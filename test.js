@@ -1,2 +1,2 @@
-var fw_version = "0.0.6";
+var fw_version = "0.0.8";
 console.log( "Moebio's Framework version " + fw_version );
