@@ -1,0 +1,11 @@
+/**
+* DateOperators
+* @constructor
+*/
+function DateOperators(){};
+/** 
+* receives n arguments and performs addition
+*/
+DateOperators.twoDatesToDateInterval=function(date0, date1){
+	return new DateInterval(date0, date1);
+}

@@ -1,0 +1,38 @@
+function GeometryConvertions(){};
+
+//include(frameworksRoot+"operators/strings/StringOperators.js")
+
+// GeometryConvertions.StringToPolygonList=function(string, sep0, sep1, sep2){
+	// sep0 = sep0 || ",";
+	// sep1 = sep1 || " ";
+	// sep2 = sep2 || "\n";
+// 	
+	// var polygonList = new PolygonList();
+	// var polygon;
+	// var point;
+// 	
+	// lines = StringOperators.splitString(string, sep2);
+// 	
+	// var i;
+	// var j;
+	// for(i=0; lines[i]!=null; i++){
+		// polygon = new Polygon();
+		// var points = StringOperators.splitString(lines[i], sep1);
+		// for(j=0; points[j]!=null; j++){
+			// var sPoint = StringOperators.splitString(points[j], sep0);
+			// point = new Point(Number(sPoint[0]), Number(sPoint[1]));
+			// polygon.push(point);
+		// }
+		// polygonList.push(polygon);
+	// }
+	// return polygonList;
+// }
+
+GeometryConvertions.twoNumberListsToPolygon=function(numberList0, numberList1){
+	var n = Math.min(numberList0.length, numberList1.length);
+	var polygon = new Polygon();
+	for(var i=0; i<n; i++){
+		polygon[i] = new Point(numberList0[i], numberList1[i]);
+	}
+	return polygon;
+}

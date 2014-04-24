@@ -1,0 +1,25 @@
+Rectangle.prototype = new DataModel();
+Rectangle.prototype.constructor=Rectangle;
+/**
+* Rectangle
+* @constructor
+*/
+function Rectangle (x, y, width, height) {
+	DataModel.apply(this);
+	this.name="";
+	this.type="Rectangle";
+    this.x=Number(x)||0;
+    this.y=Number(y)||0;
+    this.width=Number(width)||0;
+    this.height=Number(height)||0;
+}
+
+Rectangle.prototype.clone=function(){
+	return new Rectangle(this.x, this.y, this.width, this.height);
+}
+Rectangle.prototype.getRatio=function(){
+	return Math.max(this.width, this.height) / Math.min(this.width, this.height);
+}
+Rectangle.prototype.toString=function(){
+	return "(x="+this.x+", y="+this.y+", w="+this.width+", h="+this.height+")";
+}

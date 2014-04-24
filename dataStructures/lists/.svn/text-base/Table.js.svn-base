@@ -1,0 +1,129 @@
+Table.prototype = new List();
+Table.prototype.constructor=Table;
+
+/**
+* Table 
+* @constructor
+*/
+function Table(){
+	var args=[];
+	var i;
+	for(i=0; i<arguments.length; i++){
+		arguments[i]=List(arguments[i]);
+	}
+	var array=List.apply(this, arguments);
+	//
+	array=Table.fromArray(array);
+   	//
+   	return array;
+}
+Table.fromArray=function(array){
+	var result=List.fromArray(array);
+	result.type="Table";
+   	//assign methods to array:
+	result.spliceRows=Table.prototype.spliceRows;
+
+	return result;
+}
+
+Table.prototype.spliceRows=function(startIndex, nRows){
+	var table=new Table();
+	var i;
+	var j;
+	for(i=0; i<this.length; i++){
+		var list=this[i].splice(0, nRows);
+		table.push(list);
+		//console.log("nArray:", nArray);
+	}
+	return table;
+}
+
+Table.integrateTables=function(table0, table1){
+	var table = new Table();
+			
+	var list = List.concatWithoutRepetitions(table0[0], table1[0]);
+	//console.log("table0:", table0);
+	//console.log("table1:", table1);
+	//console.log("list:", list);
+	var nElements = list.length;
+	
+	var nNumbers0 = table0.length-1;
+	var nNumbers1 = table1.length-1;
+	
+	var numberTable0 = new Table();//NumberTable
+	var numberTable1 = new Table();//NumberTable
+	
+	var element;
+	var index;
+	
+	var i, j;
+	
+	//trace("fusionDataTables | nElements:", nElements);
+	
+	for(i=0; i<nElements; i++){
+		index = table0[0].indexOf(list[i]);
+		if(index>-1){
+			for(var j=0; j<nNumbers0; j++){
+				if(i==0){
+					numberTable0[j] = new Table();
+				}
+				numberTable0[j][i] = table0[j+1][index];
+				//checkNumberError(numberTable0[j][i]);
+			}
+		} else {
+			for(j=0; j<nNumbers0; j++){
+				if(i==0){
+					numberTable0[j] = new Table();
+				}
+				numberTable0[j][i] = 0;
+				//checkNumberError(numberTable0[j][i]);
+			}
+		}
+		
+		index = table1[0].indexOf(list[i]);
+		if(index>-1){
+			for(j=0; j<nNumbers1; j++){
+				if(i==0){
+					numberTable1[j] = new Table();
+				}
+				numberTable1[j][i] = table1[j+1][index];
+				/*trace();
+				trace("i, j, index", i, j, index);
+				trace("numberTable1[j][i]", numberTable1[j][i]);
+				trace("table1[j+1][index]", table1[j+1][index]);
+				trace("table1[j+1]", table1[j+1]);
+				trace("numberTable1[j]", numberTable1[j]);*/
+				//checkNumberError(numberTable1[j][i]);
+			}
+		} else {
+			for(j=0; j<nNumbers1; j++){
+				if(i==0){
+					numberTable1[j] = new Table();
+				}
+				numberTable1[j][i] = 0;
+				//checkNumberError(numberTable1[j][i]);
+			}
+		}
+	}
+	
+	table[0] = list;
+	//console.log("tab1:", table);
+	table = table.concat(numberTable0, numberTable1);
+	//console.log("tab2:", table);
+	/*
+	if(removeRowsWith0s){
+		var rowsWith0:NumberList = new NumberList();
+		var nRows:uint = table[0].length;
+		for(i=0; i<nRows; i++){
+			if(table.getRow(i).indexOf(0)>-1) rowsWith0.push(i);
+		}
+		nElements = table.length;
+		if(rowsWith0.length>0){
+			for(i=0; i<nElements; i++){
+				table[i] = OperatorsList.getSubListRemovingPositions(table[i], rowsWith0);
+			}
+		}
+	}
+	*/
+	return table;
+}

@@ -1,0 +1,17 @@
+Tree.prototype = new Network();
+Tree.prototype.constructor=Tree;
+
+/**
+* Tree 
+* @constructor
+*/
+function Tree(){
+	Network.apply(this);
+	this.type="Tree";
+	console.lo
+}
+//
+
+Tree.prototype.trace=function(relation){
+  console.log("Tree contains "+this.nodeList.length+" nodes and "+this.relationList.length+" relations!");
+}
