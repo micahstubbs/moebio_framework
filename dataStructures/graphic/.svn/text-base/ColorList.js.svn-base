@@ -1,0 +1,29 @@
+ColorList.prototype = new NumberList();
+ColorList.prototype.constructor=ColorList;
+/**
+* ColorList
+* @constructor
+*/
+
+function ColorList () {
+	//FIX ME: Should use this ??? 
+	var args=[];
+	var i;
+	for(i=0; i<arguments.length; i++){
+		arguments[i]=Number(arguments[i]);
+	}
+	var array=NumberList.apply(this, arguments);
+	//
+	array=ColorList.fromArray(array);
+   	//
+   	return array;   	
+}
+
+
+ColorList.fromArray=function(array){
+	var result=NumberList.fromArray(array);
+	result.type="ColorList";
+   	//assign methods to array:
+	//result.getStandardDeviation=ColorList.prototype.getStandardDeviation;
+	return result;
+}

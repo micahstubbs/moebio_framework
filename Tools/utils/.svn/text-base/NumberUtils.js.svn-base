@@ -1,0 +1,30 @@
+/**
+* NumberUtils 
+* @constructor
+*/function NumberUtils () {
+}
+/**
+ * return a value between min and max
+ * 0 -> min
+ * 1 -> max
+ * @param {Number} min
+ * @param {Number} max
+ * @param value between 0 and 1 (to obtain values between min and max)
+ * @return {Number}
+ * 
+ */
+NumberUtils.getInterpolatedValue=function(min, max, value){
+	if(value<0 && value >1) return null;
+	return value*(max-min) + min;
+}
+/**
+ * returns an hexadecimal value
+ * @param {Number} base10 number
+ * @return {Number} hexadecimal number
+ * 
+ */
+NumberUtils.toHex=function(number){
+	var hex=number.toString(16);
+	while(hex.length<2) hex="0"+hex;
+	return hex;
+}

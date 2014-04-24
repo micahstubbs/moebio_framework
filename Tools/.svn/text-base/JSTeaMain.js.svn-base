@@ -1,0 +1,282 @@
+/**
+ * Container for all editing methods
+ * 
+ */
+
+function Main(){
+
+}
+init=function(){
+  "must be overriden!";
+}
+update=function(){
+  "must be overriden!";
+}
+draw=function(){
+  "must be overriden!";
+}
+
+
+var gCanvas;
+var gTree;
+var events=[];
+var canvas;
+var context;
+var canvasWidth, canvasHeight;
+var frame=0;
+var mouseX;
+var mouseY;
+
+var userAgent;
+var userAgentVersion;
+
+window.addEventListener('load', function() {
+ 
+
+ //DETECT USERAGENT:
+
+ 	if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
+    	userAgent='IE';
+    	userAgentVersion=new Number(RegExp.$1) // capture x.x portion and store as a number
+  	}
+  	if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent)){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
+   		userAgent='FIREFOX';
+    	userAgentVersion=new Number(RegExp.$1) // capture x.x portion and store as a number
+   	}
+	if (/Mozilla[\/\s](\d+\.\d+)/.test(navigator.userAgent)){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
+	 	userAgent='MOZILLA';
+	    userAgentVersion=new Number(RegExp.$1) // capture x.x portion and store as a number
+	}
+   if(navigator.userAgent.match(/iPad/i) != null){
+    	userAgent='IOS';
+  	} 
+  	if(navigator.userAgent.match(/iPhone/i) != null){
+    	userAgent='IOS';
+  	}
+	
+// initialize gCanvas:
+	
+	gCanvas=new G_Canvas();
+	gTree=gCanvas.spriteTree;
+	gTree.addChild(gCanvas);
+//define frameRate:
+    Main.frameRate=30; 
+    
+    
+//define canvas & context:
+	
+	canvas = document.getElementById('main');
+	canvasHeight=canvas.height;
+	canvasWidth=canvas.width;
+	context = canvas.getContext('2d');
+	  
+	  
+	canvasWidth=context.canvas.width  = window.innerWidth;
+	canvasHeight=context.canvas.height = window.innerHeight;
+	gCanvas.setSize(canvasWidth, canvasHeight);
+	
+//initialize:
+	init();
+	
+//EVENTS
+	if (window.captureEvents) {
+	      window.addEventListener("mousedown", onMouseDown, false);
+	       window.addEventListener("mouseclick", onMouseClick, false);
+	      window.addEventListener("mouseup", onMouseUp, false);
+	      canvas.addEventListener("mousemove", onMouseMove, false);
+	      canvas.addEventListener("mouseover", onMouseMove, false);
+	      canvas.addEventListener("touchstart", onTouchStart, false);
+	      canvas.addEventListener("touchmove", onTouchMove, false);
+	      canvas.addEventListener("touchend", onTouchEnd, false);
+	      window.addEventListener("resize", onWindowResized, false);
+	}else{
+	    //document.onmousemove=getMousePos;
+	}
+
+	function onWindowResized(e){
+		console.log("window resized");
+		canvas.setAttribute('width', document.body.clientWidth);
+        canvas.setAttribute('height', document.body.clientHeight); 
+		
+		canvasWidth=context.canvas.width  = window.innerWidth;
+		canvasHeight=context.canvas.height = window.innerHeight;
+		
+		gCanvas.setSize(canvasWidth, canvasHeight);
+		/* //TODO: add windowResize event!
+		var event=new JSTEvent(JSTEvent.TOUCH_START);
+		event.touches=e.touches;
+		var targetEvent =  e.touches.item(0);
+		event.touchX=targetEvent.clientX;;
+		event.touchY=targetEvent.clientY;
+		dispatchTouch(event);
+		*/
+		
+	}
+	function onTouchStart(e){
+		var event=new JSTEvent(JSTEvent.TOUCH_START);
+		event.touches=e.touches;
+		var targetEvent =  e.touches.item(0);
+		event.touchX=targetEvent.clientX;;
+		event.touchY=targetEvent.clientY;
+		dispatchTouch(event);
+	}
+	function onTouchMove(e){
+		var event=new JSTEvent(JSTEvent.TOUCH_MOVE);
+		event.touches=e.touches
+		event.touchX=e.clientX;;
+		event.touchY=e.clientY;
+		dispatchTouch(event);
+	}
+	function onTouchEnd(e){
+		var event=new JSTEvent(JSTEvent.TOUCH_END);
+		event.touches=e.touches
+		event.touchX=e.clientX;;
+		event.touchY=e.clientY;
+		dispatchTouch(event);
+	}
+
+	//MOUSE:
+	function onMouseClick(e) { 
+      //NS
+      //console.log('mousedown', e);
+      	var event=new JSTEvent(JSTEvent.MOUSE_CLICK);
+      	if (document.layers||document.getElementById&&!document.all) {
+       		event.mouseX=e.pageX;
+        	event.mouseY=e.pageY;
+      	}
+    //IE
+      	else if (document.all) {
+        	event.mouseX=window.event.clientX;
+        	event.mouseY=window.event.clientY;
+        
+      	}
+      	dispatchMouse(event);
+      
+ 	}
+ 	function onMouseDown(e) { 
+      //NS
+      //console.log('mousedown', e);
+      	var event=new JSTEvent(JSTEvent.MOUSE_DOWN);
+      	if (document.layers||document.getElementById&&!document.all) {
+       		event.mouseX=e.pageX;
+        	event.mouseY=e.pageY;
+      	}
+    //IE
+      	else if (document.all) {
+        	event.mouseX=window.event.clientX;
+        	event.mouseY=window.event.clientY;
+        
+      	}
+      	dispatchMouse(event);
+      
+ 	}
+  	function onMouseUp(e) { 
+      	//NS
+      	var event=new JSTEvent(JSTEvent.MOUSE_UP);
+      	if (document.layers||document.getElementById&&!document.all) {
+       		event.mouseX=e.pageX;
+        	event.mouseY=e.pageY;
+      	}
+    	//IE
+      	else if (document.all) {
+        	event.mouseX=window.event.clientX;
+        	event.mouseY=window.event.clientY;
+        
+      	}
+      	dispatchMouse(event);
+      
+  	}
+  	function onMouseOver(e) { 
+      	//NS
+      	var event=new JSTEvent(JSTEvent.MOUSE_OVER);
+      	if (document.layers||document.getElementById&&!document.all) {
+        	event.mouseX=e.layerX;
+        	event.mouseY=e.layerY;
+      	}
+    	//IE
+      	else if (document.all) {
+        	event.mouseX=window.event.clientX;
+        	event.mouseY=window.event.clientY;
+        
+      	}
+      	dispatchMouse(event);
+ 
+ 	}
+  	function onMouseMove(e) { 
+      	//NS
+      	var event=new JSTEvent(JSTEvent.MOUSE_MOVE);
+      	if (document.layers||document.getElementById&&!document.all) {
+        	event.mouseX=e.layerX;
+        	event.mouseY=e.layerY;
+      	}
+    	//IE
+      	else if (document.all) {
+        	event.mouseX=window.event.clientX;
+        	event.mouseY=window.event.clientY;
+        
+      	}
+      	mouseX=event.mouseX;
+      	mouseY=event.mouseY;
+      	dispatchMouse(event);
+ 
+ 	}
+	function dispatchMouse(event){
+  		var i;
+  		for(i=this.gTree.childList.length-1; i>=0; i--){
+    		this.gTree.childList[i].dispatchMouse(event);
+    
+    		if(event.stopPropagation) break;
+  		}
+	}
+	function dispatchTouch(event){
+  		var i;
+  		for(i=this.gTree.childList.length-1; i>=0; i--){
+    		this.gTree.childList[i].dispatchTouch(event);
+    		if(event.stopPropagation) break;
+  		}
+	}
+	
+
+	///
+	var ms=Math.floor(1000/Main.frameRate);
+	setInterval(enterframe, 30);
+}, false);
+
+function enterframe(){
+	var event=new JSTEvent(JSTEvent.ENTERFRAME)
+	for(i=this.gTree.childList.length-1; i>=0; i--){
+		//alert(this.gTree.childList[i].getLabel());
+    	this.gTree.childList[i].dispatchEnterFrame(event);
+   	 	if(event.stopPropagation) break;
+  	}
+	//autosize canvas??
+        
+  	update();
+  	var length=this.gCanvas.childList.length;
+  	var i;
+  	for(i=0; i<length; i++){
+   		this.gCanvas.childList[i].callUpdate(this.gCanvas.x, this.gCanvas.y);//this.gCanvas.childList[i]);
+   	}
+   	context.clearRect(0, 0, canvasWidth, canvasHeight);
+  	draw(context);
+  	//var num=this.gCanvas.childList.length;
+  	for(i=0; i<length; i++){
+  		var target=this.gCanvas.childList[i];
+  		//console.log(target, eval(target.callDraw));
+    	if(target.visible){
+    		target.callDraw.call(target, context, this.gCanvas.x, this.gCanvas.y, frame);
+  		}
+  	}
+  	frame++;
+}
+
+addChild=function(g_Node){
+  	gCanvas.addChild(g_Node);
+}
+removeChild=function(g_Node){
+  	gTree.removeChild(g_Node);
+}
+
+
+
+	

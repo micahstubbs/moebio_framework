@@ -1,0 +1,24 @@
+Polygon3D.prototype = new List();
+Polygon3D.prototype.constructor=Polygon3D;
+/**
+* Polygon3D – A list of Points
+* @constructor
+*/
+function Polygon3D(){
+	var array=List.apply(this, arguments);
+	array=Polygon3D.fromArray(array);
+   	return array;
+};
+Polygon3D.fromArray=function(array){
+	var result=List.fromArray(array);
+	result.type="Polygon3D";
+   	//assign methods to array:
+   	/*
+   	result.addPoint=Polygon3D.prototype.addPoint;
+   	result.removePoint=Polygon3D.prototype.removePoint;
+   	result.removeNode=Polygon3D.prototype.removeNode;
+	*/
+	return result;
+}
+
+		

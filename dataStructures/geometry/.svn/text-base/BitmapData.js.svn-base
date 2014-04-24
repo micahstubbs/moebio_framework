@@ -1,0 +1,29 @@
+BitmapData.prototype = new DataModel();
+BitmapData.prototype.constructor=BitmapData;
+/**
+* BitmapData
+* @constructor
+*/
+function BitmapData (width, height, transparent, fillColor) {
+	DataModel.apply(this);
+	this.name="";
+	this.type="BitmapData";
+    this.width=Number(width)||0;
+    this.height=Number(height)||0;
+    this.pixels=null;
+    this.imageData=null;
+}
+BitmapData.fromImageData=function(imageData){
+	//console.log("in BD:", imageData);
+	var bitmapData=new BitmapData();
+	bitmapData.width=imageData.width;
+	bitmapData.height=imageData.height;
+	bitmapData.pixels=imageData.data;
+	bitmapData.imageData=imageData;
+	return bitmapData;
+}
+/*Point.prototype.dist=function(point){
+	return Math.sqrt(this.distSquared(point));
+}
+*/
+	
