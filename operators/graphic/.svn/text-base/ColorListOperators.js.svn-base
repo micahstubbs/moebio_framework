@@ -1,0 +1,30 @@
+/**
+* ColorListOperators
+* @constructor
+*/
+function ColorListOperators(){};
+/** 
+* receives n arguments and performs addition
+*/
+ColorListOperators.colorListFromColorScale=function(colorScale, nElements){
+	return colorScale.getColorList.apply(colorScale, [nElements]);
+}
+ColorListOperators.polygon3DToColorList=function(polygon3D){
+	var nPoints = polygon3D.length;
+	var colorList = new ColorList();
+	var i;
+	for(i=0; i<nPoints; i++){
+		colorList.push(OperatorsColor.point3DToColor(polygon3D[i]));
+	}
+	return colorList;
+}
+ColorListOperators.colorListToPolygon3D=function(colorList){
+	var nColors = colorList.length;
+	var polygon3D = new Polygon3D();
+	var i;
+	for(i=0; i<nColors; i++){
+		polygon3D.push(OperatorsColor.colorToPoint3D(colorList[i]));
+	}
+	return polygon3D;
+}
+

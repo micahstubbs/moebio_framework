@@ -1,0 +1,142 @@
+
+/**
+ * @class
+ */
+
+var Loader=new function (){};
+/**
+ * @field the URL of the proxy to be used
+ */
+//Loader.proxy="http://www.344server.org/php/proxy.php?url=";
+Loader.proxy="http://127.0.0.1/JSTea/proxy/proxy.php?url=";
+function LoaderRequest(url, method, data){
+	this.url=url;
+	this.method=method?method:"GET"; 
+	this.data=data;
+}
+
+
+Loader.loadBitmap=function(url, onComplete, callee){
+	var target = callee?callee:arguments.callee;
+	var img=document.createElement('img');
+	img.onload = function(){
+	 	var e=new LoadEvent();
+		e.result=new G_Bitmap(img);
+		onComplete.call(target, e);
+	}
+	img.onerror = function () {
+		var e=new LoadEvent();
+		e.errorType=1 //TODO: set an error type!
+		e.errorMessage="There was a problem retrieving the image ["+img.src+"]:";
+		onComplete.call(target, e);
+	};
+	img.src=Loader.proxy+url;
+}
+Loader.loadJSON=function(url, onLoadComplete){
+	Loader.loadData(url, function(data){
+		onLoadComplete.call(arguments.callee, jQuery.parseJSON(data));
+	});
+}
+/**
+* loads string data from server. The defined Loader.proxy will be used.
+* @param {String} url the URL of the file to be loaded 
+* @param {Function} onLoadData a function that will be called when complete. The function must receive a LoadEvent
+* @param {callee} the Object containing the onLoadData function to be called
+*/
+Loader.loadData=function(url, onLoadData, callee){
+	var req = new XMLHttpRequest();
+	var target = callee?callee:arguments.callee;
+	var onLoadComplete=function() {
+		if (req.readyState == 4) {
+			var e=new LoadEvent();
+        	if (req.status == 200) {
+        		e.result=req.responseText;
+        	    onLoadData.call(target, e);
+				
+        	} else {
+        	    console.log("[!] There was a problem retrieving the data ["+req.status+"]:\n" + req.statusText);
+        	    e.errorType=req.status;
+        	    e.errorMessage="[!] There was a problem retrieving the data ["+req.status+"]:" + req.statusText;
+        	    onLoadData.call(target, e);
+       	 	}
+    	}
+	};	
+    // branch for native XMLHttpRequest object
+    if(window.XMLHttpRequest && !(window.ActiveXObject)) {
+    	try {
+			req = new XMLHttpRequest();
+        } catch(e) {
+			req = false;
+        }
+    // branch for IE/Windows ActiveX version
+    } else if(window.ActiveXObject) {
+       	try {
+        	req = new ActiveXObject("Msxml2.XMLHTTP.6.0");
+      	} catch(e) {
+        	try {
+          		req = new ActiveXObject("Msxml2.XMLHTTP.3.0");
+        	} catch(e) {
+          		try {
+          			req = new ActiveXObject("Msxml2.XMLHTTP");
+        		} catch(e) {
+        			try {
+          				req = new ActiveXObject("Microsoft.XMLHTTP");
+        			} catch(e) {
+          				req = false;
+        			}
+        		}
+        	}
+		}
+    }
+	if(req) {
+		req.onreadystatechange = onLoadComplete;//processReqChange;
+		req.open("GET", Loader.proxy+url, true);
+		//req.overrideMimeType('text/xml');
+		req.send("");
+	}
+}
+
+//FIX THESE METHODS:
+
+Loader.loadXML=function(url, onLoadData) {
+	var req = new XMLHttpRequest();
+	var onLoadComplete=onLoadData;
+	
+    // branch for native XMLHttpRequest object
+    if(window.XMLHttpRequest && !(window.ActiveXObject)) {
+    	try {
+			req = new XMLHttpRequest();
+        } catch(e) {
+			req = false;
+        }
+    // branch for IE/Windows ActiveX version
+    } else if(window.ActiveXObject) {
+       	try {
+        	req = new ActiveXObject("Msxml2.XMLHTTP");
+      	} catch(e) {
+        	try {
+          		req = new ActiveXObject("Microsoft.XMLHTTP");
+        	} catch(e) {
+          		req = false;
+        	}
+		}
+    }
+	if(req) {
+		req.onreadystatechange = processReqChange;
+		req.open("GET", url, true);
+		req.send("");
+	}
+	function processReqChange() {
+   	 	// only if req shows "loaded"
+    	if (req.readyState == 4) {
+        	// only if "OK"
+        	if (req.status == 200) {
+        	    onLoadComplete(req.responseXML);
+			
+        	} else {
+            	alert("There was a problem retrieving the XML data:\n" +
+                req.statusText);
+        	}
+    	}
+	}
+}

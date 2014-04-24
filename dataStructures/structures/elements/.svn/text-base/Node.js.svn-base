@@ -1,0 +1,92 @@
+Node.prototype = new DataModel();
+Node.prototype.constructor=Node;
+
+/**
+* Node 
+* @param {String} id ID of the Node
+* @param {String} label string label to be assigned to node
+* @constructor
+*/
+function Node (id, label) {
+    this.id = id?id:"";
+    this.label = label?label:'';
+    this.type="Node";
+    this.x=0;
+    this.y=0;
+    this.z=0;
+    this.network=null;
+    this.nodeList=new NodeList()
+    this.relationList=new RelationList();
+    this.parent=null;
+    
+    //physics:
+    this.vx=0;
+    this.vy=0;
+    this.vz=0;
+    this.ax=0;
+    this.ay=0;
+    this.az=0;
+}
+
+Node.prototype.setNetwork=function(network){
+	this.network=network;
+}
+/**
+* access Network node is assigned to
+* @return a Network 
+*/
+Node.prototype.getNetwork=function(){
+	return this.network;
+}
+
+
+Node.prototype.setPosition=function(x, y){
+	this.x=x;
+	this.y=y;
+}
+Node.prototype.setLabel=function(label){
+  this.label=label;
+}
+Node.prototype.getLabel=function(){
+ return this.label;
+}
+//
+Node.prototype.addNode=function(node, directed){
+	//console.log("directed:", directed);
+  	this.network.addNode(node);
+  	this.network.addRelation(new Relation(this.network.getNewRelationID, "", this, node, directed?directed:false));
+  	if(this.network.type=="Tree"){
+		node.parent=this;
+	}
+	//console.log("adding node at", this.label, "::", node.label, "!", this, "!", this.nodeList);
+	
+}
+
+Node.prototype.addChild=function(node){
+  	this.addNode(node, true);
+}
+Node.prototype.removeNode=function(node){
+  	this.network.removeNode(node);
+}
+
+Node.prototype.removeChild=function(node){
+  	this.network.removeNode(node);
+}
+
+Node.prototype.addChild=function(node){
+  	this.addNode(node, true);
+}
+
+
+
+//treeProperties:
+Node.prototype.getParent=function(){
+	return this.parent;
+}
+//
+Node.prototype.draw = function(context) {
+    context.fillStyle    = '#FF0000';
+  	context.font         = 'italic 16px sans-serif';
+  	context.textBaseline = 'top';
+  	context.fillText(this.name, 0, 50, 700);
+};

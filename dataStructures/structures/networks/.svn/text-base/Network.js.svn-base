@@ -1,0 +1,95 @@
+/**
+* Network
+* @constructor
+*/
+function Network () {
+	this.type="Network";
+  this._newNodeID=0;
+  this._newRelationID=0;
+  this.nodeList=new NodeList();
+  this.relationList=new RelationList();
+}
+//
+Network.prototype.getNewNodeID=function(){
+ id=this._newNodeID;
+ this._newNodeID++;
+ return id;
+}
+Network.prototype.getNewRelationID=function(){
+ id=this._newRelationID;
+ this._newRelationID++;
+ return id;
+}
+//
+Network.prototype.addNode=function(node){
+	node.setNetwork(this);
+	//node.id=getNewNodeID();
+	this.nodeList.push(node);
+	//should return a bool??
+}
+Network.prototype.addNodeInNew=function(node){
+	node.setNetwork(this);
+	//node.id=getNewNodeID();
+	this.nodeList.addNodeIfNew(node);
+	//should return a bool??
+}
+Network.prototype.getNodeWithLabel=function(label){
+	return this.nodeList.getNodeWithLabel(label);
+}
+Network.prototype.getNodeWithId=function(id){
+	return this.nodeList.getNodeWithId(id);
+}
+Network.prototype.removeNode=function(node){
+  filteredRelations=this.relationList.getRelationsWithNode(node);
+  for(var i=0; i<filteredRelations.length; i++){
+    this.removeRelation(filteredRelations[i]);  
+  }
+  node.setNetwork=null;
+  this.nodeList.removeNode(node);
+  //should return bool?
+}
+/*
+Network.prototype.removeChild=function(node){
+  this.removeNode(node);
+}
+*/
+
+Network.prototype.addRelation=function(relation){
+  	//relation.id=_newRelationID();
+ 	this.relationList.push(relation);
+ 	relation.getNode0().nodeList.addNodeIfNew(relation.getNode1());
+ 	relation.getNode0().relationList.addRelation(relation);
+ 	if(!relation.directed || this.type!="Tree"){
+ 		//console.log("its not a tree nor directed");
+ 		relation.getNode1().nodeList.addNodeIfNew(relation.getNode0());
+ 		relation.getNode1().relationList.addRelation(relation);
+ 	}
+  	//should return a bool??
+}
+Network.prototype.addRelationIfNew=function(relation){
+  //relation.id=_newRelationID();
+ this.relationList.addRelationIfNew(relation);
+ relation.getNode0().nodeList.addNodeIfNew(relation.getNode1());
+ relation.getNode0().relationList.addRelationIfNew(relation);
+ if(!relation.directed || this.type!="Tree"){
+ 	trace("its not a tree nor directed");
+ 	relation.getNode1().nodeList.addNodeIfNew(relation.getNode0());
+ 	relation.getNode1().relationList.addRelationIfNew(relation);
+ }
+  //should return a bool??
+}
+Network.prototype.removeRelation=function(relation){
+  //relation.id=_newRelationID();
+ this.relationList.removeElement(relation);
+ relation.getNode0().nodeList.removeNode(relation.getNode1());
+ relation.getNode0().relationList.removeRelation(relation);
+ relation.getNode1().nodeList.removeNode(relation.getNode0());
+ relation.getNode1().relationList.removeRelation(relation);
+  //should return a bool??
+}
+
+//
+
+Network.prototype.trace=function(){
+  console.log("network contains "+this.nodeList.length+" nodes and "+this.relationList.length+" relations!");
+}

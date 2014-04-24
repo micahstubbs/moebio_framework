@@ -1,0 +1,65 @@
+ColorScale.prototype = new DataModel();
+ColorScale.prototype.constructor=ColorScale;
+/**
+* Point
+* @constructor
+*/
+function ColorScale (colorScaleFunction, gradientValues) {
+	DataModel.apply(this, arguments);
+	this.name="";
+	this.type="ColorScale";
+	console.log("in ColorScale", typeOf(colorScaleFunction));
+	if(colorScaleFunction==null){
+		this._colorScaleFunction=ColorScale.blackFunction;
+	}else if( typeOf(colorScaleFunction)=="string"){
+		 this._colorScaleFunction=ColorScale[colorScaleFunction+"Function"];
+	}else{
+		this._colorScaleFunction=colorScaleFunction;
+	}
+   
+}
+ColorScale.prototype.getColor=function(value){
+	return this._colorScaleFunction(value);
+}
+ColorScale.prototype.getColorList=function(nColors){
+	var colorList = new ColorList();
+	var i;	
+	console.log("@getColorList", this);
+	for(i=0; i<nColors; i++){
+		colorList.push(this.getColor(i/nColors));
+	}
+	return colorList;
+}
+//
+ColorScale.temperatureFunction=function(value){
+	var color;
+	if(value<0.2){
+		color=ColorUtils.getInterpolatedColor('#000000', ColorUtils.HSV(234, 1, 1), value*5);	
+	}else if(value>0.85){
+		color=ColorUtils.getInterpolatedColor(ColorUtils.HSV(0, 1, 1), '#FFFFFF', (value-0.85)/0.15);	
+	}else{
+		color=ColorUtils.HSV(Math.round((0.65-(value-0.2))*360), 1, 1);
+	}
+	return ColorUtils.HEXtouint(color);
+}
+ColorScale.blackFunction=function(value){
+	return 0;
+}
+/*
+Point.prototype.dist=function(point){
+	return Math.sqrt(this.distSquared(point));
+}
+	
+Point.prototype.distSquared=function(point){
+	return Math.pow(Math.abs(this.x-point.x), 2)+Math.pow(Math.abs(this.y-point.y), 2);
+}
+Point.prototype.getLength=function(){
+	return Math.sqrt( (this.x*this.x) + (this.y*this.y));
+}
+Point.prototype.clone=function(){
+	return new Point(this.x, this.y);
+}
+Point.prototype.toString=function(){
+	return "(x="+this.x+", y="+this.y+")";
+}
+*/

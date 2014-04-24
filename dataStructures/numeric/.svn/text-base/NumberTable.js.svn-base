@@ -1,0 +1,41 @@
+NumberTable.prototype = new Table();
+NumberTable.prototype.constructor=NumberTable;
+/**
+* NumberTable
+* @constructor
+*/
+
+function NumberTable () {
+	//FIX ME: Should use this ??? 
+	var args=[];
+	var i;
+	for(i=0; i<arguments.length; i++){
+		arguments[i]=NumberList.fromArray(arguments[i]);
+	}
+	var array=Table.apply(this, arguments);
+	//
+	array=NumberTable.fromArray(array);
+   	//
+   	return array;   	
+}
+NumberTable.fromArray=function(array){
+	var result=Table.fromArray(array);
+	result.type="NumberTable";
+   	//assign methods to array:
+	result.getRangeInterval=NumberTable.prototype.getRangeInterval;
+
+	return result;
+}
+
+NumberTable.prototype.getRangeInterval=function(){
+	if(this.length==0) return null;
+	var i;
+	console.log("!!", this[0]);
+	var rangeInterval=(this[0]).getRangeInterval();
+	for(i=1; i<this.length; i++){
+		var newRange=(this[i]).getRangeInterval();
+		rangeInterval.min=Math.min(rangeInterval.getMin(), newRange.getMin());
+		rangeInterval.max=Math.max(rangeInterval.getMax(), newRange.getMax());
+	}
+	return rangeInterval;
+}
