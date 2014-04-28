@@ -80,6 +80,8 @@ var _interactionCancelledFrame;
 var END_CYCLE_DELAY = 3000;
 
 window.addEventListener('load', function(){
+	c.log('Moebio Framework v2.1');
+
  	if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
     	userAgent='IE';
     	userAgentVersion=new Number(RegExp.$1) // capture x.x portion and store as a number

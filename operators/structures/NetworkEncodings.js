@@ -1,7 +1,11 @@
 function NetworkEncodings(){};
 
-//GDF https://gephi.org/users/supported-graph-formats/gdf-format/
-
+/**
+ * decodes a GDF string and builds a network
+ * @param  {String} gdfCode
+ * @return {Network}
+ * tags:decoder
+ */
 NetworkEncodings.decodeGDF = function(gdfCode){
 	var network = new Network();
 	var lines = gdfCode.split("\n"); //TODO: split by ENTERS OUTSIDE QUOTEMARKS
@@ -70,10 +74,18 @@ NetworkEncodings.decodeGDF = function(gdfCode){
 
 
 
-//GML https://gephi.org/users/supported-graph-formats/gml-format/
-
-
+/**
+ * encodes a network in formatt GDF, more info: https://gephi.org/users/supported-graph-formats/gml-format/
+ * @param  {Network} network
+ * 
+ * @param  {StringList} nodesPropertiesNames names of nodes properties to be encoded
+ * @param  {StringList} relationsPropertiesNames names of relations properties to be encoded
+ * @return {String}
+ * tags:encoder
+ */
 NetworkEncodings.encodeGDF = function(network, nodesPropertiesNames, relationsPropertiesNames){
+	if(network==null) return;
+
 	nodesPropertiesNames = nodesPropertiesNames==null?new StringList():nodesPropertiesNames;
 	relationsPropertiesNames = relationsPropertiesNames==null?new StringList():relationsPropertiesNames;
 	
@@ -118,7 +130,7 @@ NetworkEncodings.encodeGDF = function(network, nodesPropertiesNames, relationsPr
  * @return {Network}
  * tags:decoder
  */
-NetworkEncodings.decodeGML = function(gmlCode){//TODO:decide what to do with relations ids
+NetworkEncodings.decodeGML = function(gmlCode){
 	if(gmlCode==null) return null;
 	
 	gmlCode = gmlCode.substr(gmlCode.indexOf("[")+1);
@@ -240,8 +252,17 @@ NetworkEncodings._cleanLineBeginning = function(string){
 	return string;
 }
 
-
+/**
+ * encodes a network in format GDF
+ * @param  {Network} network
+ * @param  {StringList} nodesPropertiesNames names of nodes' properties to encode
+ * @param  {StringList} relationsPropertiesNames names or relations' properties to encode
+ * @return {String} GDF string
+ * tags:encoder
+ */
 NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPropertiesNames){
+	if(network==null) return;
+	
 	nodesPropertiesNames = nodesPropertiesNames==null?new StringList():nodesPropertiesNames;
 	relationsPropertiesNames = relationsPropertiesNames==null?new StringList():relationsPropertiesNames;
 	
