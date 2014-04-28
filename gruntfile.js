@@ -1,6 +1,6 @@
 'use strict';
 
-// test 28/04/2014 12:24
+// test 28/04/2014 12:24 -- 2
 var watchedFiles = [
     "**/*.js", 
     "!**/node_modules/**", 
