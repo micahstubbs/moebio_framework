@@ -37,7 +37,7 @@ function InputTextFieldHTML(configuration){
 	this.focusFunctionTarget;
 	this.blurFunctionTarget;
 	
-	this.textColor='black';
+	this.textColor=configuration.textColor==null?'black':configuration.textColor;
 	this.backgroundColor='#FFFFFF';
 	
 	this.main = document.getElementById('maindiv');
@@ -95,7 +95,7 @@ InputTextFieldHTML.prototype.setBorder = function(value) {
 	this.DOMtext.setAttribute('style',  'color: '+this.textColor+'; width:'+(this.width-7)+'px;height:'+(this.height-7)+'px; font-size:'+this.fontSize+'px; border:'+(value?'yes':'none'));
 }
 
-InputTextFieldHTML.prototype.draw = function(context) {
+InputTextFieldHTML.prototype.draw = function() {
 	if(this.x!=this._prevX || this.y!=this._prevY || this.width!=this._prevWidth || this.height!=this._prevHeight || this.text!=this._prevText){
  		this._prevX = this.x;
     	this._prevY = this.y;
@@ -117,6 +117,7 @@ InputTextFieldHTML.prototype.draw = function(context) {
 
 InputTextFieldHTML.prototype.setText=function(text, activeChange){
 	activeChange = activeChange==null?true:activeChange;
+	this.text = text;
 	this.DOMtext.value = text;
 	
 	//var timer = setTimeout(this.onKeyDownDelayed, 4, this);

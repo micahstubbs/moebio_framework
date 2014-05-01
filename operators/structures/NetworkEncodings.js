@@ -255,13 +255,17 @@ NetworkEncodings._cleanLineBeginning = function(string){
 /**
  * encodes a network in format GDF
  * @param  {Network} network
+ * 
  * @param  {StringList} nodesPropertiesNames names of nodes' properties to encode
  * @param  {StringList} relationsPropertiesNames names or relations' properties to encode
+ * @param {Boolean} idsAsInts GDF strong specification requires ids for nodes being int numbers
  * @return {String} GDF string
  * tags:encoder
  */
-NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPropertiesNames){
+NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPropertiesNames, idsAsInts){
 	if(network==null) return;
+
+	idsAsInts = idsAsInts==null?true:idsAsInts;
 	
 	nodesPropertiesNames = nodesPropertiesNames==null?new StringList():nodesPropertiesNames;
 	relationsPropertiesNames = relationsPropertiesNames==null?new StringList():relationsPropertiesNames;
@@ -277,7 +281,11 @@ NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPr
 		node = network.nodeList[i];
 		code+="\n"+ident+"node\n"+ident+"[";
 		ident="		";
-		code+="\n"+ident+"id \""+node.id+"\"";
+		if(idsAsInts){
+			code+="\n"+ident+"id "+i;
+		} else {
+			code+="\n"+ident+"id \""+node.id+"\"";
+		}
 		if(node.name!='') code+="\n"+ident+"label \""+node.name+"\"";
 		for(j=0;nodesPropertiesNames[j]!=null;j++){
 			value = node[nodesPropertiesNames[j]];
@@ -296,8 +304,13 @@ NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPr
 		relation = network.relationList[i];
 		code+="\n"+ident+"edge\n"+ident+"[";
 		ident="		";
-		code+="\n"+ident+"source \""+relation.node0.id+"\"";
-		code+="\n"+ident+"target \""+relation.node1.id+"\"";
+		if(idsAsInts){
+			code+="\n"+ident+"source "+network.nodeList.indexOf(relation.node0);
+			code+="\n"+ident+"target "+network.nodeList.indexOf(relation.node1);
+		} else {
+			code+="\n"+ident+"source \""+relation.node0.id+"\"";
+			code+="\n"+ident+"target \""+relation.node1.id+"\"";
+		}
 		for(j=0;relationsPropertiesNames[j]!=null;j++){
 			value = relation[relationsPropertiesNames[j]];
 			if(value==null) continue;

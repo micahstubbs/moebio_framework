@@ -51,8 +51,8 @@ ListOperators.concat = function(){
 /**
  * assembles a List
  * @param  {Object}
- * @param  {Object}
  * 
+ * @param  {Object}
  * @param  {Object}
  * @param  {Object}
  * @param  {Object}

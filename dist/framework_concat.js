@@ -3998,8 +3998,8 @@ Network.prototype.addRelation=function(relation){
  	relation.node1.fromRelationList.addNode(relation);
 }
 
-Network.prototype.createRelation=function(node0, node1, id, weight){
-	id = id || (node0.id+"_"+node1.id); //TODO: id generator on RelationList
+Network.prototype.connect=function(node0, node1, id, weight){
+	id = id || (node0.id+"_"+node1.id);
 	weight = weight || 1;
 	var relation = new Relation(id, id, node0, node1, weight);
 	this.addRelation(relation);
@@ -7007,8 +7007,8 @@ ListOperators.concat = function(){
 /**
  * assembles a List
  * @param  {Object}
- * @param  {Object}
  * 
+ * @param  {Object}
  * @param  {Object}
  * @param  {Object}
  * @param  {Object}
@@ -9701,13 +9701,17 @@ NetworkEncodings._cleanLineBeginning = function(string){
 /**
  * encodes a network in format GDF
  * @param  {Network} network
+ * 
  * @param  {StringList} nodesPropertiesNames names of nodes' properties to encode
  * @param  {StringList} relationsPropertiesNames names or relations' properties to encode
+ * @param {Boolean} idsAsInts GDF strong specification requires ids for nodes being int numbers
  * @return {String} GDF string
  * tags:encoder
  */
-NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPropertiesNames){
+NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPropertiesNames, idsAsInts){
 	if(network==null) return;
+
+	idsAsInts = idsAsInts==null?true:idsAsInts;
 	
 	nodesPropertiesNames = nodesPropertiesNames==null?new StringList():nodesPropertiesNames;
 	relationsPropertiesNames = relationsPropertiesNames==null?new StringList():relationsPropertiesNames;
@@ -9723,7 +9727,11 @@ NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPr
 		node = network.nodeList[i];
 		code+="\n"+ident+"node\n"+ident+"[";
 		ident="		";
-		code+="\n"+ident+"id \""+node.id+"\"";
+		if(idsAsInts){
+			code+="\n"+ident+"id "+i;
+		} else {
+			code+="\n"+ident+"id \""+node.id+"\"";
+		}
 		if(node.name!='') code+="\n"+ident+"label \""+node.name+"\"";
 		for(j=0;nodesPropertiesNames[j]!=null;j++){
 			value = node[nodesPropertiesNames[j]];
@@ -9742,8 +9750,13 @@ NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPr
 		relation = network.relationList[i];
 		code+="\n"+ident+"edge\n"+ident+"[";
 		ident="		";
-		code+="\n"+ident+"source \""+relation.node0.id+"\"";
-		code+="\n"+ident+"target \""+relation.node1.id+"\"";
+		if(idsAsInts){
+			code+="\n"+ident+"source "+network.nodeList.indexOf(relation.node0);
+			code+="\n"+ident+"target "+network.nodeList.indexOf(relation.node1);
+		} else {
+			code+="\n"+ident+"source \""+relation.node0.id+"\"";
+			code+="\n"+ident+"target \""+relation.node1.id+"\"";
+		}
 		for(j=0;relationsPropertiesNames[j]!=null;j++){
 			value = relation[relationsPropertiesNames[j]];
 			if(value==null) continue;
@@ -12483,7 +12496,7 @@ function InputTextFieldHTML(configuration){
 	this.focusFunctionTarget;
 	this.blurFunctionTarget;
 	
-	this.textColor='black';
+	this.textColor=configuration.textColor==null?'black':configuration.textColor;
 	this.backgroundColor='#FFFFFF';
 	
 	this.main = document.getElementById('maindiv');
@@ -12541,7 +12554,7 @@ InputTextFieldHTML.prototype.setBorder = function(value) {
 	this.DOMtext.setAttribute('style',  'color: '+this.textColor+'; width:'+(this.width-7)+'px;height:'+(this.height-7)+'px; font-size:'+this.fontSize+'px; border:'+(value?'yes':'none'));
 }
 
-InputTextFieldHTML.prototype.draw = function(context) {
+InputTextFieldHTML.prototype.draw = function() {
 	if(this.x!=this._prevX || this.y!=this._prevY || this.width!=this._prevWidth || this.height!=this._prevHeight || this.text!=this._prevText){
  		this._prevX = this.x;
     	this._prevY = this.y;
@@ -12563,6 +12576,7 @@ InputTextFieldHTML.prototype.draw = function(context) {
 
 InputTextFieldHTML.prototype.setText=function(text, activeChange){
 	activeChange = activeChange==null?true:activeChange;
+	this.text = text;
 	this.DOMtext.value = text;
 	
 	//var timer = setTimeout(this.onKeyDownDelayed, 4, this);
@@ -16346,7 +16360,7 @@ var _interactionCancelledFrame;
 var END_CYCLE_DELAY = 3000;
 
 window.addEventListener('load', function(){
-	c.log('Moebio Framework v2.200');
+	c.log('Moebio Framework v2.21');
 
  	if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
     	userAgent='IE';
