@@ -16360,7 +16360,7 @@ var _interactionCancelledFrame;
 var END_CYCLE_DELAY = 3000;
 
 window.addEventListener('load', function(){
-	c.log('Moebio Framework v2.21');
+	c.log('Moebio Framework v2.22');
 
  	if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
     	userAgent='IE';
@@ -16409,6 +16409,7 @@ window.addEventListener('load', function(){
 		canvas.addEventListener("mousemove", _onMouse, false);
 		canvas.addEventListener("mousedown", _onMouse, false);
 		canvas.addEventListener("mouseup", _onMouse, false);
+
 		window.addEventListener("resize", onResize, false);
 		
 		startCycle();
