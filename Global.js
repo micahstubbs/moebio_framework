@@ -114,17 +114,19 @@ window.addEventListener('load', function(){
 	if(canvas!=null){
 		removeDiv = document.getElementById('removeDiv');
 		removeDiv.style.display = 'none';
-		cH=canvas.height;
-		cW=canvas.width;
+
 		context = canvas.getContext('2d');
 		
-		//hiddenContext = CanvasAndContext.createInvisibleContext();
+		_adjustCanvas();
+
+		// cH=canvas.height;
+		// cW=canvas.width;
 		
-		cW = context.canvas.width  = window.innerWidth;
-		cH = context.canvas.height = window.innerHeight;
+		// cW = context.canvas.width  = window.innerWidth;
+		// cH = context.canvas.height = window.innerHeight;
 		
-		cX = Math.floor(cW*0.5);
-		cY = Math.floor(cH*0.5);
+		// cX = Math.floor(cW*0.5);
+		// cY = Math.floor(cH*0.5);
 		
 		canvas.addEventListener("mousemove", _onMouse, false);
 		canvas.addEventListener("mousedown", _onMouse, false);
@@ -170,6 +172,11 @@ function _onMouse(e) {
 }
 
 function onResize(e){
+	_adjustCanvas();
+	resizeWindow();
+}
+
+function _adjustCanvas(){
 	if(canvasResizeable==false) return;
 	
 	canvas.setAttribute('width', document.body.clientWidth);
@@ -180,9 +187,8 @@ function onResize(e){
 	
 	cX = Math.floor(cW*0.5);
 	cY = Math.floor(cH*0.5);
-	
-	resizeWindow();
 }
+
 
 function clearContext(){
 	context.clearRect(0, 0, cW, cH);
