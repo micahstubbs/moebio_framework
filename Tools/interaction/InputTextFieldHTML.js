@@ -50,7 +50,7 @@ function InputTextFieldHTML(configuration){
 	if(!this.border) this.DOMtext.setAttribute('style', 'border:none');
 
 	this.div.setAttribute('rows', '1');
-	this.main.appendChild(this.div);
+	in.appendChild(this.div);
 	this.div.appendChild(this.DOMtext);
 	this.DOMtext.parent = this;
 	this.added = true;
