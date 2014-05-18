@@ -118,15 +118,6 @@ window.addEventListener('load', function(){
 		context = canvas.getContext('2d');
 		
 		_adjustCanvas();
-
-		// cH=canvas.height;
-		// cW=canvas.width;
-		
-		// cW = context.canvas.width  = window.innerWidth;
-		// cH = context.canvas.height = window.innerHeight;
-		
-		// cX = Math.floor(cW*0.5);
-		// cY = Math.floor(cH*0.5);
 		
 		canvas.addEventListener("mousemove", _onMouse, false);
 		canvas.addEventListener("mousedown", _onMouse, false);
