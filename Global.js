@@ -260,6 +260,7 @@ function addInteractionEventListener(eventType, onFunction, target){//TODO: list
 			if(!_wheelActivated) activateWheel();
 			break;
 		case 'keydown':
+		case 'keyup':
 			if(!_keyboardActivated) activateKeyboard();
 			break;
 	}
@@ -314,6 +315,7 @@ function setDivPosition(div, x, y){
 function activateKeyboard(){
 	_keyboardActivated = true;
 	document.onkeydown = onKey;
+	document.onkeyup = onKey;
 }
 function onKey(e){
 	onCanvasEvent(e);
