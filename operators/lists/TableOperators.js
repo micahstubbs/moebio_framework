@@ -83,6 +83,16 @@ TableOperators.sortListsByNumberList=function(table, numberList, descending){
 	return newTable;
 }
 
+
+/**
+ * aggregates a table
+ * @param  {Table} table to be aggregated
+ * 
+ * @param  {Number} nList list in the table used as basis to aggregation
+ * @param  {Number} mode mode of aggregation, 0:picks first element 1:adds numbers
+ * @return {Table} aggregated table
+ * tags:aggregation
+ */
 TableOperators.aggregateTable=function(table, nList, mode){
 	nList = nList==null?0:nList;
 	mode = mode==null?0:mode;
