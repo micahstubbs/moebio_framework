@@ -124,6 +124,11 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
 }
 //
 
+/**
+ * improve a List (refining type)
+ * @return {List}
+ * tags:
+ */
 List.prototype.getImproved=function(){
 	if(this.length==0) return this;
 	var typeOfElements = this.getTypeOfElements();
@@ -186,6 +191,11 @@ List.prototype.toString=function(){
 	return str;
 }
 
+/**
+ * return a list of names (if any) of elements of the list
+ * @return {StringList}
+ * tags:
+ */
 List.prototype.getNames=function(){
 	var stringList = new StringList();
 	for(i=0;this[i]!=null;i++){
@@ -194,8 +204,16 @@ List.prototype.getNames=function(){
 	return stringList;
 }
 
-
+/**
+ * reverse the list
+ * @return {List}
+ * tags:sort
+ */
 List.prototype.getReversed=function(){
+
+	c.log('*');
+	c.log('List.prototype.getReversed | this:', this);
+
 	var newList = instantiateWithSameType(this);
 	for(var i=0; this[i]!=null; i++){
 		newList.unshift(this[i]);
@@ -203,7 +221,10 @@ List.prototype.getReversed=function(){
 	return newList;
 }
 
-
+/**
+ * return a sub-list, params could be: tw numbers, an interval or a NumberList
+ * @return {[type]} [description]
+ */
 List.prototype.getSubList=function(){
 	if(arguments[0].isList){
 		return this.getSubListByIndexes(arguments[0]);
@@ -1509,6 +1530,13 @@ NodeList.prototype.getNodeByName=function(name){
   	}
   	return null;
 }
+
+/**
+ * return a node from its id
+ * @param  {String} id
+ * @return {Node}
+ * tags:search
+ */
 NodeList.prototype.getNodeById=function(id){
 	return this.ids[id];
 }
@@ -1523,7 +1551,11 @@ NodeList.prototype.getNodesByIds=function(ids){
 	return newNodelist;
 }
 
-
+/**
+ * return a list of weights
+ * @return {NumberList}
+ * tags:
+ */
 NodeList.prototype.getWeights=function(){
 	var numberList = new NumberList();
 	for(var i=0; this[i]!=null; i++){
@@ -7525,6 +7557,17 @@ TableOperators.sortListsByNumberList=function(table, numberList, descending){
 	return newTable;
 }
 
+
+
+/**
+ * aggregates a table
+ * @param  {Table} table to be aggregated
+ * 
+ * @param  {Number} nList list in the table used as basis to aggregation
+ * @param  {Number} mode mode of aggregation, 0:picks first element 1:adds numbers
+ * @return {Table} aggregated table
+ * tags:aggregation
+ */
 TableOperators.aggregateTable=function(table, nList, mode){
 	nList = nList==null?0:nList;
 	mode = mode==null?0:mode;
@@ -16541,6 +16584,7 @@ function addInteractionEventListener(eventType, onFunction, target){//TODO: list
 			if(!_wheelActivated) activateWheel();
 			break;
 		case 'keydown':
+		case 'keyup':
 			if(!_keyboardActivated) activateKeyboard();
 			break;
 	}
@@ -16595,6 +16639,7 @@ function setDivPosition(div, x, y){
 function activateKeyboard(){
 	_keyboardActivated = true;
 	document.onkeydown = onKey;
+	document.onkeyup = onKey;
 }
 function onKey(e){
 	onCanvasEvent(e);

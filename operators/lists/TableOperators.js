@@ -84,6 +84,7 @@ TableOperators.sortListsByNumberList=function(table, numberList, descending){
 }
 
 
+
 /**
  * aggregates a table
  * @param  {Table} table to be aggregated

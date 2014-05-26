@@ -96,6 +96,13 @@ NodeList.prototype.getNodeByName=function(name){
   	}
   	return null;
 }
+
+/**
+ * return a node from its id
+ * @param  {String} id
+ * @return {Node}
+ * tags:search
+ */
 NodeList.prototype.getNodeById=function(id){
 	return this.ids[id];
 }
@@ -110,7 +117,11 @@ NodeList.prototype.getNodesByIds=function(ids){
 	return newNodelist;
 }
 
-
+/**
+ * return a list of weights
+ * @return {NumberList}
+ * tags:
+ */
 NodeList.prototype.getWeights=function(){
 	var numberList = new NumberList();
 	for(var i=0; this[i]!=null; i++){
