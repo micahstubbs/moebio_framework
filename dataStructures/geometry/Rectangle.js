@@ -76,6 +76,16 @@ Rectangle.prototype.containsPoint=function(point){
 	return (this.x<=point.x && this.x+this.width>=point.x && this.y<=point.y && this.y+this.height>=point.y);
 }
 
+Rectangle.prototype.getNormalRectangle=function(){
+	return new Rectangle(Math.min(this.x, this.x+this.width), Math.min(this.y, this.y+this.height), Math.abs(this.width), Math.abs(this.height));
+}
+
+/**
+ * return true if it interstects a rectangle
+ * @param  {Rectangle} rectangle
+ * @return {Boolean}
+ * tags:geometry
+ */
 Rectangle.prototype.intersectsRectangle=function(rectangle){
 	return !(this.x+this.width<rectangle.x) && !(this.y+this.height<rectangle.y) && !(rectangle.x+rectangle.width<this.x) && !(rectangle.y+rectangle.height<this.y)
 

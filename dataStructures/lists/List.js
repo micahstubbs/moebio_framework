@@ -294,7 +294,11 @@ List.prototype.clone=function(){
   	return clonedList;
 }
 
-
+/**
+ * create a new List without repeating elements
+ * @return {List}
+ * tags:filter
+ */
 List.prototype.getWithoutRepetitions=function(){
 	newList = instantiateWithSameType(this);
 	newList.name = this.name;
