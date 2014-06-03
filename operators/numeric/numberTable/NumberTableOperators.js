@@ -20,7 +20,7 @@ NumberTableOperators.normalizeListsToMax=function(numberTable){
 	return newNumberTable;
 }
 
-
+//TODO: move to NumberTableConversions
 NumberTableOperators.numberTableToNetwork=function(numberTable, method, tolerance){
 	tolerance = tolerance==null?0:tolerance;
 	
