@@ -597,9 +597,9 @@ List.prototype.indexOfElements=function(elements){
 }
 
 
-List.prototype.getFirstElementByName=function(name){
+List.prototype.getFirstElementByName=function(name, returnIndex){
 	for(var i=0; this[i]!=null; i++){
-		if(this[i].name == name) return this[i];
+		if(this[i].name == name) return returnIndex?i:this[i];
 	}
 	return null;
 }
@@ -608,7 +608,7 @@ List.prototype.getFirstElementByPropertyValue=function(propertyName, value){
 	for(var i=0; this[i]!=null; i++){
 		if(this[i][propertyName]==value) return this[i];
 	}
-	return null;
+	return returnIndex?-1:null;
 }
 
 List.prototype.indexOfByPropertyValue=function(propertyName, value){
