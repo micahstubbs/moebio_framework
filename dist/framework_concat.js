@@ -622,7 +622,12 @@ List.prototype.indexOfElements=function(elements){
 	return numberList;
 }
 
-
+/**
+ * returns the first element (or index) of an element in the with a given name
+ * @param  {[type]} name        [description]
+ * @param  {[type]} returnIndex [description]
+ * @return {[type]}             [description]
+ */
 List.prototype.getFirstElementByName=function(name, returnIndex){
 	for(var i=0; this[i]!=null; i++){
 		if(this[i].name == name) return returnIndex?i:this[i];
