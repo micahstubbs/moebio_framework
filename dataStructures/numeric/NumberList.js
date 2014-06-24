@@ -20,6 +20,7 @@ NumberList.fromArray=function(array, forceToNumber){
 	forceToNumber = forceToNumber==null?true:forceToNumber;
 	
 	var result=List.fromArray(array);
+	
 	if(forceToNumber){
 		for(var i=0; i<result.length; i++){
 			result[i]=Number(result[i]);

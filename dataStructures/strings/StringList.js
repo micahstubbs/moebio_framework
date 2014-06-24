@@ -83,6 +83,14 @@ StringList.prototype.getSurrounded=function(prefix, sufix){
 /**
  * [!] works with regular expressions
  */
+
+/**
+ * replaces a regExp by a string in each element
+ * @param  {String} regExp to be find
+ * @param  {String} string to be placed
+ * @return {StringList}
+ * tags:
+ */
 StringList.prototype.replace=function(regExp, string){
 	var newStringList = new StringList();
 	newStringList.name = this.name;

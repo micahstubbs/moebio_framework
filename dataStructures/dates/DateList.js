@@ -35,9 +35,15 @@ DateList.fromArray=function(array, forceToDate){
 	return result;
 }
 
+/**
+ * get a numberList of time (milliseconds) values
+ * @return {NumberList}
+ * tags:conversor
+ */
 DateList.prototype.getTimes=function(){
+	var i;
 	var numberList = new NumberList();
-	for(var i=0;this[i]!=null;i++){
+	for(i=0; this[i]!=null; i++){
 		numberList.push(this[i].getTime());
 	}
 	return numberList;

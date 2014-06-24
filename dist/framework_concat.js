@@ -71,6 +71,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.multiply=List.prototype.multiply;
    	array.getSubList = List.prototype.getSubList;
    	array.getSubListByIndexes = List.prototype.getSubListByIndexes;
+   	array.getSubListByType = List.prototype.getSubListByType;
    	array.getElementNumberOfOccurrences = List.prototype.getElementNumberOfOccurrences;
    	array.getPropertyValues = List.prototype.getPropertyValues;
    	array.getRandomElement = List.prototype.getRandomElement;
@@ -132,33 +133,35 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
 List.prototype.getImproved=function(){
 	if(this.length==0) return this;
 	var typeOfElements = this.getTypeOfElements();
-	//c.log('List.prototype.getImproved | typeOfElements: ['+typeOfElements+']');
+	//c.log('List.getImproved | typeOfElements: ['+typeOfElements+']');
 	if(typeOfElements=="" || typeOfElements=="undefined") return this;
 	
 	switch(typeOfElements){
 		case "number":
-			var newList = NumberList.fromArray(this);
+			var newList = NumberList.fromArray(this, false);
 			break;
 		case "string":
-			var newList = StringList.fromArray(this);
+			var newList = StringList.fromArray(this, false);
 			break;
 		case "Rectangle":
 			return this;
-		case "Date":
-			var newList = DateList.fromArray(this);
+		case "date":
+			var newList = DateList.fromArray(this, false);
 			break;
 		case "List":
+		case "DateList":
+		case "IntervalList":
 		case "Table":
-			var newList = Table.fromArray(this);
+			var newList = Table.fromArray(this, false);
 			break;
 		case "NumberList":
-			var newList = NumberTable.fromArray(this);
+			var newList = NumberTable.fromArray(this, false);
 			break;
 		case "Point":
-			var newList = Polygon.fromArray(this);
+			var newList = Polygon.fromArray(this, false);
 			break;
 		case "Polygon":
-			var newList = PolygonList.fromArray(this);
+			var newList = PolygonList.fromArray(this, false);
 			break;
 	}
 	if(newList!=null){
@@ -265,6 +268,23 @@ List.prototype.getSubList=function(){
 	newList.name = this.name;
 	if(this.type=='List' || this.type=='Table') return newList.getImproved();
 	return newList;
+}
+
+/**
+ * filters a list by picking elements of certain type
+ * @param  {String} type
+ * @return {List}
+ * tags:filter
+ */
+List.prototype.getSubListByType = function(type){
+	var newList = new List();
+	var i;
+	newList.name = this.name;
+	this.forEach(function(element){
+		if(typeOf(element)==type) newList.push(element);
+	});
+	return newList.getImproved();
+
 }
 
 List.prototype.getSubListByIndexes=function(){//TODO: merge with getSubList
@@ -510,36 +530,6 @@ List.prototype.sortOnIndexes=function(indexes){
 	return result;
 }
 
-// List.prototype.sortNumericIndexedDescending=function() {
-// 	var index = new Array();
-// 	var i;
-// 	for(i=0; i<this.length; i++){
-//   		index.push({index:i, value:this[i]});
-// 	}
-// 	var comparator = function(a, b) {
-//   		var array_a = a.value;
-//   		var array_b = b.value;
-//   		return array_b - array_a;
-// 	}
-// 	index=index.sort(comparator);
-// 	var result=new NumberList();
-// 	for(i=0; i<index.length; i++){
-//   		result.push(index[i].index);
-// 	}
-// 	return result;
-// }
-
-// List.prototype.sortNumericDescending=function(){
-// 	var comparator=function(a, b){
-// 		return b - a;
-// 	}
-// 	return this.sort(comparator);
-// }
-
-// List.prototype.sortOnNumberList=function(list){//TODO: this.data??? check this method
-// 	return new List(this.data.sortOnNumberList(list.getData));
-// }
-
 List.prototype.getSortedByProperty=function(propertyName, ascending){
 	ascending = ascending==null?true:ascending;
 	
@@ -556,6 +546,12 @@ List.prototype.getSortedByProperty=function(propertyName, ascending){
 	return this.clone().sort(comparator);
 }
 
+/**
+ * return a sorted version of the list
+ * @param  {Boolean} ascending to start with the min element
+ * @return {List}
+ * tags:sort
+ */
 List.prototype.getSorted=function(ascending){
 	ascending = ascending==null?true:ascending;
 	
@@ -871,6 +867,7 @@ NumberList.fromArray=function(array, forceToNumber){
 	forceToNumber = forceToNumber==null?true:forceToNumber;
 	
 	var result=List.fromArray(array);
+	
 	if(forceToNumber){
 		for(var i=0; i<result.length; i++){
 			result[i]=Number(result[i]);
@@ -1798,6 +1795,7 @@ Table.fromArray=function(array){
    	//assign methods to array:
    	result.applyFunction=Table.prototype.applyFunction;
    	result.getRow=Table.prototype.getRow;
+   	result.getRows=Table.prototype.getRows;
    	result.getLengths=Table.prototype.getLengths;
 	result.sliceRows=Table.prototype.sliceRows;
 	result.getWithoutRow=Table.prototype.getWithoutRow;
@@ -1831,6 +1829,12 @@ Table.prototype.applyFunction=function(func){ //TODO: to be tested!
 	return newTable.getImproved();
 }
 
+/**
+ * returns a lis with all the alements of a row
+ * @param  {Number} index
+ * @return {List}
+ * tags:filter
+ */
 Table.prototype.getRow=function(index){
 	var list=new List();
 	var i;
@@ -1838,6 +1842,30 @@ Table.prototype.getRow=function(index){
 		list[i]=this[i][index];
 	}
 	return list.getImproved();
+}
+
+/**
+ * return a Table with certain rows indicated in a list of indexes
+ * @param  {NumberList} rowsIndexes indexes of rows
+ * @return {Table}
+ * tags:filter
+ */
+Table.prototype.getRows=function(rowsIndexes){
+	var i;
+	var table = this;
+	var newTable = new Table();
+	newTable.name = this.name;
+
+	for(i=0; table[i]!=null; i++){
+		newTable[i]=new List();
+		rowsIndexes.forEach(function(index){
+			newTable[i].push(table[i][index]);
+		});
+		newTable[i] = newTable[i].getImproved();
+		newTable[i].name = table[i].name;
+	}
+
+	return newTable.getImproved();
 }
 
 Table.prototype.getLengths=function(){
@@ -1875,11 +1903,13 @@ Table.prototype.getWithoutRows=function(rowsIndexes){
 		for(j=0; this[i][j]!=null; j++){
 			if(rowsIndexes.indexOf(j)==-1) newTable[i].push(this[i][j]);
 		}
-		newTable[i] = newTable[i];
+		//newTable[i] = newTable[i];//TODO:why this?
 		newTable[i].name = this[i].name;
 	}
 	return newTable.getImproved();
 }
+
+
 
 Table.prototype.getListsSortedByList=function(list, ascendant){
 	var newTable= instantiateWithSameType(this);
@@ -2072,9 +2102,15 @@ DateList.fromArray=function(array, forceToDate){
 	return result;
 }
 
+/**
+ * get a numberList of time (milliseconds) values
+ * @return {NumberList}
+ * tags:conversor
+ */
 DateList.prototype.getTimes=function(){
+	var i;
 	var numberList = new NumberList();
-	for(var i=0;this[i]!=null;i++){
+	for(i=0; this[i]!=null; i++){
 		numberList.push(this[i].getTime());
 	}
 	return numberList;
@@ -3893,6 +3929,14 @@ StringList.prototype.getSurrounded=function(prefix, sufix){
 /**
  * [!] works with regular expressions
  */
+
+/**
+ * replaces a regExp by a string in each element
+ * @param  {String} regExp to be find
+ * @param  {String} string to be placed
+ * @return {StringList}
+ * tags:
+ */
 StringList.prototype.replace=function(regExp, string){
 	var newStringList = new StringList();
 	newStringList.name = this.name;
@@ -4620,12 +4664,13 @@ ObjectConversions = function(){};
  * @return {Object} Object of the specified type
  * tags:conversion
  */
-ObjectOperators.conversor=function(object, toType){
+ObjectConversions.conversor=function(object, toType){
 	var i;
 	var type = typeOf(object);
 	var pairType = type+"_"+toType;
+	var newList;
 
-	c.log('ObjectOperators.conversor, pairType:', pairType);
+	c.log('ObjectConversions.conversor, pairType:', pairType);
 
 	switch(pairType){
 		case 'NumberTable_Polygon':
@@ -4656,7 +4701,20 @@ ObjectOperators.conversor=function(object, toType){
 			return ColorScales[object]; //todo: not working, fix
 		case 'string_Table':
 			return TableEncodings.CSVtoTable(object);
+		case 'StringList_DateList': //TODO: solve cases of lists
+			newList = new DateList();
+			object.forEach(function(string){
+				newList.push(DateOperators.stringToDate(string));
+			});
+			newList.name = object.name;
+			return newList;
+		case 'DateList_NumberList': //TODO: solve cases of lists
+			return object.getTimes();
+		case 'Table_Network':
+			return NetworkConvertions.TableToNetwork(object, null, 0, false)
+
 	}
+
 	switch(toType){
 		case 'string':
 			return object.toString();

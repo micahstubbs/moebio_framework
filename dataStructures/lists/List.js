@@ -45,6 +45,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.multiply=List.prototype.multiply;
    	array.getSubList = List.prototype.getSubList;
    	array.getSubListByIndexes = List.prototype.getSubListByIndexes;
+   	array.getSubListByType = List.prototype.getSubListByType;
    	array.getElementNumberOfOccurrences = List.prototype.getElementNumberOfOccurrences;
    	array.getPropertyValues = List.prototype.getPropertyValues;
    	array.getRandomElement = List.prototype.getRandomElement;
@@ -106,33 +107,35 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
 List.prototype.getImproved=function(){
 	if(this.length==0) return this;
 	var typeOfElements = this.getTypeOfElements();
-	//c.log('List.prototype.getImproved | typeOfElements: ['+typeOfElements+']');
+	//c.log('List.getImproved | typeOfElements: ['+typeOfElements+']');
 	if(typeOfElements=="" || typeOfElements=="undefined") return this;
 	
 	switch(typeOfElements){
 		case "number":
-			var newList = NumberList.fromArray(this);
+			var newList = NumberList.fromArray(this, false);
 			break;
 		case "string":
-			var newList = StringList.fromArray(this);
+			var newList = StringList.fromArray(this, false);
 			break;
 		case "Rectangle":
 			return this;
-		case "Date":
-			var newList = DateList.fromArray(this);
+		case "date":
+			var newList = DateList.fromArray(this, false);
 			break;
 		case "List":
+		case "DateList":
+		case "IntervalList":
 		case "Table":
-			var newList = Table.fromArray(this);
+			var newList = Table.fromArray(this, false);
 			break;
 		case "NumberList":
-			var newList = NumberTable.fromArray(this);
+			var newList = NumberTable.fromArray(this, false);
 			break;
 		case "Point":
-			var newList = Polygon.fromArray(this);
+			var newList = Polygon.fromArray(this, false);
 			break;
 		case "Polygon":
-			var newList = PolygonList.fromArray(this);
+			var newList = PolygonList.fromArray(this, false);
 			break;
 	}
 	if(newList!=null){
@@ -239,6 +242,23 @@ List.prototype.getSubList=function(){
 	newList.name = this.name;
 	if(this.type=='List' || this.type=='Table') return newList.getImproved();
 	return newList;
+}
+
+/**
+ * filters a list by picking elements of certain type
+ * @param  {String} type
+ * @return {List}
+ * tags:filter
+ */
+List.prototype.getSubListByType = function(type){
+	var newList = new List();
+	var i;
+	newList.name = this.name;
+	this.forEach(function(element){
+		if(typeOf(element)==type) newList.push(element);
+	});
+	return newList.getImproved();
+
 }
 
 List.prototype.getSubListByIndexes=function(){//TODO: merge with getSubList
@@ -484,36 +504,6 @@ List.prototype.sortOnIndexes=function(indexes){
 	return result;
 }
 
-// List.prototype.sortNumericIndexedDescending=function() {
-// 	var index = new Array();
-// 	var i;
-// 	for(i=0; i<this.length; i++){
-//   		index.push({index:i, value:this[i]});
-// 	}
-// 	var comparator = function(a, b) {
-//   		var array_a = a.value;
-//   		var array_b = b.value;
-//   		return array_b - array_a;
-// 	}
-// 	index=index.sort(comparator);
-// 	var result=new NumberList();
-// 	for(i=0; i<index.length; i++){
-//   		result.push(index[i].index);
-// 	}
-// 	return result;
-// }
-
-// List.prototype.sortNumericDescending=function(){
-// 	var comparator=function(a, b){
-// 		return b - a;
-// 	}
-// 	return this.sort(comparator);
-// }
-
-// List.prototype.sortOnNumberList=function(list){//TODO: this.data??? check this method
-// 	return new List(this.data.sortOnNumberList(list.getData));
-// }
-
 List.prototype.getSortedByProperty=function(propertyName, ascending){
 	ascending = ascending==null?true:ascending;
 	
@@ -530,6 +520,12 @@ List.prototype.getSortedByProperty=function(propertyName, ascending){
 	return this.clone().sort(comparator);
 }
 
+/**
+ * return a sorted version of the list
+ * @param  {Boolean} ascending to start with the min element
+ * @return {List}
+ * tags:sort
+ */
 List.prototype.getSorted=function(ascending){
 	ascending = ascending==null?true:ascending;
 	

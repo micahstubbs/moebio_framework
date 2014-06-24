@@ -23,6 +23,7 @@ Table.fromArray=function(array){
    	//assign methods to array:
    	result.applyFunction=Table.prototype.applyFunction;
    	result.getRow=Table.prototype.getRow;
+   	result.getRows=Table.prototype.getRows;
    	result.getLengths=Table.prototype.getLengths;
 	result.sliceRows=Table.prototype.sliceRows;
 	result.getWithoutRow=Table.prototype.getWithoutRow;
@@ -56,6 +57,12 @@ Table.prototype.applyFunction=function(func){ //TODO: to be tested!
 	return newTable.getImproved();
 }
 
+/**
+ * returns a lis with all the alements of a row
+ * @param  {Number} index
+ * @return {List}
+ * tags:filter
+ */
 Table.prototype.getRow=function(index){
 	var list=new List();
 	var i;
@@ -63,6 +70,30 @@ Table.prototype.getRow=function(index){
 		list[i]=this[i][index];
 	}
 	return list.getImproved();
+}
+
+/**
+ * return a Table with certain rows indicated in a list of indexes
+ * @param  {NumberList} rowsIndexes indexes of rows
+ * @return {Table}
+ * tags:filter
+ */
+Table.prototype.getRows=function(rowsIndexes){
+	var i;
+	var table = this;
+	var newTable = new Table();
+	newTable.name = this.name;
+
+	for(i=0; table[i]!=null; i++){
+		newTable[i]=new List();
+		rowsIndexes.forEach(function(index){
+			newTable[i].push(table[i][index]);
+		});
+		newTable[i] = newTable[i].getImproved();
+		newTable[i].name = table[i].name;
+	}
+
+	return newTable.getImproved();
 }
 
 Table.prototype.getLengths=function(){
@@ -100,11 +131,13 @@ Table.prototype.getWithoutRows=function(rowsIndexes){
 		for(j=0; this[i][j]!=null; j++){
 			if(rowsIndexes.indexOf(j)==-1) newTable[i].push(this[i][j]);
 		}
-		newTable[i] = newTable[i];
+		//newTable[i] = newTable[i];//TODO:why this?
 		newTable[i].name = this[i].name;
 	}
 	return newTable.getImproved();
 }
+
+
 
 Table.prototype.getListsSortedByList=function(list, ascendant){
 	var newTable= instantiateWithSameType(this);
