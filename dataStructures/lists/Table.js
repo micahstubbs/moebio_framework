@@ -40,7 +40,7 @@ Table.fromArray=function(array){
 	//overiden
 	result.destroy=Table.prototype.destroy;
 
-	result.istable = true;
+	result.isTable = true;
 	
 	return result;
 }

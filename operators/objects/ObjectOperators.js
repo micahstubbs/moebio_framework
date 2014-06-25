@@ -54,12 +54,12 @@ ObjectOperators.addition=function(){
 		return null;
 	}
 	if(arguments.length==2){
-		if(arguments[0].isList && arguments[1].isList){
+		if(arguments[0]!=null && arguments[0].isList && arguments[1]!=null && arguments[1].isList){
 			return ObjectOperators._applyBinaryOperatorOnLists(arguments[0], arguments[1], ObjectOperators.addition);
-		}else if(arguments[0].isList){
+		}else if(arguments[0]!=null && arguments[0].isList){
 			//c.log('list versus object');
 			return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[0], arguments[1], ObjectOperators.addition);
-		}else if(arguments[1].isList){
+		}else if(arguments[1]!=null && arguments[1].isList){
 			return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[1], arguments[0], ObjectOperators.addition);
 		}
 
@@ -78,7 +78,7 @@ ObjectOperators.addition=function(){
 		}
 
 		var pairType = a0Type+"_"+a1Type;
-		c.log('pairType:['+pairType+']');
+		//c.log('pairType:['+pairType+']');
 		//
 		switch(pairType){
 			case 'boolean_number':
@@ -154,7 +154,7 @@ ObjectOperators.addition=function(){
  * tags:math
  */
 ObjectOperators.multiplication=function(){
-	c.log("addition__________________________________arguments:", arguments);
+	//c.log("multiplication__________________________________arguments:", arguments);
 	var objectType;
 	var result;
 	var i;

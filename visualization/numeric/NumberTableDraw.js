@@ -241,11 +241,11 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
 
 		for(i=0; i<n; i++){
 			if(isNumberTable){
-				x = numberTable[0][i]-minx;
-				y = numberTable[1][i]-miny;
+				x = Math.floor(numberTable[0][i]-minx);
+				y = Math.floor(numberTable[1][i]-miny);
 			} else {
-				x = polygon[i].x-minx;
-				y = polygon[i].y-miny;
+				x = Math.floor(polygon[i].x-minx);
+				y = Math.floor(polygon[i].y-miny);
 			}
 
 			if(matrix[x]==null) matrix[x] = new NumberList();
@@ -270,9 +270,16 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
 			colorScale:colorScale,
 			selected:null
 		}
+
+		c.log('matrix:', matrix);
+		c.log('matrixColors:', matrixColors);
+
+
 	} else {
 		matrixColors = frame.memory.matrixColors;
 	}
+
+	//c.log(matrixColors.length, matrixColors[0].length, matrixColors[0][0]);
 
 	//draw
 	var subframe = new Rectangle(frame.x+margin, frame.y+margin, frame.width-margin*2, frame.height-margin*2);

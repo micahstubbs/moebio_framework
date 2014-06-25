@@ -282,7 +282,7 @@ List.prototype.getSubListByIndexes=function(){//TODO: merge with getSubList
 	var i;
 	for(i=0; i<nPositions; i++){
 		if(indexes[i]<nElements){
-			newList.push(this[indexes[i]]);
+			newList.push(this[(indexes[i]+this.length)%this.length]);
 		}
 	}
 

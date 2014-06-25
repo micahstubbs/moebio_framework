@@ -308,7 +308,7 @@ List.prototype.getSubListByIndexes=function(){//TODO: merge with getSubList
 	var i;
 	for(i=0; i<nPositions; i++){
 		if(indexes[i]<nElements){
-			newList.push(this[indexes[i]]);
+			newList.push(this[(indexes[i]+this.length)%this.length]);
 		}
 	}
 
@@ -1812,7 +1812,7 @@ Table.fromArray=function(array){
 	//overiden
 	result.destroy=Table.prototype.destroy;
 
-	result.istable = true;
+	result.isTable = true;
 	
 	return result;
 }
@@ -4290,12 +4290,12 @@ ObjectOperators.addition=function(){
 		return null;
 	}
 	if(arguments.length==2){
-		if(arguments[0].isList && arguments[1].isList){
+		if(arguments[0]!=null && arguments[0].isList && arguments[1]!=null && arguments[1].isList){
 			return ObjectOperators._applyBinaryOperatorOnLists(arguments[0], arguments[1], ObjectOperators.addition);
-		}else if(arguments[0].isList){
+		}else if(arguments[0]!=null && arguments[0].isList){
 			//c.log('list versus object');
 			return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[0], arguments[1], ObjectOperators.addition);
-		}else if(arguments[1].isList){
+		}else if(arguments[1]!=null && arguments[1].isList){
 			return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[1], arguments[0], ObjectOperators.addition);
 		}
 
@@ -4314,7 +4314,7 @@ ObjectOperators.addition=function(){
 		}
 
 		var pairType = a0Type+"_"+a1Type;
-		c.log('pairType:['+pairType+']');
+		//c.log('pairType:['+pairType+']');
 		//
 		switch(pairType){
 			case 'boolean_number':
@@ -4390,7 +4390,7 @@ ObjectOperators.addition=function(){
  * tags:math
  */
 ObjectOperators.multiplication=function(){
-	c.log("addition__________________________________arguments:", arguments);
+	//c.log("multiplication__________________________________arguments:", arguments);
 	var objectType;
 	var result;
 	var i;
@@ -4711,7 +4711,7 @@ ObjectConversions.conversor=function(object, toType){
 		case 'DateList_NumberList': //TODO: solve cases of lists
 			return object.getTimes();
 		case 'Table_Network':
-			return NetworkConvertions.TableToNetwork(object, null, 0, false)
+			return NetworkConvertions.TableToNetwork(object, null, 0, false);
 
 	}
 
@@ -8980,6 +8980,23 @@ StringOperators.STOP_WORDS = StringList.fromArray("t,s,mt,rt,re,m,http,amp,a,abl
 StringOperators.split = function(string, character){
 	if(character==null) return StringOperators.splitByEnter(string);
 	return StringList.fromArray(string.split(character));
+}
+
+/**
+ * join strings with a character
+ * @param  {StringList} StringList strings to be joined
+ * 
+ * @param  {String} join character
+ * @param  {String} prefix
+ * @param  {String} sufix
+ * @return {String}
+ * tags:
+ */
+StringOperators.join = function(stringList, character, prefix, sufix){
+	character = character==null?"":character;
+	prefix = prefix==null?"":prefix;
+	sufix = sufix==null?"":sufix;
+	return prefix+stringList.join(character)+sufix;
 }
 
 
@@ -15526,11 +15543,11 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
 
 		for(i=0; i<n; i++){
 			if(isNumberTable){
-				x = numberTable[0][i]-minx;
-				y = numberTable[1][i]-miny;
+				x = Math.floor(numberTable[0][i]-minx);
+				y = Math.floor(numberTable[1][i]-miny);
 			} else {
-				x = polygon[i].x-minx;
-				y = polygon[i].y-miny;
+				x = Math.floor(polygon[i].x-minx);
+				y = Math.floor(polygon[i].y-miny);
 			}
 
 			if(matrix[x]==null) matrix[x] = new NumberList();
@@ -15555,9 +15572,16 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
 			colorScale:colorScale,
 			selected:null
 		}
+
+		c.log('matrix:', matrix);
+		c.log('matrixColors:', matrixColors);
+
+
 	} else {
 		matrixColors = frame.memory.matrixColors;
 	}
+
+	//c.log(matrixColors.length, matrixColors[0].length, matrixColors[0][0]);
 
 	//draw
 	var subframe = new Rectangle(frame.x+margin, frame.y+margin, frame.width-margin*2, frame.height-margin*2);
