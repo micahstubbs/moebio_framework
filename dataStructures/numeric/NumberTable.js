@@ -8,12 +8,22 @@ NumberTable.prototype.constructor=NumberTable;
 function NumberTable () {
 	var args=[];
 	var newNumberList;
-	for(var i=0; arguments[i]!=null; i++){
-		newNumberList = NumberList.fromArray(arguments[i]);
-		newNumberList.name = arguments[i].name;
-		arguments[i]=newNumberList;
+	var array
+
+	if(arguments.length>0 && Number(arguments[0])==arguments[0]){
+		array = [];
+		var i;
+		for(i=0;i<arguments[0];i++){
+			array.push(new NumberList());
+		}
+	} else {
+		for(var i=0; arguments[i]!=null; i++){
+			newNumberList = NumberList.fromArray(arguments[i]);
+			newNumberList.name = arguments[i].name;
+			arguments[i]=newNumberList;
+		}
+		array=Table.apply(this, arguments);
 	}
-	var array=Table.apply(this, arguments);
 	array=NumberTable.fromArray(array);
    	return array;
 }

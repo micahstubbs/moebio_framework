@@ -3552,12 +3552,22 @@ NumberTable.prototype.constructor=NumberTable;
 function NumberTable () {
 	var args=[];
 	var newNumberList;
-	for(var i=0; arguments[i]!=null; i++){
-		newNumberList = NumberList.fromArray(arguments[i]);
-		newNumberList.name = arguments[i].name;
-		arguments[i]=newNumberList;
+	var array
+
+	if(arguments.length>0 && Number(arguments[0])==arguments[0]){
+		array = [];
+		var i;
+		for(i=0;i<arguments[0];i++){
+			array.push(new NumberList());
+		}
+	} else {
+		for(var i=0; arguments[i]!=null; i++){
+			newNumberList = NumberList.fromArray(arguments[i]);
+			newNumberList.name = arguments[i].name;
+			arguments[i]=newNumberList;
+		}
+		array=Table.apply(this, arguments);
 	}
-	var array=Table.apply(this, arguments);
 	array=NumberTable.fromArray(array);
    	return array;
 }
@@ -14821,6 +14831,65 @@ ImageDraw.drawImage = function(frame, image, mode){
 	mode = mode||0;
 	Draw.fillRectangleWithImage(frame, image, mode);
 }
+
+
+/**
+ * draws a visualization and captures an image
+ * @param  {String} visFunction visualization function
+ * @param  {Number} width
+ * @param  {Number} height
+ *
+ * @param {Object} argument0 first argument of the visualization function
+ * @param {Object} argument1 second argument of the visualization function
+ * @param {Object} argument2 third argument of the visualization function
+ * @param {Object} argument3 fourth argument of the visualization function
+ * @return {Image}
+ * tags:
+ */
+ImageDraw.captureVisualizationImage = function(visFunctionName, width, height){
+	if(visFunctionName==null || width==null || (!width>0) || height==null || !(height>0)) return;
+
+	var frame = new Rectangle(0,0,width,height);
+
+	var args = Array.prototype.slice.call(arguments);
+	args = [frame].concat(args.slice(3));
+
+	var visFunction;
+
+	if(visFunctionName.indexOf('.')==-1){
+		visFunction = this[visFunctionName];
+	} else {
+		visFunction = this[visFunctionName.split('.')[0]][visFunctionName.split('.')[1]];
+	}
+
+	if(visFunction==null) return null;
+
+	c.log('ImageDraw.captureVisualizationImage | args', args);
+	c.log('ImageDraw.captureVisualizationImage | visFunction==null', visFunction==null);
+
+	var newCanvas = document.createElement("canvas");
+	newCanvas.width = width;
+	newCanvas.height = height;
+	var newContext = newCanvas.getContext("2d");
+	newContext.clearRect(0,0,width,height);
+
+	var mainContext = context;
+	context = newContext;
+
+	////draw
+	//setStroke('black', 2);
+	//line(0,0,width,height);
+	//line(width,0,0,height);
+	visFunction.apply(this, args);
+	////
+
+	context = mainContext;
+	
+	var im = new Image();
+	im.src = newCanvas.toDataURL();
+
+	return im;
+}
 function ListDraw(){};
 
 /**
@@ -15392,17 +15461,15 @@ NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colo
 	var list1 = (loglog?numberTable[1].log(1):numberTable[1]).getNormalized();
 	var radii = numberTable.length<=2?null:numberTable[2].getNormalized().sqrt().factor(maxRadius);
 	var nColors = (colors==null)?null:colors.length;
-	var n = Math.min(list0.length, list1.length, (radii==null)?2000:radii.length, (texts==null)?2000:texts.length);
+	var n = Math.min(list0.length, list1.length, (radii==null)?300000:radii.length, (texts==null)?300000:texts.length);
 	var iOver;
-
-
 
 	for(i=0; i<n; i++){
 		x = subframe.x + list0[i]*subframe.width;
 		y = subframe.bottom - list1[i]*subframe.height;
-
+		
 		if(radii==null){
-			if(NumberTableDraw._drawCrossScatterPlot(x, y)) iOver = i;
+			if(NumberTableDraw._drawCrossScatterPlot(x, y, colors==null?'rgb(150,150,150)':colors[i%nColors])) iOver = i;
 		} else {
 			setFill(colors==null?'rgb(150,150,150)':colors[i%nColors]);
 			if(fCircleM(x, y, radii[i], radii[i]+1)) iOver = i;
@@ -15422,13 +15489,12 @@ NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colo
 	if(iOver!=null){
 		setCursor('pointer');
 		return iOver;
-	} 
-
+	}
 }
-NumberTableDraw._drawCrossScatterPlot = function(x, y){
-	setStroke('black', 1);
-	line(x,y-5,x,y+5);
-	line(x-5,y,x+5,y);
+NumberTableDraw._drawCrossScatterPlot = function(x, y, color){
+	setStroke(color, 1);
+	line(x,y-2,x,y+2);
+	line(x-2,y,x+2,y);
 	return Math.pow(mX-x, 2)+Math.pow(mY-y, 2)<25;
 }
 
@@ -15509,8 +15575,6 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
 	//setup
 	if(frame.memory==null || coordinates!=frame.memory.coordinates || colorScale!=frame.memory.colorScale){
 
-		c.log('coordinates[0]',coordinates[0]);
-
 		var isNumberTable = coordinates[0].x==null;
 
 		if(isNumberTable){
@@ -15572,10 +15636,6 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
 			colorScale:colorScale,
 			selected:null
 		}
-
-		c.log('matrix:', matrix);
-		c.log('matrixColors:', matrixColors);
-
 
 	} else {
 		matrixColors = frame.memory.matrixColors;

@@ -90,17 +90,15 @@ NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colo
 	var list1 = (loglog?numberTable[1].log(1):numberTable[1]).getNormalized();
 	var radii = numberTable.length<=2?null:numberTable[2].getNormalized().sqrt().factor(maxRadius);
 	var nColors = (colors==null)?null:colors.length;
-	var n = Math.min(list0.length, list1.length, (radii==null)?2000:radii.length, (texts==null)?2000:texts.length);
+	var n = Math.min(list0.length, list1.length, (radii==null)?300000:radii.length, (texts==null)?300000:texts.length);
 	var iOver;
-
-
 
 	for(i=0; i<n; i++){
 		x = subframe.x + list0[i]*subframe.width;
 		y = subframe.bottom - list1[i]*subframe.height;
-
+		
 		if(radii==null){
-			if(NumberTableDraw._drawCrossScatterPlot(x, y)) iOver = i;
+			if(NumberTableDraw._drawCrossScatterPlot(x, y, colors==null?'rgb(150,150,150)':colors[i%nColors])) iOver = i;
 		} else {
 			setFill(colors==null?'rgb(150,150,150)':colors[i%nColors]);
 			if(fCircleM(x, y, radii[i], radii[i]+1)) iOver = i;
@@ -120,13 +118,12 @@ NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colo
 	if(iOver!=null){
 		setCursor('pointer');
 		return iOver;
-	} 
-
+	}
 }
-NumberTableDraw._drawCrossScatterPlot = function(x, y){
-	setStroke('black', 1);
-	line(x,y-5,x,y+5);
-	line(x-5,y,x+5,y);
+NumberTableDraw._drawCrossScatterPlot = function(x, y, color){
+	setStroke(color, 1);
+	line(x,y-2,x,y+2);
+	line(x-2,y,x+2,y);
 	return Math.pow(mX-x, 2)+Math.pow(mY-y, 2)<25;
 }
 
@@ -207,8 +204,6 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
 	//setup
 	if(frame.memory==null || coordinates!=frame.memory.coordinates || colorScale!=frame.memory.colorScale){
 
-		c.log('coordinates[0]',coordinates[0]);
-
 		var isNumberTable = coordinates[0].x==null;
 
 		if(isNumberTable){
@@ -270,10 +265,6 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
 			colorScale:colorScale,
 			selected:null
 		}
-
-		c.log('matrix:', matrix);
-		c.log('matrixColors:', matrixColors);
-
 
 	} else {
 		matrixColors = frame.memory.matrixColors;
