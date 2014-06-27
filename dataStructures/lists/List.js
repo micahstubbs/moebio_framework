@@ -187,10 +187,6 @@ List.prototype.getNames=function(){
  * tags:sort
  */
 List.prototype.getReversed=function(){
-
-	c.log('*');
-	c.log('List.prototype.getReversed | this:', this);
-
 	var newList = instantiateWithSameType(this);
 	for(var i=0; this[i]!=null; i++){
 		newList.unshift(this[i]);
@@ -373,7 +369,11 @@ List.prototype.getMostRepeatedElement = function(){//TODO: this method should be
 	return ListOperators.countElementsRepetitionOnList(this, true)[0][0];
 }
 
-
+/**
+ * get minimum value
+ * @return {Number}
+ * tags:
+ */
 List.prototype.getMin=function(){
 	if(this.length==0) return null;
 	var min=this[0];	
@@ -384,6 +384,11 @@ List.prototype.getMin=function(){
 	return min;
 }
 
+/**
+ * get maximum value
+ * @return {Number}
+ * tags:
+ */
 List.prototype.getMax=function(){
 	if(this.length==0) return null;
 	var max=this[0];	
