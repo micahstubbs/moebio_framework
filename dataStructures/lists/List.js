@@ -64,6 +64,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.getSortedByList = List.prototype.getSortedByList;
    	//filter:
    	array.getFilteredByPropertyValue = List.prototype.getFilteredByPropertyValue;
+   	array.getFilteredByBooleanList = List.prototype.getFilteredByBooleanList;
    	//conversion
    	array.toNumberList=List.prototype.toNumberList;
    	array.toStringList=List.prototype.toStringList;
@@ -196,7 +197,11 @@ List.prototype.getReversed=function(){
 
 /**
  * return a sub-list, params could be: tw numbers, an interval or a NumberList
- * @return {[type]} [description]
+ * @param {Object} argument0 number, interval or numberList
+ * 
+ * @param {Number} argument1 second index
+ * @return {List}
+ * tags:filter
  */
 List.prototype.getSubList=function(){
 	if(arguments[0].isList){
@@ -208,6 +213,7 @@ List.prototype.getSubList=function(){
 			interval = new Interval(arguments[0], arguments[1]);
 		} else {
 			interval = new Interval(arguments[0],  this.length-1);
+			c.log('------> !!!!!!!');
 		}
 	} else {
 		interval = arguments[0];
@@ -527,7 +533,8 @@ List.prototype.getSortedByProperty=function(propertyName, ascending){
 
 /**
  * return a sorted version of the list
- * @param  {Boolean} ascending to start with the min element
+ * 
+ * @param  {Boolean} ascending sort (true by default)
  * @return {List}
  * tags:sort
  */
@@ -547,12 +554,21 @@ List.prototype.getSorted=function(ascending){
 	return this.clone().sort(comparator);
 }
 
+/**
+ * sort the list by a list
+ * @param  {List} list used to sort (numberList, stringList, dateList…)
+ * 
+ * @param  {Boolean} ascending (true by default)
+ * @return {List} sorted list (of the same type)
+ * tags:sort
+ */
 List.prototype.getSortedByList=function(list, ascending){
 	ascending = ascending==null?true:ascending;
 	
 	var pairsArray = [];
+	var i;
 	
-	for(var i=0; this[i]!=null; i++){
+	for(i=0; this[i]!=null; i++){
 		pairsArray[i] = [this[i], list[i]];
 	}
 	
@@ -624,6 +640,23 @@ List.prototype.indexOfByPropertyValue=function(propertyName, value){
 	return -1;
 }
 
+
+
+/**
+ * filters the list by booleans (also accepts numberList with 0s as false a any other number as true)
+ * @param  {List} booleanList booleanList or numberList
+ * @return {List}
+ * tags:filter
+ */
+List.prototype.getFilteredByBooleanList = function(booleanList){
+	var newList = new List();
+	newList.name = this.name;
+	var i;
+	for(i=0;this[i]!=null;i++){
+		if(booleanList[i]) newList.push(this[i]);
+	}
+	return newList.getImproved();
+}
 
 List.prototype.getFilteredByPropertyValue = function(propertyName, propertyValue){
 	var newList = new List();

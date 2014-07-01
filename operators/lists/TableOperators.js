@@ -95,6 +95,8 @@ TableOperators.sortListsByNumberList=function(table, numberList, descending){
  * tags:aggregation
  */
 TableOperators.aggregateTable=function(table, nList, mode){
+	if(table==null || table[0]==null || table[0][0]==null) return null;
+
 	nList = nList==null?0:nList;
 	mode = mode==null?0:mode;
 	

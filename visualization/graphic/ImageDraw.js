@@ -29,6 +29,7 @@ ImageDraw.drawImage = function(frame, image, mode){
  * tags:
  */
 ImageDraw.captureVisualizationImage = function(visFunctionName, width, height){
+	c.log('visFunctionName', visFunctionName);
 	if(visFunctionName==null || width==null || (!width>0) || height==null || !(height>0)) return;
 
 	var frame = new Rectangle(0,0,width,height);
@@ -41,6 +42,8 @@ ImageDraw.captureVisualizationImage = function(visFunctionName, width, height){
 	if(visFunctionName.indexOf('.')==-1){
 		visFunction = this[visFunctionName];
 	} else {
+		c.log(visFunctionName.split('.')[0], this[visFunctionName.split('.')[0]], this['mY']);
+		if(this[visFunctionName.split('.')[0]]==null) return;
 		visFunction = this[visFunctionName.split('.')[0]][visFunctionName.split('.')[1]];
 	}
 

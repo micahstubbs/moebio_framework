@@ -277,6 +277,8 @@ NumberList.prototype.getQuantiles = function(nQuantiles){
 /////////sorting
 
 NumberList.prototype.getSorted=function(ascending){
+	ascending = ascending==null?true:ascending;
+	
 	if(ascending){
 		return NumberList.fromArray(this.slice().sort(function(a, b){return a-b}), false);
 	}

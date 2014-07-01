@@ -19,7 +19,6 @@ ListOperators.getElement = function(list, index){
  * @param  {List} list to be filtered
  * @param  {Object} params NumberList or Interval
  * @return {List}
- * tags:filter
  */
 ListOperators.getSubList = function(list, params){
 	if(list==null || params==null) return null;
@@ -77,7 +76,7 @@ ListOperators.assemble = function(){
 ListOperators.countElementsRepetitionOnList=function(list, sortListsByOccurrences, consecutiveRepetitions, limit){
 	if(list==null) return;
 	
-	sortListsByOccurrences = sortListsByOccurrences || true;
+	sortListsByOccurrences = sortListsByOccurrences==null?true:sortListsByOccurrences;
 	consecutiveRepetitions = consecutiveRepetitions || false;
 	limit = limit==null?0:limit;
 	

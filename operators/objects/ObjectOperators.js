@@ -1,5 +1,16 @@
 function ObjectOperators(){};
 
+
+/**
+ * identity function
+ * @param  {Object} object
+ * @return {Object}
+ * tags:special
+ */
+ObjectOperators.identity = function(object){
+	return object;
+}
+
 /**
  * return a property value from its name
  * @param  {Object} object

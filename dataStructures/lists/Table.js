@@ -138,12 +138,23 @@ Table.prototype.getWithoutRows=function(rowsIndexes){
 }
 
 
-
-Table.prototype.getListsSortedByList=function(list, ascendant){
+/**
+ * sort table's lists by a list
+ * @param  {Object} listOrIndex used to sort (numberList, stringList, dateList…), or index of list in the table
+ * 
+ * @param  {Boolean} ascending (true by default)
+ * @return {Table} table (of the same type)
+ * tags:sort
+ */
+Table.prototype.getListsSortedByList=function(listOrIndex, ascending){
 	var newTable= instantiateWithSameType(this);
+	var i;
+	var list = typeOf(listOrIndex)=='number'?this[listOrIndex]:listOrIndex;
+
 	newTable.name = this.name;
-	for(var i=0; this[i]!=null; i++){
-		newTable[i]=this[i].getSortedByList(list, ascendant);
+
+	for(i=0; this[i]!=null; i++){
+		newTable[i]=this[i].getSortedByList(list, ascending);
 	}
 	return newTable;
 }
@@ -167,6 +178,8 @@ Table.prototype.getTransposed=function(){
 	}
 	return table;
 }
+
+
 
 Table.prototype.sortListsByList=function(list){//TODO: finish
 	switch(list.type){
