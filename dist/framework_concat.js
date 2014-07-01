@@ -16009,12 +16009,14 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
 NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, bezier, colorList){
 	if(numberTable==null || numberTable.length<2 || numberTable.type!="NumberTable") return;
 
+	bezier = bezier==null?true:bezier;
+
 	//var self = NumberTableDraw.drawStreamgraph;
 
 	intervalsFactor = intervalsFactor==null?1:intervalsFactor;
 
 	//setup
-	if(frame.memory==null || numberTable!=frame.memory.numberTable || normalized!=frame.memory.normalized || sorted!=frame.memory.sorted || intervalsFactor!=frame.memory.intervalsFactor || bezier!=frame.memory.bezier){
+	if(frame.memory==null || numberTable!=frame.memory.numberTable || normalized!=frame.memory.normalized || sorted!=frame.memory.sorted || intervalsFactor!=frame.memory.intervalsFactor || bezier!=frame.memory.bezier || frame.width!=frame.memory.width || frame.height!=frame.memory.height){
 		frame.memory = {
 			numberTable:numberTable,
 			normalized:normalized,
@@ -16025,6 +16027,8 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
 			fOpen:1,
 			names:numberTable.getNames(),
 			mXF:mX,
+			width:frame.width,
+			height:frame.height,
 			image:null
 		}
 	}
@@ -16056,7 +16060,7 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
 		
 		frame.memory.fOpen = 0.8*frame.memory.fOpen + 0.2*(frame.containsPoint(mP)?0.8:1);
 
-		frame.memory.mXF = mX;// 0.8*frame.memory.mXF + 0.2*mX;
+		frame.memory.mXF = 0.7*frame.memory.mXF + 0.3*mX;
 
 		frame.memory.mXF = Math.min(Math.max(frame.memory.mXF, frame.x), frame.getRight());
 		
