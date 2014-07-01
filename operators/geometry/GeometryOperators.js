@@ -57,8 +57,6 @@ GeometryOperators.trueBezierCurveHeightHorizontalControlPoints=function(x0, x1, 
 
 		GeometryOperators._bezierSimpleCurveTable[0] = 0;
 		GeometryOperators._bezierSimpleCurveTable[1] = 1;
-
-		c.log("GeometryOperators._bezierSimpleCurveTable", GeometryOperators._bezierSimpleCurveTable.length, GeometryOperators._bezierSimpleCurveTable);
 	}
 
 	//c.log('x, y0, y1, , Math.floor(1000*x), GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*x)]', x, y0, y1, Math.floor(1000*x), GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*x)]);
