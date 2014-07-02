@@ -264,6 +264,12 @@ List.prototype.getSubListByType = function(type){
 
 }
 
+/**
+ * returns all elements in indexes
+ * @param {NumberList} indexes
+ * @return {List}
+ * tags:filter
+ */
 List.prototype.getSubListByIndexes=function(){//TODO: merge with getSubList
 	if(this.length<1) return this;
 	var indexes;
@@ -288,8 +294,6 @@ List.prototype.getSubListByIndexes=function(){//TODO: merge with getSubList
 			newList.push(this[(indexes[i]+this.length)%this.length]);
 		}
 	}
-
-	if(this[0].type!=null) c.log('••••••• this.type, newList[0].type, newList[1].type', this.type, this[0].type, this[1].type);
 
 	if(this.type=='List' || this.type=='Table') return newList.getImproved();
 	return newList;

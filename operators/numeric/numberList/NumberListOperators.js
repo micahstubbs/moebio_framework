@@ -61,6 +61,43 @@ NumberListOperators.pearsonProductMomentCorrelation=function(numberList0, number
 
 
 /**
+ * smooth a numberList by calculating averages with neighbors
+ * @param  {NumberList} numberList
+ * @param  {Number} intensity weight for neighbors in average (0<=intensity<=0.5)
+ * @param  {Number} nIterations number of ieterations
+ * @return {NumberList}
+ * tags:statistics
+ */
+NumberListOperators.averageSmoother = function(numberList, intensity, nIterations){
+	nIterations = nIterations==null?1:nIterations;
+	intensity = intensity==null?0.1:intensity;
+
+	intensity = Math.max(Math.min(intensity, 0.5), 0);
+	var anti = 1 - 2*intensity;
+	var n = numberList.length-1;
+
+	var newNumberList = new NumberList();
+	var i;
+
+	newNumberList.name = numberList.name;
+	
+	for(i=0; i<nIterations; i++){
+		if(i==0){
+			numberList.forEach(function(val, i){
+				newNumberList[i] = anti*val +  (i>0?(numberList[i-1]*intensity):0) + (i<n?(numberList[i+1]*intensity):0);
+			});
+		} else {
+			newNumberList.forEach(function(val, i){
+				newNumberList[i] = anti*val +  (i>0?(newNumberList[i-1]*intensity):0) + (i<n?(newNumberList[i+1]*intensity):0);
+			});
+		}
+	}
+
+	return newNumberList;
+}
+
+
+/**
  * accepted comparison operators: "<", "<=", ">", ">=", "==", "!="
  */
 NumberListOperators.filterNumberListByNumber=function(numberList, value, comparisonOperator, returnIndexes){

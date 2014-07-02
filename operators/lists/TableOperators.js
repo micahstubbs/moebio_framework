@@ -143,6 +143,38 @@ TableOperators.aggregateTable=function(table, nList, mode){
 	return newTable.getImproved();
 }
 
+/**
+ * counts pairs of elements in same positions in two lists (the result is the adjacent matrix of the network defined by pairs)
+ * @param  {Table} table with at least two lists
+ * @return {NumberTable}
+ * tags:
+ */
+TableOperators.getCountPairsMatrix = function(table){
+	if(table==null || table.length<2 || table[0]==null || table[0][0]==null) return null;
+
+	var list0 = table[0].getWithoutRepetitions();
+	var list1 = table[1].getWithoutRepetitions();
+
+	var matrix = new NumberTable(list1.length);
+
+	c.log('list0.length, list1.length', list0.length, list1.length);
+	c.log('matrix --> ', matrix);
+
+	list1.forEach(function(element1, i){
+		matrix[i].name = String(element1);
+		list0.forEach(function(element0, j){
+			matrix[i][j] = 0;
+		});
+	});
+
+	table[0].forEach(function(element0, i){
+		element1 = table[1][i];
+		matrix[list1.indexOf(element1)][list0.indexOf(element0)]++;
+	});
+
+	return matrix;
+}
+
 
 /**
  * filter a table selecting rows that have an element on one of its lists

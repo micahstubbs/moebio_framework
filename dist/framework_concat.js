@@ -290,6 +290,12 @@ List.prototype.getSubListByType = function(type){
 
 }
 
+/**
+ * returns all elements in indexes
+ * @param {NumberList} indexes
+ * @return {List}
+ * tags:filter
+ */
 List.prototype.getSubListByIndexes=function(){//TODO: merge with getSubList
 	if(this.length<1) return this;
 	var indexes;
@@ -314,8 +320,6 @@ List.prototype.getSubListByIndexes=function(){//TODO: merge with getSubList
 			newList.push(this[(indexes[i]+this.length)%this.length]);
 		}
 	}
-
-	if(this[0].type!=null) c.log('••••••• this.type, newList[0].type, newList[1].type', this.type, this[0].type, this[1].type);
 
 	if(this.type=='List' || this.type=='Table') return newList.getImproved();
 	return newList;
@@ -7904,6 +7908,38 @@ TableOperators.aggregateTable=function(table, nList, mode){
 	return newTable.getImproved();
 }
 
+/**
+ * counts pairs of elements in same positions in two lists (the result is the adjacent matrix of the network defined by pairs)
+ * @param  {Table} table with at least two lists
+ * @return {NumberTable}
+ * tags:
+ */
+TableOperators.getCountPairsMatrix = function(table){
+	if(table==null || table.length<2 || table[0]==null || table[0][0]==null) return null;
+
+	var list0 = table[0].getWithoutRepetitions();
+	var list1 = table[1].getWithoutRepetitions();
+
+	var matrix = new NumberTable(list1.length);
+
+	c.log('list0.length, list1.length', list0.length, list1.length);
+	c.log('matrix --> ', matrix);
+
+	list1.forEach(function(element1, i){
+		matrix[i].name = String(element1);
+		list0.forEach(function(element0, j){
+			matrix[i][j] = 0;
+		});
+	});
+
+	table[0].forEach(function(element0, i){
+		element1 = table[1][i];
+		matrix[list1.indexOf(element1)][list0.indexOf(element0)]++;
+	});
+
+	return matrix;
+}
+
 
 /**
  * filter a table selecting rows that have an element on one of its lists
@@ -8381,6 +8417,43 @@ NumberListOperators.standardDeviationBetweenTwoNumberLists=function(numberList0,
  */
 NumberListOperators.pearsonProductMomentCorrelation=function(numberList0, numberList1){//TODO:make more efficient
 	return NumberListOperators.covariance(numberList0, numberList1)/(numberList0.getStandardDeviation()*numberList1.getStandardDeviation());
+}
+
+
+/**
+ * smooth a numberList by calculating averages with neighbors
+ * @param  {NumberList} numberList
+ * @param  {Number} intensity weight for neighbors in average (0<=intensity<=0.5)
+ * @param  {Number} nIterations number of ieterations
+ * @return {NumberList}
+ * tags:statistics
+ */
+NumberListOperators.averageSmoother = function(numberList, intensity, nIterations){
+	nIterations = nIterations==null?1:nIterations;
+	intensity = intensity==null?0.1:intensity;
+
+	intensity = Math.max(Math.min(intensity, 0.5), 0);
+	var anti = 1 - 2*intensity;
+	var n = numberList.length-1;
+
+	var newNumberList = new NumberList();
+	var i;
+
+	newNumberList.name = numberList.name;
+	
+	for(i=0; i<nIterations; i++){
+		if(i==0){
+			numberList.forEach(function(val, i){
+				newNumberList[i] = anti*val +  (i>0?(numberList[i-1]*intensity):0) + (i<n?(numberList[i+1]*intensity):0);
+			});
+		} else {
+			newNumberList.forEach(function(val, i){
+				newNumberList[i] = anti*val +  (i>0?(newNumberList[i-1]*intensity):0) + (i<n?(newNumberList[i+1]*intensity):0);
+			});
+		}
+	}
+
+	return newNumberList;
 }
 
 
