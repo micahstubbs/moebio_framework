@@ -8453,6 +8453,8 @@ NumberListOperators.averageSmoother = function(numberList, intensity, nIteration
 		}
 	}
 
+	newNumberList.name = numberList.name;
+
 	return newNumberList;
 }
 
@@ -8891,6 +8893,23 @@ NumberTableOperators.normalizeListsToMax=function(numberTable){
 	for(i=0;numberTable[i]!=null;i++){
 		newNumberTable[i] = numberTable[i].getNormalizedToMax();
 	}
+	return newNumberTable;
+}
+
+/**
+ * smooth numberLists by calculating averages with neighbors
+ * @param  {NumberTable} numberTable
+ * @param  {Number} intensity weight for neighbors in average (0<=intensity<=0.5)
+ * @param  {Number} nIterations number of ieterations
+ * @return {NumberTable}
+ * tags:statistics
+ */
+NumberTableOperators.averageSmootherOnLists = function(numberTable, intensity, nIterations){
+	var newNumberTable = new NumberTable();
+	newNumberTable.name = numberTable.name;
+	numberTable.forEach(function(nL, i){
+		newNumberTable[i] = NumberListOperators.averageSmoother(numberTable[i], intensity, nIterations);
+	});
 	return newNumberTable;
 }
 

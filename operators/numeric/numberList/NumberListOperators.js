@@ -93,6 +93,8 @@ NumberListOperators.averageSmoother = function(numberList, intensity, nIteration
 		}
 	}
 
+	newNumberList.name = numberList.name;
+
 	return newNumberList;
 }
 
