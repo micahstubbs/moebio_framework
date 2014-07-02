@@ -114,6 +114,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.removeElements=List.prototype.removeElements;
    	array.removeRepetitions=List.prototype.removeRepetitions;
    	array.replace = List.prototype.replace;
+   	array.assignNames = List.prototype.assignNames;
    	array._splice=Array.prototype.splice;
    	array.splice=List.prototype.splice;
 
@@ -856,6 +857,22 @@ List.prototype.replace=function(elementToFind, elementToInsert){
 	}
 }
 
+/**
+ * assign value to property name on all elements
+ * @param  {StringList} names
+ * @return {List}
+ * tags:transform
+ */
+List.prototype.assignNames=function(names){
+	if(names==null) return this;
+	var n = names.length;
+
+	this.forEach(function(element, i){
+		element.name = names[i%n];
+	});
+
+	return this;
+}
 
 List.prototype.splice=function(){//TODO: replace
 	switch(this.type){
@@ -7846,8 +7863,7 @@ TableOperators.aggregateTable=function(table, nList, mode){
 	
 	var newTable = new Table();
 	newTable.name = table.name;
-	var i;
-	var j;
+	var i, j;
 	var index;
 	var notRepeated;
 	
@@ -7886,6 +7902,44 @@ TableOperators.aggregateTable=function(table, nList, mode){
 		newTable[j] = newTable[j].getImproved();
 	}
 	return newTable.getImproved();
+}
+
+
+/**
+ * filter a table selecting rows that have an element on one of its lists
+ * @param  {Table} table
+ * @param  {Number} nList list that could contain the element in several positions
+ * @param  {Object} element
+ * @return {Table}
+ * tags:filter
+ */
+TableOperators.filterTableByElementInList=function(table, nList, element){
+	if(table==null || nList==null) return;
+	if(element==null) return table;
+
+
+	var newTable = new Table();
+	var i, j;
+
+	newTable.name = table.name;
+
+	for(j=0; table[j]!=null; j++){
+		newTable[j] = new List();
+	}
+
+	for(i=0; table[0][i]!=null; i++){
+		if(table[nList][i]==element){
+			for(j=0; table[j]!=null; j++){
+				newTable[j].push(table[j][i]);
+			}
+		}
+	}
+
+	for(j=0; newTable[j]!=null; j++){
+		newTable[j] = newTable[j].getImproved();
+	}
+
+	return newTable;
 }
 
 TableOperators.mergeDataTablesInList=function(tableList){

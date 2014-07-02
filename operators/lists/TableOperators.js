@@ -102,8 +102,7 @@ TableOperators.aggregateTable=function(table, nList, mode){
 	
 	var newTable = new Table();
 	newTable.name = table.name;
-	var i;
-	var j;
+	var i, j;
 	var index;
 	var notRepeated;
 	
@@ -142,6 +141,44 @@ TableOperators.aggregateTable=function(table, nList, mode){
 		newTable[j] = newTable[j].getImproved();
 	}
 	return newTable.getImproved();
+}
+
+
+/**
+ * filter a table selecting rows that have an element on one of its lists
+ * @param  {Table} table
+ * @param  {Number} nList list that could contain the element in several positions
+ * @param  {Object} element
+ * @return {Table}
+ * tags:filter
+ */
+TableOperators.filterTableByElementInList=function(table, nList, element){
+	if(table==null || nList==null) return;
+	if(element==null) return table;
+
+
+	var newTable = new Table();
+	var i, j;
+
+	newTable.name = table.name;
+
+	for(j=0; table[j]!=null; j++){
+		newTable[j] = new List();
+	}
+
+	for(i=0; table[0][i]!=null; i++){
+		if(table[nList][i]==element){
+			for(j=0; table[j]!=null; j++){
+				newTable[j].push(table[j][i]);
+			}
+		}
+	}
+
+	for(j=0; newTable[j]!=null; j++){
+		newTable[j] = newTable[j].getImproved();
+	}
+
+	return newTable;
 }
 
 TableOperators.mergeDataTablesInList=function(tableList){

@@ -88,6 +88,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.removeElements=List.prototype.removeElements;
    	array.removeRepetitions=List.prototype.removeRepetitions;
    	array.replace = List.prototype.replace;
+   	array.assignNames = List.prototype.assignNames;
    	array._splice=Array.prototype.splice;
    	array.splice=List.prototype.splice;
 
@@ -830,6 +831,22 @@ List.prototype.replace=function(elementToFind, elementToInsert){
 	}
 }
 
+/**
+ * assign value to property name on all elements
+ * @param  {StringList} names
+ * @return {List}
+ * tags:transform
+ */
+List.prototype.assignNames=function(names){
+	if(names==null) return this;
+	var n = names.length;
+
+	this.forEach(function(element, i){
+		element.name = names[i%n];
+	});
+
+	return this;
+}
 
 List.prototype.splice=function(){//TODO: replace
 	switch(this.type){
