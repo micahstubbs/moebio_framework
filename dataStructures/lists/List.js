@@ -27,6 +27,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
 	array._constructor=List;
 	
    	array.getImproved=List.prototype.getImproved;
+   	array.getLength=List.prototype.getLength;
    	array.getTypeOfElements=List.prototype.getTypeOfElements; //TODO: redundant?
    	array.getTypes=List.prototype.getTypes;
    	array.getType=List.prototype.getType;
@@ -146,6 +147,16 @@ List.prototype.getImproved=function(){
 	}
 	return this;
 }
+
+/**
+ * return the number of elements of the list
+ * @return {Number}
+ * tags:
+ */
+List.prototype.getLength=function(){
+	return this.length
+}
+
 List.prototype.getTypeOfElements=function(){
 	var typeOfElements = typeOf(this[0]);
 	for(var i=1;this[i]!=null;i++){

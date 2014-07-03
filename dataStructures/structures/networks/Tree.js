@@ -53,6 +53,19 @@ Tree.prototype.getNodesByLevel=function(level){
 	return newNodeList;
 }
 
+/**
+ * return the leaves (nodes without children) of a tree
+ * @return {NodeList}
+ * tags:
+ */
+Tree.prototype.getLeaves=function(){
+	var leaves = new NodeList();
+	this.nodeList.forEach(function(node){
+		if(node.toNodeList.length==0) leaves.push(node); 
+	});
+	return leaves;
+}
+
 Tree.prototype.assignDescentWeightsToNodes=function(){
 	this._assignDescentWeightsToNode(this.nodeList[0]);
 }

@@ -53,6 +53,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
 	array._constructor=List;
 	
    	array.getImproved=List.prototype.getImproved;
+   	array.getLength=List.prototype.getLength;
    	array.getTypeOfElements=List.prototype.getTypeOfElements; //TODO: redundant?
    	array.getTypes=List.prototype.getTypes;
    	array.getType=List.prototype.getType;
@@ -172,6 +173,16 @@ List.prototype.getImproved=function(){
 	}
 	return this;
 }
+
+/**
+ * return the number of elements of the list
+ * @return {Number}
+ * tags:
+ */
+List.prototype.getLength=function(){
+	return this.length
+}
+
 List.prototype.getTypeOfElements=function(){
 	var typeOfElements = typeOf(this[0]);
 	for(var i=1;this[i]!=null;i++){
@@ -4328,6 +4339,19 @@ Tree.prototype.getNodesByLevel=function(level){
 	return newNodeList;
 }
 
+/**
+ * return the leaves (nodes without children) of a tree
+ * @return {NodeList}
+ * tags:
+ */
+Tree.prototype.getLeaves=function(){
+	var leaves = new NodeList();
+	this.nodeList.forEach(function(node){
+		if(node.toNodeList.length==0) leaves.push(node); 
+	});
+	return leaves;
+}
+
 Tree.prototype.assignDescentWeightsToNodes=function(){
 	this._assignDescentWeightsToNode(this.nodeList[0]);
 }
@@ -8319,11 +8343,12 @@ MatrixGenerators.createTranslationMatrix = function(tx, ty) {
 function NumberListGenerators(){};
 
 /**
- * Generates a NumberList with sorted Numbers
+ * Generate a NumberList with sorted Numbers
  * @param {Number} nValues length of the NumberList
  * @param {Number} start first value
  * @param {Number} step increment value
- * @return {Number} generated NumberList
+ * @return {NumberList} generated NumberList
+ * tags:generator
  */
 NumberListGenerators.createSortedNumberList=function(nValues, start, step){
 	start = start || 0;
@@ -8348,6 +8373,15 @@ NumberList.createNumberListFromInterval=function(nElements, interval){
 	return numberList;
 }
 
+/**
+ * create a list with random numbers
+ * @param  {Number} nValues
+ * 
+ * @param  {Interval} interval range of the numberList
+ * @param  {Number} seed optional seed for seeded random numbers
+ * @return {NumberList}
+ * tags:random
+ */
 NumberListGenerators.createRandomNumberList=function(nValues, interval, seed, func){
 	seed = seed==null?-1:seed;
 	interval = interval==null?new Interval(0,1):interval;
@@ -11104,26 +11138,27 @@ function TreeConvertions(){};
  */
 TreeConvertions.TableToTree = function(table, fatherName, lastListIsWeights){
 	if(table==null) return;
-
+	
 	fatherName = fatherName==null?"father":fatherName;
-
+	
 	var tree = new Tree();
 	var node, parent;
 	var id;
+	var iCol;
 
 	var father = new Node(fatherName, fatherName);
 	tree.addNodeToTree(father, null);
 
 	table.forEach(function(list, i){
 		table[i].forEach(function(element, j){
-			id = String(element)+"_"+i;
+			id = TreeConvertions.getId(table, i, j);
 			node = tree.nodeList.getNodeById(id);
 			if(node==null){
 				node = new Node(id, String(element));
 				if(i==0){
 					tree.addNodeToTree(node, father);
 				} else {
-					parent = tree.nodeList.getNodeById(String(table[i-1][j])+"_"+(i-1));
+					parent = tree.nodeList.getNodeById(TreeConvertions.getId(table, i-1, j));
 					tree.addNodeToTree(node, parent);
 				}
 			}
@@ -11132,10 +11167,19 @@ TreeConvertions.TableToTree = function(table, fatherName, lastListIsWeights){
 	
 	tree.assignDescentWeightsToNodes();
 
-	c.log('tree', tree);
-
 	return tree;
 }
+TreeConvertions.getId = function(table, i, j){
+	var iCol=1;
+	var id = String(table[0][j]);
+	while(iCol<=i){
+		id+="_"+String(table[iCol][j]);
+		iCol++;
+	}
+	return id;
+}
+
+
 function TreeEncodings(){};
 
 //include(frameworksRoot+"operators/strings/StringOperators.js");
@@ -17212,54 +17256,88 @@ TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin){
  * @param  {Rectangle} frame
  * @param  {Tree} tree
  * 
- * @param  {ColorList} colors
+ * @param  {ColorList} colorList
+ * @param {NumberList} weights weights of leaves
  * tags:draw
  */
-TreeDraw.drawTreemap = function(frame, tree, colors){
-	var change = frame.memory==null || frame.memory.tree!=tree || frame.memory.colors!=colors || frame.memory.width!=frame.width || frame.memory.height!=frame.height;
+TreeDraw.drawTreemap = function(frame, tree, colorList, weights){
+	var change = frame.memory==null || frame.memory.tree!=tree || frame.memory.width!=frame.width || frame.memory.height!=frame.height || frame.memory.weights!=weights;
 
 	if(change){
 		frame.memory = {
 			tree:tree,
-			colors:colors,
 			width:frame.width,
 			height:frame.height,
-			kx:1,
-			mx:0,
-			ky:1,
-			my:0
+			weights:weights
 		}
+
+		if(weights==null){
+			tree.nodeList.forEach(function(node){
+				node._treeMapWeight = node.descentWeight;
+			});
+		} else {
+			
+			var leaves = tree.getLeaves();
+			leaves.forEach(function(node, i){
+				node._treeMapWeight = weights[i];
+			});
+			var assignTreemapWeight = function(node){
+				var i;
+				if(node.toNodeList.length==0){
+					return node._treeMapWeight;
+				} else {
+					node._treeMapWeight = 0;
+					for(i=0; node.toNodeList[i]!=null; i++){
+						node._treeMapWeight+=assignTreemapWeight(node.toNodeList[i]);
+					}
+				}
+				return node._treeMapWeight;
+			}
+			assignTreemapWeight(tree.nodeList[0]);
+		}
+
 		tree.nodeList[0]._outRectangle = new Rectangle(0,0,frame.width,frame.height);
 		tree.nodeList[0]._inRectangle = TreeDraw._inRectFromOutRect(tree.nodeList[0]._outRectangle);
 		TreeDraw._generateRectangles(tree.nodeList[0]);
 
 		frame.memory.focusFrame = TreeDraw._expandRect(tree.nodeList[0]._outRectangle);
+		frame.memory.kx = frame.width/frame.memory.focusFrame.width;
+		frame.memory.mx = - frame.memory.kx*frame.memory.focusFrame.x;
+		frame.memory.ky = frame.height/frame.memory.focusFrame.height;
+		frame.memory.my = - frame.memory.ky*frame.memory.focusFrame.y;
 
 		setText('black', 12);
 		tree.nodeList.forEach(function(node){
 			node._textWidth = getTextW(node.name);
 		});
-
 	}
 
+	//TreeDraw._generateRectangles(tree.nodeList[0]);
+
+	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
+		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(1, tree.nLevels):colorList;
+		frame.memory.colorList = colorList;
+	}
 
 	var kxF = frame.width/frame.memory.focusFrame.width;
 	var mxF = - kxF*frame.memory.focusFrame.x;
 	var kyF = frame.height/frame.memory.focusFrame.height;
 	var myF = - kyF*frame.memory.focusFrame.y;
 
-	frame.memory.kx = 0.9*frame.memory.kx + 0.1*kxF;
-	frame.memory.mx = 0.9*frame.memory.mx + 0.1*mxF;
-	frame.memory.ky = 0.9*frame.memory.ky + 0.1*kyF;
-	frame.memory.my = 0.9*frame.memory.my + 0.1*myF;
+	var v = kxF>frame.memory.kx?0.05:0.1;
+	var antiv = 1-v;
 
+	frame.memory.kx = antiv*frame.memory.kx + v*kxF;
+	frame.memory.mx = antiv*frame.memory.mx + v*mxF;
+	frame.memory.ky = antiv*frame.memory.ky + v*kyF;
+	frame.memory.my = antiv*frame.memory.my + v*myF;
 	var kx = frame.memory.kx;
 	var mx = frame.memory.mx;
 	var ky = frame.memory.ky;
 	var my = frame.memory.my;
 
-	var tx = function(x){return kx*x+mx};
-	var ty = function(y){return ky*y+my};
+	var tx = function(x){return kx*x + mx};
+	var ty = function(y){return ky*y + my};
 	
 
 	var x, y;
@@ -17271,25 +17349,34 @@ TreeDraw.drawTreemap = function(frame, tree, colors){
 
 	setStroke('black', 0.2);
 
+	context.save();
 	clipRectangle(frame.x, frame.y, frame.width, frame.height);
 
 	tree.nodeList.forEach(function(node){
 
+		//if(Math.random()<0.1) c.log(x, y, rect.width, rect.height, node.id, node.toNodeList.length);
+
 		rect = new Rectangle(tx(node._outRectangle.x), ty(node._outRectangle.y), node._outRectangle.width*kx, node._outRectangle.height*ky);
 
-		if(rect.width>2 && rect.height>2 && rect.x<frame.getRight() && rect.getRight()>0 && rect.y<frame.getBottom() && rect.getBottom()>0){
+		if(rect.width>4 && rect.height>3 && rect.x<frame.width && rect.getRight()>0 && rect.y<frame.height && rect.getBottom()>0){
 
 			x = Math.round(frame.x + rect.x)+0.5;
 			y = Math.round(frame.y + rect.y)+0.5;
-			if(sRectM(x, y, Math.floor(rect.width), Math.floor(rect.height))) overNode = node;
+
+			setFill(frame.memory.actualColorList[node.level]);
+
+			if(fsRectM(x, y, Math.floor(rect.width), Math.floor(rect.height))) overNode = node;
 			if(rect.width>20){
 				margTextX = rect.width*TreeDraw.PROP_RECT_MARGIN*0.8;
 				margTextY = rect.height*TreeDraw.PROP_RECT_MARGIN*0.15;
 				textSize = rect.height*TreeDraw.PROP_RECT_LABEL-2;
 				if(textSize>=5){
 					setText('black', textSize);
-					exceedes = (node._textWidth*textSize/12)>(rect.width-1.2*margTextX);
-					if(exceedes) clipRectangle(x+margTextX, y+margTextY,rect.width-2*margTextX, textSize*2);
+					exceedes =  (node._textWidth*textSize/12)>(rect.width-1.2*margTextX);
+					if(exceedes){
+						//context.save();
+						clipRectangle(x+margTextX, y+margTextY,rect.width-2*margTextX, textSize*2);
+					} 
 					fText(node.name, x+margTextX, y+margTextY);
 					if(exceedes) context.restore();
 				}
@@ -17305,7 +17392,7 @@ TreeDraw.drawTreemap = function(frame, tree, colors){
 		setStroke('black', 2);
 		sRect(x, y, Math.floor(rect.width), Math.floor(rect.height))
 
-		if(MOUSE_DOWN) frame.memory.focusFrame = TreeDraw._expandRect(overNode._outRectangle);
+		if(MOUSE_DOWN && frame.containsPoint(mP)) frame.memory.focusFrame = TreeDraw._expandRect(overNode._outRectangle);
 	}
 
 	context.restore();
@@ -17314,7 +17401,7 @@ TreeDraw.drawTreemap = function(frame, tree, colors){
 TreeDraw._generateRectangles = function(node){
 	var weights = new NumberList();
 	node.toNodeList.forEach(function(node){
-		weights.push(node.descentWeight);
+		weights.push(node._treeMapWeight);
 	});
 	var rectangles = RectangleOperators.quadrification(node._inRectangle, weights, false, false);
 	node.toNodeList.forEach(function(child, i){
@@ -17336,9 +17423,6 @@ TreeDraw.PROP_RECT_MARGIN = 0.03;
 TreeDraw.PROP_RECT_LABEL = 0.2;
 TreeDraw.PROP_RECT_REDUCTION_MARGIN = 0.01;
 TreeDraw.PROP_RECT_EXPANTION_MARGIN = 0.05;
-
-//RectangleOperators.quadrification=function(rectangle, weightList, isNormalizedWeights, isSortedWeights)
-//RectangleOperators.packingRectangles=function(weights, packingMode, rectangle, param)
 
 /**
  *Static class that:

@@ -11,26 +11,27 @@ function TreeConvertions(){};
  */
 TreeConvertions.TableToTree = function(table, fatherName, lastListIsWeights){
 	if(table==null) return;
-
+	
 	fatherName = fatherName==null?"father":fatherName;
-
+	
 	var tree = new Tree();
 	var node, parent;
 	var id;
+	var iCol;
 
 	var father = new Node(fatherName, fatherName);
 	tree.addNodeToTree(father, null);
 
 	table.forEach(function(list, i){
 		table[i].forEach(function(element, j){
-			id = String(element)+"_"+i;
+			id = TreeConvertions.getId(table, i, j);
 			node = tree.nodeList.getNodeById(id);
 			if(node==null){
 				node = new Node(id, String(element));
 				if(i==0){
 					tree.addNodeToTree(node, father);
 				} else {
-					parent = tree.nodeList.getNodeById(String(table[i-1][j])+"_"+(i-1));
+					parent = tree.nodeList.getNodeById(TreeConvertions.getId(table, i-1, j));
 					tree.addNodeToTree(node, parent);
 				}
 			}
@@ -39,7 +40,15 @@ TreeConvertions.TableToTree = function(table, fatherName, lastListIsWeights){
 	
 	tree.assignDescentWeightsToNodes();
 
-	c.log('tree', tree);
-
 	return tree;
 }
+TreeConvertions.getId = function(table, i, j){
+	var iCol=1;
+	var id = String(table[0][j]);
+	while(iCol<=i){
+		id+="_"+String(table[iCol][j]);
+		iCol++;
+	}
+	return id;
+}
+
