@@ -27,7 +27,7 @@ RectangleOperators.packingRectangles=function(weights, packingMode, rectangle, p
 		//4: europe quadrigram
 		//5:vertical strips
 		case 0:
-			return this.quadrification(rectangle, weights);
+			return RectangleOperators.quadrification(rectangle, weights);
 		case 1:
 			var minMax = weights.getMinMaxInterval();
 			if(minMax.min<0){
@@ -136,6 +136,7 @@ RectangleOperators.packingRectangles=function(weights, packingMode, rectangle, p
 	}
 	return null;
 }
+
 /**
 * Squarified algorithm as described in (http://www.win.tue.nl/~vanwijk/stm.pdf)
 * @param {Rectangle} bounds Rectangle
@@ -150,8 +151,10 @@ RectangleOperators.quadrification=function(rectangle, weightList, isNormalizedWe
 	if(weightList.length==1) return new RectangleList(rectangle);
 	isNormalizedWeights=isNormalizedWeights?isNormalizedWeights:false;
 	isSortedWeights=isSortedWeights?isSortedWeights:false;
+	var newWeightList;
+
 	if(isNormalizedWeights){
-		var newWeightList = weightList;// new NumberList(arregloPesos);
+		newWeightList = weightList;// new NumberList(arregloPesos);
 	} else {
 		newWeightList = weightList.getNormalizedToSum();
 	}

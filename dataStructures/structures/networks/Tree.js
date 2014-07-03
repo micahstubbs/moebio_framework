@@ -58,6 +58,10 @@ Tree.prototype.assignDescentWeightsToNodes=function(){
 }
 Tree.prototype._assignDescentWeightsToNode=function(node){
 	var i;
+	if(node.toNodeList.length==0){
+		node.descentWeight=1;
+		return 1;
+	}
 	for(i=0;node.toNodeList[i]!=null;i++){
 		node.descentWeight+=this._assignDescentWeightsToNode(node.toNodeList[i]);
 	}

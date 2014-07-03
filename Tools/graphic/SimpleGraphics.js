@@ -354,7 +354,11 @@ clipCircle = function(x, y, r){
 
 clipRectangle = function(x, y, w, h){
 	context.save();
-	context.fillRect(x, y, w, h);
+	context.beginPath();
+	context.moveTo(x,y);
+	context.lineTo(x+w,y);
+	context.lineTo(x+w,y+h);
+	context.lineTo(x,y+h);
 	context.clip();
 }
 
