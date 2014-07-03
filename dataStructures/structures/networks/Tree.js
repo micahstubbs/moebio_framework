@@ -10,8 +10,8 @@ function Tree(){
 	this.type="Tree";
 	
 	this.nLevels=0;
-	this._createRelation = this.createRelation;
-	this.createRelation = this._newCreateRelation;
+	//this._createRelation = this.createRelation;
+	//this.createRelation = this._newCreateRelation;
 }
 //
 Tree.prototype.addNodeToTree=function(node, parent){
@@ -20,28 +20,30 @@ Tree.prototype.addNodeToTree=function(node, parent){
 		node.level = 0;
 		node.parent = null;
 	} else {
-		this._createRelation(parent, node);
+		var relation = new Relation(parent.id+"_"+node.id, parent.id+"_"+node.id, parent, node);
+		this.addRelation(relation);
+		//this._createRelation(parent, node);
 		node.level = parent.level+1;
 		node.parent = parent;
 	}
 	this.nLevels = Math.max(this.nLevels, node.level+1);
 }
 
-Network.prototype._newCreateRelation=function(parent, node, id, weight){
-	this._createRelation(parent, node, id, weight);
-	node.level = parent.level+1;
-	node.parent = parent;
-	this.nLevels = Math.max(this.nLevels, node.level+1);
-}
+// Network.prototype._newCreateRelation=function(parent, node, id, weight){
+// 	this._createRelation(parent, node, id, weight);
+// 	node.level = parent.level+1;
+// 	node.parent = parent;
+// 	this.nLevels = Math.max(this.nLevels, node.level+1);
+// }
 
-Tree.prototype.addFather=function(node, children){
-	if(child.parent!=null || this.nodeList.indexOf(child)==-1) return false;
-	this.addNode(node);
-	child.parent = node;
-	child.level = 1;
-	this.nLevels = Math.max(this.nLevels, 1);
-	this.createRelation(node, child);
-}
+// Tree.prototype.addFather=function(node, children){
+// 	if(child.parent!=null || this.nodeList.indexOf(child)==-1) return false;
+// 	this.addNode(node);
+// 	child.parent = node;
+// 	child.level = 1;
+// 	this.nLevels = Math.max(this.nLevels, 1);
+// 	this.createRelation(node, child);
+// }
 
 Tree.prototype.getNodesByLevel=function(level){
 	var newNodeList = new NodeList();

@@ -83,6 +83,7 @@ include('../../frameworks2/operators/structures/NetworkConvertions.js');
 include('../../frameworks2/operators/structures/NetworkEncodings.js');
 include('../../frameworks2/operators/structures/NetworkGenerators.js');
 include('../../frameworks2/operators/structures/NetworkOperators.js');
+include('../../frameworks2/operators/structures/TreeConvertions.js');
 include('../../frameworks2/operators/structures/TreeEncodings.js');
 
 ////apis

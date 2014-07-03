@@ -4285,8 +4285,8 @@ function Tree(){
 	this.type="Tree";
 	
 	this.nLevels=0;
-	this._createRelation = this.createRelation;
-	this.createRelation = this._newCreateRelation;
+	//this._createRelation = this.createRelation;
+	//this.createRelation = this._newCreateRelation;
 }
 //
 Tree.prototype.addNodeToTree=function(node, parent){
@@ -4295,28 +4295,30 @@ Tree.prototype.addNodeToTree=function(node, parent){
 		node.level = 0;
 		node.parent = null;
 	} else {
-		this._createRelation(parent, node);
+		var relation = new Relation(parent.id+"_"+node.id, parent.id+"_"+node.id, parent, node);
+		this.addRelation(relation);
+		//this._createRelation(parent, node);
 		node.level = parent.level+1;
 		node.parent = parent;
 	}
 	this.nLevels = Math.max(this.nLevels, node.level+1);
 }
 
-Network.prototype._newCreateRelation=function(parent, node, id, weight){
-	this._createRelation(parent, node, id, weight);
-	node.level = parent.level+1;
-	node.parent = parent;
-	this.nLevels = Math.max(this.nLevels, node.level+1);
-}
+// Network.prototype._newCreateRelation=function(parent, node, id, weight){
+// 	this._createRelation(parent, node, id, weight);
+// 	node.level = parent.level+1;
+// 	node.parent = parent;
+// 	this.nLevels = Math.max(this.nLevels, node.level+1);
+// }
 
-Tree.prototype.addFather=function(node, children){
-	if(child.parent!=null || this.nodeList.indexOf(child)==-1) return false;
-	this.addNode(node);
-	child.parent = node;
-	child.level = 1;
-	this.nLevels = Math.max(this.nLevels, 1);
-	this.createRelation(node, child);
-}
+// Tree.prototype.addFather=function(node, children){
+// 	if(child.parent!=null || this.nodeList.indexOf(child)==-1) return false;
+// 	this.addNode(node);
+// 	child.parent = node;
+// 	child.level = 1;
+// 	this.nLevels = Math.max(this.nLevels, 1);
+// 	this.createRelation(node, child);
+// }
 
 Tree.prototype.getNodesByLevel=function(level){
 	var newNodeList = new NodeList();
@@ -11082,6 +11084,42 @@ NetworkOperators.addPageRankToNodes = function(network, from, useRelationsWeight
 
 
 
+function TreeConvertions(){};
+
+/**
+ * convert a table that describes a tree (higher hierarchies in first lists) into a Tree
+ * @param {Table} table
+ * @return {Tree}
+ * tags:convertion
+ */
+TreeConvertions.TableToTree = function(table){
+	if(table==null) return;
+	
+	var tree = new Tree();
+	var node, parent;
+	var id;
+
+	table.forEach(function(list, i){
+		table[i].forEach(function(element, j){
+			id = String(element)+"_"+i;
+			node = tree.nodeList.getNodeById(id);
+			if(node==null){
+				node = new Node(id, String(element));
+				if(i==0){
+					tree.addNodeToTree(node, null);
+				} else {
+					parent = tree.nodeList.getNodeById(String(table[i-1][j])+"_"+(i-1));
+					tree.addNodeToTree(node, parent);
+				}
+			}
+		});
+	});
+	
+
+	c.log('tree', tree);
+
+	return tree;
+}
 function TreeEncodings(){};
 
 //include(frameworksRoot+"operators/strings/StringOperators.js");
