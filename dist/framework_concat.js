@@ -15521,7 +15521,7 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 								  nR2*Math.cos(point.x-offA)+center.x, nR2*Math.sin(point.x-offA)+center.y,
 								  point.y*Math.cos(point.x)+center.x, point.y*Math.sin(point.x)+center.y);
 			
-			if(returnHovered && nHovered==-1 && this._isOnRadialShape(center, mousePoint, prevPoint.x, point.x, dR*(1-intervalList[(j-1)%nCols].y)+r0, dR*(1-intervalList[(j-1)%nCols].x)+r0, dR*(1-intervalList[j%nCols].y)+r0, dR*(1-intervalList[j%nCols].x)+r0)){
+			if(returnHovered && nHovered==-1 && this._isOnRadialShape(center, mP, prevPoint.x, point.x, dR*(1-intervalList[(j-1)%nCols].y)+r0, dR*(1-intervalList[(j-1)%nCols].x)+r0, dR*(1-intervalList[j%nCols].y)+r0, dR*(1-intervalList[j%nCols].x)+r0)){
 				nHovered = i;
 			}
 			
@@ -15569,12 +15569,15 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 	}
 	
 	for(i=0;filteredTexts[i]!=null;i++){
-		DrawTexts.setContextTextProperties('black', textsSizes[i], 'Arial', 'center', 'middle');
-		context.save();
-		context.translate(textsX[i], textsY[i]);
-		context.rotate(textsAngles[i]);
-		context.fillText(filteredTexts[i], 0, 0);
-		context.restore();
+		// DrawTexts.setContextTextProperties('black', textsSizes[i], 'Arial', 'center', 'middle');
+		// context.save();
+		// context.translate(textsX[i], textsY[i]);
+		// context.rotate(textsAngles[i]);
+		// context.fillText(filteredTexts[i], 0, 0);
+		// context.restore();
+		
+		setText('black', textsSizes[i], null, 'center', 'middle');
+		fTextRotated(filteredTexts[i], textsX[i], textsY[i], textsAngles[i]);
 	}
 	
 	return nHovered;
@@ -15605,7 +15608,7 @@ IntervalTableDraw._isOnRadialShape=function(center, testPoint, a0, a1, r0a, r0b,
 
 
 
-IntervalTableDraw.drawIntervalsWordsFlowTable = function(intervalsFlowTable, frame, texts, colors, typode){
+IntervalTableDraw.drawIntervalsWordsFlowTable = function(frame, intervalsFlowTable, texts, colors, typode){
 	var nElements = intervalsFlowTable.length;
 	
 	var i;
@@ -16159,7 +16162,7 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
 
 
 /**
- * draws a Steamgraph Without labels
+ * draws a steamgraph
  * @param  {Rectangle} frame
  * @param  {NumberTable} numberTable
  *
@@ -16225,9 +16228,7 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
 	if(frame.memory.image){
 		
 		frame.memory.fOpen = 0.8*frame.memory.fOpen + 0.2*(frame.containsPoint(mP)?0.8:1);
-
 		frame.memory.mXF = 0.7*frame.memory.mXF + 0.3*mX;
-
 		frame.memory.mXF = Math.min(Math.max(frame.memory.mXF, frame.x), frame.getRight());
 		
 		if(frame.memory.fOpen<0.999){
@@ -16248,7 +16249,6 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
 		}
 	}
 }
-
 NumberTableDraw._drawPartialFlow=function(frame, flowIntervals, labels, colors, x, x0, x1, OFF_X, sorted){	
 	var w = x1-x0;
 	var nDays = flowIntervals[0].length;
@@ -16333,6 +16333,66 @@ NumberTableDraw._drawPartialFlow=function(frame, flowIntervals, labels, colors, 
 		// generateCapture(iOver);
 	// }
 }
+
+
+
+/**
+ * draws a circular steamgraph Without labels
+ * @param  {Rectangle} frame
+ * @param  {NumberTable} numberTable
+ *
+ * @param {Boolean} normalized normalize each column, making the graph of constant height
+ * @param {Boolean} sorted sort flow polygons
+ * @param {Number} intervalsFactor number between 0 and 1, factors the height of flow polygons 
+ * @param {Boolean} bezier draws bezier (soft) curves
+ * @param  {ColorList} colorList colors of polygons
+ * @param  {Number} margin
+ * @return {NumberList} list of positions of elements on clicked coordinates
+ * tags:draw
+ */
+NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, colorList){
+	if(numberTable==null || numberTable.length<2 || numberTable.type!="NumberTable") return;
+
+	intervalsFactor = intervalsFactor==null?1:intervalsFactor;
+
+	//setup
+	if(frame.memory==null || numberTable!=frame.memory.numberTable || normalized!=frame.memory.normalized || sorted!=frame.memory.sorted || intervalsFactor!=frame.memory.intervalsFactor || frame.width!=frame.memory.width || frame.height!=frame.memory.height){
+		frame.memory = {
+			numberTable:numberTable,
+			normalized:normalized,
+			sorted:sorted,
+			intervalsFactor:intervalsFactor,
+			flowIntervals:IntervalTableOperators.scaleIntervals(NumberTableFlowOperators.getFlowTableIntervals(numberTable, normalized, sorted), intervalsFactor),
+			fOpen:1,
+			names:numberTable.getNames(),
+			mXF:mX,
+			width:frame.width,
+			height:frame.height,
+			radius:Math.min(frame.width, frame.height)*0.46,
+			r0:Math.min(frame.width, frame.height)*0.05,
+			angles:new NumberList()
+		}
+
+		var dA = TwoPi/numberTable[0].length;
+		numberTable[0].forEach(function(val, i){
+			frame.memory.angles[i] = i*dA;
+		});
+
+		c.log('frame.memory.angles', frame.memory.angles);
+
+
+	}
+	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
+		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(1, numberTable.length):colorList;
+		frame.memory.colorList = colorList;
+	}
+
+	IntervalTableDraw.drawCircularIntervalsFlowTable(frame.memory.flowIntervals, frame.getCenter(), frame.memory.radius, frame.memory.r0, frame.memory.actualColorList, frame.memory.names, true, frame.memory.angles);
+}
+
+
+
+
 
 NumberListDraw = function(){};
 
