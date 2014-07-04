@@ -54,6 +54,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
 	array._constructor=List;
 	
    	array.getImproved=List.prototype.getImproved;
+   	array.getLength=List.prototype.getLength;
    	array.getTypeOfElements=List.prototype.getTypeOfElements; //TODO: redundant?
    	array.getTypes=List.prototype.getTypes;
    	array.getType=List.prototype.getType;
@@ -72,6 +73,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.multiply=List.prototype.multiply;
    	array.getSubList = List.prototype.getSubList;
    	array.getSubListByIndexes = List.prototype.getSubListByIndexes;
+   	array.getSubListByType = List.prototype.getSubListByType;
    	array.getElementNumberOfOccurrences = List.prototype.getElementNumberOfOccurrences;
    	array.getPropertyValues = List.prototype.getPropertyValues;
    	array.getRandomElement = List.prototype.getRandomElement;
@@ -90,6 +92,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.getSortedByList = List.prototype.getSortedByList;
    	//filter:
    	array.getFilteredByPropertyValue = List.prototype.getFilteredByPropertyValue;
+   	array.getFilteredByBooleanList = List.prototype.getFilteredByBooleanList;
    	//conversion
    	array.toNumberList=List.prototype.toNumberList;
    	array.toStringList=List.prototype.toStringList;
@@ -113,6 +116,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.removeElements=List.prototype.removeElements;
    	array.removeRepetitions=List.prototype.removeRepetitions;
    	array.replace = List.prototype.replace;
+   	array.assignNames = List.prototype.assignNames;
    	array._splice=Array.prototype.splice;
    	array.splice=List.prototype.splice;
 
@@ -125,36 +129,43 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
 }
 //
 
+/**
+ * improve a List (refining type)
+ * @return {List}
+ * tags:
+ */
 List.prototype.getImproved=function(){
 	if(this.length==0) return this;
 	var typeOfElements = this.getTypeOfElements();
-	//c.log('List.prototype.getImproved | typeOfElements: ['+typeOfElements+']');
+	//c.log('List.getImproved | typeOfElements: ['+typeOfElements+']');
 	if(typeOfElements=="" || typeOfElements=="undefined") return this;
 	
 	switch(typeOfElements){
 		case "number":
-			var newList = NumberList.fromArray(this);
+			var newList = NumberList.fromArray(this, false);
 			break;
 		case "string":
-			var newList = StringList.fromArray(this);
+			var newList = StringList.fromArray(this, false);
 			break;
 		case "Rectangle":
 			return this;
-		case "Date":
-			var newList = DateList.fromArray(this);
+		case "date":
+			var newList = DateList.fromArray(this, false);
 			break;
 		case "List":
+		case "DateList":
+		case "IntervalList":
 		case "Table":
-			var newList = Table.fromArray(this);
+			var newList = Table.fromArray(this, false);
 			break;
 		case "NumberList":
-			var newList = NumberTable.fromArray(this);
+			var newList = NumberTable.fromArray(this, false);
 			break;
 		case "Point":
-			var newList = Polygon.fromArray(this);
+			var newList = Polygon.fromArray(this, false);
 			break;
 		case "Polygon":
-			var newList = PolygonList.fromArray(this);
+			var newList = PolygonList.fromArray(this, false);
 			break;
 	}
 	if(newList!=null){
@@ -163,6 +174,16 @@ List.prototype.getImproved=function(){
 	}
 	return this;
 }
+
+/**
+ * return the number of elements of the list
+ * @return {Number}
+ * tags:
+ */
+List.prototype.getLength=function(){
+	return this.length
+}
+
 List.prototype.getTypeOfElements=function(){
 	var typeOfElements = typeOf(this[0]);
 	for(var i=1;this[i]!=null;i++){
@@ -187,6 +208,11 @@ List.prototype.toString=function(){
 	return str;
 }
 
+/**
+ * return a list of names (if any) of elements of the list
+ * @return {StringList}
+ * tags:
+ */
 List.prototype.getNames=function(){
 	var stringList = new StringList();
 	for(i=0;this[i]!=null;i++){
@@ -195,7 +221,11 @@ List.prototype.getNames=function(){
 	return stringList;
 }
 
-
+/**
+ * reverse the list
+ * @return {List}
+ * tags:sort
+ */
 List.prototype.getReversed=function(){
 	var newList = instantiateWithSameType(this);
 	for(var i=0; this[i]!=null; i++){
@@ -204,7 +234,14 @@ List.prototype.getReversed=function(){
 	return newList;
 }
 
-
+/**
+ * return a sub-list, params could be: tw numbers, an interval or a NumberList
+ * @param {Object} argument0 number, interval or numberList
+ * 
+ * @param {Number} argument1 second index
+ * @return {List}
+ * tags:filter
+ */
 List.prototype.getSubList=function(){
 	if(arguments[0].isList){
 		return this.getSubListByIndexes(arguments[0]);
@@ -215,6 +252,7 @@ List.prototype.getSubList=function(){
 			interval = new Interval(arguments[0], arguments[1]);
 		} else {
 			interval = new Interval(arguments[0],  this.length-1);
+			c.log('------> !!!!!!!');
 		}
 	} else {
 		interval = arguments[0];
@@ -247,6 +285,29 @@ List.prototype.getSubList=function(){
 	return newList;
 }
 
+/**
+ * filters a list by picking elements of certain type
+ * @param  {String} type
+ * @return {List}
+ * tags:filter
+ */
+List.prototype.getSubListByType = function(type){
+	var newList = new List();
+	var i;
+	newList.name = this.name;
+	this.forEach(function(element){
+		if(typeOf(element)==type) newList.push(element);
+	});
+	return newList.getImproved();
+
+}
+
+/**
+ * returns all elements in indexes
+ * @param {NumberList} indexes
+ * @return {List}
+ * tags:filter
+ */
 List.prototype.getSubListByIndexes=function(){//TODO: merge with getSubList
 	if(this.length<1) return this;
 	var indexes;
@@ -268,11 +329,9 @@ List.prototype.getSubListByIndexes=function(){//TODO: merge with getSubList
 	var i;
 	for(i=0; i<nPositions; i++){
 		if(indexes[i]<nElements){
-			newList.push(this[indexes[i]]);
+			newList.push(this[(indexes[i]+this.length)%this.length]);
 		}
 	}
-
-	if(this[0].type!=null) c.log('••••••• this.type, newList[0].type, newList[1].type', this.type, this[0].type, this[1].type);
 
 	if(this.type=='List' || this.type=='Table') return newList.getImproved();
 	return newList;
@@ -300,7 +359,11 @@ List.prototype.clone=function(){
   	return clonedList;
 }
 
-
+/**
+ * create a new List without repeating elements
+ * @return {List}
+ * tags:filter
+ */
 List.prototype.getWithoutRepetitions=function(){
 	newList = instantiateWithSameType(this);
 	newList.name = this.name;
@@ -355,7 +418,11 @@ List.prototype.getMostRepeatedElement = function(){//TODO: this method should be
 	return ListOperators.countElementsRepetitionOnList(this, true)[0][0];
 }
 
-
+/**
+ * get minimum value
+ * @return {Number}
+ * tags:
+ */
 List.prototype.getMin=function(){
 	if(this.length==0) return null;
 	var min=this[0];	
@@ -366,6 +433,11 @@ List.prototype.getMin=function(){
 	return min;
 }
 
+/**
+ * get maximum value
+ * @return {Number}
+ * tags:
+ */
 List.prototype.getMax=function(){
 	if(this.length==0) return null;
 	var max=this[0];	
@@ -486,36 +558,6 @@ List.prototype.sortOnIndexes=function(indexes){
 	return result;
 }
 
-// List.prototype.sortNumericIndexedDescending=function() {
-// 	var index = new Array();
-// 	var i;
-// 	for(i=0; i<this.length; i++){
-//   		index.push({index:i, value:this[i]});
-// 	}
-// 	var comparator = function(a, b) {
-//   		var array_a = a.value;
-//   		var array_b = b.value;
-//   		return array_b - array_a;
-// 	}
-// 	index=index.sort(comparator);
-// 	var result=new NumberList();
-// 	for(i=0; i<index.length; i++){
-//   		result.push(index[i].index);
-// 	}
-// 	return result;
-// }
-
-// List.prototype.sortNumericDescending=function(){
-// 	var comparator=function(a, b){
-// 		return b - a;
-// 	}
-// 	return this.sort(comparator);
-// }
-
-// List.prototype.sortOnNumberList=function(list){//TODO: this.data??? check this method
-// 	return new List(this.data.sortOnNumberList(list.getData));
-// }
-
 List.prototype.getSortedByProperty=function(propertyName, ascending){
 	ascending = ascending==null?true:ascending;
 	
@@ -532,6 +574,13 @@ List.prototype.getSortedByProperty=function(propertyName, ascending){
 	return this.clone().sort(comparator);
 }
 
+/**
+ * return a sorted version of the list
+ * 
+ * @param  {Boolean} ascending sort (true by default)
+ * @return {List}
+ * tags:sort
+ */
 List.prototype.getSorted=function(ascending){
 	ascending = ascending==null?true:ascending;
 	
@@ -548,12 +597,21 @@ List.prototype.getSorted=function(ascending){
 	return this.clone().sort(comparator);
 }
 
+/**
+ * sort the list by a list
+ * @param  {List} list used to sort (numberList, stringList, dateList…)
+ * 
+ * @param  {Boolean} ascending (true by default)
+ * @return {List} sorted list (of the same type)
+ * tags:sort
+ */
 List.prototype.getSortedByList=function(list, ascending){
 	ascending = ascending==null?true:ascending;
 	
 	var pairsArray = [];
+	var i;
 	
-	for(var i=0; this[i]!=null; i++){
+	for(i=0; this[i]!=null; i++){
 		pairsArray[i] = [this[i], list[i]];
 	}
 	
@@ -598,10 +656,15 @@ List.prototype.indexOfElements=function(elements){
 	return numberList;
 }
 
-
-List.prototype.getFirstElementByName=function(name){
+/**
+ * returns the first element (or index) of an element in the with a given name
+ * @param  {[type]} name        [description]
+ * @param  {[type]} returnIndex [description]
+ * @return {[type]}             [description]
+ */
+List.prototype.getFirstElementByName=function(name, returnIndex){
 	for(var i=0; this[i]!=null; i++){
-		if(this[i].name == name) return this[i];
+		if(this[i].name == name) return returnIndex?i:this[i];
 	}
 	return null;
 }
@@ -610,7 +673,7 @@ List.prototype.getFirstElementByPropertyValue=function(propertyName, value){
 	for(var i=0; this[i]!=null; i++){
 		if(this[i][propertyName]==value) return this[i];
 	}
-	return null;
+	return returnIndex?-1:null;
 }
 
 List.prototype.indexOfByPropertyValue=function(propertyName, value){
@@ -620,6 +683,23 @@ List.prototype.indexOfByPropertyValue=function(propertyName, value){
 	return -1;
 }
 
+
+
+/**
+ * filters the list by booleans (also accepts numberList with 0s as false a any other number as true)
+ * @param  {List} booleanList booleanList or numberList
+ * @return {List}
+ * tags:filter
+ */
+List.prototype.getFilteredByBooleanList = function(booleanList){
+	var newList = new List();
+	newList.name = this.name;
+	var i;
+	for(i=0;this[i]!=null;i++){
+		if(booleanList[i]) newList.push(this[i]);
+	}
+	return newList.getImproved();
+}
 
 List.prototype.getFilteredByPropertyValue = function(propertyName, propertyValue){
 	var newList = new List();
@@ -641,6 +721,11 @@ List.prototype.toNumberList=function(){
 	return numberList;
 }
 
+/**
+ * conert a list into a StringList
+ * @return {StringList}
+ * tags:conversion
+ */
 List.prototype.toStringList=function(){
 	var i;
 	var stringList = new StringList();
@@ -793,6 +878,22 @@ List.prototype.replace=function(elementToFind, elementToInsert){
 	}
 }
 
+/**
+ * assign value to property name on all elements
+ * @param  {StringList} names
+ * @return {List}
+ * tags:transform
+ */
+List.prototype.assignNames=function(names){
+	if(names==null) return this;
+	var n = names.length;
+
+	this.forEach(function(element, i){
+		element.name = names[i%n];
+	});
+
+	return this;
+}
 
 List.prototype.splice=function(){//TODO: replace
 	switch(this.type){
@@ -842,6 +943,7 @@ NumberList.fromArray=function(array, forceToNumber){
 	forceToNumber = forceToNumber==null?true:forceToNumber;
 	
 	var result=List.fromArray(array);
+	
 	if(forceToNumber){
 		for(var i=0; i<result.length; i++){
 			result[i]=Number(result[i]);
@@ -1098,6 +1200,8 @@ NumberList.prototype.getQuantiles = function(nQuantiles){
 /////////sorting
 
 NumberList.prototype.getSorted=function(ascending){
+	ascending = ascending==null?true:ascending;
+	
 	if(ascending){
 		return NumberList.fromArray(this.slice().sort(function(a, b){return a-b}), false);
 	}
@@ -1510,6 +1614,13 @@ NodeList.prototype.getNodeByName=function(name){
   	}
   	return null;
 }
+
+/**
+ * return a node from its id
+ * @param  {String} id
+ * @return {Node}
+ * tags:search
+ */
 NodeList.prototype.getNodeById=function(id){
 	return this.ids[id];
 }
@@ -1524,7 +1635,11 @@ NodeList.prototype.getNodesByIds=function(ids){
 	return newNodelist;
 }
 
-
+/**
+ * return a list of weights
+ * @return {NumberList}
+ * tags:
+ */
 NodeList.prototype.getWeights=function(){
 	var numberList = new NumberList();
 	for(var i=0; this[i]!=null; i++){
@@ -1758,6 +1873,7 @@ Table.fromArray=function(array){
    	//assign methods to array:
    	result.applyFunction=Table.prototype.applyFunction;
    	result.getRow=Table.prototype.getRow;
+   	result.getRows=Table.prototype.getRows;
    	result.getLengths=Table.prototype.getLengths;
 	result.sliceRows=Table.prototype.sliceRows;
 	result.getWithoutRow=Table.prototype.getWithoutRow;
@@ -1774,7 +1890,7 @@ Table.fromArray=function(array){
 	//overiden
 	result.destroy=Table.prototype.destroy;
 
-	result.istable = true;
+	result.isTable = true;
 	
 	return result;
 }
@@ -1791,6 +1907,12 @@ Table.prototype.applyFunction=function(func){ //TODO: to be tested!
 	return newTable.getImproved();
 }
 
+/**
+ * returns a lis with all the alements of a row
+ * @param  {Number} index
+ * @return {List}
+ * tags:filter
+ */
 Table.prototype.getRow=function(index){
 	var list=new List();
 	var i;
@@ -1798,6 +1920,30 @@ Table.prototype.getRow=function(index){
 		list[i]=this[i][index];
 	}
 	return list.getImproved();
+}
+
+/**
+ * return a Table with certain rows indicated in a list of indexes
+ * @param  {NumberList} rowsIndexes indexes of rows
+ * @return {Table}
+ * tags:filter
+ */
+Table.prototype.getRows=function(rowsIndexes){
+	var i;
+	var table = this;
+	var newTable = new Table();
+	newTable.name = this.name;
+
+	for(i=0; table[i]!=null; i++){
+		newTable[i]=new List();
+		rowsIndexes.forEach(function(index){
+			newTable[i].push(table[i][index]);
+		});
+		newTable[i] = newTable[i].getImproved();
+		newTable[i].name = table[i].name;
+	}
+
+	return newTable.getImproved();
 }
 
 Table.prototype.getLengths=function(){
@@ -1835,17 +1981,30 @@ Table.prototype.getWithoutRows=function(rowsIndexes){
 		for(j=0; this[i][j]!=null; j++){
 			if(rowsIndexes.indexOf(j)==-1) newTable[i].push(this[i][j]);
 		}
-		newTable[i] = newTable[i];
+		//newTable[i] = newTable[i];//TODO:why this?
 		newTable[i].name = this[i].name;
 	}
 	return newTable.getImproved();
 }
 
-Table.prototype.getListsSortedByList=function(list, ascendant){
+
+/**
+ * sort table's lists by a list
+ * @param  {Object} listOrIndex used to sort (numberList, stringList, dateList…), or index of list in the table
+ * 
+ * @param  {Boolean} ascending (true by default)
+ * @return {Table} table (of the same type)
+ * tags:sort
+ */
+Table.prototype.getListsSortedByList=function(listOrIndex, ascending){
 	var newTable= instantiateWithSameType(this);
+	var i;
+	var list = typeOf(listOrIndex)=='number'?this[listOrIndex]:listOrIndex;
+
 	newTable.name = this.name;
-	for(var i=0; this[i]!=null; i++){
-		newTable[i]=this[i].getSortedByList(list, ascendant);
+
+	for(i=0; this[i]!=null; i++){
+		newTable[i]=this[i].getSortedByList(list, ascending);
 	}
 	return newTable;
 }
@@ -1869,6 +2028,8 @@ Table.prototype.getTransposed=function(){
 	}
 	return table;
 }
+
+
 
 Table.prototype.sortListsByList=function(list){//TODO: finish
 	switch(list.type){
@@ -2032,9 +2193,15 @@ DateList.fromArray=function(array, forceToDate){
 	return result;
 }
 
+/**
+ * get a numberList of time (milliseconds) values
+ * @return {NumberList}
+ * tags:conversor
+ */
 DateList.prototype.getTimes=function(){
+	var i;
 	var numberList = new NumberList();
-	for(var i=0;this[i]!=null;i++){
+	for(i=0; this[i]!=null; i++){
 		numberList.push(this[i].getTime());
 	}
 	return numberList;
@@ -2817,10 +2984,42 @@ Rectangle.prototype.getArea=function(){
 	return this.width*this.height;
 }
 
+/**
+ * check if a point belong to the rectangle
+ * @param  {Point} point
+ * @return {Boolean}
+ * tags:geometry
+ */
 Rectangle.prototype.containsPoint=function(point){
 	return (this.x<=point.x && this.x+this.width>=point.x && this.y<=point.y && this.y+this.height>=point.y);
 }
 
+
+Rectangle.prototype.pointIsOnBorder=function(point, margin){
+	margin = margin==null?1:margin;
+	if(point.x>=this.x-margin && point.x<=this.x+this.width+margin){
+		if(point.y>=this.y-margin && point.y<=this.y+margin) return true;
+		if(point.y>=this.y+this.height-margin && point.y<=this.y+this.height+margin) return true;
+		if(point.y>=this.y-margin && point.y<=this.y+this.height+margin){
+			if(point.x<this.x+margin || point.x>this.x+this.width-margin) return true;
+		}
+	}
+	return false;
+}
+
+
+
+
+Rectangle.prototype.getNormalRectangle=function(){
+	return new Rectangle(Math.min(this.x, this.x+this.width), Math.min(this.y, this.y+this.height), Math.abs(this.width), Math.abs(this.height));
+}
+
+/**
+ * return true if it interstects a rectangle
+ * @param  {Rectangle} rectangle
+ * @return {Boolean}
+ * tags:geometry
+ */
 Rectangle.prototype.intersectsRectangle=function(rectangle){
 	return !(this.x+this.width<rectangle.x) && !(this.y+this.height<rectangle.y) && !(rectangle.x+rectangle.width<this.x) && !(rectangle.y+rectangle.height<this.y)
 
@@ -3466,12 +3665,22 @@ NumberTable.prototype.constructor=NumberTable;
 function NumberTable () {
 	var args=[];
 	var newNumberList;
-	for(var i=0; arguments[i]!=null; i++){
-		newNumberList = NumberList.fromArray(arguments[i]);
-		newNumberList.name = arguments[i].name;
-		arguments[i]=newNumberList;
+	var array
+
+	if(arguments.length>0 && Number(arguments[0])==arguments[0]){
+		array = [];
+		var i;
+		for(i=0;i<arguments[0];i++){
+			array.push(new NumberList());
+		}
+	} else {
+		for(var i=0; arguments[i]!=null; i++){
+			newNumberList = NumberList.fromArray(arguments[i]);
+			newNumberList.name = arguments[i].name;
+			arguments[i]=newNumberList;
+		}
+		array=Table.apply(this, arguments);
 	}
-	var array=Table.apply(this, arguments);
 	array=NumberTable.fromArray(array);
    	return array;
 }
@@ -3843,6 +4052,14 @@ StringList.prototype.getSurrounded=function(prefix, sufix){
 /**
  * [!] works with regular expressions
  */
+
+/**
+ * replaces a regExp by a string in each element
+ * @param  {String} regExp to be find
+ * @param  {String} string to be placed
+ * @return {StringList}
+ * tags:
+ */
 StringList.prototype.replace=function(regExp, string){
 	var newStringList = new StringList();
 	newStringList.name = this.name;
@@ -3999,8 +4216,8 @@ Network.prototype.addRelation=function(relation){
  	relation.node1.fromRelationList.addNode(relation);
 }
 
-Network.prototype.createRelation=function(node0, node1, id, weight){
-	id = id || (node0.id+"_"+node1.id); //TODO: id generator on RelationList
+Network.prototype.connect=function(node0, node1, id, weight){
+	id = id || (node0.id+"_"+node1.id);
 	weight = weight || 1;
 	var relation = new Relation(id, id, node0, node1, weight);
 	this.addRelation(relation);
@@ -4085,8 +4302,8 @@ function Tree(){
 	this.type="Tree";
 	
 	this.nLevels=0;
-	this._createRelation = this.createRelation;
-	this.createRelation = this._newCreateRelation;
+	//this._createRelation = this.createRelation;
+	//this.createRelation = this._newCreateRelation;
 }
 //
 Tree.prototype.addNodeToTree=function(node, parent){
@@ -4095,28 +4312,30 @@ Tree.prototype.addNodeToTree=function(node, parent){
 		node.level = 0;
 		node.parent = null;
 	} else {
-		this._createRelation(parent, node);
+		var relation = new Relation(parent.id+"_"+node.id, parent.id+"_"+node.id, parent, node);
+		this.addRelation(relation);
+		//this._createRelation(parent, node);
 		node.level = parent.level+1;
 		node.parent = parent;
 	}
 	this.nLevels = Math.max(this.nLevels, node.level+1);
 }
 
-Network.prototype._newCreateRelation=function(parent, node, id, weight){
-	this._createRelation(parent, node, id, weight);
-	node.level = parent.level+1;
-	node.parent = parent;
-	this.nLevels = Math.max(this.nLevels, node.level+1);
-}
+// Network.prototype._newCreateRelation=function(parent, node, id, weight){
+// 	this._createRelation(parent, node, id, weight);
+// 	node.level = parent.level+1;
+// 	node.parent = parent;
+// 	this.nLevels = Math.max(this.nLevels, node.level+1);
+// }
 
-Tree.prototype.addFather=function(node, children){
-	if(child.parent!=null || this.nodeList.indexOf(child)==-1) return false;
-	this.addNode(node);
-	child.parent = node;
-	child.level = 1;
-	this.nLevels = Math.max(this.nLevels, 1);
-	this.createRelation(node, child);
-}
+// Tree.prototype.addFather=function(node, children){
+// 	if(child.parent!=null || this.nodeList.indexOf(child)==-1) return false;
+// 	this.addNode(node);
+// 	child.parent = node;
+// 	child.level = 1;
+// 	this.nLevels = Math.max(this.nLevels, 1);
+// 	this.createRelation(node, child);
+// }
 
 Tree.prototype.getNodesByLevel=function(level){
 	var newNodeList = new NodeList();
@@ -4126,11 +4345,28 @@ Tree.prototype.getNodesByLevel=function(level){
 	return newNodeList;
 }
 
+/**
+ * return the leaves (nodes without children) of a tree
+ * @return {NodeList}
+ * tags:
+ */
+Tree.prototype.getLeaves=function(){
+	var leaves = new NodeList();
+	this.nodeList.forEach(function(node){
+		if(node.toNodeList.length==0) leaves.push(node); 
+	});
+	return leaves;
+}
+
 Tree.prototype.assignDescentWeightsToNodes=function(){
 	this._assignDescentWeightsToNode(this.nodeList[0]);
 }
 Tree.prototype._assignDescentWeightsToNode=function(node){
 	var i;
+	if(node.toNodeList.length==0){
+		node.descentWeight=1;
+		return 1;
+	}
 	for(i=0;node.toNodeList[i]!=null;i++){
 		node.descentWeight+=this._assignDescentWeightsToNode(node.toNodeList[i]);
 	}
@@ -4141,6 +4377,17 @@ Tree.prototype.getReport=function(relation){
   return "Tree contains "+this.nodeList.length+" nodes and "+this.relationList.length+" relations";
 }
 function ObjectOperators(){};
+
+
+/**
+ * identity function
+ * @param  {Object} object
+ * @return {Object}
+ * tags:special
+ */
+ObjectOperators.identity = function(object){
+	return object;
+}
 
 /**
  * return a property value from its name
@@ -4196,12 +4443,12 @@ ObjectOperators.addition=function(){
 		return null;
 	}
 	if(arguments.length==2){
-		if(arguments[0].isList && arguments[1].isList){
+		if(arguments[0]!=null && arguments[0].isList && arguments[1]!=null && arguments[1].isList){
 			return ObjectOperators._applyBinaryOperatorOnLists(arguments[0], arguments[1], ObjectOperators.addition);
-		}else if(arguments[0].isList){
+		}else if(arguments[0]!=null && arguments[0].isList){
 			//c.log('list versus object');
 			return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[0], arguments[1], ObjectOperators.addition);
-		}else if(arguments[1].isList){
+		}else if(arguments[1]!=null && arguments[1].isList){
 			return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[1], arguments[0], ObjectOperators.addition);
 		}
 
@@ -4220,7 +4467,7 @@ ObjectOperators.addition=function(){
 		}
 
 		var pairType = a0Type+"_"+a1Type;
-		c.log('pairType:['+pairType+']');
+		//c.log('pairType:['+pairType+']');
 		//
 		switch(pairType){
 			case 'boolean_number':
@@ -4296,7 +4543,7 @@ ObjectOperators.addition=function(){
  * tags:math
  */
 ObjectOperators.multiplication=function(){
-	c.log("addition__________________________________arguments:", arguments);
+	//c.log("multiplication__________________________________arguments:", arguments);
 	var objectType;
 	var result;
 	var i;
@@ -4570,12 +4817,13 @@ ObjectConversions = function(){};
  * @return {Object} Object of the specified type
  * tags:conversion
  */
-ObjectOperators.conversor=function(object, toType){
+ObjectConversions.conversor=function(object, toType){
 	var i;
 	var type = typeOf(object);
 	var pairType = type+"_"+toType;
+	var newList;
 
-	c.log('ObjectOperators.conversor, pairType:', pairType);
+	c.log('ObjectConversions.conversor, pairType:', pairType);
 
 	switch(pairType){
 		case 'NumberTable_Polygon':
@@ -4606,7 +4854,20 @@ ObjectOperators.conversor=function(object, toType){
 			return ColorScales[object]; //todo: not working, fix
 		case 'string_Table':
 			return TableEncodings.CSVtoTable(object);
+		case 'StringList_DateList': //TODO: solve cases of lists
+			newList = new DateList();
+			object.forEach(function(string){
+				newList.push(DateOperators.stringToDate(string));
+			});
+			newList.name = object.name;
+			return newList;
+		case 'DateList_NumberList': //TODO: solve cases of lists
+			return object.getTimes();
+		case 'Table_Network':
+			return NetworkConvertions.TableToNetwork(object, null, 0, false);
+
 	}
+
 	switch(toType){
 		case 'string':
 			return object.toString();
@@ -4865,6 +5126,104 @@ GeometryOperators.bezierCurvePoints=function(x0, y0, c0x, c0y, c1x, c1y, x1, y1,
 	var fy = s*by + t*cy;
 	
 	return new Point(t*fx + s*ex, t*fy + s*ey);
+}
+
+
+
+GeometryOperators.trueBezierCurveHeightHorizontalControlPoints=function(x0, x1, y0, y1, c0x, c1x, x){
+	var dx = x1-x0;
+	var x = (x-x0)/dx;
+	var c0x = (c0x-x0)/dx;
+	var c1x = (c1x-x0)/dx;
+
+	if(GeometryOperators._bezierSimpleCurveTable==null){
+		var i, p;
+
+		GeometryOperators._bezierSimpleCurveTable = new NumberList();
+
+		for(i=1; i<10000; i++){
+			p = GeometryOperators.bezierCurvePoints(0,0,c0x,0,c1x,1,1,1, i/10000);
+			GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*p.x)] = p.y;
+		}
+
+		GeometryOperators._bezierSimpleCurveTable[0] = 0;
+		GeometryOperators._bezierSimpleCurveTable[1] = 1;
+	}
+
+	//c.log('x, y0, y1, , Math.floor(1000*x), GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*x)]', x, y0, y1, Math.floor(1000*x), GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*x)]);
+
+	return GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*x)]*(y1-y0) + y0;
+
+}
+
+
+
+
+
+/**
+ * This an approximation, it doesn't take into account actual values of c0x and c1x
+ */
+GeometryOperators.trueBezierCurveHeightHorizontalControlPointsOld=function(x0, x1, y0, y1, c0x, c1x, x){//TODO:fix
+
+	// if(GeometryOperators._bezierSimpleCurveTable==null){
+
+	// 	for(i=0; i<1000; i++){
+
+	// 	}
+
+	// }
+
+	// return GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*(x-x0)/(x1-x0))]*(y1-y0) + y0;
+
+
+
+	//
+
+	//x=3at + t^2(3-9a) + t^3(1+6a)  --> Javier
+	//http://en.wikipedia.org/wiki/Cubic_function#General_formula_for_roots
+	
+
+
+
+	//return (x-x0)/(x1-x0);// (x - x0)/(c0x + c1x - 2*x0);
+
+	//var 
+
+	// var antit = 1 - t;
+
+	// var x0t = x0 + (cx0-x0)*t;
+	// var x1t = x1 + (cx1-x1)*t;
+
+	// var xm = x0t = (x1t-x0t)*t;
+
+
+	// c.log( (x-x0)/(c0x-x0+x1 - 2*x0) );
+
+	// return (x-x0)/(c0x+x1 - 2*x0);
+
+
+	// var d0 = c0x-x0;
+	// // var d1 = c1x-x1;
+
+	// var _a = 2*d0;
+	// var _b = d0 + x1 - x0;
+	// var _c = x0 - x;
+
+	// // var _b = d0 + x1 - x0;
+	// // var _c = x0 - x;
+
+
+	// //c.log(_a, _b, _c, '-->', (-_b + Math.sqrt(_b*_b - 4*_a*_c))/(2*_a), (-_b -Math.sqrt(_b*_b - 4*_a*_c))/(2*_a));
+
+	// return [(-_b + Math.sqrt(_b*_b - 4*_a*_c))/(2*_a), (-_b -Math.sqrt(_b*_b - 4*_a*_c))/(2*_a)];
+
+
+
+
+	// var cosinus = Math.cos(Math.PI*(t-1));
+	// var sign = cosinus>0?1:-1;
+	
+	// return (0.5 + 0.5*( Math.pow(cosinus*sign, 0.6)*sign ))*(y1-y0) + y0;
 }
 
 /**
@@ -5796,7 +6155,7 @@ RectangleOperators.packingRectangles=function(weights, packingMode, rectangle, p
 		//4: europe quadrigram
 		//5:vertical strips
 		case 0:
-			return this.quadrification(rectangle, weights);
+			return RectangleOperators.quadrification(rectangle, weights);
 		case 1:
 			var minMax = weights.getMinMaxInterval();
 			if(minMax.min<0){
@@ -5905,6 +6264,7 @@ RectangleOperators.packingRectangles=function(weights, packingMode, rectangle, p
 	}
 	return null;
 }
+
 /**
 * Squarified algorithm as described in (http://www.win.tue.nl/~vanwijk/stm.pdf)
 * @param {Rectangle} bounds Rectangle
@@ -5919,8 +6279,10 @@ RectangleOperators.quadrification=function(rectangle, weightList, isNormalizedWe
 	if(weightList.length==1) return new RectangleList(rectangle);
 	isNormalizedWeights=isNormalizedWeights?isNormalizedWeights:false;
 	isSortedWeights=isSortedWeights?isSortedWeights:false;
+	var newWeightList;
+
 	if(isNormalizedWeights){
-		var newWeightList = weightList;// new NumberList(arregloPesos);
+		newWeightList = weightList;// new NumberList(arregloPesos);
 	} else {
 		newWeightList = weightList.getNormalizedToSum();
 	}
@@ -6976,7 +7338,6 @@ ListOperators.getElement = function(list, index){
  * @param  {List} list to be filtered
  * @param  {Object} params NumberList or Interval
  * @return {List}
- * tags:filter
  */
 ListOperators.getSubList = function(list, params){
 	if(list==null || params==null) return null;
@@ -7008,8 +7369,8 @@ ListOperators.concat = function(){
 /**
  * assembles a List
  * @param  {Object}
- * @param  {Object}
  * 
+ * @param  {Object}
  * @param  {Object}
  * @param  {Object}
  * @param  {Object}
@@ -7034,7 +7395,7 @@ ListOperators.assemble = function(){
 ListOperators.countElementsRepetitionOnList=function(list, sortListsByOccurrences, consecutiveRepetitions, limit){
 	if(list==null) return;
 	
-	sortListsByOccurrences = sortListsByOccurrences || true;
+	sortListsByOccurrences = sortListsByOccurrences==null?true:sortListsByOccurrences;
 	consecutiveRepetitions = consecutiveRepetitions || false;
 	limit = limit==null?0:limit;
 	
@@ -7103,6 +7464,23 @@ ListOperators.reverse = function(list){
 	return list.getReversed();
 }
 
+/**
+ * using a table with two columns as a dictionary (first list elements to be read, second list result elements), translates a list
+ * @param  {List} list to transalte
+ * @param  {Table} dictionary table with two lists
+ *
+ * @param {Object} nullElement element to place in case no translation is found
+ * @return {List}
+ * tags:
+ */
+ListOperators.translateWithDictionary = function(list, dictionary, nullElement){
+	var newList = new List();
+	list.forEach(function(element, i){
+		index = dictionary[0].indexOf(element);
+		newList[i] = index==-1?nullElement:dictionary[1][index];
+	});
+	return newList.getImproved();
+}
 
 
 // ListOperators.getIndexesOfElements=function(list, elements){
@@ -7526,14 +7904,26 @@ TableOperators.sortListsByNumberList=function(table, numberList, descending){
 	return newTable;
 }
 
+
+
+/**
+ * aggregates a table
+ * @param  {Table} table to be aggregated
+ * 
+ * @param  {Number} nList list in the table used as basis to aggregation
+ * @param  {Number} mode mode of aggregation, 0:picks first element 1:adds numbers
+ * @return {Table} aggregated table
+ * tags:aggregation
+ */
 TableOperators.aggregateTable=function(table, nList, mode){
+	if(table==null || table[0]==null || table[0][0]==null) return null;
+
 	nList = nList==null?0:nList;
 	mode = mode==null?0:mode;
 	
 	var newTable = new Table();
 	newTable.name = table.name;
-	var i;
-	var j;
+	var i, j;
 	var index;
 	var notRepeated;
 	
@@ -7572,6 +7962,76 @@ TableOperators.aggregateTable=function(table, nList, mode){
 		newTable[j] = newTable[j].getImproved();
 	}
 	return newTable.getImproved();
+}
+
+/**
+ * counts pairs of elements in same positions in two lists (the result is the adjacent matrix of the network defined by pairs)
+ * @param  {Table} table with at least two lists
+ * @return {NumberTable}
+ * tags:
+ */
+TableOperators.getCountPairsMatrix = function(table){
+	if(table==null || table.length<2 || table[0]==null || table[0][0]==null) return null;
+
+	var list0 = table[0].getWithoutRepetitions();
+	var list1 = table[1].getWithoutRepetitions();
+
+	var matrix = new NumberTable(list1.length);
+
+	c.log('list0.length, list1.length', list0.length, list1.length);
+	c.log('matrix --> ', matrix);
+
+	list1.forEach(function(element1, i){
+		matrix[i].name = String(element1);
+		list0.forEach(function(element0, j){
+			matrix[i][j] = 0;
+		});
+	});
+
+	table[0].forEach(function(element0, i){
+		element1 = table[1][i];
+		matrix[list1.indexOf(element1)][list0.indexOf(element0)]++;
+	});
+
+	return matrix;
+}
+
+
+/**
+ * filter a table selecting rows that have an element on one of its lists
+ * @param  {Table} table
+ * @param  {Number} nList list that could contain the element in several positions
+ * @param  {Object} element
+ * @return {Table}
+ * tags:filter
+ */
+TableOperators.filterTableByElementInList=function(table, nList, element){
+	if(table==null || nList==null) return;
+	if(element==null) return table;
+
+
+	var newTable = new Table();
+	var i, j;
+
+	newTable.name = table.name;
+
+	for(j=0; table[j]!=null; j++){
+		newTable[j] = new List();
+	}
+
+	for(i=0; table[0][i]!=null; i++){
+		if(table[nList][i]==element){
+			for(j=0; table[j]!=null; j++){
+				newTable[j].push(table[j][i]);
+			}
+		}
+	}
+
+	for(j=0; newTable[j]!=null; j++){
+		newTable[j] = newTable[j].getImproved();
+	}
+
+	return newTable;
 }
 
 TableOperators.mergeDataTablesInList=function(tableList){
@@ -7906,11 +8366,12 @@ MatrixGenerators.createTranslationMatrix = function(tx, ty) {
 function NumberListGenerators(){};
 
 /**
- * Generates a NumberList with sorted Numbers
+ * Generate a NumberList with sorted Numbers
  * @param {Number} nValues length of the NumberList
  * @param {Number} start first value
  * @param {Number} step increment value
- * @return {Number} generated NumberList
+ * @return {NumberList} generated NumberList
+ * tags:generator
  */
 NumberListGenerators.createSortedNumberList=function(nValues, start, step){
 	start = start || 0;
@@ -7935,6 +8396,15 @@ NumberList.createNumberListFromInterval=function(nElements, interval){
 	return numberList;
 }
 
+/**
+ * create a list with random numbers
+ * @param  {Number} nValues
+ * 
+ * @param  {Interval} interval range of the numberList
+ * @param  {Number} seed optional seed for seeded random numbers
+ * @return {NumberList}
+ * tags:random
+ */
 NumberListGenerators.createRandomNumberList=function(nValues, interval, seed, func){
 	seed = seed==null?-1:seed;
 	interval = interval==null?new Interval(0,1):interval;
@@ -8013,6 +8483,45 @@ NumberListOperators.standardDeviationBetweenTwoNumberLists=function(numberList0,
  */
 NumberListOperators.pearsonProductMomentCorrelation=function(numberList0, numberList1){//TODO:make more efficient
 	return NumberListOperators.covariance(numberList0, numberList1)/(numberList0.getStandardDeviation()*numberList1.getStandardDeviation());
+}
+
+
+/**
+ * smooth a numberList by calculating averages with neighbors
+ * @param  {NumberList} numberList
+ * @param  {Number} intensity weight for neighbors in average (0<=intensity<=0.5)
+ * @param  {Number} nIterations number of ieterations
+ * @return {NumberList}
+ * tags:statistics
+ */
+NumberListOperators.averageSmoother = function(numberList, intensity, nIterations){
+	nIterations = nIterations==null?1:nIterations;
+	intensity = intensity==null?0.1:intensity;
+
+	intensity = Math.max(Math.min(intensity, 0.5), 0);
+	var anti = 1 - 2*intensity;
+	var n = numberList.length-1;
+
+	var newNumberList = new NumberList();
+	var i;
+
+	newNumberList.name = numberList.name;
+	
+	for(i=0; i<nIterations; i++){
+		if(i==0){
+			numberList.forEach(function(val, i){
+				newNumberList[i] = anti*val +  (i>0?(numberList[i-1]*intensity):0) + (i<n?(numberList[i+1]*intensity):0);
+			});
+		} else {
+			newNumberList.forEach(function(val, i){
+				newNumberList[i] = anti*val +  (i>0?(newNumberList[i-1]*intensity):0) + (i<n?(newNumberList[i+1]*intensity):0);
+			});
+		}
+	}
+
+	newNumberList.name = numberList.name;
+
+	return newNumberList;
 }
 
 
@@ -8453,7 +8962,24 @@ NumberTableOperators.normalizeListsToMax=function(numberTable){
 	return newNumberTable;
 }
 
+/**
+ * smooth numberLists by calculating averages with neighbors
+ * @param  {NumberTable} numberTable
+ * @param  {Number} intensity weight for neighbors in average (0<=intensity<=0.5)
+ * @param  {Number} nIterations number of ieterations
+ * @return {NumberTable}
+ * tags:statistics
+ */
+NumberTableOperators.averageSmootherOnLists = function(numberTable, intensity, nIterations){
+	var newNumberTable = new NumberTable();
+	newNumberTable.name = numberTable.name;
+	numberTable.forEach(function(nL, i){
+		newNumberTable[i] = NumberListOperators.averageSmoother(numberTable[i], intensity, nIterations);
+	});
+	return newNumberTable;
+}
 
+//TODO: move to NumberTableConversions
 NumberTableOperators.numberTableToNetwork=function(numberTable, method, tolerance){
 	tolerance = tolerance==null?0:tolerance;
 	
@@ -8861,6 +9387,23 @@ StringOperators.STOP_WORDS = StringList.fromArray("t,s,mt,rt,re,m,http,amp,a,abl
 StringOperators.split = function(string, character){
 	if(character==null) return StringOperators.splitByEnter(string);
 	return StringList.fromArray(string.split(character));
+}
+
+/**
+ * join strings with a character
+ * @param  {StringList} StringList strings to be joined
+ * 
+ * @param  {String} join character
+ * @param  {String} prefix
+ * @param  {String} sufix
+ * @return {String}
+ * tags:
+ */
+StringOperators.join = function(stringList, character, prefix, sufix){
+	character = character==null?"":character;
+	prefix = prefix==null?"":prefix;
+	sufix = sufix==null?"":sufix;
+	return prefix+stringList.join(character)+sufix;
 }
 
 
@@ -9577,7 +10120,7 @@ NetworkEncodings.encodeGDF = function(network, nodesPropertiesNames, relationsPr
  * @return {Network}
  * tags:decoder
  */
-NetworkEncodings.decodeGML = function(gmlCode){//TODO:decide what to do with relations ids
+NetworkEncodings.decodeGML = function(gmlCode){
 	if(gmlCode==null) return null;
 	
 	gmlCode = gmlCode.substr(gmlCode.indexOf("[")+1);
@@ -9702,12 +10245,18 @@ NetworkEncodings._cleanLineBeginning = function(string){
 /**
  * encodes a network in format GDF
  * @param  {Network} network
+ * 
  * @param  {StringList} nodesPropertiesNames names of nodes' properties to encode
  * @param  {StringList} relationsPropertiesNames names or relations' properties to encode
+ * @param {Boolean} idsAsInts GDF strong specification requires ids for nodes being int numbers
  * @return {String} GDF string
  * tags:encoder
  */
-NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPropertiesNames){
+NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPropertiesNames, idsAsInts){
+	if(network==null) return;
+
+	idsAsInts = idsAsInts==null?true:idsAsInts;
+	
 	nodesPropertiesNames = nodesPropertiesNames==null?new StringList():nodesPropertiesNames;
 	relationsPropertiesNames = relationsPropertiesNames==null?new StringList():relationsPropertiesNames;
 	
@@ -9722,7 +10271,11 @@ NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPr
 		node = network.nodeList[i];
 		code+="\n"+ident+"node\n"+ident+"[";
 		ident="		";
-		code+="\n"+ident+"id \""+node.id+"\"";
+		if(idsAsInts){
+			code+="\n"+ident+"id "+i;
+		} else {
+			code+="\n"+ident+"id \""+node.id+"\"";
+		}
 		if(node.name!='') code+="\n"+ident+"label \""+node.name+"\"";
 		for(j=0;nodesPropertiesNames[j]!=null;j++){
 			value = node[nodesPropertiesNames[j]];
@@ -9741,8 +10294,13 @@ NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPr
 		relation = network.relationList[i];
 		code+="\n"+ident+"edge\n"+ident+"[";
 		ident="		";
-		code+="\n"+ident+"source \""+relation.node0.id+"\"";
-		code+="\n"+ident+"target \""+relation.node1.id+"\"";
+		if(idsAsInts){
+			code+="\n"+ident+"source "+network.nodeList.indexOf(relation.node0);
+			code+="\n"+ident+"target "+network.nodeList.indexOf(relation.node1);
+		} else {
+			code+="\n"+ident+"source \""+relation.node0.id+"\"";
+			code+="\n"+ident+"target \""+relation.node1.id+"\"";
+		}
 		for(j=0;relationsPropertiesNames[j]!=null;j++){
 			value = relation[relationsPropertiesNames[j]];
 			if(value==null) continue;
@@ -10588,6 +11146,61 @@ NetworkOperators.addPageRankToNodes = function(network, from, useRelationsWeight
 
 
 
+
+
+function TreeConvertions(){};
+
+/**
+ * convert a table that describes a tree (higher hierarchies in first lists) into a Tree
+ * @param {Table} table
+ *
+ * @param {String} fatherName name of father node
+ * @param {Boolean} lastListIsWeights true if last list is a NumberList with weights for leaves
+ * @return {Tree}
+ * tags:convertion
+ */
+TreeConvertions.TableToTree = function(table, fatherName, lastListIsWeights){
+	if(table==null) return;
+	
+	fatherName = fatherName==null?"father":fatherName;
+	
+	var tree = new Tree();
+	var node, parent;
+	var id;
+	var iCol;
+
+	var father = new Node(fatherName, fatherName);
+	tree.addNodeToTree(father, null);
+
+	table.forEach(function(list, i){
+		table[i].forEach(function(element, j){
+			id = TreeConvertions.getId(table, i, j);
+			node = tree.nodeList.getNodeById(id);
+			if(node==null){
+				node = new Node(id, String(element));
+				if(i==0){
+					tree.addNodeToTree(node, father);
+				} else {
+					parent = tree.nodeList.getNodeById(TreeConvertions.getId(table, i-1, j));
+					tree.addNodeToTree(node, parent);
+				}
+			}
+		});
+	});
+	
+	tree.assignDescentWeightsToNodes();
+
+	return tree;
+}
+TreeConvertions.getId = function(table, i, j){
+	var iCol=1;
+	var id = String(table[0][j]);
+	while(iCol<=i){
+		id+="_"+String(table[iCol][j]);
+		iCol++;
+	}
+	return id;
+}
 
 
 function TreeEncodings(){};
@@ -12189,7 +12802,11 @@ clipCircle = function(x, y, r){
 
 clipRectangle = function(x, y, w, h){
 	context.save();
-	context.fillRect(x, y, w, h);
+	context.beginPath();
+	context.moveTo(x,y);
+	context.lineTo(x+w,y);
+	context.lineTo(x+w,y+h);
+	context.lineTo(x,y+h);
 	context.clip();
 }
 
@@ -12482,7 +13099,7 @@ function InputTextFieldHTML(configuration){
 	this.focusFunctionTarget;
 	this.blurFunctionTarget;
 	
-	this.textColor='black';
+	this.textColor=configuration.textColor==null?'black':configuration.textColor;
 	this.backgroundColor='#FFFFFF';
 	
 	this.main = document.getElementById('maindiv');
@@ -12540,7 +13157,7 @@ InputTextFieldHTML.prototype.setBorder = function(value) {
 	this.DOMtext.setAttribute('style',  'color: '+this.textColor+'; width:'+(this.width-7)+'px;height:'+(this.height-7)+'px; font-size:'+this.fontSize+'px; border:'+(value?'yes':'none'));
 }
 
-InputTextFieldHTML.prototype.draw = function(context) {
+InputTextFieldHTML.prototype.draw = function() {
 	if(this.x!=this._prevX || this.y!=this._prevY || this.width!=this._prevWidth || this.height!=this._prevHeight || this.text!=this._prevText){
  		this._prevX = this.x;
     	this._prevY = this.y;
@@ -12562,6 +13179,7 @@ InputTextFieldHTML.prototype.draw = function(context) {
 
 InputTextFieldHTML.prototype.setText=function(text, activeChange){
 	activeChange = activeChange==null?true:activeChange;
+	this.text = text;
 	this.DOMtext.value = text;
 	
 	//var timer = setTimeout(this.onKeyDownDelayed, 4, this);
@@ -14661,12 +15279,75 @@ function ImageDraw(){};
  * draws an image
  * @param  {Rectangle} frame
  * @param  {Image} image to be drawn
+ * 
  * @param  {Number} mode: 0: adjust to rectangle, 1: center and mask, 2: center and eventual reduction (image smaller than rectangle), 3: adjust to rectangle preserving proportions (image bigger than rectangle), 4: fill repeated from corner, 5: fill repeated from 0,0
  * tags:draw
  */
 ImageDraw.drawImage = function(frame, image, mode){
 	mode = mode||0;
 	Draw.fillRectangleWithImage(frame, image, mode);
+}
+
+
+/**
+ * draws a visualization and captures an image
+ * @param  {String} visFunction visualization function
+ * @param  {Number} width
+ * @param  {Number} height
+ *
+ * @param {Object} argument0 first argument of the visualization function
+ * @param {Object} argument1 second argument of the visualization function
+ * @param {Object} argument2 third argument of the visualization function
+ * @param {Object} argument3 fourth argument of the visualization function
+ * @return {Image}
+ * tags:
+ */
+ImageDraw.captureVisualizationImage = function(visFunctionName, width, height){
+	c.log('visFunctionName', visFunctionName);
+	if(visFunctionName==null || width==null || (!width>0) || height==null || !(height>0)) return;
+
+	var frame = new Rectangle(0,0,width,height);
+
+	var args = Array.prototype.slice.call(arguments);
+	args = [frame].concat(args.slice(3));
+
+	var visFunction;
+
+	if(visFunctionName.indexOf('.')==-1){
+		visFunction = this[visFunctionName];
+	} else {
+		c.log(visFunctionName.split('.')[0], this[visFunctionName.split('.')[0]], this['mY']);
+		if(this[visFunctionName.split('.')[0]]==null) return;
+		visFunction = this[visFunctionName.split('.')[0]][visFunctionName.split('.')[1]];
+	}
+
+	if(visFunction==null) return null;
+
+	c.log('ImageDraw.captureVisualizationImage | args', args);
+	c.log('ImageDraw.captureVisualizationImage | visFunction==null', visFunction==null);
+
+	var newCanvas = document.createElement("canvas");
+	newCanvas.width = width;
+	newCanvas.height = height;
+	var newContext = newCanvas.getContext("2d");
+	newContext.clearRect(0,0,width,height);
+
+	var mainContext = context;
+	context = newContext;
+
+	////draw
+	//setStroke('black', 2);
+	//line(0,0,width,height);
+	//line(width,0,0,height);
+	visFunction.apply(this, args);
+	////
+
+	context = mainContext;
+	
+	var im = new Image();
+	im.src = newCanvas.toDataURL();
+
+	return im;
 }
 function ListDraw(){};
 
@@ -14675,29 +15356,87 @@ function ListDraw(){};
  * @param  {Rectangle} frame
  * @param  {List} list to be drawn
  * 
- * @param  {ColorList} colorList optional
+ * @param {Number} returnMode 0:return index, 1:return element
+ * @param  {ColorList} colorList colors of elements
+ * @param {Number} textSize
  * @param  {Number} mode 0:color in square if any
  * @return {Number} returns the index of the selected element
  * tags:draw
  */
-ListDraw.drawList = function(frame, list, colorList, mode){
+ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode){
+	if(list==null || !list.length>0) return;
+
+	textSize = textSize||14;
+	returnMode = returnMode||0;
+	if(frame.memory==null) frame.memory = {selected:0, y:0};
+
+	var changeList = frame.memory.list!=list;
+
+	if(changeList){
+		frame.memory.list=list;
+		frame.memory.selected = 0;
+	}
+
 	var i;
 	var x = frame.x + 5;
+	var xTexts = x + (colorList?15:0);
 	var y;
-	var dy = 18;
+	var dy = textSize+4;
 	var n = list.length;
 	var bottom = frame.getBottom();
+	var mouseIn = frame.containsPoint(mP);
+	var y0Follow = 0;
+	var y0;
 
-	setText('black', 14);
-	for(i=0; list[i]!=null; i++){
-		y = frame.y + dy*i + 5;
-		if(y>bottom) return;
-		setFill(colorList==null?'rgb(200, 200, 200)':colorList[i%n]);
-		fRect(x, y + 4, 10, 10);
-		setFill('black');
-		fText(list[i].toString(), x + 15, y + 2);
-		
+	var hList = list.length*dy;
+
+	if(hList<frame.height-20){
+		y0 = frame.y + 10;
+	} else {
+		if(mouseIn){
+			y0Follow = Math.min(10 - (hList - frame.height + 20)*((mY-(frame.y+10))/(frame.height-20)), 10);
+		} else {
+			y0Follow = 10 - (hList - frame.height + 20)*frame.memory.selected/list.length;
+		}
+
+		frame.memory.y = 0.95*frame.memory.y + 0.05*y0Follow;
+
+		y0 = frame.y + frame.memory.y;
 	}
+
+	
+	
+
+	setText('black', textSize);
+
+	for(i=0; list[i]!=null; i++){
+		y = y0 + dy*i;
+
+		if(y<frame.y) continue;
+		if(y+12>bottom) break;
+
+		if(colorList){
+			setFill(colorList==null?'rgb(200, 200, 200)':colorList[i%n]);
+			fRect(x, y + 4, 10, 10);
+		}
+
+		if(frame.memory.selected==i){
+			setFill('black');
+			fRect(frame.x+2, y, frame.width-4, dy);
+			setFill('white');
+		} else {
+			if(mouseIn && mY>=y && mY<y+dy){
+				setFill('rgb(220,220,220)');
+				fRect(frame.x+2, y, frame.width-4, dy);
+				if(MOUSE_DOWN) frame.memory.selected = i;
+			}
+			setFill('black');
+		}
+		
+		fText(list[i].toString(), xTexts, y+2);
+	}
+
+	return returnMode==1?list[frame.memory.selected]:frame.memory.selected;
 }
 function IntervalTableDraw(){};
 
@@ -14907,7 +15646,7 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 								  nR2*Math.cos(point.x-offA)+center.x, nR2*Math.sin(point.x-offA)+center.y,
 								  point.y*Math.cos(point.x)+center.x, point.y*Math.sin(point.x)+center.y);
 			
-			if(returnHovered && nHovered==-1 && this._isOnRadialShape(center, mousePoint, prevPoint.x, point.x, dR*(1-intervalList[(j-1)%nCols].y)+r0, dR*(1-intervalList[(j-1)%nCols].x)+r0, dR*(1-intervalList[j%nCols].y)+r0, dR*(1-intervalList[j%nCols].x)+r0)){
+			if(returnHovered && nHovered==-1 && this._isOnRadialShape(center, mP, prevPoint.x, point.x, dR*(1-intervalList[(j-1)%nCols].y)+r0, dR*(1-intervalList[(j-1)%nCols].x)+r0, dR*(1-intervalList[j%nCols].y)+r0, dR*(1-intervalList[j%nCols].x)+r0)){
 				nHovered = i;
 			}
 			
@@ -14955,12 +15694,15 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 	}
 	
 	for(i=0;filteredTexts[i]!=null;i++){
-		DrawTexts.setContextTextProperties('black', textsSizes[i], 'Arial', 'center', 'middle');
-		context.save();
-		context.translate(textsX[i], textsY[i]);
-		context.rotate(textsAngles[i]);
-		context.fillText(filteredTexts[i], 0, 0);
-		context.restore();
+		// DrawTexts.setContextTextProperties('black', textsSizes[i], 'Arial', 'center', 'middle');
+		// context.save();
+		// context.translate(textsX[i], textsY[i]);
+		// context.rotate(textsAngles[i]);
+		// context.fillText(filteredTexts[i], 0, 0);
+		// context.restore();
+		
+		setText('black', textsSizes[i], null, 'center', 'middle');
+		fTextRotated(filteredTexts[i], textsX[i], textsY[i], textsAngles[i]);
 	}
 	
 	return nHovered;
@@ -14991,7 +15733,7 @@ IntervalTableDraw._isOnRadialShape=function(center, testPoint, a0, a1, r0a, r0b,
 
 
 
-IntervalTableDraw.drawIntervalsWordsFlowTable = function(intervalsFlowTable, frame, texts, colors, typode){
+IntervalTableDraw.drawIntervalsWordsFlowTable = function(frame, intervalsFlowTable, texts, colors, typode){
 	var nElements = intervalsFlowTable.length;
 	
 	var i;
@@ -15239,17 +15981,15 @@ NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colo
 	var list1 = (loglog?numberTable[1].log(1):numberTable[1]).getNormalized();
 	var radii = numberTable.length<=2?null:numberTable[2].getNormalized().sqrt().factor(maxRadius);
 	var nColors = (colors==null)?null:colors.length;
-	var n = Math.min(list0.length, list1.length, (radii==null)?2000:radii.length, (texts==null)?2000:texts.length);
+	var n = Math.min(list0.length, list1.length, (radii==null)?300000:radii.length, (texts==null)?300000:texts.length);
 	var iOver;
-
-
 
 	for(i=0; i<n; i++){
 		x = subframe.x + list0[i]*subframe.width;
 		y = subframe.bottom - list1[i]*subframe.height;
-
+		
 		if(radii==null){
-			if(NumberTableDraw._drawCrossScatterPlot(x, y)) iOver = i;
+			if(NumberTableDraw._drawCrossScatterPlot(x, y, colors==null?'rgb(150,150,150)':colors[i%nColors])) iOver = i;
 		} else {
 			setFill(colors==null?'rgb(150,150,150)':colors[i%nColors]);
 			if(fCircleM(x, y, radii[i], radii[i]+1)) iOver = i;
@@ -15269,13 +16009,12 @@ NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colo
 	if(iOver!=null){
 		setCursor('pointer');
 		return iOver;
-	} 
-
+	}
 }
-NumberTableDraw._drawCrossScatterPlot = function(x, y){
-	setStroke('black', 1);
-	line(x,y-5,x,y+5);
-	line(x-5,y,x+5,y);
+NumberTableDraw._drawCrossScatterPlot = function(x, y, color){
+	setStroke(color, 1);
+	line(x,y-2,x,y+2);
+	line(x-2,y,x+2,y);
 	return Math.pow(mX-x, 2)+Math.pow(mY-y, 2)<25;
 }
 
@@ -15356,8 +16095,6 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
 	//setup
 	if(frame.memory==null || coordinates!=frame.memory.coordinates || colorScale!=frame.memory.colorScale){
 
-		c.log('coordinates[0]',coordinates[0]);
-
 		var isNumberTable = coordinates[0].x==null;
 
 		if(isNumberTable){
@@ -15390,11 +16127,11 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
 
 		for(i=0; i<n; i++){
 			if(isNumberTable){
-				x = numberTable[0][i]-minx;
-				y = numberTable[1][i]-miny;
+				x = Math.floor(numberTable[0][i]-minx);
+				y = Math.floor(numberTable[1][i]-miny);
 			} else {
-				x = polygon[i].x-minx;
-				y = polygon[i].y-miny;
+				x = Math.floor(polygon[i].x-minx);
+				y = Math.floor(polygon[i].y-miny);
 			}
 
 			if(matrix[x]==null) matrix[x] = new NumberList();
@@ -15419,9 +16156,12 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
 			colorScale:colorScale,
 			selected:null
 		}
+
 	} else {
 		matrixColors = frame.memory.matrixColors;
 	}
+
+	//c.log(matrixColors.length, matrixColors[0].length, matrixColors[0][0]);
 
 	//draw
 	var subframe = new Rectangle(frame.x+margin, frame.y+margin, frame.width-margin*2, frame.height-margin*2);
@@ -15473,8 +16213,81 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
 }
 
 
+// *
+//  * draws a Steamgraph
+//  * @param  {Rectangle} frame
+//  * @param  {NumberTable} numberTable
+//  *
+//  * @param {Boolean} normalized normalize each column, making the graph of constant height
+//  * @param {Boolean} sorted sort flow polygons
+//  * @param {Number} intervalsFactor number between 0 and 1, factors the height of flow polygons 
+//  * @param {Boolean} bezier draws bezier (soft) curves
+//  * @param  {ColorList} colorList colors of polygons
+//  * @param  {Number} margin
+//  * @return {NumberList} list of positions of elements on clicked coordinates
+ 
+// NumberTableDraw.drawStreamgraphW = function(frame, numberTable, normalized, sorted, intervalsFactor, bez, colorList){
+// 	if(numberTable==null || numberTable.length<2 || numberTable.type!="NumberTable") return;
+
+// 	//setup
+// 	if(frame.memory==null || numberTable!=frame.memory.numberTable || normalized!=frame.memory.normalized || sorted!=frame.memory.sorted || intervalsFactor!=frame.memory.intervalsFactor || bez!=frame.memory.bez){
+// 		c.log('Oo');
+// 		frame.memory = {
+// 			numberTable:numberTable,
+// 			normalized:normalized,
+// 			sorted:sorted,
+// 			intervalsFactor:intervalsFactor,
+// 			bez:bez,
+// 			flowIntervals:IntervalTableOperators.scaleIntervals(NumberTableFlowOperators.getFlowTableIntervals(numberTable, normalized, sorted), intervalsFactor)
+// 		}
+// 	}
+// 	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
+// 		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(1, numberTable.length):colorList;
+// 		frame.memory.colorList = colorList;
+// 	}
+
+// 	c.log('-numberTable, frame.memory.flowIntervals, frame.memory.actualColorList', numberTable, frame.memory.flowIntervals, frame.memory.actualColorList);
+
+// 	IntervalTableDraw.drawIntervalsFlowTable(frame.memory.flowIntervals, frame, frame.memory.actualColorList, bez, 0.3);
+
+
+// 	// if(numberTable==null || numberTable.length<2 || numberTable.type!="NumberTable") return;
+
+// 	// var change = frame.memory==null || frame.memory.numberTable==null;//!=numberTable || frame.memory.normalized!=normalized || frame.memory.sorted!=sorted || frame.memory.intervalsFactor!=intervalsFactor || frame.memory.bezier!=bezier || frame.memory.colorList!=colorList || frame.memory.width!=frame.width || frame.memory.height!=frame.height;
+
+// 	// c.log('\n\nframe.memory==null, change', frame.memory==null, change);
+
+// 	// if(frame.memory=!null) c.log('1. frame.memory.o', frame.memory.o);//, frame.memory.normalized!=normalized, frame.memory.sorted!=sorted, frame.memory.intervalsFactor!=intervalsFactor, frame.memory.bezier!=bezier, frame.memory.colorList!=colorList, frame.memory.width!=frame.width, frame.memory.height!=frame.height)
+	
+// 	// if(change){
+// 	// 	c.log('->');
+// 	// 	frame.bottom = frame.getBottom();
+// 	// 	frame.memory = {};
+// 	// 	frame.memory.numberTable = numberTable;
+// 	// 	frame.memory.o = 0;
+// 	// 	// frame.memory = {
+// 	// 	// 	numberTable:numberTable,
+// 	// 	// 	normalized:normalized,
+// 	// 	// 	sorted:sorted,
+// 	// 	// 	intervalsFactor:intervalsFactor,
+// 	// 	// 	bezier:bezier,
+// 	// 	// 	colorList:colorList,
+// 	// 	// 	width:frame.width,
+// 	// 	// 	height:frame.height,
+// 	// 	// 	//capture:ImageDraw.captureVisualizationImage('NumberTableDraw.drawStreamgraphSimple', frame.width, frame.height, numberTable, normalized, sorted, intervalsFactor, bezier, colorList)
+// 	// 	// }
+// 	// 	c.log('2. frame.memory.o', frame.memory.o);
+// 	// }
+
+// 	// return null;
+
+// 	// //c.log('frame.memory.capture', frame.memory.capture);
+// 	// //if(frame.memory.capture) drawImage(frame.memory.capture, frame.x, frame.y, frame.width, frame.height);
+// }
+
+
 /**
- * draws a Steamgraph
+ * draws a steamgraph
  * @param  {Rectangle} frame
  * @param  {NumberTable} numberTable
  *
@@ -15488,31 +16301,223 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
  * tags:draw
  */
 NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, bezier, colorList){
-	if(numberTable==null || numberTable.length<2 || numberTable.type!="NumberTable") return; //todo:provisional, this is System's work
+	if(numberTable==null || numberTable.length<2 || numberTable.type!="NumberTable") return;
+
+	bezier = bezier==null?true:bezier;
 
 	//var self = NumberTableDraw.drawStreamgraph;
 
 	intervalsFactor = intervalsFactor==null?1:intervalsFactor;
 
 	//setup
-	if(frame.memory==null || numberTable!=frame.memory.numberTable || normalized!=frame.memory.normalized || sorted!=frame.memory.sorted || intervalsFactor!=frame.memory.intervalsFactor || intervalsFactor!=frame.memory.intervalsFactor){
+	if(frame.memory==null || numberTable!=frame.memory.numberTable || normalized!=frame.memory.normalized || sorted!=frame.memory.sorted || intervalsFactor!=frame.memory.intervalsFactor || bezier!=frame.memory.bezier || frame.width!=frame.memory.width || frame.height!=frame.memory.height){
 		frame.memory = {
 			numberTable:numberTable,
 			normalized:normalized,
 			sorted:sorted,
 			intervalsFactor:intervalsFactor,
-			flowIntervals:IntervalTableOperators.scaleIntervals(NumberTableFlowOperators.getFlowTableIntervals(numberTable, normalized, sorted), intervalsFactor)
+			bezier:bezier,
+			flowIntervals:IntervalTableOperators.scaleIntervals(NumberTableFlowOperators.getFlowTableIntervals(numberTable, normalized, sorted), intervalsFactor),
+			fOpen:1,
+			names:numberTable.getNames(),
+			mXF:mX,
+			width:frame.width,
+			height:frame.height,
+			image:null
 		}
-
-		frame.secret = "hola!";
 	}
 	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
 		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(1, numberTable.length):colorList;
 		frame.memory.colorList = colorList;
 	}
 
-	IntervalTableDraw.drawIntervalsFlowTable(frame.memory.flowIntervals, frame, frame.memory.actualColorList, bezier, 0.3);
+
+	if(frame.memory.image==null){
+		var newCanvas = document.createElement("canvas");
+		newCanvas.width = frame.width;
+		newCanvas.height = frame.height;
+		var newContext = newCanvas.getContext("2d");
+		newContext.clearRect(0,0,frame.width,frame.height);
+
+		var mainContext = context;
+		context = newContext;
+
+		IntervalTableDraw.drawIntervalsFlowTable(frame.memory.flowIntervals, new Rectangle(0,0,frame.width,frame.height), frame.memory.actualColorList, bezier, 0.3);
+
+		context = mainContext;
+		
+		frame.memory.image = new Image();
+		frame.memory.image.src = newCanvas.toDataURL();
+	}
+
+	if(frame.memory.image){
+		
+		frame.memory.fOpen = 0.8*frame.memory.fOpen + 0.2*(frame.containsPoint(mP)?0.8:1);
+		frame.memory.mXF = 0.7*frame.memory.mXF + 0.3*mX;
+		frame.memory.mXF = Math.min(Math.max(frame.memory.mXF, frame.x), frame.getRight());
+		
+		if(frame.memory.fOpen<0.999){
+			context.save();
+			context.translate(frame.x, frame.y);
+			var cut = frame.memory.mXF-frame.x;
+			var x0 = Math.floor(cut*frame.memory.fOpen);
+			var x1 = Math.ceil(frame.width-(frame.width-cut)*frame.memory.fOpen);
+			
+			drawImage(frame.memory.image, 0,0,cut,frame.height,0,0,x0,frame.height);
+			drawImage(frame.memory.image, cut,0,(frame.width-cut),frame.height,x1,0,(frame.width-cut)*frame.memory.fOpen,frame.height);
+
+			NumberTableDraw._drawPartialFlow(new Rectangle(0,0,frame.width, frame.height), frame.memory.flowIntervals, frame.memory.names, frame.memory.actualColorList, cut, x0, x1, 0.3, sorted);
+
+			context.restore();
+		} else {
+			drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+		}
+	}
 }
+NumberTableDraw._drawPartialFlow=function(frame, flowIntervals, labels, colors, x, x0, x1, OFF_X, sorted){	
+	var w = x1-x0;
+	var nDays = flowIntervals[0].length;
+
+	var wDay = frame.width/(nDays-1);
+	
+	var iDay =  (x-frame.x)/wDay;// Math.min(Math.max((nDays-1)*(x-frame.x)/frame.width, 0), nDays-1);
+	
+	var iDay = Math.max(Math.min(iDay, nDays-1), 0);
+
+	var i;
+	var i0 = Math.floor(iDay);
+	var i1 = Math.ceil(iDay);
+	
+	var t = iDay - i0;
+	var s = 1-t;
+	
+	var xi;
+	var yi;
+	
+	var interval0;
+	var interval1;
+
+	var y, h;
+	
+	var wt;
+	var pt;
+	
+	var text;
+	
+	var offX = OFF_X*wDay;//*(frame.width-(x1-x0))/nDays; //not taken into account
+	
+	//var previOver = iOver;
+	var iOver = -1;
+
+	var X0, X1, xx;
+
+	for(i=0; flowIntervals[i]!=null; i++){
+		
+		setFill(colors[i]);
+		interval0 = flowIntervals[i][i0];
+		interval1 = flowIntervals[i][i1];
+
+		// xi = GeometryOperators.bezierCurveHeightHorizontalControlPoints(interval0.x, x0+offX, x1-offX, interval1.x, t);
+		// yi = GeometryOperators.bezierCurveHeightHorizontalControlPoints(interval0.y, x0+offX, x1-offX, interval1.y, t);
+		
+		// y = frame.height*xi + frame.y;
+		// h = frame.height*(yi-xi);
+
+		X0 = Math.floor(iDay)*wDay;
+		X1 = Math.floor(iDay+1)*wDay;
+
+		xx = x;
+
+		y = GeometryOperators.trueBezierCurveHeightHorizontalControlPoints(X0, X1, interval0.x, interval1.x, X0+offX, X1-offX, xx);
+		h = GeometryOperators.trueBezierCurveHeightHorizontalControlPoints(X0, X1, interval0.y, interval1.y, X0+offX, X1-offX, xx)-y;
+
+		y = y*frame.height + frame.y;
+		h *= frame.height;
+		
+		if(h<1) continue;
+		
+		if(fRectM(x0,y, w, h)) iOver = i;
+		
+		if(h>=8 && w>40){
+			setText('white', h, null, null, 'middle');
+			
+			text = labels[i];//wordsTable[0][i].toUpperCase();
+			
+			wt = getTextW(text);
+			pt = wt/w;
+
+			if(pt>1) setText('white', h/pt, null, null, 'middle');
+			
+			context.fillText(text, x0, y + h*0.5);
+		}
+	}
+
+	return iOver;
+	
+	// if(previOver!=iOver){
+		// generateCapture(iOver);
+	// }
+}
+
+
+
+/**
+ * draws a circular steamgraph Without labels
+ * @param  {Rectangle} frame
+ * @param  {NumberTable} numberTable
+ *
+ * @param {Boolean} normalized normalize each column, making the graph of constant height
+ * @param {Boolean} sorted sort flow polygons
+ * @param {Number} intervalsFactor number between 0 and 1, factors the height of flow polygons 
+ * @param {Boolean} bezier draws bezier (soft) curves
+ * @param  {ColorList} colorList colors of polygons
+ * @param  {Number} margin
+ * @return {NumberList} list of positions of elements on clicked coordinates
+ * tags:draw
+ */
+NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, colorList){
+	if(numberTable==null || numberTable.length<2 || numberTable.type!="NumberTable") return;
+
+	intervalsFactor = intervalsFactor==null?1:intervalsFactor;
+
+	//setup
+	if(frame.memory==null || numberTable!=frame.memory.numberTable || normalized!=frame.memory.normalized || sorted!=frame.memory.sorted || intervalsFactor!=frame.memory.intervalsFactor || frame.width!=frame.memory.width || frame.height!=frame.memory.height){
+		frame.memory = {
+			numberTable:numberTable,
+			normalized:normalized,
+			sorted:sorted,
+			intervalsFactor:intervalsFactor,
+			flowIntervals:IntervalTableOperators.scaleIntervals(NumberTableFlowOperators.getFlowTableIntervals(numberTable, normalized, sorted), intervalsFactor),
+			fOpen:1,
+			names:numberTable.getNames(),
+			mXF:mX,
+			width:frame.width,
+			height:frame.height,
+			radius:Math.min(frame.width, frame.height)*0.46,
+			r0:Math.min(frame.width, frame.height)*0.05,
+			angles:new NumberList()
+		}
+
+		var dA = TwoPi/numberTable[0].length;
+		numberTable[0].forEach(function(val, i){
+			frame.memory.angles[i] = i*dA;
+		});
+
+		c.log('frame.memory.angles', frame.memory.angles);
+
+
+	}
+	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
+		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(1, numberTable.length):colorList;
+		frame.memory.colorList = colorList;
+	}
+
+	IntervalTableDraw.drawCircularIntervalsFlowTable(frame.memory.flowIntervals, frame.getCenter(), frame.memory.radius, frame.memory.r0, frame.memory.actualColorList, frame.memory.names, true, frame.memory.angles);
+}
+
+
+
+
 
 NumberListDraw = function(){};
 
@@ -15998,7 +17003,7 @@ NetworkDraw.drawRadialNetwork = function(frame, network){
  * tags:draw
  */
 NetworkDraw.drawNetwork2D = function(frame, network, polygon, respectProportions, logScale, drawGrid, margin){
-	if(network==null || polygon==null) return;
+	if(network==null || polygon==null || polygon.type!='Polygon') return;
 
 	respectProportions = respectProportions||false;
 	logScale = logScale||false;
@@ -16232,22 +17237,30 @@ NetworkDraw.drawNetworkMatrix = function(frame, network, colors, relationsColorS
 	}
 	return hoverValues;
 } 
-/**
-* TreeDraw
-* @constructor
-*/
 function TreeDraw(){};
 
 
-//TODO: deploy returnHovered
-TreeDraw.drawRectanglesTree = function(tree, frame, levelColors, margin, returnHovered){
+/**
+ * simple tree visualization with levels in vertical rectangles
+ * @param  {Rectangle} frame
+ * @param  {Tree} tree
+ * 
+ * @param  {ColorList} levelColors
+ * @param  {Number} margin
+ * tags:draw
+ */
+TreeDraw.drawRectanglesTree = function(frame, tree, levelColors, margin){
+	levelColors = levelColors==null?ColorListGenerators.createCategoricalColors(1, tree.nLevels):levelColors;
+	margin = margin||1;
+
 	var dX = frame.width/tree.nLevels;
-	this._drawRectanglesTreeChildren(tree.nodeList[0], new Rectangle(frame.x,frame.y,dX,frame.height), levelColors, margin);
+	TreeDraw._drawRectanglesTreeChildren(tree.nodeList[0], new Rectangle(frame.x,frame.y,dX,frame.height), levelColors, margin);
 }
 TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin){
 	context.fillStyle = colors[node.level];
 	context.fillRect(frame.x+margin, frame.y+margin, frame.width-margin*2, frame.height-margin*2);
 	var children = node.toNodeList;
+	//c.log(node.level, node.name, children.length);
 	if(children.length>0){
 		var i;
 		var dY = frame.height/(node.descentWeight-1);
@@ -16255,13 +17268,184 @@ TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin){
 		var h;
 		for(i=0;children[i]!=null;i++){
 			h = dY*(children[i].descentWeight);
-			this._drawRectanglesTreeChildren(children[i], new Rectangle(frame.x+frame.width,yy,frame.width, h), colors, margin);
+			TreeDraw._drawRectanglesTreeChildren(children[i], new Rectangle(frame.x+frame.width,yy,frame.width, h), colors, margin);
 			yy+=h;
 		}
 	}
 }
 
+/**
+ * simple treemap visualization
+ * @param  {Rectangle} frame
+ * @param  {Tree} tree
+ * 
+ * @param  {ColorList} colorList
+ * @param {NumberList} weights weights of leaves
+ * tags:draw
+ */
+TreeDraw.drawTreemap = function(frame, tree, colorList, weights){
+	var change = frame.memory==null || frame.memory.tree!=tree || frame.memory.width!=frame.width || frame.memory.height!=frame.height || frame.memory.weights!=weights;
 
+	if(change){
+		frame.memory = {
+			tree:tree,
+			width:frame.width,
+			height:frame.height,
+			weights:weights
+		}
+
+		if(weights==null){
+			tree.nodeList.forEach(function(node){
+				node._treeMapWeight = node.descentWeight;
+			});
+		} else {
+			
+			var leaves = tree.getLeaves();
+			leaves.forEach(function(node, i){
+				node._treeMapWeight = weights[i];
+			});
+			var assignTreemapWeight = function(node){
+				var i;
+				if(node.toNodeList.length==0){
+					return node._treeMapWeight;
+				} else {
+					node._treeMapWeight = 0;
+					for(i=0; node.toNodeList[i]!=null; i++){
+						node._treeMapWeight+=assignTreemapWeight(node.toNodeList[i]);
+					}
+				}
+				return node._treeMapWeight;
+			}
+			assignTreemapWeight(tree.nodeList[0]);
+		}
+
+		tree.nodeList[0]._outRectangle = new Rectangle(0,0,frame.width,frame.height);
+		tree.nodeList[0]._inRectangle = TreeDraw._inRectFromOutRect(tree.nodeList[0]._outRectangle);
+		TreeDraw._generateRectangles(tree.nodeList[0]);
+
+		frame.memory.focusFrame = TreeDraw._expandRect(tree.nodeList[0]._outRectangle);
+		frame.memory.kx = frame.width/frame.memory.focusFrame.width;
+		frame.memory.mx = - frame.memory.kx*frame.memory.focusFrame.x;
+		frame.memory.ky = frame.height/frame.memory.focusFrame.height;
+		frame.memory.my = - frame.memory.ky*frame.memory.focusFrame.y;
+
+		setText('black', 12);
+		tree.nodeList.forEach(function(node){
+			node._textWidth = getTextW(node.name);
+		});
+	}
+
+	//TreeDraw._generateRectangles(tree.nodeList[0]);
+
+	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
+		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(1, tree.nLevels):colorList;
+		frame.memory.colorList = colorList;
+	}
+
+	var kxF = frame.width/frame.memory.focusFrame.width;
+	var mxF = - kxF*frame.memory.focusFrame.x;
+	var kyF = frame.height/frame.memory.focusFrame.height;
+	var myF = - kyF*frame.memory.focusFrame.y;
+
+	var v = kxF>frame.memory.kx?0.05:0.1;
+	var antiv = 1-v;
+
+	frame.memory.kx = antiv*frame.memory.kx + v*kxF;
+	frame.memory.mx = antiv*frame.memory.mx + v*mxF;
+	frame.memory.ky = antiv*frame.memory.ky + v*kyF;
+	frame.memory.my = antiv*frame.memory.my + v*myF;
+	var kx = frame.memory.kx;
+	var mx = frame.memory.mx;
+	var ky = frame.memory.ky;
+	var my = frame.memory.my;
+
+	var tx = function(x){return kx*x + mx};
+	var ty = function(y){return ky*y + my};
+	
+
+	var x, y;
+	var margTextX,margTextY;
+	var textSize;
+	var exceedes;
+	var rect;
+	var overNode = null;
+
+	setStroke('black', 0.2);
+
+	context.save();
+	clipRectangle(frame.x, frame.y, frame.width, frame.height);
+
+	tree.nodeList.forEach(function(node){
+
+		//if(Math.random()<0.1) c.log(x, y, rect.width, rect.height, node.id, node.toNodeList.length);
+
+		rect = new Rectangle(tx(node._outRectangle.x), ty(node._outRectangle.y), node._outRectangle.width*kx, node._outRectangle.height*ky);
+
+		if(rect.width>4 && rect.height>3 && rect.x<frame.width && rect.getRight()>0 && rect.y<frame.height && rect.getBottom()>0){
+
+			x = Math.round(frame.x + rect.x)+0.5;
+			y = Math.round(frame.y + rect.y)+0.5;
+
+			setFill(frame.memory.actualColorList[node.level]);
+
+			if(fsRectM(x, y, Math.floor(rect.width), Math.floor(rect.height))) overNode = node;
+			if(rect.width>20){
+				margTextX = rect.width*TreeDraw.PROP_RECT_MARGIN*0.8;
+				margTextY = rect.height*TreeDraw.PROP_RECT_MARGIN*0.15;
+				textSize = rect.height*TreeDraw.PROP_RECT_LABEL-2;
+				if(textSize>=5){
+					setText('black', textSize);
+					exceedes =  (node._textWidth*textSize/12)>(rect.width-1.2*margTextX);
+					if(exceedes){
+						//context.save();
+						clipRectangle(x+margTextX, y+margTextY,rect.width-2*margTextX, textSize*2);
+					} 
+					fText(node.name, x+margTextX, y+margTextY);
+					if(exceedes) context.restore();
+				}
+			}
+		}
+	});
+
+	
+	if(overNode){
+		rect = new Rectangle(tx(overNode._outRectangle.x), ty(overNode._outRectangle.y), overNode._outRectangle.width*kx, overNode._outRectangle.height*ky);
+		x = Math.round(frame.x + rect.x)+0.5;
+		y = Math.round(frame.y + rect.y)+0.5;
+		setStroke('black', 2);
+		sRect(x, y, Math.floor(rect.width), Math.floor(rect.height))
+
+		if(MOUSE_DOWN && frame.containsPoint(mP)) frame.memory.focusFrame = TreeDraw._expandRect(overNode._outRectangle);
+	}
+
+	context.restore();
+	
+}
+TreeDraw._generateRectangles = function(node){
+	var weights = new NumberList();
+	node.toNodeList.forEach(function(node){
+		weights.push(node._treeMapWeight);
+	});
+	var rectangles = RectangleOperators.quadrification(node._inRectangle, weights, false, false);
+	node.toNodeList.forEach(function(child, i){
+		child._outRectangle = TreeDraw._reduceRect(rectangles[i]);
+		child._inRectangle = TreeDraw._inRectFromOutRect(child._outRectangle);
+		TreeDraw._generateRectangles(child);
+	});
+}
+TreeDraw._reduceRect = function(rect){
+	return new Rectangle(rect.x + rect.width*TreeDraw.PROP_RECT_REDUCTION_MARGIN, rect.y + rect.height*TreeDraw.PROP_RECT_REDUCTION_MARGIN, rect.width*(1-2*TreeDraw.PROP_RECT_REDUCTION_MARGIN), rect.height*(1-2*TreeDraw.PROP_RECT_REDUCTION_MARGIN) );
+}
+TreeDraw._expandRect = function(rect){
+	return new Rectangle(rect.x - rect.width*TreeDraw.PROP_RECT_EXPANTION_MARGIN, rect.y - rect.height*TreeDraw.PROP_RECT_EXPANTION_MARGIN, rect.width*(1+2*TreeDraw.PROP_RECT_EXPANTION_MARGIN), rect.height*(1+2*TreeDraw.PROP_RECT_EXPANTION_MARGIN) );
+}
+TreeDraw._inRectFromOutRect = function(rect){
+	return new Rectangle(rect.x + rect.width*TreeDraw.PROP_RECT_MARGIN, rect.y + rect.height*TreeDraw.PROP_RECT_LABEL, rect.width*(1-2*TreeDraw.PROP_RECT_MARGIN), rect.height*(1-TreeDraw.PROP_RECT_MARGIN-TreeDraw.PROP_RECT_LABEL) );
+}
+TreeDraw.PROP_RECT_MARGIN = 0.03;
+TreeDraw.PROP_RECT_LABEL = 0.2;
+TreeDraw.PROP_RECT_REDUCTION_MARGIN = 0.01;
+TreeDraw.PROP_RECT_EXPANTION_MARGIN = 0.05;
 
 /**
  *Static class that:
@@ -16345,7 +17529,7 @@ var _interactionCancelledFrame;
 var END_CYCLE_DELAY = 3000;
 
 window.addEventListener('load', function(){
-	c.log('Moebio Framework v2.1');
+	c.log('Moebio Framework v2.22');
 
  	if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
     	userAgent='IE';
@@ -16379,21 +17563,15 @@ window.addEventListener('load', function(){
 	if(canvas!=null){
 		removeDiv = document.getElementById('removeDiv');
 		removeDiv.style.display = 'none';
-		cH=canvas.height;
-		cW=canvas.width;
+
 		context = canvas.getContext('2d');
 		
-		//hiddenContext = CanvasAndContext.createInvisibleContext();
-		
-		cW = context.canvas.width  = window.innerWidth;
-		cH = context.canvas.height = window.innerHeight;
-		
-		cX = Math.floor(cW*0.5);
-		cY = Math.floor(cH*0.5);
+		_adjustCanvas();
 		
 		canvas.addEventListener("mousemove", _onMouse, false);
 		canvas.addEventListener("mousedown", _onMouse, false);
 		canvas.addEventListener("mouseup", _onMouse, false);
+
 		window.addEventListener("resize", onResize, false);
 		
 		startCycle();
@@ -16434,6 +17612,11 @@ function _onMouse(e) {
 }
 
 function onResize(e){
+	_adjustCanvas();
+	resizeWindow();
+}
+
+function _adjustCanvas(){
 	if(canvasResizeable==false) return;
 	
 	canvas.setAttribute('width', document.body.clientWidth);
@@ -16444,9 +17627,8 @@ function onResize(e){
 	
 	cX = Math.floor(cW*0.5);
 	cY = Math.floor(cH*0.5);
-	
-	resizeWindow();
 }
+
 
 function clearContext(){
 	context.clearRect(0, 0, cW, cH);
@@ -16527,6 +17709,7 @@ function addInteractionEventListener(eventType, onFunction, target){//TODO: list
 			if(!_wheelActivated) activateWheel();
 			break;
 		case 'keydown':
+		case 'keyup':
 			if(!_keyboardActivated) activateKeyboard();
 			break;
 	}
@@ -16581,6 +17764,7 @@ function setDivPosition(div, x, y){
 function activateKeyboard(){
 	_keyboardActivated = true;
 	document.onkeydown = onKey;
+	document.onkeyup = onKey;
 }
 function onKey(e){
 	onCanvasEvent(e);

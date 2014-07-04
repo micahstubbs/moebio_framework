@@ -694,6 +694,11 @@ List.prototype.toNumberList=function(){
 	return numberList;
 }
 
+/**
+ * conert a list into a StringList
+ * @return {StringList}
+ * tags:conversion
+ */
 List.prototype.toStringList=function(){
 	var i;
 	var stringList = new StringList();

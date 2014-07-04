@@ -145,6 +145,23 @@ ListOperators.reverse = function(list){
 	return list.getReversed();
 }
 
+/**
+ * using a table with two columns as a dictionary (first list elements to be read, second list result elements), translates a list
+ * @param  {List} list to transalte
+ * @param  {Table} dictionary table with two lists
+ *
+ * @param {Object} nullElement element to place in case no translation is found
+ * @return {List}
+ * tags:
+ */
+ListOperators.translateWithDictionary = function(list, dictionary, nullElement){
+	var newList = new List();
+	list.forEach(function(element, i){
+		index = dictionary[0].indexOf(element);
+		newList[i] = index==-1?nullElement:dictionary[1][index];
+	});
+	return newList.getImproved();
+}
 
 
 // ListOperators.getIndexesOfElements=function(list, elements){

@@ -41,13 +41,16 @@ ColorListGenerators.createColorListWithSingleColor=function(nColors, color){
 
 
 /**
- * Creates a ColorList
+ * Creates a ColorList of categorical colors
  * @param {Number} mode 0:simple picking from color scale function, 1:random (with seed), 2:, 3:, 4:, 5:evolutionary algorithm, guarantees non consecutive similar colors
  * @param {Number} nColors
+ * 
  * @param {Function} colorScaleFunction
+ * @param {Number} alpha transparency
  * ®return {ColorList} ColorList with categorical colors
+ * tags:
  */
-ColorListGenerators.createCategoricalColors=function(mode, nColors, colorScaleFunction){
+ColorListGenerators.createCategoricalColors=function(mode, nColors, colorScaleFunction, alpha){
 	colorScaleFunction = colorScaleFunction==null?ColorScales.temperature:colorScaleFunction;
 	
 	var i;
@@ -96,6 +99,12 @@ ColorListGenerators.createCategoricalColors=function(mode, nColors, colorScaleFu
 				colorList.push(colorScaleFunction((1/nColors) + randomPositions[i]/(nColors+1))); //TODO: make more efficient by pre-nuilding the colorList
 			}
 			break;
+	}
+
+	if(alpha){
+		colorList.forEach(function(color, i){
+			colorList[i] = ColorOperators.addAlpha(color, alpha);
+		});
 	}
 	
 	return colorList;

@@ -720,6 +720,11 @@ List.prototype.toNumberList=function(){
 	return numberList;
 }
 
+/**
+ * conert a list into a StringList
+ * @return {StringList}
+ * tags:conversion
+ */
 List.prototype.toStringList=function(){
 	var i;
 	var stringList = new StringList();
@@ -6506,13 +6511,16 @@ ColorListGenerators.createColorListWithSingleColor=function(nColors, color){
 
 
 /**
- * Creates a ColorList
+ * Creates a ColorList of categorical colors
  * @param {Number} mode 0:simple picking from color scale function, 1:random (with seed), 2:, 3:, 4:, 5:evolutionary algorithm, guarantees non consecutive similar colors
  * @param {Number} nColors
+ * 
  * @param {Function} colorScaleFunction
+ * @param {Number} alpha transparency
  * ®return {ColorList} ColorList with categorical colors
+ * tags:
  */
-ColorListGenerators.createCategoricalColors=function(mode, nColors, colorScaleFunction){
+ColorListGenerators.createCategoricalColors=function(mode, nColors, colorScaleFunction, alpha){
 	colorScaleFunction = colorScaleFunction==null?ColorScales.temperature:colorScaleFunction;
 	
 	var i;
@@ -6561,6 +6569,12 @@ ColorListGenerators.createCategoricalColors=function(mode, nColors, colorScaleFu
 				colorList.push(colorScaleFunction((1/nColors) + randomPositions[i]/(nColors+1))); //TODO: make more efficient by pre-nuilding the colorList
 			}
 			break;
+	}
+
+	if(alpha){
+		colorList.forEach(function(color, i){
+			colorList[i] = ColorOperators.addAlpha(color, alpha);
+		});
 	}
 	
 	return colorList;
@@ -7458,6 +7472,23 @@ ListOperators.reverse = function(list){
 	return list.getReversed();
 }
 
+/**
+ * using a table with two columns as a dictionary (first list elements to be read, second list result elements), translates a list
+ * @param  {List} list to transalte
+ * @param  {Table} dictionary table with two lists
+ *
+ * @param {Object} nullElement element to place in case no translation is found
+ * @return {List}
+ * tags:
+ */
+ListOperators.translateWithDictionary = function(list, dictionary, nullElement){
+	var newList = new List();
+	list.forEach(function(element, i){
+		index = dictionary[0].indexOf(element);
+		newList[i] = index==-1?nullElement:dictionary[1][index];
+	});
+	return newList.getImproved();
+}
 
 
 // ListOperators.getIndexesOfElements=function(list, elements){
@@ -17315,7 +17346,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights){
 	//TreeDraw._generateRectangles(tree.nodeList[0]);
 
 	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
-		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(1, tree.nLevels):colorList;
+		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(0, tree.nLevels, ColorScales.grayToOrange, 0.1):colorList;
 		frame.memory.colorList = colorList;
 	}
 
@@ -17354,8 +17385,6 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights){
 
 	tree.nodeList.forEach(function(node){
 
-		//if(Math.random()<0.1) c.log(x, y, rect.width, rect.height, node.id, node.toNodeList.length);
-
 		rect = new Rectangle(tx(node._outRectangle.x), ty(node._outRectangle.y), node._outRectangle.width*kx, node._outRectangle.height*ky);
 
 		if(rect.width>4 && rect.height>3 && rect.x<frame.width && rect.getRight()>0 && rect.y<frame.height && rect.getBottom()>0){
@@ -17363,7 +17392,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights){
 			x = Math.round(frame.x + rect.x)+0.5;
 			y = Math.round(frame.y + rect.y)+0.5;
 
-			setFill(frame.memory.actualColorList[node.level]);
+			setFill(frame.memory.actualColorList[node.level%frame.memory.actualColorList.length]);
 
 			if(fsRectM(x, y, Math.floor(rect.width), Math.floor(rect.height))) overNode = node;
 			if(rect.width>20){
