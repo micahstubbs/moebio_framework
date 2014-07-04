@@ -27,6 +27,17 @@ ObjectOperators.fusionObjects = function(object, objectToFusion){
 
 }
 
+/**
+ * replaces an object by another if it matches the obectToReplace
+ * @param  {Object} object to be replaced if equals to obectToReplace
+ * @param  {Object} obectToReplace object to check
+ * @param  {Object} objectToPlace to be delivered instead of given object (in case the object matches obectToReplace)
+ * @return {Object} original object or replaced object
+ * tags:
+ */
+ObjectOperators.replaceObject = function(object, obectToReplace, objectToPlace){
+	return object==obectToReplace?objectToPlace:object;
+}
 
 
 

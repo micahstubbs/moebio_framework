@@ -133,10 +133,14 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
  * @return {List}
  * tags:
  */
-List.prototype.getImproved=function(){
+List.prototype.getImproved=function(){//TODO: still doesn't solve tha case of a list with several list of different types
 	if(this.length==0) return this;
 	var typeOfElements = this.getTypeOfElements();
+	
+	//var typeOfElements=="" allAreLists = … finish this
+	
 	//c.log('List.getImproved | typeOfElements: ['+typeOfElements+']');
+	
 	if(typeOfElements=="" || typeOfElements=="undefined") return this;
 	
 	switch(typeOfElements){
@@ -154,6 +158,7 @@ List.prototype.getImproved=function(){
 		case "List":
 		case "DateList":
 		case "IntervalList":
+		case "StringList":
 		case "Table":
 			var newList = Table.fromArray(this, false);
 			break;
@@ -4404,6 +4409,17 @@ ObjectOperators.fusionObjects = function(object, objectToFusion){
 
 }
 
+/**
+ * replaces an object by another if it matches the obectToReplace
+ * @param  {Object} object to be replaced if equals to obectToReplace
+ * @param  {Object} obectToReplace object to check
+ * @param  {Object} objectToPlace to be delivered instead of given object (in case the object matches obectToReplace)
+ * @return {Object} original object or replaced object
+ * tags:
+ */
+ObjectOperators.replaceObject = function(object, obectToReplace, objectToPlace){
+	return object==obectToReplace?objectToPlace:object;
+}
 
 
 
@@ -17289,6 +17305,7 @@ TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin){
  * 
  * @param  {ColorList} colorList
  * @param {NumberList} weights weights of leaves
+ * @return {Node} selected node
  * tags:draw
  */
 TreeDraw.drawTreemap = function(frame, tree, colorList, weights){
@@ -17299,7 +17316,8 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights){
 			tree:tree,
 			width:frame.width,
 			height:frame.height,
-			weights:weights
+			weights:weights,
+			nodeSelected:null
 		}
 
 		if(weights==null){
@@ -17421,10 +17439,15 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights){
 		setStroke('black', 2);
 		sRect(x, y, Math.floor(rect.width), Math.floor(rect.height))
 
-		if(MOUSE_DOWN && frame.containsPoint(mP)) frame.memory.focusFrame = TreeDraw._expandRect(overNode._outRectangle);
+		if(MOUSE_DOWN && frame.containsPoint(mP)) {
+			frame.memory.focusFrame = TreeDraw._expandRect(overNode._outRectangle);
+			frame.memory.nodeSelected = overNode;
+		}
 	}
 
 	context.restore();
+
+	return frame.memory.nodeSelected;
 	
 }
 TreeDraw._generateRectangles = function(node){

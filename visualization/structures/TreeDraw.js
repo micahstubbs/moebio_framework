@@ -42,6 +42,7 @@ TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin){
  * 
  * @param  {ColorList} colorList
  * @param {NumberList} weights weights of leaves
+ * @return {Node} selected node
  * tags:draw
  */
 TreeDraw.drawTreemap = function(frame, tree, colorList, weights){
@@ -52,7 +53,8 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights){
 			tree:tree,
 			width:frame.width,
 			height:frame.height,
-			weights:weights
+			weights:weights,
+			nodeSelected:null
 		}
 
 		if(weights==null){
@@ -174,10 +176,15 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights){
 		setStroke('black', 2);
 		sRect(x, y, Math.floor(rect.width), Math.floor(rect.height))
 
-		if(MOUSE_DOWN && frame.containsPoint(mP)) frame.memory.focusFrame = TreeDraw._expandRect(overNode._outRectangle);
+		if(MOUSE_DOWN && frame.containsPoint(mP)) {
+			frame.memory.focusFrame = TreeDraw._expandRect(overNode._outRectangle);
+			frame.memory.nodeSelected = overNode;
+		}
 	}
 
 	context.restore();
+
+	return frame.memory.nodeSelected;
 	
 }
 TreeDraw._generateRectangles = function(node){
