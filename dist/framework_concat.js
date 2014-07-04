@@ -17312,6 +17312,9 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights){
 	var change = frame.memory==null || frame.memory.tree!=tree || frame.memory.width!=frame.width || frame.memory.height!=frame.height || frame.memory.weights!=weights;
 
 	if(change){
+		var changeInTree = frame.memory!=null && frame.memory.tree!=null!=tree;
+		var changeInWeights = frame.memory!=null && frame.memory.weights!=weights;
+		
 		frame.memory = {
 			tree:tree,
 			width:frame.width,
@@ -17326,7 +17329,8 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights){
 			});
 		} else {
 			
-			var leaves = tree.getLeaves();
+			var leaves = (!changeInTree && frame.memory.leaves)?frame.memory.leaves:tree.getLeaves();
+			frame.memory.leaves = leaves;
 			leaves.forEach(function(node, i){
 				node._treeMapWeight = weights[i];
 			});
@@ -17358,6 +17362,12 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights){
 		setText('black', 12);
 		tree.nodeList.forEach(function(node){
 			node._textWidth = getTextW(node.name);
+		});
+	}
+
+	if(frame.memory.followingWeights){
+		tree.nodeList.forEach(function(node){
+			node._treeMapWeight = node.descentWeight;
 		});
 	}
 
@@ -17451,11 +17461,15 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights){
 	
 }
 TreeDraw._generateRectangles = function(node){
+
 	var weights = new NumberList();
 	node.toNodeList.forEach(function(node){
 		weights.push(node._treeMapWeight);
 	});
+	
 	var rectangles = RectangleOperators.quadrification(node._inRectangle, weights, false, false);
+	//var rectangles = RectangleOperators.packingRectangles(weights, 5, node._inRectangle)
+
 	node.toNodeList.forEach(function(child, i){
 		child._outRectangle = TreeDraw._reduceRect(rectangles[i]);
 		child._inRectangle = TreeDraw._inRectFromOutRect(child._outRectangle);
