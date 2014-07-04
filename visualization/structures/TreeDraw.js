@@ -152,7 +152,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights){
 
 		rect = new Rectangle(tx(node._outRectangle.x), ty(node._outRectangle.y), node._outRectangle.width*kx, node._outRectangle.height*ky);
 
-		if(rect.width>4 && rect.height>3 && rect.x<frame.width && rect.getRight()>0 && rect.y<frame.height && rect.getBottom()>0){
+		if(rect.width>5 && rect.height>4 && rect.x<frame.width && rect.getRight()>0 && rect.y<frame.height && rect.getBottom()>0){
 
 			x = Math.round(frame.x + rect.x)+0.5;
 			y = Math.round(frame.y + rect.y)+0.5;
@@ -197,6 +197,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights){
 	return frame.memory.nodeSelected;
 	
 }
+
 TreeDraw._generateRectangles = function(node){
 
 	var weights = new NumberList();
