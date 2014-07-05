@@ -7,12 +7,20 @@
 */
 function ColorListGenerators(){};
 
-
-ColorListGenerators.createColorListFromNumberList=function(numberList, colorScaleFunction, mode){
+/**
+ * create a colorList based on a colorScale and values from a numberList (that will be normalized)
+ * @param  {NumberList} numberList
+ * @param  {ColorScale} colorScale
+ * @param  {Number} mode 0:normalize numberList
+ * @return {ColorList}
+ * tags:
+ */
+ColorListGenerators.createColorListFromNumberList=function(numberList, colorScale, mode){
 	mode = mode==null?0:mode;
 	
 	var colorList = new ColorList();
 	var newNumberList;
+	var i;
 	
 	switch(mode){
 		case 0://0 to max
@@ -24,9 +32,10 @@ ColorListGenerators.createColorListFromNumberList=function(numberList, colorScal
 			break;
 	}
 	
-	for(var i=0; newNumberList[i]!=null; i++){
-		colorList.push(colorScaleFunction(newNumberList[i]));
+	for(i=0; newNumberList[i]!=null; i++){
+		colorList.push(colorScale(newNumberList[i]));
 	}
+	
 	return colorList;
 }
 
@@ -45,9 +54,9 @@ ColorListGenerators.createColorListWithSingleColor=function(nColors, color){
  * @param {Number} mode 0:simple picking from color scale function, 1:random (with seed), 2:, 3:, 4:, 5:evolutionary algorithm, guarantees non consecutive similar colors
  * @param {Number} nColors
  * 
- * @param {Function} colorScaleFunction
+ * @param {ColorScale} colorScaleFunction
  * @param {Number} alpha transparency
- * ®return {ColorList} ColorList with categorical colors
+ * @return {ColorList} ColorList with categorical colors
  * tags:
  */
 ColorListGenerators.createCategoricalColors=function(mode, nColors, colorScaleFunction, alpha){
