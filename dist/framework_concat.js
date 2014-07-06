@@ -15603,7 +15603,7 @@ IntervalTableDraw._isOnShape=function(prevPoint, point, prevYsup, newYsup, offX,
 
 
 
-IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, center, radius, r0, colors, texts, returnHovered, angles){
+IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, center, radius, r0, colors, texts, returnHovered, angles, angle0){
 	var nElements = intervalsFlowTable.length;
 	var i;
 	var j;
@@ -15612,6 +15612,7 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 	center = center==null?new Point(100,100):center;
 	radius = radius==null?200:radius;
 	r0 = r0==null?10:r0;
+	angle0 = angle0==null?0:angle0;
 	
 	var nCols = intervalsFlowTable[0].length;
 	var dA = TwoPi/nCols;
@@ -15623,7 +15624,6 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 	var lastIntervalList = intervalsFlowTable[nElements-1];
 	var interval;
 	
-	//var a = angles==null?0:angles[0];
 	var r = r0;
 	
 	var prevPoint;
@@ -15662,7 +15662,7 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 		
 		context.beginPath();
 		
-		point = new Point(angles==null?0:angles[0], (1-intervalList[0].y)*dR+r0);
+		point = new Point(angles==null?0:angles[0] + angle0, (1-intervalList[0].y)*dR+r0);
 		context.moveTo(point.y*Math.cos(point.x)+center.x, point.y*Math.sin(point.x)+center.y);
 		
 		prevPoint = point;
@@ -15670,7 +15670,7 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 		for(j=1;j<=nCols;j++){
 
 			interval = intervalList[j%nCols];
-			point = new Point(angles==null?j*dA:angles[j%nCols], (1-interval.y)*dR+r0);
+			point = new Point(angles==null?j*dA:angles[j%nCols] + angle0, (1-interval.y)*dR+r0);
 			
 			nR = prevPoint.y/cosOffA;
 			nR2 = point.y/cosOffA;
@@ -15702,12 +15702,12 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 			
 		}
 		
-		point = new Point(angles==null?0:angles[0], (1-intervalList[0].x)*dR+r0);
+		point = new Point(angles==null?0:angles[0] + angle0, (1-intervalList[0].x)*dR+r0);
 		context.lineTo(point.y*Math.cos(point.x)+center.x, point.y*Math.sin(point.x)+center.y);
 		prevPoint = point;
 		
 		for(j=nCols-1;j>=0;j--){
-			point = new Point(angles==null?j*dA:angles[j], (1-intervalList[j].x)*dR+r0);
+			point = new Point(angles==null?j*dA:angles[j] + angle0, (1-intervalList[j].x)*dR+r0);
 			
 			nR = prevPoint.y/cosOffA;
 			nR2 = point.y/cosOffA;
@@ -15719,21 +15719,14 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 			prevPoint = point;
 		}
 		
-		point = new Point(angles==null?0:angles[0], (1-intervalList[0].x)*dR+r0);
+		point = new Point(angles==null?0:angles[0] + angle0, (1-intervalList[0].x)*dR+r0);
 		context.lineTo(point.y*Math.cos(point.x)+center.x, point.y*Math.sin(point.x)+center.y);
 		
 		context.fill();
 		
 	}
 	
-	for(i=0;filteredTexts[i]!=null;i++){
-		// DrawTexts.setContextTextProperties('black', textsSizes[i], 'Arial', 'center', 'middle');
-		// context.save();
-		// context.translate(textsX[i], textsY[i]);
-		// context.rotate(textsAngles[i]);
-		// context.fillText(filteredTexts[i], 0, 0);
-		// context.restore();
-		
+	for(i=0;filteredTexts[i]!=null;i++){		
 		setText('black', textsSizes[i], null, 'center', 'middle');
 		fTextRotated(filteredTexts[i], textsX[i], textsY[i], textsAngles[i]);
 	}
@@ -16496,15 +16489,13 @@ NumberTableDraw._drawPartialFlow=function(frame, flowIntervals, labels, colors, 
 
 /**
  * draws a circular steamgraph Without labels
- * @param  {Rectangle} frame
- * @param  {NumberTable} numberTable
+ * @param {Rectangle} frame
+ * @param {NumberTable} numberTable
  *
  * @param {Boolean} normalized normalize each column, making the graph of constant height
  * @param {Boolean} sorted sort flow polygons
- * @param {Number} intervalsFactor number between 0 and 1, factors the height of flow polygons 
- * @param {Boolean} bezier draws bezier (soft) curves
- * @param  {ColorList} colorList colors of polygons
- * @param  {Number} margin
+ * @param {Number} intervalsFactor number between 0 and 1, factors the height of flow polygons
+ * @param {ColorList} colorList colors of polygons
  * @return {NumberList} list of positions of elements on clicked coordinates
  * tags:draw
  */
@@ -16528,24 +16519,49 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
 			height:frame.height,
 			radius:Math.min(frame.width, frame.height)*0.46,
 			r0:Math.min(frame.width, frame.height)*0.05,
-			angles:new NumberList()
+			angles:new NumberList(),
+			zoom:1,
+			angle0:0
 		}
 
 		var dA = TwoPi/numberTable[0].length;
 		numberTable[0].forEach(function(val, i){
 			frame.memory.angles[i] = i*dA;
 		});
-
-		c.log('frame.memory.angles', frame.memory.angles);
-
-
 	}
 	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
 		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(1, numberTable.length):colorList;
 		frame.memory.colorList = colorList;
 	}
 
-	IntervalTableDraw.drawCircularIntervalsFlowTable(frame.memory.flowIntervals, frame.getCenter(), frame.memory.radius, frame.memory.r0, frame.memory.actualColorList, frame.memory.names, true, frame.memory.angles);
+	if(MOUSE_DOWN && frame.containsPoint(mP)){
+		frame.memory.downX = mX;
+		frame.memory.downY = mY;
+		frame.memory.pressed = true;
+		frame.memory.zoomPressed = frame.memory.zoom;
+		frame.memory.anglePressed = frame.memory.angle0;
+	}
+	if(MOUSE_UP) frame.memory.pressed = false;
+	if(frame.memory.pressed){
+		var center = frame.getCenter();
+		var dx0 = frame.memory.downX-center.x;
+		var dy0 = frame.memory.downY-center.y;
+		var d0 = Math.sqrt(Math.pow(dx0, 2) + Math.pow(dy0, 2));
+		var dx1 = mX-center.x;
+		var dy1 = mY-center.y;
+		var d1 = Math.sqrt(Math.pow(dx1, 2) + Math.pow(dy1, 2));
+		frame.memory.zoom = frame.memory.zoomPressed*((d1+5)/(d0+5));
+		var a0 = Math.atan2(dy0, dx0);
+		var a1 = Math.atan2(dy1, dx1);
+		frame.memory.angle0 = frame.memory.anglePressed + a1 - a0;
+	}
+
+	context.save();
+	clipRectangle(frame.x, frame.y, frame.width, frame.height);
+
+	IntervalTableDraw.drawCircularIntervalsFlowTable(frame.memory.flowIntervals, frame.getCenter(), frame.memory.radius*frame.memory.zoom, frame.memory.r0, frame.memory.actualColorList, frame.memory.names, true, frame.memory.angles, frame.memory.angle0);
+
+	context.restore();
 }
 
 

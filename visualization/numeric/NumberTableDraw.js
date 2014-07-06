@@ -572,15 +572,13 @@ NumberTableDraw._drawPartialFlow=function(frame, flowIntervals, labels, colors, 
 
 /**
  * draws a circular steamgraph Without labels
- * @param  {Rectangle} frame
- * @param  {NumberTable} numberTable
+ * @param {Rectangle} frame
+ * @param {NumberTable} numberTable
  *
  * @param {Boolean} normalized normalize each column, making the graph of constant height
  * @param {Boolean} sorted sort flow polygons
- * @param {Number} intervalsFactor number between 0 and 1, factors the height of flow polygons 
- * @param {Boolean} bezier draws bezier (soft) curves
- * @param  {ColorList} colorList colors of polygons
- * @param  {Number} margin
+ * @param {Number} intervalsFactor number between 0 and 1, factors the height of flow polygons
+ * @param {ColorList} colorList colors of polygons
  * @return {NumberList} list of positions of elements on clicked coordinates
  * tags:draw
  */
@@ -604,24 +602,49 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
 			height:frame.height,
 			radius:Math.min(frame.width, frame.height)*0.46,
 			r0:Math.min(frame.width, frame.height)*0.05,
-			angles:new NumberList()
+			angles:new NumberList(),
+			zoom:1,
+			angle0:0
 		}
 
 		var dA = TwoPi/numberTable[0].length;
 		numberTable[0].forEach(function(val, i){
 			frame.memory.angles[i] = i*dA;
 		});
-
-		c.log('frame.memory.angles', frame.memory.angles);
-
-
 	}
 	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
 		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(1, numberTable.length):colorList;
 		frame.memory.colorList = colorList;
 	}
 
-	IntervalTableDraw.drawCircularIntervalsFlowTable(frame.memory.flowIntervals, frame.getCenter(), frame.memory.radius, frame.memory.r0, frame.memory.actualColorList, frame.memory.names, true, frame.memory.angles);
+	if(MOUSE_DOWN && frame.containsPoint(mP)){
+		frame.memory.downX = mX;
+		frame.memory.downY = mY;
+		frame.memory.pressed = true;
+		frame.memory.zoomPressed = frame.memory.zoom;
+		frame.memory.anglePressed = frame.memory.angle0;
+	}
+	if(MOUSE_UP) frame.memory.pressed = false;
+	if(frame.memory.pressed){
+		var center = frame.getCenter();
+		var dx0 = frame.memory.downX-center.x;
+		var dy0 = frame.memory.downY-center.y;
+		var d0 = Math.sqrt(Math.pow(dx0, 2) + Math.pow(dy0, 2));
+		var dx1 = mX-center.x;
+		var dy1 = mY-center.y;
+		var d1 = Math.sqrt(Math.pow(dx1, 2) + Math.pow(dy1, 2));
+		frame.memory.zoom = frame.memory.zoomPressed*((d1+5)/(d0+5));
+		var a0 = Math.atan2(dy0, dx0);
+		var a1 = Math.atan2(dy1, dx1);
+		frame.memory.angle0 = frame.memory.anglePressed + a1 - a0;
+	}
+
+	context.save();
+	clipRectangle(frame.x, frame.y, frame.width, frame.height);
+
+	IntervalTableDraw.drawCircularIntervalsFlowTable(frame.memory.flowIntervals, frame.getCenter(), frame.memory.radius*frame.memory.zoom, frame.memory.r0, frame.memory.actualColorList, frame.memory.names, true, frame.memory.angles, frame.memory.angle0);
+
+	context.restore();
 }
 
 
