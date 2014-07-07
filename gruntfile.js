@@ -35,27 +35,21 @@ module.exports = function (grunt) {
         }
     },
     watch: {
-        js:  { files: watchedFiles, tasks: [ 'buildFileList', 'concat', 'uglify' ] },
+        js:  { files: watchedFiles, tasks: [ 'buildFileList', 'concat', 'uglify', 'copy' ] },
          
-    }
-    /*
-    ,
+    },
 
     copy: {
-      main: {
+      spiral: {
+        src: 'dist/framework_concat.js',
+        dest: '../spiral/_dev/client/angularSpiral/app/scripts/classes/framework_concat.js'
+      }, 
+      spiralMin: {
         src: 'dist/framework_concat.min.js',
-        dest: '../spiral/_dev/client/angularSpiral/app/scripts/classes/moebioFramework.min.js'
-      },
-      onSpiralCanvas: {
-        src: 'dist/framework_concat.min.js',
-        dest: '../SpiralCanvas/classes/moebioFramework.min.js',
-      },
-      onGeoProspective: {
-        src: 'dist/framework_concat.min.js',
-        dest: '../Geoprospective/classes/moebioFramework.min.js',
-      },
+        dest: '../spiral/_dev/client/angularSpiral/app/scripts/classes/framework_concat.min.js'
+      }
     }
-    */
+    
 });
 
 // load plugins
@@ -65,7 +59,7 @@ grunt.loadNpmTasks('grunt-contrib-uglify');
 grunt.loadNpmTasks('grunt-contrib-copy');
 
 // register at least this one task
-grunt.registerTask('default', [ 'buildFileList', 'concat', 'uglify' ]);
+grunt.registerTask('default', [ 'buildFileList', 'concat', 'uglify', 'copy' ]);
 
 
 // test task
