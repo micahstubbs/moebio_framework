@@ -133,10 +133,14 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
  * @return {List}
  * tags:
  */
-List.prototype.getImproved=function(){
+List.prototype.getImproved=function(){//TODO: still doesn't solve tha case of a list with several list of different types
 	if(this.length==0) return this;
 	var typeOfElements = this.getTypeOfElements();
+	
+	//var typeOfElements=="" allAreLists = … finish this
+	
 	//c.log('List.getImproved | typeOfElements: ['+typeOfElements+']');
+	
 	if(typeOfElements=="" || typeOfElements=="undefined") return this;
 	
 	switch(typeOfElements){
@@ -154,6 +158,7 @@ List.prototype.getImproved=function(){
 		case "List":
 		case "DateList":
 		case "IntervalList":
+		case "StringList":
 		case "Table":
 			var newList = Table.fromArray(this, false);
 			break;
@@ -668,11 +673,18 @@ List.prototype.getFirstElementByName=function(name, returnIndex){
 	return null;
 }
 
+/**
+ * get first elemenet that has some property with a given value
+ * @param  {String} propertyName name of property
+ * @param  {Object} value value of property
+ * @return {Object}
+ * tags:
+ */
 List.prototype.getFirstElementByPropertyValue=function(propertyName, value){
 	for(var i=0; this[i]!=null; i++){
 		if(this[i][propertyName]==value) return this[i];
 	}
-	return returnIndex?-1:null;
+	return null;
 }
 
 List.prototype.indexOfByPropertyValue=function(propertyName, value){
@@ -4404,6 +4416,17 @@ ObjectOperators.fusionObjects = function(object, objectToFusion){
 
 }
 
+/**
+ * replaces an object by another if it matches the obectToReplace
+ * @param  {Object} object to be replaced if equals to obectToReplace
+ * @param  {Object} obectToReplace object to check
+ * @param  {Object} objectToPlace to be delivered instead of given object (in case the object matches obectToReplace)
+ * @return {Object} original object or replaced object
+ * tags:
+ */
+ObjectOperators.replaceObject = function(object, obectToReplace, objectToPlace){
+	return object==obectToReplace?objectToPlace:object;
+}
 
 
 
@@ -6477,12 +6500,20 @@ ColorGenerators.randomColor=function(alpha){
 */
 function ColorListGenerators(){};
 
-
-ColorListGenerators.createColorListFromNumberList=function(numberList, colorScaleFunction, mode){
+/**
+ * create a colorList based on a colorScale and values from a numberList (that will be normalized)
+ * @param  {NumberList} numberList
+ * @param  {ColorScale} colorScale
+ * @param  {Number} mode 0:normalize numberList
+ * @return {ColorList}
+ * tags:
+ */
+ColorListGenerators.createColorListFromNumberList=function(numberList, colorScale, mode){
 	mode = mode==null?0:mode;
 	
 	var colorList = new ColorList();
 	var newNumberList;
+	var i;
 	
 	switch(mode){
 		case 0://0 to max
@@ -6494,9 +6525,10 @@ ColorListGenerators.createColorListFromNumberList=function(numberList, colorScal
 			break;
 	}
 	
-	for(var i=0; newNumberList[i]!=null; i++){
-		colorList.push(colorScaleFunction(newNumberList[i]));
+	for(i=0; newNumberList[i]!=null; i++){
+		colorList.push(colorScale(newNumberList[i]));
 	}
+	
 	return colorList;
 }
 
@@ -6515,9 +6547,9 @@ ColorListGenerators.createColorListWithSingleColor=function(nColors, color){
  * @param {Number} mode 0:simple picking from color scale function, 1:random (with seed), 2:, 3:, 4:, 5:evolutionary algorithm, guarantees non consecutive similar colors
  * @param {Number} nColors
  * 
- * @param {Function} colorScaleFunction
+ * @param {ColorScale} colorScaleFunction
  * @param {Number} alpha transparency
- * ®return {ColorList} ColorList with categorical colors
+ * @return {ColorList} ColorList with categorical colors
  * tags:
  */
 ColorListGenerators.createCategoricalColors=function(mode, nColors, colorScaleFunction, alpha){
@@ -8014,7 +8046,7 @@ TableOperators.getCountPairsMatrix = function(table){
  * tags:filter
  */
 TableOperators.filterTableByElementInList=function(table, nList, element){
-	if(table==null || nList==null) return;
+	if(table==null || !table.length>1 || nList==null) return;
 	if(element==null) return table;
 
 
@@ -15578,7 +15610,7 @@ IntervalTableDraw._isOnShape=function(prevPoint, point, prevYsup, newYsup, offX,
 
 
 
-IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, center, radius, r0, colors, texts, returnHovered, angles){
+IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, center, radius, r0, colors, texts, returnHovered, angles, angle0){
 	var nElements = intervalsFlowTable.length;
 	var i;
 	var j;
@@ -15587,6 +15619,7 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 	center = center==null?new Point(100,100):center;
 	radius = radius==null?200:radius;
 	r0 = r0==null?10:r0;
+	angle0 = angle0==null?0:angle0;
 	
 	var nCols = intervalsFlowTable[0].length;
 	var dA = TwoPi/nCols;
@@ -15598,7 +15631,6 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 	var lastIntervalList = intervalsFlowTable[nElements-1];
 	var interval;
 	
-	//var a = angles==null?0:angles[0];
 	var r = r0;
 	
 	var prevPoint;
@@ -15637,7 +15669,7 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 		
 		context.beginPath();
 		
-		point = new Point(angles==null?0:angles[0], (1-intervalList[0].y)*dR+r0);
+		point = new Point(angles==null?0:angles[0] + angle0, (1-intervalList[0].y)*dR+r0);
 		context.moveTo(point.y*Math.cos(point.x)+center.x, point.y*Math.sin(point.x)+center.y);
 		
 		prevPoint = point;
@@ -15645,7 +15677,7 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 		for(j=1;j<=nCols;j++){
 
 			interval = intervalList[j%nCols];
-			point = new Point(angles==null?j*dA:angles[j%nCols], (1-interval.y)*dR+r0);
+			point = new Point(angles==null?j*dA:angles[j%nCols] + angle0, (1-interval.y)*dR+r0);
 			
 			nR = prevPoint.y/cosOffA;
 			nR2 = point.y/cosOffA;
@@ -15677,12 +15709,12 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 			
 		}
 		
-		point = new Point(angles==null?0:angles[0], (1-intervalList[0].x)*dR+r0);
+		point = new Point(angles==null?0:angles[0] + angle0, (1-intervalList[0].x)*dR+r0);
 		context.lineTo(point.y*Math.cos(point.x)+center.x, point.y*Math.sin(point.x)+center.y);
 		prevPoint = point;
 		
 		for(j=nCols-1;j>=0;j--){
-			point = new Point(angles==null?j*dA:angles[j], (1-intervalList[j].x)*dR+r0);
+			point = new Point(angles==null?j*dA:angles[j] + angle0, (1-intervalList[j].x)*dR+r0);
 			
 			nR = prevPoint.y/cosOffA;
 			nR2 = point.y/cosOffA;
@@ -15694,21 +15726,14 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 			prevPoint = point;
 		}
 		
-		point = new Point(angles==null?0:angles[0], (1-intervalList[0].x)*dR+r0);
+		point = new Point(angles==null?0:angles[0] + angle0, (1-intervalList[0].x)*dR+r0);
 		context.lineTo(point.y*Math.cos(point.x)+center.x, point.y*Math.sin(point.x)+center.y);
 		
 		context.fill();
 		
 	}
 	
-	for(i=0;filteredTexts[i]!=null;i++){
-		// DrawTexts.setContextTextProperties('black', textsSizes[i], 'Arial', 'center', 'middle');
-		// context.save();
-		// context.translate(textsX[i], textsY[i]);
-		// context.rotate(textsAngles[i]);
-		// context.fillText(filteredTexts[i], 0, 0);
-		// context.restore();
-		
+	for(i=0;filteredTexts[i]!=null;i++){		
 		setText('black', textsSizes[i], null, 'center', 'middle');
 		fTextRotated(filteredTexts[i], textsX[i], textsY[i], textsAngles[i]);
 	}
@@ -16471,15 +16496,13 @@ NumberTableDraw._drawPartialFlow=function(frame, flowIntervals, labels, colors, 
 
 /**
  * draws a circular steamgraph Without labels
- * @param  {Rectangle} frame
- * @param  {NumberTable} numberTable
+ * @param {Rectangle} frame
+ * @param {NumberTable} numberTable
  *
  * @param {Boolean} normalized normalize each column, making the graph of constant height
  * @param {Boolean} sorted sort flow polygons
- * @param {Number} intervalsFactor number between 0 and 1, factors the height of flow polygons 
- * @param {Boolean} bezier draws bezier (soft) curves
- * @param  {ColorList} colorList colors of polygons
- * @param  {Number} margin
+ * @param {Number} intervalsFactor number between 0 and 1, factors the height of flow polygons
+ * @param {ColorList} colorList colors of polygons
  * @return {NumberList} list of positions of elements on clicked coordinates
  * tags:draw
  */
@@ -16503,24 +16526,49 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
 			height:frame.height,
 			radius:Math.min(frame.width, frame.height)*0.46,
 			r0:Math.min(frame.width, frame.height)*0.05,
-			angles:new NumberList()
+			angles:new NumberList(),
+			zoom:1,
+			angle0:0
 		}
 
 		var dA = TwoPi/numberTable[0].length;
 		numberTable[0].forEach(function(val, i){
 			frame.memory.angles[i] = i*dA;
 		});
-
-		c.log('frame.memory.angles', frame.memory.angles);
-
-
 	}
 	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
 		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(1, numberTable.length):colorList;
 		frame.memory.colorList = colorList;
 	}
 
-	IntervalTableDraw.drawCircularIntervalsFlowTable(frame.memory.flowIntervals, frame.getCenter(), frame.memory.radius, frame.memory.r0, frame.memory.actualColorList, frame.memory.names, true, frame.memory.angles);
+	if(MOUSE_DOWN && frame.containsPoint(mP)){
+		frame.memory.downX = mX;
+		frame.memory.downY = mY;
+		frame.memory.pressed = true;
+		frame.memory.zoomPressed = frame.memory.zoom;
+		frame.memory.anglePressed = frame.memory.angle0;
+	}
+	if(MOUSE_UP) frame.memory.pressed = false;
+	if(frame.memory.pressed){
+		var center = frame.getCenter();
+		var dx0 = frame.memory.downX-center.x;
+		var dy0 = frame.memory.downY-center.y;
+		var d0 = Math.sqrt(Math.pow(dx0, 2) + Math.pow(dy0, 2));
+		var dx1 = mX-center.x;
+		var dy1 = mY-center.y;
+		var d1 = Math.sqrt(Math.pow(dx1, 2) + Math.pow(dy1, 2));
+		frame.memory.zoom = frame.memory.zoomPressed*((d1+5)/(d0+5));
+		var a0 = Math.atan2(dy0, dx0);
+		var a1 = Math.atan2(dy1, dx1);
+		frame.memory.angle0 = frame.memory.anglePressed + a1 - a0;
+	}
+
+	context.save();
+	clipRectangle(frame.x, frame.y, frame.width, frame.height);
+
+	IntervalTableDraw.drawCircularIntervalsFlowTable(frame.memory.flowIntervals, frame.getCenter(), frame.memory.radius*frame.memory.zoom, frame.memory.r0, frame.memory.actualColorList, frame.memory.names, true, frame.memory.angles, frame.memory.angle0);
+
+	context.restore();
 }
 
 
@@ -17284,31 +17332,38 @@ TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin){
 
 /**
  * simple treemap visualization
- * @param  {Rectangle} frame
- * @param  {Tree} tree
+ * @param {Rectangle} frame
+ * @param {Tree} tree
  * 
- * @param  {ColorList} colorList
+ * @param {ColorList} colorList
  * @param {NumberList} weights weights of leaves
+ * @param {String} textColor if not provided will be calculated to contrast node color
+ * @return {Node} selected node
  * tags:draw
  */
-TreeDraw.drawTreemap = function(frame, tree, colorList, weights){
+TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 	var change = frame.memory==null || frame.memory.tree!=tree || frame.memory.width!=frame.width || frame.memory.height!=frame.height || frame.memory.weights!=weights;
 
 	if(change){
+		var changeInTree = frame.memory!=null && frame.memory.tree!=null!=tree;
+		var changeInWeights = frame.memory!=null && frame.memory.weights!=weights;
+		
 		frame.memory = {
 			tree:tree,
 			width:frame.width,
 			height:frame.height,
-			weights:weights
+			weights:weights,
+			nodeSelected:null
 		}
+
+		var leaves = (!changeInTree && frame.memory.leaves)?frame.memory.leaves:tree.getLeaves();
+		frame.memory.leaves = leaves;
 
 		if(weights==null){
 			tree.nodeList.forEach(function(node){
 				node._treeMapWeight = node.descentWeight;
 			});
 		} else {
-			
-			var leaves = tree.getLeaves();
 			leaves.forEach(function(node, i){
 				node._treeMapWeight = weights[i];
 			});
@@ -17343,12 +17398,66 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights){
 		});
 	}
 
-	//TreeDraw._generateRectangles(tree.nodeList[0]);
+	if(frame.memory.followingWeights){
+		tree.nodeList.forEach(function(node){
+			node._treeMapWeight = node.descentWeight;
+		});
+	}
 
 	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
 		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(0, tree.nLevels, ColorScales.grayToOrange, 0.1):colorList;
+		frame.memory.nodesColorList = new ColorList();
+		if(textColor==null) frame.memory.textsColorList = new ColorList();
+
+		//c.log('frame.memory.leaves.length', frame.memory.leaves.length);
+
+		if(frame.memory.actualColorList.length<=tree.nLevels){
+			tree.nodeList.forEach(function(node, i){
+				frame.memory.nodesColorList[i] = frame.memory.actualColorList[node.level%frame.memory.actualColorList.length];
+			});
+		} else if(frame.memory.actualColorList.length==frame.memory.leaves.length){
+			frame.memory.leaves.forEach(function(node, i){
+				node._color = frame.memory.actualColorList[i];
+				node._rgb = ColorOperators.colorStringToRGB(node._color);
+			});
+			var assignColor = function(node){
+				var i;
+				if(node.toNodeList.length==0) return;
+				
+				node._rgb = [0,0,0];
+				for(i=0; node.toNodeList[i]!=null; i++){
+					assignColor(node.toNodeList[i]);
+					node._rgb[0]+=node.toNodeList[i]._rgb[0];
+					node._rgb[1]+=node.toNodeList[i]._rgb[1];
+					node._rgb[2]+=node.toNodeList[i]._rgb[2];
+				}
+				node._rgb[0] = Math.floor(node._rgb[0]/node.toNodeList.length);
+				node._rgb[1] = Math.floor(node._rgb[1]/node.toNodeList.length);
+				node._rgb[2] = Math.floor(node._rgb[2]/node.toNodeList.length);
+			}
+			assignColor(tree.nodeList[0]);
+			tree.nodeList.forEach(function(node, i){
+				if(node._rgb && node._rgbF==null) node._rgbF = [node._rgb[0], node._rgb[1], node._rgb[2]];
+				frame.memory.nodesColorList[i] = 'rgb('+node._rgb[0]+','+node._rgb[1]+','+node._rgb[2]+')';
+			});
+		} else {
+			tree.nodeList.forEach(function(node, i){
+				frame.memory.nodesColorList[i] = frame.memory.actualColorList[i%frame.memory.actualColorList.length];
+			});
+		}
+
+		if(textColor==null){
+			var rgb;
+			tree.nodeList.forEach(function(node, i){
+				rgb = ColorOperators.colorStringToRGB(node._color);
+				frame.memory.textsColorList[i] = (rgb[0]+rgb[1]+rgb[2]>360)?'black':'white'
+			});
+		}
+
 		frame.memory.colorList = colorList;
 	}
+
+	if(textColor==null) textColor = 'black';
 
 	var kxF = frame.width/frame.memory.focusFrame.width;
 	var mxF = - kxF*frame.memory.focusFrame.x;
@@ -17377,33 +17486,43 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights){
 	var exceedes;
 	var rect;
 	var overNode = null;
+	var overI;
 
 	setStroke('black', 0.2);
 
 	context.save();
 	clipRectangle(frame.x, frame.y, frame.width, frame.height);
 
-	tree.nodeList.forEach(function(node){
+	tree.nodeList.forEach(function(node, i){
 
 		rect = new Rectangle(tx(node._outRectangle.x), ty(node._outRectangle.y), node._outRectangle.width*kx, node._outRectangle.height*ky);
 
-		if(rect.width>4 && rect.height>3 && rect.x<frame.width && rect.getRight()>0 && rect.y<frame.height && rect.getBottom()>0){
+		if(rect.width>5 && rect.height>4 && rect.x<frame.width && rect.getRight()>0 && rect.y<frame.height && rect.getBottom()>0){
 
 			x = Math.round(frame.x + rect.x)+0.5;
 			y = Math.round(frame.y + rect.y)+0.5;
 
-			setFill(frame.memory.actualColorList[node.level%frame.memory.actualColorList.length]);
+			if(node._rgbF){
+				node._rgbF[0] = 0.95*node._rgbF[0] + 0.05*node._rgb[0];
+				node._rgbF[1] = 0.95*node._rgbF[1] + 0.05*node._rgb[1];
+				node._rgbF[2] = 0.95*node._rgbF[2] + 0.05*node._rgb[2];
+				setFill('rgb('+Math.floor(node._rgbF[0])+','+Math.floor(node._rgbF[1])+','+Math.floor(node._rgbF[2])+')');
+			} else {
+				setFill(frame.memory.nodesColorList[i]);
+			}
 
-			if(fsRectM(x, y, Math.floor(rect.width), Math.floor(rect.height))) overNode = node;
+			if(fsRectM(x, y, Math.floor(rect.width), Math.floor(rect.height))){
+				overNode = node;
+				overI = i;
+			}
 			if(rect.width>20){
 				margTextX = rect.width*TreeDraw.PROP_RECT_MARGIN*0.8;
 				margTextY = rect.height*TreeDraw.PROP_RECT_MARGIN*0.15;
 				textSize = rect.height*TreeDraw.PROP_RECT_LABEL-2;
 				if(textSize>=5){
-					setText('black', textSize);
+					setText(textColor?textColor:frame.memory.textsColorList[i], textSize);
 					exceedes =  (node._textWidth*textSize/12)>(rect.width-1.2*margTextX);
 					if(exceedes){
-						//context.save();
 						clipRectangle(x+margTextX, y+margTextY,rect.width-2*margTextX, textSize*2);
 					} 
 					fText(node.name, x+margTextX, y+margTextY);
@@ -17418,21 +17537,31 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights){
 		rect = new Rectangle(tx(overNode._outRectangle.x), ty(overNode._outRectangle.y), overNode._outRectangle.width*kx, overNode._outRectangle.height*ky);
 		x = Math.round(frame.x + rect.x)+0.5;
 		y = Math.round(frame.y + rect.y)+0.5;
-		setStroke('black', 2);
+		setStroke(textColor?textColor:frame.memory.textsColorList[overI], 2);
 		sRect(x, y, Math.floor(rect.width), Math.floor(rect.height))
 
-		if(MOUSE_DOWN && frame.containsPoint(mP)) frame.memory.focusFrame = TreeDraw._expandRect(overNode._outRectangle);
+		if(MOUSE_DOWN && frame.containsPoint(mP)) {
+			frame.memory.focusFrame = TreeDraw._expandRect(overNode._outRectangle);
+			frame.memory.nodeSelected = overNode;
+		}
 	}
 
 	context.restore();
+
+	return frame.memory.nodeSelected;
 	
 }
+
 TreeDraw._generateRectangles = function(node){
+
 	var weights = new NumberList();
 	node.toNodeList.forEach(function(node){
 		weights.push(node._treeMapWeight);
 	});
+	
 	var rectangles = RectangleOperators.quadrification(node._inRectangle, weights, false, false);
+	//var rectangles = RectangleOperators.packingRectangles(weights, 5, node._inRectangle)
+
 	node.toNodeList.forEach(function(child, i){
 		child._outRectangle = TreeDraw._reduceRect(rectangles[i]);
 		child._inRectangle = TreeDraw._inRectFromOutRect(child._outRectangle);

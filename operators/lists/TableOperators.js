@@ -185,7 +185,7 @@ TableOperators.getCountPairsMatrix = function(table){
  * tags:filter
  */
 TableOperators.filterTableByElementInList=function(table, nList, element){
-	if(table==null || nList==null) return;
+	if(table==null || !table.length>1 || nList==null) return;
 	if(element==null) return table;
 
 

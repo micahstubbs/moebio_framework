@@ -107,10 +107,14 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
  * @return {List}
  * tags:
  */
-List.prototype.getImproved=function(){
+List.prototype.getImproved=function(){//TODO: still doesn't solve tha case of a list with several list of different types
 	if(this.length==0) return this;
 	var typeOfElements = this.getTypeOfElements();
+	
+	//var typeOfElements=="" allAreLists = … finish this
+	
 	//c.log('List.getImproved | typeOfElements: ['+typeOfElements+']');
+	
 	if(typeOfElements=="" || typeOfElements=="undefined") return this;
 	
 	switch(typeOfElements){
@@ -128,6 +132,7 @@ List.prototype.getImproved=function(){
 		case "List":
 		case "DateList":
 		case "IntervalList":
+		case "StringList":
 		case "Table":
 			var newList = Table.fromArray(this, false);
 			break;
@@ -642,11 +647,18 @@ List.prototype.getFirstElementByName=function(name, returnIndex){
 	return null;
 }
 
+/**
+ * get first elemenet that has some property with a given value
+ * @param  {String} propertyName name of property
+ * @param  {Object} value value of property
+ * @return {Object}
+ * tags:
+ */
 List.prototype.getFirstElementByPropertyValue=function(propertyName, value){
 	for(var i=0; this[i]!=null; i++){
 		if(this[i][propertyName]==value) return this[i];
 	}
-	return returnIndex?-1:null;
+	return null;
 }
 
 List.prototype.indexOfByPropertyValue=function(propertyName, value){
