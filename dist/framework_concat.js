@@ -712,6 +712,7 @@ List.prototype.getFilteredByBooleanList = function(booleanList){
 	return newList.getImproved();
 }
 
+
 List.prototype.getFilteredByPropertyValue = function(propertyName, propertyValue){
 	var newList = new List();
 	newList.name = this.name;
