@@ -14,15 +14,26 @@ ListOperators.getElement = function(list, index){
 	return list[index];
 }
 
+// *
+//  * filters a List, by a NumberList of indexes, or by an Interval
+//  * @param  {List} list to be filtered
+//  * @param  {Object} params NumberList or Interval
+//  * @return {List}
+ 
+// ListOperators.getSubList = function(list, params){
+// 	if(list==null || params==null) return null;
+// 	return list.getSubList.apply(list, params.isList?[params]:params);
+// }
+
 /**
- * filters a List, by a NumberList of indexes, or by an Interval
- * @param  {List} list to be filtered
- * @param  {Object} params NumberList or Interval
- * @return {List}
+ * first position of element in list (-1 if element doesn't belong to the list)
+ * @param  {List} list
+ * @param  {Object} element
+ * @return {Number}
+ * tags:
  */
-ListOperators.getSubList = function(list, params){
-	if(list==null || params==null) return null;
-	return list.getSubList.apply(list, params.isList?[params]:params);
+ListOperators.indexOf = function(list, element){
+	return list.indexOf(element);
 }
 
 /**

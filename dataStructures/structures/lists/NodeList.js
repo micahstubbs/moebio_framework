@@ -130,6 +130,11 @@ NodeList.prototype.getWeights=function(){
   	return numberList;
 }
 
+/**
+ * get ids from nodes
+ * @return {StringList}
+ * tags:
+ */
 NodeList.prototype.getIds=function(){
 	var list = new StringList();
 	for(var i=0; this[i]!=null; i++){

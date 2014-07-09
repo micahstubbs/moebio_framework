@@ -616,6 +616,12 @@ List.prototype.getSortedByList=function(list, ascending){
 	return newList;
 }
 
+/**
+ * return a numberList of indexes of an element
+ * @param  {Object} element
+ * @return {NumberList}
+ * tags:
+ */
 List.prototype.indexesOf=function(element){
 	var index = this.indexOf(element);
 	var numberList = new NumberList();
@@ -626,6 +632,12 @@ List.prototype.indexesOf=function(element){
 	return numberList;
 }
 
+/**
+ * return a numberList with indexes (first position) of elements in a list
+ * @param  {List} elements
+ * @return {NumberList}
+ * tags:
+ */
 List.prototype.indexOfElements=function(elements){
 	var numberList = new NumberList();
 	for(var i=0; elements[i]!=null; i++){

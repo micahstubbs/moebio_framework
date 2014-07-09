@@ -642,6 +642,12 @@ List.prototype.getSortedByList=function(list, ascending){
 	return newList;
 }
 
+/**
+ * return a numberList of indexes of an element
+ * @param  {Object} element
+ * @return {NumberList}
+ * tags:
+ */
 List.prototype.indexesOf=function(element){
 	var index = this.indexOf(element);
 	var numberList = new NumberList();
@@ -652,6 +658,12 @@ List.prototype.indexesOf=function(element){
 	return numberList;
 }
 
+/**
+ * return a numberList with indexes (first position) of elements in a list
+ * @param  {List} elements
+ * @return {NumberList}
+ * tags:
+ */
 List.prototype.indexOfElements=function(elements){
 	var numberList = new NumberList();
 	for(var i=0; elements[i]!=null; i++){
@@ -1660,6 +1672,11 @@ NodeList.prototype.getWeights=function(){
   	return numberList;
 }
 
+/**
+ * get ids from nodes
+ * @return {StringList}
+ * tags:
+ */
 NodeList.prototype.getIds=function(){
 	var list = new StringList();
 	for(var i=0; this[i]!=null; i++){
@@ -4359,14 +4376,31 @@ Tree.prototype.getNodesByLevel=function(level){
 
 /**
  * return the leaves (nodes without children) of a tree
+ *
+ * @param {Node} node to collect leaves under a node
  * @return {NodeList}
  * tags:
  */
-Tree.prototype.getLeaves=function(){
+Tree.prototype.getLeaves=function(node){
 	var leaves = new NodeList();
-	this.nodeList.forEach(function(node){
-		if(node.toNodeList.length==0) leaves.push(node); 
-	});
+	if(node){
+		if(node.toNodeList.length==0){
+			leaves.push(node);
+			return leaves;
+		}
+		addLeaves = function(candidate){
+			if(candidate.toNodeList.length==0){
+				leaves.push(candidate);
+			} else {
+				candidate.toNodeList.forEach(addLeaves);
+			}
+		}
+		node.toNodeList.forEach(addLeaves)
+	} else {
+		this.nodeList.forEach(function(candidate){
+			if(candidate.toNodeList.length==0) leaves.push(candidate); 
+		});
+	}
 	return leaves;
 }
 
@@ -4481,7 +4515,7 @@ ObjectOperators.addition=function(){
 		var a1Type = typeOf(a1);
 		var reversed = false;
 
-		if(a1Type<a0Type){
+		if(a1Type<a0Type && a1Type!="string" && a0Type!="string"){
 			a0 = arguments[1];
 			a1 = arguments[0];
 			a0Type = typeOf(a0);
@@ -4493,15 +4527,15 @@ ObjectOperators.addition=function(){
 		//c.log('pairType:['+pairType+']');
 		//
 		switch(pairType){
-			case 'boolean_number':
-			case 'number_number':
-				return a0+a1;
 			case 'boolean_boolean':
 				return a0 && a1;
 			case 'date_string':
 				return reversed?a1+DateOperators.dateToString(a0):DateOperators.dateToString(a0)+a1;
 			case 'number_string':
 			case 'string_string':
+			case 'string_number':
+			case 'boolean_number':
+			case 'number_number':
 				return a0+a1;
 			case 'Point_Point':
 				return new Point(a0.x + a1.x, a0.y + a1.y);
@@ -4512,7 +4546,7 @@ ObjectOperators.addition=function(){
 			case 'number_Point3D':
 				return new Point3D(a0.x + a1, a0.y + a1, a0.z + a1);
 			case 'Interval_number':
-				return new Interval(a0.getMin() + a1, a0.getMax() + a1);
+				return new Interval(a0.x + a1, a0.y + a1);
 			case 'Interval_Point':
 				return new Point(a0.getMin() + a1.x, a0.getMax() + a1.y);
 			case 'Interval_Interval':
@@ -7374,15 +7408,26 @@ ListOperators.getElement = function(list, index){
 	return list[index];
 }
 
+// *
+//  * filters a List, by a NumberList of indexes, or by an Interval
+//  * @param  {List} list to be filtered
+//  * @param  {Object} params NumberList or Interval
+//  * @return {List}
+ 
+// ListOperators.getSubList = function(list, params){
+// 	if(list==null || params==null) return null;
+// 	return list.getSubList.apply(list, params.isList?[params]:params);
+// }
+
 /**
- * filters a List, by a NumberList of indexes, or by an Interval
- * @param  {List} list to be filtered
- * @param  {Object} params NumberList or Interval
- * @return {List}
+ * first position of element in list (-1 if element doesn't belong to the list)
+ * @param  {List} list
+ * @param  {Object} element
+ * @return {Number}
+ * tags:
  */
-ListOperators.getSubList = function(list, params){
-	if(list==null || params==null) return null;
-	return list.getSubList.apply(list, params.isList?[params]:params);
+ListOperators.indexOf = function(list, element){
+	return list.indexOf(element);
 }
 
 /**

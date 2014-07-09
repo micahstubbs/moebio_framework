@@ -55,14 +55,31 @@ Tree.prototype.getNodesByLevel=function(level){
 
 /**
  * return the leaves (nodes without children) of a tree
+ *
+ * @param {Node} node to collect leaves under a node
  * @return {NodeList}
  * tags:
  */
-Tree.prototype.getLeaves=function(){
+Tree.prototype.getLeaves=function(node){
 	var leaves = new NodeList();
-	this.nodeList.forEach(function(node){
-		if(node.toNodeList.length==0) leaves.push(node); 
-	});
+	if(node){
+		if(node.toNodeList.length==0){
+			leaves.push(node);
+			return leaves;
+		}
+		addLeaves = function(candidate){
+			if(candidate.toNodeList.length==0){
+				leaves.push(candidate);
+			} else {
+				candidate.toNodeList.forEach(addLeaves);
+			}
+		}
+		node.toNodeList.forEach(addLeaves)
+	} else {
+		this.nodeList.forEach(function(candidate){
+			if(candidate.toNodeList.length==0) leaves.push(candidate); 
+		});
+	}
 	return leaves;
 }
 

@@ -91,7 +91,7 @@ ObjectOperators.addition=function(){
 		var a1Type = typeOf(a1);
 		var reversed = false;
 
-		if(a1Type<a0Type){
+		if(a1Type<a0Type && a1Type!="string" && a0Type!="string"){
 			a0 = arguments[1];
 			a1 = arguments[0];
 			a0Type = typeOf(a0);
@@ -103,15 +103,15 @@ ObjectOperators.addition=function(){
 		//c.log('pairType:['+pairType+']');
 		//
 		switch(pairType){
-			case 'boolean_number':
-			case 'number_number':
-				return a0+a1;
 			case 'boolean_boolean':
 				return a0 && a1;
 			case 'date_string':
 				return reversed?a1+DateOperators.dateToString(a0):DateOperators.dateToString(a0)+a1;
 			case 'number_string':
 			case 'string_string':
+			case 'string_number':
+			case 'boolean_number':
+			case 'number_number':
 				return a0+a1;
 			case 'Point_Point':
 				return new Point(a0.x + a1.x, a0.y + a1.y);
@@ -122,7 +122,7 @@ ObjectOperators.addition=function(){
 			case 'number_Point3D':
 				return new Point3D(a0.x + a1, a0.y + a1, a0.z + a1);
 			case 'Interval_number':
-				return new Interval(a0.getMin() + a1, a0.getMax() + a1);
+				return new Interval(a0.x + a1, a0.y + a1);
 			case 'Interval_Point':
 				return new Point(a0.getMin() + a1.x, a0.getMax() + a1.y);
 			case 'Interval_Interval':
