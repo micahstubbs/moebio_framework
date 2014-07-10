@@ -171,6 +171,12 @@ List.prototype.getImproved=function(){//TODO: still doesn't solve tha case of a 
 		case "Polygon":
 			var newList = PolygonList.fromArray(this, false);
 			break;
+		case "Node":
+			var newList = NodeList.fromArray(this, false);
+			break;
+		case "Relation":
+			var newList = RelationList.fromArray(this, false);
+			break;
 	}
 	if(newList!=null){
 		newList.name = this.name;
@@ -14837,15 +14843,7 @@ Engine3D.prototype.quadrilater=function(p0, p1, p2, p3){
  * and all data models classes names
  */
 function typeOf(o){
-	//c.log('o', o);
-	
 	var type = typeof o;
-
-	//c.log('      o:'+o+'. typeof o:['+typeof o+']');
-	
-	// c.log('type', type);
-	// c.log("type !== 'object'", type !== 'object');
-	// c.log("type !== 'Object'", type !== 'Object');
 	
 	if (type !== 'object') {
 		return type;
@@ -14862,6 +14860,7 @@ function typeOf(o){
 	}
 	c.log("[!] ERROR: could not detect type for ", o);
 }
+
 function VOID(){}
 
 function instantiate(className, args) {
@@ -14963,24 +14962,71 @@ function isArray(obj) {
 Date.prototype.getType=function(){
 	return 'Date';
 }
-// Object.prototype.isOfType=function(name){
-	// if(this.constructor.toString().indexOf("Array")!=-1){
-		// return !(this._constructor!=null && this._constructor.toString().indexOf(name) == -1);
-	// }
-	// return !(this.constructor.toString().indexOf(name) == -1);
-// }
+
+
+evalJavaScriptFunction = function(functionText, args){
+	//if(HOLD) return;
+
+	var res;
+
+	var myFunction;
+	
+	var good = true;
+	var message = '';
+
+	var realCode;
+
+	var isFunction = functionText.split('\n')[0].indexOf('function')!=-1;
+
+	if(isFunction){
+		realCode = "myFunction = " + functionText;
+	} else {
+		realCode = "myVar = " + functionText;
+	}
+
+	try{
+		if(isFunction){
+			eval(realCode);
+			res = myFunction.apply(this, args);
+		} else {
+			eval(realCode);
+			res = myVar;
+		}
+	} catch(err){
+		good = false;
+		message = err.message;
+		res = null;
+	}
+
+	// c.l('•• evalJavaScriptFunction')
+	// c.l('res:',res);
+	// c.l('good:',good);
+	// c.l('message',message);
+
+	var resultObject = {
+		result:res,
+		success:good,
+		errorMessage:message
+	};
+
+	//c.l('resultObject', resultObject);
+
+	return resultObject;
+}
+
+
 
 //////// uniqueGlobalFunc, executeUniqueGlobalFunc, what are their purpose?
 
-var uniqueGlobalFunc=new Array();
-function getUniqueGlobalFunc(func, scope){
-	uniqueGlobalFunc.push([func, scope]);
-	return uniqueGlobalFunc.length-1;
-}
-function executeUniqueGlobalFunc(index, value){
-	if(index==undefined) return;
-	uniqueGlobalFunc[index][0].call(uniqueGlobalFunc[index][1], value);
-}
+// var uniqueGlobalFunc=new Array();
+// function getUniqueGlobalFunc(func, scope){
+// 	uniqueGlobalFunc.push([func, scope]);
+// 	return uniqueGlobalFunc.length-1;
+// }
+// function executeUniqueGlobalFunc(index, value){
+// 	if(index==undefined) return;
+// 	uniqueGlobalFunc[index][0].call(uniqueGlobalFunc[index][1], value);
+// }
 
 /////////
 /**
@@ -17710,6 +17756,7 @@ var HalfPi = 0.5*Math.PI;
 var radToGrad = 180/Math.PI;
 var gradToRad = Math.PI/180;
 var c = console; //use c.log instead of console.log
+c.l = c.log;
 
 //private
 var _wheelActivated = false;

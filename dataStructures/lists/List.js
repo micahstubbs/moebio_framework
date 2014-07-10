@@ -145,6 +145,12 @@ List.prototype.getImproved=function(){//TODO: still doesn't solve tha case of a 
 		case "Polygon":
 			var newList = PolygonList.fromArray(this, false);
 			break;
+		case "Node":
+			var newList = NodeList.fromArray(this, false);
+			break;
+		case "Relation":
+			var newList = RelationList.fromArray(this, false);
+			break;
 	}
 	if(newList!=null){
 		newList.name = this.name;

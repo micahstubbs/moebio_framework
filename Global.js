@@ -66,6 +66,7 @@ var HalfPi = 0.5*Math.PI;
 var radToGrad = 180/Math.PI;
 var gradToRad = Math.PI/180;
 var c = console; //use c.log instead of console.log
+c.l = c.log;
 
 //private
 var _wheelActivated = false;
