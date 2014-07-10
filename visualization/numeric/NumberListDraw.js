@@ -35,11 +35,11 @@ NumberListDraw.drawSimpleGraph = function(frame, numberList, margin){
 	setFill('black');
 	if(frame.memory.zero){
 		for(i=0; numberList[i]!=null; i++){
-			fRect(subframe.x + i*dx, subframe.bottom - subframe.height*frame.memory.zero, dx-1,  -subframe.height*(frame.memory.normalizedList[i]-frame.memory.zero));
+			fRect(subframe.x + i*dx, subframe.bottom - subframe.height*frame.memory.zero, dx,  -subframe.height*(frame.memory.normalizedList[i]-frame.memory.zero));
 		}
 	} else {
 		for(i=0; numberList[i]!=null; i++){
-			fRect(subframe.x + i*dx, subframe.bottom, dx-1,  -subframe.height*frame.memory.normalizedList[i]);
+			fRect(subframe.x + i*dx, subframe.bottom, dx,  -subframe.height*frame.memory.normalizedList[i]);
 		}
 	}
 }

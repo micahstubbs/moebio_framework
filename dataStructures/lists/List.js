@@ -236,7 +236,6 @@ List.prototype.getSubList=function(){
 			interval = new Interval(arguments[0], arguments[1]);
 		} else {
 			interval = new Interval(arguments[0],  this.length-1);
-			c.log('------> !!!!!!!');
 		}
 	} else {
 		interval = arguments[0];
