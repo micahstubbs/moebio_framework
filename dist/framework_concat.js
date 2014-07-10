@@ -491,7 +491,13 @@ List.prototype.indexOfElement=function(element){//TODO: test if this is faster t
 
 
 
-
+/**
+ * return a list of values of a property of all elements
+ * @param  {String} propertyName
+ * @param  {Object} valueIfNull in case the property doesn't exist in the element
+ * @return {List}
+ * tags:
+ */
 List.prototype.getPropertyValues=function(propertyName, valueIfNull){
 	var newList = new List();
 	newList.name = propertyName;
@@ -740,6 +746,11 @@ List.prototype.getFilteredByPropertyValue = function(propertyName, propertyValue
 	return newList.getImproved();
 }
 
+/**
+ * conert a list into a NumberList
+ * @return {NumberList}
+ * tags:conversion
+ */
 List.prototype.toNumberList=function(){
 	var numberList = new NumberList();
 	numberList.name = this.name;
@@ -751,7 +762,7 @@ List.prototype.toNumberList=function(){
 }
 
 /**
- * conert a list into a StringList
+ * convert a list into a StringList
  * @return {StringList}
  * tags:conversion
  */
@@ -4468,6 +4479,16 @@ ObjectOperators.replaceObject = function(object, obectToReplace, objectToPlace){
 	return object==obectToReplace?objectToPlace:object;
 }
 
+
+/**
+ * create an improved list from an Array
+ * @param  {Array} array
+ * @return {List}
+ * tags:conversion
+ */
+ObjectOperators.toList = function(array){
+	return List.fromArray(array).getImproved();
+}
 
 
 /////universal operators

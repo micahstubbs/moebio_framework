@@ -40,6 +40,16 @@ ObjectOperators.replaceObject = function(object, obectToReplace, objectToPlace){
 }
 
 
+/**
+ * create an improved list from an Array
+ * @param  {Array} array
+ * @return {List}
+ * tags:conversion
+ */
+ObjectOperators.toList = function(array){
+	return List.fromArray(array).getImproved();
+}
+
 
 /////universal operators
 
