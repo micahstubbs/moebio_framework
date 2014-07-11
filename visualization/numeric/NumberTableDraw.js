@@ -409,7 +409,7 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
  * @return {NumberList} list of positions of elements on clicked coordinates
  * tags:draw
  */
-NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, bezier, colorList){
+NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, bezier, colorList, horizontalLabels, showValues, logFactor){
 	if(numberTable==null || numberTable.length<2 || numberTable.type!="NumberTable") return;
 
 	bezier = bezier==null?true:bezier;
@@ -419,19 +419,22 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
 	intervalsFactor = intervalsFactor==null?1:intervalsFactor;
 
 	//setup
-	if(frame.memory==null || numberTable!=frame.memory.numberTable || normalized!=frame.memory.normalized || sorted!=frame.memory.sorted || intervalsFactor!=frame.memory.intervalsFactor || bezier!=frame.memory.bezier || frame.width!=frame.memory.width || frame.height!=frame.memory.height){
+	if(frame.memory==null || numberTable!=frame.memory.numberTable || normalized!=frame.memory.normalized || sorted!=frame.memory.sorted || intervalsFactor!=frame.memory.intervalsFactor || bezier!=frame.memory.bezier || frame.width!=frame.memory.width || frame.height!=frame.memory.height || logFactor!=frame.memory.logFactor){
+		var nT2 = logFactor?numberTable.applyFunction(function(val){return Math.log(logFactor*val+1)}):numberTable;
+
 		frame.memory = {
 			numberTable:numberTable,
 			normalized:normalized,
 			sorted:sorted,
 			intervalsFactor:intervalsFactor,
 			bezier:bezier,
-			flowIntervals:IntervalTableOperators.scaleIntervals(NumberTableFlowOperators.getFlowTableIntervals(numberTable, normalized, sorted), intervalsFactor),
+			flowIntervals:IntervalTableOperators.scaleIntervals(NumberTableFlowOperators.getFlowTableIntervals(nT2, normalized, sorted), intervalsFactor),
 			fOpen:1,
 			names:numberTable.getNames(),
 			mXF:mX,
 			width:frame.width,
 			height:frame.height,
+			logFactor:logFactor,
 			image:null
 		}
 	}
@@ -440,6 +443,7 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
 		frame.memory.colorList = colorList;
 	}
 
+	var flowFrame = new Rectangle(0, 0, frame.width, horizontalLabels==null?frame.height:(frame.height-14));
 
 	if(frame.memory.image==null){
 		var newCanvas = document.createElement("canvas");
@@ -451,7 +455,7 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
 		var mainContext = context;
 		context = newContext;
 
-		IntervalTableDraw.drawIntervalsFlowTable(frame.memory.flowIntervals, new Rectangle(0,0,frame.width,frame.height), frame.memory.actualColorList, bezier, 0.3);
+		IntervalTableDraw.drawIntervalsFlowTable(frame.memory.flowIntervals, flowFrame, frame.memory.actualColorList, bezier, 0.3);
 
 		context = mainContext;
 		
@@ -472,10 +476,34 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
 			var x0 = Math.floor(cut*frame.memory.fOpen);
 			var x1 = Math.ceil(frame.width-(frame.width-cut)*frame.memory.fOpen);
 			
-			drawImage(frame.memory.image, 0,0,cut,frame.height,0,0,x0,frame.height);
-			drawImage(frame.memory.image, cut,0,(frame.width-cut),frame.height,x1,0,(frame.width-cut)*frame.memory.fOpen,frame.height);
+			drawImage(frame.memory.image, 0,0,cut,flowFrame.height,0,0,x0,flowFrame.height);
+			drawImage(frame.memory.image, cut,0,(frame.width-cut),flowFrame.height,x1,0,(frame.width-cut)*frame.memory.fOpen,flowFrame.height);
 
-			NumberTableDraw._drawPartialFlow(new Rectangle(0,0,frame.width, frame.height), frame.memory.flowIntervals, frame.memory.names, frame.memory.actualColorList, cut, x0, x1, 0.3, sorted);
+			NumberTableDraw._drawPartialFlow(flowFrame, frame.memory.flowIntervals, frame.memory.names, frame.memory.actualColorList, cut, x0, x1, 0.3, sorted, numberTable);
+
+			if(horizontalLabels){
+				var dx = frame.width/numberTable[0].length;
+				var x;
+				var y = frame.height-5;
+				var iPosDec = (numberTable[0].length*mX/flowFrame.width) - 1;
+				var iPos = Math.round(iPosDec);
+				
+				horizontalLabels.forEach(function(label, i){
+					setText('black', i==iPos?14:10, null, 'center', 'middle');
+
+					if(iPos==i){
+						x = (x0 + x1)*0.5 - (x1-x0)*(iPosDec-iPos);
+					} else {
+						x = frame.x + i*dx;
+						if(x<mX){
+							x = x*frame.memory.fOpen;
+						} else if(x>mX){
+							x = x*frame.memory.fOpen + (x1-x0);
+						}
+					}
+					fText(horizontalLabels[i], x, y);
+				});
+			}
 
 			context.restore();
 		} else {
@@ -483,8 +511,10 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
 		}
 	}
 }
-NumberTableDraw._drawPartialFlow=function(frame, flowIntervals, labels, colors, x, x0, x1, OFF_X, sorted){	
+NumberTableDraw._drawPartialFlow=function(frame, flowIntervals, labels, colors, x, x0, x1, OFF_X, sorted, numberTable){	
 	var w = x1-x0;
+	var wForText = numberTable==null?(x1-x0):(x1-x0)*0.85;
+
 	var nDays = flowIntervals[0].length;
 
 	var wDay = frame.width/(nDays-1);
@@ -520,17 +550,13 @@ NumberTableDraw._drawPartialFlow=function(frame, flowIntervals, labels, colors, 
 
 	var X0, X1, xx;
 
+	var ts0, ts1;
+
 	for(i=0; flowIntervals[i]!=null; i++){
 		
 		setFill(colors[i]);
 		interval0 = flowIntervals[i][i0];
 		interval1 = flowIntervals[i][i1];
-
-		// xi = GeometryOperators.bezierCurveHeightHorizontalControlPoints(interval0.x, x0+offX, x1-offX, interval1.x, t);
-		// yi = GeometryOperators.bezierCurveHeightHorizontalControlPoints(interval0.y, x0+offX, x1-offX, interval1.y, t);
-		
-		// y = frame.height*xi + frame.y;
-		// h = frame.height*(yi-xi);
 
 		X0 = Math.floor(iDay)*wDay;
 		X1 = Math.floor(iDay+1)*wDay;
@@ -550,22 +576,33 @@ NumberTableDraw._drawPartialFlow=function(frame, flowIntervals, labels, colors, 
 		if(h>=8 && w>40){
 			setText('white', h, null, null, 'middle');
 			
-			text = labels[i];//wordsTable[0][i].toUpperCase();
+			text = labels[i];
 			
 			wt = getTextW(text);
-			pt = wt/w;
+			pt = wt/wForText;
 
-			if(pt>1) setText('white', h/pt, null, null, 'middle');
+			if(pt>1){
+				setText('white', h/pt, null, null, 'middle');
+			}
 			
 			context.fillText(text, x0, y + h*0.5);
+
+			if(numberTable){
+				wt = getTextW(text);
+
+				ts0 = Math.min(h, h/pt);
+				ts1 = Math.max(ts0*0.6, 8);
+
+				setText('white', ts1, null, null, 'middle');
+				fText(numberTable[i][i0], x0 + wt + w*0.03, y + (h+(ts0-ts1)*0.5)*0.5);
+			}
+			
+
+
 		}
 	}
 
 	return iOver;
-	
-	// if(previOver!=iOver){
-		// generateCapture(iOver);
-	// }
 }
 
 

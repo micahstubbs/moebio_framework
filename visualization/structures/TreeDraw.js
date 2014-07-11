@@ -49,8 +49,6 @@ TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin){
 TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 	var change = frame.memory==null || frame.memory.tree!=tree || frame.memory.width!=frame.width || frame.memory.height!=frame.height || frame.memory.weights!=weights;
 
-	//c.l('[TM] -----------> nF', nF);
-
 	if(change){
 		var changeInTree = frame.memory!=null && frame.memory.tree!=null!=tree;
 		var changeInWeights = frame.memory!=null && frame.memory.weights!=weights;
