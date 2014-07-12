@@ -104,7 +104,17 @@ Table.prototype.getLengths=function(){
 	return lengths;
 }
 
+/**
+ * filter a table by selecting a section of rows, elements with last index included
+ * @param  {Number} startIndex index of first element in all lists of the table
+ * 
+ * @param  {Number} endIndex index of last elements in all lists of the table
+ * @return {Table}
+ * tags:filter
+ */
 Table.prototype.sliceRows=function(startIndex, endIndex){
+	endIndex = endIndex==null?(this[0].length-1):endIndex;
+	
 	var newTable=new Table();
 	newTable.name = this.name;
 	for(var i=0; this[i]!=null; i++){

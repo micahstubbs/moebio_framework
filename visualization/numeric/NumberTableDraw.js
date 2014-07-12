@@ -404,8 +404,10 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
  * @param {Boolean} sorted sort flow polygons
  * @param {Number} intervalsFactor number between 0 and 1, factors the height of flow polygons 
  * @param {Boolean} bezier draws bezier (soft) curves
- * @param  {ColorList} colorList colors of polygons
- * @param  {Number} margin
+ * @param {ColorList} colorList colors of polygons
+ * @param {StringList} horizontalLabels to be placed in the bottom
+ * @param {Boolean} showValues show values in the stream
+ * @param {Number} logFactor if >0 heights will be transformed logaritmically log(logFactor*val + 1)
  * @return {NumberList} list of positions of elements on clicked coordinates
  * tags:draw
  */
@@ -481,35 +483,40 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
 
 			NumberTableDraw._drawPartialFlow(flowFrame, frame.memory.flowIntervals, frame.memory.names, frame.memory.actualColorList, cut, x0, x1, 0.3, sorted, numberTable);
 
-			if(horizontalLabels){
-				var dx = frame.width/numberTable[0].length;
-				var x;
-				var y = frame.height-5;
-				var iPosDec = (numberTable[0].length*mX/flowFrame.width) - 1;
-				var iPos = Math.round(iPosDec);
-				
-				horizontalLabels.forEach(function(label, i){
-					setText('black', i==iPos?14:10, null, 'center', 'middle');
-
-					if(iPos==i){
-						x = (x0 + x1)*0.5 - (x1-x0)*(iPosDec-iPos);
-					} else {
-						x = frame.x + i*dx;
-						if(x<mX){
-							x = x*frame.memory.fOpen;
-						} else if(x>mX){
-							x = x*frame.memory.fOpen + (x1-x0);
-						}
-					}
-					fText(horizontalLabels[i], x, y);
-				});
-			}
-
 			context.restore();
 		} else {
 			drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
 		}
 	}
+
+	if(horizontalLabels) NumberTableDraw._drawHorizontalLabels(frame, frame.getBottom()-5, numberTable, horizontalLabels, x0, x1);
+}
+NumberTableDraw._drawHorizontalLabels = function(frame, y, numberTable, horizontalLabels, x0, x1){
+	var dx = frame.width/numberTable[0].length;
+	var x;
+	var mX2 = Math.min(Math.max(mX, frame.x+1), frame.getRight()-1);
+	var iPosDec = (numberTable[0].length*mX2/frame.width) - 1;
+	var iPos = Math.round(iPosDec);
+	x0 = x0==null?frame.x:x0;
+	x1 = x1==null?frame.x:x1;
+	
+	horizontalLabels.forEach(function(label, i){
+		setText('black', (i==iPos && x1>(x0+4))?14:10, null, 'center', 'middle');
+
+		if(x0>x1-5){
+			x = frame.x + i*dx;
+		} else if(iPos==i){
+			x = (x0 + x1)*0.5 - (x1-x0)*(iPosDec-iPos);
+		} else {
+			x = frame.x + i*dx;
+			if(x<mX2){
+				x = x*frame.memory.fOpen;
+			} else if(x>mX2){
+				x = x*frame.memory.fOpen + (x1-x0);
+			}
+		}
+		fText(horizontalLabels[i], x, y);
+	});
 }
 NumberTableDraw._drawPartialFlow=function(frame, flowIntervals, labels, colors, x, x0, x1, OFF_X, sorted, numberTable){	
 	var w = x1-x0;
@@ -594,7 +601,7 @@ NumberTableDraw._drawPartialFlow=function(frame, flowIntervals, labels, colors, 
 				ts1 = Math.max(ts0*0.6, 8);
 
 				setText('white', ts1, null, null, 'middle');
-				fText(numberTable[i][i0], x0 + wt + w*0.03, y + (h+(ts0-ts1)*0.5)*0.5);
+				fText(Math.round(numberTable[i][i0]), x0 + wt + w*0.03, y + (h+(ts0-ts1)*0.5)*0.5);
 			}
 			
 

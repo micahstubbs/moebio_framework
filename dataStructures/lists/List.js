@@ -152,6 +152,19 @@ List.prototype.getImproved=function(){//TODO: still doesn't solve tha case of a 
 			var newList = RelationList.fromArray(this, false);
 			break;
 	}
+
+	if(newList==null){
+		var allLists = true;
+		var i;
+		for(i=0; this[i]!=null; i++){
+			if(!(this[i].isList)){
+				allLists = false;
+				break;
+			}
+		}
+		if(allLists) newList = Table.fromArray(this, false);
+	}
+
 	if(newList!=null){
 		newList.name = this.name;
 		return newList;
@@ -220,7 +233,7 @@ List.prototype.getReversed=function(){
 
 /**
  * return a sub-list, params could be: tw numbers, an interval or a NumberList
- * @param {Object} argument0 number, interval or numberList
+ * @param {Object} argument0 number, interval (in this it will include elements with initial and end indexes) or numberList
  * 
  * @param {Number} argument1 second index
  * @return {List}
@@ -366,6 +379,8 @@ List.prototype.countOccurrences=function(){//TODO: more efficient
 }
 
 List.prototype.getElementsRepetitionCount=function(sortListsByOccurrences){
+	sortListsByOccurrences = sortListsByOccurrences==null?true:sortListsByOccurrences;
+
 	var obj;
 	var elementList= new List();
 	var numberList = new NumberList();
@@ -387,7 +402,7 @@ List.prototype.getElementsRepetitionCount=function(sortListsByOccurrences){
 	table.push(elementList);
 	table.push(numberList);
 	var indexArray=numberList.sortNumericIndexed();
-	if(sortListsByOccurrences!=undefined?sortListsByOccurrences:true){
+	if(sortListsByOccurrences){
 		var j;
 		for(j=0; j<table.length; j++){
 			table[j]=table[j].clone().sortOnIndexes(indexArray);
@@ -838,6 +853,10 @@ List.prototype.concat=function(){
 			return NodeList.fromArray(this._concat.apply(this, arguments), false);
 		} else if(this.type == "DateList"){
 			return DateList.fromArray(this._concat.apply(this, arguments), false);
+		} else if(this.type == "Table"){
+			return Table.fromArray(this._concat.apply(this, arguments), false);
+		} else if(this.type == "NumberTable"){
+			return NumberTable.fromArray(this._concat.apply(this, arguments), false);
 		}
 	}
 	return List.fromArray(this._concat.apply(this, arguments)).getImproved();

@@ -113,12 +113,10 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(0, tree.nLevels, ColorScales.grayToOrange, 0.1):colorList;
 		frame.memory.nodesColorList = new ColorList();
 		if(textColor==null) frame.memory.textsColorList = new ColorList();
-
-		//c.log('frame.memory.leaves.length', frame.memory.leaves.length);
-
+		
 		if(frame.memory.actualColorList.length<=tree.nLevels){
 			tree.nodeList.forEach(function(node, i){
-				frame.memory.nodesColorList[i] = frame.memory.actualColorList[node.level%frame.memory.actualColorList.length];
+				frame.memory.nodesColorList[i] = node._color = frame.memory.actualColorList[node.level%frame.memory.actualColorList.length];
 			});
 		} else if(frame.memory.actualColorList.length==frame.memory.leaves.length){
 			frame.memory.leaves.forEach(function(node, i){

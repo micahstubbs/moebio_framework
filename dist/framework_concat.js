@@ -178,6 +178,19 @@ List.prototype.getImproved=function(){//TODO: still doesn't solve tha case of a 
 			var newList = RelationList.fromArray(this, false);
 			break;
 	}
+
+	if(newList==null){
+		var allLists = true;
+		var i;
+		for(i=0; this[i]!=null; i++){
+			if(!(this[i].isList)){
+				allLists = false;
+				break;
+			}
+		}
+		if(allLists) newList = Table.fromArray(this, false);
+	}
+
 	if(newList!=null){
 		newList.name = this.name;
 		return newList;
@@ -246,7 +259,7 @@ List.prototype.getReversed=function(){
 
 /**
  * return a sub-list, params could be: tw numbers, an interval or a NumberList
- * @param {Object} argument0 number, interval or numberList
+ * @param {Object} argument0 number, interval (in this it will include elements with initial and end indexes) or numberList
  * 
  * @param {Number} argument1 second index
  * @return {List}
@@ -392,6 +405,8 @@ List.prototype.countOccurrences=function(){//TODO: more efficient
 }
 
 List.prototype.getElementsRepetitionCount=function(sortListsByOccurrences){
+	sortListsByOccurrences = sortListsByOccurrences==null?true:sortListsByOccurrences;
+
 	var obj;
 	var elementList= new List();
 	var numberList = new NumberList();
@@ -413,7 +428,7 @@ List.prototype.getElementsRepetitionCount=function(sortListsByOccurrences){
 	table.push(elementList);
 	table.push(numberList);
 	var indexArray=numberList.sortNumericIndexed();
-	if(sortListsByOccurrences!=undefined?sortListsByOccurrences:true){
+	if(sortListsByOccurrences){
 		var j;
 		for(j=0; j<table.length; j++){
 			table[j]=table[j].clone().sortOnIndexes(indexArray);
@@ -864,6 +879,10 @@ List.prototype.concat=function(){
 			return NodeList.fromArray(this._concat.apply(this, arguments), false);
 		} else if(this.type == "DateList"){
 			return DateList.fromArray(this._concat.apply(this, arguments), false);
+		} else if(this.type == "Table"){
+			return Table.fromArray(this._concat.apply(this, arguments), false);
+		} else if(this.type == "NumberTable"){
+			return NumberTable.fromArray(this._concat.apply(this, arguments), false);
 		}
 	}
 	return List.fromArray(this._concat.apply(this, arguments)).getImproved();
@@ -1999,7 +2018,17 @@ Table.prototype.getLengths=function(){
 	return lengths;
 }
 
+/**
+ * filter a table by selecting a section of rows, elements with last index included
+ * @param  {Number} startIndex index of first element in all lists of the table
+ * 
+ * @param  {Number} endIndex index of last elements in all lists of the table
+ * @return {Table}
+ * tags:filter
+ */
 Table.prototype.sliceRows=function(startIndex, endIndex){
+	endIndex = endIndex==null?(this[0].length-1):endIndex;
+	
 	var newTable=new Table();
 	newTable.name = this.name;
 	for(var i=0; this[i]!=null; i++){
@@ -8480,6 +8509,7 @@ function NumberListGenerators(){};
 /**
  * Generate a NumberList with sorted Numbers
  * @param {Number} nValues length of the NumberList
+ * 
  * @param {Number} start first value
  * @param {Number} step increment value
  * @return {NumberList} generated NumberList
@@ -8785,7 +8815,18 @@ NumberOperators.numberFromBinaryValues = function(binaryValues){
 }
 
 NumberOperators.powersOfTwoDecomposition = function(number, length) {
-	var powers = new NumberList();
+  // var i;
+  // var powers = StringList.fromArray(Number(number).toString(2).split('')).toNumberList().getReversed();
+  // var n = powers.length;
+  // for(i=n; i<length; i++){
+  //   powers.push(0);
+  // }
+  // return powers;
+
+
+
+  var powers = new NumberList();
+
 	var constructingNumber = 0;
 	var biggestPower;
 	
@@ -16440,8 +16481,10 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
  * @param {Boolean} sorted sort flow polygons
  * @param {Number} intervalsFactor number between 0 and 1, factors the height of flow polygons 
  * @param {Boolean} bezier draws bezier (soft) curves
- * @param  {ColorList} colorList colors of polygons
- * @param  {Number} margin
+ * @param {ColorList} colorList colors of polygons
+ * @param {StringList} horizontalLabels to be placed in the bottom
+ * @param {Boolean} showValues show values in the stream
+ * @param {Number} logFactor if >0 heights will be transformed logaritmically log(logFactor*val + 1)
  * @return {NumberList} list of positions of elements on clicked coordinates
  * tags:draw
  */
@@ -16517,35 +16560,40 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
 
 			NumberTableDraw._drawPartialFlow(flowFrame, frame.memory.flowIntervals, frame.memory.names, frame.memory.actualColorList, cut, x0, x1, 0.3, sorted, numberTable);
 
-			if(horizontalLabels){
-				var dx = frame.width/numberTable[0].length;
-				var x;
-				var y = frame.height-5;
-				var iPosDec = (numberTable[0].length*mX/flowFrame.width) - 1;
-				var iPos = Math.round(iPosDec);
-				
-				horizontalLabels.forEach(function(label, i){
-					setText('black', i==iPos?14:10, null, 'center', 'middle');
-
-					if(iPos==i){
-						x = (x0 + x1)*0.5 - (x1-x0)*(iPosDec-iPos);
-					} else {
-						x = frame.x + i*dx;
-						if(x<mX){
-							x = x*frame.memory.fOpen;
-						} else if(x>mX){
-							x = x*frame.memory.fOpen + (x1-x0);
-						}
-					}
-					fText(horizontalLabels[i], x, y);
-				});
-			}
-
 			context.restore();
 		} else {
 			drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
 		}
 	}
+
+	if(horizontalLabels) NumberTableDraw._drawHorizontalLabels(frame, frame.getBottom()-5, numberTable, horizontalLabels, x0, x1);
+}
+NumberTableDraw._drawHorizontalLabels = function(frame, y, numberTable, horizontalLabels, x0, x1){
+	var dx = frame.width/numberTable[0].length;
+	var x;
+	var mX2 = Math.min(Math.max(mX, frame.x+1), frame.getRight()-1);
+	var iPosDec = (numberTable[0].length*mX2/frame.width) - 1;
+	var iPos = Math.round(iPosDec);
+	x0 = x0==null?frame.x:x0;
+	x1 = x1==null?frame.x:x1;
+	
+	horizontalLabels.forEach(function(label, i){
+		setText('black', (i==iPos && x1>(x0+4))?14:10, null, 'center', 'middle');
+
+		if(x0>x1-5){
+			x = frame.x + i*dx;
+		} else if(iPos==i){
+			x = (x0 + x1)*0.5 - (x1-x0)*(iPosDec-iPos);
+		} else {
+			x = frame.x + i*dx;
+			if(x<mX2){
+				x = x*frame.memory.fOpen;
+			} else if(x>mX2){
+				x = x*frame.memory.fOpen + (x1-x0);
+			}
+		}
+		fText(horizontalLabels[i], x, y);
+	});
 }
 NumberTableDraw._drawPartialFlow=function(frame, flowIntervals, labels, colors, x, x0, x1, OFF_X, sorted, numberTable){	
 	var w = x1-x0;
@@ -16630,7 +16678,7 @@ NumberTableDraw._drawPartialFlow=function(frame, flowIntervals, labels, colors, 
 				ts1 = Math.max(ts0*0.6, 8);
 
 				setText('white', ts1, null, null, 'middle');
-				fText(numberTable[i][i0], x0 + wt + w*0.03, y + (h+(ts0-ts1)*0.5)*0.5);
+				fText(Math.round(numberTable[i][i0]), x0 + wt + w*0.03, y + (h+(ts0-ts1)*0.5)*0.5);
 			}
 			
 
@@ -17571,12 +17619,10 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(0, tree.nLevels, ColorScales.grayToOrange, 0.1):colorList;
 		frame.memory.nodesColorList = new ColorList();
 		if(textColor==null) frame.memory.textsColorList = new ColorList();
-
-		//c.log('frame.memory.leaves.length', frame.memory.leaves.length);
-
+		
 		if(frame.memory.actualColorList.length<=tree.nLevels){
 			tree.nodeList.forEach(function(node, i){
-				frame.memory.nodesColorList[i] = frame.memory.actualColorList[node.level%frame.memory.actualColorList.length];
+				frame.memory.nodesColorList[i] = node._color = frame.memory.actualColorList[node.level%frame.memory.actualColorList.length];
 			});
 		} else if(frame.memory.actualColorList.length==frame.memory.leaves.length){
 			frame.memory.leaves.forEach(function(node, i){
