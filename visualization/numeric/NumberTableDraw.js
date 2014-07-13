@@ -661,13 +661,19 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
 		frame.memory.colorList = colorList;
 	}
 
-	if(MOUSE_DOWN && frame.containsPoint(mP)){
-		frame.memory.downX = mX;
-		frame.memory.downY = mY;
-		frame.memory.pressed = true;
-		frame.memory.zoomPressed = frame.memory.zoom;
-		frame.memory.anglePressed = frame.memory.angle0;
+	if(frame.containsPoint(mP)){
+
+		if(MOUSE_DOWN){
+			frame.memory.downX = mX;
+			frame.memory.downY = mY;
+			frame.memory.pressed = true;
+			frame.memory.zoomPressed = frame.memory.zoom;
+			frame.memory.anglePressed = frame.memory.angle0;
+		}
+		
+		frame.memory.zoom*=(1-0.4*WHEEL_CHANGE)
 	}
+
 	if(MOUSE_UP) frame.memory.pressed = false;
 	if(frame.memory.pressed){
 		var center = frame.getCenter();

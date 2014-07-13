@@ -44,6 +44,7 @@ var nF = 0; // number of current frame
 var MOUSE_DOWN=false; //true on the frame of mousedown event
 var MOUSE_UP=false; //true on the frame of mouseup event
 var MOUSE_UP_FAST=false; //true on the frame of mouseup event
+var WHEEL_CHANGE=0;
 var NF_DOWN; //number of frame of last mousedown event
 var NF_UP; //number of frame of last mouseup event
 var MOUSE_PRESSED; //true if mouse pressed
@@ -123,6 +124,7 @@ window.addEventListener('load', function(){
 		canvas.addEventListener("mousemove", _onMouse, false);
 		canvas.addEventListener("mousedown", _onMouse, false);
 		canvas.addEventListener("mouseup", _onMouse, false);
+		activateWheel();
 
 		window.addEventListener("resize", onResize, false);
 		
@@ -208,7 +210,10 @@ function enterFrame(){
 	MOUSE_UP = NF_UP==nF;
 	MOUSE_UP_FAST = MOUSE_UP && (nF-NF_DOWN)<9;
 
+	//c.log('pre-cycle WHEEL_CHANGE:', WHEEL_CHANGE, nF);
   	cycle();
+
+  	WHEEL_CHANGE = 0;
   	
   	nF++;
 }
@@ -339,12 +344,15 @@ function _onWheel(e) {
     if (!e) e = window.event; //IE
             
     if (e.wheelDelta){
-    	deltaWheel = e.wheelDelta/120;
+    	WHEEL_CHANGE = e.wheelDelta/120;
     } else if (e.detail) { /** Mozilla case. */
-        deltaWheel = -e.detail/3;
+        WHEEL_CHANGE = -e.detail/3;
     }
-    e.value = deltaWheel;
+    e.value = WHEEL_CHANGE;
     e.type = "mousewheel"; //why this doesn't work?
+
 	onCanvasEvent(e);
+
+
 }
 

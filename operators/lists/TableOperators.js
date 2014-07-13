@@ -49,6 +49,7 @@ TableOperators.getSubTable=function(table, x, y, width, height){
  * tags:matrixes
  */
 TableOperators.transpose=function(table){
+	if(table==null) return null;
 	return table.getTransposed();
 }
 

@@ -58,7 +58,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 			width:frame.width,
 			height:frame.height,
 			weights:weights,
-			nodeSelected:null
+			nodeSelected:tree.nodeList[0]
 		}
 
 		var leaves = (!changeInTree && frame.memory.leaves)?frame.memory.leaves:tree.getLeaves();
@@ -113,7 +113,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(0, tree.nLevels, ColorScales.grayToOrange, 0.1):colorList;
 		frame.memory.nodesColorList = new ColorList();
 		if(textColor==null) frame.memory.textsColorList = new ColorList();
-		
+
 		if(frame.memory.actualColorList.length<=tree.nLevels){
 			tree.nodeList.forEach(function(node, i){
 				frame.memory.nodesColorList[i] = node._color = frame.memory.actualColorList[node.level%frame.memory.actualColorList.length];
@@ -235,18 +235,52 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 		}
 	});
 	
-	if(overNode){
-		rect = new Rectangle(tx(overNode._outRectangle.x), ty(overNode._outRectangle.y), overNode._outRectangle.width*kx, overNode._outRectangle.height*ky);
-		x = Math.round(frame.x + rect.x)+0.5;
-		y = Math.round(frame.y + rect.y)+0.5;
-		setStroke(textColor?textColor:frame.memory.textsColorList[overI], 2);
-		sRect(x, y, Math.floor(rect.width), Math.floor(rect.height))
+	if(frame.containsPoint(mP)){
+		if(overNode){
+			setCursor('pointer');
 
-		if(MOUSE_DOWN && frame.containsPoint(mP)) {
-			frame.memory.focusFrame = TreeDraw._expandRect(overNode._outRectangle);
-			frame.memory.nodeSelected = overNode;
+			rect = new Rectangle(tx(overNode._outRectangle.x), ty(overNode._outRectangle.y), overNode._outRectangle.width*kx, overNode._outRectangle.height*ky);
+			x = Math.round(frame.x + rect.x)+0.5;
+			y = Math.round(frame.y + rect.y)+0.5;
+			setStroke(textColor?textColor:frame.memory.textsColorList[overI], 2);
+			sRect(x, y, Math.floor(rect.width), Math.floor(rect.height))
+
+			if(MOUSE_UP_FAST) {
+				frame.memory.focusFrame = TreeDraw._expandRect(overNode._outRectangle);
+				frame.memory.nodeSelected = overNode;
+			}
+		}
+		if(MOUSE_DOWN){
+			frame.memory.prevMX = mX;
+			frame.memory.prevMY = mY;
+		}
+		if(MOUSE_PRESSED){
+			scale = 5*frame.memory.focusFrame.width/frame.width;
+			frame.memory.focusFrame.x -= (mX-frame.memory.prevMX)*scale;
+			frame.memory.focusFrame.y -= (mY-frame.memory.prevMY)*scale;
+
+			frame.memory.prevMX = mX;
+			frame.memory.prevMY = mY;
+		}
+		if(WHEEL_CHANGE!=0){
+			var center = frame.memory.focusFrame.getCenter();
+			var zoom = 1 + 0.1*WHEEL_CHANGE;
+			frame.memory.focusFrame.x = center.x - frame.memory.focusFrame.width*0.5*zoom;
+			frame.memory.focusFrame.y = center.y - frame.memory.focusFrame.height*0.5*zoom;
+			frame.memory.focusFrame.width*=zoom;
+			frame.memory.focusFrame.height*=zoom;
+		}
+		if(MOUSE_PRESSED || WHEEL_CHANGE){
+			frame.memory.focusFrame.x = Math.min(Math.max(frame.memory.focusFrame.x, 0), frame.width-frame.memory.focusFrame.width);
+			frame.memory.focusFrame.y = Math.min(Math.max(frame.memory.focusFrame.y, 0), frame.height-frame.memory.focusFrame.height);
+			
+			frame.memory.focusFrame.width = Math.min(frame.memory.focusFrame.width, frame.width);
+			frame.memory.focusFrame.height = Math.min(frame.memory.focusFrame.height, frame.height);
+
 		}
 	}
+
+	
 
 	context.restore();
 
