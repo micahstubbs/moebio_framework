@@ -2029,10 +2029,15 @@ Table.prototype.getLengths=function(){
 Table.prototype.sliceRows=function(startIndex, endIndex){
 	endIndex = endIndex==null?(this[0].length-1):endIndex;
 	
+	var i;
 	var newTable=new Table();
+	var newList;
+	
 	newTable.name = this.name;
-	for(var i=0; this[i]!=null; i++){
-		newTable.push(this[i].getSubList(startIndex, endIndex));
+	for(i=0; this[i]!=null; i++){
+		newList = this[i].getSubList(startIndex, endIndex);
+		newList.name = this[i].name;
+		newTable.push(newList);
 	}
 	return newTable.getImproved();
 }
@@ -15855,7 +15860,7 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 				if(s*radius>20){
 					rT = point.y + s*0.5*dR;
 					
-					textsSizes.push(Math.min(Math.sqrt(s*radius)*2.5, 24));
+					textsSizes.push(Math.min(Math.sqrt(s*radius)*2.6, 24));
 					textsAngles.push(point.x+Math.PI*0.5);
 					
 					textsX.push(rT*Math.cos(point.x)+center.x);

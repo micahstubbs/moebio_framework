@@ -115,10 +115,15 @@ Table.prototype.getLengths=function(){
 Table.prototype.sliceRows=function(startIndex, endIndex){
 	endIndex = endIndex==null?(this[0].length-1):endIndex;
 	
+	var i;
 	var newTable=new Table();
+	var newList;
+	
 	newTable.name = this.name;
-	for(var i=0; this[i]!=null; i++){
-		newTable.push(this[i].getSubList(startIndex, endIndex));
+	for(i=0; this[i]!=null; i++){
+		newList = this[i].getSubList(startIndex, endIndex);
+		newList.name = this[i].name;
+		newTable.push(newList);
 	}
 	return newTable.getImproved();
 }
