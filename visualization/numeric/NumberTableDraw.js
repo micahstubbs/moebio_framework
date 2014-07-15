@@ -448,21 +448,20 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
 	var flowFrame = new Rectangle(0, 0, frame.width, horizontalLabels==null?frame.height:(frame.height-14));
 
 	if(frame.memory.image==null){
+		///// capture image
+		
 		var newCanvas = document.createElement("canvas");
 		newCanvas.width = frame.width;
 		newCanvas.height = frame.height;
 		var newContext = newCanvas.getContext("2d");
 		newContext.clearRect(0,0,frame.width,frame.height);
-
 		var mainContext = context;
 		context = newContext;
-
 		IntervalTableDraw.drawIntervalsFlowTable(frame.memory.flowIntervals, flowFrame, frame.memory.actualColorList, bezier, 0.3);
-
 		context = mainContext;
-		
 		frame.memory.image = new Image();
 		frame.memory.image.src = newCanvas.toDataURL();
+		/////
 	}
 
 	if(frame.memory.image){
@@ -648,7 +647,8 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
 			r0:Math.min(frame.width, frame.height)*0.05,
 			angles:new NumberList(),
 			zoom:1,
-			angle0:0
+			angle0:0,
+			image:null
 		}
 
 		var dA = TwoPi/numberTable[0].length;
@@ -657,12 +657,13 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
 		});
 	}
 	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
-		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(1, numberTable.length):colorList;
+		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(1, numberTable.length).getInterpolated('black', 0.1).addAlpha(0.5):colorList;
 		frame.memory.colorList = colorList;
 	}
 
-	if(frame.containsPoint(mP)){
+	var mouseOnFrame = frame.containsPoint(mP);
 
+	if(mouseOnFrame){
 		if(MOUSE_DOWN){
 			frame.memory.downX = mX;
 			frame.memory.downY = mY;
@@ -671,7 +672,7 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
 			frame.memory.anglePressed = frame.memory.angle0;
 		}
 		
-		frame.memory.zoom*=(1-0.4*WHEEL_CHANGE)
+		frame.memory.zoom*=(1-0.4*WHEEL_CHANGE);
 	}
 
 	if(MOUSE_UP) frame.memory.pressed = false;
@@ -689,12 +690,46 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
 		frame.memory.angle0 = frame.memory.anglePressed + a1 - a0;
 	}
 
-	context.save();
-	clipRectangle(frame.x, frame.y, frame.width, frame.height);
+	if(mouseOnFrame) frame.memory.image = null;
+	
+	var captureImage = frame.memory.image==null && !mouseOnFrame;
+	var drawingImage = !mouseOnFrame && frame.memory.image!=null && !captureImage;
 
-	IntervalTableDraw.drawCircularIntervalsFlowTable(frame.memory.flowIntervals, frame.getCenter(), frame.memory.radius*frame.memory.zoom, frame.memory.r0, frame.memory.actualColorList, frame.memory.names, true, frame.memory.angles, frame.memory.angle0);
+	if(drawingImage){
+		drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+	} else {
+		if(captureImage){
+			var newCanvas = document.createElement("canvas");
+			newCanvas.width = frame.width;
+			newCanvas.height = frame.height;
+			var newContext = newCanvas.getContext("2d");
+			newContext.clearRect(0,0,frame.width,frame.height);
+			var mainContext = context;
+			context = newContext;
+			var prevFx = frame.x;
+			var prevFy = frame.y;
+			frame.x = 0;
+			frame.y = 0;
+			setFill('white');
+			fRect(0,0,frame.width,frame.height);
+		}
 
-	context.restore();
+		context.save();
+		clipRectangle(frame.x, frame.y, frame.width, frame.height);
+
+		IntervalTableDraw.drawCircularIntervalsFlowTable(frame.memory.flowIntervals, frame.getCenter(), frame.memory.radius*frame.memory.zoom, frame.memory.r0, frame.memory.actualColorList, frame.memory.names, true, frame.memory.angles, frame.memory.angle0);
+
+		context.restore();
+
+		if(captureImage){
+			context = mainContext;
+			frame.memory.image = new Image();
+			frame.memory.image.src = newCanvas.toDataURL();
+			frame.x = prevFx;
+			frame.y = prevFy;
+			drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+		}
+	}
 }
 
 

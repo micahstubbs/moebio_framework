@@ -58,7 +58,9 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 			width:frame.width,
 			height:frame.height,
 			weights:weights,
-			nodeSelected:tree.nodeList[0]
+			nodeSelected:tree.nodeList[0],
+			nFLastChange:nF,
+			image:null
 		}
 
 		var leaves = (!changeInTree && frame.memory.leaves)?frame.memory.leaves:tree.getLeaves();
@@ -110,6 +112,8 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 	}
 
 	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
+		frame.memory.nFLastChange = nF;
+		frame.memory.image=null;
 		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(0, tree.nLevels, ColorScales.grayToOrange, 0.1):colorList;
 		frame.memory.nodesColorList = new ColorList();
 		if(textColor==null) frame.memory.textsColorList = new ColorList();
@@ -190,52 +194,86 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 	var rect;
 	var overNode = null;
 	var overI;
+	var mouseOnFrame = frame.containsPoint(mP);
+	var moving = nF-frame.memory.nFLastChange<50 || Math.pow(frame.memory.kx-kxF, 2) + Math.pow(frame.memory.ky-kyF, 2) + Math.pow(frame.memory.mx-mxF, 2) + Math.pow(frame.memory.my-myF, 2) > 0.01;
+	var captureImage = !moving && frame.memory.image==null && !mouseOnFrame;
+	var drawingImage = !moving && !mouseOnFrame && frame.memory.image!=null && !captureImage;
 
-	setStroke('black', 0.2);
+	if(drawingImage){
+		drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+	} else {
+		if(captureImage){
+			var newCanvas = document.createElement("canvas");
+			newCanvas.width = frame.width;
+			newCanvas.height = frame.height;
+			var newContext = newCanvas.getContext("2d");
+			newContext.clearRect(0,0,frame.width,frame.height);
+			var mainContext = context;
+			context = newContext;
+			var prevFx = frame.x;
+			var prevFy = frame.y;
+			frame.x = 0;
+			frame.y = 0;
+			setFill('white');
+			fRect(0,0,frame.width,frame.height);
+			setText('black', 12);
+		} else {
+			context.save();
+			clipRectangle(frame.x, frame.y, frame.width, frame.height);
+		}
 
-	context.save();
-	clipRectangle(frame.x, frame.y, frame.width, frame.height);
+		setStroke('black', 0.2);
 
-	tree.nodeList.forEach(function(node, i){
+		tree.nodeList.forEach(function(node, i){
 
-		rect = new Rectangle(tx(node._outRectangle.x), ty(node._outRectangle.y), node._outRectangle.width*kx, node._outRectangle.height*ky);
+			rect = new Rectangle(tx(node._outRectangle.x), ty(node._outRectangle.y), node._outRectangle.width*kx, node._outRectangle.height*ky);
 
-		if(rect.width>5 && rect.height>4 && rect.x<frame.width && rect.getRight()>0 && rect.y<frame.height && rect.getBottom()>0){
+			if(rect.width>5 && rect.height>4 && rect.x<frame.width && rect.getRight()>0 && rect.y<frame.height && rect.getBottom()>0){
 
-			x = Math.round(frame.x + rect.x)+0.5;
-			y = Math.round(frame.y + rect.y)+0.5;
+				x = Math.round(frame.x + rect.x)+0.5;
+				y = Math.round(frame.y + rect.y)+0.5;
 
-			if(node._rgbF){
-				node._rgbF[0] = 0.95*node._rgbF[0] + 0.05*node._rgb[0];
-				node._rgbF[1] = 0.95*node._rgbF[1] + 0.05*node._rgb[1];
-				node._rgbF[2] = 0.95*node._rgbF[2] + 0.05*node._rgb[2];
-				setFill('rgb('+Math.floor(node._rgbF[0])+','+Math.floor(node._rgbF[1])+','+Math.floor(node._rgbF[2])+')');
-			} else {
-				setFill(frame.memory.nodesColorList[i]);
-			}
+				if(node._rgbF){
+					node._rgbF[0] = 0.95*node._rgbF[0] + 0.05*node._rgb[0];
+					node._rgbF[1] = 0.95*node._rgbF[1] + 0.05*node._rgb[1];
+					node._rgbF[2] = 0.95*node._rgbF[2] + 0.05*node._rgb[2];
+					setFill('rgb('+Math.floor(node._rgbF[0])+','+Math.floor(node._rgbF[1])+','+Math.floor(node._rgbF[2])+')');
+				} else {
+					setFill(frame.memory.nodesColorList[i]);
+				}
 
-			if(fsRectM(x, y, Math.floor(rect.width), Math.floor(rect.height))){
-				overNode = node;
-				overI = i;
-			}
-			if(rect.width>20){
-				margTextX = rect.width*TreeDraw.PROP_RECT_MARGIN*0.8;
-				margTextY = rect.height*TreeDraw.PROP_RECT_MARGIN*0.15;
-				textSize = rect.height*TreeDraw.PROP_RECT_LABEL-2;
-				if(textSize>=5){
-					setText(textColor?textColor:frame.memory.textsColorList[i], textSize);
-					exceedes =  (node._textWidth*textSize/12)>(rect.width-1.2*margTextX);
-					if(exceedes){
-						clipRectangle(x+margTextX, y+margTextY,rect.width-2*margTextX, textSize*2);
-					} 
-					fText(node.name, x+margTextX, y+margTextY);
-					if(exceedes) context.restore();
+				if(fsRectM(x, y, Math.floor(rect.width), Math.floor(rect.height))){
+					overNode = node;
+					overI = i;
+				}
+				if(rect.width>20){
+					margTextX = rect.width*TreeDraw.PROP_RECT_MARGIN*0.8;
+					margTextY = rect.height*TreeDraw.PROP_RECT_MARGIN*0.15;
+					textSize = rect.height*TreeDraw.PROP_RECT_LABEL-2;
+					if(textSize>=5){
+						setText(textColor?textColor:frame.memory.textsColorList[i], textSize);
+						exceedes =  (node._textWidth*textSize/12)>(rect.width-1.2*margTextX);
+						if(exceedes){
+							clipRectangle(x+margTextX, y+margTextY,rect.width-2*margTextX, textSize*2);
+						} 
+						fText(node.name, x+margTextX, y+margTextY);
+						if(exceedes) context.restore();
+					}
 				}
 			}
+		});
+		
+		if(captureImage){
+			context = mainContext;
+			frame.memory.image = new Image();
+			frame.memory.image.src = newCanvas.toDataURL();
+			frame.x = prevFx;
+			frame.y = prevFy;
+			drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
 		}
-	});
+	}
 	
-	if(frame.containsPoint(mP)){
+	if(mouseOnFrame){
 		if(overNode){
 			setCursor('pointer');
 
@@ -248,6 +286,8 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 			if(MOUSE_UP_FAST) {
 				frame.memory.focusFrame = TreeDraw._expandRect(overNode._outRectangle);
 				frame.memory.nodeSelected = overNode;
+
+				frame.memory.image = null;
 			}
 		}
 		if(MOUSE_DOWN){
@@ -270,19 +310,23 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 			frame.memory.focusFrame.width*=zoom;
 			frame.memory.focusFrame.height*=zoom;
 		}
-		if(MOUSE_PRESSED || WHEEL_CHANGE){
-			frame.memory.focusFrame.x = Math.min(Math.max(frame.memory.focusFrame.x, 0), frame.width-frame.memory.focusFrame.width);
-			frame.memory.focusFrame.y = Math.min(Math.max(frame.memory.focusFrame.y, 0), frame.height-frame.memory.focusFrame.height);
+		if(MOUSE_PRESSED || WHEEL_CHANGE!=0){
+			//boundaries unactive until well programmed
+
+			// frame.memory.focusFrame.x = Math.min(Math.max(frame.memory.focusFrame.x, -100), frame.width-frame.memory.focusFrame.width+200);
+			// frame.memory.focusFrame.y = Math.min(Math.max(frame.memory.focusFrame.y, -100), frame.height-frame.memory.focusFrame.height+200);
 			
-			frame.memory.focusFrame.width = Math.min(frame.memory.focusFrame.width, frame.width);
-			frame.memory.focusFrame.height = Math.min(frame.memory.focusFrame.height, frame.height);
+			// frame.memory.focusFrame.width = Math.min(frame.memory.focusFrame.width, frame.width);
+			// frame.memory.focusFrame.height = Math.min(frame.memory.focusFrame.height, frame.height);
+
+			frame.memory.image = null;
 
 		}
 	}
 
-	
+	if(!captureImage && !drawingImage) context.restore();
 
-	context.restore();
+	
 
 	return frame.memory.nodeSelected;
 	
@@ -296,7 +340,6 @@ TreeDraw._generateRectangles = function(node){
 	});
 	
 	var rectangles = RectangleOperators.quadrification(node._inRectangle, weights, false, false);
-	//var rectangles = RectangleOperators.packingRectangles(weights, 5, node._inRectangle)
 
 	node.toNodeList.forEach(function(child, i){
 		child._outRectangle = TreeDraw._reduceRect(rectangles[i]);

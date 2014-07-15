@@ -7354,6 +7354,10 @@ ColorScales.greenToRed = function(value){//todo:make it efficient
 	var rgb = ColorOperators.interpolateColorsRGB([50,255,50], [255,50,50], value);
 	return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
 }
+ColorScales.greenToBlue = function(value){//todo:make it efficient
+	var rgb = ColorOperators.interpolateColorsRGB([50,255,50], [50,50,255], value);
+	return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+}
 
 ColorScales.grayToOrange = function(value){//todo:make it efficient
 	var rgb = ColorOperators.interpolateColorsRGB([100,100,100], [255,110,0], value);
@@ -15848,10 +15852,10 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 			
 			if(texts!=null){
 				s = interval.getAmplitude();
-				if(s*radius>27){
+				if(s*radius>20){
 					rT = point.y + s*0.5*dR;
 					
-					textsSizes.push(Math.min(Math.sqrt(s*radius)*1.8, 24));
+					textsSizes.push(Math.min(Math.sqrt(s*radius)*2.5, 24));
 					textsAngles.push(point.x+Math.PI*0.5);
 					
 					textsX.push(rT*Math.cos(point.x)+center.x);
@@ -16526,21 +16530,20 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
 	var flowFrame = new Rectangle(0, 0, frame.width, horizontalLabels==null?frame.height:(frame.height-14));
 
 	if(frame.memory.image==null){
+		///// capture image
+		
 		var newCanvas = document.createElement("canvas");
 		newCanvas.width = frame.width;
 		newCanvas.height = frame.height;
 		var newContext = newCanvas.getContext("2d");
 		newContext.clearRect(0,0,frame.width,frame.height);
-
 		var mainContext = context;
 		context = newContext;
-
 		IntervalTableDraw.drawIntervalsFlowTable(frame.memory.flowIntervals, flowFrame, frame.memory.actualColorList, bezier, 0.3);
-
 		context = mainContext;
-		
 		frame.memory.image = new Image();
 		frame.memory.image.src = newCanvas.toDataURL();
+		/////
 	}
 
 	if(frame.memory.image){
@@ -16726,7 +16729,8 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
 			r0:Math.min(frame.width, frame.height)*0.05,
 			angles:new NumberList(),
 			zoom:1,
-			angle0:0
+			angle0:0,
+			image:null
 		}
 
 		var dA = TwoPi/numberTable[0].length;
@@ -16735,12 +16739,13 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
 		});
 	}
 	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
-		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(1, numberTable.length):colorList;
+		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(1, numberTable.length).getInterpolated('black', 0.1).addAlpha(0.5):colorList;
 		frame.memory.colorList = colorList;
 	}
 
-	if(frame.containsPoint(mP)){
+	var mouseOnFrame = frame.containsPoint(mP);
 
+	if(mouseOnFrame){
 		if(MOUSE_DOWN){
 			frame.memory.downX = mX;
 			frame.memory.downY = mY;
@@ -16749,7 +16754,7 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
 			frame.memory.anglePressed = frame.memory.angle0;
 		}
 		
-		frame.memory.zoom*=(1-0.4*WHEEL_CHANGE)
+		frame.memory.zoom*=(1-0.4*WHEEL_CHANGE);
 	}
 
 	if(MOUSE_UP) frame.memory.pressed = false;
@@ -16767,12 +16772,46 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
 		frame.memory.angle0 = frame.memory.anglePressed + a1 - a0;
 	}
 
-	context.save();
-	clipRectangle(frame.x, frame.y, frame.width, frame.height);
+	if(mouseOnFrame) frame.memory.image = null;
+	
+	var captureImage = frame.memory.image==null && !mouseOnFrame;
+	var drawingImage = !mouseOnFrame && frame.memory.image!=null && !captureImage;
 
-	IntervalTableDraw.drawCircularIntervalsFlowTable(frame.memory.flowIntervals, frame.getCenter(), frame.memory.radius*frame.memory.zoom, frame.memory.r0, frame.memory.actualColorList, frame.memory.names, true, frame.memory.angles, frame.memory.angle0);
+	if(drawingImage){
+		drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+	} else {
+		if(captureImage){
+			var newCanvas = document.createElement("canvas");
+			newCanvas.width = frame.width;
+			newCanvas.height = frame.height;
+			var newContext = newCanvas.getContext("2d");
+			newContext.clearRect(0,0,frame.width,frame.height);
+			var mainContext = context;
+			context = newContext;
+			var prevFx = frame.x;
+			var prevFy = frame.y;
+			frame.x = 0;
+			frame.y = 0;
+			setFill('white');
+			fRect(0,0,frame.width,frame.height);
+		}
 
-	context.restore();
+		context.save();
+		clipRectangle(frame.x, frame.y, frame.width, frame.height);
+
+		IntervalTableDraw.drawCircularIntervalsFlowTable(frame.memory.flowIntervals, frame.getCenter(), frame.memory.radius*frame.memory.zoom, frame.memory.r0, frame.memory.actualColorList, frame.memory.names, true, frame.memory.angles, frame.memory.angle0);
+
+		context.restore();
+
+		if(captureImage){
+			context = mainContext;
+			frame.memory.image = new Image();
+			frame.memory.image.src = newCanvas.toDataURL();
+			frame.x = prevFx;
+			frame.y = prevFy;
+			drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+		}
+	}
 }
 
 
@@ -17571,7 +17610,9 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 			width:frame.width,
 			height:frame.height,
 			weights:weights,
-			nodeSelected:tree.nodeList[0]
+			nodeSelected:tree.nodeList[0],
+			nFLastChange:nF,
+			image:null
 		}
 
 		var leaves = (!changeInTree && frame.memory.leaves)?frame.memory.leaves:tree.getLeaves();
@@ -17623,6 +17664,8 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 	}
 
 	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
+		frame.memory.nFLastChange = nF;
+		frame.memory.image=null;
 		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(0, tree.nLevels, ColorScales.grayToOrange, 0.1):colorList;
 		frame.memory.nodesColorList = new ColorList();
 		if(textColor==null) frame.memory.textsColorList = new ColorList();
@@ -17703,52 +17746,86 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 	var rect;
 	var overNode = null;
 	var overI;
+	var mouseOnFrame = frame.containsPoint(mP);
+	var moving = nF-frame.memory.nFLastChange<50 || Math.pow(frame.memory.kx-kxF, 2) + Math.pow(frame.memory.ky-kyF, 2) + Math.pow(frame.memory.mx-mxF, 2) + Math.pow(frame.memory.my-myF, 2) > 0.01;
+	var captureImage = !moving && frame.memory.image==null && !mouseOnFrame;
+	var drawingImage = !moving && !mouseOnFrame && frame.memory.image!=null && !captureImage;
 
-	setStroke('black', 0.2);
+	if(drawingImage){
+		drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+	} else {
+		if(captureImage){
+			var newCanvas = document.createElement("canvas");
+			newCanvas.width = frame.width;
+			newCanvas.height = frame.height;
+			var newContext = newCanvas.getContext("2d");
+			newContext.clearRect(0,0,frame.width,frame.height);
+			var mainContext = context;
+			context = newContext;
+			var prevFx = frame.x;
+			var prevFy = frame.y;
+			frame.x = 0;
+			frame.y = 0;
+			setFill('white');
+			fRect(0,0,frame.width,frame.height);
+			setText('black', 12);
+		} else {
+			context.save();
+			clipRectangle(frame.x, frame.y, frame.width, frame.height);
+		}
 
-	context.save();
-	clipRectangle(frame.x, frame.y, frame.width, frame.height);
+		setStroke('black', 0.2);
 
-	tree.nodeList.forEach(function(node, i){
+		tree.nodeList.forEach(function(node, i){
 
-		rect = new Rectangle(tx(node._outRectangle.x), ty(node._outRectangle.y), node._outRectangle.width*kx, node._outRectangle.height*ky);
+			rect = new Rectangle(tx(node._outRectangle.x), ty(node._outRectangle.y), node._outRectangle.width*kx, node._outRectangle.height*ky);
 
-		if(rect.width>5 && rect.height>4 && rect.x<frame.width && rect.getRight()>0 && rect.y<frame.height && rect.getBottom()>0){
+			if(rect.width>5 && rect.height>4 && rect.x<frame.width && rect.getRight()>0 && rect.y<frame.height && rect.getBottom()>0){
 
-			x = Math.round(frame.x + rect.x)+0.5;
-			y = Math.round(frame.y + rect.y)+0.5;
+				x = Math.round(frame.x + rect.x)+0.5;
+				y = Math.round(frame.y + rect.y)+0.5;
 
-			if(node._rgbF){
-				node._rgbF[0] = 0.95*node._rgbF[0] + 0.05*node._rgb[0];
-				node._rgbF[1] = 0.95*node._rgbF[1] + 0.05*node._rgb[1];
-				node._rgbF[2] = 0.95*node._rgbF[2] + 0.05*node._rgb[2];
-				setFill('rgb('+Math.floor(node._rgbF[0])+','+Math.floor(node._rgbF[1])+','+Math.floor(node._rgbF[2])+')');
-			} else {
-				setFill(frame.memory.nodesColorList[i]);
-			}
+				if(node._rgbF){
+					node._rgbF[0] = 0.95*node._rgbF[0] + 0.05*node._rgb[0];
+					node._rgbF[1] = 0.95*node._rgbF[1] + 0.05*node._rgb[1];
+					node._rgbF[2] = 0.95*node._rgbF[2] + 0.05*node._rgb[2];
+					setFill('rgb('+Math.floor(node._rgbF[0])+','+Math.floor(node._rgbF[1])+','+Math.floor(node._rgbF[2])+')');
+				} else {
+					setFill(frame.memory.nodesColorList[i]);
+				}
 
-			if(fsRectM(x, y, Math.floor(rect.width), Math.floor(rect.height))){
-				overNode = node;
-				overI = i;
-			}
-			if(rect.width>20){
-				margTextX = rect.width*TreeDraw.PROP_RECT_MARGIN*0.8;
-				margTextY = rect.height*TreeDraw.PROP_RECT_MARGIN*0.15;
-				textSize = rect.height*TreeDraw.PROP_RECT_LABEL-2;
-				if(textSize>=5){
-					setText(textColor?textColor:frame.memory.textsColorList[i], textSize);
-					exceedes =  (node._textWidth*textSize/12)>(rect.width-1.2*margTextX);
-					if(exceedes){
-						clipRectangle(x+margTextX, y+margTextY,rect.width-2*margTextX, textSize*2);
-					} 
-					fText(node.name, x+margTextX, y+margTextY);
-					if(exceedes) context.restore();
+				if(fsRectM(x, y, Math.floor(rect.width), Math.floor(rect.height))){
+					overNode = node;
+					overI = i;
+				}
+				if(rect.width>20){
+					margTextX = rect.width*TreeDraw.PROP_RECT_MARGIN*0.8;
+					margTextY = rect.height*TreeDraw.PROP_RECT_MARGIN*0.15;
+					textSize = rect.height*TreeDraw.PROP_RECT_LABEL-2;
+					if(textSize>=5){
+						setText(textColor?textColor:frame.memory.textsColorList[i], textSize);
+						exceedes =  (node._textWidth*textSize/12)>(rect.width-1.2*margTextX);
+						if(exceedes){
+							clipRectangle(x+margTextX, y+margTextY,rect.width-2*margTextX, textSize*2);
+						} 
+						fText(node.name, x+margTextX, y+margTextY);
+						if(exceedes) context.restore();
+					}
 				}
 			}
+		});
+		
+		if(captureImage){
+			context = mainContext;
+			frame.memory.image = new Image();
+			frame.memory.image.src = newCanvas.toDataURL();
+			frame.x = prevFx;
+			frame.y = prevFy;
+			drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
 		}
-	});
+	}
 	
-	if(frame.containsPoint(mP)){
+	if(mouseOnFrame){
 		if(overNode){
 			setCursor('pointer');
 
@@ -17761,6 +17838,8 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 			if(MOUSE_UP_FAST) {
 				frame.memory.focusFrame = TreeDraw._expandRect(overNode._outRectangle);
 				frame.memory.nodeSelected = overNode;
+
+				frame.memory.image = null;
 			}
 		}
 		if(MOUSE_DOWN){
@@ -17783,19 +17862,23 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 			frame.memory.focusFrame.width*=zoom;
 			frame.memory.focusFrame.height*=zoom;
 		}
-		if(MOUSE_PRESSED || WHEEL_CHANGE){
-			frame.memory.focusFrame.x = Math.min(Math.max(frame.memory.focusFrame.x, 0), frame.width-frame.memory.focusFrame.width);
-			frame.memory.focusFrame.y = Math.min(Math.max(frame.memory.focusFrame.y, 0), frame.height-frame.memory.focusFrame.height);
+		if(MOUSE_PRESSED || WHEEL_CHANGE!=0){
+			//boundaries unactive until well programmed
+
+			// frame.memory.focusFrame.x = Math.min(Math.max(frame.memory.focusFrame.x, -100), frame.width-frame.memory.focusFrame.width+200);
+			// frame.memory.focusFrame.y = Math.min(Math.max(frame.memory.focusFrame.y, -100), frame.height-frame.memory.focusFrame.height+200);
 			
-			frame.memory.focusFrame.width = Math.min(frame.memory.focusFrame.width, frame.width);
-			frame.memory.focusFrame.height = Math.min(frame.memory.focusFrame.height, frame.height);
+			// frame.memory.focusFrame.width = Math.min(frame.memory.focusFrame.width, frame.width);
+			// frame.memory.focusFrame.height = Math.min(frame.memory.focusFrame.height, frame.height);
+
+			frame.memory.image = null;
 
 		}
 	}
 
-	
+	if(!captureImage && !drawingImage) context.restore();
 
-	context.restore();
+	
 
 	return frame.memory.nodeSelected;
 	
@@ -17809,7 +17892,6 @@ TreeDraw._generateRectangles = function(node){
 	});
 	
 	var rectangles = RectangleOperators.quadrification(node._inRectangle, weights, false, false);
-	//var rectangles = RectangleOperators.packingRectangles(weights, 5, node._inRectangle)
 
 	node.toNodeList.forEach(function(child, i){
 		child._outRectangle = TreeDraw._reduceRect(rectangles[i]);
@@ -17887,20 +17969,20 @@ var mX_UP; // cursor x position on last mousedown event
 var mY_UP; // cursor x position on last mousedown event
 
 //
-var deltaWheel = 0;
+//var deltaWheel = 0;
 var cursorStyle = 'auto';
 var backGroundColor = 'white';
 var cycleActive;
 
 //global constants
 var context;
-var hddenContext;
+//var hddenContext;
 var TwoPi = 2*Math.PI;
 var HalfPi = 0.5*Math.PI;
 var radToGrad = 180/Math.PI;
 var gradToRad = Math.PI/180;
-var c = console; //use c.log instead of console.log
-c.l = c.log;
+var c = console;
+c.l = c.log; //use c.l instead of console.log
 
 //private
 var _wheelActivated = false;
@@ -17915,7 +17997,7 @@ var _interactionCancelledFrame;
 var END_CYCLE_DELAY = 3000;
 
 window.addEventListener('load', function(){
-	c.log('Moebio Framework v2.22');
+	c.log('Moebio Framework v2.23');
 
  	if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
     	userAgent='IE';

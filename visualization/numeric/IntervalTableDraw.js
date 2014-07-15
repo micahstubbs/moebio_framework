@@ -214,10 +214,10 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 			
 			if(texts!=null){
 				s = interval.getAmplitude();
-				if(s*radius>27){
+				if(s*radius>20){
 					rT = point.y + s*0.5*dR;
 					
-					textsSizes.push(Math.min(Math.sqrt(s*radius)*1.8, 24));
+					textsSizes.push(Math.min(Math.sqrt(s*radius)*2.6, 24));
 					textsAngles.push(point.x+Math.PI*0.5);
 					
 					textsX.push(rT*Math.cos(point.x)+center.x);

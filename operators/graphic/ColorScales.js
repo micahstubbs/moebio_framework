@@ -59,6 +59,10 @@ ColorScales.greenToRed = function(value){//todo:make it efficient
 	var rgb = ColorOperators.interpolateColorsRGB([50,255,50], [255,50,50], value);
 	return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
 }
+ColorScales.greenToBlue = function(value){//todo:make it efficient
+	var rgb = ColorOperators.interpolateColorsRGB([50,255,50], [50,50,255], value);
+	return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+}
 
 ColorScales.grayToOrange = function(value){//todo:make it efficient
 	var rgb = ColorOperators.interpolateColorsRGB([100,100,100], [255,110,0], value);

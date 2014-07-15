@@ -54,20 +54,20 @@ var mX_UP; // cursor x position on last mousedown event
 var mY_UP; // cursor x position on last mousedown event
 
 //
-var deltaWheel = 0;
+//var deltaWheel = 0;
 var cursorStyle = 'auto';
 var backGroundColor = 'white';
 var cycleActive;
 
 //global constants
 var context;
-var hddenContext;
+//var hddenContext;
 var TwoPi = 2*Math.PI;
 var HalfPi = 0.5*Math.PI;
 var radToGrad = 180/Math.PI;
 var gradToRad = Math.PI/180;
-var c = console; //use c.log instead of console.log
-c.l = c.log;
+var c = console;
+c.l = c.log; //use c.l instead of console.log
 
 //private
 var _wheelActivated = false;
@@ -82,7 +82,7 @@ var _interactionCancelledFrame;
 var END_CYCLE_DELAY = 3000;
 
 window.addEventListener('load', function(){
-	c.log('Moebio Framework v2.22');
+	c.log('Moebio Framework v2.23');
 
  	if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
     	userAgent='IE';
