@@ -626,7 +626,7 @@ NumberTableDraw._drawPartialFlow=function(frame, flowIntervals, labels, colors, 
  * tags:draw
  */
 NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, colorList){
-	if(numberTable==null || numberTable.length<2 || numberTable.type!="NumberTable") return;
+	if(numberTable==null || numberTable.length<2 || numberTable[0].length<2 || numberTable.type!="NumberTable") return;
 
 	intervalsFactor = intervalsFactor==null?1:intervalsFactor;
 
