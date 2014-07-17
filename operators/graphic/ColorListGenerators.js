@@ -8,12 +8,26 @@
 function ColorListGenerators(){};
 
 /**
+ * create a simple list of categorical colors
+ * @param  {Number} nColors
+ * 
+ * @param  {Number} alpha 0.5 by default
+ * @return {ColorList}
+ * tags:generator
+ */
+ColorListGenerators.createDefaultCategoricalColorList = function(nColors, alpha){
+	alpha = alpha==null?0.5:alpha;
+	return ColorListGenerators.createCategoricalColors(1, nColors).getInterpolated('black', 0.15).addAlpha(alpha);
+}
+
+
+/**
  * create a colorList based on a colorScale and values from a numberList (that will be normalized)
  * @param  {NumberList} numberList
  * @param  {ColorScale} colorScale
  * @param  {Number} mode 0:normalize numberList
  * @return {ColorList}
- * tags:
+ * tags:generator
  */
 ColorListGenerators.createColorListFromNumberList=function(numberList, colorScale, mode){
 	mode = mode==null?0:mode;
@@ -57,7 +71,7 @@ ColorListGenerators.createColorListWithSingleColor=function(nColors, color){
  * @param {ColorScale} colorScaleFunction
  * @param {Number} alpha transparency
  * @return {ColorList} ColorList with categorical colors
- * tags:
+ * tags:generator
  */
 ColorListGenerators.createCategoricalColors=function(mode, nColors, colorScaleFunction, alpha){
 	colorScaleFunction = colorScaleFunction==null?ColorScales.temperature:colorScaleFunction;

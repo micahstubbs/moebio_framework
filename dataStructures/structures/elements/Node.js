@@ -86,6 +86,24 @@ Node.prototype.destroy=function(){
 Node.prototype.getParent=function(){
 	return this.parent;
 }
+
+/**
+ * return the leaves under a node ina Tree, [!] if the network is not a tree this method could run infinite loops
+ * @return {NodeList}
+ * tags:
+ */
+Node.prototype.getLeaves=function(){
+    var leaves = new NodeList();
+    var addLeaves = function(node){
+        if(node.toNodeList.length==0){
+            leaves.push(node);
+            return;
+        }
+        node.toNodeList.forEach(addLeaves);
+    }
+    addLeaves(this);
+    return leaves;
+}
 //
 
 

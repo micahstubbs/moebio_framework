@@ -91,12 +91,12 @@ TableOperators.sortListsByNumberList=function(table, numberList, descending){
  * @param  {Table} table to be aggregated
  * 
  * @param  {Number} nList list in the table used as basis to aggregation
- * @param  {Number} mode mode of aggregation, 0:picks first element 1:adds numbers
+ * @param  {Number} mode mode of aggregation, 0:picks first element 1:adds numbers, 2:averages
  * @return {Table} aggregated table
  * tags:aggregation
  */
 TableOperators.aggregateTable=function(table, nList, mode){
-	if(table==null || table[0]==null || table[0][0]==null) return null;
+	if(table==null || table[0]==null || table[0][0]==null || table[nList]==null) return null;
 
 	nList = nList==null?0:nList;
 	mode = mode==null?0:mode;
@@ -132,10 +132,24 @@ TableOperators.aggregateTable=function(table, nList, mode){
 					}
 				} else {
 					for(j=0; table[j]!=null; j++){
-						if(j!=nList && table[j].type=='NumberList')	newTable[j][index]+=table[j][i];
+						if(j!=nList && table[j].type=='NumberList'){
+							newTable[j][index]+=table[j][i];
+						}
 					}
 				}
 			}
+			break;
+		case 2://averages values in numberLists
+			var nRepetitionsList = table[nList].getElementsRepetitionCount(false);
+			newTable = TableOperators.aggregateTable(table, nList, 1);
+
+			for(j=0; newTable[j]!=null; j++){
+				if(j!=nList && newTable[j].type=='NumberList'){
+					newTable[j] = newTable[j].divide(nRepetitionsList[1]);
+				}
+			}
+			
+			newTable.push(nRepetitionsList[1]);
 			break;
 	}
 	for(j=0; newTable[j]!=null; j++){

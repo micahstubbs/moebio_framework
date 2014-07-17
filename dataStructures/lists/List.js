@@ -401,8 +401,8 @@ List.prototype.getElementsRepetitionCount=function(sortListsByOccurrences){
 	var table = new Table();
 	table.push(elementList);
 	table.push(numberList);
-	var indexArray=numberList.sortNumericIndexed();
 	if(sortListsByOccurrences){
+		var indexArray=numberList.sortNumericIndexed();
 		var j;
 		for(j=0; j<table.length; j++){
 			table[j]=table[j].clone().sortOnIndexes(indexArray);

@@ -162,6 +162,8 @@ Table.prototype.getWithoutRows=function(rowsIndexes){
  * tags:sort
  */
 Table.prototype.getListsSortedByList=function(listOrIndex, ascending){
+	if(listOrIndex==null) return;
+	
 	var newTable= instantiateWithSameType(this);
 	var i;
 	var list = typeOf(listOrIndex)=='number'?this[listOrIndex]:listOrIndex;

@@ -12,7 +12,7 @@ function NetworkConvertions(){};
  * tags:conversion
  */
 NetworkConvertions.TableToNetwork = function(table, numberList, threshold, allowMultipleRelations){
-	if(table==null || table.type!="Table" || table[0]==null || table[1]==null) return;
+	if(table==null || !table.isTable || table[0]==null || table[1]==null) return;
 
 	//trace("••••••• createNetworkFromPairsTable", table);
 	if(allowMultipleRelations==null) allowMultipleRelations=false;

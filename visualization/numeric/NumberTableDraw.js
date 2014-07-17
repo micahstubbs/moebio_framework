@@ -321,80 +321,6 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
 	if(frame.memory.selected) return frame.memory.indexes;
 }
 
-
-// *
-//  * draws a Steamgraph
-//  * @param  {Rectangle} frame
-//  * @param  {NumberTable} numberTable
-//  *
-//  * @param {Boolean} normalized normalize each column, making the graph of constant height
-//  * @param {Boolean} sorted sort flow polygons
-//  * @param {Number} intervalsFactor number between 0 and 1, factors the height of flow polygons 
-//  * @param {Boolean} bezier draws bezier (soft) curves
-//  * @param  {ColorList} colorList colors of polygons
-//  * @param  {Number} margin
-//  * @return {NumberList} list of positions of elements on clicked coordinates
- 
-// NumberTableDraw.drawStreamgraphW = function(frame, numberTable, normalized, sorted, intervalsFactor, bez, colorList){
-// 	if(numberTable==null || numberTable.length<2 || numberTable.type!="NumberTable") return;
-
-// 	//setup
-// 	if(frame.memory==null || numberTable!=frame.memory.numberTable || normalized!=frame.memory.normalized || sorted!=frame.memory.sorted || intervalsFactor!=frame.memory.intervalsFactor || bez!=frame.memory.bez){
-// 		c.log('Oo');
-// 		frame.memory = {
-// 			numberTable:numberTable,
-// 			normalized:normalized,
-// 			sorted:sorted,
-// 			intervalsFactor:intervalsFactor,
-// 			bez:bez,
-// 			flowIntervals:IntervalTableOperators.scaleIntervals(NumberTableFlowOperators.getFlowTableIntervals(numberTable, normalized, sorted), intervalsFactor)
-// 		}
-// 	}
-// 	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
-// 		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(1, numberTable.length):colorList;
-// 		frame.memory.colorList = colorList;
-// 	}
-
-// 	c.log('-numberTable, frame.memory.flowIntervals, frame.memory.actualColorList', numberTable, frame.memory.flowIntervals, frame.memory.actualColorList);
-
-// 	IntervalTableDraw.drawIntervalsFlowTable(frame.memory.flowIntervals, frame, frame.memory.actualColorList, bez, 0.3);
-
-
-// 	// if(numberTable==null || numberTable.length<2 || numberTable.type!="NumberTable") return;
-
-// 	// var change = frame.memory==null || frame.memory.numberTable==null;//!=numberTable || frame.memory.normalized!=normalized || frame.memory.sorted!=sorted || frame.memory.intervalsFactor!=intervalsFactor || frame.memory.bezier!=bezier || frame.memory.colorList!=colorList || frame.memory.width!=frame.width || frame.memory.height!=frame.height;
-
-// 	// c.log('\n\nframe.memory==null, change', frame.memory==null, change);
-
-// 	// if(frame.memory=!null) c.log('1. frame.memory.o', frame.memory.o);//, frame.memory.normalized!=normalized, frame.memory.sorted!=sorted, frame.memory.intervalsFactor!=intervalsFactor, frame.memory.bezier!=bezier, frame.memory.colorList!=colorList, frame.memory.width!=frame.width, frame.memory.height!=frame.height)
-	
-// 	// if(change){
-// 	// 	c.log('->');
-// 	// 	frame.bottom = frame.getBottom();
-// 	// 	frame.memory = {};
-// 	// 	frame.memory.numberTable = numberTable;
-// 	// 	frame.memory.o = 0;
-// 	// 	// frame.memory = {
-// 	// 	// 	numberTable:numberTable,
-// 	// 	// 	normalized:normalized,
-// 	// 	// 	sorted:sorted,
-// 	// 	// 	intervalsFactor:intervalsFactor,
-// 	// 	// 	bezier:bezier,
-// 	// 	// 	colorList:colorList,
-// 	// 	// 	width:frame.width,
-// 	// 	// 	height:frame.height,
-// 	// 	// 	//capture:ImageDraw.captureVisualizationImage('NumberTableDraw.drawStreamgraphSimple', frame.width, frame.height, numberTable, normalized, sorted, intervalsFactor, bezier, colorList)
-// 	// 	// }
-// 	// 	c.log('2. frame.memory.o', frame.memory.o);
-// 	// }
-
-// 	// return null;
-
-// 	// //c.log('frame.memory.capture', frame.memory.capture);
-// 	// //if(frame.memory.capture) drawImage(frame.memory.capture, frame.x, frame.y, frame.width, frame.height);
-// }
-
-
 /**
  * draws a steamgraph
  * @param  {Rectangle} frame
@@ -441,7 +367,7 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
 		}
 	}
 	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
-		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(1, numberTable.length):colorList;
+		frame.memory.actualColorList = colorList==null?ColorListGenerators.createDefaultCategoricalColorList(numberTable.length, 0.7):colorList;
 		frame.memory.colorList = colorList;
 	}
 
@@ -657,7 +583,7 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
 		});
 	}
 	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
-		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(1, numberTable.length).getInterpolated('black', 0.1).addAlpha(0.5):colorList;
+		frame.memory.actualColorList = colorList==null?ColorListGenerators.createDefaultCategoricalColorList(numberTable.length):colorList;
 		frame.memory.colorList = colorList;
 	}
 
