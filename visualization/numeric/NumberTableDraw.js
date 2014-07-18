@@ -417,13 +417,14 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
 	if(horizontalLabels) NumberTableDraw._drawHorizontalLabels(frame, frame.getBottom()-5, numberTable, horizontalLabels, x0, x1);
 }
 NumberTableDraw._drawHorizontalLabels = function(frame, y, numberTable, horizontalLabels, x0, x1){
-	var dx = frame.width/numberTable[0].length;
+	var dx = frame.width/(numberTable[0].length-1);
 	var x;
 	var mX2 = Math.min(Math.max(mX, frame.x+1), frame.getRight()-1);
-	var iPosDec = (numberTable[0].length*mX2/frame.width) - 1;
+	var iPosDec = (mX2-frame.x)/dx;
 	var iPos = Math.round(iPosDec);
-	x0 = x0==null?frame.x:x0;
-	x1 = x1==null?frame.x:x1;
+
+	x0 = x0==null?frame.x:x0+frame.x;
+	x1 = x1==null?frame.x:x1+frame.x;
 	
 	horizontalLabels.forEach(function(label, i){
 		setText('black', (i==iPos && x1>(x0+4))?14:10, null, 'center', 'middle');
@@ -435,9 +436,9 @@ NumberTableDraw._drawHorizontalLabels = function(frame, y, numberTable, horizont
 		} else {
 			x = frame.x + i*dx;
 			if(x<mX2){
-				x = x*frame.memory.fOpen;
+				x = frame.x + i*dx*frame.memory.fOpen;
 			} else if(x>mX2){
-				x = x*frame.memory.fOpen + (x1-x0);
+				x = frame.x + i*dx*frame.memory.fOpen + (x1-x0);
 			}
 		}
 		fText(horizontalLabels[i], x, y);

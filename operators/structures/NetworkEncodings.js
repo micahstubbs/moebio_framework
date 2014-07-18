@@ -395,6 +395,7 @@ NetworkEncodings.decodeSYM = function(symCode){
 					break;
 				case "RELATION":
 					var ids = bits[2].replace(/\s/g, "").split(",");
+					//var ids = bits[2].split(",");
 					node = network.nodeList.getNodeById(ids[0]);
 					node1 = network.nodeList.getNodeById(ids[1]);
 					if(node!=null && node1!=null){

@@ -10133,10 +10133,11 @@ function NetworkConvertions(){};
  * @param  {NumberList} numberList weights of relations
  * @param  {Number} threshold minimum weight or noumber of co-occurrences to create a relation
  * @param  {Boolean} allowMultipleRelations
+ * @param {Number} minRelationsInNode remove nodes with number of relations below threshold
  * @return {Network}
  * tags:conversion
  */
-NetworkConvertions.TableToNetwork = function(table, numberList, threshold, allowMultipleRelations){
+NetworkConvertions.TableToNetwork = function(table, numberList, threshold, allowMultipleRelations, minRelationsInNode){
 	if(table==null || !table.isTable || table[0]==null || table[1]==null) return;
 
 	//trace("••••••• createNetworkFromPairsTable", table);
@@ -10196,6 +10197,16 @@ NetworkConvertions.TableToNetwork = function(table, numberList, threshold, allow
 			network.addRelation(relation);
 		}
 	}
+
+	if(minRelationsInNode){
+		for(i=0; network.nodeList[i]!=null; i++){
+			if(network.nodeList[i].relationList.length<minRelationsInNode){
+				network.removeNode(network.nodeList[i]);
+				i--;
+			}
+		}
+	}
+
 	return network;
 }
 
@@ -10596,6 +10607,7 @@ NetworkEncodings.decodeSYM = function(symCode){
 					break;
 				case "RELATION":
 					var ids = bits[2].replace(/\s/g, "").split(",");
+					//var ids = bits[2].split(",");
 					node = network.nodeList.getNodeById(ids[0]);
 					node1 = network.nodeList.getNodeById(ids[1]);
 					if(node!=null && node1!=null){
@@ -10946,6 +10958,7 @@ NetworkGenerators.createNetworkFromPairsTable = function(pairsTable, minPairOccu
 	return network;
 }
 NetworkOperators = function(){};
+
 
 NetworkOperators.filterNodesByMinDegree = function(network, minDegree){//TODO: fix! this method is transforming the network
 	var i;
@@ -16552,13 +16565,14 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
 	if(horizontalLabels) NumberTableDraw._drawHorizontalLabels(frame, frame.getBottom()-5, numberTable, horizontalLabels, x0, x1);
 }
 NumberTableDraw._drawHorizontalLabels = function(frame, y, numberTable, horizontalLabels, x0, x1){
-	var dx = frame.width/numberTable[0].length;
+	var dx = frame.width/(numberTable[0].length-1);
 	var x;
 	var mX2 = Math.min(Math.max(mX, frame.x+1), frame.getRight()-1);
-	var iPosDec = (numberTable[0].length*mX2/frame.width) - 1;
+	var iPosDec = (mX2-frame.x)/dx;
 	var iPos = Math.round(iPosDec);
-	x0 = x0==null?frame.x:x0;
-	x1 = x1==null?frame.x:x1;
+
+	x0 = x0==null?frame.x:x0+frame.x;
+	x1 = x1==null?frame.x:x1+frame.x;
 	
 	horizontalLabels.forEach(function(label, i){
 		setText('black', (i==iPos && x1>(x0+4))?14:10, null, 'center', 'middle');
@@ -16570,9 +16584,9 @@ NumberTableDraw._drawHorizontalLabels = function(frame, y, numberTable, horizont
 		} else {
 			x = frame.x + i*dx;
 			if(x<mX2){
-				x = x*frame.memory.fOpen;
+				x = frame.x + i*dx*frame.memory.fOpen;
 			} else if(x>mX2){
-				x = x*frame.memory.fOpen + (x1-x0);
+				x = frame.x + i*dx*frame.memory.fOpen + (x1-x0);
 			}
 		}
 		fText(horizontalLabels[i], x, y);

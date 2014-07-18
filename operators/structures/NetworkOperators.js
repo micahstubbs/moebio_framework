@@ -1,5 +1,6 @@
 NetworkOperators = function(){};
 
+
 NetworkOperators.filterNodesByMinDegree = function(network, minDegree){//TODO: fix! this method is transforming the network
 	var i;
 	for(i=0; network.nodeList[i]!=null; i++){
