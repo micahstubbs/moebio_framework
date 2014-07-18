@@ -7562,7 +7562,7 @@ ListOperators.concat = function(){
  * tags:
  */
 ListOperators.assemble = function(){
-	return List.fromArray(arguments).getImproved();
+	return List.fromArray(Array.prototype.slice.call(arguments, 0)).getImproved();
 }
 
 
@@ -15654,7 +15654,7 @@ ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode)
 
 	var hList = list.length*dy;
 
-	if(hList<frame.height-20){
+	if(hList<=frame.height-20){
 		y0 = frame.y + 10;
 	} else {
 		if(mouseIn){
@@ -15691,7 +15691,9 @@ ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode)
 		} else {
 			if(mouseIn && mY>=y && mY<y+dy){
 				setFill('rgb(220,220,220)');
-				fRect(frame.x+2, y, frame.width-4, dy);
+				if(fRectM(frame.x+2, y, frame.width-4, dy)){
+					setCursor('pointer');
+				}
 				if(MOUSE_DOWN) frame.memory.selected = i;
 			}
 			setFill('black');

@@ -70,7 +70,7 @@ ListOperators.concat = function(){
  * tags:
  */
 ListOperators.assemble = function(){
-	return List.fromArray(arguments).getImproved();
+	return List.fromArray(Array.prototype.slice.call(arguments, 0)).getImproved();
 }
 
 
