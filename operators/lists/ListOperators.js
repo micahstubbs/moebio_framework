@@ -239,22 +239,6 @@ ListOperators.sortListByIndexes=function(list, indexedArray){
 	return newList;
 }
 
-// ListOperators.concat=function(){
-// 	var i;
-// 	var j;
-// 	var addList;
-// 	var newList=arguments[0].clone();
-// 	var sameType = true;
-// 	for(i=1; i<arguments.length; i++){
-// 		addList=arguments[i];
-// 		if(arguments[i].type != arguments[i-1].type) sameType = false;
-// 		for(j=0; addList[j]!=null; j++){
-// 			newList.push(addList[j]);
-// 		}
-// 	}
-// 	if(sameType) return newList;
-// 	return List.fromArray(newList);
-// }
 
 ListOperators.concatWithoutRepetitions=function(){ //?
 	var i;

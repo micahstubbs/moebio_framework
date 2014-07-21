@@ -44,7 +44,7 @@ var nF = 0; // number of current frame
 var MOUSE_DOWN=false; //true on the frame of mousedown event
 var MOUSE_UP=false; //true on the frame of mouseup event
 var MOUSE_UP_FAST=false; //true on the frame of mouseup event
-var WHEEL_CHANGE=0;
+var WHEEL_CHANGE=0; //differnt from 0 if mousewheel (or pad) moves
 var NF_DOWN; //number of frame of last mousedown event
 var NF_UP; //number of frame of last mouseup event
 var MOUSE_PRESSED; //true if mouse pressed
@@ -61,7 +61,6 @@ var cycleActive;
 
 //global constants
 var context;
-//var hddenContext;
 var TwoPi = 2*Math.PI;
 var HalfPi = 0.5*Math.PI;
 var radToGrad = 180/Math.PI;
@@ -82,7 +81,7 @@ var _interactionCancelledFrame;
 var END_CYCLE_DELAY = 3000;
 
 window.addEventListener('load', function(){
-	c.log('Moebio Framework v2.23');
+	c.log('Moebio Framework v2.24');
 
  	if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
     	userAgent='IE';

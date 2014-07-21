@@ -7731,22 +7731,6 @@ ListOperators.sortListByIndexes=function(list, indexedArray){
 	return newList;
 }
 
-// ListOperators.concat=function(){
-// 	var i;
-// 	var j;
-// 	var addList;
-// 	var newList=arguments[0].clone();
-// 	var sameType = true;
-// 	for(i=1; i<arguments.length; i++){
-// 		addList=arguments[i];
-// 		if(arguments[i].type != arguments[i-1].type) sameType = false;
-// 		for(j=0; addList[j]!=null; j++){
-// 			newList.push(addList[j]);
-// 		}
-// 	}
-// 	if(sameType) return newList;
-// 	return List.fromArray(newList);
-// }
 
 ListOperators.concatWithoutRepetitions=function(){ //?
 	var i;
@@ -9013,42 +8997,37 @@ function NumberTableFlowOperators(){};
 NumberTableFlowOperators.getFlowTable=function(numberTable, normalized, include0s){
 	normalized = normalized || false;
 	var nElements = numberTable.length;
-	var nCols = numberTable[0].length;
+	var nRows = numberTable[0].length;
 	var numberList;
-	var nNumbers=numberTable[0].length;
 	var minList = new NumberList();
 	var maxList = new NumberList();
 	var sums = new NumberList();
-	var minInCol;
-	var maxInCol;
-	var sumInCol;
+	var minInRow;
+	var maxInRow;
+	var sumInRow;
 	var MAX = -9999999;
 	var MIN = 9999999;
 	var MAXSUMS = -9999999;
-	var number;
-	var i;
-	var j;
-	for(i=0; i<nCols; i++){
-		minInCol = 9999999; //TODO: what's the max Number?
-		maxInCol = -9999999;
-		sumInCol = 0;
+	var i, j;
+	for(i=0; i<nRows; i++){
+		minInRow = 9999999; //TODO: what's the max Number?
+		maxInRow = -9999999;
+		sumInRow = 0;
 		for(j=0; j<nElements; j++){
 			numberList = numberTable[j];
-			if(numberList.length!=nCols) return;
+			if(numberList.length!=nRows) return;
 			
-			maxInCol = Math.max(maxInCol, numberList[i]);
-			minInCol = Math.min(minInCol, numberList[i]);
-			sumInCol += numberList[i];
+			maxInRow = Math.max(maxInRow, numberList[i]);
+			minInRow = Math.min(minInRow, numberList[i]);
+			sumInRow += numberList[i];
 		}
-		minList.push(minInCol);
-		maxList.push(maxInCol);
-		sums.push(sumInCol);
-		MIN = Math.min(MIN, minInCol);
-		MAX = Math.max(MAX, maxInCol);
-		MAXSUMS = Math.max(MAXSUMS, sumInCol);
+		minList.push(minInRow);
+		maxList.push(maxInRow);
+		sums.push(sumInRow);
+		MIN = Math.min(MIN, minInRow);
+		MAX = Math.max(MAX, maxInRow);
+		MAXSUMS = Math.max(MAXSUMS, sumInRow);
 	}
-
-	c.log("NumberTableFlowOperators.getFlowTable, MIN", MIN);
 
 	var dMINMAX = MAXSUMS-MIN;
 	var flowTable = new NumberTable();
@@ -9058,6 +9037,28 @@ NumberTableFlowOperators.getFlowTable=function(numberTable, normalized, include0
 	
 	var include0Add = include0s?1:0;
 	
+
+	if(normalized && include0s){
+		var max;
+
+		flowTable = new NumberTable(numberTable.length+1);
+
+		numberTable[0].forEach(function(){
+			flowTable[0].push(0);
+		});
+
+		numberTable.forEach(function(list, iList){
+			list.forEach(function(val, j){
+				sum = sums[j];
+				flowTable[iList+1][j] = val/(sum==0?0.00001:sum) + flowTable[iList][j];
+			});
+		});
+		
+		return flowTable;
+	}
+
+	flowTable = new NumberTable();
+
 	if(!normalized){
 		minToNormalize = MIN;
 		maxToNormalize = dMINMAX;
@@ -9069,10 +9070,10 @@ NumberTableFlowOperators.getFlowTable=function(numberTable, normalized, include0
 		flowTable.push(flowNumberList);
 	}
 	if(include0s) flowTable.push(new NumberList());
-	for(i=0; i<nCols; i++){
+
+	for(i=0; i<nRows; i++){
 		numberList = numberTable[0];
 		if(normalized){
-			
 			maxToNormalize = sums[i]-minToNormalize;
 		}
 		if(include0s){
@@ -9090,10 +9091,12 @@ NumberTableFlowOperators.getFlowTable=function(numberTable, normalized, include0
 
 NumberTableFlowOperators.getFlowTableIntervals=function(numberTable, normalized, sorted, stacked){
 	var table = NumberTableFlowOperators.getFlowTable(numberTable, normalized, true);
+
 	var intervalTable = new Table();
+	var i, j;
 	
 	var nElements = table.length;
-	var nCols = table[0].length;
+	var nRows = table[0].length;
 	
 	var intervalList;
 	
@@ -9103,7 +9106,7 @@ NumberTableFlowOperators.getFlowTableIntervals=function(numberTable, normalized,
 		numberList = table[i];
 		intervalList = new List();
 		intervalTable[i-1] = intervalList;
-		for(j=0;j<nCols;j++){
+		for(j=0;j<nRows;j++){
 			intervalList.push(new Interval(table[i-1][j], table[i][j]));
 			if(i==nElements-1) maxCols[j] = table[i][j];
 		}
@@ -9114,7 +9117,7 @@ NumberTableFlowOperators.getFlowTableIntervals=function(numberTable, normalized,
 		var amplitudes;
 		var interval;
 		var yy;
-		for(j=0; j<nCols; j++){
+		for(j=0; j<nRows; j++){
 			amplitudes = new NumberList();
 			intervalList = intervalTable[i];
 			for(i=0;i<nElements-1;i++){
@@ -9132,7 +9135,7 @@ NumberTableFlowOperators.getFlowTableIntervals=function(numberTable, normalized,
 			}
 		}
 	} else if(!normalized){
-		for(j=0; j<nCols; j++){
+		for(j=0; j<nRows; j++){
 			for(i=0;i<nElements-1;i++){
 				interval = intervalTable[i][j];
 				if(stacked){
@@ -15667,8 +15670,6 @@ ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode)
 
 		y0 = frame.y + frame.memory.y;
 	}
-
-	
 	
 
 	setText('black', textSize);
@@ -16148,10 +16149,6 @@ IntervalTableDraw._bezierValue = function(x0, x1, y0, y1, t, offX){
 
 
 
-/**
-* NumberTable_or_PolygonDraw
-* @constructor
-*/
 function NumberTableDraw(){};
 
 /**
@@ -18001,7 +17998,7 @@ var nF = 0; // number of current frame
 var MOUSE_DOWN=false; //true on the frame of mousedown event
 var MOUSE_UP=false; //true on the frame of mouseup event
 var MOUSE_UP_FAST=false; //true on the frame of mouseup event
-var WHEEL_CHANGE=0;
+var WHEEL_CHANGE=0; //differnt from 0 if mousewheel (or pad) moves
 var NF_DOWN; //number of frame of last mousedown event
 var NF_UP; //number of frame of last mouseup event
 var MOUSE_PRESSED; //true if mouse pressed
@@ -18018,7 +18015,6 @@ var cycleActive;
 
 //global constants
 var context;
-//var hddenContext;
 var TwoPi = 2*Math.PI;
 var HalfPi = 0.5*Math.PI;
 var radToGrad = 180/Math.PI;
@@ -18039,7 +18035,7 @@ var _interactionCancelledFrame;
 var END_CYCLE_DELAY = 3000;
 
 window.addEventListener('load', function(){
-	c.log('Moebio Framework v2.23');
+	c.log('Moebio Framework v2.24');
 
  	if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
     	userAgent='IE';

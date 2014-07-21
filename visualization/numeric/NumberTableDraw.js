@@ -1,7 +1,3 @@
-/**
-* NumberTable_or_PolygonDraw
-* @constructor
-*/
 function NumberTableDraw(){};
 
 /**
