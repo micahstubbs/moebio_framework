@@ -20,6 +20,8 @@ ObjectDraw.count = function(frame, object){
 		frame.memory.n++;
 	}
 
+	if(MOUSE_DOWN && frame.containsPoint(mP)) frame.memory.n=0;
+
 	setText('black', 12);
 	fText(frame.memory.n, frame.x + 10, frame.y + 10);
 }

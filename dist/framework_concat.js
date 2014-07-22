@@ -1957,6 +1957,7 @@ Table.fromArray=function(array){
    	result.getRow=Table.prototype.getRow;
    	result.getRows=Table.prototype.getRows;
    	result.getLengths=Table.prototype.getLengths;
+   	result.getListLength=Table.prototype.getListLength;
 	result.sliceRows=Table.prototype.sliceRows;
 	result.getWithoutRow=Table.prototype.getWithoutRow;
 	result.getWithoutRows=Table.prototype.getWithoutRows;
@@ -2002,6 +2003,17 @@ Table.prototype.getRow=function(index){
 		list[i]=this[i][index];
 	}
 	return list.getImproved();
+}
+
+/**
+ * returns the length of the list at given index (default 0)
+ * 
+ * @param  {Number} index
+ * @return {Number}
+ * tags:
+ */
+Table.prototype.getListLength=function(index){
+	return this[index||0].length;
 }
 
 /**
@@ -8995,6 +9007,8 @@ NumberTableConversions.numberTableToPolygon = function(numberTable){
 function NumberTableFlowOperators(){};
 
 NumberTableFlowOperators.getFlowTable=function(numberTable, normalized, include0s){
+	if(numberTable==null) return;
+
 	normalized = normalized || false;
 	var nElements = numberTable.length;
 	var nRows = numberTable[0].length;
@@ -9090,11 +9104,13 @@ NumberTableFlowOperators.getFlowTable=function(numberTable, normalized, include0
 }
 
 NumberTableFlowOperators.getFlowTableIntervals=function(numberTable, normalized, sorted, stacked){
+	if(numberTable==null) return null;
+
 	var table = NumberTableFlowOperators.getFlowTable(numberTable, normalized, true);
 
 	var intervalTable = new Table();
 	var i, j;
-	
+
 	var nElements = table.length;
 	var nRows = table[0].length;
 	
@@ -16923,6 +16939,8 @@ ObjectDraw.count = function(frame, object){
 		frame.memory.object=object;
 		frame.memory.n++;
 	}
+
+	if(MOUSE_DOWN && frame.containsPoint(mP)) frame.memory.n=0;
 
 	setText('black', 12);
 	fText(frame.memory.n, frame.x + 10, frame.y + 10);

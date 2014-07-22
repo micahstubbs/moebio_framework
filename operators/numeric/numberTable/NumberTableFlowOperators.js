@@ -1,6 +1,8 @@
 function NumberTableFlowOperators(){};
 
 NumberTableFlowOperators.getFlowTable=function(numberTable, normalized, include0s){
+	if(numberTable==null) return;
+
 	normalized = normalized || false;
 	var nElements = numberTable.length;
 	var nRows = numberTable[0].length;
@@ -96,11 +98,13 @@ NumberTableFlowOperators.getFlowTable=function(numberTable, normalized, include0
 }
 
 NumberTableFlowOperators.getFlowTableIntervals=function(numberTable, normalized, sorted, stacked){
+	if(numberTable==null) return null;
+
 	var table = NumberTableFlowOperators.getFlowTable(numberTable, normalized, true);
 
 	var intervalTable = new Table();
 	var i, j;
-	
+
 	var nElements = table.length;
 	var nRows = table[0].length;
 	

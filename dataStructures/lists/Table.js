@@ -25,6 +25,7 @@ Table.fromArray=function(array){
    	result.getRow=Table.prototype.getRow;
    	result.getRows=Table.prototype.getRows;
    	result.getLengths=Table.prototype.getLengths;
+   	result.getListLength=Table.prototype.getListLength;
 	result.sliceRows=Table.prototype.sliceRows;
 	result.getWithoutRow=Table.prototype.getWithoutRow;
 	result.getWithoutRows=Table.prototype.getWithoutRows;
@@ -70,6 +71,17 @@ Table.prototype.getRow=function(index){
 		list[i]=this[i][index];
 	}
 	return list.getImproved();
+}
+
+/**
+ * returns the length of the list at given index (default 0)
+ * 
+ * @param  {Number} index
+ * @return {Number}
+ * tags:
+ */
+Table.prototype.getListLength=function(index){
+	return this[index||0].length;
 }
 
 /**
