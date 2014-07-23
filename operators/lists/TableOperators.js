@@ -96,19 +96,20 @@ TableOperators.sortListsByNumberList=function(table, numberList, descending){
  * tags:aggregation
  */
 TableOperators.aggregateTable=function(table, nList, mode){
-	if(table==null || table[0]==null || table[0][0]==null || table[nList]==null) return null;
-
 	nList = nList==null?0:nList;
+	if(table==null || table[0]==null || table[0][0]==null || table[nList]==null) return null;
 	mode = mode==null?0:mode;
 	
 	var newTable = new Table();
-	newTable.name = table.name;
 	var i, j;
 	var index;
 	var notRepeated;
 	
+	newTable.name = table.name;
+
 	for(j=0; table[j]!=null; j++){
 		newTable[j] = new List();
+		newTable[j].name = table[j].name;
 	}
 	
 	switch(mode){
