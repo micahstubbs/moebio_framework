@@ -20,7 +20,11 @@ cycle=function(){
 }
 
 resizeWindow=function(){
-  console.log("resizeWindow must be overriden!");
+  //console.log("resizeWindow must be overriden!");
+}
+
+lastCycle = function(){
+	//override
 }
 
 var listenerArray  = new Array();
@@ -228,6 +232,8 @@ function startCycle(){
 function stopCycle(){
 	clearInterval(_setIntervalId);
 	cycleActive = false;
+
+	lastCycle();
 }
 
 
