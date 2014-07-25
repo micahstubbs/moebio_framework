@@ -63,7 +63,7 @@ StringListOperators.countStringsOccurrencesOnTexts=function(strings, texts){
 		}
 		occurrencesTable[i] = numberList;
 	}
-	return occurrencesTable
+	return occurrencesTable;
 }
 
 /**
@@ -177,7 +177,6 @@ StringListOperators.createTextsNetwork = function(texts, stopWords, stressUnique
     return network;
 }
 
-//by measuring entropy of words: 
 
 /**
  * builds a network out of a list of short strings
