@@ -4645,7 +4645,7 @@ ObjectOperators.addition=function(){
 		}
 
 		var pairType = a0Type+"_"+a1Type;
-		//c.log('pairType:['+pairType+']');
+		//c.log('ObjectOperators.addition, pairType:['+pairType+']');
 		//
 		switch(pairType){
 			case 'boolean_boolean':
@@ -4690,6 +4690,10 @@ ObjectOperators.addition=function(){
 				return new DateInterval(ObjectOperators.addition(a0.date0, a1.min), ObjectOperators.addition(a0.date1, a1.max));
 			case 'DateInterval_DateInterval':
 				return new DateInterval(ObjectOperators.addition(a0.date0, a1.date0), ObjectOperators.addition(a0.date1, a1.date1));
+			case 'string_StringList':
+				return a1.append(a0, false);
+			case 'StringList_string':
+				return a1.append(a0, true);
 			default:
 				c.log("[!] addition didn't manage to resolve:", pairType, a0+a1);
 				return null;
@@ -13473,7 +13477,8 @@ InputTextFieldHTML.prototype.onKeyDown=function(e){
 }
 
 InputTextFieldHTML.prototype.onKeyDownDelayed=function(target){
-	if(target._keyCode==13){
+
+	if(target._keyCode==13 &&  target.DOMtext==document.activeElement){
 		if(target.enterFunction!=null){
 			target.enterFunction.call(target.enterFunctionTarget, target.id);
 		}
@@ -13485,9 +13490,12 @@ InputTextFieldHTML.prototype.onKeyDownDelayed=function(target){
 		var lastChar = target.text.charAt(target.text.length-1);
 		
 		if(target._keyCode!=13){
-			if(target.changeFunction!=null) target.changeFunction.call(target.changeFunctionTarget, target.id);
+			if(target.changeFunction!=null){
+				target.changeFunction.call(target.changeFunctionTarget, target.id);
+			}
 		}
 	}
+	
 	if(_cycleOnMouseMovement) reStartCycle();
 
 	this.timer = null;

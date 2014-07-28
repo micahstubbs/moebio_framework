@@ -110,7 +110,7 @@ ObjectOperators.addition=function(){
 		}
 
 		var pairType = a0Type+"_"+a1Type;
-		//c.log('pairType:['+pairType+']');
+		//c.log('ObjectOperators.addition, pairType:['+pairType+']');
 		//
 		switch(pairType){
 			case 'boolean_boolean':
@@ -155,6 +155,10 @@ ObjectOperators.addition=function(){
 				return new DateInterval(ObjectOperators.addition(a0.date0, a1.min), ObjectOperators.addition(a0.date1, a1.max));
 			case 'DateInterval_DateInterval':
 				return new DateInterval(ObjectOperators.addition(a0.date0, a1.date0), ObjectOperators.addition(a0.date1, a1.date1));
+			case 'string_StringList':
+				return a1.append(a0, false);
+			case 'StringList_string':
+				return a1.append(a0, true);
 			default:
 				c.log("[!] addition didn't manage to resolve:", pairType, a0+a1);
 				return null;

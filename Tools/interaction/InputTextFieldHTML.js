@@ -139,7 +139,8 @@ InputTextFieldHTML.prototype.onKeyDown=function(e){
 }
 
 InputTextFieldHTML.prototype.onKeyDownDelayed=function(target){
-	if(target._keyCode==13){
+
+	if(target._keyCode==13 &&  target.DOMtext==document.activeElement){
 		if(target.enterFunction!=null){
 			target.enterFunction.call(target.enterFunctionTarget, target.id);
 		}
@@ -151,9 +152,12 @@ InputTextFieldHTML.prototype.onKeyDownDelayed=function(target){
 		var lastChar = target.text.charAt(target.text.length-1);
 		
 		if(target._keyCode!=13){
-			if(target.changeFunction!=null) target.changeFunction.call(target.changeFunctionTarget, target.id);
+			if(target.changeFunction!=null){
+				target.changeFunction.call(target.changeFunctionTarget, target.id);
+			}
 		}
 	}
+	
 	if(_cycleOnMouseMovement) reStartCycle();
 
 	this.timer = null;
