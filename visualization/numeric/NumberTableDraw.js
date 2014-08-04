@@ -402,7 +402,7 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
 			drawImage(frame.memory.image, 0,0,cut,flowFrame.height,0,0,x0,flowFrame.height);
 			drawImage(frame.memory.image, cut,0,(frame.width-cut),flowFrame.height,x1,0,(frame.width-cut)*frame.memory.fOpen,flowFrame.height);
 
-			NumberTableDraw._drawPartialFlow(flowFrame, frame.memory.flowIntervals, frame.memory.names, frame.memory.actualColorList, cut, x0, x1, 0.3, sorted, numberTable);
+			NumberTableDraw._drawPartialFlow(flowFrame, frame.memory.flowIntervals, frame.memory.names, frame.memory.actualColorList, cut, x0, x1, 0.3, sorted, showValues?numberTable:null);
 
 			context.restore();
 		} else {
@@ -525,7 +525,6 @@ NumberTableDraw._drawPartialFlow=function(frame, flowIntervals, labels, colors, 
 				setText('white', ts1, null, null, 'middle');
 				fText(Math.round(numberTable[i][i0]), x0 + wt + w*0.03, y + (h+(ts0-ts1)*0.5)*0.5);
 			}
-			
 
 
 		}
