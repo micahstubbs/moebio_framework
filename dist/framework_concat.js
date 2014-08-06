@@ -6869,9 +6869,46 @@ ColorListOperators.colorListToPolygon3D=function(colorList){
 function ColorOperators(){};
 
 
+
+/**
+ * return a color between color0 and color1
+ * 0 -> color0
+ * 1 -> color1
+ * @param {String} color0
+ * @param {String} color1
+ * @param value between 0 and 1 (to obtain color between color0 and color1)
+ * @return {String} interpolated color
+ * 
+ */
+ColorOperators.interpolateColors=function(color0, color1, value){
+    var resultArray=ColorOperators.interpolateColorsRGB(ColorOperators.colorStringToRGB(color0), ColorOperators.colorStringToRGB(color1), value);
+    return ColorOperators.RGBtoHEX(resultArray[0], resultArray[1], resultArray[2]);
+}
+
+/**
+ * return a color between color0 and color1
+ * 0 -> color0
+ * 1 -> color1
+ * @param {Array} color0 RGB
+ * @param {Array} color1 RGB
+ * @param value between 0 and 1 (to obtain values between color0 and color1)
+ * @return {Array} interpolated RGB color
+ * 
+ */
+ColorOperators.interpolateColorsRGB=function(color0, color1, value){
+    var s = 1-value;
+    return [Math.floor(s*color0[0] + value*color1[0]), Math.floor(s*color0[1] + value*color1[1]), Math.floor(s*color0[2] + value*color1[2])];
+}
+
+
 ColorOperators.RGBtoHEX=function(red, green, blue){
 	return "#" + ColorOperators.toHex(red)+ColorOperators.toHex(green)+ColorOperators.toHex(blue);
 }
+
+ColorOperators.RGBArrayToString=function(array){
+    return 'rgb('+array[0]+','+array[1]+','+array[2]+')';
+}
+
 
 
 /**
@@ -7071,34 +7108,6 @@ ColorOperators.HSLtoRGB = function(hue, saturation, light){
     return [Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255)];
 }
 
-/**
- * return a color between color0 and color1
- * 0 -> color0
- * 1 -> color1
- * @param {String} color0
- * @param {String} color1
- * @param value between 0 and 1 (to obtain color between color0 and color1)
- * @return {String} interpolated color
- * 
- */
-ColorOperators.interpolateColors=function(color0, color1, value){
-	var resultArray=ColorOperators.interpolateColorsRGB(ColorOperators.colorStringToRGB(color0), ColorOperators.colorStringToRGB(color1), value);
-	return ColorOperators.RGBtoHEX(resultArray[0], resultArray[1], resultArray[2]);
-}
-/**
- * return a color between color0 and color1
- * 0 -> color0
- * 1 -> color1
- * @param {Array} color0 RGB
- * @param {Array} color1 RGB
- * @param value between 0 and 1 (to obtain values between color0 and color1)
- * @return {Array} interpolated RGB color
- * 
- */
-ColorOperators.interpolateColorsRGB=function(color0, color1, value){
-	var s = 1-value;
-	return [Math.floor(s*color0[0] + value*color1[0]), Math.floor(s*color0[1] + value*color1[1]), Math.floor(s*color0[2] + value*color1[2])];
-}
 
 ColorOperators.invertColorRGB=function(r, g, b){
 	return [255-r, 255-g, 255-b];
@@ -9464,7 +9473,7 @@ StringListOperators.getWordsOccurrencesMatrix=function(strings, stopWords, inclu
 }
 
 //good approach for few large texts, to be tested
-StringListOperators.createTextsNetwork = function(texts, stopWords, stressUniqueness, relationBias){
+StringListOperators.createTextsNetwork = function(texts, stopWords, stressUniqueness, relationThreshold){
 	var i, j;
 	var network = new Network();
 
@@ -9491,7 +9500,7 @@ StringListOperators.createTextsNetwork = function(texts, stopWords, stressUnique
     			c.log(node.wordsWeights.getNorm()*node1.wordsWeights.getNorm());
     		}
 
-    		if(weight>relationBias){
+    		if(weight>relationThreshold){
     			relation = new Relation(node.id+"_"+node1.id, node.id+"_"+node1.id, node, node1, weight);
     			network.addRelation(relation);
     		}
@@ -9503,18 +9512,18 @@ StringListOperators.createTextsNetwork = function(texts, stopWords, stressUnique
 
 
 /**
- * builds a network out of a list of short strings
+ * builds a network out of a list of short strings, adds a property wordsTable to each node (with words and weights)
  * @param  {StringList} texts
  * 
  * @param  {StringList} stopWords
- * @param  {Number} relationBias bias to create a relation
- * @param {Number} mode 0:entropy, by finding key words with low entropy (words occurring in a single text or in all texts have maximum entropy, occuring in 0.25 texts minimum entropy (max weight)), 1:originality, 2:skewed entropy
- * @param {Boolean} applyIntenisty takes into account occurrences of word into each text
+ * @param  {Number} relationThreshold threshold to create a relation
+ * @param {Number} mode 0:entropy, by finding key words with low entropy (words occurring in a single text or in all texts have maximum entropy, occuring in 0.25 texts minimum entropy (max weight)), 1:originality, 2:skewed entropy, 3:originality except isolation
+ * @param {Boolean} applyIntensity takes into account occurrences of word into each text
  * @param {Table} [varname] if a words frquency table is provided, les frequent words are weighed
  * @return {Network}
  * tags:generator
  */
-StringListOperators.createShortTextsNetwork = function(texts, stopWords, relationBias, mode, applyIntenisty, wordsFrequencyTable){
+StringListOperators.createShortTextsNetwork = function(texts, stopWords, relationThreshold, mode, applyIntensity, wordsFrequencyTable){
 	if(texts==null || texts.length==null || texts.length==0) return;
 
 	var network = new Network();
@@ -9530,7 +9539,7 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
 	var weight;
 	var maxWeight = 0;
 
-	relationBias = relationBias||0;
+	relationThreshold = relationThreshold||0;
 	mode = mode||0;
 
 	if(wordsFrequencyTable){
@@ -9555,6 +9564,11 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
 		case 2://skewed entropy (favoring very few external occurrences)
 			weightFunction = function(nOtherTexts){
 				return 1-Math.pow(2*Math.pow(nOtherTexts/(n_texts-1), 0.2)-1, 2);
+			}
+		default://originality except isolation
+			weightFunction = function(nOtherTexts){
+				if(nOtherTexts==0) return 0;
+				return 1/nOtherTexts;
 			}
 	}
 
@@ -9582,7 +9596,7 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
 
     		weights[j] = weightFunction(nOtherTexts);//1-Math.pow(2*Math.pow(nOtherTexts/(n_texts-1), 0.25)-1, 2);
     		
-    		if(applyIntenisty) weights[j]*= (1 - 1/(StringOperators.countOccurrences(textsLowerCase[i], word) + 1));
+    		if(applyIntensity) weights[j]*= (1 - 1/(StringOperators.countOccurrences(textsLowerCase[i], word) + 1));
     		
     		if(wordsFrequencyTable){
     			index = wordsFrequencyTable[0].indexOf(word);
@@ -9603,7 +9617,6 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
     });
 
 	
-	
 	for(i=0; network.nodeList[i+1]!=null; i++){
     	node = network.nodeList[i];
     	for(j=i+1; network.nodeList[j]!=null; j++){
@@ -9614,7 +9627,7 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
     			if(index!=-1) weight+=node.wordsTable[1][i]*node1.wordsTable[1][index];
     		});
     		weight = Math.sqrt((weight/maxWeight)/Math.max(node.wordsTable[0].length, node1.wordsTable[0].length));
-    		if(weight>relationBias){
+    		if(weight>relationThreshold){
     			relation = new Relation(node.id+"_"+node1.id, node.id+"_"+node1.id, node, node1, weight);
     			network.addRelation(relation);
     		}
@@ -10984,31 +10997,31 @@ NetworkGenerators.createNetworkFromListAndFunction = function(list, weightFuncti
 	return network;
 }
 
-
-NetworkGenerators.createNetworkFromPairsTable = function(pairsTable, minPairOccurrences){//TODO: test it (never used)
-	var pairsStringList = pairsTable[0].toStringList().append("#").append(pairsTable[1].toStringList());
-	var occurrences = pairsStringList.countOccurrences();
-	var node0;
-	var node1;
-	var network = new Network();
+//replaced by: NetworkConvertions.TableToNetwork
+// NetworkGenerators.createNetworkFromPairsTable = function(pairsTable, minPairOccurrences){//TODO: test it (never used)
+// 	var pairsStringList = pairsTable[0].toStringList().append("#").append(pairsTable[1].toStringList());
+// 	var occurrences = pairsStringList.countOccurrences();
+// 	var node0;
+// 	var node1;
+// 	var network = new Network();
 	
-	for(var i=0; pairsTable[0][i]!=null; i++){
-		if(occurrences[i]>minPairOccurrences){
-			node0 = network.nodeList.getNodeById(pairsTable[0][i]);
-			if(node0==null){
-				node0 = new Node(pairsTable[0][i], pairsTable[0][i]);
-				network.addNode(node0);
-			}
-			node1 = network.nodeList.getNodeById(pairsTable[1][i]);
-			if(node1==null){
-				node1 = new Node(pairsTable[1][i], pairsTable[1][i]);
-				network.addNode(node1);
-			}
-			network.addRelation(new Relation(node0.id+"_"+node1.id, node0.id+"_"+node1.id, node0, node1, occurrences[i]));
-		}
-	}
-	return network;
-}
+// 	for(var i=0; pairsTable[0][i]!=null; i++){
+// 		if(occurrences[i]>minPairOccurrences){
+// 			node0 = network.nodeList.getNodeById(pairsTable[0][i]);
+// 			if(node0==null){
+// 				node0 = new Node(pairsTable[0][i], pairsTable[0][i]);
+// 				network.addNode(node0);
+// 			}
+// 			node1 = network.nodeList.getNodeById(pairsTable[1][i]);
+// 			if(node1==null){
+// 				node1 = new Node(pairsTable[1][i], pairsTable[1][i]);
+// 				network.addNode(node1);
+// 			}
+// 			network.addRelation(new Relation(node0.id+"_"+node1.id, node0.id+"_"+node1.id, node0, node1, occurrences[i]));
+// 		}
+// 	}
+// 	return network;
+// }
 NetworkOperators = function(){};
 
 
@@ -17842,7 +17855,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 	var mouseOnFrame = frame.containsPoint(mP);
 	var moving = nF-frame.memory.nFLastChange<50 || Math.pow(frame.memory.kx-kxF, 2) + Math.pow(frame.memory.ky-kyF, 2) + Math.pow(frame.memory.mx-mxF, 2) + Math.pow(frame.memory.my-myF, 2) > 0.01;
 	var captureImage = !moving && frame.memory.image==null && !mouseOnFrame;
-	var drawingImage = !moving && !mouseOnFrame && frame.memory.image!=null && !captureImage;
+	var drawingImage = !moving && !mouseOnFrame && frame.memory.image!=null && !captureImage  && frame.memory.image.width>0;
 
 	if(drawingImage){
 		drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);

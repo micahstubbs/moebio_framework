@@ -197,7 +197,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 	var mouseOnFrame = frame.containsPoint(mP);
 	var moving = nF-frame.memory.nFLastChange<50 || Math.pow(frame.memory.kx-kxF, 2) + Math.pow(frame.memory.ky-kyF, 2) + Math.pow(frame.memory.mx-mxF, 2) + Math.pow(frame.memory.my-myF, 2) > 0.01;
 	var captureImage = !moving && frame.memory.image==null && !mouseOnFrame;
-	var drawingImage = !moving && !mouseOnFrame && frame.memory.image!=null && !captureImage;
+	var drawingImage = !moving && !mouseOnFrame && frame.memory.image!=null && !captureImage  && frame.memory.image.width>0;
 
 	if(drawingImage){
 		drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);

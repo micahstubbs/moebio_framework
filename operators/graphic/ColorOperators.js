@@ -7,9 +7,46 @@
 function ColorOperators(){};
 
 
+
+/**
+ * return a color between color0 and color1
+ * 0 -> color0
+ * 1 -> color1
+ * @param {String} color0
+ * @param {String} color1
+ * @param value between 0 and 1 (to obtain color between color0 and color1)
+ * @return {String} interpolated color
+ * 
+ */
+ColorOperators.interpolateColors=function(color0, color1, value){
+    var resultArray=ColorOperators.interpolateColorsRGB(ColorOperators.colorStringToRGB(color0), ColorOperators.colorStringToRGB(color1), value);
+    return ColorOperators.RGBtoHEX(resultArray[0], resultArray[1], resultArray[2]);
+}
+
+/**
+ * return a color between color0 and color1
+ * 0 -> color0
+ * 1 -> color1
+ * @param {Array} color0 RGB
+ * @param {Array} color1 RGB
+ * @param value between 0 and 1 (to obtain values between color0 and color1)
+ * @return {Array} interpolated RGB color
+ * 
+ */
+ColorOperators.interpolateColorsRGB=function(color0, color1, value){
+    var s = 1-value;
+    return [Math.floor(s*color0[0] + value*color1[0]), Math.floor(s*color0[1] + value*color1[1]), Math.floor(s*color0[2] + value*color1[2])];
+}
+
+
 ColorOperators.RGBtoHEX=function(red, green, blue){
 	return "#" + ColorOperators.toHex(red)+ColorOperators.toHex(green)+ColorOperators.toHex(blue);
 }
+
+ColorOperators.RGBArrayToString=function(array){
+    return 'rgb('+array[0]+','+array[1]+','+array[2]+')';
+}
+
 
 
 /**
@@ -209,34 +246,6 @@ ColorOperators.HSLtoRGB = function(hue, saturation, light){
     return [Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255)];
 }
 
-/**
- * return a color between color0 and color1
- * 0 -> color0
- * 1 -> color1
- * @param {String} color0
- * @param {String} color1
- * @param value between 0 and 1 (to obtain color between color0 and color1)
- * @return {String} interpolated color
- * 
- */
-ColorOperators.interpolateColors=function(color0, color1, value){
-	var resultArray=ColorOperators.interpolateColorsRGB(ColorOperators.colorStringToRGB(color0), ColorOperators.colorStringToRGB(color1), value);
-	return ColorOperators.RGBtoHEX(resultArray[0], resultArray[1], resultArray[2]);
-}
-/**
- * return a color between color0 and color1
- * 0 -> color0
- * 1 -> color1
- * @param {Array} color0 RGB
- * @param {Array} color1 RGB
- * @param value between 0 and 1 (to obtain values between color0 and color1)
- * @return {Array} interpolated RGB color
- * 
- */
-ColorOperators.interpolateColorsRGB=function(color0, color1, value){
-	var s = 1-value;
-	return [Math.floor(s*color0[0] + value*color1[0]), Math.floor(s*color0[1] + value*color1[1]), Math.floor(s*color0[2] + value*color1[2])];
-}
 
 ColorOperators.invertColorRGB=function(r, g, b){
 	return [255-r, 255-g, 255-b];

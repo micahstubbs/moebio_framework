@@ -155,28 +155,28 @@ NetworkGenerators.createNetworkFromListAndFunction = function(list, weightFuncti
 	return network;
 }
 
-
-NetworkGenerators.createNetworkFromPairsTable = function(pairsTable, minPairOccurrences){//TODO: test it (never used)
-	var pairsStringList = pairsTable[0].toStringList().append("#").append(pairsTable[1].toStringList());
-	var occurrences = pairsStringList.countOccurrences();
-	var node0;
-	var node1;
-	var network = new Network();
+//replaced by: NetworkConvertions.TableToNetwork
+// NetworkGenerators.createNetworkFromPairsTable = function(pairsTable, minPairOccurrences){//TODO: test it (never used)
+// 	var pairsStringList = pairsTable[0].toStringList().append("#").append(pairsTable[1].toStringList());
+// 	var occurrences = pairsStringList.countOccurrences();
+// 	var node0;
+// 	var node1;
+// 	var network = new Network();
 	
-	for(var i=0; pairsTable[0][i]!=null; i++){
-		if(occurrences[i]>minPairOccurrences){
-			node0 = network.nodeList.getNodeById(pairsTable[0][i]);
-			if(node0==null){
-				node0 = new Node(pairsTable[0][i], pairsTable[0][i]);
-				network.addNode(node0);
-			}
-			node1 = network.nodeList.getNodeById(pairsTable[1][i]);
-			if(node1==null){
-				node1 = new Node(pairsTable[1][i], pairsTable[1][i]);
-				network.addNode(node1);
-			}
-			network.addRelation(new Relation(node0.id+"_"+node1.id, node0.id+"_"+node1.id, node0, node1, occurrences[i]));
-		}
-	}
-	return network;
-}
+// 	for(var i=0; pairsTable[0][i]!=null; i++){
+// 		if(occurrences[i]>minPairOccurrences){
+// 			node0 = network.nodeList.getNodeById(pairsTable[0][i]);
+// 			if(node0==null){
+// 				node0 = new Node(pairsTable[0][i], pairsTable[0][i]);
+// 				network.addNode(node0);
+// 			}
+// 			node1 = network.nodeList.getNodeById(pairsTable[1][i]);
+// 			if(node1==null){
+// 				node1 = new Node(pairsTable[1][i], pairsTable[1][i]);
+// 				network.addNode(node1);
+// 			}
+// 			network.addRelation(new Relation(node0.id+"_"+node1.id, node0.id+"_"+node1.id, node0, node1, occurrences[i]));
+// 		}
+// 	}
+// 	return network;
+// }

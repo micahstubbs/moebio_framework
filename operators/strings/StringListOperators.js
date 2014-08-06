@@ -140,7 +140,7 @@ StringListOperators.getWordsOccurrencesMatrix=function(strings, stopWords, inclu
 }
 
 //good approach for few large texts, to be tested
-StringListOperators.createTextsNetwork = function(texts, stopWords, stressUniqueness, relationBias){
+StringListOperators.createTextsNetwork = function(texts, stopWords, stressUniqueness, relationThreshold){
 	var i, j;
 	var network = new Network();
 
@@ -167,7 +167,7 @@ StringListOperators.createTextsNetwork = function(texts, stopWords, stressUnique
     			c.log(node.wordsWeights.getNorm()*node1.wordsWeights.getNorm());
     		}
 
-    		if(weight>relationBias){
+    		if(weight>relationThreshold){
     			relation = new Relation(node.id+"_"+node1.id, node.id+"_"+node1.id, node, node1, weight);
     			network.addRelation(relation);
     		}
@@ -179,18 +179,18 @@ StringListOperators.createTextsNetwork = function(texts, stopWords, stressUnique
 
 
 /**
- * builds a network out of a list of short strings
+ * builds a network out of a list of short strings, adds a property wordsTable to each node (with words and weights)
  * @param  {StringList} texts
  * 
  * @param  {StringList} stopWords
- * @param  {Number} relationBias bias to create a relation
- * @param {Number} mode 0:entropy, by finding key words with low entropy (words occurring in a single text or in all texts have maximum entropy, occuring in 0.25 texts minimum entropy (max weight)), 1:originality, 2:skewed entropy
- * @param {Boolean} applyIntenisty takes into account occurrences of word into each text
+ * @param  {Number} relationThreshold threshold to create a relation
+ * @param {Number} mode 0:entropy, by finding key words with low entropy (words occurring in a single text or in all texts have maximum entropy, occuring in 0.25 texts minimum entropy (max weight)), 1:originality, 2:skewed entropy, 3:originality except isolation
+ * @param {Boolean} applyIntensity takes into account occurrences of word into each text
  * @param {Table} [varname] if a words frquency table is provided, les frequent words are weighed
  * @return {Network}
  * tags:generator
  */
-StringListOperators.createShortTextsNetwork = function(texts, stopWords, relationBias, mode, applyIntenisty, wordsFrequencyTable){
+StringListOperators.createShortTextsNetwork = function(texts, stopWords, relationThreshold, mode, applyIntensity, wordsFrequencyTable){
 	if(texts==null || texts.length==null || texts.length==0) return;
 
 	var network = new Network();
@@ -206,7 +206,7 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
 	var weight;
 	var maxWeight = 0;
 
-	relationBias = relationBias||0;
+	relationThreshold = relationThreshold||0;
 	mode = mode||0;
 
 	if(wordsFrequencyTable){
@@ -231,6 +231,11 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
 		case 2://skewed entropy (favoring very few external occurrences)
 			weightFunction = function(nOtherTexts){
 				return 1-Math.pow(2*Math.pow(nOtherTexts/(n_texts-1), 0.2)-1, 2);
+			}
+		default://originality except isolation
+			weightFunction = function(nOtherTexts){
+				if(nOtherTexts==0) return 0;
+				return 1/nOtherTexts;
 			}
 	}
 
@@ -258,7 +263,7 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
 
     		weights[j] = weightFunction(nOtherTexts);//1-Math.pow(2*Math.pow(nOtherTexts/(n_texts-1), 0.25)-1, 2);
     		
-    		if(applyIntenisty) weights[j]*= (1 - 1/(StringOperators.countOccurrences(textsLowerCase[i], word) + 1));
+    		if(applyIntensity) weights[j]*= (1 - 1/(StringOperators.countOccurrences(textsLowerCase[i], word) + 1));
     		
     		if(wordsFrequencyTable){
     			index = wordsFrequencyTable[0].indexOf(word);
@@ -279,7 +284,6 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
     });
 
 	
-	
 	for(i=0; network.nodeList[i+1]!=null; i++){
     	node = network.nodeList[i];
     	for(j=i+1; network.nodeList[j]!=null; j++){
@@ -290,7 +294,7 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
     			if(index!=-1) weight+=node.wordsTable[1][i]*node1.wordsTable[1][index];
     		});
     		weight = Math.sqrt((weight/maxWeight)/Math.max(node.wordsTable[0].length, node1.wordsTable[0].length));
-    		if(weight>relationBias){
+    		if(weight>relationThreshold){
     			relation = new Relation(node.id+"_"+node1.id, node.id+"_"+node1.id, node, node1, weight);
     			network.addRelation(relation);
     		}
