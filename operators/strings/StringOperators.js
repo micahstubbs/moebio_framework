@@ -27,23 +27,6 @@ StringOperators.split = function(string, character){
 	return StringList.fromArray(string.split(character));
 }
 
-/**
- * join strings with a character
- * @param  {StringList} StringList strings to be joined
- * 
- * @param  {String} join character
- * @param  {String} prefix
- * @param  {String} sufix
- * @return {String}
- * tags:
- */
-StringOperators.join = function(stringList, character, prefix, sufix){
-	character = character==null?"":character;
-	prefix = prefix==null?"":prefix;
-	sufix = sufix==null?"":sufix;
-	return prefix+stringList.join(character)+sufix;
-}
-
 
 /**
  * return a substring

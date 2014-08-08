@@ -9335,10 +9335,30 @@ function StringListOperators(){};
 /** 
 * receives n arguments and performs addition
 */
-StringListOperators.concatStrings=function(stringList, joinString){
+StringListOperators.concatStrings=function(stringList, joinString){//deprecated
 	if(joinString==null) joinString="";
 	return StringList.fromArray(stringList.join(joinString));
 }
+
+/**
+ * join strings with a character
+ * @param  {StringList} StringList strings to be joined
+ * 
+ * @param  {String} join character
+ * @param  {String} prefix
+ * @param  {String} sufix
+ * @return {String}
+ * tags:
+ */
+StringOperators.join = function(stringList, character, prefix, sufix){
+	if(stringList==null) return;
+	
+	character = character==null?"":character;
+	prefix = prefix==null?"":prefix;
+	sufix = sufix==null?"":sufix;
+	return prefix+stringList.join(character)+sufix;
+}
+
 
 /**
  * filters a StringList by a string
@@ -9663,23 +9683,6 @@ StringOperators.STOP_WORDS = StringList.fromArray("t,s,mt,rt,re,m,http,amp,a,abl
 StringOperators.split = function(string, character){
 	if(character==null) return StringOperators.splitByEnter(string);
 	return StringList.fromArray(string.split(character));
-}
-
-/**
- * join strings with a character
- * @param  {StringList} StringList strings to be joined
- * 
- * @param  {String} join character
- * @param  {String} prefix
- * @param  {String} sufix
- * @return {String}
- * tags:
- */
-StringOperators.join = function(stringList, character, prefix, sufix){
-	character = character==null?"":character;
-	prefix = prefix==null?"":prefix;
-	sufix = sufix==null?"":sufix;
-	return prefix+stringList.join(character)+sufix;
 }
 
 
