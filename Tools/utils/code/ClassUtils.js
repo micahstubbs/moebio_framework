@@ -164,34 +164,17 @@ evalJavaScriptFunction = function(functionText, args){
 		res = null;
 	}
 
-	// c.l('•• evalJavaScriptFunction')
-	// c.l('res:',res);
-	// c.l('good:',good);
-	// c.l('message',message);
-
 	var resultObject = {
 		result:res,
 		success:good,
 		errorMessage:message
 	};
 
-	//c.l('resultObject', resultObject);
-
 	return resultObject;
 }
 
 
 
-//////// uniqueGlobalFunc, executeUniqueGlobalFunc, what are their purpose?
-
-// var uniqueGlobalFunc=new Array();
-// function getUniqueGlobalFunc(func, scope){
-// 	uniqueGlobalFunc.push([func, scope]);
-// 	return uniqueGlobalFunc.length-1;
-// }
-// function executeUniqueGlobalFunc(index, value){
-// 	if(index==undefined) return;
-// 	uniqueGlobalFunc[index][0].call(uniqueGlobalFunc[index][1], value);
-// }
-
-/////////
+function argumentsToArray(args){
+	return Array.prototype.slice.call(args, 0);
+}
