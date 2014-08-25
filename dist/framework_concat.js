@@ -76,6 +76,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.getElementNumberOfOccurrences = List.prototype.getElementNumberOfOccurrences;
    	array.getPropertyValues = List.prototype.getPropertyValues;
    	array.getRandomElement = List.prototype.getRandomElement;
+   	array.getRandomElements = List.prototype.getRandomElements;
    	array.containsElement = List.prototype.containsElement;
 	array.indexOfElement = List.prototype.indexOfElement;
    	//sorting:
@@ -483,8 +484,33 @@ List.prototype.add=function(value){
 	}
 }
 
+/**
+ * selects a random element from list
+ * @return {Object}
+ * tags:
+ */
 List.prototype.getRandomElement=function(){
 	return this[Math.floor(this.length*Math.random())];
+}
+
+/**
+ * creates a list with randomly selected elements
+ * @param  {Number} n number of elements
+ * @param  {Boolean} avoidRepetitions
+ * @return {List}
+ * tags:filter
+ */
+List.prototype.getRandomElements=function(n, avoidRepetitions){
+	avoidRepetitions = avoidRepetitions==null?true:avoidRepetitions;
+	n = Math.min(n, this.length);
+	var newList = instantiateWithSameType(this);
+	var element;
+
+	while(newList.length<n){
+		element = this[Math.floor(this.length*Math.random())];
+		if(!avoidRepetitions ||newList.indexOf(element)==-1) newList.push(element);
+	}
+	return newList;
 }
 
 
@@ -9537,7 +9563,7 @@ StringListOperators.createTextsNetwork = function(texts, stopWords, stressUnique
  * 
  * @param  {StringList} stopWords
  * @param  {Number} relationThreshold threshold to create a relation
- * @param {Number} mode 0:entropy, by finding key words with low entropy (words occurring in a single text or in all texts have maximum entropy, occuring in 0.25 texts minimum entropy (max weight)), 1:originality, 2:skewed entropy, 3:originality except isolation
+ * @param {Number} mode <br>0:pseudoentropy, by finding key words with low entropy (words occurring in a single text or in all texts have maximum entropy, occuring in 0.25 texts minimum entropy (max weight))<br>1:originality<br>2:skewed entropy<br>3:originality except isolation
  * @param {Boolean} applyIntensity takes into account occurrences of word into each text
  * @param {Table} [varname] if a words frquency table is provided, les frequent words are weighed
  * @return {Network}
@@ -9570,9 +9596,8 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
 
 	var weightFunction;
 	switch(mode){
-		case 0://entropy
+		case 0://pseudo-entropy
 			weightFunction = function(nOtherTexts){
-				//return 1-Math.pow(2*Math.pow(nOtherTexts/(n_texts-1), 0.25)-1, 2);
 				return 1-Math.pow( 2*nOtherTexts/(n_texts-1) - 1, 2);
 			}
 			break;
@@ -10065,8 +10090,7 @@ StringOperators.getWords = function(string, withoutRepetitions, stopWords, sorte
 	
 	if(includeLinks) var links = string.match(StringOperators.LINK_REGEX);
 	string = string.toLowerCase().replace(StringOperators.LINK_REGEX, "");
-	//if(minSizeWords>0) string = string.replace(/\w{1,/+minSizeWords+/}\b/g, "");
-		
+	
 	var list = string.match(/\w+/g);
 	if(list==null) return new StringList();
 	
@@ -15590,6 +15614,86 @@ CirclesVisOperators._pointInCircles = function(circles, px, py, r, margin){
 		if( Math.pow(circle.x - px, 2) + Math.pow(circle.y - py, 2) < Math.pow(circle.z + r + margin, 2) ) return true;
 	}
 	return false;
+}
+function ColorsDraw(){};
+
+/**
+ * draws a color scale, with optional min and max associated values
+ * @param  {Rectangle} frame
+ * @param  {ColorScale} colorScale
+ * 
+ * @param  {Number} minValue value associated to min color
+ * @param  {Number} maxValue value associated to max color
+ * tags:draw
+ */
+ColorsDraw.drawColorScaleLegend = function(frame, colorScale, minValue, maxValue){
+	var change = frame.memory==null || frame.width!=frame.memory.w ||  frame.height!=frame.memory.h ||  colorScale!=frame.memory.cS ||  minValue!=frame.memory.min ||  maxValue!=frame.memory.max
+
+	if(change){
+		frame.memory = {
+			w:frame.width,
+			h:frame.height,
+			cS:colorScale,
+			min:minValue,
+			max:maxValue
+		}
+		
+		///// capture image 1
+		var newCanvas = document.createElement("canvas");
+		newCanvas.width = frame.width;
+		newCanvas.height = frame.height;
+		var newContext = newCanvas.getContext("2d");
+		newContext.clearRect(0,0,frame.width,frame.height);
+		var mainContext = context;
+		context = newContext;
+		/////
+
+		var x;
+
+		if(frame.width>frame.height){
+
+			for(x=0; x<frame.width; x+=2){
+				setFill(colorScale(x/frame.width));
+				c.l('->',colorScale(x/frame.width));
+				fRect(x,0,2,frame.height);
+			}
+
+			setStroke('rgba(0,0,0,0.8)', 3);
+
+			if(minValue!=null){
+				setText('white', 14, null, 'left', 'middle');
+				fsText(minValue, 2, frame.height*0.5);
+			}
+
+			if(maxValue!=null){
+				setText('white', 14, null, 'right', 'middle');
+				fsText(maxValue, frame.width-2, frame.height*0.5);
+			}
+		} else {
+
+			//finis this, with color scale going uppwards, and texts for min max values
+
+			for(x=0; x<frame.height; x+=2){
+				setFill(colorScale(x/frame.height));
+				fRect(0,x,frame.width, 2);
+			}
+		}
+
+		
+
+
+		//// capture image 2
+		context = mainContext;
+		frame.memory.image = new Image();
+		frame.memory.image.src = newCanvas.toDataURL();
+		////
+	}
+
+
+	if(frame.memory.image){
+		drawImage(frame.memory.image, frame.x, frame.y)
+	}
+
 }
 function ImageDraw(){};
 

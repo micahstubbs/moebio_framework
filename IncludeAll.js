@@ -138,6 +138,7 @@ include('../frameworks2/Tools/utils/system/Navigator.js');
 ////visualization
 include('../frameworks2/visualization/geo/CountryListDraw.js');
 include('../frameworks2/visualization/geometry/CirclesVisOperators.js');
+include('../frameworks2/visualization/graphic/ColorsDraw.js');
 include('../frameworks2/visualization/graphic/ImageDraw.js');
 include('../frameworks2/visualization/lists/ListDraw.js');
 include('../frameworks2/visualization/numeric/IntervalTableDraw.js');

@@ -204,7 +204,7 @@ StringListOperators.createTextsNetwork = function(texts, stopWords, stressUnique
  * 
  * @param  {StringList} stopWords
  * @param  {Number} relationThreshold threshold to create a relation
- * @param {Number} mode 0:entropy, by finding key words with low entropy (words occurring in a single text or in all texts have maximum entropy, occuring in 0.25 texts minimum entropy (max weight)), 1:originality, 2:skewed entropy, 3:originality except isolation
+ * @param {Number} mode <br>0:pseudoentropy, by finding key words with low entropy (words occurring in a single text or in all texts have maximum entropy, occuring in 0.25 texts minimum entropy (max weight))<br>1:originality<br>2:skewed entropy<br>3:originality except isolation
  * @param {Boolean} applyIntensity takes into account occurrences of word into each text
  * @param {Table} [varname] if a words frquency table is provided, les frequent words are weighed
  * @return {Network}
@@ -237,9 +237,8 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
 
 	var weightFunction;
 	switch(mode){
-		case 0://entropy
+		case 0://pseudo-entropy
 			weightFunction = function(nOtherTexts){
-				//return 1-Math.pow(2*Math.pow(nOtherTexts/(n_texts-1), 0.25)-1, 2);
 				return 1-Math.pow( 2*nOtherTexts/(n_texts-1) - 1, 2);
 			}
 			break;

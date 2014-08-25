@@ -407,8 +407,7 @@ StringOperators.getWords = function(string, withoutRepetitions, stopWords, sorte
 	
 	if(includeLinks) var links = string.match(StringOperators.LINK_REGEX);
 	string = string.toLowerCase().replace(StringOperators.LINK_REGEX, "");
-	//if(minSizeWords>0) string = string.replace(/\w{1,/+minSizeWords+/}\b/g, "");
-		
+	
 	var list = string.match(/\w+/g);
 	if(list==null) return new StringList();
 	

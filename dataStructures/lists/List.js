@@ -50,6 +50,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.getElementNumberOfOccurrences = List.prototype.getElementNumberOfOccurrences;
    	array.getPropertyValues = List.prototype.getPropertyValues;
    	array.getRandomElement = List.prototype.getRandomElement;
+   	array.getRandomElements = List.prototype.getRandomElements;
    	array.containsElement = List.prototype.containsElement;
 	array.indexOfElement = List.prototype.indexOfElement;
    	//sorting:
@@ -457,8 +458,33 @@ List.prototype.add=function(value){
 	}
 }
 
+/**
+ * selects a random element from list
+ * @return {Object}
+ * tags:
+ */
 List.prototype.getRandomElement=function(){
 	return this[Math.floor(this.length*Math.random())];
+}
+
+/**
+ * creates a list with randomly selected elements
+ * @param  {Number} n number of elements
+ * @param  {Boolean} avoidRepetitions
+ * @return {List}
+ * tags:filter
+ */
+List.prototype.getRandomElements=function(n, avoidRepetitions){
+	avoidRepetitions = avoidRepetitions==null?true:avoidRepetitions;
+	n = Math.min(n, this.length);
+	var newList = instantiateWithSameType(this);
+	var element;
+
+	while(newList.length<n){
+		element = this[Math.floor(this.length*Math.random())];
+		if(!avoidRepetitions ||newList.indexOf(element)==-1) newList.push(element);
+	}
+	return newList;
 }
 
 
