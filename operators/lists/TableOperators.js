@@ -379,3 +379,139 @@ TableOperators.getNumberTableFromTable=function(table){
 	return newTable;
 }
 
+/**
+ * calculates de information gain of all variables in a table and a supervised variable
+ * @param  {Table} variablesTable
+ * @param  {List} supervised
+ * @return {NumberList}
+ * tags:ds
+ */
+TableOperators.getVariablesInformationGain = function(variablesTable, supervised){
+	var igs = new NumberList();
+	variablesTable.forEach(function(feature){
+		igs.push(ListOperators.getInformationGain(feature, supervised));
+	});
+	return igs;
+}
+
+TableOperators.splitTableByCategoricList = function(table, list){
+	if(table==null || list==null) return null;
+
+	var childrenTable;
+	var tablesList = new List();
+	var childrenObject = {};
+	var N = list.length;
+
+	list.forEach(function(element, i){
+		childrenTable = childrenObject[element];
+		if(childrenTable==null){
+			childrenTable = new Table()
+			childrenObject[element]=childrenTable;
+			tablesList.push(childrenTable);
+			table.forEach(function(list, j){
+				childrenTable[j] = new List();
+				childrenTable[j].name = list.name;
+			});
+			childrenTable._element = element;
+		}
+		table.forEach(function(list, j){
+			childrenTable[j].push(table[j][i]);
+		});
+	});
+
+	return tablesList;
+}
+
+/**
+ * builds a decision tree based on a variables table and a supervised variable
+ * @param  {Table} variablesTable
+ * @param  {List} supervised
+ * 
+ * @param {Number} min_entropy minimum value of entropy on nodes
+ * @param {Number} min_size_node minimum population size associated with node
+ * @param {Number} min_info_gain minimum information gain by splitting by best feature
+ * @param {Object} valueFollowing main value in supervised list (associated with blue)
+ * @return {Tree}
+ * tags:ds
+ */
+TableOperators.buildDecisionTree = function(variablesTable, supervised, min_entropy, min_size_node, min_info_gain, valueFollowing){
+	if(variablesTable==null || supervised==null) return;
+	min_entropy = min_entropy==null?0.2:min_entropy;
+	min_size_node = min_size_node||0;
+	min_info_gain = min_info_gain||0;
+
+	var tree = new Tree();
+
+	TableOperators._buildDecisionTreeNode(tree, variablesTable, supervised, 0, min_entropy, min_size_node, min_info_gain, null, null, valueFollowing);
+
+	return tree;
+}
+
+
+TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervised, level, min_entropy, min_size_node, min_info_gain, parent, value, valueFollowing){
+	var entropy = ListOperators.getListEntropy(supervised);
+
+
+	if(entropy>=min_entropy){
+		informationGains = TableOperators.getVariablesInformationGain(variablesTable, supervised);
+		var maxIg = 0;
+		var iBestFeature = 0;
+		informationGains.forEach(function(ig, i){
+			if(ig>maxIg){
+				maxIg = ig;
+				iBestFeature = i;
+			}
+		});
+	}
+
+	var subDivide = entropy>=min_entropy && maxIg>min_info_gain && supervised.length>=min_size_node;
+
+	var id = tree.nodeList.getNewId();
+	var name = (value==null?'':value+':')+(subDivide?variablesTable[iBestFeature].name:'P='+supervised._biggestProbability+'('+supervised._mostRepresentedValue+')');
+	var node = new Node(id,  name);
+	
+	tree.addNodeToTree(node, parent);
+
+	node.entropy = entropy;
+	node.weight = supervised.length;
+	node.supervised = supervised;
+	node.value = value;
+	node.mostRepresentedValue = supervised._mostRepresentedValue;
+	node.biggestProbability = supervised._biggestProbability;
+
+	node._color = node.mostRepresentedValue==valueFollowing?
+		TableOperators._decisionTreeColorScale(1-node.biggestProbability)
+		:
+		TableOperators._decisionTreeColorScale(node.biggestProbability);
+
+	if(!subDivide){
+		return node;
+	}
+
+	node.bestFeatureName = variablesTable[iBestFeature].name;
+	node.iBestFeature = iBestFeature;
+	node.informationGain = maxIg;
+
+	var expanded = variablesTable.concat([supervised]);
+
+	var tables = TableOperators.splitTableByCategoricList(expanded, variablesTable[iBestFeature]);
+	var childTable;
+	var childSupervised;
+	var newNode;
+
+
+	tables.forEach(function(expandedChild){
+		childTable = expandedChild.getSubList(0, expandedChild.length-2);
+		childSupervised = expandedChild[expandedChild.length-1];
+		TableOperators._buildDecisionTreeNode(tree, childTable, childSupervised, level+1, min_entropy, min_size_node, min_info_gain, node, expandedChild._element, valueFollowing);
+	});
+
+	return node;
+}
+TableOperators._decisionTreeColorScale = function(value){
+	var rr = value<0.5?Math.floor(510*value):255;
+	var gg = value<0.5?Math.floor(510*value):Math.floor(510*(1-value));
+	var bb = value<0.5?255:Math.floor(510*(1-value));
+
+	return 'rgb('+rr+','+gg+','+bb+')';
+}

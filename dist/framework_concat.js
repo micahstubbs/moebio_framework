@@ -850,6 +850,12 @@ List.prototype.getWithoutElementsAtIndexes=function(indexes){ //[!] This DOESN'T
 	return newList;
 }
 
+/**
+ * removes an element and returns a new list
+ * @param  {Number} index of element to remove
+ * @return {List}
+ * tags:filter
+ */
 List.prototype.getWithoutElementAtIndex=function(index){
 	if(this.type=='List'){
 		var newList = new List();
@@ -7687,7 +7693,7 @@ ListOperators.countElementsRepetitionOnList=function(list, sortListsByOccurrence
 	} else {
 		for(i=0; list[i]!=null; i++){
 			obj = list[i];
-			index = elementList.indexOf(obj); //TODO: implement equivalence and indexOfElement operator
+			index = elementList.indexOf(obj);
 			if(index!=-1){
 				numberList[index]++;
 			} else {
@@ -7903,7 +7909,123 @@ ListOperators.getCommonElements=function(list0, list1){
 	return newList.getImproved();
 }
 
+/**
+ * calculates de entropy of a list
+ * @param  {List} list with repeated elements (actegorical list)
+ * @return {Number}
+ * tags:ds
+ */
+ListOperators.getListEntropy = function(list){
+	if(list==null) return;
+	if(list.length<2) return 0;
 
+	var table = ListOperators.countElementsRepetitionOnList(list, true);
+	list._mostRepresentedValue = table[0][0];
+	var N = list.length;
+	list._biggestProbability = table[1][0]/N;
+	if(table[0].length==1) return 0;
+	var entropy = 0;
+	
+	var norm = Math.log(table[0].length);
+	table[1].forEach(function(val){
+		entropy -= (val/N)*Math.log(val/N)/norm;
+	});
+	
+	return entropy;
+}
+
+/**
+ * measures how much a feature decreases entropy when segmenting by its values a supervised variable
+ * @param  {List} feature
+ * @param  {List} supervised
+ * @return {Number}
+ * tags:ds
+ */
+ListOperators.getInformationGain = function(feature, supervised){
+	if(feature==null || supervised==null || feature.length!=supervised.length) return null;
+
+	var ig = ListOperators.getListEntropy(supervised);
+	var childrenObject = {};
+	var childrenLists = [];
+	var N = feature.length;
+
+	feature.forEach(function(element, i){
+		if(childrenObject[element]==null){
+			childrenObject[element]=new List();
+			childrenLists.push(childrenObject[element]);
+		}
+		childrenObject[element].push(supervised[i]);
+	});
+
+	childrenLists.forEach(function(cl){
+		ig -= (cl.length/N)*ListOperators.getListEntropy(cl);
+	});
+
+	return ig;
+}
+
+
+/**
+ * measures how much a feature decreases entropy when segmenting by its values a supervised variable
+ * @param  {List} feature
+ * @param  {List} supervised
+ * @return {Number}
+ * tags:ds
+ */
+ListOperators.getInformationGain = function(feature, supervised){
+	if(feature==null || supervised==null || feature.length!=supervised.length) return null;
+
+	var ig = ListOperators.getListEntropy(supervised);
+	var childrenObject = {};
+	var childrenLists = [];
+	var N = feature.length;
+	
+	feature.forEach(function(element, i){
+		if(childrenObject[element]==null){
+			childrenObject[element]=new List();
+			childrenLists.push(childrenObject[element]);
+		}
+		childrenObject[element].push(supervised[i]);
+	});
+
+	childrenLists.forEach(function(cl){
+		ig -= (cl.length/N)*ListOperators.getListEntropy(cl);
+	});
+
+	return ig;
+}
+
+ListOperators.getInformationGainAnalysis = function(feature, supervised){
+	if(feature==null || supervised==null || feature.length!=supervised.length) return null;
+
+	var ig = ListOperators.getListEntropy(supervised);
+	var childrenObject = {};
+	var childrenLists = [];
+	var N = feature.length;
+	var entropy;
+	var sets = new List();
+	
+	feature.forEach(function(element, i){
+		if(childrenObject[element]==null){
+			childrenObject[element]=new List();
+			childrenLists.push(childrenObject[element]);
+		}
+		childrenObject[element].push(supervised[i]);
+	});
+
+	childrenLists.forEach(function(cl){
+		entropy = ListOperators.getListEntropy(cl)
+		ig -= (cl.length/N)*entropy;
+
+		sets.push({
+			children:cl,
+			entropy:entropy,
+			infoGain:ig
+		})
+	});
+
+	return sets;
+}
 
 
 function TableEncodings(){};
@@ -8448,6 +8570,142 @@ TableOperators.getNumberTableFromTable=function(table){
 	return newTable;
 }
 
+/**
+ * calculates de information gain of all variables in a table and a supervised variable
+ * @param  {Table} variablesTable
+ * @param  {List} supervised
+ * @return {NumberList}
+ * tags:ds
+ */
+TableOperators.getVariablesInformationGain = function(variablesTable, supervised){
+	var igs = new NumberList();
+	variablesTable.forEach(function(feature){
+		igs.push(ListOperators.getInformationGain(feature, supervised));
+	});
+	return igs;
+}
+
+TableOperators.splitTableByCategoricList = function(table, list){
+	if(table==null || list==null) return null;
+
+	var childrenTable;
+	var tablesList = new List();
+	var childrenObject = {};
+	var N = list.length;
+
+	list.forEach(function(element, i){
+		childrenTable = childrenObject[element];
+		if(childrenTable==null){
+			childrenTable = new Table()
+			childrenObject[element]=childrenTable;
+			tablesList.push(childrenTable);
+			table.forEach(function(list, j){
+				childrenTable[j] = new List();
+				childrenTable[j].name = list.name;
+			});
+			childrenTable._element = element;
+		}
+		table.forEach(function(list, j){
+			childrenTable[j].push(table[j][i]);
+		});
+	});
+
+	return tablesList;
+}
+
+/**
+ * builds a decision tree based on a variables table and a supervised variable
+ * @param  {Table} variablesTable
+ * @param  {List} supervised
+ * 
+ * @param {Number} min_entropy minimum value of entropy on nodes
+ * @param {Number} min_size_node minimum population size associated with node
+ * @param {Number} min_info_gain minimum information gain by splitting by best feature
+ * @param {Object} valueFollowing main value in supervised list (associated with blue)
+ * @return {Tree}
+ * tags:ds
+ */
+TableOperators.buildDecisionTree = function(variablesTable, supervised, min_entropy, min_size_node, min_info_gain, valueFollowing){
+	if(variablesTable==null || supervised==null) return;
+	min_entropy = min_entropy==null?0.2:min_entropy;
+	min_size_node = min_size_node||0;
+	min_info_gain = min_info_gain||0;
+
+	var tree = new Tree();
+
+	TableOperators._buildDecisionTreeNode(tree, variablesTable, supervised, 0, min_entropy, min_size_node, min_info_gain, null, null, valueFollowing);
+
+	return tree;
+}
+
+
+TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervised, level, min_entropy, min_size_node, min_info_gain, parent, value, valueFollowing){
+	var entropy = ListOperators.getListEntropy(supervised);
+
+
+	if(entropy>=min_entropy){
+		informationGains = TableOperators.getVariablesInformationGain(variablesTable, supervised);
+		var maxIg = 0;
+		var iBestFeature = 0;
+		informationGains.forEach(function(ig, i){
+			if(ig>maxIg){
+				maxIg = ig;
+				iBestFeature = i;
+			}
+		});
+	}
+
+	var subDivide = entropy>=min_entropy && maxIg>min_info_gain && supervised.length>=min_size_node;
+
+	var id = tree.nodeList.getNewId();
+	var name = (value==null?'':value+':')+(subDivide?variablesTable[iBestFeature].name:'P='+supervised._biggestProbability+'('+supervised._mostRepresentedValue+')');
+	var node = new Node(id,  name);
+	
+	tree.addNodeToTree(node, parent);
+
+	node.entropy = entropy;
+	node.weight = supervised.length;
+	node.supervised = supervised;
+	node.value = value;
+	node.mostRepresentedValue = supervised._mostRepresentedValue;
+	node.biggestProbability = supervised._biggestProbability;
+
+	node._color = node.mostRepresentedValue==valueFollowing?
+		TableOperators._decisionTreeColorScale(1-node.biggestProbability)
+		:
+		TableOperators._decisionTreeColorScale(node.biggestProbability);
+
+	if(!subDivide){
+		return node;
+	}
+
+	node.bestFeatureName = variablesTable[iBestFeature].name;
+	node.iBestFeature = iBestFeature;
+	node.informationGain = maxIg;
+
+	var expanded = variablesTable.concat([supervised]);
+
+	var tables = TableOperators.splitTableByCategoricList(expanded, variablesTable[iBestFeature]);
+	var childTable;
+	var childSupervised;
+	var newNode;
+
+
+	tables.forEach(function(expandedChild){
+		childTable = expandedChild.getSubList(0, expandedChild.length-2);
+		childSupervised = expandedChild[expandedChild.length-1];
+		TableOperators._buildDecisionTreeNode(tree, childTable, childSupervised, level+1, min_entropy, min_size_node, min_info_gain, node, expandedChild._element, valueFollowing);
+	});
+
+	return node;
+}
+TableOperators._decisionTreeColorScale = function(value){
+	var rr = value<0.5?Math.floor(510*value):255;
+	var gg = value<0.5?Math.floor(510*value):Math.floor(510*(1-value));
+	var bb = value<0.5?255:Math.floor(510*(1-value));
+
+	return 'rgb('+rr+','+gg+','+bb+')';
+}
 
 /**
 * IntervalListOperators
@@ -15637,7 +15895,7 @@ ColorsDraw.drawColorScaleLegend = function(frame, colorScale, minValue, maxValue
 			min:minValue,
 			max:maxValue
 		}
-		
+
 		///// capture image 1
 		var newCanvas = document.createElement("canvas");
 		newCanvas.width = frame.width;
@@ -15661,12 +15919,12 @@ ColorsDraw.drawColorScaleLegend = function(frame, colorScale, minValue, maxValue
 			setStroke('rgba(0,0,0,0.8)', 3);
 
 			if(minValue!=null){
-				setText('white', 14, null, 'left', 'middle');
+				setText('white', 12, null, 'left', 'middle');
 				fsText(minValue, 2, frame.height*0.5);
 			}
 
 			if(maxValue!=null){
-				setText('white', 14, null, 'right', 'middle');
+				setText('white', 12, null, 'right', 'middle');
 				fsText(maxValue, frame.width-2, frame.height*0.5);
 			}
 		} else {
@@ -17897,7 +18155,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 			});
 		} else {
 			tree.nodeList.forEach(function(node, i){
-				frame.memory.nodesColorList[i] = frame.memory.actualColorList[i%frame.memory.actualColorList.length];
+				node._color = frame.memory.nodesColorList[i] = frame.memory.actualColorList[i%frame.memory.actualColorList.length];
 			});
 		}
 
@@ -18108,6 +18366,293 @@ TreeDraw.PROP_RECT_MARGIN = 0.03;
 TreeDraw.PROP_RECT_LABEL = 0.2;
 TreeDraw.PROP_RECT_REDUCTION_MARGIN = 0.01;
 TreeDraw.PROP_RECT_EXPANTION_MARGIN = 0.05;
+
+
+
+///////////////////////////decision tree
+
+
+
+/**
+ * decision tree visualization, tree from TableOperators.buildDecisionTree
+ * @param {Rectangle} frame
+ * @param {Tree} tree
+ * 
+ * @param {String} textColor if not provided will be calculated to contrast node color
+ * @return {Node} selected node
+ * tags:draw,ds
+ */
+TreeDraw.drawDecisionTree = function(frame, tree, textColor){
+	var change = frame.memory==null || frame.memory.tree!=tree || frame.memory.width!=frame.width || frame.memory.height!=frame.height;
+
+	if(change){
+		var changeInTree = frame.memory!=null && frame.memory.tree!=null!=tree;
+		
+		frame.memory = {
+			tree:tree,
+			width:frame.width,
+			height:frame.height,
+			nodeSelected:tree.nodeList[0],
+			nFLastChange:nF,
+			image:null
+		}
+
+		var leaves = (!changeInTree && frame.memory.leaves)?frame.memory.leaves:tree.getLeaves();
+		frame.memory.leaves = leaves;
+
+		var hLevel = frame.height/tree.nLevels;
+
+		tree.nodeList[0]._outRectangle = new Rectangle(0,0,frame.width,frame.height);
+		tree.nodeList[0]._inRectangle = TreeDraw._inRectFromOutRectDecision(tree.nodeList[0]._outRectangle, hLevel);
+		TreeDraw._generateRectanglesDecision(tree.nodeList[0], hLevel);
+
+		frame.memory.focusFrame = tree.nodeList[0]._outRectangle;
+		frame.memory.kx = frame.width/frame.memory.focusFrame.width;
+		frame.memory.mx = - frame.memory.kx*frame.memory.focusFrame.x;
+		frame.memory.ky = frame.height/frame.memory.focusFrame.height;
+		frame.memory.my = - frame.memory.ky*frame.memory.focusFrame.y;
+
+		setText('black', 12);
+		tree.nodeList.forEach(function(node){
+			node.label = node.toNodeList.length==0?Math.round(node.biggestProbability*100)/100:node.bestFeatureName
+			node._textWidth = getTextW(node.label);
+		});
+	}
+
+	if(frame.memory.followingWeights){
+		tree.nodeList.forEach(function(node){
+			node._treeMapWeight = node.descentWeight;
+		});
+	}
+
+	if(textColor==null) textColor = 'black';
+
+	var kxF = frame.width/frame.memory.focusFrame.width;
+	var mxF = - kxF*frame.memory.focusFrame.x;
+	var kyF = frame.height/frame.memory.focusFrame.height;
+	var myF = - kyF*frame.memory.focusFrame.y;
+
+	var v = kxF>frame.memory.kx?0.05:0.1;
+	var antiv = 1-v;
+
+	frame.memory.kx = antiv*frame.memory.kx + v*kxF;
+	frame.memory.mx = antiv*frame.memory.mx + v*mxF;
+	frame.memory.ky = antiv*frame.memory.ky + v*kyF;
+	frame.memory.my = antiv*frame.memory.my + v*myF;
+	var kx = frame.memory.kx;
+	var mx = frame.memory.mx;
+	var ky = frame.memory.ky;
+	var my = frame.memory.my;
+
+	var tx = function(x){return kx*x + mx};
+	var ty = function(y){return ky*y + my};
+	
+
+	var x, y;
+	var margTextX,margTextY;
+	var textSize;
+	var exceedes;
+	var rect;
+	var overNode = null;
+	var overI;
+	var mouseOnFrame = frame.containsPoint(mP);
+	var moving = nF-frame.memory.nFLastChange<50 || Math.pow(frame.memory.kx-kxF, 2) + Math.pow(frame.memory.ky-kyF, 2) + Math.pow(frame.memory.mx-mxF, 2) + Math.pow(frame.memory.my-myF, 2) > 0.01;
+	var captureImage = !moving && frame.memory.image==null && !mouseOnFrame;
+	var drawingImage = !moving && !mouseOnFrame && frame.memory.image!=null && !captureImage  && frame.memory.image.width>0;
+
+	if(drawingImage){
+		drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+	} else {
+		if(captureImage){
+			var newCanvas = document.createElement("canvas");
+			newCanvas.width = frame.width;
+			newCanvas.height = frame.height;
+			var newContext = newCanvas.getContext("2d");
+			newContext.clearRect(0,0,frame.width,frame.height);
+			var mainContext = context;
+			context = newContext;
+			var prevFx = frame.x;
+			var prevFy = frame.y;
+			frame.x = 0;
+			frame.y = 0;
+			setFill('white');
+			fRect(0,0,frame.width,frame.height);
+			setText('black', 12);
+		} else {
+			context.save();
+			clipRectangle(frame.x, frame.y, frame.width, frame.height);
+		}
+
+		setStroke('black', 0.2);
+
+		tree.nodeList.forEach(function(node, i){
+
+			rect = new Rectangle(tx(node._outRectangle.x), ty(node._outRectangle.y), node._outRectangle.width*kx, node._outRectangle.height*ky);
+
+			//if(rect.width>5 && rect.height>4 && rect.x<frame.width && rect.getRight()>0 && rect.y<frame.height && rect.getBottom()>0){
+			if(rect.x<frame.width && rect.getRight()>0 && rect.y<frame.height && rect.getBottom()>0){
+
+				x = Math.round(frame.x + rect.x)+0.5;
+				y = Math.round(frame.y + rect.y)+0.5;
+
+				setFill(node._color);
+
+				var realWidth = Math.min(rect.getRight(), frame.width) - Math.max(rect.x, 0);
+
+				if(fsRectM(x, y, Math.floor(rect.width), Math.floor(rect.height))){
+					overNode = node;
+					overI = i;
+				}
+
+				if(realWidth>16){
+					margTextX = rect.width*TreeDraw.PROP_RECT_MARGIN*0.8;
+					margTextY = rect.height*TreeDraw.PROP_RECT_MARGIN*0.15;
+					tC = textColor?textColor:frame.memory.textsColorList[i];
+					textSize = 18;// rect.height*TreeDraw.PROP_RECT_LABEL-2;
+					//if(textSize>=5){
+					
+					setText(tC, textSize);
+					exceedes =  true;//(node._textWidth*textSize/12)>(rect.width-1.2*margTextX);
+					if(exceedes){
+						clipRectangle(x, y-17,rect.width, textSize*2+17);
+					}
+					
+					//feature or P
+					fText(node.label, Math.max(x, frame.x)+8, y+1);
+
+					if(node.value){
+						textSize = 14;
+						setText(tC, textSize);
+
+						fText(node.value, Math.max(x, frame.x)+8, y-17);
+					}
+
+					//size
+					if(realWidth-node._textWidth>60){
+						textSize = 12;
+						setText(tC, textSize, null, 'right');
+
+						fText("s="+node.weight, Math.min(frame.x + rect.getRight(), frame.getRight())-2, y+1);
+						fText("e="+Math.round(node.entropy*100)/100, Math.min(frame.x + rect.getRight(), frame.getRight())-2, y+12);
+						if(node.toNodeList.length>0) fText("P="+Math.round(node.biggestProbability*100)/100, Math.min(frame.x + rect.getRight(), frame.getRight())-2, y+23);
+					}
+
+
+					if(exceedes) context.restore();
+					//}
+				}
+			}
+		});
+		
+		if(captureImage){
+			context = mainContext;
+			frame.memory.image = new Image();
+			frame.memory.image.src = newCanvas.toDataURL();
+			frame.x = prevFx;
+			frame.y = prevFy;
+			drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+		}
+	}
+	
+	if(mouseOnFrame){
+		if(overNode){
+			setCursor('pointer');
+
+			rect = new Rectangle(tx(overNode._outRectangle.x), ty(overNode._outRectangle.y), overNode._outRectangle.width*kx, overNode._outRectangle.height*ky);
+			x = Math.round(frame.x + rect.x)+0.5;
+			y = Math.round(frame.y + rect.y)+0.5;
+			setStroke(textColor?textColor:frame.memory.textsColorList[overI], 2);
+			sRect(x, y, Math.floor(rect.width), Math.floor(rect.height))
+
+			if(MOUSE_UP_FAST) {
+				frame.memory.focusFrame = new Rectangle(overNode._outRectangle.x-overNode._outRectangle.width*0.025, 0, overNode._outRectangle.width*1.05, frame.height);// TreeDraw._expandRect(overNode._outRectangle);
+				
+				if(frame.memory.focusFrame.x<0){
+					frame.memory.focusFrame.width+=frame.memory.focusFrame.x;
+					frame.memory.focusFrame.x=0;
+				}
+
+				if(frame.memory.focusFrame.getRight()>frame.width){
+					frame.memory.focusFrame.width-=(frame.memory.focusFrame.getRight()-frame.width);
+					frame.memory.focusFrame.x = frame.width - frame.memory.focusFrame.width;
+				}
+
+
+				frame.memory.nodeSelected = overNode;
+
+				frame.memory.image = null;
+			}
+		}
+		if(MOUSE_DOWN){
+			frame.memory.prevMX = mX;
+			//frame.memory.prevMY = mY;
+		}
+		if(MOUSE_PRESSED){
+			scale = 5*frame.memory.focusFrame.width/frame.width;
+			frame.memory.focusFrame.x -= (mX-frame.memory.prevMX)*scale;
+			//frame.memory.focusFrame.y -= (mY-frame.memory.prevMY)*scale;
+
+			frame.memory.prevMX = mX;
+			//frame.memory.prevMY = mY;
+		}
+		if(WHEEL_CHANGE!=0){
+			var center = frame.memory.focusFrame.getCenter();
+			var zoom = 1 + 0.1*WHEEL_CHANGE;
+			frame.memory.focusFrame.x = center.x - frame.memory.focusFrame.width*0.5*zoom;
+			//frame.memory.focusFrame.y = center.y - frame.memory.focusFrame.height*0.5*zoom;
+			frame.memory.focusFrame.width*=zoom;
+			//frame.memory.focusFrame.height*=zoom;
+		}
+		if(MOUSE_PRESSED || WHEEL_CHANGE!=0){
+
+			frame.memory.image = null;
+
+		}
+	}
+
+	if(!captureImage && !drawingImage) context.restore();
+
+	
+
+	return frame.memory.nodeSelected;
+	
+}
+TreeDraw._generateRectanglesDecision = function(node, hLevel){
+
+	var weights = new NumberList();
+	node.toNodeList.forEach(function(node){
+		weights.push(node.weight);
+	});
+	
+	var rectangles = TreeDraw._horizontalRectanglesDecision(node._inRectangle, weights);
+
+	node.toNodeList.forEach(function(child, i){
+		child._outRectangle = rectangles[i];
+		child._inRectangle = TreeDraw._inRectFromOutRectDecision(child._outRectangle, hLevel);
+		TreeDraw._generateRectanglesDecision(child, hLevel);
+	});
+}
+TreeDraw._inRectFromOutRectDecision = function(rect, hLevel){
+	return new Rectangle(rect.x, rect.y + hLevel, rect.width, rect.height - hLevel);
+}
+TreeDraw._horizontalRectanglesDecision = function(rect, weights){
+	var rects = new List();
+	var x0 = rect.x;
+	var w;
+	var newWeights = weights.getNormalizedToSum();
+
+	newWeights.forEach(function(weight){
+		w = weight*rect.width;
+		rects.push(new Rectangle(x0, rect.y, w, rect.height));
+		x0+=w;
+	});
+
+	return rects;
+}
+
+
+
+
 
 /**
  *Static class that:

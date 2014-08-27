@@ -824,6 +824,12 @@ List.prototype.getWithoutElementsAtIndexes=function(indexes){ //[!] This DOESN'T
 	return newList;
 }
 
+/**
+ * removes an element and returns a new list
+ * @param  {Number} index of element to remove
+ * @return {List}
+ * tags:filter
+ */
 List.prototype.getWithoutElementAtIndex=function(index){
 	if(this.type=='List'){
 		var newList = new List();

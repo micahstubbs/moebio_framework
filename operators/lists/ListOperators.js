@@ -115,7 +115,7 @@ ListOperators.countElementsRepetitionOnList=function(list, sortListsByOccurrence
 	} else {
 		for(i=0; list[i]!=null; i++){
 			obj = list[i];
-			index = elementList.indexOf(obj); //TODO: implement equivalence and indexOfElement operator
+			index = elementList.indexOf(obj);
 			if(index!=-1){
 				numberList[index]++;
 			} else {
@@ -331,5 +331,121 @@ ListOperators.getCommonElements=function(list0, list1){
 	return newList.getImproved();
 }
 
+/**
+ * calculates de entropy of a list
+ * @param  {List} list with repeated elements (actegorical list)
+ * @return {Number}
+ * tags:ds
+ */
+ListOperators.getListEntropy = function(list){
+	if(list==null) return;
+	if(list.length<2) return 0;
 
+	var table = ListOperators.countElementsRepetitionOnList(list, true);
+	list._mostRepresentedValue = table[0][0];
+	var N = list.length;
+	list._biggestProbability = table[1][0]/N;
+	if(table[0].length==1) return 0;
+	var entropy = 0;
+	
+	var norm = Math.log(table[0].length);
+	table[1].forEach(function(val){
+		entropy -= (val/N)*Math.log(val/N)/norm;
+	});
+	
+	return entropy;
+}
+
+/**
+ * measures how much a feature decreases entropy when segmenting by its values a supervised variable
+ * @param  {List} feature
+ * @param  {List} supervised
+ * @return {Number}
+ * tags:ds
+ */
+ListOperators.getInformationGain = function(feature, supervised){
+	if(feature==null || supervised==null || feature.length!=supervised.length) return null;
+
+	var ig = ListOperators.getListEntropy(supervised);
+	var childrenObject = {};
+	var childrenLists = [];
+	var N = feature.length;
+
+	feature.forEach(function(element, i){
+		if(childrenObject[element]==null){
+			childrenObject[element]=new List();
+			childrenLists.push(childrenObject[element]);
+		}
+		childrenObject[element].push(supervised[i]);
+	});
+
+	childrenLists.forEach(function(cl){
+		ig -= (cl.length/N)*ListOperators.getListEntropy(cl);
+	});
+
+	return ig;
+}
+
+
+/**
+ * measures how much a feature decreases entropy when segmenting by its values a supervised variable
+ * @param  {List} feature
+ * @param  {List} supervised
+ * @return {Number}
+ * tags:ds
+ */
+ListOperators.getInformationGain = function(feature, supervised){
+	if(feature==null || supervised==null || feature.length!=supervised.length) return null;
+
+	var ig = ListOperators.getListEntropy(supervised);
+	var childrenObject = {};
+	var childrenLists = [];
+	var N = feature.length;
+	
+	feature.forEach(function(element, i){
+		if(childrenObject[element]==null){
+			childrenObject[element]=new List();
+			childrenLists.push(childrenObject[element]);
+		}
+		childrenObject[element].push(supervised[i]);
+	});
+
+	childrenLists.forEach(function(cl){
+		ig -= (cl.length/N)*ListOperators.getListEntropy(cl);
+	});
+
+	return ig;
+}
+
+ListOperators.getInformationGainAnalysis = function(feature, supervised){
+	if(feature==null || supervised==null || feature.length!=supervised.length) return null;
+
+	var ig = ListOperators.getListEntropy(supervised);
+	var childrenObject = {};
+	var childrenLists = [];
+	var N = feature.length;
+	var entropy;
+	var sets = new List();
+	
+	feature.forEach(function(element, i){
+		if(childrenObject[element]==null){
+			childrenObject[element]=new List();
+			childrenLists.push(childrenObject[element]);
+		}
+		childrenObject[element].push(supervised[i]);
+	});
+
+	childrenLists.forEach(function(cl){
+		entropy = ListOperators.getListEntropy(cl)
+		ig -= (cl.length/N)*entropy;
+
+		sets.push({
+			children:cl,
+			entropy:entropy,
+			infoGain:ig
+		})
+	});
+
+	return sets;
+}
 
