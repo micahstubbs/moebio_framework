@@ -332,20 +332,32 @@ ListOperators.getCommonElements=function(list0, list1){
 }
 
 /**
- * calculates de entropy of a list
+ * calculates de entropy of a list, properties _mostRepresentedValue and _biggestProbability are added to the list
  * @param  {List} list with repeated elements (actegorical list)
+ *
+ * @param {Object} valueFollowing if a value is provided, the property _P_valueFollowing will be added to the list, with proportion of that value in the list
  * @return {Number}
  * tags:ds
  */
-ListOperators.getListEntropy = function(list){
+ListOperators.getListEntropy = function(list, valueFollowing){
 	if(list==null) return;
-	if(list.length<2) return 0;
+	if(list.length<2){
+		if(list.length==1){
+			list._mostRepresentedValue = list[0];
+			list._biggestProbability = 1;
+			list._P_valueFollowing = list[0]==valueFollowing?1:0;
+		}
+		return 0;
+	}
 
 	var table = ListOperators.countElementsRepetitionOnList(list, true);
 	list._mostRepresentedValue = table[0][0];
 	var N = list.length;
 	list._biggestProbability = table[1][0]/N;
-	if(table[0].length==1) return 0;
+	if(table[0].length==1){
+		list._P_valueFollowing = list[0]==valueFollowing?1:0;
+		return 0;
+	}
 	var entropy = 0;
 	
 	var norm = Math.log(table[0].length);
@@ -353,6 +365,11 @@ ListOperators.getListEntropy = function(list){
 		entropy -= (val/N)*Math.log(val/N)/norm;
 	});
 	
+	if(valueFollowing){
+		var index = table[0].indexOf(valueFollowing);
+		list._P_valueFollowing = index==-1?0:table[1][index]/N;
+	}
+
 	return entropy;
 }
 

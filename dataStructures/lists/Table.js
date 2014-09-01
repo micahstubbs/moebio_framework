@@ -27,6 +27,7 @@ Table.fromArray=function(array){
    	result.getLengths=Table.prototype.getLengths;
    	result.getListLength=Table.prototype.getListLength;
 	result.sliceRows=Table.prototype.sliceRows;
+	result.getSubListsByIndexes = Table.prototype.getSubListsByIndexes;
 	result.getWithoutRow=Table.prototype.getWithoutRow;
 	result.getWithoutRows=Table.prototype.getWithoutRows;
 	result.getTransposed=Table.prototype.getTransposed;
@@ -84,29 +85,8 @@ Table.prototype.getListLength=function(index){
 	return this[index||0].length;
 }
 
-/**
- * return a Table with certain rows indicated in a list of indexes
- * @param  {NumberList} rowsIndexes indexes of rows
- * @return {Table}
- * tags:filter
- */
-Table.prototype.getRows=function(rowsIndexes){
-	var i;
-	var table = this;
-	var newTable = new Table();
-	newTable.name = this.name;
 
-	for(i=0; table[i]!=null; i++){
-		newTable[i]=new List();
-		rowsIndexes.forEach(function(index){
-			newTable[i].push(table[i][index]);
-		});
-		newTable[i] = newTable[i].getImproved();
-		newTable[i].name = table[i].name;
-	}
 
-	return newTable.getImproved();
-}
 
 Table.prototype.getLengths=function(){
 	var lengths=new NumberList();
@@ -138,6 +118,40 @@ Table.prototype.sliceRows=function(startIndex, endIndex){
 		newTable.push(newList);
 	}
 	return newTable.getImproved();
+}
+
+/**
+ * filters the lists of the table by indexes
+ * @param  {NumberList} indexes
+ * @return {Table}
+ * tags:filter
+ */
+Table.prototype.getSubListsByIndexes=function(indexes){
+	var newTable = new Table();
+	this.forEach(function(list){
+		newTable.push(list.getSubListByIndexes(indexes));
+	});
+	return newTable.getImproved();
+}
+
+//deprecated
+Table.prototype.getRows=function(rowsIndexes){
+	return Table.prototype.getSubListsByIndexes(indexes);
+	// var i;
+	// var table = this;
+	// var newTable = new Table();
+	// newTable.name = this.name;
+
+	// for(i=0; table[i]!=null; i++){
+	// 	newTable[i]=new List();
+	// 	rowsIndexes.forEach(function(index){
+	// 		newTable[i].push(table[i][index]);
+	// 	});
+	// 	newTable[i] = newTable[i].getImproved();
+	// 	newTable[i].name = table[i].name;
+	// }
+
+	// return newTable.getImproved();
 }
 
 Table.prototype.getWithoutRow=function(rowIndex){

@@ -339,7 +339,7 @@ List.prototype.getSubListByIndexes=function(){//TODO: merge with getSubList
 	} else {
 		indexes = arguments[0];
 	}
-
+	if(indexes==null) return;
 	if(this.type=='List'){
 		var newList = new List();
 	} else {
@@ -1991,6 +1991,7 @@ Table.fromArray=function(array){
    	result.getLengths=Table.prototype.getLengths;
    	result.getListLength=Table.prototype.getListLength;
 	result.sliceRows=Table.prototype.sliceRows;
+	result.getSubListsByIndexes = Table.prototype.getSubListsByIndexes;
 	result.getWithoutRow=Table.prototype.getWithoutRow;
 	result.getWithoutRows=Table.prototype.getWithoutRows;
 	result.getTransposed=Table.prototype.getTransposed;
@@ -2048,29 +2049,8 @@ Table.prototype.getListLength=function(index){
 	return this[index||0].length;
 }
 
-/**
- * return a Table with certain rows indicated in a list of indexes
- * @param  {NumberList} rowsIndexes indexes of rows
- * @return {Table}
- * tags:filter
- */
-Table.prototype.getRows=function(rowsIndexes){
-	var i;
-	var table = this;
-	var newTable = new Table();
-	newTable.name = this.name;
 
-	for(i=0; table[i]!=null; i++){
-		newTable[i]=new List();
-		rowsIndexes.forEach(function(index){
-			newTable[i].push(table[i][index]);
-		});
-		newTable[i] = newTable[i].getImproved();
-		newTable[i].name = table[i].name;
-	}
 
-	return newTable.getImproved();
-}
 
 Table.prototype.getLengths=function(){
 	var lengths=new NumberList();
@@ -2102,6 +2082,40 @@ Table.prototype.sliceRows=function(startIndex, endIndex){
 		newTable.push(newList);
 	}
 	return newTable.getImproved();
+}
+
+/**
+ * filters the lists of the table by indexes
+ * @param  {NumberList} indexes
+ * @return {Table}
+ * tags:filter
+ */
+Table.prototype.getSubListsByIndexes=function(indexes){
+	var newTable = new Table();
+	this.forEach(function(list){
+		newTable.push(list.getSubListByIndexes(indexes));
+	});
+	return newTable.getImproved();
+}
+
+//deprecated
+Table.prototype.getRows=function(rowsIndexes){
+	return Table.prototype.getSubListsByIndexes(indexes);
+	// var i;
+	// var table = this;
+	// var newTable = new Table();
+	// newTable.name = this.name;
+
+	// for(i=0; table[i]!=null; i++){
+	// 	newTable[i]=new List();
+	// 	rowsIndexes.forEach(function(index){
+	// 		newTable[i].push(table[i][index]);
+	// 	});
+	// 	newTable[i] = newTable[i].getImproved();
+	// 	newTable[i].name = table[i].name;
+	// }
+
+	// return newTable.getImproved();
 }
 
 Table.prototype.getWithoutRow=function(rowIndex){
@@ -7910,20 +7924,32 @@ ListOperators.getCommonElements=function(list0, list1){
 }
 
 /**
- * calculates de entropy of a list
+ * calculates de entropy of a list, properties _mostRepresentedValue and _biggestProbability are added to the list
  * @param  {List} list with repeated elements (actegorical list)
+ *
+ * @param {Object} valueFollowing if a value is provided, the property _P_valueFollowing will be added to the list, with proportion of that value in the list
  * @return {Number}
  * tags:ds
  */
-ListOperators.getListEntropy = function(list){
+ListOperators.getListEntropy = function(list, valueFollowing){
 	if(list==null) return;
-	if(list.length<2) return 0;
+	if(list.length<2){
+		if(list.length==1){
+			list._mostRepresentedValue = list[0];
+			list._biggestProbability = 1;
+			list._P_valueFollowing = list[0]==valueFollowing?1:0;
+		}
+		return 0;
+	}
 
 	var table = ListOperators.countElementsRepetitionOnList(list, true);
 	list._mostRepresentedValue = table[0][0];
 	var N = list.length;
 	list._biggestProbability = table[1][0]/N;
-	if(table[0].length==1) return 0;
+	if(table[0].length==1){
+		list._P_valueFollowing = list[0]==valueFollowing?1:0;
+		return 0;
+	}
 	var entropy = 0;
 	
 	var norm = Math.log(table[0].length);
@@ -7931,6 +7957,11 @@ ListOperators.getListEntropy = function(list){
 		entropy -= (val/N)*Math.log(val/N)/norm;
 	});
 	
+	if(valueFollowing){
+		var index = table[0].indexOf(valueFollowing);
+		list._P_valueFollowing = index==-1?0:table[1][index]/N;
+	}
+
 	return entropy;
 }
 
@@ -8618,9 +8649,9 @@ TableOperators.splitTableByCategoricList = function(table, list){
  * @param  {Table} variablesTable
  * @param  {List} supervised
  * 
- * @param {Number} min_entropy minimum value of entropy on nodes
- * @param {Number} min_size_node minimum population size associated with node
- * @param {Number} min_info_gain minimum information gain by splitting by best feature
+ * @param {Number} min_entropy minimum value of entropy on nodes (0.2 default)
+ * @param {Number} min_size_node minimum population size associated with node (10 default)
+ * @param {Number} min_info_gain minimum information gain by splitting by best feature (0.002 default)
  * @param {Object} valueFollowing main value in supervised list (associated with blue)
  * @return {Tree}
  * tags:ds
@@ -8628,20 +8659,20 @@ TableOperators.splitTableByCategoricList = function(table, list){
 TableOperators.buildDecisionTree = function(variablesTable, supervised, min_entropy, min_size_node, min_info_gain, valueFollowing){
 	if(variablesTable==null || supervised==null) return;
 	min_entropy = min_entropy==null?0.2:min_entropy;
-	min_size_node = min_size_node||0;
-	min_info_gain = min_info_gain||0;
+	min_size_node = min_size_node||10;
+	min_info_gain = min_info_gain||0.002;
 
+	var indexes = NumberListGenerators.createSortedNumberList(supervised.length);
 	var tree = new Tree();
 
-	TableOperators._buildDecisionTreeNode(tree, variablesTable, supervised, 0, min_entropy, min_size_node, min_info_gain, null, null, valueFollowing);
+	TableOperators._buildDecisionTreeNode(tree, variablesTable, supervised, 0, min_entropy, min_size_node, min_info_gain, null, null, valueFollowing, indexes);
 
 	return tree;
 }
 
 
-TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervised, level, min_entropy, min_size_node, min_info_gain, parent, value, valueFollowing){
-	var entropy = ListOperators.getListEntropy(supervised);
-
+TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervised, level, min_entropy, min_size_node, min_info_gain, parent, value, valueFollowing, indexes){
+	var entropy = ListOperators.getListEntropy(supervised, valueFollowing);
 
 	if(entropy>=min_entropy){
 		informationGains = TableOperators.getVariablesInformationGain(variablesTable, supervised);
@@ -8662,13 +8693,26 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
 	var node = new Node(id,  name);
 	
 	tree.addNodeToTree(node, parent);
+	
+	if(parent==null){
+		tree.informationGainTable = new Table();
+		tree.informationGainTable[0] = variablesTable.getNames();
+		if(informationGains){
+			tree.informationGainTable[1] = informationGains.clone();
+			tree.informationGainTable = tree.informationGainTable.getListsSortedByList(informationGains, false);
+		}
 
+	}
+	
 	node.entropy = entropy;
 	node.weight = supervised.length;
 	node.supervised = supervised;
+	node.indexes = indexes;
 	node.value = value;
 	node.mostRepresentedValue = supervised._mostRepresentedValue;
 	node.biggestProbability = supervised._biggestProbability;
+	node.valueFollowingProbability = supervised._P_valueFollowing;
+	node.lift = node.valueFollowingProbability/tree.nodeList[0].valueFollowingProbability;//Math.log(node.valueFollowingProbability/tree.nodeList[0].valueFollowingProbability)/Math.log(2);
 
 	node._color = node.mostRepresentedValue==valueFollowing?
 		TableOperators._decisionTreeColorScale(1-node.biggestProbability)
@@ -8683,19 +8727,21 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
 	node.iBestFeature = iBestFeature;
 	node.informationGain = maxIg;
 
-	var expanded = variablesTable.concat([supervised]);
+	var expanded = variablesTable.concat([supervised, indexes]);
 
 	var tables = TableOperators.splitTableByCategoricList(expanded, variablesTable[iBestFeature]);
 	var childTable;
 	var childSupervised;
 	var newNode;
 
-
 	tables.forEach(function(expandedChild){
-		childTable = expandedChild.getSubList(0, expandedChild.length-2);
-		childSupervised = expandedChild[expandedChild.length-1];
-		TableOperators._buildDecisionTreeNode(tree, childTable, childSupervised, level+1, min_entropy, min_size_node, min_info_gain, node, expandedChild._element, valueFollowing);
+		childTable = expandedChild.getSubList(0, expandedChild.length-3);
+		childSupervised = expandedChild[expandedChild.length-2];
+		childIndexes = expandedChild[expandedChild.length-1];
+		TableOperators._buildDecisionTreeNode(tree, childTable, childSupervised, level+1, min_entropy, min_size_node, min_info_gain, node, expandedChild._element, valueFollowing, childIndexes);
 	});
+
+	node.toNodeList = node.toNodeList.getSortedByProperty('valueFollowingProbability', false);
 
 	return node;
 }
@@ -15693,6 +15739,11 @@ FastHtml.findAndPlaceTwitterAdresses=function(text){
 	return (blocks.length==0 || blocks.length==1)?text:blocks2.join('');
 }
 
+FastHtml.getColorTag=function(color){
+	color = ColorOperators.colorStringToHEX(color);
+	return "<font color=\""+color+"\">";
+}
+
 /**
 * JSONUtils 
 * @constructor
@@ -18111,11 +18162,11 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 		});
 	}
 
-	if(frame.memory.followingWeights){
-		tree.nodeList.forEach(function(node){
-			node._treeMapWeight = node.descentWeight;
-		});
-	}
+	// if(frame.memory.followingWeights){
+	// 	tree.nodeList.forEach(function(node){
+	// 		node._treeMapWeight = node.descentWeight;
+	// 	});
+	// }
 
 	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
 		frame.memory.nFLastChange = nF;
@@ -18310,7 +18361,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 		}
 		if(WHEEL_CHANGE!=0){
 			var center = frame.memory.focusFrame.getCenter();
-			var zoom = 1 + 0.1*WHEEL_CHANGE;
+			var zoom = 1 - 0.1*WHEEL_CHANGE;
 			frame.memory.focusFrame.x = center.x - frame.memory.focusFrame.width*0.5*zoom;
 			frame.memory.focusFrame.y = center.y - frame.memory.focusFrame.height*0.5*zoom;
 			frame.memory.focusFrame.width*=zoom;
@@ -18377,16 +18428,20 @@ TreeDraw.PROP_RECT_EXPANTION_MARGIN = 0.05;
  * decision tree visualization, tree from TableOperators.buildDecisionTree
  * @param {Rectangle} frame
  * @param {Tree} tree
- * 
- * @param {String} textColor if not provided will be calculated to contrast node color
  * @return {Node} selected node
+ * @return {Node} hovered node
  * tags:draw,ds
  */
-TreeDraw.drawDecisionTree = function(frame, tree, textColor){
+TreeDraw.drawDecisionTree = function(frame, tree){
 	var change = frame.memory==null || frame.memory.tree!=tree || frame.memory.width!=frame.width || frame.memory.height!=frame.height;
 
+	var gap = frame.height*0.06;
+	var hTree = tree.nLevels*(frame.height-gap)/(tree.nLevels+1);
+	var hLevel = hTree/tree.nLevels;
+	var changeInResult = false;
+
 	if(change){
-		var changeInTree = frame.memory!=null && frame.memory.tree!=null!=tree;
+		var changeInTree = frame.memory!=null && frame.memory.tree!=null && frame.memory.tree!=tree;
 		
 		frame.memory = {
 			tree:tree,
@@ -18394,19 +18449,21 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor){
 			height:frame.height,
 			nodeSelected:tree.nodeList[0],
 			nFLastChange:nF,
+			leaves:null,
 			image:null
 		}
 
-		var leaves = (!changeInTree && frame.memory.leaves)?frame.memory.leaves:tree.getLeaves();
-		frame.memory.leaves = leaves;
+		if(changeInTree || frame.memory.leaves==null){
+			frame.memory.leaves = tree.getLeaves().getSortedByProperty('valueFollowingProbability', false);
+		}
 
-		var hLevel = frame.height/tree.nLevels;
+		
 
-		tree.nodeList[0]._outRectangle = new Rectangle(0,0,frame.width,frame.height);
+		tree.nodeList[0]._outRectangle = new Rectangle(0,0,frame.width,hTree);
 		tree.nodeList[0]._inRectangle = TreeDraw._inRectFromOutRectDecision(tree.nodeList[0]._outRectangle, hLevel);
 		TreeDraw._generateRectanglesDecision(tree.nodeList[0], hLevel);
 
-		frame.memory.focusFrame = tree.nodeList[0]._outRectangle;
+		frame.memory.focusFrame = new Rectangle(0,0,frame.width,frame.height);
 		frame.memory.kx = frame.width/frame.memory.focusFrame.width;
 		frame.memory.mx = - frame.memory.kx*frame.memory.focusFrame.x;
 		frame.memory.ky = frame.height/frame.memory.focusFrame.height;
@@ -18414,9 +18471,11 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor){
 
 		setText('black', 12);
 		tree.nodeList.forEach(function(node){
-			node.label = node.toNodeList.length==0?Math.round(node.biggestProbability*100)/100:node.bestFeatureName
+			node.label = node.toNodeList.length==0?Math.round(node.valueFollowingProbability*100)/100:node.bestFeatureName
 			node._textWidth = getTextW(node.label);
 		});
+
+		
 	}
 
 	if(frame.memory.followingWeights){
@@ -18425,7 +18484,7 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor){
 		});
 	}
 
-	if(textColor==null) textColor = 'black';
+	var textColor = 'black';
 
 	var kxF = frame.width/frame.memory.focusFrame.width;
 	var mxF = - kxF*frame.memory.focusFrame.x;
@@ -18446,7 +18505,6 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor){
 
 	var tx = function(x){return kx*x + mx};
 	var ty = function(y){return ky*y + my};
-	
 
 	var x, y;
 	var margTextX,margTextY;
@@ -18456,7 +18514,7 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor){
 	var overNode = null;
 	var overI;
 	var mouseOnFrame = frame.containsPoint(mP);
-	var moving = nF-frame.memory.nFLastChange<50 || Math.pow(frame.memory.kx-kxF, 2) + Math.pow(frame.memory.ky-kyF, 2) + Math.pow(frame.memory.mx-mxF, 2) + Math.pow(frame.memory.my-myF, 2) > 0.01;
+	var moving = nF-frame.memory.nFLastChange<80 || Math.pow(frame.memory.kx-kxF, 2) + Math.pow(frame.memory.mx-mxF, 2) > 0.001;
 	var captureImage = !moving && frame.memory.image==null && !mouseOnFrame;
 	var drawingImage = !moving && !mouseOnFrame && frame.memory.image!=null && !captureImage  && frame.memory.image.width>0;
 
@@ -18483,13 +18541,14 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor){
 			clipRectangle(frame.x, frame.y, frame.width, frame.height);
 		}
 
+		var yLeaves = frame.y+hTree+gap;
+
 		setStroke('black', 0.2);
 
 		tree.nodeList.forEach(function(node, i){
 
 			rect = new Rectangle(tx(node._outRectangle.x), ty(node._outRectangle.y), node._outRectangle.width*kx, node._outRectangle.height*ky);
 
-			//if(rect.width>5 && rect.height>4 && rect.x<frame.width && rect.getRight()>0 && rect.y<frame.height && rect.getBottom()>0){
 			if(rect.x<frame.width && rect.getRight()>0 && rect.y<frame.height && rect.getBottom()>0){
 
 				x = Math.round(frame.x + rect.x)+0.5;
@@ -18508,13 +18567,12 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor){
 					margTextX = rect.width*TreeDraw.PROP_RECT_MARGIN*0.8;
 					margTextY = rect.height*TreeDraw.PROP_RECT_MARGIN*0.15;
 					tC = textColor?textColor:frame.memory.textsColorList[i];
-					textSize = 18;// rect.height*TreeDraw.PROP_RECT_LABEL-2;
-					//if(textSize>=5){
+					textSize = 18;
 					
 					setText(tC, textSize);
 					exceedes =  true;//(node._textWidth*textSize/12)>(rect.width-1.2*margTextX);
 					if(exceedes){
-						clipRectangle(x, y-17,rect.width, textSize*2+17);
+						clipRectangle(x, y-17,rect.width, rect.height);
 					}
 					
 					//feature or P
@@ -18534,16 +18592,69 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor){
 
 						fText("s="+node.weight, Math.min(frame.x + rect.getRight(), frame.getRight())-2, y+1);
 						fText("e="+Math.round(node.entropy*100)/100, Math.min(frame.x + rect.getRight(), frame.getRight())-2, y+12);
-						if(node.toNodeList.length>0) fText("P="+Math.round(node.biggestProbability*100)/100, Math.min(frame.x + rect.getRight(), frame.getRight())-2, y+23);
+						if(node.toNodeList.length>0) fText("P="+Math.round(node.valueFollowingProbability*100)/100, Math.min(frame.x + rect.getRight(), frame.getRight())-2, y+23);
+						fText("l="+Math.round(node.lift*100)/100, Math.min(frame.x + rect.getRight(), frame.getRight())-2, y+23+(node.toNodeList.length>0?11:0));
 					}
-
-
+					
 					if(exceedes) context.restore();
 					//}
 				}
 			}
 		});
+
+		//leaves
 		
+		var x0 = frame.x;
+		var w;
+		var sx = frame.width/tree.nodeList[0].weight;
+		var waitingForMark = true;
+		var waitingForDoubleMark = true;
+		var waitingForHalfMark = true;
+		var waitingFor15Mark = true;
+		var waitingFor067Mark = true;
+
+		
+
+		frame.memory.leaves.forEach(function(node){
+			setStroke('black', 0.2);
+
+			w = sx*node.weight;
+			setFill(node._color);
+			if(fsRectM(x0, yLeaves, w, hLevel)){
+				overNode = node;
+				overI = tree.nodeList.indexOf(node);
+			}
+			node._xLeaf = x0;
+			node._wLeaf = w;
+
+			setStroke('black', 1);
+
+			if(waitingForMark && node.valueFollowingProbability<tree.nodeList[0].valueFollowingProbability){
+				waitingForMark = false;
+				setFill('black');
+				fLines(x0, yLeaves-14, x0+4, yLeaves-8, x0, yLeaves-2, x0-4, yLeaves-8);
+			}
+			if(waitingForDoubleMark && node.valueFollowingProbability<=tree.nodeList[0].valueFollowingProbability*2){
+				waitingForDoubleMark = false;
+				line(x0, yLeaves-14, x0, yLeaves-2);
+			}
+			if(waitingForHalfMark && node.valueFollowingProbability<tree.nodeList[0].valueFollowingProbability*0.5){
+				waitingForHalfMark = false;
+				line(x0, yLeaves-14, x0, yLeaves-2);
+			}
+			if(waitingFor15Mark && node.valueFollowingProbability<=tree.nodeList[0].valueFollowingProbability*1.5){
+				waitingFor15Mark = false;
+				line(x0, yLeaves-14, x0, yLeaves-2);
+			}
+			if(waitingFor067Mark && node.valueFollowingProbability<tree.nodeList[0].valueFollowingProbability*0.66667){
+				waitingFor067Mark = false;
+				line(x0, yLeaves-14, x0, yLeaves-2);
+			}
+
+			x0+=w;
+
+		});
+
 		if(captureImage){
 			context = mainContext;
 			frame.memory.image = new Image();
@@ -18561,8 +18672,25 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor){
 			rect = new Rectangle(tx(overNode._outRectangle.x), ty(overNode._outRectangle.y), overNode._outRectangle.width*kx, overNode._outRectangle.height*ky);
 			x = Math.round(frame.x + rect.x)+0.5;
 			y = Math.round(frame.y + rect.y)+0.5;
+
 			setStroke(textColor?textColor:frame.memory.textsColorList[overI], 2);
-			sRect(x, y, Math.floor(rect.width), Math.floor(rect.height))
+
+			if(overNode._wLeaf){
+				setFill('rgba(0,0,0,0.5)');
+				context.beginPath();
+
+				context.moveTo(x, yLeaves-gap);
+				context.bezierCurveTo(x, yLeaves-0.65*gap, overNode._xLeaf, yLeaves-gap*0.35, overNode._xLeaf, yLeaves);
+				context.lineTo(overNode._xLeaf+overNode._wLeaf, yLeaves);
+				context.bezierCurveTo(overNode._xLeaf+overNode._wLeaf, yLeaves-gap*0.35, x+rect.width, yLeaves-0.65*gap, x+rect.width, yLeaves-gap);
+				context.fill();
+
+				sRect(overNode._xLeaf, yLeaves, overNode._wLeaf, hLevel);
+			}
+			
+			sRect(x, y, Math.floor(rect.width), Math.floor(rect.height));
+
+			
 
 			if(MOUSE_UP_FAST) {
 				frame.memory.focusFrame = new Rectangle(overNode._outRectangle.x-overNode._outRectangle.width*0.025, 0, overNode._outRectangle.width*1.05, frame.height);// TreeDraw._expandRect(overNode._outRectangle);
@@ -18579,6 +18707,7 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor){
 
 
 				frame.memory.nodeSelected = overNode;
+				changeInResult = true;
 
 				frame.memory.image = null;
 			}
@@ -18613,8 +18742,25 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor){
 	if(!captureImage && !drawingImage) context.restore();
 
 	
+	if(frame.memory.overNode!=overNode){
+		frame.memory.overNode=overNode;
+		changeInResult = true;
+	}
 
-	return frame.memory.nodeSelected;
+	if(changeInResult || frame.memory.result==null){
+		frame.memory.result = [
+			{
+				value:frame.memory.nodeSelected,
+				type:'Node'
+			},
+			{
+				value:frame.memory.overNode,
+				type:'Node'
+			}
+		];
+	}
+
+	return frame.memory.result;
 	
 }
 TreeDraw._generateRectanglesDecision = function(node, hLevel){

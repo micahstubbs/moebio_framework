@@ -105,11 +105,11 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 		});
 	}
 
-	if(frame.memory.followingWeights){
-		tree.nodeList.forEach(function(node){
-			node._treeMapWeight = node.descentWeight;
-		});
-	}
+	// if(frame.memory.followingWeights){
+	// 	tree.nodeList.forEach(function(node){
+	// 		node._treeMapWeight = node.descentWeight;
+	// 	});
+	// }
 
 	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
 		frame.memory.nFLastChange = nF;
@@ -304,7 +304,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 		}
 		if(WHEEL_CHANGE!=0){
 			var center = frame.memory.focusFrame.getCenter();
-			var zoom = 1 + 0.1*WHEEL_CHANGE;
+			var zoom = 1 - 0.1*WHEEL_CHANGE;
 			frame.memory.focusFrame.x = center.x - frame.memory.focusFrame.width*0.5*zoom;
 			frame.memory.focusFrame.y = center.y - frame.memory.focusFrame.height*0.5*zoom;
 			frame.memory.focusFrame.width*=zoom;
@@ -371,16 +371,20 @@ TreeDraw.PROP_RECT_EXPANTION_MARGIN = 0.05;
  * decision tree visualization, tree from TableOperators.buildDecisionTree
  * @param {Rectangle} frame
  * @param {Tree} tree
- * 
- * @param {String} textColor if not provided will be calculated to contrast node color
  * @return {Node} selected node
+ * @return {Node} hovered node
  * tags:draw,ds
  */
-TreeDraw.drawDecisionTree = function(frame, tree, textColor){
+TreeDraw.drawDecisionTree = function(frame, tree){
 	var change = frame.memory==null || frame.memory.tree!=tree || frame.memory.width!=frame.width || frame.memory.height!=frame.height;
 
+	var gap = frame.height*0.06;
+	var hTree = tree.nLevels*(frame.height-gap)/(tree.nLevels+1);
+	var hLevel = hTree/tree.nLevels;
+	var changeInResult = false;
+
 	if(change){
-		var changeInTree = frame.memory!=null && frame.memory.tree!=null!=tree;
+		var changeInTree = frame.memory!=null && frame.memory.tree!=null && frame.memory.tree!=tree;
 		
 		frame.memory = {
 			tree:tree,
@@ -388,19 +392,21 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor){
 			height:frame.height,
 			nodeSelected:tree.nodeList[0],
 			nFLastChange:nF,
+			leaves:null,
 			image:null
 		}
 
-		var leaves = (!changeInTree && frame.memory.leaves)?frame.memory.leaves:tree.getLeaves();
-		frame.memory.leaves = leaves;
+		if(changeInTree || frame.memory.leaves==null){
+			frame.memory.leaves = tree.getLeaves().getSortedByProperty('valueFollowingProbability', false);
+		}
 
-		var hLevel = frame.height/tree.nLevels;
+		
 
-		tree.nodeList[0]._outRectangle = new Rectangle(0,0,frame.width,frame.height);
+		tree.nodeList[0]._outRectangle = new Rectangle(0,0,frame.width,hTree);
 		tree.nodeList[0]._inRectangle = TreeDraw._inRectFromOutRectDecision(tree.nodeList[0]._outRectangle, hLevel);
 		TreeDraw._generateRectanglesDecision(tree.nodeList[0], hLevel);
 
-		frame.memory.focusFrame = tree.nodeList[0]._outRectangle;
+		frame.memory.focusFrame = new Rectangle(0,0,frame.width,frame.height);
 		frame.memory.kx = frame.width/frame.memory.focusFrame.width;
 		frame.memory.mx = - frame.memory.kx*frame.memory.focusFrame.x;
 		frame.memory.ky = frame.height/frame.memory.focusFrame.height;
@@ -408,9 +414,11 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor){
 
 		setText('black', 12);
 		tree.nodeList.forEach(function(node){
-			node.label = node.toNodeList.length==0?Math.round(node.biggestProbability*100)/100:node.bestFeatureName
+			node.label = node.toNodeList.length==0?Math.round(node.valueFollowingProbability*100)/100:node.bestFeatureName
 			node._textWidth = getTextW(node.label);
 		});
+
+		
 	}
 
 	if(frame.memory.followingWeights){
@@ -419,7 +427,7 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor){
 		});
 	}
 
-	if(textColor==null) textColor = 'black';
+	var textColor = 'black';
 
 	var kxF = frame.width/frame.memory.focusFrame.width;
 	var mxF = - kxF*frame.memory.focusFrame.x;
@@ -440,7 +448,6 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor){
 
 	var tx = function(x){return kx*x + mx};
 	var ty = function(y){return ky*y + my};
-	
 
 	var x, y;
 	var margTextX,margTextY;
@@ -450,7 +457,7 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor){
 	var overNode = null;
 	var overI;
 	var mouseOnFrame = frame.containsPoint(mP);
-	var moving = nF-frame.memory.nFLastChange<50 || Math.pow(frame.memory.kx-kxF, 2) + Math.pow(frame.memory.ky-kyF, 2) + Math.pow(frame.memory.mx-mxF, 2) + Math.pow(frame.memory.my-myF, 2) > 0.01;
+	var moving = nF-frame.memory.nFLastChange<80 || Math.pow(frame.memory.kx-kxF, 2) + Math.pow(frame.memory.mx-mxF, 2) > 0.001;
 	var captureImage = !moving && frame.memory.image==null && !mouseOnFrame;
 	var drawingImage = !moving && !mouseOnFrame && frame.memory.image!=null && !captureImage  && frame.memory.image.width>0;
 
@@ -477,13 +484,14 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor){
 			clipRectangle(frame.x, frame.y, frame.width, frame.height);
 		}
 
+		var yLeaves = frame.y+hTree+gap;
+
 		setStroke('black', 0.2);
 
 		tree.nodeList.forEach(function(node, i){
 
 			rect = new Rectangle(tx(node._outRectangle.x), ty(node._outRectangle.y), node._outRectangle.width*kx, node._outRectangle.height*ky);
 
-			//if(rect.width>5 && rect.height>4 && rect.x<frame.width && rect.getRight()>0 && rect.y<frame.height && rect.getBottom()>0){
 			if(rect.x<frame.width && rect.getRight()>0 && rect.y<frame.height && rect.getBottom()>0){
 
 				x = Math.round(frame.x + rect.x)+0.5;
@@ -502,13 +510,12 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor){
 					margTextX = rect.width*TreeDraw.PROP_RECT_MARGIN*0.8;
 					margTextY = rect.height*TreeDraw.PROP_RECT_MARGIN*0.15;
 					tC = textColor?textColor:frame.memory.textsColorList[i];
-					textSize = 18;// rect.height*TreeDraw.PROP_RECT_LABEL-2;
-					//if(textSize>=5){
+					textSize = 18;
 					
 					setText(tC, textSize);
 					exceedes =  true;//(node._textWidth*textSize/12)>(rect.width-1.2*margTextX);
 					if(exceedes){
-						clipRectangle(x, y-17,rect.width, textSize*2+17);
+						clipRectangle(x, y-17,rect.width, rect.height);
 					}
 					
 					//feature or P
@@ -528,16 +535,69 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor){
 
 						fText("s="+node.weight, Math.min(frame.x + rect.getRight(), frame.getRight())-2, y+1);
 						fText("e="+Math.round(node.entropy*100)/100, Math.min(frame.x + rect.getRight(), frame.getRight())-2, y+12);
-						if(node.toNodeList.length>0) fText("P="+Math.round(node.biggestProbability*100)/100, Math.min(frame.x + rect.getRight(), frame.getRight())-2, y+23);
+						if(node.toNodeList.length>0) fText("P="+Math.round(node.valueFollowingProbability*100)/100, Math.min(frame.x + rect.getRight(), frame.getRight())-2, y+23);
+						fText("l="+Math.round(node.lift*100)/100, Math.min(frame.x + rect.getRight(), frame.getRight())-2, y+23+(node.toNodeList.length>0?11:0));
 					}
-
-
+					
 					if(exceedes) context.restore();
 					//}
 				}
 			}
 		});
+
+		//leaves
 		
+		var x0 = frame.x;
+		var w;
+		var sx = frame.width/tree.nodeList[0].weight;
+		var waitingForMark = true;
+		var waitingForDoubleMark = true;
+		var waitingForHalfMark = true;
+		var waitingFor15Mark = true;
+		var waitingFor067Mark = true;
+
+		
+
+		frame.memory.leaves.forEach(function(node){
+			setStroke('black', 0.2);
+
+			w = sx*node.weight;
+			setFill(node._color);
+			if(fsRectM(x0, yLeaves, w, hLevel)){
+				overNode = node;
+				overI = tree.nodeList.indexOf(node);
+			}
+			node._xLeaf = x0;
+			node._wLeaf = w;
+
+			setStroke('black', 1);
+
+			if(waitingForMark && node.valueFollowingProbability<tree.nodeList[0].valueFollowingProbability){
+				waitingForMark = false;
+				setFill('black');
+				fLines(x0, yLeaves-14, x0+4, yLeaves-8, x0, yLeaves-2, x0-4, yLeaves-8);
+			}
+			if(waitingForDoubleMark && node.valueFollowingProbability<=tree.nodeList[0].valueFollowingProbability*2){
+				waitingForDoubleMark = false;
+				line(x0, yLeaves-14, x0, yLeaves-2);
+			}
+			if(waitingForHalfMark && node.valueFollowingProbability<tree.nodeList[0].valueFollowingProbability*0.5){
+				waitingForHalfMark = false;
+				line(x0, yLeaves-14, x0, yLeaves-2);
+			}
+			if(waitingFor15Mark && node.valueFollowingProbability<=tree.nodeList[0].valueFollowingProbability*1.5){
+				waitingFor15Mark = false;
+				line(x0, yLeaves-14, x0, yLeaves-2);
+			}
+			if(waitingFor067Mark && node.valueFollowingProbability<tree.nodeList[0].valueFollowingProbability*0.66667){
+				waitingFor067Mark = false;
+				line(x0, yLeaves-14, x0, yLeaves-2);
+			}
+
+			x0+=w;
+
+		});
+
 		if(captureImage){
 			context = mainContext;
 			frame.memory.image = new Image();
@@ -555,8 +615,25 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor){
 			rect = new Rectangle(tx(overNode._outRectangle.x), ty(overNode._outRectangle.y), overNode._outRectangle.width*kx, overNode._outRectangle.height*ky);
 			x = Math.round(frame.x + rect.x)+0.5;
 			y = Math.round(frame.y + rect.y)+0.5;
+
 			setStroke(textColor?textColor:frame.memory.textsColorList[overI], 2);
-			sRect(x, y, Math.floor(rect.width), Math.floor(rect.height))
+
+			if(overNode._wLeaf){
+				setFill('rgba(0,0,0,0.5)');
+				context.beginPath();
+
+				context.moveTo(x, yLeaves-gap);
+				context.bezierCurveTo(x, yLeaves-0.65*gap, overNode._xLeaf, yLeaves-gap*0.35, overNode._xLeaf, yLeaves);
+				context.lineTo(overNode._xLeaf+overNode._wLeaf, yLeaves);
+				context.bezierCurveTo(overNode._xLeaf+overNode._wLeaf, yLeaves-gap*0.35, x+rect.width, yLeaves-0.65*gap, x+rect.width, yLeaves-gap);
+				context.fill();
+
+				sRect(overNode._xLeaf, yLeaves, overNode._wLeaf, hLevel);
+			}
+			
+			sRect(x, y, Math.floor(rect.width), Math.floor(rect.height));
+
+			
 
 			if(MOUSE_UP_FAST) {
 				frame.memory.focusFrame = new Rectangle(overNode._outRectangle.x-overNode._outRectangle.width*0.025, 0, overNode._outRectangle.width*1.05, frame.height);// TreeDraw._expandRect(overNode._outRectangle);
@@ -573,6 +650,7 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor){
 
 
 				frame.memory.nodeSelected = overNode;
+				changeInResult = true;
 
 				frame.memory.image = null;
 			}
@@ -607,8 +685,25 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor){
 	if(!captureImage && !drawingImage) context.restore();
 
 	
+	if(frame.memory.overNode!=overNode){
+		frame.memory.overNode=overNode;
+		changeInResult = true;
+	}
 
-	return frame.memory.nodeSelected;
+	if(changeInResult || frame.memory.result==null){
+		frame.memory.result = [
+			{
+				value:frame.memory.nodeSelected,
+				type:'Node'
+			},
+			{
+				value:frame.memory.overNode,
+				type:'Node'
+			}
+		];
+	}
+
+	return frame.memory.result;
 	
 }
 TreeDraw._generateRectanglesDecision = function(node, hLevel){

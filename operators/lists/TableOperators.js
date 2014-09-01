@@ -427,9 +427,9 @@ TableOperators.splitTableByCategoricList = function(table, list){
  * @param  {Table} variablesTable
  * @param  {List} supervised
  * 
- * @param {Number} min_entropy minimum value of entropy on nodes
- * @param {Number} min_size_node minimum population size associated with node
- * @param {Number} min_info_gain minimum information gain by splitting by best feature
+ * @param {Number} min_entropy minimum value of entropy on nodes (0.2 default)
+ * @param {Number} min_size_node minimum population size associated with node (10 default)
+ * @param {Number} min_info_gain minimum information gain by splitting by best feature (0.002 default)
  * @param {Object} valueFollowing main value in supervised list (associated with blue)
  * @return {Tree}
  * tags:ds
@@ -437,20 +437,20 @@ TableOperators.splitTableByCategoricList = function(table, list){
 TableOperators.buildDecisionTree = function(variablesTable, supervised, min_entropy, min_size_node, min_info_gain, valueFollowing){
 	if(variablesTable==null || supervised==null) return;
 	min_entropy = min_entropy==null?0.2:min_entropy;
-	min_size_node = min_size_node||0;
-	min_info_gain = min_info_gain||0;
+	min_size_node = min_size_node||10;
+	min_info_gain = min_info_gain||0.002;
 
+	var indexes = NumberListGenerators.createSortedNumberList(supervised.length);
 	var tree = new Tree();
 
-	TableOperators._buildDecisionTreeNode(tree, variablesTable, supervised, 0, min_entropy, min_size_node, min_info_gain, null, null, valueFollowing);
+	TableOperators._buildDecisionTreeNode(tree, variablesTable, supervised, 0, min_entropy, min_size_node, min_info_gain, null, null, valueFollowing, indexes);
 
 	return tree;
 }
 
 
-TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervised, level, min_entropy, min_size_node, min_info_gain, parent, value, valueFollowing){
-	var entropy = ListOperators.getListEntropy(supervised);
-
+TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervised, level, min_entropy, min_size_node, min_info_gain, parent, value, valueFollowing, indexes){
+	var entropy = ListOperators.getListEntropy(supervised, valueFollowing);
 
 	if(entropy>=min_entropy){
 		informationGains = TableOperators.getVariablesInformationGain(variablesTable, supervised);
@@ -471,13 +471,26 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
 	var node = new Node(id,  name);
 	
 	tree.addNodeToTree(node, parent);
+	
+	if(parent==null){
+		tree.informationGainTable = new Table();
+		tree.informationGainTable[0] = variablesTable.getNames();
+		if(informationGains){
+			tree.informationGainTable[1] = informationGains.clone();
+			tree.informationGainTable = tree.informationGainTable.getListsSortedByList(informationGains, false);
+		}
 
+	}
+	
 	node.entropy = entropy;
 	node.weight = supervised.length;
 	node.supervised = supervised;
+	node.indexes = indexes;
 	node.value = value;
 	node.mostRepresentedValue = supervised._mostRepresentedValue;
 	node.biggestProbability = supervised._biggestProbability;
+	node.valueFollowingProbability = supervised._P_valueFollowing;
+	node.lift = node.valueFollowingProbability/tree.nodeList[0].valueFollowingProbability;//Math.log(node.valueFollowingProbability/tree.nodeList[0].valueFollowingProbability)/Math.log(2);
 
 	node._color = node.mostRepresentedValue==valueFollowing?
 		TableOperators._decisionTreeColorScale(1-node.biggestProbability)
@@ -492,19 +505,21 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
 	node.iBestFeature = iBestFeature;
 	node.informationGain = maxIg;
 
-	var expanded = variablesTable.concat([supervised]);
+	var expanded = variablesTable.concat([supervised, indexes]);
 
 	var tables = TableOperators.splitTableByCategoricList(expanded, variablesTable[iBestFeature]);
 	var childTable;
 	var childSupervised;
 	var newNode;
 
-
 	tables.forEach(function(expandedChild){
-		childTable = expandedChild.getSubList(0, expandedChild.length-2);
-		childSupervised = expandedChild[expandedChild.length-1];
-		TableOperators._buildDecisionTreeNode(tree, childTable, childSupervised, level+1, min_entropy, min_size_node, min_info_gain, node, expandedChild._element, valueFollowing);
+		childTable = expandedChild.getSubList(0, expandedChild.length-3);
+		childSupervised = expandedChild[expandedChild.length-2];
+		childIndexes = expandedChild[expandedChild.length-1];
+		TableOperators._buildDecisionTreeNode(tree, childTable, childSupervised, level+1, min_entropy, min_size_node, min_info_gain, node, expandedChild._element, valueFollowing, childIndexes);
 	});
+
+	node.toNodeList = node.toNodeList.getSortedByProperty('valueFollowingProbability', false);
 
 	return node;
 }

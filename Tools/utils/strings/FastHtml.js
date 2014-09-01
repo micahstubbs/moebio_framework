@@ -163,3 +163,8 @@ FastHtml.findAndPlaceTwitterAdresses=function(text){
 	
 	return (blocks.length==0 || blocks.length==1)?text:blocks2.join('');
 }
+
+FastHtml.getColorTag=function(color){
+	color = ColorOperators.colorStringToHEX(color);
+	return "<font color=\""+color+"\">";
+}

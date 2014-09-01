@@ -313,7 +313,7 @@ List.prototype.getSubListByIndexes=function(){//TODO: merge with getSubList
 	} else {
 		indexes = arguments[0];
 	}
-
+	if(indexes==null) return;
 	if(this.type=='List'){
 		var newList = new List();
 	} else {
