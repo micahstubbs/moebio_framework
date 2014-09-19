@@ -39,7 +39,7 @@ NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listC
 	
 	for(i=0;numberTable[i]!=null;i++){
 		numberList = numberTable[i];
-		x = frame.x+i*dX;
+		x = Math.round(frame.x+i*dX);
 		mouseXOnColumn = mX>x && mX<=x+dX;
 		if(listColorsIndependent){
 			minMaxInterval = numberList.getMinMaxInterval();
@@ -47,7 +47,7 @@ NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listC
 		}
 		for(j=0;numberList[j]!=null;j++){
 			context.fillStyle = colorScale((numberList[j]-minMaxInterval.x)/amp);
-			context.fillRect(x, frame.y+j*dY,dX-margin,dY-margin);
+			context.fillRect(x, Math.round(frame.y+j*dY), Math.ceil(dX)-margin, Math.ceil(dY)-margin);
 			if(mouseXOnColumn && mY>frame.y+j*dY && mY<=frame.y+(j+1)*dY) overCoordinates=new Point(i,j);
 		}
 	}

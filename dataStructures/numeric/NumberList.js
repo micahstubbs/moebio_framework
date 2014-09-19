@@ -60,6 +60,7 @@ NumberList.fromArray=function(array, forceToNumber){
 	result.subtract=NumberList.prototype.subtract;
 	result.divide=NumberList.prototype.divide;
 	result.dotProduct=NumberList.prototype.dotProduct;
+	result.distance=NumberList.prototype.distance;
 	result.sqrt=NumberList.prototype.sqrt;
 	result.pow=NumberList.prototype.pow;
 	result.log=NumberList.prototype.log;
@@ -98,6 +99,7 @@ NumberList.prototype.getMax=function(){//TODO:store result and retrieve while th
 	}
 	return max;
 }
+
 NumberList.prototype.getAmplitude=function(){
 	if(this.length==0) return 0;
 	var min=this[0];
@@ -109,10 +111,15 @@ NumberList.prototype.getAmplitude=function(){
 	return max-min;
 }
 
-NumberList.prototype.getMinMaxInterval=function(){
+NumberList.prototype.getMinMaxInterval=function(){//deprecated?
 	return new Interval(this.getMin(), this.getMax());
 }
 
+/**
+ * returns the sum of values in the numberList
+ * @return {Number}
+ * tags:
+ */
 NumberList.prototype.getSum=function(){
 	if(this.length==0) return 0;
 	var i;
@@ -123,6 +130,11 @@ NumberList.prototype.getSum=function(){
 	return sum;
 }
 
+/**
+ * return the product of values in the numberList
+ * @return {Number}
+ * tags:
+ */
 NumberList.prototype.getProduct=function(){
 	if(this.length==0) return null;
 	var i;
@@ -135,8 +147,9 @@ NumberList.prototype.getProduct=function(){
 
 /**
  * returns a NumberList normalized to the sum
- * @param {factor} factor optional 
+ * @param {Number} factor optional 
  * @return {NumberList}
+ * tags:
  */
 NumberList.prototype.getNormalizedToSum=function(factor){
 	factor = factor==null?1:factor;
@@ -154,9 +167,10 @@ NumberList.prototype.getNormalizedToSum=function(factor){
 }
 
 /**
- * returns a NumberList normalized to Min-Max
- * @param {factor} factor optional
+ * returns a numberList normalized to min-max interval
+ * @param {Number} factor optional
  * @return {NumberList}
+ * tags:
  */
 NumberList.prototype.getNormalized=function(factor){
 	factor = factor==null?1:factor;
@@ -175,9 +189,10 @@ NumberList.prototype.getNormalized=function(factor){
 }
 
 /**
- * returns a NumberList normalized to Max
- * @param {factor} factor optional
+ * returns a numberList normalized to Max
+ * @param {Number} factor optional
  * @return {NumberList}
+ * tags:
  */
 NumberList.prototype.getNormalizedToMax=function(factor){
 	factor = factor==null?1:factor;
@@ -197,7 +212,11 @@ NumberList.prototype.getNormalizedToMax=function(factor){
 	return newNumberList;
 }
 
-
+/**
+ * builds an Interval witn min and max value from the numberList
+ * @return {Interval}
+ * tags:
+ */
 NumberList.prototype.getInterval=function(){
 	if(this.length==0) return null;
 	var max=this[0];
@@ -209,6 +228,7 @@ NumberList.prototype.getInterval=function(){
 	var interval=new Interval(min, max);
 	return interval;
 }
+
 
 NumberList.prototype.toPolygon=function(){
 	if(this.length==0) return null;
@@ -224,10 +244,33 @@ NumberList.prototype.toPolygon=function(){
 
 /////////statistics
 
+/**
+ * calculates mean of numberList
+ * @return {Number}
+ * tags:statistics
+ */
 NumberList.prototype.getAverage=function(){
 	return this.getSum()/this.length;
 }
 
+/**
+ * calculates geometric mean of numberList
+ * @return {Number}
+ * tags:statistics
+ */
+NumberList.prototype.getGeometricMean=function(){
+	var s = 0;
+	this.forEach(function(val){
+		s+=Math.log(val);
+	});
+	return Math.pow(Math.E, s/this.length);
+}
+
+/**
+ * calculates de norm of the numberList (treated as a vector)
+ * @return {Number}
+ * tags:statistics
+ */
 NumberList.prototype.getNorm=function(){
 	var sq=0;
 	for(var i=0; this[i]!=null; i++){
@@ -236,6 +279,11 @@ NumberList.prototype.getNorm=function(){
 	return Math.sqrt(sq);
 }
 
+/**
+ * calculates the variance of the numberList
+ * @return {Number}
+ * tags:statistics
+ */
 NumberList.prototype.getVariance=function(){
 	var sd=0;
 	var average=this.getAverage();
@@ -245,11 +293,20 @@ NumberList.prototype.getVariance=function(){
 	return sd/this.length;
 }
 
+/**
+ * calculates the standard deviation
+ * @return {Number}
+ * tags:statistics
+ */
 NumberList.prototype.getStandardDeviation=function(){
 	return Math.sqrt(this.getVariance());
 }
 
-
+/**
+ * calculates the median of the numberList
+ * @return {Number}
+ * tags:statistics
+ */
 NumberList.prototype.getMedian = function(nQuantiles){
 	var sorted = this.getSorted(true);
 	var prop = (this.length-1)/2;
@@ -259,6 +316,12 @@ NumberList.prototype.getMedian = function(nQuantiles){
 	return onIndex?sorted[prop]:(0.5*sorted[entProp] + 0.5*sorted[entProp+1]);
 }
 
+/**
+ * builds a partition of n quantiles from the numberList
+ * @param {Number} nQuantiles number of quantiles
+ * @return {Number}
+ * tags:statistics
+ */
 NumberList.prototype.getQuantiles = function(nQuantiles){
 	var sorted = this.getSorted(true);
 	
@@ -433,6 +496,22 @@ NumberList.prototype.dotProduct=function(numberList){
 		sum+=this[i]*numberList[i];
 	}
 	return sum;
+}
+
+/**
+ * calculates Euclidean distance between two numberLists
+ * @param  {NumberList} numberList
+ * @return {Number}
+ * tags:
+ */
+NumberList.prototype.distance=function(numberList){
+	var sum = 0;
+	var i;
+	var nElements = Math.min(this.length, numberList.length);
+	for(i=0;i<nElements;i++){
+		sum+=Math.pow(this[i]-numberList[i], 2);
+	}
+	return Math.sqrt(sum);
 }
 
 NumberList.prototype.isEquivalent=function(numberList){

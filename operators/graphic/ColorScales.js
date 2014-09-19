@@ -11,7 +11,7 @@ function ColorScales(){}
 // }
 
 ColorScales.blackScale = function(value){
-	return 'black'
+	return 'black';
 }
 
 ColorScales.grayscale = function(value){
@@ -69,10 +69,14 @@ ColorScales.grayToOrange = function(value){//todo:make it efficient
 	return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
 }
 
-ColorScales.blueToRed = function(value){//todo:make it efficient
-	var rgb = ColorOperators.interpolateColorsRGB([0,0,255], [255,0,0], value);
-	return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+ColorScales.blueToRed = function(value){
+	return 'rgb('+Math.floor(value*255)+',0,'+Math.floor((1-value)*255)+')';
 }
+
+ColorScales.blueToRedAlpha = function(value){//todo:make it efficient
+	return 'rgba('+Math.floor(value*255)+',0,'+Math.floor((1-value)*255)+', 0.5)';
+}
+
 ColorScales.whiteToRed = function(value){
 	var gg = Math.floor(255-value*255);
 	return 'rgb(255,'+gg+','+gg+')';

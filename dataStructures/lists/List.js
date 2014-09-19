@@ -33,6 +33,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.getType=List.prototype.getType;
    	array.getWithoutRepetitions=List.prototype.getWithoutRepetitions;
    	array.getElementsRepetitionCount=List.prototype.getElementsRepetitionCount;
+   	array.countElement=List.prototype.countElement;
    	array.countOccurrences=List.prototype.countOccurrences;
    	array.getMostRepeatedElement = List.prototype.getMostRepeatedElement;
    	array.getMin=List.prototype.getMin;
@@ -41,6 +42,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.indexOfElements=List.prototype.indexOfElements;
    	array.indexOfByPropertyValue=List.prototype.indexOfByPropertyValue;
    	array.getFirstElementByName=List.prototype.getFirstElementByName;
+   	array.getElementsByNames=List.prototype.getElementsByNames;
    	array.getFirstElementByPropertyValue=List.prototype.getFirstElementByPropertyValue;
    	array.add=List.prototype.add;
    	array.multiply=List.prototype.multiply;
@@ -371,6 +373,24 @@ List.prototype.getWithoutRepetitions=function(){
 }
 
 
+
+/**
+ * return number of occurrences of an element on a list
+ * @param  {Object} element
+ * @return {Number}
+ * tags:countt
+ */
+List.prototype.countElement=function(element){
+	n=0;
+	this.forEach(function(elementInList){if(element==elementInList) n++});
+	return n;
+}
+
+/**
+ * returns a numberList of same size as list with number of occurrences of each element
+ * @return {numberList}
+ * tags:count
+ */
 List.prototype.countOccurrences=function(){//TODO: more efficient
 	var occurrences = new NumberList();
 	for(var i=0; this[i]!=null; i++){
@@ -379,6 +399,12 @@ List.prototype.countOccurrences=function(){//TODO: more efficient
 	return occurrences;
 }
 
+/**
+ * returns a table with a list of non repeated elements and a list with the numbers of occurrences of each one
+ * @param  {Boolean} sortListsByOccurrences if true both lists in the table will be sorted by number of occurences (most frequent on top), true by default
+ * @return {Table} list (non-repeated elements) and numberList (frequency of each element)
+ * tags:count
+ */
 List.prototype.getElementsRepetitionCount=function(sortListsByOccurrences){
 	sortListsByOccurrences = sortListsByOccurrences==null?true:sortListsByOccurrences;
 
@@ -403,11 +429,12 @@ List.prototype.getElementsRepetitionCount=function(sortListsByOccurrences){
 	table.push(elementList);
 	table.push(numberList);
 	if(sortListsByOccurrences){
-		var indexArray=numberList.sortNumericIndexed();
-		var j;
-		for(j=0; j<table.length; j++){
-			table[j]=table[j].clone().sortOnIndexes(indexArray);
-		}
+		// var indexArray=numberList.getSortIndexes();//sortNumericIndexed();
+		// var j;
+		// for(j=0; j<table.length; j++){
+		// 	table[j]=table[j].clone().sortOnIndexes(indexArray);
+		// }
+		table = table.getListsSortedByList(numberList);
 	}
 	
 	return table;
@@ -594,11 +621,11 @@ List.prototype.getSortedByProperty=function(propertyName, ascending){
 	var comparator;
 	if(ascending){
 		comparator=function(a, b){
-			return a[propertyName] - b[propertyName];	
+			return a[propertyName]-b[propertyName];	
 		}
 	} else {
 		comparator=function(a, b){
-			return b[propertyName] - a[propertyName];
+			return b[propertyName]-a[propertyName];
 		}
 	}
 	return this.clone().sort(comparator);
@@ -700,16 +727,41 @@ List.prototype.indexOfElements=function(elements){
 
 /**
  * returns the first element (or index) of an element in the with a given name
- * @param  {[type]} name        [description]
- * @param  {[type]} returnIndex [description]
- * @return {[type]}             [description]
+ * @param  {String} name of element
+ * @param  {Boolean} returnIndex if true returns the index of element (false by default)
+ * @return {List}
  */
 List.prototype.getFirstElementByName=function(name, returnIndex){
 	for(var i=0; this[i]!=null; i++){
 		if(this[i].name == name) return returnIndex?i:this[i];
 	}
-	return null;
+	return returnIndex?-1:null;
 }
+
+/**
+ * returns the first element from each name ([!] to be tested)
+ * @param  {StringList} names of elements to be filtered
+ * @param  {Boolean} returnIndexes if true returns the indexes of elements (false by default)
+ * @return {List}
+ * tags:filter
+ */
+List.prototype.getElementsByNames=function(names, returnIndex){
+	var list = returnIndex?new NumberList():new List();
+	var i;
+
+	names.forEach(function(name){
+		for(i=0; this[i]!=null; i++){
+			if(this[i].name == name){
+				list.push(returnIndex?i:this[i]);
+				break;
+			}
+		}
+		list.push(returnIndex?-1:null);
+	});
+
+	return returnIndex?list:list.getImproved();
+}
+
 
 /**
  * get first elemenet that has some property with a given value
@@ -876,6 +928,8 @@ List.prototype.getFilteredByFunction=function(func){
 }
 
 List.prototype.concat=function(){
+	if(arguments[0]==null) return this;
+	
 	if(arguments[0].type==this.type){
 		if(this.type == "NumberList"){
 			return NumberList.fromArray(this._concat.apply(this, arguments), false);

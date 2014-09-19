@@ -27,6 +27,10 @@ Network.prototype.getNodeWithId=function(id){
 	return this.nodeList.getNodeWithId(id);
 }
 
+Network.prototype.createRelation = function(node0, node1, id, weight){
+	this.addRelation(new Relation(id, id, node0, node1, weight));
+}
+
 Network.prototype.addRelation=function(relation){
  	this.relationList.addNode(relation);
  	relation.node0.nodeList.addNode(relation.node1);

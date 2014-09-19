@@ -60,6 +60,12 @@ ColorOperators.HEXtoRGB=function(hexColor){
 };
 
 
+ColorOperators.colorStringToHEX = function(color_string){
+    var rgb = ColorOperators.colorStringToRGB(color_string);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+}
+
+
 ColorOperators.numberToHex=function(number){
 	var hex=number.toString(16);
 	while(hex.length<2) hex="0"+hex;
@@ -279,10 +285,7 @@ ColorOperators.getRandomColor=function(){
 
 /////// Universal matching
 
-ColorOperators.colorStringToHEX = function(color_string){
-	var rgb = ColorOperators.colorStringToRGB(color_string);
-	return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-}
+
 
 /**
  * This method was partially obtained (and simplified) from a Class by Stoyan Stefanov:

@@ -49,7 +49,15 @@ NetworkOperators.shortestPath = function(network, node0, node1, includeExtremes)
 	return path.getReversed();
 }
 
-NetworkOperators.spanningTree = function(network, node0, nodeLimit){//TODO: this method is horribly inneficient
+/**
+ * builds a spanning tree of a Node in a Network (rather inneficient)
+ * @param  {Network} network
+ * @param  {Node} node0 parent of tree
+ * @param  {Node} nodeLimit optional node in the network to prune the tree
+ * @return {Tree}
+ * tags:
+ */
+NetworkOperators.spanningTree = function(network, node0, nodeLimit){//TODO: this method is horribly inneficient // add: level limt
 	var tree = new Tree();
 	var parent = new Node(node0.id, node0.name);
 	parent.node = node0;
@@ -66,6 +74,7 @@ NetworkOperators.spanningTree = function(network, node0, nodeLimit){//TODO: this
 	
 	for(i=0;nodes[i]!=null;i++){
 		newNode = new Node(nodes[i].id, nodes[i].name);
+		if(nodes[i]==newNode) continue;
 		newNode.node = nodes[i];
 		tree.addNodeToTree(newNode, parent);
 		if(nodeLimit!=null && newNode.id==nodeLimit.id) limitReached = true;
@@ -75,9 +84,7 @@ NetworkOperators.spanningTree = function(network, node0, nodeLimit){//TODO: this
 	
 	var accumulated = nodes.clone();
 	accumulated.push(node0);
-	//c.log('1. accumulated:'+accumulated.getIds().join(', '));
 	
-	//while(nodes.indexOf(nodeLimit)==-1){//TODO: check if getNodeById is faster
 	while(true){
 		//c.log('-----');
 		newNodes = new NodeList();//nodes.clone();
@@ -254,7 +261,7 @@ NetworkOperators.buildDendrogram = function(network){
 		}
 	}
 
-	c.log('\n\n\n\nTIME ------>'+ ((new Date().getTime())-t)+"\n\n\n\n");
+	//c.log('\n\n\n\nTIME ------>'+ ((new Date().getTime())-t)+"\n\n\n\n");
 	
 	return tree;
 }
@@ -346,7 +353,6 @@ NetworkOperators.buildNetworkClusters = function(network, dendrogramTree, minWei
 }
 
 NetworkOperators._iterativeBuildClusters = function (node, clusters, minWeight){
-	c.log('_iterativeBuildClusters, clusters.length', clusters.length);
 	if(node.nodeList.length==1) {clusters.push(new NodeList(node.node)); return};
 	
 	if(node.nodeList[0].nodes.length==1 || node.nodeList[0].weight>minWeight){

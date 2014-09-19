@@ -398,6 +398,19 @@ StringOperators.removeQuotes=function(string){//TODO:improve
 // 	return string.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 // }
 
+/**
+ * builds a stringList of words contained in the text
+ * @param  {String} string text to be analyzed
+ * 
+ * @param  {Boolean} withoutRepetitions remove words repetitions
+ * @param  {Boolean} stopWords remove stop words
+ * @param  {Boolean} sortedByFrequency  sorted by frequency in text
+ * @param  {Boolean} includeLinks include html links
+ * @param  {Number} limit of words
+ * @param  {Number} minSizeWords minimal number of characters of words
+ * @return {StringList}
+ * tags:
+ */
 StringOperators.getWords = function(string, withoutRepetitions, stopWords, sortedByFrequency, includeLinks, limit, minSizeWords){
 	minSizeWords = minSizeWords||0;
 	withoutRepetitions = withoutRepetitions==null?true:withoutRepetitions;

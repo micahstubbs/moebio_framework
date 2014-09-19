@@ -48,6 +48,7 @@ ListOperators.indexOf = function(list, element){
  * tags:
  */
 ListOperators.concat = function(){
+	if(arguments == null || arguments.length==0 || arguments[0]==null) return null;
 	if(arguments.length==1) return arguments[0];
 	
 	var i;

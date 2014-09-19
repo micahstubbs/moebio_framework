@@ -319,7 +319,7 @@ TableOperators.mergeDataTables=function(table0, table1){
 }
 
 /**
- * From two DataTables creates a new DataTable with combined elements in the first List, and additoned values in the second 
+ * From two DataTables creates a new DataTable with combined elements in the first List, and added values in the second 
  * @param {Object} table0
  * @param {Object} table1
  * @return {Table}
@@ -471,7 +471,7 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
 	var node = new Node(id,  name);
 	
 	tree.addNodeToTree(node, parent);
-	
+
 	if(parent==null){
 		tree.informationGainTable = new Table();
 		tree.informationGainTable[0] = variablesTable.getNames();
@@ -479,9 +479,8 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
 			tree.informationGainTable[1] = informationGains.clone();
 			tree.informationGainTable = tree.informationGainTable.getListsSortedByList(informationGains, false);
 		}
-
 	}
-	
+
 	node.entropy = entropy;
 	node.weight = supervised.length;
 	node.supervised = supervised;

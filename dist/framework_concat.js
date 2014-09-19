@@ -59,6 +59,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.getType=List.prototype.getType;
    	array.getWithoutRepetitions=List.prototype.getWithoutRepetitions;
    	array.getElementsRepetitionCount=List.prototype.getElementsRepetitionCount;
+   	array.countElement=List.prototype.countElement;
    	array.countOccurrences=List.prototype.countOccurrences;
    	array.getMostRepeatedElement = List.prototype.getMostRepeatedElement;
    	array.getMin=List.prototype.getMin;
@@ -67,6 +68,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.indexOfElements=List.prototype.indexOfElements;
    	array.indexOfByPropertyValue=List.prototype.indexOfByPropertyValue;
    	array.getFirstElementByName=List.prototype.getFirstElementByName;
+   	array.getElementsByNames=List.prototype.getElementsByNames;
    	array.getFirstElementByPropertyValue=List.prototype.getFirstElementByPropertyValue;
    	array.add=List.prototype.add;
    	array.multiply=List.prototype.multiply;
@@ -397,6 +399,24 @@ List.prototype.getWithoutRepetitions=function(){
 }
 
 
+
+/**
+ * return number of occurrences of an element on a list
+ * @param  {Object} element
+ * @return {Number}
+ * tags:countt
+ */
+List.prototype.countElement=function(element){
+	n=0;
+	this.forEach(function(elementInList){if(element==elementInList) n++});
+	return n;
+}
+
+/**
+ * returns a numberList of same size as list with number of occurrences of each element
+ * @return {numberList}
+ * tags:count
+ */
 List.prototype.countOccurrences=function(){//TODO: more efficient
 	var occurrences = new NumberList();
 	for(var i=0; this[i]!=null; i++){
@@ -405,6 +425,12 @@ List.prototype.countOccurrences=function(){//TODO: more efficient
 	return occurrences;
 }
 
+/**
+ * returns a table with a list of non repeated elements and a list with the numbers of occurrences of each one
+ * @param  {Boolean} sortListsByOccurrences if true both lists in the table will be sorted by number of occurences (most frequent on top), true by default
+ * @return {Table} list (non-repeated elements) and numberList (frequency of each element)
+ * tags:count
+ */
 List.prototype.getElementsRepetitionCount=function(sortListsByOccurrences){
 	sortListsByOccurrences = sortListsByOccurrences==null?true:sortListsByOccurrences;
 
@@ -429,11 +455,12 @@ List.prototype.getElementsRepetitionCount=function(sortListsByOccurrences){
 	table.push(elementList);
 	table.push(numberList);
 	if(sortListsByOccurrences){
-		var indexArray=numberList.sortNumericIndexed();
-		var j;
-		for(j=0; j<table.length; j++){
-			table[j]=table[j].clone().sortOnIndexes(indexArray);
-		}
+		// var indexArray=numberList.getSortIndexes();//sortNumericIndexed();
+		// var j;
+		// for(j=0; j<table.length; j++){
+		// 	table[j]=table[j].clone().sortOnIndexes(indexArray);
+		// }
+		table = table.getListsSortedByList(numberList);
 	}
 	
 	return table;
@@ -620,11 +647,11 @@ List.prototype.getSortedByProperty=function(propertyName, ascending){
 	var comparator;
 	if(ascending){
 		comparator=function(a, b){
-			return a[propertyName] - b[propertyName];	
+			return a[propertyName]-b[propertyName];	
 		}
 	} else {
 		comparator=function(a, b){
-			return b[propertyName] - a[propertyName];
+			return b[propertyName]-a[propertyName];
 		}
 	}
 	return this.clone().sort(comparator);
@@ -726,16 +753,41 @@ List.prototype.indexOfElements=function(elements){
 
 /**
  * returns the first element (or index) of an element in the with a given name
- * @param  {[type]} name        [description]
- * @param  {[type]} returnIndex [description]
- * @return {[type]}             [description]
+ * @param  {String} name of element
+ * @param  {Boolean} returnIndex if true returns the index of element (false by default)
+ * @return {List}
  */
 List.prototype.getFirstElementByName=function(name, returnIndex){
 	for(var i=0; this[i]!=null; i++){
 		if(this[i].name == name) return returnIndex?i:this[i];
 	}
-	return null;
+	return returnIndex?-1:null;
 }
+
+/**
+ * returns the first element from each name ([!] to be tested)
+ * @param  {StringList} names of elements to be filtered
+ * @param  {Boolean} returnIndexes if true returns the indexes of elements (false by default)
+ * @return {List}
+ * tags:filter
+ */
+List.prototype.getElementsByNames=function(names, returnIndex){
+	var list = returnIndex?new NumberList():new List();
+	var i;
+
+	names.forEach(function(name){
+		for(i=0; this[i]!=null; i++){
+			if(this[i].name == name){
+				list.push(returnIndex?i:this[i]);
+				break;
+			}
+		}
+		list.push(returnIndex?-1:null);
+	});
+
+	return returnIndex?list:list.getImproved();
+}
+
 
 /**
  * get first elemenet that has some property with a given value
@@ -902,6 +954,8 @@ List.prototype.getFilteredByFunction=function(func){
 }
 
 List.prototype.concat=function(){
+	if(arguments[0]==null) return this;
+	
 	if(arguments[0].type==this.type){
 		if(this.type == "NumberList"){
 			return NumberList.fromArray(this._concat.apply(this, arguments), false);
@@ -1074,6 +1128,7 @@ NumberList.fromArray=function(array, forceToNumber){
 	result.subtract=NumberList.prototype.subtract;
 	result.divide=NumberList.prototype.divide;
 	result.dotProduct=NumberList.prototype.dotProduct;
+	result.distance=NumberList.prototype.distance;
 	result.sqrt=NumberList.prototype.sqrt;
 	result.pow=NumberList.prototype.pow;
 	result.log=NumberList.prototype.log;
@@ -1112,6 +1167,7 @@ NumberList.prototype.getMax=function(){//TODO:store result and retrieve while th
 	}
 	return max;
 }
+
 NumberList.prototype.getAmplitude=function(){
 	if(this.length==0) return 0;
 	var min=this[0];
@@ -1123,10 +1179,15 @@ NumberList.prototype.getAmplitude=function(){
 	return max-min;
 }
 
-NumberList.prototype.getMinMaxInterval=function(){
+NumberList.prototype.getMinMaxInterval=function(){//deprecated?
 	return new Interval(this.getMin(), this.getMax());
 }
 
+/**
+ * returns the sum of values in the numberList
+ * @return {Number}
+ * tags:
+ */
 NumberList.prototype.getSum=function(){
 	if(this.length==0) return 0;
 	var i;
@@ -1137,6 +1198,11 @@ NumberList.prototype.getSum=function(){
 	return sum;
 }
 
+/**
+ * return the product of values in the numberList
+ * @return {Number}
+ * tags:
+ */
 NumberList.prototype.getProduct=function(){
 	if(this.length==0) return null;
 	var i;
@@ -1149,8 +1215,9 @@ NumberList.prototype.getProduct=function(){
 
 /**
  * returns a NumberList normalized to the sum
- * @param {factor} factor optional 
+ * @param {Number} factor optional 
  * @return {NumberList}
+ * tags:
  */
 NumberList.prototype.getNormalizedToSum=function(factor){
 	factor = factor==null?1:factor;
@@ -1168,9 +1235,10 @@ NumberList.prototype.getNormalizedToSum=function(factor){
 }
 
 /**
- * returns a NumberList normalized to Min-Max
- * @param {factor} factor optional
+ * returns a numberList normalized to min-max interval
+ * @param {Number} factor optional
  * @return {NumberList}
+ * tags:
  */
 NumberList.prototype.getNormalized=function(factor){
 	factor = factor==null?1:factor;
@@ -1189,9 +1257,10 @@ NumberList.prototype.getNormalized=function(factor){
 }
 
 /**
- * returns a NumberList normalized to Max
- * @param {factor} factor optional
+ * returns a numberList normalized to Max
+ * @param {Number} factor optional
  * @return {NumberList}
+ * tags:
  */
 NumberList.prototype.getNormalizedToMax=function(factor){
 	factor = factor==null?1:factor;
@@ -1211,7 +1280,11 @@ NumberList.prototype.getNormalizedToMax=function(factor){
 	return newNumberList;
 }
 
-
+/**
+ * builds an Interval witn min and max value from the numberList
+ * @return {Interval}
+ * tags:
+ */
 NumberList.prototype.getInterval=function(){
 	if(this.length==0) return null;
 	var max=this[0];
@@ -1223,6 +1296,7 @@ NumberList.prototype.getInterval=function(){
 	var interval=new Interval(min, max);
 	return interval;
 }
+
 
 NumberList.prototype.toPolygon=function(){
 	if(this.length==0) return null;
@@ -1238,10 +1312,33 @@ NumberList.prototype.toPolygon=function(){
 
 /////////statistics
 
+/**
+ * calculates mean of numberList
+ * @return {Number}
+ * tags:statistics
+ */
 NumberList.prototype.getAverage=function(){
 	return this.getSum()/this.length;
 }
 
+/**
+ * calculates geometric mean of numberList
+ * @return {Number}
+ * tags:statistics
+ */
+NumberList.prototype.getGeometricMean=function(){
+	var s = 0;
+	this.forEach(function(val){
+		s+=Math.log(val);
+	});
+	return Math.pow(Math.E, s/this.length);
+}
+
+/**
+ * calculates de norm of the numberList (treated as a vector)
+ * @return {Number}
+ * tags:statistics
+ */
 NumberList.prototype.getNorm=function(){
 	var sq=0;
 	for(var i=0; this[i]!=null; i++){
@@ -1250,6 +1347,11 @@ NumberList.prototype.getNorm=function(){
 	return Math.sqrt(sq);
 }
 
+/**
+ * calculates the variance of the numberList
+ * @return {Number}
+ * tags:statistics
+ */
 NumberList.prototype.getVariance=function(){
 	var sd=0;
 	var average=this.getAverage();
@@ -1259,11 +1361,20 @@ NumberList.prototype.getVariance=function(){
 	return sd/this.length;
 }
 
+/**
+ * calculates the standard deviation
+ * @return {Number}
+ * tags:statistics
+ */
 NumberList.prototype.getStandardDeviation=function(){
 	return Math.sqrt(this.getVariance());
 }
 
-
+/**
+ * calculates the median of the numberList
+ * @return {Number}
+ * tags:statistics
+ */
 NumberList.prototype.getMedian = function(nQuantiles){
 	var sorted = this.getSorted(true);
 	var prop = (this.length-1)/2;
@@ -1273,6 +1384,12 @@ NumberList.prototype.getMedian = function(nQuantiles){
 	return onIndex?sorted[prop]:(0.5*sorted[entProp] + 0.5*sorted[entProp+1]);
 }
 
+/**
+ * builds a partition of n quantiles from the numberList
+ * @param {Number} nQuantiles number of quantiles
+ * @return {Number}
+ * tags:statistics
+ */
 NumberList.prototype.getQuantiles = function(nQuantiles){
 	var sorted = this.getSorted(true);
 	
@@ -1447,6 +1564,22 @@ NumberList.prototype.dotProduct=function(numberList){
 		sum+=this[i]*numberList[i];
 	}
 	return sum;
+}
+
+/**
+ * calculates Euclidean distance between two numberLists
+ * @param  {NumberList} numberList
+ * @return {Number}
+ * tags:
+ */
+NumberList.prototype.distance=function(numberList){
+	var sum = 0;
+	var i;
+	var nElements = Math.min(this.length, numberList.length);
+	for(i=0;i<nElements;i++){
+		sum+=Math.pow(this[i]-numberList[i], 2);
+	}
+	return Math.sqrt(sum);
 }
 
 NumberList.prototype.isEquivalent=function(numberList){
@@ -4390,6 +4523,10 @@ Network.prototype.getNodeWithId=function(id){
 	return this.nodeList.getNodeWithId(id);
 }
 
+Network.prototype.createRelation = function(node0, node1, id, weight){
+	this.addRelation(new Relation(id, id, node0, node1, weight));
+}
+
 Network.prototype.addRelation=function(relation){
  	this.relationList.addNode(relation);
  	relation.node0.nodeList.addNode(relation.node1);
@@ -4488,8 +4625,8 @@ function Tree(){
 	this.type="Tree";
 	
 	this.nLevels=0;
-	//this._createRelation = this.createRelation;
-	//this.createRelation = this._newCreateRelation;
+	this._createRelation = this.createRelation;
+	this.createRelation = this._newCreateRelation;
 }
 //
 Tree.prototype.addNodeToTree=function(node, parent){
@@ -4507,21 +4644,22 @@ Tree.prototype.addNodeToTree=function(node, parent){
 	this.nLevels = Math.max(this.nLevels, node.level+1);
 }
 
-// Network.prototype._newCreateRelation=function(parent, node, id, weight){
-// 	this._createRelation(parent, node, id, weight);
-// 	node.level = parent.level+1;
-// 	node.parent = parent;
-// 	this.nLevels = Math.max(this.nLevels, node.level+1);
-// }
+Network.prototype._newCreateRelation=function(parent, node, id, weight){
+	if(id==null) id = this.relationList.getNewId();
+	this._createRelation(parent, node, id, weight);
+	node.level = parent.level+1;
+	node.parent = parent;
+	this.nLevels = Math.max(this.nLevels, node.level+1);
+}
 
-// Tree.prototype.addFather=function(node, children){
-// 	if(child.parent!=null || this.nodeList.indexOf(child)==-1) return false;
-// 	this.addNode(node);
-// 	child.parent = node;
-// 	child.level = 1;
-// 	this.nLevels = Math.max(this.nLevels, 1);
-// 	this.createRelation(node, child);
-// }
+Tree.prototype.addFather=function(node, children){
+	if(child.parent!=null || this.nodeList.indexOf(child)==-1) return false;
+	this.addNode(node);
+	child.parent = node;
+	child.level = 1;
+	this.nLevels = Math.max(this.nLevels, 1);
+	this.createRelation(node, child);
+}
 
 Tree.prototype.getNodesByLevel=function(level){
 	var newNodeList = new NodeList();
@@ -4590,6 +4728,18 @@ function ObjectOperators(){};
  */
 ObjectOperators.identity = function(object){
 	return object;
+}
+
+/**
+ * uses a boolean to decide which of two objects it returns
+ * @param  {Boolean} boolean
+ * @param  {Object} object0 returned if boolean is true
+ * @param  {Object} object1 returned if boolean is false
+ * @return {Object}
+ * tags:
+ */
+ObjectOperators.booleanGate = function(boolean, object0, object1){
+	return boolean?object0:object1
 }
 
 /**
@@ -6063,6 +6213,13 @@ PolygonListOperators.simplifyPolygons=function(polygonList, margin, removeEmptyP
 */
 function PolygonOperators(){};
 
+/**
+ * builds a Hull polygon from a set of points
+ * @param  {Polygon} polygon set of points
+ * @param  {Boolean} returnIndexes if true returns the indexes of external points, connected by the Hull polygon (false by default)
+ * @return {List} Hull polygn or list of indexes
+ * tags:geometry
+ */
 PolygonOperators.hull = function(polygon, returnIndexes) {
 	returnIndexes = returnIndexes==null?false:returnIndexes;
 	var i;
@@ -6073,18 +6230,18 @@ PolygonOperators.hull = function(polygon, returnIndexes) {
 	var h = new Polygon();
 	if(returnIndexes) var indexes = new NumberList();
 	
-	p = this.sortOnXY(p);
+	p = PolygonOperators.sortOnXY(p);
 	
 	if(returnIndexes){
 		for (i = 0; i<n; i++) {
-			while (k >= 2 && this.crossProduct3Points(h[k-2], h[k-1], p[i]) <= 0)
+			while (k >= 2 && PolygonOperators.crossProduct3Points(h[k-2], h[k-1], p[i]) <= 0)
 				k--;
 			h[k++] = p[i];
 			indexes[k-1] = i;
 		}
 		
 		for (i = n-2, t = k+1; i>=0; i--) {
-			while (k >= t && this.crossProduct3Points(h[k-2], h[k-1], p[i]) <= 0)
+			while (k >= t && PolygonOperators.crossProduct3Points(h[k-2], h[k-1], p[i]) <= 0)
 				k--;
 			h[k++] = p[i];
 			indexes[k-1] = i;
@@ -6094,19 +6251,115 @@ PolygonOperators.hull = function(polygon, returnIndexes) {
 	} 
 	
 	for (i = 0; i<n; i++) {
-		while (k >= 2 && this.crossProduct3Points(h[k-2], h[k-1], p[i]) <= 0)
+		while (k >= 2 && PolygonOperators.crossProduct3Points(h[k-2], h[k-1], p[i]) <= 0)
 			k--;
 		h[k++] = p[i];
 	}
 	
 	for (i = n-2, t = k+1; i>=0; i--) {
-		while (k >= t && this.crossProduct3Points(h[k-2], h[k-1], p[i]) <= 0)
+		while (k >= t && PolygonOperators.crossProduct3Points(h[k-2], h[k-1], p[i]) <= 0)
 			k--;
 		h[k++] = p[i];
 	}
 	
 	return Polygon.fromArray(h.getSubList(new Interval(0, k-2)));
 }
+
+/**
+ * builds a dendrogram (tree) from a Polygon (currently using barycenter for distances)
+ * @param  {Polygon} polygon
+ * @return {Tree} dendrogram
+ * tags:geometry
+ */
+PolygonOperators.buildDendrogramFromPolygon = function(polygon){
+	var tree = new Tree();
+	var point, i;
+	var node;
+	var tW;
+	var parent;
+	var leaves = new NodeList();
+
+	var node0, node1, nodeList = new Polygon();
+
+	polygon.forEach(function(point, i){
+		node = new Node('point_'+i, 'point_'+i);
+		node.weight = 1;
+		node.barycenter = point;
+		node.point = point;
+		node.polygon = new Polygon(point);
+		tree.addNode(node);
+		nodeList.push(node);
+		leaves.push(node);
+	});
+
+	tree.nodeList = tree.nodeList.getReversed();
+
+	//c.l('-');
+
+	var buildNodeFromPair = function(node0, node1){
+		var parent = new Node("("+node0.id+","+node1.id+")", "("+node0.id+","+node1.id+")");
+		parent.polygon = node0.polygon.concat(node1.polygon);
+		//c.l("node0.polygon.length, node1.polygon.length, parent.polygon.length", node0.polygon.length, node1.polygon.length, parent.polygon.length);
+		parent.weight = parent.polygon.length;
+		tW = node0.weight+node1.weight;
+		parent.barycenter = new Point((node0.weight*node0.barycenter.x+node1.weight*node1.barycenter.x)/tW, (node0.weight*node0.barycenter.y+node1.weight*node1.barycenter.y)/tW);
+		//c.l('parent.barycenter.x', parent.barycenter.x, parent.barycenter.y);
+		tree.addNode(parent);
+		tree._newCreateRelation(parent, node0);
+		tree._newCreateRelation(parent, node1);
+		return parent;
+	}
+
+	while(nodeList.length>1){
+		closestPair = PolygonOperators._findClosestNodes(nodeList);
+		node0 = nodeList[closestPair[0]];
+		node1 = nodeList[closestPair[1]];
+		parent = buildNodeFromPair(node0, node1);
+		parent.distance = closestPair.distance;
+		c.l('distance:', parent.distance);
+		nodeList.splice(closestPair[0], 1);
+		nodeList.splice(closestPair[1]-1, 1);
+		nodeList.push(parent);
+	}
+
+	tree.nodeList = tree.nodeList.getReversed();
+
+	var assignLevel = function(node, parentLevel){
+		var son;
+		node.level = parentLevel+1;
+		node.toNodeList.forEach(function(son){
+			assignLevel(son, node.level);
+		});
+	}
+
+	assignLevel(tree.nodeList[0], -1);
+
+	tree.leaves = leaves;
+
+	return tree;
+
+}
+
+PolygonOperators._findClosestNodes = function(nodeList){
+	var i, j;
+	var d2;
+	var d2Min = 9999999999;
+
+	for(i=0; nodeList[i+1]!=null; i++){
+		for(j=i+1; nodeList[j]!=null; j++){
+			d2 = Math.pow(nodeList[i].barycenter.x - nodeList[j].barycenter.x, 2) + Math.pow(nodeList[i].barycenter.y - nodeList[j].barycenter.y, 2);
+			if(d2<d2Min){
+				d2Min = d2;
+				pair = [i, j];
+			}
+		}
+	}
+
+	pair.distance = d2Min;
+
+	return pair;
+}
+
 
 PolygonOperators.sortOnXY=function(polygon){
 	return polygon.sort(function(p0, p1){
@@ -6968,6 +7221,12 @@ ColorOperators.HEXtoRGB=function(hexColor){
 };
 
 
+ColorOperators.colorStringToHEX = function(color_string){
+    var rgb = ColorOperators.colorStringToRGB(color_string);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+}
+
+
 ColorOperators.numberToHex=function(number){
 	var hex=number.toString(16);
 	while(hex.length<2) hex="0"+hex;
@@ -7187,10 +7446,7 @@ ColorOperators.getRandomColor=function(){
 
 /////// Universal matching
 
-ColorOperators.colorStringToHEX = function(color_string){
-	var rgb = ColorOperators.colorStringToRGB(color_string);
-	return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-}
+
 
 /**
  * This method was partially obtained (and simplified) from a Class by Stoyan Stefanov:
@@ -7445,7 +7701,7 @@ function ColorScales(){}
 // }
 
 ColorScales.blackScale = function(value){
-	return 'black'
+	return 'black';
 }
 
 ColorScales.grayscale = function(value){
@@ -7503,10 +7759,14 @@ ColorScales.grayToOrange = function(value){//todo:make it efficient
 	return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
 }
 
-ColorScales.blueToRed = function(value){//todo:make it efficient
-	var rgb = ColorOperators.interpolateColorsRGB([0,0,255], [255,0,0], value);
-	return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+ColorScales.blueToRed = function(value){
+	return 'rgb('+Math.floor(value*255)+',0,'+Math.floor((1-value)*255)+')';
 }
+
+ColorScales.blueToRedAlpha = function(value){//todo:make it efficient
+	return 'rgba('+Math.floor(value*255)+',0,'+Math.floor((1-value)*255)+', 0.5)';
+}
+
 ColorScales.whiteToRed = function(value){
 	var gg = Math.floor(255-value*255);
 	return 'rgb(255,'+gg+','+gg+')';
@@ -7640,6 +7900,7 @@ ListOperators.indexOf = function(list, element){
  * tags:
  */
 ListOperators.concat = function(){
+	if(arguments == null || arguments.length==0 || arguments[0]==null) return null;
 	if(arguments.length==1) return arguments[0];
 	
 	var i;
@@ -8541,7 +8802,7 @@ TableOperators.mergeDataTables=function(table0, table1){
 }
 
 /**
- * From two DataTables creates a new DataTable with combined elements in the first List, and additoned values in the second 
+ * From two DataTables creates a new DataTable with combined elements in the first List, and added values in the second 
  * @param {Object} table0
  * @param {Object} table1
  * @return {Table}
@@ -8693,7 +8954,7 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
 	var node = new Node(id,  name);
 	
 	tree.addNodeToTree(node, parent);
-	
+
 	if(parent==null){
 		tree.informationGainTable = new Table();
 		tree.informationGainTable[0] = variablesTable.getNames();
@@ -8701,9 +8962,8 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
 			tree.informationGainTable[1] = informationGains.clone();
 			tree.informationGainTable = tree.informationGainTable.getListsSortedByList(informationGains, false);
 		}
-
 	}
-	
+
 	node.entropy = entropy;
 	node.weight = supervised.length;
 	node.supervised = supervised;
@@ -9011,7 +9271,7 @@ NumberListOperators.cosineSimilarity=function(numberList0, numberList1){
 }
 
 /**
- * 
+ * calculates the covariance
  * @param  {NumberList} numberList0
  * @param  {NumberList} numberList1
  * @return {Number}
@@ -9029,6 +9289,83 @@ NumberListOperators.covariance=function(numberList0, numberList1){//TODO: improv
 	}
 	
 	return s/l;
+}
+
+/**
+ * calculates k-means clusters of values in a numberList
+ * @param  {NumberList} numberList
+ * @param  {Number} k number of clusters
+ *
+ * @param {Boolean} returnIndexes return clusters of indexes rather than values (false by default)
+ * @return {NumberTable} numberLists each being a cluster
+ * tags:ds
+ */
+NumberListOperators.linearKMeans=function(numberList, k, returnIndexes){
+	var interval = numberList.getInterval();
+	var min = interval.x;
+	var max = interval.y;
+	//var means = new NumberList();
+	var clusters = new NumberTable();
+	var i, j;
+	var jK;
+	var x;
+	var dX = (max-min)/k;
+	var d;
+	var dMin
+	var n;
+	var actualMean;
+	var N = 1000;
+	var means = new NumberList();
+	var nextMeans = new NumberList();
+	var nValuesInCluster = new NumberList();
+
+	for(i=0; i<k; i++){
+		clusters[i] = new NumberList();
+		//clusters[i].actualMean = min + (i+0.5)*dX;//means[i];
+		nextMeans[i] = min + (i+0.5)*dX;
+	}
+
+	for(n=0; n<N; n++){
+
+		//c.l('-------'+n);
+
+		for(i=0; i<k; i++){
+			//actualMean = means[i];//clusters[i].actualMean;
+			//c.l(' ', i, nextMeans[i]);
+			//clusters[i] = new NumberList();
+			//clusters[i].mean = actualMean;
+			//clusters[i].actualMean = 0;
+			nValuesInCluster[i] = 0;
+			means[i] = nextMeans[i];
+			nextMeans[i] = 0;
+		}
+		
+		for(i=0; numberList[i]!=null; i++){
+			x = numberList[i];
+			dMin = 1+max-min;
+			for(j=0; j<k; j++){
+				//d = Math.abs(x-clusters[j].mean);
+				d = Math.abs(x-means[j]);
+				if(d<dMin){
+					dMin = d;
+					jK = j;
+				}
+			}
+			//c.l('    ', x,'-->',jK, 'with mean', clusters[jK].mean);
+			if(n==N-1){
+				returnIndexes?clusters[jK].push(i):clusters[jK].push(x);
+			}
+
+			nValuesInCluster[jK]++;
+			
+			//clusters[jK].actualMean = ( (clusters[jK].length-1)*clusters[jK].actualMean + x )/clusters[jK].length;
+			nextMeans[jK] = ( (nValuesInCluster[jK]-1)*nextMeans[jK] + x )/nValuesInCluster[jK];
+		}
+		//if(n%50==0) c.l(n+' --> ' + nValuesInCluster.join(',')+"|"+means.join(','));
+	}
+
+	return clusters;
+
 }
 
 
@@ -9581,6 +9918,141 @@ NumberTableOperators.averageSmootherOnLists = function(numberTable, intensity, n
 	});
 	return newNumberTable;
 }
+
+/**
+ * builds a k-nearest neighbors function, that calculates a class membership or a regression, taking the vote or average of the k nearest instances, using Euclidean distance, and applies it to a list of points, see: http://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm
+ * <br>[!] regression still not built
+ * @param  {NumberTable} numberTable
+ * @param  {List} propertyList categories or values
+ * 
+ * @param  {Polygon} vectorList optional list of points to be tested, if provided classes or regressions are calculated, if not the function is returned
+ * @param  {Number} k number of neighbors
+ * @param  {Boolean} calculateClass if true propertyList is a list of categories for membership calculation, if false a numberList for regression
+ * @param {Number} matrixN if provided, the result will be a numberTable with values in a grid in the numberTable ranges
+ * @return {Object} kNN Function or a matrix (grid) of values if matrixN is provided, or classes or values from points if vectorList is provided
+ * tags:ds
+ */
+NumberTableOperators.kNN = function(numberTable, propertyList, vectorList, k, calculateClass, matrixN){
+	if(numberTable==null || propertyList==null) return null;
+	
+	k = k||1;
+	calculateClass = calculateClass==null?true:calculateClass;
+
+	var i,j;
+	var table = new NumberTable();
+
+	var fKNN = function(vector){
+		var i, j;
+		var d2;
+		
+		table[0] = new NumberList();
+		table[1] = new NumberList();
+		numberTable[0].forEach(function(val, i){
+			d2 = 0;// numberTable.getRow(i).distance(vector);
+			numberTable.forEach(function(nList, j){
+				d2+=Math.pow(nList[i]-vector[j], 2);
+			});
+			table[0].push(i);
+			table[1].push(d2);
+		});
+
+		table = table.getListsSortedByList(table[1]);
+
+		if(calculateClass){
+			var classTable = new Table();
+			classTable[0] = new List();
+			classTable[1] = new NumberList();
+			for(i=0; i<k; i++){
+				clas = propertyList[table[0][i]];
+				index = classTable[0].indexOf(clas);
+				if(index==-1){
+					classTable[0].push(clas);
+					classTable[1].push(1);
+				} else {
+					classTable[1][index]++;
+				}
+			}
+			var max = classTable[1][0];
+			var iMax = 0;
+			classTable[1].slice(1).forEach(function(val, i){
+				if(val>max){
+					max = val;
+					iMax = i+1;
+				}
+			});
+			return classTable[0][iMax];
+		}
+
+		var val;
+		var combination = 0;
+		var sumD = 0;
+		for(i=0; i<k; i++){
+			val = propertyList[table[0][i]];
+			combination += val/(table[1][i]+0.001);
+			sumD+=(1/(table[1][i]+0.001));
+		}
+		
+		return combination/sumD;
+
+		//regression
+		//…
+	}
+
+	if(vectorList==null){
+
+		if(matrixN!=null && matrixN>0){
+			var propertiesNumbers = {};
+			var n=0;
+
+			propertyList.forEach(function(val){
+				if(propertiesNumbers[val]==null){
+					propertiesNumbers[val]=n;
+					n++;
+				}
+			});
+
+			var p;
+			var matx = new NumberTable();
+			var ix = numberTable[0].getMinMaxInterval();
+			var minx = ix.x;
+			var kx = ix.getAmplitude()/matrixN;
+			var iy = numberTable[1].getMinMaxInterval();
+			var miny = iy.x;
+			var ky = iy.getAmplitude()/matrixN;
+
+			for(i=0; i<matrixN; i++){
+				matx[i] = new NumberList();
+
+				for(j=0; j<matrixN; j++){
+			  		p = [
+				        minx + kx*i,
+				        miny + ky*j
+			     	];
+
+			     	fKNN(p);
+			     	
+		    		matx[i][j]=calculateClass?propertiesNumbers[fKNN(p)]:fKNN(p);
+		  		}
+		  	}
+		  	//return matrix
+		  	return matx;
+		}
+
+		//return Function
+		return fKNN;
+	}
+
+	var results = instantiateWithSameType(propertyList);
+
+	vectorList.forEach(function(vector){
+		results.push(fKNN(vector));
+	});
+
+	//return results
+	return results;
+}
+
+
 
 //TODO: move to NumberTableConversions
 NumberTableOperators.numberTableToNetwork=function(numberTable, method, tolerance){
@@ -10385,6 +10857,19 @@ StringOperators.removeQuotes=function(string){//TODO:improve
 // 	return string.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 // }
 
+/**
+ * builds a stringList of words contained in the text
+ * @param  {String} string text to be analyzed
+ * 
+ * @param  {Boolean} withoutRepetitions remove words repetitions
+ * @param  {Boolean} stopWords remove stop words
+ * @param  {Boolean} sortedByFrequency  sorted by frequency in text
+ * @param  {Boolean} includeLinks include html links
+ * @param  {Number} limit of words
+ * @param  {Number} minSizeWords minimal number of characters of words
+ * @return {StringList}
+ * tags:
+ */
 StringOperators.getWords = function(string, withoutRepetitions, stopWords, sortedByFrequency, includeLinks, limit, minSizeWords){
 	minSizeWords = minSizeWords||0;
 	withoutRepetitions = withoutRepetitions==null?true:withoutRepetitions;
@@ -11404,7 +11889,15 @@ NetworkOperators.shortestPath = function(network, node0, node1, includeExtremes)
 	return path.getReversed();
 }
 
-NetworkOperators.spanningTree = function(network, node0, nodeLimit){//TODO: this method is horribly inneficient
+/**
+ * builds a spanning tree of a Node in a Network (rather inneficient)
+ * @param  {Network} network
+ * @param  {Node} node0 parent of tree
+ * @param  {Node} nodeLimit optional node in the network to prune the tree
+ * @return {Tree}
+ * tags:
+ */
+NetworkOperators.spanningTree = function(network, node0, nodeLimit){//TODO: this method is horribly inneficient // add: level limt
 	var tree = new Tree();
 	var parent = new Node(node0.id, node0.name);
 	parent.node = node0;
@@ -11421,6 +11914,7 @@ NetworkOperators.spanningTree = function(network, node0, nodeLimit){//TODO: this
 	
 	for(i=0;nodes[i]!=null;i++){
 		newNode = new Node(nodes[i].id, nodes[i].name);
+		if(nodes[i]==newNode) continue;
 		newNode.node = nodes[i];
 		tree.addNodeToTree(newNode, parent);
 		if(nodeLimit!=null && newNode.id==nodeLimit.id) limitReached = true;
@@ -11430,9 +11924,7 @@ NetworkOperators.spanningTree = function(network, node0, nodeLimit){//TODO: this
 	
 	var accumulated = nodes.clone();
 	accumulated.push(node0);
-	//c.log('1. accumulated:'+accumulated.getIds().join(', '));
 	
-	//while(nodes.indexOf(nodeLimit)==-1){//TODO: check if getNodeById is faster
 	while(true){
 		//c.log('-----');
 		newNodes = new NodeList();//nodes.clone();
@@ -11609,7 +12101,7 @@ NetworkOperators.buildDendrogram = function(network){
 		}
 	}
 
-	c.log('\n\n\n\nTIME ------>'+ ((new Date().getTime())-t)+"\n\n\n\n");
+	//c.log('\n\n\n\nTIME ------>'+ ((new Date().getTime())-t)+"\n\n\n\n");
 	
 	return tree;
 }
@@ -11701,7 +12193,6 @@ NetworkOperators.buildNetworkClusters = function(network, dendrogramTree, minWei
 }
 
 NetworkOperators._iterativeBuildClusters = function (node, clusters, minWeight){
-	c.log('_iterativeBuildClusters, clusters.length', clusters.length);
 	if(node.nodeList.length==1) {clusters.push(new NodeList(node.node)); return};
 	
 	if(node.nodeList[0].nodes.length==1 || node.nodeList[0].weight>minWeight){
@@ -16655,7 +17146,7 @@ NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listC
 	
 	for(i=0;numberTable[i]!=null;i++){
 		numberList = numberTable[i];
-		x = frame.x+i*dX;
+		x = Math.round(frame.x+i*dX);
 		mouseXOnColumn = mX>x && mX<=x+dX;
 		if(listColorsIndependent){
 			minMaxInterval = numberList.getMinMaxInterval();
@@ -16663,7 +17154,7 @@ NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listC
 		}
 		for(j=0;numberList[j]!=null;j++){
 			context.fillStyle = colorScale((numberList[j]-minMaxInterval.x)/amp);
-			context.fillRect(x, frame.y+j*dY,dX-margin,dY-margin);
+			context.fillRect(x, Math.round(frame.y+j*dY), Math.ceil(dX)-margin, Math.ceil(dY)-margin);
 			if(mouseXOnColumn && mY>frame.y+j*dY && mY<=frame.y+(j+1)*dY) overCoordinates=new Point(i,j);
 		}
 	}
@@ -18488,23 +18979,23 @@ TreeDraw.drawDecisionTree = function(frame, tree){
 
 	var kxF = frame.width/frame.memory.focusFrame.width;
 	var mxF = - kxF*frame.memory.focusFrame.x;
-	var kyF = frame.height/frame.memory.focusFrame.height;
-	var myF = - kyF*frame.memory.focusFrame.y;
+	//var kyF = frame.height/frame.memory.focusFrame.height;
+	//var myF = - kyF*frame.memory.focusFrame.y;
 
 	var v = kxF>frame.memory.kx?0.05:0.1;
 	var antiv = 1-v;
 
 	frame.memory.kx = antiv*frame.memory.kx + v*kxF;
 	frame.memory.mx = antiv*frame.memory.mx + v*mxF;
-	frame.memory.ky = antiv*frame.memory.ky + v*kyF;
-	frame.memory.my = antiv*frame.memory.my + v*myF;
+	//frame.memory.ky = antiv*frame.memory.ky + v*kyF;
+	//frame.memory.my = antiv*frame.memory.my + v*myF;
 	var kx = frame.memory.kx;
 	var mx = frame.memory.mx;
-	var ky = frame.memory.ky;
-	var my = frame.memory.my;
+	//var ky = frame.memory.ky;
+	//var my = frame.memory.my;
 
 	var tx = function(x){return kx*x + mx};
-	var ty = function(y){return ky*y + my};
+	//var ty = function(y){return ky*y + my};
 
 	var x, y;
 	var margTextX,margTextY;
@@ -18547,7 +19038,8 @@ TreeDraw.drawDecisionTree = function(frame, tree){
 
 		tree.nodeList.forEach(function(node, i){
 
-			rect = new Rectangle(tx(node._outRectangle.x), ty(node._outRectangle.y), node._outRectangle.width*kx, node._outRectangle.height*ky);
+			//rect = new Rectangle(tx(node._outRectangle.x), ty(node._outRectangle.y), node._outRectangle.width*kx, node._outRectangle.height*ky);
+			rect = new Rectangle(tx(node._outRectangle.x), node._outRectangle.y, node._outRectangle.width*kx, node._outRectangle.height);
 
 			if(rect.x<frame.width && rect.getRight()>0 && rect.y<frame.height && rect.getBottom()>0){
 
@@ -18595,9 +19087,8 @@ TreeDraw.drawDecisionTree = function(frame, tree){
 						if(node.toNodeList.length>0) fText("P="+Math.round(node.valueFollowingProbability*100)/100, Math.min(frame.x + rect.getRight(), frame.getRight())-2, y+23);
 						fText("l="+Math.round(node.lift*100)/100, Math.min(frame.x + rect.getRight(), frame.getRight())-2, y+23+(node.toNodeList.length>0?11:0));
 					}
-					
+
 					if(exceedes) context.restore();
-					//}
 				}
 			}
 		});
@@ -18644,11 +19135,11 @@ TreeDraw.drawDecisionTree = function(frame, tree){
 			}
 			if(waitingFor15Mark && node.valueFollowingProbability<=tree.nodeList[0].valueFollowingProbability*1.5){
 				waitingFor15Mark = false;
-				line(x0, yLeaves-14, x0, yLeaves-2);
+				line(x0, yLeaves-8, x0, yLeaves-2);
 			}
 			if(waitingFor067Mark && node.valueFollowingProbability<tree.nodeList[0].valueFollowingProbability*0.66667){
 				waitingFor067Mark = false;
-				line(x0, yLeaves-14, x0, yLeaves-2);
+				line(x0, yLeaves-8, x0, yLeaves-2);
 			}
 
 			x0+=w;
@@ -18669,7 +19160,8 @@ TreeDraw.drawDecisionTree = function(frame, tree){
 		if(overNode){
 			setCursor('pointer');
 
-			rect = new Rectangle(tx(overNode._outRectangle.x), ty(overNode._outRectangle.y), overNode._outRectangle.width*kx, overNode._outRectangle.height*ky);
+			//rect = new Rectangle(tx(overNode._outRectangle.x), ty(overNode._outRectangle.y), overNode._outRectangle.width*kx, overNode._outRectangle.height*ky);
+			rect = new Rectangle(tx(overNode._outRectangle.x), overNode._outRectangle.y, overNode._outRectangle.width*kx, overNode._outRectangle.height);
 			x = Math.round(frame.x + rect.x)+0.5;
 			y = Math.round(frame.y + rect.y)+0.5;
 
@@ -18714,23 +19206,17 @@ TreeDraw.drawDecisionTree = function(frame, tree){
 		}
 		if(MOUSE_DOWN){
 			frame.memory.prevMX = mX;
-			//frame.memory.prevMY = mY;
 		}
 		if(MOUSE_PRESSED){
 			scale = 5*frame.memory.focusFrame.width/frame.width;
 			frame.memory.focusFrame.x -= (mX-frame.memory.prevMX)*scale;
-			//frame.memory.focusFrame.y -= (mY-frame.memory.prevMY)*scale;
-
 			frame.memory.prevMX = mX;
-			//frame.memory.prevMY = mY;
 		}
 		if(WHEEL_CHANGE!=0){
 			var center = frame.memory.focusFrame.getCenter();
 			var zoom = 1 + 0.1*WHEEL_CHANGE;
 			frame.memory.focusFrame.x = center.x - frame.memory.focusFrame.width*0.5*zoom;
-			//frame.memory.focusFrame.y = center.y - frame.memory.focusFrame.height*0.5*zoom;
 			frame.memory.focusFrame.width*=zoom;
-			//frame.memory.focusFrame.height*=zoom;
 		}
 		if(MOUSE_PRESSED || WHEEL_CHANGE!=0){
 

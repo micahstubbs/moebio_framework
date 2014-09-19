@@ -16,7 +16,7 @@ NumberListOperators.cosineSimilarity=function(numberList0, numberList1){
 }
 
 /**
- * 
+ * calculates the covariance
  * @param  {NumberList} numberList0
  * @param  {NumberList} numberList1
  * @return {Number}
@@ -34,6 +34,83 @@ NumberListOperators.covariance=function(numberList0, numberList1){//TODO: improv
 	}
 	
 	return s/l;
+}
+
+/**
+ * calculates k-means clusters of values in a numberList
+ * @param  {NumberList} numberList
+ * @param  {Number} k number of clusters
+ *
+ * @param {Boolean} returnIndexes return clusters of indexes rather than values (false by default)
+ * @return {NumberTable} numberLists each being a cluster
+ * tags:ds
+ */
+NumberListOperators.linearKMeans=function(numberList, k, returnIndexes){
+	var interval = numberList.getInterval();
+	var min = interval.x;
+	var max = interval.y;
+	//var means = new NumberList();
+	var clusters = new NumberTable();
+	var i, j;
+	var jK;
+	var x;
+	var dX = (max-min)/k;
+	var d;
+	var dMin
+	var n;
+	var actualMean;
+	var N = 1000;
+	var means = new NumberList();
+	var nextMeans = new NumberList();
+	var nValuesInCluster = new NumberList();
+
+	for(i=0; i<k; i++){
+		clusters[i] = new NumberList();
+		//clusters[i].actualMean = min + (i+0.5)*dX;//means[i];
+		nextMeans[i] = min + (i+0.5)*dX;
+	}
+
+	for(n=0; n<N; n++){
+
+		//c.l('-------'+n);
+
+		for(i=0; i<k; i++){
+			//actualMean = means[i];//clusters[i].actualMean;
+			//c.l(' ', i, nextMeans[i]);
+			//clusters[i] = new NumberList();
+			//clusters[i].mean = actualMean;
+			//clusters[i].actualMean = 0;
+			nValuesInCluster[i] = 0;
+			means[i] = nextMeans[i];
+			nextMeans[i] = 0;
+		}
+		
+		for(i=0; numberList[i]!=null; i++){
+			x = numberList[i];
+			dMin = 1+max-min;
+			for(j=0; j<k; j++){
+				//d = Math.abs(x-clusters[j].mean);
+				d = Math.abs(x-means[j]);
+				if(d<dMin){
+					dMin = d;
+					jK = j;
+				}
+			}
+			//c.l('    ', x,'-->',jK, 'with mean', clusters[jK].mean);
+			if(n==N-1){
+				returnIndexes?clusters[jK].push(i):clusters[jK].push(x);
+			}
+
+			nValuesInCluster[jK]++;
+			
+			//clusters[jK].actualMean = ( (clusters[jK].length-1)*clusters[jK].actualMean + x )/clusters[jK].length;
+			nextMeans[jK] = ( (nValuesInCluster[jK]-1)*nextMeans[jK] + x )/nValuesInCluster[jK];
+		}
+		//if(n%50==0) c.l(n+' --> ' + nValuesInCluster.join(',')+"|"+means.join(','));
+	}
+
+	return clusters;
+
 }
 
 

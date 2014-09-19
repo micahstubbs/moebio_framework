@@ -431,23 +431,23 @@ TreeDraw.drawDecisionTree = function(frame, tree){
 
 	var kxF = frame.width/frame.memory.focusFrame.width;
 	var mxF = - kxF*frame.memory.focusFrame.x;
-	var kyF = frame.height/frame.memory.focusFrame.height;
-	var myF = - kyF*frame.memory.focusFrame.y;
+	//var kyF = frame.height/frame.memory.focusFrame.height;
+	//var myF = - kyF*frame.memory.focusFrame.y;
 
 	var v = kxF>frame.memory.kx?0.05:0.1;
 	var antiv = 1-v;
 
 	frame.memory.kx = antiv*frame.memory.kx + v*kxF;
 	frame.memory.mx = antiv*frame.memory.mx + v*mxF;
-	frame.memory.ky = antiv*frame.memory.ky + v*kyF;
-	frame.memory.my = antiv*frame.memory.my + v*myF;
+	//frame.memory.ky = antiv*frame.memory.ky + v*kyF;
+	//frame.memory.my = antiv*frame.memory.my + v*myF;
 	var kx = frame.memory.kx;
 	var mx = frame.memory.mx;
-	var ky = frame.memory.ky;
-	var my = frame.memory.my;
+	//var ky = frame.memory.ky;
+	//var my = frame.memory.my;
 
 	var tx = function(x){return kx*x + mx};
-	var ty = function(y){return ky*y + my};
+	//var ty = function(y){return ky*y + my};
 
 	var x, y;
 	var margTextX,margTextY;
@@ -490,7 +490,8 @@ TreeDraw.drawDecisionTree = function(frame, tree){
 
 		tree.nodeList.forEach(function(node, i){
 
-			rect = new Rectangle(tx(node._outRectangle.x), ty(node._outRectangle.y), node._outRectangle.width*kx, node._outRectangle.height*ky);
+			//rect = new Rectangle(tx(node._outRectangle.x), ty(node._outRectangle.y), node._outRectangle.width*kx, node._outRectangle.height*ky);
+			rect = new Rectangle(tx(node._outRectangle.x), node._outRectangle.y, node._outRectangle.width*kx, node._outRectangle.height);
 
 			if(rect.x<frame.width && rect.getRight()>0 && rect.y<frame.height && rect.getBottom()>0){
 
@@ -538,9 +539,8 @@ TreeDraw.drawDecisionTree = function(frame, tree){
 						if(node.toNodeList.length>0) fText("P="+Math.round(node.valueFollowingProbability*100)/100, Math.min(frame.x + rect.getRight(), frame.getRight())-2, y+23);
 						fText("l="+Math.round(node.lift*100)/100, Math.min(frame.x + rect.getRight(), frame.getRight())-2, y+23+(node.toNodeList.length>0?11:0));
 					}
-					
+
 					if(exceedes) context.restore();
-					//}
 				}
 			}
 		});
@@ -587,11 +587,11 @@ TreeDraw.drawDecisionTree = function(frame, tree){
 			}
 			if(waitingFor15Mark && node.valueFollowingProbability<=tree.nodeList[0].valueFollowingProbability*1.5){
 				waitingFor15Mark = false;
-				line(x0, yLeaves-14, x0, yLeaves-2);
+				line(x0, yLeaves-8, x0, yLeaves-2);
 			}
 			if(waitingFor067Mark && node.valueFollowingProbability<tree.nodeList[0].valueFollowingProbability*0.66667){
 				waitingFor067Mark = false;
-				line(x0, yLeaves-14, x0, yLeaves-2);
+				line(x0, yLeaves-8, x0, yLeaves-2);
 			}
 
 			x0+=w;
@@ -612,7 +612,8 @@ TreeDraw.drawDecisionTree = function(frame, tree){
 		if(overNode){
 			setCursor('pointer');
 
-			rect = new Rectangle(tx(overNode._outRectangle.x), ty(overNode._outRectangle.y), overNode._outRectangle.width*kx, overNode._outRectangle.height*ky);
+			//rect = new Rectangle(tx(overNode._outRectangle.x), ty(overNode._outRectangle.y), overNode._outRectangle.width*kx, overNode._outRectangle.height*ky);
+			rect = new Rectangle(tx(overNode._outRectangle.x), overNode._outRectangle.y, overNode._outRectangle.width*kx, overNode._outRectangle.height);
 			x = Math.round(frame.x + rect.x)+0.5;
 			y = Math.round(frame.y + rect.y)+0.5;
 
@@ -657,23 +658,17 @@ TreeDraw.drawDecisionTree = function(frame, tree){
 		}
 		if(MOUSE_DOWN){
 			frame.memory.prevMX = mX;
-			//frame.memory.prevMY = mY;
 		}
 		if(MOUSE_PRESSED){
 			scale = 5*frame.memory.focusFrame.width/frame.width;
 			frame.memory.focusFrame.x -= (mX-frame.memory.prevMX)*scale;
-			//frame.memory.focusFrame.y -= (mY-frame.memory.prevMY)*scale;
-
 			frame.memory.prevMX = mX;
-			//frame.memory.prevMY = mY;
 		}
 		if(WHEEL_CHANGE!=0){
 			var center = frame.memory.focusFrame.getCenter();
 			var zoom = 1 + 0.1*WHEEL_CHANGE;
 			frame.memory.focusFrame.x = center.x - frame.memory.focusFrame.width*0.5*zoom;
-			//frame.memory.focusFrame.y = center.y - frame.memory.focusFrame.height*0.5*zoom;
 			frame.memory.focusFrame.width*=zoom;
-			//frame.memory.focusFrame.height*=zoom;
 		}
 		if(MOUSE_PRESSED || WHEEL_CHANGE!=0){
 

@@ -12,6 +12,18 @@ ObjectOperators.identity = function(object){
 }
 
 /**
+ * uses a boolean to decide which of two objects it returns
+ * @param  {Boolean} boolean
+ * @param  {Object} object0 returned if boolean is true
+ * @param  {Object} object1 returned if boolean is false
+ * @return {Object}
+ * tags:
+ */
+ObjectOperators.booleanGate = function(boolean, object0, object1){
+	return boolean?object0:object1
+}
+
+/**
  * return a property value from its name
  * @param  {Object} object
  * @param  {String} property_value
