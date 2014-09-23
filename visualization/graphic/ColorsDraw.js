@@ -37,7 +37,6 @@ ColorsDraw.drawColorScaleLegend = function(frame, colorScale, minValue, maxValue
 
 			for(x=0; x<frame.width; x+=2){
 				setFill(colorScale(x/frame.width));
-				c.l('->',colorScale(x/frame.width));
 				fRect(x,0,2,frame.height);
 			}
 

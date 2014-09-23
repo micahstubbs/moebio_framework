@@ -24,7 +24,8 @@ Point.prototype.getAngle=function(){
 
 
 Point.prototype.factor=function(k){
-	return new Point(this.x*k, this.y*k);
+	if(k >=0 || k < 0) return new Point(this.x*k, this.y*k);
+	if(k.type!=null && k.type=='Point') return new Point(this.x*k.x, this.y*k.y);
 }
 
 Point.prototype.normalize=function(){
@@ -41,9 +42,11 @@ Point.prototype.normalizeToValue=function(k){
 Point.prototype.subtract=function(point){
 	return new Point(this.x-point.x, this.y-point.y);
 }
+
 Point.prototype.add=function(point){
 	return new Point(point.x+this.x, point.y+this.y);
 }
+
 Point.prototype.addCoordinates=function(x, y){
 	return new Point(x+this.x, y+this.y);
 }

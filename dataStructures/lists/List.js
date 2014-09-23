@@ -66,6 +66,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.getSortedByProperty = List.prototype.getSortedByProperty;
    	array.getSorted = List.prototype.getSorted;
    	array.getSortedByList = List.prototype.getSortedByList;
+   	array.getSortedRandom = List.prototype.getSortedRandom;
    	//filter:
    	array.getFilteredByPropertyValue = List.prototype.getFilteredByPropertyValue;
    	array.getFilteredByBooleanList = List.prototype.getFilteredByBooleanList;
@@ -695,8 +696,21 @@ List.prototype.getSortedByList=function(list, ascending){
 	return newList;
 }
 
+
 /**
- * return a numberList of indexes of an element
+ * returns a copy of the list with random sorting
+ * @return {List}
+ * tags:sort
+ */
+List.prototype.getSortedRandom = function(){
+	var newList = this.clone();
+	newList.name = this.name;
+	newList.sort(function(a, b){return Math.random()<0.5?1:-1});
+	return newList
+}
+
+/**
+ * returns a numberList with the indexes (positions) of an element
  * @param  {Object} element
  * @return {NumberList}
  * tags:

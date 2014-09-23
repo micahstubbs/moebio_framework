@@ -17,7 +17,7 @@ StringListOperators.concatStrings=function(stringList, joinString){//deprecated
  * @return {String}
  * tags:
  */
-StringOperators.join = function(stringList, character, prefix, sufix){
+StringListOperators.join = function(stringList, character, prefix, sufix){
 	if(stringList==null) return;
 	
 	character = character==null?"":character;

@@ -7,6 +7,103 @@ Loader.REPORT_LOADING = false;
 Loader.n_loading = 0;
 Loader.LOCAL_STORAGE_ENABLED = false;
 
+Loader.PHPurl = "http://intuitionanalytics.com/tests/proxy.php?url=";
+
+
+/**
+* loads string data from server. The defined Loader.proxy will be used.
+* @param {String} url the URL of the file to be loaded 
+* @param {Function} onLoadData a function that will be called when complete. The function must receive a LoadEvent
+* @param {callee} the Object containing the onLoadData function to be called
+* @para, {Object} optional parameter that will be stored in the LoadEvent instance
+*/
+Loader.loadData=function(url, onLoadData, callee, param, send_object_json){
+	if(Loader.REPORT_LOADING) c.log('load data:', url);
+	Loader.n_loading++;
+
+	if(Loader.LOCAL_STORAGE_ENABLED){
+		var result = LolacStorage.getItme(url);
+		if(result){
+			var e=new LoadEvent();
+			e.url = url;
+			e.param = param;
+			e.result=result;
+			
+        	onLoadData.call(target, e);
+		}
+	}
+
+
+	
+	if(Loader.REPORT_LOADING) c.log("Loader.loadData | url:", url);
+	
+	var useProxy = String(url).substr(0,4)=="http";
+	
+	var req = new XMLHttpRequest();
+	
+	var target = callee?callee:arguments.callee;
+	var onLoadComplete=function() {
+		if(Loader.REPORT_LOADING) c.log('Loader.loadData | onLoadComplete');//, req.responseText:', req.responseText);
+		if (req.readyState == 4) {
+			Loader.n_loading--;
+			
+			var e=new LoadEvent();
+			e.url = url;
+			e.param = param;
+        	//if (req.status == 200) { //MIG
+        	if(req.status == 200 || (req.status == 0 && req.responseText!=null)){
+        		e.result=req.responseText;
+        	    onLoadData.call(target, e);
+        	} else {
+        	    if(Loader.REPORT_LOADING) c.log("[!] There was a problem retrieving the data ["+req.status+"]:\n" + req.statusText);
+        	    e.errorType=req.status;
+        	    e.errorMessage="[!] There was a problem retrieving the data ["+req.status+"]:" + req.statusText;
+        	    onLoadData.call(target, e);
+       	 	}
+    	}
+	};
+	
+    // branch for native XMLHttpRequest object
+    if(window.XMLHttpRequest && !(window.ActiveXObject)) {
+    	try {
+			req = new XMLHttpRequest();
+        } catch(e) {
+			req = false;
+        }
+    // branch for IE/Windows ActiveX version
+    } else if(window.ActiveXObject) {
+       	try {
+        	req = new ActiveXObject("Msxml2.XMLHTTP.6.0");
+      	} catch(e) {
+        	try {
+          		req = new ActiveXObject("Msxml2.XMLHTTP.3.0");
+        	} catch(e) {
+          		try {
+          			req = new ActiveXObject("Msxml2.XMLHTTP");
+        		} catch(e) {
+        			try {
+          				req = new ActiveXObject("Microsoft.XMLHTTP");
+        			} catch(e) {
+          				req = false;
+        			}
+        		}
+        	}
+		}
+    }
+	if(req) {
+		req.onreadystatechange = onLoadComplete;//processReqChange;
+		if(useProxy){
+			req.open("GET", Loader.proxy+url, true);
+		} else {
+			req.open("GET", url, true);
+		}
+		
+		send_object_json = send_object_json||"";
+		req.send(send_object_json);
+	}
+}
+
+
 function LoaderRequest(url, method, data){
 	this.url=url;
 	this.method=method?method:"GET";
@@ -113,99 +210,7 @@ Loader.loadJSONP=function(url, onLoadComplete, callee){
 
 
 
-/**
-* loads string data from server. The defined Loader.proxy will be used.
-* @param {String} url the URL of the file to be loaded 
-* @param {Function} onLoadData a function that will be called when complete. The function must receive a LoadEvent
-* @param {callee} the Object containing the onLoadData function to be called
-* @para, {Object} optional parameter that will be stored in the LoadEvent instance
-*/
-Loader.loadData=function(url, onLoadData, callee, param, send_object_json){
-	if(Loader.REPORT_LOADING) c.log('load data:', url);
-	Loader.n_loading++;
 
-
-	if(Loader.LOCAL_STORAGE_ENABLED){
-		var result = LolacStorage.getItme(url);
-		if(result){
-			var e=new LoadEvent();
-			e.url = url;
-			e.param = param;
-			e.result=result;
-			
-        	onLoadData.call(target, e);
-		}
-	}
-
-
-	
-	if(Loader.REPORT_LOADING) c.log("Loader.loadData | url:", url);
-	
-	var useProxy = String(url).substr(0,4)=="http";
-	
-	var req = new XMLHttpRequest();
-	
-	var target = callee?callee:arguments.callee;
-	var onLoadComplete=function() {
-		if(Loader.REPORT_LOADING) c.log('Loader.loadData | onLoadComplete');//, req.responseText:', req.responseText);
-		if (req.readyState == 4) {
-			Loader.n_loading--;
-			
-			var e=new LoadEvent();
-			e.url = url;
-			e.param = param;
-        	//if (req.status == 200) { //MIG
-        	if(req.status == 200 || (req.status == 0 && req.responseText!=null)){
-        		e.result=req.responseText;
-        	    onLoadData.call(target, e);
-        	} else {
-        	    if(Loader.REPORT_LOADING) c.log("[!] There was a problem retrieving the data ["+req.status+"]:\n" + req.statusText);
-        	    e.errorType=req.status;
-        	    e.errorMessage="[!] There was a problem retrieving the data ["+req.status+"]:" + req.statusText;
-        	    onLoadData.call(target, e);
-       	 	}
-    	}
-	};
-	
-    // branch for native XMLHttpRequest object
-    if(window.XMLHttpRequest && !(window.ActiveXObject)) {
-    	try {
-			req = new XMLHttpRequest();
-        } catch(e) {
-			req = false;
-        }
-    // branch for IE/Windows ActiveX version
-    } else if(window.ActiveXObject) {
-       	try {
-        	req = new ActiveXObject("Msxml2.XMLHTTP.6.0");
-      	} catch(e) {
-        	try {
-          		req = new ActiveXObject("Msxml2.XMLHTTP.3.0");
-        	} catch(e) {
-          		try {
-          			req = new ActiveXObject("Msxml2.XMLHTTP");
-        		} catch(e) {
-        			try {
-          				req = new ActiveXObject("Microsoft.XMLHTTP");
-        			} catch(e) {
-          				req = false;
-        			}
-        		}
-        	}
-		}
-    }
-	if(req) {
-		req.onreadystatechange = onLoadComplete;//processReqChange;
-		if(useProxy){
-			req.open("GET", Loader.proxy+url, true);
-		} else {
-			req.open("GET", url, true);
-		}
-		
-		send_object_json = send_object_json||"";
-		req.send(send_object_json);
-	}
-}
 
 //FIX THESE METHODS:
 

@@ -92,6 +92,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.getSortedByProperty = List.prototype.getSortedByProperty;
    	array.getSorted = List.prototype.getSorted;
    	array.getSortedByList = List.prototype.getSortedByList;
+   	array.getSortedRandom = List.prototype.getSortedRandom;
    	//filter:
    	array.getFilteredByPropertyValue = List.prototype.getFilteredByPropertyValue;
    	array.getFilteredByBooleanList = List.prototype.getFilteredByBooleanList;
@@ -721,8 +722,21 @@ List.prototype.getSortedByList=function(list, ascending){
 	return newList;
 }
 
+
 /**
- * return a numberList of indexes of an element
+ * returns a copy of the list with random sorting
+ * @return {List}
+ * tags:sort
+ */
+List.prototype.getSortedRandom = function(){
+	var newList = this.clone();
+	newList.name = this.name;
+	newList.sort(function(a, b){return Math.random()<0.5?1:-1});
+	return newList
+}
+
+/**
+ * returns a numberList with the indexes (positions) of an element
  * @param  {Object} element
  * @return {NumberList}
  * tags:
@@ -2299,23 +2313,34 @@ Table.prototype.getListsSortedByList=function(listOrIndex, ascending){
 	return newTable;
 }
 
-Table.prototype.getTransposed=function(){
-	var table = instantiate(typeOf(this));
-	if(this.length==0) return table;
+
+Table.prototype.getTransposed=function(firstListAsHeaders){
+
+	var tableToTranspose=firstListAsHeaders?this.getSubList(1):this;
+
+	var table = instantiate(typeOf(tableToTranspose));
+	if(tableToTranspose.length==0) return table;
 	var i;
 	var j;
 	var list;
-	var rows = this[0].length;
-	for(i=0;this[i]!=null;i++){
-		list = this[i];
+	var rows = tableToTranspose[0].length;
+	for(i=0;tableToTranspose[i]!=null;i++){
+		list = tableToTranspose[i];
 		for(j=0;list[j]!=null;j++){
 			if(i==0) table[j] = new List();
-			table[j][i] = this[i][j];
+			table[j][i] = tableToTranspose[i][j];
 		}
 	}
-	for(j=0;this[0][j]!=null;j++){
+	for(j=0;tableToTranspose[0][j]!=null;j++){
 		table[j] = table[j].getImproved();
 	}
+
+	if(firstListAsHeaders){
+		this[0].forEach(function(name, i){
+			table[i].name = String(name);
+		});
+	}
+
 	return table;
 }
 
@@ -2788,7 +2813,8 @@ Point.prototype.getAngle=function(){
 
 
 Point.prototype.factor=function(k){
-	return new Point(this.x*k, this.y*k);
+	if(k >=0 || k < 0) return new Point(this.x*k, this.y*k);
+	if(k.type!=null && k.type=='Point') return new Point(this.x*k.x, this.y*k.y);
 }
 
 Point.prototype.normalize=function(){
@@ -2805,9 +2831,11 @@ Point.prototype.normalizeToValue=function(k){
 Point.prototype.subtract=function(point){
 	return new Point(this.x-point.x, this.y-point.y);
 }
+
 Point.prototype.add=function(point){
 	return new Point(point.x+this.x, point.y+this.y);
 }
+
 Point.prototype.addCoordinates=function(x, y){
 	return new Point(x+this.x, y+this.y);
 }
@@ -3030,13 +3058,32 @@ Polygon.prototype.add=function(object){
 	}
 }
 
+/**
+ * scales the polygon by a number or a Point
+ * @param  {Object} value number or point
+ * @return {Polygon}
+ * tags:
+ */
 Polygon.prototype.factor=function(value){
+	var i;
 	var newPolygon = new Polygon();
-	for(var i=0;this[i]!=null;i++){
-		newPolygon[i]=this[i].factor(value);
-	}
 	newPolygon.name = this.name;
-	return newPolygon;
+
+	if(value >=0 || value < 0) {
+		for(i=0; this[i]!=null; i++){
+			newPolygon[i]=new Point(this[i].x*value, this[i].y*value);
+		}
+		
+		return newPolygon;
+	} else if(value.type!=null && value.type=='Point'){
+		for(i=0; this[i]!=null; i++){
+			newPolygon[i]=new Point(this[i].x*value.x, this[i].y*value.y);
+		}
+
+		return newPolygon;
+	}
+
+	return null;
 }
 
 
@@ -8526,15 +8573,82 @@ TableOperators.getSubTable=function(table, x, y, width, height){
 }
 
 /**
- * transposes the table
+ * transposes a table
  * @param  {Table} table to be transposed
+ *
+ * @param {Boolean} firstListAsHeaders removes first list of the table and uses it as names for the lists on the transposed table
  * @return {Table}
  * tags:matrixes
  */
-TableOperators.transpose=function(table){
+TableOperators.transpose=function(table, firstListAsHeaders){
 	if(table==null) return null;
-	return table.getTransposed();
+	return table.getTransposed(firstListAsHeaders);
 }
+
+/**
+ * divides the instances of a table in two tables: the training table and the test table
+ * @param  {Table} table
+ * @param  {Number} proportion proportion of training instances/test instances, between 0 and 1
+ * 
+ * @param  {Number} mode  0:random<br>1:random with seed<br>2:shuffle
+ * @param {Number} seed seed for random numbers (mode 1)
+ * @return {List} list containing the two tables
+ * tags:ds
+ */
+TableOperators.trainingTestPartition = function(table, proportion, mode, seed){
+	if(table==null || proportion==null) return;
+
+	mode = mode||0;
+  	seed = seed||0;
+
+  var indexesTr = new NumberList();
+  var indexesTe = new NumberList();
+
+  var random = mode==1?new NumberOperators._Alea("my", seed, "seeds"):Math.random;
+
+  if(mode==2) N_MOD = Math.floor(proportion/(1-proportion)*10);
+  
+  table[0].forEach(function(id, i){
+  	if(mode==0 || mode==1){
+  		if(random()<proportion){
+	      indexesTr.push(i);
+	    } else {
+	      indexesTe.push(i);
+	    }
+  	} else {
+	    if(i%N_MOD!=0){
+	      indexesTr.push(i);
+	    } else {
+	      indexesTe.push(i);
+	    }
+	}
+  });
+  
+  return new List( table.getSubListsByIndexes(indexesTr), table.getSubListsByIndexes(indexesTe) );
+}
+
+/**
+ * tests a model
+ * @param  {NumberTable} numberTable coordinates of points
+ * @param  {List} classes list of values of classes
+ * @param  {Function} model function that receives two numbers and returns a guessed class
+ * @param  {Number} metric 0:error
+ * @return {Number} metric value
+ * tags:ds
+ */
+TableOperators.testClassificationModel = function(numberTable, classes, model, metric){
+	var i;
+	var nErrors = 0;
+
+	classes.forEach(function(clss, i){
+		if(model(numberTable[0][i], numberTable[1][i])!=clss){
+			nErrors++;
+		}
+	});
+
+	return nErrors/classes.length;
+}
+
 
 
 TableOperators.getSubListsByIndexes=function(table, indexes){
@@ -10152,7 +10266,7 @@ StringListOperators.concatStrings=function(stringList, joinString){//deprecated
  * @return {String}
  * tags:
  */
-StringOperators.join = function(stringList, character, prefix, sufix){
+StringListOperators.join = function(stringList, character, prefix, sufix){
 	if(stringList==null) return;
 	
 	character = character==null?"":character;
@@ -14783,6 +14897,103 @@ Loader.REPORT_LOADING = false;
 Loader.n_loading = 0;
 Loader.LOCAL_STORAGE_ENABLED = false;
 
+Loader.PHPurl = "http://intuitionanalytics.com/tests/proxy.php?url=";
+
+
+/**
+* loads string data from server. The defined Loader.proxy will be used.
+* @param {String} url the URL of the file to be loaded 
+* @param {Function} onLoadData a function that will be called when complete. The function must receive a LoadEvent
+* @param {callee} the Object containing the onLoadData function to be called
+* @para, {Object} optional parameter that will be stored in the LoadEvent instance
+*/
+Loader.loadData=function(url, onLoadData, callee, param, send_object_json){
+	if(Loader.REPORT_LOADING) c.log('load data:', url);
+	Loader.n_loading++;
+
+	if(Loader.LOCAL_STORAGE_ENABLED){
+		var result = LolacStorage.getItme(url);
+		if(result){
+			var e=new LoadEvent();
+			e.url = url;
+			e.param = param;
+			e.result=result;
+			
+        	onLoadData.call(target, e);
+		}
+	}
+
+
+	
+	if(Loader.REPORT_LOADING) c.log("Loader.loadData | url:", url);
+	
+	var useProxy = String(url).substr(0,4)=="http";
+	
+	var req = new XMLHttpRequest();
+	
+	var target = callee?callee:arguments.callee;
+	var onLoadComplete=function() {
+		if(Loader.REPORT_LOADING) c.log('Loader.loadData | onLoadComplete');//, req.responseText:', req.responseText);
+		if (req.readyState == 4) {
+			Loader.n_loading--;
+			
+			var e=new LoadEvent();
+			e.url = url;
+			e.param = param;
+        	//if (req.status == 200) { //MIG
+        	if(req.status == 200 || (req.status == 0 && req.responseText!=null)){
+        		e.result=req.responseText;
+        	    onLoadData.call(target, e);
+        	} else {
+        	    if(Loader.REPORT_LOADING) c.log("[!] There was a problem retrieving the data ["+req.status+"]:\n" + req.statusText);
+        	    e.errorType=req.status;
+        	    e.errorMessage="[!] There was a problem retrieving the data ["+req.status+"]:" + req.statusText;
+        	    onLoadData.call(target, e);
+       	 	}
+    	}
+	};
+	
+    // branch for native XMLHttpRequest object
+    if(window.XMLHttpRequest && !(window.ActiveXObject)) {
+    	try {
+			req = new XMLHttpRequest();
+        } catch(e) {
+			req = false;
+        }
+    // branch for IE/Windows ActiveX version
+    } else if(window.ActiveXObject) {
+       	try {
+        	req = new ActiveXObject("Msxml2.XMLHTTP.6.0");
+      	} catch(e) {
+        	try {
+          		req = new ActiveXObject("Msxml2.XMLHTTP.3.0");
+        	} catch(e) {
+          		try {
+          			req = new ActiveXObject("Msxml2.XMLHTTP");
+        		} catch(e) {
+        			try {
+          				req = new ActiveXObject("Microsoft.XMLHTTP");
+        			} catch(e) {
+          				req = false;
+        			}
+        		}
+        	}
+		}
+    }
+	if(req) {
+		req.onreadystatechange = onLoadComplete;//processReqChange;
+		if(useProxy){
+			req.open("GET", Loader.proxy+url, true);
+		} else {
+			req.open("GET", url, true);
+		}
+		
+		send_object_json = send_object_json||"";
+		req.send(send_object_json);
+	}
+}
+
+
 function LoaderRequest(url, method, data){
 	this.url=url;
 	this.method=method?method:"GET";
@@ -14889,99 +15100,7 @@ Loader.loadJSONP=function(url, onLoadComplete, callee){
 
 
 
-/**
-* loads string data from server. The defined Loader.proxy will be used.
-* @param {String} url the URL of the file to be loaded 
-* @param {Function} onLoadData a function that will be called when complete. The function must receive a LoadEvent
-* @param {callee} the Object containing the onLoadData function to be called
-* @para, {Object} optional parameter that will be stored in the LoadEvent instance
-*/
-Loader.loadData=function(url, onLoadData, callee, param, send_object_json){
-	if(Loader.REPORT_LOADING) c.log('load data:', url);
-	Loader.n_loading++;
 
-
-	if(Loader.LOCAL_STORAGE_ENABLED){
-		var result = LolacStorage.getItme(url);
-		if(result){
-			var e=new LoadEvent();
-			e.url = url;
-			e.param = param;
-			e.result=result;
-			
-        	onLoadData.call(target, e);
-		}
-	}
-
-
-	
-	if(Loader.REPORT_LOADING) c.log("Loader.loadData | url:", url);
-	
-	var useProxy = String(url).substr(0,4)=="http";
-	
-	var req = new XMLHttpRequest();
-	
-	var target = callee?callee:arguments.callee;
-	var onLoadComplete=function() {
-		if(Loader.REPORT_LOADING) c.log('Loader.loadData | onLoadComplete');//, req.responseText:', req.responseText);
-		if (req.readyState == 4) {
-			Loader.n_loading--;
-			
-			var e=new LoadEvent();
-			e.url = url;
-			e.param = param;
-        	//if (req.status == 200) { //MIG
-        	if(req.status == 200 || (req.status == 0 && req.responseText!=null)){
-        		e.result=req.responseText;
-        	    onLoadData.call(target, e);
-        	} else {
-        	    if(Loader.REPORT_LOADING) c.log("[!] There was a problem retrieving the data ["+req.status+"]:\n" + req.statusText);
-        	    e.errorType=req.status;
-        	    e.errorMessage="[!] There was a problem retrieving the data ["+req.status+"]:" + req.statusText;
-        	    onLoadData.call(target, e);
-       	 	}
-    	}
-	};
-	
-    // branch for native XMLHttpRequest object
-    if(window.XMLHttpRequest && !(window.ActiveXObject)) {
-    	try {
-			req = new XMLHttpRequest();
-        } catch(e) {
-			req = false;
-        }
-    // branch for IE/Windows ActiveX version
-    } else if(window.ActiveXObject) {
-       	try {
-        	req = new ActiveXObject("Msxml2.XMLHTTP.6.0");
-      	} catch(e) {
-        	try {
-          		req = new ActiveXObject("Msxml2.XMLHTTP.3.0");
-        	} catch(e) {
-          		try {
-          			req = new ActiveXObject("Msxml2.XMLHTTP");
-        		} catch(e) {
-        			try {
-          				req = new ActiveXObject("Microsoft.XMLHTTP");
-        			} catch(e) {
-          				req = false;
-        			}
-        		}
-        	}
-		}
-    }
-	if(req) {
-		req.onreadystatechange = onLoadComplete;//processReqChange;
-		if(useProxy){
-			req.open("GET", Loader.proxy+url, true);
-		} else {
-			req.open("GET", url, true);
-		}
-		
-		send_object_json = send_object_json||"";
-		req.send(send_object_json);
-	}
-}
 
 //FIX THESE METHODS:
 
@@ -16454,7 +16573,6 @@ ColorsDraw.drawColorScaleLegend = function(frame, colorScale, minValue, maxValue
 
 			for(x=0; x<frame.width; x+=2){
 				setFill(colorScale(x/frame.width));
-				c.l('->',colorScale(x/frame.width));
 				fRect(x,0,2,frame.height);
 			}
 
@@ -17651,10 +17769,11 @@ NumberTableDraw._drawPartialFlow=function(frame, flowIntervals, labels, colors, 
  * @param {Boolean} sorted sort flow polygons
  * @param {Number} intervalsFactor number between 0 and 1, factors the height of flow polygons
  * @param {ColorList} colorList colors of polygons
+ * @param {List} names names of rows
  * @return {NumberList} list of positions of elements on clicked coordinates
  * tags:draw
  */
-NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, colorList){
+NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, colorList, names){
 	if(numberTable==null || numberTable.length<2 || numberTable[0].length<2 || numberTable.type!="NumberTable") return;
 
 	intervalsFactor = intervalsFactor==null?1:intervalsFactor;
@@ -17672,7 +17791,7 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
 			mXF:mX,
 			width:frame.width,
 			height:frame.height,
-			radius:Math.min(frame.width, frame.height)*0.46,
+			radius:Math.min(frame.width, frame.height)*0.46 - (names==null?0:8),
 			r0:Math.min(frame.width, frame.height)*0.05,
 			angles:new NumberList(),
 			zoom:1,
@@ -17750,6 +17869,20 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
 
 		context.restore();
 
+		if(names){
+			var a;
+			var r = frame.memory.radius*frame.memory.zoom+8;
+
+			setText('black', 14, null, 'center', 'middle');
+
+			names.forEach(function(name, i){
+				a = frame.memory.angle0 + frame.memory.angles[i];
+
+				fTextRotated(String(name), frame.getCenter().x + r*Math.cos(a), frame.getCenter().y + r*Math.sin(a), a+HalfPi);
+			});
+		}
+
+
 		if(captureImage){
 			context = mainContext;
 			frame.memory.image = new Image();
@@ -17774,6 +17907,7 @@ NumberListDraw = function(){};
  *
  * @param {Number} margin
  * @param {Object} xValues horizontal values, could be a stringList, a numberList or an Interval
+ * @return {Number} index of element clicked
  * tags:draw
  */
 NumberListDraw.drawSimpleGraph = function(frame, numberList, margin, xValues){
@@ -17839,6 +17973,8 @@ NumberListDraw.drawSimpleGraph = function(frame, numberList, margin, xValues){
 			fRect(x, subframe.bottom, dx,  -subframe.height*frame.memory.normalizedList[i]);
 		}
 	}
+	
+	var clicked;
 
 	if(overI!=-1){
 		setText('white', 12);
@@ -17855,7 +17991,10 @@ NumberListDraw.drawSimpleGraph = function(frame, numberList, margin, xValues){
 		)
 		setFill('white');
 		fText(text, mX+10,mY-26);
+		if(MOUSE_DOWN) clicked = overI;
 	}
+
+	return clicked;
 }
 function ObjectDraw(){};
 
@@ -19343,9 +19482,13 @@ var MOUSE_PRESSED; //true if mouse pressed
 var mX_DOWN; // cursor x position on last mousedown event
 var mY_DOWN; // cursor x position on last mousedown event
 var mX_UP; // cursor x position on last mousedown event
-var mY_UP; // cursor x position on last mousedown event
+var mY_UP; // cursor y position on last mousedown event
+var PREV_mX=0; // cursor x position previous frame
+var PREV_mY=0; // cursor y position previous frame
+var DX_MOUSE=0; //horizontal movement of cursor in last frame
+var DY_MOUSE=0; //vertical movement of cursor in last frame
+var MOUSE_MOVED = false; //boolean that indicates wether the mouse moved in the last frame
 
-//
 //var deltaWheel = 0;
 var cursorStyle = 'auto';
 var backGroundColor = 'white';
@@ -19371,6 +19514,10 @@ var _setTimeOutId;
 var _cycleOnMouseMovement = false;
 var _interactionCancelledFrame;
 var END_CYCLE_DELAY = 3000;
+
+Array.prototype.last = function(){
+	return this[this.length-1];
+}
 
 window.addEventListener('load', function(){
 	c.log('Moebio Framework v2.24');
@@ -19428,6 +19575,7 @@ window.addEventListener('load', function(){
 function _onMouse(e) {
 	switch(e.type){
 		case "mousemove":
+			
 			if(e.clientX){
 				mX = e.clientX;
 		        mY = e.clientY;
@@ -19501,12 +19649,20 @@ function enterFrame(){
 	MOUSE_UP = NF_UP==nF;
 	MOUSE_UP_FAST = MOUSE_UP && (nF-NF_DOWN)<9;
 
+	DX_MOUSE = mX-PREV_mX;
+	DY_MOUSE = mY-PREV_mY;
+	MOUSE_MOVED = DX_MOUSE!=0 || DY_MOUSE!=0;
+	PREV_mX=mX;
+	PREV_mY=mY;
+
 	//c.log('pre-cycle WHEEL_CHANGE:', WHEEL_CHANGE, nF);
   	cycle();
 
   	WHEEL_CHANGE = 0;
   	
   	nF++;
+
+  	
 }
 
 function startCycle(){

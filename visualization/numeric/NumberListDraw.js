@@ -7,6 +7,7 @@ NumberListDraw = function(){};
  *
  * @param {Number} margin
  * @param {Object} xValues horizontal values, could be a stringList, a numberList or an Interval
+ * @return {Number} index of element clicked
  * tags:draw
  */
 NumberListDraw.drawSimpleGraph = function(frame, numberList, margin, xValues){
@@ -72,6 +73,8 @@ NumberListDraw.drawSimpleGraph = function(frame, numberList, margin, xValues){
 			fRect(x, subframe.bottom, dx,  -subframe.height*frame.memory.normalizedList[i]);
 		}
 	}
+	
+	var clicked;
 
 	if(overI!=-1){
 		setText('white', 12);
@@ -88,5 +91,8 @@ NumberListDraw.drawSimpleGraph = function(frame, numberList, margin, xValues){
 		)
 		setFill('white');
 		fText(text, mX+10,mY-26);
+		if(MOUSE_DOWN) clicked = overI;
 	}
+
+	return clicked;
 }

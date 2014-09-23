@@ -544,10 +544,11 @@ NumberTableDraw._drawPartialFlow=function(frame, flowIntervals, labels, colors, 
  * @param {Boolean} sorted sort flow polygons
  * @param {Number} intervalsFactor number between 0 and 1, factors the height of flow polygons
  * @param {ColorList} colorList colors of polygons
+ * @param {List} names names of rows
  * @return {NumberList} list of positions of elements on clicked coordinates
  * tags:draw
  */
-NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, colorList){
+NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, colorList, names){
 	if(numberTable==null || numberTable.length<2 || numberTable[0].length<2 || numberTable.type!="NumberTable") return;
 
 	intervalsFactor = intervalsFactor==null?1:intervalsFactor;
@@ -565,7 +566,7 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
 			mXF:mX,
 			width:frame.width,
 			height:frame.height,
-			radius:Math.min(frame.width, frame.height)*0.46,
+			radius:Math.min(frame.width, frame.height)*0.46 - (names==null?0:8),
 			r0:Math.min(frame.width, frame.height)*0.05,
 			angles:new NumberList(),
 			zoom:1,
@@ -642,6 +643,20 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
 		IntervalTableDraw.drawCircularIntervalsFlowTable(frame.memory.flowIntervals, frame.getCenter(), frame.memory.radius*frame.memory.zoom, frame.memory.r0, frame.memory.actualColorList, frame.memory.names, true, frame.memory.angles, frame.memory.angle0);
 
 		context.restore();
+
+		if(names){
+			var a;
+			var r = frame.memory.radius*frame.memory.zoom+8;
+
+			setText('black', 14, null, 'center', 'middle');
+
+			names.forEach(function(name, i){
+				a = frame.memory.angle0 + frame.memory.angles[i];
+
+				fTextRotated(String(name), frame.getCenter().x + r*Math.cos(a), frame.getCenter().y + r*Math.sin(a), a+HalfPi);
+			});
+		}
+
 
 		if(captureImage){
 			context = mainContext;

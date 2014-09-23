@@ -202,23 +202,34 @@ Table.prototype.getListsSortedByList=function(listOrIndex, ascending){
 	return newTable;
 }
 
-Table.prototype.getTransposed=function(){
-	var table = instantiate(typeOf(this));
-	if(this.length==0) return table;
+
+Table.prototype.getTransposed=function(firstListAsHeaders){
+
+	var tableToTranspose=firstListAsHeaders?this.getSubList(1):this;
+
+	var table = instantiate(typeOf(tableToTranspose));
+	if(tableToTranspose.length==0) return table;
 	var i;
 	var j;
 	var list;
-	var rows = this[0].length;
-	for(i=0;this[i]!=null;i++){
-		list = this[i];
+	var rows = tableToTranspose[0].length;
+	for(i=0;tableToTranspose[i]!=null;i++){
+		list = tableToTranspose[i];
 		for(j=0;list[j]!=null;j++){
 			if(i==0) table[j] = new List();
-			table[j][i] = this[i][j];
+			table[j][i] = tableToTranspose[i][j];
 		}
 	}
-	for(j=0;this[0][j]!=null;j++){
+	for(j=0;tableToTranspose[0][j]!=null;j++){
 		table[j] = table[j].getImproved();
 	}
+
+	if(firstListAsHeaders){
+		this[0].forEach(function(name, i){
+			table[i].name = String(name);
+		});
+	}
+
 	return table;
 }
 

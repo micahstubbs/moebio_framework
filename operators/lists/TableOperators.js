@@ -43,15 +43,82 @@ TableOperators.getSubTable=function(table, x, y, width, height){
 }
 
 /**
- * transposes the table
+ * transposes a table
  * @param  {Table} table to be transposed
+ *
+ * @param {Boolean} firstListAsHeaders removes first list of the table and uses it as names for the lists on the transposed table
  * @return {Table}
  * tags:matrixes
  */
-TableOperators.transpose=function(table){
+TableOperators.transpose=function(table, firstListAsHeaders){
 	if(table==null) return null;
-	return table.getTransposed();
+	return table.getTransposed(firstListAsHeaders);
 }
+
+/**
+ * divides the instances of a table in two tables: the training table and the test table
+ * @param  {Table} table
+ * @param  {Number} proportion proportion of training instances/test instances, between 0 and 1
+ * 
+ * @param  {Number} mode  0:random<br>1:random with seed<br>2:shuffle
+ * @param {Number} seed seed for random numbers (mode 1)
+ * @return {List} list containing the two tables
+ * tags:ds
+ */
+TableOperators.trainingTestPartition = function(table, proportion, mode, seed){
+	if(table==null || proportion==null) return;
+
+	mode = mode||0;
+  	seed = seed||0;
+
+  var indexesTr = new NumberList();
+  var indexesTe = new NumberList();
+
+  var random = mode==1?new NumberOperators._Alea("my", seed, "seeds"):Math.random;
+
+  if(mode==2) N_MOD = Math.floor(proportion/(1-proportion)*10);
+  
+  table[0].forEach(function(id, i){
+  	if(mode==0 || mode==1){
+  		if(random()<proportion){
+	      indexesTr.push(i);
+	    } else {
+	      indexesTe.push(i);
+	    }
+  	} else {
+	    if(i%N_MOD!=0){
+	      indexesTr.push(i);
+	    } else {
+	      indexesTe.push(i);
+	    }
+	}
+  });
+  
+  return new List( table.getSubListsByIndexes(indexesTr), table.getSubListsByIndexes(indexesTe) );
+}
+
+/**
+ * tests a model
+ * @param  {NumberTable} numberTable coordinates of points
+ * @param  {List} classes list of values of classes
+ * @param  {Function} model function that receives two numbers and returns a guessed class
+ * @param  {Number} metric 0:error
+ * @return {Number} metric value
+ * tags:ds
+ */
+TableOperators.testClassificationModel = function(numberTable, classes, model, metric){
+	var i;
+	var nErrors = 0;
+
+	classes.forEach(function(clss, i){
+		if(model(numberTable[0][i], numberTable[1][i])!=clss){
+			nErrors++;
+		}
+	});
+
+	return nErrors/classes.length;
+}
+
 
 
 TableOperators.getSubListsByIndexes=function(table, indexes){

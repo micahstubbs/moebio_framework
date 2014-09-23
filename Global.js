@@ -55,9 +55,13 @@ var MOUSE_PRESSED; //true if mouse pressed
 var mX_DOWN; // cursor x position on last mousedown event
 var mY_DOWN; // cursor x position on last mousedown event
 var mX_UP; // cursor x position on last mousedown event
-var mY_UP; // cursor x position on last mousedown event
+var mY_UP; // cursor y position on last mousedown event
+var PREV_mX=0; // cursor x position previous frame
+var PREV_mY=0; // cursor y position previous frame
+var DX_MOUSE=0; //horizontal movement of cursor in last frame
+var DY_MOUSE=0; //vertical movement of cursor in last frame
+var MOUSE_MOVED = false; //boolean that indicates wether the mouse moved in the last frame
 
-//
 //var deltaWheel = 0;
 var cursorStyle = 'auto';
 var backGroundColor = 'white';
@@ -83,6 +87,10 @@ var _setTimeOutId;
 var _cycleOnMouseMovement = false;
 var _interactionCancelledFrame;
 var END_CYCLE_DELAY = 3000;
+
+Array.prototype.last = function(){
+	return this[this.length-1];
+}
 
 window.addEventListener('load', function(){
 	c.log('Moebio Framework v2.24');
@@ -140,6 +148,7 @@ window.addEventListener('load', function(){
 function _onMouse(e) {
 	switch(e.type){
 		case "mousemove":
+			
 			if(e.clientX){
 				mX = e.clientX;
 		        mY = e.clientY;
@@ -213,12 +222,20 @@ function enterFrame(){
 	MOUSE_UP = NF_UP==nF;
 	MOUSE_UP_FAST = MOUSE_UP && (nF-NF_DOWN)<9;
 
+	DX_MOUSE = mX-PREV_mX;
+	DY_MOUSE = mY-PREV_mY;
+	MOUSE_MOVED = DX_MOUSE!=0 || DY_MOUSE!=0;
+	PREV_mX=mX;
+	PREV_mY=mY;
+
 	//c.log('pre-cycle WHEEL_CHANGE:', WHEEL_CHANGE, nF);
   	cycle();
 
   	WHEEL_CHANGE = 0;
   	
   	nF++;
+
+  	
 }
 
 function startCycle(){
