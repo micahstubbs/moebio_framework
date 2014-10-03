@@ -497,15 +497,27 @@ TreeDraw.drawDecisionTree = function(frame, tree){
 
 				x = Math.round(frame.x + rect.x)+0.5;
 				y = Math.round(frame.y + rect.y)+0.5;
+				
+				if(node.pattern){
+					context.fillStyle=node.pattern;
+					context.fillRect(x, y, Math.floor(rect.width), Math.floor(rect.height));
 
-				setFill(node._color);
+					if(sRectM(x, y, Math.floor(rect.width), Math.floor(rect.height)) ){
+						overNode = node;
+						overI = i;
+					}
+
+				} else {
+
+					setFill(node._color);
+
+					if( fsRectM(x, y, Math.floor(rect.width), Math.floor(rect.height)) ){
+						overNode = node;
+						overI = i;
+					}
+				}
 
 				var realWidth = Math.min(rect.getRight(), frame.width) - Math.max(rect.x, 0);
-
-				if(fsRectM(x, y, Math.floor(rect.width), Math.floor(rect.height))){
-					overNode = node;
-					overI = i;
-				}
 
 				if(realWidth>16){
 					margTextX = rect.width*TreeDraw.PROP_RECT_MARGIN*0.8;
@@ -555,18 +567,30 @@ TreeDraw.drawDecisionTree = function(frame, tree){
 		var waitingForHalfMark = true;
 		var waitingFor15Mark = true;
 		var waitingFor067Mark = true;
-
 		
 
 		frame.memory.leaves.forEach(function(node){
 			setStroke('black', 0.2);
 
 			w = sx*node.weight;
-			setFill(node._color);
-			if(fsRectM(x0, yLeaves, w, hLevel)){
-				overNode = node;
-				overI = tree.nodeList.indexOf(node);
+			
+			if(node.pattern){
+				context.fillStyle=node.pattern;
+				context.fillRect(x0, yLeaves, w, hLevel);
+
+				if( sRectM(x0, yLeaves, w, hLevel) ){
+					overNode = node;
+					overI = tree.nodeList.indexOf(node);
+				}
+
+			} else {
+				setFill(node._color);
+				if( fsRectM(x0, yLeaves, w, hLevel) ){
+					overNode = node;
+					overI = tree.nodeList.indexOf(node);
+				}
 			}
+
 			node._xLeaf = x0;
 			node._wLeaf = w;
 
@@ -733,7 +757,6 @@ TreeDraw._horizontalRectanglesDecision = function(rect, weights){
 
 	return rects;
 }
-
 
 
 

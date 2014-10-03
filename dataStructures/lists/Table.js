@@ -189,8 +189,12 @@ Table.prototype.getWithoutRows=function(rowsIndexes){
  */
 Table.prototype.getListsSortedByList=function(listOrIndex, ascending){
 	if(listOrIndex==null) return;
+
+	ascending = ascending==null?true:ascending;
 	
 	var newTable= instantiateWithSameType(this);
+	//c.l('newTable', newTable);
+
 	var i;
 	var list = typeOf(listOrIndex)=='number'?this[listOrIndex]:listOrIndex;
 
@@ -199,6 +203,9 @@ Table.prototype.getListsSortedByList=function(listOrIndex, ascending){
 	for(i=0; this[i]!=null; i++){
 		newTable[i]=this[i].getSortedByList(list, ascending);
 	}
+
+	//c.l('newTable', newTable);
+
 	return newTable;
 }
 

@@ -102,11 +102,16 @@ TableOperators.trainingTestPartition = function(table, proportion, mode, seed){
  * @param  {NumberTable} numberTable coordinates of points
  * @param  {List} classes list of values of classes
  * @param  {Function} model function that receives two numbers and returns a guessed class
+ * 
  * @param  {Number} metric 0:error
  * @return {Number} metric value
  * tags:ds
  */
 TableOperators.testClassificationModel = function(numberTable, classes, model, metric){
+	if(numberTable==null || classes==null || model==null) return null;
+
+	metric = metric||0;
+
 	var i;
 	var nErrors = 0;
 
@@ -498,10 +503,11 @@ TableOperators.splitTableByCategoricList = function(table, list){
  * @param {Number} min_size_node minimum population size associated with node (10 default)
  * @param {Number} min_info_gain minimum information gain by splitting by best feature (0.002 default)
  * @param {Object} valueFollowing main value in supervised list (associated with blue)
+ * @param {Boolean} generatePattern generates a pattern of points picturing proprtion of followed class in node
  * @return {Tree}
  * tags:ds
  */
-TableOperators.buildDecisionTree = function(variablesTable, supervised, min_entropy, min_size_node, min_info_gain, valueFollowing){
+TableOperators.buildDecisionTree = function(variablesTable, supervised, min_entropy, min_size_node, min_info_gain, valueFollowing, generatePattern){
 	if(variablesTable==null || supervised==null) return;
 	min_entropy = min_entropy==null?0.2:min_entropy;
 	min_size_node = min_size_node||10;
@@ -510,13 +516,13 @@ TableOperators.buildDecisionTree = function(variablesTable, supervised, min_entr
 	var indexes = NumberListGenerators.createSortedNumberList(supervised.length);
 	var tree = new Tree();
 
-	TableOperators._buildDecisionTreeNode(tree, variablesTable, supervised, 0, min_entropy, min_size_node, min_info_gain, null, null, valueFollowing, indexes);
+	TableOperators._buildDecisionTreeNode(tree, variablesTable, supervised, 0, min_entropy, min_size_node, min_info_gain, null, null, valueFollowing, indexes, generatePattern);
 
 	return tree;
 }
 
 
-TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervised, level, min_entropy, min_size_node, min_info_gain, parent, value, valueFollowing, indexes){
+TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervised, level, min_entropy, min_size_node, min_info_gain, parent, value, valueFollowing, indexes, generatePattern){
 	var entropy = ListOperators.getListEntropy(supervised, valueFollowing);
 
 	if(entropy>=min_entropy){
@@ -563,6 +569,29 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
 		:
 		TableOperators._decisionTreeColorScale(node.biggestProbability);
 
+	
+	if(generatePattern){
+		var newCanvas = document.createElement("canvas");
+		newCanvas.width = 150;
+		newCanvas.height = 100;
+		var newContext = newCanvas.getContext("2d");
+		newContext.clearRect(0,0,150,100);
+
+		TableOperators._decisionTreeGenerateColorsMixture(newContext, 150, 100, ['blue', 'red'],
+			node.mostRepresentedValue==valueFollowing?
+				[Math.floor(node.biggestProbability*node.weight), Math.floor((1-node.biggestProbability)*node.weight)]
+				:
+				[Math.floor((1-node.biggestProbability)*node.weight), Math.floor(node.biggestProbability*node.weight)]
+		);
+
+		
+		var img = new Image();
+		img.src = newCanvas.toDataURL();
+		node.pattern = newContext.createPattern(img, "repeat");
+	}
+
+
+
 	if(!subDivide){
 		return node;
 	}
@@ -582,7 +611,7 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
 		childTable = expandedChild.getSubList(0, expandedChild.length-3);
 		childSupervised = expandedChild[expandedChild.length-2];
 		childIndexes = expandedChild[expandedChild.length-1];
-		TableOperators._buildDecisionTreeNode(tree, childTable, childSupervised, level+1, min_entropy, min_size_node, min_info_gain, node, expandedChild._element, valueFollowing, childIndexes);
+		TableOperators._buildDecisionTreeNode(tree, childTable, childSupervised, level+1, min_entropy, min_size_node, min_info_gain, node, expandedChild._element, valueFollowing, childIndexes, generatePattern);
 	});
 
 	node.toNodeList = node.toNodeList.getSortedByProperty('valueFollowingProbability', false);
@@ -595,4 +624,32 @@ TableOperators._decisionTreeColorScale = function(value){
 	var bb = value<0.5?255:Math.floor(510*(1-value));
 
 	return 'rgb('+rr+','+gg+','+bb+')';
+}
+TableOperators._decisionTreeGenerateColorsMixture = function(ctxt, width, height, colors, weights){
+	//var imageData=context.createImageData(width, height);
+	var x, y, i;//, rgb;
+	var allColors = ListGenerators.createListWithSameElement(weights[0], colors[0]);
+
+	for(i=1; colors[i]!=null; i++){
+		allColors = allColors.concat( ListGenerators.createListWithSameElement(weights[i], colors[i]) );
+	}
+
+	//c.l('weights:', weights);
+	//c.l('allColors:', allColors);
+
+	for(x=0; x<width; x++){
+		for(y=0; y<height; y++){
+			i=(x+y*width)*4;
+			//rgb = allColors.getRandomElement();
+			
+			// imageData.data[i] = rgb[0];
+			// imageData.data[i+1] = rgb[1];
+			// imageData.data[i+2] = rgb[2];
+			// imageData.data[i+3] = 255;
+			ctxt.fillStyle = allColors.getRandomElement();
+			ctxt.fillRect(x,y,1,1);
+		}
+	}
+
+	//return imageData;
 }

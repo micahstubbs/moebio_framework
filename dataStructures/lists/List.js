@@ -119,7 +119,7 @@ List.prototype.getImproved=function(){//TODO: still doesn't solve tha case of a 
 	
 	//c.log('List.getImproved | typeOfElements: ['+typeOfElements+']');
 	
-	if(typeOfElements=="" || typeOfElements=="undefined") return this;
+	//if(typeOfElements=="" || typeOfElements=="undefined") return this;
 	
 	switch(typeOfElements){
 		case "number":
@@ -157,15 +157,21 @@ List.prototype.getImproved=function(){//TODO: still doesn't solve tha case of a 
 			break;
 	}
 
-	if(newList==null){
+	
+
+	if(newList==null || newList==""){
+		//c.l('getImproved | all elelemnts no same type')
+
 		var allLists = true;
 		var i;
 		for(i=0; this[i]!=null; i++){
+			//c.l('isList?', i, this[i].isList);
 			if(!(this[i].isList)){
 				allLists = false;
 				break;
 			}
 		}
+		//c.l('--> allLists');
 		if(allLists) newList = Table.fromArray(this, false);
 	}
 
@@ -944,6 +950,8 @@ List.prototype.getFilteredByFunction=function(func){
 List.prototype.concat=function(){
 	if(arguments[0]==null) return this;
 	
+	//c.l('concat | arguments[0].type, this.type', arguments[0].type, this.type);
+
 	if(arguments[0].type==this.type){
 		if(this.type == "NumberList"){
 			return NumberList.fromArray(this._concat.apply(this, arguments), false);
