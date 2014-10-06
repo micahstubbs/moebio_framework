@@ -93,7 +93,7 @@ Array.prototype.last = function(){
 }
 
 window.addEventListener('load', function(){
-	c.log('Moebio Framework v2.24');
+	c.log('Moebio Framework v2.25');
 
  	if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
     	userAgent='IE';
@@ -374,7 +374,79 @@ function _onWheel(e) {
     e.type = "mousewheel"; //why this doesn't work?
 
 	onCanvasEvent(e);
+}
 
 
+
+setStructureLocalStorage = function(object, id, comments){
+	c.l('\n\nsetStructureLocalStorage');
+
+	var type = typeOf(object);
+	var code;
+
+	c.l('type', type);
+
+	switch(type){
+		case 'string':
+			code = object;
+			break;
+		case 'Network':
+			code = NetworkEncodings.encodeGDF(network);
+			break;
+		default:
+			type = 'object';
+			code = JSON.stringify(object);
+			break;
+	}
+
+	//var id = MD5.hex_md5(code);
+
+	var storageObject = {
+		type:type,
+		comments:comments,
+		code:code
+	}
+
+	var storageString = JSON.stringify(storageObject);
+
+	c.l('storageObject', storageObject);
+	c.l('id:['+id+']');
+	c.l('code.length:', code.length);
+
+	localStorage.setItem(id, storageString);
+
+	//return id;
+}
+
+getStructureLocalStorage = function(id){
+	c.l('\n\ngetStructureLocalStorage, id:['+id+']');
+
+	var storageObject = JSON.parse(localStorage.getItem(id));
+	c.l('storageObject:', storageObject);
+	if(!storageObject) return null;
+
+	var type = storageObject.type;
+	var code = storageObject.code;
+	var object;
+
+	c.l('type', type);
+	
+	switch(type){
+		case 'string':
+			object = code;
+			break;
+		case 'Network':
+			c.l('ap');
+			object = NetworkEncodings.decodeGDF(code);
+			c.l('bp');
+			break;
+		case 'object':
+			object = JSON.parse(code);
+			break;
+	}
+
+	c.l('.. object:', object);
+
+	return object;
 }
 

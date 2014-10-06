@@ -14,6 +14,7 @@
 //var hexcase = 0;   /* hex output format. 0 - lowercase; 1 - uppercase        */
 //var b64pad  = "";  /* base-64 pad character. "=" for strict RFC compliance   */
 
+
 function MD5(){};
 
 /*

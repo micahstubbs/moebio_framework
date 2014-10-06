@@ -89,7 +89,7 @@ NetworkEncodings.encodeGDF = function(network, nodesPropertiesNames, relationsPr
 	nodesPropertiesNames = nodesPropertiesNames==null?new StringList():nodesPropertiesNames;
 	relationsPropertiesNames = relationsPropertiesNames==null?new StringList():relationsPropertiesNames;
 	
-	var code = "nodedef>id"+(nodesPropertiesNames.length>0?",":"")+nodesPropertiesNames.getConcatenated(",");
+	var code = "nodedef>id"+(nodesPropertiesNames.length>0?",":"")+nodesPropertiesNames.join(",");
 	var i;
 	var j;
 	var node;
@@ -106,7 +106,7 @@ NetworkEncodings.encodeGDF = function(network, nodesPropertiesNames, relationsPr
 		}
 	}
 	
-	code+="\nedgedef>id0,id1"+(relationsPropertiesNames.length>0?",":"")+relationsPropertiesNames.getConcatenated(",");
+	code+="\nedgedef>id0,id1"+(relationsPropertiesNames.length>0?",":"")+relationsPropertiesNames.join(",");
 	var relation;
 	for(i=0;network.relationList[i]!=null;i++){
 		relation = network.relationList[i];

@@ -130,10 +130,11 @@ include('../frameworks2/Tools/utils/code/ClassUtils.js');
 include('../frameworks2/Tools/utils/strings/ConsoleTools.js');
 include('../frameworks2/Tools/utils/strings/FastHtml.js');
 include('../frameworks2/Tools/utils/strings/JSONUtils.js');
-//include('../frameworks2/Tools/utils/strings/MD5.js');
+include('../frameworks2/Tools/utils/strings/MD5.js'); //used for StructureLocalStorage y StructureLichenStorage
 include('../frameworks2/Tools/utils/strings/StringUtils.js');
 //include('../frameworks2/Tools/utils/strings/SVGdecode.js');
 include('../frameworks2/Tools/utils/system/Navigator.js');
+
 
 ////visualization
 include('../frameworks2/visualization/geo/CountryListDraw.js');
