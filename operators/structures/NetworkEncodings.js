@@ -1,5 +1,8 @@
 function NetworkEncodings(){};
 
+
+//////////////GDF
+
 /**
  * decodes a GDF string and builds a network
  * @param  {String} gdfCode
@@ -72,8 +75,6 @@ NetworkEncodings.decodeGDF = function(gdfCode){
 	return network;
 }
 
-
-
 /**
  * encodes a network in formatt GDF, more info: https://gephi.org/users/supported-graph-formats/gml-format/
  * @param  {Network} network
@@ -123,6 +124,9 @@ NetworkEncodings.encodeGDF = function(network, nodesPropertiesNames, relationsPr
 	
 	return code;
 }
+
+
+//////////////GML
 
 /**
  * decodes a GML file into a network
@@ -326,6 +330,204 @@ NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPr
 	code+="\n]";
 	return code;
 }
+
+
+//////////////NoteWork
+
+NetworkEncodings.nodeNameSeparators = ['.',  '|', ':',  ' is ', ' are ', ','];
+
+/**
+ * converts a NoteWork file into a network
+ * @param  {String} code
+ * @return {Network}
+ * tags:decoding
+ */
+NetworkEncodings.decodeNoteWork = function(code){
+	code = "\n"+code;
+	
+	var i,j;
+	var line;
+	var id;
+	var name;
+	var index;
+	var index2;
+	var lines = code.split('\n');
+	var supNode = null;
+	var relation;
+	var prevLine;
+	var sep;
+	
+	var network = new Network();
+	
+	simplify = function(name){
+		name = name.toLowerCase();
+		if(name.substr(name.length-2)=='es'){
+		  name = name.substr(0, name.length-1);
+		} else if(name.charAt(name.length-1)=='s') name = name.substr(0, name.length-1);
+		return name.trim();
+	}
+	
+	for(i=0;lines[i]!=null;i++){
+		if(lines[i]==" " || lines[i]=="\t") lines[i]="";
+
+		if(lines[i].substr(0,2)=="//"){
+		  lines.splice(i, 1);
+		  i--;
+		}
+	}
+
+	//create nodes
+	
+	lines.forEach(function(line, i){
+		if(prevLine=="" && line!=""){
+
+			minIndex = 99999999;
+			index = line.indexOf(NetworkEncodings.nodeNameSeparators[0]);
+			if(index!=-1){
+				minIndex = index;
+				sep = NetworkEncodings.nodeNameSeparators[0];
+			}
+			j=1;
+			while(j<NetworkEncodings.nodeNameSeparators.length){
+				index = line.indexOf(NetworkEncodings.nodeNameSeparators[j]);
+				if(index!=-1){
+					minIndex = Math.min(index, minIndex);
+					sep = NetworkEncodings.nodeNameSeparators[j];
+				}
+				j++;
+			}
+
+			index = minIndex==99999999?-1:minIndex;
+
+			name = index==-1?line:line.substr(0, index);
+			name = name.trim();
+
+			if(name==""){
+				prevLine = line;
+				return;
+			}
+
+			id = simplify(name);
+
+			c.l('name:['+name+'], id:['+id+'], index, j', index, j);
+			
+			if(network.nodeList.getNodeById(id)==null){
+				node = new Node(id, name);
+				node.nLine = i;
+				network.addNode(node);
+				node.content = index!=-1?line.substr(index+sep.length).trim():"";
+				c.l('  content:['+node.content+']');
+			} else {
+				//?
+			}
+		}
+	
+		prevLine = line;
+	});
+	
+	
+	//create relations
+	
+	lines.forEach(function(line, i){
+		if(line!="" && prevLine!=""){
+			network.nodeList.forEach(function(node){
+				if(node.nLine>i) return;
+				supNode = node;
+			});
+		
+			if(supNode==null) return;
+			
+			line = simplify(line);
+			
+			c.l(supNode.name+'|'+line);
+			
+			network.nodeList.forEach(function(node){
+			  index = line.indexOf(node.id);
+			   if(index!=-1){
+			     c.l('  ->'+node.name);
+			     relation = new Relation(supNode.id+"_"+node.id, line.substr(0,index), supNode, node);
+			     network.addRelation(relation);
+			   }
+			});
+		}
+		prevLine = line;
+	});
+	
+	
+	//assign colors
+	
+	var text;
+	var texts;
+	var color;
+	
+	lines.forEach(function(line, i){
+	   index = line.indexOf(":");
+	   if(index!=-1){
+	     texts = line.substr(0,index).split(',');
+	     texts.forEach(function(text){
+	       color = line.substr(index+1);
+	       c.l('text:', text);
+	       c.l('color:', color);
+	       network.relationList.forEach(function(relation){
+	         if(relation.name.indexOf(text)!=-1) relation.color = color;
+	       });
+	     });
+	   }
+	});
+	
+	c.l('decodeNoteWork --> network', network);
+	
+	return network;
+}
+
+/**
+ * encodes a network into NoteWork notes
+ * @param  {Network} network
+ * 
+ * @param  {String} nodeContentSeparator separator between node name and content
+ * @param  {StringList} nodesPropertyNames properties to be encoded
+ * @param  {StringList} relationsPropertyNames relations properties to be encoded
+ * @return {String}
+ * tags:encoding
+ */
+NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesPropertyNames, relationsPropertyNames){
+	if(network==null) return;
+
+	var node, relation, other;
+	var propName;
+	var code = "";
+
+	nodeContentSeparator = nodeContentSeparator||', ';
+	nodesPropertyNames = nodesPropertyNames||[];
+	relationsPropertyNames = relationsPropertyNames||[];
+
+	network.nodeList.forEach(function(node){
+		code+=node.name;
+		if(node.content && node.content!="") code+=nodeContentSeparator+node.content;
+		code+="\n";
+
+		nodesPropertyNames.forEach(function(propName){
+			if(node[propName]!=null) code+= propName+":"+String(node[propName])+"\n";
+		});
+
+		node.toRelationList.forEach(function(relation){
+			if(relation.content && relation.content!="") code+=relation.content+" ";
+			code+=relation.node1.name+"\n";
+		});
+
+		code+="\n"
+
+	});
+
+	return code;
+}
+
+
+
+
+
+
+//////////////SYM
 
 NetworkEncodings.decodeSYM = function(symCode){
 	//c.log("/////// decodeSYM\n"+symCode+"\n/////////");

@@ -46,7 +46,6 @@ function InputTextFieldHTML(configuration){
 	this.password?this.DOMtext.setAttribute('type', 'password'):this.DOMtext.setAttribute('type', 'text');
 	this.div.setAttribute('style', 'position:absolute;top:'+this.y+'px;left:'+this.x+'px;z-index:'+this.zIndex+';');
 
-
 	if(!this.border) this.DOMtext.setAttribute('style', 'border:none');
 
 	this.div.setAttribute('rows', '1');
@@ -92,7 +91,7 @@ function InputTextFieldHTML(configuration){
 
 InputTextFieldHTML.prototype.setBorder = function(value) {
 	this.border = value;
-	this.DOMtext.setAttribute('style',  'color: '+this.textColor+'; width:'+(this.width-7)+'px;height:'+(this.height-7)+'px; font-size:'+this.fontSize+'px; border:'+(value?'yes':'none'));
+	this.DOMtext.setAttribute('style',  'border:0; color: '+this.textColor+'; width:'+(this.width-7)+'px;height:'+(this.height-7)+'px; font-size:'+this.fontSize+'px; border:'+(value?'yes':'none'));
 }
 
 InputTextFieldHTML.prototype.draw = function() {
@@ -110,8 +109,8 @@ InputTextFieldHTML.prototype.draw = function() {
 		this.DOMtext.style.background = "transparent";
 		this.DOMtext.style.resize = "none";
 		
-		this.DOMtext.setAttribute('style',  'color: '+this.textColor+'; width:'+(this.width-7)+'px;height:'+(this.height-7)+'px; font-size:'+this.fontSize+'px');
-		this.div.setAttribute('style', 'position:absolute;top:'+this.y+'px;left:'+this.x+'px;z-index:'+this.zIndex+';');
+		this.DOMtext.setAttribute('style',  'border: 0; color: '+this.textColor+'; width:'+(this.width-7)+'px;height:'+(this.height-7)+'px; font-size:'+this.fontSize+'px');
+		this.div.setAttribute('style', 'border: 0; position:absolute;top:'+this.y+'px;left:'+this.x+'px;z-index:'+this.zIndex+';');
 	}
 }
 

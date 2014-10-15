@@ -43,11 +43,12 @@ Network.prototype.addRelation=function(relation){
  	relation.node1.fromRelationList.addNode(relation);
 }
 
-Network.prototype.connect=function(node0, node1, id, weight){
+Network.prototype.connect=function(node0, node1, id, weight, content){
 	id = id || (node0.id+"_"+node1.id);
 	weight = weight || 1;
 	var relation = new Relation(id, id, node0, node1, weight);
 	this.addRelation(relation);
+	relation.content = content;
 	return relation;
 }
 

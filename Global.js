@@ -378,13 +378,15 @@ function _onWheel(e) {
 
 
 
-setStructureLocalStorage = function(object, id, comments){
-	c.l('\n\nsetStructureLocalStorage');
+////structures local storage
 
+setStructureLocalStorageWithSeed = function(object, seed, comments){
+	setStructureLocalStorage(object, MD5.hex_md5(seed), comments);
+}
+
+setStructureLocalStorage = function(object, id, comments){
 	var type = typeOf(object);
 	var code;
-
-	c.l('type', type);
 
 	switch(type){
 		case 'string':
@@ -399,53 +401,66 @@ setStructureLocalStorage = function(object, id, comments){
 			break;
 	}
 
-	//var id = MD5.hex_md5(code);
-
 	var storageObject = {
+		id:id,
 		type:type,
 		comments:comments,
+		date:new Date(),
 		code:code
 	}
 
 	var storageString = JSON.stringify(storageObject);
 
-	c.l('storageObject', storageObject);
-	c.l('id:['+id+']');
-	c.l('code.length:', code.length);
+	// c.l('storageObject', storageObject);
+	// c.l('id:['+id+']');
+	// c.l('code.length:', code.length);
 
 	localStorage.setItem(id, storageString);
-
-	//return id;
 }
 
-getStructureLocalStorage = function(id){
-	c.l('\n\ngetStructureLocalStorage, id:['+id+']');
+getStructureLocalStorageFromSeed = function(seed, returnStorageObject){
+	return getStructureLocalStorage(MD5.hex_md5(seed), returnStorageObject);
+}
 
-	var storageObject = JSON.parse(localStorage.getItem(id));
-	c.l('storageObject:', storageObject);
-	if(!storageObject) return null;
+getStructureLocalStorage = function(id, returnStorageObject){
+	returnStorageObject = returnStorageObject||false;
 
+	var item = localStorage.getItem(id);
+
+	if(item==null) return null;
+
+
+	try{
+		var storageObject = JSON.parse(item);
+	} catch(err){
+		return null;
+	}
+
+	if(storageObject.type==null && storageObject.code==null) return null;
+	
 	var type = storageObject.type;
 	var code = storageObject.code;
 	var object;
 
-	c.l('type', type);
-	
 	switch(type){
 		case 'string':
 			object = code;
 			break;
 		case 'Network':
-			c.l('ap');
 			object = NetworkEncodings.decodeGDF(code);
-			c.l('bp');
 			break;
 		case 'object':
 			object = JSON.parse(code);
 			break;
 	}
 
-	c.l('.. object:', object);
+	if(returnStorageObject){
+		storageObject.object = object;
+		storageObject.size = storageObject.code.length;
+		storageObject.date = new Date(storageObject.date);
+		
+		return storageObject;
+	}
 
 	return object;
 }
