@@ -189,7 +189,17 @@ TableEncodings.ObjectToTable = function(object, fields){
 			result[f].push( row[fields[f]]);
 		}
 	};
-	return result;
+
+	// Improve columns
+	for (var i = 0; i < result.length; i++) {
+		result[i] = result[i].getImproved()
+	}
+
+	// Improve table
+	result = result.getImproved();
+
+	// Return best possible
+	return result; 
 }
 
 
@@ -198,11 +208,11 @@ TableEncodings.ObjectToTable = function(object, fields){
  * @param {Object} table to be converted
  * 
  * @param {List} list of field names to include (by default will take all from table)
- * @return {Array} resulting Array of objects
+ * @return {Object} containing list of rows from input Table
  * tags:decoder
  */
  // To-Do: should return a List instead of Array?
-TableEncodings.TableToObject = function(table, fields){
+TableEncodings.TableToObject = function(table, fields ){
 	// If no field names supplied, take them from first element
 	if( !fields )
 	{
@@ -217,10 +227,7 @@ TableEncodings.TableToObject = function(table, fields){
 		}
 		result.push(row);
 	};
-	if( result.length == 1 )
-		return result[0];
-	else
-		return result;
+	return { array:result };
 }
 // Tests ObjectToTable / TableToObject
 /*
