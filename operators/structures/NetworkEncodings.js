@@ -480,8 +480,11 @@ NetworkEncodings.decodeNoteWork = function(code){
 			}
 			if(lines){
 				lines.slice(1).forEach(function(line, i){
+
 					index = line.indexOf(':');
 					if(index!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){
+						c.l('  more colors!');
+						
 						colorLines.push(line);
 
 						colorSegments[nLineParagraph + i] = {
