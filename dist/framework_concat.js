@@ -8383,6 +8383,7 @@ ListOperators.getInformationGainAnalysis = function(feature, supervised){
 }
 
 
+function TableConversions(){};
 
 /**
  * Convert an object (or more typically an Array of objects) into a Table
