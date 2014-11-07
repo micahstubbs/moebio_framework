@@ -8383,6 +8383,143 @@ ListOperators.getInformationGainAnalysis = function(feature, supervised){
 }
 
 
+
+/**
+ * Convert an object (or more typically an Array of objects) into a Table
+ * @param {Object} object or array of objects 
+ * 
+ * @param {List} list of field names to include (by default will take all from first element in array of objects)
+ * @return {Table} resulting Table
+ * tags:decoder
+ */
+TableConversions.ObjectToTable = function(object, fields){
+	// Formats:
+	// 1: normal list of objects
+	// 2: Object with single property, containing normal list of obejcts
+	// 3: Object as CSV (each property represents a column)
+	var format;	
+
+	// If it's an array, then it's format 1
+	if( Array.isArray(object) ){  
+		format = 1;
+		// If not field names supplied, get them from first element
+		if( !fields )
+		{
+			fields = [];
+			for( var p in object[0] ){
+				fields.push( p );
+			}
+		}
+	// Else (not array), it's an object
+	}else{
+		// Check how many properties the object has
+		var properties = [];
+		for( var p in object ){
+			properties.push( p );
+		}
+
+		// If it has only one, and it's an array, it's foramt 2, so assume it's just a capsule
+		// and extract the array as format 1
+		if( properties.length == 1 && Array.isArray( object[properties[0]] ) )
+		{
+			format = 1;
+			object = object[properties[0]];
+
+			// If not field names supplied, get them from first element
+			if( !fields )
+			{
+				fields = [];
+				for( var p in object[0] ){
+					fields.push( p );
+				}
+			}
+		}else{
+			// Finally, if the object has many properties, we assume it's a csv encoded as JSON 
+			// ( each property of the object represents a column of the CSV )
+			format = 3;
+
+			// If not fields supplied, use all properties
+			if( !fields )
+				fields = properties;
+		}
+	}
+
+
+	// Create table and columns
+	var result = new Table();
+	for (var i = 0; i < fields.length; i++) {
+		var fieldName = fields[i];
+		var column = new List();
+		result[i] = column;
+		column.name = fieldName;
+	};
+
+	// Fill the table
+	if( format == 1)
+	{
+		for (var i = 0; i < object.length; i++) {
+			var row = object[i];
+			for( var f=0; f<fields.length; f++ ){
+				result[f].push( row[fields[f]]);
+			}
+		};
+	}else{
+		for( var f=0; f<fields.length; f++ ){
+			var column = object[ fields[f] ];
+			for (var i = 0; i < column.length; i++) {
+				result[f].push( column[i] );
+			}
+		};
+	}
+
+	// Improve columns
+	for (var i = 0; i < result.length; i++) {
+		result[i] = result[i].getImproved()
+	}
+
+	// Improve table
+	result = result.getImproved();
+
+	// Return best possible
+	return result;  
+}
+
+
+
+/**
+ * Convert a Table into an Object or Array of objects
+ * @param {Object} table to be converted
+ * 
+ * @param {List} list of field names to include (by default will take all from table)
+ * @return {Object} containing list of rows from input Table
+ * tags:decoder
+ */
+ // To-Do: should return a List instead of Array?
+TableConversions.TableToObject = function(table, fields ){
+	// If no field names supplied, take them from first element
+	if( !fields )
+	{
+		fields = table.getNames()
+	}
+	var result = [];
+	for (var i = 0; i < table[0].length; i++) {
+		var row = {};
+		for( var f=0; f<fields.length; f++ )
+		{
+			row[fields[f]] = table[f][i];
+		}
+		result.push(row);
+	};
+	return { array:result };
+}
+// Tests ObjectToTable / TableToObject
+/*
+var input = [ {name:"dani", age:36, other:"eee"}, {name:"alejandro", age:34}, {name:"anna", age:37} ];
+var table = TableEncodings.ObjectToTable( input );
+console.log( "ObjectToTable: ", table );
+var obj = TableEncodings.TableToObject(table);
+console.log( "ObjectToTable INVERSE: ", obj );
+*/
 function TableEncodings(){};
 
 TableEncodings.ENTER = String.fromCharCode(13);
@@ -8538,91 +8675,7 @@ TableEncodings.TableToCSV=function(table, separator, namesAsHeaders){
 
 
 
-/**
- * Convert an object (or more typically an Array of objects) into a Table
- * @param {Object} object or array of objects 
- * 
- * @param {List} list of field names to include (by default will take all from first element in array of objects)
- * @return {Table} resulting Table
- * tags:decoder
- */
-TableEncodings.ObjectToTable = function(object, fields){
-	// Make sure we have an array to iterate
-	if( !Array.isArray(object) )
-		object = [object];
-	// If no field names supplied, take them from first element
-	if( !fields )
-	{
-		fields = [];
-		for( var p in object[0] ){
-			fields.push( p );
-		}
-	}
-	// Create table and columns
-	var result = new Table();
-	for (var i = 0; i < fields.length; i++) {
-		var fieldName = fields[i];
-		var column = new List();
-		result[i] = column;
-		column.name = fieldName;
-	};
 
-	// Fill the table
-	for (var i = 0; i < object.length; i++) {
-		var row = object[i];
-		for( var f=0; f<fields.length; f++ ){
-			result[f].push( row[fields[f]]);
-		}
-	};
-
-	// Improve columns
-	for (var i = 0; i < result.length; i++) {
-		result[i] = result[i].getImproved()
-	}
-
-	// Improve table
-	result = result.getImproved();
-
-	// Return best possible
-	return result; 
-}
-
-
-
-/**
- * Convert a Table into an Object or Array of objects
- * @param {Object} table to be converted
- * 
- * @param {List} list of field names to include (by default will take all from table)
- * @return {Object} containing list of rows from input Table
- * tags:decoder
- */
- // To-Do: should return a List instead of Array?
-TableEncodings.TableToObject = function(table, fields ){
-	// If no field names supplied, take them from first element
-	if( !fields )
-	{
-		fields = table.getNames()
-	}
-	var result = [];
-	for (var i = 0; i < table[0].length; i++) {
-		var row = {};
-		for( var f=0; f<fields.length; f++ )
-		{
-			row[fields[f]] = table[f][i];
-		}
-		result.push(row);
-	};
-	return { array:result };
-}
-// Tests ObjectToTable / TableToObject
-/*
-var input = [ {name:"dani", age:36, other:"eee"}, {name:"alejandro", age:34}, {name:"anna", age:37} ];
-var table = TableEncodings.ObjectToTable( input );
-console.log( "ObjectToTable: ", table );
-var obj = TableEncodings.TableToObject(table);
-console.log( "ObjectToTable INVERSE: ", obj );
-*/
 function TableGenerators(){};
 
 TableGenerators.createTableWithSameElement=function(nLists, nRows, element){
@@ -11714,7 +11767,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 
 	c.l('\n\n*************////////// decodeNoteWork //////////*************');
 
-	code = "\n"+code;
+	//code = "\n"+code;
 	
 	var i,j;
 	var paragraph, line, simpleLine;
@@ -11728,6 +11781,9 @@ NetworkEncodings.decodeNoteWork = function(code){
 	var prevLine;
 	var sep;
 	var colorLines = [];
+	var colorSegments = [];
+
+	var linesInfo = [];
 
 	simplify = function(name){
 		name = name.toLowerCase();
@@ -11740,57 +11796,124 @@ NetworkEncodings.decodeNoteWork = function(code){
 	
 	var network = new Network();
 
-	//remove coments and unnecesary enters and spaces
+	///////////////remove coments and unnecesary enters and spaces
 
-	lines = code.split('\n');
+	// lines = code.split('\n');
 
-	for(i=0; lines[i]!=null; i++){
-		if(lines[i]==" " || lines[i]=="  " || lines[i]=="\t") lines[i]="";
+	// for(i=0; lines[i]!=null; i++){
+	// 	if(lines[i]==" " || lines[i]=="  " || lines[i]=="\t") lines[i]="";
 
-		if(lines[i].substr(0,2)=="//"){
-		  lines.splice(i, 1);
-		  i--;
-		}
+	// 	if(lines[i].substr(0,2)=="//"){
+	// 	  lines.splice(i, 1);
+	// 	  i--;
+	// 	}
+	// }
+
+	// while(lines[0]=='\n') lines.splice(1);
+
+	// code = lines.join("\n");
+	// while(code.charAt(0)=='\n') code = code.substr(1);
+
+	// while(code.indexOf('\n\n\n')!=-1) code = code.replace(/\n\n\n/g, "\n\n");
+
+	////////////
+
+
+	// var paragraphs = code.split(/\n\n./g);
+
+	// c.l('n paragraphs =',paragraphs.length);
+
+
+
+	paragraphs = new StringList();
+	left = code;
+
+
+
+	
+
+	// if(index!=-1){
+	// 	paragraphs.push(left.substr(0, index));
+	// 	c.l('paragraph: ['+left.substr(0, index)+']');
+
+	// 	left = left.substr(index+2);
+	// 	c.l('\nleft: ['+left+']');
+
+	// 	index = left.search(/\n\n./g);
+	// }
+
+	//c.l('index:', index);
+
+
+	index = left.search(/\n\n./g);
+
+	while(index!=-1){
+		
+		paragraphs.push(left.substr(0, index));
+		//c.l('\nparagraph: ['+left.substr(0, index)+']');
+
+		left = left.substr(index+2);
+		//c.l('left: ['+left+']');
+
+		index = left.search(/\n\n./g);
 	}
 
-	while(lines[0]=='\n') lines.splice(1);
+	paragraphs.push(left);
 
-	code = lines.join("\n");
-	while(code.charAt(0)=='\n') code = code.substr(1);
-
-	while(code.indexOf('\n\n\n')!=-1) code = code.replace(/\n\n\n/g, "\n\n");
-
-	/////
+	c.l('====== paragraphs:', paragraphs);
 
 
-	var paragraphs = code.split("\n\n");
-
-	c.l('n paragraphs =',paragraphs.length);
-
+	var nLineParagraph = 0;
 
 	paragraphs.forEach(function(paragraph, i){
 		//c.l('\nparagraph:['+paragraph+']');
 
-		c.l(i);
+		c.l(i, nLineParagraph);
 
-		lines = paragraph.split('\n');
+		if(paragraph.indexOf('\n')==-1){
+			line = paragraph;
+		} else { 
+			lines = paragraph.split('\n');
+			line = lines[0];
+		}
 
-		line = lines[0];
+		c.l('line 0 paragraph:['+line+']');
 
-		if(line.indexOf(':')!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){ // color in relations
+		if(line=='\n' || line=='' || line==' ' || line=='  '){//use regex here
+			c.l('---')
+		} else if(line.indexOf('//')==0){
+			c.l('comment');
+			colorSegments[nLineParagraph] = {
+				type:'comment',
+				iStart:0,
+				iEnd:line.length
+			}
+
+		} else if(line.indexOf(':')!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){ // color in relations
 			c.l('colors!');
 			colorLines.push(line);
-			lines.slice(1).forEach(function(line){
-				index = line.indexOf(':');
-				if(index!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){
-					colorLines.push(line);
-				}
-			});
+
+			colorSegments[nLineParagraph] = {
+				type:'relation color',
+				iStart:0,
+				iEnd:line.length
+			}
+			if(lines){
+				lines.slice(1).forEach(function(line, i){
+					index = line.indexOf(':');
+					if(index!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){
+						colorLines.push(line);
+
+						colorSegments[nLineParagraph + i] = {
+							type:'relation color',
+							iStart:0,
+							iEnd:line.length
+						}
+					}
+				});
+			}
 
 		} else {
-
-			//c.l('line:['+line+']');
-
 			minIndex = 99999999;
 
 			index = line.indexOf(NetworkEncodings.nodeNameSeparators[0]);
@@ -11810,7 +11933,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 				j++;
 			}
 
-			//c.l('    index, [sep]', index+", ["+sep+"]");
+			c.l('    index, [sep]', index+", ["+sep+"]");
 
 			index = minIndex==99999999?-1:minIndex;
 
@@ -11826,25 +11949,39 @@ NetworkEncodings.decodeNoteWork = function(code){
 				
 				if(node==null){
 					node = new Node(id, name);
-					node.nLine = i;
+					node._nLine = nLineParagraph;
 					network.addNode(node);
 					node.content = index!=-1?line.substr(index+sep.length).trim():"";
 					c.l('create node, content:['+node.content+']');
 
-					node._lines = lines.slice(1);
+					node._lines = lines?lines.slice(1):new StringList();
 					//c.l('node._lines:['+node._lines+']');
+					
+					colorSegments[nLineParagraph] = {
+						type:'node name',
+						iStart:0,
+						iEnd:index==-1?line.length:index
+					}
+
 				} else {
 					c.l('[!!!!] repeated node');
-					node._lines = node._lines.concat(lines.slice(1));
+					node._lines = lines?node._lines.concat(lines.slice(1)):new StringList();
 					node.content += index!=-1?(" | " + line.substr(index+sep.length).trim()):"";
 					//c.l('node._lines:['+node._lines+']');
+					
+					colorSegments[nLineParagraph] = {
+						type:'node name repeated',
+						iStart:0,
+						iEnd:index==-1?line.length:index
+					}
 				}
 			} else {
 				c.l('? paragraph:['+paragraph+']');
 			}
-
 		}
+		c.l('+'+(lines?lines.length:1)+2+' lines');
 
+		nLineParagraph+=(lines?lines.length:1)+2;
 	});
 
 	
@@ -11856,7 +11993,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 		c.l('\nnode:', node.name);
 		//c.l('node._lines:['+node._lines+']');
 
-		node._lines.forEach(function(line){
+		node._lines.forEach(function(line, i){
 			simpleLine = simplify(line);
 			
 			network.nodeList.forEach(function(otherNode){
@@ -11865,6 +12002,12 @@ NetworkEncodings.decodeNoteWork = function(code){
 				    c.l('    relation with otherNode:'+otherNode.name);
 				    relation = new Relation(node.id+"_"+otherNode.id, line.substr(0,index), node, otherNode);
 				    network.addRelation(relation);
+
+				    colorSegments[node._nLine + i] = {
+						type:'node name in relation',
+						iStart:index,
+						iEnd:line.length
+					}
 				}
 			});
 		});
@@ -11887,111 +12030,15 @@ NetworkEncodings.decodeNoteWork = function(code){
 	    });
 	});
 	
+	network.colorSegments = colorSegments;
 
-
-	//create nodes
-	
-	// lines.forEach(function(line, i){
-	// 	if(prevLine=="" && line!=""){
-
-	// 		minIndex = 99999999;
-	// 		index = line.indexOf(NetworkEncodings.nodeNameSeparators[0]);
-	// 		if(index!=-1){
-	// 			minIndex = index;
-	// 			sep = NetworkEncodings.nodeNameSeparators[0];
-	// 		}
-	// 		j=1;
-	// 		while(j<NetworkEncodings.nodeNameSeparators.length){
-	// 			index = line.indexOf(NetworkEncodings.nodeNameSeparators[j]);
-	// 			if(index!=-1){
-	// 				minIndex = Math.min(index, minIndex);
-	// 				sep = NetworkEncodings.nodeNameSeparators[j];
-	// 			}
-	// 			j++;
-	// 		}
-
-	// 		index = minIndex==99999999?-1:minIndex;
-
-	// 		name = index==-1?line:line.substr(0, index);
-	// 		name = name.trim();
-
-	// 		if(name==""){
-	// 			prevLine = line;
-	// 			return;
-	// 		}
-
-	// 		id = simplify(name);
-
-	// 		c.l('name:['+name+'], id:['+id+'], index, j', index, j);
-			
-	// 		if(network.nodeList.getNodeById(id)==null){
-	// 			node = new Node(id, name);
-	// 			node.nLine = i;
-	// 			network.addNode(node);
-	// 			node.content = index!=-1?line.substr(index+sep.length).trim():"";
-	// 			c.l('  content:['+node.content+']');
-	// 		} else {
-	// 			//?
-	// 		}
-	// 	}
-	
-	// 	prevLine = line;
-	// });
-	
-	
-	// //create relations
-	
-	// lines.forEach(function(line, i){
-	// 	if(line!="" && prevLine!=""){
-	// 		network.nodeList.forEach(function(node){
-	// 			if(node.nLine>i) return;
-	// 			supNode = node;
-	// 		});
-		
-	// 		if(supNode==null) return;
-			
-	// 		simpleLine = simplify(line);
-			
-	// 		c.l(supNode.name+'|'+simpleLine);
-			
-	// 		network.nodeList.forEach(function(node){
-	// 		  index = simpleLine.indexOf(node.id);
-	// 		   if(index!=-1){
-	// 		     c.l('  ->'+node.name);
-	// 		     relation = new Relation(supNode.id+"_"+node.id, line.substr(0,index), supNode, node);
-	// 		     network.addRelation(relation);
-	// 		   }
-	// 		});
-	// 	}
-	// 	prevLine = line;
-	// });
-	
-	
-	// //assign colors
-	
-	// var text;
-	// var texts;
-	// var color;
-	
-	// lines.forEach(function(line, i){
-	//    index = line.indexOf(":");
-	//    if(index!=-1){
-	//      texts = line.substr(0,index).split(',');
-	//      texts.forEach(function(text){
-	//        color = line.substr(index+1);
-	//        c.l('text:', text);
-	//        c.l('color:', color);
-	//        network.relationList.forEach(function(relation){
-	//          if(relation.name.indexOf(text)!=-1) relation.color = color;
-	//        });
-	//      });
-	//    }
-	// });
-	
 	c.l('decodeNoteWork --> network', network);
+	c.l('colorSegments', colorSegments);
 
 	c.l('*************////////// decodeNoteWork //////////*************\n\n');
 	
+
+
 	return network;
 }
 
