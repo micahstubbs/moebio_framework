@@ -445,12 +445,13 @@ NetworkEncodings.decodeNoteWork = function(code){
 	var nLineParagraph = 0;
 
 	paragraphs.forEach(function(paragraph, i){
-		//c.l('\nparagraph:['+paragraph+']');
+		c.l('\n\nparagraph:['+paragraph+']');
 
 		c.l(i, nLineParagraph);
 
 		if(paragraph.indexOf('\n')==-1){
 			line = paragraph;
+			lines = null;
 		} else { 
 			lines = paragraph.split('\n');
 			line = lines[0];
@@ -558,9 +559,9 @@ NetworkEncodings.decodeNoteWork = function(code){
 				c.l('? paragraph:['+paragraph+']');
 			}
 		}
-		c.l('+'+(lines?lines.length:1)+2+' lines');
+		c.l('+'+ ( (lines?lines.length:1)+1) +' lines');
 
-		nLineParagraph+=(lines?lines.length:1)+2;
+		nLineParagraph+=(lines?lines.length:1)+1;
 	});
 
 	
@@ -582,7 +583,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 				    relation = new Relation(node.id+"_"+otherNode.id, line.substr(0,index), node, otherNode);
 				    network.addRelation(relation);
 
-				    colorSegments[node._nLine + i] = {
+				    colorSegments[node._nLine + i + 1] = {
 						type:'node name in relation',
 						iStart:index,
 						iEnd:line.length
