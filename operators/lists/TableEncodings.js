@@ -193,6 +193,7 @@ TableEncodings.ObjectToTable = function(object, fields){
 }
 
 
+
 /**
  * Convert a Table into an Object or Array of objects
  * @param {Object} table to be converted

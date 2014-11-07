@@ -63,6 +63,7 @@ include('../../frameworks2/operators/graphic/ColorOperators.js');
 include('../../frameworks2/operators/graphic/ColorScales.js');
 include('../../frameworks2/operators/lists/ListGenerators.js');
 include('../../frameworks2/operators/lists/ListOperators.js');
+include('../../frameworks2/operators/lists/TableConversions.js');
 include('../../frameworks2/operators/lists/TableEncodings.js');
 include('../../frameworks2/operators/lists/TableGenerators.js');
 include('../../frameworks2/operators/lists/TableOperators.js');
