@@ -11678,6 +11678,7 @@ NetworkEncodings._cleanLineBeginning = function(string){
 	return string;
 }
 
+
 /**
  * encodes a network in format GDF
  * @param  {Network} network
@@ -11906,7 +11907,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 					index = line.indexOf(':');
 					if(index!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){
 						c.l('  more colors!');
-						
+
 						colorLines.push(line);
 
 						colorSegments[nLineParagraph + i] = {
