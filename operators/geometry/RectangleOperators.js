@@ -150,6 +150,7 @@ RectangleOperators.quadrification = RectangleOperators.squarify; //old name
 * tags:
 */
 RectangleOperators.squarify=function(frame, weights, isNormalizedWeights, isSortedWeights){//, funcionEvaluacionnWeights:Function=null):Array{
+	if(weights==null) return;
 	if(weights.length==0) return new RectangleList();
 	if(weights.length==1) return new RectangleList(frame);
 	isNormalizedWeights=isNormalizedWeights?isNormalizedWeights:false;
