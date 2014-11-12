@@ -9,10 +9,11 @@ function NetworkConvertions(){};
  * @param  {Number} threshold minimum weight or noumber of co-occurrences to create a relation
  * @param  {Boolean} allowMultipleRelations
  * @param {Number} minRelationsInNode remove nodes with number of relations below threshold
+ * @param {StringList} stringList contents of relations
  * @return {Network}
  * tags:conversion
  */
-NetworkConvertions.TableToNetwork = function(table, numberList, threshold, allowMultipleRelations, minRelationsInNode){
+NetworkConvertions.TableToNetwork = function(table, numberList, threshold, allowMultipleRelations, minRelationsInNode, stringList){
 	if(table==null || !table.isTable || table[0]==null || table[1]==null) return;
 
 	//trace("••••••• createNetworkFromPairsTable", table);
@@ -71,6 +72,8 @@ NetworkConvertions.TableToNetwork = function(table, numberList, threshold, allow
 			relation = new Relation(name0+"_"+name1, name0+"_"+name1, node0, node1, numberList[i]);
 			network.addRelation(relation);
 		}
+		
+		if(stringList) relation.content = stringList[i];
 	}
 
 	if(minRelationsInNode){

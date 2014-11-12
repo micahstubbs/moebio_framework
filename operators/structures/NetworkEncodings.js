@@ -10,6 +10,8 @@ function NetworkEncodings(){};
  * tags:decoder
  */
 NetworkEncodings.decodeGDF = function(gdfCode){
+	if(gdfCode==null || gdfCode=="") return;
+
 	var network = new Network();
 	var lines = gdfCode.split("\n"); //TODO: split by ENTERS OUTSIDE QUOTEMARKS
 	if(lines.length==0) return null;
@@ -365,65 +367,19 @@ NetworkEncodings.decodeNoteWork = function(code){
 
 	var linesInfo = [];
 
-	simplify = function(name){
-		name = name.toLowerCase();
-		if(name.substr(name.length-2)=='es'){
-		  name = name.substr(0, name.length-1);
-		} else if(name.charAt(name.length-1)=='s') name = name.substr(0, name.length-1);
-		return name.trim();
-	}
+	// NetworkEncodings._simplifyForNoteWork = function(name){
+	// 	name = name.toLowerCase();
+	// 	if(name.substr(name.length-2)=='es'){
+	// 	  name = name.substr(0, name.length-1);
+	// 	} else if(name.charAt(name.length-1)=='s') name = name.substr(0, name.length-1);
+	// 	return name.trim();
+	// }
 
 	
 	var network = new Network();
 
-	///////////////remove coments and unnecesary enters and spaces
-
-	// lines = code.split('\n');
-
-	// for(i=0; lines[i]!=null; i++){
-	// 	if(lines[i]==" " || lines[i]=="  " || lines[i]=="\t") lines[i]="";
-
-	// 	if(lines[i].substr(0,2)=="//"){
-	// 	  lines.splice(i, 1);
-	// 	  i--;
-	// 	}
-	// }
-
-	// while(lines[0]=='\n') lines.splice(1);
-
-	// code = lines.join("\n");
-	// while(code.charAt(0)=='\n') code = code.substr(1);
-
-	// while(code.indexOf('\n\n\n')!=-1) code = code.replace(/\n\n\n/g, "\n\n");
-
-	////////////
-
-
-	// var paragraphs = code.split(/\n\n./g);
-
-	// c.l('n paragraphs =',paragraphs.length);
-
-
-
 	paragraphs = new StringList();
 	left = code;
-
-
-
-	
-
-	// if(index!=-1){
-	// 	paragraphs.push(left.substr(0, index));
-	// 	c.l('paragraph: ['+left.substr(0, index)+']');
-
-	// 	left = left.substr(index+2);
-	// 	c.l('\nleft: ['+left+']');
-
-	// 	index = left.search(/\n\n./g);
-	// }
-
-	//c.l('index:', index);
-
 
 	index = left.search(/\n\n./g);
 
@@ -525,7 +481,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 			name = name.trim();
 
 			if(name!=""){
-				id = simplify(name);
+				id = NetworkEncodings._simplifyForNoteWork(name);
 
 				c.l('name:['+name+'], id:['+id+'], index,', index, j);
 
@@ -563,6 +519,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 				c.l('? paragraph:['+paragraph+']');
 			}
 		}
+
 		c.l('+'+ ( (lines?lines.length:1)+1) +' lines');
 
 		nLineParagraph+=(lines?lines.length:1)+1;
@@ -573,24 +530,39 @@ NetworkEncodings.decodeNoteWork = function(code){
 	//
 	c.l('\n-----create relations');
 
+	var simpleLine;
+
 	network.nodeList.forEach(function(node){
 		c.l('\nnode:', node.name);
 		//c.l('node._lines:['+node._lines+']');
 
 		node._lines.forEach(function(line, i){
-			simpleLine = simplify(line);
+			simpleLine = NetworkEncodings._simplifyForNoteWork(line);
 			
 			network.nodeList.forEach(function(otherNode){
 				index = simpleLine.indexOf(otherNode.id);
-				if(index!=-1){
-				    c.l('    relation with otherNode:'+otherNode.name);
-				    relation = new Relation(node.id+"_"+otherNode.id, line.substr(0,index), node, otherNode);
-				    network.addRelation(relation);
 
-				    colorSegments[node._nLine + i + 1] = {
-						type:'node name in relation',
-						iStart:index,
-						iEnd:line.length
+				if(index!=-1){
+					
+
+					if(index == (simpleLine.length - otherNode.id.length )){
+
+					    c.l('    relation with otherNode:'+otherNode.name);
+					    id = line;
+					    relation = new Relation(line, line, node, otherNode);
+					    relation.content = line.substr(0,index);
+					    network.addRelation(relation);
+
+					    colorSegments[node._nLine + i + 1] = {
+							type:'node name in relation',
+							iStart:index,
+							iEnd:line.length
+						}
+
+					} else {
+						c.l('['+simpleLine+']');
+						c.l('['+otherNode.id+']');
+						c.l(index);
 					}
 				}
 			});
@@ -618,12 +590,17 @@ NetworkEncodings.decodeNoteWork = function(code){
 
 	c.l('decodeNoteWork --> network', network);
 	c.l('colorSegments', colorSegments);
-
 	c.l('*************////////// decodeNoteWork //////////*************\n\n');
-	
-
 
 	return network;
+}
+
+NetworkEncodings._simplifyForNoteWork = function(name){
+	name = name.toLowerCase();
+	if(name.substr(name.length-2)=='es'){
+	  name = name.substr(0, name.length-1);
+	} else if(name.charAt(name.length-1)=='s') name = name.substr(0, name.length-1);
+	return name.trim();
 }
 
 /**
@@ -642,6 +619,7 @@ NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesP
 	var node, relation, other;
 	var propName;
 	var code = "";
+	var simpNodeName;
 
 	nodeContentSeparator = nodeContentSeparator||', ';
 	nodesPropertyNames = nodesPropertyNames||[];
@@ -657,11 +635,23 @@ NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesP
 		});
 
 		node.toRelationList.forEach(function(relation){
-			if(relation.content && relation.content!="") code+=relation.content+" ";
-			code+=relation.node1.name+"\n";
+			if(relation.content && relation.content!=""){
+				code+=relation.content;
+
+				simpNodeName = NetworkEncodings._simplifyForNoteWork(relation.node1.name);
+
+				//c.l('comparing:['+NetworkEncodings._simplifyForNoteWork(relation.content).substr(-simpNodeName.length)+']['+)
+
+				if(NetworkEncodings._simplifyForNoteWork(relation.content).substr(-simpNodeName.length) != simpNodeName){
+					code+=" "+relation.node1.name;
+				}
+
+				code+="\n";
+			}
+			
 		});
 
-		code+="\n"
+		code+="\n";
 
 	});
 

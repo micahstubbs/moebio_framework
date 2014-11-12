@@ -27,6 +27,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
 	array._constructor=List;
 	
    	array.getImproved=List.prototype.getImproved;
+   	array.sameElements = List.prototype.sameElements;
    	array.getLength=List.prototype.getLength;
    	array.getTypeOfElements=List.prototype.getTypeOfElements; //TODO: redundant?
    	array.getTypes=List.prototype.getTypes;
@@ -180,6 +181,23 @@ List.prototype.getImproved=function(){//TODO: still doesn't solve tha case of a 
 		return newList;
 	}
 	return this;
+}
+
+/**
+ * compare elements with another list
+ * @param  {List} list to compare
+ * @return {Boolean} true if all elements are identical
+ * tags:
+ */
+List.prototype.sameElements=function(list){
+	if(this.length!=list.length) return false;
+
+	var i;
+	for(i=0; this[i]!=null; i++){
+		if(this[i]!=list[i]) return false;
+	}
+
+	return true;
 }
 
 /**

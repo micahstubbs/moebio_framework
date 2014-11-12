@@ -53,6 +53,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
 	array._constructor=List;
 	
    	array.getImproved=List.prototype.getImproved;
+   	array.sameElements = List.prototype.sameElements;
    	array.getLength=List.prototype.getLength;
    	array.getTypeOfElements=List.prototype.getTypeOfElements; //TODO: redundant?
    	array.getTypes=List.prototype.getTypes;
@@ -206,6 +207,23 @@ List.prototype.getImproved=function(){//TODO: still doesn't solve tha case of a 
 		return newList;
 	}
 	return this;
+}
+
+/**
+ * compare elements with another list
+ * @param  {List} list to compare
+ * @return {Boolean} true if all elements are identical
+ * tags:
+ */
+List.prototype.sameElements=function(list){
+	if(this.length!=list.length) return false;
+
+	var i;
+	for(i=0; this[i]!=null; i++){
+		if(this[i]!=list[i]) return false;
+	}
+
+	return true;
 }
 
 /**
@@ -6699,7 +6717,7 @@ RectangleOperators.packingRectangles=function(weights, packingMode, rectangle, p
 		//4: europe quadrigram
 		//5:vertical strips
 		case 0:
-			return RectangleOperators.quadrification(rectangle, weights);
+			return RectangleOperators.squarify(rectangle, weights);
 		case 1:
 			var minMax = weights.getMinMaxInterval();
 			if(minMax.min<0){
@@ -6809,26 +6827,29 @@ RectangleOperators.packingRectangles=function(weights, packingMode, rectangle, p
 	return null;
 }
 
+RectangleOperators.quadrification = RectangleOperators.squarify; //old name
+
 /**
 * Squarified algorithm as described in (http://www.win.tue.nl/~vanwijk/stm.pdf)
 * @param {Rectangle} bounds Rectangle
 * @param {NumberList} list of weights
+* 
 * @param {Boolean} weights are normalized
 * @param {Boolean} weights are sorted
-* 
 * @return {List} a list of Rectangles
+* tags:
 */
-RectangleOperators.quadrification=function(rectangle, weightList, isNormalizedWeights, isSortedWeights){//, funcionEvaluacionnWeights:Function=null):Array{
-	if(weightList.length==0) return new RectangleList();
-	if(weightList.length==1) return new RectangleList(rectangle);
+RectangleOperators.squarify=function(frame, weights, isNormalizedWeights, isSortedWeights){//, funcionEvaluacionnWeights:Function=null):Array{
+	if(weights.length==0) return new RectangleList();
+	if(weights.length==1) return new RectangleList(frame);
 	isNormalizedWeights=isNormalizedWeights?isNormalizedWeights:false;
 	isSortedWeights=isSortedWeights?isSortedWeights:false;
 	var newWeightList;
 
 	if(isNormalizedWeights){
-		newWeightList = weightList;// new NumberList(arregloPesos);
+		newWeightList = weights;// new NumberList(arregloPesos);
 	} else {
-		newWeightList = weightList.getNormalizedToSum();
+		newWeightList = weights.getNormalizedToSum();
 	}
 	
 	if(!isSortedWeights){
@@ -6836,9 +6857,9 @@ RectangleOperators.quadrification=function(rectangle, weightList, isNormalizedWe
 		newWeightList = ListOperators.sortListByNumberList(newWeightList, newWeightList);
 	}
 	//trace("RectangleOperators.squarified | ", newWeightList);
-	var area =  rectangle.width*rectangle.height;
+	var area =  frame.width*frame.height;
 	var rectangleList=new RectangleList();
-	var freeRectangle = rectangle.clone();
+	var freeRectangle = frame.clone();
 	var subWeightList;
 	var subRectangleList = new List();//RectangleList();//
 	var prevSubRectangleList;
@@ -6847,7 +6868,7 @@ RectangleOperators.quadrification=function(rectangle, weightList, isNormalizedWe
 	var index=0;
 	var subArea;
 	var freeSubRectangle = new Rectangle();
-	var nWeights = weightList.length;
+	var nWeights = weights.length;
 	var lastRectangle;
 	var isColumn;
 	if(nWeights>2){
@@ -6923,10 +6944,10 @@ RectangleOperators.quadrification=function(rectangle, weightList, isNormalizedWe
 		}
 	} else if(nWeights==2){
 		subWeightList = newWeightList.clone();
-		freeSubRectangle = rectangle.clone();
+		freeSubRectangle = frame.clone();
 		rectangleList = this.partitionRectangle(freeSubRectangle, subWeightList);
 	} else {
-		rectangleList[0] = rectangle.clone();
+		rectangleList[0] = frame.clone();
 	}
 	
 	
@@ -8391,7 +8412,7 @@ function TableConversions(){};
  * 
  * @param {List} list of field names to include (by default will take all from first element in array of objects)
  * @return {Table} resulting Table
- * tags:decoder
+ * tags:decoder,dani
  */
 TableConversions.ObjectToTable = function(object, fields){
 	// Formats:
@@ -8493,10 +8514,9 @@ TableConversions.ObjectToTable = function(object, fields){
  * 
  * @param {List} list of field names to include (by default will take all from table)
  * @return {Object} containing list of rows from input Table
- * tags:decoder
+ * tags:decoder,dani
  */
- // To-Do: should return a List instead of Array?
-TableConversions.TableToObject = function(table, fields ){
+TableConversions.TableToObject = function(table, fields ){ // To-Do: should return a List instead of Array?
 	// If no field names supplied, take them from first element
 	if( !fields )
 	{
@@ -11344,10 +11364,11 @@ function NetworkConvertions(){};
  * @param  {Number} threshold minimum weight or noumber of co-occurrences to create a relation
  * @param  {Boolean} allowMultipleRelations
  * @param {Number} minRelationsInNode remove nodes with number of relations below threshold
+ * @param {StringList} stringList contents of relations
  * @return {Network}
  * tags:conversion
  */
-NetworkConvertions.TableToNetwork = function(table, numberList, threshold, allowMultipleRelations, minRelationsInNode){
+NetworkConvertions.TableToNetwork = function(table, numberList, threshold, allowMultipleRelations, minRelationsInNode, stringList){
 	if(table==null || !table.isTable || table[0]==null || table[1]==null) return;
 
 	//trace("••••••• createNetworkFromPairsTable", table);
@@ -11406,6 +11427,8 @@ NetworkConvertions.TableToNetwork = function(table, numberList, threshold, allow
 			relation = new Relation(name0+"_"+name1, name0+"_"+name1, node0, node1, numberList[i]);
 			network.addRelation(relation);
 		}
+		
+		if(stringList) relation.content = stringList[i];
 	}
 
 	if(minRelationsInNode){
@@ -11432,6 +11455,8 @@ function NetworkEncodings(){};
  * tags:decoder
  */
 NetworkEncodings.decodeGDF = function(gdfCode){
+	if(gdfCode==null || gdfCode=="") return;
+
 	var network = new Network();
 	var lines = gdfCode.split("\n"); //TODO: split by ENTERS OUTSIDE QUOTEMARKS
 	if(lines.length==0) return null;
@@ -11787,65 +11812,19 @@ NetworkEncodings.decodeNoteWork = function(code){
 
 	var linesInfo = [];
 
-	simplify = function(name){
-		name = name.toLowerCase();
-		if(name.substr(name.length-2)=='es'){
-		  name = name.substr(0, name.length-1);
-		} else if(name.charAt(name.length-1)=='s') name = name.substr(0, name.length-1);
-		return name.trim();
-	}
+	// NetworkEncodings._simplifyForNoteWork = function(name){
+	// 	name = name.toLowerCase();
+	// 	if(name.substr(name.length-2)=='es'){
+	// 	  name = name.substr(0, name.length-1);
+	// 	} else if(name.charAt(name.length-1)=='s') name = name.substr(0, name.length-1);
+	// 	return name.trim();
+	// }
 
 	
 	var network = new Network();
 
-	///////////////remove coments and unnecesary enters and spaces
-
-	// lines = code.split('\n');
-
-	// for(i=0; lines[i]!=null; i++){
-	// 	if(lines[i]==" " || lines[i]=="  " || lines[i]=="\t") lines[i]="";
-
-	// 	if(lines[i].substr(0,2)=="//"){
-	// 	  lines.splice(i, 1);
-	// 	  i--;
-	// 	}
-	// }
-
-	// while(lines[0]=='\n') lines.splice(1);
-
-	// code = lines.join("\n");
-	// while(code.charAt(0)=='\n') code = code.substr(1);
-
-	// while(code.indexOf('\n\n\n')!=-1) code = code.replace(/\n\n\n/g, "\n\n");
-
-	////////////
-
-
-	// var paragraphs = code.split(/\n\n./g);
-
-	// c.l('n paragraphs =',paragraphs.length);
-
-
-
 	paragraphs = new StringList();
 	left = code;
-
-
-
-	
-
-	// if(index!=-1){
-	// 	paragraphs.push(left.substr(0, index));
-	// 	c.l('paragraph: ['+left.substr(0, index)+']');
-
-	// 	left = left.substr(index+2);
-	// 	c.l('\nleft: ['+left+']');
-
-	// 	index = left.search(/\n\n./g);
-	// }
-
-	//c.l('index:', index);
-
 
 	index = left.search(/\n\n./g);
 
@@ -11947,7 +11926,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 			name = name.trim();
 
 			if(name!=""){
-				id = simplify(name);
+				id = NetworkEncodings._simplifyForNoteWork(name);
 
 				c.l('name:['+name+'], id:['+id+'], index,', index, j);
 
@@ -11985,6 +11964,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 				c.l('? paragraph:['+paragraph+']');
 			}
 		}
+
 		c.l('+'+ ( (lines?lines.length:1)+1) +' lines');
 
 		nLineParagraph+=(lines?lines.length:1)+1;
@@ -11995,24 +11975,39 @@ NetworkEncodings.decodeNoteWork = function(code){
 	//
 	c.l('\n-----create relations');
 
+	var simpleLine;
+
 	network.nodeList.forEach(function(node){
 		c.l('\nnode:', node.name);
 		//c.l('node._lines:['+node._lines+']');
 
 		node._lines.forEach(function(line, i){
-			simpleLine = simplify(line);
+			simpleLine = NetworkEncodings._simplifyForNoteWork(line);
 			
 			network.nodeList.forEach(function(otherNode){
 				index = simpleLine.indexOf(otherNode.id);
-				if(index!=-1){
-				    c.l('    relation with otherNode:'+otherNode.name);
-				    relation = new Relation(node.id+"_"+otherNode.id, line.substr(0,index), node, otherNode);
-				    network.addRelation(relation);
 
-				    colorSegments[node._nLine + i + 1] = {
-						type:'node name in relation',
-						iStart:index,
-						iEnd:line.length
+				if(index!=-1){
+					
+
+					if(index == (simpleLine.length - otherNode.id.length )){
+
+					    c.l('    relation with otherNode:'+otherNode.name);
+					    id = line;
+					    relation = new Relation(line, line, node, otherNode);
+					    relation.content = line.substr(0,index);
+					    network.addRelation(relation);
+
+					    colorSegments[node._nLine + i + 1] = {
+							type:'node name in relation',
+							iStart:index,
+							iEnd:line.length
+						}
+
+					} else {
+						c.l('['+simpleLine+']');
+						c.l('['+otherNode.id+']');
+						c.l(index);
 					}
 				}
 			});
@@ -12040,12 +12035,17 @@ NetworkEncodings.decodeNoteWork = function(code){
 
 	c.l('decodeNoteWork --> network', network);
 	c.l('colorSegments', colorSegments);
-
 	c.l('*************////////// decodeNoteWork //////////*************\n\n');
-	
-
 
 	return network;
+}
+
+NetworkEncodings._simplifyForNoteWork = function(name){
+	name = name.toLowerCase();
+	if(name.substr(name.length-2)=='es'){
+	  name = name.substr(0, name.length-1);
+	} else if(name.charAt(name.length-1)=='s') name = name.substr(0, name.length-1);
+	return name.trim();
 }
 
 /**
@@ -12064,6 +12064,7 @@ NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesP
 	var node, relation, other;
 	var propName;
 	var code = "";
+	var simpNodeName;
 
 	nodeContentSeparator = nodeContentSeparator||', ';
 	nodesPropertyNames = nodesPropertyNames||[];
@@ -12079,11 +12080,23 @@ NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesP
 		});
 
 		node.toRelationList.forEach(function(relation){
-			if(relation.content && relation.content!="") code+=relation.content+" ";
-			code+=relation.node1.name+"\n";
+			if(relation.content && relation.content!=""){
+				code+=relation.content;
+
+				simpNodeName = NetworkEncodings._simplifyForNoteWork(relation.node1.name);
+
+				//c.l('comparing:['+NetworkEncodings._simplifyForNoteWork(relation.content).substr(-simpNodeName.length)+']['+)
+
+				if(NetworkEncodings._simplifyForNoteWork(relation.content).substr(-simpNodeName.length) != simpNodeName){
+					code+=" "+relation.node1.name;
+				}
+
+				code+="\n";
+			}
+			
 		});
 
-		code+="\n"
+		code+="\n";
 
 	});
 
@@ -19669,6 +19682,7 @@ TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin){
 	}
 }
 
+
 /**
  * simple treemap visualization
  * @param {Rectangle} frame
@@ -19677,11 +19691,16 @@ TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin){
  * @param {ColorList} colorList
  * @param {NumberList} weights weights of leaves
  * @param {String} textColor if not provided will be calculated to contrast node color
+ * @param {Node} externalSelectedNode node to force selection (by id)
  * @return {Node} selected node
  * tags:draw
  */
-TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
+TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, externalSelectedNode){
 	var change = frame.memory==null || frame.memory.tree!=tree || frame.memory.width!=frame.width || frame.memory.height!=frame.height || frame.memory.weights!=weights;
+
+	if(externalSelectedNode!=null) externalSelectedNode = tree.nodeList.getNodeById(externalSelectedNode.id);
+
+	var changeSelection = (externalSelectedNode!=null && (frame.memory==null || externalSelectedNode!=frame.memory.nodeSelected));
 
 	if(change){
 		var changeInTree = frame.memory!=null && frame.memory.tree!=null!=tree;
@@ -19831,7 +19850,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 	var mouseOnFrame = frame.containsPoint(mP);
 	var moving = nF-frame.memory.nFLastChange<50 || Math.pow(frame.memory.kx-kxF, 2) + Math.pow(frame.memory.ky-kyF, 2) + Math.pow(frame.memory.mx-mxF, 2) + Math.pow(frame.memory.my-myF, 2) > 0.01;
 	var captureImage = !moving && frame.memory.image==null && !mouseOnFrame;
-	var drawingImage = !moving && !mouseOnFrame && frame.memory.image!=null && !captureImage  && frame.memory.image.width>0;
+	var drawingImage = !moving && !mouseOnFrame && frame.memory.image!=null && !captureImage  && frame.memory.image.width>0 && !changeSelection;
 
 	if(drawingImage){
 		drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
@@ -19945,17 +19964,13 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 			frame.memory.focusFrame.height*=zoom;
 		}
 		if(MOUSE_PRESSED || WHEEL_CHANGE!=0){
-			//boundaries unactive until well programmed
-
-			// frame.memory.focusFrame.x = Math.min(Math.max(frame.memory.focusFrame.x, -100), frame.width-frame.memory.focusFrame.width+200);
-			// frame.memory.focusFrame.y = Math.min(Math.max(frame.memory.focusFrame.y, -100), frame.height-frame.memory.focusFrame.height+200);
-			
-			// frame.memory.focusFrame.width = Math.min(frame.memory.focusFrame.width, frame.width);
-			// frame.memory.focusFrame.height = Math.min(frame.memory.focusFrame.height, frame.height);
-
 			frame.memory.image = null;
-
 		}
+	}
+
+	if(changeSelection){
+		frame.memory.focusFrame = TreeDraw._expandRect(externalSelectedNode._outRectangle);
+		frame.memory.nodeSelected = externalSelectedNode;
 	}
 
 	if(!captureImage && !drawingImage) context.restore();

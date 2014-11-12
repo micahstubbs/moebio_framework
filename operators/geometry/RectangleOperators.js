@@ -27,7 +27,7 @@ RectangleOperators.packingRectangles=function(weights, packingMode, rectangle, p
 		//4: europe quadrigram
 		//5:vertical strips
 		case 0:
-			return RectangleOperators.quadrification(rectangle, weights);
+			return RectangleOperators.squarify(rectangle, weights);
 		case 1:
 			var minMax = weights.getMinMaxInterval();
 			if(minMax.min<0){
@@ -137,26 +137,29 @@ RectangleOperators.packingRectangles=function(weights, packingMode, rectangle, p
 	return null;
 }
 
+RectangleOperators.quadrification = RectangleOperators.squarify; //old name
+
 /**
 * Squarified algorithm as described in (http://www.win.tue.nl/~vanwijk/stm.pdf)
 * @param {Rectangle} bounds Rectangle
 * @param {NumberList} list of weights
+* 
 * @param {Boolean} weights are normalized
 * @param {Boolean} weights are sorted
-* 
 * @return {List} a list of Rectangles
+* tags:
 */
-RectangleOperators.quadrification=function(rectangle, weightList, isNormalizedWeights, isSortedWeights){//, funcionEvaluacionnWeights:Function=null):Array{
-	if(weightList.length==0) return new RectangleList();
-	if(weightList.length==1) return new RectangleList(rectangle);
+RectangleOperators.squarify=function(frame, weights, isNormalizedWeights, isSortedWeights){//, funcionEvaluacionnWeights:Function=null):Array{
+	if(weights.length==0) return new RectangleList();
+	if(weights.length==1) return new RectangleList(frame);
 	isNormalizedWeights=isNormalizedWeights?isNormalizedWeights:false;
 	isSortedWeights=isSortedWeights?isSortedWeights:false;
 	var newWeightList;
 
 	if(isNormalizedWeights){
-		newWeightList = weightList;// new NumberList(arregloPesos);
+		newWeightList = weights;// new NumberList(arregloPesos);
 	} else {
-		newWeightList = weightList.getNormalizedToSum();
+		newWeightList = weights.getNormalizedToSum();
 	}
 	
 	if(!isSortedWeights){
@@ -164,9 +167,9 @@ RectangleOperators.quadrification=function(rectangle, weightList, isNormalizedWe
 		newWeightList = ListOperators.sortListByNumberList(newWeightList, newWeightList);
 	}
 	//trace("RectangleOperators.squarified | ", newWeightList);
-	var area =  rectangle.width*rectangle.height;
+	var area =  frame.width*frame.height;
 	var rectangleList=new RectangleList();
-	var freeRectangle = rectangle.clone();
+	var freeRectangle = frame.clone();
 	var subWeightList;
 	var subRectangleList = new List();//RectangleList();//
 	var prevSubRectangleList;
@@ -175,7 +178,7 @@ RectangleOperators.quadrification=function(rectangle, weightList, isNormalizedWe
 	var index=0;
 	var subArea;
 	var freeSubRectangle = new Rectangle();
-	var nWeights = weightList.length;
+	var nWeights = weights.length;
 	var lastRectangle;
 	var isColumn;
 	if(nWeights>2){
@@ -251,10 +254,10 @@ RectangleOperators.quadrification=function(rectangle, weightList, isNormalizedWe
 		}
 	} else if(nWeights==2){
 		subWeightList = newWeightList.clone();
-		freeSubRectangle = rectangle.clone();
+		freeSubRectangle = frame.clone();
 		rectangleList = this.partitionRectangle(freeSubRectangle, subWeightList);
 	} else {
-		rectangleList[0] = rectangle.clone();
+		rectangleList[0] = frame.clone();
 	}
 	
 	

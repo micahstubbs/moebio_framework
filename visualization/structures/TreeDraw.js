@@ -35,6 +35,7 @@ TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin){
 	}
 }
 
+
 /**
  * simple treemap visualization
  * @param {Rectangle} frame
@@ -43,11 +44,16 @@ TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin){
  * @param {ColorList} colorList
  * @param {NumberList} weights weights of leaves
  * @param {String} textColor if not provided will be calculated to contrast node color
+ * @param {Node} externalSelectedNode node to force selection (by id)
  * @return {Node} selected node
  * tags:draw
  */
-TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
+TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, externalSelectedNode){
 	var change = frame.memory==null || frame.memory.tree!=tree || frame.memory.width!=frame.width || frame.memory.height!=frame.height || frame.memory.weights!=weights;
+
+	if(externalSelectedNode!=null) externalSelectedNode = tree.nodeList.getNodeById(externalSelectedNode.id);
+
+	var changeSelection = (externalSelectedNode!=null && (frame.memory==null || externalSelectedNode!=frame.memory.nodeSelected));
 
 	if(change){
 		var changeInTree = frame.memory!=null && frame.memory.tree!=null!=tree;
@@ -197,7 +203,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 	var mouseOnFrame = frame.containsPoint(mP);
 	var moving = nF-frame.memory.nFLastChange<50 || Math.pow(frame.memory.kx-kxF, 2) + Math.pow(frame.memory.ky-kyF, 2) + Math.pow(frame.memory.mx-mxF, 2) + Math.pow(frame.memory.my-myF, 2) > 0.01;
 	var captureImage = !moving && frame.memory.image==null && !mouseOnFrame;
-	var drawingImage = !moving && !mouseOnFrame && frame.memory.image!=null && !captureImage  && frame.memory.image.width>0;
+	var drawingImage = !moving && !mouseOnFrame && frame.memory.image!=null && !captureImage  && frame.memory.image.width>0 && !changeSelection;
 
 	if(drawingImage){
 		drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
@@ -311,17 +317,13 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor){
 			frame.memory.focusFrame.height*=zoom;
 		}
 		if(MOUSE_PRESSED || WHEEL_CHANGE!=0){
-			//boundaries unactive until well programmed
-
-			// frame.memory.focusFrame.x = Math.min(Math.max(frame.memory.focusFrame.x, -100), frame.width-frame.memory.focusFrame.width+200);
-			// frame.memory.focusFrame.y = Math.min(Math.max(frame.memory.focusFrame.y, -100), frame.height-frame.memory.focusFrame.height+200);
-			
-			// frame.memory.focusFrame.width = Math.min(frame.memory.focusFrame.width, frame.width);
-			// frame.memory.focusFrame.height = Math.min(frame.memory.focusFrame.height, frame.height);
-
 			frame.memory.image = null;
-
 		}
+	}
+
+	if(changeSelection){
+		frame.memory.focusFrame = TreeDraw._expandRect(externalSelectedNode._outRectangle);
+		frame.memory.nodeSelected = externalSelectedNode;
 	}
 
 	if(!captureImage && !drawingImage) context.restore();

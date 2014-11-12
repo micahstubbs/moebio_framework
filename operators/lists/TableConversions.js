@@ -6,7 +6,7 @@ function TableConversions(){};
  * 
  * @param {List} list of field names to include (by default will take all from first element in array of objects)
  * @return {Table} resulting Table
- * tags:decoder
+ * tags:decoder,dani
  */
 TableConversions.ObjectToTable = function(object, fields){
 	// Formats:
@@ -108,10 +108,9 @@ TableConversions.ObjectToTable = function(object, fields){
  * 
  * @param {List} list of field names to include (by default will take all from table)
  * @return {Object} containing list of rows from input Table
- * tags:decoder
+ * tags:decoder,dani
  */
- // To-Do: should return a List instead of Array?
-TableConversions.TableToObject = function(table, fields ){
+TableConversions.TableToObject = function(table, fields ){ // To-Do: should return a List instead of Array?
 	// If no field names supplied, take them from first element
 	if( !fields )
 	{
