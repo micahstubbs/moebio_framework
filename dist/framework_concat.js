@@ -14481,7 +14481,7 @@ fsRectM = function(x, y, width, height, margin){
 	return mY>y-margin && mY<y+height+margin && mX>x-margin && mX<x+width+margin;
 }
 
-fCircleM = function(x, y, r, margin){
+fCircleM = function(x, y, r, margin){//check if you can avoid repeat
 	margin = margin==null?0:margin;
 	context.beginPath();
 	context.arc(x, y, r, 0, TwoPi);
@@ -14693,6 +14693,7 @@ fTextRotatedM = function(text, x, y, angle, size){
   	
   	return mYT>y && mYT<y+size && mXT>x && mXT<x+context.measureText(text).width;
 }
+
 fTextW = function(text, x, y){
 	context.fillText(text, x, y);
 	return context.measureText(text).width;
@@ -14740,7 +14741,7 @@ getPixelColor = function(x, y){
 	return 'rgba('+rgba[0]+','+rgba[1]+','+rgba[2]+','+rgba[3]+')';
 }
 
-getPixelColorRGBA = function(x, y){
+getPixelColorRGBA = function(x, y){//repeated
 	return context.getImageData(x,y,1,1).data;
 }
 
@@ -20011,7 +20012,7 @@ TreeDraw._generateRectangles = function(node){
 		weights.push(node._treeMapWeight);
 	});
 	
-	var rectangles = RectangleOperators.quadrification(node._inRectangle, weights, false, false);
+	var rectangles = RectangleOperators.squarify(node._inRectangle, weights, false, false);
 
 	node.toNodeList.forEach(function(child, i){
 		child._outRectangle = TreeDraw._reduceRect(rectangles[i]);
@@ -20483,10 +20484,10 @@ var nF = 0; // number of current frame
 var MOUSE_DOWN=false; //true on the frame of mousedown event
 var MOUSE_UP=false; //true on the frame of mouseup event
 var MOUSE_UP_FAST=false; //true on the frame of mouseup event
-var WHEEL_CHANGE=0; //differnt from 0 if mousewheel (or pad) moves
+var WHEEL_CHANGE=0; //differnt from 0 if mousewheel (or pad) moves / STATE
 var NF_DOWN; //number of frame of last mousedown event
 var NF_UP; //number of frame of last mouseup event
-var MOUSE_PRESSED; //true if mouse pressed
+var MOUSE_PRESSED; //true if mouse pressed / STATE
 var mX_DOWN; // cursor x position on last mousedown event
 var mY_DOWN; // cursor x position on last mousedown event
 var mX_UP; // cursor x position on last mousedown event
@@ -20495,7 +20496,7 @@ var PREV_mX=0; // cursor x position previous frame
 var PREV_mY=0; // cursor y position previous frame
 var DX_MOUSE=0; //horizontal movement of cursor in last frame
 var DY_MOUSE=0; //vertical movement of cursor in last frame
-var MOUSE_MOVED = false; //boolean that indicates wether the mouse moved in the last frame
+var MOUSE_MOVED = false; //boolean that indicates wether the mouse moved in the last frame / STATE
 
 //var deltaWheel = 0;
 var cursorStyle = 'auto';
@@ -20594,6 +20595,7 @@ function _onMouse(e) {
 		        mX = e.layerX;
 		        mY = e.layerY;
 		    }
+		    
 		  	mP.x = mX;
 		  	mP.y = mY;
 		  	break;

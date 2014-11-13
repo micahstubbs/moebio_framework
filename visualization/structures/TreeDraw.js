@@ -341,7 +341,7 @@ TreeDraw._generateRectangles = function(node){
 		weights.push(node._treeMapWeight);
 	});
 	
-	var rectangles = RectangleOperators.quadrification(node._inRectangle, weights, false, false);
+	var rectangles = RectangleOperators.squarify(node._inRectangle, weights, false, false);
 
 	node.toNodeList.forEach(function(child, i){
 		child._outRectangle = TreeDraw._reduceRect(rectangles[i]);

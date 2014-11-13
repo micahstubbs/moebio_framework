@@ -48,10 +48,10 @@ var nF = 0; // number of current frame
 var MOUSE_DOWN=false; //true on the frame of mousedown event
 var MOUSE_UP=false; //true on the frame of mouseup event
 var MOUSE_UP_FAST=false; //true on the frame of mouseup event
-var WHEEL_CHANGE=0; //differnt from 0 if mousewheel (or pad) moves
+var WHEEL_CHANGE=0; //differnt from 0 if mousewheel (or pad) moves / STATE
 var NF_DOWN; //number of frame of last mousedown event
 var NF_UP; //number of frame of last mouseup event
-var MOUSE_PRESSED; //true if mouse pressed
+var MOUSE_PRESSED; //true if mouse pressed / STATE
 var mX_DOWN; // cursor x position on last mousedown event
 var mY_DOWN; // cursor x position on last mousedown event
 var mX_UP; // cursor x position on last mousedown event
@@ -60,7 +60,7 @@ var PREV_mX=0; // cursor x position previous frame
 var PREV_mY=0; // cursor y position previous frame
 var DX_MOUSE=0; //horizontal movement of cursor in last frame
 var DY_MOUSE=0; //vertical movement of cursor in last frame
-var MOUSE_MOVED = false; //boolean that indicates wether the mouse moved in the last frame
+var MOUSE_MOVED = false; //boolean that indicates wether the mouse moved in the last frame / STATE
 
 //var deltaWheel = 0;
 var cursorStyle = 'auto';
@@ -159,6 +159,7 @@ function _onMouse(e) {
 		        mX = e.layerX;
 		        mY = e.layerY;
 		    }
+		    
 		  	mP.x = mX;
 		  	mP.y = mY;
 		  	break;
