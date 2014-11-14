@@ -230,7 +230,7 @@ fsRectM = function(x, y, width, height, margin){
 	return mY>y-margin && mY<y+height+margin && mX>x-margin && mX<x+width+margin;
 }
 
-fCircleM = function(x, y, r, margin){
+fCircleM = function(x, y, r, margin){//check if you can avoid repeat
 	margin = margin==null?0:margin;
 	context.beginPath();
 	context.arc(x, y, r, 0, TwoPi);
@@ -442,6 +442,7 @@ fTextRotatedM = function(text, x, y, angle, size){
   	
   	return mYT>y && mYT<y+size && mXT>x && mXT<x+context.measureText(text).width;
 }
+
 fTextW = function(text, x, y){
 	context.fillText(text, x, y);
 	return context.measureText(text).width;
@@ -489,7 +490,7 @@ getPixelColor = function(x, y){
 	return 'rgba('+rgba[0]+','+rgba[1]+','+rgba[2]+','+rgba[3]+')';
 }
 
-getPixelColorRGBA = function(x, y){
+getPixelColorRGBA = function(x, y){//repeated
 	return context.getImageData(x,y,1,1).data;
 }
 
