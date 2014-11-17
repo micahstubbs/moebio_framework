@@ -31,7 +31,46 @@ ObjectOperators.booleanGate = function(boolean, object0, object1){
  * tags:
  */
 ObjectOperators.getPropertyValue = function(object, property_value){
+	if(object==null) return;
+
 	return object==null?null:object[property_value];
+}
+
+/**
+ * return a a stringList of property names
+ * @param  {Object} object
+ * @return {StringList}
+ * tags:
+ */
+ObjectOperators.getPropertiesNames = function(object){
+	if(object==null) return;
+
+	return StringList.fromArray(Object.getOwnPropertyNames(object));
+}
+
+/**
+ * return a table with a stringList of property names and a list of respective values
+ * @param  {Object} object
+ * @return {Table}
+ * tags:
+ */
+ObjectOperators.getPropertiesNamesAndValues = function(object){
+	if(object==null) return;
+
+	var table = new Table();
+	var i;
+	var value;
+
+	table[0] = ObjectOperators.getPropertiesNames(object);
+	table[1] = new List();
+
+	table[0].forEach(function(value, i){
+		table[1][i] = object[value];
+	});
+
+	table[1] = table[1].getImproved();
+
+	return table;
 }
 
 
@@ -83,7 +122,7 @@ ObjectOperators.toList = function(array){
  * tags:math
  */
 ObjectOperators.addition=function(){
-	//c.log("addition__________________________________arguments:", arguments);
+	c.log("addition__________________________________arguments:", arguments);
 	var objectType;
 	var result;
 	var i;
@@ -97,20 +136,23 @@ ObjectOperators.addition=function(){
 		}
 		return null;
 	}
+
 	if(arguments.length==2){
 		if(arguments[0]!=null && arguments[0].isList && arguments[1]!=null && arguments[1].isList){
 			return ObjectOperators._applyBinaryOperatorOnLists(arguments[0], arguments[1], ObjectOperators.addition);
 		}else if(arguments[0]!=null && arguments[0].isList){
-			//c.log('list versus object');
+			c.l('list versus object');
 			return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[0], arguments[1], ObjectOperators.addition);
 		}else if(arguments[1]!=null && arguments[1].isList){
-			return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[1], arguments[0], ObjectOperators.addition);
+			c.l('object versus list');
+			return ObjectOperators._applyBinaryOperatorOnObjectWithList(arguments[0], arguments[1], ObjectOperators.addition);
 		}
 
 		var a0 = arguments[0];
 		var a1 = arguments[1];
 		var a0Type = typeOf(a0);
 		var a1Type = typeOf(a1);
+		c.l('ObjectOperators.addition, a0Type, a1Type:['+a0Type, a1Type+']');
 		var reversed = false;
 
 		if(a1Type<a0Type && a1Type!="string" && a0Type!="string"){
@@ -122,7 +164,7 @@ ObjectOperators.addition=function(){
 		}
 
 		var pairType = a0Type+"_"+a1Type;
-		//c.log('ObjectOperators.addition, pairType:['+pairType+']');
+		c.log('ObjectOperators.addition, pairType:['+pairType+']');
 		//
 		switch(pairType){
 			case 'boolean_boolean':
@@ -450,6 +492,14 @@ ObjectOperators._applyBinaryOperatorOnListWithObject=function(list, object, oper
 	var resultList=new List();
 	for(i=0; i<list.length; i++){
 		resultList.push(ObjectOperators._applyBinaryOperator(list[i], object, operator));
+	}
+	return resultList.getImproved();
+}
+ObjectOperators._applyBinaryOperatorOnObjectWithList=function(object, list, operator){
+	var i;
+	var resultList=new List();
+	for(i=0; i<list.length; i++){
+		resultList.push(ObjectOperators._applyBinaryOperator(object, list[i], operator));
 	}
 	return resultList.getImproved();
 }

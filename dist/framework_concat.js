@@ -4448,23 +4448,32 @@ StringList.prototype.getSurrounded=function(prefix, sufix){
 	return newStringList;
 }
 
-/**
- * [!] works with regular expressions
- */
 
-/**
- * replaces a regExp by a string in each element
- * @param  {String} regExp to be find
- * @param  {String} string to be placed
- * @return {StringList}
- * tags:
- */
+//deprectaed, replaced by replaceInStrings
 StringList.prototype.replace=function(regExp, string){
 	var newStringList = new StringList();
 	newStringList.name = this.name;
 	
 	for(var i=0;this[i]!=null;i++){
 		newStringList[i]=this[i].replace(regExp, string);
+	}
+	
+	return newStringList;
+}
+
+/**
+ * replaces in each string, a sub-string by a string
+ * @param  {String} subString sub-string to be replaced in each string
+ * @param  {String} replacement string to be placed instead
+ * @return {StringList}
+ * tags:
+ */
+StringList.prototype.replaceSubStringsInStrings=function(subString, replacement){
+	var newStringList = new StringList();
+	newStringList.name = this.name;
+	
+	for(var i=0;this[i]!=null;i++){
+		newStringList[i]=StringOperators.replaceString(string, subString, replacement)
 	}
 	
 	return newStringList;
@@ -4831,7 +4840,46 @@ ObjectOperators.booleanGate = function(boolean, object0, object1){
  * tags:
  */
 ObjectOperators.getPropertyValue = function(object, property_value){
+	if(object==null) return;
+
 	return object==null?null:object[property_value];
+}
+
+/**
+ * return a a stringList of property names
+ * @param  {Object} object
+ * @return {StringList}
+ * tags:
+ */
+ObjectOperators.getPropertiesNames = function(object){
+	if(object==null) return;
+
+	return StringList.fromArray(Object.getOwnPropertyNames(object));
+}
+
+/**
+ * return a table with a stringList of property names and a list of respective values
+ * @param  {Object} object
+ * @return {Table}
+ * tags:
+ */
+ObjectOperators.getPropertiesNamesAndValues = function(object){
+	if(object==null) return;
+
+	var table = new Table();
+	var i;
+	var value;
+
+	table[0] = ObjectOperators.getPropertiesNames(object);
+	table[1] = new List();
+
+	table[0].forEach(function(value, i){
+		table[1][i] = object[value];
+	});
+
+	table[1] = table[1].getImproved();
+
+	return table;
 }
 
 
@@ -4883,7 +4931,7 @@ ObjectOperators.toList = function(array){
  * tags:math
  */
 ObjectOperators.addition=function(){
-	//c.log("addition__________________________________arguments:", arguments);
+	c.log("addition__________________________________arguments:", arguments);
 	var objectType;
 	var result;
 	var i;
@@ -4897,20 +4945,23 @@ ObjectOperators.addition=function(){
 		}
 		return null;
 	}
+
 	if(arguments.length==2){
 		if(arguments[0]!=null && arguments[0].isList && arguments[1]!=null && arguments[1].isList){
 			return ObjectOperators._applyBinaryOperatorOnLists(arguments[0], arguments[1], ObjectOperators.addition);
 		}else if(arguments[0]!=null && arguments[0].isList){
-			//c.log('list versus object');
+			c.l('list versus object');
 			return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[0], arguments[1], ObjectOperators.addition);
 		}else if(arguments[1]!=null && arguments[1].isList){
-			return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[1], arguments[0], ObjectOperators.addition);
+			c.l('object versus list');
+			return ObjectOperators._applyBinaryOperatorOnObjectWithList(arguments[0], arguments[1], ObjectOperators.addition);
 		}
 
 		var a0 = arguments[0];
 		var a1 = arguments[1];
 		var a0Type = typeOf(a0);
 		var a1Type = typeOf(a1);
+		c.l('ObjectOperators.addition, a0Type, a1Type:['+a0Type, a1Type+']');
 		var reversed = false;
 
 		if(a1Type<a0Type && a1Type!="string" && a0Type!="string"){
@@ -4922,7 +4973,7 @@ ObjectOperators.addition=function(){
 		}
 
 		var pairType = a0Type+"_"+a1Type;
-		//c.log('ObjectOperators.addition, pairType:['+pairType+']');
+		c.log('ObjectOperators.addition, pairType:['+pairType+']');
 		//
 		switch(pairType){
 			case 'boolean_boolean':
@@ -5250,6 +5301,14 @@ ObjectOperators._applyBinaryOperatorOnListWithObject=function(list, object, oper
 	var resultList=new List();
 	for(i=0; i<list.length; i++){
 		resultList.push(ObjectOperators._applyBinaryOperator(list[i], object, operator));
+	}
+	return resultList.getImproved();
+}
+ObjectOperators._applyBinaryOperatorOnObjectWithList=function(object, list, operator){
+	var i;
+	var resultList=new List();
+	for(i=0; i<list.length; i++){
+		resultList.push(ObjectOperators._applyBinaryOperator(object, list[i], operator));
 	}
 	return resultList.getImproved();
 }
@@ -10838,6 +10897,62 @@ StringOperators.split = function(string, character){
 
 
 /**
+ * replaces in a string ocurrences of a sub-string by another string (base in replace JavaScript method)
+ * @param  {String} string to be modified
+ * @param  {String} subString sub-string to be replaced
+ * @param  {String} replacement string to be placed instead
+ * @return {String}
+ * tags:
+ */
+StringOperators.replaceSubString = function(string, subString, replacement){
+	return string.replace(new RegExp(subString, "g"), replacement);
+}
+
+/**
+ * replaces in a string ocurrences of sub-strings by a string
+ * @param  {String} string to be modified
+ * @param  {StringList} subStrings sub-strings to be replaced
+ * @param  {String} replacement string to be placed instead
+ * @return {String}
+ * tags:
+ */
+StringOperators.replaceSubStringsByString = function(string, subStrings, replacement){
+	if(subStrings==null) return;
+
+	var subString;
+
+	subStrings.forEach(function(subString){
+		string = StringOperators.replaceSubString(string, subString, replacement);
+	});
+
+	return string;
+}
+
+/**
+ * replaces in a string ocurrences of sub-strings by strings (1-1)
+ * @param  {String} string to be modified
+ * @param  {StringList} subStrings sub-strings to be replaced
+ * @param  {StringList} replacements strings to be placed instead
+ * @return {String}
+ * tags:
+ */
+StringOperators.replaceSubStringsByStrings = function(string, subStrings, replacements){
+	if(subStrings==null || replacements==null) return;
+
+	var nElements = Math.min(subStrings.length, replacements.length);
+	var i;
+	var subString;
+
+	for(i=0; i<nElements; i++){
+		string = StringOperators.replaceSubString(string, subStrings[i], replacements[i]);
+	}
+
+	return string;
+}
+
+
+
+/**
  * return a substring
  * @param  {String} string
  * 
@@ -11185,6 +11300,13 @@ StringOperators.removeInitialRepeatedCharacter=function(string, character){
 	return string;
 }
 
+
+/**
+ * takes plain text from html
+ * @param  {String} html
+ * @return {String}
+ * tags:
+ */
 StringOperators.removeHtmlTags=function(html){
 	var tmp = document.createElement("DIV");
 	tmp.innerHTML = html;
@@ -12501,6 +12623,61 @@ NetworkGenerators.createNetworkFromListAndFunction = function(list, weightFuncti
 		}
 	}
 	
+	return network;
+}
+
+
+/**
+ * builds a network from a text, using previously detected words or noun phrases, and with relations built from co-occurrences in sentences
+ * relations contain as description the part of the sentence that ends with the second node name (thus being compatible with NoteWork)
+ * @param  {String} text
+ * @param  {StringList} nounPhrases words, n-grams or noun phrases
+ * @return {Network}
+ * tags:
+ */
+NetworkGenerators.createNetworkFromTextAndWords = function(text, nounPhrases){
+	if(text==null || nounPhrases==null) return null;
+
+	var network = new Network();
+
+	nounPhrases = nounPhrases.getWithoutRepetitions();
+
+	var sentences = text.split(/\.|\n/g);
+	var np, np1; 
+	var sentence;
+	var node, relation;
+	var index, index2;
+	var node0, node1;
+	var relationSentence;
+
+	nounPhrases.forEach(function(np){
+		node = new Node(np, np);
+		network.addNode(node);
+	});
+
+	sentences.forEach(function(sentence){
+		nounPhrases.forEach(function(np){
+			node0 = network.nodeList.getNodeById(np);
+			index = sentence.search(new RegExp("\\W"+np+"\\W"));
+			if(index!=-1){
+				sentenceRight = sentence.substr(index+np.length+2);
+
+				nounPhrases.forEach(function(np1){
+					index2 = sentenceRight.search(new RegExp("\\W"+np1+"\\W"));
+
+					if(index2!=-1){
+						index3 = sentence.search(new RegExp("\\W"+np1+"\\W"));
+						node1 = network.nodeList.getNodeById(np1);
+						relationSentence = sentence.substr(0, index3+np1.length+2).trim();
+						relation = new Relation(relationSentence, relationSentence, node0, node1);
+						relation.content = sentence.substr(0, index3+1).trim();
+						network.addRelation(relation);
+					}
+				});
+			}
+		});
+	});
+
 	return network;
 }
 

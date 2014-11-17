@@ -155,6 +155,61 @@ NetworkGenerators.createNetworkFromListAndFunction = function(list, weightFuncti
 	return network;
 }
 
+
+/**
+ * builds a network from a text, using previously detected words or noun phrases, and with relations built from co-occurrences in sentences
+ * relations contain as description the part of the sentence that ends with the second node name (thus being compatible with NoteWork)
+ * @param  {String} text
+ * @param  {StringList} nounPhrases words, n-grams or noun phrases
+ * @return {Network}
+ * tags:
+ */
+NetworkGenerators.createNetworkFromTextAndWords = function(text, nounPhrases){
+	if(text==null || nounPhrases==null) return null;
+
+	var network = new Network();
+
+	nounPhrases = nounPhrases.getWithoutRepetitions();
+
+	var sentences = text.split(/\.|\n/g);
+	var np, np1; 
+	var sentence;
+	var node, relation;
+	var index, index2;
+	var node0, node1;
+	var relationSentence;
+
+	nounPhrases.forEach(function(np){
+		node = new Node(np, np);
+		network.addNode(node);
+	});
+
+	sentences.forEach(function(sentence){
+		nounPhrases.forEach(function(np){
+			node0 = network.nodeList.getNodeById(np);
+			index = sentence.search(new RegExp("\\W"+np+"\\W"));
+			if(index!=-1){
+				sentenceRight = sentence.substr(index+np.length+2);
+
+				nounPhrases.forEach(function(np1){
+					index2 = sentenceRight.search(new RegExp("\\W"+np1+"\\W"));
+
+					if(index2!=-1){
+						index3 = sentence.search(new RegExp("\\W"+np1+"\\W"));
+						node1 = network.nodeList.getNodeById(np1);
+						relationSentence = sentence.substr(0, index3+np1.length+2).trim();
+						relation = new Relation(relationSentence, relationSentence, node0, node1);
+						relation.content = sentence.substr(0, index3+1).trim();
+						network.addRelation(relation);
+					}
+				});
+			}
+		});
+	});
+
+	return network;
+}
+
 //replaced by: NetworkConvertions.TableToNetwork
 // NetworkGenerators.createNetworkFromPairsTable = function(pairsTable, minPairOccurrences){//TODO: test it (never used)
 // 	var pairsStringList = pairsTable[0].toStringList().append("#").append(pairsTable[1].toStringList());

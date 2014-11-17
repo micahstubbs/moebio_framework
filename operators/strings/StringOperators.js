@@ -29,6 +29,62 @@ StringOperators.split = function(string, character){
 
 
 /**
+ * replaces in a string ocurrences of a sub-string by another string (base in replace JavaScript method)
+ * @param  {String} string to be modified
+ * @param  {String} subString sub-string to be replaced
+ * @param  {String} replacement string to be placed instead
+ * @return {String}
+ * tags:
+ */
+StringOperators.replaceSubString = function(string, subString, replacement){
+	return string.replace(new RegExp(subString, "g"), replacement);
+}
+
+/**
+ * replaces in a string ocurrences of sub-strings by a string
+ * @param  {String} string to be modified
+ * @param  {StringList} subStrings sub-strings to be replaced
+ * @param  {String} replacement string to be placed instead
+ * @return {String}
+ * tags:
+ */
+StringOperators.replaceSubStringsByString = function(string, subStrings, replacement){
+	if(subStrings==null) return;
+
+	var subString;
+
+	subStrings.forEach(function(subString){
+		string = StringOperators.replaceSubString(string, subString, replacement);
+	});
+
+	return string;
+}
+
+/**
+ * replaces in a string ocurrences of sub-strings by strings (1-1)
+ * @param  {String} string to be modified
+ * @param  {StringList} subStrings sub-strings to be replaced
+ * @param  {StringList} replacements strings to be placed instead
+ * @return {String}
+ * tags:
+ */
+StringOperators.replaceSubStringsByStrings = function(string, subStrings, replacements){
+	if(subStrings==null || replacements==null) return;
+
+	var nElements = Math.min(subStrings.length, replacements.length);
+	var i;
+	var subString;
+
+	for(i=0; i<nElements; i++){
+		string = StringOperators.replaceSubString(string, subStrings[i], replacements[i]);
+	}
+
+	return string;
+}
+
+
+
+/**
  * return a substring
  * @param  {String} string
  * 
@@ -376,6 +432,13 @@ StringOperators.removeInitialRepeatedCharacter=function(string, character){
 	return string;
 }
 
+
+/**
+ * takes plain text from html
+ * @param  {String} html
+ * @return {String}
+ * tags:
+ */
 StringOperators.removeHtmlTags=function(html){
 	var tmp = document.createElement("DIV");
 	tmp.innerHTML = html;

@@ -80,23 +80,32 @@ StringList.prototype.getSurrounded=function(prefix, sufix){
 	return newStringList;
 }
 
-/**
- * [!] works with regular expressions
- */
 
-/**
- * replaces a regExp by a string in each element
- * @param  {String} regExp to be find
- * @param  {String} string to be placed
- * @return {StringList}
- * tags:
- */
+//deprectaed, replaced by replaceInStrings
 StringList.prototype.replace=function(regExp, string){
 	var newStringList = new StringList();
 	newStringList.name = this.name;
 	
 	for(var i=0;this[i]!=null;i++){
 		newStringList[i]=this[i].replace(regExp, string);
+	}
+	
+	return newStringList;
+}
+
+/**
+ * replaces in each string, a sub-string by a string
+ * @param  {String} subString sub-string to be replaced in each string
+ * @param  {String} replacement string to be placed instead
+ * @return {StringList}
+ * tags:
+ */
+StringList.prototype.replaceSubStringsInStrings=function(subString, replacement){
+	var newStringList = new StringList();
+	newStringList.name = this.name;
+	
+	for(var i=0;this[i]!=null;i++){
+		newStringList[i]=StringOperators.replaceString(string, subString, replacement)
 	}
 	
 	return newStringList;
