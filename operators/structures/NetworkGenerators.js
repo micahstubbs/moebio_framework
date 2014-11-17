@@ -177,7 +177,9 @@ NetworkGenerators.createNetworkFromTextAndWords = function(text, nounPhrases){
 	var node, relation;
 	var index, index2;
 	var node0, node1;
-	var relationSentence;
+	//var relationSentence;
+	var regex;
+	var id;
 
 	nounPhrases.forEach(function(np){
 		node = new Node(np, np);
@@ -187,22 +189,45 @@ NetworkGenerators.createNetworkFromTextAndWords = function(text, nounPhrases){
 	sentences.forEach(function(sentence){
 		nounPhrases.forEach(function(np){
 			node0 = network.nodeList.getNodeById(np);
-			index = sentence.search(new RegExp("\\W"+np+"\\W"));
+			regex = NetworkEncodings._regexWordForNoteWork(np);
+			index = sentence.search(regex);
 			if(index!=-1){
-				sentenceRight = sentence.substr(index+np.length+2);
-
 				nounPhrases.forEach(function(np1){
-					index2 = sentenceRight.search(new RegExp("\\W"+np1+"\\W"));
-
+					regex = NetworkEncodings._regexWordForNoteWork(np1);
+					index2 = sentence.search(regex);
 					if(index2!=-1){
-						index3 = sentence.search(new RegExp("\\W"+np1+"\\W"));
 						node1 = network.nodeList.getNodeById(np1);
-						relationSentence = sentence.substr(0, index3+np1.length+2).trim();
-						relation = new Relation(relationSentence, relationSentence, node0, node1);
-						relation.content = sentence.substr(0, index3+1).trim();
-						network.addRelation(relation);
+
+						relation = network.relationList.getFirstRelationBetweenNodes(node0, node1, true);
+						if(relation==null){
+							id = node0.id+"_"+node1.id+"|"+sentence;
+							relation = new Relation(id, id, node0, node1);
+							relation.content = sentence;//.substr(0, index3+1).trim();
+							relation.paragraphs = new StringList(relation.content);
+							network.addRelation(relation);
+						} else {
+							relation.paragraphs.push(sentence);
+						}
 					}
 				});
+				
+				
+
+				// sentenceRight = sentence.substr(index+np.length+2);
+
+				// nounPhrases.forEach(function(np1){
+				// 	regex = NetworkEncodings._regexWordForNoteWork(np1);
+				// 	index2 = sentenceRight.search(regex);
+
+				// 	if(index2!=-1){
+				// 		index3 = sentence.search(regex);
+				// 		node1 = network.nodeList.getNodeById(np1);
+				// 		relationSentence = sentence.substr(0, index3+np1.length+2).trim();
+				// 		relation = new Relation(relationSentence, relationSentence, node0, node1);
+				// 		relation.content = sentence.substr(0, index3+1).trim();
+				// 		network.addRelation(relation);
+				// 	}
+				// });
 			}
 		});
 	});
