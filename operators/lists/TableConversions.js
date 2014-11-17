@@ -116,7 +116,7 @@ TableConversions.ArrayToTable = function(array, fields){
 	// type of "table". I guess the automatic fields assignment is another difference.
 
 
-	if(fields!){
+	if( !fields ){
 		var fields = Array.apply(0, Array(array[0].length)).map(function (x, y) { return y + 1; });
 		fields = fields.map(function (x) { return 'X' + x.toString(); });
 	}
