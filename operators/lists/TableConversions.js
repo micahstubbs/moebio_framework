@@ -93,11 +93,28 @@ TableConversions.ObjectToTable = function(object, fields){
 		result[i] = result[i].getImproved()
 	}
 
+	//if(result.getLengths.getMax()==1) return result.getRow(0);
+
 	// Improve table
 	result = result.getImproved();
 
 	// Return best possible
 	return result;
+}
+
+
+/**
+ * Convert an object (or more typically an Array of objects) into a Table
+ * @param {Object} object or array of objects
+ *
+ * @param {List} list of field names to include (by default will take all from first element in array of objects)
+ * @return {List} resulting list (probably a table)
+ * tags:decoder
+ */
+TableConversions.ObjectToList = function(object, fields){
+	var result = TableConversions.ObjectToTable(object, fields);
+
+	if(result.getLengths.getMax()==1) return result.getRow(0);
 }
 
 
