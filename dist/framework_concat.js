@@ -8468,8 +8468,8 @@ function TableConversions(){};
 
 /**
  * Convert an object (or more typically an Array of objects) into a Table
- * @param {Object} object or array of objects 
- * 
+ * @param {Object} object or array of objects
+ *
  * @param {List} list of field names to include (by default will take all from first element in array of objects)
  * @return {Table} resulting Table
  * tags:decoder,dani
@@ -8479,10 +8479,10 @@ TableConversions.ObjectToTable = function(object, fields){
 	// 1: normal list of objects
 	// 2: Object with single property, containing normal list of obejcts
 	// 3: Object as CSV (each property represents a column)
-	var format;	
+	var format;
 
 	// If it's an array, then it's format 1
-	if( Array.isArray(object) ){  
+	if( Array.isArray(object) ){
 		format = 1;
 		// If not field names supplied, get them from first element
 		if( !fields )
@@ -8516,7 +8516,7 @@ TableConversions.ObjectToTable = function(object, fields){
 				}
 			}
 		}else{
-			// Finally, if the object has many properties, we assume it's a csv encoded as JSON 
+			// Finally, if the object has many properties, we assume it's a csv encoded as JSON
 			// ( each property of the object represents a column of the CSV )
 			format = 3;
 
@@ -8563,15 +8563,65 @@ TableConversions.ObjectToTable = function(object, fields){
 	result = result.getImproved();
 
 	// Return best possible
-	return result;  
+	return result;
 }
 
 
+/**
+* Convert a Array of Constant-Length-Arrays into a Table
+* @param {array} array of constant-length-arrays
+*
+* @param {List} list of field names to include (by default it will generate ["X1", "X2", "X3", ...] following R's behaviour.)
+* @return {Table} resulting Table
+* tags:decoder,javier
+*/
+TableConversions.ArrayToTable = function(array, fields){
+
+	// This function can probably be merged with ObjectToTable. The only difference is that the elements on each row of the
+	// original array cannot be accessed using row[fields[f]]. An additional Format option should be added for this particular
+	// type of "table". I guess the automatic fields assignment is another difference.
+
+
+	if(fields!){
+		var fields = Array.apply(0, Array(array[0].length)).map(function (x, y) { return y + 1; });
+		fields = fields.map(function (x) { return 'X' + x.toString(); });
+	}
+
+	// Create table and columns
+
+	var result = new Table();
+	for (var i = 0; i < fields.length; i++) {
+		var fieldName = fields[i];
+		var column = new List();
+		result[i] = column;
+		column.name = fieldName;
+	}
+
+	// Fill the table
+
+	for ( var i = 0; i < array.length; i++ ) {
+		var row = array[i];
+		for( var f = 0; f < fields.length; f++ ){
+			result[f].push( row[f] ); // The main difference with ObjectToTable is here
+		}
+	}
+
+	// Improve columns
+	for (var i = 0; i < result.length; i++) {
+		result[i] = result[i].getImproved()
+	}
+
+	// Improve table
+	result = result.getImproved();
+
+	// Return best possible
+	return result;
+}
 
 /**
  * Convert a Table into an Object or Array of objects
  * @param {Object} table to be converted
- * 
+ *
  * @param {List} list of field names to include (by default will take all from table)
  * @return {Object} containing list of rows from input Table
  * tags:decoder,dani
@@ -8601,6 +8651,7 @@ console.log( "ObjectToTable: ", table );
 var obj = TableEncodings.TableToObject(table);
 console.log( "ObjectToTable INVERSE: ", obj );
 */
+
 function TableEncodings(){};
 
 TableEncodings.ENTER = String.fromCharCode(13);
