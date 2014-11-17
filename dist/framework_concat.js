@@ -12000,17 +12000,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 	var sep;
 	var colorLines = [];
 	var colorSegments = [];
-
 	var linesInfo = [];
-
-	// NetworkEncodings._simplifyForNoteWork = function(name){
-	// 	name = name.toLowerCase();
-	// 	if(name.substr(name.length-2)=='es'){
-	// 	  name = name.substr(0, name.length-1);
-	// 	} else if(name.charAt(name.length-1)=='s') name = name.substr(0, name.length-1);
-	// 	return name.trim();
-	// }
-
 	
 	var network = new Network();
 
@@ -12167,6 +12157,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 	c.l('\n-----create relations');
 
 	var simpleLine;
+	var regex;
 
 	network.nodeList.forEach(function(node){
 		c.l('\nnode:', node.name);
@@ -12176,12 +12167,13 @@ NetworkEncodings.decodeNoteWork = function(code){
 			simpleLine = NetworkEncodings._simplifyForNoteWork(line);
 			
 			network.nodeList.forEach(function(otherNode){
-				index = simpleLine.indexOf(otherNode.id);
+				regex = NetworkEncodings._regexWordForNoteWork(otherNode.id);
+
+				index = simpleLine.search(regex);
 
 				if(index!=-1){
 					
-
-					if(index == (simpleLine.length - otherNode.id.length )){
+					//if(index == (simpleLine.length - otherNode.id.length )){
 
 					    c.l('    relation with otherNode:'+otherNode.name);
 					    id = line;
@@ -12195,11 +12187,11 @@ NetworkEncodings.decodeNoteWork = function(code){
 							iEnd:line.length
 						}
 
-					} else {
-						c.l('['+simpleLine+']');
-						c.l('['+otherNode.id+']');
-						c.l(index);
-					}
+					// } else {
+					// 	c.l('['+simpleLine+']');
+					// 	c.l('['+otherNode.id+']');
+					// 	c.l(index);
+					// }
 				}
 			});
 		});
@@ -12230,13 +12222,15 @@ NetworkEncodings.decodeNoteWork = function(code){
 
 	return network;
 }
-
 NetworkEncodings._simplifyForNoteWork = function(name){
 	name = name.toLowerCase();
 	if(name.substr(name.length-2)=='es'){
 	  name = name.substr(0, name.length-1);
 	} else if(name.charAt(name.length-1)=='s') name = name.substr(0, name.length-1);
 	return name.trim();
+}
+NetworkEncodings._regexWordForNoteWork = function(word){
+	return new RegExp("\\W"+word+"|"+word+"s|"+word+"es\\W", "gi");
 }
 
 /**
@@ -12257,6 +12251,8 @@ NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesP
 	var code = "";
 	var simpNodeName;
 
+	var codedRelationsContents = new StringList();
+
 	nodeContentSeparator = nodeContentSeparator||', ';
 	nodesPropertyNames = nodesPropertyNames||[];
 	relationsPropertyNames = relationsPropertyNames||[];
@@ -12271,18 +12267,20 @@ NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesP
 		});
 
 		node.toRelationList.forEach(function(relation){
-			if(relation.content && relation.content!=""){
+			if(relation.content && relation.content!="" && codedRelationsContents.indexOf(relation.content)==-1){
 				code+=relation.content;
 
-				simpNodeName = NetworkEncodings._simplifyForNoteWork(relation.node1.name);
+				//simpNodeName = NetworkEncodings._simplifyForNoteWork(relation.node1.name);
 
 				//c.l('comparing:['+NetworkEncodings._simplifyForNoteWork(relation.content).substr(-simpNodeName.length)+']['+)
 
-				if(NetworkEncodings._simplifyForNoteWork(relation.content).substr(-simpNodeName.length) != simpNodeName){
-					code+=" "+relation.node1.name;
-				}
+				// if(NetworkEncodings._simplifyForNoteWork(relation.content).substr(-simpNodeName.length) != simpNodeName){
+				// 	code+=" "+relation.node1.name;
+				// }
 
 				code+="\n";
+
+				codedRelationsContents.push(relation.content);
 			}
 			
 		});
@@ -12716,7 +12714,9 @@ NetworkGenerators.createNetworkFromTextAndWords = function(text, nounPhrases){
 	var node, relation;
 	var index, index2;
 	var node0, node1;
-	var relationSentence;
+	//var relationSentence;
+	var regex;
+	var id;
 
 	nounPhrases.forEach(function(np){
 		node = new Node(np, np);
@@ -12726,22 +12726,45 @@ NetworkGenerators.createNetworkFromTextAndWords = function(text, nounPhrases){
 	sentences.forEach(function(sentence){
 		nounPhrases.forEach(function(np){
 			node0 = network.nodeList.getNodeById(np);
-			index = sentence.search(new RegExp("\\W"+np+"\\W"));
+			regex = NetworkEncodings._regexWordForNoteWork(np);
+			index = sentence.search(regex);
 			if(index!=-1){
-				sentenceRight = sentence.substr(index+np.length+2);
-
 				nounPhrases.forEach(function(np1){
-					index2 = sentenceRight.search(new RegExp("\\W"+np1+"\\W"));
-
+					regex = NetworkEncodings._regexWordForNoteWork(np1);
+					index2 = sentence.search(regex);
 					if(index2!=-1){
-						index3 = sentence.search(new RegExp("\\W"+np1+"\\W"));
 						node1 = network.nodeList.getNodeById(np1);
-						relationSentence = sentence.substr(0, index3+np1.length+2).trim();
-						relation = new Relation(relationSentence, relationSentence, node0, node1);
-						relation.content = sentence.substr(0, index3+1).trim();
-						network.addRelation(relation);
+
+						relation = network.relationList.getFirstRelationBetweenNodes(node0, node1, true);
+						if(relation==null){
+							id = node0.id+"_"+node1.id+"|"+sentence;
+							relation = new Relation(id, id, node0, node1);
+							relation.content = sentence;//.substr(0, index3+1).trim();
+							relation.paragraphs = new StringList(relation.content);
+							network.addRelation(relation);
+						} else {
+							relation.paragraphs.push(sentence);
+						}
 					}
 				});
+				
+				
+
+				// sentenceRight = sentence.substr(index+np.length+2);
+
+				// nounPhrases.forEach(function(np1){
+				// 	regex = NetworkEncodings._regexWordForNoteWork(np1);
+				// 	index2 = sentenceRight.search(regex);
+
+				// 	if(index2!=-1){
+				// 		index3 = sentence.search(regex);
+				// 		node1 = network.nodeList.getNodeById(np1);
+				// 		relationSentence = sentence.substr(0, index3+np1.length+2).trim();
+				// 		relation = new Relation(relationSentence, relationSentence, node0, node1);
+				// 		relation.content = sentence.substr(0, index3+1).trim();
+				// 		network.addRelation(relation);
+				// 	}
+				// });
 			}
 		});
 	});
