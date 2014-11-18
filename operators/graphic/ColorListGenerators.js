@@ -150,3 +150,49 @@ ColorListGenerators._evaluationFunction=function(numberList){ //private
 	}
 	return sum;
 }
+
+
+/**
+ * Creates a ColorList of categorical colors based on an input List. All entries with the same value will get the same color.
+ * @param {List} the list containing categorical data
+ * 
+ * @param {Number} alpha transparency
+ * @param {String} color to mix
+ * @param {Number} interpolation value (0-1) for color mix
+ * @return {ColorList} ColorList with categorical colors
+ * tags:generator
+ */
+ColorListGenerators.createCategoricalColorListForList = function( list, alpha, color, interpolate ) 
+{
+	if( !alpha )
+		alpha = 1;
+	if( !color )
+		color = "#fff";
+	if( !interpolate )
+		interpolate = 0;
+
+	list = List.fromArray( list ); 
+	var diffValues = list.getWithoutRepetitions();
+	var diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
+	diffColors = diffColors.addAlpha(alpha);
+	var colorDict = Table.fromArray( [ diffValues, diffColors ] );
+	var fullColorList = ListOperators.translateWithDictionary(list, colorDict, "NULL" );
+	return ColorList.fromArray( fullColorList ); 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

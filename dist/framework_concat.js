@@ -7285,6 +7285,53 @@ ColorListGenerators._evaluationFunction=function(numberList){ //private
 	}
 	return sum;
 }
+
+
+/**
+ * Creates a ColorList of categorical colors based on an input List. All entries with the same value will get the same color.
+ * @param {List} the list containing categorical data
+ * 
+ * @param {Number} alpha transparency
+ * @param {String} color to mix
+ * @param {Number} interpolation value (0-1) for color mix
+ * @return {ColorList} ColorList with categorical colors
+ * tags:generator
+ */
+ColorListGenerators.createCategoricalColorListForList = function( list, alpha, color, interpolate ) 
+{
+	if( !alpha )
+		alpha = 1;
+	if( !color )
+		color = "#fff";
+	if( !interpolate )
+		interpolate = 0;
+
+	list = List.fromArray( list ); 
+	var diffValues = list.getWithoutRepetitions();
+	var diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
+	diffColors = diffColors.addAlpha(alpha);
+	var colorDict = Table.fromArray( [ diffValues, diffColors ] );
+	var fullColorList = ListOperators.translateWithDictionary(list, colorDict, "NULL" );
+	return ColorList.fromArray( fullColorList ); 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
 * ColorListOperators
 * @constructor
@@ -8501,6 +8548,100 @@ ListOperators.getInformationGainAnalysis = function(feature, supervised){
 
 	return sets;
 }
+
+
+/**
+ * Segments a List and returns its elements grouped by identic value. Each list in the table is assigned a "valProperty" value which is used for sorting
+ * @param  {List} list of elements to segment
+ * @param  {Boolean} wether the results are to be sorted or not
+ * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
+ * @return {Table}
+ * tags:list,group,segment
+ */
+ListOperators.segmentElements = function(list, sortedByValue, mode ) {
+	c.l( "segmentElements");
+	if( !list )
+		return;
+	var result = ListOperators.segmentElements_Base( list, null, sortedByValue, mode );
+	return result;
+}
+
+
+/**
+ * Segments a List and returns its elements grouped by identic value. Each list in the table is assigned a "valProperty" value which is used for sorting
+ * @param  {List} list of elements to segment
+ * @param  {String} name of the property to be used for segmentation
+ * @param  {Boolean} wether the results are to be sorted or not
+ * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
+ * @return {Table}
+ * tags:list,group,segment
+ */
+ListOperators.segmentElementsByPropertyValue = function(list, propertyName, sortedByValue, mode ) {
+	c.l( "segmentElementsByPropertyValue");
+	if( !list )
+		return;
+	var result = ListOperators.segmentElements_Base( list, propertyName, sortedByValue, mode );
+	return result;
+}
+
+
+
+ListOperators.segmentElements_Base = function(list, propertyName, sortedByValue, mode) {
+	var result;
+
+	c.l( "segmentElements_Base");
+	if( !list )
+		return;
+	if( mode == undefined )
+		mode = 0;
+	var resultOb = {};
+	var resultTable = new Table();
+	var pValue, item;
+	for (var i = 0; i < list.length; i++) {
+		item = list[i];
+		pValue = propertyName == undefined ? item : item[propertyName];
+		if( resultOb[pValue] == undefined ){
+			resultOb[pValue] = new List();
+			resultOb[pValue].name = pValue;
+			resultOb[pValue].valProperty = pValue;
+			resultTable.push( resultOb[pValue] );
+		}
+		if( mode == 0)
+			resultOb[pValue].push( item );
+		else if( mode == 1)
+			resultOb[pValue].push( i );		
+	};
+
+	if( sortedByValue )
+		resultTable = resultTable.getSortedByProperty( "valProperty" );
+
+	return resultTable;
+
+}
+
+// ListOperators.segmentElementsByPropertyValue = function(list, propertyName, sortedByValue, mode) {
+// 	var resultOb = {};
+// 	var pValue;
+// 	for (var i = 0; i < list.length; i++) {
+// 		var item = list[i];
+// 		if( propertyName == undefined )
+// 			pValue = item;
+// 		else
+// 			pValue = item[propertyName];
+// 		if( resu)
+		
+// 	};
+
+// }
+
+
+
+
+
+
+
+
+
 
 
 function TableConversions(){};

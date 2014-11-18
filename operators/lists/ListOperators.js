@@ -467,3 +467,97 @@ ListOperators.getInformationGainAnalysis = function(feature, supervised){
 	return sets;
 }
 
+
+/**
+ * Segments a List and returns its elements grouped by identic value. Each list in the table is assigned a "valProperty" value which is used for sorting
+ * @param  {List} list of elements to segment
+ * @param  {Boolean} wether the results are to be sorted or not
+ * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
+ * @return {Table}
+ * tags:list,group,segment
+ */
+ListOperators.segmentElements = function(list, sortedByValue, mode ) {
+	c.l( "segmentElements");
+	if( !list )
+		return;
+	var result = ListOperators.segmentElements_Base( list, null, sortedByValue, mode );
+	return result;
+}
+
+
+/**
+ * Segments a List and returns its elements grouped by identic value. Each list in the table is assigned a "valProperty" value which is used for sorting
+ * @param  {List} list of elements to segment
+ * @param  {String} name of the property to be used for segmentation
+ * @param  {Boolean} wether the results are to be sorted or not
+ * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
+ * @return {Table}
+ * tags:list,group,segment
+ */
+ListOperators.segmentElementsByPropertyValue = function(list, propertyName, sortedByValue, mode ) {
+	c.l( "segmentElementsByPropertyValue");
+	if( !list )
+		return;
+	var result = ListOperators.segmentElements_Base( list, propertyName, sortedByValue, mode );
+	return result;
+}
+
+
+
+ListOperators.segmentElements_Base = function(list, propertyName, sortedByValue, mode) {
+	var result;
+
+	c.l( "segmentElements_Base");
+	if( !list )
+		return;
+	if( mode == undefined )
+		mode = 0;
+	var resultOb = {};
+	var resultTable = new Table();
+	var pValue, item;
+	for (var i = 0; i < list.length; i++) {
+		item = list[i];
+		pValue = propertyName == undefined ? item : item[propertyName];
+		if( resultOb[pValue] == undefined ){
+			resultOb[pValue] = new List();
+			resultOb[pValue].name = pValue;
+			resultOb[pValue].valProperty = pValue;
+			resultTable.push( resultOb[pValue] );
+		}
+		if( mode == 0)
+			resultOb[pValue].push( item );
+		else if( mode == 1)
+			resultOb[pValue].push( i );		
+	};
+
+	if( sortedByValue )
+		resultTable = resultTable.getSortedByProperty( "valProperty" );
+
+	return resultTable;
+
+}
+
+// ListOperators.segmentElementsByPropertyValue = function(list, propertyName, sortedByValue, mode) {
+// 	var resultOb = {};
+// 	var pValue;
+// 	for (var i = 0; i < list.length; i++) {
+// 		var item = list[i];
+// 		if( propertyName == undefined )
+// 			pValue = item;
+// 		else
+// 			pValue = item[propertyName];
+// 		if( resu)
+		
+// 	};
+
+// }
+
+
+
+
+
+
+
+
+
+
