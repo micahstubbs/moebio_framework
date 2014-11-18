@@ -169,28 +169,28 @@ NetworkGenerators.createNetworkFromListAndFunction = function(list, weightFuncti
 NetworkGenerators.createNetworkFromTextAndWords = function(text, nounPhrases, splitCharacters){
 	if(text==null || nounPhrases==null) return null;
 
-	splitCharacters = splitCharacters==null?"\\.|\\n":splitCharacters;
+	var np;
+	var i;
 
-	c.l('•••• createNetworkFromTextAndWords');
+	splitCharacters = splitCharacters==null?"\\.|\\n":splitCharacters;
 
 	var network = new Network();
 
-	nounPhrases = nounPhrases.getWithoutRepetitions();
 	nounPhrases = nounPhrases.getWithoutElements(new StringList("", " ", "\n"));
 
-	c.l("splitCharacters:["+splitCharacters+"]");
-	c.l("new RegExp(splitCharacters, g):["+new RegExp(splitCharacters, "g")+"]");
+	nounPhrases.forEach(function(np, i){
+		nounPhrases[i] = NetworkEncodings._simplifyForNoteWork(np);
+	});
+
+	nounPhrases = nounPhrases.getWithoutRepetitions();
 
 	var sentences = text.split(new RegExp(splitCharacters, "g"));
-	
-	c.l('n sentences: ', sentences.length);
 
-	var np, np1; 
+	var np1; 
 	var sentence;
 	var node, relation;
 	var index, index2;
 	var node0, node1;
-	//var relationSentence;
 	var regex;
 	var id;
 
@@ -199,16 +199,11 @@ NetworkGenerators.createNetworkFromTextAndWords = function(text, nounPhrases, sp
 	var nodesInSentence;
 	var maxWeight, maxNode;
 
-	//c.l('text', text);
-
 	nounPhrases.forEach(function(np){
-
-		//c.l('np:['+np+'] | NetworkEncodings._regexWordForNoteWork(np), text.match(NetworkEncodings._regexWordForNoteWork(np))', NetworkEncodings._regexWordForNoteWork(np), text.match(NetworkEncodings._regexWordForNoteWork(np)));
 		node = new Node(np, np);
 		network.addNode(node);
 		mat = text.match(NetworkEncodings._regexWordForNoteWork(np));
 		node.weight = mat==null?1:mat.length;
-		c.l(node.id, node.weight);
 	});
 
 	sentences.forEach(function(sentence){
@@ -250,10 +245,7 @@ NetworkGenerators.createNetworkFromTextAndWords = function(text, nounPhrases, sp
 				// });
 			}
 		});
-
-		c.l('nodesInSentence.length', nodesInSentence.length);
-
-		if(maxNode) c.l('MAX NODE:', maxNode.id);
+		
 
 		nodesInSentence.forEach(function(node0){
 			id = maxNode.id+"_"+node0.id+"|"+sentence;
@@ -265,11 +257,11 @@ NetworkGenerators.createNetworkFromTextAndWords = function(text, nounPhrases, sp
 		
 	});
 
+	//nested NPs (example: "health", "health consequences")
 	network.nodeList.forEach(function(node0){
 		regex = NetworkEncodings._regexWordForNoteWork(node0.id);
 		network.nodeList.forEach(function(node1){
 			if(node0!=node1 && node1.id.search(regex)!=-1){
-				c.l('contains relation', node0.id, node1.id);
 				id = node1.id+"_"+node0.id+"|contains "+node0.id;
 				relation = new Relation(id, id, node1, node0);
 				relation.content = "contains "+node0.id;
@@ -278,35 +270,5 @@ NetworkGenerators.createNetworkFromTextAndWords = function(text, nounPhrases, sp
 		});
 	});
 
-	//nested NPs (example: "health", "health consequences")
-	
-
-
 	return network;
 }
-
-//replaced by: NetworkConvertions.TableToNetwork
-// NetworkGenerators.createNetworkFromPairsTable = function(pairsTable, minPairOccurrences){//TODO: test it (never used)
-// 	var pairsStringList = pairsTable[0].toStringList().append("#").append(pairsTable[1].toStringList());
-// 	var occurrences = pairsStringList.countOccurrences();
-// 	var node0;
-// 	var node1;
-// 	var network = new Network();
-	
-// 	for(var i=0; pairsTable[0][i]!=null; i++){
-// 		if(occurrences[i]>minPairOccurrences){
-// 			node0 = network.nodeList.getNodeById(pairsTable[0][i]);
-// 			if(node0==null){
-// 				node0 = new Node(pairsTable[0][i], pairsTable[0][i]);
-// 				network.addNode(node0);
-// 			}
-// 			node1 = network.nodeList.getNodeById(pairsTable[1][i]);
-// 			if(node1==null){
-// 				node1 = new Node(pairsTable[1][i], pairsTable[1][i]);
-// 				network.addNode(node1);
-// 			}
-// 			network.addRelation(new Relation(node0.id+"_"+node1.id, node0.id+"_"+node1.id, node0, node1, occurrences[i]));
-// 		}
-// 	}
-// 	return network;
-// }

@@ -650,14 +650,6 @@ NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesP
 			if(relation.content && relation.content!="" && codedRelationsContents.indexOf(relation.content)==-1){
 				code+=relation.content;
 
-				//simpNodeName = NetworkEncodings._simplifyForNoteWork(relation.node1.name);
-
-				//c.l('comparing:['+NetworkEncodings._simplifyForNoteWork(relation.content).substr(-simpNodeName.length)+']['+)
-
-				// if(NetworkEncodings._simplifyForNoteWork(relation.content).substr(-simpNodeName.length) != simpNodeName){
-				// 	code+=" "+relation.node1.name;
-				// }
-
 				code+="\n";
 
 				codedRelationsContents.push(relation.content);
