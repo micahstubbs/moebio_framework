@@ -790,6 +790,7 @@ List.prototype.indexOfElements=function(elements){
  * @param  {String} name of element
  * @param  {Boolean} returnIndex if true returns the index of element (false by default)
  * @return {List}
+ * tags: filter
  */
 List.prototype.getFirstElementByName=function(name, returnIndex){
 	for(var i=0; this[i]!=null; i++){
