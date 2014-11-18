@@ -479,7 +479,7 @@ ListOperators.getInformationGainAnalysis = function(feature, supervised){
 ListOperators.segmentElements = function(list, sortedByValue, mode ) {
 	if( !list )
 		return;
-	var result = ListOperators.segmentElements_Base( list, null, sortedByValue, mode );
+	var result = ListOperators._segmentElements_Base( list, null, sortedByValue, mode );
 	return result;
 }
 
@@ -496,16 +496,15 @@ ListOperators.segmentElements = function(list, sortedByValue, mode ) {
 ListOperators.segmentElementsByPropertyValue = function(list, propertyName, sortedByValue, mode ) {
 	if( !list )
 		return;
-	var result = ListOperators.segmentElements_Base( list, propertyName, sortedByValue, mode );
+	var result = ListOperators._segmentElements_Base( list, propertyName, sortedByValue, mode );
 	return result;
 }
 
 
 
-ListOperators.segmentElements_Base = function(list, propertyName, sortedByValue, mode) {
+ListOperators._segmentElements_Base = function(list, propertyName, sortedByValue, mode) {
 	var result;
 
-	c.l( "segmentElements_Base");
 	if( !list )
 		return;
 	if( mode == undefined )
@@ -534,26 +533,6 @@ ListOperators.segmentElements_Base = function(list, propertyName, sortedByValue,
 	return resultTable;
 
 }
-
-// ListOperators.segmentElementsByPropertyValue = function(list, propertyName, sortedByValue, mode) {
-// 	var resultOb = {};
-// 	var pValue;
-// 	for (var i = 0; i < list.length; i++) {
-// 		var item = list[i];
-// 		if( propertyName == undefined )
-// 			pValue = item;
-// 		else
-// 			pValue = item[propertyName];
-// 		if( resu)
-		
-// 	};
-
-// }
-
-
-
-
-
 
 
 
