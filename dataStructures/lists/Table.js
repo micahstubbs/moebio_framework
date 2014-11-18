@@ -243,15 +243,25 @@ Table.prototype.getTransposed=function(firstListAsHeaders){
 }
 
 
+/**
+ * sorts the lists of the table based on a list (that could be part of the table)
+ * @param  {Object} indexOrlist list to sort the lists of the tables, or integer for the index of the list in the table to be used to sort the lists
+ * @return {Table} table with sorted lists
+ * tags:sort
+ */
+Table.prototype.sortListsByList=function(indexOrlist){//TODO: finish
+	if(indexOrlist==null) return;
+	var newTable = instantiateWithSameType(this);
+	var sortinglist = indexOrlist["isList"]?indexOrlist.clone():this[indexOrlist];
 
-Table.prototype.sortListsByList=function(list){//TODO: finish
-	switch(list.type){
-		case 'NumberList':
-			return TableOperators.sortListsByNumberList(this, list);
-			break;
-	}
-	return null;
+	this.forEach(function(list){
+		newTable.push( list.getSortedByList(sortinglist) );
+	});
+
+	return newTable;
 }
+
+
 
 ////transformative
 Table.prototype.removeRow=function(index){
