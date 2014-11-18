@@ -162,9 +162,8 @@ ColorListGenerators._evaluationFunction=function(numberList){ //private
  * @return {ColorList} ColorList with categorical colors
  * tags:generator
  */
-ColorListGenerators.createCategoricalColorListForList = function( list, alpha, color, interpolate )
+ColorListGenerators.createCategoricalColorListForList = function( list, alpha, color, interpolate ) 
 {
-	return null;
 	if( !alpha )
 		alpha = 1;
 	if( !color )
