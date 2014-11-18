@@ -242,7 +242,7 @@ TableOperators.getCountPairsMatrix = function(table){
 
 	var list0 = table[0].getWithoutRepetitions();
 	var list1 = table[1].getWithoutRepetitions();
-
+	
 	var matrix = new NumberTable(list1.length);
 
 	c.log('list0.length, list1.length', list0.length, list1.length);

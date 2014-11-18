@@ -29,6 +29,7 @@ StringList.fromArray=function(array, forceToString){
 	result.type="StringList";
 	
    	//assign methods to array:
+   	result.getLengths=StringList.prototype.getLengths;
    	result.toLowerCase=StringList.prototype.toLowerCase;
    	result.toUpperCase=StringList.prototype.toUpperCase;
    	result.append=StringList.prototype.append;
@@ -42,6 +43,20 @@ StringList.fromArray=function(array, forceToString){
 	result.clone = StringList.prototype.clone;
    	
 	return result;
+}
+
+/**
+ * overrides List.prototype.getLengths (see comments there)
+ */
+StringList.prototype.getLengths=function(){
+	var lengths = new NumberList();
+	var string;
+
+	this.forEach(function(string){
+		lengths.push(string.length);
+	});
+
+	return lengths;
 }
 
 StringList.prototype.append=function(sufix, after){

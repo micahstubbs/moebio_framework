@@ -32,6 +32,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.getTypeOfElements=List.prototype.getTypeOfElements; //TODO: redundant?
    	array.getTypes=List.prototype.getTypes;
    	array.getType=List.prototype.getType;
+   	array.getLengths=List.prototype.getLengths;
    	array.getWithoutRepetitions=List.prototype.getWithoutRepetitions;
    	array.getElementsRepetitionCount=List.prototype.getElementsRepetitionCount;
    	array.countElement=List.prototype.countElement;
@@ -209,6 +210,19 @@ List.prototype.getLength=function(){
 	return this.length
 }
 
+/**
+ * return a numberList with lists lengths (in case of a table) or strings lengths (in case of a stringList)
+ * @return {StringList}
+ * tags:
+ */
+List.prototype.getLengths=function(){
+	//overriden by different extentions of List
+	
+	return null;
+}
+
+
+
 List.prototype.getTypeOfElements=function(){
 	var typeOfElements = typeOf(this[0]);
 	for(var i=1;this[i]!=null;i++){
@@ -216,6 +230,12 @@ List.prototype.getTypeOfElements=function(){
 	}
 	return typeOfElements;
 }
+
+/**
+ * return a stringList with elemnts types
+ * @return {StringList}
+ * tags:
+ */
 List.prototype.getTypes=function(){
 	var types = new StringList();
 	for(i=0;this[i]!=null;i++){
@@ -223,6 +243,8 @@ List.prototype.getTypes=function(){
 	}
 	return types;
 }
+
+
 List.prototype.toString=function(){
 	var i;
 	var str="[";

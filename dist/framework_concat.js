@@ -58,6 +58,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.getTypeOfElements=List.prototype.getTypeOfElements; //TODO: redundant?
    	array.getTypes=List.prototype.getTypes;
    	array.getType=List.prototype.getType;
+   	array.getLengths=List.prototype.getLengths;
    	array.getWithoutRepetitions=List.prototype.getWithoutRepetitions;
    	array.getElementsRepetitionCount=List.prototype.getElementsRepetitionCount;
    	array.countElement=List.prototype.countElement;
@@ -235,6 +236,19 @@ List.prototype.getLength=function(){
 	return this.length
 }
 
+/**
+ * return a numberList with lists lengths (in case of a table) or strings lengths (in case of a stringList)
+ * @return {StringList}
+ * tags:
+ */
+List.prototype.getLengths=function(){
+	//overriden by different extentions of List
+	
+	return null;
+}
+
+
+
 List.prototype.getTypeOfElements=function(){
 	var typeOfElements = typeOf(this[0]);
 	for(var i=1;this[i]!=null;i++){
@@ -242,6 +256,12 @@ List.prototype.getTypeOfElements=function(){
 	}
 	return typeOfElements;
 }
+
+/**
+ * return a stringList with elemnts types
+ * @return {StringList}
+ * tags:
+ */
 List.prototype.getTypes=function(){
 	var types = new StringList();
 	for(i=0;this[i]!=null;i++){
@@ -249,6 +269,8 @@ List.prototype.getTypes=function(){
 	}
 	return types;
 }
+
+
 List.prototype.toString=function(){
 	var i;
 	var str="[";
@@ -2224,7 +2246,9 @@ Table.prototype.getListLength=function(index){
 
 
 
-
+/**
+ * overrides List.prototype.getLengths (see comments there)
+ */
 Table.prototype.getLengths=function(){
 	var lengths=new NumberList();
 	for(var i=0; this[i]!=null; i++){
@@ -2274,21 +2298,6 @@ Table.prototype.getSubListsByIndexes=function(indexes){
 //deprecated
 Table.prototype.getRows=function(rowsIndexes){
 	return Table.prototype.getSubListsByIndexes(indexes);
-	// var i;
-	// var table = this;
-	// var newTable = new Table();
-	// newTable.name = this.name;
-
-	// for(i=0; table[i]!=null; i++){
-	// 	newTable[i]=new List();
-	// 	rowsIndexes.forEach(function(index){
-	// 		newTable[i].push(table[i][index]);
-	// 	});
-	// 	newTable[i] = newTable[i].getImproved();
-	// 	newTable[i].name = table[i].name;
-	// }
-
-	// return newTable.getImproved();
 }
 
 Table.prototype.getWithoutRow=function(rowIndex){
@@ -2309,7 +2318,6 @@ Table.prototype.getWithoutRows=function(rowsIndexes){
 		for(j=0; this[i][j]!=null; j++){
 			if(rowsIndexes.indexOf(j)==-1) newTable[i].push(this[i][j]);
 		}
-		//newTable[i] = newTable[i];//TODO:why this?
 		newTable[i].name = this[i].name;
 	}
 	return newTable.getImproved();
@@ -2318,30 +2326,20 @@ Table.prototype.getWithoutRows=function(rowsIndexes){
 
 /**
  * sort table's lists by a list
- * @param  {Object} listOrIndex used to sort (numberList, stringList, dateList…), or index of list in the table
+ * @param  {Object} listOrIndex kist used to sort, or index of list in the table
  * 
  * @param  {Boolean} ascending (true by default)
  * @return {Table} table (of the same type)
  * tags:sort
  */
-Table.prototype.getListsSortedByList=function(listOrIndex, ascending){
+Table.prototype.getListsSortedByList=function(listOrIndex, ascending){//depracated: use sortListsByList
 	if(listOrIndex==null) return;
+	var newTable = instantiateWithSameType(this);
+	var sortinglist = listOrIndex["isList"]?listOrIndex.clone():this[listOrIndex];
 
-	ascending = ascending==null?true:ascending;
-	
-	var newTable= instantiateWithSameType(this);
-	//c.l('newTable', newTable);
-
-	var i;
-	var list = typeOf(listOrIndex)=='number'?this[listOrIndex]:listOrIndex;
-
-	newTable.name = this.name;
-
-	for(i=0; this[i]!=null; i++){
-		newTable[i]=this[i].getSortedByList(list, ascending);
-	}
-
-	//c.l('newTable', newTable);
+	this.forEach(function(list){
+		newTable.push( list.getSortedByList(sortinglist, ascending) );
+	});
 
 	return newTable;
 }
@@ -2379,14 +2377,7 @@ Table.prototype.getTransposed=function(firstListAsHeaders){
 
 
 
-Table.prototype.sortListsByList=function(list){//TODO: finish
-	switch(list.type){
-		case 'NumberList':
-			return TableOperators.sortListsByNumberList(this, list);
-			break;
-	}
-	return null;
-}
+
 
 ////transformative
 Table.prototype.removeRow=function(index){
@@ -4397,6 +4388,7 @@ StringList.fromArray=function(array, forceToString){
 	result.type="StringList";
 	
    	//assign methods to array:
+   	result.getLengths=StringList.prototype.getLengths;
    	result.toLowerCase=StringList.prototype.toLowerCase;
    	result.toUpperCase=StringList.prototype.toUpperCase;
    	result.append=StringList.prototype.append;
@@ -4410,6 +4402,20 @@ StringList.fromArray=function(array, forceToString){
 	result.clone = StringList.prototype.clone;
    	
 	return result;
+}
+
+/**
+ * overrides List.prototype.getLengths (see comments there)
+ */
+StringList.prototype.getLengths=function(){
+	var lengths = new NumberList();
+	var string;
+
+	this.forEach(function(string){
+		lengths.push(string.length);
+	});
+
+	return lengths;
 }
 
 StringList.prototype.append=function(sufix, after){
@@ -7246,6 +7252,53 @@ ColorListGenerators._evaluationFunction=function(numberList){ //private
 	}
 	return sum;
 }
+
+
+/**
+ * Creates a ColorList of categorical colors based on an input List. All entries with the same value will get the same color.
+ * @param {List} the list containing categorical data
+ * 
+ * @param {Number} alpha transparency
+ * @param {String} color to mix
+ * @param {Number} interpolation value (0-1) for color mix
+ * @return {ColorList} ColorList with categorical colors
+ * tags:generator
+ */
+ColorListGenerators.createCategoricalColorListForList = function( list, alpha, color, interpolate ) 
+{
+	if( !alpha )
+		alpha = 1;
+	if( !color )
+		color = "#fff";
+	if( !interpolate )
+		interpolate = 0;
+
+	list = List.fromArray( list ); 
+	var diffValues = list.getWithoutRepetitions();
+	var diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
+	diffColors = diffColors.addAlpha(alpha);
+	var colorDict = Table.fromArray( [ diffValues, diffColors ] );
+	var fullColorList = ListOperators.translateWithDictionary(list, colorDict, "NULL" );
+	return ColorList.fromArray( fullColorList ); 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
 * ColorListOperators
 * @constructor
@@ -8464,6 +8517,77 @@ ListOperators.getInformationGainAnalysis = function(feature, supervised){
 }
 
 
+/**
+ * Segments a List and returns its elements grouped by identic value. Each list in the table is assigned a "valProperty" value which is used for sorting
+ * @param  {List} list of elements to segment
+ * @param  {Boolean} wether the results are to be sorted or not
+ * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
+ * @return {Table}
+ * tags:dani
+ */
+ListOperators.segmentElements = function(list, sortedByValue, mode ) {
+	if( !list )
+		return;
+	var result = ListOperators._segmentElements_Base( list, null, sortedByValue, mode );
+	return result;
+}
+
+
+/**
+ * Segments a List and returns its elements grouped by identic value. Each list in the table is assigned a "valProperty" value which is used for sorting
+ * @param  {List} list of elements to segment
+ * @param  {String} name of the property to be used for segmentation
+ * @param  {Boolean} wether the results are to be sorted or not
+ * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
+ * @return {Table}
+ * tags:dani
+ */
+ListOperators.segmentElementsByPropertyValue = function(list, propertyName, sortedByValue, mode ) {
+	if( !list )
+		return;
+	var result = ListOperators._segmentElements_Base( list, propertyName, sortedByValue, mode );
+	return result;
+}
+
+
+
+ListOperators._segmentElements_Base = function(list, propertyName, sortedByValue, mode) {
+	var result;
+
+	if( !list )
+		return;
+	if( mode == undefined )
+		mode = 0;
+	var resultOb = {};
+	var resultTable = new Table();
+	var pValue, item;
+	for (var i = 0; i < list.length; i++) {
+		item = list[i];
+		pValue = propertyName == undefined ? item : item[propertyName];
+		if( resultOb[pValue] == undefined ){
+			resultOb[pValue] = new List();
+			resultOb[pValue].name = pValue;
+			resultOb[pValue].valProperty = pValue;
+			resultTable.push( resultOb[pValue] );
+		}
+		if( mode == 0)
+			resultOb[pValue].push( item );
+		else if( mode == 1)
+			resultOb[pValue].push( i );		
+	};
+
+	if( sortedByValue )
+		resultTable = resultTable.getSortedByProperty( "valProperty" );
+
+	return resultTable;
+
+}
+
+
+
+
+
+
 function TableConversions(){};
 
 /**
@@ -9078,7 +9202,7 @@ TableOperators.getCountPairsMatrix = function(table){
 
 	var list0 = table[0].getWithoutRepetitions();
 	var list1 = table[1].getWithoutRepetitions();
-
+	
 	var matrix = new NumberTable(list1.length);
 
 	c.log('list0.length, list1.length', list0.length, list1.length);
@@ -11983,13 +12107,13 @@ NetworkEncodings.nodeNameSeparators = ['.',  '|', ':',  ' is ', ' are ', ','];
  */
 NetworkEncodings.decodeNoteWork = function(code){
 
-	c.l('\n\n*************////////// decodeNoteWork //////////*************');
+	//c.l('\n\n*************////////// decodeNoteWork //////////*************');
 
 	//code = "\n"+code;
 	
 	var i,j;
 	var paragraph, line, simpleLine;
-	var id;
+	var id,id2;
 	var name;
 	var index, index2, minIndex;
 	var lines;
@@ -12001,6 +12125,8 @@ NetworkEncodings.decodeNoteWork = function(code){
 	var colorLines = [];
 	var colorSegments = [];
 	var linesInfo = [];
+	var simpleLine;
+	var regex;
 	
 	var network = new Network();
 
@@ -12012,25 +12138,18 @@ NetworkEncodings.decodeNoteWork = function(code){
 	while(index!=-1){
 		
 		paragraphs.push(left.substr(0, index));
-		//c.l('\nparagraph: ['+left.substr(0, index)+']');
 
 		left = left.substr(index+2);
-		//c.l('left: ['+left+']');
 
 		index = left.search(/\n\n./g);
 	}
 
 	paragraphs.push(left);
 
-	c.l('====== paragraphs:', paragraphs);
-
 
 	var nLineParagraph = 0;
 
 	paragraphs.forEach(function(paragraph, i){
-		c.l('\n\nparagraph:['+paragraph+']');
-
-		c.l(i, nLineParagraph);
 
 		if(paragraph.indexOf('\n')==-1){
 			line = paragraph;
@@ -12040,20 +12159,18 @@ NetworkEncodings.decodeNoteWork = function(code){
 			line = lines[0];
 		}
 
-		c.l('line 0 paragraph:['+line+']');
 
 		if(line=='\n' || line=='' || line==' ' || line=='  '){//use regex here
-			c.l('---')
+			
 		} else if(line.indexOf('//')==0){
-			c.l('comment');
+			
 			colorSegments[nLineParagraph] = {
 				type:'comment',
 				iStart:0,
 				iEnd:line.length
 			}
 
-		} else if(line.indexOf(':')!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){ // color in relations
-			c.l('colors!');
+		} else if(line.indexOf(':')!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){// color in relations
 			colorLines.push(line);
 
 			colorSegments[nLineParagraph] = {
@@ -12066,7 +12183,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 
 					index = line.indexOf(':');
 					if(index!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){
-						c.l('  more colors!');
+						//c.l('  more colors!');
 
 						colorLines.push(line);
 
@@ -12079,10 +12196,11 @@ NetworkEncodings.decodeNoteWork = function(code){
 				});
 			}
 
-		} else {
+		} else {//node
 			minIndex = 99999999;
 
 			index = line.indexOf(NetworkEncodings.nodeNameSeparators[0]);
+
 			if(index!=-1){
 				minIndex = index;
 				sep = NetworkEncodings.nodeNameSeparators[0];
@@ -12099,7 +12217,6 @@ NetworkEncodings.decodeNoteWork = function(code){
 				j++;
 			}
 
-			c.l('    index, [sep]', index+", ["+sep+"]");
 
 			index = minIndex==99999999?-1:minIndex;
 
@@ -12109,8 +12226,6 @@ NetworkEncodings.decodeNoteWork = function(code){
 			if(name!=""){
 				id = NetworkEncodings._simplifyForNoteWork(name);
 
-				c.l('name:['+name+'], id:['+id+'], index,', index, j);
-
 				node = network.nodeList.getNodeById(id);
 				
 				if(node==null){
@@ -12118,10 +12233,10 @@ NetworkEncodings.decodeNoteWork = function(code){
 					node._nLine = nLineParagraph;
 					network.addNode(node);
 					node.content = index!=-1?line.substr(index+sep.length).trim():"";
-					c.l('create node, content:['+node.content+']');
+					//c.l('create node, content:['+node.content+']');
 
 					node._lines = lines?lines.slice(1):new StringList();
-					//c.l('node._lines:['+node._lines+']');
+					////c.l('node._lines:['+node._lines+']');
 					
 					colorSegments[nLineParagraph] = {
 						type:'node name',
@@ -12130,10 +12245,10 @@ NetworkEncodings.decodeNoteWork = function(code){
 					}
 
 				} else {
-					c.l('[!!!!] repeated node');
+					//c.l('[!!!!] repeated node');
 					node._lines = lines?node._lines.concat(lines.slice(1)):new StringList();
 					node.content += index!=-1?(" | " + line.substr(index+sep.length).trim()):"";
-					//c.l('node._lines:['+node._lines+']');
+					////c.l('node._lines:['+node._lines+']');
 					
 					colorSegments[nLineParagraph] = {
 						type:'node name repeated',
@@ -12142,58 +12257,105 @@ NetworkEncodings.decodeNoteWork = function(code){
 					}
 				}
 			} else {
-				c.l('? paragraph:['+paragraph+']');
+				//c.l('? paragraph:['+paragraph+']');
 			}
 		}
 
-		c.l('+'+ ( (lines?lines.length:1)+1) +' lines');
 
 		nLineParagraph+=(lines?lines.length:1)+1;
 	});
 
-	
-	//create relations
-	//
-	c.l('\n-----create relations');
 
-	var simpleLine;
-	var regex;
+	//find equalities
+
+
+	c.l('--equalities--')
+	var foundEquivalences = true;
+
+	while(foundEquivalences){
+
+		c.l('---');
+
+		foundEquivalences = false;
+
+		loop:for(i=0; network.nodeList[i]!=null; i++){
+			node = network.nodeList[i];
+			
+			loop2:for(j=0; node._lines[j]!=null; j++){
+				line = node._lines[j];
+
+				c.l(i,j,'['+line+']');
+
+				if(line.indexOf('=')==0){
+					c.l('found =');
+
+					id2 = NetworkEncodings._simplifyForNoteWork(line.substr(1));
+					otherNode = network.nodeList.getNodeById(id2);
+					
+					if(otherNode && node!=otherNode){
+						
+
+						//otherNode = network.nodeList[index];
+
+
+						foundEquivalences = true;
+
+						otherNode._lines = otherNode._lines.concat(node._lines);
+
+						network.nodeList.removeNode(node);
+
+						c.l('equivalence between: ', node.id, otherNode.id);
+
+						break loop;
+						break loop2;
+
+					}
+				}
+			}
+			
+		}
+
+	}
+	
+
+
+	//build relations
 
 	network.nodeList.forEach(function(node){
-		c.l('\nnode:', node.name);
-		//c.l('node._lines:['+node._lines+']');
 
 		node._lines.forEach(function(line, i){
-			simpleLine = NetworkEncodings._simplifyForNoteWork(line);
-			
-			network.nodeList.forEach(function(otherNode){
-				regex = NetworkEncodings._regexWordForNoteWork(otherNode.id);
+			if(line.indexOf('=')==-1){
+				simpleLine = NetworkEncodings._simplifyForNoteWork(line);
+				
+				network.nodeList.forEach(function(otherNode){
+					regex = NetworkEncodings._regexWordForNoteWork(otherNode.id);
 
-				index = simpleLine.search(regex);
+					index = simpleLine.search(regex);
 
-				if(index!=-1){
-					
-					//if(index == (simpleLine.length - otherNode.id.length )){
+					if(index!=-1){
+					    relation = network.relationList.getFirstRelationBetweenNodes(node, otherNode, true);
 
-					    c.l('    relation with otherNode:'+otherNode.name);
-					    id = line;
-					    relation = new Relation(line, line, node, otherNode);
-					    relation.content = line.substr(0,index);
-					    network.addRelation(relation);
+					    if(relation!=null){
+					    	relation.content+=" | "+line;
+					    } else {
+					    	relation = network.relationList.getFirstRelationBetweenNodes(otherNode, node, true);
 
-					    colorSegments[node._nLine + i + 1] = {
-							type:'node name in relation',
-							iStart:index,
-							iEnd:line.length
-						}
+					    	if(relation==null || relation.content!=line){
+					    		id = line;
+							    relation = new Relation(line, line, node, otherNode);
+							    relation.content = line;//.substr(0,index);
+							    network.addRelation(relation);
 
-					// } else {
-					// 	c.l('['+simpleLine+']');
-					// 	c.l('['+otherNode.id+']');
-					// 	c.l(index);
-					// }
-				}
-			});
+							    colorSegments[node._nLine + i + 1] = {
+									type:'node name in relation',
+									iStart:index,
+									iEnd:line.length
+								}
+					    	}
+					    }
+					}
+				});
+			}
 		});
 	});
 
@@ -12206,8 +12368,8 @@ NetworkEncodings.decodeNoteWork = function(code){
 		texts = line.substr(0,index).split(',');
 	    texts.forEach(function(text){
 	       color = line.substr(index+1);
-	       c.l('text:', text);
-	       c.l('color:', color);
+	       //c.l('text:', text);
+	       //c.l('color:', color);
 	       network.relationList.forEach(function(relation){
 	         if(relation.name.indexOf(text)!=-1) relation.color = color;
 	       });
@@ -12216,9 +12378,9 @@ NetworkEncodings.decodeNoteWork = function(code){
 	
 	network.colorSegments = colorSegments;
 
-	c.l('decodeNoteWork --> network', network);
-	c.l('colorSegments', colorSegments);
-	c.l('*************////////// decodeNoteWork //////////*************\n\n');
+	//c.l('decodeNoteWork --> network', network);
+	//c.l('colorSegments', colorSegments);
+	//c.l('*************////////// decodeNoteWork //////////*************\n\n');
 
 	return network;
 }
@@ -12251,7 +12413,7 @@ NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesP
 	var code = "";
 	var simpNodeName;
 
-	var codedRelationsContents = new StringList();
+	var codedRelationsContents;
 
 	nodeContentSeparator = nodeContentSeparator||', ';
 	nodesPropertyNames = nodesPropertyNames||[];
@@ -12266,17 +12428,11 @@ NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesP
 			if(node[propName]!=null) code+= propName+":"+String(node[propName])+"\n";
 		});
 
+		codedRelationsContents = new StringList();
+
 		node.toRelationList.forEach(function(relation){
 			if(relation.content && relation.content!="" && codedRelationsContents.indexOf(relation.content)==-1){
 				code+=relation.content;
-
-				//simpNodeName = NetworkEncodings._simplifyForNoteWork(relation.node1.name);
-
-				//c.l('comparing:['+NetworkEncodings._simplifyForNoteWork(relation.content).substr(-simpNodeName.length)+']['+)
-
-				// if(NetworkEncodings._simplifyForNoteWork(relation.content).substr(-simpNodeName.length) != simpNodeName){
-				// 	code+=" "+relation.node1.name;
-				// }
 
 				code+="\n";
 
@@ -12698,105 +12854,117 @@ NetworkGenerators.createNetworkFromListAndFunction = function(list, weightFuncti
  * relations contain as description the part of the sentence that ends with the second node name (thus being compatible with NoteWork)
  * @param  {String} text
  * @param  {StringList} nounPhrases words, n-grams or noun phrases
+ *
+ * @param {String} splitCharacters split blocks by characters defined as string regexp expression (defualt:"\.|\n"), blocks determine relations
  * @return {Network}
  * tags:
  */
-NetworkGenerators.createNetworkFromTextAndWords = function(text, nounPhrases){
+NetworkGenerators.createNetworkFromTextAndWords = function(text, nounPhrases, splitCharacters){
 	if(text==null || nounPhrases==null) return null;
+
+	var np;
+	var i;
+
+	splitCharacters = splitCharacters==null?"\\.|\\n":splitCharacters;
 
 	var network = new Network();
 
+	nounPhrases = nounPhrases.getWithoutElements(new StringList("", " ", "\n"));
+
+	nounPhrases.forEach(function(np, i){
+		nounPhrases[i] = NetworkEncodings._simplifyForNoteWork(np);
+	});
+
 	nounPhrases = nounPhrases.getWithoutRepetitions();
 
-	var sentences = text.split(/\.|\n/g);
-	var np, np1; 
+	var sentences = text.split(new RegExp(splitCharacters, "g"));
+
+	var np1; 
 	var sentence;
 	var node, relation;
 	var index, index2;
 	var node0, node1;
-	//var relationSentence;
 	var regex;
 	var id;
+
+	var mat;
+
+	var nodesInSentence;
+	var maxWeight, maxNode;
 
 	nounPhrases.forEach(function(np){
 		node = new Node(np, np);
 		network.addNode(node);
+		mat = text.match(NetworkEncodings._regexWordForNoteWork(np));
+		node.weight = mat==null?1:mat.length;
 	});
 
 	sentences.forEach(function(sentence){
+		sentence = sentence.trim();
+		nodesInSentence = new NodeList();
+		maxWeight = 0;
 		nounPhrases.forEach(function(np){
 			node0 = network.nodeList.getNodeById(np);
 			regex = NetworkEncodings._regexWordForNoteWork(np);
 			index = sentence.search(regex);
+
 			if(index!=-1){
-				nounPhrases.forEach(function(np1){
-					regex = NetworkEncodings._regexWordForNoteWork(np1);
-					index2 = sentence.search(regex);
-					if(index2!=-1){
-						node1 = network.nodeList.getNodeById(np1);
-
-						relation = network.relationList.getFirstRelationBetweenNodes(node0, node1, true);
-						if(relation==null){
-							id = node0.id+"_"+node1.id+"|"+sentence;
-							relation = new Relation(id, id, node0, node1);
-							relation.content = sentence;//.substr(0, index3+1).trim();
-							relation.paragraphs = new StringList(relation.content);
-							network.addRelation(relation);
-						} else {
-							relation.paragraphs.push(sentence);
-						}
-					}
-				});
-				
-				
-
-				// sentenceRight = sentence.substr(index+np.length+2);
-
+				maxNode = node0.weight>maxWeight?node0:maxNode;
+				maxWeight = Math.max(node0.weight, maxWeight);
+				if(node0!=maxNode) nodesInSentence.push(node0);
 				// nounPhrases.forEach(function(np1){
 				// 	regex = NetworkEncodings._regexWordForNoteWork(np1);
-				// 	index2 = sentenceRight.search(regex);
-
+				// 	index2 = sentence.search(regex);
 				// 	if(index2!=-1){
-				// 		index3 = sentence.search(regex);
 				// 		node1 = network.nodeList.getNodeById(np1);
-				// 		relationSentence = sentence.substr(0, index3+np1.length+2).trim();
-				// 		relation = new Relation(relationSentence, relationSentence, node0, node1);
-				// 		relation.content = sentence.substr(0, index3+1).trim();
-				// 		network.addRelation(relation);
+
+				// 		relation = network.relationList.getFirstRelationBetweenNodes(node0, node1, false);
+
+				// 		if(relation==null){
+				// 			if(index<index2){
+				// 				id = node0.id+"_"+node1.id+"|"+sentence;
+				// 				relation = new Relation(id, id, node0, node1);
+				// 			} else {
+				// 				id = node1.id+"_"+node0.id+"|"+sentence;
+				// 				relation = new Relation(id, id, node1, node0);
+				// 			}
+				// 			relation.content = sentence;//.substr(0, index3+1).trim();
+				// 			relation.paragraphs = new StringList(relation.content);
+				// 			network.addRelation(relation);
+				// 		} else {
+				// 			relation.paragraphs.push(sentence);
+				// 		}
 				// 	}
 				// });
+			}
+		});
+		
+
+		nodesInSentence.forEach(function(node0){
+			id = maxNode.id+"_"+node0.id+"|"+sentence;
+			relation = new Relation(id, id, maxNode, node0);
+			relation.content = sentence;
+			network.addRelation(relation);
+		});
+
+		
+	});
+
+	//nested NPs (example: "health", "health consequences")
+	network.nodeList.forEach(function(node0){
+		regex = NetworkEncodings._regexWordForNoteWork(node0.id);
+		network.nodeList.forEach(function(node1){
+			if(node0!=node1 && node1.id.search(regex)!=-1){
+				id = node1.id+"_"+node0.id+"|contains "+node0.id;
+				relation = new Relation(id, id, node1, node0);
+				relation.content = "contains "+node0.id;
+				network.addRelation(relation);
 			}
 		});
 	});
 
 	return network;
 }
-
-//replaced by: NetworkConvertions.TableToNetwork
-// NetworkGenerators.createNetworkFromPairsTable = function(pairsTable, minPairOccurrences){//TODO: test it (never used)
-// 	var pairsStringList = pairsTable[0].toStringList().append("#").append(pairsTable[1].toStringList());
-// 	var occurrences = pairsStringList.countOccurrences();
-// 	var node0;
-// 	var node1;
-// 	var network = new Network();
-	
-// 	for(var i=0; pairsTable[0][i]!=null; i++){
-// 		if(occurrences[i]>minPairOccurrences){
-// 			node0 = network.nodeList.getNodeById(pairsTable[0][i]);
-// 			if(node0==null){
-// 				node0 = new Node(pairsTable[0][i], pairsTable[0][i]);
-// 				network.addNode(node0);
-// 			}
-// 			node1 = network.nodeList.getNodeById(pairsTable[1][i]);
-// 			if(node1==null){
-// 				node1 = new Node(pairsTable[1][i], pairsTable[1][i]);
-// 				network.addNode(node1);
-// 			}
-// 			network.addRelation(new Relation(node0.id+"_"+node1.id, node0.id+"_"+node1.id, node0, node1, occurrences[i]));
-// 		}
-// 	}
-// 	return network;
-// }
 NetworkOperators = function(){};
 
 

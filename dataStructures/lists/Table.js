@@ -87,7 +87,9 @@ Table.prototype.getListLength=function(index){
 
 
 
-
+/**
+ * overrides List.prototype.getLengths (see comments there)
+ */
 Table.prototype.getLengths=function(){
 	var lengths=new NumberList();
 	for(var i=0; this[i]!=null; i++){
@@ -137,21 +139,6 @@ Table.prototype.getSubListsByIndexes=function(indexes){
 //deprecated
 Table.prototype.getRows=function(rowsIndexes){
 	return Table.prototype.getSubListsByIndexes(indexes);
-	// var i;
-	// var table = this;
-	// var newTable = new Table();
-	// newTable.name = this.name;
-
-	// for(i=0; table[i]!=null; i++){
-	// 	newTable[i]=new List();
-	// 	rowsIndexes.forEach(function(index){
-	// 		newTable[i].push(table[i][index]);
-	// 	});
-	// 	newTable[i] = newTable[i].getImproved();
-	// 	newTable[i].name = table[i].name;
-	// }
-
-	// return newTable.getImproved();
 }
 
 Table.prototype.getWithoutRow=function(rowIndex){
@@ -172,7 +159,6 @@ Table.prototype.getWithoutRows=function(rowsIndexes){
 		for(j=0; this[i][j]!=null; j++){
 			if(rowsIndexes.indexOf(j)==-1) newTable[i].push(this[i][j]);
 		}
-		//newTable[i] = newTable[i];//TODO:why this?
 		newTable[i].name = this[i].name;
 	}
 	return newTable.getImproved();
@@ -181,30 +167,20 @@ Table.prototype.getWithoutRows=function(rowsIndexes){
 
 /**
  * sort table's lists by a list
- * @param  {Object} listOrIndex used to sort (numberList, stringList, dateList…), or index of list in the table
+ * @param  {Object} listOrIndex kist used to sort, or index of list in the table
  * 
  * @param  {Boolean} ascending (true by default)
  * @return {Table} table (of the same type)
  * tags:sort
  */
-Table.prototype.getListsSortedByList=function(listOrIndex, ascending){
+Table.prototype.getListsSortedByList=function(listOrIndex, ascending){//depracated: use sortListsByList
 	if(listOrIndex==null) return;
+	var newTable = instantiateWithSameType(this);
+	var sortinglist = listOrIndex["isList"]?listOrIndex.clone():this[listOrIndex];
 
-	ascending = ascending==null?true:ascending;
-	
-	var newTable= instantiateWithSameType(this);
-	//c.l('newTable', newTable);
-
-	var i;
-	var list = typeOf(listOrIndex)=='number'?this[listOrIndex]:listOrIndex;
-
-	newTable.name = this.name;
-
-	for(i=0; this[i]!=null; i++){
-		newTable[i]=this[i].getSortedByList(list, ascending);
-	}
-
-	//c.l('newTable', newTable);
+	this.forEach(function(list){
+		newTable.push( list.getSortedByList(sortinglist, ascending) );
+	});
 
 	return newTable;
 }
@@ -242,14 +218,7 @@ Table.prototype.getTransposed=function(firstListAsHeaders){
 
 
 
-Table.prototype.sortListsByList=function(list){//TODO: finish
-	switch(list.type){
-		case 'NumberList':
-			return TableOperators.sortListsByNumberList(this, list);
-			break;
-	}
-	return null;
-}
+
 
 ////transformative
 Table.prototype.removeRow=function(index){
