@@ -87,7 +87,9 @@ Table.prototype.getListLength=function(index){
 
 
 
-
+/**
+ * overrides List.prototype.getLengths (see comments there)
+ */
 Table.prototype.getLengths=function(){
 	var lengths=new NumberList();
 	for(var i=0; this[i]!=null; i++){
