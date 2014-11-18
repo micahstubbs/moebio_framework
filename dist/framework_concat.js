@@ -8556,10 +8556,9 @@ ListOperators.getInformationGainAnalysis = function(feature, supervised){
  * @param  {Boolean} wether the results are to be sorted or not
  * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
  * @return {Table}
- * tags:list,group,segment
+ * tags:dani
  */
 ListOperators.segmentElements = function(list, sortedByValue, mode ) {
-	c.l( "segmentElements");
 	if( !list )
 		return;
 	var result = ListOperators.segmentElements_Base( list, null, sortedByValue, mode );
@@ -8574,10 +8573,9 @@ ListOperators.segmentElements = function(list, sortedByValue, mode ) {
  * @param  {Boolean} wether the results are to be sorted or not
  * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
  * @return {Table}
- * tags:list,group,segment
+ * tags:dani
  */
 ListOperators.segmentElementsByPropertyValue = function(list, propertyName, sortedByValue, mode ) {
-	c.l( "segmentElementsByPropertyValue");
 	if( !list )
 		return;
 	var result = ListOperators.segmentElements_Base( list, propertyName, sortedByValue, mode );
