@@ -178,8 +178,9 @@ NetworkGenerators.createNetworkFromTextAndWords = function(text, nounPhrases, sp
 
 	nounPhrases = nounPhrases.getWithoutElements(new StringList("", " ", "\n"));
 
-	nounPhrases.forEach(function(np, i){
-		nounPhrases[i] = NetworkEncodings._simplifyForNoteWork(np);
+	nounPhrases.forEach(function(np){
+		np = NetworkEncodings._simplifyForNoteWork(np)
+		if(np) nounPhrases.push(np);
 	});
 
 	nounPhrases = nounPhrases.getWithoutRepetitions();

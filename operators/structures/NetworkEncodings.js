@@ -658,7 +658,12 @@ NetworkEncodings._simplifyForNoteWork = function(name){
 	return name.trim();
 }
 NetworkEncodings._regexWordForNoteWork = function(word){
-	return new RegExp("\\b"+word+"|"+word+"s|"+word+"es\\b", "gi");
+	try{
+		return new RegExp("\\b"+word+"|"+word+"s|"+word+"es\\b", "gi");
+	} catch(err){
+		return null;
+	}
+	
 }
 
 /**
@@ -678,6 +683,7 @@ NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesP
 	var propName;
 	var code = "";
 	var simpNodeName;
+	var regex, lineRelation;
 
 	var codedRelationsContents;
 
@@ -697,12 +703,20 @@ NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesP
 		codedRelationsContents = new StringList();
 
 		node.toRelationList.forEach(function(relation){
-			if(relation.content && relation.content!="" && codedRelationsContents.indexOf(relation.content)==-1){
-				code+=relation.content;
 
+			content = (relation.content==null && relation.description)?relation.description:relation.content;
+
+			if(content && content!=""){
+				regex = NetworkEncodings._regexWordForNoteWork(relation.node1.name);
+				lineRelation = content + ((regex!=null && content.search(regex)==-1)?(" "+relation.node1.name):"");
+			} else {
+				lineRelation = "- "+relation.node1.name;
+			}
+
+			if(codedRelationsContents.indexOf(lineRelation)==-1){
+				code+=lineRelation;
 				code+="\n";
-
-				codedRelationsContents.push(relation.content);
+				codedRelationsContents.push(lineRelation);
 			}
 			
 		});

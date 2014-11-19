@@ -5,7 +5,7 @@ function ListDraw(){};
  * @param  {Rectangle} frame
  * @param  {List} list to be drawn
  * 
- * @param {Number} returnMode 0:return index, 1:return element
+ * @param {Number} returnMode -1:no selection, 0:return index, 1:return element
  * @param  {ColorList} colorList colors of elements
  * @param {Number} textSize
  * @param  {Number} mode 0:color in square if any
@@ -16,7 +16,8 @@ ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode)
 	if(list==null || !list.length>0) return;
 
 	textSize = textSize||14;
-	returnMode = returnMode||0;
+	returnMode = returnMode==null?0:returnMode;
+
 	if(frame.memory==null) frame.memory = {selected:0, y:0};
 
 	var changeList = frame.memory.list!=list;
@@ -67,18 +68,22 @@ ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode)
 			fRect(x, y + 4, 10, 10);
 		}
 
-		if(frame.memory.selected==i){
-			setFill('black');
-			fRect(frame.x+2, y, frame.width-4, dy);
-			setFill('white');
-		} else {
-			if(mouseIn && mY>=y && mY<y+dy){
-				setFill('rgb(220,220,220)');
-				if(fRectM(frame.x+2, y, frame.width-4, dy)){
-					setCursor('pointer');
+		if(returnMode!=-1){
+			if(frame.memory.selected==i){
+				setFill('black');
+				fRect(frame.x+2, y, frame.width-4, dy);
+				setFill('white');
+			} else {
+				if(mouseIn && mY>=y && mY<y+dy){
+					setFill('rgb(220,220,220)');
+					if(fRectM(frame.x+2, y, frame.width-4, dy)){
+						setCursor('pointer');
+					}
+					if(MOUSE_DOWN) frame.memory.selected = i;
 				}
-				if(MOUSE_DOWN) frame.memory.selected = i;
+				setFill('black');
 			}
+		} else {
 			setFill('black');
 		}
 		

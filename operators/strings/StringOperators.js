@@ -37,6 +37,7 @@ StringOperators.split = function(string, character){
  * tags:
  */
 StringOperators.replaceSubString = function(string, subString, replacement){
+	if(string==null || subString==null || replacement==null) return null;
 	return string.replace(new RegExp(subString, "g"), replacement);
 }
 

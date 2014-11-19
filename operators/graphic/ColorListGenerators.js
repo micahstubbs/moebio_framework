@@ -1,4 +1,7 @@
-//include(frameworksRoot+"operators/numeric/numberList/NumberListGenerators.js");
+ColorListGenerators._HARDCODED_CATEGORICAL_COLORS =new ColorList(
+	"#dd4411", "#2200bb", "#1f77b4", "#ff660e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#dd8811",
+	"#dd0011", "#221140", "#1f66a3", "#ff220e", "#2ba01c", "#442728", "#945600", "#8c453a", "#e37700"
+)
 
 /**
 * ColorListGenerators
@@ -65,15 +68,17 @@ ColorListGenerators.createColorListWithSingleColor=function(nColors, color){
 
 /**
  * Creates a ColorList of categorical colors
- * @param {Number} mode 0:simple picking from color scale function, 1:random (with seed), 2:, 3:, 4:, 5:evolutionary algorithm, guarantees non consecutive similar colors
+ * @param {Number} mode 0:simple picking from color scale function, 1:random (with seed), 2:hardcoded colors, 3:, 4:, 5:evolutionary algorithm, guarantees non consecutive similar colors
  * @param {Number} nColors
  * 
  * @param {ColorScale} colorScaleFunction
  * @param {Number} alpha transparency
+ * @param {String} interpolateColor color to interpolate
+ * @param {Number} interpolateValue interpolation value [0, 1]
  * @return {ColorList} ColorList with categorical colors
  * tags:generator
  */
-ColorListGenerators.createCategoricalColors=function(mode, nColors, colorScaleFunction, alpha){
+ColorListGenerators.createCategoricalColors=function(mode, nColors, colorScaleFunction, alpha, interpolateColor, interpolateValue){
 	colorScaleFunction = colorScaleFunction==null?ColorScales.temperature:colorScaleFunction;
 	
 	var i;
@@ -88,6 +93,11 @@ ColorListGenerators.createCategoricalColors=function(mode, nColors, colorScaleFu
 			var values = NumberListGenerators.createRandomNumberList(nColors, null, 0)
 			for(i=0;i<nColors;i++){
 				colorList[i] = colorScaleFunction(values[i]);
+			}
+			break;
+		case 2:
+			for(i=0;i<nColors;i++){
+				colorList[i] = ColorListGenerators._HARDCODED_CATEGORICAL_COLORS[i%ColorListGenerators._HARDCODED_CATEGORICAL_COLORS.length];
 			}
 			break;
 		case 5:
@@ -124,10 +134,12 @@ ColorListGenerators.createCategoricalColors=function(mode, nColors, colorScaleFu
 			break;
 	}
 
+	if(interpolateColor!=null && interpolateValue!=null){
+		colorList = colorList.getInterpolated(interpolateColor, interpolateValue);
+	}
+
 	if(alpha){
-		colorList.forEach(function(color, i){
-			colorList[i] = ColorOperators.addAlpha(color, alpha);
-		});
+		colorList = colorList.addAlpha(alpha);
 	}
 	
 	return colorList;

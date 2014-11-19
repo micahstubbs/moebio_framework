@@ -7101,7 +7101,10 @@ ColorGenerators.randomColor=function(alpha){
 	alpha = alpha==null?1:alpha;
 	return 'rgba('+Math.floor(256*Math.random())+','+Math.floor(256*Math.random())+','+Math.floor(256*Math.random())+','+alpha+')';
 }
-//include(frameworksRoot+"operators/numeric/numberList/NumberListGenerators.js");
+ColorListGenerators._HARDCODED_CATEGORICAL_COLORS =new ColorList(
+	"#dd4411", "#2200bb", "#1f77b4", "#ff660e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#dd8811",
+	"#dd0011", "#221140", "#1f66a3", "#ff220e", "#2ba01c", "#442728", "#945600", "#8c453a", "#e37700"
+)
 
 /**
 * ColorListGenerators
@@ -7168,15 +7171,17 @@ ColorListGenerators.createColorListWithSingleColor=function(nColors, color){
 
 /**
  * Creates a ColorList of categorical colors
- * @param {Number} mode 0:simple picking from color scale function, 1:random (with seed), 2:, 3:, 4:, 5:evolutionary algorithm, guarantees non consecutive similar colors
+ * @param {Number} mode 0:simple picking from color scale function, 1:random (with seed), 2:hardcoded colors, 3:, 4:, 5:evolutionary algorithm, guarantees non consecutive similar colors
  * @param {Number} nColors
  * 
  * @param {ColorScale} colorScaleFunction
  * @param {Number} alpha transparency
+ * @param {String} interpolateColor color to interpolate
+ * @param {Number} interpolateValue interpolation value [0, 1]
  * @return {ColorList} ColorList with categorical colors
  * tags:generator
  */
-ColorListGenerators.createCategoricalColors=function(mode, nColors, colorScaleFunction, alpha){
+ColorListGenerators.createCategoricalColors=function(mode, nColors, colorScaleFunction, alpha, interpolateColor, interpolateValue){
 	colorScaleFunction = colorScaleFunction==null?ColorScales.temperature:colorScaleFunction;
 	
 	var i;
@@ -7191,6 +7196,11 @@ ColorListGenerators.createCategoricalColors=function(mode, nColors, colorScaleFu
 			var values = NumberListGenerators.createRandomNumberList(nColors, null, 0)
 			for(i=0;i<nColors;i++){
 				colorList[i] = colorScaleFunction(values[i]);
+			}
+			break;
+		case 2:
+			for(i=0;i<nColors;i++){
+				colorList[i] = ColorListGenerators._HARDCODED_CATEGORICAL_COLORS[i%ColorListGenerators._HARDCODED_CATEGORICAL_COLORS.length];
 			}
 			break;
 		case 5:
@@ -7227,10 +7237,12 @@ ColorListGenerators.createCategoricalColors=function(mode, nColors, colorScaleFu
 			break;
 	}
 
+	if(interpolateColor!=null && interpolateValue!=null){
+		colorList = colorList.getInterpolated(interpolateColor, interpolateValue);
+	}
+
 	if(alpha){
-		colorList.forEach(function(color, i){
-			colorList[i] = ColorOperators.addAlpha(color, alpha);
-		});
+		colorList = colorList.addAlpha(alpha);
 	}
 	
 	return colorList;
@@ -10733,7 +10745,11 @@ function StringConversions(){};
  * tags:convertion
  */
 StringConversions.stringToObject = function(string){
-	return JSON.parse(string);
+	try{
+		return JSON.parse(string);
+	} catch(err){
+		return null;
+	}
 }
 function StringListOperators(){};
 /** 
@@ -11098,6 +11114,7 @@ StringOperators.split = function(string, character){
  * tags:
  */
 StringOperators.replaceSubString = function(string, subString, replacement){
+	if(string==null || subString==null || replacement==null) return null;
 	return string.replace(new RegExp(subString, "g"), replacement);
 }
 
@@ -12419,7 +12436,12 @@ NetworkEncodings._simplifyForNoteWork = function(name){
 	return name.trim();
 }
 NetworkEncodings._regexWordForNoteWork = function(word){
-	return new RegExp("\\b"+word+"|"+word+"s|"+word+"es\\b", "gi");
+	try{
+		return new RegExp("\\b"+word+"|"+word+"s|"+word+"es\\b", "gi");
+	} catch(err){
+		return null;
+	}
+	
 }
 
 /**
@@ -12439,6 +12461,7 @@ NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesP
 	var propName;
 	var code = "";
 	var simpNodeName;
+	var regex, lineRelation;
 
 	var codedRelationsContents;
 
@@ -12458,12 +12481,20 @@ NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesP
 		codedRelationsContents = new StringList();
 
 		node.toRelationList.forEach(function(relation){
-			if(relation.content && relation.content!="" && codedRelationsContents.indexOf(relation.content)==-1){
-				code+=relation.content;
 
+			content = (relation.content==null && relation.description)?relation.description:relation.content;
+
+			if(content && content!=""){
+				regex = NetworkEncodings._regexWordForNoteWork(relation.node1.name);
+				lineRelation = content + ((regex!=null && content.search(regex)==-1)?(" "+relation.node1.name):"");
+			} else {
+				lineRelation = "- "+relation.node1.name;
+			}
+
+			if(codedRelationsContents.indexOf(lineRelation)==-1){
+				code+=lineRelation;
 				code+="\n";
-
-				codedRelationsContents.push(relation.content);
+				codedRelationsContents.push(lineRelation);
 			}
 			
 		});
@@ -12898,8 +12929,9 @@ NetworkGenerators.createNetworkFromTextAndWords = function(text, nounPhrases, sp
 
 	nounPhrases = nounPhrases.getWithoutElements(new StringList("", " ", "\n"));
 
-	nounPhrases.forEach(function(np, i){
-		nounPhrases[i] = NetworkEncodings._simplifyForNoteWork(np);
+	nounPhrases.forEach(function(np){
+		np = NetworkEncodings._simplifyForNoteWork(np)
+		if(np) nounPhrases.push(np);
 	});
 
 	nounPhrases = nounPhrases.getWithoutRepetitions();
@@ -18144,7 +18176,7 @@ function ListDraw(){};
  * @param  {Rectangle} frame
  * @param  {List} list to be drawn
  * 
- * @param {Number} returnMode 0:return index, 1:return element
+ * @param {Number} returnMode -1:no selection, 0:return index, 1:return element
  * @param  {ColorList} colorList colors of elements
  * @param {Number} textSize
  * @param  {Number} mode 0:color in square if any
@@ -18155,7 +18187,8 @@ ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode)
 	if(list==null || !list.length>0) return;
 
 	textSize = textSize||14;
-	returnMode = returnMode||0;
+	returnMode = returnMode==null?0:returnMode;
+
 	if(frame.memory==null) frame.memory = {selected:0, y:0};
 
 	var changeList = frame.memory.list!=list;
@@ -18206,18 +18239,22 @@ ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode)
 			fRect(x, y + 4, 10, 10);
 		}
 
-		if(frame.memory.selected==i){
-			setFill('black');
-			fRect(frame.x+2, y, frame.width-4, dy);
-			setFill('white');
-		} else {
-			if(mouseIn && mY>=y && mY<y+dy){
-				setFill('rgb(220,220,220)');
-				if(fRectM(frame.x+2, y, frame.width-4, dy)){
-					setCursor('pointer');
+		if(returnMode!=-1){
+			if(frame.memory.selected==i){
+				setFill('black');
+				fRect(frame.x+2, y, frame.width-4, dy);
+				setFill('white');
+			} else {
+				if(mouseIn && mY>=y && mY<y+dy){
+					setFill('rgb(220,220,220)');
+					if(fRectM(frame.x+2, y, frame.width-4, dy)){
+						setCursor('pointer');
+					}
+					if(MOUSE_DOWN) frame.memory.selected = i;
 				}
-				if(MOUSE_DOWN) frame.memory.selected = i;
+				setFill('black');
 			}
+		} else {
 			setFill('black');
 		}
 		
