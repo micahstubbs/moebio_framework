@@ -176,6 +176,8 @@ ColorListGenerators._evaluationFunction=function(numberList){ //private
  */
 ColorListGenerators.createCategoricalColorListForList = function( list, alpha, color, interpolate ) 
 {
+	if( !list )
+		return new ColorList();
 	if( !alpha )
 		alpha = 1;
 	if( !color )
