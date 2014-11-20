@@ -4,7 +4,8 @@
 var watchedFiles = [
     "**/*.js", 
     "!**/node_modules/**", 
-    "!dist/*.js"
+    "!dist/*.js", 
+    "!tests/**"
 ];
 
 module.exports = function (grunt) {

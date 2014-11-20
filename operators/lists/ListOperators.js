@@ -527,8 +527,6 @@ ListOperators._segmentElements_Base = function(list, propertyName, sortedByValue
 			resultOb[pValue].push( i );		
 	};
 
-	if( sortedByValue )
-		resultTable = resultTable.getSortedByProperty( "valProperty" );
 
 	return resultTable;
 
