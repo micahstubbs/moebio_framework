@@ -23,12 +23,18 @@ NumberTableOperators.normalizeListsToMax=function(numberTable){
 /**
  * smooth numberLists by calculating averages with neighbors
  * @param  {NumberTable} numberTable
+ * 
  * @param  {Number} intensity weight for neighbors in average (0<=intensity<=0.5)
  * @param  {Number} nIterations number of ieterations
  * @return {NumberTable}
  * tags:statistics
  */
 NumberTableOperators.averageSmootherOnLists = function(numberTable, intensity, nIterations){
+	if(numberTable==null) return;
+	
+	intensity = intensity||0.5;
+	nIterations = nIterations||1;
+
 	var newNumberTable = new NumberTable();
 	newNumberTable.name = numberTable.name;
 	numberTable.forEach(function(nL, i){

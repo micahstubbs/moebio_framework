@@ -4163,6 +4163,11 @@ NumberTable.prototype.getMinMaxInterval=function(){
 	return rangeInterval;
 }
 
+/**
+ * returns a numberList with values from numberlists added
+ * @return {Numberlist}
+ * tags:
+ */
 NumberTable.prototype.getSums=function(){
 	var numberList = new NumberList();
 	for(var i=0; this[i]!=null; i++){
@@ -4171,6 +4176,11 @@ NumberTable.prototype.getSums=function(){
 	return numberList;
 }
 
+/**
+ * returns a numberList with all values fro rows added
+ * @return {NumberList}
+ * tags:
+ */
 NumberTable.prototype.getRowsSums=function(){
 	var sums = this[0].clone();
 	var numberList;
@@ -4557,12 +4567,14 @@ Relation.prototype.constructor=Relation;
 * Relation 
 * @constructor
 */
-function Relation(id, name, node0, node1, weight){
+function Relation(id, name, node0, node1, weight, content){
 	Node.apply(this, [id, name]);
+	this.type="Relation";
+
 	this.node0=node0;
 	this.node1=node1;
 	this.weight = weight==null?1:weight;
-	this.type="Relation";
+	this.content = content==null?"":content;
 }
 
 
@@ -4570,6 +4582,7 @@ Relation.prototype.destroy = function() {
   Node.prototype.destroy.call(this);
   delete this.node0;
   delete this.node1;
+  delete this.content;
 }
 
 Relation.prototype.getOther = function(node) {
@@ -4601,14 +4614,45 @@ Network.prototype.constructor=Network;
 function Network () {
 	this.type="Network";
 	
-	this._newNodeID=0;
-	this._newRelationID=0;
+	//this._newNodeID=0;
+	//this._newRelationID=0;
 	this.nodeList=new NodeList();
 	this.relationList=new RelationList();
 }
 
+/**
+ * get nodeList property
+ * @return {NodeList}
+ * tags:
+ */
+Network.prototype.getNodes=function(){
+	return this.nodeList;
+}
 
-//
+/**
+ * get relationList property
+ * @return {RelationList}
+ * tags:
+ */
+Network.prototype.getRelations=function(){
+	return this.relationList;
+}
+
+/**
+ * get nodes ids property
+ * @return {StringList}
+ * tags:
+ */
+Network.prototype.getNodesIds=function(){
+	return this.nodeList.getIds();
+}
+
+
+
+/**
+ * building methods
+ */
+
 Network.prototype.addNode=function(node){
 	this.nodeList.addNode(node);
 }
@@ -4619,8 +4663,8 @@ Network.prototype.getNodeWithId=function(id){
 	return this.nodeList.getNodeWithId(id);
 }
 
-Network.prototype.createRelation = function(node0, node1, id, weight){
-	this.addRelation(new Relation(id, id, node0, node1, weight));
+Network.prototype.createRelation = function(node0, node1, id, weight, content){
+	this.addRelation(new Relation(id, id, node0, node1, weight, content));
 }
 
 Network.prototype.addRelation=function(relation){
@@ -4643,6 +4687,12 @@ Network.prototype.connect=function(node0, node1, id, weight, content){
 	relation.content = content;
 	return relation;
 }
+
+
+
+/**
+ * removing methods
+ */
 
 Network.prototype.removeNode=function(node){
 	this.removeNodeRelations(node)
@@ -4685,17 +4735,20 @@ Network.prototype.removeIsolatedNodes=function(minNumberRelations){
 	}
 }
 
-//
-Network.prototype.getNewNodeID=function(){
-	id=this._newNodeID;
-	this._newNodeID++;
-	return id;
-}
-Network.prototype.getNewRelationID=function(){
-	id=this._newRelationID;
-	this._newRelationID++;
-	return id;
-}
+
+
+
+//depreacted: nNodeList is in charge of building its own new ids
+// Network.prototype.getNewNodeID=function(){
+// 	id=this._newNodeID;
+// 	this._newNodeID++;
+// 	return id;
+// }
+// Network.prototype.getNewRelationID=function(){
+// 	id=this._newRelationID;
+// 	this._newRelationID++;
+// 	return id;
+// }
 
 Network.prototype.getReport=function(){
 	return "network contains "+this.nodeList.length+" nodes and "+this.relationList.length+" relations";
@@ -4703,8 +4756,8 @@ Network.prototype.getReport=function(){
 
 Network.prototype.destroy=function(){
 	delete this.type;
-	delete this._newNodeID;
-	delete this._newRelationID;
+	//delete this._newNodeID;
+	//delete this._newRelationID;
 	this.nodeList.destroy();
 	this.relationList.destroy();
 	delete this.nodeList;
@@ -7279,6 +7332,8 @@ ColorListGenerators._evaluationFunction=function(numberList){ //private
  */
 ColorListGenerators.createCategoricalColorListForList = function( list, alpha, color, interpolate ) 
 {
+	if( !list )
+		return new ColorList();
 	if( !alpha )
 		alpha = 1;
 	if( !color )
@@ -7288,7 +7343,8 @@ ColorListGenerators.createCategoricalColorListForList = function( list, alpha, c
 
 	list = List.fromArray( list ); 
 	var diffValues = list.getWithoutRepetitions();
-	var diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
+	var diffColors = ColorListGenerators.createCategoricalColors( 2, diffValues.length, null, alpha, color, interpolate );
+	//var diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
 	diffColors = diffColors.addAlpha(alpha);
 	var colorDict = Table.fromArray( [ diffValues, diffColors ] );
 	var fullColorList = ListOperators.translateWithDictionary(list, colorDict, "NULL" );
@@ -10519,12 +10575,18 @@ NumberTableOperators.normalizeListsToMax=function(numberTable){
 /**
  * smooth numberLists by calculating averages with neighbors
  * @param  {NumberTable} numberTable
+ * 
  * @param  {Number} intensity weight for neighbors in average (0<=intensity<=0.5)
  * @param  {Number} nIterations number of ieterations
  * @return {NumberTable}
  * tags:statistics
  */
 NumberTableOperators.averageSmootherOnLists = function(numberTable, intensity, nIterations){
+	if(numberTable==null) return;
+	
+	intensity = intensity||0.5;
+	nIterations = nIterations||1;
+
 	var newNumberTable = new NumberTable();
 	newNumberTable.name = numberTable.name;
 	numberTable.forEach(function(nL, i){
@@ -12124,6 +12186,7 @@ NetworkEncodings.nodeNameSeparators = ['|', ':',  ' is ', ' are ', ','];
  * tags:decoding
  */
 NetworkEncodings.decodeNoteWork = function(code){
+	if(code==null || code=="") return;
 
 	//c.l('\n\n*************////////// decodeNoteWork //////////*************');
 
@@ -12437,7 +12500,7 @@ NetworkEncodings._simplifyForNoteWork = function(name){
 }
 NetworkEncodings._regexWordForNoteWork = function(word){
 	try{
-		return new RegExp("\\b"+word+"|"+word+"s|"+word+"es\\b", "gi");
+		return new RegExp("(\\b)("+word+"|"+word+"s|"+word+"es)(\\b)", "gi");
 	} catch(err){
 		return null;
 	}
@@ -17362,7 +17425,7 @@ FastHtml.expand=function(abreviatedHTML, scope, onEvent){
 			if(href.substr(0,7)=="http://" || href.substr(0,8)=="https://"){
 				newText = newText.replace("<e"+bit+">", "<u><a href='"+href+"' target='"+target+"'>"+text+"</a></u>");
 			} else {
-				var index=getUniqueGlobalFunc(onEvent, scope);
+				//var index=getUniqueGlobalFunc(onEvent, scope);
 				//newText = newText.replace("<e"+bit+">", "<u><a href='javascript:clickLink()' onclick='event.preventDefault(); executeUniqueGlobalFunc("+index+", "+href+");return false; '>"+text+"</a></u>");
 				newText = newText.replace("<e"+bit+">", "<u><a href='javascript:FastHtml.clickLink(\""+href+"\")' FastHtml.onclick='event.preventDefault(); clickLink(\""+href+"\"); return false; '>"+text+"</a></u>");
 			}
