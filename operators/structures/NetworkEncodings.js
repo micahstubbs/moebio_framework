@@ -346,6 +346,7 @@ NetworkEncodings.nodeNameSeparators = ['|', ':',  ' is ', ' are ', ','];
  * tags:decoding
  */
 NetworkEncodings.decodeNoteWork = function(code){
+	if(code==null || code=="") return;
 
 	//c.l('\n\n*************////////// decodeNoteWork //////////*************');
 
@@ -659,7 +660,7 @@ NetworkEncodings._simplifyForNoteWork = function(name){
 }
 NetworkEncodings._regexWordForNoteWork = function(word){
 	try{
-		return new RegExp("\\b"+word+"|"+word+"s|"+word+"es\\b", "gi");
+		return new RegExp("(\\b)("+word+"|"+word+"s|"+word+"es)(\\b)", "gi");
 	} catch(err){
 		return null;
 	}

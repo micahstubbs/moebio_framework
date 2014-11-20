@@ -9,14 +9,45 @@ Network.prototype.constructor=Network;
 function Network () {
 	this.type="Network";
 	
-	this._newNodeID=0;
-	this._newRelationID=0;
+	//this._newNodeID=0;
+	//this._newRelationID=0;
 	this.nodeList=new NodeList();
 	this.relationList=new RelationList();
 }
 
+/**
+ * get nodeList property
+ * @return {NodeList}
+ * tags:
+ */
+Network.prototype.getNodes=function(){
+	return this.nodeList;
+}
 
-//
+/**
+ * get relationList property
+ * @return {RelationList}
+ * tags:
+ */
+Network.prototype.getRelations=function(){
+	return this.relationList;
+}
+
+/**
+ * get nodes ids property
+ * @return {StringList}
+ * tags:
+ */
+Network.prototype.getNodesIds=function(){
+	return this.nodeList.getIds();
+}
+
+
+
+/**
+ * building methods
+ */
+
 Network.prototype.addNode=function(node){
 	this.nodeList.addNode(node);
 }
@@ -27,8 +58,8 @@ Network.prototype.getNodeWithId=function(id){
 	return this.nodeList.getNodeWithId(id);
 }
 
-Network.prototype.createRelation = function(node0, node1, id, weight){
-	this.addRelation(new Relation(id, id, node0, node1, weight));
+Network.prototype.createRelation = function(node0, node1, id, weight, content){
+	this.addRelation(new Relation(id, id, node0, node1, weight, content));
 }
 
 Network.prototype.addRelation=function(relation){
@@ -51,6 +82,12 @@ Network.prototype.connect=function(node0, node1, id, weight, content){
 	relation.content = content;
 	return relation;
 }
+
+
+
+/**
+ * removing methods
+ */
 
 Network.prototype.removeNode=function(node){
 	this.removeNodeRelations(node)
@@ -93,17 +130,20 @@ Network.prototype.removeIsolatedNodes=function(minNumberRelations){
 	}
 }
 
-//
-Network.prototype.getNewNodeID=function(){
-	id=this._newNodeID;
-	this._newNodeID++;
-	return id;
-}
-Network.prototype.getNewRelationID=function(){
-	id=this._newRelationID;
-	this._newRelationID++;
-	return id;
-}
+
+
+
+//depreacted: nNodeList is in charge of building its own new ids
+// Network.prototype.getNewNodeID=function(){
+// 	id=this._newNodeID;
+// 	this._newNodeID++;
+// 	return id;
+// }
+// Network.prototype.getNewRelationID=function(){
+// 	id=this._newRelationID;
+// 	this._newRelationID++;
+// 	return id;
+// }
 
 Network.prototype.getReport=function(){
 	return "network contains "+this.nodeList.length+" nodes and "+this.relationList.length+" relations";
@@ -111,8 +151,8 @@ Network.prototype.getReport=function(){
 
 Network.prototype.destroy=function(){
 	delete this.type;
-	delete this._newNodeID;
-	delete this._newRelationID;
+	//delete this._newNodeID;
+	//delete this._newRelationID;
 	this.nodeList.destroy();
 	this.relationList.destroy();
 	delete this.nodeList;

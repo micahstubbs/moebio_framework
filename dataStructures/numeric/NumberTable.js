@@ -115,6 +115,11 @@ NumberTable.prototype.getMinMaxInterval=function(){
 	return rangeInterval;
 }
 
+/**
+ * returns a numberList with values from numberlists added
+ * @return {Numberlist}
+ * tags:
+ */
 NumberTable.prototype.getSums=function(){
 	var numberList = new NumberList();
 	for(var i=0; this[i]!=null; i++){
@@ -123,6 +128,11 @@ NumberTable.prototype.getSums=function(){
 	return numberList;
 }
 
+/**
+ * returns a numberList with all values fro rows added
+ * @return {NumberList}
+ * tags:
+ */
 NumberTable.prototype.getRowsSums=function(){
 	var sums = this[0].clone();
 	var numberList;
