@@ -7332,6 +7332,8 @@ ColorListGenerators._evaluationFunction=function(numberList){ //private
  */
 ColorListGenerators.createCategoricalColorListForList = function( list, alpha, color, interpolate ) 
 {
+	if( !list )
+		return new ColorList();
 	if( !alpha )
 		alpha = 1;
 	if( !color )
@@ -7341,7 +7343,8 @@ ColorListGenerators.createCategoricalColorListForList = function( list, alpha, c
 
 	list = List.fromArray( list ); 
 	var diffValues = list.getWithoutRepetitions();
-	var diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
+	var diffColors = ColorListGenerators.createCategoricalColors( 2, diffValues.length, null, alpha, color, interpolate );
+	//var diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
 	diffColors = diffColors.addAlpha(alpha);
 	var colorDict = Table.fromArray( [ diffValues, diffColors ] );
 	var fullColorList = ListOperators.translateWithDictionary(list, colorDict, "NULL" );
