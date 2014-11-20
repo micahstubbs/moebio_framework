@@ -112,3 +112,14 @@ DateOperators.getDateDaysAgo=function(nDays){
 }
 
 
+/**
+ * gets the week number within a year (weeks start on Sunday, first week may have less than 7 days if start in a day other than sunday
+ * @param {Date} The date whose week you want to retrieve
+ * @return {Number} The week number of the date in its year
+ * tags:generate
+ */
+DateOperators.getWeekInYear=function(date){
+	var onejan = new Date(date.getFullYear(), 0, 1);
+    return Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+}
+
