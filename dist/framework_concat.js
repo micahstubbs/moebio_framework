@@ -8446,6 +8446,13 @@ ListOperators.listsIntersect=function(list0, list1){
 	return false;
 }
 
+/**
+ * returns the list of common elements between two lists
+ * @param  {List} list0
+ * @param  {List} list1
+ * @return {List}
+ * tags:
+ */
 ListOperators.getCommonElements=function(list0, list1){
 	var nums = list0.type == 'NumberList' && list1.type == 'NumberList';
 	var strs = list0.type == 'StringList' && list1.type == 'StringList';
@@ -12555,14 +12562,14 @@ NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesP
 		codedRelationsContents = new StringList();
 
 		node.toRelationList.forEach(function(relation){
-
-			content = (relation.content==null && relation.description)?relation.description:relation.content;
-
+			
+			content = ( (relation.content==null || relation.content=="")  && relation.description)?relation.description:relation.content;
+			
 			if(content && content!=""){
 				regex = NetworkEncodings._regexWordForNoteWork(relation.node1.name);
 				lineRelation = content + ((regex!=null && content.search(regex)==-1)?(" "+relation.node1.name):"");
 			} else {
-				lineRelation = "- "+relation.node1.name;
+				lineRelation = "connected with "+relation.node1.name;
 			}
 
 			if(codedRelationsContents.indexOf(lineRelation)==-1){
