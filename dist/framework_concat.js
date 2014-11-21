@@ -8446,6 +8446,13 @@ ListOperators.listsIntersect=function(list0, list1){
 	return false;
 }
 
+/**
+ * returns the list of common elements between two lists
+ * @param  {List} list0
+ * @param  {List} list1
+ * @return {List}
+ * tags:
+ */
 ListOperators.getCommonElements=function(list0, list1){
 	var nums = list0.type == 'NumberList' && list1.type == 'NumberList';
 	var strs = list0.type == 'StringList' && list1.type == 'StringList';
