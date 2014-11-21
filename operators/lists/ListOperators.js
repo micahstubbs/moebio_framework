@@ -469,40 +469,40 @@ ListOperators.getInformationGainAnalysis = function(feature, supervised){
 
 
 /**
- * Segments a List and returns its elements grouped by identic value. Each list in the table is assigned a "valProperty" value which is used for sorting
- * @param  {List} list of elements to segment
+ * Takes a List and returns its elements grouped by identic value. Each list in the table is assigned a "valProperty" value which is used for sorting
+ * @param  {List} list of elements to group
  * @param  {Boolean} wether the results are to be sorted or not
  * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
  * @return {Table}
  * tags:dani
  */
-ListOperators.segmentElements = function(list, sortedByValue, mode ) {
+ListOperators.groupElements = function(list, sortedByValue, mode ) {
 	if( !list )
 		return;
-	var result = ListOperators._segmentElements_Base( list, null, sortedByValue, mode );
+	var result = ListOperators._groupElements_Base( list, null, sortedByValue, mode );
 	return result;
 }
 
 
 /**
- * Segments a List and returns its elements grouped by identic value. Each list in the table is assigned a "valProperty" value which is used for sorting
- * @param  {List} list of elements to segment
- * @param  {String} name of the property to be used for segmentation
+ * Takes a List and returns its elements grouped by identic value. Each list in the table is assigned a "valProperty" value which is used for sorting
+ * @param  {List} list of elements to group
+ * @param  {String} name of the property to be used for grouping
  * @param  {Boolean} wether the results are to be sorted or not
  * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
  * @return {Table}
  * tags:dani
  */
-ListOperators.segmentElementsByPropertyValue = function(list, propertyName, sortedByValue, mode ) {
+ListOperators.groupElementsByPropertyValue = function(list, propertyName, sortedByValue, mode ) {
 	if( !list )
 		return;
-	var result = ListOperators._segmentElements_Base( list, propertyName, sortedByValue, mode );
+	var result = ListOperators._groupElements_Base( list, propertyName, sortedByValue, mode );
 	return result;
 }
 
 
 
-ListOperators._segmentElements_Base = function(list, propertyName, sortedByValue, mode) {
+ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, mode) {
 	var result;
 
 	if( !list )
@@ -527,6 +527,9 @@ ListOperators._segmentElements_Base = function(list, propertyName, sortedByValue
 			resultOb[pValue].push( i );		
 	};
 
+	// To-do: looks like getSortedByProperty is removing the valProperty from the objects
+	if( sortedByValue )
+		resultTable = resultTable.getSortedByProperty( "name" ); // "valProperty"
 
 	return resultTable;
 
