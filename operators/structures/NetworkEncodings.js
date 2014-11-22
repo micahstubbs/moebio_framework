@@ -346,7 +346,8 @@ NetworkEncodings.nodeNameSeparators = ['|', ':',  ' is ', ' are ', ','];
  * tags:decoding
  */
 NetworkEncodings.decodeNoteWork = function(code){
-	if(code==null || code=="") return;
+	if(code==null) return;
+	if(code=="") return new Network();
 
 	//c.l('\n\n*************////////// decodeNoteWork //////////*************');
 
@@ -704,9 +705,9 @@ NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesP
 		codedRelationsContents = new StringList();
 
 		node.toRelationList.forEach(function(relation){
-			
+
 			content = ( (relation.content==null || relation.content=="")  && relation.description)?relation.description:relation.content;
-			
+
 			if(content && content!=""){
 				regex = NetworkEncodings._regexWordForNoteWork(relation.node1.name);
 				lineRelation = content + ((regex!=null && content.search(regex)==-1)?(" "+relation.node1.name):"");
