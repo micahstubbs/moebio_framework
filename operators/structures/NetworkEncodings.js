@@ -350,7 +350,6 @@ NetworkEncodings.decodeNoteWork = function(code){
 	if(code=="") return new Network();
 
 	//c.l('\n\n*************////////// decodeNoteWork //////////*************');
-
 	//code = "\n"+code;
 	
 	var i,j;
