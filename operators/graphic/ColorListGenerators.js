@@ -191,11 +191,12 @@ ColorListGenerators.createCategoricalColorListForList = function( list, colorLis
 	list = List.fromArray( list ); 
 	var diffValues = list.getWithoutRepetitions();
 	var diffColors;
-	if( colorList )
-		diffColors = colorList;
-	else
+	if( colorList ){
+		diffColors = colorList.getInterpolated( color, interpolate );
+	}else{
 		diffColors = ColorListGenerators.createCategoricalColors( 2, diffValues.length, null, alpha, color, interpolate );
-	//var diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
+		//diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
+	}
 	diffColors = diffColors.addAlpha(alpha);
 	var colorDict = Table.fromArray( [ diffValues, diffColors ] );
 	var fullColorList = ListOperators.translateWithDictionary(list, colorDict, "NULL" );
