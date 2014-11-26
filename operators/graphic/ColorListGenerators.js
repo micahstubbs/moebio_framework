@@ -168,14 +168,17 @@ ColorListGenerators._evaluationFunction=function(numberList){ //private
  * Creates a ColorList of categorical colors based on an input List. All entries with the same value will get the same color.
  * @param {List} the list containing categorical data
  * 
+ * @param {ColorList} ColorList with categorical colors
  * @param {Number} alpha transparency
  * @param {String} color to mix
  * @param {Number} interpolation value (0-1) for color mix
  * @return {ColorList} ColorList with categorical colors
  * tags:generator
  */
-ColorListGenerators.createCategoricalColorListForList = function( list, alpha, color, interpolate ) 
+ColorListGenerators.createCategoricalColorListForList = function( list, colorList, alpha, color, interpolate ) 
 {
+	console.log( "createCategoricalColorListForList: ", colorList);
+
 	if( !list )
 		return new ColorList();
 	if( !alpha )
@@ -187,8 +190,13 @@ ColorListGenerators.createCategoricalColorListForList = function( list, alpha, c
 
 	list = List.fromArray( list ); 
 	var diffValues = list.getWithoutRepetitions();
-	var diffColors = ColorListGenerators.createCategoricalColors( 2, diffValues.length, null, alpha, color, interpolate );
-	//var diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
+	var diffColors;
+	if( colorList ){
+		diffColors = colorList.getInterpolated( color, interpolate );
+	}else{
+		diffColors = ColorListGenerators.createCategoricalColors( 2, diffValues.length, null, alpha, color, interpolate );
+		//diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
+	}
 	diffColors = diffColors.addAlpha(alpha);
 	var colorDict = Table.fromArray( [ diffValues, diffColors ] );
 	var fullColorList = ListOperators.translateWithDictionary(list, colorDict, "NULL" );
