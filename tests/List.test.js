@@ -16,8 +16,10 @@ describe( "list.getSortedByProperty", function()
             { name:"anna", age:37 }, 
             { name:"alex", age:34 }, 
          ] );
-        list = list.getSortedByProperty("name")
-        expect( 4 ).toEqual( 4 ); 
+        var result = list.getSortedByProperty("age");
+        console.log( "--------", result )
+        expect( result[0].name ).toEqual( "alex" ); 
+        expect( result[2].name ).toEqual( "anna" ); 
     });
 
 });
