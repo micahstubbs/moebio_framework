@@ -16,7 +16,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       '../dist/framework_concat.js',  
-      './object.test.js'
+      './*.test.js'
     ],
 
 
