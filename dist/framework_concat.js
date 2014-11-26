@@ -12239,8 +12239,9 @@ NetworkEncodings.decodeNoteWork = function(code){
 	
 	var network = new Network();
 
-	paragraphs = new StringList();
-	left = code;
+	var paragraphs = new StringList();
+	var left = code;
+
 
 	index = left.search(/\n\n./g);
 
@@ -12525,13 +12526,13 @@ NetworkEncodings._simplifyForNoteWork = function(name){
 	} else if(name.charAt(name.length-1)=='s') name = name.substr(0, name.length-1);
 	return name.trim();
 }
-NetworkEncodings._regexWordForNoteWork = function(word){
+NetworkEncodings._regexWordForNoteWork = function(word, global){
+	global = global==null?true:global;
 	try{
-		return new RegExp("(\\b)("+word+"|"+word+"s|"+word+"es)(\\b)", "gi");
+		return new RegExp("(\\b)("+word+"|"+word+"s|"+word+"es)(\\b)", global?"gi":"i");
 	} catch(err){
 		return null;
 	}
-	
 }
 
 /**
