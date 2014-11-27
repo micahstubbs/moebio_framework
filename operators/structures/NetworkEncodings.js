@@ -421,7 +421,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 			if(colorSegments[nLineParagraph]==null) colorSegments[nLineParagraph]=[];
 
 			colorSegments[nLineParagraph].push({
-				type:'relation color',
+				type:'relation_color',
 				iStart:0,
 				iEnd:line.length
 			});
@@ -438,7 +438,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 						if(colorSegments[nLineParagraph+i]==null) colorSegments[nLineParagraph+i]=[];
 
 						colorSegments[nLineParagraph+i].push({
-								type:'relation color',
+								type:'relation_color',
 								iStart:0,
 								iEnd:line.length
 						});
@@ -482,6 +482,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 				iEnd = index==-1?line.length:index
 				
 				if(node==null){
+
 					node = new Node(id, name);
 					node._nLine = nLineParagraph;
 					network.addNode(node);
@@ -494,7 +495,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 					if(colorSegments[nLineParagraph]==null) colorSegments[nLineParagraph]=[];
 
 					colorSegments[nLineParagraph].push({
-						type:'node name',
+						type:'node_name',
 						iStart:0,
 						iEnd:iEnd
 					});
@@ -506,7 +507,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 					if(colorSegments[nLineParagraph]==null) colorSegments[nLineParagraph]=[];
 
 					colorSegments[nLineParagraph].push({
-						type:'node name repeated',
+						type:'node_name_repeated',
 						iStart:0,
 						iEnd:iEnd
 					});
@@ -570,7 +571,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 
 		node._lines.forEach(function(line, i){
 			if(line.indexOf('=')==-1){
-				simpleLine = NetworkEncodings._simplifyForNoteWork(line);
+				simpleLine = line;//NetworkEncodings._simplifyForNoteWork(line);
 
 
 				
@@ -589,6 +590,9 @@ NetworkEncodings.decodeNoteWork = function(code){
 					if(index!=-1){
 						iEnd = index + simpleLine.substr(index).match(regex)[0].length
 
+						// c.l('simpleLine:['+simpleLine+']');
+						// c.l('simpleLine.substr(index).match(regex)[0]:['+simpleLine.substr(index).match(regex)[0]+']');
+
 					    relation = network.relationList.getFirstRelationBetweenNodes(node, otherNode, true);
 
 					    if(relation!=null){
@@ -598,7 +602,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 					    	if(colorSegments[nLineParagraph + i + 1]==null) colorSegments[nLineParagraph + i + 1]=[];
 
 					    	colorSegments[nLineParagraph + i + 1].push({
-								type:'node name in repeated relation',
+								type:'node_name_in_repeated_relation',
 								iStart:index,
 								iEnd:iEnd
 							});
@@ -607,6 +611,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 					    	relation = network.relationList.getFirstRelationBetweenNodes(otherNode, node, true);
 
 					    	if(relation==null || relation.content!=line){
+
 					    		id = line;
 							    relation = new Relation(line, line, node, otherNode);
 							    relation.content = line;//.substr(0,index);
@@ -615,10 +620,11 @@ NetworkEncodings.decodeNoteWork = function(code){
 							    if(colorSegments[nLineParagraph + i + 1]==null) colorSegments[nLineParagraph + i + 1]=[];
 
 								colorSegments[nLineParagraph + i + 1].push({
-									type:'node name in relation',
+									type:'node_name_in_relation',
 									iStart:index,
 									iEnd:iEnd
 								});
+
 					    	}
 					    }
 					}
@@ -647,7 +653,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 	network.colorSegments = colorSegments;
 
 	//c.l('decodeNoteWork --> network', network);
-	c.l('colorSegments', colorSegments);
+	c.l('_colorSegments', colorSegments);
 	//c.l('*************////////// decodeNoteWork //////////*************\n\n');
 
 	return network;
