@@ -118,56 +118,6 @@ TableConversions.ObjectToList = function(object, fields){
 }
 
 
-/**
-* Convert a Array of Constant-Length-Arrays into a Table
-* @param {array} array of constant-length-arrays
-*
-* @param {List} list of field names to include (by default it will generate ["X1", "X2", "X3", ...] following R's behaviour.)
-* @return {Table} resulting Table
-* tags:decoder,javier
-*/
-TableConversions.ArrayToTable = function(array, fields){
-
-	// This function can probably be merged with ObjectToTable. The only difference is that the elements on each row of the
-	// original array cannot be accessed using row[fields[f]]. An additional Format option should be added for this particular
-	// type of "table". I guess the automatic fields assignment is another difference.
-
-
-	if( !fields ){
-		var fields = Array.apply(0, Array(array[0].length)).map(function (x, y) { return y + 1; });
-		fields = fields.map(function (x) { return 'X' + x.toString(); });
-	}
-
-	// Create table and columns
-
-	var result = new Table();
-	for (var i = 0; i < fields.length; i++) {
-		var fieldName = fields[i];
-		var column = new List();
-		result[i] = column;
-		column.name = fieldName;
-	}
-
-	// Fill the table
-
-	for ( var i = 0; i < array.length; i++ ) {
-		var row = array[i];
-		for( var f = 0; f < fields.length; f++ ){
-			result[f].push( row[f] ); // The main difference with ObjectToTable is here
-		}
-	}
-
-	// Improve columns
-	for (var i = 0; i < result.length; i++) {
-		result[i] = result[i].getImproved()
-	}
-
-	// Improve table
-	result = result.getImproved();
-
-	// Return best possible
-	return result;
-}
 
 /**
  * Convert a Table into an Object or Array of objects
