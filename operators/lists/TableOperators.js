@@ -144,17 +144,44 @@ TableOperators.getSubListsByIndexes=function(table, indexes){
 }
 
 TableOperators.sortListsByNumberList=function(table, numberList, descending){
-	descending = descending || true;
-	
-	var newTable = instantiate(typeOf(table));
-	newTable.name = table.name;
-	var nElements = table.length;
-	var i;
-	for(i=0; i<nElements; i++){
-		newTable[i] = ListOperators.sortListByNumberList(table[i], numberList, descending);
-	}
-	return newTable;
+  if(descending==null) descending = true;
+
+  var newTable = instantiate(typeOf(table));
+  newTable.name = table.name;
+  var nElements = table.length;
+  var i;
+  // only need to do the sort once, not for each column
+  var indexList = numberList.clone();
+  // save original index
+  for(i=0; i < indexList.length; i++){
+    indexList[i]=i;
+  }
+  indexList = ListOperators.sortListByNumberList(indexList, numberList, descending);
+  // now clone and then move from original based on index
+  for(i=0; i<nElements; i++){
+    newTable[i] = table[i].clone();
+    for(var j=0; j < indexList.length; j++){
+      newTable[i][j] = table[i][indexList[j]];
+    }
+  }
+  return newTable;
 }
+
+// old version replaced by above version Dec 1st, 2014
+// - fixed bug where descending with 'false' value gets changed to 'true'
+// - performance improvements for tables with lots of lists 
+// TableOperators.sortListsByNumberList=function(table, numberList, descending){
+// 	descending = descending || true;
+	
+// 	var newTable = instantiate(typeOf(table));
+// 	newTable.name = table.name;
+// 	var nElements = table.length;
+// 	var i;
+// 	for(i=0; i<nElements; i++){
+// 		newTable[i] = ListOperators.sortListByNumberList(table[i], numberList, descending);
+// 	}
+// 	return newTable;
+// }
 
 
 
