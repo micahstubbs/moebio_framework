@@ -398,7 +398,8 @@ NetworkEncodings.decodeNoteWork = function(code){
 			line = paragraph;
 			lines = null;
 		} else { 
-			lines = paragraph.split(/\n|\./g);
+			//lines = paragraph.split(/\n|\./g);
+			lines = paragraph.split(/\n/g);
 			line = lines[0];
 		}
 
