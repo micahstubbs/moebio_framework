@@ -643,8 +643,6 @@ NetworkEncodings.decodeNoteWork = function(code){
 		texts = line.substr(0,index).split(',');
 	    texts.forEach(function(text){
 	       color = line.substr(index+1);
-	       //c.l('text:', text);
-	       //c.l('color:', color);
 	       network.relationList.forEach(function(relation){
 	         if(relation.name.indexOf(text)!=-1) relation.color = color;
 	       });
@@ -652,10 +650,6 @@ NetworkEncodings.decodeNoteWork = function(code){
 	});
 	
 	network.colorSegments = colorSegments;
-
-	//c.l('decodeNoteWork --> network', network);
-	c.l('_colorSegments', colorSegments);
-	//c.l('*************////////// decodeNoteWork //////////*************\n\n');
 
 	return network;
 }
