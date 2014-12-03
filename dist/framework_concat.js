@@ -4943,9 +4943,37 @@ ObjectOperators.getPropertiesNamesAndValues = function(object){
 }
 
 
-ObjectOperators.fusionObjects = function(object, objectToFusion){
+/**
+ * interpolates two different objects of the same type<br>currently working with numbers and intervals
+ * @param  {Object} object0
+ * @param  {Object} object1
+ * 
+ * @param  {Number} value
+ * @return {Object}
+ * tags:
+ */
+ObjectOperators.interpolateObjects = function(object0, object1, value){
+	var type = typeOf(object0);
+	if(type!=typeOf(object1)) return object0;
 
+	value = value==null?0.5:value;
+	var antivalue = 1-value;
+
+	switch(type){
+		case 'number':
+			return antivalue*object0 + value*object1;
+			break;
+		case 'Interval':
+			return new Interval(antivalue*object0.x + value*object1.x, antivalue*object0.y + value*object1.y);
+			break;
+	}
+	return null;
 }
+
+
+// ObjectOperators.fusionObjects = function(object, objectToFusion){
+
+// }
 
 /**
  * replaces an object by another if it matches the obectToReplace
