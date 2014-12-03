@@ -80,10 +80,11 @@ ObjectOperators.getPropertiesNamesAndValues = function(object){
  * @param  {Object} object1
  * 
  * @param  {Number} value
+ * @param {Number} minDistance if objects are close enough, it delivers the orginal object
  * @return {Object}
  * tags:
  */
-ObjectOperators.interpolateObjects = function(object0, object1, value){
+ObjectOperators.interpolateObjects = function(object0, object1, value, minDistance){
 	var type = typeOf(object0);
 	if(type!=typeOf(object1)) return object0;
 
@@ -92,9 +93,11 @@ ObjectOperators.interpolateObjects = function(object0, object1, value){
 
 	switch(type){
 		case 'number':
+			if(minDistance && Math.abs(object0-object1)<=minDistance) return object0;
 			return antivalue*object0 + value*object1;
 			break;
 		case 'Interval':
+			if(minDistance && (Math.abs(object0.x-object1.x)+Math.abs(object0.y-object1.y))<=minDistance) return object0;
 			return new Interval(antivalue*object0.x + value*object1.x, antivalue*object0.y + value*object1.y);
 			break;
 	}
