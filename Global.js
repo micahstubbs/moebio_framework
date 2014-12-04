@@ -228,15 +228,13 @@ function enterFrame(){
 	MOUSE_MOVED = DX_MOUSE!=0 || DY_MOUSE!=0;
 	PREV_mX=mX;
 	PREV_mY=mY;
-
-	//c.log('pre-cycle WHEEL_CHANGE:', WHEEL_CHANGE, nF);
+	
   	cycle();
 
   	WHEEL_CHANGE = 0;
   	
   	nF++;
 
-  	
 }
 
 function startCycle(){

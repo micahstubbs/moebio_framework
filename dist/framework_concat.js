@@ -7737,6 +7737,7 @@ ColorOperators.invertColorRGB=function(r, g, b){
 ColorOperators.addAlpha=function(color, alpha){
 	//var rgb = color.substr(0,3)=='rgb'?ColorOperators.colorStringToRGB(color):ColorOperators.HEXtoRGB(color);
     var rgb = ColorOperators.colorStringToRGB(color);
+    if(rgb==null) return 'black';
 	return 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+alpha+')';
 }
 
@@ -21237,15 +21238,13 @@ function enterFrame(){
 	MOUSE_MOVED = DX_MOUSE!=0 || DY_MOUSE!=0;
 	PREV_mX=mX;
 	PREV_mY=mY;
-
-	//c.log('pre-cycle WHEEL_CHANGE:', WHEEL_CHANGE, nF);
+	
   	cycle();
 
   	WHEEL_CHANGE = 0;
   	
   	nF++;
 
-  	
 }
 
 function startCycle(){

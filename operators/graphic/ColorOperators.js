@@ -260,6 +260,7 @@ ColorOperators.invertColorRGB=function(r, g, b){
 ColorOperators.addAlpha=function(color, alpha){
 	//var rgb = color.substr(0,3)=='rgb'?ColorOperators.colorStringToRGB(color):ColorOperators.HEXtoRGB(color);
     var rgb = ColorOperators.colorStringToRGB(color);
+    if(rgb==null) return 'black';
 	return 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+alpha+')';
 }
 
