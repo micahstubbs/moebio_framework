@@ -12439,10 +12439,10 @@ NetworkEncodings.decodeNoteWork = function(code){
 	}
 	
 
-	var jsonWarp;
-	var obj;
+	// var jsonWarp;
+	// var obj;
 	var propertyName;
-	//var propertyValue;
+	var propertyValue;
 
 
 	//build relations
@@ -12461,18 +12461,21 @@ NetworkEncodings.decodeNoteWork = function(code){
 				propertyName = simpleLine.split(':')[0];
 
 				if(propertyName.indexOf(' ')==-1){
-					jsonWarp = "{\""+propertyName+"\":"+line.split(':')[1]+"}";
-					//jsonWarp = "{"+simpleLine+"}";
+					// jsonWarp = "{\""+propertyName+"\":"+line.split(':')[1]+"}";
+					// //jsonWarp = "{"+simpleLine+"}";
 
-					c.l('jsonWarp:['+jsonWarp+']');
+					// c.l('jsonWarp:['+jsonWarp+']');
 
-					obj = evalJavaScriptFunction(jsonWarp).result;//JSON.parse(jsonWarp);
+					// obj = evalJavaScriptFunction(jsonWarp).result;//JSON.parse(jsonWarp);
 					
-					c.l('obj:['+obj+']');
+					// c.l('obj:['+obj+']');
 					
-					c.l('obj[propertyName]:',obj[propertyName]);
+					// c.l('obj[propertyName]:',obj[propertyName]);
 
-					if(obj[propertyName]!=null) node[propertyName] = obj[propertyName];
+					propertyValue = line.split(':')[1].trim();
+					if(propertyValue == String(Number(propertyValue))) propertyValue = Number(propertyValue);
+
+					if(propertyValue!=null) node[propertyName] = propertyValue;
 				}
 
 			} else {
