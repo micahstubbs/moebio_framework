@@ -583,6 +583,7 @@ List.prototype.indexOfElement=function(element){//TODO: test if this is faster t
 /**
  * return a list of values of a property of all elements
  * @param  {String} propertyName
+ * 
  * @param  {Object} valueIfNull in case the property doesn't exist in the element
  * @return {List}
  * tags:
@@ -668,11 +669,11 @@ List.prototype.getSortedByProperty=function(propertyName, ascending){
 	var comparator;
 	if(ascending){
 		comparator=function(a, b){
-			return a[propertyName]-b[propertyName];	
+			return a[propertyName]>b[propertyName]?1:-1;	
 		}
 	} else {
 		comparator=function(a, b){
-			return b[propertyName]-a[propertyName];
+			return b[propertyName]>a[propertyName]?1:-1;
 		}
 	}
 	return this.clone().sort(comparator);
