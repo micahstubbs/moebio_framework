@@ -563,6 +563,11 @@ NetworkEncodings.decodeNoteWork = function(code){
 	}
 	
 
+	var jsonWarp;
+	var obj;
+	var propertyName;
+	//var propertyValue;
+
 
 	//build relations
 
@@ -571,10 +576,31 @@ NetworkEncodings.decodeNoteWork = function(code){
 		nLineParagraph = node._nLine;
 
 		node._lines.forEach(function(line, i){
-			if(line.indexOf('=')==-1){
+			if(line.indexOf('=')!=-1){
+
+			} else if(line.indexOf(':')!=-1){
+
+				simpleLine = line.trim();
+
+				propertyName = simpleLine.split(':')[0];
+
+				if(propertyName.indexOf(' ')==-1){
+					jsonWarp = "{\""+propertyName+"\":"+line.split(':')[1]+"}";
+					//jsonWarp = "{"+simpleLine+"}";
+
+					c.l('jsonWarp:['+jsonWarp+']');
+
+					obj = evalJavaScriptFunction(jsonWarp).result;//JSON.parse(jsonWarp);
+					
+					c.l('obj:['+obj+']');
+					
+					c.l('obj[propertyName]:',obj[propertyName]);
+
+					if(obj[propertyName]!=null) node[propertyName] = obj[propertyName];
+				}
+
+			} else {
 				simpleLine = line;//NetworkEncodings._simplifyForNoteWork(line);
-
-
 				
 				network.nodeList.forEach(function(otherNode){
 					regex = NetworkEncodings._regexWordForNoteWork(otherNode.id);
