@@ -1,5 +1,6 @@
 DateOperators.millisecondsToHours = 1/(1000*60*60);
 DateOperators.millisecondsToDays = 1/(1000*60*60*24);
+DateOperators.millisecondsToWeeks = 1/(1000*60*60*24*7);
 DateOperators.millisecondsToYears = 0.00000000003169;
 
 DateOperators.MONTH_NAMES_SHORT = ['jan','feb','mar','apr','mai','jun','jul','aug','sep','oct','nov','dec'];
@@ -99,6 +100,9 @@ DateOperators.getHoursBetweenDates=function(date0, date1){
 DateOperators.getDaysBetweenDates=function(date0, date1){
 	return (date1.getTime() - date0.getTime())*DateOperators.millisecondsToDays;
 }
+DateOperators.getWeeksBetweenDates=function(date0, date1){
+	return (date1.getTime() - date0.getTime())*DateOperators.millisecondsToWeeks; 
+}
 DateOperators.getYearsBetweenDates=function(date0, date1){
 	return (date1.getTime() - date0.getTime())*DateOperators.millisecondsToYears;
 }
@@ -122,4 +126,6 @@ DateOperators.getWeekInYear=function(date){
 	var onejan = new Date(date.getFullYear(), 0, 1);
     return Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
 }
+
+
 
