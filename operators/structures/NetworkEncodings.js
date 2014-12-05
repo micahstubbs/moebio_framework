@@ -349,7 +349,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 	if(code==null) return;
 	if(code=="") return new Network();
 
-	//c.l('\n\n*************////////// decodeNoteWork //////////*************');
+	c.l('\n\n*************////////// decodeNoteWork //////////*************');
 	//code = "\n"+code;
 	
 	var i,j;
@@ -369,28 +369,35 @@ NetworkEncodings.decodeNoteWork = function(code){
 	var simpleLine;
 	var regex;
 	var iEnd;
+	var propertyName;
+	var propertyValue;
 	
 	var network = new Network();
 
 	var paragraphs = new StringList();
-	var left = code;
 
+
+
+	var nLineParagraph = 0;
+	while(code.charAt(0)=='\n'){
+		code = code.substr(1);
+		nLineParagraph++;
+	}
+
+
+	var left = code;
 
 	index = left.search(/\n\n./g);
 
 	while(index!=-1){
-		
 		paragraphs.push(left.substr(0, index));
-
 		left = left.substr(index+2);
-
 		index = left.search(/\n\n./g);
 	}
 
 	paragraphs.push(left);
 
-
-	var nLineParagraph = 0;
+	
 
 	paragraphs.forEach(function(paragraph, i){
 
@@ -398,11 +405,9 @@ NetworkEncodings.decodeNoteWork = function(code){
 			line = paragraph;
 			lines = null;
 		} else { 
-			//lines = paragraph.split(/\n|\./g);
 			lines = paragraph.split(/\n/g);
 			line = lines[0];
 		}
-
 
 		if(line=='\n' || line=='' || line==' ' || line=='  '){//use regex here
 			
@@ -449,6 +454,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 			}
 
 		} else {//node
+			
 			minIndex = 99999999;
 
 			index = line.indexOf(NetworkEncodings.nodeNameSeparators[0]);
@@ -488,10 +494,8 @@ NetworkEncodings.decodeNoteWork = function(code){
 					node._nLine = nLineParagraph;
 					network.addNode(node);
 					node.content = index!=-1?line.substr(index+sep.length).trim():"";
-					//c.l('create node, content:['+node.content+']');
-
+					
 					node._lines = lines?lines.slice(1):new StringList();
-					////c.l('node._lines:['+node._lines+']');
 					
 					if(colorSegments[nLineParagraph]==null) colorSegments[nLineParagraph]=[];
 
@@ -502,7 +506,8 @@ NetworkEncodings.decodeNoteWork = function(code){
 					});
 
 				} else {
-					node._lines = lines?node._lines.concat(lines.slice(1)):new StringList();
+					if(lines!=null) node._lines = node._lines.concat(lines.slice(1));
+
 					node.content += index!=-1?(" | " + line.substr(index+sep.length).trim()):"";
 					
 					if(colorSegments[nLineParagraph]==null) colorSegments[nLineParagraph]=[];
@@ -514,14 +519,14 @@ NetworkEncodings.decodeNoteWork = function(code){
 					});
 				}
 			} else {
-				//c.l('? paragraph:['+paragraph+']');
+				
 			}
 		}
 
 		nLineParagraph+=(lines?lines.length:1)+1;
 	});
-
 	
+
 	//find equalities (synonyms)
 
 	var foundEquivalences = true;
@@ -561,12 +566,6 @@ NetworkEncodings.decodeNoteWork = function(code){
 			}
 		}
 	}
-	
-
-	// var jsonWarp;
-	// var obj;
-	var propertyName;
-	var propertyValue;
 
 
 	//build relations
@@ -576,6 +575,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 		nLineParagraph = node._nLine;
 
 		node._lines.forEach(function(line, i){
+
 			if(line.indexOf('=')!=-1){
 
 			} else if(line.indexOf(':')!=-1){
@@ -585,17 +585,6 @@ NetworkEncodings.decodeNoteWork = function(code){
 				propertyName = simpleLine.split(':')[0];
 
 				if(propertyName.indexOf(' ')==-1){
-					// jsonWarp = "{\""+propertyName+"\":"+line.split(':')[1]+"}";
-					// //jsonWarp = "{"+simpleLine+"}";
-
-					// c.l('jsonWarp:['+jsonWarp+']');
-
-					// obj = evalJavaScriptFunction(jsonWarp).result;//JSON.parse(jsonWarp);
-					
-					// c.l('obj:['+obj+']');
-					
-					// c.l('obj[propertyName]:',obj[propertyName]);
-
 					propertyValue = line.split(':')[1].trim();
 					if(propertyValue == String(Number(propertyValue))) propertyValue = Number(propertyValue);
 
@@ -603,7 +592,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 				}
 
 			} else {
-				simpleLine = line;//NetworkEncodings._simplifyForNoteWork(line);
+				simpleLine = line;
 				
 				network.nodeList.forEach(function(otherNode){
 					regex = NetworkEncodings._regexWordForNoteWork(otherNode.id);
@@ -619,10 +608,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 
 					if(index!=-1){
 						iEnd = index + simpleLine.substr(index).match(regex)[0].length
-
-						// c.l('simpleLine:['+simpleLine+']');
-						// c.l('simpleLine.substr(index).match(regex)[0]:['+simpleLine.substr(index).match(regex)[0]+']');
-
+						
 					    relation = network.relationList.getFirstRelationBetweenNodes(node, otherNode, true);
 
 					    if(relation!=null){
