@@ -74,7 +74,7 @@ NetworkOperators.spanningTree = function(network, node0, nodeLimit){//TODO: this
 	
 	for(i=0;nodes[i]!=null;i++){
 		newNode = new Node(nodes[i].id, nodes[i].name);
-		if(nodes[i]==newNode) continue;
+		if(newNode.id==parent.id) continue;
 		newNode.node = nodes[i];
 		tree.addNodeToTree(newNode, parent);
 		if(nodeLimit!=null && newNode.id==nodeLimit.id) limitReached = true;
@@ -86,29 +86,22 @@ NetworkOperators.spanningTree = function(network, node0, nodeLimit){//TODO: this
 	accumulated.push(node0);
 	
 	while(true){
-		//c.log('-----');
 		newNodes = new NodeList();//nodes.clone();
 		for(i=0;nodes[i]!=null;i++){
 			newNodes.addNodes(nodes[i].nodeList);//TODO: check if obsolete concat + check if a concatIfNew could be useful, specially if overriden in NodeList, with getNodeById
 		}
-		//c.log('1. newNodes:'+newNodes.getIds().join(', '));
 		newNodes = newNodes.getWithoutRepetitions();
-		//c.log('2. newNodes:'+newNodes.getIds().join(', '));
 		newNodes.removeElements(accumulated);
-		//c.log('3. newNodes:'+newNodes.getIds().join(', '));
 		if(newNodes.length==0) return tree;
-		//c.log('prev nodes:'+nodes.getIds().join(', '))
 		
 		for(i=0;newNodes[i]!=null;i++){
 			newNode = new Node(newNodes[i].id, newNodes[i].name);
 			newNode.node = newNodes[i];
 			for(j=0; newNodes[i].nodeList[j]!=null; j++){
 				id = newNodes[i].nodeList[j].id;
-				//c.log('  search id in prev nodes:', id);
 				nodeInPrevNodes = nodes.getNodeById(id);
-				if(nodeInPrevNodes!=null){
+				if(nodeInPrevNodes!=null && newNode.id!=id){
 					tree.addNodeToTree(newNode, tree.nodeList.getNodeById(id));
-					//c.log('       <-->', newNode.id, id);
 					break;
 				}
 			}
