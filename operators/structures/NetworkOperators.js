@@ -112,7 +112,6 @@ NetworkOperators.spanningTree = function(network, node0, nodeLimit){//TODO: this
 		
 		nodes = newNodes;
 		accumulated = accumulated.concat(newNodes);
-		//c.log('2. accumulated:'+accumulated.getIds().join(', '));
 	}
 	
 	return tree;
