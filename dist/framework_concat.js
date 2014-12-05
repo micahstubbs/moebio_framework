@@ -12254,11 +12254,15 @@ NetworkEncodings.decodeNoteWork = function(code){
 	var iEnd;
 	var propertyName;
 	var propertyValue;
-	
 	var network = new Network();
-
 	var paragraphs = new StringList();
 
+	lines = code.split(/\n/g);
+	lines.forEach(function(line, i){
+		lines[i] = line.trim();
+	});
+
+	code = lines.join('\n');
 
 
 	var nLineParagraph = 0;
@@ -12491,7 +12495,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 
 					if(index!=-1){
 						iEnd = index + simpleLine.substr(index).match(regex)[0].length
-						
+
 					    relation = network.relationList.getFirstRelationBetweenNodes(node, otherNode, true);
 
 					    if(relation!=null){
