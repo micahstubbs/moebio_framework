@@ -478,15 +478,17 @@ ListOperators.getInformationGainAnalysis = function(feature, supervised){
 /**
  * Takes a List and returns its elements grouped by identic value. Each list in the table is assigned a "valProperty" value which is used for sorting
  * @param  {List} list of elements to group
- * @param  {Boolean} wether the results are to be sorted or not
+ * @param  {Boolean} whether the results are to be sorted or not
  * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
+ *
+ * @param  {Boolean} fillBlanks: whether to fill missing slots or not (if data is sequential)
  * @return {Table}
  * tags:dani
  */
-ListOperators.groupElements = function(list, sortedByValue, mode ) {
+ListOperators.groupElements = function(list, sortedByValue, mode, fillBlanks ) {
 	if( !list )
 		return;
-	var result = ListOperators._groupElements_Base( list, null, sortedByValue, mode );
+	var result = ListOperators._groupElements_Base( list, null, sortedByValue, mode, fillBlanks );
 	return result;
 }
 
@@ -497,19 +499,21 @@ ListOperators.groupElements = function(list, sortedByValue, mode ) {
  * @param  {String} name of the property to be used for grouping
  * @param  {Boolean} wether the results are to be sorted or not
  * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
+ *
+ * @param  {Boolean} fillBlanks: whether to fill missing slots or not (if data is sequential)
  * @return {Table}
  * tags:dani
  */
-ListOperators.groupElementsByPropertyValue = function(list, propertyName, sortedByValue, mode ) {
+ListOperators.groupElementsByPropertyValue = function(list, propertyName, sortedByValue, mode, fillBlanks ) {
 	if( !list )
 		return;
-	var result = ListOperators._groupElements_Base( list, propertyName, sortedByValue, mode );
+	var result = ListOperators._groupElements_Base( list, propertyName, sortedByValue, mode, fillBlanks );
 	return result;
 }
 
 
 
-ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, mode) {
+ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, mode, fillBlanks) {
 	var result;
 
 	if( !list )
@@ -518,7 +522,7 @@ ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, 
 		mode = 0;
 	var resultOb = {};
 	var resultTable = new Table();
-	var pValue, item;
+	var pValue, item, minValue, maxValue;
 	for (var i = 0; i < list.length; i++) {
 		item = list[i];
 		pValue = propertyName == undefined ? item : item[propertyName];
@@ -532,7 +536,29 @@ ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, 
 			resultOb[pValue].push( item );
 		else if( mode == 1)
 			resultOb[pValue].push( i );		
+		// Update boundaries
+		if( minValue == undefined || pValue < minValue ){
+			minValue = pValue;
+		}
+		if( maxValue == undefined || pValue > maxValue ){
+			maxValue = pValue;
+		}
 	};
+
+	// Fill the blanks
+	if( fillBlanks ){
+		var numBlanks = 0;
+		for( var i=minValue; i<maxValue; i++ ){
+			if( resultOb[i] == undefined ){
+				resultOb[i] = new List();
+				resultOb[i].name = i;
+				resultOb[i].valProperty = i;
+				resultTable.push( resultOb[i] );		
+				numBlanks++;	
+			}
+		}
+		//c.l("numBlanks: ", numBlanks)
+	}
 
 	// To-do: looks like getSortedByProperty is removing the valProperty from the objects
 	if( sortedByValue )
