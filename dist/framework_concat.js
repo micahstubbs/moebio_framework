@@ -5023,7 +5023,7 @@ ObjectOperators.toList = function(array){
  * tags:math
  */
 ObjectOperators.addition=function(){
-	c.log("addition__________________________________arguments:", arguments);
+	//c.l("addition__________________________________arguments:", arguments);
 	var objectType;
 	var result;
 	var i;
@@ -5042,10 +5042,10 @@ ObjectOperators.addition=function(){
 		if(arguments[0]!=null && arguments[0].isList && arguments[1]!=null && arguments[1].isList){
 			return ObjectOperators._applyBinaryOperatorOnLists(arguments[0], arguments[1], ObjectOperators.addition);
 		}else if(arguments[0]!=null && arguments[0].isList){
-			c.l('list versus object');
+			//c.l('list versus object');
 			return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[0], arguments[1], ObjectOperators.addition);
 		}else if(arguments[1]!=null && arguments[1].isList){
-			c.l('object versus list');
+			//c.l('object versus list');
 			return ObjectOperators._applyBinaryOperatorOnObjectWithList(arguments[0], arguments[1], ObjectOperators.addition);
 		}
 
@@ -5053,7 +5053,7 @@ ObjectOperators.addition=function(){
 		var a1 = arguments[1];
 		var a0Type = typeOf(a0);
 		var a1Type = typeOf(a1);
-		c.l('ObjectOperators.addition, a0Type, a1Type:['+a0Type, a1Type+']');
+		//c.l('ObjectOperators.addition, a0Type, a1Type:['+a0Type, a1Type+']');
 		var reversed = false;
 
 		if(a1Type<a0Type && a1Type!="string" && a0Type!="string"){
@@ -5065,7 +5065,7 @@ ObjectOperators.addition=function(){
 		}
 
 		var pairType = a0Type+"_"+a1Type;
-		c.log('ObjectOperators.addition, pairType:['+pairType+']');
+		//c.log('ObjectOperators.addition, pairType:['+pairType+']');
 		//
 		switch(pairType){
 			case 'boolean_boolean':
