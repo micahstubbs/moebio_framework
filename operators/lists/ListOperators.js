@@ -522,7 +522,7 @@ ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, 
 		mode = 0;
 	var resultOb = {};
 	var resultTable = new Table();
-	var pValue, item, minValue, maxValue;
+	var pValue, item, minValue, maxValue; 
 	for (var i = 0; i < list.length; i++) {
 		item = list[i];
 		pValue = propertyName == undefined ? item : item[propertyName];
