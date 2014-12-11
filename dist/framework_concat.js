@@ -4945,7 +4945,7 @@ ObjectOperators.getPropertiesNamesAndValues = function(object){
 
 
 /**
- * interpolates two different objects of the same type<br>currently working with numbers and intervals
+ * interpolates two different objects of the same type<br>currently working with numbers, intervals and numberLists
  * @param  {Object} object0
  * @param  {Object} object1
  * 
@@ -4956,6 +4956,7 @@ ObjectOperators.getPropertiesNamesAndValues = function(object){
  */
 ObjectOperators.interpolateObjects = function(object0, object1, value, minDistance){
 	var type = typeOf(object0);
+	var i;
 	if(type!=typeOf(object1)) return object0;
 
 	value = value==null?0.5:value;
@@ -4965,11 +4966,17 @@ ObjectOperators.interpolateObjects = function(object0, object1, value, minDistan
 		case 'number':
 			if(minDistance && Math.abs(object0-object1)<=minDistance) return object0;
 			return antivalue*object0 + value*object1;
-			break;
 		case 'Interval':
 			if(minDistance && (Math.abs(object0.x-object1.x)+Math.abs(object0.y-object1.y))<=minDistance) return object0;
 			return new Interval(antivalue*object0.x + value*object1.x, antivalue*object0.y + value*object1.y);
-			break;
+		case 'NumberList':
+			if(minDistance && Math.abs(object0.subtract(object1).getSum())<=minDistance) return object0;
+			var minL = Math.min(object0.length, object1.length);
+			var newNumberList = new NumberList();
+			for(i=0; i<minL; i++){
+				newNumberList[i] = antivalue*object0[i] + value*object1[i];
+			}
+			return newNumberList;
 	}
 	return null;
 }
@@ -7049,7 +7056,7 @@ RectangleOperators.squarify=function(frame, weights, isNormalizedWeights, isSort
 				rectangleList.push(new Rectangle(freeSubRectangle.x, freeSubRectangle.y, 0, 0));
 			} else {
 				for(j=1; j<nWeights; j++){ 
-					subWeightList = NumberList.fromArray(newWeightList.slice(i, i+j));
+					subWeightList = newWeightList.slice(i, i+j);//NumberList.fromArray(newWeightList.slice(i, i+j));//
 					prevSubRectangleList = subRectangleList.clone();
 					subArea = subWeightList.getSum()*area;
 					freeSubRectangle.x = freeRectangle.x;
@@ -7064,8 +7071,8 @@ RectangleOperators.squarify=function(frame, weights, isNormalizedWeights, isSort
 						column = false;
 					}
 					subWeightList = subWeightList.getNormalizedToSum();
-					subRectangleList = this.partitionRectangle(freeSubRectangle, subWeightList);
-					worstProportion = this.getHighestRatio(subRectangleList);
+					subRectangleList = RectangleOperators.partitionRectangle(freeSubRectangle, subWeightList);
+					worstProportion = this._getHighestRatio(subRectangleList);
 					if(proportion<=worstProportion){
 						break;
 					} else {
@@ -7087,7 +7094,8 @@ RectangleOperators.squarify=function(frame, weights, isNormalizedWeights, isSort
 					}
 					index++;
 				} else {
-					rectangleList = List.fromArray(rectangleList.concat(prevSubRectangleList));//RectangleList
+					//rectangleList = List.fromArray(rectangleList.concat(prevSubRectangleList));//RectangleList
+					rectangleList = rectangleList.concat(prevSubRectangleList);
 					if(rectangleList.length==nWeights){
 						if(!isSortedWeights){
 							newRectangleList = new List();//RectangleList
@@ -7114,7 +7122,7 @@ RectangleOperators.squarify=function(frame, weights, isNormalizedWeights, isSort
 	} else if(nWeights==2){
 		subWeightList = newWeightList.clone();
 		freeSubRectangle = frame.clone();
-		rectangleList = this.partitionRectangle(freeSubRectangle, subWeightList);
+		rectangleList = RectangleOperators.partitionRectangle(freeSubRectangle, subWeightList);
 	} else {
 		rectangleList[0] = frame.clone();
 	}
@@ -7155,18 +7163,17 @@ RectangleOperators.partitionRectangle=function(rectangle, normalizedWeightList){
 			freeRectangle.y+=areai/freeRectangle.width;
 		}
 	}
-	//trace("            rectangulo, listaRectangulos:", rectangulo, listaRectangulos);
+
 	return rectangleList;
 }
 
-//TODO: should be in RectangleListOperators:
 /**
 * returns the highest ratio from a list of Rectangles
 * @param {List} rectangleList a Rectangle List
 * 
 * @return {Number} highestRatio
 */
-RectangleOperators.getHighestRatio=function(rectangleList){
+RectangleOperators._getHighestRatio=function(rectangleList){
 	var highestRatio = 1;
 	var rectangle;
 	var i;
@@ -8654,15 +8661,17 @@ ListOperators.getInformationGainAnalysis = function(feature, supervised){
 /**
  * Takes a List and returns its elements grouped by identic value. Each list in the table is assigned a "valProperty" value which is used for sorting
  * @param  {List} list of elements to group
- * @param  {Boolean} wether the results are to be sorted or not
+ * @param  {Boolean} whether the results are to be sorted or not
  * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
+ *
+ * @param  {Boolean} fillBlanks: whether to fill missing slots or not (if data is sequential)
  * @return {Table}
  * tags:dani
  */
-ListOperators.groupElements = function(list, sortedByValue, mode ) {
+ListOperators.groupElements = function(list, sortedByValue, mode, fillBlanks ) {
 	if( !list )
 		return;
-	var result = ListOperators._groupElements_Base( list, null, sortedByValue, mode );
+	var result = ListOperators._groupElements_Base( list, null, sortedByValue, mode, fillBlanks );
 	return result;
 }
 
@@ -8673,19 +8682,21 @@ ListOperators.groupElements = function(list, sortedByValue, mode ) {
  * @param  {String} name of the property to be used for grouping
  * @param  {Boolean} wether the results are to be sorted or not
  * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
+ *
+ * @param  {Boolean} fillBlanks: whether to fill missing slots or not (if data is sequential)
  * @return {Table}
  * tags:dani
  */
-ListOperators.groupElementsByPropertyValue = function(list, propertyName, sortedByValue, mode ) {
+ListOperators.groupElementsByPropertyValue = function(list, propertyName, sortedByValue, mode, fillBlanks ) {
 	if( !list )
 		return;
-	var result = ListOperators._groupElements_Base( list, propertyName, sortedByValue, mode );
+	var result = ListOperators._groupElements_Base( list, propertyName, sortedByValue, mode, fillBlanks );
 	return result;
 }
 
 
 
-ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, mode) {
+ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, mode, fillBlanks) {
 	var result;
 
 	if( !list )
@@ -8694,7 +8705,7 @@ ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, 
 		mode = 0;
 	var resultOb = {};
 	var resultTable = new Table();
-	var pValue, item;
+	var pValue, item, minValue, maxValue; 
 	for (var i = 0; i < list.length; i++) {
 		item = list[i];
 		pValue = propertyName == undefined ? item : item[propertyName];
@@ -8708,7 +8719,29 @@ ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, 
 			resultOb[pValue].push( item );
 		else if( mode == 1)
 			resultOb[pValue].push( i );		
+		// Update boundaries
+		if( minValue == undefined || pValue < minValue ){
+			minValue = pValue;
+		}
+		if( maxValue == undefined || pValue > maxValue ){
+			maxValue = pValue;
+		}
 	};
+
+	// Fill the blanks
+	if( fillBlanks ){
+		var numBlanks = 0;
+		for( var i=minValue; i<maxValue; i++ ){
+			if( resultOb[i] == undefined ){
+				resultOb[i] = new List();
+				resultOb[i].name = i;
+				resultOb[i].valProperty = i;
+				resultTable.push( resultOb[i] );		
+				numBlanks++;	
+			}
+		}
+		//c.l("numBlanks: ", numBlanks)
+	}
 
 	// To-do: looks like getSortedByProperty is removing the valProperty from the objects
 	if( sortedByValue )

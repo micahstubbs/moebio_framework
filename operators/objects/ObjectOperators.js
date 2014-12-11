@@ -75,7 +75,7 @@ ObjectOperators.getPropertiesNamesAndValues = function(object){
 
 
 /**
- * interpolates two different objects of the same type<br>currently working with numbers and intervals
+ * interpolates two different objects of the same type<br>currently working with numbers, intervals and numberLists
  * @param  {Object} object0
  * @param  {Object} object1
  * 
@@ -86,6 +86,7 @@ ObjectOperators.getPropertiesNamesAndValues = function(object){
  */
 ObjectOperators.interpolateObjects = function(object0, object1, value, minDistance){
 	var type = typeOf(object0);
+	var i;
 	if(type!=typeOf(object1)) return object0;
 
 	value = value==null?0.5:value;
@@ -95,11 +96,17 @@ ObjectOperators.interpolateObjects = function(object0, object1, value, minDistan
 		case 'number':
 			if(minDistance && Math.abs(object0-object1)<=minDistance) return object0;
 			return antivalue*object0 + value*object1;
-			break;
 		case 'Interval':
 			if(minDistance && (Math.abs(object0.x-object1.x)+Math.abs(object0.y-object1.y))<=minDistance) return object0;
 			return new Interval(antivalue*object0.x + value*object1.x, antivalue*object0.y + value*object1.y);
-			break;
+		case 'NumberList':
+			if(minDistance && Math.abs(object0.subtract(object1).getSum())<=minDistance) return object0;
+			var minL = Math.min(object0.length, object1.length);
+			var newNumberList = new NumberList();
+			for(i=0; i<minL; i++){
+				newNumberList[i] = antivalue*object0[i] + value*object1[i];
+			}
+			return newNumberList;
 	}
 	return null;
 }
