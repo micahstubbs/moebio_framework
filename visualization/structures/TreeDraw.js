@@ -329,7 +329,6 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
 	if(!captureImage && !drawingImage) context.restore();
 
 	
-
 	return frame.memory.nodeSelected;
 	
 }
