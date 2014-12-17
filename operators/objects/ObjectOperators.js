@@ -397,7 +397,7 @@ ObjectOperators.division=function(){
 	var result;
 	var i;
 	if(arguments.length<2){
-		if(arguments.length==1 && arguments[0].isList){
+		if(arguments.length==1 && arguments[0] && arguments[0].isList){
 			var result = arguments[0][0];
 			for(i=1; arguments[0][i]!=null; i++){
 				result = ObjectOperators.division(result, arguments[0][i]);
@@ -407,12 +407,12 @@ ObjectOperators.division=function(){
 		return null;
 	}
 	if(arguments.length==2){
-		if(arguments[0].isList && arguments[1].isList){
+		if(arguments[0]!=null && arguments[0].isList && arguments[1]!=null && arguments[1].isList){
 			return ObjectOperators._applyBinaryOperatorOnLists(arguments[0], arguments[1], ObjectOperators.division);
-		}else if(arguments[0].isList){
+		}else if(arguments[0]!=null && arguments[0].isList){
 			//c.log('list versus object');
 			return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[0], arguments[1], ObjectOperators.division);
-		}else if(arguments[1].isList){
+		}else if(arguments[1]!=null && arguments[1].isList){
 			return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[1], arguments[0], ObjectOperators.division);
 		}
 

@@ -381,6 +381,7 @@ ListOperators.getListEntropy = function(list, valueFollowing){
 	return entropy;
 }
 
+
 /**
  * measures how much a feature decreases entropy when segmenting by its values a supervised variable
  * @param  {List} feature

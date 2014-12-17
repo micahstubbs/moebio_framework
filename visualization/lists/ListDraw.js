@@ -5,26 +5,42 @@ function ListDraw(){};
  * @param  {Rectangle} frame
  * @param  {List} list to be drawn
  * 
- * @param {Number} returnMode -1:no selection, 0:return index, 1:return element
+ * @param {Number} returnMode:<br>-1:no selection<br>0:return index<br>1:return element<br>2:indexes<br>3:elements
  * @param  {ColorList} colorList colors of elements
  * @param {Number} textSize
  * @param  {Number} mode 0:color in square if any
- * @return {Number} returns the index of the selected element
+ * @param {Object} [varname] index or list of indexes of externally selected
+ * @return {Object} returns the index of the selected element, the element, a list of indexes or a list of elements
  * tags:draw
  */
-ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode){
+ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode, selectedInit){
 	if(list==null || !list.length>0) return;
 
 	textSize = textSize||14;
 	returnMode = returnMode==null?0:returnMode;
 
-	if(frame.memory==null) frame.memory = {selected:0, y:0};
+	if(frame.memory==null) frame.memory = {selected:0, y:0, multiSelected:new List()};
 
 	var changeList = frame.memory.list!=list;
+	var changeExternallySelected = (changeList && selectedInit!=null) || frame.memory.selectedInit != selectedInit;
 
+	if(changeExternallySelected){
+		if(returnMode==3){
+			frame.memory.multiSelected = new List();
+			selectedInit.forEach(function(index){
+				frame.memory.multiSelected.push(list[index]);
+			});
+		} else if(returnMode==2){
+			frame.memory.multiSelected = List.fromArray(selectedInit).getImproved();
+		} else {
+			frame.memory.selected = selectedInit;
+		}
+
+		frame.memory.selectedInit = selectedInit;
+	}
+	
 	if(changeList){
 		frame.memory.list=list;
-		frame.memory.selected = 0;
 	}
 
 	var i;
@@ -37,6 +53,9 @@ ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode)
 	var mouseIn = frame.containsPoint(mP);
 	var y0Follow = 0;
 	var y0;
+	var isSelected;
+	var multi = returnMode==2 || returnMode==3;
+	var index, onMulti;
 
 	var hList = list.length*dy;
 
@@ -69,26 +88,48 @@ ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode)
 		}
 
 		if(returnMode!=-1){
-			if(frame.memory.selected==i){
+
+			index = frame.memory.multiSelected.indexOf(i);
+			onMulti = multi && index!=-1;
+
+			isSelected = multi?onMulti:frame.memory.selected==i;
+
+			if(isSelected){
 				setFill('black');
 				fRect(frame.x+2, y, frame.width-4, dy);
 				setFill('white');
 			} else {
-				if(mouseIn && mY>=y && mY<y+dy){
-					setFill('rgb(220,220,220)');
-					if(fRectM(frame.x+2, y, frame.width-4, dy)){
-						setCursor('pointer');
-					}
-					if(MOUSE_DOWN) frame.memory.selected = i;
-				}
 				setFill('black');
+			}
+			fText(list[i].toString(), xTexts, y+2);
+
+			if(mouseIn && mY>=y && mY<y+dy){
+				setFill('rgba(150,150,150,0.3)');
+				if(fRectM(frame.x+2, y, frame.width-4, dy)){
+					setCursor('pointer');
+				}
+				if(MOUSE_DOWN){
+					if(multi){
+
+						if(onMulti){
+							frame.memory.multiSelected = frame.memory.multiSelected.getWithoutElementAtIndex(index);
+						} else {
+							frame.memory.multiSelected = frame.memory.multiSelected.clone();
+							frame.memory.multiSelected.push(returnMode==2?i:list[i]);
+							frame.memory.multiSelected = frame.memory.multiSelected.getImproved();
+						}
+
+					} else {
+						frame.memory.selected = i;
+					}
+				}
 			}
 		} else {
 			setFill('black');
 		}
 		
-		fText(list[i].toString(), xTexts, y+2);
+		
 	}
 
-	return returnMode==1?list[frame.memory.selected]:frame.memory.selected;
+	return returnMode==1?list[frame.memory.selected]:(multi?frame.memory.multiSelected:frame.memory.selected);
 }

@@ -469,6 +469,8 @@ TableOperators.completeTable=function(table, nRows, value){
  * tags:filter
  */
 TableOperators.getNumberTableFromTable=function(table){
+	if(table==null || !table.length>0) return null;
+	
 	var i;
 	var newTable = new NumberTable();
 	newTable.name = table.name;
@@ -486,6 +488,8 @@ TableOperators.getNumberTableFromTable=function(table){
  * tags:ds
  */
 TableOperators.getVariablesInformationGain = function(variablesTable, supervised){
+	if(variablesTable==null) return null;
+
 	var igs = new NumberList();
 	variablesTable.forEach(function(feature){
 		igs.push(ListOperators.getInformationGain(feature, supervised));
@@ -563,6 +567,7 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
 			}
 		});
 	}
+
 
 	var subDivide = entropy>=min_entropy && maxIg>min_info_gain && supervised.length>=min_size_node;
 

@@ -5267,7 +5267,7 @@ ObjectOperators.division=function(){
 	var result;
 	var i;
 	if(arguments.length<2){
-		if(arguments.length==1 && arguments[0].isList){
+		if(arguments.length==1 && arguments[0] && arguments[0].isList){
 			var result = arguments[0][0];
 			for(i=1; arguments[0][i]!=null; i++){
 				result = ObjectOperators.division(result, arguments[0][i]);
@@ -5277,12 +5277,12 @@ ObjectOperators.division=function(){
 		return null;
 	}
 	if(arguments.length==2){
-		if(arguments[0].isList && arguments[1].isList){
+		if(arguments[0]!=null && arguments[0].isList && arguments[1]!=null && arguments[1].isList){
 			return ObjectOperators._applyBinaryOperatorOnLists(arguments[0], arguments[1], ObjectOperators.division);
-		}else if(arguments[0].isList){
+		}else if(arguments[0]!=null && arguments[0].isList){
 			//c.log('list versus object');
 			return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[0], arguments[1], ObjectOperators.division);
-		}else if(arguments[1].isList){
+		}else if(arguments[1]!=null && arguments[1].isList){
 			return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[1], arguments[0], ObjectOperators.division);
 		}
 
@@ -8564,6 +8564,7 @@ ListOperators.getListEntropy = function(list, valueFollowing){
 	return entropy;
 }
 
+
 /**
  * measures how much a feature decreases entropy when segmenting by its values a supervised variable
  * @param  {List} feature
@@ -9547,6 +9548,8 @@ TableOperators.completeTable=function(table, nRows, value){
  * tags:filter
  */
 TableOperators.getNumberTableFromTable=function(table){
+	if(table==null || !table.length>0) return null;
+	
 	var i;
 	var newTable = new NumberTable();
 	newTable.name = table.name;
@@ -9564,6 +9567,8 @@ TableOperators.getNumberTableFromTable=function(table){
  * tags:ds
  */
 TableOperators.getVariablesInformationGain = function(variablesTable, supervised){
+	if(variablesTable==null) return null;
+
 	var igs = new NumberList();
 	variablesTable.forEach(function(feature){
 		igs.push(ListOperators.getInformationGain(feature, supervised));
@@ -9641,6 +9646,7 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
 			}
 		});
 	}
+
 
 	var subDivide = entropy>=min_entropy && maxIg>min_info_gain && supervised.length>=min_size_node;
 
@@ -18328,26 +18334,42 @@ function ListDraw(){};
  * @param  {Rectangle} frame
  * @param  {List} list to be drawn
  * 
- * @param {Number} returnMode -1:no selection, 0:return index, 1:return element
+ * @param {Number} returnMode:<br>-1:no selection<br>0:return index<br>1:return element<br>2:indexes<br>3:elements
  * @param  {ColorList} colorList colors of elements
  * @param {Number} textSize
  * @param  {Number} mode 0:color in square if any
- * @return {Number} returns the index of the selected element
+ * @param {Object} [varname] index or list of indexes of externally selected
+ * @return {Object} returns the index of the selected element, the element, a list of indexes or a list of elements
  * tags:draw
  */
-ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode){
+ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode, selectedInit){
 	if(list==null || !list.length>0) return;
 
 	textSize = textSize||14;
 	returnMode = returnMode==null?0:returnMode;
 
-	if(frame.memory==null) frame.memory = {selected:0, y:0};
+	if(frame.memory==null) frame.memory = {selected:0, y:0, multiSelected:new List()};
 
 	var changeList = frame.memory.list!=list;
+	var changeExternallySelected = (changeList && selectedInit!=null) || frame.memory.selectedInit != selectedInit;
 
+	if(changeExternallySelected){
+		if(returnMode==3){
+			frame.memory.multiSelected = new List();
+			selectedInit.forEach(function(index){
+				frame.memory.multiSelected.push(list[index]);
+			});
+		} else if(returnMode==2){
+			frame.memory.multiSelected = List.fromArray(selectedInit).getImproved();
+		} else {
+			frame.memory.selected = selectedInit;
+		}
+
+		frame.memory.selectedInit = selectedInit;
+	}
+	
 	if(changeList){
 		frame.memory.list=list;
-		frame.memory.selected = 0;
 	}
 
 	var i;
@@ -18360,6 +18382,9 @@ ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode)
 	var mouseIn = frame.containsPoint(mP);
 	var y0Follow = 0;
 	var y0;
+	var isSelected;
+	var multi = returnMode==2 || returnMode==3;
+	var index, onMulti;
 
 	var hList = list.length*dy;
 
@@ -18392,28 +18417,50 @@ ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode)
 		}
 
 		if(returnMode!=-1){
-			if(frame.memory.selected==i){
+
+			index = frame.memory.multiSelected.indexOf(i);
+			onMulti = multi && index!=-1;
+
+			isSelected = multi?onMulti:frame.memory.selected==i;
+
+			if(isSelected){
 				setFill('black');
 				fRect(frame.x+2, y, frame.width-4, dy);
 				setFill('white');
 			} else {
-				if(mouseIn && mY>=y && mY<y+dy){
-					setFill('rgb(220,220,220)');
-					if(fRectM(frame.x+2, y, frame.width-4, dy)){
-						setCursor('pointer');
-					}
-					if(MOUSE_DOWN) frame.memory.selected = i;
-				}
 				setFill('black');
+			}
+			fText(list[i].toString(), xTexts, y+2);
+
+			if(mouseIn && mY>=y && mY<y+dy){
+				setFill('rgba(150,150,150,0.3)');
+				if(fRectM(frame.x+2, y, frame.width-4, dy)){
+					setCursor('pointer');
+				}
+				if(MOUSE_DOWN){
+					if(multi){
+
+						if(onMulti){
+							frame.memory.multiSelected = frame.memory.multiSelected.getWithoutElementAtIndex(index);
+						} else {
+							frame.memory.multiSelected = frame.memory.multiSelected.clone();
+							frame.memory.multiSelected.push(returnMode==2?i:list[i]);
+							frame.memory.multiSelected = frame.memory.multiSelected.getImproved();
+						}
+
+					} else {
+						frame.memory.selected = i;
+					}
+				}
 			}
 		} else {
 			setFill('black');
 		}
 		
-		fText(list[i].toString(), xTexts, y+2);
+		
 	}
 
-	return returnMode==1?list[frame.memory.selected]:frame.memory.selected;
+	return returnMode==1?list[frame.memory.selected]:(multi?frame.memory.multiSelected:frame.memory.selected);
 }
 function IntervalTableDraw(){};
 
@@ -19226,6 +19273,7 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
 	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
 		frame.memory.actualColorList = colorList==null?ColorListGenerators.createDefaultCategoricalColorList(numberTable.length, 0.7):colorList;
 		frame.memory.colorList = colorList;
+		frame.memory.image=null;
 	}
 
 	var flowFrame = new Rectangle(0, 0, frame.width, horizontalLabels==null?frame.height:(frame.height-14));
