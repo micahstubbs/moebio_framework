@@ -8221,13 +8221,13 @@ ListOperators.indexOf = function(list, element){
 
 /**
  * concats lists
- * @param  {List}
- * @param  {List}
+ * @param  {List} list0
+ * @param  {List} list1
  * 
- * @param  {List}
- * @param  {List}
- * @param  {List}
- * @return {List}
+ * @param  {List} list2
+ * @param  {List} list3
+ * @param  {List} list4
+ * @return {List} list5
  * tags:
  */
 ListOperators.concat = function(){
@@ -8244,12 +8244,12 @@ ListOperators.concat = function(){
 
 /**
  * assembles a List
- * @param  {Object}
+ * @param  {Object} argument0
  * 
- * @param  {Object}
- * @param  {Object}
- * @param  {Object}
- * @param  {Object}
+ * @param  {Object} argument1
+ * @param  {Object} argument2
+ * @param  {Object} argument3
+ * @param  {Object} argument4
  * @return {List}
  * tags:
  */
@@ -19270,6 +19270,7 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
 			image:null
 		}
 	}
+	
 	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
 		frame.memory.actualColorList = colorList==null?ColorListGenerators.createDefaultCategoricalColorList(numberTable.length, 0.7):colorList;
 		frame.memory.colorList = colorList;
