@@ -151,13 +151,13 @@ NumberList.prototype.getProduct=function(){
  * @return {NumberList}
  * tags:
  */
-NumberList.prototype.getNormalizedToSum=function(factor){
+NumberList.prototype.getNormalizedToSum=function(factor, sum){
 	factor = factor==null?1:factor;
 	var newNumberList=new NumberList();
 	newNumberList.name = this.name;
 	if(this.length==0) return newNumberList;
 	var i;
-	var sum=this.getSum();
+	var sum = sum==null?this.getSum():sum;
 	if(sum==0) return this.clone();
 	
 	for(i=0; i<this.length; i++){

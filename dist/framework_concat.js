@@ -1283,13 +1283,13 @@ NumberList.prototype.getProduct=function(){
  * @return {NumberList}
  * tags:
  */
-NumberList.prototype.getNormalizedToSum=function(factor){
+NumberList.prototype.getNormalizedToSum=function(factor, sum){
 	factor = factor==null?1:factor;
 	var newNumberList=new NumberList();
 	newNumberList.name = this.name;
 	if(this.length==0) return newNumberList;
 	var i;
-	var sum=this.getSum();
+	var sum = sum==null?this.getSum():sum;
 	if(sum==0) return this.clone();
 	
 	for(i=0; i<this.length; i++){
@@ -7048,8 +7048,8 @@ RectangleOperators.squarify=function(frame, weights, isNormalizedWeights, isSort
 	var lastRectangle;
 	var isColumn;
 	if(nWeights>2){
-		var i;
-		var j;
+		var i, j, k;
+		var sum;
 		for(i=index; i<nWeights; i++){
 			proportion = Number.MAX_VALUE;
 			if(newWeightList[i]==0){
@@ -7057,8 +7057,9 @@ RectangleOperators.squarify=function(frame, weights, isNormalizedWeights, isSort
 			} else {
 				for(j=1; j<nWeights; j++){ 
 					subWeightList = newWeightList.slice(i, i+j);//NumberList.fromArray(newWeightList.slice(i, i+j));//
-					prevSubRectangleList = subRectangleList.clone();
-					subArea = subWeightList.getSum()*area;
+					prevSubRectangleList = subRectangleList.slice();//.clone();
+					sum = subWeightList.getSum();
+					subArea = sum*area;
 					freeSubRectangle.x = freeRectangle.x;
 					freeSubRectangle.y = freeRectangle.y;
 					if(freeRectangle.width>freeRectangle.height){ //column
@@ -7070,9 +7071,13 @@ RectangleOperators.squarify=function(frame, weights, isNormalizedWeights, isSort
 						freeSubRectangle.height = subArea/freeRectangle.width;
 						column = false;
 					}
-					subWeightList = subWeightList.getNormalizedToSum();
-					subRectangleList = RectangleOperators.partitionRectangle(freeSubRectangle, subWeightList);
-					worstProportion = this._getHighestRatio(subRectangleList);
+					//subWeightList = subWeightList.getNormalizedToSum(1,sum);
+					// subWeightList.forEach(function(val, k){
+					// 	subWeightList[k]/=sum;
+					// });
+
+					subRectangleList = RectangleOperators.partitionRectangle(freeSubRectangle, subWeightList, sum);
+					worstProportion = subRectangleList.highestRatio;// RectangleOperators._getHighestRatio(subRectangleList);//
 					if(proportion<=worstProportion){
 						break;
 					} else {
@@ -7081,7 +7086,7 @@ RectangleOperators.squarify=function(frame, weights, isNormalizedWeights, isSort
 				}
 				
 				if(prevSubRectangleList.length==0){
-					rectangleList.push(freeRectangle.clone());
+					rectangleList.push(new Rectangle(freeRectangle.x, freeRectangle.y, freeRectangle.width, freeRectangle.height));//freeRectangle.clone());
 					if(rectangleList.length==nWeights){
 						if(!isSortedWeights){
 							var newRectangleList = new List();//RectangleList();
@@ -7094,11 +7099,10 @@ RectangleOperators.squarify=function(frame, weights, isNormalizedWeights, isSort
 					}
 					index++;
 				} else {
-					//rectangleList = List.fromArray(rectangleList.concat(prevSubRectangleList));//RectangleList
 					rectangleList = rectangleList.concat(prevSubRectangleList);
 					if(rectangleList.length==nWeights){
 						if(!isSortedWeights){
-							newRectangleList = new List();//RectangleList
+							newRectangleList = new List();
 							for(i=0; rectangleList[i]!=null; i++){
 								newRectangleList[newPositions[i]] = rectangleList[i];
 							}
@@ -7120,11 +7124,11 @@ RectangleOperators.squarify=function(frame, weights, isNormalizedWeights, isSort
 			}
 		}
 	} else if(nWeights==2){
-		subWeightList = newWeightList.clone();
+		subWeightList = newWeightList.slice();//.clone();
 		freeSubRectangle = frame.clone();
-		rectangleList = RectangleOperators.partitionRectangle(freeSubRectangle, subWeightList);
+		rectangleList = RectangleOperators.partitionRectangle(freeSubRectangle, subWeightList, subWeightList.getSum());
 	} else {
-		rectangleList[0] = frame.clone();
+		rectangleList[0] = new Rectangle(frame.x, frame.y, frame.width, frame.height);//frame.clone();
 	}
 	
 	
@@ -7146,23 +7150,33 @@ RectangleOperators.squarify=function(frame, weights, isNormalizedWeights, isSort
 * 
 * @return {List} a list of Rectangles
 */
-RectangleOperators.partitionRectangle=function(rectangle, normalizedWeightList){
+RectangleOperators.partitionRectangle=function(rectangle, normalizedWeightList, sum){
 	var area =  rectangle.width*rectangle.height;
 	var rectangleList=new List();//RectangleList();
-	var freeRectangle = rectangle.clone();
+	var freeRectangle = new Rectangle(rectangle.x, rectangle.y, rectangle.width, rectangle.height);//rectangle.clone();
 	//trace("??", freeRectangle);
 	var areai;
 	var i;
+	var rect;
+	var highestRatio = 1;
 	for(i=0; i<normalizedWeightList.length; i++){
-		areai = normalizedWeightList[i]*area;
+		areai = normalizedWeightList[i]*area/sum;
 		if(rectangle.width>rectangle.height){
-			rectangleList.push(new Rectangle(freeRectangle.x, freeRectangle.y, areai/freeRectangle.height, freeRectangle.height));
+			rect = new Rectangle(freeRectangle.x, freeRectangle.y, areai/freeRectangle.height, freeRectangle.height);
+			rectangleList.push(rect);
 			freeRectangle.x+=areai/freeRectangle.height;
+			//rect.ratio = rect.width/rect.height;
 		} else {
-			rectangleList.push(new Rectangle(freeRectangle.x, freeRectangle.y, freeRectangle.width, areai/freeRectangle.width));
+			rect = new Rectangle(freeRectangle.x, freeRectangle.y, freeRectangle.width, areai/freeRectangle.width);
+			rectangleList.push(rect);
 			freeRectangle.y+=areai/freeRectangle.width;
+			//rect.ratio = rect.height/rect.width;
 		}
+		rect.ratio = Math.max(rect.width, rect.height) / Math.min(rect.width, rect.height);
+		highestRatio = Math.max(highestRatio, rect.ratio );
 	}
+	
+	rectangleList.highestRatio = highestRatio;
 
 	return rectangleList;
 }
