@@ -288,7 +288,7 @@ NumberListOperators.filterNumberListByNumber=function(numberList, value, compari
  * @return {NumberList} the union of both NumberLists
  * tags:
  */
-NumberListOperators.union = function (x, y) {
+NumberListOperators.union = function (x, y) { 
   // Borrowed from here: http://stackoverflow.com/questions/3629817/getting-a-union-of-two-arrays-in-javascript
   var obj = {};
   for (var i = x.length-1; i >= 0; -- i)

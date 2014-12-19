@@ -8197,6 +8197,7 @@ ListGenerators.createIterationSequence=function(nValues, firstElement, dynamicFu
 }
 function ListOperators(){};
 
+
 /**
  * gets an element in a specified position from a List
  * @param  {List} list
@@ -10301,7 +10302,55 @@ NumberListOperators.filterNumberListByNumber=function(numberList, value, compari
 	return newNumberList;
 }
 
+/**
+ * creates a NumberList that contains the union of two NumberList (removing repetitions)
+ * @param  {NumberList} list A
+ * @param  {NumberList} list B
+ * 
+ * @return {NumberList} the union of both NumberLists
+ * tags:
+ */
+NumberListOperators.union = function (x, y) { 
+  // Borrowed from here: http://stackoverflow.com/questions/3629817/getting-a-union-of-two-arrays-in-javascript
+  var obj = {};
+  for (var i = x.length-1; i >= 0; -- i)
+     obj[x[i]] = x[i];
+  for (var i = y.length-1; i >= 0; -- i)
+     obj[y[i]] = y[i];
+  var res = new NumberList();
+  for (var k in obj) {
+    if (obj.hasOwnProperty(k))  // <-- optional
+      res.push(obj[k]);
+  }
+  return res;
+}
 
+/**
+ * creates a NumberList that contains the intersection of two NumberList (elements present in BOTH lists)
+ * @param  {NumberList} list A
+ * @param  {NumberList} list B
+ * 
+ * @return {NumberList} the intersection of both NumberLists
+ * tags:
+ */
+NumberListOperators.intersection = function ( a, b ) {
+  // Borrowed from here: http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
+  var result = new NumberList();
+  	 a = a.slice();
+  	 b = b.slice();
+  while( a.length > 0 && b.length > 0 )
+  {  
+     if      (a[0] < b[0] ){ a.shift(); }
+     else if (a[0] > b[0] ){ b.shift(); }
+     else /* they're equal */
+     {
+       result.push(a.shift());
+       b.shift();
+     }
+  }
+
+  return result;
+}
 
 /**
 * NumberOperators
@@ -17421,6 +17470,38 @@ evalJavaScriptFunction = function(functionText, args){
 function argumentsToArray(args){
 	return Array.prototype.slice.call(args, 0);
 }
+
+
+
+
+
+
+
+function TimeLogger( name ){
+	var scope = this;
+	this.name = name;
+	this.clocks = {};
+
+	this.tic = function( clockName ){
+		scope.clocks[clockName] = new Date().getTime();
+		//c.l( "TimeLogger '"+clockName+"' has been started");
+	}
+	this.tac = function( clockName ){
+		if( scope.clocks[clockName]==null ){
+			scope.tic( clockName );
+		}else{
+			var now = new Date().getTime();
+			var diff = now - scope.clocks[clockName];
+			c.l( "TimeLogger '"+clockName+"' took " + diff + " ms");
+		}
+	}
+}
+var tl = new TimeLogger( "Global Time Logger" );
+
+
+
+
+
 /**
 * ConsoleTools
 * some of the methods available here might be converted into genuine 'ASCII visualization'
