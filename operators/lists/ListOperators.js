@@ -354,7 +354,7 @@ ListOperators.getCommonElements=function(list0, list1){
 ListOperators.unionLists = function (x, y) { 
   // Borrowed from here: http://stackoverflow.com/questions/3629817/getting-a-union-of-two-arrays-in-javascript
   var result;
-  if( a.type != b.type || (a.type != "StringList" && a.type != "NumberList") )
+  if( x.type != x.type || (x.type != "StringList" && x.type != "NumberList") )
   {
   	// To-do: call generic method here (not yet implemented)
   	c.l( "ListOperators.unionLists for type '" + x.type + "' or '" + y.type + "' not yet implemented" );
@@ -367,7 +367,7 @@ ListOperators.unionLists = function (x, y) {
 	     obj[x[i]] = x[i];
 	  for (var i = y.length-1; i >= 0; -- i)
 	     obj[y[i]] = y[i];
-	  result = a.type == "StringList" ? new StringList() : new NumberList();
+	  result = x.type == "StringList" ? new StringList() : new NumberList();
 	  for (var k in obj) {
 	    if (obj.hasOwnProperty(k))  // <-- optional
 	      result.push(obj[k]);
