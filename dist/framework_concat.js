@@ -19479,18 +19479,18 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
 			image:null
 		}
 	}
+
+	if(colorList && frame.memory.colorList!=colorList) frame.memory.image=null;
 	
 	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
 		frame.memory.actualColorList = colorList==null?ColorListGenerators.createDefaultCategoricalColorList(numberTable.length, 0.7):colorList;
 		frame.memory.colorList = colorList;
-		frame.memory.image=null;
 	}
 
 	var flowFrame = new Rectangle(0, 0, frame.width, horizontalLabels==null?frame.height:(frame.height-14));
 
 	if(frame.memory.image==null){
 		///// capture image
-		
 		var newCanvas = document.createElement("canvas");
 		newCanvas.width = frame.width;
 		newCanvas.height = frame.height;
