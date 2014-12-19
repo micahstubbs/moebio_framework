@@ -19617,11 +19617,11 @@ NumberTableDraw._drawPartialFlow=function(frame, flowIntervals, labels, colors, 
 		y = y*frame.height + frame.y;
 		h *= frame.height;
 		
-		if(h<1) continue;
+		//if(h<1) continue;
 		
 		if(fRectM(x0,y, w, h)) iOver = i;
 		
-		if(h>=8 && w>40){
+		if(h>=5 && w>40){
 			setText('white', h, null, null, 'middle');
 			
 			text = labels[i];
