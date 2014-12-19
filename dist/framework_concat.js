@@ -8537,6 +8537,80 @@ ListOperators.getCommonElements=function(list0, list1){
 	return newList.getImproved();
 }
 
+
+
+
+/**
+ * creates a List that contains the union of two List (removing repetitions)
+ * @param  {List} list A
+ * @param  {List} list B
+ * 
+ * @return {List} the union of both NumberLists
+ * tags:
+ */
+ListOperators.unionLists = function (x, y) { 
+  // Borrowed from here: http://stackoverflow.com/questions/3629817/getting-a-union-of-two-arrays-in-javascript
+  var result;
+  if( a.type != b.type || (a.type != "StringList" && a.type != "NumberList") )
+  {
+  	// To-do: call generic method here (not yet implemented)
+  	c.l( "ListOperators.unionLists for type '" + x.type + "' or '" + y.type + "' not yet implemented" );
+  	return null;
+  }
+  else
+  {
+	  var obj = {};
+	  for (var i = x.length-1; i >= 0; -- i)
+	     obj[x[i]] = x[i];
+	  for (var i = y.length-1; i >= 0; -- i)
+	     obj[y[i]] = y[i];
+	  result = a.type == "StringList" ? new StringList() : new NumberList();
+	  for (var k in obj) {
+	    if (obj.hasOwnProperty(k))  // <-- optional
+	      result.push(obj[k]);
+	  }
+	}
+  return result;
+}
+
+/**
+ * creates a List that contains the intersection of two List (elements present in BOTH lists)
+ * @param  {List} list A
+ * @param  {List} list B
+ * 
+ * @return {List} the intersection of both NumberLists
+ * tags:
+ */
+ListOperators.intersectLists = function ( a, b ) {
+  // Borrowed from here: http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
+  var result;
+  if( a.type != b.type || (a.type != "StringList" && a.type != "NumberList") )
+  {
+  	result = ListOperators.getCommonElements( a, b );
+  }
+  else
+  {
+  		result = a.type == "StringList" ? new StringList() : new NumberList();
+	  	 a = a.slice();
+	  	 b = b.slice();
+	  while( a.length > 0 && b.length > 0 )
+	  {  
+	     if      (a[0] < b[0] ){ a.shift(); }
+	     else if (a[0] > b[0] ){ b.shift(); }
+	     else /* they're equal */
+	     {
+	       result.push(a.shift());
+	       b.shift();
+	     }
+	  }
+  }
+  return result;
+}
+
+
+
+
+
 /**
  * calculates de entropy of a list, properties _mostRepresentedValue and _biggestProbability are added to the list
  * @param  {List} list with repeated elements (actegorical list)
