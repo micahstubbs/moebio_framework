@@ -48,11 +48,11 @@ NumberListOperators.covariance=function(numberList0, numberList1){//TODO: improv
 NumberListOperators.linearKMeans=function(numberList, k, returnIndexes){
 	if(numberList==null || k==null || !k>0) return null;
 
-	c.l('numberList:', numberList);
+	//c.l('numberList:', numberList);
 
 	var interval = numberList.getInterval();
 
-	c.l('interval:', interval);
+	//c.l('interval:', interval);
 
 	var min = interval.x;
 	var max = interval.y;

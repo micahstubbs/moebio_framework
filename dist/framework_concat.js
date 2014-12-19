@@ -437,11 +437,37 @@ List.prototype.clone=function(){
  * tags:filter
  */
 List.prototype.getWithoutRepetitions=function(){
+	var i;
+	var dictionary;
+
 	newList = instantiateWithSameType(this);
 	newList.name = this.name;
-	for(i=0; this[i]!=null; i++){
-		if(newList.indexOf(this[i])==-1) newList.push(this[i]);
+
+	if(this.type=='NumberList' || this.type=='StringList'){
+		dictionary = {};
+		for(i=0; this[i]!=null; i++){
+			if(!dictionary[this[i]]){
+				newList.push(this[i]);
+				dictionary[this[i]]=true;
+			}
+		}
+	} else {
+		for(i=0; this[i]!=null; i++){
+			if(newList.indexOf(this[i])==-1) newList.push(this[i]);
+		}
 	}
+
+
+	// else if(this.type=='NodeList' || this.type=='RelationList'){
+	// 	dictionary = {};
+	// 	for(i=0; this[i]!=null; i++){
+	// 		if(!dictionary[this[i].id]){
+	// 			newList.push(this[i]);
+	// 			dictionary[this[i].id]=true;
+	// 		}
+	// 	}
+	// } 
+	
 	return newList;
 }
 
@@ -10144,11 +10170,11 @@ NumberListOperators.covariance=function(numberList0, numberList1){//TODO: improv
 NumberListOperators.linearKMeans=function(numberList, k, returnIndexes){
 	if(numberList==null || k==null || !k>0) return null;
 
-	c.l('numberList:', numberList);
+	//c.l('numberList:', numberList);
 
 	var interval = numberList.getInterval();
 
-	c.l('interval:', interval);
+	//c.l('interval:', interval);
 
 	var min = interval.x;
 	var max = interval.y;
