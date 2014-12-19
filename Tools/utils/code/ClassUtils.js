@@ -178,3 +178,34 @@ evalJavaScriptFunction = function(functionText, args){
 function argumentsToArray(args){
 	return Array.prototype.slice.call(args, 0);
 }
+
+
+
+
+
+
+
+function TimeLogger( name ){
+	var scope = this;
+	this.name = name;
+	this.clocks = {};
+
+	this.tic = function( clockName ){
+		scope.clocks[clockName] = new Date().getTime();
+		//c.l( "TimeLogger '"+clockName+"' has been started");
+	}
+	this.tac = function( clockName ){
+		if( scope.clocks[clockName]==null ){
+			scope.tic( clockName );
+		}else{
+			var now = new Date().getTime();
+			var diff = now - scope.clocks[clockName];
+			c.l( "TimeLogger '"+clockName+"' took " + diff + " ms");
+		}
+	}
+}
+var tl = new TimeLogger( "Global Time Logger" );
+
+
+
+
