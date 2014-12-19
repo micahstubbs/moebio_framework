@@ -10142,7 +10142,14 @@ NumberListOperators.covariance=function(numberList0, numberList1){//TODO: improv
  * tags:ds
  */
 NumberListOperators.linearKMeans=function(numberList, k, returnIndexes){
+	if(numberList==null || k==null || !k>0) return null;
+
+	c.l('numberList:', numberList);
+
 	var interval = numberList.getInterval();
+
+	c.l('interval:', interval);
+
 	var min = interval.x;
 	var max = interval.y;
 	//var means = new NumberList();
@@ -10159,6 +10166,8 @@ NumberListOperators.linearKMeans=function(numberList, k, returnIndexes){
 	var means = new NumberList();
 	var nextMeans = new NumberList();
 	var nValuesInCluster = new NumberList();
+
+	var initdMin = 1+max-min;
 
 	for(i=0; i<k; i++){
 		clusters[i] = new NumberList();
@@ -10183,10 +10192,13 @@ NumberListOperators.linearKMeans=function(numberList, k, returnIndexes){
 		
 		for(i=0; numberList[i]!=null; i++){
 			x = numberList[i];
-			dMin = 1+max-min;
+			dMin = initdMin;
+			jK = 0;
+			
 			for(j=0; j<k; j++){
 				//d = Math.abs(x-clusters[j].mean);
 				d = Math.abs(x-means[j]);
+				//c.l('   d', d);
 				if(d<dMin){
 					dMin = d;
 					jK = j;
@@ -10194,6 +10206,7 @@ NumberListOperators.linearKMeans=function(numberList, k, returnIndexes){
 			}
 			//c.l('    ', x,'-->',jK, 'with mean', clusters[jK].mean);
 			if(n==N-1){
+				//c.l('jK, clusters[jK]', jK, clusters[jK]);
 				returnIndexes?clusters[jK].push(i):clusters[jK].push(x);
 			}
 
@@ -18580,10 +18593,7 @@ ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode,
 		if(y<frame.y) continue;
 		if(y+12>bottom) break;
 
-		if(colorList){
-			setFill(colorList==null?'rgb(200, 200, 200)':colorList[i%n]);
-			fRect(x, y + 4, 10, 10);
-		}
+		
 
 		if(returnMode!=-1){
 
@@ -18626,6 +18636,10 @@ ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode,
 			setFill('black');
 		}
 		
+		if(colorList){
+			setFill(colorList==null?'rgb(200, 200, 200)':colorList[i%n]);
+			fRect(x, y + 4, 10, 10);
+		}
 		
 	}
 

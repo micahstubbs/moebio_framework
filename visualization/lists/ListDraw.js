@@ -82,10 +82,7 @@ ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode,
 		if(y<frame.y) continue;
 		if(y+12>bottom) break;
 
-		if(colorList){
-			setFill(colorList==null?'rgb(200, 200, 200)':colorList[i%n]);
-			fRect(x, y + 4, 10, 10);
-		}
+		
 
 		if(returnMode!=-1){
 
@@ -128,6 +125,10 @@ ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode,
 			setFill('black');
 		}
 		
+		if(colorList){
+			setFill(colorList==null?'rgb(200, 200, 200)':colorList[i%n]);
+			fRect(x, y + 4, 10, 10);
+		}
 		
 	}
 
