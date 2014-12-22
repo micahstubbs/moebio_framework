@@ -162,7 +162,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
 		if(textColor==null){
 			var rgb;
 			tree.nodeList.forEach(function(node, i){
-				rgb = ColorOperators.colorStringToRGB(node._color);
+				rgb = node._color?ColorOperators.colorStringToRGB(node._color):[0,0,0];
 				frame.memory.textsColorList[i] = (rgb[0]+rgb[1]+rgb[2]>360)?'black':'white'
 			});
 		}
