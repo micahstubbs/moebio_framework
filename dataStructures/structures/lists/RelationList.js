@@ -85,6 +85,7 @@ RelationList.prototype.getRelatedNodesToNode=function(node){
 * @param {Node} node1
 * @param {Boolean} directed consider relation direction (default: false)
 * @return a RelationList with relations that contain node0 and node1
+* tags:
 */
 RelationList.prototype.getAllRelationsBetweenNodes=function(node0, node1, directed){ //TODO: to be improved (check node1 on node0.relationList) (see: nodesAreConnected)
   var i;
@@ -101,11 +102,26 @@ RelationList.prototype.getAllRelationsBetweenNodes=function(node0, node1, direct
 
 
 /**
+ * checks if two nodes are related, returns a boolean
+ * @param  {Node} node0
+ * @param  {Node} node1
+ * @param  {Boolean} directed true if relation must be directed
+ * @return {Boolean}
+ * tags:
+ */
+RelationList.prototype.nodesAreConnected=function(node0, node1, directed){
+	if(node0.toNodeList.getNodeById(node1.id)!=null) return true;
+	return !directed && node1.toNodeList.getNodeById(node0.id)!=null;
+}
+
+
+/**
 * get first Relation between two Nodes
 * @param {Node} node0 
 * @param {Node} node1
 * @param {Boolean} directed consider relation direction (default: false)
 * @return a RelationList with relations that contain node0 and node1
+* tags:
 */
 RelationList.prototype.getFirstRelationBetweenNodes=function(node0, node1, directed){ //TODO: to be improved (check node1 on node0.relationList) (see: nodesAreConnected) //TODO: make it work with ids
 	directed=directed==null?false:directed;
@@ -115,6 +131,7 @@ RelationList.prototype.getFirstRelationBetweenNodes=function(node0, node1, direc
 	}
 	return null;
 }
+
 
 /**
 * get first relations between two Nodes
@@ -146,9 +163,9 @@ RelationList.prototype.getFirstRelationByIds=function(id0, id1, directed){ //TOD
 }
 
 
-RelationList.prototype.nodesAreConnected=function(node0, node1, directed){
-	if(node0.toNodeList.getNodeById(node1.id)!=null) return true;
-	if(!directed && node0.fromNodeList.getNodeById(node1.id)!=null) return true;
-	return false;
-}
+// RelationList.prototype.nodesAreConnected=function(node0, node1, directed){//
+// 	if(node0.toNodeList.getNodeById(node1.id)!=null) return true;
+// 	if(!directed && node0.fromNodeList.getNodeById(node1.id)!=null) return true;
+// 	return false;
+// }
 

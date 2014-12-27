@@ -29,6 +29,7 @@ include('../../frameworks2/dataStructures/geometry/Rectangle.js');
 include('../../frameworks2/dataStructures/geometry/RectangleList.js');
 include('../../frameworks2/dataStructures/graphic/ColorList.js');
 include('../../frameworks2/dataStructures/graphic/ColorScale.js');
+include('../../frameworks2/operators/graphic/ColorScaleGenerators.js');
 include('../../frameworks2/dataStructures/numeric/Axis.js');
 include('../../frameworks2/dataStructures/numeric/Axis2D.js');
 include('../../frameworks2/dataStructures/numeric/Interval.js');

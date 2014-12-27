@@ -27,11 +27,11 @@ ColorList.fromArray=function(array){
 	return result;
 }
 
-ColorList.prototype.getRgbArrays=function(){//TODO:rename getRgbTable
+ColorList.prototype.getRgbArrays=function(){
 	var rgbArrays = new List();
 	
 	for(var i=0; this[i]!=null; i++){
-		rgbArrays[i] = ColorOperators.HEXtoRGB(this[i]);
+		rgbArrays[i] = ColorOperators.colorStringToRGB(this[i]);
 	}
 	
 	return rgbArrays;
