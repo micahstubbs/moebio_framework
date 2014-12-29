@@ -4658,8 +4658,6 @@ Network.prototype.constructor=Network;
 function Network () {
 	this.type="Network";
 	
-	//this._newNodeID=0;
-	//this._newRelationID=0;
 	this.nodeList=new NodeList();
 	this.relationList=new RelationList();
 }
@@ -4779,6 +4777,34 @@ Network.prototype.removeIsolatedNodes=function(minNumberRelations){
 	}
 }
 
+
+Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames){
+	var newNetwork = new Network();
+	var newNode, newRelation;
+	var i;
+	
+	this.nodeList.forEach(function(node){
+		newNode = new Node(node.id, node.name);
+		if(nodePropertiesNames){
+			nodePropertiesNames.forEach(function(propName){
+				if(node[propName]!=null) newNode[propName] = node[propName];
+			});
+		}
+		newNetwork.addNode(newNode);
+	});
+
+	this.relationList.forEach(function(relation){
+		newRelation = new Relation(relation.id, relation.name, newNetwork.nodeList.getNodeById(relation.node0.id), newNetwork.nodeList.getNodeById(relation.node1.id));
+		if(relationPropertiesNames){
+			relationPropertiesNames.forEach(function(propName){
+				if(relation[propName]!=null) newRelation[propName] = relation[propName];
+			});
+		}
+		newNetwork.addRelation(newRelation);
+	});
+
+	return newNetwork;
+}
 
 
 
@@ -8216,10 +8242,6 @@ ColorScaleGenerators.createColorScaleFromColors = function(colorList, positions)
 			if(t<positions[i+1]){
 				intert = (t-positions[i])/(positions[i+1]-positions[i]);
 				antit = 1-intert;
-				c.l(t,i,positions[i],intert, '->', 'rgb('
-					+Math.floor( antit*colorList.rgbs[i][0] + intert*colorList.rgbs[i+1][0] )+','
-					+Math.floor( antit*colorList.rgbs[i][1] + intert*colorList.rgbs[i+1][1] )+','
-					+Math.floor( antit*colorList.rgbs[i][2] + intert*colorList.rgbs[i+1][2] )+')');
 				return 'rgb('
 					+Math.floor( antit*colorList.rgbs[i][0] + intert*colorList.rgbs[i+1][0] )+','
 					+Math.floor( antit*colorList.rgbs[i][1] + intert*colorList.rgbs[i+1][1] )+','
@@ -13826,23 +13848,36 @@ NetworkOperators.addPageRankToNodes = function(network, from, useRelationsWeight
 	var node;
 	var otherNode;
 	var nodeList;
+
+	network.minFromPageRank = network.minToPageRank = 99999999;
+	network.maxFromPageRank = network.maxToPageRank = -99999999;
+
 	
 	for(i=0; network.nodeList[i]!=null; i++){
 		node = network.nodeList[i];
 		node[propName] = 1/N;
 	}
 	
-	for(n=0; n<100; n++){
+	for(n=0; n<300; n++){
 		for(i=0; network.nodeList[i]!=null; i++){
 			node = network.nodeList[i];
 			
-			//if(from && node.fromPageRank==null);
 			nodeList = from?node.fromNodeList:node.toNodeList;
 			node[propName] = base;
 			
 			for(j=0; nodeList[j]!=null; j++){
 				otherNode = nodeList[j];
 				node[propName]+=d*otherNode[propName]/(from?otherNode.toNodeList.length:otherNode.fromNodeList.length);
+			}
+
+			if(n==299){
+				if(from){
+					network.minFromPageRank = Math.min(network.minFromPageRank, node[propName]);
+					network.maxFromPageRank = Math.max(network.maxFromPageRank, node[propName]);
+				} else{
+					network.minToPageRank = Math.min(network.minToPageRank, node[propName]);
+					network.maxToPageRank = Math.max(network.maxToPageRank, node[propName]);
+				}
 			}
 		}
 	}

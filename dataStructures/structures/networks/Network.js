@@ -9,8 +9,6 @@ Network.prototype.constructor=Network;
 function Network () {
 	this.type="Network";
 	
-	//this._newNodeID=0;
-	//this._newRelationID=0;
 	this.nodeList=new NodeList();
 	this.relationList=new RelationList();
 }
@@ -130,6 +128,34 @@ Network.prototype.removeIsolatedNodes=function(minNumberRelations){
 	}
 }
 
+
+Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames){
+	var newNetwork = new Network();
+	var newNode, newRelation;
+	var i;
+	
+	this.nodeList.forEach(function(node){
+		newNode = new Node(node.id, node.name);
+		if(nodePropertiesNames){
+			nodePropertiesNames.forEach(function(propName){
+				if(node[propName]!=null) newNode[propName] = node[propName];
+			});
+		}
+		newNetwork.addNode(newNode);
+	});
+
+	this.relationList.forEach(function(relation){
+		newRelation = new Relation(relation.id, relation.name, newNetwork.nodeList.getNodeById(relation.node0.id), newNetwork.nodeList.getNodeById(relation.node1.id));
+		if(relationPropertiesNames){
+			relationPropertiesNames.forEach(function(propName){
+				if(relation[propName]!=null) newRelation[propName] = relation[propName];
+			});
+		}
+		newNetwork.addRelation(newRelation);
+	});
+
+	return newNetwork;
+}
 
 
 

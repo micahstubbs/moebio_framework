@@ -383,23 +383,36 @@ NetworkOperators.addPageRankToNodes = function(network, from, useRelationsWeight
 	var node;
 	var otherNode;
 	var nodeList;
+
+	network.minFromPageRank = network.minToPageRank = 99999999;
+	network.maxFromPageRank = network.maxToPageRank = -99999999;
+
 	
 	for(i=0; network.nodeList[i]!=null; i++){
 		node = network.nodeList[i];
 		node[propName] = 1/N;
 	}
 	
-	for(n=0; n<100; n++){
+	for(n=0; n<300; n++){
 		for(i=0; network.nodeList[i]!=null; i++){
 			node = network.nodeList[i];
 			
-			//if(from && node.fromPageRank==null);
 			nodeList = from?node.fromNodeList:node.toNodeList;
 			node[propName] = base;
 			
 			for(j=0; nodeList[j]!=null; j++){
 				otherNode = nodeList[j];
 				node[propName]+=d*otherNode[propName]/(from?otherNode.toNodeList.length:otherNode.fromNodeList.length);
+			}
+
+			if(n==299){
+				if(from){
+					network.minFromPageRank = Math.min(network.minFromPageRank, node[propName]);
+					network.maxFromPageRank = Math.max(network.maxFromPageRank, node[propName]);
+				} else{
+					network.minToPageRank = Math.min(network.minToPageRank, node[propName]);
+					network.maxToPageRank = Math.max(network.maxToPageRank, node[propName]);
+				}
 			}
 		}
 	}
