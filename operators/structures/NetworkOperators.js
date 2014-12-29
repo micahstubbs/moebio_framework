@@ -405,7 +405,7 @@ NetworkOperators.addPageRankToNodes = function(network, from, useRelationsWeight
 				node[propName]+=d*otherNode[propName]/(from?otherNode.toNodeList.length:otherNode.fromNodeList.length);
 			}
 
-			if(n==299){
+			if(n==1299){
 				if(from){
 					network.minFromPageRank = Math.min(network.minFromPageRank, node[propName]);
 					network.maxFromPageRank = Math.max(network.maxFromPageRank, node[propName]);
