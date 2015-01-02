@@ -90,7 +90,7 @@ Forces.prototype.forcesForNetwork=function(network, initRadius, initCenter, eqDi
 Forces.prototype.addNode=function(node, initPosition, initSpeed){
 	initPosition = initPosition==null?new Point(Math.random()*200-100, Math.random()*200-100):initPosition;
 	initSpeed = initSpeed==null?new Point(0, 0):initSpeed;
-	this.nodeList.push(node);
+	this.nodeList.addNode(node);
 	node.x = initPosition.x;
 	node.y = initPosition.y;
 	node.vx = initSpeed.x;
