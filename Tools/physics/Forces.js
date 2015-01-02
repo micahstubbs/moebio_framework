@@ -100,8 +100,8 @@ Forces.prototype.addNode=function(node, initPosition, initSpeed){
 }
 
 Forces.prototype.addForce=function(node0, node1, type, equilibriumDistance){
-	this.fromNodeList.push(node0);
-	this.toNodeList.push(node1);
+	this.fromNodeList.addNode(node0);
+	this.toNodeList.addNode(node1);
 	this.forcesList.push(node0.id+"*"+node1.id+"*"+type);
 	this.forcesTypeList.push(type);
 	if(equilibriumDistance!=null) this.equilibriumDistances.push(equilibriumDistance);
