@@ -543,6 +543,32 @@ StringOperators.getWords = function(string, withoutRepetitions, stopWords, sorte
 	return list;
 }
 
+removeAccentsAndDiacritics = function(string){
+    var r = string.replace(new RegExp(/[àáâãäå]/g),"a");
+    r = r.replace(new RegExp(/æ/g),"ae");
+    r = r.replace(new RegExp(/ç/g),"c");
+    r = r.replace(new RegExp(/[èéêë]/g),"e");
+    r = r.replace(new RegExp(/[ìíîï]/g),"i");
+    r = r.replace(new RegExp(/ñ/g),"n");                
+    r = r.replace(new RegExp(/[òóôõö]/g),"o");
+    r = r.replace(new RegExp(/œ/g),"oe");
+    r = r.replace(new RegExp(/[ùúûü]/g),"u");
+    r = r.replace(new RegExp(/[ýÿ]/g),"y");
+
+    r = r.replace(new RegExp(/[ÀÁÂÄÃ]/g),"A");
+    r = r.replace(new RegExp(/Æ/g),"AE");
+    r = r.replace(new RegExp(/Ç/g),"c");
+    r = r.replace(new RegExp(/[ÈÉÊË]/g),"E");
+    r = r.replace(new RegExp(/[ÌÍÎÏ]/g),"I");
+    r = r.replace(new RegExp(/Ñ/g),"N");                
+    r = r.replace(new RegExp(/[ÒÓÔÖÕ]/g),"O");
+    r = r.replace(new RegExp(/Œ/g),"OE");
+    r = r.replace(new RegExp(/[ÙÚÛÜ]/g),"U");
+    r = r.replace(new RegExp(/[Ÿ]/g),"Y");
+
+    return r;
+};
+
 /**
  * creates a table with frequent words and occurrences numbers
  * @param  {String} string text to be analyzed

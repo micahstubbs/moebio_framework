@@ -133,7 +133,7 @@ Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames)
 	var newNetwork = new Network();
 	var newNode, newRelation;
 	var i;
-	
+
 	this.nodeList.forEach(function(node){
 		newNode = new Node(node.id, node.name);
 		if(nodePropertiesNames){
@@ -158,27 +158,12 @@ Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames)
 }
 
 
-
-//depreacted: nNodeList is in charge of building its own new ids
-// Network.prototype.getNewNodeID=function(){
-// 	id=this._newNodeID;
-// 	this._newNodeID++;
-// 	return id;
-// }
-// Network.prototype.getNewRelationID=function(){
-// 	id=this._newRelationID;
-// 	this._newRelationID++;
-// 	return id;
-// }
-
 Network.prototype.getReport=function(){
 	return "network contains "+this.nodeList.length+" nodes and "+this.relationList.length+" relations";
 }
 
 Network.prototype.destroy=function(){
 	delete this.type;
-	//delete this._newNodeID;
-	//delete this._newRelationID;
 	this.nodeList.destroy();
 	this.relationList.destroy();
 	delete this.nodeList;

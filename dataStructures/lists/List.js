@@ -430,17 +430,6 @@ List.prototype.getWithoutRepetitions=function(){
 			if(newList.indexOf(this[i])==-1) newList.push(this[i]);
 		}
 	}
-
-
-	// else if(this.type=='NodeList' || this.type=='RelationList'){
-	// 	dictionary = {};
-	// 	for(i=0; this[i]!=null; i++){
-	// 		if(!dictionary[this[i].id]){
-	// 			newList.push(this[i]);
-	// 			dictionary[this[i].id]=true;
-	// 		}
-	// 	}
-	// } 
 	
 	return newList;
 }

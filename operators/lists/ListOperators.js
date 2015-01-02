@@ -357,7 +357,8 @@ ListOperators.unionLists = function (x, y) {
   if( x.type != x.type || (x.type != "StringList" && x.type != "NumberList") )
   {
   	// To-do: call generic method here (not yet implemented)
-  	c.l( "ListOperators.unionLists for type '" + x.type + "' or '" + y.type + "' not yet implemented" );
+  	//c.l( "ListOperators.unionLists for type '" + x.type + "' or '" + y.type + "' not yet implemented" );
+  	return x.concat(y).getWithoutRepetitions();
   	return null;
   }
   else

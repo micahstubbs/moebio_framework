@@ -147,7 +147,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 				j++;
 			}
 
-
+			
 			index = minIndex==99999999?-1:minIndex;
 
 			name = index==-1?line:line.substr(0, index);
@@ -250,18 +250,16 @@ NetworkEncodings.decodeNoteWork = function(code){
 
 			if(line.indexOf('=')!=-1){
 
-			} else if(line.indexOf(':')!=-1){
+			} else if(line.indexOf(':')>0){
 
 				simpleLine = line.trim();
 
-				propertyName = simpleLine.split(':')[0];
+				propertyName = removeAccentsAndDiacritics(simpleLine.split(':')[0]).replace(/\s/g, "_");
 
-				if(propertyName.indexOf(' ')==-1){
-					propertyValue = line.split(':')[1].trim();
-					if(propertyValue == String(Number(propertyValue))) propertyValue = Number(propertyValue);
+				propertyValue = line.split(':')[1].trim();
+				if(propertyValue == String(Number(propertyValue))) propertyValue = Number(propertyValue);
 
-					if(propertyValue!=null) node[propertyName] = propertyValue;
-				}
+				if(propertyValue!=null) node[propertyName] = propertyValue;
 
 			} else {
 				simpleLine = line;

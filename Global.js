@@ -43,7 +43,7 @@ var cY = 1; // canvas center y
 var mX = 0; // cursor x
 var mY = 0; // cursor y
 var mP = new Point(0, 0); // cursor point
-var nF = 0; // number of current frame
+var nF = 0; // number of current frame since first cycle
 
 var MOUSE_DOWN=false; //true on the frame of mousedown event
 var MOUSE_UP=false; //true on the frame of mouseup event
@@ -61,6 +61,7 @@ var PREV_mY=0; // cursor y position previous frame
 var DX_MOUSE=0; //horizontal movement of cursor in last frame
 var DY_MOUSE=0; //vertical movement of cursor in last frame
 var MOUSE_MOVED = false; //boolean that indicates wether the mouse moved in the last frame / STATE
+var T_MOUSE_PRESSED = 0; //time in milliseconds of mouse being pressed, useful for sutained pressure detection
 
 //var deltaWheel = 0;
 var cursorStyle = 'auto';
@@ -86,14 +87,16 @@ var _setIntervalId;
 var _setTimeOutId;
 var _cycleOnMouseMovement = false;
 var _interactionCancelledFrame;
-var END_CYCLE_DELAY = 3000;
+var _tLastMouseDown;
+
+var END_CYCLE_DELAY = 3000; //time in milliseconds, from last mouse movement to the last cycle to be executed in case cycleOnMouseMovement has been activated
 
 Array.prototype.last = function(){
 	return this[this.length-1];
 }
 
 window.addEventListener('load', function(){
-	c.log('Moebio Framework v2.25');
+	c.l('Moebio Framework v2.25');
 
  	if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
     	userAgent='IE';
@@ -117,7 +120,7 @@ window.addEventListener('load', function(){
     	userAgent='IOS';
   	}
   	
-  	c.log('[G] userAgent:', userAgent);
+  	c.l('[G] userAgent:', userAgent);
   	
   	Global.userAgent=userAgent;
     Global.frameRate=30;
@@ -166,12 +169,15 @@ function _onMouse(e) {
 		case "mousedown":
 			NF_DOWN = nF;
 			MOUSE_PRESSED = true;
+			T_MOUSE_PRESSED = 0;
+			_tLastMouseDown = new Date().getTime();
 			mX_DOWN = mX;
 			mY_DOWN = mY;
 			break;
 		case "mouseup":
 			NF_UP = nF;
 			MOUSE_PRESSED = false;
+			T_MOUSE_PRESSED = 0;
 			mX_UP = mX;
 			mY_UP = mY;
 			break;
@@ -228,6 +234,8 @@ function enterFrame(){
 	MOUSE_MOVED = DX_MOUSE!=0 || DY_MOUSE!=0;
 	PREV_mX=mX;
 	PREV_mY=mY;
+
+	if(MOUSE_PRESSED) T_MOUSE_PRESSED = new Date().getTime() - _tLastMouseDown;
 	
   	cycle();
 
