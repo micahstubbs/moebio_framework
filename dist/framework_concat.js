@@ -5872,7 +5872,7 @@ GeometryOperators.trueBezierCurveHeightHorizontalControlPoints=function(x0, x1, 
 /**
  * This an approximation, it doesn't take into account actual values of c0x and c1x
  */
-GeometryOperators.trueBezierCurveHeightHorizontalControlPointsOld=function(x0, x1, y0, y1, c0x, c1x, x){//TODO:fix
+//GeometryOperators.trueBezierCurveHeightHorizontalControlPointsOld=function(x0, x1, y0, y1, c0x, c1x, x){//TODO:fix
 
 	// if(GeometryOperators._bezierSimpleCurveTable==null){
 
@@ -5933,7 +5933,7 @@ GeometryOperators.trueBezierCurveHeightHorizontalControlPointsOld=function(x0, x
 	// var sign = cosinus>0?1:-1;
 	
 	// return (0.5 + 0.5*( Math.pow(cosinus*sign, 0.6)*sign ))*(y1-y0) + y0;
-}
+//}
 
 /**
  * This an approximation, it doesn't take into account actual values of c0x and c1x
@@ -5961,11 +5961,13 @@ GeometryOperators.distanceToBezierCurve=function(x0, y0, c0x, c0y, c1x, c1y, x1,
 	var d0I = Math.pow(p0I.x-p.x, 2) + Math.pow(p0I.y-p.y, 2);
 	var d1 = Math.pow(p1.x-p.x, 2) + Math.pow(p1.y-p.y, 2);
 	var d1I = Math.pow(p1I.x-p.x, 2) + Math.pow(p1I.y-p.y, 2);
+
+	var i;
 	
 	var pM;
 	var pMI;
 	
-	for(var i=0; i<10; i++){
+	for(i=0; i<10; i++){
 		pM = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, (t0+t1)*0.5);
 		pMI = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, (t0+t1)*0.5 + minDT);
 		
@@ -12222,7 +12224,7 @@ function NetworkEncodings(){};
 
 //////////////NoteWork
 
-NetworkEncodings.nodeNameSeparators = ['|', ':',  ' is ', ' are ', ','];
+NetworkEncodings.nodeNameSeparators = ['|', ':',  ' is ', ' are ', '.', ','];
 
 /**
  * converts a text file under NoteWork format into a network
@@ -12365,7 +12367,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 				j++;
 			}
 
-			
+
 			index = minIndex==99999999?-1:minIndex;
 
 			name = index==-1?line:line.substr(0, index);
@@ -13510,6 +13512,8 @@ NetworkOperators.filterNodesByMinDegree = function(network, minDegree){
 
 
 NetworkOperators.degreeBetweenNodes = function(network, node0, node1){
+	if(network==null || node0==null || node1==null) return null;
+
 	if(node0==node1) return 0;
 	var nodes = node0.nodeList;
 	var d=1;
@@ -13532,6 +13536,8 @@ NetworkOperators.degreeBetweenNodes = function(network, node0, node1){
 }
 
 NetworkOperators.shortestPath = function(network, node0, node1, includeExtremes){
+	if(network==null || node0==null || node1==null) return null;
+
 	var tree = NetworkOperators.spanningTree(network, node0, node1);
 	var path = new NodeList();
 	if(includeExtremes) path.addNode(node1);
@@ -13557,6 +13563,8 @@ NetworkOperators.shortestPath = function(network, node0, node1, includeExtremes)
  * @return {Table} list of paths (nodeLists)
  */
 NetworkOperators.shortestPaths = function(network, node0, node1, shortPath){
+	if(network==null || node0==null || node1==null) return null;
+
 	if(shortPath==null) shortPath = NetworkOperators.shortestPath(network, node0, node1, true);
 
 	var lengthShortestPaths = shortPath.length;
@@ -13624,6 +13632,8 @@ NetworkOperators._extendPaths = function(allPaths, nodeDestiny, maxLength){
  * tags:analytics
  */
 NetworkOperators.loops = function(network){
+	if(network==null) return null;
+	
 	var i, j, k, loops;
 	
 	allLoops = new Table();
@@ -15743,6 +15753,7 @@ bezierM = function(x0, y0, cx0, cy0, cx1, cy1, x1, y1, d){//TODO: fix this mess!
 	context.moveTo(x0, y0);
 	context.bezierCurveTo(cx0, cy0, cx1, cy1, x1, y1);
 	context.stroke();
+	if(mX<Math.min(x0,x1,cx0,cx1)-d || mX>Math.max(x0,x1,cx0,cx1)+d || mY<Math.min(y0,y1,cy0,cy1)-d || mY>Math.max(y0,y1,cy0,cy1)+d) return false;
 	return GeometryOperators.distanceToBezierCurve(x0, y0, cx0, cy0, cx1, cy1, x1, y1, mP, false)<d;
 }
 

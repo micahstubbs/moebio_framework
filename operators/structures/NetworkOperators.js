@@ -14,6 +14,8 @@ NetworkOperators.filterNodesByMinDegree = function(network, minDegree){
 
 
 NetworkOperators.degreeBetweenNodes = function(network, node0, node1){
+	if(network==null || node0==null || node1==null) return null;
+
 	if(node0==node1) return 0;
 	var nodes = node0.nodeList;
 	var d=1;
@@ -36,6 +38,8 @@ NetworkOperators.degreeBetweenNodes = function(network, node0, node1){
 }
 
 NetworkOperators.shortestPath = function(network, node0, node1, includeExtremes){
+	if(network==null || node0==null || node1==null) return null;
+
 	var tree = NetworkOperators.spanningTree(network, node0, node1);
 	var path = new NodeList();
 	if(includeExtremes) path.addNode(node1);
@@ -61,6 +65,8 @@ NetworkOperators.shortestPath = function(network, node0, node1, includeExtremes)
  * @return {Table} list of paths (nodeLists)
  */
 NetworkOperators.shortestPaths = function(network, node0, node1, shortPath){
+	if(network==null || node0==null || node1==null) return null;
+
 	if(shortPath==null) shortPath = NetworkOperators.shortestPath(network, node0, node1, true);
 
 	var lengthShortestPaths = shortPath.length;
@@ -128,6 +134,8 @@ NetworkOperators._extendPaths = function(allPaths, nodeDestiny, maxLength){
  * tags:analytics
  */
 NetworkOperators.loops = function(network){
+	if(network==null) return null;
+	
 	var i, j, k, loops;
 	
 	allLoops = new Table();

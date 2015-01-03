@@ -72,7 +72,7 @@ GeometryOperators.trueBezierCurveHeightHorizontalControlPoints=function(x0, x1, 
 /**
  * This an approximation, it doesn't take into account actual values of c0x and c1x
  */
-GeometryOperators.trueBezierCurveHeightHorizontalControlPointsOld=function(x0, x1, y0, y1, c0x, c1x, x){//TODO:fix
+//GeometryOperators.trueBezierCurveHeightHorizontalControlPointsOld=function(x0, x1, y0, y1, c0x, c1x, x){//TODO:fix
 
 	// if(GeometryOperators._bezierSimpleCurveTable==null){
 
@@ -133,7 +133,7 @@ GeometryOperators.trueBezierCurveHeightHorizontalControlPointsOld=function(x0, x
 	// var sign = cosinus>0?1:-1;
 	
 	// return (0.5 + 0.5*( Math.pow(cosinus*sign, 0.6)*sign ))*(y1-y0) + y0;
-}
+//}
 
 /**
  * This an approximation, it doesn't take into account actual values of c0x and c1x
@@ -161,11 +161,13 @@ GeometryOperators.distanceToBezierCurve=function(x0, y0, c0x, c0y, c1x, c1y, x1,
 	var d0I = Math.pow(p0I.x-p.x, 2) + Math.pow(p0I.y-p.y, 2);
 	var d1 = Math.pow(p1.x-p.x, 2) + Math.pow(p1.y-p.y, 2);
 	var d1I = Math.pow(p1I.x-p.x, 2) + Math.pow(p1I.y-p.y, 2);
+
+	var i;
 	
 	var pM;
 	var pMI;
 	
-	for(var i=0; i<10; i++){
+	for(i=0; i<10; i++){
 		pM = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, (t0+t1)*0.5);
 		pMI = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, (t0+t1)*0.5 + minDT);
 		

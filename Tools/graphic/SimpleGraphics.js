@@ -280,6 +280,7 @@ bezierM = function(x0, y0, cx0, cy0, cx1, cy1, x1, y1, d){//TODO: fix this mess!
 	context.moveTo(x0, y0);
 	context.bezierCurveTo(cx0, cy0, cx1, cy1, x1, y1);
 	context.stroke();
+	if(mX<Math.min(x0,x1,cx0,cx1)-d || mX>Math.max(x0,x1,cx0,cx1)+d || mY<Math.min(y0,y1,cy0,cy1)-d || mY>Math.max(y0,y1,cy0,cy1)+d) return false;
 	return GeometryOperators.distanceToBezierCurve(x0, y0, cx0, cy0, cx1, cy1, x1, y1, mP, false)<d;
 }
 

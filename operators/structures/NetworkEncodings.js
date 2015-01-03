@@ -4,7 +4,7 @@ function NetworkEncodings(){};
 
 //////////////NoteWork
 
-NetworkEncodings.nodeNameSeparators = ['|', ':',  ' is ', ' are ', ','];
+NetworkEncodings.nodeNameSeparators = ['|', ':',  ' is ', ' are ', '.', ','];
 
 /**
  * converts a text file under NoteWork format into a network
@@ -147,7 +147,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 				j++;
 			}
 
-			
+
 			index = minIndex==99999999?-1:minIndex;
 
 			name = index==-1?line:line.substr(0, index);
