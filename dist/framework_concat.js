@@ -12006,7 +12006,6 @@ StringOperators.getWords = function(string, withoutRepetitions, stopWords, sorte
 	
 	if(stopWords!=null){
 		//list.removeElements(stopWords);
-		var i, j;
 		for(i=0; list[i]!=null; i++){
 			for(j=0; stopWords[j]!=null; j++){
 				if((typeof stopWords[j]) == 'string'){
