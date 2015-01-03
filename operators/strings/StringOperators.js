@@ -481,6 +481,8 @@ StringOperators.getWords = function(string, withoutRepetitions, stopWords, sorte
 	sortedByFrequency = sortedByFrequency==null?true:sortedByFrequency;
 	includeLinks = includeLinks==null?true:includeLinks;
 	limit = limit==null?0:limit;
+
+	var i, j;
 	
 	if(includeLinks) var links = string.match(StringOperators.LINK_REGEX);
 	string = string.toLowerCase().replace(StringOperators.LINK_REGEX, "");
@@ -493,7 +495,6 @@ StringOperators.getWords = function(string, withoutRepetitions, stopWords, sorte
 	
 	if(stopWords!=null){
 		//list.removeElements(stopWords);
-		var i, j;
 		for(i=0; list[i]!=null; i++){
 			for(j=0; stopWords[j]!=null; j++){
 				if((typeof stopWords[j]) == 'string'){
@@ -512,9 +513,9 @@ StringOperators.getWords = function(string, withoutRepetitions, stopWords, sorte
 	}
 	
 	if(minSizeWords>0){
-		for(var i=0; list[i]!=null; i++){
+		for(i=0; list[i]!=null; i++){
 			if(list[i].length<minSizeWords){
-				list.removeElementAtIndex(i);
+				list.splice(i, 1);
 				i--;
 			}
 		}

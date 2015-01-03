@@ -213,6 +213,8 @@ StringListOperators.createTextsNetwork = function(texts, stopWords, stressUnique
 StringListOperators.createShortTextsNetwork = function(texts, stopWords, relationThreshold, mode, applyIntensity, wordsFrequencyTable){
 	if(texts==null || texts.length==null || texts.length==0) return;
 
+	var _time = new Date().getTime();
+
 	var network = new Network();
 	var joined = texts.join(' *** ').toLowerCase();
 	var textsLowerCase = joined.split(' *** ');
@@ -226,7 +228,7 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
 	var weight;
 	var maxWeight = 0;
 
-	relationThreshold = relationThreshold||0;
+	relationThreshold = relationThreshold||0.2;
 	mode = mode||0;
 
 	if(wordsFrequencyTable){
@@ -258,11 +260,15 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
 			}
 	}
 
+	c.l('A ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
+	_time = new Date().getTime();
+
 	texts.forEach(function(text, i){
     	node = new Node("_"+i, "_"+i);
     	network.addNode(node);
     	node.content = text;
     	words = StringOperators.getWords(text, true, stopWords, false, false, 0, 3);
+    	
     	n_words = words.length;
     	weights = new NumberList();
     	//words.forEach(function(word, j){
@@ -296,12 +302,21 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
     	nWords = Math.floor(Math.log(n_words+1)*3);
     	
     	words = words.getSortedByList(weights, false).slice(0, nWords);
+
+    	words.position = {};
+    	words.forEach(function(word, j){
+    		words.position[word] = j;
+    	});
+
     	weights = weights.getSorted(false).slice(0, nWords);
     	node.wordsTable = new Table();
     	node.wordsTable[0] = words;
     	node.wordsTable[1] = weights;
     });
-
+	
+	
+	c.l('B ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
+	_time = new Date().getTime();
 	
 	for(i=0; network.nodeList[i+1]!=null; i++){
     	node = network.nodeList[i];
@@ -309,8 +324,9 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
     		node1 = network.nodeList[j];
     		weight = 0;
     		node.wordsTable[0].forEach(function(word, i){
-    			index = node1.wordsTable[0].indexOf(word);//TODO:this could be improved (as seen in forums, indexOf might be unneficient for arrays
-    			if(index!=-1) weight+=node.wordsTable[1][i]*node1.wordsTable[1][index];
+    			//index = node1.wordsTable[0].indexOf(word);//TODO:this could be improved (as seen in forums, indexOf might be unneficient for arrays
+    			index = node1.wordsTable[0].position[word];
+    			if(index!=null) weight+=node.wordsTable[1][i]*node1.wordsTable[1][index];
     		});
     		weight = Math.sqrt((weight/maxWeight)/Math.max(node.wordsTable[0].length, node1.wordsTable[0].length));
     		if(weight>relationThreshold){
@@ -319,6 +335,8 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
     		}
     	}
     }
+
+    c.l('C ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
 
     return network;
 }

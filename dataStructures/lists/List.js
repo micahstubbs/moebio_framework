@@ -1049,7 +1049,7 @@ List.prototype.removeElement=function(element){
 	if(index!=-1) this.splice(index, 1);
 }
 
-List.prototype.removeElementAtIndex=function(index){
+List.prototype.removeElementAtIndex=function(index){//deprecated
 	this.splice(index, 1);
 }
 
