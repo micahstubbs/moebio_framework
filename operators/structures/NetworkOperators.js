@@ -479,18 +479,17 @@ NetworkOperators.buildDendrogram = function(network){
 		newNode.nodes = node0.nodes.concat(node1.nodes);
 		
 		for(i=0; node0.nodeList[i]!=null; i++){
-			newNode.node.nodeList.push(node0.nodeList[i]);
-			newNode.node.relationList.push(node0.relationList[i]);
+			newNode.node.nodeList.addNode(node0.nodeList[i]);
+			newNode.node.relationList.addRelation(node0.relationList[i]);
 		}
 		for(i=0; node1.nodeList[i]!=null; i++){
-			newNode.node.nodeList.push(node0.nodeList[i]);
-			newNode.node.relationList.push(node0.relationList[i]);
+			newNode.node.nodeList.addNode(node1.nodeList[i]);
+			newNode.node.relationList.addRelation(node1.relationList[i]);
 		}
 		
-		//nodeList.removeElements(new NodeList(node0, node1));
 		nodeList.removeElement(node0);
 		nodeList.removeElement(node1);
-		nodeList.push(newNode);
+		nodeList.addNode(newNode);
 	}
 	
 	

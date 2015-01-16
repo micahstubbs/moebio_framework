@@ -272,9 +272,6 @@ TableOperators.getCountPairsMatrix = function(table){
 	
 	var matrix = new NumberTable(list1.length);
 
-	c.log('list0.length, list1.length', list0.length, list1.length);
-	c.log('matrix --> ', matrix);
-
 	list1.forEach(function(element1, i){
 		matrix[i].name = String(element1);
 		list0.forEach(function(element0, j){
@@ -540,6 +537,7 @@ TableOperators.splitTableByCategoricList = function(table, list){
  */
 TableOperators.buildDecisionTree = function(variablesTable, supervised, min_entropy, min_size_node, min_info_gain, valueFollowing, generatePattern){
 	if(variablesTable==null || supervised==null) return;
+
 	min_entropy = min_entropy==null?0.2:min_entropy;
 	min_size_node = min_size_node||10;
 	min_info_gain = min_info_gain||0.002;
@@ -666,18 +664,9 @@ TableOperators._decisionTreeGenerateColorsMixture = function(ctxt, width, height
 		allColors = allColors.concat( ListGenerators.createListWithSameElement(weights[i], colors[i]) );
 	}
 
-	//c.l('weights:', weights);
-	//c.l('allColors:', allColors);
-
 	for(x=0; x<width; x++){
 		for(y=0; y<height; y++){
 			i=(x+y*width)*4;
-			//rgb = allColors.getRandomElement();
-			
-			// imageData.data[i] = rgb[0];
-			// imageData.data[i+1] = rgb[1];
-			// imageData.data[i+2] = rgb[2];
-			// imageData.data[i+3] = 255;
 			ctxt.fillStyle = allColors.getRandomElement();
 			ctxt.fillRect(x,y,1,1);
 		}

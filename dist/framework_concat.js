@@ -107,6 +107,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.getNames=List.prototype.getNames;
    	array.applyFunction=List.prototype.applyFunction;
    	array.getWithoutElementAtIndex=List.prototype.getWithoutElementAtIndex;
+   	array.getWithoutElement=List.prototype.getWithoutElement;
    	array.getWithoutElements=List.prototype.getWithoutElements;
    	array.getWithoutElementsAtIndexes=List.prototype.getWithoutElementsAtIndexes;
    	array.getFilteredByFunction=List.prototype.getFilteredByFunction;
@@ -424,7 +425,9 @@ List.prototype.getElementNumberOfOccurrences=function(element){
 
 List.prototype.clone=function(){
 	var clonedList= instantiateWithSameType(this);
-  	for(var i=0; this[i]!=null; i++){
+	var i;
+
+  	for(i=0; this[i]!=null; i++){
     	clonedList.push(this[i]);
   	}
   	clonedList.name = this.name;
@@ -997,6 +1000,27 @@ List.prototype.getWithoutElementAtIndex=function(index){
 	 	}
 	}
 	newList.name = this.name;
+	if(this.type=='List') return newList.getImproved();
+	return newList;
+}
+
+List.prototype.getWithoutElement=function(element){
+	var index = this.indexOf(element);
+	if(index==-1) return this;
+
+	if(this.type=='List'){
+		var newList = new List();
+	} else {
+		var newList =  instantiateWithSameType(this);
+	}
+
+	newList.name = this.name;
+	
+	var i;
+	for(i=0; this[i]!=null; i++){
+		if(i!=index) newList.push(this[i]);
+	}
+
 	if(this.type=='List') return newList.getImproved();
 	return newList;
 }
@@ -1797,7 +1821,7 @@ Node.prototype.getParent=function(){
 }
 
 /**
- * return the leaves under a node ina Tree, [!] if the network is not a tree this method could run infinite loops
+ * return the leaves under a node in a Tree, [!] if the network is not a tree this method could run infinite loops
  * @return {NodeList}
  * tags:
  */
@@ -1805,7 +1829,7 @@ Node.prototype.getLeaves=function(){
     var leaves = new NodeList();
     var addLeaves = function(node){
         if(node.toNodeList.length==0){
-            leaves.push(node);
+            leaves.addNode(node);
             return;
         }
         node.toNodeList.forEach(addLeaves);
@@ -1816,9 +1840,9 @@ Node.prototype.getLeaves=function(){
 //
 
 
-Node.prototype.toString=function(){
-	return this.name+", "+this.id;
-}
+// Node.prototype.toString=function(){
+// 	return this.name+", "+this.id;
+// }
 
 Node.prototype.clone=function(){
 	var newNode = new Node(this.id, this.name);
@@ -4210,10 +4234,14 @@ NumberTable.prototype.getNumberListsNormalizedToSum=function(){
 
 NumberTable.prototype.getMax=function(){
 	if(this.length==0) return null;
-	var max=(this[0]).getMax();
-	for(var i=1; this[i]!=null; i++){
+
+	var max=this[0].getMax();
+	var i;
+
+	for(i=1; this[i]!=null; i++){
 		max = Math.max(this[i].getMax(), max);
 	}
+	
 	return max;
 }
 
@@ -4890,7 +4918,7 @@ Tree.prototype.addFather=function(node, children){
 Tree.prototype.getNodesByLevel=function(level){
 	var newNodeList = new NodeList();
 	for(i=0; this.nodeList[i]!=null; i++){
-		if(this.nodeList[i].level==level) newNodeList.push(this.nodeList[i]);
+		if(this.nodeList[i].level==level) newNodeList.addNode(this.nodeList[i]);
 	}
 	return newNodeList;
 }
@@ -4906,12 +4934,12 @@ Tree.prototype.getLeaves=function(node){
 	var leaves = new NodeList();
 	if(node){
 		if(node.toNodeList.length==0){
-			leaves.push(node);
+			leaves.addNode(node);
 			return leaves;
 		}
 		addLeaves = function(candidate){
 			if(candidate.toNodeList.length==0){
-				leaves.push(candidate);
+				leaves.addNode(candidate);
 			} else {
 				candidate.toNodeList.forEach(addLeaves);
 			}
@@ -4919,7 +4947,7 @@ Tree.prototype.getLeaves=function(node){
 		node.toNodeList.forEach(addLeaves)
 	} else {
 		this.nodeList.forEach(function(candidate){
-			if(candidate.toNodeList.length==0) leaves.push(candidate); 
+			if(candidate.toNodeList.length==0) leaves.addNode(candidate); 
 		});
 	}
 	return leaves;
@@ -8489,7 +8517,11 @@ ListOperators.translateWithDictionary = function(list, dictionary, nullElement){
 	var newList = new List();
 	list.forEach(function(element, i){
 		index = dictionary[0].indexOf(element);
-		newList[i] = index==-1?nullElement:dictionary[1][index];
+		if(nullElement!=null){
+			newList[i] = index==-1?nullElement:dictionary[1][index];
+		} else {
+			newList[i] = index==-1?list[i]:dictionary[1][index];
+		}
 	});
 	return newList.getImproved();
 }
@@ -8783,28 +8815,29 @@ ListOperators.getListEntropy = function(list, valueFollowing){
  * @return {Number}
  * tags:ds
  */
-ListOperators.getInformationGain = function(feature, supervised){
-	if(feature==null || supervised==null || feature.length!=supervised.length) return null;
 
-	var ig = ListOperators.getListEntropy(supervised);
-	var childrenObject = {};
-	var childrenLists = [];
-	var N = feature.length;
+// ListOperators.getInformationGain = function(feature, supervised){
+// 	if(feature==null || supervised==null || feature.length!=supervised.length) return null;
 
-	feature.forEach(function(element, i){
-		if(childrenObject[element]==null){
-			childrenObject[element]=new List();
-			childrenLists.push(childrenObject[element]);
-		}
-		childrenObject[element].push(supervised[i]);
-	});
+// 	var ig = ListOperators.getListEntropy(supervised);
+// 	var childrenObject = {};
+// 	var childrenLists = [];
+// 	var N = feature.length;
 
-	childrenLists.forEach(function(cl){
-		ig -= (cl.length/N)*ListOperators.getListEntropy(cl);
-	});
+// 	feature.forEach(function(element, i){
+// 		if(childrenObject[element]==null){
+// 			childrenObject[element]=new List();
+// 			childrenLists.push(childrenObject[element]);
+// 		}
+// 		childrenObject[element].push(supervised[i]);
+// 	});
 
-	return ig;
-}
+// 	childrenLists.forEach(function(cl){
+// 		ig -= (cl.length/N)*ListOperators.getListEntropy(cl);
+// 	});
+
+// 	return ig;
+// }
 
 
 /**
@@ -9562,9 +9595,6 @@ TableOperators.getCountPairsMatrix = function(table){
 	
 	var matrix = new NumberTable(list1.length);
 
-	c.log('list0.length, list1.length', list0.length, list1.length);
-	c.log('matrix --> ', matrix);
-
 	list1.forEach(function(element1, i){
 		matrix[i].name = String(element1);
 		list0.forEach(function(element0, j){
@@ -9830,6 +9860,7 @@ TableOperators.splitTableByCategoricList = function(table, list){
  */
 TableOperators.buildDecisionTree = function(variablesTable, supervised, min_entropy, min_size_node, min_info_gain, valueFollowing, generatePattern){
 	if(variablesTable==null || supervised==null) return;
+
 	min_entropy = min_entropy==null?0.2:min_entropy;
 	min_size_node = min_size_node||10;
 	min_info_gain = min_info_gain||0.002;
@@ -9956,18 +9987,9 @@ TableOperators._decisionTreeGenerateColorsMixture = function(ctxt, width, height
 		allColors = allColors.concat( ListGenerators.createListWithSameElement(weights[i], colors[i]) );
 	}
 
-	//c.l('weights:', weights);
-	//c.l('allColors:', allColors);
-
 	for(x=0; x<width; x++){
 		for(y=0; y<height; y++){
 			i=(x+y*width)*4;
-			//rgb = allColors.getRandomElement();
-			
-			// imageData.data[i] = rgb[0];
-			// imageData.data[i+1] = rgb[1];
-			// imageData.data[i+2] = rgb[2];
-			// imageData.data[i+3] = 255;
 			ctxt.fillStyle = allColors.getRandomElement();
 			ctxt.fillRect(x,y,1,1);
 		}
@@ -13996,18 +14018,17 @@ NetworkOperators.buildDendrogram = function(network){
 		newNode.nodes = node0.nodes.concat(node1.nodes);
 		
 		for(i=0; node0.nodeList[i]!=null; i++){
-			newNode.node.nodeList.push(node0.nodeList[i]);
-			newNode.node.relationList.push(node0.relationList[i]);
+			newNode.node.nodeList.addNode(node0.nodeList[i]);
+			newNode.node.relationList.addRelation(node0.relationList[i]);
 		}
 		for(i=0; node1.nodeList[i]!=null; i++){
-			newNode.node.nodeList.push(node0.nodeList[i]);
-			newNode.node.relationList.push(node0.relationList[i]);
+			newNode.node.nodeList.addNode(node1.nodeList[i]);
+			newNode.node.relationList.addRelation(node1.relationList[i]);
 		}
 		
-		//nodeList.removeElements(new NodeList(node0, node1));
 		nodeList.removeElement(node0);
 		nodeList.removeElement(node1);
-		nodeList.push(newNode);
+		nodeList.addNode(newNode);
 	}
 	
 	
@@ -21426,23 +21447,16 @@ TreeDraw.drawDecisionTree = function(frame, tree){
 
 	var kxF = frame.width/frame.memory.focusFrame.width;
 	var mxF = - kxF*frame.memory.focusFrame.x;
-	//var kyF = frame.height/frame.memory.focusFrame.height;
-	//var myF = - kyF*frame.memory.focusFrame.y;
 
 	var v = kxF>frame.memory.kx?0.05:0.1;
 	var antiv = 1-v;
 
 	frame.memory.kx = antiv*frame.memory.kx + v*kxF;
 	frame.memory.mx = antiv*frame.memory.mx + v*mxF;
-	//frame.memory.ky = antiv*frame.memory.ky + v*kyF;
-	//frame.memory.my = antiv*frame.memory.my + v*myF;
 	var kx = frame.memory.kx;
 	var mx = frame.memory.mx;
-	//var ky = frame.memory.ky;
-	//var my = frame.memory.my;
 
 	var tx = function(x){return kx*x + mx};
-	//var ty = function(y){return ky*y + my};
 
 	var x, y;
 	var margTextX,margTextY;
@@ -21485,7 +21499,6 @@ TreeDraw.drawDecisionTree = function(frame, tree){
 
 		tree.nodeList.forEach(function(node, i){
 
-			//rect = new Rectangle(tx(node._outRectangle.x), ty(node._outRectangle.y), node._outRectangle.width*kx, node._outRectangle.height*ky);
 			rect = new Rectangle(tx(node._outRectangle.x), node._outRectangle.y, node._outRectangle.width*kx, node._outRectangle.height);
 
 			if(rect.x<frame.width && rect.getRight()>0 && rect.y<frame.height && rect.getBottom()>0){

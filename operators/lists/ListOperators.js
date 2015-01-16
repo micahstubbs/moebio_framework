@@ -171,7 +171,11 @@ ListOperators.translateWithDictionary = function(list, dictionary, nullElement){
 	var newList = new List();
 	list.forEach(function(element, i){
 		index = dictionary[0].indexOf(element);
-		newList[i] = index==-1?nullElement:dictionary[1][index];
+		if(nullElement!=null){
+			newList[i] = index==-1?nullElement:dictionary[1][index];
+		} else {
+			newList[i] = index==-1?list[i]:dictionary[1][index];
+		}
 	});
 	return newList.getImproved();
 }
@@ -465,28 +469,29 @@ ListOperators.getListEntropy = function(list, valueFollowing){
  * @return {Number}
  * tags:ds
  */
-ListOperators.getInformationGain = function(feature, supervised){
-	if(feature==null || supervised==null || feature.length!=supervised.length) return null;
 
-	var ig = ListOperators.getListEntropy(supervised);
-	var childrenObject = {};
-	var childrenLists = [];
-	var N = feature.length;
+// ListOperators.getInformationGain = function(feature, supervised){
+// 	if(feature==null || supervised==null || feature.length!=supervised.length) return null;
 
-	feature.forEach(function(element, i){
-		if(childrenObject[element]==null){
-			childrenObject[element]=new List();
-			childrenLists.push(childrenObject[element]);
-		}
-		childrenObject[element].push(supervised[i]);
-	});
+// 	var ig = ListOperators.getListEntropy(supervised);
+// 	var childrenObject = {};
+// 	var childrenLists = [];
+// 	var N = feature.length;
 
-	childrenLists.forEach(function(cl){
-		ig -= (cl.length/N)*ListOperators.getListEntropy(cl);
-	});
+// 	feature.forEach(function(element, i){
+// 		if(childrenObject[element]==null){
+// 			childrenObject[element]=new List();
+// 			childrenLists.push(childrenObject[element]);
+// 		}
+// 		childrenObject[element].push(supervised[i]);
+// 	});
 
-	return ig;
-}
+// 	childrenLists.forEach(function(cl){
+// 		ig -= (cl.length/N)*ListOperators.getListEntropy(cl);
+// 	});
+
+// 	return ig;
+// }
 
 
 /**

@@ -97,10 +97,14 @@ NumberTable.prototype.getNumberListsNormalizedToSum=function(){
 
 NumberTable.prototype.getMax=function(){
 	if(this.length==0) return null;
-	var max=(this[0]).getMax();
-	for(var i=1; this[i]!=null; i++){
+
+	var max=this[0].getMax();
+	var i;
+
+	for(i=1; this[i]!=null; i++){
 		max = Math.max(this[i].getMax(), max);
 	}
+	
 	return max;
 }
 

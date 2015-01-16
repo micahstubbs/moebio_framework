@@ -49,7 +49,7 @@ Tree.prototype.addFather=function(node, children){
 Tree.prototype.getNodesByLevel=function(level){
 	var newNodeList = new NodeList();
 	for(i=0; this.nodeList[i]!=null; i++){
-		if(this.nodeList[i].level==level) newNodeList.push(this.nodeList[i]);
+		if(this.nodeList[i].level==level) newNodeList.addNode(this.nodeList[i]);
 	}
 	return newNodeList;
 }
@@ -65,12 +65,12 @@ Tree.prototype.getLeaves=function(node){
 	var leaves = new NodeList();
 	if(node){
 		if(node.toNodeList.length==0){
-			leaves.push(node);
+			leaves.addNode(node);
 			return leaves;
 		}
 		addLeaves = function(candidate){
 			if(candidate.toNodeList.length==0){
-				leaves.push(candidate);
+				leaves.addNode(candidate);
 			} else {
 				candidate.toNodeList.forEach(addLeaves);
 			}
@@ -78,7 +78,7 @@ Tree.prototype.getLeaves=function(node){
 		node.toNodeList.forEach(addLeaves)
 	} else {
 		this.nodeList.forEach(function(candidate){
-			if(candidate.toNodeList.length==0) leaves.push(candidate); 
+			if(candidate.toNodeList.length==0) leaves.addNode(candidate); 
 		});
 	}
 	return leaves;

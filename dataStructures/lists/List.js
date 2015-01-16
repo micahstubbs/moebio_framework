@@ -81,6 +81,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.getNames=List.prototype.getNames;
    	array.applyFunction=List.prototype.applyFunction;
    	array.getWithoutElementAtIndex=List.prototype.getWithoutElementAtIndex;
+   	array.getWithoutElement=List.prototype.getWithoutElement;
    	array.getWithoutElements=List.prototype.getWithoutElements;
    	array.getWithoutElementsAtIndexes=List.prototype.getWithoutElementsAtIndexes;
    	array.getFilteredByFunction=List.prototype.getFilteredByFunction;
@@ -398,7 +399,9 @@ List.prototype.getElementNumberOfOccurrences=function(element){
 
 List.prototype.clone=function(){
 	var clonedList= instantiateWithSameType(this);
-  	for(var i=0; this[i]!=null; i++){
+	var i;
+
+  	for(i=0; this[i]!=null; i++){
     	clonedList.push(this[i]);
   	}
   	clonedList.name = this.name;
@@ -971,6 +974,27 @@ List.prototype.getWithoutElementAtIndex=function(index){
 	 	}
 	}
 	newList.name = this.name;
+	if(this.type=='List') return newList.getImproved();
+	return newList;
+}
+
+List.prototype.getWithoutElement=function(element){
+	var index = this.indexOf(element);
+	if(index==-1) return this;
+
+	if(this.type=='List'){
+		var newList = new List();
+	} else {
+		var newList =  instantiateWithSameType(this);
+	}
+
+	newList.name = this.name;
+	
+	var i;
+	for(i=0; this[i]!=null; i++){
+		if(i!=index) newList.push(this[i]);
+	}
+
 	if(this.type=='List') return newList.getImproved();
 	return newList;
 }

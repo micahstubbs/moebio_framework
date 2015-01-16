@@ -432,23 +432,16 @@ TreeDraw.drawDecisionTree = function(frame, tree){
 
 	var kxF = frame.width/frame.memory.focusFrame.width;
 	var mxF = - kxF*frame.memory.focusFrame.x;
-	//var kyF = frame.height/frame.memory.focusFrame.height;
-	//var myF = - kyF*frame.memory.focusFrame.y;
 
 	var v = kxF>frame.memory.kx?0.05:0.1;
 	var antiv = 1-v;
 
 	frame.memory.kx = antiv*frame.memory.kx + v*kxF;
 	frame.memory.mx = antiv*frame.memory.mx + v*mxF;
-	//frame.memory.ky = antiv*frame.memory.ky + v*kyF;
-	//frame.memory.my = antiv*frame.memory.my + v*myF;
 	var kx = frame.memory.kx;
 	var mx = frame.memory.mx;
-	//var ky = frame.memory.ky;
-	//var my = frame.memory.my;
 
 	var tx = function(x){return kx*x + mx};
-	//var ty = function(y){return ky*y + my};
 
 	var x, y;
 	var margTextX,margTextY;
@@ -491,7 +484,6 @@ TreeDraw.drawDecisionTree = function(frame, tree){
 
 		tree.nodeList.forEach(function(node, i){
 
-			//rect = new Rectangle(tx(node._outRectangle.x), ty(node._outRectangle.y), node._outRectangle.width*kx, node._outRectangle.height*ky);
 			rect = new Rectangle(tx(node._outRectangle.x), node._outRectangle.y, node._outRectangle.width*kx, node._outRectangle.height);
 
 			if(rect.x<frame.width && rect.getRight()>0 && rect.y<frame.height && rect.getBottom()>0){
