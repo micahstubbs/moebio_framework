@@ -14023,7 +14023,7 @@ NetworkOperators.buildDendrogram = function(network){
 		}
 		for(i=0; node1.nodeList[i]!=null; i++){
 			newNode.node.nodeList.addNode(node1.nodeList[i]);
-			newNode.node.relationList.addRelation(node1.relationList[i]);
+			newNode.node.relationList.addRelation(node1.relationList[i]);Network
 		}
 		
 		nodeList.removeElement(node0);
@@ -14035,13 +14035,10 @@ NetworkOperators.buildDendrogram = function(network){
 	//recalculate levels for nodes here
 	for(i=0; tree.nodeList[i]!=null; i++){
 		node0 = tree.nodeList[i];
-		//c.log(i, )
 		if(node0.nodes.length>1){
 			node0.level = Math.max(node0.nodeList[0].level, node0.nodeList[1].level)+1;
 		}
 	}
-
-	//c.log('\n\n\n\nTIME ------>'+ ((new Date().getTime())-t)+"\n\n\n\n");
 	
 	return tree;
 }
@@ -21126,12 +21123,6 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
 		});
 	}
 
-	// if(frame.memory.followingWeights){
-	// 	tree.nodeList.forEach(function(node){
-	// 		node._treeMapWeight = node.descentWeight;
-	// 	});
-	// }
-
 	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
 		frame.memory.nFLastChange = nF;
 		frame.memory.image=null;
@@ -21272,13 +21263,19 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
 					margTextY = rect.height*TreeDraw.PROP_RECT_MARGIN*0.15;
 					textSize = rect.height*TreeDraw.PROP_RECT_LABEL-2;
 					if(textSize>=5){
-						setText(textColor?textColor:frame.memory.textsColorList[i], textSize);
-						exceedes =  (node._textWidth*textSize/12)>(rect.width-1.2*margTextX);
+
+						propTextSpace = (rect.width-2*margTextX)/(node._textWidth*textSize/12);
+						exceedes =  propTextSpace<1;//(node._textWidth*textSize/12)>(rect.width-1.2*margTextX);
+						
 						if(exceedes){
-							clipRectangle(x+margTextX, y+margTextY,rect.width-2*margTextX, textSize*2);
-						} 
+							//clipRectangle(x+margTextX, y+margTextY,rect.width-2*margTextX, textSize*2);
+							setText(textColor?textColor:frame.memory.textsColorList[i], textSize*propTextSpace);
+						} else {
+							setText(textColor?textColor:frame.memory.textsColorList[i], textSize);
+						}
+
 						fText(node.name, x+margTextX, y+margTextY);
-						if(exceedes) context.restore();
+						//if(exceedes) context.restore();
 					}
 				}
 			}
@@ -21339,6 +21336,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
 	if(changeSelection){
 		frame.memory.focusFrame = TreeDraw._expandRect(externalSelectedNode._outRectangle);
 		frame.memory.nodeSelected = externalSelectedNode;
+		frame.memory.image = null;
 	}
 
 	if(!captureImage && !drawingImage) context.restore();

@@ -484,7 +484,7 @@ NetworkOperators.buildDendrogram = function(network){
 		}
 		for(i=0; node1.nodeList[i]!=null; i++){
 			newNode.node.nodeList.addNode(node1.nodeList[i]);
-			newNode.node.relationList.addRelation(node1.relationList[i]);
+			newNode.node.relationList.addRelation(node1.relationList[i]);Network
 		}
 		
 		nodeList.removeElement(node0);
@@ -496,13 +496,10 @@ NetworkOperators.buildDendrogram = function(network){
 	//recalculate levels for nodes here
 	for(i=0; tree.nodeList[i]!=null; i++){
 		node0 = tree.nodeList[i];
-		//c.log(i, )
 		if(node0.nodes.length>1){
 			node0.level = Math.max(node0.nodeList[0].level, node0.nodeList[1].level)+1;
 		}
 	}
-
-	//c.log('\n\n\n\nTIME ------>'+ ((new Date().getTime())-t)+"\n\n\n\n");
 	
 	return tree;
 }
