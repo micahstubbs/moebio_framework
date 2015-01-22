@@ -21865,7 +21865,7 @@ Array.prototype.last = function(){
 }
 
 window.addEventListener('load', function(){
-	c.l('Moebio Framework v2.25');
+	c.l('Moebio Framework v2.255');
 
  	if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
     	userAgent='IE';
@@ -22139,6 +22139,8 @@ function activateWheel(){
 	
 }
 function _onWheel(e) {
+	//c.l('_onWheel, e:', e);
+
     if (!e) e = window.event; //IE
             
     if (e.wheelDelta){
