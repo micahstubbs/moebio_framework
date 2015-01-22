@@ -17962,7 +17962,7 @@ function isArray(obj) {
       return true;
 }
 Date.prototype.getType=function(){
-	return 'Date';
+	return 'date';
 }
 
 
