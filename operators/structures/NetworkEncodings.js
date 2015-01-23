@@ -30,7 +30,8 @@ NetworkEncodings.decodeNoteWork = function(code){
 	var relation;
 	var prevLine;
 	var sep;
-	var colorLines = [];
+	var colorLinesRelations = []; //for relations
+	var colorLinesGroups = [];
 	var colorSegments = [];
 	var linesInfo = [];
 	var simpleLine;
@@ -69,6 +70,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 
 	paragraphs.push(left);
 
+	var firstLine;
 	
 
 	paragraphs.forEach(function(paragraph, i){
@@ -80,6 +82,8 @@ NetworkEncodings.decodeNoteWork = function(code){
 			lines = paragraph.split(/\n/g);
 			line = lines[0];
 		}
+
+		firstLine = line;
 
 		if(line=='\n' || line=='' || line==' ' || line=='  '){//use regex here
 			
@@ -93,25 +97,39 @@ NetworkEncodings.decodeNoteWork = function(code){
 				iEnd:line.length
 			});
 
-		} else if(line.indexOf(':')!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){// color in relations
-			colorLines.push(line);
+		} else if(line == "relations colors:" || line == "groups colors:" || line == "categories colors:"){//line.indexOf(':')!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){ // color in relations or groups
+			// colorLinesRelations.push(line);
 
-			if(colorSegments[nLineParagraph]==null) colorSegments[nLineParagraph]=[];
+			// if(colorSegments[nLineParagraph]==null) colorSegments[nLineParagraph]=[];
 
-			colorSegments[nLineParagraph].push({
-				type:'relation_color',
-				iStart:0,
-				iEnd:line.length
-			});
+			// colorSegments[nLineParagraph].push({
+			// 	type:'relation_color',
+			// 	iStart:0,
+			// 	iEnd:line.length
+			// });
 
 			if(lines){
 				lines.slice(1).forEach(function(line, i){
 
 					index = line.indexOf(':');
-					if(index!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){
+					if(firstLine == "relations colors:" && index!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){
 						//c.l('  more colors!');
 
-						colorLines.push(line);
+						colorLinesRelations.push(line);
+						
+						if(colorSegments[nLineParagraph+i]==null) colorSegments[nLineParagraph+i]=[];
+
+						colorSegments[nLineParagraph+i].push({
+								type:'relation_color',
+								iStart:0,
+								iEnd:line.length
+						});
+						
+					}
+					if((firstLine == "groups colors:" || firstLine == "categories colors:") && index!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){
+						//c.l('  more colors!');
+
+						colorLinesGroups.push(line);
 						
 						if(colorSegments[nLineParagraph+i]==null) colorSegments[nLineParagraph+i]=[];
 
@@ -329,13 +347,25 @@ NetworkEncodings.decodeNoteWork = function(code){
 	//colors in relations
 	//
 	
-	colorLines.forEach(function(line){
+	colorLinesRelations.forEach(function(line){
 		index = line.indexOf(':');
 		texts = line.substr(0,index).split(',');
 	    texts.forEach(function(text){
 	       color = line.substr(index+1);
 	       network.relationList.forEach(function(relation){
 	         if(relation.name.indexOf(text)!=-1) relation.color = color;
+	       });
+	    });
+	});
+
+	colorLinesGroups.forEach(function(line){
+		index = line.indexOf(':');
+		texts = line.substr(0,index).split(',');
+	    texts.forEach(function(text){
+	       color = line.substr(index+1);
+	       network.nodeList.forEach(function(node){
+	         if(node.group==text) node.color = color;
+	         if(node.category==text) node.color = color;
 	       });
 	    });
 	});
