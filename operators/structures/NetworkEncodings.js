@@ -43,6 +43,9 @@ NetworkEncodings.decodeNoteWork = function(code){
 	var paragraphs = new StringList();
 	var content;
 
+	network.nodesPropertiesNames = new StringList();
+	network.relationsPropertiesNames = new StringList();
+
 	lines = code.split(/\n/g);
 	lines.forEach(function(line, i){
 		lines[i] = line.trim();
@@ -124,7 +127,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 								iStart:0,
 								iEnd:line.length
 						});
-						
+
 					}
 					if((firstLine == "groups colors:" || firstLine == "categories colors:") && index!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){
 						//c.l('  more colors!');
@@ -258,7 +261,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 	}
 
 
-	//build relations
+	//build relations and nodes properties
 
 	network.nodeList.forEach(function(node){
 
@@ -277,7 +280,10 @@ NetworkEncodings.decodeNoteWork = function(code){
 				propertyValue = line.split(':')[1].trim();
 				if(propertyValue == String(Number(propertyValue))) propertyValue = Number(propertyValue);
 
-				if(propertyValue!=null) node[propertyName] = propertyValue;
+				if(propertyValue!=null){
+					node[propertyName] = propertyValue;
+					if(network.nodesPropertiesNames.indexOf(propertyName)==-1) network.nodesPropertiesNames.push(propertyName);
+				}
 
 			} else {
 				simpleLine = line;
