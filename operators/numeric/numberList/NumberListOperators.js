@@ -326,6 +326,24 @@ NumberListOperators.union = function (x, y) {
  */
 NumberListOperators.intersection = function ( a, b ) {
   // Borrowed from here: http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
+  console.log( "arguments: ", arguments ); 
+  if( arguments.length > 2 ){
+  	var sets = [];
+  	for (var i = 0; i < arguments.length; i++) {
+  		sets.push( arguments[i] );
+  	};
+  	sets.sort(function(a,b){
+		return a.length - b.length;
+	})
+	console.log( "sets: ", sets ); 
+  	var resultsTrail = sets[0];
+  	for (var i = 1; i < sets.length; i++) {
+  		var newSet = sets[i];
+  		resultsTrail = NumberListOperators.intersection( resultsTrail, newSet );
+  	};
+  	return resultsTrail;
+  }
+
   var result = new NumberList();
   	 a = a.slice();
   	 b = b.slice();
