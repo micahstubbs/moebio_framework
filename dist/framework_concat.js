@@ -4846,7 +4846,7 @@ Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames,
 		}
 		newNetwork.addNode(newNode);
 	});
-
+	
 	this.relationList.forEach(function(relation){
 		newRelation = new Relation(idsSubfix+relation.id, namesSubfix+relation.name, newNetwork.nodeList.getNodeById(idsSubfix+relation.node0.id), newNetwork.nodeList.getNodeById(idsSubfix+relation.node1.id));
 		if(idsSubfix!='') newRelation.basicId = relation.id;
@@ -10573,6 +10573,24 @@ NumberListOperators.union = function (x, y) {
  */
 NumberListOperators.intersection = function ( a, b ) {
   // Borrowed from here: http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
+  console.log( "arguments: ", arguments ); 
+  if( arguments.length > 2 ){
+  	var sets = [];
+  	for (var i = 0; i < arguments.length; i++) {
+  		sets.push( arguments[i] );
+  	};
+  	sets.sort(function(a,b){
+		return a.length - b.length;
+	})
+	console.log( "sets: ", sets ); 
+  	var resultsTrail = sets[0];
+  	for (var i = 1; i < sets.length; i++) {
+  		var newSet = sets[i];
+  		resultsTrail = NumberListOperators.intersection( resultsTrail, newSet );
+  	};
+  	return resultsTrail;
+  }
+
   var result = new NumberList();
   	 a = a.slice();
   	 b = b.slice();
