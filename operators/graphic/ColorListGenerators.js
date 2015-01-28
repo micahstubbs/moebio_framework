@@ -14,13 +14,15 @@ function ColorListGenerators(){};
  * create a simple list of categorical colors
  * @param  {Number} nColors
  * 
- * @param  {Number} alpha 0.5 by default
+ * @param  {Number} alpha 1 by default
  * @return {ColorList}
  * tags:generator
  */
 ColorListGenerators.createDefaultCategoricalColorList = function(nColors, alpha){
-	alpha = alpha==null?0.5:alpha;
-	return ColorListGenerators.createCategoricalColors(1, nColors).getInterpolated('black', 0.15).addAlpha(alpha);
+	alpha = alpha==null?1:alpha;
+	var colors = ColorListGenerators.createCategoricalColors(1, nColors).getInterpolated('black', 0.15);
+	if(alpha<1) colors = colors.addAlpha(alpha);
+	return colors;
 }
 
 
