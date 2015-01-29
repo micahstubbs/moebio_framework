@@ -4827,6 +4827,7 @@ Network.prototype.removeIsolatedNodes=function(minNumberRelations){
 }
 
 
+
 Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames, idsSubfix, namesSubfix){
 	var newNetwork = new Network();
 	var newNode, newRelation;
@@ -4846,7 +4847,7 @@ Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames,
 		}
 		newNetwork.addNode(newNode);
 	});
-	
+
 	this.relationList.forEach(function(relation){
 		newRelation = new Relation(idsSubfix+relation.id, namesSubfix+relation.name, newNetwork.nodeList.getNodeById(idsSubfix+relation.node0.id), newNetwork.nodeList.getNodeById(idsSubfix+relation.node1.id));
 		if(idsSubfix!='') newRelation.basicId = relation.id;
@@ -21894,6 +21895,7 @@ var DX_MOUSE=0; //horizontal movement of cursor in last frame
 var DY_MOUSE=0; //vertical movement of cursor in last frame
 var MOUSE_MOVED = false; //boolean that indicates wether the mouse moved in the last frame / STATE
 var T_MOUSE_PRESSED = 0; //time in milliseconds of mouse being pressed, useful for sutained pressure detection
+var MOUSE_IN_DOCUMENT = true;
 
 //var deltaWheel = 0;
 var cursorStyle = 'auto';
@@ -21970,6 +21972,8 @@ window.addEventListener('load', function(){
 		canvas.addEventListener("mousemove", _onMouse, false);
 		canvas.addEventListener("mousedown", _onMouse, false);
 		canvas.addEventListener("mouseup", _onMouse, false);
+		canvas.addEventListener("mouseenter", _onMouse, false);
+		canvas.addEventListener("mouseleave", _onMouse, false);
 		activateWheel();
 
 		window.addEventListener("resize", onResize, false);
@@ -21981,6 +21985,7 @@ window.addEventListener('load', function(){
 }, false);
 
 function _onMouse(e) {
+	c.l('_+_+_+ e.type', e.type);
 	switch(e.type){
 		case "mousemove":
 			
@@ -21994,9 +21999,9 @@ function _onMouse(e) {
 		        mX = e.layerX;
 		        mY = e.layerY;
 		    }
-		    
 		  	mP.x = mX;
 		  	mP.y = mY;
+		  	MOUSE_IN_DOCUMENT = true;
 		  	break;
 		case "mousedown":
 			NF_DOWN = nF;
@@ -22005,6 +22010,7 @@ function _onMouse(e) {
 			_tLastMouseDown = new Date().getTime();
 			mX_DOWN = mX;
 			mY_DOWN = mY;
+			MOUSE_IN_DOCUMENT = true;
 			break;
 		case "mouseup":
 			NF_UP = nF;
@@ -22012,6 +22018,14 @@ function _onMouse(e) {
 			T_MOUSE_PRESSED = 0;
 			mX_UP = mX;
 			mY_UP = mY;
+			MOUSE_IN_DOCUMENT = true;
+			break;
+		case "mouseenter":
+			MOUSE_IN_DOCUMENT = true;
+			break;
+		case "mouseleave":
+		c.l('*%$#*/%$# mouseleave');
+			MOUSE_IN_DOCUMENT = false;
 			break;
 	}
 }

@@ -129,6 +129,7 @@ Network.prototype.removeIsolatedNodes=function(minNumberRelations){
 }
 
 
+
 Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames, idsSubfix, namesSubfix){
 	var newNetwork = new Network();
 	var newNode, newRelation;
@@ -148,7 +149,7 @@ Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames,
 		}
 		newNetwork.addNode(newNode);
 	});
-	
+
 	this.relationList.forEach(function(relation){
 		newRelation = new Relation(idsSubfix+relation.id, namesSubfix+relation.name, newNetwork.nodeList.getNodeById(idsSubfix+relation.node0.id), newNetwork.nodeList.getNodeById(idsSubfix+relation.node1.id));
 		if(idsSubfix!='') newRelation.basicId = relation.id;
