@@ -190,10 +190,10 @@ function _onMouse(e) {
 			MOUSE_IN_DOCUMENT = true;
 			break;
 		case "mouseleave":
-			mX = 999999;
-			mY = 999999;
-			mP.x = mX;
-		  	mP.y = mY;
+			// mX = 999999;
+			// mY = 999999;
+			// mP.x = mX;
+		 	// mP.y = mY;
 			MOUSE_IN_DOCUMENT = false;
 			break;
 	}
