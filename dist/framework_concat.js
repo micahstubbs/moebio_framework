@@ -14268,6 +14268,62 @@ NetworkOperators.addPageRankToNodes = function(network, from, useRelationsWeight
 }
 
 
+NetworkOperators.fusionNetworks =function(networks, hubsDistanceFactor, hubsForceWeight){
+	hubsDistanceFactor = hubsDistanceFactor==null?1:hubsDistanceFactor;
+	hubsForceWeight = hubsForceWeight==null?1:hubsForceWeight;
+
+	var fusionNet = new Network();
+	var newNode;
+	var newRelation;
+	var i, j;
+	var mapsCluster = new Table();
+
+	var colors = ColorListGenerators.createDefaultCategoricalColorList(networks.length);
+
+	networks.forEach(function(net, i){
+	mapsCluster[i] = new NodeList();
+
+	net.nodeList.forEach(function(node){
+		newNode = new Node(node.id, node.name);
+		newNode.basicId = node.basicId;
+		newNode.mapId = "map_"+i;
+		newNode.color = colors[i];
+		fusionNet.addNode(newNode);
+			mapsCluster[i].addNode(newNode);
+		});
+	});
+
+		networks.forEach(function(net, i){
+		net.relationList.forEach(function(relation){
+			newRelation = new Relation(relation.id, relation.name, fusionNet.nodeList.getNodeById(relation.node0.id), fusionNet.nodeList.getNodeById(relation.node1.id));
+			newRelation.color = relation.color;
+			fusionNet.addRelation(newRelation);
+		});
+	});
+
+
+
+	var node0;
+
+	for(i=0;fusionNet.nodeList[i]!=null; i++){
+		node0 = fusionNet.nodeList[i];
+		for(j=i+1;fusionNet.nodeList[j]!=null; j++){
+			if(node0.basicId==fusionNet.nodeList[j].basicId){
+				newRelation = new Relation(node0.id+'_'+fusionNet.nodeList[j].id, node0.id+'_'+fusionNet.nodeList[j].id, node0, fusionNet.nodeList[j]);
+				newRelation.color = 'black';
+				newRelation.distanceFactor = hubsDistanceFactor;
+				newRelation.forceWeight = hubsForceWeight;
+				fusionNet.addRelation(newRelation);
+			}
+		}
+	}
+
+	fusionNet.mapsCluster = mapsCluster;
+
+	return fusionNet;
+}
+
+
 
 
 
@@ -22023,10 +22079,10 @@ function _onMouse(e) {
 			MOUSE_IN_DOCUMENT = true;
 			break;
 		case "mouseleave":
-			mX = 999999;
-			mY = 999999;
-			mP.x = mX;
-		  	mP.y = mY;
+			// mX = 999999;
+			// mY = 999999;
+			// mP.x = mX;
+		 	// mP.y = mY;
 			MOUSE_IN_DOCUMENT = false;
 			break;
 	}
