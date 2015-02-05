@@ -664,7 +664,13 @@ NetworkOperators.addPageRankToNodes = function(network, from, useRelationsWeight
 	}
 }
 
-
+/**
+ * builds a fusioned Network, with nodes with same names coming from different source networks (called hubs) connected
+ * @param  {List} networks list of networks
+ * @param  {Number} hubsDistanceFactor distance between repeated nodes (hubs)
+ * @param  {Number} hubsForceWeight strength factor for the relation when using a forces engine
+ * @return {Network} fusioned Network
+ */
 NetworkOperators.fusionNetworks =function(networks, hubsDistanceFactor, hubsForceWeight){
 	hubsDistanceFactor = hubsDistanceFactor==null?1:hubsDistanceFactor;
 	hubsForceWeight = hubsForceWeight==null?1:hubsForceWeight;
