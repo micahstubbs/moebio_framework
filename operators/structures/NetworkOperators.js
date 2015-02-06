@@ -664,6 +664,30 @@ NetworkOperators.addPageRankToNodes = function(network, from, useRelationsWeight
 	}
 }
 
+
+/**
+ * builds a fusioned Network from a list of network codes, with nodes with same names coming from different source networks (called hubs) connected
+ * @param  {List} noteworksList
+ *
+ * @param  {Number} hubsDistanceFactor distance between repeated nodes (hubs)
+ * @param  {Number} hubsForceWeight strength factor for the relation when using a forces engine
+ * @return {Network}
+ */
+NetworkOperators.fusionNoteworks = function(noteworksList, hubsDistanceFactor, hubsForceWeight){
+	networks = new List();
+
+	noteworksList.forEach(function(map, i){
+		subfix = "map_"+i+"_";
+		net = NetworkEncodings.decodeNoteWork(map);
+		net = net.clone(net.nodesPropertiesNames, net.relationsPropertiesNames, subfix);
+		net.id = "map_"+i;
+		networks.push(net);
+	});
+
+	return NetworkOperators.fusionNetworks(networks, hubsDistanceFactor, hubsForceWeight);
+}
+
+
 /**
  * builds a fusioned Network, with nodes with same names coming from different source networks (called hubs) connected
  * @param  {List} networks list of networks
