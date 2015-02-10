@@ -20,17 +20,21 @@ function DateOperators(){};
  */
 DateOperators.stringToDate=function(string, formatCase, separator){
 	separator = separator==null?"-":separator;
-	formatCase = formatCase==null?0:formatCase;
+	formatCase = formatCase==null?1:formatCase;
+
+	if(formatCase==1){
+		if(separator!="-") string = string.replace(new RegExp(string, "g"), "-");
+		return new Date(string);
+	}
 	
 	var y;
-	
 	var parts = string.split(separator);
 	switch(formatCase){
 		case 0://MM-DD-YYYY
 			return new Date(Number(parts[2]), Number(parts[0])-1, Number(parts[1]));
 			break;
 		case 1://YYYY-MM-DD
-			return new Date(Number(parts[0]), Number(parts[1])-1, Number(parts[2]));
+			return new Date(string);//Number(parts[0]), Number(parts[1])-1, Number(parts[2]));
 			break;
 		case 2://MM-DD-YY
 			y = Number(parts[2]);

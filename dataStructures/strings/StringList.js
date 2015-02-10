@@ -169,9 +169,12 @@ StringList.prototype.toNumberList=function(){
 
 
 /**
- * format cases
- * 0: MM-DD-YYYY
- * 1: YYYY-MM-DD
+ * converts a stringList into a dateList
+ * 
+ * @param  {String} formatCase format cases:<br>0: MM-DD-YYYY<br>1: YYYY-MM-DD (standard Javascript conversion)
+ * @param  {String} separator "-" by default
+ * @return {DateList}
+ * tags:
  */
 StringList.prototype.toDateList=function(formatCase, separator){
 	var dateList = new DateList();
