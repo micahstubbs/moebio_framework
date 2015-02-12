@@ -44,6 +44,7 @@ include('../../frameworks2/dataStructures/structures/networks/Tree.js');
 ////operators
 include('../../frameworks2/operators/objects/ObjectOperators.js');
 include('../../frameworks2/operators/objects/ObjectConversions.js');
+include('../../frameworks2/operators/dates/DateListOperators.js');
 include('../../frameworks2/operators/dates/DateOperators.js');
 include('../../frameworks2/operators/geo/CountryListOperators.js');
 include('../../frameworks2/operators/geo/CountryOperators.js');

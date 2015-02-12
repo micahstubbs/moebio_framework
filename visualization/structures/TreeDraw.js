@@ -459,6 +459,7 @@ TreeDraw.drawDecisionTree = function(frame, tree){
 	if(drawingImage){
 		drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
 	} else {
+		c.l('drawing')
 		if(captureImage){
 			var newCanvas = document.createElement("canvas");
 			newCanvas.width = frame.width;
