@@ -128,6 +128,9 @@ TableConversions.ObjectToList = function(object, fields){
  * tags:decoder,dani
  */
 TableConversions.TableToObject = function(table, fields ){ // To-Do: should return a List instead of Array?
+	if( !table )
+		return;
+	
 	// If no field names supplied, take them from first element
 	if( !fields )
 	{
