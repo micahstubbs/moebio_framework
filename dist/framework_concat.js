@@ -8984,6 +8984,8 @@ ListOperators.getListEntropy = function(list, valueFollowing){
 	}
 
 	var table = ListOperators.countElementsRepetitionOnList(list, true);
+	c.l('    getListEntropy | table[0]', table[0]);
+	c.l('    getListEntropy | table[1]', table[1]);
 	list._mostRepresentedValue = table[0][0];
 	var N = list.length;
 	list._biggestProbability = table[1][0]/N;
@@ -8998,7 +9000,7 @@ ListOperators.getListEntropy = function(list, valueFollowing){
 		entropy -= (val/N)*Math.log(val/N)/norm;
 	});
 	
-	if(valueFollowing){
+	if(valueFollowing!=null){
 		var index = table[0].indexOf(valueFollowing);
 		list._P_valueFollowing = index==-1?0:table[1][index]/N;
 	}
