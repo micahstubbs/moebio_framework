@@ -1,10 +1,14 @@
 function CirclesVisOperators(){}
 
 CirclesVisOperators.circlesCloud = function(weights, frame, margin){
+	if(weights==null || weights.length==0) return null;
+
 	margin = margin==null?0:margin;
 	
 	var normWeights = weights.getNormalizedToMax().sqrt();
 	var circlesPlaced = new Polygon3D();
+
+	c.l('  o',weights.length, normWeights);
 	
 	var dL = 6;
 	
@@ -43,7 +47,7 @@ CirclesVisOperators.circlesCloud = function(weights, frame, margin){
 	}
 	
 	var circle;
-	prop = 0.5*frame.width/rMax;
+	prop = 0.5*frame.width/(rMax+0.001);
 	for(i=0; circlesPlaced[i]!=null; i++){
 		circle = circlesPlaced[i];
 		circle.x = center.x + (circle.x-center.x)*prop;

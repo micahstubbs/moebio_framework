@@ -742,6 +742,12 @@ NetworkOperators.fusionNetworks =function(networks, hubsDistanceFactor, hubsForc
 				newRelation.distanceFactor = hubsDistanceFactor;
 				newRelation.forceWeight = hubsForceWeight;
 				fusionNet.addRelation(newRelation);
+
+				newRelation = new Relation(fusionNet.nodeList[j].id+'_'+node0.id, fusionNet.nodeList[j].id+'_'+node0.id, fusionNet.nodeList[j], node0);
+				newRelation.color = 'black';
+				newRelation.distanceFactor = hubsDistanceFactor;
+				newRelation.forceWeight = hubsForceWeight;
+				fusionNet.addRelation(newRelation);
 			}
 		}
 	}

@@ -22,7 +22,7 @@ Loader.loadData=function(url, onLoadData, callee, param, send_object_json){
 	Loader.n_loading++;
 
 	if(Loader.LOCAL_STORAGE_ENABLED){
-		var result = LolacStorage.getItme(url);
+		var result = LocalStorage.getItem(url);
 		if(result){
 			var e=new LoadEvent();
 			e.url = url;
