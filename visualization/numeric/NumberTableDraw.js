@@ -69,10 +69,10 @@ NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listC
  * tags:draw
  */
 NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colors, maxRadius, loglog, margin){
-	if(frame==null || numberTable==null || numberTable.type!="NumberTable") return; //todo:provisional, this is System's work
+	if(frame==null || numberTable==null || numberTable.type!="NumberTable" ||  numberTable.length<2 ||  numberTable[0].length==0 || numberTable[1].length==0) return; //todo:provisional, this is System's work
 
 	if(numberTable.length<2) return;
-
+	
 	maxRadius = maxRadius||20;
 	loglog = loglog||false;
 	margin = margin||0;

@@ -3928,13 +3928,17 @@ Interval.prototype.getInterpolatedValues=function(numberList){
 	}
 	return newNumberList;
 }
-Interval.prototype.getInverseInterpolatedValues=function(numberList){
+Interval.prototype.getInverseInterpolatedValues = function(numberList){
 	var newNumberList = new Array();
 	var nElements=numberList.length;
 	for(var i=0; i<nElements; i++){
 		newNumberList.push(this.getInverseInterpolatedValue(numberList[i]));
 	}
 	return newNumberList;
+}
+
+Interval.prototype.intersect = function(interval){
+	return new Interval( Math.max(this.x, interval.x), Math.min(this.y, interval.y) );
 }
 
 /**
@@ -5793,6 +5797,8 @@ DateOperators.millisecondsToYears = 0.00000000003169;
 DateOperators.MONTH_NAMES = ['january','february','march','april','may','june','july','august','september','october','november','december'];
 DateOperators.MONTH_NAMES_SHORT = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
 DateOperators.MONTH_NDAYS = [31,28,31,30,31,30,31,31,30,31,30,31];
+
+DateOperators.WEEK_NAMES = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
 /**
 * DateOperators
 * @constructor
@@ -5871,6 +5877,10 @@ DateOperators.currentDate = function(){
 
 DateOperators.addDaysToDate=function(date, nDays){
 	return new Date(date.getTime()+(nDays/DateOperators.millisecondsToDays));
+}
+
+DateOperators.addMillisecondsToDate=function(date, nMilliseconds){
+	return new Date(date.getTime()+nMilliseconds);
 }
 
 
@@ -7543,13 +7553,17 @@ function ColorListGenerators(){};
  * @param  {Number} nColors
  * 
  * @param  {Number} alpha 1 by default
+ * @param {Boolean} invert invert colors
  * @return {ColorList}
  * tags:generator
  */
-ColorListGenerators.createDefaultCategoricalColorList = function(nColors, alpha){
+ColorListGenerators.createDefaultCategoricalColorList = function(nColors, alpha, invert){
 	alpha = alpha==null?1:alpha;
 	var colors = ColorListGenerators.createCategoricalColors(1, nColors).getInterpolated('black', 0.15);
 	if(alpha<1) colors = colors.addAlpha(alpha);
+
+	if(invert) colors = colors.getInverted();
+
 	return colors;
 }
 
@@ -7702,12 +7716,15 @@ ColorListGenerators._evaluationFunction=function(numberList){ //private
  * @param {Number} alpha transparency
  * @param {String} color to mix
  * @param {Number} interpolation value (0-1) for color mix
- * @return {ColorList} ColorList with categorical colors
+ * @param {Boolean} invert invert colors
+ * @return {ColorList} ColorList with categorical colors that match the given list
+ * @return {List} elements list of elemnts that match colors (equivalent to getWithoutRepetions)
+ * @return {ColorList} ColorList with different categorical colors
+ * @return {Table} dictionary dictionary table with elemnts and matching colors
  * tags:generator
  */
-ColorListGenerators.createCategoricalColorListForList = function( list, colorList, alpha, color, interpolate ) 
+ColorListGenerators.createCategoricalColorListForList = function( list, colorList, alpha, color, interpolate, invert ) 
 {
-	console.log( "createCategoricalColorListForList: ", colorList);
 
 	if( !list )
 		return new ColorList();
@@ -7728,9 +7745,15 @@ ColorListGenerators.createCategoricalColorListForList = function( list, colorLis
 		//diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
 	}
 	diffColors = diffColors.addAlpha(alpha);
+
+	if(invert) diffColors = diffColors.getInverted();
+
 	var colorDict = Table.fromArray( [ diffValues, diffColors ] );
 	var fullColorList = ListOperators.translateWithDictionary(list, colorDict, "NULL" );
-	return ColorList.fromArray( fullColorList ); 
+
+	fullColorList = ColorList.fromArray( fullColorList );
+
+	return [{value:fullColorList, type:'ColorList'}, {value:diffValues, type:diffValues.type}, {value:diffColors, type:'ColorList'}, {value:new Table(diffValues, fullColorList), type:'Table'}];
 }
 
 
@@ -12380,6 +12403,22 @@ StringOperators.indexesOf = function(text, string){//TODO:test
 	}
 	return indexes;
 }
+
+/**
+ * returns a string repeated a number of times
+ * @param  {String} text to be repeated
+ * @param  {Number} n number of repetitions
+ * @return {String}
+ */
+StringOperators.repeat = function(text, n){
+	var i;
+	var newText = "";
+	for(i=0; i<n; i++){
+		newText+=text;
+	}
+	return newText;
+}
+
 
 
 
@@ -17151,7 +17190,7 @@ Loader.loadData=function(url, onLoadData, callee, param, send_object_json){
 	Loader.n_loading++;
 
 	if(Loader.LOCAL_STORAGE_ENABLED){
-		var result = LolacStorage.getItme(url);
+		var result = LocalStorage.getItem(url);
 		if(result){
 			var e=new LoadEvent();
 			e.url = url;
@@ -20000,10 +20039,10 @@ NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listC
  * tags:draw
  */
 NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colors, maxRadius, loglog, margin){
-	if(frame==null || numberTable==null || numberTable.type!="NumberTable") return; //todo:provisional, this is System's work
+	if(frame==null || numberTable==null || numberTable.type!="NumberTable" ||  numberTable.length<2 ||  numberTable[0].length==0 || numberTable[1].length==0) return; //todo:provisional, this is System's work
 
 	if(numberTable.length<2) return;
-
+	
 	maxRadius = maxRadius||20;
 	loglog = loglog||false;
 	margin = margin||0;
@@ -22307,7 +22346,9 @@ window.addEventListener('load', function(){
 function _onMouse(e) {
 	switch(e.type){
 		case "mousemove":
-			
+			PREV_mX=mX;
+			PREV_mY=mY;
+
 			if(e.clientX){
 				mX = e.clientX;
 		        mY = e.clientY;
@@ -22400,14 +22441,15 @@ function enterFrame(){
 	DX_MOUSE = mX-PREV_mX;
 	DY_MOUSE = mY-PREV_mY;
 	MOUSE_MOVED = DX_MOUSE!=0 || DY_MOUSE!=0;
-	PREV_mX=mX;
-	PREV_mY=mY;
 
 	if(MOUSE_PRESSED) T_MOUSE_PRESSED = new Date().getTime() - _tLastMouseDown;
 	
   	cycle();
 
   	WHEEL_CHANGE = 0;
+
+  	PREV_mX=mX;
+	PREV_mY=mY;
   	
   	nF++;
 

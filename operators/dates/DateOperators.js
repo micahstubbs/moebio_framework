@@ -6,6 +6,8 @@ DateOperators.millisecondsToYears = 0.00000000003169;
 DateOperators.MONTH_NAMES = ['january','february','march','april','may','june','july','august','september','october','november','december'];
 DateOperators.MONTH_NAMES_SHORT = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
 DateOperators.MONTH_NDAYS = [31,28,31,30,31,30,31,31,30,31,30,31];
+
+DateOperators.WEEK_NAMES = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
 /**
 * DateOperators
 * @constructor
@@ -84,6 +86,10 @@ DateOperators.currentDate = function(){
 
 DateOperators.addDaysToDate=function(date, nDays){
 	return new Date(date.getTime()+(nDays/DateOperators.millisecondsToDays));
+}
+
+DateOperators.addMillisecondsToDate=function(date, nMilliseconds){
+	return new Date(date.getTime()+nMilliseconds);
 }
 
 

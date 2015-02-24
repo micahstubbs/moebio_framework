@@ -15,13 +15,17 @@ function ColorListGenerators(){};
  * @param  {Number} nColors
  * 
  * @param  {Number} alpha 1 by default
+ * @param {Boolean} invert invert colors
  * @return {ColorList}
  * tags:generator
  */
-ColorListGenerators.createDefaultCategoricalColorList = function(nColors, alpha){
+ColorListGenerators.createDefaultCategoricalColorList = function(nColors, alpha, invert){
 	alpha = alpha==null?1:alpha;
 	var colors = ColorListGenerators.createCategoricalColors(1, nColors).getInterpolated('black', 0.15);
 	if(alpha<1) colors = colors.addAlpha(alpha);
+
+	if(invert) colors = colors.getInverted();
+
 	return colors;
 }
 
@@ -174,12 +178,15 @@ ColorListGenerators._evaluationFunction=function(numberList){ //private
  * @param {Number} alpha transparency
  * @param {String} color to mix
  * @param {Number} interpolation value (0-1) for color mix
- * @return {ColorList} ColorList with categorical colors
+ * @param {Boolean} invert invert colors
+ * @return {ColorList} ColorList with categorical colors that match the given list
+ * @return {List} elements list of elemnts that match colors (equivalent to getWithoutRepetions)
+ * @return {ColorList} ColorList with different categorical colors
+ * @return {Table} dictionary dictionary table with elemnts and matching colors
  * tags:generator
  */
-ColorListGenerators.createCategoricalColorListForList = function( list, colorList, alpha, color, interpolate ) 
+ColorListGenerators.createCategoricalColorListForList = function( list, colorList, alpha, color, interpolate, invert ) 
 {
-	console.log( "createCategoricalColorListForList: ", colorList);
 
 	if( !list )
 		return new ColorList();
@@ -200,9 +207,15 @@ ColorListGenerators.createCategoricalColorListForList = function( list, colorLis
 		//diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
 	}
 	diffColors = diffColors.addAlpha(alpha);
+
+	if(invert) diffColors = diffColors.getInverted();
+
 	var colorDict = Table.fromArray( [ diffValues, diffColors ] );
 	var fullColorList = ListOperators.translateWithDictionary(list, colorDict, "NULL" );
-	return ColorList.fromArray( fullColorList ); 
+
+	fullColorList = ColorList.fromArray( fullColorList );
+
+	return [{value:fullColorList, type:'ColorList'}, {value:diffValues, type:diffValues.type}, {value:diffColors, type:'ColorList'}, {value:new Table(diffValues, fullColorList), type:'Table'}];
 }
 
 

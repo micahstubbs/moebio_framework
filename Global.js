@@ -154,7 +154,9 @@ window.addEventListener('load', function(){
 function _onMouse(e) {
 	switch(e.type){
 		case "mousemove":
-			
+			PREV_mX=mX;
+			PREV_mY=mY;
+
 			if(e.clientX){
 				mX = e.clientX;
 		        mY = e.clientY;
@@ -247,14 +249,15 @@ function enterFrame(){
 	DX_MOUSE = mX-PREV_mX;
 	DY_MOUSE = mY-PREV_mY;
 	MOUSE_MOVED = DX_MOUSE!=0 || DY_MOUSE!=0;
-	PREV_mX=mX;
-	PREV_mY=mY;
 
 	if(MOUSE_PRESSED) T_MOUSE_PRESSED = new Date().getTime() - _tLastMouseDown;
 	
   	cycle();
 
   	WHEEL_CHANGE = 0;
+
+  	PREV_mX=mX;
+	PREV_mY=mY;
   	
   	nF++;
 

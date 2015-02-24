@@ -598,6 +598,22 @@ StringOperators.indexesOf = function(text, string){//TODO:test
 	return indexes;
 }
 
+/**
+ * returns a string repeated a number of times
+ * @param  {String} text to be repeated
+ * @param  {Number} n number of repetitions
+ * @return {String}
+ */
+StringOperators.repeat = function(text, n){
+	var i;
+	var newText = "";
+	for(i=0; i<n; i++){
+		newText+=text;
+	}
+	return newText;
+}
+
+
 
 
 //counting / statistics
