@@ -22416,7 +22416,9 @@ function clearContext(){
 	context.clearRect(0, 0, cW, cH);
 }
 
-function cycleOnMouseMovement(value){
+function cycleOnMouseMovement(value, time){
+	if(time!=null) END_CYCLE_DELAY = time;
+
 	if(value){
 		context.canvas.addEventListener('mousemove', onMoveCycle, false);
 		addInteractionEventListener('mousewheel', onMoveCycle, this);
