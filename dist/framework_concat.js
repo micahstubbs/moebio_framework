@@ -8652,9 +8652,9 @@ ListOperators.assemble = function(){
  * @param {Boolean} consecutiveRepetitions optional false by default, if true only counts consecutive repetitions
  * @param {Number} optional limit, limits the size of the lists
  * @return {Table}
- * tags:count
+ * tags:count,toimprove
  */
-ListOperators.countElementsRepetitionOnList=function(list, sortListsByOccurrences, consecutiveRepetitions, limit){
+ListOperators.countElementsRepetitionOnList=function(list, sortListsByOccurrences, consecutiveRepetitions, limit){ //transform this, use dictionary instead of indexOf !!!!!!!
 	if(list==null) return;
 	
 	sortListsByOccurrences = sortListsByOccurrences==null?true:sortListsByOccurrences;
@@ -9557,6 +9557,8 @@ TableOperators.getElementFromTable=function(table, i, j){
 }
 
 TableOperators.getSubTable=function(table, x, y, width, height){
+	if(table==null) return table;
+	
 	var nLists = table.length;
 	if(nLists==0) return null;
 	var result = new Table();

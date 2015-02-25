@@ -7,6 +7,8 @@ TableOperators.getElementFromTable=function(table, i, j){
 }
 
 TableOperators.getSubTable=function(table, x, y, width, height){
+	if(table==null) return table;
+	
 	var nLists = table.length;
 	if(nLists==0) return null;
 	var result = new Table();
