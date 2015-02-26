@@ -152,6 +152,7 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 	var interval;
 	
 	var r = r0;
+	var s, textS;
 	
 	var prevPoint;
 	var prevRsup;
@@ -214,10 +215,11 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 			
 			if(texts!=null){
 				s = interval.getAmplitude();
-				if(s*radius>16){
+				textS = Math.min(Math.sqrt(s*radius)*3, 28);
+				if(textS>=8){
 					rT = point.y + s*0.5*dR;
 					
-					textsSizes.push(Math.min(Math.sqrt(s*radius)*3, 24));
+					textsSizes.push(textS);
 					textsAngles.push(point.x+Math.PI*0.5);
 					
 					textsX.push(rT*Math.cos(point.x)+center.x);
@@ -226,7 +228,6 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 					filteredTexts.push(texts[i]);
 				}
 			}
-			
 		}
 		
 		point = new Point(angles==null?0:angles[0] + angle0, (1-intervalList[0].x)*dR+r0);

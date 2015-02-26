@@ -12,7 +12,7 @@ function NumberTableDraw(){};
  * tags:draw
  */
 NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listColorsIndependent, margin){
-	if(frame==null || numberTable==null || numberTable.type!="NumberTable" || numberTable.length<2) return; //todo:provisional, this is System's work
+	if(frame==null || numberTable==null || numberTable.type==null || numberTable.type!="NumberTable" || numberTable.length<2) return null;
 	
 	colorScale = colorScale==null?ColorScales.blueToRed:colorScale;
 	listColorsIndependent = listColorsIndependent||false;
@@ -582,12 +582,12 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
 		});
 	}
 	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
-		frame.memory.actualColorList = colorList==null?ColorListGenerators.createDefaultCategoricalColorList(numberTable.length):colorList;
+		frame.memory.actualColorList = colorList==null?ColorListGenerators.createDefaultCategoricalColorList(numberTable.length, 0.4):colorList;
 		frame.memory.colorList = colorList;
 	}
 
 	var mouseOnFrame = frame.containsPoint(mP);
-
+	
 	if(mouseOnFrame){
 		if(MOUSE_DOWN){
 			frame.memory.downX = mX;

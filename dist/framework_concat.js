@@ -19680,6 +19680,7 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 	var interval;
 	
 	var r = r0;
+	var s, textS;
 	
 	var prevPoint;
 	var prevRsup;
@@ -19742,10 +19743,11 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 			
 			if(texts!=null){
 				s = interval.getAmplitude();
-				if(s*radius>16){
+				textS = Math.min(Math.sqrt(s*radius)*3, 28);
+				if(textS>=8){
 					rT = point.y + s*0.5*dR;
 					
-					textsSizes.push(Math.min(Math.sqrt(s*radius)*3, 24));
+					textsSizes.push(textS);
 					textsAngles.push(point.x+Math.PI*0.5);
 					
 					textsX.push(rT*Math.cos(point.x)+center.x);
@@ -19984,7 +19986,7 @@ function NumberTableDraw(){};
  * tags:draw
  */
 NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listColorsIndependent, margin){
-	if(frame==null || numberTable==null || numberTable.type!="NumberTable" || numberTable.length<2) return; //todo:provisional, this is System's work
+	if(frame==null || numberTable==null || numberTable.type==null || numberTable.type!="NumberTable" || numberTable.length<2) return null;
 	
 	colorScale = colorScale==null?ColorScales.blueToRed:colorScale;
 	listColorsIndependent = listColorsIndependent||false;
@@ -20554,12 +20556,12 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
 		});
 	}
 	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
-		frame.memory.actualColorList = colorList==null?ColorListGenerators.createDefaultCategoricalColorList(numberTable.length):colorList;
+		frame.memory.actualColorList = colorList==null?ColorListGenerators.createDefaultCategoricalColorList(numberTable.length, 0.4):colorList;
 		frame.memory.colorList = colorList;
 	}
 
 	var mouseOnFrame = frame.containsPoint(mP);
-
+	
 	if(mouseOnFrame){
 		if(MOUSE_DOWN){
 			frame.memory.downX = mX;
@@ -22291,7 +22293,6 @@ Array.prototype.last = function(){
 }
 
 window.addEventListener('load', function(){
-	c.l('Moebio Framework v2.255');
 
  	if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
     	userAgent='IE';
@@ -22315,7 +22316,6 @@ window.addEventListener('load', function(){
     	userAgent='IOS';
   	}
   	
-  	c.l('[G] userAgent:', userAgent);
   	
   	Global.userAgent=userAgent;
     Global.frameRate=30;
@@ -22342,6 +22342,8 @@ window.addEventListener('load', function(){
 		startCycle();
 		init();
 	}
+
+	c.l('Moebio Framework v2.255 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
 	
 }, false);
 
@@ -22386,10 +22388,6 @@ function _onMouse(e) {
 			MOUSE_IN_DOCUMENT = true;
 			break;
 		case "mouseleave":
-			// mX = 999999;
-			// mY = 999999;
-			// mP.x = mX;
-		 	// mP.y = mY;
 			MOUSE_IN_DOCUMENT = false;
 			break;
 	}

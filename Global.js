@@ -97,7 +97,6 @@ Array.prototype.last = function(){
 }
 
 window.addEventListener('load', function(){
-	c.l('Moebio Framework v2.255');
 
  	if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
     	userAgent='IE';
@@ -121,7 +120,6 @@ window.addEventListener('load', function(){
     	userAgent='IOS';
   	}
   	
-  	c.l('[G] userAgent:', userAgent);
   	
   	Global.userAgent=userAgent;
     Global.frameRate=30;
@@ -148,6 +146,8 @@ window.addEventListener('load', function(){
 		startCycle();
 		init();
 	}
+
+	c.l('Moebio Framework v2.255 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
 	
 }, false);
 
@@ -192,10 +192,6 @@ function _onMouse(e) {
 			MOUSE_IN_DOCUMENT = true;
 			break;
 		case "mouseleave":
-			// mX = 999999;
-			// mY = 999999;
-			// mP.x = mX;
-		 	// mP.y = mY;
 			MOUSE_IN_DOCUMENT = false;
 			break;
 	}
