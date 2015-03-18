@@ -81,6 +81,9 @@ Node.prototype.destroy=function(){
     delete this.az;
 }
 
+Node.prototype.getDegree=function(){
+    return this.relationList.length;
+}
 
 //treeProperties:
 Node.prototype.getParent=function(){
@@ -106,6 +109,12 @@ Node.prototype.getLeaves=function(){
 }
 //
 
+
+Node.prototype.loadImage = function(urlImage){
+    Loader.loadImage(urlImage, function(e){
+        this.image = e.result;
+    }, this);
+}
 
 // Node.prototype.toString=function(){
 // 	return this.name+", "+this.id;

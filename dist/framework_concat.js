@@ -1814,6 +1814,9 @@ Node.prototype.destroy=function(){
     delete this.az;
 }
 
+Node.prototype.getDegree=function(){
+    return this.relationList.length;
+}
 
 //treeProperties:
 Node.prototype.getParent=function(){
@@ -1839,6 +1842,12 @@ Node.prototype.getLeaves=function(){
 }
 //
 
+
+Node.prototype.loadImage = function(urlImage){
+    Loader.loadImage(urlImage, function(e){
+        this.image = e.result;
+    }, this);
+}
 
 // Node.prototype.toString=function(){
 // 	return this.name+", "+this.id;
@@ -4820,17 +4829,35 @@ Network.prototype.removeRelation=function(relation){
 	relation.node1.fromRelationList.removeRelation(relation);
 }
 
-Network.prototype.removeIsolatedNodes=function(minNumberRelations){
+/**
+ * transformative method, removes nodes without a minimal number of connections
+ * @param  {Number} minDegree minimal degree
+ * @return {Number} number of nodes removed
+ * tags:transform
+ */
+Network.prototype.removeIsolatedNodes=function(minDegree){
 	var i;
-
-	minNumberRelations = minNumberRelations==null?1:minNumberRelations;
+	var nRemoved = 0;
+	minDegree = minDegree==null?1:minDegree;
 	
 	for(i=0; this.nodeList[i]!=null; i++){
-		if(this.nodeList[i].relationList.length<minNumberRelations){
+		if(this.nodeList[i].getDegree()<minDegree){
+			this.nodeList[i]._toRemove = true;
+			// this.removeNode(this.nodeList[i]);
+			// nRemoved++;
+			// i--;
+		}
+	}
+
+	for(i=0; this.nodeList[i]!=null; i++){
+		if(this.nodeList[i]._toRemove){
 			this.removeNode(this.nodeList[i]);
+			nRemoved++;
 			i--;
 		}
 	}
+
+	return nRemoved;
 }
 
 
@@ -12284,6 +12311,10 @@ StringOperators.removeQuotes=function(string){//TODO:improve
  * tags:
  */
 StringOperators.getWords = function(string, withoutRepetitions, stopWords, sortedByFrequency, includeLinks, limit, minSizeWords){
+	if(string==null) return null;
+
+	c.l('\n\nStringOperators.getWords');
+
 	minSizeWords = minSizeWords||0;
 	withoutRepetitions = withoutRepetitions==null?true:withoutRepetitions;
 	sortedByFrequency = sortedByFrequency==null?true:sortedByFrequency;
@@ -12301,8 +12332,9 @@ StringOperators.getWords = function(string, withoutRepetitions, stopWords, sorte
 	if(includeLinks && links!=null) list = list.concat(links);
 	list = StringList.fromArray(list).replace(/ /g, "");
 	
-	if(stopWords!=null){
+	if(stopWords!=null){//TODO:check before if all stopwrds are strings
 		//list.removeElements(stopWords);
+
 		for(i=0; list[i]!=null; i++){
 			for(j=0; stopWords[j]!=null; j++){
 				if((typeof stopWords[j]) == 'string'){
@@ -12318,6 +12350,7 @@ StringOperators.getWords = function(string, withoutRepetitions, stopWords, sorte
 				}
 			}
 		}
+
 	}
 	
 	if(minSizeWords>0){
@@ -12381,13 +12414,16 @@ removeAccentsAndDiacritics = function(string){
 /**
  * creates a table with frequent words and occurrences numbers
  * @param  {String} string text to be analyzed
+ * 
  * @param  {StringList} stopWords
- * @param  {Bollean} includeLinks
+ * @param  {Boolean} includeLinks
  * @param  {Number} limit max size of rows
  * @param  {Number} minSizeWords
  * @return {Table} contains a list of words, and a numberList of occurrences
+ * tags:words
  */
 StringOperators.getWordsOccurrencesTable = function(string, stopWords, includeLinks, limit, minSizeWords){
+	if(string==null) return;
 	if(string.length==0) return new Table(new StringList(), new NumberList());
 	var words = StringOperators.getWords(string, false, stopWords, false, includeLinks, limit, minSizeWords);
 
@@ -19756,7 +19792,6 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 					filteredTexts.push(texts[i]);
 				}
 			}
-			
 		}
 		
 		point = new Point(angles==null?0:angles[0] + angle0, (1-intervalList[0].x)*dR+r0);

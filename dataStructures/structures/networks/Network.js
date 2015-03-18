@@ -115,17 +115,35 @@ Network.prototype.removeRelation=function(relation){
 	relation.node1.fromRelationList.removeRelation(relation);
 }
 
-Network.prototype.removeIsolatedNodes=function(minNumberRelations){
+/**
+ * transformative method, removes nodes without a minimal number of connections
+ * @param  {Number} minDegree minimal degree
+ * @return {Number} number of nodes removed
+ * tags:transform
+ */
+Network.prototype.removeIsolatedNodes=function(minDegree){
 	var i;
-
-	minNumberRelations = minNumberRelations==null?1:minNumberRelations;
+	var nRemoved = 0;
+	minDegree = minDegree==null?1:minDegree;
 	
 	for(i=0; this.nodeList[i]!=null; i++){
-		if(this.nodeList[i].relationList.length<minNumberRelations){
+		if(this.nodeList[i].getDegree()<minDegree){
+			this.nodeList[i]._toRemove = true;
+			// this.removeNode(this.nodeList[i]);
+			// nRemoved++;
+			// i--;
+		}
+	}
+
+	for(i=0; this.nodeList[i]!=null; i++){
+		if(this.nodeList[i]._toRemove){
 			this.removeNode(this.nodeList[i]);
+			nRemoved++;
 			i--;
 		}
 	}
+
+	return nRemoved;
 }
 
 
