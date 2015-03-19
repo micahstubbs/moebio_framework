@@ -15,6 +15,92 @@ ListOperators.getElement = function(list, index){
 	return list[index];
 }
 
+/**
+ * multi-ouput operator that gives acces to individual elements
+ * @param  {List} list
+ * 
+ * @param  {Number} fromIndex (default 0)
+ * @return {Object} first Object
+ * @return {Object} second Object
+ * @return {Object} third Object
+ * @return {Object} fourth Object
+ * @return {Object} fifth Object
+ * @return {Object} sisxth Object
+ * @return {Object} seventh Object
+ * @return {Object} eight Object
+ * @return {Object} ninth Object
+ * @return {Object} tenth Object
+ * tags:
+ */
+ListOperators.getFirstElements = function(list, fromIndex){
+	if(list==null) return null;
+
+	fromIndex = fromIndex==null?0:Number(fromIndex);
+
+	return [
+		{
+			type:"Object",
+			name:"first value",
+			description:"first value",
+			value:list[fromIndex+0]
+		},
+		{
+			type:"Object",
+			name:"second value",
+			description:"second value",
+			value:list[fromIndex+1]
+		},
+		{
+			type:"Object",
+			name:"third value",
+			description:"third value",
+			value:list[fromIndex+2]
+		},
+		{
+			type:"Object",
+			name:"fourth value",
+			description:"fourth value",
+			value:list[fromIndex+3]
+		},
+		{
+			type:"Object",
+			name:"fifth value",
+			description:"fifth value",
+			value:list[fromIndex+4]
+		},
+		{
+			type:"Object",
+			name:"sixth value",
+			description:"sixth value",
+			value:list[fromIndex+5]
+		},
+		{
+			type:"Object",
+			name:"seventh value",
+			description:"seventh value",
+			value:list[fromIndex+6]
+		},
+		{
+			type:"Object",
+			name:"eight value",
+			description:"eight value",
+			value:list[fromIndex+7]
+		},
+		{
+			type:"Object",
+			name:"ninth value",
+			description:"ninth value",
+			value:list[fromIndex+8]
+		},
+		{
+			type:"Object",
+			name:"tenth value",
+			description:"tenth value",
+			value:list[fromIndex+9]
+		}
+	]
+}
+
 // *
 //  * filters a List, by a NumberList of indexes, or by an Interval
 //  * @param  {List} list to be filtered

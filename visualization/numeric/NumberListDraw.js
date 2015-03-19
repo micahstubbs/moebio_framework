@@ -51,6 +51,7 @@ NumberListDraw.drawSimpleGraph = function(frame, numberList, margin, xValues){
 	var normalColor = mouseOnFrame?'rgb(160,160,160)':'black';
 	
 	if(frame.memory.zero){
+		var zeroY = subframe.bottom - subframe.height*frame.memory.zero;//Math.max(subframe.bottom - subframe.height*frame.memory.zero, subframe.y);
 		for(i=0; numberList[i]!=null; i++){
 			x = subframe.x + i*dx;
 			if(mouseOnFrame && mX>x && mX<x+dx){
@@ -59,7 +60,7 @@ NumberListDraw.drawSimpleGraph = function(frame, numberList, margin, xValues){
 			} else {
 				setFill(normalColor);
 			}
-			fRect(subframe.x + i*dx, subframe.bottom - subframe.height*frame.memory.zero, dx,  -subframe.height*(frame.memory.normalizedList[i]-frame.memory.zero));
+			fRect(subframe.x + i*dx, zeroY, dx,  -subframe.height*(frame.memory.normalizedList[i]-frame.memory.zero));
 		}
 	} else {
 		for(i=0; numberList[i]!=null; i++){

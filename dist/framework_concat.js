@@ -6051,7 +6051,7 @@ function GeometryConvertions(){};
 	// return polygonList;
 // }
 
-GeometryConvertions.twoNumberListsToPolygon=function(numberList0, numberList1){
+GeometryConvertions.twoNumberListsToPolygon=function(numberList0, numberList1){//TODO:change name to NumberTableToPolygon
 	var n = Math.min(numberList0.length, numberList1.length);
 	var polygon = new Polygon();
 	for(var i=0; i<n; i++){
@@ -6060,6 +6060,26 @@ GeometryConvertions.twoNumberListsToPolygon=function(numberList0, numberList1){
 	return polygon;
 }
 
+/**
+ * converts a Polygon into a NumberTable
+ * @param {Polygon} polygon
+ * @return {NumberTable}
+ * tags:conversion
+ */
+GeometryConvertions.PolygonToNumberTable = function(polygon){
+	if(polygon==null) return null;
+	
+	var numberTable = new NumberTable();
+	numberTable[0] = new NumberList();
+	numberTable[1] = new NumberList();
+
+	polygon.forEach(function(p){
+		numberTable[0].push(p.x);
+		numberTable[1].push(p.y);
+	});
+
+	return numberTable;
+}
 /**
 * GeometryOperators
 * @constructor
@@ -8608,6 +8628,92 @@ ListOperators.getElement = function(list, index){
 	if(list==null) return null;
 	index = index==null?0:index%list.length;
 	return list[index];
+}
+
+/**
+ * multi-ouput operator that gives acces to individual elements
+ * @param  {List} list
+ * 
+ * @param  {Number} fromIndex (default 0)
+ * @return {Object} first Object
+ * @return {Object} second Object
+ * @return {Object} third Object
+ * @return {Object} fourth Object
+ * @return {Object} fifth Object
+ * @return {Object} sisxth Object
+ * @return {Object} seventh Object
+ * @return {Object} eight Object
+ * @return {Object} ninth Object
+ * @return {Object} tenth Object
+ * tags:
+ */
+ListOperators.getFirstElements = function(list, fromIndex){
+	if(list==null) return null;
+
+	fromIndex = fromIndex==null?0:Number(fromIndex);
+
+	return [
+		{
+			type:"Object",
+			name:"first value",
+			description:"first value",
+			value:list[fromIndex+0]
+		},
+		{
+			type:"Object",
+			name:"second value",
+			description:"second value",
+			value:list[fromIndex+1]
+		},
+		{
+			type:"Object",
+			name:"third value",
+			description:"third value",
+			value:list[fromIndex+2]
+		},
+		{
+			type:"Object",
+			name:"fourth value",
+			description:"fourth value",
+			value:list[fromIndex+3]
+		},
+		{
+			type:"Object",
+			name:"fifth value",
+			description:"fifth value",
+			value:list[fromIndex+4]
+		},
+		{
+			type:"Object",
+			name:"sixth value",
+			description:"sixth value",
+			value:list[fromIndex+5]
+		},
+		{
+			type:"Object",
+			name:"seventh value",
+			description:"seventh value",
+			value:list[fromIndex+6]
+		},
+		{
+			type:"Object",
+			name:"eight value",
+			description:"eight value",
+			value:list[fromIndex+7]
+		},
+		{
+			type:"Object",
+			name:"ninth value",
+			description:"ninth value",
+			value:list[fromIndex+8]
+		},
+		{
+			type:"Object",
+			name:"tenth value",
+			description:"tenth value",
+			value:list[fromIndex+9]
+		}
+	]
 }
 
 // *
@@ -20730,6 +20836,7 @@ NumberListDraw.drawSimpleGraph = function(frame, numberList, margin, xValues){
 	var normalColor = mouseOnFrame?'rgb(160,160,160)':'black';
 	
 	if(frame.memory.zero){
+		var zeroY = subframe.bottom - subframe.height*frame.memory.zero;//Math.max(subframe.bottom - subframe.height*frame.memory.zero, subframe.y);
 		for(i=0; numberList[i]!=null; i++){
 			x = subframe.x + i*dx;
 			if(mouseOnFrame && mX>x && mX<x+dx){
@@ -20738,7 +20845,7 @@ NumberListDraw.drawSimpleGraph = function(frame, numberList, margin, xValues){
 			} else {
 				setFill(normalColor);
 			}
-			fRect(subframe.x + i*dx, subframe.bottom - subframe.height*frame.memory.zero, dx,  -subframe.height*(frame.memory.normalizedList[i]-frame.memory.zero));
+			fRect(subframe.x + i*dx, zeroY, dx,  -subframe.height*(frame.memory.normalizedList[i]-frame.memory.zero));
 		}
 	} else {
 		for(i=0; numberList[i]!=null; i++){
