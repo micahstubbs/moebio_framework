@@ -12044,13 +12044,8 @@ StringOperators.countWordsDichotomyAnalysis=function(string, negativeStrings, po
  * tags:html
  */
 StringOperators.getLinksFromHtml=function(html, urlSource, removeHash){
-	//var rawHTML = '<html><body><a href="foo">bar</a><a href="narf">zort</a></body></html>';
-
 	var doc = document.createElement("html");
 	doc.innerHTML = html;
-
-	//return doc.links;//StringList.fromArray(doc.links);
-
 
 	var i;
 	var links = doc.getElementsByTagName("a");
@@ -12312,8 +12307,6 @@ StringOperators.removeQuotes=function(string){//TODO:improve
  */
 StringOperators.getWords = function(string, withoutRepetitions, stopWords, sortedByFrequency, includeLinks, limit, minSizeWords){
 	if(string==null) return null;
-
-	c.l('\n\nStringOperators.getWords');
 
 	minSizeWords = minSizeWords||0;
 	withoutRepetitions = withoutRepetitions==null?true:withoutRepetitions;
