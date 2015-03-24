@@ -27,6 +27,23 @@ StringOperators.split = function(string, character){
 	return StringList.fromArray(string.split(character));
 }
 
+/**
+ * split a String by enter (using several codifications)
+ * @param  {String} string
+ * @return {StringList}
+ * tags:
+ */
+StringOperators.splitByEnter=function(string){
+	if(string==null) return null;
+	var stringList = StringOperators.splitString(string, "\n");
+	if(stringList.length>1) return stringList;
+	var stringList = StringOperators.splitString(string, StringOperators.ENTER2);
+	if(stringList.length>1) return stringList;
+	var stringList = StringOperators.splitString(string, StringOperators.ENTER3);
+	if(stringList.length>1) return stringList;
+	return new StringList(string);
+}
+
 
 /**
  * replaces in a string ocurrences of a sub-string by another string (base in replace JavaScript method)
@@ -113,23 +130,6 @@ StringOperators.splitString=function(string, separator){
 	if(typeof separator == "string") separator = separator.replace("\\n", "\n");
 	if(string.indexOf(separator)==-1) return new StringList(string);
 	return StringList.fromArray(string.split(separator));
-}
-
-/**
- * split a String by enter (using several codifications)
- * @param  {String} string
- * @return {StringList}
- * tags:
- */
-StringOperators.splitByEnter=function(string){
-	if(string==null) return null;
-	var stringList = StringOperators.splitString(string, "\n");
-	if(stringList.length>1) return stringList;
-	var stringList = StringOperators.splitString(string, StringOperators.ENTER2);
-	if(stringList.length>1) return stringList;
-	var stringList = StringOperators.splitString(string, StringOperators.ENTER3);
-	if(stringList.length>1) return stringList;
-	return null;
 }
 
 /**

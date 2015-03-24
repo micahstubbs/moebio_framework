@@ -129,9 +129,6 @@ Network.prototype.removeIsolatedNodes=function(minDegree){
 	for(i=0; this.nodeList[i]!=null; i++){
 		if(this.nodeList[i].getDegree()<minDegree){
 			this.nodeList[i]._toRemove = true;
-			// this.removeNode(this.nodeList[i]);
-			// nRemoved++;
-			// i--;
 		}
 	}
 
@@ -149,6 +146,8 @@ Network.prototype.removeIsolatedNodes=function(minDegree){
 
 
 Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames, idsSubfix, namesSubfix){
+	c.l('clone network');
+
 	var newNetwork = new Network();
 	var newNode, newRelation;
 	var i;

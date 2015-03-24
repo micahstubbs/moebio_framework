@@ -54,7 +54,6 @@ NodeList.fromArray=function(array, forceToNode){
    	result.getPolygon=NodeList.prototype.getPolygon;
 
    	result._push = Array.prototype.push;
-   	
    	result.push = function(a){c.l('with nodeList, use addNode instead of push'); var k; k.push(a)};
 
    	//overriden

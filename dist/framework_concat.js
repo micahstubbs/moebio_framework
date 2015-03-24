@@ -1926,7 +1926,6 @@ NodeList.fromArray=function(array, forceToNode){
    	result.getPolygon=NodeList.prototype.getPolygon;
 
    	result._push = Array.prototype.push;
-   	
    	result.push = function(a){c.l('with nodeList, use addNode instead of push'); var k; k.push(a)};
 
    	//overriden
@@ -4843,9 +4842,6 @@ Network.prototype.removeIsolatedNodes=function(minDegree){
 	for(i=0; this.nodeList[i]!=null; i++){
 		if(this.nodeList[i].getDegree()<minDegree){
 			this.nodeList[i]._toRemove = true;
-			// this.removeNode(this.nodeList[i]);
-			// nRemoved++;
-			// i--;
 		}
 	}
 
@@ -4863,6 +4859,8 @@ Network.prototype.removeIsolatedNodes=function(minDegree){
 
 
 Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames, idsSubfix, namesSubfix){
+	c.l('clone network');
+
 	var newNetwork = new Network();
 	var newNode, newRelation;
 	var i;
@@ -11968,6 +11966,23 @@ StringOperators.split = function(string, character){
 	return StringList.fromArray(string.split(character));
 }
 
+/**
+ * split a String by enter (using several codifications)
+ * @param  {String} string
+ * @return {StringList}
+ * tags:
+ */
+StringOperators.splitByEnter=function(string){
+	if(string==null) return null;
+	var stringList = StringOperators.splitString(string, "\n");
+	if(stringList.length>1) return stringList;
+	var stringList = StringOperators.splitString(string, StringOperators.ENTER2);
+	if(stringList.length>1) return stringList;
+	var stringList = StringOperators.splitString(string, StringOperators.ENTER3);
+	if(stringList.length>1) return stringList;
+	return new StringList(string);
+}
+
 
 /**
  * replaces in a string ocurrences of a sub-string by another string (base in replace JavaScript method)
@@ -12054,23 +12069,6 @@ StringOperators.splitString=function(string, separator){
 	if(typeof separator == "string") separator = separator.replace("\\n", "\n");
 	if(string.indexOf(separator)==-1) return new StringList(string);
 	return StringList.fromArray(string.split(separator));
-}
-
-/**
- * split a String by enter (using several codifications)
- * @param  {String} string
- * @return {StringList}
- * tags:
- */
-StringOperators.splitByEnter=function(string){
-	if(string==null) return null;
-	var stringList = StringOperators.splitString(string, "\n");
-	if(stringList.length>1) return stringList;
-	var stringList = StringOperators.splitString(string, StringOperators.ENTER2);
-	if(stringList.length>1) return stringList;
-	var stringList = StringOperators.splitString(string, StringOperators.ENTER3);
-	if(stringList.length>1) return stringList;
-	return null;
 }
 
 /**
@@ -18607,7 +18605,11 @@ var tl = new TimeLogger( "Global Time Logger" );
 * * @constructor
 */
 
-function ConsoleTools(){}
+function ConsoleTools(){};
+
+
+ConsoleTools._ticTime;
+ConsoleTools._tacTime;
 
 ConsoleTools.NumberTableOnConsole=function(table){
 	var message = "";
@@ -18615,7 +18617,7 @@ ConsoleTools.NumberTableOnConsole=function(table){
 	var number;
 	var i;
 	var j;
-	c.log(table);
+
 	for(j=0;j<table[0].length; j++){
 		line = "|"; 
 		for(i=0;table[i]!=null; i++){
@@ -18625,11 +18627,28 @@ ConsoleTools.NumberTableOnConsole=function(table){
 		}
 		message+=line+"\n";
 	}
-	c.log(message);
+
+	c.l(message);
+	
 	return message;
 }
 
 
+ConsoleTools.tic = function(message){
+	message = message||"";
+
+	ConsoleTools._ticTime = ConsoleTools._tacTime = new Date().getTime();
+	ConsoleTools._nTacs = 0;
+	c.l('°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° tic °°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° ['+message+']');
+}
+
+ConsoleTools.tac = function(message){
+	message = message||"";
+
+	var lastTac = ConsoleTools._tacTime;
+	ConsoleTools._tacTime = new Date().getTime();
+	c.l('°°°°°°° tac ['+message+'], t from tic:'+(ConsoleTools._tacTime-ConsoleTools._ticTime)+', t from last tac:'+((ConsoleTools._tacTime-lastTac)) );
+}
 /**
 * FastHtml 
 * @constructor
