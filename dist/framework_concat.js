@@ -423,7 +423,7 @@ List.prototype.getElementNumberOfOccurrences=function(element){
 }
 
 
-List.prototype.clone=function(){
+List.prototype.clone=function(){//TODO:check this! fromArray should suffice
 	var clonedList= instantiateWithSameType(this);
 	var i;
 

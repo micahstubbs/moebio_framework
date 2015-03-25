@@ -397,10 +397,10 @@ List.prototype.getElementNumberOfOccurrences=function(element){
 }
 
 
-List.prototype.clone=function(){
+List.prototype.clone=function(){//TODO:check this! fromArray should suffice
 	var clonedList= instantiateWithSameType(this);
 	var i;
-
+	
   	for(i=0; this[i]!=null; i++){
     	clonedList.push(this[i]);
   	}
