@@ -7,6 +7,7 @@ function PolygonListEncodings(){};
  * 
  * @param {String} separatorCoordinates "," by default
  * @param {String} separatorPolygons "/" by default
+ * @return {PolygonList}
  * tags:encoding
  */
 PolygonListEncodings.StringToPolygonList=function(string, separatorCoordinates, separatorPolygons){
