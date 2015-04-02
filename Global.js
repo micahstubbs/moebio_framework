@@ -122,7 +122,7 @@ window.addEventListener('load', function(){
   	
   	
   	Global.userAgent=userAgent;
-    Global.frameRate=30;
+    Global._frameRate=30;
     
 	canvas = document.getElementById('main');
 	
@@ -204,12 +204,12 @@ function onResize(e){
 
 function _adjustCanvas(){
 	if(canvasResizeable==false) return;
+
+	cW = getDocWidth();
+	cH = getDocHeight();
 	
-	canvas.setAttribute('width', document.body.clientWidth);
-    canvas.setAttribute('height', document.body.clientHeight);
-	
-	cW = context.canvas.width;
-	cH = context.canvas.height;
+	canvas.setAttribute('width', cW);
+    canvas.setAttribute('height', cH);
 	
 	cX = Math.floor(cW*0.5);
 	cY = Math.floor(cH*0.5);
@@ -234,6 +234,13 @@ function cycleOnMouseMovement(value, time){
 		_cycleOnMouseMovement = false;
 		startCycle();
 	}
+}
+
+function setFrameRate(fr){
+	fr = fr||30;
+	Global._frameRate = fr;
+
+	if(cycleActive) startCycle();
 }
 	
 function enterFrame(){
@@ -264,7 +271,7 @@ function enterFrame(){
 function startCycle(){
 	clearTimeout(_setTimeOutId);
 	clearInterval(_setIntervalId);
-	_setIntervalId = setInterval(enterFrame, 30);
+	_setIntervalId = setInterval(enterFrame, Global._frameRate);
 	cycleActive = true;
 }
 
@@ -289,7 +296,7 @@ function reStartCycle(){
 	_prevMouseY=mY;
 	
 	if(!cycleActive){
-		_setIntervalId = setInterval(enterFrame, 30);
+		_setIntervalId = setInterval(enterFrame, Global._frameRate);
 		cycleActive = true;
 	}
 	
@@ -490,3 +497,20 @@ getStructureLocalStorage = function(id, returnStorageObject){
 	return object;
 }
 
+function getDocWidth() {
+    var D = document;
+    return Math.max(
+        D.body.scrollWidth, D.documentElement.scrollWidth,
+        D.body.offsetWidth, D.documentElement.offsetWidth,
+        D.body.clientWidth, D.documentElement.clientWidth
+    );
+}
+
+function getDocHeight() {
+    var D = document;
+    return Math.max(
+        D.body.scrollHeight, D.documentElement.scrollHeight,
+        D.body.offsetHeight, D.documentElement.offsetHeight,
+        D.body.clientHeight, D.documentElement.clientHeight
+    );
+}
