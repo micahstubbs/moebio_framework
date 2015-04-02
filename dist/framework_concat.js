@@ -22607,10 +22607,10 @@ function cycleOnMouseMovement(value, time){
 	}
 }
 
-function setFramerate(fr){
+function setFrameRate(fr){
 	fr = fr||30;
 	Global._frameRate = fr;
-	
+
 	if(cycleActive) startCycle();
 }
 	
