@@ -110,7 +110,7 @@ function LoaderRequest(url, method, data){
 	this.data=data;
 }
 
-Loader.loadImage=function(url, onComplete, callee){
+Loader.loadImage=function(url, onComplete, callee, param){
 	Loader.n_loading++;
 	
 	if(Loader.REPORT_LOADING) c.log("Loader.loadImage | url:", url);
@@ -125,6 +125,7 @@ Loader.loadImage=function(url, onComplete, callee){
 			var e=new LoadEvent();
 			e.result=this.associativeByUrls[url];
 			e.url = url;
+			e.param = param;
 			onComplete.call(target, e);
 		} else {
 			var cache = true;
@@ -137,6 +138,7 @@ Loader.loadImage=function(url, onComplete, callee){
 	 	var e=new LoadEvent();
 		e.result=img;
 		e.url = url;
+		e.param = param;
 		if(cache) associative[url] = img;
 		onComplete.call(target, e);
 	}
@@ -148,6 +150,7 @@ Loader.loadImage=function(url, onComplete, callee){
 		e.errorType=1 //TODO: set an error type!
 		e.errorMessage="There was a problem retrieving the image ["+img.src+"]:";
 		e.url = url;
+		e.param = param;
 		onComplete.call(target, e);
 	};
 	
