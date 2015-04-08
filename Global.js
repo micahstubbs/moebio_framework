@@ -139,6 +139,8 @@ window.addEventListener('load', function(){
 		canvas.addEventListener("mouseup", _onMouse, false);
 		canvas.addEventListener("mouseenter", _onMouse, false);
 		canvas.addEventListener("mouseleave", _onMouse, false);
+
+
 		activateWheel();
 
 		window.addEventListener("resize", onResize, false);
@@ -147,11 +149,12 @@ window.addEventListener('load', function(){
 		init();
 	}
 
-	c.l('Moebio Framework v2.255 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
+	c.l('Moebio Framework v2.256 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
 	
 }, false);
 
 function _onMouse(e) {
+
 	switch(e.type){
 		case "mousemove":
 			PREV_mX=mX;
@@ -195,6 +198,8 @@ function _onMouse(e) {
 			MOUSE_IN_DOCUMENT = false;
 			break;
 	}
+
+	if(SOYC) c.l('_onMouse %%%%%%%%%%%%%%%% e.type, mX', e.type, mX);
 }
 
 function onResize(e){
@@ -244,6 +249,8 @@ function setFrameRate(fr){
 }
 	
 function enterFrame(){
+	if(SOYC) c.l('<enterFrame mX, nF', mX, nF);
+
    	context.clearRect(0, 0, cW, cH);
    	setCursor('default');
 
@@ -257,6 +264,7 @@ function enterFrame(){
 
 	if(MOUSE_PRESSED) T_MOUSE_PRESSED = new Date().getTime() - _tLastMouseDown;
 	
+	if(SOYC) c.l('--> cycle');
   	cycle();
 
   	WHEEL_CHANGE = 0;
@@ -265,10 +273,11 @@ function enterFrame(){
 	PREV_mY=mY;
   	
   	nF++;
-
+  	if(SOYC) c.l('enterFrame> mX, nF', mX, nF);
 }
 
 function startCycle(){
+	if(SOYC) c.l('!!!! startCycle');
 	clearTimeout(_setTimeOutId);
 	clearInterval(_setIntervalId);
 	_setIntervalId = setInterval(enterFrame, Global._frameRate);
@@ -291,7 +300,9 @@ function onMoveCycle(e){
 	reStartCycle();
 }
 
+var SOYC = false;
 function reStartCycle(){
+	if(SOYC) c.l('!!!! reStartCycle');
 	_prevMouseX=mX;
 	_prevMouseY=mY;
 	
