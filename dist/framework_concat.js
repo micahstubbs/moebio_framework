@@ -11415,24 +11415,42 @@ NumberTableOperators.kNN = function(numberTable, propertyList, vectorList, k, ca
 	calculateClass = calculateClass==null?true:calculateClass;
 
 	var i,j;
-	var table = new NumberTable();
 
 	var fKNN = function(vector){
 		var i, j;
 		var d2;
+
+		var table = new NumberTable();
 		
 		table[0] = new NumberList();
 		table[1] = new NumberList();
 		numberTable[0].forEach(function(val, i){
-			d2 = 0;// numberTable.getRow(i).distance(vector);
+			d2 = 0;
 			numberTable.forEach(function(nList, j){
 				d2+=Math.pow(nList[i]-vector[j], 2);
 			});
-			table[0].push(i);
-			table[1].push(d2);
+			if(table[1].length<k || table[1][k-1]>d2){
+				var inserted = false;
+				for(j=0; table[1][j]<k; j++){
+					if(d2<table[1][j]){
+						table[1].splice(j, 0, d2);
+						table[0].splice(j, 0, i);
+						inserted = true;
+						break;
+					}
+				}
+				if(!inserted && table[1].length<k){
+					table[1].push(d2);
+					table[0].push(i);
+				}
+			}
+			// table[0].push(i);
+			// table[1].push(d2);
 		});
 
-		table = table.getListsSortedByList(table[1]);
+		
+
+		//table = table.getListsSortedByList(table[1]);
 
 		if(calculateClass){
 			var classTable = new Table();
@@ -11464,9 +11482,11 @@ NumberTableOperators.kNN = function(numberTable, propertyList, vectorList, k, ca
 		var sumD = 0;
 		for(i=0; i<k; i++){
 			val = propertyList[table[0][i]];
-			combination += val/(table[1][i]+0.001);
-			sumD+=(1/(table[1][i]+0.001));
+			combination += val/(table[1][i]+0.0001);
+			sumD+=(1/(table[1][i]+0.0001));
 		}
+
+		c.l('vector:', vector[0], vector[1], 'colsest:', Math.floor(100000000*table[1][0]), Math.floor(100000000*table[1][1]), 'categories',  propertyList[table[0][0]], propertyList[table[0][1]], 'result', combination/sumD);
 		
 		return combination/sumD;
 
