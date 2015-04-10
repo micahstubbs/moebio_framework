@@ -22873,7 +22873,6 @@ getStructureLocalStorage = function(id, returnStorageObject){
 function getDocWidth() {
     var D = document;
     return Math.max(
-        D.body.scrollWidth, D.documentElement.scrollWidth,
         D.body.offsetWidth, D.documentElement.offsetWidth,
         D.body.clientWidth, D.documentElement.clientWidth
     );
@@ -22882,7 +22881,6 @@ function getDocWidth() {
 function getDocHeight() {
     var D = document;
     return Math.max(
-        D.body.scrollHeight, D.documentElement.scrollHeight,
         D.body.offsetHeight, D.documentElement.offsetHeight,
         D.body.clientHeight, D.documentElement.clientHeight
     );
