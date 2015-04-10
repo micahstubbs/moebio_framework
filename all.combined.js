@@ -16998,14 +16998,13 @@ NumberTableDraw.drawSlopeGraph = function(frame, numberTable, texts){
 
 
 /**
- * based on a integers NumberTable draws a a matrix of rectangles with colors associated to number of elelments in overCoordinates
+ * TODO: fix this method / based on a integers NumberTable draws a a matrix of rectangles with colors associated to number of elelments in overCoordinates
  * @param  {Rectangle} frame
  * @param  {Object} coordinates, it could be a polygon, or a numberTable with two lists
  * 
  * @param  {ColorScale} colorScale
  * @param  {Number} margin
  * @return {NumberList} list of positions of elements on clicked coordinates
- * tags:draw
  */
 NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, margin){
 	if(coordinates==null || coordinates[0]==null) return;
