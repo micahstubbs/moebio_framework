@@ -130,8 +130,8 @@ NumberTableOperators.kNN = function(numberTable, propertyList, vectorList, k, ca
 		var sumD = 0;
 		for(i=0; i<k; i++){
 			val = propertyList[table[0][i]];
-			combination += val/(table[1][i]+0.0001);
-			sumD+=(1/(table[1][i]+0.0001));
+			combination += val/(table[1][i]+0.000001);
+			sumD+=(1/(table[1][i]+0.000001));
 		}
 
 		c.l('vector:', vector[0], vector[1], 'colsest:', Math.floor(100000000*table[1][0]), Math.floor(100000000*table[1][1]), 'categories',  propertyList[table[0][0]], propertyList[table[0][1]], 'result', combination/sumD);
