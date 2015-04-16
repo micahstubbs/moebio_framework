@@ -129,7 +129,7 @@ ColorOperators.HSLtoHEX=function(hue, saturation, light){
  * converts an RGB color to HSV
  * @param {Array} a RGB color array
  * @return {Array} returns a HSV color array
- * 
+ * H in [0,360], S in [0,1], V in [0,1]
  */
 ColorOperators.RGBtoHSV=function(r, g, b){
 	var h;
@@ -137,9 +137,9 @@ ColorOperators.RGBtoHSV=function(r, g, b){
 	var v;
 	var min = Math.min(Math.min( r, g), b );
 	var max = Math.max(Math.max( r, g), b );
-	v = max;
+	v = max/255;
 	var delta = max - min;
-	if(delta==0) return new Array(0,0,r);
+	if(delta==0) return new Array(0,0,r/255);
 	if( max != 0 ){
 		s = delta / max;
 	}else {
