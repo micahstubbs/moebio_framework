@@ -108,7 +108,7 @@ ColorOperators.grayByLevel=function(level){
  * 
  */
 ColorOperators.HEXtoHSV=function(hexColor){
-  var rbg=ColorOperators.HEXtoRGB(hexColor);
+  var rgb=ColorOperators.HEXtoRGB(hexColor);
   return ColorOperators.RGBtoHSV(rgb[0], rgb[1], rgb[2]);
 };
 
