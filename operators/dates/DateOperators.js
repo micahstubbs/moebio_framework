@@ -16,11 +16,12 @@ function DateOperators(){};
 
 
 /**
- * format cases
- * 0: MM-DD-YYYY
- * 1: YYYY-MM-DD
- * 2: MM-DD-YY
- * 3: YY-MM-DD
+ * parses a Date
+ * @param  {String} string date in string format
+ * @param  {String} formatCase 0: <br>MM-DD-YYYY<br>1: YYYY-MM-DD<br>2: MM-DD-YY<br>3: YY-MM-DD
+ * @param  {String} separator
+ * @return {Date}
+ * tags:decoder
  */
 DateOperators.stringToDate=function(string, formatCase, separator){
 	separator = separator==null?"-":separator;
