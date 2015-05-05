@@ -2604,7 +2604,6 @@ Table.prototype.getReport = function(level){
 
 	///add ideas to: analyze, visualize
 
-
 	return text;
 
 }
