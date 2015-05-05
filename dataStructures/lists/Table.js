@@ -33,6 +33,7 @@ Table.fromArray=function(array){
 	result.getTransposed=Table.prototype.getTransposed;
 	result.getListsSortedByList=Table.prototype.getListsSortedByList;
 	result.sortListsByList=Table.prototype.sortListsByList;
+	result.getReport=Table.prototype.getReport;
 	result.clone=Table.prototype.clone;
 	result.print=Table.prototype.print;
 	
@@ -217,6 +218,63 @@ Table.prototype.getTransposed=function(firstListAsHeaders){
 }
 
 
+Table.prototype.getReport = function(level){
+	var ident = "\n"+(level>0?StringOperators.repeat("  ", level):"");
+	var lengths = this.getLengths();
+	var minLength = lengths.getMin();
+	var maxLength = lengths.getMax();
+	var averageLength = (minLength+maxLength)*0.5;
+	var sameLengths =  minLength==maxLength;
+
+
+	var text = level>0?(ident+"////report of instance of Table////"):"///////////report of instance of Table//////////";
+
+	if(this.length==0){
+		text += ident+"this table has no lists";
+		return text;
+	}
+
+	text += ident+"name: "+this.name;
+	text += ident+"type: "+this.type;
+	text += ident+"number of lists: "+this.length;
+
+	text += ident+"all lists have same length: "+(sameLengths?"true":"false");
+	
+	if(sameLengths){
+		text += ident+"lists length: "+this[0].length;
+	} else 	{
+		text += ident+"min length: "+minLength;
+		text += ident+"max length: "+maxLength;
+		text += ident+"average length: "+averageLength;
+		text += ident+"all lengths: "+lengths.join(", ");
+	}
+
+	var types = this.getTypes();
+	var sameTypes = types.allElementsEqual();
+	if(sameTypes){
+		text+=ident+"types of all lists: "+types[0];
+	} else {
+		text+=ident+"types: "+types.join(", ");
+	}
+	
+	if(this.length<101){
+		text+=ident+ident+"--------lists reports---------";
+
+		var i;
+		for(i=0; this[i]!=null; i++){
+			text += "\n" + ident + ("("+i+"/"+this.length+")") + this[i].getReport(1);
+		}
+	}
+
+	///add ideas to: analyze, visualize
+
+
+	return text;
+
+}
+
+Table.prototype.getReportObject = function(){};//TODO
+Table.prototype.getReportHtml = function(){};//TODO
 
 
 

@@ -11,6 +11,45 @@ ObjectOperators.identity = function(object){
 	return object;
 }
 
+
+/**
+ * builds a string report of the object
+ * @param  {Object} object
+ * @return {String}
+ * tags:special
+ */
+ObjectOperators.getReport = function(object){
+	if(object==null) return null;
+	
+	if(object.getReport) return object.getReport();
+
+	var text = "///////////report of instance of Object//////////";
+
+	var string = ObjectConversions.objectToString(object);
+
+	if(string.length<2000){
+		text+="\n"+string;
+		return text;
+	}
+
+	var propertyNames = new StringList();
+	var propertyValues = new StringList();
+	var popertyTypes = new StringList();
+
+	for(propName in object){
+		propertyNames.push(propName);
+	}
+
+	if(propertyNames.length<100){
+		text += "\nproperties: "+propertyNames.join(", ");
+	} else {
+		text += "\nfirst 100 properties: "+propertyNames.slice(0,100).join(", ");
+	}
+
+	return text;
+	
+}
+
 /**
  * uses a boolean to decide which of two objects it returns
  * @param  {Boolean} boolean

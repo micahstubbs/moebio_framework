@@ -35,6 +35,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.getLengths=List.prototype.getLengths;
    	array.getWithoutRepetitions=List.prototype.getWithoutRepetitions;
    	array.getElementsRepetitionCount=List.prototype.getElementsRepetitionCount;
+   	array.allElementsEqual = List.prototype.allElementsEqual;
    	array.countElement=List.prototype.countElement;
    	array.countOccurrences=List.prototype.countOccurrences;
    	array.getMostRepeatedElement = List.prototype.getMostRepeatedElement;
@@ -87,6 +88,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.getFilteredByFunction=List.prototype.getFilteredByFunction;
    	array._concat=Array.prototype.concat;
    	array.concat=List.prototype.concat;
+   	array.getReport=List.prototype.getReport;
    	
    	//transformations
    	array.pushIfUnique=List.prototype.pushIfUnique;
@@ -452,7 +454,7 @@ List.prototype.countElement=function(element){
 }
 
 /**
- * returns a numberList of same size as list with number of occurrences of each element
+ * returns a numberList of same size as list with number of occurrences for each element
  * @return {numberList}
  * tags:count
  */
@@ -465,7 +467,7 @@ List.prototype.countOccurrences=function(){//TODO: more efficient
 }
 
 /**
- * returns a table with a list of non repeated elements and a list with the numbers of occurrences of each one
+ * returns a table with a list of non repeated elements and a list with the numbers of occurrences for each one
  * @param  {Boolean} sortListsByOccurrences if true both lists in the table will be sorted by number of occurences (most frequent on top), true by default
  * @return {Table} list (non-repeated elements) and numberList (frequency of each element)
  * tags:count
@@ -499,11 +501,25 @@ List.prototype.getElementsRepetitionCount=function(sortListsByOccurrences){
 		// for(j=0; j<table.length; j++){
 		// 	table[j]=table[j].clone().sortOnIndexes(indexArray);
 		// }
-		table = table.getListsSortedByList(numberList);
+		table = table.getListsSortedByList(numberList, false);
 	}
 	
 	return table;
 }
+
+List.prototype.allElementsEqual = function(){
+	var i;
+	if(this.length<2) return true;
+
+	first = this[0];
+	
+	for(i=1; this[i]!=null; i++){
+		if(this[i]!=first) return false;
+	}
+
+	return true;
+}
+
 
 List.prototype.getMostRepeatedElement = function(){//TODO: this method should be more efficient
 	return ListOperators.countElementsRepetitionOnList(this, true)[0][0];
@@ -1049,6 +1065,69 @@ List.prototype.concat=function(){
 		}
 	}
 	return List.fromArray(this._concat.apply(this, arguments)).getImproved();
+}
+
+
+
+List.prototype.getReport=function(level){//TODO:complete
+	var ident = "\n"+(level>0?StringOperators.repeat("  ", level):"");
+	var text = level>0?(ident+"////report of instance of List////"):"///////////report of instance of List//////////";
+
+	var length = this.length;
+	var i;
+
+	text += ident+"name: "+this.name;
+	text += ident+"type: "+this.type;
+
+	if(length==0){
+		text += ident+"single element: ["+this[0]+"]";
+		return text;
+	} else {
+		text += ident+"length: "+length;
+	}
+
+	switch(this.type){
+		case "NumberList":
+			var min = this.getMin();
+			var max = this.getMax();
+			var average = (min+max)*0.5;
+			text += ident+"min: "+min;
+			text += ident+"max: "+max;
+			text += ident+"average: "+average;
+			if(length<101){
+				text += ident+"numbers: "+this.join(", ");
+			}
+			break;
+		case "StringList":
+		case "List":
+			var freqTable = this.getElementsRepetitionCount(true);
+			text += ident+"number of different elements: "+freqTable[0].length;
+			if(freqTable[0].length<10){
+				text += ident+"elements frequency:";
+			} else {
+				text += ident+"some elements frequency:";
+			}
+
+			for(i=0; freqTable[0][i]!=null && i<10; i++){
+				text += ident+"  ["+String(freqTable[0][i])+"]: "+freqTable[1][i];
+			}
+
+			var joined;
+			if(this.type == "List"){
+				joined = this.join("], [");
+			} else {
+				joined = this.toStringList().join("], [");
+			}
+			
+			if(joined.length<2000) text += ident+"strings: ["+joined+"]";
+			break;
+
+	}
+
+	///add ideas to: analyze, visualize
+
+
+	return text;
 }
 
 
