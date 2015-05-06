@@ -262,7 +262,7 @@ Table.prototype.getReport = function(level){
 
 		var i;
 		for(i=0; this[i]!=null; i++){
-			text += "\n" + ident + ("("+i+"/"+this.length+")") + this[i].getReport(1);
+			text += "\n" + ident + ("("+(i+1)+"/"+this.length+")") + this[i].getReport(1);
 		}
 	}
 
