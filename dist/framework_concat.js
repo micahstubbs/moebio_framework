@@ -5160,6 +5160,7 @@ ObjectOperators.identity = function(object){
 	return object;
 }
 
+
 /**
  * builds a string report of the object
  * @param  {Object} object
