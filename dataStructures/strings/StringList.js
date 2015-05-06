@@ -38,6 +38,7 @@ StringList.fromArray=function(array, forceToString){
    	result.getConcatenated=StringList.prototype.getConcatenated;
    	result.toNumberList=StringList.prototype.toNumberList;
    	result.toDateList=StringList.prototype.toDateList;
+   	result.trim=StringList.prototype.trim;
    	
    	//override
 	result.clone = StringList.prototype.clone;
@@ -185,6 +186,20 @@ StringList.prototype.toDateList=function(formatCase, separator){
 	return dateList;
 }
 
+/**
+ * trims all the strings on the stringList
+ * @return {StringList}
+ * tags:
+ */
+StringList.prototype.trim = function(){
+	var i;
+	var newStringList = new StringList();
+	for(i=0;this[i]!=null;i++){
+		newStringList[i] = this[i].trim();
+	}
+	newStringList.name = this.name;
+	return newStringList;
+}
 
 ///////overriding
 
