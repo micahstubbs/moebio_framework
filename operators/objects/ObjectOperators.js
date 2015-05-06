@@ -11,7 +11,6 @@ ObjectOperators.identity = function(object){
 	return object;
 }
 
-
 /**
  * builds a string report of the object
  * @param  {Object} object
@@ -20,7 +19,7 @@ ObjectOperators.identity = function(object){
  */
 ObjectOperators.getReport = function(object){
 	if(object==null) return null;
-	
+
 	if(object.getReport) return object.getReport();
 
 	var text = "///////////report of instance of Object//////////";
