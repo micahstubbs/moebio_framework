@@ -13103,6 +13103,8 @@ NetworkEncodings.decodeNoteWork = function(code){
 					node.content = index!=-1?line.substr(index+sep.length).trim():"";
 					
 					node._lines = lines?lines.slice(1):new StringList();
+
+					node.position = network.nodeList.length-1;
 					
 					if(colorSegments[nLineParagraph]==null) colorSegments[nLineParagraph]=[];
 
@@ -13180,6 +13182,8 @@ NetworkEncodings.decodeNoteWork = function(code){
 	network.nodeList.forEach(function(node){
 
 		nLineParagraph = node._nLine;
+
+		c.l('node.nLineWeight', node.nLineWeight);
 
 		node._lines.forEach(function(line, i){
 
@@ -13261,6 +13265,10 @@ NetworkEncodings.decodeNoteWork = function(code){
 				});
 			}
 		});
+		
+		node.positionWeight = Math.pow(network.nodeList.length - node.position - 1/network.nodeList.length, 2);
+		node.combinedWeight = node.positionWeight + node.nodeList.length*0.1;
+
 	});
 
 
