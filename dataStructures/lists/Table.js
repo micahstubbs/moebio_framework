@@ -249,6 +249,7 @@ Table.prototype.getReport = function(level){
 		text += ident+"all lengths: "+lengths.join(", ");
 	}
 
+	var names = this.getNames();
 	var types = this.getTypes();
 	var sameTypes = types.allElementsEqual();
 	if(sameTypes){
@@ -256,6 +257,7 @@ Table.prototype.getReport = function(level){
 	} else {
 		text+=ident+"types: "+types.join(", ");
 	}
+	text+=ident+"names: "+names.join(", ");
 	
 	if(this.length<101){
 		text+=ident+ident+"--------lists reports---------";

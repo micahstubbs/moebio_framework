@@ -2585,13 +2585,16 @@ Table.prototype.getReport = function(level){
 		text += ident+"all lengths: "+lengths.join(", ");
 	}
 
+	var names = this.getNames();
 	var types = this.getTypes();
+
 	var sameTypes = types.allElementsEqual();
 	if(sameTypes){
 		text+=ident+"types of all lists: "+types[0];
 	} else {
 		text+=ident+"types: "+types.join(", ");
 	}
+	text+=ident+"names: "+names.join(", ");
 	
 	if(this.length<101){
 		text+=ident+ident+"--------lists reports---------";
