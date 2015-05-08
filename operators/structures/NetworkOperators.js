@@ -748,10 +748,14 @@ NetworkOperators.fusionNetworks =function(networks, hubsDistanceFactor, hubsForc
 				newRelation.forceWeight = hubsForceWeight;
 				fusionNet.addRelation(newRelation);
 
-				newRelation.node0.hubWeight = 1;
-				newRelation.node1.hubWeight = 1;
+				newRelation.node0.hubWeight += 1;
+				newRelation.node1.hubWeight += 1;
 			}
 		}
+	}
+
+	for(i=0;fusionNet.nodeList[i]!=null; i++){
+		fusionNet.nodeList[i].hubWeight = Math.sqrt(fusionNet.nodeList[i].hubWeight);
 	}
 
 	fusionNet.mapsCluster = mapsCluster;
