@@ -13115,7 +13115,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 						iStart:0,
 						iEnd:iEnd
 					});
-
+					
 				} else {
 					if(lines!=null) node._lines = node._lines.concat(lines.slice(1));
 
@@ -13159,9 +13159,9 @@ NetworkEncodings.decodeNoteWork = function(code){
 					if(otherNode && node!=otherNode){
 
 						foundEquivalences = true;
-
+						
 						node._lines = otherNode._lines.concat(otherNode._lines);
-
+						
 						network.nodeList.removeNode(otherNode);
 						network.nodeList.ids[otherNode.id] = node;
 
@@ -14947,18 +14947,18 @@ NetworkOperators.fusionNetworks =function(networks, hubsDistanceFactor, hubsForc
 	var colors = ColorListGenerators.createDefaultCategoricalColorList(networks.length);
 
 	networks.forEach(function(net, i){
-	mapsCluster[i] = new NodeList();
+		mapsCluster[i] = new NodeList();
 
-	net.nodeList.forEach(function(node){
-		newNode = new Node(node.id, node.name);
-		newNode.basicId = node.basicId;
-		newNode.mapId = "map_"+i;
-		newNode.color = colors[i];
-		newNode.hubWeight = 0;
-		fusionNet.addNode(newNode);
-			mapsCluster[i].addNode(newNode);
+		net.nodeList.forEach(function(node){
+			newNode = new Node(node.id, node.name);
+			newNode.basicId = node.basicId;
+			newNode.mapId = "map_"+i;
+			newNode.color = colors[i];
+			newNode.hubWeight = 0;
+			fusionNet.addNode(newNode);
+				mapsCluster[i].addNode(newNode);
+			});
 		});
-	});
 
 		networks.forEach(function(net, i){
 		net.relationList.forEach(function(relation){
@@ -14967,8 +14967,6 @@ NetworkOperators.fusionNetworks =function(networks, hubsDistanceFactor, hubsForc
 			fusionNet.addRelation(newRelation);
 		});
 	});
-
-
 
 	var node0;
 

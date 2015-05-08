@@ -199,7 +199,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 						iStart:0,
 						iEnd:iEnd
 					});
-
+					
 				} else {
 					if(lines!=null) node._lines = node._lines.concat(lines.slice(1));
 
@@ -243,9 +243,9 @@ NetworkEncodings.decodeNoteWork = function(code){
 					if(otherNode && node!=otherNode){
 
 						foundEquivalences = true;
-
+						
 						node._lines = otherNode._lines.concat(otherNode._lines);
-
+						
 						network.nodeList.removeNode(otherNode);
 						network.nodeList.ids[otherNode.id] = node;
 
