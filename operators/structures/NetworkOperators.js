@@ -716,6 +716,7 @@ NetworkOperators.fusionNetworks =function(networks, hubsDistanceFactor, hubsForc
 		newNode.basicId = node.basicId;
 		newNode.mapId = "map_"+i;
 		newNode.color = colors[i];
+		newNode.hubWeight = 0;
 		fusionNet.addNode(newNode);
 			mapsCluster[i].addNode(newNode);
 		});
@@ -748,6 +749,9 @@ NetworkOperators.fusionNetworks =function(networks, hubsDistanceFactor, hubsForc
 				newRelation.distanceFactor = hubsDistanceFactor;
 				newRelation.forceWeight = hubsForceWeight;
 				fusionNet.addRelation(newRelation);
+
+				newRelation.node0.hubWeight = 1;
+				newRelation.node1.hubWeight = 1;
 			}
 		}
 	}
