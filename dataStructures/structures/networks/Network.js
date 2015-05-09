@@ -146,8 +146,6 @@ Network.prototype.removeIsolatedNodes=function(minDegree){
 
 
 Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames, idsSubfix, namesSubfix){
-	c.l('clone network');
-
 	var newNetwork = new Network();
 	var newNode, newRelation;
 	var i;
