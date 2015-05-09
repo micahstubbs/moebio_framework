@@ -924,14 +924,82 @@ List.prototype.getFilteredByBooleanList = function(booleanList){
 	return newList.getImproved();
 }
 
+/**
+ * filters a list by its elements, and a type of comparison (equal by default)
+ * @param  {Object} value object (for equal or different comparison) or number or date (for equal, different, greater, lesser)
+ * @param  {String} comparison equal (default), different, greater, lesser
+ * @return {List} filtered list
+ * tags:filter
+ */
+List.prototype.getFilteredByValue = function(value, comparison){
+	comparison = comparison==null?"equal":comparison;
 
-List.prototype.getFilteredByPropertyValue = function(propertyName, propertyValue){
 	var newList = new List();
-	newList.name = this.name;
+	newList.name = "filtered_"+this.name;
 	var i;
-	for(i=0;this[i]!=null;i++){
-		if(this[i][propertyName]==propertyValue) newList.push(this[i]);
+	switch(comparison){
+		case "equal":
+			for(i=0;this[i]!=null;i++){
+				if(this[i][propertyName]==propertyValue) newList.push(this[i]);
+			}
+			break;
+		case "different":
+			for(i=0;this[i]!=null;i++){
+				if(this[i][propertyName]!=propertyValue) newList.push(this[i]);
+			}
+			break;
+		case "greater":
+			for(i=0;this[i]!=null;i++){
+				if(this[i][propertyName]>propertyValue) newList.push(this[i]);
+			}
+			break;
+		case "lower":
+			for(i=0;this[i]!=null;i++){
+				if(this[i][propertyName]>propertyValue) newList.push(this[i]);
+			}
+			break;
 	}
+	
+	return newList.getImproved();
+}
+
+/**
+ * filters a list by the values of a property on its elements, and a type of comparison (equal by default)
+ * @param  {String} propertyName name of property
+ * @param  {Object} propertyValue object (for equal or different comparison) or number or date (for equal, different, greater, lesser)
+ * @param  {String} comparison equal (default), different, greater, lesser
+ * @return {List} filtered list
+ * tags:filter
+ */
+List.prototype.getFilteredByPropertyValue = function(propertyName, propertyValue, comparison){
+	comparison = comparison==null?"equal":comparison;
+
+	var newList = new List();
+	newList.name = "filtered_"+this.name;
+	var i;
+	switch(comparison){
+		case "equal":
+			for(i=0;this[i]!=null;i++){
+				if(this[i][propertyName]==propertyValue) newList.push(this[i]);
+			}
+			break;
+		case "different":
+			for(i=0;this[i]!=null;i++){
+				if(this[i][propertyName]!=propertyValue) newList.push(this[i]);
+			}
+			break;
+		case "greater":
+			for(i=0;this[i]!=null;i++){
+				if(this[i][propertyName]>propertyValue) newList.push(this[i]);
+			}
+			break;
+		case "lower":
+			for(i=0;this[i]!=null;i++){
+				if(this[i][propertyName]>propertyValue) newList.push(this[i]);
+			}
+			break;
+	}
+	
 	return newList.getImproved();
 }
 
@@ -14366,10 +14434,11 @@ NetworkOperators._extendPaths = function(allPaths, nodeDestiny, maxLength){
 /**
  * finds all loops in the network
  * @param  {Network} network
+ * @param {Number} minSize minimum size of loops
  * @return {Table} list of nodeLists
  * tags:analytics
  */
-NetworkOperators.loops = function(network){
+NetworkOperators.loops = function(network, minSize){
 	if(network==null) return null;
 	
 	var i, j, k, loops;
@@ -14389,6 +14458,8 @@ NetworkOperators.loops = function(network){
 		}
 		allLoops = allLoops.concat(loops);
 	}
+
+	if(minSize) allLoops = allLoops.getFilteredByPropertyValue("length", minSize, "greater");
 
 	allLoops.sort(function(a0, a1){return a0.length>a1.length?-1:1});
 

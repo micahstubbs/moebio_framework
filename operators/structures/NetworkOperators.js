@@ -130,10 +130,11 @@ NetworkOperators._extendPaths = function(allPaths, nodeDestiny, maxLength){
 /**
  * finds all loops in the network
  * @param  {Network} network
+ * @param {Number} minSize minimum size of loops
  * @return {Table} list of nodeLists
  * tags:analytics
  */
-NetworkOperators.loops = function(network){
+NetworkOperators.loops = function(network, minSize){
 	if(network==null) return null;
 	
 	var i, j, k, loops;
@@ -153,6 +154,8 @@ NetworkOperators.loops = function(network){
 		}
 		allLoops = allLoops.concat(loops);
 	}
+	
+	if(minSize) allLoops = allLoops.getFilteredByPropertyValue("length", minSize, "greater");
 
 	allLoops.sort(function(a0, a1){return a0.length>a1.length?-1:1});
 
