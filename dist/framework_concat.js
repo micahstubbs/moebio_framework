@@ -13070,6 +13070,8 @@ NetworkEncodings.decodeNoteWork = function(code){
 
 		firstLine = line;
 
+		c.l('firstLine: ['+firstLine+']');
+
 		if(line=='\n' || line=='' || line==' ' || line=='  '){//use regex here
 			
 		} else if(line.indexOf('//')==0){
@@ -13111,8 +13113,10 @@ NetworkEncodings.decodeNoteWork = function(code){
 						});
 
 					}
+
 					if((firstLine == "groups colors:" || firstLine == "categories colors:") && index!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){
-						//c.l('  more colors!');
+						c.l(line)
+						c.l('  color to group!');
 
 						colorLinesGroups.push(line);
 						
@@ -13181,7 +13185,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 						iStart:0,
 						iEnd:iEnd
 					});
-					
+
 				} else {
 					if(lines!=null) node._lines = node._lines.concat(lines.slice(1));
 
@@ -13225,9 +13229,9 @@ NetworkEncodings.decodeNoteWork = function(code){
 					if(otherNode && node!=otherNode){
 
 						foundEquivalences = true;
-						
+
 						node._lines = otherNode._lines.concat(otherNode._lines);
-						
+
 						network.nodeList.removeNode(otherNode);
 						network.nodeList.ids[otherNode.id] = node;
 
@@ -13340,8 +13344,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 	});
 
 
-	//colors in relations
-	//
+	//colors in relations and groups
 	
 	colorLinesRelations.forEach(function(line){
 		index = line.indexOf(':');
@@ -14458,7 +14461,7 @@ NetworkOperators.loops = function(network, minSize){
 		}
 		allLoops = allLoops.concat(loops);
 	}
-
+	
 	if(minSize) allLoops = allLoops.getFilteredByPropertyValue("length", minSize, "greater");
 
 	allLoops.sort(function(a0, a1){return a0.length>a1.length?-1:1});
