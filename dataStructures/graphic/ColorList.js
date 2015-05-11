@@ -27,6 +27,11 @@ ColorList.fromArray=function(array){
 	return result;
 }
 
+/**
+ * return an arrays of rgb arrays ([rr,gg,bb])
+ * @return {array}
+ * tags:
+ */
 ColorList.prototype.getRgbArrays=function(){
 	var rgbArrays = new List();
 	
@@ -37,6 +42,13 @@ ColorList.prototype.getRgbArrays=function(){
 	return rgbArrays;
 }
 
+/**
+ * interpolates colors with a given color and measure
+ * @param  {String} color to be interpolated with
+ * @param  {Number} value intenisty of interpolation [0,1]
+ * @return {ColorList}
+ * tags:
+ */
 ColorList.prototype.getInterpolated=function(color, value){
 	var newColorList = new ColorList();
 	
@@ -48,6 +60,11 @@ ColorList.prototype.getInterpolated=function(color, value){
 	return newColorList;
 }
 
+/**
+ * inverts all colors
+ * @return {ColorList}
+ * tags:
+ */
 ColorList.prototype.getInverted=function(){
 	var newColorList = new ColorList();
 	
@@ -59,6 +76,12 @@ ColorList.prototype.getInverted=function(){
 	return newColorList;
 }
 
+/**
+ * adds alpha value to all colores
+ * @param {Number} alpha alpha value in [0,1]
+ * @return {ColorList}
+ * tags:
+ */
 ColorList.prototype.addAlpha=function(alpha){
 	var newColorList = new ColorList();
 	

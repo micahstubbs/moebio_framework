@@ -154,7 +154,7 @@ NetworkOperators.loops = function(network, minSize){
 		}
 		allLoops = allLoops.concat(loops);
 	}
-	
+
 	if(minSize) allLoops = allLoops.getFilteredByPropertyValue("length", minSize, "greater");
 
 	allLoops.sort(function(a0, a1){return a0.length>a1.length?-1:1});
@@ -709,7 +709,7 @@ NetworkOperators.fusionNetworks =function(networks, hubsDistanceFactor, hubsForc
 	var i, j;
 	var mapsCluster = new Table();
 
-	var colors = ColorListGenerators.createDefaultCategoricalColorList(networks.length);
+	var colors = ColorListGenerators.createDefaultCategoricalColorList(networks.length).getInterpolated('black', 0.17).getInterpolated('white', 0.55);
 
 	networks.forEach(function(net, i){
 		mapsCluster[i] = new NodeList();

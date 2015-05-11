@@ -23,7 +23,7 @@ ColorListGenerators.createDefaultCategoricalColorList = function(nColors, alpha,
 	alpha = alpha==null?1:alpha;
 	var colors = ColorListGenerators.createCategoricalColors(1, nColors).getInterpolated('black', 0.15);
 	if(alpha<1) colors = colors.addAlpha(alpha);
-
+	
 	if(invert) colors = colors.getInverted();
 
 	return colors;
