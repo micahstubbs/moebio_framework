@@ -730,6 +730,9 @@ NetworkOperators.fusionNetworks =function(networks, hubsDistanceFactor, hubsForc
 		net.relationList.forEach(function(relation){
 			newRelation = new Relation(relation.id, relation.name, fusionNet.nodeList.getNodeById(relation.node0.id), fusionNet.nodeList.getNodeById(relation.node1.id));
 			newRelation.color = relation.color;
+			newRelation.content = relation.content;
+			newRelation.description = relation.description;
+			newRelation.weight = relation.weight;
 			fusionNet.addRelation(newRelation);
 		});
 	});
@@ -740,13 +743,14 @@ NetworkOperators.fusionNetworks =function(networks, hubsDistanceFactor, hubsForc
 		node0 = fusionNet.nodeList[i];
 		for(j=i+1;fusionNet.nodeList[j]!=null; j++){
 			if(node0.basicId==fusionNet.nodeList[j].basicId){
-				newRelation = new Relation(node0.id+'_'+fusionNet.nodeList[j].id, node0.id+'_'+fusionNet.nodeList[j].id, node0, fusionNet.nodeList[j]);
+				//newRelation = new Relation(node0.id+'_'+fusionNet.nodeList[j].id, node0.id+'_'+fusionNet.nodeList[j].id, node0, fusionNet.nodeList[j]);
+				newRelation = new Relation(node0.id+'_'+fusionNet.nodeList[j].id, "same variable", node0, fusionNet.nodeList[j]);
 				newRelation.color = 'black';
 				newRelation.distanceFactor = hubsDistanceFactor;
 				newRelation.forceWeight = hubsForceWeight;
 				fusionNet.addRelation(newRelation);
 
-				newRelation = new Relation(fusionNet.nodeList[j].id+'_'+node0.id, fusionNet.nodeList[j].id+'_'+node0.id, fusionNet.nodeList[j], node0);
+				newRelation = new Relation(fusionNet.nodeList[j].id+'_'+node0.id, "same variable", fusionNet.nodeList[j], node0);
 				newRelation.color = 'black';
 				newRelation.distanceFactor = hubsDistanceFactor;
 				newRelation.forceWeight = hubsForceWeight;

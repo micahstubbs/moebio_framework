@@ -12808,7 +12808,7 @@ removeAccentsAndDiacritics = function(string){
     r = r.replace(new RegExp(/ç/g),"c");
     r = r.replace(new RegExp(/[èéêë]/g),"e");
     r = r.replace(new RegExp(/[ìíîï]/g),"i");
-    r = r.replace(new RegExp(/ñ/g),"n");                
+    r = r.replace(new RegExp(/ñ/g),"n");      
     r = r.replace(new RegExp(/[òóôõö]/g),"o");
     r = r.replace(new RegExp(/œ/g),"oe");
     r = r.replace(new RegExp(/[ùúûü]/g),"u");
@@ -13338,8 +13338,26 @@ NetworkEncodings.decodeNoteWork = function(code){
 
 					    	if(relation==null || relation.content!=content){
 
+					    		var relationName = line;
+
+					    		var regex = NetworkEncodings._regexWordForNoteWork(node.id);
+								index = relationName.search(regex);
+
+								if(index!=-1){
+									relationName = relationName.substr(index);
+									relationName = relationName.replace(regex, "").trim();
+								}
+
+								//c.l(node.id, "*", line, "*", index, "*", line.substr(index));
+
+								//line = line.replace(regex, "").trim();
+
+								regex = NetworkEncodings._regexWordForNoteWork(otherNode.id);
+								index = relationName.search(regex);
+								relationName = "… " + relationName.substr(0, index).trim() + " …";
+
 					    		id = line;
-							    relation = new Relation(line, line, node, otherNode);
+							    relation = new Relation(line, relationName, node, otherNode);
 
 							    content = relation.node0.name+" "+line;
 
@@ -15060,6 +15078,9 @@ NetworkOperators.fusionNetworks =function(networks, hubsDistanceFactor, hubsForc
 		net.relationList.forEach(function(relation){
 			newRelation = new Relation(relation.id, relation.name, fusionNet.nodeList.getNodeById(relation.node0.id), fusionNet.nodeList.getNodeById(relation.node1.id));
 			newRelation.color = relation.color;
+			newRelation.content = relation.content;
+			newRelation.description = relation.description;
+			newRelation.weight = relation.weight;
 			fusionNet.addRelation(newRelation);
 		});
 	});
@@ -15070,13 +15091,14 @@ NetworkOperators.fusionNetworks =function(networks, hubsDistanceFactor, hubsForc
 		node0 = fusionNet.nodeList[i];
 		for(j=i+1;fusionNet.nodeList[j]!=null; j++){
 			if(node0.basicId==fusionNet.nodeList[j].basicId){
-				newRelation = new Relation(node0.id+'_'+fusionNet.nodeList[j].id, node0.id+'_'+fusionNet.nodeList[j].id, node0, fusionNet.nodeList[j]);
+				//newRelation = new Relation(node0.id+'_'+fusionNet.nodeList[j].id, node0.id+'_'+fusionNet.nodeList[j].id, node0, fusionNet.nodeList[j]);
+				newRelation = new Relation(node0.id+'_'+fusionNet.nodeList[j].id, "same variable", node0, fusionNet.nodeList[j]);
 				newRelation.color = 'black';
 				newRelation.distanceFactor = hubsDistanceFactor;
 				newRelation.forceWeight = hubsForceWeight;
 				fusionNet.addRelation(newRelation);
 
-				newRelation = new Relation(fusionNet.nodeList[j].id+'_'+node0.id, fusionNet.nodeList[j].id+'_'+node0.id, fusionNet.nodeList[j], node0);
+				newRelation = new Relation(fusionNet.nodeList[j].id+'_'+node0.id, "same variable", fusionNet.nodeList[j], node0);
 				newRelation.color = 'black';
 				newRelation.distanceFactor = hubsDistanceFactor;
 				newRelation.forceWeight = hubsForceWeight;

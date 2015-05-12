@@ -333,8 +333,26 @@ NetworkEncodings.decodeNoteWork = function(code){
 
 					    	if(relation==null || relation.content!=content){
 
+					    		var relationName = line;
+
+					    		var regex = NetworkEncodings._regexWordForNoteWork(node.id);
+								index = relationName.search(regex);
+
+								if(index!=-1){
+									relationName = relationName.substr(index);
+									relationName = relationName.replace(regex, "").trim();
+								}
+
+								//c.l(node.id, "*", line, "*", index, "*", line.substr(index));
+
+								//line = line.replace(regex, "").trim();
+
+								regex = NetworkEncodings._regexWordForNoteWork(otherNode.id);
+								index = relationName.search(regex);
+								relationName = "… " + relationName.substr(0, index).trim() + " …";
+
 					    		id = line;
-							    relation = new Relation(line, line, node, otherNode);
+							    relation = new Relation(line, relationName, node, otherNode);
 
 							    content = relation.node0.name+" "+line;
 
