@@ -13093,7 +13093,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 
 		firstLine = line;
 
-		c.l('firstLine: ['+firstLine+']');
+		//c.l('firstLine: ['+firstLine+']');
 
 		if(line=='\n' || line=='' || line==' ' || line=='  '){//use regex here
 			
@@ -13138,8 +13138,8 @@ NetworkEncodings.decodeNoteWork = function(code){
 					}
 
 					if((firstLine == "groups colors:" || firstLine == "categories colors:") && index!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){
-						c.l(line)
-						c.l('  color to group!');
+						//c.l(line)
+						//c.l('  color to group!');
 
 						colorLinesGroups.push(line);
 						
@@ -13278,7 +13278,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 
 		nLineParagraph = node._nLine;
 
-		c.l('node.nLineWeight', node.nLineWeight);
+		//c.l('node.nLineWeight', node.nLineWeight);
 
 		node._lines.forEach(function(line, i){
 
@@ -15063,18 +15063,26 @@ NetworkOperators.fusionNetworks =function(networks, hubsDistanceFactor, hubsForc
 		mapsCluster[i] = new NodeList();
 
 		net.nodeList.forEach(function(node){
-			newNode = new Node(node.id, node.name);
-			newNode.basicId = node.basicId;
-			newNode.mapId = "map_"+i;
-			newNode.color = colors[i];
-			newNode.hubWeight = 0;
-			newNode.weight = node.weight;
-			fusionNet.addNode(newNode);
+
+			c.l('• ['+node.id+']['+node.name+']');
+
+			newNode = fusionNet.nodeList.getNodeById(node.id);
+
+			if(newNode==null){
+				newNode = new Node(node.id, node.name);
+				newNode.basicId = node.basicId;
+				newNode.mapId = "map_"+i;
+				newNode.color = colors[i];
+				newNode.hubWeight = 0;
+				newNode.weight = node.weight;
+				fusionNet.addNode(newNode);
 				mapsCluster[i].addNode(newNode);
-			});
+			}
 		});
 
-		networks.forEach(function(net, i){
+	});
+
+	networks.forEach(function(net, i){
 		net.relationList.forEach(function(relation){
 			newRelation = new Relation(relation.id, relation.name, fusionNet.nodeList.getNodeById(relation.node0.id), fusionNet.nodeList.getNodeById(relation.node1.id));
 			newRelation.color = relation.color;

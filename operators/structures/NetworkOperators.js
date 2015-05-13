@@ -715,18 +715,26 @@ NetworkOperators.fusionNetworks =function(networks, hubsDistanceFactor, hubsForc
 		mapsCluster[i] = new NodeList();
 
 		net.nodeList.forEach(function(node){
-			newNode = new Node(node.id, node.name);
-			newNode.basicId = node.basicId;
-			newNode.mapId = "map_"+i;
-			newNode.color = colors[i];
-			newNode.hubWeight = 0;
-			newNode.weight = node.weight;
-			fusionNet.addNode(newNode);
+
+			c.l('• ['+node.id+']['+node.name+']');
+
+			newNode = fusionNet.nodeList.getNodeById(node.id);
+
+			if(newNode==null){
+				newNode = new Node(node.id, node.name);
+				newNode.basicId = node.basicId;
+				newNode.mapId = "map_"+i;
+				newNode.color = colors[i];
+				newNode.hubWeight = 0;
+				newNode.weight = node.weight;
+				fusionNet.addNode(newNode);
 				mapsCluster[i].addNode(newNode);
-			});
+			}
 		});
 
-		networks.forEach(function(net, i){
+	});
+
+	networks.forEach(function(net, i){
 		net.relationList.forEach(function(relation){
 			newRelation = new Relation(relation.id, relation.name, fusionNet.nodeList.getNodeById(relation.node0.id), fusionNet.nodeList.getNodeById(relation.node1.id));
 			newRelation.color = relation.color;

@@ -88,7 +88,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 
 		firstLine = line;
 
-		c.l('firstLine: ['+firstLine+']');
+		//c.l('firstLine: ['+firstLine+']');
 
 		if(line=='\n' || line=='' || line==' ' || line=='  '){//use regex here
 			
@@ -133,8 +133,8 @@ NetworkEncodings.decodeNoteWork = function(code){
 					}
 
 					if((firstLine == "groups colors:" || firstLine == "categories colors:") && index!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){
-						c.l(line)
-						c.l('  color to group!');
+						//c.l(line)
+						//c.l('  color to group!');
 
 						colorLinesGroups.push(line);
 						
@@ -273,7 +273,7 @@ NetworkEncodings.decodeNoteWork = function(code){
 
 		nLineParagraph = node._nLine;
 
-		c.l('node.nLineWeight', node.nLineWeight);
+		//c.l('node.nLineWeight', node.nLineWeight);
 
 		node._lines.forEach(function(line, i){
 
