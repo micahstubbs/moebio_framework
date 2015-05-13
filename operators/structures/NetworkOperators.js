@@ -716,23 +716,28 @@ NetworkOperators.fusionNetworks =function(networks, hubsDistanceFactor, hubsForc
 
 		net.nodeList.forEach(function(node){
 
-			c.l('• ['+node.id+']['+node.name+']');
-
 			newNode = fusionNet.nodeList.getNodeById(node.id);
 
 			if(newNode==null){
 				newNode = new Node(node.id, node.name);
 				newNode.basicId = node.basicId;
 				newNode.mapId = "map_"+i;
+				newNode.mapsIds = [newNode.mapId]
 				newNode.color = colors[i];
-				newNode.hubWeight = 0;
+				newNode.nMaps = 1;
 				newNode.weight = node.weight;
 				fusionNet.addNode(newNode);
 				mapsCluster[i].addNode(newNode);
+			} else {
+				newNode.nMaps += 1;
+				newNode.mapsIds.push("map_"+i);
+				newNode.color = 'rgb(200,200,200)';
 			}
 		});
 
 	});
+
+
 
 	networks.forEach(function(net, i){
 		net.relationList.forEach(function(relation){
@@ -750,7 +755,7 @@ NetworkOperators.fusionNetworks =function(networks, hubsDistanceFactor, hubsForc
 	for(i=0;fusionNet.nodeList[i]!=null; i++){
 		node0 = fusionNet.nodeList[i];
 		for(j=i+1;fusionNet.nodeList[j]!=null; j++){
-			if(node0.basicId==fusionNet.nodeList[j].basicId){
+			if(node0.name==fusionNet.nodeList[j].name){
 				//newRelation = new Relation(node0.id+'_'+fusionNet.nodeList[j].id, node0.id+'_'+fusionNet.nodeList[j].id, node0, fusionNet.nodeList[j]);
 				newRelation = new Relation(node0.id+'_'+fusionNet.nodeList[j].id, "same variable", node0, fusionNet.nodeList[j]);
 				newRelation.color = 'black';
@@ -764,14 +769,14 @@ NetworkOperators.fusionNetworks =function(networks, hubsDistanceFactor, hubsForc
 				newRelation.forceWeight = hubsForceWeight;
 				fusionNet.addRelation(newRelation);
 
-				newRelation.node0.hubWeight += 1;
-				newRelation.node1.hubWeight += 1;
+				newRelation.node0.nMaps += 1;
+				newRelation.node1.nMaps += 1;
 			}
 		}
 	}
 
 	for(i=0;fusionNet.nodeList[i]!=null; i++){
-		fusionNet.nodeList[i].hubWeight = Math.sqrt(fusionNet.nodeList[i].hubWeight);
+		fusionNet.nodeList[i].hubWeight = Math.sqrt(fusionNet.nodeList[i].nMaps-1);
 	}
 
 	fusionNet.mapsCluster = mapsCluster;
