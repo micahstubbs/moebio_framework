@@ -1152,8 +1152,9 @@ List.prototype.getReport=function(level){//TODO:complete
 		return text;
 	} else {
 		text += ident+"length: "+length;
+		text += ident+"first element: ["+this[0]+"]";
 	}
-
+	
 	switch(this.type){
 		case "NumberList":
 			var min = this.getMin();

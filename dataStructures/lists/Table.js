@@ -233,7 +233,7 @@ Table.prototype.getReport = function(level){
 		text += ident+"this table has no lists";
 		return text;
 	}
-
+	
 	text += ident+"name: "+this.name;
 	text += ident+"type: "+this.type;
 	text += ident+"number of lists: "+this.length;
@@ -264,7 +264,7 @@ Table.prototype.getReport = function(level){
 
 		var i;
 		for(i=0; this[i]!=null; i++){
-			text += "\n" + ident + ("("+(i+1)+"/"+this.length+")") + this[i].getReport(1);
+			text += "\n" + ident + ("("+(i)+"/0-"+(this.length-1)+")") + this[i].getReport(1);
 		}
 	}
 
