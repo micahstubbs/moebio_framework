@@ -16,6 +16,6 @@ JSONUtils.stringifyAndPrint=function(object){
  * This function is not used in the framework.
  * It's used only for GIT / Jenkins tests
  */
-JSONUtils.dummy = function(  ){
+JSONUtils.dummy2 = function(  ){
 	return null;
 }
