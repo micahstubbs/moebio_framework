@@ -11,3 +11,11 @@ JSONUtils.stringifyAndPrint=function(object){
 	c.log(jsonString);
 	c.log("__________________________________________________________________________________________________________________________________________________________");
 }
+
+/**
+ * This function is not used in the framework.
+ * It's used only for GIT / Jenkins tests
+ */
+JSONUtils.dummy = function(  ){
+	return null;
+}
