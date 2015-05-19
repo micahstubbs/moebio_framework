@@ -82,7 +82,7 @@ NetworkDraw.drawRadialNetwork = function(frame, network){
  * tags:draw
  */
 NetworkDraw.drawNetwork2D = function(frame, network, polygon, respectProportions, logScale, drawGrid, margin){
-	if(network==null || polygon==null) return;
+	if(network==null || polygon==null || polygon.type!='Polygon') return;
 
 	respectProportions = respectProportions||false;
 	logScale = logScale||false;

@@ -150,3 +150,6 @@ TableEncodings.TableToCSV=function(table, separator, namesAsHeaders){
 	
 	return headers+lines.getConcatenated("\n");
 }
+
+
+

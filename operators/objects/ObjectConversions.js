@@ -18,12 +18,13 @@ ObjectConversions = function(){};
  * @return {Object} Object of the specified type
  * tags:conversion
  */
-ObjectOperators.conversor=function(object, toType){
+ObjectConversions.conversor=function(object, toType){
 	var i;
 	var type = typeOf(object);
 	var pairType = type+"_"+toType;
+	var newList;
 
-	c.log('ObjectOperators.conversor, pairType:', pairType);
+	c.log('ObjectConversions.conversor, pairType:', pairType);
 
 	switch(pairType){
 		case 'NumberTable_Polygon':
@@ -54,7 +55,20 @@ ObjectOperators.conversor=function(object, toType){
 			return ColorScales[object]; //todo: not working, fix
 		case 'string_Table':
 			return TableEncodings.CSVtoTable(object);
+		case 'StringList_DateList': //TODO: solve cases of lists
+			newList = new DateList();
+			object.forEach(function(string){
+				newList.push(DateOperators.stringToDate(string));
+			});
+			newList.name = object.name;
+			return newList;
+		case 'DateList_NumberList': //TODO: solve cases of lists
+			return object.getTimes();
+		case 'Table_Network':
+			return NetworkConvertions.TableToNetwork(object, null, 0, false);
+
 	}
+
 	switch(toType){
 		case 'string':
 			return object.toString();

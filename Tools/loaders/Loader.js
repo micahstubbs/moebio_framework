@@ -7,110 +7,7 @@ Loader.REPORT_LOADING = false;
 Loader.n_loading = 0;
 Loader.LOCAL_STORAGE_ENABLED = false;
 
-function LoaderRequest(url, method, data){
-	this.url=url;
-	this.method=method?method:"GET";
-	this.data=data;
-}
-
-Loader.loadImage=function(url, onComplete, callee){
-	Loader.n_loading++;
-	
-	if(Loader.REPORT_LOADING) c.log("Loader.loadImage | url:", url);
-	
-	var target = callee?callee:arguments.callee;
-	var img=document.createElement('img');
-	
-	if(this.cacheActive){
-		if(this.associativeByUrls[url]!=null){
-			Loader.n_loading--;
-			//c.log('=====>>>>+==>>>+====>>=====>>>+==>> in cache:', url);
-			var e=new LoadEvent();
-			e.result=this.associativeByUrls[url];
-			e.url = url;
-			onComplete.call(target, e);
-		} else {
-			var cache = true;
-			var associative = this.associativeByUrls;
-		}
-	}
-	
-	img.onload = function(){
-		Loader.n_loading--;
-	 	var e=new LoadEvent();
-		e.result=img;
-		e.url = url;
-		if(cache) associative[url] = img;
-		onComplete.call(target, e);
-	}
-	
-	img.onerror = function (){
-		Loader.n_loading--;
-		var e=new LoadEvent();
-		e.result=null;
-		e.errorType=1 //TODO: set an error type!
-		e.errorMessage="There was a problem retrieving the image ["+img.src+"]:";
-		e.url = url;
-		onComplete.call(target, e);
-	};
-	
-	img.src=Loader.proxy+url;
-}
-
-Loader.loadJSON=function(url, onLoadComplete){
-	Loader.n_loading++;
-	
-	Loader.loadData(url, function(data){
-		Loader.n_loading--;
-		onLoadComplete.call(arguments.callee, jQuery.parseJSON(data));
-	});
-}
-
-Loader.callIndex=0;
-Loader.loadJSONP=function(url, onLoadComplete, callee){
-	Loader.n_loading++;
-	
-	Loader.callIndex=Loader.callIndex+1;
-	var index=Loader.callIndex;
-	
-	var newUrl=url+"&callback=JSONcallback"+index;
-	//var newUrl=url+"?callback=JSONcallback"+index; //   <----  WFP suggestion
-	
-	var target = callee?callee:arguments.callee;
-	
-	//c.log('Loader.loadJSONP, newUrl:', newUrl);
-
-	$.ajax({
-		url: newUrl,                                                                                                                                              
-	    type: 'GET',
-	    data: {},
-	    dataType: 'jsonp',
-	    contentType: "application/json",
-	    jsonp: 'jsonp',
-	    jsonpCallback: 'JSONcallback'+index,
-	    success: function(data){
-	    	Loader.n_loading--;
-	    	var e=new LoadEvent();
-	    	e.result=data;
-	    	onLoadComplete.call(target, e);
-	    },
-	    error:function(data){
-	    	Loader.n_loading--;
-	    	c.log("Loader.loadJSONP | error, data:", data);
-	    	
-	    	var e=new LoadEvent();
-	    	e.errorType=1;
-	    	onLoadComplete.call(target, e);
-	    }
-	});//.error(function(e){
-			// c.log('---> (((error))) B');
-// 			
-			// var e=new LoadEvent();
-			// e.errorType=1;
-		    // onLoadComplete.call(target, e);
-		// });
-}
-
+Loader.PHPurl = "http://intuitionanalytics.com/tests/proxy.php?url=";
 
 
 /**
@@ -124,9 +21,8 @@ Loader.loadData=function(url, onLoadData, callee, param, send_object_json){
 	if(Loader.REPORT_LOADING) c.log('load data:', url);
 	Loader.n_loading++;
 
-
 	if(Loader.LOCAL_STORAGE_ENABLED){
-		var result = LolacStorage.getItme(url);
+		var result = LocalStorage.getItem(url);
 		if(result){
 			var e=new LoadEvent();
 			e.url = url;
@@ -206,6 +102,118 @@ Loader.loadData=function(url, onLoadData, callee, param, send_object_json){
 		req.send(send_object_json);
 	}
 }
+
+
+function LoaderRequest(url, method, data){
+	this.url=url;
+	this.method=method?method:"GET";
+	this.data=data;
+}
+
+Loader.loadImage=function(url, onComplete, callee, param){
+	Loader.n_loading++;
+	
+	if(Loader.REPORT_LOADING) c.log("Loader.loadImage | url:", url);
+	
+	var target = callee?callee:arguments.callee;
+	var img=document.createElement('img');
+	
+	if(this.cacheActive){
+		if(this.associativeByUrls[url]!=null){
+			Loader.n_loading--;
+			//c.log('=====>>>>+==>>>+====>>=====>>>+==>> in cache:', url);
+			var e=new LoadEvent();
+			e.result=this.associativeByUrls[url];
+			e.url = url;
+			e.param = param;
+			onComplete.call(target, e);
+		} else {
+			var cache = true;
+			var associative = this.associativeByUrls;
+		}
+	}
+	
+	img.onload = function(){
+		Loader.n_loading--;
+	 	var e=new LoadEvent();
+		e.result=img;
+		e.url = url;
+		e.param = param;
+		if(cache) associative[url] = img;
+		onComplete.call(target, e);
+	}
+	
+	img.onerror = function (){
+		Loader.n_loading--;
+		var e=new LoadEvent();
+		e.result=null;
+		e.errorType=1 //TODO: set an error type!
+		e.errorMessage="There was a problem retrieving the image ["+img.src+"]:";
+		e.url = url;
+		e.param = param;
+		onComplete.call(target, e);
+	};
+	
+	img.src=Loader.proxy+url;
+}
+
+Loader.loadJSON=function(url, onLoadComplete){
+	Loader.n_loading++;
+	
+	Loader.loadData(url, function(data){
+		Loader.n_loading--;
+		onLoadComplete.call(arguments.callee, jQuery.parseJSON(data));
+	});
+}
+
+Loader.callIndex=0;
+Loader.loadJSONP=function(url, onLoadComplete, callee){
+	Loader.n_loading++;
+	
+	Loader.callIndex=Loader.callIndex+1;
+	var index=Loader.callIndex;
+	
+	var newUrl=url+"&callback=JSONcallback"+index;
+	//var newUrl=url+"?callback=JSONcallback"+index; //   <----  WFP suggestion
+	
+	var target = callee?callee:arguments.callee;
+	
+	//c.log('Loader.loadJSONP, newUrl:', newUrl);
+
+	$.ajax({
+		url: newUrl,                                                                                                                                              
+	    type: 'GET',
+	    data: {},
+	    dataType: 'jsonp',
+	    contentType: "application/json",
+	    jsonp: 'jsonp',
+	    jsonpCallback: 'JSONcallback'+index,
+	    success: function(data){
+	    	Loader.n_loading--;
+	    	var e=new LoadEvent();
+	    	e.result=data;
+	    	onLoadComplete.call(target, e);
+	    },
+	    error:function(data){
+	    	Loader.n_loading--;
+	    	c.log("Loader.loadJSONP | error, data:", data);
+	    	
+	    	var e=new LoadEvent();
+	    	e.errorType=1;
+	    	onLoadComplete.call(target, e);
+	    }
+	});//.error(function(e){
+			// c.log('---> (((error))) B');
+// 			
+			// var e=new LoadEvent();
+			// e.errorType=1;
+		    // onLoadComplete.call(target, e);
+		// });
+}
+
+
+
+
 
 //FIX THESE METHODS:
 

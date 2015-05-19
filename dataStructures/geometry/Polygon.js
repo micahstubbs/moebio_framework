@@ -78,13 +78,32 @@ Polygon.prototype.add=function(object){
 	}
 }
 
+/**
+ * scales the polygon by a number or a Point
+ * @param  {Object} value number or point
+ * @return {Polygon}
+ * tags:
+ */
 Polygon.prototype.factor=function(value){
+	var i;
 	var newPolygon = new Polygon();
-	for(var i=0;this[i]!=null;i++){
-		newPolygon[i]=this[i].factor(value);
-	}
 	newPolygon.name = this.name;
-	return newPolygon;
+
+	if(value >=0 || value < 0) {
+		for(i=0; this[i]!=null; i++){
+			newPolygon[i]=new Point(this[i].x*value, this[i].y*value);
+		}
+		
+		return newPolygon;
+	} else if(value.type!=null && value.type=='Point'){
+		for(i=0; this[i]!=null; i++){
+			newPolygon[i]=new Point(this[i].x*value.x, this[i].y*value.y);
+		}
+
+		return newPolygon;
+	}
+
+	return null;
 }
 
 

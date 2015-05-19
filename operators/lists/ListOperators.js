@@ -1,5 +1,6 @@
 function ListOperators(){};
 
+
 /**
  * gets an element in a specified position from a List
  * @param  {List} list
@@ -15,29 +16,126 @@ ListOperators.getElement = function(list, index){
 }
 
 /**
- * filters a List, by a NumberList of indexes, or by an Interval
- * @param  {List} list to be filtered
- * @param  {Object} params NumberList or Interval
- * @return {List}
- * tags:filter
+ * multi-ouput operator that gives acces to individual elements
+ * @param  {List} list
+ * 
+ * @param  {Number} fromIndex (default 0)
+ * @return {Object} first Object
+ * @return {Object} second Object
+ * @return {Object} third Object
+ * @return {Object} fourth Object
+ * @return {Object} fifth Object
+ * @return {Object} sisxth Object
+ * @return {Object} seventh Object
+ * @return {Object} eight Object
+ * @return {Object} ninth Object
+ * @return {Object} tenth Object
+ * tags:
  */
-ListOperators.getSubList = function(list, params){
-	if(list==null || params==null) return null;
-	return list.getSubList.apply(list, params.isList?[params]:params);
+ListOperators.getFirstElements = function(list, fromIndex){
+	if(list==null) return null;
+
+	fromIndex = fromIndex==null?0:Number(fromIndex);
+
+	return [
+		{
+			type:"Object",
+			name:"first value",
+			description:"first value",
+			value:list[fromIndex+0]
+		},
+		{
+			type:"Object",
+			name:"second value",
+			description:"second value",
+			value:list[fromIndex+1]
+		},
+		{
+			type:"Object",
+			name:"third value",
+			description:"third value",
+			value:list[fromIndex+2]
+		},
+		{
+			type:"Object",
+			name:"fourth value",
+			description:"fourth value",
+			value:list[fromIndex+3]
+		},
+		{
+			type:"Object",
+			name:"fifth value",
+			description:"fifth value",
+			value:list[fromIndex+4]
+		},
+		{
+			type:"Object",
+			name:"sixth value",
+			description:"sixth value",
+			value:list[fromIndex+5]
+		},
+		{
+			type:"Object",
+			name:"seventh value",
+			description:"seventh value",
+			value:list[fromIndex+6]
+		},
+		{
+			type:"Object",
+			name:"eight value",
+			description:"eight value",
+			value:list[fromIndex+7]
+		},
+		{
+			type:"Object",
+			name:"ninth value",
+			description:"ninth value",
+			value:list[fromIndex+8]
+		},
+		{
+			type:"Object",
+			name:"tenth value",
+			description:"tenth value",
+			value:list[fromIndex+9]
+		}
+	]
+}
+
+// *
+//  * filters a List, by a NumberList of indexes, or by an Interval
+//  * @param  {List} list to be filtered
+//  * @param  {Object} params NumberList or Interval
+//  * @return {List}
+ 
+// ListOperators.getSubList = function(list, params){
+// 	if(list==null || params==null) return null;
+// 	return list.getSubList.apply(list, params.isList?[params]:params);
+// }
+
+/**
+ * first position of element in list (-1 if element doesn't belong to the list)
+ * @param  {List} list
+ * @param  {Object} element
+ * @return {Number}
+ * tags:
+ */
+ListOperators.indexOf = function(list, element){
+	return list.indexOf(element);
 }
 
 /**
  * concats lists
- * @param  {List}
- * @param  {List}
+ * @param  {List} list0
+ * @param  {List} list1
  * 
- * @param  {List}
- * @param  {List}
- * @param  {List}
- * @return {List}
+ * @param  {List} list2
+ * @param  {List} list3
+ * @param  {List} list4
+ * @return {List} list5
  * tags:
  */
 ListOperators.concat = function(){
+	if(arguments == null || arguments.length==0 || arguments[0]==null) return null;
 	if(arguments.length==1) return arguments[0];
 	
 	var i;
@@ -50,17 +148,17 @@ ListOperators.concat = function(){
 
 /**
  * assembles a List
- * @param  {Object}
- * @param  {Object}
+ * @param  {Object} argument0
  * 
- * @param  {Object}
- * @param  {Object}
- * @param  {Object}
+ * @param  {Object} argument1
+ * @param  {Object} argument2
+ * @param  {Object} argument3
+ * @param  {Object} argument4
  * @return {List}
  * tags:
  */
 ListOperators.assemble = function(){
-	return List.fromArray(arguments).getImproved();
+	return List.fromArray(Array.prototype.slice.call(arguments, 0)).getImproved();
 }
 
 
@@ -72,12 +170,12 @@ ListOperators.assemble = function(){
  * @param {Boolean} consecutiveRepetitions optional false by default, if true only counts consecutive repetitions
  * @param {Number} optional limit, limits the size of the lists
  * @return {Table}
- * tags:count
+ * tags:count,toimprove
  */
-ListOperators.countElementsRepetitionOnList=function(list, sortListsByOccurrences, consecutiveRepetitions, limit){
+ListOperators.countElementsRepetitionOnList=function(list, sortListsByOccurrences, consecutiveRepetitions, limit){ //transform this, use dictionary instead of indexOf !!!!!!!
 	if(list==null) return;
 	
-	sortListsByOccurrences = sortListsByOccurrences || true;
+	sortListsByOccurrences = sortListsByOccurrences==null?true:sortListsByOccurrences;
 	consecutiveRepetitions = consecutiveRepetitions || false;
 	limit = limit==null?0:limit;
 	
@@ -105,7 +203,7 @@ ListOperators.countElementsRepetitionOnList=function(list, sortListsByOccurrence
 	} else {
 		for(i=0; list[i]!=null; i++){
 			obj = list[i];
-			index = elementList.indexOf(obj); //TODO: implement equivalence and indexOfElement operator
+			index = elementList.indexOf(obj);
 			if(index!=-1){
 				numberList[index]++;
 			} else {
@@ -146,6 +244,27 @@ ListOperators.reverse = function(list){
 	return list.getReversed();
 }
 
+/**
+ * using a table with two columns as a dictionary (first list elements to be read, second list result elements), translates a list
+ * @param  {List} list to transalte
+ * @param  {Table} dictionary table with two lists
+ *
+ * @param {Object} nullElement element to place in case no translation is found
+ * @return {List}
+ * tags:
+ */
+ListOperators.translateWithDictionary = function(list, dictionary, nullElement){
+	var newList = new List();
+	list.forEach(function(element, i){
+		index = dictionary[0].indexOf(element);
+		if(nullElement!=null){
+			newList[i] = index==-1?nullElement:dictionary[1][index];
+		} else {
+			newList[i] = index==-1?list[i]:dictionary[1][index];
+		}
+	});
+	return newList.getImproved();
+}
 
 
 // ListOperators.getIndexesOfElements=function(list, elements){
@@ -212,22 +331,6 @@ ListOperators.sortListByIndexes=function(list, indexedArray){
 	return newList;
 }
 
-// ListOperators.concat=function(){
-// 	var i;
-// 	var j;
-// 	var addList;
-// 	var newList=arguments[0].clone();
-// 	var sameType = true;
-// 	for(i=1; i<arguments.length; i++){
-// 		addList=arguments[i];
-// 		if(arguments[i].type != arguments[i-1].type) sameType = false;
-// 		for(j=0; addList[j]!=null; j++){
-// 			newList.push(addList[j]);
-// 		}
-// 	}
-// 	if(sameType) return newList;
-// 	return List.fromArray(newList);
-// }
 
 ListOperators.concatWithoutRepetitions=function(){ //?
 	var i;
@@ -305,6 +408,13 @@ ListOperators.listsIntersect=function(list0, list1){
 	return false;
 }
 
+/**
+ * returns the list of common elements between two lists
+ * @param  {List} list0
+ * @param  {List} list1
+ * @return {List}
+ * tags:
+ */
 ListOperators.getCommonElements=function(list0, list1){
 	var nums = list0.type == 'NumberList' && list1.type == 'NumberList';
 	var strs = list0.type == 'StringList' && list1.type == 'StringList';
@@ -319,6 +429,316 @@ ListOperators.getCommonElements=function(list0, list1){
 	if(nums || strs) return newList;
 	return newList.getImproved();
 }
+
+
+
+
+/**
+ * creates a List that contains the union of two List (removing repetitions)
+ * @param  {List} list A
+ * @param  {List} list B
+ * 
+ * @return {List} the union of both NumberLists
+ * tags:
+ */
+ListOperators.unionLists = function (x, y) { 
+  // Borrowed from here: http://stackoverflow.com/questions/3629817/getting-a-union-of-two-arrays-in-javascript
+  var result;
+  if( x.type != x.type || (x.type != "StringList" && x.type != "NumberList") )
+  {
+  	// To-do: call generic method here (not yet implemented)
+  	//c.l( "ListOperators.unionLists for type '" + x.type + "' or '" + y.type + "' not yet implemented" );
+  	return x.concat(y).getWithoutRepetitions();
+  	return null;
+  }
+  else
+  {
+	  var obj = {};
+	  for (var i = x.length-1; i >= 0; -- i)
+	     obj[x[i]] = x[i];
+	  for (var i = y.length-1; i >= 0; -- i)
+	     obj[y[i]] = y[i];
+	  result = x.type == "StringList" ? new StringList() : new NumberList();
+	  for (var k in obj) {
+	    if (obj.hasOwnProperty(k))  // <-- optional
+	      result.push(obj[k]);
+	  }
+	}
+  return result;
+}
+
+/**
+ * creates a List that contains the intersection of two List (elements present in BOTH lists)
+ * @param  {List} list A
+ * @param  {List} list B
+ * 
+ * @return {List} the intersection of both NumberLists
+ * tags:
+ */
+ListOperators.intersectLists = function ( a, b ) {
+  // Borrowed from here: http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
+  var result;
+  if( a.type != b.type || (a.type != "StringList" && a.type != "NumberList") )
+  {
+  	result = ListOperators.getCommonElements( a, b );
+  }
+  else
+  {
+  		result = a.type == "StringList" ? new StringList() : new NumberList();
+	  	 a = a.slice();
+	  	 b = b.slice();
+	  while( a.length > 0 && b.length > 0 )
+	  {  
+	     if      (a[0] < b[0] ){ a.shift(); }
+	     else if (a[0] > b[0] ){ b.shift(); }
+	     else /* they're equal */
+	     {
+	       result.push(a.shift());
+	       b.shift();
+	     }
+	  }
+  }
+  return result;
+}
+
+
+
+
+
+/**
+ * calculates de entropy of a list, properties _mostRepresentedValue and _biggestProbability are added to the list
+ * @param  {List} list with repeated elements (actegorical list)
+ *
+ * @param {Object} valueFollowing if a value is provided, the property _P_valueFollowing will be added to the list, with proportion of that value in the list
+ * @return {Number}
+ * tags:ds
+ */
+ListOperators.getListEntropy = function(list, valueFollowing){
+	if(list==null) return;
+	if(list.length<2){
+		if(list.length==1){
+			list._mostRepresentedValue = list[0];
+			list._biggestProbability = 1;
+			list._P_valueFollowing = list[0]==valueFollowing?1:0;
+		}
+		return 0;
+	}
+
+	var table = ListOperators.countElementsRepetitionOnList(list, true);
+	c.l('    getListEntropy | table[0]', table[0]);
+	c.l('    getListEntropy | table[1]', table[1]);
+	list._mostRepresentedValue = table[0][0];
+	var N = list.length;
+	list._biggestProbability = table[1][0]/N;
+	if(table[0].length==1){
+		list._P_valueFollowing = list[0]==valueFollowing?1:0;
+		return 0;
+	}
+	var entropy = 0;
+	
+	var norm = Math.log(table[0].length);
+	table[1].forEach(function(val){
+		entropy -= (val/N)*Math.log(val/N)/norm;
+	});
+	
+	if(valueFollowing!=null){
+		var index = table[0].indexOf(valueFollowing);
+		list._P_valueFollowing = index==-1?0:table[1][index]/N;
+	}
+
+	return entropy;
+}
+
+
+/**
+ * measures how much a feature decreases entropy when segmenting by its values a supervised variable
+ * @param  {List} feature
+ * @param  {List} supervised
+ * @return {Number}
+ * tags:ds
+ */
+
+// ListOperators.getInformationGain = function(feature, supervised){
+// 	if(feature==null || supervised==null || feature.length!=supervised.length) return null;
+
+// 	var ig = ListOperators.getListEntropy(supervised);
+// 	var childrenObject = {};
+// 	var childrenLists = [];
+// 	var N = feature.length;
+
+// 	feature.forEach(function(element, i){
+// 		if(childrenObject[element]==null){
+// 			childrenObject[element]=new List();
+// 			childrenLists.push(childrenObject[element]);
+// 		}
+// 		childrenObject[element].push(supervised[i]);
+// 	});
+
+// 	childrenLists.forEach(function(cl){
+// 		ig -= (cl.length/N)*ListOperators.getListEntropy(cl);
+// 	});
+
+// 	return ig;
+// }
+
+
+/**
+ * measures how much a feature decreases entropy when segmenting by its values a supervised variable
+ * @param  {List} feature
+ * @param  {List} supervised
+ * @return {Number}
+ * tags:ds
+ */
+ListOperators.getInformationGain = function(feature, supervised){
+	if(feature==null || supervised==null || feature.length!=supervised.length) return null;
+
+	var ig = ListOperators.getListEntropy(supervised);
+	var childrenObject = {};
+	var childrenLists = [];
+	var N = feature.length;
+	
+	feature.forEach(function(element, i){
+		if(childrenObject[element]==null){
+			childrenObject[element]=new List();
+			childrenLists.push(childrenObject[element]);
+		}
+		childrenObject[element].push(supervised[i]);
+	});
+
+	childrenLists.forEach(function(cl){
+		ig -= (cl.length/N)*ListOperators.getListEntropy(cl);
+	});
+
+	return ig;
+}
+
+ListOperators.getInformationGainAnalysis = function(feature, supervised){
+	if(feature==null || supervised==null || feature.length!=supervised.length) return null;
+
+	var ig = ListOperators.getListEntropy(supervised);
+	var childrenObject = {};
+	var childrenLists = [];
+	var N = feature.length;
+	var entropy;
+	var sets = new List();
+	
+	feature.forEach(function(element, i){
+		if(childrenObject[element]==null){
+			childrenObject[element]=new List();
+			childrenLists.push(childrenObject[element]);
+		}
+		childrenObject[element].push(supervised[i]);
+	});
+
+	childrenLists.forEach(function(cl){
+		entropy = ListOperators.getListEntropy(cl)
+		ig -= (cl.length/N)*entropy;
+
+		sets.push({
+			children:cl,
+			entropy:entropy,
+			infoGain:ig
+		})
+	});
+
+	return sets;
+}
+
+
+/**
+ * Takes a List and returns its elements grouped by identic value. Each list in the table is assigned a "valProperty" value which is used for sorting
+ * @param  {List} list of elements to group
+ * @param  {Boolean} whether the results are to be sorted or not
+ * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
+ *
+ * @param  {Boolean} fillBlanks: whether to fill missing slots or not (if data is sequential)
+ * @return {Table}
+ * tags:dani
+ */
+ListOperators.groupElements = function(list, sortedByValue, mode, fillBlanks ) {
+	if( !list )
+		return;
+	var result = ListOperators._groupElements_Base( list, null, sortedByValue, mode, fillBlanks );
+	return result;
+}
+
+
+/**
+ * Takes a List and returns its elements grouped by identic value. Each list in the table is assigned a "valProperty" value which is used for sorting
+ * @param  {List} list of elements to group
+ * @param  {String} name of the property to be used for grouping
+ * @param  {Boolean} wether the results are to be sorted or not
+ * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
+ *
+ * @param  {Boolean} fillBlanks: whether to fill missing slots or not (if data is sequential)
+ * @return {Table}
+ * tags:dani
+ */
+ListOperators.groupElementsByPropertyValue = function(list, propertyName, sortedByValue, mode, fillBlanks ) {
+	if( !list )
+		return;
+	var result = ListOperators._groupElements_Base( list, propertyName, sortedByValue, mode, fillBlanks );
+	return result;
+}
+
+
+
+ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, mode, fillBlanks) {
+	var result;
+
+	if( !list )
+		return;
+	if( mode == undefined )
+		mode = 0;
+	var resultOb = {};
+	var resultTable = new Table();
+	var pValue, item, minValue, maxValue; 
+	for (var i = 0; i < list.length; i++) {
+		item = list[i];
+		pValue = propertyName == undefined ? item : item[propertyName];
+		if( resultOb[pValue] == undefined ){
+			resultOb[pValue] = new List();
+			resultOb[pValue].name = pValue;
+			resultOb[pValue].valProperty = pValue;
+			resultTable.push( resultOb[pValue] );
+		}
+		if( mode == 0)
+			resultOb[pValue].push( item );
+		else if( mode == 1)
+			resultOb[pValue].push( i );		
+		// Update boundaries
+		if( minValue == undefined || pValue < minValue ){
+			minValue = pValue;
+		}
+		if( maxValue == undefined || pValue > maxValue ){
+			maxValue = pValue;
+		}
+	};
+
+	// Fill the blanks
+	if( fillBlanks ){
+		var numBlanks = 0;
+		for( var i=minValue; i<maxValue; i++ ){
+			if( resultOb[i] == undefined ){
+				resultOb[i] = new List();
+				resultOb[i].name = i;
+				resultOb[i].valProperty = i;
+				resultTable.push( resultOb[i] );		
+				numBlanks++;	
+			}
+		}
+		//c.l("numBlanks: ", numBlanks)
+	}
+
+	// To-do: looks like getSortedByProperty is removing the valProperty from the objects
+	if( sortedByValue )
+		resultTable = resultTable.getSortedByProperty( "name" ); // "valProperty"
+
+	return resultTable;
+
+}
+
+
 
 
 

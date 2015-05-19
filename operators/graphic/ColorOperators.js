@@ -7,9 +7,46 @@
 function ColorOperators(){};
 
 
+
+/**
+ * return a color between color0 and color1
+ * 0 -> color0
+ * 1 -> color1
+ * @param {String} color0
+ * @param {String} color1
+ * @param value between 0 and 1 (to obtain color between color0 and color1)
+ * @return {String} interpolated color
+ * 
+ */
+ColorOperators.interpolateColors=function(color0, color1, value){
+    var resultArray=ColorOperators.interpolateColorsRGB(ColorOperators.colorStringToRGB(color0), ColorOperators.colorStringToRGB(color1), value);
+    return ColorOperators.RGBtoHEX(resultArray[0], resultArray[1], resultArray[2]);
+}
+
+/**
+ * return a color between color0 and color1
+ * 0 -> color0
+ * 1 -> color1
+ * @param {Array} color0 RGB
+ * @param {Array} color1 RGB
+ * @param value between 0 and 1 (to obtain values between color0 and color1)
+ * @return {Array} interpolated RGB color
+ * 
+ */
+ColorOperators.interpolateColorsRGB=function(color0, color1, value){
+    var s = 1-value;
+    return [Math.floor(s*color0[0] + value*color1[0]), Math.floor(s*color0[1] + value*color1[1]), Math.floor(s*color0[2] + value*color1[2])];
+}
+
+
 ColorOperators.RGBtoHEX=function(red, green, blue){
 	return "#" + ColorOperators.toHex(red)+ColorOperators.toHex(green)+ColorOperators.toHex(blue);
 }
+
+ColorOperators.RGBArrayToString=function(array){
+    return 'rgb('+array[0]+','+array[1]+','+array[2]+')';
+}
+
 
 
 /**
@@ -21,6 +58,12 @@ ColorOperators.RGBtoHEX=function(red, green, blue){
 ColorOperators.HEXtoRGB=function(hexColor){
 	return [parseInt(hexColor.substr(1, 2), 16), parseInt(hexColor.substr(3, 2), 16), parseInt(hexColor.substr(5, 2), 16)];
 };
+
+
+ColorOperators.colorStringToHEX = function(color_string){
+    var rgb = ColorOperators.colorStringToRGB(color_string);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+}
 
 
 ColorOperators.numberToHex=function(number){
@@ -65,7 +108,7 @@ ColorOperators.grayByLevel=function(level){
  * 
  */
 ColorOperators.HEXtoHSV=function(hexColor){
-  var rbg=ColorOperators.HEXtoRGB(hexColor);
+  var rgb=ColorOperators.HEXtoRGB(hexColor);
   return ColorOperators.RGBtoHSV(rgb[0], rgb[1], rgb[2]);
 };
 
@@ -86,7 +129,7 @@ ColorOperators.HSLtoHEX=function(hue, saturation, light){
  * converts an RGB color to HSV
  * @param {Array} a RGB color array
  * @return {Array} returns a HSV color array
- * 
+ * H in [0,360], S in [0,1], V in [0,1]
  */
 ColorOperators.RGBtoHSV=function(r, g, b){
 	var h;
@@ -94,9 +137,9 @@ ColorOperators.RGBtoHSV=function(r, g, b){
 	var v;
 	var min = Math.min(Math.min( r, g), b );
 	var max = Math.max(Math.max( r, g), b );
-	v = max;
+	v = max/255;
 	var delta = max - min;
-	if(delta==0) return new Array(0,0,r);
+	if(delta==0) return new Array(0,0,r/255);
 	if( max != 0 ){
 		s = delta / max;
 	}else {
@@ -209,34 +252,6 @@ ColorOperators.HSLtoRGB = function(hue, saturation, light){
     return [Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255)];
 }
 
-/**
- * return a color between color0 and color1
- * 0 -> color0
- * 1 -> color1
- * @param {String} color0
- * @param {String} color1
- * @param value between 0 and 1 (to obtain color between color0 and color1)
- * @return {String} interpolated color
- * 
- */
-ColorOperators.interpolateColors=function(color0, color1, value){
-	var resultArray=ColorOperators.interpolateColorsRGB(ColorOperators.colorStringToRGB(color0), ColorOperators.colorStringToRGB(color1), value);
-	return ColorOperators.RGBtoHEX(resultArray[0], resultArray[1], resultArray[2]);
-}
-/**
- * return a color between color0 and color1
- * 0 -> color0
- * 1 -> color1
- * @param {Array} color0 RGB
- * @param {Array} color1 RGB
- * @param value between 0 and 1 (to obtain values between color0 and color1)
- * @return {Array} interpolated RGB color
- * 
- */
-ColorOperators.interpolateColorsRGB=function(color0, color1, value){
-	var s = 1-value;
-	return [Math.floor(s*color0[0] + value*color1[0]), Math.floor(s*color0[1] + value*color1[1]), Math.floor(s*color0[2] + value*color1[2])];
-}
 
 ColorOperators.invertColorRGB=function(r, g, b){
 	return [255-r, 255-g, 255-b];
@@ -245,6 +260,7 @@ ColorOperators.invertColorRGB=function(r, g, b){
 ColorOperators.addAlpha=function(color, alpha){
 	//var rgb = color.substr(0,3)=='rgb'?ColorOperators.colorStringToRGB(color):ColorOperators.HEXtoRGB(color);
     var rgb = ColorOperators.colorStringToRGB(color);
+    if(rgb==null) return 'black';
 	return 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+alpha+')';
 }
 
@@ -270,10 +286,7 @@ ColorOperators.getRandomColor=function(){
 
 /////// Universal matching
 
-ColorOperators.colorStringToHEX = function(color_string){
-	var rgb = ColorOperators.colorStringToRGB(color_string);
-	return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-}
+
 
 /**
  * This method was partially obtained (and simplified) from a Class by Stoyan Stefanov:

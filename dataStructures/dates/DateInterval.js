@@ -26,3 +26,32 @@ DateInterval.prototype.getMin=function(){
 	if(this.date0<this.date1) return this.date0;
 	return this.date1;
 }
+
+/**
+ * converts the dateInterval into an Interval (getting milliseconds time from each date)
+ * @return {Interval}
+ * tags:conversion
+ */
+DateInterval.prototype.getTimesInterval=function(){
+	return new Interval(this.date0.getTime(), this.date1.getTime());
+}
+
+/**
+ * factors the dateInterval (specially useful: factor by an interval, in which case a sub-dateInterval is selected)
+ * @param  {Object} object could be: interval
+ * @return {DateInterval}
+ * tags:
+ */
+DateInterval.prototype.getProduct = function(object){//TODO: complete with more object types
+	if(object==null) return;
+
+	if(object.type == 'Interval'){
+		var time0 = this.date0.getTime();
+		var time1 = this.date1.getTime();
+		var amp = time1-time0;
+
+		return new DateInterval(new Date(time0 + object.x*amp), new Date(time0 + object.y*amp));
+	}
+
+	return null;
+}

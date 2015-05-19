@@ -1,6 +1,15 @@
 
 function PolygonListEncodings(){};
 
+/**
+ * converts a simple format for polygons into a PolygonList
+ * @param {String} string
+ * 
+ * @param {String} separatorCoordinates "," by default
+ * @param {String} separatorPolygons "/" by default
+ * @return {PolygonList}
+ * tags:encoding
+ */
 PolygonListEncodings.StringToPolygonList=function(string, separatorCoordinates, separatorPolygons){
 	separatorCoordinates = separatorCoordinates || ",";
 	separatorPolygons = separatorPolygons||"/";
@@ -25,17 +34,26 @@ PolygonListEncodings.StringToPolygonList=function(string, separatorCoordinates, 
 	return polygonList;
 }
 
-
-PolygonListEncodings.polygonListToString=function(polygonList, separatorCoordinates, separatorPolygons){
+/**
+ * converts a polygonList into a simple text format
+ * @param {PolygonList} polygonList
+ * 
+ * @param {String} separatorCoordinates "," by default
+ * @param {String} separatorPolygons "/" by default
+ * @return {String}
+ * tags:encoding
+ */
+PolygonListEncodings.PolygonListToString=function(polygonList, separatorCoordinates, separatorPolygons){
 	separatorCoordinates = separatorCoordinates || ",";
 	separatorPolygons = separatorPolygons||"/";
 	
+	var i;
 	var j;
 	var t='';
-	for(var i=0;this[i]!=null;i++){
+	for(var i=0;polygonList[i]!=null;i++){
 		t+=(i==0?'':separatorPolygons);
-		for(j=0; this[i][j]!=null; j++){
-			t+=(j==0?'':separatorCoordinates)+this[i][j].x+separatorCoordinates+this[i][j].y;
+		for(j=0; polygonList[i][j]!=null; j++){
+			t+=(j==0?'':separatorCoordinates)+polygonList[i][j].x+separatorCoordinates+polygonList[i][j].y;
 		}
 	}
 	return t;

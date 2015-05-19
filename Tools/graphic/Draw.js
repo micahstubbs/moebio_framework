@@ -378,3 +378,4 @@ Draw.drawAndCapture=function(drawFunction, frame, target){
 	return image;
 }
 
+

@@ -20,7 +20,11 @@ cycle=function(){
 }
 
 resizeWindow=function(){
-  console.log("resizeWindow must be overriden!");
+  //console.log("resizeWindow must be overriden!");
+}
+
+lastCycle = function(){
+	//override
 }
 
 var listenerArray  = new Array();
@@ -39,33 +43,40 @@ var cY = 1; // canvas center y
 var mX = 0; // cursor x
 var mY = 0; // cursor y
 var mP = new Point(0, 0); // cursor point
-var nF = 0; // number of current frame
+var nF = 0; // number of current frame since first cycle
 
 var MOUSE_DOWN=false; //true on the frame of mousedown event
 var MOUSE_UP=false; //true on the frame of mouseup event
 var MOUSE_UP_FAST=false; //true on the frame of mouseup event
+var WHEEL_CHANGE=0; //differnt from 0 if mousewheel (or pad) moves / STATE
 var NF_DOWN; //number of frame of last mousedown event
 var NF_UP; //number of frame of last mouseup event
-var MOUSE_PRESSED; //true if mouse pressed
+var MOUSE_PRESSED; //true if mouse pressed / STATE
+var MOUSE_IN_DOCUMENT = true; //true if cursor is inside document / STATE
 var mX_DOWN; // cursor x position on last mousedown event
 var mY_DOWN; // cursor x position on last mousedown event
 var mX_UP; // cursor x position on last mousedown event
-var mY_UP; // cursor x position on last mousedown event
+var mY_UP; // cursor y position on last mousedown event
+var PREV_mX=0; // cursor x position previous frame
+var PREV_mY=0; // cursor y position previous frame
+var DX_MOUSE=0; //horizontal movement of cursor in last frame
+var DY_MOUSE=0; //vertical movement of cursor in last frame
+var MOUSE_MOVED = false; //boolean that indicates wether the mouse moved in the last frame / STATE
+var T_MOUSE_PRESSED = 0; //time in milliseconds of mouse being pressed, useful for sutained pressure detection
 
-//
-var deltaWheel = 0;
+//var deltaWheel = 0;
 var cursorStyle = 'auto';
 var backGroundColor = 'white';
 var cycleActive;
 
 //global constants
 var context;
-var hddenContext;
 var TwoPi = 2*Math.PI;
 var HalfPi = 0.5*Math.PI;
 var radToGrad = 180/Math.PI;
 var gradToRad = Math.PI/180;
-var c = console; //use c.log instead of console.log
+var c = console;
+c.l = c.log; //use c.l instead of console.log
 
 //private
 var _wheelActivated = false;
@@ -77,9 +88,16 @@ var _setIntervalId;
 var _setTimeOutId;
 var _cycleOnMouseMovement = false;
 var _interactionCancelledFrame;
-var END_CYCLE_DELAY = 3000;
+var _tLastMouseDown;
+
+var END_CYCLE_DELAY = 3000; //time in milliseconds, from last mouse movement to the last cycle to be executed in case cycleOnMouseMovement has been activated
+
+Array.prototype.last = function(){
+	return this[this.length-1];
+}
 
 window.addEventListener('load', function(){
+
  	if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
     	userAgent='IE';
     	userAgentVersion=new Number(RegExp.$1) // capture x.x portion and store as a number
@@ -102,42 +120,46 @@ window.addEventListener('load', function(){
     	userAgent='IOS';
   	}
   	
-  	c.log('[G] userAgent:', userAgent);
   	
   	Global.userAgent=userAgent;
-    Global.frameRate=30;
+    Global._frameRate=30;
     
 	canvas = document.getElementById('main');
 	
 	if(canvas!=null){
 		removeDiv = document.getElementById('removeDiv');
 		removeDiv.style.display = 'none';
-		cH=canvas.height;
-		cW=canvas.width;
+
 		context = canvas.getContext('2d');
 		
-		//hiddenContext = CanvasAndContext.createInvisibleContext();
-		
-		cW = context.canvas.width  = window.innerWidth;
-		cH = context.canvas.height = window.innerHeight;
-		
-		cX = Math.floor(cW*0.5);
-		cY = Math.floor(cH*0.5);
+		_adjustCanvas();
 		
 		canvas.addEventListener("mousemove", _onMouse, false);
 		canvas.addEventListener("mousedown", _onMouse, false);
 		canvas.addEventListener("mouseup", _onMouse, false);
+		canvas.addEventListener("mouseenter", _onMouse, false);
+		canvas.addEventListener("mouseleave", _onMouse, false);
+
+
+		activateWheel();
+
 		window.addEventListener("resize", onResize, false);
 		
 		startCycle();
 		init();
 	}
+
+	c.l('Moebio Framework v2.256 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
 	
 }, false);
 
 function _onMouse(e) {
+
 	switch(e.type){
 		case "mousemove":
+			PREV_mX=mX;
+			PREV_mY=mY;
+
 			if(e.clientX){
 				mX = e.clientX;
 		        mY = e.clientY;
@@ -150,42 +172,60 @@ function _onMouse(e) {
 		    }
 		  	mP.x = mX;
 		  	mP.y = mY;
+		  	MOUSE_IN_DOCUMENT = true;
 		  	break;
 		case "mousedown":
 			NF_DOWN = nF;
 			MOUSE_PRESSED = true;
+			T_MOUSE_PRESSED = 0;
+			_tLastMouseDown = new Date().getTime();
 			mX_DOWN = mX;
 			mY_DOWN = mY;
+			MOUSE_IN_DOCUMENT = true;
 			break;
 		case "mouseup":
 			NF_UP = nF;
 			MOUSE_PRESSED = false;
+			T_MOUSE_PRESSED = 0;
 			mX_UP = mX;
 			mY_UP = mY;
+			MOUSE_IN_DOCUMENT = true;
+			break;
+		case "mouseenter":
+			MOUSE_IN_DOCUMENT = true;
+			break;
+		case "mouseleave":
+			MOUSE_IN_DOCUMENT = false;
 			break;
 	}
 }
 
 function onResize(e){
+	_adjustCanvas();
+	resizeWindow();
+}
+
+function _adjustCanvas(){
 	if(canvasResizeable==false) return;
+
+	cW = getDocWidth();
+	cH = getDocHeight();
 	
-	canvas.setAttribute('width', document.body.clientWidth);
-    canvas.setAttribute('height', document.body.clientHeight);
-	
-	cW = context.canvas.width;
-	cH = context.canvas.height;
+	canvas.setAttribute('width', cW);
+    canvas.setAttribute('height', cH);
 	
 	cX = Math.floor(cW*0.5);
 	cY = Math.floor(cH*0.5);
-	
-	resizeWindow();
 }
+
 
 function clearContext(){
 	context.clearRect(0, 0, cW, cH);
 }
 
-function cycleOnMouseMovement(value){
+function cycleOnMouseMovement(value, time){
+	if(time!=null) END_CYCLE_DELAY = time;
+
 	if(value){
 		context.canvas.addEventListener('mousemove', onMoveCycle, false);
 		addInteractionEventListener('mousewheel', onMoveCycle, this);
@@ -198,6 +238,13 @@ function cycleOnMouseMovement(value){
 		startCycle();
 	}
 }
+
+function setFrameRate(fr){
+	fr = fr||30;
+	Global._frameRate = fr;
+
+	if(cycleActive) startCycle();
+}
 	
 function enterFrame(){
    	context.clearRect(0, 0, cW, cH);
@@ -207,7 +254,18 @@ function enterFrame(){
 	MOUSE_UP = NF_UP==nF;
 	MOUSE_UP_FAST = MOUSE_UP && (nF-NF_DOWN)<9;
 
+	DX_MOUSE = mX-PREV_mX;
+	DY_MOUSE = mY-PREV_mY;
+	MOUSE_MOVED = DX_MOUSE!=0 || DY_MOUSE!=0;
+
+	if(MOUSE_PRESSED) T_MOUSE_PRESSED = new Date().getTime() - _tLastMouseDown;
+	
   	cycle();
+
+  	WHEEL_CHANGE = 0;
+
+  	PREV_mX=mX;
+	PREV_mY=mY;
   	
   	nF++;
 }
@@ -215,7 +273,7 @@ function enterFrame(){
 function startCycle(){
 	clearTimeout(_setTimeOutId);
 	clearInterval(_setIntervalId);
-	_setIntervalId = setInterval(enterFrame, 30);
+	_setIntervalId = setInterval(enterFrame, Global._frameRate);
 	cycleActive = true;
 }
 
@@ -223,6 +281,8 @@ function startCycle(){
 function stopCycle(){
 	clearInterval(_setIntervalId);
 	cycleActive = false;
+
+	lastCycle();
 }
 
 
@@ -238,7 +298,7 @@ function reStartCycle(){
 	_prevMouseY=mY;
 	
 	if(!cycleActive){
-		_setIntervalId = setInterval(enterFrame, 30);
+		_setIntervalId = setInterval(enterFrame, Global._frameRate);
 		cycleActive = true;
 	}
 	
@@ -260,6 +320,7 @@ function addInteractionEventListener(eventType, onFunction, target){//TODO: list
 			if(!_wheelActivated) activateWheel();
 			break;
 		case 'keydown':
+		case 'keyup':
 			if(!_keyboardActivated) activateKeyboard();
 			break;
 	}
@@ -314,6 +375,7 @@ function setDivPosition(div, x, y){
 function activateKeyboard(){
 	_keyboardActivated = true;
 	document.onkeydown = onKey;
+	document.onkeyup = onKey;
 }
 function onKey(e){
 	onCanvasEvent(e);
@@ -333,15 +395,122 @@ function activateWheel(){
 	
 }
 function _onWheel(e) {
+	//c.l('_onWheel, e:', e);
+
     if (!e) e = window.event; //IE
             
     if (e.wheelDelta){
-    	deltaWheel = e.wheelDelta/120;
+    	WHEEL_CHANGE = e.wheelDelta/120;
     } else if (e.detail) { /** Mozilla case. */
-        deltaWheel = -e.detail/3;
+        WHEEL_CHANGE = -e.detail/3;
     }
-    e.value = deltaWheel;
+    e.value = WHEEL_CHANGE;
     e.type = "mousewheel"; //why this doesn't work?
+
 	onCanvasEvent(e);
 }
 
+
+
+////structures local storage
+
+setStructureLocalStorageWithSeed = function(object, seed, comments){
+	setStructureLocalStorage(object, MD5.hex_md5(seed), comments);
+}
+
+setStructureLocalStorage = function(object, id, comments){
+	var type = typeOf(object);
+	var code;
+
+	switch(type){
+		case 'string':
+			code = object;
+			break;
+		case 'Network':
+			code = NetworkEncodings.encodeGDF(network);
+			break;
+		default:
+			type = 'object';
+			code = JSON.stringify(object);
+			break;
+	}
+
+	var storageObject = {
+		id:id,
+		type:type,
+		comments:comments,
+		date:new Date(),
+		code:code
+	}
+
+	var storageString = JSON.stringify(storageObject);
+
+	// c.l('storageObject', storageObject);
+	// c.l('id:['+id+']');
+	// c.l('code.length:', code.length);
+
+	localStorage.setItem(id, storageString);
+}
+
+getStructureLocalStorageFromSeed = function(seed, returnStorageObject){
+	return getStructureLocalStorage(MD5.hex_md5(seed), returnStorageObject);
+}
+
+getStructureLocalStorage = function(id, returnStorageObject){
+	returnStorageObject = returnStorageObject||false;
+
+	var item = localStorage.getItem(id);
+
+	if(item==null) return null;
+
+
+	try{
+		var storageObject = JSON.parse(item);
+	} catch(err){
+		return null;
+	}
+
+	if(storageObject.type==null && storageObject.code==null) return null;
+	
+	var type = storageObject.type;
+	var code = storageObject.code;
+	var object;
+
+	switch(type){
+		case 'string':
+			object = code;
+			break;
+		case 'Network':
+			object = NetworkEncodings.decodeGDF(code);
+			break;
+		case 'object':
+			object = JSON.parse(code);
+			break;
+	}
+
+	if(returnStorageObject){
+		storageObject.object = object;
+		storageObject.size = storageObject.code.length;
+		storageObject.date = new Date(storageObject.date);
+		
+		return storageObject;
+	}
+
+	return object;
+}
+
+function getDocWidth() {
+    var D = document;
+    return Math.max(
+        D.body.offsetWidth, D.documentElement.offsetWidth,
+        D.body.clientWidth, D.documentElement.clientWidth
+    );
+}
+
+function getDocHeight() {
+    var D = document;
+    return Math.max(
+        D.body.offsetHeight, D.documentElement.offsetHeight,
+        D.body.clientHeight, D.documentElement.clientHeight
+    );
+}

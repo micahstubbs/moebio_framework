@@ -86,13 +86,17 @@ Interval.prototype.getInterpolatedValues=function(numberList){
 	}
 	return newNumberList;
 }
-Interval.prototype.getInverseInterpolatedValues=function(numberList){
+Interval.prototype.getInverseInterpolatedValues = function(numberList){
 	var newNumberList = new Array();
 	var nElements=numberList.length;
 	for(var i=0; i<nElements; i++){
 		newNumberList.push(this.getInverseInterpolatedValue(numberList[i]));
 	}
 	return newNumberList;
+}
+
+Interval.prototype.intersect = function(interval){
+	return new Interval( Math.max(this.x, interval.x), Math.min(this.y, interval.y) );
 }
 
 /**

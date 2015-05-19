@@ -130,7 +130,7 @@ IntervalTableDraw._isOnShape=function(prevPoint, point, prevYsup, newYsup, offX,
 
 
 
-IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, center, radius, r0, colors, texts, returnHovered, angles){
+IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, center, radius, r0, colors, texts, returnHovered, angles, angle0){
 	var nElements = intervalsFlowTable.length;
 	var i;
 	var j;
@@ -139,6 +139,7 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 	center = center==null?new Point(100,100):center;
 	radius = radius==null?200:radius;
 	r0 = r0==null?10:r0;
+	angle0 = angle0==null?0:angle0;
 	
 	var nCols = intervalsFlowTable[0].length;
 	var dA = TwoPi/nCols;
@@ -150,8 +151,8 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 	var lastIntervalList = intervalsFlowTable[nElements-1];
 	var interval;
 	
-	//var a = angles==null?0:angles[0];
 	var r = r0;
+	var s, textS;
 	
 	var prevPoint;
 	var prevRsup;
@@ -189,7 +190,7 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 		
 		context.beginPath();
 		
-		point = new Point(angles==null?0:angles[0], (1-intervalList[0].y)*dR+r0);
+		point = new Point(angles==null?0:angles[0] + angle0, (1-intervalList[0].y)*dR+r0);
 		context.moveTo(point.y*Math.cos(point.x)+center.x, point.y*Math.sin(point.x)+center.y);
 		
 		prevPoint = point;
@@ -197,7 +198,7 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 		for(j=1;j<=nCols;j++){
 
 			interval = intervalList[j%nCols];
-			point = new Point(angles==null?j*dA:angles[j%nCols], (1-interval.y)*dR+r0);
+			point = new Point(angles==null?j*dA:angles[j%nCols] + angle0, (1-interval.y)*dR+r0);
 			
 			nR = prevPoint.y/cosOffA;
 			nR2 = point.y/cosOffA;
@@ -206,7 +207,7 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 								  nR2*Math.cos(point.x-offA)+center.x, nR2*Math.sin(point.x-offA)+center.y,
 								  point.y*Math.cos(point.x)+center.x, point.y*Math.sin(point.x)+center.y);
 			
-			if(returnHovered && nHovered==-1 && this._isOnRadialShape(center, mousePoint, prevPoint.x, point.x, dR*(1-intervalList[(j-1)%nCols].y)+r0, dR*(1-intervalList[(j-1)%nCols].x)+r0, dR*(1-intervalList[j%nCols].y)+r0, dR*(1-intervalList[j%nCols].x)+r0)){
+			if(returnHovered && nHovered==-1 && this._isOnRadialShape(center, mP, prevPoint.x, point.x, dR*(1-intervalList[(j-1)%nCols].y)+r0, dR*(1-intervalList[(j-1)%nCols].x)+r0, dR*(1-intervalList[j%nCols].y)+r0, dR*(1-intervalList[j%nCols].x)+r0)){
 				nHovered = i;
 			}
 			
@@ -214,10 +215,11 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 			
 			if(texts!=null){
 				s = interval.getAmplitude();
-				if(s*radius>27){
+				textS = Math.min(Math.sqrt(s*radius)*3, 28);
+				if(textS>=8){
 					rT = point.y + s*0.5*dR;
 					
-					textsSizes.push(Math.min(Math.sqrt(s*radius)*1.8, 24));
+					textsSizes.push(textS);
 					textsAngles.push(point.x+Math.PI*0.5);
 					
 					textsX.push(rT*Math.cos(point.x)+center.x);
@@ -226,15 +228,14 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 					filteredTexts.push(texts[i]);
 				}
 			}
-			
 		}
 		
-		point = new Point(angles==null?0:angles[0], (1-intervalList[0].x)*dR+r0);
+		point = new Point(angles==null?0:angles[0] + angle0, (1-intervalList[0].x)*dR+r0);
 		context.lineTo(point.y*Math.cos(point.x)+center.x, point.y*Math.sin(point.x)+center.y);
 		prevPoint = point;
 		
 		for(j=nCols-1;j>=0;j--){
-			point = new Point(angles==null?j*dA:angles[j], (1-intervalList[j].x)*dR+r0);
+			point = new Point(angles==null?j*dA:angles[j] + angle0, (1-intervalList[j].x)*dR+r0);
 			
 			nR = prevPoint.y/cosOffA;
 			nR2 = point.y/cosOffA;
@@ -246,20 +247,16 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 			prevPoint = point;
 		}
 		
-		point = new Point(angles==null?0:angles[0], (1-intervalList[0].x)*dR+r0);
+		point = new Point(angles==null?0:angles[0] + angle0, (1-intervalList[0].x)*dR+r0);
 		context.lineTo(point.y*Math.cos(point.x)+center.x, point.y*Math.sin(point.x)+center.y);
 		
 		context.fill();
 		
 	}
 	
-	for(i=0;filteredTexts[i]!=null;i++){
-		DrawTexts.setContextTextProperties('black', textsSizes[i], 'Arial', 'center', 'middle');
-		context.save();
-		context.translate(textsX[i], textsY[i]);
-		context.rotate(textsAngles[i]);
-		context.fillText(filteredTexts[i], 0, 0);
-		context.restore();
+	for(i=0;filteredTexts[i]!=null;i++){		
+		setText('black', textsSizes[i], null, 'center', 'middle');
+		fTextRotated(filteredTexts[i], textsX[i], textsY[i], textsAngles[i]);
 	}
 	
 	return nHovered;
@@ -290,7 +287,7 @@ IntervalTableDraw._isOnRadialShape=function(center, testPoint, a0, a1, r0a, r0b,
 
 
 
-IntervalTableDraw.drawIntervalsWordsFlowTable = function(intervalsFlowTable, frame, texts, colors, typode){
+IntervalTableDraw.drawIntervalsWordsFlowTable = function(frame, intervalsFlowTable, texts, colors, typode){
 	var nElements = intervalsFlowTable.length;
 	
 	var i;

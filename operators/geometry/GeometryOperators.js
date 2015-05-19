@@ -37,6 +37,104 @@ GeometryOperators.bezierCurvePoints=function(x0, y0, c0x, c0y, c1x, c1y, x1, y1,
 	return new Point(t*fx + s*ex, t*fy + s*ey);
 }
 
+
+
+GeometryOperators.trueBezierCurveHeightHorizontalControlPoints=function(x0, x1, y0, y1, c0x, c1x, x){
+	var dx = x1-x0;
+	var x = (x-x0)/dx;
+	var c0x = (c0x-x0)/dx;
+	var c1x = (c1x-x0)/dx;
+
+	if(GeometryOperators._bezierSimpleCurveTable==null){
+		var i, p;
+
+		GeometryOperators._bezierSimpleCurveTable = new NumberList();
+
+		for(i=1; i<10000; i++){
+			p = GeometryOperators.bezierCurvePoints(0,0,c0x,0,c1x,1,1,1, i/10000);
+			GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*p.x)] = p.y;
+		}
+
+		GeometryOperators._bezierSimpleCurveTable[0] = 0;
+		GeometryOperators._bezierSimpleCurveTable[1] = 1;
+	}
+
+	//c.log('x, y0, y1, , Math.floor(1000*x), GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*x)]', x, y0, y1, Math.floor(1000*x), GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*x)]);
+
+	return GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*x)]*(y1-y0) + y0;
+
+}
+
+
+
+
+
+/**
+ * This an approximation, it doesn't take into account actual values of c0x and c1x
+ */
+//GeometryOperators.trueBezierCurveHeightHorizontalControlPointsOld=function(x0, x1, y0, y1, c0x, c1x, x){//TODO:fix
+
+	// if(GeometryOperators._bezierSimpleCurveTable==null){
+
+	// 	for(i=0; i<1000; i++){
+
+	// 	}
+
+	// }
+
+	// return GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*(x-x0)/(x1-x0))]*(y1-y0) + y0;
+
+
+
+	//
+
+	//x=3at + t^2(3-9a) + t^3(1+6a)  --> Javier
+	//http://en.wikipedia.org/wiki/Cubic_function#General_formula_for_roots
+	
+
+
+
+	//return (x-x0)/(x1-x0);// (x - x0)/(c0x + c1x - 2*x0);
+
+	//var 
+
+	// var antit = 1 - t;
+
+	// var x0t = x0 + (cx0-x0)*t;
+	// var x1t = x1 + (cx1-x1)*t;
+
+	// var xm = x0t = (x1t-x0t)*t;
+
+
+	// c.log( (x-x0)/(c0x-x0+x1 - 2*x0) );
+
+	// return (x-x0)/(c0x+x1 - 2*x0);
+
+
+	// var d0 = c0x-x0;
+	// // var d1 = c1x-x1;
+
+	// var _a = 2*d0;
+	// var _b = d0 + x1 - x0;
+	// var _c = x0 - x;
+
+	// // var _b = d0 + x1 - x0;
+	// // var _c = x0 - x;
+
+
+	// //c.log(_a, _b, _c, '-->', (-_b + Math.sqrt(_b*_b - 4*_a*_c))/(2*_a), (-_b -Math.sqrt(_b*_b - 4*_a*_c))/(2*_a));
+
+	// return [(-_b + Math.sqrt(_b*_b - 4*_a*_c))/(2*_a), (-_b -Math.sqrt(_b*_b - 4*_a*_c))/(2*_a)];
+
+
+
+
+	// var cosinus = Math.cos(Math.PI*(t-1));
+	// var sign = cosinus>0?1:-1;
+	
+	// return (0.5 + 0.5*( Math.pow(cosinus*sign, 0.6)*sign ))*(y1-y0) + y0;
+//}
+
 /**
  * This an approximation, it doesn't take into account actual values of c0x and c1x
  */
@@ -63,11 +161,13 @@ GeometryOperators.distanceToBezierCurve=function(x0, y0, c0x, c0y, c1x, c1y, x1,
 	var d0I = Math.pow(p0I.x-p.x, 2) + Math.pow(p0I.y-p.y, 2);
 	var d1 = Math.pow(p1.x-p.x, 2) + Math.pow(p1.y-p.y, 2);
 	var d1I = Math.pow(p1I.x-p.x, 2) + Math.pow(p1I.y-p.y, 2);
+
+	var i;
 	
 	var pM;
 	var pMI;
 	
-	for(var i=0; i<10; i++){
+	for(i=0; i<10; i++){
 		pM = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, (t0+t1)*0.5);
 		pMI = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, (t0+t1)*0.5 + minDT);
 		
@@ -125,7 +225,7 @@ GeometryOperators.distancePointToLine = function(point, line){
 
 GeometryOperators.distancePointToSegment = function(point, point0Segment, point1Segment){
 	var m = point0Segment.x==point1Segment.x?Infinity:(point1Segment.y-point0Segment.y)/(point1Segment.x-point0Segment.x);
-	line = m==Infinity?new Point(Infinity, point0Segment.x):new Point(m, point0Segment.y-m*point0Segment.x);
+	var line = m==Infinity?new Point(Infinity, point0Segment.x):new Point(m, point0Segment.y-m*point0Segment.x);
 	var m2;
 	var b2;
 	if(line.x==0){

@@ -82,7 +82,7 @@ FastHtml.expand=function(abreviatedHTML, scope, onEvent){
 			if(href.substr(0,7)=="http://" || href.substr(0,8)=="https://"){
 				newText = newText.replace("<e"+bit+">", "<u><a href='"+href+"' target='"+target+"'>"+text+"</a></u>");
 			} else {
-				var index=getUniqueGlobalFunc(onEvent, scope);
+				//var index=getUniqueGlobalFunc(onEvent, scope);
 				//newText = newText.replace("<e"+bit+">", "<u><a href='javascript:clickLink()' onclick='event.preventDefault(); executeUniqueGlobalFunc("+index+", "+href+");return false; '>"+text+"</a></u>");
 				newText = newText.replace("<e"+bit+">", "<u><a href='javascript:FastHtml.clickLink(\""+href+"\")' FastHtml.onclick='event.preventDefault(); clickLink(\""+href+"\"); return false; '>"+text+"</a></u>");
 			}
@@ -162,4 +162,9 @@ FastHtml.findAndPlaceTwitterAdresses=function(text){
 	}
 	
 	return (blocks.length==0 || blocks.length==1)?text:blocks2.join('');
+}
+
+FastHtml.getColorTag=function(color){
+	color = ColorOperators.colorStringToHEX(color);
+	return "<font color=\""+color+"\">";
 }

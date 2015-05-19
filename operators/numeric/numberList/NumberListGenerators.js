@@ -1,11 +1,13 @@
 function NumberListGenerators(){};
 
 /**
- * Generates a NumberList with sorted Numbers
+ * Generate a NumberList with sorted Numbers
  * @param {Number} nValues length of the NumberList
+ * 
  * @param {Number} start first value
  * @param {Number} step increment value
- * @return {Number} generated NumberList
+ * @return {NumberList} generated NumberList
+ * tags:generator
  */
 NumberListGenerators.createSortedNumberList=function(nValues, start, step){
 	start = start || 0;
@@ -30,6 +32,15 @@ NumberList.createNumberListFromInterval=function(nElements, interval){
 	return numberList;
 }
 
+/**
+ * create a list with random numbers
+ * @param  {Number} nValues
+ * 
+ * @param  {Interval} interval range of the numberList
+ * @param  {Number} seed optional seed for seeded random numbers
+ * @return {NumberList}
+ * tags:random
+ */
 NumberListGenerators.createRandomNumberList=function(nValues, interval, seed, func){
 	seed = seed==null?-1:seed;
 	interval = interval==null?new Interval(0,1):interval;

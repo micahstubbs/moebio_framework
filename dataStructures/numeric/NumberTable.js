@@ -8,12 +8,22 @@ NumberTable.prototype.constructor=NumberTable;
 function NumberTable () {
 	var args=[];
 	var newNumberList;
-	for(var i=0; arguments[i]!=null; i++){
-		newNumberList = NumberList.fromArray(arguments[i]);
-		newNumberList.name = arguments[i].name;
-		arguments[i]=newNumberList;
+	var array
+
+	if(arguments.length>0 && Number(arguments[0])==arguments[0]){
+		array = [];
+		var i;
+		for(i=0;i<arguments[0];i++){
+			array.push(new NumberList());
+		}
+	} else {
+		for(var i=0; arguments[i]!=null; i++){
+			newNumberList = NumberList.fromArray(arguments[i]);
+			newNumberList.name = arguments[i].name;
+			arguments[i]=newNumberList;
+		}
+		array=Table.apply(this, arguments);
 	}
-	var array=Table.apply(this, arguments);
 	array=NumberTable.fromArray(array);
    	return array;
 }
@@ -87,10 +97,14 @@ NumberTable.prototype.getNumberListsNormalizedToSum=function(){
 
 NumberTable.prototype.getMax=function(){
 	if(this.length==0) return null;
-	var max=(this[0]).getMax();
-	for(var i=1; this[i]!=null; i++){
+
+	var max=this[0].getMax();
+	var i;
+
+	for(i=1; this[i]!=null; i++){
 		max = Math.max(this[i].getMax(), max);
 	}
+	
 	return max;
 }
 
@@ -105,6 +119,11 @@ NumberTable.prototype.getMinMaxInterval=function(){
 	return rangeInterval;
 }
 
+/**
+ * returns a numberList with values from numberlists added
+ * @return {Numberlist}
+ * tags:
+ */
 NumberTable.prototype.getSums=function(){
 	var numberList = new NumberList();
 	for(var i=0; this[i]!=null; i++){
@@ -113,6 +132,11 @@ NumberTable.prototype.getSums=function(){
 	return numberList;
 }
 
+/**
+ * returns a numberList with all values fro rows added
+ * @return {NumberList}
+ * tags:
+ */
 NumberTable.prototype.getRowsSums=function(){
 	var sums = this[0].clone();
 	var numberList;

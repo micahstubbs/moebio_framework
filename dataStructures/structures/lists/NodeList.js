@@ -6,9 +6,20 @@ NodeList.prototype.constructor=NodeList;
 */
 
 function NodeList(){
-	var array=List.apply(this, arguments);
-	//
-	array=NodeList.fromArray(array);
+	//var array=List.apply(this, arguments);
+	
+	//if(arguments && arguments.length>0) {c.l('UEUEUEUE, arguments.length', arguments.length); var a; a.push(0)};
+
+	array=NodeList.fromArray([]);
+
+	if(arguments && arguments.length>0){
+		var args = Array.prototype.slice.call(arguments);
+
+		args.forEach(function(arg){
+			array.addNode(arg);
+		});
+	}
+
    	return array;
 }
 
@@ -24,12 +35,14 @@ NodeList.fromArray=function(array, forceToNode){
 	
 	var result=List.fromArray(array);
 	result.type="NodeList";
-	result.ids =  new Object();Array();//
+	result.ids =  new Object();Array();//????
+
    	//assign methods to array:
    	result.deleteNodes=NodeList.prototype.deleteNodes;
    	result.addNode=NodeList.prototype.addNode;
    	result.addNodes=NodeList.prototype.addNodes;
    	result.removeNode=NodeList.prototype.removeNode;
+   	result.removeNodeAtIndex=NodeList.prototype.removeNodeAtIndex;
    	result.getNodeByName=NodeList.prototype.getNodeByName;
    	result.getNodeById=NodeList.prototype.getNodeById;
    	result.getNodesByIds=NodeList.prototype.getNodesByIds;
@@ -39,9 +52,13 @@ NodeList.fromArray=function(array, forceToNode){
    	result.getIds=NodeList.prototype.getIds;
    	result.getDegrees=NodeList.prototype.getDegrees;
    	result.getPolygon=NodeList.prototype.getPolygon;
-   	
+
+   	result._push = Array.prototype.push;
+   	result.push = function(a){c.l('with nodeList, use addNode instead of push'); var k; k.push(a)};
+
    	//overriden
    	result.getWithoutRepetitions=NodeList.prototype.getWithoutRepetitions;
+   	result.clone=NodeList.prototype.clone;
 
 	return result;
 }
@@ -55,11 +72,12 @@ NodeList.prototype.removeNodes=function(){
 
 NodeList.prototype.addNode=function(node){
 	this.ids[node.id] = node;
-  	this.push(node);
+  	this._push(node);
 }
 
 NodeList.prototype.addNodes=function(nodes){
-	for(var i=0; nodes[i]!=null; i++){
+	var i;
+	for(i=0; nodes[i]!=null; i++){
 		this.addNode(nodes[i]);
 	}
 }
@@ -67,6 +85,11 @@ NodeList.prototype.addNodes=function(nodes){
 NodeList.prototype.removeNode=function(node){
 	this.ids[node.id] = null;
 	this.removeElement(node);
+}
+
+NodeList.prototype.removeNodeAtIndex=function(index){
+	this.ids[this[index].id] = null;
+	this.splice(index, 1);
 }
 
 /**
@@ -96,6 +119,13 @@ NodeList.prototype.getNodeByName=function(name){
   	}
   	return null;
 }
+
+/**
+ * return a node from its id
+ * @param  {String} id
+ * @return {Node}
+ * tags:search
+ */
 NodeList.prototype.getNodeById=function(id){
 	return this.ids[id];
 }
@@ -110,7 +140,11 @@ NodeList.prototype.getNodesByIds=function(ids){
 	return newNodelist;
 }
 
-
+/**
+ * return a list of weights
+ * @return {NumberList}
+ * tags:
+ */
 NodeList.prototype.getWeights=function(){
 	var numberList = new NumberList();
 	for(var i=0; this[i]!=null; i++){
@@ -119,6 +153,11 @@ NodeList.prototype.getWeights=function(){
   	return numberList;
 }
 
+/**
+ * get ids from nodes
+ * @return {StringList}
+ * tags:
+ */
 NodeList.prototype.getIds=function(){
 	var list = new StringList();
 	for(var i=0; this[i]!=null; i++){
@@ -151,9 +190,17 @@ NodeList.prototype.getNewId=function(){
 	}
 }
 
+NodeList.prototype.clone=function(){
+	var newNodeList = new NodeList();
+	this.forEach(function(node){
+		newNodeList.addNode(node);
+	});
+	newNodeList.name = this.name;
+	return newNodeList;
+}
+
 
 //methods overriden
-
 NodeList.prototype.getWithoutRepetitions=function(){
 	newList = new NodeList();
 	newList.name = this.name;

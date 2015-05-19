@@ -40,7 +40,18 @@ NumberOperators.numberFromBinaryValues = function(binaryValues){
 }
 
 NumberOperators.powersOfTwoDecomposition = function(number, length) {
-	var powers = new NumberList();
+  // var i;
+  // var powers = StringList.fromArray(Number(number).toString(2).split('')).toNumberList().getReversed();
+  // var n = powers.length;
+  // for(i=n; i<length; i++){
+  //   powers.push(0);
+  // }
+  // return powers;
+
+
+
+  var powers = new NumberList();
+
 	var constructingNumber = 0;
 	var biggestPower;
 	

@@ -1,7 +1,3 @@
-/**
-* NumberTable_or_PolygonDraw
-* @constructor
-*/
 function NumberTableDraw(){};
 
 /**
@@ -16,7 +12,7 @@ function NumberTableDraw(){};
  * tags:draw
  */
 NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listColorsIndependent, margin){
-	if(frame==null || numberTable==null || numberTable.type!="NumberTable" || numberTable.length<2) return; //todo:provisional, this is System's work
+	if(frame==null || numberTable==null || numberTable.type==null || numberTable.type!="NumberTable" || numberTable.length<2) return null;
 	
 	colorScale = colorScale==null?ColorScales.blueToRed:colorScale;
 	listColorsIndependent = listColorsIndependent||false;
@@ -43,7 +39,7 @@ NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listC
 	
 	for(i=0;numberTable[i]!=null;i++){
 		numberList = numberTable[i];
-		x = frame.x+i*dX;
+		x = Math.round(frame.x+i*dX);
 		mouseXOnColumn = mX>x && mX<=x+dX;
 		if(listColorsIndependent){
 			minMaxInterval = numberList.getMinMaxInterval();
@@ -51,7 +47,7 @@ NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listC
 		}
 		for(j=0;numberList[j]!=null;j++){
 			context.fillStyle = colorScale((numberList[j]-minMaxInterval.x)/amp);
-			context.fillRect(x, frame.y+j*dY,dX-margin,dY-margin);
+			context.fillRect(x, Math.round(frame.y+j*dY), Math.ceil(dX)-margin, Math.ceil(dY)-margin);
 			if(mouseXOnColumn && mY>frame.y+j*dY && mY<=frame.y+(j+1)*dY) overCoordinates=new Point(i,j);
 		}
 	}
@@ -73,10 +69,10 @@ NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listC
  * tags:draw
  */
 NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colors, maxRadius, loglog, margin){
-	if(frame==null || numberTable==null || numberTable.type!="NumberTable") return; //todo:provisional, this is System's work
+	if(frame==null || numberTable==null || numberTable.type!="NumberTable" ||  numberTable.length<2 ||  numberTable[0].length==0 || numberTable[1].length==0) return; //todo:provisional, this is System's work
 
 	if(numberTable.length<2) return;
-
+	
 	maxRadius = maxRadius||20;
 	loglog = loglog||false;
 	margin = margin||0;
@@ -90,17 +86,15 @@ NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colo
 	var list1 = (loglog?numberTable[1].log(1):numberTable[1]).getNormalized();
 	var radii = numberTable.length<=2?null:numberTable[2].getNormalized().sqrt().factor(maxRadius);
 	var nColors = (colors==null)?null:colors.length;
-	var n = Math.min(list0.length, list1.length, (radii==null)?2000:radii.length, (texts==null)?2000:texts.length);
+	var n = Math.min(list0.length, list1.length, (radii==null)?300000:radii.length, (texts==null)?300000:texts.length);
 	var iOver;
-
-
 
 	for(i=0; i<n; i++){
 		x = subframe.x + list0[i]*subframe.width;
 		y = subframe.bottom - list1[i]*subframe.height;
-
+		
 		if(radii==null){
-			if(NumberTableDraw._drawCrossScatterPlot(x, y)) iOver = i;
+			if(NumberTableDraw._drawCrossScatterPlot(x, y, colors==null?'rgb(150,150,150)':colors[i%nColors])) iOver = i;
 		} else {
 			setFill(colors==null?'rgb(150,150,150)':colors[i%nColors]);
 			if(fCircleM(x, y, radii[i], radii[i]+1)) iOver = i;
@@ -120,13 +114,12 @@ NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colo
 	if(iOver!=null){
 		setCursor('pointer');
 		return iOver;
-	} 
-
+	}
 }
-NumberTableDraw._drawCrossScatterPlot = function(x, y){
-	setStroke('black', 1);
-	line(x,y-5,x,y+5);
-	line(x-5,y,x+5,y);
+NumberTableDraw._drawCrossScatterPlot = function(x, y, color){
+	setStroke(color, 1);
+	line(x,y-2,x,y+2);
+	line(x-2,y,x+2,y);
 	return Math.pow(mX-x, 2)+Math.pow(mY-y, 2)<25;
 }
 
@@ -207,8 +200,6 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
 	//setup
 	if(frame.memory==null || coordinates!=frame.memory.coordinates || colorScale!=frame.memory.colorScale){
 
-		c.log('coordinates[0]',coordinates[0]);
-
 		var isNumberTable = coordinates[0].x==null;
 
 		if(isNumberTable){
@@ -241,11 +232,11 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
 
 		for(i=0; i<n; i++){
 			if(isNumberTable){
-				x = numberTable[0][i]-minx;
-				y = numberTable[1][i]-miny;
+				x = Math.floor(numberTable[0][i]-minx);
+				y = Math.floor(numberTable[1][i]-miny);
 			} else {
-				x = polygon[i].x-minx;
-				y = polygon[i].y-miny;
+				x = Math.floor(polygon[i].x-minx);
+				y = Math.floor(polygon[i].y-miny);
 			}
 
 			if(matrix[x]==null) matrix[x] = new NumberList();
@@ -270,9 +261,12 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
 			colorScale:colorScale,
 			selected:null
 		}
+
 	} else {
 		matrixColors = frame.memory.matrixColors;
 	}
+
+	//c.log(matrixColors.length, matrixColors[0].length, matrixColors[0][0]);
 
 	//draw
 	var subframe = new Rectangle(frame.x+margin, frame.y+margin, frame.width-margin*2, frame.height-margin*2);
@@ -323,9 +317,8 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
 	if(frame.memory.selected) return frame.memory.indexes;
 }
 
-
 /**
- * draws a Steamgraph
+ * draws a steamgraph
  * @param  {Rectangle} frame
  * @param  {NumberTable} numberTable
  *
@@ -333,34 +326,351 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
  * @param {Boolean} sorted sort flow polygons
  * @param {Number} intervalsFactor number between 0 and 1, factors the height of flow polygons 
  * @param {Boolean} bezier draws bezier (soft) curves
- * @param  {ColorList} colorList colors of polygons
- * @param  {Number} margin
+ * @param {ColorList} colorList colors of polygons
+ * @param {StringList} horizontalLabels to be placed in the bottom
+ * @param {Boolean} showValues show values in the stream
+ * @param {Number} logFactor if >0 heights will be transformed logaritmically log(logFactor*val + 1)
  * @return {NumberList} list of positions of elements on clicked coordinates
  * tags:draw
  */
-NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, bezier, colorList){
-	if(numberTable==null || numberTable.length<2 || numberTable.type!="NumberTable") return; //todo:provisional, this is System's work
+NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, bezier, colorList, horizontalLabels, showValues, logFactor){
+	if(numberTable==null || numberTable.length<2 || numberTable.type!="NumberTable") return;
+
+	bezier = bezier==null?true:bezier;
 
 	//var self = NumberTableDraw.drawStreamgraph;
 
 	intervalsFactor = intervalsFactor==null?1:intervalsFactor;
 
 	//setup
-	if(frame.memory==null || numberTable!=frame.memory.numberTable || normalized!=frame.memory.normalized || sorted!=frame.memory.sorted || intervalsFactor!=frame.memory.intervalsFactor || intervalsFactor!=frame.memory.intervalsFactor){
+	if(frame.memory==null || numberTable!=frame.memory.numberTable || normalized!=frame.memory.normalized || sorted!=frame.memory.sorted || intervalsFactor!=frame.memory.intervalsFactor || bezier!=frame.memory.bezier || frame.width!=frame.memory.width || frame.height!=frame.memory.height || logFactor!=frame.memory.logFactor){
+		var nT2 = logFactor?numberTable.applyFunction(function(val){return Math.log(logFactor*val+1)}):numberTable;
+
 		frame.memory = {
 			numberTable:numberTable,
 			normalized:normalized,
 			sorted:sorted,
 			intervalsFactor:intervalsFactor,
-			flowIntervals:IntervalTableOperators.scaleIntervals(NumberTableFlowOperators.getFlowTableIntervals(numberTable, normalized, sorted), intervalsFactor)
+			bezier:bezier,
+			flowIntervals:IntervalTableOperators.scaleIntervals(NumberTableFlowOperators.getFlowTableIntervals(nT2, normalized, sorted), intervalsFactor),
+			fOpen:1,
+			names:numberTable.getNames(),
+			mXF:mX,
+			width:frame.width,
+			height:frame.height,
+			logFactor:logFactor,
+			image:null
 		}
-
-		frame.secret = "hola!";
 	}
+
+	if(colorList && frame.memory.colorList!=colorList) frame.memory.image=null;
+	
 	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
-		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(1, numberTable.length):colorList;
+		frame.memory.actualColorList = colorList==null?ColorListGenerators.createDefaultCategoricalColorList(numberTable.length, 0.7):colorList;
 		frame.memory.colorList = colorList;
 	}
 
-	IntervalTableDraw.drawIntervalsFlowTable(frame.memory.flowIntervals, frame, frame.memory.actualColorList, bezier, 0.3);
+	var flowFrame = new Rectangle(0, 0, frame.width, horizontalLabels==null?frame.height:(frame.height-14));
+
+	if(frame.memory.image==null){
+		///// capture image
+		var newCanvas = document.createElement("canvas");
+		newCanvas.width = frame.width;
+		newCanvas.height = frame.height;
+		var newContext = newCanvas.getContext("2d");
+		newContext.clearRect(0,0,frame.width,frame.height);
+		var mainContext = context;
+		context = newContext;
+		IntervalTableDraw.drawIntervalsFlowTable(frame.memory.flowIntervals, flowFrame, frame.memory.actualColorList, bezier, 0.3);
+		context = mainContext;
+		frame.memory.image = new Image();
+		frame.memory.image.src = newCanvas.toDataURL();
+		/////
+	}
+
+	if(frame.memory.image){
+		
+		frame.memory.fOpen = 0.8*frame.memory.fOpen + 0.2*(frame.containsPoint(mP)?0.8:1);
+		frame.memory.mXF = 0.7*frame.memory.mXF + 0.3*mX;
+		frame.memory.mXF = Math.min(Math.max(frame.memory.mXF, frame.x), frame.getRight());
+		
+		if(frame.memory.fOpen<0.999){
+			context.save();
+			context.translate(frame.x, frame.y);
+			var cut = frame.memory.mXF-frame.x;
+			var x0 = Math.floor(cut*frame.memory.fOpen);
+			var x1 = Math.ceil(frame.width-(frame.width-cut)*frame.memory.fOpen);
+			
+			drawImage(frame.memory.image, 0,0,cut,flowFrame.height,0,0,x0,flowFrame.height);
+			drawImage(frame.memory.image, cut,0,(frame.width-cut),flowFrame.height,x1,0,(frame.width-cut)*frame.memory.fOpen,flowFrame.height);
+
+			NumberTableDraw._drawPartialFlow(flowFrame, frame.memory.flowIntervals, frame.memory.names, frame.memory.actualColorList, cut, x0, x1, 0.3, sorted, showValues?numberTable:null);
+
+			context.restore();
+		} else {
+			drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+		}
+	}
+
+	if(horizontalLabels) NumberTableDraw._drawHorizontalLabels(frame, frame.getBottom()-5, numberTable, horizontalLabels, x0, x1);
 }
+NumberTableDraw._drawHorizontalLabels = function(frame, y, numberTable, horizontalLabels, x0, x1){
+	var dx = frame.width/(numberTable[0].length-1);
+	var x;
+	var mX2 = Math.min(Math.max(mX, frame.x+1), frame.getRight()-1);
+	var iPosDec = (mX2-frame.x)/dx;
+	var iPos = Math.round(iPosDec);
+
+	x0 = x0==null?frame.x:x0+frame.x;
+	x1 = x1==null?frame.x:x1+frame.x;
+	
+	horizontalLabels.forEach(function(label, i){
+		setText('black', (i==iPos && x1>(x0+4))?14:10, null, 'center', 'middle');
+
+		if(x0>x1-5){
+			x = frame.x + i*dx;
+		} else if(iPos==i){
+			x = (x0 + x1)*0.5 - (x1-x0)*(iPosDec-iPos);
+		} else {
+			x = frame.x + i*dx;
+			if(x<mX2){
+				x = frame.x + i*dx*frame.memory.fOpen;
+			} else if(x>mX2){
+				x = frame.x + i*dx*frame.memory.fOpen + (x1-x0);
+			}
+		}
+		fText(horizontalLabels[i], x, y);
+	});
+}
+NumberTableDraw._drawPartialFlow=function(frame, flowIntervals, labels, colors, x, x0, x1, OFF_X, sorted, numberTable){	
+	var w = x1-x0;
+	var wForText = numberTable==null?(x1-x0):(x1-x0)*0.85;
+
+	var nDays = flowIntervals[0].length;
+
+	var wDay = frame.width/(nDays-1);
+	
+	var iDay =  (x-frame.x)/wDay;// Math.min(Math.max((nDays-1)*(x-frame.x)/frame.width, 0), nDays-1);
+	
+	var iDay = Math.max(Math.min(iDay, nDays-1), 0);
+
+	var i;
+	var i0 = Math.floor(iDay);
+	var i1 = Math.ceil(iDay);
+	
+	var t = iDay - i0;
+	var s = 1-t;
+	
+	var xi;
+	var yi;
+	
+	var interval0;
+	var interval1;
+
+	var y, h;
+	
+	var wt;
+	var pt;
+	
+	var text;
+	
+	var offX = OFF_X*wDay;//*(frame.width-(x1-x0))/nDays; //not taken into account
+	
+	//var previOver = iOver;
+	var iOver = -1;
+
+	var X0, X1, xx;
+
+	var ts0, ts1;
+
+	for(i=0; flowIntervals[i]!=null; i++){
+		
+		setFill(colors[i]);
+		interval0 = flowIntervals[i][i0];
+		interval1 = flowIntervals[i][i1];
+
+		X0 = Math.floor(iDay)*wDay;
+		X1 = Math.floor(iDay+1)*wDay;
+
+		xx = x;
+
+		y = GeometryOperators.trueBezierCurveHeightHorizontalControlPoints(X0, X1, interval0.x, interval1.x, X0+offX, X1-offX, xx);
+		h = GeometryOperators.trueBezierCurveHeightHorizontalControlPoints(X0, X1, interval0.y, interval1.y, X0+offX, X1-offX, xx)-y;
+
+		y = y*frame.height + frame.y;
+		h *= frame.height;
+		
+		//if(h<1) continue;
+		
+		if(fRectM(x0,y, w, h)) iOver = i;
+		
+		if(h>=5 && w>40){
+			setText('white', h, null, null, 'middle');
+			
+			text = labels[i];
+			
+			wt = getTextW(text);
+			pt = wt/wForText;
+
+			if(pt>1){
+				setText('white', h/pt, null, null, 'middle');
+			}
+			
+			context.fillText(text, x0, y + h*0.5);
+
+			if(numberTable){
+				wt = getTextW(text);
+
+				ts0 = Math.min(h, h/pt);
+				ts1 = Math.max(ts0*0.6, 8);
+
+				setText('white', ts1, null, null, 'middle');
+				fText(Math.round(numberTable[i][i0]), x0 + wt + w*0.03, y + (h+(ts0-ts1)*0.5)*0.5);
+			}
+
+
+		}
+	}
+
+	return iOver;
+}
+
+
+
+/**
+ * draws a circular steamgraph Without labels
+ * @param {Rectangle} frame
+ * @param {NumberTable} numberTable
+ *
+ * @param {Boolean} normalized normalize each column, making the graph of constant height
+ * @param {Boolean} sorted sort flow polygons
+ * @param {Number} intervalsFactor number between 0 and 1, factors the height of flow polygons
+ * @param {ColorList} colorList colors of polygons
+ * @param {List} names names of rows
+ * @return {NumberList} list of positions of elements on clicked coordinates
+ * tags:draw
+ */
+NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, colorList, names){
+	if(numberTable==null || numberTable.length<2 || numberTable[0].length<2 || numberTable.type!="NumberTable") return;
+
+	intervalsFactor = intervalsFactor==null?1:intervalsFactor;
+
+	//setup
+	if(frame.memory==null || numberTable!=frame.memory.numberTable || normalized!=frame.memory.normalized || sorted!=frame.memory.sorted || intervalsFactor!=frame.memory.intervalsFactor || frame.width!=frame.memory.width || frame.height!=frame.memory.height){
+		frame.memory = {
+			numberTable:numberTable,
+			normalized:normalized,
+			sorted:sorted,
+			intervalsFactor:intervalsFactor,
+			flowIntervals:IntervalTableOperators.scaleIntervals(NumberTableFlowOperators.getFlowTableIntervals(numberTable, normalized, sorted), intervalsFactor),
+			fOpen:1,
+			names:numberTable.getNames(),
+			mXF:mX,
+			width:frame.width,
+			height:frame.height,
+			radius:Math.min(frame.width, frame.height)*0.46 - (names==null?0:8),
+			r0:Math.min(frame.width, frame.height)*0.05,
+			angles:new NumberList(),
+			zoom:1,
+			angle0:0,
+			image:null
+		}
+
+		var dA = TwoPi/numberTable[0].length;
+		numberTable[0].forEach(function(val, i){
+			frame.memory.angles[i] = i*dA;
+		});
+	}
+	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
+		frame.memory.actualColorList = colorList==null?ColorListGenerators.createDefaultCategoricalColorList(numberTable.length, 0.4):colorList;
+		frame.memory.colorList = colorList;
+	}
+
+	var mouseOnFrame = frame.containsPoint(mP);
+	
+	if(mouseOnFrame){
+		if(MOUSE_DOWN){
+			frame.memory.downX = mX;
+			frame.memory.downY = mY;
+			frame.memory.pressed = true;
+			frame.memory.zoomPressed = frame.memory.zoom;
+			frame.memory.anglePressed = frame.memory.angle0;
+		}
+		
+		frame.memory.zoom*=(1-0.4*WHEEL_CHANGE);
+	}
+
+	if(MOUSE_UP) frame.memory.pressed = false;
+	if(frame.memory.pressed){
+		var center = frame.getCenter();
+		var dx0 = frame.memory.downX-center.x;
+		var dy0 = frame.memory.downY-center.y;
+		var d0 = Math.sqrt(Math.pow(dx0, 2) + Math.pow(dy0, 2));
+		var dx1 = mX-center.x;
+		var dy1 = mY-center.y;
+		var d1 = Math.sqrt(Math.pow(dx1, 2) + Math.pow(dy1, 2));
+		frame.memory.zoom = frame.memory.zoomPressed*((d1+5)/(d0+5));
+		var a0 = Math.atan2(dy0, dx0);
+		var a1 = Math.atan2(dy1, dx1);
+		frame.memory.angle0 = frame.memory.anglePressed + a1 - a0;
+	}
+
+	if(mouseOnFrame) frame.memory.image = null;
+	
+	var captureImage = frame.memory.image==null && !mouseOnFrame;
+	var drawingImage = !mouseOnFrame && frame.memory.image!=null && !captureImage;
+
+	if(drawingImage){
+		drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+	} else {
+		if(captureImage){
+			var newCanvas = document.createElement("canvas");
+			newCanvas.width = frame.width;
+			newCanvas.height = frame.height;
+			var newContext = newCanvas.getContext("2d");
+			newContext.clearRect(0,0,frame.width,frame.height);
+			var mainContext = context;
+			context = newContext;
+			var prevFx = frame.x;
+			var prevFy = frame.y;
+			frame.x = 0;
+			frame.y = 0;
+			setFill('white');
+			fRect(0,0,frame.width,frame.height);
+		}
+
+		context.save();
+		clipRectangle(frame.x, frame.y, frame.width, frame.height);
+
+		IntervalTableDraw.drawCircularIntervalsFlowTable(frame.memory.flowIntervals, frame.getCenter(), frame.memory.radius*frame.memory.zoom, frame.memory.r0, frame.memory.actualColorList, frame.memory.names, true, frame.memory.angles, frame.memory.angle0);
+
+		context.restore();
+
+		if(names){
+			var a;
+			var r = frame.memory.radius*frame.memory.zoom+8;
+
+			setText('black', 14, null, 'center', 'middle');
+
+			names.forEach(function(name, i){
+				a = frame.memory.angle0 + frame.memory.angles[i];
+
+				fTextRotated(String(name), frame.getCenter().x + r*Math.cos(a), frame.getCenter().y + r*Math.sin(a), a+HalfPi);
+			});
+		}
+
+
+		if(captureImage){
+			context = mainContext;
+			frame.memory.image = new Image();
+			frame.memory.image.src = newCanvas.toDataURL();
+			frame.x = prevFx;
+			frame.y = prevFy;
+			drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+		}
+	}
+}
+
+
+
+

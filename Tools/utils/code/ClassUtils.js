@@ -9,15 +9,7 @@
  * and all data models classes names
  */
 function typeOf(o){
-	//c.log('o', o);
-	
 	var type = typeof o;
-
-	//c.log('      o:'+o+'. typeof o:['+typeof o+']');
-	
-	// c.log('type', type);
-	// c.log("type !== 'object'", type !== 'object');
-	// c.log("type !== 'Object'", type !== 'Object');
 	
 	if (type !== 'object') {
 		return type;
@@ -34,6 +26,7 @@ function typeOf(o){
 	}
 	c.log("[!] ERROR: could not detect type for ", o);
 }
+
 function VOID(){}
 
 function instantiate(className, args) {
@@ -133,25 +126,86 @@ function isArray(obj) {
       return true;
 }
 Date.prototype.getType=function(){
-	return 'Date';
-}
-// Object.prototype.isOfType=function(name){
-	// if(this.constructor.toString().indexOf("Array")!=-1){
-		// return !(this._constructor!=null && this._constructor.toString().indexOf(name) == -1);
-	// }
-	// return !(this.constructor.toString().indexOf(name) == -1);
-// }
-
-//////// uniqueGlobalFunc, executeUniqueGlobalFunc, what are their purpose?
-
-var uniqueGlobalFunc=new Array();
-function getUniqueGlobalFunc(func, scope){
-	uniqueGlobalFunc.push([func, scope]);
-	return uniqueGlobalFunc.length-1;
-}
-function executeUniqueGlobalFunc(index, value){
-	if(index==undefined) return;
-	uniqueGlobalFunc[index][0].call(uniqueGlobalFunc[index][1], value);
+	return 'date';
 }
 
-/////////
+
+evalJavaScriptFunction = function(functionText, args){
+	//if(HOLD) return;
+
+	var res;
+
+	var myFunction;
+	
+	var good = true;
+	var message = '';
+
+	var realCode;
+
+	var isFunction = functionText.split('\n')[0].indexOf('function')!=-1;
+
+	if(isFunction){
+		realCode = "myFunction = " + functionText;
+	} else {
+		realCode = "myVar = " + functionText;
+	}
+
+	try{
+		if(isFunction){
+			eval(realCode);
+			res = myFunction.apply(this, args);
+		} else {
+			eval(realCode);
+			res = myVar;
+		}
+	} catch(err){
+		good = false;
+		message = err.message;
+		res = null;
+	}
+
+	var resultObject = {
+		result:res,
+		success:good,
+		errorMessage:message
+	};
+
+	return resultObject;
+}
+
+
+
+function argumentsToArray(args){
+	return Array.prototype.slice.call(args, 0);
+}
+
+
+
+
+
+
+
+function TimeLogger( name ){
+	var scope = this;
+	this.name = name;
+	this.clocks = {};
+
+	this.tic = function( clockName ){
+		scope.clocks[clockName] = new Date().getTime();
+		//c.l( "TimeLogger '"+clockName+"' has been started");
+	}
+	this.tac = function( clockName ){
+		if( scope.clocks[clockName]==null ){
+			scope.tic( clockName );
+		}else{
+			var now = new Date().getTime();
+			var diff = now - scope.clocks[clockName];
+			c.l( "TimeLogger '"+clockName+"' took " + diff + " ms");
+		}
+	}
+}
+var tl = new TimeLogger( "Global Time Logger" );
+
+
+
+

@@ -27,6 +27,80 @@ StringOperators.split = function(string, character){
 	return StringList.fromArray(string.split(character));
 }
 
+/**
+ * split a String by enter (using several codifications)
+ * @param  {String} string
+ * @return {StringList}
+ * tags:
+ */
+StringOperators.splitByEnter=function(string){
+	if(string==null) return null;
+	var stringList = StringOperators.splitString(string, "\n");
+	if(stringList.length>1) return stringList;
+	var stringList = StringOperators.splitString(string, StringOperators.ENTER2);
+	if(stringList.length>1) return stringList;
+	var stringList = StringOperators.splitString(string, StringOperators.ENTER3);
+	if(stringList.length>1) return stringList;
+	return new StringList(string);
+}
+
+
+/**
+ * replaces in a string ocurrences of a sub-string by another string (base in replace JavaScript method)
+ * @param  {String} string to be modified
+ * @param  {String} subString sub-string to be replaced
+ * @param  {String} replacement string to be placed instead
+ * @return {String}
+ * tags:
+ */
+StringOperators.replaceSubString = function(string, subString, replacement){
+	if(string==null || subString==null || replacement==null) return null;
+	return string.replace(new RegExp(subString, "g"), replacement);
+}
+
+/**
+ * replaces in a string ocurrences of sub-strings by a string
+ * @param  {String} string to be modified
+ * @param  {StringList} subStrings sub-strings to be replaced
+ * @param  {String} replacement string to be placed instead
+ * @return {String}
+ * tags:
+ */
+StringOperators.replaceSubStringsByString = function(string, subStrings, replacement){
+	if(subStrings==null) return;
+
+	var subString;
+
+	subStrings.forEach(function(subString){
+		string = StringOperators.replaceSubString(string, subString, replacement);
+	});
+
+	return string;
+}
+
+/**
+ * replaces in a string ocurrences of sub-strings by strings (1-1)
+ * @param  {String} string to be modified
+ * @param  {StringList} subStrings sub-strings to be replaced
+ * @param  {StringList} replacements strings to be placed instead
+ * @return {String}
+ * tags:
+ */
+StringOperators.replaceSubStringsByStrings = function(string, subStrings, replacements){
+	if(subStrings==null || replacements==null) return;
+
+	var nElements = Math.min(subStrings.length, replacements.length);
+	var i;
+	var subString;
+
+	for(i=0; i<nElements; i++){
+		string = StringOperators.replaceSubString(string, subStrings[i], replacements[i]);
+	}
+
+	return string;
+}
+
+
 
 /**
  * return a substring
@@ -56,23 +130,6 @@ StringOperators.splitString=function(string, separator){
 	if(typeof separator == "string") separator = separator.replace("\\n", "\n");
 	if(string.indexOf(separator)==-1) return new StringList(string);
 	return StringList.fromArray(string.split(separator));
-}
-
-/**
- * split a String by enter (using several codifications)
- * @param  {String} string
- * @return {StringList}
- * tags:
- */
-StringOperators.splitByEnter=function(string){
-	if(string==null) return null;
-	var stringList = StringOperators.splitString(string, "\n");
-	if(stringList.length>1) return stringList;
-	var stringList = StringOperators.splitString(string, StringOperators.ENTER2);
-	if(stringList.length>1) return stringList;
-	var stringList = StringOperators.splitString(string, StringOperators.ENTER3);
-	if(stringList.length>1) return stringList;
-	return null;
 }
 
 /**
@@ -152,13 +209,8 @@ StringOperators.countWordsDichotomyAnalysis=function(string, negativeStrings, po
  * tags:html
  */
 StringOperators.getLinksFromHtml=function(html, urlSource, removeHash){
-	//var rawHTML = '<html><body><a href="foo">bar</a><a href="narf">zort</a></body></html>';
-
 	var doc = document.createElement("html");
 	doc.innerHTML = html;
-
-	//return doc.links;//StringList.fromArray(doc.links);
-
 
 	var i;
 	var links = doc.getElementsByTagName("a");
@@ -376,6 +428,13 @@ StringOperators.removeInitialRepeatedCharacter=function(string, character){
 	return string;
 }
 
+
+/**
+ * takes plain text from html
+ * @param  {String} html
+ * @return {String}
+ * tags:
+ */
 StringOperators.removeHtmlTags=function(html){
 	var tmp = document.createElement("DIV");
 	tmp.innerHTML = html;
@@ -398,26 +457,42 @@ StringOperators.removeQuotes=function(string){//TODO:improve
 // 	return string.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 // }
 
+/**
+ * builds a stringList of words contained in the text
+ * @param  {String} string text to be analyzed
+ * 
+ * @param  {Boolean} withoutRepetitions remove words repetitions
+ * @param  {Boolean} stopWords remove stop words
+ * @param  {Boolean} sortedByFrequency  sorted by frequency in text
+ * @param  {Boolean} includeLinks include html links
+ * @param  {Number} limit of words
+ * @param  {Number} minSizeWords minimal number of characters of words
+ * @return {StringList}
+ * tags:
+ */
 StringOperators.getWords = function(string, withoutRepetitions, stopWords, sortedByFrequency, includeLinks, limit, minSizeWords){
+	if(string==null) return null;
+
 	minSizeWords = minSizeWords||0;
 	withoutRepetitions = withoutRepetitions==null?true:withoutRepetitions;
 	sortedByFrequency = sortedByFrequency==null?true:sortedByFrequency;
 	includeLinks = includeLinks==null?true:includeLinks;
 	limit = limit==null?0:limit;
+
+	var i, j;
 	
 	if(includeLinks) var links = string.match(StringOperators.LINK_REGEX);
 	string = string.toLowerCase().replace(StringOperators.LINK_REGEX, "");
-	//if(minSizeWords>0) string = string.replace(/\w{1,/+minSizeWords+/}\b/g, "");
-		
+	
 	var list = string.match(/\w+/g);
 	if(list==null) return new StringList();
 	
 	if(includeLinks && links!=null) list = list.concat(links);
 	list = StringList.fromArray(list).replace(/ /g, "");
 	
-	if(stopWords!=null){
+	if(stopWords!=null){//TODO:check before if all stopwrds are strings
 		//list.removeElements(stopWords);
-		var i, j;
+
 		for(i=0; list[i]!=null; i++){
 			for(j=0; stopWords[j]!=null; j++){
 				if((typeof stopWords[j]) == 'string'){
@@ -433,12 +508,13 @@ StringOperators.getWords = function(string, withoutRepetitions, stopWords, sorte
 				}
 			}
 		}
+
 	}
 	
 	if(minSizeWords>0){
-		for(var i=0; list[i]!=null; i++){
+		for(i=0; list[i]!=null; i++){
 			if(list[i].length<minSizeWords){
-				list.removeElementAtIndex(i);
+				list.splice(i, 1);
 				i--;
 			}
 		}
@@ -467,16 +543,45 @@ StringOperators.getWords = function(string, withoutRepetitions, stopWords, sorte
 	return list;
 }
 
+removeAccentsAndDiacritics = function(string){
+    var r = string.replace(new RegExp(/[àáâãäå]/g),"a");
+    r = r.replace(new RegExp(/æ/g),"ae");
+    r = r.replace(new RegExp(/ç/g),"c");
+    r = r.replace(new RegExp(/[èéêë]/g),"e");
+    r = r.replace(new RegExp(/[ìíîï]/g),"i");
+    r = r.replace(new RegExp(/ñ/g),"n");      
+    r = r.replace(new RegExp(/[òóôõö]/g),"o");
+    r = r.replace(new RegExp(/œ/g),"oe");
+    r = r.replace(new RegExp(/[ùúûü]/g),"u");
+    r = r.replace(new RegExp(/[ýÿ]/g),"y");
+
+    r = r.replace(new RegExp(/[ÀÁÂÄÃ]/g),"A");
+    r = r.replace(new RegExp(/Æ/g),"AE");
+    r = r.replace(new RegExp(/Ç/g),"c");
+    r = r.replace(new RegExp(/[ÈÉÊË]/g),"E");
+    r = r.replace(new RegExp(/[ÌÍÎÏ]/g),"I");
+    r = r.replace(new RegExp(/Ñ/g),"N");                
+    r = r.replace(new RegExp(/[ÒÓÔÖÕ]/g),"O");
+    r = r.replace(new RegExp(/Œ/g),"OE");
+    r = r.replace(new RegExp(/[ÙÚÛÜ]/g),"U");
+    r = r.replace(new RegExp(/[Ÿ]/g),"Y");
+
+    return r;
+};
+
 /**
  * creates a table with frequent words and occurrences numbers
  * @param  {String} string text to be analyzed
+ * 
  * @param  {StringList} stopWords
- * @param  {Bollean} includeLinks
+ * @param  {Boolean} includeLinks
  * @param  {Number} limit max size of rows
  * @param  {Number} minSizeWords
  * @return {Table} contains a list of words, and a numberList of occurrences
+ * tags:words
  */
 StringOperators.getWordsOccurrencesTable = function(string, stopWords, includeLinks, limit, minSizeWords){
+	if(string==null) return;
 	if(string.length==0) return new Table(new StringList(), new NumberList());
 	var words = StringOperators.getWords(string, false, stopWords, false, includeLinks, limit, minSizeWords);
 
@@ -494,6 +599,22 @@ StringOperators.indexesOf = function(text, string){//TODO:test
 	}
 	return indexes;
 }
+
+/**
+ * returns a string repeated a number of times
+ * @param  {String} text to be repeated
+ * @param  {Number} n number of repetitions
+ * @return {String}
+ */
+StringOperators.repeat = function(text, n){
+	var i;
+	var newText = "";
+	for(i=0; i<n; i++){
+		newText+=text;
+	}
+	return newText;
+}
+
 
 
 

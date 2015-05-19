@@ -8,5 +8,9 @@ function StringConversions(){};
  * tags:convertion
  */
 StringConversions.stringToObject = function(string){
-	return JSON.parse(string);
+	try{
+		return JSON.parse(string);
+	} catch(err){
+		return null;
+	}
 }

@@ -37,7 +37,7 @@ function InputTextFieldHTML(configuration){
 	this.focusFunctionTarget;
 	this.blurFunctionTarget;
 	
-	this.textColor='black';
+	this.textColor=configuration.textColor==null?'black':configuration.textColor;
 	this.backgroundColor='#FFFFFF';
 	
 	this.main = document.getElementById('maindiv');
@@ -45,7 +45,6 @@ function InputTextFieldHTML(configuration){
 	this.textarea?this.DOMtext = document.createElement("textarea"):this.DOMtext = document.createElement("input");
 	this.password?this.DOMtext.setAttribute('type', 'password'):this.DOMtext.setAttribute('type', 'text');
 	this.div.setAttribute('style', 'position:absolute;top:'+this.y+'px;left:'+this.x+'px;z-index:'+this.zIndex+';');
-
 
 	if(!this.border) this.DOMtext.setAttribute('style', 'border:none');
 
@@ -92,10 +91,10 @@ function InputTextFieldHTML(configuration){
 
 InputTextFieldHTML.prototype.setBorder = function(value) {
 	this.border = value;
-	this.DOMtext.setAttribute('style',  'color: '+this.textColor+'; width:'+(this.width-7)+'px;height:'+(this.height-7)+'px; font-size:'+this.fontSize+'px; border:'+(value?'yes':'none'));
+	this.DOMtext.setAttribute('style',  'border:0; color: '+this.textColor+'; width:'+(this.width-7)+'px;height:'+(this.height-7)+'px; font-size:'+this.fontSize+'px; border:'+(value?'yes':'none'));
 }
 
-InputTextFieldHTML.prototype.draw = function(context) {
+InputTextFieldHTML.prototype.draw = function() {
 	if(this.x!=this._prevX || this.y!=this._prevY || this.width!=this._prevWidth || this.height!=this._prevHeight || this.text!=this._prevText){
  		this._prevX = this.x;
     	this._prevY = this.y;
@@ -110,13 +109,14 @@ InputTextFieldHTML.prototype.draw = function(context) {
 		this.DOMtext.style.background = "transparent";
 		this.DOMtext.style.resize = "none";
 		
-		this.DOMtext.setAttribute('style',  'color: '+this.textColor+'; width:'+(this.width-7)+'px;height:'+(this.height-7)+'px; font-size:'+this.fontSize+'px');
-		this.div.setAttribute('style', 'position:absolute;top:'+this.y+'px;left:'+this.x+'px;z-index:'+this.zIndex+';');
+		this.DOMtext.setAttribute('style',  'border: 0; color: '+this.textColor+'; width:'+(this.width-7)+'px;height:'+(this.height-7)+'px; font-size:'+this.fontSize+'px');
+		this.div.setAttribute('style', 'border: 0; position:absolute;top:'+this.y+'px;left:'+this.x+'px;z-index:'+this.zIndex+';');
 	}
 }
 
 InputTextFieldHTML.prototype.setText=function(text, activeChange){
 	activeChange = activeChange==null?true:activeChange;
+	this.text = text;
 	this.DOMtext.value = text;
 	
 	//var timer = setTimeout(this.onKeyDownDelayed, 4, this);
@@ -138,7 +138,8 @@ InputTextFieldHTML.prototype.onKeyDown=function(e){
 }
 
 InputTextFieldHTML.prototype.onKeyDownDelayed=function(target){
-	if(target._keyCode==13){
+
+	if(target._keyCode==13 &&  target.DOMtext==document.activeElement){
 		if(target.enterFunction!=null){
 			target.enterFunction.call(target.enterFunctionTarget, target.id);
 		}
@@ -150,9 +151,12 @@ InputTextFieldHTML.prototype.onKeyDownDelayed=function(target){
 		var lastChar = target.text.charAt(target.text.length-1);
 		
 		if(target._keyCode!=13){
-			if(target.changeFunction!=null) target.changeFunction.call(target.changeFunctionTarget, target.id);
+			if(target.changeFunction!=null){
+				target.changeFunction.call(target.changeFunctionTarget, target.id);
+			}
 		}
 	}
+	
 	if(_cycleOnMouseMovement) reStartCycle();
 
 	this.timer = null;

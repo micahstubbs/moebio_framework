@@ -43,6 +43,7 @@ include('../frameworks2/dataStructures/structures/networks/Tree.js');
 ////operators
 include('../frameworks2/operators/objects/ObjectOperators.js');
 include('../frameworks2/operators/objects/ObjectConversions.js');
+include('../frameworks2/operators/dates/DateListOperators.js');
 include('../frameworks2/operators/dates/DateOperators.js');
 include('../frameworks2/operators/geo/CountryListOperators.js');
 include('../frameworks2/operators/geo/CountryOperators.js');
@@ -61,8 +62,10 @@ include('../frameworks2/operators/graphic/ColorListGenerators.js');
 include('../frameworks2/operators/graphic/ColorListOperators.js');
 include('../frameworks2/operators/graphic/ColorOperators.js');
 include('../frameworks2/operators/graphic/ColorScales.js');
+include('../frameworks2/operators/graphic/ColorScaleGenerators.js');
 include('../frameworks2/operators/lists/ListGenerators.js');
 include('../frameworks2/operators/lists/ListOperators.js');
+include('../frameworks2/operators/lists/TableConversions.js');
 include('../frameworks2/operators/lists/TableEncodings.js');
 include('../frameworks2/operators/lists/TableGenerators.js');
 include('../frameworks2/operators/lists/TableOperators.js');
@@ -83,6 +86,7 @@ include('../frameworks2/operators/structures/NetworkConvertions.js');
 include('../frameworks2/operators/structures/NetworkEncodings.js');
 include('../frameworks2/operators/structures/NetworkGenerators.js');
 include('../frameworks2/operators/structures/NetworkOperators.js');
+include('../frameworks2/operators/structures/TreeConvertions.js');
 include('../frameworks2/operators/structures/TreeEncodings.js');
 
 ////apis
@@ -129,14 +133,16 @@ include('../frameworks2/Tools/utils/code/ClassUtils.js');
 include('../frameworks2/Tools/utils/strings/ConsoleTools.js');
 include('../frameworks2/Tools/utils/strings/FastHtml.js');
 include('../frameworks2/Tools/utils/strings/JSONUtils.js');
-//include('../frameworks2/Tools/utils/strings/MD5.js');
+include('../frameworks2/Tools/utils/strings/MD5.js');
 include('../frameworks2/Tools/utils/strings/StringUtils.js');
 //include('../frameworks2/Tools/utils/strings/SVGdecode.js');
 include('../frameworks2/Tools/utils/system/Navigator.js');
 
+
 ////visualization
 include('../frameworks2/visualization/geo/CountryListDraw.js');
 include('../frameworks2/visualization/geometry/CirclesVisOperators.js');
+include('../frameworks2/visualization/graphic/ColorsDraw.js');
 include('../frameworks2/visualization/graphic/ImageDraw.js');
 include('../frameworks2/visualization/lists/ListDraw.js');
 include('../frameworks2/visualization/numeric/IntervalTableDraw.js');

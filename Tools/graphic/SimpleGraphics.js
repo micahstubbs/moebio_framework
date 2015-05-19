@@ -230,7 +230,7 @@ fsRectM = function(x, y, width, height, margin){
 	return mY>y-margin && mY<y+height+margin && mX>x-margin && mX<x+width+margin;
 }
 
-fCircleM = function(x, y, r, margin){
+fCircleM = function(x, y, r, margin){//check if you can avoid repeat
 	margin = margin==null?0:margin;
 	context.beginPath();
 	context.arc(x, y, r, 0, TwoPi);
@@ -280,6 +280,7 @@ bezierM = function(x0, y0, cx0, cy0, cx1, cy1, x1, y1, d){//TODO: fix this mess!
 	context.moveTo(x0, y0);
 	context.bezierCurveTo(cx0, cy0, cx1, cy1, x1, y1);
 	context.stroke();
+	if(mX<Math.min(x0,x1,cx0,cx1)-d || mX>Math.max(x0,x1,cx0,cx1)+d || mY<Math.min(y0,y1,cy0,cy1)-d || mY>Math.max(y0,y1,cy0,cy1)+d) return false;
 	return GeometryOperators.distanceToBezierCurve(x0, y0, cx0, cy0, cx1, cy1, x1, y1, mP, false)<d;
 }
 
@@ -292,8 +293,11 @@ bezierM = function(x0, y0, cx0, cy0, cx1, cy1, x1, y1, d){//TODO: fix this mess!
  *	drawImage(image, dx, dy)
  *	drawImage(image, dx, dy, dw, dh)
  *	drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh)
+ *	@param {Image} image
  */
 drawImage = function(image){//TODO: improve efficiency
+	if(image==null) return;
+
 	switch(arguments.length){
 		case 3:
 			context.drawImage(image, arguments[1], arguments[2]);
@@ -305,6 +309,25 @@ drawImage = function(image){//TODO: improve efficiency
 			context.drawImage(image, arguments[1], arguments[2], arguments[3], arguments[4], arguments[5], arguments[6], arguments[7], arguments[8]);
 			break;
 			
+	}
+}
+
+/**
+ * fits an image into a rectangle without chagning its proportions (thus probably loosing top-bottom or left-right margins)
+ * @param  {Image} image
+ * @param  {Rectangle} rectangle frame of the image
+ */
+fitImage = function(image, rectangle){
+	if(image==null || rectangle==null) return;
+
+	var propIm = image.width/image.height;
+	var propRc = rectangle.width/rectangle.height;
+	var compProp = propIm/propRc;
+
+	if(propIm>propRc){
+		context.drawImage(image, 0.5*(image.width - image.width/compProp), 0, image.width/compProp, image.height, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+	} else {
+		context.drawImage(image, 0, 0.5*(image.height - image.height*compProp), image.width, image.height*compProp, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
 	}
 }
 
@@ -354,7 +377,11 @@ clipCircle = function(x, y, r){
 
 clipRectangle = function(x, y, w, h){
 	context.save();
-	context.fillRect(x, y, w, h);
+	context.beginPath();
+	context.moveTo(x,y);
+	context.lineTo(x+w,y);
+	context.lineTo(x+w,y+h);
+	context.lineTo(x,y+h);
 	context.clip();
 }
 
@@ -416,6 +443,7 @@ fTextRotatedM = function(text, x, y, angle, size){
   	
   	return mYT>y && mYT<y+size && mXT>x && mXT<x+context.measureText(text).width;
 }
+
 fTextW = function(text, x, y){
 	context.fillText(text, x, y);
 	return context.measureText(text).width;
@@ -463,7 +491,7 @@ getPixelColor = function(x, y){
 	return 'rgba('+rgba[0]+','+rgba[1]+','+rgba[2]+','+rgba[3]+')';
 }
 
-getPixelColorRGBA = function(x, y){
+getPixelColorRGBA = function(x, y){//repeated
 	return context.getImageData(x,y,1,1).data;
 }
 

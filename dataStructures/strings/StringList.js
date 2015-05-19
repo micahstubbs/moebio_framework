@@ -29,6 +29,7 @@ StringList.fromArray=function(array, forceToString){
 	result.type="StringList";
 	
    	//assign methods to array:
+   	result.getLengths=StringList.prototype.getLengths;
    	result.toLowerCase=StringList.prototype.toLowerCase;
    	result.toUpperCase=StringList.prototype.toUpperCase;
    	result.append=StringList.prototype.append;
@@ -37,11 +38,26 @@ StringList.fromArray=function(array, forceToString){
    	result.getConcatenated=StringList.prototype.getConcatenated;
    	result.toNumberList=StringList.prototype.toNumberList;
    	result.toDateList=StringList.prototype.toDateList;
+   	result.trim=StringList.prototype.trim;
    	
    	//override
 	result.clone = StringList.prototype.clone;
    	
 	return result;
+}
+
+/**
+ * overrides List.prototype.getLengths (see comments there)
+ */
+StringList.prototype.getLengths=function(){
+	var lengths = new NumberList();
+	var string;
+
+	this.forEach(function(string){
+		lengths.push(string.length);
+	});
+
+	return lengths;
 }
 
 StringList.prototype.append=function(sufix, after){
@@ -80,15 +96,32 @@ StringList.prototype.getSurrounded=function(prefix, sufix){
 	return newStringList;
 }
 
-/**
- * [!] works with regular expressions
- */
+
+//deprectaed, replaced by replaceInStrings
 StringList.prototype.replace=function(regExp, string){
 	var newStringList = new StringList();
 	newStringList.name = this.name;
 	
 	for(var i=0;this[i]!=null;i++){
 		newStringList[i]=this[i].replace(regExp, string);
+	}
+	
+	return newStringList;
+}
+
+/**
+ * replaces in each string, a sub-string by a string
+ * @param  {String} subString sub-string to be replaced in each string
+ * @param  {String} replacement string to be placed instead
+ * @return {StringList}
+ * tags:
+ */
+StringList.prototype.replaceSubStringsInStrings=function(subString, replacement){
+	var newStringList = new StringList();
+	newStringList.name = this.name;
+	
+	for(var i=0;this[i]!=null;i++){
+		newStringList[i]=StringOperators.replaceString(string, subString, replacement)
 	}
 	
 	return newStringList;
@@ -137,9 +170,12 @@ StringList.prototype.toNumberList=function(){
 
 
 /**
- * format cases
- * 0: MM-DD-YYYY
- * 1: YYYY-MM-DD
+ * converts a stringList into a dateList
+ * 
+ * @param  {String} formatCase format cases:<br>0: MM-DD-YYYY<br>1: YYYY-MM-DD (standard Javascript conversion)
+ * @param  {String} separator "-" by default
+ * @return {DateList}
+ * tags:
  */
 StringList.prototype.toDateList=function(formatCase, separator){
 	var dateList = new DateList();
@@ -150,6 +186,20 @@ StringList.prototype.toDateList=function(formatCase, separator){
 	return dateList;
 }
 
+/**
+ * trims all the strings on the stringList
+ * @return {StringList}
+ * tags:
+ */
+StringList.prototype.trim = function(){
+	var i;
+	var newStringList = new StringList();
+	for(i=0;this[i]!=null;i++){
+		newStringList[i] = this[i].trim();
+	}
+	newStringList.name = this.name;
+	return newStringList;
+}
 
 ///////overriding
 

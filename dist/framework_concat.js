@@ -24,7 +24,6 @@ DataModel.prototype.toString=function(){
 	
 }
 
-
 List.prototype = new DataModel();
 List.prototype.constructor=List;
 
@@ -54,11 +53,16 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
 	array._constructor=List;
 	
    	array.getImproved=List.prototype.getImproved;
+   	array.sameElements = List.prototype.sameElements;
+   	array.getLength=List.prototype.getLength;
    	array.getTypeOfElements=List.prototype.getTypeOfElements; //TODO: redundant?
    	array.getTypes=List.prototype.getTypes;
    	array.getType=List.prototype.getType;
+   	array.getLengths=List.prototype.getLengths;
    	array.getWithoutRepetitions=List.prototype.getWithoutRepetitions;
    	array.getElementsRepetitionCount=List.prototype.getElementsRepetitionCount;
+   	array.allElementsEqual = List.prototype.allElementsEqual;
+   	array.countElement=List.prototype.countElement;
    	array.countOccurrences=List.prototype.countOccurrences;
    	array.getMostRepeatedElement = List.prototype.getMostRepeatedElement;
    	array.getMin=List.prototype.getMin;
@@ -67,14 +71,17 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.indexOfElements=List.prototype.indexOfElements;
    	array.indexOfByPropertyValue=List.prototype.indexOfByPropertyValue;
    	array.getFirstElementByName=List.prototype.getFirstElementByName;
+   	array.getElementsByNames=List.prototype.getElementsByNames;
    	array.getFirstElementByPropertyValue=List.prototype.getFirstElementByPropertyValue;
    	array.add=List.prototype.add;
    	array.multiply=List.prototype.multiply;
    	array.getSubList = List.prototype.getSubList;
    	array.getSubListByIndexes = List.prototype.getSubListByIndexes;
+   	array.getSubListByType = List.prototype.getSubListByType;
    	array.getElementNumberOfOccurrences = List.prototype.getElementNumberOfOccurrences;
    	array.getPropertyValues = List.prototype.getPropertyValues;
    	array.getRandomElement = List.prototype.getRandomElement;
+   	array.getRandomElements = List.prototype.getRandomElements;
    	array.containsElement = List.prototype.containsElement;
 	array.indexOfElement = List.prototype.indexOfElement;
    	//sorting:
@@ -88,8 +95,10 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.getSortedByProperty = List.prototype.getSortedByProperty;
    	array.getSorted = List.prototype.getSorted;
    	array.getSortedByList = List.prototype.getSortedByList;
+   	array.getSortedRandom = List.prototype.getSortedRandom;
    	//filter:
    	array.getFilteredByPropertyValue = List.prototype.getFilteredByPropertyValue;
+   	array.getFilteredByBooleanList = List.prototype.getFilteredByBooleanList;
    	//conversion
    	array.toNumberList=List.prototype.toNumberList;
    	array.toStringList=List.prototype.toStringList;
@@ -99,11 +108,13 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.getNames=List.prototype.getNames;
    	array.applyFunction=List.prototype.applyFunction;
    	array.getWithoutElementAtIndex=List.prototype.getWithoutElementAtIndex;
+   	array.getWithoutElement=List.prototype.getWithoutElement;
    	array.getWithoutElements=List.prototype.getWithoutElements;
    	array.getWithoutElementsAtIndexes=List.prototype.getWithoutElementsAtIndexes;
    	array.getFilteredByFunction=List.prototype.getFilteredByFunction;
    	array._concat=Array.prototype.concat;
    	array.concat=List.prototype.concat;
+   	array.getReport=List.prototype.getReport;
    	
    	//transformations
    	array.pushIfUnique=List.prototype.pushIfUnique;
@@ -113,6 +124,7 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
    	array.removeElements=List.prototype.removeElements;
    	array.removeRepetitions=List.prototype.removeRepetitions;
    	array.replace = List.prototype.replace;
+   	array.assignNames = List.prototype.assignNames;
    	array._splice=Array.prototype.splice;
    	array.splice=List.prototype.splice;
 
@@ -125,43 +137,121 @@ List.fromArray=function(array){ //TODO: clear some of these method declarations
 }
 //
 
-List.prototype.getImproved=function(){
+/**
+ * improve a List (refining type)
+ * @return {List}
+ * tags:
+ */
+List.prototype.getImproved=function(){//TODO: still doesn't solve tha case of a list with several list of different types
 	if(this.length==0) return this;
 	var typeOfElements = this.getTypeOfElements();
-	if(typeOfElements=="" || typeOfElements=="undefined") return this;
+	
+	//var typeOfElements=="" allAreLists = … finish this
+	
+	//c.log('List.getImproved | typeOfElements: ['+typeOfElements+']');
+	
+	//if(typeOfElements=="" || typeOfElements=="undefined") return this;
 	
 	switch(typeOfElements){
 		case "number":
-			var newList = NumberList.fromArray(this);
+			var newList = NumberList.fromArray(this, false);
 			break;
 		case "string":
-			var newList = StringList.fromArray(this);
+			var newList = StringList.fromArray(this, false);
 			break;
 		case "Rectangle":
 			return this;
-		case "Date":
-			var newList = DateList.fromArray(this);
+		case "date":
+			var newList = DateList.fromArray(this, false);
 			break;
 		case "List":
+		case "DateList":
+		case "IntervalList":
+		case "StringList":
 		case "Table":
-			var newList = Table.fromArray(this);
+			var newList = Table.fromArray(this, false);
 			break;
 		case "NumberList":
-			var newList = NumberTable.fromArray(this);
+			var newList = NumberTable.fromArray(this, false);
 			break;
 		case "Point":
-			var newList = Polygon.fromArray(this);
+			var newList = Polygon.fromArray(this, false);
 			break;
 		case "Polygon":
-			var newList = PolygonList.fromArray(this);
+			var newList = PolygonList.fromArray(this, false);
+			break;
+		case "Node":
+			var newList = NodeList.fromArray(this, false);
+			break;
+		case "Relation":
+			var newList = RelationList.fromArray(this, false);
 			break;
 	}
+
+	
+
+	if(newList==null || newList==""){
+		//c.l('getImproved | all elelemnts no same type')
+
+		var allLists = true;
+		var i;
+		for(i=0; this[i]!=null; i++){
+			//c.l('isList?', i, this[i].isList);
+			if(!(this[i].isList)){
+				allLists = false;
+				break;
+			}
+		}
+		//c.l('--> allLists');
+		if(allLists) newList = Table.fromArray(this, false);
+	}
+
 	if(newList!=null){
 		newList.name = this.name;
 		return newList;
 	}
 	return this;
 }
+
+/**
+ * compare elements with another list
+ * @param  {List} list to compare
+ * @return {Boolean} true if all elements are identical
+ * tags:
+ */
+List.prototype.sameElements=function(list){
+	if(this.length!=list.length) return false;
+
+	var i;
+	for(i=0; this[i]!=null; i++){
+		if(this[i]!=list[i]) return false;
+	}
+
+	return true;
+}
+
+/**
+ * return the number of elements of the list
+ * @return {Number}
+ * tags:
+ */
+List.prototype.getLength=function(){
+	return this.length
+}
+
+/**
+ * return a numberList with lists lengths (in case of a table) or strings lengths (in case of a stringList)
+ * @return {StringList}
+ * tags:
+ */
+List.prototype.getLengths=function(){
+	//overriden by different extentions of List
+	
+	return null;
+}
+
+
+
 List.prototype.getTypeOfElements=function(){
 	var typeOfElements = typeOf(this[0]);
 	for(var i=1;this[i]!=null;i++){
@@ -169,6 +259,12 @@ List.prototype.getTypeOfElements=function(){
 	}
 	return typeOfElements;
 }
+
+/**
+ * return a stringList with elemnts types
+ * @return {StringList}
+ * tags:
+ */
 List.prototype.getTypes=function(){
 	var types = new StringList();
 	for(i=0;this[i]!=null;i++){
@@ -176,6 +272,8 @@ List.prototype.getTypes=function(){
 	}
 	return types;
 }
+
+
 List.prototype.toString=function(){
 	var i;
 	var str="[";
@@ -186,6 +284,11 @@ List.prototype.toString=function(){
 	return str;
 }
 
+/**
+ * return a list of names (if any) of elements of the list
+ * @return {StringList}
+ * tags:
+ */
 List.prototype.getNames=function(){
 	var stringList = new StringList();
 	for(i=0;this[i]!=null;i++){
@@ -194,7 +297,11 @@ List.prototype.getNames=function(){
 	return stringList;
 }
 
-
+/**
+ * reverse the list
+ * @return {List}
+ * tags:sort
+ */
 List.prototype.getReversed=function(){
 	var newList = instantiateWithSameType(this);
 	for(var i=0; this[i]!=null; i++){
@@ -203,7 +310,14 @@ List.prototype.getReversed=function(){
 	return newList;
 }
 
-
+/**
+ * return a sub-list, params could be: tw numbers, an interval or a NumberList
+ * @param {Object} argument0 number, interval (in this it will include elements with initial and end indexes) or numberList
+ * 
+ * @param {Number} argument1 second index
+ * @return {List}
+ * tags:filter
+ */
 List.prototype.getSubList=function(){
 	if(arguments[0].isList){
 		return this.getSubListByIndexes(arguments[0]);
@@ -246,14 +360,38 @@ List.prototype.getSubList=function(){
 	return newList;
 }
 
+/**
+ * filters a list by picking elements of certain type
+ * @param  {String} type
+ * @return {List}
+ * tags:filter
+ */
+List.prototype.getSubListByType = function(type){
+	var newList = new List();
+	var i;
+	newList.name = this.name;
+	this.forEach(function(element){
+		if(typeOf(element)==type) newList.push(element);
+	});
+	return newList.getImproved();
+
+}
+
+/**
+ * returns all elements in indexes
+ * @param {NumberList} indexes
+ * @return {List}
+ * tags:filter
+ */
 List.prototype.getSubListByIndexes=function(){//TODO: merge with getSubList
 	if(this.length<1) return this;
-	var indexes
+	var indexes;
 	if(typeOf(arguments[0])=='number'){
 		indexes = arguments;
 	} else {
 		indexes = arguments[0];
 	}
+	if(indexes==null) return;
 	if(this.type=='List'){
 		var newList = new List();
 	} else {
@@ -266,10 +404,11 @@ List.prototype.getSubListByIndexes=function(){//TODO: merge with getSubList
 	var i;
 	for(i=0; i<nPositions; i++){
 		if(indexes[i]<nElements){
-			newList.push(this[indexes[i]]);
+			newList.push(this[(indexes[i]+this.length)%this.length]);
 		}
 	}
-	if(this.type=='List') return newList.getImproved();
+
+	if(this.type=='List' || this.type=='Table') return newList.getImproved();
 	return newList;
 }
 
@@ -286,26 +425,65 @@ List.prototype.getElementNumberOfOccurrences=function(element){
 }
 
 
-List.prototype.clone=function(){
+List.prototype.clone=function(){//TODO:check this! fromArray should suffice
 	var clonedList= instantiateWithSameType(this);
-  	for(var i=0; this[i]!=null; i++){
+	var i;
+	
+  	for(i=0; this[i]!=null; i++){
     	clonedList.push(this[i]);
   	}
   	clonedList.name = this.name;
   	return clonedList;
 }
 
-
+/**
+ * create a new List without repeating elements
+ * @return {List}
+ * tags:filter
+ */
 List.prototype.getWithoutRepetitions=function(){
+	var i;
+	var dictionary;
+
 	newList = instantiateWithSameType(this);
 	newList.name = this.name;
-	for(i=0; this[i]!=null; i++){
-		if(newList.indexOf(this[i])==-1) newList.push(this[i]);
+
+	if(this.type=='NumberList' || this.type=='StringList'){
+		dictionary = {};
+		for(i=0; this[i]!=null; i++){
+			if(!dictionary[this[i]]){
+				newList.push(this[i]);
+				dictionary[this[i]]=true;
+			}
+		}
+	} else {
+		for(i=0; this[i]!=null; i++){
+			if(newList.indexOf(this[i])==-1) newList.push(this[i]);
+		}
 	}
+	
 	return newList;
 }
 
 
+
+/**
+ * return number of occurrences of an element on a list
+ * @param  {Object} element
+ * @return {Number}
+ * tags:countt
+ */
+List.prototype.countElement=function(element){
+	n=0;
+	this.forEach(function(elementInList){if(element==elementInList) n++});
+	return n;
+}
+
+/**
+ * returns a numberList of same size as list with number of occurrences for each element
+ * @return {numberList}
+ * tags:count
+ */
 List.prototype.countOccurrences=function(){//TODO: more efficient
 	var occurrences = new NumberList();
 	for(var i=0; this[i]!=null; i++){
@@ -314,7 +492,15 @@ List.prototype.countOccurrences=function(){//TODO: more efficient
 	return occurrences;
 }
 
+/**
+ * returns a table with a list of non repeated elements and a list with the numbers of occurrences for each one
+ * @param  {Boolean} sortListsByOccurrences if true both lists in the table will be sorted by number of occurences (most frequent on top), true by default
+ * @return {Table} list (non-repeated elements) and numberList (frequency of each element)
+ * tags:count
+ */
 List.prototype.getElementsRepetitionCount=function(sortListsByOccurrences){
+	sortListsByOccurrences = sortListsByOccurrences==null?true:sortListsByOccurrences;
+
 	var obj;
 	var elementList= new List();
 	var numberList = new NumberList();
@@ -335,22 +521,41 @@ List.prototype.getElementsRepetitionCount=function(sortListsByOccurrences){
 	var table = new Table();
 	table.push(elementList);
 	table.push(numberList);
-	var indexArray=numberList.sortNumericIndexed();
-	if(sortListsByOccurrences!=undefined?sortListsByOccurrences:true){
-		var j;
-		for(j=0; j<table.length; j++){
-			table[j]=table[j].clone().sortOnIndexes(indexArray);
-		}
+	if(sortListsByOccurrences){
+		// var indexArray=numberList.getSortIndexes();//sortNumericIndexed();
+		// var j;
+		// for(j=0; j<table.length; j++){
+		// 	table[j]=table[j].clone().sortOnIndexes(indexArray);
+		// }
+		table = table.getListsSortedByList(numberList, false);
 	}
 	
 	return table;
 }
 
+List.prototype.allElementsEqual = function(){
+	var i;
+	if(this.length<2) return true;
+
+	first = this[0];
+	
+	for(i=1; this[i]!=null; i++){
+		if(this[i]!=first) return false;
+	}
+
+	return true;
+}
+
+
 List.prototype.getMostRepeatedElement = function(){//TODO: this method should be more efficient
 	return ListOperators.countElementsRepetitionOnList(this, true)[0][0];
 }
 
-
+/**
+ * get minimum value
+ * @return {Number}
+ * tags:
+ */
 List.prototype.getMin=function(){
 	if(this.length==0) return null;
 	var min=this[0];	
@@ -361,6 +566,11 @@ List.prototype.getMin=function(){
 	return min;
 }
 
+/**
+ * get maximum value
+ * @return {Number}
+ * tags:
+ */
 List.prototype.getMax=function(){
 	if(this.length==0) return null;
 	var max=this[0];	
@@ -382,8 +592,33 @@ List.prototype.add=function(value){
 	}
 }
 
+/**
+ * selects a random element from list
+ * @return {Object}
+ * tags:
+ */
 List.prototype.getRandomElement=function(){
 	return this[Math.floor(this.length*Math.random())];
+}
+
+/**
+ * creates a list with randomly selected elements
+ * @param  {Number} n number of elements
+ * @param  {Boolean} avoidRepetitions
+ * @return {List}
+ * tags:filter
+ */
+List.prototype.getRandomElements=function(n, avoidRepetitions){
+	avoidRepetitions = avoidRepetitions==null?true:avoidRepetitions;
+	n = Math.min(n, this.length);
+	var newList = instantiateWithSameType(this);
+	var element;
+
+	while(newList.length<n){
+		element = this[Math.floor(this.length*Math.random())];
+		if(!avoidRepetitions ||newList.indexOf(element)==-1) newList.push(element);
+	}
+	return newList;
 }
 
 
@@ -405,7 +640,14 @@ List.prototype.indexOfElement=function(element){//TODO: test if this is faster t
 
 
 
-
+/**
+ * return a list of values of a property of all elements
+ * @param  {String} propertyName
+ * 
+ * @param  {Object} valueIfNull in case the property doesn't exist in the element
+ * @return {List}
+ * tags:
+ */
 List.prototype.getPropertyValues=function(propertyName, valueIfNull){
 	var newList = new List();
 	newList.name = propertyName;
@@ -481,52 +723,29 @@ List.prototype.sortOnIndexes=function(indexes){
 	return result;
 }
 
-// List.prototype.sortNumericIndexedDescending=function() {
-// 	var index = new Array();
-// 	var i;
-// 	for(i=0; i<this.length; i++){
-//   		index.push({index:i, value:this[i]});
-// 	}
-// 	var comparator = function(a, b) {
-//   		var array_a = a.value;
-//   		var array_b = b.value;
-//   		return array_b - array_a;
-// 	}
-// 	index=index.sort(comparator);
-// 	var result=new NumberList();
-// 	for(i=0; i<index.length; i++){
-//   		result.push(index[i].index);
-// 	}
-// 	return result;
-// }
-
-// List.prototype.sortNumericDescending=function(){
-// 	var comparator=function(a, b){
-// 		return b - a;
-// 	}
-// 	return this.sort(comparator);
-// }
-
-// List.prototype.sortOnNumberList=function(list){//TODO: this.data??? check this method
-// 	return new List(this.data.sortOnNumberList(list.getData));
-// }
-
 List.prototype.getSortedByProperty=function(propertyName, ascending){
 	ascending = ascending==null?true:ascending;
 	
 	var comparator;
 	if(ascending){
 		comparator=function(a, b){
-			return a[propertyName] - b[propertyName];	
+			return a[propertyName]>b[propertyName]?1:-1;	
 		}
 	} else {
 		comparator=function(a, b){
-			return b[propertyName] - a[propertyName];
+			return b[propertyName]>a[propertyName]?1:-1;
 		}
 	}
 	return this.clone().sort(comparator);
 }
 
+/**
+ * return a sorted version of the list
+ * 
+ * @param  {Boolean} ascending sort (true by default)
+ * @return {List}
+ * tags:sort
+ */
 List.prototype.getSorted=function(ascending){
 	ascending = ascending==null?true:ascending;
 	
@@ -543,12 +762,21 @@ List.prototype.getSorted=function(ascending){
 	return this.clone().sort(comparator);
 }
 
+/**
+ * sort the list by a list
+ * @param  {List} list used to sort (numberList, stringList, dateList…)
+ * 
+ * @param  {Boolean} ascending (true by default)
+ * @return {List} sorted list (of the same type)
+ * tags:sort
+ */
 List.prototype.getSortedByList=function(list, ascending){
 	ascending = ascending==null?true:ascending;
 	
 	var pairsArray = [];
+	var i;
 	
-	for(var i=0; this[i]!=null; i++){
+	for(i=0; this[i]!=null; i++){
 		pairsArray[i] = [this[i], list[i]];
 	}
 	
@@ -575,6 +803,25 @@ List.prototype.getSortedByList=function(list, ascending){
 	return newList;
 }
 
+
+/**
+ * returns a copy of the list with random sorting
+ * @return {List}
+ * tags:sort
+ */
+List.prototype.getSortedRandom = function(){
+	var newList = this.clone();
+	newList.name = this.name;
+	newList.sort(function(a, b){return Math.random()<0.5?1:-1});
+	return newList
+}
+
+/**
+ * returns a numberList with the indexes (positions) of an element
+ * @param  {Object} element
+ * @return {NumberList}
+ * tags:
+ */
 List.prototype.indexesOf=function(element){
 	var index = this.indexOf(element);
 	var numberList = new NumberList();
@@ -585,6 +832,12 @@ List.prototype.indexesOf=function(element){
 	return numberList;
 }
 
+/**
+ * return a numberList with indexes (first position) of elements in a list
+ * @param  {List} elements
+ * @return {NumberList}
+ * tags:
+ */
 List.prototype.indexOfElements=function(elements){
 	var numberList = new NumberList();
 	for(var i=0; elements[i]!=null; i++){
@@ -593,14 +846,52 @@ List.prototype.indexOfElements=function(elements){
 	return numberList;
 }
 
-
-List.prototype.getFirstElementByName=function(name){
+/**
+ * returns the first element (or index) of an element in the with a given name
+ * @param  {String} name of element
+ * @param  {Boolean} returnIndex if true returns the index of element (false by default)
+ * @return {List}
+ * tags: filter
+ */
+List.prototype.getFirstElementByName=function(name, returnIndex){
 	for(var i=0; this[i]!=null; i++){
-		if(this[i].name == name) return this[i];
+		if(this[i].name == name) return returnIndex?i:this[i];
 	}
-	return null;
+	return returnIndex?-1:null;
 }
 
+/**
+ * returns the first element from each name ([!] to be tested)
+ * @param  {StringList} names of elements to be filtered
+ * @param  {Boolean} returnIndexes if true returns the indexes of elements (false by default)
+ * @return {List}
+ * tags:filter
+ */
+List.prototype.getElementsByNames=function(names, returnIndex){
+	var list = returnIndex?new NumberList():new List();
+	var i;
+
+	names.forEach(function(name){
+		for(i=0; this[i]!=null; i++){
+			if(this[i].name == name){
+				list.push(returnIndex?i:this[i]);
+				break;
+			}
+		}
+		list.push(returnIndex?-1:null);
+	});
+
+	return returnIndex?list:list.getImproved();
+}
+
+
+/**
+ * get first elemenet that has some property with a given value
+ * @param  {String} propertyName name of property
+ * @param  {Object} value value of property
+ * @return {Object}
+ * tags:
+ */
 List.prototype.getFirstElementByPropertyValue=function(propertyName, value){
 	for(var i=0; this[i]!=null; i++){
 		if(this[i][propertyName]==value) return this[i];
@@ -616,16 +907,107 @@ List.prototype.indexOfByPropertyValue=function(propertyName, value){
 }
 
 
-List.prototype.getFilteredByPropertyValue = function(propertyName, propertyValue){
+
+/**
+ * filters the list by booleans (also accepts numberList with 0s as false a any other number as true)
+ * @param  {List} booleanList booleanList or numberList
+ * @return {List}
+ * tags:filter
+ */
+List.prototype.getFilteredByBooleanList = function(booleanList){
 	var newList = new List();
 	newList.name = this.name;
 	var i;
 	for(i=0;this[i]!=null;i++){
-		if(this[i][propertyName]==propertyValue) newList.push(this[i]);
+		if(booleanList[i]) newList.push(this[i]);
 	}
 	return newList.getImproved();
 }
 
+/**
+ * filters a list by its elements, and a type of comparison (equal by default)
+ * @param  {Object} value object (for equal or different comparison) or number or date (for equal, different, greater, lesser)
+ * @param  {String} comparison equal (default), different, greater, lesser
+ * @return {List} filtered list
+ * tags:filter
+ */
+List.prototype.getFilteredByValue = function(value, comparison){
+	comparison = comparison==null?"equal":comparison;
+
+	var newList = new List();
+	newList.name = "filtered_"+this.name;
+	var i;
+	switch(comparison){
+		case "equal":
+			for(i=0;this[i]!=null;i++){
+				if(this[i][propertyName]==propertyValue) newList.push(this[i]);
+			}
+			break;
+		case "different":
+			for(i=0;this[i]!=null;i++){
+				if(this[i][propertyName]!=propertyValue) newList.push(this[i]);
+			}
+			break;
+		case "greater":
+			for(i=0;this[i]!=null;i++){
+				if(this[i][propertyName]>propertyValue) newList.push(this[i]);
+			}
+			break;
+		case "lower":
+			for(i=0;this[i]!=null;i++){
+				if(this[i][propertyName]>propertyValue) newList.push(this[i]);
+			}
+			break;
+	}
+	
+	return newList.getImproved();
+}
+
+/**
+ * filters a list by the values of a property on its elements, and a type of comparison (equal by default)
+ * @param  {String} propertyName name of property
+ * @param  {Object} propertyValue object (for equal or different comparison) or number or date (for equal, different, greater, lesser)
+ * @param  {String} comparison equal (default), different, greater, lesser
+ * @return {List} filtered list
+ * tags:filter
+ */
+List.prototype.getFilteredByPropertyValue = function(propertyName, propertyValue, comparison){
+	comparison = comparison==null?"equal":comparison;
+
+	var newList = new List();
+	newList.name = "filtered_"+this.name;
+	var i;
+	switch(comparison){
+		case "equal":
+			for(i=0;this[i]!=null;i++){
+				if(this[i][propertyName]==propertyValue) newList.push(this[i]);
+			}
+			break;
+		case "different":
+			for(i=0;this[i]!=null;i++){
+				if(this[i][propertyName]!=propertyValue) newList.push(this[i]);
+			}
+			break;
+		case "greater":
+			for(i=0;this[i]!=null;i++){
+				if(this[i][propertyName]>propertyValue) newList.push(this[i]);
+			}
+			break;
+		case "lower":
+			for(i=0;this[i]!=null;i++){
+				if(this[i][propertyName]>propertyValue) newList.push(this[i]);
+			}
+			break;
+	}
+	
+	return newList.getImproved();
+}
+
+/**
+ * conert a list into a NumberList
+ * @return {NumberList}
+ * tags:conversion
+ */
 List.prototype.toNumberList=function(){
 	var numberList = new NumberList();
 	numberList.name = this.name;
@@ -636,6 +1018,11 @@ List.prototype.toNumberList=function(){
 	return numberList;
 }
 
+/**
+ * convert a list into a StringList
+ * @return {StringList}
+ * tags:conversion
+ */
 List.prototype.toStringList=function(){
 	var i;
 	var stringList = new StringList();
@@ -679,6 +1066,12 @@ List.prototype.getWithoutElementsAtIndexes=function(indexes){ //[!] This DOESN'T
 	return newList;
 }
 
+/**
+ * removes an element and returns a new list
+ * @param  {Number} index of element to remove
+ * @return {List}
+ * tags:filter
+ */
 List.prototype.getWithoutElementAtIndex=function(index){
 	if(this.type=='List'){
 		var newList = new List();
@@ -691,6 +1084,27 @@ List.prototype.getWithoutElementAtIndex=function(index){
 	 	}
 	}
 	newList.name = this.name;
+	if(this.type=='List') return newList.getImproved();
+	return newList;
+}
+
+List.prototype.getWithoutElement=function(element){
+	var index = this.indexOf(element);
+	if(index==-1) return this;
+
+	if(this.type=='List'){
+		var newList = new List();
+	} else {
+		var newList =  instantiateWithSameType(this);
+	}
+
+	newList.name = this.name;
+	
+	var i;
+	for(i=0; this[i]!=null; i++){
+		if(i!=index) newList.push(this[i]);
+	}
+
 	if(this.type=='List') return newList.getImproved();
 	return newList;
 }
@@ -725,6 +1139,10 @@ List.prototype.getFilteredByFunction=function(func){
 }
 
 List.prototype.concat=function(){
+	if(arguments[0]==null) return this;
+	
+	//c.l('concat | arguments[0].type, this.type', arguments[0].type, this.type);
+
 	if(arguments[0].type==this.type){
 		if(this.type == "NumberList"){
 			return NumberList.fromArray(this._concat.apply(this, arguments), false);
@@ -734,9 +1152,77 @@ List.prototype.concat=function(){
 			return NodeList.fromArray(this._concat.apply(this, arguments), false);
 		} else if(this.type == "DateList"){
 			return DateList.fromArray(this._concat.apply(this, arguments), false);
+		} else if(this.type == "Table"){
+			return Table.fromArray(this._concat.apply(this, arguments), false);
+		} else if(this.type == "NumberTable"){
+			return NumberTable.fromArray(this._concat.apply(this, arguments), false);
 		}
 	}
 	return List.fromArray(this._concat.apply(this, arguments)).getImproved();
+}
+
+
+
+List.prototype.getReport=function(level){//TODO:complete
+	var ident = "\n"+(level>0?StringOperators.repeat("  ", level):"");
+	var text = level>0?(ident+"////report of instance of List////"):"///////////report of instance of List//////////";
+
+	var length = this.length;
+	var i;
+
+	text += ident+"name: "+this.name;
+	text += ident+"type: "+this.type;
+
+	if(length==0){
+		text += ident+"single element: ["+this[0]+"]";
+		return text;
+	} else {
+		text += ident+"length: "+length;
+		text += ident+"first element: ["+this[0]+"]";
+	}
+	
+	switch(this.type){
+		case "NumberList":
+			var min = this.getMin();
+			var max = this.getMax();
+			var average = (min+max)*0.5;
+			text += ident+"min: "+min;
+			text += ident+"max: "+max;
+			text += ident+"average: "+average;
+			if(length<101){
+				text += ident+"numbers: "+this.join(", ");
+			}
+			break;
+		case "StringList":
+		case "List":
+			var freqTable = this.getElementsRepetitionCount(true);
+			text += ident+"number of different elements: "+freqTable[0].length;
+			if(freqTable[0].length<10){
+				text += ident+"elements frequency:";
+			} else {
+				text += ident+"some elements frequency:";
+			}
+
+			for(i=0; freqTable[0][i]!=null && i<10; i++){
+				text += ident+"  ["+String(freqTable[0][i])+"]: "+freqTable[1][i];
+			}
+
+			var joined;
+			if(this.type == "List"){
+				joined = this.join("], [");
+			} else {
+				joined = this.toStringList().join("], [");
+			}
+			
+			if(joined.length<2000) text += ident+"strings: ["+joined+"]";
+			break;
+
+	}
+
+	///add ideas to: analyze, visualize
+
+
+	return text;
 }
 
 
@@ -761,7 +1247,7 @@ List.prototype.removeElement=function(element){
 	if(index!=-1) this.splice(index, 1);
 }
 
-List.prototype.removeElementAtIndex=function(index){
+List.prototype.removeElementAtIndex=function(index){//deprecated
 	this.splice(index, 1);
 }
 
@@ -788,6 +1274,22 @@ List.prototype.replace=function(elementToFind, elementToInsert){
 	}
 }
 
+/**
+ * assign value to property name on all elements
+ * @param  {StringList} names
+ * @return {List}
+ * tags:transform
+ */
+List.prototype.assignNames=function(names){
+	if(names==null) return this;
+	var n = names.length;
+
+	this.forEach(function(element, i){
+		element.name = names[i%n];
+	});
+
+	return this;
+}
 
 List.prototype.splice=function(){//TODO: replace
 	switch(this.type){
@@ -815,7 +1317,6 @@ List.prototype.destroy=function(){
 
 
 
-
 NumberList.prototype = new List();
 NumberList.prototype.constructor=NumberList;
 /**
@@ -838,6 +1339,7 @@ NumberList.fromArray=function(array, forceToNumber){
 	forceToNumber = forceToNumber==null?true:forceToNumber;
 	
 	var result=List.fromArray(array);
+	
 	if(forceToNumber){
 		for(var i=0; i<result.length; i++){
 			result[i]=Number(result[i]);
@@ -877,6 +1379,7 @@ NumberList.fromArray=function(array, forceToNumber){
 	result.subtract=NumberList.prototype.subtract;
 	result.divide=NumberList.prototype.divide;
 	result.dotProduct=NumberList.prototype.dotProduct;
+	result.distance=NumberList.prototype.distance;
 	result.sqrt=NumberList.prototype.sqrt;
 	result.pow=NumberList.prototype.pow;
 	result.log=NumberList.prototype.log;
@@ -888,6 +1391,8 @@ NumberList.fromArray=function(array, forceToNumber){
 	
 	//override
 	result.clone = NumberList.prototype.clone;
+	result._slice=Array.prototype.slice;
+	result.slice=NumberList.prototype.slice;
 	
 	return result;
 }
@@ -913,6 +1418,7 @@ NumberList.prototype.getMax=function(){//TODO:store result and retrieve while th
 	}
 	return max;
 }
+
 NumberList.prototype.getAmplitude=function(){
 	if(this.length==0) return 0;
 	var min=this[0];
@@ -924,10 +1430,15 @@ NumberList.prototype.getAmplitude=function(){
 	return max-min;
 }
 
-NumberList.prototype.getMinMaxInterval=function(){
+NumberList.prototype.getMinMaxInterval=function(){//deprecated?
 	return new Interval(this.getMin(), this.getMax());
 }
 
+/**
+ * returns the sum of values in the numberList
+ * @return {Number}
+ * tags:
+ */
 NumberList.prototype.getSum=function(){
 	if(this.length==0) return 0;
 	var i;
@@ -938,6 +1449,11 @@ NumberList.prototype.getSum=function(){
 	return sum;
 }
 
+/**
+ * return the product of values in the numberList
+ * @return {Number}
+ * tags:
+ */
 NumberList.prototype.getProduct=function(){
 	if(this.length==0) return null;
 	var i;
@@ -950,16 +1466,17 @@ NumberList.prototype.getProduct=function(){
 
 /**
  * returns a NumberList normalized to the sum
- * @param {factor} factor optional 
+ * @param {Number} factor optional 
  * @return {NumberList}
+ * tags:
  */
-NumberList.prototype.getNormalizedToSum=function(factor){
+NumberList.prototype.getNormalizedToSum=function(factor, sum){
 	factor = factor==null?1:factor;
 	var newNumberList=new NumberList();
 	newNumberList.name = this.name;
 	if(this.length==0) return newNumberList;
 	var i;
-	var sum=this.getSum();
+	var sum = sum==null?this.getSum():sum;
 	if(sum==0) return this.clone();
 	
 	for(i=0; i<this.length; i++){
@@ -969,9 +1486,10 @@ NumberList.prototype.getNormalizedToSum=function(factor){
 }
 
 /**
- * returns a NumberList normalized to Min-Max
- * @param {factor} factor optional
+ * returns a numberList normalized to min-max interval
+ * @param {Number} factor optional
  * @return {NumberList}
+ * tags:
  */
 NumberList.prototype.getNormalized=function(factor){
 	factor = factor==null?1:factor;
@@ -990,9 +1508,10 @@ NumberList.prototype.getNormalized=function(factor){
 }
 
 /**
- * returns a NumberList normalized to Max
- * @param {factor} factor optional
+ * returns a numberList normalized to Max
+ * @param {Number} factor optional
  * @return {NumberList}
+ * tags:
  */
 NumberList.prototype.getNormalizedToMax=function(factor){
 	factor = factor==null?1:factor;
@@ -1012,7 +1531,11 @@ NumberList.prototype.getNormalizedToMax=function(factor){
 	return newNumberList;
 }
 
-
+/**
+ * builds an Interval witn min and max value from the numberList
+ * @return {Interval}
+ * tags:
+ */
 NumberList.prototype.getInterval=function(){
 	if(this.length==0) return null;
 	var max=this[0];
@@ -1024,6 +1547,7 @@ NumberList.prototype.getInterval=function(){
 	var interval=new Interval(min, max);
 	return interval;
 }
+
 
 NumberList.prototype.toPolygon=function(){
 	if(this.length==0) return null;
@@ -1039,10 +1563,33 @@ NumberList.prototype.toPolygon=function(){
 
 /////////statistics
 
+/**
+ * calculates mean of numberList
+ * @return {Number}
+ * tags:statistics
+ */
 NumberList.prototype.getAverage=function(){
 	return this.getSum()/this.length;
 }
 
+/**
+ * calculates geometric mean of numberList
+ * @return {Number}
+ * tags:statistics
+ */
+NumberList.prototype.getGeometricMean=function(){
+	var s = 0;
+	this.forEach(function(val){
+		s+=Math.log(val);
+	});
+	return Math.pow(Math.E, s/this.length);
+}
+
+/**
+ * calculates de norm of the numberList (treated as a vector)
+ * @return {Number}
+ * tags:statistics
+ */
 NumberList.prototype.getNorm=function(){
 	var sq=0;
 	for(var i=0; this[i]!=null; i++){
@@ -1051,6 +1598,11 @@ NumberList.prototype.getNorm=function(){
 	return Math.sqrt(sq);
 }
 
+/**
+ * calculates the variance of the numberList
+ * @return {Number}
+ * tags:statistics
+ */
 NumberList.prototype.getVariance=function(){
 	var sd=0;
 	var average=this.getAverage();
@@ -1060,11 +1612,20 @@ NumberList.prototype.getVariance=function(){
 	return sd/this.length;
 }
 
+/**
+ * calculates the standard deviation
+ * @return {Number}
+ * tags:statistics
+ */
 NumberList.prototype.getStandardDeviation=function(){
 	return Math.sqrt(this.getVariance());
 }
 
-
+/**
+ * calculates the median of the numberList
+ * @return {Number}
+ * tags:statistics
+ */
 NumberList.prototype.getMedian = function(nQuantiles){
 	var sorted = this.getSorted(true);
 	var prop = (this.length-1)/2;
@@ -1074,6 +1635,12 @@ NumberList.prototype.getMedian = function(nQuantiles){
 	return onIndex?sorted[prop]:(0.5*sorted[entProp] + 0.5*sorted[entProp+1]);
 }
 
+/**
+ * builds a partition of n quantiles from the numberList
+ * @param {Number} nQuantiles number of quantiles
+ * @return {Number}
+ * tags:statistics
+ */
 NumberList.prototype.getQuantiles = function(nQuantiles){
 	var sorted = this.getSorted(true);
 	
@@ -1092,6 +1659,8 @@ NumberList.prototype.getQuantiles = function(nQuantiles){
 /////////sorting
 
 NumberList.prototype.getSorted=function(ascending){
+	ascending = ascending==null?true:ascending;
+	
 	if(ascending){
 		return NumberList.fromArray(this.slice().sort(function(a, b){return a-b}), false);
 	}
@@ -1248,6 +1817,22 @@ NumberList.prototype.dotProduct=function(numberList){
 	return sum;
 }
 
+/**
+ * calculates Euclidean distance between two numberLists
+ * @param  {NumberList} numberList
+ * @return {Number}
+ * tags:
+ */
+NumberList.prototype.distance=function(numberList){
+	var sum = 0;
+	var i;
+	var nElements = Math.min(this.length, numberList.length);
+	for(i=0;i<nElements;i++){
+		sum+=Math.pow(this[i]-numberList[i], 2);
+	}
+	return Math.sqrt(sum);
+}
+
 NumberList.prototype.isEquivalent=function(numberList){
 	for(i=0;this[i]!=null;i++){
 		if(this[i]!=numberList[i]) return false;
@@ -1283,11 +1868,14 @@ NumberList.prototype.approach=function(destinty, speed){
 ///////overriding
 
 NumberList.prototype.clone=function(){
-	var newList = NumberList.fromArray(this.slice(), false);
+	var newList = NumberList.fromArray(this._slice(), false);
 	newList.name = this.name;
 	return newList;
 }
 
+NumberList.prototype.slice=function(){
+	return NumberList.fromArray(this._slice.apply(this, arguments), false);
+}
 
 
 
@@ -1374,17 +1962,44 @@ Node.prototype.destroy=function(){
     delete this.az;
 }
 
+Node.prototype.getDegree=function(){
+    return this.relationList.length;
+}
 
 //treeProperties:
 Node.prototype.getParent=function(){
 	return this.parent;
 }
+
+/**
+ * return the leaves under a node in a Tree, [!] if the network is not a tree this method could run infinite loops
+ * @return {NodeList}
+ * tags:
+ */
+Node.prototype.getLeaves=function(){
+    var leaves = new NodeList();
+    var addLeaves = function(node){
+        if(node.toNodeList.length==0){
+            leaves.addNode(node);
+            return;
+        }
+        node.toNodeList.forEach(addLeaves);
+    }
+    addLeaves(this);
+    return leaves;
+}
 //
 
 
-Node.prototype.toString=function(){
-	return this.name+", "+this.id;
+Node.prototype.loadImage = function(urlImage){
+    Loader.loadImage(urlImage, function(e){
+        this.image = e.result;
+    }, this);
 }
+
+// Node.prototype.toString=function(){
+// 	return this.name+", "+this.id;
+// }
 
 Node.prototype.clone=function(){
 	var newNode = new Node(this.id, this.name);
@@ -1403,7 +2018,6 @@ Node.prototype.clone=function(){
 
 
 
-
 NodeList.prototype = new List();
 NodeList.prototype.constructor=NodeList;
 /**
@@ -1412,9 +2026,20 @@ NodeList.prototype.constructor=NodeList;
 */
 
 function NodeList(){
-	var array=List.apply(this, arguments);
-	//
-	array=NodeList.fromArray(array);
+	//var array=List.apply(this, arguments);
+	
+	//if(arguments && arguments.length>0) {c.l('UEUEUEUE, arguments.length', arguments.length); var a; a.push(0)};
+
+	array=NodeList.fromArray([]);
+
+	if(arguments && arguments.length>0){
+		var args = Array.prototype.slice.call(arguments);
+
+		args.forEach(function(arg){
+			array.addNode(arg);
+		});
+	}
+
    	return array;
 }
 
@@ -1430,12 +2055,14 @@ NodeList.fromArray=function(array, forceToNode){
 	
 	var result=List.fromArray(array);
 	result.type="NodeList";
-	result.ids =  new Object();Array();//
+	result.ids =  new Object();Array();//????
+
    	//assign methods to array:
    	result.deleteNodes=NodeList.prototype.deleteNodes;
    	result.addNode=NodeList.prototype.addNode;
    	result.addNodes=NodeList.prototype.addNodes;
    	result.removeNode=NodeList.prototype.removeNode;
+   	result.removeNodeAtIndex=NodeList.prototype.removeNodeAtIndex;
    	result.getNodeByName=NodeList.prototype.getNodeByName;
    	result.getNodeById=NodeList.prototype.getNodeById;
    	result.getNodesByIds=NodeList.prototype.getNodesByIds;
@@ -1445,9 +2072,13 @@ NodeList.fromArray=function(array, forceToNode){
    	result.getIds=NodeList.prototype.getIds;
    	result.getDegrees=NodeList.prototype.getDegrees;
    	result.getPolygon=NodeList.prototype.getPolygon;
-   	
+
+   	result._push = Array.prototype.push;
+   	result.push = function(a){c.l('with nodeList, use addNode instead of push'); var k; k.push(a)};
+
    	//overriden
    	result.getWithoutRepetitions=NodeList.prototype.getWithoutRepetitions;
+   	result.clone=NodeList.prototype.clone;
 
 	return result;
 }
@@ -1461,11 +2092,12 @@ NodeList.prototype.removeNodes=function(){
 
 NodeList.prototype.addNode=function(node){
 	this.ids[node.id] = node;
-  	this.push(node);
+  	this._push(node);
 }
 
 NodeList.prototype.addNodes=function(nodes){
-	for(var i=0; nodes[i]!=null; i++){
+	var i;
+	for(i=0; nodes[i]!=null; i++){
 		this.addNode(nodes[i]);
 	}
 }
@@ -1473,6 +2105,11 @@ NodeList.prototype.addNodes=function(nodes){
 NodeList.prototype.removeNode=function(node){
 	this.ids[node.id] = null;
 	this.removeElement(node);
+}
+
+NodeList.prototype.removeNodeAtIndex=function(index){
+	this.ids[this[index].id] = null;
+	this.splice(index, 1);
 }
 
 /**
@@ -1502,6 +2139,13 @@ NodeList.prototype.getNodeByName=function(name){
   	}
   	return null;
 }
+
+/**
+ * return a node from its id
+ * @param  {String} id
+ * @return {Node}
+ * tags:search
+ */
 NodeList.prototype.getNodeById=function(id){
 	return this.ids[id];
 }
@@ -1516,7 +2160,11 @@ NodeList.prototype.getNodesByIds=function(ids){
 	return newNodelist;
 }
 
-
+/**
+ * return a list of weights
+ * @return {NumberList}
+ * tags:
+ */
 NodeList.prototype.getWeights=function(){
 	var numberList = new NumberList();
 	for(var i=0; this[i]!=null; i++){
@@ -1525,6 +2173,11 @@ NodeList.prototype.getWeights=function(){
   	return numberList;
 }
 
+/**
+ * get ids from nodes
+ * @return {StringList}
+ * tags:
+ */
 NodeList.prototype.getIds=function(){
 	var list = new StringList();
 	for(var i=0; this[i]!=null; i++){
@@ -1557,9 +2210,17 @@ NodeList.prototype.getNewId=function(){
 	}
 }
 
+NodeList.prototype.clone=function(){
+	var newNodeList = new NodeList();
+	this.forEach(function(node){
+		newNodeList.addNode(node);
+	});
+	newNodeList.name = this.name;
+	return newNodeList;
+}
+
 
 //methods overriden
-
 NodeList.prototype.getWithoutRepetitions=function(){
 	newList = new NodeList();
 	newList.name = this.name;
@@ -1568,7 +2229,6 @@ NodeList.prototype.getWithoutRepetitions=function(){
 	}
 	return newList;
 }
-
 
 
 RelationList.prototype = new NodeList();
@@ -1658,6 +2318,7 @@ RelationList.prototype.getRelatedNodesToNode=function(node){
 * @param {Node} node1
 * @param {Boolean} directed consider relation direction (default: false)
 * @return a RelationList with relations that contain node0 and node1
+* tags:
 */
 RelationList.prototype.getAllRelationsBetweenNodes=function(node0, node1, directed){ //TODO: to be improved (check node1 on node0.relationList) (see: nodesAreConnected)
   var i;
@@ -1674,11 +2335,26 @@ RelationList.prototype.getAllRelationsBetweenNodes=function(node0, node1, direct
 
 
 /**
+ * checks if two nodes are related, returns a boolean
+ * @param  {Node} node0
+ * @param  {Node} node1
+ * @param  {Boolean} directed true if relation must be directed
+ * @return {Boolean}
+ * tags:
+ */
+RelationList.prototype.nodesAreConnected=function(node0, node1, directed){
+	if(node0.toNodeList.getNodeById(node1.id)!=null) return true;
+	return !directed && node1.toNodeList.getNodeById(node0.id)!=null;
+}
+
+
+/**
 * get first Relation between two Nodes
 * @param {Node} node0 
 * @param {Node} node1
 * @param {Boolean} directed consider relation direction (default: false)
 * @return a RelationList with relations that contain node0 and node1
+* tags:
 */
 RelationList.prototype.getFirstRelationBetweenNodes=function(node0, node1, directed){ //TODO: to be improved (check node1 on node0.relationList) (see: nodesAreConnected) //TODO: make it work with ids
 	directed=directed==null?false:directed;
@@ -1688,6 +2364,7 @@ RelationList.prototype.getFirstRelationBetweenNodes=function(node0, node1, direc
 	}
 	return null;
 }
+
 
 /**
 * get first relations between two Nodes
@@ -1719,12 +2396,11 @@ RelationList.prototype.getFirstRelationByIds=function(id0, id1, directed){ //TOD
 }
 
 
-RelationList.prototype.nodesAreConnected=function(node0, node1, directed){
-	if(node0.toNodeList.getNodeById(node1.id)!=null) return true;
-	if(!directed && node0.fromNodeList.getNodeById(node1.id)!=null) return true;
-	return false;
-}
-
+// RelationList.prototype.nodesAreConnected=function(node0, node1, directed){//
+// 	if(node0.toNodeList.getNodeById(node1.id)!=null) return true;
+// 	if(!directed && node0.fromNodeList.getNodeById(node1.id)!=null) return true;
+// 	return false;
+// }
 
 
 Table.prototype = new List();
@@ -1752,13 +2428,17 @@ Table.fromArray=function(array){
    	//assign methods to array:
    	result.applyFunction=Table.prototype.applyFunction;
    	result.getRow=Table.prototype.getRow;
+   	result.getRows=Table.prototype.getRows;
    	result.getLengths=Table.prototype.getLengths;
+   	result.getListLength=Table.prototype.getListLength;
 	result.sliceRows=Table.prototype.sliceRows;
+	result.getSubListsByIndexes = Table.prototype.getSubListsByIndexes;
 	result.getWithoutRow=Table.prototype.getWithoutRow;
 	result.getWithoutRows=Table.prototype.getWithoutRows;
 	result.getTransposed=Table.prototype.getTransposed;
 	result.getListsSortedByList=Table.prototype.getListsSortedByList;
 	result.sortListsByList=Table.prototype.sortListsByList;
+	result.getReport=Table.prototype.getReport;
 	result.clone=Table.prototype.clone;
 	result.print=Table.prototype.print;
 	
@@ -1768,7 +2448,7 @@ Table.fromArray=function(array){
 	//overiden
 	result.destroy=Table.prototype.destroy;
 
-	result.istable = true;
+	result.isTable = true;
 	
 	return result;
 }
@@ -1785,6 +2465,12 @@ Table.prototype.applyFunction=function(func){ //TODO: to be tested!
 	return newTable.getImproved();
 }
 
+/**
+ * returns a lis with all the alements of a row
+ * @param  {Number} index
+ * @return {List}
+ * tags:filter
+ */
 Table.prototype.getRow=function(index){
 	var list=new List();
 	var i;
@@ -1794,6 +2480,22 @@ Table.prototype.getRow=function(index){
 	return list.getImproved();
 }
 
+/**
+ * returns the length of the list at given index (default 0)
+ * 
+ * @param  {Number} index
+ * @return {Number}
+ * tags:
+ */
+Table.prototype.getListLength=function(index){
+	return this[index||0].length;
+}
+
+
+
+/**
+ * overrides List.prototype.getLengths (see comments there)
+ */
 Table.prototype.getLengths=function(){
 	var lengths=new NumberList();
 	for(var i=0; this[i]!=null; i++){
@@ -1802,13 +2504,47 @@ Table.prototype.getLengths=function(){
 	return lengths;
 }
 
+/**
+ * filter a table by selecting a section of rows, elements with last index included
+ * @param  {Number} startIndex index of first element in all lists of the table
+ * 
+ * @param  {Number} endIndex index of last elements in all lists of the table
+ * @return {Table}
+ * tags:filter
+ */
 Table.prototype.sliceRows=function(startIndex, endIndex){
+	endIndex = endIndex==null?(this[0].length-1):endIndex;
+	
+	var i;
 	var newTable=new Table();
+	var newList;
+	
 	newTable.name = this.name;
-	for(var i=0; this[i]!=null; i++){
-		newTable.push(this[i].getSubList(startIndex, endIndex));
+	for(i=0; this[i]!=null; i++){
+		newList = this[i].getSubList(startIndex, endIndex);
+		newList.name = this[i].name;
+		newTable.push(newList);
 	}
 	return newTable.getImproved();
+}
+
+/**
+ * filters the lists of the table by indexes
+ * @param  {NumberList} indexes
+ * @return {Table}
+ * tags:filter
+ */
+Table.prototype.getSubListsByIndexes=function(indexes){
+	var newTable = new Table();
+	this.forEach(function(list){
+		newTable.push(list.getSubListByIndexes(indexes));
+	});
+	return newTable.getImproved();
+}
+
+//deprecated
+Table.prototype.getRows=function(rowsIndexes){
+	return Table.prototype.getSubListsByIndexes(indexes);
 }
 
 Table.prototype.getWithoutRow=function(rowIndex){
@@ -1829,49 +2565,124 @@ Table.prototype.getWithoutRows=function(rowsIndexes){
 		for(j=0; this[i][j]!=null; j++){
 			if(rowsIndexes.indexOf(j)==-1) newTable[i].push(this[i][j]);
 		}
-		newTable[i] = newTable[i];
 		newTable[i].name = this[i].name;
 	}
 	return newTable.getImproved();
 }
 
-Table.prototype.getListsSortedByList=function(list, ascendant){
-	var newTable= instantiateWithSameType(this);
-	newTable.name = this.name;
-	for(var i=0; this[i]!=null; i++){
-		newTable[i]=this[i].getSortedByList(list, ascendant);
-	}
+
+/**
+ * sort table's lists by a list
+ * @param  {Object} listOrIndex kist used to sort, or index of list in the table
+ * 
+ * @param  {Boolean} ascending (true by default)
+ * @return {Table} table (of the same type)
+ * tags:sort
+ */
+Table.prototype.getListsSortedByList=function(listOrIndex, ascending){//depracated: use sortListsByList
+	if(listOrIndex==null) return;
+	var newTable = instantiateWithSameType(this);
+	var sortinglist = listOrIndex["isList"]?listOrIndex.clone():this[listOrIndex];
+
+	this.forEach(function(list){
+		newTable.push( list.getSortedByList(sortinglist, ascending) );
+	});
+
 	return newTable;
 }
 
-Table.prototype.getTransposed=function(){
-	var table = instantiate(typeOf(this));
-	if(this.length==0) return table;
+
+Table.prototype.getTransposed=function(firstListAsHeaders){
+
+	var tableToTranspose=firstListAsHeaders?this.getSubList(1):this;
+
+	var table = instantiate(typeOf(tableToTranspose));
+	if(tableToTranspose.length==0) return table;
 	var i;
 	var j;
 	var list;
-	var rows = this[0].length;
-	for(i=0;this[i]!=null;i++){
-		list = this[i];
+	var rows = tableToTranspose[0].length;
+	for(i=0;tableToTranspose[i]!=null;i++){
+		list = tableToTranspose[i];
 		for(j=0;list[j]!=null;j++){
 			if(i==0) table[j] = new List();
-			table[j][i] = this[i][j];
+			table[j][i] = tableToTranspose[i][j];
 		}
 	}
-	for(j=0;this[0][j]!=null;j++){
+	for(j=0;tableToTranspose[0][j]!=null;j++){
 		table[j] = table[j].getImproved();
 	}
+
+	if(firstListAsHeaders){
+		this[0].forEach(function(name, i){
+			table[i].name = String(name);
+		});
+	}
+
 	return table;
 }
 
-Table.prototype.sortListsByList=function(list){//TODO: finish
-	switch(list.type){
-		case 'NumberList':
-			return TableOperators.sortListsByNumberList(this, list);
-			break;
+
+Table.prototype.getReport = function(level){
+	var ident = "\n"+(level>0?StringOperators.repeat("  ", level):"");
+	var lengths = this.getLengths();
+	var minLength = lengths.getMin();
+	var maxLength = lengths.getMax();
+	var averageLength = (minLength+maxLength)*0.5;
+	var sameLengths =  minLength==maxLength;
+
+
+	var text = level>0?(ident+"////report of instance of Table////"):"///////////report of instance of Table//////////";
+
+	if(this.length==0){
+		text += ident+"this table has no lists";
+		return text;
 	}
-	return null;
+	
+	text += ident+"name: "+this.name;
+	text += ident+"type: "+this.type;
+	text += ident+"number of lists: "+this.length;
+
+	text += ident+"all lists have same length: "+(sameLengths?"true":"false");
+	
+	if(sameLengths){
+		text += ident+"lists length: "+this[0].length;
+	} else 	{
+		text += ident+"min length: "+minLength;
+		text += ident+"max length: "+maxLength;
+		text += ident+"average length: "+averageLength;
+		text += ident+"all lengths: "+lengths.join(", ");
+	}
+
+	var names = this.getNames();
+	var types = this.getTypes();
+	var sameTypes = types.allElementsEqual();
+	if(sameTypes){
+		text+=ident+"types of all lists: "+types[0];
+	} else {
+		text+=ident+"types: "+types.join(", ");
+	}
+	text+=ident+"names: "+names.join(", ");
+	
+	if(this.length<101){
+		text+=ident+ident+"--------lists reports---------";
+
+		var i;
+		for(i=0; this[i]!=null; i++){
+			text += "\n" + ident + ("("+(i)+"/0-"+(this.length-1)+")") + this[i].getReport(1);
+		}
+	}
+
+	///add ideas to: analyze, visualize
+
+	return text;
+
 }
+
+Table.prototype.getReportObject = function(){};//TODO
+Table.prototype.getReportHtml = function(){};//TODO
+
+
 
 ////transformative
 Table.prototype.removeRow=function(index){
@@ -1904,7 +2715,6 @@ Table.prototype.print = function(){
 	c.log(TableEncodings.TableToCSV(this, null, true));
 	c.log("/////////////"+this.name+"> ////////////////////////////////////////////////////");
 }
-
 DateAxis.prototype = new DataModel();
 DateAxis.prototype.constructor=DateAxis;
 
@@ -1962,7 +2772,6 @@ DateAxis.prototype.update=function(){
 DateAxis.prototype.toString=function(){
 	return "DateAxis["+this.departureDateInterval.toString()+", "+this.arrivalInterval.toString()+"]";
 }
-
 DateInterval.prototype = new DataModel();
 DateInterval.prototype.constructor=DateInterval;
 
@@ -1992,6 +2801,34 @@ DateInterval.prototype.getMin=function(){
 	return this.date1;
 }
 
+/**
+ * converts the dateInterval into an Interval (getting milliseconds time from each date)
+ * @return {Interval}
+ * tags:conversion
+ */
+DateInterval.prototype.getTimesInterval=function(){
+	return new Interval(this.date0.getTime(), this.date1.getTime());
+}
+
+/**
+ * factors the dateInterval (specially useful: factor by an interval, in which case a sub-dateInterval is selected)
+ * @param  {Object} object could be: interval
+ * @return {DateInterval}
+ * tags:
+ */
+DateInterval.prototype.getProduct = function(object){//TODO: complete with more object types
+	if(object==null) return;
+
+	if(object.type == 'Interval'){
+		var time0 = this.date0.getTime();
+		var time1 = this.date1.getTime();
+		var amp = time1-time0;
+
+		return new DateInterval(new Date(time0 + object.x*amp), new Date(time0 + object.y*amp));
+	}
+
+	return null;
+}
 DateList.prototype = new List();
 DateList.prototype.constructor=DateList;
 /**
@@ -2029,9 +2866,15 @@ DateList.fromArray=function(array, forceToDate){
 	return result;
 }
 
+/**
+ * get a numberList of time (milliseconds) values
+ * @return {NumberList}
+ * tags:conversor
+ */
 DateList.prototype.getTimes=function(){
+	var i;
 	var numberList = new NumberList();
-	for(var i=0;this[i]!=null;i++){
+	for(i=0; this[i]!=null; i++){
 		numberList.push(this[i].getTime());
 	}
 	return numberList;
@@ -2065,7 +2908,6 @@ DateList.prototype.getMax=function(){
 	}
 	return max;
 }
-
 Country.prototype = new Node();
 Country.prototype.constructor=Country;
 
@@ -2129,7 +2971,6 @@ Country.prototype.getFrame = function(){
 	}
 	return this._frame;
 }
-
 
 CountryList.prototype = new NodeList();
 CountryList.prototype.constructor=CountryList;
@@ -2275,7 +3116,6 @@ CountryList.prototype.assignValuesToCountriesFromTable=function(table, valueToNu
 	}
 }
 
-
 Point.prototype = new DataModel();
 Point.prototype.constructor=Point;
 
@@ -2302,7 +3142,8 @@ Point.prototype.getAngle=function(){
 
 
 Point.prototype.factor=function(k){
-	return new Point(this.x*k, this.y*k);
+	if(k >=0 || k < 0) return new Point(this.x*k, this.y*k);
+	if(k.type!=null && k.type=='Point') return new Point(this.x*k.x, this.y*k.y);
 }
 
 Point.prototype.normalize=function(){
@@ -2319,9 +3160,11 @@ Point.prototype.normalizeToValue=function(k){
 Point.prototype.subtract=function(point){
 	return new Point(this.x-point.x, this.y-point.y);
 }
+
 Point.prototype.add=function(point){
 	return new Point(point.x+this.x, point.y+this.y);
 }
+
 Point.prototype.addCoordinates=function(x, y){
 	return new Point(x+this.x, y+this.y);
 }
@@ -2376,7 +3219,6 @@ Point.prototype.destroy=function(){
 }
 
 
-
 Point3D.prototype = new Point();
 Point3D.prototype.constructor=Point3D;
 /**
@@ -2385,7 +3227,7 @@ Point3D.prototype.constructor=Point3D;
 */
 function Point3D (x, y, z) {
 	Point.apply(this, arguments);
-	this.name='';
+	//this.name='';
 	this.type="Point3D";
     this.z=z;
 }
@@ -2463,7 +3305,6 @@ Point3D.prototype.destroy=function(){
 	delete this.y;
 	delete this.z;
 }
-
 
 
 Polygon.prototype = new List();
@@ -2546,13 +3387,32 @@ Polygon.prototype.add=function(object){
 	}
 }
 
+/**
+ * scales the polygon by a number or a Point
+ * @param  {Object} value number or point
+ * @return {Polygon}
+ * tags:
+ */
 Polygon.prototype.factor=function(value){
+	var i;
 	var newPolygon = new Polygon();
-	for(var i=0;this[i]!=null;i++){
-		newPolygon[i]=this[i].factor(value);
-	}
 	newPolygon.name = this.name;
-	return newPolygon;
+
+	if(value >=0 || value < 0) {
+		for(i=0; this[i]!=null; i++){
+			newPolygon[i]=new Point(this[i].x*value, this[i].y*value);
+		}
+		
+		return newPolygon;
+	} else if(value.type!=null && value.type=='Point'){
+		for(i=0; this[i]!=null; i++){
+			newPolygon[i]=new Point(this[i].x*value.x, this[i].y*value.y);
+		}
+
+		return newPolygon;
+	}
+
+	return null;
 }
 
 
@@ -2628,7 +3488,6 @@ Polygon.prototype.clone = function(){
 	return newPolygon;
 }
 		
-
 Polygon3D.prototype = new List();
 Polygon3D.prototype.constructor=Polygon3D;
 /**
@@ -2648,7 +3507,6 @@ Polygon3D.fromArray=function(array){
 }
 
 		
-
 Polygon3DList.prototype = new List();
 Polygon3DList.prototype.constructor=Polygon3DList;
 /**
@@ -2665,7 +3523,6 @@ Polygon3DList.fromArray=function(array){
 	result.type="Polygon3DList";
 	return result;
 }
-
 PolygonList.prototype = new Table();
 PolygonList.prototype.constructor=PolygonList;
 /**
@@ -2748,7 +3605,6 @@ PolygonList.prototype.clone=function(){
 	// }
 	// return t;
 // }
-
 Rectangle.prototype = new DataModel();
 Rectangle.prototype.constructor=Rectangle;
 /**
@@ -2823,10 +3679,42 @@ Rectangle.prototype.getArea=function(){
 	return this.width*this.height;
 }
 
+/**
+ * check if a point belong to the rectangle
+ * @param  {Point} point
+ * @return {Boolean}
+ * tags:geometry
+ */
 Rectangle.prototype.containsPoint=function(point){
 	return (this.x<=point.x && this.x+this.width>=point.x && this.y<=point.y && this.y+this.height>=point.y);
 }
 
+
+Rectangle.prototype.pointIsOnBorder=function(point, margin){
+	margin = margin==null?1:margin;
+	if(point.x>=this.x-margin && point.x<=this.x+this.width+margin){
+		if(point.y>=this.y-margin && point.y<=this.y+margin) return true;
+		if(point.y>=this.y+this.height-margin && point.y<=this.y+this.height+margin) return true;
+		if(point.y>=this.y-margin && point.y<=this.y+this.height+margin){
+			if(point.x<this.x+margin || point.x>this.x+this.width-margin) return true;
+		}
+	}
+	return false;
+}
+
+
+
+
+Rectangle.prototype.getNormalRectangle=function(){
+	return new Rectangle(Math.min(this.x, this.x+this.width), Math.min(this.y, this.y+this.height), Math.abs(this.width), Math.abs(this.height));
+}
+
+/**
+ * return true if it interstects a rectangle
+ * @param  {Rectangle} rectangle
+ * @return {Boolean}
+ * tags:geometry
+ */
 Rectangle.prototype.intersectsRectangle=function(rectangle){
 	return !(this.x+this.width<rectangle.x) && !(this.y+this.height<rectangle.y) && !(rectangle.x+rectangle.width<this.x) && !(rectangle.y+rectangle.height<this.y)
 
@@ -2866,7 +3754,6 @@ Rectangle.prototype.destroy=function(){
 	delete this.width;
 	delete this.height;
 }
-
 
 RectangleList.prototype = new List();
 RectangleList.prototype.constructor=RectangleList;
@@ -2941,7 +3828,6 @@ RectangleList.prototype.getIntersectionArea = function(){
 	
 	return intersectionArea;
 }
-
 ColorList.prototype = new List();
 ColorList.prototype.constructor=ColorList;
 /**
@@ -2971,16 +3857,28 @@ ColorList.fromArray=function(array){
 	return result;
 }
 
-ColorList.prototype.getRgbArrays=function(){//TODO:rename getRgbTable
+/**
+ * return an arrays of rgb arrays ([rr,gg,bb])
+ * @return {array}
+ * tags:
+ */
+ColorList.prototype.getRgbArrays=function(){
 	var rgbArrays = new List();
 	
 	for(var i=0; this[i]!=null; i++){
-		rgbArrays[i] = ColorOperators.HEXtoRGB(this[i]);
+		rgbArrays[i] = ColorOperators.colorStringToRGB(this[i]);
 	}
 	
 	return rgbArrays;
 }
 
+/**
+ * interpolates colors with a given color and measure
+ * @param  {String} color to be interpolated with
+ * @param  {Number} value intenisty of interpolation [0,1]
+ * @return {ColorList}
+ * tags:
+ */
 ColorList.prototype.getInterpolated=function(color, value){
 	var newColorList = new ColorList();
 	
@@ -2992,6 +3890,11 @@ ColorList.prototype.getInterpolated=function(color, value){
 	return newColorList;
 }
 
+/**
+ * inverts all colors
+ * @return {ColorList}
+ * tags:
+ */
 ColorList.prototype.getInverted=function(){
 	var newColorList = new ColorList();
 	
@@ -3003,6 +3906,12 @@ ColorList.prototype.getInverted=function(){
 	return newColorList;
 }
 
+/**
+ * adds alpha value to all colores
+ * @param {Number} alpha alpha value in [0,1]
+ * @return {ColorList}
+ * tags:
+ */
 ColorList.prototype.addAlpha=function(alpha){
 	var newColorList = new ColorList();
 	
@@ -3013,7 +3922,6 @@ ColorList.prototype.addAlpha=function(alpha){
 	newColorList.name = this.name;
 	return newColorList;
 }
-
 ColorScale.prototype = new DataModel();
 ColorScale.prototype.constructor=ColorScale;
 /**
@@ -3040,7 +3948,6 @@ ColorScale.prototype.getColorList=function(nColors){
 	}
 	return colorList;
 }
-
 Axis.prototype = new DataModel();
 Axis.prototype.constructor=Axis;
 
@@ -3095,7 +4002,6 @@ Axis.prototype.update=function(){
 Axis.prototype.toString=function(){
 	return "Axis["+this.departureInterval.toString()+", "+this.arrivalInterval.toString()+"]";
 }
-
 Axis2D.prototype = new DataModel();
 Axis2D.prototype.constructor=Axis2D;
 
@@ -3172,7 +4078,6 @@ Axis2D.prototype._update=function(){
 Axis2D.prototype.toString=function(){
 	return "Axis2D["+this.departureFrame.toString()+", "+this.arrivalFrame.toString()+"]";
 }
-
 Interval.prototype = new Point();
 Interval.prototype.constructor=Interval;
 
@@ -3261,13 +4166,17 @@ Interval.prototype.getInterpolatedValues=function(numberList){
 	}
 	return newNumberList;
 }
-Interval.prototype.getInverseInterpolatedValues=function(numberList){
+Interval.prototype.getInverseInterpolatedValues = function(numberList){
 	var newNumberList = new Array();
 	var nElements=numberList.length;
 	for(var i=0; i<nElements; i++){
 		newNumberList.push(this.getInverseInterpolatedValue(numberList[i]));
 	}
 	return newNumberList;
+}
+
+Interval.prototype.intersect = function(interval){
+	return new Interval( Math.max(this.x, interval.x), Math.min(this.y, interval.y) );
 }
 
 /**
@@ -3313,7 +4222,6 @@ Interval.prototype.toString=function(){
 }
 
 		
-
 
 Matrix.prototype = new DataModel();
 Matrix.prototype.constructor=Matrix;
@@ -3469,7 +4377,6 @@ Matrix.prototype.scale=function(sx, sy, aboutPoint) {
 Matrix.prototype.translate=function(tx, ty) {
 	return this.concat(Matrix.translation(tx, ty));
 }
-
 NumberTable.prototype = new Table();
 NumberTable.prototype.constructor=NumberTable;
 
@@ -3480,12 +4387,22 @@ NumberTable.prototype.constructor=NumberTable;
 function NumberTable () {
 	var args=[];
 	var newNumberList;
-	for(var i=0; arguments[i]!=null; i++){
-		newNumberList = NumberList.fromArray(arguments[i]);
-		newNumberList.name = arguments[i].name;
-		arguments[i]=newNumberList;
+	var array
+
+	if(arguments.length>0 && Number(arguments[0])==arguments[0]){
+		array = [];
+		var i;
+		for(i=0;i<arguments[0];i++){
+			array.push(new NumberList());
+		}
+	} else {
+		for(var i=0; arguments[i]!=null; i++){
+			newNumberList = NumberList.fromArray(arguments[i]);
+			newNumberList.name = arguments[i].name;
+			arguments[i]=newNumberList;
+		}
+		array=Table.apply(this, arguments);
 	}
-	var array=Table.apply(this, arguments);
 	array=NumberTable.fromArray(array);
    	return array;
 }
@@ -3559,10 +4476,14 @@ NumberTable.prototype.getNumberListsNormalizedToSum=function(){
 
 NumberTable.prototype.getMax=function(){
 	if(this.length==0) return null;
-	var max=(this[0]).getMax();
-	for(var i=1; this[i]!=null; i++){
+
+	var max=this[0].getMax();
+	var i;
+
+	for(i=1; this[i]!=null; i++){
 		max = Math.max(this[i].getMax(), max);
 	}
+	
 	return max;
 }
 
@@ -3577,6 +4498,11 @@ NumberTable.prototype.getMinMaxInterval=function(){
 	return rangeInterval;
 }
 
+/**
+ * returns a numberList with values from numberlists added
+ * @return {Numberlist}
+ * tags:
+ */
 NumberTable.prototype.getSums=function(){
 	var numberList = new NumberList();
 	for(var i=0; this[i]!=null; i++){
@@ -3585,6 +4511,11 @@ NumberTable.prototype.getSums=function(){
 	return numberList;
 }
 
+/**
+ * returns a numberList with all values fro rows added
+ * @return {NumberList}
+ * tags:
+ */
 NumberTable.prototype.getRowsSums=function(){
 	var sums = this[0].clone();
 	var numberList;
@@ -3655,7 +4586,6 @@ NumberTable.prototype.add=function(value){
 	newTable.name = this.name;
 	return newTable;
 }
-
 function Space2D(configuration){
 	configuration = configuration==null?{}:configuration;
 	
@@ -3773,7 +4703,6 @@ Space2D.prototype.wheel = function(e){
 	if(this.scale>=this.MAX_SCALE && e.value<0){this.scale=this.MAX_SCALE; return;}
 	this.factorScaleFromPoint(new Point(mX-0, mY-0), (1-0.02*e.value));
 }
-
 StringList.prototype = new List();
 StringList.prototype.constructor=StringList;
 /**
@@ -3805,6 +4734,7 @@ StringList.fromArray=function(array, forceToString){
 	result.type="StringList";
 	
    	//assign methods to array:
+   	result.getLengths=StringList.prototype.getLengths;
    	result.toLowerCase=StringList.prototype.toLowerCase;
    	result.toUpperCase=StringList.prototype.toUpperCase;
    	result.append=StringList.prototype.append;
@@ -3813,11 +4743,26 @@ StringList.fromArray=function(array, forceToString){
    	result.getConcatenated=StringList.prototype.getConcatenated;
    	result.toNumberList=StringList.prototype.toNumberList;
    	result.toDateList=StringList.prototype.toDateList;
+   	result.trim=StringList.prototype.trim;
    	
    	//override
 	result.clone = StringList.prototype.clone;
    	
 	return result;
+}
+
+/**
+ * overrides List.prototype.getLengths (see comments there)
+ */
+StringList.prototype.getLengths=function(){
+	var lengths = new NumberList();
+	var string;
+
+	this.forEach(function(string){
+		lengths.push(string.length);
+	});
+
+	return lengths;
 }
 
 StringList.prototype.append=function(sufix, after){
@@ -3856,15 +4801,32 @@ StringList.prototype.getSurrounded=function(prefix, sufix){
 	return newStringList;
 }
 
-/**
- * [!] works with regular expressions
- */
+
+//deprectaed, replaced by replaceInStrings
 StringList.prototype.replace=function(regExp, string){
 	var newStringList = new StringList();
 	newStringList.name = this.name;
 	
 	for(var i=0;this[i]!=null;i++){
 		newStringList[i]=this[i].replace(regExp, string);
+	}
+	
+	return newStringList;
+}
+
+/**
+ * replaces in each string, a sub-string by a string
+ * @param  {String} subString sub-string to be replaced in each string
+ * @param  {String} replacement string to be placed instead
+ * @return {StringList}
+ * tags:
+ */
+StringList.prototype.replaceSubStringsInStrings=function(subString, replacement){
+	var newStringList = new StringList();
+	newStringList.name = this.name;
+	
+	for(var i=0;this[i]!=null;i++){
+		newStringList[i]=StringOperators.replaceString(string, subString, replacement)
 	}
 	
 	return newStringList;
@@ -3913,9 +4875,12 @@ StringList.prototype.toNumberList=function(){
 
 
 /**
- * format cases
- * 0: MM-DD-YYYY
- * 1: YYYY-MM-DD
+ * converts a stringList into a dateList
+ * 
+ * @param  {String} formatCase format cases:<br>0: MM-DD-YYYY<br>1: YYYY-MM-DD (standard Javascript conversion)
+ * @param  {String} separator "-" by default
+ * @return {DateList}
+ * tags:
  */
 StringList.prototype.toDateList=function(formatCase, separator){
 	var dateList = new DateList();
@@ -3926,6 +4891,20 @@ StringList.prototype.toDateList=function(formatCase, separator){
 	return dateList;
 }
 
+/**
+ * trims all the strings on the stringList
+ * @return {StringList}
+ * tags:
+ */
+StringList.prototype.trim = function(){
+	var i;
+	var newStringList = new StringList();
+	for(i=0;this[i]!=null;i++){
+		newStringList[i] = this[i].trim();
+	}
+	newStringList.name = this.name;
+	return newStringList;
+}
 
 ///////overriding
 
@@ -3934,7 +4913,6 @@ StringList.prototype.clone=function(){
 	newList.name = this.name;
 	return newList;
 }
-
 Relation.prototype = new Node();
 Relation.prototype.constructor=Relation;
 
@@ -3942,11 +4920,14 @@ Relation.prototype.constructor=Relation;
 * Relation 
 * @constructor
 */
-function Relation(id, name, node0, node1, weight){
+function Relation(id, name, node0, node1, weight, content){
 	Node.apply(this, [id, name]);
+	this.type="Relation";
+
 	this.node0=node0;
 	this.node1=node1;
 	this.weight = weight==null?1:weight;
+	this.content = content==null?"":content;
 }
 
 
@@ -3954,6 +4935,7 @@ Relation.prototype.destroy = function() {
   Node.prototype.destroy.call(this);
   delete this.node0;
   delete this.node1;
+  delete this.content;
 }
 
 Relation.prototype.getOther = function(node) {
@@ -3974,6 +4956,9 @@ Relation.prototype.clone = function() {
 	
 	return relation; 
 }
+Network.prototype = new DataModel();
+Network.prototype.constructor=Network;
+
 
 /**
 * Network
@@ -3981,14 +4966,44 @@ Relation.prototype.clone = function() {
 */
 function Network () {
 	this.type="Network";
-	this._newNodeID=0;
-	this._newRelationID=0;
+	
 	this.nodeList=new NodeList();
 	this.relationList=new RelationList();
 }
 
+/**
+ * get nodeList property
+ * @return {NodeList}
+ * tags:
+ */
+Network.prototype.getNodes=function(){
+	return this.nodeList;
+}
 
-//
+/**
+ * get relationList property
+ * @return {RelationList}
+ * tags:
+ */
+Network.prototype.getRelations=function(){
+	return this.relationList;
+}
+
+/**
+ * get nodes ids property
+ * @return {StringList}
+ * tags:
+ */
+Network.prototype.getNodesIds=function(){
+	return this.nodeList.getIds();
+}
+
+
+
+/**
+ * building methods
+ */
+
 Network.prototype.addNode=function(node){
 	this.nodeList.addNode(node);
 }
@@ -3997,6 +5012,10 @@ Network.prototype.getNodeWithName=function(name){
 }
 Network.prototype.getNodeWithId=function(id){
 	return this.nodeList.getNodeWithId(id);
+}
+
+Network.prototype.createRelation = function(node0, node1, id, weight, content){
+	this.addRelation(new Relation(id, id, node0, node1, weight, content));
 }
 
 Network.prototype.addRelation=function(relation){
@@ -4011,13 +5030,20 @@ Network.prototype.addRelation=function(relation){
  	relation.node1.fromRelationList.addNode(relation);
 }
 
-Network.prototype.createRelation=function(node0, node1, id, weight){
-	id = id || (node0.id+"_"+node1.id); //TODO: id generator on RelationList
+Network.prototype.connect=function(node0, node1, id, weight, content){
+	id = id || (node0.id+"_"+node1.id);
 	weight = weight || 1;
 	var relation = new Relation(id, id, node0, node1, weight);
 	this.addRelation(relation);
+	relation.content = content;
 	return relation;
 }
+
+
+
+/**
+ * removing methods
+ */
 
 Network.prototype.removeNode=function(node){
 	this.removeNodeRelations(node)
@@ -4047,30 +5073,71 @@ Network.prototype.removeRelation=function(relation){
 	relation.node1.fromRelationList.removeRelation(relation);
 }
 
-Network.prototype.removeIsolatedNodes=function(minNumberRelations){
+/**
+ * transformative method, removes nodes without a minimal number of connections
+ * @param  {Number} minDegree minimal degree
+ * @return {Number} number of nodes removed
+ * tags:transform
+ */
+Network.prototype.removeIsolatedNodes=function(minDegree){
 	var i;
-
-	minNumberRelations = minNumberRelations==null?1:minNumberRelations;
+	var nRemoved = 0;
+	minDegree = minDegree==null?1:minDegree;
 	
 	for(i=0; this.nodeList[i]!=null; i++){
-		if(this.nodeList[i].relationList.length<minNumberRelations){
+		if(this.nodeList[i].getDegree()<minDegree){
+			this.nodeList[i]._toRemove = true;
+		}
+	}
+
+	for(i=0; this.nodeList[i]!=null; i++){
+		if(this.nodeList[i]._toRemove){
 			this.removeNode(this.nodeList[i]);
+			nRemoved++;
 			i--;
 		}
 	}
+
+	return nRemoved;
 }
 
-//
-Network.prototype.getNewNodeID=function(){
-	id=this._newNodeID;
-	this._newNodeID++;
-	return id;
+
+
+Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames, idsSubfix, namesSubfix){
+	var newNetwork = new Network();
+	var newNode, newRelation;
+	var i;
+
+	idsSubfix = idsSubfix==null?'':String(idsSubfix);
+	namesSubfix = namesSubfix==null?'':String(namesSubfix);
+
+	this.nodeList.forEach(function(node){
+		newNode = new Node(idsSubfix+node.id, namesSubfix+node.name);
+		if(idsSubfix!='') newNode.basicId = node.id;
+		if(namesSubfix!='') newNode.basicName = node.name;
+		if(nodePropertiesNames){
+			nodePropertiesNames.forEach(function(propName){
+				if(node[propName]!=null) newNode[propName] = node[propName];
+			});
+		}
+		newNetwork.addNode(newNode);
+	});
+
+	this.relationList.forEach(function(relation){
+		newRelation = new Relation(idsSubfix+relation.id, namesSubfix+relation.name, newNetwork.nodeList.getNodeById(idsSubfix+relation.node0.id), newNetwork.nodeList.getNodeById(idsSubfix+relation.node1.id));
+		if(idsSubfix!='') newRelation.basicId = relation.id;
+		if(namesSubfix!='') newRelation.basicName = relation.name;
+		if(relationPropertiesNames){
+			relationPropertiesNames.forEach(function(propName){
+				if(relation[propName]!=null) newRelation[propName] = relation[propName];
+			});
+		}
+		newNetwork.addRelation(newRelation);
+	});
+
+	return newNetwork;
 }
-Network.prototype.getNewRelationID=function(){
-	id=this._newRelationID;
-	this._newRelationID++;
-	return id;
-}
+
 
 Network.prototype.getReport=function(){
 	return "network contains "+this.nodeList.length+" nodes and "+this.relationList.length+" relations";
@@ -4078,14 +5145,11 @@ Network.prototype.getReport=function(){
 
 Network.prototype.destroy=function(){
 	delete this.type;
-	delete this._newNodeID;
-	delete this._newRelationID;
 	this.nodeList.destroy();
 	this.relationList.destroy();
 	delete this.nodeList;
 	delete this.relationList;
 }
-
 Tree.prototype = new Network();
 Tree.prototype.constructor=Tree;
 
@@ -4108,7 +5172,9 @@ Tree.prototype.addNodeToTree=function(node, parent){
 		node.level = 0;
 		node.parent = null;
 	} else {
-		this._createRelation(parent, node);
+		var relation = new Relation(parent.id+"_"+node.id, parent.id+"_"+node.id, parent, node);
+		this.addRelation(relation);
+		//this._createRelation(parent, node);
 		node.level = parent.level+1;
 		node.parent = parent;
 	}
@@ -4116,6 +5182,7 @@ Tree.prototype.addNodeToTree=function(node, parent){
 }
 
 Network.prototype._newCreateRelation=function(parent, node, id, weight){
+	if(id==null) id = this.relationList.getNewId();
 	this._createRelation(parent, node, id, weight);
 	node.level = parent.level+1;
 	node.parent = parent;
@@ -4134,9 +5201,39 @@ Tree.prototype.addFather=function(node, children){
 Tree.prototype.getNodesByLevel=function(level){
 	var newNodeList = new NodeList();
 	for(i=0; this.nodeList[i]!=null; i++){
-		if(this.nodeList[i].level==level) newNodeList.push(this.nodeList[i]);
+		if(this.nodeList[i].level==level) newNodeList.addNode(this.nodeList[i]);
 	}
 	return newNodeList;
+}
+
+/**
+ * return the leaves (nodes without children) of a tree
+ *
+ * @param {Node} node to collect leaves under a node
+ * @return {NodeList}
+ * tags:
+ */
+Tree.prototype.getLeaves=function(node){
+	var leaves = new NodeList();
+	if(node){
+		if(node.toNodeList.length==0){
+			leaves.addNode(node);
+			return leaves;
+		}
+		addLeaves = function(candidate){
+			if(candidate.toNodeList.length==0){
+				leaves.addNode(candidate);
+			} else {
+				candidate.toNodeList.forEach(addLeaves);
+			}
+		}
+		node.toNodeList.forEach(addLeaves)
+	} else {
+		this.nodeList.forEach(function(candidate){
+			if(candidate.toNodeList.length==0) leaves.addNode(candidate); 
+		});
+	}
+	return leaves;
 }
 
 Tree.prototype.assignDescentWeightsToNodes=function(){
@@ -4144,6 +5241,10 @@ Tree.prototype.assignDescentWeightsToNodes=function(){
 }
 Tree.prototype._assignDescentWeightsToNode=function(node){
 	var i;
+	if(node.toNodeList.length==0){
+		node.descentWeight=1;
+		return 1;
+	}
 	for(i=0;node.toNodeList[i]!=null;i++){
 		node.descentWeight+=this._assignDescentWeightsToNode(node.toNodeList[i]);
 	}
@@ -4153,12 +5254,858 @@ Tree.prototype._assignDescentWeightsToNode=function(node){
 Tree.prototype.getReport=function(relation){
   return "Tree contains "+this.nodeList.length+" nodes and "+this.relationList.length+" relations";
 }
+function ObjectOperators(){};
+
+
+/**
+ * identity function
+ * @param  {Object} object
+ * @return {Object}
+ * tags:special
+ */
+ObjectOperators.identity = function(object){
+	return object;
+}
+
+
+/**
+ * builds a string report of the object
+ * @param  {Object} object
+ * @return {String}
+ * tags:special
+ */
+ObjectOperators.getReport = function(object){
+	if(object==null) return null;
+
+	if(object.getReport) return object.getReport();
+
+	var text = "///////////report of instance of Object//////////";
+
+	var string = ObjectConversions.objectToString(object);
+
+	if(string.length<2000){
+		text+="\n"+string;
+		return text;
+	}
+
+	var propertyNames = new StringList();
+	var propertyValues = new StringList();
+	var popertyTypes = new StringList();
+
+	for(propName in object){
+		propertyNames.push(propName);
+	}
+
+	if(propertyNames.length<100){
+		text += "\nproperties: "+propertyNames.join(", ");
+	} else {
+		text += "\nfirst 100 properties: "+propertyNames.slice(0,100).join(", ");
+	}
+
+	return text;
+	
+}
+
+/**
+ * uses a boolean to decide which of two objects it returns
+ * @param  {Boolean} boolean
+ * @param  {Object} object0 returned if boolean is true
+ * @param  {Object} object1 returned if boolean is false
+ * @return {Object}
+ * tags:
+ */
+ObjectOperators.booleanGate = function(boolean, object0, object1){
+	return boolean?object0:object1
+}
+
+/**
+ * return a property value from its name
+ * @param  {Object} object
+ * @param  {String} property_value
+ * @return {Object}
+ * tags:
+ */
+ObjectOperators.getPropertyValue = function(object, property_value){
+	if(object==null) return;
+
+	return object==null?null:object[property_value];
+}
+
+/**
+ * return a a stringList of property names
+ * @param  {Object} object
+ * @return {StringList}
+ * tags:
+ */
+ObjectOperators.getPropertiesNames = function(object){
+	if(object==null) return;
+
+	return StringList.fromArray(Object.getOwnPropertyNames(object));
+}
+
+/**
+ * return a table with a stringList of property names and a list of respective values
+ * @param  {Object} object
+ * @return {Table}
+ * tags:
+ */
+ObjectOperators.getPropertiesNamesAndValues = function(object){
+	if(object==null) return;
+
+	var table = new Table();
+	var i;
+	var value;
+
+	table[0] = ObjectOperators.getPropertiesNames(object);
+	table[1] = new List();
+
+	table[0].forEach(function(value, i){
+		table[1][i] = object[value];
+	});
+
+	table[1] = table[1].getImproved();
+
+	return table;
+}
+
+
+/**
+ * interpolates two different objects of the same type<br>currently working with numbers, intervals and numberLists
+ * @param  {Object} object0
+ * @param  {Object} object1
+ * 
+ * @param  {Number} value
+ * @param {Number} minDistance if objects are close enough, it delivers the orginal object
+ * @return {Object}
+ * tags:
+ */
+ObjectOperators.interpolateObjects = function(object0, object1, value, minDistance){
+	var type = typeOf(object0);
+	var i;
+	if(type!=typeOf(object1)) return object0;
+
+	value = value==null?0.5:value;
+	var antivalue = 1-value;
+
+	switch(type){
+		case 'number':
+			if(minDistance && Math.abs(object0-object1)<=minDistance) return object0;
+			return antivalue*object0 + value*object1;
+		case 'Interval':
+			if(minDistance && (Math.abs(object0.x-object1.x)+Math.abs(object0.y-object1.y))<=minDistance) return object0;
+			return new Interval(antivalue*object0.x + value*object1.x, antivalue*object0.y + value*object1.y);
+		case 'NumberList':
+			if(minDistance && Math.abs(object0.subtract(object1).getSum())<=minDistance) return object0;
+			var minL = Math.min(object0.length, object1.length);
+			var newNumberList = new NumberList();
+			for(i=0; i<minL; i++){
+				newNumberList[i] = antivalue*object0[i] + value*object1[i];
+			}
+			return newNumberList;
+	}
+	return null;
+}
+
+
+// ObjectOperators.fusionObjects = function(object, objectToFusion){
+
+// }
+
+/**
+ * replaces an object by another if it matches the obectToReplace
+ * @param  {Object} object to be replaced if equals to obectToReplace
+ * @param  {Object} obectToReplace object to check
+ * @param  {Object} objectToPlace to be delivered instead of given object (in case the object matches obectToReplace)
+ * @return {Object} original object or replaced object
+ * tags:
+ */
+ObjectOperators.replaceObject = function(object, obectToReplace, objectToPlace){
+	return object==obectToReplace?objectToPlace:object;
+}
+
+
+/**
+ * create an improved list from an Array
+ * @param  {Array} array
+ * @return {List}
+ * tags:conversion
+ */
+ObjectOperators.toList = function(array){
+	return List.fromArray(array).getImproved();
+}
+
+
+/////universal operators
+
+
+
+//////unibersal algebra
+
+
+/**
+ * adds two or more objects, addition is performed according to the different types 
+ * @param {Object} object0
+ * 
+ * @param {Object} object1
+ * @param {Object} object2
+ * @param {Object} object3
+ * @param {Object} object4
+ * @param {Object} object5
+ * @return {Object}
+ * tags:math
+ */
+ObjectOperators.addition=function(){
+	//c.l("addition__________________________________arguments:", arguments);
+	var objectType;
+	var result;
+	var i;
+	if(arguments.length<2){
+		if(arguments.length==1 && arguments[0]!=null && arguments[0].isList){
+			var result = arguments[0][0];
+			for(i=1; arguments[0][i]!=null; i++){
+				result = ObjectOperators.addition(result, arguments[0][i]);
+			}
+			return result;
+		}
+		return null;
+	}
+
+	if(arguments.length==2){
+		if(arguments[0]!=null && arguments[0].isList && arguments[1]!=null && arguments[1].isList){
+			return ObjectOperators._applyBinaryOperatorOnLists(arguments[0], arguments[1], ObjectOperators.addition);
+		}else if(arguments[0]!=null && arguments[0].isList){
+			//c.l('list versus object');
+			return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[0], arguments[1], ObjectOperators.addition);
+		}else if(arguments[1]!=null && arguments[1].isList){
+			//c.l('object versus list');
+			return ObjectOperators._applyBinaryOperatorOnObjectWithList(arguments[0], arguments[1], ObjectOperators.addition);
+		}
+
+		var a0 = arguments[0];
+		var a1 = arguments[1];
+		var a0Type = typeOf(a0);
+		var a1Type = typeOf(a1);
+		//c.l('ObjectOperators.addition, a0Type, a1Type:['+a0Type, a1Type+']');
+		var reversed = false;
+
+		if(a1Type<a0Type && a1Type!="string" && a0Type!="string"){
+			a0 = arguments[1];
+			a1 = arguments[0];
+			a0Type = typeOf(a0);
+			a1Type = typeOf(a1);
+			reversed = true;
+		}
+
+		var pairType = a0Type+"_"+a1Type;
+		//c.log('ObjectOperators.addition, pairType:['+pairType+']');
+		//
+		switch(pairType){
+			case 'boolean_boolean':
+				return a0 && a1;
+			case 'date_string':
+				return reversed?a1+DateOperators.dateToString(a0):DateOperators.dateToString(a0)+a1;
+			case 'number_string':
+			case 'string_string':
+			case 'string_number':
+			case 'boolean_number':
+			case 'number_number':
+				return a0+a1;
+			case 'Point_Point':
+				return new Point(a0.x + a1.x, a0.y + a1.y);
+			case 'Point3D_Point3D':
+				return new Point3D(a0.x + a1.x, a0.y + a1.y, a0.z + a1.z);
+			case 'number_Point':
+				return new Point(a0.x + a1, a0.y + a1);
+			case 'number_Point3D':
+				return new Point3D(a0.x + a1, a0.y + a1, a0.z + a1);
+			case 'Interval_number':
+				return new Interval(a0.x + a1, a0.y + a1);
+			case 'Interval_Point':
+				return new Point(a0.getMin() + a1.x, a0.getMax() + a1.y);
+			case 'Interval_Interval':
+				return new Point(a0.getMin() + a1.getMin(), a0.getMax() + a1.getMax());
+			case 'Point_Rectangle':
+				return new Rectangle(a0.x + a1.x, a0.y + a1.y, a1.width, a1.height);
+			case 'Interval_Rectangle':
+				return new Rectangle(a0.getMin() + a1.x, a0.getMax() + a1.y, a1.width, a1.height);
+			case 'Rectangle_Rectangle':
+				return new Rectangle(a0.x + a1.x, a0.y + a1.y, a0.width+a1.width, a0.height+a1.height);
+			case 'date_number':
+				return new Date(a0.getTime()+(a1/DateOperators.millisecondsToDays));
+			case 'date_date':
+				return new Date(Number(a0.getTime()+a1.getTime()));//?
+			case 'date_DateInterval':
+				return new DateInterval(ObjectOperators.addition(a0, a1.date0), ObjectOperators.addition(a0, a1.date1));
+			case 'DateInterval_number':
+				return new DateInterval(ObjectOperators.addition(a0.date0, a1), ObjectOperators.addition(a0.date1, a1));
+			case 'DateInterval_Interval':
+				return new DateInterval(ObjectOperators.addition(a0.date0, a1.min), ObjectOperators.addition(a0.date1, a1.max));
+			case 'DateInterval_DateInterval':
+				return new DateInterval(ObjectOperators.addition(a0.date0, a1.date0), ObjectOperators.addition(a0.date1, a1.date1));
+			case 'string_StringList':
+				return a1.append(a0, false);
+			case 'StringList_string':
+				return a1.append(a0, true);
+			default:
+				c.log("[!] addition didn't manage to resolve:", pairType, a0+a1);
+				return null;
+
+		}
+		return a0+a1;
+		
+	}	
+		
+	result=arguments[0];
+	for(i=1; i<arguments.length; i++){
+		//c.log(i, 'result:', result);
+		result=ObjectOperators.addition(result, arguments[i]);
+	}
+	return result;
+}
+
+
+/**
+ * multiplies two or more objects, multiplication is performed according to the different types 
+ * @param {Object} object0
+ * 
+ * @param {Object} object1
+ * @param {Object} object2
+ * @param {Object} object3
+ * @param {Object} object4
+ * @param {Object} object5
+ * @return {Object}
+ * tags:math
+ */
+ObjectOperators.multiplication=function(){
+	//c.log("multiplication__________________________________arguments:", arguments);
+	var objectType;
+	var result;
+	var i;
+	if(arguments.length<2){
+		if(arguments.length==1 && arguments[0].isList){
+			var result = arguments[0][0];
+			for(i=1; arguments[0][i]!=null; i++){
+				result = ObjectOperators.multiplication(result, arguments[0][i]);
+			}
+			return result;
+		}
+		return null;
+	}
+	if(arguments.length==2){
+		if(arguments[0]==null) return null;
+		
+		if(arguments[0].isList && arguments[1].isList){
+			return ObjectOperators._applyBinaryOperatorOnLists(arguments[0], arguments[1], ObjectOperators.multiplication);
+		}else if(arguments[0].isList){
+			//c.log('list versus object');
+			return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[0], arguments[1], ObjectOperators.multiplication);
+		}else if(arguments[1].isList){
+			return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[1], arguments[0], ObjectOperators.multiplication);
+		}
+
+		var a0 = arguments[0];
+		var a1 = arguments[1];
+		var a0Type = typeOf(a0);
+		var a1Type = typeOf(a1);
+
+		if(a1Type<a0Type){
+			a0 = arguments[1];
+			a1 = arguments[0];
+			a0Type = typeOf(a0);
+			a1Type = typeOf(a1);
+		}
+
+		var pairType = a0Type+"_"+a1Type;
+		//c.log('pairType:['+pairType+']');
+		//
+		switch(pairType){
+			case 'number_number':
+			case 'boolean_boolean':
+			case 'boolean_number':
+			case 'Date_string':
+			case 'number_string':
+			case 'string_string':
+				return a0*a1;//todo: what to do with strings?
+			case 'Point_Point':
+				return new Point(a0.x*a1.x, a0.y*a1.y);
+			case 'Point3D_Point3D':
+				return new Point3D(a0.x*a1.x, a0.y*a1.y, a0.z*a1.z);
+			case 'number_Point':
+				return new Point(a0.x*a1, a0.y*a1);
+			case 'number_Point3D':
+				return new Point3D(a0.x*a1, a0.y*a1, a0.z*a1);
+			case 'Interval_number':
+				return new Interval(a0.getMin()*a1, a0.getMax()*a1);
+			case 'Interval_Point':
+				return new Point(a0.getMin()*a1.x, a0.getMax()*a1.y);
+			case 'Interval_Interval':
+				return new Point(a0.getMin() + a1.getMin(), a0.getMax() + a1.getMax());
+			case 'Point_Rectangle':
+				return new Rectangle(a0.x*a1.x, a0.y*a1.y, a1.width, a1.height);//todo: no
+			case 'Interval_Rectangle':
+				return new Rectangle(a0.getMin()*a1.x, a0.getMax()*a1.y, a1.width, a1.height);//todo: no
+			case 'Rectangle_Rectangle':
+				return new Rectangle(a0.x*a1.x, a0.y*a1.y, a0.width*a1.width, a0.height*a1.height);
+			case 'date_number':
+				return new Date(a0.getTime()*(a1/DateOperators.millisecondsToDays));
+			case 'date_date':
+				return new Date(Number(a0.getTime()+a1.getTime()));//todo: ???
+			case 'date_DateInterval':
+				return new DateInterval(ObjectOperators.multiplication(a0, a1.date0), ObjectOperators.multiplication(a0, a1.date1));//todo: ???
+			case 'DateInterval_number':
+				return new DateInterval(ObjectOperators.multiplication(a0.date0, a1), ObjectOperators.multiplication(a0.date1, a1));//todo: ???
+			case 'DateInterval_Interval':
+				return new DateInterval(ObjectOperators.multiplication(a0.date0, a1.min), ObjectOperators.multiplication(a0.date1, a1.max));//todo: ???
+			case 'DateInterval_DateInterval':
+				return new DateInterval(ObjectOperators.multiplication(a0.date0, a1.date0), ObjectOperators.multiplication(a0.date1, a1.date1));//todo: ???
+			default:
+				c.log("[!] multiplication didn't manage to resolve:", pairType, a0*a1);
+				return null;
+
+		}
+		return a0*a1;
+	}	
+		
+	result=arguments[0];
+	for(i=1; i<arguments.length; i++){
+		//c.log(i, 'result:', result);
+		result=ObjectOperators.multiplication(result, arguments[i]);
+	}
+	return result;
+}
+
+/**
+ * divides two or more objects, division is performed according to the different types 
+ * @param {Object} object0
+ * 
+ * @param {Object} object1
+ * @param {Object} object2
+ * @param {Object} object3
+ * @param {Object} object4
+ * @param {Object} object5
+ * @return {Object}
+ * tags:math
+ */
+ObjectOperators.division=function(){
+	//c.log("addition__________________________________arguments:", arguments);
+	var objectType;
+	var result;
+	var i;
+	if(arguments.length<2){
+		if(arguments.length==1 && arguments[0] && arguments[0].isList){
+			var result = arguments[0][0];
+			for(i=1; arguments[0][i]!=null; i++){
+				result = ObjectOperators.division(result, arguments[0][i]);
+			}
+			return result;
+		}
+		return null;
+	}
+	if(arguments.length==2){
+		if(arguments[0]!=null && arguments[0].isList && arguments[1]!=null && arguments[1].isList){
+			return ObjectOperators._applyBinaryOperatorOnLists(arguments[0], arguments[1], ObjectOperators.division);
+		}else if(arguments[0]!=null && arguments[0].isList){
+			//c.log('list versus object');
+			return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[0], arguments[1], ObjectOperators.division);
+		}else if(arguments[1]!=null && arguments[1].isList){
+			return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[1], arguments[0], ObjectOperators.division);
+		}
+
+		var a0 = arguments[0];
+		var a1 = arguments[1];
+		var a0Type = typeOf(a0);
+		var a1Type = typeOf(a1);
+
+		if(a1Type<a0Type){
+			a0 = arguments[1];
+			a1 = arguments[0];
+			a0Type = typeOf(a0);
+			a1Type = typeOf(a1);
+		}
+
+		var pairType = a0Type+"_"+a1Type;
+		//c.log('pairType:['+pairType+']');
+		//
+		switch(pairType){
+			case 'number_number':
+			case 'boolean_boolean':
+			case 'boolean_number':
+			case 'Date_string':
+			case 'number_string':
+			case 'string_string':
+				return a0/a1;//todo: what to do with strings?
+			case 'Point_Point':
+				return new Point(a0.x/a1.x, a0.y/a1.y);
+			case 'Point3D_Point3D':
+				return new Point3D(a0.x/a1.x, a0.y/a1.y, a0.z/a1.z);
+			case 'number_Point':
+				return new Point(a0.x/a1, a0.y/a1);
+			case 'number_Point3D':
+				return new Point3D(a0.x/a1, a0.y/a1, a0.z/a1);
+			case 'Interval_number':
+				return new Interval(a0.getMin()/a1, a0.getMax()/a1);
+			case 'Interval_Point':
+				return new Point(a0.getMin()/a1.x, a0.getMax()/a1.y);
+			case 'Interval_Interval':
+				return new Point(a0.getMin() + a1.getMin(), a0.getMax() + a1.getMax());
+			case 'Point_Rectangle':
+				return new Rectangle(a0.x/a1.x, a0.y/a1.y, a1.width, a1.height);//todo: no
+			case 'Interval_Rectangle':
+				return new Rectangle(a0.getMin()/a1.x, a0.getMax()/a1.y, a1.width, a1.height);//todo: no
+			case 'Rectangle_Rectangle':
+				return new Rectangle(a0.x/a1.x, a0.y/a1.y, a0.width/a1.width, a0.height/a1.height);
+			case 'date_number':
+				return new Date(a0.getTime()/(a1/DateOperators.millisecondsToDays));
+			case 'date_date':
+				return new Date(Number(a0.getTime()+a1.getTime()));//todo: ???
+			case 'date_DateInterval':
+				return new DateInterval(ObjectOperators.division(a0, a1.date0), ObjectOperators.division(a0, a1.date1));//todo: ???
+			case 'DateInterval_number':
+				return new DateInterval(ObjectOperators.division(a0.date0, a1), ObjectOperators.division(a0.date1, a1));//todo: ???
+			case 'DateInterval_Interval':
+				return new DateInterval(ObjectOperators.division(a0.date0, a1.min), ObjectOperators.division(a0.date1, a1.max));//todo: ???
+			case 'DateInterval_DateInterval':
+				return new DateInterval(ObjectOperators.division(a0.date0, a1.date0), ObjectOperators.division(a0.date1, a1.date1));//todo: ???
+			default:
+				c.log("[!] division didn't manage to resolve:", pairType, a0/a1);
+				return null;
+
+		}
+		return a0/a1;
+	}	
+		
+	result=arguments[0];
+	for(i=1; i<arguments.length; i++){
+		//c.log(i, 'result:', result);
+		result=ObjectOperators.division(result, arguments[i]);
+	}
+	return result;
+}
+
+
+
+
+
+//removed, added an approach method in NumberList and Polygon
+
+/**
+ * modifies and object, making it closer to another (convergent asymptotic vector aka destiny) object, objects need to be vectors
+ * @param  {Object} objectToModify object that will be modified
+ * @param  {Object} objectDestiny  object guide (convergent asymptotic vector)
+ * @param  {Number} speed speed of convergence
+ */
+// ObjectOperators.approach = function(objectToModify, objectDestiny, speed){
+// 	var type = typeOf(objectToModify);
+// 	if(type!=typeOf(objectDestiny)) return null;
+// 	speed = speed||0.5;
+// 	var antispeed = 1-speed;
+
+// 	switch(type){
+// 		case "NumberList":
+// 			objectToModify.forEach(function(n, i){objectToModify[i] = antispeed*objectToModify[i] + speed*objectDestiny[i];});
+// 			break;
+// 	}
+// }
+
+
+
+
+
+ObjectOperators._applyBinaryOperatorOnLists=function(list0, list1, operator){
+	var n=Math.min(list0.length, list1.length);
+	var i;
+	var resultList=new List();
+	for(i=0; i<n; i++){
+		resultList.push(ObjectOperators._applyBinaryOperator(list0[i], list1[i], operator));
+	}
+	return resultList.getImproved();
+}
+ObjectOperators._applyBinaryOperatorOnListWithObject=function(list, object, operator){
+	var i;
+	var resultList=new List();
+	for(i=0; i<list.length; i++){
+		resultList.push(ObjectOperators._applyBinaryOperator(list[i], object, operator));
+	}
+	return resultList.getImproved();
+}
+ObjectOperators._applyBinaryOperatorOnObjectWithList=function(object, list, operator){
+	var i;
+	var resultList=new List();
+	for(i=0; i<list.length; i++){
+		resultList.push(ObjectOperators._applyBinaryOperator(object, list[i], operator));
+	}
+	return resultList.getImproved();
+}
+ObjectOperators._applyBinaryOperator=function(object0, object1, operator){
+	return operator(object0, object1);
+}
+ObjectConversions = function(){};
+
+// *
+//  * convert an object into a json string (JSON.stringify(object))
+//  * @param  {Object} object to convert
+//  * @return {String} string in format json
+//  * tags:conversion
+ 
+// ObjectConversions.objectToString = function(object){
+// 	return JSON.stringify(object);
+// }
+
+
+/**
+ * converts any Object into the desirde type, using the most obvious conversion (if exists)
+ * @param  {Object} object
+ * @param  {String} toType can be literal (ex: "string", "NumberList") or short (ex: "s", "#L")
+ * @return {Object} Object of the specified type
+ * tags:conversion
+ */
+ObjectConversions.conversor=function(object, toType){
+	var i;
+	var type = typeOf(object);
+	var pairType = type+"_"+toType;
+	var newList;
+
+	c.log('ObjectConversions.conversor, pairType:', pairType);
+
+	switch(pairType){
+		case 'NumberTable_Polygon':
+			var polygon = new Polygon();
+			var length2 = object.length>1;
+			for(i=0; object[0][i]!=null; i++){
+				polygon[i] = new Point(object[0][i], length2?object[1][i]:0);
+			}
+			return polygon;
+		case 'date_string':
+			return DateOperators.dateToString(object);
+		case 'string_date':
+			return DateOperators.stringToDate(object);
+		case 'date_number':
+			return object.getTime();
+		case 'number_date':
+			return new Date(object);
+		case 'List_StringList':
+		case 'NumberList_StringList':
+			return object.toStringList();
+		case 'StringList_NumberList':
+			return object.toNumberList();
+		case 'Object_string':
+			return JSON.stringify(object, null, "\t");
+		case 'string_Object':
+			return JSON.parse(object);
+		case 'string_ColorScale':
+			return ColorScales[object]; //todo: not working, fix
+		case 'string_Table':
+			return TableEncodings.CSVtoTable(object);
+		case 'StringList_DateList': //TODO: solve cases of lists
+			newList = new DateList();
+			object.forEach(function(string){
+				newList.push(DateOperators.stringToDate(string));
+			});
+			newList.name = object.name;
+			return newList;
+		case 'DateList_NumberList': //TODO: solve cases of lists
+			return object.getTimes();
+		case 'Table_Network':
+			return NetworkConvertions.TableToNetwork(object, null, 0, false);
+
+	}
+
+	switch(toType){
+		case 'string':
+			return object.toString();
+		case 'number':
+			return Number(object);
+	}
+}
+
+
+/**
+* DateListOperators
+* @constructor
+*/
+function DateListOperators(){};
+
+
+DateListOperators.buildTimeTreeFromDates = function(dates){
+	if(dates==null) return;
+
+	var tree = new Tree();
+	var minYear;
+	var maxYear;
+
+	var minDate = dates[0];
+	var maxDate = dates[0];
+
+	
+
+	dates.forEach(function(date){
+		minDate = date<minDate?date:minDate;
+		maxDate = date>maxDate?date:maxDate;
+	});
+
+	minYear = minDate.getFullYear();
+	maxYear = minDate.getFullYear();
+
+	var superior = new Node("years", "years");
+	tree.addNodeToTree(superior);
+	superior.dates = dates.clone();
+
+	var y, m, d, h, mn, s, ms;
+	var yNode, mNode, dNode, hNode, mnNode, sNode, msNode;
+	var parent;
+
+	//var N=0;
+
+	for(y=minYear; y<=maxYear; y++){
+		yNode = new Node(String(y), String(y));
+		tree.addNodeToTree(yNode, superior);
+	}
+
+	dates.forEach(function(date){
+		y = DateListOperators._y(date);
+		yNode = superior.toNodeList[y-minYear];
+		
+		if(yNode.dates==null){
+			yNode.dates = new DateList();
+
+			for(m=0; m<12; m++){
+				mNode = new Node(DateOperators.MONTH_NAMES[m]+"_"+y, DateOperators.MONTH_NAMES[m]);
+				tree.addNodeToTree(mNode, yNode);
+				nDaysOnMonth = DateOperators.getNDaysInMonth(y, m+1);
+			}
+		}
+		yNode.dates.push(date);
+
+
+		m = DateListOperators._m(date);
+		mNode = yNode.toNodeList[m];
+		if(mNode.dates==null){
+			mNode.dates = new DateList();
+			for(d=0; d<nDaysOnMonth; d++){
+				dNode = new Node((d+1)+"_"+mNode.id, String(d+1));
+				tree.addNodeToTree(dNode, mNode);
+			}
+		}
+		mNode.dates.push(date);
+
+		d = DateListOperators._d(date);
+		dNode = mNode.toNodeList[d];
+		if(dNode.dates==null){
+			dNode.dates = new DateList();
+			for(h=0; h<24; h++){
+				hNode = new Node(h+"_"+dNode.id, String(h)+":00");
+				tree.addNodeToTree(hNode, dNode);
+			}
+		}
+		dNode.dates.push(date);
+
+		h = DateListOperators._h(date);
+		hNode = dNode.toNodeList[h];
+		if(hNode.dates==null){
+			hNode.dates = new DateList();
+			for(mn=0; mn<60; mn++){
+				mnNode = new Node(mn+"_"+hNode.id, String(mn));
+				tree.addNodeToTree(mnNode, hNode);
+			}
+		}
+		hNode.dates.push(date);
+
+		mn = DateListOperators._mn(date);
+		mnNode = hNode.toNodeList[mn];
+		if(mnNode.dates==null){
+			mnNode.dates = new DateList();
+			//c.l(date);
+			// N++;
+			// for(s=0; s<60; s++){
+			// 	sNode = new Node(String(s), s+"_"+mnNode.id);
+			// 	tree.addNodeToTree(sNode, mnNode);
+			// }
+		}
+		mnNode.weight++;
+		mnNode.dates.push(date);
+
+		// s = DateListOperators._s(date);
+		// sNode = mnNode.toNodeList[s];
+		// if(sNode.dates==null){
+		// 	sNode.dates = new DateList();
+		// }
+		// sNode.dates.push(date);
+		// sNode.weight++;
+	});
+
+	tree.assignDescentWeightsToNodes();
+
+	// 
+
+	
+
+	// for(y=minYear; y<=maxYear; y++){
+	// 	yNode = new Node(String(y), String(y));
+	// 	tree.addNodeToTree(yNode, superior);
+
+	// 	for(m=0; m<12; m++){
+	// 		mNode = new Node(DateOperators.MONTH_NAMES[m], DateOperators.MONTH_NAMES[m]+"_"+y);
+	// 		tree.addNodeToTree(mNode, yNode);
+	// 		nDaysOnMonth = DateOperators.getNDaysInMonth(y, m+1);
+
+	// 		for(d=0; d<nDaysOnMonth; d++){
+	// 			dNode = new Node(String(d+1), (d+1)+"_"+mNode.id);
+	// 			tree.addNodeToTree(dNode, mNode);
+
+	// 			for(h=0; h<24; h++){
+	// 				hNode = new Node(String(h), h+"_"+dNode.id);
+	// 				tree.addNodeToTree(hNode, dNode);
+
+	// 				for(mn=0; mn<60; mn++){
+	// 					mnNode = new Node(String(mn), mn+"_"+hNode.id);
+	// 					tree.addNodeToTree(mnNode, hNode);
+
+	// 					for(s=0; s<60; s++){
+	// 						sNode = new Node(String(s), s+"_"+mnNode.id);
+	// 						tree.addNodeToTree(sNode, mnNode);
+	// 					}
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// }
+
+	return tree;
+}
+
+DateListOperators._y = function(date){
+	return date.getFullYear();
+}
+DateListOperators._m = function(date){
+	return date.getMonth();
+}
+DateListOperators._d = function(date){
+	return date.getDate()-1;
+}
+DateListOperators._h = function(date){
+	return date.getHours();
+}
+DateListOperators._mn = function(date){
+	return date.getMinutes();
+}
+DateListOperators._s = function(date){
+	return date.getSeconds();
+}
+DateListOperators._ms = function(date){
+	return date.getMilliseconds();
+}
+
 
 DateOperators.millisecondsToHours = 1/(1000*60*60);
 DateOperators.millisecondsToDays = 1/(1000*60*60*24);
+DateOperators.millisecondsToWeeks = 1/(1000*60*60*24*7);
 DateOperators.millisecondsToYears = 0.00000000003169;
 
-DateOperators.MONTH_NAMES_SHORT = ['jan','feb','mar','apr','mai','jun','jul','aug','sep','oct','nov','dec'];
+DateOperators.MONTH_NAMES = ['january','february','march','april','may','june','july','august','september','october','november','december'];
+DateOperators.MONTH_NAMES_SHORT = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+DateOperators.MONTH_NDAYS = [31,28,31,30,31,30,31,31,30,31,30,31];
+
+DateOperators.WEEK_NAMES = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
 /**
 * DateOperators
 * @constructor
@@ -4167,25 +6114,30 @@ function DateOperators(){};
 
 
 /**
- * format cases
- * 0: MM-DD-YYYY
- * 1: YYYY-MM-DD
- * 2: MM-DD-YY
- * 3: YY-MM-DD
+ * parses a Date
+ * @param  {String} string date in string format
+ * @param  {String} formatCase 0: <br>MM-DD-YYYY<br>1: YYYY-MM-DD<br>2: MM-DD-YY<br>3: YY-MM-DD
+ * @param  {String} separator
+ * @return {Date}
+ * tags:decoder
  */
 DateOperators.stringToDate=function(string, formatCase, separator){
 	separator = separator==null?"-":separator;
-	formatCase = formatCase==null?0:formatCase;
+	formatCase = formatCase==null?1:formatCase;
+
+	if(formatCase==1){
+		if(separator!="-") string = string.replace(new RegExp(string, "g"), "-");
+		return new Date(string);
+	}
 	
 	var y;
-	
 	var parts = string.split(separator);
 	switch(formatCase){
 		case 0://MM-DD-YYYY
 			return new Date(Number(parts[2]), Number(parts[0])-1, Number(parts[1]));
 			break;
 		case 1://YYYY-MM-DD
-			return new Date(Number(parts[0]), Number(parts[1])-1, Number(parts[2]));
+			return new Date(string);//Number(parts[0]), Number(parts[1])-1, Number(parts[2]));
 			break;
 		case 2://MM-DD-YY
 			y = Number(parts[2]);
@@ -4212,8 +6164,6 @@ DateOperators.dateToString=function(date, formatCase, separator){
 	var month = date.getMonth()+1;
 	var day = date.getDate();
 	
-	//return 
-	
 	switch(formatCase){
 		case 0://MM-DD-YYYY
 			return month+separator+day+separator+year;
@@ -4237,6 +6187,10 @@ DateOperators.addDaysToDate=function(date, nDays){
 	return new Date(date.getTime()+(nDays/DateOperators.millisecondsToDays));
 }
 
+DateOperators.addMillisecondsToDate=function(date, nMilliseconds){
+	return new Date(date.getTime()+nMilliseconds);
+}
+
 
 DateOperators.parseDate=function(string){
 	return new Date(Date.parse(string.replace(/\./g,"-")));
@@ -4257,6 +6211,9 @@ DateOperators.getHoursBetweenDates=function(date0, date1){
 DateOperators.getDaysBetweenDates=function(date0, date1){
 	return (date1.getTime() - date0.getTime())*DateOperators.millisecondsToDays;
 }
+DateOperators.getWeeksBetweenDates=function(date0, date1){
+	return (date1.getTime() - date0.getTime())*DateOperators.millisecondsToWeeks; 
+}
 DateOperators.getYearsBetweenDates=function(date0, date1){
 	return (date1.getTime() - date0.getTime())*DateOperators.millisecondsToYears;
 }
@@ -4269,6 +6226,21 @@ DateOperators.getDateDaysAgo=function(nDays){
 	return DateOperators.addDaysToDate(new Date(), -nDays);
 }
 
+
+/**
+ * gets the week number within a year (weeks start on Sunday, first week may have less than 7 days if start in a day other than sunday
+ * @param {Date} The date whose week you want to retrieve
+ * @return {Number} The week number of the date in its year
+ * tags:generate
+ */
+DateOperators.getWeekInYear=function(date){
+	var onejan = new Date(date.getFullYear(), 0, 1);
+    return Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+}
+
+DateOperators.getNDaysInMonth = function(month,year){
+    return new Date(year, month, 0).getDate();
+}
 
 
 
@@ -4288,7 +6260,6 @@ CountryListOperators.getCountryByName=function(countryList, name){
 	
 	return null;
 }
-
 /**
 * CountryOperators
 * @constructor
@@ -4307,7 +6278,6 @@ CountryOperators.getSimplifiedNames=function(names){
 	}
 	return simplifiedNames;
 }
-
 function GeoOperators(){};
 
 GeoOperators.EARTH_RADIUS = 6371009; 
@@ -4331,7 +6301,6 @@ GeoOperators.polygonLength = function(polygon){
 	}
 	return length;
 }
-
 
 function GeometryConvertions(){};
 
@@ -4363,7 +6332,7 @@ function GeometryConvertions(){};
 	// return polygonList;
 // }
 
-GeometryConvertions.twoNumberListsToPolygon=function(numberList0, numberList1){
+GeometryConvertions.twoNumberListsToPolygon=function(numberList0, numberList1){//TODO:change name to NumberTableToPolygon
 	var n = Math.min(numberList0.length, numberList1.length);
 	var polygon = new Polygon();
 	for(var i=0; i<n; i++){
@@ -4372,7 +6341,26 @@ GeometryConvertions.twoNumberListsToPolygon=function(numberList0, numberList1){
 	return polygon;
 }
 
+/**
+ * converts a Polygon into a NumberTable
+ * @param {Polygon} polygon
+ * @return {NumberTable}
+ * tags:conversion
+ */
+GeometryConvertions.PolygonToNumberTable = function(polygon){
+	if(polygon==null) return null;
+	
+	var numberTable = new NumberTable();
+	numberTable[0] = new NumberList();
+	numberTable[1] = new NumberList();
 
+	polygon.forEach(function(p){
+		numberTable[0].push(p.x);
+		numberTable[1].push(p.y);
+	});
+
+	return numberTable;
+}
 /**
 * GeometryOperators
 * @constructor
@@ -4412,6 +6400,104 @@ GeometryOperators.bezierCurvePoints=function(x0, y0, c0x, c0y, c1x, c1y, x1, y1,
 	return new Point(t*fx + s*ex, t*fy + s*ey);
 }
 
+
+
+GeometryOperators.trueBezierCurveHeightHorizontalControlPoints=function(x0, x1, y0, y1, c0x, c1x, x){
+	var dx = x1-x0;
+	var x = (x-x0)/dx;
+	var c0x = (c0x-x0)/dx;
+	var c1x = (c1x-x0)/dx;
+
+	if(GeometryOperators._bezierSimpleCurveTable==null){
+		var i, p;
+
+		GeometryOperators._bezierSimpleCurveTable = new NumberList();
+
+		for(i=1; i<10000; i++){
+			p = GeometryOperators.bezierCurvePoints(0,0,c0x,0,c1x,1,1,1, i/10000);
+			GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*p.x)] = p.y;
+		}
+
+		GeometryOperators._bezierSimpleCurveTable[0] = 0;
+		GeometryOperators._bezierSimpleCurveTable[1] = 1;
+	}
+
+	//c.log('x, y0, y1, , Math.floor(1000*x), GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*x)]', x, y0, y1, Math.floor(1000*x), GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*x)]);
+
+	return GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*x)]*(y1-y0) + y0;
+
+}
+
+
+
+
+
+/**
+ * This an approximation, it doesn't take into account actual values of c0x and c1x
+ */
+//GeometryOperators.trueBezierCurveHeightHorizontalControlPointsOld=function(x0, x1, y0, y1, c0x, c1x, x){//TODO:fix
+
+	// if(GeometryOperators._bezierSimpleCurveTable==null){
+
+	// 	for(i=0; i<1000; i++){
+
+	// 	}
+
+	// }
+
+	// return GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*(x-x0)/(x1-x0))]*(y1-y0) + y0;
+
+
+
+	//
+
+	//x=3at + t^2(3-9a) + t^3(1+6a)  --> Javier
+	//http://en.wikipedia.org/wiki/Cubic_function#General_formula_for_roots
+	
+
+
+
+	//return (x-x0)/(x1-x0);// (x - x0)/(c0x + c1x - 2*x0);
+
+	//var 
+
+	// var antit = 1 - t;
+
+	// var x0t = x0 + (cx0-x0)*t;
+	// var x1t = x1 + (cx1-x1)*t;
+
+	// var xm = x0t = (x1t-x0t)*t;
+
+
+	// c.log( (x-x0)/(c0x-x0+x1 - 2*x0) );
+
+	// return (x-x0)/(c0x+x1 - 2*x0);
+
+
+	// var d0 = c0x-x0;
+	// // var d1 = c1x-x1;
+
+	// var _a = 2*d0;
+	// var _b = d0 + x1 - x0;
+	// var _c = x0 - x;
+
+	// // var _b = d0 + x1 - x0;
+	// // var _c = x0 - x;
+
+
+	// //c.log(_a, _b, _c, '-->', (-_b + Math.sqrt(_b*_b - 4*_a*_c))/(2*_a), (-_b -Math.sqrt(_b*_b - 4*_a*_c))/(2*_a));
+
+	// return [(-_b + Math.sqrt(_b*_b - 4*_a*_c))/(2*_a), (-_b -Math.sqrt(_b*_b - 4*_a*_c))/(2*_a)];
+
+
+
+
+	// var cosinus = Math.cos(Math.PI*(t-1));
+	// var sign = cosinus>0?1:-1;
+	
+	// return (0.5 + 0.5*( Math.pow(cosinus*sign, 0.6)*sign ))*(y1-y0) + y0;
+//}
+
 /**
  * This an approximation, it doesn't take into account actual values of c0x and c1x
  */
@@ -4438,11 +6524,13 @@ GeometryOperators.distanceToBezierCurve=function(x0, y0, c0x, c0y, c1x, c1y, x1,
 	var d0I = Math.pow(p0I.x-p.x, 2) + Math.pow(p0I.y-p.y, 2);
 	var d1 = Math.pow(p1.x-p.x, 2) + Math.pow(p1.y-p.y, 2);
 	var d1I = Math.pow(p1I.x-p.x, 2) + Math.pow(p1I.y-p.y, 2);
+
+	var i;
 	
 	var pM;
 	var pMI;
 	
-	for(var i=0; i<10; i++){
+	for(i=0; i<10; i++){
 		pM = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, (t0+t1)*0.5);
 		pMI = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, (t0+t1)*0.5 + minDT);
 		
@@ -4469,6 +6557,10 @@ GeometryOperators.triangleContainsPoint=function(pT0, pT1, pT2, p){
     var b = (pT1.x - p.x)*(pT2.y - p.y) - (pT2.x - p.x)*(pT1.y - p.y);
     var c = (pT2.x - p.x)*(pT0.y - p.y) - (pT0.x - p.x)*(pT2.y - p.y);
     return (a>0 && b>0 && c>0) || (a>=0 && b>=0 && c>=0);
+}
+
+GeometryOperators.triangleArea = function(triangle){
+	return Math.abs(triangle.a.x*(triangle.b.y - triangle.c.y)+triangle.b.x*(triangle.c.y - triangle.a.y) + triangle.c.x*(triangle.a.y - triangle.b.y))/2;
 }
 
 
@@ -4639,7 +6731,7 @@ GeometryOperators.circlesLensAngles = function(circle0, circle1){
 
 //////Delauney
 
-GeometryOperators.delauney = function(polygon){
+GeometryOperators.delauney = function(polygon){ /// ---> move to Polygon operators, chnge name to getDelauneyTriangulation
 	return _triangulate(polygon);
 }
 
@@ -4813,7 +6905,6 @@ function _triangulate(vertices) {
 
 
 
-
 /**
 * PointOperators
 * @constructor
@@ -4837,7 +6928,6 @@ PointOperators.dot=function(point0, point1){
 PointOperators.twoPointsInterpolation=function(point0, point1, t){
 	return new Point((1-t)*point0.x+t*point1.x, (1-t)*point0.y+t*point1.y);
 }
-
 /**
 * PolygonGenerators
 * @constructor
@@ -4954,9 +7044,17 @@ PolygonGenerators.createPolygon=function(nPoints, mode, frame){
 // 	return new Array(centers, radius);
 // }
 
-
 function PolygonListEncodings(){};
 
+/**
+ * converts a simple format for polygons into a PolygonList
+ * @param {String} string
+ * 
+ * @param {String} separatorCoordinates "," by default
+ * @param {String} separatorPolygons "/" by default
+ * @return {PolygonList}
+ * tags:encoding
+ */
 PolygonListEncodings.StringToPolygonList=function(string, separatorCoordinates, separatorPolygons){
 	separatorCoordinates = separatorCoordinates || ",";
 	separatorPolygons = separatorPolygons||"/";
@@ -4981,22 +7079,30 @@ PolygonListEncodings.StringToPolygonList=function(string, separatorCoordinates, 
 	return polygonList;
 }
 
-
-PolygonListEncodings.polygonListToString=function(polygonList, separatorCoordinates, separatorPolygons){
+/**
+ * converts a polygonList into a simple text format
+ * @param {PolygonList} polygonList
+ * 
+ * @param {String} separatorCoordinates "," by default
+ * @param {String} separatorPolygons "/" by default
+ * @return {String}
+ * tags:encoding
+ */
+PolygonListEncodings.PolygonListToString=function(polygonList, separatorCoordinates, separatorPolygons){
 	separatorCoordinates = separatorCoordinates || ",";
 	separatorPolygons = separatorPolygons||"/";
 	
+	var i;
 	var j;
 	var t='';
-	for(var i=0;this[i]!=null;i++){
+	for(var i=0;polygonList[i]!=null;i++){
 		t+=(i==0?'':separatorPolygons);
-		for(j=0; this[i][j]!=null; j++){
-			t+=(j==0?'':separatorCoordinates)+this[i][j].x+separatorCoordinates+this[i][j].y;
+		for(j=0; polygonList[i][j]!=null; j++){
+			t+=(j==0?'':separatorCoordinates)+polygonList[i][j].x+separatorCoordinates+polygonList[i][j].y;
 		}
 	}
 	return t;
 }
-
 /**
 * PolygonGenerators
 * @constructor
@@ -5015,13 +7121,19 @@ PolygonListOperators.simplifyPolygons=function(polygonList, margin, removeEmptyP
 	}
 	return newPolygonList;
 }
-
 /**
 * PolygonOperators
 * @constructor
 */
 function PolygonOperators(){};
 
+/**
+ * builds a Hull polygon from a set of points
+ * @param  {Polygon} polygon set of points
+ * @param  {Boolean} returnIndexes if true returns the indexes of external points, connected by the Hull polygon (false by default)
+ * @return {List} Hull polygn or list of indexes
+ * tags:geometry
+ */
 PolygonOperators.hull = function(polygon, returnIndexes) {
 	returnIndexes = returnIndexes==null?false:returnIndexes;
 	var i;
@@ -5032,18 +7144,18 @@ PolygonOperators.hull = function(polygon, returnIndexes) {
 	var h = new Polygon();
 	if(returnIndexes) var indexes = new NumberList();
 	
-	p = this.sortOnXY(p);
+	p = PolygonOperators.sortOnXY(p);
 	
 	if(returnIndexes){
 		for (i = 0; i<n; i++) {
-			while (k >= 2 && this.crossProduct3Points(h[k-2], h[k-1], p[i]) <= 0)
+			while (k >= 2 && PolygonOperators.crossProduct3Points(h[k-2], h[k-1], p[i]) <= 0)
 				k--;
 			h[k++] = p[i];
 			indexes[k-1] = i;
 		}
 		
 		for (i = n-2, t = k+1; i>=0; i--) {
-			while (k >= t && this.crossProduct3Points(h[k-2], h[k-1], p[i]) <= 0)
+			while (k >= t && PolygonOperators.crossProduct3Points(h[k-2], h[k-1], p[i]) <= 0)
 				k--;
 			h[k++] = p[i];
 			indexes[k-1] = i;
@@ -5053,19 +7165,115 @@ PolygonOperators.hull = function(polygon, returnIndexes) {
 	} 
 	
 	for (i = 0; i<n; i++) {
-		while (k >= 2 && this.crossProduct3Points(h[k-2], h[k-1], p[i]) <= 0)
+		while (k >= 2 && PolygonOperators.crossProduct3Points(h[k-2], h[k-1], p[i]) <= 0)
 			k--;
 		h[k++] = p[i];
 	}
 	
 	for (i = n-2, t = k+1; i>=0; i--) {
-		while (k >= t && this.crossProduct3Points(h[k-2], h[k-1], p[i]) <= 0)
+		while (k >= t && PolygonOperators.crossProduct3Points(h[k-2], h[k-1], p[i]) <= 0)
 			k--;
 		h[k++] = p[i];
 	}
 	
 	return Polygon.fromArray(h.getSubList(new Interval(0, k-2)));
 }
+
+/**
+ * builds a dendrogram (tree) from a Polygon (currently using barycenter for distances)
+ * @param  {Polygon} polygon
+ * @return {Tree} dendrogram
+ * tags:geometry
+ */
+PolygonOperators.buildDendrogramFromPolygon = function(polygon){
+	var tree = new Tree();
+	var point, i;
+	var node;
+	var tW;
+	var parent;
+	var leaves = new NodeList();
+
+	var node0, node1, nodeList = new Polygon();
+
+	polygon.forEach(function(point, i){
+		node = new Node('point_'+i, 'point_'+i);
+		node.weight = 1;
+		node.barycenter = point;
+		node.point = point;
+		node.polygon = new Polygon(point);
+		tree.addNode(node);
+		nodeList.push(node);
+		leaves.push(node);
+	});
+
+	tree.nodeList = tree.nodeList.getReversed();
+
+	//c.l('-');
+
+	var buildNodeFromPair = function(node0, node1){
+		var parent = new Node("("+node0.id+","+node1.id+")", "("+node0.id+","+node1.id+")");
+		parent.polygon = node0.polygon.concat(node1.polygon);
+		//c.l("node0.polygon.length, node1.polygon.length, parent.polygon.length", node0.polygon.length, node1.polygon.length, parent.polygon.length);
+		parent.weight = parent.polygon.length;
+		tW = node0.weight+node1.weight;
+		parent.barycenter = new Point((node0.weight*node0.barycenter.x+node1.weight*node1.barycenter.x)/tW, (node0.weight*node0.barycenter.y+node1.weight*node1.barycenter.y)/tW);
+		//c.l('parent.barycenter.x', parent.barycenter.x, parent.barycenter.y);
+		tree.addNode(parent);
+		tree._newCreateRelation(parent, node0);
+		tree._newCreateRelation(parent, node1);
+		return parent;
+	}
+
+	while(nodeList.length>1){
+		closestPair = PolygonOperators._findClosestNodes(nodeList);
+		node0 = nodeList[closestPair[0]];
+		node1 = nodeList[closestPair[1]];
+		parent = buildNodeFromPair(node0, node1);
+		parent.distance = closestPair.distance;
+		c.l('distance:', parent.distance);
+		nodeList.splice(closestPair[0], 1);
+		nodeList.splice(closestPair[1]-1, 1);
+		nodeList.push(parent);
+	}
+
+	tree.nodeList = tree.nodeList.getReversed();
+
+	var assignLevel = function(node, parentLevel){
+		var son;
+		node.level = parentLevel+1;
+		node.toNodeList.forEach(function(son){
+			assignLevel(son, node.level);
+		});
+	}
+
+	assignLevel(tree.nodeList[0], -1);
+
+	tree.leaves = leaves;
+
+	return tree;
+
+}
+
+PolygonOperators._findClosestNodes = function(nodeList){
+	var i, j;
+	var d2;
+	var d2Min = 9999999999;
+
+	for(i=0; nodeList[i+1]!=null; i++){
+		for(j=i+1; nodeList[j]!=null; j++){
+			d2 = Math.pow(nodeList[i].barycenter.x - nodeList[j].barycenter.x, 2) + Math.pow(nodeList[i].barycenter.y - nodeList[j].barycenter.y, 2);
+			if(d2<d2Min){
+				d2Min = d2;
+				pair = [i, j];
+			}
+		}
+	}
+
+	pair.distance = d2Min;
+
+	return pair;
+}
+
 
 PolygonOperators.sortOnXY=function(polygon){
 	return polygon.sort(function(p0, p1){
@@ -5313,7 +7521,6 @@ PolygonOperators.placePointsInsideBezierPolygon = function(polygon, nPoints, mod
 			break;
 	}
 }
-
 /**
 * RectangleOperators
 * @constructor
@@ -5343,7 +7550,7 @@ RectangleOperators.packingRectangles=function(weights, packingMode, rectangle, p
 		//4: europe quadrigram
 		//5:vertical strips
 		case 0:
-			return this.quadrification(rectangle, weights);
+			return RectangleOperators.squarify(rectangle, weights);
 		case 1:
 			var minMax = weights.getMinMaxInterval();
 			if(minMax.min<0){
@@ -5452,24 +7659,31 @@ RectangleOperators.packingRectangles=function(weights, packingMode, rectangle, p
 	}
 	return null;
 }
+
+RectangleOperators.quadrification = RectangleOperators.squarify; //old name
+
 /**
 * Squarified algorithm as described in (http://www.win.tue.nl/~vanwijk/stm.pdf)
 * @param {Rectangle} bounds Rectangle
 * @param {NumberList} list of weights
+* 
 * @param {Boolean} weights are normalized
 * @param {Boolean} weights are sorted
-* 
 * @return {List} a list of Rectangles
+* tags:
 */
-RectangleOperators.quadrification=function(rectangle, weightList, isNormalizedWeights, isSortedWeights){//, funcionEvaluacionnWeights:Function=null):Array{
-	if(weightList.length==0) return new RectangleList();
-	if(weightList.length==1) return new RectangleList(rectangle);
+RectangleOperators.squarify=function(frame, weights, isNormalizedWeights, isSortedWeights){//, funcionEvaluacionnWeights:Function=null):Array{
+	if(weights==null) return;
+	if(weights.length==0) return new RectangleList();
+	if(weights.length==1) return new RectangleList(frame);
 	isNormalizedWeights=isNormalizedWeights?isNormalizedWeights:false;
 	isSortedWeights=isSortedWeights?isSortedWeights:false;
+	var newWeightList;
+
 	if(isNormalizedWeights){
-		var newWeightList = weightList;// new NumberList(arregloPesos);
+		newWeightList = weights;// new NumberList(arregloPesos);
 	} else {
-		newWeightList = weightList.getNormalizedToSum();
+		newWeightList = weights.getNormalizedToSum();
 	}
 	
 	if(!isSortedWeights){
@@ -5477,9 +7691,9 @@ RectangleOperators.quadrification=function(rectangle, weightList, isNormalizedWe
 		newWeightList = ListOperators.sortListByNumberList(newWeightList, newWeightList);
 	}
 	//trace("RectangleOperators.squarified | ", newWeightList);
-	var area =  rectangle.width*rectangle.height;
+	var area =  frame.width*frame.height;
 	var rectangleList=new RectangleList();
-	var freeRectangle = rectangle.clone();
+	var freeRectangle = frame.clone();
 	var subWeightList;
 	var subRectangleList = new List();//RectangleList();//
 	var prevSubRectangleList;
@@ -5488,21 +7702,22 @@ RectangleOperators.quadrification=function(rectangle, weightList, isNormalizedWe
 	var index=0;
 	var subArea;
 	var freeSubRectangle = new Rectangle();
-	var nWeights = weightList.length;
+	var nWeights = weights.length;
 	var lastRectangle;
 	var isColumn;
 	if(nWeights>2){
-		var i;
-		var j;
+		var i, j, k;
+		var sum;
 		for(i=index; i<nWeights; i++){
 			proportion = Number.MAX_VALUE;
 			if(newWeightList[i]==0){
 				rectangleList.push(new Rectangle(freeSubRectangle.x, freeSubRectangle.y, 0, 0));
 			} else {
 				for(j=1; j<nWeights; j++){ 
-					subWeightList = NumberList.fromArray(newWeightList.slice(i, i+j));
-					prevSubRectangleList = subRectangleList.clone();
-					subArea = subWeightList.getSum()*area;
+					subWeightList = newWeightList.slice(i, i+j);//NumberList.fromArray(newWeightList.slice(i, i+j));//
+					prevSubRectangleList = subRectangleList.slice();//.clone();
+					sum = subWeightList.getSum();
+					subArea = sum*area;
 					freeSubRectangle.x = freeRectangle.x;
 					freeSubRectangle.y = freeRectangle.y;
 					if(freeRectangle.width>freeRectangle.height){ //column
@@ -5514,9 +7729,13 @@ RectangleOperators.quadrification=function(rectangle, weightList, isNormalizedWe
 						freeSubRectangle.height = subArea/freeRectangle.width;
 						column = false;
 					}
-					subWeightList = subWeightList.getNormalizedToSum();
-					subRectangleList = this.partitionRectangle(freeSubRectangle, subWeightList);
-					worstProportion = this.getHighestRatio(subRectangleList);
+					//subWeightList = subWeightList.getNormalizedToSum(1,sum);
+					// subWeightList.forEach(function(val, k){
+					// 	subWeightList[k]/=sum;
+					// });
+
+					subRectangleList = RectangleOperators.partitionRectangle(freeSubRectangle, subWeightList, sum);
+					worstProportion = subRectangleList.highestRatio;// RectangleOperators._getHighestRatio(subRectangleList);//
 					if(proportion<=worstProportion){
 						break;
 					} else {
@@ -5525,7 +7744,7 @@ RectangleOperators.quadrification=function(rectangle, weightList, isNormalizedWe
 				}
 				
 				if(prevSubRectangleList.length==0){
-					rectangleList.push(freeRectangle.clone());
+					rectangleList.push(new Rectangle(freeRectangle.x, freeRectangle.y, freeRectangle.width, freeRectangle.height));//freeRectangle.clone());
 					if(rectangleList.length==nWeights){
 						if(!isSortedWeights){
 							var newRectangleList = new List();//RectangleList();
@@ -5538,10 +7757,10 @@ RectangleOperators.quadrification=function(rectangle, weightList, isNormalizedWe
 					}
 					index++;
 				} else {
-					rectangleList = List.fromArray(rectangleList.concat(prevSubRectangleList));//RectangleList
+					rectangleList = rectangleList.concat(prevSubRectangleList);
 					if(rectangleList.length==nWeights){
 						if(!isSortedWeights){
-							newRectangleList = new List();//RectangleList
+							newRectangleList = new List();
 							for(i=0; rectangleList[i]!=null; i++){
 								newRectangleList[newPositions[i]] = rectangleList[i];
 							}
@@ -5563,11 +7782,11 @@ RectangleOperators.quadrification=function(rectangle, weightList, isNormalizedWe
 			}
 		}
 	} else if(nWeights==2){
-		subWeightList = newWeightList.clone();
-		freeSubRectangle = rectangle.clone();
-		rectangleList = this.partitionRectangle(freeSubRectangle, subWeightList);
+		subWeightList = newWeightList.slice();//.clone();
+		freeSubRectangle = frame.clone();
+		rectangleList = RectangleOperators.partitionRectangle(freeSubRectangle, subWeightList, subWeightList.getSum());
 	} else {
-		rectangleList[0] = rectangle.clone();
+		rectangleList[0] = new Rectangle(frame.x, frame.y, frame.width, frame.height);//frame.clone();
 	}
 	
 	
@@ -5589,35 +7808,44 @@ RectangleOperators.quadrification=function(rectangle, weightList, isNormalizedWe
 * 
 * @return {List} a list of Rectangles
 */
-RectangleOperators.partitionRectangle=function(rectangle, normalizedWeightList){
+RectangleOperators.partitionRectangle=function(rectangle, normalizedWeightList, sum){
 	var area =  rectangle.width*rectangle.height;
 	var rectangleList=new List();//RectangleList();
-	var freeRectangle = rectangle.clone();
+	var freeRectangle = new Rectangle(rectangle.x, rectangle.y, rectangle.width, rectangle.height);//rectangle.clone();
 	//trace("??", freeRectangle);
 	var areai;
 	var i;
+	var rect;
+	var highestRatio = 1;
 	for(i=0; i<normalizedWeightList.length; i++){
-		areai = normalizedWeightList[i]*area;
+		areai = normalizedWeightList[i]*area/sum;
 		if(rectangle.width>rectangle.height){
-			rectangleList.push(new Rectangle(freeRectangle.x, freeRectangle.y, areai/freeRectangle.height, freeRectangle.height));
+			rect = new Rectangle(freeRectangle.x, freeRectangle.y, areai/freeRectangle.height, freeRectangle.height);
+			rectangleList.push(rect);
 			freeRectangle.x+=areai/freeRectangle.height;
+			//rect.ratio = rect.width/rect.height;
 		} else {
-			rectangleList.push(new Rectangle(freeRectangle.x, freeRectangle.y, freeRectangle.width, areai/freeRectangle.width));
+			rect = new Rectangle(freeRectangle.x, freeRectangle.y, freeRectangle.width, areai/freeRectangle.width);
+			rectangleList.push(rect);
 			freeRectangle.y+=areai/freeRectangle.width;
+			//rect.ratio = rect.height/rect.width;
 		}
+		rect.ratio = Math.max(rect.width, rect.height) / Math.min(rect.width, rect.height);
+		highestRatio = Math.max(highestRatio, rect.ratio );
 	}
-	//trace("            rectangulo, listaRectangulos:", rectangulo, listaRectangulos);
+	
+	rectangleList.highestRatio = highestRatio;
+
 	return rectangleList;
 }
 
-//TODO: should be in RectangleListOperators:
 /**
 * returns the highest ratio from a list of Rectangles
 * @param {List} rectangleList a Rectangle List
 * 
 * @return {Number} highestRatio
 */
-RectangleOperators.getHighestRatio=function(rectangleList){
+RectangleOperators._getHighestRatio=function(rectangleList){
 	var highestRatio = 1;
 	var rectangle;
 	var i;
@@ -5627,7 +7855,6 @@ RectangleOperators.getHighestRatio=function(rectangleList){
 	}
 	return highestRatio;
 }
-
 
 /**
 * ColorOperators
@@ -5643,7 +7870,6 @@ ColorOperators.colorToPoint3D=function(color){
 }
 
 
-
 /**
 * ColorGenerators 
 * @constructor
@@ -5656,8 +7882,10 @@ ColorGenerators.randomColor=function(alpha){
 	alpha = alpha==null?1:alpha;
 	return 'rgba('+Math.floor(256*Math.random())+','+Math.floor(256*Math.random())+','+Math.floor(256*Math.random())+','+alpha+')';
 }
-
-//include(frameworksRoot+"operators/numeric/numberList/NumberListGenerators.js");
+ColorListGenerators._HARDCODED_CATEGORICAL_COLORS =new ColorList(
+	"#dd4411", "#2200bb", "#1f77b4", "#ff660e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#dd8811",
+	"#dd0011", "#221140", "#1f66a3", "#ff220e", "#2ba01c", "#442728", "#945600", "#8c453a", "#e37700"
+)
 
 /**
 * ColorListGenerators
@@ -5666,12 +7894,40 @@ ColorGenerators.randomColor=function(alpha){
 */
 function ColorListGenerators(){};
 
+/**
+ * create a simple list of categorical colors
+ * @param  {Number} nColors
+ * 
+ * @param  {Number} alpha 1 by default
+ * @param {Boolean} invert invert colors
+ * @return {ColorList}
+ * tags:generator
+ */
+ColorListGenerators.createDefaultCategoricalColorList = function(nColors, alpha, invert){
+	alpha = alpha==null?1:alpha;
+	var colors = ColorListGenerators.createCategoricalColors(1, nColors).getInterpolated('black', 0.15);
+	if(alpha<1) colors = colors.addAlpha(alpha);
+	
+	if(invert) colors = colors.getInverted();
 
-ColorListGenerators.createColorListFromNumberList=function(numberList, colorScaleFunction, mode){
+	return colors;
+}
+
+
+/**
+ * create a colorList based on a colorScale and values from a numberList (that will be normalized)
+ * @param  {NumberList} numberList
+ * @param  {ColorScale} colorScale
+ * @param  {Number} mode 0:normalize numberList
+ * @return {ColorList}
+ * tags:generator
+ */
+ColorListGenerators.createColorListFromNumberList=function(numberList, colorScale, mode){
 	mode = mode==null?0:mode;
 	
 	var colorList = new ColorList();
 	var newNumberList;
+	var i;
 	
 	switch(mode){
 		case 0://0 to max
@@ -5683,9 +7939,10 @@ ColorListGenerators.createColorListFromNumberList=function(numberList, colorScal
 			break;
 	}
 	
-	for(var i=0; newNumberList[i]!=null; i++){
-		colorList.push(colorScaleFunction(newNumberList[i]));
+	for(i=0; newNumberList[i]!=null; i++){
+		colorList.push(colorScale(newNumberList[i]));
 	}
+	
 	return colorList;
 }
 
@@ -5700,13 +7957,18 @@ ColorListGenerators.createColorListWithSingleColor=function(nColors, color){
 
 
 /**
- * Creates a ColorList
- * @param {Number} mode 0:simple picking from color scale function, 1:random (with seed), 2:, 3:, 4:, 5:evolutionary algorithm, guarantees non consecutive similar colors
+ * Creates a ColorList of categorical colors
+ * @param {Number} mode 0:simple picking from color scale function, 1:random (with seed), 2:hardcoded colors, 3:, 4:, 5:evolutionary algorithm, guarantees non consecutive similar colors
  * @param {Number} nColors
- * @param {Function} colorScaleFunction
- * ®return {ColorList} ColorList with categorical colors
+ * 
+ * @param {ColorScale} colorScaleFunction
+ * @param {Number} alpha transparency
+ * @param {String} interpolateColor color to interpolate
+ * @param {Number} interpolateValue interpolation value [0, 1]
+ * @return {ColorList} ColorList with categorical colors
+ * tags:generator
  */
-ColorListGenerators.createCategoricalColors=function(mode, nColors, colorScaleFunction){
+ColorListGenerators.createCategoricalColors=function(mode, nColors, colorScaleFunction, alpha, interpolateColor, interpolateValue){
 	colorScaleFunction = colorScaleFunction==null?ColorScales.temperature:colorScaleFunction;
 	
 	var i;
@@ -5721,6 +7983,11 @@ ColorListGenerators.createCategoricalColors=function(mode, nColors, colorScaleFu
 			var values = NumberListGenerators.createRandomNumberList(nColors, null, 0)
 			for(i=0;i<nColors;i++){
 				colorList[i] = colorScaleFunction(values[i]);
+			}
+			break;
+		case 2:
+			for(i=0;i<nColors;i++){
+				colorList[i] = ColorListGenerators._HARDCODED_CATEGORICAL_COLORS[i%ColorListGenerators._HARDCODED_CATEGORICAL_COLORS.length];
 			}
 			break;
 		case 5:
@@ -5756,6 +8023,14 @@ ColorListGenerators.createCategoricalColors=function(mode, nColors, colorScaleFu
 			}
 			break;
 	}
+
+	if(interpolateColor!=null && interpolateValue!=null){
+		colorList = colorList.getInterpolated(interpolateColor, interpolateValue);
+	}
+
+	if(alpha){
+		colorList = colorList.addAlpha(alpha);
+	}
 	
 	return colorList;
 }
@@ -5777,6 +8052,72 @@ ColorListGenerators._evaluationFunction=function(numberList){ //private
 	}
 	return sum;
 }
+
+
+/**
+ * Creates a ColorList of categorical colors based on an input List. All entries with the same value will get the same color.
+ * @param {List} the list containing categorical data
+ * 
+ * @param {ColorList} ColorList with categorical colors
+ * @param {Number} alpha transparency
+ * @param {String} color to mix
+ * @param {Number} interpolation value (0-1) for color mix
+ * @param {Boolean} invert invert colors
+ * @return {ColorList} ColorList with categorical colors that match the given list
+ * @return {List} elements list of elemnts that match colors (equivalent to getWithoutRepetions)
+ * @return {ColorList} ColorList with different categorical colors
+ * @return {Table} dictionary dictionary table with elemnts and matching colors
+ * tags:generator
+ */
+ColorListGenerators.createCategoricalColorListForList = function( list, colorList, alpha, color, interpolate, invert ) 
+{
+
+	if( !list )
+		return new ColorList();
+	if( !alpha )
+		alpha = 1;
+	if( !color )
+		color = "#fff";
+	if( !interpolate )
+		interpolate = 0;
+
+	list = List.fromArray( list ); 
+	var diffValues = list.getWithoutRepetitions();
+	var diffColors;
+	if( colorList ){
+		diffColors = colorList.getInterpolated( color, interpolate );
+	}else{
+		diffColors = ColorListGenerators.createCategoricalColors( 2, diffValues.length, null, alpha, color, interpolate );
+		//diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
+	}
+	diffColors = diffColors.addAlpha(alpha);
+
+	if(invert) diffColors = diffColors.getInverted();
+
+	var colorDict = Table.fromArray( [ diffValues, diffColors ] );
+	var fullColorList = ListOperators.translateWithDictionary(list, colorDict, "NULL" );
+
+	fullColorList = ColorList.fromArray( fullColorList );
+
+	return [{value:fullColorList, type:'ColorList'}, {value:diffValues, type:diffValues.type}, {value:diffColors, type:'ColorList'}, {value:new Table(diffValues, fullColorList), type:'Table'}];
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
 * ColorListOperators
@@ -5835,7 +8176,6 @@ ColorListOperators.colorListToPolygon3D=function(colorList){
 }
 
 
-
 /**
 * ColorOperators
 * @constructor
@@ -5845,9 +8185,46 @@ ColorListOperators.colorListToPolygon3D=function(colorList){
 function ColorOperators(){};
 
 
+
+/**
+ * return a color between color0 and color1
+ * 0 -> color0
+ * 1 -> color1
+ * @param {String} color0
+ * @param {String} color1
+ * @param value between 0 and 1 (to obtain color between color0 and color1)
+ * @return {String} interpolated color
+ * 
+ */
+ColorOperators.interpolateColors=function(color0, color1, value){
+    var resultArray=ColorOperators.interpolateColorsRGB(ColorOperators.colorStringToRGB(color0), ColorOperators.colorStringToRGB(color1), value);
+    return ColorOperators.RGBtoHEX(resultArray[0], resultArray[1], resultArray[2]);
+}
+
+/**
+ * return a color between color0 and color1
+ * 0 -> color0
+ * 1 -> color1
+ * @param {Array} color0 RGB
+ * @param {Array} color1 RGB
+ * @param value between 0 and 1 (to obtain values between color0 and color1)
+ * @return {Array} interpolated RGB color
+ * 
+ */
+ColorOperators.interpolateColorsRGB=function(color0, color1, value){
+    var s = 1-value;
+    return [Math.floor(s*color0[0] + value*color1[0]), Math.floor(s*color0[1] + value*color1[1]), Math.floor(s*color0[2] + value*color1[2])];
+}
+
+
 ColorOperators.RGBtoHEX=function(red, green, blue){
 	return "#" + ColorOperators.toHex(red)+ColorOperators.toHex(green)+ColorOperators.toHex(blue);
 }
+
+ColorOperators.RGBArrayToString=function(array){
+    return 'rgb('+array[0]+','+array[1]+','+array[2]+')';
+}
+
 
 
 /**
@@ -5859,6 +8236,12 @@ ColorOperators.RGBtoHEX=function(red, green, blue){
 ColorOperators.HEXtoRGB=function(hexColor){
 	return [parseInt(hexColor.substr(1, 2), 16), parseInt(hexColor.substr(3, 2), 16), parseInt(hexColor.substr(5, 2), 16)];
 };
+
+
+ColorOperators.colorStringToHEX = function(color_string){
+    var rgb = ColorOperators.colorStringToRGB(color_string);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+}
 
 
 ColorOperators.numberToHex=function(number){
@@ -5903,7 +8286,7 @@ ColorOperators.grayByLevel=function(level){
  * 
  */
 ColorOperators.HEXtoHSV=function(hexColor){
-  var rbg=ColorOperators.HEXtoRGB(hexColor);
+  var rgb=ColorOperators.HEXtoRGB(hexColor);
   return ColorOperators.RGBtoHSV(rgb[0], rgb[1], rgb[2]);
 };
 
@@ -5924,7 +8307,7 @@ ColorOperators.HSLtoHEX=function(hue, saturation, light){
  * converts an RGB color to HSV
  * @param {Array} a RGB color array
  * @return {Array} returns a HSV color array
- * 
+ * H in [0,360], S in [0,1], V in [0,1]
  */
 ColorOperators.RGBtoHSV=function(r, g, b){
 	var h;
@@ -5932,9 +8315,9 @@ ColorOperators.RGBtoHSV=function(r, g, b){
 	var v;
 	var min = Math.min(Math.min( r, g), b );
 	var max = Math.max(Math.max( r, g), b );
-	v = max;
+	v = max/255;
 	var delta = max - min;
-	if(delta==0) return new Array(0,0,r);
+	if(delta==0) return new Array(0,0,r/255);
 	if( max != 0 ){
 		s = delta / max;
 	}else {
@@ -6047,46 +8430,20 @@ ColorOperators.HSLtoRGB = function(hue, saturation, light){
     return [Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255)];
 }
 
-/**
- * return a color between color0 and color1
- * 0 -> color0
- * 1 -> color1
- * @param {String} color0
- * @param {String} color1
- * @param value between 0 and 1 (to obtain color between color0 and color1)
- * @return {String} interpolated color
- * 
- */
-ColorOperators.interpolateColors=function(color0, color1, value){
-	var resultArray=ColorOperators.interpolateColorsRGB(ColorOperators.colorStringToRGB(color0), ColorOperators.colorStringToRGB(color1), value);
-	return ColorOperators.RGBtoHEX(resultArray[0], resultArray[1], resultArray[2]);
-}
-/**
- * return a color between color0 and color1
- * 0 -> color0
- * 1 -> color1
- * @param {Array} color0 RGB
- * @param {Array} color1 RGB
- * @param value between 0 and 1 (to obtain values between color0 and color1)
- * @return {Array} interpolated RGB color
- * 
- */
-ColorOperators.interpolateColorsRGB=function(color0, color1, value){
-	var s = 1-value;
-	return [Math.floor(s*color0[0] + value*color1[0]), Math.floor(s*color0[1] + value*color1[1]), Math.floor(s*color0[2] + value*color1[2])];
-}
 
 ColorOperators.invertColorRGB=function(r, g, b){
 	return [255-r, 255-g, 255-b];
 }
 
 ColorOperators.addAlpha=function(color, alpha){
-	var rgb = color.substr(0,3)=='rgb'?ColorOperators.colorStringToRGB(color):ColorOperators.HEXtoRGB(color);
+	//var rgb = color.substr(0,3)=='rgb'?ColorOperators.colorStringToRGB(color):ColorOperators.HEXtoRGB(color);
+    var rgb = ColorOperators.colorStringToRGB(color);
+    if(rgb==null) return 'black';
 	return 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+alpha+')';
 }
 
 ColorOperators.invertColor=function(color){
-	var rgb = ColorOperators.HEXtoRGB(color);
+	var rgb = ColorOperators.colorStringToRGB(color);
 	rgb = ColorOperators.invertColorRGB(rgb[0], rgb[1], rgb[2]);
 	return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
 }
@@ -6107,10 +8464,7 @@ ColorOperators.getRandomColor=function(){
 
 /////// Universal matching
 
-ColorOperators.colorStringToHEX = function(color_string){
-	var rgb = ColorOperators.colorStringToRGB(color_string);
-	return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-}
+
 
 /**
  * This method was partially obtained (and simplified) from a Class by Stoyan Stefanov:
@@ -6352,7 +8706,6 @@ ColorOperators.colorStringToRGB = function(color_string){
 
 
 
-
 function ColorScales(){}
 
 // *
@@ -6366,7 +8719,7 @@ function ColorScales(){}
 // }
 
 ColorScales.blackScale = function(value){
-	return 'black'
+	return 'black';
 }
 
 ColorScales.grayscale = function(value){
@@ -6414,16 +8767,24 @@ ColorScales.greenToRed = function(value){//todo:make it efficient
 	var rgb = ColorOperators.interpolateColorsRGB([50,255,50], [255,50,50], value);
 	return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
 }
+ColorScales.greenToBlue = function(value){//todo:make it efficient
+	var rgb = ColorOperators.interpolateColorsRGB([50,255,50], [50,50,255], value);
+	return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+}
 
 ColorScales.grayToOrange = function(value){//todo:make it efficient
 	var rgb = ColorOperators.interpolateColorsRGB([100,100,100], [255,110,0], value);
 	return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
 }
 
-ColorScales.blueToRed = function(value){//todo:make it efficient
-	var rgb = ColorOperators.interpolateColorsRGB([0,0,255], [255,0,0], value);
-	return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+ColorScales.blueToRed = function(value){
+	return 'rgb('+Math.floor(value*255)+',0,'+Math.floor((1-value)*255)+')';
 }
+
+ColorScales.blueToRedAlpha = function(value){//todo:make it efficient
+	return 'rgba('+Math.floor(value*255)+',0,'+Math.floor((1-value)*255)+', 0.5)';
+}
+
 ColorScales.whiteToRed = function(value){
 	var gg = Math.floor(255-value*255);
 	return 'rgb(255,'+gg+','+gg+')';
@@ -6451,7 +8812,50 @@ ColorScales.solar = function(value){
 ColorScales.antiSolar = function(value){
 	return ColorOperators.invertColor(ColorScales.solar(value));
 }
+/**
+* ColorScaleGenerators
+* @constructor
+* 
+*/
+function ColorScaleGenerators(){};
 
+
+/**
+ * creates a ColorScale function from colors and positions, a numberList with values in (0,1) (positions lenth must be colorList length minus 2)
+ * @param  {ColorList} colorList
+ * @param  {NumberList} positions
+ * @return {ColorScale}
+ * tags:generator
+ */
+ColorScaleGenerators.createColorScaleFromColors = function(colorList, positions){
+	if(colorList==null || positions==null || !colorList.length>0 || !positions.length>0 || colorList.length!=(positions.length+2) ) return null;
+
+	if(colorList.rgbs==null){
+		colorList.rgbs = colorList.getRgbArrays();
+	}
+
+	positions = positions.slice();
+	positions.unshift(0);
+	positions.push(1);
+
+	var cS = function(t){
+		var i;
+		var intert, antit;
+
+		for(i=0; positions[i+1]!=null; i++){
+			if(t<positions[i+1]){
+				intert = (t-positions[i])/(positions[i+1]-positions[i]);
+				antit = 1-intert;
+				return 'rgb('
+					+Math.floor( antit*colorList.rgbs[i][0] + intert*colorList.rgbs[i+1][0] )+','
+					+Math.floor( antit*colorList.rgbs[i][1] + intert*colorList.rgbs[i+1][1] )+','
+					+Math.floor( antit*colorList.rgbs[i][2] + intert*colorList.rgbs[i+1][2] )+')';
+			}
+		}
+	}
+
+	return cS;
+}
 /**
  * static class with methods to generate different kinds of Lists
  */
@@ -6508,8 +8912,8 @@ ListGenerators.createIterationSequence=function(nValues, firstElement, dynamicFu
 	}
 	return list;
 }
-
 function ListOperators(){};
+
 
 /**
  * gets an element in a specified position from a List
@@ -6526,31 +8930,126 @@ ListOperators.getElement = function(list, index){
 }
 
 /**
- * filters a List, by a NumberList of indexes, or by an Interval
- * @param  {List} list to be filtered
- * @param  {Object} params NumberList or Interval
- * @return {List}
- * tags:filter
+ * multi-ouput operator that gives acces to individual elements
+ * @param  {List} list
+ * 
+ * @param  {Number} fromIndex (default 0)
+ * @return {Object} first Object
+ * @return {Object} second Object
+ * @return {Object} third Object
+ * @return {Object} fourth Object
+ * @return {Object} fifth Object
+ * @return {Object} sisxth Object
+ * @return {Object} seventh Object
+ * @return {Object} eight Object
+ * @return {Object} ninth Object
+ * @return {Object} tenth Object
+ * tags:
  */
-ListOperators.getSubList = function(list, params){
-	c.log('params', params);
-	c.log('params.isList', params.isList);
-	if(list==null || params==null) return null;
-	return list.getSubList.apply(list, params.isList?[params]:params);
+ListOperators.getFirstElements = function(list, fromIndex){
+	if(list==null) return null;
+
+	fromIndex = fromIndex==null?0:Number(fromIndex);
+
+	return [
+		{
+			type:"Object",
+			name:"first value",
+			description:"first value",
+			value:list[fromIndex+0]
+		},
+		{
+			type:"Object",
+			name:"second value",
+			description:"second value",
+			value:list[fromIndex+1]
+		},
+		{
+			type:"Object",
+			name:"third value",
+			description:"third value",
+			value:list[fromIndex+2]
+		},
+		{
+			type:"Object",
+			name:"fourth value",
+			description:"fourth value",
+			value:list[fromIndex+3]
+		},
+		{
+			type:"Object",
+			name:"fifth value",
+			description:"fifth value",
+			value:list[fromIndex+4]
+		},
+		{
+			type:"Object",
+			name:"sixth value",
+			description:"sixth value",
+			value:list[fromIndex+5]
+		},
+		{
+			type:"Object",
+			name:"seventh value",
+			description:"seventh value",
+			value:list[fromIndex+6]
+		},
+		{
+			type:"Object",
+			name:"eight value",
+			description:"eight value",
+			value:list[fromIndex+7]
+		},
+		{
+			type:"Object",
+			name:"ninth value",
+			description:"ninth value",
+			value:list[fromIndex+8]
+		},
+		{
+			type:"Object",
+			name:"tenth value",
+			description:"tenth value",
+			value:list[fromIndex+9]
+		}
+	]
+}
+
+// *
+//  * filters a List, by a NumberList of indexes, or by an Interval
+//  * @param  {List} list to be filtered
+//  * @param  {Object} params NumberList or Interval
+//  * @return {List}
+ 
+// ListOperators.getSubList = function(list, params){
+// 	if(list==null || params==null) return null;
+// 	return list.getSubList.apply(list, params.isList?[params]:params);
+// }
+
+/**
+ * first position of element in list (-1 if element doesn't belong to the list)
+ * @param  {List} list
+ * @param  {Object} element
+ * @return {Number}
+ * tags:
+ */
+ListOperators.indexOf = function(list, element){
+	return list.indexOf(element);
 }
 
 /**
  * concats lists
- * @param  {List}
- * @param  {List}
+ * @param  {List} list0
+ * @param  {List} list1
  * 
- * @param  {List}
- * @param  {List}
- * @param  {List}
- * @return {List}
+ * @param  {List} list2
+ * @param  {List} list3
+ * @param  {List} list4
+ * @return {List} list5
  * tags:
  */
 ListOperators.concat = function(){
+	if(arguments == null || arguments.length==0 || arguments[0]==null) return null;
 	if(arguments.length==1) return arguments[0];
 	
 	var i;
@@ -6563,17 +9062,17 @@ ListOperators.concat = function(){
 
 /**
  * assembles a List
- * @param  {Object}
- * @param  {Object}
+ * @param  {Object} argument0
  * 
- * @param  {Object}
- * @param  {Object}
- * @param  {Object}
+ * @param  {Object} argument1
+ * @param  {Object} argument2
+ * @param  {Object} argument3
+ * @param  {Object} argument4
  * @return {List}
  * tags:
  */
 ListOperators.assemble = function(){
-	return List.fromArray(arguments).getImproved();
+	return List.fromArray(Array.prototype.slice.call(arguments, 0)).getImproved();
 }
 
 
@@ -6585,10 +9084,12 @@ ListOperators.assemble = function(){
  * @param {Boolean} consecutiveRepetitions optional false by default, if true only counts consecutive repetitions
  * @param {Number} optional limit, limits the size of the lists
  * @return {Table}
- * tags:count
+ * tags:count,toimprove
  */
-ListOperators.countElementsRepetitionOnList=function(list, sortListsByOccurrences, consecutiveRepetitions, limit){
-	sortListsByOccurrences = sortListsByOccurrences || true;
+ListOperators.countElementsRepetitionOnList=function(list, sortListsByOccurrences, consecutiveRepetitions, limit){ //transform this, use dictionary instead of indexOf !!!!!!!
+	if(list==null) return;
+	
+	sortListsByOccurrences = sortListsByOccurrences==null?true:sortListsByOccurrences;
 	consecutiveRepetitions = consecutiveRepetitions || false;
 	limit = limit==null?0:limit;
 	
@@ -6616,7 +9117,7 @@ ListOperators.countElementsRepetitionOnList=function(list, sortListsByOccurrence
 	} else {
 		for(i=0; list[i]!=null; i++){
 			obj = list[i];
-			index = elementList.indexOf(obj); //TODO: implement equivalence and indexOfElement operator
+			index = elementList.indexOf(obj);
 			if(index!=-1){
 				numberList[index]++;
 			} else {
@@ -6657,6 +9158,27 @@ ListOperators.reverse = function(list){
 	return list.getReversed();
 }
 
+/**
+ * using a table with two columns as a dictionary (first list elements to be read, second list result elements), translates a list
+ * @param  {List} list to transalte
+ * @param  {Table} dictionary table with two lists
+ *
+ * @param {Object} nullElement element to place in case no translation is found
+ * @return {List}
+ * tags:
+ */
+ListOperators.translateWithDictionary = function(list, dictionary, nullElement){
+	var newList = new List();
+	list.forEach(function(element, i){
+		index = dictionary[0].indexOf(element);
+		if(nullElement!=null){
+			newList[i] = index==-1?nullElement:dictionary[1][index];
+		} else {
+			newList[i] = index==-1?list[i]:dictionary[1][index];
+		}
+	});
+	return newList.getImproved();
+}
 
 
 // ListOperators.getIndexesOfElements=function(list, elements){
@@ -6723,22 +9245,6 @@ ListOperators.sortListByIndexes=function(list, indexedArray){
 	return newList;
 }
 
-// ListOperators.concat=function(){
-// 	var i;
-// 	var j;
-// 	var addList;
-// 	var newList=arguments[0].clone();
-// 	var sameType = true;
-// 	for(i=1; i<arguments.length; i++){
-// 		addList=arguments[i];
-// 		if(arguments[i].type != arguments[i-1].type) sameType = false;
-// 		for(j=0; addList[j]!=null; j++){
-// 			newList.push(addList[j]);
-// 		}
-// 	}
-// 	if(sameType) return newList;
-// 	return List.fromArray(newList);
-// }
 
 ListOperators.concatWithoutRepetitions=function(){ //?
 	var i;
@@ -6816,6 +9322,13 @@ ListOperators.listsIntersect=function(list0, list1){
 	return false;
 }
 
+/**
+ * returns the list of common elements between two lists
+ * @param  {List} list0
+ * @param  {List} list1
+ * @return {List}
+ * tags:
+ */
 ListOperators.getCommonElements=function(list0, list1){
 	var nums = list0.type == 'NumberList' && list1.type == 'NumberList';
 	var strs = list0.type == 'StringList' && list1.type == 'StringList';
@@ -6834,6 +9347,473 @@ ListOperators.getCommonElements=function(list0, list1){
 
 
 
+/**
+ * creates a List that contains the union of two List (removing repetitions)
+ * @param  {List} list A
+ * @param  {List} list B
+ * 
+ * @return {List} the union of both NumberLists
+ * tags:
+ */
+ListOperators.unionLists = function (x, y) { 
+  // Borrowed from here: http://stackoverflow.com/questions/3629817/getting-a-union-of-two-arrays-in-javascript
+  var result;
+  if( x.type != x.type || (x.type != "StringList" && x.type != "NumberList") )
+  {
+  	// To-do: call generic method here (not yet implemented)
+  	//c.l( "ListOperators.unionLists for type '" + x.type + "' or '" + y.type + "' not yet implemented" );
+  	return x.concat(y).getWithoutRepetitions();
+  	return null;
+  }
+  else
+  {
+	  var obj = {};
+	  for (var i = x.length-1; i >= 0; -- i)
+	     obj[x[i]] = x[i];
+	  for (var i = y.length-1; i >= 0; -- i)
+	     obj[y[i]] = y[i];
+	  result = x.type == "StringList" ? new StringList() : new NumberList();
+	  for (var k in obj) {
+	    if (obj.hasOwnProperty(k))  // <-- optional
+	      result.push(obj[k]);
+	  }
+	}
+  return result;
+}
+
+/**
+ * creates a List that contains the intersection of two List (elements present in BOTH lists)
+ * @param  {List} list A
+ * @param  {List} list B
+ * 
+ * @return {List} the intersection of both NumberLists
+ * tags:
+ */
+ListOperators.intersectLists = function ( a, b ) {
+  // Borrowed from here: http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
+  var result;
+  if( a.type != b.type || (a.type != "StringList" && a.type != "NumberList") )
+  {
+  	result = ListOperators.getCommonElements( a, b );
+  }
+  else
+  {
+  		result = a.type == "StringList" ? new StringList() : new NumberList();
+	  	 a = a.slice();
+	  	 b = b.slice();
+	  while( a.length > 0 && b.length > 0 )
+	  {  
+	     if      (a[0] < b[0] ){ a.shift(); }
+	     else if (a[0] > b[0] ){ b.shift(); }
+	     else /* they're equal */
+	     {
+	       result.push(a.shift());
+	       b.shift();
+	     }
+	  }
+  }
+  return result;
+}
+
+
+
+
+
+/**
+ * calculates de entropy of a list, properties _mostRepresentedValue and _biggestProbability are added to the list
+ * @param  {List} list with repeated elements (actegorical list)
+ *
+ * @param {Object} valueFollowing if a value is provided, the property _P_valueFollowing will be added to the list, with proportion of that value in the list
+ * @return {Number}
+ * tags:ds
+ */
+ListOperators.getListEntropy = function(list, valueFollowing){
+	if(list==null) return;
+	if(list.length<2){
+		if(list.length==1){
+			list._mostRepresentedValue = list[0];
+			list._biggestProbability = 1;
+			list._P_valueFollowing = list[0]==valueFollowing?1:0;
+		}
+		return 0;
+	}
+
+	var table = ListOperators.countElementsRepetitionOnList(list, true);
+	c.l('    getListEntropy | table[0]', table[0]);
+	c.l('    getListEntropy | table[1]', table[1]);
+	list._mostRepresentedValue = table[0][0];
+	var N = list.length;
+	list._biggestProbability = table[1][0]/N;
+	if(table[0].length==1){
+		list._P_valueFollowing = list[0]==valueFollowing?1:0;
+		return 0;
+	}
+	var entropy = 0;
+	
+	var norm = Math.log(table[0].length);
+	table[1].forEach(function(val){
+		entropy -= (val/N)*Math.log(val/N)/norm;
+	});
+	
+	if(valueFollowing!=null){
+		var index = table[0].indexOf(valueFollowing);
+		list._P_valueFollowing = index==-1?0:table[1][index]/N;
+	}
+
+	return entropy;
+}
+
+
+/**
+ * measures how much a feature decreases entropy when segmenting by its values a supervised variable
+ * @param  {List} feature
+ * @param  {List} supervised
+ * @return {Number}
+ * tags:ds
+ */
+
+// ListOperators.getInformationGain = function(feature, supervised){
+// 	if(feature==null || supervised==null || feature.length!=supervised.length) return null;
+
+// 	var ig = ListOperators.getListEntropy(supervised);
+// 	var childrenObject = {};
+// 	var childrenLists = [];
+// 	var N = feature.length;
+
+// 	feature.forEach(function(element, i){
+// 		if(childrenObject[element]==null){
+// 			childrenObject[element]=new List();
+// 			childrenLists.push(childrenObject[element]);
+// 		}
+// 		childrenObject[element].push(supervised[i]);
+// 	});
+
+// 	childrenLists.forEach(function(cl){
+// 		ig -= (cl.length/N)*ListOperators.getListEntropy(cl);
+// 	});
+
+// 	return ig;
+// }
+
+
+/**
+ * measures how much a feature decreases entropy when segmenting by its values a supervised variable
+ * @param  {List} feature
+ * @param  {List} supervised
+ * @return {Number}
+ * tags:ds
+ */
+ListOperators.getInformationGain = function(feature, supervised){
+	if(feature==null || supervised==null || feature.length!=supervised.length) return null;
+
+	var ig = ListOperators.getListEntropy(supervised);
+	var childrenObject = {};
+	var childrenLists = [];
+	var N = feature.length;
+	
+	feature.forEach(function(element, i){
+		if(childrenObject[element]==null){
+			childrenObject[element]=new List();
+			childrenLists.push(childrenObject[element]);
+		}
+		childrenObject[element].push(supervised[i]);
+	});
+
+	childrenLists.forEach(function(cl){
+		ig -= (cl.length/N)*ListOperators.getListEntropy(cl);
+	});
+
+	return ig;
+}
+
+ListOperators.getInformationGainAnalysis = function(feature, supervised){
+	if(feature==null || supervised==null || feature.length!=supervised.length) return null;
+
+	var ig = ListOperators.getListEntropy(supervised);
+	var childrenObject = {};
+	var childrenLists = [];
+	var N = feature.length;
+	var entropy;
+	var sets = new List();
+	
+	feature.forEach(function(element, i){
+		if(childrenObject[element]==null){
+			childrenObject[element]=new List();
+			childrenLists.push(childrenObject[element]);
+		}
+		childrenObject[element].push(supervised[i]);
+	});
+
+	childrenLists.forEach(function(cl){
+		entropy = ListOperators.getListEntropy(cl)
+		ig -= (cl.length/N)*entropy;
+
+		sets.push({
+			children:cl,
+			entropy:entropy,
+			infoGain:ig
+		})
+	});
+
+	return sets;
+}
+
+
+/**
+ * Takes a List and returns its elements grouped by identic value. Each list in the table is assigned a "valProperty" value which is used for sorting
+ * @param  {List} list of elements to group
+ * @param  {Boolean} whether the results are to be sorted or not
+ * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
+ *
+ * @param  {Boolean} fillBlanks: whether to fill missing slots or not (if data is sequential)
+ * @return {Table}
+ * tags:dani
+ */
+ListOperators.groupElements = function(list, sortedByValue, mode, fillBlanks ) {
+	if( !list )
+		return;
+	var result = ListOperators._groupElements_Base( list, null, sortedByValue, mode, fillBlanks );
+	return result;
+}
+
+
+/**
+ * Takes a List and returns its elements grouped by identic value. Each list in the table is assigned a "valProperty" value which is used for sorting
+ * @param  {List} list of elements to group
+ * @param  {String} name of the property to be used for grouping
+ * @param  {Boolean} wether the results are to be sorted or not
+ * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
+ *
+ * @param  {Boolean} fillBlanks: whether to fill missing slots or not (if data is sequential)
+ * @return {Table}
+ * tags:dani
+ */
+ListOperators.groupElementsByPropertyValue = function(list, propertyName, sortedByValue, mode, fillBlanks ) {
+	if( !list )
+		return;
+	var result = ListOperators._groupElements_Base( list, propertyName, sortedByValue, mode, fillBlanks );
+	return result;
+}
+
+
+
+ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, mode, fillBlanks) {
+	var result;
+
+	if( !list )
+		return;
+	if( mode == undefined )
+		mode = 0;
+	var resultOb = {};
+	var resultTable = new Table();
+	var pValue, item, minValue, maxValue; 
+	for (var i = 0; i < list.length; i++) {
+		item = list[i];
+		pValue = propertyName == undefined ? item : item[propertyName];
+		if( resultOb[pValue] == undefined ){
+			resultOb[pValue] = new List();
+			resultOb[pValue].name = pValue;
+			resultOb[pValue].valProperty = pValue;
+			resultTable.push( resultOb[pValue] );
+		}
+		if( mode == 0)
+			resultOb[pValue].push( item );
+		else if( mode == 1)
+			resultOb[pValue].push( i );		
+		// Update boundaries
+		if( minValue == undefined || pValue < minValue ){
+			minValue = pValue;
+		}
+		if( maxValue == undefined || pValue > maxValue ){
+			maxValue = pValue;
+		}
+	};
+
+	// Fill the blanks
+	if( fillBlanks ){
+		var numBlanks = 0;
+		for( var i=minValue; i<maxValue; i++ ){
+			if( resultOb[i] == undefined ){
+				resultOb[i] = new List();
+				resultOb[i].name = i;
+				resultOb[i].valProperty = i;
+				resultTable.push( resultOb[i] );		
+				numBlanks++;	
+			}
+		}
+		//c.l("numBlanks: ", numBlanks)
+	}
+
+	// To-do: looks like getSortedByProperty is removing the valProperty from the objects
+	if( sortedByValue )
+		resultTable = resultTable.getSortedByProperty( "name" ); // "valProperty"
+
+	return resultTable;
+
+}
+
+
+
+
+
+
+function TableConversions(){};
+
+/**
+ * Convert an object (or more typically an Array of objects) into a Table
+ * @param {Object} object or array of objects
+ *
+ * @param {List} list of field names to include (by default will take all from first element in array of objects)
+ * @return {Table} resulting Table
+ * tags:decoder,dani
+ */
+TableConversions.ObjectToTable = function(object, fields){
+	// Formats:
+	// 1: normal list of objects
+	// 2: Object with single property, containing normal list of obejcts
+	// 3: Object as CSV (each property represents a column)
+	var format;
+
+	// If it's an array, then it's format 1
+	if( Array.isArray(object) ){
+		format = 1;
+		// If not field names supplied, get them from first element
+		if( !fields )
+		{
+			fields = [];
+			for( var p in object[0] ){
+				fields.push( p );
+			}
+		}
+	// Else (not array), it's an object
+	}else{
+		// Check how many properties the object has
+		var properties = [];
+		for( var p in object ){
+			properties.push( p );
+		}
+
+		// If it has only one, and it's an array, it's foramt 2, so assume it's just a capsule
+		// and extract the array as format 1
+		if( properties.length == 1 && Array.isArray( object[properties[0]] ) )
+		{
+			format = 1;
+			object = object[properties[0]];
+
+			// If not field names supplied, get them from first element
+			if( !fields )
+			{
+				fields = [];
+				for( var p in object[0] ){
+					fields.push( p );
+				}
+			}
+		}else{
+			// Finally, if the object has many properties, we assume it's a csv encoded as JSON
+			// ( each property of the object represents a column of the CSV )
+			format = 3;
+
+			// If not fields supplied, use all properties
+			if( !fields )
+				fields = properties;
+		}
+	}
+
+
+	// Create table and columns
+	var result = new Table();
+	for (var i = 0; i < fields.length; i++) {
+		var fieldName = fields[i];
+		var column = new List();
+		result[i] = column;
+		column.name = fieldName;
+	};
+
+	// Fill the table
+	if( format == 1)
+	{
+		for (var i = 0; i < object.length; i++) {
+			var row = object[i];
+			for( var f=0; f<fields.length; f++ ){
+				result[f].push( row[fields[f]]);
+			}
+		};
+	}else{
+		for( var f=0; f<fields.length; f++ ){
+			var column = object[ fields[f] ];
+			for (var i = 0; i < column.length; i++) {
+				result[f].push( column[i] );
+			}
+		};
+	}
+
+	// Improve columns
+	for (var i = 0; i < result.length; i++) {
+		result[i] = result[i].getImproved()
+	}
+
+	//if(result.getLengths.getMax()==1) return result.getRow(0);
+
+	// Improve table
+	result = result.getImproved();
+
+	// Return best possible
+	return result;
+}
+
+
+/**
+ * Convert an object (or more typically an Array of objects) into a Table
+ * @param {Object} object or array of objects
+ *
+ * @param {List} list of field names to include (by default will take all from first element in array of objects)
+ * @return {List} resulting list (probably a table)
+ * tags:decoder
+ */
+TableConversions.ObjectToList = function(object, fields){
+	var result = TableConversions.ObjectToTable(object, fields);
+
+	if(result.getLengths.getMax()==1) return result.getRow(0);
+}
+
+
+
+/**
+ * Convert a Table into an Object or Array of objects
+ * @param {Object} table to be converted
+ *
+ * @param {List} list of field names to include (by default will take all from table)
+ * @return {Object} containing list of rows from input Table
+ * tags:decoder,dani
+ */
+TableConversions.TableToObject = function(table, fields ){ // To-Do: should return a List instead of Array?
+	if( !table )
+		return;
+	
+	// If no field names supplied, take them from first element
+	if( !fields )
+	{
+		fields = table.getNames()
+	}
+	var result = [];
+	for (var i = 0; i < table[0].length; i++) {
+		var row = {};
+		for( var f=0; f<fields.length; f++ )
+		{
+			row[fields[f]] = table[f][i];
+		}
+		result.push(row);
+	};
+	return { array:result };
+}
+// Tests ObjectToTable / TableToObject
+/*
+var input = [ {name:"dani", age:36, other:"eee"}, {name:"alejandro", age:34}, {name:"anna", age:37} ];
+var table = TableEncodings.ObjectToTable( input );
+console.log( "ObjectToTable: ", table );
+var obj = TableEncodings.TableToObject(table);
+console.log( "ObjectToTable INVERSE: ", obj );
+*/
 
 function TableEncodings(){};
 
@@ -6865,6 +9845,8 @@ TableEncodings.CSVtoTable=function(csvString, firstRowIsHeader, separator, value
 	
 	if(csvString==null) return null;
 	if(csvString=="") return new Table();
+
+	csvString = csvString.replace(/\$/g, "");
 	
 	var blocks = csvString.split("\"");
 	for(i=1; blocks[i]!=null; i+=2){
@@ -6896,6 +9878,7 @@ TableEncodings.CSVtoTable=function(csvString, firstRowIsHeader, separator, value
 	
 	var element;
 	var cellContent;
+	var numberCandidate;
 	for(i=startIndex; i<lines.length; i++){
 		if(lines[i].length<2) continue;
 		
@@ -6911,8 +9894,10 @@ TableEncodings.CSVtoTable=function(csvString, firstRowIsHeader, separator, value
 			cellContent = cellContents[j].replace(/\*CHOMA\*/g, ",").replace(/\*ENTER\*/g, "\n");
 			
 			cellContent = cellContent==''?valueForNulls:cellContent;
+
+			numberCandidate = Number(cellContent.replace(',', '.'));
 			
-			element = (Number(cellContent)||(Number(cellContent)==0 && cellContent!=''))?Number(cellContent):cellContent;
+			element = (numberCandidate||(numberCandidate==0 && cellContent!=''))?numberCandidate:cellContent;
 			
 			if(typeof element =='string' ) element = TableEncodings._removeQuotes(element);
 			
@@ -6983,6 +9968,9 @@ TableEncodings.TableToCSV=function(table, separator, namesAsHeaders){
 	return headers+lines.getConcatenated("\n");
 }
 
+
+
+
 function TableGenerators(){};
 
 TableGenerators.createTableWithSameElement=function(nLists, nRows, element){
@@ -6992,7 +9980,6 @@ TableGenerators.createTableWithSameElement=function(nLists, nRows, element){
 	}
 	return table.getImproved();
 }
-
 function TableOperators(){};
 
 
@@ -7002,6 +9989,8 @@ TableOperators.getElementFromTable=function(table, i, j){
 }
 
 TableOperators.getSubTable=function(table, x, y, width, height){
+	if(table==null) return table;
+	
 	var nLists = table.length;
 	if(nLists==0) return null;
 	var result = new Table();
@@ -7038,14 +10027,87 @@ TableOperators.getSubTable=function(table, x, y, width, height){
 }
 
 /**
- * transposes the table
+ * transposes a table
  * @param  {Table} table to be transposed
+ *
+ * @param {Boolean} firstListAsHeaders removes first list of the table and uses it as names for the lists on the transposed table
  * @return {Table}
  * tags:matrixes
  */
-TableOperators.transpose=function(table){
-	return table.getTransposed();
+TableOperators.transpose=function(table, firstListAsHeaders){
+	if(table==null) return null;
+	return table.getTransposed(firstListAsHeaders);
 }
+
+/**
+ * divides the instances of a table in two tables: the training table and the test table
+ * @param  {Table} table
+ * @param  {Number} proportion proportion of training instances/test instances, between 0 and 1
+ * 
+ * @param  {Number} mode  0:random<br>1:random with seed<br>2:shuffle
+ * @param {Number} seed seed for random numbers (mode 1)
+ * @return {List} list containing the two tables
+ * tags:ds
+ */
+TableOperators.trainingTestPartition = function(table, proportion, mode, seed){
+	if(table==null || proportion==null) return;
+
+	mode = mode||0;
+  	seed = seed||0;
+
+  var indexesTr = new NumberList();
+  var indexesTe = new NumberList();
+
+  var random = mode==1?new NumberOperators._Alea("my", seed, "seeds"):Math.random;
+
+  if(mode==2) N_MOD = Math.floor(proportion/(1-proportion)*10);
+  
+  table[0].forEach(function(id, i){
+  	if(mode==0 || mode==1){
+  		if(random()<proportion){
+	      indexesTr.push(i);
+	    } else {
+	      indexesTe.push(i);
+	    }
+  	} else {
+	    if(i%N_MOD!=0){
+	      indexesTr.push(i);
+	    } else {
+	      indexesTe.push(i);
+	    }
+	}
+  });
+  
+  return new List( table.getSubListsByIndexes(indexesTr), table.getSubListsByIndexes(indexesTe) );
+}
+
+/**
+ * tests a model
+ * @param  {NumberTable} numberTable coordinates of points
+ * @param  {List} classes list of values of classes
+ * @param  {Function} model function that receives two numbers and returns a guessed class
+ * 
+ * @param  {Number} metric 0:error
+ * @return {Number} metric value
+ * tags:ds
+ */
+TableOperators.testClassificationModel = function(numberTable, classes, model, metric){
+	if(numberTable==null || classes==null || model==null) return null;
+
+	metric = metric||0;
+
+	var i;
+	var nErrors = 0;
+
+	classes.forEach(function(clss, i){
+		if(model(numberTable[0][i], numberTable[1][i])!=clss){
+			nErrors++;
+		}
+	});
+
+	return nErrors/classes.length;
+}
+
 
 
 TableOperators.getSubListsByIndexes=function(table, indexes){
@@ -7066,31 +10128,71 @@ TableOperators.getSubListsByIndexes=function(table, indexes){
 }
 
 TableOperators.sortListsByNumberList=function(table, numberList, descending){
-	descending = descending || true;
-	
-	var newTable = instantiate(typeOf(table));
-	newTable.name = table.name;
-	var nElements = table.length;
-	var i;
-	for(i=0; i<nElements; i++){
-		newTable[i] = ListOperators.sortListByNumberList(table[i], numberList, descending);
-	}
-	return newTable;
+  if(descending==null) descending = true;
+
+  var newTable = instantiate(typeOf(table));
+  newTable.name = table.name;
+  var nElements = table.length;
+  var i;
+  // only need to do the sort once, not for each column
+  var indexList = numberList.clone();
+  // save original index
+  for(i=0; i < indexList.length; i++){
+    indexList[i]=i;
+  }
+  indexList = ListOperators.sortListByNumberList(indexList, numberList, descending);
+  // now clone and then move from original based on index
+  for(i=0; i<nElements; i++){
+    newTable[i] = table[i].clone();
+    for(var j=0; j < indexList.length; j++){
+      newTable[i][j] = table[i][indexList[j]];
+    }
+  }
+  return newTable;
 }
 
+// old version replaced by above version Dec 1st, 2014
+// - fixed bug where descending with 'false' value gets changed to 'true'
+// - performance improvements for tables with lots of lists 
+// TableOperators.sortListsByNumberList=function(table, numberList, descending){
+// 	descending = descending || true;
+	
+// 	var newTable = instantiate(typeOf(table));
+// 	newTable.name = table.name;
+// 	var nElements = table.length;
+// 	var i;
+// 	for(i=0; i<nElements; i++){
+// 		newTable[i] = ListOperators.sortListByNumberList(table[i], numberList, descending);
+// 	}
+// 	return newTable;
+// }
+
+
+
+/**
+ * aggregates a table
+ * @param  {Table} table to be aggregated
+ * 
+ * @param  {Number} nList list in the table used as basis to aggregation
+ * @param  {Number} mode mode of aggregation, 0:picks first element 1:adds numbers, 2:averages
+ * @return {Table} aggregated table
+ * tags:aggregation
+ */
 TableOperators.aggregateTable=function(table, nList, mode){
 	nList = nList==null?0:nList;
+	if(table==null || table[0]==null || table[0][0]==null || table[nList]==null) return null;
 	mode = mode==null?0:mode;
 	
 	var newTable = new Table();
-	newTable.name = table.name;
-	var i;
-	var j;
+	var i, j;
 	var index;
 	var notRepeated;
 	
+	newTable.name = table.name;
+
 	for(j=0; table[j]!=null; j++){
 		newTable[j] = new List();
+		newTable[j].name = table[j].name;
 	}
 	
 	switch(mode){
@@ -7114,16 +10216,97 @@ TableOperators.aggregateTable=function(table, nList, mode){
 					}
 				} else {
 					for(j=0; table[j]!=null; j++){
-						if(j!=nList && table[j].type=='NumberList')	newTable[j][index]+=table[j][i];
+						if(j!=nList && table[j].type=='NumberList'){
+							newTable[j][index]+=table[j][i];
+						}
 					}
 				}
 			}
+			break;
+		case 2://averages values in numberLists
+			var nRepetitionsList = table[nList].getElementsRepetitionCount(false);
+			newTable = TableOperators.aggregateTable(table, nList, 1);
+
+			for(j=0; newTable[j]!=null; j++){
+				if(j!=nList && newTable[j].type=='NumberList'){
+					newTable[j] = newTable[j].divide(nRepetitionsList[1]);
+				}
+			}
+			
+			newTable.push(nRepetitionsList[1]);
 			break;
 	}
 	for(j=0; newTable[j]!=null; j++){
 		newTable[j] = newTable[j].getImproved();
 	}
 	return newTable.getImproved();
+}
+
+/**
+ * counts pairs of elements in same positions in two lists (the result is the adjacent matrix of the network defined by pairs)
+ * @param  {Table} table with at least two lists
+ * @return {NumberTable}
+ * tags:
+ */
+TableOperators.getCountPairsMatrix = function(table){
+	if(table==null || table.length<2 || table[0]==null || table[0][0]==null) return null;
+
+	var list0 = table[0].getWithoutRepetitions();
+	var list1 = table[1].getWithoutRepetitions();
+	
+	var matrix = new NumberTable(list1.length);
+
+	list1.forEach(function(element1, i){
+		matrix[i].name = String(element1);
+		list0.forEach(function(element0, j){
+			matrix[i][j] = 0;
+		});
+	});
+
+	table[0].forEach(function(element0, i){
+		element1 = table[1][i];
+		matrix[list1.indexOf(element1)][list0.indexOf(element0)]++;
+	});
+
+	return matrix;
+}
+
+
+/**
+ * filter a table selecting rows that have an element on one of its lists
+ * @param  {Table} table
+ * @param  {Number} nList list that could contain the element in several positions
+ * @param  {Object} element
+ * @return {Table}
+ * tags:filter
+ */
+TableOperators.filterTableByElementInList=function(table, nList, element){
+	if(table==null || !table.length>1 || nList==null) return;
+	if(element==null) return table;
+
+
+	var newTable = new Table();
+	var i, j;
+
+	newTable.name = table.name;
+
+	for(j=0; table[j]!=null; j++){
+		newTable[j] = new List();
+	}
+
+	for(i=0; table[0][i]!=null; i++){
+		if(table[nList][i]==element){
+			for(j=0; table[j]!=null; j++){
+				newTable[j].push(table[j][i]);
+			}
+		}
+	}
+
+	for(j=0; newTable[j]!=null; j++){
+		newTable[j] = newTable[j].getImproved();
+	}
+
+	return newTable;
 }
 
 TableOperators.mergeDataTablesInList=function(tableList){
@@ -7216,7 +10399,7 @@ TableOperators.mergeDataTables=function(table0, table1){
 }
 
 /**
- * From two DataTables creates a new DataTable with combined elements in the first List, and additoned values in the second 
+ * From two DataTables creates a new DataTable with combined elements in the first List, and added values in the second 
  * @param {Object} table0
  * @param {Object} table1
  * @return {Table}
@@ -7267,6 +10450,8 @@ TableOperators.completeTable=function(table, nRows, value){
  * tags:filter
  */
 TableOperators.getNumberTableFromTable=function(table){
+	if(table==null || !table.length>0) return null;
+	
 	var i;
 	var newTable = new NumberTable();
 	newTable.name = table.name;
@@ -7276,7 +10461,231 @@ TableOperators.getNumberTableFromTable=function(table){
 	return newTable;
 }
 
+/**
+ * calculates de information gain of all variables in a table and a supervised variable
+ * @param  {Table} variablesTable
+ * @param  {List} supervised
+ * @return {NumberList}
+ * tags:ds
+ */
+TableOperators.getVariablesInformationGain = function(variablesTable, supervised){
+	if(variablesTable==null) return null;
 
+	var igs = new NumberList();
+	variablesTable.forEach(function(feature){
+		igs.push(ListOperators.getInformationGain(feature, supervised));
+	});
+	return igs;
+}
+
+TableOperators.splitTableByCategoricList = function(table, list){
+	if(table==null || list==null) return null;
+
+	var childrenTable;
+	var tablesList = new List();
+	var childrenObject = {};
+	var N = list.length;
+
+	list.forEach(function(element, i){
+		childrenTable = childrenObject[element];
+		if(childrenTable==null){
+			childrenTable = new Table()
+			childrenObject[element]=childrenTable;
+			tablesList.push(childrenTable);
+			table.forEach(function(list, j){
+				childrenTable[j] = new List();
+				childrenTable[j].name = list.name;
+			});
+			childrenTable._element = element;
+		}
+		table.forEach(function(list, j){
+			childrenTable[j].push(table[j][i]);
+		});
+	});
+
+	return tablesList;
+}
+
+/**
+ * builds a decision tree based on a variables table and a supervised variable
+ * @param  {Table} variablesTable
+ * @param  {List} supervised
+ * @param {Object} supervisedValue main value in supervised list (associated with blue)
+ * 
+ * @param {Number} min_entropy minimum value of entropy on nodes (0.2 default)
+ * @param {Number} min_size_node minimum population size associated with node (10 default)
+ * @param {Number} min_info_gain minimum information gain by splitting by best feature (0.002 default)
+ * @param {Boolean} generatePattern generates a pattern of points picturing proprtion of followed class in node
+ * @return {Tree}
+ * tags:ds
+ */
+TableOperators.buildDecisionTree = function(variablesTable, supervised, supervisedValue, min_entropy, min_size_node, min_info_gain, generatePattern){
+	if(variablesTable==null || supervised==null || supervisedValue==null) return;
+
+	min_entropy = min_entropy==null?0.2:min_entropy;
+	min_size_node = min_size_node||10;
+	min_info_gain = min_info_gain||0.002;
+
+	var indexes = NumberListGenerators.createSortedNumberList(supervised.length);
+	var tree = new Tree();
+
+	TableOperators._buildDecisionTreeNode(tree, variablesTable, supervised, 0, min_entropy, min_size_node, min_info_gain, null, null, supervisedValue, indexes, generatePattern);
+
+	return tree;
+}
+
+
+TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervised, level, min_entropy, min_size_node, min_info_gain, parent, value, supervisedValue, indexes, generatePattern){
+
+	var entropy = ListOperators.getListEntropy(supervised, supervisedValue);
+	
+
+	if(entropy>=min_entropy){
+		informationGains = TableOperators.getVariablesInformationGain(variablesTable, supervised);
+		var maxIg = 0;
+		var iBestFeature = 0;
+		informationGains.forEach(function(ig, i){
+			if(ig>maxIg){
+				maxIg = ig;
+				iBestFeature = i;
+			}
+		});
+	}
+	
+	//c.l('informationGains', informationGains);
+	
+
+
+	var subDivide = entropy>=min_entropy && maxIg>min_info_gain && supervised.length>=min_size_node;
+
+	var id = tree.nodeList.getNewId();
+	var name = (value==null?'':value+':')+(subDivide?variablesTable[iBestFeature].name:'P='+supervised._biggestProbability+'('+supervised._mostRepresentedValue+')');
+	var node = new Node(id,  name);
+	
+	
+
+
+	tree.addNodeToTree(node, parent);
+
+	if(parent==null){
+		tree.informationGainTable = new Table();
+		tree.informationGainTable[0] = variablesTable.getNames();
+		if(informationGains){
+			tree.informationGainTable[1] = informationGains.clone();
+			tree.informationGainTable = tree.informationGainTable.getListsSortedByList(informationGains, false);
+		}
+	}
+
+	node.entropy = entropy;
+	node.weight = supervised.length;
+	node.supervised = supervised;
+	node.indexes = indexes;
+	node.value = value;
+	node.mostRepresentedValue = supervised._mostRepresentedValue;
+	node.biggestProbability = supervised._biggestProbability;
+	node.valueFollowingProbability = supervised._P_valueFollowing;
+	node.lift = node.valueFollowingProbability/tree.nodeList[0].valueFollowingProbability;//Math.log(node.valueFollowingProbability/tree.nodeList[0].valueFollowingProbability)/Math.log(2);
+
+
+	if(level<2){
+		c.l('\nlevel', level);
+		c.l('supervised.countElement(supervisedValue)', supervised.countElement(supervisedValue))
+		c.l('entropy', entropy);
+		c.l('value', value);
+		c.l('name', name);
+		c.l('supervised.name', supervised.name);
+		c.l('supervised.length', supervised.length);
+		c.l('supervisedValue', supervisedValue);
+		c.l('supervised._biggestProbability, supervised._P_valueFollowing', supervised._biggestProbability, supervised._P_valueFollowing);
+		c.l('node.valueFollowingProbability (=supervised._P_valueFollowing):', node.valueFollowingProbability)
+		c.l('tree.nodeList[0].valueFollowingProbability', tree.nodeList[0].valueFollowingProbability);
+		c.l('node.biggestProbability (=_biggestProbability):', node.biggestProbability);
+		c.l('node.mostRepresentedValue:', node.mostRepresentedValue);
+		c.l('node.mostRepresentedValue==supervisedValue', node.mostRepresentedValue==supervisedValue);
+	}
+	
+	node._color = TableOperators._decisionTreeColorScale(1-node.valueFollowingProbability);
+
+	// node._color = node.mostRepresentedValue==supervisedValue?
+	// 	TableOperators._decisionTreeColorScale(1-node.biggestProbability)
+	// 	:
+	// 	TableOperators._decisionTreeColorScale(node.biggestProbability);
+
+	
+	if(generatePattern){
+		var newCanvas = document.createElement("canvas");
+		newCanvas.width = 150;
+		newCanvas.height = 100;
+		var newContext = newCanvas.getContext("2d");
+		newContext.clearRect(0,0,150,100);
+
+		TableOperators._decisionTreeGenerateColorsMixture(newContext, 150, 100, ['blue', 'red'],
+			node.mostRepresentedValue==supervisedValue?
+				[Math.floor(node.biggestProbability*node.weight), Math.floor((1-node.biggestProbability)*node.weight)]
+				:
+				[Math.floor((1-node.biggestProbability)*node.weight), Math.floor(node.biggestProbability*node.weight)]
+		);
+
+		
+		var img = new Image();
+		img.src = newCanvas.toDataURL();
+		node.pattern = newContext.createPattern(img, "repeat");
+	}
+
+
+
+	if(!subDivide){
+		return node;
+	}
+
+	node.bestFeatureName = variablesTable[iBestFeature].name;
+	node.iBestFeature = iBestFeature;
+	node.informationGain = maxIg;
+
+	var expanded = variablesTable.concat([supervised, indexes]);
+
+	var tables = TableOperators.splitTableByCategoricList(expanded, variablesTable[iBestFeature]);
+	var childTable;
+	var childSupervised;
+	var newNode;
+
+	tables.forEach(function(expandedChild){
+		childTable = expandedChild.getSubList(0, expandedChild.length-3);
+		childSupervised = expandedChild[expandedChild.length-2];
+		childIndexes = expandedChild[expandedChild.length-1];
+		TableOperators._buildDecisionTreeNode(tree, childTable, childSupervised, level+1, min_entropy, min_size_node, min_info_gain, node, expandedChild._element, supervisedValue, childIndexes, generatePattern);
+	});
+
+	node.toNodeList = node.toNodeList.getSortedByProperty('valueFollowingProbability', false);
+
+	return node;
+}
+TableOperators._decisionTreeColorScale = function(value){
+	var rr = value<0.5?Math.floor(510*value):255;
+	var gg = value<0.5?Math.floor(510*value):Math.floor(510*(1-value));
+	var bb = value<0.5?255:Math.floor(510*(1-value));
+
+	return 'rgb('+rr+','+gg+','+bb+')';
+}
+TableOperators._decisionTreeGenerateColorsMixture = function(ctxt, width, height, colors, weights){
+	//var imageData=context.createImageData(width, height);
+	var x, y, i;//, rgb;
+	var allColors = ListGenerators.createListWithSameElement(weights[0], colors[0]);
+
+	for(i=1; colors[i]!=null; i++){
+		allColors = allColors.concat( ListGenerators.createListWithSameElement(weights[i], colors[i]) );
+	}
+
+	for(x=0; x<width; x++){
+		for(y=0; y<height; y++){
+			i=(x+y*width)*4;
+			ctxt.fillStyle = allColors.getRandomElement();
+			ctxt.fillRect(x,y,1,1);
+		}
+	}
+
+	//return imageData;
+}
 
 /**
 * IntervalListOperators
@@ -7293,7 +10702,6 @@ IntervalListOperators.scaleIntervals = function(intervalList, value) {
 	}
 	return newIntervalList;
 }
-
 /**
 * IntervalTableOperators
 * @constructor
@@ -7309,7 +10717,6 @@ IntervalTableOperators.scaleIntervals = function(intervalTable, value) {
 	}
 	return newIntervalTable;
 }
-
 function MatrixGenerators(){};
 
 
@@ -7458,15 +10865,16 @@ MatrixGenerators.createTranslationMatrix = function(tx, ty) {
    // * @fieldOf Matrix
    // */
 // Matrix.VERTICAL_FLIP = Matrix(1, 0, 0, -1);
-
 function NumberListGenerators(){};
 
 /**
- * Generates a NumberList with sorted Numbers
+ * Generate a NumberList with sorted Numbers
  * @param {Number} nValues length of the NumberList
+ * 
  * @param {Number} start first value
  * @param {Number} step increment value
- * @return {Number} generated NumberList
+ * @return {NumberList} generated NumberList
+ * tags:generator
  */
 NumberListGenerators.createSortedNumberList=function(nValues, start, step){
 	start = start || 0;
@@ -7491,6 +10899,15 @@ NumberList.createNumberListFromInterval=function(nElements, interval){
 	return numberList;
 }
 
+/**
+ * create a list with random numbers
+ * @param  {Number} nValues
+ * 
+ * @param  {Interval} interval range of the numberList
+ * @param  {Number} seed optional seed for seeded random numbers
+ * @return {NumberList}
+ * tags:random
+ */
 NumberListGenerators.createRandomNumberList=function(nValues, interval, seed, func){
 	seed = seed==null?-1:seed;
 	interval = interval==null?new Interval(0,1):interval;
@@ -7510,14 +10927,16 @@ NumberListGenerators.createRandomNumberList=function(nValues, interval, seed, fu
 	return numberList;
 }
 
-
 function NumberListOperators(){};
 
 
 
 /**
- * used to compare two NumberLists
- * http://en.wikipedia.org/wiki/Cosine_similarity
+ * cosine similarity, used to compare two NumberLists regardless of norm (see: http://en.wikipedia.org/wiki/Cosine_similarity)
+ * @param  {NumberList} numberList0
+ * @param  {NumberList} numberList1
+ * @return {Number}
+ * tags:statistics
  */
 NumberListOperators.cosineSimilarity=function(numberList0, numberList1){
 	var norms = numberList0.getNorm()*numberList1.getNorm();
@@ -7525,20 +10944,115 @@ NumberListOperators.cosineSimilarity=function(numberList0, numberList1){
 	return numberList0.dotProduct(numberList1)/norms;
 }
 
-
+/**
+ * calculates the covariance
+ * @param  {NumberList} numberList0
+ * @param  {NumberList} numberList1
+ * @return {Number}
+ * tags:statistics
+ */
 NumberListOperators.covariance=function(numberList0, numberList1){//TODO: improve efficiency
 	var l = Math.min(numberList0.length, numberList1.length);
-	
+	var i;
 	var av0 = numberList0.getAverage();
 	var av1 = numberList1.getAverage();
 	var s = 0;
 	
-	
-	for(var i=0; i<l; i++){
+	for(i=0; i<l; i++){
 		s+= (numberList0[i] - av0)*(numberList1[i] - av1);
 	}
 	
 	return s/l;
+}
+
+/**
+ * calculates k-means clusters of values in a numberList
+ * @param  {NumberList} numberList
+ * @param  {Number} k number of clusters
+ *
+ * @param {Boolean} returnIndexes return clusters of indexes rather than values (false by default)
+ * @return {NumberTable} numberLists each being a cluster
+ * tags:ds
+ */
+NumberListOperators.linearKMeans=function(numberList, k, returnIndexes){
+	if(numberList==null || k==null || !k>0) return null;
+
+	//c.l('numberList:', numberList);
+
+	var interval = numberList.getInterval();
+
+	//c.l('interval:', interval);
+
+	var min = interval.x;
+	var max = interval.y;
+	//var means = new NumberList();
+	var clusters = new NumberTable();
+	var i, j;
+	var jK;
+	var x;
+	var dX = (max-min)/k;
+	var d;
+	var dMin
+	var n;
+	var actualMean;
+	var N = 1000;
+	var means = new NumberList();
+	var nextMeans = new NumberList();
+	var nValuesInCluster = new NumberList();
+
+	var initdMin = 1+max-min;
+
+	for(i=0; i<k; i++){
+		clusters[i] = new NumberList();
+		//clusters[i].actualMean = min + (i+0.5)*dX;//means[i];
+		nextMeans[i] = min + (i+0.5)*dX;
+	}
+
+	for(n=0; n<N; n++){
+
+		//c.l('-------'+n);
+
+		for(i=0; i<k; i++){
+			//actualMean = means[i];//clusters[i].actualMean;
+			//c.l(' ', i, nextMeans[i]);
+			//clusters[i] = new NumberList();
+			//clusters[i].mean = actualMean;
+			//clusters[i].actualMean = 0;
+			nValuesInCluster[i] = 0;
+			means[i] = nextMeans[i];
+			nextMeans[i] = 0;
+		}
+		
+		for(i=0; numberList[i]!=null; i++){
+			x = numberList[i];
+			dMin = initdMin;
+			jK = 0;
+			
+			for(j=0; j<k; j++){
+				//d = Math.abs(x-clusters[j].mean);
+				d = Math.abs(x-means[j]);
+				//c.l('   d', d);
+				if(d<dMin){
+					dMin = d;
+					jK = j;
+				}
+			}
+			//c.l('    ', x,'-->',jK, 'with mean', clusters[jK].mean);
+			if(n==N-1){
+				//c.l('jK, clusters[jK]', jK, clusters[jK]);
+				returnIndexes?clusters[jK].push(i):clusters[jK].push(x);
+			}
+
+			nValuesInCluster[jK]++;
+			
+			//clusters[jK].actualMean = ( (clusters[jK].length-1)*clusters[jK].actualMean + x )/clusters[jK].length;
+			nextMeans[jK] = ( (nValuesInCluster[jK]-1)*nextMeans[jK] + x )/nValuesInCluster[jK];
+		}
+		//if(n%50==0) c.l(n+' --> ' + nValuesInCluster.join(',')+"|"+means.join(','));
+	}
+
+	return clusters;
+
 }
 
 
@@ -7553,8 +11067,54 @@ NumberListOperators.standardDeviationBetweenTwoNumberLists=function(numberList0,
 	return s/l;
 }
 
+/**
+ * returns Pearson Product Moment Correlation, the most common correlation coefficient ( covariance/(standard_deviation0*standard_deviation1) )
+ * @param  {NumberList} numberList0
+ * @param  {NumberList} numberList1
+ * @return {Number}
+ * tags:statistics
+ */
 NumberListOperators.pearsonProductMomentCorrelation=function(numberList0, numberList1){//TODO:make more efficient
 	return NumberListOperators.covariance(numberList0, numberList1)/(numberList0.getStandardDeviation()*numberList1.getStandardDeviation());
+}
+
+
+/**
+ * smooth a numberList by calculating averages with neighbors
+ * @param  {NumberList} numberList
+ * @param  {Number} intensity weight for neighbors in average (0<=intensity<=0.5)
+ * @param  {Number} nIterations number of ieterations
+ * @return {NumberList}
+ * tags:statistics
+ */
+NumberListOperators.averageSmoother = function(numberList, intensity, nIterations){
+	nIterations = nIterations==null?1:nIterations;
+	intensity = intensity==null?0.1:intensity;
+
+	intensity = Math.max(Math.min(intensity, 0.5), 0);
+	var anti = 1 - 2*intensity;
+	var n = numberList.length-1;
+
+	var newNumberList = new NumberList();
+	var i;
+
+	newNumberList.name = numberList.name;
+	
+	for(i=0; i<nIterations; i++){
+		if(i==0){
+			numberList.forEach(function(val, i){
+				newNumberList[i] = anti*val +  (i>0?(numberList[i-1]*intensity):0) + (i<n?(numberList[i+1]*intensity):0);
+			});
+		} else {
+			newNumberList.forEach(function(val, i){
+				newNumberList[i] = anti*val +  (i>0?(newNumberList[i-1]*intensity):0) + (i<n?(newNumberList[i+1]*intensity):0);
+			});
+		}
+	}
+
+	newNumberList.name = numberList.name;
+
+	return newNumberList;
 }
 
 
@@ -7662,8 +11222,73 @@ NumberListOperators.filterNumberListByNumber=function(numberList, value, compari
 	return newNumberList;
 }
 
+/**
+ * creates a NumberList that contains the union of two NumberList (removing repetitions)
+ * @param  {NumberList} list A
+ * @param  {NumberList} list B
+ * 
+ * @return {NumberList} the union of both NumberLists
+ * tags:
+ */
+NumberListOperators.union = function (x, y) { 
+  // Borrowed from here: http://stackoverflow.com/questions/3629817/getting-a-union-of-two-arrays-in-javascript
+  var obj = {};
+  for (var i = x.length-1; i >= 0; -- i)
+     obj[x[i]] = x[i];
+  for (var i = y.length-1; i >= 0; -- i)
+     obj[y[i]] = y[i];
+  var res = new NumberList();
+  for (var k in obj) {
+    if (obj.hasOwnProperty(k))  // <-- optional
+      res.push(obj[k]);
+  }
+  return res;
+}
 
+/**
+ * creates a NumberList that contains the intersection of two NumberList (elements present in BOTH lists)
+ * @param  {NumberList} list A
+ * @param  {NumberList} list B
+ * 
+ * @return {NumberList} the intersection of both NumberLists
+ * tags:
+ */
+NumberListOperators.intersection = function ( a, b ) {
+  // Borrowed from here: http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
+  console.log( "arguments: ", arguments ); 
+  if( arguments.length > 2 ){
+  	var sets = [];
+  	for (var i = 0; i < arguments.length; i++) {
+  		sets.push( arguments[i] );
+  	};
+  	sets.sort(function(a,b){
+		return a.length - b.length;
+	})
+	console.log( "sets: ", sets ); 
+  	var resultsTrail = sets[0];
+  	for (var i = 1; i < sets.length; i++) {
+  		var newSet = sets[i];
+  		resultsTrail = NumberListOperators.intersection( resultsTrail, newSet );
+  	};
+  	return resultsTrail;
+  }
 
+  var result = new NumberList();
+  	 a = a.slice();
+  	 b = b.slice();
+  while( a.length > 0 && b.length > 0 )
+  {  
+     if      (a[0] < b[0] ){ a.shift(); }
+     else if (a[0] > b[0] ){ b.shift(); }
+     else /* they're equal */
+     {
+       result.push(a.shift());
+       b.shift();
+     }
+  }
+
+  return result;
+}
 
 /**
 * NumberOperators
@@ -7707,7 +11332,18 @@ NumberOperators.numberFromBinaryValues = function(binaryValues){
 }
 
 NumberOperators.powersOfTwoDecomposition = function(number, length) {
-	var powers = new NumberList();
+  // var i;
+  // var powers = StringList.fromArray(Number(number).toString(2).split('')).toNumberList().getReversed();
+  // var n = powers.length;
+  // for(i=n; i<length; i++){
+  //   powers.push(0);
+  // }
+  // return powers;
+
+
+
+  var powers = new NumberList();
+
 	var constructingNumber = 0;
 	var biggestPower;
 	
@@ -7810,48 +11446,65 @@ NumberOperators._Mash = function(){
   mash.version = 'Mash 0.9';
   return mash;
 }
+NumberTableConversions = function(){};
 
+/**
+ * converts a numberTable with at least two lists into a Polygon
+ * @param  {NumberTable} numberTable with at least two numberLists
+ * @return {Polygon}
+ * tags:conversion
+ */
+NumberTableConversions.numberTableToPolygon = function(numberTable){
+	if(numberTable.length<2) return null;
+
+	var i;
+	var n = Math.min(numberTable[0].length, numberTable[1].length);
+	var polygon = new Polygon();
+
+	for(i=0; i<n; i++){
+		polygon[i] = new Point(numberTable[0][i], numberTable[1][i]);
+	}
+
+	return polygon;
+}
 function NumberTableFlowOperators(){};
 
 NumberTableFlowOperators.getFlowTable=function(numberTable, normalized, include0s){
+	if(numberTable==null) return;
+
 	normalized = normalized || false;
 	var nElements = numberTable.length;
-	var nCols = numberTable[0].length;
+	var nRows = numberTable[0].length;
 	var numberList;
-	var nNumbers=numberTable[0].length;
 	var minList = new NumberList();
 	var maxList = new NumberList();
 	var sums = new NumberList();
-	var minInCol;
-	var maxInCol;
-	var sumInCol;
+	var minInRow;
+	var maxInRow;
+	var sumInRow;
 	var MAX = -9999999;
 	var MIN = 9999999;
 	var MAXSUMS = -9999999;
-	var number;
-	var i;
-	var j;
-	for(i=0; i<nCols; i++){
-		minInCol = 9999999; //TODO: what's the max Number?
-		maxInCol = -9999999;
-		sumInCol = 0;
+	var i, j;
+	for(i=0; i<nRows; i++){
+		minInRow = 9999999; //TODO: what's the max Number?
+		maxInRow = -9999999;
+		sumInRow = 0;
 		for(j=0; j<nElements; j++){
 			numberList = numberTable[j];
-			if(numberList.length!=nCols) return;
+			if(numberList.length!=nRows) return;
 			
-			maxInCol = Math.max(maxInCol, numberList[i]);
-			minInCol = Math.min(minInCol, numberList[i]);
-			sumInCol += numberList[i];
+			maxInRow = Math.max(maxInRow, numberList[i]);
+			minInRow = Math.min(minInRow, numberList[i]);
+			sumInRow += numberList[i];
 		}
-		minList.push(minInCol);
-		maxList.push(maxInCol);
-		sums.push(sumInCol);
-		MIN = Math.min(MIN, minInCol);
-		MAX = Math.max(MAX, maxInCol);
-		MAXSUMS = Math.max(MAXSUMS, sumInCol);
+		minList.push(minInRow);
+		maxList.push(maxInRow);
+		sums.push(sumInRow);
+		MIN = Math.min(MIN, minInRow);
+		MAX = Math.max(MAX, maxInRow);
+		MAXSUMS = Math.max(MAXSUMS, sumInRow);
 	}
-
-	c.log("NumberTableFlowOperators.getFlowTable, MIN", MIN);
 
 	var dMINMAX = MAXSUMS-MIN;
 	var flowTable = new NumberTable();
@@ -7861,6 +11514,28 @@ NumberTableFlowOperators.getFlowTable=function(numberTable, normalized, include0
 	
 	var include0Add = include0s?1:0;
 	
+
+	if(normalized && include0s){
+		var max;
+
+		flowTable = new NumberTable(numberTable.length+1);
+
+		numberTable[0].forEach(function(){
+			flowTable[0].push(0);
+		});
+
+		numberTable.forEach(function(list, iList){
+			list.forEach(function(val, j){
+				sum = sums[j];
+				flowTable[iList+1][j] = val/(sum==0?0.00001:sum) + flowTable[iList][j];
+			});
+		});
+		
+		return flowTable;
+	}
+
+	flowTable = new NumberTable();
+
 	if(!normalized){
 		minToNormalize = MIN;
 		maxToNormalize = dMINMAX;
@@ -7872,10 +11547,10 @@ NumberTableFlowOperators.getFlowTable=function(numberTable, normalized, include0
 		flowTable.push(flowNumberList);
 	}
 	if(include0s) flowTable.push(new NumberList());
-	for(i=0; i<nCols; i++){
+
+	for(i=0; i<nRows; i++){
 		numberList = numberTable[0];
 		if(normalized){
-			
 			maxToNormalize = sums[i]-minToNormalize;
 		}
 		if(include0s){
@@ -7892,11 +11567,15 @@ NumberTableFlowOperators.getFlowTable=function(numberTable, normalized, include0
 }
 
 NumberTableFlowOperators.getFlowTableIntervals=function(numberTable, normalized, sorted, stacked){
+	if(numberTable==null) return null;
+
 	var table = NumberTableFlowOperators.getFlowTable(numberTable, normalized, true);
+
 	var intervalTable = new Table();
-	
+	var i, j;
+
 	var nElements = table.length;
-	var nCols = table[0].length;
+	var nRows = table[0].length;
 	
 	var intervalList;
 	
@@ -7906,7 +11585,7 @@ NumberTableFlowOperators.getFlowTableIntervals=function(numberTable, normalized,
 		numberList = table[i];
 		intervalList = new List();
 		intervalTable[i-1] = intervalList;
-		for(j=0;j<nCols;j++){
+		for(j=0;j<nRows;j++){
 			intervalList.push(new Interval(table[i-1][j], table[i][j]));
 			if(i==nElements-1) maxCols[j] = table[i][j];
 		}
@@ -7917,7 +11596,7 @@ NumberTableFlowOperators.getFlowTableIntervals=function(numberTable, normalized,
 		var amplitudes;
 		var interval;
 		var yy;
-		for(j=0; j<nCols; j++){
+		for(j=0; j<nRows; j++){
 			amplitudes = new NumberList();
 			intervalList = intervalTable[i];
 			for(i=0;i<nElements-1;i++){
@@ -7935,17 +11614,22 @@ NumberTableFlowOperators.getFlowTableIntervals=function(numberTable, normalized,
 			}
 		}
 	} else if(!normalized){
-		for(j=0; j<nCols; j++){
+		for(j=0; j<nRows; j++){
 			for(i=0;i<nElements-1;i++){
 				interval = intervalTable[i][j];
-				intervalTable[i][j] = interval.add((1-maxCols[j])*0.5);
+				if(stacked){
+					intervalTable[i][j].x = 1 - intervalTable[i][j].x;
+					intervalTable[i][j].y = 1 - intervalTable[i][j].y;
+				} else {
+					intervalTable[i][j] = interval.add((1-maxCols[j])*0.5);
+				}
+				
 			}
 		}
 	}
 	
 	return intervalTable;
 }
-
 
 
 
@@ -7971,7 +11655,185 @@ NumberTableOperators.normalizeListsToMax=function(numberTable){
 	return newNumberTable;
 }
 
+/**
+ * smooth numberLists by calculating averages with neighbors
+ * @param  {NumberTable} numberTable
+ * 
+ * @param  {Number} intensity weight for neighbors in average (0<=intensity<=0.5)
+ * @param  {Number} nIterations number of ieterations
+ * @return {NumberTable}
+ * tags:statistics
+ */
+NumberTableOperators.averageSmootherOnLists = function(numberTable, intensity, nIterations){
+	if(numberTable==null) return;
+	
+	intensity = intensity||0.5;
+	nIterations = nIterations||1;
 
+	var newNumberTable = new NumberTable();
+	newNumberTable.name = numberTable.name;
+	numberTable.forEach(function(nL, i){
+		newNumberTable[i] = NumberListOperators.averageSmoother(numberTable[i], intensity, nIterations);
+	});
+	return newNumberTable;
+}
+
+/**
+ * builds a k-nearest neighbors function, that calculates a class membership or a regression, taking the vote or average of the k nearest instances, using Euclidean distance, and applies it to a list of points, see: http://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm
+ * <br>[!] regression still not built
+ * @param  {NumberTable} numberTable
+ * @param  {List} propertyList categories or values
+ * 
+ * @param  {Polygon} vectorList optional list of points to be tested, if provided classes or regressions are calculated, if not the function is returned
+ * @param  {Number} k number of neighbors
+ * @param  {Boolean} calculateClass if true propertyList is a list of categories for membership calculation, if false a numberList for regression
+ * @param {Number} matrixN if provided, the result will be a numberTable with values in a grid in the numberTable ranges
+ * @return {Object} kNN Function or a matrix (grid) of values if matrixN is provided, or classes or values from points if vectorList is provided
+ * tags:ds
+ */
+NumberTableOperators.kNN = function(numberTable, propertyList, vectorList, k, calculateClass, matrixN){
+	if(numberTable==null || propertyList==null) return null;
+	
+	k = k||1;
+	calculateClass = calculateClass==null?true:calculateClass;
+
+	var i,j;
+
+	var fKNN = function(vector){
+		var i, j;
+		var d2;
+
+		var table = new NumberTable();
+		
+		table[0] = new NumberList();
+		table[1] = new NumberList();
+		numberTable[0].forEach(function(val, i){
+			d2 = 0;
+			numberTable.forEach(function(nList, j){
+				d2+=Math.pow(nList[i]-vector[j], 2);
+			});
+			if(table[1].length<k || table[1][k-1]>d2){
+				var inserted = false;
+				for(j=0; table[1][j]<k; j++){
+					if(d2<table[1][j]){
+						table[1].splice(j, 0, d2);
+						table[0].splice(j, 0, i);
+						inserted = true;
+						break;
+					}
+				}
+				if(!inserted && table[1].length<k){
+					table[1].push(d2);
+					table[0].push(i);
+				}
+			}
+			// table[0].push(i);
+			// table[1].push(d2);
+		});
+
+		
+
+		//table = table.getListsSortedByList(table[1]);
+
+		if(calculateClass){
+			var classTable = new Table();
+			classTable[0] = new List();
+			classTable[1] = new NumberList();
+			for(i=0; i<k; i++){
+				clas = propertyList[table[0][i]];
+				index = classTable[0].indexOf(clas);
+				if(index==-1){
+					classTable[0].push(clas);
+					classTable[1].push(1);
+				} else {
+					classTable[1][index]++;
+				}
+			}
+			var max = classTable[1][0];
+			var iMax = 0;
+			classTable[1].slice(1).forEach(function(val, i){
+				if(val>max){
+					max = val;
+					iMax = i+1;
+				}
+			});
+			return classTable[0][iMax];
+		}
+
+		var val;
+		var combination = 0;
+		var sumD = 0;
+		for(i=0; i<k; i++){
+			val = propertyList[table[0][i]];
+			combination += val/(table[1][i]+0.000001);
+			sumD+=(1/(table[1][i]+0.000001));
+		}
+
+		c.l('vector:', vector[0], vector[1], 'colsest:', Math.floor(100000000*table[1][0]), Math.floor(100000000*table[1][1]), 'categories',  propertyList[table[0][0]], propertyList[table[0][1]], 'result', combination/sumD);
+		
+		return combination/sumD;
+
+		//regression
+		//…
+	}
+
+	if(vectorList==null){
+
+		if(matrixN!=null && matrixN>0){
+			var propertiesNumbers = {};
+			var n=0;
+
+			propertyList.forEach(function(val){
+				if(propertiesNumbers[val]==null){
+					propertiesNumbers[val]=n;
+					n++;
+				}
+			});
+
+			var p;
+			var matx = new NumberTable();
+			var ix = numberTable[0].getMinMaxInterval();
+			var minx = ix.x;
+			var kx = ix.getAmplitude()/matrixN;
+			var iy = numberTable[1].getMinMaxInterval();
+			var miny = iy.x;
+			var ky = iy.getAmplitude()/matrixN;
+
+			for(i=0; i<matrixN; i++){
+				matx[i] = new NumberList();
+
+				for(j=0; j<matrixN; j++){
+			  		p = [
+				        minx + kx*i,
+				        miny + ky*j
+			     	];
+
+			     	fKNN(p);
+			     	
+		    		matx[i][j]=calculateClass?propertiesNumbers[fKNN(p)]:fKNN(p);
+		  		}
+		  	}
+		  	//return matrix
+		  	return matx;
+		}
+
+		//return Function
+		return fKNN;
+	}
+
+	var results = instantiateWithSameType(propertyList);
+
+	vectorList.forEach(function(vector){
+		results.push(fKNN(vector));
+	});
+
+	//return results
+	return results;
+}
+
+
+
+//TODO: move to NumberTableConversions
 NumberTableOperators.numberTableToNetwork=function(numberTable, method, tolerance){
 	tolerance = tolerance==null?0:tolerance;
 	
@@ -8038,363 +11900,50 @@ NumberTableOperators.numberTableToNetwork=function(numberTable, method, toleranc
 	
 	return network;
 }
-
-// /**
-// * Universal Numeric Operators
-// * @constructor
-// */
-// function UniversalNumericOperators(){};
-// /** 
-// * receives n arguments and performs addition
-// */
-// 
-// UniversalNumericOperators.addition=function(){
-	// //c.log("addition__________________________________");
-	// var objectType;
-	// var result;
-	// var i;
-	// if(arguments.length<2){
-		// return result;
-	// }
-	// if(arguments.length==2){
-		// //c.log("addition: ", typeOf(arguments[0]), typeOf(arguments[1]));
-		// if(arguments[0].isOfType("Array") && arguments[1].isOfType("Array")){
-			// return UniversalNumericOperators.applyBinaryOperatorOnLists(arguments[0], arguments[1], UniversalNumericOperators.addition);
-		// }else if(arguments[0].isOfType("Array")){
-			// //c.log("Array and non-Array!: ", typeOf(arguments[0]), typeOf(arguments[1]));
-			// return UniversalNumericOperators.applyBinaryOperatorOnListWithObject(arguments[0], arguments[1], UniversalNumericOperators.addition);
-		// }else if(arguments[1].isOfType("Array")){
-			// return UniversalNumericOperators.applyBinaryOperatorOnObjectWithList(arguments[0], arguments[1], UniversalNumericOperators.addition);
-		// }
-		// var args=new List(arguments[0], arguments[1]);
-		// var argsName=new List(typeOf(arguments[0]), typeOf(arguments[1]));
-		// var indexes=argsName.sortIndexed(); //Very intelligent (Mig), though I'm not completely sure is efficient
-// 
-		// args=args.sortOnIndexes(indexes);
-		// argsName=argsName.sortOnIndexes(indexes);
-		// objectType=argsName.join("_");
-		// //
-		// switch(objectType){
-			// case 'boolean_boolean':
-				// if( ( args[0] || args[1] ) && !( args[0] && args[1] ) ) {
-  					// return true;
-				// }
-				// return false;
-			// case 'Point_Point':
-				// return new Point(args[0].x + args[1].x, args[0].y + args[1].y);
-			// case 'Point3D_Point3D':
-				// return new Point3D(args[0].x + args[1].x, args[0].y + args[1].y, args[0].z + args[1].z);
-			// case 'Point_number':
-				// return new Point(args[0].x + args[1], args[0].y + args[1]);
-			// case 'Point3D_number':
-				// return new Point3D(args[0].x + args[1], args[0].y + args[1], args[0].z + args[1]);
-			// case 'Interval_number':
-				// return new Interval(args[0].min + args[1], args[0].max + args[1]);
-			// case 'Interval_Point':
-				// return new Point(args[0].min + args[1].x, args[0].max + args[1].y);
-			// case 'Interval_Interval':
-				// return new Point(args[0].min + args[1].min, args[0].max + args[1].max);
-			// case 'Point_Rectangle':
-				// return new Rectangle(args[0].x + args[1].x, args[0].y + args[1].y, args[1].width, args[1].height);
-			// case 'Interval_Rectangle':
-				// return new Rectangle(args[0].min + args[1].x, args[0].max + args[1].y, args[1].width, args[1].height);
-			// case 'Rectangle_Rectangle':
-				// return new Rectangle(args[0].x + args[1].x, args[0].y + args[1].y, args[0].width+args[1].width, args[0].height+args[1].height);
-			// case 'Date_number':
-				// return new Date(args[0].getTime()+(args[1]*60000));
-			// case 'Date_Date':
-				// return new Date(Number(args[0].getTime()+args[1].getTime()));
-			// case 'Date_DateInterval':
-				// return new DateInterval(UniversalNumericOperators.addition(args[0], args[1].date0), UniversalNumericOperators.addition(args[0], args[1].date1));
-			// case 'DateInterval_number':
-				// return new DateInterval(UniversalNumericOperators.addition(args[0].date0, args[1]), UniversalNumericOperators.addition(args[0].date1, args[1]));
-			// case 'DateInterval_Interval':
-				// return new DateInterval(UniversalNumericOperators.addition(args[0].date0, args[1].min), UniversalNumericOperators.addition(args[0].date1, args[1].max));
-			// case 'DateInterval_DateInterval':
-				// return new DateInterval(UniversalNumericOperators.addition(args[0].date0, args[1].date0), UniversalNumericOperators.addition(args[0].date1, args[1].date1));
-			// //perform normal addition:
-			// case 'number_number':
-				// return args[0]+args[1];
-			// case 'boolean_number':
-			// case 'Date_string':
-			// case 'number_string':
-			// case 'string_string':
-				// return args[0]+args[1]; //correct?
-				// break;
-			// default:
-				// trace("[!] addition didn't manage to resolve:", objectType);
-				// trace("[!] addition didn't manage to resolve:", objectType, "==", arguments[0]+arguments[1]);
-				// return null;
-// 
-		// }
-		// return arguments[0]+arguments[1];
-// 		
-// 		
-	// }	
-// 		
-	// result=arguments[0];
-	// for(i=1; i<arguments.length; i++){
-		// result=UniversalNumericOperators.addition(result, arguments[i]);
-	// }
-	// return result;
-// }
-// UniversalNumericOperators.applyBinaryOperatorOnLists=function(list0, list1, operator){
-	// var n=Math.min(list0.length, list1.length);
-	// var i;
-	// var resultList=new List();
-	// for(i=0; i<n; i++){
-		// resultList.push(UniversalNumericOperators.applyBinaryOperator(list0[i], list1[i], operator));
-	// }
-	// return resultList.getImproved();
-// }
-// UniversalNumericOperators.applyBinaryOperatorOnListWithObject=function(list, object, operator){
-	// var i;
-	// var resultList=new List();
-	// for(i=0; i<list.length; i++){
-		// resultList.push(UniversalNumericOperators.applyBinaryOperator(list[i], object, operator));
-	// }
-	// return resultList.getImproved();
-// }
-// UniversalNumericOperators.applyBinaryOperatorOnObjectWithList=function(object, list, operator){
-	// var i;
-	// var resultList=new List();
-	// for(i=0; i<list.length; i++){
-		// resultList.push(UniversalNumericOperators.applyBinaryOperator(object, list[i], operator));
-	// }
-	// return resultList.getImproved();
-// }
-// UniversalNumericOperators.applyBinaryOperator=function(object0, object1, operator){
-	// return operator(object0, object1);
-// }
-// UniversalNumericOperators.multiplication=function(){
-	// var objectType;
-	// var result;
-	// var i;
-	// if(arguments.length<2){
-		// //trace("one single argument! at mul");
-		// objectType=typeOf(arguments[0]);
-		// //trace(objectType);
-		// return result;
-	// }
-	// if(arguments.length==2){
-		// //trace("mul args:", arguments);
-		// if(arguments[0].isOfType("Array") && arguments[1].isOfType("Array")){
-			// return UniversalNumericOperators.applyBinaryOperatorOnLists(arguments[0], arguments[1], UniversalNumericOperators.multiplication);
-		// }else if(arguments[0].isOfType("Array")){
-			// return UniversalNumericOperators.applyBinaryOperatorOnListWithObject(arguments[0], arguments[1], UniversalNumericOperators.multiplication);
-		// }else if(arguments[1].isOfType("Array")){
-			// return UniversalNumericOperators.applyBinaryOperatorOnObjectWithList(arguments[0], arguments[1], UniversalNumericOperators.multiplication);
-		// }
-		// var args=new List(arguments[0], arguments[1]);
-		// var argsName=new List(typeOf(arguments[0]), typeOf(arguments[1]));
-		// var indexes=argsName.sortIndexed();
-		// args=args.sortOnIndexes(indexes);
-		// argsName=argsName.sortOnIndexes(indexes);
-		// objectType=argsName.join("_");
-		// //
-		// switch(objectType){
-			// case 'boolean_boolean':
-				// if( args[0] && args[1] ) {
-  					// return true;
-				// }
-				// return false;
-			// case 'Point_Point':
-				// return args[0].cross(args[1]);
-			// case 'Point3D_Point3D':
-				// return args[0].cross(args[1]);
-			// case 'Point_number':
-				// return new Point(args[0].x * args[1], args[0].y * args[1]);
-			// case 'Point3D_number':
-				// return new Point3D(args[0].x * args[1], args[0].y * args[1], args[0].z * args[1]);
-			// case 'Interval_number':
-				// return new Interval(args[0].min * args[1], args[0].max * args[1]);
-			// case 'Interval_Point':
-				// return args[1].cross(new Point(args[0].min, args[0].max));
-			// case 'Interval_Interval':
-				// var p=new Point(args[0].min, args[0].max);
-				// return p.cross(new Point(args[1].min, args[1].max));
-// 	
-			// case 'Date_number':
-				// return new Date(args[0].getTime()*(args[1]*60000));
-			// case 'DateInterval_number':
-				// return new DateInterval(UniversalNumericOperators.multiplication(args[0].date0, args[1]), UniversalNumericOperators.multiplication(args[0].date1, args[1]));
-			// case 'DateInterval_Interval':
-				// return new DateInterval(UniversalNumericOperators.multiplication(args[0].date0, args[1].min), UniversalNumericOperators.multiplication(args[0].date1, args[1].max));
-			// //perform normal multiplication:
-			// case 'boolean_number':
-			// case 'number_number':
-				// break;
-			// default:
-				// trace("[!] multiplication didn't manage to resolve:", objectType);
-				// trace("[!] multiplication didn't manage to resolve:", objectType, "==", arguments[0]*arguments[1]);
-				// return null;
-// 
-		// }
-		// return arguments[0]*arguments[1];
-// 		
-// 		
-	// }	
-// 		
-	// result=arguments[0];
-	// for(i=1; i<arguments.length; i++){
-		// result=UniversalNumericOperators.multiplication(result, arguments[i])
-	// }
-	// return result;
-// }
-// UniversalNumericOperators.division=function(){
-	// var objectType;
-	// var result;
-	// var i;
-	// if(arguments.length<2){
-		// objectType=typeOf(arguments[0]);
-// 		
-		// //trace(objectType);
-		// return result;
-	// }
-	// if(arguments.length==2){
-		// objectType=typeOf(arguments[0])+"_"+typeOf(arguments[1]);
-		// //trace(objectType);
-		// return arguments[0]/arguments[1];
-	// }	
-// 		
-	// result=arguments[0];
-	// for(i=1; i<arguments.length; i++){
-		// result=UniversalNumericOperators.division(result, arguments[i])
-	// }
-	// return result;
-// }
-// 
-// UniversalNumericOperators.getMin=function(object0, object1){
-	// var objectsType=typeOf(object0)+"_"+typeOf(object1);
-	// switch(objectsType){
-		// case 'number_number':
-			// return Math.min(object0, object1);
-		// case 'Date_Date':
-			// if(object0<object1) return object0;
-			// return object1;
-		// case 'Interval_undefined':
-		// case 'List_null':
-		// case 'NumberList_undefined':
-		// case 'DateInterval_undefined':
-		// //case 'DateList_undefined':
-		// //case 'NumberTable':
-			// return object0.getMin();
-		// case 'Point_':
-			// return Math.min(object0.x, object0.y);
-		// default:
-			// trace("[!] ERROR: UniversalNumericOperators.getMin", object0, object1);
-			// return null;
-	// }
-// }
-// 
-// UniversalNumericOperators.getMax=function(object0, object1){
-	// var objectsType=typeOf(object0)+"_"+typeOf(object1);
-	// //console.log("UniversalNumericOperators.getMax | objecstType ----> ", objectsType);
-	// switch(objectsType){
-		// case 'number_number':
-			// return Math.max(object0, object1);
-		// case 'Date_Date':
-			// if(object0>object1) return object0;
-			// return object1;
-		// case 'Interval_undefined':
-		// case 'List_undefined':
-		// case 'NumberList_undefined':
-		// case 'DateInterval_undefined':
-		// //case 'DateList_undefined':
-		// //case 'NumberTable':
-			// return object0.getMax();
-		// case 'Point_':
-			// return Math.max(object0.x, object0.y);
-		// default:
-			// trace("[!] ERROR: UniversalNumericOperators.getMax", object0, object1);
-			// return null;	
-	// }
-// }
-// 
-// UniversalNumericOperators.distance=function(object0, object1){
-	// var objectType;
-	// var result;
-	// var i;
-	// if(arguments.length<2){
-		// objectType=typeOf(arguments[0]);
-		// //trace(objectType);
-		// return result;
-	// }
-	// if(arguments.length==2){
-// 		
-		// var args=new List(arguments[0], arguments[1]);
-		// var argsName=new List(typeOf(arguments[0]), typeOf(arguments[1]));
-		// var indexes=argsName.sortIndexed();
-		// args=args.sortOnIndexes(indexes);
-		// argsName=argsName.sortOnIndexes(indexes);
-		// objectType=argsName.join("_");
-		// //
-		// switch(objectType){
-			// case 'number_number':
-				// return Math.abs(Number(object0) -Number(object1));
-				// break;
-			// case 'NumberList_NumberList':
-				// return Math.abs(object0.getSum() - object1.getSum());
-				// break;
-			// default:
-				// trace("[!] distance didn't manage to resolve:", objectType);
-				// trace("[!] distance didn't manage to resolve:", objectType, "==", Math.abs(arguments[0]-arguments[1]));
-				// return null;
-// 
-		// }
-		// return Math.abs(arguments[0]-arguments[1]);
-	// }	
-// 		
-	// result=arguments[0];
-	// for(i=1; i<arguments.length; i++){
-		// result=UniversalNumericOperators.multiplication(result, arguments[i])
-	// }
-	// return result;
-// 
-// }
-// UniversalNumericOperators.interpolation=function(object0, object1, value){
-	// //trace("interpolation:", object0, object1, value);
-	// var sum0 = UniversalNumericOperators.multiplication((1-value), object0);
-	// var sum1 = UniversalNumericOperators.multiplication(value, object1);
-	// //trace("res MUL:", sum0, sum1);
-	// if(sum0==null || sum1==null) return null;
-	// return UniversalNumericOperators.addition(sum0, sum1);
-// }
-// 
-// UniversalNumericOperators.power=function(value, powerValue){
-	// var type = typeOf(value);
-// 	
-	// if(type=='number'){
-		// return Math.pow(value, powerValue);
-	// }
-	// //c.log("UniversalNumericOperators.power ---> value, powerValue, type, value.isOfType('Array')", value, powerValue, type, value.isOfType('Array'));
-	// if(value.isOfType('Array')){
-		// var i;
-		// var list = instantiate(type);
-		// list.name = value.name;
-		// for(i=0;value[i]!=null;i++){
-			// list.push(this.power(value[i], powerValue));
-		// }
-		// return list;
-	// }
-	// return null;
-// }
-// 
-// UniversalNumericOperators.randomNumber=function(interval){
-	// var result = Math.random();
-	// result = interval.getInterpolatedValue(result);
-	// return result;
-// }
+function StringConversions(){};
 
 
+/**
+ * converts a string in json format into an Object (JSON.parse(string))
+ * @param  {String} string in format json
+ * @return {Object}
+ * tags:convertion
+ */
+StringConversions.stringToObject = function(string){
+	try{
+		return JSON.parse(string);
+	} catch(err){
+		return null;
+	}
+}
 function StringListOperators(){};
 /** 
 * receives n arguments and performs addition
 */
-StringListOperators.concatStrings=function(stringList, joinString){
+StringListOperators.concatStrings=function(stringList, joinString){//deprecated
 	if(joinString==null) joinString="";
 	return StringList.fromArray(stringList.join(joinString));
 }
+
+/**
+ * join strings with a character
+ * @param  {StringList} StringList strings to be joined
+ * 
+ * @param  {String} join character
+ * @param  {String} prefix
+ * @param  {String} sufix
+ * @return {String}
+ * tags:
+ */
+StringListOperators.join = function(stringList, character, prefix, sufix){
+	if(stringList==null) return;
+	
+	character = character==null?"":character;
+	prefix = prefix==null?"":prefix;
+	sufix = sufix==null?"":sufix;
+	return prefix+stringList.join(character)+sufix;
+}
+
 
 /**
  * filters a StringList by a string
@@ -8452,7 +12001,7 @@ StringListOperators.countStringsOccurrencesOnTexts=function(strings, texts){
 		}
 		occurrencesTable[i] = numberList;
 	}
-	return occurrencesTable
+	return occurrencesTable;
 }
 
 /**
@@ -8475,11 +12024,10 @@ StringListOperators.getWordsOccurrencesMatrix=function(strings, stopWords, inclu
 
 	wordsLimitPerString = wordsLimitPerString||500;
 	totalWordsLimit = totalWordsLimit||1000;
-	normalize = normalize||true;
+	normalize = normalize==null?true:normalize;
 	stressUniqueness = stressUniqueness||false;
 	sortByTotalWeight = (sortByTotalWeight||true);
 	minSizeWords = minSizeWords==null?3:minSizeWords;
-
 
 	var matrix = StringOperators.getWordsOccurrencesTable(strings[0], stopWords, includeLinks, wordsLimitPerString, minSizeWords);
 
@@ -8488,6 +12036,7 @@ StringListOperators.getWordsOccurrencesMatrix=function(strings, stopWords, inclu
 		table = StringOperators.getWordsOccurrencesTable(strings[i], stopWords, includeLinks, wordsLimitPerString, minSizeWords);
 		matrix = TableOperators.mergeDataTables(matrix, table);
 	}
+
 
 	if(matrix[0].length>totalWordsLimit) sortByTotalWeight=true;
 
@@ -8511,7 +12060,7 @@ StringListOperators.getWordsOccurrencesMatrix=function(strings, stopWords, inclu
 		}
 
 		if(sortByTotalWeight){
-			matrix = matrix.getListsSortedByList(totalList);
+			matrix = matrix.getListsSortedByList(totalList, false);
 		}
 	}
 
@@ -8529,7 +12078,7 @@ StringListOperators.getWordsOccurrencesMatrix=function(strings, stopWords, inclu
 }
 
 //good approach for few large texts, to be tested
-StringListOperators.createTextsNetwork = function(texts, stopWords, stressUniqueness, relationBias){
+StringListOperators.createTextsNetwork = function(texts, stopWords, stressUniqueness, relationThreshold){
 	var i, j;
 	var network = new Network();
 
@@ -8556,7 +12105,7 @@ StringListOperators.createTextsNetwork = function(texts, stopWords, stressUnique
     			c.log(node.wordsWeights.getNorm()*node1.wordsWeights.getNorm());
     		}
 
-    		if(weight>relationBias){
+    		if(weight>relationThreshold){
     			relation = new Relation(node.id+"_"+node1.id, node.id+"_"+node1.id, node, node1, weight);
     			network.addRelation(relation);
     		}
@@ -8566,20 +12115,24 @@ StringListOperators.createTextsNetwork = function(texts, stopWords, stressUnique
     return network;
 }
 
-//by measuring enthropy of words: 
 
 /**
- * builds a network out of a list of short strings
+ * builds a network out of a list of short strings, adds a property wordsTable to each node (with words and weights)
  * @param  {StringList} texts
  * 
  * @param  {StringList} stopWords
- * @param  {Number} relationBias bias to create a relation
- * @param {Number} mode 0:enthropy, by finding key words with low enthropy (words occurring in a single text or in all texts have maximum enthropy, occuring in 0.25 texts minimum enthropy (max weight)), 1:few
- * @param {Boolean} intensity takes into account occurrences of word into each text
+ * @param  {Number} relationThreshold threshold to create a relation
+ * @param {Number} mode <br>0:pseudoentropy, by finding key words with low entropy (words occurring in a single text or in all texts have maximum entropy, occuring in 0.25 texts minimum entropy (max weight))<br>1:originality<br>2:skewed entropy<br>3:originality except isolation
+ * @param {Boolean} applyIntensity takes into account occurrences of word into each text
+ * @param {Table} [varname] if a words frquency table is provided, les frequent words are weighed
  * @return {Network}
  * tags:generator
  */
-StringListOperators.createShortTextsNetwork = function(texts, stopWords, relationBias, mode, intensity){
+StringListOperators.createShortTextsNetwork = function(texts, stopWords, relationThreshold, mode, applyIntensity, wordsFrequencyTable){
+	if(texts==null || texts.length==null || texts.length==0) return;
+
+	var _time = new Date().getTime();
+
 	var network = new Network();
 	var joined = texts.join(' *** ').toLowerCase();
 	var textsLowerCase = joined.split(' *** ');
@@ -8591,34 +12144,50 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
 	var n_words;
 	var weights;
 	var weight;
+	var maxWeight = 0;
 
-	relationBias = relationBias||0;
+	relationThreshold = relationThreshold||0.2;
 	mode = mode||0;
 
-	c.log('mode', mode);
+	if(wordsFrequencyTable){
+		wordsFrequencyTable[0] = wordsFrequencyTable[0].toLowerCase();
+		var maxFreq = wordsFrequencyTable[1][0];
+		var index;
+	}
 
 	var weightFunction;
 	switch(mode){
-		case 0://enthropy
+		case 0://pseudo-entropy
 			weightFunction = function(nOtherTexts){
-				return 1-Math.pow(2*Math.pow(nOtherTexts/(n_texts-1), 0.25)-1, 2);
+				return 1-Math.pow( 2*nOtherTexts/(n_texts-1) - 1, 2);
 			}
 			break;
-		case 1://few
+		case 1://originality
 			weightFunction = function(nOtherTexts){
-				//if(nOtherTexts==0) return 0;
+				return 1/(nOtherTexts+1);
+			}
+			break;
+		case 2://skewed entropy (favoring very few external occurrences)
+			weightFunction = function(nOtherTexts){
+				return 1-Math.pow(2*Math.pow(nOtherTexts/(n_texts-1), 0.2)-1, 2);
+			}
+		default://originality except isolation
+			weightFunction = function(nOtherTexts){
+				if(nOtherTexts==0) return 0;
 				return 1/nOtherTexts;
 			}
-			break;
 	}
+
+	c.l('A ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
+	_time = new Date().getTime();
 
 	texts.forEach(function(text, i){
     	node = new Node("_"+i, "_"+i);
     	network.addNode(node);
-    	//if(i<10) c.log('\n\n'+text);
     	node.content = text;
     	words = StringOperators.getWords(text, true, stopWords, false, false, 0, 3);
-    	n_words = words.length
+    	
+    	n_words = words.length;
     	weights = new NumberList();
     	//words.forEach(function(word, j){
     	for(j=0; words[j]!=null; j++){
@@ -8626,27 +12195,46 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
     		nOtherTexts=0;
     		textsLowerCase.forEach(function(text, k){
     			if(i==k) return;
-    			//c.log(word+"*"+text);
     			nOtherTexts+=Number(text.indexOf(word)!=-1);//is this the fastest way?
     		});
+
     		if(nOtherTexts==0){
     			words.splice(j,1);
     			j--;
     			continue;
     		}
+
     		weights[j] = weightFunction(nOtherTexts);//1-Math.pow(2*Math.pow(nOtherTexts/(n_texts-1), 0.25)-1, 2);
-    		if(intensity) weights[j]*=Math.sqrt(StringOperators.countOccurrences(textsLowerCase[i], word));
-    		//if(i<10) c.log('nOtherTexts, weights[j], word', nOtherTexts, weights[j], word);
+    		
+    		if(applyIntensity) weights[j]*= (1 - 1/(StringOperators.countOccurrences(textsLowerCase[i], word) + 1));
+    		
+    		if(wordsFrequencyTable){
+    			index = wordsFrequencyTable[0].indexOf(word);
+    			//c.log(' •>•>•>•>•>•>•>•>•>•>•>•>•>•>•>•>•> ', word, weights[j], index==-1?1:(1 - Math.pow(wordsFrequencyTable[1][index]/maxFreq, 0.2)) )
+    			weights[j]*= (index==-1?1:(1 - Math.pow(wordsFrequencyTable[1][index]/maxFreq, 0.2)) );
+    		}
+
+    		maxWeight = Math.max(maxWeight, weights[j]);
     	};
+
     	nWords = Math.floor(Math.log(n_words+1)*3);
-    	//c.log(nWords, n_words, '|', words.length, weights.length);
+    	
     	words = words.getSortedByList(weights, false).slice(0, nWords);
+
+    	words.position = {};
+    	words.forEach(function(word, j){
+    		words.position[word] = j;
+    	});
+
     	weights = weights.getSorted(false).slice(0, nWords);
     	node.wordsTable = new Table();
     	node.wordsTable[0] = words;
     	node.wordsTable[1] = weights;
-    	//if(i<10) c.log(node.wordsTable);
     });
+	
+	
+	c.l('B ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
+	_time = new Date().getTime();
 	
 	for(i=0; network.nodeList[i+1]!=null; i++){
     	node = network.nodeList[i];
@@ -8654,20 +12242,22 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
     		node1 = network.nodeList[j];
     		weight = 0;
     		node.wordsTable[0].forEach(function(word, i){
-    			index = node1.wordsTable[0].indexOf(word);//TODO:this could be improved (as seen in forums, indexOf might be unneficient for arrays
-    			if(index!=-1) weight+=node.wordsTable[1][i]*node1.wordsTable[1][index];
+    			//index = node1.wordsTable[0].indexOf(word);//TODO:this could be improved (as seen in forums, indexOf might be unneficient for arrays
+    			index = node1.wordsTable[0].position[word];
+    			if(index!=null) weight+=node.wordsTable[1][i]*node1.wordsTable[1][index];
     		});
-    		weight = Math.sqrt(weight/Math.max(node.wordsTable[0].length, node1.wordsTable[0].length));;
-    		if(weight>relationBias){
+    		weight = Math.sqrt((weight/maxWeight)/Math.max(node.wordsTable[0].length, node1.wordsTable[0].length));
+    		if(weight>relationThreshold){
     			relation = new Relation(node.id+"_"+node1.id, node.id+"_"+node1.id, node, node1, weight);
     			network.addRelation(relation);
     		}
     	}
     }
 
+    c.l('C ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
+
     return network;
 }
-
 function StringOperators(){};
 
 StringOperators.ENTER = String.fromCharCode(13);
@@ -8682,7 +12272,7 @@ StringOperators.TAB2 =  String.fromCharCode(9);
 
 StringOperators.LINK_REGEX = /(^|\s+)(https*\:\/\/\S+[^\.\s+])/;
 StringOperators.MAIL_REGEX = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-StringOperators.STOP_WORDS = StringList.fromArray("t,s,mt,rt,re,m,http,amp,a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,only,or,other,our,own,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your".split(","));
+StringOperators.STOP_WORDS = StringList.fromArray("t,s,mt,rt,re,m,http,amp,a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,or,other,our,own,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your".split(","));
 
 /**
  * splits a String by a character (entre by default)
@@ -8696,6 +12286,80 @@ StringOperators.split = function(string, character){
 	if(character==null) return StringOperators.splitByEnter(string);
 	return StringList.fromArray(string.split(character));
 }
+
+/**
+ * split a String by enter (using several codifications)
+ * @param  {String} string
+ * @return {StringList}
+ * tags:
+ */
+StringOperators.splitByEnter=function(string){
+	if(string==null) return null;
+	var stringList = StringOperators.splitString(string, "\n");
+	if(stringList.length>1) return stringList;
+	var stringList = StringOperators.splitString(string, StringOperators.ENTER2);
+	if(stringList.length>1) return stringList;
+	var stringList = StringOperators.splitString(string, StringOperators.ENTER3);
+	if(stringList.length>1) return stringList;
+	return new StringList(string);
+}
+
+
+/**
+ * replaces in a string ocurrences of a sub-string by another string (base in replace JavaScript method)
+ * @param  {String} string to be modified
+ * @param  {String} subString sub-string to be replaced
+ * @param  {String} replacement string to be placed instead
+ * @return {String}
+ * tags:
+ */
+StringOperators.replaceSubString = function(string, subString, replacement){
+	if(string==null || subString==null || replacement==null) return null;
+	return string.replace(new RegExp(subString, "g"), replacement);
+}
+
+/**
+ * replaces in a string ocurrences of sub-strings by a string
+ * @param  {String} string to be modified
+ * @param  {StringList} subStrings sub-strings to be replaced
+ * @param  {String} replacement string to be placed instead
+ * @return {String}
+ * tags:
+ */
+StringOperators.replaceSubStringsByString = function(string, subStrings, replacement){
+	if(subStrings==null) return;
+
+	var subString;
+
+	subStrings.forEach(function(subString){
+		string = StringOperators.replaceSubString(string, subString, replacement);
+	});
+
+	return string;
+}
+
+/**
+ * replaces in a string ocurrences of sub-strings by strings (1-1)
+ * @param  {String} string to be modified
+ * @param  {StringList} subStrings sub-strings to be replaced
+ * @param  {StringList} replacements strings to be placed instead
+ * @return {String}
+ * tags:
+ */
+StringOperators.replaceSubStringsByStrings = function(string, subStrings, replacements){
+	if(subStrings==null || replacements==null) return;
+
+	var nElements = Math.min(subStrings.length, replacements.length);
+	var i;
+	var subString;
+
+	for(i=0; i<nElements; i++){
+		string = StringOperators.replaceSubString(string, subStrings[i], replacements[i]);
+	}
+
+	return string;
+}
+
 
 
 /**
@@ -8721,26 +12385,11 @@ StringOperators.substr = function(string, i0, length){
  * tags:
  */
 StringOperators.splitString=function(string, separator){
+	if(string==null) return null;
 	if(separator==null) separator=",";
 	if(typeof separator == "string") separator = separator.replace("\\n", "\n");
 	if(string.indexOf(separator)==-1) return new StringList(string);
 	return StringList.fromArray(string.split(separator));
-}
-
-/**
- * split a String by enter (using several codifications)
- * @param  {String} string
- * @return {StringList}
- * tags:
- */
-StringOperators.splitByEnter=function(string){
-	var stringList = StringOperators.splitString(string, "\n");
-	if(stringList.length>1) return stringList;
-	var stringList = StringOperators.splitString(string, StringOperators.ENTER2);
-	if(stringList.length>1) return stringList;
-	var stringList = StringOperators.splitString(string, StringOperators.ENTER3);
-	if(stringList.length>1) return stringList;
-	return null;
 }
 
 /**
@@ -8820,13 +12469,8 @@ StringOperators.countWordsDichotomyAnalysis=function(string, negativeStrings, po
  * tags:html
  */
 StringOperators.getLinksFromHtml=function(html, urlSource, removeHash){
-	//var rawHTML = '<html><body><a href="foo">bar</a><a href="narf">zort</a></body></html>';
-
 	var doc = document.createElement("html");
 	doc.innerHTML = html;
-
-	//return doc.links;//StringList.fromArray(doc.links);
-
 
 	var i;
 	var links = doc.getElementsByTagName("a");
@@ -8891,6 +12535,8 @@ StringOperators.getLinksFromHtml=function(html, urlSource, removeHash){
 				url = parts.join('/').replace("**", "//");
 			}
 		}
+
+		url = url.trim();
 
 		if(url.substr(-1)=="/") url = url.substr(0, url.length-1);
 
@@ -9042,6 +12688,13 @@ StringOperators.removeInitialRepeatedCharacter=function(string, character){
 	return string;
 }
 
+
+/**
+ * takes plain text from html
+ * @param  {String} html
+ * @return {String}
+ * tags:
+ */
 StringOperators.removeHtmlTags=function(html){
 	var tmp = document.createElement("DIV");
 	tmp.innerHTML = html;
@@ -9064,26 +12717,42 @@ StringOperators.removeQuotes=function(string){//TODO:improve
 // 	return string.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 // }
 
+/**
+ * builds a stringList of words contained in the text
+ * @param  {String} string text to be analyzed
+ * 
+ * @param  {Boolean} withoutRepetitions remove words repetitions
+ * @param  {Boolean} stopWords remove stop words
+ * @param  {Boolean} sortedByFrequency  sorted by frequency in text
+ * @param  {Boolean} includeLinks include html links
+ * @param  {Number} limit of words
+ * @param  {Number} minSizeWords minimal number of characters of words
+ * @return {StringList}
+ * tags:
+ */
 StringOperators.getWords = function(string, withoutRepetitions, stopWords, sortedByFrequency, includeLinks, limit, minSizeWords){
+	if(string==null) return null;
+
 	minSizeWords = minSizeWords||0;
 	withoutRepetitions = withoutRepetitions==null?true:withoutRepetitions;
 	sortedByFrequency = sortedByFrequency==null?true:sortedByFrequency;
 	includeLinks = includeLinks==null?true:includeLinks;
 	limit = limit==null?0:limit;
+
+	var i, j;
 	
 	if(includeLinks) var links = string.match(StringOperators.LINK_REGEX);
 	string = string.toLowerCase().replace(StringOperators.LINK_REGEX, "");
-	//if(minSizeWords>0) string = string.replace(/\w{1,/+minSizeWords+/}\b/g, "");
-		
+	
 	var list = string.match(/\w+/g);
 	if(list==null) return new StringList();
 	
 	if(includeLinks && links!=null) list = list.concat(links);
 	list = StringList.fromArray(list).replace(/ /g, "");
 	
-	if(stopWords!=null){
+	if(stopWords!=null){//TODO:check before if all stopwrds are strings
 		//list.removeElements(stopWords);
-		var i, j;
+
 		for(i=0; list[i]!=null; i++){
 			for(j=0; stopWords[j]!=null; j++){
 				if((typeof stopWords[j]) == 'string'){
@@ -9099,12 +12768,13 @@ StringOperators.getWords = function(string, withoutRepetitions, stopWords, sorte
 				}
 			}
 		}
+
 	}
 	
 	if(minSizeWords>0){
-		for(var i=0; list[i]!=null; i++){
+		for(i=0; list[i]!=null; i++){
 			if(list[i].length<minSizeWords){
-				list.removeElementAtIndex(i);
+				list.splice(i, 1);
 				i--;
 			}
 		}
@@ -9114,12 +12784,14 @@ StringOperators.getWords = function(string, withoutRepetitions, stopWords, sorte
 		if(withoutRepetitions){
 			list = ListOperators.countElementsRepetitionOnList(list, true)[0]
 			if(limit!=0) list = list.substr(0, limit);
+
 			return list;
 		}
 		
 		var occurrences = ListOperators.countOccurrencesOnList(list);
 		list = list.getSortedByList(occurrences);
 		if(limit!=0) list = list.substr(0, limit);
+
 		return list;
 	}
 	
@@ -9131,18 +12803,48 @@ StringOperators.getWords = function(string, withoutRepetitions, stopWords, sorte
 	return list;
 }
 
+removeAccentsAndDiacritics = function(string){
+    var r = string.replace(new RegExp(/[àáâãäå]/g),"a");
+    r = r.replace(new RegExp(/æ/g),"ae");
+    r = r.replace(new RegExp(/ç/g),"c");
+    r = r.replace(new RegExp(/[èéêë]/g),"e");
+    r = r.replace(new RegExp(/[ìíîï]/g),"i");
+    r = r.replace(new RegExp(/ñ/g),"n");      
+    r = r.replace(new RegExp(/[òóôõö]/g),"o");
+    r = r.replace(new RegExp(/œ/g),"oe");
+    r = r.replace(new RegExp(/[ùúûü]/g),"u");
+    r = r.replace(new RegExp(/[ýÿ]/g),"y");
+
+    r = r.replace(new RegExp(/[ÀÁÂÄÃ]/g),"A");
+    r = r.replace(new RegExp(/Æ/g),"AE");
+    r = r.replace(new RegExp(/Ç/g),"c");
+    r = r.replace(new RegExp(/[ÈÉÊË]/g),"E");
+    r = r.replace(new RegExp(/[ÌÍÎÏ]/g),"I");
+    r = r.replace(new RegExp(/Ñ/g),"N");                
+    r = r.replace(new RegExp(/[ÒÓÔÖÕ]/g),"O");
+    r = r.replace(new RegExp(/Œ/g),"OE");
+    r = r.replace(new RegExp(/[ÙÚÛÜ]/g),"U");
+    r = r.replace(new RegExp(/[Ÿ]/g),"Y");
+
+    return r;
+};
+
 /**
  * creates a table with frequent words and occurrences numbers
  * @param  {String} string text to be analyzed
+ * 
  * @param  {StringList} stopWords
- * @param  {Bollean} includeLinks
+ * @param  {Boolean} includeLinks
  * @param  {Number} limit max size of rows
  * @param  {Number} minSizeWords
  * @return {Table} contains a list of words, and a numberList of occurrences
+ * tags:words
  */
 StringOperators.getWordsOccurrencesTable = function(string, stopWords, includeLinks, limit, minSizeWords){
+	if(string==null) return;
 	if(string.length==0) return new Table(new StringList(), new NumberList());
 	var words = StringOperators.getWords(string, false, stopWords, false, includeLinks, limit, minSizeWords);
+
 	return ListOperators.countElementsRepetitionOnList(words, true, false, limit);
 }
 
@@ -9157,6 +12859,22 @@ StringOperators.indexesOf = function(text, string){//TODO:test
 	}
 	return indexes;
 }
+
+/**
+ * returns a string repeated a number of times
+ * @param  {String} text to be repeated
+ * @param  {Number} n number of repetitions
+ * @return {String}
+ */
+StringOperators.repeat = function(text, n){
+	var i;
+	var newText = "";
+	for(i=0; i<n; i++){
+		newText+=text;
+	}
+	return newText;
+}
+
 
 
 
@@ -9196,11 +12914,24 @@ StringOperators.validateUrl = function(text) {
     return StringOperators.LINK_REGEX.test(text);
 }
 
-
 function NetworkConvertions(){};
 
 
-NetworkConvertions.createNetworkFromPairsTable = function(table, numberList, threshold, allowMultipleRelations){
+/**
+ * builds a Network based on a two columns Table, creating relations on co-occureences
+ * @param  {Table} table table with at least two columns (commonly strings)
+ * 
+ * @param  {NumberList} numberList weights of relations
+ * @param  {Number} threshold minimum weight or noumber of co-occurrences to create a relation
+ * @param  {Boolean} allowMultipleRelations
+ * @param {Number} minRelationsInNode remove nodes with number of relations below threshold
+ * @param {StringList} stringList contents of relations
+ * @return {Network}
+ * tags:conversion
+ */
+NetworkConvertions.TableToNetwork = function(table, numberList, threshold, allowMultipleRelations, minRelationsInNode, stringList){
+	if(table==null || !table.isTable || table[0]==null || table[1]==null) return;
+
 	//trace("••••••• createNetworkFromPairsTable", table);
 	if(allowMultipleRelations==null) allowMultipleRelations=false;
 	if(table.length<2) return null;
@@ -9246,7 +12977,7 @@ NetworkConvertions.createNetworkFromPairsTable = function(table, numberList, thr
 			node1.weight++;
 		}
 		if(numberList==null){
-			relation = network.relationList.getFirstRelationByNodesIds(node0.id, node1.id, false);
+			relation = network.relationList.getFirstRelationByIds(node0.id, node1.id, false);
 			if(relation==null || allowMultipleRelations){
 				relation = new Relation(name0+"_"+name1+network.relationList.length, name0+"_"+name1, node0, node1, 1);
 				network.addRelation(relation);
@@ -9257,16 +12988,526 @@ NetworkConvertions.createNetworkFromPairsTable = function(table, numberList, thr
 			relation = new Relation(name0+"_"+name1, name0+"_"+name1, node0, node1, numberList[i]);
 			network.addRelation(relation);
 		}
+		
+		if(stringList) relation.content = stringList[i];
 	}
+
+	if(minRelationsInNode){
+		for(i=0; network.nodeList[i]!=null; i++){
+			if(network.nodeList[i].relationList.length<minRelationsInNode){
+				network.removeNode(network.nodeList[i]);
+				i--;
+			}
+		}
+	}
+
 	return network;
 }
 
-
 function NetworkEncodings(){};
 
-//GDF https://gephi.org/users/supported-graph-formats/gdf-format/
 
+
+//////////////NoteWork
+
+NetworkEncodings.nodeNameSeparators = ['|', ':',  ' is ', ' are ', '.', ','];
+
+/**
+ * converts a text file under NoteWork format into a network
+ * @param  {String} code
+ * @return {Network}
+ * tags:decoding
+ */
+NetworkEncodings.decodeNoteWork = function(code){
+	if(code==null) return;
+	if(code=="") return new Network();
+
+	c.l('\n\n*************////////// decodeNoteWork //////////*************');
+	//code = "\n"+code;
+	
+	var i,j;
+	var paragraph, line, simpleLine;
+	var id,id2;
+	var name;
+	var index, index2, minIndex;
+	var lines;
+	var node, otherNode;
+	var supNode = null;
+	var relation;
+	var prevLine;
+	var sep;
+	var colorLinesRelations = []; //for relations
+	var colorLinesGroups = [];
+	var colorSegments = [];
+	var linesInfo = [];
+	var simpleLine;
+	var regex;
+	var iEnd;
+	var propertyName;
+	var propertyValue;
+	var network = new Network();
+	var paragraphs = new StringList();
+	var content;
+
+	network.nodesPropertiesNames = new StringList();
+	network.relationsPropertiesNames = new StringList();
+
+	lines = code.split(/\n/g);
+	lines.forEach(function(line, i){
+		lines[i] = line.trim();
+	});
+
+	code = lines.join('\n');
+
+
+	var nLineParagraph = 0;
+	while(code.charAt(0)=='\n'){
+		code = code.substr(1);
+		nLineParagraph++;
+	}
+
+
+	var left = code;
+
+	index = left.search(/\n\n./g);
+
+	while(index!=-1){
+		paragraphs.push(left.substr(0, index));
+		left = left.substr(index+2);
+		index = left.search(/\n\n./g);
+	}
+
+	paragraphs.push(left);
+
+	var firstLine;
+	
+
+	paragraphs.forEach(function(paragraph, i){
+
+		if(paragraph.indexOf('\n')==-1){
+			line = paragraph;
+			lines = null;
+		} else { 
+			lines = paragraph.split(/\n/g);
+			line = lines[0];
+		}
+
+		firstLine = line;
+
+		//c.l('firstLine: ['+firstLine+']');
+
+		if(line=='\n' || line=='' || line==' ' || line=='  '){//use regex here
+			
+		} else if(line.indexOf('//')==0){
+			
+			if(colorSegments[nLineParagraph]==null) colorSegments[nLineParagraph]=[];
+
+			colorSegments[nLineParagraph].push({
+				type:'comment',
+				iStart:0,
+				iEnd:line.length
+			});
+
+		} else if(line == "relations colors:" || line == "groups colors:" || line == "categories colors:"){//line.indexOf(':')!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){ // color in relations or groups
+			// colorLinesRelations.push(line);
+
+			// if(colorSegments[nLineParagraph]==null) colorSegments[nLineParagraph]=[];
+
+			// colorSegments[nLineParagraph].push({
+			// 	type:'relation_color',
+			// 	iStart:0,
+			// 	iEnd:line.length
+			// });
+
+			if(lines){
+				lines.slice(1).forEach(function(line, i){
+
+					index = line.indexOf(':');
+					if(firstLine == "relations colors:" && index!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){
+						//c.l('  more colors!');
+
+						colorLinesRelations.push(line);
+						
+						if(colorSegments[nLineParagraph+i]==null) colorSegments[nLineParagraph+i]=[];
+
+						colorSegments[nLineParagraph+i].push({
+								type:'relation_color',
+								iStart:0,
+								iEnd:line.length
+						});
+
+					}
+
+					if((firstLine == "groups colors:" || firstLine == "categories colors:") && index!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){
+						//c.l(line)
+						//c.l('  color to group!');
+
+						colorLinesGroups.push(line);
+						
+						if(colorSegments[nLineParagraph+i]==null) colorSegments[nLineParagraph+i]=[];
+
+						colorSegments[nLineParagraph+i].push({
+								type:'relation_color',
+								iStart:0,
+								iEnd:line.length
+						});
+
+					}
+				});
+			}
+
+		} else {//node
+			
+			minIndex = 99999999;
+
+			index = line.indexOf(NetworkEncodings.nodeNameSeparators[0]);
+
+			if(index!=-1){
+				minIndex = index;
+				sep = NetworkEncodings.nodeNameSeparators[0];
+			}
+
+			j=1;
+			
+			while(j<NetworkEncodings.nodeNameSeparators.length){
+				index = line.indexOf(NetworkEncodings.nodeNameSeparators[j]);
+				if(index!=-1){
+					minIndex = Math.min(index, minIndex);
+					sep = NetworkEncodings.nodeNameSeparators[j];
+				}
+				j++;
+			}
+
+
+			index = minIndex==99999999?-1:minIndex;
+
+			name = index==-1?line:line.substr(0, index);
+			name = name.trim();
+
+			if(name!=""){
+				id = NetworkEncodings._simplifyForNoteWork(name);
+
+				node = network.nodeList.getNodeById(id);
+
+				iEnd = index==-1?line.length:index
+				
+				if(node==null){
+
+					node = new Node(id, name);
+					node._nLine = nLineParagraph;
+					network.addNode(node);
+					node.content = index!=-1?line.substr(index+sep.length).trim():"";
+					
+					node._lines = lines?lines.slice(1):new StringList();
+
+					node.position = network.nodeList.length-1;
+					
+					if(colorSegments[nLineParagraph]==null) colorSegments[nLineParagraph]=[];
+
+					colorSegments[nLineParagraph].push({
+						type:'node_name',
+						iStart:0,
+						iEnd:iEnd
+					});
+
+				} else {
+					if(lines!=null) node._lines = node._lines.concat(lines.slice(1));
+
+					node.content += index!=-1?(" | " + line.substr(index+sep.length).trim()):"";
+					
+					if(colorSegments[nLineParagraph]==null) colorSegments[nLineParagraph]=[];
+
+					colorSegments[nLineParagraph].push({
+						type:'node_name_repeated',
+						iStart:0,
+						iEnd:iEnd
+					});
+				}
+			} else {
+				
+			}
+		}
+
+		nLineParagraph+=(lines?lines.length:1)+1;
+	});
+	
+
+	//find equalities (synonyms)
+
+	var foundEquivalences = true;
+
+	while(foundEquivalences){
+		foundEquivalences = false;
+
+		loop:for(i=0; network.nodeList[i]!=null; i++){
+			node = network.nodeList[i];
+
+			loop2:for(j=0; node._lines[j]!=null; j++){
+				line = node._lines[j];
+
+				if(line.indexOf('=')==0){
+
+					id2 = NetworkEncodings._simplifyForNoteWork(line.substr(1));
+					otherNode = network.nodeList.getNodeById(id2);
+					
+					if(otherNode && node!=otherNode){
+
+						foundEquivalences = true;
+
+						node._lines = otherNode._lines.concat(otherNode._lines);
+
+						network.nodeList.removeNode(otherNode);
+						network.nodeList.ids[otherNode.id] = node;
+
+						break loop;
+						break loop2;
+					} else {
+						network.nodeList.ids[id2] = otherNode;
+					}
+					
+					if(!node._otherIds) node._otherIds = [];
+					node._otherIds.push(id2);
+				}
+			}
+		}
+	}
+
+
+	//build relations and nodes properties
+
+	network.nodeList.forEach(function(node){
+
+		nLineParagraph = node._nLine;
+
+		//c.l('node.nLineWeight', node.nLineWeight);
+
+		node._lines.forEach(function(line, i){
+
+			if(line.indexOf('=')!=-1){
+
+			} else if(line.indexOf(':')>0){
+
+				simpleLine = line.trim();
+
+				propertyName = removeAccentsAndDiacritics(simpleLine.split(':')[0]).replace(/\s/g, "_");
+
+				propertyValue = line.split(':')[1].trim();
+				if(propertyValue == String(Number(propertyValue))) propertyValue = Number(propertyValue);
+
+				if(propertyValue!=null){
+					node[propertyName] = propertyValue;
+					if(network.nodesPropertiesNames.indexOf(propertyName)==-1) network.nodesPropertiesNames.push(propertyName);
+				}
+
+			} else {
+				simpleLine = line;
+				
+				network.nodeList.forEach(function(otherNode){
+					regex = NetworkEncodings._regexWordForNoteWork(otherNode.id);
+					index = simpleLine.search(regex);
+
+					if(index==-1 && otherNode._otherIds){
+						for(j=0; otherNode._otherIds[j]!=null ; j++){
+							regex = NetworkEncodings._regexWordForNoteWork(otherNode._otherIds[j]);
+							index = simpleLine.search(regex);
+							if(index!=-1) break;
+						}
+					}
+
+					if(index!=-1){
+						iEnd = index + simpleLine.substr(index).match(regex)[0].length
+
+					    relation = network.relationList.getFirstRelationBetweenNodes(node, otherNode, true);
+
+
+					    if(relation!=null){
+
+					    	content = relation.node0.name+" "+line;
+					    	
+					    	relation.content+=" | "+content;
+
+					    	if(colorSegments[nLineParagraph + i + 1]==null) colorSegments[nLineParagraph + i + 1]=[];
+
+					    	colorSegments[nLineParagraph + i + 1].push({
+								type:'node_name_in_repeated_relation',
+								iStart:index,
+								iEnd:iEnd
+							});
+
+					    } else {
+					    	relation = network.relationList.getFirstRelationBetweenNodes(otherNode, node, true);
+
+					    	if(relation==null || relation.content!=content){
+
+					    		var relationName = line;
+
+					    		var regex = NetworkEncodings._regexWordForNoteWork(node.id);
+								index = relationName.search(regex);
+
+								if(index!=-1){
+									relationName = relationName.substr(index);
+									relationName = relationName.replace(regex, "").trim();
+								}
+
+								//c.l(node.id, "*", line, "*", index, "*", line.substr(index));
+
+								//line = line.replace(regex, "").trim();
+
+								regex = NetworkEncodings._regexWordForNoteWork(otherNode.id);
+								index = relationName.search(regex);
+								relationName = "… " + relationName.substr(0, index).trim() + " …";
+
+					    		id = line;
+							    relation = new Relation(line, relationName, node, otherNode);
+
+							    content = relation.node0.name+" "+line;
+
+							    relation.content = content;//.substr(0,index);
+							    network.addRelation(relation);
+
+							    if(colorSegments[nLineParagraph + i + 1]==null) colorSegments[nLineParagraph + i + 1]=[];
+
+								colorSegments[nLineParagraph + i + 1].push({
+									type:'node_name_in_relation',
+									iStart:index,
+									iEnd:iEnd
+								});
+
+					    	}
+					    }
+					}
+				});
+			}
+		});
+		
+		node.positionWeight = Math.pow(network.nodeList.length - node.position - 1/network.nodeList.length, 2);
+		node.combinedWeight = node.positionWeight + node.nodeList.length*0.1;
+
+	});
+
+
+	//colors in relations and groups
+	
+	colorLinesRelations.forEach(function(line){
+		index = line.indexOf(':');
+		texts = line.substr(0,index).split(',');
+	    texts.forEach(function(text){
+	       color = line.substr(index+1);
+	       network.relationList.forEach(function(relation){
+	         if(relation.name.indexOf(text)!=-1) relation.color = color;
+	       });
+	    });
+	});
+
+	colorLinesGroups.forEach(function(line){
+		index = line.indexOf(':');
+		texts = line.substr(0,index).split(',');
+	    texts.forEach(function(text){
+	       color = line.substr(index+1);
+	       network.nodeList.forEach(function(node){
+	         if(node.group==text) node.color = color;
+	         if(node.category==text) node.color = color;
+	       });
+	    });
+	});
+	
+	network.colorSegments = colorSegments;
+
+	return network;
+}
+NetworkEncodings._simplifyForNoteWork = function(name){
+	name = name.toLowerCase();
+	if(name.substr(name.length-2)=='es'){
+	  name = name.substr(0, name.length-1);
+	} else if(name.charAt(name.length-1)=='s') name = name.substr(0, name.length-1);
+	return name.trim();
+}
+NetworkEncodings._regexWordForNoteWork = function(word, global){
+	global = global==null?true:global;
+	try{
+		return new RegExp("(\\b)("+word+"|"+word+"s|"+word+"es)(\\b)", global?"gi":"i");
+	} catch(err){
+		return null;
+	}
+}
+
+/**
+ * encodes a network into NoteWork notes
+ * @param  {Network} network
+ * 
+ * @param  {String} nodeContentSeparator separator between node name and content
+ * @param  {StringList} nodesPropertyNames properties to be encoded
+ * @param  {StringList} relationsPropertyNames relations properties to be encoded
+ * @return {String}
+ * tags:encoding
+ */
+NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesPropertyNames, relationsPropertyNames){
+	if(network==null) return;
+
+	var node, relation, other;
+	var propName;
+	var code = "";
+	var simpNodeName;
+	var regex, lineRelation;
+
+	var codedRelationsContents;
+
+	nodeContentSeparator = nodeContentSeparator||', ';
+	nodesPropertyNames = nodesPropertyNames||[];
+	relationsPropertyNames = relationsPropertyNames||[];
+
+	network.nodeList.forEach(function(node){
+		code+=node.name;
+		if(node.content && node.content!="") code+=nodeContentSeparator+node.content;
+		code+="\n";
+
+		nodesPropertyNames.forEach(function(propName){
+			if(node[propName]!=null) code+= propName+":"+String(node[propName])+"\n";
+		});
+
+		codedRelationsContents = new StringList();
+
+		node.toRelationList.forEach(function(relation){
+
+			content = ( (relation.content==null || relation.content=="")  && relation.description)?relation.description:relation.content;
+
+			if(content && content!=""){
+				regex = NetworkEncodings._regexWordForNoteWork(relation.node1.name);
+				lineRelation = content + ((regex!=null && content.search(regex)==-1)?(" "+relation.node1.name):"");
+			} else {
+				lineRelation = "connected with "+relation.node1.name;
+			}
+
+			if(codedRelationsContents.indexOf(lineRelation)==-1){
+				code+=lineRelation;
+				code+="\n";
+				codedRelationsContents.push(lineRelation);
+			}
+			
+		});
+
+		code+="\n";
+
+	});
+
+	return code;
+}
+
+
+
+
+
+//////////////GDF
+
+/**
+ * decodes a GDF string and builds a network
+ * @param  {String} gdfCode
+ * @return {Network}
+ * tags:decoder
+ */
 NetworkEncodings.decodeGDF = function(gdfCode){
+	if(gdfCode==null || gdfCode=="") return;
+
 	var network = new Network();
 	var lines = gdfCode.split("\n"); //TODO: split by ENTERS OUTSIDE QUOTEMARKS
 	if(lines.length==0) return null;
@@ -9332,16 +13573,22 @@ NetworkEncodings.decodeGDF = function(gdfCode){
 	return network;
 }
 
-
-
-//GML https://gephi.org/users/supported-graph-formats/gml-format/
-
-
+/**
+ * encodes a network in formatt GDF, more info: https://gephi.org/users/supported-graph-formats/gml-format/
+ * @param  {Network} network
+ * 
+ * @param  {StringList} nodesPropertiesNames names of nodes properties to be encoded
+ * @param  {StringList} relationsPropertiesNames names of relations properties to be encoded
+ * @return {String}
+ * tags:encoder
+ */
 NetworkEncodings.encodeGDF = function(network, nodesPropertiesNames, relationsPropertiesNames){
+	if(network==null) return;
+
 	nodesPropertiesNames = nodesPropertiesNames==null?new StringList():nodesPropertiesNames;
 	relationsPropertiesNames = relationsPropertiesNames==null?new StringList():relationsPropertiesNames;
 	
-	var code = "nodedef>id"+(nodesPropertiesNames.length>0?",":"")+nodesPropertiesNames.getConcatenated(",");
+	var code = "nodedef>id"+(nodesPropertiesNames.length>0?",":"")+nodesPropertiesNames.join(",");
 	var i;
 	var j;
 	var node;
@@ -9358,7 +13605,7 @@ NetworkEncodings.encodeGDF = function(network, nodesPropertiesNames, relationsPr
 		}
 	}
 	
-	code+="\nedgedef>id0,id1"+(relationsPropertiesNames.length>0?",":"")+relationsPropertiesNames.getConcatenated(",");
+	code+="\nedgedef>id0,id1"+(relationsPropertiesNames.length>0?",":"")+relationsPropertiesNames.join(",");
 	var relation;
 	for(i=0;network.relationList[i]!=null;i++){
 		relation = network.relationList[i];
@@ -9376,13 +13623,16 @@ NetworkEncodings.encodeGDF = function(network, nodesPropertiesNames, relationsPr
 	return code;
 }
 
+
+//////////////GML
+
 /**
  * decodes a GML file into a network
  * @param  {String} gmlCode
  * @return {Network}
  * tags:decoder
  */
-NetworkEncodings.decodeGML = function(gmlCode){//TODO:decide what to do with relations ids
+NetworkEncodings.decodeGML = function(gmlCode){
 	if(gmlCode==null) return null;
 	
 	gmlCode = gmlCode.substr(gmlCode.indexOf("[")+1);
@@ -9505,7 +13755,21 @@ NetworkEncodings._cleanLineBeginning = function(string){
 }
 
 
-NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPropertiesNames){
+/**
+ * encodes a network in format GDF
+ * @param  {Network} network
+ * 
+ * @param  {StringList} nodesPropertiesNames names of nodes' properties to encode
+ * @param  {StringList} relationsPropertiesNames names or relations' properties to encode
+ * @param {Boolean} idsAsInts GDF strong specification requires ids for nodes being int numbers
+ * @return {String} GDF string
+ * tags:encoder
+ */
+NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPropertiesNames, idsAsInts){
+	if(network==null) return;
+
+	idsAsInts = idsAsInts==null?true:idsAsInts;
+	
 	nodesPropertiesNames = nodesPropertiesNames==null?new StringList():nodesPropertiesNames;
 	relationsPropertiesNames = relationsPropertiesNames==null?new StringList():relationsPropertiesNames;
 	
@@ -9520,7 +13784,11 @@ NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPr
 		node = network.nodeList[i];
 		code+="\n"+ident+"node\n"+ident+"[";
 		ident="		";
-		code+="\n"+ident+"id \""+node.id+"\"";
+		if(idsAsInts){
+			code+="\n"+ident+"id "+i;
+		} else {
+			code+="\n"+ident+"id \""+node.id+"\"";
+		}
 		if(node.name!='') code+="\n"+ident+"label \""+node.name+"\"";
 		for(j=0;nodesPropertiesNames[j]!=null;j++){
 			value = node[nodesPropertiesNames[j]];
@@ -9539,8 +13807,13 @@ NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPr
 		relation = network.relationList[i];
 		code+="\n"+ident+"edge\n"+ident+"[";
 		ident="		";
-		code+="\n"+ident+"source \""+relation.node0.id+"\"";
-		code+="\n"+ident+"target \""+relation.node1.id+"\"";
+		if(idsAsInts){
+			code+="\n"+ident+"source "+network.nodeList.indexOf(relation.node0);
+			code+="\n"+ident+"target "+network.nodeList.indexOf(relation.node1);
+		} else {
+			code+="\n"+ident+"source \""+relation.node0.id+"\"";
+			code+="\n"+ident+"target \""+relation.node1.id+"\"";
+		}
 		for(j=0;relationsPropertiesNames[j]!=null;j++){
 			value = relation[relationsPropertiesNames[j]];
 			if(value==null) continue;
@@ -9556,6 +13829,12 @@ NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPr
 	code+="\n]";
 	return code;
 }
+
+
+
+
+
+//////////////SYM
 
 NetworkEncodings.decodeSYM = function(symCode){
 	//c.log("/////// decodeSYM\n"+symCode+"\n/////////");
@@ -9625,6 +13904,7 @@ NetworkEncodings.decodeSYM = function(symCode){
 					break;
 				case "RELATION":
 					var ids = bits[2].replace(/\s/g, "").split(",");
+					//var ids = bits[2].split(",");
 					node = network.nodeList.getNodeById(ids[0]);
 					node1 = network.nodeList.getNodeById(ids[1]);
 					if(node!=null && node1!=null){
@@ -9792,15 +14072,25 @@ NetworkEncodings._replaceSpacesInLine = function(line){
 }
 
 
-
 function NetworkGenerators(){};
 
 
+/**
+ * builds a random network, several options
+ * @param  {Number} nNodes number of nodes
+ * @param  {Number} pRelation probability of a relation being created between 2 nodes
+ * 
+ * @param  {Number} mode 0:simple random 1:clusterized
+ * @param  {Boolean} randomRelationsWeights adds a random weigth to relations
+ * @return {Network}
+ * tags:generator
+ */
 NetworkGenerators.createRandomNetwork = function(nNodes, pRelation, mode, randomRelationsWeights){
+	if(nNodes==null || pRelation==null) return null;
+	
 	mode = mode==null?0:mode;
 	
-	var i;
-	var j;
+	var i, j;
 	var network = new Network();
 	var node;
 	
@@ -9940,34 +14230,127 @@ NetworkGenerators.createNetworkFromListAndFunction = function(list, weightFuncti
 }
 
 
-NetworkGenerators.createNetworkFromPairsTable = function(pairsTable, minPairOccurrences){//TODO: test it (never used)
-	var pairsStringList = pairsTable[0].toStringList().append("#").append(pairsTable[1].toStringList());
-	var occurrences = pairsStringList.countOccurrences();
-	var node0;
-	var node1;
+/**
+ * builds a network from a text, using previously detected words or noun phrases, and with relations built from co-occurrences in sentences
+ * relations contain as description the part of the sentence that ends with the second node name (thus being compatible with NoteWork)
+ * @param  {String} text
+ * @param  {StringList} nounPhrases words, n-grams or noun phrases
+ *
+ * @param {String} splitCharacters split blocks by characters defined as string regexp expression (defualt:"\.|\n"), blocks determine relations
+ * @return {Network}
+ * tags:
+ */
+NetworkGenerators.createNetworkFromTextAndWords = function(text, nounPhrases, splitCharacters){
+	if(text==null || nounPhrases==null) return null;
+
+	var np;
+	var i;
+
+	splitCharacters = splitCharacters==null?"\\.|\\n":splitCharacters;
+
 	var network = new Network();
-	
-	for(var i=0; pairsTable[0][i]!=null; i++){
-		if(occurrences[i]>minPairOccurrences){
-			node0 = network.nodeList.getNodeById(pairsTable[0][i]);
-			if(node0==null){
-				node0 = new Node(pairsTable[0][i], pairsTable[0][i]);
-				network.addNode(node0);
+
+	nounPhrases = nounPhrases.getWithoutElements(new StringList("", " ", "\n"));
+
+	nounPhrases.forEach(function(np){
+		np = NetworkEncodings._simplifyForNoteWork(np)
+		if(np) nounPhrases.push(np);
+	});
+
+	nounPhrases = nounPhrases.getWithoutRepetitions();
+
+	var sentences = text.split(new RegExp(splitCharacters, "g"));
+
+	var np1; 
+	var sentence;
+	var node, relation;
+	var index, index2;
+	var node0, node1;
+	var regex;
+	var id;
+
+	var mat;
+
+	var nodesInSentence;
+	var maxWeight, maxNode;
+
+	nounPhrases.forEach(function(np){
+		node = new Node(np, np);
+		network.addNode(node);
+		mat = text.match(NetworkEncodings._regexWordForNoteWork(np));
+		node.weight = mat==null?1:mat.length;
+	});
+
+	sentences.forEach(function(sentence){
+		sentence = sentence.trim();
+		nodesInSentence = new NodeList();
+		maxWeight = 0;
+		nounPhrases.forEach(function(np){
+			node0 = network.nodeList.getNodeById(np);
+			regex = NetworkEncodings._regexWordForNoteWork(np);
+			index = sentence.search(regex);
+
+			if(index!=-1){
+				maxNode = node0.weight>maxWeight?node0:maxNode;
+				maxWeight = Math.max(node0.weight, maxWeight);
+				if(node0!=maxNode) nodesInSentence.push(node0);
+				// nounPhrases.forEach(function(np1){
+				// 	regex = NetworkEncodings._regexWordForNoteWork(np1);
+				// 	index2 = sentence.search(regex);
+				// 	if(index2!=-1){
+				// 		node1 = network.nodeList.getNodeById(np1);
+
+				// 		relation = network.relationList.getFirstRelationBetweenNodes(node0, node1, false);
+
+				// 		if(relation==null){
+				// 			if(index<index2){
+				// 				id = node0.id+"_"+node1.id+"|"+sentence;
+				// 				relation = new Relation(id, id, node0, node1);
+				// 			} else {
+				// 				id = node1.id+"_"+node0.id+"|"+sentence;
+				// 				relation = new Relation(id, id, node1, node0);
+				// 			}
+				// 			relation.content = sentence;//.substr(0, index3+1).trim();
+				// 			relation.paragraphs = new StringList(relation.content);
+				// 			network.addRelation(relation);
+				// 		} else {
+				// 			relation.paragraphs.push(sentence);
+				// 		}
+				// 	}
+				// });
 			}
-			node1 = network.nodeList.getNodeById(pairsTable[1][i]);
-			if(node1==null){
-				node1 = new Node(pairsTable[1][i], pairsTable[1][i]);
-				network.addNode(node1);
+		});
+		
+
+		nodesInSentence.forEach(function(node0){
+			id = maxNode.id+"_"+node0.id+"|"+sentence;
+			relation = new Relation(id, id, maxNode, node0);
+			relation.content = sentence;
+			network.addRelation(relation);
+		});
+
+		
+	});
+
+	//nested NPs (example: "health", "health consequences")
+	network.nodeList.forEach(function(node0){
+		regex = NetworkEncodings._regexWordForNoteWork(node0.id);
+		network.nodeList.forEach(function(node1){
+			if(node0!=node1 && node1.id.search(regex)!=-1){
+				id = node1.id+"_"+node0.id+"|contains "+node0.id;
+				relation = new Relation(id, id, node1, node0);
+				relation.content = "contains "+node0.id;
+				network.addRelation(relation);
 			}
-			network.addRelation(new Relation(node0.id+"_"+node1.id, node0.id+"_"+node1.id, node0, node1, occurrences[i]));
-		}
-	}
+		});
+	});
+
 	return network;
 }
-
 NetworkOperators = function(){};
 
-NetworkOperators.filterNodesByMinDegree = function(network, minDegree){//TODO: fix! this method is transforming the network
+
+NetworkOperators.filterNodesByMinDegree = function(network, minDegree){
 	var i;
 	for(i=0; network.nodeList[i]!=null; i++){
 		if(network.nodeList[i].nodeList.length<minDegree){
@@ -9980,13 +14363,16 @@ NetworkOperators.filterNodesByMinDegree = function(network, minDegree){//TODO: f
 
 
 NetworkOperators.degreeBetweenNodes = function(network, node0, node1){
+	if(network==null || node0==null || node1==null) return null;
+
 	if(node0==node1) return 0;
 	var nodes = node0.nodeList;
 	var d=1;
 	var newNodes;
 	var i;
 	
-	while(nodes.indexOf(node1)==-1){//TODO: check if getNodeById is faster
+	//while(nodes.indexOf(node1)==-1){//TODO: check if getNodeById is faster
+	while(nodes.getNodeById(node1.id)==null){
 		newNodes = nodes.clone();
 		for(i=0;nodes[i]!=null;i++){
 			newNodes = ListOperators.concat(newNodes, nodes[i].nodeList);//TODO: check if obsolete concat + check if a concatIfNew could be useful, specially if overriden in NodeList, with getNodeById
@@ -10001,21 +14387,279 @@ NetworkOperators.degreeBetweenNodes = function(network, node0, node1){
 }
 
 NetworkOperators.shortestPath = function(network, node0, node1, includeExtremes){
+	if(network==null || node0==null || node1==null) return null;
+
 	var tree = NetworkOperators.spanningTree(network, node0, node1);
 	var path = new NodeList();
-	if(includeExtremes) path.push(node1);
+	if(includeExtremes) path.addNode(node1);
 	var node = tree.nodeList.getNodeById(node1.id);
 	if(node==null) return null;
 	while(node.parent.id!=node0.id){
-		path.push(node.parent.node);
+		path.addNode(node.parent.node);
 		node = node.parent;
 		if(node==null) return null;
 	}
-	if(includeExtremes) path.push(node0);
+	if(includeExtremes) path.addNode(node0);
 	return path.getReversed();
 }
 
-NetworkOperators.spanningTree = function(network, node0, nodeLimit){//TODO: this method is horribly inneficient
+
+/**
+ * finds all shortest paths between two nodes
+ * @param  {Network} network
+ * @param  {Node} node0
+ * @param  {Node} node1
+ * 
+ * @param  {NodeList} shortPath in case a shortPath has been calculated previously
+ * @return {Table} list of paths (nodeLists)
+ */
+NetworkOperators.shortestPaths = function(network, node0, node1, shortPath){
+	if(network==null || node0==null || node1==null) return null;
+
+	if(shortPath==null) shortPath = NetworkOperators.shortestPath(network, node0, node1, true);
+
+	var lengthShortestPaths = shortPath.length;
+
+	var allPaths = new Table();
+	var firstPath = new NodeList();
+	var i;
+
+	firstPath.addNode(node0);
+	allPaths.push(firstPath);
+
+
+	var all = NetworkOperators._extendPaths(allPaths, node1, lengthShortestPaths);
+
+	c.l('1. all.length', all.length);
+
+	for(i=0; all[i]!=null; i++){
+		if(all[i][all[i].length-1]!=node1){
+			all.splice(i, 1);
+			i--;
+		}
+	}
+
+	c.l('2. all.length', all.length);
+
+	return all;
+}
+
+NetworkOperators._extendPaths = function(allPaths, nodeDestiny, maxLength){
+
+	if(allPaths[0].length >= maxLength) return allPaths;
+
+	var i, j;
+	var next;
+	var node;
+
+	var newPaths = new Table();
+	var path, newPath;
+
+	for(i=0; allPaths[i]!=null; i++){
+		path = allPaths[i];
+		node = path[path.length-1];
+		next = node.nodeList.getWithoutRepetitions();
+
+		for(j=0; next[j]!=null; j++){
+			if(path.getNodeById(next[j].id)==null){
+				newPath = path.clone();
+				newPath.addNode(next[j]);
+				newPaths.push(newPath);
+			}
+		}
+
+	}
+
+	allPaths = newPaths;
+
+	return NetworkOperators._extendPaths(allPaths, nodeDestiny, maxLength);
+
+}
+
+/**
+ * finds all loops in the network
+ * @param  {Network} network
+ * @param {Number} minSize minimum size of loops
+ * @return {Table} list of nodeLists
+ * tags:analytics
+ */
+NetworkOperators.loops = function(network, minSize){
+	if(network==null) return null;
+	
+	var i, j, k, loops;
+	
+	allLoops = new Table();
+	
+	for(i=0; network.nodeList[i]!=null; i++){
+		loops = NetworkOperators._getLoopsOnNode(network.nodeList[i]);
+
+		for(k=0; allLoops[k]!=null; k++){
+			for(j=0; loops[j]!=null; j++){
+				if(NetworkOperators._sameLoop(loops[j], allLoops[k])){
+					loops.splice(j, 1);
+					j--;
+				}
+			}
+		}
+		allLoops = allLoops.concat(loops);
+	}
+
+	if(minSize) allLoops = allLoops.getFilteredByPropertyValue("length", minSize, "greater");
+
+	allLoops.sort(function(a0, a1){return a0.length>a1.length?-1:1});
+
+	allLoops.forEach(function(loop){
+		c.l(loop.getIds().join('-'));
+	});
+
+	var same = NetworkOperators._sameLoop(allLoops[0], allLoops[1]);
+
+	return allLoops;
+}
+NetworkOperators._sameLoop = function(loop0, loop1){
+	if(loop0.length!=loop1.length) return false;
+	if(loop1.getNodeById(loop0[0].id)==null) return false;
+
+	var i1 = loop1.indexOf(loop0[0]);
+	var l = loop0.length;
+	for(var i=1; loop0[i]!=null; i++){
+		if(loop0[i]!=loop1[(i+i1)%l]) return false;
+	}
+	return true;
+}
+NetworkOperators._getLoopsOnNode = function(central){
+	if(central.toNodeList.length==0 || central.fromNodeList.length==0) return [];
+	
+	var columns = new Table();
+	var nl = new NodeList();
+	var n, i, j;
+
+	nl.addNode(central);
+	columns.push(nl);
+
+	NetworkOperators._loopsColumns(central.toNodeList, 1, columns, 1);
+	
+	//purge
+	for(n=1; columns[n]; n++){
+		for(i=1; columns[i]!=null; i++){
+			for(j=0; columns[i][j]!=null; j++){
+				node = columns[i][j];
+				delete node.onColumn;
+				if(node.toNodeList.length==0){
+					columns[i].removeNodeAtIndex(j);
+					j--;
+				}
+			}
+		}
+	}
+	
+	/////////////////////
+	//build loops
+	var loops = new Table();
+	var loop;
+	for(i=1; columns[i]!=null; i++){
+		for(j=0; columns[i][j]!=null; j++){
+			node = columns[i][j];
+			//if(node.toNodeList.indexOf(central)!=-1){
+			if(node.toNodeList.getNodeById(central.id)!=null){
+				loop = new NodeList(node);
+				loops.push(loop);
+				NetworkOperators._pathsToCentral(columns, i, loop, loops);
+			}
+		}
+	}
+	
+	loops.sort(function(a0, a1){return a0.length>a1.length?-1:1});
+	
+	return loops;
+}
+
+NetworkOperators._pathsToCentral = function(columns, iColumn, path, paths){
+	if(path.finished) return;
+	
+	if(iColumn==0){
+		path.finished = true;
+		return;
+	}
+
+	var i;
+	var node = path[0];
+	var prevNode;
+	var prevPath;
+	var newPath;
+	var first = true;
+
+	var nodesToCheck = columns[iColumn-1].clone();
+	nodesToCheck.addNodes(columns[iColumn]);
+
+	var lPrevColumn = columns[iColumn-1].length;
+	
+	for(i=0; nodesToCheck[i]!=null; i++){
+		prevNode = nodesToCheck[i];
+		//if(node==prevNode || path.indexOf(prevNode)!=-1 || (prevPath!=null && prevPath.indexOf(prevNode)!=-1)) continue;
+		if(node==prevNode || path.getNodeById(prevNode.id)!=null || (prevPath!=null && prevPath.getNodeById(prevNode.id)!=null)) continue;
+		
+		//if(prevNode.toNodeList.indexOf(node)!=-1){
+		
+		if(prevNode.toNodeList.getNodeById(node.id)!=null){
+			if(first){
+				prevPath = path.clone();
+
+				path.unshift(prevNode);
+				path.ids[prevNode.id] = prevNode;
+				
+				NetworkOperators._pathsToCentral(columns, i<lPrevColumn?(iColumn-1):iColumn, path, paths);
+				first = false;
+			} else {
+				newPath = prevPath.clone();
+
+				paths.push(newPath);
+				
+				newPath.unshift(prevNode);
+				newPath.ids[prevNode.id] = prevNode;
+
+				NetworkOperators._pathsToCentral(columns, i<lPrevColumn?(iColumn-1):iColumn, newPath, paths);
+			}
+		}
+	}
+}
+
+NetworkOperators._loopsColumns = function (nodeList, iColumn, columns){
+	if(columns[iColumn]==null) columns[iColumn]=new NodeList();
+	var node, otherNode;
+	var newNodeList = new NodeList();
+	for(var i=0; nodeList[i]!=null; i++){
+		node = nodeList[i];
+		if(!node.onColumn){
+			node.onColumn = true;
+			columns[iColumn].addNode(node);
+			newNodeList.addNodes(node.toNodeList);
+		}
+	}
+	newNodeList = newNodeList.getWithoutRepetitions();
+	for(i=0; newNodeList[i]!=null; i++){
+		if(newNodeList[i].onColumn){
+			newNodeList.removeNodeAtIndex(i);
+			//newNodeList.ids[newNodeList[i].id] = null;
+			//newNodeList.splice(i, 1);
+			i--;
+		}
+	}
+	if(newNodeList.length>0) NetworkOperators._loopsColumns(newNodeList, iColumn+1, columns);
+}
+
+
+
+
+/**
+ * builds a spanning tree of a Node in a Network (rather inneficient)
+ * @param  {Network} network
+ * @param  {Node} node0 parent of tree
+ * @param  {Node} nodeLimit optional node in the network to prune the tree
+ * @return {Tree}
+ * tags:
+ */
+NetworkOperators.spanningTree = function(network, node0, nodeLimit){//TODO: this method is horribly inneficient // add: level limt
 	var tree = new Tree();
 	var parent = new Node(node0.id, node0.name);
 	parent.node = node0;
@@ -10032,6 +14676,7 @@ NetworkOperators.spanningTree = function(network, node0, nodeLimit){//TODO: this
 	
 	for(i=0;nodes[i]!=null;i++){
 		newNode = new Node(nodes[i].id, nodes[i].name);
+		if(newNode.id==parent.id) continue;
 		newNode.node = nodes[i];
 		tree.addNodeToTree(newNode, parent);
 		if(nodeLimit!=null && newNode.id==nodeLimit.id) limitReached = true;
@@ -10040,34 +14685,25 @@ NetworkOperators.spanningTree = function(network, node0, nodeLimit){//TODO: this
 	if(limitReached) return tree;
 	
 	var accumulated = nodes.clone();
-	accumulated.push(node0);
-	//c.log('1. accumulated:'+accumulated.getIds().join(', '));
+	accumulated.addNode(node0);
 	
-	//while(nodes.indexOf(nodeLimit)==-1){//TODO: check if getNodeById is faster
 	while(true){
-		//c.log('-----');
 		newNodes = new NodeList();//nodes.clone();
 		for(i=0;nodes[i]!=null;i++){
 			newNodes.addNodes(nodes[i].nodeList);//TODO: check if obsolete concat + check if a concatIfNew could be useful, specially if overriden in NodeList, with getNodeById
 		}
-		//c.log('1. newNodes:'+newNodes.getIds().join(', '));
 		newNodes = newNodes.getWithoutRepetitions();
-		//c.log('2. newNodes:'+newNodes.getIds().join(', '));
 		newNodes.removeElements(accumulated);
-		//c.log('3. newNodes:'+newNodes.getIds().join(', '));
 		if(newNodes.length==0) return tree;
-		//c.log('prev nodes:'+nodes.getIds().join(', '))
 		
 		for(i=0;newNodes[i]!=null;i++){
 			newNode = new Node(newNodes[i].id, newNodes[i].name);
 			newNode.node = newNodes[i];
 			for(j=0; newNodes[i].nodeList[j]!=null; j++){
 				id = newNodes[i].nodeList[j].id;
-				//c.log('  search id in prev nodes:', id);
 				nodeInPrevNodes = nodes.getNodeById(id);
-				if(nodeInPrevNodes!=null){
+				if(nodeInPrevNodes!=null && newNode.id!=id){
 					tree.addNodeToTree(newNode, tree.nodeList.getNodeById(id));
-					//c.log('       <-->', newNode.id, id);
 					break;
 				}
 			}
@@ -10078,7 +14714,6 @@ NetworkOperators.spanningTree = function(network, node0, nodeLimit){//TODO: this
 		
 		nodes = newNodes;
 		accumulated = accumulated.concat(newNodes);
-		//c.log('2. accumulated:'+accumulated.getIds().join(', '));
 	}
 	
 	return tree;
@@ -10104,7 +14739,7 @@ NetworkOperators.degreesPartition = function(network, node){//TODO:optionally ad
 		for(i=0; nextLevel[i]!=null; i++){
 			nextNodes = nextLevel[i].nodeList;
 			for(j=0; nextNodes[j]!=null; j++){
-				if(listAccumulated.indexOf(nextNodes[j])==-1){
+				if(listAccumulated.indexOf(nextNodes[j])==-1){//fix this
 					externalLayer.push(nextNodes[j]);
 					listAccumulated.push(nextNodes[j]);
 				}
@@ -10130,7 +14765,7 @@ NetworkOperators.degreesFromNodeToNodes = function(network, node, nodeList){//TO
 			degrees[i]=0;
 		} else {
 			for(j=1; table[j]!=null;j++){
-				if(table[j].indexOf(nodeList[i])!=-1){
+				if(table[j].indexOf(nodeList[i])!=-1){//use getNodeById
 					degrees[i]=j;
 					degrees.max = Math.max(degrees.max, j);
 					break;
@@ -10196,31 +14831,27 @@ NetworkOperators.buildDendrogram = function(network){
 		newNode.nodes = node0.nodes.concat(node1.nodes);
 		
 		for(i=0; node0.nodeList[i]!=null; i++){
-			newNode.node.nodeList.push(node0.nodeList[i]);
-			newNode.node.relationList.push(node0.relationList[i]);
+			newNode.node.nodeList.addNode(node0.nodeList[i]);
+			newNode.node.relationList.addRelation(node0.relationList[i]);
 		}
 		for(i=0; node1.nodeList[i]!=null; i++){
-			newNode.node.nodeList.push(node0.nodeList[i]);
-			newNode.node.relationList.push(node0.relationList[i]);
+			newNode.node.nodeList.addNode(node1.nodeList[i]);
+			newNode.node.relationList.addRelation(node1.relationList[i]);Network
 		}
 		
-		//nodeList.removeElements(new NodeList(node0, node1));
 		nodeList.removeElement(node0);
 		nodeList.removeElement(node1);
-		nodeList.push(newNode);
+		nodeList.addNode(newNode);
 	}
 	
 	
 	//recalculate levels for nodes here
 	for(i=0; tree.nodeList[i]!=null; i++){
 		node0 = tree.nodeList[i];
-		//c.log(i, )
 		if(node0.nodes.length>1){
 			node0.level = Math.max(node0.nodeList[0].level, node0.nodeList[1].level)+1;
 		}
 	}
-
-	c.log('\n\n\n\nTIME ------>'+ ((new Date().getTime())-t)+"\n\n\n\n");
 	
 	return tree;
 }
@@ -10299,6 +14930,7 @@ NetworkOperators._strengthBetweenSets = function(nodeList0, nodeList1, pRelation
  * tags:analysis
  */
 NetworkOperators.buildNetworkClusters = function(network, dendrogramTree, minWeight){
+	if(network==null) return;
 
 	if(dendrogramTree==null) dendrogramTree = NetworkOperators.buildDendrogram(network);
 	minWeight = minWeight||0.5;
@@ -10311,7 +14943,6 @@ NetworkOperators.buildNetworkClusters = function(network, dendrogramTree, minWei
 }
 
 NetworkOperators._iterativeBuildClusters = function (node, clusters, minWeight){
-	c.log('_iterativeBuildClusters, clusters.length', clusters.length);
 	if(node.nodeList.length==1) {clusters.push(new NodeList(node.node)); return};
 	
 	if(node.nodeList[0].nodes.length==1 || node.nodeList[0].weight>minWeight){
@@ -10335,7 +14966,7 @@ NetworkOperators._iterativeBuildClusters = function (node, clusters, minWeight){
  * @param {Network} network
  * @param {Boolean} from optional, default:true, to set if the pagerank uses the in-relations or out-relations
  * @param {Boolean} from optional, default:false, to set if relations weight will affect the metric balance, partiularly interesting if some weights are negative
- * tags:analytics
+ * tags:analytics,transformative
  */
 NetworkOperators.addPageRankToNodes = function(network, from, useRelationsWeight){//TODO:deploy useRelationsWeight
 	from = from==null?true:from;
@@ -10350,17 +14981,20 @@ NetworkOperators.addPageRankToNodes = function(network, from, useRelationsWeight
 	var node;
 	var otherNode;
 	var nodeList;
+
+	network.minFromPageRank = network.minToPageRank = 99999999;
+	network.maxFromPageRank = network.maxToPageRank = -99999999;
+
 	
 	for(i=0; network.nodeList[i]!=null; i++){
 		node = network.nodeList[i];
 		node[propName] = 1/N;
 	}
 	
-	for(n=0; n<100; n++){
+	for(n=0; n<300; n++){
 		for(i=0; network.nodeList[i]!=null; i++){
 			node = network.nodeList[i];
 			
-			//if(from && node.fromPageRank==null);
 			nodeList = from?node.fromNodeList:node.toNodeList;
 			node[propName] = base;
 			
@@ -10368,8 +15002,135 @@ NetworkOperators.addPageRankToNodes = function(network, from, useRelationsWeight
 				otherNode = nodeList[j];
 				node[propName]+=d*otherNode[propName]/(from?otherNode.toNodeList.length:otherNode.fromNodeList.length);
 			}
+
+			if(n==299){
+				if(from){
+					network.minFromPageRank = Math.min(network.minFromPageRank, node[propName]);
+					network.maxFromPageRank = Math.max(network.maxFromPageRank, node[propName]);
+				} else{
+					network.minToPageRank = Math.min(network.minToPageRank, node[propName]);
+					network.maxToPageRank = Math.max(network.maxToPageRank, node[propName]);
+				}
+			}
 		}
 	}
+}
+
+
+/**
+ * builds a fusioned Network from a list of network codes, with nodes with same names coming from different source networks (called hubs) connected
+ * @param  {List} noteworksList
+ *
+ * @param  {Number} hubsDistanceFactor distance between repeated nodes (hubs)
+ * @param  {Number} hubsForceWeight strength factor for the relation when using a forces engine
+ * @return {Network}
+ */
+NetworkOperators.fusionNoteworks = function(noteworksList, hubsDistanceFactor, hubsForceWeight){
+	networks = new List();
+
+	noteworksList.forEach(function(map, i){
+		subfix = "map_"+i+"_";
+		net = NetworkEncodings.decodeNoteWork(map);
+		net = net.clone(net.nodesPropertiesNames, net.relationsPropertiesNames, subfix);
+		net.id = "map_"+i;
+		networks.push(net);
+	});
+
+	return NetworkOperators.fusionNetworks(networks, hubsDistanceFactor, hubsForceWeight);
+}
+
+
+/**
+ * builds a fusioned Network, with nodes with same names coming from different source networks (called hubs) connected
+ * @param  {List} networks list of networks
+ * 
+ * @param  {Number} hubsDistanceFactor distance between repeated nodes (hubs)
+ * @param  {Number} hubsForceWeight strength factor for the relation when using a forces engine
+ * @return {Network} fusioned Network
+ */
+NetworkOperators.fusionNetworks =function(networks, hubsDistanceFactor, hubsForceWeight){
+	hubsDistanceFactor = hubsDistanceFactor==null?1:hubsDistanceFactor;
+	hubsForceWeight = hubsForceWeight==null?1:hubsForceWeight;
+
+	var fusionNet = new Network();
+	var newNode;
+	var newRelation;
+	var i, j;
+	var mapsCluster = new Table();
+
+	var colors = ColorListGenerators.createDefaultCategoricalColorList(networks.length).getInterpolated('black', 0.17).getInterpolated('white', 0.55);
+
+	networks.forEach(function(net, i){
+		mapsCluster[i] = new NodeList();
+
+		net.nodeList.forEach(function(node){
+
+			newNode = fusionNet.nodeList.getNodeById(node.id);
+
+			if(newNode==null){
+				newNode = new Node(node.id, node.name);
+				newNode.basicId = node.basicId;
+				newNode.mapId = "map_"+i;
+				newNode.mapsIds = [newNode.mapId]
+				newNode.color = colors[i];
+				newNode.nMaps = 1;
+				newNode.weight = node.weight;
+				fusionNet.addNode(newNode);
+				mapsCluster[i].addNode(newNode);
+			} else {
+				newNode.nMaps += 1;
+				newNode.mapsIds.push("map_"+i);
+				newNode.color = 'rgb(200,200,200)';
+			}
+		});
+
+	});
+
+
+
+	networks.forEach(function(net, i){
+		net.relationList.forEach(function(relation){
+			newRelation = new Relation(relation.id, relation.name, fusionNet.nodeList.getNodeById(relation.node0.id), fusionNet.nodeList.getNodeById(relation.node1.id));
+			newRelation.color = relation.color;
+			newRelation.content = relation.content;
+			newRelation.description = relation.description;
+			newRelation.weight = relation.weight;
+			fusionNet.addRelation(newRelation);
+		});
+	});
+
+	var node0;
+
+	for(i=0;fusionNet.nodeList[i]!=null; i++){
+		node0 = fusionNet.nodeList[i];
+		for(j=i+1;fusionNet.nodeList[j]!=null; j++){
+			if(node0.name==fusionNet.nodeList[j].name){
+				//newRelation = new Relation(node0.id+'_'+fusionNet.nodeList[j].id, node0.id+'_'+fusionNet.nodeList[j].id, node0, fusionNet.nodeList[j]);
+				newRelation = new Relation(node0.id+'_'+fusionNet.nodeList[j].id, "same variable", node0, fusionNet.nodeList[j]);
+				newRelation.color = 'black';
+				newRelation.distanceFactor = hubsDistanceFactor;
+				newRelation.forceWeight = hubsForceWeight;
+				fusionNet.addRelation(newRelation);
+
+				newRelation = new Relation(fusionNet.nodeList[j].id+'_'+node0.id, "same variable", fusionNet.nodeList[j], node0);
+				newRelation.color = 'black';
+				newRelation.distanceFactor = hubsDistanceFactor;
+				newRelation.forceWeight = hubsForceWeight;
+				fusionNet.addRelation(newRelation);
+
+				newRelation.node0.nMaps += 1;
+				newRelation.node1.nMaps += 1;
+			}
+		}
+	}
+
+	for(i=0;fusionNet.nodeList[i]!=null; i++){
+		fusionNet.nodeList[i].hubWeight = Math.sqrt(fusionNet.nodeList[i].nMaps-1);
+	}
+
+	fusionNet.mapsCluster = mapsCluster;
+
+	return fusionNet;
 }
 
 
@@ -10377,6 +15138,60 @@ NetworkOperators.addPageRankToNodes = function(network, from, useRelationsWeight
 
 
 
+
+function TreeConvertions(){};
+
+/**
+ * convert a table that describes a tree (higher hierarchies in first lists) into a Tree
+ * @param {Table} table
+ *
+ * @param {String} fatherName name of father node
+ * @param {Boolean} lastListIsWeights true if last list is a NumberList with weights for leaves
+ * @return {Tree}
+ * tags:convertion
+ */
+TreeConvertions.TableToTree = function(table, fatherName, lastListIsWeights){
+	if(table==null) return;
+	
+	fatherName = fatherName==null?"father":fatherName;
+	
+	var tree = new Tree();
+	var node, parent;
+	var id;
+	var iCol;
+
+	var father = new Node(fatherName, fatherName);
+	tree.addNodeToTree(father, null);
+
+	table.forEach(function(list, i){
+		table[i].forEach(function(element, j){
+			id = TreeConvertions.getId(table, i, j);
+			node = tree.nodeList.getNodeById(id);
+			if(node==null){
+				node = new Node(id, String(element));
+				if(i==0){
+					tree.addNodeToTree(node, father);
+				} else {
+					parent = tree.nodeList.getNodeById(TreeConvertions.getId(table, i-1, j));
+					tree.addNodeToTree(node, parent);
+				}
+			}
+		});
+	});
+	
+	tree.assignDescentWeightsToNodes();
+
+	return tree;
+}
+TreeConvertions.getId = function(table, i, j){
+	var iCol=1;
+	var id = String(table[0][j]);
+	while(iCol<=i){
+		id+="_"+String(table[iCol][j]);
+		iCol++;
+	}
+	return id;
+}
 
 
 function TreeEncodings(){};
@@ -10445,7 +15260,6 @@ TreeEncodings.decodeIdentedTree = function(indexedTree, superiorNodeName, identa
 	
 	return tree;
 }
-
 function CanvasAndContext(){};
 
 CanvasAndContext.createInvisibleContext = function(width, height){
@@ -10457,7 +15271,6 @@ CanvasAndContext.createInvisibleContext = function(width, height){
 	tempCanvas.height = cH;
 	return tempCanvas.getContext('2d');
 }
-
 
 //TODO: delete many functions that are deprectaed, replaced by SimpleGraphics.js functions
 
@@ -11240,7 +16053,6 @@ DrawSimpleVis.drawStackBarsFlowTable = function(context, intervalsFlowTable, fra
 
 
 
-
 /**
  * static Class with methods to render text in canvas
  * @constructir
@@ -11407,7 +16219,6 @@ DrawTexts.cropString=function(ctx, string, fitWidth){
         else {idx++;}
     }
 }
-
 //include(frameworksRoot+"operators/numeric/MatrixGenerators.js");
 
 
@@ -11627,7 +16438,6 @@ DrawTextsAdvanced.typodeOnQuadrilater=function(text, p0, p1, p2, p3){//TODO:fix,
 	}
 	
 }
-
 /*
  * graphic and text methods globally accesible
  * that work with context
@@ -11860,7 +16670,7 @@ fsRectM = function(x, y, width, height, margin){
 	return mY>y-margin && mY<y+height+margin && mX>x-margin && mX<x+width+margin;
 }
 
-fCircleM = function(x, y, r, margin){
+fCircleM = function(x, y, r, margin){//check if you can avoid repeat
 	margin = margin==null?0:margin;
 	context.beginPath();
 	context.arc(x, y, r, 0, TwoPi);
@@ -11910,6 +16720,7 @@ bezierM = function(x0, y0, cx0, cy0, cx1, cy1, x1, y1, d){//TODO: fix this mess!
 	context.moveTo(x0, y0);
 	context.bezierCurveTo(cx0, cy0, cx1, cy1, x1, y1);
 	context.stroke();
+	if(mX<Math.min(x0,x1,cx0,cx1)-d || mX>Math.max(x0,x1,cx0,cx1)+d || mY<Math.min(y0,y1,cy0,cy1)-d || mY>Math.max(y0,y1,cy0,cy1)+d) return false;
 	return GeometryOperators.distanceToBezierCurve(x0, y0, cx0, cy0, cx1, cy1, x1, y1, mP, false)<d;
 }
 
@@ -11922,8 +16733,11 @@ bezierM = function(x0, y0, cx0, cy0, cx1, cy1, x1, y1, d){//TODO: fix this mess!
  *	drawImage(image, dx, dy)
  *	drawImage(image, dx, dy, dw, dh)
  *	drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh)
+ *	@param {Image} image
  */
 drawImage = function(image){//TODO: improve efficiency
+	if(image==null) return;
+
 	switch(arguments.length){
 		case 3:
 			context.drawImage(image, arguments[1], arguments[2]);
@@ -11935,6 +16749,25 @@ drawImage = function(image){//TODO: improve efficiency
 			context.drawImage(image, arguments[1], arguments[2], arguments[3], arguments[4], arguments[5], arguments[6], arguments[7], arguments[8]);
 			break;
 			
+	}
+}
+
+/**
+ * fits an image into a rectangle without chagning its proportions (thus probably loosing top-bottom or left-right margins)
+ * @param  {Image} image
+ * @param  {Rectangle} rectangle frame of the image
+ */
+fitImage = function(image, rectangle){
+	if(image==null || rectangle==null) return;
+
+	var propIm = image.width/image.height;
+	var propRc = rectangle.width/rectangle.height;
+	var compProp = propIm/propRc;
+
+	if(propIm>propRc){
+		context.drawImage(image, 0.5*(image.width - image.width/compProp), 0, image.width/compProp, image.height, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+	} else {
+		context.drawImage(image, 0, 0.5*(image.height - image.height*compProp), image.width, image.height*compProp, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
 	}
 }
 
@@ -11984,7 +16817,11 @@ clipCircle = function(x, y, r){
 
 clipRectangle = function(x, y, w, h){
 	context.save();
-	context.fillRect(x, y, w, h);
+	context.beginPath();
+	context.moveTo(x,y);
+	context.lineTo(x+w,y);
+	context.lineTo(x+w,y+h);
+	context.lineTo(x,y+h);
 	context.clip();
 }
 
@@ -12046,6 +16883,7 @@ fTextRotatedM = function(text, x, y, angle, size){
   	
   	return mYT>y && mYT<y+size && mXT>x && mXT<x+context.measureText(text).width;
 }
+
 fTextW = function(text, x, y){
 	context.fillText(text, x, y);
 	return context.measureText(text).width;
@@ -12093,6 +16931,10 @@ getPixelColor = function(x, y){
 	return 'rgba('+rgba[0]+','+rgba[1]+','+rgba[2]+','+rgba[3]+')';
 }
 
+getPixelColorRGBA = function(x, y){//repeated
+	return context.getImageData(x,y,1,1).data;
+}
+
 captureCanvas = function(){
 	var im = new Image();
 	im.src = canvas.toDataURL();
@@ -12136,7 +16978,6 @@ getMilliseconds = function(){
 	delete date;
 	return _ms;
 }
-
 
 
 
@@ -12235,195 +17076,6 @@ DragDetection.prototype.simulateMouseUp=function(){
 	this.idInterval=null;
 }
 
-
-InputTextField.prototype.constructor=InputTextField;
-
-
-function InputTextField(id){
-	this.id = id;
-	
-	this.x=0;
-    this.y=0;
-    this.width=200;
-    this.height=18;
-    
-    this.hovered = false;
-    this.focused = false;
-    
-    this.baseText;
-	
-	this.textColor='black';
-	this.textSize='14';
-	this.textFont='Arial';
-	this.textAlign='left';
-	this.textbaseLine = 'top';
-	this.textStyle='';
-	
-	this.backgroundColor='rgba(255,255,255,0.8)';
-	this.borderStyle = null;
-	this.borderWidth = 1;
-
-	this.cursorVisible = true;
-	this._intervalID = setInterval(this.cursorCycle, 500, this);
-	
-	addInteractionEventListener("mousedown", this.onMouse, this);
-	addInteractionEventListener("keydown", this.onKeyDown, this);
-	this._time = 0;
-	
-	this.allSelected = false;
-	
-	this.enterFunctionTarget;
-	this.enterFunction;
-	
-	this._assocativeKeys = {
-		49:["1","!","‘"],
-		71:["g","G","@"],
-		186:[";",":","¶"],
-		187:["=","+","±"],
-		189:["-","_","–"]
-	}//TODO: switch on all browsers!!!!! see: http://unixpapa.com/js/key.html
-}
-
-
-InputTextField.prototype.onMouse=function(event){
-	this.focused = this.hovered;
-	clearInterval(this._intervalID);
-	if(this.focused){
-		this.allSelected = new Date().getTime()-this._time<400;
-		this._time = new Date().getTime();	
-		this._intervalID = setInterval(this.cursorCycle, 500, this);
-	} else {
-		this.allSelected = false;
-	}
-	this.cursorVisible = this.focused;
-}
-
-InputTextField.prototype.setEnterFunction=function(enterFunction, target){
-	this.enterFunction = enterFunction;
-	this.enterFunctionTarget = target;
-}
-
-
-InputTextField.prototype.cursorCycle=function(target){
-	target.cursorVisible = !target.cursorVisible;
-}
-
-
-InputTextField.prototype.onKeyDown=function(e){
-	if(!this.focused) return;
-	var x = '';
-    if (document.all){
-        var evnt = window.event;
-        x = evnt.keyCode;
-    } else {
-        x = e.keyCode;
-    }
-	if(x==8){
-		if(this.allSelected){
-			this.text = "";
-		} else {
-			this.text = this.text.substr(0, this.text.length-1);
-		}
-	} else if(x==13){
-		if(this.enterFunction!=null){
-			this.enterFunction.call(this.enterFunctionTarget, this.id);
-		}
-	} else {
-		var character = String.fromCharCode(x);
-		c.log("onKeyDown x:"+x+", character: ["+character+"]");
-		if(this._assocativeKeys[x]!=null){
-			if(this.allSelected){
-				this.text = "";
-			}
-			if(e.shiftKey){
-				character = this._assocativeKeys[x][1];
-			} else if(e.altKey){
-				character = this._assocativeKeys[x][2];
-			} else {
-				character = this._assocativeKeys[x][0];
-			}
-			this.text +=character;
-		} else if(character.match(/[a-zA-Z0-9 _\-#@:$%^&*\(\)\.]/)){
-			if(this.allSelected){
-				this.text = "";
-			}
-			if(e.shiftKey){
-				if(character.match(/[0-9]/)){
-					character = ") ! @ # $ % ^ & * (".split(" ")[Number(character)];
-				} else {
-					character = character.toUpperCase();
-				}
-			} else {
-				character = character.toLowerCase();
-			}
-			this.text +=character;
-		}
-	}
-	this.allSelected = false;
-}
-
-
-InputTextField.prototype.draw = function(context) {
-	this.hovered = mouseY>this.y && mouseY<this.y+this.height && mouseX>this.x && mouseX<this.x+this.width;
-	if(this.hovered) canvas.style.cursor = 'text';
-	
-	//background
-	
-	context.fillStyle = this.backgroundColor;
-	context.fillRect(this.x, this.y, this.width, this.height);
-	
-	
-	
-	DrawTexts.setContextTextProperties(this.textColor, this.textSize, this.textFont, this.textAlign, this.textbaseLine, this.textStyle);
-	
-	var text = this.text;
-	
-	var textWidthComplete = context.measureText(text).width;
-	var textWidth = textWidthComplete;
-	
-	while(textWidth>this.width){
-		text = this.text.substr(0,text.length-2)+"…";
-		textWidth = context.measureText(text).width;
-	} 
-	
-	
-	
-	if(textWidthComplete<this.width){
-		if(this.cursorVisible) {
-			context.strokeStyle='black';
-			context.lineWidth = 1;
-			context.beginPath();
-			context.moveTo(this.x + textWidthComplete+2, this.y + 2);
-			context.lineTo(this.x + textWidthComplete+2, this.y + this.height - 2);
-			context.stroke();
-		}
-	}
-	
-	
-	//selection
-	
-	if(this.allSelected){
-		context.fillStyle = 'rgb(150,150,150)';
-		context.fillRect(this.x+1, this.y+2, textWidth-2, this.height-4);
-	}
-	
-	//draw text
-	
-	DrawTexts.setContextTextProperties(this.textColor, this.textSize, this.textFont, this.textAlign, this.textbaseLine, this.textStyle);
-	
-	context.fillStyle = text=="" || text==null?'gray':this.textColor;
-	text = (text=="" || text==null) && this.baseText!=null? this.baseText:text;
-	context.fillText(text, this.x, this.y);
-}
-
-InputTextField.prototype.setText=function(text){
-	this.text = text;
-}
-
-InputTextField.prototype.getText=function(){
-	return this.text;
-}
-
 InputTextFieldHTML.prototype.constructor=InputTextFieldHTML;
 
 
@@ -12463,7 +17115,7 @@ function InputTextFieldHTML(configuration){
 	this.focusFunctionTarget;
 	this.blurFunctionTarget;
 	
-	this.textColor='black';
+	this.textColor=configuration.textColor==null?'black':configuration.textColor;
 	this.backgroundColor='#FFFFFF';
 	
 	this.main = document.getElementById('maindiv');
@@ -12471,7 +17123,6 @@ function InputTextFieldHTML(configuration){
 	this.textarea?this.DOMtext = document.createElement("textarea"):this.DOMtext = document.createElement("input");
 	this.password?this.DOMtext.setAttribute('type', 'password'):this.DOMtext.setAttribute('type', 'text');
 	this.div.setAttribute('style', 'position:absolute;top:'+this.y+'px;left:'+this.x+'px;z-index:'+this.zIndex+';');
-
 
 	if(!this.border) this.DOMtext.setAttribute('style', 'border:none');
 
@@ -12518,11 +17169,10 @@ function InputTextFieldHTML(configuration){
 
 InputTextFieldHTML.prototype.setBorder = function(value) {
 	this.border = value;
-	this.DOMtext.setAttribute('style',  'color: '+this.textColor+'; width:'+(this.width-7)+'px;height:'+(this.height-7)+'px; font-size:'+this.fontSize+'px; border:'+(value?'yes':'none'));
-	c.log('~~~~~border:'+(value?'yes':'none'));
+	this.DOMtext.setAttribute('style',  'border:0; color: '+this.textColor+'; width:'+(this.width-7)+'px;height:'+(this.height-7)+'px; font-size:'+this.fontSize+'px; border:'+(value?'yes':'none'));
 }
 
-InputTextFieldHTML.prototype.draw = function(context) {
+InputTextFieldHTML.prototype.draw = function() {
 	if(this.x!=this._prevX || this.y!=this._prevY || this.width!=this._prevWidth || this.height!=this._prevHeight || this.text!=this._prevText){
  		this._prevX = this.x;
     	this._prevY = this.y;
@@ -12537,13 +17187,14 @@ InputTextFieldHTML.prototype.draw = function(context) {
 		this.DOMtext.style.background = "transparent";
 		this.DOMtext.style.resize = "none";
 		
-		this.DOMtext.setAttribute('style',  'color: '+this.textColor+'; width:'+(this.width-7)+'px;height:'+(this.height-7)+'px; font-size:'+this.fontSize+'px');
-		this.div.setAttribute('style', 'position:absolute;top:'+this.y+'px;left:'+this.x+'px;z-index:'+this.zIndex+';');
+		this.DOMtext.setAttribute('style',  'border: 0; color: '+this.textColor+'; width:'+(this.width-7)+'px;height:'+(this.height-7)+'px; font-size:'+this.fontSize+'px');
+		this.div.setAttribute('style', 'border: 0; position:absolute;top:'+this.y+'px;left:'+this.x+'px;z-index:'+this.zIndex+';');
 	}
 }
 
 InputTextFieldHTML.prototype.setText=function(text, activeChange){
 	activeChange = activeChange==null?true:activeChange;
+	this.text = text;
 	this.DOMtext.value = text;
 	
 	//var timer = setTimeout(this.onKeyDownDelayed, 4, this);
@@ -12565,7 +17216,8 @@ InputTextFieldHTML.prototype.onKeyDown=function(e){
 }
 
 InputTextFieldHTML.prototype.onKeyDownDelayed=function(target){
-	if(target._keyCode==13){
+
+	if(target._keyCode==13 &&  target.DOMtext==document.activeElement){
 		if(target.enterFunction!=null){
 			target.enterFunction.call(target.enterFunctionTarget, target.id);
 		}
@@ -12577,9 +17229,12 @@ InputTextFieldHTML.prototype.onKeyDownDelayed=function(target){
 		var lastChar = target.text.charAt(target.text.length-1);
 		
 		if(target._keyCode!=13){
-			if(target.changeFunction!=null) target.changeFunction.call(target.changeFunctionTarget, target.id);
+			if(target.changeFunction!=null){
+				target.changeFunction.call(target.changeFunctionTarget, target.id);
+			}
 		}
 	}
+	
 	if(_cycleOnMouseMovement) reStartCycle();
 
 	this.timer = null;
@@ -12670,106 +17325,6 @@ InputTextFieldHTML.prototype.disappear=function(){
 	this.x = -10000;
 	this.draw();
 }
-
-function Selection(configuration){
-	this.buttonsTexts = configuration.buttonsTexts||[];
-	this.warnFunction = configuration.warnFunction;
-	this.target = configuration.target;
-	this.textStyle = configuration.textStyle==null?
-			{
-				fontSize:12,
-				fontColor:'black',
-				fontName:LOADED_FONT
-			}:
-			configuration.textStyle;
-	this.multiple = configuration.multiple==null?true:configuration.multiple;
-	this.oneActive = configuration.oneActive;
-	this.vertical = configuration.vertical==null?true:configuration.vertical;
-	this.x = configuration.x||0;
-	this.y = configuration.y||0;
-	this.space = configuration.space==null?(this.vertical?16:30):configuration.space;
-	this.buttonStyle = configuration.buttonStyle||'circle';
-	this.actives = configuration.actives||ListGenerators.createListWithSameElement(this.buttonsTexts.length, false);
-	this.id = configuration.id;
-	
-	this.iOver = -1;
-	this.lastToChange = -1;
-	this.iActive;
-	
-	if(this.oneActive && this.actives.indexOf(true)==-1 && this.buttonsTexts.length>0) this.actives[0] = true;
-	
-	switch(this.buttonStyle){
-		case 'circle':
-			this.drawButtonFunction = this.drawButtonCircle;
-			break;
-	}
-	
-	if(!this.vertical){
-		this.xPositions = new NumberList();
-		var x0 = 0;
-		setText('black', configuration.fontSize, configuration.fontName);
-	}
-	
-	setText(this.textStyle.fontColor, this.textStyle.fontSize, this.textStyle.fontName);
-	
-	for(var i=0; this.buttonsTexts[i]!=null; i++){
-		if(this.vertical){
-			
-		} else {
-			this.xPositions[i] = x0;
-			x0 += context.measureText(this.buttonsTexts[i]).width + this.space + 12;
-		}
-	}
-	if(!this.vertical) this.xPositions[i] = x0;
-	
-	addInteractionEventListener('mousedown', this.onMouse, this);
-	
-}
-
-Selection.prototype.onMouse = function(){
-	if(this.iOver!=-1){
-		if(!this.multiple && !this.actives[this.iOver]){
-			for(var i=0; this.buttonsTexts[i]!=null; i++){
-				this.actives[i] = (i==this.iOver);
-			}
-			this.lastToChange = this.iOver;
-			this.iActive = this.iOver;
-			this.warnFunction.call(this.target, this.id);
-		} else if(!this.multiple && this.oneActive && this.actives[this.iOver]){
-			//nothing
-		} else {
-			this.actives[this.iOver] = !this.actives[this.iOver];
-			this.lastToChange = this.iOver;
-			this.warnFunction.call(this.target, this.id);
-		}
-	}
-}
-
-Selection.prototype.draw = function(){
-	this.iOver = -1;
-	for(var i=0; this.buttonsTexts[i]!=null; i++){
-		if(this.vertical){
-			this.drawButtonFunction(this.buttonsTexts[i], this.x, this.y + i*this.space, this.actives[i]);
-		} else {
-			this.drawButtonFunction(this.buttonsTexts[i], this.x + this.xPositions[i], this.y, this.actives[i]);
-			if(mY>this.y && mY<this.y+14 && mX>this.x + this.xPositions[i] && mX<this.x + this.xPositions[i+1]) this.iOver = i;
-		}
-	}
-	if(this.iOver!=-1) canvas.style.cursor = 'pointer';
-}
-
-Selection.prototype.drawButtonCircle = function(text, x, y, active){
-	setText(this.textStyle.fontColor, this.textStyle.fontSize, this.textStyle.fontName);
-	fText(text, x+10, y);
-	
-	setStroke(this.textStyle.fontColor);
-	setLW(1);
-	sCircle(x, y+this.textStyle.fontSize*0.5, 5);
-	
-	if(active) fCircle(x, y+this.textStyle.fontSize*0.5, 3);
-}
-
-
 TextBox.prototype.constructor=TextBox;
 
 /**
@@ -13041,96 +17596,6 @@ TextBox.replaceWikiLinks = function(text){
 }
 
 
-
-TextButton.prototype.constructor= TextButton;
-
-
-function  TextButton(configuration){
-	var configuration = configuration==null?new Object():configuration;
-	
-	this.text = configuration.text==null?'button':configuration.text;
-	
-	this.warnFunction = configuration.warnFunction;
-	this.target = configuration.target;
-	this.id = configuration.id;
-	
-	this.fontColor = configuration.fontColor==null?'black':configuration.fontColor;
-	this.fontSize =  configuration.fontSize==null?'14':configuration.fontSize;
-	this.fontName = configuration.fontName==null?'Arial':configuration.fontName;
-	this.fontStyle = configuration.fontStyle==null?'':configuration.fontStyle;
-	
-	this.backgroundColor = configuration.backgroundColor;
-	this.margin=configuration.margin==null?0:configuration.margin;
-	
-	this.x = configuration.x==null?0:configuration.x;
-	this.y = configuration.y==null?0:configuration.y;
-	
-	this.underline = configuration.underline==null?false:configuration.underline;
-	
-	this.active = configuration.active==null?true:configuration.active;
-	
-	this.on = configuration.on==null?true:configuration.on;
-	
-	this.width;
-	this.height;
-	
-	this._updateDimensions();
-	
-	addInteractionEventListener('mousedown', this.onMouse, this);
-}
-
-TextButton.prototype.onMouse = function(e){
-	if(this.active && this.mouseOnButton()){
-		this.on = !this.on;
-		this.warnFunction.call(this.target, this.id);
-	}
-}
-
-TextButton.prototype.setText = function(text){
-	this.text = text;
-	this._updateDimensions();
-}
-
-TextButton.prototype.setTextProperties = function(fontColor, fontSize, fontName, fontStyle){
-	this.fontColor = fontColor;
-	this.fontSize =  fontSize;
-	this.fontName = fontName;
-	this.fontStyle = fontStyle;
-	this._updateDimensions();
-}
-
-TextButton.prototype._updateDimensions = function(){
-	DrawTexts.setContextTextProperties(this.fontColor, this.fontSize, this.fontName, null, null, this.fontStyle);
-	this.width = context.measureText(this.text).width;
-	this.height = this.fontSize*DrawTexts.POINT_TO_PIXEL;
-}
-
-TextButton.prototype.draw = function(){
-	if(this.backgroundColor!=null){
-		context.fillStyle = this.backgroundColor;
-		context.fillRect(this.x-this.margin, this.y-this.margin, this.width+2*this.margin, this.height+2*this.margin);
-	}
-	DrawTexts.setContextTextProperties(this.fontColor, this.fontSize, this.fontName, null, null, this.fontStyle);
-	context.fillText(this.text, this.x, this.y);
-	
-	if(this.underline){
-		var yLine = Math.floor(this.y+this.height*0.8)+0.5;
-		context.strokeStyle = this.fontColor;
-		context.lineWidth = 1;
-		context.beginPath();
-		context.moveTo(this.x, yLine);
-		context.lineTo(this.x+this.width, yLine);
-		context.stroke();
-	}
-	
-	if(this.active && this.mouseOnButton()) canvas.style.cursor = 'pointer';
-}
-
-TextButton.prototype.mouseOnButton = function(){
-	return mY>this.y && mY<this.y+this.height && mX>this.x && mX<this.x+this.width;
-}
-
-
 TextFieldHTML.prototype.constructor= TextFieldHTML;
 
 /**
@@ -13213,185 +17678,7 @@ TextFieldHTML.prototype.getText=function(){
 
 
 
-
-ToolTip.prototype.constructor=ToolTip;
-
-
-function ToolTip(target){
-	this.target = target==null?this:target;
-	
-	this.width = 500;
-	this.height = 200;
-	this.visible = false;
-	
-	this.text;
-	this.lines;
-	this.interlines_space = 16;
-	this.heightMax = 600;
-	
-	this.x = 0;
-	this.y = 0;
-	
-	this.pointedX = -1;
-	this.pointedY = -1;
-	
-	this.drawContentFunction = this.drawText;
-	
-	this.toolTipPlacement = 4;
-	//0: top
-	//1: right;
-	//2: bottom;
-	//3: left;
-	//4: automatic
-	
-}
-
-ToolTip.prototype.draw=function(){
-	if(this.visible){
-		this.drawShape();
-		this.drawContentFunction.call(this.target);
-	}
-}
-
-ToolTip.prototype.drawText=function(){
-	DrawTexts.setContextTextProperties('black', 12);
-	DrawTexts.fillTextWordWrapWithTextLines(context, this.lines, this.x+4, this.y+4, this.height, this.interlines_space);
-}
-
-
-
-////////// setters
-
-//0: text
-ToolTip.prototype.setText=function(newText, size){
-	if(newText==undefined || newText=="") return;
-	this.textSize = size||12;
-	if(newText==undefined) newText="";
-	if(newText!=this.text){
-		this.text = newText;
-	  	DrawTexts.setContextTextProperties('black', this.textSize, 'Arial', 'right', 'top');
-		this.lines = DrawTexts.textWordWrapReturnLines(newText, this.width-8, this.heightMax);
-		this.drawContentFunction = this.drawText;
-		this.target = this;
-	}
-	this.height = this.lines.length*this.interlines_space+12;
-	this.settedMode = 0;
-}
-
-
-
-
-// 
-// 
-
-
-
-//////
-
-ToolTip.prototype.drawShape=function(){
-	context.fillStyle='rgba(255,255,255,0.9)';
-	switch(this.toolTipPlacement){
-		case 2:
-			this.x = 0.7*this.x + 0.3*Math.min(Math.max(5, mouseX - this.width*0.3), canvasWidth - this.width-5);
-			this.y = 0.7*this.y + 0.3*Math.min(Math.max(5, mouseY + 50), this.pointedY+30);
-			
-			this.drawShapeInPlace(2);
-			break;
-		case 4:
-			var angle = Math.atan2((this.pointedY-canvasHeight*0.5)/canvasHeight, (this.pointedX-canvasWidth*0.5)/canvasWidth)+Math.PI;
-			var r = Math.sqrt(Math.pow(this.width*0.5, 2), Math.pow(this.height*0.5, 2))*1.2;
-			var center = new Point(this.pointedX + r*Math.cos(angle), this.pointedY + r*Math.sin(angle));
-			
-			this.x = center.x-this.width*0.5;
-			this.y = center.y-this.height*0.5;
-			
-			var place;
-			
-			if(this.y > this.pointedY){
-				this.y = this.pointedY+20;
-				place = 2;
-			} else if(this.y < this.pointedY-this.height){
-				this.y = this.pointedY-this.height-20;
-				place = 0;
-			} else if(this.x > this.pointedX){
-				this.x = this.pointedX+20;
-				place = 1;
-			} else if(this.x < this.pointedX-this.width){
-				this.x = this.pointedX-this.width-20;
-				place = 3;
-			}
-			
-			this.drawShapeInPlace(place);
-	}
-}
-
-ToolTip.prototype.drawShapeInPlace=function(place){
-	context.beginPath();
-	switch(place){
-		case 0: //top
-			var xSelected = Math.max(Math.min(this.pointedX, this.x+this.width-10), this.x+10);
-			
-			context.moveTo(this.x,this.y);
-			context.lineTo(this.x+this.width,this.y);
-			context.lineTo(this.x+this.width,this.y+this.height);
-			
-			context.lineTo(xSelected+10,this.y+this.height);
-			context.lineTo(this.pointedX,this.pointedY);
-			context.lineTo(xSelected-10,this.y+this.height);
-			
-			context.lineTo(this.x,this.y+this.height);
-			context.lineTo(this.x,this.y);
-			break;
-		case 1: //right
-			var ySelected = Math.min(Math.max(this.pointedY, this.y+10), this.y + this.height - 10);
-			
-			context.moveTo(this.x,this.y);
-			context.lineTo(this.x+this.width,this.y);
-			
-			context.lineTo(this.x+this.width,this.y+this.height);
-			context.lineTo(this.x,this.y+this.height);
-			
-			context.lineTo(this.x,ySelected+10);
-			context.lineTo(this.x-20,this.pointedY);
-			context.lineTo(this.x,ySelected-10);
-			
-			context.lineTo(this.x,this.y);
-			break;
-		case 2: //bottom
-			xSelected = Math.max(Math.min(this.pointedX, this.x+this.width-10), this.x+10);;	
-			
-			context.moveTo(this.x,this.y);
-			
-			context.lineTo(xSelected-10,this.y);
-			context.lineTo(this.pointedX,this.pointedY);
-			context.lineTo(xSelected+10,this.y);
-			
-			context.lineTo(this.x+this.width,this.y);
-			context.lineTo(this.x+this.width,this.y+this.height);
-			context.lineTo(this.x,this.y+this.height);
-			context.lineTo(this.x,this.y);
-			break;
-		case 3: //left
-			ySelected = Math.min(Math.max(this.pointedY, this.y+10), this.y + this.height - 10);
-			context.moveTo(this.x,this.y);
-			context.lineTo(this.x+this.width,this.y);
-			
-			context.lineTo(this.x+this.width,ySelected-10);
-			context.lineTo(this.x+this.width+20,this.pointedY);
-			context.lineTo(this.x+this.width,ySelected+10);
-			
-			context.lineTo(this.x+this.width,this.y+this.height);
-			context.lineTo(this.x,this.y+this.height);
-			context.lineTo(this.x,this.y);
-			break;
-	}
-	context.fill();
-}
-
-
-
-
-rvar Loader=new function (){};
+var Loader=new function (){};
 
 Loader.proxy=""; //TODO:install proxy created by Mig at moebio.com
 Loader.cacheActive = false; //TODO: fix!
@@ -13400,110 +17687,7 @@ Loader.REPORT_LOADING = false;
 Loader.n_loading = 0;
 Loader.LOCAL_STORAGE_ENABLED = false;
 
-function LoaderRequest(url, method, data){
-	this.url=url;
-	this.method=method?method:"GET";
-	this.data=data;
-}
-
-Loader.loadImage=function(url, onComplete, callee){
-	Loader.n_loading++;
-	
-	if(Loader.REPORT_LOADING) c.log("Loader.loadImage | url:", url);
-	
-	var target = callee?callee:arguments.callee;
-	var img=document.createElement('img');
-	
-	if(this.cacheActive){
-		if(this.associativeByUrls[url]!=null){
-			Loader.n_loading--;
-			//c.log('=====>>>>+==>>>+====>>=====>>>+==>> in cache:', url);
-			var e=new LoadEvent();
-			e.result=this.associativeByUrls[url];
-			e.url = url;
-			onComplete.call(target, e);
-		} else {
-			var cache = true;
-			var associative = this.associativeByUrls;
-		}
-	}
-	
-	img.onload = function(){
-		Loader.n_loading--;
-	 	var e=new LoadEvent();
-		e.result=img;
-		e.url = url;
-		if(cache) associative[url] = img;
-		onComplete.call(target, e);
-	}
-	
-	img.onerror = function (){
-		Loader.n_loading--;
-		var e=new LoadEvent();
-		e.result=null;
-		e.errorType=1 //TODO: set an error type!
-		e.errorMessage="There was a problem retrieving the image ["+img.src+"]:";
-		e.url = url;
-		onComplete.call(target, e);
-	};
-	
-	img.src=Loader.proxy+url;
-}
-
-Loader.loadJSON=function(url, onLoadComplete){
-	Loader.n_loading++;
-	
-	Loader.loadData(url, function(data){
-		Loader.n_loading--;
-		onLoadComplete.call(arguments.callee, jQuery.parseJSON(data));
-	});
-}
-
-Loader.callIndex=0;
-Loader.loadJSONP=function(url, onLoadComplete, callee){
-	Loader.n_loading++;
-	
-	Loader.callIndex=Loader.callIndex+1;
-	var index=Loader.callIndex;
-	
-	var newUrl=url+"&callback=JSONcallback"+index;
-	//var newUrl=url+"?callback=JSONcallback"+index; //   <----  WFP suggestion
-	
-	var target = callee?callee:arguments.callee;
-	
-	//c.log('Loader.loadJSONP, newUrl:', newUrl);
-
-	$.ajax({
-		url: newUrl,                                                                                                                                              
-	    type: 'GET',
-	    data: {},
-	    dataType: 'jsonp',
-	    contentType: "application/json",
-	    jsonp: 'jsonp',
-	    jsonpCallback: 'JSONcallback'+index,
-	    success: function(data){
-	    	Loader.n_loading--;
-	    	var e=new LoadEvent();
-	    	e.result=data;
-	    	onLoadComplete.call(target, e);
-	    },
-	    error:function(data){
-	    	Loader.n_loading--;
-	    	c.log("Loader.loadJSONP | error, data:", data);
-	    	
-	    	var e=new LoadEvent();
-	    	e.errorType=1;
-	    	onLoadComplete.call(target, e);
-	    }
-	});//.error(function(e){
-			// c.log('---> (((error))) B');
-// 			
-			// var e=new LoadEvent();
-			// e.errorType=1;
-		    // onLoadComplete.call(target, e);
-		// });
-}
-
+Loader.PHPurl = "http://intuitionanalytics.com/tests/proxy.php?url=";
 
 
 /**
@@ -13517,9 +17701,8 @@ Loader.loadData=function(url, onLoadData, callee, param, send_object_json){
 	if(Loader.REPORT_LOADING) c.log('load data:', url);
 	Loader.n_loading++;
 
-
 	if(Loader.LOCAL_STORAGE_ENABLED){
-		var result = LolacStorage.getItme(url);
+		var result = LocalStorage.getItem(url);
 		if(result){
 			var e=new LoadEvent();
 			e.url = url;
@@ -13599,6 +17782,118 @@ Loader.loadData=function(url, onLoadData, callee, param, send_object_json){
 		req.send(send_object_json);
 	}
 }
+
+
+function LoaderRequest(url, method, data){
+	this.url=url;
+	this.method=method?method:"GET";
+	this.data=data;
+}
+
+Loader.loadImage=function(url, onComplete, callee, param){
+	Loader.n_loading++;
+	
+	if(Loader.REPORT_LOADING) c.log("Loader.loadImage | url:", url);
+	
+	var target = callee?callee:arguments.callee;
+	var img=document.createElement('img');
+	
+	if(this.cacheActive){
+		if(this.associativeByUrls[url]!=null){
+			Loader.n_loading--;
+			//c.log('=====>>>>+==>>>+====>>=====>>>+==>> in cache:', url);
+			var e=new LoadEvent();
+			e.result=this.associativeByUrls[url];
+			e.url = url;
+			e.param = param;
+			onComplete.call(target, e);
+		} else {
+			var cache = true;
+			var associative = this.associativeByUrls;
+		}
+	}
+	
+	img.onload = function(){
+		Loader.n_loading--;
+	 	var e=new LoadEvent();
+		e.result=img;
+		e.url = url;
+		e.param = param;
+		if(cache) associative[url] = img;
+		onComplete.call(target, e);
+	}
+	
+	img.onerror = function (){
+		Loader.n_loading--;
+		var e=new LoadEvent();
+		e.result=null;
+		e.errorType=1 //TODO: set an error type!
+		e.errorMessage="There was a problem retrieving the image ["+img.src+"]:";
+		e.url = url;
+		e.param = param;
+		onComplete.call(target, e);
+	};
+	
+	img.src=Loader.proxy+url;
+}
+
+Loader.loadJSON=function(url, onLoadComplete){
+	Loader.n_loading++;
+	
+	Loader.loadData(url, function(data){
+		Loader.n_loading--;
+		onLoadComplete.call(arguments.callee, jQuery.parseJSON(data));
+	});
+}
+
+Loader.callIndex=0;
+Loader.loadJSONP=function(url, onLoadComplete, callee){
+	Loader.n_loading++;
+	
+	Loader.callIndex=Loader.callIndex+1;
+	var index=Loader.callIndex;
+	
+	var newUrl=url+"&callback=JSONcallback"+index;
+	//var newUrl=url+"?callback=JSONcallback"+index; //   <----  WFP suggestion
+	
+	var target = callee?callee:arguments.callee;
+	
+	//c.log('Loader.loadJSONP, newUrl:', newUrl);
+
+	$.ajax({
+		url: newUrl,                                                                                                                                              
+	    type: 'GET',
+	    data: {},
+	    dataType: 'jsonp',
+	    contentType: "application/json",
+	    jsonp: 'jsonp',
+	    jsonpCallback: 'JSONcallback'+index,
+	    success: function(data){
+	    	Loader.n_loading--;
+	    	var e=new LoadEvent();
+	    	e.result=data;
+	    	onLoadComplete.call(target, e);
+	    },
+	    error:function(data){
+	    	Loader.n_loading--;
+	    	c.log("Loader.loadJSONP | error, data:", data);
+	    	
+	    	var e=new LoadEvent();
+	    	e.errorType=1;
+	    	onLoadComplete.call(target, e);
+	    }
+	});//.error(function(e){
+			// c.log('---> (((error))) B');
+// 			
+			// var e=new LoadEvent();
+			// e.errorType=1;
+		    // onLoadComplete.call(target, e);
+		// });
+}
+
+
+
+
 
 //FIX THESE METHODS:
 
@@ -13700,7 +17995,6 @@ Loader.sendDataToPhp = function(url, data, onLoadData, callee, param){
 }
 
 
-
 LoadEvent.prototype = new Object();
 LoadEvent.prototype.constructor=LoadEvent;
 
@@ -13715,7 +18009,6 @@ function LoadEvent(){
 	this.errorMessage="";
 	this.url;
 }
-
 
 MultiLoader.prototype = new Object();
 MultiLoader.prototype.constructor=MultiLoader;
@@ -13925,7 +18218,6 @@ MultiLoader.prototype.destroy = function(){
 	delete this.imagesLoaded;
 }
 
-
 /**
 * Forces
 * @constructor
@@ -14018,7 +18310,7 @@ Forces.prototype.forcesForNetwork=function(network, initRadius, initCenter, eqDi
 Forces.prototype.addNode=function(node, initPosition, initSpeed){
 	initPosition = initPosition==null?new Point(Math.random()*200-100, Math.random()*200-100):initPosition;
 	initSpeed = initSpeed==null?new Point(0, 0):initSpeed;
-	this.nodeList.push(node);
+	this.nodeList.addNode(node);
 	node.x = initPosition.x;
 	node.y = initPosition.y;
 	node.vx = initSpeed.x;
@@ -14028,8 +18320,8 @@ Forces.prototype.addNode=function(node, initPosition, initSpeed){
 }
 
 Forces.prototype.addForce=function(node0, node1, type, equilibriumDistance){
-	this.fromNodeList.push(node0);
-	this.toNodeList.push(node1);
+	this.fromNodeList.addNode(node0);
+	this.toNodeList.addNode(node1);
 	this.forcesList.push(node0.id+"*"+node1.id+"*"+type);
 	this.forcesTypeList.push(type);
 	if(equilibriumDistance!=null) this.equilibriumDistances.push(equilibriumDistance);
@@ -14251,7 +18543,6 @@ Forces.prototype._resetAccelerations=function(){
 	}
 }
 
-
 Engine3D.prototype.constructor=Engine3D;
 
 /**
@@ -14394,15 +18685,17 @@ Engine3D.prototype.basis3DRotation=function(basis, angles){
 }
 
 Engine3D.prototype.point3DRotation=function(point, angles){
-	ca = Math.cos(angles.x);
-	sa = Math.sin(angles.x);
-	cb = Math.cos(angles.y);
-	sb = Math.sin(angles.y);
-	cg = Math.cos(angles.z);
-	sg = Math.sin(angles.z);
-	return new Point3D(point.x*cg*cb + point.y*(cg*sa*sb+sg*ca) + point.z*(sg*sa-cg*ca*sb),
+	var ca = Math.cos(angles.x);
+	var sa = Math.sin(angles.x);
+	var cb = Math.cos(angles.y);
+	var sb = Math.sin(angles.y);
+	var cg = Math.cos(angles.z);
+	var sg = Math.sin(angles.z);
+	return new Point3D(
+		point.x*cg*cb + point.y*(cg*sa*sb+sg*ca) + point.z*(sg*sa-cg*ca*sb),
 		-point.x*sg*cb + point.y*(cg*ca-sg*sa*sb) + point.z*(sg*ca*sb+cg*sa),
-		point.x*sb    - point.y*sa*cb			+ point.z*cb*ca);
+		point.x*sb    - point.y*sa*cb			+ point.z*cb*ca
+	);
 }
 
 
@@ -14474,7 +18767,6 @@ Engine3D.prototype.quadrilater=function(p0, p1, p2, p3){
 
 
 
-
 /**
  * All these function are globally available since they are included in the Global class
  * 
@@ -14486,13 +18778,7 @@ Engine3D.prototype.quadrilater=function(p0, p1, p2, p3){
  * and all data models classes names
  */
 function typeOf(o){
-	//c.log('o', o);
-	
 	var type = typeof o;
-	
-	// c.log('type', type);
-	// c.log("type !== 'object'", type !== 'object');
-	// c.log("type !== 'Object'", type !== 'Object');
 	
 	if (type !== 'object') {
 		return type;
@@ -14509,6 +18795,7 @@ function typeOf(o){
 	}
 	c.log("[!] ERROR: could not detect type for ", o);
 }
+
 function VOID(){}
 
 function instantiate(className, args) {
@@ -14608,28 +18895,89 @@ function isArray(obj) {
       return true;
 }
 Date.prototype.getType=function(){
-	return 'Date';
-}
-// Object.prototype.isOfType=function(name){
-	// if(this.constructor.toString().indexOf("Array")!=-1){
-		// return !(this._constructor!=null && this._constructor.toString().indexOf(name) == -1);
-	// }
-	// return !(this.constructor.toString().indexOf(name) == -1);
-// }
-
-//////// uniqueGlobalFunc, executeUniqueGlobalFunc, what are their purpose?
-
-var uniqueGlobalFunc=new Array();
-function getUniqueGlobalFunc(func, scope){
-	uniqueGlobalFunc.push([func, scope]);
-	return uniqueGlobalFunc.length-1;
-}
-function executeUniqueGlobalFunc(index, value){
-	if(index==undefined) return;
-	uniqueGlobalFunc[index][0].call(uniqueGlobalFunc[index][1], value);
+	return 'date';
 }
 
-/////////
+
+evalJavaScriptFunction = function(functionText, args){
+	//if(HOLD) return;
+
+	var res;
+
+	var myFunction;
+	
+	var good = true;
+	var message = '';
+
+	var realCode;
+
+	var isFunction = functionText.split('\n')[0].indexOf('function')!=-1;
+
+	if(isFunction){
+		realCode = "myFunction = " + functionText;
+	} else {
+		realCode = "myVar = " + functionText;
+	}
+
+	try{
+		if(isFunction){
+			eval(realCode);
+			res = myFunction.apply(this, args);
+		} else {
+			eval(realCode);
+			res = myVar;
+		}
+	} catch(err){
+		good = false;
+		message = err.message;
+		res = null;
+	}
+
+	var resultObject = {
+		result:res,
+		success:good,
+		errorMessage:message
+	};
+
+	return resultObject;
+}
+
+
+
+function argumentsToArray(args){
+	return Array.prototype.slice.call(args, 0);
+}
+
+
+
+
+
+
+
+function TimeLogger( name ){
+	var scope = this;
+	this.name = name;
+	this.clocks = {};
+
+	this.tic = function( clockName ){
+		scope.clocks[clockName] = new Date().getTime();
+		//c.l( "TimeLogger '"+clockName+"' has been started");
+	}
+	this.tac = function( clockName ){
+		if( scope.clocks[clockName]==null ){
+			scope.tic( clockName );
+		}else{
+			var now = new Date().getTime();
+			var diff = now - scope.clocks[clockName];
+			c.l( "TimeLogger '"+clockName+"' took " + diff + " ms");
+		}
+	}
+}
+var tl = new TimeLogger( "Global Time Logger" );
+
+
+
+
 
 /**
 * ConsoleTools
@@ -14637,7 +18985,11 @@ function executeUniqueGlobalFunc(index, value){
 * * @constructor
 */
 
-function ConsoleTools(){}
+function ConsoleTools(){};
+
+
+ConsoleTools._ticTime;
+ConsoleTools._tacTime;
 
 ConsoleTools.NumberTableOnConsole=function(table){
 	var message = "";
@@ -14645,7 +18997,7 @@ ConsoleTools.NumberTableOnConsole=function(table){
 	var number;
 	var i;
 	var j;
-	c.log(table);
+
 	for(j=0;j<table[0].length; j++){
 		line = "|"; 
 		for(i=0;table[i]!=null; i++){
@@ -14655,12 +19007,28 @@ ConsoleTools.NumberTableOnConsole=function(table){
 		}
 		message+=line+"\n";
 	}
-	c.log(message);
+
+	c.l(message);
+	
 	return message;
 }
 
 
+ConsoleTools.tic = function(message){
+	message = message||"";
 
+	ConsoleTools._ticTime = ConsoleTools._tacTime = new Date().getTime();
+	ConsoleTools._nTacs = 0;
+	c.l('°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° tic °°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° ['+message+']');
+}
+
+ConsoleTools.tac = function(message){
+	message = message||"";
+
+	var lastTac = ConsoleTools._tacTime;
+	ConsoleTools._tacTime = new Date().getTime();
+	c.l('°°°°°°° tac ['+message+'], t from tic:'+(ConsoleTools._tacTime-ConsoleTools._ticTime)+', t from last tac:'+((ConsoleTools._tacTime-lastTac)) );
+}
 /**
 * FastHtml 
 * @constructor
@@ -14745,7 +19113,7 @@ FastHtml.expand=function(abreviatedHTML, scope, onEvent){
 			if(href.substr(0,7)=="http://" || href.substr(0,8)=="https://"){
 				newText = newText.replace("<e"+bit+">", "<u><a href='"+href+"' target='"+target+"'>"+text+"</a></u>");
 			} else {
-				var index=getUniqueGlobalFunc(onEvent, scope);
+				//var index=getUniqueGlobalFunc(onEvent, scope);
 				//newText = newText.replace("<e"+bit+">", "<u><a href='javascript:clickLink()' onclick='event.preventDefault(); executeUniqueGlobalFunc("+index+", "+href+");return false; '>"+text+"</a></u>");
 				newText = newText.replace("<e"+bit+">", "<u><a href='javascript:FastHtml.clickLink(\""+href+"\")' FastHtml.onclick='event.preventDefault(); clickLink(\""+href+"\"); return false; '>"+text+"</a></u>");
 			}
@@ -14827,6 +19195,10 @@ FastHtml.findAndPlaceTwitterAdresses=function(text){
 	return (blocks.length==0 || blocks.length==1)?text:blocks2.join('');
 }
 
+FastHtml.getColorTag=function(color){
+	color = ColorOperators.colorStringToHEX(color);
+	return "<font color=\""+color+"\">";
+}
 
 /**
 * JSONUtils 
@@ -14841,7 +19213,390 @@ JSONUtils.stringifyAndPrint=function(object){
 	c.log(jsonString);
 	c.log("__________________________________________________________________________________________________________________________________________________________");
 }
+/*
+ * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
+ * Digest Algorithm, as defined in RFC 1321.
+ * Version 2.2 Copyright (C) Paul Johnston 1999 - 2009
+ * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
+ * Distributed under the BSD License
+ * See http://pajhome.org.uk/crypt/md5 for more info.
+ */
 
+/*
+ * Configurable variables. You may need to tweak these to be compatible with
+ * the server-side, but the defaults work in most cases.
+ */
+//var hexcase = 0;   /* hex output format. 0 - lowercase; 1 - uppercase        */
+//var b64pad  = "";  /* base-64 pad character. "=" for strict RFC compliance   */
+
+
+function MD5(){};
+
+/*
+ * These are the functions you'll usually want to call
+ * They take string arguments and return either hex or base-64 encoded strings
+ */
+MD5.hex_md5 = function(s)    { return this.rstr2hex(this.rstr_md5(this.str2rstr_utf8(s))); }
+MD5.b64_md5 = function(s)    { return this.rstr2b64(this.rstr_md5(this.str2rstr_utf8(s))); }
+MD5.any_md5 = function(s, e) { return this.rstr2any(this.rstr_md5(this.str2rstr_utf8(s)), e); }
+MD5.hex_hmac_md5 = function(k, d)
+  { return this.rstr2hex(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); }
+MD5.b64_hmac_md5 = function(k, d)
+  { return this.rstr2b64(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); }
+MD5.any_hmac_md5 = function(k, d, e)
+  { return this.rstr2any(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d)), e); }
+
+/*
+ * Perform a simple self-test to see if the VM is working
+ */
+MD5.md5_vm_test = function()
+{
+  return this.hex_md5("abc").toLowerCase() == "900150983cd24fb0d6963f7d28e17f72";
+}
+
+/*
+ * Calculate the MD5 of a raw string
+ */
+MD5.rstr_md5 = function(s)
+{
+  return this.binl2rstr(this.binl_md5(this.rstr2binl(s), s.length * 8));
+}
+
+/*
+ * Calculate the HMAC-MD5, of a key and some data (raw strings)
+ */
+MD5.rstr_hmac_md5 = function(key, data)
+{
+  var bkey = rstr2binl(key);
+  if(bkey.length > 16) bkey = this.binl_md5(bkey, key.length * 8);
+
+  var ipad = Array(16), opad = Array(16);
+  for(var i = 0; i < 16; i++)
+  {
+    ipad[i] = bkey[i] ^ 0x36363636;
+    opad[i] = bkey[i] ^ 0x5C5C5C5C;
+  }
+
+  var hash = this.binl_md5(ipad.concat(this.rstr2binl(data)), 512 + data.length * 8);
+  return this.binl2rstr(this.binl_md5(opad.concat(hash), 512 + 128));
+}
+
+/*
+ * Convert a raw string to a hex string
+ */
+MD5.rstr2hex = function(input)
+{
+	var hexcase = 0;
+  try { hexcase } catch(e) { hexcase=0; }
+  var hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
+  var output = "";
+  var x;
+  for(var i = 0; i < input.length; i++)
+  {
+    x = input.charCodeAt(i);
+    output += hex_tab.charAt((x >>> 4) & 0x0F)
+           +  hex_tab.charAt( x        & 0x0F);
+  }
+  return output;
+}
+
+/*
+ * Convert a raw string to a base-64 string
+ */
+MD5.rstr2b64 = function(input)
+{
+	var b64pad  = "";
+  try { b64pad } catch(e) { b64pad=''; }
+  var tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+  var output = "";
+  var len = input.length;
+  for(var i = 0; i < len; i += 3)
+  {
+    var triplet = (input.charCodeAt(i) << 16)
+                | (i + 1 < len ? input.charCodeAt(i+1) << 8 : 0)
+                | (i + 2 < len ? input.charCodeAt(i+2)      : 0);
+    for(var j = 0; j < 4; j++)
+    {
+      if(i * 8 + j * 6 > input.length * 8) output += b64pad;
+      else output += tab.charAt((triplet >>> 6*(3-j)) & 0x3F);
+    }
+  }
+  return output;
+}
+
+/*
+ * Convert a raw string to an arbitrary string encoding
+ */
+MD5.rstr2any = function(input, encoding)
+{
+  var divisor = encoding.length;
+  var i, j, q, x, quotient;
+
+  /* Convert to an array of 16-bit big-endian values, forming the dividend */
+  var dividend = Array(Math.ceil(input.length / 2));
+  for(i = 0; i < dividend.length; i++)
+  {
+    dividend[i] = (input.charCodeAt(i * 2) << 8) | input.charCodeAt(i * 2 + 1);
+  }
+
+  /*
+   * Repeatedly perform a long division. The binary array forms the dividend,
+   * the length of the encoding is the divisor. Once computed, the quotient
+   * forms the dividend for the next step. All remainders are stored for later
+   * use.
+   */
+  var full_length = Math.ceil(input.length * 8 /
+                                    (Math.log(encoding.length) / Math.log(2)));
+  var remainders = Array(full_length);
+  for(j = 0; j < full_length; j++)
+  {
+    quotient = Array();
+    x = 0;
+    for(i = 0; i < dividend.length; i++)
+    {
+      x = (x << 16) + dividend[i];
+      q = Math.floor(x / divisor);
+      x -= q * divisor;
+      if(quotient.length > 0 || q > 0)
+        quotient[quotient.length] = q;
+    }
+    remainders[j] = x;
+    dividend = quotient;
+  }
+
+  /* Convert the remainders to the output string */
+  var output = "";
+  for(i = remainders.length - 1; i >= 0; i--)
+    output += encoding.charAt(remainders[i]);
+
+  return output;
+}
+
+/*
+ * Encode a string as utf-8.
+ * For efficiency, this assumes the input is valid utf-16.
+ */
+MD5.str2rstr_utf8 = function(input)
+{
+  var output = "";
+  var i = -1;
+  var x, y;
+
+  while(++i < input.length)
+  {
+    /* Decode utf-16 surrogate pairs */
+    x = input.charCodeAt(i);
+    y = i + 1 < input.length ? input.charCodeAt(i + 1) : 0;
+    if(0xD800 <= x && x <= 0xDBFF && 0xDC00 <= y && y <= 0xDFFF)
+    {
+      x = 0x10000 + ((x & 0x03FF) << 10) + (y & 0x03FF);
+      i++;
+    }
+
+    /* Encode output as utf-8 */
+    if(x <= 0x7F)
+      output += String.fromCharCode(x);
+    else if(x <= 0x7FF)
+      output += String.fromCharCode(0xC0 | ((x >>> 6 ) & 0x1F),
+                                    0x80 | ( x         & 0x3F));
+    else if(x <= 0xFFFF)
+      output += String.fromCharCode(0xE0 | ((x >>> 12) & 0x0F),
+                                    0x80 | ((x >>> 6 ) & 0x3F),
+                                    0x80 | ( x         & 0x3F));
+    else if(x <= 0x1FFFFF)
+      output += String.fromCharCode(0xF0 | ((x >>> 18) & 0x07),
+                                    0x80 | ((x >>> 12) & 0x3F),
+                                    0x80 | ((x >>> 6 ) & 0x3F),
+                                    0x80 | ( x         & 0x3F));
+  }
+  return output;
+}
+
+/*
+ * Encode a string as utf-16
+ */
+MD5.str2rstr_utf16le = function(input)
+{
+  var output = "";
+  for(var i = 0; i < input.length; i++)
+    output += String.fromCharCode( input.charCodeAt(i)        & 0xFF,
+                                  (input.charCodeAt(i) >>> 8) & 0xFF);
+  return output;
+}
+
+MD5.str2rstr_utf16be = function(input)
+{
+  var output = "";
+  for(var i = 0; i < input.length; i++)
+    output += String.fromCharCode((input.charCodeAt(i) >>> 8) & 0xFF,
+                                   input.charCodeAt(i)        & 0xFF);
+  return output;
+}
+
+/*
+ * Convert a raw string to an array of little-endian words
+ * Characters >255 have their high-byte silently ignored.
+ */
+MD5.rstr2binl = function(input)
+{
+  var output = Array(input.length >> 2);
+  for(var i = 0; i < output.length; i++)
+    output[i] = 0;
+  for(var i = 0; i < input.length * 8; i += 8)
+    output[i>>5] |= (input.charCodeAt(i / 8) & 0xFF) << (i%32);
+  return output;
+}
+
+/*
+ * Convert an array of little-endian words to a string
+ */
+MD5.binl2rstr = function(input)
+{
+  var output = "";
+  for(var i = 0; i < input.length * 32; i += 8)
+    output += String.fromCharCode((input[i>>5] >>> (i % 32)) & 0xFF);
+  return output;
+}
+
+/*
+ * Calculate the MD5 of an array of little-endian words, and a bit length.
+ */
+MD5.binl_md5 = function(x, len)
+{
+  /* append padding */
+  x[len >> 5] |= 0x80 << ((len) % 32);
+  x[(((len + 64) >>> 9) << 4) + 14] = len;
+
+  var a =  1732584193;
+  var b = -271733879;
+  var c = -1732584194;
+  var d =  271733878;
+
+  for(var i = 0; i < x.length; i += 16)
+  {
+    var olda = a;
+    var oldb = b;
+    var oldc = c;
+    var oldd = d;
+
+    a = this.md5_ff(a, b, c, d, x[i+ 0], 7 , -680876936);
+    d = this.md5_ff(d, a, b, c, x[i+ 1], 12, -389564586);
+    c = this.md5_ff(c, d, a, b, x[i+ 2], 17,  606105819);
+    b = this.md5_ff(b, c, d, a, x[i+ 3], 22, -1044525330);
+    a = this.md5_ff(a, b, c, d, x[i+ 4], 7 , -176418897);
+    d = this.md5_ff(d, a, b, c, x[i+ 5], 12,  1200080426);
+    c = this.md5_ff(c, d, a, b, x[i+ 6], 17, -1473231341);
+    b = this.md5_ff(b, c, d, a, x[i+ 7], 22, -45705983);
+    a = this.md5_ff(a, b, c, d, x[i+ 8], 7 ,  1770035416);
+    d = this.md5_ff(d, a, b, c, x[i+ 9], 12, -1958414417);
+    c = this.md5_ff(c, d, a, b, x[i+10], 17, -42063);
+    b = this.md5_ff(b, c, d, a, x[i+11], 22, -1990404162);
+    a = this.md5_ff(a, b, c, d, x[i+12], 7 ,  1804603682);
+    d = this.md5_ff(d, a, b, c, x[i+13], 12, -40341101);
+    c = this.md5_ff(c, d, a, b, x[i+14], 17, -1502002290);
+    b = this.md5_ff(b, c, d, a, x[i+15], 22,  1236535329);
+
+    a = this.md5_gg(a, b, c, d, x[i+ 1], 5 , -165796510);
+    d = this.md5_gg(d, a, b, c, x[i+ 6], 9 , -1069501632);
+    c = this.md5_gg(c, d, a, b, x[i+11], 14,  643717713);
+    b = this.md5_gg(b, c, d, a, x[i+ 0], 20, -373897302);
+    a = this.md5_gg(a, b, c, d, x[i+ 5], 5 , -701558691);
+    d = this.md5_gg(d, a, b, c, x[i+10], 9 ,  38016083);
+    c = this.md5_gg(c, d, a, b, x[i+15], 14, -660478335);
+    b = this.md5_gg(b, c, d, a, x[i+ 4], 20, -405537848);
+    a = this.md5_gg(a, b, c, d, x[i+ 9], 5 ,  568446438);
+    d = this.md5_gg(d, a, b, c, x[i+14], 9 , -1019803690);
+    c = this.md5_gg(c, d, a, b, x[i+ 3], 14, -187363961);
+    b = this.md5_gg(b, c, d, a, x[i+ 8], 20,  1163531501);
+    a = this.md5_gg(a, b, c, d, x[i+13], 5 , -1444681467);
+    d = this.md5_gg(d, a, b, c, x[i+ 2], 9 , -51403784);
+    c = this.md5_gg(c, d, a, b, x[i+ 7], 14,  1735328473);
+    b = this.md5_gg(b, c, d, a, x[i+12], 20, -1926607734);
+
+    a = this.md5_hh(a, b, c, d, x[i+ 5], 4 , -378558);
+    d = this.md5_hh(d, a, b, c, x[i+ 8], 11, -2022574463);
+    c = this.md5_hh(c, d, a, b, x[i+11], 16,  1839030562);
+    b = this.md5_hh(b, c, d, a, x[i+14], 23, -35309556);
+    a = this.md5_hh(a, b, c, d, x[i+ 1], 4 , -1530992060);
+    d = this.md5_hh(d, a, b, c, x[i+ 4], 11,  1272893353);
+    c = this.md5_hh(c, d, a, b, x[i+ 7], 16, -155497632);
+    b = this.md5_hh(b, c, d, a, x[i+10], 23, -1094730640);
+    a = this.md5_hh(a, b, c, d, x[i+13], 4 ,  681279174);
+    d = this.md5_hh(d, a, b, c, x[i+ 0], 11, -358537222);
+    c = this.md5_hh(c, d, a, b, x[i+ 3], 16, -722521979);
+    b = this.md5_hh(b, c, d, a, x[i+ 6], 23,  76029189);
+    a = this.md5_hh(a, b, c, d, x[i+ 9], 4 , -640364487);
+    d = this.md5_hh(d, a, b, c, x[i+12], 11, -421815835);
+    c = this.md5_hh(c, d, a, b, x[i+15], 16,  530742520);
+    b = this.md5_hh(b, c, d, a, x[i+ 2], 23, -995338651);
+
+    a = this.md5_ii(a, b, c, d, x[i+ 0], 6 , -198630844);
+    d = this.md5_ii(d, a, b, c, x[i+ 7], 10,  1126891415);
+    c = this.md5_ii(c, d, a, b, x[i+14], 15, -1416354905);
+    b = this.md5_ii(b, c, d, a, x[i+ 5], 21, -57434055);
+    a = this.md5_ii(a, b, c, d, x[i+12], 6 ,  1700485571);
+    d = this.md5_ii(d, a, b, c, x[i+ 3], 10, -1894986606);
+    c = this.md5_ii(c, d, a, b, x[i+10], 15, -1051523);
+    b = this.md5_ii(b, c, d, a, x[i+ 1], 21, -2054922799);
+    a = this.md5_ii(a, b, c, d, x[i+ 8], 6 ,  1873313359);
+    d = this.md5_ii(d, a, b, c, x[i+15], 10, -30611744);
+    c = this.md5_ii(c, d, a, b, x[i+ 6], 15, -1560198380);
+    b = this.md5_ii(b, c, d, a, x[i+13], 21,  1309151649);
+    a = this.md5_ii(a, b, c, d, x[i+ 4], 6 , -145523070);
+    d = this.md5_ii(d, a, b, c, x[i+11], 10, -1120210379);
+    c = this.md5_ii(c, d, a, b, x[i+ 2], 15,  718787259);
+    b = this.md5_ii(b, c, d, a, x[i+ 9], 21, -343485551);
+
+    a = this.safe_add(a, olda);
+    b = this.safe_add(b, oldb);
+    c = this.safe_add(c, oldc);
+    d = this.safe_add(d, oldd);
+  }
+  return Array(a, b, c, d);
+}
+
+/*
+ * These functions implement the four basic operations the algorithm uses.
+ */
+MD5.md5_cmn = function(q, a, b, x, s, t)
+{
+  return this.safe_add(this.bit_rol(this.safe_add(this.safe_add(a, q), this.safe_add(x, t)), s),b);
+}
+MD5.md5_ff = function(a, b, c, d, x, s, t)
+{
+  return this.md5_cmn((b & c) | ((~b) & d), a, b, x, s, t);
+}
+MD5.md5_gg = function(a, b, c, d, x, s, t)
+{
+  return this.md5_cmn((b & d) | (c & (~d)), a, b, x, s, t);
+}
+MD5.md5_hh = function(a, b, c, d, x, s, t)
+{
+  return this.md5_cmn(b ^ c ^ d, a, b, x, s, t);
+}
+MD5.md5_ii = function(a, b, c, d, x, s, t)
+{
+  return this.md5_cmn(c ^ (b | (~d)), a, b, x, s, t);
+}
+
+/*
+ * Add integers, wrapping at 2^32. This uses 16-bit operations internally
+ * to work around bugs in some JS interpreters.
+ */
+MD5.safe_add = function(x, y)
+{
+  var lsw = (x & 0xFFFF) + (y & 0xFFFF);
+  var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+  return (msw << 16) | (lsw & 0xFFFF);
+}
+
+/*
+ * Bitwise rotate a 32-bit number to the left.
+ */
+MD5.bit_rol = function(num, cnt)
+{
+  return (num << cnt) | (num >>> (32 - cnt));
+}
 /**
 * StringUtils 
 * @constructor
@@ -14860,7 +19615,6 @@ StringUtils.stringtoXML=function(text){
     }
     return doc;
 }
-
 function Navigator(){};
 var userAgent;
 var userAgentVersion;
@@ -14887,7 +19641,6 @@ Navigator.getUserAgent=function(){
 Navigator.getUserAgentVersion=function(){
   return userAgentVersion;
 }
-
 function CountryListDraw(){
 };
 
@@ -14947,14 +19700,17 @@ CountryListDraw.drawCountriesPolygons = function(context, countryList, frame, ge
 	}
 }
 
-
 function CirclesVisOperators(){}
 
 CirclesVisOperators.circlesCloud = function(weights, frame, margin){
+	if(weights==null || weights.length==0) return null;
+
 	margin = margin==null?0:margin;
 	
 	var normWeights = weights.getNormalizedToMax().sqrt();
 	var circlesPlaced = new Polygon3D();
+
+	c.l('  o',weights.length, normWeights);
 	
 	var dL = 6;
 	
@@ -14993,7 +19749,7 @@ CirclesVisOperators.circlesCloud = function(weights, frame, margin){
 	}
 	
 	var circle;
-	prop = 0.5*frame.width/rMax;
+	prop = 0.5*frame.width/(rMax+0.001);
 	for(i=0; circlesPlaced[i]!=null; i++){
 		circle = circlesPlaced[i];
 		circle.x = center.x + (circle.x-center.x)*prop;
@@ -15012,7 +19768,298 @@ CirclesVisOperators._pointInCircles = function(circles, px, py, r, margin){
 	}
 	return false;
 }
+function ColorsDraw(){};
 
+/**
+ * draws a color scale, with optional min and max associated values
+ * @param  {Rectangle} frame
+ * @param  {ColorScale} colorScale
+ * 
+ * @param  {Number} minValue value associated to min color
+ * @param  {Number} maxValue value associated to max color
+ * tags:draw
+ */
+ColorsDraw.drawColorScaleLegend = function(frame, colorScale, minValue, maxValue){
+	var change = frame.memory==null || frame.width!=frame.memory.w ||  frame.height!=frame.memory.h ||  colorScale!=frame.memory.cS ||  minValue!=frame.memory.min ||  maxValue!=frame.memory.max
+
+	if(change){
+		frame.memory = {
+			w:frame.width,
+			h:frame.height,
+			cS:colorScale,
+			min:minValue,
+			max:maxValue
+		}
+
+		///// capture image 1
+		var newCanvas = document.createElement("canvas");
+		newCanvas.width = frame.width;
+		newCanvas.height = frame.height;
+		var newContext = newCanvas.getContext("2d");
+		newContext.clearRect(0,0,frame.width,frame.height);
+		var mainContext = context;
+		context = newContext;
+		/////
+
+		var x;
+
+		if(frame.width>frame.height){
+
+			for(x=0; x<frame.width; x+=2){
+				setFill(colorScale(x/frame.width));
+				fRect(x,0,2,frame.height);
+			}
+
+			setStroke('rgba(0,0,0,0.8)', 3);
+
+			if(minValue!=null){
+				setText('white', 12, null, 'left', 'middle');
+				fsText(minValue, 2, frame.height*0.5);
+			}
+
+			if(maxValue!=null){
+				setText('white', 12, null, 'right', 'middle');
+				fsText(maxValue, frame.width-2, frame.height*0.5);
+			}
+		} else {
+
+			//finis this, with color scale going uppwards, and texts for min max values
+
+			for(x=0; x<frame.height; x+=2){
+				setFill(colorScale(x/frame.height));
+				fRect(0,x,frame.width, 2);
+			}
+		}
+
+		
+
+
+		//// capture image 2
+		context = mainContext;
+		frame.memory.image = new Image();
+		frame.memory.image.src = newCanvas.toDataURL();
+		////
+	}
+
+
+	if(frame.memory.image){
+		drawImage(frame.memory.image, frame.x, frame.y)
+	}
+
+}
+function ImageDraw(){};
+
+
+/**
+ * draws an image
+ * @param  {Rectangle} frame
+ * @param  {Image} image to be drawn
+ * 
+ * @param  {Number} mode: 0: adjust to rectangle, 1: center and mask, 2: center and eventual reduction (image smaller than rectangle), 3: adjust to rectangle preserving proportions (image bigger than rectangle), 4: fill repeated from corner, 5: fill repeated from 0,0
+ * tags:draw
+ */
+ImageDraw.drawImage = function(frame, image, mode){
+	mode = mode||0;
+	Draw.fillRectangleWithImage(frame, image, mode);
+}
+
+
+/**
+ * draws a visualization and captures an image
+ * @param  {String} visFunction visualization function
+ * @param  {Number} width
+ * @param  {Number} height
+ *
+ * @param {Object} argument0 first argument of the visualization function
+ * @param {Object} argument1 second argument of the visualization function
+ * @param {Object} argument2 third argument of the visualization function
+ * @param {Object} argument3 fourth argument of the visualization function
+ * @return {Image}
+ * tags:
+ */
+ImageDraw.captureVisualizationImage = function(visFunctionName, width, height){
+	c.log('visFunctionName', visFunctionName);
+	if(visFunctionName==null || width==null || (!width>0) || height==null || !(height>0)) return;
+
+	var frame = new Rectangle(0,0,width,height);
+
+	var args = Array.prototype.slice.call(arguments);
+	args = [frame].concat(args.slice(3));
+
+	var visFunction;
+
+	if(visFunctionName.indexOf('.')==-1){
+		visFunction = this[visFunctionName];
+	} else {
+		c.log(visFunctionName.split('.')[0], this[visFunctionName.split('.')[0]], this['mY']);
+		if(this[visFunctionName.split('.')[0]]==null) return;
+		visFunction = this[visFunctionName.split('.')[0]][visFunctionName.split('.')[1]];
+	}
+
+	if(visFunction==null) return null;
+
+	c.log('ImageDraw.captureVisualizationImage | args', args);
+	c.log('ImageDraw.captureVisualizationImage | visFunction==null', visFunction==null);
+
+	var newCanvas = document.createElement("canvas");
+	newCanvas.width = width;
+	newCanvas.height = height;
+	var newContext = newCanvas.getContext("2d");
+	newContext.clearRect(0,0,width,height);
+
+	var mainContext = context;
+	context = newContext;
+
+	////draw
+	//setStroke('black', 2);
+	//line(0,0,width,height);
+	//line(width,0,0,height);
+	visFunction.apply(this, args);
+	////
+
+	context = mainContext;
+	
+	var im = new Image();
+	im.src = newCanvas.toDataURL();
+
+	return im;
+}
+function ListDraw(){};
+
+/**
+ * draws a list in a vertical stack
+ * @param  {Rectangle} frame
+ * @param  {List} list to be drawn
+ * 
+ * @param {Number} returnMode:<br>-1:no selection<br>0:return index<br>1:return element<br>2:indexes<br>3:elements
+ * @param  {ColorList} colorList colors of elements
+ * @param {Number} textSize
+ * @param  {Number} mode 0:color in square if any
+ * @param {Object} [varname] index or list of indexes of externally selected
+ * @return {Object} returns the index of the selected element, the element, a list of indexes or a list of elements
+ * tags:draw
+ */
+ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode, selectedInit){
+	if(list==null || !list.length>0) return;
+
+	textSize = textSize||14;
+	returnMode = returnMode==null?0:returnMode;
+
+	if(frame.memory==null) frame.memory = {selected:0, y:0, multiSelected:new List()};
+
+	var changeList = frame.memory.list!=list;
+	var changeExternallySelected = (changeList && selectedInit!=null) || frame.memory.selectedInit != selectedInit;
+
+	if(changeExternallySelected){
+		if(returnMode==3){
+			frame.memory.multiSelected = new List();
+			selectedInit.forEach(function(index){
+				frame.memory.multiSelected.push(list[index]);
+			});
+		} else if(returnMode==2){
+			frame.memory.multiSelected = List.fromArray(selectedInit).getImproved();
+		} else {
+			frame.memory.selected = selectedInit;
+		}
+
+		frame.memory.selectedInit = selectedInit;
+	}
+	
+	if(changeList){
+		frame.memory.list=list;
+	}
+
+	var i;
+	var x = frame.x + 5;
+	var xTexts = x + (colorList?15:0);
+	var y;
+	var dy = textSize+4;
+	var n = list.length;
+	var bottom = frame.getBottom();
+	var mouseIn = frame.containsPoint(mP);
+	var y0Follow = 0;
+	var y0;
+	var isSelected;
+	var multi = returnMode==2 || returnMode==3;
+	var index, onMulti;
+
+	var hList = list.length*dy;
+
+	if(hList<=frame.height-20){
+		y0 = frame.y + 10;
+	} else {
+		if(mouseIn){
+			y0Follow = Math.min(10 - (hList - frame.height + 20)*((mY-(frame.y+10))/(frame.height-20)), 10);
+		} else {
+			y0Follow = 10 - (hList - frame.height + 20)*frame.memory.selected/list.length;
+		}
+
+		frame.memory.y = 0.95*frame.memory.y + 0.05*y0Follow;
+
+		y0 = frame.y + frame.memory.y;
+	}
+	
+
+	setText('black', textSize);
+
+	for(i=0; list[i]!=null; i++){
+		y = y0 + dy*i;
+
+		if(y<frame.y) continue;
+		if(y+12>bottom) break;
+
+		
+
+		if(returnMode!=-1){
+
+			index = frame.memory.multiSelected.indexOf(i);
+			onMulti = multi && index!=-1;
+
+			isSelected = multi?onMulti:frame.memory.selected==i;
+
+			if(isSelected){
+				setFill('black');
+				fRect(frame.x+2, y, frame.width-4, dy);
+				setFill('white');
+			} else {
+				setFill('black');
+			}
+			fText(list[i].toString(), xTexts, y+2);
+
+			if(mouseIn && mY>=y && mY<y+dy){
+				setFill('rgba(150,150,150,0.3)');
+				if(fRectM(frame.x+2, y, frame.width-4, dy)){
+					setCursor('pointer');
+				}
+				if(MOUSE_DOWN){
+					if(multi){
+
+						if(onMulti){
+							frame.memory.multiSelected = frame.memory.multiSelected.getWithoutElementAtIndex(index);
+						} else {
+							frame.memory.multiSelected = frame.memory.multiSelected.clone();
+							frame.memory.multiSelected.push(returnMode==2?i:list[i]);
+							frame.memory.multiSelected = frame.memory.multiSelected.getImproved();
+						}
+
+					} else {
+						frame.memory.selected = i;
+					}
+				}
+			}
+		} else {
+			setFill('black');
+		}
+		
+		if(colorList){
+			setFill(colorList==null?'rgb(200, 200, 200)':colorList[i%n]);
+			fRect(x, y + 4, 10, 10);
+		}
+		
+	}
+
+	return returnMode==1?list[frame.memory.selected]:(multi?frame.memory.multiSelected:frame.memory.selected);
+}
 function IntervalTableDraw(){};
 
 IntervalTableDraw.MIN_CHARACTERS_SIZE = 1;
@@ -15145,7 +20192,7 @@ IntervalTableDraw._isOnShape=function(prevPoint, point, prevYsup, newYsup, offX,
 
 
 
-IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, center, radius, r0, colors, texts, returnHovered, angles){
+IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, center, radius, r0, colors, texts, returnHovered, angles, angle0){
 	var nElements = intervalsFlowTable.length;
 	var i;
 	var j;
@@ -15154,6 +20201,7 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 	center = center==null?new Point(100,100):center;
 	radius = radius==null?200:radius;
 	r0 = r0==null?10:r0;
+	angle0 = angle0==null?0:angle0;
 	
 	var nCols = intervalsFlowTable[0].length;
 	var dA = TwoPi/nCols;
@@ -15165,8 +20213,8 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 	var lastIntervalList = intervalsFlowTable[nElements-1];
 	var interval;
 	
-	//var a = angles==null?0:angles[0];
 	var r = r0;
+	var s, textS;
 	
 	var prevPoint;
 	var prevRsup;
@@ -15204,7 +20252,7 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 		
 		context.beginPath();
 		
-		point = new Point(angles==null?0:angles[0], (1-intervalList[0].y)*dR+r0);
+		point = new Point(angles==null?0:angles[0] + angle0, (1-intervalList[0].y)*dR+r0);
 		context.moveTo(point.y*Math.cos(point.x)+center.x, point.y*Math.sin(point.x)+center.y);
 		
 		prevPoint = point;
@@ -15212,7 +20260,7 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 		for(j=1;j<=nCols;j++){
 
 			interval = intervalList[j%nCols];
-			point = new Point(angles==null?j*dA:angles[j%nCols], (1-interval.y)*dR+r0);
+			point = new Point(angles==null?j*dA:angles[j%nCols] + angle0, (1-interval.y)*dR+r0);
 			
 			nR = prevPoint.y/cosOffA;
 			nR2 = point.y/cosOffA;
@@ -15221,7 +20269,7 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 								  nR2*Math.cos(point.x-offA)+center.x, nR2*Math.sin(point.x-offA)+center.y,
 								  point.y*Math.cos(point.x)+center.x, point.y*Math.sin(point.x)+center.y);
 			
-			if(returnHovered && nHovered==-1 && this._isOnRadialShape(center, mousePoint, prevPoint.x, point.x, dR*(1-intervalList[(j-1)%nCols].y)+r0, dR*(1-intervalList[(j-1)%nCols].x)+r0, dR*(1-intervalList[j%nCols].y)+r0, dR*(1-intervalList[j%nCols].x)+r0)){
+			if(returnHovered && nHovered==-1 && this._isOnRadialShape(center, mP, prevPoint.x, point.x, dR*(1-intervalList[(j-1)%nCols].y)+r0, dR*(1-intervalList[(j-1)%nCols].x)+r0, dR*(1-intervalList[j%nCols].y)+r0, dR*(1-intervalList[j%nCols].x)+r0)){
 				nHovered = i;
 			}
 			
@@ -15229,10 +20277,11 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 			
 			if(texts!=null){
 				s = interval.getAmplitude();
-				if(s*radius>27){
+				textS = Math.min(Math.sqrt(s*radius)*3, 28);
+				if(textS>=8){
 					rT = point.y + s*0.5*dR;
 					
-					textsSizes.push(Math.min(Math.sqrt(s*radius)*1.8, 24));
+					textsSizes.push(textS);
 					textsAngles.push(point.x+Math.PI*0.5);
 					
 					textsX.push(rT*Math.cos(point.x)+center.x);
@@ -15241,15 +20290,14 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 					filteredTexts.push(texts[i]);
 				}
 			}
-			
 		}
 		
-		point = new Point(angles==null?0:angles[0], (1-intervalList[0].x)*dR+r0);
+		point = new Point(angles==null?0:angles[0] + angle0, (1-intervalList[0].x)*dR+r0);
 		context.lineTo(point.y*Math.cos(point.x)+center.x, point.y*Math.sin(point.x)+center.y);
 		prevPoint = point;
 		
 		for(j=nCols-1;j>=0;j--){
-			point = new Point(angles==null?j*dA:angles[j], (1-intervalList[j].x)*dR+r0);
+			point = new Point(angles==null?j*dA:angles[j] + angle0, (1-intervalList[j].x)*dR+r0);
 			
 			nR = prevPoint.y/cosOffA;
 			nR2 = point.y/cosOffA;
@@ -15261,20 +20309,16 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 			prevPoint = point;
 		}
 		
-		point = new Point(angles==null?0:angles[0], (1-intervalList[0].x)*dR+r0);
+		point = new Point(angles==null?0:angles[0] + angle0, (1-intervalList[0].x)*dR+r0);
 		context.lineTo(point.y*Math.cos(point.x)+center.x, point.y*Math.sin(point.x)+center.y);
 		
 		context.fill();
 		
 	}
 	
-	for(i=0;filteredTexts[i]!=null;i++){
-		DrawTexts.setContextTextProperties('black', textsSizes[i], 'Arial', 'center', 'middle');
-		context.save();
-		context.translate(textsX[i], textsY[i]);
-		context.rotate(textsAngles[i]);
-		context.fillText(filteredTexts[i], 0, 0);
-		context.restore();
+	for(i=0;filteredTexts[i]!=null;i++){		
+		setText('black', textsSizes[i], null, 'center', 'middle');
+		fTextRotated(filteredTexts[i], textsX[i], textsY[i], textsAngles[i]);
 	}
 	
 	return nHovered;
@@ -15305,7 +20349,7 @@ IntervalTableDraw._isOnRadialShape=function(center, testPoint, a0, a1, r0a, r0b,
 
 
 
-IntervalTableDraw.drawIntervalsWordsFlowTable = function(intervalsFlowTable, frame, texts, colors, typode){
+IntervalTableDraw.drawIntervalsWordsFlowTable = function(frame, intervalsFlowTable, texts, colors, typode){
 	var nElements = intervalsFlowTable.length;
 	
 	var i;
@@ -15461,11 +20505,6 @@ IntervalTableDraw._bezierValue = function(x0, x1, y0, y1, t, offX){
 
 
 
-
-/**
-* NumberTable_or_PolygonDraw
-* @constructor
-*/
 function NumberTableDraw(){};
 
 /**
@@ -15474,14 +20513,16 @@ function NumberTableDraw(){};
  * @param  {NumberTable} numberTable
  * 
  * @param  {ColorScale} colorScale
+ * @param  {Boolean} listColorsIndependent if true each numberList will be colored to fit the colorScale range
  * @param  {Number} margin
  * @return {Point}
  * tags:draw
  */
-NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, margin){
-	if(frame==null || numberTable==null || numberTable.type!="NumberTable" || numberTable.length<2) return; //todo:provisional, this is System's work
+NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listColorsIndependent, margin){
+	if(frame==null || numberTable==null || numberTable.type==null || numberTable.type!="NumberTable" || numberTable.length<2) return null;
 	
 	colorScale = colorScale==null?ColorScales.blueToRed:colorScale;
+	listColorsIndependent = listColorsIndependent||false;
 	margin = margin==null?2:margin;
 
 	var dX = frame.width/numberTable.length;
@@ -15494,18 +20535,26 @@ NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, margi
 	
 	var overCoordinates;
 	
-	var minMaxInterval = numberTable.getMinMaxInterval();
-	var amp = minMaxInterval.getAmplitude();
+	var minMaxInterval;
+	var amp;
+	if(!listColorsIndependent){
+		minMaxInterval = numberTable.getMinMaxInterval();
+		amp = minMaxInterval.getAmplitude();
+	}
 	
 	var mouseXOnColumn;
 	
 	for(i=0;numberTable[i]!=null;i++){
 		numberList = numberTable[i];
-		x = frame.x+i*dX;
+		x = Math.round(frame.x+i*dX);
 		mouseXOnColumn = mX>x && mX<=x+dX;
+		if(listColorsIndependent){
+			minMaxInterval = numberList.getMinMaxInterval();
+			amp = minMaxInterval.getAmplitude();
+		}
 		for(j=0;numberList[j]!=null;j++){
 			context.fillStyle = colorScale((numberList[j]-minMaxInterval.x)/amp);
-			context.fillRect(x, frame.y+j*dY,dX-margin,dY-margin);
+			context.fillRect(x, Math.round(frame.y+j*dY), Math.ceil(dX)-margin, Math.ceil(dY)-margin);
 			if(mouseXOnColumn && mY>frame.y+j*dY && mY<=frame.y+(j+1)*dY) overCoordinates=new Point(i,j);
 		}
 	}
@@ -15527,10 +20576,10 @@ NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, margi
  * tags:draw
  */
 NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colors, maxRadius, loglog, margin){
-	if(frame==null || numberTable==null || numberTable.type!="NumberTable") return; //todo:provisional, this is System's work
+	if(frame==null || numberTable==null || numberTable.type!="NumberTable" ||  numberTable.length<2 ||  numberTable[0].length==0 || numberTable[1].length==0) return; //todo:provisional, this is System's work
 
 	if(numberTable.length<2) return;
-
+	
 	maxRadius = maxRadius||20;
 	loglog = loglog||false;
 	margin = margin||0;
@@ -15544,17 +20593,15 @@ NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colo
 	var list1 = (loglog?numberTable[1].log(1):numberTable[1]).getNormalized();
 	var radii = numberTable.length<=2?null:numberTable[2].getNormalized().sqrt().factor(maxRadius);
 	var nColors = (colors==null)?null:colors.length;
-	var n = Math.min(list0.length, list1.length, (radii==null)?2000:radii.length, (texts==null)?2000:texts.length);
+	var n = Math.min(list0.length, list1.length, (radii==null)?300000:radii.length, (texts==null)?300000:texts.length);
 	var iOver;
-
-
 
 	for(i=0; i<n; i++){
 		x = subframe.x + list0[i]*subframe.width;
 		y = subframe.bottom - list1[i]*subframe.height;
-
+		
 		if(radii==null){
-			if(NumberTableDraw._drawCrossScatterPlot(x, y)) iOver = i;
+			if(NumberTableDraw._drawCrossScatterPlot(x, y, colors==null?'rgb(150,150,150)':colors[i%nColors])) iOver = i;
 		} else {
 			setFill(colors==null?'rgb(150,150,150)':colors[i%nColors]);
 			if(fCircleM(x, y, radii[i], radii[i]+1)) iOver = i;
@@ -15574,13 +20621,12 @@ NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colo
 	if(iOver!=null){
 		setCursor('pointer');
 		return iOver;
-	} 
-
+	}
 }
-NumberTableDraw._drawCrossScatterPlot = function(x, y){
-	setStroke('black', 1);
-	line(x,y-5,x,y+5);
-	line(x-5,y,x+5,y);
+NumberTableDraw._drawCrossScatterPlot = function(x, y, color){
+	setStroke(color, 1);
+	line(x,y-2,x,y+2);
+	line(x-2,y,x+2,y);
 	return Math.pow(mX-x, 2)+Math.pow(mY-y, 2)<25;
 }
 
@@ -15661,8 +20707,6 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
 	//setup
 	if(frame.memory==null || coordinates!=frame.memory.coordinates || colorScale!=frame.memory.colorScale){
 
-		c.log('coordinates[0]',coordinates[0]);
-
 		var isNumberTable = coordinates[0].x==null;
 
 		if(isNumberTable){
@@ -15695,11 +20739,11 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
 
 		for(i=0; i<n; i++){
 			if(isNumberTable){
-				x = numberTable[0][i]-minx;
-				y = numberTable[1][i]-miny;
+				x = Math.floor(numberTable[0][i]-minx);
+				y = Math.floor(numberTable[1][i]-miny);
 			} else {
-				x = polygon[i].x-minx;
-				y = polygon[i].y-miny;
+				x = Math.floor(polygon[i].x-minx);
+				y = Math.floor(polygon[i].y-miny);
 			}
 
 			if(matrix[x]==null) matrix[x] = new NumberList();
@@ -15724,9 +20768,12 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
 			colorScale:colorScale,
 			selected:null
 		}
+
 	} else {
 		matrixColors = frame.memory.matrixColors;
 	}
+
+	//c.log(matrixColors.length, matrixColors[0].length, matrixColors[0][0]);
 
 	//draw
 	var subframe = new Rectangle(frame.x+margin, frame.y+margin, frame.width-margin*2, frame.height-margin*2);
@@ -15777,9 +20824,8 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
 	if(frame.memory.selected) return frame.memory.indexes;
 }
 
-
 /**
- * draws a Steamgraph
+ * draws a steamgraph
  * @param  {Rectangle} frame
  * @param  {NumberTable} numberTable
  *
@@ -15787,38 +20833,582 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
  * @param {Boolean} sorted sort flow polygons
  * @param {Number} intervalsFactor number between 0 and 1, factors the height of flow polygons 
  * @param {Boolean} bezier draws bezier (soft) curves
- * @param  {ColorList} colorList colors of polygons
- * @param  {Number} margin
+ * @param {ColorList} colorList colors of polygons
+ * @param {StringList} horizontalLabels to be placed in the bottom
+ * @param {Boolean} showValues show values in the stream
+ * @param {Number} logFactor if >0 heights will be transformed logaritmically log(logFactor*val + 1)
  * @return {NumberList} list of positions of elements on clicked coordinates
  * tags:draw
  */
-NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, bezier, colorList){
-	if(numberTable==null || numberTable.length<2 || numberTable.type!="NumberTable") return; //todo:provisional, this is System's work
+NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, bezier, colorList, horizontalLabels, showValues, logFactor){
+	if(numberTable==null || numberTable.length<2 || numberTable.type!="NumberTable") return;
+
+	bezier = bezier==null?true:bezier;
 
 	//var self = NumberTableDraw.drawStreamgraph;
 
 	intervalsFactor = intervalsFactor==null?1:intervalsFactor;
 
 	//setup
-	if(frame.memory==null || numberTable!=frame.memory.numberTable || normalized!=frame.memory.normalized || sorted!=frame.memory.sorted || intervalsFactor!=frame.memory.intervalsFactor || intervalsFactor!=frame.memory.intervalsFactor){
+	if(frame.memory==null || numberTable!=frame.memory.numberTable || normalized!=frame.memory.normalized || sorted!=frame.memory.sorted || intervalsFactor!=frame.memory.intervalsFactor || bezier!=frame.memory.bezier || frame.width!=frame.memory.width || frame.height!=frame.memory.height || logFactor!=frame.memory.logFactor){
+		var nT2 = logFactor?numberTable.applyFunction(function(val){return Math.log(logFactor*val+1)}):numberTable;
+
 		frame.memory = {
 			numberTable:numberTable,
 			normalized:normalized,
 			sorted:sorted,
 			intervalsFactor:intervalsFactor,
-			flowIntervals:IntervalTableOperators.scaleIntervals(NumberTableFlowOperators.getFlowTableIntervals(numberTable, normalized, sorted), intervalsFactor)
+			bezier:bezier,
+			flowIntervals:IntervalTableOperators.scaleIntervals(NumberTableFlowOperators.getFlowTableIntervals(nT2, normalized, sorted), intervalsFactor),
+			fOpen:1,
+			names:numberTable.getNames(),
+			mXF:mX,
+			width:frame.width,
+			height:frame.height,
+			logFactor:logFactor,
+			image:null
 		}
-
-		frame.secret = "hola!";
 	}
+
+	if(colorList && frame.memory.colorList!=colorList) frame.memory.image=null;
+	
 	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
-		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(1, numberTable.length):colorList;
+		frame.memory.actualColorList = colorList==null?ColorListGenerators.createDefaultCategoricalColorList(numberTable.length, 0.7):colorList;
 		frame.memory.colorList = colorList;
 	}
 
-	IntervalTableDraw.drawIntervalsFlowTable(frame.memory.flowIntervals, frame, frame.memory.actualColorList, bezier, 0.3);
+	var flowFrame = new Rectangle(0, 0, frame.width, horizontalLabels==null?frame.height:(frame.height-14));
+
+	if(frame.memory.image==null){
+		///// capture image
+		var newCanvas = document.createElement("canvas");
+		newCanvas.width = frame.width;
+		newCanvas.height = frame.height;
+		var newContext = newCanvas.getContext("2d");
+		newContext.clearRect(0,0,frame.width,frame.height);
+		var mainContext = context;
+		context = newContext;
+		IntervalTableDraw.drawIntervalsFlowTable(frame.memory.flowIntervals, flowFrame, frame.memory.actualColorList, bezier, 0.3);
+		context = mainContext;
+		frame.memory.image = new Image();
+		frame.memory.image.src = newCanvas.toDataURL();
+		/////
+	}
+
+	if(frame.memory.image){
+		
+		frame.memory.fOpen = 0.8*frame.memory.fOpen + 0.2*(frame.containsPoint(mP)?0.8:1);
+		frame.memory.mXF = 0.7*frame.memory.mXF + 0.3*mX;
+		frame.memory.mXF = Math.min(Math.max(frame.memory.mXF, frame.x), frame.getRight());
+		
+		if(frame.memory.fOpen<0.999){
+			context.save();
+			context.translate(frame.x, frame.y);
+			var cut = frame.memory.mXF-frame.x;
+			var x0 = Math.floor(cut*frame.memory.fOpen);
+			var x1 = Math.ceil(frame.width-(frame.width-cut)*frame.memory.fOpen);
+			
+			drawImage(frame.memory.image, 0,0,cut,flowFrame.height,0,0,x0,flowFrame.height);
+			drawImage(frame.memory.image, cut,0,(frame.width-cut),flowFrame.height,x1,0,(frame.width-cut)*frame.memory.fOpen,flowFrame.height);
+
+			NumberTableDraw._drawPartialFlow(flowFrame, frame.memory.flowIntervals, frame.memory.names, frame.memory.actualColorList, cut, x0, x1, 0.3, sorted, showValues?numberTable:null);
+
+			context.restore();
+		} else {
+			drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+		}
+	}
+
+	if(horizontalLabels) NumberTableDraw._drawHorizontalLabels(frame, frame.getBottom()-5, numberTable, horizontalLabels, x0, x1);
+}
+NumberTableDraw._drawHorizontalLabels = function(frame, y, numberTable, horizontalLabels, x0, x1){
+	var dx = frame.width/(numberTable[0].length-1);
+	var x;
+	var mX2 = Math.min(Math.max(mX, frame.x+1), frame.getRight()-1);
+	var iPosDec = (mX2-frame.x)/dx;
+	var iPos = Math.round(iPosDec);
+
+	x0 = x0==null?frame.x:x0+frame.x;
+	x1 = x1==null?frame.x:x1+frame.x;
+	
+	horizontalLabels.forEach(function(label, i){
+		setText('black', (i==iPos && x1>(x0+4))?14:10, null, 'center', 'middle');
+
+		if(x0>x1-5){
+			x = frame.x + i*dx;
+		} else if(iPos==i){
+			x = (x0 + x1)*0.5 - (x1-x0)*(iPosDec-iPos);
+		} else {
+			x = frame.x + i*dx;
+			if(x<mX2){
+				x = frame.x + i*dx*frame.memory.fOpen;
+			} else if(x>mX2){
+				x = frame.x + i*dx*frame.memory.fOpen + (x1-x0);
+			}
+		}
+		fText(horizontalLabels[i], x, y);
+	});
+}
+NumberTableDraw._drawPartialFlow=function(frame, flowIntervals, labels, colors, x, x0, x1, OFF_X, sorted, numberTable){	
+	var w = x1-x0;
+	var wForText = numberTable==null?(x1-x0):(x1-x0)*0.85;
+
+	var nDays = flowIntervals[0].length;
+
+	var wDay = frame.width/(nDays-1);
+	
+	var iDay =  (x-frame.x)/wDay;// Math.min(Math.max((nDays-1)*(x-frame.x)/frame.width, 0), nDays-1);
+	
+	var iDay = Math.max(Math.min(iDay, nDays-1), 0);
+
+	var i;
+	var i0 = Math.floor(iDay);
+	var i1 = Math.ceil(iDay);
+	
+	var t = iDay - i0;
+	var s = 1-t;
+	
+	var xi;
+	var yi;
+	
+	var interval0;
+	var interval1;
+
+	var y, h;
+	
+	var wt;
+	var pt;
+	
+	var text;
+	
+	var offX = OFF_X*wDay;//*(frame.width-(x1-x0))/nDays; //not taken into account
+	
+	//var previOver = iOver;
+	var iOver = -1;
+
+	var X0, X1, xx;
+
+	var ts0, ts1;
+
+	for(i=0; flowIntervals[i]!=null; i++){
+		
+		setFill(colors[i]);
+		interval0 = flowIntervals[i][i0];
+		interval1 = flowIntervals[i][i1];
+
+		X0 = Math.floor(iDay)*wDay;
+		X1 = Math.floor(iDay+1)*wDay;
+
+		xx = x;
+
+		y = GeometryOperators.trueBezierCurveHeightHorizontalControlPoints(X0, X1, interval0.x, interval1.x, X0+offX, X1-offX, xx);
+		h = GeometryOperators.trueBezierCurveHeightHorizontalControlPoints(X0, X1, interval0.y, interval1.y, X0+offX, X1-offX, xx)-y;
+
+		y = y*frame.height + frame.y;
+		h *= frame.height;
+		
+		//if(h<1) continue;
+		
+		if(fRectM(x0,y, w, h)) iOver = i;
+		
+		if(h>=5 && w>40){
+			setText('white', h, null, null, 'middle');
+			
+			text = labels[i];
+			
+			wt = getTextW(text);
+			pt = wt/wForText;
+
+			if(pt>1){
+				setText('white', h/pt, null, null, 'middle');
+			}
+			
+			context.fillText(text, x0, y + h*0.5);
+
+			if(numberTable){
+				wt = getTextW(text);
+
+				ts0 = Math.min(h, h/pt);
+				ts1 = Math.max(ts0*0.6, 8);
+
+				setText('white', ts1, null, null, 'middle');
+				fText(Math.round(numberTable[i][i0]), x0 + wt + w*0.03, y + (h+(ts0-ts1)*0.5)*0.5);
+			}
+
+
+		}
+	}
+
+	return iOver;
 }
 
+
+
+/**
+ * draws a circular steamgraph Without labels
+ * @param {Rectangle} frame
+ * @param {NumberTable} numberTable
+ *
+ * @param {Boolean} normalized normalize each column, making the graph of constant height
+ * @param {Boolean} sorted sort flow polygons
+ * @param {Number} intervalsFactor number between 0 and 1, factors the height of flow polygons
+ * @param {ColorList} colorList colors of polygons
+ * @param {List} names names of rows
+ * @return {NumberList} list of positions of elements on clicked coordinates
+ * tags:draw
+ */
+NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, colorList, names){
+	if(numberTable==null || numberTable.length<2 || numberTable[0].length<2 || numberTable.type!="NumberTable") return;
+
+	intervalsFactor = intervalsFactor==null?1:intervalsFactor;
+
+	//setup
+	if(frame.memory==null || numberTable!=frame.memory.numberTable || normalized!=frame.memory.normalized || sorted!=frame.memory.sorted || intervalsFactor!=frame.memory.intervalsFactor || frame.width!=frame.memory.width || frame.height!=frame.memory.height){
+		frame.memory = {
+			numberTable:numberTable,
+			normalized:normalized,
+			sorted:sorted,
+			intervalsFactor:intervalsFactor,
+			flowIntervals:IntervalTableOperators.scaleIntervals(NumberTableFlowOperators.getFlowTableIntervals(numberTable, normalized, sorted), intervalsFactor),
+			fOpen:1,
+			names:numberTable.getNames(),
+			mXF:mX,
+			width:frame.width,
+			height:frame.height,
+			radius:Math.min(frame.width, frame.height)*0.46 - (names==null?0:8),
+			r0:Math.min(frame.width, frame.height)*0.05,
+			angles:new NumberList(),
+			zoom:1,
+			angle0:0,
+			image:null
+		}
+
+		var dA = TwoPi/numberTable[0].length;
+		numberTable[0].forEach(function(val, i){
+			frame.memory.angles[i] = i*dA;
+		});
+	}
+	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
+		frame.memory.actualColorList = colorList==null?ColorListGenerators.createDefaultCategoricalColorList(numberTable.length, 0.4):colorList;
+		frame.memory.colorList = colorList;
+	}
+
+	var mouseOnFrame = frame.containsPoint(mP);
+	
+	if(mouseOnFrame){
+		if(MOUSE_DOWN){
+			frame.memory.downX = mX;
+			frame.memory.downY = mY;
+			frame.memory.pressed = true;
+			frame.memory.zoomPressed = frame.memory.zoom;
+			frame.memory.anglePressed = frame.memory.angle0;
+		}
+		
+		frame.memory.zoom*=(1-0.4*WHEEL_CHANGE);
+	}
+
+	if(MOUSE_UP) frame.memory.pressed = false;
+	if(frame.memory.pressed){
+		var center = frame.getCenter();
+		var dx0 = frame.memory.downX-center.x;
+		var dy0 = frame.memory.downY-center.y;
+		var d0 = Math.sqrt(Math.pow(dx0, 2) + Math.pow(dy0, 2));
+		var dx1 = mX-center.x;
+		var dy1 = mY-center.y;
+		var d1 = Math.sqrt(Math.pow(dx1, 2) + Math.pow(dy1, 2));
+		frame.memory.zoom = frame.memory.zoomPressed*((d1+5)/(d0+5));
+		var a0 = Math.atan2(dy0, dx0);
+		var a1 = Math.atan2(dy1, dx1);
+		frame.memory.angle0 = frame.memory.anglePressed + a1 - a0;
+	}
+
+	if(mouseOnFrame) frame.memory.image = null;
+	
+	var captureImage = frame.memory.image==null && !mouseOnFrame;
+	var drawingImage = !mouseOnFrame && frame.memory.image!=null && !captureImage;
+
+	if(drawingImage){
+		drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+	} else {
+		if(captureImage){
+			var newCanvas = document.createElement("canvas");
+			newCanvas.width = frame.width;
+			newCanvas.height = frame.height;
+			var newContext = newCanvas.getContext("2d");
+			newContext.clearRect(0,0,frame.width,frame.height);
+			var mainContext = context;
+			context = newContext;
+			var prevFx = frame.x;
+			var prevFy = frame.y;
+			frame.x = 0;
+			frame.y = 0;
+			setFill('white');
+			fRect(0,0,frame.width,frame.height);
+		}
+
+		context.save();
+		clipRectangle(frame.x, frame.y, frame.width, frame.height);
+
+		IntervalTableDraw.drawCircularIntervalsFlowTable(frame.memory.flowIntervals, frame.getCenter(), frame.memory.radius*frame.memory.zoom, frame.memory.r0, frame.memory.actualColorList, frame.memory.names, true, frame.memory.angles, frame.memory.angle0);
+
+		context.restore();
+
+		if(names){
+			var a;
+			var r = frame.memory.radius*frame.memory.zoom+8;
+
+			setText('black', 14, null, 'center', 'middle');
+
+			names.forEach(function(name, i){
+				a = frame.memory.angle0 + frame.memory.angles[i];
+
+				fTextRotated(String(name), frame.getCenter().x + r*Math.cos(a), frame.getCenter().y + r*Math.sin(a), a+HalfPi);
+			});
+		}
+
+
+		if(captureImage){
+			context = mainContext;
+			frame.memory.image = new Image();
+			frame.memory.image.src = newCanvas.toDataURL();
+			frame.x = prevFx;
+			frame.y = prevFy;
+			drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+		}
+	}
+}
+
+
+
+
+
+NumberListDraw = function(){};
+
+/**
+ * draws a simple graph
+ * @param  {Rectangle} frame
+ * @param  {NumberList} numberList
+ *
+ * @param {Number} margin
+ * @param {Object} xValues horizontal values, could be a stringList, a numberList or an Interval
+ * @return {Number} index of element clicked
+ * tags:draw
+ */
+NumberListDraw.drawSimpleGraph = function(frame, numberList, margin, xValues){
+	if(numberList==null || numberList.getNormalized==null) return;
+
+	margin = margin||0;
+
+	//setup
+	if(frame.memory==null || numberList!=frame.memory.numberList){
+		frame.memory = {
+			numberList:numberList,
+			minmax:numberList.getMinMaxInterval(),
+			zero:null
+		}
+		if(frame.memory.minmax.x>0 && frame.memory.minmax.y>0){
+			frame.memory.normalizedList = numberList.getNormalizedToMax()
+		} else {
+			frame.memory.normalizedList = numberList.getNormalized();
+			frame.memory.zero = -frame.memory.minmax.x/frame.memory.minmax.getAmplitude();
+		}
+
+		frame.memory.xTexts = new StringList();
+
+		if(xValues!=null && xValues.type=="Interval"){
+			var kx = (xValues.getAmplitude()+1)/numberList.length;
+		}
+
+		numberList.forEach(function(val, i){
+			frame.memory.xTexts[i] = (xValues==null)?String(numberList[i]):( ( kx==null?xValues[i]:(xValues.x + i*kx) )+":"+numberList[i] );
+		});
+	}
+
+	var i;
+	var subframe = new Rectangle(frame.x+margin, frame.y+margin, frame.width-margin*2, frame.height-margin*2);
+	subframe.bottom = subframe.getBottom();
+	var x;
+	var dx = subframe.width/numberList.length;
+	var overI = -1;
+	
+	var mouseOnFrame = subframe.containsPoint(mP);
+	var normalColor = mouseOnFrame?'rgb(160,160,160)':'black';
+	
+	if(frame.memory.zero){
+		var zeroY = subframe.bottom - subframe.height*frame.memory.zero;//Math.max(subframe.bottom - subframe.height*frame.memory.zero, subframe.y);
+		for(i=0; numberList[i]!=null; i++){
+			x = subframe.x + i*dx;
+			if(mouseOnFrame && mX>x && mX<x+dx){
+				overI = i;
+				setFill('black');
+			} else {
+				setFill(normalColor);
+			}
+			fRect(subframe.x + i*dx, zeroY, dx,  -subframe.height*(frame.memory.normalizedList[i]-frame.memory.zero));
+		}
+	} else {
+		for(i=0; numberList[i]!=null; i++){
+			x = subframe.x + i*dx;
+			if(mouseOnFrame && mX>x && mX<x+dx){
+				overI = i;
+				setFill('black');
+			} else {
+				setFill(normalColor);
+			}
+			fRect(x, subframe.bottom, dx,  -subframe.height*frame.memory.normalizedList[i]);
+		}
+	}
+	
+	var clicked;
+
+	if(overI!=-1){
+		setText('white', 12);
+		var text = frame.memory.xTexts[overI];
+		var w = getTextW(text);
+		setFill('rgb(100,100,100)');
+		fLines(
+			mX,mY,
+			mX+16,mY-10,
+			mX+w+16,mY-10,
+			mX+w+16,mY-30,
+			mX+6,mY-30,
+			mX+6,mY-10
+		)
+		setFill('white');
+		fText(text, mX+10,mY-26);
+		if(MOUSE_DOWN) clicked = overI;
+	}
+
+	return clicked;
+}
+function ObjectDraw(){};
+
+
+/**
+ * counts the number of times the function is called
+ * @param  {Rectangle} frame
+ * @param  {Object} object
+ * tags:draw
+ */
+ObjectDraw.count = function(frame, object){
+	if(frame.memory==null){
+		frame.memory={
+			n:1,
+			object:object
+		}
+	}
+
+	if(frame.memory.object!=object){
+		frame.memory.object=object;
+		frame.memory.n++;
+	}
+
+	if(MOUSE_DOWN && frame.containsPoint(mP)) frame.memory.n=0;
+
+	setText('black', 12);
+	fText(frame.memory.n, frame.x + 10, frame.y + 10);
+}
+function StringDraw(){};
+
+/**
+ * draws a String (if the object is not a string it displays the json)
+ * @param  {Rectangle} frame
+ * @param  {Object} object normally a String (if not, a conversion will be made)
+ * 
+ * @param  {Number} fontSize
+ * @param  {String} fontStyle ex:'bold italic'
+ * @param  {Number} margin
+ * @return {Object}
+ * tags:draw
+ */
+StringDraw.drawText = function(frame, object, fontSize, fontStyle, margin){	
+	//var frame = frame;//StringDraw.drawText;
+
+	margin = margin||10;
+	fontSize = fontSize||12;
+	
+	var subframe = new Rectangle(frame.x+margin, frame.y+margin, frame.width-margin*2, frame.height-margin*2);
+	subframe.bottom = subframe.getBottom();
+
+	var lineHeight = Math.floor(fontSize*1.2);
+
+	setText('black', fontSize, null, null, null, fontStyle);
+
+	significantChange = frame.memory==null || object!=frame.memory.object || fontSize!=frame.memory.fontSize || fontStyle!=frame.memory.fontStyle || margin!=frame.memory.margin || frame.width!=frame.memory.width || frame.height!=frame.memory.height
+	
+	//setup
+	if(significantChange){
+		var realString = object==null?
+						""
+						:
+						(typeof object == 'string')?
+							object
+							:
+							JSON.stringify(object, null, "\t");
+		frame.memory = {
+			textLines:DrawTexts.textWordWrapReturnLines(realString, subframe.width, subframe.height, lineHeight, true),
+			object:object,
+			fontSize:fontSize,
+			fontStyle:fontStyle,
+			margin:margin,
+			width:frame.width,
+			height:frame.height
+		};
+	}
+
+	DrawTexts.fillTextRectangleWithTextLines(frame.memory.textLines, subframe.x, subframe.y, subframe.height, lineHeight);
+}
+function StringListDraw(){};
+
+StringListDraw.tagCloudRectangles = function(stringList, weights, frame){
+	
+	var normWeights = table[1].sqrt().getNormalizedToMax();
+	
+	rectangles = new List();
+	textPositions = new Polygon();
+	textSizes = new NumberList();
+	
+	var rectanglesPlaced = new List();
+	
+	var dL = 6;
+	
+	var a = 0;
+	var r = 0;
+	var p = new Point(0,0);
+	
+	var w;
+	var h;
+	
+	for(var i=0; words[i]!=null; i++){
+		//words[i] = words[i].toUpperCase();
+		textSizes[i] = Math.round(weights[i]*16)*dL;
+		
+		DrawTexts.setContextTextProperties('black', textSizes[i], 'Arial', null, null, 'bold');
+		w=Math.ceil((2+context.measureText(stringList[i]).width)/dL)*dL;
+		h=textSizes[i];
+		
+		while(StringListDraw._pointInRectangles(rectanglesPlaced, p, w, h)){
+			p.x+=dL;
+			p.y-=dL;
+			if(p.y<0){
+				p.y = p.x;
+				p.x = 0;
+			}
+		}
+		
+		rectangles[i] = new Rectangle(p.x,p.y,w,h);
+		rectanglesPlaced.push(rectangles[i]);
+	}
+}
+
+StringListDraw._pointInRectangles = function(rectangles, p, width, height){
+	var rect;
+	for(var i=0; rectangles[i]!=null; i++){
+		rect = rectangles[i];
+		if(p.x+width>rect.x && p.x<(rect.x+rect.width) && p.y+height>rect.y && p.y<(rect.y+rect.height) ) return true;
+	}
+	return false;
+}
 
 /**
  * Operators that contain visualization method algoritms and return a Table with parameters for StringListPrimitive
@@ -16062,7 +21652,6 @@ StringListVisOperators._pointInRectangles = function(rectangles, px, py, width, 
 }
 
 
-
 /**
 * NetworkDraw
 * @constructor
@@ -16103,28 +21692,30 @@ NetworkDraw.drawRadialNetwork = function(frame, network){
 	var nodeOver;
 	var dA = TwoPi/network.nodeList.length;
 
+	var polygon = new Polygon();
+
 	setFill('black');
 
 	network.nodeList.forEach(function(node, i){
-		node.x = cxf + rw*Math.cos(i*dA);
-		node.y = cyf + rh*Math.sin(i*dA);
+		node._drawRadialNetwork_x = cxf + rw*Math.cos(i*dA);
+		node._drawRadialNetwork_y = cyf + rh*Math.sin(i*dA);
 	});
 
 	network.relationList.forEach(function(relation){
 		setStroke('black', relation.weight*0.25);
-		mx = (relation.node0.x+relation.node1.x)*0.5;
-		my = (relation.node0.y+relation.node1.y)*0.5;
-		d = Math.sqrt(Math.pow(relation.node0.x-relation.node1.x, 2),Math.pow(relation.node0.y-relation.node1.y, 2))+1;
+		mx = (relation.node0._drawRadialNetwork_x+relation.node1._drawRadialNetwork_x)*0.5;
+		my = (relation.node0._drawRadialNetwork_y+relation.node1._drawRadialNetwork_y)*0.5;
+		d = Math.sqrt(Math.pow(relation.node0._drawRadialNetwork_x-relation.node1._drawRadialNetwork_x, 2),Math.pow(relation.node0._drawRadialNetwork_y-relation.node1._drawRadialNetwork_y, 2))+1;
 		mx = (1-0.5*(d/rw))*mx + 0.5*(d/rw)*cxf;
 		my = (1-0.5*(d/rh))*my + 0.5*(d/rh)*cyf;
-		bezier(relation.node0.x, relation.node0.y,
+		bezier(relation.node0._drawRadialNetwork_x, relation.node0._drawRadialNetwork_y,
 			mx, my,
 			mx, my,
-			relation.node1.x, relation.node1.y);
+			relation.node1._drawRadialNetwork_x, relation.node1._drawRadialNetwork_y);
 	});
 
 	network.nodeList.forEach(function(node){
-		if(NetworkDraw._drawNode(node, node.x, node.y, r)) nodeOver = node;
+		if(NetworkDraw._drawNode(node, node._drawRadialNetwork_x, node._drawRadialNetwork_y, r)) nodeOver = node;
 	});
 
 	return nodeOver;
@@ -16145,7 +21736,7 @@ NetworkDraw.drawRadialNetwork = function(frame, network){
  * tags:draw
  */
 NetworkDraw.drawNetwork2D = function(frame, network, polygon, respectProportions, logScale, drawGrid, margin){
-	if(network==null || polygon==null) return;
+	if(network==null || polygon==null || polygon.type!='Polygon') return;
 
 	respectProportions = respectProportions||false;
 	logScale = logScale||false;
@@ -16379,23 +21970,30 @@ NetworkDraw.drawNetworkMatrix = function(frame, network, colors, relationsColorS
 	}
 	return hoverValues;
 } 
-
-/**
-* TreeDraw
-* @constructor
-*/
 function TreeDraw(){};
 
 
-//TODO: deploy returnHovered
-TreeDraw.drawRectanglesTree = function(tree, frame, levelColors, margin, returnHovered){
+/**
+ * simple tree visualization with levels in vertical rectangles
+ * @param  {Rectangle} frame
+ * @param  {Tree} tree
+ * 
+ * @param  {ColorList} levelColors
+ * @param  {Number} margin
+ * tags:draw
+ */
+TreeDraw.drawRectanglesTree = function(frame, tree, levelColors, margin){
+	levelColors = levelColors==null?ColorListGenerators.createCategoricalColors(1, tree.nLevels):levelColors;
+	margin = margin||1;
+
 	var dX = frame.width/tree.nLevels;
-	this._drawRectanglesTreeChildren(tree.nodeList[0], new Rectangle(frame.x,frame.y,dX,frame.height), levelColors, margin);
+	TreeDraw._drawRectanglesTreeChildren(tree.nodeList[0], new Rectangle(frame.x,frame.y,dX,frame.height), levelColors, margin);
 }
 TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin){
 	context.fillStyle = colors[node.level];
 	context.fillRect(frame.x+margin, frame.y+margin, frame.width-margin*2, frame.height-margin*2);
 	var children = node.toNodeList;
+	//c.log(node.level, node.name, children.length);
 	if(children.length>0){
 		var i;
 		var dY = frame.height/(node.descentWeight-1);
@@ -16403,10 +22001,728 @@ TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin){
 		var h;
 		for(i=0;children[i]!=null;i++){
 			h = dY*(children[i].descentWeight);
-			this._drawRectanglesTreeChildren(children[i], new Rectangle(frame.x+frame.width,yy,frame.width, h), colors, margin);
+			TreeDraw._drawRectanglesTreeChildren(children[i], new Rectangle(frame.x+frame.width,yy,frame.width, h), colors, margin);
 			yy+=h;
 		}
 	}
+}
+
+
+/**
+ * simple treemap visualization
+ * @param {Rectangle} frame
+ * @param {Tree} tree
+ * 
+ * @param {ColorList} colorList
+ * @param {NumberList} weights weights of leaves
+ * @param {String} textColor if not provided will be calculated to contrast node color
+ * @param {Node} externalSelectedNode node to force selection (by id)
+ * @return {Node} selected node
+ * tags:draw
+ */
+TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, externalSelectedNode){
+	var change = frame.memory==null || frame.memory.tree!=tree || frame.memory.width!=frame.width || frame.memory.height!=frame.height || frame.memory.weights!=weights;
+
+	if(externalSelectedNode!=null) externalSelectedNode = tree.nodeList.getNodeById(externalSelectedNode.id);
+
+	var changeSelection = (externalSelectedNode!=null && (frame.memory==null || externalSelectedNode!=frame.memory.nodeSelected));
+
+	if(change){
+		var changeInTree = frame.memory!=null && frame.memory.tree!=null!=tree;
+		var changeInWeights = frame.memory!=null && frame.memory.weights!=weights;
+		
+		frame.memory = {
+			tree:tree,
+			width:frame.width,
+			height:frame.height,
+			weights:weights,
+			nodeSelected:tree.nodeList[0],
+			nFLastChange:nF,
+			image:null
+		}
+
+		var leaves = (!changeInTree && frame.memory.leaves)?frame.memory.leaves:tree.getLeaves();
+		frame.memory.leaves = leaves;
+
+		if(weights==null){
+			tree.nodeList.forEach(function(node){
+				node._treeMapWeight = node.descentWeight;
+			});
+		} else {
+			leaves.forEach(function(node, i){
+				node._treeMapWeight = weights[i];
+			});
+			var assignTreemapWeight = function(node){
+				var i;
+				if(node.toNodeList.length==0){
+					return node._treeMapWeight;
+				} else {
+					node._treeMapWeight = 0;
+					for(i=0; node.toNodeList[i]!=null; i++){
+						node._treeMapWeight+=assignTreemapWeight(node.toNodeList[i]);
+					}
+				}
+				return node._treeMapWeight;
+			}
+			assignTreemapWeight(tree.nodeList[0]);
+		}
+
+		tree.nodeList[0]._outRectangle = new Rectangle(0,0,frame.width,frame.height);
+		tree.nodeList[0]._inRectangle = TreeDraw._inRectFromOutRect(tree.nodeList[0]._outRectangle);
+		TreeDraw._generateRectangles(tree.nodeList[0]);
+
+		frame.memory.focusFrame = TreeDraw._expandRect(tree.nodeList[0]._outRectangle);
+		frame.memory.kx = frame.width/frame.memory.focusFrame.width;
+		frame.memory.mx = - frame.memory.kx*frame.memory.focusFrame.x;
+		frame.memory.ky = frame.height/frame.memory.focusFrame.height;
+		frame.memory.my = - frame.memory.ky*frame.memory.focusFrame.y;
+
+		setText('black', 12);
+		tree.nodeList.forEach(function(node){
+			node._textWidth = getTextW(node.name);
+		});
+	}
+
+	if(frame.memory.colorList!=colorList || frame.memory.colorList==null){
+		frame.memory.nFLastChange = nF;
+		frame.memory.image=null;
+		frame.memory.actualColorList = colorList==null?ColorListGenerators.createCategoricalColors(0, tree.nLevels, ColorScales.grayToOrange, 0.1):colorList;
+		frame.memory.nodesColorList = new ColorList();
+		if(textColor==null) frame.memory.textsColorList = new ColorList();
+
+		if(frame.memory.actualColorList.length<=tree.nLevels){
+			tree.nodeList.forEach(function(node, i){
+				frame.memory.nodesColorList[i] = node._color = frame.memory.actualColorList[node.level%frame.memory.actualColorList.length];
+			});
+		} else if(frame.memory.actualColorList.length==frame.memory.leaves.length){
+			frame.memory.leaves.forEach(function(node, i){
+				node._color = frame.memory.actualColorList[i];
+				node._rgb = ColorOperators.colorStringToRGB(node._color);
+			});
+			var assignColor = function(node){
+				var i;
+				if(node.toNodeList.length==0) return;
+				
+				node._rgb = [0,0,0];
+				for(i=0; node.toNodeList[i]!=null; i++){
+					assignColor(node.toNodeList[i]);
+					node._rgb[0]+=node.toNodeList[i]._rgb[0];
+					node._rgb[1]+=node.toNodeList[i]._rgb[1];
+					node._rgb[2]+=node.toNodeList[i]._rgb[2];
+				}
+				node._rgb[0] = Math.floor(node._rgb[0]/node.toNodeList.length);
+				node._rgb[1] = Math.floor(node._rgb[1]/node.toNodeList.length);
+				node._rgb[2] = Math.floor(node._rgb[2]/node.toNodeList.length);
+			}
+			assignColor(tree.nodeList[0]);
+			tree.nodeList.forEach(function(node, i){
+				if(node._rgb && node._rgbF==null) node._rgbF = [node._rgb[0], node._rgb[1], node._rgb[2]];
+				frame.memory.nodesColorList[i] = 'rgb('+node._rgb[0]+','+node._rgb[1]+','+node._rgb[2]+')';
+			});
+		} else {
+			tree.nodeList.forEach(function(node, i){
+				node._color = frame.memory.nodesColorList[i] = frame.memory.actualColorList[i%frame.memory.actualColorList.length];
+			});
+		}
+
+		if(textColor==null){
+			var rgb;
+			tree.nodeList.forEach(function(node, i){
+				rgb = node._color?ColorOperators.colorStringToRGB(node._color):[0,0,0];
+				frame.memory.textsColorList[i] = (rgb[0]+rgb[1]+rgb[2]>360)?'black':'white'
+			});
+		}
+
+		frame.memory.colorList = colorList;
+	}
+
+	if(textColor==null) textColor = 'black';
+
+	var kxF = frame.width/frame.memory.focusFrame.width;
+	var mxF = - kxF*frame.memory.focusFrame.x;
+	var kyF = frame.height/frame.memory.focusFrame.height;
+	var myF = - kyF*frame.memory.focusFrame.y;
+
+	var v = kxF>frame.memory.kx?0.05:0.1;
+	var antiv = 1-v;
+
+	frame.memory.kx = antiv*frame.memory.kx + v*kxF;
+	frame.memory.mx = antiv*frame.memory.mx + v*mxF;
+	frame.memory.ky = antiv*frame.memory.ky + v*kyF;
+	frame.memory.my = antiv*frame.memory.my + v*myF;
+	var kx = frame.memory.kx;
+	var mx = frame.memory.mx;
+	var ky = frame.memory.ky;
+	var my = frame.memory.my;
+
+	var tx = function(x){return kx*x + mx};
+	var ty = function(y){return ky*y + my};
+	
+
+	var x, y;
+	var margTextX,margTextY;
+	var textSize;
+	var exceedes;
+	var rect;
+	var overNode = null;
+	var overI;
+	var mouseOnFrame = frame.containsPoint(mP);
+	var moving = nF-frame.memory.nFLastChange<50 || Math.pow(frame.memory.kx-kxF, 2) + Math.pow(frame.memory.ky-kyF, 2) + Math.pow(frame.memory.mx-mxF, 2) + Math.pow(frame.memory.my-myF, 2) > 0.01;
+	var captureImage = !moving && frame.memory.image==null && !mouseOnFrame;
+	var drawingImage = !moving && !mouseOnFrame && frame.memory.image!=null && !captureImage  && frame.memory.image.width>0 && !changeSelection;
+
+	if(drawingImage){
+		drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+	} else {
+		if(captureImage){
+			var newCanvas = document.createElement("canvas");
+			newCanvas.width = frame.width;
+			newCanvas.height = frame.height;
+			var newContext = newCanvas.getContext("2d");
+			newContext.clearRect(0,0,frame.width,frame.height);
+			var mainContext = context;
+			context = newContext;
+			var prevFx = frame.x;
+			var prevFy = frame.y;
+			frame.x = 0;
+			frame.y = 0;
+			setFill('white');
+			fRect(0,0,frame.width,frame.height);
+			setText('black', 12);
+		} else {
+			context.save();
+			clipRectangle(frame.x, frame.y, frame.width, frame.height);
+		}
+
+		setStroke('black', 0.2);
+
+		tree.nodeList.forEach(function(node, i){
+
+			rect = new Rectangle(tx(node._outRectangle.x), ty(node._outRectangle.y), node._outRectangle.width*kx, node._outRectangle.height*ky);
+
+			if(rect.width>5 && rect.height>4 && rect.x<frame.width && rect.getRight()>0 && rect.y<frame.height && rect.getBottom()>0){
+
+				x = Math.round(frame.x + rect.x)+0.5;
+				y = Math.round(frame.y + rect.y)+0.5;
+
+				if(node._rgbF){
+					node._rgbF[0] = 0.95*node._rgbF[0] + 0.05*node._rgb[0];
+					node._rgbF[1] = 0.95*node._rgbF[1] + 0.05*node._rgb[1];
+					node._rgbF[2] = 0.95*node._rgbF[2] + 0.05*node._rgb[2];
+					setFill('rgb('+Math.floor(node._rgbF[0])+','+Math.floor(node._rgbF[1])+','+Math.floor(node._rgbF[2])+')');
+				} else {
+					setFill(frame.memory.nodesColorList[i]);
+				}
+
+				if(fsRectM(x, y, Math.floor(rect.width), Math.floor(rect.height))){
+					overNode = node;
+					overI = i;
+				}
+				if(rect.width>20){
+					margTextX = rect.width*TreeDraw.PROP_RECT_MARGIN*0.8;
+					margTextY = rect.height*TreeDraw.PROP_RECT_MARGIN*0.15;
+					textSize = rect.height*TreeDraw.PROP_RECT_LABEL-2;
+					if(textSize>=5){
+
+						propTextSpace = (rect.width-2*margTextX)/(node._textWidth*textSize/12);
+						exceedes =  propTextSpace<1;//(node._textWidth*textSize/12)>(rect.width-1.2*margTextX);
+						
+						if(exceedes){
+							//clipRectangle(x+margTextX, y+margTextY,rect.width-2*margTextX, textSize*2);
+							setText(textColor?textColor:frame.memory.textsColorList[i], textSize*propTextSpace);
+						} else {
+							setText(textColor?textColor:frame.memory.textsColorList[i], textSize);
+						}
+
+						fText(node.name, x+margTextX, y+margTextY);
+						//if(exceedes) context.restore();
+					}
+				}
+			}
+		});
+		
+		if(captureImage){
+			context = mainContext;
+			frame.memory.image = new Image();
+			frame.memory.image.src = newCanvas.toDataURL();
+			frame.x = prevFx;
+			frame.y = prevFy;
+			drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+		}
+	}
+	
+	if(mouseOnFrame){
+		if(overNode){
+			setCursor('pointer');
+
+			rect = new Rectangle(tx(overNode._outRectangle.x), ty(overNode._outRectangle.y), overNode._outRectangle.width*kx, overNode._outRectangle.height*ky);
+			x = Math.round(frame.x + rect.x)+0.5;
+			y = Math.round(frame.y + rect.y)+0.5;
+			setStroke(textColor?textColor:frame.memory.textsColorList[overI], 2);
+			sRect(x, y, Math.floor(rect.width), Math.floor(rect.height))
+
+			if(MOUSE_UP_FAST) {
+				frame.memory.focusFrame = TreeDraw._expandRect(overNode._outRectangle);
+				frame.memory.nodeSelected = overNode;
+
+				frame.memory.image = null;
+			}
+		}
+		if(MOUSE_DOWN){
+			frame.memory.prevMX = mX;
+			frame.memory.prevMY = mY;
+		}
+		if(MOUSE_PRESSED){
+			scale = 5*frame.memory.focusFrame.width/frame.width;
+			frame.memory.focusFrame.x -= (mX-frame.memory.prevMX)*scale;
+			frame.memory.focusFrame.y -= (mY-frame.memory.prevMY)*scale;
+
+			frame.memory.prevMX = mX;
+			frame.memory.prevMY = mY;
+		}
+		if(WHEEL_CHANGE!=0){
+			var center = frame.memory.focusFrame.getCenter();
+			var zoom = 1 - 0.1*WHEEL_CHANGE;
+			frame.memory.focusFrame.x = center.x - frame.memory.focusFrame.width*0.5*zoom;
+			frame.memory.focusFrame.y = center.y - frame.memory.focusFrame.height*0.5*zoom;
+			frame.memory.focusFrame.width*=zoom;
+			frame.memory.focusFrame.height*=zoom;
+		}
+		if(MOUSE_PRESSED || WHEEL_CHANGE!=0){
+			frame.memory.image = null;
+		}
+	}
+
+	if(changeSelection){
+		frame.memory.focusFrame = TreeDraw._expandRect(externalSelectedNode._outRectangle);
+		frame.memory.nodeSelected = externalSelectedNode;
+		frame.memory.image = null;
+	}
+
+	if(!captureImage && !drawingImage) context.restore();
+
+	
+	return frame.memory.nodeSelected;
+	
+}
+
+TreeDraw._generateRectangles = function(node){
+
+	var weights = new NumberList();
+	node.toNodeList.forEach(function(node){
+		weights.push(node._treeMapWeight);
+	});
+	
+	var rectangles = RectangleOperators.squarify(node._inRectangle, weights, false, false);
+
+	node.toNodeList.forEach(function(child, i){
+		child._outRectangle = TreeDraw._reduceRect(rectangles[i]);
+		child._inRectangle = TreeDraw._inRectFromOutRect(child._outRectangle);
+		TreeDraw._generateRectangles(child);
+	});
+}
+TreeDraw._reduceRect = function(rect){
+	return new Rectangle(rect.x + rect.width*TreeDraw.PROP_RECT_REDUCTION_MARGIN, rect.y + rect.height*TreeDraw.PROP_RECT_REDUCTION_MARGIN, rect.width*(1-2*TreeDraw.PROP_RECT_REDUCTION_MARGIN), rect.height*(1-2*TreeDraw.PROP_RECT_REDUCTION_MARGIN) );
+}
+TreeDraw._expandRect = function(rect){
+	return new Rectangle(rect.x - rect.width*TreeDraw.PROP_RECT_EXPANTION_MARGIN, rect.y - rect.height*TreeDraw.PROP_RECT_EXPANTION_MARGIN, rect.width*(1+2*TreeDraw.PROP_RECT_EXPANTION_MARGIN), rect.height*(1+2*TreeDraw.PROP_RECT_EXPANTION_MARGIN) );
+}
+TreeDraw._inRectFromOutRect = function(rect){
+	return new Rectangle(rect.x + rect.width*TreeDraw.PROP_RECT_MARGIN, rect.y + rect.height*TreeDraw.PROP_RECT_LABEL, rect.width*(1-2*TreeDraw.PROP_RECT_MARGIN), rect.height*(1-TreeDraw.PROP_RECT_MARGIN-TreeDraw.PROP_RECT_LABEL) );
+}
+TreeDraw.PROP_RECT_MARGIN = 0.03;
+TreeDraw.PROP_RECT_LABEL = 0.2;
+TreeDraw.PROP_RECT_REDUCTION_MARGIN = 0.01;
+TreeDraw.PROP_RECT_EXPANTION_MARGIN = 0.05;
+
+
+
+///////////////////////////decision tree
+
+
+
+/**
+ * decision tree visualization, tree from TableOperators.buildDecisionTree
+ * @param {Rectangle} frame
+ * @param {Tree} tree
+ * @return {Node} selected node
+ * @return {Node} hovered node
+ * tags:draw,ds
+ */
+TreeDraw.drawDecisionTree = function(frame, tree){
+	var change = frame.memory==null || frame.memory.tree!=tree || frame.memory.width!=frame.width || frame.memory.height!=frame.height;
+
+	var gap = frame.height*0.06;
+	var hTree = tree.nLevels*(frame.height-gap)/(tree.nLevels+1);
+	var hLevel = hTree/tree.nLevels;
+	var changeInResult = false;
+
+	if(change){
+		var changeInTree = frame.memory!=null && frame.memory.tree!=null && frame.memory.tree!=tree;
+		
+		frame.memory = {
+			tree:tree,
+			width:frame.width,
+			height:frame.height,
+			nodeSelected:tree.nodeList[0],
+			nFLastChange:nF,
+			leaves:null,
+			image:null
+		}
+
+		if(changeInTree || frame.memory.leaves==null){
+			frame.memory.leaves = tree.getLeaves().getSortedByProperty('valueFollowingProbability', false);
+		}
+
+		
+
+		tree.nodeList[0]._outRectangle = new Rectangle(0,0,frame.width,hTree);
+		tree.nodeList[0]._inRectangle = TreeDraw._inRectFromOutRectDecision(tree.nodeList[0]._outRectangle, hLevel);
+		TreeDraw._generateRectanglesDecision(tree.nodeList[0], hLevel);
+
+		frame.memory.focusFrame = new Rectangle(0,0,frame.width,frame.height);
+		frame.memory.kx = frame.width/frame.memory.focusFrame.width;
+		frame.memory.mx = - frame.memory.kx*frame.memory.focusFrame.x;
+		frame.memory.ky = frame.height/frame.memory.focusFrame.height;
+		frame.memory.my = - frame.memory.ky*frame.memory.focusFrame.y;
+
+		setText('black', 12);
+		tree.nodeList.forEach(function(node){
+			node.label = node.toNodeList.length==0?Math.round(node.valueFollowingProbability*100)/100:node.bestFeatureName
+			node._textWidth = getTextW(node.label);
+		});
+
+		
+	}
+
+	if(frame.memory.followingWeights){
+		tree.nodeList.forEach(function(node){
+			node._treeMapWeight = node.descentWeight;
+		});
+	}
+
+	var textColor = 'black';
+
+	var kxF = frame.width/frame.memory.focusFrame.width;
+	var mxF = - kxF*frame.memory.focusFrame.x;
+
+	var v = kxF>frame.memory.kx?0.05:0.1;
+	var antiv = 1-v;
+
+	frame.memory.kx = antiv*frame.memory.kx + v*kxF;
+	frame.memory.mx = antiv*frame.memory.mx + v*mxF;
+	var kx = frame.memory.kx;
+	var mx = frame.memory.mx;
+
+	var tx = function(x){return kx*x + mx};
+
+	var x, y;
+	var margTextX,margTextY;
+	var textSize;
+	var exceedes;
+	var rect;
+	var overNode = null;
+	var overI;
+	var mouseOnFrame = frame.containsPoint(mP);
+	var moving = nF-frame.memory.nFLastChange<80 || Math.pow(frame.memory.kx-kxF, 2) + Math.pow(frame.memory.mx-mxF, 2) > 0.001;
+	var captureImage = !moving && frame.memory.image==null && !mouseOnFrame;
+	var drawingImage = !moving && !mouseOnFrame && frame.memory.image!=null && !captureImage  && frame.memory.image.width>0;
+
+	if(drawingImage){
+		drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+	} else {
+		c.l('drawing')
+		if(captureImage){
+			var newCanvas = document.createElement("canvas");
+			newCanvas.width = frame.width;
+			newCanvas.height = frame.height;
+			var newContext = newCanvas.getContext("2d");
+			newContext.clearRect(0,0,frame.width,frame.height);
+			var mainContext = context;
+			context = newContext;
+			var prevFx = frame.x;
+			var prevFy = frame.y;
+			frame.x = 0;
+			frame.y = 0;
+			setFill('white');
+			fRect(0,0,frame.width,frame.height);
+			setText('black', 12);
+		} else {
+			context.save();
+			clipRectangle(frame.x, frame.y, frame.width, frame.height);
+		}
+
+		var yLeaves = frame.y+hTree+gap;
+
+		setStroke('black', 0.2);
+
+		tree.nodeList.forEach(function(node, i){
+
+			rect = new Rectangle(tx(node._outRectangle.x), node._outRectangle.y, node._outRectangle.width*kx, node._outRectangle.height);
+
+			if(rect.x<frame.width && rect.getRight()>0 && rect.y<frame.height && rect.getBottom()>0){
+
+				x = Math.round(frame.x + rect.x)+0.5;
+				y = Math.round(frame.y + rect.y)+0.5;
+				
+				if(node.pattern){
+					context.fillStyle=node.pattern;
+					context.fillRect(x, y, Math.floor(rect.width), Math.floor(rect.height));
+
+					if(sRectM(x, y, Math.floor(rect.width), Math.floor(rect.height)) ){
+						overNode = node;
+						overI = i;
+					}
+
+				} else {
+
+					setFill(node._color);
+
+					if( fsRectM(x, y, Math.floor(rect.width), Math.floor(rect.height)) ){
+						overNode = node;
+						overI = i;
+					}
+				}
+
+				var realWidth = Math.min(rect.getRight(), frame.width) - Math.max(rect.x, 0);
+
+				if(realWidth>16){
+					margTextX = rect.width*TreeDraw.PROP_RECT_MARGIN*0.8;
+					margTextY = rect.height*TreeDraw.PROP_RECT_MARGIN*0.15;
+					tC = textColor?textColor:frame.memory.textsColorList[i];
+					textSize = 18;
+					
+					setText(tC, textSize);
+					exceedes =  true;//(node._textWidth*textSize/12)>(rect.width-1.2*margTextX);
+					if(exceedes){
+						clipRectangle(x, y-17,rect.width, rect.height);
+					}
+					
+					//feature or P
+					fText(node.label, Math.max(x, frame.x)+8, y+1);
+
+					if(node.value){
+						textSize = 14;
+						setText(tC, textSize);
+
+						fText(node.value, Math.max(x, frame.x)+8, y-17);
+					}
+
+					//size
+					if(realWidth-node._textWidth>60){
+						textSize = 12;
+						setText(tC, textSize, null, 'right');
+
+						fText("s="+node.weight, Math.min(frame.x + rect.getRight(), frame.getRight())-2, y+1);
+						fText("e="+Math.round(node.entropy*100)/100, Math.min(frame.x + rect.getRight(), frame.getRight())-2, y+12);
+						if(node.toNodeList.length>0) fText("P="+Math.round(node.valueFollowingProbability*100)/100, Math.min(frame.x + rect.getRight(), frame.getRight())-2, y+23);
+						fText("l="+Math.round(node.lift*100)/100, Math.min(frame.x + rect.getRight(), frame.getRight())-2, y+23+(node.toNodeList.length>0?11:0));
+					}
+
+					if(exceedes) context.restore();
+				}
+			}
+		});
+
+		//leaves
+		
+		var x0 = frame.x;
+		var w;
+		var sx = frame.width/tree.nodeList[0].weight;
+		var waitingForMark = true;
+		var waitingForDoubleMark = true;
+		var waitingForHalfMark = true;
+		var waitingFor15Mark = true;
+		var waitingFor067Mark = true;
+		
+
+		frame.memory.leaves.forEach(function(node){
+			setStroke('black', 0.2);
+
+			w = sx*node.weight;
+			
+			if(node.pattern){
+				context.fillStyle=node.pattern;
+				context.fillRect(x0, yLeaves, w, hLevel);
+
+				if( sRectM(x0, yLeaves, w, hLevel) ){
+					overNode = node;
+					overI = tree.nodeList.indexOf(node);
+				}
+
+			} else {
+				setFill(node._color);
+				if( fsRectM(x0, yLeaves, w, hLevel) ){
+					overNode = node;
+					overI = tree.nodeList.indexOf(node);
+				}
+			}
+
+			node._xLeaf = x0;
+			node._wLeaf = w;
+
+			setStroke('black', 1);
+
+			if(waitingForMark && node.valueFollowingProbability<tree.nodeList[0].valueFollowingProbability){
+				waitingForMark = false;
+				setFill('black');
+				fLines(x0, yLeaves-14, x0+4, yLeaves-8, x0, yLeaves-2, x0-4, yLeaves-8);
+			}
+			if(waitingForDoubleMark && node.valueFollowingProbability<=tree.nodeList[0].valueFollowingProbability*2){
+				waitingForDoubleMark = false;
+				line(x0, yLeaves-14, x0, yLeaves-2);
+			}
+			if(waitingForHalfMark && node.valueFollowingProbability<tree.nodeList[0].valueFollowingProbability*0.5){
+				waitingForHalfMark = false;
+				line(x0, yLeaves-14, x0, yLeaves-2);
+			}
+			if(waitingFor15Mark && node.valueFollowingProbability<=tree.nodeList[0].valueFollowingProbability*1.5){
+				waitingFor15Mark = false;
+				line(x0, yLeaves-8, x0, yLeaves-2);
+			}
+			if(waitingFor067Mark && node.valueFollowingProbability<tree.nodeList[0].valueFollowingProbability*0.66667){
+				waitingFor067Mark = false;
+				line(x0, yLeaves-8, x0, yLeaves-2);
+			}
+
+			x0+=w;
+
+		});
+
+		if(captureImage){
+			context = mainContext;
+			frame.memory.image = new Image();
+			frame.memory.image.src = newCanvas.toDataURL();
+			frame.x = prevFx;
+			frame.y = prevFy;
+			drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+		}
+	}
+	
+	if(mouseOnFrame){
+		if(overNode){
+			setCursor('pointer');
+
+			//rect = new Rectangle(tx(overNode._outRectangle.x), ty(overNode._outRectangle.y), overNode._outRectangle.width*kx, overNode._outRectangle.height*ky);
+			rect = new Rectangle(tx(overNode._outRectangle.x), overNode._outRectangle.y, overNode._outRectangle.width*kx, overNode._outRectangle.height);
+			x = Math.round(frame.x + rect.x)+0.5;
+			y = Math.round(frame.y + rect.y)+0.5;
+
+			setStroke(textColor?textColor:frame.memory.textsColorList[overI], 2);
+
+			if(overNode._wLeaf){
+				setFill('rgba(0,0,0,0.5)');
+				context.beginPath();
+
+				context.moveTo(x, yLeaves-gap);
+				context.bezierCurveTo(x, yLeaves-0.65*gap, overNode._xLeaf, yLeaves-gap*0.35, overNode._xLeaf, yLeaves);
+				context.lineTo(overNode._xLeaf+overNode._wLeaf, yLeaves);
+				context.bezierCurveTo(overNode._xLeaf+overNode._wLeaf, yLeaves-gap*0.35, x+rect.width, yLeaves-0.65*gap, x+rect.width, yLeaves-gap);
+				context.fill();
+
+				sRect(overNode._xLeaf, yLeaves, overNode._wLeaf, hLevel);
+			}
+			
+			sRect(x, y, Math.floor(rect.width), Math.floor(rect.height));
+
+			
+
+			if(MOUSE_UP_FAST) {
+				frame.memory.focusFrame = new Rectangle(overNode._outRectangle.x-overNode._outRectangle.width*0.025, 0, overNode._outRectangle.width*1.05, frame.height);// TreeDraw._expandRect(overNode._outRectangle);
+				
+				if(frame.memory.focusFrame.x<0){
+					frame.memory.focusFrame.width+=frame.memory.focusFrame.x;
+					frame.memory.focusFrame.x=0;
+				}
+
+				if(frame.memory.focusFrame.getRight()>frame.width){
+					frame.memory.focusFrame.width-=(frame.memory.focusFrame.getRight()-frame.width);
+					frame.memory.focusFrame.x = frame.width - frame.memory.focusFrame.width;
+				}
+
+
+				frame.memory.nodeSelected = overNode;
+				changeInResult = true;
+
+				frame.memory.image = null;
+			}
+		}
+		if(MOUSE_DOWN){
+			frame.memory.prevMX = mX;
+		}
+		if(MOUSE_PRESSED){
+			scale = 5*frame.memory.focusFrame.width/frame.width;
+			frame.memory.focusFrame.x -= (mX-frame.memory.prevMX)*scale;
+			frame.memory.prevMX = mX;
+		}
+		if(WHEEL_CHANGE!=0){
+			var center = frame.memory.focusFrame.getCenter();
+			var zoom = 1 + 0.1*WHEEL_CHANGE;
+			frame.memory.focusFrame.x = center.x - frame.memory.focusFrame.width*0.5*zoom;
+			frame.memory.focusFrame.width*=zoom;
+		}
+		if(MOUSE_PRESSED || WHEEL_CHANGE!=0){
+
+			frame.memory.image = null;
+
+		}
+	}
+
+	if(!captureImage && !drawingImage) context.restore();
+
+	
+	if(frame.memory.overNode!=overNode){
+		frame.memory.overNode=overNode;
+		changeInResult = true;
+	}
+
+	if(changeInResult || frame.memory.result==null){
+		frame.memory.result = [
+			{
+				value:frame.memory.nodeSelected,
+				type:'Node'
+			},
+			{
+				value:frame.memory.overNode,
+				type:'Node'
+			}
+		];
+	}
+
+	return frame.memory.result;
+	
+}
+TreeDraw._generateRectanglesDecision = function(node, hLevel){
+
+	var weights = new NumberList();
+	node.toNodeList.forEach(function(node){
+		weights.push(node.weight);
+	});
+	
+	var rectangles = TreeDraw._horizontalRectanglesDecision(node._inRectangle, weights);
+
+	node.toNodeList.forEach(function(child, i){
+		child._outRectangle = rectangles[i];
+		child._inRectangle = TreeDraw._inRectFromOutRectDecision(child._outRectangle, hLevel);
+		TreeDraw._generateRectanglesDecision(child, hLevel);
+	});
+}
+TreeDraw._inRectFromOutRectDecision = function(rect, hLevel){
+	return new Rectangle(rect.x, rect.y + hLevel, rect.width, rect.height - hLevel);
+}
+TreeDraw._horizontalRectanglesDecision = function(rect, weights){
+	var rects = new List();
+	var x0 = rect.x;
+	var w;
+	var newWeights = weights.getNormalizedToSum();
+
+	newWeights.forEach(function(weight){
+		w = weight*rect.width;
+		rects.push(new Rectangle(x0, rect.y, w, rect.height));
+		x0+=w;
+	});
+
+	return rects;
 }
 
 
@@ -16426,15 +22742,19 @@ function Global(){}
 Global.userAgent="unknown";
 
 init=function(){
-  console.log("init must be overriden!");
+  //console.log("init must be overriden!");
 }
 
 cycle=function(){
-  console.log("cycle must be overriden!");
+  //console.log("cycle must be overriden!");
 }
 
 resizeWindow=function(){
-  console.log("resizeWindow must be overriden!");
+  //console.log("resizeWindow must be overriden!");
+}
+
+lastCycle = function(){
+	//override
 }
 
 var listenerArray  = new Array();
@@ -16453,33 +22773,40 @@ var cY = 1; // canvas center y
 var mX = 0; // cursor x
 var mY = 0; // cursor y
 var mP = new Point(0, 0); // cursor point
-var nF = 0; // number of current frame
+var nF = 0; // number of current frame since first cycle
 
 var MOUSE_DOWN=false; //true on the frame of mousedown event
 var MOUSE_UP=false; //true on the frame of mouseup event
 var MOUSE_UP_FAST=false; //true on the frame of mouseup event
+var WHEEL_CHANGE=0; //differnt from 0 if mousewheel (or pad) moves / STATE
 var NF_DOWN; //number of frame of last mousedown event
 var NF_UP; //number of frame of last mouseup event
-var MOUSE_PRESSED; //true if mouse pressed
+var MOUSE_PRESSED; //true if mouse pressed / STATE
+var MOUSE_IN_DOCUMENT = true; //true if cursor is inside document / STATE
 var mX_DOWN; // cursor x position on last mousedown event
 var mY_DOWN; // cursor x position on last mousedown event
 var mX_UP; // cursor x position on last mousedown event
-var mY_UP; // cursor x position on last mousedown event
+var mY_UP; // cursor y position on last mousedown event
+var PREV_mX=0; // cursor x position previous frame
+var PREV_mY=0; // cursor y position previous frame
+var DX_MOUSE=0; //horizontal movement of cursor in last frame
+var DY_MOUSE=0; //vertical movement of cursor in last frame
+var MOUSE_MOVED = false; //boolean that indicates wether the mouse moved in the last frame / STATE
+var T_MOUSE_PRESSED = 0; //time in milliseconds of mouse being pressed, useful for sutained pressure detection
 
-//
-var deltaWheel = 0;
+//var deltaWheel = 0;
 var cursorStyle = 'auto';
 var backGroundColor = 'white';
 var cycleActive;
 
 //global constants
 var context;
-var hddenContext;
 var TwoPi = 2*Math.PI;
 var HalfPi = 0.5*Math.PI;
 var radToGrad = 180/Math.PI;
 var gradToRad = Math.PI/180;
-var c = console; //use c.log instead of console.log
+var c = console;
+c.l = c.log; //use c.l instead of console.log
 
 //private
 var _wheelActivated = false;
@@ -16491,9 +22818,16 @@ var _setIntervalId;
 var _setTimeOutId;
 var _cycleOnMouseMovement = false;
 var _interactionCancelledFrame;
-var END_CYCLE_DELAY = 3000;
+var _tLastMouseDown;
+
+var END_CYCLE_DELAY = 3000; //time in milliseconds, from last mouse movement to the last cycle to be executed in case cycleOnMouseMovement has been activated
+
+Array.prototype.last = function(){
+	return this[this.length-1];
+}
 
 window.addEventListener('load', function(){
+
  	if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
     	userAgent='IE';
     	userAgentVersion=new Number(RegExp.$1) // capture x.x portion and store as a number
@@ -16516,41 +22850,46 @@ window.addEventListener('load', function(){
     	userAgent='IOS';
   	}
   	
-  	c.log('[G] userAgent:', userAgent);
   	
   	Global.userAgent=userAgent;
-    Global.frameRate=30;
+    Global._frameRate=30;
     
 	canvas = document.getElementById('main');
-	removeDiv = document.getElementById('removeDiv');
-	removeDiv.style.display = 'none';
-	cH=canvas.height;
-	cW=canvas.width;
-	context = canvas.getContext('2d');
-	
-	hiddenContext = CanvasAndContext.createInvisibleContext();
-	
-	cW = context.canvas.width  = window.innerWidth;
-	cH = context.canvas.height = window.innerHeight;
-	
-	cX = Math.floor(cW*0.5);
-	cY = Math.floor(cH*0.5);
-	
-	canvas.addEventListener("mousemove", _onMouse, false);
-	canvas.addEventListener("mousedown", _onMouse, false);
-	canvas.addEventListener("mouseup", _onMouse, false);
-	window.addEventListener("resize", onResize, false);
 	
 	if(canvas!=null){
+		removeDiv = document.getElementById('removeDiv');
+		removeDiv.style.display = 'none';
+
+		context = canvas.getContext('2d');
+		
+		_adjustCanvas();
+		
+		canvas.addEventListener("mousemove", _onMouse, false);
+		canvas.addEventListener("mousedown", _onMouse, false);
+		canvas.addEventListener("mouseup", _onMouse, false);
+		canvas.addEventListener("mouseenter", _onMouse, false);
+		canvas.addEventListener("mouseleave", _onMouse, false);
+
+
+		activateWheel();
+
+		window.addEventListener("resize", onResize, false);
+		
 		startCycle();
 		init();
 	}
+
+	c.l('Moebio Framework v2.256 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
 	
 }, false);
 
 function _onMouse(e) {
+
 	switch(e.type){
 		case "mousemove":
+			PREV_mX=mX;
+			PREV_mY=mY;
+
 			if(e.clientX){
 				mX = e.clientX;
 		        mY = e.clientY;
@@ -16563,42 +22902,60 @@ function _onMouse(e) {
 		    }
 		  	mP.x = mX;
 		  	mP.y = mY;
+		  	MOUSE_IN_DOCUMENT = true;
 		  	break;
 		case "mousedown":
 			NF_DOWN = nF;
 			MOUSE_PRESSED = true;
+			T_MOUSE_PRESSED = 0;
+			_tLastMouseDown = new Date().getTime();
 			mX_DOWN = mX;
 			mY_DOWN = mY;
+			MOUSE_IN_DOCUMENT = true;
 			break;
 		case "mouseup":
 			NF_UP = nF;
 			MOUSE_PRESSED = false;
+			T_MOUSE_PRESSED = 0;
 			mX_UP = mX;
 			mY_UP = mY;
+			MOUSE_IN_DOCUMENT = true;
+			break;
+		case "mouseenter":
+			MOUSE_IN_DOCUMENT = true;
+			break;
+		case "mouseleave":
+			MOUSE_IN_DOCUMENT = false;
 			break;
 	}
 }
 
 function onResize(e){
+	_adjustCanvas();
+	resizeWindow();
+}
+
+function _adjustCanvas(){
 	if(canvasResizeable==false) return;
+
+	cW = getDocWidth();
+	cH = getDocHeight();
 	
-	canvas.setAttribute('width', document.body.clientWidth);
-    canvas.setAttribute('height', document.body.clientHeight);
-	
-	cW = context.canvas.width;
-	cH = context.canvas.height;
+	canvas.setAttribute('width', cW);
+    canvas.setAttribute('height', cH);
 	
 	cX = Math.floor(cW*0.5);
 	cY = Math.floor(cH*0.5);
-	
-	resizeWindow();
 }
+
 
 function clearContext(){
 	context.clearRect(0, 0, cW, cH);
 }
 
-function cycleOnMouseMovement(value){
+function cycleOnMouseMovement(value, time){
+	if(time!=null) END_CYCLE_DELAY = time;
+
 	if(value){
 		context.canvas.addEventListener('mousemove', onMoveCycle, false);
 		addInteractionEventListener('mousewheel', onMoveCycle, this);
@@ -16611,6 +22968,13 @@ function cycleOnMouseMovement(value){
 		startCycle();
 	}
 }
+
+function setFrameRate(fr){
+	fr = fr||30;
+	Global._frameRate = fr;
+
+	if(cycleActive) startCycle();
+}
 	
 function enterFrame(){
    	context.clearRect(0, 0, cW, cH);
@@ -16620,7 +22984,18 @@ function enterFrame(){
 	MOUSE_UP = NF_UP==nF;
 	MOUSE_UP_FAST = MOUSE_UP && (nF-NF_DOWN)<9;
 
+	DX_MOUSE = mX-PREV_mX;
+	DY_MOUSE = mY-PREV_mY;
+	MOUSE_MOVED = DX_MOUSE!=0 || DY_MOUSE!=0;
+
+	if(MOUSE_PRESSED) T_MOUSE_PRESSED = new Date().getTime() - _tLastMouseDown;
+	
   	cycle();
+
+  	WHEEL_CHANGE = 0;
+
+  	PREV_mX=mX;
+	PREV_mY=mY;
   	
   	nF++;
 }
@@ -16628,7 +23003,7 @@ function enterFrame(){
 function startCycle(){
 	clearTimeout(_setTimeOutId);
 	clearInterval(_setIntervalId);
-	_setIntervalId = setInterval(enterFrame, 30);
+	_setIntervalId = setInterval(enterFrame, Global._frameRate);
 	cycleActive = true;
 }
 
@@ -16636,6 +23011,8 @@ function startCycle(){
 function stopCycle(){
 	clearInterval(_setIntervalId);
 	cycleActive = false;
+
+	lastCycle();
 }
 
 
@@ -16651,7 +23028,7 @@ function reStartCycle(){
 	_prevMouseY=mY;
 	
 	if(!cycleActive){
-		_setIntervalId = setInterval(enterFrame, 30);
+		_setIntervalId = setInterval(enterFrame, Global._frameRate);
 		cycleActive = true;
 	}
 	
@@ -16673,6 +23050,7 @@ function addInteractionEventListener(eventType, onFunction, target){//TODO: list
 			if(!_wheelActivated) activateWheel();
 			break;
 		case 'keydown':
+		case 'keyup':
 			if(!_keyboardActivated) activateKeyboard();
 			break;
 	}
@@ -16727,6 +23105,7 @@ function setDivPosition(div, x, y){
 function activateKeyboard(){
 	_keyboardActivated = true;
 	document.onkeydown = onKey;
+	document.onkeyup = onKey;
 }
 function onKey(e){
 	onCanvasEvent(e);
@@ -16746,15 +23125,122 @@ function activateWheel(){
 	
 }
 function _onWheel(e) {
+	//c.l('_onWheel, e:', e);
+
     if (!e) e = window.event; //IE
             
     if (e.wheelDelta){
-    	deltaWheel = e.wheelDelta/120;
+    	WHEEL_CHANGE = e.wheelDelta/120;
     } else if (e.detail) { /** Mozilla case. */
-        deltaWheel = -e.detail/3;
+        WHEEL_CHANGE = -e.detail/3;
     }
-    e.value = deltaWheel;
+    e.value = WHEEL_CHANGE;
     e.type = "mousewheel"; //why this doesn't work?
+
 	onCanvasEvent(e);
 }
 
+
+
+////structures local storage
+
+setStructureLocalStorageWithSeed = function(object, seed, comments){
+	setStructureLocalStorage(object, MD5.hex_md5(seed), comments);
+}
+
+setStructureLocalStorage = function(object, id, comments){
+	var type = typeOf(object);
+	var code;
+
+	switch(type){
+		case 'string':
+			code = object;
+			break;
+		case 'Network':
+			code = NetworkEncodings.encodeGDF(network);
+			break;
+		default:
+			type = 'object';
+			code = JSON.stringify(object);
+			break;
+	}
+
+	var storageObject = {
+		id:id,
+		type:type,
+		comments:comments,
+		date:new Date(),
+		code:code
+	}
+
+	var storageString = JSON.stringify(storageObject);
+
+	// c.l('storageObject', storageObject);
+	// c.l('id:['+id+']');
+	// c.l('code.length:', code.length);
+
+	localStorage.setItem(id, storageString);
+}
+
+getStructureLocalStorageFromSeed = function(seed, returnStorageObject){
+	return getStructureLocalStorage(MD5.hex_md5(seed), returnStorageObject);
+}
+
+getStructureLocalStorage = function(id, returnStorageObject){
+	returnStorageObject = returnStorageObject||false;
+
+	var item = localStorage.getItem(id);
+
+	if(item==null) return null;
+
+
+	try{
+		var storageObject = JSON.parse(item);
+	} catch(err){
+		return null;
+	}
+
+	if(storageObject.type==null && storageObject.code==null) return null;
+	
+	var type = storageObject.type;
+	var code = storageObject.code;
+	var object;
+
+	switch(type){
+		case 'string':
+			object = code;
+			break;
+		case 'Network':
+			object = NetworkEncodings.decodeGDF(code);
+			break;
+		case 'object':
+			object = JSON.parse(code);
+			break;
+	}
+
+	if(returnStorageObject){
+		storageObject.object = object;
+		storageObject.size = storageObject.code.length;
+		storageObject.date = new Date(storageObject.date);
+		
+		return storageObject;
+	}
+
+	return object;
+}
+
+function getDocWidth() {
+    var D = document;
+    return Math.max(
+        D.body.offsetWidth, D.documentElement.offsetWidth,
+        D.body.clientWidth, D.documentElement.clientWidth
+    );
+}
+
+function getDocHeight() {
+    var D = document;
+    return Math.max(
+        D.body.offsetHeight, D.documentElement.offsetHeight,
+        D.body.clientHeight, D.documentElement.clientHeight
+    );
+}

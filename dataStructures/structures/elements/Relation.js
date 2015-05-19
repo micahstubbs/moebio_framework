@@ -5,12 +5,14 @@ Relation.prototype.constructor=Relation;
 * Relation 
 * @constructor
 */
-function Relation(id, name, node0, node1, weight){
+function Relation(id, name, node0, node1, weight, content){
 	Node.apply(this, [id, name]);
+	this.type="Relation";
+
 	this.node0=node0;
 	this.node1=node1;
 	this.weight = weight==null?1:weight;
-	this.type="Relation";
+	this.content = content==null?"":content;
 }
 
 
@@ -18,6 +20,7 @@ Relation.prototype.destroy = function() {
   Node.prototype.destroy.call(this);
   delete this.node0;
   delete this.node1;
+  delete this.content;
 }
 
 Relation.prototype.getOther = function(node) {

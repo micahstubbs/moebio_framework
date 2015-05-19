@@ -4,6 +4,13 @@
 */
 function PolygonOperators(){};
 
+/**
+ * builds a Hull polygon from a set of points
+ * @param  {Polygon} polygon set of points
+ * @param  {Boolean} returnIndexes if true returns the indexes of external points, connected by the Hull polygon (false by default)
+ * @return {List} Hull polygn or list of indexes
+ * tags:geometry
+ */
 PolygonOperators.hull = function(polygon, returnIndexes) {
 	returnIndexes = returnIndexes==null?false:returnIndexes;
 	var i;
@@ -14,18 +21,18 @@ PolygonOperators.hull = function(polygon, returnIndexes) {
 	var h = new Polygon();
 	if(returnIndexes) var indexes = new NumberList();
 	
-	p = this.sortOnXY(p);
+	p = PolygonOperators.sortOnXY(p);
 	
 	if(returnIndexes){
 		for (i = 0; i<n; i++) {
-			while (k >= 2 && this.crossProduct3Points(h[k-2], h[k-1], p[i]) <= 0)
+			while (k >= 2 && PolygonOperators.crossProduct3Points(h[k-2], h[k-1], p[i]) <= 0)
 				k--;
 			h[k++] = p[i];
 			indexes[k-1] = i;
 		}
 		
 		for (i = n-2, t = k+1; i>=0; i--) {
-			while (k >= t && this.crossProduct3Points(h[k-2], h[k-1], p[i]) <= 0)
+			while (k >= t && PolygonOperators.crossProduct3Points(h[k-2], h[k-1], p[i]) <= 0)
 				k--;
 			h[k++] = p[i];
 			indexes[k-1] = i;
@@ -35,19 +42,115 @@ PolygonOperators.hull = function(polygon, returnIndexes) {
 	} 
 	
 	for (i = 0; i<n; i++) {
-		while (k >= 2 && this.crossProduct3Points(h[k-2], h[k-1], p[i]) <= 0)
+		while (k >= 2 && PolygonOperators.crossProduct3Points(h[k-2], h[k-1], p[i]) <= 0)
 			k--;
 		h[k++] = p[i];
 	}
 	
 	for (i = n-2, t = k+1; i>=0; i--) {
-		while (k >= t && this.crossProduct3Points(h[k-2], h[k-1], p[i]) <= 0)
+		while (k >= t && PolygonOperators.crossProduct3Points(h[k-2], h[k-1], p[i]) <= 0)
 			k--;
 		h[k++] = p[i];
 	}
 	
 	return Polygon.fromArray(h.getSubList(new Interval(0, k-2)));
 }
+
+/**
+ * builds a dendrogram (tree) from a Polygon (currently using barycenter for distances)
+ * @param  {Polygon} polygon
+ * @return {Tree} dendrogram
+ * tags:geometry
+ */
+PolygonOperators.buildDendrogramFromPolygon = function(polygon){
+	var tree = new Tree();
+	var point, i;
+	var node;
+	var tW;
+	var parent;
+	var leaves = new NodeList();
+
+	var node0, node1, nodeList = new Polygon();
+
+	polygon.forEach(function(point, i){
+		node = new Node('point_'+i, 'point_'+i);
+		node.weight = 1;
+		node.barycenter = point;
+		node.point = point;
+		node.polygon = new Polygon(point);
+		tree.addNode(node);
+		nodeList.push(node);
+		leaves.push(node);
+	});
+
+	tree.nodeList = tree.nodeList.getReversed();
+
+	//c.l('-');
+
+	var buildNodeFromPair = function(node0, node1){
+		var parent = new Node("("+node0.id+","+node1.id+")", "("+node0.id+","+node1.id+")");
+		parent.polygon = node0.polygon.concat(node1.polygon);
+		//c.l("node0.polygon.length, node1.polygon.length, parent.polygon.length", node0.polygon.length, node1.polygon.length, parent.polygon.length);
+		parent.weight = parent.polygon.length;
+		tW = node0.weight+node1.weight;
+		parent.barycenter = new Point((node0.weight*node0.barycenter.x+node1.weight*node1.barycenter.x)/tW, (node0.weight*node0.barycenter.y+node1.weight*node1.barycenter.y)/tW);
+		//c.l('parent.barycenter.x', parent.barycenter.x, parent.barycenter.y);
+		tree.addNode(parent);
+		tree._newCreateRelation(parent, node0);
+		tree._newCreateRelation(parent, node1);
+		return parent;
+	}
+
+	while(nodeList.length>1){
+		closestPair = PolygonOperators._findClosestNodes(nodeList);
+		node0 = nodeList[closestPair[0]];
+		node1 = nodeList[closestPair[1]];
+		parent = buildNodeFromPair(node0, node1);
+		parent.distance = closestPair.distance;
+		c.l('distance:', parent.distance);
+		nodeList.splice(closestPair[0], 1);
+		nodeList.splice(closestPair[1]-1, 1);
+		nodeList.push(parent);
+	}
+
+	tree.nodeList = tree.nodeList.getReversed();
+
+	var assignLevel = function(node, parentLevel){
+		var son;
+		node.level = parentLevel+1;
+		node.toNodeList.forEach(function(son){
+			assignLevel(son, node.level);
+		});
+	}
+
+	assignLevel(tree.nodeList[0], -1);
+
+	tree.leaves = leaves;
+
+	return tree;
+
+}
+
+PolygonOperators._findClosestNodes = function(nodeList){
+	var i, j;
+	var d2;
+	var d2Min = 9999999999;
+
+	for(i=0; nodeList[i+1]!=null; i++){
+		for(j=i+1; nodeList[j]!=null; j++){
+			d2 = Math.pow(nodeList[i].barycenter.x - nodeList[j].barycenter.x, 2) + Math.pow(nodeList[i].barycenter.y - nodeList[j].barycenter.y, 2);
+			if(d2<d2Min){
+				d2Min = d2;
+				pair = [i, j];
+			}
+		}
+	}
+
+	pair.distance = d2Min;
+
+	return pair;
+}
+
 
 PolygonOperators.sortOnXY=function(polygon){
 	return polygon.sort(function(p0, p1){

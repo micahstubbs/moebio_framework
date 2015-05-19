@@ -1,7 +1,21 @@
 function NetworkConvertions(){};
 
 
-NetworkConvertions.createNetworkFromPairsTable = function(table, numberList, threshold, allowMultipleRelations){
+/**
+ * builds a Network based on a two columns Table, creating relations on co-occureences
+ * @param  {Table} table table with at least two columns (commonly strings)
+ * 
+ * @param  {NumberList} numberList weights of relations
+ * @param  {Number} threshold minimum weight or noumber of co-occurrences to create a relation
+ * @param  {Boolean} allowMultipleRelations
+ * @param {Number} minRelationsInNode remove nodes with number of relations below threshold
+ * @param {StringList} stringList contents of relations
+ * @return {Network}
+ * tags:conversion
+ */
+NetworkConvertions.TableToNetwork = function(table, numberList, threshold, allowMultipleRelations, minRelationsInNode, stringList){
+	if(table==null || !table.isTable || table[0]==null || table[1]==null) return;
+
 	//trace("••••••• createNetworkFromPairsTable", table);
 	if(allowMultipleRelations==null) allowMultipleRelations=false;
 	if(table.length<2) return null;
@@ -47,7 +61,7 @@ NetworkConvertions.createNetworkFromPairsTable = function(table, numberList, thr
 			node1.weight++;
 		}
 		if(numberList==null){
-			relation = network.relationList.getFirstRelationByNodesIds(node0.id, node1.id, false);
+			relation = network.relationList.getFirstRelationByIds(node0.id, node1.id, false);
 			if(relation==null || allowMultipleRelations){
 				relation = new Relation(name0+"_"+name1+network.relationList.length, name0+"_"+name1, node0, node1, 1);
 				network.addRelation(relation);
@@ -58,6 +72,18 @@ NetworkConvertions.createNetworkFromPairsTable = function(table, numberList, thr
 			relation = new Relation(name0+"_"+name1, name0+"_"+name1, node0, node1, numberList[i]);
 			network.addRelation(relation);
 		}
+		
+		if(stringList) relation.content = stringList[i];
 	}
+
+	if(minRelationsInNode){
+		for(i=0; network.nodeList[i]!=null; i++){
+			if(network.nodeList[i].relationList.length<minRelationsInNode){
+				network.removeNode(network.nodeList[i]);
+				i--;
+			}
+		}
+	}
+
 	return network;
 }

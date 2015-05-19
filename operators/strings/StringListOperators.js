@@ -2,10 +2,30 @@ function StringListOperators(){};
 /** 
 * receives n arguments and performs addition
 */
-StringListOperators.concatStrings=function(stringList, joinString){
+StringListOperators.concatStrings=function(stringList, joinString){//deprecated
 	if(joinString==null) joinString="";
 	return StringList.fromArray(stringList.join(joinString));
 }
+
+/**
+ * join strings with a character
+ * @param  {StringList} StringList strings to be joined
+ * 
+ * @param  {String} join character
+ * @param  {String} prefix
+ * @param  {String} sufix
+ * @return {String}
+ * tags:
+ */
+StringListOperators.join = function(stringList, character, prefix, sufix){
+	if(stringList==null) return;
+	
+	character = character==null?"":character;
+	prefix = prefix==null?"":prefix;
+	sufix = sufix==null?"":sufix;
+	return prefix+stringList.join(character)+sufix;
+}
+
 
 /**
  * filters a StringList by a string
@@ -63,7 +83,7 @@ StringListOperators.countStringsOccurrencesOnTexts=function(strings, texts){
 		}
 		occurrencesTable[i] = numberList;
 	}
-	return occurrencesTable
+	return occurrencesTable;
 }
 
 /**
@@ -140,7 +160,7 @@ StringListOperators.getWordsOccurrencesMatrix=function(strings, stopWords, inclu
 }
 
 //good approach for few large texts, to be tested
-StringListOperators.createTextsNetwork = function(texts, stopWords, stressUniqueness, relationBias){
+StringListOperators.createTextsNetwork = function(texts, stopWords, stressUniqueness, relationThreshold){
 	var i, j;
 	var network = new Network();
 
@@ -167,7 +187,7 @@ StringListOperators.createTextsNetwork = function(texts, stopWords, stressUnique
     			c.log(node.wordsWeights.getNorm()*node1.wordsWeights.getNorm());
     		}
 
-    		if(weight>relationBias){
+    		if(weight>relationThreshold){
     			relation = new Relation(node.id+"_"+node1.id, node.id+"_"+node1.id, node, node1, weight);
     			network.addRelation(relation);
     		}
@@ -177,25 +197,25 @@ StringListOperators.createTextsNetwork = function(texts, stopWords, stressUnique
     return network;
 }
 
-//by measuring enthropy of words: 
 
 /**
- * builds a network out of a list of short strings
+ * builds a network out of a list of short strings, adds a property wordsTable to each node (with words and weights)
  * @param  {StringList} texts
  * 
  * @param  {StringList} stopWords
- * @param  {Number} relationBias bias to create a relation
- * @param {Number} mode 0:enthropy, by finding key words with low enthropy (words occurring in a single text or in all texts have maximum enthropy, occuring in 0.25 texts minimum enthropy (max weight)), 1:few
- * @param {Boolean} intensity takes into account occurrences of word into each text
+ * @param  {Number} relationThreshold threshold to create a relation
+ * @param {Number} mode <br>0:pseudoentropy, by finding key words with low entropy (words occurring in a single text or in all texts have maximum entropy, occuring in 0.25 texts minimum entropy (max weight))<br>1:originality<br>2:skewed entropy<br>3:originality except isolation
+ * @param {Boolean} applyIntensity takes into account occurrences of word into each text
  * @param {Table} [varname] if a words frquency table is provided, les frequent words are weighed
  * @return {Network}
  * tags:generator
  */
-StringListOperators.createShortTextsNetwork = function(texts, stopWords, relationBias, mode, intensity, wordsFrequencyTable){
+StringListOperators.createShortTextsNetwork = function(texts, stopWords, relationThreshold, mode, applyIntensity, wordsFrequencyTable){
 	if(texts==null || texts.length==null || texts.length==0) return;
 
+	var _time = new Date().getTime();
+
 	var network = new Network();
-	c.log('texts',texts);
 	var joined = texts.join(' *** ').toLowerCase();
 	var textsLowerCase = joined.split(' *** ');
 	var n_texts = texts.length;
@@ -206,8 +226,9 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
 	var n_words;
 	var weights;
 	var weight;
+	var maxWeight = 0;
 
-	relationBias = relationBias||0;
+	relationThreshold = relationThreshold||0.2;
 	mode = mode||0;
 
 	if(wordsFrequencyTable){
@@ -216,31 +237,38 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
 		var index;
 	}
 
-	c.log('mode', mode);
-
 	var weightFunction;
 	switch(mode){
-		case 0://enthropy
+		case 0://pseudo-entropy
 			weightFunction = function(nOtherTexts){
-				//return 1-Math.pow(2*Math.pow(nOtherTexts/(n_texts-1), 0.25)-1, 2);
 				return 1-Math.pow( 2*nOtherTexts/(n_texts-1) - 1, 2);
 			}
 			break;
-		case 1://few
+		case 1://originality
 			weightFunction = function(nOtherTexts){
-				//if(nOtherTexts==0) return 0;
-				return 1/nOtherTexts;
+				return 1/(nOtherTexts+1);
 			}
 			break;
+		case 2://skewed entropy (favoring very few external occurrences)
+			weightFunction = function(nOtherTexts){
+				return 1-Math.pow(2*Math.pow(nOtherTexts/(n_texts-1), 0.2)-1, 2);
+			}
+		default://originality except isolation
+			weightFunction = function(nOtherTexts){
+				if(nOtherTexts==0) return 0;
+				return 1/nOtherTexts;
+			}
 	}
+
+	c.l('A ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
+	_time = new Date().getTime();
 
 	texts.forEach(function(text, i){
     	node = new Node("_"+i, "_"+i);
     	network.addNode(node);
-    	//if(i<10) c.log('\n\n'+text);
     	node.content = text;
     	words = StringOperators.getWords(text, true, stopWords, false, false, 0, 3);
-    	c.log('•>•>•>•> words:', words);
+    	
     	n_words = words.length;
     	weights = new NumberList();
     	//words.forEach(function(word, j){
@@ -260,24 +288,35 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
 
     		weights[j] = weightFunction(nOtherTexts);//1-Math.pow(2*Math.pow(nOtherTexts/(n_texts-1), 0.25)-1, 2);
     		
-    		if(intensity) weights[j]*=Math.sqrt(StringOperators.countOccurrences(textsLowerCase[i], word));
+    		if(applyIntensity) weights[j]*= (1 - 1/(StringOperators.countOccurrences(textsLowerCase[i], word) + 1));
     		
     		if(wordsFrequencyTable){
     			index = wordsFrequencyTable[0].indexOf(word);
-    			c.log(' •>•>•>•>•>•>•>•>•>•>•>•>•>•>•>•>•> ', word, weights[j], index==-1?1:(1 - Math.pow(wordsFrequencyTable[1][index]/maxFreq, 0.2)) )
+    			//c.log(' •>•>•>•>•>•>•>•>•>•>•>•>•>•>•>•>•> ', word, weights[j], index==-1?1:(1 - Math.pow(wordsFrequencyTable[1][index]/maxFreq, 0.2)) )
     			weights[j]*= (index==-1?1:(1 - Math.pow(wordsFrequencyTable[1][index]/maxFreq, 0.2)) );
     		}
-    		//if(i<10) c.log('nOtherTexts, weights[j], word', nOtherTexts, weights[j], word);
+
+    		maxWeight = Math.max(maxWeight, weights[j]);
     	};
+
     	nWords = Math.floor(Math.log(n_words+1)*3);
-    	//c.log(nWords, n_words, '|', words.length, weights.length);
+    	
     	words = words.getSortedByList(weights, false).slice(0, nWords);
+
+    	words.position = {};
+    	words.forEach(function(word, j){
+    		words.position[word] = j;
+    	});
+
     	weights = weights.getSorted(false).slice(0, nWords);
     	node.wordsTable = new Table();
     	node.wordsTable[0] = words;
     	node.wordsTable[1] = weights;
-    	//if(i<10) c.log(node.wordsTable);
     });
+	
+	
+	c.l('B ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
+	_time = new Date().getTime();
 	
 	for(i=0; network.nodeList[i+1]!=null; i++){
     	node = network.nodeList[i];
@@ -285,16 +324,19 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
     		node1 = network.nodeList[j];
     		weight = 0;
     		node.wordsTable[0].forEach(function(word, i){
-    			index = node1.wordsTable[0].indexOf(word);//TODO:this could be improved (as seen in forums, indexOf might be unneficient for arrays
-    			if(index!=-1) weight+=node.wordsTable[1][i]*node1.wordsTable[1][index];
+    			//index = node1.wordsTable[0].indexOf(word);//TODO:this could be improved (as seen in forums, indexOf might be unneficient for arrays
+    			index = node1.wordsTable[0].position[word];
+    			if(index!=null) weight+=node.wordsTable[1][i]*node1.wordsTable[1][index];
     		});
-    		weight = Math.sqrt(weight/Math.max(node.wordsTable[0].length, node1.wordsTable[0].length));;
-    		if(weight>relationBias){
+    		weight = Math.sqrt((weight/maxWeight)/Math.max(node.wordsTable[0].length, node1.wordsTable[0].length));
+    		if(weight>relationThreshold){
     			relation = new Relation(node.id+"_"+node1.id, node.id+"_"+node1.id, node, node1, weight);
     			network.addRelation(relation);
     		}
     	}
     }
+
+    c.l('C ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
 
     return network;
 }

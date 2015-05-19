@@ -81,17 +81,44 @@ Node.prototype.destroy=function(){
     delete this.az;
 }
 
+Node.prototype.getDegree=function(){
+    return this.relationList.length;
+}
 
 //treeProperties:
 Node.prototype.getParent=function(){
 	return this.parent;
 }
+
+/**
+ * return the leaves under a node in a Tree, [!] if the network is not a tree this method could run infinite loops
+ * @return {NodeList}
+ * tags:
+ */
+Node.prototype.getLeaves=function(){
+    var leaves = new NodeList();
+    var addLeaves = function(node){
+        if(node.toNodeList.length==0){
+            leaves.addNode(node);
+            return;
+        }
+        node.toNodeList.forEach(addLeaves);
+    }
+    addLeaves(this);
+    return leaves;
+}
 //
 
 
-Node.prototype.toString=function(){
-	return this.name+", "+this.id;
+Node.prototype.loadImage = function(urlImage){
+    Loader.loadImage(urlImage, function(e){
+        this.image = e.result;
+    }, this);
 }
+
+// Node.prototype.toString=function(){
+// 	return this.name+", "+this.id;
+// }
 
 Node.prototype.clone=function(){
 	var newNode = new Node(this.id, this.name);
