@@ -225,7 +225,7 @@ GeometryOperators.distancePointToLine = function(point, line){
 
 GeometryOperators.distancePointToSegment = function(point, point0Segment, point1Segment){
 	var m = point0Segment.x==point1Segment.x?Infinity:(point1Segment.y-point0Segment.y)/(point1Segment.x-point0Segment.x);
-	line = m==Infinity?new Point(Infinity, point0Segment.x):new Point(m, point0Segment.y-m*point0Segment.x);
+	var line = m==Infinity?new Point(Infinity, point0Segment.x):new Point(m, point0Segment.y-m*point0Segment.x);
 	var m2;
 	var b2;
 	if(line.x==0){
