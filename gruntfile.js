@@ -2,9 +2,9 @@
 
 // test 28/04/2014 12:24 -- 2
 var watchedFiles = [
-    "**/*.js", 
-    "!**/node_modules/**", 
-    "!dist/*.js", 
+    "**/*.js",
+    "!**/node_modules/**",
+    "!dist/*.js",
     "!tests/**"
 ];
 
@@ -25,9 +25,9 @@ module.exports = function (grunt) {
     },
     // define source files and their destinations
     uglify: {
-        files: { 
+        files: {
             src: 'dist/framework_concat.js'//'./*.js',  // source files mask
-            , 
+            ,
 
             dest: 'dist/',    // destination folder
             expand: true,    // allow dynamic building
@@ -37,20 +37,32 @@ module.exports = function (grunt) {
     },
     watch: {
         js:  { files: watchedFiles, tasks: [ 'buildFileList', 'concat', 'uglify', 'copy' ] },
-         
+
     },
 
     copy: {
       spiral: {
         src: 'dist/framework_concat.js',
         dest: '../spiral/_dev/client/angularSpiral/app/scripts/classes/framework_concat.js'
-      }, 
+      },
       spiralMin: {
         src: 'dist/framework_concat.min.js',
         dest: '../spiral/_dev/client/angularSpiral/app/scripts/classes/framework_concat.min.js'
       }
+    },
+    jsdoc : {
+      dist : {
+        src: ['Global.js', 'dataStructures/**/*.js', 'visualization/**/*.js', 'apis/**/*.js', 'operators/**/*.js', 'Tools/**/*.js'],
+        jsdoc: "node_modules/.bin/jsdoc",
+        options: {
+          destination: 'site/docs',
+          template : "docs/moebio-jsdoc",
+          configure : "docs/jsdoc.conf.json",
+          readme : "docs/jsdoc-readme.md"
+        }
+      }
     }
-    
+
 });
 
 // load plugins
@@ -58,9 +70,11 @@ grunt.loadNpmTasks('grunt-contrib-watch');
 grunt.loadNpmTasks('grunt-contrib-concat');
 grunt.loadNpmTasks('grunt-contrib-uglify');
 grunt.loadNpmTasks('grunt-contrib-copy');
+grunt.loadNpmTasks('grunt-jsdoc');
 
 // register at least this one task
 grunt.registerTask('default', [ 'buildFileList', 'concat', 'uglify', 'copy' ]);
+grunt.registerTask('doc', [ 'jsdoc' ]);
 
 
 // test task
@@ -73,12 +87,12 @@ grunt.registerTask('buildFileList', 'My "buildFileList" task description.', func
         var lines = data.split("\n");
         for (var i = 0; i < lines.length; i++) {
             var line = lines[i];
-            if( line.substr(0, 8)=="include("){     
-                var fileName = line.substr(24, line.length-27);   
+            if( line.substr(0, 8)=="include("){
+                var fileName = line.substr(24, line.length-27);
                 fileList.push( fileName );
             }
         };
-        
+
         console.log( "fileList to concatenate / uglyfy is " + fileList.length + " lines long" );
         done();
     });
@@ -86,27 +100,3 @@ grunt.registerTask('buildFileList', 'My "buildFileList" task description.', func
 
 
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
