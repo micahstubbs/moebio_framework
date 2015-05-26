@@ -2,3 +2,4 @@
 node_modules
 site/build
 site/source/_site
+.jekyll
