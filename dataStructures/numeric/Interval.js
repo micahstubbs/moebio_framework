@@ -3,8 +3,8 @@ Interval.prototype.constructor=Interval;
 
 /**
 * Interval
-* @param {Number} Interval's x value
-* @param {Number} Interval's y value
+* @param {Number} x - Interval's x value
+* @param {Number} y - Interval's y value
 * @constructor
 */
 function Interval (x, y) {
@@ -14,6 +14,11 @@ function Interval (x, y) {
     this.type="Interval";
 }
 
+/**
+ * getMin - find the minimum value of the interval
+ *
+ * @return {Number} the minimum value in the interval
+ */
 Interval.prototype.getMin=function(){
 	return Math.min(x,y);
 }
@@ -68,7 +73,7 @@ Interval.prototype.invert=function(){
  * 0 -> min
  * 1 -> max
  * @param value between 0 and 1 (to obtain values between min and max)
- * 
+ *
  */
 Interval.prototype.getInterpolatedValue=function(value){
 	return value*Number(this.getSignedAmplitude()) + this.x;

@@ -24,9 +24,6 @@
   background: rgb(45, 62, 80);
 }
 
-.fixed {
-  position: fixed;
-}
 
 html,
 body,
@@ -116,12 +113,12 @@ h2 {
 }
 
 h3 {
-  font-size: 15px;
-  line-height: 20px;
+  font-size: 19px;
+  line-height: 24px;
 }
 
 h4 {
-  font-size: 12px;
+  font-size: 15px;
   line-height: 20px;
 }
 
@@ -440,8 +437,13 @@ table.prose th,
   text-transform: capitalize;
 }
 
-/* Loading overlay
-------------------------------------------------------- */
+.force-inline * {
+  display:inline !important;
+}
+
+.fixed {
+  position: fixed;
+}
 
 /* Small Screen Layout
 ------------------------------------------------------- */

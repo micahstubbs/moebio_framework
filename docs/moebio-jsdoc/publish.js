@@ -362,7 +362,7 @@ function buildNav(members) {
 
     nav += buildMemberNav(members.modules, '', {}, linkto);
     nav += buildMemberNav(members.externals, 'Externals', seen, linktoExternal);
-    nav += buildMemberNav(members.classes, '', seen, linkto);
+    nav += buildMemberNav(members.classes, 'Classes', seen, linkto);
     nav += buildMemberNav(members.events, 'Events', seen, linkto);
     nav += buildMemberNav(members.namespaces, 'Namespaces', seen, linkto);
     nav += buildMemberNav(members.mixins, 'Mixins', seen, linkto);
@@ -379,7 +379,9 @@ function buildNav(members) {
             seen[g.longname] = true;
         });
 
-        nav += '<div class="quiet"><h4 class="space-top1">Types</h4><ul>' + globalNav + '</ul></div>';
+        nav += '<h3>' + 'Functions' + '</h3>'
+
+        nav += '<ul>' + globalNav + '</ul></div>';
     }
 
     return nav;

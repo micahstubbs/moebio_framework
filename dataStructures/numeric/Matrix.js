@@ -19,14 +19,12 @@ function Matrix(a, b, c, d, tx, ty) {
 
 
 /**
-* Returns the result of applying the geometric transformation represented by the 
+* Returns the result of applying the geometric transformation represented by the
 * Matrix object to the specified point.
-* @name transformPoint
 * @methodOf Matrix#
 * @see #deltaTransformPoint
 *
-* @returns A new point with the transformation applied.
-* @type Point
+* @returns {Point} A new point with the transformation applied.
 */
 Matrix.prototype.transformPoint=function(point) {
 	return new Point(
@@ -44,16 +42,14 @@ Matrix.prototype.transformPoint=function(point) {
 
 /**
 * Returns the result of this matrix multiplied by another matrix
-* combining the geometric effects of the two. In mathematical terms, 
+* combining the geometric effects of the two. In mathematical terms,
 * concatenating two matrixes is the same as combining them using matrix multiplication.
 * If this matrix is A and the matrix passed in is B, the resulting matrix is A x B
 * http://mathworld.wolfram.com/MatrixMultiplication.html
-* @name concat
 * @methodOf Matrix#
 *
 * @param {Matrix} matrix The matrix to multiply this matrix by.
-* @returns The result of the matrix multiplication, a new matrix.
-* @type Matrix
+* @returns {Matrix} The result of the matrix multiplication, a new matrix.
 */
 Matrix.prototype.concat=function(matrix) {
 	return Matrix(
@@ -67,16 +63,13 @@ Matrix.prototype.concat=function(matrix) {
 }
 
 /**
-* Given a point in the pretransform coordinate space, returns the coordinates of 
-* that point after the transformation occurs. Unlike the standard transformation 
-* applied using the transformPoint() method, the deltaTransformPoint() method's 
+* Given a point in the pretransform coordinate space, returns the coordinates of
+* that point after the transformation occurs. Unlike the standard transformation
+* applied using the transformPoint() method, the deltaTransformPoint() method's
 * transformation does not consider the translation parameters tx and ty.
-* @name deltaTransformPoint
-* @methodOf Matrix#
 * @see #transformPoint
 *
-* @return A new point transformed by this matrix ignoring tx and ty.
-* @type Point
+* @return {Point} A new point transformed by this matrix ignoring tx and ty.
 */
 Matrix.prototype.deltaTransformPoint=function(point) {
 	return Point(
@@ -88,11 +81,8 @@ Matrix.prototype.deltaTransformPoint=function(point) {
 /**
 * Returns the inverse of the matrix.
 * http://mathworld.wolfram.com/MatrixInverse.html
-* @name inverse
-* @methodOf Matrix#
 *
-* @returns A new matrix that is the inverse of this matrix.
-* @type Matrix
+* @returns {Matrix} A new matrix that is the inverse of this matrix.
 */
 Matrix.prototype.getInverse=function() {
 	var determinant = this.a * this.d - this.b * this.c;
@@ -108,46 +98,38 @@ Matrix.prototype.getInverse=function() {
 /**
 * Returns a new matrix that corresponds this matrix multiplied by a
 * a rotation matrix.
-* @name rotate
-* @methodOf Matrix#
 * @see Matrix.rotation
 *
 * @param {Number} theta Amount to rotate in radians.
 * @param {Point} [aboutPoint] The point about which this rotation occurs. Defaults to (0,0).
-* @returns A new matrix, rotated by the specified amount.
-* @type Matrix
+* @returns {Matrix} A new matrix, rotated by the specified amount.
 */
 Matrix.prototype.rotate=function(theta, aboutPoint) {
 	return this.concat(Matrix.rotation(theta, aboutPoint));
 }
- 
+
 /**
 * Returns a new matrix that corresponds this matrix multiplied by a
 * a scaling matrix.
-* @name scale
-* @methodOf Matrix#
 * @see Matrix.scale
 *
 * @param {Number} sx
 * @param {Number} [sy]
 * @param {Point} [aboutPoint] The point that remains fixed during the scaling
-* @type Matrix
+* @returns {Matrix}
 */
 Matrix.prototype.scale=function(sx, sy, aboutPoint) {
 	return this.concat(Matrix.scale(sx, sy, aboutPoint));
 }
- 
- 
+
+
 /**
-* Translates the matrix along the x and y axes, as specified by the tx and ty parameters.
-* @name translate
 * @methodOf Matrix#
 * @see Matrix.translation
 *
 * @param {Number} tx The translation along the x axis.
 * @param {Number} ty The translation along the y axis.
-* @returns A new matrix with the translation applied.
-* @type Matrix
+* @returns {Matrix} A new matrix with the translation applied.
 */
 Matrix.prototype.translate=function(tx, ty) {
 	return this.concat(Matrix.translation(tx, ty));

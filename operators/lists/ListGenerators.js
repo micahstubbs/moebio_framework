@@ -1,5 +1,7 @@
 /**
  * static class with methods to generate different kinds of Lists
+* 
+* @constructor
  */
 function ListGenerators(){};
 
@@ -33,7 +35,7 @@ ListGenerators.createListWithSameElement=function(nValues, element){
 		default:
 			var list = new List();
 	}
-	
+
 	for(var i=0; i<nValues; i++){
 		list[i] = element;
 	}

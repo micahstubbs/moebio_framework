@@ -8,7 +8,7 @@ var self = this;
     <?js } ?>
 
 
-    <h3 class="name" id="<?js= id ?>"><?js= data.attribs + (kind === 'class' ? 'new ' : '') +
+    <h3 class="name" id="<?js= id ?>"><?js=  (kind === 'class' ? 'new ' : '') +
     name + (data.signature || '') ?></h3>
 
     <?js if (data.summary) { ?>
@@ -42,21 +42,21 @@ var self = this;
 <?js } ?>
 
 <?js if (data.params && params.length) { ?>
-  <h3>Parameters</h3>
+  <h4>Parameters</h4>
   <p>
   <?js= this.partial('params.tmpl', params) ?>
   </p>
 <?js } ?>
 
 <?js if (data.kind !== 'module' && data.requires && data.requires.length) { ?>
-<h3>Requires</h3>
+<h4>Requires</h4>
 <ul><?js data.requires.forEach(function(r) { ?>
     <li><?js= self.linkto(r) ?></li>
 <?js }); ?></ul>
 <?js } ?>
 
 <?js if (data.fires && fires.length) { ?>
-<h3>Fires</h3>
+<h4>Fires</h4>
 <ul><?js fires.forEach(function(f) { ?>
     <li><?js= self.linkto(f) ?></li>
 <?js }); ?></ul>
@@ -77,7 +77,7 @@ var self = this;
 <?js } ?>
 
 <?js if (data.exceptions && exceptions.length) { ?>
-<h3>Throws</h3>
+<h4>Throws</h4>
 <?js if (exceptions.length > 1) { ?><ul><?js
     exceptions.forEach(function(r) { ?>
         <li><?js= self.partial('exceptions.tmpl', r) ?></li>
@@ -103,6 +103,6 @@ var self = this;
 <?js } ?>
 
 <?js if (data.examples && examples.length) { ?>
-    <h3>Example<?js= examples.length > 1? 's':'' ?></h3>
+    <h4>Example<?js= examples.length > 1? 's':'' ?></h4>
     <?js= this.partial('examples.tmpl', examples) ?>
 <?js } ?>

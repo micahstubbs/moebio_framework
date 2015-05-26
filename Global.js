@@ -2,7 +2,7 @@
  *Static class that:
  * -includes all the data models (by including the class IncludeDataModels.js)
  * -includes class utils (that contains methods such as instantiate)
- * -contains the global variables (such as userAgent, canvas, nF, mX…), global 
+ * -contains the global variables (such as userAgent, canvas, nF, mX…), global
  * -contains the listener methods
  * -triggers de init, update and draw in Global class
  * @constructor
@@ -119,21 +119,21 @@ window.addEventListener('load', function(){
   	} else if(navigator.userAgent.match(/iPhone/i) != null){
     	userAgent='IOS';
   	}
-  	
-  	
+
+
   	Global.userAgent=userAgent;
     Global._frameRate=30;
-    
+
 	canvas = document.getElementById('main');
-	
+
 	if(canvas!=null){
 		removeDiv = document.getElementById('removeDiv');
 		removeDiv.style.display = 'none';
 
 		context = canvas.getContext('2d');
-		
+
 		_adjustCanvas();
-		
+
 		canvas.addEventListener("mousemove", _onMouse, false);
 		canvas.addEventListener("mousedown", _onMouse, false);
 		canvas.addEventListener("mouseup", _onMouse, false);
@@ -144,13 +144,13 @@ window.addEventListener('load', function(){
 		activateWheel();
 
 		window.addEventListener("resize", onResize, false);
-		
+
 		startCycle();
 		init();
 	}
 
 	c.l('Moebio Framework v2.256 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
-	
+
 }, false);
 
 function _onMouse(e) {
@@ -210,10 +210,10 @@ function _adjustCanvas(){
 
 	cW = getDocWidth();
 	cH = getDocHeight();
-	
+
 	canvas.setAttribute('width', cW);
     canvas.setAttribute('height', cH);
-	
+
 	cX = Math.floor(cW*0.5);
 	cY = Math.floor(cH*0.5);
 }
@@ -245,7 +245,7 @@ function setFrameRate(fr){
 
 	if(cycleActive) startCycle();
 }
-	
+
 function enterFrame(){
    	context.clearRect(0, 0, cW, cH);
    	setCursor('default');
@@ -259,14 +259,14 @@ function enterFrame(){
 	MOUSE_MOVED = DX_MOUSE!=0 || DY_MOUSE!=0;
 
 	if(MOUSE_PRESSED) T_MOUSE_PRESSED = new Date().getTime() - _tLastMouseDown;
-	
+
   	cycle();
 
   	WHEEL_CHANGE = 0;
 
   	PREV_mX=mX;
 	PREV_mY=mY;
-  	
+
   	nF++;
 }
 
@@ -296,12 +296,12 @@ function onMoveCycle(e){
 function reStartCycle(){
 	_prevMouseX=mX;
 	_prevMouseY=mY;
-	
+
 	if(!cycleActive){
 		_setIntervalId = setInterval(enterFrame, Global._frameRate);
 		cycleActive = true;
 	}
-	
+
 	clearTimeout(_setTimeOutId);
 	_setTimeOutId = setTimeout(stopCycle, END_CYCLE_DELAY);
 }
@@ -381,24 +381,24 @@ function onKey(e){
 	onCanvasEvent(e);
 }
 
-/**
+/*
  * thanks http://www.adomas.org/javascript-mouse-wheel
  */
 function activateWheel(){
 	_wheelActivated = true;
-	
+
 	if (window.addEventListener){
 		window.addEventListener('DOMMouseScroll', _onWheel, false);
 		//window.addEventListener("mousewheel", _onWheel, false); // testing
 	}
 	window.onmousewheel = document.onmousewheel = _onWheel;
-	
+
 }
 function _onWheel(e) {
 	//c.l('_onWheel, e:', e);
 
     if (!e) e = window.event; //IE
-            
+
     if (e.wheelDelta){
     	WHEEL_CHANGE = e.wheelDelta/120;
     } else if (e.detail) { /** Mozilla case. */
@@ -471,7 +471,7 @@ getStructureLocalStorage = function(id, returnStorageObject){
 	}
 
 	if(storageObject.type==null && storageObject.code==null) return null;
-	
+
 	var type = storageObject.type;
 	var code = storageObject.code;
 	var object;
@@ -492,7 +492,7 @@ getStructureLocalStorage = function(id, returnStorageObject){
 		storageObject.object = object;
 		storageObject.size = storageObject.code.length;
 		storageObject.date = new Date(storageObject.date);
-		
+
 		return storageObject;
 	}
 

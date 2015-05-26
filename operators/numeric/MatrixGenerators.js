@@ -96,8 +96,7 @@ MatrixGenerators.createRotationMatrix = function(theta, aboutPoint) {
    * @param {Number} sx The amount to scale by along the x axis or uniformly if no sy is given.
    * @param {Number} [sy] The amount to scale by along the y axis.
    * @param {Point} [aboutPoint] The point about which the scaling occurs. Defaults to (0,0).
-   * @returns A matrix transformation representing scaling by sx and sy.
-   * @type Matrix
+   * @returns {Matrix} A matrix transformation representing scaling by sx and sy.
    */
 MatrixGenerators.createScaleMatrix = function(sx, sy, aboutPoint) {
     sy = sy || sx;
