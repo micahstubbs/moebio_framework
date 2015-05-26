@@ -5,8 +5,8 @@
 function GeometryOperators(){};
 
 
-/** 
- * from three Points calculates two control Points for the middle Point that will define a curve (using Bézier) that goes softly through the three points 
+/**
+ * from three Points calculates two control Points for the middle Point that will define a curve (using Bézier) that goes softly through the three points
  * TODO: finish method by taking into account distances
  */
 GeometryOperators.getSoftenControlPoints=function(point0, point1, point2, controlVectorSize){
@@ -21,19 +21,19 @@ GeometryOperators.bezierCurvePoints=function(x0, y0, c0x, c0y, c1x, c1y, x1, y1,
 	var s = 1-t;
 	var ax = s*x0 + t*c0x;
 	var ay = s*y0 + t*c0y;
-	
+
 	var bx = s*c0x + t*c1x;
 	var by = s*c0y + t*c1y;
-	
+
 	var cx = s*c1x + t*x1;
 	var cy = s*c1y + t*y1;
-	
+
 	var ex = s*ax + t*bx;
 	var ey = s*ay + t*by;
-	
+
 	var fx = s*bx + t*cx;
 	var fy = s*by + t*cy;
-	
+
 	return new Point(t*fx + s*ex, t*fy + s*ey);
 }
 
@@ -90,13 +90,13 @@ GeometryOperators.trueBezierCurveHeightHorizontalControlPoints=function(x0, x1, 
 
 	//x=3at + t^2(3-9a) + t^3(1+6a)  --> Javier
 	//http://en.wikipedia.org/wiki/Cubic_function#General_formula_for_roots
-	
+
 
 
 
 	//return (x-x0)/(x1-x0);// (x - x0)/(c0x + c1x - 2*x0);
 
-	//var 
+	//var
 
 	// var antit = 1 - t;
 
@@ -131,7 +131,7 @@ GeometryOperators.trueBezierCurveHeightHorizontalControlPoints=function(x0, x1, 
 
 	// var cosinus = Math.cos(Math.PI*(t-1));
 	// var sign = cosinus>0?1:-1;
-	
+
 	// return (0.5 + 0.5*( Math.pow(cosinus*sign, 0.6)*sign ))*(y1-y0) + y0;
 //}
 
@@ -139,10 +139,10 @@ GeometryOperators.trueBezierCurveHeightHorizontalControlPoints=function(x0, x1, 
  * This an approximation, it doesn't take into account actual values of c0x and c1x
  */
 GeometryOperators.bezierCurveHeightHorizontalControlPoints=function(y0, c0x, c1x, y1, t){//TODO:fix
-	
+
 	var cosinus = Math.cos(Math.PI*(t-1));
 	var sign = cosinus>0?1:-1;
-	
+
 	return (0.5 + 0.5*( Math.pow(cosinus*sign, 0.6)*sign ))*(y1-y0) + y0;
 }
 
@@ -163,17 +163,17 @@ GeometryOperators.distanceToBezierCurve=function(x0, y0, c0x, c0y, c1x, c1y, x1,
 	var d1I = Math.pow(p1I.x-p.x, 2) + Math.pow(p1I.y-p.y, 2);
 
 	var i;
-	
+
 	var pM;
 	var pMI;
-	
+
 	for(i=0; i<10; i++){
 		pM = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, (t0+t1)*0.5);
 		pMI = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, (t0+t1)*0.5 + minDT);
-		
+
 		d0 = Math.pow(pM.x-p.x, 2) + Math.pow(pM.y-p.y, 2);
 		d0I = Math.pow(pMI.x-p.x, 2) + Math.pow(pMI.y-p.y, 2);
-		
+
 		if(d0<d0I){
 			t1 = (t0+t1)*0.5;
 			p1 = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, t1);
@@ -184,7 +184,7 @@ GeometryOperators.distanceToBezierCurve=function(x0, y0, c0x, c0y, c1x, c1y, x1,
 			d0 = Math.pow(p0.x-p.x, 2) + Math.pow(p0.y-p.y, 2);
 		}
 	}
-	
+
 	if(returnPoint) return p1;
 	return Math.sqrt(Math.min(d0,d1));
 }
@@ -256,7 +256,7 @@ GeometryOperators.intersectionLines = function(line0, line1){
 	} else if(line1.x==Infinity){
 		return new Point(line1.y, line0.x*line1.y+line0.y);
 	}
-	
+
 	var xx = (line1.y-line0.y)/(line0.x-line1.x);
 	return new Point(xx, line0.x*xx+line0.y);
 }
@@ -266,26 +266,26 @@ GeometryOperators.VennCircles = function(area0, area1, areaIntersection, centerI
 	var rA = Math.sqrt(area0/Math.PI);
 	var rB = Math.sqrt(area1/Math.PI);
 	var d = GeometryOperators.circleDistancesFromCommonArea(rA, rB, areaIntersection, precision);
-	
+
 	var circle0;
 	var circle1;
-		
+
 	if(centerInLens){
 		var x0 = (d*d+Math.pow(rA, 2)-Math.pow(rB, 2))/(2*d);
-		
+
 		circle0 = new Point3D(-x0, 0, rA);
 		circle1 = new Point3D(d-x0, 0, rB);
-		
+
 	} else {
 		circle0 = new Point3D(-d*0.5, 0, rA);
 		circle1 = new Point3D(d*0.5, 0, rB);
 	}
-	
+
 	if(areaIntersection==0){
 		circle0.x-=d*0.1;
 		circle1.x+=d*0.1;
 	}
-	
+
 	return new Polygon3D(circle0, circle1);
 }
 
@@ -295,7 +295,6 @@ GeometryOperators.VennCircles = function(area0, area1, areaIntersection, centerI
  * @param r1
  * @param areaComun
  * @param precision
- * @return 
  * 
  */
 GeometryOperators.circleDistancesFromCommonArea = function(r0, r1, commonArea, precision){
@@ -303,11 +302,11 @@ GeometryOperators.circleDistancesFromCommonArea = function(r0, r1, commonArea, p
 	var d0 = Math.max(r0, r1) - Math.min(r0, r1);
 	var d1 = r0 + r1;
 	var dM = (d0+d1)*0.5;
-	
+
 	var attempts=0;
-	
+
 	var currentArea = GeometryOperators.circlesCommonArea(r0, r1, dM);
-	
+
 	while(Math.abs(currentArea-commonArea)>precision && attempts<200){
 		if(currentArea>commonArea){
 			d0 = dM;
@@ -327,11 +326,11 @@ GeometryOperators.circlesCommonArea = function(ra, rb, d){
 	if(d+Math.min(ra, rb)<=Math.max(ra, rb)){
 		return Math.PI*Math.pow(Math.min(ra, rb), 2);
 	}
-	
+
 	var d2 = Math.pow(d,2);
 	var ra2 =  Math.pow(ra,2);
 	var rb2 =  Math.pow(rb,2);
-	
+
 	return ra2*Math.acos((d2+ra2-rb2)/(2*d*ra)) + rb2*Math.acos((d2+rb2-ra2)/(2*d*rb)) - 0.5*Math.sqrt((-d+ra+rb)*(d+ra-rb)*(d-ra+rb)*(d+ra+rb));
 }
 
@@ -349,13 +348,13 @@ GeometryOperators.circlesLensAngles = function(circle0, circle1){
 	} else if(circle0.x-circle0.z>=circle1.x-circle1.z){
 		return null;
 	}
-	
+
 	var d = circle1.x-circle0.x
 	var x0 = (d*d+Math.pow(circle0.z, 2)-Math.pow(circle1.z, 2))/(2*d);
 	var alfa = Math.acos(x0/circle0.z);
 	var h = circle0.z*Math.sin(alfa);
 	var beta = Math.asin(h/circle1.z);
-	
+
 	if(circle0.x+x0<circle1.x){
 		return new NumberList(-alfa, alfa, Math.PI-beta, Math.PI+beta);
 	} else {
@@ -539,5 +538,3 @@ function _triangulate(vertices) {
   /* Yay, we're done! */
   return closed
 }
-
-

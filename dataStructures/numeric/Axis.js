@@ -8,17 +8,17 @@ Axis.prototype.constructor=Axis;
 function Axis (departureInterval, arrivalInterval) {
 	departureInterval = departureInterval==null?new Interval(0,1):departureInterval;
 	arrivalInterval = arrivalInterval==null?new Interval(0,1):arrivalInterval;
-	
+
 	DataModel.apply(this, arguments);
     this.departureInterval = departureInterval;
     this.arrivalInterval = arrivalInterval;
-    
+
     this.departureAmplitude;
     this.arrivalAmplitude;
-    
+
     this.setDepartureInterval(departureInterval);
     this.setArrivalInterval(arrivalInterval);
-    
+
     this.type="Axis";
 }
 
@@ -28,7 +28,7 @@ Axis.prototype.setDepartureInterval=function(departureInterval){
 	this.departureInterval=departureInterval;
 	c.log('--> departureInterval', departureInterval);
 	this.departureAmplitude = departureInterval.getSignedAmplitude();
-	
+
 }
 Axis.prototype.setArrivalInterval=function(arrivalInterval){
 	this.arrivalInterval=arrivalInterval;

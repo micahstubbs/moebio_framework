@@ -1,9 +1,9 @@
 /**
 * ColorOperators
 * @constructor
-* 
-* TODO: create Color struture to be used instead of arrays [255, 100,0] ?
+*
 */
+// TODO: create Color struture to be used instead of arrays [255, 100,0] ?
 function ColorOperators(){};
 
 
@@ -16,7 +16,7 @@ function ColorOperators(){};
  * @param {String} color1
  * @param value between 0 and 1 (to obtain color between color0 and color1)
  * @return {String} interpolated color
- * 
+ *
  */
 ColorOperators.interpolateColors=function(color0, color1, value){
     var resultArray=ColorOperators.interpolateColorsRGB(ColorOperators.colorStringToRGB(color0), ColorOperators.colorStringToRGB(color1), value);
@@ -31,7 +31,7 @@ ColorOperators.interpolateColors=function(color0, color1, value){
  * @param {Array} color1 RGB
  * @param value between 0 and 1 (to obtain values between color0 and color1)
  * @return {Array} interpolated RGB color
- * 
+ *
  */
 ColorOperators.interpolateColorsRGB=function(color0, color1, value){
     var s = 1-value;
@@ -53,7 +53,7 @@ ColorOperators.RGBArrayToString=function(array){
  * converts an hexadecimal color to RGB
  * @param {String} an hexadecimal color string
  * @return {Array} returns an RGB color Array
- * 
+ *
  */
 ColorOperators.HEXtoRGB=function(hexColor){
 	return [parseInt(hexColor.substr(1, 2), 16), parseInt(hexColor.substr(3, 2), 16), parseInt(hexColor.substr(5, 2), 16)];
@@ -105,7 +105,7 @@ ColorOperators.grayByLevel=function(level){
  * converts an hexadecimal color to HSV
  * @param {String} an hexadecimal color string
  * @return {Array} returns an HSV color Array
- * 
+ *
  */
 ColorOperators.HEXtoHSV=function(hexColor){
   var rgb=ColorOperators.HEXtoRGB(hexColor);
@@ -162,7 +162,7 @@ ColorOperators.RGBtoHSV=function(r, g, b){
  * converts an HSV color to RGB
  * @param {Array} a HSV color array
  * @return {Array} returns a RGB color array
- * 
+ *
  */
 ColorOperators.HSVtoRGB=function(hue, saturation, value){
 	hue=hue?hue:0;
@@ -225,7 +225,7 @@ ColorOperators.HSVtoRGB=function(hue, saturation, value){
 /**
  * Converts an HSL color value to RGB. Conversion formula
  * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
- * Assumes hue is contained in the interval [0,360) and saturation and l are contained in the set [0, 1] 
+ * Assumes hue is contained in the interval [0,360) and saturation and l are contained in the set [0, 1]
  */
 ColorOperators.HSLtoRGB = function(hue, saturation, light){
     var r, g, b;
@@ -290,7 +290,7 @@ ColorOperators.getRandomColor=function(){
 
 /**
  * This method was partially obtained (and simplified) from a Class by Stoyan Stefanov:
- * 
+ *
  * A class to parse color values
  * @author Stoyan Stefanov <sstoo@gmail.com>
  * @link   http://www.phpied.com/rgb-color-parser-in-javascript/
@@ -457,7 +457,7 @@ ColorOperators.colorStringToRGB = function(color_string){
         yellow: 'ffff00',
         yellowgreen: '9acd32'
     };
-    
+
     if(simple_colors[color_string]!=null) color_string = simple_colors[color_string];
 
 
@@ -508,7 +508,7 @@ ColorOperators.colorStringToRGB = function(color_string){
             }
         }
     ];
-    
+
     // search through the definitions to find a match
     for (var i = 0; i < color_defs.length; i++) {
         var re = color_defs[i].re;
@@ -519,11 +519,6 @@ ColorOperators.colorStringToRGB = function(color_string){
         }
 
     }
-    
+
     return null;
 }
-
-
-
-
-
