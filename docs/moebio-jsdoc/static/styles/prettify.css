@@ -34,7 +34,7 @@
 /* Put a border around prettyprinted code snippets. */
 pre.prettyprint {
 	padding: 2px;
-	border: 0px solid #f7f7f7;
+  padding-left: 15px;
 	background-color: #f7f7f7;
 	border-radius: 3px;
 }
