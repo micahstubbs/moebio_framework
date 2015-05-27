@@ -129,11 +129,6 @@ grunt.loadNpmTasks('grunt-jekyll');
 grunt.loadNpmTasks('grunt-contrib-jshint');
 grunt.loadNpmTasks("grunt-jscs");
 
-// register at least this one task
-grunt.registerTask('default', [ 'buildFileList', 'concat', 'uglify', 'copy' ]);
-grunt.registerTask('doc', [ 'jsdoc' ]);
-grunt.registerTask('site', [ 'jekyll:build', 'doc', 'gh-pages' ]);
-
 
 // test task
 grunt.registerTask('buildFileList', 'My "buildFileList" task description.', function() {
@@ -156,10 +151,19 @@ grunt.registerTask('buildFileList', 'My "buildFileList" task description.', func
     });
 });
 
+//
+// Default task - build distribution source
+//
+grunt.registerTask('default', [ 'buildFileList', 'concat', 'uglify', 'copy' ]);
+
+//
+// Build documentation
+//
+grunt.registerTask('doc', [ 'jsdoc' ]);
 
 //
 // Build and deploy static site.
 //
-grunt.registerTask('deploy', ['jekyll:build', 'gh-pages']);
+grunt.registerTask('site', ['jekyll:build', 'doc', 'gh-pages']);
 
 };
