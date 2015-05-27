@@ -27,9 +27,7 @@ var filter = function() {
       } else {
         $(this).addClass("filtered");
       }
-      console.log(name);
       return true;
-
     });
   }
 

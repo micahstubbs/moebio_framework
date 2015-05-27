@@ -132,6 +132,7 @@ grunt.loadNpmTasks("grunt-jscs");
 // register at least this one task
 grunt.registerTask('default', [ 'buildFileList', 'concat', 'uglify', 'copy' ]);
 grunt.registerTask('doc', [ 'jsdoc' ]);
+grunt.registerTask('site', [ 'jekyll:build', 'doc', 'gh-pages' ]);
 
 
 // test task
