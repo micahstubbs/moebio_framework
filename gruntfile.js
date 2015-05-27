@@ -92,7 +92,7 @@ module.exports = function (grunt) {
 
 		jsdoc : {
 			dist : {
-				src: ['Global.js', 'dataStructures/**/*.js', 'visualization/**/*.js', 'apis/**/*.js', 'operators/**/*.js', 'Tools/**/*.js'],
+				src: buildFileList(),
 				jsdoc: "node_modules/.bin/jsdoc",
 				options: {
 					destination: 'site/build/docs',
