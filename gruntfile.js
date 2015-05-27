@@ -50,17 +50,47 @@ module.exports = function (grunt) {
         dest: '../spiral/_dev/client/angularSpiral/app/scripts/classes/framework_concat.min.js'
       }
     },
+
     jsdoc : {
       dist : {
         src: ['Global.js', 'dataStructures/**/*.js', 'visualization/**/*.js', 'apis/**/*.js', 'operators/**/*.js', 'Tools/**/*.js'],
         jsdoc: "node_modules/.bin/jsdoc",
         options: {
-          destination: 'site/docs',
+          destination: 'site/build/docs',
           template : "docs/moebio-jsdoc",
           configure : "docs/jsdoc.conf.json",
           readme : "docs/jsdoc-readme.md"
         }
       }
+    },
+
+    jekyll: {
+        options: {
+          src : 'site/source'
+        },
+        build: {
+          options: {
+            dest: 'site/build',
+            config: 'site/source/_config.yml'
+          }
+        },
+        serve: {
+          options: {
+            dest: '.jekyll',
+            serve: true,
+            port : 8000,
+            auto : true,
+            config: 'site/source/_config.yml'
+          }
+        }
+    },
+
+    'gh-pages': {
+      options: {
+        base: 'site/build',
+        repo: 'git@github.com:bocoup/moebio_framework.git'
+      },
+      src: '**/*'
     }
 
 });
@@ -71,6 +101,8 @@ grunt.loadNpmTasks('grunt-contrib-concat');
 grunt.loadNpmTasks('grunt-contrib-uglify');
 grunt.loadNpmTasks('grunt-contrib-copy');
 grunt.loadNpmTasks('grunt-jsdoc');
+grunt.loadNpmTasks('grunt-gh-pages');
+grunt.loadNpmTasks('grunt-jekyll');
 
 // register at least this one task
 grunt.registerTask('default', [ 'buildFileList', 'concat', 'uglify', 'copy' ]);
@@ -98,5 +130,10 @@ grunt.registerTask('buildFileList', 'My "buildFileList" task description.', func
     });
 });
 
+
+//
+// Build and deploy static site.
+//
+grunt.registerTask('deploy', ['jekyll:build', 'gh-pages']);
 
 };

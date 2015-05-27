@@ -1,0 +1,13 @@
+source:      .
+destination: ./_build
+includes:    ./_includes
+
+highlighter:    pygments
+markdown:    rdiscount
+permalink:   /:title.html
+description: ""
+
+baseurl: /moebio_framework
+
+rdiscount:
+  extensions: []
