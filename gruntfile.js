@@ -78,7 +78,28 @@ module.exports = function (grunt) {
          repo: 'git@github.com:bocoup/moebio_framework.git'
        },
        src: '**/*'
-    }
+    },
+
+    jshint: {
+        options: {
+          jshintrc: true,
+          ignores: ['libraries, dist'],
+          reporter: require('jshint-stylish')
+        },
+        src: ['*.js', 'Tools/**/*.js', 'dataStructures/**/*.js', 'operators/**/*.js',
+              'apis/**/*.js', 'Tools/**/*.js', 'Tools/**/*.js', 'visualization/**/*.js',
+              'tests/**/*.js']
+    },
+
+    jscs: {
+      options: {
+          config: ".jscsrc",
+          reporter: require('jscs-stylish').path
+    },
+    src: ['*.js', 'Tools/**/*.js', 'dataStructures/**/*.js', 'operators/**/*.js',
+              'apis/**/*.js', 'Tools/**/*.js', 'Tools/**/*.js', 'visualization/**/*.js',
+              'tests/**/*.js']
+}
 
 });
 
@@ -87,8 +108,12 @@ grunt.loadNpmTasks('grunt-contrib-watch');
 grunt.loadNpmTasks('grunt-contrib-concat');
 grunt.loadNpmTasks('grunt-contrib-uglify');
 grunt.loadNpmTasks('grunt-contrib-copy');
+
 grunt.loadNpmTasks('grunt-gh-pages');
 grunt.loadNpmTasks('grunt-jekyll');
+
+grunt.loadNpmTasks('grunt-contrib-jshint');
+grunt.loadNpmTasks("grunt-jscs");
 
 // register at least this one task
 grunt.registerTask('default', [ 'buildFileList', 'concat', 'uglify', 'copy' ]);
