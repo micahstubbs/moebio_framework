@@ -3958,17 +3958,17 @@ Axis.prototype.constructor=Axis;
 function Axis (departureInterval, arrivalInterval) {
 	departureInterval = departureInterval==null?new Interval(0,1):departureInterval;
 	arrivalInterval = arrivalInterval==null?new Interval(0,1):arrivalInterval;
-	
+
 	DataModel.apply(this, arguments);
     this.departureInterval = departureInterval;
     this.arrivalInterval = arrivalInterval;
-    
+
     this.departureAmplitude;
     this.arrivalAmplitude;
-    
+
     this.setDepartureInterval(departureInterval);
     this.setArrivalInterval(arrivalInterval);
-    
+
     this.type="Axis";
 }
 
@@ -3978,7 +3978,7 @@ Axis.prototype.setDepartureInterval=function(departureInterval){
 	this.departureInterval=departureInterval;
 	c.log('--> departureInterval', departureInterval);
 	this.departureAmplitude = departureInterval.getSignedAmplitude();
-	
+
 }
 Axis.prototype.setArrivalInterval=function(arrivalInterval){
 	this.arrivalInterval=arrivalInterval;
@@ -4002,6 +4002,7 @@ Axis.prototype.update=function(){
 Axis.prototype.toString=function(){
 	return "Axis["+this.departureInterval.toString()+", "+this.arrivalInterval.toString()+"]";
 }
+
 Axis2D.prototype = new DataModel();
 Axis2D.prototype.constructor=Axis2D;
 
@@ -4083,8 +4084,8 @@ Interval.prototype.constructor=Interval;
 
 /**
 * Interval
-* @param {Number} Interval's x value
-* @param {Number} Interval's y value
+* @param {Number} x - Interval's x value
+* @param {Number} y - Interval's y value
 * @constructor
 */
 function Interval (x, y) {
@@ -4094,6 +4095,11 @@ function Interval (x, y) {
     this.type="Interval";
 }
 
+/**
+ * getMin - find the minimum value of the interval
+ *
+ * @return {Number} the minimum value in the interval
+ */
 Interval.prototype.getMin=function(){
 	return Math.min(x,y);
 }
@@ -4136,7 +4142,7 @@ Interval.prototype.getScaledFromProportion=function(value, proportion){
 Interval.prototype.add=function(value){
 	return new Interval(this.x+value, this.y+value);
 }
-		
+
 Interval.prototype.invert=function(){
 	var swap=this.x;
 	this.x=this.y;
@@ -4148,13 +4154,12 @@ Interval.prototype.invert=function(){
  * 0 -> min
  * 1 -> max
  * @param value between 0 and 1 (to obtain values between min and max)
- * @return 
- * 
+ *
  */
 Interval.prototype.getInterpolatedValue=function(value){
 	return value*Number(this.getSignedAmplitude()) + this.x;
 }
-		
+
 Interval.prototype.getInverseInterpolatedValue=function(value){
 	return (value-this.x)/this.getSignedAmplitude();
 }
@@ -4180,21 +4185,21 @@ Interval.prototype.intersect = function(interval){
 }
 
 /**
-* create a new interval with the same proporties values 
+* create a new interval with the same proporties values
 * @return {Interval}
-* 
+*
 */
 Interval.prototype.clone=function(){
 	var newInterval = new Interval(this.x, this.y);
 	newInterval.name = name;
 	return newInterval;
 }
-		
+
 /**
-* indicate wether a number is included in the interval 
+* indicate wether a number is included in the interval
 * @param value
 * @return {Boolean}
-* 
+*
 */
 Interval.prototype.contains=function(value){
 	if(this.y>this.x) return value>=this.x && value<=this.y;
@@ -4205,23 +4210,21 @@ Interval.prototype.contains=function(value){
 * indicate wether other interval contains the same values
 * @param interval
 * @return {Boolean}
-* 
+*
 */
 Interval.prototype.isEquivalent=function(interval){
 	return this.x==interval.x && this.y==interval.y;
 }
 
 /**
- * create a new interval with the same proporties values 
+ * create a new interval with the same proporties values
  * @return {String}
- * 
+ *
  */
 
 Interval.prototype.toString=function(){
 	return "Interval[x:"+this.x+"| y:"+this.y+"| amplitude:"+this.getAmplitude()+"]";
 }
-
-		
 
 Matrix.prototype = new DataModel();
 Matrix.prototype.constructor=Matrix;
@@ -4244,14 +4247,12 @@ function Matrix(a, b, c, d, tx, ty) {
 
 
 /**
-* Returns the result of applying the geometric transformation represented by the 
+* Returns the result of applying the geometric transformation represented by the
 * Matrix object to the specified point.
-* @name transformPoint
 * @methodOf Matrix#
 * @see #deltaTransformPoint
 *
-* @returns A new point with the transformation applied.
-* @type Point
+* @returns {Point} A new point with the transformation applied.
 */
 Matrix.prototype.transformPoint=function(point) {
 	return new Point(
@@ -4269,16 +4270,14 @@ Matrix.prototype.transformPoint=function(point) {
 
 /**
 * Returns the result of this matrix multiplied by another matrix
-* combining the geometric effects of the two. In mathematical terms, 
+* combining the geometric effects of the two. In mathematical terms,
 * concatenating two matrixes is the same as combining them using matrix multiplication.
 * If this matrix is A and the matrix passed in is B, the resulting matrix is A x B
 * http://mathworld.wolfram.com/MatrixMultiplication.html
-* @name concat
 * @methodOf Matrix#
 *
 * @param {Matrix} matrix The matrix to multiply this matrix by.
-* @returns The result of the matrix multiplication, a new matrix.
-* @type Matrix
+* @returns {Matrix} The result of the matrix multiplication, a new matrix.
 */
 Matrix.prototype.concat=function(matrix) {
 	return Matrix(
@@ -4292,16 +4291,13 @@ Matrix.prototype.concat=function(matrix) {
 }
 
 /**
-* Given a point in the pretransform coordinate space, returns the coordinates of 
-* that point after the transformation occurs. Unlike the standard transformation 
-* applied using the transformPoint() method, the deltaTransformPoint() method's 
+* Given a point in the pretransform coordinate space, returns the coordinates of
+* that point after the transformation occurs. Unlike the standard transformation
+* applied using the transformPoint() method, the deltaTransformPoint() method's
 * transformation does not consider the translation parameters tx and ty.
-* @name deltaTransformPoint
-* @methodOf Matrix#
 * @see #transformPoint
 *
-* @return A new point transformed by this matrix ignoring tx and ty.
-* @type Point
+* @return {Point} A new point transformed by this matrix ignoring tx and ty.
 */
 Matrix.prototype.deltaTransformPoint=function(point) {
 	return Point(
@@ -4313,11 +4309,8 @@ Matrix.prototype.deltaTransformPoint=function(point) {
 /**
 * Returns the inverse of the matrix.
 * http://mathworld.wolfram.com/MatrixInverse.html
-* @name inverse
-* @methodOf Matrix#
 *
-* @returns A new matrix that is the inverse of this matrix.
-* @type Matrix
+* @returns {Matrix} A new matrix that is the inverse of this matrix.
 */
 Matrix.prototype.getInverse=function() {
 	var determinant = this.a * this.d - this.b * this.c;
@@ -4333,50 +4326,43 @@ Matrix.prototype.getInverse=function() {
 /**
 * Returns a new matrix that corresponds this matrix multiplied by a
 * a rotation matrix.
-* @name rotate
-* @methodOf Matrix#
 * @see Matrix.rotation
 *
 * @param {Number} theta Amount to rotate in radians.
 * @param {Point} [aboutPoint] The point about which this rotation occurs. Defaults to (0,0).
-* @returns A new matrix, rotated by the specified amount.
-* @type Matrix
+* @returns {Matrix} A new matrix, rotated by the specified amount.
 */
 Matrix.prototype.rotate=function(theta, aboutPoint) {
 	return this.concat(Matrix.rotation(theta, aboutPoint));
 }
- 
+
 /**
 * Returns a new matrix that corresponds this matrix multiplied by a
 * a scaling matrix.
-* @name scale
-* @methodOf Matrix#
 * @see Matrix.scale
 *
 * @param {Number} sx
 * @param {Number} [sy]
 * @param {Point} [aboutPoint] The point that remains fixed during the scaling
-* @type Matrix
+* @returns {Matrix}
 */
 Matrix.prototype.scale=function(sx, sy, aboutPoint) {
 	return this.concat(Matrix.scale(sx, sy, aboutPoint));
 }
- 
- 
+
+
 /**
-* Translates the matrix along the x and y axes, as specified by the tx and ty parameters.
-* @name translate
 * @methodOf Matrix#
 * @see Matrix.translation
 *
 * @param {Number} tx The translation along the x axis.
 * @param {Number} ty The translation along the y axis.
-* @returns A new matrix with the translation applied.
-* @type Matrix
+* @returns {Matrix} A new matrix with the translation applied.
 */
 Matrix.prototype.translate=function(tx, ty) {
 	return this.concat(Matrix.translation(tx, ty));
 }
+
 NumberTable.prototype = new Table();
 NumberTable.prototype.constructor=NumberTable;
 
@@ -6368,8 +6354,8 @@ GeometryConvertions.PolygonToNumberTable = function(polygon){
 function GeometryOperators(){};
 
 
-/** 
- * from three Points calculates two control Points for the middle Point that will define a curve (using Bézier) that goes softly through the three points 
+/**
+ * from three Points calculates two control Points for the middle Point that will define a curve (using Bézier) that goes softly through the three points
  * TODO: finish method by taking into account distances
  */
 GeometryOperators.getSoftenControlPoints=function(point0, point1, point2, controlVectorSize){
@@ -6384,19 +6370,19 @@ GeometryOperators.bezierCurvePoints=function(x0, y0, c0x, c0y, c1x, c1y, x1, y1,
 	var s = 1-t;
 	var ax = s*x0 + t*c0x;
 	var ay = s*y0 + t*c0y;
-	
+
 	var bx = s*c0x + t*c1x;
 	var by = s*c0y + t*c1y;
-	
+
 	var cx = s*c1x + t*x1;
 	var cy = s*c1y + t*y1;
-	
+
 	var ex = s*ax + t*bx;
 	var ey = s*ay + t*by;
-	
+
 	var fx = s*bx + t*cx;
 	var fy = s*by + t*cy;
-	
+
 	return new Point(t*fx + s*ex, t*fy + s*ey);
 }
 
@@ -6453,13 +6439,13 @@ GeometryOperators.trueBezierCurveHeightHorizontalControlPoints=function(x0, x1, 
 
 	//x=3at + t^2(3-9a) + t^3(1+6a)  --> Javier
 	//http://en.wikipedia.org/wiki/Cubic_function#General_formula_for_roots
-	
+
 
 
 
 	//return (x-x0)/(x1-x0);// (x - x0)/(c0x + c1x - 2*x0);
 
-	//var 
+	//var
 
 	// var antit = 1 - t;
 
@@ -6494,7 +6480,7 @@ GeometryOperators.trueBezierCurveHeightHorizontalControlPoints=function(x0, x1, 
 
 	// var cosinus = Math.cos(Math.PI*(t-1));
 	// var sign = cosinus>0?1:-1;
-	
+
 	// return (0.5 + 0.5*( Math.pow(cosinus*sign, 0.6)*sign ))*(y1-y0) + y0;
 //}
 
@@ -6502,10 +6488,10 @@ GeometryOperators.trueBezierCurveHeightHorizontalControlPoints=function(x0, x1, 
  * This an approximation, it doesn't take into account actual values of c0x and c1x
  */
 GeometryOperators.bezierCurveHeightHorizontalControlPoints=function(y0, c0x, c1x, y1, t){//TODO:fix
-	
+
 	var cosinus = Math.cos(Math.PI*(t-1));
 	var sign = cosinus>0?1:-1;
-	
+
 	return (0.5 + 0.5*( Math.pow(cosinus*sign, 0.6)*sign ))*(y1-y0) + y0;
 }
 
@@ -6526,17 +6512,17 @@ GeometryOperators.distanceToBezierCurve=function(x0, y0, c0x, c0y, c1x, c1y, x1,
 	var d1I = Math.pow(p1I.x-p.x, 2) + Math.pow(p1I.y-p.y, 2);
 
 	var i;
-	
+
 	var pM;
 	var pMI;
-	
+
 	for(i=0; i<10; i++){
 		pM = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, (t0+t1)*0.5);
 		pMI = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, (t0+t1)*0.5 + minDT);
-		
+
 		d0 = Math.pow(pM.x-p.x, 2) + Math.pow(pM.y-p.y, 2);
 		d0I = Math.pow(pMI.x-p.x, 2) + Math.pow(pMI.y-p.y, 2);
-		
+
 		if(d0<d0I){
 			t1 = (t0+t1)*0.5;
 			p1 = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, t1);
@@ -6547,7 +6533,7 @@ GeometryOperators.distanceToBezierCurve=function(x0, y0, c0x, c0y, c1x, c1y, x1,
 			d0 = Math.pow(p0.x-p.x, 2) + Math.pow(p0.y-p.y, 2);
 		}
 	}
-	
+
 	if(returnPoint) return p1;
 	return Math.sqrt(Math.min(d0,d1));
 }
@@ -6588,7 +6574,7 @@ GeometryOperators.distancePointToLine = function(point, line){
 
 GeometryOperators.distancePointToSegment = function(point, point0Segment, point1Segment){
 	var m = point0Segment.x==point1Segment.x?Infinity:(point1Segment.y-point0Segment.y)/(point1Segment.x-point0Segment.x);
-	line = m==Infinity?new Point(Infinity, point0Segment.x):new Point(m, point0Segment.y-m*point0Segment.x);
+	var line = m==Infinity?new Point(Infinity, point0Segment.x):new Point(m, point0Segment.y-m*point0Segment.x);
 	var m2;
 	var b2;
 	if(line.x==0){
@@ -6619,7 +6605,7 @@ GeometryOperators.intersectionLines = function(line0, line1){
 	} else if(line1.x==Infinity){
 		return new Point(line1.y, line0.x*line1.y+line0.y);
 	}
-	
+
 	var xx = (line1.y-line0.y)/(line0.x-line1.x);
 	return new Point(xx, line0.x*xx+line0.y);
 }
@@ -6629,26 +6615,26 @@ GeometryOperators.VennCircles = function(area0, area1, areaIntersection, centerI
 	var rA = Math.sqrt(area0/Math.PI);
 	var rB = Math.sqrt(area1/Math.PI);
 	var d = GeometryOperators.circleDistancesFromCommonArea(rA, rB, areaIntersection, precision);
-	
+
 	var circle0;
 	var circle1;
-		
+
 	if(centerInLens){
 		var x0 = (d*d+Math.pow(rA, 2)-Math.pow(rB, 2))/(2*d);
-		
+
 		circle0 = new Point3D(-x0, 0, rA);
 		circle1 = new Point3D(d-x0, 0, rB);
-		
+
 	} else {
 		circle0 = new Point3D(-d*0.5, 0, rA);
 		circle1 = new Point3D(d*0.5, 0, rB);
 	}
-	
+
 	if(areaIntersection==0){
 		circle0.x-=d*0.1;
 		circle1.x+=d*0.1;
 	}
-	
+
 	return new Polygon3D(circle0, circle1);
 }
 
@@ -6658,7 +6644,6 @@ GeometryOperators.VennCircles = function(area0, area1, areaIntersection, centerI
  * @param r1
  * @param areaComun
  * @param precision
- * @return 
  * 
  */
 GeometryOperators.circleDistancesFromCommonArea = function(r0, r1, commonArea, precision){
@@ -6666,11 +6651,11 @@ GeometryOperators.circleDistancesFromCommonArea = function(r0, r1, commonArea, p
 	var d0 = Math.max(r0, r1) - Math.min(r0, r1);
 	var d1 = r0 + r1;
 	var dM = (d0+d1)*0.5;
-	
+
 	var attempts=0;
-	
+
 	var currentArea = GeometryOperators.circlesCommonArea(r0, r1, dM);
-	
+
 	while(Math.abs(currentArea-commonArea)>precision && attempts<200){
 		if(currentArea>commonArea){
 			d0 = dM;
@@ -6690,11 +6675,11 @@ GeometryOperators.circlesCommonArea = function(ra, rb, d){
 	if(d+Math.min(ra, rb)<=Math.max(ra, rb)){
 		return Math.PI*Math.pow(Math.min(ra, rb), 2);
 	}
-	
+
 	var d2 = Math.pow(d,2);
 	var ra2 =  Math.pow(ra,2);
 	var rb2 =  Math.pow(rb,2);
-	
+
 	return ra2*Math.acos((d2+ra2-rb2)/(2*d*ra)) + rb2*Math.acos((d2+rb2-ra2)/(2*d*rb)) - 0.5*Math.sqrt((-d+ra+rb)*(d+ra-rb)*(d-ra+rb)*(d+ra+rb));
 }
 
@@ -6712,13 +6697,13 @@ GeometryOperators.circlesLensAngles = function(circle0, circle1){
 	} else if(circle0.x-circle0.z>=circle1.x-circle1.z){
 		return null;
 	}
-	
+
 	var d = circle1.x-circle0.x
 	var x0 = (d*d+Math.pow(circle0.z, 2)-Math.pow(circle1.z, 2))/(2*d);
 	var alfa = Math.acos(x0/circle0.z);
 	var h = circle0.z*Math.sin(alfa);
 	var beta = Math.asin(h/circle1.z);
-	
+
 	if(circle0.x+x0<circle1.x){
 		return new NumberList(-alfa, alfa, Math.PI-beta, Math.PI+beta);
 	} else {
@@ -6902,8 +6887,6 @@ function _triangulate(vertices) {
   /* Yay, we're done! */
   return closed
 }
-
-
 
 /**
 * PointOperators
@@ -8179,9 +8162,9 @@ ColorListOperators.colorListToPolygon3D=function(colorList){
 /**
 * ColorOperators
 * @constructor
-* 
-* TODO: create Color struture to be used instead of arrays [255, 100,0] ?
+*
 */
+// TODO: create Color struture to be used instead of arrays [255, 100,0] ?
 function ColorOperators(){};
 
 
@@ -8194,7 +8177,7 @@ function ColorOperators(){};
  * @param {String} color1
  * @param value between 0 and 1 (to obtain color between color0 and color1)
  * @return {String} interpolated color
- * 
+ *
  */
 ColorOperators.interpolateColors=function(color0, color1, value){
     var resultArray=ColorOperators.interpolateColorsRGB(ColorOperators.colorStringToRGB(color0), ColorOperators.colorStringToRGB(color1), value);
@@ -8209,7 +8192,7 @@ ColorOperators.interpolateColors=function(color0, color1, value){
  * @param {Array} color1 RGB
  * @param value between 0 and 1 (to obtain values between color0 and color1)
  * @return {Array} interpolated RGB color
- * 
+ *
  */
 ColorOperators.interpolateColorsRGB=function(color0, color1, value){
     var s = 1-value;
@@ -8231,7 +8214,7 @@ ColorOperators.RGBArrayToString=function(array){
  * converts an hexadecimal color to RGB
  * @param {String} an hexadecimal color string
  * @return {Array} returns an RGB color Array
- * 
+ *
  */
 ColorOperators.HEXtoRGB=function(hexColor){
 	return [parseInt(hexColor.substr(1, 2), 16), parseInt(hexColor.substr(3, 2), 16), parseInt(hexColor.substr(5, 2), 16)];
@@ -8283,7 +8266,7 @@ ColorOperators.grayByLevel=function(level){
  * converts an hexadecimal color to HSV
  * @param {String} an hexadecimal color string
  * @return {Array} returns an HSV color Array
- * 
+ *
  */
 ColorOperators.HEXtoHSV=function(hexColor){
   var rgb=ColorOperators.HEXtoRGB(hexColor);
@@ -8340,7 +8323,7 @@ ColorOperators.RGBtoHSV=function(r, g, b){
  * converts an HSV color to RGB
  * @param {Array} a HSV color array
  * @return {Array} returns a RGB color array
- * 
+ *
  */
 ColorOperators.HSVtoRGB=function(hue, saturation, value){
 	hue=hue?hue:0;
@@ -8403,7 +8386,7 @@ ColorOperators.HSVtoRGB=function(hue, saturation, value){
 /**
  * Converts an HSL color value to RGB. Conversion formula
  * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
- * Assumes hue is contained in the interval [0,360) and saturation and l are contained in the set [0, 1] 
+ * Assumes hue is contained in the interval [0,360) and saturation and l are contained in the set [0, 1]
  */
 ColorOperators.HSLtoRGB = function(hue, saturation, light){
     var r, g, b;
@@ -8468,7 +8451,7 @@ ColorOperators.getRandomColor=function(){
 
 /**
  * This method was partially obtained (and simplified) from a Class by Stoyan Stefanov:
- * 
+ *
  * A class to parse color values
  * @author Stoyan Stefanov <sstoo@gmail.com>
  * @link   http://www.phpied.com/rgb-color-parser-in-javascript/
@@ -8635,7 +8618,7 @@ ColorOperators.colorStringToRGB = function(color_string){
         yellow: 'ffff00',
         yellowgreen: '9acd32'
     };
-    
+
     if(simple_colors[color_string]!=null) color_string = simple_colors[color_string];
 
 
@@ -8686,7 +8669,7 @@ ColorOperators.colorStringToRGB = function(color_string){
             }
         }
     ];
-    
+
     // search through the definitions to find a match
     for (var i = 0; i < color_defs.length; i++) {
         var re = color_defs[i].re;
@@ -8697,14 +8680,9 @@ ColorOperators.colorStringToRGB = function(color_string){
         }
 
     }
-    
+
     return null;
 }
-
-
-
-
-
 
 function ColorScales(){}
 
@@ -8858,6 +8836,8 @@ ColorScaleGenerators.createColorScaleFromColors = function(colorList, positions)
 }
 /**
  * static class with methods to generate different kinds of Lists
+* 
+* @constructor
  */
 function ListGenerators(){};
 
@@ -8891,7 +8871,7 @@ ListGenerators.createListWithSameElement=function(nValues, element){
 		default:
 			var list = new List();
 	}
-	
+
 	for(var i=0; i<nValues; i++){
 		list[i] = element;
 	}
@@ -8912,6 +8892,7 @@ ListGenerators.createIterationSequence=function(nValues, firstElement, dynamicFu
 	}
 	return list;
 }
+
 function ListOperators(){};
 
 
@@ -10717,34 +10698,37 @@ IntervalTableOperators.scaleIntervals = function(intervalTable, value) {
 	}
 	return newIntervalTable;
 }
+/**
+* MatrixGenerators
+* @constructor
+*/
 function MatrixGenerators(){};
 
 
 /**
    * Returns a transformation matrix from a triangle mapping
    *
-   * @returns
-   * @type Matrix
-   * 
-   * TODO: resolve particular cases (right angles)
+   * @returns Matrix
+   *
    **/
+// TODO: resolve particular cases (right angles)
 MatrixGenerators.createMatrixFromTrianglesMapping=function(v0, v1, v2, w0, w1, w2){
 	if(v1.y != v0.y){
 		var k = (v2.y-v0.y)/(v1.y-v0.y);
-		
+
 		var a = (w2.x-w0.x-(w1.x-w0.x)*k)/(v2.x-v0.x-(v1.x-v0.x)*k);
 		var b = k*(w1.x-w0.x)/(v2.y-v0.y) - a*(v1.x-v0.x)/(v1.y-v0.y);
-		
+
 		var c = (w2.y-w0.y-(w1.y-w0.y)*k)/(v2.x-v0.x-(v1.x-v0.x)*k);
 		var d = k*(w1.y-w0.y)/(v2.y-v0.y) - c*(v1.x-v0.x)/(v1.y-v0.y);
 	} else {
 		a = (w1.x-w0.x)/(v1.x-v0.x);
 		b = (w2.x-w0.x)/(v2.y-v0.y) - a*(v2.x-v0.x)/(v2.y-v0.y);
-		
+
 		c = (w1.y-w0.y)/(v1.x-v0.x);
 		d = (w2.y-w0.y)/(v2.y-v0.y) - c*(v2.x-v0.x)/(v2.y-v0.y);
 	}
-	
+
 	return new Matrix(a, c, b, d, w0.x - a*v0.x - b*v0.y, w0.y - c*v0.x - d*v0.y);
 }
 
@@ -10753,16 +10737,16 @@ MatrixGenerators.createMatrixFromTrianglesMapping=function(v0, v1, v2, w0, w1, w
 MatrixGenerators.applyTransformationOnCanvasFromPoints=function(context, v0, v1, v2, w0, w1, w2){
 	if(v1.y != v0.y){
 		var k = (v2.y-v0.y)/(v1.y-v0.y);
-		
+
 		var a = (w2.x-w0.x-(w1.x-w0.x)*k)/(v2.x-v0.x-(v1.x-v0.x)*k);
 		var b = k*(w1.x-w0.x)/(v2.y-v0.y) - a*(v1.x-v0.x)/(v1.y-v0.y);
-		
+
 		var c = (w2.y-w0.y-(w1.y-w0.y)*k)/(v2.x-v0.x-(v1.x-v0.x)*k);
 		var d = k*(w1.y-w0.y)/(v2.y-v0.y) - c*(v1.x-v0.x)/(v1.y-v0.y);
 	} else {
 		a = (w1.x-w0.x)/(v1.x-v0.x);
 		b = (w2.x-w0.x)/(v2.y-v0.y) - a*(v2.x-v0.x)/(v2.y-v0.y);
-		
+
 		c = (w1.y-w0.y)/(v1.x-v0.x);
 		d = (w2.y-w0.y)/(v2.y-v0.y) - c*(v2.x-v0.x)/(v2.y-v0.y);
 	}
@@ -10779,8 +10763,7 @@ MatrixGenerators.applyTransformationOnCanvasFromPoints=function(context, v0, v1,
    *
    * @param {Number} theta Rotation in radians.
    * @param {Point} [aboutPoint] The point about which this rotation occurs. Defaults to (0,0).
-   * @returns 
-   * @type Matrix
+   * @returns {Matrix}
    */
 MatrixGenerators.createRotationMatrix = function(theta, aboutPoint) {
     var rotationMatrix = Matrix(
@@ -10789,7 +10772,7 @@ MatrixGenerators.createRotationMatrix = function(theta, aboutPoint) {
       -Math.sin(theta),
       Math.cos(theta)
     );
- 
+
     if(aboutPoint) {
       rotationMatrix =
         Matrix.translation(aboutPoint.x, aboutPoint.y).concat(
@@ -10798,10 +10781,10 @@ MatrixGenerators.createRotationMatrix = function(theta, aboutPoint) {
           Matrix.translation(-aboutPoint.x, -aboutPoint.y)
         );
     }
- 
+
     return rotationMatrix;
 };
- 
+
   /**
    * Returns a matrix that corresponds to scaling by factors of sx, sy along
    * the x and y axis respectively.
@@ -10813,14 +10796,13 @@ MatrixGenerators.createRotationMatrix = function(theta, aboutPoint) {
    * @param {Number} sx The amount to scale by along the x axis or uniformly if no sy is given.
    * @param {Number} [sy] The amount to scale by along the y axis.
    * @param {Point} [aboutPoint] The point about which the scaling occurs. Defaults to (0,0).
-   * @returns A matrix transformation representing scaling by sx and sy.
-   * @type Matrix
+   * @returns {Matrix} A matrix transformation representing scaling by sx and sy.
    */
 MatrixGenerators.createScaleMatrix = function(sx, sy, aboutPoint) {
     sy = sy || sx;
- 
+
     var scaleMatrix = Matrix(sx, 0, 0, sy);
- 
+
     if(aboutPoint) {
       scaleMatrix =
         Matrix.translation(aboutPoint.x, aboutPoint.y).concat(
@@ -10829,7 +10811,7 @@ MatrixGenerators.createScaleMatrix = function(sx, sy, aboutPoint) {
           Matrix.translation(-aboutPoint.x, -aboutPoint.y)
         );
     }
- 
+
     return scaleMatrix;
   };
 
@@ -10840,13 +10822,12 @@ MatrixGenerators.createScaleMatrix = function(sx, sy, aboutPoint) {
    *
    * @param {Number} tx The amount to translate in the x direction.
    * @param {Number} ty The amount to translate in the y direction.
-   * @return A matrix transformation representing a translation by tx and ty.
-   * @type Matrix
+   * @returns {Matrix} A matrix transformation representing a translation by tx and ty.
    */
 MatrixGenerators.createTranslationMatrix = function(tx, ty) {
     return Matrix(1, 0, 0, 1, tx, ty);
 };
-//  
+//
   // /**
    // * A constant representing the identity matrix.
    // * @name IDENTITY
@@ -10865,6 +10846,7 @@ MatrixGenerators.createTranslationMatrix = function(tx, ty) {
    // * @fieldOf Matrix
    // */
 // Matrix.VERTICAL_FLIP = Matrix(1, 0, 0, -1);
+
 function NumberListGenerators(){};
 
 /**
@@ -15658,19 +15640,19 @@ Draw.drawAndCapture=function(drawFunction, frame, target){
 
 /**
 * DrawSimpleVis
-* @constructor
-* 
+*
 * This class contains methods that draw simple visualizations such as lines, barChart…
 * It's main aim is to allow a first glance on a structure
 * The challenge is to create at least one method for each structure
-* 
+*
 * in the future a 'detect element hovered' might be deployed
-* 
-* Once this class becomes big and complex enough, a new 'big folder' will be created ('visGraphication'?) with the conventional structure: dates, geometry, graphic, lists, numeric, strings, structures… 
-* and with classes named NumberTableGraph… os similar 
-* 
-* 
+*
+* Once this class becomes big and complex enough, a new 'big folder' will be created ('visGraphication'?) with the conventional structure: dates, geometry, graphic, lists, numeric, strings, structures…
+* and with classes named NumberTableGraph… os similar
+*
+*
 * ////////>>>>>>>> [!] METHODS ARE BEING REMOVED FROM HERE TO BE PLACE ON THEIR CORRECT CLASSES
+* @constructor
 */
 
 function DrawSimpleVis(){};
@@ -15679,12 +15661,12 @@ function DrawSimpleVis(){};
 DrawSimpleVis.drawSimpleBarChart = function(context, numberList, frame, colors){//TODO: complete cases (numberLists with negative (and positive) values)
 	colors = colors==null?ColorListOperators.colorListFromColorScale(new ColorScale()):colors;
 	frame = frame==null?new Rectangle(10, 10, 400, 300):frame;
-	
+
 	var dX = frame.width/numberList.length;
-	
+
 	var bottom = frame.getBottom();
 	var normalizedNumberList = numberList.getNormalizedToMax(frame.height);
-	
+
 	var i;
 	for(i=0;numberList[i]!=null;i++){
 		context.fillStyle = colors[i];
@@ -15699,86 +15681,86 @@ DrawSimpleVis.drawIntervalsFlowTable = function(context, intervalsFlowTable, fra
 	// var nElements = intervalsFlowTable.length;
 	// var i;
 	// var j;
-// 	
+//
 	// colors = colors==null?ColorListOperators.colorListFromColorScale(new ColorScale(ColorOperators.temperatureScale), nElements):colors;
 	// frame = frame==null?new Rectangle(10, 10, 400, 300):frame;
 	// bezier = bezier||false;
-// 	
+//
 	// var nCols = intervalsFlowTable[0].length;
 	// var dX = frame.width/(nCols-1);
 	// var dY = frame.height;
-// 	
+//
 	// var point;
-// 	
+//
 	// var intervalList;
 	// var lastIntervalList = intervalsFlowTable[nElements-1];
 	// var sY = 0;
 	// var mY = 0;
 	// var x = frame.x;
 	// var y = frame.y;
-// 	
+//
 	// var prevPoint;
 	// var prevYsup;
 	// var prevsY;
 	// var newYsup;
-// 	
+//
 	// var offX;// = dX*0.45;
-// 	
+//
 	// for(i=0; intervalsFlowTable[i]!=null; i++){
 		// intervalList = intervalsFlowTable[i];
-// 		
+//
 		// context.fillStyle = colors[i];
 		// context.beginPath();
-// 		
+//
 		// //---->
 		// sY = (1-lastIntervalList[0].y)*0.5*dY+i*mY+y;
-// 		
+//
 		// point = new Point(x, intervalList[0].y*dY+sY);
 		// context.moveTo(point.x, point.y);
-// 		
+//
 		// prevPoint = point;
-// 		
+//
 		// for(j=1;j<nCols;j++){
 			// sY = (1-lastIntervalList[j].y)*0.5*dY+i*mY+y;
-// 			
+//
 			// point = new Point(j*dX+x, intervalList[j].y*dY+sY);
-// 			
+//
 			// if(bezier){
 				// offX = (point.x-prevPoint.x)*0.45;
 				// context.bezierCurveTo(prevPoint.x+offX, prevPoint.y, point.x-offX, point.y, point.x, point.y);
 			// } else {
 				// context.lineTo(point.x, point.y);
 			// }
-// 			
+//
 			// prevPoint = point;
 		// }
-// 		
+//
 		// //<-----
 		// point = new Point((nCols-1)*dX+x, intervalList[nCols-1].x*dY+sY);
 		// context.lineTo(point.x, point.y);
 		// prevPoint = point;
-// 
+//
 		// for(j=nCols-2;j>=0;j--){
 			// sY = (1-lastIntervalList[j].y)*0.5*dY+i*mY+y;
-// 			
+//
 			// point = new Point(j*dX+x, intervalList[j].x*dY+sY);
-// 			
-// 			
+//
+//
 			// if(bezier){
 				// offX = (point.x-prevPoint.x)*0.45;
 				// context.bezierCurveTo(prevPoint.x+offX, prevPoint.y, point.x-offX, point.y, point.x, point.y);
 			// } else {
 				// context.lineTo(point.x, point.y);
 			// }
-// 			
+//
 			// prevPoint = point;
 		// }
-// 		
+//
 		// point = new Point(x, intervalList[0].x*dY+sY);
 		// context.lineTo(point.x, point.y);
-// 		
+//
 		// context.fill();
-// 		
+//
 	// }
 }
 
@@ -15787,44 +15769,44 @@ DrawSimpleVis.drawIntervalsFlowTable = function(context, intervalsFlowTable, fra
 DrawSimpleVis.drawIntervalsWordsFlowTable = function(context, intervalsFlowTable, frame, texts, colors){
 	c.log("[!] MOVED TO IntervalTableDraw.js");
 	// var nElements = intervalsFlowTable.length;
-// 	
+//
 	// var i;
 	// var j;
-// 	
+//
 	// colors = colors==null?ColorListOperators.colorListFromColorScale(new ColorScale(ColorOperators.temperatureScale), nElements):colors;
 	// frame = frame==null?new Rectangle(10, 10, 400, 300):frame;
-// 	
+//
 	// var nCols = intervalsFlowTable[0].length;
 	// var dX = frame.width/(nCols-1);
 	// var dY = frame.height;
-// 	
+//
 	// var point0;
 	// var point1;
-// 	
+//
 	// var nextPoint0;
 	// var nextPoint1;
-// 	
+//
 	// var point0Prev = new Point();
 	// var point1Prev = new Point();
-// 	
+//
 	// var center;
 	// var size;
-// 	
+//
 	// var intervalList;
 	// var lastIntervalList = intervalsFlowTable[nElements-1];
 	// var sY = 0;
 	// var x = frame.x;
 	// var y = frame.y;
-// 	
+//
 	// var offX;
-// 	
+//
 	// var text;
-// 	
+//
 	// context.strokeStyle = "rgba(255,255,255,0.4)";
-// 	
+//
 	// context.textBaseline = "top";
 	// context.textAlign = "left";
-// 	
+//
 	// var position;
 	// var xx;
 	// var t;
@@ -15837,33 +15819,33 @@ DrawSimpleVis.drawIntervalsWordsFlowTable = function(context, intervalsFlowTable
 	// var selectedChar;
 	// var charWidth;
 	// var fontSize;
-// 	
+//
 	// var offX;
-// 	
+//
 	// var factX = (nCols-1)/frame.width;
-// 	
+//
 	// var xj0;
 	// var xj1;
-// 	
-// 	
+//
+//
 	// for(i=0; intervalsFlowTable[i]!=null; i++){
 		// intervalList = intervalsFlowTable[i];
-// 		
+//
 		// text = " "+texts[i];
-// 		
+//
 		// xx=0;
 		// nChar=0;
-// 		
+//
 		// position=0;
 		// j=0;
 		// t=0;
-// 		
+//
 		// //c.log("-");
-// 		
+//
 		// sY = (1-lastIntervalList[0].y)*0.5*dY+y;
 		// point0 = new Point(x, intervalList[0].x*dY+sY);
 		// point1 = new Point(x, intervalList[0].y*dY+sY);
-// 		
+//
 		// do {
 			// nChar++;
 			// size = (point1.y-point0.y);
@@ -15872,52 +15854,52 @@ DrawSimpleVis.drawIntervalsWordsFlowTable = function(context, intervalsFlowTable
 			// selectedChar = text.charAt(nChar%text.length);
 			// charWidth = context.measureText(selectedChar).width+2;
 			// jumpX = charWidth*0.9;
-// 			
+//
 			// xx+=jumpX;
 			// position = factX*xx;
 			// j = Math.floor(position);
 			// t = position - j;
-// 			
-// 			
+//
+//
 			// if(j+2>nCols) continue;
-// 			
+//
 			// //valueLastInterval = (1-t)*lastIntervalList[j].y + t*lastIntervalList[j+1].y;
-// 			
+//
 			// xj0 = j/factX;
 			// xj1 = (j+1)/factX;
-// 			
+//
 			// offX = factX*0.45;
 			// valueLastInterval = DrawSimpleVis._bezierValue(xj0, xj1, lastIntervalList[j].y, lastIntervalList[j+1].y, t, offX);
-// 			
-// 			
+//
+//
 			// prevsY = sY;
 			// sY = (1-valueLastInterval)*0.5*dY+y;
-// 			
-// 			
+//
+//
 			// point0Prev.x = point0.x;
 			// point0Prev.y = point0.y;
 			// point1Prev.x = point1.x;
 			// point1Prev.y = point1.y;
-// 			
-// 			
+//
+//
 			// //valueX = (1-t)*intervalList[j].x + t*intervalList[j+1].x;
 			// //valueY = (1-t)*intervalList[j].y + t*intervalList[j+1].y;
-// 			
+//
 			// valueX = DrawSimpleVis._bezierValue(xj0, xj1, intervalList[j].x, intervalList[j+1].x, t, offX);
 			// valueY = DrawSimpleVis._bezierValue(xj0, xj1, intervalList[j].y, intervalList[j+1].y, t, offX);
-// 			
-// 			
+//
+//
 			// point0 = new Point(xx+x, valueX*dY+sY);
 			// point1 = new Point(xx+x, valueY*dY+sY);
-// 
-// 			
+//
+//
 			// center = new Point(point0Prev.x+jumpX*0.5, (point0.y+point1.y+point0Prev.y+point1Prev.y)*0.25);
-// 			
+//
 			// //c.log(jumpX);
-// 			
+//
 			// context.fillStyle = colors[i];
 			// //context.beginPath();
-// 			
+//
 			// //boundaries
 			// // context.beginPath();
 			// // context.moveTo(point0Prev.x, point0Prev.y);
@@ -15925,8 +15907,8 @@ DrawSimpleVis.drawIntervalsWordsFlowTable = function(context, intervalsFlowTable
 			// // context.lineTo(point1.x, point1.y); //move/line to draw or not vertical
 			// // context.lineTo(point1Prev.x, point1Prev.y);
 			// // context.stroke();
-// 			
-// 			
+//
+//
 			// if(size>1){
 				// //context.fillText(selectedChar,center.x, center.y);
 				// context.save();
@@ -15944,64 +15926,64 @@ DrawSimpleVis.drawIntervalsWordsFlowTable = function(context, intervalsFlowTable
 	// var p0 = new Point(x0+ t*offX, y0);
 	// var p1 = new Point(u*(x0+offX) + t*(x1-offX), u*y0 + t*y1);
 	// var p2 = new Point(x1-u*offX, y1);
-// 	
+//
 	// var P0 = new Point(u*p0.x + t*p1.x, u*p0.y + t*p1.y);
 	// var P1 = new Point(u*p1.x + t*p2.x, u*p1.y + t*p2.y);
-// 	
+//
 	// return u*P0.y + t*P1.y;
 // }
 
 
 DrawSimpleVis.drawStackBarsFlowTable = function(context, intervalsFlowTable, frame, colors){ //TODO: +efficiency
 	var nElements = intervalsFlowTable.length;
-	
+
 	var i;
 	var j;
-	
+
 	colors = colors==null?ColorListOperators.colorListFromColorScale(new ColorScale(ColorOperators.temperatureScale), nElements):colors;
 	frame = frame==null?new Rectangle(10, 10, 400, 300):frame;
-	
+
 	var nCols = intervalsFlowTable[0].length;
 	var dX = frame.width/(nCols-1);
 	var dY = frame.height;
-	
+
 	var point0;
 	var point1;
 	var point2;
 	var point3;
-	
+
 	var intervalList;
 	var lastIntervalList = intervalsFlowTable[nElements-1];
 	var sY = 0;
 	var mY = 0;
 	var x = frame.x;
 	var y = frame.y;
-	
+
 	var prevPoint;
 	var prevYsup;
 	var prevsY;
 	var newYsup;
-	
+
 	var offX;
-	
+
 	var toolTipText;
-	
+
 	context.strokeStyle = "white";
-	
+
 	for(i=0; intervalsFlowTable[i]!=null; i++){
 		intervalList = intervalsFlowTable[i];
-		
+
 		//---->
 		sY = (1-lastIntervalList[0].y)*0.5*dY+i*mY+y;
-		
+
 		for(j=1;j<nCols;j++){
 			sY = (1-lastIntervalList[j].y)*0.5*dY+i*mY+y;
-			
+
 			point0 = new Point(j*dX+x, intervalList[j].x*dY+sY);
 			point1 = new Point((j+1)*dX+x, intervalList[j].x*dY+sY);
 			point2 = new Point((j+1)*dX+x, intervalList[j].y*dY+sY);
 			point3 = new Point(j*dX+x, intervalList[j].y*dY+sY);
-			
+
 			context.fillStyle = colors[i];
 			context.beginPath();
 			context.moveTo(point0.x, point0.y);
@@ -16019,26 +16001,26 @@ DrawSimpleVis.drawStackBarsFlowTable = function(context, intervalsFlowTable, fra
 	// relationsColorScaleFunction = relationsColorScaleFunction==null?ColorOperators.grayScale:relationsColorScaleFunction;
 	// margin = margin==null?2:margin;
 	// directed = directed==null?false:directed;
-// 	
+//
 	// var i;
 	// var nodeList = network.nodeList;
 	// var relationList = network.relationList;
 	// var relation;
-// 	
+//
 	// var dX = frame.width/(nodeList.length+1);
 	// var dY = frame.height/(nodeList.length+1);
 	// var w=dX-margin;
 	// var h=dY-margin;
-// 	
+//
 	// var ix;
 	// var iy;
-// 	
+//
 	// for(i=0;nodeList[i]!=null;i++){
 		// context.fillStyle = colors[i];
 		// context.fillRect(frame.x+(i+1)*dX, frame.y, w, h);
 		// context.fillRect(frame.x, frame.y+(i+1)*dY, w, h);
 	// }
-// 	
+//
 	// for(i=0;relationList[i]!=null;i++){
 		// relation = relationList[i];
 		// context.fillStyle = relationsColorScaleFunction(relation.weight);
@@ -16049,13 +16031,11 @@ DrawSimpleVis.drawStackBarsFlowTable = function(context, intervalsFlowTable, fra
 			// context.fillRect(frame.x+iy*dX, frame.y+ix*dY, w, h);
 		// }
 	// }
-// } 
-
-
+// }
 
 /**
  * static Class with methods to render text in canvas
- * @constructir
+ * @constructor
  */
 function DrawTexts(){};
 
@@ -16080,9 +16060,9 @@ DrawTexts.PIXEL_TO_POINT = 0.75;
 // 	align = align==null?'left':align;
 // 	baseline = baseline==null?'top':baseline;
 // 	style = style==null?'':style;
-	
+
 // 	if(style!='') style+=' ';
-	
+
 // 	context.fillStyle    = color;
 //   	context.font         = style+fontSize+'px '+fontName;
 //   	context.textAlign 	 = align;
@@ -16113,7 +16093,7 @@ DrawTexts.fillTextRotated=function(text, x, y, angle){//TODO: remove (replaced b
 
 DrawTexts.fillTextRectangleWithTextLines=function(textLines, x, y, height, lineHeight, returnHeight){
 	height = height==0 || height==null?99999:height;
-	
+
 	for(var i=0; textLines[i]!=null; i++){
   		context.fillText(textLines[i], x, y + i*lineHeight);
   		if((i+2)*lineHeight>height) break;
@@ -16127,15 +16107,15 @@ DrawTexts.textWordWrapReturnLines=function(text, fitWidth, fitHeight, lineHeight
 	fitWidth = fitWidth || 100;
     fitHeight = fitHeight || 600;
     lineHeight = lineHeight || 16;
-    
+
     var nLinesLimit = lineHeight==0?-1:Math.floor(fitHeight/lineHeight);
     var lines = new StringList();
-    
+
     if(fitWidth <= 0){
         lines.push(text);
         return lines;
     }
-    
+
     var sentences = text.split(/\\n|\n/);
     var i;
     var currentLine = 0;
@@ -16144,7 +16124,7 @@ DrawTexts.textWordWrapReturnLines=function(text, fitWidth, fitHeight, lineHeight
     var str;
     var w;
     var sentence;
-    
+
     for(i=0; i<sentences.length; i++){
     	if(sentences[i]==''){
     		lines.push('');
@@ -16184,9 +16164,9 @@ DrawTexts.textWordWrapReturnLines=function(text, fitWidth, fitHeight, lineHeight
 	    }
 	    currentLine++;
 	}
-	
+
 	lines.width = lines.length==1?w:fitWidth;
-	
+
 	return lines;
 }
 DrawTexts.getMaxTextWidth = function(texts){
@@ -16201,7 +16181,7 @@ DrawTexts.getMaxTextWidth = function(texts){
 DrawTexts.cropString=function(ctx, string, fitWidth){
 	if(string==null) return;
     fitWidth = fitWidth || 0;
-   
+
     if (fitWidth <= 0 || ctx.measureText(string).width<=fitWidth){
         return string;
     }
@@ -16219,6 +16199,7 @@ DrawTexts.cropString=function(ctx, string, fitWidth){
         else {idx++;}
     }
 }
+
 //include(frameworksRoot+"operators/numeric/MatrixGenerators.js");
 
 
@@ -16989,32 +16970,33 @@ DragDetection.prototype.constructor=DragDetection;
  * 0: frame to frame dragging vector (draggingInstance.dragVector register the vectorial change each frame)
  * 1: from click point dragging (draggingInstance.dragVector register the vectorial change from the clicking point)
  * 2: polar (draggingInstance.dragVector.x is dR, draggingInstance.dragVector.y is dA, according to the center)
+* @constructor
  */
 function DragDetection(congiguration){//mode, listenerFunction, target, areaVerificationFunction){
 	this.mode = congiguration.mode||0;
 	this.listenerFunction = congiguration.listenerFunction;
 	this.target = congiguration.target;
 	this.areaVerificationFunction = congiguration.areaVerificationFunction;
-	
+
 	this.factor = congiguration.factor==null?1:congiguration.factor;
 	this.center = new Point(0,0);
-	
+
 	addInteractionEventListener("mousedown", this.onMouse, this);
 	addInteractionEventListener("mouseup", this.onMouse, this);
-	
+
 	this.dragging = false;
 	this.mouseClickPosition = new Point();
 	this.mousePosition = new Point();
 	this.r = 0;
 	this.a = 0;
-	
+
 	this.idInterval;
-	
+
 	this.dragVector = new Point();
 }
 
 DragDetection.prototype.enterframe=function(draggingInstance){
-	
+
 	switch(draggingInstance.mode){
 		case 0:
 			draggingInstance.dragVector.x = (mX - draggingInstance.mousePosition.x)*draggingInstance.factor;
@@ -17039,7 +17021,7 @@ DragDetection.prototype.enterframe=function(draggingInstance){
 	}
 	//c.log(draggingInstance, draggingInstance.target, draggingInstance.dragVector);
 	draggingInstance.listenerFunction.call(draggingInstance.target, draggingInstance.dragVector);
-	
+
 }
 
 DragDetection.prototype.onMouse=function(event){
@@ -17047,20 +17029,20 @@ DragDetection.prototype.onMouse=function(event){
 		case 'mousedown':
 			if(this.areaVerificationFunction!=null && !this.areaVerificationFunction.call(this.target)) return;
 			this.dragging = true;
-			
+
 			this.mouseClickPosition.x = mX;
 			this.mouseClickPosition.y = mY;
 			this.mousePosition.x = mX;
 			this.mousePosition.y = mY;
-			
+
 			var dX = mX-this.center.x;
 			var dY = mY-this.center.y;
 			this.r = Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
 			this.a = Math.atan2(dY, dX);
-			
+
 			this.dragVector.x = 0;
 			this.dragVector.y = 0;
-			
+
 			if(this.idInterval!=null) clearInterval(this.idInterval);
 			this.idInterval = setInterval(this.enterframe, 30, this); //[!] this won't work on IE, it´s better to create a new Listener for setInterval
 			break;
@@ -18982,7 +18964,7 @@ var tl = new TimeLogger( "Global Time Logger" );
 /**
 * ConsoleTools
 * some of the methods available here might be converted into genuine 'ASCII visualization'
-* * @constructor
+* @constructor
 */
 
 function ConsoleTools(){};
@@ -18999,7 +18981,7 @@ ConsoleTools.NumberTableOnConsole=function(table){
 	var j;
 
 	for(j=0;j<table[0].length; j++){
-		line = "|"; 
+		line = "|";
 		for(i=0;table[i]!=null; i++){
 			number = String(Math.floor(100*table[i][j])/100).replace(/0./, ".");
 			while(number.length<3) number = " "+number;
@@ -19009,7 +18991,7 @@ ConsoleTools.NumberTableOnConsole=function(table){
 	}
 
 	c.l(message);
-	
+
 	return message;
 }
 
@@ -19029,6 +19011,7 @@ ConsoleTools.tac = function(message){
 	ConsoleTools._tacTime = new Date().getTime();
 	c.l('°°°°°°° tac ['+message+'], t from tic:'+(ConsoleTools._tacTime-ConsoleTools._ticTime)+', t from last tac:'+((ConsoleTools._tacTime-lastTac)) );
 }
+
 /**
 * FastHtml 
 * @constructor
@@ -19212,6 +19195,14 @@ JSONUtils.stringifyAndPrint=function(object){
 	c.log("__________________________________________________________________________________________________________________________________________________________");
 	c.log(jsonString);
 	c.log("__________________________________________________________________________________________________________________________________________________________");
+}
+
+/**
+ * This function is not used in the framework.
+ * It's used only for GIT / Jenkins tests
+ */
+JSONUtils.dummy2 = function(  ){
+	return null;
 }
 /*
  * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
@@ -21412,56 +21403,56 @@ StringListDraw._pointInRectangles = function(rectangles, p, width, height){
 
 /**
  * Operators that contain visualization method algoritms and return a Table with parameters for StringListPrimitive
+* @constructor
  */
-
 function StringListVisOperators(){}
 
 
 StringListVisOperators.simpleTagCloud = function(stringList, weights, frame, font, interLineFactor){
 	font = font==null?'Arial':font;
 	interLineFactor = interLineFactor==null?1.2:interLineFactor;
-	
+
 	var i;
 	var j;
 	var xx;
 	var yy;
 	var tag;
 	var wT;
-	
+
 	var sT;
 	var maxST;
-	
+
 	var K = 20;
 	var i0Line;
-	
+
 	var normWeigths = weights.getNormalizedToMax();
-	
+
 	var sizes;
 	var positions;
-	
+
 	var notFinished = true;
-	
+
 	var trys=0;
-	
+
 	while(notFinished){
 		interLine = K*interLineFactor;
 		xx = 0;
 		yy = 0;//interLine;
 		maxST = 0;
 		i0Line = 0;
-		
+
 		sizes = new NumberList();
 		positions = new Polygon();
-	
+
 		for(i=0;stringList[i]!=null;i++){
 			tag = stringList[i];
 			sT = Math.floor(Math.sqrt(normWeigths[i])*K);
-			
+
 			sizes.push(sT);
-			
+
 			context.font = String(sT)+'px '+font;
 			wT = context.measureText(tag).width;
-			
+
 			if(xx+wT>frame.width){
 				xx = 0;
 				yy+=(maxST*interLineFactor+1);
@@ -21471,18 +21462,18 @@ StringListVisOperators.simpleTagCloud = function(stringList, weights, frame, fon
 				}
 				i0Line = i;
 			}
-			
+
 			maxST = Math.max(maxST, sT);
 			positions.push(new Point(xx, yy));
 			xx+=wT+sT*0.2;
 		}
-		
+
 		yy+=(maxST*interLineFactor+1);
 		for(j=i0Line;stringList[j]!=null;j++){
 			positions[j].y = yy;
 		}
-		
-		
+
+
 		notFinished = false;
 		if(yy<frame.height*0.97){
 			K=0.5*K + 0.5*K*frame.height/(yy+interLine);
@@ -21495,12 +21486,12 @@ StringListVisOperators.simpleTagCloud = function(stringList, weights, frame, fon
 		trys++;
 		if(trys>10) notFinished = false;
 	}
-	
+
 	table = new Table();
 	table[0] = stringList;
 	table[1] = positions;
 	table[2] = sizes;
-	
+
 	return table;
 }
 
@@ -21509,27 +21500,27 @@ StringListVisOperators.simpleTagCloud = function(stringList, weights, frame, fon
 StringListVisOperators.tagCloudRectangles = function(stringList, weights, frame, mode, margin){
 	mode = mode==null?0:mode;
 	margin = margin==null?0:margin;
-	
+
 	var normWeights = weights.sqrt().getNormalizedToMax();
-	
+
 	var roundSizes = mode==0;
-	
+
 	rectangles = new List();
 	textPositions = new Polygon();
 	textSizes = new NumberList();
-	
+
 	var rectanglesPlaced = new List();
-	
+
 	var dL = 6;
-	
+
 	var a = 0;
 	var r = 0;
-	
+
 	var px;
 	var py;
 	var center;
 	var rMax = 0;
-	
+
 	switch(mode){
 		case 0://open triangle
 			px = frame.x;
@@ -21546,18 +21537,18 @@ StringListVisOperators.tagCloudRectangles = function(stringList, weights, frame,
 			center = frame.getCenter();
 			break;
 	}
-	
+
 	var w;
 	var h;
 	var prop = frame.width/frame.height;
-	
+
 	for(var i=0; stringList[i]!=null; i++){
 		textSizes[i] = roundSizes?Math.round(normWeights[i]*12)*dL:normWeights[i]*12*dL;
-		
+
 		DrawTexts.setContextTextProperties('black', textSizes[i], LOADED_FONT, null, null, 'bold');
 		w=Math.ceil((2+context.measureText(stringList[i]).width)/dL)*dL;
 		h=textSizes[i];
-		
+
 		switch(mode){
 			case 0://open triangle
 				while(StringListVisOperators._pointInRectangles(rectanglesPlaced, px, py, w, h, margin)){
@@ -21579,7 +21570,7 @@ StringListVisOperators.tagCloudRectangles = function(stringList, weights, frame,
 					while(StringListVisOperators._pointInRectangles(rectanglesPlaced, px, py, w, h, margin)){
 						r+=1;
 						a+=r*0.005;
-						
+
 						px=center.x + prop*r*Math.cos(a)-w*0.5;
 						py=center.y + r*Math.sin(a)-h*0.5;
 					}
@@ -21601,10 +21592,10 @@ StringListVisOperators.tagCloudRectangles = function(stringList, weights, frame,
 
 						pc.x+=prop*jump*Math.cos(a);
 						pc.y+=jump*Math.sin(a);
-						
+
 						px = pc.x-w*0.5;
 						py = pc.y-h*0.5;
-						
+
 						if(nStep>=nSteps){
 							a+=Math.PI*0.5;
 							nSteps+=0.5;
@@ -21614,13 +21605,13 @@ StringListVisOperators.tagCloudRectangles = function(stringList, weights, frame,
 					rMax = Math.max(Math.abs(pc.x-center.x)+w*0.5, rMax);
 				}
 				break;
-		
+
 		}
-		
+
 		rectangles[i] = new Rectangle(px,py,w,h);
 		rectanglesPlaced.push(rectangles[i]);
 	}
-	
+
 	if(mode==1 || mode==2){
 		var rectangle;
 		prop = 0.5*frame.width/rMax;
@@ -21633,12 +21624,12 @@ StringListVisOperators.tagCloudRectangles = function(stringList, weights, frame,
 			textSizes[i]*=prop;
 		}
 	}
-	
+
 	var table = new Table();
 	table[0] = stringList;
 	table[1] = rectangles;
 	table[2] = textSizes;
-	
+
 	return table;
 }
 
@@ -21650,7 +21641,6 @@ StringListVisOperators._pointInRectangles = function(rectangles, px, py, width, 
 	}
 	return false;
 }
-
 
 /**
 * NetworkDraw
@@ -22732,7 +22722,7 @@ TreeDraw._horizontalRectanglesDecision = function(rect, weights){
  *Static class that:
  * -includes all the data models (by including the class IncludeDataModels.js)
  * -includes class utils (that contains methods such as instantiate)
- * -contains the global variables (such as userAgent, canvas, nF, mX…), global 
+ * -contains the global variables (such as userAgent, canvas, nF, mX…), global
  * -contains the listener methods
  * -triggers de init, update and draw in Global class
  * @constructor
@@ -22849,21 +22839,21 @@ window.addEventListener('load', function(){
   	} else if(navigator.userAgent.match(/iPhone/i) != null){
     	userAgent='IOS';
   	}
-  	
-  	
+
+
   	Global.userAgent=userAgent;
     Global._frameRate=30;
-    
+
 	canvas = document.getElementById('main');
-	
+
 	if(canvas!=null){
 		removeDiv = document.getElementById('removeDiv');
 		removeDiv.style.display = 'none';
 
 		context = canvas.getContext('2d');
-		
+
 		_adjustCanvas();
-		
+
 		canvas.addEventListener("mousemove", _onMouse, false);
 		canvas.addEventListener("mousedown", _onMouse, false);
 		canvas.addEventListener("mouseup", _onMouse, false);
@@ -22874,13 +22864,13 @@ window.addEventListener('load', function(){
 		activateWheel();
 
 		window.addEventListener("resize", onResize, false);
-		
+
 		startCycle();
 		init();
 	}
 
 	c.l('Moebio Framework v2.256 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
-	
+
 }, false);
 
 function _onMouse(e) {
@@ -22940,10 +22930,10 @@ function _adjustCanvas(){
 
 	cW = getDocWidth();
 	cH = getDocHeight();
-	
+
 	canvas.setAttribute('width', cW);
     canvas.setAttribute('height', cH);
-	
+
 	cX = Math.floor(cW*0.5);
 	cY = Math.floor(cH*0.5);
 }
@@ -22975,7 +22965,7 @@ function setFrameRate(fr){
 
 	if(cycleActive) startCycle();
 }
-	
+
 function enterFrame(){
    	context.clearRect(0, 0, cW, cH);
    	setCursor('default');
@@ -22989,14 +22979,14 @@ function enterFrame(){
 	MOUSE_MOVED = DX_MOUSE!=0 || DY_MOUSE!=0;
 
 	if(MOUSE_PRESSED) T_MOUSE_PRESSED = new Date().getTime() - _tLastMouseDown;
-	
+
   	cycle();
 
   	WHEEL_CHANGE = 0;
 
   	PREV_mX=mX;
 	PREV_mY=mY;
-  	
+
   	nF++;
 }
 
@@ -23026,12 +23016,12 @@ function onMoveCycle(e){
 function reStartCycle(){
 	_prevMouseX=mX;
 	_prevMouseY=mY;
-	
+
 	if(!cycleActive){
 		_setIntervalId = setInterval(enterFrame, Global._frameRate);
 		cycleActive = true;
 	}
-	
+
 	clearTimeout(_setTimeOutId);
 	_setTimeOutId = setTimeout(stopCycle, END_CYCLE_DELAY);
 }
@@ -23111,24 +23101,24 @@ function onKey(e){
 	onCanvasEvent(e);
 }
 
-/**
+/*
  * thanks http://www.adomas.org/javascript-mouse-wheel
  */
 function activateWheel(){
 	_wheelActivated = true;
-	
+
 	if (window.addEventListener){
 		window.addEventListener('DOMMouseScroll', _onWheel, false);
 		//window.addEventListener("mousewheel", _onWheel, false); // testing
 	}
 	window.onmousewheel = document.onmousewheel = _onWheel;
-	
+
 }
 function _onWheel(e) {
 	//c.l('_onWheel, e:', e);
 
     if (!e) e = window.event; //IE
-            
+
     if (e.wheelDelta){
     	WHEEL_CHANGE = e.wheelDelta/120;
     } else if (e.detail) { /** Mozilla case. */
@@ -23201,7 +23191,7 @@ getStructureLocalStorage = function(id, returnStorageObject){
 	}
 
 	if(storageObject.type==null && storageObject.code==null) return null;
-	
+
 	var type = storageObject.type;
 	var code = storageObject.code;
 	var object;
@@ -23222,7 +23212,7 @@ getStructureLocalStorage = function(id, returnStorageObject){
 		storageObject.object = object;
 		storageObject.size = storageObject.code.length;
 		storageObject.date = new Date(storageObject.date);
-		
+
 		return storageObject;
 	}
 

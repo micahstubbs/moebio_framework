@@ -1,5 +1,0 @@
-function BitmapUtils(){};
-//TODO:
-BitmapUtils.resize=function(bitmap, w, h){
- 
-};
