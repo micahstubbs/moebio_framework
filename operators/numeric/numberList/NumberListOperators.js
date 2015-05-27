@@ -326,7 +326,7 @@ NumberListOperators.union = function (x, y) {
  */
 NumberListOperators.intersection = function ( a, b ) {
   // Borrowed from here: http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
-  console.log( "arguments: ", arguments ); 
+  //console.log( "arguments: ", arguments ); 
   if( arguments.length > 2 ){
   	var sets = [];
   	for (var i = 0; i < arguments.length; i++) {
