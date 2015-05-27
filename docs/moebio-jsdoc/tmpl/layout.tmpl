@@ -20,7 +20,13 @@
     </div>
   </div>
   <div class='pad1 small'>
-    <?js= this.nav ?>
+    <div class="filter-block clearfix">
+      <input type="text" id="filter-input" placeholder="Type to filter">
+      <a href="#" id="clear-filter-button">x</a>
+    </div>
+    <div class='side'>
+      <?js= this.nav ?>
+    </div>
   </div>
 </div>
 <div class='limiter margin2'>
@@ -35,5 +41,7 @@
     <div class='quiet small center pad1y'>
     </div>
   </div>
+  <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <script src="scripts/filter.js"></script>
 </body>
 </html>
