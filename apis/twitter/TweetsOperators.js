@@ -1,4 +1,4 @@
-/**
+/*
  * In this operators tweets are treated as objects, so they can take into account metadata for url treatmente, etc…
  * A tweet object is typically like this:
 {
@@ -50,6 +50,9 @@
 	to_user_name: null
 }
 */
+/**
+* @constructor
+*/
 function TweetsOperators(){};
 
 
@@ -59,7 +62,7 @@ TweetsOperators.ACCOUNT_NAME_REGEXP = /@[a-zA-Z0-9_]+('|\?|:| |;|.|,|")?/gi;
 
 TweetsOperators.getStringFromTweets = function(tweetsArray, separator){
 	separator = separator==null?" ":separator;
-	
+
 	var string = "";
 	for(var i=0; tweetsArray[i]!=null; i++){
 		string+=tweetsArray[i].text+separator;
@@ -78,7 +81,7 @@ TweetsOperators.getAccountsNamesFromTweets = function(tweetsArray, withoutRepeti
 }
 
 TweetsOperators.getNGramsFromTweets = function(tweetsArray, N){
-	
+
 }
 
 TweetsOperators.getWordsFrequenciesTable = function(tweetsArray, removeStopWords, includeLinks, limit, minSizeWords){
@@ -105,16 +108,16 @@ TweetsOperators.getWordsFrequenciesMergedTable = function(tweetsArray, removeSto
 	var subList;
 	var subTable;
 	var table;
-	
+
 	users = users.getWithoutRepetitions();
-	
+
 	for(i=0; users[i]!=null; i++){
 		subList = tweetsArray.getFilteredByPropertyValue('from_user', users[i]);
 		subTable = TweetsOperators.getWordsFrequenciesTable(subList, removeStopWords, includeLinks, limit, minSizeWords);
 		table = table==null?subTable:TableOperators.mergeDataTables(table, subTable);
 		table[i+1].name = users[i];
 	}
-	
+
 	return table;
 }
 
@@ -134,25 +137,25 @@ TweetsOperators.getWordsFrequenciesMergedTableLight = function(tweetsArray, remo
 	var wordsTable = TweetsOperators.getWordsFrequenciesTable(tweetsArray, removeStopWords, includeLinks, limit, minSizeWords);
 	var table = new Table();
 	//var match;
-	
+
 	users = users.getWithoutRepetitions();
 
 	table[0] = wordsTable[0];
-	
+
 	for(i=0; users[i]!=null; i++){
 		subList = tweetsArray.getFilteredByPropertyValue('from_user', users[i]);
 		text = subList.getPropertyValues('text').join(' ');
-		
+
 		table[i+1] = new NumberList();
 		table[i+1].name = users[i];
-		
+
 		for(j=0; wordsTable[0][j]!=null; j++){
 			//match = text.match(new RegExp("\\b"+wordsTable[0][j]+"\\b"));
 			//table[i+1][j] =  match==null?0:match.length;
 			table[i+1][j] = text.split(wordsTable[0][j]).length-1;
 		}
 	}
-	
+
 	return table;
 }
 
@@ -161,14 +164,14 @@ TweetsOperators.createCoOccurrencesNetwork = function(tweetsArray, removeStopWor
 	removeStopWords = removeStopWords==null?true:removeStopWords;
 	includeLinks = includeLinks==null?true:includeLinks;
 	coOccurrencesLimit = coOccurrencesLimit==null?0:coOccurrencesLimit;
-	
+
 	var network = new Network();
 	var table = TweetsOperators.getWordsFrequenciesTable(tweetsArray, removeStopWords, includeLinks, wordsLimit);
 	var words = table[0];
 	var weights = table[1];
 	var j;
 	var k;
-	
+
 	var word0 = words[0];
 	var word1;
 	var node0 = new Node(word0, word0);
@@ -176,7 +179,7 @@ TweetsOperators.createCoOccurrencesNetwork = function(tweetsArray, removeStopWor
 	var tweetWords;
 	node0.weight = weights[0];
 	network.addNode(node0);
-	
+
 	for(var i=0; words[i+1]!=null; i++){
 		word0 = words[i];
 		node0 = network.nodeList[i];
@@ -189,19 +192,19 @@ TweetsOperators.createCoOccurrencesNetwork = function(tweetsArray, removeStopWor
 			} else {
 				node1 = network.nodeList[j];
 			}
-			
+
 			var coOccurrences = 0;
 			for(k=0; tweetsArray[k]!=null; k++){
 				tweetWords = tweetsArray[k].text.toLowerCase().match(/\w+/g);
 				coOccurrences +=Number(tweetWords.indexOf(word0)!=-1 && tweetWords.indexOf(word1)!=-1);
 			}
-			
+
 			if(coOccurrences>coOccurrencesLimit){
 				relation = new Relation(word0+"_"+word1, word0+"_"+word1, node0, node1, coOccurrences);
 				network.addRelation(relation);
 			}
 		}
 	}
-	
+
 	return network;
 }

@@ -1,6 +1,6 @@
 /**
  * static Class with methods to render text in canvas
- * @constructir
+ * @constructor
  */
 function DrawTexts(){};
 
@@ -25,9 +25,9 @@ DrawTexts.PIXEL_TO_POINT = 0.75;
 // 	align = align==null?'left':align;
 // 	baseline = baseline==null?'top':baseline;
 // 	style = style==null?'':style;
-	
+
 // 	if(style!='') style+=' ';
-	
+
 // 	context.fillStyle    = color;
 //   	context.font         = style+fontSize+'px '+fontName;
 //   	context.textAlign 	 = align;
@@ -58,7 +58,7 @@ DrawTexts.fillTextRotated=function(text, x, y, angle){//TODO: remove (replaced b
 
 DrawTexts.fillTextRectangleWithTextLines=function(textLines, x, y, height, lineHeight, returnHeight){
 	height = height==0 || height==null?99999:height;
-	
+
 	for(var i=0; textLines[i]!=null; i++){
   		context.fillText(textLines[i], x, y + i*lineHeight);
   		if((i+2)*lineHeight>height) break;
@@ -72,15 +72,15 @@ DrawTexts.textWordWrapReturnLines=function(text, fitWidth, fitHeight, lineHeight
 	fitWidth = fitWidth || 100;
     fitHeight = fitHeight || 600;
     lineHeight = lineHeight || 16;
-    
+
     var nLinesLimit = lineHeight==0?-1:Math.floor(fitHeight/lineHeight);
     var lines = new StringList();
-    
+
     if(fitWidth <= 0){
         lines.push(text);
         return lines;
     }
-    
+
     var sentences = text.split(/\\n|\n/);
     var i;
     var currentLine = 0;
@@ -89,7 +89,7 @@ DrawTexts.textWordWrapReturnLines=function(text, fitWidth, fitHeight, lineHeight
     var str;
     var w;
     var sentence;
-    
+
     for(i=0; i<sentences.length; i++){
     	if(sentences[i]==''){
     		lines.push('');
@@ -129,9 +129,9 @@ DrawTexts.textWordWrapReturnLines=function(text, fitWidth, fitHeight, lineHeight
 	    }
 	    currentLine++;
 	}
-	
+
 	lines.width = lines.length==1?w:fitWidth;
-	
+
 	return lines;
 }
 DrawTexts.getMaxTextWidth = function(texts){
@@ -146,7 +146,7 @@ DrawTexts.getMaxTextWidth = function(texts){
 DrawTexts.cropString=function(ctx, string, fitWidth){
 	if(string==null) return;
     fitWidth = fitWidth || 0;
-   
+
     if (fitWidth <= 0 || ctx.measureText(string).width<=fitWidth){
         return string;
     }

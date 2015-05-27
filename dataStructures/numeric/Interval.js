@@ -3,8 +3,8 @@ Interval.prototype.constructor=Interval;
 
 /**
 * Interval
-* @param {Number} Interval's x value
-* @param {Number} Interval's y value
+* @param {Number} x - Interval's x value
+* @param {Number} y - Interval's y value
 * @constructor
 */
 function Interval (x, y) {
@@ -14,6 +14,11 @@ function Interval (x, y) {
     this.type="Interval";
 }
 
+/**
+ * getMin - find the minimum value of the interval
+ *
+ * @return {Number} the minimum value in the interval
+ */
 Interval.prototype.getMin=function(){
 	return Math.min(x,y);
 }
@@ -56,7 +61,7 @@ Interval.prototype.getScaledFromProportion=function(value, proportion){
 Interval.prototype.add=function(value){
 	return new Interval(this.x+value, this.y+value);
 }
-		
+
 Interval.prototype.invert=function(){
 	var swap=this.x;
 	this.x=this.y;
@@ -68,13 +73,12 @@ Interval.prototype.invert=function(){
  * 0 -> min
  * 1 -> max
  * @param value between 0 and 1 (to obtain values between min and max)
- * @return 
- * 
+ *
  */
 Interval.prototype.getInterpolatedValue=function(value){
 	return value*Number(this.getSignedAmplitude()) + this.x;
 }
-		
+
 Interval.prototype.getInverseInterpolatedValue=function(value){
 	return (value-this.x)/this.getSignedAmplitude();
 }
@@ -100,21 +104,21 @@ Interval.prototype.intersect = function(interval){
 }
 
 /**
-* create a new interval with the same proporties values 
+* create a new interval with the same proporties values
 * @return {Interval}
-* 
+*
 */
 Interval.prototype.clone=function(){
 	var newInterval = new Interval(this.x, this.y);
 	newInterval.name = name;
 	return newInterval;
 }
-		
+
 /**
-* indicate wether a number is included in the interval 
+* indicate wether a number is included in the interval
 * @param value
 * @return {Boolean}
-* 
+*
 */
 Interval.prototype.contains=function(value){
 	if(this.y>this.x) return value>=this.x && value<=this.y;
@@ -125,20 +129,18 @@ Interval.prototype.contains=function(value){
 * indicate wether other interval contains the same values
 * @param interval
 * @return {Boolean}
-* 
+*
 */
 Interval.prototype.isEquivalent=function(interval){
 	return this.x==interval.x && this.y==interval.y;
 }
 
 /**
- * create a new interval with the same proporties values 
+ * create a new interval with the same proporties values
  * @return {String}
- * 
+ *
  */
 
 Interval.prototype.toString=function(){
 	return "Interval[x:"+this.x+"| y:"+this.y+"| amplitude:"+this.getAmplitude()+"]";
 }
-
-		
