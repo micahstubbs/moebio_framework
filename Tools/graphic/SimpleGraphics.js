@@ -345,6 +345,16 @@ setFill = function(style){
 	context.fillStyle = style;
 }
 
+/**
+ * setStroke - set stroke to draw with in canvas
+ *
+ * @param {(String|Number)} style If string, then hex value or web color.
+ * If Number, then a set of RGB or RGBA integers
+ * @param {Number} lineWidth Optional width of line to use. Only valid if style parameter is a string.
+ * @example
+ * setStroke('steelblue'); // sets stroke to blue.
+ * setStroke(0,0,0,0.4); // sets stroke to black with partial opacity.
+ */
 setStroke = function(style, lineWidth){
 	if(typeof style == "number"){
 		if(arguments.length>3){
@@ -355,7 +365,7 @@ setStroke = function(style, lineWidth){
 		return;
 	}
 	context.strokeStyle = style;
-
+	//TODO: will lineWidth still work if RGB or RGBA is used?
 	if(lineWidth) context.lineWidth = lineWidth;
 }
 
@@ -525,6 +535,10 @@ drawAndcapture = function(drawFunction, w, h, target){
 
 //cursor
 
+/**
+ * Change mouse cursor to given style. See {@link https://developer.mozilla.org/en-US/docs/Web/CSS/cursor|MDN Cursor Page} for all style options.
+ * @param {String} name The name of the cursor style.
+ */
 setCursor = function(name) {
 	name = name==null?'default':name;
 	canvas.style.cursor = name;

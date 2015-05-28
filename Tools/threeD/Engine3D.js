@@ -6,6 +6,11 @@ Engine3D.prototype.constructor=Engine3D;
 * @param {Number} configuration.lens Distance of camera from scene
 * @param {Point3D} configuration.angles Initial angle of camera
 * @constructor
+* @example
+* // creates a new Engine3D instance.
+* var engine = new Engine3D({
+*   lens:300
+* });
 */
 function Engine3D (configuration) {
 	configuration = configuration==null?{}:configuration;
@@ -27,9 +32,12 @@ Engine3D.prototype.setBasis=function(point3D){
 }
 
 /**
- * setAngles - set viewing angle of camera on 3D scene
+ * setAngles - set viewing angle of camera on 3D scene.
  *
- * @param {Point3D} point3D viewing angle of the camera
+ * @param {Point3D} point3D viewing angle of the camera.
+ * @example
+ * var engine = new Engine3D();
+ * engine.setAngles(new Point3D(0.2,-HalfPi*1.2, 0.05));
  */
 Engine3D.prototype.setAngles=function(point3D){
 	this._angles = point3D.clone();
@@ -37,6 +45,11 @@ Engine3D.prototype.setAngles=function(point3D){
 	this._basis = this.basis3DRotation(this._basisBase, this._angles);
 }
 
+/**
+ * applyRotation - Add rotation to existing 3D scene.
+ *
+ * @param {Point3D} planeVector rotation vector to add to scene.
+ */
 Engine3D.prototype.applyRotation=function(planeVector){
 	if(!this._freeRotation){
 		this._freeRotation = true;
@@ -53,6 +66,12 @@ Engine3D.prototype.applyRotation=function(planeVector){
 	this._provisionalBase[2] = this._basis[2].clone();
 }
 
+/**
+ * projectPoint3D - Use the current rotation of the scene and the viewpoint
+ * of the camera to project a single point into this space.
+ *
+ * @param {Point3D} point3D point to project
+ */
 Engine3D.prototype.projectPoint3D=function(point3D){
 	var prescale = this.lens/(this.lens+(this._basis[0].z*point3D.x+this._basis[1].z*point3D.y+this._basis[2].z*point3D.z));
 	return new Point3D((this._basis[0].x*point3D.x+this._basis[1].x*point3D.y+this._basis[2].x*point3D.z)*prescale,(this._basis[0].y*point3D.x+this._basis[1].y*point3D.y+this._basis[2].y*point3D.z)*prescale, prescale);
