@@ -77,18 +77,19 @@ We will look at some of the other attributes later, but these should be enough t
 
 Part of what makes Moebio Framework a powerful tool is its collection of drawing functions. We can think of these as helper functions that simplify the canvas API to allow for quickly displaying common shapes.
 
-Let's use just one of these functions, `fRect`, to draw a few rectangles. We will also use `setFill` to provide the rectangle's color.
+Let's use just one of these functions, `fRect`, to draw a rectangle. We will also use `setFill` to provide the rectangle's color.
 
 Modify the cycle function to look like this:
 
 ```javascript
 cycle = function() {
-	setFill('red');
-	fRect(cW / 2, cH / 2, 50, 50);
-
 	setFill('steelblue');
-	fRect(mX - 20, mY - 20, 30, 30);
+	fRect(cW / 2, cH / 2, (mX / 2), (mY / 2));
 }
 ```
 
-Reloading the page gives us a red square in the middle of the visualization, and blue square that follows the mouse around the page.
+Reloading the page gives us a blue rectangle in the middle of the visualization, with dimensions based on the current location of the mouse.
+
+### Basic Interaction
+
+So we have a rectangle updating with every `cycle`. Let's add another that is interactive and responds to mouse events.

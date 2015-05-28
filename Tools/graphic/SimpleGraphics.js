@@ -308,7 +308,7 @@ drawImage = function(image){//TODO: improve efficiency
 		case 9:
 			context.drawImage(image, arguments[1], arguments[2], arguments[3], arguments[4], arguments[5], arguments[6], arguments[7], arguments[8]);
 			break;
-			
+
 	}
 }
 
@@ -433,14 +433,14 @@ fTextRotatedM = function(text, x, y, angle, size){
 	context.rotate(angle);
 	context.fillText(text, 0, 0);
   	context.restore();
-  	
+
   	var dX = mX-x;
   	var dY = mY-y;
   	var d = Math.sqrt(dX*dX+dY*dY);
   	var a = Math.atan2(dY, dX)-angle;
   	var mXT = x + d*Math.cos(a);
   	var mYT = y + d*Math.sin(a);
-  	
+
   	return mYT>y && mYT<y+size && mXT>x && mXT<x+context.measureText(text).width;
 }
 
@@ -466,9 +466,9 @@ setText = function(color, fontSize, fontName, align, baseline, style){
 	align = align==null?'left':align;
 	baseline = baseline==null?'top':baseline;
 	style = style==null?'':style;
-	
+
 	if(style!='') style+=' ';
-	
+
 	context.fillStyle    = color;
   	context.font         = style+fontSize+'px '+fontName;
   	context.textAlign 	 = align;
@@ -504,19 +504,19 @@ captureCanvas = function(){
 
 drawAndcapture = function(drawFunction, w, h, target){
 	var defaultContext = context;
-	
+
 	context = hiddenContext;
-	
+
 	context.canvas.setAttribute('width', w);
     context.canvas.setAttribute('height', h);
-    
+
 	context.clearRect(0,0,w,h);
-	
+
 	target==null?drawFunction.call():drawFunction.call(target);
-	
+
 	var im = new Image();
 	im.src = context.canvas.toDataURL();
-	
+
 	context = defaultContext;
 
 	return im;
@@ -525,7 +525,7 @@ drawAndcapture = function(drawFunction, w, h, target){
 
 //cursor
 
-setCursor = function(name){
+setCursor = function(name) {
 	name = name==null?'default':name;
 	canvas.style.cursor = name;
 }
@@ -538,6 +538,3 @@ getMilliseconds = function(){
 	delete date;
 	return _ms;
 }
-
-
-

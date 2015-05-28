@@ -2,6 +2,9 @@ Engine3D.prototype.constructor=Engine3D;
 
 /**
 * Engine3D
+* @param {Object} configuration Configuration for engine
+* @param {Number} configuration.lens Distance of camera from scene
+* @param {Point3D} configuration.angles Initial angle of camera
 * @constructor
 */
 function Engine3D (configuration) {
@@ -11,9 +14,9 @@ function Engine3D (configuration) {
 	this._freeRotation = false;
 
 	this.setBasis(new Polygon3D(new Point3D(1,0,0), new Point3D(0,1,0), new Point3D(0,0,1)));
-	
+
 	this._cuttingPlane = 10;
-	
+
 	if(configuration.angles!=null) this.setAngles(configuration.angles);
 }
 
@@ -23,6 +26,11 @@ Engine3D.prototype.setBasis=function(point3D){
 	this._provisionalBase = point3D.clone();
 }
 
+/**
+ * setAngles - set viewing angle of camera on 3D scene
+ *
+ * @param {Point3D} point3D viewing angle of the camera
+ */
 Engine3D.prototype.setAngles=function(point3D){
 	this._angles = point3D.clone();
 	this._freeRotation = false;
@@ -39,7 +47,7 @@ Engine3D.prototype.applyRotation=function(planeVector){
 	}
 	this._basis[0] = this.point3DRotation(this._provisionalBase[0], new Point3D(-planeVector.y, planeVector.x, 0));
 	this._basis[1] = this.point3DRotation(this._provisionalBase[1], new Point3D(-planeVector.y, planeVector.x, 0));
-	this._basis[2] = this.point3DRotation(this._provisionalBase[2], new Point3D(-planeVector.y, planeVector.x, 0)); 
+	this._basis[2] = this.point3DRotation(this._provisionalBase[2], new Point3D(-planeVector.y, planeVector.x, 0));
 	this._provisionalBase[0] = this._basis[0].clone();
 	this._provisionalBase[1] = this._basis[1].clone();
 	this._provisionalBase[2] = this._basis[2].clone();
@@ -67,42 +75,42 @@ Engine3D.prototype.scale=function(point3D){
 
 Engine3D.prototype.sortedIndexesByPointsScale = function(polygon3D){
 	var pairsArray = new Array();
-	
+
 	for(var i=0;polygon3D[i]!=null;i++){
 		pairsArray[i] = [polygon3D[i], i];
 	}
-	
+
 	UTLITARY_GLOBAL_VAR = this._basis;
 	pairsArray = pairsArray.sort(this._sortingCriteria, this._basis);
 	UTLITARY_GLOBAL_VAR = null;
-	
+
 	var indexes = new NumberList();
-	
+
 	for(var i=0;polygon3D[i]!=null;i++){
 		indexes[i] = pairsArray[i][1];
 	}
-	
+
 	return indexes;
 }
 
 Engine3D.prototype.sortListByPointsScale = function(list, polygon3D){
 	var pairsArray = new Array();
-	
+
 	for(var i=0;list[i]!=null;i++){
 		pairsArray[i] = [polygon3D[i], list[i]];
 	}
-	
+
 	UTLITARY_GLOBAL_VAR = this._basis;
 	pairsArray = pairsArray.sort(this._sortingCriteria, this._basis);
 	UTLITARY_GLOBAL_VAR = null;
-	
+
 	var newList = instantiateWithSameType(list);
 	newList.name = list;
-	
+
 	for(var i=0;list[i]!=null;i++){
 		newList[i] = pairsArray[i][1];
 	}
-	
+
 	return newList;
 }
 Engine3D.prototype._sortingCriteria = function(array0, array1, basis){
@@ -134,9 +142,9 @@ Engine3D.prototype.basis3DRotation=function(basis, angles){
 	sb = Math.sin(angles.y);
 	cg = Math.cos(angles.z);
 	sg= Math.sin(angles.z);
-	
+
 	return new Polygon3D(new Point3D(basis[0].x*cg*cb + basis[0].y*(cg*sa*sb+sg*ca) + basis[0].z*(sg*sa-cg*ca*sb), -basis[0].x*sg*cb + basis[0].y*(cg*ca-sg*sa*sb) + basis[0].z*(sg*ca*sb+cg*sa), basis[0].x*sb - basis[0].y*sa*cb + basis[0].z*cb*ca),  new Point3D(basis[1].x*cg*cb + basis[1].y*(cg*sa*sb+sg*ca) + basis[1].z*(sg*sa-cg*ca*sb), -basis[1].x*sg*cb + basis[1].y*(cg*ca-sg*sa*sb) + basis[1].z*(sg*ca*sb+cg*sa), basis[1].x*sb - basis[1].y*sa*cb + basis[1].z*cb*ca), new Point3D(basis[2].x*cg*cb + basis[2].y*(cg*sa*sb+sg*ca) + basis[2].z*(sg*sa-cg*ca*sb), -basis[2].x*sg*cb + basis[2].y*(cg*ca-sg*sa*sb) + basis[2].z*(sg*ca*sb+cg*sa), basis[2].x*sb - basis[2].y*sa*cb + basis[2].z*cb*ca));
-	
+
 }
 
 Engine3D.prototype.point3DRotation=function(point, angles){
@@ -158,14 +166,14 @@ Engine3D.prototype.point3DRotation=function(point, angles){
 
 Engine3D.prototype.line3D=function(point0, point1){
 	var polygon = new Polygon();
-	
+
 	var p0 = point0; //while there's no Transformation3D'
 	var prescale0 = this.lens/(this.lens+(this._basis[0].z*p0.x+this._basis[1].z*p0.y+this._basis[2].z*p0.z));
-	
+
 	//
 	var p1 = point1;
 	var prescale1 = this.lens/(this.lens+(this._basis[0].z*p1.x+this._basis[1].z*p1.y+this._basis[2].z*p1.z));
-	
+
 	if(prescale0>0 || prescale1>0){
 		if(prescale0>0 && prescale1>0){
 			polygon.push(new Point((this._basis[0].x*p0.x+this._basis[1].x*p0.y+this._basis[2].x*p0.z)*prescale0, (this._basis[0].y*p0.x+this._basis[1].y*p0.y+this._basis[2].y*p0.z)*prescale0));
@@ -192,12 +200,12 @@ Engine3D.prototype.line3D=function(point0, point1){
 
 Engine3D.prototype.quadrilater=function(p0, p1, p2, p3){
 	var polygon3D = new Polygon3D();
-	
+
 	var l0 = this.line3D(p0, p1);
 	var l1 = this.line3D(p1, p2);
 	var l2 = this.line3D(p2, p3);
 	var l3 = this.line3D(p3, p0);
-	
+
 	if(l0!=null){
 		if(l3==null || (l0[0].x!=l3[1].x && l0[0].y!=l3[1].y)) polygon3D.push(l0[0]);
 		polygon3D.push(l0[1]);
@@ -214,10 +222,6 @@ Engine3D.prototype.quadrilater=function(p0, p1, p2, p3){
 		if(l2==null || (l3[0].x!=l2[1].x && l3[0].y!=l2[1].y)) polygon3D.push(l3[0]);
 		polygon3D.push(l3[1]);
 	}
-	
+
 	return polygon3D;
 }
-
-
-
-
