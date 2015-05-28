@@ -1,23 +1,23 @@
 /**
-* PointOperators
-* @constructor
-*/
-function PointOperators(){};
+ * PointOperators
+ * @constructor
+ */
+function PointOperators() {};
 
 
 
-PointOperators.angleBetweenVectors=function(point0, point1){
-	return Math.atan2(point1.y, point1.x)-Math.atan2(point0.y, point0.x);
+PointOperators.angleBetweenVectors = function(point0, point1) {
+  return Math.atan2(point1.y, point1.x) - Math.atan2(point0.y, point0.x);
 }
 
-PointOperators.angleFromTwoPoints=function(point0, point1){
-	return Math.atan2(point1.y-point0.y, point1.x-point0.x);
+PointOperators.angleFromTwoPoints = function(point0, point1) {
+  return Math.atan2(point1.y - point0.y, point1.x - point0.x);
 }
 
-PointOperators.dot=function(point0, point1){
-	return point0.x*point1.x + point0.y*point1.y;
+PointOperators.dot = function(point0, point1) {
+  return point0.x * point1.x + point0.y * point1.y;
 }
 
-PointOperators.twoPointsInterpolation=function(point0, point1, t){
-	return new Point((1-t)*point0.x+t*point1.x, (1-t)*point0.y+t*point1.y);
+PointOperators.twoPointsInterpolation = function(point0, point1, t) {
+  return new Point((1 - t) * point0.x + t * point1.x, (1 - t) * point0.y + t * point1.y);
 }
