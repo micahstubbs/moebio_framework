@@ -354,6 +354,7 @@ setFill = function(style){
  * @example
  * setStroke('steelblue'); // sets stroke to blue.
  * setStroke(0,0,0,0.4); // sets stroke to black with partial opacity.
+ * setStroke('black', 0.2); // provides lineWidth to stroke
  */
 setStroke = function(style, lineWidth){
 	if(typeof style == "number"){
