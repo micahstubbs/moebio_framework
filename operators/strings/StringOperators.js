@@ -1,14 +1,14 @@
-function StringOperators(){};
+function StringOperators() {};
 
 StringOperators.ENTER = String.fromCharCode(13);
-StringOperators.ENTER2 =  String.fromCharCode(10);
+StringOperators.ENTER2 = String.fromCharCode(10);
 StringOperators.ENTER3 = String.fromCharCode(8232);
-		
-StringOperators.SPACE =  String.fromCharCode(32);
+
+StringOperators.SPACE = String.fromCharCode(32);
 StringOperators.SPACE2 = String.fromCharCode(160);
-		
+
 StringOperators.TAB = "	";
-StringOperators.TAB2 =  String.fromCharCode(9);
+StringOperators.TAB2 = String.fromCharCode(9);
 
 StringOperators.LINK_REGEX = /(^|\s+)(https*\:\/\/\S+[^\.\s+])/;
 StringOperators.MAIL_REGEX = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -22,9 +22,9 @@ StringOperators.STOP_WORDS = StringList.fromArray("t,s,mt,rt,re,m,http,amp,a,abl
  * @return {StringList}
  * tags:
  */
-StringOperators.split = function(string, character){
-	if(character==null) return StringOperators.splitByEnter(string);
-	return StringList.fromArray(string.split(character));
+StringOperators.split = function(string, character) {
+  if(character == null) return StringOperators.splitByEnter(string);
+  return StringList.fromArray(string.split(character));
 }
 
 /**
@@ -33,15 +33,15 @@ StringOperators.split = function(string, character){
  * @return {StringList}
  * tags:
  */
-StringOperators.splitByEnter=function(string){
-	if(string==null) return null;
-	var stringList = StringOperators.splitString(string, "\n");
-	if(stringList.length>1) return stringList;
-	var stringList = StringOperators.splitString(string, StringOperators.ENTER2);
-	if(stringList.length>1) return stringList;
-	var stringList = StringOperators.splitString(string, StringOperators.ENTER3);
-	if(stringList.length>1) return stringList;
-	return new StringList(string);
+StringOperators.splitByEnter = function(string) {
+  if(string == null) return null;
+  var stringList = StringOperators.splitString(string, "\n");
+  if(stringList.length > 1) return stringList;
+  var stringList = StringOperators.splitString(string, StringOperators.ENTER2);
+  if(stringList.length > 1) return stringList;
+  var stringList = StringOperators.splitString(string, StringOperators.ENTER3);
+  if(stringList.length > 1) return stringList;
+  return new StringList(string);
 }
 
 
@@ -53,9 +53,9 @@ StringOperators.splitByEnter=function(string){
  * @return {String}
  * tags:
  */
-StringOperators.replaceSubString = function(string, subString, replacement){
-	if(string==null || subString==null || replacement==null) return null;
-	return string.replace(new RegExp(subString, "g"), replacement);
+StringOperators.replaceSubString = function(string, subString, replacement) {
+  if(string == null || subString == null || replacement == null) return null;
+  return string.replace(new RegExp(subString, "g"), replacement);
 }
 
 /**
@@ -66,16 +66,16 @@ StringOperators.replaceSubString = function(string, subString, replacement){
  * @return {String}
  * tags:
  */
-StringOperators.replaceSubStringsByString = function(string, subStrings, replacement){
-	if(subStrings==null) return;
+StringOperators.replaceSubStringsByString = function(string, subStrings, replacement) {
+  if(subStrings == null) return;
 
-	var subString;
+  var subString;
 
-	subStrings.forEach(function(subString){
-		string = StringOperators.replaceSubString(string, subString, replacement);
-	});
+  subStrings.forEach(function(subString) {
+    string = StringOperators.replaceSubString(string, subString, replacement);
+  });
 
-	return string;
+  return string;
 }
 
 /**
@@ -86,18 +86,18 @@ StringOperators.replaceSubStringsByString = function(string, subStrings, replace
  * @return {String}
  * tags:
  */
-StringOperators.replaceSubStringsByStrings = function(string, subStrings, replacements){
-	if(subStrings==null || replacements==null) return;
+StringOperators.replaceSubStringsByStrings = function(string, subStrings, replacements) {
+  if(subStrings == null || replacements == null) return;
 
-	var nElements = Math.min(subStrings.length, replacements.length);
-	var i;
-	var subString;
+  var nElements = Math.min(subStrings.length, replacements.length);
+  var i;
+  var subString;
 
-	for(i=0; i<nElements; i++){
-		string = StringOperators.replaceSubString(string, subStrings[i], replacements[i]);
-	}
+  for(i = 0; i < nElements; i++) {
+    string = StringOperators.replaceSubString(string, subStrings[i], replacements[i]);
+  }
 
-	return string;
+  return string;
 }
 
 
@@ -111,9 +111,9 @@ StringOperators.replaceSubStringsByStrings = function(string, subStrings, replac
  * @return {String}
  * tags:filter
  */
-StringOperators.substr = function(string, i0, length){
-	i0 = i0||0;
-	return string.substr(i0, length);
+StringOperators.substr = function(string, i0, length) {
+  i0 = i0 || 0;
+  return string.substr(i0, length);
 }
 
 /**
@@ -124,12 +124,12 @@ StringOperators.substr = function(string, i0, length){
  * @return {StringList}
  * tags:
  */
-StringOperators.splitString=function(string, separator){
-	if(string==null) return null;
-	if(separator==null) separator=",";
-	if(typeof separator == "string") separator = separator.replace("\\n", "\n");
-	if(string.indexOf(separator)==-1) return new StringList(string);
-	return StringList.fromArray(string.split(separator));
+StringOperators.splitString = function(string, separator) {
+  if(string == null) return null;
+  if(separator == null) separator = ",";
+  if(typeof separator == "string") separator = separator.replace("\\n", "\n");
+  if(string.indexOf(separator) == -1) return new StringList(string);
+  return StringList.fromArray(string.split(separator));
 }
 
 /**
@@ -141,13 +141,13 @@ StringOperators.splitString=function(string, separator){
  * @return {String}
  * tags:filter
  */
-StringOperators.getFirstTextBetweenStrings=function(text, subString0, subString1){
-	var i0 = text.indexOf(subString0);
-	if(i0==-1) return null;
-	if(subString1=="" || subString1==null) return text.substr(i0+subString0.length);
-	var i1= text.indexOf(subString1, i0+subString0.length+1);
-	if(i1==-1) return text.substring(i0+subString0.length);
-	return text.substr(i0+subString0.length,i1 - (i0+subString0.length));
+StringOperators.getFirstTextBetweenStrings = function(text, subString0, subString1) {
+  var i0 = text.indexOf(subString0);
+  if(i0 == -1) return null;
+  if(subString1 == "" || subString1 == null) return text.substr(i0 + subString0.length);
+  var i1 = text.indexOf(subString1, i0 + subString0.length + 1);
+  if(i1 == -1) return text.substring(i0 + subString0.length);
+  return text.substr(i0 + subString0.length, i1 - (i0 + subString0.length));
 }
 
 /**
@@ -158,26 +158,26 @@ StringOperators.getFirstTextBetweenStrings=function(text, subString0, subString1
  * @return {StringList}
  * tags:filter
  */
-StringOperators.getAllTextsBetweenStrings=function(text, subString0, subString1){//TODO: improve using indexOf(string, START_INDEX)
-	if(text.indexOf(subString0)==-1) return new StringList();
-	var blocks = text.split(subString0);
-	var nBlocks = blocks.length;
-	var stringList = new StringList();
-	var block;
-	var index;
-	var i;
-	for(i=1; i<nBlocks; i++){
-		block = blocks[i];
-		if(subString1==subString0){
-			stringList.push(block);
-		} else {
-			index = block.indexOf(subString1);
-			if(index>=0){
-				stringList.push(block.substr(0, index));
-			}
-		}
-	}
-	return stringList;
+StringOperators.getAllTextsBetweenStrings = function(text, subString0, subString1) { //TODO: improve using indexOf(string, START_INDEX)
+  if(text.indexOf(subString0) == -1) return new StringList();
+  var blocks = text.split(subString0);
+  var nBlocks = blocks.length;
+  var stringList = new StringList();
+  var block;
+  var index;
+  var i;
+  for(i = 1; i < nBlocks; i++) {
+    block = blocks[i];
+    if(subString1 == subString0) {
+      stringList.push(block);
+    } else {
+      index = block.indexOf(subString1);
+      if(index >= 0) {
+        stringList.push(block.substr(0, index));
+      }
+    }
+  }
+  return stringList;
 }
 
 /**
@@ -190,12 +190,16 @@ StringOperators.getAllTextsBetweenStrings=function(text, subString0, subString1)
  * @return {Number}
  * tags:analysis
  */
-StringOperators.countWordsDichotomyAnalysis=function(string, negativeStrings, positiveStrings, normalizeBySize){
-	var val = 0;
-	negativeStrings.forEach(function(word){val-=StringOperators.countWordOccurrences(string, word)});
-	positiveStrings.forEach(function(word){val+=StringOperators.countWordOccurrences(string, word)});
-	if(normalizeBySize) val/=string.length;
-	return val;
+StringOperators.countWordsDichotomyAnalysis = function(string, negativeStrings, positiveStrings, normalizeBySize) {
+  var val = 0;
+  negativeStrings.forEach(function(word) {
+    val -= StringOperators.countWordOccurrences(string, word)
+  });
+  positiveStrings.forEach(function(word) {
+    val += StringOperators.countWordOccurrences(string, word)
+  });
+  if(normalizeBySize) val /= string.length;
+  return val;
 }
 
 
@@ -208,86 +212,86 @@ StringOperators.countWordsDichotomyAnalysis=function(string, negativeStrings, po
  * @return {StringList} list of urls
  * tags:html
  */
-StringOperators.getLinksFromHtml=function(html, urlSource, removeHash){
-	var doc = document.createElement("html");
-	doc.innerHTML = html;
+StringOperators.getLinksFromHtml = function(html, urlSource, removeHash) {
+  var doc = document.createElement("html");
+  doc.innerHTML = html;
 
-	var i;
-	var links = doc.getElementsByTagName("a");
-	var originalUrl, url;
-	var urls = new StringList();
-	var index;
-	var urlSourceParts;
-	var parts,blocks;
+  var i;
+  var links = doc.getElementsByTagName("a");
+  var originalUrl, url;
+  var urls = new StringList();
+  var index;
+  var urlSourceParts;
+  var parts, blocks;
 
-	urlSource = urlSource==""?null:urlSource;
-	removeHash = removeHash==null?false:removeHash;
+  urlSource = urlSource == "" ? null : urlSource;
+  removeHash = removeHash == null ? false : removeHash;
 
-	if(urlSource){
-		urlSource = urlSource.trim();
-		
-		if(urlSource.substr(-5)==".html"){
-			urlSourceParts = urlSource.split("/");
-			urlSource = urlSourceParts.slice(0, urlSourceParts.length-1).join("/");
-		}
-		if(urlSource.indexOf(-1)=="/") urlSource = urlSource.substr(0, urlSource.length-1);
-		urlSourceParts = urlSource.split("/");
+  if(urlSource) {
+    urlSource = urlSource.trim();
 
-		var root = urlSource.replace("//", "**").split("/")[0].replace("**", "//");
-	}
+    if(urlSource.substr(-5) == ".html") {
+      urlSourceParts = urlSource.split("/");
+      urlSource = urlSourceParts.slice(0, urlSourceParts.length - 1).join("/");
+    }
+    if(urlSource.indexOf(-1) == "/") urlSource = urlSource.substr(0, urlSource.length - 1);
+    urlSourceParts = urlSource.split("/");
+
+    var root = urlSource.replace("//", "**").split("/")[0].replace("**", "//");
+  }
 
 
-	for(i=0; i<links.length; i++){
-		originalUrl = url = links[i].getAttribute("href");
-		if(url==null) continue;
+  for(i = 0; i < links.length; i++) {
+    originalUrl = url = links[i].getAttribute("href");
+    if(url == null) continue;
 
-		if(url.indexOf('=')!=-1) url = url.split('=')[0];
+    if(url.indexOf('=') != -1) url = url.split('=')[0];
 
-		//c.log(url);
-		if(urlSource && url.indexOf('http://')==-1 && url.indexOf('https://')==-1 && url.indexOf('wwww.')==-1 && url.indexOf('file:')==-1 && url.indexOf('gopher:')==-1 && url.indexOf('//')!=0){
-			if(url.substr(0,9)=="../../../"){
-				url = urlSourceParts.slice(0, urlSourceParts.length-3).join("/")+"/"+url.substr(9);
-			} else if(url.substr(0,6)=="../../"){
-				url = urlSourceParts.slice(0, urlSourceParts.length-2).join("/")+"/"+url.substr(6);
-			} else if(url.substr(0,3)=="../"){
-				url = urlSourceParts.slice(0, urlSourceParts.length-1).join("/")+"/"+url.substr(3);
-			} else if(url.charAt(0)=="/"){
-				url = root+url;
-			} else {
-				url = urlSource+"/"+url;
-			}
-		}
-		if(removeHash && url.indexOf("#")!=-1) url = url.split('#')[0];
-		if(url.substr(-1)=="/") url = url.substr(0,url.length-1);
+    //c.log(url);
+    if(urlSource && url.indexOf('http://') == -1 && url.indexOf('https://') == -1 && url.indexOf('wwww.') == -1 && url.indexOf('file:') == -1 && url.indexOf('gopher:') == -1 && url.indexOf('//') != 0) {
+      if(url.substr(0, 9) == "../../../") {
+        url = urlSourceParts.slice(0, urlSourceParts.length - 3).join("/") + "/" + url.substr(9);
+      } else if(url.substr(0, 6) == "../../") {
+        url = urlSourceParts.slice(0, urlSourceParts.length - 2).join("/") + "/" + url.substr(6);
+      } else if(url.substr(0, 3) == "../") {
+        url = urlSourceParts.slice(0, urlSourceParts.length - 1).join("/") + "/" + url.substr(3);
+      } else if(url.charAt(0) == "/") {
+        url = root + url;
+      } else {
+        url = urlSource + "/" + url;
+      }
+    }
+    if(removeHash && url.indexOf("#") != -1) url = url.split('#')[0];
+    if(url.substr(-1) == "/") url = url.substr(0, url.length - 1);
 
-		index = url.indexOf('/../');
-		while(index!=-1){
-			blocks = url.split('/../');
-			parts = blocks[0].replace("//", "**").split("/");
-			url = parts.slice(0, parts.length-1).join("/").replace("**", "//")+("/"+blocks.slice(1).join("/../"));
-			index = url.indexOf('/../');
-		}
+    index = url.indexOf('/../');
+    while(index != -1) {
+      blocks = url.split('/../');
+      parts = blocks[0].replace("//", "**").split("/");
+      url = parts.slice(0, parts.length - 1).join("/").replace("**", "//") + ("/" + blocks.slice(1).join("/../"));
+      index = url.indexOf('/../');
+    }
 
-		if(url.indexOf('./')!=-1){
-			parts = url.replace("//", "**").split("/");
-			if(parts[0].substr(-1)=="."){
-				parts[0] = parts[0].substr(0, parts[0].length-1);
-				url = parts.join('/').replace("**", "//");
-			}
-		}
+    if(url.indexOf('./') != -1) {
+      parts = url.replace("//", "**").split("/");
+      if(parts[0].substr(-1) == ".") {
+        parts[0] = parts[0].substr(0, parts[0].length - 1);
+        url = parts.join('/').replace("**", "//");
+      }
+    }
 
-		url = url.trim();
+    url = url.trim();
 
-		if(url.substr(-1)=="/") url = url.substr(0, url.length-1);
+    if(url.substr(-1) == "/") url = url.substr(0, url.length - 1);
 
-		if(url==urlSource) continue;
-		//c.log(urlSource+' | '+originalUrl+' -> '+url);
-	    urls.push(url);
-	}
+    if(url == urlSource) continue;
+    //c.log(urlSource+' | '+originalUrl+' -> '+url);
+    urls.push(url);
+  }
 
-	urls = urls.getWithoutRepetitions();
+  urls = urls.getWithoutRepetitions();
 
-	return urls;
+  return urls;
 }
 
 
@@ -300,13 +304,12 @@ StringOperators.getLinksFromHtml=function(html, urlSource, removeHash){
  * @param {Boolean} caseSensitive (false by default)
  * @return {Boolean} returns true if string or word is contained
  */
-StringOperators.textContainsString = function(text, string, asWord, caseSensitive){
-	text = caseSensitive?string:text.toLowerCase();
-	string = caseSensitive?string:string.toLowerCase();
-	return asWord?
-		text.match(new RegExp("\\b"+string+"\\b")).length>0
-		:
-		text.indexOf(string)!=-1;
+StringOperators.textContainsString = function(text, string, asWord, caseSensitive) {
+  text = caseSensitive ? string : text.toLowerCase();
+  string = caseSensitive ? string : string.toLowerCase();
+  return asWord ?
+    text.match(new RegExp("\\b" + string + "\\b")).length > 0 :
+    text.indexOf(string) != -1;
 }
 
 /**
@@ -315,11 +318,11 @@ StringOperators.textContainsString = function(text, string, asWord, caseSensitiv
  * @param  {Boolean} frame  if true (default) prints ///////////////// on top and bottom
  * tags:
  */
-StringOperators.logInConsole = function(string, frame){
-	frame = frame==null?true:frame;
-	if(frame) c.log('///////////////////////////////////////////////////');
-	c.log(string);
-	if(frame) c.log('///////////////////////////////////////////////////');
+StringOperators.logInConsole = function(string, frame) {
+  frame = frame == null ? true : frame;
+  if(frame) c.log('///////////////////////////////////////////////////');
+  c.log(string);
+  if(frame) c.log('///////////////////////////////////////////////////');
 }
 
 
@@ -328,104 +331,104 @@ StringOperators.logInConsole = function(string, frame){
 //////
 
 
-StringOperators.getParenthesisContents=function(text, brackets){
-	var contents = new StringList();
-	
-	var subText=text; 
-	
-	var contentObject = StringOperators.getFirstParenthesisContentWithIndexes(text, brackets);
-	
-	var nAttempts = 0;
-	while(contentObject.content!="" && contentObject.index1<subText.length-1 && nAttempts<text.length){
-		contents.push(contentObject.content);
-		subText = subText.substr(contentObject.index1+2);
-		contentObject = StringOperators.getFirstParenthesisContentWithIndexes(subText, brackets);
-		nAttempts++;
-	}
-	
-	return contents;
-}
-StringOperators.getFirstParenthesisContent=function(text, brackets){
-	return StringOperators.getFirstParenthesisContentWithIndexes(text, brackets).content;
-}
-StringOperators.getFirstParenthesisContentWithIndexes=function(text, brackets){
-	var open  = brackets?"[":"(";
-	var close = brackets?"]":")";
-	
-	var openRegEx  = brackets?/\[/g:/\(/g;
-	var closeRegEx = brackets?/\]/g:/\)/g;
-	
-	var indexOpen = text.indexOf(open);
-	
-	if(indexOpen==-1) return {
-		"content":"",
-		"index0":0,
-		"index1":0
-	}
-	
-	var indexClose = text.indexOf(close);
-	
-	var part = text.substring(indexOpen+1, indexClose);
-	
-	var openMatch  = part.match(openRegEx);
-	var closeMatch = part.match(closeRegEx);
-	
-	var nOpen = (openMatch==null?0:openMatch.length) - (closeMatch==null?0:closeMatch.length);
-	var nAttempts = 0;
-	
-	
-	while((nOpen>0 || indexClose==-1) && nAttempts<text.length){
-		indexClose = text.indexOf(close, indexClose);
-		part = text.substring(indexOpen+1, indexClose+1);
-		indexClose++;
-		openMatch  = part.match(openRegEx);
-		closeMatch = part.match(closeRegEx);
-		nOpen = (openMatch==null?0:openMatch.length) - (closeMatch==null?0:closeMatch.length);
-		
-		nAttempts++;
-	}
-	indexClose = text.indexOf(close, indexClose);
+StringOperators.getParenthesisContents = function(text, brackets) {
+  var contents = new StringList();
 
-	return { 
-		"content":indexClose==-1?text.substring(indexOpen+1):text.substring(indexOpen+1, indexClose),
-		"index0":indexOpen+1,
-		"index1":indexClose==-1?(text.length-1):(indexClose-1)
-	};
-}
+  var subText = text;
 
-StringOperators.placeString=function(string, stringToPlace, index){
-	return string.substr(0,index)+stringToPlace+string.substr(index+stringToPlace.length);
+  var contentObject = StringOperators.getFirstParenthesisContentWithIndexes(text, brackets);
+
+  var nAttempts = 0;
+  while(contentObject.content != "" && contentObject.index1 < subText.length - 1 && nAttempts < text.length) {
+    contents.push(contentObject.content);
+    subText = subText.substr(contentObject.index1 + 2);
+    contentObject = StringOperators.getFirstParenthesisContentWithIndexes(subText, brackets);
+    nAttempts++;
+  }
+
+  return contents;
+}
+StringOperators.getFirstParenthesisContent = function(text, brackets) {
+  return StringOperators.getFirstParenthesisContentWithIndexes(text, brackets).content;
+}
+StringOperators.getFirstParenthesisContentWithIndexes = function(text, brackets) {
+  var open = brackets ? "[" : "(";
+  var close = brackets ? "]" : ")";
+
+  var openRegEx = brackets ? /\[/g : /\(/g;
+  var closeRegEx = brackets ? /\]/g : /\)/g;
+
+  var indexOpen = text.indexOf(open);
+
+  if(indexOpen == -1) return {
+    "content": "",
+    "index0": 0,
+    "index1": 0
+  }
+
+  var indexClose = text.indexOf(close);
+
+  var part = text.substring(indexOpen + 1, indexClose);
+
+  var openMatch = part.match(openRegEx);
+  var closeMatch = part.match(closeRegEx);
+
+  var nOpen = (openMatch == null ? 0 : openMatch.length) - (closeMatch == null ? 0 : closeMatch.length);
+  var nAttempts = 0;
+
+
+  while((nOpen > 0 || indexClose == -1) && nAttempts < text.length) {
+    indexClose = text.indexOf(close, indexClose);
+    part = text.substring(indexOpen + 1, indexClose + 1);
+    indexClose++;
+    openMatch = part.match(openRegEx);
+    closeMatch = part.match(closeRegEx);
+    nOpen = (openMatch == null ? 0 : openMatch.length) - (closeMatch == null ? 0 : closeMatch.length);
+
+    nAttempts++;
+  }
+  indexClose = text.indexOf(close, indexClose);
+
+  return {
+    "content": indexClose == -1 ? text.substring(indexOpen + 1) : text.substring(indexOpen + 1, indexClose),
+    "index0": indexOpen + 1,
+    "index1": indexClose == -1 ? (text.length - 1) : (indexClose - 1)
+  };
 }
 
-StringOperators.insertString=function(string, stringToInsert, index){
-	return string.substr(0,index)+stringToInsert+string.substr(index);
+StringOperators.placeString = function(string, stringToPlace, index) {
+  return string.substr(0, index) + stringToPlace + string.substr(index + stringToPlace.length);
 }
 
-StringOperators.removeEnters=function(string){
-	return string.replace(/(\StringOperators.ENTER|\StringOperators.ENTER2|\StringOperators.ENTER3)/gi, " ");
+StringOperators.insertString = function(string, stringToInsert, index) {
+  return string.substr(0, index) + stringToInsert + string.substr(index);
 }
 
-StringOperators.removeTabs=function(string){
-	return string.replace(/(\StringOperators.TAB|\StringOperators.TAB2|\t)/gi, "");
+StringOperators.removeEnters = function(string) {
+  return string.replace(/(\StringOperators.ENTER|\StringOperators.ENTER2|\StringOperators.ENTER3)/gi, " ");
 }
 
-StringOperators.removePunctuation=function(string, replaceBy){
-	replaceBy = replaceBy || "";
-	return string.replace(/[:,.;?!\(\)\"\']/gi, replaceBy);
+StringOperators.removeTabs = function(string) {
+  return string.replace(/(\StringOperators.TAB|\StringOperators.TAB2|\t)/gi, "");
 }
 
-StringOperators.removeDoubleSpaces=function(string){
-	var retString=string;
-	var regExpr=RegExp(/  /);
-	while(regExpr.test(retString)){
-		retString=retString.replace(regExpr, " ");
-	}
-	return retString;
+StringOperators.removePunctuation = function(string, replaceBy) {
+  replaceBy = replaceBy || "";
+  return string.replace(/[:,.;?!\(\)\"\']/gi, replaceBy);
 }
 
-StringOperators.removeInitialRepeatedCharacter=function(string, character){
-	while(string.charAt(0)==character) string = string.substr(1);
-	return string;
+StringOperators.removeDoubleSpaces = function(string) {
+  var retString = string;
+  var regExpr = RegExp(/  /);
+  while(regExpr.test(retString)) {
+    retString = retString.replace(regExpr, " ");
+  }
+  return retString;
+}
+
+StringOperators.removeInitialRepeatedCharacter = function(string, character) {
+  while(string.charAt(0) == character) string = string.substr(1);
+  return string;
 }
 
 
@@ -435,22 +438,22 @@ StringOperators.removeInitialRepeatedCharacter=function(string, character){
  * @return {String}
  * tags:
  */
-StringOperators.removeHtmlTags=function(html){
-	var tmp = document.createElement("DIV");
-	tmp.innerHTML = html;
-	return tmp.textContent||tmp.innerText;
+StringOperators.removeHtmlTags = function(html) {
+  var tmp = document.createElement("DIV");
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText;
 }
 
-StringOperators.removeLinks=function(text){
-	text+=' ';
-	var regexp = /http:\/\/[a-zA-Z0-9\/\.]+( |:|;|\r|\t|\n|\v)/g;
-	return (text.replace(regexp, ' ')).substr(0, text.length-2);
+StringOperators.removeLinks = function(text) {
+  text += ' ';
+  var regexp = /http:\/\/[a-zA-Z0-9\/\.]+( |:|;|\r|\t|\n|\v)/g;
+  return(text.replace(regexp, ' ')).substr(0, text.length - 2);
 }
 
-StringOperators.removeQuotes=function(string){//TODO:improve
-	if(string.charAt(0)=="\"") string = string.substr(1);
-	if(string.charAt(string.length-1)=="\"") string = string.substr(0, string.length-1);
-	return string;
+StringOperators.removeQuotes = function(string) { //TODO:improve
+  if(string.charAt(0) == "\"") string = string.substr(1);
+  if(string.charAt(string.length - 1) == "\"") string = string.substr(0, string.length - 1);
+  return string;
 }
 
 // StringOperators.trim = function(string){
@@ -470,103 +473,103 @@ StringOperators.removeQuotes=function(string){//TODO:improve
  * @return {StringList}
  * tags:
  */
-StringOperators.getWords = function(string, withoutRepetitions, stopWords, sortedByFrequency, includeLinks, limit, minSizeWords){
-	if(string==null) return null;
+StringOperators.getWords = function(string, withoutRepetitions, stopWords, sortedByFrequency, includeLinks, limit, minSizeWords) {
+  if(string == null) return null;
 
-	minSizeWords = minSizeWords||0;
-	withoutRepetitions = withoutRepetitions==null?true:withoutRepetitions;
-	sortedByFrequency = sortedByFrequency==null?true:sortedByFrequency;
-	includeLinks = includeLinks==null?true:includeLinks;
-	limit = limit==null?0:limit;
+  minSizeWords = minSizeWords || 0;
+  withoutRepetitions = withoutRepetitions == null ? true : withoutRepetitions;
+  sortedByFrequency = sortedByFrequency == null ? true : sortedByFrequency;
+  includeLinks = includeLinks == null ? true : includeLinks;
+  limit = limit == null ? 0 : limit;
 
-	var i, j;
-	
-	if(includeLinks) var links = string.match(StringOperators.LINK_REGEX);
-	string = string.toLowerCase().replace(StringOperators.LINK_REGEX, "");
-	
-	var list = string.match(/\w+/g);
-	if(list==null) return new StringList();
-	
-	if(includeLinks && links!=null) list = list.concat(links);
-	list = StringList.fromArray(list).replace(/ /g, "");
-	
-	if(stopWords!=null){//TODO:check before if all stopwrds are strings
-		//list.removeElements(stopWords);
+  var i, j;
 
-		for(i=0; list[i]!=null; i++){
-			for(j=0; stopWords[j]!=null; j++){
-				if((typeof stopWords[j]) == 'string'){
-					if(stopWords[j]==list[i]){
-						list.splice(i, 1);
-						i--;
-						break;
-					}
-				} else if(stopWords[j].test(list[i])){
-					list.splice(i, 1);
-					i--;
-					break;
-				}
-			}
-		}
+  if(includeLinks) var links = string.match(StringOperators.LINK_REGEX);
+  string = string.toLowerCase().replace(StringOperators.LINK_REGEX, "");
 
-	}
-	
-	if(minSizeWords>0){
-		for(i=0; list[i]!=null; i++){
-			if(list[i].length<minSizeWords){
-				list.splice(i, 1);
-				i--;
-			}
-		}
-	}
-	
-	if(sortedByFrequency){
-		if(withoutRepetitions){
-			list = ListOperators.countElementsRepetitionOnList(list, true)[0]
-			if(limit!=0) list = list.substr(0, limit);
+  var list = string.match(/\w+/g);
+  if(list == null) return new StringList();
 
-			return list;
-		}
-		
-		var occurrences = ListOperators.countOccurrencesOnList(list);
-		list = list.getSortedByList(occurrences);
-		if(limit!=0) list = list.substr(0, limit);
+  if(includeLinks && links != null) list = list.concat(links);
+  list = StringList.fromArray(list).replace(/ /g, "");
 
-		return list;
-	}
-	
-	if(withoutRepetitions){
-		list = list.getWithoutRepetitions();
-	}
-	
-	if(limit!=0) list = list.splice(0, limit);
-	return list;
+  if(stopWords != null) { //TODO:check before if all stopwrds are strings
+    //list.removeElements(stopWords);
+
+    for(i = 0; list[i] != null; i++) {
+      for(j = 0; stopWords[j] != null; j++) {
+        if((typeof stopWords[j]) == 'string') {
+          if(stopWords[j] == list[i]) {
+            list.splice(i, 1);
+            i--;
+            break;
+          }
+        } else if(stopWords[j].test(list[i])) {
+          list.splice(i, 1);
+          i--;
+          break;
+        }
+      }
+    }
+
+  }
+
+  if(minSizeWords > 0) {
+    for(i = 0; list[i] != null; i++) {
+      if(list[i].length < minSizeWords) {
+        list.splice(i, 1);
+        i--;
+      }
+    }
+  }
+
+  if(sortedByFrequency) {
+    if(withoutRepetitions) {
+      list = ListOperators.countElementsRepetitionOnList(list, true)[0]
+      if(limit != 0) list = list.substr(0, limit);
+
+      return list;
+    }
+
+    var occurrences = ListOperators.countOccurrencesOnList(list);
+    list = list.getSortedByList(occurrences);
+    if(limit != 0) list = list.substr(0, limit);
+
+    return list;
+  }
+
+  if(withoutRepetitions) {
+    list = list.getWithoutRepetitions();
+  }
+
+  if(limit != 0) list = list.splice(0, limit);
+  return list;
 }
 
-removeAccentsAndDiacritics = function(string){
-    var r = string.replace(new RegExp(/[àáâãäå]/g),"a");
-    r = r.replace(new RegExp(/æ/g),"ae");
-    r = r.replace(new RegExp(/ç/g),"c");
-    r = r.replace(new RegExp(/[èéêë]/g),"e");
-    r = r.replace(new RegExp(/[ìíîï]/g),"i");
-    r = r.replace(new RegExp(/ñ/g),"n");      
-    r = r.replace(new RegExp(/[òóôõö]/g),"o");
-    r = r.replace(new RegExp(/œ/g),"oe");
-    r = r.replace(new RegExp(/[ùúûü]/g),"u");
-    r = r.replace(new RegExp(/[ýÿ]/g),"y");
+removeAccentsAndDiacritics = function(string) {
+  var r = string.replace(new RegExp(/[àáâãäå]/g), "a");
+  r = r.replace(new RegExp(/æ/g), "ae");
+  r = r.replace(new RegExp(/ç/g), "c");
+  r = r.replace(new RegExp(/[èéêë]/g), "e");
+  r = r.replace(new RegExp(/[ìíîï]/g), "i");
+  r = r.replace(new RegExp(/ñ/g), "n");
+  r = r.replace(new RegExp(/[òóôõö]/g), "o");
+  r = r.replace(new RegExp(/œ/g), "oe");
+  r = r.replace(new RegExp(/[ùúûü]/g), "u");
+  r = r.replace(new RegExp(/[ýÿ]/g), "y");
 
-    r = r.replace(new RegExp(/[ÀÁÂÄÃ]/g),"A");
-    r = r.replace(new RegExp(/Æ/g),"AE");
-    r = r.replace(new RegExp(/Ç/g),"c");
-    r = r.replace(new RegExp(/[ÈÉÊË]/g),"E");
-    r = r.replace(new RegExp(/[ÌÍÎÏ]/g),"I");
-    r = r.replace(new RegExp(/Ñ/g),"N");                
-    r = r.replace(new RegExp(/[ÒÓÔÖÕ]/g),"O");
-    r = r.replace(new RegExp(/Œ/g),"OE");
-    r = r.replace(new RegExp(/[ÙÚÛÜ]/g),"U");
-    r = r.replace(new RegExp(/[Ÿ]/g),"Y");
+  r = r.replace(new RegExp(/[ÀÁÂÄÃ]/g), "A");
+  r = r.replace(new RegExp(/Æ/g), "AE");
+  r = r.replace(new RegExp(/Ç/g), "c");
+  r = r.replace(new RegExp(/[ÈÉÊË]/g), "E");
+  r = r.replace(new RegExp(/[ÌÍÎÏ]/g), "I");
+  r = r.replace(new RegExp(/Ñ/g), "N");
+  r = r.replace(new RegExp(/[ÒÓÔÖÕ]/g), "O");
+  r = r.replace(new RegExp(/Œ/g), "OE");
+  r = r.replace(new RegExp(/[ÙÚÛÜ]/g), "U");
+  r = r.replace(new RegExp(/[Ÿ]/g), "Y");
 
-    return r;
+  return r;
 };
 
 /**
@@ -580,24 +583,24 @@ removeAccentsAndDiacritics = function(string){
  * @return {Table} contains a list of words, and a numberList of occurrences
  * tags:words
  */
-StringOperators.getWordsOccurrencesTable = function(string, stopWords, includeLinks, limit, minSizeWords){
-	if(string==null) return;
-	if(string.length==0) return new Table(new StringList(), new NumberList());
-	var words = StringOperators.getWords(string, false, stopWords, false, includeLinks, limit, minSizeWords);
+StringOperators.getWordsOccurrencesTable = function(string, stopWords, includeLinks, limit, minSizeWords) {
+  if(string == null) return;
+  if(string.length == 0) return new Table(new StringList(), new NumberList());
+  var words = StringOperators.getWords(string, false, stopWords, false, includeLinks, limit, minSizeWords);
 
-	return ListOperators.countElementsRepetitionOnList(words, true, false, limit);
+  return ListOperators.countElementsRepetitionOnList(words, true, false, limit);
 }
 
-StringOperators.indexesOf = function(text, string){//TODO:test
-	var index = text.indexOf(string);
-	if(index==-1) return new NumberList();
-	var indexes = new NumberList(index);
-	index = text.indexOf(string, index+1);
-	while(index!=-1){
-		indexes.push(index);
-		index = text.indexOf(string, index+1);
-	}
-	return indexes;
+StringOperators.indexesOf = function(text, string) { //TODO:test
+  var index = text.indexOf(string);
+  if(index == -1) return new NumberList();
+  var indexes = new NumberList(index);
+  index = text.indexOf(string, index + 1);
+  while(index != -1) {
+    indexes.push(index);
+    index = text.indexOf(string, index + 1);
+  }
+  return indexes;
 }
 
 /**
@@ -606,13 +609,13 @@ StringOperators.indexesOf = function(text, string){//TODO:test
  * @param  {Number} n number of repetitions
  * @return {String}
  */
-StringOperators.repeat = function(text, n){
-	var i;
-	var newText = "";
-	for(i=0; i<n; i++){
-		newText+=text;
-	}
-	return newText;
+StringOperators.repeat = function(text, n) {
+  var i;
+  var newText = "";
+  for(i = 0; i < n; i++) {
+    newText += text;
+  }
+  return newText;
 }
 
 
@@ -620,36 +623,36 @@ StringOperators.repeat = function(text, n){
 
 //counting / statistics
 
-StringOperators.countOccurrences=function(text, string){ //seems to be th emost efficient: http://stackoverflow.com/questions/4009756/how-to-count-string-occurrence-in-string
-	var n=0;
-	var index = text.indexOf(string);
-	while(index!=-1){
-		n++;
-		index = text.indexOf(string, index+string.length);
-	}
-	return n;
+StringOperators.countOccurrences = function(text, string) { //seems to be th emost efficient: http://stackoverflow.com/questions/4009756/how-to-count-string-occurrence-in-string
+  var n = 0;
+  var index = text.indexOf(string);
+  while(index != -1) {
+    n++;
+    index = text.indexOf(string, index + string.length);
+  }
+  return n;
 }
 
-StringOperators.countWordOccurrences = function(string, word){
-	var regex = new RegExp("\\b"+word+"\\b");
-	var match = string.match(regex);
-	return match==null?0:match.length;
+StringOperators.countWordOccurrences = function(string, word) {
+  var regex = new RegExp("\\b" + word + "\\b");
+  var match = string.match(regex);
+  return match == null ? 0 : match.length;
 }
 
-StringOperators.countStringsOccurrences=function(text, strings){
-	var i;
-	var numberList = new NumberList();
-	for(i=0; strings[i]!=null; i++){
-		numberList[i] = text.split(strings[i]).length-1;
-	}
-	return numberList;
+StringOperators.countStringsOccurrences = function(text, strings) {
+  var i;
+  var numberList = new NumberList();
+  for(i = 0; strings[i] != null; i++) {
+    numberList[i] = text.split(strings[i]).length - 1;
+  }
+  return numberList;
 }
 
 //validation
 
-StringOperators.validateEmail = function(text) { 
-    return StringOperators.MAIL_REGEX.test(text);
+StringOperators.validateEmail = function(text) {
+  return StringOperators.MAIL_REGEX.test(text);
 }
-StringOperators.validateUrl = function(text) { 
-    return StringOperators.LINK_REGEX.test(text);
+StringOperators.validateUrl = function(text) {
+  return StringOperators.LINK_REGEX.test(text);
 }

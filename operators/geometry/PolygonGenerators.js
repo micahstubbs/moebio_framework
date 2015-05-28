@@ -1,24 +1,24 @@
 /**
-* PolygonGenerators
-* @constructor
-*/
-function PolygonGenerators(){};
+ * PolygonGenerators
+ * @constructor
+ */
+function PolygonGenerators() {};
 
 
-PolygonGenerators.createPolygon=function(nPoints, mode, frame){
-	var polygon = new Polygon();
-	
-	switch(mode){
-		case 0://random
-			for(var i=0; i<nPoints; i++){
-				polygon.push(new Point(frame.x + frame.width*Math.random(), frame.y + frame.height*Math.random()));
-			}
-			break;
-		case 1://circle
-			break;
-	}
-	
-	return polygon;
+PolygonGenerators.createPolygon = function(nPoints, mode, frame) {
+  var polygon = new Polygon();
+
+  switch(mode) {
+    case 0: //random
+      for(var i = 0; i < nPoints; i++) {
+        polygon.push(new Point(frame.x + frame.width * Math.random(), frame.y + frame.height * Math.random()));
+      }
+      break;
+    case 1: //circle
+      break;
+  }
+
+  return polygon;
 };
 
 // PolygonGenerators.getCirclesDisposedInSpiral=function(weights, frame){ //TODO: this method belongs to another class (?)
@@ -32,7 +32,7 @@ PolygonGenerators.createPolygon=function(nPoints, mode, frame){
 // 	var nElements = weights.length;
 // 	var i;
 // 	var j;
-	
+
 // 	if(nElements==1){
 // 		var table=new Table();
 // 		var pointList=new Polygon();
@@ -45,18 +45,18 @@ PolygonGenerators.createPolygon=function(nPoints, mode, frame){
 // 		return table;
 // 	}
 // 	maxWeight =weights.getMax();
-	
-	
+
+
 // 	if(maxWeight==0) return null;
-	
+
 // 	var MIN_SPACE_BETWEEN_CIRCLES = 0.1;
-	
+
 // 	sortedRadius = new NumberList(Math.sqrt(weights[sortArray[0]]/maxWeight), Math.sqrt(weights[sortArray[1]]/maxWeight));
 // 	sortedCenters = new Polygon(new Point(0,0), new Point(sortedRadius[0] + sortedRadius[1] + MIN_SPACE_BETWEEN_CIRCLES,0));
 // 	//trace("sortedCenters:", sortedCenters),
 // 	centers[sortArray[0]] = sortedCenters[0];
 // 	radius[sortArray[0]] = sortedRadius[0];
-	
+
 // 	centers[sortArray[1]] = sortedCenters[1];
 // 	radius[sortArray[1]] = sortedRadius[1];
 // 	//trace(centers);
@@ -64,25 +64,25 @@ PolygonGenerators.createPolygon=function(nPoints, mode, frame){
 // 	var r;
 // 	var rI;
 // 	var angle = 0;
-	
+
 // 	var testPoint = new Point(0, 0);
 // 	var externR = sortedCenters[1].x + sortedRadius[1];
-	
+
 // 	//var ACCUM_J:Number=0;
-	
+
 // 	for(i=2; i<nElements; i++){
 // 		rI = Math.sqrt(weights[sortArray[i]]/maxWeight);
 // 		//trace(i, "rI", rI);
 // 		r = sortedRadius[0] + rI + MIN_SPACE_BETWEEN_CIRCLES;
 // 		angle = i;
-		
+
 // 		for(j=0; j<100000; j++){
 // 			testPoint.x = r*Math.cos(angle);
 // 			testPoint.y = r*Math.sin(angle);
-			
+
 // 			r+=0.01;
 // 			angle+=r*0.04;
-			
+
 // 			if(Polygon.testCircleAtPoint(testPoint, rI+MIN_SPACE_BETWEEN_CIRCLES, sortedCenters, sortedRadius) || j==99999){
 // 				sortedCenters.push(new Point(testPoint.x, testPoint.y));
 // 				sortedRadius.push(rI);
@@ -93,7 +93,7 @@ PolygonGenerators.createPolygon=function(nPoints, mode, frame){
 // 			}
 // 		}
 // 		//ACCUM_J+=j
-		
+
 // 	}
 // 	//trace("   packingCircles:ACCUM_J", ACCUM_J);
 // 	//trace("c:", centers);
@@ -110,6 +110,6 @@ PolygonGenerators.createPolygon=function(nPoints, mode, frame){
 // 	//radius = radius.multiply(1/externR);
 // 	//trace("c2:", centers);
 // 	//trace("r2:", radius);
-	
+
 // 	return new Array(centers, radius);
 // }

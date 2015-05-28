@@ -1,4 +1,4 @@
-function StringDraw(){};
+function StringDraw() {};
 
 /**
  * draws a String (if the object is not a string it displays the json)
@@ -11,40 +11,40 @@ function StringDraw(){};
  * @return {Object}
  * tags:draw
  */
-StringDraw.drawText = function(frame, object, fontSize, fontStyle, margin){	
-	//var frame = frame;//StringDraw.drawText;
+StringDraw.drawText = function(frame, object, fontSize, fontStyle, margin) {
+  //var frame = frame;//StringDraw.drawText;
 
-	margin = margin||10;
-	fontSize = fontSize||12;
-	
-	var subframe = new Rectangle(frame.x+margin, frame.y+margin, frame.width-margin*2, frame.height-margin*2);
-	subframe.bottom = subframe.getBottom();
+  margin = margin || 10;
+  fontSize = fontSize || 12;
 
-	var lineHeight = Math.floor(fontSize*1.2);
+  var subframe = new Rectangle(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
+  subframe.bottom = subframe.getBottom();
 
-	setText('black', fontSize, null, null, null, fontStyle);
+  var lineHeight = Math.floor(fontSize * 1.2);
 
-	significantChange = frame.memory==null || object!=frame.memory.object || fontSize!=frame.memory.fontSize || fontStyle!=frame.memory.fontStyle || margin!=frame.memory.margin || frame.width!=frame.memory.width || frame.height!=frame.memory.height
-	
-	//setup
-	if(significantChange){
-		var realString = object==null?
+  setText('black', fontSize, null, null, null, fontStyle);
+
+  significantChange = frame.memory == null || object != frame.memory.object || fontSize != frame.memory.fontSize || fontStyle != frame.memory.fontStyle || margin != frame.memory.margin || frame.width != frame.memory.width || frame.height != frame.memory.height
+
+  //setup
+  if(significantChange) {
+    var realString = object == null ?
 						""
 						:
-						(typeof object == 'string')?
+      (typeof object == 'string') ?
 							object
 							:
-							JSON.stringify(object, null, "\t");
-		frame.memory = {
-			textLines:DrawTexts.textWordWrapReturnLines(realString, subframe.width, subframe.height, lineHeight, true),
-			object:object,
-			fontSize:fontSize,
-			fontStyle:fontStyle,
-			margin:margin,
-			width:frame.width,
-			height:frame.height
-		};
-	}
+      JSON.stringify(object, null, "\t");
+    frame.memory = {
+      textLines: DrawTexts.textWordWrapReturnLines(realString, subframe.width, subframe.height, lineHeight, true),
+      object: object,
+      fontSize: fontSize,
+      fontStyle: fontStyle,
+      margin: margin,
+      width: frame.width,
+      height: frame.height
+    };
+  }
 
-	DrawTexts.fillTextRectangleWithTextLines(frame.memory.textLines, subframe.x, subframe.y, subframe.height, lineHeight);
+  DrawTexts.fillTextRectangleWithTextLines(frame.memory.textLines, subframe.x, subframe.y, subframe.height, lineHeight);
 }
