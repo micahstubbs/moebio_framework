@@ -6,7 +6,8 @@ var watchedFiles = [
 	"**/*.js",
 	"!**/node_modules/**",
 	"!dist/*.js",
-	"!tests/**"
+	"!tests/**",
+	"!docs/**"
 ];
 
 // Helper function to build the list of files that
@@ -50,11 +51,11 @@ module.exports = function (grunt) {
 	grunt.initConfig({
 
 		concat: {
-			options: {
-				// define a string to put between each file in the concatenated output
-				separator: '\n'
-			},
 			dist: {
+				options: {
+					separator: '\n',
+					nonull: true
+				},
 				// the files to concatenate
 				src: buildFileList(),
 				// the location of the resulting JS file
@@ -87,6 +88,12 @@ module.exports = function (grunt) {
 			spiralMin: {
 				src: 'dist/framework_concat.min.js',
 				dest: '../spiral/_dev/client/angularSpiral/app/scripts/classes/framework_concat.min.js'
+			},
+			site_js: {
+				expand: true,
+				cwd: 'dist/',
+				src: ['framework_concat.js', 'framework_concat.min.js'],
+				dest: 'site/source/examples/js/'
 			}
 		},
 
