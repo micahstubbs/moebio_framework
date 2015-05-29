@@ -1,4 +1,4 @@
-DataModel.prototype = new Object();
+DataModel.prototype = {};
 DataModel.prototype.constructor = DataModel;
 
 /**
@@ -12,17 +12,17 @@ function DataModel() {
 DataModel.prototype.destroy = function() {
   delete this.type;
   delete this.name;
-}
+};
 DataModel.prototype.setType = function(type) {
   this.type = type;
-}
+};
 
 DataModel.prototype.getType = function(type) {
   return this.type;
-}
+};
 DataModel.prototype.toString = function() {
 
-}
+};
 List.prototype = new DataModel();
 List.prototype.constructor = List;
 
@@ -33,7 +33,7 @@ List.prototype.constructor = List;
  */
 function List() {
   DataModel.apply(this);
-  var array = new Array();
+  var array = [];
   var i;
   for(i = 0; i < arguments.length; i++) {
     array.push(arguments[i]);
@@ -133,7 +133,7 @@ List.fromArray = function(array) { //TODO: clear some of these method declaratio
 
 
     return array;
-  }
+  };
   //
 
 /**
@@ -210,7 +210,7 @@ List.prototype.getImproved = function() { //TODO: still doesn't solve tha case o
     return newList;
   }
   return this;
-}
+};
 
 /**
  * compare elements with another list
@@ -227,7 +227,7 @@ List.prototype.sameElements = function(list) {
   }
 
   return true;
-}
+};
 
 /**
  * return the number of elements of the list
@@ -235,8 +235,8 @@ List.prototype.sameElements = function(list) {
  * tags:
  */
 List.prototype.getLength = function() {
-  return this.length
-}
+  return this.length;
+};
 
 /**
  * return a numberList with lists lengths (in case of a table) or strings lengths (in case of a stringList)
@@ -247,7 +247,7 @@ List.prototype.getLengths = function() {
   //overriden by different extentions of List
 
   return null;
-}
+};
 
 
 
@@ -257,7 +257,7 @@ List.prototype.getTypeOfElements = function() {
     if(typeOf(this[i]) != typeOfElements) return "";
   }
   return typeOfElements;
-}
+};
 
 /**
  * return a stringList with elemnts types
@@ -270,18 +270,18 @@ List.prototype.getTypes = function() {
     types[i] = typeOf(this[i]);
   }
   return types;
-}
+};
 
 
 List.prototype.toString = function() {
   var i;
   var str = "[";
   for(i = 0; i < this.length - 1; i++) {
-    str += this[i] + ", "
+    str += this[i] + ", ";
   }
   str += this[this.length - 1] + "]";
   return str;
-}
+};
 
 /**
  * return a list of names (if any) of elements of the list
@@ -294,7 +294,7 @@ List.prototype.getNames = function() {
     stringList[i] = this[i].name;
   }
   return stringList;
-}
+};
 
 /**
  * reverse the list
@@ -307,7 +307,7 @@ List.prototype.getReversed = function() {
     newList.unshift(this[i]);
   }
   return newList;
-}
+};
 
 /**
  * return a sub-list, params could be: tw numbers, an interval or a NumberList
@@ -357,7 +357,7 @@ List.prototype.getSubList = function() {
   newList.name = this.name;
   if(this.type == 'List' || this.type == 'Table') return newList.getImproved();
   return newList;
-}
+};
 
 /**
  * filters a list by picking elements of certain type
@@ -374,7 +374,7 @@ List.prototype.getSubListByType = function(type) {
   });
   return newList.getImproved();
 
-}
+};
 
 /**
  * returns all elements in indexes
@@ -409,7 +409,7 @@ List.prototype.getSubListByIndexes = function() { //TODO: merge with getSubList
 
   if(this.type == 'List' || this.type == 'Table') return newList.getImproved();
   return newList;
-}
+};
 
 List.prototype.getElementNumberOfOccurrences = function(element) {
   var nOccurrences = 0;
@@ -421,7 +421,7 @@ List.prototype.getElementNumberOfOccurrences = function(element) {
     index = this.indexOf(element, from);
   }
   return nOccurrences;
-}
+};
 
 
 List.prototype.clone = function() { //TODO:check this! fromArray should suffice
@@ -433,7 +433,7 @@ List.prototype.clone = function() { //TODO:check this! fromArray should suffice
   }
   clonedList.name = this.name;
   return clonedList;
-}
+};
 
 /**
  * create a new List without repeating elements
@@ -462,7 +462,7 @@ List.prototype.getWithoutRepetitions = function() {
   }
 
   return newList;
-}
+};
 
 
 
@@ -475,10 +475,10 @@ List.prototype.getWithoutRepetitions = function() {
 List.prototype.countElement = function(element) {
   n = 0;
   this.forEach(function(elementInList) {
-    if(element == elementInList) n++
+    if(element == elementInList) n++;
   });
   return n;
-}
+};
 
 /**
  * returns a numberList of same size as list with number of occurrences for each element
@@ -491,7 +491,7 @@ List.prototype.countOccurrences = function() { //TODO: more efficient
     occurrences[i] = this.indexesOf(this[i]).length;
   }
   return occurrences;
-}
+};
 
 /**
  * returns a table with a list of non repeated elements and a list with the numbers of occurrences for each one
@@ -532,7 +532,7 @@ List.prototype.getElementsRepetitionCount = function(sortListsByOccurrences) {
   }
 
   return table;
-}
+};
 
 List.prototype.allElementsEqual = function() {
   var i;
@@ -545,12 +545,12 @@ List.prototype.allElementsEqual = function() {
   }
 
   return true;
-}
+};
 
 
 List.prototype.getMostRepeatedElement = function() { //TODO: this method should be more efficient
   return ListOperators.countElementsRepetitionOnList(this, true)[0][0];
-}
+};
 
 /**
  * get minimum value
@@ -565,7 +565,7 @@ List.prototype.getMin = function() {
     min = Math.min(min, this[i]);
   }
   return min;
-}
+};
 
 /**
  * get maximum value
@@ -580,7 +580,7 @@ List.prototype.getMax = function() {
     max = Math.max(max, this[i]);
   }
   return max;
-}
+};
 
 List.prototype.add = function(value) {
   if(value.constructor == Number) {
@@ -591,7 +591,7 @@ List.prototype.add = function(value) {
     }
     return array;
   }
-}
+};
 
 /**
  * selects a random element from list
@@ -600,7 +600,7 @@ List.prototype.add = function(value) {
  */
 List.prototype.getRandomElement = function() {
   return this[Math.floor(this.length * Math.random())];
-}
+};
 
 /**
  * creates a list with randomly selected elements
@@ -620,7 +620,7 @@ List.prototype.getRandomElements = function(n, avoidRepetitions) {
     if(!avoidRepetitions || newList.indexOf(element) == -1) newList.push(element);
   }
   return newList;
-}
+};
 
 
 List.prototype.containsElement = function(element) { //TODO: test if this is faster than indexOf
@@ -629,7 +629,7 @@ List.prototype.containsElement = function(element) { //TODO: test if this is fas
     if(this[i] == element) return true;
   }
   return false;
-}
+};
 
 List.prototype.indexOfElement = function(element) { //TODO: test if this is faster than indexOf
   var i;
@@ -637,7 +637,7 @@ List.prototype.indexOfElement = function(element) { //TODO: test if this is fast
     if(this[i] == element) return i;
   }
   return -1;
-}
+};
 
 
 
@@ -654,14 +654,14 @@ List.prototype.getPropertyValues = function(propertyName, valueIfNull) {
   newList.name = propertyName;
   var val;
   for(var i = 0; this[i] != null; i++) {
-    val = this[i][propertyName]
+    val = this[i][propertyName];
     newList[i] = (val == null ? valueIfNull : val);
   }
   return newList.getImproved();
-}
+};
 
 List.prototype.sortIndexed = function() {
-  var index = new Array();
+  var index = [];
   var i;
   for(i = 0; i < this.length; i++) {
     index.push({
@@ -671,17 +671,17 @@ List.prototype.sortIndexed = function() {
   }
   var comparator = function(a, b) {
     var array_a = a.value;
-    var array_b = b.value;;
+    var array_b = b.value;
 
     return array_a < array_b ? -1 : array_a > array_b ? 1 : 0;
-  }
+  };
   index = index.sort(comparator);
   var result = new NumberList();
   for(i = 0; i < index.length; i++) {
     result.push(index[i].index);
   }
   return result;
-}
+};
 
 // List.prototype.sortNumericIndexed=function() {
 // 	var index = new Array();
@@ -725,7 +725,7 @@ List.prototype.sortOnIndexes = function(indexes) {
     if(indexes[i] != -1) result.push(this[indexes[i]]);
   }
   return result;
-}
+};
 
 List.prototype.getSortedByProperty = function(propertyName, ascending) {
   ascending = ascending == null ? true : ascending;
@@ -734,14 +734,14 @@ List.prototype.getSortedByProperty = function(propertyName, ascending) {
   if(ascending) {
     comparator = function(a, b) {
       return a[propertyName] > b[propertyName] ? 1 : -1;
-    }
+    };
   } else {
     comparator = function(a, b) {
       return b[propertyName] > a[propertyName] ? 1 : -1;
-    }
+    };
   }
   return this.clone().sort(comparator);
-}
+};
 
 /**
  * return a sorted version of the list
@@ -757,14 +757,14 @@ List.prototype.getSorted = function(ascending) {
   if(ascending) {
     comparator = function(a, b) {
       return a > b ? 1 : -1;
-    }
+    };
   } else {
     comparator = function(a, b) {
       return a > b ? -1 : 1;
-    }
+    };
   }
   return this.clone().sort(comparator);
-}
+};
 
 /**
  * sort the list by a list
@@ -788,11 +788,11 @@ List.prototype.getSortedByList = function(list, ascending) {
   if(ascending) {
     comparator = function(a, b) {
       return a[1] < b[1] ? -1 : 1;
-    }
+    };
   } else {
     comparator = function(a, b) {
       return a[1] < b[1] ? 1 : -1;
-    }
+    };
   }
 
   pairsArray = pairsArray.sort(comparator);
@@ -805,7 +805,7 @@ List.prototype.getSortedByList = function(list, ascending) {
   }
 
   return newList;
-}
+};
 
 
 /**
@@ -817,10 +817,10 @@ List.prototype.getSortedRandom = function() {
   var newList = this.clone();
   newList.name = this.name;
   newList.sort(function(a, b) {
-    return Math.random() < 0.5 ? 1 : -1
+    return Math.random() < 0.5 ? 1 : -1;
   });
-  return newList
-}
+  return newList;
+};
 
 /**
  * returns a numberList with the indexes (positions) of an element
@@ -836,7 +836,7 @@ List.prototype.indexesOf = function(element) {
     index = this.indexOf(element, index + 1);
   }
   return numberList;
-}
+};
 
 /**
  * return a numberList with indexes (first position) of elements in a list
@@ -850,7 +850,7 @@ List.prototype.indexOfElements = function(elements) {
     numberList[i] = this.indexOf(elements[i]);
   }
   return numberList;
-}
+};
 
 /**
  * returns the first element (or index) of an element in the with a given name
@@ -864,7 +864,7 @@ List.prototype.getFirstElementByName = function(name, returnIndex) {
     if(this[i].name == name) return returnIndex ? i : this[i];
   }
   return returnIndex ? -1 : null;
-}
+};
 
 /**
  * returns the first element from each name ([!] to be tested)
@@ -888,7 +888,7 @@ List.prototype.getElementsByNames = function(names, returnIndex) {
   });
 
   return returnIndex ? list : list.getImproved();
-}
+};
 
 
 /**
@@ -903,14 +903,14 @@ List.prototype.getFirstElementByPropertyValue = function(propertyName, value) {
     if(this[i][propertyName] == value) return this[i];
   }
   return null;
-}
+};
 
 List.prototype.indexOfByPropertyValue = function(propertyName, value) {
   for(var i = 0; this[i] != null; i++) {
     if(this[i][propertyName] == value) return i;
   }
   return -1;
-}
+};
 
 
 
@@ -928,7 +928,7 @@ List.prototype.getFilteredByBooleanList = function(booleanList) {
     if(booleanList[i]) newList.push(this[i]);
   }
   return newList.getImproved();
-}
+};
 
 /**
  * filters a list by its elements, and a type of comparison (equal by default)
@@ -967,7 +967,7 @@ List.prototype.getFilteredByValue = function(value, comparison) {
   }
 
   return newList.getImproved();
-}
+};
 
 /**
  * filters a list by the values of a property on its elements, and a type of comparison (equal by default)
@@ -1007,7 +1007,7 @@ List.prototype.getFilteredByPropertyValue = function(propertyName, propertyValue
   }
 
   return newList.getImproved();
-}
+};
 
 /**
  * conert a list into a NumberList
@@ -1022,7 +1022,7 @@ List.prototype.toNumberList = function() {
     numberList[i] = Number(this[i]);
   }
   return numberList;
-}
+};
 
 /**
  * convert a list into a StringList
@@ -1041,7 +1041,7 @@ List.prototype.toStringList = function() {
     }
   }
   return stringList;
-}
+};
 
 List.prototype.applyFunction = function(func) { //TODO: to be tested!
   var newList = new List();
@@ -1051,7 +1051,7 @@ List.prototype.applyFunction = function(func) { //TODO: to be tested!
     newList[i] = func(this[i]);
   }
   return newList.getImproved();
-}
+};
 
 
 //filtering
@@ -1070,7 +1070,7 @@ List.prototype.getWithoutElementsAtIndexes = function(indexes) { //[!] This DOES
   }
   if(this.type == 'List') return newList.getImproved();
   return newList;
-}
+};
 
 /**
  * removes an element and returns a new list
@@ -1092,7 +1092,7 @@ List.prototype.getWithoutElementAtIndex = function(index) {
   newList.name = this.name;
   if(this.type == 'List') return newList.getImproved();
   return newList;
-}
+};
 
 List.prototype.getWithoutElement = function(element) {
   var index = this.indexOf(element);
@@ -1113,7 +1113,7 @@ List.prototype.getWithoutElement = function(element) {
 
   if(this.type == 'List') return newList.getImproved();
   return newList;
-}
+};
 
 List.prototype.getWithoutElements = function(list) {
   if(this.type == 'List') {
@@ -1129,7 +1129,7 @@ List.prototype.getWithoutElements = function(list) {
   newList.name = this.name;
   if(this.type == 'List') return newList.getImproved();
   return newList;
-}
+};
 
 
 List.prototype.getFilteredByFunction = function(func) {
@@ -1142,7 +1142,7 @@ List.prototype.getFilteredByFunction = function(func) {
   newList.name = this.name;
   if(this.type == 'List') return newList.getImproved();
   return newList;
-}
+};
 
 List.prototype.concat = function() {
   if(arguments[0] == null) return this;
@@ -1165,7 +1165,7 @@ List.prototype.concat = function() {
     }
   }
   return List.fromArray(this._concat.apply(this, arguments)).getImproved();
-}
+};
 
 
 
@@ -1229,7 +1229,7 @@ List.prototype.getReport = function(level) { //TODO:complete
 
 
   return text;
-}
+};
 
 
 ////transformations
@@ -1237,7 +1237,7 @@ List.prototype.getReport = function(level) { //TODO:complete
 List.prototype.pushIfUnique = function(element) {
   if(this.indexOf(element) != -1) return; //TODO: implement equivalence
   this.push(element);
-}
+};
 
 List.prototype.removeElements = function(elements) { //TODO: make it more efficient (avoiding the splice method)
   for(var i = 0; i < this.length; i++) {
@@ -1246,26 +1246,26 @@ List.prototype.removeElements = function(elements) { //TODO: make it more effici
       i--;
     }
   }
-}
+};
 
 List.prototype.removeElement = function(element) {
   var index = this.indexOf(element);
   if(index != -1) this.splice(index, 1);
-}
+};
 
 List.prototype.removeElementAtIndex = function(index) { //deprecated
   this.splice(index, 1);
-}
+};
 
 List.prototype.removeElementsAtIndexes = function(indexes) {
   indexes = indexes.sort(function(a, b) {
-    return a - b
+    return a - b;
   });
 
   for(var i = 0; indexes[i] != null; i++) {
     this.splice(indexes[i] - i, 1);
   }
-}
+};
 
 List.prototype.removeRepetitions = function() {
   for(var i = 0; this[i] != null; i++) {
@@ -1273,14 +1273,14 @@ List.prototype.removeRepetitions = function() {
       this.splice(i, 1);
     }
   }
-}
+};
 
 List.prototype.replace = function(elementToFind, elementToInsert) {
   var l = this.length;
   for(var i = 0; i < l; i++) {
     if(this[i] == elementToFind) this[i] = elementToInsert;
   }
-}
+};
 
 /**
  * assign value to property name on all elements
@@ -1297,31 +1297,31 @@ List.prototype.assignNames = function(names) {
   });
 
   return this;
-}
+};
 
 List.prototype.splice = function() { //TODO: replace
   switch(this.type) {
     case 'NumberList':
-      return NumberList.fromArray(this._splice.apply(this, arguments))
+      return NumberList.fromArray(this._splice.apply(this, arguments));
       break;
     case 'StringList':
-      return StringList.fromArray(this._splice.apply(this, arguments))
+      return StringList.fromArray(this._splice.apply(this, arguments));
       break;
     case 'NodeList':
-      return NodeList.fromArray(this._splice.apply(this, arguments))
+      return NodeList.fromArray(this._splice.apply(this, arguments));
       break;
     case 'DateList':
-      return DateList.fromArray(this._splice.apply(this, arguments))
+      return DateList.fromArray(this._splice.apply(this, arguments));
       break;
   }
   return List.fromArray(this._splice.apply(this, arguments)).getImproved();
-}
+};
 
 List.prototype.destroy = function() {
   for(var i = 0; this[i] != null; i++) {
     delete this[i];
   }
-}
+};
 NumberList.prototype = new List();
 NumberList.prototype.constructor = NumberList;
 /**
@@ -1400,7 +1400,7 @@ NumberList.fromArray = function(array, forceToNumber) {
   result.slice = NumberList.prototype.slice;
 
   return result;
-}
+};
 NumberList.prototype.unit = "";
 NumberList.prototype.tenPower = 0;
 
@@ -1412,7 +1412,7 @@ NumberList.prototype.getMin = function() { //TODO:store result and retrieve whil
     min = Math.min(min, this[i]);
   }
   return min;
-}
+};
 
 NumberList.prototype.getMax = function() { //TODO:store result and retrieve while the NumberList doesn't change;
   if(this.length == 0) return null;
@@ -1422,7 +1422,7 @@ NumberList.prototype.getMax = function() { //TODO:store result and retrieve whil
     max = Math.max(max, this[i]);
   }
   return max;
-}
+};
 
 NumberList.prototype.getAmplitude = function() {
   if(this.length == 0) return 0;
@@ -1433,11 +1433,11 @@ NumberList.prototype.getAmplitude = function() {
     max = Math.max(max, this[i]);
   }
   return max - min;
-}
+};
 
 NumberList.prototype.getMinMaxInterval = function() { //deprecated?
   return new Interval(this.getMin(), this.getMax());
-}
+};
 
 /**
  * returns the sum of values in the numberList
@@ -1452,7 +1452,7 @@ NumberList.prototype.getSum = function() {
     sum += this[i];
   }
   return sum;
-}
+};
 
 /**
  * return the product of values in the numberList
@@ -1467,7 +1467,7 @@ NumberList.prototype.getProduct = function() {
     product *= this[i];
   }
   return product;
-}
+};
 
 /**
  * returns a NumberList normalized to the sum
@@ -1488,7 +1488,7 @@ NumberList.prototype.getNormalizedToSum = function(factor, sum) {
     newNumberList.push(factor * this[i] / sum);
   }
   return newNumberList;
-}
+};
 
 /**
  * returns a numberList normalized to min-max interval
@@ -1510,7 +1510,7 @@ NumberList.prototype.getNormalized = function(factor) {
   }
   newNumberList.name = this.name;
   return newNumberList;
-}
+};
 
 /**
  * returns a numberList normalized to Max
@@ -1534,7 +1534,7 @@ NumberList.prototype.getNormalizedToMax = function(factor) {
   }
   newNumberList.name = this.name;
   return newNumberList;
-}
+};
 
 /**
  * builds an Interval witn min and max value from the numberList
@@ -1551,7 +1551,7 @@ NumberList.prototype.getInterval = function() {
   }
   var interval = new Interval(min, max);
   return interval;
-}
+};
 
 
 NumberList.prototype.toPolygon = function() {
@@ -1561,7 +1561,7 @@ NumberList.prototype.toPolygon = function() {
     polygon.push(new Point(this[i], this[i + 1]));
   }
   return polygon;
-}
+};
 
 
 
@@ -1575,7 +1575,7 @@ NumberList.prototype.toPolygon = function() {
  */
 NumberList.prototype.getAverage = function() {
   return this.getSum() / this.length;
-}
+};
 
 /**
  * calculates geometric mean of numberList
@@ -1588,7 +1588,7 @@ NumberList.prototype.getGeometricMean = function() {
     s += Math.log(val);
   });
   return Math.pow(Math.E, s / this.length);
-}
+};
 
 /**
  * calculates de norm of the numberList (treated as a vector)
@@ -1601,7 +1601,7 @@ NumberList.prototype.getNorm = function() {
     sq += Math.pow(this[i], 2);
   }
   return Math.sqrt(sq);
-}
+};
 
 /**
  * calculates the variance of the numberList
@@ -1615,7 +1615,7 @@ NumberList.prototype.getVariance = function() {
     sd += Math.pow(this[i] - average, 2);
   }
   return sd / this.length;
-}
+};
 
 /**
  * calculates the standard deviation
@@ -1624,7 +1624,7 @@ NumberList.prototype.getVariance = function() {
  */
 NumberList.prototype.getStandardDeviation = function() {
   return Math.sqrt(this.getVariance());
-}
+};
 
 /**
  * calculates the median of the numberList
@@ -1638,7 +1638,7 @@ NumberList.prototype.getMedian = function(nQuantiles) {
   var onIndex = prop == entProp;
   var quantiles = new NumberList();
   return onIndex ? sorted[prop] : (0.5 * sorted[entProp] + 0.5 * sorted[entProp + 1]);
-}
+};
 
 /**
  * builds a partition of n quantiles from the numberList
@@ -1657,7 +1657,7 @@ NumberList.prototype.getQuantiles = function(nQuantiles) {
     quantiles[i] = onIndex ? sorted[(i + 1) * prop] : (0.5 * sorted[(i + 1) * entProp] + 0.5 * sorted[(i + 1) * entProp + 1]);
   }
   return quantiles;
-}
+};
 
 
 
@@ -1668,18 +1668,18 @@ NumberList.prototype.getSorted = function(ascending) {
 
   if(ascending) {
     return NumberList.fromArray(this.slice().sort(function(a, b) {
-      return a - b
+      return a - b;
     }), false);
   }
   return NumberList.fromArray(this.slice().sort(function(a, b) {
-    return b - a
+    return b - a;
   }), false);
-}
+};
 
 NumberList.prototype.getSortIndexes = function(descending) {
   if(descending == null) descending = true;
 
-  var pairs = new Array();
+  var pairs = [];
   var newList = new NumberList();
 
   if(this.length == 0) return newList;
@@ -1705,7 +1705,7 @@ NumberList.prototype.getSortIndexes = function(descending) {
   }
   newList.name = this.name;
   return newList;
-}
+};
 
 NumberList.prototype.factor = function(value) {
   var i;
@@ -1715,7 +1715,7 @@ NumberList.prototype.factor = function(value) {
   }
   newNumberList.name = this.name;
   return newNumberList;
-}
+};
 
 NumberList.prototype.add = function(object) {
   var i;
@@ -1737,7 +1737,7 @@ NumberList.prototype.add = function(object) {
 
   newNumberList.name = this.name;
   return newNumberList;
-}
+};
 
 NumberList.prototype.subtract = function(object) {
   var i;
@@ -1759,7 +1759,7 @@ NumberList.prototype.subtract = function(object) {
 
   newNumberList.name = this.name;
   return newNumberList;
-}
+};
 
 NumberList.prototype.divide = function(object) {
   var i;
@@ -1781,7 +1781,7 @@ NumberList.prototype.divide = function(object) {
 
   newNumberList.name = this.name;
   return newNumberList;
-}
+};
 
 NumberList.prototype.sqrt = function() {
   var i;
@@ -1791,7 +1791,7 @@ NumberList.prototype.sqrt = function() {
   }
   newNumberList.name = this.name;
   return newNumberList;
-}
+};
 
 NumberList.prototype.pow = function(power) {
   var i;
@@ -1801,7 +1801,7 @@ NumberList.prototype.pow = function(power) {
   }
   newNumberList.name = this.name;
   return newNumberList;
-}
+};
 
 NumberList.prototype.log = function(add) {
   add = add || 0;
@@ -1814,7 +1814,7 @@ NumberList.prototype.log = function(add) {
   newNumberList.name = this.name;
 
   return newNumberList;
-}
+};
 
 NumberList.prototype.dotProduct = function(numberList) {
   var sum = 0;
@@ -1824,7 +1824,7 @@ NumberList.prototype.dotProduct = function(numberList) {
     sum += this[i] * numberList[i];
   }
   return sum;
-}
+};
 
 /**
  * calculates Euclidean distance between two numberLists
@@ -1840,14 +1840,14 @@ NumberList.prototype.distance = function(numberList) {
     sum += Math.pow(this[i] - numberList[i], 2);
   }
   return Math.sqrt(sum);
-}
+};
 
 NumberList.prototype.isEquivalent = function(numberList) {
   for(i = 0; this[i] != null; i++) {
     if(this[i] != numberList[i]) return false;
   }
   return true;
-}
+};
 
 NumberList.prototype.toStringList = function() {
   var i;
@@ -1857,7 +1857,7 @@ NumberList.prototype.toStringList = function() {
   }
   stringList.name = this.name;
   return stringList;
-}
+};
 
 
 //transform
@@ -1870,8 +1870,8 @@ NumberList.prototype.approach = function(destinty, speed) {
 
   for(i = 0; this[i] != null; i++) {
     this[i] = antispeed * this[i] + speed * destinty[i];
-  };
-}
+  }
+};
 
 
 ///////overriding
@@ -1880,11 +1880,11 @@ NumberList.prototype.clone = function() {
   var newList = NumberList.fromArray(this._slice(), false);
   newList.name = this.name;
   return newList;
-}
+};
 
 NumberList.prototype.slice = function() {
   return NumberList.fromArray(this._slice.apply(this, arguments), false);
-}
+};
 Node.prototype = new DataModel();
 Node.prototype.constructor = Node;
 
@@ -1939,7 +1939,7 @@ Node.prototype.cleanRelations = function() {
 
   this.fromNodeList = new NodeList();
   this.fromRelationList = new RelationList();
-}
+};
 
 //TODO: complete with all properties
 Node.prototype.destroy = function() {
@@ -1966,16 +1966,16 @@ Node.prototype.destroy = function() {
   delete this.ax;
   delete this.ay;
   delete this.az;
-}
+};
 
 Node.prototype.getDegree = function() {
   return this.relationList.length;
-}
+};
 
 //treeProperties:
 Node.prototype.getParent = function() {
   return this.parent;
-}
+};
 
 /**
  * return the leaves under a node in a Tree, [!] if the network is not a tree this method could run infinite loops
@@ -1990,10 +1990,10 @@ Node.prototype.getLeaves = function() {
         return;
       }
       node.toNodeList.forEach(addLeaves);
-    }
+    };
     addLeaves(this);
     return leaves;
-  }
+  };
   //
 
 
@@ -2001,7 +2001,7 @@ Node.prototype.loadImage = function(urlImage) {
   Loader.loadImage(urlImage, function(e) {
     this.image = e.result;
   }, this);
-}
+};
 
 // Node.prototype.toString=function(){
 // 	return this.name+", "+this.id;
@@ -2020,7 +2020,7 @@ Node.prototype.clone = function() {
   newNode.descentWeight = this.descentWeight;
 
   return newNode;
-}
+};
 NodeList.prototype = new List();
 NodeList.prototype.constructor = NodeList;
 /**
@@ -2058,7 +2058,7 @@ NodeList.fromArray = function(array, forceToNode) {
 
   var result = List.fromArray(array);
   result.type = "NodeList";
-  result.ids = new Object();
+  result.ids = {};
   Array(); //????
 
   //assign methods to array:
@@ -2081,7 +2081,7 @@ NodeList.fromArray = function(array, forceToNode) {
   result.push = function(a) {
     c.l('with nodeList, use addNode instead of push');
     var k;
-    k.push(a)
+    k.push(a);
   };
 
   //overriden
@@ -2089,36 +2089,36 @@ NodeList.fromArray = function(array, forceToNode) {
   result.clone = NodeList.prototype.clone;
 
   return result;
-}
+};
 
 NodeList.prototype.removeNodes = function() {
   for(var i = 0; i < this.length; i++) {
     this.ids[this[i].id] = null;
     this.removeElement(this[i]);
   }
-}
+};
 
 NodeList.prototype.addNode = function(node) {
   this.ids[node.id] = node;
   this._push(node);
-}
+};
 
 NodeList.prototype.addNodes = function(nodes) {
   var i;
   for(i = 0; nodes[i] != null; i++) {
     this.addNode(nodes[i]);
   }
-}
+};
 
 NodeList.prototype.removeNode = function(node) {
   this.ids[node.id] = null;
   this.removeElement(node);
-}
+};
 
 NodeList.prototype.removeNodeAtIndex = function(index) {
   this.ids[this[index].id] = null;
   this.splice(index, 1);
-}
+};
 
 /**
  * works under the assumption that weights are >=0
@@ -2132,7 +2132,7 @@ NodeList.prototype.normalizeWeights = function() {
   for(i = 0; this[i] != null; i++) {
     this[i].weight /= max;
   }
-}
+};
 
 
 /**
@@ -2146,7 +2146,7 @@ NodeList.prototype.getNodeByName = function(name) {
     }
   }
   return null;
-}
+};
 
 /**
  * return a node from its id
@@ -2156,7 +2156,7 @@ NodeList.prototype.getNodeByName = function(name) {
  */
 NodeList.prototype.getNodeById = function(id) {
   return this.ids[id];
-}
+};
 
 NodeList.prototype.getNodesByIds = function(ids) {
   newNodelist = new NodeList();
@@ -2166,7 +2166,7 @@ NodeList.prototype.getNodesByIds = function(ids) {
     if(node != null) newNodelist[i] = node;
   }
   return newNodelist;
-}
+};
 
 /**
  * return a list of weights
@@ -2179,7 +2179,7 @@ NodeList.prototype.getWeights = function() {
     numberList[i] = this[i].weight;
   }
   return numberList;
-}
+};
 
 /**
  * get ids from nodes
@@ -2192,7 +2192,7 @@ NodeList.prototype.getIds = function() {
     list[i] = this[i].id;
   }
   return list;
-}
+};
 
 NodeList.prototype.getDegrees = function() {
   var numberList = new NumberList();
@@ -2200,7 +2200,7 @@ NodeList.prototype.getDegrees = function() {
     numberList[i] = this[i].nodeList.length;
   }
   return numberList;
-}
+};
 
 
 NodeList.prototype.getPolygon = function() {
@@ -2209,14 +2209,14 @@ NodeList.prototype.getPolygon = function() {
     polygon[i] = new Point(this[i].x + cX, this[i].y + cY);
   }
   return polygon;
-}
+};
 
 NodeList.prototype.getNewId = function() {
   var n = this.length + 1;
   for(var i = 0; i < n; i++) {
     if(this.getNodeById(String(i)) == null) return String(i);
   }
-}
+};
 
 NodeList.prototype.clone = function() {
   var newNodeList = new NodeList();
@@ -2225,7 +2225,7 @@ NodeList.prototype.clone = function() {
   });
   newNodeList.name = this.name;
   return newNodeList;
-}
+};
 
 
 //methods overriden
@@ -2236,7 +2236,7 @@ NodeList.prototype.getWithoutRepetitions = function() {
     if(newList.getNodeById(this[i].id) == null) newList.addNode(this[i]);
   }
   return newList;
-}
+};
 RelationList.prototype = new NodeList();
 RelationList.prototype.constructor = RelationList;
 /**
@@ -2269,16 +2269,16 @@ RelationList.fromArray = function(array) {
   result.nodesAreConnected = RelationList.prototype.nodesAreConnected;
 
   return result;
-}
+};
 
 //TODO:remove?
 RelationList.prototype.addRelation = function(relation) {
   this.addNode(relation);
-}
+};
 
 RelationList.prototype.removeRelation = function(relation) {
     this.removeNode(relation);
-  }
+  };
   /**
    * get all relations that contain a given node
    * @param {Node} node 
@@ -2286,7 +2286,7 @@ RelationList.prototype.removeRelation = function(relation) {
    */
 RelationList.prototype.getRelationsWithNode = function(node) {
   var i;
-  var filteredRelations = new Array();
+  var filteredRelations = [];
   for(i = 0; this[i] != null; i++) {
     var relation = this[i];
     if(relation.node0 == node || relation.node1 == node) {
@@ -2294,7 +2294,7 @@ RelationList.prototype.getRelationsWithNode = function(node) {
     }
   }
   return filteredRelations;
-}
+};
 
 /**
  * get all Nodes related to a given Node
@@ -2314,7 +2314,7 @@ RelationList.prototype.getRelatedNodesToNode = function(node) {
     }
   }
   return relatedNodes;
-}
+};
 
 
 
@@ -2329,7 +2329,7 @@ RelationList.prototype.getRelatedNodesToNode = function(node) {
 RelationList.prototype.getAllRelationsBetweenNodes = function(node0, node1, directed) { //TODO: to be improved (check node1 on node0.relationList) (see: nodesAreConnected)
   var i;
   directed = directed == null ? false : directed;
-  var filteredRelations = new Array();
+  var filteredRelations = [];
   for(i = 0; this[i] != null; i++) {
     var relation = this[i];
     if((relation.node0 == node0 && relation.node1 == node1) || (!directed && relation.node0 == node1 && relation.node1 == node0)) {
@@ -2337,7 +2337,7 @@ RelationList.prototype.getAllRelationsBetweenNodes = function(node0, node1, dire
     }
   }
   return filteredRelations;
-}
+};
 
 
 /**
@@ -2351,7 +2351,7 @@ RelationList.prototype.getAllRelationsBetweenNodes = function(node0, node1, dire
 RelationList.prototype.nodesAreConnected = function(node0, node1, directed) {
   if(node0.toNodeList.getNodeById(node1.id) != null) return true;
   return !directed && node1.toNodeList.getNodeById(node0.id) != null;
-}
+};
 
 
 /**
@@ -2369,7 +2369,7 @@ RelationList.prototype.getFirstRelationBetweenNodes = function(node0, node1, dir
     if((this[i].node0.id == node0.id && this[i].node1.id == node1.id) || (!directed && this[i].node1.id == node0.id && this[i].node0.id == node1.id)) return this[i];
   }
   return null;
-}
+};
 
 
 /**
@@ -2399,7 +2399,7 @@ RelationList.prototype.getFirstRelationByIds = function(id0, id1, directed) { //
     }
   }
   return null;
-}
+};
 
 
 // RelationList.prototype.nodesAreConnected=function(node0, node1, directed){//
@@ -2455,7 +2455,7 @@ Table.fromArray = function(array) {
   result.isTable = true;
 
   return result;
-}
+};
 
 Table.prototype.applyFunction = function(func) { //TODO: to be tested!
   var i;
@@ -2467,7 +2467,7 @@ Table.prototype.applyFunction = function(func) { //TODO: to be tested!
     newTable[i] = this[i].applyFunction(func);
   }
   return newTable.getImproved();
-}
+};
 
 /**
  * returns a lis with all the alements of a row
@@ -2482,7 +2482,7 @@ Table.prototype.getRow = function(index) {
     list[i] = this[i][index];
   }
   return list.getImproved();
-}
+};
 
 /**
  * returns the length of the list at given index (default 0)
@@ -2493,7 +2493,7 @@ Table.prototype.getRow = function(index) {
  */
 Table.prototype.getListLength = function(index) {
   return this[index || 0].length;
-}
+};
 
 
 
@@ -2506,7 +2506,7 @@ Table.prototype.getLengths = function() {
     lengths[i] = this[i].length;
   }
   return lengths;
-}
+};
 
 /**
  * filter a table by selecting a section of rows, elements with last index included
@@ -2530,7 +2530,7 @@ Table.prototype.sliceRows = function(startIndex, endIndex) {
     newTable.push(newList);
   }
   return newTable.getImproved();
-}
+};
 
 /**
  * filters the lists of the table by indexes
@@ -2544,12 +2544,12 @@ Table.prototype.getSubListsByIndexes = function(indexes) {
     newTable.push(list.getSubListByIndexes(indexes));
   });
   return newTable.getImproved();
-}
+};
 
 //deprecated
 Table.prototype.getRows = function(rowsIndexes) {
   return Table.prototype.getSubListsByIndexes(indexes);
-}
+};
 
 Table.prototype.getWithoutRow = function(rowIndex) {
   var newTable = new Table();
@@ -2559,7 +2559,7 @@ Table.prototype.getWithoutRow = function(rowIndex) {
     newTable[i].name = this[i].name;
   }
   return newTable.getImproved();
-}
+};
 
 Table.prototype.getWithoutRows = function(rowsIndexes) {
   var newTable = new Table();
@@ -2572,7 +2572,7 @@ Table.prototype.getWithoutRows = function(rowsIndexes) {
     newTable[i].name = this[i].name;
   }
   return newTable.getImproved();
-}
+};
 
 
 /**
@@ -2586,14 +2586,14 @@ Table.prototype.getWithoutRows = function(rowsIndexes) {
 Table.prototype.getListsSortedByList = function(listOrIndex, ascending) { //depracated: use sortListsByList
   if(listOrIndex == null) return;
   var newTable = instantiateWithSameType(this);
-  var sortinglist = listOrIndex["isList"] ? listOrIndex.clone() : this[listOrIndex];
+  var sortinglist = listOrIndex.isList ? listOrIndex.clone() : this[listOrIndex];
 
   this.forEach(function(list) {
     newTable.push(list.getSortedByList(sortinglist, ascending));
   });
 
   return newTable;
-}
+};
 
 
 Table.prototype.getTransposed = function(firstListAsHeaders) {
@@ -2624,7 +2624,7 @@ Table.prototype.getTransposed = function(firstListAsHeaders) {
   }
 
   return table;
-}
+};
 
 
 Table.prototype.getReport = function(level) {
@@ -2681,7 +2681,7 @@ Table.prototype.getReport = function(level) {
 
   return text;
 
-}
+};
 
 Table.prototype.getReportObject = function() {}; //TODO
 Table.prototype.getReportHtml = function() {}; //TODO
@@ -2693,7 +2693,7 @@ Table.prototype.removeRow = function(index) {
   for(var i = 0; this[i] != null; i++) {
     this[i].splice(index, 1);
   }
-}
+};
 
 
 ////
@@ -2705,20 +2705,20 @@ Table.prototype.clone = function() {
     clonedTable.push(this[i].clone());
   }
   return clonedTable;
-}
+};
 
 Table.prototype.destroy = function() {
   for(var i = 0; this[i] != null; i++) {
     this[i].destroy();
     delete this[i];
   }
-}
+};
 
 Table.prototype.print = function() {
   c.log("///////////// <" + this.name + "////////////////////////////////////////////////////");
   c.log(TableEncodings.TableToCSV(this, null, true));
   c.log("/////////////" + this.name + "> ////////////////////////////////////////////////////");
-}
+};
 DateAxis.prototype = new DataModel();
 DateAxis.prototype.constructor = DateAxis;
 
@@ -2751,15 +2751,15 @@ DateAxis.prototype.setDepartureDateInterval = function(departureDateInterval) {
   this.time1 = this.departureDateInterval.date1.getTime();
   this.dTime = this.time1 - this.time0;
 
-}
+};
 DateAxis.prototype.setArrivalInterval = function(arrivalInterval) {
   this.arrivalInterval = arrivalInterval;
   this.arrivalAmplitude = arrivalInterval.getAmplitude();
-}
+};
 
 DateAxis.prototype.project = function(date) {
   return this.arrivalInterval.x + this.arrivalAmplitude * (date.getTime() - this.time0) / this.dTime;
-}
+};
 
 
 /**
@@ -2770,12 +2770,12 @@ DateAxis.prototype.update = function() {
   this.time1 = this.departureDateInterval.date1.getTime();
   this.dTime = this.time1 - this.time0;
   this.arrivalAmplitude = this.arrivalInterval.getAmplitude();
-}
+};
 
 
 DateAxis.prototype.toString = function() {
   return "DateAxis[" + this.departureDateInterval.toString() + ", " + this.arrivalInterval.toString() + "]";
-}
+};
 DateInterval.prototype = new DataModel();
 DateInterval.prototype.constructor = DateInterval;
 
@@ -2793,17 +2793,17 @@ function DateInterval(date0, date1) {
 }
 DateInterval.prototype.toString = function() {
   return "DateInterval[" + this.date0 + ", " + this.date1 + "]";
-}
+};
 
 DateInterval.prototype.getMax = function() {
   if(this.date1 > this.date0) return this.date1;
   return this.date0;
-}
+};
 
 DateInterval.prototype.getMin = function() {
   if(this.date0 < this.date1) return this.date0;
   return this.date1;
-}
+};
 
 /**
  * converts the dateInterval into an Interval (getting milliseconds time from each date)
@@ -2812,7 +2812,7 @@ DateInterval.prototype.getMin = function() {
  */
 DateInterval.prototype.getTimesInterval = function() {
   return new Interval(this.date0.getTime(), this.date1.getTime());
-}
+};
 
 /**
  * factors the dateInterval (specially useful: factor by an interval, in which case a sub-dateInterval is selected)
@@ -2832,7 +2832,7 @@ DateInterval.prototype.getProduct = function(object) { //TODO: complete with mor
   }
 
   return null;
-}
+};
 DateList.prototype = new List();
 DateList.prototype.constructor = DateList;
 /**
@@ -2868,7 +2868,7 @@ DateList.fromArray = function(array, forceToDate) {
   result.getMin = DateList.prototype.getMin;
   result.getMax = DateList.prototype.getMax;
   return result;
-}
+};
 
 /**
  * get a numberList of time (milliseconds) values
@@ -2882,7 +2882,7 @@ DateList.prototype.getTimes = function() {
     numberList.push(this[i].getTime());
   }
   return numberList;
-}
+};
 
 
 DateList.prototype.toStringList = function() {
@@ -2891,7 +2891,7 @@ DateList.prototype.toStringList = function() {
     stringList[i] = DateOperators.dateToString(this[i]);
   }
   return stringList;
-}
+};
 
 DateList.prototype.getMin = function() {
   if(this.length == 0) return null;
@@ -2901,7 +2901,7 @@ DateList.prototype.getMin = function() {
     min = min < this[i] ? min : this[i];
   }
   return min;
-}
+};
 
 DateList.prototype.getMax = function() {
   if(this.length == 0) return null;
@@ -2911,7 +2911,7 @@ DateList.prototype.getMax = function() {
     max = max > this[i] ? max : this[i];
   }
   return max;
-}
+};
 Country.prototype = new Node();
 Country.prototype.constructor = Country;
 
@@ -2960,21 +2960,21 @@ Country.prototype.generatesSimplifiedNames = function() {
     .replace('Democratic Republic', 'D.R.')
     .replace('United States', 'U.S.A')
     .replace('United Arab', 'U.A.');
-}
+};
 
 Country.prototype.nameMatches = function(name) {
   if(this._simplifiedId == null) this.generatesSimplifiedNames();
   name = CountryOperators.getSimplifiedName(name);
   if(name == this._simplifiedId || name == this._simplifiedName) return true;
   return this._simplifiedNames.indexOf(name) != -1;
-}
+};
 
 Country.prototype.getFrame = function() {
   if(this._frame == null) {
     this._frame = this.simplePolygonList == null ? this.polygonList.getFrame() : this.simplePolygonList.getFrame();
   }
   return this._frame;
-}
+};
 CountryList.prototype = new NodeList();
 CountryList.prototype.constructor = CountryList;
 
@@ -3005,7 +3005,7 @@ CountryList.fromArray = function(array) {
   result.assignValuesToCountriesFromTable = CountryList.prototype.assignValuesToCountriesFromTable;
   result.simplifyPolygons = CountryList.prototype.simplifyPolygons;
   return result;
-}
+};
 
 /**
  * each country has several names to try a match
@@ -3016,14 +3016,14 @@ CountryList.prototype.getCountryFromName = function(countryName) {
     if(this[i].nameMatches(countryName)) return this[i];
   }
   return null;
-}
+};
 
 
 //transformative
 
 CountryList.prototype.removeAntarctica = function() {
   this.removeNode(this.getNodeById('AQ'));
-}
+};
 
 CountryList.prototype.removeTinyPolygonsFromCountries = function(minArea) {
   minArea = 0.2 || minArea;
@@ -3040,7 +3040,7 @@ CountryList.prototype.removeTinyPolygonsFromCountries = function(minArea) {
     }
 
   }
-}
+};
 
 CountryList.prototype.removeTinyCountries = function(minArea) {
   minArea = 0.5 || minArea;
@@ -3063,7 +3063,7 @@ CountryList.prototype.removeTinyCountries = function(minArea) {
       i--;
     }
   }
-}
+};
 
 CountryList.prototype.simplifyPolygons = function(margin) {
   var country;
@@ -3088,7 +3088,7 @@ CountryList.prototype.simplifyPolygons = function(margin) {
     country.longestPolygon.destroy();
     country.longestPolygon = country.polygonList[jMax];
   }
-}
+};
 
 /**
  * in 2D representations Antarctiva requires 2 extra points, placed on global geo grame corners
@@ -3104,7 +3104,7 @@ CountryList.prototype.simplifyAntarctica = function() {
   if(polygonList != null) {
     //TODO: remove last two points
   }
-}
+};
 
 CountryList.prototype.assignValuesToCountriesFromTable = function(table, valueToNull) {
   var j;
@@ -3117,7 +3117,7 @@ CountryList.prototype.assignValuesToCountriesFromTable = function(table, valueTo
       }
     }
   }
-}
+};
 Point.prototype = new DataModel();
 Point.prototype.constructor = Point;
 
@@ -3135,82 +3135,82 @@ function Point(x, y) {
 
 Point.prototype.getNorm = function() {
   return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
-}
+};
 
 Point.prototype.getAngle = function() {
   return Math.atan2(this.y, this.x);
-}
+};
 
 
 
 Point.prototype.factor = function(k) {
   if(k >= 0 || k < 0) return new Point(this.x * k, this.y * k);
   if(k.type != null && k.type == 'Point') return new Point(this.x * k.x, this.y * k.y);
-}
+};
 
 Point.prototype.normalize = function() {
   var norm = Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
   return new Point(this.x / norm, this.y / norm);
-}
+};
 Point.prototype.normalizeToValue = function(k) {
   var factor = k / Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
   return new Point(this.x * factor, this.y * factor);
-}
+};
 
 
 
 Point.prototype.subtract = function(point) {
   return new Point(this.x - point.x, this.y - point.y);
-}
+};
 
 Point.prototype.add = function(point) {
   return new Point(point.x + this.x, point.y + this.y);
-}
+};
 
 Point.prototype.addCoordinates = function(x, y) {
   return new Point(x + this.x, y + this.y);
-}
+};
 
 Point.prototype.distanceToPoint = function(point) {
   return Math.sqrt(Math.pow(this.x - point.x, 2) + Math.pow(this.y - point.y, 2));
-}
+};
 Point.prototype.distanceToPointSquared = function(point) {
   return Math.pow(this.x - point.x, 2) + Math.pow(this.y - point.y, 2);
-}
+};
 Point.prototype.angleToPoint = function(point) {
   return Math.atan2(point.y - this.y, point.x - this.x);
-}
+};
 Point.prototype.expandFromPoint = function(point, factor) {
   return new Point(point.x + factor * (this.x - point.x), point.y + factor * (this.y - point.y));
-}
+};
 
 
 Point.prototype.interpolate = function(point, t) {
   return new Point((1 - t) * this.x + t * point.x, (1 - t) * this.y + t * point.y);
-}
+};
 
 Point.prototype.cross = function(point) {
   return this.x * point.y - this.y * point.x;
-}
+};
 
 Point.prototype.dot = function(point) {
   return this.x * point.x + this.y * point.y;
-}
+};
 
 Point.prototype.getRotated = function(angle, center) {
   center = center == null ? new Point() : center;
 
   return new Point(Math.cos(angle) * (this.x - center.x) - Math.sin(angle) * (this.y - center.y) + center.x, Math.sin(angle) * (this.x - center.x) + Math.cos(angle) * (this.y - center.y) + center.y);
-}
+};
 
 
 
 Point.prototype.clone = function() {
   return new Point(this.x, this.y);
-}
+};
 Point.prototype.toString = function() {
   return "(x=" + this.x + ", y=" + this.y + ")";
-}
+};
 
 
 Point.prototype.destroy = function() {
@@ -3218,7 +3218,7 @@ Point.prototype.destroy = function() {
   delete this.name;
   delete this.x;
   delete this.y;
-}
+};
 Point3D.prototype = new Point();
 Point3D.prototype.constructor = Point3D;
 /**
@@ -3234,41 +3234,41 @@ function Point3D(x, y, z) {
 
 Point3D.prototype.distanceToPoint3D = function(point3D) {
   return Math.sqrt(Math.pow(Math.abs(this.x - point3D.x), 2) + Math.pow(Math.abs(this.y - point3D.y), 2) + Math.pow(Math.abs(this.z - point3D.z), 2));
-}
+};
 
 Point3D.prototype.distanceToPointSquared = function(point3D) {
   return Math.pow(Math.abs(this.x - point3D.x), 2) + Math.pow(Math.abs(this.y - point3D.y), 2) + Math.pow(Math.abs(this.z - point3D.z), 2);
-}
+};
 Point3D.prototype.getNorm = function() {
   return Math.sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z));
-}
+};
 
 Point3D.prototype.normalizeToValue = function(k) {
   var factor = k / Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2) + Math.pow(this.z, 2));
   return new Point3D(this.x * factor, this.y * factor, this.z * factor);
-}
+};
 
 Point3D.prototype.cross = function(point3D) {
   var _x = this.y * point3D.z - this.z * point3D.y;
   var _y = this.z * point3D.x - this.x * point3D.z;
   var _z = this.x * point3D.y - this.y * point3D.x;
   return new Point3D(_x, _y, _z);
-}
+};
 Point3D.prototype.dot = function(point3D) {
   return this.x * point3D.x + this.y * point3D.y + this.z * point3D.z;
-}
+};
 Point3D.prototype.add = function(point) {
   return new Point3D(point.x + this.x, point.y + this.y, point.z + this.z);
-}
+};
 Point3D.prototype.subtract = function(point) {
   return new Point3D(this.x - point.x, this.y - point.y, this.z - point.z);
-}
+};
 Point3D.prototype.factor = function(k) {
   return new Point3D(this.x * k, this.y * k, this.z * k);
-}
+};
 Point3D.prototype.interpolate = function(point3D, t) {
   return new Point3D((1 - t) * this.x + t * point3D.x, (1 - t) * this.y + t * point3D.y, (1 - t) * this.z + t * point3D.z);
-}
+};
 Point3D.prototype.getAngles = function() {
   var radius = Math.sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z));
   var alfa = 0.5 * Math.PI - Math.atan2(this.z / radius, this.y / radius);
@@ -3278,7 +3278,7 @@ Point3D.prototype.getAngles = function() {
   if(beta < -Math.PI) beta += 2 * Math.PI;
   if(beta > Math.PI) beta -= 2 * Math.PI;
   return new Point3D(alfa, beta, 0);
-}
+};
 Point3D.prototype.getInverseAngles = function() {
   var radius = Math.sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z));
   var alfa = -0.5 * Math.PI + Math.atan2(-this.z / radius, -this.y / radius);
@@ -3288,15 +3288,15 @@ Point3D.prototype.getInverseAngles = function() {
   if(beta < -Math.PI) beta += 2 * Math.PI;
   if(beta > Math.PI) beta -= 2 * Math.PI;
   return new Point3D(alfa, beta, 0);
-}
+};
 
 
 Point3D.prototype.clone = function() {
   return new Point3D(this.x, this.y, this.z);
-}
+};
 Point3D.prototype.toString = function() {
   return "(x=" + this.x + ", y=" + this.y + ", z=" + this.z + ")";
-}
+};
 
 Point3D.prototype.destroy = function() {
   delete this.type;
@@ -3304,7 +3304,7 @@ Point3D.prototype.destroy = function() {
   delete this.x;
   delete this.y;
   delete this.z;
-}
+};
 Polygon.prototype = new List();
 Polygon.prototype.constructor = Polygon;
 /**
@@ -3315,7 +3315,7 @@ function Polygon() {
   var array = List.apply(this, arguments);
   array = Polygon.fromArray(array);
   return array;
-};
+}
 Polygon.fromArray = function(array) {
   var result = List.fromArray(array);
   result.type = "Polygon";
@@ -3334,7 +3334,7 @@ Polygon.fromArray = function(array) {
   result.clone = Polygon.prototype.clone;
 
   return result;
-}
+};
 
 
 Polygon.prototype.getFrame = function() {
@@ -3383,7 +3383,7 @@ Polygon.prototype.add = function(object) {
       return newPolygon;
       break;
   }
-}
+};
 
 /**
  * scales the polygon by a number or a Point
@@ -3411,7 +3411,7 @@ Polygon.prototype.factor = function(value) {
   }
 
   return null;
-}
+};
 
 
 Polygon.prototype.getRotated = function(angle, center) {
@@ -3423,7 +3423,7 @@ Polygon.prototype.getRotated = function(angle, center) {
   }
   newPolygon.name = this.name;
   return newPolygon;
-}
+};
 
 Polygon.prototype.getClosestPoint = function(point) {
   var closest = this[0];
@@ -3438,7 +3438,7 @@ Polygon.prototype.getClosestPoint = function(point) {
     }
   }
   return closest;
-}
+};
 
 Polygon.prototype.toNumberList = function() {
   var numberList = new NumberList();
@@ -3448,7 +3448,7 @@ Polygon.prototype.toNumberList = function() {
     numberList[i * 2 + 1] = this[i].y;
   }
   return numberList;
-}
+};
 
 /**
  * Thanks http://jsfromhell.com/math/is-point-in-poly AND http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
@@ -3462,7 +3462,7 @@ Polygon.prototype.containsPoint = function(point) {
         && (point.x < (this[j].x - this[i].x) * (point.y - this[i].y) / (this[j].y - this[i].y) + this[i].x)
         && (c = !c);
   return c;
-}
+};
 
 //transform
 
@@ -3474,7 +3474,7 @@ Polygon.prototype.approach = function(destiny, speed) {
     point.x = antispeed * point.x + speed * destiny[i].x;
     point.y = antispeed * point.y + speed * destiny[i].y;
   });
-}
+};
 
 
 Polygon.prototype.clone = function() {
@@ -3484,7 +3484,7 @@ Polygon.prototype.clone = function() {
   }
   newPolygon.name = this.name;
   return newPolygon;
-}
+};
 Polygon3D.prototype = new List();
 Polygon3D.prototype.constructor = Polygon3D;
 /**
@@ -3495,13 +3495,13 @@ function Polygon3D() {
   var array = List.apply(this, arguments);
   array = Polygon3D.fromArray(array);
   return array;
-};
+}
 Polygon3D.fromArray = function(array) {
   var result = List.fromArray(array);
   result.type = "Polygon3D";
   //assign methods to array:
   return result;
-}
+};
 Polygon3DList.prototype = new List();
 Polygon3DList.prototype.constructor = Polygon3DList;
 /**
@@ -3512,12 +3512,12 @@ function Polygon3DList() {
   var array = List.apply(this, arguments);
   array = Polygon3DList.fromArray(array);
   return array;
-};
+}
 Polygon3DList.fromArray = function(array) {
   var result = List.fromArray(array);
   result.type = "Polygon3DList";
   return result;
-}
+};
 PolygonList.prototype = new Table();
 PolygonList.prototype.constructor = PolygonList;
 /**
@@ -3528,7 +3528,7 @@ function PolygonList() {
   var array = Table.apply(this, arguments);
   array = PolygonList.fromArray(array);
   return array;
-};
+}
 PolygonList.fromArray = function(array) {
   var result = Table.fromArray(array);
   result.type = "PolygonList";
@@ -3538,7 +3538,7 @@ PolygonList.fromArray = function(array) {
   result.clone = PolygonList.prototype.clone;
   result.getString = PolygonList.prototype.getString;
   return result;
-}
+};
 PolygonList.prototype.getFrame = function() {
   if(this.length == 0) return null;
   var frameP = this[0].getFrame();
@@ -3554,7 +3554,7 @@ PolygonList.prototype.getFrame = function() {
   rectangle.height -= rectangle.y;
 
   return rectangle;
-}
+};
 PolygonList.prototype.add = function(object) {
   var type = typeOf(object);
   var i;
@@ -3568,7 +3568,7 @@ PolygonList.prototype.add = function(object) {
       return newPolygonList;
       break;
   }
-}
+};
 PolygonList.prototype.factor = function(value) {
   var newPolygonList = new PolygonList();
   for(var i = 0; this[i] != null; i++) {
@@ -3576,7 +3576,7 @@ PolygonList.prototype.factor = function(value) {
   }
   newPolygonList.name = this.name;
   return newPolygonList;
-}
+};
 
 PolygonList.prototype.clone = function() {
   var newPolygonList = new PolygonList();
@@ -3585,7 +3585,7 @@ PolygonList.prototype.clone = function() {
   }
   newPolygonList.name = this.name;
   return newPolygonList;
-}
+};
 
 // PolygonList.prototype.getString=function(pointSeparator,polygonSeparator){
 // pointSeparator = pointSeparator==null?',':pointSeparator;
@@ -3618,61 +3618,61 @@ function Rectangle(x, y, width, height) {
 
 Rectangle.prototype.getRight = function() {
   return this.x + this.width;
-}
+};
 
 Rectangle.prototype.getBottom = function() {
   return this.y + this.height;
-}
+};
 
 Rectangle.prototype.setRight = function(value) {
   this.width = value - this.x;
-}
+};
 
 Rectangle.prototype.setBottom = function(value) {
   this.height = value - this.y;
-}
+};
 
 
 
 Rectangle.prototype.getTopLeft = function() {
   return new Point(this.x, this.y);
-}
+};
 Rectangle.prototype.getTopRight = function() {
   return new Point(this.x + this.width, this.y);
-}
+};
 
 Rectangle.prototype.getBottomRight = function() {
   return new Point(this.x + this.width, this.y + this.height);
-}
+};
 Rectangle.prototype.getBottomLeft = function() {
   return new Point(this.x, this.y + this.height);
-}
+};
 Rectangle.prototype.getCenter = function() {
   return new Point(this.x + 0.5 * this.width, this.y + 0.5 * this.height);
-}
+};
 Rectangle.prototype.getRandomPoint = function() {
   return new Point(this.x + Math.random() * this.width, this.y + Math.random() * this.height);
-}
+};
 
 Rectangle.prototype.getIntersection = function(rectangle) {
   if(rectangle.x + rectangle.width < this.x || rectangle.x > this.x + this.width || rectangle.y + rectangle.height < this.y || rectangle.y > this.y + this.height) return null;
   var xR = Math.max(rectangle.x, this.x);
   var yR = Math.max(rectangle.y, this.y);
   return new Rectangle(xR, yR, Math.min(rectangle.x + rectangle.width, this.x + this.width) - xR, Math.min(rectangle.y + rectangle.height, this.y + this.height) - yR);
-}
+};
 
 Rectangle.prototype.interpolate = function(rectangle, t) {
   var mint = 1 - t;
   return new Rectangle(mint * this.x + t * rectangle.x, mint * this.y + t * rectangle.y, mint * this.width + t * rectangle.width, mint * this.height + t * rectangle.height);
-}
+};
 
 Rectangle.prototype.getRatio = function() {
   return Math.max(this.width, this.height) / Math.min(this.width, this.height);
-}
+};
 
 Rectangle.prototype.getArea = function() {
   return this.width * this.height;
-}
+};
 
 /**
  * check if a point belong to the rectangle
@@ -3682,7 +3682,7 @@ Rectangle.prototype.getArea = function() {
  */
 Rectangle.prototype.containsPoint = function(point) {
   return(this.x <= point.x && this.x + this.width >= point.x && this.y <= point.y && this.y + this.height >= point.y);
-}
+};
 
 
 Rectangle.prototype.pointIsOnBorder = function(point, margin) {
@@ -3695,14 +3695,14 @@ Rectangle.prototype.pointIsOnBorder = function(point, margin) {
     }
   }
   return false;
-}
+};
 
 
 
 
 Rectangle.prototype.getNormalRectangle = function() {
   return new Rectangle(Math.min(this.x, this.x + this.width), Math.min(this.y, this.y + this.height), Math.abs(this.width), Math.abs(this.height));
-}
+};
 
 /**
  * return true if it interstects a rectangle
@@ -3711,7 +3711,7 @@ Rectangle.prototype.getNormalRectangle = function() {
  * tags:geometry
  */
 Rectangle.prototype.intersectsRectangle = function(rectangle) {
-  return !(this.x + this.width < rectangle.x) && !(this.y + this.height < rectangle.y) && !(rectangle.x + rectangle.width < this.x) && !(rectangle.y + rectangle.height < this.y)
+  return !(this.x + this.width < rectangle.x) && !(this.y + this.height < rectangle.y) && !(rectangle.x + rectangle.width < this.x) && !(rectangle.y + rectangle.height < this.y);
 
 
   if(this.x + this.width < rectangle.x) return false;
@@ -3724,31 +3724,31 @@ Rectangle.prototype.intersectsRectangle = function(rectangle) {
 
 	return this.containsPoint(rectangle.getTopLeft()) || this.containsPoint(rectangle.getTopRight()) || this.containsPoint(rectangle.getBottomLeft()) || this.containsPoint(rectangle.getBottomRight()) 
 	|| rectangle.containsPoint(this.getTopLeft()) || rectangle.containsPoint(this.getTopRight()) || rectangle.containsPoint(this.getBottomLeft()) || rectangle.containsPoint(this.getBottomRight());
-}
+};
 
 Rectangle.prototype.expand = function(expantion, centerPoint) {
   centerPoint = centerPoint || new Point(this.x + 0.5 * this.width, this.y + 0.5 * this.height);
   return new Rectangle((this.x - centerPoint.x) * expantion + centerPoint.x, (this.y - centerPoint.y) * expantion + centerPoint.y, this.width * expantion, this.height * expantion);
-}
+};
 
 Rectangle.prototype.isEqual = function(rectangle) {
   return this.x == rectangle.x && this.y == rectangle.y && this.width == rectangle.width && this.height == rectangle.height;
-}
+};
 
 Rectangle.prototype.clone = function() {
   return new Rectangle(this.x, this.y, this.width, this.height);
-}
+};
 
 Rectangle.prototype.toString = function() {
   return "(x=" + this.x + ", y=" + this.y + ", w=" + this.width + ", h=" + this.height + ")";
-}
+};
 
 Rectangle.prototype.destroy = function() {
   delete this.x;
   delete this.y;
   delete this.width;
   delete this.height;
-}
+};
 RectangleList.prototype = new List();
 RectangleList.prototype.constructor = RectangleList;
 /**
@@ -3759,7 +3759,7 @@ function RectangleList() {
   var array = List.apply(this, arguments);
   array = RectangleList.fromArray(array);
   return array;
-};
+}
 
 RectangleList.fromArray = function(array) {
   var result = List.fromArray(array);
@@ -3772,7 +3772,7 @@ RectangleList.fromArray = function(array) {
   result.getIntersectionArea = RectangleList.prototype.getIntersectionArea;
 
   return result;
-}
+};
 
 //TODO:finish RectangleList methods
 
@@ -3793,17 +3793,17 @@ RectangleList.prototype.getFrame = function() {
   frame.height -= frame.y;
 
   return frame;
-}
+};
 
 RectangleList.prototype.add = function() {
 
-}
+};
 
 RectangleList.prototype.factor = function() {
 
-}
+};
 
-RectangleList.prototype.getAddedArea = function() {}
+RectangleList.prototype.getAddedArea = function() {};
 
 RectangleList.prototype.getIntersectionArea = function() {
   var rect0;
@@ -3820,7 +3820,7 @@ RectangleList.prototype.getIntersectionArea = function() {
   }
 
   return intersectionArea;
-}
+};
 ColorList.prototype = new List();
 ColorList.prototype.constructor = ColorList;
 /**
@@ -3848,7 +3848,7 @@ ColorList.fromArray = function(array) {
   result.getInverted = ColorList.prototype.getInverted;
   result.addAlpha = ColorList.prototype.addAlpha;
   return result;
-}
+};
 
 /**
  * return an arrays of rgb arrays ([rr,gg,bb])
@@ -3863,7 +3863,7 @@ ColorList.prototype.getRgbArrays = function() {
   }
 
   return rgbArrays;
-}
+};
 
 /**
  * interpolates colors with a given color and measure
@@ -3881,7 +3881,7 @@ ColorList.prototype.getInterpolated = function(color, value) {
 
   newColorList.name = this.name;
   return newColorList;
-}
+};
 
 /**
  * inverts all colors
@@ -3897,7 +3897,7 @@ ColorList.prototype.getInverted = function() {
 
   newColorList.name = this.name;
   return newColorList;
-}
+};
 
 /**
  * adds alpha value to all colores
@@ -3914,7 +3914,7 @@ ColorList.prototype.addAlpha = function(alpha) {
 
   newColorList.name = this.name;
   return newColorList;
-}
+};
 ColorScale.prototype = new DataModel();
 ColorScale.prototype.constructor = ColorScale;
 /**
@@ -3932,7 +3932,7 @@ function ColorScale(colorScaleFunction) {
 }
 ColorScale.prototype.getColor = function(value) {
   return this.colorScaleFunction(value);
-}
+};
 ColorScale.prototype.getColorList = function(nColors) {
   var colorList = new ColorList();
   var i;
@@ -3940,7 +3940,7 @@ ColorScale.prototype.getColorList = function(nColors) {
     colorList.push(this.getColor(i / (nColors - 1)));
   }
   return colorList;
-}
+};
 Axis.prototype = new DataModel();
 Axis.prototype.constructor = Axis;
 
@@ -3972,15 +3972,15 @@ Axis.prototype.setDepartureInterval = function(departureInterval) {
   c.log('--> departureInterval', departureInterval);
   this.departureAmplitude = departureInterval.getSignedAmplitude();
 
-}
+};
 Axis.prototype.setArrivalInterval = function(arrivalInterval) {
   this.arrivalInterval = arrivalInterval;
   this.arrivalAmplitude = arrivalInterval.getSignedAmplitude();
-}
+};
 
 Axis.prototype.project = function(x) {
   return this.arrivalInterval.x + this.arrivalAmplitude * (x - this.departureInterval.x) / this.departureAmplitude;
-}
+};
 
 
 /**
@@ -3989,12 +3989,12 @@ Axis.prototype.project = function(x) {
 Axis.prototype.update = function() {
   this.departureAmplitude = this.departureInterval.getSignedAmplitude();
   this.arrivalAmplitude = this.arrivalInterval.getSignedAmplitude();
-}
+};
 
 
 Axis.prototype.toString = function() {
   return "Axis[" + this.departureInterval.toString() + ", " + this.arrivalInterval.toString() + "]";
-}
+};
 Axis2D.prototype = new DataModel();
 Axis2D.prototype.constructor = Axis2D;
 
@@ -4020,44 +4020,44 @@ Axis2D.prototype.setFrames = function(departureFrame, arrivalFrame) {
   this.departureFrame = departureFrame;
   this.arrivalFrame = arrivalFrame;
   this._update();
-}
+};
 
 Axis2D.prototype.setDepartureFrame = function(departureFrame) {
   this.departureFrame = departureFrame;
   this._update();
-}
+};
 
 Axis2D.prototype.setArrivalFrame = function(arrivalFrame) {
   this.arrivalFrame = arrivalFrame;
   this._update();
-}
+};
 
 
 Axis2D.prototype.project = function(point) {
   return new Point((point.x - this.departureFrame.x) * this.pW + this.arrivalFrame.x, (point.y - this.departureFrame.y) * this.pH + this.arrivalFrame.y);
-}
+};
 
 
 Axis2D.prototype.projectX = function(x) {
   return(x - this.departureFrame.x) * this.pW + this.arrivalFrame.x;
-}
+};
 
 Axis2D.prototype.projectY = function(y) {
   return(y - this.departureFrame.y) * this.pH + this.arrivalFrame.y;
-}
+};
 
 Axis2D.prototype.inverseProject = function(point) {
   return new Point((point.x - this.arrivalFrame.x) / this.pW + this.departureFrame.x, (point.y - this.arrivalFrame.y) / this.pH + this.departureFrame.y);
-}
+};
 
 
 Axis2D.prototype.inverseProjectX = function(x) {
   return(x - this.arrivalFrame.x) / this.pW + this.departureFrame.x;
-}
+};
 
 Axis2D.prototype.inverseProjectY = function(y) {
   return(y - this.arrivalFrame.y) / this.pH + this.departureFrame.y;
-}
+};
 
 
 
@@ -4065,12 +4065,12 @@ Axis2D.prototype.inverseProjectY = function(y) {
 Axis2D.prototype._update = function() {
   this.pW = this.arrivalFrame.width / this.departureFrame.width;
   this.pH = this.arrivalFrame.height / this.departureFrame.height;
-}
+};
 
 
 Axis2D.prototype.toString = function() {
   return "Axis2D[" + this.departureFrame.toString() + ", " + this.arrivalFrame.toString() + "]";
-}
+};
 Interval.prototype = new Point();
 Interval.prototype.constructor = Interval;
 
@@ -4094,34 +4094,34 @@ function Interval(x, y) {
  */
 Interval.prototype.getMin = function() {
   return Math.min(x, y);
-}
+};
 
 Interval.prototype.getMax = function() {
   return Math.max(x, y);
-}
+};
 
 Interval.prototype.getAmplitude = function() {
   return Math.abs(this.x - this.y);
-}
+};
 
 Interval.prototype.getSignedAmplitude = function() {
   return this.x - this.y;
-}
+};
 
 Interval.prototype.getMiddle = function() {
   return(this.x + this.y) * 0.5;
-}
+};
 
 Interval.prototype.getSign = function() {
   if(this.x == this.y) return 0;
   return this.getAmplitude() / this.getSignedAmplitude();
-}
+};
 
 Interval.prototype.getScaled = function(value) {
   var midAmp = 0.5 * (this.y - this.x);
   var middle = (this.x + this.y) * 0.5;
   return new Interval(middle - midAmp * value, middle + midAmp * value);
-}
+};
 
 Interval.prototype.getScaledFromProportion = function(value, proportion) {
   var antiP = 1 - proportion;
@@ -4129,17 +4129,17 @@ Interval.prototype.getScaledFromProportion = function(value, proportion) {
   var amp1 = antiP * (this.y - this.x);
   var middle = antiP * this.x + proportion * this.y;
   return new Interval(middle - amp0 * value, middle + amp1 * value);
-}
+};
 
 Interval.prototype.add = function(value) {
   return new Interval(this.x + value, this.y + value);
-}
+};
 
 Interval.prototype.invert = function() {
   var swap = this.x;
   this.x = this.y;
   this.y = swap;
-}
+};
 
 /**
  * return a value in interval range
@@ -4150,31 +4150,31 @@ Interval.prototype.invert = function() {
  */
 Interval.prototype.getInterpolatedValue = function(value) {
   return value * Number(this.getSignedAmplitude()) + this.x;
-}
+};
 
 Interval.prototype.getInverseInterpolatedValue = function(value) {
   return(value - this.x) / this.getSignedAmplitude();
-}
+};
 Interval.prototype.getInterpolatedValues = function(numberList) {
-  var newNumberList = new Array();
+  var newNumberList = [];
   var nElements = numberList.length;
   for(var i = 0; i < nElements; i++) {
     newNumberList.push(this.getInterpolatedValue(numberList[i]));
   }
   return newNumberList;
-}
+};
 Interval.prototype.getInverseInterpolatedValues = function(numberList) {
-  var newNumberList = new Array();
+  var newNumberList = [];
   var nElements = numberList.length;
   for(var i = 0; i < nElements; i++) {
     newNumberList.push(this.getInverseInterpolatedValue(numberList[i]));
   }
   return newNumberList;
-}
+};
 
 Interval.prototype.intersect = function(interval) {
   return new Interval(Math.max(this.x, interval.x), Math.min(this.y, interval.y));
-}
+};
 
 /**
  * create a new interval with the same proporties values
@@ -4185,7 +4185,7 @@ Interval.prototype.clone = function() {
   var newInterval = new Interval(this.x, this.y);
   newInterval.name = name;
   return newInterval;
-}
+};
 
 /**
  * indicate wether a number is included in the interval
@@ -4196,7 +4196,7 @@ Interval.prototype.clone = function() {
 Interval.prototype.contains = function(value) {
   if(this.y > this.x) return value >= this.x && value <= this.y;
   return value >= this.y && value <= this.y;
-}
+};
 
 /**
  * indicate wether other interval contains the same values
@@ -4206,7 +4206,7 @@ Interval.prototype.contains = function(value) {
  */
 Interval.prototype.isEquivalent = function(interval) {
   return this.x == interval.x && this.y == interval.y;
-}
+};
 
 /**
  * create a new interval with the same proporties values
@@ -4216,7 +4216,7 @@ Interval.prototype.isEquivalent = function(interval) {
 
 Interval.prototype.toString = function() {
   return "Interval[x:" + this.x + "| y:" + this.y + "| amplitude:" + this.getAmplitude() + "]";
-}
+};
 Matrix.prototype = new DataModel();
 Matrix.prototype.constructor = Matrix;
 /**
@@ -4250,7 +4250,7 @@ Matrix.prototype.transformPoint = function(point) {
     this.a * point.x + this.c * point.y + this.tx,
     this.b * point.x + this.d * point.y + this.ty
   );
-}
+};
 
 // /**
 // * Applies Matrix to context transform
@@ -4279,7 +4279,7 @@ Matrix.prototype.concat = function(matrix) {
     this.a * matrix.tx + this.c * matrix.ty + this.tx,
     this.b * matrix.tx + this.d * matrix.ty + this.ty
   );
-}
+};
 
 /**
  * Given a point in the pretransform coordinate space, returns the coordinates of
@@ -4295,7 +4295,7 @@ Matrix.prototype.deltaTransformPoint = function(point) {
     this.a * point.x + this.c * point.y,
     this.b * point.x + this.d * point.y
   );
-}
+};
 
 /**
  * Returns the inverse of the matrix.
@@ -4313,7 +4313,7 @@ Matrix.prototype.getInverse = function() {
 		(this.c * this.ty - this.d * this.tx) / determinant,
 		(this.b * this.tx - this.a * this.ty) / determinant
     );
-  }
+  };
   /**
    * Returns a new matrix that corresponds this matrix multiplied by a
    * a rotation matrix.
@@ -4325,7 +4325,7 @@ Matrix.prototype.getInverse = function() {
    */
 Matrix.prototype.rotate = function(theta, aboutPoint) {
   return this.concat(Matrix.rotation(theta, aboutPoint));
-}
+};
 
 /**
  * Returns a new matrix that corresponds this matrix multiplied by a
@@ -4339,7 +4339,7 @@ Matrix.prototype.rotate = function(theta, aboutPoint) {
  */
 Matrix.prototype.scale = function(sx, sy, aboutPoint) {
   return this.concat(Matrix.scale(sx, sy, aboutPoint));
-}
+};
 
 
 /**
@@ -4352,7 +4352,7 @@ Matrix.prototype.scale = function(sx, sy, aboutPoint) {
  */
 Matrix.prototype.translate = function(tx, ty) {
   return this.concat(Matrix.translation(tx, ty));
-}
+};
 NumberTable.prototype = new Table();
 NumberTable.prototype.constructor = NumberTable;
 
@@ -4363,7 +4363,7 @@ NumberTable.prototype.constructor = NumberTable;
 function NumberTable() {
   var args = [];
   var newNumberList;
-  var array
+  var array;
 
   if(arguments.length > 0 && Number(arguments[0]) == arguments[0]) {
     array = [];
@@ -4401,7 +4401,7 @@ NumberTable.fromArray = function(array) {
   result.getMinMaxInterval = NumberTable.prototype.getMinMaxInterval;
 
   return result;
-}
+};
 
 NumberTable.prototype.getNumberListsNormalized = function(factor) {
   factor = factor == null ? 1 : factor;
@@ -4414,7 +4414,7 @@ NumberTable.prototype.getNumberListsNormalized = function(factor) {
   }
   newTable.name = this.name;
   return newTable;
-}
+};
 
 NumberTable.prototype.getNormalizedToMax = function(factor) {
   factor = factor == null ? 1 : factor;
@@ -4427,7 +4427,7 @@ NumberTable.prototype.getNormalizedToMax = function(factor) {
   }
   newTable.name = this.name;
   return newTable;
-}
+};
 
 NumberTable.prototype.getNumberListsNormalizedToMax = function(factorValue) {
   var newTable = new NumberTable();
@@ -4437,7 +4437,7 @@ NumberTable.prototype.getNumberListsNormalizedToMax = function(factorValue) {
   }
   newTable.name = this.name;
   return newTable;
-}
+};
 
 NumberTable.prototype.getNumberListsNormalizedToSum = function() {
   var newTable = new NumberTable();
@@ -4447,7 +4447,7 @@ NumberTable.prototype.getNumberListsNormalizedToSum = function() {
   }
   newTable.name = this.name;
   return newTable;
-}
+};
 
 
 NumberTable.prototype.getMax = function() {
@@ -4461,7 +4461,7 @@ NumberTable.prototype.getMax = function() {
   }
 
   return max;
-}
+};
 
 NumberTable.prototype.getMinMaxInterval = function() {
   if(this.length == 0) return null;
@@ -4472,7 +4472,7 @@ NumberTable.prototype.getMinMaxInterval = function() {
     rangeInterval.y = Math.max(rangeInterval.y, newRange.y);
   }
   return rangeInterval;
-}
+};
 
 /**
  * returns a numberList with values from numberlists added
@@ -4485,7 +4485,7 @@ NumberTable.prototype.getSums = function() {
     numberList[i] = this[i].getSum();
   }
   return numberList;
-}
+};
 
 /**
  * returns a numberList with all values fro rows added
@@ -4502,7 +4502,7 @@ NumberTable.prototype.getRowsSums = function() {
     }
   }
   return sums;
-}
+};
 
 NumberTable.prototype.getAverages = function() {
   var numberList = new NumberList();
@@ -4510,7 +4510,7 @@ NumberTable.prototype.getAverages = function() {
     numberList[i] = this[i].getAverage();
   }
   return numberList;
-}
+};
 
 NumberTable.prototype.getRowsAverages = function() {
   var nLists = this.length;
@@ -4525,7 +4525,7 @@ NumberTable.prototype.getRowsAverages = function() {
     }
   }
   return averages;
-}
+};
 
 NumberTable.prototype.factor = function(value) {
   var newTable = new NumberTable();
@@ -4549,7 +4549,7 @@ NumberTable.prototype.factor = function(value) {
 
   newTable.name = this.name;
   return newTable;
-}
+};
 
 NumberTable.prototype.add = function(value) {
   var newTable = new NumberTable();
@@ -4561,7 +4561,7 @@ NumberTable.prototype.add = function(value) {
 
   newTable.name = this.name;
   return newTable;
-}
+};
 function Space2D(configuration) {
   configuration = configuration == null ? {} : configuration;
 
@@ -4582,7 +4582,7 @@ Space2D.prototype.activeInteraction = function() {
   addInteractionEventListener('mousedown', this.onMouse, this);
   addInteractionEventListener('mouseup', this.onMouse, this);
   addInteractionEventListener('mousewheel', this.wheel, this);
-}
+};
 
 Space2D.prototype.deActivate = function() {
   this.active = false;
@@ -4591,60 +4591,60 @@ Space2D.prototype.deActivate = function() {
   removeInteractionEventListener('mouseup', this.onMouse, this);
   removeInteractionEventListener('mousemove', this.onMouse, this);
   removeInteractionEventListener('mousewheel', this.wheel, this);
-}
+};
 
 Space2D.prototype.stopDragging = function() {
   removeInteractionEventListener('mousemove', this.onMouse, this);
-}
+};
 
 Space2D.prototype.project = function(point) {
   return new Point((point.x - this.center.x) * this.scale, (point.y + this.center.y) * this.scale);
-}
+};
 
 Space2D.prototype.projectX = function(x) {
   return(x - this.center.x) * this.scale;
-}
+};
 
 Space2D.prototype.projectY = function(y) {
   return(y - this.center.y) * this.scale;
-}
+};
 
 
 Space2D.prototype.inverseProject = function(point) {
   return new Point(point.x / this.scale + this.center.x, point.y / this.scale + this.center.y);
-}
+};
 
 Space2D.prototype.inverseProjectX = function(x) {
   return x / this.scale + this.center.x;
-}
+};
 
 Space2D.prototype.inverseProjectY = function(y) {
   return y / this.scale + this.center.y;
-}
+};
 
 Space2D.prototype.move = function(vector, projected) {
   this.center = this.center.subtract(projected ? vector.factor(1 / this.scale) : vector);
-}
+};
 
 Space2D.prototype.factorScaleFromPoint = function(point, factor) {
   var k = (1 - 1 / factor) / this.scale;
-  this.center.x = k * point.x + this.center.x
+  this.center.x = k * point.x + this.center.x;
   this.center.y = k * point.y + this.center.y;
 
   this.scale *= factor;
-}
+};
 
 Space2D.prototype.fixX = function(xDeparture, xArrival) {
   this.center.x = xDeparture - (xArrival / this.scale);
-}
+};
 Space2D.prototype.fixY = function(yDeparture, yArrival) {
   this.center.y = yDeparture - (yArrival / this.scale);
-}
+};
 
 Space2D.prototype.fixHorizontalInterval = function(departureInterval, arrivalInterval) {
   this.scale = arrivalInterval.getAmplitude() / departureInterval.getAmplitude();
   this.fixX((departureInterval.x + departureInterval.y) * 0.5, cW * 0.5);
-}
+};
 
 //////
 
@@ -4669,7 +4669,7 @@ Space2D.prototype.onMouse = function(e) {
       this.prev_mY = mY;
       break;
   }
-}
+};
 
 
 
@@ -4684,7 +4684,7 @@ Space2D.prototype.wheel = function(e) {
     return;
   }
   this.factorScaleFromPoint(new Point(mX - 0, mY - 0), (1 - 0.02 * e.value));
-}
+};
 StringList.prototype = new List();
 StringList.prototype.constructor = StringList;
 /**
@@ -4731,7 +4731,7 @@ StringList.fromArray = function(array, forceToString) {
   result.clone = StringList.prototype.clone;
 
   return result;
-}
+};
 
 /**
  * overrides List.prototype.getLengths (see comments there)
@@ -4745,7 +4745,7 @@ StringList.prototype.getLengths = function() {
   });
 
   return lengths;
-}
+};
 
 StringList.prototype.append = function(sufix, after) {
   after = after == null ? true : after;
@@ -4763,7 +4763,7 @@ StringList.prototype.append = function(sufix, after) {
     }
   }
   return newStringList;
-}
+};
 
 /**
  * prefix and sufix can be string or a StringList
@@ -4781,7 +4781,7 @@ StringList.prototype.getSurrounded = function(prefix, sufix) {
   }
 
   return newStringList;
-}
+};
 
 
 //deprectaed, replaced by replaceInStrings
@@ -4794,7 +4794,7 @@ StringList.prototype.replace = function(regExp, string) {
   }
 
   return newStringList;
-}
+};
 
 /**
  * replaces in each string, a sub-string by a string
@@ -4808,11 +4808,11 @@ StringList.prototype.replaceSubStringsInStrings = function(subString, replacemen
   newStringList.name = this.name;
 
   for(var i = 0; this[i] != null; i++) {
-    newStringList[i] = StringOperators.replaceString(string, subString, replacement)
+    newStringList[i] = StringOperators.replaceString(string, subString, replacement);
   }
 
   return newStringList;
-}
+};
 
 StringList.prototype.getConcatenated = function(separator) {
   var i;
@@ -4822,7 +4822,7 @@ StringList.prototype.getConcatenated = function(separator) {
     if(i < this.length - 1) string += separator;
   }
   return string;
-}
+};
 
 
 StringList.prototype.toLowerCase = function() {
@@ -4833,7 +4833,7 @@ StringList.prototype.toLowerCase = function() {
     newStringList[i] = this[i].toLowerCase();
   }
   return newStringList;
-}
+};
 
 StringList.prototype.toUpperCase = function() {
   var newStringList = new StringList();
@@ -4843,7 +4843,7 @@ StringList.prototype.toUpperCase = function() {
     newStringList[i] = this[i].toUpperCase();
   }
   return newStringList;
-}
+};
 
 StringList.prototype.toNumberList = function() {
   var numbers = new NumberList();
@@ -4853,7 +4853,7 @@ StringList.prototype.toNumberList = function() {
     numbers[i] = Number(this[i]);
   }
   return numbers;
-}
+};
 
 
 /**
@@ -4871,7 +4871,7 @@ StringList.prototype.toDateList = function(formatCase, separator) {
     dateList.push(DateOperators.stringToDate(this[i], formatCase, separator));
   }
   return dateList;
-}
+};
 
 /**
  * trims all the strings on the stringList
@@ -4886,7 +4886,7 @@ StringList.prototype.trim = function() {
   }
   newStringList.name = this.name;
   return newStringList;
-}
+};
 
 ///////overriding
 
@@ -4894,7 +4894,7 @@ StringList.prototype.clone = function() {
   var newList = StringList.fromArray(this.slice(), false);
   newList.name = this.name;
   return newList;
-}
+};
 Relation.prototype = new Node();
 Relation.prototype.constructor = Relation;
 
@@ -4918,11 +4918,11 @@ Relation.prototype.destroy = function() {
   delete this.node0;
   delete this.node1;
   delete this.content;
-}
+};
 
 Relation.prototype.getOther = function(node) {
   return node == this.node0 ? this.node1 : this.node0;
-}
+};
 
 Relation.prototype.clone = function() {
   var relation = new Relation(this.id, this.name, this.node0, this.node1);
@@ -4937,7 +4937,7 @@ Relation.prototype.clone = function() {
   relation.descentWeight = this.descentWeight;
 
   return relation;
-}
+};
 Network.prototype = new DataModel();
 Network.prototype.constructor = Network;
 
@@ -4960,7 +4960,7 @@ function Network() {
  */
 Network.prototype.getNodes = function() {
   return this.nodeList;
-}
+};
 
 /**
  * get relationList property
@@ -4969,7 +4969,7 @@ Network.prototype.getNodes = function() {
  */
 Network.prototype.getRelations = function() {
   return this.relationList;
-}
+};
 
 /**
  * get nodes ids property
@@ -4978,7 +4978,7 @@ Network.prototype.getRelations = function() {
  */
 Network.prototype.getNodesIds = function() {
   return this.nodeList.getIds();
-}
+};
 
 
 
@@ -4988,17 +4988,17 @@ Network.prototype.getNodesIds = function() {
 
 Network.prototype.addNode = function(node) {
   this.nodeList.addNode(node);
-}
+};
 Network.prototype.getNodeWithName = function(name) {
   return this.nodeList.getNodeWithName(name);
-}
+};
 Network.prototype.getNodeWithId = function(id) {
   return this.nodeList.getNodeWithId(id);
-}
+};
 
 Network.prototype.createRelation = function(node0, node1, id, weight, content) {
   this.addRelation(new Relation(id, id, node0, node1, weight, content));
-}
+};
 
 Network.prototype.addRelation = function(relation) {
   this.relationList.addNode(relation);
@@ -5010,7 +5010,7 @@ Network.prototype.addRelation = function(relation) {
   relation.node1.relationList.addNode(relation);
   relation.node1.fromNodeList.addNode(relation.node0);
   relation.node1.fromRelationList.addNode(relation);
-}
+};
 
 Network.prototype.connect = function(node0, node1, id, weight, content) {
   id = id || (node0.id + "_" + node1.id);
@@ -5019,7 +5019,7 @@ Network.prototype.connect = function(node0, node1, id, weight, content) {
   this.addRelation(relation);
   relation.content = content;
   return relation;
-}
+};
 
 
 
@@ -5028,21 +5028,21 @@ Network.prototype.connect = function(node0, node1, id, weight, content) {
  */
 
 Network.prototype.removeNode = function(node) {
-  this.removeNodeRelations(node)
+  this.removeNodeRelations(node);
   this.nodeList.removeNode(node);
-}
+};
 
 Network.prototype.removeNodeRelations = function(node) {
   for(var i = 0; node.relationList[i] != null; i++) {
     this.removeRelation(node.relationList[i]);
     i--;
   }
-}
+};
 
 Network.prototype.removeNodes = function() {
   this.nodeList.deleteNodes();
   this.relationList.deleteNodes();
-}
+};
 Network.prototype.removeRelation = function(relation) {
   this.relationList.removeElement(relation);
   relation.node0.nodeList.removeNode(relation.node1);
@@ -5053,7 +5053,7 @@ Network.prototype.removeRelation = function(relation) {
   relation.node1.relationList.removeRelation(relation);
   relation.node1.fromNodeList.removeNode(relation.node0);
   relation.node1.fromRelationList.removeRelation(relation);
-}
+};
 
 /**
  * transformative method, removes nodes without a minimal number of connections
@@ -5081,7 +5081,7 @@ Network.prototype.removeIsolatedNodes = function(minDegree) {
   }
 
   return nRemoved;
-}
+};
 
 
 
@@ -5118,12 +5118,12 @@ Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames,
   });
 
   return newNetwork;
-}
+};
 
 
 Network.prototype.getReport = function() {
   return "network contains " + this.nodeList.length + " nodes and " + this.relationList.length + " relations";
-}
+};
 
 Network.prototype.destroy = function() {
   delete this.type;
@@ -5131,7 +5131,7 @@ Network.prototype.destroy = function() {
   this.relationList.destroy();
   delete this.nodeList;
   delete this.relationList;
-}
+};
 Tree.prototype = new Network();
 Tree.prototype.constructor = Tree;
 
@@ -5161,7 +5161,7 @@ Tree.prototype.addNodeToTree = function(node, parent) {
     node.parent = parent;
   }
   this.nLevels = Math.max(this.nLevels, node.level + 1);
-}
+};
 
 Network.prototype._newCreateRelation = function(parent, node, id, weight) {
   if(id == null) id = this.relationList.getNewId();
@@ -5169,7 +5169,7 @@ Network.prototype._newCreateRelation = function(parent, node, id, weight) {
   node.level = parent.level + 1;
   node.parent = parent;
   this.nLevels = Math.max(this.nLevels, node.level + 1);
-}
+};
 
 Tree.prototype.addFather = function(node, children) {
   if(child.parent != null || this.nodeList.indexOf(child) == -1) return false;
@@ -5178,7 +5178,7 @@ Tree.prototype.addFather = function(node, children) {
   child.level = 1;
   this.nLevels = Math.max(this.nLevels, 1);
   this.createRelation(node, child);
-}
+};
 
 Tree.prototype.getNodesByLevel = function(level) {
   var newNodeList = new NodeList();
@@ -5186,7 +5186,7 @@ Tree.prototype.getNodesByLevel = function(level) {
     if(this.nodeList[i].level == level) newNodeList.addNode(this.nodeList[i]);
   }
   return newNodeList;
-}
+};
 
 /**
  * return the leaves (nodes without children) of a tree
@@ -5208,19 +5208,19 @@ Tree.prototype.getLeaves = function(node) {
       } else {
         candidate.toNodeList.forEach(addLeaves);
       }
-    }
-    node.toNodeList.forEach(addLeaves)
+    };
+    node.toNodeList.forEach(addLeaves);
   } else {
     this.nodeList.forEach(function(candidate) {
       if(candidate.toNodeList.length == 0) leaves.addNode(candidate);
     });
   }
   return leaves;
-}
+};
 
 Tree.prototype.assignDescentWeightsToNodes = function() {
   this._assignDescentWeightsToNode(this.nodeList[0]);
-}
+};
 Tree.prototype._assignDescentWeightsToNode = function(node) {
   var i;
   if(node.toNodeList.length == 0) {
@@ -5231,12 +5231,12 @@ Tree.prototype._assignDescentWeightsToNode = function(node) {
     node.descentWeight += this._assignDescentWeightsToNode(node.toNodeList[i]);
   }
   return node.descentWeight;
-}
+};
 
 Tree.prototype.getReport = function(relation) {
   return "Tree contains " + this.nodeList.length + " nodes and " + this.relationList.length + " relations";
-}
-function ObjectOperators() {};
+};
+function ObjectOperators() {}
 
 
 /**
@@ -5247,7 +5247,7 @@ function ObjectOperators() {};
  */
 ObjectOperators.identity = function(object) {
   return object;
-}
+};
 
 
 /**
@@ -5286,7 +5286,7 @@ ObjectOperators.getReport = function(object) {
 
   return text;
 
-}
+};
 
 /**
  * uses a boolean to decide which of two objects it returns
@@ -5297,8 +5297,8 @@ ObjectOperators.getReport = function(object) {
  * tags:
  */
 ObjectOperators.booleanGate = function(boolean, object0, object1) {
-  return boolean ? object0 : object1
-}
+  return boolean ? object0 : object1;
+};
 
 /**
  * return a property value from its name
@@ -5311,7 +5311,7 @@ ObjectOperators.getPropertyValue = function(object, property_value) {
   if(object == null) return;
 
   return object == null ? null : object[property_value];
-}
+};
 
 /**
  * return a a stringList of property names
@@ -5323,7 +5323,7 @@ ObjectOperators.getPropertiesNames = function(object) {
   if(object == null) return;
 
   return StringList.fromArray(Object.getOwnPropertyNames(object));
-}
+};
 
 /**
  * return a table with a stringList of property names and a list of respective values
@@ -5348,7 +5348,7 @@ ObjectOperators.getPropertiesNamesAndValues = function(object) {
   table[1] = table[1].getImproved();
 
   return table;
-}
+};
 
 
 /**
@@ -5386,7 +5386,7 @@ ObjectOperators.interpolateObjects = function(object0, object1, value, minDistan
       return newNumberList;
   }
   return null;
-}
+};
 
 
 // ObjectOperators.fusionObjects = function(object, objectToFusion){
@@ -5403,7 +5403,7 @@ ObjectOperators.interpolateObjects = function(object0, object1, value, minDistan
  */
 ObjectOperators.replaceObject = function(object, obectToReplace, objectToPlace) {
   return object == obectToReplace ? objectToPlace : object;
-}
+};
 
 
 /**
@@ -5414,7 +5414,7 @@ ObjectOperators.replaceObject = function(object, obectToReplace, objectToPlace) 
  */
 ObjectOperators.toList = function(array) {
   return List.fromArray(array).getImproved();
-}
+};
 
 
 /////universal operators
@@ -5543,7 +5543,7 @@ ObjectOperators.addition = function() {
     result = ObjectOperators.addition(result, arguments[i]);
   }
   return result;
-}
+};
 
 
 /**
@@ -5654,7 +5654,7 @@ ObjectOperators.multiplication = function() {
     result = ObjectOperators.multiplication(result, arguments[i]);
   }
   return result;
-}
+};
 
 /**
  * divides two or more objects, division is performed according to the different types 
@@ -5762,7 +5762,7 @@ ObjectOperators.division = function() {
     result = ObjectOperators.division(result, arguments[i]);
   }
   return result;
-}
+};
 
 
 
@@ -5801,7 +5801,7 @@ ObjectOperators._applyBinaryOperatorOnLists = function(list0, list1, operator) {
     resultList.push(ObjectOperators._applyBinaryOperator(list0[i], list1[i], operator));
   }
   return resultList.getImproved();
-}
+};
 ObjectOperators._applyBinaryOperatorOnListWithObject = function(list, object, operator) {
   var i;
   var resultList = new List();
@@ -5809,7 +5809,7 @@ ObjectOperators._applyBinaryOperatorOnListWithObject = function(list, object, op
     resultList.push(ObjectOperators._applyBinaryOperator(list[i], object, operator));
   }
   return resultList.getImproved();
-}
+};
 ObjectOperators._applyBinaryOperatorOnObjectWithList = function(object, list, operator) {
   var i;
   var resultList = new List();
@@ -5817,10 +5817,10 @@ ObjectOperators._applyBinaryOperatorOnObjectWithList = function(object, list, op
     resultList.push(ObjectOperators._applyBinaryOperator(object, list[i], operator));
   }
   return resultList.getImproved();
-}
+};
 ObjectOperators._applyBinaryOperator = function(object0, object1, operator) {
   return operator(object0, object1);
-}
+};
 ObjectConversions = function() {};
 
 // *
@@ -5898,12 +5898,12 @@ ObjectConversions.conversor = function(object, toType) {
     case 'number':
       return Number(object);
   }
-}
+};
 /**
  * DateListOperators
  * @constructor
  */
-function DateListOperators() {};
+function DateListOperators() {}
 
 
 DateListOperators.buildTimeTreeFromDates = function(dates) {
@@ -6051,29 +6051,29 @@ DateListOperators.buildTimeTreeFromDates = function(dates) {
   // }
 
   return tree;
-}
+};
 
 DateListOperators._y = function(date) {
   return date.getFullYear();
-}
+};
 DateListOperators._m = function(date) {
   return date.getMonth();
-}
+};
 DateListOperators._d = function(date) {
   return date.getDate() - 1;
-}
+};
 DateListOperators._h = function(date) {
   return date.getHours();
-}
+};
 DateListOperators._mn = function(date) {
   return date.getMinutes();
-}
+};
 DateListOperators._s = function(date) {
   return date.getSeconds();
-}
+};
 DateListOperators._ms = function(date) {
   return date.getMilliseconds();
-}
+};
 DateOperators.millisecondsToHours = 1 / (1000 * 60 * 60);
 DateOperators.millisecondsToDays = 1 / (1000 * 60 * 60 * 24);
 DateOperators.millisecondsToWeeks = 1 / (1000 * 60 * 60 * 24 * 7);
@@ -6088,7 +6088,7 @@ DateOperators.WEEK_NAMES = ['monday', 'tuesday', 'wednesday', 'thursday', 'frida
  * DateOperators
  * @constructor
  */
-function DateOperators() {};
+function DateOperators() {}
 
 
 /**
@@ -6128,7 +6128,7 @@ DateOperators.stringToDate = function(string, formatCase, separator) {
       return new Date(y, Number(parts[1]) - 1, Number(parts[2]));
       break;
   }
-}
+};
 
 /**
  * format cases
@@ -6150,7 +6150,7 @@ DateOperators.dateToString = function(date, formatCase, separator) {
       return year + separator + month + separator + day;
       break;
   }
-}
+};
 
 /**
  * generates current date Date
@@ -6159,20 +6159,20 @@ DateOperators.dateToString = function(date, formatCase, separator) {
  */
 DateOperators.currentDate = function() {
   return new Date();
-}
+};
 
 DateOperators.addDaysToDate = function(date, nDays) {
   return new Date(date.getTime() + (nDays / DateOperators.millisecondsToDays));
-}
+};
 
 DateOperators.addMillisecondsToDate = function(date, nMilliseconds) {
   return new Date(date.getTime() + nMilliseconds);
-}
+};
 
 
 DateOperators.parseDate = function(string) {
   return new Date(Date.parse(string.replace(/\./g, "-")));
-}
+};
 
 DateOperators.parseDates = function(stringList) {
   var dateList = new DateList();
@@ -6181,28 +6181,28 @@ DateOperators.parseDates = function(stringList) {
     dateList.push(this.parseDate(stringList[i]));
   }
   return dateList;
-}
+};
 
 DateOperators.getHoursBetweenDates = function(date0, date1) {
   return(date1.getTime() - date0.getTime()) * DateOperators.millisecondsToHours;
-}
+};
 DateOperators.getDaysBetweenDates = function(date0, date1) {
   return(date1.getTime() - date0.getTime()) * DateOperators.millisecondsToDays;
-}
+};
 DateOperators.getWeeksBetweenDates = function(date0, date1) {
   return(date1.getTime() - date0.getTime()) * DateOperators.millisecondsToWeeks;
-}
+};
 DateOperators.getYearsBetweenDates = function(date0, date1) {
   return(date1.getTime() - date0.getTime()) * DateOperators.millisecondsToYears;
-}
+};
 
 DateOperators.nDayInYear = function(date) {
   return Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 1).getTime()) * DateOperators.millisecondsToDays);
-}
+};
 
 DateOperators.getDateDaysAgo = function(nDays) {
   return DateOperators.addDaysToDate(new Date(), -nDays);
-}
+};
 
 
 /**
@@ -6214,16 +6214,16 @@ DateOperators.getDateDaysAgo = function(nDays) {
 DateOperators.getWeekInYear = function(date) {
   var onejan = new Date(date.getFullYear(), 0, 1);
   return Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
-}
+};
 
 DateOperators.getNDaysInMonth = function(month, year) {
   return new Date(year, month, 0).getDate();
-}
+};
 /**
  * CountryListOperators
  * @constructor
  */
-function CountryListOperators() {};
+function CountryListOperators() {}
 
 
 CountryListOperators.getCountryByName = function(countryList, name) {
@@ -6234,16 +6234,16 @@ CountryListOperators.getCountryByName = function(countryList, name) {
   }
 
   return null;
-}
+};
 /**
  * CountryOperators
  * @constructor
  */
-function CountryOperators() {};
+function CountryOperators() {}
 
 CountryOperators.getSimplifiedName = function(name) {
   return name.replace(/[\.\- ,\']/g, "").toLowerCase();
-}
+};
 CountryOperators.getSimplifiedNames = function(names) {
   var simplifiedNames = new StringList();
   var name;
@@ -6252,8 +6252,8 @@ CountryOperators.getSimplifiedNames = function(names) {
     if(name != "") simplifiedNames.pushIfUnique(name);
   }
   return simplifiedNames;
-}
-function GeoOperators() {};
+};
+function GeoOperators() {}
 
 GeoOperators.EARTH_RADIUS = 6371009;
 GeoOperators.EARTH_DIAMETER = GeoOperators.EARTH_RADIUS * 2;
@@ -6261,12 +6261,12 @@ GeoOperators.EARTH_DIAMETER = GeoOperators.EARTH_RADIUS * 2;
 
 GeoOperators.geoCoordinateToDecimal = function(value) {
   return Math.floor(value) + (value - Math.floor(value)) * 1.66667;
-}
+};
 
 GeoOperators.geoDistance = function(point0, point1) {
-  var a = Math.pow(Math.sin((point1.y - point0.y) * 0.5 * gradToRad), 2) + Math.cos(point0.y * gradToRad) * Math.cos(point1.y * gradToRad) * Math.pow(Math.sin((point1.x - point0.x) * 0.5 * gradToRad), 2)
+  var a = Math.pow(Math.sin((point1.y - point0.y) * 0.5 * gradToRad), 2) + Math.cos(point0.y * gradToRad) * Math.cos(point1.y * gradToRad) * Math.pow(Math.sin((point1.x - point0.x) * 0.5 * gradToRad), 2);
   return GeoOperators.EARTH_DIAMETER * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
+};
 GeoOperators.polygonLength = function(polygon) {
   if(polygon.length < 2) return 0;
 
@@ -6275,8 +6275,8 @@ GeoOperators.polygonLength = function(polygon) {
     length += GeoOperators.geoDistance(polygon[i - 1], polygon[i]);
   }
   return length;
-}
-function GeometryConvertions() {};
+};
+function GeometryConvertions() {}
 
 //include(frameworksRoot+"operators/strings/StringOperators.js")
 
@@ -6313,7 +6313,7 @@ GeometryConvertions.twoNumberListsToPolygon = function(numberList0, numberList1)
     polygon[i] = new Point(numberList0[i], numberList1[i]);
   }
   return polygon;
-}
+};
 
 /**
  * converts a Polygon into a NumberTable
@@ -6334,12 +6334,12 @@ GeometryConvertions.PolygonToNumberTable = function(polygon) {
   });
 
   return numberTable;
-}
+};
 /**
  * GeometryOperators
  * @constructor
  */
-function GeometryOperators() {};
+function GeometryOperators() {}
 
 
 /**
@@ -6352,7 +6352,7 @@ GeometryOperators.getSoftenControlPoints = function(point0, point1, point2, cont
   var controlPoint0 = new Point(point1.x - controlVectorSize * Math.cos(angle), point1.y - controlVectorSize * Math.sin(angle));
   var controlPoint1 = new Point(point1.x + controlVectorSize * Math.cos(angle), point1.y + controlVectorSize * Math.sin(angle));
   return [controlPoint0, controlPoint1];
-}
+};
 
 GeometryOperators.bezierCurvePoints = function(x0, y0, c0x, c0y, c1x, c1y, x1, y1, t) {
   var s = 1 - t;
@@ -6372,7 +6372,7 @@ GeometryOperators.bezierCurvePoints = function(x0, y0, c0x, c0y, c1x, c1y, x1, y
   var fy = s * by + t * cy;
 
   return new Point(t * fx + s * ex, t * fy + s * ey);
-}
+};
 
 
 
@@ -6400,7 +6400,7 @@ GeometryOperators.trueBezierCurveHeightHorizontalControlPoints = function(x0, x1
 
   return GeometryOperators._bezierSimpleCurveTable[Math.floor(1000 * x)] * (y1 - y0) + y0;
 
-}
+};
 
 
 
@@ -6481,7 +6481,7 @@ GeometryOperators.bezierCurveHeightHorizontalControlPoints = function(y0, c0x, c
   var sign = cosinus > 0 ? 1 : -1;
 
   return(0.5 + 0.5 * (Math.pow(cosinus * sign, 0.6) * sign)) * (y1 - y0) + y0;
-}
+};
 
 /**
  * unefficient method (uses Newton strategy)
@@ -6524,18 +6524,18 @@ GeometryOperators.distanceToBezierCurve = function(x0, y0, c0x, c0y, c1x, c1y, x
 
   if(returnPoint) return p1;
   return Math.sqrt(Math.min(d0, d1));
-}
+};
 
 GeometryOperators.triangleContainsPoint = function(pT0, pT1, pT2, p) {
   var a = (pT0.x - p.x) * (pT1.y - p.y) - (pT1.x - p.x) * (pT0.y - p.y);
   var b = (pT1.x - p.x) * (pT2.y - p.y) - (pT2.x - p.x) * (pT1.y - p.y);
   var c = (pT2.x - p.x) * (pT0.y - p.y) - (pT0.x - p.x) * (pT2.y - p.y);
   return(a > 0 && b > 0 && c > 0) || (a >= 0 && b >= 0 && c >= 0);
-}
+};
 
 GeometryOperators.triangleArea = function(triangle) {
   return Math.abs(triangle.a.x * (triangle.b.y - triangle.c.y) + triangle.b.x * (triangle.c.y - triangle.a.y) + triangle.c.x * (triangle.a.y - triangle.b.y)) / 2;
-}
+};
 
 
 /////////////lines (line is a Point with values m and b in y=mx+b)
@@ -6544,7 +6544,7 @@ GeometryOperators.lineFromTwoPoints = function(point0, point1) {
   if(point0.x == point1.x) return new Point(Infinity, point0.x);
   var m = (point1.y - point0.y) / (point1.x - point0.x);
   return new Point(m, point0.y - m * point0.x);
-}
+};
 
 GeometryOperators.distancePointToLine = function(point, line) {
   var m2;
@@ -6558,7 +6558,7 @@ GeometryOperators.distancePointToLine = function(point, line) {
   }
   var interPoint = GeometryOperators.intersectionLines(line, new Point(m2, b2));
   return Math.sqrt(Math.pow(point.x - interPoint.x, 2) + Math.pow(point.y - interPoint.y, 2));
-}
+};
 
 GeometryOperators.distancePointToSegment = function(point, point0Segment, point1Segment) {
   var m = point0Segment.x == point1Segment.x ? Infinity : (point1Segment.y - point0Segment.y) / (point1Segment.x - point0Segment.x);
@@ -6575,7 +6575,7 @@ GeometryOperators.distancePointToSegment = function(point, point0Segment, point1
   var interPoint = GeometryOperators.intersectionLines(line, new Point(m2, b2));
   if(interPoint.x >= Math.min(point0Segment.x, point1Segment.x) && interPoint.x <= Math.max(point0Segment.x, point1Segment.x)) return point.distanceToPoint(interPoint);
   return Math.min(point.distanceToPoint(point0Segment), point.distanceToPoint(point1Segment));
-}
+};
 
 GeometryOperators.intersectionLines = function(line0, line1) {
   if(line0.x == line1.x) {
@@ -6596,7 +6596,7 @@ GeometryOperators.intersectionLines = function(line0, line1) {
 
   var xx = (line1.y - line0.y) / (line0.x - line1.x);
   return new Point(xx, line0.x * xx + line0.y);
-}
+};
 
 
 GeometryOperators.VennCircles = function(area0, area1, areaIntersection, centerInLens, precision) {
@@ -6624,7 +6624,7 @@ GeometryOperators.VennCircles = function(area0, area1, areaIntersection, centerI
   }
 
   return new Polygon3D(circle0, circle1);
-}
+};
 
 /**
  * very lazy and ineficcient solution (Newton algorithm)
@@ -6656,7 +6656,7 @@ GeometryOperators.circleDistancesFromCommonArea = function(r0, r1, commonArea, p
     currentArea = GeometryOperators.circlesCommonArea(r0, r1, dM);
   }
   return dM;
-}
+};
 
 GeometryOperators.circlesCommonArea = function(ra, rb, d) {
   if(d >= (ra + rb)) return 0;
@@ -6669,7 +6669,7 @@ GeometryOperators.circlesCommonArea = function(ra, rb, d) {
   var rb2 = Math.pow(rb, 2);
 
   return ra2 * Math.acos((d2 + ra2 - rb2) / (2 * d * ra)) + rb2 * Math.acos((d2 + rb2 - ra2) / (2 * d * rb)) - 0.5 * Math.sqrt((-d + ra + rb) * (d + ra - rb) * (d - ra + rb) * (d + ra + rb));
-}
+};
 
 /**
  * This method return the angles required to draw the intersection shape (lens) of two circles
@@ -6686,7 +6686,7 @@ GeometryOperators.circlesLensAngles = function(circle0, circle1) {
     return null;
   }
 
-  var d = circle1.x - circle0.x
+  var d = circle1.x - circle0.x;
   var x0 = (d * d + Math.pow(circle0.z, 2) - Math.pow(circle1.z, 2)) / (2 * d);
   var alfa = Math.acos(x0 / circle0.z);
   var h = circle0.z * Math.sin(alfa);
@@ -6697,7 +6697,7 @@ GeometryOperators.circlesLensAngles = function(circle0, circle1) {
   } else {
     return new NumberList(-alfa, alfa, beta, -beta);
   }
-}
+};
 
 
 
@@ -6706,13 +6706,13 @@ GeometryOperators.circlesLensAngles = function(circle0, circle1) {
 
 GeometryOperators.delauney = function(polygon) { /// ---> move to Polygon operators, chnge name to getDelauneyTriangulation
   return _triangulate(polygon);
-}
+};
 
 
 function Triangle(a, b, c) {
-  this.a = a
-  this.b = b
-  this.c = c
+  this.a = a;
+  this.b = b;
+  this.c = c;
 
   var A = b.x - a.x,
     B = b.y - a.y,
@@ -6721,51 +6721,51 @@ function Triangle(a, b, c) {
     E = A * (a.x + b.x) + B * (a.y + b.y),
     F = C * (a.x + c.x) + D * (a.y + c.y),
     G = 2 * (A * (c.y - b.y) - B * (c.x - b.x)),
-    minx, miny, dx, dy
+    minx, miny, dx, dy;
 
   /* If the points of the triangle are collinear, then just find the
    * extremes and use the midpoint as the center of the circumcircle. */
   if(Math.abs(G) < 0.000001) {
-    minx = Math.min(a.x, b.x, c.x)
-    miny = Math.min(a.y, b.y, c.y)
-    dx = (Math.max(a.x, b.x, c.x) - minx) * 0.5
-    dy = (Math.max(a.y, b.y, c.y) - miny) * 0.5
+    minx = Math.min(a.x, b.x, c.x);
+    miny = Math.min(a.y, b.y, c.y);
+    dx = (Math.max(a.x, b.x, c.x) - minx) * 0.5;
+    dy = (Math.max(a.y, b.y, c.y) - miny) * 0.5;
 
-    this.x = minx + dx
-    this.y = miny + dy
-    this.r = dx * dx + dy * dy
+    this.x = minx + dx;
+    this.y = miny + dy;
+    this.r = dx * dx + dy * dy;
   }
 
   else {
-    this.x = (D * E - B * F) / G
-    this.y = (A * F - C * E) / G
-    dx = this.x - a.x
-    dy = this.y - a.y
-    this.r = dx * dx + dy * dy
+    this.x = (D * E - B * F) / G;
+    this.y = (A * F - C * E) / G;
+    dx = this.x - a.x;
+    dy = this.y - a.y;
+    this.r = dx * dx + dy * dy;
   }
 }
 
 
 function byX(a, b) {
-  return b.x - a.x
+  return b.x - a.x;
 }
 
 function dedup(edges) {
   var j = edges.length,
-    a, b, i, m, n
+    a, b, i, m, n;
 
   outer: while(j) {
-    b = edges[--j]
-    a = edges[--j]
-    i = j
+    b = edges[--j];
+    a = edges[--j];
+    i = j;
     while(i) {
-      n = edges[--i]
-      m = edges[--i]
+      n = edges[--i];
+      m = edges[--i];
       if((a === m && b === n) || (a === n && b === m)) {
-        edges.splice(j, 2)
-        edges.splice(i, 2)
-        j -= 2
-        continue outer
+        edges.splice(j, 2);
+        edges.splice(i, 2);
+        j -= 2;
+        continue outer;
       }
     }
   }
@@ -6774,22 +6774,22 @@ function dedup(edges) {
 function _triangulate(vertices) {
   /* Bail if there aren't enough vertices to form any triangles. */
   if(vertices.length < 3)
-    return []
+    return [];
 
   /* Ensure the vertex array is in order of descending X coordinate
    * (which is needed to ensure a subquadratic runtime), and then find
    * the bounding box around the points. */
-  vertices.sort(byX)
+  vertices.sort(byX);
 
   var i = vertices.length - 1,
     xmin = vertices[i].x,
     xmax = vertices[0].x,
     ymin = vertices[i].y,
-    ymax = ymin
+    ymax = ymin;
 
   while(i--) {
-    if(vertices[i].y < ymin) ymin = vertices[i].y
-    if(vertices[i].y > ymax) ymax = vertices[i].y
+    if(vertices[i].y < ymin) ymin = vertices[i].y;
+    if(vertices[i].y > ymax) ymax = vertices[i].y;
   }
 
   /* Find a supertriangle, which is a triangle that surrounds all the
@@ -6814,95 +6814,95 @@ function _triangulate(vertices) {
     ],
     closed = [],
     edges = [],
-    j, a, b
+    j, a, b;
 
   /* Incrementally add each vertex to the mesh. */
-  i = vertices.length
+  i = vertices.length;
   while(i--) {
     /* For each open triangle, check to see if the current point is
      * inside it's circumcircle. If it is, remove the triangle and add
      * it's edges to an edge list. */
-    edges.length = 0
-    j = open.length
+    edges.length = 0;
+    j = open.length;
     while(j--) {
       /* If this point is to the right of this triangle's circumcircle,
        * then this triangle should never get checked again. Remove it
        * from the open list, add it to the closed list, and skip. */
-      dx = vertices[i].x - open[j].x
+      dx = vertices[i].x - open[j].x;
       if(dx > 0 && dx * dx > open[j].r) {
-        closed.push(open[j])
-        open.splice(j, 1)
-        continue
+        closed.push(open[j]);
+        open.splice(j, 1);
+        continue;
       }
 
       /* If not, skip this triangle. */
-      dy = vertices[i].y - open[j].y
+      dy = vertices[i].y - open[j].y;
       if(dx * dx + dy * dy > open[j].r)
-        continue
+        continue;
 
       /* Remove the triangle and add it's edges to the edge list. */
       edges.push(
         open[j].a, open[j].b,
         open[j].b, open[j].c,
         open[j].c, open[j].a
-      )
-      open.splice(j, 1)
+      );
+      open.splice(j, 1);
     }
 
     /* Remove any doubled edges. */
-    dedup(edges)
+    dedup(edges);
 
     /* Add a new triangle for each edge. */
-    j = edges.length
+    j = edges.length;
     while(j) {
-      b = edges[--j]
-      a = edges[--j]
-      open.push(new Triangle(a, b, vertices[i]))
+      b = edges[--j];
+      a = edges[--j];
+      open.push(new Triangle(a, b, vertices[i]));
     }
   }
 
   /* Copy any remaining open triangles to the closed list, and then
    * remove any triangles that share a vertex with the supertriangle. */
-  Array.prototype.push.apply(closed, open)
+  Array.prototype.push.apply(closed, open);
 
-  i = closed.length
+  i = closed.length;
   while(i--)
     if(closed[i].a.__sentinel ||
       closed[i].b.__sentinel ||
       closed[i].c.__sentinel)
-      closed.splice(i, 1)
+      closed.splice(i, 1);
 
     /* Yay, we're done! */
-  return closed
+  return closed;
 }
 /**
  * PointOperators
  * @constructor
  */
-function PointOperators() {};
+function PointOperators() {}
 
 
 
 PointOperators.angleBetweenVectors = function(point0, point1) {
   return Math.atan2(point1.y, point1.x) - Math.atan2(point0.y, point0.x);
-}
+};
 
 PointOperators.angleFromTwoPoints = function(point0, point1) {
   return Math.atan2(point1.y - point0.y, point1.x - point0.x);
-}
+};
 
 PointOperators.dot = function(point0, point1) {
   return point0.x * point1.x + point0.y * point1.y;
-}
+};
 
 PointOperators.twoPointsInterpolation = function(point0, point1, t) {
   return new Point((1 - t) * point0.x + t * point1.x, (1 - t) * point0.y + t * point1.y);
-}
+};
 /**
  * PolygonGenerators
  * @constructor
  */
-function PolygonGenerators() {};
+function PolygonGenerators() {}
 
 
 PolygonGenerators.createPolygon = function(nPoints, mode, frame) {
@@ -7013,7 +7013,7 @@ PolygonGenerators.createPolygon = function(nPoints, mode, frame) {
 
 // 	return new Array(centers, radius);
 // }
-function PolygonListEncodings() {};
+function PolygonListEncodings() {}
 
 /**
  * converts a simple format for polygons into a PolygonList
@@ -7046,7 +7046,7 @@ PolygonListEncodings.StringToPolygonList = function(string, separatorCoordinates
     polygonList.push(polygon);
   }
   return polygonList;
-}
+};
 
 /**
  * converts a polygonList into a simple text format
@@ -7071,12 +7071,12 @@ PolygonListEncodings.PolygonListToString = function(polygonList, separatorCoordi
     }
   }
   return t;
-}
+};
 /**
  * PolygonGenerators
  * @constructor
  */
-function PolygonListOperators() {};
+function PolygonListOperators() {}
 
 
 PolygonListOperators.simplifyPolygons = function(polygonList, margin, removeEmptyPolygons) {
@@ -7089,12 +7089,12 @@ PolygonListOperators.simplifyPolygons = function(polygonList, margin, removeEmpt
     }
   }
   return newPolygonList;
-}
+};
 /**
  * PolygonOperators
  * @constructor
  */
-function PolygonOperators() {};
+function PolygonOperators() {}
 
 /**
  * builds a Hull polygon from a set of points
@@ -7146,7 +7146,7 @@ PolygonOperators.hull = function(polygon, returnIndexes) {
   }
 
   return Polygon.fromArray(h.getSubList(new Interval(0, k - 2)));
-}
+};
 
 /**
  * builds a dendrogram (tree) from a Polygon (currently using barycenter for distances)
@@ -7191,7 +7191,7 @@ PolygonOperators.buildDendrogramFromPolygon = function(polygon) {
     tree._newCreateRelation(parent, node0);
     tree._newCreateRelation(parent, node1);
     return parent;
-  }
+  };
 
   while(nodeList.length > 1) {
     closestPair = PolygonOperators._findClosestNodes(nodeList);
@@ -7213,7 +7213,7 @@ PolygonOperators.buildDendrogramFromPolygon = function(polygon) {
     node.toNodeList.forEach(function(son) {
       assignLevel(son, node.level);
     });
-  }
+  };
 
   assignLevel(tree.nodeList[0], -1);
 
@@ -7221,7 +7221,7 @@ PolygonOperators.buildDendrogramFromPolygon = function(polygon) {
 
   return tree;
 
-}
+};
 
 PolygonOperators._findClosestNodes = function(nodeList) {
   var i, j;
@@ -7241,7 +7241,7 @@ PolygonOperators._findClosestNodes = function(nodeList) {
   pair.distance = d2Min;
 
   return pair;
-}
+};
 
 
 PolygonOperators.sortOnXY = function(polygon) {
@@ -7250,12 +7250,12 @@ PolygonOperators.sortOnXY = function(polygon) {
     if(p0.x == p1.x && p0.y < p1.y) return -1;
     return 1;
   });
-}
+};
 
 //TODO: move this to PointOperators
 PolygonOperators.crossProduct3Points = function(o, a, b) {
   return(a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
-}
+};
 
 PolygonOperators.expandFromBarycenter = function(polygon, factor) {
   var newPolygon = new Polygon();
@@ -7266,7 +7266,7 @@ PolygonOperators.expandFromBarycenter = function(polygon, factor) {
   }
 
   return newPolygon;
-}
+};
 
 PolygonOperators.expandInAngles = function(polygon, amount) { //TODO: test if it works with convex polygons
   var newPolygon = new Polygon();
@@ -7295,7 +7295,7 @@ PolygonOperators.expandInAngles = function(polygon, amount) { //TODO: test if it
   }
 
   return newPolygon;
-}
+};
 
 PolygonOperators.simplifyPolygon = function(polygon, margin) {
   margin = margin == null || margin == 0 ? 1 : margin;
@@ -7319,7 +7319,7 @@ PolygonOperators.simplifyPolygon = function(polygon, margin) {
     nPoints = newPolygon.length;
   }
   return newPolygon;
-}
+};
 
 
 /**
@@ -7342,7 +7342,7 @@ PolygonOperators.bezierPolygonContainsPoint = function(polygon, point, border) {
   var data = context.getImageData(point.x - frame.x, point.y - frame.y, 1, 1).data;
   clearContext();
   return data[0] > 0;
-}
+};
 
 
 /**
@@ -7385,7 +7385,7 @@ PolygonOperators.getBezierPolygonBestCenter = function(polygon, nAttempts) {
   }
 
   return bestCenter;
-}
+};
 
 
 PolygonOperators.convexHull = function(polygon, deepness) {
@@ -7442,7 +7442,7 @@ PolygonOperators.convexHull = function(polygon, deepness) {
     nHull++;
   }
   return indexesHull;
-}
+};
 
 PolygonOperators.controlPointsFromPointsAnglesIntensities = function(polygon, angles, intensities) {
   var controlPoints = new Polygon();
@@ -7451,7 +7451,7 @@ PolygonOperators.controlPointsFromPointsAnglesIntensities = function(polygon, an
     if(i < polygon.length - 1) controlPoints.push(new Point(polygon[i].x + intensities[i] * Math.cos(angles[i]), polygon[i].y + intensities[i] * Math.sin(angles[i])));
   }
   return controlPoints;
-}
+};
 
 
 PolygonOperators.placePointsInsidePolygon = function(polygon, nPoints, mode) {
@@ -7468,7 +7468,7 @@ PolygonOperators.placePointsInsidePolygon = function(polygon, nPoints, mode) {
       return points;
       break;
   }
-}
+};
 
 PolygonOperators.placePointsInsideBezierPolygon = function(polygon, nPoints, mode, border) {
   var points = new Polygon();
@@ -7489,12 +7489,12 @@ PolygonOperators.placePointsInsideBezierPolygon = function(polygon, nPoints, mod
       return points;
       break;
   }
-}
+};
 /**
  * RectangleOperators
  * @constructor
  */
-function RectangleOperators() {};
+function RectangleOperators() {}
 
 
 /**
@@ -7627,7 +7627,7 @@ RectangleOperators.packingRectangles = function(weights, packingMode, rectangle,
     case 6: //horizontal strips
   }
   return null;
-}
+};
 
 RectangleOperators.quadrification = RectangleOperators.squarify; //old name
 
@@ -7768,7 +7768,7 @@ RectangleOperators.squarify = function(frame, weights, isNormalizedWeights, isSo
   }
 
   return rectangleList;
-}
+};
 
 /**
  * partitionRectangle 
@@ -7806,7 +7806,7 @@ RectangleOperators.partitionRectangle = function(rectangle, normalizedWeightList
   rectangleList.highestRatio = highestRatio;
 
   return rectangleList;
-}
+};
 
 /**
  * returns the highest ratio from a list of Rectangles
@@ -7823,19 +7823,19 @@ RectangleOperators._getHighestRatio = function(rectangleList) {
     highestRatio = Math.max(highestRatio, rectangle.getRatio());
   }
   return highestRatio;
-}
+};
 /**
  * ColorOperators
  * @constructor
  */
-function ColorOperators() {};
+function ColorOperators() {}
 
 ColorOperators.point3DToColor = function(point3D) {
   return ColorUtils.RGBtouint(point3D.x, point3D.y, point3D.z);
-}
+};
 ColorOperators.colorToPoint3D = function(color) {
   return Point3D.fromArray(ColorUtils.uinttoRGB(color));
-}
+};
 /**
  * ColorGenerators 
  * @constructor
@@ -7846,18 +7846,18 @@ function ColorGenerators() {}
 ColorGenerators.randomColor = function(alpha) {
   alpha = alpha == null ? 1 : alpha;
   return 'rgba(' + Math.floor(256 * Math.random()) + ',' + Math.floor(256 * Math.random()) + ',' + Math.floor(256 * Math.random()) + ',' + alpha + ')';
-}
+};
 ColorListGenerators._HARDCODED_CATEGORICAL_COLORS = new ColorList(
   "#dd4411", "#2200bb", "#1f77b4", "#ff660e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#dd8811",
   "#dd0011", "#221140", "#1f66a3", "#ff220e", "#2ba01c", "#442728", "#945600", "#8c453a", "#e37700"
-)
+);
 
 /**
  * ColorListGenerators
  * @constructor
  *
  */
-function ColorListGenerators() {};
+function ColorListGenerators() {}
 
 /**
  * create a simple list of categorical colors
@@ -7876,7 +7876,7 @@ ColorListGenerators.createDefaultCategoricalColorList = function(nColors, alpha,
   if(invert) colors = colors.getInverted();
 
   return colors;
-}
+};
 
 
 /**
@@ -7909,7 +7909,7 @@ ColorListGenerators.createColorListFromNumberList = function(numberList, colorSc
   }
 
   return colorList;
-}
+};
 
 
 ColorListGenerators.createColorListWithSingleColor = function(nColors, color) {
@@ -7918,7 +7918,7 @@ ColorListGenerators.createColorListWithSingleColor = function(nColors, color) {
     colorList.push(color);
   }
   return colorList;
-}
+};
 
 
 /**
@@ -7945,7 +7945,7 @@ ColorListGenerators.createCategoricalColors = function(mode, nColors, colorScale
       }
       break;
     case 1: //seeded random numbers
-      var values = NumberListGenerators.createRandomNumberList(nColors, null, 0)
+      var values = NumberListGenerators.createRandomNumberList(nColors, null, 0);
       for(i = 0; i < nColors; i++) {
         colorList[i] = colorScaleFunction(values[i]);
       }
@@ -7998,7 +7998,7 @@ ColorListGenerators.createCategoricalColors = function(mode, nColors, colorScale
   }
 
   return colorList;
-}
+};
 
 ColorListGenerators._sortingVariation = function(numberList, rnd0, rnd1) { //private
   var newNumberList = numberList.clone();
@@ -8008,7 +8008,7 @@ ColorListGenerators._sortingVariation = function(numberList, rnd0, rnd1) { //pri
   newNumberList[pos1] = newNumberList[pos0];
   newNumberList[pos0] = cache;
   return newNumberList;
-}
+};
 ColorListGenerators._evaluationFunction = function(numberList) { //private
   var sum = 0;
   var i;
@@ -8016,7 +8016,7 @@ ColorListGenerators._evaluationFunction = function(numberList) { //private
     sum += Math.sqrt(Math.abs(numberList[i + 1] - numberList[i]));
   }
   return sum;
-}
+};
 
 
 /**
@@ -8079,18 +8079,18 @@ ColorListGenerators.createCategoricalColorListForList = function(list, colorList
       type: 'Table'
     }
   ];
-}
+};
 /**
  * ColorListOperators
  * @constructor
  */
-function ColorListOperators() {};
+function ColorListOperators() {}
 /** 
  * receives n arguments and performs addition
  */
 ColorListOperators.colorListFromColorScale = function(colorScale, nColors) {
   return colorScale.getColorList.apply(colorScale, [nColors]);
-}
+};
 
 ColorListOperators.colorListFromColorScaleFunction = function(colorScaleFunction, nColors) {
   var colorList = new ColorList();
@@ -8099,7 +8099,7 @@ ColorListOperators.colorListFromColorScaleFunction = function(colorScaleFunction
     colorList[i] = colorScaleFunction(i / (nColors - 1));
   }
   return colorList;
-}
+};
 
 
 ColorListOperators.colorListFromColorScaleFunctionAndNumberList = function(colorScaleFunction, numberList, normalize) {
@@ -8113,7 +8113,7 @@ ColorListOperators.colorListFromColorScaleFunctionAndNumberList = function(color
     colorList[i] = colorScaleFunction(numberList[i]);
   }
   return colorList;
-}
+};
 
 
 
@@ -8125,7 +8125,7 @@ ColorListOperators.polygon3DToColorList = function(polygon3D) {
     colorList.push(ColorOperators.point3DToColor(polygon3D[i]));
   }
   return colorList;
-}
+};
 ColorListOperators.colorListToPolygon3D = function(colorList) {
   var nColors = colorList.length;
   var polygon3D = new Polygon3D();
@@ -8134,14 +8134,14 @@ ColorListOperators.colorListToPolygon3D = function(colorList) {
     polygon3D.push(ColorOperators.colorToPoint3D(colorList[i]));
   }
   return polygon3D;
-}
+};
 /**
  * ColorOperators
  * @constructor
  *
  */
 // TODO: create Color struture to be used instead of arrays [255, 100,0] ?
-function ColorOperators() {};
+function ColorOperators() {}
 
 
 
@@ -8158,7 +8158,7 @@ function ColorOperators() {};
 ColorOperators.interpolateColors = function(color0, color1, value) {
   var resultArray = ColorOperators.interpolateColorsRGB(ColorOperators.colorStringToRGB(color0), ColorOperators.colorStringToRGB(color1), value);
   return ColorOperators.RGBtoHEX(resultArray[0], resultArray[1], resultArray[2]);
-}
+};
 
 /**
  * return a color between color0 and color1
@@ -8173,16 +8173,16 @@ ColorOperators.interpolateColors = function(color0, color1, value) {
 ColorOperators.interpolateColorsRGB = function(color0, color1, value) {
   var s = 1 - value;
   return [Math.floor(s * color0[0] + value * color1[0]), Math.floor(s * color0[1] + value * color1[1]), Math.floor(s * color0[2] + value * color1[2])];
-}
+};
 
 
 ColorOperators.RGBtoHEX = function(red, green, blue) {
   return "#" + ColorOperators.toHex(red) + ColorOperators.toHex(green) + ColorOperators.toHex(blue);
-}
+};
 
 ColorOperators.RGBArrayToString = function(array) {
   return 'rgb(' + array[0] + ',' + array[1] + ',' + array[2] + ')';
-}
+};
 
 
 
@@ -8200,14 +8200,14 @@ ColorOperators.HEXtoRGB = function(hexColor) {
 ColorOperators.colorStringToHEX = function(color_string) {
   var rgb = ColorOperators.colorStringToRGB(color_string);
   return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-}
+};
 
 
 ColorOperators.numberToHex = function(number) {
   var hex = number.toString(16);
   while(hex.length < 2) hex = "0" + hex;
   return hex;
-}
+};
 
 
 ColorOperators.uinttoRGB = function(color) {
@@ -8215,7 +8215,7 @@ ColorOperators.uinttoRGB = function(color) {
   return rgbColor;
 };
 ColorOperators.uinttoHEX = function(color) {
-  var rgbColor = ColorOperators.uinttoRGB(color)
+  var rgbColor = ColorOperators.uinttoRGB(color);
   var hexColor = ColorOperators.RGBToHEX(rgbColor[0], rgbColor[1], rgbColor[2]);
   return hexColor;
 };
@@ -8223,18 +8223,18 @@ ColorOperators.uinttoHEX = function(color) {
 
 ColorOperators.RGBtouint = function(red, green, blue) {
   return Number(red) << 16 | Number(green) << 8 | Number(blue);
-}
+};
 
 ColorOperators.HEXtouint = function(hexColor) {
   var colorArray = ColorOperators.HEXtoRGB(hexColor);
   var color = ColorOperators.RGBtouint(colorArray[0], colorArray[1], colorArray[2]);
   return color;
-}
+};
 
 ColorOperators.grayByLevel = function(level) {
   level = Math.floor(level * 255);
   return 'rgb(' + level + ',' + level + ',' + level + ')';
-}
+};
 
 
 
@@ -8294,7 +8294,7 @@ ColorOperators.RGBtoHSV = function(r, g, b) {
     h *= 60;
     if(h < 0) h += 360;
     return new Array(h, s, v);
-  }
+  };
   /**
    * converts an HSV color to RGB
    * @param {Array} a HSV color array
@@ -8310,7 +8310,7 @@ ColorOperators.HSVtoRGB = function(hue, saturation, value) {
   var b;
   //
   var i;
-  var f
+  var f;
   var p;
   var q;
   var t;
@@ -8357,7 +8357,7 @@ ColorOperators.HSVtoRGB = function(hue, saturation, value) {
       break;
   }
   return new Array(Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255));
-}
+};
 
 /**
  * Converts an HSL color value to RGB. Conversion formula
@@ -8387,25 +8387,25 @@ ColorOperators.HSLtoRGB = function(hue, saturation, light) {
   }
 
   return [Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255)];
-}
+};
 
 
 ColorOperators.invertColorRGB = function(r, g, b) {
   return [255 - r, 255 - g, 255 - b];
-}
+};
 
 ColorOperators.addAlpha = function(color, alpha) {
   //var rgb = color.substr(0,3)=='rgb'?ColorOperators.colorStringToRGB(color):ColorOperators.HEXtoRGB(color);
   var rgb = ColorOperators.colorStringToRGB(color);
   if(rgb == null) return 'black';
   return 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + alpha + ')';
-}
+};
 
 ColorOperators.invertColor = function(color) {
   var rgb = ColorOperators.colorStringToRGB(color);
   rgb = ColorOperators.invertColorRGB(rgb[0], rgb[1], rgb[2]);
   return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-}
+};
 
 
 
@@ -8413,12 +8413,12 @@ ColorOperators.toHex = function(number) {
   var hex = number.toString(16);
   while(hex.length < 2) hex = "0" + hex;
   return hex;
-}
+};
 
 
 ColorOperators.getRandomColor = function() {
   return 'rgb(' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ')';
-}
+};
 
 
 /////// Universal matching
@@ -8657,7 +8657,7 @@ ColorOperators.colorStringToRGB = function(color_string) {
   }
 
   return null;
-}
+};
 function ColorScales() {}
 
 // *
@@ -8672,21 +8672,21 @@ function ColorScales() {}
 
 ColorScales.blackScale = function(value) {
   return 'black';
-}
+};
 
 ColorScales.grayscale = function(value) {
   var rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], [255, 255, 255], value);
   return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-}
+};
 
 ColorScales.antiGrayscale = function(value) {
   var rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [0, 0, 0], value);
   return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-}
+};
 
 ColorScales.antiTemperature = function(value) {
   return ColorScales.temperature(1 - value);
-}
+};
 
 ColorScales.temperature = function(value) { //todo:make it efficient
   if(value < 0.2) {
@@ -8697,55 +8697,55 @@ ColorScales.temperature = function(value) { //todo:make it efficient
     color = ColorOperators.HSVtoHEX(Math.round((0.65 - (value - 0.2)) * 360), 1, 1);
   }
   return color;
-}
+};
 
 ColorScales.sqrtTemperature = function(value) {
   return ColorScales.temperature(Math.sqrt(value));
-}
+};
 
 ColorScales.sqrt4Temperature = function(value) {
   return ColorScales.temperature(Math.pow(value, 0.25));
-}
+};
 
 ColorScales.quadraticTemperature = function(value) {
   return ColorScales.temperature(Math.pow(value, 2));
-}
+};
 
 ColorScales.cubicTemperature = function(value) {
   return ColorScales.temperature(Math.pow(value, 3));
-}
+};
 
 ColorScales.greenToRed = function(value) { //todo:make it efficient
   var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [255, 50, 50], value);
   return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-}
+};
 ColorScales.greenToBlue = function(value) { //todo:make it efficient
   var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [50, 50, 255], value);
   return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-}
+};
 
 ColorScales.grayToOrange = function(value) { //todo:make it efficient
   var rgb = ColorOperators.interpolateColorsRGB([100, 100, 100], [255, 110, 0], value);
   return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-}
+};
 
 ColorScales.blueToRed = function(value) {
   return 'rgb(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ')';
-}
+};
 
 ColorScales.blueToRedAlpha = function(value) { //todo:make it efficient
   return 'rgba(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ', 0.5)';
-}
+};
 
 ColorScales.whiteToRed = function(value) {
   var gg = Math.floor(255 - value * 255);
   return 'rgb(255,' + gg + ',' + gg + ')';
-}
+};
 
 ColorScales.redToBlue = function(value) {
   var rgb = ColorOperators.interpolateColorsRGB([255, 0, 0], [0, 0, 255], value);
   return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-}
+};
 
 ColorScales.greenWhiteRed = function(value) {
   if(value < 0.5) {
@@ -8754,22 +8754,22 @@ ColorScales.greenWhiteRed = function(value) {
     rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [255, 50, 50], (value - 0.5) * 2);
   }
   return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-}
+};
 
 
 ColorScales.solar = function(value) {
   var rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], ColorOperators.interpolateColorsRGB([255, 0, 0], [255, 255, 0], value), Math.pow(value * 0.99 + 0.01, 0.2));
   return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-}
+};
 ColorScales.antiSolar = function(value) {
   return ColorOperators.invertColor(ColorScales.solar(value));
-}
+};
 /**
  * ColorScaleGenerators
  * @constructor
  * 
  */
-function ColorScaleGenerators() {};
+function ColorScaleGenerators() {}
 
 
 /**
@@ -8804,16 +8804,16 @@ ColorScaleGenerators.createColorScaleFromColors = function(colorList, positions)
 					+Math.floor( antit*colorList.rgbs[i][2] + intert*colorList.rgbs[i+1][2] )+')';
       }
     }
-  }
+  };
 
   return cS;
-}
+};
 /**
  * static class with methods to generate different kinds of Lists
  * 
  * @constructor
  */
-function ListGenerators() {};
+function ListGenerators() {}
 
 
 /**
@@ -8850,7 +8850,7 @@ ListGenerators.createListWithSameElement = function(nValues, element) {
     list[i] = element;
   }
   return list;
-}
+};
 
 /**
  * Generates a List built froma seed element and a function that will be applied iteratively
@@ -8865,8 +8865,8 @@ ListGenerators.createIterationSequence = function(nValues, firstElement, dynamic
     list[i] = dynamicFunction(list[i - 1]);
   }
   return list;
-}
-function ListOperators() {};
+};
+function ListOperators() {}
 
 
 /**
@@ -8881,7 +8881,7 @@ ListOperators.getElement = function(list, index) {
   if(list == null) return null;
   index = index == null ? 0 : index % list.length;
   return list[index];
-}
+};
 
 /**
  * multi-ouput operator that gives acces to individual elements
@@ -8965,8 +8965,8 @@ ListOperators.getFirstElements = function(list, fromIndex) {
     name: "tenth value",
     description: "tenth value",
     value: list[fromIndex + 9]
-  }]
-}
+  }];
+};
 
 // *
 //  * filters a List, by a NumberList of indexes, or by an Interval
@@ -8988,7 +8988,7 @@ ListOperators.getFirstElements = function(list, fromIndex) {
  */
 ListOperators.indexOf = function(list, element) {
   return list.indexOf(element);
-}
+};
 
 /**
  * concats lists
@@ -9011,7 +9011,7 @@ ListOperators.concat = function() {
     list = list.concat(arguments[i]);
   }
   return list.getImproved();
-}
+};
 
 /**
  * assembles a List
@@ -9026,7 +9026,7 @@ ListOperators.concat = function() {
  */
 ListOperators.assemble = function() {
   return List.fromArray(Array.prototype.slice.call(arguments, 0)).getImproved();
-}
+};
 
 
 /**
@@ -9098,7 +9098,7 @@ ListOperators.countElementsRepetitionOnList = function(list, sortListsByOccurren
   }
 
   return table;
-}
+};
 
 
 /**
@@ -9109,7 +9109,7 @@ ListOperators.countElementsRepetitionOnList = function(list, sortListsByOccurren
  */
 ListOperators.reverse = function(list) {
   return list.getReversed();
-}
+};
 
 /**
  * using a table with two columns as a dictionary (first list elements to be read, second list result elements), translates a list
@@ -9131,7 +9131,7 @@ ListOperators.translateWithDictionary = function(list, dictionary, nullElement) 
     }
   });
   return newList.getImproved();
-}
+};
 
 
 // ListOperators.getIndexesOfElements=function(list, elements){
@@ -9159,7 +9159,7 @@ ListOperators.sortListByNumberList = function(list, numberList, descending) {
   if(numberList.length == 0) return list;
   var newNumberList;
 
-  var pairs = new Array();
+  var pairs = [];
   var newList = instantiate(typeOf(list));
 
   for(i = 0; list[i] != null; i++) {
@@ -9184,7 +9184,7 @@ ListOperators.sortListByNumberList = function(list, numberList, descending) {
   }
   newList.name = list.name;
   return newList;
-}
+};
 
 
 ListOperators.sortListByIndexes = function(list, indexedArray) {
@@ -9196,7 +9196,7 @@ ListOperators.sortListByIndexes = function(list, indexedArray) {
     newList.push(list[indexedArray[i]]);
   }
   return newList;
-}
+};
 
 
 ListOperators.concatWithoutRepetitions = function() { //?
@@ -9210,7 +9210,7 @@ ListOperators.concatWithoutRepetitions = function() { //?
     }
   }
   return newList.getImproved();
-}
+};
 
 
 ListOperators.slidingWindowOnList = function(list, subListsLength, step, finalizationMode) {
@@ -9258,13 +9258,13 @@ ListOperators.slidingWindowOnList = function(list, subListsLength, step, finaliz
   }
 
   return table.getImproved();
-}
+};
 
 ListOperators.getNewListForObjectType = function(object) {
   var newList = new List();
   newList[0] = object;
   return instantiateWithSameType(newList.getImproved());
-}
+};
 
 ListOperators.listsIntersect = function(list0, list1) {
   var list = list0.length < list1.length ? list0 : list1;
@@ -9273,7 +9273,7 @@ ListOperators.listsIntersect = function(list0, list1) {
     if(otherList.indexOf(list[i]) != -1) return true;
   }
   return false;
-}
+};
 
 /**
  * returns the list of common elements between two lists
@@ -9295,7 +9295,7 @@ ListOperators.getCommonElements = function(list0, list1) {
   }
   if(nums || strs) return newList;
   return newList.getImproved();
-}
+};
 
 
 
@@ -9332,7 +9332,7 @@ ListOperators.unionLists = function(x, y) {
     }
   }
   return result;
-}
+};
 
 /**
  * creates a List that contains the intersection of two List (elements present in BOTH lists)
@@ -9370,7 +9370,7 @@ ListOperators.intersectLists = function(a, b) {
     }
   }
   return result;
-}
+};
 
 
 
@@ -9418,7 +9418,7 @@ ListOperators.getListEntropy = function(list, valueFollowing) {
   }
 
   return entropy;
-}
+};
 
 
 /**
@@ -9481,7 +9481,7 @@ ListOperators.getInformationGain = function(feature, supervised) {
   });
 
   return ig;
-}
+};
 
 ListOperators.getInformationGainAnalysis = function(feature, supervised) {
   if(feature == null || supervised == null || feature.length != supervised.length) return null;
@@ -9502,18 +9502,18 @@ ListOperators.getInformationGainAnalysis = function(feature, supervised) {
   });
 
   childrenLists.forEach(function(cl) {
-    entropy = ListOperators.getListEntropy(cl)
+    entropy = ListOperators.getListEntropy(cl);
     ig -= (cl.length / N) * entropy;
 
     sets.push({
       children: cl,
       entropy: entropy,
       infoGain: ig
-    })
+    });
   });
 
   return sets;
-}
+};
 
 
 /**
@@ -9531,7 +9531,7 @@ ListOperators.groupElements = function(list, sortedByValue, mode, fillBlanks) {
     return;
   var result = ListOperators._groupElements_Base(list, null, sortedByValue, mode, fillBlanks);
   return result;
-}
+};
 
 
 /**
@@ -9550,7 +9550,7 @@ ListOperators.groupElementsByPropertyValue = function(list, propertyName, sorted
     return;
   var result = ListOperators._groupElements_Base(list, propertyName, sortedByValue, mode, fillBlanks);
   return result;
-}
+};
 
 
 
@@ -9584,7 +9584,7 @@ ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, 
     if(maxValue == undefined || pValue > maxValue) {
       maxValue = pValue;
     }
-  };
+  }
 
   // Fill the blanks
   if(fillBlanks) {
@@ -9607,8 +9607,8 @@ ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, 
 
   return resultTable;
 
-}
-function TableConversions() {};
+};
+function TableConversions() {}
 
 /**
  * Convert an object (or more typically an Array of objects) into a Table
@@ -9678,7 +9678,7 @@ TableConversions.ObjectToTable = function(object, fields) {
     var column = new List();
     result[i] = column;
     column.name = fieldName;
-  };
+  }
 
   // Fill the table
   if(format == 1)
@@ -9688,19 +9688,19 @@ TableConversions.ObjectToTable = function(object, fields) {
       for(var f = 0; f < fields.length; f++) {
         result[f].push(row[fields[f]]);
       }
-    };
+    }
   } else {
     for(var f = 0; f < fields.length; f++) {
       var column = object[fields[f]];
       for(var i = 0; i < column.length; i++) {
         result[f].push(column[i]);
       }
-    };
+    }
   }
 
   // Improve columns
   for(var i = 0; i < result.length; i++) {
-    result[i] = result[i].getImproved()
+    result[i] = result[i].getImproved();
   }
 
   //if(result.getLengths.getMax()==1) return result.getRow(0);
@@ -9710,7 +9710,7 @@ TableConversions.ObjectToTable = function(object, fields) {
 
   // Return best possible
   return result;
-}
+};
 
 
 /**
@@ -9725,7 +9725,7 @@ TableConversions.ObjectToList = function(object, fields) {
   var result = TableConversions.ObjectToTable(object, fields);
 
   if(result.getLengths.getMax() == 1) return result.getRow(0);
-}
+};
 
 
 
@@ -9744,7 +9744,7 @@ TableConversions.TableToObject = function(table, fields) { // To-Do: should retu
     // If no field names supplied, take them from first element
     if(!fields)
     {
-      fields = table.getNames()
+      fields = table.getNames();
     }
     var result = [];
     for(var i = 0; i < table[0].length; i++) {
@@ -9754,11 +9754,11 @@ TableConversions.TableToObject = function(table, fields) { // To-Do: should retu
         row[fields[f]] = table[f][i];
       }
       result.push(row);
-    };
+    }
     return {
       array: result
     };
-  }
+  };
   // Tests ObjectToTable / TableToObject
   /*
   var input = [ {name:"dani", age:36, other:"eee"}, {name:"alejandro", age:34}, {name:"anna", age:37} ];
@@ -9767,7 +9767,7 @@ TableConversions.TableToObject = function(table, fields) { // To-Do: should retu
   var obj = TableEncodings.TableToObject(table);
   console.log( "ObjectToTable INVERSE: ", obj );
   */
-function TableEncodings() {};
+function TableEncodings() {}
 
 TableEncodings.ENTER = String.fromCharCode(13);
 TableEncodings.ENTER2 = String.fromCharCode(10);
@@ -9864,13 +9864,13 @@ TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, val
   table = table.getImproved();
 
   return table;
-}
+};
 
 TableEncodings._removeQuotes = function(string) {
   if(string.length == 0) return string;
   if((string.charAt(0) == "\"" || string.charAt(0) == "'") && (string.charAt(string.length - 1) == "\"" || string.charAt(string.length - 1) == "'")) string = string.substr(1, string.length - 2);
   return string;
-}
+};
 
 
 /**
@@ -9918,8 +9918,8 @@ TableEncodings.TableToCSV = function(table, separator, namesAsHeaders) {
   }
 
   return headers + lines.getConcatenated("\n");
-}
-function TableGenerators() {};
+};
+function TableGenerators() {}
 
 TableGenerators.createTableWithSameElement = function(nLists, nRows, element) {
   var table = new Table();
@@ -9927,14 +9927,14 @@ TableGenerators.createTableWithSameElement = function(nLists, nRows, element) {
     table[i] = ListGenerators.createListWithSameElement(nRows, element);
   }
   return table.getImproved();
-}
-function TableOperators() {};
+};
+function TableOperators() {}
 
 
 TableOperators.getElementFromTable = function(table, i, j) {
   if(table[i] == null) return null;
   return table[i][j];
-}
+};
 
 TableOperators.getSubTable = function(table, x, y, width, height) {
   if(table == null) return table;
@@ -9972,7 +9972,7 @@ TableOperators.getSubTable = function(table, x, y, width, height) {
     result.push(newColumn.getImproved());
   }
   return result.getImproved();
-}
+};
 
 /**
  * transposes a table
@@ -9985,7 +9985,7 @@ TableOperators.getSubTable = function(table, x, y, width, height) {
 TableOperators.transpose = function(table, firstListAsHeaders) {
   if(table == null) return null;
   return table.getTransposed(firstListAsHeaders);
-}
+};
 
 /**
  * divides the instances of a table in two tables: the training table and the test table
@@ -10027,7 +10027,7 @@ TableOperators.trainingTestPartition = function(table, proportion, mode, seed) {
   });
 
   return new List(table.getSubListsByIndexes(indexesTr), table.getSubListsByIndexes(indexesTe));
-}
+};
 
 /**
  * tests a model
@@ -10054,7 +10054,7 @@ TableOperators.testClassificationModel = function(numberTable, classes, model, m
   });
 
   return nErrors / classes.length;
-}
+};
 
 
 
@@ -10073,7 +10073,7 @@ TableOperators.getSubListsByIndexes = function(table, indexes) {
     newTable[i] = newList.getImproved();
   }
   return newTable;
-}
+};
 
 TableOperators.sortListsByNumberList = function(table, numberList, descending) {
   if(descending == null) descending = true;
@@ -10097,7 +10097,7 @@ TableOperators.sortListsByNumberList = function(table, numberList, descending) {
     }
   }
   return newTable;
-}
+};
 
 // old version replaced by above version Dec 1st, 2014
 // - fixed bug where descending with 'false' value gets changed to 'true'
@@ -10188,7 +10188,7 @@ TableOperators.aggregateTable = function(table, nList, mode) {
     newTable[j] = newTable[j].getImproved();
   }
   return newTable.getImproved();
-}
+};
 
 /**
  * counts pairs of elements in same positions in two lists (the result is the adjacent matrix of the network defined by pairs)
@@ -10217,7 +10217,7 @@ TableOperators.getCountPairsMatrix = function(table) {
   });
 
   return matrix;
-}
+};
 
 
 /**
@@ -10255,7 +10255,7 @@ TableOperators.filterTableByElementInList = function(table, nList, element) {
   }
 
   return newTable;
-}
+};
 
 TableOperators.mergeDataTablesInList = function(tableList) {
   if(tableList.length < 2) return tableList;
@@ -10267,7 +10267,7 @@ TableOperators.mergeDataTablesInList = function(tableList) {
   }
 
   return merged;
-}
+};
 
 /**
  * creates a new table with an updated first List of elements and an added new numberList with the new values
@@ -10344,7 +10344,7 @@ TableOperators.mergeDataTables = function(table0, table1) {
     table.push(numberTable1[i]);
   }
   return table;
-}
+};
 
 /**
  * From two DataTables creates a new DataTable with combined elements in the first List, and added values in the second 
@@ -10367,7 +10367,7 @@ TableOperators.fusionDataTables = function(table0, table1) {
     }
   }
   return table;
-}
+};
 
 TableOperators.completeTable = function(table, nRows, value) {
   value = value == null ? 0 : value;
@@ -10389,7 +10389,7 @@ TableOperators.completeTable = function(table, nRows, value) {
     newTable[i] = newList;
   }
   return newTable;
-}
+};
 
 /**
  * filters a Table keeping the NumberLists
@@ -10407,7 +10407,7 @@ TableOperators.getNumberTableFromTable = function(table) {
     if(table[i].type == "NumberList") newTable.push(table[i]);
   }
   return newTable;
-}
+};
 
 /**
  * calculates de information gain of all variables in a table and a supervised variable
@@ -10424,7 +10424,7 @@ TableOperators.getVariablesInformationGain = function(variablesTable, supervised
     igs.push(ListOperators.getInformationGain(feature, supervised));
   });
   return igs;
-}
+};
 
 TableOperators.splitTableByCategoricList = function(table, list) {
   if(table == null || list == null) return null;
@@ -10437,7 +10437,7 @@ TableOperators.splitTableByCategoricList = function(table, list) {
   list.forEach(function(element, i) {
     childrenTable = childrenObject[element];
     if(childrenTable == null) {
-      childrenTable = new Table()
+      childrenTable = new Table();
       childrenObject[element] = childrenTable;
       tablesList.push(childrenTable);
       table.forEach(function(list, j) {
@@ -10452,7 +10452,7 @@ TableOperators.splitTableByCategoricList = function(table, list) {
   });
 
   return tablesList;
-}
+};
 
 /**
  * builds a decision tree based on a variables table and a supervised variable
@@ -10480,7 +10480,7 @@ TableOperators.buildDecisionTree = function(variablesTable, supervised, supervis
   TableOperators._buildDecisionTreeNode(tree, variablesTable, supervised, 0, min_entropy, min_size_node, min_info_gain, null, null, supervisedValue, indexes, generatePattern);
 
   return tree;
-}
+};
 
 
 TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervised, level, min_entropy, min_size_node, min_info_gain, parent, value, supervisedValue, indexes, generatePattern) {
@@ -10537,7 +10537,7 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
 
   if(level < 2) {
     c.l('\nlevel', level);
-    c.l('supervised.countElement(supervisedValue)', supervised.countElement(supervisedValue))
+    c.l('supervised.countElement(supervisedValue)', supervised.countElement(supervisedValue));
     c.l('entropy', entropy);
     c.l('value', value);
     c.l('name', name);
@@ -10545,7 +10545,7 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
     c.l('supervised.length', supervised.length);
     c.l('supervisedValue', supervisedValue);
     c.l('supervised._biggestProbability, supervised._P_valueFollowing', supervised._biggestProbability, supervised._P_valueFollowing);
-    c.l('node.valueFollowingProbability (=supervised._P_valueFollowing):', node.valueFollowingProbability)
+    c.l('node.valueFollowingProbability (=supervised._P_valueFollowing):', node.valueFollowingProbability);
     c.l('tree.nodeList[0].valueFollowingProbability', tree.nodeList[0].valueFollowingProbability);
     c.l('node.biggestProbability (=_biggestProbability):', node.biggestProbability);
     c.l('node.mostRepresentedValue:', node.mostRepresentedValue);
@@ -10607,14 +10607,14 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
   node.toNodeList = node.toNodeList.getSortedByProperty('valueFollowingProbability', false);
 
   return node;
-}
+};
 TableOperators._decisionTreeColorScale = function(value) {
   var rr = value < 0.5 ? Math.floor(510 * value) : 255;
   var gg = value < 0.5 ? Math.floor(510 * value) : Math.floor(510 * (1 - value));
   var bb = value < 0.5 ? 255 : Math.floor(510 * (1 - value));
 
   return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
-}
+};
 TableOperators._decisionTreeGenerateColorsMixture = function(ctxt, width, height, colors, weights) {
   //var imageData=context.createImageData(width, height);
   var x, y, i; //, rgb;
@@ -10633,12 +10633,12 @@ TableOperators._decisionTreeGenerateColorsMixture = function(ctxt, width, height
   }
 
   //return imageData;
-}
+};
 /**
  * IntervalListOperators
  * @constructor
  */
-function IntervalListOperators() {};
+function IntervalListOperators() {}
 
 
 IntervalListOperators.scaleIntervals = function(intervalList, value) {
@@ -10648,12 +10648,12 @@ IntervalListOperators.scaleIntervals = function(intervalList, value) {
     newIntervalList[i] = intervalList[i].getScaled(value);
   }
   return newIntervalList;
-}
+};
 /**
  * IntervalTableOperators
  * @constructor
  */
-function IntervalTableOperators() {};
+function IntervalTableOperators() {}
 
 
 IntervalTableOperators.scaleIntervals = function(intervalTable, value) {
@@ -10663,12 +10663,12 @@ IntervalTableOperators.scaleIntervals = function(intervalTable, value) {
     newIntervalTable[i] = IntervalListOperators.scaleIntervals(intervalTable[i], value);
   }
   return newIntervalTable;
-}
+};
 /**
  * MatrixGenerators
  * @constructor
  */
-function MatrixGenerators() {};
+function MatrixGenerators() {}
 
 
 /**
@@ -10696,7 +10696,7 @@ MatrixGenerators.createMatrixFromTrianglesMapping = function(v0, v1, v2, w0, w1,
   }
 
   return new Matrix(a, c, b, d, w0.x - a * v0.x - b * v0.y, w0.y - c * v0.x - d * v0.y);
-}
+};
 
 
 //TODO: place this in the correct place
@@ -10717,7 +10717,7 @@ MatrixGenerators.applyTransformationOnCanvasFromPoints = function(context, v0, v
     d = (w2.y - w0.y) / (v2.y - v0.y) - c * (v2.x - v0.x) / (v2.y - v0.y);
   }
   context.transform(a, c, b, d, w0.x - a * v0.x - b * v0.y, w0.y - c * v0.x - d * v0.y);
-}
+};
 
 
 
@@ -10812,7 +10812,7 @@ MatrixGenerators.createTranslationMatrix = function(tx, ty) {
 // * @fieldOf Matrix
 // */
 // Matrix.VERTICAL_FLIP = Matrix(1, 0, 0, -1);
-function NumberListGenerators() {};
+function NumberListGenerators() {}
 
 /**
  * Generate a NumberList with sorted Numbers
@@ -10833,7 +10833,7 @@ NumberListGenerators.createSortedNumberList = function(nValues, start, step) {
     numberList.push(start + i * step);
   }
   return numberList;
-}
+};
 
 NumberList.createNumberListFromInterval = function(nElements, interval) {
   if(interval == null) interval = new Interval(0, 1);
@@ -10844,7 +10844,7 @@ NumberList.createNumberListFromInterval = function(nElements, interval) {
     numberList.push(Number(interval.getMin()) + Number(Math.random() * range));
   }
   return numberList;
-}
+};
 
 /**
  * create a list with random numbers
@@ -10872,8 +10872,8 @@ NumberListGenerators.createRandomNumberList = function(nValues, interval, seed, 
   }
 
   return numberList;
-}
-function NumberListOperators() {};
+};
+function NumberListOperators() {}
 
 
 
@@ -10888,7 +10888,7 @@ NumberListOperators.cosineSimilarity = function(numberList0, numberList1) {
   var norms = numberList0.getNorm() * numberList1.getNorm();
   if(norms == 0) return 0;
   return numberList0.dotProduct(numberList1) / norms;
-}
+};
 
 /**
  * calculates the covariance
@@ -10909,7 +10909,7 @@ NumberListOperators.covariance = function(numberList0, numberList1) { //TODO: im
   }
 
   return s / l;
-}
+};
 
 /**
  * calculates k-means clusters of values in a numberList
@@ -10938,7 +10938,7 @@ NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
   var x;
   var dX = (max - min) / k;
   var d;
-  var dMin
+  var dMin;
   var n;
   var actualMean;
   var N = 1000;
@@ -10999,7 +10999,7 @@ NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
 
   return clusters;
 
-}
+};
 
 
 NumberListOperators.standardDeviationBetweenTwoNumberLists = function(numberList0, numberList1) {
@@ -11011,7 +11011,7 @@ NumberListOperators.standardDeviationBetweenTwoNumberLists = function(numberList
   }
 
   return s / l;
-}
+};
 
 /**
  * returns Pearson Product Moment Correlation, the most common correlation coefficient ( covariance/(standard_deviation0*standard_deviation1) )
@@ -11022,7 +11022,7 @@ NumberListOperators.standardDeviationBetweenTwoNumberLists = function(numberList
  */
 NumberListOperators.pearsonProductMomentCorrelation = function(numberList0, numberList1) { //TODO:make more efficient
   return NumberListOperators.covariance(numberList0, numberList1) / (numberList0.getStandardDeviation() * numberList1.getStandardDeviation());
-}
+};
 
 
 /**
@@ -11061,7 +11061,7 @@ NumberListOperators.averageSmoother = function(numberList, intensity, nIteration
   newNumberList.name = numberList.name;
 
   return newNumberList;
-}
+};
 
 
 /**
@@ -11166,7 +11166,7 @@ NumberListOperators.filterNumberListByNumber = function(numberList, value, compa
   }
 
   return newNumberList;
-}
+};
 
 /**
  * creates a NumberList that contains the union of two NumberList (removing repetitions)
@@ -11189,7 +11189,7 @@ NumberListOperators.union = function(x, y) {
       res.push(obj[k]);
   }
   return res;
-}
+};
 
 /**
  * creates a NumberList that contains the intersection of two NumberList (elements present in BOTH lists)
@@ -11206,16 +11206,16 @@ NumberListOperators.intersection = function(a, b) {
     var sets = [];
     for(var i = 0; i < arguments.length; i++) {
       sets.push(arguments[i]);
-    };
+    }
     sets.sort(function(a, b) {
       return a.length - b.length;
-    })
+    });
     console.log("sets: ", sets);
     var resultsTrail = sets[0];
     for(var i = 1; i < sets.length; i++) {
       var newSet = sets[i];
       resultsTrail = NumberListOperators.intersection(resultsTrail, newSet);
-    };
+    }
     return resultsTrail;
   }
 
@@ -11238,12 +11238,12 @@ NumberListOperators.intersection = function(a, b) {
   }
 
   return result;
-}
+};
 /**
  * NumberOperators
  * @constructor
  */
-function NumberOperators() {};
+function NumberOperators() {}
 
 NumberOperators.numberToString = function(value, nDecimals, powersMode, unit) {
   var string = value.toFixed(nDecimals);
@@ -11252,7 +11252,7 @@ NumberOperators.numberToString = function(value, nDecimals, powersMode, unit) {
   }
   if(string.charAt(string.length - 1) == '.') string = string.substring(0, string.length - 1);
   return string;
-}
+};
 
 /**
  * decent method to create pseudo random numbers
@@ -11261,7 +11261,7 @@ NumberOperators.numberToString = function(value, nDecimals, powersMode, unit) {
 NumberOperators.getRandomWithSeed = function(seed) {
   seed = (seed * 9301 + 49297) % 233280;
   return seed / (233280.0);
-}
+};
 
 NumberOperators.numberFromBinaryPositions = function(binaryPositions) {
   var i;
@@ -11270,7 +11270,7 @@ NumberOperators.numberFromBinaryPositions = function(binaryPositions) {
     n += Math.pow(2, binaryPositions[i]);
   }
   return n;
-}
+};
 
 NumberOperators.numberFromBinaryValues = function(binaryValues) {
   var n = 0;
@@ -11278,7 +11278,7 @@ NumberOperators.numberFromBinaryValues = function(binaryValues) {
     n += binaryValues[i] == 1 ? Math.pow(2, i) : 0;
   }
   return n;
-}
+};
 
 NumberOperators.powersOfTwoDecomposition = function(number, length) {
   // var i;
@@ -11309,7 +11309,7 @@ NumberOperators.powersOfTwoDecomposition = function(number, length) {
   }
 
   return powers;
-}
+};
 
 NumberOperators.positionsFromBinaryValues = function(binaryValues) {
   var i;
@@ -11318,7 +11318,7 @@ NumberOperators.positionsFromBinaryValues = function(binaryValues) {
     if(binaryValues[i] == 1) positions.push(i);
   }
   return positions;
-}
+};
 
 //////////Random Generator with Seed, From http://baagoe.org/en/w/index.php/Better_random_numbers_for_javascript
 
@@ -11331,7 +11331,7 @@ NumberOperators._Alea = function() {
     var c = 1;
 
     if(args.length == 0) {
-      args = [+new Date];
+      args = [+new Date()];
     }
     var mash = NumberOperators._Mash();
     s0 = mash(' ');
@@ -11394,7 +11394,7 @@ NumberOperators._Mash = function() {
 
   mash.version = 'Mash 0.9';
   return mash;
-}
+};
 NumberTableConversions = function() {};
 
 /**
@@ -11415,8 +11415,8 @@ NumberTableConversions.numberTableToPolygon = function(numberTable) {
   }
 
   return polygon;
-}
-function NumberTableFlowOperators() {};
+};
+function NumberTableFlowOperators() {}
 
 NumberTableFlowOperators.getFlowTable = function(numberTable, normalized, include0s) {
   if(numberTable == null) return;
@@ -11513,7 +11513,7 @@ NumberTableFlowOperators.getFlowTable = function(numberTable, normalized, includ
     }
   }
   return flowTable;
-}
+};
 
 NumberTableFlowOperators.getFlowTableIntervals = function(numberTable, normalized, sorted, stacked) {
   if(numberTable == null) return null;
@@ -11578,8 +11578,8 @@ NumberTableFlowOperators.getFlowTableIntervals = function(numberTable, normalize
   }
 
   return intervalTable;
-}
-function NumberTableOperators() {};
+};
+function NumberTableOperators() {}
 
 /**
  * normlizes each NumberList to min and max values
@@ -11589,7 +11589,7 @@ function NumberTableOperators() {};
  */
 NumberTableOperators.normalizeLists = function(numberTable) {
   return numberTable.getNumberListsNormalized();
-}
+};
 
 NumberTableOperators.normalizeListsToMax = function(numberTable) {
   var newNumberTable = new NumberTable();
@@ -11599,7 +11599,7 @@ NumberTableOperators.normalizeListsToMax = function(numberTable) {
     newNumberTable[i] = numberTable[i].getNormalizedToMax();
   }
   return newNumberTable;
-}
+};
 
 /**
  * smooth numberLists by calculating averages with neighbors
@@ -11622,7 +11622,7 @@ NumberTableOperators.averageSmootherOnLists = function(numberTable, intensity, n
     newNumberTable[i] = NumberListOperators.averageSmoother(numberTable[i], intensity, nIterations);
   });
   return newNumberTable;
-}
+};
 
 /**
  * builds a k-nearest neighbors function, that calculates a class membership or a regression, taking the vote or average of the k nearest instances, using Euclidean distance, and applies it to a list of points, see: http://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm
@@ -11721,7 +11721,7 @@ NumberTableOperators.kNN = function(numberTable, propertyList, vectorList, k, ca
 
     //regression
     //…
-  }
+  };
 
   if(vectorList == null) {
 
@@ -11775,7 +11775,7 @@ NumberTableOperators.kNN = function(numberTable, propertyList, vectorList, k, ca
 
   //return results
   return results;
-}
+};
 
 
 
@@ -11845,8 +11845,8 @@ NumberTableOperators.numberTableToNetwork = function(numberTable, method, tolera
   }
 
   return network;
-}
-function StringConversions() {};
+};
+function StringConversions() {}
 
 
 /**
@@ -11861,15 +11861,15 @@ StringConversions.stringToObject = function(string) {
   } catch(err) {
     return null;
   }
-}
-function StringListOperators() {};
+};
+function StringListOperators() {}
 /** 
  * receives n arguments and performs addition
  */
 StringListOperators.concatStrings = function(stringList, joinString) { //deprecated
   if(joinString == null) joinString = "";
   return StringList.fromArray(stringList.join(joinString));
-}
+};
 
 /**
  * join strings with a character
@@ -11888,7 +11888,7 @@ StringListOperators.join = function(stringList, character, prefix, sufix) {
   prefix = prefix == null ? "" : prefix;
   sufix = sufix == null ? "" : sufix;
   return prefix + stringList.join(character) + sufix;
-}
+};
 
 
 /**
@@ -11918,7 +11918,7 @@ StringListOperators.filterStringListByString = function(stringList, string, asWo
     }
   }
   return newList;
-}
+};
 
 
 // var regex = new RegExp("\\b"+word+"\\b");
@@ -11948,7 +11948,7 @@ StringListOperators.countStringsOccurrencesOnTexts = function(strings, texts) {
     occurrencesTable[i] = numberList;
   }
   return occurrencesTable;
-}
+};
 
 /**
  * builds a table with a list of occurrent words and numberLists for occurrences in each string
@@ -12021,7 +12021,7 @@ StringListOperators.getWordsOccurrencesMatrix = function(strings, stopWords, inc
   if(totalWordsLimit > 0) matrix = matrix.sliceRows(0, totalWordsLimit - 1);
 
   return matrix;
-}
+};
 
 //good approach for few large texts, to be tested
 StringListOperators.createTextsNetwork = function(texts, stopWords, stressUniqueness, relationThreshold) {
@@ -12059,7 +12059,7 @@ StringListOperators.createTextsNetwork = function(texts, stopWords, stressUnique
   }
 
   return network;
-}
+};
 
 
 /**
@@ -12106,22 +12106,22 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
     case 0: //pseudo-entropy
       weightFunction = function(nOtherTexts) {
         return 1 - Math.pow(2 * nOtherTexts / (n_texts - 1) - 1, 2);
-      }
+      };
       break;
     case 1: //originality
       weightFunction = function(nOtherTexts) {
         return 1 / (nOtherTexts + 1);
-      }
+      };
       break;
     case 2: //skewed entropy (favoring very few external occurrences)
       weightFunction = function(nOtherTexts) {
         return 1 - Math.pow(2 * Math.pow(nOtherTexts / (n_texts - 1), 0.2) - 1, 2);
-      }
+      };
     default: //originality except isolation
       weightFunction = function(nOtherTexts) {
         if(nOtherTexts == 0) return 0;
         return 1 / nOtherTexts;
-      }
+      };
   }
 
   c.l('A ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
@@ -12161,7 +12161,7 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
       }
 
       maxWeight = Math.max(maxWeight, weights[j]);
-    };
+    }
 
     nWords = Math.floor(Math.log(n_words + 1) * 3);
 
@@ -12203,8 +12203,8 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
   c.l('C ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
 
   return network;
-}
-function StringOperators() {};
+};
+function StringOperators() {}
 
 StringOperators.ENTER = String.fromCharCode(13);
 StringOperators.ENTER2 = String.fromCharCode(10);
@@ -12231,7 +12231,7 @@ StringOperators.STOP_WORDS = StringList.fromArray("t,s,mt,rt,re,m,http,amp,a,abl
 StringOperators.split = function(string, character) {
   if(character == null) return StringOperators.splitByEnter(string);
   return StringList.fromArray(string.split(character));
-}
+};
 
 /**
  * split a String by enter (using several codifications)
@@ -12248,7 +12248,7 @@ StringOperators.splitByEnter = function(string) {
   var stringList = StringOperators.splitString(string, StringOperators.ENTER3);
   if(stringList.length > 1) return stringList;
   return new StringList(string);
-}
+};
 
 
 /**
@@ -12262,7 +12262,7 @@ StringOperators.splitByEnter = function(string) {
 StringOperators.replaceSubString = function(string, subString, replacement) {
   if(string == null || subString == null || replacement == null) return null;
   return string.replace(new RegExp(subString, "g"), replacement);
-}
+};
 
 /**
  * replaces in a string ocurrences of sub-strings by a string
@@ -12282,7 +12282,7 @@ StringOperators.replaceSubStringsByString = function(string, subStrings, replace
   });
 
   return string;
-}
+};
 
 /**
  * replaces in a string ocurrences of sub-strings by strings (1-1)
@@ -12304,7 +12304,7 @@ StringOperators.replaceSubStringsByStrings = function(string, subStrings, replac
   }
 
   return string;
-}
+};
 
 
 
@@ -12320,7 +12320,7 @@ StringOperators.replaceSubStringsByStrings = function(string, subStrings, replac
 StringOperators.substr = function(string, i0, length) {
   i0 = i0 || 0;
   return string.substr(i0, length);
-}
+};
 
 /**
  * split a String by a separator (a String) and returns a StringList
@@ -12336,7 +12336,7 @@ StringOperators.splitString = function(string, separator) {
   if(typeof separator == "string") separator = separator.replace("\\n", "\n");
   if(string.indexOf(separator) == -1) return new StringList(string);
   return StringList.fromArray(string.split(separator));
-}
+};
 
 /**
  * searches for two Strings within a String and returns the String in between
@@ -12354,7 +12354,7 @@ StringOperators.getFirstTextBetweenStrings = function(text, subString0, subStrin
   var i1 = text.indexOf(subString1, i0 + subString0.length + 1);
   if(i1 == -1) return text.substring(i0 + subString0.length);
   return text.substr(i0 + subString0.length, i1 - (i0 + subString0.length));
-}
+};
 
 /**
  * searches all the Strings contained between two Strings in a String
@@ -12384,7 +12384,7 @@ StringOperators.getAllTextsBetweenStrings = function(text, subString0, subString
     }
   }
   return stringList;
-}
+};
 
 /**
  * associates a value to each text in a StringList, according to number of words containg in each StringList; one lists pushes to negative values, the other to positive. A classic use would be a primitive sentimental analisis using a list of positive adjectives and a list of negative ones
@@ -12399,14 +12399,14 @@ StringOperators.getAllTextsBetweenStrings = function(text, subString0, subString
 StringOperators.countWordsDichotomyAnalysis = function(string, negativeStrings, positiveStrings, normalizeBySize) {
   var val = 0;
   negativeStrings.forEach(function(word) {
-    val -= StringOperators.countWordOccurrences(string, word)
+    val -= StringOperators.countWordOccurrences(string, word);
   });
   positiveStrings.forEach(function(word) {
-    val += StringOperators.countWordOccurrences(string, word)
+    val += StringOperators.countWordOccurrences(string, word);
   });
   if(normalizeBySize) val /= string.length;
   return val;
-}
+};
 
 
 /**
@@ -12498,7 +12498,7 @@ StringOperators.getLinksFromHtml = function(html, urlSource, removeHash) {
   urls = urls.getWithoutRepetitions();
 
   return urls;
-}
+};
 
 
 /**
@@ -12516,7 +12516,7 @@ StringOperators.textContainsString = function(text, string, asWord, caseSensitiv
   return asWord ?
     text.match(new RegExp("\\b" + string + "\\b")).length > 0 :
     text.indexOf(string) != -1;
-}
+};
 
 /**
  * print a string in console
@@ -12529,7 +12529,7 @@ StringOperators.logInConsole = function(string, frame) {
   if(frame) c.log('///////////////////////////////////////////////////');
   c.log(string);
   if(frame) c.log('///////////////////////////////////////////////////');
-}
+};
 
 
 
@@ -12553,10 +12553,10 @@ StringOperators.getParenthesisContents = function(text, brackets) {
   }
 
   return contents;
-}
+};
 StringOperators.getFirstParenthesisContent = function(text, brackets) {
   return StringOperators.getFirstParenthesisContentWithIndexes(text, brackets).content;
-}
+};
 StringOperators.getFirstParenthesisContentWithIndexes = function(text, brackets) {
   var open = brackets ? "[" : "(";
   var close = brackets ? "]" : ")";
@@ -12570,7 +12570,7 @@ StringOperators.getFirstParenthesisContentWithIndexes = function(text, brackets)
     "content": "",
     "index0": 0,
     "index1": 0
-  }
+  };
 
   var indexClose = text.indexOf(close);
 
@@ -12600,28 +12600,28 @@ StringOperators.getFirstParenthesisContentWithIndexes = function(text, brackets)
     "index0": indexOpen + 1,
     "index1": indexClose == -1 ? (text.length - 1) : (indexClose - 1)
   };
-}
+};
 
 StringOperators.placeString = function(string, stringToPlace, index) {
   return string.substr(0, index) + stringToPlace + string.substr(index + stringToPlace.length);
-}
+};
 
 StringOperators.insertString = function(string, stringToInsert, index) {
   return string.substr(0, index) + stringToInsert + string.substr(index);
-}
+};
 
 StringOperators.removeEnters = function(string) {
   return string.replace(/(\StringOperators.ENTER|\StringOperators.ENTER2|\StringOperators.ENTER3)/gi, " ");
-}
+};
 
 StringOperators.removeTabs = function(string) {
   return string.replace(/(\StringOperators.TAB|\StringOperators.TAB2|\t)/gi, "");
-}
+};
 
 StringOperators.removePunctuation = function(string, replaceBy) {
   replaceBy = replaceBy || "";
   return string.replace(/[:,.;?!\(\)\"\']/gi, replaceBy);
-}
+};
 
 StringOperators.removeDoubleSpaces = function(string) {
   var retString = string;
@@ -12630,12 +12630,12 @@ StringOperators.removeDoubleSpaces = function(string) {
     retString = retString.replace(regExpr, " ");
   }
   return retString;
-}
+};
 
 StringOperators.removeInitialRepeatedCharacter = function(string, character) {
   while(string.charAt(0) == character) string = string.substr(1);
   return string;
-}
+};
 
 
 /**
@@ -12648,19 +12648,19 @@ StringOperators.removeHtmlTags = function(html) {
   var tmp = document.createElement("DIV");
   tmp.innerHTML = html;
   return tmp.textContent || tmp.innerText;
-}
+};
 
 StringOperators.removeLinks = function(text) {
   text += ' ';
   var regexp = /http:\/\/[a-zA-Z0-9\/\.]+( |:|;|\r|\t|\n|\v)/g;
   return(text.replace(regexp, ' ')).substr(0, text.length - 2);
-}
+};
 
 StringOperators.removeQuotes = function(string) { //TODO:improve
   if(string.charAt(0) == "\"") string = string.substr(1);
   if(string.charAt(string.length - 1) == "\"") string = string.substr(0, string.length - 1);
   return string;
-}
+};
 
 // StringOperators.trim = function(string){
 // 	return string.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
@@ -12731,7 +12731,7 @@ StringOperators.getWords = function(string, withoutRepetitions, stopWords, sorte
 
   if(sortedByFrequency) {
     if(withoutRepetitions) {
-      list = ListOperators.countElementsRepetitionOnList(list, true)[0]
+      list = ListOperators.countElementsRepetitionOnList(list, true)[0];
       if(limit != 0) list = list.substr(0, limit);
 
       return list;
@@ -12750,7 +12750,7 @@ StringOperators.getWords = function(string, withoutRepetitions, stopWords, sorte
 
   if(limit != 0) list = list.splice(0, limit);
   return list;
-}
+};
 
 removeAccentsAndDiacritics = function(string) {
   var r = string.replace(new RegExp(/[àáâãäå]/g), "a");
@@ -12795,7 +12795,7 @@ StringOperators.getWordsOccurrencesTable = function(string, stopWords, includeLi
   var words = StringOperators.getWords(string, false, stopWords, false, includeLinks, limit, minSizeWords);
 
   return ListOperators.countElementsRepetitionOnList(words, true, false, limit);
-}
+};
 
 StringOperators.indexesOf = function(text, string) { //TODO:test
   var index = text.indexOf(string);
@@ -12807,7 +12807,7 @@ StringOperators.indexesOf = function(text, string) { //TODO:test
     index = text.indexOf(string, index + 1);
   }
   return indexes;
-}
+};
 
 /**
  * returns a string repeated a number of times
@@ -12822,7 +12822,7 @@ StringOperators.repeat = function(text, n) {
     newText += text;
   }
   return newText;
-}
+};
 
 
 
@@ -12837,13 +12837,13 @@ StringOperators.countOccurrences = function(text, string) { //seems to be th emo
     index = text.indexOf(string, index + string.length);
   }
   return n;
-}
+};
 
 StringOperators.countWordOccurrences = function(string, word) {
   var regex = new RegExp("\\b" + word + "\\b");
   var match = string.match(regex);
   return match == null ? 0 : match.length;
-}
+};
 
 StringOperators.countStringsOccurrences = function(text, strings) {
   var i;
@@ -12852,17 +12852,17 @@ StringOperators.countStringsOccurrences = function(text, strings) {
     numberList[i] = text.split(strings[i]).length - 1;
   }
   return numberList;
-}
+};
 
 //validation
 
 StringOperators.validateEmail = function(text) {
   return StringOperators.MAIL_REGEX.test(text);
-}
+};
 StringOperators.validateUrl = function(text) {
   return StringOperators.LINK_REGEX.test(text);
-}
-function NetworkConvertions() {};
+};
+function NetworkConvertions() {}
 
 
 /**
@@ -12950,8 +12950,8 @@ NetworkConvertions.TableToNetwork = function(table, numberList, threshold, allow
   }
 
   return network;
-}
-function NetworkEncodings() {};
+};
+function NetworkEncodings() {}
 
 
 
@@ -13136,7 +13136,7 @@ NetworkEncodings.decodeNoteWork = function(code) {
 
         node = network.nodeList.getNodeById(id);
 
-        iEnd = index == -1 ? line.length : index
+        iEnd = index == -1 ? line.length : index;
 
         if(node == null) {
 
@@ -13262,7 +13262,7 @@ NetworkEncodings.decodeNoteWork = function(code) {
           }
 
           if(index != -1) {
-            iEnd = index + simpleLine.substr(index).match(regex)[0].length
+            iEnd = index + simpleLine.substr(index).match(regex)[0].length;
 
             relation = network.relationList.getFirstRelationBetweenNodes(node, otherNode, true);
 
@@ -13361,14 +13361,14 @@ NetworkEncodings.decodeNoteWork = function(code) {
   network.colorSegments = colorSegments;
 
   return network;
-}
+};
 NetworkEncodings._simplifyForNoteWork = function(name) {
   name = name.toLowerCase();
   if(name.substr(name.length - 2) == 'es') {
     name = name.substr(0, name.length - 1);
   } else if(name.charAt(name.length - 1) == 's') name = name.substr(0, name.length - 1);
   return name.trim();
-}
+};
 NetworkEncodings._regexWordForNoteWork = function(word, global) {
   global = global == null ? true : global;
   try {
@@ -13376,7 +13376,7 @@ NetworkEncodings._regexWordForNoteWork = function(word, global) {
   } catch(err) {
     return null;
   }
-}
+};
 
 /**
  * encodes a network into NoteWork notes
@@ -13438,7 +13438,7 @@ NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesP
   });
 
   return code;
-}
+};
 
 
 
@@ -13518,7 +13518,7 @@ NetworkEncodings.decodeGDF = function(gdfCode) {
   }
 
   return network;
-}
+};
 
 /**
  * encodes a network in formatt GDF, more info: https://gephi.org/users/supported-graph-formats/gml-format/
@@ -13568,7 +13568,7 @@ NetworkEncodings.encodeGDF = function(network, nodesPropertiesNames, relationsPr
   }
 
   return code;
-}
+};
 
 
 //////////////GML
@@ -13692,14 +13692,14 @@ NetworkEncodings.decodeGML = function(gmlCode) {
   }
 
   return network;
-}
+};
 NetworkEncodings._cleanLineBeginning = function(string) {
   string = StringOperators.removeInitialRepeatedCharacter(string, "\n");
   string = StringOperators.removeInitialRepeatedCharacter(string, "\r");
   string = StringOperators.removeInitialRepeatedCharacter(string, " ");
   string = StringOperators.removeInitialRepeatedCharacter(string, "	");
   return string;
-}
+};
 
 
 /**
@@ -13775,7 +13775,7 @@ NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPr
 
   code += "\n]";
   return code;
-}
+};
 
 
 
@@ -13920,7 +13920,7 @@ NetworkEncodings.decodeSYM = function(symCode) {
   network.groupsPropertiesNames = groupsPropertiesNames;
 
   return network;
-}
+};
 
 NetworkEncodings.encodeSYM = function(network, groups, nodesPropertiesNames, relationsPropertiesNames, groupsPropertiesNames) {
   nodesPropertiesNames = nodesPropertiesNames == null ? new StringList() : nodesPropertiesNames;
@@ -13936,7 +13936,7 @@ NetworkEncodings.encodeSYM = function(network, groups, nodesPropertiesNames, rel
     code += (i == 0 ? "" : "\n\n") + "NODE " + node.id;
     if(node.name != "") code += "\nname:" + (node.name).replace(/\n/g, "\\n");
     for(j = 0; nodesPropertiesNames[j] != null; j++) {
-      propertyName = nodesPropertiesNames[j]
+      propertyName = nodesPropertiesNames[j];
       if(node[propertyName] != null) code += "\n" + propertyName + ":" + _processProperty(propertyName, node[propertyName]);
     }
   }
@@ -13946,7 +13946,7 @@ NetworkEncodings.encodeSYM = function(network, groups, nodesPropertiesNames, rel
     relation = network.relationList[i];
     code += "\n\nRELATION " + relation.node0.id + ", " + relation.node1.id;
     for(j = 0; relationsPropertiesNames[j] != null; j++) {
-      propertyName = relationsPropertiesNames[j]
+      propertyName = relationsPropertiesNames[j];
       if(relation[propertyName] != null) code += "\n" + propertyName + ":" + _processProperty(propertyName, relation[propertyName]);
     }
   }
@@ -13966,7 +13966,7 @@ NetworkEncodings.encodeSYM = function(network, groups, nodesPropertiesNames, rel
   //c.log("/////// encodeSYM\n"+code+"\n/////////");
 
   return code;
-}
+};
 
 _processProperty = function(propName, propValue) { //TODO: use this in other encoders
   switch(propName) {
@@ -13980,7 +13980,7 @@ _processProperty = function(propName, propValue) { //TODO: use this in other enc
   }
   propValue = String(propValue).replace(/\n/g, "\\n");
   return propValue;
-}
+};
 
 
 
@@ -14002,7 +14002,7 @@ NetworkEncodings.replaceChomasInLine = function(line) {
   }
   line = StringList.fromArray(quoteBlocks).getConcatenated("");
   return line;
-}
+};
 NetworkEncodings._replaceSpacesInLine = function(line) {
   var quoteBlocks = line.split("\"");
   if(quoteBlocks.length < 2) return line;
@@ -14016,8 +14016,8 @@ NetworkEncodings._replaceSpacesInLine = function(line) {
   }
   line = StringList.fromArray(quoteBlocks).getConcatenated("\"");
   return line;
-}
-function NetworkGenerators() {};
+};
+function NetworkGenerators() {}
 
 
 /**
@@ -14080,7 +14080,7 @@ NetworkGenerators.createRandomNetwork = function(nNodes, pRelation, mode, random
       return network;
   }
 
-}
+};
 
 /**
  * weightsForRelationsMethod 0:dotProduct (more efficient) 1:cosinus similarity
@@ -14089,7 +14089,7 @@ NetworkGenerators.createRandomNetwork = function(nNodes, pRelation, mode, random
 NetworkGenerators.createTextsCoOccurrencesNetwork = function(strings, texts, weightsForRelationsMethod, minimum) {
   var occurrencesTable = StringListOperators.countStringsOccurrencesOnTexts(strings, texts, weightsForRelationsMethod, minimum);
   return NetworkGenerators.createNetworkFromOccurrencesTable(occurrencesTable);
-}
+};
 
 NetworkGenerators.createNetworkFromOccurrencesTable = function(occurrencesTable, weightsForRelationsMethod, minimum) {
   weightsForRelationsMethod = weightsForRelationsMethod == null ? 0 : weightsForRelationsMethod;
@@ -14142,7 +14142,7 @@ NetworkGenerators.createNetworkFromOccurrencesTable = function(occurrencesTable,
   }
 
   return network;
-}
+};
 
 /**
  * Creates a network using a list and measuring the relation weight with a given method
@@ -14172,7 +14172,7 @@ NetworkGenerators.createNetworkFromListAndFunction = function(list, weightFuncti
   }
 
   return network;
-}
+};
 
 
 /**
@@ -14198,7 +14198,7 @@ NetworkGenerators.createNetworkFromTextAndWords = function(text, nounPhrases, sp
   nounPhrases = nounPhrases.getWithoutElements(new StringList("", " ", "\n"));
 
   nounPhrases.forEach(function(np) {
-    np = NetworkEncodings._simplifyForNoteWork(np)
+    np = NetworkEncodings._simplifyForNoteWork(np);
     if(np) nounPhrases.push(np);
   });
 
@@ -14291,7 +14291,7 @@ NetworkGenerators.createNetworkFromTextAndWords = function(text, nounPhrases, sp
   });
 
   return network;
-}
+};
 NetworkOperators = function() {};
 
 
@@ -14304,7 +14304,7 @@ NetworkOperators.filterNodesByMinDegree = function(network, minDegree) {
     }
   }
   return null;
-}
+};
 
 
 NetworkOperators.degreeBetweenNodes = function(network, node0, node1) {
@@ -14329,7 +14329,7 @@ NetworkOperators.degreeBetweenNodes = function(network, node0, node1) {
   }
 
   return d;
-}
+};
 
 NetworkOperators.shortestPath = function(network, node0, node1, includeExtremes) {
   if(network == null || node0 == null || node1 == null) return null;
@@ -14346,7 +14346,7 @@ NetworkOperators.shortestPath = function(network, node0, node1, includeExtremes)
   }
   if(includeExtremes) path.addNode(node0);
   return path.getReversed();
-}
+};
 
 
 /**
@@ -14387,7 +14387,7 @@ NetworkOperators.shortestPaths = function(network, node0, node1, shortPath) {
   c.l('2. all.length', all.length);
 
   return all;
-}
+};
 
 NetworkOperators._extendPaths = function(allPaths, nodeDestiny, maxLength) {
 
@@ -14419,7 +14419,7 @@ NetworkOperators._extendPaths = function(allPaths, nodeDestiny, maxLength) {
 
   return NetworkOperators._extendPaths(allPaths, nodeDestiny, maxLength);
 
-}
+};
 
 /**
  * finds all loops in the network
@@ -14452,7 +14452,7 @@ NetworkOperators.loops = function(network, minSize) {
   if(minSize) allLoops = allLoops.getFilteredByPropertyValue("length", minSize, "greater");
 
   allLoops.sort(function(a0, a1) {
-    return a0.length > a1.length ? -1 : 1
+    return a0.length > a1.length ? -1 : 1;
   });
 
   allLoops.forEach(function(loop) {
@@ -14462,7 +14462,7 @@ NetworkOperators.loops = function(network, minSize) {
   var same = NetworkOperators._sameLoop(allLoops[0], allLoops[1]);
 
   return allLoops;
-}
+};
 NetworkOperators._sameLoop = function(loop0, loop1) {
   if(loop0.length != loop1.length) return false;
   if(loop1.getNodeById(loop0[0].id) == null) return false;
@@ -14473,7 +14473,7 @@ NetworkOperators._sameLoop = function(loop0, loop1) {
     if(loop0[i] != loop1[(i + i1) % l]) return false;
   }
   return true;
-}
+};
 NetworkOperators._getLoopsOnNode = function(central) {
   if(central.toNodeList.length == 0 || central.fromNodeList.length == 0) return [];
 
@@ -14517,11 +14517,11 @@ NetworkOperators._getLoopsOnNode = function(central) {
   }
 
   loops.sort(function(a0, a1) {
-    return a0.length > a1.length ? -1 : 1
+    return a0.length > a1.length ? -1 : 1;
   });
 
   return loops;
-}
+};
 
 NetworkOperators._pathsToCentral = function(columns, iColumn, path, paths) {
   if(path.finished) return;
@@ -14571,7 +14571,7 @@ NetworkOperators._pathsToCentral = function(columns, iColumn, path, paths) {
       }
     }
   }
-}
+};
 
 NetworkOperators._loopsColumns = function(nodeList, iColumn, columns) {
   if(columns[iColumn] == null) columns[iColumn] = new NodeList();
@@ -14595,7 +14595,7 @@ NetworkOperators._loopsColumns = function(nodeList, iColumn, columns) {
     }
   }
   if(newNodeList.length > 0) NetworkOperators._loopsColumns(newNodeList, iColumn + 1, columns);
-}
+};
 
 
 
@@ -14666,7 +14666,7 @@ NetworkOperators.spanningTree = function(network, node0, nodeLimit) { //TODO: th
   }
 
   return tree;
-}
+};
 
 NetworkOperators.degreesPartition = function(network, node) { //TODO:optionally add a NodeList of not connected Nodes
   var list0 = new NodeList(node);
@@ -14702,7 +14702,7 @@ NetworkOperators.degreesPartition = function(network, node) { //TODO:optionally 
   }
 
   return nodesTable;
-}
+};
 
 NetworkOperators.degreesFromNodeToNodes = function(network, node, nodeList) { //TODO: probably very unefficient
   var table = NetworkOperators.degreesPartition(network, node);
@@ -14724,7 +14724,7 @@ NetworkOperators.degreesFromNodeToNodes = function(network, node, nodeList) { //
     if(degrees[i] == null) degrees[i] = -1;
   }
   return degrees;
-}
+};
 
 /**
  * builds a dendrogram from a network
@@ -14786,7 +14786,7 @@ NetworkOperators.buildDendrogram = function(network) {
     for(i = 0; node1.nodeList[i] != null; i++) {
       newNode.node.nodeList.addNode(node1.nodeList[i]);
       newNode.node.relationList.addRelation(node1.relationList[i]);
-      Network
+      Network;
     }
 
     nodeList.removeElement(node0);
@@ -14804,7 +14804,7 @@ NetworkOperators.buildDendrogram = function(network) {
   }
 
   return tree;
-}
+};
 NetworkOperators._getClosestPair = function(nodeList, returnIndexes, pRelationPair) {
   if(nodeList.length == 2) {
     var index = nodeList[0].nodeList.indexOf(nodeList[1]);
@@ -14849,7 +14849,7 @@ NetworkOperators._getClosestPair = function(nodeList, returnIndexes, pRelationPa
   nodes.strength = maxStrength;
   return nodes;
 
-}
+};
 NetworkOperators._strengthBetweenSets = function(nodeList0, nodeList1, pRelationPair) {
   var strength = 0;
   var i, j;
@@ -14866,7 +14866,7 @@ NetworkOperators._strengthBetweenSets = function(nodeList0, nodeList1, pRelation
   }
 
   return strength / (nodeList0.length * nodeList1.length * pRelationPair);
-}
+};
 
 
 
@@ -14890,13 +14890,13 @@ NetworkOperators.buildNetworkClusters = function(network, dendrogramTree, minWei
   NetworkOperators._iterativeBuildClusters(dendrogramTree.nodeList[dendrogramTree.nodeList.length - 1], clusters, minWeight);
 
   return clusters;
-}
+};
 
 NetworkOperators._iterativeBuildClusters = function(node, clusters, minWeight) {
   if(node.nodeList.length == 1) {
     clusters.push(new NodeList(node.node));
-    return
-  };
+    return;
+  }
 
   if(node.nodeList[0].nodes.length == 1 || node.nodeList[0].weight > minWeight) {
     clusters.push(node.nodeList[0].nodes);
@@ -14909,7 +14909,7 @@ NetworkOperators._iterativeBuildClusters = function(node, clusters, minWeight) {
   } else {
     NetworkOperators._iterativeBuildClusters(node.nodeList[1], clusters, minWeight);
   }
-}
+};
 
 
 
@@ -14967,7 +14967,7 @@ NetworkOperators.addPageRankToNodes = function(network, from, useRelationsWeight
       }
     }
   }
-}
+};
 
 
 /**
@@ -14990,7 +14990,7 @@ NetworkOperators.fusionNoteworks = function(noteworksList, hubsDistanceFactor, h
   });
 
   return NetworkOperators.fusionNetworks(networks, hubsDistanceFactor, hubsForceWeight);
-}
+};
 
 
 /**
@@ -15024,7 +15024,7 @@ NetworkOperators.fusionNetworks = function(networks, hubsDistanceFactor, hubsFor
         newNode = new Node(node.id, node.name);
         newNode.basicId = node.basicId;
         newNode.mapId = "map_" + i;
-        newNode.mapsIds = [newNode.mapId]
+        newNode.mapsIds = [newNode.mapId];
         newNode.color = colors[i];
         newNode.nMaps = 1;
         newNode.weight = node.weight;
@@ -15084,8 +15084,8 @@ NetworkOperators.fusionNetworks = function(networks, hubsDistanceFactor, hubsFor
   fusionNet.mapsCluster = mapsCluster;
 
   return fusionNet;
-}
-function TreeConvertions() {};
+};
+function TreeConvertions() {}
 
 /**
  * convert a table that describes a tree (higher hierarchies in first lists) into a Tree
@@ -15128,7 +15128,7 @@ TreeConvertions.TableToTree = function(table, fatherName, lastListIsWeights) {
   tree.assignDescentWeightsToNodes();
 
   return tree;
-}
+};
 TreeConvertions.getId = function(table, i, j) {
   var iCol = 1;
   var id = String(table[0][j]);
@@ -15137,8 +15137,8 @@ TreeConvertions.getId = function(table, i, j) {
     iCol++;
   }
   return id;
-}
-function TreeEncodings() {};
+};
+function TreeEncodings() {}
 
 //include(frameworksRoot+"operators/strings/StringOperators.js");
 
@@ -15203,8 +15203,8 @@ TreeEncodings.decodeIdentedTree = function(indexedTree, superiorNodeName, identa
   tree.assignDescentWeightsToNodes();
 
   return tree;
-}
-function CanvasAndContext() {};
+};
+function CanvasAndContext() {}
 
 CanvasAndContext.createInvisibleContext = function(width, height) {
   width = width || cW;
@@ -15214,7 +15214,7 @@ CanvasAndContext.createInvisibleContext = function(width, height) {
   tempCanvas.width = cW;
   tempCanvas.height = cH;
   return tempCanvas.getContext('2d');
-}
+};
 //TODO: delete many functions that are deprectaed, replaced by SimpleGraphics.js functions
 
 //include(frameworksRoot+"operators/geometry/GeometryOperators.js");
@@ -15222,7 +15222,7 @@ CanvasAndContext.createInvisibleContext = function(width, height) {
  * Draw
  * @constructor
  */
-function Draw() {};
+function Draw() {}
 
 Draw.drawSmoothPolygon = function(polygon, closed, amount) { //TODO: add tx, ty
   amount = amount == null ? 30 : amount;
@@ -15266,7 +15266,7 @@ Draw.drawSmoothPolygon = function(polygon, closed, amount) { //TODO: add tx, ty
     prevCP = controlPoints[1];
     prevPoint = point;
   }
-}
+};
 
 /**
  * modes:
@@ -15340,7 +15340,7 @@ Draw.fillRectangleWithImage = function(rectangle, image, mode, backColor) {
     case 5:
       break;
   }
-}
+};
 
 
 /**
@@ -15365,7 +15365,7 @@ Draw.drawEllipse = function(x, y, rW, rH) {
   context.bezierCurveTo(xe, y + oy, x + ox, ye, x, ye);
   context.bezierCurveTo(x - ox, ye, x - rW, y + oy, x - rW, y);
   context.moveTo(x - rW, y);
-}
+};
 
 /**
  * Draws a polygon
@@ -15386,7 +15386,7 @@ Draw.drawPolygon = function(polygon, close, tx, ty) {
   if(close) {
     context.lineTo(tx + polygon[0].x, ty + polygon[0].y);
   }
-}
+};
 
 Draw.drawPolygonWithControlPoints = function(polygon, controlPoints, tx, ty) {
   tx = tx || 0;
@@ -15398,7 +15398,7 @@ Draw.drawPolygonWithControlPoints = function(polygon, controlPoints, tx, ty) {
       tx + controlPoints[i * 2 - 1].x, ty + controlPoints[i * 2 - 1].y,
       tx + polygon[i].x, ty + polygon[i].y);
   }
-}
+};
 
 Draw.drawBezierPolygon = function(bezierPolygon, tx, ty) {
   tx = tx || 0;
@@ -15416,7 +15416,7 @@ Draw.drawBezierPolygon = function(bezierPolygon, tx, ty) {
       tx + bezierPolygon[bI + 2].x, ty + bezierPolygon[bI + 2].y
     );
   }
-}
+};
 
 Draw.drawBezierPolygonTransformed = function(bezierPolygon, transformationFunction) {
   if(bezierPolygon == null ||  bezierPolygon.length == 0) return;
@@ -15442,7 +15442,7 @@ Draw.drawBezierPolygonTransformed = function(bezierPolygon, transformationFuncti
       p2.x, p2.y
     );
   }
-}
+};
 
 Draw.drawPolygonTransformed = function(polygon, transformationFunction) {
   var p = transformationFunction(polygon[0]);
@@ -15451,7 +15451,7 @@ Draw.drawPolygonTransformed = function(polygon, transformationFunction) {
     p = transformationFunction(polygon[i]);
     context.lineTo(p.x, p.y);
   }
-}
+};
 
 
 Draw.drawSliderRectangle = function(x, y, width, height) {
@@ -15460,7 +15460,7 @@ Draw.drawSliderRectangle = function(x, y, width, height) {
   context.arc(x + width * 0.5, y + height, width * 0.5, 0, Math.PI);
   context.lineTo(x, y);
   //context.fillRect(x, y, width, height);
-}
+};
 
 
 
@@ -15487,7 +15487,7 @@ Draw.drawRoundRect = function(x, y, width, height, radius) {
   context.quadraticCurveTo(x, bottom, x, bottom - radius);
   context.lineTo(x, y + radius);
   context.quadraticCurveTo(x, y, x + radius, y);
-}
+};
 
 Draw.drawEquilateralTriangle = function(x, y, radius, angle) { //deprecated
   angle = angle || 0;
@@ -15495,20 +15495,20 @@ Draw.drawEquilateralTriangle = function(x, y, radius, angle) { //deprecated
   context.lineTo(radius * Math.cos(angle + 2.0944) + x, radius * Math.sin(angle + 2.0944) + y);
   context.lineTo(radius * Math.cos(angle + 4.1888) + x, radius * Math.sin(angle + 4.1888) + y);
   context.lineTo(radius * Math.cos(angle) + x, radius * Math.sin(angle) + y);
-}
+};
 
 Draw.drawArrowTriangle = function(p0, p1, base) {
   var angle = p0.angleToPoint(p1);
   var height = p0.distanceToPoint(p1);
   Draw.drawTriangleFromBase(p0.x, p0.y, base, height, angle);
-}
+};
 
 Draw.drawTriangleFromBase = function(x, y, base, height, angle) {
   context.moveTo(x + 0.5 * base * Math.cos(angle + Math.PI * 0.5), y + 0.5 * base * Math.sin(angle + Math.PI * 0.5));
   context.lineTo(x + 0.5 * base * Math.cos(angle - Math.PI * 0.5), y + 0.5 * base * Math.sin(angle - Math.PI * 0.5));
   context.lineTo(x + height * Math.cos(angle), y + height * Math.sin(angle));
   context.lineTo(x + 0.5 * base * Math.cos(angle + Math.PI * 0.5), y + 0.5 * base * Math.sin(angle + Math.PI * 0.5));
-}
+};
 
 Draw.drawHorizontalFlowPiece = function(x0, x1, y0U, y0D, y1U, y1D, offX) {
   context.moveTo(x0, y0U);
@@ -15516,7 +15516,7 @@ Draw.drawHorizontalFlowPiece = function(x0, x1, y0U, y0D, y1U, y1D, offX) {
   context.lineTo(x1, y1D);
   context.bezierCurveTo(x1 - offX, y1D, x0 + offX, y0D, x0, y0D);
   context.lineTo(x0, y0U);
-}
+};
 
 
 
@@ -15540,7 +15540,7 @@ Draw.drawRectangles = function(rectangleList, x, y, colors, margin, bitmapDataLi
       Draw.fillRectangleWithImage(context, adjustedRect, bitmapDataList[i], bitmapDataDrawMode);
     }
   }
-}
+};
 
 Draw.drawQuadrilater = function(p0, p1, p2, p3, close) {
   close = close == null ? true : close;
@@ -15549,7 +15549,7 @@ Draw.drawQuadrilater = function(p0, p1, p2, p3, close) {
   context.lineTo(p2.x, p2.y);
   context.lineTo(p3.x, p3.y);
   if(close) context.lineTo(p0.x, p0.y);
-}
+};
 
 /**
  * it assumes that both circles centers have same y coordinates
@@ -15572,7 +15572,7 @@ Draw.drawLens = function(circle0, circle1) {
 
   context.arc(circle0.x, circle0.y, circle0.z, angles[0], angles[1]);
   context.arc(circle1.x, circle1.y, circle1.z, angles[2], angles[3]);
-}
+};
 
 
 
@@ -15593,7 +15593,7 @@ Draw.drawAndCapture = function(drawFunction, frame, target) {
 
   context = defaultContext;
   return image;
-}
+};
 //include(frameworksRoot+"operators/graphic/ColorListOperators.js");
 
 /**
@@ -15613,7 +15613,7 @@ Draw.drawAndCapture = function(drawFunction, frame, target) {
  * @constructor
  */
 
-function DrawSimpleVis() {};
+function DrawSimpleVis() {}
 
 
 DrawSimpleVis.drawSimpleBarChart = function(context, numberList, frame, colors) { //TODO: complete cases (numberLists with negative (and positive) values)
@@ -15630,7 +15630,7 @@ DrawSimpleVis.drawSimpleBarChart = function(context, numberList, frame, colors) 
     context.fillStyle = colors[i];
     context.fillRect(frame.x + i * dX, bottom - normalizedNumberList[i], dX - 1, normalizedNumberList[i]);
   }
-}
+};
 
 
 
@@ -15720,7 +15720,7 @@ DrawSimpleVis.drawIntervalsFlowTable = function(context, intervalsFlowTable, fra
   // context.fill();
   //
   // }
-}
+};
 
 
 
@@ -15876,7 +15876,7 @@ DrawSimpleVis.drawIntervalsWordsFlowTable = function(context, intervalsFlowTable
   // }
   // } while(j+1<nCols);
   // }
-}
+};
 
 // DrawSimpleVis._bezierValue = function(x0, x1, y0, y1, t, offX){
 // //return y0*(1-t)+y1*t;
@@ -15953,7 +15953,7 @@ DrawSimpleVis.drawStackBarsFlowTable = function(context, intervalsFlowTable, fra
     }
     context.fill();
   }
-}
+};
 
 // DrawSimpleVis.drawNetworMatrix = function(network, frame, colors, relationsColorScaleFunction, margin, directed){
 // relationsColorScaleFunction = relationsColorScaleFunction==null?ColorOperators.grayScale:relationsColorScaleFunction;
@@ -15994,7 +15994,7 @@ DrawSimpleVis.drawStackBarsFlowTable = function(context, intervalsFlowTable, fra
  * static Class with methods to render text in canvas
  * @constructor
  */
-function DrawTexts() {};
+function DrawTexts() {}
 
 DrawTexts.POINT_TO_PIXEL = 1.3333;
 DrawTexts.PIXEL_TO_POINT = 0.75;
@@ -16030,7 +16030,7 @@ DrawTexts.PIXEL_TO_POINT = 0.75;
 DrawTexts.fillTextRectangle = function(text, x, y, width, height, lineHeight, returnHeight, ellipsis) {
   var textLines = DrawTexts.textWordWrapReturnLines(text, width, height, lineHeight, ellipsis);
   return DrawTexts.fillTextRectangleWithTextLines(textLines, x, y, height, lineHeight, returnHeight);
-}
+};
 
 /**
  * fill a text rotated
@@ -16045,7 +16045,7 @@ DrawTexts.fillTextRotated = function(text, x, y, angle) { //TODO: remove (replac
   context.rotate(angle);
   context.fillText(text, 0, 0);
   context.restore();
-}
+};
 
 
 DrawTexts.fillTextRectangleWithTextLines = function(textLines, x, y, height, lineHeight, returnHeight) {
@@ -16057,7 +16057,7 @@ DrawTexts.fillTextRectangleWithTextLines = function(textLines, x, y, height, lin
   }
   if(returnHeight) return textLines.length * lineHeight;
   return textLines.length;
-}
+};
 
 
 DrawTexts.textWordWrapReturnLines = function(text, fitWidth, fitHeight, lineHeight, ellipsis) {
@@ -16127,14 +16127,14 @@ DrawTexts.textWordWrapReturnLines = function(text, fitWidth, fitHeight, lineHeig
   lines.width = lines.length == 1 ? w : fitWidth;
 
   return lines;
-}
+};
 DrawTexts.getMaxTextWidth = function(texts) {
   var max = getTextW(texts[0]);
   for(var i = 1; texts[i] != null; i++) {
     max = Math.max(max, getTextW(texts[i]));
   }
   return max;
-}
+};
 
 
 DrawTexts.cropString = function(ctx, string, fitWidth) {
@@ -16159,16 +16159,16 @@ DrawTexts.cropString = function(ctx, string, fitWidth) {
       idx++;
     }
   }
-}
+};
 //include(frameworksRoot+"operators/numeric/MatrixGenerators.js");
 
 
-function DrawTextsAdvanced() {};
+function DrawTextsAdvanced() {}
 
 
 DrawTextsAdvanced.characterOnQuadrilater = function(context, character, p0, p1, p2, p3, fontType) {
 
-}
+};
 
 
 /**
@@ -16252,12 +16252,12 @@ DrawTextsAdvanced.textOnQuadrilater = function(text, p0, p1, p2, p3, fontSize, n
   context.fillText(text, 0, 0);
 
   context.restore();
-}
+};
 
 DrawTextsAdvanced.applyTransformationOnCanvasFromPoints = function(v0, v1, v2, w0, w1, w2) { //TODO:find the correct place for this
   var M = MatrixGenerators.createMatrixFromTrianglesMapping(v0, v1, v2, w0, w1, w2);
   context.transform(M.a, M.b, M.c, M.d, M.tx, M.ty);
-}
+};
 
 DrawTextsAdvanced.mapRectangleIntoQuadrilater = function(image, xI, yI, wI, hI, v0, v1, v2, v3) { //TODO:find the correct place for this
   context.save();
@@ -16299,10 +16299,10 @@ DrawTextsAdvanced.mapRectangleIntoQuadrilater = function(image, xI, yI, wI, hI, 
 
 
   context.restore();
-}
+};
 
 DrawTextsAdvanced.getClippedTrianglesData = function(image, xI, yI, wI, hI) {
-  var object = new Object();
+  var object = {};
 
   context.clearRect(0, 0, wI, hI);
   context.save();
@@ -16342,7 +16342,7 @@ DrawTextsAdvanced.getClippedTrianglesData = function(image, xI, yI, wI, hI) {
   context.restore();
 
   return object;
-}
+};
 
 
 //
@@ -16378,7 +16378,7 @@ DrawTextsAdvanced.typodeOnQuadrilater = function(text, p0, p1, p2, p3) { //TODO:
     context.stroke();
   }
 
-}
+};
 /*
  * graphic and text methods globally accesible
  * that work with context
@@ -16392,50 +16392,50 @@ fRect = function(x, y, width, height) {
     y = x.y;
     width = x.width;
     height = x.height;
-    x = x.x
-  };
+    x = x.x;
+  }
   context.fillRect(x, y, width, height);
-}
+};
 
 sRect = function(x, y, width, height) {
   if(typeof x != 'number') {
     y = x.y;
     width = x.width;
     height = x.height;
-    x = x.x
-  };
+    x = x.x;
+  }
   context.strokeRect(x, y, width, height);
-}
+};
 
 fsRect = function(x, y, width, height) {
   if(typeof x != 'number') {
     y = x.y;
     width = x.width;
     height = x.height;
-    x = x.x
-  };
+    x = x.x;
+  }
   context.fillRect(x, y, width, height);
   context.strokeRect(x, y, width, height);
-}
+};
 
 fCircle = function(x, y, r) {
   context.beginPath();
   context.arc(x, y, r, 0, TwoPi);
   context.fill();
-}
+};
 
 sCircle = function(x, y, r) {
   context.beginPath();
   context.arc(x, y, r, 0, TwoPi);
   context.stroke();
-}
+};
 
 fsCircle = function(x, y, r) {
   context.beginPath();
   context.arc(x, y, r, 0, TwoPi);
   context.fill();
   context.stroke();
-}
+};
 
 fEllipse = function(x, y, rW, rH) {
   var k = 0.5522848, // 4 * ((√(2) - 1) / 3)
@@ -16452,7 +16452,7 @@ fEllipse = function(x, y, rW, rH) {
   context.moveTo(x - rW, y);
   context.closePath();
   context.fill();
-}
+};
 
 sEllipse = function(x, y, rW, rH) {
   var k = 0.5522848,
@@ -16469,7 +16469,7 @@ sEllipse = function(x, y, rW, rH) {
   context.moveTo(x - rW, y);
   context.closePath();
   context.stroke();
-}
+};
 
 fsEllipse = function(x, y, rW, rH) {
   var k = 0.5522848,
@@ -16487,14 +16487,14 @@ fsEllipse = function(x, y, rW, rH) {
   context.closePath();
   context.fill();
   context.stroke();
-}
+};
 
 line = function(x0, y0, x1, y1) {
   context.beginPath();
   context.moveTo(x0, y0);
   context.lineTo(x1, y1);
   context.stroke();
-}
+};
 
 
 bezier = function(x0, y0, cx0, cy0, cx1, cy1, x1, y1) {
@@ -16502,7 +16502,7 @@ bezier = function(x0, y0, cx0, cy0, cx1, cy1, x1, y1) {
   context.moveTo(x0, y0);
   context.bezierCurveTo(cx0, cy0, cx1, cy1, x1, y1);
   context.stroke();
-}
+};
 
 
 _lines = function() {
@@ -16513,7 +16513,7 @@ _lines = function() {
   for(var i = 2; arguments[i + 1] != null; i += 2) {
     context.lineTo(arguments[i], arguments[i + 1]);
   }
-}
+};
 
 _linesM = function() {
   if(arguments == null) return;
@@ -16527,31 +16527,31 @@ _linesM = function() {
     p.push(new Point(arguments[i], arguments[i + 1]));
   }
   return p.containsPoint(mP);
-}
+};
 
 
 fLines = function() {
   _lines(arguments);
   context.fill();
-}
+};
 
 sLines = function() {
   _lines(arguments);
   context.stroke();
-}
+};
 
 fsLines = function() {
   _lines(arguments);
   context.fill();
   context.stroke();
-}
+};
 
 fsLinesM = function() {
   var mouseOn = _linesM(arguments);
   context.fill();
   context.stroke();
   return mouseOn;
-}
+};
 
 _polygon = function(polygon) {
   context.beginPath();
@@ -16559,41 +16559,41 @@ _polygon = function(polygon) {
   for(var i = 1; polygon[i] != null; i++) {
     context.lineTo(polygon[i].x, polygon[i].y);
   }
-}
+};
 
 fPolygon = function(polygon) {
   _polygon(polygon);
   context.fill();
-}
+};
 
 sPolygon = function(polygon, closePath) {
   _polygon(polygon);
   if(closePath) context.closePath();
   context.stroke();
-}
+};
 
 fsPolygon = function(polygon, closePath) {
   _polygon(polygon);
   if(closePath) context.closePath();
   context.fill();
   context.stroke();
-}
+};
 
 fEqTriangle = function(x, y, angle, r) {
   _eqTriangle(x, y, angle, r);
   context.fill();
-}
+};
 
 sEqTriangle = function(x, y, angle, r) {
   _eqTriangle(x, y, angle, r);
   context.stroke();
-}
+};
 
 fsEqTriangle = function(x, y, angle, r) {
   _eqTriangle(x, y, angle, r);
   context.fill();
   context.stroke();
-}
+};
 
 _eqTriangle = function(x, y, angle, r) {
   context.beginPath();
@@ -16602,7 +16602,7 @@ _eqTriangle = function(x, y, angle, r) {
   context.lineTo(r * Math.cos(angle + 2.0944) + x, r * Math.sin(angle + 2.0944) + y);
   context.lineTo(r * Math.cos(angle + 4.1888) + x, r * Math.sin(angle + 4.1888) + y);
   context.lineTo(r * Math.cos(angle) + x, r * Math.sin(angle) + y);
-}
+};
 
 
 //drawing and checking cursor
@@ -16611,20 +16611,20 @@ fRectM = function(x, y, width, height, margin) {
   margin = margin == null ? 0 : margin;
   context.fillRect(x, y, width, height);
   return mY > y - margin && mY < y + height + margin && mX > x - margin && mX < x + width + margin;
-}
+};
 
 sRectM = function(x, y, width, height, margin) {
   margin = margin == null ? 0 : margin;
   context.strokeRect(x, y, width, height);
   return mY > y - margin && mY < y + height + margin && mX > x - margin && mX < x + width + margin;
-}
+};
 
 fsRectM = function(x, y, width, height, margin) {
   margin = margin == null ? 0 : margin;
   context.fillRect(x, y, width, height);
   context.strokeRect(x, y, width, height);
   return mY > y - margin && mY < y + height + margin && mX > x - margin && mX < x + width + margin;
-}
+};
 
 fCircleM = function(x, y, r, margin) { //check if you can avoid repeat
   margin = margin == null ? 0 : margin;
@@ -16632,14 +16632,14 @@ fCircleM = function(x, y, r, margin) { //check if you can avoid repeat
   context.arc(x, y, r, 0, TwoPi);
   context.fill();
   return Math.pow(x - mX, 2) + Math.pow(y - mY, 2) < Math.pow(r + margin, 2);
-}
+};
 sCircleM = function(x, y, r, margin) {
   margin = margin == null ? 0 : margin;
   context.beginPath();
   context.arc(x, y, r, 0, TwoPi);
   context.stroke();
   return Math.pow(x - mX, 2) + Math.pow(y - mY, 2) < Math.pow(r + margin, 2);
-}
+};
 fsCircleM = function(x, y, r, margin) {
   margin = margin == null ? 0 : margin;
   context.beginPath();
@@ -16647,7 +16647,7 @@ fsCircleM = function(x, y, r, margin) {
   context.stroke();
   context.fill();
   return Math.pow(x - mX, 2) + Math.pow(y - mY, 2) < Math.pow(r + margin, 2);
-}
+};
 
 lineM = function(x0, y0, x1, y1, d) {
   d = d || 4;
@@ -16656,7 +16656,7 @@ lineM = function(x0, y0, x1, y1, d) {
   context.lineTo(x1, y1);
   context.stroke();
   return _distToSegmentSquared(x0, y0, x1, y1) < d * d;
-}
+};
 _distToSegmentSquared = function(x0, y0, x1, y1) {
   var l2 = Math.pow(x0 - x1, 2) + Math.pow(y0 - y1, 2);
   if(l2 === 0) return Math.pow(x0 - mX, 2) + Math.pow(y0 - mY, 2);
@@ -16666,7 +16666,7 @@ _distToSegmentSquared = function(x0, y0, x1, y1) {
   var px = x0 + t * (x1 - x0);
   var py = y0 + t * (y1 - y0);
   return Math.pow(px - mX, 2) + Math.pow(py - mY, 2);
-}
+};
 
 //TODO:fEqTriangleM, fPolygonM
 
@@ -16678,7 +16678,7 @@ bezierM = function(x0, y0, cx0, cy0, cx1, cy1, x1, y1, d) { //TODO: fix this mes
   context.stroke();
   if(mX < Math.min(x0, x1, cx0, cx1) - d || mX > Math.max(x0, x1, cx0, cx1) + d || mY < Math.min(y0, y1, cy0, cy1) - d || mY > Math.max(y0, y1, cy0, cy1) + d) return false;
   return GeometryOperators.distanceToBezierCurve(x0, y0, cx0, cy0, cx1, cy1, x1, y1, mP, false) < d;
-}
+};
 
 
 
@@ -16706,7 +16706,7 @@ drawImage = function(image) { //TODO: improve efficiency
       break;
 
   }
-}
+};
 
 /**
  * fits an image into a rectangle without chagning its proportions (thus probably loosing top-bottom or left-right margins)
@@ -16725,7 +16725,7 @@ fitImage = function(image, rectangle) {
   } else {
     context.drawImage(image, 0, 0.5 * (image.height - image.height * compProp), image.width, image.height * compProp, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
   }
-}
+};
 
 // styles
 
@@ -16739,7 +16739,7 @@ setFill = function(style) {
     return;
   }
   context.fillStyle = style;
-}
+};
 
 setStroke = function(style, lineWidth) {
   if(typeof style == "number") {
@@ -16753,11 +16753,11 @@ setStroke = function(style, lineWidth) {
   context.strokeStyle = style;
 
   if(lineWidth) context.lineWidth = lineWidth;
-}
+};
 
 setLW = function(lineWidth) {
   context.lineWidth = lineWidth;
-}
+};
 
 
 
@@ -16769,7 +16769,7 @@ clipCircle = function(x, y, r) {
   context.arc(x, y, r, 0, TwoPi, false);
   context.closePath();
   context.clip();
-}
+};
 
 clipRectangle = function(x, y, w, h) {
   context.save();
@@ -16779,27 +16779,27 @@ clipRectangle = function(x, y, w, h) {
   context.lineTo(x + w, y + h);
   context.lineTo(x, y + h);
   context.clip();
-}
+};
 
 restore = function() {
   context.restore();
-}
+};
 
 
 // texts
 
 fText = function(text, x, y) {
   context.fillText(text, x, y);
-}
+};
 
 sText = function(text, x, y) {
   context.strokeText(text, x, y);
-}
+};
 
 fsText = function(text, x, y) {
   context.strokeText(text, x, y);
   context.fillText(text, x, y);
-}
+};
 
 fTextRotated = function(text, x, y, angle) {
   context.save();
@@ -16807,20 +16807,20 @@ fTextRotated = function(text, x, y, angle) {
   context.rotate(angle);
   context.fillText(text, 0, 0);
   context.restore();
-}
+};
 
 fTextM = function(text, x, y, size) {
   size = size || 12;
   context.fillText(text, x, y);
   return mY > y && mY < y + size && mX > x && mX < x + context.measureText(text).width;
-}
+};
 
 fsTextM = function(text, x, y, size) {
   size = size || 12;
   context.strokeText(text, x, y);
   context.fillText(text, x, y);
   return mY > y && mY < y + size && mX > x && mX < x + context.measureText(text).width;
-}
+};
 
 fTextRotatedM = function(text, x, y, angle, size) {
   size = size || 12;
@@ -16838,12 +16838,12 @@ fTextRotatedM = function(text, x, y, angle, size) {
   var mYT = y + d * Math.sin(a);
 
   return mYT > y && mYT < y + size && mXT > x && mXT < x + context.measureText(text).width;
-}
+};
 
 fTextW = function(text, x, y) {
   context.fillText(text, x, y);
   return context.measureText(text).width;
-}
+};
 
 /**
  * set several text canvas rendering properties
@@ -16869,33 +16869,33 @@ setText = function(color, fontSize, fontName, align, baseline, style) {
   context.font = style + fontSize + 'px ' + fontName;
   context.textAlign = align;
   context.textBaseline = baseline;
-}
+};
 
 getTextW = function(text) {
   return context.measureText(text).width;
-}
+};
 
 
 // pixel data
 
 getPixelData = function(x, y) {
   return context.getImageData(x, y, 1, 1).data;
-}
+};
 
 getPixelColor = function(x, y) {
   var rgba = context.getImageData(x, y, 1, 1).data;
   return 'rgba(' + rgba[0] + ',' + rgba[1] + ',' + rgba[2] + ',' + rgba[3] + ')';
-}
+};
 
 getPixelColorRGBA = function(x, y) { //repeated
   return context.getImageData(x, y, 1, 1).data;
-}
+};
 
 captureCanvas = function() {
   var im = new Image();
   im.src = canvas.toDataURL();
   return im;
-}
+};
 
 
 drawAndcapture = function(drawFunction, w, h, target) {
@@ -16916,7 +16916,7 @@ drawAndcapture = function(drawFunction, w, h, target) {
   context = defaultContext;
 
   return im;
-}
+};
 
 
 //cursor
@@ -16924,16 +16924,16 @@ drawAndcapture = function(drawFunction, w, h, target) {
 setCursor = function(name) {
   name = name == null ? 'default' : name;
   canvas.style.cursor = name;
-}
+};
 
 //time
 
 getMilliseconds = function() {
   var date = new Date();
   _ms = date.getTime();
-  delete date;
+  date = undefined;
   return _ms;
-}
+};
 DragDetection.prototype.constructor = DragDetection;
 
 /**
@@ -16993,7 +16993,7 @@ DragDetection.prototype.enterframe = function(draggingInstance) {
   //c.log(draggingInstance, draggingInstance.target, draggingInstance.dragVector);
   draggingInstance.listenerFunction.call(draggingInstance.target, draggingInstance.dragVector);
 
-}
+};
 
 DragDetection.prototype.onMouse = function(event) {
   switch(event.type) {
@@ -17021,13 +17021,13 @@ DragDetection.prototype.onMouse = function(event) {
       this.simulateMouseUp();
       break;
   }
-}
+};
 
 DragDetection.prototype.simulateMouseUp = function() {
   this.dragging = false;
   clearInterval(this.idInterval);
   this.idInterval = null;
-}
+};
 InputTextFieldHTML.prototype.constructor = InputTextFieldHTML;
 
 
@@ -17089,11 +17089,11 @@ function InputTextFieldHTML(configuration) {
   this.DOMtext.onfocus = function(e) {
     e.target = this.parent;
     this.parent._onFocus(this.parent);
-  }
+  };
   this.DOMtext.onblur = function(e) {
     e.target = this.parent;
     this.parent._onBlur(this.parent);
-  }
+  };
 
   this.DOMtext.value = "";
 
@@ -17122,7 +17122,7 @@ function InputTextFieldHTML(configuration) {
 InputTextFieldHTML.prototype.setBorder = function(value) {
   this.border = value;
   this.DOMtext.setAttribute('style', 'border:0; color: ' + this.textColor + '; width:' + (this.width - 7) + 'px;height:' + (this.height - 7) + 'px; font-size:' + this.fontSize + 'px; border:' + (value ? 'yes' : 'none'));
-}
+};
 
 InputTextFieldHTML.prototype.draw = function() {
   if(this.x != this._prevX || this.y != this._prevY || this.width != this._prevWidth || this.height != this._prevHeight || this.text != this._prevText) {
@@ -17142,7 +17142,7 @@ InputTextFieldHTML.prototype.draw = function() {
     this.DOMtext.setAttribute('style', 'border: 0; color: ' + this.textColor + '; width:' + (this.width - 7) + 'px;height:' + (this.height - 7) + 'px; font-size:' + this.fontSize + 'px');
     this.div.setAttribute('style', 'border: 0; position:absolute;top:' + this.y + 'px;left:' + this.x + 'px;z-index:' + this.zIndex + ';');
   }
-}
+};
 
 InputTextFieldHTML.prototype.setText = function(text, activeChange) {
   activeChange = activeChange == null ? true : activeChange;
@@ -17151,21 +17151,21 @@ InputTextFieldHTML.prototype.setText = function(text, activeChange) {
 
   //var timer = setTimeout(this.onKeyDownDelayed, 4, this);
   this.draw();
-}
+};
 
 InputTextFieldHTML.prototype.getText = function() {
   return this.DOMtext.value;
-}
+};
 
 InputTextFieldHTML.prototype.getSelectionStart = function() {
   return this.DOMtext.selectionStart;
-}
+};
 
 InputTextFieldHTML.prototype.onKeyDown = function(e) {
   this._eKeyDown = e;
   this._keyCode = e.keyCode;
   this.timer = setTimeout(this.onKeyDownDelayed, 4, this);
-}
+};
 
 InputTextFieldHTML.prototype.onKeyDownDelayed = function(target) {
 
@@ -17190,72 +17190,72 @@ InputTextFieldHTML.prototype.onKeyDownDelayed = function(target) {
   if(_cycleOnMouseMovement) reStartCycle();
 
   this.timer = null;
-}
+};
 
 InputTextFieldHTML.prototype.forceFocus = function() {
   this.DOMtext.focus();
   this.focus = true;
-}
+};
 
 InputTextFieldHTML.prototype.forceUnfocus = function() {
   c.log("[!] use InputTextFieldHTML.prototype.forceBlur instead");
   a.push(0);
-}
+};
 
 InputTextFieldHTML.prototype.forceBlur = function() {
   this.DOMtext.blur();
   this.focus = false;
-}
+};
 
 
 InputTextFieldHTML.prototype.setEnterFunction = function(enterFunction, target) {
   this.enterFunction = enterFunction;
   this.enterFunctionTarget = target;
-}
+};
 InputTextFieldHTML.prototype.setChangeFunction = function(changeFunction, target) {
   this.changeFunction = changeFunction;
   this.changeFunctionTarget = target;
-}
+};
 InputTextFieldHTML.prototype.setFocusFunction = function(focusFunction, target) {
   this.focusFunction = focusFunction;
   this.focusFunctionTarget = target;
-}
+};
 InputTextFieldHTML.prototype.setBlurFunction = function(blurFunction, target) {
   this.blurFunction = blurFunction;
   this.blurFunctionTarget = target;
-}
+};
 
 InputTextFieldHTML.prototype.setSelection = function(start, end) {
   start = start == null ? 0 : start;
   end = end == null ? this.DOMtext.value.length : end;
   this.DOMtext.selectionStart = start;
   this.DOMtext.selectionEnd = end;
-}
+};
 InputTextFieldHTML.prototype.placeCursor = function(nChar) {
   this.setSelection(nChar);
-}
+};
 
 InputTextFieldHTML.prototype.setScrollPosition = function(y) {
   if(y <= 1) y = Math.floor(y * this.DOMtext.scrollHeight);
   this.DOMtext.scrollTop = y;
-}
+};
 InputTextFieldHTML.prototype.getScrollPosition = function() {
   return this.DOMtext.scrollTop;
-}
+};
 InputTextFieldHTML.prototype.getTextHeight = function() {
   return this.DOMtext.scrollHeight;
-}
+};
 
 
 InputTextFieldHTML.prototype._onFocus = function(target) {
   target.focus = true;
   if(target.focusFunction != null) target.focusFunction.call(target.focusFunctionTarget, target.id);
-}
+};
 
 InputTextFieldHTML.prototype._onBlur = function(target) {
   target.focus = false;
   if(target.blurFunction != null) target.blurFunction.call(target.blurFunctionTarget, target.id);
-}
+};
 
 InputTextFieldHTML.prototype.remove = function() {
   if(this.added) {
@@ -17263,7 +17263,7 @@ InputTextFieldHTML.prototype.remove = function() {
     this.main.removeChild(this.div);
     this.added = false;
   }
-}
+};
 
 InputTextFieldHTML.prototype.readd = function() {
   if(!this.added) {
@@ -17271,14 +17271,14 @@ InputTextFieldHTML.prototype.readd = function() {
     this.div.appendChild(this.DOMtext);
     this.added = true;
   }
-}
+};
 
 InputTextFieldHTML.prototype.disappear = function() {
   c.log('[!] InputTextFieldHTML.prototype.disappear replaced by remove');
   a.push(0);
   this.x = -10000;
   this.draw();
-}
+};
 TextBox.prototype.constructor = TextBox;
 
 /**
@@ -17287,7 +17287,7 @@ TextBox.prototype.constructor = TextBox;
  * @constructor
  */
 function TextBox(configuration) {
-  configuration = configuration == null ? new Object() : configuration;
+  configuration = configuration == null ? {} : configuration;
 
   this.x = configuration.x == null ? 300 : configuration.x;
   this.y = configuration.y == null ? 2 : configuration.y;
@@ -17323,11 +17323,11 @@ function TextBox(configuration) {
 
 TextBox.prototype.getMaxWidth = function() {
   return DrawTexts.getMaxTextWidth(this.lines);
-}
+};
 
 TextBox.prototype.update = function() {
   this.setText(this.text);
-}
+};
 
 TextBox.prototype.setText = function(text) {
   this.text = String(text);
@@ -17342,7 +17342,7 @@ TextBox.prototype.setText = function(text) {
     var index0b;
     var index1;
 
-    var names = new Array();
+    var names = [];
     this.links = new StringList();
     this.linksType = new StringList();
     var indexesPairs = new List();
@@ -17409,7 +17409,7 @@ TextBox.prototype.setText = function(text) {
   if(this.links != null) {
     var interval;
     var lengthAccumulated = 0;
-    this.pointPairs = new Array();
+    this.pointPairs = [];
     var w0;
     var w1;
     var y;
@@ -17450,7 +17450,7 @@ TextBox.prototype.setText = function(text) {
   for(i = 0; this.lines[i] != null; i++) {
     this.maxWidth = Math.max(this.maxWidth, context.measureText(this.lines[i]).width);
   }
-}
+};
 
 TextBox.prototype.draw = function(scale) {
   scale = scale == null ? 1 : scale;
@@ -17485,14 +17485,14 @@ TextBox.prototype.draw = function(scale) {
       }
     }
   }
-}
+};
 
 TextBox.prototype.line = function(x0, x1, y) {
   context.beginPath();
   context.moveTo(x0, y);
   context.lineTo(x1, y);
   context.stroke();
-}
+};
 
 TextBox.prototype.mouseUp = function(e) {
   if(this.overLink != null) {
@@ -17505,11 +17505,11 @@ TextBox.prototype.mouseUp = function(e) {
     }
     this.overLink = null;
   }
-}
+};
 
 TextBox.prototype.deactivate = function() {
   removeInteractionEventListener('mouseup', this.mouseUp, this);
-}
+};
 
 
 ///
@@ -17551,7 +17551,7 @@ TextBox.replaceWikiLinks = function(text) {
   }
   //c.log('new text:', text);
   return text;
-}
+};
 TextFieldHTML.prototype.constructor = TextFieldHTML;
 
 /**
@@ -17560,7 +17560,7 @@ TextFieldHTML.prototype.constructor = TextFieldHTML;
  * @constructor
  */
 function TextFieldHTML(configuration) {
-  configuration = configuration == null ? new Object() : configuration;
+  configuration = configuration == null ? {} : configuration;
 
   this.x = configuration.x == null ? 300 : configuration.x;
   this.y = configuration.y == null ? 2 : configuration.y;
@@ -17617,25 +17617,25 @@ TextFieldHTML.prototype.draw = function() {
     //this.div.setAttribute('style', 'position:absolute;top:'+this.y+'px;left:'+this.x+'px;z-index:'+this.zIndex+'; width:'+this.width+'px;');//height:'+this.height+'px;');
     this.div.setAttribute('style', 'position:absolute;top:' + this.y + 'px;left:' + this.x + 'px;z-index:' + this.zIndex + '; width:' + this.width + 'px; height:' + this.height + 'px;');
   }
-}
+};
 
 TextFieldHTML.prototype.setText = function(text) {
   if(this.text != text) {
     this.text = text;
     this.div.innerHTML = this.fastHTMLactive ? FastHtml.expand(text) : text;
   }
-}
+};
 
 TextFieldHTML.prototype.getText = function() {
   return this.DOMtext.value;
-}
+};
 
 //
-var Loader = new function() {};
+function Loader() {}
 
 Loader.proxy = ""; //TODO:install proxy created by Mig at moebio.com
 Loader.cacheActive = false; //TODO: fix!
-Loader.associativeByUrls = new Object();
+Loader.associativeByUrls = {};
 Loader.REPORT_LOADING = false;
 Loader.n_loading = 0;
 Loader.LOCAL_STORAGE_ENABLED = false;
@@ -17645,7 +17645,7 @@ Loader.PHPurl = "http://intuitionanalytics.com/tests/proxy.php?url=";
 
 /**
  * loads string data from server. The defined Loader.proxy will be used.
- * @param {String} url the URL of the file to be loaded 
+ * @param {String} url the URL of the file to be loaded
  * @param {Function} onLoadData a function that will be called when complete. The function must receive a LoadEvent
  * @param {callee} the Object containing the onLoadData function to be called
  * @para, {Object} optional parameter that will be stored in the LoadEvent instance
@@ -17734,7 +17734,7 @@ Loader.loadData = function(url, onLoadData, callee, param, send_object_json) {
     send_object_json = send_object_json || "";
     req.send(send_object_json);
   }
-}
+};
 
 
 function LoaderRequest(url, method, data) {
@@ -17774,13 +17774,13 @@ Loader.loadImage = function(url, onComplete, callee, param) {
     e.param = param;
     if(cache) associative[url] = img;
     onComplete.call(target, e);
-  }
+  };
 
   img.onerror = function() {
     Loader.n_loading--;
     var e = new LoadEvent();
     e.result = null;
-    e.errorType = 1 //TODO: set an error type!
+    e.errorType = 1; //TODO: set an error type!
     e.errorMessage = "There was a problem retrieving the image [" + img.src + "]:";
     e.url = url;
     e.param = param;
@@ -17788,7 +17788,7 @@ Loader.loadImage = function(url, onComplete, callee, param) {
   };
 
   img.src = Loader.proxy + url;
-}
+};
 
 Loader.loadJSON = function(url, onLoadComplete) {
   Loader.n_loading++;
@@ -17797,7 +17797,7 @@ Loader.loadJSON = function(url, onLoadComplete) {
     Loader.n_loading--;
     onLoadComplete.call(arguments.callee, jQuery.parseJSON(data));
   });
-}
+};
 
 Loader.callIndex = 0;
 Loader.loadJSONP = function(url, onLoadComplete, callee) {
@@ -17837,12 +17837,12 @@ Loader.loadJSONP = function(url, onLoadComplete, callee) {
     }
   }); //.error(function(e){
   // c.log('---> (((error))) B');
-  // 			
+  //
   // var e=new LoadEvent();
   // e.errorType=1;
   // onLoadComplete.call(target, e);
   // });
-}
+};
 
 
 
@@ -17897,7 +17897,7 @@ Loader.loadXML = function(url, onLoadData) {
       }
     }
   }
-}
+};
 
 
 ///////////////PHP
@@ -17905,7 +17905,7 @@ Loader.loadXML = function(url, onLoadData) {
 Loader.sendContentToVariableToPhp = function(url, varName, value, onLoadData, callee, param) {
   var data = varName + "=" + encodeURIComponent(value);
   Loader.sendDataToPhp(url, data, onLoadData, callee, param);
-}
+};
 
 Loader.sendContentsToVariablesToPhp = function(url, varNames, values, onLoadData, callee, param) {
   var data = varNames[0] + "=" + encodeURIComponent(values[0]);
@@ -17913,7 +17913,7 @@ Loader.sendContentsToVariablesToPhp = function(url, varNames, values, onLoadData
     data += "&" + varNames[i] + "=" + encodeURIComponent(values[i]);
   }
   Loader.sendDataToPhp(url, data, onLoadData, callee, param);
-}
+};
 
 Loader.sendDataToPhp = function(url, data, onLoadData, callee, param) {
   var req = new XMLHttpRequest();
@@ -17945,9 +17945,9 @@ Loader.sendDataToPhp = function(url, data, onLoadData, callee, param) {
     }
   };
 
-  req.onreadystatechange = onLoadComplete
-}
-LoadEvent.prototype = new Object();
+  req.onreadystatechange = onLoadComplete;
+};
+LoadEvent.prototype = {};
 LoadEvent.prototype.constructor = LoadEvent;
 
 /**
@@ -17961,7 +17961,7 @@ function LoadEvent() {
   this.errorMessage = "";
   this.url;
 }
-MultiLoader.prototype = new Object();
+MultiLoader.prototype = {};
 MultiLoader.prototype.constructor = MultiLoader;
 
 //include(frameworksRoot+"Tools/loaders/Loader.js");
@@ -17986,14 +17986,14 @@ function MultiLoader() {
   this.imagesLoaded = null;
 
   this.priorityWeights;
-  this.associativeArray = new Array();
+  this.associativeArray = [];
 
-  this.url_to_image = new Object();
+  this.url_to_image = {};
 
   this.simulateDelay = false;
   this.DELAY_MILLISECONDS = 1000;
   this.timer;
-};
+}
 
 
 
@@ -18005,7 +18005,7 @@ MultiLoader.prototype.loadDatas = function(urlList, onComplete, callee) {
 
   this.datasLoaded = new List();
   this.nextDataLoading();
-}
+};
 
 MultiLoader.prototype.nextDataLoading = function() {
   //c.log("MultiLoader.prototype.nextDataLoading | this.iLoaded, this.urlList[this.iLoaded]:", this.iLoaded, this.urlList[this.iLoaded]);
@@ -18016,7 +18016,7 @@ MultiLoader.prototype.nextDataLoading = function() {
   } else {
     this.loading = false;
   }
-}
+};
 
 MultiLoader.prototype.onCompleteLoadData = function(e) {
   if(this.priorityWeights != null) {
@@ -18039,7 +18039,7 @@ MultiLoader.prototype.onCompleteLoadData = function(e) {
   this.iLoaded++;
   //c.log('---> this.iLoaded, e.url', this.iLoaded, e.url);
   this.nextDataLoading();
-}
+};
 
 
 /////images
@@ -18056,7 +18056,7 @@ MultiLoader.prototype.loadImages = function(urlList, onComplete, target, priorit
   this.imagesLoaded = new List();
 
   this.nextImageLoading();
-}
+};
 
 
 MultiLoader.prototype.onCompleteLoadImage = function(e) {
@@ -18093,11 +18093,11 @@ MultiLoader.prototype.onCompleteLoadImage = function(e) {
 
   this.iLoaded++;
   this.nextImageLoading();
-}
+};
 
 MultiLoader.prototype.getImageFromUrl = function(url) {
   return this.url_to_image[url];
-}
+};
 
 MultiLoader.prototype.setPriorityWeights = function(weights) {
   this.priorityWeights = weights;
@@ -18105,7 +18105,7 @@ MultiLoader.prototype.setPriorityWeights = function(weights) {
   if(!this.loading) {
     this.nextImageLoading();
   }
-}
+};
 
 MultiLoader.prototype.nextImageLoading = function(target) {
   //c.log('nextImageLoading', this.iLoaded, "/", this.urlList.length);
@@ -18162,12 +18162,12 @@ MultiLoader.prototype.nextImageLoading = function(target) {
   } else {
     this.loading = false;
   }
-}
+};
 
 MultiLoader.prototype.destroy = function() {
   delete this.datasLoaded;
   delete this.imagesLoaded;
-}
+};
 /**
  * Forces
  * @constructor
@@ -18255,7 +18255,7 @@ Forces.prototype.forcesForNetwork = function(network, initRadius, initCenter, eq
       }
     }
   }
-}
+};
 
 Forces.prototype.addNode = function(node, initPosition, initSpeed) {
   initPosition = initPosition == null ? new Point(Math.random() * 200 - 100, Math.random() * 200 - 100) : initPosition;
@@ -18267,7 +18267,7 @@ Forces.prototype.addNode = function(node, initPosition, initSpeed) {
   node.vy = initSpeed.y;
   node.ax = 0;
   node.ay = 0;
-}
+};
 
 Forces.prototype.addForce = function(node0, node1, type, equilibriumDistance) {
   this.fromNodeList.addNode(node0);
@@ -18275,7 +18275,7 @@ Forces.prototype.addForce = function(node0, node1, type, equilibriumDistance) {
   this.forcesList.push(node0.id + "*" + node1.id + "*" + type);
   this.forcesTypeList.push(type);
   if(equilibriumDistance != null) this.equilibriumDistances.push(equilibriumDistance);
-}
+};
 
 Forces.prototype.calculate = function() {
   var i;
@@ -18324,7 +18324,7 @@ Forces.prototype.calculate = function() {
         break;
     }
   }
-}
+};
 
 Forces.prototype.attractionToPoint = function(point, strength, limit) {
   strength = strength == null ? 1 : strength;
@@ -18346,7 +18346,7 @@ Forces.prototype.attractionToPoint = function(point, strength, limit) {
     node.ax += force * dx;
     node.ay += force * dy;
   }
-}
+};
 
 
 Forces.prototype.avoidOverlapping = function(delta) {
@@ -18403,7 +18403,7 @@ Forces.prototype.avoidOverlapping = function(delta) {
     }
   }
   this._i0++;
-}
+};
 
 Forces.prototype.avoidOverlappingRadial = function(delta, K) {
   delta = delta || 0;
@@ -18439,7 +18439,7 @@ Forces.prototype.avoidOverlappingRadial = function(delta, K) {
     }
   }
   this._i0++;
-}
+};
 
 
 
@@ -18455,11 +18455,11 @@ Forces.prototype.applyForces = function() {
     node.x += node.vx;
     node.y += node.vy;
   }
-}
+};
 
 Forces.prototype.deactivateForcesFromNode = function(node) {
   node.vx = node.vy = node.ax = node.ay = 0;
-}
+};
 
 Forces.prototype.destroy = function() {
   delete this.k;
@@ -18479,7 +18479,7 @@ Forces.prototype.destroy = function() {
   this.toNodeList.destroy();
   delete this.toNodeList;
   delete this._i0;
-}
+};
 
 ///////////////////////////////////////////PRIVATE
 
@@ -18491,7 +18491,7 @@ Forces.prototype._resetAccelerations = function() {
     node.ax = 0;
     node.ay = 0;
   }
-}
+};
 Engine3D.prototype.constructor = Engine3D;
 
 /**
@@ -18515,13 +18515,13 @@ Engine3D.prototype.setBasis = function(point3D) {
   this._basis = point3D.clone();
   this._basisBase = point3D.clone();
   this._provisionalBase = point3D.clone();
-}
+};
 
 Engine3D.prototype.setAngles = function(point3D) {
   this._angles = point3D.clone();
   this._freeRotation = false;
   this._basis = this.basis3DRotation(this._basisBase, this._angles);
-}
+};
 
 Engine3D.prototype.applyRotation = function(planeVector) {
   if(!this._freeRotation) {
@@ -18537,30 +18537,30 @@ Engine3D.prototype.applyRotation = function(planeVector) {
   this._provisionalBase[0] = this._basis[0].clone();
   this._provisionalBase[1] = this._basis[1].clone();
   this._provisionalBase[2] = this._basis[2].clone();
-}
+};
 
 Engine3D.prototype.projectPoint3D = function(point3D) {
   var prescale = this.lens / (this.lens + (this._basis[0].z * point3D.x + this._basis[1].z * point3D.y + this._basis[2].z * point3D.z));
   return new Point3D((this._basis[0].x * point3D.x + this._basis[1].x * point3D.y + this._basis[2].x * point3D.z) * prescale, (this._basis[0].y * point3D.x + this._basis[1].y * point3D.y + this._basis[2].y * point3D.z) * prescale, prescale);
-}
+};
 
 Engine3D.prototype.projectCoordinates = function(x, y, z) {
   var prescale = this.lens / (this.lens + (this._basis[0].z * x + this._basis[1].z * y + this._basis[2].z * z));
   return new Point3D((this._basis[0].x * x + this._basis[1].x * y + this._basis[2].x * z) * prescale, (this._basis[0].y * x + this._basis[1].y * y + this._basis[2].y * z) * prescale, prescale);
-}
+};
 
 Engine3D.prototype.projectPoint3DNode = function(node) {
   var prescale = this.lens / (this.lens + (this._basis[0].z * node.x + this._basis[1].z * node.y + this._basis[2].z * node.z));
   return new Point3D((this._basis[0].x * node.x + this._basis[1].x * node.y + this._basis[2].x * node.z) * prescale, (this._basis[0].y * node.x + this._basis[1].y * node.y + this._basis[2].y * node.z) * prescale, prescale);
-}
+};
 
 Engine3D.prototype.scale = function(point3D) {
   return this.lens / (this.lens + (this._basis[0].z * point3D.x + this._basis[1].z * point3D.y + this._basis[2].z * point3D.z));
-}
+};
 
 
 Engine3D.prototype.sortedIndexesByPointsScale = function(polygon3D) {
-  var pairsArray = new Array();
+  var pairsArray = [];
 
   for(var i = 0; polygon3D[i] != null; i++) {
     pairsArray[i] = [polygon3D[i], i];
@@ -18577,10 +18577,10 @@ Engine3D.prototype.sortedIndexesByPointsScale = function(polygon3D) {
   }
 
   return indexes;
-}
+};
 
 Engine3D.prototype.sortListByPointsScale = function(list, polygon3D) {
-  var pairsArray = new Array();
+  var pairsArray = [];
 
   for(var i = 0; list[i] != null; i++) {
     pairsArray[i] = [polygon3D[i], list[i]];
@@ -18598,22 +18598,22 @@ Engine3D.prototype.sortListByPointsScale = function(list, polygon3D) {
   }
 
   return newList;
-}
+};
 Engine3D.prototype._sortingCriteria = function(array0, array1, basis) {
   var point3D0 = array0[0];
   var point3D1 = array1[0];
   return(UTLITARY_GLOBAL_VAR[0].z * point3D0.x + UTLITARY_GLOBAL_VAR[1].z * point3D0.y + UTLITARY_GLOBAL_VAR[2].z * point3D0.z < UTLITARY_GLOBAL_VAR[0].z * point3D1.x + UTLITARY_GLOBAL_VAR[1].z * point3D1.y + UTLITARY_GLOBAL_VAR[2].z * point3D1.z) ? 1 : -1;
-}
+};
 
 
 //private methods
 
 Engine3D.prototype.updateAngles = function() {
   this._angles = this.getEulerAngles();
-}
+};
 Engine3D.prototype.getEulerAngles = function() {
   return new Point3D(Math.atan2(-this._basis[1].z, this._basis[2].z), Math.asin(this._basis[0].z), Math.atan2(-this._basis[0].y, this._basis[0].x));
-}
+};
 
 
 //rotation
@@ -18631,7 +18631,7 @@ Engine3D.prototype.basis3DRotation = function(basis, angles) {
 
   return new Polygon3D(new Point3D(basis[0].x * cg * cb + basis[0].y * (cg * sa * sb + sg * ca) + basis[0].z * (sg * sa - cg * ca * sb), -basis[0].x * sg * cb + basis[0].y * (cg * ca - sg * sa * sb) + basis[0].z * (sg * ca * sb + cg * sa), basis[0].x * sb - basis[0].y * sa * cb + basis[0].z * cb * ca), new Point3D(basis[1].x * cg * cb + basis[1].y * (cg * sa * sb + sg * ca) + basis[1].z * (sg * sa - cg * ca * sb), -basis[1].x * sg * cb + basis[1].y * (cg * ca - sg * sa * sb) + basis[1].z * (sg * ca * sb + cg * sa), basis[1].x * sb - basis[1].y * sa * cb + basis[1].z * cb * ca), new Point3D(basis[2].x * cg * cb + basis[2].y * (cg * sa * sb + sg * ca) + basis[2].z * (sg * sa - cg * ca * sb), -basis[2].x * sg * cb + basis[2].y * (cg * ca - sg * sa * sb) + basis[2].z * (sg * ca * sb + cg * sa), basis[2].x * sb - basis[2].y * sa * cb + basis[2].z * cb * ca));
 
-}
+};
 
 Engine3D.prototype.point3DRotation = function(point, angles) {
   var ca = Math.cos(angles.x);
@@ -18644,7 +18644,7 @@ Engine3D.prototype.point3DRotation = function(point, angles) {
     point.x * cg * cb + point.y * (cg * sa * sb + sg * ca) + point.z * (sg * sa - cg * ca * sb), -point.x * sg * cb + point.y * (cg * ca - sg * sa * sb) + point.z * (sg * ca * sb + cg * sa),
     point.x * sb - point.y * sa * cb + point.z * cb * ca
   );
-}
+};
 
 
 
@@ -18681,7 +18681,7 @@ Engine3D.prototype.line3D = function(point0, point1) {
     }
   }
   return null;
-}
+};
 
 Engine3D.prototype.quadrilater = function(p0, p1, p2, p3) {
   var polygon3D = new Polygon3D();
@@ -18709,7 +18709,7 @@ Engine3D.prototype.quadrilater = function(p0, p1, p2, p3) {
   }
 
   return polygon3D;
-}
+};
 /**
  * All these function are globally available since they are included in the Global class
  *
@@ -18808,7 +18808,7 @@ getTextFromObject = function(value, type) {
         text += (i != 0 ? ", " : "") + subtext;
       }
       if(value.length > 6) text += ",…";
-      text += "]"
+      text += "]";
     }
     return text;
   }
@@ -18825,7 +18825,7 @@ getTextFromObject = function(value, type) {
     default:
       return "{}"; //value.toString();
   }
-}
+};
 
 function instantiateWithSameType(object, args) {
   return instantiate(typeOf(object), args);
@@ -18839,7 +18839,7 @@ function isArray(obj) {
 }
 Date.prototype.getType = function() {
   return 'date';
-}
+};
 
 
 evalJavaScriptFunction = function(functionText, args) {
@@ -18883,7 +18883,7 @@ evalJavaScriptFunction = function(functionText, args) {
   };
 
   return resultObject;
-}
+};
 
 
 
@@ -18905,7 +18905,7 @@ function TimeLogger(name) {
   this.tic = function(clockName) {
     scope.clocks[clockName] = new Date().getTime();
     //c.l( "TimeLogger '"+clockName+"' has been started");
-  }
+  };
   this.tac = function(clockName) {
     if(scope.clocks[clockName] == null) {
       scope.tic(clockName);
@@ -18914,7 +18914,7 @@ function TimeLogger(name) {
       var diff = now - scope.clocks[clockName];
       c.l("TimeLogger '" + clockName + "' took " + diff + " ms");
     }
-  }
+  };
 }
 var tl = new TimeLogger("Global Time Logger");
 /**
@@ -18923,7 +18923,7 @@ var tl = new TimeLogger("Global Time Logger");
  * @constructor
  */
 
-function ConsoleTools() {};
+function ConsoleTools() {}
 
 
 ConsoleTools._ticTime;
@@ -18949,7 +18949,7 @@ ConsoleTools.NumberTableOnConsole = function(table) {
   c.l(message);
 
   return message;
-}
+};
 
 
 ConsoleTools.tic = function(message) {
@@ -18958,7 +18958,7 @@ ConsoleTools.tic = function(message) {
   ConsoleTools._ticTime = ConsoleTools._tacTime = new Date().getTime();
   ConsoleTools._nTacs = 0;
   c.l('°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° tic °°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° [' + message + ']');
-}
+};
 
 ConsoleTools.tac = function(message) {
   message = message || "";
@@ -18966,12 +18966,12 @@ ConsoleTools.tac = function(message) {
   var lastTac = ConsoleTools._tacTime;
   ConsoleTools._tacTime = new Date().getTime();
   c.l('°°°°°°° tac [' + message + '], t from tic:' + (ConsoleTools._tacTime - ConsoleTools._ticTime) + ', t from last tac:' + ((ConsoleTools._tacTime - lastTac)));
-}
+};
 /**
  * FastHtml 
  * @constructor
  */
-function FastHtml() {};
+function FastHtml() {}
 
 FastHtml.expand = function(abreviatedHTML, scope, onEvent) {
   if(abreviatedHTML == null || abreviatedHTML == "") return "";
@@ -19070,22 +19070,22 @@ FastHtml.expand = function(abreviatedHTML, scope, onEvent) {
   // c.log("////////////////////////////////////");
 
   return newText;
-}
+};
 
 FastHtml.clickLink = function(param) {
   FastHtml.linkFunction.call(FastHtml.target, param);
-}
+};
 
 FastHtml.findAndPlaceLinks = function(text) {
   var newText = FastHtml._findAndPlaceLinksPrefix(text, "http");
   return FastHtml._findAndPlaceLinksPrefix(newText, "https");
-}
+};
 FastHtml._findAndPlaceLinksPrefix = function(text, prefix) {
   var regexp = prefix == 'http' ? /http:\/\//g : /https:\/\//g;
   var blocks = text.split(regexp);
 
   if(blocks.length > 1) {
-    var blocks2 = new Array();
+    var blocks2 = [];
     var indexS;
     var url;
 
@@ -19103,13 +19103,13 @@ FastHtml._findAndPlaceLinksPrefix = function(text, prefix) {
     }
   }
   return(blocks.length == 0 || blocks.length == 1) ? text : blocks2.join('');
-}
+};
 
 FastHtml.findAndPlaceTwitterAdresses = function(text) {
   var blocks = text.split(/@/g);
 
   if(blocks.length > 1) {
-    var blocks2 = new Array();
+    var blocks2 = [];
     var indexS;
     var url;
     var accountName;
@@ -19131,17 +19131,17 @@ FastHtml.findAndPlaceTwitterAdresses = function(text) {
   }
 
   return(blocks.length == 0 || blocks.length == 1) ? text : blocks2.join('');
-}
+};
 
 FastHtml.getColorTag = function(color) {
   color = ColorOperators.colorStringToHEX(color);
   return "<font color=\"" + color + "\">";
-}
+};
 /**
  * JSONUtils 
  * @constructor
  */
-function JSONUtils() {};
+function JSONUtils() {}
 
 
 JSONUtils.stringifyAndPrint = function(object) {
@@ -19149,7 +19149,7 @@ JSONUtils.stringifyAndPrint = function(object) {
   c.log("__________________________________________________________________________________________________________________________________________________________");
   c.log(jsonString);
   c.log("__________________________________________________________________________________________________________________________________________________________");
-}
+};
 
 /**
  * This function is not used in the framework.
@@ -19157,7 +19157,7 @@ JSONUtils.stringifyAndPrint = function(object) {
  */
 JSONUtils.dummy2 = function() {
   return null;
-}
+};
 /*
  * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
  * Digest Algorithm, as defined in RFC 1321.
@@ -19175,21 +19175,21 @@ JSONUtils.dummy2 = function() {
 //var b64pad  = "";  /* base-64 pad character. "=" for strict RFC compliance   */
 
 
-function MD5(){};
+function MD5(){}
 
 /*
  * These are the functions you'll usually want to call
  * They take string arguments and return either hex or base-64 encoded strings
  */
-MD5.hex_md5 = function(s)    { return this.rstr2hex(this.rstr_md5(this.str2rstr_utf8(s))); }
-MD5.b64_md5 = function(s)    { return this.rstr2b64(this.rstr_md5(this.str2rstr_utf8(s))); }
-MD5.any_md5 = function(s, e) { return this.rstr2any(this.rstr_md5(this.str2rstr_utf8(s)), e); }
+MD5.hex_md5 = function(s)    { return this.rstr2hex(this.rstr_md5(this.str2rstr_utf8(s))); };
+MD5.b64_md5 = function(s)    { return this.rstr2b64(this.rstr_md5(this.str2rstr_utf8(s))); };
+MD5.any_md5 = function(s, e) { return this.rstr2any(this.rstr_md5(this.str2rstr_utf8(s)), e); };
 MD5.hex_hmac_md5 = function(k, d)
-  { return this.rstr2hex(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); }
+  { return this.rstr2hex(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); };
 MD5.b64_hmac_md5 = function(k, d)
-  { return this.rstr2b64(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); }
+  { return this.rstr2b64(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); };
 MD5.any_hmac_md5 = function(k, d, e)
-  { return this.rstr2any(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d)), e); }
+  { return this.rstr2any(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d)), e); };
 
 /*
  * Perform a simple self-test to see if the VM is working
@@ -19197,7 +19197,7 @@ MD5.any_hmac_md5 = function(k, d, e)
 MD5.md5_vm_test = function()
 {
   return this.hex_md5("abc").toLowerCase() == "900150983cd24fb0d6963f7d28e17f72";
-}
+};
 
 /*
  * Calculate the MD5 of a raw string
@@ -19205,7 +19205,7 @@ MD5.md5_vm_test = function()
 MD5.rstr_md5 = function(s)
 {
   return this.binl2rstr(this.binl_md5(this.rstr2binl(s), s.length * 8));
-}
+};
 
 /*
  * Calculate the HMAC-MD5, of a key and some data (raw strings)
@@ -19224,7 +19224,7 @@ MD5.rstr_hmac_md5 = function(key, data)
 
   var hash = this.binl_md5(ipad.concat(this.rstr2binl(data)), 512 + data.length * 8);
   return this.binl2rstr(this.binl_md5(opad.concat(hash), 512 + 128));
-}
+};
 
 /*
  * Convert a raw string to a hex string
@@ -19232,7 +19232,7 @@ MD5.rstr_hmac_md5 = function(key, data)
 MD5.rstr2hex = function(input)
 {
 	var hexcase = 0;
-  try { hexcase } catch(e) { hexcase=0; }
+  try { hexcase; } catch(e) { hexcase=0; }
   var hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
   var output = "";
   var x;
@@ -19243,7 +19243,7 @@ MD5.rstr2hex = function(input)
            +  hex_tab.charAt( x        & 0x0F);
   }
   return output;
-}
+};
 
 /*
  * Convert a raw string to a base-64 string
@@ -19251,7 +19251,7 @@ MD5.rstr2hex = function(input)
 MD5.rstr2b64 = function(input)
 {
 	var b64pad  = "";
-  try { b64pad } catch(e) { b64pad=''; }
+  try { b64pad; } catch(e) { b64pad=''; }
   var tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
   var output = "";
   var len = input.length;
@@ -19267,7 +19267,7 @@ MD5.rstr2b64 = function(input)
     }
   }
   return output;
-}
+};
 
 /*
  * Convert a raw string to an arbitrary string encoding
@@ -19315,7 +19315,7 @@ MD5.rstr2any = function(input, encoding)
     output += encoding.charAt(remainders[i]);
 
   return output;
-}
+};
 
 /*
  * Encode a string as utf-8.
@@ -19355,7 +19355,7 @@ MD5.str2rstr_utf8 = function(input)
                                     0x80 | ( x         & 0x3F));
   }
   return output;
-}
+};
 
 /*
  * Encode a string as utf-16
@@ -19367,7 +19367,7 @@ MD5.str2rstr_utf16le = function(input)
     output += String.fromCharCode( input.charCodeAt(i)        & 0xFF,
                                   (input.charCodeAt(i) >>> 8) & 0xFF);
   return output;
-}
+};
 
 MD5.str2rstr_utf16be = function(input)
 {
@@ -19376,7 +19376,7 @@ MD5.str2rstr_utf16be = function(input)
     output += String.fromCharCode((input.charCodeAt(i) >>> 8) & 0xFF,
                                    input.charCodeAt(i)        & 0xFF);
   return output;
-}
+};
 
 /*
  * Convert a raw string to an array of little-endian words
@@ -19390,7 +19390,7 @@ MD5.rstr2binl = function(input)
   for(var i = 0; i < input.length * 8; i += 8)
     output[i>>5] |= (input.charCodeAt(i / 8) & 0xFF) << (i%32);
   return output;
-}
+};
 
 /*
  * Convert an array of little-endian words to a string
@@ -19401,7 +19401,7 @@ MD5.binl2rstr = function(input)
   for(var i = 0; i < input.length * 32; i += 8)
     output += String.fromCharCode((input[i>>5] >>> (i % 32)) & 0xFF);
   return output;
-}
+};
 
 /*
  * Calculate the MD5 of an array of little-endian words, and a bit length.
@@ -19498,7 +19498,7 @@ MD5.binl_md5 = function(x, len)
     d = this.safe_add(d, oldd);
   }
   return Array(a, b, c, d);
-}
+};
 
 /*
  * These functions implement the four basic operations the algorithm uses.
@@ -19506,23 +19506,23 @@ MD5.binl_md5 = function(x, len)
 MD5.md5_cmn = function(q, a, b, x, s, t)
 {
   return this.safe_add(this.bit_rol(this.safe_add(this.safe_add(a, q), this.safe_add(x, t)), s),b);
-}
+};
 MD5.md5_ff = function(a, b, c, d, x, s, t)
 {
   return this.md5_cmn((b & c) | ((~b) & d), a, b, x, s, t);
-}
+};
 MD5.md5_gg = function(a, b, c, d, x, s, t)
 {
   return this.md5_cmn((b & d) | (c & (~d)), a, b, x, s, t);
-}
+};
 MD5.md5_hh = function(a, b, c, d, x, s, t)
 {
   return this.md5_cmn(b ^ c ^ d, a, b, x, s, t);
-}
+};
 MD5.md5_ii = function(a, b, c, d, x, s, t)
 {
   return this.md5_cmn(c ^ (b | (~d)), a, b, x, s, t);
-}
+};
 
 /*
  * Add integers, wrapping at 2^32. This uses 16-bit operations internally
@@ -19533,7 +19533,7 @@ MD5.safe_add = function(x, y)
   var lsw = (x & 0xFFFF) + (y & 0xFFFF);
   var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
   return (msw << 16) | (lsw & 0xFFFF);
-}
+};
 
 /*
  * Bitwise rotate a 32-bit number to the left.
@@ -19541,12 +19541,12 @@ MD5.safe_add = function(x, y)
 MD5.bit_rol = function(num, cnt)
 {
   return (num << cnt) | (num >>> (32 - cnt));
-}
+};
 /**
  * StringUtils 
  * @constructor
  */
-function StringUtils() {};
+function StringUtils() {}
 
 
 StringUtils.stringtoXML = function(text) {
@@ -19559,8 +19559,8 @@ StringUtils.stringtoXML = function(text) {
     var doc = parser.parseFromString(text, 'text/xml');
   }
   return doc;
-}
-function Navigator() {};
+};
+function Navigator() {}
 var userAgent;
 var userAgentVersion;
 Navigator.IE = "IE";
@@ -19570,23 +19570,23 @@ Navigator.IOS = "IOS";
 detectUserAgent = function() {
   if(/MSIE (\d+\.\d+);/.test(navigator.userAgent)) { //test for MSIE x.x;
     userAgent = Navigator.IE;
-    userAgentVersion = new Number(RegExp.$1) // capture x.x portion and store as a number
+    userAgentVersion = Number(RegExp.$1); // capture x.x portion and store as a number
   }
   if(navigator.userAgent.match(/iPad/i) != null) {
     userAgent = Navigator.IOS;
   }
   if(/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent)) { //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
     userAgent = Navigator.NS;
-    userAgentVersion = new Number(RegExp.$1) // capture x.x portion and store as a number
+    userAgentVersion = Number(RegExp.$1); // capture x.x portion and store as a number
   }
-}
+};
 Navigator.getUserAgent = function() {
   return userAgent;
-}
+};
 Navigator.getUserAgentVersion = function() {
   return userAgentVersion;
-}
-function CountryListDraw() {};
+};
+function CountryListDraw() {}
 
 
 CountryListDraw.drawCountriesAsCircles = function(context, countryList, radiusList, frame, geoFrame, colors) {
@@ -19608,7 +19608,7 @@ CountryListDraw.drawCountriesAsCircles = function(context, countryList, radiusLi
     context.arc(frame.x + dX * (country.geoCenter.x - geoFrame.x), frame.getBottom() - dY * (country.geoCenter.y - geoFrame.y), radiusList[i], 0, TwoPi);
     context.fill();
   }
-}
+};
 
 CountryListDraw.drawCountriesPolygons = function(context, countryList, frame, geoFrame, colors, lineWidth, lineColor) {
   geoFrame = geoFrame == null ? new Rectangle(-180, -90, 360, 180) : geoFrame;
@@ -19642,7 +19642,7 @@ CountryListDraw.drawCountriesPolygons = function(context, countryList, frame, ge
       if(lineWidth != null) context.stroke();
     }
   }
-}
+};
 function CirclesVisOperators() {}
 
 CirclesVisOperators.circlesCloud = function(weights, frame, margin) {
@@ -19701,7 +19701,7 @@ CirclesVisOperators.circlesCloud = function(weights, frame, margin) {
   }
 
   return circlesPlaced;
-}
+};
 
 CirclesVisOperators._pointInCircles = function(circles, px, py, r, margin) {
   var circle;
@@ -19710,8 +19710,8 @@ CirclesVisOperators._pointInCircles = function(circles, px, py, r, margin) {
     if(Math.pow(circle.x - px, 2) + Math.pow(circle.y - py, 2) < Math.pow(circle.z + r + margin, 2)) return true;
   }
   return false;
-}
-function ColorsDraw() {};
+};
+function ColorsDraw() {}
 
 /**
  * draws a color scale, with optional min and max associated values
@@ -19723,7 +19723,7 @@ function ColorsDraw() {};
  * tags:draw
  */
 ColorsDraw.drawColorScaleLegend = function(frame, colorScale, minValue, maxValue) {
-  var change = frame.memory == null || frame.width != frame.memory.w || frame.height != frame.memory.h || colorScale != frame.memory.cS || minValue != frame.memory.min || maxValue != frame.memory.max
+  var change = frame.memory == null || frame.width != frame.memory.w || frame.height != frame.memory.h || colorScale != frame.memory.cS || minValue != frame.memory.min || maxValue != frame.memory.max;
 
   if(change) {
     frame.memory = {
@@ -19732,7 +19732,7 @@ ColorsDraw.drawColorScaleLegend = function(frame, colorScale, minValue, maxValue
       cS: colorScale,
       min: minValue,
       max: maxValue
-    }
+    };
 
     ///// capture image 1
     var newCanvas = document.createElement("canvas");
@@ -19786,11 +19786,11 @@ ColorsDraw.drawColorScaleLegend = function(frame, colorScale, minValue, maxValue
 
 
   if(frame.memory.image) {
-    drawImage(frame.memory.image, frame.x, frame.y)
+    drawImage(frame.memory.image, frame.x, frame.y);
   }
 
-}
-function ImageDraw() {};
+};
+function ImageDraw() {}
 
 
 /**
@@ -19804,7 +19804,7 @@ function ImageDraw() {};
 ImageDraw.drawImage = function(frame, image, mode) {
   mode = mode || 0;
   Draw.fillRectangleWithImage(frame, image, mode);
-}
+};
 
 
 /**
@@ -19834,7 +19834,7 @@ ImageDraw.captureVisualizationImage = function(visFunctionName, width, height) {
   if(visFunctionName.indexOf('.') == -1) {
     visFunction = this[visFunctionName];
   } else {
-    c.log(visFunctionName.split('.')[0], this[visFunctionName.split('.')[0]], this['mY']);
+    c.log(visFunctionName.split('.')[0], this[visFunctionName.split('.')[0]], this.mY);
     if(this[visFunctionName.split('.')[0]] == null) return;
     visFunction = this[visFunctionName.split('.')[0]][visFunctionName.split('.')[1]];
   }
@@ -19866,8 +19866,8 @@ ImageDraw.captureVisualizationImage = function(visFunctionName, width, height) {
   im.src = newCanvas.toDataURL();
 
   return im;
-}
-function ListDraw() {};
+};
+function ListDraw() {}
 
 /**
  * draws a list in a vertical stack
@@ -20002,8 +20002,8 @@ ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode,
   }
 
   return returnMode == 1 ? list[frame.memory.selected] : (multi ? frame.memory.multiSelected : frame.memory.selected);
-}
-function IntervalTableDraw() {};
+};
+function IntervalTableDraw() {}
 
 IntervalTableDraw.MIN_CHARACTERS_SIZE = 1;
 
@@ -20099,7 +20099,7 @@ IntervalTableDraw.drawIntervalsFlowTable = function(intervalsFlowTable, frame, c
   }
 
   //return nHovered;
-}
+};
 IntervalTableDraw._isOnShape = function(prevPoint, point, prevYsup, newYsup, offX, testX, textY) {
   var t = (testX - prevPoint.x) / (point.x - prevPoint.x);
   var u = 1 - t;
@@ -20130,8 +20130,8 @@ IntervalTableDraw._isOnShape = function(prevPoint, point, prevYsup, newYsup, off
 
   var mYSup = u * this.P0.y + t * this.P1.y;
 
-  return textY > mYSup && textY < mYInf
-}
+  return textY > mYSup && textY < mYInf;
+};
 
 
 
@@ -20181,11 +20181,11 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 
   var nHovered = -1;
 
-  var filteredTexts = new Array();
-  var textsX = new Array();
-  var textsY = new Array();
-  var textsSizes = new Array();
-  var textsAngles = new Array();
+  var filteredTexts = [];
+  var textsX = [];
+  var textsY = [];
+  var textsSizes = [];
+  var textsAngles = [];
 
   for(i = 0; i < nElements; i++) {
 
@@ -20265,7 +20265,7 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
   }
 
   return nHovered;
-}
+};
 
 IntervalTableDraw._isOnRadialShape = function(center, testPoint, a0, a1, r0a, r0b, r1a, r1b) {
   if(a1 < a0) a1 += TwoPi;
@@ -20288,7 +20288,7 @@ IntervalTableDraw._isOnRadialShape = function(center, testPoint, a0, a1, r0a, r0
   r = testPoint.subtract(center).getNorm();
 
   return r > pa.y && r < pb.y;
-}
+};
 
 
 
@@ -20428,7 +20428,7 @@ IntervalTableDraw.drawIntervalsWordsFlowTable = function(frame, intervalsFlowTab
       }
     } while (j + 1 < nCols);
   }
-}
+};
 IntervalTableDraw._bezierValue = function(x0, x1, y0, y1, t, offX) {
   var u = 1 - t;
   var p0 = new Point(x0 + t * offX, y0);
@@ -20439,8 +20439,8 @@ IntervalTableDraw._bezierValue = function(x0, x1, y0, y1, t, offX) {
   var P1 = new Point(u * p1.x + t * p2.x, u * p1.y + t * p2.y);
 
   return u * P0.y + t * P1.y;
-}
-function NumberTableDraw() {};
+};
+function NumberTableDraw() {}
 
 /**
  * draws a matrix, with cells colors associated to values from a ColorScale
@@ -20495,7 +20495,7 @@ NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listC
   }
 
   return overCoordinates;
-}
+};
 
 /**
  * draws a ScatterPlot, if the provided NumberTable contains a third NumberList it also draws circles
@@ -20557,13 +20557,13 @@ NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colo
     setCursor('pointer');
     return iOver;
   }
-}
+};
 NumberTableDraw._drawCrossScatterPlot = function(x, y, color) {
   setStroke(color, 1);
   line(x, y - 2, x, y + 2);
   line(x - 2, y, x + 2, y);
   return Math.pow(mX - x, 2) + Math.pow(mY - y, 2) < 25;
-}
+};
 
 /**
  * draws a slopegraph
@@ -20608,7 +20608,7 @@ NumberTableDraw.drawSlopeGraph = function(frame, numberTable, texts) {
       fText(texts[i], x1 + 2, y1);
     }
   }
-}
+};
 
 
 /**
@@ -20702,7 +20702,7 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
       coordinates: coordinates,
       colorScale: colorScale,
       selected: null
-    }
+    };
 
   } else {
     matrixColors = frame.memory.matrixColors;
@@ -20757,7 +20757,7 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
   }
 
   if(frame.memory.selected) return frame.memory.indexes;
-}
+};
 
 /**
  * draws a steamgraph
@@ -20786,7 +20786,7 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
 
   //setup
   if(frame.memory == null || numberTable != frame.memory.numberTable || normalized != frame.memory.normalized || sorted != frame.memory.sorted || intervalsFactor != frame.memory.intervalsFactor || bezier != frame.memory.bezier || frame.width != frame.memory.width || frame.height != frame.memory.height || logFactor != frame.memory.logFactor) {
-		var nT2 = logFactor?numberTable.applyFunction(function(val){return Math.log(logFactor*val+1)}):numberTable;
+		var nT2 = logFactor?numberTable.applyFunction(function(val){return Math.log(logFactor*val+1);}):numberTable;
 
     frame.memory = {
       numberTable: numberTable,
@@ -20802,7 +20802,7 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
       height: frame.height,
       logFactor: logFactor,
       image: null
-    }
+    };
   }
 
   if(colorList && frame.memory.colorList != colorList) frame.memory.image = null;
@@ -20855,7 +20855,7 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
   }
 
   if(horizontalLabels) NumberTableDraw._drawHorizontalLabels(frame, frame.getBottom() - 5, numberTable, horizontalLabels, x0, x1);
-}
+};
 NumberTableDraw._drawHorizontalLabels = function(frame, y, numberTable, horizontalLabels, x0, x1) {
   var dx = frame.width / (numberTable[0].length - 1);
   var x;
@@ -20883,7 +20883,7 @@ NumberTableDraw._drawHorizontalLabels = function(frame, y, numberTable, horizont
     }
     fText(horizontalLabels[i], x, y);
   });
-}
+};
 NumberTableDraw._drawPartialFlow = function(frame, flowIntervals, labels, colors, x, x0, x1, OFF_X, sorted, numberTable) {
   var w = x1 - x0;
   var wForText = numberTable == null ? (x1 - x0) : (x1 - x0) * 0.85;
@@ -20975,7 +20975,7 @@ NumberTableDraw._drawPartialFlow = function(frame, flowIntervals, labels, colors
   }
 
   return iOver;
-}
+};
 
 
 
@@ -21016,7 +21016,7 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
       zoom: 1,
       angle0: 0,
       image: null
-    }
+    };
 
     var dA = TwoPi / numberTable[0].length;
     numberTable[0].forEach(function(val, i) {
@@ -21111,7 +21111,7 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
       drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
     }
   }
-}
+};
 NumberListDraw = function() {};
 
 /**
@@ -21135,9 +21135,9 @@ NumberListDraw.drawSimpleGraph = function(frame, numberList, margin, xValues) {
       numberList: numberList,
       minmax: numberList.getMinMaxInterval(),
       zero: null
-    }
+    };
     if(frame.memory.minmax.x > 0 && frame.memory.minmax.y > 0) {
-      frame.memory.normalizedList = numberList.getNormalizedToMax()
+      frame.memory.normalizedList = numberList.getNormalizedToMax();
     } else {
       frame.memory.normalizedList = numberList.getNormalized();
       frame.memory.zero = -frame.memory.minmax.x / frame.memory.minmax.getAmplitude();
@@ -21203,15 +21203,15 @@ NumberListDraw.drawSimpleGraph = function(frame, numberList, margin, xValues) {
       mX + w + 16, mY - 30,
       mX + 6, mY - 30,
       mX + 6, mY - 10
-    )
+    );
     setFill('white');
     fText(text, mX + 10, mY - 26);
     if(MOUSE_DOWN) clicked = overI;
   }
 
   return clicked;
-}
-function ObjectDraw() {};
+};
+function ObjectDraw() {}
 
 
 /**
@@ -21225,7 +21225,7 @@ ObjectDraw.count = function(frame, object) {
     frame.memory = {
       n: 1,
       object: object
-    }
+    };
   }
 
   if(frame.memory.object != object) {
@@ -21237,8 +21237,8 @@ ObjectDraw.count = function(frame, object) {
 
   setText('black', 12);
   fText(frame.memory.n, frame.x + 10, frame.y + 10);
-}
-function StringDraw() {};
+};
+function StringDraw() {}
 
 /**
  * draws a String (if the object is not a string it displays the json)
@@ -21264,7 +21264,7 @@ StringDraw.drawText = function(frame, object, fontSize, fontStyle, margin) {
 
   setText('black', fontSize, null, null, null, fontStyle);
 
-  significantChange = frame.memory == null || object != frame.memory.object || fontSize != frame.memory.fontSize || fontStyle != frame.memory.fontStyle || margin != frame.memory.margin || frame.width != frame.memory.width || frame.height != frame.memory.height
+  significantChange = frame.memory == null || object != frame.memory.object || fontSize != frame.memory.fontSize || fontStyle != frame.memory.fontStyle || margin != frame.memory.margin || frame.width != frame.memory.width || frame.height != frame.memory.height;
 
   //setup
   if(significantChange) {
@@ -21287,8 +21287,8 @@ StringDraw.drawText = function(frame, object, fontSize, fontStyle, margin) {
   }
 
   DrawTexts.fillTextRectangleWithTextLines(frame.memory.textLines, subframe.x, subframe.y, subframe.height, lineHeight);
-}
-function StringListDraw() {};
+};
+function StringListDraw() {}
 
 StringListDraw.tagCloudRectangles = function(stringList, weights, frame) {
 
@@ -21329,7 +21329,7 @@ StringListDraw.tagCloudRectangles = function(stringList, weights, frame) {
     rectangles[i] = new Rectangle(p.x, p.y, w, h);
     rectanglesPlaced.push(rectangles[i]);
   }
-}
+};
 
 StringListDraw._pointInRectangles = function(rectangles, p, width, height) {
   var rect;
@@ -21338,7 +21338,7 @@ StringListDraw._pointInRectangles = function(rectangles, p, width, height) {
     if(p.x + width > rect.x && p.x < (rect.x + rect.width) && p.y + height > rect.y && p.y < (rect.y + rect.height)) return true;
   }
   return false;
-}
+};
 /**
  * Operators that contain visualization method algoritms and return a Table with parameters for StringListPrimitive
  * @constructor
@@ -21431,7 +21431,7 @@ StringListVisOperators.simpleTagCloud = function(stringList, weights, frame, fon
   table[2] = sizes;
 
   return table;
-}
+};
 
 
 
@@ -21569,7 +21569,7 @@ StringListVisOperators.tagCloudRectangles = function(stringList, weights, frame,
   table[2] = textSizes;
 
   return table;
-}
+};
 
 StringListVisOperators._pointInRectangles = function(rectangles, px, py, width, height, margin) {
   var rect;
@@ -21578,12 +21578,12 @@ StringListVisOperators._pointInRectangles = function(rectangles, px, py, width, 
     if(px + width > (rect.x - margin) && px < (rect.x + rect.width + margin) && (py + height) > (rect.y - margin) && py < (rect.y + rect.height + margin)) return true;
   }
   return false;
-}
+};
 /**
  * NetworkDraw
  * @constructor
  */
-function NetworkDraw() {};
+function NetworkDraw() {}
 
 
 NetworkDraw._drawNode = function(node, x, y, r) {
@@ -21599,7 +21599,7 @@ NetworkDraw._drawNode = function(node, x, y, r) {
   }
   if(over) setCursor('pointer');
   return over;
-}
+};
 
 
 /**
@@ -21684,7 +21684,7 @@ NetworkDraw.drawNetwork2D = function(frame, network, polygon, respectProportions
   if(memory == null || memory.network != network || memory.nNodes != network.nodeList.length || memory.polygon != polygon || changeOnFrame || memory.respectProportions != respectProportions || memory.margin != margin || memory.logScale != logScale || memory.drawGrid != drawGrid) {
 
     if(memory == null) {
-      frame.memory = {}
+      frame.memory = {};
       memory = frame.memory;
     }
     memory.frame = frame.clone();
@@ -21717,13 +21717,13 @@ NetworkDraw.drawNetwork2D = function(frame, network, polygon, respectProportions
       ky = frameMargin.height / Math.log((frameP.bottom + 1) / (frameP.y + 1));
       project = function(p) {
         return new Point((Math.log(p.x + 1) - Math.log(frameP.x + 1)) * kx + frameMargin.x, frameMargin.bottom - (Math.log(p.y + 1) - Math.log(frameP.y + 1)) * ky);
-      }
+      };
     } else {
       kx = frameMargin.width / frameP.width;
       ky = frameMargin.height / frameP.height;
       project = function(p) {
         return new Point((p.x - frameP.x) * kx + frameMargin.x, frameMargin.bottom - (p.y - frameP.y) * ky);
-      }
+      };
     }
     memory.projectedPolygon = new Polygon();
     polygon.forEach(function(p, i) {
@@ -21805,7 +21805,7 @@ NetworkDraw._drawNodeValues = function(vx, vy, name) {
   fRect(mX - 2, mY - 2, -getTextW(text) - 4, -14);
   setText('white', 12, null, 'right', 'bottom');
   fText(text, mX - 4, mY - 2);
-}
+};
 
 
 
@@ -21846,10 +21846,10 @@ NetworkDraw.drawNetworkMatrix = function(frame, network, colors, relationsColorS
     dY = frame.height - dY;
     var ww;
     var hh;
-    var xNodes = new Array();
-    var yNodes = new Array();
-    var wNodes = new Array();
-    var hNodes = new Array();
+    var xNodes = [];
+    var yNodes = [];
+    var wNodes = [];
+    var hNodes = [];
   }
 
   for(i = 0; nodeList[i] != null; i++) {
@@ -21896,8 +21896,8 @@ NetworkDraw.drawNetworkMatrix = function(frame, network, colors, relationsColorS
 
   }
   return hoverValues;
-}
-function TreeDraw() {};
+};
+function TreeDraw() {}
 
 
 /**
@@ -21915,7 +21915,7 @@ TreeDraw.drawRectanglesTree = function(frame, tree, levelColors, margin) {
 
   var dX = frame.width / tree.nLevels;
   TreeDraw._drawRectanglesTreeChildren(tree.nodeList[0], new Rectangle(frame.x, frame.y, dX, frame.height), levelColors, margin);
-}
+};
 TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin) {
   context.fillStyle = colors[node.level];
   context.fillRect(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
@@ -21932,7 +21932,7 @@ TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin) {
       yy += h;
     }
   }
-}
+};
 
 
 /**
@@ -21966,7 +21966,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
       nodeSelected: tree.nodeList[0],
       nFLastChange: nF,
       image: null
-    }
+    };
 
     var leaves = (!changeInTree && frame.memory.leaves) ? frame.memory.leaves : tree.getLeaves();
     frame.memory.leaves = leaves;
@@ -21990,7 +21990,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
           }
         }
         return node._treeMapWeight;
-      }
+      };
       assignTreemapWeight(tree.nodeList[0]);
     }
 
@@ -22040,7 +22040,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
         node._rgb[0] = Math.floor(node._rgb[0] / node.toNodeList.length);
         node._rgb[1] = Math.floor(node._rgb[1] / node.toNodeList.length);
         node._rgb[2] = Math.floor(node._rgb[2] / node.toNodeList.length);
-      }
+      };
       assignColor(tree.nodeList[0]);
       tree.nodeList.forEach(function(node, i) {
         if(node._rgb && node._rgbF == null) node._rgbF = [node._rgb[0], node._rgb[1], node._rgb[2]];
@@ -22056,7 +22056,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
       var rgb;
       tree.nodeList.forEach(function(node, i) {
         rgb = node._color ? ColorOperators.colorStringToRGB(node._color) : [0, 0, 0];
-        frame.memory.textsColorList[i] = (rgb[0] + rgb[1] + rgb[2] > 360) ? 'black' : 'white'
+        frame.memory.textsColorList[i] = (rgb[0] + rgb[1] + rgb[2] > 360) ? 'black' : 'white';
       });
     }
 
@@ -22083,10 +22083,10 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
   var my = frame.memory.my;
 
   var tx = function(x) {
-    return kx * x + mx
+    return kx * x + mx;
   };
   var ty = function(y) {
-    return ky * y + my
+    return ky * y + my;
   };
 
 
@@ -22190,7 +22190,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
       x = Math.round(frame.x + rect.x) + 0.5;
       y = Math.round(frame.y + rect.y) + 0.5;
       setStroke(textColor ? textColor : frame.memory.textsColorList[overI], 2);
-      sRect(x, y, Math.floor(rect.width), Math.floor(rect.height))
+      sRect(x, y, Math.floor(rect.width), Math.floor(rect.height));
 
       if(MOUSE_UP_FAST) {
         frame.memory.focusFrame = TreeDraw._expandRect(overNode._outRectangle);
@@ -22235,7 +22235,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
 
   return frame.memory.nodeSelected;
 
-}
+};
 
 TreeDraw._generateRectangles = function(node) {
 
@@ -22251,16 +22251,16 @@ TreeDraw._generateRectangles = function(node) {
     child._inRectangle = TreeDraw._inRectFromOutRect(child._outRectangle);
     TreeDraw._generateRectangles(child);
   });
-}
+};
 TreeDraw._reduceRect = function(rect) {
   return new Rectangle(rect.x + rect.width * TreeDraw.PROP_RECT_REDUCTION_MARGIN, rect.y + rect.height * TreeDraw.PROP_RECT_REDUCTION_MARGIN, rect.width * (1 - 2 * TreeDraw.PROP_RECT_REDUCTION_MARGIN), rect.height * (1 - 2 * TreeDraw.PROP_RECT_REDUCTION_MARGIN));
-}
+};
 TreeDraw._expandRect = function(rect) {
   return new Rectangle(rect.x - rect.width * TreeDraw.PROP_RECT_EXPANTION_MARGIN, rect.y - rect.height * TreeDraw.PROP_RECT_EXPANTION_MARGIN, rect.width * (1 + 2 * TreeDraw.PROP_RECT_EXPANTION_MARGIN), rect.height * (1 + 2 * TreeDraw.PROP_RECT_EXPANTION_MARGIN));
-}
+};
 TreeDraw._inRectFromOutRect = function(rect) {
   return new Rectangle(rect.x + rect.width * TreeDraw.PROP_RECT_MARGIN, rect.y + rect.height * TreeDraw.PROP_RECT_LABEL, rect.width * (1 - 2 * TreeDraw.PROP_RECT_MARGIN), rect.height * (1 - TreeDraw.PROP_RECT_MARGIN - TreeDraw.PROP_RECT_LABEL));
-}
+};
 TreeDraw.PROP_RECT_MARGIN = 0.03;
 TreeDraw.PROP_RECT_LABEL = 0.2;
 TreeDraw.PROP_RECT_REDUCTION_MARGIN = 0.01;
@@ -22299,7 +22299,7 @@ TreeDraw.drawDecisionTree = function(frame, tree) {
       nFLastChange: nF,
       leaves: null,
       image: null
-    }
+    };
 
     if(changeInTree || frame.memory.leaves == null) {
       frame.memory.leaves = tree.getLeaves().getSortedByProperty('valueFollowingProbability', false);
@@ -22319,7 +22319,7 @@ TreeDraw.drawDecisionTree = function(frame, tree) {
 
     setText('black', 12);
     tree.nodeList.forEach(function(node) {
-      node.label = node.toNodeList.length == 0 ? Math.round(node.valueFollowingProbability * 100) / 100 : node.bestFeatureName
+      node.label = node.toNodeList.length == 0 ? Math.round(node.valueFollowingProbability * 100) / 100 : node.bestFeatureName;
       node._textWidth = getTextW(node.label);
     });
 
@@ -22346,7 +22346,7 @@ TreeDraw.drawDecisionTree = function(frame, tree) {
   var mx = frame.memory.mx;
 
   var tx = function(x) {
-    return kx * x + mx
+    return kx * x + mx;
   };
 
   var x, y;
@@ -22364,7 +22364,7 @@ TreeDraw.drawDecisionTree = function(frame, tree) {
   if(drawingImage) {
     drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
   } else {
-    c.l('drawing')
+    c.l('drawing');
     if(captureImage) {
       var newCanvas = document.createElement("canvas");
       newCanvas.width = frame.width;
@@ -22624,7 +22624,7 @@ TreeDraw.drawDecisionTree = function(frame, tree) {
 
   return frame.memory.result;
 
-}
+};
 TreeDraw._generateRectanglesDecision = function(node, hLevel) {
 
   var weights = new NumberList();
@@ -22639,10 +22639,10 @@ TreeDraw._generateRectanglesDecision = function(node, hLevel) {
     child._inRectangle = TreeDraw._inRectFromOutRectDecision(child._outRectangle, hLevel);
     TreeDraw._generateRectanglesDecision(child, hLevel);
   });
-}
+};
 TreeDraw._inRectFromOutRectDecision = function(rect, hLevel) {
   return new Rectangle(rect.x, rect.y + hLevel, rect.width, rect.height - hLevel);
-}
+};
 TreeDraw._horizontalRectanglesDecision = function(rect, weights) {
   var rects = new List();
   var x0 = rect.x;
@@ -22656,7 +22656,7 @@ TreeDraw._horizontalRectanglesDecision = function(rect, weights) {
   });
 
   return rects;
-}
+};
 /**
  *Static class that:
  * -includes all the data models (by including the class IncludeDataModels.js)
@@ -22672,21 +22672,21 @@ Global.userAgent="unknown";
 
 init=function(){
   //console.log("init must be overriden!");
-}
+};
 
 cycle=function(){
   //console.log("cycle must be overriden!");
-}
+};
 
 resizeWindow=function(){
   //console.log("resizeWindow must be overriden!");
-}
+};
 
 lastCycle = function(){
 	//override
-}
+};
 
-var listenerArray  = new Array();
+var listenerArray  = [];
 var canvas;
 var removeDiv;
 var userAgent="none";
@@ -22753,26 +22753,26 @@ var END_CYCLE_DELAY = 3000; //time in milliseconds, from last mouse movement to 
 
 Array.prototype.last = function(){
 	return this[this.length-1];
-}
+};
 
 window.addEventListener('load', function(){
 
  	if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
     	userAgent='IE';
-    	userAgentVersion=new Number(RegExp.$1) // capture x.x portion and store as a number
+    	userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
     	if(userAgentVersion<9) return null;
 	} else if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent)){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
    		userAgent='FIREFOX';
-    	userAgentVersion=new Number(RegExp.$1) // capture x.x portion and store as a number
+    	userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
    	} else if (navigator.userAgent.match(/Chrome/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
 	 	userAgent='CHROME';
-	    userAgentVersion=new Number(RegExp.$1) // capture x.x portion and store as a number
+	    userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
 	} else if (/Mozilla[\/\s](\d+\.\d+)/.test(navigator.userAgent) || navigator.userAgent.match(/Mozilla/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
 	 	userAgent='MOZILLA';
-	    userAgentVersion=new Number(RegExp.$1) // capture x.x portion and store as a number
+	    userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
 	} else if (navigator.userAgent.match(/Safari/) != null){ //test for MSIE x.x;
     	userAgent='Safari';
-    	userAgentVersion=new Number(RegExp.$1) // capture x.x portion and store as a number
+    	userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
   	} else if(navigator.userAgent.match(/iPad/i) != null){
     	userAgent='IOS';
   	} else if(navigator.userAgent.match(/iPhone/i) != null){
@@ -23075,7 +23075,7 @@ function _onWheel(e) {
 
 setStructureLocalStorageWithSeed = function(object, seed, comments){
 	setStructureLocalStorage(object, MD5.hex_md5(seed), comments);
-}
+};
 
 setStructureLocalStorage = function(object, id, comments){
 	var type = typeOf(object);
@@ -23100,7 +23100,7 @@ setStructureLocalStorage = function(object, id, comments){
 		comments:comments,
 		date:new Date(),
 		code:code
-	}
+	};
 
 	var storageString = JSON.stringify(storageObject);
 
@@ -23109,11 +23109,11 @@ setStructureLocalStorage = function(object, id, comments){
 	// c.l('code.length:', code.length);
 
 	localStorage.setItem(id, storageString);
-}
+};
 
 getStructureLocalStorageFromSeed = function(seed, returnStorageObject){
 	return getStructureLocalStorage(MD5.hex_md5(seed), returnStorageObject);
-}
+};
 
 getStructureLocalStorage = function(id, returnStorageObject){
 	returnStorageObject = returnStorageObject||false;
@@ -23156,7 +23156,7 @@ getStructureLocalStorage = function(id, returnStorageObject){
 	}
 
 	return object;
-}
+};
 
 function getDocWidth() {
     var D = document;

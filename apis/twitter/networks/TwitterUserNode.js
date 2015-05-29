@@ -28,20 +28,20 @@ function TwitterUserNode(name, completeName, id, i, thumbnailUrl, tweets, dates,
 
 TwitterUserNode.prototype.getLastTweet = function() {
   return this.tweets[this.tweets.length - 1];
-}
+};
 TwitterUserNode.prototype.getLastDate = function() {
   return this.dates[this.dates.length - 1];
-}
+};
 
 
 TwitterUserNode.prototype.loadThumbnail = function() {
 
   if(!this._alreadyLoadingOrLoaded) Loader.loadImage(this.thumbnailUrl, this.onImageLoaded, this);
   this._alreadyLoadingOrLoaded = true;
-}
+};
 TwitterUserNode.prototype.onImageLoaded = function(e) {
   this.image = e.result;
-}
+};
 
 TwitterUserNode.prototype.clone = function() {
   var node = new TwitterUserNode(this.name, this.completeName, this.id, this.i, this.tweets, this.dates);
@@ -62,4 +62,4 @@ TwitterUserNode.prototype.clone = function() {
   node.dates = this.dates.clone();
 
   return node;
-}
+};

@@ -1,4 +1,4 @@
-function CanvasAndContext() {};
+function CanvasAndContext() {}
 
 CanvasAndContext.createInvisibleContext = function(width, height) {
   width = width || cW;
@@ -8,4 +8,4 @@ CanvasAndContext.createInvisibleContext = function(width, height) {
   tempCanvas.width = cW;
   tempCanvas.height = cH;
   return tempCanvas.getContext('2d');
-}
+};

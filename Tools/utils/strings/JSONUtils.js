@@ -2,7 +2,7 @@
  * JSONUtils 
  * @constructor
  */
-function JSONUtils() {};
+function JSONUtils() {}
 
 
 JSONUtils.stringifyAndPrint = function(object) {
@@ -10,7 +10,7 @@ JSONUtils.stringifyAndPrint = function(object) {
   c.log("__________________________________________________________________________________________________________________________________________________________");
   c.log(jsonString);
   c.log("__________________________________________________________________________________________________________________________________________________________");
-}
+};
 
 /**
  * This function is not used in the framework.
@@ -18,4 +18,4 @@ JSONUtils.stringifyAndPrint = function(object) {
  */
 JSONUtils.dummy2 = function() {
   return null;
-}
+};

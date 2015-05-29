@@ -70,7 +70,7 @@ Selection.prototype.onMouse = function() {
       this.warnFunction.call(this.target, this.id);
     }
   }
-}
+};
 
 Selection.prototype.draw = function() {
   this.iOver = -1;
@@ -83,7 +83,7 @@ Selection.prototype.draw = function() {
     }
   }
   if(this.iOver != -1) canvas.style.cursor = 'pointer';
-}
+};
 
 Selection.prototype.drawButtonCircle = function(text, x, y, active) {
   setText(this.textStyle.fontColor, this.textStyle.fontSize, this.textStyle.fontName);
@@ -94,4 +94,4 @@ Selection.prototype.drawButtonCircle = function(text, x, y, active) {
   sCircle(x, y + this.textStyle.fontSize * 0.5, 5);
 
   if(active) fCircle(x, y + this.textStyle.fontSize * 0.5, 3);
-}
+};

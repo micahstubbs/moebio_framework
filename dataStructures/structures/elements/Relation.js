@@ -21,11 +21,11 @@ Relation.prototype.destroy = function() {
   delete this.node0;
   delete this.node1;
   delete this.content;
-}
+};
 
 Relation.prototype.getOther = function(node) {
   return node == this.node0 ? this.node1 : this.node0;
-}
+};
 
 Relation.prototype.clone = function() {
   var relation = new Relation(this.id, this.name, this.node0, this.node1);
@@ -40,4 +40,4 @@ Relation.prototype.clone = function() {
   relation.descentWeight = this.descentWeight;
 
   return relation;
-}
+};

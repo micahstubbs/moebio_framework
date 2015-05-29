@@ -1,4 +1,4 @@
-function NetworkEncodings() {};
+function NetworkEncodings() {}
 
 
 
@@ -183,7 +183,7 @@ NetworkEncodings.decodeNoteWork = function(code) {
 
         node = network.nodeList.getNodeById(id);
 
-        iEnd = index == -1 ? line.length : index
+        iEnd = index == -1 ? line.length : index;
 
         if(node == null) {
 
@@ -309,7 +309,7 @@ NetworkEncodings.decodeNoteWork = function(code) {
           }
 
           if(index != -1) {
-            iEnd = index + simpleLine.substr(index).match(regex)[0].length
+            iEnd = index + simpleLine.substr(index).match(regex)[0].length;
 
             relation = network.relationList.getFirstRelationBetweenNodes(node, otherNode, true);
 
@@ -408,14 +408,14 @@ NetworkEncodings.decodeNoteWork = function(code) {
   network.colorSegments = colorSegments;
 
   return network;
-}
+};
 NetworkEncodings._simplifyForNoteWork = function(name) {
   name = name.toLowerCase();
   if(name.substr(name.length - 2) == 'es') {
     name = name.substr(0, name.length - 1);
   } else if(name.charAt(name.length - 1) == 's') name = name.substr(0, name.length - 1);
   return name.trim();
-}
+};
 NetworkEncodings._regexWordForNoteWork = function(word, global) {
   global = global == null ? true : global;
   try {
@@ -423,7 +423,7 @@ NetworkEncodings._regexWordForNoteWork = function(word, global) {
   } catch(err) {
     return null;
   }
-}
+};
 
 /**
  * encodes a network into NoteWork notes
@@ -485,7 +485,7 @@ NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesP
   });
 
   return code;
-}
+};
 
 
 
@@ -565,7 +565,7 @@ NetworkEncodings.decodeGDF = function(gdfCode) {
   }
 
   return network;
-}
+};
 
 /**
  * encodes a network in formatt GDF, more info: https://gephi.org/users/supported-graph-formats/gml-format/
@@ -615,7 +615,7 @@ NetworkEncodings.encodeGDF = function(network, nodesPropertiesNames, relationsPr
   }
 
   return code;
-}
+};
 
 
 //////////////GML
@@ -739,14 +739,14 @@ NetworkEncodings.decodeGML = function(gmlCode) {
   }
 
   return network;
-}
+};
 NetworkEncodings._cleanLineBeginning = function(string) {
   string = StringOperators.removeInitialRepeatedCharacter(string, "\n");
   string = StringOperators.removeInitialRepeatedCharacter(string, "\r");
   string = StringOperators.removeInitialRepeatedCharacter(string, " ");
   string = StringOperators.removeInitialRepeatedCharacter(string, "	");
   return string;
-}
+};
 
 
 /**
@@ -822,7 +822,7 @@ NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPr
 
   code += "\n]";
   return code;
-}
+};
 
 
 
@@ -967,7 +967,7 @@ NetworkEncodings.decodeSYM = function(symCode) {
   network.groupsPropertiesNames = groupsPropertiesNames;
 
   return network;
-}
+};
 
 NetworkEncodings.encodeSYM = function(network, groups, nodesPropertiesNames, relationsPropertiesNames, groupsPropertiesNames) {
   nodesPropertiesNames = nodesPropertiesNames == null ? new StringList() : nodesPropertiesNames;
@@ -983,7 +983,7 @@ NetworkEncodings.encodeSYM = function(network, groups, nodesPropertiesNames, rel
     code += (i == 0 ? "" : "\n\n") + "NODE " + node.id;
     if(node.name != "") code += "\nname:" + (node.name).replace(/\n/g, "\\n");
     for(j = 0; nodesPropertiesNames[j] != null; j++) {
-      propertyName = nodesPropertiesNames[j]
+      propertyName = nodesPropertiesNames[j];
       if(node[propertyName] != null) code += "\n" + propertyName + ":" + _processProperty(propertyName, node[propertyName]);
     }
   }
@@ -993,7 +993,7 @@ NetworkEncodings.encodeSYM = function(network, groups, nodesPropertiesNames, rel
     relation = network.relationList[i];
     code += "\n\nRELATION " + relation.node0.id + ", " + relation.node1.id;
     for(j = 0; relationsPropertiesNames[j] != null; j++) {
-      propertyName = relationsPropertiesNames[j]
+      propertyName = relationsPropertiesNames[j];
       if(relation[propertyName] != null) code += "\n" + propertyName + ":" + _processProperty(propertyName, relation[propertyName]);
     }
   }
@@ -1013,7 +1013,7 @@ NetworkEncodings.encodeSYM = function(network, groups, nodesPropertiesNames, rel
   //c.log("/////// encodeSYM\n"+code+"\n/////////");
 
   return code;
-}
+};
 
 _processProperty = function(propName, propValue) { //TODO: use this in other encoders
   switch(propName) {
@@ -1027,7 +1027,7 @@ _processProperty = function(propName, propValue) { //TODO: use this in other enc
   }
   propValue = String(propValue).replace(/\n/g, "\\n");
   return propValue;
-}
+};
 
 
 
@@ -1049,7 +1049,7 @@ NetworkEncodings.replaceChomasInLine = function(line) {
   }
   line = StringList.fromArray(quoteBlocks).getConcatenated("");
   return line;
-}
+};
 NetworkEncodings._replaceSpacesInLine = function(line) {
   var quoteBlocks = line.split("\"");
   if(quoteBlocks.length < 2) return line;
@@ -1063,4 +1063,4 @@ NetworkEncodings._replaceSpacesInLine = function(line) {
   }
   line = StringList.fromArray(quoteBlocks).getConcatenated("\"");
   return line;
-}
+};

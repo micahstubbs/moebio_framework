@@ -2,7 +2,7 @@
  * MatrixGenerators
  * @constructor
  */
-function MatrixGenerators() {};
+function MatrixGenerators() {}
 
 
 /**
@@ -30,7 +30,7 @@ MatrixGenerators.createMatrixFromTrianglesMapping = function(v0, v1, v2, w0, w1,
   }
 
   return new Matrix(a, c, b, d, w0.x - a * v0.x - b * v0.y, w0.y - c * v0.x - d * v0.y);
-}
+};
 
 
 //TODO: place this in the correct place
@@ -51,7 +51,7 @@ MatrixGenerators.applyTransformationOnCanvasFromPoints = function(context, v0, v
     d = (w2.y - w0.y) / (v2.y - v0.y) - c * (v2.x - v0.x) / (v2.y - v0.y);
   }
   context.transform(a, c, b, d, w0.x - a * v0.x - b * v0.y, w0.y - c * v0.x - d * v0.y);
-}
+};
 
 
 

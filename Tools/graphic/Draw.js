@@ -5,7 +5,7 @@
  * Draw
  * @constructor
  */
-function Draw() {};
+function Draw() {}
 
 Draw.drawSmoothPolygon = function(polygon, closed, amount) { //TODO: add tx, ty
   amount = amount == null ? 30 : amount;
@@ -49,7 +49,7 @@ Draw.drawSmoothPolygon = function(polygon, closed, amount) { //TODO: add tx, ty
     prevCP = controlPoints[1];
     prevPoint = point;
   }
-}
+};
 
 /**
  * modes:
@@ -123,7 +123,7 @@ Draw.fillRectangleWithImage = function(rectangle, image, mode, backColor) {
     case 5:
       break;
   }
-}
+};
 
 
 /**
@@ -148,7 +148,7 @@ Draw.drawEllipse = function(x, y, rW, rH) {
   context.bezierCurveTo(xe, y + oy, x + ox, ye, x, ye);
   context.bezierCurveTo(x - ox, ye, x - rW, y + oy, x - rW, y);
   context.moveTo(x - rW, y);
-}
+};
 
 /**
  * Draws a polygon
@@ -169,7 +169,7 @@ Draw.drawPolygon = function(polygon, close, tx, ty) {
   if(close) {
     context.lineTo(tx + polygon[0].x, ty + polygon[0].y);
   }
-}
+};
 
 Draw.drawPolygonWithControlPoints = function(polygon, controlPoints, tx, ty) {
   tx = tx || 0;
@@ -181,7 +181,7 @@ Draw.drawPolygonWithControlPoints = function(polygon, controlPoints, tx, ty) {
       tx + controlPoints[i * 2 - 1].x, ty + controlPoints[i * 2 - 1].y,
       tx + polygon[i].x, ty + polygon[i].y);
   }
-}
+};
 
 Draw.drawBezierPolygon = function(bezierPolygon, tx, ty) {
   tx = tx || 0;
@@ -199,7 +199,7 @@ Draw.drawBezierPolygon = function(bezierPolygon, tx, ty) {
       tx + bezierPolygon[bI + 2].x, ty + bezierPolygon[bI + 2].y
     );
   }
-}
+};
 
 Draw.drawBezierPolygonTransformed = function(bezierPolygon, transformationFunction) {
   if(bezierPolygon == null ||  bezierPolygon.length == 0) return;
@@ -225,7 +225,7 @@ Draw.drawBezierPolygonTransformed = function(bezierPolygon, transformationFuncti
       p2.x, p2.y
     );
   }
-}
+};
 
 Draw.drawPolygonTransformed = function(polygon, transformationFunction) {
   var p = transformationFunction(polygon[0]);
@@ -234,7 +234,7 @@ Draw.drawPolygonTransformed = function(polygon, transformationFunction) {
     p = transformationFunction(polygon[i]);
     context.lineTo(p.x, p.y);
   }
-}
+};
 
 
 Draw.drawSliderRectangle = function(x, y, width, height) {
@@ -243,7 +243,7 @@ Draw.drawSliderRectangle = function(x, y, width, height) {
   context.arc(x + width * 0.5, y + height, width * 0.5, 0, Math.PI);
   context.lineTo(x, y);
   //context.fillRect(x, y, width, height);
-}
+};
 
 
 
@@ -270,7 +270,7 @@ Draw.drawRoundRect = function(x, y, width, height, radius) {
   context.quadraticCurveTo(x, bottom, x, bottom - radius);
   context.lineTo(x, y + radius);
   context.quadraticCurveTo(x, y, x + radius, y);
-}
+};
 
 Draw.drawEquilateralTriangle = function(x, y, radius, angle) { //deprecated
   angle = angle || 0;
@@ -278,20 +278,20 @@ Draw.drawEquilateralTriangle = function(x, y, radius, angle) { //deprecated
   context.lineTo(radius * Math.cos(angle + 2.0944) + x, radius * Math.sin(angle + 2.0944) + y);
   context.lineTo(radius * Math.cos(angle + 4.1888) + x, radius * Math.sin(angle + 4.1888) + y);
   context.lineTo(radius * Math.cos(angle) + x, radius * Math.sin(angle) + y);
-}
+};
 
 Draw.drawArrowTriangle = function(p0, p1, base) {
   var angle = p0.angleToPoint(p1);
   var height = p0.distanceToPoint(p1);
   Draw.drawTriangleFromBase(p0.x, p0.y, base, height, angle);
-}
+};
 
 Draw.drawTriangleFromBase = function(x, y, base, height, angle) {
   context.moveTo(x + 0.5 * base * Math.cos(angle + Math.PI * 0.5), y + 0.5 * base * Math.sin(angle + Math.PI * 0.5));
   context.lineTo(x + 0.5 * base * Math.cos(angle - Math.PI * 0.5), y + 0.5 * base * Math.sin(angle - Math.PI * 0.5));
   context.lineTo(x + height * Math.cos(angle), y + height * Math.sin(angle));
   context.lineTo(x + 0.5 * base * Math.cos(angle + Math.PI * 0.5), y + 0.5 * base * Math.sin(angle + Math.PI * 0.5));
-}
+};
 
 Draw.drawHorizontalFlowPiece = function(x0, x1, y0U, y0D, y1U, y1D, offX) {
   context.moveTo(x0, y0U);
@@ -299,7 +299,7 @@ Draw.drawHorizontalFlowPiece = function(x0, x1, y0U, y0D, y1U, y1D, offX) {
   context.lineTo(x1, y1D);
   context.bezierCurveTo(x1 - offX, y1D, x0 + offX, y0D, x0, y0D);
   context.lineTo(x0, y0U);
-}
+};
 
 
 
@@ -323,7 +323,7 @@ Draw.drawRectangles = function(rectangleList, x, y, colors, margin, bitmapDataLi
       Draw.fillRectangleWithImage(context, adjustedRect, bitmapDataList[i], bitmapDataDrawMode);
     }
   }
-}
+};
 
 Draw.drawQuadrilater = function(p0, p1, p2, p3, close) {
   close = close == null ? true : close;
@@ -332,7 +332,7 @@ Draw.drawQuadrilater = function(p0, p1, p2, p3, close) {
   context.lineTo(p2.x, p2.y);
   context.lineTo(p3.x, p3.y);
   if(close) context.lineTo(p0.x, p0.y);
-}
+};
 
 /**
  * it assumes that both circles centers have same y coordinates
@@ -355,7 +355,7 @@ Draw.drawLens = function(circle0, circle1) {
 
   context.arc(circle0.x, circle0.y, circle0.z, angles[0], angles[1]);
   context.arc(circle1.x, circle1.y, circle1.z, angles[2], angles[3]);
-}
+};
 
 
 
@@ -376,4 +376,4 @@ Draw.drawAndCapture = function(drawFunction, frame, target) {
 
   context = defaultContext;
   return image;
-}
+};

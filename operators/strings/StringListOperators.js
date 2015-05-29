@@ -1,11 +1,11 @@
-function StringListOperators() {};
+function StringListOperators() {}
 /** 
  * receives n arguments and performs addition
  */
 StringListOperators.concatStrings = function(stringList, joinString) { //deprecated
   if(joinString == null) joinString = "";
   return StringList.fromArray(stringList.join(joinString));
-}
+};
 
 /**
  * join strings with a character
@@ -24,7 +24,7 @@ StringListOperators.join = function(stringList, character, prefix, sufix) {
   prefix = prefix == null ? "" : prefix;
   sufix = sufix == null ? "" : sufix;
   return prefix + stringList.join(character) + sufix;
-}
+};
 
 
 /**
@@ -54,7 +54,7 @@ StringListOperators.filterStringListByString = function(stringList, string, asWo
     }
   }
   return newList;
-}
+};
 
 
 // var regex = new RegExp("\\b"+word+"\\b");
@@ -84,7 +84,7 @@ StringListOperators.countStringsOccurrencesOnTexts = function(strings, texts) {
     occurrencesTable[i] = numberList;
   }
   return occurrencesTable;
-}
+};
 
 /**
  * builds a table with a list of occurrent words and numberLists for occurrences in each string
@@ -157,7 +157,7 @@ StringListOperators.getWordsOccurrencesMatrix = function(strings, stopWords, inc
   if(totalWordsLimit > 0) matrix = matrix.sliceRows(0, totalWordsLimit - 1);
 
   return matrix;
-}
+};
 
 //good approach for few large texts, to be tested
 StringListOperators.createTextsNetwork = function(texts, stopWords, stressUniqueness, relationThreshold) {
@@ -195,7 +195,7 @@ StringListOperators.createTextsNetwork = function(texts, stopWords, stressUnique
   }
 
   return network;
-}
+};
 
 
 /**
@@ -242,22 +242,22 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
     case 0: //pseudo-entropy
       weightFunction = function(nOtherTexts) {
         return 1 - Math.pow(2 * nOtherTexts / (n_texts - 1) - 1, 2);
-      }
+      };
       break;
     case 1: //originality
       weightFunction = function(nOtherTexts) {
         return 1 / (nOtherTexts + 1);
-      }
+      };
       break;
     case 2: //skewed entropy (favoring very few external occurrences)
       weightFunction = function(nOtherTexts) {
         return 1 - Math.pow(2 * Math.pow(nOtherTexts / (n_texts - 1), 0.2) - 1, 2);
-      }
+      };
     default: //originality except isolation
       weightFunction = function(nOtherTexts) {
         if(nOtherTexts == 0) return 0;
         return 1 / nOtherTexts;
-      }
+      };
   }
 
   c.l('A ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
@@ -297,7 +297,7 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
       }
 
       maxWeight = Math.max(maxWeight, weights[j]);
-    };
+    }
 
     nWords = Math.floor(Math.log(n_words + 1) * 3);
 
@@ -339,4 +339,4 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
   c.l('C ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
 
   return network;
-}
+};

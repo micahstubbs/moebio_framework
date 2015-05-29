@@ -1,4 +1,4 @@
-function SVGdecode() {};
+function SVGdecode() {}
 
 SVGdecode.pathToBezierPolygon = function(path) {
   var log = false;
@@ -20,7 +20,7 @@ SVGdecode.pathToBezierPolygon = function(path) {
   if(path.substr(-1, 1) == "z") path = path.substr(0, path.length - 1);
   if(log) c.log('2. path:' + path);
 
-  var regExpSpliters = /c|C|s|S|l|L|,/g
+  var regExpSpliters = /c|C|s|S|l|L|,/g;
 
   var spliters = path.match(regExpSpliters);
 
@@ -39,7 +39,7 @@ SVGdecode.pathToBezierPolygon = function(path) {
   var p0;
   var p;
   var previous;
-  var prePrevious
+  var prePrevious;
   var bI;
   var spliter = ',';
 
@@ -126,4 +126,4 @@ SVGdecode.pathToBezierPolygon = function(path) {
   //c.log(polygon);
 
   return polygon;
-}
+};

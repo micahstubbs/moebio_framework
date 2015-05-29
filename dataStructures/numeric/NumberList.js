@@ -76,7 +76,7 @@ NumberList.fromArray = function(array, forceToNumber) {
   result.slice = NumberList.prototype.slice;
 
   return result;
-}
+};
 NumberList.prototype.unit = "";
 NumberList.prototype.tenPower = 0;
 
@@ -88,7 +88,7 @@ NumberList.prototype.getMin = function() { //TODO:store result and retrieve whil
     min = Math.min(min, this[i]);
   }
   return min;
-}
+};
 
 NumberList.prototype.getMax = function() { //TODO:store result and retrieve while the NumberList doesn't change;
   if(this.length == 0) return null;
@@ -98,7 +98,7 @@ NumberList.prototype.getMax = function() { //TODO:store result and retrieve whil
     max = Math.max(max, this[i]);
   }
   return max;
-}
+};
 
 NumberList.prototype.getAmplitude = function() {
   if(this.length == 0) return 0;
@@ -109,11 +109,11 @@ NumberList.prototype.getAmplitude = function() {
     max = Math.max(max, this[i]);
   }
   return max - min;
-}
+};
 
 NumberList.prototype.getMinMaxInterval = function() { //deprecated?
   return new Interval(this.getMin(), this.getMax());
-}
+};
 
 /**
  * returns the sum of values in the numberList
@@ -128,7 +128,7 @@ NumberList.prototype.getSum = function() {
     sum += this[i];
   }
   return sum;
-}
+};
 
 /**
  * return the product of values in the numberList
@@ -143,7 +143,7 @@ NumberList.prototype.getProduct = function() {
     product *= this[i];
   }
   return product;
-}
+};
 
 /**
  * returns a NumberList normalized to the sum
@@ -164,7 +164,7 @@ NumberList.prototype.getNormalizedToSum = function(factor, sum) {
     newNumberList.push(factor * this[i] / sum);
   }
   return newNumberList;
-}
+};
 
 /**
  * returns a numberList normalized to min-max interval
@@ -186,7 +186,7 @@ NumberList.prototype.getNormalized = function(factor) {
   }
   newNumberList.name = this.name;
   return newNumberList;
-}
+};
 
 /**
  * returns a numberList normalized to Max
@@ -210,7 +210,7 @@ NumberList.prototype.getNormalizedToMax = function(factor) {
   }
   newNumberList.name = this.name;
   return newNumberList;
-}
+};
 
 /**
  * builds an Interval witn min and max value from the numberList
@@ -227,7 +227,7 @@ NumberList.prototype.getInterval = function() {
   }
   var interval = new Interval(min, max);
   return interval;
-}
+};
 
 
 NumberList.prototype.toPolygon = function() {
@@ -237,7 +237,7 @@ NumberList.prototype.toPolygon = function() {
     polygon.push(new Point(this[i], this[i + 1]));
   }
   return polygon;
-}
+};
 
 
 
@@ -251,7 +251,7 @@ NumberList.prototype.toPolygon = function() {
  */
 NumberList.prototype.getAverage = function() {
   return this.getSum() / this.length;
-}
+};
 
 /**
  * calculates geometric mean of numberList
@@ -264,7 +264,7 @@ NumberList.prototype.getGeometricMean = function() {
     s += Math.log(val);
   });
   return Math.pow(Math.E, s / this.length);
-}
+};
 
 /**
  * calculates de norm of the numberList (treated as a vector)
@@ -277,7 +277,7 @@ NumberList.prototype.getNorm = function() {
     sq += Math.pow(this[i], 2);
   }
   return Math.sqrt(sq);
-}
+};
 
 /**
  * calculates the variance of the numberList
@@ -291,7 +291,7 @@ NumberList.prototype.getVariance = function() {
     sd += Math.pow(this[i] - average, 2);
   }
   return sd / this.length;
-}
+};
 
 /**
  * calculates the standard deviation
@@ -300,7 +300,7 @@ NumberList.prototype.getVariance = function() {
  */
 NumberList.prototype.getStandardDeviation = function() {
   return Math.sqrt(this.getVariance());
-}
+};
 
 /**
  * calculates the median of the numberList
@@ -314,7 +314,7 @@ NumberList.prototype.getMedian = function(nQuantiles) {
   var onIndex = prop == entProp;
   var quantiles = new NumberList();
   return onIndex ? sorted[prop] : (0.5 * sorted[entProp] + 0.5 * sorted[entProp + 1]);
-}
+};
 
 /**
  * builds a partition of n quantiles from the numberList
@@ -333,7 +333,7 @@ NumberList.prototype.getQuantiles = function(nQuantiles) {
     quantiles[i] = onIndex ? sorted[(i + 1) * prop] : (0.5 * sorted[(i + 1) * entProp] + 0.5 * sorted[(i + 1) * entProp + 1]);
   }
   return quantiles;
-}
+};
 
 
 
@@ -344,18 +344,18 @@ NumberList.prototype.getSorted = function(ascending) {
 
   if(ascending) {
     return NumberList.fromArray(this.slice().sort(function(a, b) {
-      return a - b
+      return a - b;
     }), false);
   }
   return NumberList.fromArray(this.slice().sort(function(a, b) {
-    return b - a
+    return b - a;
   }), false);
-}
+};
 
 NumberList.prototype.getSortIndexes = function(descending) {
   if(descending == null) descending = true;
 
-  var pairs = new Array();
+  var pairs = [];
   var newList = new NumberList();
 
   if(this.length == 0) return newList;
@@ -381,7 +381,7 @@ NumberList.prototype.getSortIndexes = function(descending) {
   }
   newList.name = this.name;
   return newList;
-}
+};
 
 NumberList.prototype.factor = function(value) {
   var i;
@@ -391,7 +391,7 @@ NumberList.prototype.factor = function(value) {
   }
   newNumberList.name = this.name;
   return newNumberList;
-}
+};
 
 NumberList.prototype.add = function(object) {
   var i;
@@ -413,7 +413,7 @@ NumberList.prototype.add = function(object) {
 
   newNumberList.name = this.name;
   return newNumberList;
-}
+};
 
 NumberList.prototype.subtract = function(object) {
   var i;
@@ -435,7 +435,7 @@ NumberList.prototype.subtract = function(object) {
 
   newNumberList.name = this.name;
   return newNumberList;
-}
+};
 
 NumberList.prototype.divide = function(object) {
   var i;
@@ -457,7 +457,7 @@ NumberList.prototype.divide = function(object) {
 
   newNumberList.name = this.name;
   return newNumberList;
-}
+};
 
 NumberList.prototype.sqrt = function() {
   var i;
@@ -467,7 +467,7 @@ NumberList.prototype.sqrt = function() {
   }
   newNumberList.name = this.name;
   return newNumberList;
-}
+};
 
 NumberList.prototype.pow = function(power) {
   var i;
@@ -477,7 +477,7 @@ NumberList.prototype.pow = function(power) {
   }
   newNumberList.name = this.name;
   return newNumberList;
-}
+};
 
 NumberList.prototype.log = function(add) {
   add = add || 0;
@@ -490,7 +490,7 @@ NumberList.prototype.log = function(add) {
   newNumberList.name = this.name;
 
   return newNumberList;
-}
+};
 
 NumberList.prototype.dotProduct = function(numberList) {
   var sum = 0;
@@ -500,7 +500,7 @@ NumberList.prototype.dotProduct = function(numberList) {
     sum += this[i] * numberList[i];
   }
   return sum;
-}
+};
 
 /**
  * calculates Euclidean distance between two numberLists
@@ -516,14 +516,14 @@ NumberList.prototype.distance = function(numberList) {
     sum += Math.pow(this[i] - numberList[i], 2);
   }
   return Math.sqrt(sum);
-}
+};
 
 NumberList.prototype.isEquivalent = function(numberList) {
   for(i = 0; this[i] != null; i++) {
     if(this[i] != numberList[i]) return false;
   }
   return true;
-}
+};
 
 NumberList.prototype.toStringList = function() {
   var i;
@@ -533,7 +533,7 @@ NumberList.prototype.toStringList = function() {
   }
   stringList.name = this.name;
   return stringList;
-}
+};
 
 
 //transform
@@ -546,8 +546,8 @@ NumberList.prototype.approach = function(destinty, speed) {
 
   for(i = 0; this[i] != null; i++) {
     this[i] = antispeed * this[i] + speed * destinty[i];
-  };
-}
+  }
+};
 
 
 ///////overriding
@@ -556,8 +556,8 @@ NumberList.prototype.clone = function() {
   var newList = NumberList.fromArray(this._slice(), false);
   newList.name = this.name;
   return newList;
-}
+};
 
 NumberList.prototype.slice = function() {
   return NumberList.fromArray(this._slice.apply(this, arguments), false);
-}
+};

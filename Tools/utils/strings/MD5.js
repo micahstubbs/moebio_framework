@@ -15,21 +15,21 @@
 //var b64pad  = "";  /* base-64 pad character. "=" for strict RFC compliance   */
 
 
-function MD5(){};
+function MD5(){}
 
 /*
  * These are the functions you'll usually want to call
  * They take string arguments and return either hex or base-64 encoded strings
  */
-MD5.hex_md5 = function(s)    { return this.rstr2hex(this.rstr_md5(this.str2rstr_utf8(s))); }
-MD5.b64_md5 = function(s)    { return this.rstr2b64(this.rstr_md5(this.str2rstr_utf8(s))); }
-MD5.any_md5 = function(s, e) { return this.rstr2any(this.rstr_md5(this.str2rstr_utf8(s)), e); }
+MD5.hex_md5 = function(s)    { return this.rstr2hex(this.rstr_md5(this.str2rstr_utf8(s))); };
+MD5.b64_md5 = function(s)    { return this.rstr2b64(this.rstr_md5(this.str2rstr_utf8(s))); };
+MD5.any_md5 = function(s, e) { return this.rstr2any(this.rstr_md5(this.str2rstr_utf8(s)), e); };
 MD5.hex_hmac_md5 = function(k, d)
-  { return this.rstr2hex(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); }
+  { return this.rstr2hex(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); };
 MD5.b64_hmac_md5 = function(k, d)
-  { return this.rstr2b64(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); }
+  { return this.rstr2b64(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); };
 MD5.any_hmac_md5 = function(k, d, e)
-  { return this.rstr2any(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d)), e); }
+  { return this.rstr2any(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d)), e); };
 
 /*
  * Perform a simple self-test to see if the VM is working
@@ -37,7 +37,7 @@ MD5.any_hmac_md5 = function(k, d, e)
 MD5.md5_vm_test = function()
 {
   return this.hex_md5("abc").toLowerCase() == "900150983cd24fb0d6963f7d28e17f72";
-}
+};
 
 /*
  * Calculate the MD5 of a raw string
@@ -45,7 +45,7 @@ MD5.md5_vm_test = function()
 MD5.rstr_md5 = function(s)
 {
   return this.binl2rstr(this.binl_md5(this.rstr2binl(s), s.length * 8));
-}
+};
 
 /*
  * Calculate the HMAC-MD5, of a key and some data (raw strings)
@@ -64,7 +64,7 @@ MD5.rstr_hmac_md5 = function(key, data)
 
   var hash = this.binl_md5(ipad.concat(this.rstr2binl(data)), 512 + data.length * 8);
   return this.binl2rstr(this.binl_md5(opad.concat(hash), 512 + 128));
-}
+};
 
 /*
  * Convert a raw string to a hex string
@@ -72,7 +72,7 @@ MD5.rstr_hmac_md5 = function(key, data)
 MD5.rstr2hex = function(input)
 {
 	var hexcase = 0;
-  try { hexcase } catch(e) { hexcase=0; }
+  try { hexcase; } catch(e) { hexcase=0; }
   var hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
   var output = "";
   var x;
@@ -83,7 +83,7 @@ MD5.rstr2hex = function(input)
            +  hex_tab.charAt( x        & 0x0F);
   }
   return output;
-}
+};
 
 /*
  * Convert a raw string to a base-64 string
@@ -91,7 +91,7 @@ MD5.rstr2hex = function(input)
 MD5.rstr2b64 = function(input)
 {
 	var b64pad  = "";
-  try { b64pad } catch(e) { b64pad=''; }
+  try { b64pad; } catch(e) { b64pad=''; }
   var tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
   var output = "";
   var len = input.length;
@@ -107,7 +107,7 @@ MD5.rstr2b64 = function(input)
     }
   }
   return output;
-}
+};
 
 /*
  * Convert a raw string to an arbitrary string encoding
@@ -155,7 +155,7 @@ MD5.rstr2any = function(input, encoding)
     output += encoding.charAt(remainders[i]);
 
   return output;
-}
+};
 
 /*
  * Encode a string as utf-8.
@@ -195,7 +195,7 @@ MD5.str2rstr_utf8 = function(input)
                                     0x80 | ( x         & 0x3F));
   }
   return output;
-}
+};
 
 /*
  * Encode a string as utf-16
@@ -207,7 +207,7 @@ MD5.str2rstr_utf16le = function(input)
     output += String.fromCharCode( input.charCodeAt(i)        & 0xFF,
                                   (input.charCodeAt(i) >>> 8) & 0xFF);
   return output;
-}
+};
 
 MD5.str2rstr_utf16be = function(input)
 {
@@ -216,7 +216,7 @@ MD5.str2rstr_utf16be = function(input)
     output += String.fromCharCode((input.charCodeAt(i) >>> 8) & 0xFF,
                                    input.charCodeAt(i)        & 0xFF);
   return output;
-}
+};
 
 /*
  * Convert a raw string to an array of little-endian words
@@ -230,7 +230,7 @@ MD5.rstr2binl = function(input)
   for(var i = 0; i < input.length * 8; i += 8)
     output[i>>5] |= (input.charCodeAt(i / 8) & 0xFF) << (i%32);
   return output;
-}
+};
 
 /*
  * Convert an array of little-endian words to a string
@@ -241,7 +241,7 @@ MD5.binl2rstr = function(input)
   for(var i = 0; i < input.length * 32; i += 8)
     output += String.fromCharCode((input[i>>5] >>> (i % 32)) & 0xFF);
   return output;
-}
+};
 
 /*
  * Calculate the MD5 of an array of little-endian words, and a bit length.
@@ -338,7 +338,7 @@ MD5.binl_md5 = function(x, len)
     d = this.safe_add(d, oldd);
   }
   return Array(a, b, c, d);
-}
+};
 
 /*
  * These functions implement the four basic operations the algorithm uses.
@@ -346,23 +346,23 @@ MD5.binl_md5 = function(x, len)
 MD5.md5_cmn = function(q, a, b, x, s, t)
 {
   return this.safe_add(this.bit_rol(this.safe_add(this.safe_add(a, q), this.safe_add(x, t)), s),b);
-}
+};
 MD5.md5_ff = function(a, b, c, d, x, s, t)
 {
   return this.md5_cmn((b & c) | ((~b) & d), a, b, x, s, t);
-}
+};
 MD5.md5_gg = function(a, b, c, d, x, s, t)
 {
   return this.md5_cmn((b & d) | (c & (~d)), a, b, x, s, t);
-}
+};
 MD5.md5_hh = function(a, b, c, d, x, s, t)
 {
   return this.md5_cmn(b ^ c ^ d, a, b, x, s, t);
-}
+};
 MD5.md5_ii = function(a, b, c, d, x, s, t)
 {
   return this.md5_cmn(c ^ (b | (~d)), a, b, x, s, t);
-}
+};
 
 /*
  * Add integers, wrapping at 2^32. This uses 16-bit operations internally
@@ -373,7 +373,7 @@ MD5.safe_add = function(x, y)
   var lsw = (x & 0xFFFF) + (y & 0xFFFF);
   var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
   return (msw << 16) | (lsw & 0xFFFF);
-}
+};
 
 /*
  * Bitwise rotate a 32-bit number to the left.
@@ -381,4 +381,4 @@ MD5.safe_add = function(x, y)
 MD5.bit_rol = function(num, cnt)
 {
   return (num << cnt) | (num >>> (32 - cnt));
-}
+};

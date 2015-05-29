@@ -1,4 +1,4 @@
-function ObjectDraw() {};
+function ObjectDraw() {}
 
 
 /**
@@ -12,7 +12,7 @@ ObjectDraw.count = function(frame, object) {
     frame.memory = {
       n: 1,
       object: object
-    }
+    };
   }
 
   if(frame.memory.object != object) {
@@ -24,4 +24,4 @@ ObjectDraw.count = function(frame, object) {
 
   setText('black', 12);
   fText(frame.memory.n, frame.x + 10, frame.y + 10);
-}
+};

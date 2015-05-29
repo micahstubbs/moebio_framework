@@ -2,7 +2,7 @@
  * NumberOperators
  * @constructor
  */
-function NumberOperators() {};
+function NumberOperators() {}
 
 NumberOperators.numberToString = function(value, nDecimals, powersMode, unit) {
   var string = value.toFixed(nDecimals);
@@ -11,7 +11,7 @@ NumberOperators.numberToString = function(value, nDecimals, powersMode, unit) {
   }
   if(string.charAt(string.length - 1) == '.') string = string.substring(0, string.length - 1);
   return string;
-}
+};
 
 /**
  * decent method to create pseudo random numbers
@@ -20,7 +20,7 @@ NumberOperators.numberToString = function(value, nDecimals, powersMode, unit) {
 NumberOperators.getRandomWithSeed = function(seed) {
   seed = (seed * 9301 + 49297) % 233280;
   return seed / (233280.0);
-}
+};
 
 NumberOperators.numberFromBinaryPositions = function(binaryPositions) {
   var i;
@@ -29,7 +29,7 @@ NumberOperators.numberFromBinaryPositions = function(binaryPositions) {
     n += Math.pow(2, binaryPositions[i]);
   }
   return n;
-}
+};
 
 NumberOperators.numberFromBinaryValues = function(binaryValues) {
   var n = 0;
@@ -37,7 +37,7 @@ NumberOperators.numberFromBinaryValues = function(binaryValues) {
     n += binaryValues[i] == 1 ? Math.pow(2, i) : 0;
   }
   return n;
-}
+};
 
 NumberOperators.powersOfTwoDecomposition = function(number, length) {
   // var i;
@@ -68,7 +68,7 @@ NumberOperators.powersOfTwoDecomposition = function(number, length) {
   }
 
   return powers;
-}
+};
 
 NumberOperators.positionsFromBinaryValues = function(binaryValues) {
   var i;
@@ -77,7 +77,7 @@ NumberOperators.positionsFromBinaryValues = function(binaryValues) {
     if(binaryValues[i] == 1) positions.push(i);
   }
   return positions;
-}
+};
 
 //////////Random Generator with Seed, From http://baagoe.org/en/w/index.php/Better_random_numbers_for_javascript
 
@@ -90,7 +90,7 @@ NumberOperators._Alea = function() {
     var c = 1;
 
     if(args.length == 0) {
-      args = [+new Date];
+      args = [+new Date()];
     }
     var mash = NumberOperators._Mash();
     s0 = mash(' ');
@@ -153,4 +153,4 @@ NumberOperators._Mash = function() {
 
   mash.version = 'Mash 0.9';
   return mash;
-}
+};

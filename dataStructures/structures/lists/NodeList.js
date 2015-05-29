@@ -35,7 +35,7 @@ NodeList.fromArray = function(array, forceToNode) {
 
   var result = List.fromArray(array);
   result.type = "NodeList";
-  result.ids = new Object();
+  result.ids = {};
   Array(); //????
 
   //assign methods to array:
@@ -58,7 +58,7 @@ NodeList.fromArray = function(array, forceToNode) {
   result.push = function(a) {
     c.l('with nodeList, use addNode instead of push');
     var k;
-    k.push(a)
+    k.push(a);
   };
 
   //overriden
@@ -66,36 +66,36 @@ NodeList.fromArray = function(array, forceToNode) {
   result.clone = NodeList.prototype.clone;
 
   return result;
-}
+};
 
 NodeList.prototype.removeNodes = function() {
   for(var i = 0; i < this.length; i++) {
     this.ids[this[i].id] = null;
     this.removeElement(this[i]);
   }
-}
+};
 
 NodeList.prototype.addNode = function(node) {
   this.ids[node.id] = node;
   this._push(node);
-}
+};
 
 NodeList.prototype.addNodes = function(nodes) {
   var i;
   for(i = 0; nodes[i] != null; i++) {
     this.addNode(nodes[i]);
   }
-}
+};
 
 NodeList.prototype.removeNode = function(node) {
   this.ids[node.id] = null;
   this.removeElement(node);
-}
+};
 
 NodeList.prototype.removeNodeAtIndex = function(index) {
   this.ids[this[index].id] = null;
   this.splice(index, 1);
-}
+};
 
 /**
  * works under the assumption that weights are >=0
@@ -109,7 +109,7 @@ NodeList.prototype.normalizeWeights = function() {
   for(i = 0; this[i] != null; i++) {
     this[i].weight /= max;
   }
-}
+};
 
 
 /**
@@ -123,7 +123,7 @@ NodeList.prototype.getNodeByName = function(name) {
     }
   }
   return null;
-}
+};
 
 /**
  * return a node from its id
@@ -133,7 +133,7 @@ NodeList.prototype.getNodeByName = function(name) {
  */
 NodeList.prototype.getNodeById = function(id) {
   return this.ids[id];
-}
+};
 
 NodeList.prototype.getNodesByIds = function(ids) {
   newNodelist = new NodeList();
@@ -143,7 +143,7 @@ NodeList.prototype.getNodesByIds = function(ids) {
     if(node != null) newNodelist[i] = node;
   }
   return newNodelist;
-}
+};
 
 /**
  * return a list of weights
@@ -156,7 +156,7 @@ NodeList.prototype.getWeights = function() {
     numberList[i] = this[i].weight;
   }
   return numberList;
-}
+};
 
 /**
  * get ids from nodes
@@ -169,7 +169,7 @@ NodeList.prototype.getIds = function() {
     list[i] = this[i].id;
   }
   return list;
-}
+};
 
 NodeList.prototype.getDegrees = function() {
   var numberList = new NumberList();
@@ -177,7 +177,7 @@ NodeList.prototype.getDegrees = function() {
     numberList[i] = this[i].nodeList.length;
   }
   return numberList;
-}
+};
 
 
 NodeList.prototype.getPolygon = function() {
@@ -186,14 +186,14 @@ NodeList.prototype.getPolygon = function() {
     polygon[i] = new Point(this[i].x + cX, this[i].y + cY);
   }
   return polygon;
-}
+};
 
 NodeList.prototype.getNewId = function() {
   var n = this.length + 1;
   for(var i = 0; i < n; i++) {
     if(this.getNodeById(String(i)) == null) return String(i);
   }
-}
+};
 
 NodeList.prototype.clone = function() {
   var newNodeList = new NodeList();
@@ -202,7 +202,7 @@ NodeList.prototype.clone = function() {
   });
   newNodeList.name = this.name;
   return newNodeList;
-}
+};
 
 
 //methods overriden
@@ -213,4 +213,4 @@ NodeList.prototype.getWithoutRepetitions = function() {
     if(newList.getNodeById(this[i].id) == null) newList.addNode(this[i]);
   }
   return newList;
-}
+};

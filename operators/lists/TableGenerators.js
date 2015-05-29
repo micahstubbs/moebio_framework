@@ -1,4 +1,4 @@
-function TableGenerators() {};
+function TableGenerators() {}
 
 TableGenerators.createTableWithSameElement = function(nLists, nRows, element) {
   var table = new Table();
@@ -6,4 +6,4 @@ TableGenerators.createTableWithSameElement = function(nLists, nRows, element) {
     table[i] = ListGenerators.createListWithSameElement(nRows, element);
   }
   return table.getImproved();
-}
+};

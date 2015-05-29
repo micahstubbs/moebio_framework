@@ -31,7 +31,7 @@ Matrix.prototype.transformPoint = function(point) {
     this.a * point.x + this.c * point.y + this.tx,
     this.b * point.x + this.d * point.y + this.ty
   );
-}
+};
 
 // /**
 // * Applies Matrix to context transform
@@ -60,7 +60,7 @@ Matrix.prototype.concat = function(matrix) {
     this.a * matrix.tx + this.c * matrix.ty + this.tx,
     this.b * matrix.tx + this.d * matrix.ty + this.ty
   );
-}
+};
 
 /**
  * Given a point in the pretransform coordinate space, returns the coordinates of
@@ -76,7 +76,7 @@ Matrix.prototype.deltaTransformPoint = function(point) {
     this.a * point.x + this.c * point.y,
     this.b * point.x + this.d * point.y
   );
-}
+};
 
 /**
  * Returns the inverse of the matrix.
@@ -94,7 +94,7 @@ Matrix.prototype.getInverse = function() {
 		(this.c * this.ty - this.d * this.tx) / determinant,
 		(this.b * this.tx - this.a * this.ty) / determinant
     );
-  }
+  };
   /**
    * Returns a new matrix that corresponds this matrix multiplied by a
    * a rotation matrix.
@@ -106,7 +106,7 @@ Matrix.prototype.getInverse = function() {
    */
 Matrix.prototype.rotate = function(theta, aboutPoint) {
   return this.concat(Matrix.rotation(theta, aboutPoint));
-}
+};
 
 /**
  * Returns a new matrix that corresponds this matrix multiplied by a
@@ -120,7 +120,7 @@ Matrix.prototype.rotate = function(theta, aboutPoint) {
  */
 Matrix.prototype.scale = function(sx, sy, aboutPoint) {
   return this.concat(Matrix.scale(sx, sy, aboutPoint));
-}
+};
 
 
 /**
@@ -133,4 +133,4 @@ Matrix.prototype.scale = function(sx, sy, aboutPoint) {
  */
 Matrix.prototype.translate = function(tx, ty) {
   return this.concat(Matrix.translation(tx, ty));
-}
+};

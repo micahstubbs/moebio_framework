@@ -1,14 +1,14 @@
 ColorListGenerators._HARDCODED_CATEGORICAL_COLORS = new ColorList(
   "#dd4411", "#2200bb", "#1f77b4", "#ff660e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#dd8811",
   "#dd0011", "#221140", "#1f66a3", "#ff220e", "#2ba01c", "#442728", "#945600", "#8c453a", "#e37700"
-)
+);
 
 /**
  * ColorListGenerators
  * @constructor
  *
  */
-function ColorListGenerators() {};
+function ColorListGenerators() {}
 
 /**
  * create a simple list of categorical colors
@@ -27,7 +27,7 @@ ColorListGenerators.createDefaultCategoricalColorList = function(nColors, alpha,
   if(invert) colors = colors.getInverted();
 
   return colors;
-}
+};
 
 
 /**
@@ -60,7 +60,7 @@ ColorListGenerators.createColorListFromNumberList = function(numberList, colorSc
   }
 
   return colorList;
-}
+};
 
 
 ColorListGenerators.createColorListWithSingleColor = function(nColors, color) {
@@ -69,7 +69,7 @@ ColorListGenerators.createColorListWithSingleColor = function(nColors, color) {
     colorList.push(color);
   }
   return colorList;
-}
+};
 
 
 /**
@@ -96,7 +96,7 @@ ColorListGenerators.createCategoricalColors = function(mode, nColors, colorScale
       }
       break;
     case 1: //seeded random numbers
-      var values = NumberListGenerators.createRandomNumberList(nColors, null, 0)
+      var values = NumberListGenerators.createRandomNumberList(nColors, null, 0);
       for(i = 0; i < nColors; i++) {
         colorList[i] = colorScaleFunction(values[i]);
       }
@@ -149,7 +149,7 @@ ColorListGenerators.createCategoricalColors = function(mode, nColors, colorScale
   }
 
   return colorList;
-}
+};
 
 ColorListGenerators._sortingVariation = function(numberList, rnd0, rnd1) { //private
   var newNumberList = numberList.clone();
@@ -159,7 +159,7 @@ ColorListGenerators._sortingVariation = function(numberList, rnd0, rnd1) { //pri
   newNumberList[pos1] = newNumberList[pos0];
   newNumberList[pos0] = cache;
   return newNumberList;
-}
+};
 ColorListGenerators._evaluationFunction = function(numberList) { //private
   var sum = 0;
   var i;
@@ -167,7 +167,7 @@ ColorListGenerators._evaluationFunction = function(numberList) { //private
     sum += Math.sqrt(Math.abs(numberList[i + 1] - numberList[i]));
   }
   return sum;
-}
+};
 
 
 /**
@@ -230,4 +230,4 @@ ColorListGenerators.createCategoricalColorListForList = function(list, colorList
       type: 'Table'
     }
   ];
-}
+};

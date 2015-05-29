@@ -1,4 +1,4 @@
-function ObjectOperators() {};
+function ObjectOperators() {}
 
 
 /**
@@ -9,7 +9,7 @@ function ObjectOperators() {};
  */
 ObjectOperators.identity = function(object) {
   return object;
-}
+};
 
 
 /**
@@ -48,7 +48,7 @@ ObjectOperators.getReport = function(object) {
 
   return text;
 
-}
+};
 
 /**
  * uses a boolean to decide which of two objects it returns
@@ -59,8 +59,8 @@ ObjectOperators.getReport = function(object) {
  * tags:
  */
 ObjectOperators.booleanGate = function(boolean, object0, object1) {
-  return boolean ? object0 : object1
-}
+  return boolean ? object0 : object1;
+};
 
 /**
  * return a property value from its name
@@ -73,7 +73,7 @@ ObjectOperators.getPropertyValue = function(object, property_value) {
   if(object == null) return;
 
   return object == null ? null : object[property_value];
-}
+};
 
 /**
  * return a a stringList of property names
@@ -85,7 +85,7 @@ ObjectOperators.getPropertiesNames = function(object) {
   if(object == null) return;
 
   return StringList.fromArray(Object.getOwnPropertyNames(object));
-}
+};
 
 /**
  * return a table with a stringList of property names and a list of respective values
@@ -110,7 +110,7 @@ ObjectOperators.getPropertiesNamesAndValues = function(object) {
   table[1] = table[1].getImproved();
 
   return table;
-}
+};
 
 
 /**
@@ -148,7 +148,7 @@ ObjectOperators.interpolateObjects = function(object0, object1, value, minDistan
       return newNumberList;
   }
   return null;
-}
+};
 
 
 // ObjectOperators.fusionObjects = function(object, objectToFusion){
@@ -165,7 +165,7 @@ ObjectOperators.interpolateObjects = function(object0, object1, value, minDistan
  */
 ObjectOperators.replaceObject = function(object, obectToReplace, objectToPlace) {
   return object == obectToReplace ? objectToPlace : object;
-}
+};
 
 
 /**
@@ -176,7 +176,7 @@ ObjectOperators.replaceObject = function(object, obectToReplace, objectToPlace) 
  */
 ObjectOperators.toList = function(array) {
   return List.fromArray(array).getImproved();
-}
+};
 
 
 /////universal operators
@@ -305,7 +305,7 @@ ObjectOperators.addition = function() {
     result = ObjectOperators.addition(result, arguments[i]);
   }
   return result;
-}
+};
 
 
 /**
@@ -416,7 +416,7 @@ ObjectOperators.multiplication = function() {
     result = ObjectOperators.multiplication(result, arguments[i]);
   }
   return result;
-}
+};
 
 /**
  * divides two or more objects, division is performed according to the different types 
@@ -524,7 +524,7 @@ ObjectOperators.division = function() {
     result = ObjectOperators.division(result, arguments[i]);
   }
   return result;
-}
+};
 
 
 
@@ -563,7 +563,7 @@ ObjectOperators._applyBinaryOperatorOnLists = function(list0, list1, operator) {
     resultList.push(ObjectOperators._applyBinaryOperator(list0[i], list1[i], operator));
   }
   return resultList.getImproved();
-}
+};
 ObjectOperators._applyBinaryOperatorOnListWithObject = function(list, object, operator) {
   var i;
   var resultList = new List();
@@ -571,7 +571,7 @@ ObjectOperators._applyBinaryOperatorOnListWithObject = function(list, object, op
     resultList.push(ObjectOperators._applyBinaryOperator(list[i], object, operator));
   }
   return resultList.getImproved();
-}
+};
 ObjectOperators._applyBinaryOperatorOnObjectWithList = function(object, list, operator) {
   var i;
   var resultList = new List();
@@ -579,7 +579,7 @@ ObjectOperators._applyBinaryOperatorOnObjectWithList = function(object, list, op
     resultList.push(ObjectOperators._applyBinaryOperator(object, list[i], operator));
   }
   return resultList.getImproved();
-}
+};
 ObjectOperators._applyBinaryOperator = function(object0, object1, operator) {
   return operator(object0, object1);
-}
+};

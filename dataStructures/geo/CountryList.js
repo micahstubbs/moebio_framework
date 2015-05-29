@@ -28,7 +28,7 @@ CountryList.fromArray = function(array) {
   result.assignValuesToCountriesFromTable = CountryList.prototype.assignValuesToCountriesFromTable;
   result.simplifyPolygons = CountryList.prototype.simplifyPolygons;
   return result;
-}
+};
 
 /**
  * each country has several names to try a match
@@ -39,14 +39,14 @@ CountryList.prototype.getCountryFromName = function(countryName) {
     if(this[i].nameMatches(countryName)) return this[i];
   }
   return null;
-}
+};
 
 
 //transformative
 
 CountryList.prototype.removeAntarctica = function() {
   this.removeNode(this.getNodeById('AQ'));
-}
+};
 
 CountryList.prototype.removeTinyPolygonsFromCountries = function(minArea) {
   minArea = 0.2 || minArea;
@@ -63,7 +63,7 @@ CountryList.prototype.removeTinyPolygonsFromCountries = function(minArea) {
     }
 
   }
-}
+};
 
 CountryList.prototype.removeTinyCountries = function(minArea) {
   minArea = 0.5 || minArea;
@@ -86,7 +86,7 @@ CountryList.prototype.removeTinyCountries = function(minArea) {
       i--;
     }
   }
-}
+};
 
 CountryList.prototype.simplifyPolygons = function(margin) {
   var country;
@@ -111,7 +111,7 @@ CountryList.prototype.simplifyPolygons = function(margin) {
     country.longestPolygon.destroy();
     country.longestPolygon = country.polygonList[jMax];
   }
-}
+};
 
 /**
  * in 2D representations Antarctiva requires 2 extra points, placed on global geo grame corners
@@ -127,7 +127,7 @@ CountryList.prototype.simplifyAntarctica = function() {
   if(polygonList != null) {
     //TODO: remove last two points
   }
-}
+};
 
 CountryList.prototype.assignValuesToCountriesFromTable = function(table, valueToNull) {
   var j;
@@ -140,4 +140,4 @@ CountryList.prototype.assignValuesToCountriesFromTable = function(table, valueTo
       }
     }
   }
-}
+};

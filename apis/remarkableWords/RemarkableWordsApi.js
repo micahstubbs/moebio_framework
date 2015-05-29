@@ -29,7 +29,7 @@ RemarkableWordsApi.prototype.startLoading = function(language) {
         Loader.loadData(RemarkableWordsApi.EN_WORDS_FREQUENCY_PATH, this.onLoadWords, this);
       }
   }
-}
+};
 RemarkableWordsApi.prototype.calculate = function(text, language, removeWords, removeTwitterAccounts) {
   this.text = text;
   this.language = language == null ? 'en' : language;
@@ -37,7 +37,7 @@ RemarkableWordsApi.prototype.calculate = function(text, language, removeWords, r
   this.removeTwitterAccounts = removeTwitterAccounts;
   if((this.language == 'es' && this.esFrequencyTable == null) ||  (this.language == 'en' && this.enFrequencyTable == null)) return null;
   return this.executeCalculus(true);
-}
+};
 
 RemarkableWordsApi.prototype.returnWordsFrequencies = function(texts, language) {
   var values = new NumberList();
@@ -50,7 +50,7 @@ RemarkableWordsApi.prototype.returnWordsFrequencies = function(texts, language) 
   }
 
   return values;
-}
+};
 
 
 RemarkableWordsApi.prototype.loadAndCalculate = function(text, language) {
@@ -71,7 +71,7 @@ RemarkableWordsApi.prototype.loadAndCalculate = function(text, language) {
         this.executeCalculus();
       }
   }
-}
+};
 
 RemarkableWordsApi.prototype.onLoadWords = function(e) {
 
@@ -88,7 +88,7 @@ RemarkableWordsApi.prototype.onLoadWords = function(e) {
 
   this.executeCalculus();
   //if(this.onComplete!=null) this.onComplete.call(this.target);
-}
+};
 
 RemarkableWordsApi.prototype.executeCalculus = function(returnImmediately) {
   returnImmediately = returnImmediately == null ? false : returnImmediately;
@@ -172,26 +172,26 @@ RemarkableWordsApi.prototype.executeCalculus = function(returnImmediately) {
   } else {
     if(this.onComplete != null) this.onComplete.call(this.target, this.table);
   }
-}
+};
 
 
 RemarkableWordsApi.prototype.getFreqInCorpus = function(word) {
   var index = this.table[0].indexOf(word);
   return index == -1 ? 30 : this.table[2][index];
-}
+};
 
 RemarkableWordsApi.prototype.getFreqInText = function(word) {
   var index = this.table[0].indexOf(word);
   return index == -1 ? 0 : this.table[1][index];
-}
+};
 
 RemarkableWordsApi.prototype.getRemarkability = function(word) {
   var index = this.table[0].indexOf(word);
   return index == -1 ? this.minR : this.table[3][index];
-}
+};
 
 RemarkableWordsApi.prototype.destroy = function() {
   delete this.esFrequencyTable;
   delete this.enFrequencyTable;
   delete this.table;
-}
+};

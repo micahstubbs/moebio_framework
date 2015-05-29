@@ -1,4 +1,4 @@
-function NetworkGenerators() {};
+function NetworkGenerators() {}
 
 
 /**
@@ -61,7 +61,7 @@ NetworkGenerators.createRandomNetwork = function(nNodes, pRelation, mode, random
       return network;
   }
 
-}
+};
 
 /**
  * weightsForRelationsMethod 0:dotProduct (more efficient) 1:cosinus similarity
@@ -70,7 +70,7 @@ NetworkGenerators.createRandomNetwork = function(nNodes, pRelation, mode, random
 NetworkGenerators.createTextsCoOccurrencesNetwork = function(strings, texts, weightsForRelationsMethod, minimum) {
   var occurrencesTable = StringListOperators.countStringsOccurrencesOnTexts(strings, texts, weightsForRelationsMethod, minimum);
   return NetworkGenerators.createNetworkFromOccurrencesTable(occurrencesTable);
-}
+};
 
 NetworkGenerators.createNetworkFromOccurrencesTable = function(occurrencesTable, weightsForRelationsMethod, minimum) {
   weightsForRelationsMethod = weightsForRelationsMethod == null ? 0 : weightsForRelationsMethod;
@@ -123,7 +123,7 @@ NetworkGenerators.createNetworkFromOccurrencesTable = function(occurrencesTable,
   }
 
   return network;
-}
+};
 
 /**
  * Creates a network using a list and measuring the relation weight with a given method
@@ -153,7 +153,7 @@ NetworkGenerators.createNetworkFromListAndFunction = function(list, weightFuncti
   }
 
   return network;
-}
+};
 
 
 /**
@@ -179,7 +179,7 @@ NetworkGenerators.createNetworkFromTextAndWords = function(text, nounPhrases, sp
   nounPhrases = nounPhrases.getWithoutElements(new StringList("", " ", "\n"));
 
   nounPhrases.forEach(function(np) {
-    np = NetworkEncodings._simplifyForNoteWork(np)
+    np = NetworkEncodings._simplifyForNoteWork(np);
     if(np) nounPhrases.push(np);
   });
 
@@ -272,4 +272,4 @@ NetworkGenerators.createNetworkFromTextAndWords = function(text, nounPhrases, sp
   });
 
   return network;
-}
+};

@@ -1,4 +1,4 @@
-function ImageDraw() {};
+function ImageDraw() {}
 
 
 /**
@@ -12,7 +12,7 @@ function ImageDraw() {};
 ImageDraw.drawImage = function(frame, image, mode) {
   mode = mode || 0;
   Draw.fillRectangleWithImage(frame, image, mode);
-}
+};
 
 
 /**
@@ -42,7 +42,7 @@ ImageDraw.captureVisualizationImage = function(visFunctionName, width, height) {
   if(visFunctionName.indexOf('.') == -1) {
     visFunction = this[visFunctionName];
   } else {
-    c.log(visFunctionName.split('.')[0], this[visFunctionName.split('.')[0]], this['mY']);
+    c.log(visFunctionName.split('.')[0], this[visFunctionName.split('.')[0]], this.mY);
     if(this[visFunctionName.split('.')[0]] == null) return;
     visFunction = this[visFunctionName.split('.')[0]][visFunctionName.split('.')[1]];
   }
@@ -74,4 +74,4 @@ ImageDraw.captureVisualizationImage = function(visFunctionName, width, height) {
   im.src = newCanvas.toDataURL();
 
   return im;
-}
+};

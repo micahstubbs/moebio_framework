@@ -4,7 +4,7 @@
  *
  */
 // TODO: create Color struture to be used instead of arrays [255, 100,0] ?
-function ColorOperators() {};
+function ColorOperators() {}
 
 
 
@@ -21,7 +21,7 @@ function ColorOperators() {};
 ColorOperators.interpolateColors = function(color0, color1, value) {
   var resultArray = ColorOperators.interpolateColorsRGB(ColorOperators.colorStringToRGB(color0), ColorOperators.colorStringToRGB(color1), value);
   return ColorOperators.RGBtoHEX(resultArray[0], resultArray[1], resultArray[2]);
-}
+};
 
 /**
  * return a color between color0 and color1
@@ -36,16 +36,16 @@ ColorOperators.interpolateColors = function(color0, color1, value) {
 ColorOperators.interpolateColorsRGB = function(color0, color1, value) {
   var s = 1 - value;
   return [Math.floor(s * color0[0] + value * color1[0]), Math.floor(s * color0[1] + value * color1[1]), Math.floor(s * color0[2] + value * color1[2])];
-}
+};
 
 
 ColorOperators.RGBtoHEX = function(red, green, blue) {
   return "#" + ColorOperators.toHex(red) + ColorOperators.toHex(green) + ColorOperators.toHex(blue);
-}
+};
 
 ColorOperators.RGBArrayToString = function(array) {
   return 'rgb(' + array[0] + ',' + array[1] + ',' + array[2] + ')';
-}
+};
 
 
 
@@ -63,14 +63,14 @@ ColorOperators.HEXtoRGB = function(hexColor) {
 ColorOperators.colorStringToHEX = function(color_string) {
   var rgb = ColorOperators.colorStringToRGB(color_string);
   return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-}
+};
 
 
 ColorOperators.numberToHex = function(number) {
   var hex = number.toString(16);
   while(hex.length < 2) hex = "0" + hex;
   return hex;
-}
+};
 
 
 ColorOperators.uinttoRGB = function(color) {
@@ -78,7 +78,7 @@ ColorOperators.uinttoRGB = function(color) {
   return rgbColor;
 };
 ColorOperators.uinttoHEX = function(color) {
-  var rgbColor = ColorOperators.uinttoRGB(color)
+  var rgbColor = ColorOperators.uinttoRGB(color);
   var hexColor = ColorOperators.RGBToHEX(rgbColor[0], rgbColor[1], rgbColor[2]);
   return hexColor;
 };
@@ -86,18 +86,18 @@ ColorOperators.uinttoHEX = function(color) {
 
 ColorOperators.RGBtouint = function(red, green, blue) {
   return Number(red) << 16 | Number(green) << 8 | Number(blue);
-}
+};
 
 ColorOperators.HEXtouint = function(hexColor) {
   var colorArray = ColorOperators.HEXtoRGB(hexColor);
   var color = ColorOperators.RGBtouint(colorArray[0], colorArray[1], colorArray[2]);
   return color;
-}
+};
 
 ColorOperators.grayByLevel = function(level) {
   level = Math.floor(level * 255);
   return 'rgb(' + level + ',' + level + ',' + level + ')';
-}
+};
 
 
 
@@ -157,7 +157,7 @@ ColorOperators.RGBtoHSV = function(r, g, b) {
     h *= 60;
     if(h < 0) h += 360;
     return new Array(h, s, v);
-  }
+  };
   /**
    * converts an HSV color to RGB
    * @param {Array} a HSV color array
@@ -173,7 +173,7 @@ ColorOperators.HSVtoRGB = function(hue, saturation, value) {
   var b;
   //
   var i;
-  var f
+  var f;
   var p;
   var q;
   var t;
@@ -220,7 +220,7 @@ ColorOperators.HSVtoRGB = function(hue, saturation, value) {
       break;
   }
   return new Array(Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255));
-}
+};
 
 /**
  * Converts an HSL color value to RGB. Conversion formula
@@ -250,25 +250,25 @@ ColorOperators.HSLtoRGB = function(hue, saturation, light) {
   }
 
   return [Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255)];
-}
+};
 
 
 ColorOperators.invertColorRGB = function(r, g, b) {
   return [255 - r, 255 - g, 255 - b];
-}
+};
 
 ColorOperators.addAlpha = function(color, alpha) {
   //var rgb = color.substr(0,3)=='rgb'?ColorOperators.colorStringToRGB(color):ColorOperators.HEXtoRGB(color);
   var rgb = ColorOperators.colorStringToRGB(color);
   if(rgb == null) return 'black';
   return 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + alpha + ')';
-}
+};
 
 ColorOperators.invertColor = function(color) {
   var rgb = ColorOperators.colorStringToRGB(color);
   rgb = ColorOperators.invertColorRGB(rgb[0], rgb[1], rgb[2]);
   return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-}
+};
 
 
 
@@ -276,12 +276,12 @@ ColorOperators.toHex = function(number) {
   var hex = number.toString(16);
   while(hex.length < 2) hex = "0" + hex;
   return hex;
-}
+};
 
 
 ColorOperators.getRandomColor = function() {
   return 'rgb(' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ')';
-}
+};
 
 
 /////// Universal matching
@@ -520,4 +520,4 @@ ColorOperators.colorStringToRGB = function(color_string) {
   }
 
   return null;
-}
+};

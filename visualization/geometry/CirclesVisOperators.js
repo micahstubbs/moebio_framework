@@ -56,7 +56,7 @@ CirclesVisOperators.circlesCloud = function(weights, frame, margin) {
   }
 
   return circlesPlaced;
-}
+};
 
 CirclesVisOperators._pointInCircles = function(circles, px, py, r, margin) {
   var circle;
@@ -65,4 +65,4 @@ CirclesVisOperators._pointInCircles = function(circles, px, py, r, margin) {
     if(Math.pow(circle.x - px, 2) + Math.pow(circle.y - py, 2) < Math.pow(circle.z + r + margin, 2)) return true;
   }
   return false;
-}
+};

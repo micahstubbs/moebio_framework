@@ -2,7 +2,7 @@
  * CountryListOperators
  * @constructor
  */
-function CountryListOperators() {};
+function CountryListOperators() {}
 
 
 CountryListOperators.getCountryByName = function(countryList, name) {
@@ -13,4 +13,4 @@ CountryListOperators.getCountryByName = function(countryList, name) {
   }
 
   return null;
-}
+};

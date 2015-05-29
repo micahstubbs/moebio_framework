@@ -2,7 +2,7 @@
  * RectangleOperators
  * @constructor
  */
-function RectangleOperators() {};
+function RectangleOperators() {}
 
 
 /**
@@ -135,7 +135,7 @@ RectangleOperators.packingRectangles = function(weights, packingMode, rectangle,
     case 6: //horizontal strips
   }
   return null;
-}
+};
 
 RectangleOperators.quadrification = RectangleOperators.squarify; //old name
 
@@ -276,7 +276,7 @@ RectangleOperators.squarify = function(frame, weights, isNormalizedWeights, isSo
   }
 
   return rectangleList;
-}
+};
 
 /**
  * partitionRectangle 
@@ -314,7 +314,7 @@ RectangleOperators.partitionRectangle = function(rectangle, normalizedWeightList
   rectangleList.highestRatio = highestRatio;
 
   return rectangleList;
-}
+};
 
 /**
  * returns the highest ratio from a list of Rectangles
@@ -331,4 +331,4 @@ RectangleOperators._getHighestRatio = function(rectangleList) {
     highestRatio = Math.max(highestRatio, rectangle.getRatio());
   }
   return highestRatio;
-}
+};

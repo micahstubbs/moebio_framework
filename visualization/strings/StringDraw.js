@@ -1,4 +1,4 @@
-function StringDraw() {};
+function StringDraw() {}
 
 /**
  * draws a String (if the object is not a string it displays the json)
@@ -24,7 +24,7 @@ StringDraw.drawText = function(frame, object, fontSize, fontStyle, margin) {
 
   setText('black', fontSize, null, null, null, fontStyle);
 
-  significantChange = frame.memory == null || object != frame.memory.object || fontSize != frame.memory.fontSize || fontStyle != frame.memory.fontStyle || margin != frame.memory.margin || frame.width != frame.memory.width || frame.height != frame.memory.height
+  significantChange = frame.memory == null || object != frame.memory.object || fontSize != frame.memory.fontSize || fontStyle != frame.memory.fontStyle || margin != frame.memory.margin || frame.width != frame.memory.width || frame.height != frame.memory.height;
 
   //setup
   if(significantChange) {
@@ -47,4 +47,4 @@ StringDraw.drawText = function(frame, object, fontSize, fontStyle, margin) {
   }
 
   DrawTexts.fillTextRectangleWithTextLines(frame.memory.textLines, subframe.x, subframe.y, subframe.height, lineHeight);
-}
+};

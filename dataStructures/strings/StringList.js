@@ -44,7 +44,7 @@ StringList.fromArray = function(array, forceToString) {
   result.clone = StringList.prototype.clone;
 
   return result;
-}
+};
 
 /**
  * overrides List.prototype.getLengths (see comments there)
@@ -58,7 +58,7 @@ StringList.prototype.getLengths = function() {
   });
 
   return lengths;
-}
+};
 
 StringList.prototype.append = function(sufix, after) {
   after = after == null ? true : after;
@@ -76,7 +76,7 @@ StringList.prototype.append = function(sufix, after) {
     }
   }
   return newStringList;
-}
+};
 
 /**
  * prefix and sufix can be string or a StringList
@@ -94,7 +94,7 @@ StringList.prototype.getSurrounded = function(prefix, sufix) {
   }
 
   return newStringList;
-}
+};
 
 
 //deprectaed, replaced by replaceInStrings
@@ -107,7 +107,7 @@ StringList.prototype.replace = function(regExp, string) {
   }
 
   return newStringList;
-}
+};
 
 /**
  * replaces in each string, a sub-string by a string
@@ -121,11 +121,11 @@ StringList.prototype.replaceSubStringsInStrings = function(subString, replacemen
   newStringList.name = this.name;
 
   for(var i = 0; this[i] != null; i++) {
-    newStringList[i] = StringOperators.replaceString(string, subString, replacement)
+    newStringList[i] = StringOperators.replaceString(string, subString, replacement);
   }
 
   return newStringList;
-}
+};
 
 StringList.prototype.getConcatenated = function(separator) {
   var i;
@@ -135,7 +135,7 @@ StringList.prototype.getConcatenated = function(separator) {
     if(i < this.length - 1) string += separator;
   }
   return string;
-}
+};
 
 
 StringList.prototype.toLowerCase = function() {
@@ -146,7 +146,7 @@ StringList.prototype.toLowerCase = function() {
     newStringList[i] = this[i].toLowerCase();
   }
   return newStringList;
-}
+};
 
 StringList.prototype.toUpperCase = function() {
   var newStringList = new StringList();
@@ -156,7 +156,7 @@ StringList.prototype.toUpperCase = function() {
     newStringList[i] = this[i].toUpperCase();
   }
   return newStringList;
-}
+};
 
 StringList.prototype.toNumberList = function() {
   var numbers = new NumberList();
@@ -166,7 +166,7 @@ StringList.prototype.toNumberList = function() {
     numbers[i] = Number(this[i]);
   }
   return numbers;
-}
+};
 
 
 /**
@@ -184,7 +184,7 @@ StringList.prototype.toDateList = function(formatCase, separator) {
     dateList.push(DateOperators.stringToDate(this[i], formatCase, separator));
   }
   return dateList;
-}
+};
 
 /**
  * trims all the strings on the stringList
@@ -199,7 +199,7 @@ StringList.prototype.trim = function() {
   }
   newStringList.name = this.name;
   return newStringList;
-}
+};
 
 ///////overriding
 
@@ -207,4 +207,4 @@ StringList.prototype.clone = function() {
   var newList = StringList.fromArray(this.slice(), false);
   newList.name = this.name;
   return newList;
-}
+};

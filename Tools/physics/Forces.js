@@ -85,7 +85,7 @@ Forces.prototype.forcesForNetwork = function(network, initRadius, initCenter, eq
       }
     }
   }
-}
+};
 
 Forces.prototype.addNode = function(node, initPosition, initSpeed) {
   initPosition = initPosition == null ? new Point(Math.random() * 200 - 100, Math.random() * 200 - 100) : initPosition;
@@ -97,7 +97,7 @@ Forces.prototype.addNode = function(node, initPosition, initSpeed) {
   node.vy = initSpeed.y;
   node.ax = 0;
   node.ay = 0;
-}
+};
 
 Forces.prototype.addForce = function(node0, node1, type, equilibriumDistance) {
   this.fromNodeList.addNode(node0);
@@ -105,7 +105,7 @@ Forces.prototype.addForce = function(node0, node1, type, equilibriumDistance) {
   this.forcesList.push(node0.id + "*" + node1.id + "*" + type);
   this.forcesTypeList.push(type);
   if(equilibriumDistance != null) this.equilibriumDistances.push(equilibriumDistance);
-}
+};
 
 Forces.prototype.calculate = function() {
   var i;
@@ -154,7 +154,7 @@ Forces.prototype.calculate = function() {
         break;
     }
   }
-}
+};
 
 Forces.prototype.attractionToPoint = function(point, strength, limit) {
   strength = strength == null ? 1 : strength;
@@ -176,7 +176,7 @@ Forces.prototype.attractionToPoint = function(point, strength, limit) {
     node.ax += force * dx;
     node.ay += force * dy;
   }
-}
+};
 
 
 Forces.prototype.avoidOverlapping = function(delta) {
@@ -233,7 +233,7 @@ Forces.prototype.avoidOverlapping = function(delta) {
     }
   }
   this._i0++;
-}
+};
 
 Forces.prototype.avoidOverlappingRadial = function(delta, K) {
   delta = delta || 0;
@@ -269,7 +269,7 @@ Forces.prototype.avoidOverlappingRadial = function(delta, K) {
     }
   }
   this._i0++;
-}
+};
 
 
 
@@ -285,11 +285,11 @@ Forces.prototype.applyForces = function() {
     node.x += node.vx;
     node.y += node.vy;
   }
-}
+};
 
 Forces.prototype.deactivateForcesFromNode = function(node) {
   node.vx = node.vy = node.ax = node.ay = 0;
-}
+};
 
 Forces.prototype.destroy = function() {
   delete this.k;
@@ -309,7 +309,7 @@ Forces.prototype.destroy = function() {
   this.toNodeList.destroy();
   delete this.toNodeList;
   delete this._i0;
-}
+};
 
 ///////////////////////////////////////////PRIVATE
 
@@ -321,4 +321,4 @@ Forces.prototype._resetAccelerations = function() {
     node.ax = 0;
     node.ay = 0;
   }
-}
+};

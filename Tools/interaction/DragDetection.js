@@ -57,7 +57,7 @@ DragDetection.prototype.enterframe = function(draggingInstance) {
   //c.log(draggingInstance, draggingInstance.target, draggingInstance.dragVector);
   draggingInstance.listenerFunction.call(draggingInstance.target, draggingInstance.dragVector);
 
-}
+};
 
 DragDetection.prototype.onMouse = function(event) {
   switch(event.type) {
@@ -85,10 +85,10 @@ DragDetection.prototype.onMouse = function(event) {
       this.simulateMouseUp();
       break;
   }
-}
+};
 
 DragDetection.prototype.simulateMouseUp = function() {
   this.dragging = false;
   clearInterval(this.idInterval);
   this.idInterval = null;
-}
+};

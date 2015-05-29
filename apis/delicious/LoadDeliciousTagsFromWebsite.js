@@ -26,14 +26,14 @@ function LoadDeliciousTagsFromWebsite(warnFunction) {
 LoadDeliciousTagsFromWebsite.prototype.search = function(url) {
   var deliciousUrl = LoadDeliciousTagsFromWebsite.deliciousPageUrl(url);
   Loader.loadData(deliciousUrl, this.onComplete, this);
-}
+};
 
 LoadDeliciousTagsFromWebsite.deliciousPageUrl = function(url) {
   if(url.indexOf(".") == -1) return "http://delicious.com/url/" + url;
   if(url.charAt(url.length - 1) != "/") url = url + "/";
   this._url = this.adaptUrl(url);
   return "http://delicious.com/url/" + MD5.hex_md5(url);
-}
+};
 
 LoadDeliciousTagsFromWebsite.adaptUrl = function(url) {
   var newUrl = url;
@@ -42,7 +42,7 @@ LoadDeliciousTagsFromWebsite.adaptUrl = function(url) {
   //if(newUrl.substr(0,8)=="https://" && newUrl.substr(0,12)!="https://www.") newUrl = "https://www."+newUrl.substr(8);
   if(newUrl.charAt(newUrl.length - 1) != "/") newUrl = newUrl + "/";
   return newUrl;
-}
+};
 
 
 LoadDeliciousTagsFromWebsite.prototype.onComplete = function(e) {
@@ -50,7 +50,7 @@ LoadDeliciousTagsFromWebsite.prototype.onComplete = function(e) {
   var table = ListOperators.countElementsRepetitionOnList(tags);
 
   this._warnFunction(table);
-}
+};
 
 LoadDeliciousTagsFromWebsite.prototype.searchMultiple = function(urlList, normalizeEach, maxNumberOfTags) {
   this._urlList = new StringList();
@@ -71,7 +71,7 @@ LoadDeliciousTagsFromWebsite.prototype.searchMultiple = function(urlList, normal
 
   this._multiLoader = new MultiLoader();
   this._multiLoader.loadDatas(this._modifiedUrlList, this.onCompleteMulti, this);
-}
+};
 
 LoadDeliciousTagsFromWebsite.prototype.onCompleteMulti = function(e) {
   var last = e.result[e.result.length - 1];
@@ -88,7 +88,7 @@ LoadDeliciousTagsFromWebsite.prototype.onCompleteMulti = function(e) {
     this._tableMerged = TableOperators.mergeDataTables(this._tableMerged, table);
   }
 
-  c.log("•", this._tableMerged.length + "/" + (this._urlList.length + 1))
+  c.log("•", this._tableMerged.length + "/" + (this._urlList.length + 1));
   c.log("this._tableMerged[0].length", this._tableMerged[0].length);
 
   if(this._tableMerged.length == this._urlList.length + 1) {
@@ -109,4 +109,4 @@ LoadDeliciousTagsFromWebsite.prototype.onCompleteMulti = function(e) {
 
     this._warnFunction(this._tableMerged);
   }
-}
+};

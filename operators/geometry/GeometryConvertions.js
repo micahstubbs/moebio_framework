@@ -1,4 +1,4 @@
-function GeometryConvertions() {};
+function GeometryConvertions() {}
 
 //include(frameworksRoot+"operators/strings/StringOperators.js")
 
@@ -35,7 +35,7 @@ GeometryConvertions.twoNumberListsToPolygon = function(numberList0, numberList1)
     polygon[i] = new Point(numberList0[i], numberList1[i]);
   }
   return polygon;
-}
+};
 
 /**
  * converts a Polygon into a NumberTable
@@ -56,4 +56,4 @@ GeometryConvertions.PolygonToNumberTable = function(polygon) {
   });
 
   return numberTable;
-}
+};

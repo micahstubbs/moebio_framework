@@ -2,7 +2,7 @@
  * DateListOperators
  * @constructor
  */
-function DateListOperators() {};
+function DateListOperators() {}
 
 
 DateListOperators.buildTimeTreeFromDates = function(dates) {
@@ -150,26 +150,26 @@ DateListOperators.buildTimeTreeFromDates = function(dates) {
   // }
 
   return tree;
-}
+};
 
 DateListOperators._y = function(date) {
   return date.getFullYear();
-}
+};
 DateListOperators._m = function(date) {
   return date.getMonth();
-}
+};
 DateListOperators._d = function(date) {
   return date.getDate() - 1;
-}
+};
 DateListOperators._h = function(date) {
   return date.getHours();
-}
+};
 DateListOperators._mn = function(date) {
   return date.getMinutes();
-}
+};
 DateListOperators._s = function(date) {
   return date.getSeconds();
-}
+};
 DateListOperators._ms = function(date) {
   return date.getMilliseconds();
-}
+};

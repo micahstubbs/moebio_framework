@@ -1,4 +1,4 @@
-function NumberTableOperators() {};
+function NumberTableOperators() {}
 
 /**
  * normlizes each NumberList to min and max values
@@ -8,7 +8,7 @@ function NumberTableOperators() {};
  */
 NumberTableOperators.normalizeLists = function(numberTable) {
   return numberTable.getNumberListsNormalized();
-}
+};
 
 NumberTableOperators.normalizeListsToMax = function(numberTable) {
   var newNumberTable = new NumberTable();
@@ -18,7 +18,7 @@ NumberTableOperators.normalizeListsToMax = function(numberTable) {
     newNumberTable[i] = numberTable[i].getNormalizedToMax();
   }
   return newNumberTable;
-}
+};
 
 /**
  * smooth numberLists by calculating averages with neighbors
@@ -41,7 +41,7 @@ NumberTableOperators.averageSmootherOnLists = function(numberTable, intensity, n
     newNumberTable[i] = NumberListOperators.averageSmoother(numberTable[i], intensity, nIterations);
   });
   return newNumberTable;
-}
+};
 
 /**
  * builds a k-nearest neighbors function, that calculates a class membership or a regression, taking the vote or average of the k nearest instances, using Euclidean distance, and applies it to a list of points, see: http://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm
@@ -140,7 +140,7 @@ NumberTableOperators.kNN = function(numberTable, propertyList, vectorList, k, ca
 
     //regression
     //…
-  }
+  };
 
   if(vectorList == null) {
 
@@ -194,7 +194,7 @@ NumberTableOperators.kNN = function(numberTable, propertyList, vectorList, k, ca
 
   //return results
   return results;
-}
+};
 
 
 
@@ -264,4 +264,4 @@ NumberTableOperators.numberTableToNetwork = function(numberTable, method, tolera
   }
 
   return network;
-}
+};

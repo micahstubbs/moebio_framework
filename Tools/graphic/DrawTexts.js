@@ -2,7 +2,7 @@
  * static Class with methods to render text in canvas
  * @constructor
  */
-function DrawTexts() {};
+function DrawTexts() {}
 
 DrawTexts.POINT_TO_PIXEL = 1.3333;
 DrawTexts.PIXEL_TO_POINT = 0.75;
@@ -38,7 +38,7 @@ DrawTexts.PIXEL_TO_POINT = 0.75;
 DrawTexts.fillTextRectangle = function(text, x, y, width, height, lineHeight, returnHeight, ellipsis) {
   var textLines = DrawTexts.textWordWrapReturnLines(text, width, height, lineHeight, ellipsis);
   return DrawTexts.fillTextRectangleWithTextLines(textLines, x, y, height, lineHeight, returnHeight);
-}
+};
 
 /**
  * fill a text rotated
@@ -53,7 +53,7 @@ DrawTexts.fillTextRotated = function(text, x, y, angle) { //TODO: remove (replac
   context.rotate(angle);
   context.fillText(text, 0, 0);
   context.restore();
-}
+};
 
 
 DrawTexts.fillTextRectangleWithTextLines = function(textLines, x, y, height, lineHeight, returnHeight) {
@@ -65,7 +65,7 @@ DrawTexts.fillTextRectangleWithTextLines = function(textLines, x, y, height, lin
   }
   if(returnHeight) return textLines.length * lineHeight;
   return textLines.length;
-}
+};
 
 
 DrawTexts.textWordWrapReturnLines = function(text, fitWidth, fitHeight, lineHeight, ellipsis) {
@@ -135,14 +135,14 @@ DrawTexts.textWordWrapReturnLines = function(text, fitWidth, fitHeight, lineHeig
   lines.width = lines.length == 1 ? w : fitWidth;
 
   return lines;
-}
+};
 DrawTexts.getMaxTextWidth = function(texts) {
   var max = getTextW(texts[0]);
   for(var i = 1; texts[i] != null; i++) {
     max = Math.max(max, getTextW(texts[i]));
   }
   return max;
-}
+};
 
 
 DrawTexts.cropString = function(ctx, string, fitWidth) {
@@ -167,4 +167,4 @@ DrawTexts.cropString = function(ctx, string, fitWidth) {
       idx++;
     }
   }
-}
+};

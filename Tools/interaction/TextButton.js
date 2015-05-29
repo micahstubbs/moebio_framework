@@ -2,7 +2,7 @@ TextButton.prototype.constructor = TextButton;
 
 
 function TextButton(configuration) {
-  var configuration = configuration == null ? new Object() : configuration;
+  var configuration = configuration == null ? {} : configuration;
 
   this.text = configuration.text == null ? 'button' : configuration.text;
 
@@ -40,12 +40,12 @@ TextButton.prototype.onMouse = function(e) {
     this.on = !this.on;
     this.warnFunction.call(this.target, this.id);
   }
-}
+};
 
 TextButton.prototype.setText = function(text) {
   this.text = text;
   this._updateDimensions();
-}
+};
 
 TextButton.prototype.setTextProperties = function(fontColor, fontSize, fontName, fontStyle) {
   this.fontColor = fontColor;
@@ -53,13 +53,13 @@ TextButton.prototype.setTextProperties = function(fontColor, fontSize, fontName,
   this.fontName = fontName;
   this.fontStyle = fontStyle;
   this._updateDimensions();
-}
+};
 
 TextButton.prototype._updateDimensions = function() {
   DrawTexts.setContextTextProperties(this.fontColor, this.fontSize, this.fontName, null, null, this.fontStyle);
   this.width = context.measureText(this.text).width;
   this.height = this.fontSize * DrawTexts.POINT_TO_PIXEL;
-}
+};
 
 TextButton.prototype.draw = function() {
   if(this.backgroundColor != null) {
@@ -80,8 +80,8 @@ TextButton.prototype.draw = function() {
   }
 
   if(this.active && this.mouseOnButton()) canvas.style.cursor = 'pointer';
-}
+};
 
 TextButton.prototype.mouseOnButton = function() {
   return mY > this.y && mY < this.y + this.height && mX > this.x && mX < this.x + this.width;
-}
+};

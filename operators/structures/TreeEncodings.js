@@ -1,4 +1,4 @@
-function TreeEncodings() {};
+function TreeEncodings() {}
 
 //include(frameworksRoot+"operators/strings/StringOperators.js");
 
@@ -63,4 +63,4 @@ TreeEncodings.decodeIdentedTree = function(indexedTree, superiorNodeName, identa
   tree.assignDescentWeightsToNodes();
 
   return tree;
-}
+};

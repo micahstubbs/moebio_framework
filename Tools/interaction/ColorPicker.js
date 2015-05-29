@@ -45,18 +45,18 @@ ColorPicker.prototype.draw = function() {
       context.fillRect(this.x + i * dX + this.margin, this.y + j * dY + this.margin, dXMargined, dYMargined);
     }
   }
-}
+};
 
 ColorPicker.prototype.colorAtSquare = function(i, j) {
   if(i < this.nH - 1) return ColorOperators.HSLtoHEX(i * this.dHue, this.saturation, (j + 1) * this.dLight);
   return ColorOperators.grayByLevel(j / (this.nV - 1));
-}
+};
 
 ColorPicker.prototype.colorBelowMouse = function() {
   if(mouseX < this.x || mouseX > this.x + this.width || mouseY < this.y || mouseY > this.y + this.height) return null;
   return this.colorFromCoordinate(mouseX - this.x, mouseY - this.y);
-}
+};
 
 ColorPicker.prototype.colorFromCoordinate = function(x, y) {
   return this.colorAtSquare(this.nH * x / this.width, this.nV * y / this.height);
-}
+};

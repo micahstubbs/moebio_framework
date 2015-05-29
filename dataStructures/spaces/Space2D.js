@@ -18,7 +18,7 @@ Space2D.prototype.activeInteraction = function() {
   addInteractionEventListener('mousedown', this.onMouse, this);
   addInteractionEventListener('mouseup', this.onMouse, this);
   addInteractionEventListener('mousewheel', this.wheel, this);
-}
+};
 
 Space2D.prototype.deActivate = function() {
   this.active = false;
@@ -27,60 +27,60 @@ Space2D.prototype.deActivate = function() {
   removeInteractionEventListener('mouseup', this.onMouse, this);
   removeInteractionEventListener('mousemove', this.onMouse, this);
   removeInteractionEventListener('mousewheel', this.wheel, this);
-}
+};
 
 Space2D.prototype.stopDragging = function() {
   removeInteractionEventListener('mousemove', this.onMouse, this);
-}
+};
 
 Space2D.prototype.project = function(point) {
   return new Point((point.x - this.center.x) * this.scale, (point.y + this.center.y) * this.scale);
-}
+};
 
 Space2D.prototype.projectX = function(x) {
   return(x - this.center.x) * this.scale;
-}
+};
 
 Space2D.prototype.projectY = function(y) {
   return(y - this.center.y) * this.scale;
-}
+};
 
 
 Space2D.prototype.inverseProject = function(point) {
   return new Point(point.x / this.scale + this.center.x, point.y / this.scale + this.center.y);
-}
+};
 
 Space2D.prototype.inverseProjectX = function(x) {
   return x / this.scale + this.center.x;
-}
+};
 
 Space2D.prototype.inverseProjectY = function(y) {
   return y / this.scale + this.center.y;
-}
+};
 
 Space2D.prototype.move = function(vector, projected) {
   this.center = this.center.subtract(projected ? vector.factor(1 / this.scale) : vector);
-}
+};
 
 Space2D.prototype.factorScaleFromPoint = function(point, factor) {
   var k = (1 - 1 / factor) / this.scale;
-  this.center.x = k * point.x + this.center.x
+  this.center.x = k * point.x + this.center.x;
   this.center.y = k * point.y + this.center.y;
 
   this.scale *= factor;
-}
+};
 
 Space2D.prototype.fixX = function(xDeparture, xArrival) {
   this.center.x = xDeparture - (xArrival / this.scale);
-}
+};
 Space2D.prototype.fixY = function(yDeparture, yArrival) {
   this.center.y = yDeparture - (yArrival / this.scale);
-}
+};
 
 Space2D.prototype.fixHorizontalInterval = function(departureInterval, arrivalInterval) {
   this.scale = arrivalInterval.getAmplitude() / departureInterval.getAmplitude();
   this.fixX((departureInterval.x + departureInterval.y) * 0.5, cW * 0.5);
-}
+};
 
 //////
 
@@ -105,7 +105,7 @@ Space2D.prototype.onMouse = function(e) {
       this.prev_mY = mY;
       break;
   }
-}
+};
 
 
 
@@ -120,4 +120,4 @@ Space2D.prototype.wheel = function(e) {
     return;
   }
   this.factorScaleFromPoint(new Point(mX - 0, mY - 0), (1 - 0.02 * e.value));
-}
+};

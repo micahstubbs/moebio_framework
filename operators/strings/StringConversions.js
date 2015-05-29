@@ -1,4 +1,4 @@
-function StringConversions() {};
+function StringConversions() {}
 
 
 /**
@@ -13,4 +13,4 @@ StringConversions.stringToObject = function(string) {
   } catch(err) {
     return null;
   }
-}
+};

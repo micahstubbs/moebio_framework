@@ -35,12 +35,12 @@ ToolTip.prototype.draw = function() {
     this.drawShape();
     this.drawContentFunction.call(this.target);
   }
-}
+};
 
 ToolTip.prototype.drawText = function() {
   DrawTexts.setContextTextProperties('black', 12);
   DrawTexts.fillTextWordWrapWithTextLines(context, this.lines, this.x + 4, this.y + 4, this.height, this.interlines_space);
-}
+};
 
 
 
@@ -60,7 +60,7 @@ ToolTip.prototype.setText = function(newText, size) {
   }
   this.height = this.lines.length * this.interlines_space + 12;
   this.settedMode = 0;
-}
+};
 
 
 
@@ -107,7 +107,7 @@ ToolTip.prototype.drawShape = function() {
 
       this.drawShapeInPlace(place);
   }
-}
+};
 
 ToolTip.prototype.drawShapeInPlace = function(place) {
   context.beginPath();
@@ -142,7 +142,7 @@ ToolTip.prototype.drawShapeInPlace = function(place) {
       context.lineTo(this.x, this.y);
       break;
     case 2: //bottom
-      xSelected = Math.max(Math.min(this.pointedX, this.x + this.width - 10), this.x + 10);;
+      xSelected = Math.max(Math.min(this.pointedX, this.x + this.width - 10), this.x + 10);
 
       context.moveTo(this.x, this.y);
 
@@ -170,4 +170,4 @@ ToolTip.prototype.drawShapeInPlace = function(place) {
       break;
   }
   context.fill();
-}
+};

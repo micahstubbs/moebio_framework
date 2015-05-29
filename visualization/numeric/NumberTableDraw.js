@@ -1,4 +1,4 @@
-function NumberTableDraw() {};
+function NumberTableDraw() {}
 
 /**
  * draws a matrix, with cells colors associated to values from a ColorScale
@@ -53,7 +53,7 @@ NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listC
   }
 
   return overCoordinates;
-}
+};
 
 /**
  * draws a ScatterPlot, if the provided NumberTable contains a third NumberList it also draws circles
@@ -115,13 +115,13 @@ NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colo
     setCursor('pointer');
     return iOver;
   }
-}
+};
 NumberTableDraw._drawCrossScatterPlot = function(x, y, color) {
   setStroke(color, 1);
   line(x, y - 2, x, y + 2);
   line(x - 2, y, x + 2, y);
   return Math.pow(mX - x, 2) + Math.pow(mY - y, 2) < 25;
-}
+};
 
 /**
  * draws a slopegraph
@@ -166,7 +166,7 @@ NumberTableDraw.drawSlopeGraph = function(frame, numberTable, texts) {
       fText(texts[i], x1 + 2, y1);
     }
   }
-}
+};
 
 
 /**
@@ -260,7 +260,7 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
       coordinates: coordinates,
       colorScale: colorScale,
       selected: null
-    }
+    };
 
   } else {
     matrixColors = frame.memory.matrixColors;
@@ -315,7 +315,7 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
   }
 
   if(frame.memory.selected) return frame.memory.indexes;
-}
+};
 
 /**
  * draws a steamgraph
@@ -344,7 +344,7 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
 
   //setup
   if(frame.memory == null || numberTable != frame.memory.numberTable || normalized != frame.memory.normalized || sorted != frame.memory.sorted || intervalsFactor != frame.memory.intervalsFactor || bezier != frame.memory.bezier || frame.width != frame.memory.width || frame.height != frame.memory.height || logFactor != frame.memory.logFactor) {
-		var nT2 = logFactor?numberTable.applyFunction(function(val){return Math.log(logFactor*val+1)}):numberTable;
+		var nT2 = logFactor?numberTable.applyFunction(function(val){return Math.log(logFactor*val+1);}):numberTable;
 
     frame.memory = {
       numberTable: numberTable,
@@ -360,7 +360,7 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
       height: frame.height,
       logFactor: logFactor,
       image: null
-    }
+    };
   }
 
   if(colorList && frame.memory.colorList != colorList) frame.memory.image = null;
@@ -413,7 +413,7 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
   }
 
   if(horizontalLabels) NumberTableDraw._drawHorizontalLabels(frame, frame.getBottom() - 5, numberTable, horizontalLabels, x0, x1);
-}
+};
 NumberTableDraw._drawHorizontalLabels = function(frame, y, numberTable, horizontalLabels, x0, x1) {
   var dx = frame.width / (numberTable[0].length - 1);
   var x;
@@ -441,7 +441,7 @@ NumberTableDraw._drawHorizontalLabels = function(frame, y, numberTable, horizont
     }
     fText(horizontalLabels[i], x, y);
   });
-}
+};
 NumberTableDraw._drawPartialFlow = function(frame, flowIntervals, labels, colors, x, x0, x1, OFF_X, sorted, numberTable) {
   var w = x1 - x0;
   var wForText = numberTable == null ? (x1 - x0) : (x1 - x0) * 0.85;
@@ -533,7 +533,7 @@ NumberTableDraw._drawPartialFlow = function(frame, flowIntervals, labels, colors
   }
 
   return iOver;
-}
+};
 
 
 
@@ -574,7 +574,7 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
       zoom: 1,
       angle0: 0,
       image: null
-    }
+    };
 
     var dA = TwoPi / numberTable[0].length;
     numberTable[0].forEach(function(val, i) {
@@ -669,4 +669,4 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
       drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
     }
   }
-}
+};

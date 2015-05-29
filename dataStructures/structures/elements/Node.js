@@ -52,7 +52,7 @@ Node.prototype.cleanRelations = function() {
 
   this.fromNodeList = new NodeList();
   this.fromRelationList = new RelationList();
-}
+};
 
 //TODO: complete with all properties
 Node.prototype.destroy = function() {
@@ -79,16 +79,16 @@ Node.prototype.destroy = function() {
   delete this.ax;
   delete this.ay;
   delete this.az;
-}
+};
 
 Node.prototype.getDegree = function() {
   return this.relationList.length;
-}
+};
 
 //treeProperties:
 Node.prototype.getParent = function() {
   return this.parent;
-}
+};
 
 /**
  * return the leaves under a node in a Tree, [!] if the network is not a tree this method could run infinite loops
@@ -103,10 +103,10 @@ Node.prototype.getLeaves = function() {
         return;
       }
       node.toNodeList.forEach(addLeaves);
-    }
+    };
     addLeaves(this);
     return leaves;
-  }
+  };
   //
 
 
@@ -114,7 +114,7 @@ Node.prototype.loadImage = function(urlImage) {
   Loader.loadImage(urlImage, function(e) {
     this.image = e.result;
   }, this);
-}
+};
 
 // Node.prototype.toString=function(){
 // 	return this.name+", "+this.id;
@@ -133,4 +133,4 @@ Node.prototype.clone = function() {
   newNode.descentWeight = this.descentWeight;
 
   return newNode;
-}
+};

@@ -1,4 +1,4 @@
-function TreeDraw() {};
+function TreeDraw() {}
 
 
 /**
@@ -16,7 +16,7 @@ TreeDraw.drawRectanglesTree = function(frame, tree, levelColors, margin) {
 
   var dX = frame.width / tree.nLevels;
   TreeDraw._drawRectanglesTreeChildren(tree.nodeList[0], new Rectangle(frame.x, frame.y, dX, frame.height), levelColors, margin);
-}
+};
 TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin) {
   context.fillStyle = colors[node.level];
   context.fillRect(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
@@ -33,7 +33,7 @@ TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin) {
       yy += h;
     }
   }
-}
+};
 
 
 /**
@@ -67,7 +67,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
       nodeSelected: tree.nodeList[0],
       nFLastChange: nF,
       image: null
-    }
+    };
 
     var leaves = (!changeInTree && frame.memory.leaves) ? frame.memory.leaves : tree.getLeaves();
     frame.memory.leaves = leaves;
@@ -91,7 +91,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
           }
         }
         return node._treeMapWeight;
-      }
+      };
       assignTreemapWeight(tree.nodeList[0]);
     }
 
@@ -141,7 +141,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
         node._rgb[0] = Math.floor(node._rgb[0] / node.toNodeList.length);
         node._rgb[1] = Math.floor(node._rgb[1] / node.toNodeList.length);
         node._rgb[2] = Math.floor(node._rgb[2] / node.toNodeList.length);
-      }
+      };
       assignColor(tree.nodeList[0]);
       tree.nodeList.forEach(function(node, i) {
         if(node._rgb && node._rgbF == null) node._rgbF = [node._rgb[0], node._rgb[1], node._rgb[2]];
@@ -157,7 +157,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
       var rgb;
       tree.nodeList.forEach(function(node, i) {
         rgb = node._color ? ColorOperators.colorStringToRGB(node._color) : [0, 0, 0];
-        frame.memory.textsColorList[i] = (rgb[0] + rgb[1] + rgb[2] > 360) ? 'black' : 'white'
+        frame.memory.textsColorList[i] = (rgb[0] + rgb[1] + rgb[2] > 360) ? 'black' : 'white';
       });
     }
 
@@ -184,10 +184,10 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
   var my = frame.memory.my;
 
   var tx = function(x) {
-    return kx * x + mx
+    return kx * x + mx;
   };
   var ty = function(y) {
-    return ky * y + my
+    return ky * y + my;
   };
 
 
@@ -291,7 +291,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
       x = Math.round(frame.x + rect.x) + 0.5;
       y = Math.round(frame.y + rect.y) + 0.5;
       setStroke(textColor ? textColor : frame.memory.textsColorList[overI], 2);
-      sRect(x, y, Math.floor(rect.width), Math.floor(rect.height))
+      sRect(x, y, Math.floor(rect.width), Math.floor(rect.height));
 
       if(MOUSE_UP_FAST) {
         frame.memory.focusFrame = TreeDraw._expandRect(overNode._outRectangle);
@@ -336,7 +336,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
 
   return frame.memory.nodeSelected;
 
-}
+};
 
 TreeDraw._generateRectangles = function(node) {
 
@@ -352,16 +352,16 @@ TreeDraw._generateRectangles = function(node) {
     child._inRectangle = TreeDraw._inRectFromOutRect(child._outRectangle);
     TreeDraw._generateRectangles(child);
   });
-}
+};
 TreeDraw._reduceRect = function(rect) {
   return new Rectangle(rect.x + rect.width * TreeDraw.PROP_RECT_REDUCTION_MARGIN, rect.y + rect.height * TreeDraw.PROP_RECT_REDUCTION_MARGIN, rect.width * (1 - 2 * TreeDraw.PROP_RECT_REDUCTION_MARGIN), rect.height * (1 - 2 * TreeDraw.PROP_RECT_REDUCTION_MARGIN));
-}
+};
 TreeDraw._expandRect = function(rect) {
   return new Rectangle(rect.x - rect.width * TreeDraw.PROP_RECT_EXPANTION_MARGIN, rect.y - rect.height * TreeDraw.PROP_RECT_EXPANTION_MARGIN, rect.width * (1 + 2 * TreeDraw.PROP_RECT_EXPANTION_MARGIN), rect.height * (1 + 2 * TreeDraw.PROP_RECT_EXPANTION_MARGIN));
-}
+};
 TreeDraw._inRectFromOutRect = function(rect) {
   return new Rectangle(rect.x + rect.width * TreeDraw.PROP_RECT_MARGIN, rect.y + rect.height * TreeDraw.PROP_RECT_LABEL, rect.width * (1 - 2 * TreeDraw.PROP_RECT_MARGIN), rect.height * (1 - TreeDraw.PROP_RECT_MARGIN - TreeDraw.PROP_RECT_LABEL));
-}
+};
 TreeDraw.PROP_RECT_MARGIN = 0.03;
 TreeDraw.PROP_RECT_LABEL = 0.2;
 TreeDraw.PROP_RECT_REDUCTION_MARGIN = 0.01;
@@ -400,7 +400,7 @@ TreeDraw.drawDecisionTree = function(frame, tree) {
       nFLastChange: nF,
       leaves: null,
       image: null
-    }
+    };
 
     if(changeInTree || frame.memory.leaves == null) {
       frame.memory.leaves = tree.getLeaves().getSortedByProperty('valueFollowingProbability', false);
@@ -420,7 +420,7 @@ TreeDraw.drawDecisionTree = function(frame, tree) {
 
     setText('black', 12);
     tree.nodeList.forEach(function(node) {
-      node.label = node.toNodeList.length == 0 ? Math.round(node.valueFollowingProbability * 100) / 100 : node.bestFeatureName
+      node.label = node.toNodeList.length == 0 ? Math.round(node.valueFollowingProbability * 100) / 100 : node.bestFeatureName;
       node._textWidth = getTextW(node.label);
     });
 
@@ -447,7 +447,7 @@ TreeDraw.drawDecisionTree = function(frame, tree) {
   var mx = frame.memory.mx;
 
   var tx = function(x) {
-    return kx * x + mx
+    return kx * x + mx;
   };
 
   var x, y;
@@ -465,7 +465,7 @@ TreeDraw.drawDecisionTree = function(frame, tree) {
   if(drawingImage) {
     drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
   } else {
-    c.l('drawing')
+    c.l('drawing');
     if(captureImage) {
       var newCanvas = document.createElement("canvas");
       newCanvas.width = frame.width;
@@ -725,7 +725,7 @@ TreeDraw.drawDecisionTree = function(frame, tree) {
 
   return frame.memory.result;
 
-}
+};
 TreeDraw._generateRectanglesDecision = function(node, hLevel) {
 
   var weights = new NumberList();
@@ -740,10 +740,10 @@ TreeDraw._generateRectanglesDecision = function(node, hLevel) {
     child._inRectangle = TreeDraw._inRectFromOutRectDecision(child._outRectangle, hLevel);
     TreeDraw._generateRectanglesDecision(child, hLevel);
   });
-}
+};
 TreeDraw._inRectFromOutRectDecision = function(rect, hLevel) {
   return new Rectangle(rect.x, rect.y + hLevel, rect.width, rect.height - hLevel);
-}
+};
 TreeDraw._horizontalRectanglesDecision = function(rect, weights) {
   var rects = new List();
   var x0 = rect.x;
@@ -757,4 +757,4 @@ TreeDraw._horizontalRectanglesDecision = function(rect, weights) {
   });
 
   return rects;
-}
+};

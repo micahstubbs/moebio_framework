@@ -2,7 +2,7 @@
  * NetworkDraw
  * @constructor
  */
-function NetworkDraw() {};
+function NetworkDraw() {}
 
 
 NetworkDraw._drawNode = function(node, x, y, r) {
@@ -18,7 +18,7 @@ NetworkDraw._drawNode = function(node, x, y, r) {
   }
   if(over) setCursor('pointer');
   return over;
-}
+};
 
 
 /**
@@ -103,7 +103,7 @@ NetworkDraw.drawNetwork2D = function(frame, network, polygon, respectProportions
   if(memory == null || memory.network != network || memory.nNodes != network.nodeList.length || memory.polygon != polygon || changeOnFrame || memory.respectProportions != respectProportions || memory.margin != margin || memory.logScale != logScale || memory.drawGrid != drawGrid) {
 
     if(memory == null) {
-      frame.memory = {}
+      frame.memory = {};
       memory = frame.memory;
     }
     memory.frame = frame.clone();
@@ -136,13 +136,13 @@ NetworkDraw.drawNetwork2D = function(frame, network, polygon, respectProportions
       ky = frameMargin.height / Math.log((frameP.bottom + 1) / (frameP.y + 1));
       project = function(p) {
         return new Point((Math.log(p.x + 1) - Math.log(frameP.x + 1)) * kx + frameMargin.x, frameMargin.bottom - (Math.log(p.y + 1) - Math.log(frameP.y + 1)) * ky);
-      }
+      };
     } else {
       kx = frameMargin.width / frameP.width;
       ky = frameMargin.height / frameP.height;
       project = function(p) {
         return new Point((p.x - frameP.x) * kx + frameMargin.x, frameMargin.bottom - (p.y - frameP.y) * ky);
-      }
+      };
     }
     memory.projectedPolygon = new Polygon();
     polygon.forEach(function(p, i) {
@@ -224,7 +224,7 @@ NetworkDraw._drawNodeValues = function(vx, vy, name) {
   fRect(mX - 2, mY - 2, -getTextW(text) - 4, -14);
   setText('white', 12, null, 'right', 'bottom');
   fText(text, mX - 4, mY - 2);
-}
+};
 
 
 
@@ -265,10 +265,10 @@ NetworkDraw.drawNetworkMatrix = function(frame, network, colors, relationsColorS
     dY = frame.height - dY;
     var ww;
     var hh;
-    var xNodes = new Array();
-    var yNodes = new Array();
-    var wNodes = new Array();
-    var hNodes = new Array();
+    var xNodes = [];
+    var yNodes = [];
+    var wNodes = [];
+    var hNodes = [];
   }
 
   for(i = 0; nodeList[i] != null; i++) {
@@ -315,4 +315,4 @@ NetworkDraw.drawNetworkMatrix = function(frame, network, colors, relationsColorS
 
   }
   return hoverValues;
-}
+};

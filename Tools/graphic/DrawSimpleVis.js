@@ -17,7 +17,7 @@
  * @constructor
  */
 
-function DrawSimpleVis() {};
+function DrawSimpleVis() {}
 
 
 DrawSimpleVis.drawSimpleBarChart = function(context, numberList, frame, colors) { //TODO: complete cases (numberLists with negative (and positive) values)
@@ -34,7 +34,7 @@ DrawSimpleVis.drawSimpleBarChart = function(context, numberList, frame, colors) 
     context.fillStyle = colors[i];
     context.fillRect(frame.x + i * dX, bottom - normalizedNumberList[i], dX - 1, normalizedNumberList[i]);
   }
-}
+};
 
 
 
@@ -124,7 +124,7 @@ DrawSimpleVis.drawIntervalsFlowTable = function(context, intervalsFlowTable, fra
   // context.fill();
   //
   // }
-}
+};
 
 
 
@@ -280,7 +280,7 @@ DrawSimpleVis.drawIntervalsWordsFlowTable = function(context, intervalsFlowTable
   // }
   // } while(j+1<nCols);
   // }
-}
+};
 
 // DrawSimpleVis._bezierValue = function(x0, x1, y0, y1, t, offX){
 // //return y0*(1-t)+y1*t;
@@ -357,7 +357,7 @@ DrawSimpleVis.drawStackBarsFlowTable = function(context, intervalsFlowTable, fra
     }
     context.fill();
   }
-}
+};
 
 // DrawSimpleVis.drawNetworMatrix = function(network, frame, colors, relationsColorScaleFunction, margin, directed){
 // relationsColorScaleFunction = relationsColorScaleFunction==null?ColorOperators.grayScale:relationsColorScaleFunction;

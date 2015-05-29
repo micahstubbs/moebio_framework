@@ -1,11 +1,11 @@
-function TwitterCommunityMetrics() {};
+function TwitterCommunityMetrics() {}
 
 TwitterCommunityMetrics.calculteFriendship = function(centralNode, network) {
   return TwitterCommunityMetrics._calculteMetric(centralNode, network, TwitterCommunityMetrics.friendshipFunction);
-}
+};
 TwitterCommunityMetrics.friendshipFunction = function(centralNode, network, node, relation, max) {
   if(relation == null) {
-    node['friendship'] = 0;
+    node.friendship = 0;
     return 0;
   }
   var directed = relation.node0 == centralNode;
@@ -20,16 +20,16 @@ TwitterCommunityMetrics.friendshipFunction = function(centralNode, network, node
   } else {
     value = (Math.min(to, from) / Math.max(to, from)) * Math.sqrt(Math.pow(to, 2) + Math.pow(from, 2)) / maxDistance;
   }
-  node['friendship'] = value;
+  node.friendship = value;
   return value;
-}
+};
 
 TwitterCommunityMetrics.calculateHeroism = function(centralNode, network) {
   return TwitterCommunityMetrics._calculteMetric(centralNode, network, TwitterCommunityMetrics.heroismFunction);
-}
+};
 TwitterCommunityMetrics.heroismFunction = function(centralNode, network, node, relation, max) {
   if(relation == null) {
-    node['heorism'] = 0;
+    node.heorism = 0;
     return 0;
   }
   var directed = relation.node0 == centralNode;
@@ -44,17 +44,17 @@ TwitterCommunityMetrics.heroismFunction = function(centralNode, network, node, r
     value = (to / (from + 1)) / max;
   }
 
-  node['heroism'] = value;
+  node.heroism = value;
   return value;
-}
+};
 
 
 TwitterCommunityMetrics.calculateFanatism = function(centralNode, network) {
   return TwitterCommunityMetrics._calculteMetric(centralNode, network, TwitterCommunityMetrics.fanatismFunction);
-}
+};
 TwitterCommunityMetrics.fanatismFunction = function(centralNode, network, node, relation, max) {
   if(relation == null) {
-    node['fanatismFunction'] = 0;
+    node.fanatismFunction = 0;
     return 0;
   }
   var directed = relation.node0 == centralNode;
@@ -68,13 +68,13 @@ TwitterCommunityMetrics.fanatismFunction = function(centralNode, network, node, 
   } else {
     value = (from / (to + 1)) / max;
   }
-  node['fanatism'] = value;
+  node.fanatism = value;
   return value;
-}
+};
 
 TwitterCommunityMetrics.calculateCommunityInput = function(centralNode, network) {
   return TwitterCommunityMetrics._calculteMetric(centralNode, network, TwitterCommunityMetrics.CommunityInputFunction);
-}
+};
 TwitterCommunityMetrics.CommunityInputFunction = function(centralNode, network, node, relation, max) {
   var maxRelations = 0;
   var maxWeight = 0;
@@ -102,9 +102,9 @@ TwitterCommunityMetrics.CommunityInputFunction = function(centralNode, network, 
     value = TwitterCommunityMetrics.friendshipFunction(centralNode, network, node, relation, max) * ((relation == null ? 0 : relation.weight) / maxWeight) * nRelations;
   }
 
-  node['communityInput'] = value;
+  node.communityInput = value;
   return value;
-}
+};
 
 
 
@@ -121,7 +121,7 @@ TwitterCommunityMetrics._calculteMetric = function(centralNode, network, metricF
     metricValues[i] = metricFunction(centralNode, network, node, relation, max);
   }
   return metricValues;
-}
+};
 
 
 TwitterCommunityMetrics.getMaxToFrom = function(centralNode, network) {
@@ -137,7 +137,7 @@ TwitterCommunityMetrics.getMaxToFrom = function(centralNode, network) {
   }
 
   return max;
-}
+};
 
 TwitterCommunityMetrics.getCommunityMembers = function(network, centralNodeName, max) {
   var centralNode = centralNodeName == null ? null : network.nodeList.getNodeByName(centralNodeName);
@@ -171,4 +171,4 @@ TwitterCommunityMetrics.getCommunityMembers = function(network, centralNodeName,
     }
   }
   return communityMembersNames;
-}
+};

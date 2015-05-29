@@ -30,16 +30,16 @@ RelationList.fromArray = function(array) {
   result.nodesAreConnected = RelationList.prototype.nodesAreConnected;
 
   return result;
-}
+};
 
 //TODO:remove?
 RelationList.prototype.addRelation = function(relation) {
   this.addNode(relation);
-}
+};
 
 RelationList.prototype.removeRelation = function(relation) {
     this.removeNode(relation);
-  }
+  };
   /**
    * get all relations that contain a given node
    * @param {Node} node 
@@ -47,7 +47,7 @@ RelationList.prototype.removeRelation = function(relation) {
    */
 RelationList.prototype.getRelationsWithNode = function(node) {
   var i;
-  var filteredRelations = new Array();
+  var filteredRelations = [];
   for(i = 0; this[i] != null; i++) {
     var relation = this[i];
     if(relation.node0 == node || relation.node1 == node) {
@@ -55,7 +55,7 @@ RelationList.prototype.getRelationsWithNode = function(node) {
     }
   }
   return filteredRelations;
-}
+};
 
 /**
  * get all Nodes related to a given Node
@@ -75,7 +75,7 @@ RelationList.prototype.getRelatedNodesToNode = function(node) {
     }
   }
   return relatedNodes;
-}
+};
 
 
 
@@ -90,7 +90,7 @@ RelationList.prototype.getRelatedNodesToNode = function(node) {
 RelationList.prototype.getAllRelationsBetweenNodes = function(node0, node1, directed) { //TODO: to be improved (check node1 on node0.relationList) (see: nodesAreConnected)
   var i;
   directed = directed == null ? false : directed;
-  var filteredRelations = new Array();
+  var filteredRelations = [];
   for(i = 0; this[i] != null; i++) {
     var relation = this[i];
     if((relation.node0 == node0 && relation.node1 == node1) || (!directed && relation.node0 == node1 && relation.node1 == node0)) {
@@ -98,7 +98,7 @@ RelationList.prototype.getAllRelationsBetweenNodes = function(node0, node1, dire
     }
   }
   return filteredRelations;
-}
+};
 
 
 /**
@@ -112,7 +112,7 @@ RelationList.prototype.getAllRelationsBetweenNodes = function(node0, node1, dire
 RelationList.prototype.nodesAreConnected = function(node0, node1, directed) {
   if(node0.toNodeList.getNodeById(node1.id) != null) return true;
   return !directed && node1.toNodeList.getNodeById(node0.id) != null;
-}
+};
 
 
 /**
@@ -130,7 +130,7 @@ RelationList.prototype.getFirstRelationBetweenNodes = function(node0, node1, dir
     if((this[i].node0.id == node0.id && this[i].node1.id == node1.id) || (!directed && this[i].node1.id == node0.id && this[i].node0.id == node1.id)) return this[i];
   }
   return null;
-}
+};
 
 
 /**
@@ -160,7 +160,7 @@ RelationList.prototype.getFirstRelationByIds = function(id0, id1, directed) { //
     }
   }
   return null;
-}
+};
 
 
 // RelationList.prototype.nodesAreConnected=function(node0, node1, directed){//

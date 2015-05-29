@@ -52,7 +52,7 @@ WikipediaArticlesVisits.prototype.search = function(articlesNames, date0, date1,
   } else {
     Loader.loadData(this.searchString, this.onComplete, this);
   }
-}
+};
 
 WikipediaArticlesVisits.prototype.onComplete = function(e) {
   //c.log("WikipediaArticlesVisits | onComplete | e", e);
@@ -87,4 +87,4 @@ WikipediaArticlesVisits.prototype.onComplete = function(e) {
 
   //c.log("table", table);
   this.warnFunction.call(this.target, table);
-}
+};

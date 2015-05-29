@@ -1,4 +1,4 @@
-LoadEvent.prototype = new Object();
+LoadEvent.prototype = {};
 LoadEvent.prototype.constructor = LoadEvent;
 
 /**

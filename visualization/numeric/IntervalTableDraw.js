@@ -1,4 +1,4 @@
-function IntervalTableDraw() {};
+function IntervalTableDraw() {}
 
 IntervalTableDraw.MIN_CHARACTERS_SIZE = 1;
 
@@ -94,7 +94,7 @@ IntervalTableDraw.drawIntervalsFlowTable = function(intervalsFlowTable, frame, c
   }
 
   //return nHovered;
-}
+};
 IntervalTableDraw._isOnShape = function(prevPoint, point, prevYsup, newYsup, offX, testX, textY) {
   var t = (testX - prevPoint.x) / (point.x - prevPoint.x);
   var u = 1 - t;
@@ -125,8 +125,8 @@ IntervalTableDraw._isOnShape = function(prevPoint, point, prevYsup, newYsup, off
 
   var mYSup = u * this.P0.y + t * this.P1.y;
 
-  return textY > mYSup && textY < mYInf
-}
+  return textY > mYSup && textY < mYInf;
+};
 
 
 
@@ -176,11 +176,11 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 
   var nHovered = -1;
 
-  var filteredTexts = new Array();
-  var textsX = new Array();
-  var textsY = new Array();
-  var textsSizes = new Array();
-  var textsAngles = new Array();
+  var filteredTexts = [];
+  var textsX = [];
+  var textsY = [];
+  var textsSizes = [];
+  var textsAngles = [];
 
   for(i = 0; i < nElements; i++) {
 
@@ -260,7 +260,7 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
   }
 
   return nHovered;
-}
+};
 
 IntervalTableDraw._isOnRadialShape = function(center, testPoint, a0, a1, r0a, r0b, r1a, r1b) {
   if(a1 < a0) a1 += TwoPi;
@@ -283,7 +283,7 @@ IntervalTableDraw._isOnRadialShape = function(center, testPoint, a0, a1, r0a, r0
   r = testPoint.subtract(center).getNorm();
 
   return r > pa.y && r < pb.y;
-}
+};
 
 
 
@@ -423,7 +423,7 @@ IntervalTableDraw.drawIntervalsWordsFlowTable = function(frame, intervalsFlowTab
       }
     } while (j + 1 < nCols);
   }
-}
+};
 IntervalTableDraw._bezierValue = function(x0, x1, y0, y1, t, offX) {
   var u = 1 - t;
   var p0 = new Point(x0 + t * offX, y0);
@@ -434,4 +434,4 @@ IntervalTableDraw._bezierValue = function(x0, x1, y0, y1, t, offX) {
   var P1 = new Point(u * p1.x + t * p2.x, u * p1.y + t * p2.y);
 
   return u * P0.y + t * P1.y;
-}
+};

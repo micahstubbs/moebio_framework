@@ -10,7 +10,7 @@ NetworkOperators.filterNodesByMinDegree = function(network, minDegree) {
     }
   }
   return null;
-}
+};
 
 
 NetworkOperators.degreeBetweenNodes = function(network, node0, node1) {
@@ -35,7 +35,7 @@ NetworkOperators.degreeBetweenNodes = function(network, node0, node1) {
   }
 
   return d;
-}
+};
 
 NetworkOperators.shortestPath = function(network, node0, node1, includeExtremes) {
   if(network == null || node0 == null || node1 == null) return null;
@@ -52,7 +52,7 @@ NetworkOperators.shortestPath = function(network, node0, node1, includeExtremes)
   }
   if(includeExtremes) path.addNode(node0);
   return path.getReversed();
-}
+};
 
 
 /**
@@ -93,7 +93,7 @@ NetworkOperators.shortestPaths = function(network, node0, node1, shortPath) {
   c.l('2. all.length', all.length);
 
   return all;
-}
+};
 
 NetworkOperators._extendPaths = function(allPaths, nodeDestiny, maxLength) {
 
@@ -125,7 +125,7 @@ NetworkOperators._extendPaths = function(allPaths, nodeDestiny, maxLength) {
 
   return NetworkOperators._extendPaths(allPaths, nodeDestiny, maxLength);
 
-}
+};
 
 /**
  * finds all loops in the network
@@ -158,7 +158,7 @@ NetworkOperators.loops = function(network, minSize) {
   if(minSize) allLoops = allLoops.getFilteredByPropertyValue("length", minSize, "greater");
 
   allLoops.sort(function(a0, a1) {
-    return a0.length > a1.length ? -1 : 1
+    return a0.length > a1.length ? -1 : 1;
   });
 
   allLoops.forEach(function(loop) {
@@ -168,7 +168,7 @@ NetworkOperators.loops = function(network, minSize) {
   var same = NetworkOperators._sameLoop(allLoops[0], allLoops[1]);
 
   return allLoops;
-}
+};
 NetworkOperators._sameLoop = function(loop0, loop1) {
   if(loop0.length != loop1.length) return false;
   if(loop1.getNodeById(loop0[0].id) == null) return false;
@@ -179,7 +179,7 @@ NetworkOperators._sameLoop = function(loop0, loop1) {
     if(loop0[i] != loop1[(i + i1) % l]) return false;
   }
   return true;
-}
+};
 NetworkOperators._getLoopsOnNode = function(central) {
   if(central.toNodeList.length == 0 || central.fromNodeList.length == 0) return [];
 
@@ -223,11 +223,11 @@ NetworkOperators._getLoopsOnNode = function(central) {
   }
 
   loops.sort(function(a0, a1) {
-    return a0.length > a1.length ? -1 : 1
+    return a0.length > a1.length ? -1 : 1;
   });
 
   return loops;
-}
+};
 
 NetworkOperators._pathsToCentral = function(columns, iColumn, path, paths) {
   if(path.finished) return;
@@ -277,7 +277,7 @@ NetworkOperators._pathsToCentral = function(columns, iColumn, path, paths) {
       }
     }
   }
-}
+};
 
 NetworkOperators._loopsColumns = function(nodeList, iColumn, columns) {
   if(columns[iColumn] == null) columns[iColumn] = new NodeList();
@@ -301,7 +301,7 @@ NetworkOperators._loopsColumns = function(nodeList, iColumn, columns) {
     }
   }
   if(newNodeList.length > 0) NetworkOperators._loopsColumns(newNodeList, iColumn + 1, columns);
-}
+};
 
 
 
@@ -372,7 +372,7 @@ NetworkOperators.spanningTree = function(network, node0, nodeLimit) { //TODO: th
   }
 
   return tree;
-}
+};
 
 NetworkOperators.degreesPartition = function(network, node) { //TODO:optionally add a NodeList of not connected Nodes
   var list0 = new NodeList(node);
@@ -408,7 +408,7 @@ NetworkOperators.degreesPartition = function(network, node) { //TODO:optionally 
   }
 
   return nodesTable;
-}
+};
 
 NetworkOperators.degreesFromNodeToNodes = function(network, node, nodeList) { //TODO: probably very unefficient
   var table = NetworkOperators.degreesPartition(network, node);
@@ -430,7 +430,7 @@ NetworkOperators.degreesFromNodeToNodes = function(network, node, nodeList) { //
     if(degrees[i] == null) degrees[i] = -1;
   }
   return degrees;
-}
+};
 
 /**
  * builds a dendrogram from a network
@@ -492,7 +492,7 @@ NetworkOperators.buildDendrogram = function(network) {
     for(i = 0; node1.nodeList[i] != null; i++) {
       newNode.node.nodeList.addNode(node1.nodeList[i]);
       newNode.node.relationList.addRelation(node1.relationList[i]);
-      Network
+      Network;
     }
 
     nodeList.removeElement(node0);
@@ -510,7 +510,7 @@ NetworkOperators.buildDendrogram = function(network) {
   }
 
   return tree;
-}
+};
 NetworkOperators._getClosestPair = function(nodeList, returnIndexes, pRelationPair) {
   if(nodeList.length == 2) {
     var index = nodeList[0].nodeList.indexOf(nodeList[1]);
@@ -555,7 +555,7 @@ NetworkOperators._getClosestPair = function(nodeList, returnIndexes, pRelationPa
   nodes.strength = maxStrength;
   return nodes;
 
-}
+};
 NetworkOperators._strengthBetweenSets = function(nodeList0, nodeList1, pRelationPair) {
   var strength = 0;
   var i, j;
@@ -572,7 +572,7 @@ NetworkOperators._strengthBetweenSets = function(nodeList0, nodeList1, pRelation
   }
 
   return strength / (nodeList0.length * nodeList1.length * pRelationPair);
-}
+};
 
 
 
@@ -596,13 +596,13 @@ NetworkOperators.buildNetworkClusters = function(network, dendrogramTree, minWei
   NetworkOperators._iterativeBuildClusters(dendrogramTree.nodeList[dendrogramTree.nodeList.length - 1], clusters, minWeight);
 
   return clusters;
-}
+};
 
 NetworkOperators._iterativeBuildClusters = function(node, clusters, minWeight) {
   if(node.nodeList.length == 1) {
     clusters.push(new NodeList(node.node));
-    return
-  };
+    return;
+  }
 
   if(node.nodeList[0].nodes.length == 1 || node.nodeList[0].weight > minWeight) {
     clusters.push(node.nodeList[0].nodes);
@@ -615,7 +615,7 @@ NetworkOperators._iterativeBuildClusters = function(node, clusters, minWeight) {
   } else {
     NetworkOperators._iterativeBuildClusters(node.nodeList[1], clusters, minWeight);
   }
-}
+};
 
 
 
@@ -673,7 +673,7 @@ NetworkOperators.addPageRankToNodes = function(network, from, useRelationsWeight
       }
     }
   }
-}
+};
 
 
 /**
@@ -696,7 +696,7 @@ NetworkOperators.fusionNoteworks = function(noteworksList, hubsDistanceFactor, h
   });
 
   return NetworkOperators.fusionNetworks(networks, hubsDistanceFactor, hubsForceWeight);
-}
+};
 
 
 /**
@@ -730,7 +730,7 @@ NetworkOperators.fusionNetworks = function(networks, hubsDistanceFactor, hubsFor
         newNode = new Node(node.id, node.name);
         newNode.basicId = node.basicId;
         newNode.mapId = "map_" + i;
-        newNode.mapsIds = [newNode.mapId]
+        newNode.mapsIds = [newNode.mapId];
         newNode.color = colors[i];
         newNode.nMaps = 1;
         newNode.weight = node.weight;
@@ -790,4 +790,4 @@ NetworkOperators.fusionNetworks = function(networks, hubsDistanceFactor, hubsFor
   fusionNet.mapsCluster = mapsCluster;
 
   return fusionNet;
-}
+};

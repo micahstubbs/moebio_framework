@@ -1,4 +1,4 @@
-function ImageGenerators() {};
+function ImageGenerators() {}
 
 ImageGenerators.dashedPattern = function(colorBackground, colorLine, separationLines, widthLines) { //TODO: doesn't work because of two different issues
   separationLines = separationLines == null ? 2 : separationLines;
@@ -31,4 +31,4 @@ ImageGenerators.dashedPattern = function(colorBackground, colorLine, separationL
   onResize();
 
   return im;
-}
+};

@@ -8,7 +8,7 @@ function PolygonList() {
   var array = Table.apply(this, arguments);
   array = PolygonList.fromArray(array);
   return array;
-};
+}
 PolygonList.fromArray = function(array) {
   var result = Table.fromArray(array);
   result.type = "PolygonList";
@@ -18,7 +18,7 @@ PolygonList.fromArray = function(array) {
   result.clone = PolygonList.prototype.clone;
   result.getString = PolygonList.prototype.getString;
   return result;
-}
+};
 PolygonList.prototype.getFrame = function() {
   if(this.length == 0) return null;
   var frameP = this[0].getFrame();
@@ -34,7 +34,7 @@ PolygonList.prototype.getFrame = function() {
   rectangle.height -= rectangle.y;
 
   return rectangle;
-}
+};
 PolygonList.prototype.add = function(object) {
   var type = typeOf(object);
   var i;
@@ -48,7 +48,7 @@ PolygonList.prototype.add = function(object) {
       return newPolygonList;
       break;
   }
-}
+};
 PolygonList.prototype.factor = function(value) {
   var newPolygonList = new PolygonList();
   for(var i = 0; this[i] != null; i++) {
@@ -56,7 +56,7 @@ PolygonList.prototype.factor = function(value) {
   }
   newPolygonList.name = this.name;
   return newPolygonList;
-}
+};
 
 PolygonList.prototype.clone = function() {
   var newPolygonList = new PolygonList();
@@ -65,7 +65,7 @@ PolygonList.prototype.clone = function() {
   }
   newPolygonList.name = this.name;
   return newPolygonList;
-}
+};
 
 // PolygonList.prototype.getString=function(pointSeparator,polygonSeparator){
 // pointSeparator = pointSeparator==null?',':pointSeparator;

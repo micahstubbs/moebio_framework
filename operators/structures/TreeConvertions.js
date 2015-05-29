@@ -1,4 +1,4 @@
-function TreeConvertions() {};
+function TreeConvertions() {}
 
 /**
  * convert a table that describes a tree (higher hierarchies in first lists) into a Tree
@@ -41,7 +41,7 @@ TreeConvertions.TableToTree = function(table, fatherName, lastListIsWeights) {
   tree.assignDescentWeightsToNodes();
 
   return tree;
-}
+};
 TreeConvertions.getId = function(table, i, j) {
   var iCol = 1;
   var id = String(table[0][j]);
@@ -50,4 +50,4 @@ TreeConvertions.getId = function(table, i, j) {
     iCol++;
   }
   return id;
-}
+};

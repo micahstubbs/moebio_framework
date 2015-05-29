@@ -2,7 +2,7 @@
  * PolygonGenerators
  * @constructor
  */
-function PolygonListOperators() {};
+function PolygonListOperators() {}
 
 
 PolygonListOperators.simplifyPolygons = function(polygonList, margin, removeEmptyPolygons) {
@@ -15,4 +15,4 @@ PolygonListOperators.simplifyPolygons = function(polygonList, margin, removeEmpt
     }
   }
   return newPolygonList;
-}
+};

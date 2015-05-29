@@ -8,7 +8,7 @@ function Polygon() {
   var array = List.apply(this, arguments);
   array = Polygon.fromArray(array);
   return array;
-};
+}
 Polygon.fromArray = function(array) {
   var result = List.fromArray(array);
   result.type = "Polygon";
@@ -27,7 +27,7 @@ Polygon.fromArray = function(array) {
   result.clone = Polygon.prototype.clone;
 
   return result;
-}
+};
 
 
 Polygon.prototype.getFrame = function() {
@@ -76,7 +76,7 @@ Polygon.prototype.add = function(object) {
       return newPolygon;
       break;
   }
-}
+};
 
 /**
  * scales the polygon by a number or a Point
@@ -104,7 +104,7 @@ Polygon.prototype.factor = function(value) {
   }
 
   return null;
-}
+};
 
 
 Polygon.prototype.getRotated = function(angle, center) {
@@ -116,7 +116,7 @@ Polygon.prototype.getRotated = function(angle, center) {
   }
   newPolygon.name = this.name;
   return newPolygon;
-}
+};
 
 Polygon.prototype.getClosestPoint = function(point) {
   var closest = this[0];
@@ -131,7 +131,7 @@ Polygon.prototype.getClosestPoint = function(point) {
     }
   }
   return closest;
-}
+};
 
 Polygon.prototype.toNumberList = function() {
   var numberList = new NumberList();
@@ -141,7 +141,7 @@ Polygon.prototype.toNumberList = function() {
     numberList[i * 2 + 1] = this[i].y;
   }
   return numberList;
-}
+};
 
 /**
  * Thanks http://jsfromhell.com/math/is-point-in-poly AND http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
@@ -155,7 +155,7 @@ Polygon.prototype.containsPoint = function(point) {
         && (point.x < (this[j].x - this[i].x) * (point.y - this[i].y) / (this[j].y - this[i].y) + this[i].x)
         && (c = !c);
   return c;
-}
+};
 
 //transform
 
@@ -167,7 +167,7 @@ Polygon.prototype.approach = function(destiny, speed) {
     point.x = antispeed * point.x + speed * destiny[i].x;
     point.y = antispeed * point.y + speed * destiny[i].y;
   });
-}
+};
 
 
 Polygon.prototype.clone = function() {
@@ -177,4 +177,4 @@ Polygon.prototype.clone = function() {
   }
   newPolygon.name = this.name;
   return newPolygon;
-}
+};

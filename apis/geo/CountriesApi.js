@@ -15,7 +15,7 @@ function CountriesApi() {
 
   this.simpleLoaded = false;
   this.complexLoaded = false;
-};
+}
 
 /**
  * starts loading info
@@ -30,7 +30,7 @@ CountriesApi.prototype.loadAndBuild = function(onComplete, callee, simple, compl
   this.complex = complex;
   this.onComplete = onComplete;
   Loader.loadData(CountriesApi.COUNTRIES_INFO_PATH, this.loadedInfo, this);
-}
+};
 
 
 CountriesApi.prototype.loadedInfo = function(e) {
@@ -67,7 +67,7 @@ CountriesApi.prototype.loadedInfo = function(e) {
   if(this.simple) Loader.loadData(CountriesApi.SIMPLE_POLYGONS_PATH, this.loadedPolygons, this);
   if(this.complex) Loader.loadData(CountriesApi.POLYGONS_PATH, this.loadedPolygons, this);
   if(!this.simple && !this.complex) this.onComplete.call(this.callee, this._countryList);
-}
+};
 
 
 CountriesApi.prototype.loadedPolygons = function(e) {
@@ -103,7 +103,7 @@ CountriesApi.prototype.loadedPolygons = function(e) {
   var complete = !((this.simple && !this.simpleLoaded) || (this.complex && !this.complexLoaded));
 
   if(complete) this.onComplete.call(this.callee, this._countryList);
-}
+};
 
 CountriesApi.prototype.buildPolygons = function(polygonsText) {
   if(polygonsText == 0 || polygonsText == '') return new PolygonList();
@@ -131,4 +131,4 @@ CountriesApi.prototype.buildPolygons = function(polygonsText) {
   }
 
   return polygonList;
-}
+};

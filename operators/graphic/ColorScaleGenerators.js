@@ -3,7 +3,7 @@
  * @constructor
  * 
  */
-function ColorScaleGenerators() {};
+function ColorScaleGenerators() {}
 
 
 /**
@@ -38,7 +38,7 @@ ColorScaleGenerators.createColorScaleFromColors = function(colorList, positions)
 					+Math.floor( antit*colorList.rgbs[i][2] + intert*colorList.rgbs[i+1][2] )+')';
       }
     }
-  }
+  };
 
   return cS;
-}
+};

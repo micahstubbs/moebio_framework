@@ -21,9 +21,9 @@ NumberListDraw.drawSimpleGraph = function(frame, numberList, margin, xValues) {
       numberList: numberList,
       minmax: numberList.getMinMaxInterval(),
       zero: null
-    }
+    };
     if(frame.memory.minmax.x > 0 && frame.memory.minmax.y > 0) {
-      frame.memory.normalizedList = numberList.getNormalizedToMax()
+      frame.memory.normalizedList = numberList.getNormalizedToMax();
     } else {
       frame.memory.normalizedList = numberList.getNormalized();
       frame.memory.zero = -frame.memory.minmax.x / frame.memory.minmax.getAmplitude();
@@ -89,11 +89,11 @@ NumberListDraw.drawSimpleGraph = function(frame, numberList, margin, xValues) {
       mX + w + 16, mY - 30,
       mX + 6, mY - 30,
       mX + 6, mY - 10
-    )
+    );
     setFill('white');
     fText(text, mX + 10, mY - 26);
     if(MOUSE_DOWN) clicked = overI;
   }
 
   return clicked;
-}
+};

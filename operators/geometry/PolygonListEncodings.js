@@ -1,4 +1,4 @@
-function PolygonListEncodings() {};
+function PolygonListEncodings() {}
 
 /**
  * converts a simple format for polygons into a PolygonList
@@ -31,7 +31,7 @@ PolygonListEncodings.StringToPolygonList = function(string, separatorCoordinates
     polygonList.push(polygon);
   }
   return polygonList;
-}
+};
 
 /**
  * converts a polygonList into a simple text format
@@ -56,4 +56,4 @@ PolygonListEncodings.PolygonListToString = function(polygonList, separatorCoordi
     }
   }
   return t;
-}
+};
