@@ -1,4 +1,4 @@
-function StringOperators() {};
+function StringOperators() {}
 
 StringOperators.ENTER = String.fromCharCode(13);
 StringOperators.ENTER2 = String.fromCharCode(10);
@@ -25,7 +25,7 @@ StringOperators.STOP_WORDS = StringList.fromArray("t,s,mt,rt,re,m,http,amp,a,abl
 StringOperators.split = function(string, character) {
   if(character == null) return StringOperators.splitByEnter(string);
   return StringList.fromArray(string.split(character));
-}
+};
 
 /**
  * split a String by enter (using several codifications)
@@ -42,7 +42,7 @@ StringOperators.splitByEnter = function(string) {
   var stringList = StringOperators.splitString(string, StringOperators.ENTER3);
   if(stringList.length > 1) return stringList;
   return new StringList(string);
-}
+};
 
 
 /**
@@ -56,7 +56,7 @@ StringOperators.splitByEnter = function(string) {
 StringOperators.replaceSubString = function(string, subString, replacement) {
   if(string == null || subString == null || replacement == null) return null;
   return string.replace(new RegExp(subString, "g"), replacement);
-}
+};
 
 /**
  * replaces in a string ocurrences of sub-strings by a string
@@ -76,7 +76,7 @@ StringOperators.replaceSubStringsByString = function(string, subStrings, replace
   });
 
   return string;
-}
+};
 
 /**
  * replaces in a string ocurrences of sub-strings by strings (1-1)
@@ -98,7 +98,7 @@ StringOperators.replaceSubStringsByStrings = function(string, subStrings, replac
   }
 
   return string;
-}
+};
 
 
 
@@ -114,7 +114,7 @@ StringOperators.replaceSubStringsByStrings = function(string, subStrings, replac
 StringOperators.substr = function(string, i0, length) {
   i0 = i0 || 0;
   return string.substr(i0, length);
-}
+};
 
 /**
  * split a String by a separator (a String) and returns a StringList
@@ -130,7 +130,7 @@ StringOperators.splitString = function(string, separator) {
   if(typeof separator == "string") separator = separator.replace("\\n", "\n");
   if(string.indexOf(separator) == -1) return new StringList(string);
   return StringList.fromArray(string.split(separator));
-}
+};
 
 /**
  * searches for two Strings within a String and returns the String in between
@@ -148,7 +148,7 @@ StringOperators.getFirstTextBetweenStrings = function(text, subString0, subStrin
   var i1 = text.indexOf(subString1, i0 + subString0.length + 1);
   if(i1 == -1) return text.substring(i0 + subString0.length);
   return text.substr(i0 + subString0.length, i1 - (i0 + subString0.length));
-}
+};
 
 /**
  * searches all the Strings contained between two Strings in a String
@@ -178,7 +178,7 @@ StringOperators.getAllTextsBetweenStrings = function(text, subString0, subString
     }
   }
   return stringList;
-}
+};
 
 /**
  * associates a value to each text in a StringList, according to number of words containg in each StringList; one lists pushes to negative values, the other to positive. A classic use would be a primitive sentimental analisis using a list of positive adjectives and a list of negative ones
@@ -193,14 +193,14 @@ StringOperators.getAllTextsBetweenStrings = function(text, subString0, subString
 StringOperators.countWordsDichotomyAnalysis = function(string, negativeStrings, positiveStrings, normalizeBySize) {
   var val = 0;
   negativeStrings.forEach(function(word) {
-    val -= StringOperators.countWordOccurrences(string, word)
+    val -= StringOperators.countWordOccurrences(string, word);
   });
   positiveStrings.forEach(function(word) {
-    val += StringOperators.countWordOccurrences(string, word)
+    val += StringOperators.countWordOccurrences(string, word);
   });
   if(normalizeBySize) val /= string.length;
   return val;
-}
+};
 
 
 /**
@@ -292,7 +292,7 @@ StringOperators.getLinksFromHtml = function(html, urlSource, removeHash) {
   urls = urls.getWithoutRepetitions();
 
   return urls;
-}
+};
 
 
 /**
@@ -310,7 +310,7 @@ StringOperators.textContainsString = function(text, string, asWord, caseSensitiv
   return asWord ?
     text.match(new RegExp("\\b" + string + "\\b")).length > 0 :
     text.indexOf(string) != -1;
-}
+};
 
 /**
  * print a string in console
@@ -323,7 +323,7 @@ StringOperators.logInConsole = function(string, frame) {
   if(frame) c.log('///////////////////////////////////////////////////');
   c.log(string);
   if(frame) c.log('///////////////////////////////////////////////////');
-}
+};
 
 
 
@@ -347,10 +347,10 @@ StringOperators.getParenthesisContents = function(text, brackets) {
   }
 
   return contents;
-}
+};
 StringOperators.getFirstParenthesisContent = function(text, brackets) {
   return StringOperators.getFirstParenthesisContentWithIndexes(text, brackets).content;
-}
+};
 StringOperators.getFirstParenthesisContentWithIndexes = function(text, brackets) {
   var open = brackets ? "[" : "(";
   var close = brackets ? "]" : ")";
@@ -364,7 +364,7 @@ StringOperators.getFirstParenthesisContentWithIndexes = function(text, brackets)
     "content": "",
     "index0": 0,
     "index1": 0
-  }
+  };
 
   var indexClose = text.indexOf(close);
 
@@ -394,28 +394,28 @@ StringOperators.getFirstParenthesisContentWithIndexes = function(text, brackets)
     "index0": indexOpen + 1,
     "index1": indexClose == -1 ? (text.length - 1) : (indexClose - 1)
   };
-}
+};
 
 StringOperators.placeString = function(string, stringToPlace, index) {
   return string.substr(0, index) + stringToPlace + string.substr(index + stringToPlace.length);
-}
+};
 
 StringOperators.insertString = function(string, stringToInsert, index) {
   return string.substr(0, index) + stringToInsert + string.substr(index);
-}
+};
 
 StringOperators.removeEnters = function(string) {
   return string.replace(/(\StringOperators.ENTER|\StringOperators.ENTER2|\StringOperators.ENTER3)/gi, " ");
-}
+};
 
 StringOperators.removeTabs = function(string) {
   return string.replace(/(\StringOperators.TAB|\StringOperators.TAB2|\t)/gi, "");
-}
+};
 
 StringOperators.removePunctuation = function(string, replaceBy) {
   replaceBy = replaceBy || "";
   return string.replace(/[:,.;?!\(\)\"\']/gi, replaceBy);
-}
+};
 
 StringOperators.removeDoubleSpaces = function(string) {
   var retString = string;
@@ -424,12 +424,12 @@ StringOperators.removeDoubleSpaces = function(string) {
     retString = retString.replace(regExpr, " ");
   }
   return retString;
-}
+};
 
 StringOperators.removeInitialRepeatedCharacter = function(string, character) {
   while(string.charAt(0) == character) string = string.substr(1);
   return string;
-}
+};
 
 
 /**
@@ -442,19 +442,19 @@ StringOperators.removeHtmlTags = function(html) {
   var tmp = document.createElement("DIV");
   tmp.innerHTML = html;
   return tmp.textContent || tmp.innerText;
-}
+};
 
 StringOperators.removeLinks = function(text) {
   text += ' ';
   var regexp = /http:\/\/[a-zA-Z0-9\/\.]+( |:|;|\r|\t|\n|\v)/g;
   return(text.replace(regexp, ' ')).substr(0, text.length - 2);
-}
+};
 
 StringOperators.removeQuotes = function(string) { //TODO:improve
   if(string.charAt(0) == "\"") string = string.substr(1);
   if(string.charAt(string.length - 1) == "\"") string = string.substr(0, string.length - 1);
   return string;
-}
+};
 
 // StringOperators.trim = function(string){
 // 	return string.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
@@ -525,7 +525,7 @@ StringOperators.getWords = function(string, withoutRepetitions, stopWords, sorte
 
   if(sortedByFrequency) {
     if(withoutRepetitions) {
-      list = ListOperators.countElementsRepetitionOnList(list, true)[0]
+      list = ListOperators.countElementsRepetitionOnList(list, true)[0];
       if(limit != 0) list = list.substr(0, limit);
 
       return list;
@@ -544,7 +544,7 @@ StringOperators.getWords = function(string, withoutRepetitions, stopWords, sorte
 
   if(limit != 0) list = list.splice(0, limit);
   return list;
-}
+};
 
 removeAccentsAndDiacritics = function(string) {
   var r = string.replace(new RegExp(/[àáâãäå]/g), "a");
@@ -589,7 +589,7 @@ StringOperators.getWordsOccurrencesTable = function(string, stopWords, includeLi
   var words = StringOperators.getWords(string, false, stopWords, false, includeLinks, limit, minSizeWords);
 
   return ListOperators.countElementsRepetitionOnList(words, true, false, limit);
-}
+};
 
 StringOperators.indexesOf = function(text, string) { //TODO:test
   var index = text.indexOf(string);
@@ -601,7 +601,7 @@ StringOperators.indexesOf = function(text, string) { //TODO:test
     index = text.indexOf(string, index + 1);
   }
   return indexes;
-}
+};
 
 /**
  * returns a string repeated a number of times
@@ -616,7 +616,7 @@ StringOperators.repeat = function(text, n) {
     newText += text;
   }
   return newText;
-}
+};
 
 
 
@@ -631,13 +631,13 @@ StringOperators.countOccurrences = function(text, string) { //seems to be th emo
     index = text.indexOf(string, index + string.length);
   }
   return n;
-}
+};
 
 StringOperators.countWordOccurrences = function(string, word) {
   var regex = new RegExp("\\b" + word + "\\b");
   var match = string.match(regex);
   return match == null ? 0 : match.length;
-}
+};
 
 StringOperators.countStringsOccurrences = function(text, strings) {
   var i;
@@ -646,13 +646,13 @@ StringOperators.countStringsOccurrences = function(text, strings) {
     numberList[i] = text.split(strings[i]).length - 1;
   }
   return numberList;
-}
+};
 
 //validation
 
 StringOperators.validateEmail = function(text) {
   return StringOperators.MAIL_REGEX.test(text);
-}
+};
 StringOperators.validateUrl = function(text) {
   return StringOperators.LINK_REGEX.test(text);
-}
+};

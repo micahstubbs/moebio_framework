@@ -2,7 +2,7 @@
  * FastHtml 
  * @constructor
  */
-function FastHtml() {};
+function FastHtml() {}
 
 FastHtml.expand = function(abreviatedHTML, scope, onEvent) {
   if(abreviatedHTML == null || abreviatedHTML == "") return "";
@@ -101,22 +101,22 @@ FastHtml.expand = function(abreviatedHTML, scope, onEvent) {
   // c.log("////////////////////////////////////");
 
   return newText;
-}
+};
 
 FastHtml.clickLink = function(param) {
   FastHtml.linkFunction.call(FastHtml.target, param);
-}
+};
 
 FastHtml.findAndPlaceLinks = function(text) {
   var newText = FastHtml._findAndPlaceLinksPrefix(text, "http");
   return FastHtml._findAndPlaceLinksPrefix(newText, "https");
-}
+};
 FastHtml._findAndPlaceLinksPrefix = function(text, prefix) {
   var regexp = prefix == 'http' ? /http:\/\//g : /https:\/\//g;
   var blocks = text.split(regexp);
 
   if(blocks.length > 1) {
-    var blocks2 = new Array();
+    var blocks2 = [];
     var indexS;
     var url;
 
@@ -134,13 +134,13 @@ FastHtml._findAndPlaceLinksPrefix = function(text, prefix) {
     }
   }
   return(blocks.length == 0 || blocks.length == 1) ? text : blocks2.join('');
-}
+};
 
 FastHtml.findAndPlaceTwitterAdresses = function(text) {
   var blocks = text.split(/@/g);
 
   if(blocks.length > 1) {
-    var blocks2 = new Array();
+    var blocks2 = [];
     var indexS;
     var url;
     var accountName;
@@ -162,9 +162,9 @@ FastHtml.findAndPlaceTwitterAdresses = function(text) {
   }
 
   return(blocks.length == 0 || blocks.length == 1) ? text : blocks2.join('');
-}
+};
 
 FastHtml.getColorTag = function(color) {
   color = ColorOperators.colorStringToHEX(color);
   return "<font color=\"" + color + "\">";
-}
+};

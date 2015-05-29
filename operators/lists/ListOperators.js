@@ -1,4 +1,4 @@
-function ListOperators() {};
+function ListOperators() {}
 
 
 /**
@@ -13,7 +13,7 @@ ListOperators.getElement = function(list, index) {
   if(list == null) return null;
   index = index == null ? 0 : index % list.length;
   return list[index];
-}
+};
 
 /**
  * multi-ouput operator that gives acces to individual elements
@@ -97,8 +97,8 @@ ListOperators.getFirstElements = function(list, fromIndex) {
     name: "tenth value",
     description: "tenth value",
     value: list[fromIndex + 9]
-  }]
-}
+  }];
+};
 
 // *
 //  * filters a List, by a NumberList of indexes, or by an Interval
@@ -120,7 +120,7 @@ ListOperators.getFirstElements = function(list, fromIndex) {
  */
 ListOperators.indexOf = function(list, element) {
   return list.indexOf(element);
-}
+};
 
 /**
  * concats lists
@@ -143,7 +143,7 @@ ListOperators.concat = function() {
     list = list.concat(arguments[i]);
   }
   return list.getImproved();
-}
+};
 
 /**
  * assembles a List
@@ -158,7 +158,7 @@ ListOperators.concat = function() {
  */
 ListOperators.assemble = function() {
   return List.fromArray(Array.prototype.slice.call(arguments, 0)).getImproved();
-}
+};
 
 
 /**
@@ -230,7 +230,7 @@ ListOperators.countElementsRepetitionOnList = function(list, sortListsByOccurren
   }
 
   return table;
-}
+};
 
 
 /**
@@ -241,7 +241,7 @@ ListOperators.countElementsRepetitionOnList = function(list, sortListsByOccurren
  */
 ListOperators.reverse = function(list) {
   return list.getReversed();
-}
+};
 
 /**
  * using a table with two columns as a dictionary (first list elements to be read, second list result elements), translates a list
@@ -263,7 +263,7 @@ ListOperators.translateWithDictionary = function(list, dictionary, nullElement) 
     }
   });
   return newList.getImproved();
-}
+};
 
 
 // ListOperators.getIndexesOfElements=function(list, elements){
@@ -291,7 +291,7 @@ ListOperators.sortListByNumberList = function(list, numberList, descending) {
   if(numberList.length == 0) return list;
   var newNumberList;
 
-  var pairs = new Array();
+  var pairs = [];
   var newList = instantiate(typeOf(list));
 
   for(i = 0; list[i] != null; i++) {
@@ -316,7 +316,7 @@ ListOperators.sortListByNumberList = function(list, numberList, descending) {
   }
   newList.name = list.name;
   return newList;
-}
+};
 
 
 ListOperators.sortListByIndexes = function(list, indexedArray) {
@@ -328,7 +328,7 @@ ListOperators.sortListByIndexes = function(list, indexedArray) {
     newList.push(list[indexedArray[i]]);
   }
   return newList;
-}
+};
 
 
 ListOperators.concatWithoutRepetitions = function() { //?
@@ -342,7 +342,7 @@ ListOperators.concatWithoutRepetitions = function() { //?
     }
   }
   return newList.getImproved();
-}
+};
 
 
 ListOperators.slidingWindowOnList = function(list, subListsLength, step, finalizationMode) {
@@ -390,13 +390,13 @@ ListOperators.slidingWindowOnList = function(list, subListsLength, step, finaliz
   }
 
   return table.getImproved();
-}
+};
 
 ListOperators.getNewListForObjectType = function(object) {
   var newList = new List();
   newList[0] = object;
   return instantiateWithSameType(newList.getImproved());
-}
+};
 
 ListOperators.listsIntersect = function(list0, list1) {
   var list = list0.length < list1.length ? list0 : list1;
@@ -405,7 +405,7 @@ ListOperators.listsIntersect = function(list0, list1) {
     if(otherList.indexOf(list[i]) != -1) return true;
   }
   return false;
-}
+};
 
 /**
  * returns the list of common elements between two lists
@@ -427,7 +427,7 @@ ListOperators.getCommonElements = function(list0, list1) {
   }
   if(nums || strs) return newList;
   return newList.getImproved();
-}
+};
 
 
 
@@ -464,7 +464,7 @@ ListOperators.unionLists = function(x, y) {
     }
   }
   return result;
-}
+};
 
 /**
  * creates a List that contains the intersection of two List (elements present in BOTH lists)
@@ -502,7 +502,7 @@ ListOperators.intersectLists = function(a, b) {
     }
   }
   return result;
-}
+};
 
 
 
@@ -550,7 +550,7 @@ ListOperators.getListEntropy = function(list, valueFollowing) {
   }
 
   return entropy;
-}
+};
 
 
 /**
@@ -613,7 +613,7 @@ ListOperators.getInformationGain = function(feature, supervised) {
   });
 
   return ig;
-}
+};
 
 ListOperators.getInformationGainAnalysis = function(feature, supervised) {
   if(feature == null || supervised == null || feature.length != supervised.length) return null;
@@ -634,18 +634,18 @@ ListOperators.getInformationGainAnalysis = function(feature, supervised) {
   });
 
   childrenLists.forEach(function(cl) {
-    entropy = ListOperators.getListEntropy(cl)
+    entropy = ListOperators.getListEntropy(cl);
     ig -= (cl.length / N) * entropy;
 
     sets.push({
       children: cl,
       entropy: entropy,
       infoGain: ig
-    })
+    });
   });
 
   return sets;
-}
+};
 
 
 /**
@@ -663,7 +663,7 @@ ListOperators.groupElements = function(list, sortedByValue, mode, fillBlanks) {
     return;
   var result = ListOperators._groupElements_Base(list, null, sortedByValue, mode, fillBlanks);
   return result;
-}
+};
 
 
 /**
@@ -682,7 +682,7 @@ ListOperators.groupElementsByPropertyValue = function(list, propertyName, sorted
     return;
   var result = ListOperators._groupElements_Base(list, propertyName, sortedByValue, mode, fillBlanks);
   return result;
-}
+};
 
 
 
@@ -716,7 +716,7 @@ ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, 
     if(maxValue == undefined || pValue > maxValue) {
       maxValue = pValue;
     }
-  };
+  }
 
   // Fill the blanks
   if(fillBlanks) {
@@ -739,4 +739,4 @@ ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, 
 
   return resultTable;
 
-}
+};

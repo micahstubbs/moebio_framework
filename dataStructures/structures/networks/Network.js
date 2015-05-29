@@ -20,7 +20,7 @@ function Network() {
  */
 Network.prototype.getNodes = function() {
   return this.nodeList;
-}
+};
 
 /**
  * get relationList property
@@ -29,7 +29,7 @@ Network.prototype.getNodes = function() {
  */
 Network.prototype.getRelations = function() {
   return this.relationList;
-}
+};
 
 /**
  * get nodes ids property
@@ -38,7 +38,7 @@ Network.prototype.getRelations = function() {
  */
 Network.prototype.getNodesIds = function() {
   return this.nodeList.getIds();
-}
+};
 
 
 
@@ -48,17 +48,17 @@ Network.prototype.getNodesIds = function() {
 
 Network.prototype.addNode = function(node) {
   this.nodeList.addNode(node);
-}
+};
 Network.prototype.getNodeWithName = function(name) {
   return this.nodeList.getNodeWithName(name);
-}
+};
 Network.prototype.getNodeWithId = function(id) {
   return this.nodeList.getNodeWithId(id);
-}
+};
 
 Network.prototype.createRelation = function(node0, node1, id, weight, content) {
   this.addRelation(new Relation(id, id, node0, node1, weight, content));
-}
+};
 
 Network.prototype.addRelation = function(relation) {
   this.relationList.addNode(relation);
@@ -70,7 +70,7 @@ Network.prototype.addRelation = function(relation) {
   relation.node1.relationList.addNode(relation);
   relation.node1.fromNodeList.addNode(relation.node0);
   relation.node1.fromRelationList.addNode(relation);
-}
+};
 
 Network.prototype.connect = function(node0, node1, id, weight, content) {
   id = id || (node0.id + "_" + node1.id);
@@ -79,7 +79,7 @@ Network.prototype.connect = function(node0, node1, id, weight, content) {
   this.addRelation(relation);
   relation.content = content;
   return relation;
-}
+};
 
 
 
@@ -88,21 +88,21 @@ Network.prototype.connect = function(node0, node1, id, weight, content) {
  */
 
 Network.prototype.removeNode = function(node) {
-  this.removeNodeRelations(node)
+  this.removeNodeRelations(node);
   this.nodeList.removeNode(node);
-}
+};
 
 Network.prototype.removeNodeRelations = function(node) {
   for(var i = 0; node.relationList[i] != null; i++) {
     this.removeRelation(node.relationList[i]);
     i--;
   }
-}
+};
 
 Network.prototype.removeNodes = function() {
   this.nodeList.deleteNodes();
   this.relationList.deleteNodes();
-}
+};
 Network.prototype.removeRelation = function(relation) {
   this.relationList.removeElement(relation);
   relation.node0.nodeList.removeNode(relation.node1);
@@ -113,7 +113,7 @@ Network.prototype.removeRelation = function(relation) {
   relation.node1.relationList.removeRelation(relation);
   relation.node1.fromNodeList.removeNode(relation.node0);
   relation.node1.fromRelationList.removeRelation(relation);
-}
+};
 
 /**
  * transformative method, removes nodes without a minimal number of connections
@@ -141,7 +141,7 @@ Network.prototype.removeIsolatedNodes = function(minDegree) {
   }
 
   return nRemoved;
-}
+};
 
 
 
@@ -178,12 +178,12 @@ Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames,
   });
 
   return newNetwork;
-}
+};
 
 
 Network.prototype.getReport = function() {
   return "network contains " + this.nodeList.length + " nodes and " + this.relationList.length + " relations";
-}
+};
 
 Network.prototype.destroy = function() {
   delete this.type;
@@ -191,4 +191,4 @@ Network.prototype.destroy = function() {
   this.relationList.destroy();
   delete this.nodeList;
   delete this.relationList;
-}
+};

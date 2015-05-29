@@ -2,7 +2,7 @@
  * Twitter API 
  * @constructor
  */
-function TwitterApi() {};
+function TwitterApi() {}
 /**
  * gather tweets from twitterUser. 
  * @param {String} twittID the twitter user
@@ -54,7 +54,7 @@ TwitterApi.searchKeyword = function(searchString, onComplete, nResults, page, ca
     c.log('¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶ error Loader.loadJSONP at TwitterApi.searchKeyword, error:', error);
   }
   //c.log('3. TwitterApi.searchKeyword:['+searchString+']');
-}
+};
 
 /**
  * gather tweets that contain a specific string. 
@@ -80,4 +80,4 @@ TwitterApi.loadListMembers = function(accountName, listName, cursor, onComplete,
   } catch(error) {
     c.log('¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶ error Loader.loadJSONP at TwitterApi.loadListMembers, error:', error);
   }
-}
+};

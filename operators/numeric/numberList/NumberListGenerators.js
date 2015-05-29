@@ -1,4 +1,4 @@
-function NumberListGenerators() {};
+function NumberListGenerators() {}
 
 /**
  * Generate a NumberList with sorted Numbers
@@ -19,7 +19,7 @@ NumberListGenerators.createSortedNumberList = function(nValues, start, step) {
     numberList.push(start + i * step);
   }
   return numberList;
-}
+};
 
 NumberList.createNumberListFromInterval = function(nElements, interval) {
   if(interval == null) interval = new Interval(0, 1);
@@ -30,7 +30,7 @@ NumberList.createNumberListFromInterval = function(nElements, interval) {
     numberList.push(Number(interval.getMin()) + Number(Math.random() * range));
   }
   return numberList;
-}
+};
 
 /**
  * create a list with random numbers
@@ -58,4 +58,4 @@ NumberListGenerators.createRandomNumberList = function(nValues, interval, seed, 
   }
 
   return numberList;
-}
+};

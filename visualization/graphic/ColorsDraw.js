@@ -1,4 +1,4 @@
-function ColorsDraw() {};
+function ColorsDraw() {}
 
 /**
  * draws a color scale, with optional min and max associated values
@@ -10,7 +10,7 @@ function ColorsDraw() {};
  * tags:draw
  */
 ColorsDraw.drawColorScaleLegend = function(frame, colorScale, minValue, maxValue) {
-  var change = frame.memory == null || frame.width != frame.memory.w || frame.height != frame.memory.h || colorScale != frame.memory.cS || minValue != frame.memory.min || maxValue != frame.memory.max
+  var change = frame.memory == null || frame.width != frame.memory.w || frame.height != frame.memory.h || colorScale != frame.memory.cS || minValue != frame.memory.min || maxValue != frame.memory.max;
 
   if(change) {
     frame.memory = {
@@ -19,7 +19,7 @@ ColorsDraw.drawColorScaleLegend = function(frame, colorScale, minValue, maxValue
       cS: colorScale,
       min: minValue,
       max: maxValue
-    }
+    };
 
     ///// capture image 1
     var newCanvas = document.createElement("canvas");
@@ -73,7 +73,7 @@ ColorsDraw.drawColorScaleLegend = function(frame, colorScale, minValue, maxValue
 
 
   if(frame.memory.image) {
-    drawImage(frame.memory.image, frame.x, frame.y)
+    drawImage(frame.memory.image, frame.x, frame.y);
   }
 
-}
+};

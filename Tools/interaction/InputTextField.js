@@ -43,7 +43,7 @@ function InputTextField(id) {
       186: [";", ":", "¶"],
       187: ["=", "+", "±"],
       189: ["-", "_", "–"]
-    } //TODO: switch on all browsers!!!!! see: http://unixpapa.com/js/key.html
+    }; //TODO: switch on all browsers!!!!! see: http://unixpapa.com/js/key.html
 }
 
 
@@ -58,17 +58,17 @@ InputTextField.prototype.onMouse = function(event) {
     this.allSelected = false;
   }
   this.cursorVisible = this.focused;
-}
+};
 
 InputTextField.prototype.setEnterFunction = function(enterFunction, target) {
   this.enterFunction = enterFunction;
   this.enterFunctionTarget = target;
-}
+};
 
 
 InputTextField.prototype.cursorCycle = function(target) {
   target.cursorVisible = !target.cursorVisible;
-}
+};
 
 
 InputTextField.prototype.onKeyDown = function(e) {
@@ -122,7 +122,7 @@ InputTextField.prototype.onKeyDown = function(e) {
     }
   }
   this.allSelected = false;
-}
+};
 
 
 InputTextField.prototype.draw = function(context) {
@@ -176,12 +176,12 @@ InputTextField.prototype.draw = function(context) {
   context.fillStyle = text == "" || text == null ? 'gray' : this.textColor;
   text = (text == "" || text == null) && this.baseText != null ? this.baseText : text;
   context.fillText(text, this.x, this.y);
-}
+};
 
 InputTextField.prototype.setText = function(text) {
   this.text = text;
-}
+};
 
 InputTextField.prototype.getText = function() {
   return this.text;
-}
+};

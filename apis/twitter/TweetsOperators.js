@@ -53,7 +53,7 @@
 /**
  * @constructor
  */
-function TweetsOperators() {};
+function TweetsOperators() {}
 
 
 TweetsOperators.STOP_WORDS = StringOperators.STOP_WORDS; //StringList.fromArray("t,s,mt,rt,re,m,http,amp,a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,only,or,other,our,own,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your".split(","));
@@ -68,31 +68,31 @@ TweetsOperators.getStringFromTweets = function(tweetsArray, separator) {
     string += tweetsArray[i].text + separator;
   }
   return string;
-}
+};
 
 TweetsOperators.getWordsFromTweets = function(tweetsArray, withoutRepetitions, removeStopWords, sortedByFrequency, includeLinks, limit, minSizeWords) {
   return StringOperators.getWords(TweetsOperators.getStringFromTweets(tweetsArray), withoutRepetitions, removeStopWords ? TweetsOperators.STOP_WORDS : null, sortedByFrequency, includeLinks, limit, minSizeWords);
-}
+};
 
 TweetsOperators.getAccountsNamesFromTweets = function(tweetsArray, withoutRepetitions, sortedByFrequency, limit) {
   var string = TweetsOperators.getStringFromTweets(tweetsArray);
   var list = string.match(TweetsOperators.ACCOUNT_NAME_REGEXP);
   return StringOperators.getWords(list.join(' '), withoutRepetitions, null, sortedByFrequency, false, limit);
-}
+};
 
 TweetsOperators.getNGramsFromTweets = function(tweetsArray, N) {
 
-}
+};
 
 TweetsOperators.getWordsFrequenciesTable = function(tweetsArray, removeStopWords, includeLinks, limit, minSizeWords) {
   var words = TweetsOperators.getWordsFromTweets(tweetsArray, false, removeStopWords, false, includeLinks, null, minSizeWords);
   return ListOperators.countElementsRepetitionOnList(words, true, false, limit);
-}
+};
 
 TweetsOperators.getAccountsNamesFrequenciesTable = function(tweetsArray, limit) {
   var words = TweetsOperators.getAccountsNamesFromTweets(tweetsArray, false, false, null);
   return ListOperators.countElementsRepetitionOnList(words, true, false, limit);
-}
+};
 
 /**
  * returns a Table in which the first list is the accounts names, and the others are the number of occurrences of words
@@ -119,7 +119,7 @@ TweetsOperators.getWordsFrequenciesMergedTable = function(tweetsArray, removeSto
   }
 
   return table;
-}
+};
 
 /**
  * returns a Table in which the first list is the accounts names, and the others are the number of occurrences of words, faster algorithm (calculates list of words first)
@@ -133,7 +133,7 @@ TweetsOperators.getWordsFrequenciesMergedTableLight = function(tweetsArray, remo
   var i, j;
   var users = tweetsArray.getPropertyValues('from_user');
   var subList;
-  var words
+  var words;
   var wordsTable = TweetsOperators.getWordsFrequenciesTable(tweetsArray, removeStopWords, includeLinks, limit, minSizeWords);
   var table = new Table();
   //var match;
@@ -157,7 +157,7 @@ TweetsOperators.getWordsFrequenciesMergedTableLight = function(tweetsArray, remo
   }
 
   return table;
-}
+};
 
 
 TweetsOperators.createCoOccurrencesNetwork = function(tweetsArray, removeStopWords, includeLinks, wordsLimit, coOccurrencesLimit) {
@@ -207,4 +207,4 @@ TweetsOperators.createCoOccurrencesNetwork = function(tweetsArray, removeStopWor
   }
 
   return network;
-}
+};

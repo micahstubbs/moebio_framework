@@ -1,12 +1,12 @@
 //include(frameworksRoot+"operators/numeric/MatrixGenerators.js");
 
 
-function DrawTextsAdvanced() {};
+function DrawTextsAdvanced() {}
 
 
 DrawTextsAdvanced.characterOnQuadrilater = function(context, character, p0, p1, p2, p3, fontType) {
 
-}
+};
 
 
 /**
@@ -90,12 +90,12 @@ DrawTextsAdvanced.textOnQuadrilater = function(text, p0, p1, p2, p3, fontSize, n
   context.fillText(text, 0, 0);
 
   context.restore();
-}
+};
 
 DrawTextsAdvanced.applyTransformationOnCanvasFromPoints = function(v0, v1, v2, w0, w1, w2) { //TODO:find the correct place for this
   var M = MatrixGenerators.createMatrixFromTrianglesMapping(v0, v1, v2, w0, w1, w2);
   context.transform(M.a, M.b, M.c, M.d, M.tx, M.ty);
-}
+};
 
 DrawTextsAdvanced.mapRectangleIntoQuadrilater = function(image, xI, yI, wI, hI, v0, v1, v2, v3) { //TODO:find the correct place for this
   context.save();
@@ -137,10 +137,10 @@ DrawTextsAdvanced.mapRectangleIntoQuadrilater = function(image, xI, yI, wI, hI, 
 
 
   context.restore();
-}
+};
 
 DrawTextsAdvanced.getClippedTrianglesData = function(image, xI, yI, wI, hI) {
-  var object = new Object();
+  var object = {};
 
   context.clearRect(0, 0, wI, hI);
   context.save();
@@ -180,7 +180,7 @@ DrawTextsAdvanced.getClippedTrianglesData = function(image, xI, yI, wI, hI) {
   context.restore();
 
   return object;
-}
+};
 
 
 //
@@ -216,4 +216,4 @@ DrawTextsAdvanced.typodeOnQuadrilater = function(text, p0, p1, p2, p3) { //TODO:
     context.stroke();
   }
 
-}
+};

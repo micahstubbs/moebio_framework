@@ -33,7 +33,7 @@ DateList.fromArray = function(array, forceToDate) {
   result.getMin = DateList.prototype.getMin;
   result.getMax = DateList.prototype.getMax;
   return result;
-}
+};
 
 /**
  * get a numberList of time (milliseconds) values
@@ -47,7 +47,7 @@ DateList.prototype.getTimes = function() {
     numberList.push(this[i].getTime());
   }
   return numberList;
-}
+};
 
 
 DateList.prototype.toStringList = function() {
@@ -56,7 +56,7 @@ DateList.prototype.toStringList = function() {
     stringList[i] = DateOperators.dateToString(this[i]);
   }
   return stringList;
-}
+};
 
 DateList.prototype.getMin = function() {
   if(this.length == 0) return null;
@@ -66,7 +66,7 @@ DateList.prototype.getMin = function() {
     min = min < this[i] ? min : this[i];
   }
   return min;
-}
+};
 
 DateList.prototype.getMax = function() {
   if(this.length == 0) return null;
@@ -76,4 +76,4 @@ DateList.prototype.getMax = function() {
     max = max > this[i] ? max : this[i];
   }
   return max;
-}
+};

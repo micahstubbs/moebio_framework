@@ -1,4 +1,4 @@
-MultiLoader.prototype = new Object();
+MultiLoader.prototype = {};
 MultiLoader.prototype.constructor = MultiLoader;
 
 //include(frameworksRoot+"Tools/loaders/Loader.js");
@@ -23,14 +23,14 @@ function MultiLoader() {
   this.imagesLoaded = null;
 
   this.priorityWeights;
-  this.associativeArray = new Array();
+  this.associativeArray = [];
 
-  this.url_to_image = new Object();
+  this.url_to_image = {};
 
   this.simulateDelay = false;
   this.DELAY_MILLISECONDS = 1000;
   this.timer;
-};
+}
 
 
 
@@ -42,7 +42,7 @@ MultiLoader.prototype.loadDatas = function(urlList, onComplete, callee) {
 
   this.datasLoaded = new List();
   this.nextDataLoading();
-}
+};
 
 MultiLoader.prototype.nextDataLoading = function() {
   //c.log("MultiLoader.prototype.nextDataLoading | this.iLoaded, this.urlList[this.iLoaded]:", this.iLoaded, this.urlList[this.iLoaded]);
@@ -53,7 +53,7 @@ MultiLoader.prototype.nextDataLoading = function() {
   } else {
     this.loading = false;
   }
-}
+};
 
 MultiLoader.prototype.onCompleteLoadData = function(e) {
   if(this.priorityWeights != null) {
@@ -76,7 +76,7 @@ MultiLoader.prototype.onCompleteLoadData = function(e) {
   this.iLoaded++;
   //c.log('---> this.iLoaded, e.url', this.iLoaded, e.url);
   this.nextDataLoading();
-}
+};
 
 
 /////images
@@ -93,7 +93,7 @@ MultiLoader.prototype.loadImages = function(urlList, onComplete, target, priorit
   this.imagesLoaded = new List();
 
   this.nextImageLoading();
-}
+};
 
 
 MultiLoader.prototype.onCompleteLoadImage = function(e) {
@@ -130,11 +130,11 @@ MultiLoader.prototype.onCompleteLoadImage = function(e) {
 
   this.iLoaded++;
   this.nextImageLoading();
-}
+};
 
 MultiLoader.prototype.getImageFromUrl = function(url) {
   return this.url_to_image[url];
-}
+};
 
 MultiLoader.prototype.setPriorityWeights = function(weights) {
   this.priorityWeights = weights;
@@ -142,7 +142,7 @@ MultiLoader.prototype.setPriorityWeights = function(weights) {
   if(!this.loading) {
     this.nextImageLoading();
   }
-}
+};
 
 MultiLoader.prototype.nextImageLoading = function(target) {
   //c.log('nextImageLoading', this.iLoaded, "/", this.urlList.length);
@@ -199,9 +199,9 @@ MultiLoader.prototype.nextImageLoading = function(target) {
   } else {
     this.loading = false;
   }
-}
+};
 
 MultiLoader.prototype.destroy = function() {
   delete this.datasLoaded;
   delete this.imagesLoaded;
-}
+};

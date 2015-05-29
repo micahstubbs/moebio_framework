@@ -46,7 +46,7 @@ Table.fromArray = function(array) {
   result.isTable = true;
 
   return result;
-}
+};
 
 Table.prototype.applyFunction = function(func) { //TODO: to be tested!
   var i;
@@ -58,7 +58,7 @@ Table.prototype.applyFunction = function(func) { //TODO: to be tested!
     newTable[i] = this[i].applyFunction(func);
   }
   return newTable.getImproved();
-}
+};
 
 /**
  * returns a lis with all the alements of a row
@@ -73,7 +73,7 @@ Table.prototype.getRow = function(index) {
     list[i] = this[i][index];
   }
   return list.getImproved();
-}
+};
 
 /**
  * returns the length of the list at given index (default 0)
@@ -84,7 +84,7 @@ Table.prototype.getRow = function(index) {
  */
 Table.prototype.getListLength = function(index) {
   return this[index || 0].length;
-}
+};
 
 
 
@@ -97,7 +97,7 @@ Table.prototype.getLengths = function() {
     lengths[i] = this[i].length;
   }
   return lengths;
-}
+};
 
 /**
  * filter a table by selecting a section of rows, elements with last index included
@@ -121,7 +121,7 @@ Table.prototype.sliceRows = function(startIndex, endIndex) {
     newTable.push(newList);
   }
   return newTable.getImproved();
-}
+};
 
 /**
  * filters the lists of the table by indexes
@@ -135,12 +135,12 @@ Table.prototype.getSubListsByIndexes = function(indexes) {
     newTable.push(list.getSubListByIndexes(indexes));
   });
   return newTable.getImproved();
-}
+};
 
 //deprecated
 Table.prototype.getRows = function(rowsIndexes) {
   return Table.prototype.getSubListsByIndexes(indexes);
-}
+};
 
 Table.prototype.getWithoutRow = function(rowIndex) {
   var newTable = new Table();
@@ -150,7 +150,7 @@ Table.prototype.getWithoutRow = function(rowIndex) {
     newTable[i].name = this[i].name;
   }
   return newTable.getImproved();
-}
+};
 
 Table.prototype.getWithoutRows = function(rowsIndexes) {
   var newTable = new Table();
@@ -163,7 +163,7 @@ Table.prototype.getWithoutRows = function(rowsIndexes) {
     newTable[i].name = this[i].name;
   }
   return newTable.getImproved();
-}
+};
 
 
 /**
@@ -177,14 +177,14 @@ Table.prototype.getWithoutRows = function(rowsIndexes) {
 Table.prototype.getListsSortedByList = function(listOrIndex, ascending) { //depracated: use sortListsByList
   if(listOrIndex == null) return;
   var newTable = instantiateWithSameType(this);
-  var sortinglist = listOrIndex["isList"] ? listOrIndex.clone() : this[listOrIndex];
+  var sortinglist = listOrIndex.isList ? listOrIndex.clone() : this[listOrIndex];
 
   this.forEach(function(list) {
     newTable.push(list.getSortedByList(sortinglist, ascending));
   });
 
   return newTable;
-}
+};
 
 
 Table.prototype.getTransposed = function(firstListAsHeaders) {
@@ -215,7 +215,7 @@ Table.prototype.getTransposed = function(firstListAsHeaders) {
   }
 
   return table;
-}
+};
 
 
 Table.prototype.getReport = function(level) {
@@ -272,7 +272,7 @@ Table.prototype.getReport = function(level) {
 
   return text;
 
-}
+};
 
 Table.prototype.getReportObject = function() {}; //TODO
 Table.prototype.getReportHtml = function() {}; //TODO
@@ -284,7 +284,7 @@ Table.prototype.removeRow = function(index) {
   for(var i = 0; this[i] != null; i++) {
     this[i].splice(index, 1);
   }
-}
+};
 
 
 ////
@@ -296,17 +296,17 @@ Table.prototype.clone = function() {
     clonedTable.push(this[i].clone());
   }
   return clonedTable;
-}
+};
 
 Table.prototype.destroy = function() {
   for(var i = 0; this[i] != null; i++) {
     this[i].destroy();
     delete this[i];
   }
-}
+};
 
 Table.prototype.print = function() {
   c.log("///////////// <" + this.name + "////////////////////////////////////////////////////");
   c.log(TableEncodings.TableToCSV(this, null, true));
   c.log("/////////////" + this.name + "> ////////////////////////////////////////////////////");
-}
+};

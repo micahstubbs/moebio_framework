@@ -2,7 +2,7 @@
  * IntervalTableOperators
  * @constructor
  */
-function IntervalTableOperators() {};
+function IntervalTableOperators() {}
 
 
 IntervalTableOperators.scaleIntervals = function(intervalTable, value) {
@@ -12,4 +12,4 @@ IntervalTableOperators.scaleIntervals = function(intervalTable, value) {
     newIntervalTable[i] = IntervalListOperators.scaleIntervals(intervalTable[i], value);
   }
   return newIntervalTable;
-}
+};

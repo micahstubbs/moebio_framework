@@ -18,4 +18,4 @@ NumberTableConversions.numberTableToPolygon = function(numberTable) {
   }
 
   return polygon;
-}
+};

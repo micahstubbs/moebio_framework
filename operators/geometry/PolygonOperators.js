@@ -2,7 +2,7 @@
  * PolygonOperators
  * @constructor
  */
-function PolygonOperators() {};
+function PolygonOperators() {}
 
 /**
  * builds a Hull polygon from a set of points
@@ -54,7 +54,7 @@ PolygonOperators.hull = function(polygon, returnIndexes) {
   }
 
   return Polygon.fromArray(h.getSubList(new Interval(0, k - 2)));
-}
+};
 
 /**
  * builds a dendrogram (tree) from a Polygon (currently using barycenter for distances)
@@ -99,7 +99,7 @@ PolygonOperators.buildDendrogramFromPolygon = function(polygon) {
     tree._newCreateRelation(parent, node0);
     tree._newCreateRelation(parent, node1);
     return parent;
-  }
+  };
 
   while(nodeList.length > 1) {
     closestPair = PolygonOperators._findClosestNodes(nodeList);
@@ -121,7 +121,7 @@ PolygonOperators.buildDendrogramFromPolygon = function(polygon) {
     node.toNodeList.forEach(function(son) {
       assignLevel(son, node.level);
     });
-  }
+  };
 
   assignLevel(tree.nodeList[0], -1);
 
@@ -129,7 +129,7 @@ PolygonOperators.buildDendrogramFromPolygon = function(polygon) {
 
   return tree;
 
-}
+};
 
 PolygonOperators._findClosestNodes = function(nodeList) {
   var i, j;
@@ -149,7 +149,7 @@ PolygonOperators._findClosestNodes = function(nodeList) {
   pair.distance = d2Min;
 
   return pair;
-}
+};
 
 
 PolygonOperators.sortOnXY = function(polygon) {
@@ -158,12 +158,12 @@ PolygonOperators.sortOnXY = function(polygon) {
     if(p0.x == p1.x && p0.y < p1.y) return -1;
     return 1;
   });
-}
+};
 
 //TODO: move this to PointOperators
 PolygonOperators.crossProduct3Points = function(o, a, b) {
   return(a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
-}
+};
 
 PolygonOperators.expandFromBarycenter = function(polygon, factor) {
   var newPolygon = new Polygon();
@@ -174,7 +174,7 @@ PolygonOperators.expandFromBarycenter = function(polygon, factor) {
   }
 
   return newPolygon;
-}
+};
 
 PolygonOperators.expandInAngles = function(polygon, amount) { //TODO: test if it works with convex polygons
   var newPolygon = new Polygon();
@@ -203,7 +203,7 @@ PolygonOperators.expandInAngles = function(polygon, amount) { //TODO: test if it
   }
 
   return newPolygon;
-}
+};
 
 PolygonOperators.simplifyPolygon = function(polygon, margin) {
   margin = margin == null || margin == 0 ? 1 : margin;
@@ -227,7 +227,7 @@ PolygonOperators.simplifyPolygon = function(polygon, margin) {
     nPoints = newPolygon.length;
   }
   return newPolygon;
-}
+};
 
 
 /**
@@ -250,7 +250,7 @@ PolygonOperators.bezierPolygonContainsPoint = function(polygon, point, border) {
   var data = context.getImageData(point.x - frame.x, point.y - frame.y, 1, 1).data;
   clearContext();
   return data[0] > 0;
-}
+};
 
 
 /**
@@ -293,7 +293,7 @@ PolygonOperators.getBezierPolygonBestCenter = function(polygon, nAttempts) {
   }
 
   return bestCenter;
-}
+};
 
 
 PolygonOperators.convexHull = function(polygon, deepness) {
@@ -350,7 +350,7 @@ PolygonOperators.convexHull = function(polygon, deepness) {
     nHull++;
   }
   return indexesHull;
-}
+};
 
 PolygonOperators.controlPointsFromPointsAnglesIntensities = function(polygon, angles, intensities) {
   var controlPoints = new Polygon();
@@ -359,7 +359,7 @@ PolygonOperators.controlPointsFromPointsAnglesIntensities = function(polygon, an
     if(i < polygon.length - 1) controlPoints.push(new Point(polygon[i].x + intensities[i] * Math.cos(angles[i]), polygon[i].y + intensities[i] * Math.sin(angles[i])));
   }
   return controlPoints;
-}
+};
 
 
 PolygonOperators.placePointsInsidePolygon = function(polygon, nPoints, mode) {
@@ -376,7 +376,7 @@ PolygonOperators.placePointsInsidePolygon = function(polygon, nPoints, mode) {
       return points;
       break;
   }
-}
+};
 
 PolygonOperators.placePointsInsideBezierPolygon = function(polygon, nPoints, mode, border) {
   var points = new Polygon();
@@ -397,4 +397,4 @@ PolygonOperators.placePointsInsideBezierPolygon = function(polygon, nPoints, mod
       return points;
       break;
   }
-}
+};

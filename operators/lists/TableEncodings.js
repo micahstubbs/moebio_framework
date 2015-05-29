@@ -1,4 +1,4 @@
-function TableEncodings() {};
+function TableEncodings() {}
 
 TableEncodings.ENTER = String.fromCharCode(13);
 TableEncodings.ENTER2 = String.fromCharCode(10);
@@ -95,13 +95,13 @@ TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, val
   table = table.getImproved();
 
   return table;
-}
+};
 
 TableEncodings._removeQuotes = function(string) {
   if(string.length == 0) return string;
   if((string.charAt(0) == "\"" || string.charAt(0) == "'") && (string.charAt(string.length - 1) == "\"" || string.charAt(string.length - 1) == "'")) string = string.substr(1, string.length - 2);
   return string;
-}
+};
 
 
 /**
@@ -149,4 +149,4 @@ TableEncodings.TableToCSV = function(table, separator, namesAsHeaders) {
   }
 
   return headers + lines.getConcatenated("\n");
-}
+};

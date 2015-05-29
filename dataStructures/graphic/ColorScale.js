@@ -15,7 +15,7 @@ function ColorScale(colorScaleFunction) {
 }
 ColorScale.prototype.getColor = function(value) {
   return this.colorScaleFunction(value);
-}
+};
 ColorScale.prototype.getColorList = function(nColors) {
   var colorList = new ColorList();
   var i;
@@ -23,4 +23,4 @@ ColorScale.prototype.getColorList = function(nColors) {
     colorList.push(this.getColor(i / (nColors - 1)));
   }
   return colorList;
-}
+};

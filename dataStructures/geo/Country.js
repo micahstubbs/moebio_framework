@@ -46,18 +46,18 @@ Country.prototype.generatesSimplifiedNames = function() {
     .replace('Democratic Republic', 'D.R.')
     .replace('United States', 'U.S.A')
     .replace('United Arab', 'U.A.');
-}
+};
 
 Country.prototype.nameMatches = function(name) {
   if(this._simplifiedId == null) this.generatesSimplifiedNames();
   name = CountryOperators.getSimplifiedName(name);
   if(name == this._simplifiedId || name == this._simplifiedName) return true;
   return this._simplifiedNames.indexOf(name) != -1;
-}
+};
 
 Country.prototype.getFrame = function() {
   if(this._frame == null) {
     this._frame = this.simplePolygonList == null ? this.polygonList.getFrame() : this.simplePolygonList.getFrame();
   }
   return this._frame;
-}
+};

@@ -2,13 +2,13 @@
  * ColorListOperators
  * @constructor
  */
-function ColorListOperators() {};
+function ColorListOperators() {}
 /** 
  * receives n arguments and performs addition
  */
 ColorListOperators.colorListFromColorScale = function(colorScale, nColors) {
   return colorScale.getColorList.apply(colorScale, [nColors]);
-}
+};
 
 ColorListOperators.colorListFromColorScaleFunction = function(colorScaleFunction, nColors) {
   var colorList = new ColorList();
@@ -17,7 +17,7 @@ ColorListOperators.colorListFromColorScaleFunction = function(colorScaleFunction
     colorList[i] = colorScaleFunction(i / (nColors - 1));
   }
   return colorList;
-}
+};
 
 
 ColorListOperators.colorListFromColorScaleFunctionAndNumberList = function(colorScaleFunction, numberList, normalize) {
@@ -31,7 +31,7 @@ ColorListOperators.colorListFromColorScaleFunctionAndNumberList = function(color
     colorList[i] = colorScaleFunction(numberList[i]);
   }
   return colorList;
-}
+};
 
 
 
@@ -43,7 +43,7 @@ ColorListOperators.polygon3DToColorList = function(polygon3D) {
     colorList.push(ColorOperators.point3DToColor(polygon3D[i]));
   }
   return colorList;
-}
+};
 ColorListOperators.colorListToPolygon3D = function(colorList) {
   var nColors = colorList.length;
   var polygon3D = new Polygon3D();
@@ -52,4 +52,4 @@ ColorListOperators.colorListToPolygon3D = function(colorList) {
     polygon3D.push(ColorOperators.colorToPoint3D(colorList[i]));
   }
   return polygon3D;
-}
+};

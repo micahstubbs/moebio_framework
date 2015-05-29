@@ -27,7 +27,7 @@ Tree.prototype.addNodeToTree = function(node, parent) {
     node.parent = parent;
   }
   this.nLevels = Math.max(this.nLevels, node.level + 1);
-}
+};
 
 Network.prototype._newCreateRelation = function(parent, node, id, weight) {
   if(id == null) id = this.relationList.getNewId();
@@ -35,7 +35,7 @@ Network.prototype._newCreateRelation = function(parent, node, id, weight) {
   node.level = parent.level + 1;
   node.parent = parent;
   this.nLevels = Math.max(this.nLevels, node.level + 1);
-}
+};
 
 Tree.prototype.addFather = function(node, children) {
   if(child.parent != null || this.nodeList.indexOf(child) == -1) return false;
@@ -44,7 +44,7 @@ Tree.prototype.addFather = function(node, children) {
   child.level = 1;
   this.nLevels = Math.max(this.nLevels, 1);
   this.createRelation(node, child);
-}
+};
 
 Tree.prototype.getNodesByLevel = function(level) {
   var newNodeList = new NodeList();
@@ -52,7 +52,7 @@ Tree.prototype.getNodesByLevel = function(level) {
     if(this.nodeList[i].level == level) newNodeList.addNode(this.nodeList[i]);
   }
   return newNodeList;
-}
+};
 
 /**
  * return the leaves (nodes without children) of a tree
@@ -74,19 +74,19 @@ Tree.prototype.getLeaves = function(node) {
       } else {
         candidate.toNodeList.forEach(addLeaves);
       }
-    }
-    node.toNodeList.forEach(addLeaves)
+    };
+    node.toNodeList.forEach(addLeaves);
   } else {
     this.nodeList.forEach(function(candidate) {
       if(candidate.toNodeList.length == 0) leaves.addNode(candidate);
     });
   }
   return leaves;
-}
+};
 
 Tree.prototype.assignDescentWeightsToNodes = function() {
   this._assignDescentWeightsToNode(this.nodeList[0]);
-}
+};
 Tree.prototype._assignDescentWeightsToNode = function(node) {
   var i;
   if(node.toNodeList.length == 0) {
@@ -97,8 +97,8 @@ Tree.prototype._assignDescentWeightsToNode = function(node) {
     node.descentWeight += this._assignDescentWeightsToNode(node.toNodeList[i]);
   }
   return node.descentWeight;
-}
+};
 
 Tree.prototype.getReport = function(relation) {
   return "Tree contains " + this.nodeList.length + " nodes and " + this.relationList.length + " relations";
-}
+};

@@ -6,7 +6,7 @@ TextFieldHTML.prototype.constructor = TextFieldHTML;
  * @constructor
  */
 function TextFieldHTML(configuration) {
-  configuration = configuration == null ? new Object() : configuration;
+  configuration = configuration == null ? {} : configuration;
 
   this.x = configuration.x == null ? 300 : configuration.x;
   this.y = configuration.y == null ? 2 : configuration.y;
@@ -63,17 +63,17 @@ TextFieldHTML.prototype.draw = function() {
     //this.div.setAttribute('style', 'position:absolute;top:'+this.y+'px;left:'+this.x+'px;z-index:'+this.zIndex+'; width:'+this.width+'px;');//height:'+this.height+'px;');
     this.div.setAttribute('style', 'position:absolute;top:' + this.y + 'px;left:' + this.x + 'px;z-index:' + this.zIndex + '; width:' + this.width + 'px; height:' + this.height + 'px;');
   }
-}
+};
 
 TextFieldHTML.prototype.setText = function(text) {
   if(this.text != text) {
     this.text = text;
     this.div.innerHTML = this.fastHTMLactive ? FastHtml.expand(text) : text;
   }
-}
+};
 
 TextFieldHTML.prototype.getText = function() {
   return this.DOMtext.value;
-}
+};
 
 //

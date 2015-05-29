@@ -96,7 +96,7 @@ getTextFromObject = function(value, type) {
         text += (i != 0 ? ", " : "") + subtext;
       }
       if(value.length > 6) text += ",…";
-      text += "]"
+      text += "]";
     }
     return text;
   }
@@ -113,7 +113,7 @@ getTextFromObject = function(value, type) {
     default:
       return "{}"; //value.toString();
   }
-}
+};
 
 function instantiateWithSameType(object, args) {
   return instantiate(typeOf(object), args);
@@ -127,7 +127,7 @@ function isArray(obj) {
 }
 Date.prototype.getType = function() {
   return 'date';
-}
+};
 
 
 evalJavaScriptFunction = function(functionText, args) {
@@ -171,7 +171,7 @@ evalJavaScriptFunction = function(functionText, args) {
   };
 
   return resultObject;
-}
+};
 
 
 
@@ -193,7 +193,7 @@ function TimeLogger(name) {
   this.tic = function(clockName) {
     scope.clocks[clockName] = new Date().getTime();
     //c.l( "TimeLogger '"+clockName+"' has been started");
-  }
+  };
   this.tac = function(clockName) {
     if(scope.clocks[clockName] == null) {
       scope.tic(clockName);
@@ -202,6 +202,6 @@ function TimeLogger(name) {
       var diff = now - scope.clocks[clockName];
       c.l("TimeLogger '" + clockName + "' took " + diff + " ms");
     }
-  }
+  };
 }
 var tl = new TimeLogger("Global Time Logger");

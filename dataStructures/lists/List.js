@@ -8,7 +8,7 @@ List.prototype.constructor = List;
  */
 function List() {
   DataModel.apply(this);
-  var array = new Array();
+  var array = [];
   var i;
   for(i = 0; i < arguments.length; i++) {
     array.push(arguments[i]);
@@ -108,7 +108,7 @@ List.fromArray = function(array) { //TODO: clear some of these method declaratio
 
 
     return array;
-  }
+  };
   //
 
 /**
@@ -185,7 +185,7 @@ List.prototype.getImproved = function() { //TODO: still doesn't solve tha case o
     return newList;
   }
   return this;
-}
+};
 
 /**
  * compare elements with another list
@@ -202,7 +202,7 @@ List.prototype.sameElements = function(list) {
   }
 
   return true;
-}
+};
 
 /**
  * return the number of elements of the list
@@ -210,8 +210,8 @@ List.prototype.sameElements = function(list) {
  * tags:
  */
 List.prototype.getLength = function() {
-  return this.length
-}
+  return this.length;
+};
 
 /**
  * return a numberList with lists lengths (in case of a table) or strings lengths (in case of a stringList)
@@ -222,7 +222,7 @@ List.prototype.getLengths = function() {
   //overriden by different extentions of List
 
   return null;
-}
+};
 
 
 
@@ -232,7 +232,7 @@ List.prototype.getTypeOfElements = function() {
     if(typeOf(this[i]) != typeOfElements) return "";
   }
   return typeOfElements;
-}
+};
 
 /**
  * return a stringList with elemnts types
@@ -245,18 +245,18 @@ List.prototype.getTypes = function() {
     types[i] = typeOf(this[i]);
   }
   return types;
-}
+};
 
 
 List.prototype.toString = function() {
   var i;
   var str = "[";
   for(i = 0; i < this.length - 1; i++) {
-    str += this[i] + ", "
+    str += this[i] + ", ";
   }
   str += this[this.length - 1] + "]";
   return str;
-}
+};
 
 /**
  * return a list of names (if any) of elements of the list
@@ -269,7 +269,7 @@ List.prototype.getNames = function() {
     stringList[i] = this[i].name;
   }
   return stringList;
-}
+};
 
 /**
  * reverse the list
@@ -282,7 +282,7 @@ List.prototype.getReversed = function() {
     newList.unshift(this[i]);
   }
   return newList;
-}
+};
 
 /**
  * return a sub-list, params could be: tw numbers, an interval or a NumberList
@@ -332,7 +332,7 @@ List.prototype.getSubList = function() {
   newList.name = this.name;
   if(this.type == 'List' || this.type == 'Table') return newList.getImproved();
   return newList;
-}
+};
 
 /**
  * filters a list by picking elements of certain type
@@ -349,7 +349,7 @@ List.prototype.getSubListByType = function(type) {
   });
   return newList.getImproved();
 
-}
+};
 
 /**
  * returns all elements in indexes
@@ -384,7 +384,7 @@ List.prototype.getSubListByIndexes = function() { //TODO: merge with getSubList
 
   if(this.type == 'List' || this.type == 'Table') return newList.getImproved();
   return newList;
-}
+};
 
 List.prototype.getElementNumberOfOccurrences = function(element) {
   var nOccurrences = 0;
@@ -396,7 +396,7 @@ List.prototype.getElementNumberOfOccurrences = function(element) {
     index = this.indexOf(element, from);
   }
   return nOccurrences;
-}
+};
 
 
 List.prototype.clone = function() { //TODO:check this! fromArray should suffice
@@ -408,7 +408,7 @@ List.prototype.clone = function() { //TODO:check this! fromArray should suffice
   }
   clonedList.name = this.name;
   return clonedList;
-}
+};
 
 /**
  * create a new List without repeating elements
@@ -437,7 +437,7 @@ List.prototype.getWithoutRepetitions = function() {
   }
 
   return newList;
-}
+};
 
 
 
@@ -450,10 +450,10 @@ List.prototype.getWithoutRepetitions = function() {
 List.prototype.countElement = function(element) {
   n = 0;
   this.forEach(function(elementInList) {
-    if(element == elementInList) n++
+    if(element == elementInList) n++;
   });
   return n;
-}
+};
 
 /**
  * returns a numberList of same size as list with number of occurrences for each element
@@ -466,7 +466,7 @@ List.prototype.countOccurrences = function() { //TODO: more efficient
     occurrences[i] = this.indexesOf(this[i]).length;
   }
   return occurrences;
-}
+};
 
 /**
  * returns a table with a list of non repeated elements and a list with the numbers of occurrences for each one
@@ -507,7 +507,7 @@ List.prototype.getElementsRepetitionCount = function(sortListsByOccurrences) {
   }
 
   return table;
-}
+};
 
 List.prototype.allElementsEqual = function() {
   var i;
@@ -520,12 +520,12 @@ List.prototype.allElementsEqual = function() {
   }
 
   return true;
-}
+};
 
 
 List.prototype.getMostRepeatedElement = function() { //TODO: this method should be more efficient
   return ListOperators.countElementsRepetitionOnList(this, true)[0][0];
-}
+};
 
 /**
  * get minimum value
@@ -540,7 +540,7 @@ List.prototype.getMin = function() {
     min = Math.min(min, this[i]);
   }
   return min;
-}
+};
 
 /**
  * get maximum value
@@ -555,7 +555,7 @@ List.prototype.getMax = function() {
     max = Math.max(max, this[i]);
   }
   return max;
-}
+};
 
 List.prototype.add = function(value) {
   if(value.constructor == Number) {
@@ -566,7 +566,7 @@ List.prototype.add = function(value) {
     }
     return array;
   }
-}
+};
 
 /**
  * selects a random element from list
@@ -575,7 +575,7 @@ List.prototype.add = function(value) {
  */
 List.prototype.getRandomElement = function() {
   return this[Math.floor(this.length * Math.random())];
-}
+};
 
 /**
  * creates a list with randomly selected elements
@@ -595,7 +595,7 @@ List.prototype.getRandomElements = function(n, avoidRepetitions) {
     if(!avoidRepetitions || newList.indexOf(element) == -1) newList.push(element);
   }
   return newList;
-}
+};
 
 
 List.prototype.containsElement = function(element) { //TODO: test if this is faster than indexOf
@@ -604,7 +604,7 @@ List.prototype.containsElement = function(element) { //TODO: test if this is fas
     if(this[i] == element) return true;
   }
   return false;
-}
+};
 
 List.prototype.indexOfElement = function(element) { //TODO: test if this is faster than indexOf
   var i;
@@ -612,7 +612,7 @@ List.prototype.indexOfElement = function(element) { //TODO: test if this is fast
     if(this[i] == element) return i;
   }
   return -1;
-}
+};
 
 
 
@@ -629,14 +629,14 @@ List.prototype.getPropertyValues = function(propertyName, valueIfNull) {
   newList.name = propertyName;
   var val;
   for(var i = 0; this[i] != null; i++) {
-    val = this[i][propertyName]
+    val = this[i][propertyName];
     newList[i] = (val == null ? valueIfNull : val);
   }
   return newList.getImproved();
-}
+};
 
 List.prototype.sortIndexed = function() {
-  var index = new Array();
+  var index = [];
   var i;
   for(i = 0; i < this.length; i++) {
     index.push({
@@ -646,17 +646,17 @@ List.prototype.sortIndexed = function() {
   }
   var comparator = function(a, b) {
     var array_a = a.value;
-    var array_b = b.value;;
+    var array_b = b.value;
 
     return array_a < array_b ? -1 : array_a > array_b ? 1 : 0;
-  }
+  };
   index = index.sort(comparator);
   var result = new NumberList();
   for(i = 0; i < index.length; i++) {
     result.push(index[i].index);
   }
   return result;
-}
+};
 
 // List.prototype.sortNumericIndexed=function() {
 // 	var index = new Array();
@@ -700,7 +700,7 @@ List.prototype.sortOnIndexes = function(indexes) {
     if(indexes[i] != -1) result.push(this[indexes[i]]);
   }
   return result;
-}
+};
 
 List.prototype.getSortedByProperty = function(propertyName, ascending) {
   ascending = ascending == null ? true : ascending;
@@ -709,14 +709,14 @@ List.prototype.getSortedByProperty = function(propertyName, ascending) {
   if(ascending) {
     comparator = function(a, b) {
       return a[propertyName] > b[propertyName] ? 1 : -1;
-    }
+    };
   } else {
     comparator = function(a, b) {
       return b[propertyName] > a[propertyName] ? 1 : -1;
-    }
+    };
   }
   return this.clone().sort(comparator);
-}
+};
 
 /**
  * return a sorted version of the list
@@ -732,14 +732,14 @@ List.prototype.getSorted = function(ascending) {
   if(ascending) {
     comparator = function(a, b) {
       return a > b ? 1 : -1;
-    }
+    };
   } else {
     comparator = function(a, b) {
       return a > b ? -1 : 1;
-    }
+    };
   }
   return this.clone().sort(comparator);
-}
+};
 
 /**
  * sort the list by a list
@@ -763,11 +763,11 @@ List.prototype.getSortedByList = function(list, ascending) {
   if(ascending) {
     comparator = function(a, b) {
       return a[1] < b[1] ? -1 : 1;
-    }
+    };
   } else {
     comparator = function(a, b) {
       return a[1] < b[1] ? 1 : -1;
-    }
+    };
   }
 
   pairsArray = pairsArray.sort(comparator);
@@ -780,7 +780,7 @@ List.prototype.getSortedByList = function(list, ascending) {
   }
 
   return newList;
-}
+};
 
 
 /**
@@ -792,10 +792,10 @@ List.prototype.getSortedRandom = function() {
   var newList = this.clone();
   newList.name = this.name;
   newList.sort(function(a, b) {
-    return Math.random() < 0.5 ? 1 : -1
+    return Math.random() < 0.5 ? 1 : -1;
   });
-  return newList
-}
+  return newList;
+};
 
 /**
  * returns a numberList with the indexes (positions) of an element
@@ -811,7 +811,7 @@ List.prototype.indexesOf = function(element) {
     index = this.indexOf(element, index + 1);
   }
   return numberList;
-}
+};
 
 /**
  * return a numberList with indexes (first position) of elements in a list
@@ -825,7 +825,7 @@ List.prototype.indexOfElements = function(elements) {
     numberList[i] = this.indexOf(elements[i]);
   }
   return numberList;
-}
+};
 
 /**
  * returns the first element (or index) of an element in the with a given name
@@ -839,7 +839,7 @@ List.prototype.getFirstElementByName = function(name, returnIndex) {
     if(this[i].name == name) return returnIndex ? i : this[i];
   }
   return returnIndex ? -1 : null;
-}
+};
 
 /**
  * returns the first element from each name ([!] to be tested)
@@ -863,7 +863,7 @@ List.prototype.getElementsByNames = function(names, returnIndex) {
   });
 
   return returnIndex ? list : list.getImproved();
-}
+};
 
 
 /**
@@ -878,14 +878,14 @@ List.prototype.getFirstElementByPropertyValue = function(propertyName, value) {
     if(this[i][propertyName] == value) return this[i];
   }
   return null;
-}
+};
 
 List.prototype.indexOfByPropertyValue = function(propertyName, value) {
   for(var i = 0; this[i] != null; i++) {
     if(this[i][propertyName] == value) return i;
   }
   return -1;
-}
+};
 
 
 
@@ -903,7 +903,7 @@ List.prototype.getFilteredByBooleanList = function(booleanList) {
     if(booleanList[i]) newList.push(this[i]);
   }
   return newList.getImproved();
-}
+};
 
 /**
  * filters a list by its elements, and a type of comparison (equal by default)
@@ -942,7 +942,7 @@ List.prototype.getFilteredByValue = function(value, comparison) {
   }
 
   return newList.getImproved();
-}
+};
 
 /**
  * filters a list by the values of a property on its elements, and a type of comparison (equal by default)
@@ -982,7 +982,7 @@ List.prototype.getFilteredByPropertyValue = function(propertyName, propertyValue
   }
 
   return newList.getImproved();
-}
+};
 
 /**
  * conert a list into a NumberList
@@ -997,7 +997,7 @@ List.prototype.toNumberList = function() {
     numberList[i] = Number(this[i]);
   }
   return numberList;
-}
+};
 
 /**
  * convert a list into a StringList
@@ -1016,7 +1016,7 @@ List.prototype.toStringList = function() {
     }
   }
   return stringList;
-}
+};
 
 List.prototype.applyFunction = function(func) { //TODO: to be tested!
   var newList = new List();
@@ -1026,7 +1026,7 @@ List.prototype.applyFunction = function(func) { //TODO: to be tested!
     newList[i] = func(this[i]);
   }
   return newList.getImproved();
-}
+};
 
 
 //filtering
@@ -1045,7 +1045,7 @@ List.prototype.getWithoutElementsAtIndexes = function(indexes) { //[!] This DOES
   }
   if(this.type == 'List') return newList.getImproved();
   return newList;
-}
+};
 
 /**
  * removes an element and returns a new list
@@ -1067,7 +1067,7 @@ List.prototype.getWithoutElementAtIndex = function(index) {
   newList.name = this.name;
   if(this.type == 'List') return newList.getImproved();
   return newList;
-}
+};
 
 List.prototype.getWithoutElement = function(element) {
   var index = this.indexOf(element);
@@ -1088,7 +1088,7 @@ List.prototype.getWithoutElement = function(element) {
 
   if(this.type == 'List') return newList.getImproved();
   return newList;
-}
+};
 
 List.prototype.getWithoutElements = function(list) {
   if(this.type == 'List') {
@@ -1104,7 +1104,7 @@ List.prototype.getWithoutElements = function(list) {
   newList.name = this.name;
   if(this.type == 'List') return newList.getImproved();
   return newList;
-}
+};
 
 
 List.prototype.getFilteredByFunction = function(func) {
@@ -1117,7 +1117,7 @@ List.prototype.getFilteredByFunction = function(func) {
   newList.name = this.name;
   if(this.type == 'List') return newList.getImproved();
   return newList;
-}
+};
 
 List.prototype.concat = function() {
   if(arguments[0] == null) return this;
@@ -1140,7 +1140,7 @@ List.prototype.concat = function() {
     }
   }
   return List.fromArray(this._concat.apply(this, arguments)).getImproved();
-}
+};
 
 
 
@@ -1204,7 +1204,7 @@ List.prototype.getReport = function(level) { //TODO:complete
 
 
   return text;
-}
+};
 
 
 ////transformations
@@ -1212,7 +1212,7 @@ List.prototype.getReport = function(level) { //TODO:complete
 List.prototype.pushIfUnique = function(element) {
   if(this.indexOf(element) != -1) return; //TODO: implement equivalence
   this.push(element);
-}
+};
 
 List.prototype.removeElements = function(elements) { //TODO: make it more efficient (avoiding the splice method)
   for(var i = 0; i < this.length; i++) {
@@ -1221,26 +1221,26 @@ List.prototype.removeElements = function(elements) { //TODO: make it more effici
       i--;
     }
   }
-}
+};
 
 List.prototype.removeElement = function(element) {
   var index = this.indexOf(element);
   if(index != -1) this.splice(index, 1);
-}
+};
 
 List.prototype.removeElementAtIndex = function(index) { //deprecated
   this.splice(index, 1);
-}
+};
 
 List.prototype.removeElementsAtIndexes = function(indexes) {
   indexes = indexes.sort(function(a, b) {
-    return a - b
+    return a - b;
   });
 
   for(var i = 0; indexes[i] != null; i++) {
     this.splice(indexes[i] - i, 1);
   }
-}
+};
 
 List.prototype.removeRepetitions = function() {
   for(var i = 0; this[i] != null; i++) {
@@ -1248,14 +1248,14 @@ List.prototype.removeRepetitions = function() {
       this.splice(i, 1);
     }
   }
-}
+};
 
 List.prototype.replace = function(elementToFind, elementToInsert) {
   var l = this.length;
   for(var i = 0; i < l; i++) {
     if(this[i] == elementToFind) this[i] = elementToInsert;
   }
-}
+};
 
 /**
  * assign value to property name on all elements
@@ -1272,28 +1272,28 @@ List.prototype.assignNames = function(names) {
   });
 
   return this;
-}
+};
 
 List.prototype.splice = function() { //TODO: replace
   switch(this.type) {
     case 'NumberList':
-      return NumberList.fromArray(this._splice.apply(this, arguments))
+      return NumberList.fromArray(this._splice.apply(this, arguments));
       break;
     case 'StringList':
-      return StringList.fromArray(this._splice.apply(this, arguments))
+      return StringList.fromArray(this._splice.apply(this, arguments));
       break;
     case 'NodeList':
-      return NodeList.fromArray(this._splice.apply(this, arguments))
+      return NodeList.fromArray(this._splice.apply(this, arguments));
       break;
     case 'DateList':
-      return DateList.fromArray(this._splice.apply(this, arguments))
+      return DateList.fromArray(this._splice.apply(this, arguments));
       break;
   }
   return List.fromArray(this._splice.apply(this, arguments)).getImproved();
-}
+};
 
 List.prototype.destroy = function() {
   for(var i = 0; this[i] != null; i++) {
     delete this[i];
   }
-}
+};

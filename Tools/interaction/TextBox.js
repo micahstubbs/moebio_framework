@@ -6,7 +6,7 @@ TextBox.prototype.constructor = TextBox;
  * @constructor
  */
 function TextBox(configuration) {
-  configuration = configuration == null ? new Object() : configuration;
+  configuration = configuration == null ? {} : configuration;
 
   this.x = configuration.x == null ? 300 : configuration.x;
   this.y = configuration.y == null ? 2 : configuration.y;
@@ -42,11 +42,11 @@ function TextBox(configuration) {
 
 TextBox.prototype.getMaxWidth = function() {
   return DrawTexts.getMaxTextWidth(this.lines);
-}
+};
 
 TextBox.prototype.update = function() {
   this.setText(this.text);
-}
+};
 
 TextBox.prototype.setText = function(text) {
   this.text = String(text);
@@ -61,7 +61,7 @@ TextBox.prototype.setText = function(text) {
     var index0b;
     var index1;
 
-    var names = new Array();
+    var names = [];
     this.links = new StringList();
     this.linksType = new StringList();
     var indexesPairs = new List();
@@ -128,7 +128,7 @@ TextBox.prototype.setText = function(text) {
   if(this.links != null) {
     var interval;
     var lengthAccumulated = 0;
-    this.pointPairs = new Array();
+    this.pointPairs = [];
     var w0;
     var w1;
     var y;
@@ -169,7 +169,7 @@ TextBox.prototype.setText = function(text) {
   for(i = 0; this.lines[i] != null; i++) {
     this.maxWidth = Math.max(this.maxWidth, context.measureText(this.lines[i]).width);
   }
-}
+};
 
 TextBox.prototype.draw = function(scale) {
   scale = scale == null ? 1 : scale;
@@ -204,14 +204,14 @@ TextBox.prototype.draw = function(scale) {
       }
     }
   }
-}
+};
 
 TextBox.prototype.line = function(x0, x1, y) {
   context.beginPath();
   context.moveTo(x0, y);
   context.lineTo(x1, y);
   context.stroke();
-}
+};
 
 TextBox.prototype.mouseUp = function(e) {
   if(this.overLink != null) {
@@ -224,11 +224,11 @@ TextBox.prototype.mouseUp = function(e) {
     }
     this.overLink = null;
   }
-}
+};
 
 TextBox.prototype.deactivate = function() {
   removeInteractionEventListener('mouseup', this.mouseUp, this);
-}
+};
 
 
 ///
@@ -270,4 +270,4 @@ TextBox.replaceWikiLinks = function(text) {
   }
   //c.log('new text:', text);
   return text;
-}
+};

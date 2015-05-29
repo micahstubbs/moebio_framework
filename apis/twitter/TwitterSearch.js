@@ -45,7 +45,7 @@ function TwitterSearch(configuration) {
 
 TwitterSearch.prototype.cancel = function() {
   this.cancelled = true;
-}
+};
 
 TwitterSearch.prototype.search = function(searchString, language, excludeWords, maxResults, refresh) {
   if(this.cancelled) return;
@@ -70,7 +70,7 @@ TwitterSearch.prototype.search = function(searchString, language, excludeWords, 
     this._searchString = this._newSearchString;
     TwitterApi.searchKeyword(this._searchString, this.onComplete, nResultsPerPage, 1, this);
   }
-}
+};
 
 TwitterSearch.prototype.multiSearch = function(searchStrings, language, excludeWords, maxResults, refresh) {
   this._tS = new TwitterSearch(this._conf);
@@ -81,12 +81,12 @@ TwitterSearch.prototype.multiSearch = function(searchStrings, language, excludeW
   this._iMulti = 0;
   this.loading = true;
   this._next();
-}
+};
 TwitterSearch.prototype._next = function() {
   c.log("\n\n\n\n\n\n\n\n\nmultiSearch, _iMulti/_searchStrings.length, next:", this._iMulti + "/" + this._searchStrings.length, this._searchStrings[this._iMulti]);
   this._tS.search(this._searchStrings[this._iMulti], null, null, this._maxResults);
   this._iMulti++;
-}
+};
 TwitterSearch.prototype._onCompleteMulti = function(results) {
   if(this.multiResults == null) this.multiResults = new List();
   this.multiResults = this.multiResults.concat(results);
@@ -100,13 +100,13 @@ TwitterSearch.prototype._onCompleteMulti = function(results) {
   }
 
   this._warnFunction.call(this.target, results);
-}
+};
 
 
 TwitterSearch.prototype.clean = function() {
   this._table = null;
   this._idList = null;
-}
+};
 
 TwitterSearch.prototype.onComplete = function(e) {
   c.log("TwitterSearch.prototype.onComplete | this.returnTable, this.cancelled, e:", this.returnTable, this.cancelled, e);
@@ -225,7 +225,7 @@ TwitterSearch.prototype.onComplete = function(e) {
     TwitterApi.searchKeyword(this._searchString, this.onComplete, 100, this._nPage, this);
     this._string = "Loading " + nLoading + "/" + this._maxResults;
   } else {
-    c.log('')
+    c.log('');
     this._string = "Loaded " + nLoading + "/" + this._maxResults;
     this.loading = false;
   }
@@ -243,7 +243,7 @@ TwitterSearch.prototype.onComplete = function(e) {
       this._warnFunction.call(this.target, this._fileData);
     }
   }
-}
+};
 
 ///////these should de static!!!!
 
@@ -268,7 +268,7 @@ TwitterSearch.prototype.expand = function(query) {
   newQuery = newQuery.replace(spacePattern, ") OR (");
 
   return newQuery;
-}
+};
 
 TwitterSearch.prototype.getFeaturedAccounts = function(query) {
   var featuredAccounts = new StringList();
@@ -286,7 +286,7 @@ TwitterSearch.prototype.getFeaturedAccounts = function(query) {
   }
 
   return featuredAccounts;
-}
+};
 
 
 
@@ -301,7 +301,7 @@ TwitterSearch.prototype.loadListMembers = function(accountName, listName, maxRes
   this._listName = listName;
   this._loadedMembers = new StringList();
   TwitterApi.loadListMembers(accountName, listName, -1, this.onCompleteMembers, this);
-}
+};
 
 TwitterSearch.prototype.onCompleteMembers = function(e) {
   if(this.cancelled) return;
@@ -329,4 +329,4 @@ TwitterSearch.prototype.onCompleteMembers = function(e) {
   } else {
     TwitterApi.loadListMembers(this._accountName, this._listName, e.result.next_cursor, this.onCompleteMembers, this);
   }
-}
+};

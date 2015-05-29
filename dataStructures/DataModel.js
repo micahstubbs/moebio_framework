@@ -1,4 +1,4 @@
-DataModel.prototype = new Object();
+DataModel.prototype = {};
 DataModel.prototype.constructor = DataModel;
 
 /**
@@ -12,14 +12,14 @@ function DataModel() {
 DataModel.prototype.destroy = function() {
   delete this.type;
   delete this.name;
-}
+};
 DataModel.prototype.setType = function(type) {
   this.type = type;
-}
+};
 
 DataModel.prototype.getType = function(type) {
   return this.type;
-}
+};
 DataModel.prototype.toString = function() {
 
-}
+};

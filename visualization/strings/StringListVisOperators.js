@@ -90,7 +90,7 @@ StringListVisOperators.simpleTagCloud = function(stringList, weights, frame, fon
   table[2] = sizes;
 
   return table;
-}
+};
 
 
 
@@ -228,7 +228,7 @@ StringListVisOperators.tagCloudRectangles = function(stringList, weights, frame,
   table[2] = textSizes;
 
   return table;
-}
+};
 
 StringListVisOperators._pointInRectangles = function(rectangles, px, py, width, height, margin) {
   var rect;
@@ -237,4 +237,4 @@ StringListVisOperators._pointInRectangles = function(rectangles, px, py, width, 
     if(px + width > (rect.x - margin) && px < (rect.x + rect.width + margin) && (py + height) > (rect.y - margin) && py < (rect.y + rect.height + margin)) return true;
   }
   return false;
-}
+};

@@ -8,7 +8,7 @@ function RectangleList() {
   var array = List.apply(this, arguments);
   array = RectangleList.fromArray(array);
   return array;
-};
+}
 
 RectangleList.fromArray = function(array) {
   var result = List.fromArray(array);
@@ -21,7 +21,7 @@ RectangleList.fromArray = function(array) {
   result.getIntersectionArea = RectangleList.prototype.getIntersectionArea;
 
   return result;
-}
+};
 
 //TODO:finish RectangleList methods
 
@@ -42,17 +42,17 @@ RectangleList.prototype.getFrame = function() {
   frame.height -= frame.y;
 
   return frame;
-}
+};
 
 RectangleList.prototype.add = function() {
 
-}
+};
 
 RectangleList.prototype.factor = function() {
 
-}
+};
 
-RectangleList.prototype.getAddedArea = function() {}
+RectangleList.prototype.getAddedArea = function() {};
 
 RectangleList.prototype.getIntersectionArea = function() {
   var rect0;
@@ -69,4 +69,4 @@ RectangleList.prototype.getIntersectionArea = function() {
   }
 
   return intersectionArea;
-}
+};

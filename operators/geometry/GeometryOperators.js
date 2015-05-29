@@ -2,7 +2,7 @@
  * GeometryOperators
  * @constructor
  */
-function GeometryOperators() {};
+function GeometryOperators() {}
 
 
 /**
@@ -15,7 +15,7 @@ GeometryOperators.getSoftenControlPoints = function(point0, point1, point2, cont
   var controlPoint0 = new Point(point1.x - controlVectorSize * Math.cos(angle), point1.y - controlVectorSize * Math.sin(angle));
   var controlPoint1 = new Point(point1.x + controlVectorSize * Math.cos(angle), point1.y + controlVectorSize * Math.sin(angle));
   return [controlPoint0, controlPoint1];
-}
+};
 
 GeometryOperators.bezierCurvePoints = function(x0, y0, c0x, c0y, c1x, c1y, x1, y1, t) {
   var s = 1 - t;
@@ -35,7 +35,7 @@ GeometryOperators.bezierCurvePoints = function(x0, y0, c0x, c0y, c1x, c1y, x1, y
   var fy = s * by + t * cy;
 
   return new Point(t * fx + s * ex, t * fy + s * ey);
-}
+};
 
 
 
@@ -63,7 +63,7 @@ GeometryOperators.trueBezierCurveHeightHorizontalControlPoints = function(x0, x1
 
   return GeometryOperators._bezierSimpleCurveTable[Math.floor(1000 * x)] * (y1 - y0) + y0;
 
-}
+};
 
 
 
@@ -144,7 +144,7 @@ GeometryOperators.bezierCurveHeightHorizontalControlPoints = function(y0, c0x, c
   var sign = cosinus > 0 ? 1 : -1;
 
   return(0.5 + 0.5 * (Math.pow(cosinus * sign, 0.6) * sign)) * (y1 - y0) + y0;
-}
+};
 
 /**
  * unefficient method (uses Newton strategy)
@@ -187,18 +187,18 @@ GeometryOperators.distanceToBezierCurve = function(x0, y0, c0x, c0y, c1x, c1y, x
 
   if(returnPoint) return p1;
   return Math.sqrt(Math.min(d0, d1));
-}
+};
 
 GeometryOperators.triangleContainsPoint = function(pT0, pT1, pT2, p) {
   var a = (pT0.x - p.x) * (pT1.y - p.y) - (pT1.x - p.x) * (pT0.y - p.y);
   var b = (pT1.x - p.x) * (pT2.y - p.y) - (pT2.x - p.x) * (pT1.y - p.y);
   var c = (pT2.x - p.x) * (pT0.y - p.y) - (pT0.x - p.x) * (pT2.y - p.y);
   return(a > 0 && b > 0 && c > 0) || (a >= 0 && b >= 0 && c >= 0);
-}
+};
 
 GeometryOperators.triangleArea = function(triangle) {
   return Math.abs(triangle.a.x * (triangle.b.y - triangle.c.y) + triangle.b.x * (triangle.c.y - triangle.a.y) + triangle.c.x * (triangle.a.y - triangle.b.y)) / 2;
-}
+};
 
 
 /////////////lines (line is a Point with values m and b in y=mx+b)
@@ -207,7 +207,7 @@ GeometryOperators.lineFromTwoPoints = function(point0, point1) {
   if(point0.x == point1.x) return new Point(Infinity, point0.x);
   var m = (point1.y - point0.y) / (point1.x - point0.x);
   return new Point(m, point0.y - m * point0.x);
-}
+};
 
 GeometryOperators.distancePointToLine = function(point, line) {
   var m2;
@@ -221,7 +221,7 @@ GeometryOperators.distancePointToLine = function(point, line) {
   }
   var interPoint = GeometryOperators.intersectionLines(line, new Point(m2, b2));
   return Math.sqrt(Math.pow(point.x - interPoint.x, 2) + Math.pow(point.y - interPoint.y, 2));
-}
+};
 
 GeometryOperators.distancePointToSegment = function(point, point0Segment, point1Segment) {
   var m = point0Segment.x == point1Segment.x ? Infinity : (point1Segment.y - point0Segment.y) / (point1Segment.x - point0Segment.x);
@@ -238,7 +238,7 @@ GeometryOperators.distancePointToSegment = function(point, point0Segment, point1
   var interPoint = GeometryOperators.intersectionLines(line, new Point(m2, b2));
   if(interPoint.x >= Math.min(point0Segment.x, point1Segment.x) && interPoint.x <= Math.max(point0Segment.x, point1Segment.x)) return point.distanceToPoint(interPoint);
   return Math.min(point.distanceToPoint(point0Segment), point.distanceToPoint(point1Segment));
-}
+};
 
 GeometryOperators.intersectionLines = function(line0, line1) {
   if(line0.x == line1.x) {
@@ -259,7 +259,7 @@ GeometryOperators.intersectionLines = function(line0, line1) {
 
   var xx = (line1.y - line0.y) / (line0.x - line1.x);
   return new Point(xx, line0.x * xx + line0.y);
-}
+};
 
 
 GeometryOperators.VennCircles = function(area0, area1, areaIntersection, centerInLens, precision) {
@@ -287,7 +287,7 @@ GeometryOperators.VennCircles = function(area0, area1, areaIntersection, centerI
   }
 
   return new Polygon3D(circle0, circle1);
-}
+};
 
 /**
  * very lazy and ineficcient solution (Newton algorithm)
@@ -319,7 +319,7 @@ GeometryOperators.circleDistancesFromCommonArea = function(r0, r1, commonArea, p
     currentArea = GeometryOperators.circlesCommonArea(r0, r1, dM);
   }
   return dM;
-}
+};
 
 GeometryOperators.circlesCommonArea = function(ra, rb, d) {
   if(d >= (ra + rb)) return 0;
@@ -332,7 +332,7 @@ GeometryOperators.circlesCommonArea = function(ra, rb, d) {
   var rb2 = Math.pow(rb, 2);
 
   return ra2 * Math.acos((d2 + ra2 - rb2) / (2 * d * ra)) + rb2 * Math.acos((d2 + rb2 - ra2) / (2 * d * rb)) - 0.5 * Math.sqrt((-d + ra + rb) * (d + ra - rb) * (d - ra + rb) * (d + ra + rb));
-}
+};
 
 /**
  * This method return the angles required to draw the intersection shape (lens) of two circles
@@ -349,7 +349,7 @@ GeometryOperators.circlesLensAngles = function(circle0, circle1) {
     return null;
   }
 
-  var d = circle1.x - circle0.x
+  var d = circle1.x - circle0.x;
   var x0 = (d * d + Math.pow(circle0.z, 2) - Math.pow(circle1.z, 2)) / (2 * d);
   var alfa = Math.acos(x0 / circle0.z);
   var h = circle0.z * Math.sin(alfa);
@@ -360,7 +360,7 @@ GeometryOperators.circlesLensAngles = function(circle0, circle1) {
   } else {
     return new NumberList(-alfa, alfa, beta, -beta);
   }
-}
+};
 
 
 
@@ -369,13 +369,13 @@ GeometryOperators.circlesLensAngles = function(circle0, circle1) {
 
 GeometryOperators.delauney = function(polygon) { /// ---> move to Polygon operators, chnge name to getDelauneyTriangulation
   return _triangulate(polygon);
-}
+};
 
 
 function Triangle(a, b, c) {
-  this.a = a
-  this.b = b
-  this.c = c
+  this.a = a;
+  this.b = b;
+  this.c = c;
 
   var A = b.x - a.x,
     B = b.y - a.y,
@@ -384,51 +384,51 @@ function Triangle(a, b, c) {
     E = A * (a.x + b.x) + B * (a.y + b.y),
     F = C * (a.x + c.x) + D * (a.y + c.y),
     G = 2 * (A * (c.y - b.y) - B * (c.x - b.x)),
-    minx, miny, dx, dy
+    minx, miny, dx, dy;
 
   /* If the points of the triangle are collinear, then just find the
    * extremes and use the midpoint as the center of the circumcircle. */
   if(Math.abs(G) < 0.000001) {
-    minx = Math.min(a.x, b.x, c.x)
-    miny = Math.min(a.y, b.y, c.y)
-    dx = (Math.max(a.x, b.x, c.x) - minx) * 0.5
-    dy = (Math.max(a.y, b.y, c.y) - miny) * 0.5
+    minx = Math.min(a.x, b.x, c.x);
+    miny = Math.min(a.y, b.y, c.y);
+    dx = (Math.max(a.x, b.x, c.x) - minx) * 0.5;
+    dy = (Math.max(a.y, b.y, c.y) - miny) * 0.5;
 
-    this.x = minx + dx
-    this.y = miny + dy
-    this.r = dx * dx + dy * dy
+    this.x = minx + dx;
+    this.y = miny + dy;
+    this.r = dx * dx + dy * dy;
   }
 
   else {
-    this.x = (D * E - B * F) / G
-    this.y = (A * F - C * E) / G
-    dx = this.x - a.x
-    dy = this.y - a.y
-    this.r = dx * dx + dy * dy
+    this.x = (D * E - B * F) / G;
+    this.y = (A * F - C * E) / G;
+    dx = this.x - a.x;
+    dy = this.y - a.y;
+    this.r = dx * dx + dy * dy;
   }
 }
 
 
 function byX(a, b) {
-  return b.x - a.x
+  return b.x - a.x;
 }
 
 function dedup(edges) {
   var j = edges.length,
-    a, b, i, m, n
+    a, b, i, m, n;
 
   outer: while(j) {
-    b = edges[--j]
-    a = edges[--j]
-    i = j
+    b = edges[--j];
+    a = edges[--j];
+    i = j;
     while(i) {
-      n = edges[--i]
-      m = edges[--i]
+      n = edges[--i];
+      m = edges[--i];
       if((a === m && b === n) || (a === n && b === m)) {
-        edges.splice(j, 2)
-        edges.splice(i, 2)
-        j -= 2
-        continue outer
+        edges.splice(j, 2);
+        edges.splice(i, 2);
+        j -= 2;
+        continue outer;
       }
     }
   }
@@ -437,22 +437,22 @@ function dedup(edges) {
 function _triangulate(vertices) {
   /* Bail if there aren't enough vertices to form any triangles. */
   if(vertices.length < 3)
-    return []
+    return [];
 
   /* Ensure the vertex array is in order of descending X coordinate
    * (which is needed to ensure a subquadratic runtime), and then find
    * the bounding box around the points. */
-  vertices.sort(byX)
+  vertices.sort(byX);
 
   var i = vertices.length - 1,
     xmin = vertices[i].x,
     xmax = vertices[0].x,
     ymin = vertices[i].y,
-    ymax = ymin
+    ymax = ymin;
 
   while(i--) {
-    if(vertices[i].y < ymin) ymin = vertices[i].y
-    if(vertices[i].y > ymax) ymax = vertices[i].y
+    if(vertices[i].y < ymin) ymin = vertices[i].y;
+    if(vertices[i].y > ymax) ymax = vertices[i].y;
   }
 
   /* Find a supertriangle, which is a triangle that surrounds all the
@@ -477,64 +477,64 @@ function _triangulate(vertices) {
     ],
     closed = [],
     edges = [],
-    j, a, b
+    j, a, b;
 
   /* Incrementally add each vertex to the mesh. */
-  i = vertices.length
+  i = vertices.length;
   while(i--) {
     /* For each open triangle, check to see if the current point is
      * inside it's circumcircle. If it is, remove the triangle and add
      * it's edges to an edge list. */
-    edges.length = 0
-    j = open.length
+    edges.length = 0;
+    j = open.length;
     while(j--) {
       /* If this point is to the right of this triangle's circumcircle,
        * then this triangle should never get checked again. Remove it
        * from the open list, add it to the closed list, and skip. */
-      dx = vertices[i].x - open[j].x
+      dx = vertices[i].x - open[j].x;
       if(dx > 0 && dx * dx > open[j].r) {
-        closed.push(open[j])
-        open.splice(j, 1)
-        continue
+        closed.push(open[j]);
+        open.splice(j, 1);
+        continue;
       }
 
       /* If not, skip this triangle. */
-      dy = vertices[i].y - open[j].y
+      dy = vertices[i].y - open[j].y;
       if(dx * dx + dy * dy > open[j].r)
-        continue
+        continue;
 
       /* Remove the triangle and add it's edges to the edge list. */
       edges.push(
         open[j].a, open[j].b,
         open[j].b, open[j].c,
         open[j].c, open[j].a
-      )
-      open.splice(j, 1)
+      );
+      open.splice(j, 1);
     }
 
     /* Remove any doubled edges. */
-    dedup(edges)
+    dedup(edges);
 
     /* Add a new triangle for each edge. */
-    j = edges.length
+    j = edges.length;
     while(j) {
-      b = edges[--j]
-      a = edges[--j]
-      open.push(new Triangle(a, b, vertices[i]))
+      b = edges[--j];
+      a = edges[--j];
+      open.push(new Triangle(a, b, vertices[i]));
     }
   }
 
   /* Copy any remaining open triangles to the closed list, and then
    * remove any triangles that share a vertex with the supertriangle. */
-  Array.prototype.push.apply(closed, open)
+  Array.prototype.push.apply(closed, open);
 
-  i = closed.length
+  i = closed.length;
   while(i--)
     if(closed[i].a.__sentinel ||
       closed[i].b.__sentinel ||
       closed[i].c.__sentinel)
-      closed.splice(i, 1)
+      closed.splice(i, 1);
 
     /* Yay, we're done! */
-  return closed
+  return closed;
 }

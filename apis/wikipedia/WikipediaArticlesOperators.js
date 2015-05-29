@@ -2,7 +2,7 @@
  * WikipediaArticlesOperators
  * @constructor
  */
-function WikipediaArticlesOperators() {};
+function WikipediaArticlesOperators() {}
 
 
 /**
@@ -56,7 +56,7 @@ WikipediaArticlesOperators.getLinksTableFromArticle = function(articleText, comp
   table[2] = externalLinks;
 
   return table;
-}
+};
 
 
 WikipediaArticlesOperators.removeArticlesListRepetitions = function(articlesList) {
@@ -69,11 +69,11 @@ WikipediaArticlesOperators.removeArticlesListRepetitions = function(articlesList
       }
     }
   }
-}
+};
 
 WikipediaArticlesOperators.cleanTitle = function(title) {
   return decodeURI(title.replace(/_/g, " "));
-}
+};
 
 WikipediaArticlesOperators.buildArticlesNetwork = function(articlesList, includeReferredArticles, includeExternalPages) {
   var network = new Network();
@@ -138,11 +138,11 @@ WikipediaArticlesOperators.buildArticlesNetwork = function(articlesList, include
   }
 
   return network;
-}
+};
 
 WikipediaArticlesOperators._createNodeFromArticle = function(article) {
   var node = new Node(article.title, article.cleanTitle);
   node.article = article;
   node.weight = article.length == null ? 1 : article.length / 10000;
   return node;
-}
+};

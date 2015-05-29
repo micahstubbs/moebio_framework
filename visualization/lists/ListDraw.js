@@ -1,4 +1,4 @@
-function ListDraw() {};
+function ListDraw() {}
 
 /**
  * draws a list in a vertical stack
@@ -133,4 +133,4 @@ ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode,
   }
 
   return returnMode == 1 ? list[frame.memory.selected] : (multi ? frame.memory.multiSelected : frame.memory.selected);
-}
+};

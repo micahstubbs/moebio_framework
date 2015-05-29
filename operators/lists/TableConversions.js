@@ -1,4 +1,4 @@
-function TableConversions() {};
+function TableConversions() {}
 
 /**
  * Convert an object (or more typically an Array of objects) into a Table
@@ -68,7 +68,7 @@ TableConversions.ObjectToTable = function(object, fields) {
     var column = new List();
     result[i] = column;
     column.name = fieldName;
-  };
+  }
 
   // Fill the table
   if(format == 1)
@@ -78,19 +78,19 @@ TableConversions.ObjectToTable = function(object, fields) {
       for(var f = 0; f < fields.length; f++) {
         result[f].push(row[fields[f]]);
       }
-    };
+    }
   } else {
     for(var f = 0; f < fields.length; f++) {
       var column = object[fields[f]];
       for(var i = 0; i < column.length; i++) {
         result[f].push(column[i]);
       }
-    };
+    }
   }
 
   // Improve columns
   for(var i = 0; i < result.length; i++) {
-    result[i] = result[i].getImproved()
+    result[i] = result[i].getImproved();
   }
 
   //if(result.getLengths.getMax()==1) return result.getRow(0);
@@ -100,7 +100,7 @@ TableConversions.ObjectToTable = function(object, fields) {
 
   // Return best possible
   return result;
-}
+};
 
 
 /**
@@ -115,7 +115,7 @@ TableConversions.ObjectToList = function(object, fields) {
   var result = TableConversions.ObjectToTable(object, fields);
 
   if(result.getLengths.getMax() == 1) return result.getRow(0);
-}
+};
 
 
 
@@ -134,7 +134,7 @@ TableConversions.TableToObject = function(table, fields) { // To-Do: should retu
     // If no field names supplied, take them from first element
     if(!fields)
     {
-      fields = table.getNames()
+      fields = table.getNames();
     }
     var result = [];
     for(var i = 0; i < table[0].length; i++) {
@@ -144,11 +144,11 @@ TableConversions.TableToObject = function(table, fields) { // To-Do: should retu
         row[fields[f]] = table[f][i];
       }
       result.push(row);
-    };
+    }
     return {
       array: result
     };
-  }
+  };
   // Tests ObjectToTable / TableToObject
   /*
   var input = [ {name:"dani", age:36, other:"eee"}, {name:"alejandro", age:34}, {name:"anna", age:37} ];

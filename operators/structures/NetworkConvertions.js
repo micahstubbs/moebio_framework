@@ -1,4 +1,4 @@
-function NetworkConvertions() {};
+function NetworkConvertions() {}
 
 
 /**
@@ -86,4 +86,4 @@ NetworkConvertions.TableToNetwork = function(table, numberList, threshold, allow
   }
 
   return network;
-}
+};

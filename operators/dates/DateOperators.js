@@ -12,7 +12,7 @@ DateOperators.WEEK_NAMES = ['monday', 'tuesday', 'wednesday', 'thursday', 'frida
  * DateOperators
  * @constructor
  */
-function DateOperators() {};
+function DateOperators() {}
 
 
 /**
@@ -52,7 +52,7 @@ DateOperators.stringToDate = function(string, formatCase, separator) {
       return new Date(y, Number(parts[1]) - 1, Number(parts[2]));
       break;
   }
-}
+};
 
 /**
  * format cases
@@ -74,7 +74,7 @@ DateOperators.dateToString = function(date, formatCase, separator) {
       return year + separator + month + separator + day;
       break;
   }
-}
+};
 
 /**
  * generates current date Date
@@ -83,20 +83,20 @@ DateOperators.dateToString = function(date, formatCase, separator) {
  */
 DateOperators.currentDate = function() {
   return new Date();
-}
+};
 
 DateOperators.addDaysToDate = function(date, nDays) {
   return new Date(date.getTime() + (nDays / DateOperators.millisecondsToDays));
-}
+};
 
 DateOperators.addMillisecondsToDate = function(date, nMilliseconds) {
   return new Date(date.getTime() + nMilliseconds);
-}
+};
 
 
 DateOperators.parseDate = function(string) {
   return new Date(Date.parse(string.replace(/\./g, "-")));
-}
+};
 
 DateOperators.parseDates = function(stringList) {
   var dateList = new DateList();
@@ -105,28 +105,28 @@ DateOperators.parseDates = function(stringList) {
     dateList.push(this.parseDate(stringList[i]));
   }
   return dateList;
-}
+};
 
 DateOperators.getHoursBetweenDates = function(date0, date1) {
   return(date1.getTime() - date0.getTime()) * DateOperators.millisecondsToHours;
-}
+};
 DateOperators.getDaysBetweenDates = function(date0, date1) {
   return(date1.getTime() - date0.getTime()) * DateOperators.millisecondsToDays;
-}
+};
 DateOperators.getWeeksBetweenDates = function(date0, date1) {
   return(date1.getTime() - date0.getTime()) * DateOperators.millisecondsToWeeks;
-}
+};
 DateOperators.getYearsBetweenDates = function(date0, date1) {
   return(date1.getTime() - date0.getTime()) * DateOperators.millisecondsToYears;
-}
+};
 
 DateOperators.nDayInYear = function(date) {
   return Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 1).getTime()) * DateOperators.millisecondsToDays);
-}
+};
 
 DateOperators.getDateDaysAgo = function(nDays) {
   return DateOperators.addDaysToDate(new Date(), -nDays);
-}
+};
 
 
 /**
@@ -138,8 +138,8 @@ DateOperators.getDateDaysAgo = function(nDays) {
 DateOperators.getWeekInYear = function(date) {
   var onejan = new Date(date.getFullYear(), 0, 1);
   return Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
-}
+};
 
 DateOperators.getNDaysInMonth = function(month, year) {
   return new Date(year, month, 0).getDate();
-}
+};

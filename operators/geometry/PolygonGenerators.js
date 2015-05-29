@@ -2,7 +2,7 @@
  * PolygonGenerators
  * @constructor
  */
-function PolygonGenerators() {};
+function PolygonGenerators() {}
 
 
 PolygonGenerators.createPolygon = function(nPoints, mode, frame) {

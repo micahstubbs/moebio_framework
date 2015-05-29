@@ -33,4 +33,4 @@ MergedRelation.prototype.clone = function(newNetwork) {
   if(this.tweets != null) relation.tweets = this.tweets.clone();
 
   return relation;
-}
+};

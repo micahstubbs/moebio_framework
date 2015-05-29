@@ -1,4 +1,4 @@
-function StringListDraw() {};
+function StringListDraw() {}
 
 StringListDraw.tagCloudRectangles = function(stringList, weights, frame) {
 
@@ -39,7 +39,7 @@ StringListDraw.tagCloudRectangles = function(stringList, weights, frame) {
     rectangles[i] = new Rectangle(p.x, p.y, w, h);
     rectanglesPlaced.push(rectangles[i]);
   }
-}
+};
 
 StringListDraw._pointInRectangles = function(rectangles, p, width, height) {
   var rect;
@@ -48,4 +48,4 @@ StringListDraw._pointInRectangles = function(rectangles, p, width, height) {
     if(p.x + width > rect.x && p.x < (rect.x + rect.width) && p.y + height > rect.y && p.y < (rect.y + rect.height)) return true;
   }
   return false;
-}
+};

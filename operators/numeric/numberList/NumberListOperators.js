@@ -1,4 +1,4 @@
-function NumberListOperators() {};
+function NumberListOperators() {}
 
 
 
@@ -13,7 +13,7 @@ NumberListOperators.cosineSimilarity = function(numberList0, numberList1) {
   var norms = numberList0.getNorm() * numberList1.getNorm();
   if(norms == 0) return 0;
   return numberList0.dotProduct(numberList1) / norms;
-}
+};
 
 /**
  * calculates the covariance
@@ -34,7 +34,7 @@ NumberListOperators.covariance = function(numberList0, numberList1) { //TODO: im
   }
 
   return s / l;
-}
+};
 
 /**
  * calculates k-means clusters of values in a numberList
@@ -63,7 +63,7 @@ NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
   var x;
   var dX = (max - min) / k;
   var d;
-  var dMin
+  var dMin;
   var n;
   var actualMean;
   var N = 1000;
@@ -124,7 +124,7 @@ NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
 
   return clusters;
 
-}
+};
 
 
 NumberListOperators.standardDeviationBetweenTwoNumberLists = function(numberList0, numberList1) {
@@ -136,7 +136,7 @@ NumberListOperators.standardDeviationBetweenTwoNumberLists = function(numberList
   }
 
   return s / l;
-}
+};
 
 /**
  * returns Pearson Product Moment Correlation, the most common correlation coefficient ( covariance/(standard_deviation0*standard_deviation1) )
@@ -147,7 +147,7 @@ NumberListOperators.standardDeviationBetweenTwoNumberLists = function(numberList
  */
 NumberListOperators.pearsonProductMomentCorrelation = function(numberList0, numberList1) { //TODO:make more efficient
   return NumberListOperators.covariance(numberList0, numberList1) / (numberList0.getStandardDeviation() * numberList1.getStandardDeviation());
-}
+};
 
 
 /**
@@ -186,7 +186,7 @@ NumberListOperators.averageSmoother = function(numberList, intensity, nIteration
   newNumberList.name = numberList.name;
 
   return newNumberList;
-}
+};
 
 
 /**
@@ -291,7 +291,7 @@ NumberListOperators.filterNumberListByNumber = function(numberList, value, compa
   }
 
   return newNumberList;
-}
+};
 
 /**
  * creates a NumberList that contains the union of two NumberList (removing repetitions)
@@ -314,7 +314,7 @@ NumberListOperators.union = function(x, y) {
       res.push(obj[k]);
   }
   return res;
-}
+};
 
 /**
  * creates a NumberList that contains the intersection of two NumberList (elements present in BOTH lists)
@@ -331,16 +331,16 @@ NumberListOperators.intersection = function(a, b) {
     var sets = [];
     for(var i = 0; i < arguments.length; i++) {
       sets.push(arguments[i]);
-    };
+    }
     sets.sort(function(a, b) {
       return a.length - b.length;
-    })
+    });
     console.log("sets: ", sets);
     var resultsTrail = sets[0];
     for(var i = 1; i < sets.length; i++) {
       var newSet = sets[i];
       resultsTrail = NumberListOperators.intersection(resultsTrail, newSet);
-    };
+    }
     return resultsTrail;
   }
 
@@ -363,4 +363,4 @@ NumberListOperators.intersection = function(a, b) {
   }
 
   return result;
-}
+};

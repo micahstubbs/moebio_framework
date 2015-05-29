@@ -1,10 +1,10 @@
-function TableOperators() {};
+function TableOperators() {}
 
 
 TableOperators.getElementFromTable = function(table, i, j) {
   if(table[i] == null) return null;
   return table[i][j];
-}
+};
 
 TableOperators.getSubTable = function(table, x, y, width, height) {
   if(table == null) return table;
@@ -42,7 +42,7 @@ TableOperators.getSubTable = function(table, x, y, width, height) {
     result.push(newColumn.getImproved());
   }
   return result.getImproved();
-}
+};
 
 /**
  * transposes a table
@@ -55,7 +55,7 @@ TableOperators.getSubTable = function(table, x, y, width, height) {
 TableOperators.transpose = function(table, firstListAsHeaders) {
   if(table == null) return null;
   return table.getTransposed(firstListAsHeaders);
-}
+};
 
 /**
  * divides the instances of a table in two tables: the training table and the test table
@@ -97,7 +97,7 @@ TableOperators.trainingTestPartition = function(table, proportion, mode, seed) {
   });
 
   return new List(table.getSubListsByIndexes(indexesTr), table.getSubListsByIndexes(indexesTe));
-}
+};
 
 /**
  * tests a model
@@ -124,7 +124,7 @@ TableOperators.testClassificationModel = function(numberTable, classes, model, m
   });
 
   return nErrors / classes.length;
-}
+};
 
 
 
@@ -143,7 +143,7 @@ TableOperators.getSubListsByIndexes = function(table, indexes) {
     newTable[i] = newList.getImproved();
   }
   return newTable;
-}
+};
 
 TableOperators.sortListsByNumberList = function(table, numberList, descending) {
   if(descending == null) descending = true;
@@ -167,7 +167,7 @@ TableOperators.sortListsByNumberList = function(table, numberList, descending) {
     }
   }
   return newTable;
-}
+};
 
 // old version replaced by above version Dec 1st, 2014
 // - fixed bug where descending with 'false' value gets changed to 'true'
@@ -258,7 +258,7 @@ TableOperators.aggregateTable = function(table, nList, mode) {
     newTable[j] = newTable[j].getImproved();
   }
   return newTable.getImproved();
-}
+};
 
 /**
  * counts pairs of elements in same positions in two lists (the result is the adjacent matrix of the network defined by pairs)
@@ -287,7 +287,7 @@ TableOperators.getCountPairsMatrix = function(table) {
   });
 
   return matrix;
-}
+};
 
 
 /**
@@ -325,7 +325,7 @@ TableOperators.filterTableByElementInList = function(table, nList, element) {
   }
 
   return newTable;
-}
+};
 
 TableOperators.mergeDataTablesInList = function(tableList) {
   if(tableList.length < 2) return tableList;
@@ -337,7 +337,7 @@ TableOperators.mergeDataTablesInList = function(tableList) {
   }
 
   return merged;
-}
+};
 
 /**
  * creates a new table with an updated first List of elements and an added new numberList with the new values
@@ -414,7 +414,7 @@ TableOperators.mergeDataTables = function(table0, table1) {
     table.push(numberTable1[i]);
   }
   return table;
-}
+};
 
 /**
  * From two DataTables creates a new DataTable with combined elements in the first List, and added values in the second 
@@ -437,7 +437,7 @@ TableOperators.fusionDataTables = function(table0, table1) {
     }
   }
   return table;
-}
+};
 
 TableOperators.completeTable = function(table, nRows, value) {
   value = value == null ? 0 : value;
@@ -459,7 +459,7 @@ TableOperators.completeTable = function(table, nRows, value) {
     newTable[i] = newList;
   }
   return newTable;
-}
+};
 
 /**
  * filters a Table keeping the NumberLists
@@ -477,7 +477,7 @@ TableOperators.getNumberTableFromTable = function(table) {
     if(table[i].type == "NumberList") newTable.push(table[i]);
   }
   return newTable;
-}
+};
 
 /**
  * calculates de information gain of all variables in a table and a supervised variable
@@ -494,7 +494,7 @@ TableOperators.getVariablesInformationGain = function(variablesTable, supervised
     igs.push(ListOperators.getInformationGain(feature, supervised));
   });
   return igs;
-}
+};
 
 TableOperators.splitTableByCategoricList = function(table, list) {
   if(table == null || list == null) return null;
@@ -507,7 +507,7 @@ TableOperators.splitTableByCategoricList = function(table, list) {
   list.forEach(function(element, i) {
     childrenTable = childrenObject[element];
     if(childrenTable == null) {
-      childrenTable = new Table()
+      childrenTable = new Table();
       childrenObject[element] = childrenTable;
       tablesList.push(childrenTable);
       table.forEach(function(list, j) {
@@ -522,7 +522,7 @@ TableOperators.splitTableByCategoricList = function(table, list) {
   });
 
   return tablesList;
-}
+};
 
 /**
  * builds a decision tree based on a variables table and a supervised variable
@@ -550,7 +550,7 @@ TableOperators.buildDecisionTree = function(variablesTable, supervised, supervis
   TableOperators._buildDecisionTreeNode(tree, variablesTable, supervised, 0, min_entropy, min_size_node, min_info_gain, null, null, supervisedValue, indexes, generatePattern);
 
   return tree;
-}
+};
 
 
 TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervised, level, min_entropy, min_size_node, min_info_gain, parent, value, supervisedValue, indexes, generatePattern) {
@@ -607,7 +607,7 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
 
   if(level < 2) {
     c.l('\nlevel', level);
-    c.l('supervised.countElement(supervisedValue)', supervised.countElement(supervisedValue))
+    c.l('supervised.countElement(supervisedValue)', supervised.countElement(supervisedValue));
     c.l('entropy', entropy);
     c.l('value', value);
     c.l('name', name);
@@ -615,7 +615,7 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
     c.l('supervised.length', supervised.length);
     c.l('supervisedValue', supervisedValue);
     c.l('supervised._biggestProbability, supervised._P_valueFollowing', supervised._biggestProbability, supervised._P_valueFollowing);
-    c.l('node.valueFollowingProbability (=supervised._P_valueFollowing):', node.valueFollowingProbability)
+    c.l('node.valueFollowingProbability (=supervised._P_valueFollowing):', node.valueFollowingProbability);
     c.l('tree.nodeList[0].valueFollowingProbability', tree.nodeList[0].valueFollowingProbability);
     c.l('node.biggestProbability (=_biggestProbability):', node.biggestProbability);
     c.l('node.mostRepresentedValue:', node.mostRepresentedValue);
@@ -677,14 +677,14 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
   node.toNodeList = node.toNodeList.getSortedByProperty('valueFollowingProbability', false);
 
   return node;
-}
+};
 TableOperators._decisionTreeColorScale = function(value) {
   var rr = value < 0.5 ? Math.floor(510 * value) : 255;
   var gg = value < 0.5 ? Math.floor(510 * value) : Math.floor(510 * (1 - value));
   var bb = value < 0.5 ? 255 : Math.floor(510 * (1 - value));
 
   return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
-}
+};
 TableOperators._decisionTreeGenerateColorsMixture = function(ctxt, width, height, colors, weights) {
   //var imageData=context.createImageData(width, height);
   var x, y, i; //, rgb;
@@ -703,4 +703,4 @@ TableOperators._decisionTreeGenerateColorsMixture = function(ctxt, width, height
   }
 
   //return imageData;
-}
+};

@@ -1,8 +1,8 @@
-var Loader = new function() {};
+function Loader() {}
 
 Loader.proxy = ""; //TODO:install proxy created by Mig at moebio.com
 Loader.cacheActive = false; //TODO: fix!
-Loader.associativeByUrls = new Object();
+Loader.associativeByUrls = {};
 Loader.REPORT_LOADING = false;
 Loader.n_loading = 0;
 Loader.LOCAL_STORAGE_ENABLED = false;
@@ -12,7 +12,7 @@ Loader.PHPurl = "http://intuitionanalytics.com/tests/proxy.php?url=";
 
 /**
  * loads string data from server. The defined Loader.proxy will be used.
- * @param {String} url the URL of the file to be loaded 
+ * @param {String} url the URL of the file to be loaded
  * @param {Function} onLoadData a function that will be called when complete. The function must receive a LoadEvent
  * @param {callee} the Object containing the onLoadData function to be called
  * @para, {Object} optional parameter that will be stored in the LoadEvent instance
@@ -101,7 +101,7 @@ Loader.loadData = function(url, onLoadData, callee, param, send_object_json) {
     send_object_json = send_object_json || "";
     req.send(send_object_json);
   }
-}
+};
 
 
 function LoaderRequest(url, method, data) {
@@ -141,13 +141,13 @@ Loader.loadImage = function(url, onComplete, callee, param) {
     e.param = param;
     if(cache) associative[url] = img;
     onComplete.call(target, e);
-  }
+  };
 
   img.onerror = function() {
     Loader.n_loading--;
     var e = new LoadEvent();
     e.result = null;
-    e.errorType = 1 //TODO: set an error type!
+    e.errorType = 1; //TODO: set an error type!
     e.errorMessage = "There was a problem retrieving the image [" + img.src + "]:";
     e.url = url;
     e.param = param;
@@ -155,7 +155,7 @@ Loader.loadImage = function(url, onComplete, callee, param) {
   };
 
   img.src = Loader.proxy + url;
-}
+};
 
 Loader.loadJSON = function(url, onLoadComplete) {
   Loader.n_loading++;
@@ -164,7 +164,7 @@ Loader.loadJSON = function(url, onLoadComplete) {
     Loader.n_loading--;
     onLoadComplete.call(arguments.callee, jQuery.parseJSON(data));
   });
-}
+};
 
 Loader.callIndex = 0;
 Loader.loadJSONP = function(url, onLoadComplete, callee) {
@@ -204,12 +204,12 @@ Loader.loadJSONP = function(url, onLoadComplete, callee) {
     }
   }); //.error(function(e){
   // c.log('---> (((error))) B');
-  // 			
+  //
   // var e=new LoadEvent();
   // e.errorType=1;
   // onLoadComplete.call(target, e);
   // });
-}
+};
 
 
 
@@ -264,7 +264,7 @@ Loader.loadXML = function(url, onLoadData) {
       }
     }
   }
-}
+};
 
 
 ///////////////PHP
@@ -272,7 +272,7 @@ Loader.loadXML = function(url, onLoadData) {
 Loader.sendContentToVariableToPhp = function(url, varName, value, onLoadData, callee, param) {
   var data = varName + "=" + encodeURIComponent(value);
   Loader.sendDataToPhp(url, data, onLoadData, callee, param);
-}
+};
 
 Loader.sendContentsToVariablesToPhp = function(url, varNames, values, onLoadData, callee, param) {
   var data = varNames[0] + "=" + encodeURIComponent(values[0]);
@@ -280,7 +280,7 @@ Loader.sendContentsToVariablesToPhp = function(url, varNames, values, onLoadData
     data += "&" + varNames[i] + "=" + encodeURIComponent(values[i]);
   }
   Loader.sendDataToPhp(url, data, onLoadData, callee, param);
-}
+};
 
 Loader.sendDataToPhp = function(url, data, onLoadData, callee, param) {
   var req = new XMLHttpRequest();
@@ -312,5 +312,5 @@ Loader.sendDataToPhp = function(url, data, onLoadData, callee, param) {
     }
   };
 
-  req.onreadystatechange = onLoadComplete
-}
+  req.onreadystatechange = onLoadComplete;
+};

@@ -1,4 +1,4 @@
-function TwitterSearchProcesses() {};
+function TwitterSearchProcesses() {}
 
 TwitterSearchProcesses.MENTIONS_REGEXP = /@[a-zA-Z0-9_]+('|\?|:| |;|.|,|")?/gi;
 TwitterSearchProcesses.RT_REGEXP = /\b(rt|RT|MT):? /gi;
@@ -87,13 +87,13 @@ TwitterSearchProcesses.buildUsersNetwork = function(results, biDirectional) {
   //c.log('network', network);
 
   return network;
-}
+};
 
 TwitterSearchProcesses.loadThumbnailsFromUsers = function(network) {
   for(var i = 0; network.nodeList[i] != null; i++) {
     network.nodeList[i].loadThumbnail();
   }
-}
+};
 
 
 
@@ -145,7 +145,7 @@ TwitterSearchProcesses.buildAggregatedTable = function(table) {
   }
 
   return aggregatedTable;
-}
+};
 
 TwitterSearchProcesses.buildMentionsNetwork = function(aggregatedTable) {
   var i;
@@ -199,7 +199,7 @@ TwitterSearchProcesses.buildMentionsNetwork = function(aggregatedTable) {
     }
   }
   return network;
-}
+};
 
 TwitterSearchProcesses.buildRetweetsNetwork = function(table, aggregatedTable) {
   var retweetNetwork = new Network();
@@ -251,7 +251,7 @@ TwitterSearchProcesses.buildRetweetsNetwork = function(table, aggregatedTable) {
   }
 
   return retweetNetwork;
-}
+};
 
 /**
  * To be deprectaed
@@ -313,4 +313,4 @@ TwitterSearchProcesses.buildMergedNetworks = function(mentionsNetwork, rtNetwork
 
   }
   return mergedNetwork;
-}
+};

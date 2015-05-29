@@ -3,7 +3,7 @@
  * 
  * @constructor
  */
-function ListGenerators() {};
+function ListGenerators() {}
 
 
 /**
@@ -40,7 +40,7 @@ ListGenerators.createListWithSameElement = function(nValues, element) {
     list[i] = element;
   }
   return list;
-}
+};
 
 /**
  * Generates a List built froma seed element and a function that will be applied iteratively
@@ -55,4 +55,4 @@ ListGenerators.createIterationSequence = function(nValues, firstElement, dynamic
     list[i] = dynamicFunction(list[i - 1]);
   }
   return list;
-}
+};

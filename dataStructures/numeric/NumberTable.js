@@ -8,7 +8,7 @@ NumberTable.prototype.constructor = NumberTable;
 function NumberTable() {
   var args = [];
   var newNumberList;
-  var array
+  var array;
 
   if(arguments.length > 0 && Number(arguments[0]) == arguments[0]) {
     array = [];
@@ -46,7 +46,7 @@ NumberTable.fromArray = function(array) {
   result.getMinMaxInterval = NumberTable.prototype.getMinMaxInterval;
 
   return result;
-}
+};
 
 NumberTable.prototype.getNumberListsNormalized = function(factor) {
   factor = factor == null ? 1 : factor;
@@ -59,7 +59,7 @@ NumberTable.prototype.getNumberListsNormalized = function(factor) {
   }
   newTable.name = this.name;
   return newTable;
-}
+};
 
 NumberTable.prototype.getNormalizedToMax = function(factor) {
   factor = factor == null ? 1 : factor;
@@ -72,7 +72,7 @@ NumberTable.prototype.getNormalizedToMax = function(factor) {
   }
   newTable.name = this.name;
   return newTable;
-}
+};
 
 NumberTable.prototype.getNumberListsNormalizedToMax = function(factorValue) {
   var newTable = new NumberTable();
@@ -82,7 +82,7 @@ NumberTable.prototype.getNumberListsNormalizedToMax = function(factorValue) {
   }
   newTable.name = this.name;
   return newTable;
-}
+};
 
 NumberTable.prototype.getNumberListsNormalizedToSum = function() {
   var newTable = new NumberTable();
@@ -92,7 +92,7 @@ NumberTable.prototype.getNumberListsNormalizedToSum = function() {
   }
   newTable.name = this.name;
   return newTable;
-}
+};
 
 
 NumberTable.prototype.getMax = function() {
@@ -106,7 +106,7 @@ NumberTable.prototype.getMax = function() {
   }
 
   return max;
-}
+};
 
 NumberTable.prototype.getMinMaxInterval = function() {
   if(this.length == 0) return null;
@@ -117,7 +117,7 @@ NumberTable.prototype.getMinMaxInterval = function() {
     rangeInterval.y = Math.max(rangeInterval.y, newRange.y);
   }
   return rangeInterval;
-}
+};
 
 /**
  * returns a numberList with values from numberlists added
@@ -130,7 +130,7 @@ NumberTable.prototype.getSums = function() {
     numberList[i] = this[i].getSum();
   }
   return numberList;
-}
+};
 
 /**
  * returns a numberList with all values fro rows added
@@ -147,7 +147,7 @@ NumberTable.prototype.getRowsSums = function() {
     }
   }
   return sums;
-}
+};
 
 NumberTable.prototype.getAverages = function() {
   var numberList = new NumberList();
@@ -155,7 +155,7 @@ NumberTable.prototype.getAverages = function() {
     numberList[i] = this[i].getAverage();
   }
   return numberList;
-}
+};
 
 NumberTable.prototype.getRowsAverages = function() {
   var nLists = this.length;
@@ -170,7 +170,7 @@ NumberTable.prototype.getRowsAverages = function() {
     }
   }
   return averages;
-}
+};
 
 NumberTable.prototype.factor = function(value) {
   var newTable = new NumberTable();
@@ -194,7 +194,7 @@ NumberTable.prototype.factor = function(value) {
 
   newTable.name = this.name;
   return newTable;
-}
+};
 
 NumberTable.prototype.add = function(value) {
   var newTable = new NumberTable();
@@ -206,4 +206,4 @@ NumberTable.prototype.add = function(value) {
 
   newTable.name = this.name;
   return newTable;
-}
+};

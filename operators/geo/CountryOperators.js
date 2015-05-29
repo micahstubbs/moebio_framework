@@ -2,11 +2,11 @@
  * CountryOperators
  * @constructor
  */
-function CountryOperators() {};
+function CountryOperators() {}
 
 CountryOperators.getSimplifiedName = function(name) {
   return name.replace(/[\.\- ,\']/g, "").toLowerCase();
-}
+};
 CountryOperators.getSimplifiedNames = function(names) {
   var simplifiedNames = new StringList();
   var name;
@@ -15,4 +15,4 @@ CountryOperators.getSimplifiedNames = function(names) {
     if(name != "") simplifiedNames.pushIfUnique(name);
   }
   return simplifiedNames;
-}
+};

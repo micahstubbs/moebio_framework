@@ -30,15 +30,15 @@ DateAxis.prototype.setDepartureDateInterval = function(departureDateInterval) {
   this.time1 = this.departureDateInterval.date1.getTime();
   this.dTime = this.time1 - this.time0;
 
-}
+};
 DateAxis.prototype.setArrivalInterval = function(arrivalInterval) {
   this.arrivalInterval = arrivalInterval;
   this.arrivalAmplitude = arrivalInterval.getAmplitude();
-}
+};
 
 DateAxis.prototype.project = function(date) {
   return this.arrivalInterval.x + this.arrivalAmplitude * (date.getTime() - this.time0) / this.dTime;
-}
+};
 
 
 /**
@@ -49,9 +49,9 @@ DateAxis.prototype.update = function() {
   this.time1 = this.departureDateInterval.date1.getTime();
   this.dTime = this.time1 - this.time0;
   this.arrivalAmplitude = this.arrivalInterval.getAmplitude();
-}
+};
 
 
 DateAxis.prototype.toString = function() {
   return "DateAxis[" + this.departureDateInterval.toString() + ", " + this.arrivalInterval.toString() + "]";
-}
+};

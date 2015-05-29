@@ -1,6 +1,6 @@
 WikipediaArticlesApi.prototype.constructor = WikipediaArticlesApi;
 
-WikipediaArticlesApi.types = new Object();
+WikipediaArticlesApi.types = {};
 WikipediaArticlesApi.types.NORMAL = "normal";
 WikipediaArticlesApi.types.LINK_HERE = "link here";
 WikipediaArticlesApi.types.LIST = "list";
@@ -19,21 +19,21 @@ WikipediaArticlesApi.prototype.loadArticle = function(title) {
   this.title = title;
   c.log("[w] load article:" + this.title + " | url:" + "http://" + this.language + ".wikipedia.org/w/index.php?action=render&title=" + title);
   Loader.loadData("http://" + this.language + ".wikipedia.org/w/index.php?action=render&title=" + title, this.onComplete, this);
-}
+};
 
 WikipediaArticlesApi.prototype.loadArticlesThatLinkToArticle = function(title, nMax) {
   this.title = 'links to ' + title;
   nMax = nMax == null ? 500 : nMax;
   c.log("[w] load article containing articles that link to:" + this.title);
   Loader.loadData("http://" + this.language + ".wikipedia.org/w/index.php?action=render&title=Special:WhatLinksHere/" + title + "&limit=" + nMax, this.onComplete, this);
-}
+};
 
 
 WikipediaArticlesApi.prototype.onComplete = function(e) {
   c.log('article loaded');
   var article = this.buildArticle(this.title, e.url, e.result);
   this._warnFunction.call(this.target, article);
-}
+};
 
 
 
@@ -45,13 +45,13 @@ WikipediaArticlesApi.prototype.loadArticles = function(titles) {
   this.nLoaded = 0;
   this.nToLoad = titles.length;
   this.loadNextArticle();
-}
+};
 
 WikipediaArticlesApi.prototype.loadNextArticle = function() {
   this.title = this.titles[this.nLoaded];
   c.log("[w] loading " + this.nLoaded + "/" + this.nToLoad, 'next: ' + this.title);
   Loader.loadData("http://" + this.language + ".wikipedia.org/w/index.php?action=render&title=" + this.title, this.onCompleteFromMany, this);
-}
+};
 
 WikipediaArticlesApi.prototype.onCompleteFromMany = function(e) {
   this.listArticles.push(this.buildArticle(this.title, e.url, e.result));
@@ -63,13 +63,13 @@ WikipediaArticlesApi.prototype.onCompleteFromMany = function(e) {
   } else {
     this.loadNextArticle();
   }
-}
+};
 
 
 //
 
 WikipediaArticlesApi.prototype.buildArticle = function(title, url, text) {
-  var article = new Object();
+  var article = {};
 
   article.title = title;
   article.cleanTitle = WikipediaArticlesOperators.cleanTitle(title);
@@ -100,7 +100,7 @@ WikipediaArticlesApi.prototype.buildArticle = function(title, url, text) {
   article.internalLinks = article.textLinks.concat(article.seeAlsoLinks);
 
   return article;
-}
+};
 
 
 WikipediaArticlesApi.buildTable = function(article) {
@@ -126,4 +126,4 @@ WikipediaArticlesApi.buildTable = function(article) {
   }
 
   return table;
-}
+};

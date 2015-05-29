@@ -2,7 +2,7 @@
  * StringUtils 
  * @constructor
  */
-function StringUtils() {};
+function StringUtils() {}
 
 
 StringUtils.stringtoXML = function(text) {
@@ -15,4 +15,4 @@ StringUtils.stringtoXML = function(text) {
     var doc = parser.parseFromString(text, 'text/xml');
   }
   return doc;
-}
+};

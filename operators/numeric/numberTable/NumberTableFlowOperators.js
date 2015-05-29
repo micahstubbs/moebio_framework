@@ -1,4 +1,4 @@
-function NumberTableFlowOperators() {};
+function NumberTableFlowOperators() {}
 
 NumberTableFlowOperators.getFlowTable = function(numberTable, normalized, include0s) {
   if(numberTable == null) return;
@@ -95,7 +95,7 @@ NumberTableFlowOperators.getFlowTable = function(numberTable, normalized, includ
     }
   }
   return flowTable;
-}
+};
 
 NumberTableFlowOperators.getFlowTableIntervals = function(numberTable, normalized, sorted, stacked) {
   if(numberTable == null) return null;
@@ -160,4 +160,4 @@ NumberTableFlowOperators.getFlowTableIntervals = function(numberTable, normalize
   }
 
   return intervalTable;
-}
+};

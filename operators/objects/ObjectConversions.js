@@ -75,4 +75,4 @@ ObjectConversions.conversor = function(object, toType) {
     case 'number':
       return Number(object);
   }
-}
+};

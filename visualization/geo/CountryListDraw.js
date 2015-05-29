@@ -1,4 +1,4 @@
-function CountryListDraw() {};
+function CountryListDraw() {}
 
 
 CountryListDraw.drawCountriesAsCircles = function(context, countryList, radiusList, frame, geoFrame, colors) {
@@ -20,7 +20,7 @@ CountryListDraw.drawCountriesAsCircles = function(context, countryList, radiusLi
     context.arc(frame.x + dX * (country.geoCenter.x - geoFrame.x), frame.getBottom() - dY * (country.geoCenter.y - geoFrame.y), radiusList[i], 0, TwoPi);
     context.fill();
   }
-}
+};
 
 CountryListDraw.drawCountriesPolygons = function(context, countryList, frame, geoFrame, colors, lineWidth, lineColor) {
   geoFrame = geoFrame == null ? new Rectangle(-180, -90, 360, 180) : geoFrame;
@@ -54,4 +54,4 @@ CountryListDraw.drawCountriesPolygons = function(context, countryList, frame, ge
       if(lineWidth != null) context.stroke();
     }
   }
-}
+};
