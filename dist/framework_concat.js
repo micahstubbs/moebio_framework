@@ -6588,7 +6588,7 @@ GeometryOperators.distancePointToLine = function(point, line){
 
 GeometryOperators.distancePointToSegment = function(point, point0Segment, point1Segment){
 	var m = point0Segment.x==point1Segment.x?Infinity:(point1Segment.y-point0Segment.y)/(point1Segment.x-point0Segment.x);
-	line = m==Infinity?new Point(Infinity, point0Segment.x):new Point(m, point0Segment.y-m*point0Segment.x);
+	var line = m==Infinity?new Point(Infinity, point0Segment.x):new Point(m, point0Segment.y-m*point0Segment.x);
 	var m2;
 	var b2;
 	if(line.x==0){
@@ -11255,7 +11255,7 @@ NumberListOperators.union = function (x, y) {
  */
 NumberListOperators.intersection = function ( a, b ) {
   // Borrowed from here: http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
-  console.log( "arguments: ", arguments ); 
+  //console.log( "arguments: ", arguments ); 
   if( arguments.length > 2 ){
   	var sets = [];
   	for (var i = 0; i < arguments.length; i++) {
@@ -18899,8 +18899,9 @@ Date.prototype.getType=function(){
 }
 
 
-evalJavaScriptFunction = function(functionText, args){
+evalJavaScriptFunction = function(functionText, args, scope){
 	//if(HOLD) return;
+	if(functionText==null) return;
 
 	var res;
 
@@ -18911,21 +18912,50 @@ evalJavaScriptFunction = function(functionText, args){
 
 	var realCode;
 
-	var isFunction = functionText.split('\n')[0].indexOf('function')!=-1;
+	var lines = functionText.split('\n');
+
+	for(i=0; lines[i]!=null; i++){
+		lines[i] = lines[i].trim();
+		if(lines[i]=="" || lines[i].substr(2)=="//"){
+			lines.splice(i,1);
+			i--;
+		}
+	}
+
+
+	var isFunction = lines[0].indexOf('function')!=-1;
+
+	functionText = lines.join('\n');
 
 	if(isFunction){
-		realCode = "myFunction = " + functionText;
+		if(scope){
+			realCode = "scope.myFunction = " + functionText;
+		} else {
+			realCode = "myFunction = " + functionText;
+		}
 	} else {
-		realCode = "myVar = " + functionText;
+		if(scope){
+			realCode = "scope.myVar = " + functionText;
+		} else {
+			realCode = "myVar = " + functionText;
+		}
 	}
 
 	try{
 		if(isFunction){
 			eval(realCode);
-			res = myFunction.apply(this, args);
+			if(scope){
+				res = scope.myFunction.apply(scope, args);
+			} else {
+				res = myFunction.apply(this, args);
+			}
 		} else {
 			eval(realCode);
-			res = myVar;
+			if(scope){
+				res = scope.myVar;
+			} else 	{
+				res = myVar;
+			}
 		}
 	} catch(err){
 		good = false;
@@ -22797,6 +22827,7 @@ var T_MOUSE_PRESSED = 0; //time in milliseconds of mouse being pressed, useful f
 //var deltaWheel = 0;
 var cursorStyle = 'auto';
 var backGroundColor = 'white';
+var backGroundColorRGB = [255,255,255];
 var cycleActive;
 
 //global constants
@@ -22819,6 +22850,8 @@ var _setTimeOutId;
 var _cycleOnMouseMovement = false;
 var _interactionCancelledFrame;
 var _tLastMouseDown;
+
+var _alphaRefresh=0;//if _alphaRefresh>0 instead of clearing the canvas each frame, a transparent rectangle will be drawn
 
 var END_CYCLE_DELAY = 3000; //time in milliseconds, from last mouse movement to the last cycle to be executed in case cycleOnMouseMovement has been activated
 
@@ -22879,7 +22912,7 @@ window.addEventListener('load', function(){
 		init();
 	}
 
-	c.l('Moebio Framework v2.256 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
+	c.l('Moebio Framework v2.257 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
 	
 }, false);
 
@@ -22977,7 +23010,13 @@ function setFrameRate(fr){
 }
 	
 function enterFrame(){
-   	context.clearRect(0, 0, cW, cH);
+	if(_alphaRefresh==0){
+	   	context.clearRect(0, 0, cW, cH);
+	} else {
+		context.fillStyle = 'rgba('+backGroundColorRGB[0]+','+backGroundColorRGB[1]+','+backGroundColorRGB[2]+','+_alphaRefresh+')';
+		context.fillRect(0, 0, cW, cH);
+	}
+
    	setCursor('default');
 
    	MOUSE_DOWN = NF_DOWN==nF;
@@ -23091,6 +23130,9 @@ function setBackgroundColor(color){
 		color = ColorOperators.RGBtoHEX(color[0], color[1], color[2]);
 	}
 	backGroundColor = color;
+
+	backGroundColorRGB = ColorOperators.colorStringToRGB(backGroundColor);
+
 	var body = document.getElementById('index');
 	body.setAttribute('bgcolor', backGroundColor);
 }

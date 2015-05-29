@@ -67,6 +67,7 @@ var T_MOUSE_PRESSED = 0; //time in milliseconds of mouse being pressed, useful f
 //var deltaWheel = 0;
 var cursorStyle = 'auto';
 var backGroundColor = 'white';
+var backGroundColorRGB = [255,255,255];
 var cycleActive;
 
 //global constants
@@ -89,6 +90,8 @@ var _setTimeOutId;
 var _cycleOnMouseMovement = false;
 var _interactionCancelledFrame;
 var _tLastMouseDown;
+
+var _alphaRefresh=0;//if _alphaRefresh>0 instead of clearing the canvas each frame, a transparent rectangle will be drawn
 
 var END_CYCLE_DELAY = 3000; //time in milliseconds, from last mouse movement to the last cycle to be executed in case cycleOnMouseMovement has been activated
 
@@ -149,7 +152,7 @@ window.addEventListener('load', function(){
 		init();
 	}
 
-	c.l('Moebio Framework v2.256 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
+	c.l('Moebio Framework v2.257 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
 	
 }, false);
 
@@ -247,7 +250,13 @@ function setFrameRate(fr){
 }
 	
 function enterFrame(){
-   	context.clearRect(0, 0, cW, cH);
+	if(_alphaRefresh==0){
+	   	context.clearRect(0, 0, cW, cH);
+	} else {
+		context.fillStyle = 'rgba('+backGroundColorRGB[0]+','+backGroundColorRGB[1]+','+backGroundColorRGB[2]+','+_alphaRefresh+')';
+		context.fillRect(0, 0, cW, cH);
+	}
+	
    	setCursor('default');
 
    	MOUSE_DOWN = NF_DOWN==nF;
@@ -361,6 +370,9 @@ function setBackgroundColor(color){
 		color = ColorOperators.RGBtoHEX(color[0], color[1], color[2]);
 	}
 	backGroundColor = color;
+
+	backGroundColorRGB = ColorOperators.colorStringToRGB(backGroundColor);
+
 	var body = document.getElementById('index');
 	body.setAttribute('bgcolor', backGroundColor);
 }

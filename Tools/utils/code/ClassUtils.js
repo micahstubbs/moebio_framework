@@ -130,8 +130,9 @@ Date.prototype.getType=function(){
 }
 
 
-evalJavaScriptFunction = function(functionText, args){
+evalJavaScriptFunction = function(functionText, args, scope){
 	//if(HOLD) return;
+	if(functionText==null) return;
 
 	var res;
 
@@ -142,21 +143,50 @@ evalJavaScriptFunction = function(functionText, args){
 
 	var realCode;
 
-	var isFunction = functionText.split('\n')[0].indexOf('function')!=-1;
+	var lines = functionText.split('\n');
+
+	for(i=0; lines[i]!=null; i++){
+		lines[i] = lines[i].trim();
+		if(lines[i]=="" || lines[i].substr(2)=="//"){
+			lines.splice(i,1);
+			i--;
+		}
+	}
+
+
+	var isFunction = lines[0].indexOf('function')!=-1;
+
+	functionText = lines.join('\n');
 
 	if(isFunction){
-		realCode = "myFunction = " + functionText;
+		if(scope){
+			realCode = "scope.myFunction = " + functionText;
+		} else {
+			realCode = "myFunction = " + functionText;
+		}
 	} else {
-		realCode = "myVar = " + functionText;
+		if(scope){
+			realCode = "scope.myVar = " + functionText;
+		} else {
+			realCode = "myVar = " + functionText;
+		}
 	}
 
 	try{
 		if(isFunction){
 			eval(realCode);
-			res = myFunction.apply(this, args);
+			if(scope){
+				res = scope.myFunction.apply(scope, args);
+			} else {
+				res = myFunction.apply(this, args);
+			}
 		} else {
 			eval(realCode);
-			res = myVar;
+			if(scope){
+				res = scope.myVar;
+			} else 	{
+				res = myVar;
+			}
 		}
 	} catch(err){
 		good = false;
