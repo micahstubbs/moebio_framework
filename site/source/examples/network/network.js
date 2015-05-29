@@ -1,3 +1,9 @@
+/*
+ * Network
+ * Demonstration of using the Moebio Framework and its random network generator
+ * to create a random network and display it on the canvas. Uses the
+ *
+ */
 var network;
 
 var N_NODES = 2000; // Number of nodes to put in visualization
@@ -59,7 +65,7 @@ cycle = function(){
 
     // draws a node with radius = (2x number of node connections + 2) px, and detects wether the cursor is hovering
     isOverCircle = fCircleM(node.x+cX, node.y+cY, 2*node.nodeList.length+2);
-    if(overCircle) {
+    if(isOverCircle) {
       iOver = i;
     }
   }

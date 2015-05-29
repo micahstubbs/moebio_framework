@@ -16633,6 +16633,7 @@ fCircleM = function(x, y, r, margin) { //check if you can avoid repeat
   context.fill();
   return Math.pow(x - mX, 2) + Math.pow(y - mY, 2) < Math.pow(r + margin, 2);
 };
+
 sCircleM = function(x, y, r, margin) {
   margin = margin == null ? 0 : margin;
   context.beginPath();
@@ -16640,6 +16641,7 @@ sCircleM = function(x, y, r, margin) {
   context.stroke();
   return Math.pow(x - mX, 2) + Math.pow(y - mY, 2) < Math.pow(r + margin, 2);
 };
+
 fsCircleM = function(x, y, r, margin) {
   margin = margin == null ? 0 : margin;
   context.beginPath();
@@ -16657,6 +16659,7 @@ lineM = function(x0, y0, x1, y1, d) {
   context.stroke();
   return _distToSegmentSquared(x0, y0, x1, y1) < d * d;
 };
+
 _distToSegmentSquared = function(x0, y0, x1, y1) {
   var l2 = Math.pow(x0 - x1, 2) + Math.pow(y0 - y1, 2);
   if(l2 === 0) return Math.pow(x0 - mX, 2) + Math.pow(y0 - mY, 2);
@@ -16741,6 +16744,17 @@ setFill = function(style) {
   context.fillStyle = style;
 };
 
+/**
+ * setStroke - set stroke to draw with in canvas
+ *
+ * @param {(String|Number)} style If string, then hex value or web color.
+ * If Number, then a set of RGB or RGBA integers
+ * @param {Number} lineWidth Optional width of line to use. Only valid if style parameter is a string.
+ * @example
+ * setStroke('steelblue'); // sets stroke to blue.
+ * setStroke(0,0,0,0.4); // sets stroke to black with partial opacity.
+ * setStroke('black', 0.2); // provides lineWidth to stroke
+ */
 setStroke = function(style, lineWidth) {
   if(typeof style == "number") {
     if(arguments.length > 3) {
@@ -16751,7 +16765,7 @@ setStroke = function(style, lineWidth) {
     return;
   }
   context.strokeStyle = style;
-
+  //TODO: will lineWidth still work if RGB or RGBA is used?
   if(lineWidth) context.lineWidth = lineWidth;
 };
 
@@ -16863,7 +16877,9 @@ setText = function(color, fontSize, fontName, align, baseline, style) {
   baseline = baseline == null ? 'top' : baseline;
   style = style == null ? '' : style;
 
-  if(style != '') style += ' ';
+  if(style != '') {
+    style += ' ';
+  }
 
   context.fillStyle = color;
   context.font = style + fontSize + 'px ' + fontName;
@@ -16921,6 +16937,10 @@ drawAndcapture = function(drawFunction, w, h, target) {
 
 //cursor
 
+/**
+ * Change mouse cursor to given style. See {@link https://developer.mozilla.org/en-US/docs/Web/CSS/cursor|MDN Cursor Page} for all style options.
+ * @param {String} name The name of the cursor style.
+ */
 setCursor = function(name) {
   name = name == null ? 'default' : name;
   canvas.style.cursor = name;
@@ -16931,25 +16951,34 @@ setCursor = function(name) {
 getMilliseconds = function() {
   var date = new Date();
   _ms = date.getTime();
-  date = undefined;
+  delete date;
   return _ms;
 };
 DragDetection.prototype.constructor = DragDetection;
 
 /**
- * modes
- * 0: frame to frame dragging vector (draggingInstance.dragVector register the vectorial change each frame)
- * 1: from click point dragging (draggingInstance.dragVector register the vectorial change from the clicking point)
- * 2: polar (draggingInstance.dragVector.x is dR, draggingInstance.dragVector.y is dA, according to the center)
+ * DragDetection -
+ * @param {Object} configuration
+ * @param {Number} configuration.mode Mode the DragDetection tool should work under.
+ * Possible options:
+ * <ul>
+ * <li><strong>0</strong>: frame to frame dragging vector (draggingInstance.dragVector register the vectorial change each frame).</li>
+ * <li><strong>1</strong>: from click point dragging (draggingInstance.dragVector register the vectorial change from the clicking point).</li>
+ * <li><strong>2</strong>: polar (draggingInstance.dragVector.x is dR, draggingInstance.dragVector.y is dA, according to the center).</li>
+ * </ul>
+ * @param {Object} configuration.target
+ * @param {Function} configuration.listenerFunction Callback function executed each time drag is detected.
+ * @param {Function} configuration.areaVerificationFunction
+ * @param {Number} configuration.factor
  * @constructor
  */
-function DragDetection(congiguration) { //mode, listenerFunction, target, areaVerificationFunction){
-  this.mode = congiguration.mode || 0;
-  this.listenerFunction = congiguration.listenerFunction;
-  this.target = congiguration.target;
-  this.areaVerificationFunction = congiguration.areaVerificationFunction;
+function DragDetection(configuration) { //mode, listenerFunction, target, areaVerificationFunction){
+  this.mode = configuration.mode || 0;
+  this.listenerFunction = configuration.listenerFunction;
+  this.target = configuration.target;
+  this.areaVerificationFunction = configuration.areaVerificationFunction;
 
-  this.factor = congiguration.factor == null ? 1 : congiguration.factor;
+  this.factor = configuration.factor == null ? 1 : configuration.factor;
   this.center = new Point(0, 0);
 
   addInteractionEventListener("mousedown", this.onMouse, this);
@@ -16961,7 +16990,7 @@ function DragDetection(congiguration) { //mode, listenerFunction, target, areaVe
   this.r = 0;
   this.a = 0;
 
-  this.idInterval;
+  this.idInterval = null;
 
   this.dragVector = new Point();
 }
@@ -16998,7 +17027,11 @@ DragDetection.prototype.enterframe = function(draggingInstance) {
 DragDetection.prototype.onMouse = function(event) {
   switch(event.type) {
     case 'mousedown':
-      if(this.areaVerificationFunction != null && !this.areaVerificationFunction.call(this.target)) return;
+      if(this.areaVerificationFunction != null && !this.areaVerificationFunction.call(this.target))
+      {
+        return;
+      }
+
       this.dragging = true;
 
       this.mouseClickPosition.x = mX;
@@ -17014,7 +17047,9 @@ DragDetection.prototype.onMouse = function(event) {
       this.dragVector.x = 0;
       this.dragVector.y = 0;
 
-      if(this.idInterval != null) clearInterval(this.idInterval);
+      if(this.idInterval != null) {
+        clearInterval(this.idInterval);
+      }
       this.idInterval = setInterval(this.enterframe, 30, this); //[!] this won't work on IE, it´s better to create a new Listener for setInterval
       break;
     case 'mouseup':
@@ -18496,7 +18531,15 @@ Engine3D.prototype.constructor = Engine3D;
 
 /**
  * Engine3D
+ * @param {Object} configuration Configuration for engine
+ * @param {Number} configuration.lens Distance of camera from scene
+ * @param {Point3D} configuration.angles Initial angle of camera
  * @constructor
+ * @example
+ * // creates a new Engine3D instance.
+ * var engine = new Engine3D({
+ *   lens:300
+ * });
  */
 function Engine3D(configuration) {
   configuration = configuration == null ? {} : configuration;
@@ -18515,14 +18558,27 @@ Engine3D.prototype.setBasis = function(point3D) {
   this._basis = point3D.clone();
   this._basisBase = point3D.clone();
   this._provisionalBase = point3D.clone();
-};
+}
 
+/**
+ * setAngles - set viewing angle of camera on 3D scene.
+ *
+ * @param {Point3D} point3D viewing angle of the camera.
+ * @example
+ * var engine = new Engine3D();
+ * engine.setAngles(new Point3D(0.2,-HalfPi*1.2, 0.05));
+ */
 Engine3D.prototype.setAngles = function(point3D) {
   this._angles = point3D.clone();
   this._freeRotation = false;
   this._basis = this.basis3DRotation(this._basisBase, this._angles);
-};
+}
 
+/**
+ * applyRotation - Add rotation to existing 3D scene.
+ *
+ * @param {Point3D} planeVector rotation vector to add to scene.
+ */
 Engine3D.prototype.applyRotation = function(planeVector) {
   if(!this._freeRotation) {
     this._freeRotation = true;
@@ -18537,30 +18593,36 @@ Engine3D.prototype.applyRotation = function(planeVector) {
   this._provisionalBase[0] = this._basis[0].clone();
   this._provisionalBase[1] = this._basis[1].clone();
   this._provisionalBase[2] = this._basis[2].clone();
-};
+}
 
+/**
+ * projectPoint3D - Use the current rotation of the scene and the viewpoint
+ * of the camera to project a single point into this space.
+ *
+ * @param {Point3D} point3D point to project
+ */
 Engine3D.prototype.projectPoint3D = function(point3D) {
   var prescale = this.lens / (this.lens + (this._basis[0].z * point3D.x + this._basis[1].z * point3D.y + this._basis[2].z * point3D.z));
   return new Point3D((this._basis[0].x * point3D.x + this._basis[1].x * point3D.y + this._basis[2].x * point3D.z) * prescale, (this._basis[0].y * point3D.x + this._basis[1].y * point3D.y + this._basis[2].y * point3D.z) * prescale, prescale);
-};
+}
 
 Engine3D.prototype.projectCoordinates = function(x, y, z) {
   var prescale = this.lens / (this.lens + (this._basis[0].z * x + this._basis[1].z * y + this._basis[2].z * z));
   return new Point3D((this._basis[0].x * x + this._basis[1].x * y + this._basis[2].x * z) * prescale, (this._basis[0].y * x + this._basis[1].y * y + this._basis[2].y * z) * prescale, prescale);
-};
+}
 
 Engine3D.prototype.projectPoint3DNode = function(node) {
   var prescale = this.lens / (this.lens + (this._basis[0].z * node.x + this._basis[1].z * node.y + this._basis[2].z * node.z));
   return new Point3D((this._basis[0].x * node.x + this._basis[1].x * node.y + this._basis[2].x * node.z) * prescale, (this._basis[0].y * node.x + this._basis[1].y * node.y + this._basis[2].y * node.z) * prescale, prescale);
-};
+}
 
 Engine3D.prototype.scale = function(point3D) {
   return this.lens / (this.lens + (this._basis[0].z * point3D.x + this._basis[1].z * point3D.y + this._basis[2].z * point3D.z));
-};
+}
 
 
 Engine3D.prototype.sortedIndexesByPointsScale = function(polygon3D) {
-  var pairsArray = [];
+  var pairsArray = new Array();
 
   for(var i = 0; polygon3D[i] != null; i++) {
     pairsArray[i] = [polygon3D[i], i];
@@ -18577,10 +18639,10 @@ Engine3D.prototype.sortedIndexesByPointsScale = function(polygon3D) {
   }
 
   return indexes;
-};
+}
 
 Engine3D.prototype.sortListByPointsScale = function(list, polygon3D) {
-  var pairsArray = [];
+  var pairsArray = new Array();
 
   for(var i = 0; list[i] != null; i++) {
     pairsArray[i] = [polygon3D[i], list[i]];
@@ -18598,22 +18660,22 @@ Engine3D.prototype.sortListByPointsScale = function(list, polygon3D) {
   }
 
   return newList;
-};
+}
 Engine3D.prototype._sortingCriteria = function(array0, array1, basis) {
   var point3D0 = array0[0];
   var point3D1 = array1[0];
   return(UTLITARY_GLOBAL_VAR[0].z * point3D0.x + UTLITARY_GLOBAL_VAR[1].z * point3D0.y + UTLITARY_GLOBAL_VAR[2].z * point3D0.z < UTLITARY_GLOBAL_VAR[0].z * point3D1.x + UTLITARY_GLOBAL_VAR[1].z * point3D1.y + UTLITARY_GLOBAL_VAR[2].z * point3D1.z) ? 1 : -1;
-};
+}
 
 
 //private methods
 
 Engine3D.prototype.updateAngles = function() {
   this._angles = this.getEulerAngles();
-};
+}
 Engine3D.prototype.getEulerAngles = function() {
   return new Point3D(Math.atan2(-this._basis[1].z, this._basis[2].z), Math.asin(this._basis[0].z), Math.atan2(-this._basis[0].y, this._basis[0].x));
-};
+}
 
 
 //rotation
@@ -18631,7 +18693,7 @@ Engine3D.prototype.basis3DRotation = function(basis, angles) {
 
   return new Polygon3D(new Point3D(basis[0].x * cg * cb + basis[0].y * (cg * sa * sb + sg * ca) + basis[0].z * (sg * sa - cg * ca * sb), -basis[0].x * sg * cb + basis[0].y * (cg * ca - sg * sa * sb) + basis[0].z * (sg * ca * sb + cg * sa), basis[0].x * sb - basis[0].y * sa * cb + basis[0].z * cb * ca), new Point3D(basis[1].x * cg * cb + basis[1].y * (cg * sa * sb + sg * ca) + basis[1].z * (sg * sa - cg * ca * sb), -basis[1].x * sg * cb + basis[1].y * (cg * ca - sg * sa * sb) + basis[1].z * (sg * ca * sb + cg * sa), basis[1].x * sb - basis[1].y * sa * cb + basis[1].z * cb * ca), new Point3D(basis[2].x * cg * cb + basis[2].y * (cg * sa * sb + sg * ca) + basis[2].z * (sg * sa - cg * ca * sb), -basis[2].x * sg * cb + basis[2].y * (cg * ca - sg * sa * sb) + basis[2].z * (sg * ca * sb + cg * sa), basis[2].x * sb - basis[2].y * sa * cb + basis[2].z * cb * ca));
 
-};
+}
 
 Engine3D.prototype.point3DRotation = function(point, angles) {
   var ca = Math.cos(angles.x);
@@ -18644,7 +18706,7 @@ Engine3D.prototype.point3DRotation = function(point, angles) {
     point.x * cg * cb + point.y * (cg * sa * sb + sg * ca) + point.z * (sg * sa - cg * ca * sb), -point.x * sg * cb + point.y * (cg * ca - sg * sa * sb) + point.z * (sg * ca * sb + cg * sa),
     point.x * sb - point.y * sa * cb + point.z * cb * ca
   );
-};
+}
 
 
 
@@ -18681,7 +18743,7 @@ Engine3D.prototype.line3D = function(point0, point1) {
     }
   }
   return null;
-};
+}
 
 Engine3D.prototype.quadrilater = function(p0, p1, p2, p3) {
   var polygon3D = new Polygon3D();
@@ -18709,7 +18771,7 @@ Engine3D.prototype.quadrilater = function(p0, p1, p2, p3) {
   }
 
   return polygon3D;
-};
+}
 /**
  * All these function are globally available since they are included in the Global class
  *
