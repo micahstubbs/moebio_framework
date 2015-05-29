@@ -45,7 +45,7 @@ Most users do not need to do this part. This is useful if you want to contribute
 
 ### Docs Build
 
-We use JSDocs to annotate and build the documentation.
+JSDocs is used to annotate and build the documentation.
 
 ### Site Build
 
