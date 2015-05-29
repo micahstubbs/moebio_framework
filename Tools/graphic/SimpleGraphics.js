@@ -126,7 +126,7 @@ bezier = function(x0, y0, cx0, cy0, cx1, cy1, x1, y1) {
 
 _lines = function() {
   if(arguments == null) return;
-  arguments =; arguments[0];
+  arguments = arguments[0];
   context.beginPath();
   context.moveTo(arguments[0], arguments[1]);
   for(var i = 2; arguments[i + 1] != null; i += 2) {
@@ -136,7 +136,7 @@ _lines = function() {
 
 _linesM = function() {
   if(arguments == null) return;
-  arguments =; arguments[0];
+  arguments = arguments[0];
   var p = new Polygon();
   context.beginPath();
   context.moveTo(arguments[0], arguments[1]);
