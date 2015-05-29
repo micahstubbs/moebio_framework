@@ -13,21 +13,21 @@ Global.userAgent="unknown";
 
 init=function(){
   //console.log("init must be overriden!");
-}
+};
 
 cycle=function(){
   //console.log("cycle must be overriden!");
-}
+};
 
 resizeWindow=function(){
   //console.log("resizeWindow must be overriden!");
-}
+};
 
 lastCycle = function(){
 	//override
-}
+};
 
-var listenerArray  = new Array();
+var listenerArray  = [];
 var canvas;
 var removeDiv;
 var userAgent="none";
@@ -94,26 +94,26 @@ var END_CYCLE_DELAY = 3000; //time in milliseconds, from last mouse movement to 
 
 Array.prototype.last = function(){
 	return this[this.length-1];
-}
+};
 
 window.addEventListener('load', function(){
 
  	if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
     	userAgent='IE';
-    	userAgentVersion=new Number(RegExp.$1) // capture x.x portion and store as a number
+    	userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
     	if(userAgentVersion<9) return null;
 	} else if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent)){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
    		userAgent='FIREFOX';
-    	userAgentVersion=new Number(RegExp.$1) // capture x.x portion and store as a number
+    	userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
    	} else if (navigator.userAgent.match(/Chrome/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
 	 	userAgent='CHROME';
-	    userAgentVersion=new Number(RegExp.$1) // capture x.x portion and store as a number
+	    userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
 	} else if (/Mozilla[\/\s](\d+\.\d+)/.test(navigator.userAgent) || navigator.userAgent.match(/Mozilla/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
 	 	userAgent='MOZILLA';
-	    userAgentVersion=new Number(RegExp.$1) // capture x.x portion and store as a number
+	    userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
 	} else if (navigator.userAgent.match(/Safari/) != null){ //test for MSIE x.x;
     	userAgent='Safari';
-    	userAgentVersion=new Number(RegExp.$1) // capture x.x portion and store as a number
+    	userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
   	} else if(navigator.userAgent.match(/iPad/i) != null){
     	userAgent='IOS';
   	} else if(navigator.userAgent.match(/iPhone/i) != null){
@@ -416,7 +416,7 @@ function _onWheel(e) {
 
 setStructureLocalStorageWithSeed = function(object, seed, comments){
 	setStructureLocalStorage(object, MD5.hex_md5(seed), comments);
-}
+};
 
 setStructureLocalStorage = function(object, id, comments){
 	var type = typeOf(object);
@@ -441,7 +441,7 @@ setStructureLocalStorage = function(object, id, comments){
 		comments:comments,
 		date:new Date(),
 		code:code
-	}
+	};
 
 	var storageString = JSON.stringify(storageObject);
 
@@ -450,11 +450,11 @@ setStructureLocalStorage = function(object, id, comments){
 	// c.l('code.length:', code.length);
 
 	localStorage.setItem(id, storageString);
-}
+};
 
 getStructureLocalStorageFromSeed = function(seed, returnStorageObject){
 	return getStructureLocalStorage(MD5.hex_md5(seed), returnStorageObject);
-}
+};
 
 getStructureLocalStorage = function(id, returnStorageObject){
 	returnStorageObject = returnStorageObject||false;
@@ -497,7 +497,7 @@ getStructureLocalStorage = function(id, returnStorageObject){
 	}
 
 	return object;
-}
+};
 
 function getDocWidth() {
     var D = document;

@@ -1,1 +1,1 @@
-DateIntervalOperators = function(){};
+DateIntervalOperators = function() {};

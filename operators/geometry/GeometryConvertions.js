@@ -1,41 +1,41 @@
-function GeometryConvertions(){};
+function GeometryConvertions() {}
 
 //include(frameworksRoot+"operators/strings/StringOperators.js")
 
 // GeometryConvertions.StringToPolygonList=function(string, sep0, sep1, sep2){
-	// sep0 = sep0 || ",";
-	// sep1 = sep1 || " ";
-	// sep2 = sep2 || "\n";
+// sep0 = sep0 || ",";
+// sep1 = sep1 || " ";
+// sep2 = sep2 || "\n";
 // 	
-	// var polygonList = new PolygonList();
-	// var polygon;
-	// var point;
+// var polygonList = new PolygonList();
+// var polygon;
+// var point;
 // 	
-	// lines = StringOperators.splitString(string, sep2);
+// lines = StringOperators.splitString(string, sep2);
 // 	
-	// var i;
-	// var j;
-	// for(i=0; lines[i]!=null; i++){
-		// polygon = new Polygon();
-		// var points = StringOperators.splitString(lines[i], sep1);
-		// for(j=0; points[j]!=null; j++){
-			// var sPoint = StringOperators.splitString(points[j], sep0);
-			// point = new Point(Number(sPoint[0]), Number(sPoint[1]));
-			// polygon.push(point);
-		// }
-		// polygonList.push(polygon);
-	// }
-	// return polygonList;
+// var i;
+// var j;
+// for(i=0; lines[i]!=null; i++){
+// polygon = new Polygon();
+// var points = StringOperators.splitString(lines[i], sep1);
+// for(j=0; points[j]!=null; j++){
+// var sPoint = StringOperators.splitString(points[j], sep0);
+// point = new Point(Number(sPoint[0]), Number(sPoint[1]));
+// polygon.push(point);
+// }
+// polygonList.push(polygon);
+// }
+// return polygonList;
 // }
 
-GeometryConvertions.twoNumberListsToPolygon=function(numberList0, numberList1){//TODO:change name to NumberTableToPolygon
-	var n = Math.min(numberList0.length, numberList1.length);
-	var polygon = new Polygon();
-	for(var i=0; i<n; i++){
-		polygon[i] = new Point(numberList0[i], numberList1[i]);
-	}
-	return polygon;
-}
+GeometryConvertions.twoNumberListsToPolygon = function(numberList0, numberList1) { //TODO:change name to NumberTableToPolygon
+  var n = Math.min(numberList0.length, numberList1.length);
+  var polygon = new Polygon();
+  for(var i = 0; i < n; i++) {
+    polygon[i] = new Point(numberList0[i], numberList1[i]);
+  }
+  return polygon;
+};
 
 /**
  * converts a Polygon into a NumberTable
@@ -43,17 +43,17 @@ GeometryConvertions.twoNumberListsToPolygon=function(numberList0, numberList1){/
  * @return {NumberTable}
  * tags:conversion
  */
-GeometryConvertions.PolygonToNumberTable = function(polygon){
-	if(polygon==null) return null;
-	
-	var numberTable = new NumberTable();
-	numberTable[0] = new NumberList();
-	numberTable[1] = new NumberList();
+GeometryConvertions.PolygonToNumberTable = function(polygon) {
+  if(polygon == null) return null;
 
-	polygon.forEach(function(p){
-		numberTable[0].push(p.x);
-		numberTable[1].push(p.y);
-	});
+  var numberTable = new NumberTable();
+  numberTable[0] = new NumberList();
+  numberTable[1] = new NumberList();
 
-	return numberTable;
-}
+  polygon.forEach(function(p) {
+    numberTable[0].push(p.x);
+    numberTable[1].push(p.y);
+  });
+
+  return numberTable;
+};
