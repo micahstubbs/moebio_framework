@@ -1,0 +1,14 @@
+{
+  "curly": false,
+  "eqnull": true,
+  "undef": false,
+  "forin": true,
+  "unused": true,
+  "freeze": true,
+  "globals": {
+  	"describe": true,
+  	"it": true,
+  	"expect": true
+  },
+  "eqeqeq": false
+}

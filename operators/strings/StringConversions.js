@@ -1,4 +1,4 @@
-function StringConversions(){};
+function StringConversions() {}
 
 
 /**
@@ -7,10 +7,10 @@ function StringConversions(){};
  * @return {Object}
  * tags:convertion
  */
-StringConversions.stringToObject = function(string){
-	try{
-		return JSON.parse(string);
-	} catch(err){
-		return null;
-	}
-}
+StringConversions.stringToObject = function(string) {
+  try {
+    return JSON.parse(string);
+  } catch(err) {
+    return null;
+  }
+};

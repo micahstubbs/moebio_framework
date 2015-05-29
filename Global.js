@@ -2,7 +2,7 @@
  *Static class that:
  * -includes all the data models (by including the class IncludeDataModels.js)
  * -includes class utils (that contains methods such as instantiate)
- * -contains the global variables (such as userAgent, canvas, nF, mX…), global 
+ * -contains the global variables (such as userAgent, canvas, nF, mX…), global
  * -contains the listener methods
  * -triggers de init, update and draw in Global class
  * @constructor
@@ -13,21 +13,21 @@ Global.userAgent="unknown";
 
 init=function(){
   //console.log("init must be overriden!");
-}
+};
 
 cycle=function(){
   //console.log("cycle must be overriden!");
-}
+};
 
 resizeWindow=function(){
   //console.log("resizeWindow must be overriden!");
-}
+};
 
 lastCycle = function(){
 	//override
-}
+};
 
-var listenerArray  = new Array();
+var listenerArray  = [];
 var canvas;
 var removeDiv;
 var userAgent="none";
@@ -97,46 +97,46 @@ var END_CYCLE_DELAY = 3000; //time in milliseconds, from last mouse movement to 
 
 Array.prototype.last = function(){
 	return this[this.length-1];
-}
+};
 
 window.addEventListener('load', function(){
 
  	if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
     	userAgent='IE';
-    	userAgentVersion=new Number(RegExp.$1) // capture x.x portion and store as a number
+    	userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
     	if(userAgentVersion<9) return null;
 	} else if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent)){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
    		userAgent='FIREFOX';
-    	userAgentVersion=new Number(RegExp.$1) // capture x.x portion and store as a number
+    	userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
    	} else if (navigator.userAgent.match(/Chrome/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
 	 	userAgent='CHROME';
-	    userAgentVersion=new Number(RegExp.$1) // capture x.x portion and store as a number
+	    userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
 	} else if (/Mozilla[\/\s](\d+\.\d+)/.test(navigator.userAgent) || navigator.userAgent.match(/Mozilla/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
 	 	userAgent='MOZILLA';
-	    userAgentVersion=new Number(RegExp.$1) // capture x.x portion and store as a number
+	    userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
 	} else if (navigator.userAgent.match(/Safari/) != null){ //test for MSIE x.x;
     	userAgent='Safari';
-    	userAgentVersion=new Number(RegExp.$1) // capture x.x portion and store as a number
+    	userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
   	} else if(navigator.userAgent.match(/iPad/i) != null){
     	userAgent='IOS';
   	} else if(navigator.userAgent.match(/iPhone/i) != null){
     	userAgent='IOS';
   	}
-  	
-  	
+
+
   	Global.userAgent=userAgent;
     Global._frameRate=30;
-    
+
 	canvas = document.getElementById('main');
-	
+
 	if(canvas!=null){
 		removeDiv = document.getElementById('removeDiv');
 		removeDiv.style.display = 'none';
 
 		context = canvas.getContext('2d');
-		
+
 		_adjustCanvas();
-		
+
 		canvas.addEventListener("mousemove", _onMouse, false);
 		canvas.addEventListener("mousedown", _onMouse, false);
 		canvas.addEventListener("mouseup", _onMouse, false);
@@ -147,13 +147,18 @@ window.addEventListener('load', function(){
 		activateWheel();
 
 		window.addEventListener("resize", onResize, false);
-		
+
 		startCycle();
 		init();
 	}
 
+<<<<<<< HEAD
 	c.l('Moebio Framework v2.257 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
 	
+=======
+	c.l('Moebio Framework v2.256 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
+
+>>>>>>> b60399e03d963f94411a2cc44c3105e01c867b5f
 }, false);
 
 function _onMouse(e) {
@@ -213,10 +218,10 @@ function _adjustCanvas(){
 
 	cW = getDocWidth();
 	cH = getDocHeight();
-	
+
 	canvas.setAttribute('width', cW);
     canvas.setAttribute('height', cH);
-	
+
 	cX = Math.floor(cW*0.5);
 	cY = Math.floor(cH*0.5);
 }
@@ -248,7 +253,7 @@ function setFrameRate(fr){
 
 	if(cycleActive) startCycle();
 }
-	
+
 function enterFrame(){
 	if(_alphaRefresh==0){
 	   	context.clearRect(0, 0, cW, cH);
@@ -268,14 +273,14 @@ function enterFrame(){
 	MOUSE_MOVED = DX_MOUSE!=0 || DY_MOUSE!=0;
 
 	if(MOUSE_PRESSED) T_MOUSE_PRESSED = new Date().getTime() - _tLastMouseDown;
-	
+
   	cycle();
 
   	WHEEL_CHANGE = 0;
 
   	PREV_mX=mX;
 	PREV_mY=mY;
-  	
+
   	nF++;
 }
 
@@ -305,12 +310,12 @@ function onMoveCycle(e){
 function reStartCycle(){
 	_prevMouseX=mX;
 	_prevMouseY=mY;
-	
+
 	if(!cycleActive){
 		_setIntervalId = setInterval(enterFrame, Global._frameRate);
 		cycleActive = true;
 	}
-	
+
 	clearTimeout(_setTimeOutId);
 	_setTimeOutId = setTimeout(stopCycle, END_CYCLE_DELAY);
 }
@@ -393,24 +398,24 @@ function onKey(e){
 	onCanvasEvent(e);
 }
 
-/**
+/*
  * thanks http://www.adomas.org/javascript-mouse-wheel
  */
 function activateWheel(){
 	_wheelActivated = true;
-	
+
 	if (window.addEventListener){
 		window.addEventListener('DOMMouseScroll', _onWheel, false);
 		//window.addEventListener("mousewheel", _onWheel, false); // testing
 	}
 	window.onmousewheel = document.onmousewheel = _onWheel;
-	
+
 }
 function _onWheel(e) {
 	//c.l('_onWheel, e:', e);
 
     if (!e) e = window.event; //IE
-            
+
     if (e.wheelDelta){
     	WHEEL_CHANGE = e.wheelDelta/120;
     } else if (e.detail) { /** Mozilla case. */
@@ -428,7 +433,7 @@ function _onWheel(e) {
 
 setStructureLocalStorageWithSeed = function(object, seed, comments){
 	setStructureLocalStorage(object, MD5.hex_md5(seed), comments);
-}
+};
 
 setStructureLocalStorage = function(object, id, comments){
 	var type = typeOf(object);
@@ -453,7 +458,7 @@ setStructureLocalStorage = function(object, id, comments){
 		comments:comments,
 		date:new Date(),
 		code:code
-	}
+	};
 
 	var storageString = JSON.stringify(storageObject);
 
@@ -462,11 +467,11 @@ setStructureLocalStorage = function(object, id, comments){
 	// c.l('code.length:', code.length);
 
 	localStorage.setItem(id, storageString);
-}
+};
 
 getStructureLocalStorageFromSeed = function(seed, returnStorageObject){
 	return getStructureLocalStorage(MD5.hex_md5(seed), returnStorageObject);
-}
+};
 
 getStructureLocalStorage = function(id, returnStorageObject){
 	returnStorageObject = returnStorageObject||false;
@@ -483,7 +488,7 @@ getStructureLocalStorage = function(id, returnStorageObject){
 	}
 
 	if(storageObject.type==null && storageObject.code==null) return null;
-	
+
 	var type = storageObject.type;
 	var code = storageObject.code;
 	var object;
@@ -504,12 +509,12 @@ getStructureLocalStorage = function(id, returnStorageObject){
 		storageObject.object = object;
 		storageObject.size = storageObject.code.length;
 		storageObject.date = new Date(storageObject.date);
-		
+
 		return storageObject;
 	}
 
 	return object;
-}
+};
 
 function getDocWidth() {
     var D = document;

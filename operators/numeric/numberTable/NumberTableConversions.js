@@ -1,4 +1,4 @@
-NumberTableConversions = function(){};
+NumberTableConversions = function() {};
 
 /**
  * converts a numberTable with at least two lists into a Polygon
@@ -6,16 +6,16 @@ NumberTableConversions = function(){};
  * @return {Polygon}
  * tags:conversion
  */
-NumberTableConversions.numberTableToPolygon = function(numberTable){
-	if(numberTable.length<2) return null;
+NumberTableConversions.numberTableToPolygon = function(numberTable) {
+  if(numberTable.length < 2) return null;
 
-	var i;
-	var n = Math.min(numberTable[0].length, numberTable[1].length);
-	var polygon = new Polygon();
+  var i;
+  var n = Math.min(numberTable[0].length, numberTable[1].length);
+  var polygon = new Polygon();
 
-	for(i=0; i<n; i++){
-		polygon[i] = new Point(numberTable[0][i], numberTable[1][i]);
-	}
+  for(i = 0; i < n; i++) {
+    polygon[i] = new Point(numberTable[0][i], numberTable[1][i]);
+  }
 
-	return polygon;
-}
+  return polygon;
+};

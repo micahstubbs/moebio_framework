@@ -1,4 +1,4 @@
-function ObjectDraw(){};
+function ObjectDraw() {}
 
 
 /**
@@ -7,21 +7,21 @@ function ObjectDraw(){};
  * @param  {Object} object
  * tags:draw
  */
-ObjectDraw.count = function(frame, object){
-	if(frame.memory==null){
-		frame.memory={
-			n:1,
-			object:object
-		}
-	}
+ObjectDraw.count = function(frame, object) {
+  if(frame.memory == null) {
+    frame.memory = {
+      n: 1,
+      object: object
+    };
+  }
 
-	if(frame.memory.object!=object){
-		frame.memory.object=object;
-		frame.memory.n++;
-	}
+  if(frame.memory.object != object) {
+    frame.memory.object = object;
+    frame.memory.n++;
+  }
 
-	if(MOUSE_DOWN && frame.containsPoint(mP)) frame.memory.n=0;
+  if(MOUSE_DOWN && frame.containsPoint(mP)) frame.memory.n = 0;
 
-	setText('black', 12);
-	fText(frame.memory.n, frame.x + 10, frame.y + 10);
-}
+  setText('black', 12);
+  fText(frame.memory.n, frame.x + 10, frame.y + 10);
+};
