@@ -4,6 +4,11 @@ var iOver;
 var spanTree;
 var iSelected = -1;
 
+/*
+ * init
+ * Moebio Framework visualizations use init to setup variables.
+ * These variables are used in the cycle function.
+ */
 init = function(){
   network = NetworkGenerators.createRandomNetwork(1200, 0.001, 1);
   network.removeIsolatedNodes();
@@ -24,10 +29,10 @@ init = function(){
 };
 
 
-resizeWindow = function(){
-};
-
-
+/*
+ * The cycle function is called repeatedly to display the visualization.
+ * Here we render the network on each iteration of the render loop.
+ */
 cycle = function(){
   var i;
   var node;
@@ -88,7 +93,8 @@ cycle = function(){
     setCursor('pointer');
     if(MOUSE_DOWN){
       iSelected = iOver;
-      node.__dXCursor = node.x - mX;//relative distance of node to cursor, to be kept when dragging node
+      // relative distance of node to cursor, to be kept when dragging node
+      node.__dXCursor = node.x - mX;
       node.__dYCursor = node.y - mY;
     }
 
