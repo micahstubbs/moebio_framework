@@ -2,10 +2,12 @@ Node.prototype = new DataModel();
 Node.prototype.constructor = Node;
 
 /**
- * Node 
+ * @classdesc Represents a single node element in a Network. Can have both an id as well
+ * as a name.
  * @param {String} id ID of the Node
  * @param {String} name string (label) name to be assigned to node
  * @constructor
+ * @category networks
  */
 function Node(id, name) {
   this.id = id == null ? '' : id;

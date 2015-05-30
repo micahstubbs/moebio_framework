@@ -3,6 +3,7 @@ NodeList.prototype.constructor = NodeList;
 /**
  * NodeList
  * @constructor
+ * @category networks
  */
 
 function NodeList() {

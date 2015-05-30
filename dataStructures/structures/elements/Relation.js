@@ -2,8 +2,9 @@ Relation.prototype = new Node();
 Relation.prototype.constructor = Relation;
 
 /**
- * Relation 
+ * Relation
  * @constructor
+ * @category networks
  */
 function Relation(id, name, node0, node1, weight, content) {
   Node.apply(this, [id, name]);

@@ -1,3 +1,7 @@
+/**
+ * @namespace
+ * @category networks
+ */
 function NetworkGenerators() {}
 
 
@@ -5,7 +9,7 @@ function NetworkGenerators() {}
  * builds a random network, several options
  * @param  {Number} nNodes number of nodes
  * @param  {Number} pRelation probability of a relation being created between 2 nodes
- * 
+ *
  * @param  {Number} mode 0:simple random 1:clusterized
  * @param  {Boolean} randomRelationsWeights adds a random weigth to relations
  * @return {Network}
@@ -128,7 +132,7 @@ NetworkGenerators.createNetworkFromOccurrencesTable = function(occurrencesTable,
 /**
  * Creates a network using a list and measuring the relation weight with a given method
  * a Relation is created between two nodes if and only if the returned weight is > 0
- * @param {List} list List of objects that define the nodes 
+ * @param {List} list List of objects that define the nodes
  * @param {Function} weightFunction method used to eval each pair of nodes
  * @param {StringList} names optional, names of Nodes
  * @return {Network} a network with number of nodes equal to the length of the List

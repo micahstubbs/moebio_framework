@@ -1,10 +1,14 @@
 Network.prototype = new DataModel();
 Network.prototype.constructor = Network;
 
-
 /**
- * Network
+ * @classdesc Networks are a DataType to store network data.
+ *
+ * Networks have nodes stored in a NodeList,
+ * and relations (edges) stored in a RelationList.
+ * @description Create a new Network instance.
  * @constructor
+ * @category networks
  */
 function Network() {
   this.type = "Network";
@@ -14,7 +18,7 @@ function Network() {
 }
 
 /**
- * get nodeList property
+ * Get Nodes of the Network as a NodeList
  * @return {NodeList}
  * tags:
  */
@@ -23,7 +27,8 @@ Network.prototype.getNodes = function() {
 };
 
 /**
- * get relationList property
+ * Get Relations (edges) of the Network as
+ * a RelationList.
  * @return {RelationList}
  * tags:
  */
@@ -42,24 +47,54 @@ Network.prototype.getNodesIds = function() {
 
 
 
-/**
+/*
  * building methods
  */
 
+/**
+ * Add a node to the network
+ * @param {Node} node A new node that will be added to the network.
+ */
 Network.prototype.addNode = function(node) {
   this.nodeList.addNode(node);
 };
+
+/**
+ * Retrieve a node from the nodeList of the Network with the given name (label).
+ * @param {String} name The name of the node to retrieve from the Network.
+ * @return {Node} The node with the given name. Null if no node with that name
+ * can be found in the Network.
+ */
 Network.prototype.getNodeWithName = function(name) {
   return this.nodeList.getNodeWithName(name);
 };
+
+/**
+ * Retrieve node from Network with the given id.
+ * @param {String} id ID of the node to retrieve
+ * @return {Node} The node with the given id. Null if a node with this id is not
+ * in the Network.
+ */
 Network.prototype.getNodeWithId = function(id) {
   return this.nodeList.getNodeWithId(id);
 };
 
+/**
+ * Add a new Relation (edge) to the Network between two nodes.
+ * @param {Node} node0 The source of the relation.
+ * @param {Node} node1 The destination of the relation.
+ * @param {String} id The id of the relation.
+ * @param {Number} weight A numerical weight associated with the relation (edge).
+ * @param {String} content Information associated with the relation.
+ */
 Network.prototype.createRelation = function(node0, node1, id, weight, content) {
   this.addRelation(new Relation(id, id, node0, node1, weight, content));
 };
 
+/**
+ * Add an existing Relation (edge) to the Network.
+ * @param {Relation} relation The relation to add to the network.
+ */
 Network.prototype.addRelation = function(relation) {
   this.relationList.addNode(relation);
   relation.node0.nodeList.addNode(relation.node1);
@@ -72,6 +107,16 @@ Network.prototype.addRelation = function(relation) {
   relation.node1.fromRelationList.addNode(relation);
 };
 
+/**
+ * Create a new Relation between two nodes in the network
+ * @param {Node} node0 The source of the relation.
+ * @param {Node} node1 The destination of the relation.
+ * @param {String} id The id of the relation. If missing, an id will be generated
+ * based on the id's of node0 and node1.
+ * @param {Number} weight=1 A numerical weight associated with the relation (edge).
+ * @param {String} content Information associated with the relation.
+ * @return {Relation} The new relation added to the Network.
+ */
 Network.prototype.connect = function(node0, node1, id, weight, content) {
   id = id || (node0.id + "_" + node1.id);
   weight = weight || 1;
@@ -83,15 +128,23 @@ Network.prototype.connect = function(node0, node1, id, weight, content) {
 
 
 
-/**
+/*
  * removing methods
  */
 
+/**
+ * Remove a node from the Network
+ * @param {Node} node The node to remove.
+ */
 Network.prototype.removeNode = function(node) {
   this.removeNodeRelations(node);
   this.nodeList.removeNode(node);
 };
 
+/**
+ * Remove all Relations connected to the node from the Network.
+ * @param {Node} node Node who's relations will be removed.
+ */
 Network.prototype.removeNodeRelations = function(node) {
   for(var i = 0; node.relationList[i] != null; i++) {
     this.removeRelation(node.relationList[i]);
@@ -99,10 +152,14 @@ Network.prototype.removeNodeRelations = function(node) {
   }
 };
 
+/**
+ * Remove all Nodes from the Network.
+ */
 Network.prototype.removeNodes = function() {
   this.nodeList.deleteNodes();
   this.relationList.deleteNodes();
 };
+
 Network.prototype.removeRelation = function(relation) {
   this.relationList.removeElement(relation);
   relation.node0.nodeList.removeNode(relation.node1);
@@ -116,7 +173,7 @@ Network.prototype.removeRelation = function(relation) {
 };
 
 /**
- * transformative method, removes nodes without a minimal number of connections
+ * Transformative method, removes nodes without a minimal number of connections
  * @param  {Number} minDegree minimal degree
  * @return {Number} number of nodes removed
  * tags:transform
