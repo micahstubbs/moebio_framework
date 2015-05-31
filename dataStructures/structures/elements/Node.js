@@ -4,6 +4,8 @@ Node.prototype.constructor = Node;
 /**
  * @classdesc Represents a single node element in a Network. Can have both an id as well
  * as a name.
+ *
+ * @description Create a new Node.
  * @param {String} id ID of the Node
  * @param {String} name string (label) name to be assigned to node
  * @constructor

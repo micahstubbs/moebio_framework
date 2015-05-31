@@ -1,6 +1,20 @@
+/**
+ * @classdesc NetworkOperators provides a set of tools that work with Networks.
+ *
+ * @namespace
+ * @category networks
+ */
 NetworkOperators = function() {};
 
 
+/**
+ * Filters Network in-place to remove Nodes with less then minDegree connections.
+ *
+ * @param {Network} network Network to filter
+ * @param {Number} minDegree The minimum number of Relations a
+ * Node must have to remain in the Network.
+ * @return {null}
+ */
 NetworkOperators.filterNodesByMinDegree = function(network, minDegree) {
   var i;
   for(i = 0; network.nodeList[i] != null; i++) {
@@ -13,6 +27,13 @@ NetworkOperators.filterNodesByMinDegree = function(network, minDegree) {
 };
 
 
+/**
+ *
+ * @param {Network} network Network to work on.
+ * @param {Node} node0 Source Node.
+ * @param {Node} node1 Destination Node
+ * @return {Number}
+ */
 NetworkOperators.degreeBetweenNodes = function(network, node0, node1) {
   if(network == null || node0 == null || node1 == null) return null;
 
@@ -37,6 +58,16 @@ NetworkOperators.degreeBetweenNodes = function(network, node0, node1) {
   return d;
 };
 
+/**
+ * Returns a NodeList with the Nodes in the Network that are part of the
+ * first shortest path found between the two input nodes.
+ *
+ * @param {Network} network Network to work on.
+ * @param {Node} node0 Source Node.
+ * @param {Node} node1 Destination Node.
+ * @param {Boolean} includeExtremes If true, include node0 and node1 in the returned list.
+ * @return {NodeList} Nodes in the shortest path between node0 and node1.
+ */
 NetworkOperators.shortestPath = function(network, node0, node1, includeExtremes) {
   if(network == null || node0 == null || node1 == null) return null;
 
@@ -56,13 +87,14 @@ NetworkOperators.shortestPath = function(network, node0, node1, includeExtremes)
 
 
 /**
- * finds all shortest paths between two nodes
- * @param  {Network} network
- * @param  {Node} node0
- * @param  {Node} node1
- * 
- * @param  {NodeList} shortPath in case a shortPath has been calculated previously
- * @return {Table} list of paths (nodeLists)
+ * Finds all shortest paths between two nodes.
+ *
+ * @param  {Network} network Network to work on.
+ * @param  {Node} node0 Source Node.
+ * @param  {Node} node1 Destination Node.
+ *
+ * @param  {NodeList} shortPath In case a shortPath has been calculated previously
+ * @return {Table} List of paths (NodeLists)
  */
 NetworkOperators.shortestPaths = function(network, node0, node1, shortPath) {
   if(network == null || node0 == null || node1 == null) return null;
@@ -95,6 +127,9 @@ NetworkOperators.shortestPaths = function(network, node0, node1, shortPath) {
   return all;
 };
 
+/**
+ * @ignore
+ */
 NetworkOperators._extendPaths = function(allPaths, nodeDestiny, maxLength) {
 
   if(allPaths[0].length >= maxLength) return allPaths;
@@ -128,7 +163,8 @@ NetworkOperators._extendPaths = function(allPaths, nodeDestiny, maxLength) {
 };
 
 /**
- * finds all loops in the network
+ * Finds all loops in the network
+ *
  * @param  {Network} network
  * @param {Number} minSize minimum size of loops
  * @return {Table} list of nodeLists
@@ -180,6 +216,10 @@ NetworkOperators._sameLoop = function(loop0, loop1) {
   }
   return true;
 };
+
+/**
+ * @ignore
+ */
 NetworkOperators._getLoopsOnNode = function(central) {
   if(central.toNodeList.length == 0 || central.fromNodeList.length == 0) return [];
 
@@ -229,6 +269,9 @@ NetworkOperators._getLoopsOnNode = function(central) {
   return loops;
 };
 
+/**
+ * @ignore
+ */
 NetworkOperators._pathsToCentral = function(columns, iColumn, path, paths) {
   if(path.finished) return;
 
@@ -279,6 +322,9 @@ NetworkOperators._pathsToCentral = function(columns, iColumn, path, paths) {
   }
 };
 
+/**
+ * @ignore
+ */
 NetworkOperators._loopsColumns = function(nodeList, iColumn, columns) {
   if(columns[iColumn] == null) columns[iColumn] = new NodeList();
   var node, otherNode;
@@ -307,10 +353,10 @@ NetworkOperators._loopsColumns = function(nodeList, iColumn, columns) {
 
 
 /**
- * builds a spanning tree of a Node in a Network (rather inneficient)
+ * Builds a spanning tree of a Node in a Network (not very efficient)
  * @param  {Network} network
- * @param  {Node} node0 parent of tree
- * @param  {Node} nodeLimit optional node in the network to prune the tree
+ * @param  {Node} node0 Parent of the tree
+ * @param  {Node} nodeLimit Optional node in the network to prune the tree
  * @return {Tree}
  * tags:
  */
@@ -433,7 +479,7 @@ NetworkOperators.degreesFromNodeToNodes = function(network, node, nodeList) { //
 };
 
 /**
- * builds a dendrogram from a network
+ * Builds a dendrogram from a network
  * @param  {Network} network
  * @return {Tree}
  * tags:analysis
@@ -579,7 +625,7 @@ NetworkOperators._strengthBetweenSets = function(nodeList0, nodeList1, pRelation
 /**
  * builds a Table of clusters, based on an dendrogram Tree (if not provided it will be calculated), and a weight bias
  * @param  {Network} network
- * 
+ *
  * @param  {Tree} dendrogramTree dendrogram Tree, if precalculated, changes in weight bias will perform faster
  * @param  {Number} minWeight weight bias, criteria to group clusters (0.5 default)
  * @return {Table} list of nodeLists
@@ -702,7 +748,7 @@ NetworkOperators.fusionNoteworks = function(noteworksList, hubsDistanceFactor, h
 /**
  * builds a fusioned Network, with nodes with same names coming from different source networks (called hubs) connected
  * @param  {List} networks list of networks
- * 
+ *
  * @param  {Number} hubsDistanceFactor distance between repeated nodes (hubs)
  * @param  {Number} hubsForceWeight strength factor for the relation when using a forces engine
  * @return {Network} fusioned Network
