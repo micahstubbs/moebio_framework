@@ -1,19 +1,28 @@
 DragDetection.prototype.constructor = DragDetection;
 
 /**
- * modes
- * 0: frame to frame dragging vector (draggingInstance.dragVector register the vectorial change each frame)
- * 1: from click point dragging (draggingInstance.dragVector register the vectorial change from the clicking point)
- * 2: polar (draggingInstance.dragVector.x is dR, draggingInstance.dragVector.y is dA, according to the center)
+ * DragDetection -
+ * @param {Object} configuration
+ * @param {Number} configuration.mode Mode the DragDetection tool should work under.
+ * Possible options:
+ * <ul>
+ * <li><strong>0</strong>: frame to frame dragging vector (draggingInstance.dragVector register the vectorial change each frame).</li>
+ * <li><strong>1</strong>: from click point dragging (draggingInstance.dragVector register the vectorial change from the clicking point).</li>
+ * <li><strong>2</strong>: polar (draggingInstance.dragVector.x is dR, draggingInstance.dragVector.y is dA, according to the center).</li>
+ * </ul>
+ * @param {Object} configuration.target
+ * @param {Function} configuration.listenerFunction Callback function executed each time drag is detected.
+ * @param {Function} configuration.areaVerificationFunction
+ * @param {Number} configuration.factor
  * @constructor
  */
-function DragDetection(congiguration) { //mode, listenerFunction, target, areaVerificationFunction){
-  this.mode = congiguration.mode || 0;
-  this.listenerFunction = congiguration.listenerFunction;
-  this.target = congiguration.target;
-  this.areaVerificationFunction = congiguration.areaVerificationFunction;
+function DragDetection(configuration) { //mode, listenerFunction, target, areaVerificationFunction){
+  this.mode = configuration.mode || 0;
+  this.listenerFunction = configuration.listenerFunction;
+  this.target = configuration.target;
+  this.areaVerificationFunction = configuration.areaVerificationFunction;
 
-  this.factor = congiguration.factor == null ? 1 : congiguration.factor;
+  this.factor = configuration.factor == null ? 1 : configuration.factor;
   this.center = new Point(0, 0);
 
   addInteractionEventListener("mousedown", this.onMouse, this);
@@ -25,7 +34,7 @@ function DragDetection(congiguration) { //mode, listenerFunction, target, areaVe
   this.r = 0;
   this.a = 0;
 
-  this.idInterval;
+  this.idInterval = null;
 
   this.dragVector = new Point();
 }
@@ -62,7 +71,11 @@ DragDetection.prototype.enterframe = function(draggingInstance) {
 DragDetection.prototype.onMouse = function(event) {
   switch(event.type) {
     case 'mousedown':
-      if(this.areaVerificationFunction != null && !this.areaVerificationFunction.call(this.target)) return;
+      if(this.areaVerificationFunction != null && !this.areaVerificationFunction.call(this.target))
+      {
+        return;
+      }
+
       this.dragging = true;
 
       this.mouseClickPosition.x = mX;
@@ -78,7 +91,9 @@ DragDetection.prototype.onMouse = function(event) {
       this.dragVector.x = 0;
       this.dragVector.y = 0;
 
-      if(this.idInterval != null) clearInterval(this.idInterval);
+      if(this.idInterval != null) {
+        clearInterval(this.idInterval);
+      }
       this.idInterval = setInterval(this.enterframe, 30, this); //[!] this won't work on IE, it´s better to create a new Listener for setInterval
       break;
     case 'mouseup':

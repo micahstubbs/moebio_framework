@@ -6,7 +6,8 @@ var watchedFiles = [
   "**/*.js",
   "!**/node_modules/**",
   "!dist/*.js",
-  "!tests/**"
+  "!tests/**",
+  "!docs/**"
 ];
 
 // Helper function to build the list of files that
@@ -50,11 +51,11 @@ module.exports = function (grunt) {
   grunt.initConfig({
 
     concat: {
-      options: {
-        // define a string to put between each file in the concatenated output
-        separator: '\n'
-      },
       dist: {
+        options: {
+          separator: '\n',
+          nonull: true
+        },
         // the files to concatenate
         src: buildFileList(),
         // the location of the resulting JS file
@@ -87,12 +88,18 @@ module.exports = function (grunt) {
       spiralMin: {
         src: 'dist/framework_concat.min.js',
         dest: '../spiral/_dev/client/angularSpiral/app/scripts/classes/framework_concat.min.js'
+      },
+      site_js: {
+        expand: true,
+        cwd: 'dist/',
+        src: ['framework_concat.js', 'framework_concat.min.js'],
+        dest: 'site/source/examples/js/'
       }
     },
 
     jsdoc : {
       dist : {
-        src: ['Global.js', 'dataStructures/**/*.js', 'visualization/**/*.js', 'apis/**/*.js', 'operators/**/*.js', 'Tools/**/*.js'],
+        src: buildFileList(),
         jsdoc: "node_modules/.bin/jsdoc",
         options: {
           destination: 'site/build/docs',
@@ -139,8 +146,8 @@ module.exports = function (grunt) {
         reporter: require('jshint-stylish')
       },
       src: ['*.js', 'Tools/**/*.js', 'dataStructures/**/*.js', 'operators/**/*.js',
-      'apis/**/*.js', 'Tools/**/*.js', 'Tools/**/*.js', 'visualization/**/*.js',
-      'tests/**/*.js']
+        'apis/**/*.js', 'Tools/**/*.js', 'Tools/**/*.js', 'visualization/**/*.js',
+        'tests/**/*.js']
     },
 
     jscs: {
@@ -149,8 +156,8 @@ module.exports = function (grunt) {
         reporter: require('jscs-stylish').path
       },
       src: ['*.js', 'Tools/**/*.js', 'dataStructures/**/*.js', 'operators/**/*.js',
-      'apis/**/*.js', 'Tools/**/*.js', 'Tools/**/*.js', 'visualization/**/*.js',
-      'tests/**/*.js']
+        'apis/**/*.js', 'Tools/**/*.js', 'Tools/**/*.js', 'visualization/**/*.js',
+        'tests/**/*.js']
     }
 
   });

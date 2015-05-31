@@ -252,6 +252,7 @@ fCircleM = function(x, y, r, margin) { //check if you can avoid repeat
   context.fill();
   return Math.pow(x - mX, 2) + Math.pow(y - mY, 2) < Math.pow(r + margin, 2);
 };
+
 sCircleM = function(x, y, r, margin) {
   margin = margin == null ? 0 : margin;
   context.beginPath();
@@ -259,6 +260,7 @@ sCircleM = function(x, y, r, margin) {
   context.stroke();
   return Math.pow(x - mX, 2) + Math.pow(y - mY, 2) < Math.pow(r + margin, 2);
 };
+
 fsCircleM = function(x, y, r, margin) {
   margin = margin == null ? 0 : margin;
   context.beginPath();
@@ -276,6 +278,7 @@ lineM = function(x0, y0, x1, y1, d) {
   context.stroke();
   return _distToSegmentSquared(x0, y0, x1, y1) < d * d;
 };
+
 _distToSegmentSquared = function(x0, y0, x1, y1) {
   var l2 = Math.pow(x0 - x1, 2) + Math.pow(y0 - y1, 2);
   if(l2 === 0) return Math.pow(x0 - mX, 2) + Math.pow(y0 - mY, 2);
@@ -360,6 +363,17 @@ setFill = function(style) {
   context.fillStyle = style;
 };
 
+/**
+ * setStroke - set stroke to draw with in canvas
+ *
+ * @param {(String|Number)} style If string, then hex value or web color.
+ * If Number, then a set of RGB or RGBA integers
+ * @param {Number} lineWidth Optional width of line to use. Only valid if style parameter is a string.
+ * @example
+ * setStroke('steelblue'); // sets stroke to blue.
+ * setStroke(0,0,0,0.4); // sets stroke to black with partial opacity.
+ * setStroke('black', 0.2); // provides lineWidth to stroke
+ */
 setStroke = function(style, lineWidth) {
   if(typeof style == "number") {
     if(arguments.length > 3) {
@@ -370,7 +384,7 @@ setStroke = function(style, lineWidth) {
     return;
   }
   context.strokeStyle = style;
-
+  //TODO: will lineWidth still work if RGB or RGBA is used?
   if(lineWidth) context.lineWidth = lineWidth;
 };
 
@@ -482,7 +496,9 @@ setText = function(color, fontSize, fontName, align, baseline, style) {
   baseline = baseline == null ? 'top' : baseline;
   style = style == null ? '' : style;
 
-  if(style != '') style += ' ';
+  if(style != '') {
+    style += ' ';
+  }
 
   context.fillStyle = color;
   context.font = style + fontSize + 'px ' + fontName;
@@ -540,6 +556,10 @@ drawAndcapture = function(drawFunction, w, h, target) {
 
 //cursor
 
+/**
+ * Change mouse cursor to given style. See {@link https://developer.mozilla.org/en-US/docs/Web/CSS/cursor|MDN Cursor Page} for all style options.
+ * @param {String} name The name of the cursor style.
+ */
 setCursor = function(name) {
   name = name == null ? 'default' : name;
   canvas.style.cursor = name;
@@ -550,6 +570,6 @@ setCursor = function(name) {
 getMilliseconds = function() {
   var date = new Date();
   _ms = date.getTime();
-  date = undefined;
+  delete date;
   return _ms;
 };
