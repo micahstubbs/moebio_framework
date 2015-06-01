@@ -1,5 +1,5 @@
 /**
- * @classdesc NetworkOperators provides a set of tools that work with Networks.
+ * @classdesc Provides a set of tools that work with Networks.
  *
  * @namespace
  * @category networks
@@ -667,13 +667,15 @@ NetworkOperators._iterativeBuildClusters = function(node, clusters, minWeight) {
 
 
 /**
- * see http://en.wikipedia.org/wiki/Page_rank, fromPageRank or toPageRank will be added as propertie to nodesç I use two different pageranks, since a Network whose relations measure influence would require a pagerank to measure nodes influence into the system
+ * see {@link http://en.wikipedia.org/wiki/Page_rank|Page Rank} for more details. fromPageRank or toPageRank will be added as propertie to Nodes.
+ * I use two different pageranks, since a Network whose relations measure influence would require a pagerank to measure nodes influence into the system
  * @param {Network} network
  * @param {Boolean} from optional, default:true, to set if the pagerank uses the in-relations or out-relations
  * @param {Boolean} from optional, default:false, to set if relations weight will affect the metric balance, partiularly interesting if some weights are negative
  * tags:analytics,transformative
  */
-NetworkOperators.addPageRankToNodes = function(network, from, useRelationsWeight) { //TODO:deploy useRelationsWeight
+NetworkOperators.addPageRankToNodes = function(network, from, useRelationsWeight) {
+  //TODO:deploy useRelationsWeight
   from = from == null ? true : from;
 
   var n;
@@ -723,7 +725,7 @@ NetworkOperators.addPageRankToNodes = function(network, from, useRelationsWeight
 
 
 /**
- * builds a fusioned Network from a list of network codes, with nodes with same names coming from different source networks (called hubs) connected
+ * Builds a fusioned Network from a list of network codes, with nodes with same names coming from different source networks (called hubs) connected
  * @param  {List} noteworksList
  *
  * @param  {Number} hubsDistanceFactor distance between repeated nodes (hubs)

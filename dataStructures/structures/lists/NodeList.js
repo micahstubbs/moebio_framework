@@ -1,11 +1,13 @@
 NodeList.prototype = new List();
 NodeList.prototype.constructor = NodeList;
+
 /**
- * NodeList
+ * @classdesc A sub-class of {@link List} for storing {@link Node|Nodes}.
+ *
+ * @description create a new NodeList.
  * @constructor
  * @category networks
  */
-
 function NodeList() {
   //var array=List.apply(this, arguments);
 
@@ -24,19 +26,30 @@ function NodeList() {
   return array;
 }
 
+/**
+ * Creates NodeList from raw Array.
+ *
+ * @param {Node[] | String[]} array Array to convert to
+ * @param {Boolean} forceToNode If true, and input array is an array of Strings,
+ * convert strings to Node instances with the strings used as the Node's id and name.
+ * @return {NodeList}
+ */
 NodeList.fromArray = function(array, forceToNode) {
   forceToNode = forceToNode == null ? false : forceToNode;
 
   var result = List.fromArray(array);
+
   if(forceToNode) {
     for(var i = 0; i < result.length; i++) {
       result[i] = typeOf(result[i]) == "Node" ? result[i] : (new Node(String(result[i]), String(result[i])));
     }
   }
 
+  // TODO: Remove duplicate line?
   var result = List.fromArray(array);
   result.type = "NodeList";
   result.ids = {};
+  // TODO: Fix
   Array(); //????
 
   //assign methods to array:
@@ -69,6 +82,10 @@ NodeList.fromArray = function(array, forceToNode) {
   return result;
 };
 
+/**
+ * Clears NodeList.
+ *
+ */
 NodeList.prototype.removeNodes = function() {
   for(var i = 0; i < this.length; i++) {
     this.ids[this[i].id] = null;
@@ -76,11 +93,21 @@ NodeList.prototype.removeNodes = function() {
   }
 };
 
+/**
+ * Adds given Node to NodeList.
+ *
+ * @param {Node} node Node to add
+ */
 NodeList.prototype.addNode = function(node) {
   this.ids[node.id] = node;
   this._push(node);
 };
 
+/**
+ * Adds all Nodes from another NodeList to this NodeList.
+ *
+ * @param {NodeList} nodes Nodes to add.
+ */
 NodeList.prototype.addNodes = function(nodes) {
   var i;
   for(i = 0; nodes[i] != null; i++) {
@@ -88,18 +115,29 @@ NodeList.prototype.addNodes = function(nodes) {
   }
 };
 
+/**
+ * Removes a given node from the list.
+ *
+ * @param {Node} node Node to remove.
+ */
 NodeList.prototype.removeNode = function(node) {
   this.ids[node.id] = null;
   this.removeElement(node);
 };
 
+/**
+ * Removes a Node at a particular index of the NodeList
+ *
+ * @param {Number} index The index of the Node to remove.
+ */
 NodeList.prototype.removeNodeAtIndex = function(index) {
   this.ids[this[index].id] = null;
   this.splice(index, 1);
 };
 
 /**
- * works under the assumption that weights are >=0
+ * Normalizes all weights associated with Nodes in NodeList
+ * to a value between 0 and 1. Works under the assumption that weights are >= 0.
  */
 NodeList.prototype.normalizeWeights = function() {
   var i;
@@ -114,7 +152,10 @@ NodeList.prototype.normalizeWeights = function() {
 
 
 /**
- * very unefficient method, use getNodeWithId when possible
+ * Returns Node with given name if present in the NodeList.
+ * Very inefficient method. Use {@link .getNodeById} when possible
+ *
+ * @return {Node} Node with name matching input name. Null if no such Node.
  */
 NodeList.prototype.getNodeByName = function(name) {
   var i;
@@ -127,8 +168,9 @@ NodeList.prototype.getNodeByName = function(name) {
 };
 
 /**
- * return a node from its id
- * @param  {String} id
+ * Returns Node in NodeList with given Id.
+ *
+ * @param  {String} id Id of Node to return.
  * @return {Node}
  * tags:search
  */
@@ -136,6 +178,14 @@ NodeList.prototype.getNodeById = function(id) {
   return this.ids[id];
 };
 
+/**
+ * Returns a new NodeList with all nodes in this
+ * NodeList with Id's found in the given {@link NumberList}
+ * of ids.
+ *
+ * @param {NumberList} ids Ids of Nodes to extract.
+ * @return {NodeList}
+ */
 NodeList.prototype.getNodesByIds = function(ids) {
   newNodelist = new NodeList();
   var node;
@@ -147,7 +197,9 @@ NodeList.prototype.getNodesByIds = function(ids) {
 };
 
 /**
- * return a list of weights
+ * Returns a {@link NumberList} of the weights associated
+ * with each Node in the NodeList.
+ *
  * @return {NumberList}
  * tags:
  */
@@ -160,7 +212,9 @@ NodeList.prototype.getWeights = function() {
 };
 
 /**
- * get ids from nodes
+ * Returns a {@link StringList} of all the Ids
+ * of the Nodes in the NodeList.
+ *
  * @return {StringList}
  * tags:
  */
@@ -172,6 +226,14 @@ NodeList.prototype.getIds = function() {
   return list;
 };
 
+/**
+ * Returns a {@link NumberList} with a count of directly
+ * connected Relations a Node has for each Node.
+ *
+ *
+ * @return {NumberList} List containing the number
+ * of Relations each Node has.
+ */
 NodeList.prototype.getDegrees = function() {
   var numberList = new NumberList();
   for(var i = 0; this[i] != null; i++) {
@@ -181,6 +243,14 @@ NodeList.prototype.getDegrees = function() {
 };
 
 
+/**
+ * Returns a {@link Polygon} constructed from all Nodes in
+ * the NodeList by using the
+ * <strong>x</strong> and <strong>y</strong> attributes of
+ * the Nodes.
+ *
+ * @return {Polygon}
+ */
 NodeList.prototype.getPolygon = function() {
   var polygon = new Polygon();
   for(var i = 0; this[i] != null; i++) {
@@ -196,6 +266,11 @@ NodeList.prototype.getNewId = function() {
   }
 };
 
+/**
+ * Returns a copy of this NodeList.
+ *
+ * @return {NodeList}
+ */
 NodeList.prototype.clone = function() {
   var newNodeList = new NodeList();
   this.forEach(function(node) {
@@ -207,6 +282,12 @@ NodeList.prototype.clone = function() {
 
 
 //methods overriden
+/**
+ * getWithoutRepetitions
+ *
+ * @return {undefined}
+ * @ignore
+ */
 NodeList.prototype.getWithoutRepetitions = function() {
   newList = new NodeList();
   newList.name = this.name;
