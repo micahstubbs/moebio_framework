@@ -16,6 +16,7 @@ NetworkEncodings.nodeNameSeparators = ['|', ':', ' is ', ' are ', '.', ','];
 
 /**
  * Converts a String in NoteWork format into a network
+ *
  * @param  {String} code
  * @return {Network}
  * tags:decoding
@@ -448,8 +449,8 @@ NetworkEncodings._regexWordForNoteWork = function(word, global) {
 
 /**
  * Encodes a network into NoteWork notes.
- * @param  {Network} network Network to encode.
  *
+ * @param  {Network} network Network to encode.
  * @param  {String} nodeContentSeparator Separator between node name and content. Uses comma if not defined.
  * @param  {StringList} nodesPropertyNames Node properties to be encoded.
  * If not defined, no Node properties are encoded.
@@ -592,7 +593,9 @@ NetworkEncodings.decodeGDF = function(gdfCode) {
 };
 
 /**
- * Encodes a network in GDF Format, more info on GDF format can be found from {@link https://gephi.org/users/supported-graph-formats/gml-format/|Gephi}.
+ * Encodes a network in GDF Format, more info on GDF
+ * format can be found from
+ * {@link https://gephi.org/users/supported-graph-formats/gml-format/|Gephi}.
  *
  * @param  {Network} network Network to encode.
  * @param  {StringList} nodesPropertiesNames Names of nodes properties to be encoded.
@@ -780,6 +783,7 @@ NetworkEncodings._cleanLineBeginning = function(string) {
 
 /**
  * Encodes a network into GDF format.
+ *
  * @param  {Network} network The Network to encode.
  *
  * @param  {StringList} nodesPropertiesNames Names of Node properties to encode.

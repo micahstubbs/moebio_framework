@@ -45,11 +45,9 @@ RelationList.fromArray = function(array) {
 };
 
 /**
- * addRelation
+ * Add new Relation to the list.
  *
- * @param relation
- * @return {undefined}
- * @ignore
+ * @param {Relation} relation Relation to add.
  */
 //TODO:remove?
 RelationList.prototype.addRelation = function(relation) {
