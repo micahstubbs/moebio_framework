@@ -115,6 +115,7 @@ getTextFromObject = function(value, type) {
   }
 };
 
+
 function instantiateWithSameType(object, args) {
   return instantiate(typeOf(object), args);
 }
@@ -130,14 +131,10 @@ Date.prototype.getType = function() {
 };
 
 
-<<<<<<< HEAD
+
 evalJavaScriptFunction = function(functionText, args, scope){
 	//if(HOLD) return;
 	if(functionText==null) return;
-=======
-evalJavaScriptFunction = function(functionText, args) {
-  //if(HOLD) return;
->>>>>>> b60399e03d963f94411a2cc44c3105e01c867b5f
 
   var res;
 
@@ -146,8 +143,7 @@ evalJavaScriptFunction = function(functionText, args) {
   var good = true;
   var message = '';
 
-<<<<<<< HEAD
-	var lines = functionText.split('\n');
+  var lines = functionText.split('\n');
 
 	for(i=0; lines[i]!=null; i++){
 		lines[i] = lines[i].trim();
@@ -156,7 +152,6 @@ evalJavaScriptFunction = function(functionText, args) {
 			i--;
 		}
 	}
-
 
 	var isFunction = lines[0].indexOf('function')!=-1;
 
@@ -197,7 +192,7 @@ evalJavaScriptFunction = function(functionText, args) {
 		message = err.message;
 		res = null;
 	}
-=======
+
   var realCode;
 
   var isFunction = functionText.split('\n')[0].indexOf('function') != -1;
@@ -207,7 +202,7 @@ evalJavaScriptFunction = function(functionText, args) {
   } else {
     realCode = "myVar = " + functionText;
   }
->>>>>>> b60399e03d963f94411a2cc44c3105e01c867b5f
+
 
   try {
     if(isFunction) {

@@ -152,13 +152,8 @@ window.addEventListener('load', function(){
 		init();
 	}
 
-<<<<<<< HEAD
-	c.l('Moebio Framework v2.257 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
-	
-=======
-	c.l('Moebio Framework v2.256 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
+	c.l('Moebio Framework v2.258 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
 
->>>>>>> b60399e03d963f94411a2cc44c3105e01c867b5f
 }, false);
 
 function _onMouse(e) {
@@ -207,6 +202,7 @@ function _onMouse(e) {
 			break;
 	}
 }
+
 
 function onResize(e){
 	_adjustCanvas();

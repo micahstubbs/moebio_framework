@@ -6396,81 +6396,10 @@ GeometryOperators.trueBezierCurveHeightHorizontalControlPoints = function(x0, x1
     GeometryOperators._bezierSimpleCurveTable[1] = 1;
   }
 
-  //c.log('x, y0, y1, , Math.floor(1000*x), GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*x)]', x, y0, y1, Math.floor(1000*x), GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*x)]);
-
   return GeometryOperators._bezierSimpleCurveTable[Math.floor(1000 * x)] * (y1 - y0) + y0;
 
 };
 
-
-
-
-
-/**
- * This an approximation, it doesn't take into account actual values of c0x and c1x
- */
-//GeometryOperators.trueBezierCurveHeightHorizontalControlPointsOld=function(x0, x1, y0, y1, c0x, c1x, x){//TODO:fix
-
-// if(GeometryOperators._bezierSimpleCurveTable==null){
-
-// 	for(i=0; i<1000; i++){
-
-// 	}
-
-// }
-
-// return GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*(x-x0)/(x1-x0))]*(y1-y0) + y0;
-
-
-
-//
-
-//x=3at + t^2(3-9a) + t^3(1+6a)  --> Javier
-//http://en.wikipedia.org/wiki/Cubic_function#General_formula_for_roots
-
-
-
-
-//return (x-x0)/(x1-x0);// (x - x0)/(c0x + c1x - 2*x0);
-
-//var
-
-// var antit = 1 - t;
-
-// var x0t = x0 + (cx0-x0)*t;
-// var x1t = x1 + (cx1-x1)*t;
-
-// var xm = x0t = (x1t-x0t)*t;
-
-
-// c.log( (x-x0)/(c0x-x0+x1 - 2*x0) );
-
-// return (x-x0)/(c0x+x1 - 2*x0);
-
-
-// var d0 = c0x-x0;
-// // var d1 = c1x-x1;
-
-// var _a = 2*d0;
-// var _b = d0 + x1 - x0;
-// var _c = x0 - x;
-
-// // var _b = d0 + x1 - x0;
-// // var _c = x0 - x;
-
-
-// //c.log(_a, _b, _c, '-->', (-_b + Math.sqrt(_b*_b - 4*_a*_c))/(2*_a), (-_b -Math.sqrt(_b*_b - 4*_a*_c))/(2*_a));
-
-// return [(-_b + Math.sqrt(_b*_b - 4*_a*_c))/(2*_a), (-_b -Math.sqrt(_b*_b - 4*_a*_c))/(2*_a)];
-
-
-
-
-// var cosinus = Math.cos(Math.PI*(t-1));
-// var sign = cosinus>0?1:-1;
-
-// return (0.5 + 0.5*( Math.pow(cosinus*sign, 0.6)*sign ))*(y1-y0) + y0;
-//}
 
 /**
  * This an approximation, it doesn't take into account actual values of c0x and c1x
@@ -6560,24 +6489,6 @@ GeometryOperators.distancePointToLine = function(point, line) {
   return Math.sqrt(Math.pow(point.x - interPoint.x, 2) + Math.pow(point.y - interPoint.y, 2));
 };
 
-<<<<<<< HEAD
-GeometryOperators.distancePointToSegment = function(point, point0Segment, point1Segment){
-	var m = point0Segment.x==point1Segment.x?Infinity:(point1Segment.y-point0Segment.y)/(point1Segment.x-point0Segment.x);
-	var line = m==Infinity?new Point(Infinity, point0Segment.x):new Point(m, point0Segment.y-m*point0Segment.x);
-	var m2;
-	var b2;
-	if(line.x==0){
-		m2 = Infinity;
-		b2 = point.x;
-	} else {
-		m2 = -1/line.x;
-		b2 = point.y - m2*point.x;
-	}
-	var interPoint = GeometryOperators.intersectionLines(line, new Point(m2, b2));
-	if(interPoint.x>=Math.min(point0Segment.x, point1Segment.x) && interPoint.x<=Math.max(point0Segment.x, point1Segment.x)) return point.distanceToPoint(interPoint);
-	return Math.min(point.distanceToPoint(point0Segment), point.distanceToPoint(point1Segment));
-}
-=======
 GeometryOperators.distancePointToSegment = function(point, point0Segment, point1Segment) {
   var m = point0Segment.x == point1Segment.x ? Infinity : (point1Segment.y - point0Segment.y) / (point1Segment.x - point0Segment.x);
   var line = m == Infinity ? new Point(Infinity, point0Segment.x) : new Point(m, point0Segment.y - m * point0Segment.x);
@@ -6594,7 +6505,6 @@ GeometryOperators.distancePointToSegment = function(point, point0Segment, point1
   if(interPoint.x >= Math.min(point0Segment.x, point1Segment.x) && interPoint.x <= Math.max(point0Segment.x, point1Segment.x)) return point.distanceToPoint(interPoint);
   return Math.min(point.distanceToPoint(point0Segment), point.distanceToPoint(point1Segment));
 };
->>>>>>> b60399e03d963f94411a2cc44c3105e01c867b5f
 
 GeometryOperators.intersectionLines = function(line0, line1) {
   if(line0.x == line1.x) {
@@ -11221,23 +11131,6 @@ NumberListOperators.union = function(x, y) {
 NumberListOperators.intersection = function(a, b) {
   // Borrowed from here: http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
   //console.log( "arguments: ", arguments ); 
-<<<<<<< HEAD
-  if( arguments.length > 2 ){
-  	var sets = [];
-  	for (var i = 0; i < arguments.length; i++) {
-  		sets.push( arguments[i] );
-  	};
-  	sets.sort(function(a,b){
-		return a.length - b.length;
-	})
-	console.log( "sets: ", sets ); 
-  	var resultsTrail = sets[0];
-  	for (var i = 1; i < sets.length; i++) {
-  		var newSet = sets[i];
-  		resultsTrail = NumberListOperators.intersection( resultsTrail, newSet );
-  	};
-  	return resultsTrail;
-=======
   if(arguments.length > 2) {
     var sets = [];
     for(var i = 0; i < arguments.length; i++) {
@@ -11253,7 +11146,6 @@ NumberListOperators.intersection = function(a, b) {
       resultsTrail = NumberListOperators.intersection(resultsTrail, newSet);
     }
     return resultsTrail;
->>>>>>> b60399e03d963f94411a2cc44c3105e01c867b5f
   }
 
   var result = new NumberList();
@@ -16621,16 +16513,10 @@ fEqTriangle = function(x, y, angle, r) {
   context.fill();
 };
 
-<<<<<<< HEAD
-evalJavaScriptFunction = function(functionText, args, scope){
-	//if(HOLD) return;
-	if(functionText==null) return;
-=======
 sEqTriangle = function(x, y, angle, r) {
   _eqTriangle(x, y, angle, r);
   context.stroke();
 };
->>>>>>> b60399e03d963f94411a2cc44c3105e01c867b5f
 
 fsEqTriangle = function(x, y, angle, r) {
   _eqTriangle(x, y, angle, r);
@@ -16648,58 +16534,6 @@ _eqTriangle = function(x, y, angle, r) {
 };
 
 
-<<<<<<< HEAD
-	var lines = functionText.split('\n');
-
-	for(i=0; lines[i]!=null; i++){
-		lines[i] = lines[i].trim();
-		if(lines[i]=="" || lines[i].substr(2)=="//"){
-			lines.splice(i,1);
-			i--;
-		}
-	}
-
-
-	var isFunction = lines[0].indexOf('function')!=-1;
-
-	functionText = lines.join('\n');
-
-	if(isFunction){
-		if(scope){
-			realCode = "scope.myFunction = " + functionText;
-		} else {
-			realCode = "myFunction = " + functionText;
-		}
-	} else {
-		if(scope){
-			realCode = "scope.myVar = " + functionText;
-		} else {
-			realCode = "myVar = " + functionText;
-		}
-	}
-
-	try{
-		if(isFunction){
-			eval(realCode);
-			if(scope){
-				res = scope.myFunction.apply(scope, args);
-			} else {
-				res = myFunction.apply(this, args);
-			}
-		} else {
-			eval(realCode);
-			if(scope){
-				res = scope.myVar;
-			} else 	{
-				res = myVar;
-			}
-		}
-	} catch(err){
-		good = false;
-		message = err.message;
-		res = null;
-	}
-=======
 //drawing and checking cursor
 
 fRectM = function(x, y, width, height, margin) {
@@ -16713,7 +16547,6 @@ sRectM = function(x, y, width, height, margin) {
   context.strokeRect(x, y, width, height);
   return mY > y - margin && mY < y + height + margin && mX > x - margin && mX < x + width + margin;
 };
->>>>>>> b60399e03d963f94411a2cc44c3105e01c867b5f
 
 fsRectM = function(x, y, width, height, margin) {
   margin = margin == null ? 0 : margin;
@@ -18923,6 +18756,7 @@ getTextFromObject = function(value, type) {
   }
 };
 
+
 function instantiateWithSameType(object, args) {
   return instantiate(typeOf(object), args);
 }
@@ -18938,8 +18772,10 @@ Date.prototype.getType = function() {
 };
 
 
-evalJavaScriptFunction = function(functionText, args) {
-  //if(HOLD) return;
+
+evalJavaScriptFunction = function(functionText, args, scope){
+	//if(HOLD) return;
+	if(functionText==null) return;
 
   var res;
 
@@ -18947,6 +18783,56 @@ evalJavaScriptFunction = function(functionText, args) {
 
   var good = true;
   var message = '';
+
+  var lines = functionText.split('\n');
+
+	for(i=0; lines[i]!=null; i++){
+		lines[i] = lines[i].trim();
+		if(lines[i]=="" || lines[i].substr(2)=="//"){
+			lines.splice(i,1);
+			i--;
+		}
+	}
+
+	var isFunction = lines[0].indexOf('function')!=-1;
+
+	functionText = lines.join('\n');
+
+	if(isFunction){
+		if(scope){
+			realCode = "scope.myFunction = " + functionText;
+		} else {
+			realCode = "myFunction = " + functionText;
+		}
+	} else {
+		if(scope){
+			realCode = "scope.myVar = " + functionText;
+		} else {
+			realCode = "myVar = " + functionText;
+		}
+	}
+
+	try{
+		if(isFunction){
+			eval(realCode);
+			if(scope){
+				res = scope.myFunction.apply(scope, args);
+			} else {
+				res = myFunction.apply(this, args);
+			}
+		} else {
+			eval(realCode);
+			if(scope){
+				res = scope.myVar;
+			} else 	{
+				res = myVar;
+			}
+		}
+	} catch(err){
+		good = false;
+		message = err.message;
+		res = null;
+	}
 
   var realCode;
 
@@ -18957,6 +18843,7 @@ evalJavaScriptFunction = function(functionText, args) {
   } else {
     realCode = "myVar = " + functionText;
   }
+
 
   try {
     if(isFunction) {
@@ -22907,13 +22794,8 @@ window.addEventListener('load', function(){
 		init();
 	}
 
-<<<<<<< HEAD
-	c.l('Moebio Framework v2.257 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
-	
-=======
-	c.l('Moebio Framework v2.256 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
+	c.l('Moebio Framework v2.258 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
 
->>>>>>> b60399e03d963f94411a2cc44c3105e01c867b5f
 }, false);
 
 function _onMouse(e) {
@@ -22962,6 +22844,7 @@ function _onMouse(e) {
 			break;
 	}
 }
+
 
 function onResize(e){
 	_adjustCanvas();
@@ -23016,7 +22899,7 @@ function enterFrame(){
 		context.fillStyle = 'rgba('+backGroundColorRGB[0]+','+backGroundColorRGB[1]+','+backGroundColorRGB[2]+','+_alphaRefresh+')';
 		context.fillRect(0, 0, cW, cH);
 	}
-
+	
    	setCursor('default');
 
    	MOUSE_DOWN = NF_DOWN==nF;
