@@ -147,7 +147,7 @@ evalJavaScriptFunction = function(functionText, args, scope){
 
 	for(i=0; lines[i]!=null; i++){
 		lines[i] = lines[i].trim();
-		if(lines[i]=="" || lines[i].substr(2)=="//"){
+		if(lines[i]=="" || lines[i].substr(1)=="/"){
 			lines.splice(i,1);
 			i--;
 		}
