@@ -2660,6 +2660,13 @@ Table.prototype.getReport = function(level) {
 
   var names = this.getNames();
   var types = this.getTypes();
+
+  text += ident + "--";
+  names.forEach(function(name, i){
+    text += ident + name + " ["+TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"]";
+  });
+  text += ident + "--";
+
   var sameTypes = types.allElementsEqual();
   if(sameTypes) {
     text += ident + "types of all lists: " + types[0];
@@ -2673,7 +2680,12 @@ Table.prototype.getReport = function(level) {
 
     var i;
     for(i = 0; this[i] != null; i++) {
-      text += "\n" + ident + ("(" + (i) + "/0-" + (this.length - 1) + ")") + this[i].getReport(1);
+      text += "\n" + ident + ("(" + (i) + "/0-" + (this.length - 1) + ")")
+      try{
+         text += this[i].getReport(1);
+      } catch(err){
+        text += ident + "[!] something wrong with list ";
+      }
     }
   }
 
@@ -2683,8 +2695,10 @@ Table.prototype.getReport = function(level) {
 
 };
 
-Table.prototype.getReportObject = function() {}; //TODO
 Table.prototype.getReportHtml = function() {}; //TODO
+
+Table.prototype.getReportObject = function() {}; //TODO
+
 
 
 
@@ -18641,8 +18655,14 @@ Engine3D.prototype.quadrilater = function(p0, p1, p2, p3) {
 };
 /**
  * All these function are globally available since they are included in the Global class
- *
  */
+
+
+
+
+var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"}
+
+
 
 /**
  * types are:

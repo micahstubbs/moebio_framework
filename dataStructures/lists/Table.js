@@ -251,6 +251,13 @@ Table.prototype.getReport = function(level) {
 
   var names = this.getNames();
   var types = this.getTypes();
+
+  text += ident + "--";
+  names.forEach(function(name, i){
+    text += ident + name + " ["+TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"]";
+  });
+  text += ident + "--";
+
   var sameTypes = types.allElementsEqual();
   if(sameTypes) {
     text += ident + "types of all lists: " + types[0];
@@ -264,7 +271,12 @@ Table.prototype.getReport = function(level) {
 
     var i;
     for(i = 0; this[i] != null; i++) {
-      text += "\n" + ident + ("(" + (i) + "/0-" + (this.length - 1) + ")") + this[i].getReport(1);
+      text += "\n" + ident + ("(" + (i) + "/0-" + (this.length - 1) + ")")
+      try{
+         text += this[i].getReport(1);
+      } catch(err){
+        text += ident + "[!] something wrong with list ";
+      }
     }
   }
 
@@ -274,8 +286,10 @@ Table.prototype.getReport = function(level) {
 
 };
 
-Table.prototype.getReportObject = function() {}; //TODO
 Table.prototype.getReportHtml = function() {}; //TODO
+
+Table.prototype.getReportObject = function() {}; //TODO
+
 
 
 
