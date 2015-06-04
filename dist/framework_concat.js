@@ -18794,17 +18794,18 @@ Date.prototype.getType = function() {
 
 
 evalJavaScriptFunction = function(functionText, args, scope){
-	//if(HOLD) return;
 	if(functionText==null) return;
 
-  var res;
+	var res;
 
-  var myFunction;
+	var myFunction;
 
-  var good = true;
-  var message = '';
+	var good = true;
+	var message = '';
 
-  var lines = functionText.split('\n');
+	var realCode;
+
+	var lines = functionText.split('\n');
 
 	for(i=0; lines[i]!=null; i++){
 		lines[i] = lines[i].trim();
@@ -18854,30 +18855,29 @@ evalJavaScriptFunction = function(functionText, args, scope){
 		res = null;
 	}
 
-  var realCode;
 
-  var isFunction = functionText.split('\n')[0].indexOf('function') != -1;
+  // var isFunction = functionText.split('\n')[0].indexOf('function') != -1;
 
-  if(isFunction) {
-    realCode = "myFunction = " + functionText;
-  } else {
-    realCode = "myVar = " + functionText;
-  }
+  // if(isFunction) {
+  //   realCode = "myFunction = " + functionText;
+  // } else {
+  //   realCode = "myVar = " + functionText;
+  // }
 
 
-  try {
-    if(isFunction) {
-      eval(realCode);
-      res = myFunction.apply(this, args);
-    } else {
-      eval(realCode);
-      res = myVar;
-    }
-  } catch(err) {
-    good = false;
-    message = err.message;
-    res = null;
-  }
+  // try {
+  //   if(isFunction) {
+  //     eval(realCode);
+  //     res = myFunction.apply(this, args);
+  //   } else {
+  //     eval(realCode);
+  //     res = myVar;
+  //   }
+  // } catch(err) {
+  //   good = false;
+  //   message = err.message;
+  //   res = null;
+  // }
 
   var resultObject = {
     result: res,
