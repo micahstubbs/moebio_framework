@@ -18879,6 +18879,8 @@ evalJavaScriptFunction = function(functionText, args, scope){
   //   res = null;
   // }
 
+  //c.l('resultObject', resultObject);
+
   var resultObject = {
     result: res,
     success: good,
