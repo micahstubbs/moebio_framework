@@ -2,8 +2,11 @@ Tree.prototype = new Network();
 Tree.prototype.constructor = Tree;
 
 /**
- * Tree 
+ * @classdesc Trees are Networks that have a hierarchical structure.
+ *
+ * @description Create a new Tree.
  * @constructor
+ * @category networks
  */
 function Tree() {
   Network.apply(this);
@@ -13,7 +16,14 @@ function Tree() {
   this._createRelation = this.createRelation;
   this.createRelation = this._newCreateRelation;
 }
-//
+
+
+/**
+ * Adds a given Node to the tree, under the given parent Node.
+ *
+ * @param {Node} node
+ * @param {Node} parent
+ */
 Tree.prototype.addNodeToTree = function(node, parent) {
   this.addNode(node);
   if(parent == null) {
@@ -29,6 +39,9 @@ Tree.prototype.addNodeToTree = function(node, parent) {
   this.nLevels = Math.max(this.nLevels, node.level + 1);
 };
 
+/**
+ * @ignore
+ */
 Network.prototype._newCreateRelation = function(parent, node, id, weight) {
   if(id == null) id = this.relationList.getNewId();
   this._createRelation(parent, node, id, weight);
@@ -37,7 +50,13 @@ Network.prototype._newCreateRelation = function(parent, node, id, weight) {
   this.nLevels = Math.max(this.nLevels, node.level + 1);
 };
 
+/**
+ * Adds a new parent node to the Tree.
+ *
+ * @param {Node} node New Parent Node.
+ */
 Tree.prototype.addFather = function(node, children) {
+  //TODO: is children supposed to be child?
   if(child.parent != null || this.nodeList.indexOf(child) == -1) return false;
   this.addNode(node);
   child.parent = node;
@@ -46,6 +65,12 @@ Tree.prototype.addFather = function(node, children) {
   this.createRelation(node, child);
 };
 
+/**
+ * Provides a {@link NodeList} of all the Nodes of the Tree at a given level.
+ *
+ * @param {Number} level Level (depth) of the Tree to extract Nodes at.
+ * @return {NodeList} All Nodes at the given level of the tree.
+ */
 Tree.prototype.getNodesByLevel = function(level) {
   var newNodeList = new NodeList();
   for(i = 0; this.nodeList[i] != null; i++) {
@@ -55,10 +80,11 @@ Tree.prototype.getNodesByLevel = function(level) {
 };
 
 /**
- * return the leaves (nodes without children) of a tree
+ * Returns the leaves (nodes without children) of a tree.
  *
- * @param {Node} node to collect leaves under a node
- * @return {NodeList}
+ * @param {Node} node Optional parent Node to start the leaf search from.
+ * If no Node is provided, all leaf Nodes are returned.
+ * @return {NodeList} Leaves of the Tree or sub-tree.
  * tags:
  */
 Tree.prototype.getLeaves = function(node) {
@@ -84,9 +110,18 @@ Tree.prototype.getLeaves = function(node) {
   return leaves;
 };
 
+/**
+ * assignDescentWeightsToNodes
+ *
+ * @return {undefined}
+ */
 Tree.prototype.assignDescentWeightsToNodes = function() {
   this._assignDescentWeightsToNode(this.nodeList[0]);
 };
+
+/**
+ * @ignore
+ */
 Tree.prototype._assignDescentWeightsToNode = function(node) {
   var i;
   if(node.toNodeList.length == 0) {
@@ -99,6 +134,12 @@ Tree.prototype._assignDescentWeightsToNode = function(node) {
   return node.descentWeight;
 };
 
+/**
+ * Returns a string indicating the size of the Tree.
+ *
+ * @return {String} Log message indicating Tree's size.
+ */
 Tree.prototype.getReport = function(relation) {
+  //TODO: remove relation input?
   return "Tree contains " + this.nodeList.length + " nodes and " + this.relationList.length + " relations";
 };

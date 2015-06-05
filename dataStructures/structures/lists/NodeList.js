@@ -282,6 +282,7 @@ NodeList.prototype.clone = function() {
 
 
 //methods overriden
+
 /**
  * getWithoutRepetitions
  *
