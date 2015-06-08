@@ -1,6 +1,8 @@
 /**
- * MatrixGenerators
- * @constructor
+ * @classdesc Create default Matrix instances.
+ *
+ * @namespace
+ * @category basics
  */
 function MatrixGenerators() {}
 

@@ -2,8 +2,11 @@ DataModel.prototype = {};
 DataModel.prototype.constructor = DataModel;
 
 /**
- * DataModel 
+ * @classdesc Basic DataType from which other types are derived.
+ *
+ * @description Creates a new DataModel.
  * @constructor
+ * @category basics
  */
 function DataModel() {
   Object.apply(this);
@@ -18,6 +21,7 @@ DataModel.prototype.setType = function(type) {
 };
 
 DataModel.prototype.getType = function(type) {
+  //TODO: remove type param
   return this.type;
 };
 DataModel.prototype.toString = function() {

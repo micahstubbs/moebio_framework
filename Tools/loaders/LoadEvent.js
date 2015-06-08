@@ -4,6 +4,7 @@ LoadEvent.prototype.constructor = LoadEvent;
 /**
  * LoadEvent
  * @constructor
+ * @category misc
  */
 function LoadEvent() {
   Object.apply(this);

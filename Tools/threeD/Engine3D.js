@@ -1,7 +1,8 @@
 Engine3D.prototype.constructor = Engine3D;
 
 /**
- * Engine3D
+ * @classdesc Engine3D
+ *
  * @param {Object} configuration Configuration for engine
  * @param {Number} configuration.lens Distance of camera from scene
  * @param {Point3D} configuration.angles Initial angle of camera
@@ -11,6 +12,7 @@ Engine3D.prototype.constructor = Engine3D;
  * var engine = new Engine3D({
  *   lens:300
  * });
+ * @category geometry
  */
 function Engine3D(configuration) {
   configuration = configuration == null ? {} : configuration;

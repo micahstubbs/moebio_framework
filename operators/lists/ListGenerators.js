@@ -1,7 +1,8 @@
 /**
- * static class with methods to generate different kinds of Lists
- * 
- * @constructor
+ * @classdesc Create default lists
+ *
+ * @namespace
+ * @category basics
  */
 function ListGenerators() {}
 

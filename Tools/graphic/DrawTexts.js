@@ -1,6 +1,7 @@
 /**
- * static Class with methods to render text in canvas
- * @constructor
+ * @classdesc static Class with methods to render text in canvas
+ * @namespace
+ * @category strings
  */
 function DrawTexts() {}
 

@@ -15,6 +15,7 @@ DragDetection.prototype.constructor = DragDetection;
  * @param {Function} configuration.areaVerificationFunction
  * @param {Number} configuration.factor
  * @constructor
+ * @category interactions
  */
 function DragDetection(configuration) { //mode, listenerFunction, target, areaVerificationFunction){
   this.mode = configuration.mode || 0;

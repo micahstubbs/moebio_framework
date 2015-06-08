@@ -1,4 +1,4 @@
-/**
+/*
  * All these function are globally available since they are included in the Global class
  */
 
@@ -9,7 +9,7 @@ var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Bo
 
 
 
-/**
+/*
  * types are:
  * number, string, boolean, date
  * and all data models classes names
