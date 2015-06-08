@@ -1,6 +1,8 @@
 /**
- * DateListOperators
- * @constructor
+ * @classdesc Provides a set of tools that work with DateLists.
+ *
+ * @namespace
+ * @category dates
  */
 function DateListOperators() {}
 
@@ -114,7 +116,7 @@ DateListOperators.buildTimeTreeFromDates = function(dates) {
 
   tree.assignDescentWeightsToNodes();
 
-  // 
+  //
 
 
 

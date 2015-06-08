@@ -8,9 +8,12 @@ DateOperators.MONTH_NAMES_SHORT = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'ju
 DateOperators.MONTH_NDAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 DateOperators.WEEK_NAMES = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
 /**
- * DateOperators
- * @constructor
+ * @classdesc Provides a set of tools that work with Dates.
+ *
+ * @namespace
+ * @category dates
  */
 function DateOperators() {}
 
