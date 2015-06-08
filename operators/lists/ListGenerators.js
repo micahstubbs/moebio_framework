@@ -11,6 +11,7 @@ function ListGenerators() {}
  * @param {Object} nValues length of the List
  * @param {Object} element object to be placed in all positions
  * @return {List} generated List
+ * tags:generator
  */
 ListGenerators.createListWithSameElement = function(nValues, element) {
   switch(typeOf(element)) {
