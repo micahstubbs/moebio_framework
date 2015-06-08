@@ -1,8 +1,12 @@
 Polygon.prototype = new List();
 Polygon.prototype.constructor = Polygon;
+
 /**
- * Polygon
+ * @classdesc A Polygon is a shape created from a list of {@link Point|Points}.
+ *
+ * @description Creates a new Polygon.
  * @constructor
+ * @category geometry
  */
 function Polygon() {
   var array = List.apply(this, arguments);

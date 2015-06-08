@@ -1,14 +1,19 @@
 PolygonList.prototype = new Table();
 PolygonList.prototype.constructor = PolygonList;
+
 /**
- * PolygonList
+ * @classdesc A {@link List} structure for storing {@link Polygon} instances.
+ *
+ * @description Creates a new PolygonList.
  * @constructor
+ * @category geometry
  */
 function PolygonList() {
   var array = Table.apply(this, arguments);
   array = PolygonList.fromArray(array);
   return array;
 }
+
 PolygonList.fromArray = function(array) {
   var result = Table.fromArray(array);
   result.type = "PolygonList";
@@ -19,6 +24,7 @@ PolygonList.fromArray = function(array) {
   result.getString = PolygonList.prototype.getString;
   return result;
 };
+
 PolygonList.prototype.getFrame = function() {
   if(this.length == 0) return null;
   var frameP = this[0].getFrame();
@@ -35,6 +41,7 @@ PolygonList.prototype.getFrame = function() {
 
   return rectangle;
 };
+
 PolygonList.prototype.add = function(object) {
   var type = typeOf(object);
   var i;
@@ -49,6 +56,7 @@ PolygonList.prototype.add = function(object) {
       break;
   }
 };
+
 PolygonList.prototype.factor = function(value) {
   var newPolygonList = new PolygonList();
   for(var i = 0; this[i] != null; i++) {

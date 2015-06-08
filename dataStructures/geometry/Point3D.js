@@ -1,8 +1,14 @@
 Point3D.prototype = new Point();
 Point3D.prototype.constructor = Point3D;
 /**
- * Point3D
+ * @classdesc Point3D represents a point in 3D space.
+ *
+ * @description Create a new 3D Point.
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Number} z
  * @constructor
+ * @category geometry
  */
 function Point3D(x, y, z) {
   Point.apply(this, arguments);
