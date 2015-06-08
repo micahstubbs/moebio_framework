@@ -173,8 +173,10 @@ module.exports = function (grunt) {
   grunt.registerTask('doc', [ 'jsdoc' ]);
 
   //
-  // Build and deploy static site.
+  // Build and deploy static site. Building the site will also build
+  // the documentation.
   //
-  grunt.registerTask('site', ['jekyll:build', 'doc', 'gh-pages']);
+  grunt.registerTask('build-site', ['jekyll:build', 'doc']);
+  grunt.registerTask('deploy-site', ['build-site', 'gh-pages']);
 
 };
