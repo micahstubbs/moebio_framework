@@ -2,8 +2,11 @@ DateAxis.prototype = new DataModel();
 DateAxis.prototype.constructor = DateAxis;
 
 /**
- * DateAxis
+ * @classdesc Date based {@link Axis}.
+ *
+ * @description Creates a new DateAxis.
  * @constructor
+ * @category dates
  */
 function DateAxis(departureDateInterval, arrivalInterval) {
   arrivalInterval = arrivalInterval == null ? new Interval(0, 1) : arrivalInterval;

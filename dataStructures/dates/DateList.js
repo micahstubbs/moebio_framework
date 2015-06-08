@@ -1,10 +1,15 @@
 DateList.prototype = new List();
 DateList.prototype.constructor = DateList;
-/**
- * DateList
- * @constructor
- */
 
+/**
+ * @classdesc A {@link List} for storing Dates.
+ *
+ * @description Creates a new DateList.
+ * @param {Date} Interval's minimum value.
+ * @param {Date} Interval's maximum value.
+ * @constructor
+ * @category dates
+ */
 function DateList() {
   var args = [];
   for(var i = 0; i < arguments.length; i++) {
