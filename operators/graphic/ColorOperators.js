@@ -1,10 +1,11 @@
 /**
- * ColorOperators
- * @constructor
+ * @classdesc Provides a set of tools that work with Colors.
  *
+ * @namespace
+ * @category colors
  */
-// TODO: create Color struture to be used instead of arrays [255, 100,0] ?
 function ColorOperators() {}
+// TODO: create Color struture to be used instead of arrays [255, 100,0] ?
 
 
 

@@ -5,8 +5,6 @@ DateList.prototype.constructor = DateList;
  * @classdesc A {@link List} for storing Dates.
  *
  * @description Creates a new DateList.
- * @param {Date} Interval's minimum value.
- * @param {Date} Interval's maximum value.
  * @constructor
  * @category dates
  */
