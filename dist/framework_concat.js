@@ -2660,6 +2660,13 @@ Table.prototype.getReport = function(level) {
 
   var names = this.getNames();
   var types = this.getTypes();
+
+  text += ident + "--";
+  names.forEach(function(name, i){
+    text += ident + name + " ["+TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"]";
+  });
+  text += ident + "--";
+
   var sameTypes = types.allElementsEqual();
   if(sameTypes) {
     text += ident + "types of all lists: " + types[0];
@@ -2673,7 +2680,12 @@ Table.prototype.getReport = function(level) {
 
     var i;
     for(i = 0; this[i] != null; i++) {
-      text += "\n" + ident + ("(" + (i) + "/0-" + (this.length - 1) + ")") + this[i].getReport(1);
+      text += "\n" + ident + ("(" + (i) + "/0-" + (this.length - 1) + ")")
+      try{
+         text += this[i].getReport(1);
+      } catch(err){
+        text += ident + "[!] something wrong with list ";
+      }
     }
   }
 
@@ -2683,8 +2695,10 @@ Table.prototype.getReport = function(level) {
 
 };
 
-Table.prototype.getReportObject = function() {}; //TODO
 Table.prototype.getReportHtml = function() {}; //TODO
+
+Table.prototype.getReportObject = function() {}; //TODO
+
 
 
 
@@ -6396,81 +6410,10 @@ GeometryOperators.trueBezierCurveHeightHorizontalControlPoints = function(x0, x1
     GeometryOperators._bezierSimpleCurveTable[1] = 1;
   }
 
-  //c.log('x, y0, y1, , Math.floor(1000*x), GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*x)]', x, y0, y1, Math.floor(1000*x), GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*x)]);
-
   return GeometryOperators._bezierSimpleCurveTable[Math.floor(1000 * x)] * (y1 - y0) + y0;
 
 };
 
-
-
-
-
-/**
- * This an approximation, it doesn't take into account actual values of c0x and c1x
- */
-//GeometryOperators.trueBezierCurveHeightHorizontalControlPointsOld=function(x0, x1, y0, y1, c0x, c1x, x){//TODO:fix
-
-// if(GeometryOperators._bezierSimpleCurveTable==null){
-
-// 	for(i=0; i<1000; i++){
-
-// 	}
-
-// }
-
-// return GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*(x-x0)/(x1-x0))]*(y1-y0) + y0;
-
-
-
-//
-
-//x=3at + t^2(3-9a) + t^3(1+6a)  --> Javier
-//http://en.wikipedia.org/wiki/Cubic_function#General_formula_for_roots
-
-
-
-
-//return (x-x0)/(x1-x0);// (x - x0)/(c0x + c1x - 2*x0);
-
-//var
-
-// var antit = 1 - t;
-
-// var x0t = x0 + (cx0-x0)*t;
-// var x1t = x1 + (cx1-x1)*t;
-
-// var xm = x0t = (x1t-x0t)*t;
-
-
-// c.log( (x-x0)/(c0x-x0+x1 - 2*x0) );
-
-// return (x-x0)/(c0x+x1 - 2*x0);
-
-
-// var d0 = c0x-x0;
-// // var d1 = c1x-x1;
-
-// var _a = 2*d0;
-// var _b = d0 + x1 - x0;
-// var _c = x0 - x;
-
-// // var _b = d0 + x1 - x0;
-// // var _c = x0 - x;
-
-
-// //c.log(_a, _b, _c, '-->', (-_b + Math.sqrt(_b*_b - 4*_a*_c))/(2*_a), (-_b -Math.sqrt(_b*_b - 4*_a*_c))/(2*_a));
-
-// return [(-_b + Math.sqrt(_b*_b - 4*_a*_c))/(2*_a), (-_b -Math.sqrt(_b*_b - 4*_a*_c))/(2*_a)];
-
-
-
-
-// var cosinus = Math.cos(Math.PI*(t-1));
-// var sign = cosinus>0?1:-1;
-
-// return (0.5 + 0.5*( Math.pow(cosinus*sign, 0.6)*sign ))*(y1-y0) + y0;
-//}
 
 /**
  * This an approximation, it doesn't take into account actual values of c0x and c1x
@@ -8821,6 +8764,7 @@ function ListGenerators() {}
  * @param {Object} nValues length of the List
  * @param {Object} element object to be placed in all positions
  * @return {List} generated List
+ * tags:generator
  */
 ListGenerators.createListWithSameElement = function(nValues, element) {
   switch(typeOf(element)) {
@@ -18774,8 +18718,14 @@ Engine3D.prototype.quadrilater = function(p0, p1, p2, p3) {
 }
 /**
  * All these function are globally available since they are included in the Global class
- *
  */
+
+
+
+
+var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"}
+
+
 
 /**
  * types are:
@@ -18889,6 +18839,7 @@ getTextFromObject = function(value, type) {
   }
 };
 
+
 function instantiateWithSameType(object, args) {
   return instantiate(typeOf(object), args);
 }
@@ -18904,39 +18855,94 @@ Date.prototype.getType = function() {
 };
 
 
-evalJavaScriptFunction = function(functionText, args) {
-  //if(HOLD) return;
 
-  var res;
+evalJavaScriptFunction = function(functionText, args, scope){
+	if(functionText==null) return;
 
-  var myFunction;
+	var res;
 
-  var good = true;
-  var message = '';
+	var myFunction;
 
-  var realCode;
+	var good = true;
+	var message = '';
 
-  var isFunction = functionText.split('\n')[0].indexOf('function') != -1;
+	var realCode;
 
-  if(isFunction) {
-    realCode = "myFunction = " + functionText;
-  } else {
-    realCode = "myVar = " + functionText;
-  }
+	var lines = functionText.split('\n');
 
-  try {
-    if(isFunction) {
-      eval(realCode);
-      res = myFunction.apply(this, args);
-    } else {
-      eval(realCode);
-      res = myVar;
-    }
-  } catch(err) {
-    good = false;
-    message = err.message;
-    res = null;
-  }
+	for(i=0; lines[i]!=null; i++){
+		lines[i] = lines[i].trim();
+		if(lines[i]=="" || lines[i].substr(1)=="/"){
+			lines.splice(i,1);
+			i--;
+		}
+	}
+
+	var isFunction = lines[0].indexOf('function')!=-1;
+
+	functionText = lines.join('\n');
+
+	if(isFunction){
+		if(scope){
+			realCode = "scope.myFunction = " + functionText;
+		} else {
+			realCode = "myFunction = " + functionText;
+		}
+	} else {
+		if(scope){
+			realCode = "scope.myVar = " + functionText;
+		} else {
+			realCode = "myVar = " + functionText;
+		}
+	}
+
+	try{
+		if(isFunction){
+			eval(realCode);
+			if(scope){
+				res = scope.myFunction.apply(scope, args);
+			} else {
+				res = myFunction.apply(this, args);
+			}
+		} else {
+			eval(realCode);
+			if(scope){
+				res = scope.myVar;
+			} else 	{
+				res = myVar;
+			}
+		}
+	} catch(err){
+		good = false;
+		message = err.message;
+		res = null;
+	}
+
+
+  // var isFunction = functionText.split('\n')[0].indexOf('function') != -1;
+
+  // if(isFunction) {
+  //   realCode = "myFunction = " + functionText;
+  // } else {
+  //   realCode = "myVar = " + functionText;
+  // }
+
+
+  // try {
+  //   if(isFunction) {
+  //     eval(realCode);
+  //     res = myFunction.apply(this, args);
+  //   } else {
+  //     eval(realCode);
+  //     res = myVar;
+  //   }
+  // } catch(err) {
+  //   good = false;
+  //   message = err.message;
+  //   res = null;
+  // }
+
+  //c.l('resultObject', resultObject);
 
   var resultObject = {
     result: res,
@@ -22788,6 +22794,7 @@ var T_MOUSE_PRESSED = 0; //time in milliseconds of mouse being pressed, useful f
 //var deltaWheel = 0;
 var cursorStyle = 'auto';
 var backGroundColor = 'white';
+var backGroundColorRGB = [255,255,255];
 var cycleActive;
 
 //global constants
@@ -22810,6 +22817,8 @@ var _setTimeOutId;
 var _cycleOnMouseMovement = false;
 var _interactionCancelledFrame;
 var _tLastMouseDown;
+
+var _alphaRefresh=0;//if _alphaRefresh>0 instead of clearing the canvas each frame, a transparent rectangle will be drawn
 
 var END_CYCLE_DELAY = 3000; //time in milliseconds, from last mouse movement to the last cycle to be executed in case cycleOnMouseMovement has been activated
 
@@ -22870,7 +22879,7 @@ window.addEventListener('load', function(){
 		init();
 	}
 
-	c.l('Moebio Framework v2.256 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
+	c.l('Moebio Framework v2.258 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
 
 }, false);
 
@@ -22921,6 +22930,7 @@ function _onMouse(e) {
 	}
 }
 
+
 function onResize(e){
 	_adjustCanvas();
 	resizeWindow();
@@ -22968,7 +22978,13 @@ function setFrameRate(fr){
 }
 
 function enterFrame(){
-   	context.clearRect(0, 0, cW, cH);
+	if(_alphaRefresh==0){
+	   	context.clearRect(0, 0, cW, cH);
+	} else {
+		context.fillStyle = 'rgba('+backGroundColorRGB[0]+','+backGroundColorRGB[1]+','+backGroundColorRGB[2]+','+_alphaRefresh+')';
+		context.fillRect(0, 0, cW, cH);
+	}
+	
    	setCursor('default');
 
    	MOUSE_DOWN = NF_DOWN==nF;
@@ -23082,6 +23098,9 @@ function setBackgroundColor(color){
 		color = ColorOperators.RGBtoHEX(color[0], color[1], color[2]);
 	}
 	backGroundColor = color;
+
+	backGroundColorRGB = ColorOperators.colorStringToRGB(backGroundColor);
+
 	var body = document.getElementById('index');
 	body.setAttribute('bgcolor', backGroundColor);
 }

@@ -1,7 +1,13 @@
 /**
  * All these function are globally available since they are included in the Global class
- *
  */
+
+
+
+
+var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"}
+
+
 
 /**
  * types are:
@@ -115,6 +121,7 @@ getTextFromObject = function(value, type) {
   }
 };
 
+
 function instantiateWithSameType(object, args) {
   return instantiate(typeOf(object), args);
 }
@@ -130,39 +137,94 @@ Date.prototype.getType = function() {
 };
 
 
-evalJavaScriptFunction = function(functionText, args) {
-  //if(HOLD) return;
 
-  var res;
+evalJavaScriptFunction = function(functionText, args, scope){
+	if(functionText==null) return;
 
-  var myFunction;
+	var res;
 
-  var good = true;
-  var message = '';
+	var myFunction;
 
-  var realCode;
+	var good = true;
+	var message = '';
 
-  var isFunction = functionText.split('\n')[0].indexOf('function') != -1;
+	var realCode;
 
-  if(isFunction) {
-    realCode = "myFunction = " + functionText;
-  } else {
-    realCode = "myVar = " + functionText;
-  }
+	var lines = functionText.split('\n');
 
-  try {
-    if(isFunction) {
-      eval(realCode);
-      res = myFunction.apply(this, args);
-    } else {
-      eval(realCode);
-      res = myVar;
-    }
-  } catch(err) {
-    good = false;
-    message = err.message;
-    res = null;
-  }
+	for(i=0; lines[i]!=null; i++){
+		lines[i] = lines[i].trim();
+		if(lines[i]=="" || lines[i].substr(1)=="/"){
+			lines.splice(i,1);
+			i--;
+		}
+	}
+
+	var isFunction = lines[0].indexOf('function')!=-1;
+
+	functionText = lines.join('\n');
+
+	if(isFunction){
+		if(scope){
+			realCode = "scope.myFunction = " + functionText;
+		} else {
+			realCode = "myFunction = " + functionText;
+		}
+	} else {
+		if(scope){
+			realCode = "scope.myVar = " + functionText;
+		} else {
+			realCode = "myVar = " + functionText;
+		}
+	}
+
+	try{
+		if(isFunction){
+			eval(realCode);
+			if(scope){
+				res = scope.myFunction.apply(scope, args);
+			} else {
+				res = myFunction.apply(this, args);
+			}
+		} else {
+			eval(realCode);
+			if(scope){
+				res = scope.myVar;
+			} else 	{
+				res = myVar;
+			}
+		}
+	} catch(err){
+		good = false;
+		message = err.message;
+		res = null;
+	}
+
+
+  // var isFunction = functionText.split('\n')[0].indexOf('function') != -1;
+
+  // if(isFunction) {
+  //   realCode = "myFunction = " + functionText;
+  // } else {
+  //   realCode = "myVar = " + functionText;
+  // }
+
+
+  // try {
+  //   if(isFunction) {
+  //     eval(realCode);
+  //     res = myFunction.apply(this, args);
+  //   } else {
+  //     eval(realCode);
+  //     res = myVar;
+  //   }
+  // } catch(err) {
+  //   good = false;
+  //   message = err.message;
+  //   res = null;
+  // }
+
+  //c.l('resultObject', resultObject);
 
   var resultObject = {
     result: res,
