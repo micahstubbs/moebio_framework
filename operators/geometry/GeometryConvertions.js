@@ -1,3 +1,9 @@
+/**
+ * @classdesc Tools to convert geometric data types.
+ *
+ * @namespace
+ * @category geometry
+ */
 function GeometryConvertions() {}
 
 //include(frameworksRoot+"operators/strings/StringOperators.js")
@@ -6,13 +12,13 @@ function GeometryConvertions() {}
 // sep0 = sep0 || ",";
 // sep1 = sep1 || " ";
 // sep2 = sep2 || "\n";
-// 	
+//
 // var polygonList = new PolygonList();
 // var polygon;
 // var point;
-// 	
+//
 // lines = StringOperators.splitString(string, sep2);
-// 	
+//
 // var i;
 // var j;
 // for(i=0; lines[i]!=null; i++){

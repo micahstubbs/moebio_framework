@@ -1,6 +1,8 @@
 /**
- * PointOperators
- * @constructor
+ * @classdesc Provides a set of tools that work with {@link Point|Points}.
+ *
+ * @namespace
+ * @category geometry
  */
 function PointOperators() {}
 

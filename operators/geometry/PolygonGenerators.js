@@ -1,6 +1,8 @@
 /**
- * PolygonGenerators
- * @constructor
+ * @classdesc Functions to create Polygons from a set of points
+ *
+ * @namespace
+ * @category geometry
  */
 function PolygonGenerators() {}
 

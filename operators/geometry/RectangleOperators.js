@@ -1,12 +1,14 @@
 /**
- * RectangleOperators
- * @constructor
+ * @classdesc Provides a set of tools that work with Rectangles
+ *
+ * @namespace
+ * @category geometry
  */
 function RectangleOperators() {}
 
 
 /**
- * 
+ *
  * 0: quadrification
  * 1: vertical
  * 2: horizontal
@@ -143,7 +145,7 @@ RectangleOperators.quadrification = RectangleOperators.squarify; //old name
  * Squarified algorithm as described in (http://www.win.tue.nl/~vanwijk/stm.pdf)
  * @param {Rectangle} bounds Rectangle
  * @param {NumberList} list of weights
- * 
+ *
  * @param {Boolean} weights are normalized
  * @param {Boolean} weights are sorted
  * @return {List} a list of Rectangles
@@ -279,10 +281,10 @@ RectangleOperators.squarify = function(frame, weights, isNormalizedWeights, isSo
 };
 
 /**
- * partitionRectangle 
+ * partitionRectangle
  * @param {Rectangle} bounds Rectangle
  * @param {NumberList} normalizedWeight List
- * 
+ *
  * @return {List} a list of Rectangles
  */
 RectangleOperators.partitionRectangle = function(rectangle, normalizedWeightList, sum) {
@@ -319,7 +321,7 @@ RectangleOperators.partitionRectangle = function(rectangle, normalizedWeightList
 /**
  * returns the highest ratio from a list of Rectangles
  * @param {List} rectangleList a Rectangle List
- * 
+ *
  * @return {Number} highestRatio
  */
 RectangleOperators._getHighestRatio = function(rectangleList) {

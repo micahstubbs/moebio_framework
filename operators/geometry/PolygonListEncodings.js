@@ -1,9 +1,15 @@
+/**
+ * @classdesc Provides a set of tools that work with {@link Country|Countries}.
+ *
+ * @namespace
+ * @category geo
+ */
 function PolygonListEncodings() {}
 
 /**
  * converts a simple format for polygons into a PolygonList
  * @param {String} string
- * 
+ *
  * @param {String} separatorCoordinates "," by default
  * @param {String} separatorPolygons "/" by default
  * @return {PolygonList}
@@ -36,7 +42,7 @@ PolygonListEncodings.StringToPolygonList = function(string, separatorCoordinates
 /**
  * converts a polygonList into a simple text format
  * @param {PolygonList} polygonList
- * 
+ *
  * @param {String} separatorCoordinates "," by default
  * @param {String} separatorPolygons "/" by default
  * @return {String}
