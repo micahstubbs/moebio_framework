@@ -2,8 +2,20 @@ Relation.prototype = new Node();
 Relation.prototype.constructor = Relation;
 
 /**
- * Relation 
+ * Relation
+ * @classdesc Relations represent the edges that connect Nodes
+ * in a Network DataType.
+ *
+ * @description create a new Relation.
  * @constructor
+ * @param {String} id ID of the Relation.
+ * @param {String} name Name of the Relation.
+ * @param {Node} node0 Source of the Relation.
+ * @param {Node} node1 Destination of the Relation.
+ * @param {Number} weight Edge weight associated with Relation.
+ * Defaults to 1.
+ * @param {String} content Other data to associate with this Relation.
+ * @category networks
  */
 function Relation(id, name, node0, node1, weight, content) {
   Node.apply(this, [id, name]);

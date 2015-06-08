@@ -1,15 +1,24 @@
+/**
+ * @classdesc NetworkGenerators provides a set of tools to generate Network
+ * instances from a variety of sources.
+ * @namespace
+ * @category networks
+ */
 function NetworkGenerators() {}
 
 
 /**
- * builds a random network, several options
- * @param  {Number} nNodes number of nodes
- * @param  {Number} pRelation probability of a relation being created between 2 nodes
- * 
- * @param  {Number} mode 0:simple random 1:clusterized
- * @param  {Boolean} randomRelationsWeights adds a random weigth to relations
- * @return {Network}
+ * Build a random network based on the provided options
  * tags:generator
+ * @param {Number} nNodes number of nodes
+ * @param {Number} pRelation probability of a relation being created between 2 nodes
+ *
+ * @param {Number} mode 0:simple random 1:clusterized
+ * @param {Boolean} randomRelationsWeights adds a random weigth to relations
+ * @return {Network}
+ * @example
+ * // generate a sparsely connected network with 2000 Nodes
+ * network = NetworkGenerators.createRandomNetwork(2000, 0.0006, 1);
  */
 NetworkGenerators.createRandomNetwork = function(nNodes, pRelation, mode, randomRelationsWeights) {
   if(nNodes == null || pRelation == null) return null;
@@ -64,8 +73,13 @@ NetworkGenerators.createRandomNetwork = function(nNodes, pRelation, mode, random
 };
 
 /**
- * weightsForRelationsMethod 0:dotProduct (more efficient) 1:cosinus similarity
- * http://en.wikipedia.org/wiki/Cosine_similarity
+ * @param strings
+ * @param texts
+ * @param {Number} weightsForRelationsMethod
+ * <ul>
+ * <li><strong>0</strong>: dotProduct (more efficient)</li>
+ * <li><strong>1</strong>: {@link http://en.wikipedia.org/wiki/Cosine_similarity|cosinus similarity}</li>
+ *
  */
 NetworkGenerators.createTextsCoOccurrencesNetwork = function(strings, texts, weightsForRelationsMethod, minimum) {
   var occurrencesTable = StringListOperators.countStringsOccurrencesOnTexts(strings, texts, weightsForRelationsMethod, minimum);
@@ -128,7 +142,7 @@ NetworkGenerators.createNetworkFromOccurrencesTable = function(occurrencesTable,
 /**
  * Creates a network using a list and measuring the relation weight with a given method
  * a Relation is created between two nodes if and only if the returned weight is > 0
- * @param {List} list List of objects that define the nodes 
+ * @param {List} list List of objects that define the nodes
  * @param {Function} weightFunction method used to eval each pair of nodes
  * @param {StringList} names optional, names of Nodes
  * @return {Network} a network with number of nodes equal to the length of the List
@@ -157,7 +171,7 @@ NetworkGenerators.createNetworkFromListAndFunction = function(list, weightFuncti
 
 
 /**
- * builds a network from a text, using previously detected words or noun phrases, and with relations built from co-occurrences in sentences
+ * Builds a network from a text, using previously detected words or noun phrases, and with relations built from co-occurrences in sentences
  * relations contain as description the part of the sentence that ends with the second node name (thus being compatible with NoteWork)
  * @param  {String} text
  * @param  {StringList} nounPhrases words, n-grams or noun phrases

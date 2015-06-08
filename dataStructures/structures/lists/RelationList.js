@@ -5,9 +5,15 @@ RelationList.prototype.constructor = RelationList;
  * @constructor
  */
 
+/**
+ * @classdesc A sub-class of {@link List} for storing {@link Relations|Relation}.
+ *
+ * @description create a new RelationList.
+ * @constructor
+ * @category networks
+ */
 function RelationList() {
   var array = NodeList.apply(this, arguments);
-  //
   array.name = "";
   //assign methods to array:
   array = RelationList.fromArray(array);
@@ -15,6 +21,12 @@ function RelationList() {
   return array;
 }
 
+/**
+ * Convert raw array of Relations into a RelationList.
+ *
+ * @param {Relation[]} array Array to convert to a RelationList.
+ * @return {RelationList}
+ */
 RelationList.fromArray = function(array) {
   var result = NodeList.fromArray(array);
   result.type = "RelationList";
@@ -32,19 +44,31 @@ RelationList.fromArray = function(array) {
   return result;
 };
 
+/**
+ * Add new Relation to the list.
+ *
+ * @param {Relation} relation Relation to add.
+ */
 //TODO:remove?
 RelationList.prototype.addRelation = function(relation) {
   this.addNode(relation);
 };
 
+/**
+ * Removes Relation from the list.
+ *
+ * @param {Relation} relation Relation to remove.
+ */
 RelationList.prototype.removeRelation = function(relation) {
     this.removeNode(relation);
-  };
-  /**
-   * get all relations that contain a given node
-   * @param {Node} node 
-   * @return a RelationList with relations that contain node
-   */
+};
+
+/**
+ * Returns all relations that are directly connected to the given Node.
+ *
+ * @param {Node} node Node to search
+ * @return {Relation[]} Containing Relations that contain node.
+ */
 RelationList.prototype.getRelationsWithNode = function(node) {
   var i;
   var filteredRelations = [];
@@ -54,12 +78,15 @@ RelationList.prototype.getRelationsWithNode = function(node) {
       filteredRelations.push(relation);
     }
   }
+
+  // TODO: convert to RelationList?
   return filteredRelations;
 };
 
 /**
- * get all Nodes related to a given Node
- * @param {Node} node 
+ * Returns all Nodes related to a given Node.
+ *
+ * @param {Node} node
  * @return a RelationList with relations that contain node
  */
 RelationList.prototype.getRelatedNodesToNode = function(node) {
@@ -80,14 +107,16 @@ RelationList.prototype.getRelatedNodesToNode = function(node) {
 
 
 /**
- * get all relations between two Nodes
- * @param {Node} node0 
- * @param {Node} node1
- * @param {Boolean} directed consider relation direction (default: false)
- * @return a RelationList with relations that contain node0 and node1
+ * Returns all Relations between two Nodes.
+ *
+ * @param {Node} node0 Source Node.
+ * @param {Node} node1 Destination Node.
+ * @param {Boolean} directed Consider Relation directional in nature (default: false).
+ * @return {Relation[]} With Relations that contain node0 and node1.
  * tags:
  */
-RelationList.prototype.getAllRelationsBetweenNodes = function(node0, node1, directed) { //TODO: to be improved (check node1 on node0.relationList) (see: nodesAreConnected)
+RelationList.prototype.getAllRelationsBetweenNodes = function(node0, node1, directed) {
+  //TODO: to be improved (check node1 on node0.relationList) (see: nodesAreConnected)
   var i;
   directed = directed == null ? false : directed;
   var filteredRelations = [];
@@ -97,12 +126,14 @@ RelationList.prototype.getAllRelationsBetweenNodes = function(node0, node1, dire
       filteredRelations.push(relation);
     }
   }
+  // TODO: convert to RelationList ?
   return filteredRelations;
 };
 
 
 /**
- * checks if two nodes are related, returns a boolean
+ * Checks if two nodes are related, returns a boolean
+ *
  * @param  {Node} node0
  * @param  {Node} node1
  * @param  {Boolean} directed true if relation must be directed
@@ -116,11 +147,12 @@ RelationList.prototype.nodesAreConnected = function(node0, node1, directed) {
 
 
 /**
- * get first Relation between two Nodes
- * @param {Node} node0 
- * @param {Node} node1
- * @param {Boolean} directed consider relation direction (default: false)
- * @return a RelationList with relations that contain node0 and node1
+ * Returns the first Relation between two Nodes.
+ *
+ * @param {Node} node0 Source Node.
+ * @param {Node} node1 Destination Node.
+ * @param {Boolean} directed consider relation direction (default: false).
+ * @return {Relation[]} With Relations that contain node0 and node1.
  * tags:
  */
 RelationList.prototype.getFirstRelationBetweenNodes = function(node0, node1, directed) { //TODO: to be improved (check node1 on node0.relationList) (see: nodesAreConnected) //TODO: make it work with ids
@@ -134,13 +166,16 @@ RelationList.prototype.getFirstRelationBetweenNodes = function(node0, node1, dir
 
 
 /**
- * get first relations between two Nodes
- * @param {String} id0 
- * @param {String} id1
- * @param {Boolean} directed consider relation direction (default: false)
- * @return a RelationList with relations that contain node0 and node1 (with node0.id = id0 and node1.id = id1)
+ * Returns first relations between two Nodes.
+ *
+ * @param {String} id0 Id of the source Node.
+ * @param {String} id1 Id of the destination Node.
+ * @param {Boolean} directed Consider relation directional (default: false).
+ * @return {Relation[]} With Relations that contain node0 and node1 (with node0.id = id0 and node1.id = id1).
  */
-RelationList.prototype.getFirstRelationByIds = function(id0, id1, directed) { //TODO: to be improved (check node1 on node0.relationList) (see: nodesAreConnected) //TODO: make it work with ids
+RelationList.prototype.getFirstRelationByIds = function(id0, id1, directed) {
+  //TODO: to be improved (check node1 on node0.relationList) (see: nodesAreConnected)
+  //TODO: make it work with ids
   var i;
   var _directed = directed || false;
   var relation;
@@ -156,15 +191,10 @@ RelationList.prototype.getFirstRelationByIds = function(id0, id1, directed) { //
     relation = this[i];
     if(relation.node0.id == id1 && relation.node1.id == id0) {
       //c.log("<--- ", relation.node0.name, relation.node1.name);
+      // TODO: convert to RelationList ?
       return relation;
     }
   }
   return null;
 };
 
-
-// RelationList.prototype.nodesAreConnected=function(node0, node1, directed){//
-// 	if(node0.toNodeList.getNodeById(node1.id)!=null) return true;
-// 	if(!directed && node0.fromNodeList.getNodeById(node1.id)!=null) return true;
-// 	return false;
-// }

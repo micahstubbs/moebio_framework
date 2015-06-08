@@ -1,13 +1,20 @@
+/**
+ * @classdesc Functions for drawing {@link Tree|Trees}.
+ *
+ * @namespace
+ * @category networks
+ */
 function TreeDraw() {}
 
 
 /**
- * simple tree visualization with levels in vertical rectangles
- * @param  {Rectangle} frame
- * @param  {Tree} tree
+ * Simple tree visualization with levels in vertical rectangles.
  *
- * @param  {ColorList} levelColors
- * @param  {Number} margin
+ * @param {Rectangle} frame
+ * @param {Tree} tree The Tree to draw.
+ *
+ * @param {ColorList} levelColors
+ * @param {Number} margin
  * tags:draw
  */
 TreeDraw.drawRectanglesTree = function(frame, tree, levelColors, margin) {
@@ -37,9 +44,10 @@ TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin) {
 
 
 /**
- * simple treemap visualization
+ * Creates a simple treemap visualization.
+ *
  * @param {Rectangle} frame
- * @param {Tree} tree
+ * @param {Tree} tree The Tree to draw.
  *
  * @param {ColorList} colorList
  * @param {NumberList} weights weights of leaves
@@ -338,6 +346,9 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
 
 };
 
+/**
+ * @ignore
+ */
 TreeDraw._generateRectangles = function(node) {
 
   var weights = new NumberList();
@@ -353,6 +364,10 @@ TreeDraw._generateRectangles = function(node) {
     TreeDraw._generateRectangles(child);
   });
 };
+
+/**
+ * @ignore
+ */
 TreeDraw._reduceRect = function(rect) {
   return new Rectangle(rect.x + rect.width * TreeDraw.PROP_RECT_REDUCTION_MARGIN, rect.y + rect.height * TreeDraw.PROP_RECT_REDUCTION_MARGIN, rect.width * (1 - 2 * TreeDraw.PROP_RECT_REDUCTION_MARGIN), rect.height * (1 - 2 * TreeDraw.PROP_RECT_REDUCTION_MARGIN));
 };
@@ -374,7 +389,8 @@ TreeDraw.PROP_RECT_EXPANTION_MARGIN = 0.05;
 
 
 /**
- * decision tree visualization, tree from TableOperators.buildDecisionTree
+ * Decision tree visualization, tree from {@link TableOperators}'s buildDecisionTree function.
+ *
  * @param {Rectangle} frame
  * @param {Tree} tree
  * @return {Node} selected node
@@ -726,6 +742,10 @@ TreeDraw.drawDecisionTree = function(frame, tree) {
   return frame.memory.result;
 
 };
+
+/**
+ * @ignore
+ */
 TreeDraw._generateRectanglesDecision = function(node, hLevel) {
 
   var weights = new NumberList();

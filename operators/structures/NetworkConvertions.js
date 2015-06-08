@@ -1,15 +1,23 @@
+
+/**
+ * @classdesc Includes functions to convert Networks into other DataTypes.
+ *
+ * @namespace
+ * @category networks
+ */
 function NetworkConvertions() {}
 
 
 /**
- * builds a Network based on a two columns Table, creating relations on co-occureences
- * @param  {Table} table table with at least two columns (commonly strings)
- * 
- * @param  {NumberList} numberList weights of relations
- * @param  {Number} threshold minimum weight or noumber of co-occurrences to create a relation
- * @param  {Boolean} allowMultipleRelations
- * @param {Number} minRelationsInNode remove nodes with number of relations below threshold
- * @param {StringList} stringList contents of relations
+ * Builds a Network based on a two columns Table, creating relations on co-occurrences.
+ *
+ * @param {Table} table table with at least two columns (commonly strings)
+ *
+ * @param {NumberList} numberList Weights of relations.
+ * @param {Number} threshold Minimum weight or number of co-occurrences to create a relation.
+ * @param {Boolean} allowMultipleRelations
+ * @param {Number} minRelationsInNode Remove nodes with number of relations below threshold.
+ * @param {StringList} stringList Contents of relations.
  * @return {Network}
  * tags:conversion
  */
