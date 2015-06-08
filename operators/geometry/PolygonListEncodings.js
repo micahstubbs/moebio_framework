@@ -1,8 +1,8 @@
 /**
- * @classdesc Provides a set of tools that work with {@link Country|Countries}.
+ * @classdesc Encode and Decode {@link Polygon} as a String.
  *
  * @namespace
- * @category geo
+ * @category geometry
  */
 function PolygonListEncodings() {}
 
