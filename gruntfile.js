@@ -25,15 +25,6 @@ function buildFileList() {
     fileList.push(path.join(root,file));
   });
 
-  // var lines = data.split("\n");
-  //
-  // for (var i = 0; i < lines.length; i++) {
-  //   var line = lines[i];
-  //   if( line.substr(0, 8)=="include("){
-  //     var fileName = line.substr(24, line.length-27);
-  //     fileList.push( fileName );
-  //   }
-  // }
   console.log( "fileList to concatenate / uglyfy is " + fileList.length + " lines long" );
   return fileList;
 
