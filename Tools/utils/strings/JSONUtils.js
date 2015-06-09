@@ -1,6 +1,8 @@
 /**
- * JSONUtils 
- * @constructor
+ * @classdesc Provides a set of tools that work with JSON.
+ *
+ * @namespace
+ * @category misc
  */
 function JSONUtils() {}
 

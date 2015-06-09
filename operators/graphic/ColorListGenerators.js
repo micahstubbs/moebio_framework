@@ -4,9 +4,10 @@ ColorListGenerators._HARDCODED_CATEGORICAL_COLORS = new ColorList(
 );
 
 /**
- * ColorListGenerators
- * @constructor
+ * @classdesc Tools for generating {@link List|Lists} of colors.
  *
+ * @namespace
+ * @category colors
  */
 function ColorListGenerators() {}
 

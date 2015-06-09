@@ -1,3 +1,10 @@
+/**
+ * @classdesc Provides a set of tools for dealing with distances and geometric
+ * conversions.
+ *
+ * @namespace
+ * @category geo
+ */
 function GeoOperators() {}
 
 GeoOperators.EARTH_RADIUS = 6371009;

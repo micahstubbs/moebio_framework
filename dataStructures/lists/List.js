@@ -1,11 +1,14 @@
 List.prototype = new DataModel();
 List.prototype.constructor = List;
 
-/**
- * List is an Array with a type property
- * @param comma separated values to add to List
- * @constructor
- */
+ /**
+  * @classdesc List is an Array with a type property.
+  *
+  * @description Creates a new List.
+  * @param {} values Comma separated values to add to List
+  * @constructor
+  * @category basics
+  */
 function List() {
   DataModel.apply(this);
   var array = [];
@@ -287,7 +290,7 @@ List.prototype.getReversed = function() {
 /**
  * return a sub-list, params could be: tw numbers, an interval or a NumberList
  * @param {Object} argument0 number, interval (in this it will include elements with initial and end indexes) or numberList
- * 
+ *
  * @param {Number} argument1 second index
  * @return {List}
  * tags:filter
@@ -619,7 +622,7 @@ List.prototype.indexOfElement = function(element) { //TODO: test if this is fast
 /**
  * return a list of values of a property of all elements
  * @param  {String} propertyName
- * 
+ *
  * @param  {Object} valueIfNull in case the property doesn't exist in the element
  * @return {List}
  * tags:
@@ -720,7 +723,7 @@ List.prototype.getSortedByProperty = function(propertyName, ascending) {
 
 /**
  * return a sorted version of the list
- * 
+ *
  * @param  {Boolean} ascending sort (true by default)
  * @return {List}
  * tags:sort
@@ -744,7 +747,7 @@ List.prototype.getSorted = function(ascending) {
 /**
  * sort the list by a list
  * @param  {List} list used to sort (numberList, stringList, dateList…)
- * 
+ *
  * @param  {Boolean} ascending (true by default)
  * @return {List} sorted list (of the same type)
  * tags:sort

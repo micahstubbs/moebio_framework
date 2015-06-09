@@ -2,10 +2,14 @@ Country.prototype = new Node();
 Country.prototype.constructor = Country;
 
 /**
- * Country
- * @param {String} country id (ISO2)
- * @param {String} country name
+ * @classdesc Represents an individual country for visualization and spatial
+ * reasoning.
+ *
+* @description Creates a new Country instance.
+ * @param {String} id Country id (ISO2)
+ * @param {String} name Country name
  * @constructor
+ * @category geo
  */
 function Country(id, name) {
   Node.apply(this, [id, name]);

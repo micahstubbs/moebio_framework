@@ -1,6 +1,8 @@
 /**
- * ColorGenerators 
- * @constructor
+ * @classdesc Tools for generating colors.
+ *
+ * @namespace
+ * @category colors
  */
 function ColorGenerators() {}
 

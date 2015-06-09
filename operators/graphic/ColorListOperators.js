@@ -1,9 +1,11 @@
 /**
- * ColorListOperators
- * @constructor
+ * @classdesc Tools for working with Lists of colors.
+ *
+ * @namespace
+ * @category colors
  */
 function ColorListOperators() {}
-/** 
+/**
  * receives n arguments and performs addition
  */
 ColorListOperators.colorListFromColorScale = function(colorScale, nColors) {

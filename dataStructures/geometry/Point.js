@@ -2,8 +2,13 @@ Point.prototype = new DataModel();
 Point.prototype.constructor = Point;
 
 /**
- * Point
+ * @classdesc Represents an individual 2D point in space.
+ *
+ * @description Creates a new Point
+ * @param {Number} x
+ * @param {Number} y
  * @constructor
+ * @category geometry
  */
 function Point(x, y) {
   DataModel.apply(this, arguments);

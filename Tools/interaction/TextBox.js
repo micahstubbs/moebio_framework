@@ -1,9 +1,12 @@
 TextBox.prototype.constructor = TextBox;
 
 /**
- * Instanciable class that manages and renders a text on the canvas
+ * @classdesc Instanciable class that manages and renders a text on the canvas.
+ *
+ * @description create new TextBox.
  * @param configuration configuration Object with parameters (x, y, width, text, fontColor, fontSize, fontName, fontStyle, warnFunction, target…)
  * @constructor
+ * @category strings
  */
 function TextBox(configuration) {
   configuration = configuration == null ? {} : configuration;

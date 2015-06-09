@@ -1,6 +1,8 @@
 /**
- * ColorOperators
- * @constructor
+ * @classdesc Provides a set of tools that work with Colors.
+ *
+ * @namespace
+ * @category colors
  */
 function ColorOperators() {}
 

@@ -2,10 +2,13 @@ DateInterval.prototype = new DataModel();
 DateInterval.prototype.constructor = DateInterval;
 
 /**
- * DateInterval
- * @param {Date} Interval's minimum value
- * * @param {Date} Interval's maximum value
+ * @classdesc Date Interval
+ *
+ * @description Creates a new DateInterval.
+ * @param {Date} Interval's minimum value.
+ * @param {Date} Interval's maximum value.
  * @constructor
+ * @category dates
  */
 function DateInterval(date0, date1) {
   DataModel.apply(this, arguments);

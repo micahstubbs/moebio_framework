@@ -1,6 +1,8 @@
 /**
- * CountryOperators
- * @constructor
+ * @classdesc Provides a set of tools that work with {@link Country|Countries}.
+ *
+ * @namespace
+ * @category geo
  */
 function CountryOperators() {}
 

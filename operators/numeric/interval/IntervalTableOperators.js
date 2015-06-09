@@ -1,6 +1,9 @@
 /**
- * IntervalTableOperators
- * @constructor
+ * @classdesc Provides a set of tools that work with {@link Table|Tables} of
+ * Intervals.
+ *
+ * @namespace
+ * @category numbers
  */
 function IntervalTableOperators() {}
 

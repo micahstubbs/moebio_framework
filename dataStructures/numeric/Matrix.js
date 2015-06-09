@@ -1,9 +1,13 @@
 Matrix.prototype = new DataModel();
 Matrix.prototype.constructor = Matrix;
+
 /**
- * Matrix
- * some credits to http://strd6.com/2010/06/introducing-matrix-js/
+ * @classdesc Matrix implementation.
+ * Some credits to http://strd6.com/2010/06/introducing-matrix-js/
+ *
  * @constructor
+ * @description Creates a new Matrix instance.
+ * @category numbers
  */
 function Matrix(a, b, c, d, tx, ty) {
   DataModel.apply(this, arguments);

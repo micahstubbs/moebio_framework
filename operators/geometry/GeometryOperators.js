@@ -1,6 +1,8 @@
 /**
- * GeometryOperators
- * @constructor
+ * @classdesc Provides a set of tools that work with Geometric data.
+ *
+ * @namespace
+ * @category geometry
  */
 function GeometryOperators() {}
 
@@ -224,7 +226,7 @@ GeometryOperators.VennCircles = function(area0, area1, areaIntersection, centerI
  * @param r1
  * @param areaComun
  * @param precision
- * 
+ *
  */
 GeometryOperators.circleDistancesFromCommonArea = function(r0, r1, commonArea, precision) {
   precision = precision || 0.1;

@@ -1,6 +1,8 @@
 /**
- * NumberOperators
- * @constructor
+ * @classdesc Provides a set of tools that work with Numbers.
+ *
+ * @namespace
+ * @category numbers
  */
 function NumberOperators() {}
 

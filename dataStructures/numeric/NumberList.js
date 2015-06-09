@@ -1,10 +1,13 @@
 NumberList.prototype = new List();
 NumberList.prototype.constructor = NumberList;
-/**
- * NumberList
- * @constructor
- */
 
+/**
+ * @classdesc List structure for Numbers.
+ *
+ * @constructor
+ * @description Creates a new NumberList.
+ * @category numbers
+ */
 function NumberList() {
   var args = [];
 
@@ -147,7 +150,7 @@ NumberList.prototype.getProduct = function() {
 
 /**
  * returns a NumberList normalized to the sum
- * @param {Number} factor optional 
+ * @param {Number} factor optional
  * @return {NumberList}
  * tags:
  */

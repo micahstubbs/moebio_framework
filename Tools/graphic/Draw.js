@@ -2,8 +2,10 @@
 
 //include(frameworksRoot+"operators/geometry/GeometryOperators.js");
 /**
- * Draw
- * @constructor
+ * @classdesc Draw basic shapes
+ * 
+ * @namespace
+ * @category geometry
  */
 function Draw() {}
 
@@ -127,12 +129,12 @@ Draw.fillRectangleWithImage = function(rectangle, image, mode, backColor) {
 
 
 /**
- * Draws an ellipse using the current state of the canvas. 
+ * Draws an ellipse using the current state of the canvas.
  * @param {CanvasRenderingContext2D} context
  * @param {Number} x The center x coordinate
- * @param {Number} y The center y coordinate 
- * @param {Number} rW The horizontal radius of the ellipse 
- * @param {Number} rH The vertical radius of the ellipse 
+ * @param {Number} y The center y coordinate
+ * @param {Number} rW The horizontal radius of the ellipse
+ * @param {Number} rH The vertical radius of the ellipse
 
  */
 Draw.drawEllipse = function(x, y, rW, rH) {
@@ -248,13 +250,13 @@ Draw.drawSliderRectangle = function(x, y, width, height) {
 
 
 /**
- * Draws a rounded rectangle using the current state of the canvas. 
- * If you omit the last three params, it will draw a rectangle 
- * outline with a 5 pixel border radius 
+ * Draws a rounded rectangle using the current state of the canvas.
+ * If you omit the last three params, it will draw a rectangle
+ * outline with a 5 pixel border radius
  * @param {CanvasRenderingContext2D} context
  * @param {Number} x The top left x coordinate
- * @param {Number} y The top left y coordinate 
- * @param {Number} width The width of the rectangle 
+ * @param {Number} y The top left y coordinate
+ * @param {Number} width The width of the rectangle
  * @param {Number} height The height of the rectangle
  * @param {Number} radius The corner radius. Defaults to 5;
  */

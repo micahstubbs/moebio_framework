@@ -1,6 +1,8 @@
 /**
- * Forces
+ * @classdesc Force layout
+ *
  * @constructor
+ * @category networks
  */
 function Forces(configuration) {
   this.k = configuration.k ? configuration.k : 0.01;
@@ -20,7 +22,7 @@ function Forces(configuration) {
 }
 
 /**
- * eqDistancesMode: 
+ * eqDistancesMode:
  * 		0: all distances this.dEqSprings
  * 		1: shorter distances for heavy relations
  * 		2: nodes degrees sum proportional to distance

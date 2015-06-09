@@ -1,6 +1,8 @@
 /**
- * FastHtml 
- * @constructor
+ * @classdesc Fast Html
+ *
+ * @namespace
+ * @category misc
  */
 function FastHtml() {}
 

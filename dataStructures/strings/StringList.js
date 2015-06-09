@@ -1,10 +1,13 @@
 StringList.prototype = new List();
 StringList.prototype.constructor = StringList;
-/**
- * StringList
- * @constructor
- */
 
+/**
+ * @classdesc {@link List} for storing Strings.
+ *
+ * @constructor
+ * @description Creates a new StringList
+ * @category strings
+ */
 function StringList() {
   var args = []; //TODO:why this?, ask M
 
@@ -171,7 +174,7 @@ StringList.prototype.toNumberList = function() {
 
 /**
  * converts a stringList into a dateList
- * 
+ *
  * @param  {String} formatCase format cases:<br>0: MM-DD-YYYY<br>1: YYYY-MM-DD (standard Javascript conversion)
  * @param  {String} separator "-" by default
  * @return {DateList}

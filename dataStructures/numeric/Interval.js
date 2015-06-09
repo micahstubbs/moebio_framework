@@ -2,10 +2,13 @@ Interval.prototype = new Point();
 Interval.prototype.constructor = Interval;
 
 /**
- * Interval
- * @param {Number} x - Interval's x value
- * @param {Number} y - Interval's y value
+ * @classdesc Provide reasoning around numeric intervals.
+ *
  * @constructor
+ * @param {Number} x Interval's x value
+ * @param {Number} y Interval's y value
+ * @description Creates a new Interval
+ * @category numbers
  */
 function Interval(x, y) {
   DataModel.apply(this, arguments);

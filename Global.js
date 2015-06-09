@@ -5,7 +5,8 @@
  * -contains the global variables (such as userAgent, canvas, nF, mX…), global
  * -contains the listener methods
  * -triggers de init, update and draw in Global class
- * @constructor
+ * @namespace
+ * @category basics
  */
 function Global(){}
 
@@ -257,7 +258,7 @@ function enterFrame(){
 		context.fillStyle = 'rgba('+backGroundColorRGB[0]+','+backGroundColorRGB[1]+','+backGroundColorRGB[2]+','+_alphaRefresh+')';
 		context.fillRect(0, 0, cW, cH);
 	}
-	
+
    	setCursor('default');
 
    	MOUSE_DOWN = NF_DOWN==nF;

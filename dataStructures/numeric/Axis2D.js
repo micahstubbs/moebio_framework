@@ -2,8 +2,11 @@ Axis2D.prototype = new DataModel();
 Axis2D.prototype.constructor = Axis2D;
 
 /**
- * Axis2D
+ * @classdesc Axis for 2D data
+ *
  * @constructor
+ * @description Creates a new 2d axis.
+ * @category numbers
  */
 function Axis2D(departureFrame, arrivalFrame) {
   arrivalFrame = arrivalFrame == null ? new Rectangle(0, 0, 1, 1) : arrivalFrame;

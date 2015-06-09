@@ -1,8 +1,13 @@
 Polygon3D.prototype = new List();
 Polygon3D.prototype.constructor = Polygon3D;
+
 /**
- * Polygon3D
+ * @classdesc Polygon3D brings the {@link Polygon} concept into three
+ * dimensions through the use of {@link Point3D}.
+ *
+ * @description Creates a new Polygon3D.
  * @constructor
+ * @category geometry
  */
 function Polygon3D() {
   var array = List.apply(this, arguments);

@@ -1,6 +1,8 @@
 /**
- * PolygonOperators
- * @constructor
+ * @classdesc Provides a set of tools that work with Polygons
+ *
+ * @namespace
+ * @category geometry
  */
 function PolygonOperators() {}
 
@@ -325,7 +327,7 @@ PolygonOperators.convexHull = function(polygon, deepness) {
       dP = Math.sqrt(Math.pow(p1.x - p0.x, 2) + Math.pow(p1.y - p0.y, 2));
       for(k = 0; pointsLeftIndexes[k] != null; k++) {
         p = polygon[pointsLeftIndexes[k]];
-        //d = Math.pow(p.x-pC.x, 2)+Math.pow(p.y-pC.y, 2); 
+        //d = Math.pow(p.x-pC.x, 2)+Math.pow(p.y-pC.y, 2);
         d = (Math.sqrt(Math.pow(p.x - p0.x, 2) + Math.pow(p.y - p0.y, 2)) + Math.sqrt(Math.pow(p.x - p1.x, 2) + Math.pow(p.y - p1.y, 2))) / Math.pow(dP, 2);
         if(d < dMin) {
           dMin = d;

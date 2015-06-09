@@ -1,9 +1,9 @@
 /**
- * ConsoleTools
- * some of the methods available here might be converted into genuine 'ASCII visualization'
- * @constructor
+ * @classdesc Functions to create interesting console output.
+ *
+ * @namespace
+ * @category misc
  */
-
 function ConsoleTools() {}
 
 

@@ -2,8 +2,11 @@ CountryList.prototype = new NodeList();
 CountryList.prototype.constructor = CountryList;
 
 /**
- * CountryList
+ * @classdesc A {@link List} structure for storing {@link Country|Countries}.
+ *
+ * @description Creates a new CountryList instance.
  * @constructor
+ * @category geo
  */
 function CountryList() {
   var array = NodeList.apply(this, arguments);

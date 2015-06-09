@@ -1,10 +1,13 @@
 ColorList.prototype = new List();
 ColorList.prototype.constructor = ColorList;
-/**
- * ColorList
- * @constructor
- */
 
+/**
+ * @classdesc A {@link List} for storing Colors.
+ *
+ * @description Creates a new ColorList.
+ * @constructor
+ * @category colors
+ */
 function ColorList() {
   var args = [];
   var i;

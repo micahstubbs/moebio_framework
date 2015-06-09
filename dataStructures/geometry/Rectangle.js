@@ -1,8 +1,16 @@
 Rectangle.prototype = new DataModel();
 Rectangle.prototype.constructor = Rectangle;
+
 /**
- * Rectangle
+ * @classdesc Rectangle shape
+ *
+ * @description Creates a new Rectangle.
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Number} width
+ * @param {Number} height
  * @constructor
+ * @category geometry
  */
 function Rectangle(x, y, width, height) {
   DataModel.apply(this);
@@ -120,7 +128,7 @@ Rectangle.prototype.intersectsRectangle = function(rectangle) {
 
 
 
-	return this.containsPoint(rectangle.getTopLeft()) || this.containsPoint(rectangle.getTopRight()) || this.containsPoint(rectangle.getBottomLeft()) || this.containsPoint(rectangle.getBottomRight()) 
+	return this.containsPoint(rectangle.getTopLeft()) || this.containsPoint(rectangle.getTopRight()) || this.containsPoint(rectangle.getBottomLeft()) || this.containsPoint(rectangle.getBottomRight())
 	|| rectangle.containsPoint(this.getTopLeft()) || rectangle.containsPoint(this.getTopRight()) || rectangle.containsPoint(this.getBottomLeft()) || rectangle.containsPoint(this.getBottomRight());
 };
 
