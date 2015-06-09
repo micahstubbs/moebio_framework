@@ -15,19 +15,16 @@ var watchedFiles = [
 function buildFileList() {
 
   var fs = require('fs');
-  var filename = "IncludeAll.js";
+  var path = require('path');
+  var root = "src";
+  var filename = path.join(root, "all.json");
   var fileList = [];
 
   var data = fs.readFileSync(filename, 'utf8');
-  var lines = data.split("\n");
+  JSON.parse(data).forEach(function(file) {
+    fileList.push(path.join(root,file));
+  });
 
-  for (var i = 0; i < lines.length; i++) {
-    var line = lines[i];
-    if( line.substr(0, 8)=="include("){
-      var fileName = line.substr(24, line.length-27);
-      fileList.push( fileName );
-    }
-  }
   console.log( "fileList to concatenate / uglyfy is " + fileList.length + " lines long" );
   return fileList;
 
