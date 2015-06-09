@@ -35,7 +35,6 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-jsdoc');
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -74,23 +73,6 @@ module.exports = function (grunt) {
       },
     },
 
-    copy: {
-      spiral: {
-        src: 'dist/framework_concat.js',
-        dest: '../spiral/_dev/client/angularSpiral/app/scripts/classes/framework_concat.js'
-      },
-      spiralMin: {
-        src: 'dist/framework_concat.min.js',
-        dest: '../spiral/_dev/client/angularSpiral/app/scripts/classes/framework_concat.min.js'
-      },
-      site_js: {
-        expand: true,
-        cwd: 'dist/',
-        src: ['framework_concat.js', 'framework_concat.min.js'],
-        dest: 'site/source/examples/js/'
-      }
-    },
-
     jsdoc : {
       dist : {
         src: buildFileList(),
@@ -125,7 +107,7 @@ module.exports = function (grunt) {
   //
   // Default task - build distribution source
   //
-  grunt.registerTask('default', ['concat', 'uglify', 'copy' ]);
+  grunt.registerTask('default', ['concat', 'uglify']);
 
   //
   // Build documentation
