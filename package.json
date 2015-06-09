@@ -11,8 +11,6 @@
     "grunt-jsdoc": "^0.6.4",
     "jsdoc": "^3.3.0-beta1",
     "lodash": "^3.3.1",
-    "grunt-gh-pages": "^0.10.0",
-    "grunt-jekyll": "^0.4.2",
     "grunt-jscs": "^1.8.0",
     "jscs-stylish": "^0.3.1",
     "jshint-stylish": "^2.0.0",
