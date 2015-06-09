@@ -142,9 +142,7 @@ module.exports = function (grunt) {
         ignores: ['libraries, dist'],
         reporter: require('jshint-stylish')
       },
-      src: ['*.js', 'Tools/**/*.js', 'dataStructures/**/*.js', 'operators/**/*.js',
-        'apis/**/*.js', 'Tools/**/*.js', 'Tools/**/*.js', 'visualization/**/*.js',
-        'tests/**/*.js']
+      src: buildFileList()
     },
 
     jscs: {
@@ -152,11 +150,8 @@ module.exports = function (grunt) {
         config: ".jscsrc",
         reporter: require('jscs-stylish').path
       },
-      src: ['*.js', 'Tools/**/*.js', 'dataStructures/**/*.js', 'operators/**/*.js',
-        'apis/**/*.js', 'Tools/**/*.js', 'Tools/**/*.js', 'visualization/**/*.js',
-        'tests/**/*.js']
+      src: buildFileList()
     }
-
   });
 
   //
