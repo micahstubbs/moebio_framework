@@ -1,8 +1,11 @@
 RectangleList.prototype = new List();
 RectangleList.prototype.constructor = RectangleList;
 /**
- * RectangleList
+ * @classdesc A {@link List} structure for storing {@link Rectangle} instances.
+ *
+ * @description Creates a new RectangleList.
  * @constructor
+ * @category geometry
  */
 function RectangleList() {
   var array = List.apply(this, arguments);

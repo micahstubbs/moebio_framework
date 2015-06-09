@@ -1,6 +1,8 @@
 /**
- * IntervalListOperators
- * @constructor
+ * @classdesc Provides a set of tools that work with Interval Lists.
+ *
+ * @namespace
+ * @category numbers
  */
 function IntervalListOperators() {}
 

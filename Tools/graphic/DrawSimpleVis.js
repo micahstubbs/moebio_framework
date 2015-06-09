@@ -1,6 +1,6 @@
 //include(frameworksRoot+"operators/graphic/ColorListOperators.js");
 
-/**
+/*
  * DrawSimpleVis
  *
  * This class contains methods that draw simple visualizations such as lines, barChart…

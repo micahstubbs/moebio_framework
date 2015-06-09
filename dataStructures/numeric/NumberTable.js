@@ -2,8 +2,11 @@ NumberTable.prototype = new Table();
 NumberTable.prototype.constructor = NumberTable;
 
 /**
- * NumberTable
+ * @classdesc {@link Table} to store numbers.
+ *
  * @constructor
+ * @description Creates a new NumberTable.
+ * @category numbers
  */
 function NumberTable() {
   var args = [];

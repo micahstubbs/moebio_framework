@@ -1,10 +1,15 @@
 /**
- * NetworkDraw
- * @constructor
+ * @classdesc Functions for drawing {@link Network|Networks}.
+ *
+ * @namespace
+ * @category networks
  */
 function NetworkDraw() {}
 
 
+/**
+ * @ignore
+ */
 NetworkDraw._drawNode = function(node, x, y, r) {
   var over = false;
   if(node.image) {
@@ -22,10 +27,12 @@ NetworkDraw._drawNode = function(node, x, y, r) {
 
 
 /**
- * draws a radial (elliptical) network
- * @param  {Rectangle} frame
- * @param  {Network} network
- * @return {Node} rollovered node
+ * Draws a radial (elliptical) Network
+ *
+ * @param  {Rectangle} frame A Rectangle indicating the width, height, and location of the drawing area.
+ * @param  {Network} network The Network to draw.
+ * @return {Node} If a Node in the Network is currently being moused over, it is returned.
+ * If no Node is being interacted with, undefined is returned.
  * tags:draw
  */
 NetworkDraw.drawRadialNetwork = function(frame, network) {
@@ -69,16 +76,18 @@ NetworkDraw.drawRadialNetwork = function(frame, network) {
 
 
 /**
- * draws a network with nodes placed in coordinates provided by a polygon
+ * Draws a Network with nodes placed in coordinates provided by a polygon.
+ *
  * @param  {Rectangle} frame
  * @param  {Network} network
- * @param {Polygon} polygon nodes positions
- * 
- * @param {Boolean} respectProportions if true, proportions will be equal for both axis
+ * @param {Polygon} polygon Nodes positions
+ *
+ * @param {Boolean} respectProportions If true, proportions will be equal for both axis
  * @param {Boolean} logScale uses a logarithmic scale in both axis, applies only if all values are >=0
  * @param {Boolean} drawGrid draws a grid
  * @param {Number} margin
- * @return {Node} rollovered node
+ * @return {Node} If a Node in the Network is currently being moused over, it is returned.
+ * If no Node is being interacted with, undefined is returned.
  * tags:draw
  */
 NetworkDraw.drawNetwork2D = function(frame, network, polygon, respectProportions, logScale, drawGrid, margin) {
@@ -192,8 +201,6 @@ NetworkDraw.drawNetwork2D = function(frame, network, polygon, respectProportions
     }
   });
 
-
-
   //values label
 
   if(frame.containsPoint(mP)) {
@@ -218,6 +225,10 @@ NetworkDraw.drawNetwork2D = function(frame, network, polygon, respectProportions
 
   return nodeOver;
 };
+
+/**
+ * @ignore
+ */
 NetworkDraw._drawNodeValues = function(vx, vy, name) {
   var text = (name == null ? '' : (name + ': ')) + vx + ", " + vy;
   setFill('rgba(50,50,50,0.8)');
@@ -227,11 +238,12 @@ NetworkDraw._drawNodeValues = function(vx, vy, name) {
 };
 
 
-
-
-
-
 //to be tested
+
+/**
+ * drawNetworkMatrix
+ * @ignore
+ */
 NetworkDraw.drawNetworkMatrix = function(frame, network, colors, relationsColorScaleFunction, margin, directed, normalizedNodeWeights, returnHovered) {
   relationsColorScaleFunction = relationsColorScaleFunction == null ? ColorOperators.grayScale : relationsColorScaleFunction;
   margin = margin == null ? 2 : margin;

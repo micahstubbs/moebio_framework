@@ -1,6 +1,8 @@
 /**
- * Operators that contain visualization method algoritms and return a Table with parameters for StringListPrimitive
- * @constructor
+ * @classdesc Operators that contain visualization method algoritms and return a Table with parameters for StringListPrimitive
+ * 
+ * @namespace
+ * @category strings
  */
 function StringListVisOperators() {}
 

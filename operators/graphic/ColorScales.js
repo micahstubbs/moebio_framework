@@ -1,3 +1,10 @@
+/**
+ * @classdesc Default color scales.
+ *
+ * @namespace
+ * @category colors
+ */
+
 function ColorScales() {}
 
 // *

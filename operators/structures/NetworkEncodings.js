@@ -1,3 +1,11 @@
+
+/**
+ * @classdesc Serializes and deserializes {@link Network|Networks} using into
+ * a number of text based formats.
+ *
+ * @namespace
+ * @category networks
+ */
 function NetworkEncodings() {}
 
 
@@ -7,7 +15,8 @@ function NetworkEncodings() {}
 NetworkEncodings.nodeNameSeparators = ['|', ':', ' is ', ' are ', '.', ','];
 
 /**
- * converts a text file under NoteWork format into a network
+ * Converts a String in NoteWork format into a network
+ *
  * @param  {String} code
  * @return {Network}
  * tags:decoding
@@ -409,6 +418,10 @@ NetworkEncodings.decodeNoteWork = function(code) {
 
   return network;
 };
+
+/**
+ * @ignore
+ */
 NetworkEncodings._simplifyForNoteWork = function(name) {
   name = name.toLowerCase();
   if(name.substr(name.length - 2) == 'es') {
@@ -416,6 +429,15 @@ NetworkEncodings._simplifyForNoteWork = function(name) {
   } else if(name.charAt(name.length - 1) == 's') name = name.substr(0, name.length - 1);
   return name.trim();
 };
+
+/**
+ * _regexWordForNoteWork
+ *
+ * @param word
+ * @param global
+ * @return {undefined}
+ * @ignore
+ */
 NetworkEncodings._regexWordForNoteWork = function(word, global) {
   global = global == null ? true : global;
   try {
@@ -426,13 +448,15 @@ NetworkEncodings._regexWordForNoteWork = function(word, global) {
 };
 
 /**
- * encodes a network into NoteWork notes
- * @param  {Network} network
+ * Encodes a network into NoteWork notes.
  *
- * @param  {String} nodeContentSeparator separator between node name and content
- * @param  {StringList} nodesPropertyNames properties to be encoded
- * @param  {StringList} relationsPropertyNames relations properties to be encoded
- * @return {String}
+ * @param  {Network} network Network to encode.
+ * @param  {String} nodeContentSeparator Separator between node name and content. Uses comma if not defined.
+ * @param  {StringList} nodesPropertyNames Node properties to be encoded.
+ * If not defined, no Node properties are encoded.
+ * @param  {StringList} relationsPropertyNames Relations properties to be encoded.
+ * If not defined, no Relation properties are encoded.
+ * @return {String} NoteWork based representation of Network.
  * tags:encoding
  */
 NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesPropertyNames, relationsPropertyNames) {
@@ -494,8 +518,9 @@ NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesP
 //////////////GDF
 
 /**
- * decodes a GDF string and builds a network
- * @param  {String} gdfCode
+ * Creates Network from a GDF string representation.
+ *
+ * @param  {String} gdfCode GDF serialized Network representation.
  * @return {Network}
  * tags:decoder
  */
@@ -568,12 +593,14 @@ NetworkEncodings.decodeGDF = function(gdfCode) {
 };
 
 /**
- * encodes a network in formatt GDF, more info: https://gephi.org/users/supported-graph-formats/gml-format/
- * @param  {Network} network
+ * Encodes a network in GDF Format, more info on GDF
+ * format can be found from
+ * {@link https://gephi.org/users/supported-graph-formats/gml-format/|Gephi}.
  *
- * @param  {StringList} nodesPropertiesNames names of nodes properties to be encoded
- * @param  {StringList} relationsPropertiesNames names of relations properties to be encoded
- * @return {String}
+ * @param  {Network} network Network to encode.
+ * @param  {StringList} nodesPropertiesNames Names of nodes properties to be encoded.
+ * @param  {StringList} relationsPropertiesNames Names of relations properties to be encoded
+ * @return {String} GDF encoding of Network.
  * tags:encoder
  */
 NetworkEncodings.encodeGDF = function(network, nodesPropertiesNames, relationsPropertiesNames) {
@@ -621,8 +648,9 @@ NetworkEncodings.encodeGDF = function(network, nodesPropertiesNames, relationsPr
 //////////////GML
 
 /**
- * decodes a GML file into a network
- * @param  {String} gmlCode
+ * Decodes a GML file into a new Network.
+ *
+ * @param  {String} gmlCode GML based representation of Network.
  * @return {Network}
  * tags:decoder
  */
@@ -686,9 +714,6 @@ NetworkEncodings.decodeGML = function(gmlCode) {
         node[lineParts[0]] = (lineParts[1].charAt(0) == "\"") ? StringOperators.removeQuotes(lineParts[1]).replace(/\*SPACE\*/g, " ") : Number(lineParts[1]);
       }
     }
-
-
-
   }
 
   part = edgesPart;
@@ -740,6 +765,13 @@ NetworkEncodings.decodeGML = function(gmlCode) {
 
   return network;
 };
+
+/**
+ * _cleanLineBeginning
+ *
+ * @param string
+ * @ignore
+ */
 NetworkEncodings._cleanLineBeginning = function(string) {
   string = StringOperators.removeInitialRepeatedCharacter(string, "\n");
   string = StringOperators.removeInitialRepeatedCharacter(string, "\r");
@@ -750,13 +782,15 @@ NetworkEncodings._cleanLineBeginning = function(string) {
 
 
 /**
- * encodes a network in format GDF
- * @param  {Network} network
+ * Encodes a network into GDF format.
  *
- * @param  {StringList} nodesPropertiesNames names of nodes' properties to encode
- * @param  {StringList} relationsPropertiesNames names or relations' properties to encode
- * @param {Boolean} idsAsInts GDF strong specification requires ids for nodes being int numbers
- * @return {String} GDF string
+ * @param  {Network} network The Network to encode.
+ *
+ * @param  {StringList} nodesPropertiesNames Names of Node properties to encode.
+ * @param  {StringList} relationsPropertiesNames Names of Relation properties to encode.
+ * @param {Boolean} idsAsInts If true, then the index of the Node is used as an ID.
+ * GDF strong specification requires ids for nodes being int numbers.
+ * @return {String} GDF string.
  * tags:encoder
  */
 NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPropertiesNames, idsAsInts) {
@@ -830,6 +864,12 @@ NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPr
 
 //////////////SYM
 
+/**
+ * decodeSYM
+ *
+ * @param symCode
+ * @return {Network}
+ */
 NetworkEncodings.decodeSYM = function(symCode) {
   //c.log("/////// decodeSYM\n"+symCode+"\n/////////");
   var i;
@@ -969,6 +1009,16 @@ NetworkEncodings.decodeSYM = function(symCode) {
   return network;
 };
 
+/**
+ * encodeSYM
+ *
+ * @param network
+ * @param groups
+ * @param nodesPropertiesNames
+ * @param relationsPropertiesNames
+ * @param groupsPropertiesNames
+ * @return {String}
+ */
 NetworkEncodings.encodeSYM = function(network, groups, nodesPropertiesNames, relationsPropertiesNames, groupsPropertiesNames) {
   nodesPropertiesNames = nodesPropertiesNames == null ? new StringList() : nodesPropertiesNames;
   relationsPropertiesNames = relationsPropertiesNames == null ? new StringList() : relationsPropertiesNames;
@@ -1036,6 +1086,14 @@ _processProperty = function(propName, propValue) { //TODO: use this in other enc
 /////////////////
 
 //Also used by CSVToTable
+
+/**
+ * replaceChomasInLine
+ *
+ * @param line
+ * @return {undefined}
+ * @ignore
+ */
 NetworkEncodings.replaceChomasInLine = function(line) {
   var quoteBlocks = line.split("\"");
   if(quoteBlocks.length < 2) return line;
@@ -1050,6 +1108,14 @@ NetworkEncodings.replaceChomasInLine = function(line) {
   line = StringList.fromArray(quoteBlocks).getConcatenated("");
   return line;
 };
+
+/**
+ * _replaceSpacesInLine
+ *
+ * @param line
+ * @return {undefined}
+ * @ignore
+ */
 NetworkEncodings._replaceSpacesInLine = function(line) {
   var quoteBlocks = line.split("\"");
   if(quoteBlocks.length < 2) return line;

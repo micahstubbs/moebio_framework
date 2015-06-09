@@ -2,8 +2,11 @@ Table.prototype = new List();
 Table.prototype.constructor = Table;
 
 /**
- * Table 
+ * @classdesc A Table provides a 2D array-like structure.
+ *
+ * @description Creates a new Table.
  * @constructor
+ * @category basics
  */
 function Table() {
   var args = [];
@@ -77,7 +80,7 @@ Table.prototype.getRow = function(index) {
 
 /**
  * returns the length of the list at given index (default 0)
- * 
+ *
  * @param  {Number} index
  * @return {Number}
  * tags:
@@ -102,7 +105,7 @@ Table.prototype.getLengths = function() {
 /**
  * filter a table by selecting a section of rows, elements with last index included
  * @param  {Number} startIndex index of first element in all lists of the table
- * 
+ *
  * @param  {Number} endIndex index of last elements in all lists of the table
  * @return {Table}
  * tags:filter
@@ -169,7 +172,7 @@ Table.prototype.getWithoutRows = function(rowsIndexes) {
 /**
  * sort table's lists by a list
  * @param  {Object} listOrIndex kist used to sort, or index of list in the table
- * 
+ *
  * @param  {Boolean} ascending (true by default)
  * @return {Table} table (of the same type)
  * tags:sort

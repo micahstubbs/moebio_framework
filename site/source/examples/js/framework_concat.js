@@ -2,8 +2,11 @@ DataModel.prototype = {};
 DataModel.prototype.constructor = DataModel;
 
 /**
- * DataModel 
+ * @classdesc Basic DataType from which other types are derived.
+ *
+ * @description Creates a new DataModel.
  * @constructor
+ * @category basics
  */
 function DataModel() {
   Object.apply(this);
@@ -18,19 +21,24 @@ DataModel.prototype.setType = function(type) {
 };
 
 DataModel.prototype.getType = function(type) {
+  //TODO: remove type param
   return this.type;
 };
 DataModel.prototype.toString = function() {
 
 };
+
 List.prototype = new DataModel();
 List.prototype.constructor = List;
 
-/**
- * List is an Array with a type property
- * @param comma separated values to add to List
- * @constructor
- */
+ /**
+  * @classdesc List is an Array with a type property.
+  *
+  * @description Creates a new List.
+  * @param {} values Comma separated values to add to List
+  * @constructor
+  * @category basics
+  */
 function List() {
   DataModel.apply(this);
   var array = [];
@@ -312,7 +320,7 @@ List.prototype.getReversed = function() {
 /**
  * return a sub-list, params could be: tw numbers, an interval or a NumberList
  * @param {Object} argument0 number, interval (in this it will include elements with initial and end indexes) or numberList
- * 
+ *
  * @param {Number} argument1 second index
  * @return {List}
  * tags:filter
@@ -644,7 +652,7 @@ List.prototype.indexOfElement = function(element) { //TODO: test if this is fast
 /**
  * return a list of values of a property of all elements
  * @param  {String} propertyName
- * 
+ *
  * @param  {Object} valueIfNull in case the property doesn't exist in the element
  * @return {List}
  * tags:
@@ -745,7 +753,7 @@ List.prototype.getSortedByProperty = function(propertyName, ascending) {
 
 /**
  * return a sorted version of the list
- * 
+ *
  * @param  {Boolean} ascending sort (true by default)
  * @return {List}
  * tags:sort
@@ -769,7 +777,7 @@ List.prototype.getSorted = function(ascending) {
 /**
  * sort the list by a list
  * @param  {List} list used to sort (numberList, stringList, dateList…)
- * 
+ *
  * @param  {Boolean} ascending (true by default)
  * @return {List} sorted list (of the same type)
  * tags:sort
@@ -1322,13 +1330,17 @@ List.prototype.destroy = function() {
     delete this[i];
   }
 };
+
 NumberList.prototype = new List();
 NumberList.prototype.constructor = NumberList;
-/**
- * NumberList
- * @constructor
- */
 
+/**
+ * @classdesc List structure for Numbers.
+ *
+ * @constructor
+ * @description Creates a new NumberList.
+ * @category numbers
+ */
 function NumberList() {
   var args = [];
 
@@ -1471,7 +1483,7 @@ NumberList.prototype.getProduct = function() {
 
 /**
  * returns a NumberList normalized to the sum
- * @param {Number} factor optional 
+ * @param {Number} factor optional
  * @return {NumberList}
  * tags:
  */
@@ -1885,14 +1897,19 @@ NumberList.prototype.clone = function() {
 NumberList.prototype.slice = function() {
   return NumberList.fromArray(this._slice.apply(this, arguments), false);
 };
+
 Node.prototype = new DataModel();
 Node.prototype.constructor = Node;
 
 /**
- * Node 
+ * @classdesc Represents a single node element in a Network. Can have both an id as well
+ * as a name.
+ *
+ * @description Create a new Node.
  * @param {String} id ID of the Node
  * @param {String} name string (label) name to be assigned to node
  * @constructor
+ * @category networks
  */
 function Node(id, name) {
   this.id = id == null ? '' : id;
@@ -1930,6 +1947,10 @@ function Node(id, name) {
   this.az = 0;
 }
 
+/**
+ * Removes all Relations and connected Nodes from
+ * the current Node.
+ */
 Node.prototype.cleanRelations = function() {
   this.nodeList = new NodeList();
   this.relationList = new RelationList();
@@ -1968,18 +1989,32 @@ Node.prototype.destroy = function() {
   delete this.az;
 };
 
+/**
+ * Returns the number of Relations connected to this Node.
+ *
+ * @return {Number} Number of Relations (edges) connecting to this Node instance.
+ */
 Node.prototype.getDegree = function() {
   return this.relationList.length;
 };
 
 //treeProperties:
+
+
+/**
+ * Returns the parent Node of this Node if it is part of a {@link Tree}.
+ *
+ * @return {Node} Parent Node of this Node.
+ */
 Node.prototype.getParent = function() {
   return this.parent;
 };
 
 /**
- * return the leaves under a node in a Tree, [!] if the network is not a tree this method could run infinite loops
- * @return {NodeList}
+ * Returns the leaves under a node in a Tree,
+ *
+ * <strong>Warning:</strong> If this Node is part of a Network that is not a tree, this method could run an infinite loop.
+ * @return {NodeList} Leaf Nodes of this Node.
  * tags:
  */
 Node.prototype.getLeaves = function() {
@@ -1994,19 +2029,25 @@ Node.prototype.getLeaves = function() {
     addLeaves(this);
     return leaves;
   };
-  //
 
 
+/**
+ * Uses an image as a visual representation to this Node.
+ *
+ * @param {String} urlImage The URL of the image to load.
+ */
 Node.prototype.loadImage = function(urlImage) {
   Loader.loadImage(urlImage, function(e) {
     this.image = e.result;
   }, this);
 };
 
-// Node.prototype.toString=function(){
-// 	return this.name+", "+this.id;
-// }
 
+/**
+ * Makes a copy of this Node.
+ *
+ * @return {Node} New Node that is a copy of this Node.
+ */
 Node.prototype.clone = function() {
   var newNode = new Node(this.id, this.name);
 
@@ -2021,13 +2062,17 @@ Node.prototype.clone = function() {
 
   return newNode;
 };
+
 NodeList.prototype = new List();
 NodeList.prototype.constructor = NodeList;
-/**
- * NodeList
- * @constructor
- */
 
+/**
+ * @classdesc A sub-class of {@link List} for storing {@link Node|Nodes}.
+ *
+ * @description create a new NodeList.
+ * @constructor
+ * @category networks
+ */
 function NodeList() {
   //var array=List.apply(this, arguments);
 
@@ -2046,19 +2091,30 @@ function NodeList() {
   return array;
 }
 
+/**
+ * Creates NodeList from raw Array.
+ *
+ * @param {Node[] | String[]} array Array to convert to
+ * @param {Boolean} forceToNode If true, and input array is an array of Strings,
+ * convert strings to Node instances with the strings used as the Node's id and name.
+ * @return {NodeList}
+ */
 NodeList.fromArray = function(array, forceToNode) {
   forceToNode = forceToNode == null ? false : forceToNode;
 
   var result = List.fromArray(array);
+
   if(forceToNode) {
     for(var i = 0; i < result.length; i++) {
       result[i] = typeOf(result[i]) == "Node" ? result[i] : (new Node(String(result[i]), String(result[i])));
     }
   }
 
+  // TODO: Remove duplicate line?
   var result = List.fromArray(array);
   result.type = "NodeList";
   result.ids = {};
+  // TODO: Fix
   Array(); //????
 
   //assign methods to array:
@@ -2091,6 +2147,10 @@ NodeList.fromArray = function(array, forceToNode) {
   return result;
 };
 
+/**
+ * Clears NodeList.
+ *
+ */
 NodeList.prototype.removeNodes = function() {
   for(var i = 0; i < this.length; i++) {
     this.ids[this[i].id] = null;
@@ -2098,11 +2158,21 @@ NodeList.prototype.removeNodes = function() {
   }
 };
 
+/**
+ * Adds given Node to NodeList.
+ *
+ * @param {Node} node Node to add
+ */
 NodeList.prototype.addNode = function(node) {
   this.ids[node.id] = node;
   this._push(node);
 };
 
+/**
+ * Adds all Nodes from another NodeList to this NodeList.
+ *
+ * @param {NodeList} nodes Nodes to add.
+ */
 NodeList.prototype.addNodes = function(nodes) {
   var i;
   for(i = 0; nodes[i] != null; i++) {
@@ -2110,18 +2180,29 @@ NodeList.prototype.addNodes = function(nodes) {
   }
 };
 
+/**
+ * Removes a given node from the list.
+ *
+ * @param {Node} node Node to remove.
+ */
 NodeList.prototype.removeNode = function(node) {
   this.ids[node.id] = null;
   this.removeElement(node);
 };
 
+/**
+ * Removes a Node at a particular index of the NodeList
+ *
+ * @param {Number} index The index of the Node to remove.
+ */
 NodeList.prototype.removeNodeAtIndex = function(index) {
   this.ids[this[index].id] = null;
   this.splice(index, 1);
 };
 
 /**
- * works under the assumption that weights are >=0
+ * Normalizes all weights associated with Nodes in NodeList
+ * to a value between 0 and 1. Works under the assumption that weights are >= 0.
  */
 NodeList.prototype.normalizeWeights = function() {
   var i;
@@ -2136,7 +2217,10 @@ NodeList.prototype.normalizeWeights = function() {
 
 
 /**
- * very unefficient method, use getNodeWithId when possible
+ * Returns Node with given name if present in the NodeList.
+ * Very inefficient method. Use {@link .getNodeById} when possible
+ *
+ * @return {Node} Node with name matching input name. Null if no such Node.
  */
 NodeList.prototype.getNodeByName = function(name) {
   var i;
@@ -2149,8 +2233,9 @@ NodeList.prototype.getNodeByName = function(name) {
 };
 
 /**
- * return a node from its id
- * @param  {String} id
+ * Returns Node in NodeList with given Id.
+ *
+ * @param  {String} id Id of Node to return.
  * @return {Node}
  * tags:search
  */
@@ -2158,6 +2243,14 @@ NodeList.prototype.getNodeById = function(id) {
   return this.ids[id];
 };
 
+/**
+ * Returns a new NodeList with all nodes in this
+ * NodeList with Id's found in the given {@link NumberList}
+ * of ids.
+ *
+ * @param {NumberList} ids Ids of Nodes to extract.
+ * @return {NodeList}
+ */
 NodeList.prototype.getNodesByIds = function(ids) {
   newNodelist = new NodeList();
   var node;
@@ -2169,7 +2262,9 @@ NodeList.prototype.getNodesByIds = function(ids) {
 };
 
 /**
- * return a list of weights
+ * Returns a {@link NumberList} of the weights associated
+ * with each Node in the NodeList.
+ *
  * @return {NumberList}
  * tags:
  */
@@ -2182,7 +2277,9 @@ NodeList.prototype.getWeights = function() {
 };
 
 /**
- * get ids from nodes
+ * Returns a {@link StringList} of all the Ids
+ * of the Nodes in the NodeList.
+ *
  * @return {StringList}
  * tags:
  */
@@ -2194,6 +2291,14 @@ NodeList.prototype.getIds = function() {
   return list;
 };
 
+/**
+ * Returns a {@link NumberList} with a count of directly
+ * connected Relations a Node has for each Node.
+ *
+ *
+ * @return {NumberList} List containing the number
+ * of Relations each Node has.
+ */
 NodeList.prototype.getDegrees = function() {
   var numberList = new NumberList();
   for(var i = 0; this[i] != null; i++) {
@@ -2203,6 +2308,14 @@ NodeList.prototype.getDegrees = function() {
 };
 
 
+/**
+ * Returns a {@link Polygon} constructed from all Nodes in
+ * the NodeList by using the
+ * <strong>x</strong> and <strong>y</strong> attributes of
+ * the Nodes.
+ *
+ * @return {Polygon}
+ */
 NodeList.prototype.getPolygon = function() {
   var polygon = new Polygon();
   for(var i = 0; this[i] != null; i++) {
@@ -2218,6 +2331,11 @@ NodeList.prototype.getNewId = function() {
   }
 };
 
+/**
+ * Returns a copy of this NodeList.
+ *
+ * @return {NodeList}
+ */
 NodeList.prototype.clone = function() {
   var newNodeList = new NodeList();
   this.forEach(function(node) {
@@ -2229,6 +2347,13 @@ NodeList.prototype.clone = function() {
 
 
 //methods overriden
+
+/**
+ * getWithoutRepetitions
+ *
+ * @return {undefined}
+ * @ignore
+ */
 NodeList.prototype.getWithoutRepetitions = function() {
   newList = new NodeList();
   newList.name = this.name;
@@ -2237,6 +2362,7 @@ NodeList.prototype.getWithoutRepetitions = function() {
   }
   return newList;
 };
+
 RelationList.prototype = new NodeList();
 RelationList.prototype.constructor = RelationList;
 /**
@@ -2244,9 +2370,15 @@ RelationList.prototype.constructor = RelationList;
  * @constructor
  */
 
+/**
+ * @classdesc A sub-class of {@link List} for storing {@link Relations|Relation}.
+ *
+ * @description create a new RelationList.
+ * @constructor
+ * @category networks
+ */
 function RelationList() {
   var array = NodeList.apply(this, arguments);
-  //
   array.name = "";
   //assign methods to array:
   array = RelationList.fromArray(array);
@@ -2254,6 +2386,12 @@ function RelationList() {
   return array;
 }
 
+/**
+ * Convert raw array of Relations into a RelationList.
+ *
+ * @param {Relation[]} array Array to convert to a RelationList.
+ * @return {RelationList}
+ */
 RelationList.fromArray = function(array) {
   var result = NodeList.fromArray(array);
   result.type = "RelationList";
@@ -2271,19 +2409,31 @@ RelationList.fromArray = function(array) {
   return result;
 };
 
+/**
+ * Add new Relation to the list.
+ *
+ * @param {Relation} relation Relation to add.
+ */
 //TODO:remove?
 RelationList.prototype.addRelation = function(relation) {
   this.addNode(relation);
 };
 
+/**
+ * Removes Relation from the list.
+ *
+ * @param {Relation} relation Relation to remove.
+ */
 RelationList.prototype.removeRelation = function(relation) {
     this.removeNode(relation);
-  };
-  /**
-   * get all relations that contain a given node
-   * @param {Node} node 
-   * @return a RelationList with relations that contain node
-   */
+};
+
+/**
+ * Returns all relations that are directly connected to the given Node.
+ *
+ * @param {Node} node Node to search
+ * @return {Relation[]} Containing Relations that contain node.
+ */
 RelationList.prototype.getRelationsWithNode = function(node) {
   var i;
   var filteredRelations = [];
@@ -2293,12 +2443,15 @@ RelationList.prototype.getRelationsWithNode = function(node) {
       filteredRelations.push(relation);
     }
   }
+
+  // TODO: convert to RelationList?
   return filteredRelations;
 };
 
 /**
- * get all Nodes related to a given Node
- * @param {Node} node 
+ * Returns all Nodes related to a given Node.
+ *
+ * @param {Node} node
  * @return a RelationList with relations that contain node
  */
 RelationList.prototype.getRelatedNodesToNode = function(node) {
@@ -2319,14 +2472,16 @@ RelationList.prototype.getRelatedNodesToNode = function(node) {
 
 
 /**
- * get all relations between two Nodes
- * @param {Node} node0 
- * @param {Node} node1
- * @param {Boolean} directed consider relation direction (default: false)
- * @return a RelationList with relations that contain node0 and node1
+ * Returns all Relations between two Nodes.
+ *
+ * @param {Node} node0 Source Node.
+ * @param {Node} node1 Destination Node.
+ * @param {Boolean} directed Consider Relation directional in nature (default: false).
+ * @return {Relation[]} With Relations that contain node0 and node1.
  * tags:
  */
-RelationList.prototype.getAllRelationsBetweenNodes = function(node0, node1, directed) { //TODO: to be improved (check node1 on node0.relationList) (see: nodesAreConnected)
+RelationList.prototype.getAllRelationsBetweenNodes = function(node0, node1, directed) {
+  //TODO: to be improved (check node1 on node0.relationList) (see: nodesAreConnected)
   var i;
   directed = directed == null ? false : directed;
   var filteredRelations = [];
@@ -2336,12 +2491,14 @@ RelationList.prototype.getAllRelationsBetweenNodes = function(node0, node1, dire
       filteredRelations.push(relation);
     }
   }
+  // TODO: convert to RelationList ?
   return filteredRelations;
 };
 
 
 /**
- * checks if two nodes are related, returns a boolean
+ * Checks if two nodes are related, returns a boolean
+ *
  * @param  {Node} node0
  * @param  {Node} node1
  * @param  {Boolean} directed true if relation must be directed
@@ -2355,11 +2512,12 @@ RelationList.prototype.nodesAreConnected = function(node0, node1, directed) {
 
 
 /**
- * get first Relation between two Nodes
- * @param {Node} node0 
- * @param {Node} node1
- * @param {Boolean} directed consider relation direction (default: false)
- * @return a RelationList with relations that contain node0 and node1
+ * Returns the first Relation between two Nodes.
+ *
+ * @param {Node} node0 Source Node.
+ * @param {Node} node1 Destination Node.
+ * @param {Boolean} directed consider relation direction (default: false).
+ * @return {Relation[]} With Relations that contain node0 and node1.
  * tags:
  */
 RelationList.prototype.getFirstRelationBetweenNodes = function(node0, node1, directed) { //TODO: to be improved (check node1 on node0.relationList) (see: nodesAreConnected) //TODO: make it work with ids
@@ -2373,13 +2531,16 @@ RelationList.prototype.getFirstRelationBetweenNodes = function(node0, node1, dir
 
 
 /**
- * get first relations between two Nodes
- * @param {String} id0 
- * @param {String} id1
- * @param {Boolean} directed consider relation direction (default: false)
- * @return a RelationList with relations that contain node0 and node1 (with node0.id = id0 and node1.id = id1)
+ * Returns first relations between two Nodes.
+ *
+ * @param {String} id0 Id of the source Node.
+ * @param {String} id1 Id of the destination Node.
+ * @param {Boolean} directed Consider relation directional (default: false).
+ * @return {Relation[]} With Relations that contain node0 and node1 (with node0.id = id0 and node1.id = id1).
  */
-RelationList.prototype.getFirstRelationByIds = function(id0, id1, directed) { //TODO: to be improved (check node1 on node0.relationList) (see: nodesAreConnected) //TODO: make it work with ids
+RelationList.prototype.getFirstRelationByIds = function(id0, id1, directed) {
+  //TODO: to be improved (check node1 on node0.relationList) (see: nodesAreConnected)
+  //TODO: make it work with ids
   var i;
   var _directed = directed || false;
   var relation;
@@ -2395,6 +2556,7 @@ RelationList.prototype.getFirstRelationByIds = function(id0, id1, directed) { //
     relation = this[i];
     if(relation.node0.id == id1 && relation.node1.id == id0) {
       //c.log("<--- ", relation.node0.name, relation.node1.name);
+      // TODO: convert to RelationList ?
       return relation;
     }
   }
@@ -2402,17 +2564,15 @@ RelationList.prototype.getFirstRelationByIds = function(id0, id1, directed) { //
 };
 
 
-// RelationList.prototype.nodesAreConnected=function(node0, node1, directed){//
-// 	if(node0.toNodeList.getNodeById(node1.id)!=null) return true;
-// 	if(!directed && node0.fromNodeList.getNodeById(node1.id)!=null) return true;
-// 	return false;
-// }
 Table.prototype = new List();
 Table.prototype.constructor = Table;
 
 /**
- * Table 
+ * @classdesc A Table provides a 2D array-like structure.
+ *
+ * @description Creates a new Table.
  * @constructor
+ * @category basics
  */
 function Table() {
   var args = [];
@@ -2486,7 +2646,7 @@ Table.prototype.getRow = function(index) {
 
 /**
  * returns the length of the list at given index (default 0)
- * 
+ *
  * @param  {Number} index
  * @return {Number}
  * tags:
@@ -2511,7 +2671,7 @@ Table.prototype.getLengths = function() {
 /**
  * filter a table by selecting a section of rows, elements with last index included
  * @param  {Number} startIndex index of first element in all lists of the table
- * 
+ *
  * @param  {Number} endIndex index of last elements in all lists of the table
  * @return {Table}
  * tags:filter
@@ -2578,7 +2738,7 @@ Table.prototype.getWithoutRows = function(rowsIndexes) {
 /**
  * sort table's lists by a list
  * @param  {Object} listOrIndex kist used to sort, or index of list in the table
- * 
+ *
  * @param  {Boolean} ascending (true by default)
  * @return {Table} table (of the same type)
  * tags:sort
@@ -2660,6 +2820,13 @@ Table.prototype.getReport = function(level) {
 
   var names = this.getNames();
   var types = this.getTypes();
+
+  text += ident + "--";
+  names.forEach(function(name, i){
+    text += ident + name + " ["+TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"]";
+  });
+  text += ident + "--";
+
   var sameTypes = types.allElementsEqual();
   if(sameTypes) {
     text += ident + "types of all lists: " + types[0];
@@ -2673,7 +2840,12 @@ Table.prototype.getReport = function(level) {
 
     var i;
     for(i = 0; this[i] != null; i++) {
-      text += "\n" + ident + ("(" + (i) + "/0-" + (this.length - 1) + ")") + this[i].getReport(1);
+      text += "\n" + ident + ("(" + (i) + "/0-" + (this.length - 1) + ")")
+      try{
+         text += this[i].getReport(1);
+      } catch(err){
+        text += ident + "[!] something wrong with list ";
+      }
     }
   }
 
@@ -2683,8 +2855,10 @@ Table.prototype.getReport = function(level) {
 
 };
 
-Table.prototype.getReportObject = function() {}; //TODO
 Table.prototype.getReportHtml = function() {}; //TODO
+
+Table.prototype.getReportObject = function() {}; //TODO
+
 
 
 
@@ -2719,12 +2893,16 @@ Table.prototype.print = function() {
   c.log(TableEncodings.TableToCSV(this, null, true));
   c.log("/////////////" + this.name + "> ////////////////////////////////////////////////////");
 };
+
 DateAxis.prototype = new DataModel();
 DateAxis.prototype.constructor = DateAxis;
 
 /**
- * DateAxis
+ * @classdesc Date based {@link Axis}.
+ *
+ * @description Creates a new DateAxis.
  * @constructor
+ * @category dates
  */
 function DateAxis(departureDateInterval, arrivalInterval) {
   arrivalInterval = arrivalInterval == null ? new Interval(0, 1) : arrivalInterval;
@@ -2776,14 +2954,18 @@ DateAxis.prototype.update = function() {
 DateAxis.prototype.toString = function() {
   return "DateAxis[" + this.departureDateInterval.toString() + ", " + this.arrivalInterval.toString() + "]";
 };
+
 DateInterval.prototype = new DataModel();
 DateInterval.prototype.constructor = DateInterval;
 
 /**
- * DateInterval
- * @param {Date} Interval's minimum value
- * * @param {Date} Interval's maximum value
+ * @classdesc Date Interval
+ *
+ * @description Creates a new DateInterval.
+ * @param {Date} Interval's minimum value.
+ * @param {Date} Interval's maximum value.
  * @constructor
+ * @category dates
  */
 function DateInterval(date0, date1) {
   DataModel.apply(this, arguments);
@@ -2833,13 +3015,17 @@ DateInterval.prototype.getProduct = function(object) { //TODO: complete with mor
 
   return null;
 };
+
 DateList.prototype = new List();
 DateList.prototype.constructor = DateList;
-/**
- * DateList
- * @constructor
- */
 
+/**
+ * @classdesc A {@link List} for storing Dates.
+ *
+ * @description Creates a new DateList.
+ * @constructor
+ * @category dates
+ */
 function DateList() {
   var args = [];
   for(var i = 0; i < arguments.length; i++) {
@@ -2912,14 +3098,19 @@ DateList.prototype.getMax = function() {
   }
   return max;
 };
+
 Country.prototype = new Node();
 Country.prototype.constructor = Country;
 
 /**
- * Country
- * @param {String} country id (ISO2)
- * @param {String} country name
+ * @classdesc Represents an individual country for visualization and spatial
+ * reasoning.
+ *
+* @description Creates a new Country instance.
+ * @param {String} id Country id (ISO2)
+ * @param {String} name Country name
  * @constructor
+ * @category geo
  */
 function Country(id, name) {
   Node.apply(this, [id, name]);
@@ -2975,12 +3166,16 @@ Country.prototype.getFrame = function() {
   }
   return this._frame;
 };
+
 CountryList.prototype = new NodeList();
 CountryList.prototype.constructor = CountryList;
 
 /**
- * CountryList
+ * @classdesc A {@link List} structure for storing {@link Country|Countries}.
+ *
+ * @description Creates a new CountryList instance.
  * @constructor
+ * @category geo
  */
 function CountryList() {
   var array = NodeList.apply(this, arguments);
@@ -3118,12 +3313,18 @@ CountryList.prototype.assignValuesToCountriesFromTable = function(table, valueTo
     }
   }
 };
+
 Point.prototype = new DataModel();
 Point.prototype.constructor = Point;
 
 /**
- * Point
+ * @classdesc Represents an individual 2D point in space.
+ *
+ * @description Creates a new Point
+ * @param {Number} x
+ * @param {Number} y
  * @constructor
+ * @category geometry
  */
 function Point(x, y) {
   DataModel.apply(this, arguments);
@@ -3219,11 +3420,18 @@ Point.prototype.destroy = function() {
   delete this.x;
   delete this.y;
 };
+
 Point3D.prototype = new Point();
 Point3D.prototype.constructor = Point3D;
 /**
- * Point3D
+ * @classdesc Point3D represents a point in 3D space.
+ *
+ * @description Create a new 3D Point.
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Number} z
  * @constructor
+ * @category geometry
  */
 function Point3D(x, y, z) {
   Point.apply(this, arguments);
@@ -3305,11 +3513,16 @@ Point3D.prototype.destroy = function() {
   delete this.y;
   delete this.z;
 };
+
 Polygon.prototype = new List();
 Polygon.prototype.constructor = Polygon;
+
 /**
- * Polygon
+ * @classdesc A Polygon is a shape created from a list of {@link Point|Points}.
+ *
+ * @description Creates a new Polygon.
  * @constructor
+ * @category geometry
  */
 function Polygon() {
   var array = List.apply(this, arguments);
@@ -3485,11 +3698,17 @@ Polygon.prototype.clone = function() {
   newPolygon.name = this.name;
   return newPolygon;
 };
+
 Polygon3D.prototype = new List();
 Polygon3D.prototype.constructor = Polygon3D;
+
 /**
- * Polygon3D
+ * @classdesc Polygon3D brings the {@link Polygon} concept into three
+ * dimensions through the use of {@link Point3D}.
+ *
+ * @description Creates a new Polygon3D.
  * @constructor
+ * @category geometry
  */
 function Polygon3D() {
   var array = List.apply(this, arguments);
@@ -3502,33 +3721,45 @@ Polygon3D.fromArray = function(array) {
   //assign methods to array:
   return result;
 };
+
 Polygon3DList.prototype = new List();
 Polygon3DList.prototype.constructor = Polygon3DList;
+
 /**
- * Polygon3DList
+ * @classdesc A {@link List} structure for storing {@link Polygon3D} instances.
+ *
+ * @description Creates a new Polygon3DList.
  * @constructor
+ * @category geometry
  */
 function Polygon3DList() {
   var array = List.apply(this, arguments);
   array = Polygon3DList.fromArray(array);
   return array;
 }
+
 Polygon3DList.fromArray = function(array) {
   var result = List.fromArray(array);
   result.type = "Polygon3DList";
   return result;
 };
+
 PolygonList.prototype = new Table();
 PolygonList.prototype.constructor = PolygonList;
+
 /**
- * PolygonList
+ * @classdesc A {@link List} structure for storing {@link Polygon} instances.
+ *
+ * @description Creates a new PolygonList.
  * @constructor
+ * @category geometry
  */
 function PolygonList() {
   var array = Table.apply(this, arguments);
   array = PolygonList.fromArray(array);
   return array;
 }
+
 PolygonList.fromArray = function(array) {
   var result = Table.fromArray(array);
   result.type = "PolygonList";
@@ -3539,6 +3770,7 @@ PolygonList.fromArray = function(array) {
   result.getString = PolygonList.prototype.getString;
   return result;
 };
+
 PolygonList.prototype.getFrame = function() {
   if(this.length == 0) return null;
   var frameP = this[0].getFrame();
@@ -3555,6 +3787,7 @@ PolygonList.prototype.getFrame = function() {
 
   return rectangle;
 };
+
 PolygonList.prototype.add = function(object) {
   var type = typeOf(object);
   var i;
@@ -3569,6 +3802,7 @@ PolygonList.prototype.add = function(object) {
       break;
   }
 };
+
 PolygonList.prototype.factor = function(value) {
   var newPolygonList = new PolygonList();
   for(var i = 0; this[i] != null; i++) {
@@ -3600,11 +3834,20 @@ PolygonList.prototype.clone = function() {
 // }
 // return t;
 // }
+
 Rectangle.prototype = new DataModel();
 Rectangle.prototype.constructor = Rectangle;
+
 /**
- * Rectangle
+ * @classdesc Rectangle shape
+ *
+ * @description Creates a new Rectangle.
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Number} width
+ * @param {Number} height
  * @constructor
+ * @category geometry
  */
 function Rectangle(x, y, width, height) {
   DataModel.apply(this);
@@ -3722,7 +3965,7 @@ Rectangle.prototype.intersectsRectangle = function(rectangle) {
 
 
 
-	return this.containsPoint(rectangle.getTopLeft()) || this.containsPoint(rectangle.getTopRight()) || this.containsPoint(rectangle.getBottomLeft()) || this.containsPoint(rectangle.getBottomRight()) 
+	return this.containsPoint(rectangle.getTopLeft()) || this.containsPoint(rectangle.getTopRight()) || this.containsPoint(rectangle.getBottomLeft()) || this.containsPoint(rectangle.getBottomRight())
 	|| rectangle.containsPoint(this.getTopLeft()) || rectangle.containsPoint(this.getTopRight()) || rectangle.containsPoint(this.getBottomLeft()) || rectangle.containsPoint(this.getBottomRight());
 };
 
@@ -3749,11 +3992,15 @@ Rectangle.prototype.destroy = function() {
   delete this.width;
   delete this.height;
 };
+
 RectangleList.prototype = new List();
 RectangleList.prototype.constructor = RectangleList;
 /**
- * RectangleList
+ * @classdesc A {@link List} structure for storing {@link Rectangle} instances.
+ *
+ * @description Creates a new RectangleList.
  * @constructor
+ * @category geometry
  */
 function RectangleList() {
   var array = List.apply(this, arguments);
@@ -3821,13 +4068,17 @@ RectangleList.prototype.getIntersectionArea = function() {
 
   return intersectionArea;
 };
+
 ColorList.prototype = new List();
 ColorList.prototype.constructor = ColorList;
-/**
- * ColorList
- * @constructor
- */
 
+/**
+ * @classdesc A {@link List} for storing Colors.
+ *
+ * @description Creates a new ColorList.
+ * @constructor
+ * @category colors
+ */
 function ColorList() {
   var args = [];
   var i;
@@ -3915,14 +4166,18 @@ ColorList.prototype.addAlpha = function(alpha) {
   newColorList.name = this.name;
   return newColorList;
 };
+
 ColorScale.prototype = new DataModel();
 ColorScale.prototype.constructor = ColorScale;
-/**
- * Point
- * @constructor
- */
-//include(frameworksRoot+"operators/graphic/ColorOperators.js");
 
+/**
+ * @classdesc Color scale.
+ *
+ * @description Creates a new ColorScale.
+ * @param {Function} colorScaleFunction Function.
+ * @constructor
+ * @category colors
+ */
 function ColorScale(colorScaleFunction) {
   DataModel.apply(this, arguments);
   this.name = "";
@@ -3930,9 +4185,11 @@ function ColorScale(colorScaleFunction) {
 
   this.colorScaleFunction = colorScaleFunction ? colorScaleFunction : ColorScales.blackScale;
 }
+
 ColorScale.prototype.getColor = function(value) {
   return this.colorScaleFunction(value);
 };
+
 ColorScale.prototype.getColorList = function(nColors) {
   var colorList = new ColorList();
   var i;
@@ -3941,12 +4198,16 @@ ColorScale.prototype.getColorList = function(nColors) {
   }
   return colorList;
 };
+
 Axis.prototype = new DataModel();
 Axis.prototype.constructor = Axis;
 
 /**
- * Axis
+ * @classdesc Axis for 1D data.
+ *
  * @constructor
+ * @description Creates a new Axis.
+ * @category numbers
  */
 function Axis(departureInterval, arrivalInterval) {
   departureInterval = departureInterval == null ? new Interval(0, 1) : departureInterval;
@@ -3995,12 +4256,16 @@ Axis.prototype.update = function() {
 Axis.prototype.toString = function() {
   return "Axis[" + this.departureInterval.toString() + ", " + this.arrivalInterval.toString() + "]";
 };
+
 Axis2D.prototype = new DataModel();
 Axis2D.prototype.constructor = Axis2D;
 
 /**
- * Axis2D
+ * @classdesc Axis for 2D data
+ *
  * @constructor
+ * @description Creates a new 2d axis.
+ * @category numbers
  */
 function Axis2D(departureFrame, arrivalFrame) {
   arrivalFrame = arrivalFrame == null ? new Rectangle(0, 0, 1, 1) : arrivalFrame;
@@ -4071,14 +4336,18 @@ Axis2D.prototype._update = function() {
 Axis2D.prototype.toString = function() {
   return "Axis2D[" + this.departureFrame.toString() + ", " + this.arrivalFrame.toString() + "]";
 };
+
 Interval.prototype = new Point();
 Interval.prototype.constructor = Interval;
 
 /**
- * Interval
- * @param {Number} x - Interval's x value
- * @param {Number} y - Interval's y value
+ * @classdesc Provide reasoning around numeric intervals.
+ *
  * @constructor
+ * @param {Number} x Interval's x value
+ * @param {Number} y Interval's y value
+ * @description Creates a new Interval
+ * @category numbers
  */
 function Interval(x, y) {
   DataModel.apply(this, arguments);
@@ -4217,12 +4486,17 @@ Interval.prototype.isEquivalent = function(interval) {
 Interval.prototype.toString = function() {
   return "Interval[x:" + this.x + "| y:" + this.y + "| amplitude:" + this.getAmplitude() + "]";
 };
+
 Matrix.prototype = new DataModel();
 Matrix.prototype.constructor = Matrix;
+
 /**
- * Matrix
- * some credits to http://strd6.com/2010/06/introducing-matrix-js/
+ * @classdesc Matrix implementation.
+ * Some credits to http://strd6.com/2010/06/introducing-matrix-js/
+ *
  * @constructor
+ * @description Creates a new Matrix instance.
+ * @category numbers
  */
 function Matrix(a, b, c, d, tx, ty) {
   DataModel.apply(this, arguments);
@@ -4353,12 +4627,16 @@ Matrix.prototype.scale = function(sx, sy, aboutPoint) {
 Matrix.prototype.translate = function(tx, ty) {
   return this.concat(Matrix.translation(tx, ty));
 };
+
 NumberTable.prototype = new Table();
 NumberTable.prototype.constructor = NumberTable;
 
 /**
- * NumberTable
+ * @classdesc {@link Table} to store numbers.
+ *
  * @constructor
+ * @description Creates a new NumberTable.
+ * @category numbers
  */
 function NumberTable() {
   var args = [];
@@ -4562,6 +4840,7 @@ NumberTable.prototype.add = function(value) {
   newTable.name = this.name;
   return newTable;
 };
+
 function Space2D(configuration) {
   configuration = configuration == null ? {} : configuration;
 
@@ -4687,11 +4966,14 @@ Space2D.prototype.wheel = function(e) {
 };
 StringList.prototype = new List();
 StringList.prototype.constructor = StringList;
-/**
- * StringList
- * @constructor
- */
 
+/**
+ * @classdesc {@link List} for storing Strings.
+ *
+ * @constructor
+ * @description Creates a new StringList
+ * @category strings
+ */
 function StringList() {
   var args = []; //TODO:why this?, ask M
 
@@ -4858,7 +5140,7 @@ StringList.prototype.toNumberList = function() {
 
 /**
  * converts a stringList into a dateList
- * 
+ *
  * @param  {String} formatCase format cases:<br>0: MM-DD-YYYY<br>1: YYYY-MM-DD (standard Javascript conversion)
  * @param  {String} separator "-" by default
  * @return {DateList}
@@ -4895,12 +5177,25 @@ StringList.prototype.clone = function() {
   newList.name = this.name;
   return newList;
 };
+
 Relation.prototype = new Node();
 Relation.prototype.constructor = Relation;
 
 /**
- * Relation 
+ * Relation
+ * @classdesc Relations represent the edges that connect Nodes
+ * in a Network DataType.
+ *
+ * @description create a new Relation.
  * @constructor
+ * @param {String} id ID of the Relation.
+ * @param {String} name Name of the Relation.
+ * @param {Node} node0 Source of the Relation.
+ * @param {Node} node1 Destination of the Relation.
+ * @param {Number} weight Edge weight associated with Relation.
+ * Defaults to 1.
+ * @param {String} content Other data to associate with this Relation.
+ * @category networks
  */
 function Relation(id, name, node0, node1, weight, content) {
   Node.apply(this, [id, name]);
@@ -4938,13 +5233,18 @@ Relation.prototype.clone = function() {
 
   return relation;
 };
+
 Network.prototype = new DataModel();
 Network.prototype.constructor = Network;
 
-
 /**
- * Network
+ * @classdesc Networks are a DataType to store network data.
+ *
+ * Networks have nodes stored in a NodeList,
+ * and relations (edges) stored in a RelationList.
+ * @description Create a new Network instance.
  * @constructor
+ * @category networks
  */
 function Network() {
   this.type = "Network";
@@ -4954,7 +5254,7 @@ function Network() {
 }
 
 /**
- * get nodeList property
+ * Get Nodes of the Network as a NodeList
  * @return {NodeList}
  * tags:
  */
@@ -4963,7 +5263,8 @@ Network.prototype.getNodes = function() {
 };
 
 /**
- * get relationList property
+ * Get Relations (edges) of the Network as
+ * a RelationList.
  * @return {RelationList}
  * tags:
  */
@@ -4982,24 +5283,54 @@ Network.prototype.getNodesIds = function() {
 
 
 
-/**
+/*
  * building methods
  */
 
+/**
+ * Add a node to the network
+ * @param {Node} node A new node that will be added to the network.
+ */
 Network.prototype.addNode = function(node) {
   this.nodeList.addNode(node);
 };
+
+/**
+ * Retrieve a node from the nodeList of the Network with the given name (label).
+ * @param {String} name The name of the node to retrieve from the Network.
+ * @return {Node} The node with the given name. Null if no node with that name
+ * can be found in the Network.
+ */
 Network.prototype.getNodeWithName = function(name) {
   return this.nodeList.getNodeWithName(name);
 };
+
+/**
+ * Retrieve node from Network with the given id.
+ * @param {String} id ID of the node to retrieve
+ * @return {Node} The node with the given id. Null if a node with this id is not
+ * in the Network.
+ */
 Network.prototype.getNodeWithId = function(id) {
   return this.nodeList.getNodeWithId(id);
 };
 
+/**
+ * Add a new Relation (edge) to the Network between two nodes.
+ * @param {Node} node0 The source of the relation.
+ * @param {Node} node1 The destination of the relation.
+ * @param {String} id The id of the relation.
+ * @param {Number} weight A numerical weight associated with the relation (edge).
+ * @param {String} content Information associated with the relation.
+ */
 Network.prototype.createRelation = function(node0, node1, id, weight, content) {
   this.addRelation(new Relation(id, id, node0, node1, weight, content));
 };
 
+/**
+ * Add an existing Relation (edge) to the Network.
+ * @param {Relation} relation The relation to add to the network.
+ */
 Network.prototype.addRelation = function(relation) {
   this.relationList.addNode(relation);
   relation.node0.nodeList.addNode(relation.node1);
@@ -5012,6 +5343,16 @@ Network.prototype.addRelation = function(relation) {
   relation.node1.fromRelationList.addNode(relation);
 };
 
+/**
+ * Create a new Relation between two nodes in the network
+ * @param {Node} node0 The source of the relation.
+ * @param {Node} node1 The destination of the relation.
+ * @param {String} id The id of the relation. If missing, an id will be generated
+ * based on the id's of node0 and node1.
+ * @param {Number} weight=1 A numerical weight associated with the relation (edge).
+ * @param {String} content Information associated with the relation.
+ * @return {Relation} The new relation added to the Network.
+ */
 Network.prototype.connect = function(node0, node1, id, weight, content) {
   id = id || (node0.id + "_" + node1.id);
   weight = weight || 1;
@@ -5023,15 +5364,23 @@ Network.prototype.connect = function(node0, node1, id, weight, content) {
 
 
 
-/**
+/*
  * removing methods
  */
 
+/**
+ * Remove a node from the Network
+ * @param {Node} node The node to remove.
+ */
 Network.prototype.removeNode = function(node) {
   this.removeNodeRelations(node);
   this.nodeList.removeNode(node);
 };
 
+/**
+ * Remove all Relations connected to the node from the Network.
+ * @param {Node} node Node who's relations will be removed.
+ */
 Network.prototype.removeNodeRelations = function(node) {
   for(var i = 0; node.relationList[i] != null; i++) {
     this.removeRelation(node.relationList[i]);
@@ -5039,10 +5388,14 @@ Network.prototype.removeNodeRelations = function(node) {
   }
 };
 
+/**
+ * Remove all Nodes from the Network.
+ */
 Network.prototype.removeNodes = function() {
   this.nodeList.deleteNodes();
   this.relationList.deleteNodes();
 };
+
 Network.prototype.removeRelation = function(relation) {
   this.relationList.removeElement(relation);
   relation.node0.nodeList.removeNode(relation.node1);
@@ -5056,7 +5409,7 @@ Network.prototype.removeRelation = function(relation) {
 };
 
 /**
- * transformative method, removes nodes without a minimal number of connections
+ * Transformative method, removes nodes without a minimal number of connections
  * @param  {Number} minDegree minimal degree
  * @return {Number} number of nodes removed
  * tags:transform
@@ -5132,12 +5485,16 @@ Network.prototype.destroy = function() {
   delete this.nodeList;
   delete this.relationList;
 };
+
 Tree.prototype = new Network();
 Tree.prototype.constructor = Tree;
 
 /**
- * Tree 
+ * @classdesc Trees are Networks that have a hierarchical structure.
+ *
+ * @description Create a new Tree.
  * @constructor
+ * @category networks
  */
 function Tree() {
   Network.apply(this);
@@ -5147,7 +5504,14 @@ function Tree() {
   this._createRelation = this.createRelation;
   this.createRelation = this._newCreateRelation;
 }
-//
+
+
+/**
+ * Adds a given Node to the tree, under the given parent Node.
+ *
+ * @param {Node} node
+ * @param {Node} parent
+ */
 Tree.prototype.addNodeToTree = function(node, parent) {
   this.addNode(node);
   if(parent == null) {
@@ -5163,6 +5527,9 @@ Tree.prototype.addNodeToTree = function(node, parent) {
   this.nLevels = Math.max(this.nLevels, node.level + 1);
 };
 
+/**
+ * @ignore
+ */
 Network.prototype._newCreateRelation = function(parent, node, id, weight) {
   if(id == null) id = this.relationList.getNewId();
   this._createRelation(parent, node, id, weight);
@@ -5171,7 +5538,13 @@ Network.prototype._newCreateRelation = function(parent, node, id, weight) {
   this.nLevels = Math.max(this.nLevels, node.level + 1);
 };
 
+/**
+ * Adds a new parent node to the Tree.
+ *
+ * @param {Node} node New Parent Node.
+ */
 Tree.prototype.addFather = function(node, children) {
+  //TODO: is children supposed to be child?
   if(child.parent != null || this.nodeList.indexOf(child) == -1) return false;
   this.addNode(node);
   child.parent = node;
@@ -5180,6 +5553,12 @@ Tree.prototype.addFather = function(node, children) {
   this.createRelation(node, child);
 };
 
+/**
+ * Provides a {@link NodeList} of all the Nodes of the Tree at a given level.
+ *
+ * @param {Number} level Level (depth) of the Tree to extract Nodes at.
+ * @return {NodeList} All Nodes at the given level of the tree.
+ */
 Tree.prototype.getNodesByLevel = function(level) {
   var newNodeList = new NodeList();
   for(i = 0; this.nodeList[i] != null; i++) {
@@ -5189,10 +5568,11 @@ Tree.prototype.getNodesByLevel = function(level) {
 };
 
 /**
- * return the leaves (nodes without children) of a tree
+ * Returns the leaves (nodes without children) of a tree.
  *
- * @param {Node} node to collect leaves under a node
- * @return {NodeList}
+ * @param {Node} node Optional parent Node to start the leaf search from.
+ * If no Node is provided, all leaf Nodes are returned.
+ * @return {NodeList} Leaves of the Tree or sub-tree.
  * tags:
  */
 Tree.prototype.getLeaves = function(node) {
@@ -5218,9 +5598,18 @@ Tree.prototype.getLeaves = function(node) {
   return leaves;
 };
 
+/**
+ * assignDescentWeightsToNodes
+ *
+ * @return {undefined}
+ */
 Tree.prototype.assignDescentWeightsToNodes = function() {
   this._assignDescentWeightsToNode(this.nodeList[0]);
 };
+
+/**
+ * @ignore
+ */
 Tree.prototype._assignDescentWeightsToNode = function(node) {
   var i;
   if(node.toNodeList.length == 0) {
@@ -5233,9 +5622,16 @@ Tree.prototype._assignDescentWeightsToNode = function(node) {
   return node.descentWeight;
 };
 
+/**
+ * Returns a string indicating the size of the Tree.
+ *
+ * @return {String} Log message indicating Tree's size.
+ */
 Tree.prototype.getReport = function(relation) {
+  //TODO: remove relation input?
   return "Tree contains " + this.nodeList.length + " nodes and " + this.relationList.length + " relations";
 };
+
 function ObjectOperators() {}
 
 
@@ -5900,8 +6296,10 @@ ObjectConversions.conversor = function(object, toType) {
   }
 };
 /**
- * DateListOperators
- * @constructor
+ * @classdesc Provides a set of tools that work with DateLists.
+ *
+ * @namespace
+ * @category dates
  */
 function DateListOperators() {}
 
@@ -6015,7 +6413,7 @@ DateListOperators.buildTimeTreeFromDates = function(dates) {
 
   tree.assignDescentWeightsToNodes();
 
-  // 
+  //
 
 
 
@@ -6074,6 +6472,7 @@ DateListOperators._s = function(date) {
 DateListOperators._ms = function(date) {
   return date.getMilliseconds();
 };
+
 DateOperators.millisecondsToHours = 1 / (1000 * 60 * 60);
 DateOperators.millisecondsToDays = 1 / (1000 * 60 * 60 * 24);
 DateOperators.millisecondsToWeeks = 1 / (1000 * 60 * 60 * 24 * 7);
@@ -6084,9 +6483,12 @@ DateOperators.MONTH_NAMES_SHORT = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'ju
 DateOperators.MONTH_NDAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 DateOperators.WEEK_NAMES = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
 /**
- * DateOperators
- * @constructor
+ * @classdesc Provides a set of tools that work with Dates.
+ *
+ * @namespace
+ * @category dates
  */
 function DateOperators() {}
 
@@ -6219,9 +6621,12 @@ DateOperators.getWeekInYear = function(date) {
 DateOperators.getNDaysInMonth = function(month, year) {
   return new Date(year, month, 0).getDate();
 };
+
 /**
- * CountryListOperators
- * @constructor
+ * @classdesc Provides a set of tools that work with {@link countryList|CountryLists}.
+ *
+ * @namespace
+ * @category geo
  */
 function CountryListOperators() {}
 
@@ -6235,9 +6640,12 @@ CountryListOperators.getCountryByName = function(countryList, name) {
 
   return null;
 };
+
 /**
- * CountryOperators
- * @constructor
+ * @classdesc Provides a set of tools that work with {@link Country|Countries}.
+ *
+ * @namespace
+ * @category geo
  */
 function CountryOperators() {}
 
@@ -6253,6 +6661,14 @@ CountryOperators.getSimplifiedNames = function(names) {
   }
   return simplifiedNames;
 };
+
+/**
+ * @classdesc Provides a set of tools for dealing with distances and geometric
+ * conversions.
+ *
+ * @namespace
+ * @category geo
+ */
 function GeoOperators() {}
 
 GeoOperators.EARTH_RADIUS = 6371009;
@@ -6276,6 +6692,13 @@ GeoOperators.polygonLength = function(polygon) {
   }
   return length;
 };
+
+/**
+ * @classdesc Tools to convert geometric data types.
+ *
+ * @namespace
+ * @category geometry
+ */
 function GeometryConvertions() {}
 
 //include(frameworksRoot+"operators/strings/StringOperators.js")
@@ -6284,13 +6707,13 @@ function GeometryConvertions() {}
 // sep0 = sep0 || ",";
 // sep1 = sep1 || " ";
 // sep2 = sep2 || "\n";
-// 	
+//
 // var polygonList = new PolygonList();
 // var polygon;
 // var point;
-// 	
+//
 // lines = StringOperators.splitString(string, sep2);
-// 	
+//
 // var i;
 // var j;
 // for(i=0; lines[i]!=null; i++){
@@ -6335,9 +6758,12 @@ GeometryConvertions.PolygonToNumberTable = function(polygon) {
 
   return numberTable;
 };
+
 /**
- * GeometryOperators
- * @constructor
+ * @classdesc Provides a set of tools that work with Geometric data.
+ *
+ * @namespace
+ * @category geometry
  */
 function GeometryOperators() {}
 
@@ -6396,81 +6822,10 @@ GeometryOperators.trueBezierCurveHeightHorizontalControlPoints = function(x0, x1
     GeometryOperators._bezierSimpleCurveTable[1] = 1;
   }
 
-  //c.log('x, y0, y1, , Math.floor(1000*x), GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*x)]', x, y0, y1, Math.floor(1000*x), GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*x)]);
-
   return GeometryOperators._bezierSimpleCurveTable[Math.floor(1000 * x)] * (y1 - y0) + y0;
 
 };
 
-
-
-
-
-/**
- * This an approximation, it doesn't take into account actual values of c0x and c1x
- */
-//GeometryOperators.trueBezierCurveHeightHorizontalControlPointsOld=function(x0, x1, y0, y1, c0x, c1x, x){//TODO:fix
-
-// if(GeometryOperators._bezierSimpleCurveTable==null){
-
-// 	for(i=0; i<1000; i++){
-
-// 	}
-
-// }
-
-// return GeometryOperators._bezierSimpleCurveTable[Math.floor(1000*(x-x0)/(x1-x0))]*(y1-y0) + y0;
-
-
-
-//
-
-//x=3at + t^2(3-9a) + t^3(1+6a)  --> Javier
-//http://en.wikipedia.org/wiki/Cubic_function#General_formula_for_roots
-
-
-
-
-//return (x-x0)/(x1-x0);// (x - x0)/(c0x + c1x - 2*x0);
-
-//var
-
-// var antit = 1 - t;
-
-// var x0t = x0 + (cx0-x0)*t;
-// var x1t = x1 + (cx1-x1)*t;
-
-// var xm = x0t = (x1t-x0t)*t;
-
-
-// c.log( (x-x0)/(c0x-x0+x1 - 2*x0) );
-
-// return (x-x0)/(c0x+x1 - 2*x0);
-
-
-// var d0 = c0x-x0;
-// // var d1 = c1x-x1;
-
-// var _a = 2*d0;
-// var _b = d0 + x1 - x0;
-// var _c = x0 - x;
-
-// // var _b = d0 + x1 - x0;
-// // var _c = x0 - x;
-
-
-// //c.log(_a, _b, _c, '-->', (-_b + Math.sqrt(_b*_b - 4*_a*_c))/(2*_a), (-_b -Math.sqrt(_b*_b - 4*_a*_c))/(2*_a));
-
-// return [(-_b + Math.sqrt(_b*_b - 4*_a*_c))/(2*_a), (-_b -Math.sqrt(_b*_b - 4*_a*_c))/(2*_a)];
-
-
-
-
-// var cosinus = Math.cos(Math.PI*(t-1));
-// var sign = cosinus>0?1:-1;
-
-// return (0.5 + 0.5*( Math.pow(cosinus*sign, 0.6)*sign ))*(y1-y0) + y0;
-//}
 
 /**
  * This an approximation, it doesn't take into account actual values of c0x and c1x
@@ -6632,7 +6987,7 @@ GeometryOperators.VennCircles = function(area0, area1, areaIntersection, centerI
  * @param r1
  * @param areaComun
  * @param precision
- * 
+ *
  */
 GeometryOperators.circleDistancesFromCommonArea = function(r0, r1, commonArea, precision) {
   precision = precision || 0.1;
@@ -6875,9 +7230,12 @@ function _triangulate(vertices) {
     /* Yay, we're done! */
   return closed;
 }
+
 /**
- * PointOperators
- * @constructor
+ * @classdesc Provides a set of tools that work with {@link Point|Points}.
+ *
+ * @namespace
+ * @category geometry
  */
 function PointOperators() {}
 
@@ -6898,9 +7256,12 @@ PointOperators.dot = function(point0, point1) {
 PointOperators.twoPointsInterpolation = function(point0, point1, t) {
   return new Point((1 - t) * point0.x + t * point1.x, (1 - t) * point0.y + t * point1.y);
 };
+
 /**
- * PolygonGenerators
- * @constructor
+ * @classdesc Functions to create Polygons from a set of points
+ *
+ * @namespace
+ * @category geometry
  */
 function PolygonGenerators() {}
 
@@ -7013,12 +7374,19 @@ PolygonGenerators.createPolygon = function(nPoints, mode, frame) {
 
 // 	return new Array(centers, radius);
 // }
+
+/**
+ * @classdesc Encode and Decode {@link Polygon} as a String.
+ *
+ * @namespace
+ * @category geometry
+ */
 function PolygonListEncodings() {}
 
 /**
  * converts a simple format for polygons into a PolygonList
  * @param {String} string
- * 
+ *
  * @param {String} separatorCoordinates "," by default
  * @param {String} separatorPolygons "/" by default
  * @return {PolygonList}
@@ -7051,7 +7419,7 @@ PolygonListEncodings.StringToPolygonList = function(string, separatorCoordinates
 /**
  * converts a polygonList into a simple text format
  * @param {PolygonList} polygonList
- * 
+ *
  * @param {String} separatorCoordinates "," by default
  * @param {String} separatorPolygons "/" by default
  * @return {String}
@@ -7072,9 +7440,12 @@ PolygonListEncodings.PolygonListToString = function(polygonList, separatorCoordi
   }
   return t;
 };
+
 /**
- * PolygonGenerators
- * @constructor
+ * @classdesc Tools to manipulate {@link PolygonList|Polygon Lists}.
+ *
+ * @namespace
+ * @category geometry
  */
 function PolygonListOperators() {}
 
@@ -7090,9 +7461,12 @@ PolygonListOperators.simplifyPolygons = function(polygonList, margin, removeEmpt
   }
   return newPolygonList;
 };
+
 /**
- * PolygonOperators
- * @constructor
+ * @classdesc Provides a set of tools that work with Polygons
+ *
+ * @namespace
+ * @category geometry
  */
 function PolygonOperators() {}
 
@@ -7417,7 +7791,7 @@ PolygonOperators.convexHull = function(polygon, deepness) {
       dP = Math.sqrt(Math.pow(p1.x - p0.x, 2) + Math.pow(p1.y - p0.y, 2));
       for(k = 0; pointsLeftIndexes[k] != null; k++) {
         p = polygon[pointsLeftIndexes[k]];
-        //d = Math.pow(p.x-pC.x, 2)+Math.pow(p.y-pC.y, 2); 
+        //d = Math.pow(p.x-pC.x, 2)+Math.pow(p.y-pC.y, 2);
         d = (Math.sqrt(Math.pow(p.x - p0.x, 2) + Math.pow(p.y - p0.y, 2)) + Math.sqrt(Math.pow(p.x - p1.x, 2) + Math.pow(p.y - p1.y, 2))) / Math.pow(dP, 2);
         if(d < dMin) {
           dMin = d;
@@ -7490,15 +7864,18 @@ PolygonOperators.placePointsInsideBezierPolygon = function(polygon, nPoints, mod
       break;
   }
 };
+
 /**
- * RectangleOperators
- * @constructor
+ * @classdesc Provides a set of tools that work with Rectangles
+ *
+ * @namespace
+ * @category geometry
  */
 function RectangleOperators() {}
 
 
 /**
- * 
+ *
  * 0: quadrification
  * 1: vertical
  * 2: horizontal
@@ -7635,7 +8012,7 @@ RectangleOperators.quadrification = RectangleOperators.squarify; //old name
  * Squarified algorithm as described in (http://www.win.tue.nl/~vanwijk/stm.pdf)
  * @param {Rectangle} bounds Rectangle
  * @param {NumberList} list of weights
- * 
+ *
  * @param {Boolean} weights are normalized
  * @param {Boolean} weights are sorted
  * @return {List} a list of Rectangles
@@ -7771,10 +8148,10 @@ RectangleOperators.squarify = function(frame, weights, isNormalizedWeights, isSo
 };
 
 /**
- * partitionRectangle 
+ * partitionRectangle
  * @param {Rectangle} bounds Rectangle
  * @param {NumberList} normalizedWeight List
- * 
+ *
  * @return {List} a list of Rectangles
  */
 RectangleOperators.partitionRectangle = function(rectangle, normalizedWeightList, sum) {
@@ -7811,7 +8188,7 @@ RectangleOperators.partitionRectangle = function(rectangle, normalizedWeightList
 /**
  * returns the highest ratio from a list of Rectangles
  * @param {List} rectangleList a Rectangle List
- * 
+ *
  * @return {Number} highestRatio
  */
 RectangleOperators._getHighestRatio = function(rectangleList) {
@@ -7824,9 +8201,12 @@ RectangleOperators._getHighestRatio = function(rectangleList) {
   }
   return highestRatio;
 };
+
 /**
- * ColorOperators
- * @constructor
+ * @classdesc Provides a set of tools that work with Colors.
+ *
+ * @namespace
+ * @category colors
  */
 function ColorOperators() {}
 
@@ -7836,9 +8216,12 @@ ColorOperators.point3DToColor = function(point3D) {
 ColorOperators.colorToPoint3D = function(color) {
   return Point3D.fromArray(ColorUtils.uinttoRGB(color));
 };
+
 /**
- * ColorGenerators 
- * @constructor
+ * @classdesc Tools for generating colors.
+ *
+ * @namespace
+ * @category colors
  */
 function ColorGenerators() {}
 
@@ -7847,15 +8230,17 @@ ColorGenerators.randomColor = function(alpha) {
   alpha = alpha == null ? 1 : alpha;
   return 'rgba(' + Math.floor(256 * Math.random()) + ',' + Math.floor(256 * Math.random()) + ',' + Math.floor(256 * Math.random()) + ',' + alpha + ')';
 };
+
 ColorListGenerators._HARDCODED_CATEGORICAL_COLORS = new ColorList(
   "#dd4411", "#2200bb", "#1f77b4", "#ff660e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#dd8811",
   "#dd0011", "#221140", "#1f66a3", "#ff220e", "#2ba01c", "#442728", "#945600", "#8c453a", "#e37700"
 );
 
 /**
- * ColorListGenerators
- * @constructor
+ * @classdesc Tools for generating {@link List|Lists} of colors.
  *
+ * @namespace
+ * @category colors
  */
 function ColorListGenerators() {}
 
@@ -8080,12 +8465,15 @@ ColorListGenerators.createCategoricalColorListForList = function(list, colorList
     }
   ];
 };
+
 /**
- * ColorListOperators
- * @constructor
+ * @classdesc Tools for working with Lists of colors.
+ *
+ * @namespace
+ * @category colors
  */
 function ColorListOperators() {}
-/** 
+/**
  * receives n arguments and performs addition
  */
 ColorListOperators.colorListFromColorScale = function(colorScale, nColors) {
@@ -8135,13 +8523,15 @@ ColorListOperators.colorListToPolygon3D = function(colorList) {
   }
   return polygon3D;
 };
+
 /**
- * ColorOperators
- * @constructor
+ * @classdesc Provides a set of tools that work with Colors.
  *
+ * @namespace
+ * @category colors
  */
-// TODO: create Color struture to be used instead of arrays [255, 100,0] ?
 function ColorOperators() {}
+// TODO: create Color struture to be used instead of arrays [255, 100,0] ?
 
 
 
@@ -8658,6 +9048,14 @@ ColorOperators.colorStringToRGB = function(color_string) {
 
   return null;
 };
+
+/**
+ * @classdesc Default color scales.
+ *
+ * @namespace
+ * @category colors
+ */
+
 function ColorScales() {}
 
 // *
@@ -8764,10 +9162,12 @@ ColorScales.solar = function(value) {
 ColorScales.antiSolar = function(value) {
   return ColorOperators.invertColor(ColorScales.solar(value));
 };
+
 /**
- * ColorScaleGenerators
- * @constructor
- * 
+ * @classdesc Generate {@link ColorScale|ColorScales} with various properties.
+ *
+ * @namespace
+ * @category colors
  */
 function ColorScaleGenerators() {}
 
@@ -8808,10 +9208,12 @@ ColorScaleGenerators.createColorScaleFromColors = function(colorList, positions)
 
   return cS;
 };
+
 /**
- * static class with methods to generate different kinds of Lists
- * 
- * @constructor
+ * @classdesc Create default lists
+ *
+ * @namespace
+ * @category basics
  */
 function ListGenerators() {}
 
@@ -8821,6 +9223,7 @@ function ListGenerators() {}
  * @param {Object} nValues length of the List
  * @param {Object} element object to be placed in all positions
  * @return {List} generated List
+ * tags:generator
  */
 ListGenerators.createListWithSameElement = function(nValues, element) {
   switch(typeOf(element)) {
@@ -8866,6 +9269,7 @@ ListGenerators.createIterationSequence = function(nValues, firstElement, dynamic
   }
   return list;
 };
+
 function ListOperators() {}
 
 
@@ -10635,8 +11039,10 @@ TableOperators._decisionTreeGenerateColorsMixture = function(ctxt, width, height
   //return imageData;
 };
 /**
- * IntervalListOperators
- * @constructor
+ * @classdesc Provides a set of tools that work with Interval Lists.
+ *
+ * @namespace
+ * @category numbers
  */
 function IntervalListOperators() {}
 
@@ -10649,9 +11055,13 @@ IntervalListOperators.scaleIntervals = function(intervalList, value) {
   }
   return newIntervalList;
 };
+
 /**
- * IntervalTableOperators
- * @constructor
+ * @classdesc Provides a set of tools that work with {@link Table|Tables} of
+ * Intervals.
+ *
+ * @namespace
+ * @category numbers
  */
 function IntervalTableOperators() {}
 
@@ -10664,9 +11074,12 @@ IntervalTableOperators.scaleIntervals = function(intervalTable, value) {
   }
   return newIntervalTable;
 };
+
 /**
- * MatrixGenerators
- * @constructor
+ * @classdesc Create default Matrix instances.
+ *
+ * @namespace
+ * @category basics
  */
 function MatrixGenerators() {}
 
@@ -10812,6 +11225,7 @@ MatrixGenerators.createTranslationMatrix = function(tx, ty) {
 // * @fieldOf Matrix
 // */
 // Matrix.VERTICAL_FLIP = Matrix(1, 0, 0, -1);
+
 function NumberListGenerators() {}
 
 /**
@@ -11240,8 +11654,10 @@ NumberListOperators.intersection = function(a, b) {
   return result;
 };
 /**
- * NumberOperators
- * @constructor
+ * @classdesc Provides a set of tools that work with Numbers.
+ *
+ * @namespace
+ * @category numbers
  */
 function NumberOperators() {}
 
@@ -11395,6 +11811,7 @@ NumberOperators._Mash = function() {
   mash.version = 'Mash 0.9';
   return mash;
 };
+
 NumberTableConversions = function() {};
 
 /**
@@ -12862,18 +13279,26 @@ StringOperators.validateEmail = function(text) {
 StringOperators.validateUrl = function(text) {
   return StringOperators.LINK_REGEX.test(text);
 };
+
+/**
+ * @classdesc Includes functions to convert Networks into other DataTypes.
+ *
+ * @namespace
+ * @category networks
+ */
 function NetworkConvertions() {}
 
 
 /**
- * builds a Network based on a two columns Table, creating relations on co-occureences
- * @param  {Table} table table with at least two columns (commonly strings)
- * 
- * @param  {NumberList} numberList weights of relations
- * @param  {Number} threshold minimum weight or noumber of co-occurrences to create a relation
- * @param  {Boolean} allowMultipleRelations
- * @param {Number} minRelationsInNode remove nodes with number of relations below threshold
- * @param {StringList} stringList contents of relations
+ * Builds a Network based on a two columns Table, creating relations on co-occurrences.
+ *
+ * @param {Table} table table with at least two columns (commonly strings)
+ *
+ * @param {NumberList} numberList Weights of relations.
+ * @param {Number} threshold Minimum weight or number of co-occurrences to create a relation.
+ * @param {Boolean} allowMultipleRelations
+ * @param {Number} minRelationsInNode Remove nodes with number of relations below threshold.
+ * @param {StringList} stringList Contents of relations.
  * @return {Network}
  * tags:conversion
  */
@@ -12951,6 +13376,15 @@ NetworkConvertions.TableToNetwork = function(table, numberList, threshold, allow
 
   return network;
 };
+
+
+/**
+ * @classdesc Serializes and deserializes {@link Network|Networks} using into
+ * a number of text based formats.
+ *
+ * @namespace
+ * @category networks
+ */
 function NetworkEncodings() {}
 
 
@@ -12960,7 +13394,8 @@ function NetworkEncodings() {}
 NetworkEncodings.nodeNameSeparators = ['|', ':', ' is ', ' are ', '.', ','];
 
 /**
- * converts a text file under NoteWork format into a network
+ * Converts a String in NoteWork format into a network
+ *
  * @param  {String} code
  * @return {Network}
  * tags:decoding
@@ -13362,6 +13797,10 @@ NetworkEncodings.decodeNoteWork = function(code) {
 
   return network;
 };
+
+/**
+ * @ignore
+ */
 NetworkEncodings._simplifyForNoteWork = function(name) {
   name = name.toLowerCase();
   if(name.substr(name.length - 2) == 'es') {
@@ -13369,6 +13808,15 @@ NetworkEncodings._simplifyForNoteWork = function(name) {
   } else if(name.charAt(name.length - 1) == 's') name = name.substr(0, name.length - 1);
   return name.trim();
 };
+
+/**
+ * _regexWordForNoteWork
+ *
+ * @param word
+ * @param global
+ * @return {undefined}
+ * @ignore
+ */
 NetworkEncodings._regexWordForNoteWork = function(word, global) {
   global = global == null ? true : global;
   try {
@@ -13379,13 +13827,15 @@ NetworkEncodings._regexWordForNoteWork = function(word, global) {
 };
 
 /**
- * encodes a network into NoteWork notes
- * @param  {Network} network
+ * Encodes a network into NoteWork notes.
  *
- * @param  {String} nodeContentSeparator separator between node name and content
- * @param  {StringList} nodesPropertyNames properties to be encoded
- * @param  {StringList} relationsPropertyNames relations properties to be encoded
- * @return {String}
+ * @param  {Network} network Network to encode.
+ * @param  {String} nodeContentSeparator Separator between node name and content. Uses comma if not defined.
+ * @param  {StringList} nodesPropertyNames Node properties to be encoded.
+ * If not defined, no Node properties are encoded.
+ * @param  {StringList} relationsPropertyNames Relations properties to be encoded.
+ * If not defined, no Relation properties are encoded.
+ * @return {String} NoteWork based representation of Network.
  * tags:encoding
  */
 NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesPropertyNames, relationsPropertyNames) {
@@ -13447,8 +13897,9 @@ NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesP
 //////////////GDF
 
 /**
- * decodes a GDF string and builds a network
- * @param  {String} gdfCode
+ * Creates Network from a GDF string representation.
+ *
+ * @param  {String} gdfCode GDF serialized Network representation.
  * @return {Network}
  * tags:decoder
  */
@@ -13521,12 +13972,14 @@ NetworkEncodings.decodeGDF = function(gdfCode) {
 };
 
 /**
- * encodes a network in formatt GDF, more info: https://gephi.org/users/supported-graph-formats/gml-format/
- * @param  {Network} network
+ * Encodes a network in GDF Format, more info on GDF
+ * format can be found from
+ * {@link https://gephi.org/users/supported-graph-formats/gml-format/|Gephi}.
  *
- * @param  {StringList} nodesPropertiesNames names of nodes properties to be encoded
- * @param  {StringList} relationsPropertiesNames names of relations properties to be encoded
- * @return {String}
+ * @param  {Network} network Network to encode.
+ * @param  {StringList} nodesPropertiesNames Names of nodes properties to be encoded.
+ * @param  {StringList} relationsPropertiesNames Names of relations properties to be encoded
+ * @return {String} GDF encoding of Network.
  * tags:encoder
  */
 NetworkEncodings.encodeGDF = function(network, nodesPropertiesNames, relationsPropertiesNames) {
@@ -13574,8 +14027,9 @@ NetworkEncodings.encodeGDF = function(network, nodesPropertiesNames, relationsPr
 //////////////GML
 
 /**
- * decodes a GML file into a network
- * @param  {String} gmlCode
+ * Decodes a GML file into a new Network.
+ *
+ * @param  {String} gmlCode GML based representation of Network.
  * @return {Network}
  * tags:decoder
  */
@@ -13639,9 +14093,6 @@ NetworkEncodings.decodeGML = function(gmlCode) {
         node[lineParts[0]] = (lineParts[1].charAt(0) == "\"") ? StringOperators.removeQuotes(lineParts[1]).replace(/\*SPACE\*/g, " ") : Number(lineParts[1]);
       }
     }
-
-
-
   }
 
   part = edgesPart;
@@ -13693,6 +14144,13 @@ NetworkEncodings.decodeGML = function(gmlCode) {
 
   return network;
 };
+
+/**
+ * _cleanLineBeginning
+ *
+ * @param string
+ * @ignore
+ */
 NetworkEncodings._cleanLineBeginning = function(string) {
   string = StringOperators.removeInitialRepeatedCharacter(string, "\n");
   string = StringOperators.removeInitialRepeatedCharacter(string, "\r");
@@ -13703,13 +14161,15 @@ NetworkEncodings._cleanLineBeginning = function(string) {
 
 
 /**
- * encodes a network in format GDF
- * @param  {Network} network
+ * Encodes a network into GDF format.
  *
- * @param  {StringList} nodesPropertiesNames names of nodes' properties to encode
- * @param  {StringList} relationsPropertiesNames names or relations' properties to encode
- * @param {Boolean} idsAsInts GDF strong specification requires ids for nodes being int numbers
- * @return {String} GDF string
+ * @param  {Network} network The Network to encode.
+ *
+ * @param  {StringList} nodesPropertiesNames Names of Node properties to encode.
+ * @param  {StringList} relationsPropertiesNames Names of Relation properties to encode.
+ * @param {Boolean} idsAsInts If true, then the index of the Node is used as an ID.
+ * GDF strong specification requires ids for nodes being int numbers.
+ * @return {String} GDF string.
  * tags:encoder
  */
 NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPropertiesNames, idsAsInts) {
@@ -13783,6 +14243,12 @@ NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPr
 
 //////////////SYM
 
+/**
+ * decodeSYM
+ *
+ * @param symCode
+ * @return {Network}
+ */
 NetworkEncodings.decodeSYM = function(symCode) {
   //c.log("/////// decodeSYM\n"+symCode+"\n/////////");
   var i;
@@ -13922,6 +14388,16 @@ NetworkEncodings.decodeSYM = function(symCode) {
   return network;
 };
 
+/**
+ * encodeSYM
+ *
+ * @param network
+ * @param groups
+ * @param nodesPropertiesNames
+ * @param relationsPropertiesNames
+ * @param groupsPropertiesNames
+ * @return {String}
+ */
 NetworkEncodings.encodeSYM = function(network, groups, nodesPropertiesNames, relationsPropertiesNames, groupsPropertiesNames) {
   nodesPropertiesNames = nodesPropertiesNames == null ? new StringList() : nodesPropertiesNames;
   relationsPropertiesNames = relationsPropertiesNames == null ? new StringList() : relationsPropertiesNames;
@@ -13989,6 +14465,14 @@ _processProperty = function(propName, propValue) { //TODO: use this in other enc
 /////////////////
 
 //Also used by CSVToTable
+
+/**
+ * replaceChomasInLine
+ *
+ * @param line
+ * @return {undefined}
+ * @ignore
+ */
 NetworkEncodings.replaceChomasInLine = function(line) {
   var quoteBlocks = line.split("\"");
   if(quoteBlocks.length < 2) return line;
@@ -14003,6 +14487,14 @@ NetworkEncodings.replaceChomasInLine = function(line) {
   line = StringList.fromArray(quoteBlocks).getConcatenated("");
   return line;
 };
+
+/**
+ * _replaceSpacesInLine
+ *
+ * @param line
+ * @return {undefined}
+ * @ignore
+ */
 NetworkEncodings._replaceSpacesInLine = function(line) {
   var quoteBlocks = line.split("\"");
   if(quoteBlocks.length < 2) return line;
@@ -14017,18 +14509,28 @@ NetworkEncodings._replaceSpacesInLine = function(line) {
   line = StringList.fromArray(quoteBlocks).getConcatenated("\"");
   return line;
 };
+
+/**
+ * @classdesc NetworkGenerators provides a set of tools to generate Network
+ * instances from a variety of sources.
+ * @namespace
+ * @category networks
+ */
 function NetworkGenerators() {}
 
 
 /**
- * builds a random network, several options
- * @param  {Number} nNodes number of nodes
- * @param  {Number} pRelation probability of a relation being created between 2 nodes
- * 
- * @param  {Number} mode 0:simple random 1:clusterized
- * @param  {Boolean} randomRelationsWeights adds a random weigth to relations
- * @return {Network}
+ * Build a random network based on the provided options
  * tags:generator
+ * @param {Number} nNodes number of nodes
+ * @param {Number} pRelation probability of a relation being created between 2 nodes
+ *
+ * @param {Number} mode 0:simple random 1:clusterized
+ * @param {Boolean} randomRelationsWeights adds a random weigth to relations
+ * @return {Network}
+ * @example
+ * // generate a sparsely connected network with 2000 Nodes
+ * network = NetworkGenerators.createRandomNetwork(2000, 0.0006, 1);
  */
 NetworkGenerators.createRandomNetwork = function(nNodes, pRelation, mode, randomRelationsWeights) {
   if(nNodes == null || pRelation == null) return null;
@@ -14083,8 +14585,13 @@ NetworkGenerators.createRandomNetwork = function(nNodes, pRelation, mode, random
 };
 
 /**
- * weightsForRelationsMethod 0:dotProduct (more efficient) 1:cosinus similarity
- * http://en.wikipedia.org/wiki/Cosine_similarity
+ * @param strings
+ * @param texts
+ * @param {Number} weightsForRelationsMethod
+ * <ul>
+ * <li><strong>0</strong>: dotProduct (more efficient)</li>
+ * <li><strong>1</strong>: {@link http://en.wikipedia.org/wiki/Cosine_similarity|cosinus similarity}</li>
+ *
  */
 NetworkGenerators.createTextsCoOccurrencesNetwork = function(strings, texts, weightsForRelationsMethod, minimum) {
   var occurrencesTable = StringListOperators.countStringsOccurrencesOnTexts(strings, texts, weightsForRelationsMethod, minimum);
@@ -14147,7 +14654,7 @@ NetworkGenerators.createNetworkFromOccurrencesTable = function(occurrencesTable,
 /**
  * Creates a network using a list and measuring the relation weight with a given method
  * a Relation is created between two nodes if and only if the returned weight is > 0
- * @param {List} list List of objects that define the nodes 
+ * @param {List} list List of objects that define the nodes
  * @param {Function} weightFunction method used to eval each pair of nodes
  * @param {StringList} names optional, names of Nodes
  * @return {Network} a network with number of nodes equal to the length of the List
@@ -14176,7 +14683,7 @@ NetworkGenerators.createNetworkFromListAndFunction = function(list, weightFuncti
 
 
 /**
- * builds a network from a text, using previously detected words or noun phrases, and with relations built from co-occurrences in sentences
+ * Builds a network from a text, using previously detected words or noun phrases, and with relations built from co-occurrences in sentences
  * relations contain as description the part of the sentence that ends with the second node name (thus being compatible with NoteWork)
  * @param  {String} text
  * @param  {StringList} nounPhrases words, n-grams or noun phrases
@@ -14292,9 +14799,24 @@ NetworkGenerators.createNetworkFromTextAndWords = function(text, nounPhrases, sp
 
   return network;
 };
+
+/**
+ * @classdesc Provides a set of tools that work with Networks.
+ *
+ * @namespace
+ * @category networks
+ */
 NetworkOperators = function() {};
 
 
+/**
+ * Filters Network in-place to remove Nodes with less then minDegree connections.
+ *
+ * @param {Network} network Network to filter
+ * @param {Number} minDegree The minimum number of Relations a
+ * Node must have to remain in the Network.
+ * @return {null}
+ */
 NetworkOperators.filterNodesByMinDegree = function(network, minDegree) {
   var i;
   for(i = 0; network.nodeList[i] != null; i++) {
@@ -14307,6 +14829,13 @@ NetworkOperators.filterNodesByMinDegree = function(network, minDegree) {
 };
 
 
+/**
+ *
+ * @param {Network} network Network to work on.
+ * @param {Node} node0 Source Node.
+ * @param {Node} node1 Destination Node
+ * @return {Number}
+ */
 NetworkOperators.degreeBetweenNodes = function(network, node0, node1) {
   if(network == null || node0 == null || node1 == null) return null;
 
@@ -14331,6 +14860,16 @@ NetworkOperators.degreeBetweenNodes = function(network, node0, node1) {
   return d;
 };
 
+/**
+ * Returns a NodeList with the Nodes in the Network that are part of the
+ * first shortest path found between the two input nodes.
+ *
+ * @param {Network} network Network to work on.
+ * @param {Node} node0 Source Node.
+ * @param {Node} node1 Destination Node.
+ * @param {Boolean} includeExtremes If true, include node0 and node1 in the returned list.
+ * @return {NodeList} Nodes in the shortest path between node0 and node1.
+ */
 NetworkOperators.shortestPath = function(network, node0, node1, includeExtremes) {
   if(network == null || node0 == null || node1 == null) return null;
 
@@ -14350,13 +14889,14 @@ NetworkOperators.shortestPath = function(network, node0, node1, includeExtremes)
 
 
 /**
- * finds all shortest paths between two nodes
- * @param  {Network} network
- * @param  {Node} node0
- * @param  {Node} node1
- * 
- * @param  {NodeList} shortPath in case a shortPath has been calculated previously
- * @return {Table} list of paths (nodeLists)
+ * Finds all shortest paths between two nodes.
+ *
+ * @param  {Network} network Network to work on.
+ * @param  {Node} node0 Source Node.
+ * @param  {Node} node1 Destination Node.
+ *
+ * @param  {NodeList} shortPath In case a shortPath has been calculated previously
+ * @return {Table} List of paths (NodeLists)
  */
 NetworkOperators.shortestPaths = function(network, node0, node1, shortPath) {
   if(network == null || node0 == null || node1 == null) return null;
@@ -14389,6 +14929,9 @@ NetworkOperators.shortestPaths = function(network, node0, node1, shortPath) {
   return all;
 };
 
+/**
+ * @ignore
+ */
 NetworkOperators._extendPaths = function(allPaths, nodeDestiny, maxLength) {
 
   if(allPaths[0].length >= maxLength) return allPaths;
@@ -14422,7 +14965,8 @@ NetworkOperators._extendPaths = function(allPaths, nodeDestiny, maxLength) {
 };
 
 /**
- * finds all loops in the network
+ * Finds all loops in the network
+ *
  * @param  {Network} network
  * @param {Number} minSize minimum size of loops
  * @return {Table} list of nodeLists
@@ -14474,6 +15018,10 @@ NetworkOperators._sameLoop = function(loop0, loop1) {
   }
   return true;
 };
+
+/**
+ * @ignore
+ */
 NetworkOperators._getLoopsOnNode = function(central) {
   if(central.toNodeList.length == 0 || central.fromNodeList.length == 0) return [];
 
@@ -14523,6 +15071,9 @@ NetworkOperators._getLoopsOnNode = function(central) {
   return loops;
 };
 
+/**
+ * @ignore
+ */
 NetworkOperators._pathsToCentral = function(columns, iColumn, path, paths) {
   if(path.finished) return;
 
@@ -14573,6 +15124,9 @@ NetworkOperators._pathsToCentral = function(columns, iColumn, path, paths) {
   }
 };
 
+/**
+ * @ignore
+ */
 NetworkOperators._loopsColumns = function(nodeList, iColumn, columns) {
   if(columns[iColumn] == null) columns[iColumn] = new NodeList();
   var node, otherNode;
@@ -14601,10 +15155,11 @@ NetworkOperators._loopsColumns = function(nodeList, iColumn, columns) {
 
 
 /**
- * builds a spanning tree of a Node in a Network (rather inneficient)
+ * Builds a spanning tree of a Node in a Network (not very efficient)
+ *
  * @param  {Network} network
- * @param  {Node} node0 parent of tree
- * @param  {Node} nodeLimit optional node in the network to prune the tree
+ * @param  {Node} node0 Parent of the tree
+ * @param  {Node} nodeLimit Optional node in the network to prune the tree
  * @return {Tree}
  * tags:
  */
@@ -14668,7 +15223,8 @@ NetworkOperators.spanningTree = function(network, node0, nodeLimit) { //TODO: th
   return tree;
 };
 
-NetworkOperators.degreesPartition = function(network, node) { //TODO:optionally add a NodeList of not connected Nodes
+NetworkOperators.degreesPartition = function(network, node) {
+  //TODO:optionally add a NodeList of not connected Nodes
   var list0 = new NodeList(node);
   var nextLevel = nodes = node.nodeList;
   var nextNodes;
@@ -14704,7 +15260,8 @@ NetworkOperators.degreesPartition = function(network, node) { //TODO:optionally 
   return nodesTable;
 };
 
-NetworkOperators.degreesFromNodeToNodes = function(network, node, nodeList) { //TODO: probably very unefficient
+NetworkOperators.degreesFromNodeToNodes = function(network, node, nodeList) {
+  //TODO: probably very unefficient
   var table = NetworkOperators.degreesPartition(network, node);
   var degrees = new NumberList();
   degrees.max = 0;
@@ -14727,7 +15284,8 @@ NetworkOperators.degreesFromNodeToNodes = function(network, node, nodeList) { //
 };
 
 /**
- * builds a dendrogram from a network
+ * Builds a dendrogram from a Network.
+ *
  * @param  {Network} network
  * @return {Tree}
  * tags:analysis
@@ -14735,6 +15293,7 @@ NetworkOperators.degreesFromNodeToNodes = function(network, node, nodeList) { //
 NetworkOperators.buildDendrogram = function(network) {
   if(network == null) return null;
 
+  //TODO: remove?
   var t = new Date().getTime();
 
 
@@ -14786,6 +15345,7 @@ NetworkOperators.buildDendrogram = function(network) {
     for(i = 0; node1.nodeList[i] != null; i++) {
       newNode.node.nodeList.addNode(node1.nodeList[i]);
       newNode.node.relationList.addRelation(node1.relationList[i]);
+      //TODO: remove?
       Network;
     }
 
@@ -14805,6 +15365,10 @@ NetworkOperators.buildDendrogram = function(network) {
 
   return tree;
 };
+
+/**
+ * @ignore
+ */
 NetworkOperators._getClosestPair = function(nodeList, returnIndexes, pRelationPair) {
   if(nodeList.length == 2) {
     var index = nodeList[0].nodeList.indexOf(nodeList[1]);
@@ -14850,6 +15414,10 @@ NetworkOperators._getClosestPair = function(nodeList, returnIndexes, pRelationPa
   return nodes;
 
 };
+
+/**
+ * @ignore
+ */
 NetworkOperators._strengthBetweenSets = function(nodeList0, nodeList1, pRelationPair) {
   var strength = 0;
   var i, j;
@@ -14871,12 +15439,12 @@ NetworkOperators._strengthBetweenSets = function(nodeList0, nodeList1, pRelation
 
 
 /**
- * builds a Table of clusters, based on an dendrogram Tree (if not provided it will be calculated), and a weight bias
+ * Builds a Table of clusters, based on an dendrogram Tree (if not provided it will be calculated), and a weight bias
  * @param  {Network} network
- * 
- * @param  {Tree} dendrogramTree dendrogram Tree, if precalculated, changes in weight bias will perform faster
- * @param  {Number} minWeight weight bias, criteria to group clusters (0.5 default)
- * @return {Table} list of nodeLists
+ *
+ * @param  {Tree} dendrogramTree Dendrogram Tree, if precalculated, changes in weight bias will perform faster
+ * @param  {Number} minWeight Weight bias, criteria to group clusters (0.5 default)
+ * @return {Table} List of NodeLists
  * tags:analysis
  */
 NetworkOperators.buildNetworkClusters = function(network, dendrogramTree, minWeight) {
@@ -14892,6 +15460,9 @@ NetworkOperators.buildNetworkClusters = function(network, dendrogramTree, minWei
   return clusters;
 };
 
+/**
+ * @ignore
+ */
 NetworkOperators._iterativeBuildClusters = function(node, clusters, minWeight) {
   if(node.nodeList.length == 1) {
     clusters.push(new NodeList(node.node));
@@ -14915,13 +15486,16 @@ NetworkOperators._iterativeBuildClusters = function(node, clusters, minWeight) {
 
 
 /**
- * see http://en.wikipedia.org/wiki/Page_rank, fromPageRank or toPageRank will be added as propertie to nodesç I use two different pageranks, since a Network whose relations measure influence would require a pagerank to measure nodes influence into the system
+ * Adds PageRank as <strong>fromPageRank</strong> and <strong>toPageRank</strong> properties See {@link http://en.wikipedia.org/wiki/Page_rank|Page Rank} for more details. fromPageRank or toPageRank will be added as propertie to Nodes.
+ * I use two different pageranks, since a Network whose relations measure influence would require a pagerank to measure nodes influence into the system.
+ *
  * @param {Network} network
- * @param {Boolean} from optional, default:true, to set if the pagerank uses the in-relations or out-relations
- * @param {Boolean} from optional, default:false, to set if relations weight will affect the metric balance, partiularly interesting if some weights are negative
+ * @param {Boolean} From=true Optional, default:true, to set if the PageRank uses the in-relations or out-relations
+ * @param {Boolean} useRelationsWeigh=false Optional, default:false, set to true if relations weight will affect the metric balance, particularly interesting if some weights are negative
  * tags:analytics,transformative
  */
-NetworkOperators.addPageRankToNodes = function(network, from, useRelationsWeight) { //TODO:deploy useRelationsWeight
+NetworkOperators.addPageRankToNodes = function(network, from, useRelationsWeight) {
+  //TODO:deploy useRelationsWeight
   from = from == null ? true : from;
 
   var n;
@@ -14971,7 +15545,7 @@ NetworkOperators.addPageRankToNodes = function(network, from, useRelationsWeight
 
 
 /**
- * builds a fusioned Network from a list of network codes, with nodes with same names coming from different source networks (called hubs) connected
+ * Builds a fusioned Network from a list of network codes, with nodes with same names coming from different source networks (called hubs) connected
  * @param  {List} noteworksList
  *
  * @param  {Number} hubsDistanceFactor distance between repeated nodes (hubs)
@@ -14994,9 +15568,9 @@ NetworkOperators.fusionNoteworks = function(noteworksList, hubsDistanceFactor, h
 
 
 /**
- * builds a fusioned Network, with nodes with same names coming from different source networks (called hubs) connected
+ * Builds a fusioned Network, with nodes with same names coming from different source networks (called hubs) connected
  * @param  {List} networks list of networks
- * 
+ *
  * @param  {Number} hubsDistanceFactor distance between repeated nodes (hubs)
  * @param  {Number} hubsForceWeight strength factor for the relation when using a forces engine
  * @return {Network} fusioned Network
@@ -15085,6 +15659,7 @@ NetworkOperators.fusionNetworks = function(networks, hubsDistanceFactor, hubsFor
 
   return fusionNet;
 };
+
 function TreeConvertions() {}
 
 /**
@@ -15219,8 +15794,10 @@ CanvasAndContext.createInvisibleContext = function(width, height) {
 
 //include(frameworksRoot+"operators/geometry/GeometryOperators.js");
 /**
- * Draw
- * @constructor
+ * @classdesc Draw basic shapes
+ * 
+ * @namespace
+ * @category geometry
  */
 function Draw() {}
 
@@ -15344,12 +15921,12 @@ Draw.fillRectangleWithImage = function(rectangle, image, mode, backColor) {
 
 
 /**
- * Draws an ellipse using the current state of the canvas. 
+ * Draws an ellipse using the current state of the canvas.
  * @param {CanvasRenderingContext2D} context
  * @param {Number} x The center x coordinate
- * @param {Number} y The center y coordinate 
- * @param {Number} rW The horizontal radius of the ellipse 
- * @param {Number} rH The vertical radius of the ellipse 
+ * @param {Number} y The center y coordinate
+ * @param {Number} rW The horizontal radius of the ellipse
+ * @param {Number} rH The vertical radius of the ellipse
 
  */
 Draw.drawEllipse = function(x, y, rW, rH) {
@@ -15465,13 +16042,13 @@ Draw.drawSliderRectangle = function(x, y, width, height) {
 
 
 /**
- * Draws a rounded rectangle using the current state of the canvas. 
- * If you omit the last three params, it will draw a rectangle 
- * outline with a 5 pixel border radius 
+ * Draws a rounded rectangle using the current state of the canvas.
+ * If you omit the last three params, it will draw a rectangle
+ * outline with a 5 pixel border radius
  * @param {CanvasRenderingContext2D} context
  * @param {Number} x The top left x coordinate
- * @param {Number} y The top left y coordinate 
- * @param {Number} width The width of the rectangle 
+ * @param {Number} y The top left y coordinate
+ * @param {Number} width The width of the rectangle
  * @param {Number} height The height of the rectangle
  * @param {Number} radius The corner radius. Defaults to 5;
  */
@@ -15594,9 +16171,10 @@ Draw.drawAndCapture = function(drawFunction, frame, target) {
   context = defaultContext;
   return image;
 };
+
 //include(frameworksRoot+"operators/graphic/ColorListOperators.js");
 
-/**
+/*
  * DrawSimpleVis
  *
  * This class contains methods that draw simple visualizations such as lines, barChart…
@@ -15990,9 +16568,11 @@ DrawSimpleVis.drawStackBarsFlowTable = function(context, intervalsFlowTable, fra
 // }
 // }
 // }
+
 /**
- * static Class with methods to render text in canvas
- * @constructor
+ * @classdesc static Class with methods to render text in canvas
+ * @namespace
+ * @category strings
  */
 function DrawTexts() {}
 
@@ -16160,6 +16740,7 @@ DrawTexts.cropString = function(ctx, string, fitWidth) {
     }
   }
 };
+
 //include(frameworksRoot+"operators/numeric/MatrixGenerators.js");
 
 
@@ -16971,6 +17552,7 @@ DragDetection.prototype.constructor = DragDetection;
  * @param {Function} configuration.areaVerificationFunction
  * @param {Number} configuration.factor
  * @constructor
+ * @category interactions
  */
 function DragDetection(configuration) { //mode, listenerFunction, target, areaVerificationFunction){
   this.mode = configuration.mode || 0;
@@ -17063,6 +17645,7 @@ DragDetection.prototype.simulateMouseUp = function() {
   clearInterval(this.idInterval);
   this.idInterval = null;
 };
+
 InputTextFieldHTML.prototype.constructor = InputTextFieldHTML;
 
 
@@ -17317,9 +17900,12 @@ InputTextFieldHTML.prototype.disappear = function() {
 TextBox.prototype.constructor = TextBox;
 
 /**
- * Instanciable class that manages and renders a text on the canvas
+ * @classdesc Instanciable class that manages and renders a text on the canvas.
+ *
+ * @description create new TextBox.
  * @param configuration configuration Object with parameters (x, y, width, text, fontColor, fontSize, fontName, fontStyle, warnFunction, target…)
  * @constructor
+ * @category strings
  */
 function TextBox(configuration) {
   configuration = configuration == null ? {} : configuration;
@@ -17587,12 +18173,15 @@ TextBox.replaceWikiLinks = function(text) {
   //c.log('new text:', text);
   return text;
 };
+
 TextFieldHTML.prototype.constructor = TextFieldHTML;
 
 /**
- * Instanciable class that manages and renders a text in an html div
+ * @classdesc Instanciable class that manages and renders a text in an html div
+ *
  * @param configuration configuration Object with parameters (x, y, width, text, fontColor, fontSize, fontName, fontStyle, linkFunction, target…)
  * @constructor
+ * @category strings
  */
 function TextFieldHTML(configuration) {
   configuration = configuration == null ? {} : configuration;
@@ -17666,6 +18255,7 @@ TextFieldHTML.prototype.getText = function() {
 };
 
 //
+
 function Loader() {}
 
 Loader.proxy = ""; //TODO:install proxy created by Mig at moebio.com
@@ -17988,6 +18578,7 @@ LoadEvent.prototype.constructor = LoadEvent;
 /**
  * LoadEvent
  * @constructor
+ * @category misc
  */
 function LoadEvent() {
   Object.apply(this);
@@ -17996,6 +18587,7 @@ function LoadEvent() {
   this.errorMessage = "";
   this.url;
 }
+
 MultiLoader.prototype = {};
 MultiLoader.prototype.constructor = MultiLoader;
 
@@ -18004,6 +18596,7 @@ MultiLoader.prototype.constructor = MultiLoader;
 /**
  * MultiLoader
  * @constructor
+ * @category misc
  */
 function MultiLoader() {
   this.urlList = null;
@@ -18203,9 +18796,12 @@ MultiLoader.prototype.destroy = function() {
   delete this.datasLoaded;
   delete this.imagesLoaded;
 };
+
 /**
- * Forces
+ * @classdesc Force layout
+ *
  * @constructor
+ * @category networks
  */
 function Forces(configuration) {
   this.k = configuration.k ? configuration.k : 0.01;
@@ -18225,7 +18821,7 @@ function Forces(configuration) {
 }
 
 /**
- * eqDistancesMode: 
+ * eqDistancesMode:
  * 		0: all distances this.dEqSprings
  * 		1: shorter distances for heavy relations
  * 		2: nodes degrees sum proportional to distance
@@ -18527,10 +19123,12 @@ Forces.prototype._resetAccelerations = function() {
     node.ay = 0;
   }
 };
+
 Engine3D.prototype.constructor = Engine3D;
 
 /**
- * Engine3D
+ * @classdesc Engine3D
+ *
  * @param {Object} configuration Configuration for engine
  * @param {Number} configuration.lens Distance of camera from scene
  * @param {Point3D} configuration.angles Initial angle of camera
@@ -18540,6 +19138,7 @@ Engine3D.prototype.constructor = Engine3D;
  * var engine = new Engine3D({
  *   lens:300
  * });
+ * @category geometry
  */
 function Engine3D(configuration) {
   configuration = configuration == null ? {} : configuration;
@@ -18772,12 +19371,19 @@ Engine3D.prototype.quadrilater = function(p0, p1, p2, p3) {
 
   return polygon3D;
 }
-/**
+
+/*
  * All these function are globally available since they are included in the Global class
- *
  */
 
-/**
+
+
+
+var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"}
+
+
+
+/*
  * types are:
  * number, string, boolean, date
  * and all data models classes names
@@ -18889,6 +19495,7 @@ getTextFromObject = function(value, type) {
   }
 };
 
+
 function instantiateWithSameType(object, args) {
   return instantiate(typeOf(object), args);
 }
@@ -18904,39 +19511,94 @@ Date.prototype.getType = function() {
 };
 
 
-evalJavaScriptFunction = function(functionText, args) {
-  //if(HOLD) return;
 
-  var res;
+evalJavaScriptFunction = function(functionText, args, scope){
+	if(functionText==null) return;
 
-  var myFunction;
+	var res;
 
-  var good = true;
-  var message = '';
+	var myFunction;
 
-  var realCode;
+	var good = true;
+	var message = '';
 
-  var isFunction = functionText.split('\n')[0].indexOf('function') != -1;
+	var realCode;
 
-  if(isFunction) {
-    realCode = "myFunction = " + functionText;
-  } else {
-    realCode = "myVar = " + functionText;
-  }
+	var lines = functionText.split('\n');
 
-  try {
-    if(isFunction) {
-      eval(realCode);
-      res = myFunction.apply(this, args);
-    } else {
-      eval(realCode);
-      res = myVar;
-    }
-  } catch(err) {
-    good = false;
-    message = err.message;
-    res = null;
-  }
+	for(i=0; lines[i]!=null; i++){
+		lines[i] = lines[i].trim();
+		if(lines[i]=="" || lines[i].substr(1)=="/"){
+			lines.splice(i,1);
+			i--;
+		}
+	}
+
+	var isFunction = lines[0].indexOf('function')!=-1;
+
+	functionText = lines.join('\n');
+
+	if(isFunction){
+		if(scope){
+			realCode = "scope.myFunction = " + functionText;
+		} else {
+			realCode = "myFunction = " + functionText;
+		}
+	} else {
+		if(scope){
+			realCode = "scope.myVar = " + functionText;
+		} else {
+			realCode = "myVar = " + functionText;
+		}
+	}
+
+	try{
+		if(isFunction){
+			eval(realCode);
+			if(scope){
+				res = scope.myFunction.apply(scope, args);
+			} else {
+				res = myFunction.apply(this, args);
+			}
+		} else {
+			eval(realCode);
+			if(scope){
+				res = scope.myVar;
+			} else 	{
+				res = myVar;
+			}
+		}
+	} catch(err){
+		good = false;
+		message = err.message;
+		res = null;
+	}
+
+
+  // var isFunction = functionText.split('\n')[0].indexOf('function') != -1;
+
+  // if(isFunction) {
+  //   realCode = "myFunction = " + functionText;
+  // } else {
+  //   realCode = "myVar = " + functionText;
+  // }
+
+
+  // try {
+  //   if(isFunction) {
+  //     eval(realCode);
+  //     res = myFunction.apply(this, args);
+  //   } else {
+  //     eval(realCode);
+  //     res = myVar;
+  //   }
+  // } catch(err) {
+  //   good = false;
+  //   message = err.message;
+  //   res = null;
+  // }
+
+  //c.l('resultObject', resultObject);
 
   var resultObject = {
     result: res,
@@ -18979,12 +19641,13 @@ function TimeLogger(name) {
   };
 }
 var tl = new TimeLogger("Global Time Logger");
-/**
- * ConsoleTools
- * some of the methods available here might be converted into genuine 'ASCII visualization'
- * @constructor
- */
 
+/**
+ * @classdesc Functions to create interesting console output.
+ *
+ * @namespace
+ * @category misc
+ */
 function ConsoleTools() {}
 
 
@@ -19029,9 +19692,12 @@ ConsoleTools.tac = function(message) {
   ConsoleTools._tacTime = new Date().getTime();
   c.l('°°°°°°° tac [' + message + '], t from tic:' + (ConsoleTools._tacTime - ConsoleTools._ticTime) + ', t from last tac:' + ((ConsoleTools._tacTime - lastTac)));
 };
+
 /**
- * FastHtml 
- * @constructor
+ * @classdesc Fast Html
+ *
+ * @namespace
+ * @category misc
  */
 function FastHtml() {}
 
@@ -19199,9 +19865,12 @@ FastHtml.getColorTag = function(color) {
   color = ColorOperators.colorStringToHEX(color);
   return "<font color=\"" + color + "\">";
 };
+
 /**
- * JSONUtils 
- * @constructor
+ * @classdesc Provides a set of tools that work with JSON.
+ *
+ * @namespace
+ * @category misc
  */
 function JSONUtils() {}
 
@@ -19220,6 +19889,7 @@ JSONUtils.stringifyAndPrint = function(object) {
 JSONUtils.dummy2 = function() {
   return null;
 };
+
 /*
  * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
  * Digest Algorithm, as defined in RFC 1321.
@@ -19605,8 +20275,10 @@ MD5.bit_rol = function(num, cnt)
   return (num << cnt) | (num >>> (32 - cnt));
 };
 /**
- * StringUtils 
- * @constructor
+ * @classdesc StringUtils
+ *
+ * @namespace
+ * @category strings
  */
 function StringUtils() {}
 
@@ -19622,6 +20294,7 @@ StringUtils.stringtoXML = function(text) {
   }
   return doc;
 };
+
 function Navigator() {}
 var userAgent;
 var userAgentVersion;
@@ -21402,8 +22075,10 @@ StringListDraw._pointInRectangles = function(rectangles, p, width, height) {
   return false;
 };
 /**
- * Operators that contain visualization method algoritms and return a Table with parameters for StringListPrimitive
- * @constructor
+ * @classdesc Operators that contain visualization method algoritms and return a Table with parameters for StringListPrimitive
+ * 
+ * @namespace
+ * @category strings
  */
 function StringListVisOperators() {}
 
@@ -21641,13 +22316,19 @@ StringListVisOperators._pointInRectangles = function(rectangles, px, py, width, 
   }
   return false;
 };
+
 /**
- * NetworkDraw
- * @constructor
+ * @classdesc Functions for drawing {@link Network|Networks}.
+ *
+ * @namespace
+ * @category networks
  */
 function NetworkDraw() {}
 
 
+/**
+ * @ignore
+ */
 NetworkDraw._drawNode = function(node, x, y, r) {
   var over = false;
   if(node.image) {
@@ -21665,10 +22346,12 @@ NetworkDraw._drawNode = function(node, x, y, r) {
 
 
 /**
- * draws a radial (elliptical) network
- * @param  {Rectangle} frame
- * @param  {Network} network
- * @return {Node} rollovered node
+ * Draws a radial (elliptical) Network
+ *
+ * @param  {Rectangle} frame A Rectangle indicating the width, height, and location of the drawing area.
+ * @param  {Network} network The Network to draw.
+ * @return {Node} If a Node in the Network is currently being moused over, it is returned.
+ * If no Node is being interacted with, undefined is returned.
  * tags:draw
  */
 NetworkDraw.drawRadialNetwork = function(frame, network) {
@@ -21712,16 +22395,18 @@ NetworkDraw.drawRadialNetwork = function(frame, network) {
 
 
 /**
- * draws a network with nodes placed in coordinates provided by a polygon
+ * Draws a Network with nodes placed in coordinates provided by a polygon.
+ *
  * @param  {Rectangle} frame
  * @param  {Network} network
- * @param {Polygon} polygon nodes positions
- * 
- * @param {Boolean} respectProportions if true, proportions will be equal for both axis
+ * @param {Polygon} polygon Nodes positions
+ *
+ * @param {Boolean} respectProportions If true, proportions will be equal for both axis
  * @param {Boolean} logScale uses a logarithmic scale in both axis, applies only if all values are >=0
  * @param {Boolean} drawGrid draws a grid
  * @param {Number} margin
- * @return {Node} rollovered node
+ * @return {Node} If a Node in the Network is currently being moused over, it is returned.
+ * If no Node is being interacted with, undefined is returned.
  * tags:draw
  */
 NetworkDraw.drawNetwork2D = function(frame, network, polygon, respectProportions, logScale, drawGrid, margin) {
@@ -21835,8 +22520,6 @@ NetworkDraw.drawNetwork2D = function(frame, network, polygon, respectProportions
     }
   });
 
-
-
   //values label
 
   if(frame.containsPoint(mP)) {
@@ -21861,6 +22544,10 @@ NetworkDraw.drawNetwork2D = function(frame, network, polygon, respectProportions
 
   return nodeOver;
 };
+
+/**
+ * @ignore
+ */
 NetworkDraw._drawNodeValues = function(vx, vy, name) {
   var text = (name == null ? '' : (name + ': ')) + vx + ", " + vy;
   setFill('rgba(50,50,50,0.8)');
@@ -21870,11 +22557,12 @@ NetworkDraw._drawNodeValues = function(vx, vy, name) {
 };
 
 
-
-
-
-
 //to be tested
+
+/**
+ * drawNetworkMatrix
+ * @ignore
+ */
 NetworkDraw.drawNetworkMatrix = function(frame, network, colors, relationsColorScaleFunction, margin, directed, normalizedNodeWeights, returnHovered) {
   relationsColorScaleFunction = relationsColorScaleFunction == null ? ColorOperators.grayScale : relationsColorScaleFunction;
   margin = margin == null ? 2 : margin;
@@ -21959,16 +22647,24 @@ NetworkDraw.drawNetworkMatrix = function(frame, network, colors, relationsColorS
   }
   return hoverValues;
 };
+
+/**
+ * @classdesc Functions for drawing {@link Tree|Trees}.
+ *
+ * @namespace
+ * @category networks
+ */
 function TreeDraw() {}
 
 
 /**
- * simple tree visualization with levels in vertical rectangles
- * @param  {Rectangle} frame
- * @param  {Tree} tree
+ * Simple tree visualization with levels in vertical rectangles.
  *
- * @param  {ColorList} levelColors
- * @param  {Number} margin
+ * @param {Rectangle} frame
+ * @param {Tree} tree The Tree to draw.
+ *
+ * @param {ColorList} levelColors
+ * @param {Number} margin
  * tags:draw
  */
 TreeDraw.drawRectanglesTree = function(frame, tree, levelColors, margin) {
@@ -21998,9 +22694,10 @@ TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin) {
 
 
 /**
- * simple treemap visualization
+ * Creates a simple treemap visualization.
+ *
  * @param {Rectangle} frame
- * @param {Tree} tree
+ * @param {Tree} tree The Tree to draw.
  *
  * @param {ColorList} colorList
  * @param {NumberList} weights weights of leaves
@@ -22299,6 +22996,9 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
 
 };
 
+/**
+ * @ignore
+ */
 TreeDraw._generateRectangles = function(node) {
 
   var weights = new NumberList();
@@ -22314,6 +23014,10 @@ TreeDraw._generateRectangles = function(node) {
     TreeDraw._generateRectangles(child);
   });
 };
+
+/**
+ * @ignore
+ */
 TreeDraw._reduceRect = function(rect) {
   return new Rectangle(rect.x + rect.width * TreeDraw.PROP_RECT_REDUCTION_MARGIN, rect.y + rect.height * TreeDraw.PROP_RECT_REDUCTION_MARGIN, rect.width * (1 - 2 * TreeDraw.PROP_RECT_REDUCTION_MARGIN), rect.height * (1 - 2 * TreeDraw.PROP_RECT_REDUCTION_MARGIN));
 };
@@ -22335,7 +23039,8 @@ TreeDraw.PROP_RECT_EXPANTION_MARGIN = 0.05;
 
 
 /**
- * decision tree visualization, tree from TableOperators.buildDecisionTree
+ * Decision tree visualization, tree from {@link TableOperators}'s buildDecisionTree function.
+ *
  * @param {Rectangle} frame
  * @param {Tree} tree
  * @return {Node} selected node
@@ -22687,6 +23392,10 @@ TreeDraw.drawDecisionTree = function(frame, tree) {
   return frame.memory.result;
 
 };
+
+/**
+ * @ignore
+ */
 TreeDraw._generateRectanglesDecision = function(node, hLevel) {
 
   var weights = new NumberList();
@@ -22719,6 +23428,7 @@ TreeDraw._horizontalRectanglesDecision = function(rect, weights) {
 
   return rects;
 };
+
 /**
  *Static class that:
  * -includes all the data models (by including the class IncludeDataModels.js)
@@ -22726,7 +23436,8 @@ TreeDraw._horizontalRectanglesDecision = function(rect, weights) {
  * -contains the global variables (such as userAgent, canvas, nF, mX…), global
  * -contains the listener methods
  * -triggers de init, update and draw in Global class
- * @constructor
+ * @namespace
+ * @category basics
  */
 function Global(){}
 
@@ -22788,6 +23499,7 @@ var T_MOUSE_PRESSED = 0; //time in milliseconds of mouse being pressed, useful f
 //var deltaWheel = 0;
 var cursorStyle = 'auto';
 var backGroundColor = 'white';
+var backGroundColorRGB = [255,255,255];
 var cycleActive;
 
 //global constants
@@ -22810,6 +23522,8 @@ var _setTimeOutId;
 var _cycleOnMouseMovement = false;
 var _interactionCancelledFrame;
 var _tLastMouseDown;
+
+var _alphaRefresh=0;//if _alphaRefresh>0 instead of clearing the canvas each frame, a transparent rectangle will be drawn
 
 var END_CYCLE_DELAY = 3000; //time in milliseconds, from last mouse movement to the last cycle to be executed in case cycleOnMouseMovement has been activated
 
@@ -22870,7 +23584,7 @@ window.addEventListener('load', function(){
 		init();
 	}
 
-	c.l('Moebio Framework v2.256 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
+	c.l('Moebio Framework v2.259 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
 
 }, false);
 
@@ -22921,6 +23635,7 @@ function _onMouse(e) {
 	}
 }
 
+
 function onResize(e){
 	_adjustCanvas();
 	resizeWindow();
@@ -22968,7 +23683,13 @@ function setFrameRate(fr){
 }
 
 function enterFrame(){
-   	context.clearRect(0, 0, cW, cH);
+	if(_alphaRefresh==0){
+	   	context.clearRect(0, 0, cW, cH);
+	} else {
+		context.fillStyle = 'rgba('+backGroundColorRGB[0]+','+backGroundColorRGB[1]+','+backGroundColorRGB[2]+','+_alphaRefresh+')';
+		context.fillRect(0, 0, cW, cH);
+	}
+
    	setCursor('default');
 
    	MOUSE_DOWN = NF_DOWN==nF;
@@ -23082,6 +23803,9 @@ function setBackgroundColor(color){
 		color = ColorOperators.RGBtoHEX(color[0], color[1], color[2]);
 	}
 	backGroundColor = color;
+
+	backGroundColorRGB = ColorOperators.colorStringToRGB(backGroundColor);
+
 	var body = document.getElementById('index');
 	body.setAttribute('bgcolor', backGroundColor);
 }

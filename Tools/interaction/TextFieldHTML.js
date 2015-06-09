@@ -1,9 +1,11 @@
 TextFieldHTML.prototype.constructor = TextFieldHTML;
 
 /**
- * Instanciable class that manages and renders a text in an html div
+ * @classdesc Instanciable class that manages and renders a text in an html div
+ *
  * @param configuration configuration Object with parameters (x, y, width, text, fontColor, fontSize, fontName, fontStyle, linkFunction, target…)
  * @constructor
+ * @category strings
  */
 function TextFieldHTML(configuration) {
   configuration = configuration == null ? {} : configuration;

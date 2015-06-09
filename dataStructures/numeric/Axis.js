@@ -2,8 +2,11 @@ Axis.prototype = new DataModel();
 Axis.prototype.constructor = Axis;
 
 /**
- * Axis
+ * @classdesc Axis for 1D data.
+ *
  * @constructor
+ * @description Creates a new Axis.
+ * @category numbers
  */
 function Axis(departureInterval, arrivalInterval) {
   departureInterval = departureInterval == null ? new Interval(0, 1) : departureInterval;

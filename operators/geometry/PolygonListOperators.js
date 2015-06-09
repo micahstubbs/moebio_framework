@@ -1,6 +1,8 @@
 /**
- * PolygonGenerators
- * @constructor
+ * @classdesc Tools to manipulate {@link PolygonList|Polygon Lists}.
+ *
+ * @namespace
+ * @category geometry
  */
 function PolygonListOperators() {}
 

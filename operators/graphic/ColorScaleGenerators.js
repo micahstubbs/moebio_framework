@@ -1,7 +1,8 @@
 /**
- * ColorScaleGenerators
- * @constructor
- * 
+ * @classdesc Generate {@link ColorScale|ColorScales} with various properties.
+ *
+ * @namespace
+ * @category colors
  */
 function ColorScaleGenerators() {}
 

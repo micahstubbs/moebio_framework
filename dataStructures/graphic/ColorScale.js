@@ -1,11 +1,14 @@
 ColorScale.prototype = new DataModel();
 ColorScale.prototype.constructor = ColorScale;
-/**
- * Point
- * @constructor
- */
-//include(frameworksRoot+"operators/graphic/ColorOperators.js");
 
+/**
+ * @classdesc Color scale.
+ *
+ * @description Creates a new ColorScale.
+ * @param {Function} colorScaleFunction Function.
+ * @constructor
+ * @category colors
+ */
 function ColorScale(colorScaleFunction) {
   DataModel.apply(this, arguments);
   this.name = "";
@@ -13,9 +16,11 @@ function ColorScale(colorScaleFunction) {
 
   this.colorScaleFunction = colorScaleFunction ? colorScaleFunction : ColorScales.blackScale;
 }
+
 ColorScale.prototype.getColor = function(value) {
   return this.colorScaleFunction(value);
 };
+
 ColorScale.prototype.getColorList = function(nColors) {
   var colorList = new ColorList();
   var i;

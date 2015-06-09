@@ -1,6 +1,8 @@
 /**
- * StringUtils 
- * @constructor
+ * @classdesc StringUtils
+ *
+ * @namespace
+ * @category strings
  */
 function StringUtils() {}
 

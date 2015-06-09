@@ -6,6 +6,7 @@ MultiLoader.prototype.constructor = MultiLoader;
 /**
  * MultiLoader
  * @constructor
+ * @category misc
  */
 function MultiLoader() {
   this.urlList = null;

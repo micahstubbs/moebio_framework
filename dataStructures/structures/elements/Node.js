@@ -2,10 +2,14 @@ Node.prototype = new DataModel();
 Node.prototype.constructor = Node;
 
 /**
- * Node 
+ * @classdesc Represents a single node element in a Network. Can have both an id as well
+ * as a name.
+ *
+ * @description Create a new Node.
  * @param {String} id ID of the Node
  * @param {String} name string (label) name to be assigned to node
  * @constructor
+ * @category networks
  */
 function Node(id, name) {
   this.id = id == null ? '' : id;
@@ -43,6 +47,10 @@ function Node(id, name) {
   this.az = 0;
 }
 
+/**
+ * Removes all Relations and connected Nodes from
+ * the current Node.
+ */
 Node.prototype.cleanRelations = function() {
   this.nodeList = new NodeList();
   this.relationList = new RelationList();
@@ -81,18 +89,32 @@ Node.prototype.destroy = function() {
   delete this.az;
 };
 
+/**
+ * Returns the number of Relations connected to this Node.
+ *
+ * @return {Number} Number of Relations (edges) connecting to this Node instance.
+ */
 Node.prototype.getDegree = function() {
   return this.relationList.length;
 };
 
 //treeProperties:
+
+
+/**
+ * Returns the parent Node of this Node if it is part of a {@link Tree}.
+ *
+ * @return {Node} Parent Node of this Node.
+ */
 Node.prototype.getParent = function() {
   return this.parent;
 };
 
 /**
- * return the leaves under a node in a Tree, [!] if the network is not a tree this method could run infinite loops
- * @return {NodeList}
+ * Returns the leaves under a node in a Tree,
+ *
+ * <strong>Warning:</strong> If this Node is part of a Network that is not a tree, this method could run an infinite loop.
+ * @return {NodeList} Leaf Nodes of this Node.
  * tags:
  */
 Node.prototype.getLeaves = function() {
@@ -107,19 +129,25 @@ Node.prototype.getLeaves = function() {
     addLeaves(this);
     return leaves;
   };
-  //
 
 
+/**
+ * Uses an image as a visual representation to this Node.
+ *
+ * @param {String} urlImage The URL of the image to load.
+ */
 Node.prototype.loadImage = function(urlImage) {
   Loader.loadImage(urlImage, function(e) {
     this.image = e.result;
   }, this);
 };
 
-// Node.prototype.toString=function(){
-// 	return this.name+", "+this.id;
-// }
 
+/**
+ * Makes a copy of this Node.
+ *
+ * @return {Node} New Node that is a copy of this Node.
+ */
 Node.prototype.clone = function() {
   var newNode = new Node(this.id, this.name);
 
