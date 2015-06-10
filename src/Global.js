@@ -30,7 +30,6 @@ lastCycle = function(){
 
 var listenerArray  = [];
 var canvas;
-var removeDiv;
 var userAgent="none";
 var userAgentVersion;
 var canvasResizeable=true;
@@ -131,11 +130,6 @@ window.addEventListener('load', function(){
   canvas = document.getElementById('main');
 
   if(canvas!=null){
-    removeDiv = document.getElementById('removeDiv');
-    if(removeDiv !== null) {
-      removeDiv.style.display = 'none';
-    }
-
     context = canvas.getContext('2d');
 
     _adjustCanvas();
