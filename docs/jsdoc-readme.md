@@ -22,14 +22,12 @@ This can go in the `head` of the page, or you can put it at the bottom, right be
 
 Moebio Framework harnesses [canvas](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API) for much of its visualization capabilities. So, we need to provide it with a canvas element to draw in.
 
-This canvas element is expected to have an id of `main`. Moebio Framework also expects a `removeDiv` div to be present on the page. So, the HTML should look something like this:
+This canvas element is expected to have an id of `main`. So, the HTML could look something like this:
 
 ```html
 <div id="maindiv">
 	<canvas id="main"></canvas>
 </div>
-
-<div id="removeDiv"></div>
 ```
 
 With this, we are ready to use Moebio Framework.
