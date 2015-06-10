@@ -71,17 +71,11 @@ grunt doc
 This will build the documentation into the following directory:
 
 ```bash
-site/build/docs
+docs/build
 ```
 
 JSDoc templates can be found in `docs/moebio-jsdoc` and are directly inspired by the documentation of [TurfJS](http://turfjs.org/).
 
 ### Site Build
 
-Build the Moebio Framework static site using grunt as well:
-
-```bash
-grunt site
-```
-
-See site/README for more instructions on building the website.
+Build the Moebio Framework is managed in the [Moebio Framework Site](https://github.com/bocoup/moebio_framework_site) repo.

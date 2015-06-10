@@ -35,11 +35,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-jsdoc');
-
-  grunt.loadNpmTasks('grunt-gh-pages');
-  grunt.loadNpmTasks('grunt-jekyll');
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks("grunt-jscs");
@@ -73,25 +69,8 @@ module.exports = function (grunt) {
     watch: {
       js:  {
         files: watchedFiles,
-        tasks: [ 'concat', 'uglify', 'copy' ]
+        tasks: [ 'concat', 'uglify']
       },
-    },
-
-    copy: {
-      spiral: {
-        src: 'dist/framework_concat.js',
-        dest: '../spiral/_dev/client/angularSpiral/app/scripts/classes/framework_concat.js'
-      },
-      spiralMin: {
-        src: 'dist/framework_concat.min.js',
-        dest: '../spiral/_dev/client/angularSpiral/app/scripts/classes/framework_concat.min.js'
-      },
-      site_js: {
-        expand: true,
-        cwd: 'dist/',
-        src: ['framework_concat.js', 'framework_concat.min.js'],
-        dest: 'site/source/examples/js/'
-      }
     },
 
     jsdoc : {
@@ -99,41 +78,12 @@ module.exports = function (grunt) {
         src: buildFileList(),
         jsdoc: "node_modules/.bin/jsdoc",
         options: {
-          destination: 'site/build/docs',
+          destination: 'docs/build/',
           template : "docs/moebio-jsdoc",
           configure : "docs/jsdoc.conf.json",
           readme : "docs/jsdoc-readme.md"
         }
       }
-    },
-
-    jekyll: {
-      options: {
-        src : 'site/source'
-      },
-      build: {
-        options: {
-          dest: 'site/build',
-          config: 'site/source/_config.yml'
-        }
-      },
-      serve: {
-        options: {
-          dest: '.jekyll',
-          serve: true,
-          port : 8000,
-          auto : true,
-          config: 'site/source/_config.yml'
-        }
-      }
-    },
-
-    'gh-pages': {
-      options: {
-        base: 'site/build',
-        repo: 'git@github.com:bocoup/moebio_framework.git'
-      },
-      src: '**/*'
     },
 
     jshint: {
@@ -157,18 +107,11 @@ module.exports = function (grunt) {
   //
   // Default task - build distribution source
   //
-  grunt.registerTask('default', ['concat', 'uglify', 'copy' ]);
+  grunt.registerTask('default', ['concat', 'uglify']);
 
   //
   // Build documentation
   //
   grunt.registerTask('doc', [ 'jsdoc' ]);
-
-  //
-  // Build and deploy static site. Building the site will also build
-  // the documentation.
-  //
-  grunt.registerTask('build-site', ['jekyll:build', 'doc']);
-  grunt.registerTask('deploy-site', ['build-site', 'gh-pages']);
 
 };
