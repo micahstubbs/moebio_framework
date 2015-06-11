@@ -6,30 +6,18 @@ A set of tools for Moebio's projects
 
 ## Getting Started
 
-Download the pre-built files (minified and unminified) here and start using in your project.
+Download the pre-built files (minified and unminified) from the `dist/` directory and start using in your project.
 
-For more info check out the website and docs at ...
+For more info check out the website and docs at [http://bocoup.github.io/moebio_framework/](http://bocoup.github.io/moebio_framework/).
 
 ## Project Layout
 
-Primary code in the Moebio Framework is organized in the following way:
+Primary code in the Moebio Framework is organized in its `src` directory the following way:
 
-  * apis:
-  * dataStructures:
-  * Tools:
-  * Visualization:
-  * operators:
-  * libraries:
-  * dist:
-
-
-We also have a number of folders for ancilarry code and infrastructure
-
-  * tests:
-  * site:
-  * resources:
-
-
+  * `dataStructures`: basic data types for storing and manipulating different kinds of data.
+  * `tools`: drawing tools for basic shapes, as well as helpers for interaction, data loading, and 3D.
+  * `visualization`: functions for visualization the data types used in the framework
+  * `operators`: more advanced functionality that work on instances of different data types.
 
 ## Requirements
 
@@ -56,7 +44,6 @@ Then the default Grunt task will concatenate the source files into the `dist` di
 ```bash
 grunt
 ```
-
 
 ### Docs Build
 
