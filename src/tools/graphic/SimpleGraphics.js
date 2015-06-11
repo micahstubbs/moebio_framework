@@ -353,7 +353,7 @@ fsLines = function() {
 };
 
 /**
- * Draws an interactive filled set of line segments using a series of
+ * Draws a mouse-enabled filled set of line segments using a series of
  * x/y positions as input. Returns true if moused over on current
  * cycle iteration.
  *
@@ -435,7 +435,7 @@ _eqTriangle = function(x, y, angle, r) {
 //drawing and checking cursor
 
 /**
- * Draws an interactive filled in Rectangle.
+ * Draws a mouse-enabled filled in Rectangle.
  * Fill color is expected to be set using {@link setFill}.
  *
  * @param {Number} x X position of upper-left corner of Rectangle.
@@ -460,7 +460,7 @@ fRectM = function(x, y, width, height, margin) {
 };
 
 /**
- * Draws an interactive stroked Rectangle.
+ * Draws a mouse-enabled stroked Rectangle.
  * Stroke color is expected to be set using {@link setStroke}.
  *
  * @param {Number} x X position of upper-left corner of Rectangle.
@@ -485,7 +485,7 @@ sRectM = function(x, y, width, height, margin) {
 };
 
 /**
- * Draws an interactive filled and stroked Rectangle.
+ * Draws a mouse-enabled filled and stroked Rectangle.
  * Fill color is expected to be set using {@link setFill}.
  * Stroke color is expected to be set using {@link setStroke}.
  *
@@ -514,7 +514,7 @@ fsRectM = function(x, y, width, height, margin) {
 };
 
 /**
- * Draws an interactive filled in Circle.
+ * Draws a mouse-enabled filled in Circle.
  * Fill color is expected to be set using {@link setFill}.
  * Returns true if mouse is over circle on current iteration of cycle.
  *
@@ -542,7 +542,7 @@ fCircleM = function(x, y, r, margin) { //check if you can avoid repeat
 };
 
 /**
- * Draws an interactive stroked Circle.
+ * Draws a mouse-enabled stroked Circle.
  * Stroke color is expected to be set using {@link setStroke}.
  * Returns true if mouse is over circle on current iteration of cycle.
  *
@@ -570,7 +570,7 @@ sCircleM = function(x, y, r, margin) {
 };
 
 /**
- * Draws an interactive filled and stroked Circle.
+ * Draws a mouse-enabled filled and stroked Circle.
  * Fill color is expected to be set using {@link setFill}.
  * Stroke color is expected to be set using {@link setStroke}.
  * Returns true if mouse is over circle on current iteration of cycle.
@@ -602,7 +602,7 @@ fsCircleM = function(x, y, r, margin) {
 };
 
 /**
- * Draws an interactive line from a start position to an end position.
+ * Draws a mouse-enabled line from a start position to an end position.
  *
  * @param {Number} x0 Starting x position.
  * @param {Number} y0 Starting y position.
@@ -645,7 +645,7 @@ _distToSegmentSquared = function(x0, y0, x1, y1) {
 //TODO:fEqTriangleM, fPolygonM
 
 /**
- * Draws a interactive bezier curve using {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/bezierCurveTo|bezierCurveTo}.
+ * Draws a mouse-enabled bezier curve using {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/bezierCurveTo|bezierCurveTo}.
  *
  *
  * @param {Number} x0 Starting x position.
@@ -878,7 +878,7 @@ fTextRotated = function(text, x, y, angle) {
 };
 
 /**
- * Draws interactive filled in text.
+ * Draws a mouse-enabled filled in text.
  * Fill color is expected to be set using {@link setFill}.
  * Alternatively, setText can be used to set a number of
  * text rendering properties.
@@ -905,7 +905,7 @@ fTextM = function(text, x, y, size) {
 };
 
 /**
- * Draws interactive filled and stroked text.
+ * Draws a mouse-enabled filled and stroked text.
  * Fill color is expected to be set using {@link setFill}.
  * Stroke color is expected to be set using {@link setStroke}.
  * Alternatively, setText can be used to set a number of
@@ -936,7 +936,7 @@ fsTextM = function(text, x, y, size) {
 };
 
 /**
- * Draws interactive filled text rotated by some angle.
+ * Draws a mouse-enabled filled text rotated by some angle.
  * Fill color is expected to be set using {@link setFill}.
  * Alternatively, setText can be used to set a number of
  * text rendering properties.
