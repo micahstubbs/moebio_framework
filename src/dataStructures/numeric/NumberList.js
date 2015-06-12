@@ -12,13 +12,20 @@ function NumberList() {
   var args = [];
 
   for(var i = 0; i < arguments.length; i++) {
-    arguments[i] = Number(arguments[i]);
+    args[i] = Number(arguments[i]);
   }
-  var array = List.apply(this, arguments);
+  var array = List.apply(this, args);
   array = NumberList.fromArray(array);
-  //
   return array;
 }
+
+/**
+ * Creates a new NumberList from a raw array of numbers.
+ *
+ * @param {Number[]} array The array of numbers to create the list from.
+ * @param {Boolean} forceToNumber If true, explicitly converts values in array to Numbers.
+ * @return {NumberList} New NumberList containing values in array
+ */
 NumberList.fromArray = function(array, forceToNumber) {
   forceToNumber = forceToNumber == null ? true : forceToNumber;
 
@@ -80,11 +87,18 @@ NumberList.fromArray = function(array, forceToNumber) {
 
   return result;
 };
+
 NumberList.prototype.unit = "";
 NumberList.prototype.tenPower = 0;
 
-NumberList.prototype.getMin = function() { //TODO:store result and retrieve while the NumberList doesn't change;
-  if(this.length == 0) return null;
+/**
+ * Returns minimum value in the List. Null if the NumberList is empty.
+ *
+ * @return {Number} The min value.
+ */
+NumberList.prototype.getMin = function() {
+  //TODO:store result and retrieve while the NumberList doesn't change;
+  if(this.length === 0) return null;
   var i;
   var min = this[0];
   for(i = 1; i < this.length; i++) {
@@ -93,8 +107,14 @@ NumberList.prototype.getMin = function() { //TODO:store result and retrieve whil
   return min;
 };
 
-NumberList.prototype.getMax = function() { //TODO:store result and retrieve while the NumberList doesn't change;
-  if(this.length == 0) return null;
+/**
+ * Returns maximum value in the List. Null if the NumberList is empty.
+ *
+ * @return {Number} The max value.
+ */
+NumberList.prototype.getMax = function() {
+  //TODO:store result and retrieve while the NumberList doesn't change;
+  if(this.length === 0) return null;
   var i;
   var max = this[0];
   for(i = 1; i < this.length; i++) {
@@ -103,8 +123,13 @@ NumberList.prototype.getMax = function() { //TODO:store result and retrieve whil
   return max;
 };
 
+/**
+ * Finds the range of the values in the NumberList.
+ *
+ * @return {Number} The difference between the minimum and maximum value in the List.
+ */
 NumberList.prototype.getAmplitude = function() {
-  if(this.length == 0) return 0;
+  if(this.length === 0) return 0;
   var min = this[0];
   var max = this[0];
   for(var i = 1; this[i] != null; i++) {
@@ -114,17 +139,23 @@ NumberList.prototype.getAmplitude = function() {
   return max - min;
 };
 
+/**
+ * Provides the min and max values as an {@link Interval}.
+ *
+ * @return {Interval} Interval containing the min and max values of the List.
+ */
 NumberList.prototype.getMinMaxInterval = function() { //deprecated?
   return new Interval(this.getMin(), this.getMax());
 };
 
 /**
- * returns the sum of values in the numberList
- * @return {Number}
+ * Returns the total sum of values in the NumberList.
+ *
+ * @return {Number} Sum of all values in the List.
  * tags:
  */
 NumberList.prototype.getSum = function() {
-  if(this.length == 0) return 0;
+  if(this.length === 0) return 0;
   var i;
   var sum = this[0];
   for(i = 1; i < this.length; i++) {
@@ -134,12 +165,13 @@ NumberList.prototype.getSum = function() {
 };
 
 /**
- * return the product of values in the numberList
- * @return {Number}
+ * Returns the product of values in the NumberList.
+ *
+ * @return {Number} The product of all values in the NumberList.
  * tags:
  */
 NumberList.prototype.getProduct = function() {
-  if(this.length == 0) return null;
+  if(this.length === 0) return null;
   var i;
   var product = this[0];
   for(i = 1; i < this.length; i++) {
@@ -149,7 +181,8 @@ NumberList.prototype.getProduct = function() {
 };
 
 /**
- * returns a NumberList normalized to the sum
+ * Returns a NumberList normalized to the sum.
+ *
  * @param {Number} factor optional
  * @return {NumberList}
  * tags:
@@ -170,7 +203,8 @@ NumberList.prototype.getNormalizedToSum = function(factor, sum) {
 };
 
 /**
- * returns a numberList normalized to min-max interval
+ * Returns a NumberList normalized to min-max interval.
+ *
  * @param {Number} factor optional
  * @return {NumberList}
  * tags:
@@ -178,7 +212,7 @@ NumberList.prototype.getNormalizedToSum = function(factor, sum) {
 NumberList.prototype.getNormalized = function(factor) {
   factor = factor == null ? 1 : factor;
 
-  if(this.length == 0) return null;
+  if(this.length === 0) return null;
 
   var i;
   var interval = this.getMinMaxInterval();
@@ -192,7 +226,8 @@ NumberList.prototype.getNormalized = function(factor) {
 };
 
 /**
- * returns a numberList normalized to Max
+ * Returns a numberList normalized to Max.
+ *
  * @param {Number} factor optional
  * @return {NumberList}
  * tags:
@@ -216,8 +251,10 @@ NumberList.prototype.getNormalizedToMax = function(factor) {
 };
 
 /**
- * builds an Interval witn min and max value from the numberList
- * @return {Interval}
+ * Builds an Interval with min and max value from the NumberList
+ *
+ * @return {Interval} with starting value as the min of the NumberList
+ * and ending value as the max.
  * tags:
  */
 NumberList.prototype.getInterval = function() {
@@ -248,8 +285,8 @@ NumberList.prototype.toPolygon = function() {
 /////////statistics
 
 /**
- * calculates mean of numberList
- * @return {Number}
+ * Calculates mean of the NumberList
+ * @return {Number} Mean of all values in the List.
  * tags:statistics
  */
 NumberList.prototype.getAverage = function() {
@@ -257,7 +294,7 @@ NumberList.prototype.getAverage = function() {
 };
 
 /**
- * calculates geometric mean of numberList
+ * Calculates the geometric mean of NumberList
  * @return {Number}
  * tags:statistics
  */
