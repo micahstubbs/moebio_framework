@@ -122,4 +122,9 @@ module.exports = function (grunt) {
   //
   grunt.registerTask('doc', [ 'jsdoc' ]);
 
+  //
+  // Run tests interactively
+  //
+  grunt.registerTask('test', [ 'karma' ]);
+
 };
