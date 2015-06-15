@@ -143,6 +143,7 @@ Interval.prototype.clone = function() {
 
 /**
  * Indicates if a number is included in the Interval.
+ *
  * @param value Number to test.
  * @return {Boolean} True if the value is inside the Interval.
  *
@@ -153,7 +154,8 @@ Interval.prototype.contains = function(value) {
 };
 
 /**
- * indicate wether other interval contains the same values
+ * Indicate wether other interval contains the same values
+ *
  * @param interval
  * @return {Boolean}
  *

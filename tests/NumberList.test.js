@@ -60,10 +60,13 @@ describe("NumberList", function() {
     expect(nl.getAmplitude()).toBe(0);
   });
 
-  it("should calculate sum and product", function() {
+  it("should calculate sum ", function() {
     var nl = NumberList.fromArray([10,20,30,40,50]);
-
     expect(nl.getSum()).toBe(150);
+  });
+
+  it("should calculate product", function() {
+    var nl = NumberList.fromArray([10,20,30,40,50]);
     expect(nl.getProduct()).toBe(12000000);
   });
 
@@ -81,20 +84,20 @@ describe("NumberList", function() {
     expect(nl[0]).toBe(20);
   });
 
-  it("should sort indices of list", function() {
+  it("it should return the indices of the list in sorted order of the values", function() {
     var nl = NumberList.fromArray([1,3,2]);
     var indices = nl.getSortIndexes();
     expect(indices[0]).toBe(1);
   });
 
-  it("should sort indices of negative list", function() {
+  it("should return the indices of negative list", function() {
     var nl = NumberList.fromArray([1,-3,2]);
     var indices = nl.getSortIndexes();
     expect(indices[0]).toBe(2);
     expect(indices[2]).toBe(1);
   });
 
-  it("should sort factor values", function() {
+  it("should factor values", function() {
     var nl = NumberList.fromArray([1,3,2]);
     var factor = nl.factor(10);
     expect(factor[0]).toBe(10);

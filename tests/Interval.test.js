@@ -38,7 +38,7 @@ describe("Interval", function() {
     expect(inter.contains(101)).toBe(false);
   });
 
-  xit("should find containing values in negatvie intervals", function() {
+  xit("should find containing values in negative intervals", function() {
     //TODO: interval broken for negative intervals?
     inter = new Interval(-1, -99);
     expect(inter.contains(-1)).toBe(true);

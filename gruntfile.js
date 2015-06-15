@@ -107,7 +107,8 @@ module.exports = function (grunt) {
     karma: {
       unit: {
         configFile: 'tests/karma.conf.js',
-        singleRun: false
+        singleRun: false,
+        logLevel: 'WARN'
       }
     }
   });
