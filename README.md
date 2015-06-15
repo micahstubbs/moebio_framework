@@ -6,30 +6,18 @@ A set of tools for Moebio's projects
 
 ## Getting Started
 
-Download the pre-built files (minified and unminified) here and start using in your project.
+Download the pre-built files (minified and unminified) from the `dist/` directory and start using in your project.
 
-For more info check out the website and docs at ...
+For more info check out the website and docs at [http://bocoup.github.io/moebio_framework/](http://bocoup.github.io/moebio_framework/).
 
 ## Project Layout
 
-Primary code in the Moebio Framework is organized in the following way:
+Primary code in the Moebio Framework is organized in its `src` directory the following way:
 
-  * apis:
-  * dataStructures:
-  * Tools:
-  * Visualization:
-  * operators:
-  * libraries:
-  * dist:
-
-
-We also have a number of folders for ancilarry code and infrastructure
-
-  * tests:
-  * site:
-  * resources:
-
-
+  * `dataStructures`: basic data types for storing and manipulating different kinds of data.
+  * `tools`: drawing tools for basic shapes, as well as helpers for interaction, data loading, and 3D.
+  * `visualization`: functions for visualization the data types used in the framework
+  * `operators`: more advanced functionality that work on instances of different data types.
 
 ## Requirements
 
@@ -57,7 +45,6 @@ Then the default Grunt task will concatenate the source files into the `dist` di
 grunt
 ```
 
-
 ### Docs Build
 
 The [JSDoc](http://usejsdoc.org/) format is used to annotate the source code and the JSDoc command line tool is used to generate the static API documentation used on the site.
@@ -71,17 +58,11 @@ grunt doc
 This will build the documentation into the following directory:
 
 ```bash
-site/build/docs
+docs/build
 ```
 
 JSDoc templates can be found in `docs/moebio-jsdoc` and are directly inspired by the documentation of [TurfJS](http://turfjs.org/).
 
 ### Site Build
 
-Build the Moebio Framework static site using grunt as well:
-
-```bash
-grunt site
-```
-
-See site/README for more instructions on building the website.
+Build the Moebio Framework is managed in the [Moebio Framework Site](https://github.com/bocoup/moebio_framework_site) repo.

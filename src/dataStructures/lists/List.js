@@ -1148,7 +1148,7 @@ List.prototype.concat = function() {
 
 
 List.prototype.getReport = function(level) { //TODO:complete
-  var ident = "\n" + (level > 0 ? StringOperators.repeat("  ", level) : "");
+  var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
   var text = level > 0 ? (ident + "////report of instance of List////") : "///////////report of instance of List//////////";
 
   var length = this.length;

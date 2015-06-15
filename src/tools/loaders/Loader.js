@@ -157,15 +157,19 @@ Loader.loadImage = function(url, onComplete, callee, param) {
   img.src = Loader.proxy + url;
 };
 
-Loader.loadJSON = function(url, onLoadComplete) {
-  Loader.n_loading++;
 
-  Loader.loadData(url, function(data) {
-    Loader.n_loading--;
-    onLoadComplete.call(arguments.callee, jQuery.parseJSON(data));
-  });
-};
 
+// Loader.loadJSON = function(url, onLoadComplete) {
+//   Loader.n_loading++;
+
+//   Loader.loadData(url, function(data) {
+//     Loader.n_loading--;
+//     onLoadComplete.call(arguments.callee, jQuery.parseJSON(data));
+//   });
+// };
+
+
+/**
 Loader.callIndex = 0;
 Loader.loadJSONP = function(url, onLoadComplete, callee) {
   Loader.n_loading++;
@@ -210,7 +214,7 @@ Loader.loadJSONP = function(url, onLoadComplete, callee) {
   // onLoadComplete.call(target, e);
   // });
 };
-
+**/
 
 
 

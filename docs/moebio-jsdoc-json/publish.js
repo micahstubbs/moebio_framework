@@ -1,30 +1,25 @@
 var striptags = require('striptags');
 
 /*eslint no-nested-ternary:0, space-infix-ops: 0 */
-function graft(parentNode, childNodes, parentLongname, parentName) {
-    childNodes
-    .filter(function (element) {
-        return (element.memberof === parentLongname);
-    })
-    .forEach(function (element, index) {
-        var i,
-            len;
+function clean(childNodes) {
+  var cleaned = [];
+  childNodes
+  .forEach(function (element, index) {
+    var i,
+    len;
 
-        if (element.kind === 'module') {
-            if (!parentNode.functions) {
-                parentNode.functions = [];
-            }
+    if ('class' === 'class') {
 
             var thisFunction = {
                 'name': element.name,
                 'access': element.access || '',
                 'virtual': !!element.virtual,
-                'description': striptags(element.description).replace('{@link', '').replace('}', '') || '',
-                'parameters': [ ],
+                'description': element.description ?  striptags(element.description).replace('{@link', '').replace('}', '') : '',
+                'params': [ ],
                 'examples': []
             };
 
-            parentNode.functions.push(thisFunction);
+            cleaned.push(thisFunction);
 
             if (element.returns) {
                 thisFunction.returns = {
@@ -41,7 +36,7 @@ function graft(parentNode, childNodes, parentLongname, parentName) {
 
             if (element.params) {
                 for (i = 0, len = element.params.length; i < len; i++) {
-                    thisFunction.parameters.push({
+                    thisFunction.params.push({
                         'name': element.params[i].name,
                         'type': element.params[i].type? (element.params[i].type.names.length === 1? element.params[i].type.names[0] : element.params[i].type.names) : '',
                         'description': element.params[i].description || '',
@@ -53,6 +48,7 @@ function graft(parentNode, childNodes, parentLongname, parentName) {
             }
        }
     });
+    return cleaned;
 }
 
 /**
@@ -66,16 +62,10 @@ exports.publish = function(data, opts) {
     data({undocumented: true}).remove();
     docs = data().get(); // <-- an array of Doclet objects
 
-    graft(root, docs);
+    var cleaned = clean(docs);
 
     if (opts.destination === 'console') {
-        if (opts.query && opts.query.format === 'xml') {
-            var xml = require('js2xmlparser');
-            console.log( xml('jsdoc', root) );
-        }
-        else {
-            global.dump(root);
-        }
+      global.dump(cleaned);
     }
     else {
         console.log('This template only supports output to the console. Use the option "-d console" when you run JSDoc.');

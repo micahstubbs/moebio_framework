@@ -1178,7 +1178,7 @@ List.prototype.concat = function() {
 
 
 List.prototype.getReport = function(level) { //TODO:complete
-  var ident = "\n" + (level > 0 ? StringOperators.repeat("  ", level) : "");
+  var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
   var text = level > 0 ? (ident + "////report of instance of List////") : "///////////report of instance of List//////////";
 
   var length = this.length;
@@ -2788,7 +2788,7 @@ Table.prototype.getTransposed = function(firstListAsHeaders) {
 
 
 Table.prototype.getReport = function(level) {
-  var ident = "\n" + (level > 0 ? StringOperators.repeat("  ", level) : "");
+  var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
   var lengths = this.getLengths();
   var minLength = lengths.getMin();
   var maxLength = lengths.getMax();
@@ -2844,7 +2844,7 @@ Table.prototype.getReport = function(level) {
       try{
          text += this[i].getReport(1);
       } catch(err){
-        text += ident + "[!] something wrong with list ";
+        text += ident + "[!] something wrong with list " + err;
       }
     }
   }
@@ -13231,8 +13231,9 @@ StringOperators.indexesOf = function(text, string) { //TODO:test
  * @param  {String} text to be repeated
  * @param  {Number} n number of repetitions
  * @return {String}
+ * tags:
  */
-StringOperators.repeat = function(text, n) {
+StringOperators.repeatString = function(text, n) {
   var i;
   var newText = "";
   for(i = 0; i < n; i++) {
@@ -16960,14 +16961,29 @@ DrawTextsAdvanced.typodeOnQuadrilater = function(text, p0, p1, p2, p3) { //TODO:
   }
 
 };
-/*
- * graphic and text methods globally accesible
- * that work with context
+/**
+ * @module SimpleGraphics
+ *
+ * @classdesc Graphic and text methods globally accesible
+ * that work with context.
  */
 
 
 //drawing
 
+/**
+ * Draws a filled in Rectangle.
+ * Fill color is expected to be set using {@link setFill}.
+ *
+ * @param {Number} x X position of upper-left corner of Rectangle.
+ * @param {Number} y Y position of upper-left corner of Rectangle.
+ * @param {Number} width Width of Rectangle in pixels.
+ * @param {Number} height Height of Rectangle in pixels.
+ * @example
+ * setFill('steelblue');
+ * fRect(10, 10, 40, 40);
+ *
+ */
 fRect = function(x, y, width, height) {
   if(typeof x != 'number') {
     y = x.y;
@@ -16978,6 +16994,19 @@ fRect = function(x, y, width, height) {
   context.fillRect(x, y, width, height);
 };
 
+/**
+ * Draws a stroked Rectangle - showing just an outline.
+ * Stroke color is expected to be set using {@link setStroke}.
+ *
+ * @param {Number} x X position of upper-left corner of Rectangle.
+ * @param {Number} y Y position of upper-left corner of Rectangle.
+ * @param {Number} width Width of Rectangle in pixels.
+ * @param {Number} height Height of Rectangle in pixels.
+ * @example
+ * setStroke('orange');
+ * sRect(10, 10, 40, 40);
+ *
+ */
 sRect = function(x, y, width, height) {
   if(typeof x != 'number') {
     y = x.y;
@@ -16988,6 +17017,21 @@ sRect = function(x, y, width, height) {
   context.strokeRect(x, y, width, height);
 };
 
+/**
+ * Draws a filled and stroked Rectangle.
+ * Fill color is expected to be set using {@link setFill}.
+ * Stroke color is expected to be set using {@link setStroke}.
+ *
+ * @param {Number} x X position of upper-left corner of Rectangle.
+ * @param {Number} y Y position of upper-left corner of Rectangle.
+ * @param {Number} width Width of Rectangle in pixels.
+ * @param {Number} height Height of Rectangle in pixels.
+ * @example
+ * setFill('steelblue');
+ * setStroke('orange');
+ * fsRect(10, 10, 40, 40);
+ *
+ */
 fsRect = function(x, y, width, height) {
   if(typeof x != 'number') {
     y = x.y;
@@ -16999,18 +17043,55 @@ fsRect = function(x, y, width, height) {
   context.strokeRect(x, y, width, height);
 };
 
+/**
+ * Draws a filled in Circle.
+ * Fill color is expected to be set using {@link setFill}.
+ *
+ * @param {Number} x X position of center of the Circle.
+ * @param {Number} y Y position of center of the Circle.
+ * @param {Number} r Radius of the Circle.
+ * @example
+ * setFill('steelblue');
+ * fCircle(40, 40, 20);
+ *
+ */
 fCircle = function(x, y, r) {
   context.beginPath();
   context.arc(x, y, r, 0, TwoPi);
   context.fill();
 };
 
+/**
+ * Draws a stroked Circle.
+ * Stroke color is expected to be set using {@link setStroke}.
+ *
+ * @param {Number} x X position of center of the Circle.
+ * @param {Number} y Y position of center of the Circle.
+ * @param {Number} r Radius of the Circle.
+ * @example
+ * setStroke('orange');
+ * sCircle(40, 40, 20);
+ *
+ */
 sCircle = function(x, y, r) {
   context.beginPath();
   context.arc(x, y, r, 0, TwoPi);
   context.stroke();
 };
 
+/**
+ * Draws a filled and stroked Circle.
+ * Fill color is expected to be set using {@link setFill}.
+ * Stroke color is expected to be set using {@link setStroke}.
+ *
+ * @param {Number} x X position of center of the Circle.
+ * @param {Number} y Y position of center of the Circle.
+ * @param {Number} r Radius of the Circle.
+ * @example
+ * setStroke('steelblue');
+ * sCircle(40, 40, 20);
+ *
+ */
 fsCircle = function(x, y, r) {
   context.beginPath();
   context.arc(x, y, r, 0, TwoPi);
@@ -17018,6 +17099,18 @@ fsCircle = function(x, y, r) {
   context.stroke();
 };
 
+/**
+ * Draws a filled in Ellipse.
+ * Fill color is expected to be set using {@link setFill}.
+ *
+ * @param {Number} x X position of center of the Ellipse.
+ * @param {Number} y Y position of center of the Ellipse.
+ * @param {Number} rW Radial width of the Ellipse.
+ * @param {Number} rH Radial height of the Ellipse.
+ * @example
+ * setFill('steelblue');
+ * fEllipse(40, 40, 20, 30);
+ */
 fEllipse = function(x, y, rW, rH) {
   var k = 0.5522848, // 4 * ((√(2) - 1) / 3)
     ox = rW * k, // control point offset horizontal
@@ -17035,6 +17128,18 @@ fEllipse = function(x, y, rW, rH) {
   context.fill();
 };
 
+/**
+ * Draws a stroked Ellipse.
+ * Stroke color is expected to be set using {@link setStroke}.
+ *
+ * @param {Number} x X position of center of the Ellipse.
+ * @param {Number} y Y position of center of the Ellipse.
+ * @param {Number} rW Radial width of the Ellipse.
+ * @param {Number} rH Radial height of the Ellipse.
+ * @example
+ * setStroke('orange');
+ * sEllipse(40, 40, 20, 30);
+ */
 sEllipse = function(x, y, rW, rH) {
   var k = 0.5522848,
     ox = rW * k,
@@ -17052,6 +17157,20 @@ sEllipse = function(x, y, rW, rH) {
   context.stroke();
 };
 
+/**
+ * Draws a filled and stroked Ellipse.
+ * Fill color is expected to be set using {@link setFill}.
+ * Stroke color is expected to be set using {@link setStroke}.
+ *
+ * @param {Number} x X position of center of the Ellipse.
+ * @param {Number} y Y position of center of the Ellipse.
+ * @param {Number} rW Radial width of the Ellipse.
+ * @param {Number} rH Radial height of the Ellipse.
+ * @example
+ * setFill('steelblue');
+ * setStroke('steelblue');
+ * fsEllipse(40, 40, 20, 30);
+ */
 fsEllipse = function(x, y, rW, rH) {
   var k = 0.5522848,
     ox = rW * k,
@@ -17070,6 +17189,17 @@ fsEllipse = function(x, y, rW, rH) {
   context.stroke();
 };
 
+/**
+ * Draws a line from a start position to an end position
+ *
+ * @param {Number} x0 Starting x position.
+ * @param {Number} y0 Starting y position.
+ * @param {Number} x1 Ending x position.
+ * @param {Number} y1 Ending y position.
+ * @example
+ * setStroke('black');
+ * line(0, 0, 40, 40);
+ */
 line = function(x0, y0, x1, y1) {
   context.beginPath();
   context.moveTo(x0, y0);
@@ -17077,7 +17207,21 @@ line = function(x0, y0, x1, y1) {
   context.stroke();
 };
 
-
+/**
+ * Draws a bezier curve using {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/bezierCurveTo|bezierCurveTo}
+ *
+ * @param {Number} x0 Starting x position.
+ * @param {Number} y0 Starting y position.
+ * @param {Number} cx0 First curve control point x position.
+ * @param {Number} cy0 First cure control point y position.
+ * @param {Number} cx1 Second curve control point x position.
+ * @param {Number} cy1 Second cure control point y position.
+ * @param {Number} x1 Ending x position.
+ * @param {Number} y1 Ending y position.
+ * @example
+ * setStroke('black');
+ * bezier(10, 10, 10, 0, 40, 0, 40, 10);
+ */
 bezier = function(x0, y0, cx0, cy0, cx1, cy1, x1, y1) {
   context.beginPath();
   context.moveTo(x0, y0);
@@ -17086,8 +17230,12 @@ bezier = function(x0, y0, cx0, cy0, cx1, cy1, x1, y1) {
 };
 
 
+/**
+ * @ignore
+ */
 _lines = function() {
   if(arguments == null) return;
+  //TODO: WHY?!?!
   arguments = arguments[0];
   context.beginPath();
   context.moveTo(arguments[0], arguments[1]);
@@ -17096,8 +17244,12 @@ _lines = function() {
   }
 };
 
+/**
+ * @ignore
+ */
 _linesM = function() {
   if(arguments == null) return;
+  //TODO: WHY?!?!
   arguments = arguments[0];
   var p = new Polygon();
   context.beginPath();
@@ -17110,23 +17262,77 @@ _linesM = function() {
   return p.containsPoint(mP);
 };
 
-
+/**
+ * Draws a filled polygon using a series of
+ * x/y positions.
+ *
+ * @param {...Number} positions x and y positions for the Polygon
+ * @example
+ * // This draws a filled triangle
+ * // Inputs are pairs of x/y positions.
+ * setFill('steelblue').
+ * fLines(10, 10, 40, 10, 40, 40);
+ *
+ */
 fLines = function() {
   _lines(arguments);
   context.fill();
 };
 
+/**
+ * Draws a set of line segments using a series of
+ * x/y positions as input.
+ *
+ * @param {...Number} positions x and y positions for the Lines
+ * @example
+ * // This draws the outline of a triangle.
+ * // Inputs are pairs of x/y positions.
+ * setStroke('orange');
+ * sLines(10, 10, 40, 10, 40, 40, 10, 10);
+ *
+ */
 sLines = function() {
   _lines(arguments);
   context.stroke();
 };
 
+/**
+ * Draws a filled set of line segments using a series of
+ * x/y positions as input.
+ *
+ * @param {...Number} positions x and y positions for the Lines
+ * @example
+ * // This draws a filled and outlined triangle.
+ * // Inputs are pairs of x/y positions.
+ * setFill('steelblue');
+ * setStroke('orange');
+ * fsLines(10, 10, 40, 10, 40, 40, 10, 10);
+ *
+ */
 fsLines = function() {
   _lines(arguments);
   context.fill();
   context.stroke();
 };
 
+/**
+ * Draws a mouse-enabled filled set of line segments using a series of
+ * x/y positions as input. Returns true if moused over on current
+ * cycle iteration.
+ *
+ * @param {...Number} positions x and y positions for the Lines
+ * @returns {Boolean} if true, mouse is currently hovering over lines.
+ * @example
+ * // Turns Fill Red if moused over
+ * setFill('steelblue');
+ * setStroke('orange');
+ * var on = fsLinesM(10, 10, 40, 10, 40, 40, 10, 10);
+ * if(on) {
+ *   setFill('red');
+ *   fsLines(10, 10, 40, 10, 40, 40, 10, 10);
+ * }
+ *
+ */
 fsLinesM = function() {
   var mouseOn = _linesM(arguments);
   context.fill();
@@ -17134,6 +17340,9 @@ fsLinesM = function() {
   return mouseOn;
 };
 
+/**
+ * @ignore
+ */
 _polygon = function(polygon) {
   context.beginPath();
   context.moveTo(polygon[0].x, polygon[0].y);
@@ -17188,18 +17397,78 @@ _eqTriangle = function(x, y, angle, r) {
 
 //drawing and checking cursor
 
+/**
+ * Draws a mouse-enabled filled in Rectangle.
+ * Fill color is expected to be set using {@link setFill}.
+ *
+ * @param {Number} x X position of upper-left corner of Rectangle.
+ * @param {Number} y Y position of upper-left corner of Rectangle.
+ * @param {Number} width Width of Rectangle in pixels.
+ * @param {Number} height Height of Rectangle in pixels.
+ * @param {Number} margin Parameter around rectangle to count towards mouse over.
+ * @return {Boolean} Returns true if the mouse is over the rectangle on the current
+ * iteration of the cycle function.
+ * @example
+ * setFill('steelblue');
+ * var on = fRectM(10, 10, 40, 40);
+ * if(on) {
+ *   setFill('red');
+ *   fRect(10, 10, 40, 40);
+ * }
+ */
 fRectM = function(x, y, width, height, margin) {
   margin = margin == null ? 0 : margin;
   context.fillRect(x, y, width, height);
   return mY > y - margin && mY < y + height + margin && mX > x - margin && mX < x + width + margin;
 };
 
+/**
+ * Draws a mouse-enabled stroked Rectangle.
+ * Stroke color is expected to be set using {@link setStroke}.
+ *
+ * @param {Number} x X position of upper-left corner of Rectangle.
+ * @param {Number} y Y position of upper-left corner of Rectangle.
+ * @param {Number} width Width of Rectangle in pixels.
+ * @param {Number} height Height of Rectangle in pixels.
+ * @param {Number} margin Parameter around rectangle to count towards mouse over.
+ * @return {Boolean} Returns true if the mouse is over the rectangle on the current
+ * iteration of the cycle function.
+ * @example
+ * setStroke('orange');
+ * var on = sRectM(10, 10, 40, 40);
+ * if(on) {
+ *   setStroke('black');
+ *   sRect(10, 10, 40, 40);
+ * }
+ */
 sRectM = function(x, y, width, height, margin) {
   margin = margin == null ? 0 : margin;
   context.strokeRect(x, y, width, height);
   return mY > y - margin && mY < y + height + margin && mX > x - margin && mX < x + width + margin;
 };
 
+/**
+ * Draws a mouse-enabled filled and stroked Rectangle.
+ * Fill color is expected to be set using {@link setFill}.
+ * Stroke color is expected to be set using {@link setStroke}.
+ *
+ * @param {Number} x X position of upper-left corner of Rectangle.
+ * @param {Number} y Y position of upper-left corner of Rectangle.
+ * @param {Number} width Width of Rectangle in pixels.
+ * @param {Number} height Height of Rectangle in pixels.
+ * @param {Number} margin Parameter around rectangle to count towards mouse over.
+ * @return {Boolean} Returns true if the mouse is over the rectangle on the current
+ * iteration of the cycle function.
+ * @example
+ * setFill('steelblue');
+ * setStroke('orange');
+ * var on = fsRectM(10, 10, 40, 40);
+ * if(on) {
+ *   setFill('red');
+ *   setStroke('black');
+ *   sRect(10, 10, 40, 40);
+ * }
+ */
 fsRectM = function(x, y, width, height, margin) {
   margin = margin == null ? 0 : margin;
   context.fillRect(x, y, width, height);
@@ -17207,6 +17476,26 @@ fsRectM = function(x, y, width, height, margin) {
   return mY > y - margin && mY < y + height + margin && mX > x - margin && mX < x + width + margin;
 };
 
+/**
+ * Draws a mouse-enabled filled in Circle.
+ * Fill color is expected to be set using {@link setFill}.
+ * Returns true if mouse is over circle on current iteration of cycle.
+ *
+ * @param {Number} x X position of center of the Circle.
+ * @param {Number} y Y position of center of the Circle.
+ * @param {Number} r Radius of the Circle.
+ * @param {Number} margin Margin around Circle to consider part of mouse over.
+ * @return {Boolean} Returns true if the mouse is over the circle on the current
+ * iteration of the cycle function.
+ * @example
+ * setFill('steelblue');
+ * var on = fCircleM(40, 40, 20);
+ * if(on) {
+ *  setFill('red');
+ *  fCircle(40, 40, 20);
+ * }
+ *
+ */
 fCircleM = function(x, y, r, margin) { //check if you can avoid repeat
   margin = margin == null ? 0 : margin;
   context.beginPath();
@@ -17215,6 +17504,26 @@ fCircleM = function(x, y, r, margin) { //check if you can avoid repeat
   return Math.pow(x - mX, 2) + Math.pow(y - mY, 2) < Math.pow(r + margin, 2);
 };
 
+/**
+ * Draws a mouse-enabled stroked Circle.
+ * Stroke color is expected to be set using {@link setStroke}.
+ * Returns true if mouse is over circle on current iteration of cycle.
+ *
+ * @param {Number} x X position of center of the Circle.
+ * @param {Number} y Y position of center of the Circle.
+ * @param {Number} r Radius of the Circle.
+ * @param {Number} margin Margin around Circle to consider part of mouse over.
+ * @return {Boolean} Returns true if the mouse is over the circle on the current
+ * iteration of the cycle function.
+ * @example
+ * setStroke('orange');
+ * var on = sCircleM(40, 40, 20);
+ * if(on) {
+ *  setStroke('black');
+ *  sCircle(40, 40, 20);
+ * }
+ *
+ */
 sCircleM = function(x, y, r, margin) {
   margin = margin == null ? 0 : margin;
   context.beginPath();
@@ -17223,6 +17532,29 @@ sCircleM = function(x, y, r, margin) {
   return Math.pow(x - mX, 2) + Math.pow(y - mY, 2) < Math.pow(r + margin, 2);
 };
 
+/**
+ * Draws a mouse-enabled filled and stroked Circle.
+ * Fill color is expected to be set using {@link setFill}.
+ * Stroke color is expected to be set using {@link setStroke}.
+ * Returns true if mouse is over circle on current iteration of cycle.
+ *
+ * @param {Number} x X position of center of the Circle.
+ * @param {Number} y Y position of center of the Circle.
+ * @param {Number} r Radius of the Circle.
+ * @param {Number} margin Margin around Circle to consider part of mouse over.
+ * @return {Boolean} Returns true if the mouse is over the circle on the current
+ * iteration of the cycle function.
+ * @example
+ * setFill('steelblue');
+ * setStroke('orange');
+ * var on = fsCircleM(40, 40, 20);
+ * if(on) {
+ *  setFill('red');
+ *  setStroke('black');
+ *  fsCircle(40, 40, 20);
+ * }
+ *
+ */
 fsCircleM = function(x, y, r, margin) {
   margin = margin == null ? 0 : margin;
   context.beginPath();
@@ -17232,6 +17564,24 @@ fsCircleM = function(x, y, r, margin) {
   return Math.pow(x - mX, 2) + Math.pow(y - mY, 2) < Math.pow(r + margin, 2);
 };
 
+/**
+ * Draws a mouse-enabled line from a start position to an end position.
+ *
+ * @param {Number} x0 Starting x position.
+ * @param {Number} y0 Starting y position.
+ * @param {Number} x1 Ending x position.
+ * @param {Number} y1 Ending y position.
+ * @param {Number} d Distance away from line to count towards mouse interaction.
+ * @return {Boolean} Returns true if the mouse is over the line on the current
+ * iteration of the cycle function.
+ * @example
+ * setStroke('black');
+ * var on = lineM(0, 0, 40, 40);
+ * if(on) {
+ *  setStroke('red');
+ *  line(0, 0, 40, 40);
+ * }
+ */
 lineM = function(x0, y0, x1, y1, d) {
   d = d || 4;
   context.beginPath();
@@ -17241,6 +17591,9 @@ lineM = function(x0, y0, x1, y1, d) {
   return _distToSegmentSquared(x0, y0, x1, y1) < d * d;
 };
 
+/**
+ * @ignore
+ */
 _distToSegmentSquared = function(x0, y0, x1, y1) {
   var l2 = Math.pow(x0 - x1, 2) + Math.pow(y0 - y1, 2);
   if(l2 === 0) return Math.pow(x0 - mX, 2) + Math.pow(y0 - mY, 2);
@@ -17254,6 +17607,29 @@ _distToSegmentSquared = function(x0, y0, x1, y1) {
 
 //TODO:fEqTriangleM, fPolygonM
 
+/**
+ * Draws a mouse-enabled bezier curve using {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/bezierCurveTo|bezierCurveTo}.
+ *
+ *
+ * @param {Number} x0 Starting x position.
+ * @param {Number} y0 Starting y position.
+ * @param {Number} cx0 First curve control point x position.
+ * @param {Number} cy0 First cure control point y position.
+ * @param {Number} cx1 Second curve control point x position.
+ * @param {Number} cy1 Second cure control point y position.
+ * @param {Number} x1 Ending x position.
+ * @param {Number} y1 Ending y position.
+ * @param {Number} d Distance away from line to count towards mouse interaction.
+ * @return {Boolean} Returns true if the mouse is over the line on the current
+ * iteration of the cycle function.
+ * @example
+ * setStroke('black');
+ * var on = bezierM(10, 10, 10, 0, 40, 0, 40, 10);
+ * if(on) {
+ *  setStroke('red');
+ *  bezierM(10, 10, 10, 0, 40, 0, 40, 10);
+ * }
+ */
 bezierM = function(x0, y0, cx0, cy0, cx1, cy1, x1, y1, d) { //TODO: fix this mess!
   d = d == null ? 2 : d;
   context.beginPath();
@@ -17383,19 +17759,79 @@ restore = function() {
 
 // texts
 
+/**
+ * Draws filled in text.
+ * Fill color is expected to be set using {@link setFill}.
+ * Alternatively, setText can be used to set a number of
+ * text rendering properties.
+ *
+ * @param {String} text Text to draw.
+ * @param {Number} x X position to start the text.
+ * @param {Number} y Y position to start the text.
+ * @example
+ * setText('black', 30, 'Ariel');
+ * fText("hello", 10, 10);
+ *
+ */
 fText = function(text, x, y) {
   context.fillText(text, x, y);
 };
 
+/**
+ * Draws stroked text.
+ * Stroke color is expected to be set using {@link setStroke}.
+ * Additionally, setText can be used to set a number of
+ * text rendering properties.
+ *
+ * @param {String} text Text to draw.
+ * @param {Number} x X position to start the text.
+ * @param {Number} y Y position to start the text.
+ * @example
+ * setText('black', 30, 'Ariel');
+ * setStroke('orange');
+ * sText("hello", 10, 10);
+ *
+ */
 sText = function(text, x, y) {
   context.strokeText(text, x, y);
 };
 
+/**
+ * Draws stroked and filled in text.
+ * Stroke color is expected to be set using {@link setStroke}.
+ * Fill color is expected to be set using {@link setFill}.
+ * Alternatively, setText can be used to set a number of
+ * text rendering properties.
+ *
+ * @param {String} text Text to draw.
+ * @param {Number} x X position to start the text.
+ * @param {Number} y Y position to start the text.
+ * @example
+ * setText('black', 30, 'Ariel');
+ * setStroke('orange');
+ * fsText("hello", 10, 10);
+ *
+ */
 fsText = function(text, x, y) {
   context.strokeText(text, x, y);
   context.fillText(text, x, y);
 };
 
+/**
+ * Draws filled in text, rotated by some angle.
+ * Fill color is expected to be set using {@link setFill}.
+ * Alternatively, setText can be used to set a number of
+ * text rendering properties.
+ *
+ * @param {String} text Text to draw.
+ * @param {Number} x X position to start the text.
+ * @param {Number} y Y position to start the text.
+ * @param {Number} angle The angle in radians to rotate the text
+ * @example
+ * setText('black', 30, 'Ariel');
+ * fTextRotated("hello", 40, 40, (20 * Math.PI / 180));
+ *
+ */
 fTextRotated = function(text, x, y, angle) {
   context.save();
   context.translate(x, y);
@@ -17404,12 +17840,57 @@ fTextRotated = function(text, x, y, angle) {
   context.restore();
 };
 
+/**
+ * Draws a mouse-enabled filled in text.
+ * Fill color is expected to be set using {@link setFill}.
+ * Alternatively, setText can be used to set a number of
+ * text rendering properties.
+ *
+ * @param {String} text Text to draw.
+ * @param {Number} x X position to start the text.
+ * @param {Number} y Y position to start the text.
+ * @param {Number} size Size of the text being drawn.
+ * @return {Boolean} Returns true if the mouse is over the text on the current
+ * iteration of the cycle function.
+ * @example
+ * setText('black', 30, 'Ariel');
+ * var on = fTextM("hello", 10, 10, 30);
+ * if(on) {
+ *   setText('red', 30, 'Ariel');
+ *   fText("hello", 10, 10);
+ * }
+ *
+ */
 fTextM = function(text, x, y, size) {
   size = size || 12;
   context.fillText(text, x, y);
   return mY > y && mY < y + size && mX > x && mX < x + context.measureText(text).width;
 };
 
+/**
+ * Draws a mouse-enabled filled and stroked text.
+ * Fill color is expected to be set using {@link setFill}.
+ * Stroke color is expected to be set using {@link setStroke}.
+ * Alternatively, setText can be used to set a number of
+ * text rendering properties.
+ *
+ * @param {String} text Text to draw.
+ * @param {Number} x X position to start the text.
+ * @param {Number} y Y position to start the text.
+ * @param {Number} size Size of the text being drawn.
+ * @return {Boolean} Returns true if the mouse is over the text on the current
+ * iteration of the cycle function.
+ * @example
+ * setText('black', 30, 'Ariel');
+ * setStroke('orange')
+ * var on = fsTextM("hello", 10, 10, 30);
+ * if(on) {
+ *   setText('red', 30, 'Ariel');
+ *   setStroke('black')
+ *   fsText("hello", 10, 10);
+ * }
+ *
+ */
 fsTextM = function(text, x, y, size) {
   size = size || 12;
   context.strokeText(text, x, y);
@@ -17417,6 +17898,29 @@ fsTextM = function(text, x, y, size) {
   return mY > y && mY < y + size && mX > x && mX < x + context.measureText(text).width;
 };
 
+/**
+ * Draws a mouse-enabled filled text rotated by some angle.
+ * Fill color is expected to be set using {@link setFill}.
+ * Alternatively, setText can be used to set a number of
+ * text rendering properties.
+ *
+ * @param {String} text Text to draw.
+ * @param {Number} x X position to start the text.
+ * @param {Number} y Y position to start the text.
+ * @param {Number} angle The angle in radians to rotate the text
+ * @param {Number} size Size of the text being drawn.
+ * @return {Boolean} Returns true if the mouse is over the text on the current
+ * iteration of the cycle function.
+ * @example
+ * setText('black', 30, 'Ariel');
+ * var on = fTextRotatedM("hello", 10, 10, (20 * Math.PI / 180), 30);
+ * if(on) {
+ *   setText('red', 30, 'Ariel');
+ *   setStroke('black')
+ *   fsText("hello", 10, 10);
+ * }
+ *
+ */
 fTextRotatedM = function(text, x, y, angle, size) {
   size = size || 12;
   context.save();
@@ -17441,7 +17945,8 @@ fTextW = function(text, x, y) {
 };
 
 /**
- * set several text canvas rendering properties
+ * Sets several text canvas rendering properties
+ *
  * @param {Object} color optional font color
  * @param {Object} fontSize optional font size
  * @param {Object} fontName optional font name (default: LOADED_FONT)
@@ -17535,6 +18040,7 @@ getMilliseconds = function() {
   delete date;
   return _ms;
 };
+
 DragDetection.prototype.constructor = DragDetection;
 
 /**
@@ -18415,15 +18921,19 @@ Loader.loadImage = function(url, onComplete, callee, param) {
   img.src = Loader.proxy + url;
 };
 
-Loader.loadJSON = function(url, onLoadComplete) {
-  Loader.n_loading++;
 
-  Loader.loadData(url, function(data) {
-    Loader.n_loading--;
-    onLoadComplete.call(arguments.callee, jQuery.parseJSON(data));
-  });
-};
 
+// Loader.loadJSON = function(url, onLoadComplete) {
+//   Loader.n_loading++;
+
+//   Loader.loadData(url, function(data) {
+//     Loader.n_loading--;
+//     onLoadComplete.call(arguments.callee, jQuery.parseJSON(data));
+//   });
+// };
+
+
+/**
 Loader.callIndex = 0;
 Loader.loadJSONP = function(url, onLoadComplete, callee) {
   Loader.n_loading++;
@@ -18468,7 +18978,7 @@ Loader.loadJSONP = function(url, onLoadComplete, callee) {
   // onLoadComplete.call(target, e);
   // });
 };
-
+**/
 
 
 
@@ -23456,12 +23966,11 @@ resizeWindow=function(){
 };
 
 lastCycle = function(){
-	//override
+  //override
 };
 
 var listenerArray  = [];
 var canvas;
-var removeDiv;
 var userAgent="none";
 var userAgentVersion;
 var canvasResizeable=true;
@@ -23528,331 +24037,328 @@ var _alphaRefresh=0;//if _alphaRefresh>0 instead of clearing the canvas each fra
 var END_CYCLE_DELAY = 3000; //time in milliseconds, from last mouse movement to the last cycle to be executed in case cycleOnMouseMovement has been activated
 
 Array.prototype.last = function(){
-	return this[this.length-1];
+  return this[this.length-1];
 };
 
 window.addEventListener('load', function(){
 
- 	if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
-    	userAgent='IE';
-    	userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
-    	if(userAgentVersion<9) return null;
-	} else if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent)){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
-   		userAgent='FIREFOX';
-    	userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
-   	} else if (navigator.userAgent.match(/Chrome/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
-	 	userAgent='CHROME';
-	    userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
-	} else if (/Mozilla[\/\s](\d+\.\d+)/.test(navigator.userAgent) || navigator.userAgent.match(/Mozilla/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
-	 	userAgent='MOZILLA';
-	    userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
-	} else if (navigator.userAgent.match(/Safari/) != null){ //test for MSIE x.x;
-    	userAgent='Safari';
-    	userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
-  	} else if(navigator.userAgent.match(/iPad/i) != null){
-    	userAgent='IOS';
-  	} else if(navigator.userAgent.match(/iPhone/i) != null){
-    	userAgent='IOS';
-  	}
+   if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
+      userAgent='IE';
+      userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+      if(userAgentVersion<9) return null;
+  } else if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent)){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
+       userAgent='FIREFOX';
+      userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+     } else if (navigator.userAgent.match(/Chrome/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
+     userAgent='CHROME';
+      userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+  } else if (/Mozilla[\/\s](\d+\.\d+)/.test(navigator.userAgent) || navigator.userAgent.match(/Mozilla/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
+     userAgent='MOZILLA';
+      userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+  } else if (navigator.userAgent.match(/Safari/) != null){ //test for MSIE x.x;
+      userAgent='Safari';
+      userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+    } else if(navigator.userAgent.match(/iPad/i) != null){
+      userAgent='IOS';
+    } else if(navigator.userAgent.match(/iPhone/i) != null){
+      userAgent='IOS';
+    }
 
 
-  	Global.userAgent=userAgent;
+    Global.userAgent=userAgent;
     Global._frameRate=30;
 
-	canvas = document.getElementById('main');
+  canvas = document.getElementById('main');
 
-	if(canvas!=null){
-		removeDiv = document.getElementById('removeDiv');
-		removeDiv.style.display = 'none';
+  if(canvas!=null){
+    context = canvas.getContext('2d');
 
-		context = canvas.getContext('2d');
+    _adjustCanvas();
 
-		_adjustCanvas();
-
-		canvas.addEventListener("mousemove", _onMouse, false);
-		canvas.addEventListener("mousedown", _onMouse, false);
-		canvas.addEventListener("mouseup", _onMouse, false);
-		canvas.addEventListener("mouseenter", _onMouse, false);
-		canvas.addEventListener("mouseleave", _onMouse, false);
+    canvas.addEventListener("mousemove", _onMouse, false);
+    canvas.addEventListener("mousedown", _onMouse, false);
+    canvas.addEventListener("mouseup", _onMouse, false);
+    canvas.addEventListener("mouseenter", _onMouse, false);
+    canvas.addEventListener("mouseleave", _onMouse, false);
 
 
-		activateWheel();
+    activateWheel();
 
-		window.addEventListener("resize", onResize, false);
+    window.addEventListener("resize", onResize, false);
 
-		startCycle();
-		init();
-	}
+    startCycle();
+    init();
+  }
 
-	c.l('Moebio Framework v2.259 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
+  c.l('Moebio Framework v2.259 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
 
 }, false);
 
 function _onMouse(e) {
 
-	switch(e.type){
-		case "mousemove":
-			PREV_mX=mX;
-			PREV_mY=mY;
+  switch(e.type){
+    case "mousemove":
+      PREV_mX=mX;
+      PREV_mY=mY;
 
-			if(e.clientX){
-				mX = e.clientX;
-		        mY = e.clientY;
-			} else if(e.offsetX) {
-		        mX = e.offsetX;
-		        mY = e.offsetY;
-		    } else if(e.layerX) {
-		        mX = e.layerX;
-		        mY = e.layerY;
-		    }
-		  	mP.x = mX;
-		  	mP.y = mY;
-		  	MOUSE_IN_DOCUMENT = true;
-		  	break;
-		case "mousedown":
-			NF_DOWN = nF;
-			MOUSE_PRESSED = true;
-			T_MOUSE_PRESSED = 0;
-			_tLastMouseDown = new Date().getTime();
-			mX_DOWN = mX;
-			mY_DOWN = mY;
-			MOUSE_IN_DOCUMENT = true;
-			break;
-		case "mouseup":
-			NF_UP = nF;
-			MOUSE_PRESSED = false;
-			T_MOUSE_PRESSED = 0;
-			mX_UP = mX;
-			mY_UP = mY;
-			MOUSE_IN_DOCUMENT = true;
-			break;
-		case "mouseenter":
-			MOUSE_IN_DOCUMENT = true;
-			break;
-		case "mouseleave":
-			MOUSE_IN_DOCUMENT = false;
-			break;
-	}
+      if(e.clientX){
+        mX = e.clientX;
+            mY = e.clientY;
+      } else if(e.offsetX) {
+            mX = e.offsetX;
+            mY = e.offsetY;
+        } else if(e.layerX) {
+            mX = e.layerX;
+            mY = e.layerY;
+        }
+        mP.x = mX;
+        mP.y = mY;
+        MOUSE_IN_DOCUMENT = true;
+        break;
+    case "mousedown":
+      NF_DOWN = nF;
+      MOUSE_PRESSED = true;
+      T_MOUSE_PRESSED = 0;
+      _tLastMouseDown = new Date().getTime();
+      mX_DOWN = mX;
+      mY_DOWN = mY;
+      MOUSE_IN_DOCUMENT = true;
+      break;
+    case "mouseup":
+      NF_UP = nF;
+      MOUSE_PRESSED = false;
+      T_MOUSE_PRESSED = 0;
+      mX_UP = mX;
+      mY_UP = mY;
+      MOUSE_IN_DOCUMENT = true;
+      break;
+    case "mouseenter":
+      MOUSE_IN_DOCUMENT = true;
+      break;
+    case "mouseleave":
+      MOUSE_IN_DOCUMENT = false;
+      break;
+  }
 }
 
 
 function onResize(e){
-	_adjustCanvas();
-	resizeWindow();
+  _adjustCanvas();
+  resizeWindow();
 }
 
 function _adjustCanvas(){
-	if(canvasResizeable==false) return;
+  if(canvasResizeable==false) return;
 
-	cW = getDocWidth();
-	cH = getDocHeight();
+  cW = getDocWidth();
+  cH = getDocHeight();
 
-	canvas.setAttribute('width', cW);
+  canvas.setAttribute('width', cW);
     canvas.setAttribute('height', cH);
 
-	cX = Math.floor(cW*0.5);
-	cY = Math.floor(cH*0.5);
+  cX = Math.floor(cW*0.5);
+  cY = Math.floor(cH*0.5);
 }
 
 
 function clearContext(){
-	context.clearRect(0, 0, cW, cH);
+  context.clearRect(0, 0, cW, cH);
 }
 
 function cycleOnMouseMovement(value, time){
-	if(time!=null) END_CYCLE_DELAY = time;
+  if(time!=null) END_CYCLE_DELAY = time;
 
-	if(value){
-		context.canvas.addEventListener('mousemove', onMoveCycle, false);
-		addInteractionEventListener('mousewheel', onMoveCycle, this);
-		_cycleOnMouseMovement = true;
-		stopCycle();
-	} else {
-		context.canvas.removeEventListener('mousemove', onMoveCycle, false);
-		removeInteractionEventListener('mousewheel', onMoveCycle, this);
-		_cycleOnMouseMovement = false;
-		startCycle();
-	}
+  if(value){
+    context.canvas.addEventListener('mousemove', onMoveCycle, false);
+    addInteractionEventListener('mousewheel', onMoveCycle, this);
+    _cycleOnMouseMovement = true;
+    stopCycle();
+  } else {
+    context.canvas.removeEventListener('mousemove', onMoveCycle, false);
+    removeInteractionEventListener('mousewheel', onMoveCycle, this);
+    _cycleOnMouseMovement = false;
+    startCycle();
+  }
 }
 
 function setFrameRate(fr){
-	fr = fr||30;
-	Global._frameRate = fr;
+  fr = fr||30;
+  Global._frameRate = fr;
 
-	if(cycleActive) startCycle();
+  if(cycleActive) startCycle();
 }
 
 function enterFrame(){
-	if(_alphaRefresh==0){
-	   	context.clearRect(0, 0, cW, cH);
-	} else {
-		context.fillStyle = 'rgba('+backGroundColorRGB[0]+','+backGroundColorRGB[1]+','+backGroundColorRGB[2]+','+_alphaRefresh+')';
-		context.fillRect(0, 0, cW, cH);
-	}
+  if(_alphaRefresh==0){
+       context.clearRect(0, 0, cW, cH);
+  } else {
+    context.fillStyle = 'rgba('+backGroundColorRGB[0]+','+backGroundColorRGB[1]+','+backGroundColorRGB[2]+','+_alphaRefresh+')';
+    context.fillRect(0, 0, cW, cH);
+  }
 
-   	setCursor('default');
+     setCursor('default');
 
-   	MOUSE_DOWN = NF_DOWN==nF;
-	MOUSE_UP = NF_UP==nF;
-	MOUSE_UP_FAST = MOUSE_UP && (nF-NF_DOWN)<9;
+     MOUSE_DOWN = NF_DOWN==nF;
+  MOUSE_UP = NF_UP==nF;
+  MOUSE_UP_FAST = MOUSE_UP && (nF-NF_DOWN)<9;
 
-	DX_MOUSE = mX-PREV_mX;
-	DY_MOUSE = mY-PREV_mY;
-	MOUSE_MOVED = DX_MOUSE!=0 || DY_MOUSE!=0;
+  DX_MOUSE = mX-PREV_mX;
+  DY_MOUSE = mY-PREV_mY;
+  MOUSE_MOVED = DX_MOUSE!=0 || DY_MOUSE!=0;
 
-	if(MOUSE_PRESSED) T_MOUSE_PRESSED = new Date().getTime() - _tLastMouseDown;
+  if(MOUSE_PRESSED) T_MOUSE_PRESSED = new Date().getTime() - _tLastMouseDown;
 
-  	cycle();
+    cycle();
 
-  	WHEEL_CHANGE = 0;
+    WHEEL_CHANGE = 0;
 
-  	PREV_mX=mX;
-	PREV_mY=mY;
+    PREV_mX=mX;
+  PREV_mY=mY;
 
-  	nF++;
+    nF++;
 }
 
 function startCycle(){
-	clearTimeout(_setTimeOutId);
-	clearInterval(_setIntervalId);
-	_setIntervalId = setInterval(enterFrame, Global._frameRate);
-	cycleActive = true;
+  clearTimeout(_setTimeOutId);
+  clearInterval(_setIntervalId);
+  _setIntervalId = setInterval(enterFrame, Global._frameRate);
+  cycleActive = true;
 }
 
 
 function stopCycle(){
-	clearInterval(_setIntervalId);
-	cycleActive = false;
+  clearInterval(_setIntervalId);
+  cycleActive = false;
 
-	lastCycle();
+  lastCycle();
 }
 
 
 
 
 function onMoveCycle(e){
-	if(e.type=='mousemove' && _prevMouseX==mX && _prevMouseY==mY) return;
-	reStartCycle();
+  if(e.type=='mousemove' && _prevMouseX==mX && _prevMouseY==mY) return;
+  reStartCycle();
 }
 
 function reStartCycle(){
-	_prevMouseX=mX;
-	_prevMouseY=mY;
+  _prevMouseX=mX;
+  _prevMouseY=mY;
 
-	if(!cycleActive){
-		_setIntervalId = setInterval(enterFrame, Global._frameRate);
-		cycleActive = true;
-	}
+  if(!cycleActive){
+    _setIntervalId = setInterval(enterFrame, Global._frameRate);
+    cycleActive = true;
+  }
 
-	clearTimeout(_setTimeOutId);
-	_setTimeOutId = setTimeout(stopCycle, END_CYCLE_DELAY);
+  clearTimeout(_setTimeOutId);
+  _setTimeOutId = setTimeout(stopCycle, END_CYCLE_DELAY);
 }
 
 //interaction events
 function addInteractionEventListener(eventType, onFunction, target){//TODO: listenerArray contains objects instead of arrays
-	listenerArray.push(new Array(eventType, onFunction, target));
-	switch(eventType){
-		case 'mousedown':
-		case 'mouseup':
-		case 'click':
-		case 'mousemove':
-			context.canvas.addEventListener(eventType, onCanvasEvent, false);
-			break;
-		case 'mousewheel':
-			if(!_wheelActivated) activateWheel();
-			break;
-		case 'keydown':
-		case 'keyup':
-			if(!_keyboardActivated) activateKeyboard();
-			break;
-	}
+  listenerArray.push(new Array(eventType, onFunction, target));
+  switch(eventType){
+    case 'mousedown':
+    case 'mouseup':
+    case 'click':
+    case 'mousemove':
+      context.canvas.addEventListener(eventType, onCanvasEvent, false);
+      break;
+    case 'mousewheel':
+      if(!_wheelActivated) activateWheel();
+      break;
+    case 'keydown':
+    case 'keyup':
+      if(!_keyboardActivated) activateKeyboard();
+      break;
+  }
 }
 
 function onCanvasEvent(e){
-	var i;
-	for(i=0; listenerArray[i]!=null; i++){
-		if(listenerArray[i][0]==e.type.replace('DOMMouseScroll', 'mousewheel')){
-			if(_interactionCancelledFrame==nF) return;
-			listenerArray[i][1].call(listenerArray[i][2], e);
-		}
-	}
+  var i;
+  for(i=0; listenerArray[i]!=null; i++){
+    if(listenerArray[i][0]==e.type.replace('DOMMouseScroll', 'mousewheel')){
+      if(_interactionCancelledFrame==nF) return;
+      listenerArray[i][1].call(listenerArray[i][2], e);
+    }
+  }
 }
 
 function removeInteractionEventListener(eventType, onFunction, target){ //TODO: finish this (requires single element removing method solved first)
-	for(var i=0; listenerArray[i]!=null; i++){
-		if(listenerArray[i][0]==eventType && listenerArray[i][1]==onFunction && listenerArray[i][2]==target){
-			delete listenerArray[i];
-			listenerArray.splice(i, 1);
-			i--;
-		}
-	}
+  for(var i=0; listenerArray[i]!=null; i++){
+    if(listenerArray[i][0]==eventType && listenerArray[i][1]==onFunction && listenerArray[i][2]==target){
+      delete listenerArray[i];
+      listenerArray.splice(i, 1);
+      i--;
+    }
+  }
 }
 function cancelAllInteractions(){
-	c.log("cancelAllInteractions, _interactionCancelledFrame:", nF);
-	_interactionCancelledFrame = nF;
+  c.log("cancelAllInteractions, _interactionCancelledFrame:", nF);
+  _interactionCancelledFrame = nF;
 }
 
 function setBackgroundColor(color){
-	if(typeof color == "number"){
-		if(arguments.length>3){
-			color = 'rgba('+arguments[0]+','+arguments[1]+','+arguments[2]+','+arguments[3]+')';
-		} else {
-			color = 'rgb('+arguments[0]+','+arguments[1]+','+arguments[2]+')';
-		}
-	} else if(Array.isArray(color)){
-		color = ColorOperators.RGBtoHEX(color[0], color[1], color[2]);
-	}
-	backGroundColor = color;
+  if(typeof color == "number"){
+    if(arguments.length>3){
+      color = 'rgba('+arguments[0]+','+arguments[1]+','+arguments[2]+','+arguments[3]+')';
+    } else {
+      color = 'rgb('+arguments[0]+','+arguments[1]+','+arguments[2]+')';
+    }
+  } else if(Array.isArray(color)){
+    color = ColorOperators.RGBtoHEX(color[0], color[1], color[2]);
+  }
+  backGroundColor = color;
 
-	backGroundColorRGB = ColorOperators.colorStringToRGB(backGroundColor);
+  backGroundColorRGB = ColorOperators.colorStringToRGB(backGroundColor);
 
-	var body = document.getElementById('index');
-	body.setAttribute('bgcolor', backGroundColor);
+  var body = document.getElementById('index');
+  body.setAttribute('bgcolor', backGroundColor);
 }
 
 function setDivPosition(div, x, y){
-	div.setAttribute('style', 'position:absolute;left:'+String(x)+'px;top:'+String(y)+'px;');
+  div.setAttribute('style', 'position:absolute;left:'+String(x)+'px;top:'+String(y)+'px;');
 }
 
 
 /////////////////////////////////// keyboard and wheel
 
 function activateKeyboard(){
-	_keyboardActivated = true;
-	document.onkeydown = onKey;
-	document.onkeyup = onKey;
+  _keyboardActivated = true;
+  document.onkeydown = onKey;
+  document.onkeyup = onKey;
 }
 function onKey(e){
-	onCanvasEvent(e);
+  onCanvasEvent(e);
 }
 
 /*
  * thanks http://www.adomas.org/javascript-mouse-wheel
  */
 function activateWheel(){
-	_wheelActivated = true;
+  _wheelActivated = true;
 
-	if (window.addEventListener){
-		window.addEventListener('DOMMouseScroll', _onWheel, false);
-		//window.addEventListener("mousewheel", _onWheel, false); // testing
-	}
-	window.onmousewheel = document.onmousewheel = _onWheel;
+  if (window.addEventListener){
+    window.addEventListener('DOMMouseScroll', _onWheel, false);
+    //window.addEventListener("mousewheel", _onWheel, false); // testing
+  }
+  window.onmousewheel = document.onmousewheel = _onWheel;
 
 }
 function _onWheel(e) {
-	//c.l('_onWheel, e:', e);
+  //c.l('_onWheel, e:', e);
 
     if (!e) e = window.event; //IE
 
     if (e.wheelDelta){
-    	WHEEL_CHANGE = e.wheelDelta/120;
+      WHEEL_CHANGE = e.wheelDelta/120;
     } else if (e.detail) { /** Mozilla case. */
         WHEEL_CHANGE = -e.detail/3;
     }
     e.value = WHEEL_CHANGE;
     e.type = "mousewheel"; //why this doesn't work?
 
-	onCanvasEvent(e);
+  onCanvasEvent(e);
 }
 
 
@@ -23860,88 +24366,88 @@ function _onWheel(e) {
 ////structures local storage
 
 setStructureLocalStorageWithSeed = function(object, seed, comments){
-	setStructureLocalStorage(object, MD5.hex_md5(seed), comments);
+  setStructureLocalStorage(object, MD5.hex_md5(seed), comments);
 };
 
 setStructureLocalStorage = function(object, id, comments){
-	var type = typeOf(object);
-	var code;
+  var type = typeOf(object);
+  var code;
 
-	switch(type){
-		case 'string':
-			code = object;
-			break;
-		case 'Network':
-			code = NetworkEncodings.encodeGDF(network);
-			break;
-		default:
-			type = 'object';
-			code = JSON.stringify(object);
-			break;
-	}
+  switch(type){
+    case 'string':
+      code = object;
+      break;
+    case 'Network':
+      code = NetworkEncodings.encodeGDF(network);
+      break;
+    default:
+      type = 'object';
+      code = JSON.stringify(object);
+      break;
+  }
 
-	var storageObject = {
-		id:id,
-		type:type,
-		comments:comments,
-		date:new Date(),
-		code:code
-	};
+  var storageObject = {
+    id:id,
+    type:type,
+    comments:comments,
+    date:new Date(),
+    code:code
+  };
 
-	var storageString = JSON.stringify(storageObject);
+  var storageString = JSON.stringify(storageObject);
 
-	// c.l('storageObject', storageObject);
-	// c.l('id:['+id+']');
-	// c.l('code.length:', code.length);
+  // c.l('storageObject', storageObject);
+  // c.l('id:['+id+']');
+  // c.l('code.length:', code.length);
 
-	localStorage.setItem(id, storageString);
+  localStorage.setItem(id, storageString);
 };
 
 getStructureLocalStorageFromSeed = function(seed, returnStorageObject){
-	return getStructureLocalStorage(MD5.hex_md5(seed), returnStorageObject);
+  return getStructureLocalStorage(MD5.hex_md5(seed), returnStorageObject);
 };
 
 getStructureLocalStorage = function(id, returnStorageObject){
-	returnStorageObject = returnStorageObject||false;
+  returnStorageObject = returnStorageObject||false;
 
-	var item = localStorage.getItem(id);
+  var item = localStorage.getItem(id);
 
-	if(item==null) return null;
+  if(item==null) return null;
 
 
-	try{
-		var storageObject = JSON.parse(item);
-	} catch(err){
-		return null;
-	}
+  try{
+    var storageObject = JSON.parse(item);
+  } catch(err){
+    return null;
+  }
 
-	if(storageObject.type==null && storageObject.code==null) return null;
+  if(storageObject.type==null && storageObject.code==null) return null;
 
-	var type = storageObject.type;
-	var code = storageObject.code;
-	var object;
+  var type = storageObject.type;
+  var code = storageObject.code;
+  var object;
 
-	switch(type){
-		case 'string':
-			object = code;
-			break;
-		case 'Network':
-			object = NetworkEncodings.decodeGDF(code);
-			break;
-		case 'object':
-			object = JSON.parse(code);
-			break;
-	}
+  switch(type){
+    case 'string':
+      object = code;
+      break;
+    case 'Network':
+      object = NetworkEncodings.decodeGDF(code);
+      break;
+    case 'object':
+      object = JSON.parse(code);
+      break;
+  }
 
-	if(returnStorageObject){
-		storageObject.object = object;
-		storageObject.size = storageObject.code.length;
-		storageObject.date = new Date(storageObject.date);
+  if(returnStorageObject){
+    storageObject.object = object;
+    storageObject.size = storageObject.code.length;
+    storageObject.date = new Date(storageObject.date);
 
-		return storageObject;
-	}
+    return storageObject;
+  }
 
-	return object;
+  return object;
 };
 
 function getDocWidth() {

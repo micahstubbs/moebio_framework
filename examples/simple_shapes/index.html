@@ -10,7 +10,7 @@
   <title>Moebio Framework Examples</title>
 
   <!-- CSS concatenated and minified via ant build script-->
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="../css/style.css">
   <!-- end CSS-->
 
 </head>
@@ -19,23 +19,11 @@
 
   <div class="container">
     <canvas id="main"></canvas>
-    <div id="removeDiv"></div>
-  </div> <!--! end of #container -->
+  </div>
 
 
-  <script src="../js/framework_concat.js"></script>
-  <script>
-    init = function init() {
-    }
-
-    cycle = function cycle() {
-      // using drawing functions to create a dynamic square
-      // cW & cH is canvas Width & Height
-      // mX & mY is mouse X & Y
-      setFill('steelblue');
-    	fRect(cW / 2, cH / 2, (mX / 2), (mY / 2));
-    }
-  </script>
+  <script src="../../dist/framework_concat.js"></script>
+  <script type="text/javascript" src="./simple_shapes.js"></script>
 
 
 
