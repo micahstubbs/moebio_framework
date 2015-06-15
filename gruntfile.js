@@ -39,6 +39,7 @@ module.exports = function (grunt) {
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks("grunt-jscs");
+  grunt.loadNpmTasks('grunt-karma');
 
 
   grunt.initConfig({
@@ -101,6 +102,14 @@ module.exports = function (grunt) {
         reporter: require('jscs-stylish').path
       },
       src: buildFileList()
+    },
+
+    karma: {
+      unit: {
+        configFile: 'tests/karma.conf.js',
+        singleRun: false,
+        logLevel: 'WARN'
+      }
     }
   });
 
@@ -113,5 +122,10 @@ module.exports = function (grunt) {
   // Build documentation
   //
   grunt.registerTask('doc', [ 'jsdoc' ]);
+
+  //
+  // Run tests interactively
+  //
+  grunt.registerTask('test', [ 'karma' ]);
 
 };

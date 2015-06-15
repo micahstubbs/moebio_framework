@@ -5,9 +5,9 @@ Interval.prototype.constructor = Interval;
  * @classdesc Provide reasoning around numeric intervals.
  *
  * @constructor
- * @param {Number} x Interval's x value
- * @param {Number} y Interval's y value
- * @description Creates a new Interval
+ * @param {Number} x Interval's start value.
+ * @param {Number} y Interval's end value.
+ * @description Creates a new Interval.
  * @category numbers
  */
 function Interval(x, y) {
@@ -18,7 +18,7 @@ function Interval(x, y) {
 }
 
 /**
- * getMin - find the minimum value of the interval
+ * Finds the minimum value of the Interval.
  *
  * @return {Number} the minimum value in the interval
  */
@@ -26,14 +26,31 @@ Interval.prototype.getMin = function() {
   return Math.min(x, y);
 };
 
+/**
+ * Finds the maximum value of the Interval.
+ *
+ * @return {Number} the max value in the interval
+ */
 Interval.prototype.getMax = function() {
   return Math.max(x, y);
 };
 
+/**
+ * Finds the range between the min and max of the Interval.
+ *
+ * @return {Number} the absolute difference between the starting and ending values.
+ */
 Interval.prototype.getAmplitude = function() {
   return Math.abs(this.x - this.y);
 };
 
+/**
+ * Finds the range between the min and max of the Interval.
+ * If the starting value of the Interval is less then the ending value,
+ * this will return a negative value.
+ *
+ * @return {Number} the difference between the starting and ending values.
+ */
 Interval.prototype.getSignedAmplitude = function() {
   return this.x - this.y;
 };
@@ -47,6 +64,11 @@ Interval.prototype.getSign = function() {
   return this.getAmplitude() / this.getSignedAmplitude();
 };
 
+/**
+ * Scales a value to
+ *
+ * @return {Interval}
+ */
 Interval.prototype.getScaled = function(value) {
   var midAmp = 0.5 * (this.y - this.x);
   var middle = (this.x + this.y) * 0.5;
@@ -72,19 +94,21 @@ Interval.prototype.invert = function() {
 };
 
 /**
- * return a value in interval range
+ * Returns a value in interval range
  * 0 -> min
  * 1 -> max
  * @param value between 0 and 1 (to obtain values between min and max)
  *
  */
 Interval.prototype.getInterpolatedValue = function(value) {
+  //TODO: should this be unsigned amplitude?
   return value * Number(this.getSignedAmplitude()) + this.x;
 };
 
 Interval.prototype.getInverseInterpolatedValue = function(value) {
   return(value - this.x) / this.getSignedAmplitude();
 };
+
 Interval.prototype.getInterpolatedValues = function(numberList) {
   var newNumberList = [];
   var nElements = numberList.length;
@@ -118,9 +142,10 @@ Interval.prototype.clone = function() {
 };
 
 /**
- * indicate wether a number is included in the interval
- * @param value
- * @return {Boolean}
+ * Indicates if a number is included in the Interval.
+ *
+ * @param value Number to test.
+ * @return {Boolean} True if the value is inside the Interval.
  *
  */
 Interval.prototype.contains = function(value) {
@@ -129,7 +154,8 @@ Interval.prototype.contains = function(value) {
 };
 
 /**
- * indicate wether other interval contains the same values
+ * Indicate wether other interval contains the same values
+ *
  * @param interval
  * @return {Boolean}
  *
