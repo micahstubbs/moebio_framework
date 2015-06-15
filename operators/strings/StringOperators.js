@@ -608,8 +608,9 @@ StringOperators.indexesOf = function(text, string) { //TODO:test
  * @param  {String} text to be repeated
  * @param  {Number} n number of repetitions
  * @return {String}
+ * tags:
  */
-StringOperators.repeat = function(text, n) {
+StringOperators.repeatString = function(text, n) {
   var i;
   var newText = "";
   for(i = 0; i < n; i++) {

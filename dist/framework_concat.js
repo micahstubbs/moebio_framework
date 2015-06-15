@@ -1178,7 +1178,7 @@ List.prototype.concat = function() {
 
 
 List.prototype.getReport = function(level) { //TODO:complete
-  var ident = "\n" + (level > 0 ? StringOperators.repeat("  ", level) : "");
+  var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
   var text = level > 0 ? (ident + "////report of instance of List////") : "///////////report of instance of List//////////";
 
   var length = this.length;
@@ -2788,7 +2788,7 @@ Table.prototype.getTransposed = function(firstListAsHeaders) {
 
 
 Table.prototype.getReport = function(level) {
-  var ident = "\n" + (level > 0 ? StringOperators.repeat("  ", level) : "");
+  var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
   var lengths = this.getLengths();
   var minLength = lengths.getMin();
   var maxLength = lengths.getMax();
@@ -2844,7 +2844,8 @@ Table.prototype.getReport = function(level) {
       try{
          text += this[i].getReport(1);
       } catch(err){
-        text += ident + "[!] something wrong with list ";
+        text += ident + "[!] something wrong with list " + err;
+        c.l("[!] something wrong with list: ", err);
       }
     }
   }
@@ -13231,8 +13232,9 @@ StringOperators.indexesOf = function(text, string) { //TODO:test
  * @param  {String} text to be repeated
  * @param  {Number} n number of repetitions
  * @return {String}
+ * tags:
  */
-StringOperators.repeat = function(text, n) {
+StringOperators.repeatString = function(text, n) {
   var i;
   var newText = "";
   for(i = 0; i < n; i++) {
