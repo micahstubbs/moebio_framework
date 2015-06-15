@@ -15,19 +15,16 @@ var watchedFiles = [
 function buildFileList() {
 
   var fs = require('fs');
-  var filename = "IncludeAll.js";
+  var path = require('path');
+  var root = "src";
+  var filename = path.join(root, "all.json");
   var fileList = [];
 
   var data = fs.readFileSync(filename, 'utf8');
-  var lines = data.split("\n");
+  JSON.parse(data).forEach(function(file) {
+    fileList.push(path.join(root,file));
+  });
 
-  for (var i = 0; i < lines.length; i++) {
-    var line = lines[i];
-    if( line.substr(0, 8)=="include("){
-      var fileName = line.substr(24, line.length-27);
-      fileList.push( fileName );
-    }
-  }
   console.log( "fileList to concatenate / uglyfy is " + fileList.length + " lines long" );
   return fileList;
 
@@ -38,11 +35,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-jsdoc');
-
-  grunt.loadNpmTasks('grunt-gh-pages');
-  grunt.loadNpmTasks('grunt-jekyll');
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks("grunt-jscs");
@@ -76,25 +69,8 @@ module.exports = function (grunt) {
     watch: {
       js:  {
         files: watchedFiles,
-        tasks: [ 'concat', 'uglify', 'copy' ]
+        tasks: [ 'concat', 'uglify']
       },
-    },
-
-    copy: {
-      spiral: {
-        src: 'dist/framework_concat.js',
-        dest: '../spiral/_dev/client/angularSpiral/app/scripts/classes/framework_concat.js'
-      },
-      spiralMin: {
-        src: 'dist/framework_concat.min.js',
-        dest: '../spiral/_dev/client/angularSpiral/app/scripts/classes/framework_concat.min.js'
-      },
-      site_js: {
-        expand: true,
-        cwd: 'dist/',
-        src: ['framework_concat.js', 'framework_concat.min.js'],
-        dest: 'site/source/examples/js/'
-      }
     },
 
     jsdoc : {
@@ -102,41 +78,12 @@ module.exports = function (grunt) {
         src: buildFileList(),
         jsdoc: "node_modules/.bin/jsdoc",
         options: {
-          destination: 'site/build/docs',
+          destination: 'docs/build/',
           template : "docs/moebio-jsdoc",
           configure : "docs/jsdoc.conf.json",
           readme : "docs/jsdoc-readme.md"
         }
       }
-    },
-
-    jekyll: {
-      options: {
-        src : 'site/source'
-      },
-      build: {
-        options: {
-          dest: 'site/build',
-          config: 'site/source/_config.yml'
-        }
-      },
-      serve: {
-        options: {
-          dest: '.jekyll',
-          serve: true,
-          port : 8000,
-          auto : true,
-          config: 'site/source/_config.yml'
-        }
-      }
-    },
-
-    'gh-pages': {
-      options: {
-        base: 'site/build',
-        repo: 'git@github.com:bocoup/moebio_framework.git'
-      },
-      src: '**/*'
     },
 
     jshint: {
@@ -145,9 +92,7 @@ module.exports = function (grunt) {
         ignores: ['libraries, dist'],
         reporter: require('jshint-stylish')
       },
-      src: ['*.js', 'Tools/**/*.js', 'dataStructures/**/*.js', 'operators/**/*.js',
-        'apis/**/*.js', 'Tools/**/*.js', 'Tools/**/*.js', 'visualization/**/*.js',
-        'tests/**/*.js']
+      src: buildFileList()
     },
 
     jscs: {
@@ -155,28 +100,18 @@ module.exports = function (grunt) {
         config: ".jscsrc",
         reporter: require('jscs-stylish').path
       },
-      src: ['*.js', 'Tools/**/*.js', 'dataStructures/**/*.js', 'operators/**/*.js',
-        'apis/**/*.js', 'Tools/**/*.js', 'Tools/**/*.js', 'visualization/**/*.js',
-        'tests/**/*.js']
+      src: buildFileList()
     }
-
   });
 
   //
   // Default task - build distribution source
   //
-  grunt.registerTask('default', ['concat', 'uglify', 'copy' ]);
+  grunt.registerTask('default', ['concat', 'uglify']);
 
   //
   // Build documentation
   //
   grunt.registerTask('doc', [ 'jsdoc' ]);
-
-  //
-  // Build and deploy static site. Building the site will also build
-  // the documentation.
-  //
-  grunt.registerTask('build-site', ['jekyll:build', 'doc']);
-  grunt.registerTask('deploy-site', ['build-site', 'gh-pages']);
 
 };

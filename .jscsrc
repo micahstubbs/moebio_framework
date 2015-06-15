@@ -10,11 +10,7 @@
     ],
     "requireOperatorBeforeLineBreak": true,
     "requireCamelCaseOrUpperCaseIdentifiers": "ignoreProperties",
-    "maximumLineLength": {
-      "maximumLineLength": 120,
-      "allowComments": true,
-      "allowRegex": true
-    },
+    "maximumLineLength": 120,
     "validateIndentation": 2,
     "validateQuoteMarks": true,
 
@@ -22,7 +18,7 @@
     "disallowMixedSpacesAndTabs": true,
     "disallowTrailingWhitespace": true,
     "disallowSpaceAfterPrefixUnaryOperators": true,
-    "disallowMultipleVarDecl": "exceptUndefined"
+    "disallowMultipleVarDecl": "exceptUndefined",
     "disallowKeywordsOnNewLine": ["else"],
 
 
