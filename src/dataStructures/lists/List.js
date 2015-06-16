@@ -3,9 +3,11 @@ List.prototype.constructor = List;
 
  /**
   * @classdesc List is an Array with a type property.
+  * Lists have a number of methods to assist with working with
+  * them. There are also a number of
   *
   * @description Creates a new List.
-  * @param {} values Comma separated values to add to List
+  * @param {Number|String|Object} arguments Comma separated values to add to List
   * @constructor
   * @category basics
   */
@@ -21,106 +23,118 @@ function List() {
   return array;
 }
 
-List.fromArray = function(array) { //TODO: clear some of these method declarations
-    array.type = "List";
-    array.name = array.name || "";
+/**
+ * Creates a new List from a raw array of values
+ *
+ * @param {Number[]|String[]|Object[]} array Array of values.
+ * @return {List} New List.
+ */
+List.fromArray = function(array) {
+  //TODO: clear some of these method declarations
+  array.type = "List";
+  array.name = array.name || "";
 
-    array.setType = List.prototype.setType;
-    array.setArray = List.prototype.setArray;
-    array._constructor = List;
+  array.setType = List.prototype.setType;
+  array.setArray = List.prototype.setArray;
+  array._constructor = List;
 
-    array.getImproved = List.prototype.getImproved;
-    array.sameElements = List.prototype.sameElements;
-    array.getLength = List.prototype.getLength;
-    array.getTypeOfElements = List.prototype.getTypeOfElements; //TODO: redundant?
-    array.getTypes = List.prototype.getTypes;
-    array.getType = List.prototype.getType;
-    array.getLengths = List.prototype.getLengths;
-    array.getWithoutRepetitions = List.prototype.getWithoutRepetitions;
-    array.getElementsRepetitionCount = List.prototype.getElementsRepetitionCount;
-    array.allElementsEqual = List.prototype.allElementsEqual;
-    array.countElement = List.prototype.countElement;
-    array.countOccurrences = List.prototype.countOccurrences;
-    array.getMostRepeatedElement = List.prototype.getMostRepeatedElement;
-    array.getMin = List.prototype.getMin;
-    array.getMax = List.prototype.getMax;
-    array.indexesOf = List.prototype.indexesOf;
-    array.indexOfElements = List.prototype.indexOfElements;
-    array.indexOfByPropertyValue = List.prototype.indexOfByPropertyValue;
-    array.getFirstElementByName = List.prototype.getFirstElementByName;
-    array.getElementsByNames = List.prototype.getElementsByNames;
-    array.getFirstElementByPropertyValue = List.prototype.getFirstElementByPropertyValue;
-    array.add = List.prototype.add;
-    array.multiply = List.prototype.multiply;
-    array.getSubList = List.prototype.getSubList;
-    array.getSubListByIndexes = List.prototype.getSubListByIndexes;
-    array.getSubListByType = List.prototype.getSubListByType;
-    array.getElementNumberOfOccurrences = List.prototype.getElementNumberOfOccurrences;
-    array.getPropertyValues = List.prototype.getPropertyValues;
-    array.getRandomElement = List.prototype.getRandomElement;
-    array.getRandomElements = List.prototype.getRandomElements;
-    array.containsElement = List.prototype.containsElement;
-    array.indexOfElement = List.prototype.indexOfElement;
-    //sorting:
-    array.sortIndexed = List.prototype.sortIndexed;
-    array.sortNumericIndexed = List.prototype.sortNumericIndexed;
-    array.sortNumeric = List.prototype.sortNumeric;
-    array.sortNumericIndexedDescending = List.prototype.sortNumericIndexedDescending;
-    array.sortNumericDescending = List.prototype.sortNumericDescending;
-    array.sortOnIndexes = List.prototype.sortOnIndexes;
-    array.getReversed = List.prototype.getReversed;
-    array.getSortedByProperty = List.prototype.getSortedByProperty;
-    array.getSorted = List.prototype.getSorted;
-    array.getSortedByList = List.prototype.getSortedByList;
-    array.getSortedRandom = List.prototype.getSortedRandom;
-    //filter:
-    array.getFilteredByPropertyValue = List.prototype.getFilteredByPropertyValue;
-    array.getFilteredByBooleanList = List.prototype.getFilteredByBooleanList;
-    //conversion
-    array.toNumberList = List.prototype.toNumberList;
-    array.toStringList = List.prototype.toStringList;
-    //
-    array.clone = List.prototype.clone;
-    array.toString = List.prototype.toString;
-    array.getNames = List.prototype.getNames;
-    array.applyFunction = List.prototype.applyFunction;
-    array.getWithoutElementAtIndex = List.prototype.getWithoutElementAtIndex;
-    array.getWithoutElement = List.prototype.getWithoutElement;
-    array.getWithoutElements = List.prototype.getWithoutElements;
-    array.getWithoutElementsAtIndexes = List.prototype.getWithoutElementsAtIndexes;
-    array.getFilteredByFunction = List.prototype.getFilteredByFunction;
-    array._concat = Array.prototype.concat;
-    array.concat = List.prototype.concat;
-    array.getReport = List.prototype.getReport;
-
-    //transformations
-    array.pushIfUnique = List.prototype.pushIfUnique;
-    array.removeElement = List.prototype.removeElement;
-    array.removeElementAtIndex = List.prototype.removeElementAtIndex;
-    array.removeElementsAtIndexes = List.prototype.removeElementsAtIndexes;
-    array.removeElements = List.prototype.removeElements;
-    array.removeRepetitions = List.prototype.removeRepetitions;
-    array.replace = List.prototype.replace;
-    array.assignNames = List.prototype.assignNames;
-    array._splice = Array.prototype.splice;
-    array.splice = List.prototype.splice;
-
-    array.isList = true;
-
-    array.destroy = List.prototype.destroy;
-
-
-    return array;
-  };
+  array.getImproved = List.prototype.getImproved;
+  array.sameElements = List.prototype.sameElements;
+  array.getLength = List.prototype.getLength;
+  array.getTypeOfElements = List.prototype.getTypeOfElements; //TODO: redundant?
+  array.getTypes = List.prototype.getTypes;
+  array.getType = List.prototype.getType;
+  array.getLengths = List.prototype.getLengths;
+  array.getWithoutRepetitions = List.prototype.getWithoutRepetitions;
+  array.getElementsRepetitionCount = List.prototype.getElementsRepetitionCount;
+  array.allElementsEqual = List.prototype.allElementsEqual;
+  array.countElement = List.prototype.countElement;
+  array.countOccurrences = List.prototype.countOccurrences;
+  array.getMostRepeatedElement = List.prototype.getMostRepeatedElement;
+  array.getMin = List.prototype.getMin;
+  array.getMax = List.prototype.getMax;
+  array.indexesOf = List.prototype.indexesOf;
+  array.indexOfElements = List.prototype.indexOfElements;
+  array.indexOfByPropertyValue = List.prototype.indexOfByPropertyValue;
+  array.getFirstElementByName = List.prototype.getFirstElementByName;
+  array.getElementsByNames = List.prototype.getElementsByNames;
+  array.getFirstElementByPropertyValue = List.prototype.getFirstElementByPropertyValue;
+  array.add = List.prototype.add;
+  array.multiply = List.prototype.multiply;
+  array.getSubList = List.prototype.getSubList;
+  array.getSubListByIndexes = List.prototype.getSubListByIndexes;
+  array.getSubListByType = List.prototype.getSubListByType;
+  array.getElementNumberOfOccurrences = List.prototype.getElementNumberOfOccurrences;
+  array.getPropertyValues = List.prototype.getPropertyValues;
+  array.getRandomElement = List.prototype.getRandomElement;
+  array.getRandomElements = List.prototype.getRandomElements;
+  array.containsElement = List.prototype.containsElement;
+  array.indexOfElement = List.prototype.indexOfElement;
+  //sorting:
+  array.sortIndexed = List.prototype.sortIndexed;
+  array.sortNumericIndexed = List.prototype.sortNumericIndexed;
+  array.sortNumeric = List.prototype.sortNumeric;
+  array.sortNumericIndexedDescending = List.prototype.sortNumericIndexedDescending;
+  array.sortNumericDescending = List.prototype.sortNumericDescending;
+  array.sortOnIndexes = List.prototype.sortOnIndexes;
+  array.getReversed = List.prototype.getReversed;
+  array.getSortedByProperty = List.prototype.getSortedByProperty;
+  array.getSorted = List.prototype.getSorted;
+  array.getSortedByList = List.prototype.getSortedByList;
+  array.getSortedRandom = List.prototype.getSortedRandom;
+  //filter:
+  array.getFilteredByPropertyValue = List.prototype.getFilteredByPropertyValue;
+  array.getFilteredByBooleanList = List.prototype.getFilteredByBooleanList;
+  //conversion
+  array.toNumberList = List.prototype.toNumberList;
+  array.toStringList = List.prototype.toStringList;
   //
+  array.clone = List.prototype.clone;
+  array.toString = List.prototype.toString;
+  array.getNames = List.prototype.getNames;
+  array.applyFunction = List.prototype.applyFunction;
+  array.getWithoutElementAtIndex = List.prototype.getWithoutElementAtIndex;
+  array.getWithoutElement = List.prototype.getWithoutElement;
+  array.getWithoutElements = List.prototype.getWithoutElements;
+  array.getWithoutElementsAtIndexes = List.prototype.getWithoutElementsAtIndexes;
+  array.getFilteredByFunction = List.prototype.getFilteredByFunction;
+  array._concat = Array.prototype.concat;
+  array.concat = List.prototype.concat;
+  array.getReport = List.prototype.getReport;
+
+  //transformations
+  array.pushIfUnique = List.prototype.pushIfUnique;
+  array.removeElement = List.prototype.removeElement;
+  array.removeElementAtIndex = List.prototype.removeElementAtIndex;
+  array.removeElementsAtIndexes = List.prototype.removeElementsAtIndexes;
+  array.removeElements = List.prototype.removeElements;
+  array.removeRepetitions = List.prototype.removeRepetitions;
+  array.replace = List.prototype.replace;
+  array.assignNames = List.prototype.assignNames;
+  array._splice = Array.prototype.splice;
+  array.splice = List.prototype.splice;
+
+  array.isList = true;
+
+  array.destroy = List.prototype.destroy;
+
+
+  return array;
+};
 
 /**
- * improve a List (refining type)
- * @return {List}
+ * Improves a List by its refining type.
+ *
+ * @return {List} Specific sub-class of List
+ * based on the contents of the List.
  * tags:
  */
-List.prototype.getImproved = function() { //TODO: still doesn't solve tha case of a list with several list of different types
-  if(this.length == 0) return this;
+List.prototype.getImproved = function() {
+  //TODO: still doesn't solve tha case of a list with several list of different types
+  if(this.length === 0) {
+    return this;
+  }
+
   var typeOfElements = this.getTypeOfElements();
 
   //var typeOfElements=="" allAreLists = … finish this
@@ -132,42 +146,40 @@ List.prototype.getImproved = function() { //TODO: still doesn't solve tha case o
   switch(typeOfElements) {
     case "number":
       var newList = NumberList.fromArray(this, false);
-      break;
+    break;
     case "string":
       var newList = StringList.fromArray(this, false);
-      break;
+    break;
     case "Rectangle":
       return this;
     case "date":
       var newList = DateList.fromArray(this, false);
-      break;
+    break;
     case "List":
-    case "DateList":
-    case "IntervalList":
-    case "StringList":
-    case "Table":
+      case "DateList":
+      case "IntervalList":
+      case "StringList":
+      case "Table":
       var newList = Table.fromArray(this, false);
-      break;
+    break;
     case "NumberList":
       var newList = NumberTable.fromArray(this, false);
-      break;
+    break;
     case "Point":
       var newList = Polygon.fromArray(this, false);
-      break;
+    break;
     case "Polygon":
       var newList = PolygonList.fromArray(this, false);
-      break;
+    break;
     case "Node":
       var newList = NodeList.fromArray(this, false);
-      break;
+    break;
     case "Relation":
       var newList = RelationList.fromArray(this, false);
-      break;
+    break;
   }
 
-
-
-  if(newList == null ||  newList == "") {
+  if(newList === null ||  newList === "") {
     //c.l('getImproved | all elelemnts no same type')
 
     var allLists = true;
@@ -191,9 +203,10 @@ List.prototype.getImproved = function() { //TODO: still doesn't solve tha case o
 };
 
 /**
- * compare elements with another list
- * @param  {List} list to compare
- * @return {Boolean} true if all elements are identical
+ * Compares elements with another list.
+ *
+ * @param  {List} list List to compare.
+ * @return {Boolean} true if all elements are identical.
  * tags:
  */
 List.prototype.sameElements = function(list) {
@@ -208,8 +221,9 @@ List.prototype.sameElements = function(list) {
 };
 
 /**
- * return the number of elements of the list
- * @return {Number}
+ * Returns the number of elements of the list.
+ *
+ * @return {Number} Length of the list.
  * tags:
  */
 List.prototype.getLength = function() {
@@ -217,7 +231,8 @@ List.prototype.getLength = function() {
 };
 
 /**
- * return a numberList with lists lengths (in case of a table) or strings lengths (in case of a stringList)
+ * Returns a numberList with lists lengths (in case of a table) or strings lengths (in case of a stringList).
+ *
  * @return {StringList}
  * tags:
  */
@@ -227,8 +242,13 @@ List.prototype.getLengths = function() {
   return null;
 };
 
-
-
+/**
+ * Returns the type of values contained in the List.
+ * Uses typeOf to determine type. If multiple types,
+ * returns an empty string.
+ *
+ * @return {String} Type of element stored in the List.
+ */
 List.prototype.getTypeOfElements = function() {
   var typeOfElements = typeOf(this[0]);
   for(var i = 1; this[i] != null; i++) {
@@ -238,8 +258,10 @@ List.prototype.getTypeOfElements = function() {
 };
 
 /**
- * return a stringList with elemnts types
- * @return {StringList}
+ * Returns a {@link StringList} with elemnts types
+ * for all elements in the List.
+ *
+ * @return {StringList} List of types for each element.
  * tags:
  */
 List.prototype.getTypes = function() {
@@ -251,6 +273,11 @@ List.prototype.getTypes = function() {
 };
 
 
+/**
+ * Converts the List into a string.
+ *
+ * @return {String} String representation of the List.
+ */
 List.prototype.toString = function() {
   var i;
   var str = "[";
@@ -262,7 +289,8 @@ List.prototype.toString = function() {
 };
 
 /**
- * return a list of names (if any) of elements of the list
+ * Returns a list of names (if any) of elements of the list.
+ *
  * @return {StringList}
  * tags:
  */
@@ -275,7 +303,8 @@ List.prototype.getNames = function() {
 };
 
 /**
- * reverse the list
+ * Reverses the list.
+ *
  * @return {List}
  * tags:sort
  */
@@ -288,9 +317,10 @@ List.prototype.getReversed = function() {
 };
 
 /**
- * return a sub-list, params could be: tw numbers, an interval or a NumberList
- * @param {Object} argument0 number, interval (in this it will include elements with initial and end indexes) or numberList
+ * Returns a sub-list, params could be: tw numbers, an interval or a NumberList.
  *
+ * @param {Number|Interval} argument0 number, interval (in this it will
+ * include elements with initial and end indexes) or numberList
  * @param {Number} argument1 second index
  * @return {List}
  * tags:filter
@@ -338,14 +368,14 @@ List.prototype.getSubList = function() {
 };
 
 /**
- * filters a list by picking elements of certain type
+ * Filters a list by picking elements of certain type.
+ *
  * @param  {String} type
  * @return {List}
  * tags:filter
  */
 List.prototype.getSubListByType = function(type) {
   var newList = new List();
-  var i;
   newList.name = this.name;
   this.forEach(function(element) {
     if(typeOf(element) == type) newList.push(element);
@@ -355,7 +385,8 @@ List.prototype.getSubListByType = function(type) {
 };
 
 /**
- * returns all elements in indexes
+ * Returns all elements in indexes.
+ *
  * @param {NumberList} indexes
  * @return {List}
  * tags:filter
@@ -389,6 +420,12 @@ List.prototype.getSubListByIndexes = function() { //TODO: merge with getSubList
   return newList;
 };
 
+/**
+ * getElementNumberOfOccurrences
+ *
+ * @param {Object} element
+ * @return {Number}
+ */
 List.prototype.getElementNumberOfOccurrences = function(element) {
   var nOccurrences = 0;
   var from = 0;
@@ -402,7 +439,8 @@ List.prototype.getElementNumberOfOccurrences = function(element) {
 };
 
 
-List.prototype.clone = function() { //TODO:check this! fromArray should suffice
+List.prototype.clone = function() {
+  //TODO:check this! fromArray should suffice
   var clonedList = instantiateWithSameType(this);
   var i;
 
@@ -414,7 +452,8 @@ List.prototype.clone = function() { //TODO:check this! fromArray should suffice
 };
 
 /**
- * create a new List without repeating elements
+ * Creates a new List without repeating elements.
+ *
  * @return {List}
  * tags:filter
  */
@@ -445,7 +484,8 @@ List.prototype.getWithoutRepetitions = function() {
 
 
 /**
- * return number of occurrences of an element on a list
+ * Returns the number of occurrences of an element in a list.
+ *
  * @param  {Object} element
  * @return {Number}
  * tags:countt
@@ -453,13 +493,16 @@ List.prototype.getWithoutRepetitions = function() {
 List.prototype.countElement = function(element) {
   n = 0;
   this.forEach(function(elementInList) {
-    if(element == elementInList) n++;
+    if(element == elementInList) {
+      n++;
+    }
   });
   return n;
 };
 
 /**
- * returns a numberList of same size as list with number of occurrences for each element
+ * Returns a NumberList of same size as list with number of occurrences for each element.
+ *
  * @return {numberList}
  * tags:count
  */
@@ -472,7 +515,8 @@ List.prototype.countOccurrences = function() { //TODO: more efficient
 };
 
 /**
- * returns a table with a list of non repeated elements and a list with the numbers of occurrences for each one
+ * Returns a table with a list of non repeated elements and a list with the numbers of occurrences for each one.
+ *
  * @param  {Boolean} sortListsByOccurrences if true both lists in the table will be sorted by number of occurences (most frequent on top), true by default
  * @return {Table} list (non-repeated elements) and numberList (frequency of each element)
  * tags:count
@@ -526,7 +570,8 @@ List.prototype.allElementsEqual = function() {
 };
 
 
-List.prototype.getMostRepeatedElement = function() { //TODO: this method should be more efficient
+List.prototype.getMostRepeatedElement = function() {
+  //TODO: this method should be more efficient
   return ListOperators.countElementsRepetitionOnList(this, true)[0][0];
 };
 
@@ -924,24 +969,24 @@ List.prototype.getFilteredByValue = function(value, comparison) {
   switch(comparison) {
     case "equal":
       for(i = 0; this[i] != null; i++) {
-        if(this[i][propertyName] == propertyValue) newList.push(this[i]);
-      }
-      break;
+      if(this[i][propertyName] == propertyValue) newList.push(this[i]);
+    }
+    break;
     case "different":
       for(i = 0; this[i] != null; i++) {
-        if(this[i][propertyName] != propertyValue) newList.push(this[i]);
-      }
-      break;
+      if(this[i][propertyName] != propertyValue) newList.push(this[i]);
+    }
+    break;
     case "greater":
       for(i = 0; this[i] != null; i++) {
-        if(this[i][propertyName] > propertyValue) newList.push(this[i]);
-      }
-      break;
+      if(this[i][propertyName] > propertyValue) newList.push(this[i]);
+    }
+    break;
     case "lower":
       for(i = 0; this[i] != null; i++) {
-        if(this[i][propertyName] > propertyValue) newList.push(this[i]);
-      }
-      break;
+      if(this[i][propertyName] > propertyValue) newList.push(this[i]);
+    }
+    break;
   }
 
   return newList.getImproved();
@@ -964,24 +1009,24 @@ List.prototype.getFilteredByPropertyValue = function(propertyName, propertyValue
   switch(comparison) {
     case "equal":
       for(i = 0; this[i] != null; i++) {
-        if(this[i][propertyName] == propertyValue) newList.push(this[i]);
-      }
-      break;
+      if(this[i][propertyName] == propertyValue) newList.push(this[i]);
+    }
+    break;
     case "different":
       for(i = 0; this[i] != null; i++) {
-        if(this[i][propertyName] != propertyValue) newList.push(this[i]);
-      }
-      break;
+      if(this[i][propertyName] != propertyValue) newList.push(this[i]);
+    }
+    break;
     case "greater":
       for(i = 0; this[i] != null; i++) {
-        if(this[i][propertyName] > propertyValue) newList.push(this[i]);
-      }
-      break;
+      if(this[i][propertyName] > propertyValue) newList.push(this[i]);
+    }
+    break;
     case "lower":
       for(i = 0; this[i] != null; i++) {
-        if(this[i][propertyName] > propertyValue) newList.push(this[i]);
-      }
-      break;
+      if(this[i][propertyName] > propertyValue) newList.push(this[i]);
+    }
+    break;
   }
 
   return newList.getImproved();
@@ -1168,38 +1213,38 @@ List.prototype.getReport = function(level) { //TODO:complete
   switch(this.type) {
     case "NumberList":
       var min = this.getMin();
-      var max = this.getMax();
-      var average = (min + max) * 0.5;
-      text += ident + "min: " + min;
-      text += ident + "max: " + max;
-      text += ident + "average: " + average;
-      if(length < 101) {
-        text += ident + "numbers: " + this.join(", ");
-      }
-      break;
+    var max = this.getMax();
+    var average = (min + max) * 0.5;
+    text += ident + "min: " + min;
+    text += ident + "max: " + max;
+    text += ident + "average: " + average;
+    if(length < 101) {
+      text += ident + "numbers: " + this.join(", ");
+    }
+    break;
     case "StringList":
-    case "List":
+      case "List":
       var freqTable = this.getElementsRepetitionCount(true);
-      text += ident + "number of different elements: " + freqTable[0].length;
-      if(freqTable[0].length < 10) {
-        text += ident + "elements frequency:";
-      } else {
-        text += ident + "some elements frequency:";
-      }
+    text += ident + "number of different elements: " + freqTable[0].length;
+    if(freqTable[0].length < 10) {
+      text += ident + "elements frequency:";
+    } else {
+      text += ident + "some elements frequency:";
+    }
 
-      for(i = 0; freqTable[0][i] != null && i < 10; i++) {
-        text += ident + "  [" + String(freqTable[0][i]) + "]: " + freqTable[1][i];
-      }
+    for(i = 0; freqTable[0][i] != null && i < 10; i++) {
+      text += ident + "  [" + String(freqTable[0][i]) + "]: " + freqTable[1][i];
+    }
 
-      var joined;
-      if(this.type == "List") {
-        joined = this.join("], [");
-      } else {
-        joined = this.toStringList().join("], [");
-      }
+    var joined;
+    if(this.type == "List") {
+      joined = this.join("], [");
+    } else {
+      joined = this.toStringList().join("], [");
+    }
 
-      if(joined.length < 2000) text += ident + "strings: [" + joined + "]";
-      break;
+    if(joined.length < 2000) text += ident + "strings: [" + joined + "]";
+    break;
 
   }
 
@@ -1281,16 +1326,16 @@ List.prototype.splice = function() { //TODO: replace
   switch(this.type) {
     case 'NumberList':
       return NumberList.fromArray(this._splice.apply(this, arguments));
-      break;
+    break;
     case 'StringList':
       return StringList.fromArray(this._splice.apply(this, arguments));
-      break;
+    break;
     case 'NodeList':
       return NodeList.fromArray(this._splice.apply(this, arguments));
-      break;
+    break;
     case 'DateList':
       return DateList.fromArray(this._splice.apply(this, arguments));
-      break;
+    break;
   }
   return List.fromArray(this._splice.apply(this, arguments)).getImproved();
 };

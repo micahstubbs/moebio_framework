@@ -5,6 +5,7 @@ describe("list.getSortedByProperty", function()
   it("should be defined", function() {
     var list = new List();
     expect(list.getSortedByProperty).toBeDefined();
+    expect(list.type).toBe('List');
   });
 
 
