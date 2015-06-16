@@ -272,12 +272,12 @@ bezier = function(x0, y0, cx0, cy0, cx1, cy1, x1, y1) {
  */
 _lines = function() {
   if(arguments == null) return;
-  //TODO: WHY?!?!
-  arguments = arguments[0];
+
+  var args = arguments[0];
   context.beginPath();
-  context.moveTo(arguments[0], arguments[1]);
-  for(var i = 2; arguments[i + 1] != null; i += 2) {
-    context.lineTo(arguments[i], arguments[i + 1]);
+  context.moveTo(args[0], args[1]);
+  for(var i = 2; args[i + 1] != null; i += 2) {
+    context.lineTo(args[i], args[i + 1]);
   }
 };
 
@@ -286,15 +286,15 @@ _lines = function() {
  */
 _linesM = function() {
   if(arguments == null) return;
-  //TODO: WHY?!?!
-  arguments = arguments[0];
+
+  var args = arguments[0];
   var p = new Polygon();
   context.beginPath();
-  context.moveTo(arguments[0], arguments[1]);
-  p[0] = new Point(arguments[0], arguments[1]);
-  for(var i = 2; arguments[i + 1] != null; i += 2) {
-    context.lineTo(arguments[i], arguments[i + 1]);
-    p.push(new Point(arguments[i], arguments[i + 1]));
+  context.moveTo(args[0], args[1]);
+  p[0] = new Point(args[0], args[1]);
+  for(var i = 2; args[i + 1] != null; i += 2) {
+    context.lineTo(args[i], args[i + 1]);
+    p.push(new Point(args[i], args[i + 1]));
   }
   return p.containsPoint(mP);
 };
@@ -1073,7 +1073,7 @@ setCursor = function(name) {
 
 getMilliseconds = function() {
   var date = new Date();
+  // TODO is the creation of the global below intentional?
   _ms = date.getTime();
-  delete date;
   return _ms;
 };

@@ -14,6 +14,7 @@
     "jscs-stylish": "^0.3.1",
     "jshint-stylish": "^2.0.0",
     "karma-chrome-launcher": "^0.1.5",
-    "striptags": "^2.0.2"
+    "striptags": "^2.0.2",
+    "grunt-esperanto": "^0.4.0"
   }
 }
