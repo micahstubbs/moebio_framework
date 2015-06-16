@@ -1,7 +1,7 @@
 {
   "curly": false,
   "eqnull": true,
-  "undef": false,
+  "undef": true,
   "forin": true,
   "unused": true,
   "freeze": true,
@@ -10,5 +10,6 @@
   	"it": true,
   	"expect": true
   },
-  "eqeqeq": false
+  "eqeqeq": false,
+  "esnext": true
 }

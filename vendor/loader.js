@@ -8,10 +8,12 @@ var define, requireModule;
   var registry = {}, seen = {};
 
   define = function(name, deps, callback) {
+    console.log('define: ', name)
     registry[name] = { deps: deps, callback: callback };
   };
 
   requireModule = function(name) {
+    console.log('requireModule: ', name)
     if (seen[name]) { return seen[name]; }
     seen[name] = {};
 

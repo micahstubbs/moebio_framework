@@ -1,3 +1,5 @@
+import Point from 'src/dataStructures/geometry/Point'
+
 Interval.prototype = new Point();
 Interval.prototype.constructor = Interval;
 
@@ -16,6 +18,7 @@ function Interval(x, y) {
   this.y = Number(y);
   this.type = "Interval";
 }
+export default Interval;
 
 /**
  * getMin - find the minimum value of the interval

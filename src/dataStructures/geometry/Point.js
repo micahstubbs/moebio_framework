@@ -1,3 +1,5 @@
+import DataModel from "src/dataStructures/DataModel";
+
 Point.prototype = new DataModel();
 Point.prototype.constructor = Point;
 
@@ -16,6 +18,7 @@ function Point(x, y) {
   this.x = Number(x) || 0;
   this.y = Number(y) || 0;
 }
+export default Point;
 
 
 Point.prototype.getNorm = function() {

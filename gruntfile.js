@@ -38,11 +38,11 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks("grunt-jscs");
 
   grunt.loadNpmTasks('grunt-esperanto');
+  grunt.loadNpmTasks('grunt-shell');
 
   grunt.initConfig({
 
-    // Transpile source from es6 module syntax
-    // to AMD.
+    // Transpile source from es6 module syntax to AMD.
     esperanto: {
       options: {
         type: 'amd',
@@ -50,14 +50,24 @@ module.exports = function (grunt) {
         bundleOpts : {
           strict: true,
           useStrict: true
-        },
-        fileNameAsModule: true
+        }
       },
       files: {
         expand: true,
         src: buildFileList(),
         dest: 'tmp/amd/'
       },
+    },
+
+
+    // Transpile and concat the code.
+    //
+    // We are using the esperanto command directly because
+    // it can correctly handle circular dependencies.
+    shell: {
+      esperanto_bundle: {
+        command: './node_modules/esperanto/bin/index.js -b -i src/index.js -s -o dist/moebio_framework_concat.js -a src/index'
+      }
     },
 
     // Concatenate the built AMD files into one file
@@ -99,7 +109,7 @@ module.exports = function (grunt) {
     watch: {
       js:  {
         files: buildFileList(),
-        tasks: [ 'esperanto', 'concat', 'wrap:dist']
+        tasks: ['shell:esperanto_bundle', 'wrap:dist']
       },
     },
 
@@ -159,7 +169,8 @@ module.exports = function (grunt) {
   //
   // Default task - build distribution source
   //
-  grunt.registerTask('default', ['esperanto', 'concat', 'wrap:dist', 'uglify']);
+  // grunt.registerTask('default', ['esperanto', 'concat', 'wrap:dist', 'uglify']);
+  grunt.registerTask('default', ['shell:esperanto_bundle', 'wrap:dist', 'uglify']);
 
   //
   // Build documentation

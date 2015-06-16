@@ -1,3 +1,5 @@
+import List from "src/dataStructures/lists/List";
+
 NodeList.prototype = new List();
 NodeList.prototype.constructor = NodeList;
 
@@ -13,7 +15,7 @@ function NodeList() {
 
   //if(arguments && arguments.length>0) {c.l('UEUEUEUE, arguments.length', arguments.length); var a; a.push(0)};
 
-  array = NodeList.fromArray([]);
+  var array = NodeList.fromArray([]);
 
   if(arguments && arguments.length > 0) {
     var args = Array.prototype.slice.call(arguments);
@@ -25,6 +27,8 @@ function NodeList() {
 
   return array;
 }
+
+export default NodeList;
 
 /**
  * Creates NodeList from raw Array.

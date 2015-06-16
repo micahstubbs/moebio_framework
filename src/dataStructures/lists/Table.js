@@ -1,3 +1,7 @@
+import List from "src/dataStructures/lists/List";
+import NumberList from "src/dataStructures/numeric/NumberList";
+//
+
 Table.prototype = new List();
 Table.prototype.constructor = Table;
 
@@ -20,6 +24,8 @@ function Table() {
 
   return array;
 }
+export default Table;
+
 Table.fromArray = function(array) {
   var result = List.fromArray(array);
   result.type = "Table";
@@ -141,6 +147,7 @@ Table.prototype.getSubListsByIndexes = function(indexes) {
 };
 
 //deprecated
+// TODO, this should be fixed or remobed, as indexes is not defined.
 Table.prototype.getRows = function(rowsIndexes) {
   return Table.prototype.getSubListsByIndexes(indexes);
 };

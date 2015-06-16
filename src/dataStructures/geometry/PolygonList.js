@@ -1,3 +1,5 @@
+import Table from "src/dataStructures/lists/Table";
+
 PolygonList.prototype = new Table();
 PolygonList.prototype.constructor = PolygonList;
 
@@ -13,6 +15,7 @@ function PolygonList() {
   array = PolygonList.fromArray(array);
   return array;
 }
+export default PolygonList;
 
 PolygonList.fromArray = function(array) {
   var result = Table.fromArray(array);

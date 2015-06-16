@@ -1,3 +1,8 @@
+import List from "src/dataStructures/lists/List";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import StringList from "src/dataStructures/strings/StringList";
+import DateOperators from "src/operators/dates/DateOperators";
+
 DateList.prototype = new List();
 DateList.prototype.constructor = DateList;
 
@@ -11,13 +16,15 @@ DateList.prototype.constructor = DateList;
 function DateList() {
   var args = [];
   for(var i = 0; i < arguments.length; i++) {
-    arguments[i] = Number(arguments[i]);
+    args[i] = Number(arguments[i]);
   }
-  var array = List.apply(this, arguments);
+  var array = List.apply(this, args);
   array = DateList.fromArray(array);
   //
   return array;
 }
+export default DateList;
+
 
 DateList.fromArray = function(array, forceToDate) {
   forceToDate = forceToDate == null ? true : forceToDate;
@@ -62,7 +69,7 @@ DateList.prototype.toStringList = function() {
 };
 
 DateList.prototype.getMin = function() {
-  if(this.length == 0) return null;
+  if(this.length === 0) return null;
   var min = this[0];
   var i;
   for(i = 1; this[i] != null; i++) {
@@ -72,7 +79,7 @@ DateList.prototype.getMin = function() {
 };
 
 DateList.prototype.getMax = function() {
-  if(this.length == 0) return null;
+  if(this.length === 0) return null;
   var max = this[0];
   var i;
   for(i = 1; this[i] != null; i++) {

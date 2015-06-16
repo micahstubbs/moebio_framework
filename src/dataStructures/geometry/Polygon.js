@@ -1,3 +1,5 @@
+import List from "src/dataStructures/lists/List";
+
 Polygon.prototype = new List();
 Polygon.prototype.constructor = Polygon;
 
@@ -13,6 +15,8 @@ function Polygon() {
   array = Polygon.fromArray(array);
   return array;
 }
+export default Polygon;
+
 Polygon.fromArray = function(array) {
   var result = List.fromArray(array);
   result.type = "Polygon";

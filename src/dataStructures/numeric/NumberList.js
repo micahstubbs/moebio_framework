@@ -1,3 +1,7 @@
+import List from "src/dataStructures/lists/List";
+import StringList from "src/dataStructures/strings/StringList";
+import Interval from "src/dataStructures/numeric/Interval";
+
 NumberList.prototype = new List();
 NumberList.prototype.constructor = NumberList;
 
@@ -19,6 +23,8 @@ function NumberList() {
   //
   return array;
 }
+export default NumberList;
+
 NumberList.fromArray = function(array, forceToNumber) {
   forceToNumber = forceToNumber == null ? true : forceToNumber;
 

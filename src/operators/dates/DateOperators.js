@@ -1,3 +1,15 @@
+import DateList from "src/dataStructures/dates/DateList";
+
+/**
+ * @classdesc Provides a set of tools that work with Dates.
+ *
+ * @namespace
+ * @category dates
+ */
+function DateOperators() {}
+
+export default DateOperators;
+
 DateOperators.millisecondsToHours = 1 / (1000 * 60 * 60);
 DateOperators.millisecondsToDays = 1 / (1000 * 60 * 60 * 24);
 DateOperators.millisecondsToWeeks = 1 / (1000 * 60 * 60 * 24 * 7);
@@ -8,15 +20,6 @@ DateOperators.MONTH_NAMES_SHORT = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'ju
 DateOperators.MONTH_NDAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 DateOperators.WEEK_NAMES = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-
-/**
- * @classdesc Provides a set of tools that work with Dates.
- *
- * @namespace
- * @category dates
- */
-function DateOperators() {}
-
 
 /**
  * parses a Date
@@ -40,20 +43,16 @@ DateOperators.stringToDate = function(string, formatCase, separator) {
   switch(formatCase) {
     case 0: //MM-DD-YYYY
       return new Date(Number(parts[2]), Number(parts[0]) - 1, Number(parts[1]));
-      break;
     case 1: //YYYY-MM-DD
       return new Date(string); //Number(parts[0]), Number(parts[1])-1, Number(parts[2]));
-      break;
     case 2: //MM-DD-YY
       y = Number(parts[2]);
       y = y >= 0 ? y + 2000 : y + 1900;
       return new Date(y, Number(parts[0]) - 1, Number(parts[1]));
-      break;
     case 3: //YY-MM-DD
       y = Number(parts[0]);
       y = y >= 0 ? y + 2000 : y + 1900;
       return new Date(y, Number(parts[1]) - 1, Number(parts[2]));
-      break;
   }
 };
 
@@ -72,10 +71,8 @@ DateOperators.dateToString = function(date, formatCase, separator) {
   switch(formatCase) {
     case 0: //MM-DD-YYYY
       return month + separator + day + separator + year;
-      break;
     case 1: //YYYY-MM-DD
       return year + separator + month + separator + day;
-      break;
   }
 };
 
