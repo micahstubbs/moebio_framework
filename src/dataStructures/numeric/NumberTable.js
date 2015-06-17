@@ -1,3 +1,6 @@
+import Table from "src/dataStructures/lists/Table";
+import NumberList from "src/dataStructures/numeric/NumberList";
+
 NumberTable.prototype = new Table();
 NumberTable.prototype.constructor = NumberTable;
 
@@ -30,6 +33,7 @@ function NumberTable() {
   array = NumberTable.fromArray(array);
   return array;
 }
+export default NumberTable;
 
 NumberTable.fromArray = function(array) {
   var result = Table.fromArray(array);

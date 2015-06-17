@@ -1,3 +1,5 @@
+import NodeList from 'src/dataStructures/structures/lists/NodeList';
+
 RelationList.prototype = new NodeList();
 RelationList.prototype.constructor = RelationList;
 /**
@@ -20,6 +22,7 @@ function RelationList() {
   //
   return array;
 }
+export default RelationList;
 
 /**
  * Convert raw array of Relations into a RelationList.

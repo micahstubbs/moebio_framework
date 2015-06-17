@@ -5,7 +5,7 @@
 
 
 
-var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"}
+export var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"}
 
 
 
@@ -14,7 +14,7 @@ var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Bo
  * number, string, boolean, date
  * and all data models classes names
  */
-function typeOf(o) {
+export function typeOf(o) {
   var type = typeof o;
 
   if(type !== 'object') {
@@ -35,7 +35,7 @@ function typeOf(o) {
 
 function VOID() {}
 
-function instantiate(className, args) {
+export function instantiate(className, args) {
   switch(className) {
     case 'number':
     case 'string':
@@ -87,7 +87,7 @@ function instantiate(className, args) {
   return o;
 }
 
-getTextFromObject = function(value, type) {
+function getTextFromObject(value, type) {
   if(value == null) return "Null";
   if(value.isList) {
     if(value.length == 0) return "[]";
@@ -119,10 +119,10 @@ getTextFromObject = function(value, type) {
     default:
       return "{}"; //value.toString();
   }
-};
+}
 
 
-function instantiateWithSameType(object, args) {
+export function instantiateWithSameType(object, args) {
   return instantiate(typeOf(object), args);
 }
 
@@ -138,7 +138,7 @@ Date.prototype.getType = function() {
 
 
 
-evalJavaScriptFunction = function(functionText, args, scope){
+function evalJavaScriptFunction(functionText, args, scope){
 	if(functionText==null) return;
 
 	var res;
@@ -152,9 +152,9 @@ evalJavaScriptFunction = function(functionText, args, scope){
 
 	var lines = functionText.split('\n');
 
-	for(i=0; lines[i]!=null; i++){
+	for(var i=0; lines[i]!=null; i++){
 		lines[i] = lines[i].trim();
-		if(lines[i]=="" || lines[i].substr(1)=="/"){
+		if(lines[i] === "" || lines[i].substr(1)=="/"){
 			lines.splice(i,1);
 			i--;
 		}
@@ -233,9 +233,7 @@ evalJavaScriptFunction = function(functionText, args, scope){
   };
 
   return resultObject;
-};
-
-
+}
 
 function argumentsToArray(args) {
   return Array.prototype.slice.call(args, 0);

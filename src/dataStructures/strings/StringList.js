@@ -1,3 +1,9 @@
+import List from "src/dataStructures/lists/List";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import DateList from "src/dataStructures/dates/DateList";
+import StringOperators from "src/operators/strings/StringOperators";
+import DateOperators from "src/operators/dates/DateOperators";
+
 StringList.prototype = new List();
 StringList.prototype.constructor = StringList;
 
@@ -19,6 +25,7 @@ function StringList() {
   //
   return array;
 }
+export default StringList;
 
 StringList.fromArray = function(array, forceToString) {
   forceToString = forceToString == null ? true : forceToString;

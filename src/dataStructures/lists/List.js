@@ -1,3 +1,14 @@
+import DataModel from "src/dataStructures/DataModel";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import StringList from "src/dataStructures/strings/StringList";
+import DateList from "src/dataStructures/dates/DateList";
+import NodeList from "src/dataStructures/structures/lists/NodeList";
+import RelationList from "src/dataStructures/structures/lists/RelationList";
+import Polygon from "src/dataStructures/geometry/Polygon";
+import PolygonList from "src/dataStructures/geometry/PolygonList";
+import Table from "src/dataStructures/lists/Table";
+import NumberTable from "src/dataStructures/numeric/NumberTable";
+
 List.prototype = new DataModel();
 List.prototype.constructor = List;
 
@@ -20,6 +31,8 @@ function List() {
   //
   return array;
 }
+export default List;
+
 
 List.fromArray = function(array) { //TODO: clear some of these method declarations
     array.type = "List";
@@ -129,39 +142,40 @@ List.prototype.getImproved = function() { //TODO: still doesn't solve tha case o
 
   //if(typeOfElements=="" || typeOfElements=="undefined") return this;
 
+  var newList;
   switch(typeOfElements) {
     case "number":
-      var newList = NumberList.fromArray(this, false);
+      newList = NumberList.fromArray(this, false);
       break;
     case "string":
-      var newList = StringList.fromArray(this, false);
+      newList = StringList.fromArray(this, false);
       break;
     case "Rectangle":
       return this;
     case "date":
-      var newList = DateList.fromArray(this, false);
+      newList = DateList.fromArray(this, false);
       break;
     case "List":
     case "DateList":
     case "IntervalList":
     case "StringList":
     case "Table":
-      var newList = Table.fromArray(this, false);
+      newList = Table.fromArray(this, false);
       break;
     case "NumberList":
-      var newList = NumberTable.fromArray(this, false);
+      newList = NumberTable.fromArray(this, false);
       break;
     case "Point":
-      var newList = Polygon.fromArray(this, false);
+      newList = Polygon.fromArray(this, false);
       break;
     case "Polygon":
-      var newList = PolygonList.fromArray(this, false);
+      newList = PolygonList.fromArray(this, false);
       break;
     case "Node":
-      var newList = NodeList.fromArray(this, false);
+      newList = NodeList.fromArray(this, false);
       break;
     case "Relation":
-      var newList = RelationList.fromArray(this, false);
+      newList = RelationList.fromArray(this, false);
       break;
   }
 
@@ -504,7 +518,7 @@ List.prototype.getElementsRepetitionCount = function(sortListsByOccurrences) {
     // var indexArray=numberList.getSortIndexes();//sortNumericIndexed();
     // var j;
     // for(j=0; j<table.length; j++){
-    // 	table[j]=table[j].clone().sortOnIndexes(indexArray);
+    //  table[j]=table[j].clone().sortOnIndexes(indexArray);
     // }
     table = table.getListsSortedByList(numberList, false);
   }
@@ -662,37 +676,37 @@ List.prototype.sortIndexed = function() {
 };
 
 // List.prototype.sortNumericIndexed=function() {
-// 	var index = new Array();
-// 	var i;
-// 	for(i=0; i<this.length; i++){
-//   		index.push({index:i, value:this[i]});
-// 	}
-// 	var comparator = function(a, b) {
-//   		var array_a = a.value;
-//   		var array_b = b.value;;
+//  var index = new Array();
+//  var i;
+//  for(i=0; i<this.length; i++){
+//      index.push({index:i, value:this[i]});
+//  }
+//  var comparator = function(a, b) {
+//      var array_a = a.value;
+//      var array_b = b.value;;
 
-//   		return array_a - array_b;
-// 	}
-// 	index=index.sort(comparator);
-// 	var result = new NumberList();
-// 	for(i=0; i<index.length; i++){
-//   		result.push(index[i].index);
-// 	}
-// 	return result;
+//      return array_a - array_b;
+//  }
+//  index=index.sort(comparator);
+//  var result = new NumberList();
+//  for(i=0; i<index.length; i++){
+//      result.push(index[i].index);
+//  }
+//  return result;
 // }
 
 // List.prototype.sortNumeric=function(descendant){
-// 	var comparator;
-// 	if(descendant){
-// 		var comparator=function(a, b){
-// 			return b - a;
-// 		}
-// 	} else {
-// 		var comparator=function(a, b){
-// 			return a - b;
-// 		}
-// 	}
-// 	return this.sort(comparator);
+//  var comparator;
+//  if(descendant){
+//    var comparator=function(a, b){
+//      return b - a;
+//    }
+//  } else {
+//    var comparator=function(a, b){
+//      return a - b;
+//    }
+//  }
+//  return this.sort(comparator);
 // }
 
 List.prototype.sortOnIndexes = function(indexes) {

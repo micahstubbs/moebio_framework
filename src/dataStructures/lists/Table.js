@@ -1,3 +1,17 @@
+/* global console */
+
+import List from "src/dataStructures/lists/List";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import TableEncodings from "src/operators/lists/TableEncodings";
+import StringOperators from "src/operators/strings/StringOperators";
+import {
+  instantiate,
+  instantiateWithSameType,
+  TYPES_SHORT_NAMES_DICTIONARY,
+  typeOf
+  } from "src/tools/utils/code/ClassUtils";
+//
+
 Table.prototype = new List();
 Table.prototype.constructor = Table;
 
@@ -20,6 +34,8 @@ function Table() {
 
   return array;
 }
+export default Table;
+
 Table.fromArray = function(array) {
   var result = List.fromArray(array);
   result.type = "Table";
@@ -141,7 +157,7 @@ Table.prototype.getSubListsByIndexes = function(indexes) {
 };
 
 //deprecated
-Table.prototype.getRows = function(rowsIndexes) {
+Table.prototype.getRows = function(indexes) {
   return Table.prototype.getSubListsByIndexes(indexes);
 };
 
@@ -160,7 +176,7 @@ Table.prototype.getWithoutRows = function(rowsIndexes) {
   newTable.name = this.name;
   for(var i = 0; this[i] != null; i++) {
     newTable[i] = new List();
-    for(j = 0; this[i][j] != null; j++) {
+    for(var j = 0; this[i][j] != null; j++) {
       if(rowsIndexes.indexOf(j) == -1) newTable[i].push(this[i][j]);
     }
     newTable[i].name = this[i].name;
@@ -195,7 +211,7 @@ Table.prototype.getTransposed = function(firstListAsHeaders) {
   var tableToTranspose = firstListAsHeaders ? this.getSubList(1) : this;
 
   var table = instantiate(typeOf(tableToTranspose));
-  if(tableToTranspose.length == 0) return table;
+  if(tableToTranspose.length === 0) return table;
   var i;
   var j;
   var list;
@@ -203,7 +219,7 @@ Table.prototype.getTransposed = function(firstListAsHeaders) {
   for(i = 0; tableToTranspose[i] != null; i++) {
     list = tableToTranspose[i];
     for(j = 0; list[j] != null; j++) {
-      if(i == 0) table[j] = new List();
+      if(i === 0) table[j] = new List();
       table[j][i] = tableToTranspose[i][j];
     }
   }
@@ -232,7 +248,7 @@ Table.prototype.getReport = function(level) {
 
   var text = level > 0 ? (ident + "////report of instance of Table////") : "///////////report of instance of Table//////////";
 
-  if(this.length == 0) {
+  if(this.length === 0) {
     text += ident + "this table has no lists";
     return text;
   }
@@ -274,7 +290,7 @@ Table.prototype.getReport = function(level) {
 
     var i;
     for(i = 0; this[i] != null; i++) {
-      text += "\n" + ident + ("(" + (i) + "/0-" + (this.length - 1) + ")")
+      text += "\n" + ident + ("(" + (i) + "/0-" + (this.length - 1) + ")");
       try{
          text += this[i].getReport(1);
       } catch(err){
@@ -323,7 +339,7 @@ Table.prototype.destroy = function() {
 };
 
 Table.prototype.print = function() {
-  c.log("///////////// <" + this.name + "////////////////////////////////////////////////////");
-  c.log(TableEncodings.TableToCSV(this, null, true));
-  c.log("/////////////" + this.name + "> ////////////////////////////////////////////////////");
+  console.log("///////////// <" + this.name + "////////////////////////////////////////////////////");
+  console.log(TableEncodings.TableToCSV(this, null, true));
+  console.log("/////////////" + this.name + "> ////////////////////////////////////////////////////");
 };
