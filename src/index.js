@@ -12,14 +12,14 @@ import List from "src/dataStructures/lists/List";
 import Table from "src/dataStructures/lists/Table";
 export { List, Table };
 
-// // dataStructures/numeric
-// import Axis from "src/dataStructures/numeric/Axis";
-// import Axis2D from "src/dataStructures/numeric/Axis2D";
-// import Interval from "src/dataStructures/numeric/Interval";
-// import Matrix from "src/dataStructures/numeric/Matrix";
-// import NumberList from "src/dataStructures/numeric/NumberList";
-// import NumberTable from "src/dataStructures/numeric/NumberTable";
-// export { Axis, Axis2D, Interval, Matrix, NumberList, NumberTable };
+// dataStructures/numeric
+import Axis from "src/dataStructures/numeric/Axis";
+import Axis2D from "src/dataStructures/numeric/Axis2D";
+import Interval from "src/dataStructures/numeric/Interval";
+import Matrix from "src/dataStructures/numeric/Matrix";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import NumberTable from "src/dataStructures/numeric/NumberTable";
+export { Axis , Axis2D, Interval, Matrix, NumberList, NumberTable };
 
 // // dataStructures/structures
 // import Node from "src/dataStructures/structures/elements/Node";

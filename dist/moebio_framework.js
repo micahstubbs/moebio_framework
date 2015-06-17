@@ -45,8 +45,8 @@ define('src/index', ['exports'], function (exports) {
 
   'use strict';
 
-  DataModel__DataModel.prototype = {};
-  DataModel__DataModel.prototype.constructor = DataModel__DataModel;
+  DataModel.prototype = {};
+  DataModel.prototype.constructor = DataModel;
 
   /**
    * @classdesc Basic DataType from which other types are derived.
@@ -55,14 +55,14 @@ define('src/index', ['exports'], function (exports) {
    * @constructor
    * @category basics
    */
-  function DataModel__DataModel() {
+  function DataModel() {
   	// TODO. What is the intent in this line. I don't think its needed.
     Object.apply(this);
     this.type = "DataModel";
   }
-  var DataModel__default = DataModel__DataModel;
 
-  DataModel__DataModel.prototype.destroy = function() {
+
+  DataModel.prototype.destroy = function() {
   	// TODO. Why is this being done? It is in a few
   	// places in the codebase. Also this.name isn't
   	// defined here.
@@ -70,19 +70,19 @@ define('src/index', ['exports'], function (exports) {
     delete this.name;
   };
 
-  DataModel__DataModel.prototype.setType = function(type) {
+  DataModel.prototype.setType = function(type) {
     this.type = type;
   };
 
-  DataModel__DataModel.prototype.getType = function() {
+  DataModel.prototype.getType = function() {
     return this.type;
   };
 
-  DataModel__DataModel.prototype.toString = function() {
+  DataModel.prototype.toString = function() {
 
   };
 
-  exports.DataModel = DataModel__default;
+  exports.DataModel = DataModel;
 
   function DateOperators__DateOperators() {}
 
@@ -222,7 +222,7 @@ define('src/index', ['exports'], function (exports) {
     return new Date(year, month, 0).getDate();
   };
 
-  List__List.prototype = new DataModel__default();
+  List__List.prototype = new DataModel();
   List__List.prototype.constructor = List__List;
 
    /**
@@ -234,7 +234,7 @@ define('src/index', ['exports'], function (exports) {
     * @category basics
     */
   function List__List() {
-    DataModel__default.apply(this);
+    DataModel.apply(this);
     var array = [];
     var i;
     for(i = 0; i < arguments.length; i++) {
@@ -2492,7 +2492,7 @@ define('src/index', ['exports'], function (exports) {
     return StringOperators__StringOperators.LINK_REGEX.test(text);
   };
 
-  Point__Point.prototype = new DataModel__default();
+  Point__Point.prototype = new DataModel();
   Point__Point.prototype.constructor = Point__Point;
 
   /**
@@ -2505,7 +2505,7 @@ define('src/index', ['exports'], function (exports) {
    * @category geometry
    */
   function Point__Point(x, y) {
-    DataModel__default.apply(this, arguments);
+    DataModel.apply(this, arguments);
     this.type = "Point";
     this.x = Number(x) || 0;
     this.y = Number(y) || 0;
@@ -2626,11 +2626,11 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number} the minimum value in the interval
    */
   Interval__Interval.prototype.getMin = function() {
-    return Math.min(x, y);
+    return Math.min(this.x, this.y);
   };
 
   Interval__Interval.prototype.getMax = function() {
-    return Math.max(x, y);
+    return Math.max(this.x, this.y);
   };
 
   Interval__Interval.prototype.getAmplitude = function() {
@@ -2750,6 +2750,8 @@ define('src/index', ['exports'], function (exports) {
   Interval__Interval.prototype.toString = function() {
     return "Interval[x:" + this.x + "| y:" + this.y + "| amplitude:" + this.getAmplitude() + "]";
   };
+
+  exports.Interval = Interval__default;
 
   NumberList__NumberList.prototype = new List__default();
   NumberList__NumberList.prototype.constructor = NumberList__NumberList;
@@ -3319,6 +3321,8 @@ define('src/index', ['exports'], function (exports) {
   NumberList__NumberList.prototype.slice = function() {
     return NumberList__NumberList.fromArray(this._slice.apply(this, arguments), false);
   };
+
+  exports.NumberList = NumberList__default;
 
   NodeList.prototype = new List__default();
   NodeList.prototype.constructor = NodeList;
@@ -4883,7 +4887,7 @@ define('src/index', ['exports'], function (exports) {
         array.push(new NumberList__default());
       }
     } else {
-      for(var i = 0; arguments[i] != null; i++) {
+      for(i = 0; arguments[i] != null; i++) {
         newNumberList = NumberList__default.fromArray(arguments[i]);
         newNumberList.name = arguments[i].name;
         arguments[i] = newNumberList;
@@ -5074,6 +5078,295 @@ define('src/index', ['exports'], function (exports) {
     newTable.name = this.name;
     return newTable;
   };
+
+  exports.NumberTable = NumberTable;
+
+  /* global console */
+
+  Axis.prototype = new DataModel();
+  Axis.prototype.constructor = Axis;
+
+  /**
+   * @classdesc Axis for 1D data.
+   *
+   * @constructor
+   * @description Creates a new Axis.
+   * @category numbers
+   */
+  function Axis(departureInterval, arrivalInterval) {
+    //TODO why assign the incoming param, could this be moved to lines 20-21
+    departureInterval = departureInterval == null ? new Interval__default(0, 1) : departureInterval;
+    arrivalInterval = arrivalInterval == null ? new Interval__default(0, 1) : arrivalInterval;
+
+    DataModel.apply(this, arguments);
+    this.departureInterval = departureInterval;
+    this.arrivalInterval = arrivalInterval;
+
+    this.setDepartureInterval(departureInterval);
+    this.setArrivalInterval(arrivalInterval);
+
+    this.type = "Axis";
+  }
+
+
+
+
+  Axis.prototype.setDepartureInterval = function(departureInterval) {
+    this.departureInterval = departureInterval;
+    console.log('--> departureInterval', departureInterval);
+    this.departureAmplitude = departureInterval.getSignedAmplitude();
+
+  };
+  Axis.prototype.setArrivalInterval = function(arrivalInterval) {
+    this.arrivalInterval = arrivalInterval;
+    this.arrivalAmplitude = arrivalInterval.getSignedAmplitude();
+  };
+
+  Axis.prototype.project = function(x) {
+    return this.arrivalInterval.x + this.arrivalAmplitude * (x - this.departureInterval.x) / this.departureAmplitude;
+  };
+
+
+  /**
+   * to be called once interval values changed
+   */
+  Axis.prototype.update = function() {
+    this.departureAmplitude = this.departureInterval.getSignedAmplitude();
+    this.arrivalAmplitude = this.arrivalInterval.getSignedAmplitude();
+  };
+
+
+  Axis.prototype.toString = function() {
+    return "Axis[" + this.departureInterval.toString() + ", " + this.arrivalInterval.toString() + "]";
+  };
+
+  exports.Axis = Axis;
+
+  Axis2D.prototype = new DataModel();
+  Axis2D.prototype.constructor = Axis2D;
+
+  /**
+   * @classdesc Axis for 2D data
+   *
+   * @constructor
+   * @description Creates a new 2d axis.
+   * @category numbers
+   */
+  function Axis2D(departureFrame, arrivalFrame) {
+    arrivalFrame = arrivalFrame == null ? new Rectangle(0, 0, 1, 1) : arrivalFrame;
+    DataModel.apply(this, arguments);
+    this.departureFrame = departureFrame;
+    this.arrivalFrame = arrivalFrame;
+
+    this.pW;
+    this.pH;
+
+    this.setFrames(departureFrame, arrivalFrame);
+
+    this.type = "Axis2D";
+  }
+
+
+  Axis2D.prototype.setFrames = function(departureFrame, arrivalFrame) {
+    this.departureFrame = departureFrame;
+    this.arrivalFrame = arrivalFrame;
+    this._update();
+  };
+
+  Axis2D.prototype.setDepartureFrame = function(departureFrame) {
+    this.departureFrame = departureFrame;
+    this._update();
+  };
+
+  Axis2D.prototype.setArrivalFrame = function(arrivalFrame) {
+    this.arrivalFrame = arrivalFrame;
+    this._update();
+  };
+
+
+  Axis2D.prototype.project = function(point) {
+    return new Point__default((point.x - this.departureFrame.x) * this.pW + this.arrivalFrame.x, (point.y - this.departureFrame.y) * this.pH + this.arrivalFrame.y);
+  };
+
+
+  Axis2D.prototype.projectX = function(x) {
+    return(x - this.departureFrame.x) * this.pW + this.arrivalFrame.x;
+  };
+
+  Axis2D.prototype.projectY = function(y) {
+    return(y - this.departureFrame.y) * this.pH + this.arrivalFrame.y;
+  };
+
+  Axis2D.prototype.inverseProject = function(point) {
+    return new Point__default((point.x - this.arrivalFrame.x) / this.pW + this.departureFrame.x, (point.y - this.arrivalFrame.y) / this.pH + this.departureFrame.y);
+  };
+
+
+  Axis2D.prototype.inverseProjectX = function(x) {
+    return(x - this.arrivalFrame.x) / this.pW + this.departureFrame.x;
+  };
+
+  Axis2D.prototype.inverseProjectY = function(y) {
+    return(y - this.arrivalFrame.y) / this.pH + this.departureFrame.y;
+  };
+
+
+
+
+  Axis2D.prototype._update = function() {
+    this.pW = this.arrivalFrame.width / this.departureFrame.width;
+    this.pH = this.arrivalFrame.height / this.departureFrame.height;
+  };
+
+
+  Axis2D.prototype.toString = function() {
+    return "Axis2D[" + this.departureFrame.toString() + ", " + this.arrivalFrame.toString() + "]";
+  };
+
+  exports.Axis2D = Axis2D;
+
+  Matrix.prototype = new DataModel();
+  Matrix.prototype.constructor = Matrix;
+
+  /**
+   * @classdesc Matrix implementation.
+   * Some credits to http://strd6.com/2010/06/introducing-matrix-js/
+   *
+   * @constructor
+   * @description Creates a new Matrix instance.
+   * @category numbers
+   */
+  function Matrix(a, b, c, d, tx, ty) {
+    DataModel.apply(this, arguments);
+    this.name = "";
+    this.type = "Matrix";
+    this.a = a == null ? 1 : a;
+    this.b = b == null ? 0 : b;
+    this.c = c == null ? 0 : c;
+    this.d = d == null ? 1 : d;
+    this.tx = tx == null ? 0 : tx;
+    this.ty = ty == null ? 0 : ty;
+  }
+
+
+  /**
+   * Returns the result of applying the geometric transformation represented by the
+   * Matrix object to the specified point.
+   * @methodOf Matrix#
+   * @see #deltaTransformPoint
+   *
+   * @returns {Point} A new point with the transformation applied.
+   */
+  Matrix.prototype.transformPoint = function(point) {
+    return new Point__default(
+      this.a * point.x + this.c * point.y + this.tx,
+      this.b * point.x + this.d * point.y + this.ty
+    );
+  };
+
+  // /**
+  // * Applies Matrix to context transform
+  // **/
+  // Matrix.prototype.applyToContext=function(context){
+  // context.transform(this.a, this.b, this.c, this.d, this.tx, this.ty);
+  // }
+
+  /**
+   * Returns the result of this matrix multiplied by another matrix
+   * combining the geometric effects of the two. In mathematical terms,
+   * concatenating two matrixes is the same as combining them using matrix multiplication.
+   * If this matrix is A and the matrix passed in is B, the resulting matrix is A x B
+   * http://mathworld.wolfram.com/MatrixMultiplication.html
+   * @methodOf Matrix#
+   *
+   * @param {Matrix} matrix The matrix to multiply this matrix by.
+   * @returns {Matrix} The result of the matrix multiplication, a new matrix.
+   */
+  Matrix.prototype.concat = function(matrix) {
+    return Matrix(
+      this.a * matrix.a + this.c * matrix.b,
+      this.b * matrix.a + this.d * matrix.b,
+      this.a * matrix.c + this.c * matrix.d,
+      this.b * matrix.c + this.d * matrix.d,
+      this.a * matrix.tx + this.c * matrix.ty + this.tx,
+      this.b * matrix.tx + this.d * matrix.ty + this.ty
+    );
+  };
+
+  /**
+   * Given a point in the pretransform coordinate space, returns the coordinates of
+   * that point after the transformation occurs. Unlike the standard transformation
+   * applied using the transformPoint() method, the deltaTransformPoint() method's
+   * transformation does not consider the translation parameters tx and ty.
+   * @see #transformPoint
+   *
+   * @return {Point} A new point transformed by this matrix ignoring tx and ty.
+   */
+  Matrix.prototype.deltaTransformPoint = function(point) {
+    return Point__default(
+      this.a * point.x + this.c * point.y,
+      this.b * point.x + this.d * point.y
+    );
+  };
+
+  /**
+   * Returns the inverse of the matrix.
+   * http://mathworld.wolfram.com/MatrixInverse.html
+   *
+   * @returns {Matrix} A new matrix that is the inverse of this matrix.
+   */
+  Matrix.prototype.getInverse = function() {
+      var determinant = this.a * this.d - this.b * this.c;
+      return new Matrix(
+  		this.d / determinant,
+  		-this.b / determinant,
+  		-this.c / determinant,
+  		this.a / determinant,
+  		(this.c * this.ty - this.d * this.tx) / determinant,
+  		(this.b * this.tx - this.a * this.ty) / determinant
+      );
+    };
+    /**
+     * Returns a new matrix that corresponds this matrix multiplied by a
+     * a rotation matrix.
+     * @see Matrix.rotation
+     *
+     * @param {Number} theta Amount to rotate in radians.
+     * @param {Point} [aboutPoint] The point about which this rotation occurs. Defaults to (0,0).
+     * @returns {Matrix} A new matrix, rotated by the specified amount.
+     */
+  Matrix.prototype.rotate = function(theta, aboutPoint) {
+    return this.concat(Matrix.rotation(theta, aboutPoint));
+  };
+
+  /**
+   * Returns a new matrix that corresponds this matrix multiplied by a
+   * a scaling matrix.
+   * @see Matrix.scale
+   *
+   * @param {Number} sx
+   * @param {Number} [sy]
+   * @param {Point} [aboutPoint] The point that remains fixed during the scaling
+   * @returns {Matrix}
+   */
+  Matrix.prototype.scale = function(sx, sy, aboutPoint) {
+    return this.concat(Matrix.scale(sx, sy, aboutPoint));
+  };
+
+
+  /**
+   * @methodOf Matrix#
+   * @see Matrix.translation
+   *
+   * @param {Number} tx The translation along the x axis.
+   * @param {Number} ty The translation along the y axis.
+   * @returns {Matrix} A new matrix with the translation applied.
+   */
+  Matrix.prototype.translate = function(tx, ty) {
+    return this.concat(Matrix.translation(tx, ty));
+  };
+
+  exports.Matrix = Matrix;
 
   // jshint unused:false
 
