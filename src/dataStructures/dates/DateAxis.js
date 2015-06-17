@@ -1,3 +1,6 @@
+import DataModel from "src/dataStructures/DataModel";
+import Interval from "src/dataStructures/numeric/Interval";
+
 DateAxis.prototype = new DataModel();
 DateAxis.prototype.constructor = DateAxis;
 
@@ -24,6 +27,7 @@ function DateAxis(departureDateInterval, arrivalInterval) {
 
   this.type = "DateAxis";
 }
+export default DateAxis;
 
 
 

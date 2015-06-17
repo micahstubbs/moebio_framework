@@ -1615,6 +1615,8 @@ define('src/index', ['exports'], function (exports) {
     return max;
   };
 
+  exports.DateList = DateList;
+
   StringList__StringList.prototype = new List__default();
   StringList__StringList.prototype.constructor = StringList__StringList;
 
@@ -5367,6 +5369,135 @@ define('src/index', ['exports'], function (exports) {
   };
 
   exports.Matrix = Matrix;
+
+  DateAxis.prototype = new DataModel();
+  DateAxis.prototype.constructor = DateAxis;
+
+  /**
+   * @classdesc Date based {@link Axis}.
+   *
+   * @description Creates a new DateAxis.
+   * @constructor
+   * @category dates
+   */
+  function DateAxis(departureDateInterval, arrivalInterval) {
+    arrivalInterval = arrivalInterval == null ? new Interval__default(0, 1) : arrivalInterval;
+    DataModel.apply(this, arguments);
+    this.departureDateInterval = departureDateInterval;
+    this.arrivalInterval = arrivalInterval;
+
+    this.time0;
+    this.time1;
+    this.dTime;
+    this.arrivalAmplitude;
+
+    this.setDepartureDateInterval(departureDateInterval);
+    this.setArrivalInterval(arrivalInterval);
+
+    this.type = "DateAxis";
+  }
+
+
+
+
+  DateAxis.prototype.setDepartureDateInterval = function(departureDateInterval) {
+    this.departureDateInterval = departureDateInterval;
+    this.time0 = this.departureDateInterval.date0.getTime();
+    this.time1 = this.departureDateInterval.date1.getTime();
+    this.dTime = this.time1 - this.time0;
+
+  };
+  DateAxis.prototype.setArrivalInterval = function(arrivalInterval) {
+    this.arrivalInterval = arrivalInterval;
+    this.arrivalAmplitude = arrivalInterval.getAmplitude();
+  };
+
+  DateAxis.prototype.project = function(date) {
+    return this.arrivalInterval.x + this.arrivalAmplitude * (date.getTime() - this.time0) / this.dTime;
+  };
+
+
+  /**
+   * to be called once intreval values changed
+   */
+  DateAxis.prototype.update = function() {
+    this.time0 = this.departureDateInterval.date0.getTime();
+    this.time1 = this.departureDateInterval.date1.getTime();
+    this.dTime = this.time1 - this.time0;
+    this.arrivalAmplitude = this.arrivalInterval.getAmplitude();
+  };
+
+
+  DateAxis.prototype.toString = function() {
+    return "DateAxis[" + this.departureDateInterval.toString() + ", " + this.arrivalInterval.toString() + "]";
+  };
+
+  exports.DateAxis = DateAxis;
+
+  DateInterval.prototype = new DataModel();
+  DateInterval.prototype.constructor = DateInterval;
+
+  /**
+   * @classdesc Date Interval
+   *
+   * @description Creates a new DateInterval.
+   * @param {Date} Interval's minimum value.
+   * @param {Date} Interval's maximum value.
+   * @constructor
+   * @category dates
+   */
+  function DateInterval(date0, date1) {
+    DataModel.apply(this, arguments);
+    this.date0 = date0;
+    this.date1 = date1;
+    this.type = "DateInterval";
+  }
+
+
+  DateInterval.prototype.toString = function() {
+    return "DateInterval[" + this.date0 + ", " + this.date1 + "]";
+  };
+
+  DateInterval.prototype.getMax = function() {
+    if(this.date1 > this.date0) return this.date1;
+    return this.date0;
+  };
+
+  DateInterval.prototype.getMin = function() {
+    if(this.date0 < this.date1) return this.date0;
+    return this.date1;
+  };
+
+  /**
+   * converts the dateInterval into an Interval (getting milliseconds time from each date)
+   * @return {Interval}
+   * tags:conversion
+   */
+  DateInterval.prototype.getTimesInterval = function() {
+    return new Interval__default(this.date0.getTime(), this.date1.getTime());
+  };
+
+  /**
+   * factors the dateInterval (specially useful: factor by an interval, in which case a sub-dateInterval is selected)
+   * @param  {Object} object could be: interval
+   * @return {DateInterval}
+   * tags:
+   */
+  DateInterval.prototype.getProduct = function(object) { //TODO: complete with more object types
+    if(object == null) return;
+
+    if(object.type == 'Interval') {
+      var time0 = this.date0.getTime();
+      var time1 = this.date1.getTime();
+      var amp = time1 - time0;
+
+      return new DateInterval(new Date(time0 + object.x * amp), new Date(time0 + object.y * amp));
+    }
+
+    return null;
+  };
+
+  exports.DateInterval = DateInterval;
 
   // jshint unused:false
 
