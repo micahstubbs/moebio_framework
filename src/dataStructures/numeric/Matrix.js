@@ -1,3 +1,6 @@
+import DataModel from "src/dataStructures/DataModel";
+import Point from "src/dataStructures/geometry/Point";
+
 Matrix.prototype = new DataModel();
 Matrix.prototype.constructor = Matrix;
 
@@ -20,7 +23,7 @@ function Matrix(a, b, c, d, tx, ty) {
   this.tx = tx == null ? 0 : tx;
   this.ty = ty == null ? 0 : ty;
 }
-
+export default Matrix;
 
 /**
  * Returns the result of applying the geometric transformation represented by the

@@ -23,7 +23,7 @@ function NumberTable() {
       array.push(new NumberList());
     }
   } else {
-    for(var i = 0; arguments[i] != null; i++) {
+    for(i = 0; arguments[i] != null; i++) {
       newNumberList = NumberList.fromArray(arguments[i]);
       newNumberList.name = arguments[i].name;
       arguments[i] = newNumberList;
