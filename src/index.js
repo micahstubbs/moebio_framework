@@ -9,8 +9,8 @@ export { DataModel };
 
 // dataStructures/lists
 import List from "src/dataStructures/lists/List";
-// import Table from "src/dataStructures/lists/Table";
-export { List };
+import Table from "src/dataStructures/lists/Table";
+export { List, Table };
 
 // // dataStructures/numeric
 // import Axis from "src/dataStructures/numeric/Axis";

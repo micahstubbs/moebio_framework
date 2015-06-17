@@ -41,20 +41,20 @@ define('src/index', ['exports'], function (exports) {
 
   exports.DataModel = DataModel__default;
 
-  function DateOperators() {}
+  function DateOperators__DateOperators() {}
 
+  var DateOperators__default = DateOperators__DateOperators;
 
+  DateOperators__DateOperators.millisecondsToHours = 1 / (1000 * 60 * 60);
+  DateOperators__DateOperators.millisecondsToDays = 1 / (1000 * 60 * 60 * 24);
+  DateOperators__DateOperators.millisecondsToWeeks = 1 / (1000 * 60 * 60 * 24 * 7);
+  DateOperators__DateOperators.millisecondsToYears = 0.00000000003169;
 
-  DateOperators.millisecondsToHours = 1 / (1000 * 60 * 60);
-  DateOperators.millisecondsToDays = 1 / (1000 * 60 * 60 * 24);
-  DateOperators.millisecondsToWeeks = 1 / (1000 * 60 * 60 * 24 * 7);
-  DateOperators.millisecondsToYears = 0.00000000003169;
+  DateOperators__DateOperators.MONTH_NAMES = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+  DateOperators__DateOperators.MONTH_NAMES_SHORT = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+  DateOperators__DateOperators.MONTH_NDAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
-  DateOperators.MONTH_NAMES = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
-  DateOperators.MONTH_NAMES_SHORT = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
-  DateOperators.MONTH_NDAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
-  DateOperators.WEEK_NAMES = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+  DateOperators__DateOperators.WEEK_NAMES = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
   /**
    * parses a Date
@@ -64,7 +64,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Date}
    * tags:decoder
    */
-  DateOperators.stringToDate = function(string, formatCase, separator) {
+  DateOperators__DateOperators.stringToDate = function(string, formatCase, separator) {
     separator = separator == null ? "-" : separator;
     formatCase = formatCase == null ? 1 : formatCase;
 
@@ -96,7 +96,7 @@ define('src/index', ['exports'], function (exports) {
    * 0: MM-DD-YYYY
    * 1: YYYY-MM-DD
    */
-  DateOperators.dateToString = function(date, formatCase, separator) {
+  DateOperators__DateOperators.dateToString = function(date, formatCase, separator) {
     separator = separator == null ? "-" : separator;
     formatCase = formatCase == null ? 0 : formatCase;
     var year = date.getFullYear();
@@ -116,24 +116,24 @@ define('src/index', ['exports'], function (exports) {
    * @return {Date}
    * tags:generate
    */
-  DateOperators.currentDate = function() {
+  DateOperators__DateOperators.currentDate = function() {
     return new Date();
   };
 
-  DateOperators.addDaysToDate = function(date, nDays) {
-    return new Date(date.getTime() + (nDays / DateOperators.millisecondsToDays));
+  DateOperators__DateOperators.addDaysToDate = function(date, nDays) {
+    return new Date(date.getTime() + (nDays / DateOperators__DateOperators.millisecondsToDays));
   };
 
-  DateOperators.addMillisecondsToDate = function(date, nMilliseconds) {
+  DateOperators__DateOperators.addMillisecondsToDate = function(date, nMilliseconds) {
     return new Date(date.getTime() + nMilliseconds);
   };
 
 
-  DateOperators.parseDate = function(string) {
+  DateOperators__DateOperators.parseDate = function(string) {
     return new Date(Date.parse(string.replace(/\./g, "-")));
   };
 
-  DateOperators.parseDates = function(stringList) {
+  DateOperators__DateOperators.parseDates = function(stringList) {
     var dateList = new DateList();
     var i;
     for(i = 0; stringList[i] != null; i++) {
@@ -142,25 +142,25 @@ define('src/index', ['exports'], function (exports) {
     return dateList;
   };
 
-  DateOperators.getHoursBetweenDates = function(date0, date1) {
-    return(date1.getTime() - date0.getTime()) * DateOperators.millisecondsToHours;
+  DateOperators__DateOperators.getHoursBetweenDates = function(date0, date1) {
+    return(date1.getTime() - date0.getTime()) * DateOperators__DateOperators.millisecondsToHours;
   };
-  DateOperators.getDaysBetweenDates = function(date0, date1) {
-    return(date1.getTime() - date0.getTime()) * DateOperators.millisecondsToDays;
+  DateOperators__DateOperators.getDaysBetweenDates = function(date0, date1) {
+    return(date1.getTime() - date0.getTime()) * DateOperators__DateOperators.millisecondsToDays;
   };
-  DateOperators.getWeeksBetweenDates = function(date0, date1) {
-    return(date1.getTime() - date0.getTime()) * DateOperators.millisecondsToWeeks;
+  DateOperators__DateOperators.getWeeksBetweenDates = function(date0, date1) {
+    return(date1.getTime() - date0.getTime()) * DateOperators__DateOperators.millisecondsToWeeks;
   };
-  DateOperators.getYearsBetweenDates = function(date0, date1) {
-    return(date1.getTime() - date0.getTime()) * DateOperators.millisecondsToYears;
-  };
-
-  DateOperators.nDayInYear = function(date) {
-    return Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 1).getTime()) * DateOperators.millisecondsToDays);
+  DateOperators__DateOperators.getYearsBetweenDates = function(date0, date1) {
+    return(date1.getTime() - date0.getTime()) * DateOperators__DateOperators.millisecondsToYears;
   };
 
-  DateOperators.getDateDaysAgo = function(nDays) {
-    return DateOperators.addDaysToDate(new Date(), -nDays);
+  DateOperators__DateOperators.nDayInYear = function(date) {
+    return Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 1).getTime()) * DateOperators__DateOperators.millisecondsToDays);
+  };
+
+  DateOperators__DateOperators.getDateDaysAgo = function(nDays) {
+    return DateOperators__DateOperators.addDaysToDate(new Date(), -nDays);
   };
 
 
@@ -170,17 +170,17 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number} The week number of the date in its year
    * tags:generate
    */
-  DateOperators.getWeekInYear = function(date) {
+  DateOperators__DateOperators.getWeekInYear = function(date) {
     var onejan = new Date(date.getFullYear(), 0, 1);
     return Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
   };
 
-  DateOperators.getNDaysInMonth = function(month, year) {
+  DateOperators__DateOperators.getNDaysInMonth = function(month, year) {
     return new Date(year, month, 0).getDate();
   };
 
-  List.prototype = new DataModel__default();
-  List.prototype.constructor = List;
+  List__List.prototype = new DataModel__default();
+  List__List.prototype.constructor = List__List;
 
    /**
     * @classdesc List is an Array with a type property.
@@ -190,107 +190,107 @@ define('src/index', ['exports'], function (exports) {
     * @constructor
     * @category basics
     */
-  function List() {
+  function List__List() {
     DataModel__default.apply(this);
     var array = [];
     var i;
     for(i = 0; i < arguments.length; i++) {
       array.push(arguments[i]);
     }
-    array = List.fromArray(array);
+    array = List__List.fromArray(array);
     //
     return array;
   }
+  var List__default = List__List;
 
 
-
-  List.fromArray = function(array) { //TODO: clear some of these method declarations
+  List__List.fromArray = function(array) { //TODO: clear some of these method declarations
       array.type = "List";
       array.name = array.name || "";
 
-      array.setType = List.prototype.setType;
-      array.setArray = List.prototype.setArray;
-      array._constructor = List;
+      array.setType = List__List.prototype.setType;
+      array.setArray = List__List.prototype.setArray;
+      array._constructor = List__List;
 
-      array.getImproved = List.prototype.getImproved;
-      array.sameElements = List.prototype.sameElements;
-      array.getLength = List.prototype.getLength;
-      array.getTypeOfElements = List.prototype.getTypeOfElements; //TODO: redundant?
-      array.getTypes = List.prototype.getTypes;
-      array.getType = List.prototype.getType;
-      array.getLengths = List.prototype.getLengths;
-      array.getWithoutRepetitions = List.prototype.getWithoutRepetitions;
-      array.getElementsRepetitionCount = List.prototype.getElementsRepetitionCount;
-      array.allElementsEqual = List.prototype.allElementsEqual;
-      array.countElement = List.prototype.countElement;
-      array.countOccurrences = List.prototype.countOccurrences;
-      array.getMostRepeatedElement = List.prototype.getMostRepeatedElement;
-      array.getMin = List.prototype.getMin;
-      array.getMax = List.prototype.getMax;
-      array.indexesOf = List.prototype.indexesOf;
-      array.indexOfElements = List.prototype.indexOfElements;
-      array.indexOfByPropertyValue = List.prototype.indexOfByPropertyValue;
-      array.getFirstElementByName = List.prototype.getFirstElementByName;
-      array.getElementsByNames = List.prototype.getElementsByNames;
-      array.getFirstElementByPropertyValue = List.prototype.getFirstElementByPropertyValue;
-      array.add = List.prototype.add;
-      array.multiply = List.prototype.multiply;
-      array.getSubList = List.prototype.getSubList;
-      array.getSubListByIndexes = List.prototype.getSubListByIndexes;
-      array.getSubListByType = List.prototype.getSubListByType;
-      array.getElementNumberOfOccurrences = List.prototype.getElementNumberOfOccurrences;
-      array.getPropertyValues = List.prototype.getPropertyValues;
-      array.getRandomElement = List.prototype.getRandomElement;
-      array.getRandomElements = List.prototype.getRandomElements;
-      array.containsElement = List.prototype.containsElement;
-      array.indexOfElement = List.prototype.indexOfElement;
+      array.getImproved = List__List.prototype.getImproved;
+      array.sameElements = List__List.prototype.sameElements;
+      array.getLength = List__List.prototype.getLength;
+      array.getTypeOfElements = List__List.prototype.getTypeOfElements; //TODO: redundant?
+      array.getTypes = List__List.prototype.getTypes;
+      array.getType = List__List.prototype.getType;
+      array.getLengths = List__List.prototype.getLengths;
+      array.getWithoutRepetitions = List__List.prototype.getWithoutRepetitions;
+      array.getElementsRepetitionCount = List__List.prototype.getElementsRepetitionCount;
+      array.allElementsEqual = List__List.prototype.allElementsEqual;
+      array.countElement = List__List.prototype.countElement;
+      array.countOccurrences = List__List.prototype.countOccurrences;
+      array.getMostRepeatedElement = List__List.prototype.getMostRepeatedElement;
+      array.getMin = List__List.prototype.getMin;
+      array.getMax = List__List.prototype.getMax;
+      array.indexesOf = List__List.prototype.indexesOf;
+      array.indexOfElements = List__List.prototype.indexOfElements;
+      array.indexOfByPropertyValue = List__List.prototype.indexOfByPropertyValue;
+      array.getFirstElementByName = List__List.prototype.getFirstElementByName;
+      array.getElementsByNames = List__List.prototype.getElementsByNames;
+      array.getFirstElementByPropertyValue = List__List.prototype.getFirstElementByPropertyValue;
+      array.add = List__List.prototype.add;
+      array.multiply = List__List.prototype.multiply;
+      array.getSubList = List__List.prototype.getSubList;
+      array.getSubListByIndexes = List__List.prototype.getSubListByIndexes;
+      array.getSubListByType = List__List.prototype.getSubListByType;
+      array.getElementNumberOfOccurrences = List__List.prototype.getElementNumberOfOccurrences;
+      array.getPropertyValues = List__List.prototype.getPropertyValues;
+      array.getRandomElement = List__List.prototype.getRandomElement;
+      array.getRandomElements = List__List.prototype.getRandomElements;
+      array.containsElement = List__List.prototype.containsElement;
+      array.indexOfElement = List__List.prototype.indexOfElement;
       //sorting:
-      array.sortIndexed = List.prototype.sortIndexed;
-      array.sortNumericIndexed = List.prototype.sortNumericIndexed;
-      array.sortNumeric = List.prototype.sortNumeric;
-      array.sortNumericIndexedDescending = List.prototype.sortNumericIndexedDescending;
-      array.sortNumericDescending = List.prototype.sortNumericDescending;
-      array.sortOnIndexes = List.prototype.sortOnIndexes;
-      array.getReversed = List.prototype.getReversed;
-      array.getSortedByProperty = List.prototype.getSortedByProperty;
-      array.getSorted = List.prototype.getSorted;
-      array.getSortedByList = List.prototype.getSortedByList;
-      array.getSortedRandom = List.prototype.getSortedRandom;
+      array.sortIndexed = List__List.prototype.sortIndexed;
+      array.sortNumericIndexed = List__List.prototype.sortNumericIndexed;
+      array.sortNumeric = List__List.prototype.sortNumeric;
+      array.sortNumericIndexedDescending = List__List.prototype.sortNumericIndexedDescending;
+      array.sortNumericDescending = List__List.prototype.sortNumericDescending;
+      array.sortOnIndexes = List__List.prototype.sortOnIndexes;
+      array.getReversed = List__List.prototype.getReversed;
+      array.getSortedByProperty = List__List.prototype.getSortedByProperty;
+      array.getSorted = List__List.prototype.getSorted;
+      array.getSortedByList = List__List.prototype.getSortedByList;
+      array.getSortedRandom = List__List.prototype.getSortedRandom;
       //filter:
-      array.getFilteredByPropertyValue = List.prototype.getFilteredByPropertyValue;
-      array.getFilteredByBooleanList = List.prototype.getFilteredByBooleanList;
+      array.getFilteredByPropertyValue = List__List.prototype.getFilteredByPropertyValue;
+      array.getFilteredByBooleanList = List__List.prototype.getFilteredByBooleanList;
       //conversion
-      array.toNumberList = List.prototype.toNumberList;
-      array.toStringList = List.prototype.toStringList;
+      array.toNumberList = List__List.prototype.toNumberList;
+      array.toStringList = List__List.prototype.toStringList;
       //
-      array.clone = List.prototype.clone;
-      array.toString = List.prototype.toString;
-      array.getNames = List.prototype.getNames;
-      array.applyFunction = List.prototype.applyFunction;
-      array.getWithoutElementAtIndex = List.prototype.getWithoutElementAtIndex;
-      array.getWithoutElement = List.prototype.getWithoutElement;
-      array.getWithoutElements = List.prototype.getWithoutElements;
-      array.getWithoutElementsAtIndexes = List.prototype.getWithoutElementsAtIndexes;
-      array.getFilteredByFunction = List.prototype.getFilteredByFunction;
+      array.clone = List__List.prototype.clone;
+      array.toString = List__List.prototype.toString;
+      array.getNames = List__List.prototype.getNames;
+      array.applyFunction = List__List.prototype.applyFunction;
+      array.getWithoutElementAtIndex = List__List.prototype.getWithoutElementAtIndex;
+      array.getWithoutElement = List__List.prototype.getWithoutElement;
+      array.getWithoutElements = List__List.prototype.getWithoutElements;
+      array.getWithoutElementsAtIndexes = List__List.prototype.getWithoutElementsAtIndexes;
+      array.getFilteredByFunction = List__List.prototype.getFilteredByFunction;
       array._concat = Array.prototype.concat;
-      array.concat = List.prototype.concat;
-      array.getReport = List.prototype.getReport;
+      array.concat = List__List.prototype.concat;
+      array.getReport = List__List.prototype.getReport;
 
       //transformations
-      array.pushIfUnique = List.prototype.pushIfUnique;
-      array.removeElement = List.prototype.removeElement;
-      array.removeElementAtIndex = List.prototype.removeElementAtIndex;
-      array.removeElementsAtIndexes = List.prototype.removeElementsAtIndexes;
-      array.removeElements = List.prototype.removeElements;
-      array.removeRepetitions = List.prototype.removeRepetitions;
-      array.replace = List.prototype.replace;
-      array.assignNames = List.prototype.assignNames;
+      array.pushIfUnique = List__List.prototype.pushIfUnique;
+      array.removeElement = List__List.prototype.removeElement;
+      array.removeElementAtIndex = List__List.prototype.removeElementAtIndex;
+      array.removeElementsAtIndexes = List__List.prototype.removeElementsAtIndexes;
+      array.removeElements = List__List.prototype.removeElements;
+      array.removeRepetitions = List__List.prototype.removeRepetitions;
+      array.replace = List__List.prototype.replace;
+      array.assignNames = List__List.prototype.assignNames;
       array._splice = Array.prototype.splice;
-      array.splice = List.prototype.splice;
+      array.splice = List__List.prototype.splice;
 
       array.isList = true;
 
-      array.destroy = List.prototype.destroy;
+      array.destroy = List__List.prototype.destroy;
 
 
       return array;
@@ -302,7 +302,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:
    */
-  List.prototype.getImproved = function() { //TODO: still doesn't solve tha case of a list with several list of different types
+  List__List.prototype.getImproved = function() { //TODO: still doesn't solve tha case of a list with several list of different types
     if(this.length == 0) return this;
     var typeOfElements = this.getTypeOfElements();
 
@@ -380,7 +380,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Boolean} true if all elements are identical
    * tags:
    */
-  List.prototype.sameElements = function(list) {
+  List__List.prototype.sameElements = function(list) {
     if(this.length != list.length) return false;
 
     var i;
@@ -396,7 +396,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number}
    * tags:
    */
-  List.prototype.getLength = function() {
+  List__List.prototype.getLength = function() {
     return this.length;
   };
 
@@ -405,7 +405,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {StringList}
    * tags:
    */
-  List.prototype.getLengths = function() {
+  List__List.prototype.getLengths = function() {
     //overriden by different extentions of List
 
     return null;
@@ -413,7 +413,7 @@ define('src/index', ['exports'], function (exports) {
 
 
 
-  List.prototype.getTypeOfElements = function() {
+  List__List.prototype.getTypeOfElements = function() {
     var typeOfElements = typeOf(this[0]);
     for(var i = 1; this[i] != null; i++) {
       if(typeOf(this[i]) != typeOfElements) return "";
@@ -426,7 +426,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {StringList}
    * tags:
    */
-  List.prototype.getTypes = function() {
+  List__List.prototype.getTypes = function() {
     var types = new StringList__default();
     for(i = 0; this[i] != null; i++) {
       types[i] = typeOf(this[i]);
@@ -435,7 +435,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  List.prototype.toString = function() {
+  List__List.prototype.toString = function() {
     var i;
     var str = "[";
     for(i = 0; i < this.length - 1; i++) {
@@ -450,7 +450,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {StringList}
    * tags:
    */
-  List.prototype.getNames = function() {
+  List__List.prototype.getNames = function() {
     var stringList = new StringList__default();
     for(i = 0; this[i] != null; i++) {
       stringList[i] = this[i].name;
@@ -463,7 +463,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:sort
    */
-  List.prototype.getReversed = function() {
+  List__List.prototype.getReversed = function() {
     var newList = instantiateWithSameType(this);
     for(var i = 0; this[i] != null; i++) {
       newList.unshift(this[i]);
@@ -479,7 +479,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List.prototype.getSubList = function() {
+  List__List.prototype.getSubList = function() {
     if(arguments[0].isList) {
       return this.getSubListByIndexes(arguments[0]);
     } else if(arguments.length > 2) {
@@ -508,7 +508,7 @@ define('src/index', ['exports'], function (exports) {
     }
 
     if(this.type == 'List' || this.type == 'Table') {
-      newList = new List();
+      newList = new List__List();
     } else {
       newList = instantiate(typeOf(this));
     }
@@ -527,8 +527,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List.prototype.getSubListByType = function(type) {
-    var newList = new List();
+  List__List.prototype.getSubListByType = function(type) {
+    var newList = new List__List();
     var i;
     newList.name = this.name;
     this.forEach(function(element) {
@@ -544,7 +544,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List.prototype.getSubListByIndexes = function() { //TODO: merge with getSubList
+  List__List.prototype.getSubListByIndexes = function() { //TODO: merge with getSubList
     if(this.length < 1) return this;
     var indexes;
     if(typeOf(arguments[0]) == 'number') {
@@ -554,7 +554,7 @@ define('src/index', ['exports'], function (exports) {
     }
     if(indexes == null) return;
     if(this.type == 'List') {
-      var newList = new List();
+      var newList = new List__List();
     } else {
       newList = instantiate(typeOf(this));
     }
@@ -573,7 +573,7 @@ define('src/index', ['exports'], function (exports) {
     return newList;
   };
 
-  List.prototype.getElementNumberOfOccurrences = function(element) {
+  List__List.prototype.getElementNumberOfOccurrences = function(element) {
     var nOccurrences = 0;
     var from = 0;
     var index = this.indexOf(element, from);
@@ -586,7 +586,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  List.prototype.clone = function() { //TODO:check this! fromArray should suffice
+  List__List.prototype.clone = function() { //TODO:check this! fromArray should suffice
     var clonedList = instantiateWithSameType(this);
     var i;
 
@@ -602,7 +602,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List.prototype.getWithoutRepetitions = function() {
+  List__List.prototype.getWithoutRepetitions = function() {
     var i;
     var dictionary;
 
@@ -634,7 +634,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number}
    * tags:countt
    */
-  List.prototype.countElement = function(element) {
+  List__List.prototype.countElement = function(element) {
     n = 0;
     this.forEach(function(elementInList) {
       if(element == elementInList) n++;
@@ -647,7 +647,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {numberList}
    * tags:count
    */
-  List.prototype.countOccurrences = function() { //TODO: more efficient
+  List__List.prototype.countOccurrences = function() { //TODO: more efficient
     var occurrences = new NumberList__default();
     for(var i = 0; this[i] != null; i++) {
       occurrences[i] = this.indexesOf(this[i]).length;
@@ -661,11 +661,11 @@ define('src/index', ['exports'], function (exports) {
    * @return {Table} list (non-repeated elements) and numberList (frequency of each element)
    * tags:count
    */
-  List.prototype.getElementsRepetitionCount = function(sortListsByOccurrences) {
+  List__List.prototype.getElementsRepetitionCount = function(sortListsByOccurrences) {
     sortListsByOccurrences = sortListsByOccurrences == null ? true : sortListsByOccurrences;
 
     var obj;
-    var elementList = new List();
+    var elementList = new List__List();
     var numberList = new NumberList__default();
     var nElements = this.length;
     var index;
@@ -696,7 +696,7 @@ define('src/index', ['exports'], function (exports) {
     return table;
   };
 
-  List.prototype.allElementsEqual = function() {
+  List__List.prototype.allElementsEqual = function() {
     var i;
     if(this.length < 2) return true;
 
@@ -710,7 +710,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  List.prototype.getMostRepeatedElement = function() { //TODO: this method should be more efficient
+  List__List.prototype.getMostRepeatedElement = function() { //TODO: this method should be more efficient
     return ListOperators.countElementsRepetitionOnList(this, true)[0][0];
   };
 
@@ -719,7 +719,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number}
    * tags:
    */
-  List.prototype.getMin = function() {
+  List__List.prototype.getMin = function() {
     if(this.length == 0) return null;
     var min = this[0];
     var i;
@@ -734,7 +734,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number}
    * tags:
    */
-  List.prototype.getMax = function() {
+  List__List.prototype.getMax = function() {
     if(this.length == 0) return null;
     var max = this[0];
     var i;
@@ -744,7 +744,7 @@ define('src/index', ['exports'], function (exports) {
     return max;
   };
 
-  List.prototype.add = function(value) {
+  List__List.prototype.add = function(value) {
     if(value.constructor == Number) {
       var i;
       var array = instantiateWithSameType(this);
@@ -760,7 +760,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Object}
    * tags:
    */
-  List.prototype.getRandomElement = function() {
+  List__List.prototype.getRandomElement = function() {
     return this[Math.floor(this.length * Math.random())];
   };
 
@@ -771,7 +771,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List.prototype.getRandomElements = function(n, avoidRepetitions) {
+  List__List.prototype.getRandomElements = function(n, avoidRepetitions) {
     avoidRepetitions = avoidRepetitions == null ? true : avoidRepetitions;
     n = Math.min(n, this.length);
     var newList = instantiateWithSameType(this);
@@ -785,7 +785,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  List.prototype.containsElement = function(element) { //TODO: test if this is faster than indexOf
+  List__List.prototype.containsElement = function(element) { //TODO: test if this is faster than indexOf
     var i;
     for(i = 0; this[i] != null; i++) {
       if(this[i] == element) return true;
@@ -793,7 +793,7 @@ define('src/index', ['exports'], function (exports) {
     return false;
   };
 
-  List.prototype.indexOfElement = function(element) { //TODO: test if this is faster than indexOf
+  List__List.prototype.indexOfElement = function(element) { //TODO: test if this is faster than indexOf
     var i;
     for(i = 0; this[i] != null; i++) {
       if(this[i] == element) return i;
@@ -811,8 +811,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:
    */
-  List.prototype.getPropertyValues = function(propertyName, valueIfNull) {
-    var newList = new List();
+  List__List.prototype.getPropertyValues = function(propertyName, valueIfNull) {
+    var newList = new List__List();
     newList.name = propertyName;
     var val;
     for(var i = 0; this[i] != null; i++) {
@@ -822,7 +822,7 @@ define('src/index', ['exports'], function (exports) {
     return newList.getImproved();
   };
 
-  List.prototype.sortIndexed = function() {
+  List__List.prototype.sortIndexed = function() {
     var index = [];
     var i;
     for(i = 0; i < this.length; i++) {
@@ -879,7 +879,7 @@ define('src/index', ['exports'], function (exports) {
   //  return this.sort(comparator);
   // }
 
-  List.prototype.sortOnIndexes = function(indexes) {
+  List__List.prototype.sortOnIndexes = function(indexes) {
     var result = instantiateWithSameType(this);
     result.name = this.name;
     var i;
@@ -889,7 +889,7 @@ define('src/index', ['exports'], function (exports) {
     return result;
   };
 
-  List.prototype.getSortedByProperty = function(propertyName, ascending) {
+  List__List.prototype.getSortedByProperty = function(propertyName, ascending) {
     ascending = ascending == null ? true : ascending;
 
     var comparator;
@@ -912,7 +912,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:sort
    */
-  List.prototype.getSorted = function(ascending) {
+  List__List.prototype.getSorted = function(ascending) {
     ascending = ascending == null ? true : ascending;
 
     var comparator;
@@ -936,7 +936,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List} sorted list (of the same type)
    * tags:sort
    */
-  List.prototype.getSortedByList = function(list, ascending) {
+  List__List.prototype.getSortedByList = function(list, ascending) {
     ascending = ascending == null ? true : ascending;
 
     var pairsArray = [];
@@ -975,7 +975,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:sort
    */
-  List.prototype.getSortedRandom = function() {
+  List__List.prototype.getSortedRandom = function() {
     var newList = this.clone();
     newList.name = this.name;
     newList.sort(function(a, b) {
@@ -990,7 +990,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {NumberList}
    * tags:
    */
-  List.prototype.indexesOf = function(element) {
+  List__List.prototype.indexesOf = function(element) {
     var index = this.indexOf(element);
     var numberList = new NumberList__default();
     while(index != -1) {
@@ -1006,7 +1006,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {NumberList}
    * tags:
    */
-  List.prototype.indexOfElements = function(elements) {
+  List__List.prototype.indexOfElements = function(elements) {
     var numberList = new NumberList__default();
     for(var i = 0; elements[i] != null; i++) {
       numberList[i] = this.indexOf(elements[i]);
@@ -1021,7 +1021,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags: filter
    */
-  List.prototype.getFirstElementByName = function(name, returnIndex) {
+  List__List.prototype.getFirstElementByName = function(name, returnIndex) {
     for(var i = 0; this[i] != null; i++) {
       if(this[i].name == name) return returnIndex ? i : this[i];
     }
@@ -1035,8 +1035,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List.prototype.getElementsByNames = function(names, returnIndex) {
-    var list = returnIndex ? new NumberList__default() : new List();
+  List__List.prototype.getElementsByNames = function(names, returnIndex) {
+    var list = returnIndex ? new NumberList__default() : new List__List();
     var i;
 
     names.forEach(function(name) {
@@ -1060,14 +1060,14 @@ define('src/index', ['exports'], function (exports) {
    * @return {Object}
    * tags:
    */
-  List.prototype.getFirstElementByPropertyValue = function(propertyName, value) {
+  List__List.prototype.getFirstElementByPropertyValue = function(propertyName, value) {
     for(var i = 0; this[i] != null; i++) {
       if(this[i][propertyName] == value) return this[i];
     }
     return null;
   };
 
-  List.prototype.indexOfByPropertyValue = function(propertyName, value) {
+  List__List.prototype.indexOfByPropertyValue = function(propertyName, value) {
     for(var i = 0; this[i] != null; i++) {
       if(this[i][propertyName] == value) return i;
     }
@@ -1082,8 +1082,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List.prototype.getFilteredByBooleanList = function(booleanList) {
-    var newList = new List();
+  List__List.prototype.getFilteredByBooleanList = function(booleanList) {
+    var newList = new List__List();
     newList.name = this.name;
     var i;
     for(i = 0; this[i] != null; i++) {
@@ -1099,10 +1099,10 @@ define('src/index', ['exports'], function (exports) {
    * @return {List} filtered list
    * tags:filter
    */
-  List.prototype.getFilteredByValue = function(value, comparison) {
+  List__List.prototype.getFilteredByValue = function(value, comparison) {
     comparison = comparison == null ? "equal" : comparison;
 
-    var newList = new List();
+    var newList = new List__List();
     newList.name = "filtered_" + this.name;
     var i;
     switch(comparison) {
@@ -1139,10 +1139,10 @@ define('src/index', ['exports'], function (exports) {
    * @return {List} filtered list
    * tags:filter
    */
-  List.prototype.getFilteredByPropertyValue = function(propertyName, propertyValue, comparison) {
+  List__List.prototype.getFilteredByPropertyValue = function(propertyName, propertyValue, comparison) {
     comparison = comparison == null ? "equal" : comparison;
 
-    var newList = new List();
+    var newList = new List__List();
     newList.name = "filtered_" + this.name;
     var i;
     switch(comparison) {
@@ -1176,7 +1176,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {NumberList}
    * tags:conversion
    */
-  List.prototype.toNumberList = function() {
+  List__List.prototype.toNumberList = function() {
     var numberList = new NumberList__default();
     numberList.name = this.name;
     var i;
@@ -1191,7 +1191,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {StringList}
    * tags:conversion
    */
-  List.prototype.toStringList = function() {
+  List__List.prototype.toStringList = function() {
     var i;
     var stringList = new StringList__default();
     stringList.name = this.name;
@@ -1205,8 +1205,8 @@ define('src/index', ['exports'], function (exports) {
     return stringList;
   };
 
-  List.prototype.applyFunction = function(func) { //TODO: to be tested!
-    var newList = new List();
+  List__List.prototype.applyFunction = function(func) { //TODO: to be tested!
+    var newList = new List__List();
     newList.name = this.name;
     var i;
     for(i = 0; this[i] != null; i++) {
@@ -1218,10 +1218,10 @@ define('src/index', ['exports'], function (exports) {
 
   //filtering
 
-  List.prototype.getWithoutElementsAtIndexes = function(indexes) { //[!] This DOESN'T transforms the List
+  List__List.prototype.getWithoutElementsAtIndexes = function(indexes) { //[!] This DOESN'T transforms the List
     var i;
     if(this.type == 'List') {
-      var newList = new List();
+      var newList = new List__List();
     } else {
       newList = instantiate(typeOf(this));
     }
@@ -1240,9 +1240,9 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List.prototype.getWithoutElementAtIndex = function(index) {
+  List__List.prototype.getWithoutElementAtIndex = function(index) {
     if(this.type == 'List') {
-      var newList = new List();
+      var newList = new List__List();
     } else {
       var newList = instantiateWithSameType(this);
     }
@@ -1256,12 +1256,12 @@ define('src/index', ['exports'], function (exports) {
     return newList;
   };
 
-  List.prototype.getWithoutElement = function(element) {
+  List__List.prototype.getWithoutElement = function(element) {
     var index = this.indexOf(element);
     if(index == -1) return this;
 
     if(this.type == 'List') {
-      var newList = new List();
+      var newList = new List__List();
     } else {
       var newList = instantiateWithSameType(this);
     }
@@ -1277,9 +1277,9 @@ define('src/index', ['exports'], function (exports) {
     return newList;
   };
 
-  List.prototype.getWithoutElements = function(list) {
+  List__List.prototype.getWithoutElements = function(list) {
     if(this.type == 'List') {
-      var newList = new List();
+      var newList = new List__List();
     } else {
       var newList = instantiateWithSameType(this);
     }
@@ -1294,7 +1294,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  List.prototype.getFilteredByFunction = function(func) {
+  List__List.prototype.getFilteredByFunction = function(func) {
     var newList = instantiateWithSameType(this);
     for(var i = 0; this[i] != null; i++) {
       if(func(this[i])) {
@@ -1306,7 +1306,7 @@ define('src/index', ['exports'], function (exports) {
     return newList;
   };
 
-  List.prototype.concat = function() {
+  List__List.prototype.concat = function() {
     if(arguments[0] == null) return this;
 
     //c.l('concat | arguments[0].type, this.type', arguments[0].type, this.type);
@@ -1326,12 +1326,12 @@ define('src/index', ['exports'], function (exports) {
         return NumberTable.fromArray(this._concat.apply(this, arguments), false);
       }
     }
-    return List.fromArray(this._concat.apply(this, arguments)).getImproved();
+    return List__List.fromArray(this._concat.apply(this, arguments)).getImproved();
   };
 
 
 
-  List.prototype.getReport = function(level) { //TODO:complete
+  List__List.prototype.getReport = function(level) { //TODO:complete
     var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
     var text = level > 0 ? (ident + "////report of instance of List////") : "///////////report of instance of List//////////";
 
@@ -1396,12 +1396,12 @@ define('src/index', ['exports'], function (exports) {
 
   ////transformations
 
-  List.prototype.pushIfUnique = function(element) {
+  List__List.prototype.pushIfUnique = function(element) {
     if(this.indexOf(element) != -1) return; //TODO: implement equivalence
     this.push(element);
   };
 
-  List.prototype.removeElements = function(elements) { //TODO: make it more efficient (avoiding the splice method)
+  List__List.prototype.removeElements = function(elements) { //TODO: make it more efficient (avoiding the splice method)
     for(var i = 0; i < this.length; i++) {
       if(elements.indexOf(this[i]) > -1) {
         this.splice(i, 1);
@@ -1410,16 +1410,16 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
-  List.prototype.removeElement = function(element) {
+  List__List.prototype.removeElement = function(element) {
     var index = this.indexOf(element);
     if(index != -1) this.splice(index, 1);
   };
 
-  List.prototype.removeElementAtIndex = function(index) { //deprecated
+  List__List.prototype.removeElementAtIndex = function(index) { //deprecated
     this.splice(index, 1);
   };
 
-  List.prototype.removeElementsAtIndexes = function(indexes) {
+  List__List.prototype.removeElementsAtIndexes = function(indexes) {
     indexes = indexes.sort(function(a, b) {
       return a - b;
     });
@@ -1429,7 +1429,7 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
-  List.prototype.removeRepetitions = function() {
+  List__List.prototype.removeRepetitions = function() {
     for(var i = 0; this[i] != null; i++) {
       if(this.indexOf(this[i], i + 1) != -1) {
         this.splice(i, 1);
@@ -1437,7 +1437,7 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
-  List.prototype.replace = function(elementToFind, elementToInsert) {
+  List__List.prototype.replace = function(elementToFind, elementToInsert) {
     var l = this.length;
     for(var i = 0; i < l; i++) {
       if(this[i] == elementToFind) this[i] = elementToInsert;
@@ -1450,7 +1450,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:transform
    */
-  List.prototype.assignNames = function(names) {
+  List__List.prototype.assignNames = function(names) {
     if(names == null) return this;
     var n = names.length;
 
@@ -1461,7 +1461,7 @@ define('src/index', ['exports'], function (exports) {
     return this;
   };
 
-  List.prototype.splice = function() { //TODO: replace
+  List__List.prototype.splice = function() { //TODO: replace
     switch(this.type) {
       case 'NumberList':
         return NumberList__default.fromArray(this._splice.apply(this, arguments));
@@ -1476,18 +1476,18 @@ define('src/index', ['exports'], function (exports) {
         return DateList.fromArray(this._splice.apply(this, arguments));
         break;
     }
-    return List.fromArray(this._splice.apply(this, arguments)).getImproved();
+    return List__List.fromArray(this._splice.apply(this, arguments)).getImproved();
   };
 
-  List.prototype.destroy = function() {
+  List__List.prototype.destroy = function() {
     for(var i = 0; this[i] != null; i++) {
       delete this[i];
     }
   };
 
-  exports.List = List;
+  exports.List = List__default;
 
-  DateList.prototype = new List();
+  DateList.prototype = new List__default();
   DateList.prototype.constructor = DateList;
 
   /**
@@ -1502,7 +1502,7 @@ define('src/index', ['exports'], function (exports) {
     for(var i = 0; i < arguments.length; i++) {
       args[i] = Number(arguments[i]);
     }
-    var array = List.apply(this, args);
+    var array = List__default.apply(this, args);
     array = DateList.fromArray(array);
     //
     return array;
@@ -1512,7 +1512,7 @@ define('src/index', ['exports'], function (exports) {
 
   DateList.fromArray = function(array, forceToDate) {
     forceToDate = forceToDate == null ? true : forceToDate;
-    var result = List.fromArray(array);
+    var result = List__default.fromArray(array);
 
     if(forceToDate) {
       for(var i = 0; i < result.length; i++) {
@@ -1547,7 +1547,7 @@ define('src/index', ['exports'], function (exports) {
   DateList.prototype.toStringList = function() {
     var stringList = new StringList__default();
     for(var i = 0; this[i] != null; i++) {
-      stringList[i] = DateOperators.dateToString(this[i]);
+      stringList[i] = DateOperators__default.dateToString(this[i]);
     }
     return stringList;
   };
@@ -1572,7 +1572,7 @@ define('src/index', ['exports'], function (exports) {
     return max;
   };
 
-  StringList__StringList.prototype = new List();
+  StringList__StringList.prototype = new List__default();
   StringList__StringList.prototype.constructor = StringList__StringList;
 
   /**
@@ -1588,7 +1588,7 @@ define('src/index', ['exports'], function (exports) {
     for(var i = 0; i < arguments.length; i++) {
       arguments[i] = String(arguments[i]);
     }
-    var array = List.apply(this, arguments);
+    var array = List__default.apply(this, arguments);
     array = StringList__StringList.fromArray(array);
     //
     return array;
@@ -1598,7 +1598,7 @@ define('src/index', ['exports'], function (exports) {
   StringList__StringList.fromArray = function(array, forceToString) {
     forceToString = forceToString == null ? true : forceToString;
 
-    var result = List.fromArray(array);
+    var result = List__default.fromArray(array);
     if(forceToString) {
       for(var i = 0; i < result.length; i++) {
         result[i] = String(result[i]);
@@ -1759,7 +1759,7 @@ define('src/index', ['exports'], function (exports) {
     var dateList = new DateList();
     var i;
     for(i = 0; this[i] != null; i++) {
-      dateList.push(DateOperators.stringToDate(this[i], formatCase, separator));
+      dateList.push(DateOperators__default.stringToDate(this[i], formatCase, separator));
     }
     return dateList;
   };
@@ -2708,7 +2708,7 @@ define('src/index', ['exports'], function (exports) {
     return "Interval[x:" + this.x + "| y:" + this.y + "| amplitude:" + this.getAmplitude() + "]";
   };
 
-  NumberList__NumberList.prototype = new List();
+  NumberList__NumberList.prototype = new List__default();
   NumberList__NumberList.prototype.constructor = NumberList__NumberList;
 
   /**
@@ -2724,7 +2724,7 @@ define('src/index', ['exports'], function (exports) {
     for(var i = 0; i < arguments.length; i++) {
       arguments[i] = Number(arguments[i]);
     }
-    var array = List.apply(this, arguments);
+    var array = List__default.apply(this, arguments);
     array = NumberList__NumberList.fromArray(array);
     //
     return array;
@@ -2734,7 +2734,7 @@ define('src/index', ['exports'], function (exports) {
   NumberList__NumberList.fromArray = function(array, forceToNumber) {
     forceToNumber = forceToNumber == null ? true : forceToNumber;
 
-    var result = List.fromArray(array);
+    var result = List__default.fromArray(array);
 
     if(forceToNumber) {
       for(var i = 0; i < result.length; i++) {
@@ -3277,7 +3277,7 @@ define('src/index', ['exports'], function (exports) {
     return NumberList__NumberList.fromArray(this._slice.apply(this, arguments), false);
   };
 
-  NodeList.prototype = new List();
+  NodeList.prototype = new List__default();
   NodeList.prototype.constructor = NodeList;
 
   /**
@@ -3318,7 +3318,7 @@ define('src/index', ['exports'], function (exports) {
   NodeList.fromArray = function(array, forceToNode) {
     forceToNode = forceToNode == null ? false : forceToNode;
 
-    var result = List.fromArray(array);
+    var result = List__default.fromArray(array);
 
     if(forceToNode) {
       for(var i = 0; i < result.length; i++) {
@@ -3327,7 +3327,7 @@ define('src/index', ['exports'], function (exports) {
     }
 
     // TODO: Remove duplicate line?
-    var result = List.fromArray(array);
+    var result = List__default.fromArray(array);
     result.type = "NodeList";
     result.ids = {};
     // TODO: Fix
@@ -3780,7 +3780,7 @@ define('src/index', ['exports'], function (exports) {
     return null;
   };
 
-  Polygon__Polygon.prototype = new List();
+  Polygon__Polygon.prototype = new List__default();
   Polygon__Polygon.prototype.constructor = Polygon__Polygon;
 
   /**
@@ -3791,14 +3791,14 @@ define('src/index', ['exports'], function (exports) {
    * @category geometry
    */
   function Polygon__Polygon() {
-    var array = List.apply(this, arguments);
+    var array = List__default.apply(this, arguments);
     array = Polygon__Polygon.fromArray(array);
     return array;
   }
   var Polygon__default = Polygon__Polygon;
 
   Polygon__Polygon.fromArray = function(array) {
-    var result = List.fromArray(array);
+    var result = List__default.fromArray(array);
     result.type = "Polygon";
 
     result.getFrame = Polygon__Polygon.prototype.getFrame;
@@ -3967,7 +3967,432 @@ define('src/index', ['exports'], function (exports) {
     return newPolygon;
   };
 
-  Table__Table.prototype = new List();
+  function TableEncodings() {}
+
+
+
+  TableEncodings.ENTER = String.fromCharCode(13);
+  TableEncodings.ENTER2 = String.fromCharCode(10);
+  TableEncodings.ENTER3 = String.fromCharCode(8232);
+
+  TableEncodings.SPACE = String.fromCharCode(32);
+  TableEncodings.SPACE2 = String.fromCharCode(160);
+
+  TableEncodings.TAB = "	";
+  TableEncodings.TAB2 = String.fromCharCode(9);
+
+
+  /**
+   * Decode a String in format CSV into a Table
+   * @param {String} csv CSV formatted text
+   *
+   * @param {Boolean} first_row_header first row is header (default: false)
+   * @param {String} separator separator character (default: ",")
+   * @param {Object} value_for_nulls Object to be placed instead of null values
+   * @return {Table} resulting Table
+   * tags:decoder
+   */
+  TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, valueForNulls) {
+    valueForNulls = valueForNulls == null ? '' : valueForNulls;
+    var i;
+    var _firstRowIsHeader = firstRowIsHeader == null ? false : firstRowIsHeader;
+
+    if(csvString == null) return null;
+    if(csvString == "") return new Table();
+
+    csvString = csvString.replace(/\$/g, "");
+
+    var blocks = csvString.split("\"");
+    for(i = 1; blocks[i] != null; i += 2) {
+      blocks[i] = blocks[i].replace(/\n/g, "*ENTER*");
+    }
+    csvString = blocks.join("\""); //TODO: create a general method for replacements inside "", apply it to chomas
+
+    var enterChar = TableEncodings.ENTER2;
+    var lines = csvString.split(enterChar);
+    if(lines.length == 1) {
+      enterChar = TableEncodings.ENTER;
+      lines = csvString.split(enterChar);
+      if(lines.length == 1) {
+        enterChar = TableEncodings.ENTER3;
+        lines = csvString.split(enterChar);
+      }
+    }
+
+    var table = new Table();
+    var comaCharacter = separator != undefined ? separator : ",";
+
+    if(csvString == null || csvString == "" || csvString == " " || lines.length == 0) return null;
+
+    var startIndex = 0;
+    if(_firstRowIsHeader) {
+      startIndex = 1;
+      var headerContent = lines[0].split(comaCharacter);
+    }
+
+    var element;
+    var cellContent;
+    var numberCandidate;
+    for(i = startIndex; i < lines.length; i++) {
+      if(lines[i].length < 2) continue;
+
+      var cellContents = NetworkEncodings.replaceChomasInLine(lines[i]).split(comaCharacter); //TODO: will be obsolete (see previous TODO)
+
+      for(j = 0; j < cellContents.length; j++) {
+        table[j] = table[j] == null ? new List() : table[j];
+        if(_firstRowIsHeader && i == 1) {
+          table[j].name = headerContent[j] == null ? "" : TableEncodings._removeQuotes(headerContent[j]);
+        }
+        var actualIndex = _firstRowIsHeader ? (i - 1) : i;
+
+        cellContent = cellContents[j].replace(/\*CHOMA\*/g, ",").replace(/\*ENTER\*/g, "\n");
+
+        cellContent = cellContent == '' ? valueForNulls : cellContent;
+
+        numberCandidate = Number(cellContent.replace(',', '.'));
+
+        element = (numberCandidate || (numberCandidate == 0 && cellContent != '')) ? numberCandidate : cellContent;
+
+        if(typeof element == 'string') element = TableEncodings._removeQuotes(element);
+
+        table[j][actualIndex] = element;
+      }
+    }
+
+    for(i = 0; table[i] != null; i++) {
+      table[i] = table[i].getImproved();
+    }
+
+    table = table.getImproved();
+
+    return table;
+  };
+
+  TableEncodings._removeQuotes = function(string) {
+    if(string.length == 0) return string;
+    if((string.charAt(0) == "\"" || string.charAt(0) == "'") && (string.charAt(string.length - 1) == "\"" || string.charAt(string.length - 1) == "'")) string = string.substr(1, string.length - 2);
+    return string;
+  };
+
+
+  /**
+   * Encode a Table into a String in format CSV
+   * @param {Table} Table to be enconded
+   *
+   * @param {String} separator character (default: ",")
+   * @param {Boolean} first row as List names (default: false)
+   * @return {String} resulting String in CSV format
+   * tags:encoder
+   */
+  TableEncodings.TableToCSV = function(table, separator, namesAsHeaders) {
+    separator = separator || ",";
+    var i;
+    var j;
+    var list;
+    var type;
+    var lines = ListGenerators.createListWithSameElement(table[0].length, "");
+    var addSeparator;
+    for(i = 0; table[i] != null; i++) {
+      list = table[i];
+      type = list.type;
+      addSeparator = i != table.length - 1;
+      for(j = 0; list[j] != null; j++) {
+        switch(type) {
+          case 'NumberList':
+            lines[j] += list[j];
+            break;
+          default:
+            lines[j] += "\"" + list[j] + "\"";
+            break;
+        }
+        if(addSeparator) lines[j] += separator;
+      }
+    }
+
+    var headers = '';
+    if(namesAsHeaders) {
+      for(i = 0; table[i] != null; i++) {
+        list = table[i];
+        headers += "\"" + list.name + "\"";
+        if(i != table.length - 1) headers += separator;
+      }
+      headers += '\n';
+    }
+
+    return headers + lines.getConcatenated("\n");
+  };
+
+  /*
+   * All these function are globally available since they are included in the Global class
+   */
+
+
+
+
+  var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"}
+
+
+
+  /*
+   * types are:
+   * number, string, boolean, date
+   * and all data models classes names
+   */
+  function ClassUtils__typeOf(o) {
+    var type = typeof o;
+
+    if(type !== 'object') {
+      return type;
+    }
+
+    if(o === null) {
+      return 'null';
+    } else if(o.getDate != null) {
+      return 'date';
+    } else {
+      if(o.getType == null) return 'Object';
+      var objectType = o.getType();
+      return objectType;
+    }
+    c.log("[!] ERROR: could not detect type for ", o);
+  }
+
+  function VOID() {}
+
+  function ClassUtils__instantiate(className, args) {
+    switch(className) {
+      case 'number':
+      case 'string':
+        return window[className](args);
+      case 'date':
+        if(!args || args.length == 0) return new Date();
+        if(args.length == 1) {
+          if(args[0].match(/\d*.-\d*.-\d*\D\d*.:\d*.:\d*/)) {
+            var dateArray = args[0].split(" ");
+            dateArray[0] = dateArray[0].split("-");
+            if(dateArray[1]) dateArray[1] = dateArray[1].split(":");
+            else dateArray[1] = new Array(0, 0, 0);
+            return new Date(Date.UTC(dateArray[0][0], Number(dateArray[0][1]) - 1, dateArray[0][2], dateArray[1][0], dateArray[1][1], dateArray[1][2]));
+          }
+          //
+          if(Number(args[0]) != "NaN") return new Date(Number(args[0]));
+          else return new Date(args[0]);
+        }
+        return new Date(Date.UTC.apply(null, args));
+        //
+      case 'boolean':
+        return window[className]((args == "false" || args == "0") ? false : true);
+      case 'List':
+      case 'Table':
+      case 'StringList':
+      case 'NumberList':
+      case 'NumberTable':
+      case 'NodeList':
+      case 'RelationList':
+      case 'Polygon':
+      case 'Polygon3D':
+      case 'PolygonList':
+      case 'DateList':
+      case 'ColorList':
+        return window[className].apply(window, args);
+      case null:
+      case undefined:
+      case 'undefined':
+        return null;
+    }
+    //generic instantiation of object:
+    var o, dummyFunction, cl;
+    cl = window[className]; // get reference to class constructor function
+    dummyFunction = function() {}; // dummy function
+    dummyFunction.prototype = cl.prototype; // reference same prototype
+    o = new dummyFunction(); // instantiate dummy function to copy prototype properties
+    cl.apply(o, args); // call class constructor, supplying new object as context
+
+    return o;
+  }
+
+  function getTextFromObject(value, type) {
+    if(value == null) return "Null";
+    if(value.isList) {
+      if(value.length == 0) return "[]";
+      var text = value.toString(); // value.length>6?value.slice(0, 5).forEach(function(v){return getTextFromObject(v, typeOf(v))}).join(','):value.toStringList().join(',').forEach(function(v, typeOf(v)){return getTextFromObject(v, type)});
+      if(text.length > 160) {
+        var i;
+        var subtext;
+        text = "[";
+        for(i = 0; (value[i] != null && i < 6); i++) {
+          subtext = getTextFromObject(value[i], ClassUtils__typeOf(value[i]));
+          if(subtext.length > 40) subtext = subtext.substr(0, 40) + (value[i].isList ? "…]" : "…");
+          text += (i != 0 ? ", " : "") + subtext;
+        }
+        if(value.length > 6) text += ",…";
+        text += "]";
+      }
+      return text;
+    }
+
+    switch(type) {
+      case "date":
+        return DateOperators.dateToString(value);
+      case "DateInterval":
+        return DateOperators.dateToString(value.date0) + " - " + DateOperators.dateToString(value.date1);
+      case "string":
+        return((value.length > 160) ? value.substr(0, 159) + "…" : value).replace(/\n/g, "↩");
+      case "number":
+        return String(value);
+      default:
+        return "{}"; //value.toString();
+    }
+  }
+
+
+  function ClassUtils__instantiateWithSameType(object, args) {
+    return ClassUtils__instantiate(ClassUtils__typeOf(object), args);
+  }
+
+  function isArray(obj) {
+    if(obj.constructor.toString().indexOf("Array") == -1)
+      return false;
+    else
+      return true;
+  }
+  Date.prototype.getType = function() {
+    return 'date';
+  };
+
+
+
+  function evalJavaScriptFunction(functionText, args, scope){
+  	if(functionText==null) return;
+
+  	var res;
+
+  	var myFunction;
+
+  	var good = true;
+  	var message = '';
+
+  	var realCode;
+
+  	var lines = functionText.split('\n');
+
+  	for(var i=0; lines[i]!=null; i++){
+  		lines[i] = lines[i].trim();
+  		if(lines[i] === "" || lines[i].substr(1)=="/"){
+  			lines.splice(i,1);
+  			i--;
+  		}
+  	}
+
+  	var isFunction = lines[0].indexOf('function')!=-1;
+
+  	functionText = lines.join('\n');
+
+  	if(isFunction){
+  		if(scope){
+  			realCode = "scope.myFunction = " + functionText;
+  		} else {
+  			realCode = "myFunction = " + functionText;
+  		}
+  	} else {
+  		if(scope){
+  			realCode = "scope.myVar = " + functionText;
+  		} else {
+  			realCode = "myVar = " + functionText;
+  		}
+  	}
+
+  	try{
+  		if(isFunction){
+  			eval(realCode);
+  			if(scope){
+  				res = scope.myFunction.apply(scope, args);
+  			} else {
+  				res = myFunction.apply(this, args);
+  			}
+  		} else {
+  			eval(realCode);
+  			if(scope){
+  				res = scope.myVar;
+  			} else 	{
+  				res = myVar;
+  			}
+  		}
+  	} catch(err){
+  		good = false;
+  		message = err.message;
+  		res = null;
+  	}
+
+
+    // var isFunction = functionText.split('\n')[0].indexOf('function') != -1;
+
+    // if(isFunction) {
+    //   realCode = "myFunction = " + functionText;
+    // } else {
+    //   realCode = "myVar = " + functionText;
+    // }
+
+
+    // try {
+    //   if(isFunction) {
+    //     eval(realCode);
+    //     res = myFunction.apply(this, args);
+    //   } else {
+    //     eval(realCode);
+    //     res = myVar;
+    //   }
+    // } catch(err) {
+    //   good = false;
+    //   message = err.message;
+    //   res = null;
+    // }
+
+    //c.l('resultObject', resultObject);
+
+    var resultObject = {
+      result: res,
+      success: good,
+      errorMessage: message
+    };
+
+    return resultObject;
+  }
+
+  function argumentsToArray(args) {
+    return Array.prototype.slice.call(args, 0);
+  }
+
+
+
+
+
+
+
+  function TimeLogger(name) {
+    var scope = this;
+    this.name = name;
+    this.clocks = {};
+
+    this.tic = function(clockName) {
+      scope.clocks[clockName] = new Date().getTime();
+      //c.l( "TimeLogger '"+clockName+"' has been started");
+    };
+    this.tac = function(clockName) {
+      if(scope.clocks[clockName] == null) {
+        scope.tic(clockName);
+      } else {
+        var now = new Date().getTime();
+        var diff = now - scope.clocks[clockName];
+        c.l("TimeLogger '" + clockName + "' took " + diff + " ms");
+      }
+    };
+  }
+  var tl = new TimeLogger("Global Time Logger");
+
+  /* global console */
+
+  Table__Table.prototype = new List__default();
   Table__Table.prototype.constructor = Table__Table;
 
   /**
@@ -3981,10 +4406,10 @@ define('src/index', ['exports'], function (exports) {
     var args = [];
     var i;
     for(i = 0; i < arguments.length; i++) {
-      args[i] = new List(arguments[i]);
+      args[i] = new List__default(arguments[i]);
     }
 
-    var array = List.apply(this, args);
+    var array = List__default.apply(this, args);
     array = Table__Table.fromArray(array);
 
     return array;
@@ -3992,7 +4417,7 @@ define('src/index', ['exports'], function (exports) {
   var Table__default = Table__Table;
 
   Table__Table.fromArray = function(array) {
-    var result = List.fromArray(array);
+    var result = List__default.fromArray(array);
     result.type = "Table";
     //assign methods to array:
     result.applyFunction = Table__Table.prototype.applyFunction;
@@ -4041,7 +4466,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:filter
    */
   Table__Table.prototype.getRow = function(index) {
-    var list = new List();
+    var list = new List__default();
     var i;
     for(i = 0; i < this.length; i++) {
       list[i] = this[i][index];
@@ -4112,8 +4537,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   //deprecated
-  // TODO, this should be fixed or remobed, as indexes is not defined.
-  Table__Table.prototype.getRows = function(rowsIndexes) {
+  Table__Table.prototype.getRows = function(indexes) {
     return Table__Table.prototype.getSubListsByIndexes(indexes);
   };
 
@@ -4121,7 +4545,7 @@ define('src/index', ['exports'], function (exports) {
     var newTable = new Table__Table();
     newTable.name = this.name;
     for(var i = 0; this[i] != null; i++) {
-      newTable[i] = List.fromArray(this[i].slice(0, rowIndex).concat(this[i].slice(rowIndex + 1))).getImproved();
+      newTable[i] = List__default.fromArray(this[i].slice(0, rowIndex).concat(this[i].slice(rowIndex + 1))).getImproved();
       newTable[i].name = this[i].name;
     }
     return newTable.getImproved();
@@ -4131,8 +4555,8 @@ define('src/index', ['exports'], function (exports) {
     var newTable = new Table__Table();
     newTable.name = this.name;
     for(var i = 0; this[i] != null; i++) {
-      newTable[i] = new List();
-      for(j = 0; this[i][j] != null; j++) {
+      newTable[i] = new List__default();
+      for(var j = 0; this[i][j] != null; j++) {
         if(rowsIndexes.indexOf(j) == -1) newTable[i].push(this[i][j]);
       }
       newTable[i].name = this[i].name;
@@ -4151,7 +4575,7 @@ define('src/index', ['exports'], function (exports) {
    */
   Table__Table.prototype.getListsSortedByList = function(listOrIndex, ascending) { //depracated: use sortListsByList
     if(listOrIndex == null) return;
-    var newTable = instantiateWithSameType(this);
+    var newTable = ClassUtils__instantiateWithSameType(this);
     var sortinglist = listOrIndex.isList ? listOrIndex.clone() : this[listOrIndex];
 
     this.forEach(function(list) {
@@ -4166,8 +4590,8 @@ define('src/index', ['exports'], function (exports) {
 
     var tableToTranspose = firstListAsHeaders ? this.getSubList(1) : this;
 
-    var table = instantiate(typeOf(tableToTranspose));
-    if(tableToTranspose.length == 0) return table;
+    var table = ClassUtils__instantiate(ClassUtils__typeOf(tableToTranspose));
+    if(tableToTranspose.length === 0) return table;
     var i;
     var j;
     var list;
@@ -4175,7 +4599,7 @@ define('src/index', ['exports'], function (exports) {
     for(i = 0; tableToTranspose[i] != null; i++) {
       list = tableToTranspose[i];
       for(j = 0; list[j] != null; j++) {
-        if(i == 0) table[j] = new List();
+        if(i === 0) table[j] = new List__default();
         table[j][i] = tableToTranspose[i][j];
       }
     }
@@ -4194,7 +4618,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   Table__Table.prototype.getReport = function(level) {
-    var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
+    var ident = "\n" + (level > 0 ? StringOperators__default.repeatString("  ", level) : "");
     var lengths = this.getLengths();
     var minLength = lengths.getMin();
     var maxLength = lengths.getMax();
@@ -4204,7 +4628,7 @@ define('src/index', ['exports'], function (exports) {
 
     var text = level > 0 ? (ident + "////report of instance of Table////") : "///////////report of instance of Table//////////";
 
-    if(this.length == 0) {
+    if(this.length === 0) {
       text += ident + "this table has no lists";
       return text;
     }
@@ -4246,7 +4670,7 @@ define('src/index', ['exports'], function (exports) {
 
       var i;
       for(i = 0; this[i] != null; i++) {
-        text += "\n" + ident + ("(" + (i) + "/0-" + (this.length - 1) + ")")
+        text += "\n" + ident + ("(" + (i) + "/0-" + (this.length - 1) + ")");
         try{
            text += this[i].getReport(1);
         } catch(err){
@@ -4279,7 +4703,7 @@ define('src/index', ['exports'], function (exports) {
   ////
 
   Table__Table.prototype.clone = function() {
-    var clonedTable = instantiateWithSameType(this);
+    var clonedTable = ClassUtils__instantiateWithSameType(this);
     clonedTable.name = this.name;
     for(var i = 0; this[i] != null; i++) {
       clonedTable.push(this[i].clone());
@@ -4295,10 +4719,12 @@ define('src/index', ['exports'], function (exports) {
   };
 
   Table__Table.prototype.print = function() {
-    c.log("///////////// <" + this.name + "////////////////////////////////////////////////////");
-    c.log(TableEncodings.TableToCSV(this, null, true));
-    c.log("/////////////" + this.name + "> ////////////////////////////////////////////////////");
+    console.log("///////////// <" + this.name + "////////////////////////////////////////////////////");
+    console.log(TableEncodings.TableToCSV(this, null, true));
+    console.log("/////////////" + this.name + "> ////////////////////////////////////////////////////");
   };
+
+  exports.Table = Table__default;
 
   PolygonList.prototype = new Table__default();
   PolygonList.prototype.constructor = PolygonList;
