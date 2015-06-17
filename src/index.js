@@ -27,13 +27,16 @@ import DateInterval from "src/dataStructures/dates/DateInterval";
 import DateList from "src/dataStructures/dates/DateList";
 export { DateAxis, DateInterval, DateList };
 
+// dataStructures/geo
+import Country from "src/dataStructures/geo/Country";
+import CountryList from "src/dataStructures/geo/CountryList";
+export { Country, CountryList };
 
 // // dataStructures/structures
 // import Node from "src/dataStructures/structures/elements/Node";
 // import NodeList from "src/dataStructures/structures/lists/NodeList";
 // import RelationList from "src/dataStructures/structures/lists/RelationList";
-// import Country from "src/dataStructures/geo/Country";
-// import CountryList from "src/dataStructures/geo/CountryList";
+
 // import Point from "src/dataStructures/geometry/Point";
 // import Point3D from "src/dataStructures/geometry/Point3D";
 // import Polygon from "src/dataStructures/geometry/Polygon";

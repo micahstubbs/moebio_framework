@@ -1,3 +1,6 @@
+import NodeList from 'src/dataStructures/structures/lists/NodeList';
+import PolygonOperators from 'src/operators/geometry/PolygonOperators';
+
 CountryList.prototype = new NodeList();
 CountryList.prototype.constructor = CountryList;
 
@@ -17,6 +20,7 @@ function CountryList() {
   //
   return array;
 }
+export default CountryList;
 
 CountryList.fromArray = function(array) {
   var result = NodeList.fromArray(array);

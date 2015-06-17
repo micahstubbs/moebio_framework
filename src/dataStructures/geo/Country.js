@@ -1,3 +1,6 @@
+import Node from 'src/dataStructures/structures/elements/Node';
+import CountryOperators from 'src/operators/geo/CountryOperators';
+
 Country.prototype = new Node();
 Country.prototype.constructor = Country;
 
@@ -41,6 +44,7 @@ function Country(id, name) {
 
   this._frame;
 }
+export default Country;
 
 Country.prototype.generatesSimplifiedNames = function() {
   this._simplifiedNames = CountryOperators.getSimplifiedNames(this.alternativeNames);

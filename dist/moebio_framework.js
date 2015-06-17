@@ -385,7 +385,7 @@ define('src/index', ['exports'], function (exports) {
         newList = PolygonList.fromArray(this, false);
         break;
       case "Node":
-        newList = NodeList.fromArray(this, false);
+        newList = NodeList__default.fromArray(this, false);
         break;
       case "Relation":
         newList = RelationList.fromArray(this, false);
@@ -1360,7 +1360,7 @@ define('src/index', ['exports'], function (exports) {
       } else if(this.type == "StringList") {
         return StringList__default.fromArray(this._concat.apply(this, arguments), false);
       } else if(this.type == "NodeList") { //[!] concat breaks the getNodeById in NodeList
-        return NodeList.fromArray(this._concat.apply(this, arguments), false);
+        return NodeList__default.fromArray(this._concat.apply(this, arguments), false);
       } else if(this.type == "DateList") {
         return DateList.fromArray(this._concat.apply(this, arguments), false);
       } else if(this.type == "Table") {
@@ -1513,7 +1513,7 @@ define('src/index', ['exports'], function (exports) {
         return StringList__default.fromArray(this._splice.apply(this, arguments));
         break;
       case 'NodeList':
-        return NodeList.fromArray(this._splice.apply(this, arguments));
+        return NodeList__default.fromArray(this._splice.apply(this, arguments));
         break;
       case 'DateList':
         return DateList.fromArray(this._splice.apply(this, arguments));
@@ -3326,8 +3326,8 @@ define('src/index', ['exports'], function (exports) {
 
   exports.NumberList = NumberList__default;
 
-  NodeList.prototype = new List__default();
-  NodeList.prototype.constructor = NodeList;
+  NodeList__NodeList.prototype = new List__default();
+  NodeList__NodeList.prototype.constructor = NodeList__NodeList;
 
   /**
    * @classdesc A sub-class of {@link List} for storing {@link Node|Nodes}.
@@ -3336,12 +3336,12 @@ define('src/index', ['exports'], function (exports) {
    * @constructor
    * @category networks
    */
-  function NodeList() {
+  function NodeList__NodeList() {
     //var array=List.apply(this, arguments);
 
     //if(arguments && arguments.length>0) {c.l('UEUEUEUE, arguments.length', arguments.length); var a; a.push(0)};
 
-    var array = NodeList.fromArray([]);
+    var array = NodeList__NodeList.fromArray([]);
 
     if(arguments && arguments.length > 0) {
       var args = Array.prototype.slice.call(arguments);
@@ -3354,7 +3354,7 @@ define('src/index', ['exports'], function (exports) {
     return array;
   }
 
-
+  var NodeList__default = NodeList__NodeList;
 
   /**
    * Creates NodeList from raw Array.
@@ -3364,7 +3364,7 @@ define('src/index', ['exports'], function (exports) {
    * convert strings to Node instances with the strings used as the Node's id and name.
    * @return {NodeList}
    */
-  NodeList.fromArray = function(array, forceToNode) {
+  NodeList__NodeList.fromArray = function(array, forceToNode) {
     forceToNode = forceToNode == null ? false : forceToNode;
 
     var result = List__default.fromArray(array);
@@ -3383,20 +3383,20 @@ define('src/index', ['exports'], function (exports) {
     Array(); //????
 
     //assign methods to array:
-    result.deleteNodes = NodeList.prototype.deleteNodes;
-    result.addNode = NodeList.prototype.addNode;
-    result.addNodes = NodeList.prototype.addNodes;
-    result.removeNode = NodeList.prototype.removeNode;
-    result.removeNodeAtIndex = NodeList.prototype.removeNodeAtIndex;
-    result.getNodeByName = NodeList.prototype.getNodeByName;
-    result.getNodeById = NodeList.prototype.getNodeById;
-    result.getNodesByIds = NodeList.prototype.getNodesByIds;
-    result.getNewId = NodeList.prototype.getNewId;
-    result.normalizeWeights = NodeList.prototype.normalizeWeights;
-    result.getWeights = NodeList.prototype.getWeights;
-    result.getIds = NodeList.prototype.getIds;
-    result.getDegrees = NodeList.prototype.getDegrees;
-    result.getPolygon = NodeList.prototype.getPolygon;
+    result.deleteNodes = NodeList__NodeList.prototype.deleteNodes;
+    result.addNode = NodeList__NodeList.prototype.addNode;
+    result.addNodes = NodeList__NodeList.prototype.addNodes;
+    result.removeNode = NodeList__NodeList.prototype.removeNode;
+    result.removeNodeAtIndex = NodeList__NodeList.prototype.removeNodeAtIndex;
+    result.getNodeByName = NodeList__NodeList.prototype.getNodeByName;
+    result.getNodeById = NodeList__NodeList.prototype.getNodeById;
+    result.getNodesByIds = NodeList__NodeList.prototype.getNodesByIds;
+    result.getNewId = NodeList__NodeList.prototype.getNewId;
+    result.normalizeWeights = NodeList__NodeList.prototype.normalizeWeights;
+    result.getWeights = NodeList__NodeList.prototype.getWeights;
+    result.getIds = NodeList__NodeList.prototype.getIds;
+    result.getDegrees = NodeList__NodeList.prototype.getDegrees;
+    result.getPolygon = NodeList__NodeList.prototype.getPolygon;
 
     result._push = Array.prototype.push;
     result.push = function(a) {
@@ -3406,8 +3406,8 @@ define('src/index', ['exports'], function (exports) {
     };
 
     //overriden
-    result.getWithoutRepetitions = NodeList.prototype.getWithoutRepetitions;
-    result.clone = NodeList.prototype.clone;
+    result.getWithoutRepetitions = NodeList__NodeList.prototype.getWithoutRepetitions;
+    result.clone = NodeList__NodeList.prototype.clone;
 
     return result;
   };
@@ -3416,7 +3416,7 @@ define('src/index', ['exports'], function (exports) {
    * Clears NodeList.
    *
    */
-  NodeList.prototype.removeNodes = function() {
+  NodeList__NodeList.prototype.removeNodes = function() {
     for(var i = 0; i < this.length; i++) {
       this.ids[this[i].id] = null;
       this.removeElement(this[i]);
@@ -3428,7 +3428,7 @@ define('src/index', ['exports'], function (exports) {
    *
    * @param {Node} node Node to add
    */
-  NodeList.prototype.addNode = function(node) {
+  NodeList__NodeList.prototype.addNode = function(node) {
     this.ids[node.id] = node;
     this._push(node);
   };
@@ -3438,7 +3438,7 @@ define('src/index', ['exports'], function (exports) {
    *
    * @param {NodeList} nodes Nodes to add.
    */
-  NodeList.prototype.addNodes = function(nodes) {
+  NodeList__NodeList.prototype.addNodes = function(nodes) {
     var i;
     for(i = 0; nodes[i] != null; i++) {
       this.addNode(nodes[i]);
@@ -3450,7 +3450,7 @@ define('src/index', ['exports'], function (exports) {
    *
    * @param {Node} node Node to remove.
    */
-  NodeList.prototype.removeNode = function(node) {
+  NodeList__NodeList.prototype.removeNode = function(node) {
     this.ids[node.id] = null;
     this.removeElement(node);
   };
@@ -3460,7 +3460,7 @@ define('src/index', ['exports'], function (exports) {
    *
    * @param {Number} index The index of the Node to remove.
    */
-  NodeList.prototype.removeNodeAtIndex = function(index) {
+  NodeList__NodeList.prototype.removeNodeAtIndex = function(index) {
     this.ids[this[index].id] = null;
     this.splice(index, 1);
   };
@@ -3469,7 +3469,7 @@ define('src/index', ['exports'], function (exports) {
    * Normalizes all weights associated with Nodes in NodeList
    * to a value between 0 and 1. Works under the assumption that weights are >= 0.
    */
-  NodeList.prototype.normalizeWeights = function() {
+  NodeList__NodeList.prototype.normalizeWeights = function() {
     var i;
     var max = -9999999;
     for(i = 0; this[i] != null; i++) {
@@ -3487,7 +3487,7 @@ define('src/index', ['exports'], function (exports) {
    *
    * @return {Node} Node with name matching input name. Null if no such Node.
    */
-  NodeList.prototype.getNodeByName = function(name) {
+  NodeList__NodeList.prototype.getNodeByName = function(name) {
     var i;
     for(i = 0; i < this.length; i++) {
       if(this[i].name == name) {
@@ -3504,7 +3504,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Node}
    * tags:search
    */
-  NodeList.prototype.getNodeById = function(id) {
+  NodeList__NodeList.prototype.getNodeById = function(id) {
     return this.ids[id];
   };
 
@@ -3516,8 +3516,8 @@ define('src/index', ['exports'], function (exports) {
    * @param {NumberList} ids Ids of Nodes to extract.
    * @return {NodeList}
    */
-  NodeList.prototype.getNodesByIds = function(ids) {
-    newNodelist = new NodeList();
+  NodeList__NodeList.prototype.getNodesByIds = function(ids) {
+    newNodelist = new NodeList__NodeList();
     var node;
     for(var i = 0; ids[i] != null; i++) {
       node = this.ids[ids[i]];
@@ -3533,7 +3533,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {NumberList}
    * tags:
    */
-  NodeList.prototype.getWeights = function() {
+  NodeList__NodeList.prototype.getWeights = function() {
     var numberList = new NumberList();
     for(var i = 0; this[i] != null; i++) {
       numberList[i] = this[i].weight;
@@ -3548,7 +3548,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {StringList}
    * tags:
    */
-  NodeList.prototype.getIds = function() {
+  NodeList__NodeList.prototype.getIds = function() {
     var list = new StringList();
     for(var i = 0; this[i] != null; i++) {
       list[i] = this[i].id;
@@ -3564,7 +3564,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {NumberList} List containing the number
    * of Relations each Node has.
    */
-  NodeList.prototype.getDegrees = function() {
+  NodeList__NodeList.prototype.getDegrees = function() {
     var numberList = new NumberList();
     for(var i = 0; this[i] != null; i++) {
       numberList[i] = this[i].nodeList.length;
@@ -3581,7 +3581,7 @@ define('src/index', ['exports'], function (exports) {
    *
    * @return {Polygon}
    */
-  NodeList.prototype.getPolygon = function() {
+  NodeList__NodeList.prototype.getPolygon = function() {
     var polygon = new Polygon();
     for(var i = 0; this[i] != null; i++) {
       polygon[i] = new Point(this[i].x + cX, this[i].y + cY);
@@ -3589,7 +3589,7 @@ define('src/index', ['exports'], function (exports) {
     return polygon;
   };
 
-  NodeList.prototype.getNewId = function() {
+  NodeList__NodeList.prototype.getNewId = function() {
     var n = this.length + 1;
     for(var i = 0; i < n; i++) {
       if(this.getNodeById(String(i)) == null) return String(i);
@@ -3601,8 +3601,8 @@ define('src/index', ['exports'], function (exports) {
    *
    * @return {NodeList}
    */
-  NodeList.prototype.clone = function() {
-    var newNodeList = new NodeList();
+  NodeList__NodeList.prototype.clone = function() {
+    var newNodeList = new NodeList__NodeList();
     this.forEach(function(node) {
       newNodeList.addNode(node);
     });
@@ -3619,8 +3619,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {undefined}
    * @ignore
    */
-  NodeList.prototype.getWithoutRepetitions = function() {
-    newList = new NodeList();
+  NodeList__NodeList.prototype.getWithoutRepetitions = function() {
+    newList = new NodeList__NodeList();
     newList.name = this.name;
     for(i = 0; this[i] != null; i++) {
       if(newList.getNodeById(this[i].id) == null) newList.addNode(this[i]);
@@ -3628,7 +3628,7 @@ define('src/index', ['exports'], function (exports) {
     return newList;
   };
 
-  RelationList.prototype = new NodeList();
+  RelationList.prototype = new NodeList__default();
   RelationList.prototype.constructor = RelationList;
   /**
    * RelationList
@@ -3643,7 +3643,7 @@ define('src/index', ['exports'], function (exports) {
    * @category networks
    */
   function RelationList() {
-    var array = NodeList.apply(this, arguments);
+    var array = NodeList__default.apply(this, arguments);
     array.name = "";
     //assign methods to array:
     array = RelationList.fromArray(array);
@@ -3659,7 +3659,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {RelationList}
    */
   RelationList.fromArray = function(array) {
-    var result = NodeList.fromArray(array);
+    var result = NodeList__default.fromArray(array);
     result.type = "RelationList";
     //assign methods to array:
     result.addRelation = RelationList.prototype.addRelation;
@@ -3722,7 +3722,7 @@ define('src/index', ['exports'], function (exports) {
    */
   RelationList.prototype.getRelatedNodesToNode = function(node) {
     var i;
-    var relatedNodes = new NodeList();
+    var relatedNodes = new NodeList__default();
     for(i = 0; i < this.length; i++) {
       var relation = this[i];
       if(relation.node0.id == node.id) {
@@ -5498,6 +5498,819 @@ define('src/index', ['exports'], function (exports) {
   };
 
   exports.DateInterval = DateInterval;
+
+  Node__Node.prototype = new DataModel();
+  Node__Node.prototype.constructor = Node__Node;
+
+  /**
+   * @classdesc Represents a single node element in a Network. Can have both an id as well
+   * as a name.
+   *
+   * @description Create a new Node.
+   * @param {String} id ID of the Node
+   * @param {String} name string (label) name to be assigned to node
+   * @constructor
+   * @category networks
+   */
+  function Node__Node(id, name) {
+    this.id = id == null ? '' : id;
+    this.name = name != null ? name : '';
+    this.type = "Node";
+
+    this.nodeType;
+
+    this.x = 0;
+    this.y = 0;
+    this.z = 0;
+
+    this.nodeList = new NodeList__default();
+    this.relationList = new RelationList();
+
+    this.toNodeList = new NodeList__default();
+    this.toRelationList = new RelationList();
+
+    this.fromNodeList = new NodeList__default();
+    this.fromRelationList = new RelationList();
+
+    this.weight = 1;
+    this.descentWeight = 1;
+
+    //tree
+    this.level = 0;
+    this.parent = null;
+
+    //physics:
+    this.vx = 0;
+    this.vy = 0;
+    this.vz = 0;
+    this.ax = 0;
+    this.ay = 0;
+    this.az = 0;
+  }
+  var Node__default = Node__Node;
+
+  /**
+   * Removes all Relations and connected Nodes from
+   * the current Node.
+   */
+  Node__Node.prototype.cleanRelations = function() {
+    this.nodeList = new NodeList__default();
+    this.relationList = new RelationList();
+
+    this.toNodeList = new NodeList__default();
+    this.toRelationList = new RelationList();
+
+    this.fromNodeList = new NodeList__default();
+    this.fromRelationList = new RelationList();
+  };
+
+  //TODO: complete with all properties
+  Node__Node.prototype.destroy = function() {
+    DataModel.prototype.destroy.call(this);
+    delete this.id;
+    delete this.name;
+    delete this.nodeType;
+    delete this.x;
+    delete this.y;
+    delete this.z;
+    delete this.nodeList;
+    delete this.relationList;
+    delete this.toNodeList;
+    delete this.toNodeList;
+    delete this.fromNodeList;
+    delete this.fromRelationList;
+    delete this.parent;
+    delete this.weight;
+    delete this.descentWeight;
+    delete this.level;
+    delete this.vx;
+    delete this.vy;
+    delete this.vz;
+    delete this.ax;
+    delete this.ay;
+    delete this.az;
+  };
+
+  /**
+   * Returns the number of Relations connected to this Node.
+   *
+   * @return {Number} Number of Relations (edges) connecting to this Node instance.
+   */
+  Node__Node.prototype.getDegree = function() {
+    return this.relationList.length;
+  };
+
+  //treeProperties:
+
+
+  /**
+   * Returns the parent Node of this Node if it is part of a {@link Tree}.
+   *
+   * @return {Node} Parent Node of this Node.
+   */
+  Node__Node.prototype.getParent = function() {
+    return this.parent;
+  };
+
+  /**
+   * Returns the leaves under a node in a Tree,
+   *
+   * <strong>Warning:</strong> If this Node is part of a Network that is not a tree, this method could run an infinite loop.
+   * @return {NodeList} Leaf Nodes of this Node.
+   * tags:
+   */
+  Node__Node.prototype.getLeaves = function() {
+      var leaves = new NodeList__default();
+      var addLeaves = function(node) {
+        if(node.toNodeList.length == 0) {
+          leaves.addNode(node);
+          return;
+        }
+        node.toNodeList.forEach(addLeaves);
+      };
+      addLeaves(this);
+      return leaves;
+    };
+
+
+  /**
+   * Uses an image as a visual representation to this Node.
+   *
+   * @param {String} urlImage The URL of the image to load.
+   */
+  Node__Node.prototype.loadImage = function(urlImage) {
+    Loader.loadImage(urlImage, function(e) {
+      this.image = e.result;
+    }, this);
+  };
+
+
+  /**
+   * Makes a copy of this Node.
+   *
+   * @return {Node} New Node that is a copy of this Node.
+   */
+  Node__Node.prototype.clone = function() {
+    var newNode = new Node__Node(this.id, this.name);
+
+    newNode.x = this.x;
+    newNode.y = this.y;
+    newNode.z = this.z;
+
+    newNode.nodeType = this.nodeType;
+
+    newNode.weight = this.weight;
+    newNode.descentWeight = this.descentWeight;
+
+    return newNode;
+  };
+
+  /**
+   * @classdesc Provides a set of tools that work with {@link Country|Countries}.
+   *
+   * @namespace
+   * @category geo
+   */
+  function CountryOperators() {}
+
+
+  CountryOperators.getSimplifiedName = function(name) {
+    return name.replace(/[\.\- ,\']/g, "").toLowerCase();
+  };
+  CountryOperators.getSimplifiedNames = function(names) {
+    var simplifiedNames = new StringList();
+    var name;
+    for(var i = 0; names[i] != null; i++) {
+      name = this.getSimplifiedName(names[i]);
+      if(name != "") simplifiedNames.pushIfUnique(name);
+    }
+    return simplifiedNames;
+  };
+
+  Country.prototype = new Node__default();
+  Country.prototype.constructor = Country;
+
+  /**
+   * @classdesc Represents an individual country for visualization and spatial
+   * reasoning.
+   *
+  * @description Creates a new Country instance.
+   * @param {String} id Country id (ISO2)
+   * @param {String} name Country name
+   * @constructor
+   * @category geo
+   */
+  function Country(id, name) {
+    Node__default.apply(this, [id, name]);
+    this.type = "Country";
+
+    this.id = id;
+    this.name = name;
+
+    this.shortName;
+
+    this.continentName;
+    this.isoCode;
+    this.alternativeNames;
+    this.wikipediaUrl;
+    this.flagImageUrl;
+    this.smallFlagImageUrl;
+    this.recognized = false;
+    this.geoCenter;
+
+    this.polygonList;
+    this.simplePolygonList;
+
+    this.longestPolygon;
+    this.longestSimplePolygon;
+
+    this._simplifiedNames;
+    this._simplifiedId;
+    this._simplifiedName;
+
+    this._frame;
+  }
+
+
+  Country.prototype.generatesSimplifiedNames = function() {
+    this._simplifiedNames = CountryOperators.getSimplifiedNames(this.alternativeNames);
+    this._simplifiedId = CountryOperators.getSimplifiedName(this.id);
+    this._simplifiedName = CountryOperators.getSimplifiedName(this.name);
+    this.shortName = this.name
+      .replace('Democratic Republic', 'D.R.')
+      .replace('United States', 'U.S.A')
+      .replace('United Arab', 'U.A.');
+  };
+
+  Country.prototype.nameMatches = function(name) {
+    if(this._simplifiedId == null) this.generatesSimplifiedNames();
+    name = CountryOperators.getSimplifiedName(name);
+    if(name == this._simplifiedId || name == this._simplifiedName) return true;
+    return this._simplifiedNames.indexOf(name) != -1;
+  };
+
+  Country.prototype.getFrame = function() {
+    if(this._frame == null) {
+      this._frame = this.simplePolygonList == null ? this.polygonList.getFrame() : this.simplePolygonList.getFrame();
+    }
+    return this._frame;
+  };
+
+  exports.Country = Country;
+
+  /**
+   * @classdesc Provides a set of tools that work with Polygons
+   *
+   * @namespace
+   * @category geometry
+   */
+  function PolygonOperators() {}
+
+
+  /**
+   * builds a Hull polygon from a set of points
+   * @param  {Polygon} polygon set of points
+   * @param  {Boolean} returnIndexes if true returns the indexes of external points, connected by the Hull polygon (false by default)
+   * @return {List} Hull polygn or list of indexes
+   * tags:geometry
+   */
+  PolygonOperators.hull = function(polygon, returnIndexes) {
+    returnIndexes = returnIndexes == null ? false : returnIndexes;
+    var i;
+    var t;
+    var p = polygon;
+    var n = p.length;
+    var k = 0;
+    var h = new Polygon();
+    if(returnIndexes) var indexes = new NumberList();
+
+    p = PolygonOperators.sortOnXY(p);
+
+    if(returnIndexes) {
+      for(i = 0; i < n; i++) {
+        while(k >= 2 && PolygonOperators.crossProduct3Points(h[k - 2], h[k - 1], p[i]) <= 0)
+          k--;
+        h[k++] = p[i];
+        indexes[k - 1] = i;
+      }
+
+      for(i = n - 2, t = k + 1; i >= 0; i--) {
+        while(k >= t && PolygonOperators.crossProduct3Points(h[k - 2], h[k - 1], p[i]) <= 0)
+          k--;
+        h[k++] = p[i];
+        indexes[k - 1] = i;
+      }
+
+      return NumberList.fromArray(indexes.getSubList(new Interval(0, k - 2)));
+    }
+
+    for(i = 0; i < n; i++) {
+      while(k >= 2 && PolygonOperators.crossProduct3Points(h[k - 2], h[k - 1], p[i]) <= 0)
+        k--;
+      h[k++] = p[i];
+    }
+
+    for(i = n - 2, t = k + 1; i >= 0; i--) {
+      while(k >= t && PolygonOperators.crossProduct3Points(h[k - 2], h[k - 1], p[i]) <= 0)
+        k--;
+      h[k++] = p[i];
+    }
+
+    return Polygon.fromArray(h.getSubList(new Interval(0, k - 2)));
+  };
+
+  /**
+   * builds a dendrogram (tree) from a Polygon (currently using barycenter for distances)
+   * @param  {Polygon} polygon
+   * @return {Tree} dendrogram
+   * tags:geometry
+   */
+  PolygonOperators.buildDendrogramFromPolygon = function(polygon) {
+    var tree = new Tree();
+    var point, i;
+    var node;
+    var tW;
+    var parent;
+    var leaves = new NodeList();
+
+    var node0, node1, nodeList = new Polygon();
+
+    polygon.forEach(function(point, i) {
+      node = new Node('point_' + i, 'point_' + i);
+      node.weight = 1;
+      node.barycenter = point;
+      node.point = point;
+      node.polygon = new Polygon(point);
+      tree.addNode(node);
+      nodeList.push(node);
+      leaves.push(node);
+    });
+
+    tree.nodeList = tree.nodeList.getReversed();
+
+    //c.l('-');
+
+    var buildNodeFromPair = function(node0, node1) {
+      var parent = new Node("(" + node0.id + "," + node1.id + ")", "(" + node0.id + "," + node1.id + ")");
+      parent.polygon = node0.polygon.concat(node1.polygon);
+      //c.l("node0.polygon.length, node1.polygon.length, parent.polygon.length", node0.polygon.length, node1.polygon.length, parent.polygon.length);
+      parent.weight = parent.polygon.length;
+      tW = node0.weight + node1.weight;
+      parent.barycenter = new Point((node0.weight * node0.barycenter.x + node1.weight * node1.barycenter.x) / tW, (node0.weight * node0.barycenter.y + node1.weight * node1.barycenter.y) / tW);
+      //c.l('parent.barycenter.x', parent.barycenter.x, parent.barycenter.y);
+      tree.addNode(parent);
+      tree._newCreateRelation(parent, node0);
+      tree._newCreateRelation(parent, node1);
+      return parent;
+    };
+
+    while(nodeList.length > 1) {
+      closestPair = PolygonOperators._findClosestNodes(nodeList);
+      node0 = nodeList[closestPair[0]];
+      node1 = nodeList[closestPair[1]];
+      parent = buildNodeFromPair(node0, node1);
+      parent.distance = closestPair.distance;
+      c.l('distance:', parent.distance);
+      nodeList.splice(closestPair[0], 1);
+      nodeList.splice(closestPair[1] - 1, 1);
+      nodeList.push(parent);
+    }
+
+    tree.nodeList = tree.nodeList.getReversed();
+
+    var assignLevel = function(node, parentLevel) {
+      var son;
+      node.level = parentLevel + 1;
+      node.toNodeList.forEach(function(son) {
+        assignLevel(son, node.level);
+      });
+    };
+
+    assignLevel(tree.nodeList[0], -1);
+
+    tree.leaves = leaves;
+
+    return tree;
+
+  };
+
+  PolygonOperators._findClosestNodes = function(nodeList) {
+    var i, j;
+    var d2;
+    var d2Min = 9999999999;
+
+    for(i = 0; nodeList[i + 1] != null; i++) {
+      for(j = i + 1; nodeList[j] != null; j++) {
+        d2 = Math.pow(nodeList[i].barycenter.x - nodeList[j].barycenter.x, 2) + Math.pow(nodeList[i].barycenter.y - nodeList[j].barycenter.y, 2);
+        if(d2 < d2Min) {
+          d2Min = d2;
+          pair = [i, j];
+        }
+      }
+    }
+
+    pair.distance = d2Min;
+
+    return pair;
+  };
+
+
+  PolygonOperators.sortOnXY = function(polygon) {
+    return polygon.sort(function(p0, p1) {
+      if(p0.x < p1.x) return -1;
+      if(p0.x == p1.x && p0.y < p1.y) return -1;
+      return 1;
+    });
+  };
+
+  //TODO: move this to PointOperators
+  PolygonOperators.crossProduct3Points = function(o, a, b) {
+    return(a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+  };
+
+  PolygonOperators.expandFromBarycenter = function(polygon, factor) {
+    var newPolygon = new Polygon();
+    var barycenter = polygon.getBarycenter();
+
+    for(var i = 0; polygon[i] != null; i++) {
+      newPolygon[i] = polygon[i].expandFromPoint(barycenter, factor);
+    }
+
+    return newPolygon;
+  };
+
+  PolygonOperators.expandInAngles = function(polygon, amount) { //TODO: test if it works with convex polygons
+    var newPolygon = new Polygon();
+    var p0 = polygon[polygon.length - 1];
+    var p1 = polygon[0];
+    var p2 = polygon[1];
+
+    var a0;
+    var a1;
+    var sign;
+
+    var a = 0.5 * Math.atan2(p1.y - p2.y, p1.x - p2.x) + 0.5 * Math.atan2(p1.y - p0.y, p1.x - p0.x);
+    var globalSign = polygon.containsPoint(new Point(p1.x + Math.floor(amount) * Math.cos(a), p1.y + Math.floor(amount) * Math.sin(a))) ? -1 : 1;
+
+
+    for(var i = 0; polygon[i] != null; i++) {
+      p0 = polygon[(i - 1 + polygon.length) % polygon.length];
+      p1 = polygon[i];
+      p2 = polygon[(i + 1) % polygon.length];
+      a0 = Math.atan2(p1.y - p2.y, p1.x - p2.x);
+      a1 = Math.atan2(p1.y - p0.y, p1.x - p0.x);
+      sign = Math.abs(a1 - a0) < Math.PI ? -1 : 1;
+      a = 0.5 * a0 + 0.5 * a1;
+      //sign = polygon.containsPoint(new Point(p1.x + Math.floor(amount)*Math.cos(a), p1.y + Math.floor(amount)*Math.sin(a)))?-1:1;
+      newPolygon[i] = new Point(p1.x + globalSign * sign * amount * Math.cos(a), p1.y + globalSign * sign * amount * Math.sin(a));
+    }
+
+    return newPolygon;
+  };
+
+  PolygonOperators.simplifyPolygon = function(polygon, margin) {
+    margin = margin == null || margin == 0 ? 1 : margin;
+    var newPolygon = polygon.clone();
+    var p0;
+    var p1;
+    var p2;
+    var line;
+    var i;
+    var nPoints = polygon.length;
+    for(i = 0; i < nPoints; i++) {
+      p0 = newPolygon[i];
+      p1 = newPolygon[(i + 1) % nPoints];
+      p2 = newPolygon[(i + 2) % nPoints];
+      line = GeometryOperators.lineFromTwoPoints(p0, p2);
+      if(GeometryOperators.distancePointToLine(p1, line) < margin) {
+        //newPolygon.splice((i+1)%nPoints, 1);
+        newPolygon = newPolygon.getWithoutElementAtIndex((i + 1) % nPoints);
+        i--;
+      }
+      nPoints = newPolygon.length;
+    }
+    return newPolygon;
+  };
+
+
+  /**
+   * used techinique: draws the bézier polygon and checks color
+   */
+  PolygonOperators.bezierPolygonContainsPoint = function(polygon, point, border) {
+    var frame = polygon.getFrame();
+    clearContext();
+    context.fillStyle = 'black';
+    context.fillRect(0, 0, frame.width, frame.height);
+    if(border != null) {
+      context.strokeStyle = 'black';
+      context.lineWidth = border;
+    }
+    context.fillStyle = 'white';
+    context.beginPath();
+    Draw.drawBezierPolygon(context, polygon, -frame.x, -frame.y);
+    context.fill();
+    if(border != null) context.stroke();
+    var data = context.getImageData(point.x - frame.x, point.y - frame.y, 1, 1).data;
+    clearContext();
+    return data[0] > 0;
+  };
+
+
+  /**
+   * used techinique: draws the bézier polygon and checks color
+   * best center: the center of biggest circle within the polygon
+   * [!] very unefficient
+   */
+  PolygonOperators.getBezierPolygonBestCenter = function(polygon, nAttempts) {
+    nAttempts = nAttempts == null ? 500 : nAttempts;
+
+    var frame = polygon.getFrame();
+    context.fillStyle = 'black';
+    context.fillRect(0, 0, frame.width, frame.height);
+    context.fillStyle = 'white';
+    context.beginPath();
+    Draw.drawBezierPolygon(context, polygon, -frame.x, -frame.y);
+    context.fill();
+
+    var center;
+    var testPoint;
+    var angle;
+    var r;
+    var rMax = 0;
+    var bestCenter;
+
+
+    for(var i = 0; i < nAttempts; i++) {
+      center = frame.getRandomPoint();
+      for(angle = 0; angle += 0.1; angle <= TwoPi) {
+        r = angle;
+        var data = context.getImageData(center.x + r * Math.cos(angle) - frame.x, center.y + r * Math.sin(angle) - frame.y, 1, 1).data;
+        if(data[0] == 0) {
+          if(r > rMax) {
+            rMax = r;
+            bestCenter = center;
+          }
+          break;
+        }
+      }
+    }
+
+    return bestCenter;
+  };
+
+
+  PolygonOperators.convexHull = function(polygon, deepness) {
+    var indexesHull = this.hull(polygon, true);
+    var pointsLeftIndexes = NumberListGenerators.createSortedNumberList(polygon.length);
+    pointsLeftIndexes = pointsLeftIndexes.getWithoutElementsAtIndexes(indexesHull);
+    var i;
+    var j;
+    var k;
+    var p0;
+    var p1;
+    var pC = new Point();
+    var p;
+    var d;
+    var dMin = deepness - 1;
+    var jMin;
+    var kMin;
+    var dP;
+    var nHull = indexesHull.length;
+
+    while(dMin < deepness) {
+      //c.log(dMin, deepness, nHull, pointsLeftIndexes.length);
+      dMin = 999999999;
+      for(j = 0; j < nHull; j++) {
+        p0 = polygon[indexesHull[j]];
+        p1 = polygon[indexesHull[(j + 1) % indexesHull.length]];
+        pC.x = (p0.x + p1.x) * 0.5;
+        pC.y = (p0.y + p1.y) * 0.5;
+        dP = Math.sqrt(Math.pow(p1.x - p0.x, 2) + Math.pow(p1.y - p0.y, 2));
+        for(k = 0; pointsLeftIndexes[k] != null; k++) {
+          p = polygon[pointsLeftIndexes[k]];
+          //d = Math.pow(p.x-pC.x, 2)+Math.pow(p.y-pC.y, 2);
+          d = (Math.sqrt(Math.pow(p.x - p0.x, 2) + Math.pow(p.y - p0.y, 2)) + Math.sqrt(Math.pow(p.x - p1.x, 2) + Math.pow(p.y - p1.y, 2))) / Math.pow(dP, 2);
+          if(d < dMin) {
+            dMin = d;
+            jMin = j;
+            kMin = k;
+          }
+        }
+      }
+
+      //c.log("  ", dMin);
+
+      for(j = nHull - 1; j > jMin; j--) {
+        indexesHull[j + 1] = indexesHull[j];
+      }
+      indexesHull[jMin + 1] = pointsLeftIndexes[kMin];
+
+      //pointsLeftIndexes.removeElement(pointsLeftIndexes[kMin]); //!!!! TODO: FIX THIS!
+      pointsLeftIndexes.splice(kMin, 1);
+
+      if(pointsLeftIndexes.length == 0) return indexesHull;
+
+      nHull++;
+    }
+    return indexesHull;
+  };
+
+  PolygonOperators.controlPointsFromPointsAnglesIntensities = function(polygon, angles, intensities) {
+    var controlPoints = new Polygon();
+    for(var i = 0; polygon[i] != null; i++) {
+      if(i > 0) controlPoints.push(new Point(polygon[i].x - intensities[i] * Math.cos(angles[i]), polygon[i].y - intensities[i] * Math.sin(angles[i])));
+      if(i < polygon.length - 1) controlPoints.push(new Point(polygon[i].x + intensities[i] * Math.cos(angles[i]), polygon[i].y + intensities[i] * Math.sin(angles[i])));
+    }
+    return controlPoints;
+  };
+
+
+  PolygonOperators.placePointsInsidePolygon = function(polygon, nPoints, mode) {
+    var points = new Polygon();
+    var frame = polygon.getFrame();
+    mode = mode || 0;
+    switch(mode) {
+      case 0: //random simple
+        var p;
+        while(points.length < nPoints) {
+          p = new Point(frame.x + Math.random() * frame.width, frame.y + Math.random() * frame.height);
+          if(PolygonOperators.polygonContainsPoint(polygon, p)) points.push(p);
+        }
+        return points;
+        break;
+    }
+  };
+
+  PolygonOperators.placePointsInsideBezierPolygon = function(polygon, nPoints, mode, border) {
+    var points = new Polygon();
+    var frame = polygon.getFrame();
+    mode = mode || 0;
+    switch(mode) {
+      case 0: //random simple
+        var p;
+        var nAttempts = 0;
+        while(points.length < nPoints && nAttempts < 1000) {
+          p = new Point(frame.x + Math.random() * frame.width, frame.y + Math.random() * frame.height);
+          nAttempts++;
+          if(PolygonOperators.bezierPolygonContainsPoint(polygon, p, border)) {
+            points.push(p);
+            nAttempts = 0;
+          }
+        }
+        return points;
+        break;
+    }
+  };
+
+  CountryList.prototype = new NodeList__default();
+  CountryList.prototype.constructor = CountryList;
+
+  /**
+   * @classdesc A {@link List} structure for storing {@link Country|Countries}.
+   *
+   * @description Creates a new CountryList instance.
+   * @constructor
+   * @category geo
+   */
+  function CountryList() {
+    var array = NodeList__default.apply(this, arguments);
+    //
+    array.name = "";
+    //assign methods to array:
+    array = CountryList.fromArray(array);
+    //
+    return array;
+  }
+
+
+  CountryList.fromArray = function(array) {
+    var result = NodeList__default.fromArray(array);
+    result.type = "CountryList";
+    //assign methods to array:
+    result.getCountryFromName = CountryList.prototype.getCountryFromName;
+    //transformative
+    result.removeAntarctica = CountryList.prototype.removeAntarctica;
+    result.removeTinyPolygonsFromCountries = CountryList.prototype.removeTinyPolygonsFromCountries;
+    result.removeTinyCountries = CountryList.prototype.removeTinyCountries;
+    result.simplifyAntarctica = CountryList.prototype.simplifyAntarctica;
+    result.assignValuesToCountriesFromTable = CountryList.prototype.assignValuesToCountriesFromTable;
+    result.simplifyPolygons = CountryList.prototype.simplifyPolygons;
+    return result;
+  };
+
+  /**
+   * each country has several names to try a match
+   * ISO id is allowed
+   */
+  CountryList.prototype.getCountryFromName = function(countryName) {
+    for(var i = 0; this[i] != null; i++) {
+      if(this[i].nameMatches(countryName)) return this[i];
+    }
+    return null;
+  };
+
+
+  //transformative
+
+  CountryList.prototype.removeAntarctica = function() {
+    this.removeNode(this.getNodeById('AQ'));
+  };
+
+  CountryList.prototype.removeTinyPolygonsFromCountries = function(minArea) {
+    minArea = 0.2 || minArea;
+    var country;
+    var j;
+
+    for(var i = 0; this[i] != null; i++) {
+      country = this[i];
+      for(j = 0; country.polygonList[j] != null; j++) {
+        if(country.polygonList[j].getFrame().getArea() < minArea) {
+          country.polygonList.splice(j, 1);
+          j--;
+        }
+      }
+
+    }
+  };
+
+  CountryList.prototype.removeTinyCountries = function(minArea) {
+    minArea = 0.5 || minArea;
+    var country;
+    var j;
+    var small;
+    for(var i = 0; this[i] != null; i++) {
+      country = this[i];
+
+      small = true;
+      for(j = 0; country.polygonList[j] != null; j++) {
+        if(country.polygonList[j].getFrame().getArea() > minArea) {
+          small = false;
+          break;
+        }
+      }
+
+      if(small) {
+        this.removeNode(this[i]);
+        i--;
+      }
+    }
+  };
+
+  CountryList.prototype.simplifyPolygons = function(margin) {
+    var country;
+    var j;
+    var maxPL, jMax;
+
+    for(var i = 0; this[i] != null; i++) {
+      country = this[i];
+      maxPL = 0;
+      for(j = 0; country.polygonList[j] != null; j++) {
+        country.polygonList[j] = PolygonOperators.simplifyPolygon(country.polygonList[j], margin);
+        if(country.polygonList[j].length < 3) {
+          country.polygonList.splice(j, 1);
+          j--;
+        } else {
+          if(country.polygonList[j].length > maxPL) {
+            maxPL = country.polygonList[j].length;
+            jMax = j;
+          }
+        }
+      }
+      country.longestPolygon.destroy();
+      country.longestPolygon = country.polygonList[jMax];
+    }
+  };
+
+  /**
+   * in 2D representations Antarctiva requires 2 extra points, placed on global geo grame corners
+   * this method removes them (suitable for 3D representations)
+   */
+  CountryList.prototype.simplifyAntarctica = function() {
+    var polygonList = this.getNodeById('AQ').simplePolygonList;
+    if(polygonList != null) {
+      polygonList[0].splice(10, 1);
+      polygonList[0].splice(10, 1);
+    }
+    polygonList = this.getNodeById('AQ').polygonList;
+    if(polygonList != null) {
+      //TODO: remove last two points
+    }
+  };
+
+  CountryList.prototype.assignValuesToCountriesFromTable = function(table, valueToNull) {
+    var j;
+    var country;
+    for(var i = 0; table[0][i] != null; i++) {
+      country = this.getCountryFromName(table[0][i]);
+      if(country != null) {
+        for(j = 1; table[j] != null; j++) {
+          country[table[j].name] = table[j][i] == valueToNull ? null : table[j][i];
+        }
+      }
+    }
+  };
+
+  exports.CountryList = CountryList;
 
   // jshint unused:false
 
