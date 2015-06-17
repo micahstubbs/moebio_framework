@@ -52,18 +52,24 @@ export { ColorList, ColorScale };
 import Space2D from "src/dataStructures/spaces/Space2D";
 export { Space2D };
 
+// dataStructures/Strings
+import StringList from "src/dataStructures/strings/StringList";
+export { StringList };
+
 // dataStructures/structures
-// import Node from "src/dataStructures/structures/elements/Node";
-// import NodeList from "src/dataStructures/structures/lists/NodeList";
-// import RelationList from "src/dataStructures/structures/lists/RelationList";
+import Node from "src/dataStructures/structures/elements/Node";
+import Relation from "src/dataStructures/structures/elements/Relation";
+import NodeList from "src/dataStructures/structures/lists/NodeList";
+import RelationList from "src/dataStructures/structures/lists/RelationList";
+import Network from "src/dataStructures/structures/networks/Network";
+import Tree from "src/dataStructures/structures/networks/Tree";
+export { Node, Relation, NodeList, RelationList, Network, Tree };
 
 
 
 
-// import StringList from "src/dataStructures/strings/StringList";
-// import Relation from "src/dataStructures/structures/elements/Relation";
-// import Network from "src/dataStructures/structures/networks/Network";
-// import Tree from "src/dataStructures/structures/networks/Tree";
+
+
 
 // import ObjectOperators from "src/operators/objects/ObjectOperators";
 // import ObjectConversions from "src/operators/objects/ObjectConversions";

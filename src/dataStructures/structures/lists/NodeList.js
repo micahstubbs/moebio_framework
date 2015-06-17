@@ -1,4 +1,11 @@
 import List from "src/dataStructures/lists/List";
+import StringList from "src/dataStructures/strings/StringList";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import Polygon from "src/dataStructures/geometry/Polygon";
+import Node from "src/dataStructures/structures/elements/Node";
+import Point from "src/dataStructures/geometry/Point";
+import { typeOf } from "src/tools/utils/code/ClassUtils";
+
 
 NodeList.prototype = new List();
 NodeList.prototype.constructor = NodeList;
@@ -27,7 +34,6 @@ function NodeList() {
 
   return array;
 }
-
 export default NodeList;
 
 /**
@@ -74,7 +80,7 @@ NodeList.fromArray = function(array, forceToNode) {
 
   result._push = Array.prototype.push;
   result.push = function(a) {
-    c.l('with nodeList, use addNode instead of push');
+    console.log('with nodeList, use addNode instead of push');
     var k;
     k.push(a);
   };

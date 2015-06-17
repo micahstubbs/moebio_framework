@@ -1631,9 +1631,9 @@ define('src/index', ['exports'], function (exports) {
     var args = []; //TODO:why this?, ask M
 
     for(var i = 0; i < arguments.length; i++) {
-      arguments[i] = String(arguments[i]);
+      args[i] = String(arguments[i]);
     }
-    var array = List__default.apply(this, arguments);
+    var array = List__default.apply(this, args);
     array = StringList__StringList.fromArray(array);
     //
     return array;
@@ -1687,7 +1687,7 @@ define('src/index', ['exports'], function (exports) {
     after = after == null ? true : after;
     var newStringList = new StringList__StringList();
     newStringList.name = this.name;
-    var sufixIsStringList = typeOf(sufix) == "StringList";
+    var sufixIsStringList = ClassUtils__typeOf(sufix) == "StringList";
     var i;
     if(after) {
       for(i = 0; this[i] != null; i++) {
@@ -1831,6 +1831,8 @@ define('src/index', ['exports'], function (exports) {
     newList.name = this.name;
     return newList;
   };
+
+  exports.StringList = StringList__default;
 
   function StringOperators__StringOperators() {}
   var StringOperators__default = StringOperators__StringOperators;
@@ -2493,6 +2495,274 @@ define('src/index', ['exports'], function (exports) {
   StringOperators__StringOperators.validateUrl = function(text) {
     return StringOperators__StringOperators.LINK_REGEX.test(text);
   };
+
+  /*
+   * All these function are globally available since they are included in the Global class
+   */
+
+
+
+
+  var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"}
+
+
+
+  /*
+   * types are:
+   * number, string, boolean, date
+   * and all data models classes names
+   */
+  function ClassUtils__typeOf(o) {
+    var type = typeof o;
+
+    if(type !== 'object') {
+      return type;
+    }
+
+    if(o === null) {
+      return 'null';
+    } else if(o.getDate != null) {
+      return 'date';
+    } else {
+      if(o.getType == null) return 'Object';
+      var objectType = o.getType();
+      return objectType;
+    }
+    c.log("[!] ERROR: could not detect type for ", o);
+  }
+
+  function VOID() {}
+
+  function ClassUtils__instantiate(className, args) {
+    switch(className) {
+      case 'number':
+      case 'string':
+        return window[className](args);
+      case 'date':
+        if(!args || args.length == 0) return new Date();
+        if(args.length == 1) {
+          if(args[0].match(/\d*.-\d*.-\d*\D\d*.:\d*.:\d*/)) {
+            var dateArray = args[0].split(" ");
+            dateArray[0] = dateArray[0].split("-");
+            if(dateArray[1]) dateArray[1] = dateArray[1].split(":");
+            else dateArray[1] = new Array(0, 0, 0);
+            return new Date(Date.UTC(dateArray[0][0], Number(dateArray[0][1]) - 1, dateArray[0][2], dateArray[1][0], dateArray[1][1], dateArray[1][2]));
+          }
+          //
+          if(Number(args[0]) != "NaN") return new Date(Number(args[0]));
+          else return new Date(args[0]);
+        }
+        return new Date(Date.UTC.apply(null, args));
+        //
+      case 'boolean':
+        return window[className]((args == "false" || args == "0") ? false : true);
+      case 'List':
+      case 'Table':
+      case 'StringList':
+      case 'NumberList':
+      case 'NumberTable':
+      case 'NodeList':
+      case 'RelationList':
+      case 'Polygon':
+      case 'Polygon3D':
+      case 'PolygonList':
+      case 'DateList':
+      case 'ColorList':
+        return window[className].apply(window, args);
+      case null:
+      case undefined:
+      case 'undefined':
+        return null;
+    }
+    //generic instantiation of object:
+    var o, dummyFunction, cl;
+    cl = window[className]; // get reference to class constructor function
+    dummyFunction = function() {}; // dummy function
+    dummyFunction.prototype = cl.prototype; // reference same prototype
+    o = new dummyFunction(); // instantiate dummy function to copy prototype properties
+    cl.apply(o, args); // call class constructor, supplying new object as context
+
+    return o;
+  }
+
+  function getTextFromObject(value, type) {
+    if(value == null) return "Null";
+    if(value.isList) {
+      if(value.length == 0) return "[]";
+      var text = value.toString(); // value.length>6?value.slice(0, 5).forEach(function(v){return getTextFromObject(v, typeOf(v))}).join(','):value.toStringList().join(',').forEach(function(v, typeOf(v)){return getTextFromObject(v, type)});
+      if(text.length > 160) {
+        var i;
+        var subtext;
+        text = "[";
+        for(i = 0; (value[i] != null && i < 6); i++) {
+          subtext = getTextFromObject(value[i], ClassUtils__typeOf(value[i]));
+          if(subtext.length > 40) subtext = subtext.substr(0, 40) + (value[i].isList ? "…]" : "…");
+          text += (i != 0 ? ", " : "") + subtext;
+        }
+        if(value.length > 6) text += ",…";
+        text += "]";
+      }
+      return text;
+    }
+
+    switch(type) {
+      case "date":
+        return DateOperators.dateToString(value);
+      case "DateInterval":
+        return DateOperators.dateToString(value.date0) + " - " + DateOperators.dateToString(value.date1);
+      case "string":
+        return((value.length > 160) ? value.substr(0, 159) + "…" : value).replace(/\n/g, "↩");
+      case "number":
+        return String(value);
+      default:
+        return "{}"; //value.toString();
+    }
+  }
+
+
+  function ClassUtils__instantiateWithSameType(object, args) {
+    return ClassUtils__instantiate(ClassUtils__typeOf(object), args);
+  }
+
+  function isArray(obj) {
+    if(obj.constructor.toString().indexOf("Array") == -1)
+      return false;
+    else
+      return true;
+  }
+  Date.prototype.getType = function() {
+    return 'date';
+  };
+
+
+
+  function evalJavaScriptFunction(functionText, args, scope){
+  	if(functionText==null) return;
+
+  	var res;
+
+  	var myFunction;
+
+  	var good = true;
+  	var message = '';
+
+  	var realCode;
+
+  	var lines = functionText.split('\n');
+
+  	for(var i=0; lines[i]!=null; i++){
+  		lines[i] = lines[i].trim();
+  		if(lines[i] === "" || lines[i].substr(1)=="/"){
+  			lines.splice(i,1);
+  			i--;
+  		}
+  	}
+
+  	var isFunction = lines[0].indexOf('function')!=-1;
+
+  	functionText = lines.join('\n');
+
+  	if(isFunction){
+  		if(scope){
+  			realCode = "scope.myFunction = " + functionText;
+  		} else {
+  			realCode = "myFunction = " + functionText;
+  		}
+  	} else {
+  		if(scope){
+  			realCode = "scope.myVar = " + functionText;
+  		} else {
+  			realCode = "myVar = " + functionText;
+  		}
+  	}
+
+  	try{
+  		if(isFunction){
+  			eval(realCode);
+  			if(scope){
+  				res = scope.myFunction.apply(scope, args);
+  			} else {
+  				res = myFunction.apply(this, args);
+  			}
+  		} else {
+  			eval(realCode);
+  			if(scope){
+  				res = scope.myVar;
+  			} else 	{
+  				res = myVar;
+  			}
+  		}
+  	} catch(err){
+  		good = false;
+  		message = err.message;
+  		res = null;
+  	}
+
+
+    // var isFunction = functionText.split('\n')[0].indexOf('function') != -1;
+
+    // if(isFunction) {
+    //   realCode = "myFunction = " + functionText;
+    // } else {
+    //   realCode = "myVar = " + functionText;
+    // }
+
+
+    // try {
+    //   if(isFunction) {
+    //     eval(realCode);
+    //     res = myFunction.apply(this, args);
+    //   } else {
+    //     eval(realCode);
+    //     res = myVar;
+    //   }
+    // } catch(err) {
+    //   good = false;
+    //   message = err.message;
+    //   res = null;
+    // }
+
+    //c.l('resultObject', resultObject);
+
+    var resultObject = {
+      result: res,
+      success: good,
+      errorMessage: message
+    };
+
+    return resultObject;
+  }
+
+  function argumentsToArray(args) {
+    return Array.prototype.slice.call(args, 0);
+  }
+
+
+
+
+
+
+
+  function TimeLogger(name) {
+    var scope = this;
+    this.name = name;
+    this.clocks = {};
+
+    this.tic = function(clockName) {
+      scope.clocks[clockName] = new Date().getTime();
+      //c.l( "TimeLogger '"+clockName+"' has been started");
+    };
+    this.tac = function(clockName) {
+      if(scope.clocks[clockName] == null) {
+        scope.tic(clockName);
+      } else {
+        var now = new Date().getTime();
+        var diff = now - scope.clocks[clockName];
+        c.l("TimeLogger '" + clockName + "' took " + diff + " ms");
+      }
+    };
+  }
+  var tl = new TimeLogger("Global Time Logger");
 
   Point__Point.prototype = new DataModel();
   Point__Point.prototype.constructor = Point__Point;
@@ -3328,6 +3598,195 @@ define('src/index', ['exports'], function (exports) {
 
   exports.NumberList = NumberList__default;
 
+  Polygon__Polygon.prototype = new List__default();
+  Polygon__Polygon.prototype.constructor = Polygon__Polygon;
+
+  /**
+   * @classdesc A Polygon is a shape created from a list of {@link Point|Points}.
+   *
+   * @description Creates a new Polygon.
+   * @constructor
+   * @category geometry
+   */
+  function Polygon__Polygon() {
+    var array = List__default.apply(this, arguments);
+    array = Polygon__Polygon.fromArray(array);
+    return array;
+  }
+  var Polygon__default = Polygon__Polygon;
+
+  Polygon__Polygon.fromArray = function(array) {
+    var result = List__default.fromArray(array);
+    result.type = "Polygon";
+
+    result.getFrame = Polygon__Polygon.prototype.getFrame;
+    result.getBarycenter = Polygon__Polygon.prototype.getBarycenter;
+    result.add = Polygon__Polygon.prototype.add;
+    result.factor = Polygon__Polygon.prototype.factor;
+    result.getRotated = Polygon__Polygon.prototype.getRotated;
+    result.getClosestPoint = Polygon__Polygon.prototype.getClosestPoint;
+    result.toNumberList = Polygon__Polygon.prototype.toNumberList;
+    result.containsPoint = Polygon__Polygon.prototype.containsPoint;
+    //transform
+    result.approach = Polygon__Polygon.prototype.approach;
+    //override
+    result.clone = Polygon__Polygon.prototype.clone;
+
+    return result;
+  };
+
+
+  Polygon__Polygon.prototype.getFrame = function() {
+    if(this.length == 0) return null;
+    var rectangle = new Rectangle(this[0].x, this[0].y, this[0].x, this[0].y);
+    var p;
+    for(var i = 1; this[i] != null; i++) {
+      p = this[i];
+      rectangle.x = Math.min(rectangle.x, p.x);
+      rectangle.y = Math.min(rectangle.y, p.y);
+      rectangle.width = Math.max(rectangle.width, p.x);
+      rectangle.height = Math.max(rectangle.height, p.y);
+    }
+
+    rectangle.width -= rectangle.x;
+    rectangle.height -= rectangle.y;
+
+    return rectangle;
+  };
+
+  Polygon__Polygon.prototype.getBarycenter = function(countLastPoint) {
+    var i;
+    countLastPoint = countLastPoint == null ? true : countLastPoint;
+    cLPN = 1 - Number(countLastPoint);
+    if(this.length == 0) return null;
+    var barycenter = new Point(this[0].x, this[0].y);
+    for(i = 1; this[i + cLPN] != null; i++) {
+      barycenter.x += this[i].x;
+      barycenter.y += this[i].y;
+    }
+    barycenter.x /= this.length;
+    barycenter.y /= this.length;
+    return barycenter;
+  };
+
+  Polygon__Polygon.prototype.add = function(object) {
+    var type = typeOf(object);
+    var i;
+    switch(type) {
+      case 'Point':
+        var newPolygon = new Polygon__Polygon();
+        for(i = 0; this[i] != null; i++) {
+          newPolygon[i] = this[i].add(object);
+        }
+        newPolygon.name = this.name;
+        return newPolygon;
+        break;
+    }
+  };
+
+  /**
+   * scales the polygon by a number or a Point
+   * @param  {Object} value number or point
+   * @return {Polygon}
+   * tags:
+   */
+  Polygon__Polygon.prototype.factor = function(value) {
+    var i;
+    var newPolygon = new Polygon__Polygon();
+    newPolygon.name = this.name;
+
+    if(value >= 0 || value < 0) {
+      for(i = 0; this[i] != null; i++) {
+        newPolygon[i] = new Point(this[i].x * value, this[i].y * value);
+      }
+
+      return newPolygon;
+    } else if(value.type != null && value.type == 'Point') {
+      for(i = 0; this[i] != null; i++) {
+        newPolygon[i] = new Point(this[i].x * value.x, this[i].y * value.y);
+      }
+
+      return newPolygon;
+    }
+
+    return null;
+  };
+
+
+  Polygon__Polygon.prototype.getRotated = function(angle, center) {
+    center = center == null ? new Point() : center;
+
+    var newPolygon = new Polygon__Polygon();
+    for(var i = 0; this[i] != null; i++) {
+      newPolygon[i] = new Point(Math.cos(angle) * (this[i].x - center.x) - Math.sin(angle) * (this[i].y - center.y) + center.x, Math.sin(angle) * (this[i].x - center.x) + Math.cos(angle) * (this[i].y - center.y) + center.y);
+    }
+    newPolygon.name = this.name;
+    return newPolygon;
+  };
+
+  Polygon__Polygon.prototype.getClosestPoint = function(point) {
+    var closest = this[0];
+    var d2Min = Math.pow(point.x - closest.x, 2) + Math.pow(point.y - closest.y, 2);
+    var d2;
+
+    for(var i = 1; this[i] != null; i++) {
+      d2 = Math.pow(point.x - this[i].x, 2) + Math.pow(point.y - this[i].y, 2);
+      if(d2 < d2Min) {
+        d2Min = d2;
+        closest = this[i];
+      }
+    }
+    return closest;
+  };
+
+  Polygon__Polygon.prototype.toNumberList = function() {
+    var numberList = new NumberList();
+    var i;
+    for(i = 0; this[i] != null; i++) {
+      numberList[i * 2] = this[i].x;
+      numberList[i * 2 + 1] = this[i].y;
+    }
+    return numberList;
+  };
+
+  /**
+   * Thanks http://jsfromhell.com/math/is-point-in-poly AND http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+   */
+  Polygon__Polygon.prototype.containsPoint = function(point) {
+    var i;
+    var j;
+    var l;
+    for(var c = false, i = -1, l = this.length, j = l - 1; ++i < l; j = i)
+          ((this[i].y <= point.y && point.y < this[j].y) || (this[j].y <= point.y && point.y < this[i].y))
+          && (point.x < (this[j].x - this[i].x) * (point.y - this[i].y) / (this[j].y - this[i].y) + this[i].x)
+          && (c = !c);
+    return c;
+  };
+
+  //transform
+
+  Polygon__Polygon.prototype.approach = function(destiny, speed) {
+    speed = speed || 0.5;
+    var antispeed = 1 - speed;
+
+    this.forEach(function(point, i) {
+      point.x = antispeed * point.x + speed * destiny[i].x;
+      point.y = antispeed * point.y + speed * destiny[i].y;
+    });
+  };
+
+
+  Polygon__Polygon.prototype.clone = function() {
+    var newPolygon = new Polygon__Polygon();
+    for(var i = 0; this[i] != null; i++) {
+      newPolygon[i] = this[i].clone();
+    }
+    newPolygon.name = this.name;
+    return newPolygon;
+  };
+
+  exports.Polygon = Polygon__default;
+
   NodeList__NodeList.prototype = new List__default();
   NodeList__NodeList.prototype.constructor = NodeList__NodeList;
 
@@ -3355,7 +3814,6 @@ define('src/index', ['exports'], function (exports) {
 
     return array;
   }
-
   var NodeList__default = NodeList__NodeList;
 
   /**
@@ -3373,7 +3831,7 @@ define('src/index', ['exports'], function (exports) {
 
     if(forceToNode) {
       for(var i = 0; i < result.length; i++) {
-        result[i] = typeOf(result[i]) == "Node" ? result[i] : (new Node(String(result[i]), String(result[i])));
+        result[i] = ClassUtils__typeOf(result[i]) == "Node" ? result[i] : (new Node__default(String(result[i]), String(result[i])));
       }
     }
 
@@ -3402,7 +3860,7 @@ define('src/index', ['exports'], function (exports) {
 
     result._push = Array.prototype.push;
     result.push = function(a) {
-      c.l('with nodeList, use addNode instead of push');
+      console.log('with nodeList, use addNode instead of push');
       var k;
       k.push(a);
     };
@@ -3536,7 +3994,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:
    */
   NodeList__NodeList.prototype.getWeights = function() {
-    var numberList = new NumberList();
+    var numberList = new NumberList__default();
     for(var i = 0; this[i] != null; i++) {
       numberList[i] = this[i].weight;
     }
@@ -3551,7 +4009,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:
    */
   NodeList__NodeList.prototype.getIds = function() {
-    var list = new StringList();
+    var list = new StringList__default();
     for(var i = 0; this[i] != null; i++) {
       list[i] = this[i].id;
     }
@@ -3567,7 +4025,7 @@ define('src/index', ['exports'], function (exports) {
    * of Relations each Node has.
    */
   NodeList__NodeList.prototype.getDegrees = function() {
-    var numberList = new NumberList();
+    var numberList = new NumberList__default();
     for(var i = 0; this[i] != null; i++) {
       numberList[i] = this[i].nodeList.length;
     }
@@ -3584,9 +4042,9 @@ define('src/index', ['exports'], function (exports) {
    * @return {Polygon}
    */
   NodeList__NodeList.prototype.getPolygon = function() {
-    var polygon = new Polygon();
+    var polygon = new Polygon__default();
     for(var i = 0; this[i] != null; i++) {
-      polygon[i] = new Point(this[i].x + cX, this[i].y + cY);
+      polygon[i] = new Point__default(this[i].x + cX, this[i].y + cY);
     }
     return polygon;
   };
@@ -3629,6 +4087,8 @@ define('src/index', ['exports'], function (exports) {
     }
     return newList;
   };
+
+  exports.NodeList = NodeList__default;
 
   RelationList.prototype = new NodeList__default();
   RelationList.prototype.constructor = RelationList;
@@ -3831,194 +4291,497 @@ define('src/index', ['exports'], function (exports) {
     return null;
   };
 
-  Polygon__Polygon.prototype = new List__default();
-  Polygon__Polygon.prototype.constructor = Polygon__Polygon;
+  exports.RelationList = RelationList;
+
+  function Loader() {}
+
+
+  Loader.proxy = ""; //TODO:install proxy created by Mig at moebio.com
+  Loader.cacheActive = false; //TODO: fix!
+  Loader.associativeByUrls = {};
+  Loader.REPORT_LOADING = false;
+  Loader.n_loading = 0;
+  Loader.LOCAL_STORAGE_ENABLED = false;
+
+  Loader.PHPurl = "http://intuitionanalytics.com/tests/proxy.php?url=";
+
 
   /**
-   * @classdesc A Polygon is a shape created from a list of {@link Point|Points}.
-   *
-   * @description Creates a new Polygon.
-   * @constructor
-   * @category geometry
+   * loads string data from server. The defined Loader.proxy will be used.
+   * @param {String} url the URL of the file to be loaded
+   * @param {Function} onLoadData a function that will be called when complete. The function must receive a LoadEvent
+   * @param {callee} the Object containing the onLoadData function to be called
+   * @para, {Object} optional parameter that will be stored in the LoadEvent instance
    */
-  function Polygon__Polygon() {
-    var array = List__default.apply(this, arguments);
-    array = Polygon__Polygon.fromArray(array);
-    return array;
-  }
-  var Polygon__default = Polygon__Polygon;
+  Loader.loadData = function(url, onLoadData, callee, param, send_object_json) {
+    if(Loader.REPORT_LOADING) c.log('load data:', url);
+    Loader.n_loading++;
 
-  Polygon__Polygon.fromArray = function(array) {
-    var result = List__default.fromArray(array);
-    result.type = "Polygon";
+    if(Loader.LOCAL_STORAGE_ENABLED) {
+      var result = LocalStorage.getItem(url);
+      if(result) {
+        var e = new LoadEvent();
+        e.url = url;
+        e.param = param;
+        e.result = result;
 
-    result.getFrame = Polygon__Polygon.prototype.getFrame;
-    result.getBarycenter = Polygon__Polygon.prototype.getBarycenter;
-    result.add = Polygon__Polygon.prototype.add;
-    result.factor = Polygon__Polygon.prototype.factor;
-    result.getRotated = Polygon__Polygon.prototype.getRotated;
-    result.getClosestPoint = Polygon__Polygon.prototype.getClosestPoint;
-    result.toNumberList = Polygon__Polygon.prototype.toNumberList;
-    result.containsPoint = Polygon__Polygon.prototype.containsPoint;
-    //transform
-    result.approach = Polygon__Polygon.prototype.approach;
-    //override
-    result.clone = Polygon__Polygon.prototype.clone;
-
-    return result;
-  };
-
-
-  Polygon__Polygon.prototype.getFrame = function() {
-    if(this.length == 0) return null;
-    var rectangle = new Rectangle(this[0].x, this[0].y, this[0].x, this[0].y);
-    var p;
-    for(var i = 1; this[i] != null; i++) {
-      p = this[i];
-      rectangle.x = Math.min(rectangle.x, p.x);
-      rectangle.y = Math.min(rectangle.y, p.y);
-      rectangle.width = Math.max(rectangle.width, p.x);
-      rectangle.height = Math.max(rectangle.height, p.y);
+        onLoadData.call(target, e);
+      }
     }
 
-    rectangle.width -= rectangle.x;
-    rectangle.height -= rectangle.y;
 
-    return rectangle;
-  };
 
-  Polygon__Polygon.prototype.getBarycenter = function(countLastPoint) {
-    var i;
-    countLastPoint = countLastPoint == null ? true : countLastPoint;
-    cLPN = 1 - Number(countLastPoint);
-    if(this.length == 0) return null;
-    var barycenter = new Point(this[0].x, this[0].y);
-    for(i = 1; this[i + cLPN] != null; i++) {
-      barycenter.x += this[i].x;
-      barycenter.y += this[i].y;
-    }
-    barycenter.x /= this.length;
-    barycenter.y /= this.length;
-    return barycenter;
-  };
+    if(Loader.REPORT_LOADING) c.log("Loader.loadData | url:", url);
 
-  Polygon__Polygon.prototype.add = function(object) {
-    var type = typeOf(object);
-    var i;
-    switch(type) {
-      case 'Point':
-        var newPolygon = new Polygon__Polygon();
-        for(i = 0; this[i] != null; i++) {
-          newPolygon[i] = this[i].add(object);
+    var useProxy = String(url).substr(0, 4) == "http";
+
+    var req = new XMLHttpRequest();
+
+    var target = callee ? callee : arguments.callee;
+    var onLoadComplete = function() {
+      if(Loader.REPORT_LOADING) c.log('Loader.loadData | onLoadComplete'); //, req.responseText:', req.responseText);
+      if(req.readyState == 4) {
+        Loader.n_loading--;
+
+        var e = new LoadEvent();
+        e.url = url;
+        e.param = param;
+        //if (req.status == 200) { //MIG
+        if(req.status == 200 || (req.status == 0 && req.responseText != null)) {
+          e.result = req.responseText;
+          onLoadData.call(target, e);
+        } else {
+          if(Loader.REPORT_LOADING) c.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
+          e.errorType = req.status;
+          e.errorMessage = "[!] There was a problem retrieving the data [" + req.status + "]:" + req.statusText;
+          onLoadData.call(target, e);
         }
-        newPolygon.name = this.name;
-        return newPolygon;
-        break;
+      }
+    };
+
+    // branch for native XMLHttpRequest object
+    if(window.XMLHttpRequest && !(window.ActiveXObject)) {
+      try {
+        req = new XMLHttpRequest();
+      } catch(e) {
+        req = false;
+      }
+      // branch for IE/Windows ActiveX version
+    } else if(window.ActiveXObject) {
+      try {
+        req = new ActiveXObject("Msxml2.XMLHTTP.6.0");
+      } catch(e) {
+        try {
+          req = new ActiveXObject("Msxml2.XMLHTTP.3.0");
+        } catch(e) {
+          try {
+            req = new ActiveXObject("Msxml2.XMLHTTP");
+          } catch(e) {
+            try {
+              req = new ActiveXObject("Microsoft.XMLHTTP");
+            } catch(e) {
+              req = false;
+            }
+          }
+        }
+      }
     }
+    if(req) {
+      req.onreadystatechange = onLoadComplete; //processReqChange;
+      if(useProxy) {
+        req.open("GET", Loader.proxy + url, true);
+      } else {
+        req.open("GET", url, true);
+      }
+
+      send_object_json = send_object_json || "";
+      req.send(send_object_json);
+    }
+  };
+
+
+  function LoaderRequest(url, method, data) {
+    this.url = url;
+    this.method = method ? method : "GET";
+    this.data = data;
+  }
+
+  Loader.loadImage = function(url, onComplete, callee, param) {
+    Loader.n_loading++;
+
+    if(Loader.REPORT_LOADING) c.log("Loader.loadImage | url:", url);
+
+    var target = callee ? callee : arguments.callee;
+    var img = document.createElement('img');
+
+    if(this.cacheActive) {
+      if(this.associativeByUrls[url] != null) {
+        Loader.n_loading--;
+        //c.log('=====>>>>+==>>>+====>>=====>>>+==>> in cache:', url);
+        var e = new LoadEvent();
+        e.result = this.associativeByUrls[url];
+        e.url = url;
+        e.param = param;
+        onComplete.call(target, e);
+      } else {
+        var cache = true;
+        var associative = this.associativeByUrls;
+      }
+    }
+
+    img.onload = function() {
+      Loader.n_loading--;
+      var e = new LoadEvent();
+      e.result = img;
+      e.url = url;
+      e.param = param;
+      if(cache) associative[url] = img;
+      onComplete.call(target, e);
+    };
+
+    img.onerror = function() {
+      Loader.n_loading--;
+      var e = new LoadEvent();
+      e.result = null;
+      e.errorType = 1; //TODO: set an error type!
+      e.errorMessage = "There was a problem retrieving the image [" + img.src + "]:";
+      e.url = url;
+      e.param = param;
+      onComplete.call(target, e);
+    };
+
+    img.src = Loader.proxy + url;
+  };
+
+
+
+  // Loader.loadJSON = function(url, onLoadComplete) {
+  //   Loader.n_loading++;
+
+  //   Loader.loadData(url, function(data) {
+  //     Loader.n_loading--;
+  //     onLoadComplete.call(arguments.callee, jQuery.parseJSON(data));
+  //   });
+  // };
+
+
+  /**
+  Loader.callIndex = 0;
+  Loader.loadJSONP = function(url, onLoadComplete, callee) {
+    Loader.n_loading++;
+
+    Loader.callIndex = Loader.callIndex + 1;
+    var index = Loader.callIndex;
+
+    var newUrl = url + "&callback=JSONcallback" + index;
+    //var newUrl=url+"?callback=JSONcallback"+index; //   <----  WFP suggestion
+
+    var target = callee ? callee : arguments.callee;
+
+    //c.log('Loader.loadJSONP, newUrl:', newUrl);
+
+    $.ajax({
+      url: newUrl,
+      type: 'GET',
+      data: {},
+      dataType: 'jsonp',
+      contentType: "application/json",
+      jsonp: 'jsonp',
+      jsonpCallback: 'JSONcallback' + index,
+      success: function(data) {
+        Loader.n_loading--;
+        var e = new LoadEvent();
+        e.result = data;
+        onLoadComplete.call(target, e);
+      },
+      error: function(data) {
+        Loader.n_loading--;
+        c.log("Loader.loadJSONP | error, data:", data);
+
+        var e = new LoadEvent();
+        e.errorType = 1;
+        onLoadComplete.call(target, e);
+      }
+    }); //.error(function(e){
+    // c.log('---> (((error))) B');
+    //
+    // var e=new LoadEvent();
+    // e.errorType=1;
+    // onLoadComplete.call(target, e);
+    // });
+  };
+  **/
+
+
+
+
+  //FIX THESE METHODS:
+
+  Loader.loadXML = function(url, onLoadData) {
+    Loader.n_loading++;
+
+    var req = new XMLHttpRequest();
+    var onLoadComplete = onLoadData;
+
+    if(Loader.REPORT_LOADING) c.log('loadXML, url:', url);
+
+    // branch for native XMLHttpRequest object
+    if(window.XMLHttpRequest && !(window.ActiveXObject)) {
+      try {
+        req = new XMLHttpRequest();
+      } catch(e) {
+        req = false;
+      }
+      // branch for IE/Windows ActiveX version
+    } else if(window.ActiveXObject) {
+      try {
+        req = new ActiveXObject("Msxml2.XMLHTTP");
+      } catch(e) {
+        try {
+          req = new ActiveXObject("Microsoft.XMLHTTP");
+        } catch(e) {
+          req = false;
+        }
+      }
+    }
+    if(req) {
+      req.onreadystatechange = processReqChange;
+      req.open("GET", url, true);
+      req.send("");
+    }
+
+    function processReqChange() {
+      Loader.n_loading--;
+      // only if req shows "loaded"
+      if(req.readyState == 4) {
+        // only if "OK"
+        if(req.status == 200 || req.status == 0) {
+          onLoadComplete(req.responseXML);
+
+        } else {
+          c.log("There was a problem retrieving the XML data:\n" +
+            req.statusText);
+        }
+      }
+    }
+  };
+
+
+  ///////////////PHP
+
+  Loader.sendContentToVariableToPhp = function(url, varName, value, onLoadData, callee, param) {
+    var data = varName + "=" + encodeURIComponent(value);
+    Loader.sendDataToPhp(url, data, onLoadData, callee, param);
+  };
+
+  Loader.sendContentsToVariablesToPhp = function(url, varNames, values, onLoadData, callee, param) {
+    var data = varNames[0] + "=" + encodeURIComponent(values[0]);
+    for(var i = 1; varNames[i] != null; i++) {
+      data += "&" + varNames[i] + "=" + encodeURIComponent(values[i]);
+    }
+    Loader.sendDataToPhp(url, data, onLoadData, callee, param);
+  };
+
+  Loader.sendDataToPhp = function(url, data, onLoadData, callee, param) {
+    var req = new XMLHttpRequest();
+
+    req.open("POST", url, true);
+    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    req.send(data);
+
+    var target = callee ? callee : arguments.callee;
+
+    var onLoadComplete = function() {
+      if(Loader.REPORT_LOADING) c.log('Loader.loadData | onLoadComplete, req.responseText:', req.responseText);
+      if(req.readyState == 4) {
+        Loader.n_loading--;
+
+        var e = new LoadEvent();
+        e.url = url;
+        e.param = param;
+
+        if(req.status == 200 || (req.status == 0 && req.responseText != null)) {
+          e.result = req.responseText;
+          onLoadData.call(target, e);
+        } else {
+          if(Loader.REPORT_LOADING) c.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
+          e.errorType = req.status;
+          e.errorMessage = "[!] There was a problem retrieving the data [" + req.status + "]:" + req.statusText;
+          onLoadData.call(target, e);
+        }
+      }
+    };
+
+    req.onreadystatechange = onLoadComplete;
+  };
+
+  Node__Node.prototype = new DataModel();
+  Node__Node.prototype.constructor = Node__Node;
+
+  /**
+   * @classdesc Represents a single node element in a Network. Can have both an id as well
+   * as a name.
+   *
+   * @description Create a new Node.
+   * @param {String} id ID of the Node
+   * @param {String} name string (label) name to be assigned to node
+   * @constructor
+   * @category networks
+   */
+  function Node__Node(id, name) {
+    this.id = id == null ? '' : id;
+    this.name = name != null ? name : '';
+    this.type = "Node";
+
+    this.nodeType;
+
+    this.x = 0;
+    this.y = 0;
+    this.z = 0;
+
+    this.nodeList = new NodeList__default();
+    this.relationList = new RelationList();
+
+    this.toNodeList = new NodeList__default();
+    this.toRelationList = new RelationList();
+
+    this.fromNodeList = new NodeList__default();
+    this.fromRelationList = new RelationList();
+
+    this.weight = 1;
+    this.descentWeight = 1;
+
+    //tree
+    this.level = 0;
+    this.parent = null;
+
+    //physics:
+    this.vx = 0;
+    this.vy = 0;
+    this.vz = 0;
+    this.ax = 0;
+    this.ay = 0;
+    this.az = 0;
+  }
+  var Node__default = Node__Node;
+
+  /**
+   * Removes all Relations and connected Nodes from
+   * the current Node.
+   */
+  Node__Node.prototype.cleanRelations = function() {
+    this.nodeList = new NodeList__default();
+    this.relationList = new RelationList();
+
+    this.toNodeList = new NodeList__default();
+    this.toRelationList = new RelationList();
+
+    this.fromNodeList = new NodeList__default();
+    this.fromRelationList = new RelationList();
+  };
+
+  //TODO: complete with all properties
+  Node__Node.prototype.destroy = function() {
+    DataModel.prototype.destroy.call(this);
+    delete this.id;
+    delete this.name;
+    delete this.nodeType;
+    delete this.x;
+    delete this.y;
+    delete this.z;
+    delete this.nodeList;
+    delete this.relationList;
+    delete this.toNodeList;
+    delete this.toNodeList;
+    delete this.fromNodeList;
+    delete this.fromRelationList;
+    delete this.parent;
+    delete this.weight;
+    delete this.descentWeight;
+    delete this.level;
+    delete this.vx;
+    delete this.vy;
+    delete this.vz;
+    delete this.ax;
+    delete this.ay;
+    delete this.az;
   };
 
   /**
-   * scales the polygon by a number or a Point
-   * @param  {Object} value number or point
-   * @return {Polygon}
+   * Returns the number of Relations connected to this Node.
+   *
+   * @return {Number} Number of Relations (edges) connecting to this Node instance.
+   */
+  Node__Node.prototype.getDegree = function() {
+    return this.relationList.length;
+  };
+
+  //treeProperties:
+
+
+  /**
+   * Returns the parent Node of this Node if it is part of a {@link Tree}.
+   *
+   * @return {Node} Parent Node of this Node.
+   */
+  Node__Node.prototype.getParent = function() {
+    return this.parent;
+  };
+
+  /**
+   * Returns the leaves under a node in a Tree,
+   *
+   * <strong>Warning:</strong> If this Node is part of a Network that is not a tree, this method could run an infinite loop.
+   * @return {NodeList} Leaf Nodes of this Node.
    * tags:
    */
-  Polygon__Polygon.prototype.factor = function(value) {
-    var i;
-    var newPolygon = new Polygon__Polygon();
-    newPolygon.name = this.name;
+  Node__Node.prototype.getLeaves = function() {
+      var leaves = new NodeList__default();
+      var addLeaves = function(node) {
+        if(node.toNodeList.length === 0) {
+          leaves.addNode(node);
+          return;
+        }
+        node.toNodeList.forEach(addLeaves);
+      };
+      addLeaves(this);
+      return leaves;
+    };
 
-    if(value >= 0 || value < 0) {
-      for(i = 0; this[i] != null; i++) {
-        newPolygon[i] = new Point(this[i].x * value, this[i].y * value);
-      }
-
-      return newPolygon;
-    } else if(value.type != null && value.type == 'Point') {
-      for(i = 0; this[i] != null; i++) {
-        newPolygon[i] = new Point(this[i].x * value.x, this[i].y * value.y);
-      }
-
-      return newPolygon;
-    }
-
-    return null;
-  };
-
-
-  Polygon__Polygon.prototype.getRotated = function(angle, center) {
-    center = center == null ? new Point() : center;
-
-    var newPolygon = new Polygon__Polygon();
-    for(var i = 0; this[i] != null; i++) {
-      newPolygon[i] = new Point(Math.cos(angle) * (this[i].x - center.x) - Math.sin(angle) * (this[i].y - center.y) + center.x, Math.sin(angle) * (this[i].x - center.x) + Math.cos(angle) * (this[i].y - center.y) + center.y);
-    }
-    newPolygon.name = this.name;
-    return newPolygon;
-  };
-
-  Polygon__Polygon.prototype.getClosestPoint = function(point) {
-    var closest = this[0];
-    var d2Min = Math.pow(point.x - closest.x, 2) + Math.pow(point.y - closest.y, 2);
-    var d2;
-
-    for(var i = 1; this[i] != null; i++) {
-      d2 = Math.pow(point.x - this[i].x, 2) + Math.pow(point.y - this[i].y, 2);
-      if(d2 < d2Min) {
-        d2Min = d2;
-        closest = this[i];
-      }
-    }
-    return closest;
-  };
-
-  Polygon__Polygon.prototype.toNumberList = function() {
-    var numberList = new NumberList();
-    var i;
-    for(i = 0; this[i] != null; i++) {
-      numberList[i * 2] = this[i].x;
-      numberList[i * 2 + 1] = this[i].y;
-    }
-    return numberList;
-  };
 
   /**
-   * Thanks http://jsfromhell.com/math/is-point-in-poly AND http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+   * Uses an image as a visual representation to this Node.
+   *
+   * @param {String} urlImage The URL of the image to load.
    */
-  Polygon__Polygon.prototype.containsPoint = function(point) {
-    var i;
-    var j;
-    var l;
-    for(var c = false, i = -1, l = this.length, j = l - 1; ++i < l; j = i)
-          ((this[i].y <= point.y && point.y < this[j].y) || (this[j].y <= point.y && point.y < this[i].y))
-          && (point.x < (this[j].x - this[i].x) * (point.y - this[i].y) / (this[j].y - this[i].y) + this[i].x)
-          && (c = !c);
-    return c;
-  };
-
-  //transform
-
-  Polygon__Polygon.prototype.approach = function(destiny, speed) {
-    speed = speed || 0.5;
-    var antispeed = 1 - speed;
-
-    this.forEach(function(point, i) {
-      point.x = antispeed * point.x + speed * destiny[i].x;
-      point.y = antispeed * point.y + speed * destiny[i].y;
-    });
+  Node__Node.prototype.loadImage = function(urlImage) {
+    Loader.loadImage(urlImage, function(e) {
+      this.image = e.result;
+    }, this);
   };
 
 
-  Polygon__Polygon.prototype.clone = function() {
-    var newPolygon = new Polygon__Polygon();
-    for(var i = 0; this[i] != null; i++) {
-      newPolygon[i] = this[i].clone();
-    }
-    newPolygon.name = this.name;
-    return newPolygon;
+  /**
+   * Makes a copy of this Node.
+   *
+   * @return {Node} New Node that is a copy of this Node.
+   */
+  Node__Node.prototype.clone = function() {
+    var newNode = new Node__Node(this.id, this.name);
+
+    newNode.x = this.x;
+    newNode.y = this.y;
+    newNode.z = this.z;
+
+    newNode.nodeType = this.nodeType;
+
+    newNode.weight = this.weight;
+    newNode.descentWeight = this.descentWeight;
+
+    return newNode;
   };
 
-  exports.Polygon = Polygon__default;
+  exports.Node = Node__default;
 
   function TableEncodings() {}
 
@@ -4174,274 +4937,6 @@ define('src/index', ['exports'], function (exports) {
 
     return headers + lines.getConcatenated("\n");
   };
-
-  /*
-   * All these function are globally available since they are included in the Global class
-   */
-
-
-
-
-  var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"}
-
-
-
-  /*
-   * types are:
-   * number, string, boolean, date
-   * and all data models classes names
-   */
-  function ClassUtils__typeOf(o) {
-    var type = typeof o;
-
-    if(type !== 'object') {
-      return type;
-    }
-
-    if(o === null) {
-      return 'null';
-    } else if(o.getDate != null) {
-      return 'date';
-    } else {
-      if(o.getType == null) return 'Object';
-      var objectType = o.getType();
-      return objectType;
-    }
-    c.log("[!] ERROR: could not detect type for ", o);
-  }
-
-  function VOID() {}
-
-  function ClassUtils__instantiate(className, args) {
-    switch(className) {
-      case 'number':
-      case 'string':
-        return window[className](args);
-      case 'date':
-        if(!args || args.length == 0) return new Date();
-        if(args.length == 1) {
-          if(args[0].match(/\d*.-\d*.-\d*\D\d*.:\d*.:\d*/)) {
-            var dateArray = args[0].split(" ");
-            dateArray[0] = dateArray[0].split("-");
-            if(dateArray[1]) dateArray[1] = dateArray[1].split(":");
-            else dateArray[1] = new Array(0, 0, 0);
-            return new Date(Date.UTC(dateArray[0][0], Number(dateArray[0][1]) - 1, dateArray[0][2], dateArray[1][0], dateArray[1][1], dateArray[1][2]));
-          }
-          //
-          if(Number(args[0]) != "NaN") return new Date(Number(args[0]));
-          else return new Date(args[0]);
-        }
-        return new Date(Date.UTC.apply(null, args));
-        //
-      case 'boolean':
-        return window[className]((args == "false" || args == "0") ? false : true);
-      case 'List':
-      case 'Table':
-      case 'StringList':
-      case 'NumberList':
-      case 'NumberTable':
-      case 'NodeList':
-      case 'RelationList':
-      case 'Polygon':
-      case 'Polygon3D':
-      case 'PolygonList':
-      case 'DateList':
-      case 'ColorList':
-        return window[className].apply(window, args);
-      case null:
-      case undefined:
-      case 'undefined':
-        return null;
-    }
-    //generic instantiation of object:
-    var o, dummyFunction, cl;
-    cl = window[className]; // get reference to class constructor function
-    dummyFunction = function() {}; // dummy function
-    dummyFunction.prototype = cl.prototype; // reference same prototype
-    o = new dummyFunction(); // instantiate dummy function to copy prototype properties
-    cl.apply(o, args); // call class constructor, supplying new object as context
-
-    return o;
-  }
-
-  function getTextFromObject(value, type) {
-    if(value == null) return "Null";
-    if(value.isList) {
-      if(value.length == 0) return "[]";
-      var text = value.toString(); // value.length>6?value.slice(0, 5).forEach(function(v){return getTextFromObject(v, typeOf(v))}).join(','):value.toStringList().join(',').forEach(function(v, typeOf(v)){return getTextFromObject(v, type)});
-      if(text.length > 160) {
-        var i;
-        var subtext;
-        text = "[";
-        for(i = 0; (value[i] != null && i < 6); i++) {
-          subtext = getTextFromObject(value[i], ClassUtils__typeOf(value[i]));
-          if(subtext.length > 40) subtext = subtext.substr(0, 40) + (value[i].isList ? "…]" : "…");
-          text += (i != 0 ? ", " : "") + subtext;
-        }
-        if(value.length > 6) text += ",…";
-        text += "]";
-      }
-      return text;
-    }
-
-    switch(type) {
-      case "date":
-        return DateOperators.dateToString(value);
-      case "DateInterval":
-        return DateOperators.dateToString(value.date0) + " - " + DateOperators.dateToString(value.date1);
-      case "string":
-        return((value.length > 160) ? value.substr(0, 159) + "…" : value).replace(/\n/g, "↩");
-      case "number":
-        return String(value);
-      default:
-        return "{}"; //value.toString();
-    }
-  }
-
-
-  function ClassUtils__instantiateWithSameType(object, args) {
-    return ClassUtils__instantiate(ClassUtils__typeOf(object), args);
-  }
-
-  function isArray(obj) {
-    if(obj.constructor.toString().indexOf("Array") == -1)
-      return false;
-    else
-      return true;
-  }
-  Date.prototype.getType = function() {
-    return 'date';
-  };
-
-
-
-  function evalJavaScriptFunction(functionText, args, scope){
-  	if(functionText==null) return;
-
-  	var res;
-
-  	var myFunction;
-
-  	var good = true;
-  	var message = '';
-
-  	var realCode;
-
-  	var lines = functionText.split('\n');
-
-  	for(var i=0; lines[i]!=null; i++){
-  		lines[i] = lines[i].trim();
-  		if(lines[i] === "" || lines[i].substr(1)=="/"){
-  			lines.splice(i,1);
-  			i--;
-  		}
-  	}
-
-  	var isFunction = lines[0].indexOf('function')!=-1;
-
-  	functionText = lines.join('\n');
-
-  	if(isFunction){
-  		if(scope){
-  			realCode = "scope.myFunction = " + functionText;
-  		} else {
-  			realCode = "myFunction = " + functionText;
-  		}
-  	} else {
-  		if(scope){
-  			realCode = "scope.myVar = " + functionText;
-  		} else {
-  			realCode = "myVar = " + functionText;
-  		}
-  	}
-
-  	try{
-  		if(isFunction){
-  			eval(realCode);
-  			if(scope){
-  				res = scope.myFunction.apply(scope, args);
-  			} else {
-  				res = myFunction.apply(this, args);
-  			}
-  		} else {
-  			eval(realCode);
-  			if(scope){
-  				res = scope.myVar;
-  			} else 	{
-  				res = myVar;
-  			}
-  		}
-  	} catch(err){
-  		good = false;
-  		message = err.message;
-  		res = null;
-  	}
-
-
-    // var isFunction = functionText.split('\n')[0].indexOf('function') != -1;
-
-    // if(isFunction) {
-    //   realCode = "myFunction = " + functionText;
-    // } else {
-    //   realCode = "myVar = " + functionText;
-    // }
-
-
-    // try {
-    //   if(isFunction) {
-    //     eval(realCode);
-    //     res = myFunction.apply(this, args);
-    //   } else {
-    //     eval(realCode);
-    //     res = myVar;
-    //   }
-    // } catch(err) {
-    //   good = false;
-    //   message = err.message;
-    //   res = null;
-    // }
-
-    //c.l('resultObject', resultObject);
-
-    var resultObject = {
-      result: res,
-      success: good,
-      errorMessage: message
-    };
-
-    return resultObject;
-  }
-
-  function argumentsToArray(args) {
-    return Array.prototype.slice.call(args, 0);
-  }
-
-
-
-
-
-
-
-  function TimeLogger(name) {
-    var scope = this;
-    this.name = name;
-    this.clocks = {};
-
-    this.tic = function(clockName) {
-      scope.clocks[clockName] = new Date().getTime();
-      //c.l( "TimeLogger '"+clockName+"' has been started");
-    };
-    this.tac = function(clockName) {
-      if(scope.clocks[clockName] == null) {
-        scope.tic(clockName);
-      } else {
-        var now = new Date().getTime();
-        var diff = now - scope.clocks[clockName];
-        c.l("TimeLogger '" + clockName + "' took " + diff + " ms");
-      }
-    };
-  }
-  var tl = new TimeLogger("Global Time Logger");
 
   /* global console */
 
@@ -5504,172 +5999,6 @@ define('src/index', ['exports'], function (exports) {
   };
 
   exports.DateInterval = DateInterval;
-
-  Node__Node.prototype = new DataModel();
-  Node__Node.prototype.constructor = Node__Node;
-
-  /**
-   * @classdesc Represents a single node element in a Network. Can have both an id as well
-   * as a name.
-   *
-   * @description Create a new Node.
-   * @param {String} id ID of the Node
-   * @param {String} name string (label) name to be assigned to node
-   * @constructor
-   * @category networks
-   */
-  function Node__Node(id, name) {
-    this.id = id == null ? '' : id;
-    this.name = name != null ? name : '';
-    this.type = "Node";
-
-    this.nodeType;
-
-    this.x = 0;
-    this.y = 0;
-    this.z = 0;
-
-    this.nodeList = new NodeList__default();
-    this.relationList = new RelationList();
-
-    this.toNodeList = new NodeList__default();
-    this.toRelationList = new RelationList();
-
-    this.fromNodeList = new NodeList__default();
-    this.fromRelationList = new RelationList();
-
-    this.weight = 1;
-    this.descentWeight = 1;
-
-    //tree
-    this.level = 0;
-    this.parent = null;
-
-    //physics:
-    this.vx = 0;
-    this.vy = 0;
-    this.vz = 0;
-    this.ax = 0;
-    this.ay = 0;
-    this.az = 0;
-  }
-  var Node__default = Node__Node;
-
-  /**
-   * Removes all Relations and connected Nodes from
-   * the current Node.
-   */
-  Node__Node.prototype.cleanRelations = function() {
-    this.nodeList = new NodeList__default();
-    this.relationList = new RelationList();
-
-    this.toNodeList = new NodeList__default();
-    this.toRelationList = new RelationList();
-
-    this.fromNodeList = new NodeList__default();
-    this.fromRelationList = new RelationList();
-  };
-
-  //TODO: complete with all properties
-  Node__Node.prototype.destroy = function() {
-    DataModel.prototype.destroy.call(this);
-    delete this.id;
-    delete this.name;
-    delete this.nodeType;
-    delete this.x;
-    delete this.y;
-    delete this.z;
-    delete this.nodeList;
-    delete this.relationList;
-    delete this.toNodeList;
-    delete this.toNodeList;
-    delete this.fromNodeList;
-    delete this.fromRelationList;
-    delete this.parent;
-    delete this.weight;
-    delete this.descentWeight;
-    delete this.level;
-    delete this.vx;
-    delete this.vy;
-    delete this.vz;
-    delete this.ax;
-    delete this.ay;
-    delete this.az;
-  };
-
-  /**
-   * Returns the number of Relations connected to this Node.
-   *
-   * @return {Number} Number of Relations (edges) connecting to this Node instance.
-   */
-  Node__Node.prototype.getDegree = function() {
-    return this.relationList.length;
-  };
-
-  //treeProperties:
-
-
-  /**
-   * Returns the parent Node of this Node if it is part of a {@link Tree}.
-   *
-   * @return {Node} Parent Node of this Node.
-   */
-  Node__Node.prototype.getParent = function() {
-    return this.parent;
-  };
-
-  /**
-   * Returns the leaves under a node in a Tree,
-   *
-   * <strong>Warning:</strong> If this Node is part of a Network that is not a tree, this method could run an infinite loop.
-   * @return {NodeList} Leaf Nodes of this Node.
-   * tags:
-   */
-  Node__Node.prototype.getLeaves = function() {
-      var leaves = new NodeList__default();
-      var addLeaves = function(node) {
-        if(node.toNodeList.length == 0) {
-          leaves.addNode(node);
-          return;
-        }
-        node.toNodeList.forEach(addLeaves);
-      };
-      addLeaves(this);
-      return leaves;
-    };
-
-
-  /**
-   * Uses an image as a visual representation to this Node.
-   *
-   * @param {String} urlImage The URL of the image to load.
-   */
-  Node__Node.prototype.loadImage = function(urlImage) {
-    Loader.loadImage(urlImage, function(e) {
-      this.image = e.result;
-    }, this);
-  };
-
-
-  /**
-   * Makes a copy of this Node.
-   *
-   * @return {Node} New Node that is a copy of this Node.
-   */
-  Node__Node.prototype.clone = function() {
-    var newNode = new Node__Node(this.id, this.name);
-
-    newNode.x = this.x;
-    newNode.y = this.y;
-    newNode.z = this.z;
-
-    newNode.nodeType = this.nodeType;
-
-    newNode.weight = this.weight;
-    newNode.descentWeight = this.descentWeight;
-
-    return newNode;
-  };
 
   /**
    * @classdesc Provides a set of tools that work with {@link Country|Countries}.
@@ -8147,6 +8476,467 @@ define('src/index', ['exports'], function (exports) {
   };
 
   exports.Space2D = Space2D;
+
+  Relation.prototype = new Node__default();
+  Relation.prototype.constructor = Relation;
+
+  /**
+   * Relation
+   * @classdesc Relations represent the edges that connect Nodes
+   * in a Network DataType.
+   *
+   * @description create a new Relation.
+   * @constructor
+   * @param {String} id ID of the Relation.
+   * @param {String} name Name of the Relation.
+   * @param {Node} node0 Source of the Relation.
+   * @param {Node} node1 Destination of the Relation.
+   * @param {Number} weight Edge weight associated with Relation.
+   * Defaults to 1.
+   * @param {String} content Other data to associate with this Relation.
+   * @category networks
+   */
+  function Relation(id, name, node0, node1, weight, content) {
+    Node__default.apply(this, [id, name]);
+    this.type = "Relation";
+
+    this.node0 = node0;
+    this.node1 = node1;
+    this.weight = weight == null ? 1 : weight;
+    this.content = content == null ? "" : content;
+  }
+
+
+  Relation.prototype.destroy = function() {
+    Node__default.prototype.destroy.call(this);
+    delete this.node0;
+    delete this.node1;
+    delete this.content;
+  };
+
+  Relation.prototype.getOther = function(node) {
+    return node == this.node0 ? this.node1 : this.node0;
+  };
+
+  Relation.prototype.clone = function() {
+    var relation = new Relation(this.id, this.name, this.node0, this.node1);
+
+    relation.x = this.x;
+    relation.y = this.y;
+    relation.z = this.z;
+
+    relation.nodeType = this.nodeType;
+
+    relation.weight = this.weight;
+    relation.descentWeight = this.descentWeight;
+
+    return relation;
+  };
+
+  exports.Relation = Relation;
+
+  Network.prototype = new DataModel();
+  Network.prototype.constructor = Network;
+
+  /**
+   * @classdesc Networks are a DataType to store network data.
+   *
+   * Networks have nodes stored in a NodeList,
+   * and relations (edges) stored in a RelationList.
+   * @description Create a new Network instance.
+   * @constructor
+   * @category networks
+   */
+  function Network() {
+    this.type = "Network";
+
+    this.nodeList = new NodeList__default();
+    this.relationList = new RelationList();
+  }
+
+
+  /**
+   * Get Nodes of the Network as a NodeList
+   * @return {NodeList}
+   * tags:
+   */
+  Network.prototype.getNodes = function() {
+    return this.nodeList;
+  };
+
+  /**
+   * Get Relations (edges) of the Network as
+   * a RelationList.
+   * @return {RelationList}
+   * tags:
+   */
+  Network.prototype.getRelations = function() {
+    return this.relationList;
+  };
+
+  /**
+   * get nodes ids property
+   * @return {StringList}
+   * tags:
+   */
+  Network.prototype.getNodesIds = function() {
+    return this.nodeList.getIds();
+  };
+
+
+
+  /*
+   * building methods
+   */
+
+  /**
+   * Add a node to the network
+   * @param {Node} node A new node that will be added to the network.
+   */
+  Network.prototype.addNode = function(node) {
+    this.nodeList.addNode(node);
+  };
+
+  /**
+   * Retrieve a node from the nodeList of the Network with the given name (label).
+   * @param {String} name The name of the node to retrieve from the Network.
+   * @return {Node} The node with the given name. Null if no node with that name
+   * can be found in the Network.
+   */
+  Network.prototype.getNodeWithName = function(name) {
+    return this.nodeList.getNodeWithName(name);
+  };
+
+  /**
+   * Retrieve node from Network with the given id.
+   * @param {String} id ID of the node to retrieve
+   * @return {Node} The node with the given id. Null if a node with this id is not
+   * in the Network.
+   */
+  Network.prototype.getNodeWithId = function(id) {
+    return this.nodeList.getNodeWithId(id);
+  };
+
+  /**
+   * Add a new Relation (edge) to the Network between two nodes.
+   * @param {Node} node0 The source of the relation.
+   * @param {Node} node1 The destination of the relation.
+   * @param {String} id The id of the relation.
+   * @param {Number} weight A numerical weight associated with the relation (edge).
+   * @param {String} content Information associated with the relation.
+   */
+  Network.prototype.createRelation = function(node0, node1, id, weight, content) {
+    this.addRelation(new Relation(id, id, node0, node1, weight, content));
+  };
+
+  /**
+   * Add an existing Relation (edge) to the Network.
+   * @param {Relation} relation The relation to add to the network.
+   */
+  Network.prototype.addRelation = function(relation) {
+    this.relationList.addNode(relation);
+    relation.node0.nodeList.addNode(relation.node1);
+    relation.node0.relationList.addNode(relation);
+    relation.node0.toNodeList.addNode(relation.node1);
+    relation.node0.toRelationList.addNode(relation);
+    relation.node1.nodeList.addNode(relation.node0);
+    relation.node1.relationList.addNode(relation);
+    relation.node1.fromNodeList.addNode(relation.node0);
+    relation.node1.fromRelationList.addNode(relation);
+  };
+
+  /**
+   * Create a new Relation between two nodes in the network
+   * @param {Node} node0 The source of the relation.
+   * @param {Node} node1 The destination of the relation.
+   * @param {String} id The id of the relation. If missing, an id will be generated
+   * based on the id's of node0 and node1.
+   * @param {Number} weight=1 A numerical weight associated with the relation (edge).
+   * @param {String} content Information associated with the relation.
+   * @return {Relation} The new relation added to the Network.
+   */
+  Network.prototype.connect = function(node0, node1, id, weight, content) {
+    id = id || (node0.id + "_" + node1.id);
+    weight = weight || 1;
+    var relation = new Relation(id, id, node0, node1, weight);
+    this.addRelation(relation);
+    relation.content = content;
+    return relation;
+  };
+
+
+
+  /*
+   * removing methods
+   */
+
+  /**
+   * Remove a node from the Network
+   * @param {Node} node The node to remove.
+   */
+  Network.prototype.removeNode = function(node) {
+    this.removeNodeRelations(node);
+    this.nodeList.removeNode(node);
+  };
+
+  /**
+   * Remove all Relations connected to the node from the Network.
+   * @param {Node} node Node who's relations will be removed.
+   */
+  Network.prototype.removeNodeRelations = function(node) {
+    for(var i = 0; node.relationList[i] != null; i++) {
+      this.removeRelation(node.relationList[i]);
+      i--;
+    }
+  };
+
+  /**
+   * Remove all Nodes from the Network.
+   */
+  Network.prototype.removeNodes = function() {
+    this.nodeList.deleteNodes();
+    this.relationList.deleteNodes();
+  };
+
+  Network.prototype.removeRelation = function(relation) {
+    this.relationList.removeElement(relation);
+    relation.node0.nodeList.removeNode(relation.node1);
+    relation.node0.relationList.removeRelation(relation);
+    relation.node0.toNodeList.removeNode(relation.node1);
+    relation.node0.toRelationList.removeRelation(relation);
+    relation.node1.nodeList.removeNode(relation.node0);
+    relation.node1.relationList.removeRelation(relation);
+    relation.node1.fromNodeList.removeNode(relation.node0);
+    relation.node1.fromRelationList.removeRelation(relation);
+  };
+
+  /**
+   * Transformative method, removes nodes without a minimal number of connections
+   * @param  {Number} minDegree minimal degree
+   * @return {Number} number of nodes removed
+   * tags:transform
+   */
+  Network.prototype.removeIsolatedNodes = function(minDegree) {
+    var i;
+    var nRemoved = 0;
+    minDegree = minDegree == null ? 1 : minDegree;
+
+    for(i = 0; this.nodeList[i] != null; i++) {
+      if(this.nodeList[i].getDegree() < minDegree) {
+        this.nodeList[i]._toRemove = true;
+      }
+    }
+
+    for(i = 0; this.nodeList[i] != null; i++) {
+      if(this.nodeList[i]._toRemove) {
+        this.removeNode(this.nodeList[i]);
+        nRemoved++;
+        i--;
+      }
+    }
+
+    return nRemoved;
+  };
+
+
+
+  Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames, idsSubfix, namesSubfix) {
+    var newNetwork = new Network();
+    var newNode, newRelation;
+    var i;
+
+    idsSubfix = idsSubfix == null ? '' : String(idsSubfix);
+    namesSubfix = namesSubfix == null ? '' : String(namesSubfix);
+
+    this.nodeList.forEach(function(node) {
+      newNode = new Node__default(idsSubfix + node.id, namesSubfix + node.name);
+      if(idsSubfix != '') newNode.basicId = node.id;
+      if(namesSubfix != '') newNode.basicName = node.name;
+      if(nodePropertiesNames) {
+        nodePropertiesNames.forEach(function(propName) {
+          if(node[propName] != null) newNode[propName] = node[propName];
+        });
+      }
+      newNetwork.addNode(newNode);
+    });
+
+    this.relationList.forEach(function(relation) {
+      newRelation = new Relation(idsSubfix + relation.id, namesSubfix + relation.name, newNetwork.nodeList.getNodeById(idsSubfix + relation.node0.id), newNetwork.nodeList.getNodeById(idsSubfix + relation.node1.id));
+      if(idsSubfix != '') newRelation.basicId = relation.id;
+      if(namesSubfix != '') newRelation.basicName = relation.name;
+      if(relationPropertiesNames) {
+        relationPropertiesNames.forEach(function(propName) {
+          if(relation[propName] != null) newRelation[propName] = relation[propName];
+        });
+      }
+      newNetwork.addRelation(newRelation);
+    });
+
+    return newNetwork;
+  };
+
+
+  Network.prototype.getReport = function() {
+    return "network contains " + this.nodeList.length + " nodes and " + this.relationList.length + " relations";
+  };
+
+  Network.prototype.destroy = function() {
+    delete this.type;
+    this.nodeList.destroy();
+    this.relationList.destroy();
+    delete this.nodeList;
+    delete this.relationList;
+  };
+
+  exports.Network = Network;
+
+  Tree__Tree.prototype = new Network();
+  Tree__Tree.prototype.constructor = Tree__Tree;
+
+  /**
+   * @classdesc Trees are Networks that have a hierarchical structure.
+   *
+   * @description Create a new Tree.
+   * @constructor
+   * @category networks
+   */
+  function Tree__Tree() {
+    Network.apply(this);
+    this.type = "Tree";
+
+    this.nLevels = 0;
+    this._createRelation = this.createRelation;
+    this.createRelation = this._newCreateRelation;
+  }
+  var Tree__default = Tree__Tree;
+
+  /**
+   * Adds a given Node to the tree, under the given parent Node.
+   *
+   * @param {Node} node
+   * @param {Node} parent
+   */
+  Tree__Tree.prototype.addNodeToTree = function(node, parent) {
+    this.addNode(node);
+    if(parent == null) {
+      node.level = 0;
+      node.parent = null;
+    } else {
+      var relation = new Relation(parent.id + "_" + node.id, parent.id + "_" + node.id, parent, node);
+      this.addRelation(relation);
+      //this._createRelation(parent, node);
+      node.level = parent.level + 1;
+      node.parent = parent;
+    }
+    this.nLevels = Math.max(this.nLevels, node.level + 1);
+  };
+
+  /**
+   * @ignore
+   */
+  Network.prototype._newCreateRelation = function(parent, node, id, weight) {
+    if(id == null) id = this.relationList.getNewId();
+    this._createRelation(parent, node, id, weight);
+    node.level = parent.level + 1;
+    node.parent = parent;
+    this.nLevels = Math.max(this.nLevels, node.level + 1);
+  };
+
+  /**
+   * Adds a new parent node to the Tree.
+   *
+   * @param {Node} node New Parent Node.
+   */
+  Tree__Tree.prototype.addFather = function(node, children) {
+    //TODO: is children supposed to be child?
+    if(child.parent != null || this.nodeList.indexOf(child) == -1) return false;
+    this.addNode(node);
+    child.parent = node;
+    child.level = 1;
+    this.nLevels = Math.max(this.nLevels, 1);
+    this.createRelation(node, child);
+  };
+
+  /**
+   * Provides a {@link NodeList} of all the Nodes of the Tree at a given level.
+   *
+   * @param {Number} level Level (depth) of the Tree to extract Nodes at.
+   * @return {NodeList} All Nodes at the given level of the tree.
+   */
+  Tree__Tree.prototype.getNodesByLevel = function(level) {
+    var newNodeList = new NodeList__default();
+    for(i = 0; this.nodeList[i] != null; i++) {
+      if(this.nodeList[i].level == level) newNodeList.addNode(this.nodeList[i]);
+    }
+    return newNodeList;
+  };
+
+  /**
+   * Returns the leaves (nodes without children) of a tree.
+   *
+   * @param {Node} node Optional parent Node to start the leaf search from.
+   * If no Node is provided, all leaf Nodes are returned.
+   * @return {NodeList} Leaves of the Tree or sub-tree.
+   * tags:
+   */
+  Tree__Tree.prototype.getLeaves = function(node) {
+    var leaves = new NodeList__default();
+    if(node) {
+      if(node.toNodeList.length == 0) {
+        leaves.addNode(node);
+        return leaves;
+      }
+      var addLeaves = function(candidate) {
+        if(candidate.toNodeList.length == 0) {
+          leaves.addNode(candidate);
+        } else {
+          candidate.toNodeList.forEach(addLeaves);
+        }
+      };
+      node.toNodeList.forEach(addLeaves);
+    } else {
+      this.nodeList.forEach(function(candidate) {
+        if(candidate.toNodeList.length == 0) leaves.addNode(candidate);
+      });
+    }
+    return leaves;
+  };
+
+  /**
+   * assignDescentWeightsToNodes
+   *
+   * @return {undefined}
+   */
+  Tree__Tree.prototype.assignDescentWeightsToNodes = function() {
+    this._assignDescentWeightsToNode(this.nodeList[0]);
+  };
+
+  /**
+   * @ignore
+   */
+  Tree__Tree.prototype._assignDescentWeightsToNode = function(node) {
+    var i;
+    if(node.toNodeList.length == 0) {
+      node.descentWeight = 1;
+      return 1;
+    }
+    for(i = 0; node.toNodeList[i] != null; i++) {
+      node.descentWeight += this._assignDescentWeightsToNode(node.toNodeList[i]);
+    }
+    return node.descentWeight;
+  };
+
+  /**
+   * Returns a string indicating the size of the Tree.
+   *
+   * @return {String} Log message indicating Tree's size.
+   */
+  Tree__Tree.prototype.getReport = function(relation) {
+    //TODO: remove relation input?
+    return "Tree contains " + this.nodeList.length + " nodes and " + this.relationList.length + " relations";
+  };
+
+  exports.Tree = Tree__default;
 
   // jshint unused:false
 
