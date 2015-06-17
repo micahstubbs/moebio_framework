@@ -362,7 +362,7 @@ define('src/index', ['exports'], function (exports) {
         newList = NumberList__default.fromArray(this, false);
         break;
       case "string":
-        newList = StringList__default.fromArray(this, false);
+        newList = StringList.fromArray(this, false);
         break;
       case "Rectangle":
         return this;
@@ -471,7 +471,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:
    */
   List__List.prototype.getTypes = function() {
-    var types = new StringList__default();
+    var types = new StringList();
     for(i = 0; this[i] != null; i++) {
       types[i] = typeOf(this[i]);
     }
@@ -495,7 +495,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:
    */
   List__List.prototype.getNames = function() {
-    var stringList = new StringList__default();
+    var stringList = new StringList();
     for(i = 0; this[i] != null; i++) {
       stringList[i] = this[i].name;
     }
@@ -546,7 +546,7 @@ define('src/index', ['exports'], function (exports) {
       newList.name = this.name;
       return newList;
     } else if(this.type == "StringList") {
-      newList = StringList__default.fromArray(this.slice(interval.x, interval.y + 1), false);
+      newList = StringList.fromArray(this.slice(interval.x, interval.y + 1), false);
       newList.name = this.name;
       return newList;
     }
@@ -1237,7 +1237,7 @@ define('src/index', ['exports'], function (exports) {
    */
   List__List.prototype.toStringList = function() {
     var i;
-    var stringList = new StringList__default();
+    var stringList = new StringList();
     stringList.name = this.name;
     for(i = 0; this[i] != null; i++) {
       if(typeof this[i] == 'number') {
@@ -1359,7 +1359,7 @@ define('src/index', ['exports'], function (exports) {
       if(this.type == "NumberList") {
         return NumberList__default.fromArray(this._concat.apply(this, arguments), false);
       } else if(this.type == "StringList") {
-        return StringList__default.fromArray(this._concat.apply(this, arguments), false);
+        return StringList.fromArray(this._concat.apply(this, arguments), false);
       } else if(this.type == "NodeList") { //[!] concat breaks the getNodeById in NodeList
         return NodeList__default.fromArray(this._concat.apply(this, arguments), false);
       } else if(this.type == "DateList") {
@@ -1511,7 +1511,7 @@ define('src/index', ['exports'], function (exports) {
         return NumberList__default.fromArray(this._splice.apply(this, arguments));
         break;
       case 'StringList':
-        return StringList__default.fromArray(this._splice.apply(this, arguments));
+        return StringList.fromArray(this._splice.apply(this, arguments));
         break;
       case 'NodeList':
         return NodeList__default.fromArray(this._splice.apply(this, arguments));
@@ -1589,7 +1589,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   DateList.prototype.toStringList = function() {
-    var stringList = new StringList__default();
+    var stringList = new StringList();
     for(var i = 0; this[i] != null; i++) {
       stringList[i] = DateOperators__default.dateToString(this[i]);
     }
@@ -1618,8 +1618,8 @@ define('src/index', ['exports'], function (exports) {
 
   exports.DateList = DateList;
 
-  StringList__StringList.prototype = new List__default();
-  StringList__StringList.prototype.constructor = StringList__StringList;
+  StringList.prototype = new List__default();
+  StringList.prototype.constructor = StringList;
 
   /**
    * @classdesc {@link List} for storing Strings.
@@ -1628,20 +1628,20 @@ define('src/index', ['exports'], function (exports) {
    * @description Creates a new StringList
    * @category strings
    */
-  function StringList__StringList() {
+  function StringList() {
     var args = []; //TODO:why this?, ask M
 
     for(var i = 0; i < arguments.length; i++) {
       args[i] = String(arguments[i]);
     }
     var array = List__default.apply(this, args);
-    array = StringList__StringList.fromArray(array);
+    array = StringList.fromArray(array);
     //
     return array;
   }
-  var StringList__default = StringList__StringList;
 
-  StringList__StringList.fromArray = function(array, forceToString) {
+
+  StringList.fromArray = function(array, forceToString) {
     forceToString = forceToString == null ? true : forceToString;
 
     var result = List__default.fromArray(array);
@@ -1653,19 +1653,19 @@ define('src/index', ['exports'], function (exports) {
     result.type = "StringList";
 
     //assign methods to array:
-    result.getLengths = StringList__StringList.prototype.getLengths;
-    result.toLowerCase = StringList__StringList.prototype.toLowerCase;
-    result.toUpperCase = StringList__StringList.prototype.toUpperCase;
-    result.append = StringList__StringList.prototype.append;
-    result.getSurrounded = StringList__StringList.prototype.getSurrounded;
-    result.replace = StringList__StringList.prototype.replace;
-    result.getConcatenated = StringList__StringList.prototype.getConcatenated;
-    result.toNumberList = StringList__StringList.prototype.toNumberList;
-    result.toDateList = StringList__StringList.prototype.toDateList;
-    result.trim = StringList__StringList.prototype.trim;
+    result.getLengths = StringList.prototype.getLengths;
+    result.toLowerCase = StringList.prototype.toLowerCase;
+    result.toUpperCase = StringList.prototype.toUpperCase;
+    result.append = StringList.prototype.append;
+    result.getSurrounded = StringList.prototype.getSurrounded;
+    result.replace = StringList.prototype.replace;
+    result.getConcatenated = StringList.prototype.getConcatenated;
+    result.toNumberList = StringList.prototype.toNumberList;
+    result.toDateList = StringList.prototype.toDateList;
+    result.trim = StringList.prototype.trim;
 
     //override
-    result.clone = StringList__StringList.prototype.clone;
+    result.clone = StringList.prototype.clone;
 
     return result;
   };
@@ -1673,7 +1673,7 @@ define('src/index', ['exports'], function (exports) {
   /**
    * overrides List.prototype.getLengths (see comments there)
    */
-  StringList__StringList.prototype.getLengths = function() {
+  StringList.prototype.getLengths = function() {
     var lengths = new NumberList__default();
     var string;
 
@@ -1684,9 +1684,9 @@ define('src/index', ['exports'], function (exports) {
     return lengths;
   };
 
-  StringList__StringList.prototype.append = function(sufix, after) {
+  StringList.prototype.append = function(sufix, after) {
     after = after == null ? true : after;
-    var newStringList = new StringList__StringList();
+    var newStringList = new StringList();
     newStringList.name = this.name;
     var sufixIsStringList = ClassUtils__typeOf(sufix) == "StringList";
     var i;
@@ -1705,8 +1705,8 @@ define('src/index', ['exports'], function (exports) {
   /**
    * prefix and sufix can be string or a StringList
    */
-  StringList__StringList.prototype.getSurrounded = function(prefix, sufix) {
-    var newStringList = new StringList__StringList();
+  StringList.prototype.getSurrounded = function(prefix, sufix) {
+    var newStringList = new StringList();
     newStringList.name = this.name;
     var i;
 
@@ -1722,8 +1722,8 @@ define('src/index', ['exports'], function (exports) {
 
 
   //deprectaed, replaced by replaceInStrings
-  StringList__StringList.prototype.replace = function(regExp, string) {
-    var newStringList = new StringList__StringList();
+  StringList.prototype.replace = function(regExp, string) {
+    var newStringList = new StringList();
     newStringList.name = this.name;
 
     for(var i = 0; this[i] != null; i++) {
@@ -1740,8 +1740,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {StringList}
    * tags:
    */
-  StringList__StringList.prototype.replaceSubStringsInStrings = function(subString, replacement) {
-    var newStringList = new StringList__StringList();
+  StringList.prototype.replaceSubStringsInStrings = function(subString, replacement) {
+    var newStringList = new StringList();
     newStringList.name = this.name;
 
     for(var i = 0; this[i] != null; i++) {
@@ -1751,7 +1751,7 @@ define('src/index', ['exports'], function (exports) {
     return newStringList;
   };
 
-  StringList__StringList.prototype.getConcatenated = function(separator) {
+  StringList.prototype.getConcatenated = function(separator) {
     var i;
     var string = "";
     for(i = 0; this[i] != null; i++) {
@@ -1762,8 +1762,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  StringList__StringList.prototype.toLowerCase = function() {
-    var newStringList = new StringList__StringList();
+  StringList.prototype.toLowerCase = function() {
+    var newStringList = new StringList();
     newStringList.name = this.name;
     var i;
     for(i = 0; this[i] != null; i++) {
@@ -1772,8 +1772,8 @@ define('src/index', ['exports'], function (exports) {
     return newStringList;
   };
 
-  StringList__StringList.prototype.toUpperCase = function() {
-    var newStringList = new StringList__StringList();
+  StringList.prototype.toUpperCase = function() {
+    var newStringList = new StringList();
     newStringList.name = this.name;
     var i;
     for(i = 0; this[i] != null; i++) {
@@ -1782,7 +1782,7 @@ define('src/index', ['exports'], function (exports) {
     return newStringList;
   };
 
-  StringList__StringList.prototype.toNumberList = function() {
+  StringList.prototype.toNumberList = function() {
     var numbers = new NumberList__default();
     numbers.name = this.name;
     var i;
@@ -1801,7 +1801,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {DateList}
    * tags:
    */
-  StringList__StringList.prototype.toDateList = function(formatCase, separator) {
+  StringList.prototype.toDateList = function(formatCase, separator) {
     var dateList = new DateList();
     var i;
     for(i = 0; this[i] != null; i++) {
@@ -1815,9 +1815,9 @@ define('src/index', ['exports'], function (exports) {
    * @return {StringList}
    * tags:
    */
-  StringList__StringList.prototype.trim = function() {
+  StringList.prototype.trim = function() {
     var i;
-    var newStringList = new StringList__StringList();
+    var newStringList = new StringList();
     for(i = 0; this[i] != null; i++) {
       newStringList[i] = this[i].trim();
     }
@@ -1827,13 +1827,13 @@ define('src/index', ['exports'], function (exports) {
 
   ///////overriding
 
-  StringList__StringList.prototype.clone = function() {
-    var newList = StringList__StringList.fromArray(this.slice(), false);
+  StringList.prototype.clone = function() {
+    var newList = StringList.fromArray(this.slice(), false);
     newList.name = this.name;
     return newList;
   };
 
-  exports.StringList = StringList__default;
+  exports.StringList = StringList;
 
   function StringOperators__StringOperators() {}
   var StringOperators__default = StringOperators__StringOperators;
@@ -1850,7 +1850,7 @@ define('src/index', ['exports'], function (exports) {
 
   StringOperators__StringOperators.LINK_REGEX = /(^|\s+)(https*\:\/\/\S+[^\.\s+])/;
   StringOperators__StringOperators.MAIL_REGEX = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  StringOperators__StringOperators.STOP_WORDS = StringList__default.fromArray("t,s,mt,rt,re,m,http,amp,a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,or,other,our,own,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your".split(","));
+  StringOperators__StringOperators.STOP_WORDS = StringList.fromArray("t,s,mt,rt,re,m,http,amp,a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,or,other,our,own,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your".split(","));
 
   /**
    * splits a String by a character (entre by default)
@@ -1862,7 +1862,7 @@ define('src/index', ['exports'], function (exports) {
    */
   StringOperators__StringOperators.split = function(string, character) {
     if(character == null) return StringOperators__StringOperators.splitByEnter(string);
-    return StringList__default.fromArray(string.split(character));
+    return StringList.fromArray(string.split(character));
   };
 
 
@@ -1880,7 +1880,7 @@ define('src/index', ['exports'], function (exports) {
     if(stringList.length > 1) return stringList;
     var stringList = StringOperators__StringOperators.splitString(string, StringOperators__StringOperators.ENTER3);
     if(stringList.length > 1) return stringList;
-    return new StringList__default(string);
+    return new StringList(string);
   };
 
 
@@ -1967,8 +1967,8 @@ define('src/index', ['exports'], function (exports) {
     if(string == null) return null;
     if(separator == null) separator = ",";
     if(typeof separator == "string") separator = separator.replace("\\n", "\n");
-    if(string.indexOf(separator) == -1) return new StringList__default(string);
-    return StringList__default.fromArray(string.split(separator));
+    if(string.indexOf(separator) == -1) return new StringList(string);
+    return StringList.fromArray(string.split(separator));
   };
 
   /**
@@ -1998,10 +1998,10 @@ define('src/index', ['exports'], function (exports) {
    * tags:filter
    */
   StringOperators__StringOperators.getAllTextsBetweenStrings = function(text, subString0, subString1) { //TODO: improve using indexOf(string, START_INDEX)
-    if(text.indexOf(subString0) == -1) return new StringList__default();
+    if(text.indexOf(subString0) == -1) return new StringList();
     var blocks = text.split(subString0);
     var nBlocks = blocks.length;
-    var stringList = new StringList__default();
+    var stringList = new StringList();
     var block;
     var index;
     var i;
@@ -2058,7 +2058,7 @@ define('src/index', ['exports'], function (exports) {
     var i;
     var links = doc.getElementsByTagName("a");
     var originalUrl, url;
-    var urls = new StringList__default();
+    var urls = new StringList();
     var index;
     var urlSourceParts;
     var parts, blocks;
@@ -2171,7 +2171,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   StringOperators__StringOperators.getParenthesisContents = function(text, brackets) {
-    var contents = new StringList__default();
+    var contents = new StringList();
 
     var subText = text;
 
@@ -2327,10 +2327,10 @@ define('src/index', ['exports'], function (exports) {
     string = string.toLowerCase().replace(StringOperators__StringOperators.LINK_REGEX, "");
 
     var list = string.match(/\w+/g);
-    if(list == null) return new StringList__default();
+    if(list == null) return new StringList();
 
     if(includeLinks && links != null) list = list.concat(links);
-    list = StringList__default.fromArray(list).replace(/ /g, "");
+    list = StringList.fromArray(list).replace(/ /g, "");
 
     if(stopWords != null) { //TODO:check before if all stopwrds are strings
       //list.removeElements(stopWords);
@@ -2424,7 +2424,7 @@ define('src/index', ['exports'], function (exports) {
    */
   StringOperators__StringOperators.getWordsOccurrencesTable = function(string, stopWords, includeLinks, limit, minSizeWords) {
     if(string == null) return;
-    if(string.length == 0) return new Table(new StringList__default(), new NumberList());
+    if(string.length == 0) return new Table(new StringList(), new NumberList());
     var words = StringOperators__StringOperators.getWords(string, false, stopWords, false, includeLinks, limit, minSizeWords);
 
     return ListOperators.countElementsRepetitionOnList(words, true, false, limit);
@@ -3562,7 +3562,7 @@ define('src/index', ['exports'], function (exports) {
 
   NumberList__NumberList.prototype.toStringList = function() {
     var i;
-    var stringList = new StringList__default();
+    var stringList = new StringList();
     for(i = 0; this[i] != null; i++) {
       stringList[i] = String(this[i]);
     }
@@ -4010,7 +4010,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:
    */
   NodeList__NodeList.prototype.getIds = function() {
-    var list = new StringList__default();
+    var list = new StringList();
     for(var i = 0; this[i] != null; i++) {
       list[i] = this[i].id;
     }
@@ -6001,18 +6001,13 @@ define('src/index', ['exports'], function (exports) {
 
   exports.DateInterval = DateInterval;
 
-  /**
-   * @classdesc Provides a set of tools that work with {@link Country|Countries}.
-   *
-   * @namespace
-   * @category geo
-   */
   function CountryOperators() {}
 
 
   CountryOperators.getSimplifiedName = function(name) {
     return name.replace(/[\.\- ,\']/g, "").toLowerCase();
   };
+
   CountryOperators.getSimplifiedNames = function(names) {
     var simplifiedNames = new StringList();
     var name;
@@ -9110,6 +9105,45 @@ define('src/index', ['exports'], function (exports) {
   };
   DateListOperators._ms = function(date) {
     return date.getMilliseconds();
+  };
+
+  function CountryListOperators() {}
+
+
+
+  CountryListOperators.getCountryByName = function(countryList, name) {
+    var simplifiedName = CountryOperators.getSimplifiedName(name);
+
+    for(var i = 0; countryList[i] != null; i++) {
+      if(countryList[i].simplifiedNames.indexOf(simplifiedName) != -1) return countryList[i];
+    }
+
+    return null;
+  };
+
+  function GeoOperators() {}
+
+
+  GeoOperators.EARTH_RADIUS = 6371009;
+  GeoOperators.EARTH_DIAMETER = GeoOperators.EARTH_RADIUS * 2;
+
+
+  GeoOperators.geoCoordinateToDecimal = function(value) {
+    return Math.floor(value) + (value - Math.floor(value)) * 1.66667;
+  };
+
+  GeoOperators.geoDistance = function(point0, point1) {
+    var a = Math.pow(Math.sin((point1.y - point0.y) * 0.5 * gradToRad), 2) + Math.cos(point0.y * gradToRad) * Math.cos(point1.y * gradToRad) * Math.pow(Math.sin((point1.x - point0.x) * 0.5 * gradToRad), 2);
+    return GeoOperators.EARTH_DIAMETER * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  };
+  GeoOperators.polygonLength = function(polygon) {
+    if(polygon.length < 2) return 0;
+
+    var length = GeoOperators.geoDistance(polygon[0], polygon[1]);
+    for(var i = 2; polygon[i] != null; i++) {
+      length += GeoOperators.geoDistance(polygon[i - 1], polygon[i]);
+    }
+    return length;
   };
 
   // jshint unused:false

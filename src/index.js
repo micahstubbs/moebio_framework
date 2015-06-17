@@ -71,13 +71,11 @@ import DateOperators from "src/operators/dates/DateOperators";
 export { DateOperators, DateOperators };
 
 // operators/geo
-// import CountryListOperators from "src/operators/geo/CountryListOperators";
-// import CountryOperators from "src/operators/geo/CountryOperators";
-// import GeoOperators from "src/operators/geo/GeoOperators";
+import CountryListOperators from "src/operators/geo/CountryListOperators";
+import CountryOperators from "src/operators/geo/CountryOperators";
+import GeoOperators from "src/operators/geo/GeoOperators";
 
-// import ObjectOperators from "src/operators/objects/ObjectOperators";
-// import ObjectConversions from "src/operators/objects/ObjectConversions";
-
+// operators/geometry
 // import GeometryConvertions from "src/operators/geometry/GeometryConvertions";
 // import GeometryOperators from "src/operators/geometry/GeometryOperators";
 // import PointOperators from "src/operators/geometry/PointOperators";
@@ -86,6 +84,11 @@ export { DateOperators, DateOperators };
 // import PolygonListOperators from "src/operators/geometry/PolygonListOperators";
 // import PolygonOperators from "src/operators/geometry/PolygonOperators";
 // import RectangleOperators from "src/operators/geometry/RectangleOperators";
+
+
+// import ObjectOperators from "src/operators/objects/ObjectOperators";
+// import ObjectConversions from "src/operators/objects/ObjectConversions";
+
 // import ColorConvertions from "src/operators/graphic/ColorConvertions";
 // import ColorGenerators from "src/operators/graphic/ColorGenerators";
 // import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
