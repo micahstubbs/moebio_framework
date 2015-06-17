@@ -1,6 +1,7 @@
 import DataModel from "src/dataStructures/DataModel";
 import NodeList from "src/dataStructures/structures/lists/NodeList";
 import RelationList from "src/dataStructures/structures/lists/RelationList";
+import Loader from "src/tools/loaders/Loader";
 
 Node.prototype = new DataModel();
 Node.prototype.constructor = Node;
@@ -125,7 +126,7 @@ Node.prototype.getParent = function() {
 Node.prototype.getLeaves = function() {
     var leaves = new NodeList();
     var addLeaves = function(node) {
-      if(node.toNodeList.length == 0) {
+      if(node.toNodeList.length === 0) {
         leaves.addNode(node);
         return;
       }

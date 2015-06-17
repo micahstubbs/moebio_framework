@@ -1,4 +1,5 @@
 function Loader() {}
+export default Loader;
 
 Loader.proxy = ""; //TODO:install proxy created by Mig at moebio.com
 Loader.cacheActive = false; //TODO: fix!
