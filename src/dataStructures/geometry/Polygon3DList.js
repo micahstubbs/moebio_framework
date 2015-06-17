@@ -1,3 +1,5 @@
+import List from "src/dataStructures/lists/List";
+
 Polygon3DList.prototype = new List();
 Polygon3DList.prototype.constructor = Polygon3DList;
 
@@ -13,6 +15,7 @@ function Polygon3DList() {
   array = Polygon3DList.fromArray(array);
   return array;
 }
+export default Polygon3DList;
 
 Polygon3DList.fromArray = function(array) {
   var result = List.fromArray(array);

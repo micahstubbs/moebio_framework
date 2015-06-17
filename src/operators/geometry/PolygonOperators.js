@@ -5,6 +5,7 @@
  * @category geometry
  */
 function PolygonOperators() {}
+export default PolygonOperators;
 
 /**
  * builds a Hull polygon from a set of points

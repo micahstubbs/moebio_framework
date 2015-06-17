@@ -5,6 +5,7 @@
  * @category geo
  */
 function CountryOperators() {}
+export default CountryOperators;
 
 CountryOperators.getSimplifiedName = function(name) {
   return name.replace(/[\.\- ,\']/g, "").toLowerCase();

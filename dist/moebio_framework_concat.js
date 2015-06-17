@@ -342,7 +342,7 @@ define('src/index', ['exports'], function (exports) {
         newList = PolygonList.fromArray(this, false);
         break;
       case "Node":
-        newList = NodeList.fromArray(this, false);
+        newList = NodeList__default.fromArray(this, false);
         break;
       case "Relation":
         newList = RelationList.fromArray(this, false);
@@ -1317,7 +1317,7 @@ define('src/index', ['exports'], function (exports) {
       } else if(this.type == "StringList") {
         return StringList__default.fromArray(this._concat.apply(this, arguments), false);
       } else if(this.type == "NodeList") { //[!] concat breaks the getNodeById in NodeList
-        return NodeList.fromArray(this._concat.apply(this, arguments), false);
+        return NodeList__default.fromArray(this._concat.apply(this, arguments), false);
       } else if(this.type == "DateList") {
         return DateList.fromArray(this._concat.apply(this, arguments), false);
       } else if(this.type == "Table") {
@@ -1470,7 +1470,7 @@ define('src/index', ['exports'], function (exports) {
         return StringList__default.fromArray(this._splice.apply(this, arguments));
         break;
       case 'NodeList':
-        return NodeList.fromArray(this._splice.apply(this, arguments));
+        return NodeList__default.fromArray(this._splice.apply(this, arguments));
         break;
       case 'DateList':
         return DateList.fromArray(this._splice.apply(this, arguments));
@@ -2559,6 +2559,8 @@ define('src/index', ['exports'], function (exports) {
     delete this.y;
   };
 
+  exports.Point = Point__default;
+
   Interval__Interval.prototype = new Point__default();
   Interval__Interval.prototype.constructor = Interval__Interval;
 
@@ -3283,8 +3285,8 @@ define('src/index', ['exports'], function (exports) {
 
   exports.NumberList = NumberList__default;
 
-  NodeList.prototype = new List__default();
-  NodeList.prototype.constructor = NodeList;
+  NodeList__NodeList.prototype = new List__default();
+  NodeList__NodeList.prototype.constructor = NodeList__NodeList;
 
   /**
    * @classdesc A sub-class of {@link List} for storing {@link Node|Nodes}.
@@ -3293,12 +3295,12 @@ define('src/index', ['exports'], function (exports) {
    * @constructor
    * @category networks
    */
-  function NodeList() {
+  function NodeList__NodeList() {
     //var array=List.apply(this, arguments);
 
     //if(arguments && arguments.length>0) {c.l('UEUEUEUE, arguments.length', arguments.length); var a; a.push(0)};
 
-    var array = NodeList.fromArray([]);
+    var array = NodeList__NodeList.fromArray([]);
 
     if(arguments && arguments.length > 0) {
       var args = Array.prototype.slice.call(arguments);
@@ -3311,7 +3313,7 @@ define('src/index', ['exports'], function (exports) {
     return array;
   }
 
-
+  var NodeList__default = NodeList__NodeList;
 
   /**
    * Creates NodeList from raw Array.
@@ -3321,7 +3323,7 @@ define('src/index', ['exports'], function (exports) {
    * convert strings to Node instances with the strings used as the Node's id and name.
    * @return {NodeList}
    */
-  NodeList.fromArray = function(array, forceToNode) {
+  NodeList__NodeList.fromArray = function(array, forceToNode) {
     forceToNode = forceToNode == null ? false : forceToNode;
 
     var result = List__default.fromArray(array);
@@ -3340,20 +3342,20 @@ define('src/index', ['exports'], function (exports) {
     Array(); //????
 
     //assign methods to array:
-    result.deleteNodes = NodeList.prototype.deleteNodes;
-    result.addNode = NodeList.prototype.addNode;
-    result.addNodes = NodeList.prototype.addNodes;
-    result.removeNode = NodeList.prototype.removeNode;
-    result.removeNodeAtIndex = NodeList.prototype.removeNodeAtIndex;
-    result.getNodeByName = NodeList.prototype.getNodeByName;
-    result.getNodeById = NodeList.prototype.getNodeById;
-    result.getNodesByIds = NodeList.prototype.getNodesByIds;
-    result.getNewId = NodeList.prototype.getNewId;
-    result.normalizeWeights = NodeList.prototype.normalizeWeights;
-    result.getWeights = NodeList.prototype.getWeights;
-    result.getIds = NodeList.prototype.getIds;
-    result.getDegrees = NodeList.prototype.getDegrees;
-    result.getPolygon = NodeList.prototype.getPolygon;
+    result.deleteNodes = NodeList__NodeList.prototype.deleteNodes;
+    result.addNode = NodeList__NodeList.prototype.addNode;
+    result.addNodes = NodeList__NodeList.prototype.addNodes;
+    result.removeNode = NodeList__NodeList.prototype.removeNode;
+    result.removeNodeAtIndex = NodeList__NodeList.prototype.removeNodeAtIndex;
+    result.getNodeByName = NodeList__NodeList.prototype.getNodeByName;
+    result.getNodeById = NodeList__NodeList.prototype.getNodeById;
+    result.getNodesByIds = NodeList__NodeList.prototype.getNodesByIds;
+    result.getNewId = NodeList__NodeList.prototype.getNewId;
+    result.normalizeWeights = NodeList__NodeList.prototype.normalizeWeights;
+    result.getWeights = NodeList__NodeList.prototype.getWeights;
+    result.getIds = NodeList__NodeList.prototype.getIds;
+    result.getDegrees = NodeList__NodeList.prototype.getDegrees;
+    result.getPolygon = NodeList__NodeList.prototype.getPolygon;
 
     result._push = Array.prototype.push;
     result.push = function(a) {
@@ -3363,8 +3365,8 @@ define('src/index', ['exports'], function (exports) {
     };
 
     //overriden
-    result.getWithoutRepetitions = NodeList.prototype.getWithoutRepetitions;
-    result.clone = NodeList.prototype.clone;
+    result.getWithoutRepetitions = NodeList__NodeList.prototype.getWithoutRepetitions;
+    result.clone = NodeList__NodeList.prototype.clone;
 
     return result;
   };
@@ -3373,7 +3375,7 @@ define('src/index', ['exports'], function (exports) {
    * Clears NodeList.
    *
    */
-  NodeList.prototype.removeNodes = function() {
+  NodeList__NodeList.prototype.removeNodes = function() {
     for(var i = 0; i < this.length; i++) {
       this.ids[this[i].id] = null;
       this.removeElement(this[i]);
@@ -3385,7 +3387,7 @@ define('src/index', ['exports'], function (exports) {
    *
    * @param {Node} node Node to add
    */
-  NodeList.prototype.addNode = function(node) {
+  NodeList__NodeList.prototype.addNode = function(node) {
     this.ids[node.id] = node;
     this._push(node);
   };
@@ -3395,7 +3397,7 @@ define('src/index', ['exports'], function (exports) {
    *
    * @param {NodeList} nodes Nodes to add.
    */
-  NodeList.prototype.addNodes = function(nodes) {
+  NodeList__NodeList.prototype.addNodes = function(nodes) {
     var i;
     for(i = 0; nodes[i] != null; i++) {
       this.addNode(nodes[i]);
@@ -3407,7 +3409,7 @@ define('src/index', ['exports'], function (exports) {
    *
    * @param {Node} node Node to remove.
    */
-  NodeList.prototype.removeNode = function(node) {
+  NodeList__NodeList.prototype.removeNode = function(node) {
     this.ids[node.id] = null;
     this.removeElement(node);
   };
@@ -3417,7 +3419,7 @@ define('src/index', ['exports'], function (exports) {
    *
    * @param {Number} index The index of the Node to remove.
    */
-  NodeList.prototype.removeNodeAtIndex = function(index) {
+  NodeList__NodeList.prototype.removeNodeAtIndex = function(index) {
     this.ids[this[index].id] = null;
     this.splice(index, 1);
   };
@@ -3426,7 +3428,7 @@ define('src/index', ['exports'], function (exports) {
    * Normalizes all weights associated with Nodes in NodeList
    * to a value between 0 and 1. Works under the assumption that weights are >= 0.
    */
-  NodeList.prototype.normalizeWeights = function() {
+  NodeList__NodeList.prototype.normalizeWeights = function() {
     var i;
     var max = -9999999;
     for(i = 0; this[i] != null; i++) {
@@ -3444,7 +3446,7 @@ define('src/index', ['exports'], function (exports) {
    *
    * @return {Node} Node with name matching input name. Null if no such Node.
    */
-  NodeList.prototype.getNodeByName = function(name) {
+  NodeList__NodeList.prototype.getNodeByName = function(name) {
     var i;
     for(i = 0; i < this.length; i++) {
       if(this[i].name == name) {
@@ -3461,7 +3463,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Node}
    * tags:search
    */
-  NodeList.prototype.getNodeById = function(id) {
+  NodeList__NodeList.prototype.getNodeById = function(id) {
     return this.ids[id];
   };
 
@@ -3473,8 +3475,8 @@ define('src/index', ['exports'], function (exports) {
    * @param {NumberList} ids Ids of Nodes to extract.
    * @return {NodeList}
    */
-  NodeList.prototype.getNodesByIds = function(ids) {
-    newNodelist = new NodeList();
+  NodeList__NodeList.prototype.getNodesByIds = function(ids) {
+    newNodelist = new NodeList__NodeList();
     var node;
     for(var i = 0; ids[i] != null; i++) {
       node = this.ids[ids[i]];
@@ -3490,7 +3492,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {NumberList}
    * tags:
    */
-  NodeList.prototype.getWeights = function() {
+  NodeList__NodeList.prototype.getWeights = function() {
     var numberList = new NumberList();
     for(var i = 0; this[i] != null; i++) {
       numberList[i] = this[i].weight;
@@ -3505,7 +3507,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {StringList}
    * tags:
    */
-  NodeList.prototype.getIds = function() {
+  NodeList__NodeList.prototype.getIds = function() {
     var list = new StringList();
     for(var i = 0; this[i] != null; i++) {
       list[i] = this[i].id;
@@ -3521,7 +3523,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {NumberList} List containing the number
    * of Relations each Node has.
    */
-  NodeList.prototype.getDegrees = function() {
+  NodeList__NodeList.prototype.getDegrees = function() {
     var numberList = new NumberList();
     for(var i = 0; this[i] != null; i++) {
       numberList[i] = this[i].nodeList.length;
@@ -3538,7 +3540,7 @@ define('src/index', ['exports'], function (exports) {
    *
    * @return {Polygon}
    */
-  NodeList.prototype.getPolygon = function() {
+  NodeList__NodeList.prototype.getPolygon = function() {
     var polygon = new Polygon();
     for(var i = 0; this[i] != null; i++) {
       polygon[i] = new Point(this[i].x + cX, this[i].y + cY);
@@ -3546,7 +3548,7 @@ define('src/index', ['exports'], function (exports) {
     return polygon;
   };
 
-  NodeList.prototype.getNewId = function() {
+  NodeList__NodeList.prototype.getNewId = function() {
     var n = this.length + 1;
     for(var i = 0; i < n; i++) {
       if(this.getNodeById(String(i)) == null) return String(i);
@@ -3558,8 +3560,8 @@ define('src/index', ['exports'], function (exports) {
    *
    * @return {NodeList}
    */
-  NodeList.prototype.clone = function() {
-    var newNodeList = new NodeList();
+  NodeList__NodeList.prototype.clone = function() {
+    var newNodeList = new NodeList__NodeList();
     this.forEach(function(node) {
       newNodeList.addNode(node);
     });
@@ -3576,8 +3578,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {undefined}
    * @ignore
    */
-  NodeList.prototype.getWithoutRepetitions = function() {
-    newList = new NodeList();
+  NodeList__NodeList.prototype.getWithoutRepetitions = function() {
+    newList = new NodeList__NodeList();
     newList.name = this.name;
     for(i = 0; this[i] != null; i++) {
       if(newList.getNodeById(this[i].id) == null) newList.addNode(this[i]);
@@ -3585,7 +3587,7 @@ define('src/index', ['exports'], function (exports) {
     return newList;
   };
 
-  RelationList.prototype = new NodeList();
+  RelationList.prototype = new NodeList__default();
   RelationList.prototype.constructor = RelationList;
   /**
    * RelationList
@@ -3600,7 +3602,7 @@ define('src/index', ['exports'], function (exports) {
    * @category networks
    */
   function RelationList() {
-    var array = NodeList.apply(this, arguments);
+    var array = NodeList__default.apply(this, arguments);
     array.name = "";
     //assign methods to array:
     array = RelationList.fromArray(array);
@@ -3616,7 +3618,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {RelationList}
    */
   RelationList.fromArray = function(array) {
-    var result = NodeList.fromArray(array);
+    var result = NodeList__default.fromArray(array);
     result.type = "RelationList";
     //assign methods to array:
     result.addRelation = RelationList.prototype.addRelation;
@@ -3679,7 +3681,7 @@ define('src/index', ['exports'], function (exports) {
    */
   RelationList.prototype.getRelatedNodesToNode = function(node) {
     var i;
-    var relatedNodes = new NodeList();
+    var relatedNodes = new NodeList__default();
     for(i = 0; i < this.length; i++) {
       var relation = this[i];
       if(relation.node0.id == node.id) {
@@ -3972,6 +3974,8 @@ define('src/index', ['exports'], function (exports) {
     newPolygon.name = this.name;
     return newPolygon;
   };
+
+  exports.Polygon = Polygon__default;
 
   function TableEncodings() {}
 
@@ -4824,6 +4828,8 @@ define('src/index', ['exports'], function (exports) {
   // return t;
   // }
 
+  exports.PolygonList = PolygonList;
+
   NumberTable.prototype = new Table__default();
   NumberTable.prototype.constructor = NumberTable;
 
@@ -5455,6 +5461,2649 @@ define('src/index', ['exports'], function (exports) {
   };
 
   exports.DateInterval = DateInterval;
+
+  Node__Node.prototype = new DataModel();
+  Node__Node.prototype.constructor = Node__Node;
+
+  /**
+   * @classdesc Represents a single node element in a Network. Can have both an id as well
+   * as a name.
+   *
+   * @description Create a new Node.
+   * @param {String} id ID of the Node
+   * @param {String} name string (label) name to be assigned to node
+   * @constructor
+   * @category networks
+   */
+  function Node__Node(id, name) {
+    this.id = id == null ? '' : id;
+    this.name = name != null ? name : '';
+    this.type = "Node";
+
+    this.nodeType;
+
+    this.x = 0;
+    this.y = 0;
+    this.z = 0;
+
+    this.nodeList = new NodeList__default();
+    this.relationList = new RelationList();
+
+    this.toNodeList = new NodeList__default();
+    this.toRelationList = new RelationList();
+
+    this.fromNodeList = new NodeList__default();
+    this.fromRelationList = new RelationList();
+
+    this.weight = 1;
+    this.descentWeight = 1;
+
+    //tree
+    this.level = 0;
+    this.parent = null;
+
+    //physics:
+    this.vx = 0;
+    this.vy = 0;
+    this.vz = 0;
+    this.ax = 0;
+    this.ay = 0;
+    this.az = 0;
+  }
+  var Node__default = Node__Node;
+
+  /**
+   * Removes all Relations and connected Nodes from
+   * the current Node.
+   */
+  Node__Node.prototype.cleanRelations = function() {
+    this.nodeList = new NodeList__default();
+    this.relationList = new RelationList();
+
+    this.toNodeList = new NodeList__default();
+    this.toRelationList = new RelationList();
+
+    this.fromNodeList = new NodeList__default();
+    this.fromRelationList = new RelationList();
+  };
+
+  //TODO: complete with all properties
+  Node__Node.prototype.destroy = function() {
+    DataModel.prototype.destroy.call(this);
+    delete this.id;
+    delete this.name;
+    delete this.nodeType;
+    delete this.x;
+    delete this.y;
+    delete this.z;
+    delete this.nodeList;
+    delete this.relationList;
+    delete this.toNodeList;
+    delete this.toNodeList;
+    delete this.fromNodeList;
+    delete this.fromRelationList;
+    delete this.parent;
+    delete this.weight;
+    delete this.descentWeight;
+    delete this.level;
+    delete this.vx;
+    delete this.vy;
+    delete this.vz;
+    delete this.ax;
+    delete this.ay;
+    delete this.az;
+  };
+
+  /**
+   * Returns the number of Relations connected to this Node.
+   *
+   * @return {Number} Number of Relations (edges) connecting to this Node instance.
+   */
+  Node__Node.prototype.getDegree = function() {
+    return this.relationList.length;
+  };
+
+  //treeProperties:
+
+
+  /**
+   * Returns the parent Node of this Node if it is part of a {@link Tree}.
+   *
+   * @return {Node} Parent Node of this Node.
+   */
+  Node__Node.prototype.getParent = function() {
+    return this.parent;
+  };
+
+  /**
+   * Returns the leaves under a node in a Tree,
+   *
+   * <strong>Warning:</strong> If this Node is part of a Network that is not a tree, this method could run an infinite loop.
+   * @return {NodeList} Leaf Nodes of this Node.
+   * tags:
+   */
+  Node__Node.prototype.getLeaves = function() {
+      var leaves = new NodeList__default();
+      var addLeaves = function(node) {
+        if(node.toNodeList.length == 0) {
+          leaves.addNode(node);
+          return;
+        }
+        node.toNodeList.forEach(addLeaves);
+      };
+      addLeaves(this);
+      return leaves;
+    };
+
+
+  /**
+   * Uses an image as a visual representation to this Node.
+   *
+   * @param {String} urlImage The URL of the image to load.
+   */
+  Node__Node.prototype.loadImage = function(urlImage) {
+    Loader.loadImage(urlImage, function(e) {
+      this.image = e.result;
+    }, this);
+  };
+
+
+  /**
+   * Makes a copy of this Node.
+   *
+   * @return {Node} New Node that is a copy of this Node.
+   */
+  Node__Node.prototype.clone = function() {
+    var newNode = new Node__Node(this.id, this.name);
+
+    newNode.x = this.x;
+    newNode.y = this.y;
+    newNode.z = this.z;
+
+    newNode.nodeType = this.nodeType;
+
+    newNode.weight = this.weight;
+    newNode.descentWeight = this.descentWeight;
+
+    return newNode;
+  };
+
+  /**
+   * @classdesc Provides a set of tools that work with {@link Country|Countries}.
+   *
+   * @namespace
+   * @category geo
+   */
+  function CountryOperators() {}
+
+
+  CountryOperators.getSimplifiedName = function(name) {
+    return name.replace(/[\.\- ,\']/g, "").toLowerCase();
+  };
+  CountryOperators.getSimplifiedNames = function(names) {
+    var simplifiedNames = new StringList();
+    var name;
+    for(var i = 0; names[i] != null; i++) {
+      name = this.getSimplifiedName(names[i]);
+      if(name != "") simplifiedNames.pushIfUnique(name);
+    }
+    return simplifiedNames;
+  };
+
+  Country.prototype = new Node__default();
+  Country.prototype.constructor = Country;
+
+  /**
+   * @classdesc Represents an individual country for visualization and spatial
+   * reasoning.
+   *
+  * @description Creates a new Country instance.
+   * @param {String} id Country id (ISO2)
+   * @param {String} name Country name
+   * @constructor
+   * @category geo
+   */
+  function Country(id, name) {
+    Node__default.apply(this, [id, name]);
+    this.type = "Country";
+
+    this.id = id;
+    this.name = name;
+
+    this.shortName;
+
+    this.continentName;
+    this.isoCode;
+    this.alternativeNames;
+    this.wikipediaUrl;
+    this.flagImageUrl;
+    this.smallFlagImageUrl;
+    this.recognized = false;
+    this.geoCenter;
+
+    this.polygonList;
+    this.simplePolygonList;
+
+    this.longestPolygon;
+    this.longestSimplePolygon;
+
+    this._simplifiedNames;
+    this._simplifiedId;
+    this._simplifiedName;
+
+    this._frame;
+  }
+
+
+  Country.prototype.generatesSimplifiedNames = function() {
+    this._simplifiedNames = CountryOperators.getSimplifiedNames(this.alternativeNames);
+    this._simplifiedId = CountryOperators.getSimplifiedName(this.id);
+    this._simplifiedName = CountryOperators.getSimplifiedName(this.name);
+    this.shortName = this.name
+      .replace('Democratic Republic', 'D.R.')
+      .replace('United States', 'U.S.A')
+      .replace('United Arab', 'U.A.');
+  };
+
+  Country.prototype.nameMatches = function(name) {
+    if(this._simplifiedId == null) this.generatesSimplifiedNames();
+    name = CountryOperators.getSimplifiedName(name);
+    if(name == this._simplifiedId || name == this._simplifiedName) return true;
+    return this._simplifiedNames.indexOf(name) != -1;
+  };
+
+  Country.prototype.getFrame = function() {
+    if(this._frame == null) {
+      this._frame = this.simplePolygonList == null ? this.polygonList.getFrame() : this.simplePolygonList.getFrame();
+    }
+    return this._frame;
+  };
+
+  exports.Country = Country;
+
+  /**
+   * @classdesc Provides a set of tools that work with Polygons
+   *
+   * @namespace
+   * @category geometry
+   */
+  function PolygonOperators() {}
+
+
+  /**
+   * builds a Hull polygon from a set of points
+   * @param  {Polygon} polygon set of points
+   * @param  {Boolean} returnIndexes if true returns the indexes of external points, connected by the Hull polygon (false by default)
+   * @return {List} Hull polygn or list of indexes
+   * tags:geometry
+   */
+  PolygonOperators.hull = function(polygon, returnIndexes) {
+    returnIndexes = returnIndexes == null ? false : returnIndexes;
+    var i;
+    var t;
+    var p = polygon;
+    var n = p.length;
+    var k = 0;
+    var h = new Polygon();
+    if(returnIndexes) var indexes = new NumberList();
+
+    p = PolygonOperators.sortOnXY(p);
+
+    if(returnIndexes) {
+      for(i = 0; i < n; i++) {
+        while(k >= 2 && PolygonOperators.crossProduct3Points(h[k - 2], h[k - 1], p[i]) <= 0)
+          k--;
+        h[k++] = p[i];
+        indexes[k - 1] = i;
+      }
+
+      for(i = n - 2, t = k + 1; i >= 0; i--) {
+        while(k >= t && PolygonOperators.crossProduct3Points(h[k - 2], h[k - 1], p[i]) <= 0)
+          k--;
+        h[k++] = p[i];
+        indexes[k - 1] = i;
+      }
+
+      return NumberList.fromArray(indexes.getSubList(new Interval(0, k - 2)));
+    }
+
+    for(i = 0; i < n; i++) {
+      while(k >= 2 && PolygonOperators.crossProduct3Points(h[k - 2], h[k - 1], p[i]) <= 0)
+        k--;
+      h[k++] = p[i];
+    }
+
+    for(i = n - 2, t = k + 1; i >= 0; i--) {
+      while(k >= t && PolygonOperators.crossProduct3Points(h[k - 2], h[k - 1], p[i]) <= 0)
+        k--;
+      h[k++] = p[i];
+    }
+
+    return Polygon.fromArray(h.getSubList(new Interval(0, k - 2)));
+  };
+
+  /**
+   * builds a dendrogram (tree) from a Polygon (currently using barycenter for distances)
+   * @param  {Polygon} polygon
+   * @return {Tree} dendrogram
+   * tags:geometry
+   */
+  PolygonOperators.buildDendrogramFromPolygon = function(polygon) {
+    var tree = new Tree();
+    var point, i;
+    var node;
+    var tW;
+    var parent;
+    var leaves = new NodeList();
+
+    var node0, node1, nodeList = new Polygon();
+
+    polygon.forEach(function(point, i) {
+      node = new Node('point_' + i, 'point_' + i);
+      node.weight = 1;
+      node.barycenter = point;
+      node.point = point;
+      node.polygon = new Polygon(point);
+      tree.addNode(node);
+      nodeList.push(node);
+      leaves.push(node);
+    });
+
+    tree.nodeList = tree.nodeList.getReversed();
+
+    //c.l('-');
+
+    var buildNodeFromPair = function(node0, node1) {
+      var parent = new Node("(" + node0.id + "," + node1.id + ")", "(" + node0.id + "," + node1.id + ")");
+      parent.polygon = node0.polygon.concat(node1.polygon);
+      //c.l("node0.polygon.length, node1.polygon.length, parent.polygon.length", node0.polygon.length, node1.polygon.length, parent.polygon.length);
+      parent.weight = parent.polygon.length;
+      tW = node0.weight + node1.weight;
+      parent.barycenter = new Point((node0.weight * node0.barycenter.x + node1.weight * node1.barycenter.x) / tW, (node0.weight * node0.barycenter.y + node1.weight * node1.barycenter.y) / tW);
+      //c.l('parent.barycenter.x', parent.barycenter.x, parent.barycenter.y);
+      tree.addNode(parent);
+      tree._newCreateRelation(parent, node0);
+      tree._newCreateRelation(parent, node1);
+      return parent;
+    };
+
+    while(nodeList.length > 1) {
+      closestPair = PolygonOperators._findClosestNodes(nodeList);
+      node0 = nodeList[closestPair[0]];
+      node1 = nodeList[closestPair[1]];
+      parent = buildNodeFromPair(node0, node1);
+      parent.distance = closestPair.distance;
+      c.l('distance:', parent.distance);
+      nodeList.splice(closestPair[0], 1);
+      nodeList.splice(closestPair[1] - 1, 1);
+      nodeList.push(parent);
+    }
+
+    tree.nodeList = tree.nodeList.getReversed();
+
+    var assignLevel = function(node, parentLevel) {
+      var son;
+      node.level = parentLevel + 1;
+      node.toNodeList.forEach(function(son) {
+        assignLevel(son, node.level);
+      });
+    };
+
+    assignLevel(tree.nodeList[0], -1);
+
+    tree.leaves = leaves;
+
+    return tree;
+
+  };
+
+  PolygonOperators._findClosestNodes = function(nodeList) {
+    var i, j;
+    var d2;
+    var d2Min = 9999999999;
+
+    for(i = 0; nodeList[i + 1] != null; i++) {
+      for(j = i + 1; nodeList[j] != null; j++) {
+        d2 = Math.pow(nodeList[i].barycenter.x - nodeList[j].barycenter.x, 2) + Math.pow(nodeList[i].barycenter.y - nodeList[j].barycenter.y, 2);
+        if(d2 < d2Min) {
+          d2Min = d2;
+          pair = [i, j];
+        }
+      }
+    }
+
+    pair.distance = d2Min;
+
+    return pair;
+  };
+
+
+  PolygonOperators.sortOnXY = function(polygon) {
+    return polygon.sort(function(p0, p1) {
+      if(p0.x < p1.x) return -1;
+      if(p0.x == p1.x && p0.y < p1.y) return -1;
+      return 1;
+    });
+  };
+
+  //TODO: move this to PointOperators
+  PolygonOperators.crossProduct3Points = function(o, a, b) {
+    return(a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+  };
+
+  PolygonOperators.expandFromBarycenter = function(polygon, factor) {
+    var newPolygon = new Polygon();
+    var barycenter = polygon.getBarycenter();
+
+    for(var i = 0; polygon[i] != null; i++) {
+      newPolygon[i] = polygon[i].expandFromPoint(barycenter, factor);
+    }
+
+    return newPolygon;
+  };
+
+  PolygonOperators.expandInAngles = function(polygon, amount) { //TODO: test if it works with convex polygons
+    var newPolygon = new Polygon();
+    var p0 = polygon[polygon.length - 1];
+    var p1 = polygon[0];
+    var p2 = polygon[1];
+
+    var a0;
+    var a1;
+    var sign;
+
+    var a = 0.5 * Math.atan2(p1.y - p2.y, p1.x - p2.x) + 0.5 * Math.atan2(p1.y - p0.y, p1.x - p0.x);
+    var globalSign = polygon.containsPoint(new Point(p1.x + Math.floor(amount) * Math.cos(a), p1.y + Math.floor(amount) * Math.sin(a))) ? -1 : 1;
+
+
+    for(var i = 0; polygon[i] != null; i++) {
+      p0 = polygon[(i - 1 + polygon.length) % polygon.length];
+      p1 = polygon[i];
+      p2 = polygon[(i + 1) % polygon.length];
+      a0 = Math.atan2(p1.y - p2.y, p1.x - p2.x);
+      a1 = Math.atan2(p1.y - p0.y, p1.x - p0.x);
+      sign = Math.abs(a1 - a0) < Math.PI ? -1 : 1;
+      a = 0.5 * a0 + 0.5 * a1;
+      //sign = polygon.containsPoint(new Point(p1.x + Math.floor(amount)*Math.cos(a), p1.y + Math.floor(amount)*Math.sin(a)))?-1:1;
+      newPolygon[i] = new Point(p1.x + globalSign * sign * amount * Math.cos(a), p1.y + globalSign * sign * amount * Math.sin(a));
+    }
+
+    return newPolygon;
+  };
+
+  PolygonOperators.simplifyPolygon = function(polygon, margin) {
+    margin = margin == null || margin == 0 ? 1 : margin;
+    var newPolygon = polygon.clone();
+    var p0;
+    var p1;
+    var p2;
+    var line;
+    var i;
+    var nPoints = polygon.length;
+    for(i = 0; i < nPoints; i++) {
+      p0 = newPolygon[i];
+      p1 = newPolygon[(i + 1) % nPoints];
+      p2 = newPolygon[(i + 2) % nPoints];
+      line = GeometryOperators.lineFromTwoPoints(p0, p2);
+      if(GeometryOperators.distancePointToLine(p1, line) < margin) {
+        //newPolygon.splice((i+1)%nPoints, 1);
+        newPolygon = newPolygon.getWithoutElementAtIndex((i + 1) % nPoints);
+        i--;
+      }
+      nPoints = newPolygon.length;
+    }
+    return newPolygon;
+  };
+
+
+  /**
+   * used techinique: draws the bézier polygon and checks color
+   */
+  PolygonOperators.bezierPolygonContainsPoint = function(polygon, point, border) {
+    var frame = polygon.getFrame();
+    clearContext();
+    context.fillStyle = 'black';
+    context.fillRect(0, 0, frame.width, frame.height);
+    if(border != null) {
+      context.strokeStyle = 'black';
+      context.lineWidth = border;
+    }
+    context.fillStyle = 'white';
+    context.beginPath();
+    Draw.drawBezierPolygon(context, polygon, -frame.x, -frame.y);
+    context.fill();
+    if(border != null) context.stroke();
+    var data = context.getImageData(point.x - frame.x, point.y - frame.y, 1, 1).data;
+    clearContext();
+    return data[0] > 0;
+  };
+
+
+  /**
+   * used techinique: draws the bézier polygon and checks color
+   * best center: the center of biggest circle within the polygon
+   * [!] very unefficient
+   */
+  PolygonOperators.getBezierPolygonBestCenter = function(polygon, nAttempts) {
+    nAttempts = nAttempts == null ? 500 : nAttempts;
+
+    var frame = polygon.getFrame();
+    context.fillStyle = 'black';
+    context.fillRect(0, 0, frame.width, frame.height);
+    context.fillStyle = 'white';
+    context.beginPath();
+    Draw.drawBezierPolygon(context, polygon, -frame.x, -frame.y);
+    context.fill();
+
+    var center;
+    var testPoint;
+    var angle;
+    var r;
+    var rMax = 0;
+    var bestCenter;
+
+
+    for(var i = 0; i < nAttempts; i++) {
+      center = frame.getRandomPoint();
+      for(angle = 0; angle += 0.1; angle <= TwoPi) {
+        r = angle;
+        var data = context.getImageData(center.x + r * Math.cos(angle) - frame.x, center.y + r * Math.sin(angle) - frame.y, 1, 1).data;
+        if(data[0] == 0) {
+          if(r > rMax) {
+            rMax = r;
+            bestCenter = center;
+          }
+          break;
+        }
+      }
+    }
+
+    return bestCenter;
+  };
+
+
+  PolygonOperators.convexHull = function(polygon, deepness) {
+    var indexesHull = this.hull(polygon, true);
+    var pointsLeftIndexes = NumberListGenerators.createSortedNumberList(polygon.length);
+    pointsLeftIndexes = pointsLeftIndexes.getWithoutElementsAtIndexes(indexesHull);
+    var i;
+    var j;
+    var k;
+    var p0;
+    var p1;
+    var pC = new Point();
+    var p;
+    var d;
+    var dMin = deepness - 1;
+    var jMin;
+    var kMin;
+    var dP;
+    var nHull = indexesHull.length;
+
+    while(dMin < deepness) {
+      //c.log(dMin, deepness, nHull, pointsLeftIndexes.length);
+      dMin = 999999999;
+      for(j = 0; j < nHull; j++) {
+        p0 = polygon[indexesHull[j]];
+        p1 = polygon[indexesHull[(j + 1) % indexesHull.length]];
+        pC.x = (p0.x + p1.x) * 0.5;
+        pC.y = (p0.y + p1.y) * 0.5;
+        dP = Math.sqrt(Math.pow(p1.x - p0.x, 2) + Math.pow(p1.y - p0.y, 2));
+        for(k = 0; pointsLeftIndexes[k] != null; k++) {
+          p = polygon[pointsLeftIndexes[k]];
+          //d = Math.pow(p.x-pC.x, 2)+Math.pow(p.y-pC.y, 2);
+          d = (Math.sqrt(Math.pow(p.x - p0.x, 2) + Math.pow(p.y - p0.y, 2)) + Math.sqrt(Math.pow(p.x - p1.x, 2) + Math.pow(p.y - p1.y, 2))) / Math.pow(dP, 2);
+          if(d < dMin) {
+            dMin = d;
+            jMin = j;
+            kMin = k;
+          }
+        }
+      }
+
+      //c.log("  ", dMin);
+
+      for(j = nHull - 1; j > jMin; j--) {
+        indexesHull[j + 1] = indexesHull[j];
+      }
+      indexesHull[jMin + 1] = pointsLeftIndexes[kMin];
+
+      //pointsLeftIndexes.removeElement(pointsLeftIndexes[kMin]); //!!!! TODO: FIX THIS!
+      pointsLeftIndexes.splice(kMin, 1);
+
+      if(pointsLeftIndexes.length == 0) return indexesHull;
+
+      nHull++;
+    }
+    return indexesHull;
+  };
+
+  PolygonOperators.controlPointsFromPointsAnglesIntensities = function(polygon, angles, intensities) {
+    var controlPoints = new Polygon();
+    for(var i = 0; polygon[i] != null; i++) {
+      if(i > 0) controlPoints.push(new Point(polygon[i].x - intensities[i] * Math.cos(angles[i]), polygon[i].y - intensities[i] * Math.sin(angles[i])));
+      if(i < polygon.length - 1) controlPoints.push(new Point(polygon[i].x + intensities[i] * Math.cos(angles[i]), polygon[i].y + intensities[i] * Math.sin(angles[i])));
+    }
+    return controlPoints;
+  };
+
+
+  PolygonOperators.placePointsInsidePolygon = function(polygon, nPoints, mode) {
+    var points = new Polygon();
+    var frame = polygon.getFrame();
+    mode = mode || 0;
+    switch(mode) {
+      case 0: //random simple
+        var p;
+        while(points.length < nPoints) {
+          p = new Point(frame.x + Math.random() * frame.width, frame.y + Math.random() * frame.height);
+          if(PolygonOperators.polygonContainsPoint(polygon, p)) points.push(p);
+        }
+        return points;
+        break;
+    }
+  };
+
+  PolygonOperators.placePointsInsideBezierPolygon = function(polygon, nPoints, mode, border) {
+    var points = new Polygon();
+    var frame = polygon.getFrame();
+    mode = mode || 0;
+    switch(mode) {
+      case 0: //random simple
+        var p;
+        var nAttempts = 0;
+        while(points.length < nPoints && nAttempts < 1000) {
+          p = new Point(frame.x + Math.random() * frame.width, frame.y + Math.random() * frame.height);
+          nAttempts++;
+          if(PolygonOperators.bezierPolygonContainsPoint(polygon, p, border)) {
+            points.push(p);
+            nAttempts = 0;
+          }
+        }
+        return points;
+        break;
+    }
+  };
+
+  CountryList.prototype = new NodeList__default();
+  CountryList.prototype.constructor = CountryList;
+
+  /**
+   * @classdesc A {@link List} structure for storing {@link Country|Countries}.
+   *
+   * @description Creates a new CountryList instance.
+   * @constructor
+   * @category geo
+   */
+  function CountryList() {
+    var array = NodeList__default.apply(this, arguments);
+    //
+    array.name = "";
+    //assign methods to array:
+    array = CountryList.fromArray(array);
+    //
+    return array;
+  }
+
+
+  CountryList.fromArray = function(array) {
+    var result = NodeList__default.fromArray(array);
+    result.type = "CountryList";
+    //assign methods to array:
+    result.getCountryFromName = CountryList.prototype.getCountryFromName;
+    //transformative
+    result.removeAntarctica = CountryList.prototype.removeAntarctica;
+    result.removeTinyPolygonsFromCountries = CountryList.prototype.removeTinyPolygonsFromCountries;
+    result.removeTinyCountries = CountryList.prototype.removeTinyCountries;
+    result.simplifyAntarctica = CountryList.prototype.simplifyAntarctica;
+    result.assignValuesToCountriesFromTable = CountryList.prototype.assignValuesToCountriesFromTable;
+    result.simplifyPolygons = CountryList.prototype.simplifyPolygons;
+    return result;
+  };
+
+  /**
+   * each country has several names to try a match
+   * ISO id is allowed
+   */
+  CountryList.prototype.getCountryFromName = function(countryName) {
+    for(var i = 0; this[i] != null; i++) {
+      if(this[i].nameMatches(countryName)) return this[i];
+    }
+    return null;
+  };
+
+
+  //transformative
+
+  CountryList.prototype.removeAntarctica = function() {
+    this.removeNode(this.getNodeById('AQ'));
+  };
+
+  CountryList.prototype.removeTinyPolygonsFromCountries = function(minArea) {
+    minArea = 0.2 || minArea;
+    var country;
+    var j;
+
+    for(var i = 0; this[i] != null; i++) {
+      country = this[i];
+      for(j = 0; country.polygonList[j] != null; j++) {
+        if(country.polygonList[j].getFrame().getArea() < minArea) {
+          country.polygonList.splice(j, 1);
+          j--;
+        }
+      }
+
+    }
+  };
+
+  CountryList.prototype.removeTinyCountries = function(minArea) {
+    minArea = 0.5 || minArea;
+    var country;
+    var j;
+    var small;
+    for(var i = 0; this[i] != null; i++) {
+      country = this[i];
+
+      small = true;
+      for(j = 0; country.polygonList[j] != null; j++) {
+        if(country.polygonList[j].getFrame().getArea() > minArea) {
+          small = false;
+          break;
+        }
+      }
+
+      if(small) {
+        this.removeNode(this[i]);
+        i--;
+      }
+    }
+  };
+
+  CountryList.prototype.simplifyPolygons = function(margin) {
+    var country;
+    var j;
+    var maxPL, jMax;
+
+    for(var i = 0; this[i] != null; i++) {
+      country = this[i];
+      maxPL = 0;
+      for(j = 0; country.polygonList[j] != null; j++) {
+        country.polygonList[j] = PolygonOperators.simplifyPolygon(country.polygonList[j], margin);
+        if(country.polygonList[j].length < 3) {
+          country.polygonList.splice(j, 1);
+          j--;
+        } else {
+          if(country.polygonList[j].length > maxPL) {
+            maxPL = country.polygonList[j].length;
+            jMax = j;
+          }
+        }
+      }
+      country.longestPolygon.destroy();
+      country.longestPolygon = country.polygonList[jMax];
+    }
+  };
+
+  /**
+   * in 2D representations Antarctiva requires 2 extra points, placed on global geo grame corners
+   * this method removes them (suitable for 3D representations)
+   */
+  CountryList.prototype.simplifyAntarctica = function() {
+    var polygonList = this.getNodeById('AQ').simplePolygonList;
+    if(polygonList != null) {
+      polygonList[0].splice(10, 1);
+      polygonList[0].splice(10, 1);
+    }
+    polygonList = this.getNodeById('AQ').polygonList;
+    if(polygonList != null) {
+      //TODO: remove last two points
+    }
+  };
+
+  CountryList.prototype.assignValuesToCountriesFromTable = function(table, valueToNull) {
+    var j;
+    var country;
+    for(var i = 0; table[0][i] != null; i++) {
+      country = this.getCountryFromName(table[0][i]);
+      if(country != null) {
+        for(j = 1; table[j] != null; j++) {
+          country[table[j].name] = table[j][i] == valueToNull ? null : table[j][i];
+        }
+      }
+    }
+  };
+
+  exports.CountryList = CountryList;
+
+  Point3D.prototype = new Point__default();
+  Point3D.prototype.constructor = Point3D;
+  /**
+   * @classdesc Point3D represents a point in 3D space.
+   *
+   * @description Create a new 3D Point.
+   * @param {Number} x
+   * @param {Number} y
+   * @param {Number} z
+   * @constructor
+   * @category geometry
+   */
+  function Point3D(x, y, z) {
+    Point__default.apply(this, arguments);
+    //this.name='';
+    this.type = "Point3D";
+    this.z = z;
+  }
+
+
+  Point3D.prototype.distanceToPoint3D = function(point3D) {
+    return Math.sqrt(Math.pow(Math.abs(this.x - point3D.x), 2) + Math.pow(Math.abs(this.y - point3D.y), 2) + Math.pow(Math.abs(this.z - point3D.z), 2));
+  };
+
+  Point3D.prototype.distanceToPointSquared = function(point3D) {
+    return Math.pow(Math.abs(this.x - point3D.x), 2) + Math.pow(Math.abs(this.y - point3D.y), 2) + Math.pow(Math.abs(this.z - point3D.z), 2);
+  };
+  Point3D.prototype.getNorm = function() {
+    return Math.sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z));
+  };
+
+  Point3D.prototype.normalizeToValue = function(k) {
+    var factor = k / Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2) + Math.pow(this.z, 2));
+    return new Point3D(this.x * factor, this.y * factor, this.z * factor);
+  };
+
+  Point3D.prototype.cross = function(point3D) {
+    var _x = this.y * point3D.z - this.z * point3D.y;
+    var _y = this.z * point3D.x - this.x * point3D.z;
+    var _z = this.x * point3D.y - this.y * point3D.x;
+    return new Point3D(_x, _y, _z);
+  };
+  Point3D.prototype.dot = function(point3D) {
+    return this.x * point3D.x + this.y * point3D.y + this.z * point3D.z;
+  };
+  Point3D.prototype.add = function(point) {
+    return new Point3D(point.x + this.x, point.y + this.y, point.z + this.z);
+  };
+  Point3D.prototype.subtract = function(point) {
+    return new Point3D(this.x - point.x, this.y - point.y, this.z - point.z);
+  };
+  Point3D.prototype.factor = function(k) {
+    return new Point3D(this.x * k, this.y * k, this.z * k);
+  };
+  Point3D.prototype.interpolate = function(point3D, t) {
+    return new Point3D((1 - t) * this.x + t * point3D.x, (1 - t) * this.y + t * point3D.y, (1 - t) * this.z + t * point3D.z);
+  };
+  Point3D.prototype.getAngles = function() {
+    var radius = Math.sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z));
+    var alfa = 0.5 * Math.PI - Math.atan2(this.z / radius, this.y / radius);
+    var beta = -Math.asin(this.x / radius);
+    if(alfa < -Math.PI) alfa += 2 * Math.PI;
+    if(alfa > Math.PI) alfa -= 2 * Math.PI;
+    if(beta < -Math.PI) beta += 2 * Math.PI;
+    if(beta > Math.PI) beta -= 2 * Math.PI;
+    return new Point3D(alfa, beta, 0);
+  };
+  Point3D.prototype.getInverseAngles = function() {
+    var radius = Math.sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z));
+    var alfa = -0.5 * Math.PI + Math.atan2(-this.z / radius, -this.y / radius);
+    var beta = Math.asin(-this.x / radius);
+    if(alfa < -Math.PI) alfa += 2 * Math.PI;
+    if(alfa > Math.PI) alfa -= 2 * Math.PI;
+    if(beta < -Math.PI) beta += 2 * Math.PI;
+    if(beta > Math.PI) beta -= 2 * Math.PI;
+    return new Point3D(alfa, beta, 0);
+  };
+
+
+  Point3D.prototype.clone = function() {
+    return new Point3D(this.x, this.y, this.z);
+  };
+  Point3D.prototype.toString = function() {
+    return "(x=" + this.x + ", y=" + this.y + ", z=" + this.z + ")";
+  };
+
+  Point3D.prototype.destroy = function() {
+    delete this.type;
+    delete this.name;
+    delete this.x;
+    delete this.y;
+    delete this.z;
+  };
+
+  exports.Point3D = Point3D;
+
+  Polygon3D.prototype = new List__default();
+  Polygon3D.prototype.constructor = Polygon3D;
+
+  /**
+   * @classdesc Polygon3D brings the {@link Polygon} concept into three
+   * dimensions through the use of {@link Point3D}.
+   *
+   * @description Creates a new Polygon3D.
+   * @constructor
+   * @category geometry
+   */
+  function Polygon3D() {
+    var array = List__default.apply(this, arguments);
+    array = Polygon3D.fromArray(array);
+    return array;
+  }
+
+
+  Polygon3D.fromArray = function(array) {
+    var result = List__default.fromArray(array);
+    result.type = "Polygon3D";
+    //assign methods to array:
+    return result;
+  };
+
+  exports.Polygon3D = Polygon3D;
+
+  Polygon3DList.prototype = new List__default();
+  Polygon3DList.prototype.constructor = Polygon3DList;
+
+  /**
+   * @classdesc A {@link List} structure for storing {@link Polygon3D} instances.
+   *
+   * @description Creates a new Polygon3DList.
+   * @constructor
+   * @category geometry
+   */
+  function Polygon3DList() {
+    var array = List__default.apply(this, arguments);
+    array = Polygon3DList.fromArray(array);
+    return array;
+  }
+
+
+  Polygon3DList.fromArray = function(array) {
+    var result = List__default.fromArray(array);
+    result.type = "Polygon3DList";
+    return result;
+  };
+
+  exports.Polygon3DList = Polygon3DList;
+
+  Rectangle__Rectangle.prototype = new DataModel();
+  Rectangle__Rectangle.prototype.constructor = Rectangle__Rectangle;
+
+  /**
+   * @classdesc Rectangle shape
+   *
+   * @description Creates a new Rectangle.
+   * @param {Number} x
+   * @param {Number} y
+   * @param {Number} width
+   * @param {Number} height
+   * @constructor
+   * @category geometry
+   */
+  function Rectangle__Rectangle(x, y, width, height) {
+    DataModel.apply(this);
+    this.name = "";
+    this.type = "Rectangle";
+    this.x = Number(x) || 0;
+    this.y = Number(y) || 0;
+    this.width = Number(width) || 0;
+    this.height = Number(height) || 0;
+  }
+  var Rectangle__default = Rectangle__Rectangle;
+
+  Rectangle__Rectangle.prototype.getRight = function() {
+    return this.x + this.width;
+  };
+
+  Rectangle__Rectangle.prototype.getBottom = function() {
+    return this.y + this.height;
+  };
+
+  Rectangle__Rectangle.prototype.setRight = function(value) {
+    this.width = value - this.x;
+  };
+
+  Rectangle__Rectangle.prototype.setBottom = function(value) {
+    this.height = value - this.y;
+  };
+
+
+
+  Rectangle__Rectangle.prototype.getTopLeft = function() {
+    return new Point__default(this.x, this.y);
+  };
+  Rectangle__Rectangle.prototype.getTopRight = function() {
+    return new Point__default(this.x + this.width, this.y);
+  };
+
+  Rectangle__Rectangle.prototype.getBottomRight = function() {
+    return new Point__default(this.x + this.width, this.y + this.height);
+  };
+  Rectangle__Rectangle.prototype.getBottomLeft = function() {
+    return new Point__default(this.x, this.y + this.height);
+  };
+  Rectangle__Rectangle.prototype.getCenter = function() {
+    return new Point__default(this.x + 0.5 * this.width, this.y + 0.5 * this.height);
+  };
+  Rectangle__Rectangle.prototype.getRandomPoint = function() {
+    return new Point__default(this.x + Math.random() * this.width, this.y + Math.random() * this.height);
+  };
+
+  Rectangle__Rectangle.prototype.getIntersection = function(rectangle) {
+    if(rectangle.x + rectangle.width < this.x || rectangle.x > this.x + this.width || rectangle.y + rectangle.height < this.y || rectangle.y > this.y + this.height) return null;
+    var xR = Math.max(rectangle.x, this.x);
+    var yR = Math.max(rectangle.y, this.y);
+    return new Rectangle__Rectangle(xR, yR, Math.min(rectangle.x + rectangle.width, this.x + this.width) - xR, Math.min(rectangle.y + rectangle.height, this.y + this.height) - yR);
+  };
+
+  Rectangle__Rectangle.prototype.interpolate = function(rectangle, t) {
+    var mint = 1 - t;
+    return new Rectangle__Rectangle(mint * this.x + t * rectangle.x, mint * this.y + t * rectangle.y, mint * this.width + t * rectangle.width, mint * this.height + t * rectangle.height);
+  };
+
+  Rectangle__Rectangle.prototype.getRatio = function() {
+    return Math.max(this.width, this.height) / Math.min(this.width, this.height);
+  };
+
+  Rectangle__Rectangle.prototype.getArea = function() {
+    return this.width * this.height;
+  };
+
+  /**
+   * check if a point belong to the rectangle
+   * @param  {Point} point
+   * @return {Boolean}
+   * tags:geometry
+   */
+  Rectangle__Rectangle.prototype.containsPoint = function(point) {
+    return(this.x <= point.x && this.x + this.width >= point.x && this.y <= point.y && this.y + this.height >= point.y);
+  };
+
+
+  Rectangle__Rectangle.prototype.pointIsOnBorder = function(point, margin) {
+    margin = margin == null ? 1 : margin;
+    if(point.x >= this.x - margin && point.x <= this.x + this.width + margin) {
+      if(point.y >= this.y - margin && point.y <= this.y + margin) return true;
+      if(point.y >= this.y + this.height - margin && point.y <= this.y + this.height + margin) return true;
+      if(point.y >= this.y - margin && point.y <= this.y + this.height + margin) {
+        if(point.x < this.x + margin || point.x > this.x + this.width - margin) return true;
+      }
+    }
+    return false;
+  };
+
+
+
+
+  Rectangle__Rectangle.prototype.getNormalRectangle = function() {
+    return new Rectangle__Rectangle(Math.min(this.x, this.x + this.width), Math.min(this.y, this.y + this.height), Math.abs(this.width), Math.abs(this.height));
+  };
+
+  /**
+   * return true if it interstects a rectangle
+   * @param  {Rectangle} rectangle
+   * @return {Boolean}
+   * tags:geometry
+   */
+  Rectangle__Rectangle.prototype.intersectsRectangle = function(rectangle) {
+    return !(this.x + this.width < rectangle.x) && !(this.y + this.height < rectangle.y) && !(rectangle.x + rectangle.width < this.x) && !(rectangle.y + rectangle.height < this.y);
+
+
+    if(this.x + this.width < rectangle.x) return false;
+    if(this.y + this.height < rectangle.y) return false;
+    if(rectangle.x + rectangle.width < this.x) return false;
+    if(rectangle.y + rectangle.height < this.y) return false;
+    return true;
+
+
+
+  	return this.containsPoint(rectangle.getTopLeft()) || this.containsPoint(rectangle.getTopRight()) || this.containsPoint(rectangle.getBottomLeft()) || this.containsPoint(rectangle.getBottomRight())
+  	|| rectangle.containsPoint(this.getTopLeft()) || rectangle.containsPoint(this.getTopRight()) || rectangle.containsPoint(this.getBottomLeft()) || rectangle.containsPoint(this.getBottomRight());
+  };
+
+  Rectangle__Rectangle.prototype.expand = function(expantion, centerPoint) {
+    centerPoint = centerPoint || new Point__default(this.x + 0.5 * this.width, this.y + 0.5 * this.height);
+    return new Rectangle__Rectangle((this.x - centerPoint.x) * expantion + centerPoint.x, (this.y - centerPoint.y) * expantion + centerPoint.y, this.width * expantion, this.height * expantion);
+  };
+
+  Rectangle__Rectangle.prototype.isEqual = function(rectangle) {
+    return this.x == rectangle.x && this.y == rectangle.y && this.width == rectangle.width && this.height == rectangle.height;
+  };
+
+  Rectangle__Rectangle.prototype.clone = function() {
+    return new Rectangle__Rectangle(this.x, this.y, this.width, this.height);
+  };
+
+  Rectangle__Rectangle.prototype.toString = function() {
+    return "(x=" + this.x + ", y=" + this.y + ", w=" + this.width + ", h=" + this.height + ")";
+  };
+
+  Rectangle__Rectangle.prototype.destroy = function() {
+    delete this.x;
+    delete this.y;
+    delete this.width;
+    delete this.height;
+  };
+
+  exports.Rectangle = Rectangle__default;
+
+  RectangleList.prototype = new List__default();
+  RectangleList.prototype.constructor = RectangleList;
+  /**
+   * @classdesc A {@link List} structure for storing {@link Rectangle} instances.
+   *
+   * @description Creates a new RectangleList.
+   * @constructor
+   * @category geometry
+   */
+  function RectangleList() {
+    var array = List__default.apply(this, arguments);
+    array = RectangleList.fromArray(array);
+    return array;
+  }
+
+
+  RectangleList.fromArray = function(array) {
+    var result = List__default.fromArray(array);
+    result.type = "RectangleList";
+
+    result.getFrame = RectangleList.prototype.getFrame;
+    result.add = RectangleList.prototype.add;
+    result.factor = RectangleList.prototype.factor;
+    result.getAddedArea = RectangleList.prototype.getAddedArea;
+    result.getIntersectionArea = RectangleList.prototype.getIntersectionArea;
+
+    return result;
+  };
+
+  //TODO:finish RectangleList methods
+
+  RectangleList.prototype.getFrame = function() {
+    if(this.length == 0) return null;
+    var frame = this[0];
+    frame.width = frame.getRight();
+    frame.height = frame.getBottom();
+    for(var i = 1; this[i] != null; i++) {
+      frame.x = Math.min(frame.x, this[i].x);
+      frame.y = Math.min(frame.y, this[i].y);
+
+      frame.width = Math.max(this[i].getRight(), frame.width);
+      frame.height = Math.max(this[i].getBottom(), frame.height);
+    }
+
+    frame.width -= frame.x;
+    frame.height -= frame.y;
+
+    return frame;
+  };
+
+  RectangleList.prototype.add = function() {
+
+  };
+
+  RectangleList.prototype.factor = function() {
+
+  };
+
+  RectangleList.prototype.getAddedArea = function() {};
+
+  RectangleList.prototype.getIntersectionArea = function() {
+    var rect0;
+    var rect1;
+    var intersectionArea = 0;
+    var intersection;
+    for(var i = 0; this[i + 1] != null; i++) {
+      rect0 = this[i];
+      for(var j = i + 1; this[j] != null; j++) {
+        rect1 = this[j];
+        intersection = rect0.getIntersection(rect1);
+        intersectionArea += intersection == null ? 0 : intersection.getArea();
+      }
+    }
+
+    return intersectionArea;
+  };
+
+  exports.RectangleList = RectangleList;
+
+  /**
+   * @classdesc Provides a set of tools that work with Colors.
+   *
+   * @namespace
+   * @category colors
+   */
+  function ColorOperators__ColorOperators() {}
+  var ColorOperators__default = ColorOperators__ColorOperators;
+  // TODO: create Color struture to be used instead of arrays [255, 100,0] ?
+
+
+
+  /**
+   * return a color between color0 and color1
+   * 0 -> color0
+   * 1 -> color1
+   * @param {String} color0
+   * @param {String} color1
+   * @param value between 0 and 1 (to obtain color between color0 and color1)
+   * @return {String} interpolated color
+   *
+   */
+  ColorOperators__ColorOperators.interpolateColors = function(color0, color1, value) {
+    var resultArray = ColorOperators__ColorOperators.interpolateColorsRGB(ColorOperators__ColorOperators.colorStringToRGB(color0), ColorOperators__ColorOperators.colorStringToRGB(color1), value);
+    return ColorOperators__ColorOperators.RGBtoHEX(resultArray[0], resultArray[1], resultArray[2]);
+  };
+
+  /**
+   * return a color between color0 and color1
+   * 0 -> color0
+   * 1 -> color1
+   * @param {Array} color0 RGB
+   * @param {Array} color1 RGB
+   * @param value between 0 and 1 (to obtain values between color0 and color1)
+   * @return {Array} interpolated RGB color
+   *
+   */
+  ColorOperators__ColorOperators.interpolateColorsRGB = function(color0, color1, value) {
+    var s = 1 - value;
+    return [Math.floor(s * color0[0] + value * color1[0]), Math.floor(s * color0[1] + value * color1[1]), Math.floor(s * color0[2] + value * color1[2])];
+  };
+
+
+  ColorOperators__ColorOperators.RGBtoHEX = function(red, green, blue) {
+    return "#" + ColorOperators__ColorOperators.toHex(red) + ColorOperators__ColorOperators.toHex(green) + ColorOperators__ColorOperators.toHex(blue);
+  };
+
+  ColorOperators__ColorOperators.RGBArrayToString = function(array) {
+    return 'rgb(' + array[0] + ',' + array[1] + ',' + array[2] + ')';
+  };
+
+
+
+  /**
+   * converts an hexadecimal color to RGB
+   * @param {String} an hexadecimal color string
+   * @return {Array} returns an RGB color Array
+   *
+   */
+  ColorOperators__ColorOperators.HEXtoRGB = function(hexColor) {
+    return [parseInt(hexColor.substr(1, 2), 16), parseInt(hexColor.substr(3, 2), 16), parseInt(hexColor.substr(5, 2), 16)];
+  };
+
+
+  ColorOperators__ColorOperators.colorStringToHEX = function(color_string) {
+    var rgb = ColorOperators__ColorOperators.colorStringToRGB(color_string);
+    return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+
+  ColorOperators__ColorOperators.numberToHex = function(number) {
+    var hex = number.toString(16);
+    while(hex.length < 2) hex = "0" + hex;
+    return hex;
+  };
+
+
+  ColorOperators__ColorOperators.uinttoRGB = function(color) {
+    var rgbColor = new Array(color >> 16, (color >> 8) - ((color >> 16) << 8), color - ((color >> 8) << 8));
+    return rgbColor;
+  };
+  ColorOperators__ColorOperators.uinttoHEX = function(color) {
+    var rgbColor = ColorOperators__ColorOperators.uinttoRGB(color);
+    var hexColor = ColorOperators__ColorOperators.RGBToHEX(rgbColor[0], rgbColor[1], rgbColor[2]);
+    return hexColor;
+  };
+
+
+  ColorOperators__ColorOperators.RGBtouint = function(red, green, blue) {
+    return Number(red) << 16 | Number(green) << 8 | Number(blue);
+  };
+
+  ColorOperators__ColorOperators.HEXtouint = function(hexColor) {
+    var colorArray = ColorOperators__ColorOperators.HEXtoRGB(hexColor);
+    var color = ColorOperators__ColorOperators.RGBtouint(colorArray[0], colorArray[1], colorArray[2]);
+    return color;
+  };
+
+  ColorOperators__ColorOperators.grayByLevel = function(level) {
+    level = Math.floor(level * 255);
+    return 'rgb(' + level + ',' + level + ',' + level + ')';
+  };
+
+
+
+  /**
+   * converts an hexadecimal color to HSV
+   * @param {String} an hexadecimal color string
+   * @return {Array} returns an HSV color Array
+   *
+   */
+  ColorOperators__ColorOperators.HEXtoHSV = function(hexColor) {
+    var rgb = ColorOperators__ColorOperators.HEXtoRGB(hexColor);
+    return ColorOperators__ColorOperators.RGBtoHSV(rgb[0], rgb[1], rgb[2]);
+  };
+
+
+  ColorOperators__ColorOperators.HSVtoHEX = function(hue, saturation, value) {
+    var rgb = ColorOperators__ColorOperators.HSVtoRGB(hue, saturation, value);
+    return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  ColorOperators__ColorOperators.HSLtoHEX = function(hue, saturation, light) {
+    var rgb = ColorOperators__ColorOperators.HSLtoRGB(hue, saturation, light);
+    return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+
+
+  /**
+   * converts an RGB color to HSV
+   * @param {Array} a RGB color array
+   * @return {Array} returns a HSV color array
+   * H in [0,360], S in [0,1], V in [0,1]
+   */
+  ColorOperators__ColorOperators.RGBtoHSV = function(r, g, b) {
+      var h;
+      var s;
+      var v;
+      var min = Math.min(Math.min(r, g), b);
+      var max = Math.max(Math.max(r, g), b);
+      v = max / 255;
+      var delta = max - min;
+      if(delta == 0) return new Array(0, 0, r / 255);
+      if(max != 0) {
+        s = delta / max;
+      } else {
+        s = 0;
+        h = -1;
+        return new Array(h, s, v);
+      }
+      if(r == max) {
+        h = (g - b) / delta;
+      } else if(g == max) {
+        h = 2 + (b - r) / delta;
+      } else {
+        h = 4 + (r - g) / delta;
+      }
+      h *= 60;
+      if(h < 0) h += 360;
+      return new Array(h, s, v);
+    };
+    /**
+     * converts an HSV color to RGB
+     * @param {Array} a HSV color array
+     * @return {Array} returns a RGB color array
+     *
+     */
+  ColorOperators__ColorOperators.HSVtoRGB = function(hue, saturation, value) {
+    hue = hue ? hue : 0;
+    saturation = saturation ? saturation : 0;
+    value = value ? value : 0;
+    var r;
+    var g;
+    var b;
+    //
+    var i;
+    var f;
+    var p;
+    var q;
+    var t;
+    if(saturation == 0) {
+      r = g = b = value;
+      return [Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255)];
+    }
+    hue /= 60;
+    i = Math.floor(hue);
+    f = hue - i;
+    p = value * (1 - saturation);
+    q = value * (1 - saturation * f);
+    t = value * (1 - saturation * (1 - f));
+    switch(i) {
+      case 0:
+        r = value;
+        g = t;
+        b = p;
+        break;
+      case 1:
+        r = q;
+        g = value;
+        b = p;
+        break;
+      case 2:
+        r = p;
+        g = value;
+        b = t;
+        break;
+      case 3:
+        r = p;
+        g = q;
+        b = value;
+        break;
+      case 4:
+        r = t;
+        g = p;
+        b = value;
+        break;
+      default:
+        r = value;
+        g = p;
+        b = q;
+        break;
+    }
+    return new Array(Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255));
+  };
+
+  /**
+   * Converts an HSL color value to RGB. Conversion formula
+   * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
+   * Assumes hue is contained in the interval [0,360) and saturation and l are contained in the set [0, 1]
+   */
+  ColorOperators__ColorOperators.HSLtoRGB = function(hue, saturation, light) {
+    var r, g, b;
+
+    if(saturation == 0) {
+      r = g = b = light; // achromatic
+    } else {
+      function hue2rgb(p, q, t) {
+        if(t < 0) t += 1;
+        if(t > 1) t -= 1;
+        if(t < 1 / 6) return p + (q - p) * 6 * t;
+        if(t < 1 / 2) return q;
+        if(t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+        return p;
+      }
+
+      var q = light < 0.5 ? light * (1 + saturation) : light + saturation - light * saturation;
+      var p = 2 * light - q;
+      r = hue2rgb(p, q, (hue / 360) + 1 / 3);
+      g = hue2rgb(p, q, hue / 360);
+      b = hue2rgb(p, q, (hue / 360) - 1 / 3);
+    }
+
+    return [Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255)];
+  };
+
+
+  ColorOperators__ColorOperators.invertColorRGB = function(r, g, b) {
+    return [255 - r, 255 - g, 255 - b];
+  };
+
+  ColorOperators__ColorOperators.addAlpha = function(color, alpha) {
+    //var rgb = color.substr(0,3)=='rgb'?ColorOperators.colorStringToRGB(color):ColorOperators.HEXtoRGB(color);
+    var rgb = ColorOperators__ColorOperators.colorStringToRGB(color);
+    if(rgb == null) return 'black';
+    return 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + alpha + ')';
+  };
+
+  ColorOperators__ColorOperators.invertColor = function(color) {
+    var rgb = ColorOperators__ColorOperators.colorStringToRGB(color);
+    rgb = ColorOperators__ColorOperators.invertColorRGB(rgb[0], rgb[1], rgb[2]);
+    return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+
+
+  ColorOperators__ColorOperators.toHex = function(number) {
+    var hex = number.toString(16);
+    while(hex.length < 2) hex = "0" + hex;
+    return hex;
+  };
+
+
+  ColorOperators__ColorOperators.getRandomColor = function() {
+    return 'rgb(' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ')';
+  };
+
+
+  /////// Universal matching
+
+
+
+  /**
+   * This method was partially obtained (and simplified) from a Class by Stoyan Stefanov:
+   *
+   * A class to parse color values
+   * @author Stoyan Stefanov <sstoo@gmail.com>
+   * @link   http://www.phpied.com/rgb-color-parser-in-javascript/
+   * @license Use it if you like it
+   *
+   */
+  ColorOperators__ColorOperators.colorStringToRGB = function(color_string) {
+    //c.log('color_string:['+color_string+']');
+    var ok = false;
+
+    // strip any leading #
+    if(color_string.charAt(0) == '#') { // remove # if any
+      color_string = color_string.substr(1, 6);
+      //c.log('-> color_string:['+color_string+']');
+    }
+
+    color_string = color_string.replace(/ /g, '');
+    color_string = color_string.toLowerCase();
+
+    // before getting into regexps, try simple matches
+    // and overwrite the input
+    var simple_colors = {
+      aliceblue: 'f0f8ff',
+      antiquewhite: 'faebd7',
+      aqua: '00ffff',
+      aquamarine: '7fffd4',
+      azure: 'f0ffff',
+      beige: 'f5f5dc',
+      bisque: 'ffe4c4',
+      black: '000000',
+      blanchedalmond: 'ffebcd',
+      blue: '0000ff',
+      blueviolet: '8a2be2',
+      brown: 'a52a2a',
+      burlywood: 'deb887',
+      cadetblue: '5f9ea0',
+      chartreuse: '7fff00',
+      chocolate: 'd2691e',
+      coral: 'ff7f50',
+      cornflowerblue: '6495ed',
+      cornsilk: 'fff8dc',
+      crimson: 'dc143c',
+      cyan: '00ffff',
+      darkblue: '00008b',
+      darkcyan: '008b8b',
+      darkgoldenrod: 'b8860b',
+      darkgray: 'a9a9a9',
+      darkgreen: '006400',
+      darkkhaki: 'bdb76b',
+      darkmagenta: '8b008b',
+      darkolivegreen: '556b2f',
+      darkorange: 'ff8c00',
+      darkorchid: '9932cc',
+      darkred: '8b0000',
+      darksalmon: 'e9967a',
+      darkseagreen: '8fbc8f',
+      darkslateblue: '483d8b',
+      darkslategray: '2f4f4f',
+      darkturquoise: '00ced1',
+      darkviolet: '9400d3',
+      deeppink: 'ff1493',
+      deepskyblue: '00bfff',
+      dimgray: '696969',
+      dodgerblue: '1e90ff',
+      feldspar: 'd19275',
+      firebrick: 'b22222',
+      floralwhite: 'fffaf0',
+      forestgreen: '228b22',
+      fuchsia: 'ff00ff',
+      gainsboro: 'dcdcdc',
+      ghostwhite: 'f8f8ff',
+      gold: 'ffd700',
+      goldenrod: 'daa520',
+      gray: '808080',
+      green: '008000',
+      greenyellow: 'adff2f',
+      honeydew: 'f0fff0',
+      hotpink: 'ff69b4',
+      indianred: 'cd5c5c',
+      indigo: '4b0082',
+      ivory: 'fffff0',
+      khaki: 'f0e68c',
+      lavender: 'e6e6fa',
+      lavenderblush: 'fff0f5',
+      lawngreen: '7cfc00',
+      lemonchiffon: 'fffacd',
+      lightblue: 'add8e6',
+      lightcoral: 'f08080',
+      lightcyan: 'e0ffff',
+      lightgoldenrodyellow: 'fafad2',
+      lightgrey: 'd3d3d3',
+      lightgreen: '90ee90',
+      lightpink: 'ffb6c1',
+      lightsalmon: 'ffa07a',
+      lightseagreen: '20b2aa',
+      lightskyblue: '87cefa',
+      lightslateblue: '8470ff',
+      lightslategray: '778899',
+      lightsteelblue: 'b0c4de',
+      lightyellow: 'ffffe0',
+      lime: '00ff00',
+      limegreen: '32cd32',
+      linen: 'faf0e6',
+      magenta: 'ff00ff',
+      maroon: '800000',
+      mediumaquamarine: '66cdaa',
+      mediumblue: '0000cd',
+      mediumorchid: 'ba55d3',
+      mediumpurple: '9370d8',
+      mediumseagreen: '3cb371',
+      mediumslateblue: '7b68ee',
+      mediumspringgreen: '00fa9a',
+      mediumturquoise: '48d1cc',
+      mediumvioletred: 'c71585',
+      midnightblue: '191970',
+      mintcream: 'f5fffa',
+      mistyrose: 'ffe4e1',
+      moccasin: 'ffe4b5',
+      navajowhite: 'ffdead',
+      navy: '000080',
+      oldlace: 'fdf5e6',
+      olive: '808000',
+      olivedrab: '6b8e23',
+      orange: 'ffa500',
+      orangered: 'ff4500',
+      orchid: 'da70d6',
+      palegoldenrod: 'eee8aa',
+      palegreen: '98fb98',
+      paleturquoise: 'afeeee',
+      palevioletred: 'd87093',
+      papayawhip: 'ffefd5',
+      peachpuff: 'ffdab9',
+      peru: 'cd853f',
+      pink: 'ffc0cb',
+      plum: 'dda0dd',
+      powderblue: 'b0e0e6',
+      purple: '800080',
+      red: 'ff0000',
+      rosybrown: 'bc8f8f',
+      royalblue: '4169e1',
+      saddlebrown: '8b4513',
+      salmon: 'fa8072',
+      sandybrown: 'f4a460',
+      seagreen: '2e8b57',
+      seashell: 'fff5ee',
+      sienna: 'a0522d',
+      silver: 'c0c0c0',
+      skyblue: '87ceeb',
+      slateblue: '6a5acd',
+      slategray: '708090',
+      snow: 'fffafa',
+      springgreen: '00ff7f',
+      steelblue: '4682b4',
+      tan: 'd2b48c',
+      teal: '008080',
+      thistle: 'd8bfd8',
+      tomato: 'ff6347',
+      turquoise: '40e0d0',
+      violet: 'ee82ee',
+      violetred: 'd02090',
+      wheat: 'f5deb3',
+      white: 'ffffff',
+      whitesmoke: 'f5f5f5',
+      yellow: 'ffff00',
+      yellowgreen: '9acd32'
+    };
+
+    if(simple_colors[color_string] != null) color_string = simple_colors[color_string];
+
+
+    // array of color definition objects
+    var color_defs = [
+    {
+      re: /^rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)$/,
+      //example: ['rgb(123, 234, 45)', 'rgb(255,234,245)'],
+      process: function(bits) {
+        return [
+          parseInt(bits[1]),
+          parseInt(bits[2]),
+          parseInt(bits[3])
+        ];
+      }
+    },
+    {
+      re: /^rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),[\.0123456789]+\)$/,
+      //example: ['rgb(123, 234, 45)', 'rgb(255,234,245)', 'rgba(200,100,120,0.3)'],
+      process: function(bits) {
+        return [
+          parseInt(bits[1]),
+          parseInt(bits[2]),
+          parseInt(bits[3])
+        ];
+      }
+    },
+    {
+      re: /^(\w{2})(\w{2})(\w{2})$/,
+      //example: ['#00ff00', '336699'],
+      process: function(bits) {
+        return [
+          parseInt(bits[1], 16),
+          parseInt(bits[2], 16),
+          parseInt(bits[3], 16)
+        ];
+      }
+    },
+    {
+      re: /^(\w{1})(\w{1})(\w{1})$/,
+      //example: ['#fb0', 'f0f'],
+      process: function(bits) {
+        return [
+          parseInt(bits[1] + bits[1], 16),
+          parseInt(bits[2] + bits[2], 16),
+          parseInt(bits[3] + bits[3], 16)
+        ];
+      }
+    }];
+
+    // search through the definitions to find a match
+    for(var i = 0; i < color_defs.length; i++) {
+      var re = color_defs[i].re;
+      var processor = color_defs[i].process;
+      var bits = re.exec(color_string);
+      if(bits) {
+        return processor(bits);
+      }
+
+    }
+
+    return null;
+  };
+
+  ColorList.prototype = new List__default();
+  ColorList.prototype.constructor = ColorList;
+
+  /**
+   * @classdesc A {@link List} for storing Colors.
+   *
+   * @description Creates a new ColorList.
+   * @constructor
+   * @category colors
+   */
+  function ColorList() {
+    var args = [];
+    var i;
+    for(i = 0; i < arguments.length; i++) {
+      args[i] = arguments[i];
+    }
+    var array = List__default.apply(this, args);
+    array = ColorList.fromArray(array);
+
+    return array;
+  }
+
+
+  ColorList.fromArray = function(array) {
+    var result = List__default.fromArray(array);
+    result.type = "ColorList";
+    result.getRgbArrays = ColorList.prototype.getRgbArrays;
+    result.getInterpolated = ColorList.prototype.getInterpolated;
+    result.getInverted = ColorList.prototype.getInverted;
+    result.addAlpha = ColorList.prototype.addAlpha;
+    return result;
+  };
+
+  /**
+   * return an arrays of rgb arrays ([rr,gg,bb])
+   * @return {array}
+   * tags:
+   */
+  ColorList.prototype.getRgbArrays = function() {
+    var rgbArrays = new List__default();
+
+    for(var i = 0; this[i] != null; i++) {
+      rgbArrays[i] = ColorOperators__default.colorStringToRGB(this[i]);
+    }
+
+    return rgbArrays;
+  };
+
+  /**
+   * interpolates colors with a given color and measure
+   * @param  {String} color to be interpolated with
+   * @param  {Number} value intenisty of interpolation [0,1]
+   * @return {ColorList}
+   * tags:
+   */
+  ColorList.prototype.getInterpolated = function(color, value) {
+    var newColorList = new ColorList();
+
+    for(var i = 0; this[i] != null; i++) {
+      newColorList[i] = ColorOperators__default.interpolateColors(this[i], color, value);
+    }
+
+    newColorList.name = this.name;
+    return newColorList;
+  };
+
+  /**
+   * inverts all colors
+   * @return {ColorList}
+   * tags:
+   */
+  ColorList.prototype.getInverted = function() {
+    var newColorList = new ColorList();
+
+    for(var i = 0; this[i] != null; i++) {
+      newColorList[i] = ColorOperators__default.invertColor(this[i]);
+    }
+
+    newColorList.name = this.name;
+    return newColorList;
+  };
+
+  /**
+   * adds alpha value to all colores
+   * @param {Number} alpha alpha value in [0,1]
+   * @return {ColorList}
+   * tags:
+   */
+  ColorList.prototype.addAlpha = function(alpha) {
+    var newColorList = new ColorList();
+
+    for(var i = 0; this[i] != null; i++) {
+      newColorList[i] = ColorOperators__default.addAlpha(this[i], alpha);
+    }
+
+    newColorList.name = this.name;
+    return newColorList;
+  };
+
+  exports.ColorList = ColorList;
+
+  /**
+   * @classdesc Default color scales.
+   *
+   * @namespace
+   * @category colors
+   */
+
+  function ColorScales() {}
+
+  // *
+  //  * return a colorScale from its name
+  //  * @param  {String} string name of ColorScale
+  //  * @return {Function} ColorScale function
+  //  * tags:conversion
+
+  // ColorScales.getColorScaleByName = function(string){
+  // 	return ColorScales[string];
+  // }
+
+  ColorScales.blackScale = function(value) {
+    return 'black';
+  };
+
+  ColorScales.grayscale = function(value) {
+    var rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], [255, 255, 255], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  ColorScales.antiGrayscale = function(value) {
+    var rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [0, 0, 0], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  ColorScales.antiTemperature = function(value) {
+    return ColorScales.temperature(1 - value);
+  };
+
+  ColorScales.temperature = function(value) { //todo:make it efficient
+    if(value < 0.2) {
+      var color = ColorOperators.interpolateColors('#000000', ColorOperators.HSVtoHEX(234, 1, 1), value * 5);
+    } else if(value > 0.85) {
+      color = ColorOperators.interpolateColors(ColorOperators.HSVtoHEX(0, 1, 1), '#FFFFFF', (value - 0.85) / 0.15);
+    } else {
+      color = ColorOperators.HSVtoHEX(Math.round((0.65 - (value - 0.2)) * 360), 1, 1);
+    }
+    return color;
+  };
+
+  ColorScales.sqrtTemperature = function(value) {
+    return ColorScales.temperature(Math.sqrt(value));
+  };
+
+  ColorScales.sqrt4Temperature = function(value) {
+    return ColorScales.temperature(Math.pow(value, 0.25));
+  };
+
+  ColorScales.quadraticTemperature = function(value) {
+    return ColorScales.temperature(Math.pow(value, 2));
+  };
+
+  ColorScales.cubicTemperature = function(value) {
+    return ColorScales.temperature(Math.pow(value, 3));
+  };
+
+  ColorScales.greenToRed = function(value) { //todo:make it efficient
+    var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [255, 50, 50], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+  ColorScales.greenToBlue = function(value) { //todo:make it efficient
+    var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [50, 50, 255], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  ColorScales.grayToOrange = function(value) { //todo:make it efficient
+    var rgb = ColorOperators.interpolateColorsRGB([100, 100, 100], [255, 110, 0], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  ColorScales.blueToRed = function(value) {
+    return 'rgb(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ')';
+  };
+
+  ColorScales.blueToRedAlpha = function(value) { //todo:make it efficient
+    return 'rgba(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ', 0.5)';
+  };
+
+  ColorScales.whiteToRed = function(value) {
+    var gg = Math.floor(255 - value * 255);
+    return 'rgb(255,' + gg + ',' + gg + ')';
+  };
+
+  ColorScales.redToBlue = function(value) {
+    var rgb = ColorOperators.interpolateColorsRGB([255, 0, 0], [0, 0, 255], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  ColorScales.greenWhiteRed = function(value) {
+    if(value < 0.5) {
+      var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [255, 255, 255], value * 2);
+    } else {
+      rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [255, 50, 50], (value - 0.5) * 2);
+    }
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+
+  ColorScales.solar = function(value) {
+    var rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], ColorOperators.interpolateColorsRGB([255, 0, 0], [255, 255, 0], value), Math.pow(value * 0.99 + 0.01, 0.2));
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+  ColorScales.antiSolar = function(value) {
+    return ColorOperators.invertColor(ColorScales.solar(value));
+  };
+
+  ColorScale.prototype = new DataModel();
+  ColorScale.prototype.constructor = ColorScale;
+
+  /**
+   * @classdesc Color scale.
+   *
+   * @description Creates a new ColorScale.
+   * @param {Function} colorScaleFunction Function.
+   * @constructor
+   * @category colors
+   */
+  function ColorScale(colorScaleFunction) {
+    DataModel.apply(this, arguments);
+    this.name = "";
+    this.type = "ColorScale";
+
+    this.colorScaleFunction = colorScaleFunction ? colorScaleFunction : ColorScales.blackScale;
+  }
+
+
+  ColorScale.prototype.getColor = function(value) {
+    return this.colorScaleFunction(value);
+  };
+
+  ColorScale.prototype.getColorList = function(nColors) {
+    var colorList = new ColorList();
+    var i;
+    for(i = 0; i < nColors; i++) {
+      colorList.push(this.getColor(i / (nColors - 1)));
+    }
+    return colorList;
+  };
+
+  exports.ColorScale = ColorScale;
+
+  function setCursor(name) {
+    name = name == null ? 'default' : name;
+    canvas.style.cursor = name;
+  }
+
+
+  /**
+   *Static class that:
+   * -includes all the data models (by including the class IncludeDataModels.js)
+   * -includes class utils (that contains methods such as instantiate)
+   * -contains the global variables (such as userAgent, canvas, nF, mX…), global
+   * -contains the listener methods
+   * -triggers de init, update and draw in Global class
+   * @namespace
+   * @category basics
+   */
+  function Global(){}
+
+  Global.userAgent="unknown";
+
+  function init(){
+    //console.log("init must be overriden!");
+  }
+
+  function cycle(){
+    //console.log("cycle must be overriden!");
+  }
+
+  function resizeWindow(){
+    //console.log("resizeWindow must be overriden!");
+  }
+
+  function lastCycle(){
+    //override
+  }
+
+  var listenerArray  = [];
+  var canvas;
+  var removeDiv;
+  var userAgent="none";
+  var userAgentVersion;
+  var canvasResizeable=true;
+
+
+  //global useful vars
+  var cW = 1; // canvas width
+  var cH = 1; // canvas height
+  var src_Global__cX = 1; // canvas center x
+  var src_Global__cY = 1; // canvas center y
+  var mX = 0; // cursor x
+  var mY = 0; // cursor y
+  var mP = new Point__default(0, 0); // cursor point
+  var nF = 0; // number of current frame since first cycle
+
+  var MOUSE_DOWN=false; //true on the frame of mousedown event
+  var MOUSE_UP=false; //true on the frame of mouseup event
+  var MOUSE_UP_FAST=false; //true on the frame of mouseup event
+  var WHEEL_CHANGE=0; //differnt from 0 if mousewheel (or pad) moves / STATE
+  var NF_DOWN; //number of frame of last mousedown event
+  var NF_UP; //number of frame of last mouseup event
+  var MOUSE_PRESSED; //true if mouse pressed / STATE
+  var MOUSE_IN_DOCUMENT = true; //true if cursor is inside document / STATE
+  var mX_DOWN; // cursor x position on last mousedown event
+  var mY_DOWN; // cursor x position on last mousedown event
+  var mX_UP; // cursor x position on last mousedown event
+  var mY_UP; // cursor y position on last mousedown event
+  var PREV_mX=0; // cursor x position previous frame
+  var PREV_mY=0; // cursor y position previous frame
+  var DX_MOUSE=0; //horizontal movement of cursor in last frame
+  var DY_MOUSE=0; //vertical movement of cursor in last frame
+  var MOUSE_MOVED = false; //boolean that indicates wether the mouse moved in the last frame / STATE
+  var T_MOUSE_PRESSED = 0; //time in milliseconds of mouse being pressed, useful for sutained pressure detection
+
+  //var deltaWheel = 0;
+  var cursorStyle = 'auto';
+  var backGroundColor = 'white';
+  var backGroundColorRGB = [255,255,255];
+  var cycleActive;
+
+  //global constants
+  var src_Global__context;
+  var src_Global__TwoPi = 2*Math.PI;
+  var HalfPi = 0.5*Math.PI;
+  var radToGrad = 180/Math.PI;
+  var gradToRad = Math.PI/180;
+  var src_Global__c = console;
+  src_Global__c.l = src_Global__c.log; //use c.l instead of console.log
+
+  //private
+  var _wheelActivated = false;
+  var _keyboardActivated = false;
+
+  var _prevMouseX = 0;
+  var _prevMouseY = 0;
+  var _setIntervalId;
+  var _setTimeOutId;
+  var _cycleOnMouseMovement = false;
+  var _interactionCancelledFrame;
+  var _tLastMouseDown;
+
+  var _alphaRefresh=0;//if _alphaRefresh>0 instead of clearing the canvas each frame, a transparent rectangle will be drawn
+
+  var END_CYCLE_DELAY = 3000; //time in milliseconds, from last mouse movement to the last cycle to be executed in case cycleOnMouseMovement has been activated
+
+  Array.prototype.last = function(){
+    return this[this.length-1];
+  };
+
+  window.addEventListener('load', function(){
+
+    if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
+      userAgent='IE';
+      userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+      if(userAgentVersion<9) return null;
+    } else if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent)){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
+      userAgent='FIREFOX';
+      userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+    } else if (navigator.userAgent.match(/Chrome/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
+      userAgent='CHROME';
+      userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+    } else if (/Mozilla[\/\s](\d+\.\d+)/.test(navigator.userAgent) || navigator.userAgent.match(/Mozilla/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
+      userAgent='MOZILLA';
+      userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+    } else if (navigator.userAgent.match(/Safari/) != null){ //test for MSIE x.x;
+      userAgent='Safari';
+      userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+    } else if(navigator.userAgent.match(/iPad/i) != null){
+      userAgent='IOS';
+    } else if(navigator.userAgent.match(/iPhone/i) != null){
+      userAgent='IOS';
+    }
+
+
+    Global.userAgent=userAgent;
+    Global._frameRate=30;
+
+    canvas = document.getElementById('main');
+
+    if(canvas!=null){
+      removeDiv = document.getElementById('removeDiv');
+      removeDiv.style.display = 'none';
+
+      src_Global__context = canvas.getContext('2d');
+
+      _adjustCanvas();
+
+      canvas.addEventListener("mousemove", _onMouse, false);
+      canvas.addEventListener("mousedown", _onMouse, false);
+      canvas.addEventListener("mouseup", _onMouse, false);
+      canvas.addEventListener("mouseenter", _onMouse, false);
+      canvas.addEventListener("mouseleave", _onMouse, false);
+
+
+      activateWheel();
+
+      window.addEventListener("resize", onResize, false);
+
+      startCycle();
+      init();
+    }
+
+    src_Global__c.l('Moebio Framework v2.259 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
+
+  }, false);
+
+  function _onMouse(e) {
+
+    switch(e.type){
+      case "mousemove":
+        PREV_mX=mX;
+        PREV_mY=mY;
+
+        if(e.clientX){
+          mX = e.clientX;
+              mY = e.clientY;
+        } else if(e.offsetX) {
+              mX = e.offsetX;
+              mY = e.offsetY;
+          } else if(e.layerX) {
+              mX = e.layerX;
+              mY = e.layerY;
+          }
+          mP.x = mX;
+          mP.y = mY;
+          MOUSE_IN_DOCUMENT = true;
+          break;
+      case "mousedown":
+        NF_DOWN = nF;
+        MOUSE_PRESSED = true;
+        T_MOUSE_PRESSED = 0;
+        _tLastMouseDown = new Date().getTime();
+        mX_DOWN = mX;
+        mY_DOWN = mY;
+        MOUSE_IN_DOCUMENT = true;
+        break;
+      case "mouseup":
+        NF_UP = nF;
+        MOUSE_PRESSED = false;
+        T_MOUSE_PRESSED = 0;
+        mX_UP = mX;
+        mY_UP = mY;
+        MOUSE_IN_DOCUMENT = true;
+        break;
+      case "mouseenter":
+        MOUSE_IN_DOCUMENT = true;
+        break;
+      case "mouseleave":
+        MOUSE_IN_DOCUMENT = false;
+        break;
+    }
+  }
+
+
+  function onResize(e){
+    _adjustCanvas();
+    resizeWindow();
+  }
+
+  function _adjustCanvas(){
+    if(canvasResizeable==false) return;
+
+    cW = getDocWidth();
+    cH = getDocHeight();
+
+    canvas.setAttribute('width', cW);
+      canvas.setAttribute('height', cH);
+
+    src_Global__cX = Math.floor(cW*0.5);
+    src_Global__cY = Math.floor(cH*0.5);
+  }
+
+
+  function src_Global__clearContext(){
+    src_Global__context.clearRect(0, 0, cW, cH);
+  }
+
+  function cycleOnMouseMovement(value, time){
+    if(time!=null) END_CYCLE_DELAY = time;
+
+    if(value){
+      src_Global__context.canvas.addEventListener('mousemove', onMoveCycle, false);
+      addInteractionEventListener('mousewheel', onMoveCycle, this);
+      _cycleOnMouseMovement = true;
+      stopCycle();
+    } else {
+      src_Global__context.canvas.removeEventListener('mousemove', onMoveCycle, false);
+      removeInteractionEventListener('mousewheel', onMoveCycle, this);
+      _cycleOnMouseMovement = false;
+      startCycle();
+    }
+  }
+
+  function setFrameRate(fr){
+    fr = fr||30;
+    Global._frameRate = fr;
+
+    if(cycleActive) startCycle();
+  }
+
+  function enterFrame(){
+    if(_alphaRefresh==0){
+        src_Global__context.clearRect(0, 0, cW, cH);
+    } else {
+      src_Global__context.fillStyle = 'rgba('+backGroundColorRGB[0]+','+backGroundColorRGB[1]+','+backGroundColorRGB[2]+','+_alphaRefresh+')';
+      src_Global__context.fillRect(0, 0, cW, cH);
+    }
+
+      setCursor('default');
+
+      MOUSE_DOWN = NF_DOWN==nF;
+    MOUSE_UP = NF_UP==nF;
+    MOUSE_UP_FAST = MOUSE_UP && (nF-NF_DOWN)<9;
+
+    DX_MOUSE = mX-PREV_mX;
+    DY_MOUSE = mY-PREV_mY;
+    MOUSE_MOVED = DX_MOUSE!=0 || DY_MOUSE!=0;
+
+    if(MOUSE_PRESSED) T_MOUSE_PRESSED = new Date().getTime() - _tLastMouseDown;
+
+      cycle();
+
+      WHEEL_CHANGE = 0;
+
+      PREV_mX=mX;
+    PREV_mY=mY;
+
+      nF++;
+  }
+
+  function startCycle(){
+    clearTimeout(_setTimeOutId);
+    clearInterval(_setIntervalId);
+    _setIntervalId = setInterval(enterFrame, Global._frameRate);
+    cycleActive = true;
+  }
+
+
+  function stopCycle(){
+    clearInterval(_setIntervalId);
+    cycleActive = false;
+
+    lastCycle();
+  }
+
+
+
+
+  function onMoveCycle(e){
+    if(e.type=='mousemove' && _prevMouseX==mX && _prevMouseY==mY) return;
+    reStartCycle();
+  }
+
+  function reStartCycle(){
+    _prevMouseX=mX;
+    _prevMouseY=mY;
+
+    if(!cycleActive){
+      _setIntervalId = setInterval(enterFrame, Global._frameRate);
+      cycleActive = true;
+    }
+
+    clearTimeout(_setTimeOutId);
+    _setTimeOutId = setTimeout(stopCycle, END_CYCLE_DELAY);
+  }
+
+  //interaction events
+  function addInteractionEventListener(eventType, onFunction, target){//TODO: listenerArray contains objects instead of arrays
+    listenerArray.push(new Array(eventType, onFunction, target));
+    switch(eventType){
+      case 'mousedown':
+      case 'mouseup':
+      case 'click':
+      case 'mousemove':
+        src_Global__context.canvas.addEventListener(eventType, onCanvasEvent, false);
+        break;
+      case 'mousewheel':
+        if(!_wheelActivated) activateWheel();
+        break;
+      case 'keydown':
+      case 'keyup':
+        if(!_keyboardActivated) activateKeyboard();
+        break;
+    }
+  }
+
+  function onCanvasEvent(e){
+    var i;
+    for(i=0; listenerArray[i]!=null; i++){
+      if(listenerArray[i][0]==e.type.replace('DOMMouseScroll', 'mousewheel')){
+        if(_interactionCancelledFrame==nF) return;
+        listenerArray[i][1].call(listenerArray[i][2], e);
+      }
+    }
+  }
+
+  function removeInteractionEventListener(eventType, onFunction, target){ //TODO: finish this (requires single element removing method solved first)
+    for(var i=0; listenerArray[i]!=null; i++){
+      if(listenerArray[i][0]==eventType && listenerArray[i][1]==onFunction && listenerArray[i][2]==target){
+        delete listenerArray[i];
+        listenerArray.splice(i, 1);
+        i--;
+      }
+    }
+  }
+
+  function cancelAllInteractions(){
+    src_Global__c.log("cancelAllInteractions, _interactionCancelledFrame:", nF);
+    _interactionCancelledFrame = nF;
+  }
+
+  function setBackgroundColor(color){
+    if(typeof color == "number"){
+      if(arguments.length>3){
+        color = 'rgba('+arguments[0]+','+arguments[1]+','+arguments[2]+','+arguments[3]+')';
+      } else {
+        color = 'rgb('+arguments[0]+','+arguments[1]+','+arguments[2]+')';
+      }
+    } else if(Array.isArray(color)){
+      color = ColorOperators.RGBtoHEX(color[0], color[1], color[2]);
+    }
+    backGroundColor = color;
+
+    backGroundColorRGB = ColorOperators.colorStringToRGB(backGroundColor);
+
+    var body = document.getElementById('index');
+    body.setAttribute('bgcolor', backGroundColor);
+  }
+
+  function setDivPosition(div, x, y){
+    div.setAttribute('style', 'position:absolute;left:'+String(x)+'px;top:'+String(y)+'px;');
+  }
+
+
+  /////////////////////////////////// keyboard and wheel
+
+  function activateKeyboard(){
+    _keyboardActivated = true;
+    document.onkeydown = onKey;
+    document.onkeyup = onKey;
+  }
+
+  function onKey(e){
+    onCanvasEvent(e);
+  }
+
+  /*
+   * thanks http://www.adomas.org/javascript-mouse-wheel
+   */
+  function activateWheel(){
+    _wheelActivated = true;
+
+    if (window.addEventListener){
+      window.addEventListener('DOMMouseScroll', _onWheel, false);
+      //window.addEventListener("mousewheel", _onWheel, false); // testing
+    }
+    window.onmousewheel = document.onmousewheel = _onWheel;
+
+  }
+  function _onWheel(e) {
+    //c.l('_onWheel, e:', e);
+
+      if (!e) e = window.event; //IE
+
+      if (e.wheelDelta){
+        WHEEL_CHANGE = e.wheelDelta/120;
+      } else if (e.detail) { /** Mozilla case. */
+          WHEEL_CHANGE = -e.detail/3;
+      }
+      e.value = WHEEL_CHANGE;
+      e.type = "mousewheel"; //why this doesn't work?
+
+    onCanvasEvent(e);
+  }
+
+
+
+  ////structures local storage
+
+  function setStructureLocalStorageWithSeed(object, seed, comments){
+    setStructureLocalStorage(object, MD5.hex_md5(seed), comments);
+  };
+
+  function setStructureLocalStorage(object, id, comments){
+    var type = typeOf(object);
+    var code;
+
+    switch(type){
+      case 'string':
+        code = object;
+        break;
+      case 'Network':
+        code = NetworkEncodings.encodeGDF(network);
+        break;
+      default:
+        type = 'object';
+        code = JSON.stringify(object);
+        break;
+    }
+
+    var storageObject = {
+      id:id,
+      type:type,
+      comments:comments,
+      date:new Date(),
+      code:code
+    };
+
+    var storageString = JSON.stringify(storageObject);
+
+    // c.l('storageObject', storageObject);
+    // c.l('id:['+id+']');
+    // c.l('code.length:', code.length);
+
+    localStorage.setItem(id, storageString);
+  };
+
+  function getStructureLocalStorageFromSeed(seed, returnStorageObject){
+    return getStructureLocalStorage(MD5.hex_md5(seed), returnStorageObject);
+  };
+
+  function getStructureLocalStorage(id, returnStorageObject){
+    returnStorageObject = returnStorageObject||false;
+
+    var item = localStorage.getItem(id);
+
+    if(item==null) return null;
+
+
+    try{
+      var storageObject = JSON.parse(item);
+    } catch(err){
+      return null;
+    }
+
+    if(storageObject.type==null && storageObject.code==null) return null;
+
+    var type = storageObject.type;
+    var code = storageObject.code;
+    var object;
+
+    switch(type){
+      case 'string':
+        object = code;
+        break;
+      case 'Network':
+        object = NetworkEncodings.decodeGDF(code);
+        break;
+      case 'object':
+        object = JSON.parse(code);
+        break;
+    }
+
+    if(returnStorageObject){
+      storageObject.object = object;
+      storageObject.size = storageObject.code.length;
+      storageObject.date = new Date(storageObject.date);
+
+      return storageObject;
+    }
+
+    return object;
+  };
+
+  function getDocWidth() {
+      var D = document;
+      return Math.max(
+          D.body.offsetWidth, D.documentElement.offsetWidth,
+          D.body.clientWidth, D.documentElement.clientWidth
+      );
+  }
+
+  function getDocHeight() {
+      var D = document;
+      return Math.max(
+          D.body.offsetHeight, D.documentElement.offsetHeight,
+          D.body.clientHeight, D.documentElement.clientHeight
+      );
+  }
+
+  function Space2D(configuration) {
+    configuration = configuration == null ? {} : configuration;
+
+    this.center = configuration.center == null ? new Point__default(0, 0) : configuration.center;
+    this.scale = 1;
+
+    if(configuration.interactionActive) this.activeInteraction();
+
+    this.MIN_SCALE = configuration.minScale == null ? 0.05 : configuration.minScale;
+    this.MAX_SCALE = configuration.maxScale == null ? 20 : configuration.maxScale;
+
+    this.active = configuration.interactionActive;
+  }
+
+
+  Space2D.prototype.activeInteraction = function() {
+    if(this.active) return;
+    this.active = true;
+    addInteractionEventListener('mousedown', this.onMouse, this);
+    addInteractionEventListener('mouseup', this.onMouse, this);
+    addInteractionEventListener('mousewheel', this.wheel, this);
+  };
+
+  Space2D.prototype.deActivate = function() {
+    this.active = false;
+    this.dragging = false;
+    removeInteractionEventListener('mousedown', this.onMouse, this);
+    removeInteractionEventListener('mouseup', this.onMouse, this);
+    removeInteractionEventListener('mousemove', this.onMouse, this);
+    removeInteractionEventListener('mousewheel', this.wheel, this);
+  };
+
+  Space2D.prototype.stopDragging = function() {
+    removeInteractionEventListener('mousemove', this.onMouse, this);
+  };
+
+  Space2D.prototype.project = function(point) {
+    return new Point__default((point.x - this.center.x) * this.scale, (point.y + this.center.y) * this.scale);
+  };
+
+  Space2D.prototype.projectX = function(x) {
+    return(x - this.center.x) * this.scale;
+  };
+
+  Space2D.prototype.projectY = function(y) {
+    return(y - this.center.y) * this.scale;
+  };
+
+
+  Space2D.prototype.inverseProject = function(point) {
+    return new Point__default(point.x / this.scale + this.center.x, point.y / this.scale + this.center.y);
+  };
+
+  Space2D.prototype.inverseProjectX = function(x) {
+    return x / this.scale + this.center.x;
+  };
+
+  Space2D.prototype.inverseProjectY = function(y) {
+    return y / this.scale + this.center.y;
+  };
+
+  Space2D.prototype.move = function(vector, projected) {
+    this.center = this.center.subtract(projected ? vector.factor(1 / this.scale) : vector);
+  };
+
+  Space2D.prototype.factorScaleFromPoint = function(point, factor) {
+    var k = (1 - 1 / factor) / this.scale;
+    this.center.x = k * point.x + this.center.x;
+    this.center.y = k * point.y + this.center.y;
+
+    this.scale *= factor;
+  };
+
+  Space2D.prototype.fixX = function(xDeparture, xArrival) {
+    this.center.x = xDeparture - (xArrival / this.scale);
+  };
+  Space2D.prototype.fixY = function(yDeparture, yArrival) {
+    this.center.y = yDeparture - (yArrival / this.scale);
+  };
+
+  Space2D.prototype.fixHorizontalInterval = function(departureInterval, arrivalInterval) {
+    this.scale = arrivalInterval.getAmplitude() / departureInterval.getAmplitude();
+    this.fixX((departureInterval.x + departureInterval.y) * 0.5, cW * 0.5);
+  };
+
+  //////
+
+  Space2D.prototype.onMouse = function(e) {
+    switch(e.type) {
+      case 'mousedown':
+        if(!this.active) return;
+        this.dragging = true;
+        this.prev_mX = mX;
+        this.prev_mY = mY;
+        addInteractionEventListener('mousemove', this.onMouse, this);
+        break;
+      case 'mouseup':
+        this.dragging = false;
+        removeInteractionEventListener('mousemove', this.onMouse, this);
+        break;
+      case 'mousemove':
+        if(!this.active) return;
+        this.center.x += (this.prev_mX - mX) / this.scale;
+        this.center.y += (this.prev_mY - mY) / this.scale;
+        this.prev_mX = mX;
+        this.prev_mY = mY;
+        break;
+    }
+  };
+
+
+
+  Space2D.prototype.wheel = function(e) {
+    if(!this.active) return;
+    if(this.scale <= this.MIN_SCALE && e.value > 0) {
+      this.scale = this.MIN_SCALE;
+      return;
+    }
+    if(this.scale >= this.MAX_SCALE && e.value < 0) {
+      this.scale = this.MAX_SCALE;
+      return;
+    }
+    this.factorScaleFromPoint(new Point__default(mX - 0, mY - 0), (1 - 0.02 * e.value));
+  };
+
+  exports.Space2D = Space2D;
 
   // jshint unused:false
 

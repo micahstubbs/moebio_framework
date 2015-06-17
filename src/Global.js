@@ -1,3 +1,12 @@
+import Point from 'src/dataStructures/geometry/Point';
+
+// TODO possibly remove this. it comes from simplegraphics
+function setCursor(name) {
+  name = name == null ? 'default' : name;
+  canvas.style.cursor = name;
+}
+
+
 /**
  *Static class that:
  * -includes all the data models (by including the class IncludeDataModels.js)
@@ -8,75 +17,76 @@
  * @namespace
  * @category basics
  */
-function Global(){}
+export function Global(){}
 
 Global.userAgent="unknown";
 
-init=function(){
+function init(){
   //console.log("init must be overriden!");
-};
+}
 
-cycle=function(){
+function cycle(){
   //console.log("cycle must be overriden!");
-};
+}
 
-resizeWindow=function(){
+function resizeWindow(){
   //console.log("resizeWindow must be overriden!");
-};
+}
 
-lastCycle = function(){
+function lastCycle(){
   //override
-};
+}
 
-var listenerArray  = [];
-var canvas;
-var userAgent="none";
-var userAgentVersion;
-var canvasResizeable=true;
+export var listenerArray  = [];
+export var canvas;
+export var removeDiv;
+export var userAgent="none";
+export var userAgentVersion;
+export var canvasResizeable=true;
 
 
 //global useful vars
-var cW = 1; // canvas width
-var cH = 1; // canvas height
-var cX = 1; // canvas center x
-var cY = 1; // canvas center y
-var mX = 0; // cursor x
-var mY = 0; // cursor y
-var mP = new Point(0, 0); // cursor point
-var nF = 0; // number of current frame since first cycle
+export var cW = 1; // canvas width
+export var cH = 1; // canvas height
+export var cX = 1; // canvas center x
+export var cY = 1; // canvas center y
+export var mX = 0; // cursor x
+export var mY = 0; // cursor y
+export var mP = new Point(0, 0); // cursor point
+export var nF = 0; // number of current frame since first cycle
 
-var MOUSE_DOWN=false; //true on the frame of mousedown event
-var MOUSE_UP=false; //true on the frame of mouseup event
-var MOUSE_UP_FAST=false; //true on the frame of mouseup event
-var WHEEL_CHANGE=0; //differnt from 0 if mousewheel (or pad) moves / STATE
-var NF_DOWN; //number of frame of last mousedown event
-var NF_UP; //number of frame of last mouseup event
-var MOUSE_PRESSED; //true if mouse pressed / STATE
-var MOUSE_IN_DOCUMENT = true; //true if cursor is inside document / STATE
-var mX_DOWN; // cursor x position on last mousedown event
-var mY_DOWN; // cursor x position on last mousedown event
-var mX_UP; // cursor x position on last mousedown event
-var mY_UP; // cursor y position on last mousedown event
-var PREV_mX=0; // cursor x position previous frame
-var PREV_mY=0; // cursor y position previous frame
-var DX_MOUSE=0; //horizontal movement of cursor in last frame
-var DY_MOUSE=0; //vertical movement of cursor in last frame
-var MOUSE_MOVED = false; //boolean that indicates wether the mouse moved in the last frame / STATE
-var T_MOUSE_PRESSED = 0; //time in milliseconds of mouse being pressed, useful for sutained pressure detection
+export var MOUSE_DOWN=false; //true on the frame of mousedown event
+export var MOUSE_UP=false; //true on the frame of mouseup event
+export var MOUSE_UP_FAST=false; //true on the frame of mouseup event
+export var WHEEL_CHANGE=0; //differnt from 0 if mousewheel (or pad) moves / STATE
+export var NF_DOWN; //number of frame of last mousedown event
+export var NF_UP; //number of frame of last mouseup event
+export var MOUSE_PRESSED; //true if mouse pressed / STATE
+export var MOUSE_IN_DOCUMENT = true; //true if cursor is inside document / STATE
+export var mX_DOWN; // cursor x position on last mousedown event
+export var mY_DOWN; // cursor x position on last mousedown event
+export var mX_UP; // cursor x position on last mousedown event
+export var mY_UP; // cursor y position on last mousedown event
+export var PREV_mX=0; // cursor x position previous frame
+export var PREV_mY=0; // cursor y position previous frame
+export var DX_MOUSE=0; //horizontal movement of cursor in last frame
+export var DY_MOUSE=0; //vertical movement of cursor in last frame
+export var MOUSE_MOVED = false; //boolean that indicates wether the mouse moved in the last frame / STATE
+export var T_MOUSE_PRESSED = 0; //time in milliseconds of mouse being pressed, useful for sutained pressure detection
 
 //var deltaWheel = 0;
-var cursorStyle = 'auto';
-var backGroundColor = 'white';
-var backGroundColorRGB = [255,255,255];
-var cycleActive;
+export var cursorStyle = 'auto';
+export var backGroundColor = 'white';
+export var backGroundColorRGB = [255,255,255];
+export var cycleActive;
 
 //global constants
-var context;
-var TwoPi = 2*Math.PI;
-var HalfPi = 0.5*Math.PI;
-var radToGrad = 180/Math.PI;
-var gradToRad = Math.PI/180;
-var c = console;
+export var context;
+export var TwoPi = 2*Math.PI;
+export var HalfPi = 0.5*Math.PI;
+export var radToGrad = 180/Math.PI;
+export var gradToRad = Math.PI/180;
+export var c = console;
 c.l = c.log; //use c.l instead of console.log
 
 //private
@@ -101,35 +111,38 @@ Array.prototype.last = function(){
 
 window.addEventListener('load', function(){
 
-   if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
-      userAgent='IE';
-      userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
-      if(userAgentVersion<9) return null;
+  if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
+    userAgent='IE';
+    userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+    if(userAgentVersion<9) return null;
   } else if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent)){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
-       userAgent='FIREFOX';
-      userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
-     } else if (navigator.userAgent.match(/Chrome/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
-     userAgent='CHROME';
-      userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+    userAgent='FIREFOX';
+    userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+  } else if (navigator.userAgent.match(/Chrome/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
+    userAgent='CHROME';
+    userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
   } else if (/Mozilla[\/\s](\d+\.\d+)/.test(navigator.userAgent) || navigator.userAgent.match(/Mozilla/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
-     userAgent='MOZILLA';
-      userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+    userAgent='MOZILLA';
+    userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
   } else if (navigator.userAgent.match(/Safari/) != null){ //test for MSIE x.x;
-      userAgent='Safari';
-      userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
-    } else if(navigator.userAgent.match(/iPad/i) != null){
-      userAgent='IOS';
-    } else if(navigator.userAgent.match(/iPhone/i) != null){
-      userAgent='IOS';
-    }
+    userAgent='Safari';
+    userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+  } else if(navigator.userAgent.match(/iPad/i) != null){
+    userAgent='IOS';
+  } else if(navigator.userAgent.match(/iPhone/i) != null){
+    userAgent='IOS';
+  }
 
 
-    Global.userAgent=userAgent;
-    Global._frameRate=30;
+  Global.userAgent=userAgent;
+  Global._frameRate=30;
 
   canvas = document.getElementById('main');
 
   if(canvas!=null){
+    removeDiv = document.getElementById('removeDiv');
+    removeDiv.style.display = 'none';
+
     context = canvas.getContext('2d');
 
     _adjustCanvas();
@@ -201,7 +214,7 @@ function _onMouse(e) {
 }
 
 
-function onResize(e){
+export function onResize(e){
   _adjustCanvas();
   resizeWindow();
 }
@@ -220,11 +233,11 @@ function _adjustCanvas(){
 }
 
 
-function clearContext(){
+export function clearContext(){
   context.clearRect(0, 0, cW, cH);
 }
 
-function cycleOnMouseMovement(value, time){
+export function cycleOnMouseMovement(value, time){
   if(time!=null) END_CYCLE_DELAY = time;
 
   if(value){
@@ -240,24 +253,24 @@ function cycleOnMouseMovement(value, time){
   }
 }
 
-function setFrameRate(fr){
+export function setFrameRate(fr){
   fr = fr||30;
   Global._frameRate = fr;
 
   if(cycleActive) startCycle();
 }
 
-function enterFrame(){
+export function enterFrame(){
   if(_alphaRefresh==0){
-       context.clearRect(0, 0, cW, cH);
+      context.clearRect(0, 0, cW, cH);
   } else {
     context.fillStyle = 'rgba('+backGroundColorRGB[0]+','+backGroundColorRGB[1]+','+backGroundColorRGB[2]+','+_alphaRefresh+')';
     context.fillRect(0, 0, cW, cH);
   }
 
-     setCursor('default');
+    setCursor('default');
 
-     MOUSE_DOWN = NF_DOWN==nF;
+    MOUSE_DOWN = NF_DOWN==nF;
   MOUSE_UP = NF_UP==nF;
   MOUSE_UP_FAST = MOUSE_UP && (nF-NF_DOWN)<9;
 
@@ -277,7 +290,7 @@ function enterFrame(){
     nF++;
 }
 
-function startCycle(){
+export function startCycle(){
   clearTimeout(_setTimeOutId);
   clearInterval(_setIntervalId);
   _setIntervalId = setInterval(enterFrame, Global._frameRate);
@@ -285,7 +298,7 @@ function startCycle(){
 }
 
 
-function stopCycle(){
+export function stopCycle(){
   clearInterval(_setIntervalId);
   cycleActive = false;
 
@@ -295,12 +308,12 @@ function stopCycle(){
 
 
 
-function onMoveCycle(e){
+export function onMoveCycle(e){
   if(e.type=='mousemove' && _prevMouseX==mX && _prevMouseY==mY) return;
   reStartCycle();
 }
 
-function reStartCycle(){
+export function reStartCycle(){
   _prevMouseX=mX;
   _prevMouseY=mY;
 
@@ -314,7 +327,7 @@ function reStartCycle(){
 }
 
 //interaction events
-function addInteractionEventListener(eventType, onFunction, target){//TODO: listenerArray contains objects instead of arrays
+export function addInteractionEventListener(eventType, onFunction, target){//TODO: listenerArray contains objects instead of arrays
   listenerArray.push(new Array(eventType, onFunction, target));
   switch(eventType){
     case 'mousedown':
@@ -333,7 +346,7 @@ function addInteractionEventListener(eventType, onFunction, target){//TODO: list
   }
 }
 
-function onCanvasEvent(e){
+export function onCanvasEvent(e){
   var i;
   for(i=0; listenerArray[i]!=null; i++){
     if(listenerArray[i][0]==e.type.replace('DOMMouseScroll', 'mousewheel')){
@@ -343,7 +356,7 @@ function onCanvasEvent(e){
   }
 }
 
-function removeInteractionEventListener(eventType, onFunction, target){ //TODO: finish this (requires single element removing method solved first)
+export function removeInteractionEventListener(eventType, onFunction, target){ //TODO: finish this (requires single element removing method solved first)
   for(var i=0; listenerArray[i]!=null; i++){
     if(listenerArray[i][0]==eventType && listenerArray[i][1]==onFunction && listenerArray[i][2]==target){
       delete listenerArray[i];
@@ -352,12 +365,13 @@ function removeInteractionEventListener(eventType, onFunction, target){ //TODO: 
     }
   }
 }
-function cancelAllInteractions(){
+
+export function cancelAllInteractions(){
   c.log("cancelAllInteractions, _interactionCancelledFrame:", nF);
   _interactionCancelledFrame = nF;
 }
 
-function setBackgroundColor(color){
+export function setBackgroundColor(color){
   if(typeof color == "number"){
     if(arguments.length>3){
       color = 'rgba('+arguments[0]+','+arguments[1]+','+arguments[2]+','+arguments[3]+')';
@@ -382,19 +396,20 @@ function setDivPosition(div, x, y){
 
 /////////////////////////////////// keyboard and wheel
 
-function activateKeyboard(){
+export function activateKeyboard(){
   _keyboardActivated = true;
   document.onkeydown = onKey;
   document.onkeyup = onKey;
 }
-function onKey(e){
+
+export function onKey(e){
   onCanvasEvent(e);
 }
 
 /*
  * thanks http://www.adomas.org/javascript-mouse-wheel
  */
-function activateWheel(){
+export function activateWheel(){
   _wheelActivated = true;
 
   if (window.addEventListener){
@@ -404,7 +419,7 @@ function activateWheel(){
   window.onmousewheel = document.onmousewheel = _onWheel;
 
 }
-function _onWheel(e) {
+export function _onWheel(e) {
   //c.l('_onWheel, e:', e);
 
     if (!e) e = window.event; //IE
@@ -424,11 +439,11 @@ function _onWheel(e) {
 
 ////structures local storage
 
-setStructureLocalStorageWithSeed = function(object, seed, comments){
+export function setStructureLocalStorageWithSeed(object, seed, comments){
   setStructureLocalStorage(object, MD5.hex_md5(seed), comments);
 };
 
-setStructureLocalStorage = function(object, id, comments){
+export function setStructureLocalStorage(object, id, comments){
   var type = typeOf(object);
   var code;
 
@@ -462,11 +477,11 @@ setStructureLocalStorage = function(object, id, comments){
   localStorage.setItem(id, storageString);
 };
 
-getStructureLocalStorageFromSeed = function(seed, returnStorageObject){
+export function getStructureLocalStorageFromSeed(seed, returnStorageObject){
   return getStructureLocalStorage(MD5.hex_md5(seed), returnStorageObject);
 };
 
-getStructureLocalStorage = function(id, returnStorageObject){
+export function getStructureLocalStorage(id, returnStorageObject){
   returnStorageObject = returnStorageObject||false;
 
   var item = localStorage.getItem(id);
@@ -509,7 +524,7 @@ getStructureLocalStorage = function(id, returnStorageObject){
   return object;
 };
 
-function getDocWidth() {
+export function getDocWidth() {
     var D = document;
     return Math.max(
         D.body.offsetWidth, D.documentElement.offsetWidth,
@@ -517,7 +532,7 @@ function getDocWidth() {
     );
 }
 
-function getDocHeight() {
+export function getDocHeight() {
     var D = document;
     return Math.max(
         D.body.offsetHeight, D.documentElement.offsetHeight,

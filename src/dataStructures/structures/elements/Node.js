@@ -1,3 +1,7 @@
+import DataModel from "src/dataStructures/DataModel";
+import NodeList from "src/dataStructures/structures/lists/NodeList";
+import RelationList from "src/dataStructures/structures/lists/RelationList";
+
 Node.prototype = new DataModel();
 Node.prototype.constructor = Node;
 
@@ -46,6 +50,7 @@ function Node(id, name) {
   this.ay = 0;
   this.az = 0;
 }
+export default Node;
 
 /**
  * Removes all Relations and connected Nodes from

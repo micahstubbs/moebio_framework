@@ -27,24 +27,39 @@ import DateInterval from "src/dataStructures/dates/DateInterval";
 import DateList from "src/dataStructures/dates/DateList";
 export { DateAxis, DateInterval, DateList };
 
+// dataStructures/geo
+import Country from "src/dataStructures/geo/Country";
+import CountryList from "src/dataStructures/geo/CountryList";
+export { Country, CountryList };
 
-// // dataStructures/structures
+// dataStructures/geometry
+import Point from "src/dataStructures/geometry/Point";
+import Point3D from "src/dataStructures/geometry/Point3D";
+import Polygon from "src/dataStructures/geometry/Polygon";
+import Polygon3D from "src/dataStructures/geometry/Polygon3D";
+import Polygon3DList from "src/dataStructures/geometry/Polygon3DList";
+import PolygonList from "src/dataStructures/geometry/PolygonList";
+import Rectangle from "src/dataStructures/geometry/Rectangle";
+import RectangleList from "src/dataStructures/geometry/RectangleList";
+export { Point, Point3D, Polygon, Polygon3D, Polygon3DList, PolygonList, Rectangle, RectangleList };
+
+// dataStructures/graphic
+import ColorList from "src/dataStructures/graphic/ColorList";
+import ColorScale from "src/dataStructures/graphic/ColorScale";
+export { ColorList, ColorScale };
+
+// dataStructures/spaces
+import Space2D from "src/dataStructures/spaces/Space2D";
+export { Space2D };
+
+// dataStructures/structures
 // import Node from "src/dataStructures/structures/elements/Node";
 // import NodeList from "src/dataStructures/structures/lists/NodeList";
 // import RelationList from "src/dataStructures/structures/lists/RelationList";
-// import Country from "src/dataStructures/geo/Country";
-// import CountryList from "src/dataStructures/geo/CountryList";
-// import Point from "src/dataStructures/geometry/Point";
-// import Point3D from "src/dataStructures/geometry/Point3D";
-// import Polygon from "src/dataStructures/geometry/Polygon";
-// import Polygon3D from "src/dataStructures/geometry/Polygon3D";
-// import Polygon3DList from "src/dataStructures/geometry/Polygon3DList";
-// import PolygonList from "src/dataStructures/geometry/PolygonList";
-// import Rectangle from "src/dataStructures/geometry/Rectangle";
-// import RectangleList from "src/dataStructures/geometry/RectangleList";
-// import ColorList from "src/dataStructures/graphic/ColorList";
-// import ColorScale from "src/dataStructures/graphic/ColorScale";
-// import Space2D from "src/dataStructures/spaces/Space2D";
+
+
+
+
 // import StringList from "src/dataStructures/strings/StringList";
 // import Relation from "src/dataStructures/structures/elements/Relation";
 // import Network from "src/dataStructures/structures/networks/Network";

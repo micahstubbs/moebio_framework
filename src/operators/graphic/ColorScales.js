@@ -6,7 +6,7 @@
  */
 
 function ColorScales() {}
-
+export default ColorScales;
 // *
 //  * return a colorScale from its name
 //  * @param  {String} string name of ColorScale
