@@ -65,19 +65,19 @@ import Network from "src/dataStructures/structures/networks/Network";
 import Tree from "src/dataStructures/structures/networks/Tree";
 export { Node, Relation, NodeList, RelationList, Network, Tree };
 
+// operators/dates
+import DateListOperators from "src/operators/dates/DateListOperators";
+import DateOperators from "src/operators/dates/DateOperators";
+export { DateOperators, DateOperators };
 
-
-
-
-
-
-// import ObjectOperators from "src/operators/objects/ObjectOperators";
-// import ObjectConversions from "src/operators/objects/ObjectConversions";
-// import DateListOperators from "src/operators/dates/DateListOperators";
-// import DateOperators from "src/operators/dates/DateOperators";
+// operators/geo
 // import CountryListOperators from "src/operators/geo/CountryListOperators";
 // import CountryOperators from "src/operators/geo/CountryOperators";
 // import GeoOperators from "src/operators/geo/GeoOperators";
+
+// import ObjectOperators from "src/operators/objects/ObjectOperators";
+// import ObjectConversions from "src/operators/objects/ObjectConversions";
+
 // import GeometryConvertions from "src/operators/geometry/GeometryConvertions";
 // import GeometryOperators from "src/operators/geometry/GeometryOperators";
 // import PointOperators from "src/operators/geometry/PointOperators";

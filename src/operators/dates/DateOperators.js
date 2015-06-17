@@ -7,7 +7,6 @@ import DateList from "src/dataStructures/dates/DateList";
  * @category dates
  */
 function DateOperators() {}
-
 export default DateOperators;
 
 DateOperators.millisecondsToHours = 1 / (1000 * 60 * 60);
