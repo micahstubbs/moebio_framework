@@ -19,15 +19,19 @@ import Interval from "src/dataStructures/numeric/Interval";
 import Matrix from "src/dataStructures/numeric/Matrix";
 import NumberList from "src/dataStructures/numeric/NumberList";
 import NumberTable from "src/dataStructures/numeric/NumberTable";
-export { Axis , Axis2D, Interval, Matrix, NumberList, NumberTable };
+export { Axis, Axis2D, Interval, Matrix, NumberList, NumberTable };
+
+// dataStructures/dates
+import DateAxis from "src/dataStructures/dates/DateAxis";
+import DateInterval from "src/dataStructures/dates/DateInterval";
+import DateList from "src/dataStructures/dates/DateList";
+export { DateAxis, DateInterval, DateList };
+
 
 // // dataStructures/structures
 // import Node from "src/dataStructures/structures/elements/Node";
 // import NodeList from "src/dataStructures/structures/lists/NodeList";
 // import RelationList from "src/dataStructures/structures/lists/RelationList";
-// import DateAxis from "src/dataStructures/dates/DateAxis";
-// import DateInterval from "src/dataStructures/dates/DateInterval";
-// import DateList from "src/dataStructures/dates/DateList";
 // import Country from "src/dataStructures/geo/Country";
 // import CountryList from "src/dataStructures/geo/CountryList";
 // import Point from "src/dataStructures/geometry/Point";
