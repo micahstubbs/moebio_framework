@@ -6706,6 +6706,1448 @@ define('src/index', ['exports'], function (exports) {
 
   exports.RectangleList = RectangleList;
 
+  /**
+   * @classdesc Provides a set of tools that work with Colors.
+   *
+   * @namespace
+   * @category colors
+   */
+  function ColorOperators__ColorOperators() {}
+  var ColorOperators__default = ColorOperators__ColorOperators;
+  // TODO: create Color struture to be used instead of arrays [255, 100,0] ?
+
+
+
+  /**
+   * return a color between color0 and color1
+   * 0 -> color0
+   * 1 -> color1
+   * @param {String} color0
+   * @param {String} color1
+   * @param value between 0 and 1 (to obtain color between color0 and color1)
+   * @return {String} interpolated color
+   *
+   */
+  ColorOperators__ColorOperators.interpolateColors = function(color0, color1, value) {
+    var resultArray = ColorOperators__ColorOperators.interpolateColorsRGB(ColorOperators__ColorOperators.colorStringToRGB(color0), ColorOperators__ColorOperators.colorStringToRGB(color1), value);
+    return ColorOperators__ColorOperators.RGBtoHEX(resultArray[0], resultArray[1], resultArray[2]);
+  };
+
+  /**
+   * return a color between color0 and color1
+   * 0 -> color0
+   * 1 -> color1
+   * @param {Array} color0 RGB
+   * @param {Array} color1 RGB
+   * @param value between 0 and 1 (to obtain values between color0 and color1)
+   * @return {Array} interpolated RGB color
+   *
+   */
+  ColorOperators__ColorOperators.interpolateColorsRGB = function(color0, color1, value) {
+    var s = 1 - value;
+    return [Math.floor(s * color0[0] + value * color1[0]), Math.floor(s * color0[1] + value * color1[1]), Math.floor(s * color0[2] + value * color1[2])];
+  };
+
+
+  ColorOperators__ColorOperators.RGBtoHEX = function(red, green, blue) {
+    return "#" + ColorOperators__ColorOperators.toHex(red) + ColorOperators__ColorOperators.toHex(green) + ColorOperators__ColorOperators.toHex(blue);
+  };
+
+  ColorOperators__ColorOperators.RGBArrayToString = function(array) {
+    return 'rgb(' + array[0] + ',' + array[1] + ',' + array[2] + ')';
+  };
+
+
+
+  /**
+   * converts an hexadecimal color to RGB
+   * @param {String} an hexadecimal color string
+   * @return {Array} returns an RGB color Array
+   *
+   */
+  ColorOperators__ColorOperators.HEXtoRGB = function(hexColor) {
+    return [parseInt(hexColor.substr(1, 2), 16), parseInt(hexColor.substr(3, 2), 16), parseInt(hexColor.substr(5, 2), 16)];
+  };
+
+
+  ColorOperators__ColorOperators.colorStringToHEX = function(color_string) {
+    var rgb = ColorOperators__ColorOperators.colorStringToRGB(color_string);
+    return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+
+  ColorOperators__ColorOperators.numberToHex = function(number) {
+    var hex = number.toString(16);
+    while(hex.length < 2) hex = "0" + hex;
+    return hex;
+  };
+
+
+  ColorOperators__ColorOperators.uinttoRGB = function(color) {
+    var rgbColor = new Array(color >> 16, (color >> 8) - ((color >> 16) << 8), color - ((color >> 8) << 8));
+    return rgbColor;
+  };
+  ColorOperators__ColorOperators.uinttoHEX = function(color) {
+    var rgbColor = ColorOperators__ColorOperators.uinttoRGB(color);
+    var hexColor = ColorOperators__ColorOperators.RGBToHEX(rgbColor[0], rgbColor[1], rgbColor[2]);
+    return hexColor;
+  };
+
+
+  ColorOperators__ColorOperators.RGBtouint = function(red, green, blue) {
+    return Number(red) << 16 | Number(green) << 8 | Number(blue);
+  };
+
+  ColorOperators__ColorOperators.HEXtouint = function(hexColor) {
+    var colorArray = ColorOperators__ColorOperators.HEXtoRGB(hexColor);
+    var color = ColorOperators__ColorOperators.RGBtouint(colorArray[0], colorArray[1], colorArray[2]);
+    return color;
+  };
+
+  ColorOperators__ColorOperators.grayByLevel = function(level) {
+    level = Math.floor(level * 255);
+    return 'rgb(' + level + ',' + level + ',' + level + ')';
+  };
+
+
+
+  /**
+   * converts an hexadecimal color to HSV
+   * @param {String} an hexadecimal color string
+   * @return {Array} returns an HSV color Array
+   *
+   */
+  ColorOperators__ColorOperators.HEXtoHSV = function(hexColor) {
+    var rgb = ColorOperators__ColorOperators.HEXtoRGB(hexColor);
+    return ColorOperators__ColorOperators.RGBtoHSV(rgb[0], rgb[1], rgb[2]);
+  };
+
+
+  ColorOperators__ColorOperators.HSVtoHEX = function(hue, saturation, value) {
+    var rgb = ColorOperators__ColorOperators.HSVtoRGB(hue, saturation, value);
+    return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  ColorOperators__ColorOperators.HSLtoHEX = function(hue, saturation, light) {
+    var rgb = ColorOperators__ColorOperators.HSLtoRGB(hue, saturation, light);
+    return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+
+
+  /**
+   * converts an RGB color to HSV
+   * @param {Array} a RGB color array
+   * @return {Array} returns a HSV color array
+   * H in [0,360], S in [0,1], V in [0,1]
+   */
+  ColorOperators__ColorOperators.RGBtoHSV = function(r, g, b) {
+      var h;
+      var s;
+      var v;
+      var min = Math.min(Math.min(r, g), b);
+      var max = Math.max(Math.max(r, g), b);
+      v = max / 255;
+      var delta = max - min;
+      if(delta == 0) return new Array(0, 0, r / 255);
+      if(max != 0) {
+        s = delta / max;
+      } else {
+        s = 0;
+        h = -1;
+        return new Array(h, s, v);
+      }
+      if(r == max) {
+        h = (g - b) / delta;
+      } else if(g == max) {
+        h = 2 + (b - r) / delta;
+      } else {
+        h = 4 + (r - g) / delta;
+      }
+      h *= 60;
+      if(h < 0) h += 360;
+      return new Array(h, s, v);
+    };
+    /**
+     * converts an HSV color to RGB
+     * @param {Array} a HSV color array
+     * @return {Array} returns a RGB color array
+     *
+     */
+  ColorOperators__ColorOperators.HSVtoRGB = function(hue, saturation, value) {
+    hue = hue ? hue : 0;
+    saturation = saturation ? saturation : 0;
+    value = value ? value : 0;
+    var r;
+    var g;
+    var b;
+    //
+    var i;
+    var f;
+    var p;
+    var q;
+    var t;
+    if(saturation == 0) {
+      r = g = b = value;
+      return [Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255)];
+    }
+    hue /= 60;
+    i = Math.floor(hue);
+    f = hue - i;
+    p = value * (1 - saturation);
+    q = value * (1 - saturation * f);
+    t = value * (1 - saturation * (1 - f));
+    switch(i) {
+      case 0:
+        r = value;
+        g = t;
+        b = p;
+        break;
+      case 1:
+        r = q;
+        g = value;
+        b = p;
+        break;
+      case 2:
+        r = p;
+        g = value;
+        b = t;
+        break;
+      case 3:
+        r = p;
+        g = q;
+        b = value;
+        break;
+      case 4:
+        r = t;
+        g = p;
+        b = value;
+        break;
+      default:
+        r = value;
+        g = p;
+        b = q;
+        break;
+    }
+    return new Array(Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255));
+  };
+
+  /**
+   * Converts an HSL color value to RGB. Conversion formula
+   * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
+   * Assumes hue is contained in the interval [0,360) and saturation and l are contained in the set [0, 1]
+   */
+  ColorOperators__ColorOperators.HSLtoRGB = function(hue, saturation, light) {
+    var r, g, b;
+
+    if(saturation == 0) {
+      r = g = b = light; // achromatic
+    } else {
+      function hue2rgb(p, q, t) {
+        if(t < 0) t += 1;
+        if(t > 1) t -= 1;
+        if(t < 1 / 6) return p + (q - p) * 6 * t;
+        if(t < 1 / 2) return q;
+        if(t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+        return p;
+      }
+
+      var q = light < 0.5 ? light * (1 + saturation) : light + saturation - light * saturation;
+      var p = 2 * light - q;
+      r = hue2rgb(p, q, (hue / 360) + 1 / 3);
+      g = hue2rgb(p, q, hue / 360);
+      b = hue2rgb(p, q, (hue / 360) - 1 / 3);
+    }
+
+    return [Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255)];
+  };
+
+
+  ColorOperators__ColorOperators.invertColorRGB = function(r, g, b) {
+    return [255 - r, 255 - g, 255 - b];
+  };
+
+  ColorOperators__ColorOperators.addAlpha = function(color, alpha) {
+    //var rgb = color.substr(0,3)=='rgb'?ColorOperators.colorStringToRGB(color):ColorOperators.HEXtoRGB(color);
+    var rgb = ColorOperators__ColorOperators.colorStringToRGB(color);
+    if(rgb == null) return 'black';
+    return 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + alpha + ')';
+  };
+
+  ColorOperators__ColorOperators.invertColor = function(color) {
+    var rgb = ColorOperators__ColorOperators.colorStringToRGB(color);
+    rgb = ColorOperators__ColorOperators.invertColorRGB(rgb[0], rgb[1], rgb[2]);
+    return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+
+
+  ColorOperators__ColorOperators.toHex = function(number) {
+    var hex = number.toString(16);
+    while(hex.length < 2) hex = "0" + hex;
+    return hex;
+  };
+
+
+  ColorOperators__ColorOperators.getRandomColor = function() {
+    return 'rgb(' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ')';
+  };
+
+
+  /////// Universal matching
+
+
+
+  /**
+   * This method was partially obtained (and simplified) from a Class by Stoyan Stefanov:
+   *
+   * A class to parse color values
+   * @author Stoyan Stefanov <sstoo@gmail.com>
+   * @link   http://www.phpied.com/rgb-color-parser-in-javascript/
+   * @license Use it if you like it
+   *
+   */
+  ColorOperators__ColorOperators.colorStringToRGB = function(color_string) {
+    //c.log('color_string:['+color_string+']');
+    var ok = false;
+
+    // strip any leading #
+    if(color_string.charAt(0) == '#') { // remove # if any
+      color_string = color_string.substr(1, 6);
+      //c.log('-> color_string:['+color_string+']');
+    }
+
+    color_string = color_string.replace(/ /g, '');
+    color_string = color_string.toLowerCase();
+
+    // before getting into regexps, try simple matches
+    // and overwrite the input
+    var simple_colors = {
+      aliceblue: 'f0f8ff',
+      antiquewhite: 'faebd7',
+      aqua: '00ffff',
+      aquamarine: '7fffd4',
+      azure: 'f0ffff',
+      beige: 'f5f5dc',
+      bisque: 'ffe4c4',
+      black: '000000',
+      blanchedalmond: 'ffebcd',
+      blue: '0000ff',
+      blueviolet: '8a2be2',
+      brown: 'a52a2a',
+      burlywood: 'deb887',
+      cadetblue: '5f9ea0',
+      chartreuse: '7fff00',
+      chocolate: 'd2691e',
+      coral: 'ff7f50',
+      cornflowerblue: '6495ed',
+      cornsilk: 'fff8dc',
+      crimson: 'dc143c',
+      cyan: '00ffff',
+      darkblue: '00008b',
+      darkcyan: '008b8b',
+      darkgoldenrod: 'b8860b',
+      darkgray: 'a9a9a9',
+      darkgreen: '006400',
+      darkkhaki: 'bdb76b',
+      darkmagenta: '8b008b',
+      darkolivegreen: '556b2f',
+      darkorange: 'ff8c00',
+      darkorchid: '9932cc',
+      darkred: '8b0000',
+      darksalmon: 'e9967a',
+      darkseagreen: '8fbc8f',
+      darkslateblue: '483d8b',
+      darkslategray: '2f4f4f',
+      darkturquoise: '00ced1',
+      darkviolet: '9400d3',
+      deeppink: 'ff1493',
+      deepskyblue: '00bfff',
+      dimgray: '696969',
+      dodgerblue: '1e90ff',
+      feldspar: 'd19275',
+      firebrick: 'b22222',
+      floralwhite: 'fffaf0',
+      forestgreen: '228b22',
+      fuchsia: 'ff00ff',
+      gainsboro: 'dcdcdc',
+      ghostwhite: 'f8f8ff',
+      gold: 'ffd700',
+      goldenrod: 'daa520',
+      gray: '808080',
+      green: '008000',
+      greenyellow: 'adff2f',
+      honeydew: 'f0fff0',
+      hotpink: 'ff69b4',
+      indianred: 'cd5c5c',
+      indigo: '4b0082',
+      ivory: 'fffff0',
+      khaki: 'f0e68c',
+      lavender: 'e6e6fa',
+      lavenderblush: 'fff0f5',
+      lawngreen: '7cfc00',
+      lemonchiffon: 'fffacd',
+      lightblue: 'add8e6',
+      lightcoral: 'f08080',
+      lightcyan: 'e0ffff',
+      lightgoldenrodyellow: 'fafad2',
+      lightgrey: 'd3d3d3',
+      lightgreen: '90ee90',
+      lightpink: 'ffb6c1',
+      lightsalmon: 'ffa07a',
+      lightseagreen: '20b2aa',
+      lightskyblue: '87cefa',
+      lightslateblue: '8470ff',
+      lightslategray: '778899',
+      lightsteelblue: 'b0c4de',
+      lightyellow: 'ffffe0',
+      lime: '00ff00',
+      limegreen: '32cd32',
+      linen: 'faf0e6',
+      magenta: 'ff00ff',
+      maroon: '800000',
+      mediumaquamarine: '66cdaa',
+      mediumblue: '0000cd',
+      mediumorchid: 'ba55d3',
+      mediumpurple: '9370d8',
+      mediumseagreen: '3cb371',
+      mediumslateblue: '7b68ee',
+      mediumspringgreen: '00fa9a',
+      mediumturquoise: '48d1cc',
+      mediumvioletred: 'c71585',
+      midnightblue: '191970',
+      mintcream: 'f5fffa',
+      mistyrose: 'ffe4e1',
+      moccasin: 'ffe4b5',
+      navajowhite: 'ffdead',
+      navy: '000080',
+      oldlace: 'fdf5e6',
+      olive: '808000',
+      olivedrab: '6b8e23',
+      orange: 'ffa500',
+      orangered: 'ff4500',
+      orchid: 'da70d6',
+      palegoldenrod: 'eee8aa',
+      palegreen: '98fb98',
+      paleturquoise: 'afeeee',
+      palevioletred: 'd87093',
+      papayawhip: 'ffefd5',
+      peachpuff: 'ffdab9',
+      peru: 'cd853f',
+      pink: 'ffc0cb',
+      plum: 'dda0dd',
+      powderblue: 'b0e0e6',
+      purple: '800080',
+      red: 'ff0000',
+      rosybrown: 'bc8f8f',
+      royalblue: '4169e1',
+      saddlebrown: '8b4513',
+      salmon: 'fa8072',
+      sandybrown: 'f4a460',
+      seagreen: '2e8b57',
+      seashell: 'fff5ee',
+      sienna: 'a0522d',
+      silver: 'c0c0c0',
+      skyblue: '87ceeb',
+      slateblue: '6a5acd',
+      slategray: '708090',
+      snow: 'fffafa',
+      springgreen: '00ff7f',
+      steelblue: '4682b4',
+      tan: 'd2b48c',
+      teal: '008080',
+      thistle: 'd8bfd8',
+      tomato: 'ff6347',
+      turquoise: '40e0d0',
+      violet: 'ee82ee',
+      violetred: 'd02090',
+      wheat: 'f5deb3',
+      white: 'ffffff',
+      whitesmoke: 'f5f5f5',
+      yellow: 'ffff00',
+      yellowgreen: '9acd32'
+    };
+
+    if(simple_colors[color_string] != null) color_string = simple_colors[color_string];
+
+
+    // array of color definition objects
+    var color_defs = [
+    {
+      re: /^rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)$/,
+      //example: ['rgb(123, 234, 45)', 'rgb(255,234,245)'],
+      process: function(bits) {
+        return [
+          parseInt(bits[1]),
+          parseInt(bits[2]),
+          parseInt(bits[3])
+        ];
+      }
+    },
+    {
+      re: /^rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),[\.0123456789]+\)$/,
+      //example: ['rgb(123, 234, 45)', 'rgb(255,234,245)', 'rgba(200,100,120,0.3)'],
+      process: function(bits) {
+        return [
+          parseInt(bits[1]),
+          parseInt(bits[2]),
+          parseInt(bits[3])
+        ];
+      }
+    },
+    {
+      re: /^(\w{2})(\w{2})(\w{2})$/,
+      //example: ['#00ff00', '336699'],
+      process: function(bits) {
+        return [
+          parseInt(bits[1], 16),
+          parseInt(bits[2], 16),
+          parseInt(bits[3], 16)
+        ];
+      }
+    },
+    {
+      re: /^(\w{1})(\w{1})(\w{1})$/,
+      //example: ['#fb0', 'f0f'],
+      process: function(bits) {
+        return [
+          parseInt(bits[1] + bits[1], 16),
+          parseInt(bits[2] + bits[2], 16),
+          parseInt(bits[3] + bits[3], 16)
+        ];
+      }
+    }];
+
+    // search through the definitions to find a match
+    for(var i = 0; i < color_defs.length; i++) {
+      var re = color_defs[i].re;
+      var processor = color_defs[i].process;
+      var bits = re.exec(color_string);
+      if(bits) {
+        return processor(bits);
+      }
+
+    }
+
+    return null;
+  };
+
+  ColorList.prototype = new List__default();
+  ColorList.prototype.constructor = ColorList;
+
+  /**
+   * @classdesc A {@link List} for storing Colors.
+   *
+   * @description Creates a new ColorList.
+   * @constructor
+   * @category colors
+   */
+  function ColorList() {
+    var args = [];
+    var i;
+    for(i = 0; i < arguments.length; i++) {
+      args[i] = arguments[i];
+    }
+    var array = List__default.apply(this, args);
+    array = ColorList.fromArray(array);
+
+    return array;
+  }
+
+
+  ColorList.fromArray = function(array) {
+    var result = List__default.fromArray(array);
+    result.type = "ColorList";
+    result.getRgbArrays = ColorList.prototype.getRgbArrays;
+    result.getInterpolated = ColorList.prototype.getInterpolated;
+    result.getInverted = ColorList.prototype.getInverted;
+    result.addAlpha = ColorList.prototype.addAlpha;
+    return result;
+  };
+
+  /**
+   * return an arrays of rgb arrays ([rr,gg,bb])
+   * @return {array}
+   * tags:
+   */
+  ColorList.prototype.getRgbArrays = function() {
+    var rgbArrays = new List__default();
+
+    for(var i = 0; this[i] != null; i++) {
+      rgbArrays[i] = ColorOperators__default.colorStringToRGB(this[i]);
+    }
+
+    return rgbArrays;
+  };
+
+  /**
+   * interpolates colors with a given color and measure
+   * @param  {String} color to be interpolated with
+   * @param  {Number} value intenisty of interpolation [0,1]
+   * @return {ColorList}
+   * tags:
+   */
+  ColorList.prototype.getInterpolated = function(color, value) {
+    var newColorList = new ColorList();
+
+    for(var i = 0; this[i] != null; i++) {
+      newColorList[i] = ColorOperators__default.interpolateColors(this[i], color, value);
+    }
+
+    newColorList.name = this.name;
+    return newColorList;
+  };
+
+  /**
+   * inverts all colors
+   * @return {ColorList}
+   * tags:
+   */
+  ColorList.prototype.getInverted = function() {
+    var newColorList = new ColorList();
+
+    for(var i = 0; this[i] != null; i++) {
+      newColorList[i] = ColorOperators__default.invertColor(this[i]);
+    }
+
+    newColorList.name = this.name;
+    return newColorList;
+  };
+
+  /**
+   * adds alpha value to all colores
+   * @param {Number} alpha alpha value in [0,1]
+   * @return {ColorList}
+   * tags:
+   */
+  ColorList.prototype.addAlpha = function(alpha) {
+    var newColorList = new ColorList();
+
+    for(var i = 0; this[i] != null; i++) {
+      newColorList[i] = ColorOperators__default.addAlpha(this[i], alpha);
+    }
+
+    newColorList.name = this.name;
+    return newColorList;
+  };
+
+  exports.ColorList = ColorList;
+
+  /**
+   * @classdesc Default color scales.
+   *
+   * @namespace
+   * @category colors
+   */
+
+  function ColorScales() {}
+
+  // *
+  //  * return a colorScale from its name
+  //  * @param  {String} string name of ColorScale
+  //  * @return {Function} ColorScale function
+  //  * tags:conversion
+
+  // ColorScales.getColorScaleByName = function(string){
+  // 	return ColorScales[string];
+  // }
+
+  ColorScales.blackScale = function(value) {
+    return 'black';
+  };
+
+  ColorScales.grayscale = function(value) {
+    var rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], [255, 255, 255], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  ColorScales.antiGrayscale = function(value) {
+    var rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [0, 0, 0], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  ColorScales.antiTemperature = function(value) {
+    return ColorScales.temperature(1 - value);
+  };
+
+  ColorScales.temperature = function(value) { //todo:make it efficient
+    if(value < 0.2) {
+      var color = ColorOperators.interpolateColors('#000000', ColorOperators.HSVtoHEX(234, 1, 1), value * 5);
+    } else if(value > 0.85) {
+      color = ColorOperators.interpolateColors(ColorOperators.HSVtoHEX(0, 1, 1), '#FFFFFF', (value - 0.85) / 0.15);
+    } else {
+      color = ColorOperators.HSVtoHEX(Math.round((0.65 - (value - 0.2)) * 360), 1, 1);
+    }
+    return color;
+  };
+
+  ColorScales.sqrtTemperature = function(value) {
+    return ColorScales.temperature(Math.sqrt(value));
+  };
+
+  ColorScales.sqrt4Temperature = function(value) {
+    return ColorScales.temperature(Math.pow(value, 0.25));
+  };
+
+  ColorScales.quadraticTemperature = function(value) {
+    return ColorScales.temperature(Math.pow(value, 2));
+  };
+
+  ColorScales.cubicTemperature = function(value) {
+    return ColorScales.temperature(Math.pow(value, 3));
+  };
+
+  ColorScales.greenToRed = function(value) { //todo:make it efficient
+    var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [255, 50, 50], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+  ColorScales.greenToBlue = function(value) { //todo:make it efficient
+    var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [50, 50, 255], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  ColorScales.grayToOrange = function(value) { //todo:make it efficient
+    var rgb = ColorOperators.interpolateColorsRGB([100, 100, 100], [255, 110, 0], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  ColorScales.blueToRed = function(value) {
+    return 'rgb(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ')';
+  };
+
+  ColorScales.blueToRedAlpha = function(value) { //todo:make it efficient
+    return 'rgba(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ', 0.5)';
+  };
+
+  ColorScales.whiteToRed = function(value) {
+    var gg = Math.floor(255 - value * 255);
+    return 'rgb(255,' + gg + ',' + gg + ')';
+  };
+
+  ColorScales.redToBlue = function(value) {
+    var rgb = ColorOperators.interpolateColorsRGB([255, 0, 0], [0, 0, 255], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  ColorScales.greenWhiteRed = function(value) {
+    if(value < 0.5) {
+      var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [255, 255, 255], value * 2);
+    } else {
+      rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [255, 50, 50], (value - 0.5) * 2);
+    }
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+
+  ColorScales.solar = function(value) {
+    var rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], ColorOperators.interpolateColorsRGB([255, 0, 0], [255, 255, 0], value), Math.pow(value * 0.99 + 0.01, 0.2));
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+  ColorScales.antiSolar = function(value) {
+    return ColorOperators.invertColor(ColorScales.solar(value));
+  };
+
+  ColorScale.prototype = new DataModel();
+  ColorScale.prototype.constructor = ColorScale;
+
+  /**
+   * @classdesc Color scale.
+   *
+   * @description Creates a new ColorScale.
+   * @param {Function} colorScaleFunction Function.
+   * @constructor
+   * @category colors
+   */
+  function ColorScale(colorScaleFunction) {
+    DataModel.apply(this, arguments);
+    this.name = "";
+    this.type = "ColorScale";
+
+    this.colorScaleFunction = colorScaleFunction ? colorScaleFunction : ColorScales.blackScale;
+  }
+
+
+  ColorScale.prototype.getColor = function(value) {
+    return this.colorScaleFunction(value);
+  };
+
+  ColorScale.prototype.getColorList = function(nColors) {
+    var colorList = new ColorList();
+    var i;
+    for(i = 0; i < nColors; i++) {
+      colorList.push(this.getColor(i / (nColors - 1)));
+    }
+    return colorList;
+  };
+
+  exports.ColorScale = ColorScale;
+
+  function setCursor(name) {
+    name = name == null ? 'default' : name;
+    canvas.style.cursor = name;
+  }
+
+
+  /**
+   *Static class that:
+   * -includes all the data models (by including the class IncludeDataModels.js)
+   * -includes class utils (that contains methods such as instantiate)
+   * -contains the global variables (such as userAgent, canvas, nF, mX…), global
+   * -contains the listener methods
+   * -triggers de init, update and draw in Global class
+   * @namespace
+   * @category basics
+   */
+  function Global(){}
+
+  Global.userAgent="unknown";
+
+  function init(){
+    //console.log("init must be overriden!");
+  }
+
+  function cycle(){
+    //console.log("cycle must be overriden!");
+  }
+
+  function resizeWindow(){
+    //console.log("resizeWindow must be overriden!");
+  }
+
+  function lastCycle(){
+    //override
+  }
+
+  var listenerArray  = [];
+  var canvas;
+  var removeDiv;
+  var userAgent="none";
+  var userAgentVersion;
+  var canvasResizeable=true;
+
+
+  //global useful vars
+  var cW = 1; // canvas width
+  var cH = 1; // canvas height
+  var src_Global__cX = 1; // canvas center x
+  var src_Global__cY = 1; // canvas center y
+  var mX = 0; // cursor x
+  var mY = 0; // cursor y
+  var mP = new Point__default(0, 0); // cursor point
+  var nF = 0; // number of current frame since first cycle
+
+  var MOUSE_DOWN=false; //true on the frame of mousedown event
+  var MOUSE_UP=false; //true on the frame of mouseup event
+  var MOUSE_UP_FAST=false; //true on the frame of mouseup event
+  var WHEEL_CHANGE=0; //differnt from 0 if mousewheel (or pad) moves / STATE
+  var NF_DOWN; //number of frame of last mousedown event
+  var NF_UP; //number of frame of last mouseup event
+  var MOUSE_PRESSED; //true if mouse pressed / STATE
+  var MOUSE_IN_DOCUMENT = true; //true if cursor is inside document / STATE
+  var mX_DOWN; // cursor x position on last mousedown event
+  var mY_DOWN; // cursor x position on last mousedown event
+  var mX_UP; // cursor x position on last mousedown event
+  var mY_UP; // cursor y position on last mousedown event
+  var PREV_mX=0; // cursor x position previous frame
+  var PREV_mY=0; // cursor y position previous frame
+  var DX_MOUSE=0; //horizontal movement of cursor in last frame
+  var DY_MOUSE=0; //vertical movement of cursor in last frame
+  var MOUSE_MOVED = false; //boolean that indicates wether the mouse moved in the last frame / STATE
+  var T_MOUSE_PRESSED = 0; //time in milliseconds of mouse being pressed, useful for sutained pressure detection
+
+  //var deltaWheel = 0;
+  var cursorStyle = 'auto';
+  var backGroundColor = 'white';
+  var backGroundColorRGB = [255,255,255];
+  var cycleActive;
+
+  //global constants
+  var src_Global__context;
+  var src_Global__TwoPi = 2*Math.PI;
+  var HalfPi = 0.5*Math.PI;
+  var radToGrad = 180/Math.PI;
+  var gradToRad = Math.PI/180;
+  var src_Global__c = console;
+  src_Global__c.l = src_Global__c.log; //use c.l instead of console.log
+
+  //private
+  var _wheelActivated = false;
+  var _keyboardActivated = false;
+
+  var _prevMouseX = 0;
+  var _prevMouseY = 0;
+  var _setIntervalId;
+  var _setTimeOutId;
+  var _cycleOnMouseMovement = false;
+  var _interactionCancelledFrame;
+  var _tLastMouseDown;
+
+  var _alphaRefresh=0;//if _alphaRefresh>0 instead of clearing the canvas each frame, a transparent rectangle will be drawn
+
+  var END_CYCLE_DELAY = 3000; //time in milliseconds, from last mouse movement to the last cycle to be executed in case cycleOnMouseMovement has been activated
+
+  Array.prototype.last = function(){
+    return this[this.length-1];
+  };
+
+  window.addEventListener('load', function(){
+
+    if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
+      userAgent='IE';
+      userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+      if(userAgentVersion<9) return null;
+    } else if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent)){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
+      userAgent='FIREFOX';
+      userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+    } else if (navigator.userAgent.match(/Chrome/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
+      userAgent='CHROME';
+      userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+    } else if (/Mozilla[\/\s](\d+\.\d+)/.test(navigator.userAgent) || navigator.userAgent.match(/Mozilla/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
+      userAgent='MOZILLA';
+      userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+    } else if (navigator.userAgent.match(/Safari/) != null){ //test for MSIE x.x;
+      userAgent='Safari';
+      userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+    } else if(navigator.userAgent.match(/iPad/i) != null){
+      userAgent='IOS';
+    } else if(navigator.userAgent.match(/iPhone/i) != null){
+      userAgent='IOS';
+    }
+
+
+    Global.userAgent=userAgent;
+    Global._frameRate=30;
+
+    canvas = document.getElementById('main');
+
+    if(canvas!=null){
+      removeDiv = document.getElementById('removeDiv');
+      removeDiv.style.display = 'none';
+
+      src_Global__context = canvas.getContext('2d');
+
+      _adjustCanvas();
+
+      canvas.addEventListener("mousemove", _onMouse, false);
+      canvas.addEventListener("mousedown", _onMouse, false);
+      canvas.addEventListener("mouseup", _onMouse, false);
+      canvas.addEventListener("mouseenter", _onMouse, false);
+      canvas.addEventListener("mouseleave", _onMouse, false);
+
+
+      activateWheel();
+
+      window.addEventListener("resize", onResize, false);
+
+      startCycle();
+      init();
+    }
+
+    src_Global__c.l('Moebio Framework v2.259 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
+
+  }, false);
+
+  function _onMouse(e) {
+
+    switch(e.type){
+      case "mousemove":
+        PREV_mX=mX;
+        PREV_mY=mY;
+
+        if(e.clientX){
+          mX = e.clientX;
+              mY = e.clientY;
+        } else if(e.offsetX) {
+              mX = e.offsetX;
+              mY = e.offsetY;
+          } else if(e.layerX) {
+              mX = e.layerX;
+              mY = e.layerY;
+          }
+          mP.x = mX;
+          mP.y = mY;
+          MOUSE_IN_DOCUMENT = true;
+          break;
+      case "mousedown":
+        NF_DOWN = nF;
+        MOUSE_PRESSED = true;
+        T_MOUSE_PRESSED = 0;
+        _tLastMouseDown = new Date().getTime();
+        mX_DOWN = mX;
+        mY_DOWN = mY;
+        MOUSE_IN_DOCUMENT = true;
+        break;
+      case "mouseup":
+        NF_UP = nF;
+        MOUSE_PRESSED = false;
+        T_MOUSE_PRESSED = 0;
+        mX_UP = mX;
+        mY_UP = mY;
+        MOUSE_IN_DOCUMENT = true;
+        break;
+      case "mouseenter":
+        MOUSE_IN_DOCUMENT = true;
+        break;
+      case "mouseleave":
+        MOUSE_IN_DOCUMENT = false;
+        break;
+    }
+  }
+
+
+  function onResize(e){
+    _adjustCanvas();
+    resizeWindow();
+  }
+
+  function _adjustCanvas(){
+    if(canvasResizeable==false) return;
+
+    cW = getDocWidth();
+    cH = getDocHeight();
+
+    canvas.setAttribute('width', cW);
+      canvas.setAttribute('height', cH);
+
+    src_Global__cX = Math.floor(cW*0.5);
+    src_Global__cY = Math.floor(cH*0.5);
+  }
+
+
+  function src_Global__clearContext(){
+    src_Global__context.clearRect(0, 0, cW, cH);
+  }
+
+  function cycleOnMouseMovement(value, time){
+    if(time!=null) END_CYCLE_DELAY = time;
+
+    if(value){
+      src_Global__context.canvas.addEventListener('mousemove', onMoveCycle, false);
+      addInteractionEventListener('mousewheel', onMoveCycle, this);
+      _cycleOnMouseMovement = true;
+      stopCycle();
+    } else {
+      src_Global__context.canvas.removeEventListener('mousemove', onMoveCycle, false);
+      removeInteractionEventListener('mousewheel', onMoveCycle, this);
+      _cycleOnMouseMovement = false;
+      startCycle();
+    }
+  }
+
+  function setFrameRate(fr){
+    fr = fr||30;
+    Global._frameRate = fr;
+
+    if(cycleActive) startCycle();
+  }
+
+  function enterFrame(){
+    if(_alphaRefresh==0){
+        src_Global__context.clearRect(0, 0, cW, cH);
+    } else {
+      src_Global__context.fillStyle = 'rgba('+backGroundColorRGB[0]+','+backGroundColorRGB[1]+','+backGroundColorRGB[2]+','+_alphaRefresh+')';
+      src_Global__context.fillRect(0, 0, cW, cH);
+    }
+
+      setCursor('default');
+
+      MOUSE_DOWN = NF_DOWN==nF;
+    MOUSE_UP = NF_UP==nF;
+    MOUSE_UP_FAST = MOUSE_UP && (nF-NF_DOWN)<9;
+
+    DX_MOUSE = mX-PREV_mX;
+    DY_MOUSE = mY-PREV_mY;
+    MOUSE_MOVED = DX_MOUSE!=0 || DY_MOUSE!=0;
+
+    if(MOUSE_PRESSED) T_MOUSE_PRESSED = new Date().getTime() - _tLastMouseDown;
+
+      cycle();
+
+      WHEEL_CHANGE = 0;
+
+      PREV_mX=mX;
+    PREV_mY=mY;
+
+      nF++;
+  }
+
+  function startCycle(){
+    clearTimeout(_setTimeOutId);
+    clearInterval(_setIntervalId);
+    _setIntervalId = setInterval(enterFrame, Global._frameRate);
+    cycleActive = true;
+  }
+
+
+  function stopCycle(){
+    clearInterval(_setIntervalId);
+    cycleActive = false;
+
+    lastCycle();
+  }
+
+
+
+
+  function onMoveCycle(e){
+    if(e.type=='mousemove' && _prevMouseX==mX && _prevMouseY==mY) return;
+    reStartCycle();
+  }
+
+  function reStartCycle(){
+    _prevMouseX=mX;
+    _prevMouseY=mY;
+
+    if(!cycleActive){
+      _setIntervalId = setInterval(enterFrame, Global._frameRate);
+      cycleActive = true;
+    }
+
+    clearTimeout(_setTimeOutId);
+    _setTimeOutId = setTimeout(stopCycle, END_CYCLE_DELAY);
+  }
+
+  //interaction events
+  function addInteractionEventListener(eventType, onFunction, target){//TODO: listenerArray contains objects instead of arrays
+    listenerArray.push(new Array(eventType, onFunction, target));
+    switch(eventType){
+      case 'mousedown':
+      case 'mouseup':
+      case 'click':
+      case 'mousemove':
+        src_Global__context.canvas.addEventListener(eventType, onCanvasEvent, false);
+        break;
+      case 'mousewheel':
+        if(!_wheelActivated) activateWheel();
+        break;
+      case 'keydown':
+      case 'keyup':
+        if(!_keyboardActivated) activateKeyboard();
+        break;
+    }
+  }
+
+  function onCanvasEvent(e){
+    var i;
+    for(i=0; listenerArray[i]!=null; i++){
+      if(listenerArray[i][0]==e.type.replace('DOMMouseScroll', 'mousewheel')){
+        if(_interactionCancelledFrame==nF) return;
+        listenerArray[i][1].call(listenerArray[i][2], e);
+      }
+    }
+  }
+
+  function removeInteractionEventListener(eventType, onFunction, target){ //TODO: finish this (requires single element removing method solved first)
+    for(var i=0; listenerArray[i]!=null; i++){
+      if(listenerArray[i][0]==eventType && listenerArray[i][1]==onFunction && listenerArray[i][2]==target){
+        delete listenerArray[i];
+        listenerArray.splice(i, 1);
+        i--;
+      }
+    }
+  }
+
+  function cancelAllInteractions(){
+    src_Global__c.log("cancelAllInteractions, _interactionCancelledFrame:", nF);
+    _interactionCancelledFrame = nF;
+  }
+
+  function setBackgroundColor(color){
+    if(typeof color == "number"){
+      if(arguments.length>3){
+        color = 'rgba('+arguments[0]+','+arguments[1]+','+arguments[2]+','+arguments[3]+')';
+      } else {
+        color = 'rgb('+arguments[0]+','+arguments[1]+','+arguments[2]+')';
+      }
+    } else if(Array.isArray(color)){
+      color = ColorOperators.RGBtoHEX(color[0], color[1], color[2]);
+    }
+    backGroundColor = color;
+
+    backGroundColorRGB = ColorOperators.colorStringToRGB(backGroundColor);
+
+    var body = document.getElementById('index');
+    body.setAttribute('bgcolor', backGroundColor);
+  }
+
+  function setDivPosition(div, x, y){
+    div.setAttribute('style', 'position:absolute;left:'+String(x)+'px;top:'+String(y)+'px;');
+  }
+
+
+  /////////////////////////////////// keyboard and wheel
+
+  function activateKeyboard(){
+    _keyboardActivated = true;
+    document.onkeydown = onKey;
+    document.onkeyup = onKey;
+  }
+
+  function onKey(e){
+    onCanvasEvent(e);
+  }
+
+  /*
+   * thanks http://www.adomas.org/javascript-mouse-wheel
+   */
+  function activateWheel(){
+    _wheelActivated = true;
+
+    if (window.addEventListener){
+      window.addEventListener('DOMMouseScroll', _onWheel, false);
+      //window.addEventListener("mousewheel", _onWheel, false); // testing
+    }
+    window.onmousewheel = document.onmousewheel = _onWheel;
+
+  }
+  function _onWheel(e) {
+    //c.l('_onWheel, e:', e);
+
+      if (!e) e = window.event; //IE
+
+      if (e.wheelDelta){
+        WHEEL_CHANGE = e.wheelDelta/120;
+      } else if (e.detail) { /** Mozilla case. */
+          WHEEL_CHANGE = -e.detail/3;
+      }
+      e.value = WHEEL_CHANGE;
+      e.type = "mousewheel"; //why this doesn't work?
+
+    onCanvasEvent(e);
+  }
+
+
+
+  ////structures local storage
+
+  function setStructureLocalStorageWithSeed(object, seed, comments){
+    setStructureLocalStorage(object, MD5.hex_md5(seed), comments);
+  };
+
+  function setStructureLocalStorage(object, id, comments){
+    var type = typeOf(object);
+    var code;
+
+    switch(type){
+      case 'string':
+        code = object;
+        break;
+      case 'Network':
+        code = NetworkEncodings.encodeGDF(network);
+        break;
+      default:
+        type = 'object';
+        code = JSON.stringify(object);
+        break;
+    }
+
+    var storageObject = {
+      id:id,
+      type:type,
+      comments:comments,
+      date:new Date(),
+      code:code
+    };
+
+    var storageString = JSON.stringify(storageObject);
+
+    // c.l('storageObject', storageObject);
+    // c.l('id:['+id+']');
+    // c.l('code.length:', code.length);
+
+    localStorage.setItem(id, storageString);
+  };
+
+  function getStructureLocalStorageFromSeed(seed, returnStorageObject){
+    return getStructureLocalStorage(MD5.hex_md5(seed), returnStorageObject);
+  };
+
+  function getStructureLocalStorage(id, returnStorageObject){
+    returnStorageObject = returnStorageObject||false;
+
+    var item = localStorage.getItem(id);
+
+    if(item==null) return null;
+
+
+    try{
+      var storageObject = JSON.parse(item);
+    } catch(err){
+      return null;
+    }
+
+    if(storageObject.type==null && storageObject.code==null) return null;
+
+    var type = storageObject.type;
+    var code = storageObject.code;
+    var object;
+
+    switch(type){
+      case 'string':
+        object = code;
+        break;
+      case 'Network':
+        object = NetworkEncodings.decodeGDF(code);
+        break;
+      case 'object':
+        object = JSON.parse(code);
+        break;
+    }
+
+    if(returnStorageObject){
+      storageObject.object = object;
+      storageObject.size = storageObject.code.length;
+      storageObject.date = new Date(storageObject.date);
+
+      return storageObject;
+    }
+
+    return object;
+  };
+
+  function getDocWidth() {
+      var D = document;
+      return Math.max(
+          D.body.offsetWidth, D.documentElement.offsetWidth,
+          D.body.clientWidth, D.documentElement.clientWidth
+      );
+  }
+
+  function getDocHeight() {
+      var D = document;
+      return Math.max(
+          D.body.offsetHeight, D.documentElement.offsetHeight,
+          D.body.clientHeight, D.documentElement.clientHeight
+      );
+  }
+
+  function Space2D(configuration) {
+    configuration = configuration == null ? {} : configuration;
+
+    this.center = configuration.center == null ? new Point__default(0, 0) : configuration.center;
+    this.scale = 1;
+
+    if(configuration.interactionActive) this.activeInteraction();
+
+    this.MIN_SCALE = configuration.minScale == null ? 0.05 : configuration.minScale;
+    this.MAX_SCALE = configuration.maxScale == null ? 20 : configuration.maxScale;
+
+    this.active = configuration.interactionActive;
+  }
+
+
+  Space2D.prototype.activeInteraction = function() {
+    if(this.active) return;
+    this.active = true;
+    addInteractionEventListener('mousedown', this.onMouse, this);
+    addInteractionEventListener('mouseup', this.onMouse, this);
+    addInteractionEventListener('mousewheel', this.wheel, this);
+  };
+
+  Space2D.prototype.deActivate = function() {
+    this.active = false;
+    this.dragging = false;
+    removeInteractionEventListener('mousedown', this.onMouse, this);
+    removeInteractionEventListener('mouseup', this.onMouse, this);
+    removeInteractionEventListener('mousemove', this.onMouse, this);
+    removeInteractionEventListener('mousewheel', this.wheel, this);
+  };
+
+  Space2D.prototype.stopDragging = function() {
+    removeInteractionEventListener('mousemove', this.onMouse, this);
+  };
+
+  Space2D.prototype.project = function(point) {
+    return new Point__default((point.x - this.center.x) * this.scale, (point.y + this.center.y) * this.scale);
+  };
+
+  Space2D.prototype.projectX = function(x) {
+    return(x - this.center.x) * this.scale;
+  };
+
+  Space2D.prototype.projectY = function(y) {
+    return(y - this.center.y) * this.scale;
+  };
+
+
+  Space2D.prototype.inverseProject = function(point) {
+    return new Point__default(point.x / this.scale + this.center.x, point.y / this.scale + this.center.y);
+  };
+
+  Space2D.prototype.inverseProjectX = function(x) {
+    return x / this.scale + this.center.x;
+  };
+
+  Space2D.prototype.inverseProjectY = function(y) {
+    return y / this.scale + this.center.y;
+  };
+
+  Space2D.prototype.move = function(vector, projected) {
+    this.center = this.center.subtract(projected ? vector.factor(1 / this.scale) : vector);
+  };
+
+  Space2D.prototype.factorScaleFromPoint = function(point, factor) {
+    var k = (1 - 1 / factor) / this.scale;
+    this.center.x = k * point.x + this.center.x;
+    this.center.y = k * point.y + this.center.y;
+
+    this.scale *= factor;
+  };
+
+  Space2D.prototype.fixX = function(xDeparture, xArrival) {
+    this.center.x = xDeparture - (xArrival / this.scale);
+  };
+  Space2D.prototype.fixY = function(yDeparture, yArrival) {
+    this.center.y = yDeparture - (yArrival / this.scale);
+  };
+
+  Space2D.prototype.fixHorizontalInterval = function(departureInterval, arrivalInterval) {
+    this.scale = arrivalInterval.getAmplitude() / departureInterval.getAmplitude();
+    this.fixX((departureInterval.x + departureInterval.y) * 0.5, cW * 0.5);
+  };
+
+  //////
+
+  Space2D.prototype.onMouse = function(e) {
+    switch(e.type) {
+      case 'mousedown':
+        if(!this.active) return;
+        this.dragging = true;
+        this.prev_mX = mX;
+        this.prev_mY = mY;
+        addInteractionEventListener('mousemove', this.onMouse, this);
+        break;
+      case 'mouseup':
+        this.dragging = false;
+        removeInteractionEventListener('mousemove', this.onMouse, this);
+        break;
+      case 'mousemove':
+        if(!this.active) return;
+        this.center.x += (this.prev_mX - mX) / this.scale;
+        this.center.y += (this.prev_mY - mY) / this.scale;
+        this.prev_mX = mX;
+        this.prev_mY = mY;
+        break;
+    }
+  };
+
+
+
+  Space2D.prototype.wheel = function(e) {
+    if(!this.active) return;
+    if(this.scale <= this.MIN_SCALE && e.value > 0) {
+      this.scale = this.MIN_SCALE;
+      return;
+    }
+    if(this.scale >= this.MAX_SCALE && e.value < 0) {
+      this.scale = this.MAX_SCALE;
+      return;
+    }
+    this.factorScaleFromPoint(new Point__default(mX - 0, mY - 0), (1 - 0.02 * e.value));
+  };
+
+  exports.Space2D = Space2D;
+
   // jshint unused:false
 
   // This file re-exports everything that is in the public

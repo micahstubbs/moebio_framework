@@ -43,15 +43,23 @@ import Rectangle from "src/dataStructures/geometry/Rectangle";
 import RectangleList from "src/dataStructures/geometry/RectangleList";
 export { Point, Point3D, Polygon, Polygon3D, Polygon3DList, PolygonList, Rectangle, RectangleList };
 
-// // dataStructures/structures
+// dataStructures/graphic
+import ColorList from "src/dataStructures/graphic/ColorList";
+import ColorScale from "src/dataStructures/graphic/ColorScale";
+export { ColorList, ColorScale };
+
+// dataStructures/spaces
+import Space2D from "src/dataStructures/spaces/Space2D";
+export { Space2D };
+
+// dataStructures/structures
 // import Node from "src/dataStructures/structures/elements/Node";
 // import NodeList from "src/dataStructures/structures/lists/NodeList";
 // import RelationList from "src/dataStructures/structures/lists/RelationList";
 
 
-// import ColorList from "src/dataStructures/graphic/ColorList";
-// import ColorScale from "src/dataStructures/graphic/ColorScale";
-// import Space2D from "src/dataStructures/spaces/Space2D";
+
+
 // import StringList from "src/dataStructures/strings/StringList";
 // import Relation from "src/dataStructures/structures/elements/Relation";
 // import Network from "src/dataStructures/structures/networks/Network";

@@ -1,3 +1,6 @@
+import List from "src/dataStructures/lists/List";
+import ColorOperators from "src/operators/graphic/ColorOperators";
+
 ColorList.prototype = new List();
 ColorList.prototype.constructor = ColorList;
 
@@ -12,13 +15,14 @@ function ColorList() {
   var args = [];
   var i;
   for(i = 0; i < arguments.length; i++) {
-    arguments[i] = arguments[i];
+    args[i] = arguments[i];
   }
-  var array = List.apply(this, arguments);
+  var array = List.apply(this, args);
   array = ColorList.fromArray(array);
-  //
+
   return array;
 }
+export default ColorList;
 
 ColorList.fromArray = function(array) {
   var result = List.fromArray(array);
