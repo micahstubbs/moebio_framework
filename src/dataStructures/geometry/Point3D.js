@@ -1,3 +1,5 @@
+import Point from "src/dataStructures/geometry/Point";
+
 Point3D.prototype = new Point();
 Point3D.prototype.constructor = Point3D;
 /**
@@ -16,6 +18,7 @@ function Point3D(x, y, z) {
   this.type = "Point3D";
   this.z = z;
 }
+export default Point3D;
 
 Point3D.prototype.distanceToPoint3D = function(point3D) {
   return Math.sqrt(Math.pow(Math.abs(this.x - point3D.x), 2) + Math.pow(Math.abs(this.y - point3D.y), 2) + Math.pow(Math.abs(this.z - point3D.z), 2));

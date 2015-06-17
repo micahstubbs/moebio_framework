@@ -32,19 +32,23 @@ import Country from "src/dataStructures/geo/Country";
 import CountryList from "src/dataStructures/geo/CountryList";
 export { Country, CountryList };
 
+// dataStructures/geometry
+import Point from "src/dataStructures/geometry/Point";
+import Point3D from "src/dataStructures/geometry/Point3D";
+import Polygon from "src/dataStructures/geometry/Polygon";
+import Polygon3D from "src/dataStructures/geometry/Polygon3D";
+import Polygon3DList from "src/dataStructures/geometry/Polygon3DList";
+import PolygonList from "src/dataStructures/geometry/PolygonList";
+import Rectangle from "src/dataStructures/geometry/Rectangle";
+import RectangleList from "src/dataStructures/geometry/RectangleList";
+export { Point, Point3D, Polygon, Polygon3D, Polygon3DList, PolygonList, Rectangle, RectangleList };
+
 // // dataStructures/structures
 // import Node from "src/dataStructures/structures/elements/Node";
 // import NodeList from "src/dataStructures/structures/lists/NodeList";
 // import RelationList from "src/dataStructures/structures/lists/RelationList";
 
-// import Point from "src/dataStructures/geometry/Point";
-// import Point3D from "src/dataStructures/geometry/Point3D";
-// import Polygon from "src/dataStructures/geometry/Polygon";
-// import Polygon3D from "src/dataStructures/geometry/Polygon3D";
-// import Polygon3DList from "src/dataStructures/geometry/Polygon3DList";
-// import PolygonList from "src/dataStructures/geometry/PolygonList";
-// import Rectangle from "src/dataStructures/geometry/Rectangle";
-// import RectangleList from "src/dataStructures/geometry/RectangleList";
+
 // import ColorList from "src/dataStructures/graphic/ColorList";
 // import ColorScale from "src/dataStructures/graphic/ColorScale";
 // import Space2D from "src/dataStructures/spaces/Space2D";

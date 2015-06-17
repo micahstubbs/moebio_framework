@@ -2602,6 +2602,8 @@ define('src/index', ['exports'], function (exports) {
     delete this.y;
   };
 
+  exports.Point = Point__default;
+
   Interval__Interval.prototype = new Point__default();
   Interval__Interval.prototype.constructor = Interval__Interval;
 
@@ -4016,6 +4018,8 @@ define('src/index', ['exports'], function (exports) {
     return newPolygon;
   };
 
+  exports.Polygon = Polygon__default;
+
   function TableEncodings() {}
 
 
@@ -4866,6 +4870,8 @@ define('src/index', ['exports'], function (exports) {
   // }
   // return t;
   // }
+
+  exports.PolygonList = PolygonList;
 
   NumberTable.prototype = new Table__default();
   NumberTable.prototype.constructor = NumberTable;
@@ -6311,6 +6317,394 @@ define('src/index', ['exports'], function (exports) {
   };
 
   exports.CountryList = CountryList;
+
+  Point3D.prototype = new Point__default();
+  Point3D.prototype.constructor = Point3D;
+  /**
+   * @classdesc Point3D represents a point in 3D space.
+   *
+   * @description Create a new 3D Point.
+   * @param {Number} x
+   * @param {Number} y
+   * @param {Number} z
+   * @constructor
+   * @category geometry
+   */
+  function Point3D(x, y, z) {
+    Point__default.apply(this, arguments);
+    //this.name='';
+    this.type = "Point3D";
+    this.z = z;
+  }
+
+
+  Point3D.prototype.distanceToPoint3D = function(point3D) {
+    return Math.sqrt(Math.pow(Math.abs(this.x - point3D.x), 2) + Math.pow(Math.abs(this.y - point3D.y), 2) + Math.pow(Math.abs(this.z - point3D.z), 2));
+  };
+
+  Point3D.prototype.distanceToPointSquared = function(point3D) {
+    return Math.pow(Math.abs(this.x - point3D.x), 2) + Math.pow(Math.abs(this.y - point3D.y), 2) + Math.pow(Math.abs(this.z - point3D.z), 2);
+  };
+  Point3D.prototype.getNorm = function() {
+    return Math.sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z));
+  };
+
+  Point3D.prototype.normalizeToValue = function(k) {
+    var factor = k / Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2) + Math.pow(this.z, 2));
+    return new Point3D(this.x * factor, this.y * factor, this.z * factor);
+  };
+
+  Point3D.prototype.cross = function(point3D) {
+    var _x = this.y * point3D.z - this.z * point3D.y;
+    var _y = this.z * point3D.x - this.x * point3D.z;
+    var _z = this.x * point3D.y - this.y * point3D.x;
+    return new Point3D(_x, _y, _z);
+  };
+  Point3D.prototype.dot = function(point3D) {
+    return this.x * point3D.x + this.y * point3D.y + this.z * point3D.z;
+  };
+  Point3D.prototype.add = function(point) {
+    return new Point3D(point.x + this.x, point.y + this.y, point.z + this.z);
+  };
+  Point3D.prototype.subtract = function(point) {
+    return new Point3D(this.x - point.x, this.y - point.y, this.z - point.z);
+  };
+  Point3D.prototype.factor = function(k) {
+    return new Point3D(this.x * k, this.y * k, this.z * k);
+  };
+  Point3D.prototype.interpolate = function(point3D, t) {
+    return new Point3D((1 - t) * this.x + t * point3D.x, (1 - t) * this.y + t * point3D.y, (1 - t) * this.z + t * point3D.z);
+  };
+  Point3D.prototype.getAngles = function() {
+    var radius = Math.sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z));
+    var alfa = 0.5 * Math.PI - Math.atan2(this.z / radius, this.y / radius);
+    var beta = -Math.asin(this.x / radius);
+    if(alfa < -Math.PI) alfa += 2 * Math.PI;
+    if(alfa > Math.PI) alfa -= 2 * Math.PI;
+    if(beta < -Math.PI) beta += 2 * Math.PI;
+    if(beta > Math.PI) beta -= 2 * Math.PI;
+    return new Point3D(alfa, beta, 0);
+  };
+  Point3D.prototype.getInverseAngles = function() {
+    var radius = Math.sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z));
+    var alfa = -0.5 * Math.PI + Math.atan2(-this.z / radius, -this.y / radius);
+    var beta = Math.asin(-this.x / radius);
+    if(alfa < -Math.PI) alfa += 2 * Math.PI;
+    if(alfa > Math.PI) alfa -= 2 * Math.PI;
+    if(beta < -Math.PI) beta += 2 * Math.PI;
+    if(beta > Math.PI) beta -= 2 * Math.PI;
+    return new Point3D(alfa, beta, 0);
+  };
+
+
+  Point3D.prototype.clone = function() {
+    return new Point3D(this.x, this.y, this.z);
+  };
+  Point3D.prototype.toString = function() {
+    return "(x=" + this.x + ", y=" + this.y + ", z=" + this.z + ")";
+  };
+
+  Point3D.prototype.destroy = function() {
+    delete this.type;
+    delete this.name;
+    delete this.x;
+    delete this.y;
+    delete this.z;
+  };
+
+  exports.Point3D = Point3D;
+
+  Polygon3D.prototype = new List__default();
+  Polygon3D.prototype.constructor = Polygon3D;
+
+  /**
+   * @classdesc Polygon3D brings the {@link Polygon} concept into three
+   * dimensions through the use of {@link Point3D}.
+   *
+   * @description Creates a new Polygon3D.
+   * @constructor
+   * @category geometry
+   */
+  function Polygon3D() {
+    var array = List__default.apply(this, arguments);
+    array = Polygon3D.fromArray(array);
+    return array;
+  }
+
+
+  Polygon3D.fromArray = function(array) {
+    var result = List__default.fromArray(array);
+    result.type = "Polygon3D";
+    //assign methods to array:
+    return result;
+  };
+
+  exports.Polygon3D = Polygon3D;
+
+  Polygon3DList.prototype = new List__default();
+  Polygon3DList.prototype.constructor = Polygon3DList;
+
+  /**
+   * @classdesc A {@link List} structure for storing {@link Polygon3D} instances.
+   *
+   * @description Creates a new Polygon3DList.
+   * @constructor
+   * @category geometry
+   */
+  function Polygon3DList() {
+    var array = List__default.apply(this, arguments);
+    array = Polygon3DList.fromArray(array);
+    return array;
+  }
+
+
+  Polygon3DList.fromArray = function(array) {
+    var result = List__default.fromArray(array);
+    result.type = "Polygon3DList";
+    return result;
+  };
+
+  exports.Polygon3DList = Polygon3DList;
+
+  Rectangle__Rectangle.prototype = new DataModel();
+  Rectangle__Rectangle.prototype.constructor = Rectangle__Rectangle;
+
+  /**
+   * @classdesc Rectangle shape
+   *
+   * @description Creates a new Rectangle.
+   * @param {Number} x
+   * @param {Number} y
+   * @param {Number} width
+   * @param {Number} height
+   * @constructor
+   * @category geometry
+   */
+  function Rectangle__Rectangle(x, y, width, height) {
+    DataModel.apply(this);
+    this.name = "";
+    this.type = "Rectangle";
+    this.x = Number(x) || 0;
+    this.y = Number(y) || 0;
+    this.width = Number(width) || 0;
+    this.height = Number(height) || 0;
+  }
+  var Rectangle__default = Rectangle__Rectangle;
+
+  Rectangle__Rectangle.prototype.getRight = function() {
+    return this.x + this.width;
+  };
+
+  Rectangle__Rectangle.prototype.getBottom = function() {
+    return this.y + this.height;
+  };
+
+  Rectangle__Rectangle.prototype.setRight = function(value) {
+    this.width = value - this.x;
+  };
+
+  Rectangle__Rectangle.prototype.setBottom = function(value) {
+    this.height = value - this.y;
+  };
+
+
+
+  Rectangle__Rectangle.prototype.getTopLeft = function() {
+    return new Point__default(this.x, this.y);
+  };
+  Rectangle__Rectangle.prototype.getTopRight = function() {
+    return new Point__default(this.x + this.width, this.y);
+  };
+
+  Rectangle__Rectangle.prototype.getBottomRight = function() {
+    return new Point__default(this.x + this.width, this.y + this.height);
+  };
+  Rectangle__Rectangle.prototype.getBottomLeft = function() {
+    return new Point__default(this.x, this.y + this.height);
+  };
+  Rectangle__Rectangle.prototype.getCenter = function() {
+    return new Point__default(this.x + 0.5 * this.width, this.y + 0.5 * this.height);
+  };
+  Rectangle__Rectangle.prototype.getRandomPoint = function() {
+    return new Point__default(this.x + Math.random() * this.width, this.y + Math.random() * this.height);
+  };
+
+  Rectangle__Rectangle.prototype.getIntersection = function(rectangle) {
+    if(rectangle.x + rectangle.width < this.x || rectangle.x > this.x + this.width || rectangle.y + rectangle.height < this.y || rectangle.y > this.y + this.height) return null;
+    var xR = Math.max(rectangle.x, this.x);
+    var yR = Math.max(rectangle.y, this.y);
+    return new Rectangle__Rectangle(xR, yR, Math.min(rectangle.x + rectangle.width, this.x + this.width) - xR, Math.min(rectangle.y + rectangle.height, this.y + this.height) - yR);
+  };
+
+  Rectangle__Rectangle.prototype.interpolate = function(rectangle, t) {
+    var mint = 1 - t;
+    return new Rectangle__Rectangle(mint * this.x + t * rectangle.x, mint * this.y + t * rectangle.y, mint * this.width + t * rectangle.width, mint * this.height + t * rectangle.height);
+  };
+
+  Rectangle__Rectangle.prototype.getRatio = function() {
+    return Math.max(this.width, this.height) / Math.min(this.width, this.height);
+  };
+
+  Rectangle__Rectangle.prototype.getArea = function() {
+    return this.width * this.height;
+  };
+
+  /**
+   * check if a point belong to the rectangle
+   * @param  {Point} point
+   * @return {Boolean}
+   * tags:geometry
+   */
+  Rectangle__Rectangle.prototype.containsPoint = function(point) {
+    return(this.x <= point.x && this.x + this.width >= point.x && this.y <= point.y && this.y + this.height >= point.y);
+  };
+
+
+  Rectangle__Rectangle.prototype.pointIsOnBorder = function(point, margin) {
+    margin = margin == null ? 1 : margin;
+    if(point.x >= this.x - margin && point.x <= this.x + this.width + margin) {
+      if(point.y >= this.y - margin && point.y <= this.y + margin) return true;
+      if(point.y >= this.y + this.height - margin && point.y <= this.y + this.height + margin) return true;
+      if(point.y >= this.y - margin && point.y <= this.y + this.height + margin) {
+        if(point.x < this.x + margin || point.x > this.x + this.width - margin) return true;
+      }
+    }
+    return false;
+  };
+
+
+
+
+  Rectangle__Rectangle.prototype.getNormalRectangle = function() {
+    return new Rectangle__Rectangle(Math.min(this.x, this.x + this.width), Math.min(this.y, this.y + this.height), Math.abs(this.width), Math.abs(this.height));
+  };
+
+  /**
+   * return true if it interstects a rectangle
+   * @param  {Rectangle} rectangle
+   * @return {Boolean}
+   * tags:geometry
+   */
+  Rectangle__Rectangle.prototype.intersectsRectangle = function(rectangle) {
+    return !(this.x + this.width < rectangle.x) && !(this.y + this.height < rectangle.y) && !(rectangle.x + rectangle.width < this.x) && !(rectangle.y + rectangle.height < this.y);
+
+
+    if(this.x + this.width < rectangle.x) return false;
+    if(this.y + this.height < rectangle.y) return false;
+    if(rectangle.x + rectangle.width < this.x) return false;
+    if(rectangle.y + rectangle.height < this.y) return false;
+    return true;
+
+
+
+  	return this.containsPoint(rectangle.getTopLeft()) || this.containsPoint(rectangle.getTopRight()) || this.containsPoint(rectangle.getBottomLeft()) || this.containsPoint(rectangle.getBottomRight())
+  	|| rectangle.containsPoint(this.getTopLeft()) || rectangle.containsPoint(this.getTopRight()) || rectangle.containsPoint(this.getBottomLeft()) || rectangle.containsPoint(this.getBottomRight());
+  };
+
+  Rectangle__Rectangle.prototype.expand = function(expantion, centerPoint) {
+    centerPoint = centerPoint || new Point__default(this.x + 0.5 * this.width, this.y + 0.5 * this.height);
+    return new Rectangle__Rectangle((this.x - centerPoint.x) * expantion + centerPoint.x, (this.y - centerPoint.y) * expantion + centerPoint.y, this.width * expantion, this.height * expantion);
+  };
+
+  Rectangle__Rectangle.prototype.isEqual = function(rectangle) {
+    return this.x == rectangle.x && this.y == rectangle.y && this.width == rectangle.width && this.height == rectangle.height;
+  };
+
+  Rectangle__Rectangle.prototype.clone = function() {
+    return new Rectangle__Rectangle(this.x, this.y, this.width, this.height);
+  };
+
+  Rectangle__Rectangle.prototype.toString = function() {
+    return "(x=" + this.x + ", y=" + this.y + ", w=" + this.width + ", h=" + this.height + ")";
+  };
+
+  Rectangle__Rectangle.prototype.destroy = function() {
+    delete this.x;
+    delete this.y;
+    delete this.width;
+    delete this.height;
+  };
+
+  exports.Rectangle = Rectangle__default;
+
+  RectangleList.prototype = new List__default();
+  RectangleList.prototype.constructor = RectangleList;
+  /**
+   * @classdesc A {@link List} structure for storing {@link Rectangle} instances.
+   *
+   * @description Creates a new RectangleList.
+   * @constructor
+   * @category geometry
+   */
+  function RectangleList() {
+    var array = List__default.apply(this, arguments);
+    array = RectangleList.fromArray(array);
+    return array;
+  }
+
+
+  RectangleList.fromArray = function(array) {
+    var result = List__default.fromArray(array);
+    result.type = "RectangleList";
+
+    result.getFrame = RectangleList.prototype.getFrame;
+    result.add = RectangleList.prototype.add;
+    result.factor = RectangleList.prototype.factor;
+    result.getAddedArea = RectangleList.prototype.getAddedArea;
+    result.getIntersectionArea = RectangleList.prototype.getIntersectionArea;
+
+    return result;
+  };
+
+  //TODO:finish RectangleList methods
+
+  RectangleList.prototype.getFrame = function() {
+    if(this.length == 0) return null;
+    var frame = this[0];
+    frame.width = frame.getRight();
+    frame.height = frame.getBottom();
+    for(var i = 1; this[i] != null; i++) {
+      frame.x = Math.min(frame.x, this[i].x);
+      frame.y = Math.min(frame.y, this[i].y);
+
+      frame.width = Math.max(this[i].getRight(), frame.width);
+      frame.height = Math.max(this[i].getBottom(), frame.height);
+    }
+
+    frame.width -= frame.x;
+    frame.height -= frame.y;
+
+    return frame;
+  };
+
+  RectangleList.prototype.add = function() {
+
+  };
+
+  RectangleList.prototype.factor = function() {
+
+  };
+
+  RectangleList.prototype.getAddedArea = function() {};
+
+  RectangleList.prototype.getIntersectionArea = function() {
+    var rect0;
+    var rect1;
+    var intersectionArea = 0;
+    var intersection;
+    for(var i = 0; this[i + 1] != null; i++) {
+      rect0 = this[i];
+      for(var j = i + 1; this[j] != null; j++) {
+        rect1 = this[j];
+        intersection = rect0.getIntersection(rect1);
+        intersectionArea += intersection == null ? 0 : intersection.getArea();
+      }
+    }
+
+    return intersectionArea;
+  };
+
+  exports.RectangleList = RectangleList;
 
   // jshint unused:false
 

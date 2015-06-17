@@ -1,3 +1,6 @@
+import DataModel from "src/dataStructures/DataModel";
+import Point from "src/dataStructures/geometry/Point";
+
 Rectangle.prototype = new DataModel();
 Rectangle.prototype.constructor = Rectangle;
 
@@ -21,6 +24,7 @@ function Rectangle(x, y, width, height) {
   this.width = Number(width) || 0;
   this.height = Number(height) || 0;
 }
+export default Rectangle;
 
 Rectangle.prototype.getRight = function() {
   return this.x + this.width;
