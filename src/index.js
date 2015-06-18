@@ -212,20 +212,50 @@ export { Forces };
 import Engine3D from "src/tools/threeD/Engine3D";
 export { Engine3D };
 
-// import CountryListDraw from "src/visualization/geo/CountryListDraw";
-// import CirclesVisOperators from "src/visualization/geometry/CirclesVisOperators";
-// import ColorsDraw from "src/visualization/graphic/ColorsDraw";
-// import ImageDraw from "src/visualization/graphic/ImageDraw";
-// import ListDraw from "src/visualization/lists/ListDraw";
-// import IntervalTableDraw from "src/visualization/numeric/IntervalTableDraw";
-// import NumberTableDraw from "src/visualization/numeric/NumberTableDraw";
-// import NumberListDraw from "src/visualization/numeric/NumberListDraw";
-// import ObjectDraw from "src/visualization/objects/ObjectDraw";
-// import StringDraw from "src/visualization/strings/StringDraw";
-// import StringListDraw from "src/visualization/strings/StringListDraw";
-// import StringListVisOperators from "src/visualization/strings/StringListVisOperators";
-// import NetworkDraw from "src/visualization/structures/NetworkDraw";
-// import TreeDraw from "src/visualization/structures/TreeDraw";
+// visualization/geo
+import CountryListDraw from "src/visualization/geo/CountryListDraw";
+export { CountryListDraw };
+
+// visualization/geometry
+import CirclesVisOperators from "src/visualization/geometry/CirclesVisOperators";
+export { CirclesVisOperators };
+
+// visualization/graphic
+import ColorsDraw from "src/visualization/graphic/ColorsDraw";
+import ImageDraw from "src/visualization/graphic/ImageDraw";
+export { ColorsDraw, ImageDraw };
+
+// visualization/lists
+import ListDraw from "src/visualization/lists/ListDraw";
+export { ListDraw };
+
+// visualization/numeric
+import IntervalTableDraw from "src/visualization/numeric/IntervalTableDraw";
+import NumberTableDraw from "src/visualization/numeric/NumberTableDraw";
+import NumberListDraw from "src/visualization/numeric/NumberListDraw";
+export { IntervalTableDraw, NumberTableDraw, NumberListDraw};
+
+// visualization/objects
+import ObjectDraw from "src/visualization/objects/ObjectDraw";
+import StringDraw from "src/visualization/strings/StringDraw";
+export { ObjectDraw, StringDraw};
+
+// visualization/strings
+import StringListDraw from "src/visualization/strings/StringListDraw";
+import StringListVisOperators from "src/visualization/strings/StringListVisOperators";
+export { StringListDraw, StringListVisOperators};
+
+// visualization/structures
+import NetworkDraw from "src/visualization/structures/NetworkDraw";
+import TreeDraw from "src/visualization/structures/TreeDraw";
+export { NetworkDraw, TreeDraw };
+
+
+
+
+
+
+
 
 // // Globals
 

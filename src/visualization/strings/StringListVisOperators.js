@@ -1,10 +1,11 @@
 /**
  * @classdesc Operators that contain visualization method algoritms and return a Table with parameters for StringListPrimitive
- * 
+ *
  * @namespace
  * @category strings
  */
 function StringListVisOperators() {}
+export default StringListVisOperators;
 
 
 StringListVisOperators.simpleTagCloud = function(stringList, weights, frame, font, interLineFactor) {

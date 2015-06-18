@@ -9263,15 +9263,15 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Polygon3D = Polygon3D;
 
-  function GeometryOperators() {}
-
+  function GeometryOperators__GeometryOperators() {}
+  var GeometryOperators__default = GeometryOperators__GeometryOperators;
 
 
   /**
    * from three Points calculates two control Points for the middle Point that will define a curve (using Bézier) that goes softly through the three points
    * TODO: finish method by taking into account distances
    */
-  GeometryOperators.getSoftenControlPoints = function(point0, point1, point2, controlVectorSize) {
+  GeometryOperators__GeometryOperators.getSoftenControlPoints = function(point0, point1, point2, controlVectorSize) {
     controlVectorSize = controlVectorSize || 10;
     var angle = PointOperators.angleFromTwoPoints(point0, point2);
     var controlPoint0 = new Point__default(point1.x - controlVectorSize * Math.cos(angle), point1.y - controlVectorSize * Math.sin(angle));
@@ -9279,7 +9279,7 @@ define('src/index', ['exports'], function (exports) {
     return [controlPoint0, controlPoint1];
   };
 
-  GeometryOperators.bezierCurvePoints = function(x0, y0, c0x, c0y, c1x, c1y, x1, y1, t) {
+  GeometryOperators__GeometryOperators.bezierCurvePoints = function(x0, y0, c0x, c0y, c1x, c1y, x1, y1, t) {
     var s = 1 - t;
     var ax = s * x0 + t * c0x;
     var ay = s * y0 + t * c0y;
@@ -9301,27 +9301,27 @@ define('src/index', ['exports'], function (exports) {
 
 
 
-  GeometryOperators.trueBezierCurveHeightHorizontalControlPoints = function(x0, x1, y0, y1, c0x, c1x, x) {
+  GeometryOperators__GeometryOperators.trueBezierCurveHeightHorizontalControlPoints = function(x0, x1, y0, y1, c0x, c1x, x) {
     var dx = x1 - x0;
     var x = (x - x0) / dx;
     var c0x = (c0x - x0) / dx;
     var c1x = (c1x - x0) / dx;
 
-    if(GeometryOperators._bezierSimpleCurveTable == null) {
+    if(GeometryOperators__GeometryOperators._bezierSimpleCurveTable == null) {
       var i, p;
 
-      GeometryOperators._bezierSimpleCurveTable = new NumberList();
+      GeometryOperators__GeometryOperators._bezierSimpleCurveTable = new NumberList();
 
       for(i = 1; i < 10000; i++) {
-        p = GeometryOperators.bezierCurvePoints(0, 0, c0x, 0, c1x, 1, 1, 1, i / 10000);
-        GeometryOperators._bezierSimpleCurveTable[Math.floor(1000 * p.x)] = p.y;
+        p = GeometryOperators__GeometryOperators.bezierCurvePoints(0, 0, c0x, 0, c1x, 1, 1, 1, i / 10000);
+        GeometryOperators__GeometryOperators._bezierSimpleCurveTable[Math.floor(1000 * p.x)] = p.y;
       }
 
-      GeometryOperators._bezierSimpleCurveTable[0] = 0;
-      GeometryOperators._bezierSimpleCurveTable[1] = 1;
+      GeometryOperators__GeometryOperators._bezierSimpleCurveTable[0] = 0;
+      GeometryOperators__GeometryOperators._bezierSimpleCurveTable[1] = 1;
     }
 
-    return GeometryOperators._bezierSimpleCurveTable[Math.floor(1000 * x)] * (y1 - y0) + y0;
+    return GeometryOperators__GeometryOperators._bezierSimpleCurveTable[Math.floor(1000 * x)] * (y1 - y0) + y0;
 
   };
 
@@ -9329,7 +9329,7 @@ define('src/index', ['exports'], function (exports) {
   /**
    * This an approximation, it doesn't take into account actual values of c0x and c1x
    */
-  GeometryOperators.bezierCurveHeightHorizontalControlPoints = function(y0, c0x, c1x, y1, t) { //TODO:fix
+  GeometryOperators__GeometryOperators.bezierCurveHeightHorizontalControlPoints = function(y0, c0x, c1x, y1, t) { //TODO:fix
 
     var cosinus = Math.cos(Math.PI * (t - 1));
     var sign = cosinus > 0 ? 1 : -1;
@@ -9340,14 +9340,14 @@ define('src/index', ['exports'], function (exports) {
   /**
    * unefficient method (uses Newton strategy)
    */
-  GeometryOperators.distanceToBezierCurve = function(x0, y0, c0x, c0y, c1x, c1y, x1, y1, p, returnPoint) {
+  GeometryOperators__GeometryOperators.distanceToBezierCurve = function(x0, y0, c0x, c0y, c1x, c1y, x1, y1, p, returnPoint) {
     var minDT = 0.01;
     var t0 = 0;
     var t1 = 1;
     var p0 = new Point__default(x0, y0);
-    var p0I = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, minDT);
+    var p0I = GeometryOperators__GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, minDT);
     var p1 = new Point__default(x1, y1);
-    var p1I = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, 1 - minDT);
+    var p1I = GeometryOperators__GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, 1 - minDT);
     var d0 = Math.pow(p0.x - p.x, 2) + Math.pow(p0.y - p.y, 2);
     var d0I = Math.pow(p0I.x - p.x, 2) + Math.pow(p0I.y - p.y, 2);
     var d1 = Math.pow(p1.x - p.x, 2) + Math.pow(p1.y - p.y, 2);
@@ -9359,19 +9359,19 @@ define('src/index', ['exports'], function (exports) {
     var pMI;
 
     for(i = 0; i < 10; i++) {
-      pM = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, (t0 + t1) * 0.5);
-      pMI = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, (t0 + t1) * 0.5 + minDT);
+      pM = GeometryOperators__GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, (t0 + t1) * 0.5);
+      pMI = GeometryOperators__GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, (t0 + t1) * 0.5 + minDT);
 
       d0 = Math.pow(pM.x - p.x, 2) + Math.pow(pM.y - p.y, 2);
       d0I = Math.pow(pMI.x - p.x, 2) + Math.pow(pMI.y - p.y, 2);
 
       if(d0 < d0I) {
         t1 = (t0 + t1) * 0.5;
-        p1 = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, t1);
+        p1 = GeometryOperators__GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, t1);
         d1 = Math.pow(p1.x - p.x, 2) + Math.pow(p1.y - p.y, 2);
       } else {
         t0 = (t0 + t1) * 0.5;
-        p0 = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, t0);
+        p0 = GeometryOperators__GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, t0);
         d0 = Math.pow(p0.x - p.x, 2) + Math.pow(p0.y - p.y, 2);
       }
     }
@@ -9380,27 +9380,27 @@ define('src/index', ['exports'], function (exports) {
     return Math.sqrt(Math.min(d0, d1));
   };
 
-  GeometryOperators.triangleContainsPoint = function(pT0, pT1, pT2, p) {
+  GeometryOperators__GeometryOperators.triangleContainsPoint = function(pT0, pT1, pT2, p) {
     var a = (pT0.x - p.x) * (pT1.y - p.y) - (pT1.x - p.x) * (pT0.y - p.y);
     var b = (pT1.x - p.x) * (pT2.y - p.y) - (pT2.x - p.x) * (pT1.y - p.y);
     var c = (pT2.x - p.x) * (pT0.y - p.y) - (pT0.x - p.x) * (pT2.y - p.y);
     return(a > 0 && b > 0 && c > 0) || (a >= 0 && b >= 0 && c >= 0);
   };
 
-  GeometryOperators.triangleArea = function(triangle) {
+  GeometryOperators__GeometryOperators.triangleArea = function(triangle) {
     return Math.abs(triangle.a.x * (triangle.b.y - triangle.c.y) + triangle.b.x * (triangle.c.y - triangle.a.y) + triangle.c.x * (triangle.a.y - triangle.b.y)) / 2;
   };
 
 
   /////////////lines (line is a Point with values m and b in y=mx+b)
 
-  GeometryOperators.lineFromTwoPoints = function(point0, point1) {
+  GeometryOperators__GeometryOperators.lineFromTwoPoints = function(point0, point1) {
     if(point0.x == point1.x) return new Point__default(Infinity, point0.x);
     var m = (point1.y - point0.y) / (point1.x - point0.x);
     return new Point__default(m, point0.y - m * point0.x);
   };
 
-  GeometryOperators.distancePointToLine = function(point, line) {
+  GeometryOperators__GeometryOperators.distancePointToLine = function(point, line) {
     var m2;
     var b2;
     if(line.x == 0) {
@@ -9410,11 +9410,11 @@ define('src/index', ['exports'], function (exports) {
       m2 = -1 / line.x;
       b2 = point.y - m2 * point.x;
     }
-    var interPoint = GeometryOperators.intersectionLines(line, new Point__default(m2, b2));
+    var interPoint = GeometryOperators__GeometryOperators.intersectionLines(line, new Point__default(m2, b2));
     return Math.sqrt(Math.pow(point.x - interPoint.x, 2) + Math.pow(point.y - interPoint.y, 2));
   };
 
-  GeometryOperators.distancePointToSegment = function(point, point0Segment, point1Segment) {
+  GeometryOperators__GeometryOperators.distancePointToSegment = function(point, point0Segment, point1Segment) {
     var m = point0Segment.x == point1Segment.x ? Infinity : (point1Segment.y - point0Segment.y) / (point1Segment.x - point0Segment.x);
     var line = m == Infinity ? new Point__default(Infinity, point0Segment.x) : new Point__default(m, point0Segment.y - m * point0Segment.x);
     var m2;
@@ -9426,12 +9426,12 @@ define('src/index', ['exports'], function (exports) {
       m2 = -1 / line.x;
       b2 = point.y - m2 * point.x;
     }
-    var interPoint = GeometryOperators.intersectionLines(line, new Point__default(m2, b2));
+    var interPoint = GeometryOperators__GeometryOperators.intersectionLines(line, new Point__default(m2, b2));
     if(interPoint.x >= Math.min(point0Segment.x, point1Segment.x) && interPoint.x <= Math.max(point0Segment.x, point1Segment.x)) return point.distanceToPoint(interPoint);
     return Math.min(point.distanceToPoint(point0Segment), point.distanceToPoint(point1Segment));
   };
 
-  GeometryOperators.intersectionLines = function(line0, line1) {
+  GeometryOperators__GeometryOperators.intersectionLines = function(line0, line1) {
     if(line0.x == line1.x) {
       if(line0.y == line1.y) {
         if(line0.x == Infinity) {
@@ -9453,10 +9453,10 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  GeometryOperators.VennCircles = function(area0, area1, areaIntersection, centerInLens, precision) {
+  GeometryOperators__GeometryOperators.VennCircles = function(area0, area1, areaIntersection, centerInLens, precision) {
     var rA = Math.sqrt(area0 / Math.PI);
     var rB = Math.sqrt(area1 / Math.PI);
-    var d = GeometryOperators.circleDistancesFromCommonArea(rA, rB, areaIntersection, precision);
+    var d = GeometryOperators__GeometryOperators.circleDistancesFromCommonArea(rA, rB, areaIntersection, precision);
 
     var circle0;
     var circle1;
@@ -9488,7 +9488,7 @@ define('src/index', ['exports'], function (exports) {
    * @param precision
    *
    */
-  GeometryOperators.circleDistancesFromCommonArea = function(r0, r1, commonArea, precision) {
+  GeometryOperators__GeometryOperators.circleDistancesFromCommonArea = function(r0, r1, commonArea, precision) {
     precision = precision || 0.1;
     var d0 = Math.max(r0, r1) - Math.min(r0, r1);
     var d1 = r0 + r1;
@@ -9496,7 +9496,7 @@ define('src/index', ['exports'], function (exports) {
 
     var attempts = 0;
 
-    var currentArea = GeometryOperators.circlesCommonArea(r0, r1, dM);
+    var currentArea = GeometryOperators__GeometryOperators.circlesCommonArea(r0, r1, dM);
 
     while(Math.abs(currentArea - commonArea) > precision && attempts < 200) {
       if(currentArea > commonArea) {
@@ -9507,12 +9507,12 @@ define('src/index', ['exports'], function (exports) {
         dM = (dM + d0) * 0.5;
       }
       attempts++;
-      currentArea = GeometryOperators.circlesCommonArea(r0, r1, dM);
+      currentArea = GeometryOperators__GeometryOperators.circlesCommonArea(r0, r1, dM);
     }
     return dM;
   };
 
-  GeometryOperators.circlesCommonArea = function(ra, rb, d) {
+  GeometryOperators__GeometryOperators.circlesCommonArea = function(ra, rb, d) {
     if(d >= (ra + rb)) return 0;
     if(d + Math.min(ra, rb) <= Math.max(ra, rb)) {
       return Math.PI * Math.pow(Math.min(ra, rb), 2);
@@ -9528,7 +9528,7 @@ define('src/index', ['exports'], function (exports) {
   /**
    * This method return the angles required to draw the intersection shape (lens) of two circles
    */
-  GeometryOperators.circlesLensAngles = function(circle0, circle1) {
+  GeometryOperators__GeometryOperators.circlesLensAngles = function(circle0, circle1) {
     if(circle1.x < circle0.x) {
       var _circle = circle1.clone();
       circle1 = circle0.clone();
@@ -9558,7 +9558,7 @@ define('src/index', ['exports'], function (exports) {
 
   //////Delauney
 
-  GeometryOperators.delauney = function(polygon) { /// ---> move to Polygon operators, chnge name to getDelauneyTriangulation
+  GeometryOperators__GeometryOperators.delauney = function(polygon) { /// ---> move to Polygon operators, chnge name to getDelauneyTriangulation
     return _triangulate(polygon);
   };
 
@@ -9730,7 +9730,7 @@ define('src/index', ['exports'], function (exports) {
     return closed;
   }
 
-  exports.GeometryOperators = GeometryOperators;
+  exports.GeometryOperators = GeometryOperators__default;
 
   Rectangle__Rectangle.prototype = new DataModel();
   Rectangle__Rectangle.prototype.constructor = Rectangle__Rectangle;
@@ -9944,16 +9944,16 @@ define('src/index', ['exports'], function (exports) {
   var src_Global__cY = 1; // canvas center y
   var src_Global__mX = 0; // cursor x
   var src_Global__mY = 0; // cursor y
-  var mP = new Point__default(0, 0); // cursor point
-  var nF = 0; // number of current frame since first cycle
+  var src_Global__mP = new Point__default(0, 0); // cursor point
+  var src_Global__nF = 0; // number of current frame since first cycle
 
-  var MOUSE_DOWN=false; //true on the frame of mousedown event
-  var MOUSE_UP=false; //true on the frame of mouseup event
-  var MOUSE_UP_FAST=false; //true on the frame of mouseup event
-  var WHEEL_CHANGE=0; //differnt from 0 if mousewheel (or pad) moves / STATE
+  var src_Global__MOUSE_DOWN=false; //true on the frame of mousedown event
+  var src_Global__MOUSE_UP=false; //true on the frame of mouseup event
+  var src_Global__MOUSE_UP_FAST=false; //true on the frame of mouseup event
+  var src_Global__WHEEL_CHANGE=0; //differnt from 0 if mousewheel (or pad) moves / STATE
   var NF_DOWN; //number of frame of last mousedown event
   var NF_UP; //number of frame of last mouseup event
-  var MOUSE_PRESSED; //true if mouse pressed / STATE
+  var src_Global__MOUSE_PRESSED; //true if mouse pressed / STATE
   var MOUSE_IN_DOCUMENT = true; //true if cursor is inside document / STATE
   var mX_DOWN; // cursor x position on last mousedown event
   var mY_DOWN; // cursor x position on last mousedown event
@@ -9975,7 +9975,7 @@ define('src/index', ['exports'], function (exports) {
   //global constants
   var src_Global__context;
   var src_Global__TwoPi = 2*Math.PI;
-  var HalfPi = 0.5*Math.PI;
+  var src_Global__HalfPi = 0.5*Math.PI;
   var radToGrad = 180/Math.PI;
   var gradToRad = Math.PI/180;
   var src_Global__c = console;
@@ -10075,13 +10075,13 @@ define('src/index', ['exports'], function (exports) {
               src_Global__mX = e.layerX;
               src_Global__mY = e.layerY;
           }
-          mP.x = src_Global__mX;
-          mP.y = src_Global__mY;
+          src_Global__mP.x = src_Global__mX;
+          src_Global__mP.y = src_Global__mY;
           MOUSE_IN_DOCUMENT = true;
           break;
       case "mousedown":
-        NF_DOWN = nF;
-        MOUSE_PRESSED = true;
+        NF_DOWN = src_Global__nF;
+        src_Global__MOUSE_PRESSED = true;
         T_MOUSE_PRESSED = 0;
         _tLastMouseDown = new Date().getTime();
         mX_DOWN = src_Global__mX;
@@ -10089,8 +10089,8 @@ define('src/index', ['exports'], function (exports) {
         MOUSE_IN_DOCUMENT = true;
         break;
       case "mouseup":
-        NF_UP = nF;
-        MOUSE_PRESSED = false;
+        NF_UP = src_Global__nF;
+        src_Global__MOUSE_PRESSED = false;
         T_MOUSE_PRESSED = 0;
         mX_UP = src_Global__mX;
         mY_UP = src_Global__mY;
@@ -10162,24 +10162,24 @@ define('src/index', ['exports'], function (exports) {
 
       src_Global__setCursor('default');
 
-      MOUSE_DOWN = NF_DOWN==nF;
-    MOUSE_UP = NF_UP==nF;
-    MOUSE_UP_FAST = MOUSE_UP && (nF-NF_DOWN)<9;
+      src_Global__MOUSE_DOWN = NF_DOWN==src_Global__nF;
+    src_Global__MOUSE_UP = NF_UP==src_Global__nF;
+    src_Global__MOUSE_UP_FAST = src_Global__MOUSE_UP && (src_Global__nF-NF_DOWN)<9;
 
     DX_MOUSE = src_Global__mX-PREV_mX;
     DY_MOUSE = src_Global__mY-PREV_mY;
     MOUSE_MOVED = DX_MOUSE!=0 || DY_MOUSE!=0;
 
-    if(MOUSE_PRESSED) T_MOUSE_PRESSED = new Date().getTime() - _tLastMouseDown;
+    if(src_Global__MOUSE_PRESSED) T_MOUSE_PRESSED = new Date().getTime() - _tLastMouseDown;
 
       cycle();
 
-      WHEEL_CHANGE = 0;
+      src_Global__WHEEL_CHANGE = 0;
 
       PREV_mX=src_Global__mX;
     PREV_mY=src_Global__mY;
 
-      nF++;
+      src_Global__nF++;
   }
 
   function startCycle(){
@@ -10242,7 +10242,7 @@ define('src/index', ['exports'], function (exports) {
     var i;
     for(i=0; listenerArray[i]!=null; i++){
       if(listenerArray[i][0]==e.type.replace('DOMMouseScroll', 'mousewheel')){
-        if(_interactionCancelledFrame==nF) return;
+        if(_interactionCancelledFrame==src_Global__nF) return;
         listenerArray[i][1].call(listenerArray[i][2], e);
       }
     }
@@ -10259,8 +10259,8 @@ define('src/index', ['exports'], function (exports) {
   }
 
   function cancelAllInteractions(){
-    src_Global__c.log("cancelAllInteractions, _interactionCancelledFrame:", nF);
-    _interactionCancelledFrame = nF;
+    src_Global__c.log("cancelAllInteractions, _interactionCancelledFrame:", src_Global__nF);
+    _interactionCancelledFrame = src_Global__nF;
   }
 
   function setBackgroundColor(color){
@@ -10317,11 +10317,11 @@ define('src/index', ['exports'], function (exports) {
       if (!e) e = window.event; //IE
 
       if (e.wheelDelta){
-        WHEEL_CHANGE = e.wheelDelta/120;
+        src_Global__WHEEL_CHANGE = e.wheelDelta/120;
       } else if (e.detail) { /** Mozilla case. */
-          WHEEL_CHANGE = -e.detail/3;
+          src_Global__WHEEL_CHANGE = -e.detail/3;
       }
-      e.value = WHEEL_CHANGE;
+      e.value = src_Global__WHEEL_CHANGE;
       e.type = "mousewheel"; //why this doesn't work?
 
     onCanvasEvent(e);
@@ -10462,7 +10462,7 @@ define('src/index', ['exports'], function (exports) {
     var prevPoint = polygon[nPoints - 1];
     var point = polygon[0];
     var nextPoint = polygon[1];
-    controlPoints = GeometryOperators.getSoftenControlPoints(prevPoint, point, nextPoint, amount);
+    controlPoints = GeometryOperators__default.getSoftenControlPoints(prevPoint, point, nextPoint, amount);
     var prevCP = controlPoints[1];
     var cP;
     src_Global__context.moveTo(point.x, point.y);
@@ -10471,7 +10471,7 @@ define('src/index', ['exports'], function (exports) {
     for(i = 1; i < nSteps; i++) {
       point = polygon[i % nPoints];
       nextPoint = polygon[(i + 1) % nPoints];
-      controlPoints = GeometryOperators.getSoftenControlPoints(prevPoint, point, nextPoint, amount);
+      controlPoints = GeometryOperators__default.getSoftenControlPoints(prevPoint, point, nextPoint, amount);
       cP = controlPoints[0];
       src_Global__context.bezierCurveTo(prevCP.x, prevCP.y, cP.x, cP.y, point.x, point.y);
       prevCP = controlPoints[1];
@@ -10779,7 +10779,7 @@ define('src/index', ['exports'], function (exports) {
       return;
     }
 
-    var angles = GeometryOperators.circlesLensAngles(circle0, circle1);
+    var angles = GeometryOperators__default.circlesLensAngles(circle0, circle1);
 
     src_Global__context.arc(circle0.x, circle0.y, circle0.z, angles[0], angles[1]);
     src_Global__context.arc(circle1.x, circle1.y, circle1.z, angles[2], angles[3]);
@@ -11249,8 +11249,8 @@ define('src/index', ['exports'], function (exports) {
       p0 = newPolygon[i];
       p1 = newPolygon[(i + 1) % nPoints];
       p2 = newPolygon[(i + 2) % nPoints];
-      line = GeometryOperators.lineFromTwoPoints(p0, p2);
-      if(GeometryOperators.distancePointToLine(p1, line) < margin) {
+      line = GeometryOperators__default.lineFromTwoPoints(p0, p2);
+      if(GeometryOperators__default.distancePointToLine(p1, line) < margin) {
         //newPolygon.splice((i+1)%nPoints, 1);
         newPolygon = newPolygon.getWithoutElementAtIndex((i + 1) % nPoints);
         i--;
@@ -11607,8 +11607,8 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Polygon3DList = Polygon3DList;
 
-  ColorList.prototype = new List__default();
-  ColorList.prototype.constructor = ColorList;
+  ColorList__ColorList.prototype = new List__default();
+  ColorList__ColorList.prototype.constructor = ColorList__ColorList;
 
   /**
    * @classdesc A {@link List} for storing Colors.
@@ -11617,26 +11617,26 @@ define('src/index', ['exports'], function (exports) {
    * @constructor
    * @category colors
    */
-  function ColorList() {
+  function ColorList__ColorList() {
     var args = [];
     var i;
     for(i = 0; i < arguments.length; i++) {
       args[i] = arguments[i];
     }
     var array = List__default.apply(this, args);
-    array = ColorList.fromArray(array);
+    array = ColorList__ColorList.fromArray(array);
 
     return array;
   }
+  var ColorList__default = ColorList__ColorList;
 
-
-  ColorList.fromArray = function(array) {
+  ColorList__ColorList.fromArray = function(array) {
     var result = List__default.fromArray(array);
     result.type = "ColorList";
-    result.getRgbArrays = ColorList.prototype.getRgbArrays;
-    result.getInterpolated = ColorList.prototype.getInterpolated;
-    result.getInverted = ColorList.prototype.getInverted;
-    result.addAlpha = ColorList.prototype.addAlpha;
+    result.getRgbArrays = ColorList__ColorList.prototype.getRgbArrays;
+    result.getInterpolated = ColorList__ColorList.prototype.getInterpolated;
+    result.getInverted = ColorList__ColorList.prototype.getInverted;
+    result.addAlpha = ColorList__ColorList.prototype.addAlpha;
     return result;
   };
 
@@ -11645,7 +11645,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {array}
    * tags:
    */
-  ColorList.prototype.getRgbArrays = function() {
+  ColorList__ColorList.prototype.getRgbArrays = function() {
     var rgbArrays = new List__default();
 
     for(var i = 0; this[i] != null; i++) {
@@ -11662,8 +11662,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {ColorList}
    * tags:
    */
-  ColorList.prototype.getInterpolated = function(color, value) {
-    var newColorList = new ColorList();
+  ColorList__ColorList.prototype.getInterpolated = function(color, value) {
+    var newColorList = new ColorList__ColorList();
 
     for(var i = 0; this[i] != null; i++) {
       newColorList[i] = ColorOperators__default.interpolateColors(this[i], color, value);
@@ -11678,8 +11678,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {ColorList}
    * tags:
    */
-  ColorList.prototype.getInverted = function() {
-    var newColorList = new ColorList();
+  ColorList__ColorList.prototype.getInverted = function() {
+    var newColorList = new ColorList__ColorList();
 
     for(var i = 0; this[i] != null; i++) {
       newColorList[i] = ColorOperators__default.invertColor(this[i]);
@@ -11695,8 +11695,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {ColorList}
    * tags:
    */
-  ColorList.prototype.addAlpha = function(alpha) {
-    var newColorList = new ColorList();
+  ColorList__ColorList.prototype.addAlpha = function(alpha) {
+    var newColorList = new ColorList__ColorList();
 
     for(var i = 0; this[i] != null; i++) {
       newColorList[i] = ColorOperators__default.addAlpha(this[i], alpha);
@@ -11706,10 +11706,10 @@ define('src/index', ['exports'], function (exports) {
     return newColorList;
   };
 
-  exports.ColorList = ColorList;
+  exports.ColorList = ColorList__default;
 
-  function ColorScales() {}
-
+  function ColorScales__ColorScales() {}
+  var ColorScales__default = ColorScales__ColorScales;
   // *
   //  * return a colorScale from its name
   //  * @param  {String} string name of ColorScale
@@ -11720,25 +11720,25 @@ define('src/index', ['exports'], function (exports) {
   // 	return ColorScales[string];
   // }
 
-  ColorScales.blackScale = function(value) {
+  ColorScales__ColorScales.blackScale = function(value) {
     return 'black';
   };
 
-  ColorScales.grayscale = function(value) {
+  ColorScales__ColorScales.grayscale = function(value) {
     var rgb = ColorOperators__default.interpolateColorsRGB([0, 0, 0], [255, 255, 255], value);
     return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
-  ColorScales.antiGrayscale = function(value) {
+  ColorScales__ColorScales.antiGrayscale = function(value) {
     var rgb = ColorOperators__default.interpolateColorsRGB([255, 255, 255], [0, 0, 0], value);
     return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
-  ColorScales.antiTemperature = function(value) {
-    return ColorScales.temperature(1 - value);
+  ColorScales__ColorScales.antiTemperature = function(value) {
+    return ColorScales__ColorScales.temperature(1 - value);
   };
 
-  ColorScales.temperature = function(value) { //todo:make it efficient
+  ColorScales__ColorScales.temperature = function(value) { //todo:make it efficient
     if(value < 0.2) {
       var color = ColorOperators__default.interpolateColors('#000000', ColorOperators__default.HSVtoHEX(234, 1, 1), value * 5);
     } else if(value > 0.85) {
@@ -11749,55 +11749,55 @@ define('src/index', ['exports'], function (exports) {
     return color;
   };
 
-  ColorScales.sqrtTemperature = function(value) {
-    return ColorScales.temperature(Math.sqrt(value));
+  ColorScales__ColorScales.sqrtTemperature = function(value) {
+    return ColorScales__ColorScales.temperature(Math.sqrt(value));
   };
 
-  ColorScales.sqrt4Temperature = function(value) {
-    return ColorScales.temperature(Math.pow(value, 0.25));
+  ColorScales__ColorScales.sqrt4Temperature = function(value) {
+    return ColorScales__ColorScales.temperature(Math.pow(value, 0.25));
   };
 
-  ColorScales.quadraticTemperature = function(value) {
-    return ColorScales.temperature(Math.pow(value, 2));
+  ColorScales__ColorScales.quadraticTemperature = function(value) {
+    return ColorScales__ColorScales.temperature(Math.pow(value, 2));
   };
 
-  ColorScales.cubicTemperature = function(value) {
-    return ColorScales.temperature(Math.pow(value, 3));
+  ColorScales__ColorScales.cubicTemperature = function(value) {
+    return ColorScales__ColorScales.temperature(Math.pow(value, 3));
   };
 
-  ColorScales.greenToRed = function(value) { //todo:make it efficient
+  ColorScales__ColorScales.greenToRed = function(value) { //todo:make it efficient
     var rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [255, 50, 50], value);
     return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
-  ColorScales.greenToBlue = function(value) { //todo:make it efficient
+  ColorScales__ColorScales.greenToBlue = function(value) { //todo:make it efficient
     var rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [50, 50, 255], value);
     return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
-  ColorScales.grayToOrange = function(value) { //todo:make it efficient
+  ColorScales__ColorScales.grayToOrange = function(value) { //todo:make it efficient
     var rgb = ColorOperators__default.interpolateColorsRGB([100, 100, 100], [255, 110, 0], value);
     return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
-  ColorScales.blueToRed = function(value) {
+  ColorScales__ColorScales.blueToRed = function(value) {
     return 'rgb(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ')';
   };
 
-  ColorScales.blueToRedAlpha = function(value) { //todo:make it efficient
+  ColorScales__ColorScales.blueToRedAlpha = function(value) { //todo:make it efficient
     return 'rgba(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ', 0.5)';
   };
 
-  ColorScales.whiteToRed = function(value) {
+  ColorScales__ColorScales.whiteToRed = function(value) {
     var gg = Math.floor(255 - value * 255);
     return 'rgb(255,' + gg + ',' + gg + ')';
   };
 
-  ColorScales.redToBlue = function(value) {
+  ColorScales__ColorScales.redToBlue = function(value) {
     var rgb = ColorOperators__default.interpolateColorsRGB([255, 0, 0], [0, 0, 255], value);
     return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
-  ColorScales.greenWhiteRed = function(value) {
+  ColorScales__ColorScales.greenWhiteRed = function(value) {
     if(value < 0.5) {
       var rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [255, 255, 255], value * 2);
     } else {
@@ -11807,18 +11807,18 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  ColorScales.solar = function(value) {
+  ColorScales__ColorScales.solar = function(value) {
     var rgb = ColorOperators__default.interpolateColorsRGB([0, 0, 0], ColorOperators__default.interpolateColorsRGB([255, 0, 0], [255, 255, 0], value), Math.pow(value * 0.99 + 0.01, 0.2));
     return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
-  ColorScales.antiSolar = function(value) {
-    return ColorOperators__default.invertColor(ColorScales.solar(value));
+  ColorScales__ColorScales.antiSolar = function(value) {
+    return ColorOperators__default.invertColor(ColorScales__ColorScales.solar(value));
   };
 
-  exports.ColorScales = ColorScales;
+  exports.ColorScales = ColorScales__default;
 
-  ColorScale.prototype = new DataModel();
-  ColorScale.prototype.constructor = ColorScale;
+  ColorScale__ColorScale.prototype = new DataModel();
+  ColorScale__ColorScale.prototype.constructor = ColorScale__ColorScale;
 
   /**
    * @classdesc Color scale.
@@ -11828,21 +11828,21 @@ define('src/index', ['exports'], function (exports) {
    * @constructor
    * @category colors
    */
-  function ColorScale(colorScaleFunction) {
+  function ColorScale__ColorScale(colorScaleFunction) {
     DataModel.apply(this, arguments);
     this.name = "";
     this.type = "ColorScale";
 
-    this.colorScaleFunction = colorScaleFunction ? colorScaleFunction : ColorScales.blackScale;
+    this.colorScaleFunction = colorScaleFunction ? colorScaleFunction : ColorScales__default.blackScale;
   }
+  var ColorScale__default = ColorScale__ColorScale;
 
-
-  ColorScale.prototype.getColor = function(value) {
+  ColorScale__ColorScale.prototype.getColor = function(value) {
     return this.colorScaleFunction(value);
   };
 
-  ColorScale.prototype.getColorList = function(nColors) {
-    var colorList = new ColorList();
+  ColorScale__ColorScale.prototype.getColorList = function(nColors) {
+    var colorList = new ColorList__default();
     var i;
     for(i = 0; i < nColors; i++) {
       colorList.push(this.getColor(i / (nColors - 1)));
@@ -11850,7 +11850,7 @@ define('src/index', ['exports'], function (exports) {
     return colorList;
   };
 
-  exports.ColorScale = ColorScale;
+  exports.ColorScale = ColorScale__default;
 
   function Space2D(configuration) {
     configuration = configuration == null ? {} : configuration;
@@ -12452,8 +12452,8 @@ define('src/index', ['exports'], function (exports) {
 
   exports.PolygonListOperators = PolygonListOperators;
 
-  function RectangleOperators() {}
-
+  function RectangleOperators__RectangleOperators() {}
+  var RectangleOperators__default = RectangleOperators__RectangleOperators;
 
 
   /**
@@ -12466,7 +12466,7 @@ define('src/index', ['exports'], function (exports) {
    * 5: vertical strips quadrification
    * 6: horizontal strips quadrification
    */
-  RectangleOperators.packingRectangles = function(weights, packingMode, rectangle, param) {
+  RectangleOperators__RectangleOperators.packingRectangles = function(weights, packingMode, rectangle, param) {
     //TODO: return RectangleList instead of List
     if(rectangle == null) rectangle = new Rectangle__default(0, 0, 1, 1);
     packingMode = packingMode ? packingMode : 0;
@@ -12478,7 +12478,7 @@ define('src/index', ['exports'], function (exports) {
       //4: europe quadrigram
       //5:vertical strips
       case 0:
-        return RectangleOperators.squarify(rectangle, weights);
+        return RectangleOperators__RectangleOperators.squarify(rectangle, weights);
       case 1:
         var minMax = weights.getMinMaxInterval();
         if(minMax.min < 0) {
@@ -12588,7 +12588,7 @@ define('src/index', ['exports'], function (exports) {
     return null;
   };
 
-  RectangleOperators.quadrification = RectangleOperators.squarify; //old name
+  RectangleOperators__RectangleOperators.quadrification = RectangleOperators__RectangleOperators.squarify; //old name
 
   /**
    * Squarified algorithm as described in (http://www.win.tue.nl/~vanwijk/stm.pdf)
@@ -12600,7 +12600,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List} a list of Rectangles
    * tags:
    */
-  RectangleOperators.squarify = function(frame, weights, isNormalizedWeights, isSortedWeights) { //, funcionEvaluacionnWeights:Function=null):Array{
+  RectangleOperators__RectangleOperators.squarify = function(frame, weights, isNormalizedWeights, isSortedWeights) { //, funcionEvaluacionnWeights:Function=null):Array{
     if(weights == null) return;
     if(weights.length == 0) return new RectangleList();
     if(weights.length == 1) return new RectangleList(frame);
@@ -12662,7 +12662,7 @@ define('src/index', ['exports'], function (exports) {
             // 	subWeightList[k]/=sum;
             // });
 
-            subRectangleList = RectangleOperators.partitionRectangle(freeSubRectangle, subWeightList, sum);
+            subRectangleList = RectangleOperators__RectangleOperators.partitionRectangle(freeSubRectangle, subWeightList, sum);
             worstProportion = subRectangleList.highestRatio; // RectangleOperators._getHighestRatio(subRectangleList);//
             if(proportion <= worstProportion) {
               break;
@@ -12712,7 +12712,7 @@ define('src/index', ['exports'], function (exports) {
     } else if(nWeights == 2) {
       subWeightList = newWeightList.slice(); //.clone();
       freeSubRectangle = frame.clone();
-      rectangleList = RectangleOperators.partitionRectangle(freeSubRectangle, subWeightList, subWeightList.getSum());
+      rectangleList = RectangleOperators__RectangleOperators.partitionRectangle(freeSubRectangle, subWeightList, subWeightList.getSum());
     } else {
       rectangleList[0] = new Rectangle__default(frame.x, frame.y, frame.width, frame.height); //frame.clone();
     }
@@ -12736,7 +12736,7 @@ define('src/index', ['exports'], function (exports) {
    *
    * @return {List} a list of Rectangles
    */
-  RectangleOperators.partitionRectangle = function(rectangle, normalizedWeightList, sum) {
+  RectangleOperators__RectangleOperators.partitionRectangle = function(rectangle, normalizedWeightList, sum) {
     var area = rectangle.width * rectangle.height;
     var rectangleList = new List__default(); //RectangleList();
     var freeRectangle = new Rectangle__default(rectangle.x, rectangle.y, rectangle.width, rectangle.height); //rectangle.clone();
@@ -12773,7 +12773,7 @@ define('src/index', ['exports'], function (exports) {
    *
    * @return {Number} highestRatio
    */
-  RectangleOperators._getHighestRatio = function(rectangleList) {
+  RectangleOperators__RectangleOperators._getHighestRatio = function(rectangleList) {
     var highestRatio = 1;
     var rectangle;
     var i;
@@ -12784,7 +12784,7 @@ define('src/index', ['exports'], function (exports) {
     return highestRatio;
   };
 
-  exports.RectangleOperators = RectangleOperators;
+  exports.RectangleOperators = RectangleOperators__default;
 
   /**
    * @classdesc Tools for generating colors.
@@ -12803,7 +12803,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.ColorGenerators = ColorGenerators;
 
-  ColorListGenerators._HARDCODED_CATEGORICAL_COLORS = new ColorList(
+  ColorListGenerators__ColorListGenerators._HARDCODED_CATEGORICAL_COLORS = new ColorList__default(
     "#dd4411", "#2200bb", "#1f77b4", "#ff660e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#dd8811",
     "#dd0011", "#221140", "#1f66a3", "#ff220e", "#2ba01c", "#442728", "#945600", "#8c453a", "#e37700"
   );
@@ -12814,8 +12814,8 @@ define('src/index', ['exports'], function (exports) {
    * @namespace
    * @category colors
    */
-  function ColorListGenerators() {}
-
+  function ColorListGenerators__ColorListGenerators() {}
+  var ColorListGenerators__default = ColorListGenerators__ColorListGenerators;
 
   /**
    * create a simple list of categorical colors
@@ -12826,9 +12826,9 @@ define('src/index', ['exports'], function (exports) {
    * @return {ColorList}
    * tags:generator
    */
-  ColorListGenerators.createDefaultCategoricalColorList = function(nColors, alpha, invert) {
+  ColorListGenerators__ColorListGenerators.createDefaultCategoricalColorList = function(nColors, alpha, invert) {
     alpha = alpha == null ? 1 : alpha;
-    var colors = ColorListGenerators.createCategoricalColors(1, nColors).getInterpolated('black', 0.15);
+    var colors = ColorListGenerators__ColorListGenerators.createCategoricalColors(1, nColors).getInterpolated('black', 0.15);
     if(alpha < 1) colors = colors.addAlpha(alpha);
 
     if(invert) colors = colors.getInverted();
@@ -12845,10 +12845,10 @@ define('src/index', ['exports'], function (exports) {
    * @return {ColorList}
    * tags:generator
    */
-  ColorListGenerators.createColorListFromNumberList = function(numberList, colorScale, mode) {
+  ColorListGenerators__ColorListGenerators.createColorListFromNumberList = function(numberList, colorScale, mode) {
     mode = mode == null ? 0 : mode;
 
-    var colorList = new ColorList();
+    var colorList = new ColorList__default();
     var newNumberList;
     var i;
 
@@ -12870,8 +12870,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  ColorListGenerators.createColorListWithSingleColor = function(nColors, color) {
-    var colorList = new ColorList();
+  ColorListGenerators__ColorListGenerators.createColorListWithSingleColor = function(nColors, color) {
+    var colorList = new ColorList__default();
     for(var i = 0; i < nColors; i++) {
       colorList.push(color);
     }
@@ -12891,11 +12891,11 @@ define('src/index', ['exports'], function (exports) {
    * @return {ColorList} ColorList with categorical colors
    * tags:generator
    */
-  ColorListGenerators.createCategoricalColors = function(mode, nColors, colorScaleFunction, alpha, interpolateColor, interpolateValue) {
-    colorScaleFunction = colorScaleFunction == null ? ColorScales.temperature : colorScaleFunction;
+  ColorListGenerators__ColorListGenerators.createCategoricalColors = function(mode, nColors, colorScaleFunction, alpha, interpolateColor, interpolateValue) {
+    colorScaleFunction = colorScaleFunction == null ? ColorScales__default.temperature : colorScaleFunction;
 
     var i;
-    var colorList = new ColorList();
+    var colorList = new ColorList__default();
     switch(mode) {
       case 0: //picking from ColorScale
         for(i = 0; i < nColors; i++) {
@@ -12910,7 +12910,7 @@ define('src/index', ['exports'], function (exports) {
         break;
       case 2:
         for(i = 0; i < nColors; i++) {
-          colorList[i] = ColorListGenerators._HARDCODED_CATEGORICAL_COLORS[i % ColorListGenerators._HARDCODED_CATEGORICAL_COLORS.length];
+          colorList[i] = ColorListGenerators__ColorListGenerators._HARDCODED_CATEGORICAL_COLORS[i % ColorListGenerators__ColorListGenerators._HARDCODED_CATEGORICAL_COLORS.length];
         }
         break;
       case 5:
@@ -12921,7 +12921,7 @@ define('src/index', ['exports'], function (exports) {
 
         var nGenerations = Math.floor(nColors * 2) + 100;
         var nChildren = Math.floor(nColors * 0.6) + 5;
-        var bestEvaluation = ColorListGenerators._evaluationFunction(randomPositions);
+        var bestEvaluation = ColorListGenerators__ColorListGenerators._evaluationFunction(randomPositions);
         var child;
         var bestChildren = randomPositions;
         var j;
@@ -12930,9 +12930,9 @@ define('src/index', ['exports'], function (exports) {
 
         for(i = 0; i < nGenerations; i++) {
           for(j = 0; j < nChildren; j++) {
-            child = ColorListGenerators._sortingVariation(randomPositions, randomNumbersSource[nr], randomNumbersSource[nr + 1]);
+            child = ColorListGenerators__ColorListGenerators._sortingVariation(randomPositions, randomNumbersSource[nr], randomNumbersSource[nr + 1]);
             nr = (nr + 2) % 1001;
-            evaluation = ColorListGenerators._evaluationFunction(child);
+            evaluation = ColorListGenerators__ColorListGenerators._evaluationFunction(child);
             if(evaluation > bestEvaluation) {
               bestChildren = child;
               bestEvaluation = evaluation;
@@ -12958,7 +12958,7 @@ define('src/index', ['exports'], function (exports) {
     return colorList;
   };
 
-  ColorListGenerators._sortingVariation = function(numberList, rnd0, rnd1) { //private
+  ColorListGenerators__ColorListGenerators._sortingVariation = function(numberList, rnd0, rnd1) { //private
     var newNumberList = numberList.clone();
     var pos0 = Math.floor(rnd0 * newNumberList.length);
     var pos1 = Math.floor(rnd1 * newNumberList.length);
@@ -12967,7 +12967,7 @@ define('src/index', ['exports'], function (exports) {
     newNumberList[pos0] = cache;
     return newNumberList;
   };
-  ColorListGenerators._evaluationFunction = function(numberList) { //private
+  ColorListGenerators__ColorListGenerators._evaluationFunction = function(numberList) { //private
     var sum = 0;
     var i;
     for(i = 0; numberList[i + 1] != null; i++) {
@@ -12992,11 +12992,11 @@ define('src/index', ['exports'], function (exports) {
    * @return {Table} dictionary dictionary table with elemnts and matching colors
    * tags:generator
    */
-  ColorListGenerators.createCategoricalColorListForList = function(list, colorList, alpha, color, interpolate, invert)
+  ColorListGenerators__ColorListGenerators.createCategoricalColorListForList = function(list, colorList, alpha, color, interpolate, invert)
   {
 
     if(!list)
-      return new ColorList();
+      return new ColorList__default();
     if(!alpha)
       alpha = 1;
     if(!color)
@@ -13010,7 +13010,7 @@ define('src/index', ['exports'], function (exports) {
     if(colorList) {
       diffColors = colorList.getInterpolated(color, interpolate);
     } else {
-      diffColors = ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate);
+      diffColors = ColorListGenerators__ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate);
       //diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
     }
     diffColors = diffColors.addAlpha(alpha);
@@ -13020,7 +13020,7 @@ define('src/index', ['exports'], function (exports) {
     var colorDict = Table__default.fromArray([diffValues, diffColors]);
     var fullColorList = ListOperators__default.translateWithDictionary(list, colorDict, "NULL");
 
-    fullColorList = ColorList.fromArray(fullColorList);
+    fullColorList = ColorList__default.fromArray(fullColorList);
 
     return [
       {
@@ -13039,20 +13039,20 @@ define('src/index', ['exports'], function (exports) {
     ];
   };
 
-  exports.ColorListGenerators = ColorListGenerators;
+  exports.ColorListGenerators = ColorListGenerators__default;
 
-  function ColorListOperators() {}
-
+  function ColorListOperators__ColorListOperators() {}
+  var ColorListOperators__default = ColorListOperators__ColorListOperators;
 
   /**
    * receives n arguments and performs addition
    */
-  ColorListOperators.colorListFromColorScale = function(colorScale, nColors) {
+  ColorListOperators__ColorListOperators.colorListFromColorScale = function(colorScale, nColors) {
     return colorScale.getColorList.apply(colorScale, [nColors]);
   };
 
-  ColorListOperators.colorListFromColorScaleFunction = function(colorScaleFunction, nColors) {
-    var colorList = new ColorList();
+  ColorListOperators__ColorListOperators.colorListFromColorScaleFunction = function(colorScaleFunction, nColors) {
+    var colorList = new ColorList__default();
     var i;
     for(i = 0; i < nColors; i++) {
       colorList[i] = colorScaleFunction(i / (nColors - 1));
@@ -13061,12 +13061,12 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  ColorListOperators.colorListFromColorScaleFunctionAndNumberList = function(colorScaleFunction, numberList, normalize) {
+  ColorListOperators__ColorListOperators.colorListFromColorScaleFunctionAndNumberList = function(colorScaleFunction, numberList, normalize) {
     normalize = normalize == null ? true : normalize;
 
     if(normalize) numberList = numberList.getNormalized();
 
-    var colorList = new ColorList();
+    var colorList = new ColorList__default();
     var i;
     for(i = 0; numberList[i] != null; i++) {
       colorList[i] = colorScaleFunction(numberList[i]);
@@ -13076,16 +13076,16 @@ define('src/index', ['exports'], function (exports) {
 
 
 
-  ColorListOperators.polygon3DToColorList = function(polygon3D) {
+  ColorListOperators__ColorListOperators.polygon3DToColorList = function(polygon3D) {
     var nPoints = polygon3D.length;
-    var colorList = new ColorList();
+    var colorList = new ColorList__default();
     var i;
     for(i = 0; i < nPoints; i++) {
       colorList.push(ColorOperators__default.point3DToColor(polygon3D[i]));
     }
     return colorList;
   };
-  ColorListOperators.colorListToPolygon3D = function(colorList) {
+  ColorListOperators__ColorListOperators.colorListToPolygon3D = function(colorList) {
     var nColors = colorList.length;
     var polygon3D = new Polygon3D();
     var i;
@@ -13095,7 +13095,7 @@ define('src/index', ['exports'], function (exports) {
     return polygon3D;
   };
 
-  exports.ColorListOperators = ColorListOperators;
+  exports.ColorListOperators = ColorListOperators__default;
 
   /**
    * @classdesc Generate {@link ColorScale|ColorScales} with various properties.
@@ -14047,11 +14047,11 @@ define('src/index', ['exports'], function (exports) {
 
   exports.IntervalListOperators = IntervalListOperators;
 
-  function IntervalTableOperators() {}
+  function IntervalTableOperators__IntervalTableOperators() {}
+  var IntervalTableOperators__default = IntervalTableOperators__IntervalTableOperators;
 
 
-
-  IntervalTableOperators.scaleIntervals = function(intervalTable, value) {
+  IntervalTableOperators__IntervalTableOperators.scaleIntervals = function(intervalTable, value) {
     var newIntervalTable = new Table__default();
     newIntervalTable.name = intervalTable.name;
     for(var i = 0; intervalTable[i] !== null; i++) {
@@ -14060,7 +14060,7 @@ define('src/index', ['exports'], function (exports) {
     return newIntervalTable;
   };
 
-  exports.IntervalTableOperators = IntervalTableOperators;
+  exports.IntervalTableOperators = IntervalTableOperators__default;
 
   function MatrixGenerators() {}
 
@@ -14603,10 +14603,10 @@ define('src/index', ['exports'], function (exports) {
 
   exports.NumberTableConversions = NumberTableConversions;
 
-  function NumberTableFlowOperators() {}
+  function NumberTableFlowOperators__NumberTableFlowOperators() {}
+  var NumberTableFlowOperators__default = NumberTableFlowOperators__NumberTableFlowOperators;
 
-
-  NumberTableFlowOperators.getFlowTable = function(numberTable, normalized, include0s) {
+  NumberTableFlowOperators__NumberTableFlowOperators.getFlowTable = function(numberTable, normalized, include0s) {
     if(numberTable == null) return;
 
     normalized = normalized || false;
@@ -14703,10 +14703,10 @@ define('src/index', ['exports'], function (exports) {
     return flowTable;
   };
 
-  NumberTableFlowOperators.getFlowTableIntervals = function(numberTable, normalized, sorted, stacked) {
+  NumberTableFlowOperators__NumberTableFlowOperators.getFlowTableIntervals = function(numberTable, normalized, sorted, stacked) {
     if(numberTable == null) return null;
 
-    var table = NumberTableFlowOperators.getFlowTable(numberTable, normalized, true);
+    var table = NumberTableFlowOperators__NumberTableFlowOperators.getFlowTable(numberTable, normalized, true);
 
     var intervalTable = new Table__default();
     var i, j;
@@ -14768,7 +14768,7 @@ define('src/index', ['exports'], function (exports) {
     return intervalTable;
   };
 
-  exports.NumberTableFlowOperators = NumberTableFlowOperators;
+  exports.NumberTableFlowOperators = NumberTableFlowOperators__default;
 
   function NumberTableOperators() {}
 
@@ -15777,7 +15777,7 @@ define('src/index', ['exports'], function (exports) {
       case 'string_Object':
         return JSON.parse(object);
       case 'string_ColorScale':
-        return ColorScales[object]; //todo: not working, fix
+        return ColorScales__default[object]; //todo: not working, fix
       case 'string_Table':
         return TableEncodings.CSVtoTable(object);
       case 'StringList_DateList': //TODO: solve cases of lists
@@ -17237,7 +17237,7 @@ define('src/index', ['exports'], function (exports) {
     var i, j;
     var mapsCluster = new Table__default();
 
-    var colors = ColorListGenerators.createDefaultCategoricalColorList(networks.length).getInterpolated('black', 0.17).getInterpolated('white', 0.55);
+    var colors = ColorListGenerators__default.createDefaultCategoricalColorList(networks.length).getInterpolated('black', 0.17).getInterpolated('white', 0.55);
 
     networks.forEach(function(net, i) {
       mapsCluster[i] = new NodeList__default();
@@ -17460,7 +17460,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   DrawSimpleVis.drawSimpleBarChart = function(context, numberList, frame, colors) { //TODO: complete cases (numberLists with negative (and positive) values)
-    colors = colors == null ? ColorListOperators.colorListFromColorScale(new ColorScale()) : colors;
+    colors = colors == null ? ColorListOperators__default.colorListFromColorScale(new ColorScale__default()) : colors;
     frame = frame == null ? new Rectangle__default(10, 10, 400, 300) : frame;
 
     var dX = frame.width / numberList.length;
@@ -17741,7 +17741,7 @@ define('src/index', ['exports'], function (exports) {
     var i;
     var j;
 
-    colors = colors == null ? ColorListOperators.colorListFromColorScale(new ColorScale(ColorOperators__default.temperatureScale), nElements) : colors;
+    colors = colors == null ? ColorListOperators__default.colorListFromColorScale(new ColorScale__default(ColorOperators__default.temperatureScale), nElements) : colors;
     frame = frame == null ? new Rectangle__default(10, 10, 400, 300) : frame;
 
     var nCols = intervalsFlowTable[0].length;
@@ -17836,7 +17836,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.DrawSimpleVis = DrawSimpleVis;
 
-  function fRect(x, y, width, height) {
+  function SimpleGraphics__fRect(x, y, width, height) {
     if(typeof x != 'number') {
       y = x.y;
       width = x.width;
@@ -17859,7 +17859,7 @@ define('src/index', ['exports'], function (exports) {
    * sRect(10, 10, 40, 40);
    *
    */
-  function sRect(x, y, width, height) {
+  function SimpleGraphics__sRect(x, y, width, height) {
     if(typeof x != 'number') {
       y = x.y;
       width = x.width;
@@ -18052,7 +18052,7 @@ define('src/index', ['exports'], function (exports) {
    * setStroke('black');
    * line(0, 0, 40, 40);
    */
-  function line(x0, y0, x1, y1) {
+  function SimpleGraphics__line(x0, y0, x1, y1) {
     src_Global__context.beginPath();
     src_Global__context.moveTo(x0, y0);
     src_Global__context.lineTo(x1, y1);
@@ -18074,7 +18074,7 @@ define('src/index', ['exports'], function (exports) {
    * setStroke('black');
    * bezier(10, 10, 10, 0, 40, 0, 40, 10);
    */
-  function bezier(x0, y0, cx0, cy0, cx1, cy1, x1, y1) {
+  function SimpleGraphics__bezier(x0, y0, cx0, cy0, cx1, cy1, x1, y1) {
     src_Global__context.beginPath();
     src_Global__context.moveTo(x0, y0);
     src_Global__context.bezierCurveTo(cx0, cy0, cx1, cy1, x1, y1);
@@ -18111,7 +18111,7 @@ define('src/index', ['exports'], function (exports) {
       src_Global__context.lineTo(args[i], args[i + 1]);
       p.push(new Point__default(args[i], args[i + 1]));
     }
-    return p.containsPoint(mP);
+    return p.containsPoint(src_Global__mP);
   };
 
   /**
@@ -18126,7 +18126,7 @@ define('src/index', ['exports'], function (exports) {
    * fLines(10, 10, 40, 10, 40, 40);
    *
    */
-  function fLines() {
+  function SimpleGraphics__fLines() {
     _lines(arguments);
     src_Global__context.fill();
   };
@@ -18268,7 +18268,7 @@ define('src/index', ['exports'], function (exports) {
    *   fRect(10, 10, 40, 40);
    * }
    */
-  function fRectM(x, y, width, height, margin) {
+  function SimpleGraphics__fRectM(x, y, width, height, margin) {
     margin = margin == null ? 0 : margin;
     src_Global__context.fillRect(x, y, width, height);
     return src_Global__mY > y - margin && src_Global__mY < y + height + margin && src_Global__mX > x - margin && src_Global__mX < x + width + margin;
@@ -18293,7 +18293,7 @@ define('src/index', ['exports'], function (exports) {
    *   sRect(10, 10, 40, 40);
    * }
    */
-  function sRectM(x, y, width, height, margin) {
+  function SimpleGraphics__sRectM(x, y, width, height, margin) {
     margin = margin == null ? 0 : margin;
     src_Global__context.strokeRect(x, y, width, height);
     return src_Global__mY > y - margin && src_Global__mY < y + height + margin && src_Global__mX > x - margin && src_Global__mX < x + width + margin;
@@ -18321,7 +18321,7 @@ define('src/index', ['exports'], function (exports) {
    *   sRect(10, 10, 40, 40);
    * }
    */
-  function fsRectM(x, y, width, height, margin) {
+  function SimpleGraphics__fsRectM(x, y, width, height, margin) {
     margin = margin == null ? 0 : margin;
     src_Global__context.fillRect(x, y, width, height);
     src_Global__context.strokeRect(x, y, width, height);
@@ -18348,7 +18348,7 @@ define('src/index', ['exports'], function (exports) {
    * }
    *
    */
-  function fCircleM(x, y, r, margin) { //check if you can avoid repeat
+  function SimpleGraphics__fCircleM(x, y, r, margin) { //check if you can avoid repeat
     margin = margin == null ? 0 : margin;
     src_Global__context.beginPath();
     src_Global__context.arc(x, y, r, 0, src_Global__TwoPi);
@@ -18489,7 +18489,7 @@ define('src/index', ['exports'], function (exports) {
     src_Global__context.bezierCurveTo(cx0, cy0, cx1, cy1, x1, y1);
     src_Global__context.stroke();
     if(src_Global__mX < Math.min(x0, x1, cx0, cx1) - d || src_Global__mX > Math.max(x0, x1, cx0, cx1) + d || src_Global__mY < Math.min(y0, y1, cy0, cy1) - d || src_Global__mY > Math.max(y0, y1, cy0, cy1) + d) return false;
-    return GeometryOperators.distanceToBezierCurve(x0, y0, cx0, cy0, cx1, cy1, x1, y1, mP, false) < d;
+    return GeometryOperators__default.distanceToBezierCurve(x0, y0, cx0, cy0, cx1, cy1, x1, y1, src_Global__mP, false) < d;
   };
 
 
@@ -18503,7 +18503,7 @@ define('src/index', ['exports'], function (exports) {
    *	drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh)
    *	@param {Image} image
    */
-  function drawImage(image) { //TODO: improve efficiency
+  function SimpleGraphics__drawImage(image) { //TODO: improve efficiency
     if(image == null) return;
 
     switch(arguments.length) {
@@ -18541,7 +18541,7 @@ define('src/index', ['exports'], function (exports) {
 
   // styles
 
-  function setFill(style) {
+  function SimpleGraphics__setFill(style) {
     if(typeof style == "number") {
       if(arguments.length > 3) {
         src_Global__context.fillStyle = 'rgba(' + arguments[0] + ',' + arguments[1] + ',' + arguments[2] + ',' + arguments[3] + ')';
@@ -18564,7 +18564,7 @@ define('src/index', ['exports'], function (exports) {
    * setStroke(0,0,0,0.4); // sets stroke to black with partial opacity.
    * setStroke('black', 0.2); // provides lineWidth to stroke
    */
-  function setStroke(style, lineWidth) {
+  function SimpleGraphics__setStroke(style, lineWidth) {
     if(typeof style == "number") {
       if(arguments.length > 3) {
         src_Global__context.strokeStyle = 'rgba(' + arguments[0] + ',' + arguments[1] + ',' + arguments[2] + ',' + arguments[3] + ')';
@@ -18586,7 +18586,7 @@ define('src/index', ['exports'], function (exports) {
 
   //clipping
 
-  function clipCircle(x, y, r) {
+  function SimpleGraphics__clipCircle(x, y, r) {
     src_Global__context.save();
     src_Global__context.beginPath();
     src_Global__context.arc(x, y, r, 0, src_Global__TwoPi, false);
@@ -18594,7 +18594,7 @@ define('src/index', ['exports'], function (exports) {
     src_Global__context.clip();
   };
 
-  function clipRectangle(x, y, w, h) {
+  function SimpleGraphics__clipRectangle(x, y, w, h) {
     src_Global__context.save();
     src_Global__context.beginPath();
     src_Global__context.moveTo(x, y);
@@ -18604,7 +18604,7 @@ define('src/index', ['exports'], function (exports) {
     src_Global__context.clip();
   };
 
-  function restore() {
+  function SimpleGraphics__restore() {
     src_Global__context.restore();
   };
 
@@ -18625,7 +18625,7 @@ define('src/index', ['exports'], function (exports) {
    * fText("hello", 10, 10);
    *
    */
-  function fText(text, x, y) {
+  function SimpleGraphics__fText(text, x, y) {
     src_Global__context.fillText(text, x, y);
   };
 
@@ -18664,7 +18664,7 @@ define('src/index', ['exports'], function (exports) {
    * fsText("hello", 10, 10);
    *
    */
-  function fsText(text, x, y) {
+  function SimpleGraphics__fsText(text, x, y) {
     src_Global__context.strokeText(text, x, y);
     src_Global__context.fillText(text, x, y);
   };
@@ -18684,7 +18684,7 @@ define('src/index', ['exports'], function (exports) {
    * fTextRotated("hello", 40, 40, (20 * Math.PI / 180));
    *
    */
-  function fTextRotated(text, x, y, angle) {
+  function SimpleGraphics__fTextRotated(text, x, y, angle) {
     src_Global__context.save();
     src_Global__context.translate(x, y);
     src_Global__context.rotate(angle);
@@ -18825,7 +18825,7 @@ define('src/index', ['exports'], function (exports) {
     src_Global__context.textBaseline = baseline;
   };
 
-  function getTextW(text) {
+  function SimpleGraphics__getTextW(text) {
     return src_Global__context.measureText(text).width;
   };
 
@@ -18897,8 +18897,8 @@ define('src/index', ['exports'], function (exports) {
     return _ms;
   };
 
-  exports.fRect = fRect;
-  exports.sRect = sRect;
+  exports.fRect = SimpleGraphics__fRect;
+  exports.sRect = SimpleGraphics__sRect;
   exports.fsRect = fsRect;
   exports.fCircle = fCircle;
   exports.sCircle = sCircle;
@@ -18906,9 +18906,9 @@ define('src/index', ['exports'], function (exports) {
   exports.fEllipse = fEllipse;
   exports.sEllipse = sEllipse;
   exports.fsEllipse = fsEllipse;
-  exports.line = line;
-  exports.bezier = bezier;
-  exports.fLines = fLines;
+  exports.line = SimpleGraphics__line;
+  exports.bezier = SimpleGraphics__bezier;
+  exports.fLines = SimpleGraphics__fLines;
   exports.sLines = sLines;
   exports.fsLines = fsLines;
   exports.fsLinesM = fsLinesM;
@@ -18918,32 +18918,32 @@ define('src/index', ['exports'], function (exports) {
   exports.fEqTriangle = fEqTriangle;
   exports.sEqTriangle = sEqTriangle;
   exports.fsEqTriangle = fsEqTriangle;
-  exports.fRectM = fRectM;
-  exports.sRectM = sRectM;
-  exports.fsRectM = fsRectM;
-  exports.fCircleM = fCircleM;
+  exports.fRectM = SimpleGraphics__fRectM;
+  exports.sRectM = SimpleGraphics__sRectM;
+  exports.fsRectM = SimpleGraphics__fsRectM;
+  exports.fCircleM = SimpleGraphics__fCircleM;
   exports.sCircleM = sCircleM;
   exports.fsCircleM = fsCircleM;
   exports.lineM = lineM;
   exports.bezierM = bezierM;
-  exports.drawImage = drawImage;
+  exports.drawImage = SimpleGraphics__drawImage;
   exports.fitImage = fitImage;
-  exports.setFill = setFill;
-  exports.setStroke = setStroke;
+  exports.setFill = SimpleGraphics__setFill;
+  exports.setStroke = SimpleGraphics__setStroke;
   exports.setLW = setLW;
-  exports.clipCircle = clipCircle;
-  exports.clipRectangle = clipRectangle;
-  exports.restore = restore;
-  exports.fText = fText;
+  exports.clipCircle = SimpleGraphics__clipCircle;
+  exports.clipRectangle = SimpleGraphics__clipRectangle;
+  exports.restore = SimpleGraphics__restore;
+  exports.fText = SimpleGraphics__fText;
   exports.sText = sText;
-  exports.fsText = fsText;
-  exports.fTextRotated = fTextRotated;
+  exports.fsText = SimpleGraphics__fsText;
+  exports.fTextRotated = SimpleGraphics__fTextRotated;
   exports.fTextM = fTextM;
   exports.fsTextM = fsTextM;
   exports.fTextRotatedM = fTextRotatedM;
   exports.fTextW = fTextW;
   exports.setText = SimpleGraphics__setText;
-  exports.getTextW = getTextW;
+  exports.getTextW = SimpleGraphics__getTextW;
   exports.getPixelData = getPixelData;
   exports.getPixelColor = getPixelColor;
   exports.getPixelColorRGBA = getPixelColorRGBA;
@@ -18951,11 +18951,11 @@ define('src/index', ['exports'], function (exports) {
   exports.setCursor = SimpleGraphics__setCursor;
   exports.getMilliseconds = getMilliseconds;
 
-  function DrawTexts() {}
+  function DrawTexts__DrawTexts() {}
+  var DrawTexts__default = DrawTexts__DrawTexts;
 
-
-  DrawTexts.POINT_TO_PIXEL = 1.3333;
-  DrawTexts.PIXEL_TO_POINT = 0.75;
+  DrawTexts__DrawTexts.POINT_TO_PIXEL = 1.3333;
+  DrawTexts__DrawTexts.PIXEL_TO_POINT = 0.75;
 
 
   // /**
@@ -18985,9 +18985,9 @@ define('src/index', ['exports'], function (exports) {
   // }
 
 
-  DrawTexts.fillTextRectangle = function(text, x, y, width, height, lineHeight, returnHeight, ellipsis) {
-    var textLines = DrawTexts.textWordWrapReturnLines(text, width, height, lineHeight, ellipsis);
-    return DrawTexts.fillTextRectangleWithTextLines(textLines, x, y, height, lineHeight, returnHeight);
+  DrawTexts__DrawTexts.fillTextRectangle = function(text, x, y, width, height, lineHeight, returnHeight, ellipsis) {
+    var textLines = DrawTexts__DrawTexts.textWordWrapReturnLines(text, width, height, lineHeight, ellipsis);
+    return DrawTexts__DrawTexts.fillTextRectangleWithTextLines(textLines, x, y, height, lineHeight, returnHeight);
   };
 
   /**
@@ -18997,7 +18997,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Number} y
    * @param {Number} angle in radians
    */
-  DrawTexts.fillTextRotated = function(text, x, y, angle) { //TODO: remove (replaced by fTextRotated in SimpleGraphics)
+  DrawTexts__DrawTexts.fillTextRotated = function(text, x, y, angle) { //TODO: remove (replaced by fTextRotated in SimpleGraphics)
     src_Global__context.save();
     src_Global__context.translate(x, y);
     src_Global__context.rotate(angle);
@@ -19006,7 +19006,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  DrawTexts.fillTextRectangleWithTextLines = function(textLines, x, y, height, lineHeight, returnHeight) {
+  DrawTexts__DrawTexts.fillTextRectangleWithTextLines = function(textLines, x, y, height, lineHeight, returnHeight) {
     height = height == 0 || height == null ? 99999 : height;
 
     for(var i = 0; textLines[i] != null; i++) {
@@ -19018,7 +19018,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  DrawTexts.textWordWrapReturnLines = function(text, fitWidth, fitHeight, lineHeight, ellipsis) {
+  DrawTexts__DrawTexts.textWordWrapReturnLines = function(text, fitWidth, fitHeight, lineHeight, ellipsis) {
     fitWidth = fitWidth || 100;
     fitHeight = fitHeight || 600;
     lineHeight = lineHeight || 16;
@@ -19086,16 +19086,16 @@ define('src/index', ['exports'], function (exports) {
 
     return lines;
   };
-  DrawTexts.getMaxTextWidth = function(texts) {
-    var max = getTextW(texts[0]);
+  DrawTexts__DrawTexts.getMaxTextWidth = function(texts) {
+    var max = SimpleGraphics__getTextW(texts[0]);
     for(var i = 1; texts[i] != null; i++) {
-      max = Math.max(max, getTextW(texts[i]));
+      max = Math.max(max, SimpleGraphics__getTextW(texts[i]));
     }
     return max;
   };
 
 
-  DrawTexts.cropString = function(ctx, string, fitWidth) {
+  DrawTexts__DrawTexts.cropString = function(ctx, string, fitWidth) {
     if(string == null) return;
     fitWidth = fitWidth || 0;
 
@@ -19119,7 +19119,7 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
-  exports.DrawTexts = DrawTexts;
+  exports.DrawTexts = DrawTexts__default;
 
   function DrawTextsAdvanced() {}
 
@@ -19759,7 +19759,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   TextBox.prototype.getMaxWidth = function() {
-    return DrawTexts.getMaxTextWidth(this.lines);
+    return DrawTexts__default.getMaxTextWidth(this.lines);
   };
 
   TextBox.prototype.update = function() {
@@ -19839,7 +19839,7 @@ define('src/index', ['exports'], function (exports) {
 
     setText(this.fontColor, this.fontSize, this.fontName, null, null, this.fontStyle);
 
-    this.lines = DrawTexts.textWordWrapReturnLines(this.text, this.width, 0, this.lineHeight);
+    this.lines = DrawTexts__default.textWordWrapReturnLines(this.text, this.width, 0, this.lineHeight);
     this.height = this.lines.length * this.lineHeight;
 
 
@@ -19899,7 +19899,7 @@ define('src/index', ['exports'], function (exports) {
     }
     //DrawTexts.setContextTextProperties(this.fontColor, this.fontSize*scale, this.fontName, null, null, this.fontStyle);
     setText(this.fontColor, this.fontSize * scale, this.fontName, null, null, this.fontStyle);
-    DrawTexts.fillTextRectangleWithTextLines(this.lines, this.x, this.y, 0, this.lineHeight * scale);
+    DrawTexts__default.fillTextRectangleWithTextLines(this.lines, this.x, this.y, 0, this.lineHeight * scale);
 
     var x0;
     var x1;
@@ -21563,6 +21563,3168 @@ define('src/index', ['exports'], function (exports) {
   };
 
   exports.Engine3D = Engine3D;
+
+  function CountryListDraw() {}
+
+
+
+  CountryListDraw.drawCountriesAsCircles = function(context, countryList, radiusList, frame, geoFrame, colors) {
+    geoFrame = geoFrame == null ? new Rectangle__default(-180, -90, 360, 180) : geoFrame;
+    colors = colors == null ? ColorListGenerators__default.createColorListWithSingleColor(countryList.length, 'rgba(100,100,100,0.6)') : colors;
+
+    var dX = frame.width / geoFrame.width;
+    var dY = frame.height / geoFrame.height;
+
+    var country;
+
+    for(var i = 0; countryList[i] != null; i++) {
+      if(radiusList[i] < 0.5) continue;
+
+      country = countryList[i];
+
+      context.fillStyle = colors[i];
+      context.beginPath();
+      context.arc(frame.x + dX * (country.geoCenter.x - geoFrame.x), frame.getBottom() - dY * (country.geoCenter.y - geoFrame.y), radiusList[i], 0, src_Global__TwoPi);
+      context.fill();
+    }
+  };
+
+  CountryListDraw.drawCountriesPolygons = function(context, countryList, frame, geoFrame, colors, lineWidth, lineColor) {
+    geoFrame = geoFrame == null ? new Rectangle__default(-180, -90, 360, 180) : geoFrame;
+    colors = colors == null ? ColorListGenerators__default.createColorListWithSingleColor(countryList.length, 'rgba(100,100,100,0.6)') : colors;
+
+    var dX = frame.width / geoFrame.width;
+    var dY = frame.height / geoFrame.height;
+
+    var country;
+    var polygonList;
+    var polygon;
+
+    if(lineWidth != null) context.lineWidth = lineWidth;
+    if(lineColor != null) context.strokeStyle = lineColor;
+
+    for(var i = 0; countryList[i] != null; i++) {
+      country = countryList[i];
+
+      polygonList = country.polygonList;
+
+      context.fillStyle = colors[i];
+
+      for(var j = 0; polygonList[j] != null; j++) {
+        polygon = polygonList[j];
+        context.beginPath();
+        context.moveTo(frame.x + dX * (polygon[0].x - geoFrame.x), frame.getBottom() - dY * (polygon[0].y - geoFrame.y));
+        for(var k = 1; polygon[k] != null; k++) {
+          context.lineTo(frame.x + dX * (polygon[k].x - geoFrame.x), frame.getBottom() - dY * (polygon[k].y - geoFrame.y));
+        }
+        context.fill();
+        if(lineWidth != null) context.stroke();
+      }
+    }
+  };
+
+  exports.CountryListDraw = CountryListDraw;
+
+  function CirclesVisOperators() {}
+
+
+  CirclesVisOperators.circlesCloud = function(weights, frame, margin) {
+    if(weights == null ||  weights.length == 0) return null;
+
+    margin = margin == null ? 0 : margin;
+
+    var normWeights = weights.getNormalizedToMax().sqrt();
+    var circlesPlaced = new Polygon3D();
+
+    console.log('  o', weights.length, normWeights);
+
+    var dL = 6;
+
+    var a = 0;
+    var r = 0;
+
+    var px = 0;
+    var py = 0;
+    var center = frame.getCenter();
+    var rMax = normWeights[0] * 100;
+    var rCircle;
+    var firstR;
+
+    var prop = frame.width / frame.height;
+
+    for(var i = 0; normWeights[i] != null; i++) {
+      rCircle = normWeights[i] * 100;
+      if(i == 0) {
+        px = center.x;
+        py = center.y;
+        firstR = rCircle;
+      } else {
+        a = 0; //i*0.5;
+        r = firstR + rCircle + margin + 0.1;
+        while(CirclesVisOperators._pointInCircles(circlesPlaced, px, py, rCircle, margin)) { //StringListVisOperators._pointInRectangles(rectanglesPlaced, px, py, w, h, margin)){
+          r += 0.1;
+          a += r * 0.005;
+
+          px = center.x + prop * r * Math.cos(a);
+          py = center.y + r * Math.sin(a);
+        }
+        rMax = Math.max(rMax, prop * r + normWeights[i] * 100);
+      }
+
+      circlesPlaced[i] = new Point3D(px, py, rCircle);
+    }
+
+    var circle;
+    prop = 0.5 * frame.width / (rMax + 0.001);
+    for(i = 0; circlesPlaced[i] != null; i++) {
+      circle = circlesPlaced[i];
+      circle.x = center.x + (circle.x - center.x) * prop;
+      circle.y = center.y + (circle.y - center.y) * prop;
+      circle.z *= prop;
+    }
+
+    return circlesPlaced;
+  };
+
+  CirclesVisOperators._pointInCircles = function(circles, px, py, r, margin) {
+    var circle;
+    for(var i = 0; circles[i] != null; i++) {
+      circle = circles[i];
+      if(Math.pow(circle.x - px, 2) + Math.pow(circle.y - py, 2) < Math.pow(circle.z + r + margin, 2)) return true;
+    }
+    return false;
+  };
+
+  exports.CirclesVisOperators = CirclesVisOperators;
+
+  function ColorsDraw() {}
+
+
+  /**
+   * draws a color scale, with optional min and max associated values
+   * @param  {Rectangle} frame
+   * @param  {ColorScale} colorScale
+   *
+   * @param  {Number} minValue value associated to min color
+   * @param  {Number} maxValue value associated to max color
+   * tags:draw
+   */
+  ColorsDraw.drawColorScaleLegend = function(frame, colorScale, minValue, maxValue) {
+    // TODO refactor this to import context from Global and not reassign it.
+    var change = frame.memory == null || frame.width != frame.memory.w || frame.height != frame.memory.h || colorScale != frame.memory.cS || minValue != frame.memory.min || maxValue != frame.memory.max;
+
+    if(change) {
+      frame.memory = {
+        w: frame.width,
+        h: frame.height,
+        cS: colorScale,
+        min: minValue,
+        max: maxValue
+      };
+
+      ///// capture image 1
+      var newCanvas = document.createElement("canvas");
+      newCanvas.width = frame.width;
+      newCanvas.height = frame.height;
+      var newContext = newCanvas.getContext("2d");
+      newContext.clearRect(0, 0, frame.width, frame.height);
+      var mainContext = context;
+      context = newContext;
+      /////
+
+      var x;
+
+      if(frame.width > frame.height) {
+
+        for(x = 0; x < frame.width; x += 2) {
+          setFill(colorScale(x / frame.width));
+          fRect(x, 0, 2, frame.height);
+        }
+
+        setStroke('rgba(0,0,0,0.8)', 3);
+
+        if(minValue != null) {
+          setText('white', 12, null, 'left', 'middle');
+          fsText(minValue, 2, frame.height * 0.5);
+        }
+
+        if(maxValue != null) {
+          setText('white', 12, null, 'right', 'middle');
+          fsText(maxValue, frame.width - 2, frame.height * 0.5);
+        }
+      } else {
+
+        //finis this, with color scale going uppwards, and texts for min max values
+
+        for(x = 0; x < frame.height; x += 2) {
+          setFill(colorScale(x / frame.height));
+          fRect(0, x, frame.width, 2);
+        }
+      }
+
+
+
+
+      //// capture image 2
+      context = mainContext;
+      frame.memory.image = new Image();
+      frame.memory.image.src = newCanvas.toDataURL();
+      ////
+    }
+
+
+    if(frame.memory.image) {
+      drawImage(frame.memory.image, frame.x, frame.y);
+    }
+
+  };
+
+  exports.ColorsDraw = ColorsDraw;
+
+  function ImageDraw() {}
+
+
+  /**
+   * draws an image
+   * @param  {Rectangle} frame
+   * @param  {Image} image to be drawn
+   *
+   * @param  {Number} mode: 0: adjust to rectangle, 1: center and mask, 2: center and eventual reduction (image smaller than rectangle), 3: adjust to rectangle preserving proportions (image bigger than rectangle), 4: fill repeated from corner, 5: fill repeated from 0,0
+   * tags:draw
+   */
+  ImageDraw.drawImage = function(frame, image, mode) {
+    mode = mode || 0;
+    Draw.fillRectangleWithImage(frame, image, mode);
+  };
+
+
+  /**
+   * draws a visualization and captures an image
+   * @param  {String} visFunction visualization function
+   * @param  {Number} width
+   * @param  {Number} height
+   *
+   * @param {Object} argument0 first argument of the visualization function
+   * @param {Object} argument1 second argument of the visualization function
+   * @param {Object} argument2 third argument of the visualization function
+   * @param {Object} argument3 fourth argument of the visualization function
+   * @return {Image}
+   * tags:
+   */
+  ImageDraw.captureVisualizationImage = function(visFunctionName, width, height) {
+    // TODO refactor this to import context from Global and not reassign it.
+
+    console.log('visFunctionName', visFunctionName);
+    if(visFunctionName == null ||  width == null || (!width > 0) || height == null || !(height > 0)) return;
+
+    var frame = new Rectangle__default(0, 0, width, height);
+
+    var args = Array.prototype.slice.call(arguments);
+    args = [frame].concat(args.slice(3));
+
+    var visFunction;
+
+    if(visFunctionName.indexOf('.') == -1) {
+      visFunction = this[visFunctionName];
+    } else {
+      console.log(visFunctionName.split('.')[0], this[visFunctionName.split('.')[0]], this.mY);
+      if(this[visFunctionName.split('.')[0]] == null) return;
+      visFunction = this[visFunctionName.split('.')[0]][visFunctionName.split('.')[1]];
+    }
+
+    if(visFunction == null) return null;
+
+    console.log('ImageDraw.captureVisualizationImage | args', args);
+    console.log('ImageDraw.captureVisualizationImage | visFunction==null', visFunction == null);
+
+    var newCanvas = document.createElement("canvas");
+    newCanvas.width = width;
+    newCanvas.height = height;
+    var newContext = newCanvas.getContext("2d");
+    newContext.clearRect(0, 0, width, height);
+
+    var mainContext = context;
+    context = newContext;
+
+    ////draw
+    //setStroke('black', 2);
+    //line(0,0,width,height);
+    //line(width,0,0,height);
+    visFunction.apply(this, args);
+    ////
+
+    context = mainContext;
+
+    var im = new Image();
+    im.src = newCanvas.toDataURL();
+
+    return im;
+  };
+
+  exports.ImageDraw = ImageDraw;
+
+  function ListDraw() {}
+
+
+  /**
+   * draws a list in a vertical stack
+   * @param  {Rectangle} frame
+   * @param  {List} list to be drawn
+   *
+   * @param {Number} returnMode:<br>-1:no selection<br>0:return index<br>1:return element<br>2:indexes<br>3:elements
+   * @param  {ColorList} colorList colors of elements
+   * @param {Number} textSize
+   * @param  {Number} mode 0:color in square if any
+   * @param {Object} [varname] index or list of indexes of externally selected
+   * @return {Object} returns the index of the selected element, the element, a list of indexes or a list of elements
+   * tags:draw
+   */
+  ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode, selectedInit) {
+    if(list == null || !list.length > 0) return;
+
+    textSize = textSize || 14;
+    returnMode = returnMode == null ? 0 : returnMode;
+
+    if(frame.memory == null) frame.memory = { selected: 0, y: 0, multiSelected: new List__default() };
+
+    var changeList = frame.memory.list != list;
+    var changeExternallySelected = (changeList && selectedInit != null) || frame.memory.selectedInit != selectedInit;
+
+    if(changeExternallySelected) {
+      if(returnMode == 3) {
+        frame.memory.multiSelected = new List__default();
+        selectedInit.forEach(function(index) {
+          frame.memory.multiSelected.push(list[index]);
+        });
+      } else if(returnMode == 2) {
+        frame.memory.multiSelected = List__default.fromArray(selectedInit).getImproved();
+      } else {
+        frame.memory.selected = selectedInit;
+      }
+
+      frame.memory.selectedInit = selectedInit;
+    }
+
+    if(changeList) {
+      frame.memory.list = list;
+    }
+
+    var i;
+    var x = frame.x + 5;
+    var xTexts = x + (colorList ? 15 : 0);
+    var y;
+    var dy = textSize + 4;
+    var n = list.length;
+    var bottom = frame.getBottom();
+    var mouseIn = frame.containsPoint(mP);
+    var y0Follow = 0;
+    var y0;
+    var isSelected;
+    var multi = returnMode == 2 || returnMode == 3;
+    var index, onMulti;
+
+    var hList = list.length * dy;
+
+    if(hList <= frame.height - 20) {
+      y0 = frame.y + 10;
+    } else {
+      if(mouseIn) {
+        y0Follow = Math.min(10 - (hList - frame.height + 20) * ((src_Global__mY - (frame.y + 10)) / (frame.height - 20)), 10);
+      } else {
+        y0Follow = 10 - (hList - frame.height + 20) * frame.memory.selected / list.length;
+      }
+
+      frame.memory.y = 0.95 * frame.memory.y + 0.05 * y0Follow;
+
+      y0 = frame.y + frame.memory.y;
+    }
+
+
+    SimpleGraphics__setText('black', textSize);
+
+    for(i = 0; list[i] != null; i++) {
+      y = y0 + dy * i;
+
+      if(y < frame.y) continue;
+      if(y + 12 > bottom) break;
+
+
+
+      if(returnMode != -1) {
+
+        index = frame.memory.multiSelected.indexOf(i);
+        onMulti = multi && index != -1;
+
+        isSelected = multi ? onMulti : frame.memory.selected == i;
+
+        if(isSelected) {
+          SimpleGraphics__setFill('black');
+          SimpleGraphics__fRect(frame.x + 2, y, frame.width - 4, dy);
+          SimpleGraphics__setFill('white');
+        } else {
+          SimpleGraphics__setFill('black');
+        }
+        SimpleGraphics__fText(list[i].toString(), xTexts, y + 2);
+
+        if(mouseIn && src_Global__mY >= y && src_Global__mY < y + dy) {
+          SimpleGraphics__setFill('rgba(150,150,150,0.3)');
+          if(SimpleGraphics__fRectM(frame.x + 2, y, frame.width - 4, dy)) {
+            SimpleGraphics__setCursor('pointer');
+          }
+          if(src_Global__MOUSE_DOWN) {
+            if(multi) {
+
+              if(onMulti) {
+                frame.memory.multiSelected = frame.memory.multiSelected.getWithoutElementAtIndex(index);
+              } else {
+                frame.memory.multiSelected = frame.memory.multiSelected.clone();
+                frame.memory.multiSelected.push(returnMode == 2 ? i : list[i]);
+                frame.memory.multiSelected = frame.memory.multiSelected.getImproved();
+              }
+
+            } else {
+              frame.memory.selected = i;
+            }
+          }
+        }
+      } else {
+        SimpleGraphics__setFill('black');
+      }
+
+      if(colorList) {
+        SimpleGraphics__setFill(colorList == null ? 'rgb(200, 200, 200)' : colorList[i % n]);
+        SimpleGraphics__fRect(x, y + 4, 10, 10);
+      }
+
+    }
+
+    return returnMode == 1 ? list[frame.memory.selected] : (multi ? frame.memory.multiSelected : frame.memory.selected);
+  };
+
+  exports.ListDraw = ListDraw;
+
+  function IntervalTableDraw__IntervalTableDraw() {}
+  var IntervalTableDraw__default = IntervalTableDraw__IntervalTableDraw;
+
+  IntervalTableDraw__IntervalTableDraw.MIN_CHARACTERS_SIZE = 1;
+
+  IntervalTableDraw__IntervalTableDraw.drawIntervalsFlowTable = function(intervalsFlowTable, frame, colors, bezier, offValue) { //, returnHovered){ //TODO: implement rollover detection, using _isOnShape (below)
+    frame = frame == null ? new Rectangle__default(10, 10, 400, 300) : frame;
+    colors = colors == null ? ColorListGenerators__default.createCategoricalColors(0, intervalsFlowTable.length, ColorScales__default.temperature) : colors;
+    bezier = bezier || false;
+    offValue = offValue == null ? 0.45 : offValue;
+
+    var nElements = intervalsFlowTable.length;
+    var i;
+    var j;
+
+    var nCols = intervalsFlowTable[0].length;
+    var dX = frame.width / (nCols - 1);
+    var dY = frame.height;
+
+    var point;
+
+    var intervalList;
+    var lastIntervalList = intervalsFlowTable[nElements - 1];
+    var sY = 0;
+    var mY = 0;
+    var x = frame.x;
+    var y = frame.y;
+
+    var prevPoint;
+    var prevYsup;
+    var prevsY;
+    var newYsup;
+
+    var offX;
+
+    //var nHovered = -1;
+
+    for(i = 0; intervalsFlowTable[i] != null; i++) {
+      intervalList = intervalsFlowTable[i];
+
+      src_Global__context.fillStyle = colors[i];
+      src_Global__context.beginPath();
+
+      sY = y;
+
+      point = new Point__default(x, intervalList[0].y * dY + sY);
+      src_Global__context.moveTo(point.x, point.y);
+
+      prevPoint = point;
+
+      for(j = 1; j < nCols; j++) {
+        sY = y;
+
+        point = new Point__default(j * dX + x, intervalList[j].y * dY + sY);
+
+        if(bezier) {
+          offX = (point.x - prevPoint.x) * offValue;
+          src_Global__context.bezierCurveTo(prevPoint.x + offX, prevPoint.y, point.x - offX, point.y, point.x, point.y);
+        } else {
+          src_Global__context.lineTo(point.x, point.y);
+        }
+
+        prevPoint = point;
+      }
+
+      point = new Point__default((nCols - 1) * dX + x, intervalList[nCols - 1].x * dY + sY);
+      src_Global__context.lineTo(point.x, point.y);
+      prevPoint = point;
+
+      for(j = nCols - 2; j >= 0; j--) {
+        sY = y;
+
+        point = new Point__default(j * dX + x, intervalList[j].x * dY + sY);
+
+        if(bezier) {
+          offX = (point.x - prevPoint.x) * offValue;
+          src_Global__context.bezierCurveTo(prevPoint.x + offX, prevPoint.y, point.x - offX, point.y, point.x, point.y);
+
+          // if(returnHovered && nHovered==-1 && IntervalTableDraw._isOnShape(prevPoint, point, intervalList[j-1].y*dY+sY, intervalList[j].y*dY+sY, offX, mX, mY)){
+          // nHovered = i;
+          // }
+
+        } else {
+          src_Global__context.lineTo(point.x, point.y);
+        }
+
+        prevPoint = point;
+      }
+
+      point = new Point__default(x, intervalList[0].x * dY + sY);
+      src_Global__context.lineTo(point.x, point.y);
+
+      src_Global__context.fill();
+
+    }
+
+    //return nHovered;
+  };
+  IntervalTableDraw__IntervalTableDraw._isOnShape = function(prevPoint, point, prevYsup, newYsup, offX, testX, textY) {
+    var t = (testX - prevPoint.x) / (point.x - prevPoint.x);
+    var u = 1 - t;
+
+    //Y INF
+    this.p0.x = prevPoint.x + t * offX;
+    this.p0.y = prevPoint.y;
+    this.p1.x = u * (prevPoint.x + offX) + t * (point.x - offX);
+    this.p1.y = u * prevPoint.y + t * point.y;
+    this.p2.x = point.x - u * offX;
+    this.p2.y = point.y;
+
+    this.P0.x = u * this.p0.x + t * this.p1.x;
+    this.P0.y = u * this.p0.y + t * this.p1.y;
+
+    this.P1.x = u * this.p1.x + t * this.p2.x;
+    this.P1.y = u * this.p1.y + t * this.p2.y;
+
+    var mYInf = u * this.P0.y + t * this.P1.y;
+
+    //Y SUP
+    this.p0.y = prevYsup;
+    this.p1.y = u * prevYsup + t * newYsup;
+    this.p2.y = newYsup;
+
+    this.P0.y = u * this.p0.y + t * this.p1.y;
+    this.P1.y = u * this.p1.y + t * this.p2.y;
+
+    var mYSup = u * this.P0.y + t * this.P1.y;
+
+    return textY > mYSup && textY < mYInf;
+  };
+
+
+
+  IntervalTableDraw__IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, center, radius, r0, colors, texts, returnHovered, angles, angle0) {
+    var nElements = intervalsFlowTable.length;
+    var i;
+    var j;
+
+    colors = colors == null ? ColorListOperators.colorListFromColorScale(new ColorScale(ColorOperators.temperatureScale), nElements) : colors;
+    center = center == null ? new Point__default(100, 100) : center;
+    radius = radius == null ? 200 : radius;
+    r0 = r0 == null ? 10 : r0;
+    angle0 = angle0 == null ? 0 : angle0;
+
+    var nCols = intervalsFlowTable[0].length;
+    var dA = src_Global__TwoPi / nCols;
+    var dR = (radius - r0);
+
+    var point;
+
+    var intervalList;
+    var lastIntervalList = intervalsFlowTable[nElements - 1];
+    var interval;
+
+    var r = r0;
+    var s, textS;
+
+    var prevPoint;
+    var prevRsup;
+    var prevsR;
+    var newRsup;
+
+    var breaks = false;
+
+    var nR;
+    var nR2;
+
+    var offA = dA * 0.3;
+    var cosOffA = Math.cos(offA);
+
+    var s;
+    var amp;
+    var rT;
+
+    var xT;
+    var yT;
+
+    var nHovered = -1;
+
+    var filteredTexts = [];
+    var textsX = [];
+    var textsY = [];
+    var textsSizes = [];
+    var textsAngles = [];
+
+    for(i = 0; i < nElements; i++) {
+
+      intervalList = intervalsFlowTable[i];
+
+      src_Global__context.fillStyle = colors[i % nElements];
+
+      src_Global__context.beginPath();
+
+      point = new Point__default(angles == null ? 0 : angles[0] + angle0, (1 - intervalList[0].y) * dR + r0);
+      src_Global__context.moveTo(point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
+
+      prevPoint = point;
+
+      for(j = 1; j <= nCols; j++) {
+
+        interval = intervalList[j % nCols];
+        point = new Point__default(angles == null ? j * dA : angles[j % nCols] + angle0, (1 - interval.y) * dR + r0);
+
+        nR = prevPoint.y / cosOffA;
+        nR2 = point.y / cosOffA;
+
+        src_Global__context.bezierCurveTo(nR * Math.cos(prevPoint.x + offA) + center.x, nR * Math.sin(prevPoint.x + offA) + center.y,
+          nR2 * Math.cos(point.x - offA) + center.x, nR2 * Math.sin(point.x - offA) + center.y,
+          point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
+
+        if(returnHovered && nHovered == -1 && this._isOnRadialShape(center, mP, prevPoint.x, point.x, dR * (1 - intervalList[(j - 1) % nCols].y) + r0, dR * (1 - intervalList[(j - 1) % nCols].x) + r0, dR * (1 - intervalList[j % nCols].y) + r0, dR * (1 - intervalList[j % nCols].x) + r0)) {
+          nHovered = i;
+        }
+
+        prevPoint = point;
+
+        if(texts != null) {
+          s = interval.getAmplitude();
+          textS = Math.min(Math.sqrt(s * radius) * 3, 28);
+          if(textS >= 8) {
+            rT = point.y + s * 0.5 * dR;
+
+            textsSizes.push(textS);
+            textsAngles.push(point.x + Math.PI * 0.5);
+
+            textsX.push(rT * Math.cos(point.x) + center.x);
+            textsY.push(rT * Math.sin(point.x) + center.y);
+
+            filteredTexts.push(texts[i]);
+          }
+        }
+      }
+
+      point = new Point__default(angles == null ? 0 : angles[0] + angle0, (1 - intervalList[0].x) * dR + r0);
+      src_Global__context.lineTo(point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
+      prevPoint = point;
+
+      for(j = nCols - 1; j >= 0; j--) {
+        point = new Point__default(angles == null ? j * dA : angles[j] + angle0, (1 - intervalList[j].x) * dR + r0);
+
+        nR = prevPoint.y / cosOffA;
+        nR2 = point.y / cosOffA;
+
+        src_Global__context.bezierCurveTo(nR * Math.cos(prevPoint.x - offA) + center.x, nR * Math.sin(prevPoint.x - offA) + center.y,
+          nR2 * Math.cos(point.x + offA) + center.x, nR2 * Math.sin(point.x + offA) + center.y,
+          point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
+
+        prevPoint = point;
+      }
+
+      point = new Point__default(angles == null ? 0 : angles[0] + angle0, (1 - intervalList[0].x) * dR + r0);
+      src_Global__context.lineTo(point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
+
+      src_Global__context.fill();
+
+    }
+
+    for(i = 0; filteredTexts[i] != null; i++) {
+      setText('black', textsSizes[i], null, 'center', 'middle');
+      fTextRotated(filteredTexts[i], textsX[i], textsY[i], textsAngles[i]);
+    }
+
+    return nHovered;
+  };
+
+  IntervalTableDraw__IntervalTableDraw._isOnRadialShape = function(center, testPoint, a0, a1, r0a, r0b, r1a, r1b) {
+    if(a1 < a0) a1 += src_Global__TwoPi;
+
+    var ang = center.angleToPoint(testPoint);
+
+    if(ang < 0) ang += src_Global__TwoPi;
+    if(ang > src_Global__TwoPi) ang -= src_Global__TwoPi;
+
+    if(ang + src_Global__TwoPi < a1) ang += src_Global__TwoPi;
+    if(ang - src_Global__TwoPi > a0) ang -= src_Global__TwoPi;
+
+    if(ang < a0 || ang > a1) return false;
+    var dA = a1 - a0;
+    var t = (ang - a0) / dA;
+
+    var pa = GeometryOperators__default.bezierCurvePoints(a0, r0a, a0 + dA * 0.5, r0a, a1 - dA * 0.5, r1a, a1, r1a, t);
+    var pb = GeometryOperators__default.bezierCurvePoints(a0, r0b, a0 + dA * 0.25, r0b, a1 - dA * 0.25, r1b, a1, r1b, t);
+
+    r = testPoint.subtract(center).getNorm();
+
+    return r > pa.y && r < pb.y;
+  };
+
+
+
+  IntervalTableDraw__IntervalTableDraw.drawIntervalsWordsFlowTable = function(frame, intervalsFlowTable, texts, colors, typode) {
+    var nElements = intervalsFlowTable.length;
+
+    var i;
+    var j;
+
+    colors = colors == null ? ColorListGenerators__default.createCategoricalColors(0, intervalsFlowTable.length, ColorScales__default.temperature) : colors;
+    frame = frame == null ? new Rectangle__default(10, 10, 400, 300) : frame;
+
+    var nCols = intervalsFlowTable[0].length;
+    var dX = frame.width / (nCols - 1);
+    var dY = frame.height;
+
+    var point0;
+    var point1;
+
+    var nextPoint0;
+    var nextPoint1;
+
+    var point0Prev = new Point__default();
+    var point1Prev = new Point__default();
+
+    var center;
+    var size;
+
+    var intervalList;
+    var lastIntervalList = intervalsFlowTable[nElements - 1];
+    var sY = 0;
+    var x = frame.x;
+    var y = frame.y;
+
+    var offX;
+
+    var text;
+
+    if(!typode) src_Global__context.strokeStyle = "rgba(255,255,255,0.4)";
+
+    src_Global__context.textBaseline = "top";
+    src_Global__context.textAlign = "left";
+
+    var position;
+    var xx;
+    var t;
+    var jumpX = dX;
+    var valueLastInterval;
+    var valueX;
+    var valueY;
+    var nChar;
+    var selectedChar;
+    var charWidth;
+    var fontSize;
+
+    var offX;
+
+    var factX = (nCols - 1) / frame.width;
+
+    var xj0;
+    var xj1;
+
+
+    for(i = 0; intervalsFlowTable[i] != null; i++) {
+      intervalList = intervalsFlowTable[i];
+
+      text = " " + texts[i];
+
+      xx = 0;
+      nChar = 0;
+
+      position = 0;
+      j = 0;
+      t = 0;
+
+      sY = (1 - lastIntervalList[0].y) * 0.5 * dY + y;
+      point0 = new Point__default(x, intervalList[0].x * dY + sY);
+      point1 = new Point__default(x, intervalList[0].y * dY + sY);
+
+      do {
+        nChar++;
+        size = (point1.y - point0.y);
+        fontSize = Math.floor(0.3 * size + 1);
+        if(!typode) src_Global__context.font = fontSize + 'px ' + LOADED_FONT;
+        selectedChar = text.charAt(nChar % text.length);
+        charWidth = typode ? fontSize * widthsTypode[selectedChar] : src_Global__context.measureText(selectedChar).width + 2;
+        jumpX = charWidth * 0.9 || 1;
+
+        xx += jumpX;
+        position = factX * xx;
+        j = Math.floor(position);
+        t = position - j;
+
+
+        if(j + 2 > nCols) continue;
+
+        xj0 = j / factX;
+        xj1 = (j + 1) / factX;
+
+        offX = factX * 0.45;
+
+        valueLastInterval = IntervalTableDraw__IntervalTableDraw._bezierValue(xj0, xj1, lastIntervalList[j].y, lastIntervalList[j + 1].y, t, offX);
+
+
+        prevsY = sY;
+        sY = (1 - valueLastInterval) * 0.5 * dY + y;
+
+
+        point0Prev.x = point0.x;
+        point0Prev.y = point0.y;
+        point1Prev.x = point1.x;
+        point1Prev.y = point1.y;
+
+
+        valueX = IntervalTableDraw__IntervalTableDraw._bezierValue(xj0, xj1, intervalList[j].x, intervalList[j + 1].x, t, offX);
+        valueY = IntervalTableDraw__IntervalTableDraw._bezierValue(xj0, xj1, intervalList[j].y, intervalList[j + 1].y, t, offX);
+
+
+        point0 = new Point__default(xx + x, valueX * dY + sY);
+        point1 = new Point__default(xx + x, valueY * dY + sY);
+
+        center = new Point__default(point0Prev.x + jumpX * 0.5, (point0.y + point1.y + point0Prev.y + point1Prev.y) * 0.25);
+
+        typode ? src_Global__context.strokeStyle = colors[i] : src_Global__context.fillStyle = colors[i];
+
+
+        if(size > IntervalTableDraw__IntervalTableDraw.MIN_CHARACTERS_SIZE) {
+          if(typode) {
+            DrawTextsAdvanced.typodeOnQuadrilater(selectedChar, point0Prev, point0, point1, point1Prev);
+          } else {
+            src_Global__context.save();
+            src_Global__context.globalAlpha = size / 15;
+            DrawTextsAdvanced.textOnQuadrilater(src_Global__context, selectedChar, point0Prev, point0, point1, point1Prev, fontSize, 1);
+            src_Global__context.restore();
+          }
+
+        }
+      } while (j + 1 < nCols);
+    }
+  };
+  IntervalTableDraw__IntervalTableDraw._bezierValue = function(x0, x1, y0, y1, t, offX) {
+    var u = 1 - t;
+    var p0 = new Point__default(x0 + t * offX, y0);
+    var p1 = new Point__default(u * (x0 + offX) + t * (x1 - offX), u * y0 + t * y1);
+    var p2 = new Point__default(x1 - u * offX, y1);
+
+    var P0 = new Point__default(u * p0.x + t * p1.x, u * p0.y + t * p1.y);
+    var P1 = new Point__default(u * p1.x + t * p2.x, u * p1.y + t * p2.y);
+
+    return u * P0.y + t * P1.y;
+  };
+
+  exports.IntervalTableDraw = IntervalTableDraw__default;
+
+  function NumberTableDraw() {}
+
+
+  /**
+   * draws a matrix, with cells colors associated to values from a ColorScale
+   * @param  {Rectangle} frame
+   * @param  {NumberTable} numberTable
+   *
+   * @param  {ColorScale} colorScale
+   * @param  {Boolean} listColorsIndependent if true each numberList will be colored to fit the colorScale range
+   * @param  {Number} margin
+   * @return {Point}
+   * tags:draw
+   */
+  NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listColorsIndependent, margin) {
+    if(frame == null ||  numberTable == null || numberTable.type == null || numberTable.type != "NumberTable" ||  numberTable.length < 2) return null;
+
+    colorScale = colorScale == null ? ColorScales.blueToRed : colorScale;
+    listColorsIndependent = listColorsIndependent || false;
+    margin = margin == null ? 2 : margin;
+
+    var dX = frame.width / numberTable.length;
+    var dY = frame.height / numberTable[0].length;
+
+    var i;
+    var j;
+    var numberList;
+    var x;
+
+    var overCoordinates;
+
+    var minMaxInterval;
+    var amp;
+    if(!listColorsIndependent) {
+      minMaxInterval = numberTable.getMinMaxInterval();
+      amp = minMaxInterval.getAmplitude();
+    }
+
+    var mouseXOnColumn;
+
+    for(i = 0; numberTable[i] != null; i++) {
+      numberList = numberTable[i];
+      x = Math.round(frame.x + i * dX);
+      mouseXOnColumn = mX > x && mX <= x + dX;
+      if(listColorsIndependent) {
+        minMaxInterval = numberList.getMinMaxInterval();
+        amp = minMaxInterval.getAmplitude();
+      }
+      for(j = 0; numberList[j] != null; j++) {
+        context.fillStyle = colorScale((numberList[j] - minMaxInterval.x) / amp);
+        context.fillRect(x, Math.round(frame.y + j * dY), Math.ceil(dX) - margin, Math.ceil(dY) - margin);
+        if(mouseXOnColumn && mY > frame.y + j * dY && mY <= frame.y + (j + 1) * dY) overCoordinates = new Point(i, j);
+      }
+    }
+
+    return overCoordinates;
+  };
+
+  /**
+   * draws a ScatterPlot, if the provided NumberTable contains a third NumberList it also draws circles
+   * @param  {Rectangle} frame
+   * @param  {NumberTable} numberTable with two lists
+   *
+   * @param  {StringList} texts
+   * @param  {ColorList} colors
+   * @param  {Number} maxRadius
+   * @param  {Boolean} loglog logarithmical scale for both axis
+   * @param  {Number} margin in pixels
+   * @return {Number} index of rollovered element
+   * tags:draw
+   */
+  NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colors, maxRadius, loglog, margin) {
+    if(frame == null ||  numberTable == null || numberTable.type != "NumberTable" ||  numberTable.length < 2 ||  numberTable[0].length == 0 || numberTable[1].length == 0) return; //todo:provisional, this is System's work
+
+    if(numberTable.length < 2) return;
+
+    maxRadius = maxRadius || 20;
+    loglog = loglog || false;
+    margin = margin || 0;
+
+    var subframe = new Rectangle(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
+    subframe.bottom = subframe.getBottom();
+
+    var i;
+    var x, y;
+    var list0 = (loglog ? numberTable[0].log(1) : numberTable[0]).getNormalized();
+    var list1 = (loglog ? numberTable[1].log(1) : numberTable[1]).getNormalized();
+    var radii = numberTable.length <= 2 ? null : numberTable[2].getNormalized().sqrt().factor(maxRadius);
+    var nColors = (colors == null) ? null : colors.length;
+    var n = Math.min(list0.length, list1.length, (radii == null) ? 300000 : radii.length, (texts == null) ? 300000 : texts.length);
+    var iOver;
+
+    for(i = 0; i < n; i++) {
+      x = subframe.x + list0[i] * subframe.width;
+      y = subframe.bottom - list1[i] * subframe.height;
+
+      if(radii == null) {
+        if(NumberTableDraw._drawCrossScatterPlot(x, y, colors == null ? 'rgb(150,150,150)' : colors[i % nColors])) iOver = i;
+      } else {
+        setFill(colors == null ? 'rgb(150,150,150)' : colors[i % nColors]);
+        if(fCircleM(x, y, radii[i], radii[i] + 1)) iOver = i;
+      }
+      if(texts != null) {
+        setText('black', 10);
+        fText(texts[i], x, y);
+      }
+    }
+
+    if(margin > 7 && list0.name != "" && list1.name != "") {
+      setText('black', 10, null, 'right', 'middle');
+      fText(list0.name, subframe.getRight() - 2, subframe.bottom + margin * 0.5);
+      fTextRotated(list1.name, subframe.x - margin * 0.5, subframe.y + 1, -HalfPi);
+    }
+
+    if(iOver != null) {
+      setCursor('pointer');
+      return iOver;
+    }
+  };
+  NumberTableDraw._drawCrossScatterPlot = function(x, y, color) {
+    setStroke(color, 1);
+    line(x, y - 2, x, y + 2);
+    line(x - 2, y, x + 2, y);
+    return Math.pow(mX - x, 2) + Math.pow(mY - y, 2) < 25;
+  };
+
+  /**
+   * draws a slopegraph
+   * @param  {Rectangle} frame
+   * @param  {NumberTable} numberTable with at least two numberLists
+   * @param  {StringList} texts
+   * @return {Object}
+   * tags:draw
+   */
+  NumberTableDraw.drawSlopeGraph = function(frame, numberTable, texts) {
+    if(frame == null ||  numberTable == null || numberTable.type != "NumberTable") return; //todo:provisional, this is System's work
+
+    if(numberTable.length < 2) return;
+
+    var margin = 16;
+    var subframe = new Rectangle(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
+    subframe.bottom = subframe.getBottom();
+
+    var i;
+    var y0, y1;
+    var list0 = numberTable[0].getNormalized();
+    var list1 = numberTable[1].getNormalized();
+    var n = Math.min(list0.length, list1.length, texts == null ? 2000 : texts.length);
+
+    var x0 = subframe.x + (texts == null ? 10 : 0.25 * subframe.width);
+    var x1 = subframe.getRight() - (texts == null ? 10 : 0.25 * subframe.width);
+
+    setStroke('black', 1);
+
+    for(i = 0; i < n; i++) {
+      y0 = subframe.bottom - list0[i] * subframe.height;
+      y1 = subframe.bottom - list1[i] * subframe.height;
+
+      line(x0, y0, x1, y1);
+
+      if(texts != null && (subframe.bottom - y0) >= 9) {
+        setText('black', 9, null, 'right', 'middle');
+        fText(texts[i], x0 - 2, y0);
+      }
+      if(texts != null && (subframe.bottom - y1) >= 9) {
+        setText('black', 9, null, 'left', 'middle');
+        fText(texts[i], x1 + 2, y1);
+      }
+    }
+  };
+
+
+  /**
+   * based on a integers NumberTable draws a a matrix of rectangles with colors associated to number of elelments in overCoordinates
+   * @param  {Rectangle} frame
+   * @param  {Object} coordinates, it could be a polygon, or a numberTable with two lists
+   *
+   * @param  {ColorScale} colorScale
+   * @param  {Number} margin
+   * @return {NumberList} list of positions of elements on clicked coordinates
+   * tags:draw
+   */
+  NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, margin) {
+    if(coordinates == null || coordinates[0] == null) return;
+
+    colorScale = colorScale == null ?
+  								ColorScales.whiteToRed
+  								:
+      typeof colorScale == 'string' ?
+  									ColorScales[colorScale]
+  									:
+      colorScale;
+    margin = margin || 0;
+
+    var i, j;
+    var x, y;
+    var minx, miny;
+    var matrixColors;
+
+
+    //setup
+    if(frame.memory == null || coordinates != frame.memory.coordinates || colorScale != frame.memory.colorScale) {
+
+      var isNumberTable = coordinates[0].x == null;
+
+      if(isNumberTable) {
+        var numberTable = coordinates;
+        if(numberTable == null ||  numberTable.length < 2 || numberTable.type != "NumberTable") return;
+      } else {
+        var polygon = coordinates;
+      }
+
+      var max = 0;
+      var nCols = 0;
+      var nLists = 0;
+      var matrix = new NumberTable();
+      var n = isNumberTable ? numberTable[0].length : polygon.length;
+
+      matrixColors = new Table();
+
+      if(isNumberTable) {
+        minx = numberTable[0].getMin();
+        miny = numberTable[1].getMin();
+      } else {
+        minx = polygon[0].x;
+        miny = polygon[0].y;
+        for(i = 1; i < n; i++) {
+          minx = Math.min(polygon[i].x, minx);
+          miny = Math.min(polygon[i].y, miny);
+        }
+      }
+
+
+      for(i = 0; i < n; i++) {
+        if(isNumberTable) {
+          x = Math.floor(numberTable[0][i] - minx);
+          y = Math.floor(numberTable[1][i] - miny);
+        } else {
+          x = Math.floor(polygon[i].x - minx);
+          y = Math.floor(polygon[i].y - miny);
+        }
+
+        if(matrix[x] == null) matrix[x] = new NumberList();
+        if(matrix[x][y] == null) matrix[x][y] = 0;
+        matrix[x][y]++;
+        max = Math.max(max, matrix[x][y]);
+        nCols = Math.max(nCols, x + 1);
+        nLists = Math.max(nLists, y + 1);
+      }
+
+      for(i = 0; i < nCols; i++) {
+        if(matrix[i] == null) matrix[i] = new NumberList();
+        matrixColors[i] = new ColorList();
+        for(j = 0; j < nLists; j++) {
+          if(matrix[i][j] == null) matrix[i][j] = 0;
+          matrixColors[i][j] = colorScale(matrix[i][j] / max);
+        }
+      }
+      frame.memory = {
+        matrixColors: matrixColors,
+        coordinates: coordinates,
+        colorScale: colorScale,
+        selected: null
+      };
+
+    } else {
+      matrixColors = frame.memory.matrixColors;
+    }
+
+    //c.log(matrixColors.length, matrixColors[0].length, matrixColors[0][0]);
+
+    //draw
+    var subframe = new Rectangle(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
+    subframe.bottom = subframe.getBottom();
+    var dx = subframe.width / matrixColors.length;
+    var dy = subframe.height / matrixColors[0].length;
+    var prevSelected = frame.memory.selected;
+
+    if(MOUSE_UP_FAST) frame.memory.selected = null;
+
+    for(i = 0; matrixColors[i] != null; i++) {
+      for(j = 0; matrixColors[0][j] != null; j++) {
+        setFill(matrixColors[i][j]);
+        if(fRectM(subframe.x + i * dx, subframe.bottom - (j + 1) * dy, dx + 0.5, dy + 0.5) && MOUSE_UP_FAST) {
+          frame.memory.selected = [i, j];
+        }
+      }
+    }
+
+
+    //selection
+    if(frame.memory.selected) {
+      setStroke('white', 5);
+      sRect(subframe.x + frame.memory.selected[0] * dx - 1, subframe.bottom - (frame.memory.selected[1] + 1) * dy - 1, dx + 1, dy + 1);
+      setStroke('black', 1);
+      sRect(subframe.x + frame.memory.selected[0] * dx - 1, subframe.bottom - (frame.memory.selected[1] + 1) * dy - 1, dx + 1, dy + 1);
+    }
+
+    if(prevSelected != frame.memory.selected) {
+      if(frame.memory.selected == null) {
+        frame.memory.indexes = null;
+      } else {
+        minx = numberTable[0].getMin();
+        miny = numberTable[1].getMin();
+
+        x = frame.memory.selected[0] + minx;
+        y = frame.memory.selected[1] + miny;
+
+        frame.memory.indexes = new NumberList();
+
+        for(i = 0; numberTable[0][i] != null; i++) {
+          if(numberTable[0][i] == x && numberTable[1][i] == y) frame.memory.indexes.push(i);
+        }
+      }
+
+    }
+
+    if(frame.memory.selected) return frame.memory.indexes;
+  };
+
+  /**
+   * draws a steamgraph
+   * @param  {Rectangle} frame
+   * @param  {NumberTable} numberTable
+   *
+   * @param {Boolean} normalized normalize each column, making the graph of constant height
+   * @param {Boolean} sorted sort flow polygons
+   * @param {Number} intervalsFactor number between 0 and 1, factors the height of flow polygons
+   * @param {Boolean} bezier draws bezier (soft) curves
+   * @param {ColorList} colorList colors of polygons
+   * @param {StringList} horizontalLabels to be placed in the bottom
+   * @param {Boolean} showValues show values in the stream
+   * @param {Number} logFactor if >0 heights will be transformed logaritmically log(logFactor*val + 1)
+   * @return {NumberList} list of positions of elements on clicked coordinates
+   * tags:draw
+   */
+  NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, bezier, colorList, horizontalLabels, showValues, logFactor) {
+    if(numberTable == null ||  numberTable.length < 2 || numberTable.type != "NumberTable") return;
+
+    bezier = bezier == null ? true : bezier;
+
+    //var self = NumberTableDraw.drawStreamgraph;
+
+    intervalsFactor = intervalsFactor == null ? 1 : intervalsFactor;
+
+    //setup
+    if(frame.memory == null || numberTable != frame.memory.numberTable || normalized != frame.memory.normalized || sorted != frame.memory.sorted || intervalsFactor != frame.memory.intervalsFactor || bezier != frame.memory.bezier || frame.width != frame.memory.width || frame.height != frame.memory.height || logFactor != frame.memory.logFactor) {
+  		var nT2 = logFactor?numberTable.applyFunction(function(val){return Math.log(logFactor*val+1);}):numberTable;
+
+      frame.memory = {
+        numberTable: numberTable,
+        normalized: normalized,
+        sorted: sorted,
+        intervalsFactor: intervalsFactor,
+        bezier: bezier,
+        flowIntervals: IntervalTableOperators.scaleIntervals(NumberTableFlowOperators.getFlowTableIntervals(nT2, normalized, sorted), intervalsFactor),
+        fOpen: 1,
+        names: numberTable.getNames(),
+        mXF: mX,
+        width: frame.width,
+        height: frame.height,
+        logFactor: logFactor,
+        image: null
+      };
+    }
+
+    if(colorList && frame.memory.colorList != colorList) frame.memory.image = null;
+
+    if(frame.memory.colorList != colorList || frame.memory.colorList == null) {
+      frame.memory.actualColorList = colorList == null ? ColorListGenerators.createDefaultCategoricalColorList(numberTable.length, 0.7) : colorList;
+      frame.memory.colorList = colorList;
+    }
+
+    var flowFrame = new Rectangle(0, 0, frame.width, horizontalLabels == null ? frame.height : (frame.height - 14));
+
+    if(frame.memory.image == null) {
+      ///// capture image
+      var newCanvas = document.createElement("canvas");
+      newCanvas.width = frame.width;
+      newCanvas.height = frame.height;
+      var newContext = newCanvas.getContext("2d");
+      newContext.clearRect(0, 0, frame.width, frame.height);
+      var mainContext = context;
+      context = newContext;
+      IntervalTableDraw.drawIntervalsFlowTable(frame.memory.flowIntervals, flowFrame, frame.memory.actualColorList, bezier, 0.3);
+      context = mainContext;
+      frame.memory.image = new Image();
+      frame.memory.image.src = newCanvas.toDataURL();
+      /////
+    }
+
+    if(frame.memory.image) {
+
+      frame.memory.fOpen = 0.8 * frame.memory.fOpen + 0.2 * (frame.containsPoint(mP) ? 0.8 : 1);
+      frame.memory.mXF = 0.7 * frame.memory.mXF + 0.3 * mX;
+      frame.memory.mXF = Math.min(Math.max(frame.memory.mXF, frame.x), frame.getRight());
+
+      if(frame.memory.fOpen < 0.999) {
+        context.save();
+        context.translate(frame.x, frame.y);
+        var cut = frame.memory.mXF - frame.x;
+        var x0 = Math.floor(cut * frame.memory.fOpen);
+        var x1 = Math.ceil(frame.width - (frame.width - cut) * frame.memory.fOpen);
+
+        drawImage(frame.memory.image, 0, 0, cut, flowFrame.height, 0, 0, x0, flowFrame.height);
+        drawImage(frame.memory.image, cut, 0, (frame.width - cut), flowFrame.height, x1, 0, (frame.width - cut) * frame.memory.fOpen, flowFrame.height);
+
+        NumberTableDraw._drawPartialFlow(flowFrame, frame.memory.flowIntervals, frame.memory.names, frame.memory.actualColorList, cut, x0, x1, 0.3, sorted, showValues ? numberTable : null);
+
+        context.restore();
+      } else {
+        drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+      }
+    }
+
+    if(horizontalLabels) NumberTableDraw._drawHorizontalLabels(frame, frame.getBottom() - 5, numberTable, horizontalLabels, x0, x1);
+  };
+  NumberTableDraw._drawHorizontalLabels = function(frame, y, numberTable, horizontalLabels, x0, x1) {
+    var dx = frame.width / (numberTable[0].length - 1);
+    var x;
+    var mX2 = Math.min(Math.max(mX, frame.x + 1), frame.getRight() - 1);
+    var iPosDec = (mX2 - frame.x) / dx;
+    var iPos = Math.round(iPosDec);
+
+    x0 = x0 == null ? frame.x : x0 + frame.x;
+    x1 = x1 == null ? frame.x : x1 + frame.x;
+
+    horizontalLabels.forEach(function(label, i) {
+      setText('black', (i == iPos && x1 > (x0 + 4)) ? 14 : 10, null, 'center', 'middle');
+
+      if(x0 > x1 - 5) {
+        x = frame.x + i * dx;
+      } else if(iPos == i) {
+        x = (x0 + x1) * 0.5 - (x1 - x0) * (iPosDec - iPos);
+      } else {
+        x = frame.x + i * dx;
+        if(x < mX2) {
+          x = frame.x + i * dx * frame.memory.fOpen;
+        } else if(x > mX2) {
+          x = frame.x + i * dx * frame.memory.fOpen + (x1 - x0);
+        }
+      }
+      fText(horizontalLabels[i], x, y);
+    });
+  };
+  NumberTableDraw._drawPartialFlow = function(frame, flowIntervals, labels, colors, x, x0, x1, OFF_X, sorted, numberTable) {
+    var w = x1 - x0;
+    var wForText = numberTable == null ? (x1 - x0) : (x1 - x0) * 0.85;
+
+    var nDays = flowIntervals[0].length;
+
+    var wDay = frame.width / (nDays - 1);
+
+    var iDay = (x - frame.x) / wDay; // Math.min(Math.max((nDays-1)*(x-frame.x)/frame.width, 0), nDays-1);
+
+    var iDay = Math.max(Math.min(iDay, nDays - 1), 0);
+
+    var i;
+    var i0 = Math.floor(iDay);
+    var i1 = Math.ceil(iDay);
+
+    var t = iDay - i0;
+    var s = 1 - t;
+
+    var xi;
+    var yi;
+
+    var interval0;
+    var interval1;
+
+    var y, h;
+
+    var wt;
+    var pt;
+
+    var text;
+
+    var offX = OFF_X * wDay; //*(frame.width-(x1-x0))/nDays; //not taken into account
+
+    //var previOver = iOver;
+    var iOver = -1;
+
+    var X0, X1, xx;
+
+    var ts0, ts1;
+
+    for(i = 0; flowIntervals[i] != null; i++) {
+
+      setFill(colors[i]);
+      interval0 = flowIntervals[i][i0];
+      interval1 = flowIntervals[i][i1];
+
+      X0 = Math.floor(iDay) * wDay;
+      X1 = Math.floor(iDay + 1) * wDay;
+
+      xx = x;
+
+      y = GeometryOperators.trueBezierCurveHeightHorizontalControlPoints(X0, X1, interval0.x, interval1.x, X0 + offX, X1 - offX, xx);
+      h = GeometryOperators.trueBezierCurveHeightHorizontalControlPoints(X0, X1, interval0.y, interval1.y, X0 + offX, X1 - offX, xx) - y;
+
+      y = y * frame.height + frame.y;
+      h *= frame.height;
+
+      //if(h<1) continue;
+
+      if(fRectM(x0, y, w, h)) iOver = i;
+
+      if(h >= 5 && w > 40) {
+        setText('white', h, null, null, 'middle');
+
+        text = labels[i];
+
+        wt = getTextW(text);
+        pt = wt / wForText;
+
+        if(pt > 1) {
+          setText('white', h / pt, null, null, 'middle');
+        }
+
+        context.fillText(text, x0, y + h * 0.5);
+
+        if(numberTable) {
+          wt = getTextW(text);
+
+          ts0 = Math.min(h, h / pt);
+          ts1 = Math.max(ts0 * 0.6, 8);
+
+          setText('white', ts1, null, null, 'middle');
+          fText(Math.round(numberTable[i][i0]), x0 + wt + w * 0.03, y + (h + (ts0 - ts1) * 0.5) * 0.5);
+        }
+
+
+      }
+    }
+
+    return iOver;
+  };
+
+
+
+  /**
+   * draws a circular steamgraph Without labels
+   * @param {Rectangle} frame
+   * @param {NumberTable} numberTable
+   *
+   * @param {Boolean} normalized normalize each column, making the graph of constant height
+   * @param {Boolean} sorted sort flow polygons
+   * @param {Number} intervalsFactor number between 0 and 1, factors the height of flow polygons
+   * @param {ColorList} colorList colors of polygons
+   * @param {List} names names of rows
+   * @return {NumberList} list of positions of elements on clicked coordinates
+   * tags:draw
+   */
+  NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, colorList, names) {
+    if(numberTable == null ||  numberTable.length < 2 || numberTable[0].length < 2 || numberTable.type != "NumberTable") return;
+
+    intervalsFactor = intervalsFactor == null ? 1 : intervalsFactor;
+
+    //setup
+    if(frame.memory == null || numberTable != frame.memory.numberTable || normalized != frame.memory.normalized || sorted != frame.memory.sorted || intervalsFactor != frame.memory.intervalsFactor || frame.width != frame.memory.width || frame.height != frame.memory.height) {
+      frame.memory = {
+        numberTable: numberTable,
+        normalized: normalized,
+        sorted: sorted,
+        intervalsFactor: intervalsFactor,
+        flowIntervals: IntervalTableOperators.scaleIntervals(NumberTableFlowOperators.getFlowTableIntervals(numberTable, normalized, sorted), intervalsFactor),
+        fOpen: 1,
+        names: numberTable.getNames(),
+        mXF: mX,
+        width: frame.width,
+        height: frame.height,
+        radius: Math.min(frame.width, frame.height) * 0.46 - (names == null ? 0 : 8),
+        r0: Math.min(frame.width, frame.height) * 0.05,
+        angles: new NumberList(),
+        zoom: 1,
+        angle0: 0,
+        image: null
+      };
+
+      var dA = TwoPi / numberTable[0].length;
+      numberTable[0].forEach(function(val, i) {
+        frame.memory.angles[i] = i * dA;
+      });
+    }
+    if(frame.memory.colorList != colorList || frame.memory.colorList == null) {
+      frame.memory.actualColorList = colorList == null ? ColorListGenerators.createDefaultCategoricalColorList(numberTable.length, 0.4) : colorList;
+      frame.memory.colorList = colorList;
+    }
+
+    var mouseOnFrame = frame.containsPoint(mP);
+
+    if(mouseOnFrame) {
+      if(MOUSE_DOWN) {
+        frame.memory.downX = mX;
+        frame.memory.downY = mY;
+        frame.memory.pressed = true;
+        frame.memory.zoomPressed = frame.memory.zoom;
+        frame.memory.anglePressed = frame.memory.angle0;
+      }
+
+      frame.memory.zoom *= (1 - 0.4 * WHEEL_CHANGE);
+    }
+
+    if(MOUSE_UP) frame.memory.pressed = false;
+    if(frame.memory.pressed) {
+      var center = frame.getCenter();
+      var dx0 = frame.memory.downX - center.x;
+      var dy0 = frame.memory.downY - center.y;
+      var d0 = Math.sqrt(Math.pow(dx0, 2) + Math.pow(dy0, 2));
+      var dx1 = mX - center.x;
+      var dy1 = mY - center.y;
+      var d1 = Math.sqrt(Math.pow(dx1, 2) + Math.pow(dy1, 2));
+      frame.memory.zoom = frame.memory.zoomPressed * ((d1 + 5) / (d0 + 5));
+      var a0 = Math.atan2(dy0, dx0);
+      var a1 = Math.atan2(dy1, dx1);
+      frame.memory.angle0 = frame.memory.anglePressed + a1 - a0;
+    }
+
+    if(mouseOnFrame) frame.memory.image = null;
+
+    var captureImage = frame.memory.image == null && !mouseOnFrame;
+    var drawingImage = !mouseOnFrame && frame.memory.image != null &&  !captureImage;
+
+    if(drawingImage) {
+      drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+    } else {
+      if(captureImage) {
+        var newCanvas = document.createElement("canvas");
+        newCanvas.width = frame.width;
+        newCanvas.height = frame.height;
+        var newContext = newCanvas.getContext("2d");
+        newContext.clearRect(0, 0, frame.width, frame.height);
+        var mainContext = context;
+        context = newContext;
+        var prevFx = frame.x;
+        var prevFy = frame.y;
+        frame.x = 0;
+        frame.y = 0;
+        setFill('white');
+        fRect(0, 0, frame.width, frame.height);
+      }
+
+      context.save();
+      clipRectangle(frame.x, frame.y, frame.width, frame.height);
+
+      IntervalTableDraw.drawCircularIntervalsFlowTable(frame.memory.flowIntervals, frame.getCenter(), frame.memory.radius * frame.memory.zoom, frame.memory.r0, frame.memory.actualColorList, frame.memory.names, true, frame.memory.angles, frame.memory.angle0);
+
+      context.restore();
+
+      if(names) {
+        var a;
+        var r = frame.memory.radius * frame.memory.zoom + 8;
+
+        setText('black', 14, null, 'center', 'middle');
+
+        names.forEach(function(name, i) {
+          a = frame.memory.angle0 + frame.memory.angles[i];
+
+          fTextRotated(String(name), frame.getCenter().x + r * Math.cos(a), frame.getCenter().y + r * Math.sin(a), a + HalfPi);
+        });
+      }
+
+
+      if(captureImage) {
+        context = mainContext;
+        frame.memory.image = new Image();
+        frame.memory.image.src = newCanvas.toDataURL();
+        frame.x = prevFx;
+        frame.y = prevFy;
+        drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+      }
+    }
+  };
+
+  exports.NumberTableDraw = NumberTableDraw;
+
+  function NumberListDraw() {};
+
+
+  /**
+   * draws a simple graph
+   * @param  {Rectangle} frame
+   * @param  {NumberList} numberList
+   *
+   * @param {Number} margin
+   * @param {Object} xValues horizontal values, could be a stringList, a numberList or an Interval
+   * @return {Number} index of element clicked
+   * tags:draw
+   */
+  NumberListDraw.drawSimpleGraph = function(frame, numberList, margin, xValues) {
+    if(numberList == null || numberList.getNormalized == null) return;
+
+    margin = margin || 0;
+
+    //setup
+    if(frame.memory == null || numberList != frame.memory.numberList) {
+      frame.memory = {
+        numberList: numberList,
+        minmax: numberList.getMinMaxInterval(),
+        zero: null
+      };
+      if(frame.memory.minmax.x > 0 && frame.memory.minmax.y > 0) {
+        frame.memory.normalizedList = numberList.getNormalizedToMax();
+      } else {
+        frame.memory.normalizedList = numberList.getNormalized();
+        frame.memory.zero = -frame.memory.minmax.x / frame.memory.minmax.getAmplitude();
+      }
+
+      frame.memory.xTexts = new StringList__default();
+
+      if(xValues != null && xValues.type == "Interval") {
+        var kx = (xValues.getAmplitude() + 1) / numberList.length;
+      }
+
+      numberList.forEach(function(val, i) {
+        frame.memory.xTexts[i] = (xValues == null) ? String(numberList[i]) : ((kx == null ? xValues[i] : (xValues.x + i * kx)) + ":" + numberList[i]);
+      });
+    }
+
+    var i;
+    var subframe = new Rectangle__default(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
+    subframe.bottom = subframe.getBottom();
+    var x;
+    var dx = subframe.width / numberList.length;
+    var overI = -1;
+
+    var mouseOnFrame = subframe.containsPoint(mP);
+    var normalColor = mouseOnFrame ? 'rgb(160,160,160)' : 'black';
+
+    if(frame.memory.zero) {
+      var zeroY = subframe.bottom - subframe.height * frame.memory.zero; //Math.max(subframe.bottom - subframe.height*frame.memory.zero, subframe.y);
+      for(i = 0; numberList[i] != null; i++) {
+        x = subframe.x + i * dx;
+        if(mouseOnFrame && src_Global__mX > x && src_Global__mX < x + dx) {
+          overI = i;
+          setFill('black');
+        } else {
+          setFill(normalColor);
+        }
+        fRect(subframe.x + i * dx, zeroY, dx, -subframe.height * (frame.memory.normalizedList[i] - frame.memory.zero));
+      }
+    } else {
+      for(i = 0; numberList[i] != null; i++) {
+        x = subframe.x + i * dx;
+        if(mouseOnFrame && src_Global__mX > x && src_Global__mX < x + dx) {
+          overI = i;
+          setFill('black');
+        } else {
+          setFill(normalColor);
+        }
+        fRect(x, subframe.bottom, dx, -subframe.height * frame.memory.normalizedList[i]);
+      }
+    }
+
+    var clicked;
+
+    if(overI != -1) {
+      setText('white', 12);
+      var text = frame.memory.xTexts[overI];
+      var w = getTextW(text);
+      setFill('rgb(100,100,100)');
+      fLines(
+        src_Global__mX, src_Global__mY,
+        src_Global__mX + 16, src_Global__mY - 10,
+        src_Global__mX + w + 16, src_Global__mY - 10,
+        src_Global__mX + w + 16, src_Global__mY - 30,
+        src_Global__mX + 6, src_Global__mY - 30,
+        src_Global__mX + 6, src_Global__mY - 10
+      );
+      setFill('white');
+      fText(text, src_Global__mX + 10, src_Global__mY - 26);
+      if(src_Global__MOUSE_DOWN) clicked = overI;
+    }
+
+    return clicked;
+  };
+
+  exports.NumberListDraw = NumberListDraw;
+
+  function ObjectDraw() {}
+
+
+
+  /**
+   * counts the number of times the function is called
+   * @param  {Rectangle} frame
+   * @param  {Object} object
+   * tags:draw
+   */
+  ObjectDraw.count = function(frame, object) {
+    if(frame.memory == null) {
+      frame.memory = {
+        n: 1,
+        object: object
+      };
+    }
+
+    if(frame.memory.object != object) {
+      frame.memory.object = object;
+      frame.memory.n++;
+    }
+
+    if(MOUSE_DOWN && frame.containsPoint(mP)) frame.memory.n = 0;
+
+    setText('black', 12);
+    fText(frame.memory.n, frame.x + 10, frame.y + 10);
+  };
+
+  exports.ObjectDraw = ObjectDraw;
+
+  function StringDraw() {}
+
+
+  /**
+   * draws a String (if the object is not a string it displays the json)
+   * @param  {Rectangle} frame
+   * @param  {Object} object normally a String (if not, a conversion will be made)
+   *
+   * @param  {Number} fontSize
+   * @param  {String} fontStyle ex:'bold italic'
+   * @param  {Number} margin
+   * @return {Object}
+   * tags:draw
+   */
+  StringDraw.drawText = function(frame, object, fontSize, fontStyle, margin) {
+    //var frame = frame;//StringDraw.drawText;
+
+    margin = margin || 10;
+    fontSize = fontSize || 12;
+
+    var subframe = new Rectangle(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
+    subframe.bottom = subframe.getBottom();
+
+    var lineHeight = Math.floor(fontSize * 1.2);
+
+    setText('black', fontSize, null, null, null, fontStyle);
+
+    significantChange = frame.memory == null || object != frame.memory.object || fontSize != frame.memory.fontSize || fontStyle != frame.memory.fontStyle || margin != frame.memory.margin || frame.width != frame.memory.width || frame.height != frame.memory.height;
+
+    //setup
+    if(significantChange) {
+      var realString = object == null ?
+  						""
+  						:
+        (typeof object == 'string') ?
+  							object
+  							:
+        JSON.stringify(object, null, "\t");
+      frame.memory = {
+        textLines: DrawTexts.textWordWrapReturnLines(realString, subframe.width, subframe.height, lineHeight, true),
+        object: object,
+        fontSize: fontSize,
+        fontStyle: fontStyle,
+        margin: margin,
+        width: frame.width,
+        height: frame.height
+      };
+    }
+
+    DrawTexts.fillTextRectangleWithTextLines(frame.memory.textLines, subframe.x, subframe.y, subframe.height, lineHeight);
+  };
+
+  exports.StringDraw = StringDraw;
+
+  function StringListDraw() {}
+
+
+  StringListDraw.tagCloudRectangles = function(stringList, weights, frame) {
+
+    var normWeights = table[1].sqrt().getNormalizedToMax();
+
+    rectangles = new List();
+    textPositions = new Polygon();
+    textSizes = new NumberList();
+
+    var rectanglesPlaced = new List();
+
+    var dL = 6;
+
+    var a = 0;
+    var r = 0;
+    var p = new Point(0, 0);
+
+    var w;
+    var h;
+
+    for(var i = 0; words[i] != null; i++) {
+      //words[i] = words[i].toUpperCase();
+      textSizes[i] = Math.round(weights[i] * 16) * dL;
+
+      DrawTexts.setContextTextProperties('black', textSizes[i], 'Arial', null, null, 'bold');
+      w = Math.ceil((2 + context.measureText(stringList[i]).width) / dL) * dL;
+      h = textSizes[i];
+
+      while(StringListDraw._pointInRectangles(rectanglesPlaced, p, w, h)) {
+        p.x += dL;
+        p.y -= dL;
+        if(p.y < 0) {
+          p.y = p.x;
+          p.x = 0;
+        }
+      }
+
+      rectangles[i] = new Rectangle(p.x, p.y, w, h);
+      rectanglesPlaced.push(rectangles[i]);
+    }
+  };
+
+  StringListDraw._pointInRectangles = function(rectangles, p, width, height) {
+    var rect;
+    for(var i = 0; rectangles[i] != null; i++) {
+      rect = rectangles[i];
+      if(p.x + width > rect.x && p.x < (rect.x + rect.width) && p.y + height > rect.y && p.y < (rect.y + rect.height)) return true;
+    }
+    return false;
+  };
+
+  exports.StringListDraw = StringListDraw;
+
+  /**
+   * @classdesc Operators that contain visualization method algoritms and return a Table with parameters for StringListPrimitive
+   *
+   * @namespace
+   * @category strings
+   */
+  function StringListVisOperators() {}
+
+
+
+  StringListVisOperators.simpleTagCloud = function(stringList, weights, frame, font, interLineFactor) {
+    font = font == null ? 'Arial' : font;
+    interLineFactor = interLineFactor == null ? 1.2 : interLineFactor;
+
+    var i;
+    var j;
+    var xx;
+    var yy;
+    var tag;
+    var wT;
+
+    var sT;
+    var maxST;
+
+    var K = 20;
+    var i0Line;
+
+    var normWeigths = weights.getNormalizedToMax();
+
+    var sizes;
+    var positions;
+
+    var notFinished = true;
+
+    var trys = 0;
+
+    while(notFinished) {
+      interLine = K * interLineFactor;
+      xx = 0;
+      yy = 0; //interLine;
+      maxST = 0;
+      i0Line = 0;
+
+      sizes = new NumberList();
+      positions = new Polygon();
+
+      for(i = 0; stringList[i] != null; i++) {
+        tag = stringList[i];
+        sT = Math.floor(Math.sqrt(normWeigths[i]) * K);
+
+        sizes.push(sT);
+
+        context.font = String(sT) + 'px ' + font;
+        wT = context.measureText(tag).width;
+
+        if(xx + wT > frame.width) {
+          xx = 0;
+          yy += (maxST * interLineFactor + 1);
+          maxST = 0;
+          for(j = i0Line; j < i; j++) {
+            positions[j].y = yy;
+          }
+          i0Line = i;
+        }
+
+        maxST = Math.max(maxST, sT);
+        positions.push(new Point(xx, yy));
+        xx += wT + sT * 0.2;
+      }
+
+      yy += (maxST * interLineFactor + 1);
+      for(j = i0Line; stringList[j] != null; j++) {
+        positions[j].y = yy;
+      }
+
+
+      notFinished = false;
+      if(yy < frame.height * 0.97) {
+        K = 0.5 * K + 0.5 * K * frame.height / (yy + interLine);
+        notFinished = true;
+      }
+      if(yy >= frame.height * 0.995) {
+        K = 0.5 * K + 0.5 * K * frame.height / (yy + interLine);
+        notFinished = true;
+      }
+      trys++;
+      if(trys > 10) notFinished = false;
+    }
+
+    table = new Table();
+    table[0] = stringList;
+    table[1] = positions;
+    table[2] = sizes;
+
+    return table;
+  };
+
+
+
+  StringListVisOperators.tagCloudRectangles = function(stringList, weights, frame, mode, margin) {
+    mode = mode == null ? 0 : mode;
+    margin = margin == null ? 0 : margin;
+
+    var normWeights = weights.sqrt().getNormalizedToMax();
+
+    var roundSizes = mode == 0;
+
+    rectangles = new List();
+    textPositions = new Polygon();
+    textSizes = new NumberList();
+
+    var rectanglesPlaced = new List();
+
+    var dL = 6;
+
+    var a = 0;
+    var r = 0;
+
+    var px;
+    var py;
+    var center;
+    var rMax = 0;
+
+    switch(mode) {
+      case 0: //open triangle
+        px = frame.x;
+        py = frame.y;
+        break;
+      case 2: //rectangle
+        var jump = 5;
+        var nStep = 0;
+        var nSteps = 1;
+        var pc = new Point();
+      case 1: //circle
+        px = 0;
+        py = 0;
+        center = frame.getCenter();
+        break;
+    }
+
+    var w;
+    var h;
+    var prop = frame.width / frame.height;
+
+    for(var i = 0; stringList[i] != null; i++) {
+      textSizes[i] = roundSizes ? Math.round(normWeights[i] * 12) * dL : normWeights[i] * 12 * dL;
+
+      DrawTexts.setContextTextProperties('black', textSizes[i], LOADED_FONT, null, null, 'bold');
+      w = Math.ceil((2 + context.measureText(stringList[i]).width) / dL) * dL;
+      h = textSizes[i];
+
+      switch(mode) {
+        case 0: //open triangle
+          while(StringListVisOperators._pointInRectangles(rectanglesPlaced, px, py, w, h, margin)) {
+            px += dL;
+            py -= dL;
+            if(py < frame.y) {
+              py = p.x;
+              px = frame.x;
+            }
+          }
+          break;
+        case 1: //circle
+          if(i == 0) {
+            px = center.x - w * 0.5;
+            py = center.y - h * 0.5;
+          } else {
+            a = i * 0.1;
+            r = 0;
+            while(StringListVisOperators._pointInRectangles(rectanglesPlaced, px, py, w, h, margin)) {
+              r += 1;
+              a += r * 0.005;
+
+              px = center.x + prop * r * Math.cos(a) - w * 0.5;
+              py = center.y + r * Math.sin(a) - h * 0.5;
+            }
+            rMax = Math.max(rMax, prop * r + w * 0.5);
+          }
+          break;
+        case 2: //rectangle
+          if(i == 0) {
+            pc = center.clone();
+            px = pc.x - w * 0.5;
+            py = pc.y - h * 0.5;
+          } else {
+            nStep = 0;
+            nSteps = 1;
+            a = 0;
+            pc = center.clone();
+            while(StringListVisOperators._pointInRectangles(rectanglesPlaced, px, py, w, h, margin)) {
+              nStep++;
+
+              pc.x += prop * jump * Math.cos(a);
+              pc.y += jump * Math.sin(a);
+
+              px = pc.x - w * 0.5;
+              py = pc.y - h * 0.5;
+
+              if(nStep >= nSteps) {
+                a += Math.PI * 0.5;
+                nSteps += 0.5;
+                nStep = 0;
+              }
+            }
+            rMax = Math.max(Math.abs(pc.x - center.x) + w * 0.5, rMax);
+          }
+          break;
+
+      }
+
+      rectangles[i] = new Rectangle(px, py, w, h);
+      rectanglesPlaced.push(rectangles[i]);
+    }
+
+    if(mode == 1 || mode == 2) {
+      var rectangle;
+      prop = 0.5 * frame.width / rMax;
+      for(i = 0; rectangles[i] != null; i++) {
+        rectangle = rectangles[i];
+        rectangle.x = center.x + (rectangle.x - center.x) * prop;
+        rectangle.y = center.y + (rectangle.y - center.y) * prop;
+        rectangle.width *= prop;
+        rectangle.height *= prop;
+        textSizes[i] *= prop;
+      }
+    }
+
+    var table = new Table();
+    table[0] = stringList;
+    table[1] = rectangles;
+    table[2] = textSizes;
+
+    return table;
+  };
+
+  StringListVisOperators._pointInRectangles = function(rectangles, px, py, width, height, margin) {
+    var rect;
+    for(var i = 0; rectangles[i] != null; i++) {
+      rect = rectangles[i];
+      if(px + width > (rect.x - margin) && px < (rect.x + rect.width + margin) && (py + height) > (rect.y - margin) && py < (rect.y + rect.height + margin)) return true;
+    }
+    return false;
+  };
+
+  exports.StringListVisOperators = StringListVisOperators;
+
+  /**
+   * @classdesc Functions for drawing {@link Network|Networks}.
+   *
+   * @namespace
+   * @category networks
+   */
+  function NetworkDraw() {}
+
+
+  /**
+   * @ignore
+   */
+  NetworkDraw._drawNode = function(node, x, y, r) {
+    var over = false;
+    if(node.image) {
+      clipCircle(x, y, r);
+      drawImage(node.image, x - r, y - r * 1.3, r * 2, r * 3); //[!] this assumes a 3/2 proportioned image
+      restore();
+      over = Math.pow(x - mX, 2) + Math.pow(y - mY, 2) <= r * r;
+    } else {
+      setFill(node.color == null ? 'rgb(50,50,50)' : node.color);
+      over = fCircleM(x, y, r);
+    }
+    if(over) setCursor('pointer');
+    return over;
+  };
+
+
+  /**
+   * Draws a radial (elliptical) Network
+   *
+   * @param  {Rectangle} frame A Rectangle indicating the width, height, and location of the drawing area.
+   * @param  {Network} network The Network to draw.
+   * @return {Node} If a Node in the Network is currently being moused over, it is returned.
+   * If no Node is being interacted with, undefined is returned.
+   * tags:draw
+   */
+  NetworkDraw.drawRadialNetwork = function(frame, network) {
+    var r = 1.1 * Math.min(frame.width, frame.height) / network.nodeList.length;
+    var rw = frame.width * 0.5 - r;
+    var rh = frame.height * 0.5 - r;
+    var cxf = frame.x + frame.width * 0.5;
+    var cyf = frame.y + frame.height * 0.5;
+    var mx, my, d;
+    var nodeOver;
+    var dA = TwoPi / network.nodeList.length;
+
+    var polygon = new Polygon();
+
+    setFill('black');
+
+    network.nodeList.forEach(function(node, i) {
+      node._drawRadialNetwork_x = cxf + rw * Math.cos(i * dA);
+      node._drawRadialNetwork_y = cyf + rh * Math.sin(i * dA);
+    });
+
+    network.relationList.forEach(function(relation) {
+      setStroke('black', relation.weight * 0.25);
+      mx = (relation.node0._drawRadialNetwork_x + relation.node1._drawRadialNetwork_x) * 0.5;
+      my = (relation.node0._drawRadialNetwork_y + relation.node1._drawRadialNetwork_y) * 0.5;
+      d = Math.sqrt(Math.pow(relation.node0._drawRadialNetwork_x - relation.node1._drawRadialNetwork_x, 2), Math.pow(relation.node0._drawRadialNetwork_y - relation.node1._drawRadialNetwork_y, 2)) + 1;
+      mx = (1 - 0.5 * (d / rw)) * mx + 0.5 * (d / rw) * cxf;
+      my = (1 - 0.5 * (d / rh)) * my + 0.5 * (d / rh) * cyf;
+      bezier(relation.node0._drawRadialNetwork_x, relation.node0._drawRadialNetwork_y,
+        mx, my,
+        mx, my,
+        relation.node1._drawRadialNetwork_x, relation.node1._drawRadialNetwork_y);
+    });
+
+    network.nodeList.forEach(function(node) {
+      if(NetworkDraw._drawNode(node, node._drawRadialNetwork_x, node._drawRadialNetwork_y, r)) nodeOver = node;
+    });
+
+    return nodeOver;
+  };
+
+
+  /**
+   * Draws a Network with nodes placed in coordinates provided by a polygon.
+   *
+   * @param  {Rectangle} frame
+   * @param  {Network} network
+   * @param {Polygon} polygon Nodes positions
+   *
+   * @param {Boolean} respectProportions If true, proportions will be equal for both axis
+   * @param {Boolean} logScale uses a logarithmic scale in both axis, applies only if all values are >=0
+   * @param {Boolean} drawGrid draws a grid
+   * @param {Number} margin
+   * @return {Node} If a Node in the Network is currently being moused over, it is returned.
+   * If no Node is being interacted with, undefined is returned.
+   * tags:draw
+   */
+  NetworkDraw.drawNetwork2D = function(frame, network, polygon, respectProportions, logScale, drawGrid, margin) {
+    if(network == null || polygon == null || polygon.type != 'Polygon') return;
+
+    respectProportions = respectProportions || false;
+    logScale = logScale || false;
+    drawGrid = drawGrid || false;
+    margin = margin || 0;
+
+
+    var r = 1.1 * Math.min(frame.width, frame.height) / network.nodeList.length;
+
+    var nodeOver;
+    var memory = frame.memory;
+    var kx;
+    var ky;
+    var frameP;
+    var frameMargin;
+    var changeOnFrame = memory == null || !memory.frame.isEqual(frame);
+
+    if(memory == null || memory.network != network || memory.nNodes != network.nodeList.length || memory.polygon != polygon || changeOnFrame || memory.respectProportions != respectProportions || memory.margin != margin || memory.logScale != logScale || memory.drawGrid != drawGrid) {
+
+      if(memory == null) {
+        frame.memory = {};
+        memory = frame.memory;
+      }
+      memory.frame = frame.clone();
+      memory.network = network;
+      var differentSize = memory.polygon != null && memory.polygon.length != polygon.length;
+      memory.polygon = polygon;
+      memory.respectProportions = respectProportions;
+      memory.logScale = logScale;
+      memory.drawGrid = drawGrid;
+      memory.margin = margin;
+      memory.nNodes = network.nodeList.length;
+
+      frame.bottom = frame.getBottom();
+      frame.right = frame.getRight();
+      memory.frameMargin = new Rectangle(frame.x + margin, frame.y + margin, frame.width - 2 * margin, frame.height - 2 * margin);
+      frameMargin = memory.frameMargin;
+      memory.frameMargin.right = memory.frameMargin.getRight();
+      memory.frameMargin.bottom = memory.frameMargin.getBottom();
+      memory.frameP = polygon.getFrame();
+      frameP = memory.frameP;
+      frameP.right = frameP.getRight();
+      frameP.bottom = frameP.getBottom();
+
+
+      if(respectProportions) kx = ky = Math.min(kx, ky);
+      var project;
+      memory.actualLogScale = logScale && frameP.x >= 0 && frameP.y >= 0;
+      if(memory.actualLogScale) {
+        kx = frameMargin.width / Math.log((frameP.right + 1) / (frameP.x + 1));
+        ky = frameMargin.height / Math.log((frameP.bottom + 1) / (frameP.y + 1));
+        project = function(p) {
+          return new Point((Math.log(p.x + 1) - Math.log(frameP.x + 1)) * kx + frameMargin.x, frameMargin.bottom - (Math.log(p.y + 1) - Math.log(frameP.y + 1)) * ky);
+        };
+      } else {
+        kx = frameMargin.width / frameP.width;
+        ky = frameMargin.height / frameP.height;
+        project = function(p) {
+          return new Point((p.x - frameP.x) * kx + frameMargin.x, frameMargin.bottom - (p.y - frameP.y) * ky);
+        };
+      }
+      memory.projectedPolygon = new Polygon();
+      polygon.forEach(function(p, i) {
+        memory.projectedPolygon[i] = project(p);
+      });
+
+      if(frameP.x <= 0 && frameP.getRight() >= 0) {
+        memory.yAxis = (-frameP.x) * kx + frameMargin.x;
+      }
+      if(frameP.y <= 0 && frameP.getBottom() >= 0) {
+        memory.xAxis = frameMargin.bottom - (-frameP.y) * ky;
+      }
+
+      if(frame.memory.projectPolygonConvergent == null || changeOnFrame || differentSize) frame.memory.projectPolygonConvergent = memory.projectedPolygon.clone();
+
+    } else {
+      frameP = memory.frameP;
+      frameMargin = memory.frameMargin;
+    }
+
+    setStroke('rgb(50,50,50)', 2);
+
+    if(memory.xAxis) line(frameMargin.x, memory.xAxis, memory.frameMargin.right, memory.xAxis);
+    if(memory.yAxis) line(memory.yAxis, memory.frameMargin.y, memory.yAxis, memory.frameMargin.bottom);
+
+    if(frame.containsPoint(mP)) {
+      setStroke('rgb(50,50,50)', 0.5);
+      line(frame.x + 2, mY + 0.5, frame.right - 4, mY + 0.5);
+      line(mX + 0.5, frame.y + 2, mX + 0.5, frame.bottom - 4);
+    }
+
+    memory.projectPolygonConvergent.approach(memory.projectedPolygon, 0.1);
+
+    network.nodeList.forEach(function(node, i) {
+      node.x = memory.projectPolygonConvergent[i].x;
+      node.y = memory.projectPolygonConvergent[i].y;
+    });
+
+    network.relationList.forEach(function(relation) {
+      setStroke('black', relation.weight * 0.25);
+      line(relation.node0.x, relation.node0.y, relation.node1.x, relation.node1.y);
+    });
+
+    network.nodeList.forEach(function(node) {
+      if(NetworkDraw._drawNode(node, node.x, node.y, r)) {
+        nodeOver = node;
+      }
+    });
+
+    //values label
+
+    if(frame.containsPoint(mP)) {
+      if(nodeOver == null) {
+        if(memory.actualLogScale) {
+          NetworkDraw._drawNodeValues(
+            Math.floor(10 * (Math.pow(Math.E, Math.log((frameP.right + 1) / (frameP.x + 1)) * (mX - frameMargin.x) / frameMargin.width) - 1)) / 10,
+            Math.floor(10 * (Math.pow(Math.E, Math.log((frameP.bottom + 1) / (frameP.y + 1)) * (frameMargin.bottom - mY) / frameMargin.height) - 1)) / 10
+          );
+        } else {
+          NetworkDraw._drawNodeValues(
+            Math.floor(10 * (frameP.x + frameP.width * (mX - memory.frameMargin.x) / memory.frameMargin.width)) / 10,
+            Math.floor(10 * (frameP.y + frameP.height * (memory.frameMargin.bottom - mY) / memory.frameMargin.height)) / 10
+          );
+        }
+      } else {
+        var index = network.nodeList.indexOf(nodeOver);
+        NetworkDraw._drawNodeValues(polygon[index].x, polygon[index].y, nodeOver.name);
+      }
+    }
+
+
+    return nodeOver;
+  };
+
+  /**
+   * @ignore
+   */
+  NetworkDraw._drawNodeValues = function(vx, vy, name) {
+    var text = (name == null ? '' : (name + ': ')) + vx + ", " + vy;
+    setFill('rgba(50,50,50,0.8)');
+    fRect(mX - 2, mY - 2, -getTextW(text) - 4, -14);
+    setText('white', 12, null, 'right', 'bottom');
+    fText(text, mX - 4, mY - 2);
+  };
+
+
+  //to be tested
+
+  /**
+   * drawNetworkMatrix
+   * @ignore
+   */
+  NetworkDraw.drawNetworkMatrix = function(frame, network, colors, relationsColorScaleFunction, margin, directed, normalizedNodeWeights, returnHovered) {
+    relationsColorScaleFunction = relationsColorScaleFunction == null ? ColorOperators.grayScale : relationsColorScaleFunction;
+    margin = margin == null ? 2 : margin;
+    directed = directed == null ? false : directed;
+
+    var i;
+    var nodeList = network.nodeList;
+    var relationList = network.relationList;
+    var relation;
+
+    var useWeights = (normalizedNodeWeights != null);
+
+    var dX = frame.width / (nodeList.length + 1);
+    var dY = frame.height / (nodeList.length + 1);
+    var w = dX - margin;
+    var h = dY - margin;
+
+    var ix;
+    var iy;
+
+    var xx = dX;
+    var yy = dY;
+
+    returnHovered = returnHovered && frame.pointIsInside(mousePoint);
+
+    if(returnHovered) var hoverValues = new Point(-1, -1);
+
+
+    if(useWeights) {
+      dX = frame.width - dX;
+      dY = frame.height - dY;
+      var ww;
+      var hh;
+      var xNodes = [];
+      var yNodes = [];
+      var wNodes = [];
+      var hNodes = [];
+    }
+
+    for(i = 0; nodeList[i] != null; i++) {
+      context.fillStyle = colors[i];
+      if(useWeights) {
+        ww = dX * normalizedNodeWeights[i];
+        hh = dY * normalizedNodeWeights[i];
+        context.fillRect(frame.x + xx, frame.y, ww - margin, h);
+        context.fillRect(frame.x, frame.y + yy, w, hh - margin);
+
+        if(returnHovered) {
+          if(mouseX > frame.x + xx && mouseX < frame.x + xx + ww) hoverValues.x = i;
+          if(mouseY > frame.y + yy && mouseY < frame.y + yy + hh) hoverValues.y = i;
+        }
+        xNodes[nodeList[i].id] = xx;
+        yNodes[nodeList[i].id] = yy;
+        wNodes[nodeList[i].id] = ww;
+        hNodes[nodeList[i].id] = hh;
+        xx += ww;
+        yy += hh;
+
+
+
+      } else {
+        context.fillRect(frame.x + (i + 1) * dX, frame.y, w, h);
+        context.fillRect(frame.x, frame.y + (i + 1) * dY, w, h);
+      }
+    }
+
+    for(i = 0; relationList[i] != null; i++) {
+      relation = relationList[i];
+      context.fillStyle = relationsColorScaleFunction(relation.weight);
+      if(useWeights) {
+        context.fillRect(frame.x + xNodes[relation.node0.id], frame.y + yNodes[relation.node1.id], wNodes[relation.node0.id] - margin, hNodes[relation.node1.id] - margin);
+        if(!directed) context.fillRect(frame.x + yNodes[relation.node1.id], frame.y + xNodes[relation.node0.id], hNodes[relation.node1.id] - margin, wNodes[relation.node0.id] - margin);
+      } else {
+        ix = nodeList.indexOf(relation.node0) + 1;
+        iy = nodeList.indexOf(relation.node1) + 1;
+        context.fillRect(frame.x + ix * dX, frame.y + iy * dY, w, h);
+        if(!directed && (ix != iy)) {
+          context.fillRect(frame.x + iy * dX, frame.y + ix * dY, w, h);
+        }
+      }
+
+    }
+    return hoverValues;
+  };
+
+  exports.NetworkDraw = NetworkDraw;
+
+  /**
+   * @classdesc Functions for drawing {@link Tree|Trees}.
+   *
+   * @namespace
+   * @category networks
+   */
+  function TreeDraw() {}
+
+
+
+  /**
+   * Simple tree visualization with levels in vertical rectangles.
+   *
+   * @param {Rectangle} frame
+   * @param {Tree} tree The Tree to draw.
+   *
+   * @param {ColorList} levelColors
+   * @param {Number} margin
+   * tags:draw
+   */
+  TreeDraw.drawRectanglesTree = function(frame, tree, levelColors, margin) {
+    levelColors = levelColors == null ? ColorListGenerators.createCategoricalColors(1, tree.nLevels) : levelColors;
+    margin = margin || 1;
+
+    var dX = frame.width / tree.nLevels;
+    TreeDraw._drawRectanglesTreeChildren(tree.nodeList[0], new Rectangle(frame.x, frame.y, dX, frame.height), levelColors, margin);
+  };
+  TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin) {
+    context.fillStyle = colors[node.level];
+    context.fillRect(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
+    var children = node.toNodeList;
+    //c.log(node.level, node.name, children.length);
+    if(children.length > 0) {
+      var i;
+      var dY = frame.height / (node.descentWeight - 1);
+      var yy = frame.y;
+      var h;
+      for(i = 0; children[i] != null; i++) {
+        h = dY * (children[i].descentWeight);
+        TreeDraw._drawRectanglesTreeChildren(children[i], new Rectangle(frame.x + frame.width, yy, frame.width, h), colors, margin);
+        yy += h;
+      }
+    }
+  };
+
+
+  /**
+   * Creates a simple treemap visualization.
+   *
+   * @param {Rectangle} frame
+   * @param {Tree} tree The Tree to draw.
+   *
+   * @param {ColorList} colorList
+   * @param {NumberList} weights weights of leaves
+   * @param {String} textColor if not provided will be calculated to contrast node color
+   * @param {Node} externalSelectedNode node to force selection (by id)
+   * @return {Node} selected node
+   * tags:draw
+   */
+  TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, externalSelectedNode) {
+    var change = frame.memory == null || frame.memory.tree != tree || frame.memory.width != frame.width || frame.memory.height != frame.height || frame.memory.weights != weights;
+
+    if(externalSelectedNode != null) externalSelectedNode = tree.nodeList.getNodeById(externalSelectedNode.id);
+
+    var changeSelection = (externalSelectedNode != null && (frame.memory == null || externalSelectedNode != frame.memory.nodeSelected));
+
+    if(change) {
+      var changeInTree = frame.memory != null && frame.memory.tree != null != tree;
+      var changeInWeights = frame.memory != null && frame.memory.weights != weights;
+
+      frame.memory = {
+        tree: tree,
+        width: frame.width,
+        height: frame.height,
+        weights: weights,
+        nodeSelected: tree.nodeList[0],
+        nFLastChange: nF,
+        image: null
+      };
+
+      var leaves = (!changeInTree && frame.memory.leaves) ? frame.memory.leaves : tree.getLeaves();
+      frame.memory.leaves = leaves;
+
+      if(weights == null) {
+        tree.nodeList.forEach(function(node) {
+          node._treeMapWeight = node.descentWeight;
+        });
+      } else {
+        leaves.forEach(function(node, i) {
+          node._treeMapWeight = weights[i];
+        });
+        var assignTreemapWeight = function(node) {
+          var i;
+          if(node.toNodeList.length == 0) {
+            return node._treeMapWeight;
+          } else {
+            node._treeMapWeight = 0;
+            for(i = 0; node.toNodeList[i] != null; i++) {
+              node._treeMapWeight += assignTreemapWeight(node.toNodeList[i]);
+            }
+          }
+          return node._treeMapWeight;
+        };
+        assignTreemapWeight(tree.nodeList[0]);
+      }
+
+      tree.nodeList[0]._outRectangle = new Rectangle(0, 0, frame.width, frame.height);
+      tree.nodeList[0]._inRectangle = TreeDraw._inRectFromOutRect(tree.nodeList[0]._outRectangle);
+      TreeDraw._generateRectangles(tree.nodeList[0]);
+
+      frame.memory.focusFrame = TreeDraw._expandRect(tree.nodeList[0]._outRectangle);
+      frame.memory.kx = frame.width / frame.memory.focusFrame.width;
+      frame.memory.mx = -frame.memory.kx * frame.memory.focusFrame.x;
+      frame.memory.ky = frame.height / frame.memory.focusFrame.height;
+      frame.memory.my = -frame.memory.ky * frame.memory.focusFrame.y;
+
+      setText('black', 12);
+      tree.nodeList.forEach(function(node) {
+        node._textWidth = getTextW(node.name);
+      });
+    }
+
+    if(frame.memory.colorList != colorList || frame.memory.colorList == null) {
+      frame.memory.nFLastChange = nF;
+      frame.memory.image = null;
+      frame.memory.actualColorList = colorList == null ? ColorListGenerators.createCategoricalColors(0, tree.nLevels, ColorScales.grayToOrange, 0.1) : colorList;
+      frame.memory.nodesColorList = new ColorList();
+      if(textColor == null) frame.memory.textsColorList = new ColorList();
+
+      if(frame.memory.actualColorList.length <= tree.nLevels) {
+        tree.nodeList.forEach(function(node, i) {
+          frame.memory.nodesColorList[i] = node._color = frame.memory.actualColorList[node.level % frame.memory.actualColorList.length];
+        });
+      } else if(frame.memory.actualColorList.length == frame.memory.leaves.length) {
+        frame.memory.leaves.forEach(function(node, i) {
+          node._color = frame.memory.actualColorList[i];
+          node._rgb = ColorOperators.colorStringToRGB(node._color);
+        });
+        var assignColor = function(node) {
+          var i;
+          if(node.toNodeList.length == 0) return;
+
+          node._rgb = [0, 0, 0];
+          for(i = 0; node.toNodeList[i] != null; i++) {
+            assignColor(node.toNodeList[i]);
+            node._rgb[0] += node.toNodeList[i]._rgb[0];
+            node._rgb[1] += node.toNodeList[i]._rgb[1];
+            node._rgb[2] += node.toNodeList[i]._rgb[2];
+          }
+          node._rgb[0] = Math.floor(node._rgb[0] / node.toNodeList.length);
+          node._rgb[1] = Math.floor(node._rgb[1] / node.toNodeList.length);
+          node._rgb[2] = Math.floor(node._rgb[2] / node.toNodeList.length);
+        };
+        assignColor(tree.nodeList[0]);
+        tree.nodeList.forEach(function(node, i) {
+          if(node._rgb && node._rgbF == null) node._rgbF = [node._rgb[0], node._rgb[1], node._rgb[2]];
+          frame.memory.nodesColorList[i] = 'rgb(' + node._rgb[0] + ',' + node._rgb[1] + ',' + node._rgb[2] + ')';
+        });
+      } else {
+        tree.nodeList.forEach(function(node, i) {
+          node._color = frame.memory.nodesColorList[i] = frame.memory.actualColorList[i % frame.memory.actualColorList.length];
+        });
+      }
+
+      if(textColor == null) {
+        var rgb;
+        tree.nodeList.forEach(function(node, i) {
+          rgb = node._color ? ColorOperators.colorStringToRGB(node._color) : [0, 0, 0];
+          frame.memory.textsColorList[i] = (rgb[0] + rgb[1] + rgb[2] > 360) ? 'black' : 'white';
+        });
+      }
+
+      frame.memory.colorList = colorList;
+    }
+
+    if(textColor == null) textColor = 'black';
+
+    var kxF = frame.width / frame.memory.focusFrame.width;
+    var mxF = -kxF * frame.memory.focusFrame.x;
+    var kyF = frame.height / frame.memory.focusFrame.height;
+    var myF = -kyF * frame.memory.focusFrame.y;
+
+    var v = kxF > frame.memory.kx ? 0.05 : 0.1;
+    var antiv = 1 - v;
+
+    frame.memory.kx = antiv * frame.memory.kx + v * kxF;
+    frame.memory.mx = antiv * frame.memory.mx + v * mxF;
+    frame.memory.ky = antiv * frame.memory.ky + v * kyF;
+    frame.memory.my = antiv * frame.memory.my + v * myF;
+    var kx = frame.memory.kx;
+    var mx = frame.memory.mx;
+    var ky = frame.memory.ky;
+    var my = frame.memory.my;
+
+    var tx = function(x) {
+      return kx * x + mx;
+    };
+    var ty = function(y) {
+      return ky * y + my;
+    };
+
+
+    var x, y;
+    var margTextX, margTextY;
+    var textSize;
+    var exceedes;
+    var rect;
+    var overNode = null;
+    var overI;
+    var mouseOnFrame = frame.containsPoint(mP);
+    var moving = nF - frame.memory.nFLastChange < 50 || Math.pow(frame.memory.kx - kxF, 2) + Math.pow(frame.memory.ky - kyF, 2) + Math.pow(frame.memory.mx - mxF, 2) + Math.pow(frame.memory.my - myF, 2) > 0.01;
+    var captureImage = !moving && frame.memory.image == null && !mouseOnFrame;
+    var drawingImage = !moving && !mouseOnFrame && frame.memory.image != null &&  !captureImage && frame.memory.image.width > 0 && !changeSelection;
+
+    if(drawingImage) {
+      drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+    } else {
+      if(captureImage) {
+        var newCanvas = document.createElement("canvas");
+        newCanvas.width = frame.width;
+        newCanvas.height = frame.height;
+        var newContext = newCanvas.getContext("2d");
+        newContext.clearRect(0, 0, frame.width, frame.height);
+        var mainContext = context;
+        context = newContext;
+        var prevFx = frame.x;
+        var prevFy = frame.y;
+        frame.x = 0;
+        frame.y = 0;
+        setFill('white');
+        fRect(0, 0, frame.width, frame.height);
+        setText('black', 12);
+      } else {
+        context.save();
+        clipRectangle(frame.x, frame.y, frame.width, frame.height);
+      }
+
+      setStroke('black', 0.2);
+
+      tree.nodeList.forEach(function(node, i) {
+
+        rect = new Rectangle(tx(node._outRectangle.x), ty(node._outRectangle.y), node._outRectangle.width * kx, node._outRectangle.height * ky);
+
+        if(rect.width > 5 && rect.height > 4 && rect.x < frame.width && rect.getRight() > 0 && rect.y < frame.height && rect.getBottom() > 0) {
+
+          x = Math.round(frame.x + rect.x) + 0.5;
+          y = Math.round(frame.y + rect.y) + 0.5;
+
+          if(node._rgbF) {
+            node._rgbF[0] = 0.95 * node._rgbF[0] + 0.05 * node._rgb[0];
+            node._rgbF[1] = 0.95 * node._rgbF[1] + 0.05 * node._rgb[1];
+            node._rgbF[2] = 0.95 * node._rgbF[2] + 0.05 * node._rgb[2];
+            setFill('rgb(' + Math.floor(node._rgbF[0]) + ',' + Math.floor(node._rgbF[1]) + ',' + Math.floor(node._rgbF[2]) + ')');
+          } else {
+            setFill(frame.memory.nodesColorList[i]);
+          }
+
+          if(fsRectM(x, y, Math.floor(rect.width), Math.floor(rect.height))) {
+            overNode = node;
+            overI = i;
+          }
+          if(rect.width > 20) {
+            margTextX = rect.width * TreeDraw.PROP_RECT_MARGIN * 0.8;
+            margTextY = rect.height * TreeDraw.PROP_RECT_MARGIN * 0.15;
+            textSize = rect.height * TreeDraw.PROP_RECT_LABEL - 2;
+            if(textSize >= 5) {
+
+              propTextSpace = (rect.width - 2 * margTextX) / (node._textWidth * textSize / 12);
+              exceedes = propTextSpace < 1; //(node._textWidth*textSize/12)>(rect.width-1.2*margTextX);
+
+              if(exceedes) {
+                //clipRectangle(x+margTextX, y+margTextY,rect.width-2*margTextX, textSize*2);
+                setText(textColor ? textColor : frame.memory.textsColorList[i], textSize * propTextSpace);
+              } else {
+                setText(textColor ? textColor : frame.memory.textsColorList[i], textSize);
+              }
+
+              fText(node.name, x + margTextX, y + margTextY);
+              //if(exceedes) context.restore();
+            }
+          }
+        }
+      });
+
+      if(captureImage) {
+        context = mainContext;
+        frame.memory.image = new Image();
+        frame.memory.image.src = newCanvas.toDataURL();
+        frame.x = prevFx;
+        frame.y = prevFy;
+        drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+      }
+    }
+
+    if(mouseOnFrame) {
+      if(overNode) {
+        setCursor('pointer');
+
+        rect = new Rectangle(tx(overNode._outRectangle.x), ty(overNode._outRectangle.y), overNode._outRectangle.width * kx, overNode._outRectangle.height * ky);
+        x = Math.round(frame.x + rect.x) + 0.5;
+        y = Math.round(frame.y + rect.y) + 0.5;
+        setStroke(textColor ? textColor : frame.memory.textsColorList[overI], 2);
+        sRect(x, y, Math.floor(rect.width), Math.floor(rect.height));
+
+        if(MOUSE_UP_FAST) {
+          frame.memory.focusFrame = TreeDraw._expandRect(overNode._outRectangle);
+          frame.memory.nodeSelected = overNode;
+
+          frame.memory.image = null;
+        }
+      }
+      if(MOUSE_DOWN) {
+        frame.memory.prevMX = mX;
+        frame.memory.prevMY = mY;
+      }
+      if(MOUSE_PRESSED) {
+        scale = 5 * frame.memory.focusFrame.width / frame.width;
+        frame.memory.focusFrame.x -= (mX - frame.memory.prevMX) * scale;
+        frame.memory.focusFrame.y -= (mY - frame.memory.prevMY) * scale;
+
+        frame.memory.prevMX = mX;
+        frame.memory.prevMY = mY;
+      }
+      if(WHEEL_CHANGE != 0) {
+        var center = frame.memory.focusFrame.getCenter();
+        var zoom = 1 - 0.1 * WHEEL_CHANGE;
+        frame.memory.focusFrame.x = center.x - frame.memory.focusFrame.width * 0.5 * zoom;
+        frame.memory.focusFrame.y = center.y - frame.memory.focusFrame.height * 0.5 * zoom;
+        frame.memory.focusFrame.width *= zoom;
+        frame.memory.focusFrame.height *= zoom;
+      }
+      if(MOUSE_PRESSED || WHEEL_CHANGE != 0) {
+        frame.memory.image = null;
+      }
+    }
+
+    if(changeSelection) {
+      frame.memory.focusFrame = TreeDraw._expandRect(externalSelectedNode._outRectangle);
+      frame.memory.nodeSelected = externalSelectedNode;
+      frame.memory.image = null;
+    }
+
+    if(!captureImage && !drawingImage) context.restore();
+
+
+    return frame.memory.nodeSelected;
+
+  };
+
+  /**
+   * @ignore
+   */
+  TreeDraw._generateRectangles = function(node) {
+
+    var weights = new NumberList();
+    node.toNodeList.forEach(function(node) {
+      weights.push(node._treeMapWeight);
+    });
+
+    var rectangles = RectangleOperators.squarify(node._inRectangle, weights, false, false);
+
+    node.toNodeList.forEach(function(child, i) {
+      child._outRectangle = TreeDraw._reduceRect(rectangles[i]);
+      child._inRectangle = TreeDraw._inRectFromOutRect(child._outRectangle);
+      TreeDraw._generateRectangles(child);
+    });
+  };
+
+  /**
+   * @ignore
+   */
+  TreeDraw._reduceRect = function(rect) {
+    return new Rectangle(rect.x + rect.width * TreeDraw.PROP_RECT_REDUCTION_MARGIN, rect.y + rect.height * TreeDraw.PROP_RECT_REDUCTION_MARGIN, rect.width * (1 - 2 * TreeDraw.PROP_RECT_REDUCTION_MARGIN), rect.height * (1 - 2 * TreeDraw.PROP_RECT_REDUCTION_MARGIN));
+  };
+  TreeDraw._expandRect = function(rect) {
+    return new Rectangle(rect.x - rect.width * TreeDraw.PROP_RECT_EXPANTION_MARGIN, rect.y - rect.height * TreeDraw.PROP_RECT_EXPANTION_MARGIN, rect.width * (1 + 2 * TreeDraw.PROP_RECT_EXPANTION_MARGIN), rect.height * (1 + 2 * TreeDraw.PROP_RECT_EXPANTION_MARGIN));
+  };
+  TreeDraw._inRectFromOutRect = function(rect) {
+    return new Rectangle(rect.x + rect.width * TreeDraw.PROP_RECT_MARGIN, rect.y + rect.height * TreeDraw.PROP_RECT_LABEL, rect.width * (1 - 2 * TreeDraw.PROP_RECT_MARGIN), rect.height * (1 - TreeDraw.PROP_RECT_MARGIN - TreeDraw.PROP_RECT_LABEL));
+  };
+  TreeDraw.PROP_RECT_MARGIN = 0.03;
+  TreeDraw.PROP_RECT_LABEL = 0.2;
+  TreeDraw.PROP_RECT_REDUCTION_MARGIN = 0.01;
+  TreeDraw.PROP_RECT_EXPANTION_MARGIN = 0.05;
+
+
+
+  ///////////////////////////decision tree
+
+
+
+  /**
+   * Decision tree visualization, tree from {@link TableOperators}'s buildDecisionTree function.
+   *
+   * @param {Rectangle} frame
+   * @param {Tree} tree
+   * @return {Node} selected node
+   * @return {Node} hovered node
+   * tags:draw,ds
+   */
+  TreeDraw.drawDecisionTree = function(frame, tree) {
+    var change = frame.memory == null || frame.memory.tree != tree || frame.memory.width != frame.width || frame.memory.height != frame.height;
+
+    var gap = frame.height * 0.06;
+    var hTree = tree.nLevels * (frame.height - gap) / (tree.nLevels + 1);
+    var hLevel = hTree / tree.nLevels;
+    var changeInResult = false;
+
+    if(change) {
+      var changeInTree = frame.memory != null && frame.memory.tree != null && frame.memory.tree != tree;
+
+      frame.memory = {
+        tree: tree,
+        width: frame.width,
+        height: frame.height,
+        nodeSelected: tree.nodeList[0],
+        nFLastChange: nF,
+        leaves: null,
+        image: null
+      };
+
+      if(changeInTree || frame.memory.leaves == null) {
+        frame.memory.leaves = tree.getLeaves().getSortedByProperty('valueFollowingProbability', false);
+      }
+
+
+
+      tree.nodeList[0]._outRectangle = new Rectangle(0, 0, frame.width, hTree);
+      tree.nodeList[0]._inRectangle = TreeDraw._inRectFromOutRectDecision(tree.nodeList[0]._outRectangle, hLevel);
+      TreeDraw._generateRectanglesDecision(tree.nodeList[0], hLevel);
+
+      frame.memory.focusFrame = new Rectangle(0, 0, frame.width, frame.height);
+      frame.memory.kx = frame.width / frame.memory.focusFrame.width;
+      frame.memory.mx = -frame.memory.kx * frame.memory.focusFrame.x;
+      frame.memory.ky = frame.height / frame.memory.focusFrame.height;
+      frame.memory.my = -frame.memory.ky * frame.memory.focusFrame.y;
+
+      setText('black', 12);
+      tree.nodeList.forEach(function(node) {
+        node.label = node.toNodeList.length == 0 ? Math.round(node.valueFollowingProbability * 100) / 100 : node.bestFeatureName;
+        node._textWidth = getTextW(node.label);
+      });
+
+
+    }
+
+    if(frame.memory.followingWeights) {
+      tree.nodeList.forEach(function(node) {
+        node._treeMapWeight = node.descentWeight;
+      });
+    }
+
+    var textColor = 'black';
+
+    var kxF = frame.width / frame.memory.focusFrame.width;
+    var mxF = -kxF * frame.memory.focusFrame.x;
+
+    var v = kxF > frame.memory.kx ? 0.05 : 0.1;
+    var antiv = 1 - v;
+
+    frame.memory.kx = antiv * frame.memory.kx + v * kxF;
+    frame.memory.mx = antiv * frame.memory.mx + v * mxF;
+    var kx = frame.memory.kx;
+    var mx = frame.memory.mx;
+
+    var tx = function(x) {
+      return kx * x + mx;
+    };
+
+    var x, y;
+    var margTextX, margTextY;
+    var textSize;
+    var exceedes;
+    var rect;
+    var overNode = null;
+    var overI;
+    var mouseOnFrame = frame.containsPoint(mP);
+    var moving = nF - frame.memory.nFLastChange < 80 || Math.pow(frame.memory.kx - kxF, 2) + Math.pow(frame.memory.mx - mxF, 2) > 0.001;
+    var captureImage = !moving && frame.memory.image == null && !mouseOnFrame;
+    var drawingImage = !moving && !mouseOnFrame && frame.memory.image != null &&  !captureImage && frame.memory.image.width > 0;
+
+    if(drawingImage) {
+      drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+    } else {
+      c.l('drawing');
+      if(captureImage) {
+        var newCanvas = document.createElement("canvas");
+        newCanvas.width = frame.width;
+        newCanvas.height = frame.height;
+        var newContext = newCanvas.getContext("2d");
+        newContext.clearRect(0, 0, frame.width, frame.height);
+        var mainContext = context;
+        context = newContext;
+        var prevFx = frame.x;
+        var prevFy = frame.y;
+        frame.x = 0;
+        frame.y = 0;
+        setFill('white');
+        fRect(0, 0, frame.width, frame.height);
+        setText('black', 12);
+      } else {
+        context.save();
+        clipRectangle(frame.x, frame.y, frame.width, frame.height);
+      }
+
+      var yLeaves = frame.y + hTree + gap;
+
+      setStroke('black', 0.2);
+
+      tree.nodeList.forEach(function(node, i) {
+
+        rect = new Rectangle(tx(node._outRectangle.x), node._outRectangle.y, node._outRectangle.width * kx, node._outRectangle.height);
+
+        if(rect.x < frame.width && rect.getRight() > 0 && rect.y < frame.height && rect.getBottom() > 0) {
+
+          x = Math.round(frame.x + rect.x) + 0.5;
+          y = Math.round(frame.y + rect.y) + 0.5;
+
+          if(node.pattern) {
+            context.fillStyle = node.pattern;
+            context.fillRect(x, y, Math.floor(rect.width), Math.floor(rect.height));
+
+            if(sRectM(x, y, Math.floor(rect.width), Math.floor(rect.height))) {
+              overNode = node;
+              overI = i;
+            }
+
+          } else {
+
+            setFill(node._color);
+
+            if(fsRectM(x, y, Math.floor(rect.width), Math.floor(rect.height))) {
+              overNode = node;
+              overI = i;
+            }
+          }
+
+          var realWidth = Math.min(rect.getRight(), frame.width) - Math.max(rect.x, 0);
+
+          if(realWidth > 16) {
+            margTextX = rect.width * TreeDraw.PROP_RECT_MARGIN * 0.8;
+            margTextY = rect.height * TreeDraw.PROP_RECT_MARGIN * 0.15;
+            tC = textColor ? textColor : frame.memory.textsColorList[i];
+            textSize = 18;
+
+            setText(tC, textSize);
+            exceedes = true; //(node._textWidth*textSize/12)>(rect.width-1.2*margTextX);
+            if(exceedes) {
+              clipRectangle(x, y - 17, rect.width, rect.height);
+            }
+
+            //feature or P
+            fText(node.label, Math.max(x, frame.x) + 8, y + 1);
+
+            if(node.value) {
+              textSize = 14;
+              setText(tC, textSize);
+
+              fText(node.value, Math.max(x, frame.x) + 8, y - 17);
+            }
+
+            //size
+            if(realWidth - node._textWidth > 60) {
+              textSize = 12;
+              setText(tC, textSize, null, 'right');
+
+              fText("s=" + node.weight, Math.min(frame.x + rect.getRight(), frame.getRight()) - 2, y + 1);
+              fText("e=" + Math.round(node.entropy * 100) / 100, Math.min(frame.x + rect.getRight(), frame.getRight()) - 2, y + 12);
+              if(node.toNodeList.length > 0) fText("P=" + Math.round(node.valueFollowingProbability * 100) / 100, Math.min(frame.x + rect.getRight(), frame.getRight()) - 2, y + 23);
+              fText("l=" + Math.round(node.lift * 100) / 100, Math.min(frame.x + rect.getRight(), frame.getRight()) - 2, y + 23 + (node.toNodeList.length > 0 ? 11 : 0));
+            }
+
+            if(exceedes) context.restore();
+          }
+        }
+      });
+
+      //leaves
+
+      var x0 = frame.x;
+      var w;
+      var sx = frame.width / tree.nodeList[0].weight;
+      var waitingForMark = true;
+      var waitingForDoubleMark = true;
+      var waitingForHalfMark = true;
+      var waitingFor15Mark = true;
+      var waitingFor067Mark = true;
+
+
+      frame.memory.leaves.forEach(function(node) {
+        setStroke('black', 0.2);
+
+        w = sx * node.weight;
+
+        if(node.pattern) {
+          context.fillStyle = node.pattern;
+          context.fillRect(x0, yLeaves, w, hLevel);
+
+          if(sRectM(x0, yLeaves, w, hLevel)) {
+            overNode = node;
+            overI = tree.nodeList.indexOf(node);
+          }
+
+        } else {
+          setFill(node._color);
+          if(fsRectM(x0, yLeaves, w, hLevel)) {
+            overNode = node;
+            overI = tree.nodeList.indexOf(node);
+          }
+        }
+
+        node._xLeaf = x0;
+        node._wLeaf = w;
+
+        setStroke('black', 1);
+
+        if(waitingForMark && node.valueFollowingProbability < tree.nodeList[0].valueFollowingProbability) {
+          waitingForMark = false;
+          setFill('black');
+          fLines(x0, yLeaves - 14, x0 + 4, yLeaves - 8, x0, yLeaves - 2, x0 - 4, yLeaves - 8);
+        }
+        if(waitingForDoubleMark && node.valueFollowingProbability <= tree.nodeList[0].valueFollowingProbability * 2) {
+          waitingForDoubleMark = false;
+          line(x0, yLeaves - 14, x0, yLeaves - 2);
+        }
+        if(waitingForHalfMark && node.valueFollowingProbability < tree.nodeList[0].valueFollowingProbability * 0.5) {
+          waitingForHalfMark = false;
+          line(x0, yLeaves - 14, x0, yLeaves - 2);
+        }
+        if(waitingFor15Mark && node.valueFollowingProbability <= tree.nodeList[0].valueFollowingProbability * 1.5) {
+          waitingFor15Mark = false;
+          line(x0, yLeaves - 8, x0, yLeaves - 2);
+        }
+        if(waitingFor067Mark && node.valueFollowingProbability < tree.nodeList[0].valueFollowingProbability * 0.66667) {
+          waitingFor067Mark = false;
+          line(x0, yLeaves - 8, x0, yLeaves - 2);
+        }
+
+        x0 += w;
+
+      });
+
+      if(captureImage) {
+        context = mainContext;
+        frame.memory.image = new Image();
+        frame.memory.image.src = newCanvas.toDataURL();
+        frame.x = prevFx;
+        frame.y = prevFy;
+        drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+      }
+    }
+
+    if(mouseOnFrame) {
+      if(overNode) {
+        setCursor('pointer');
+
+        //rect = new Rectangle(tx(overNode._outRectangle.x), ty(overNode._outRectangle.y), overNode._outRectangle.width*kx, overNode._outRectangle.height*ky);
+        rect = new Rectangle(tx(overNode._outRectangle.x), overNode._outRectangle.y, overNode._outRectangle.width * kx, overNode._outRectangle.height);
+        x = Math.round(frame.x + rect.x) + 0.5;
+        y = Math.round(frame.y + rect.y) + 0.5;
+
+        setStroke(textColor ? textColor : frame.memory.textsColorList[overI], 2);
+
+        if(overNode._wLeaf) {
+          setFill('rgba(0,0,0,0.5)');
+          context.beginPath();
+
+          context.moveTo(x, yLeaves - gap);
+          context.bezierCurveTo(x, yLeaves - 0.65 * gap, overNode._xLeaf, yLeaves - gap * 0.35, overNode._xLeaf, yLeaves);
+          context.lineTo(overNode._xLeaf + overNode._wLeaf, yLeaves);
+          context.bezierCurveTo(overNode._xLeaf + overNode._wLeaf, yLeaves - gap * 0.35, x + rect.width, yLeaves - 0.65 * gap, x + rect.width, yLeaves - gap);
+          context.fill();
+
+          sRect(overNode._xLeaf, yLeaves, overNode._wLeaf, hLevel);
+        }
+
+        sRect(x, y, Math.floor(rect.width), Math.floor(rect.height));
+
+
+
+        if(MOUSE_UP_FAST) {
+          frame.memory.focusFrame = new Rectangle(overNode._outRectangle.x - overNode._outRectangle.width * 0.025, 0, overNode._outRectangle.width * 1.05, frame.height); // TreeDraw._expandRect(overNode._outRectangle);
+
+          if(frame.memory.focusFrame.x < 0) {
+            frame.memory.focusFrame.width += frame.memory.focusFrame.x;
+            frame.memory.focusFrame.x = 0;
+          }
+
+          if(frame.memory.focusFrame.getRight() > frame.width) {
+            frame.memory.focusFrame.width -= (frame.memory.focusFrame.getRight() - frame.width);
+            frame.memory.focusFrame.x = frame.width - frame.memory.focusFrame.width;
+          }
+
+
+          frame.memory.nodeSelected = overNode;
+          changeInResult = true;
+
+          frame.memory.image = null;
+        }
+      }
+      if(MOUSE_DOWN) {
+        frame.memory.prevMX = mX;
+      }
+      if(MOUSE_PRESSED) {
+        scale = 5 * frame.memory.focusFrame.width / frame.width;
+        frame.memory.focusFrame.x -= (mX - frame.memory.prevMX) * scale;
+        frame.memory.prevMX = mX;
+      }
+      if(WHEEL_CHANGE != 0) {
+        var center = frame.memory.focusFrame.getCenter();
+        var zoom = 1 + 0.1 * WHEEL_CHANGE;
+        frame.memory.focusFrame.x = center.x - frame.memory.focusFrame.width * 0.5 * zoom;
+        frame.memory.focusFrame.width *= zoom;
+      }
+      if(MOUSE_PRESSED || WHEEL_CHANGE != 0) {
+
+        frame.memory.image = null;
+
+      }
+    }
+
+    if(!captureImage && !drawingImage) context.restore();
+
+
+    if(frame.memory.overNode != overNode) {
+      frame.memory.overNode = overNode;
+      changeInResult = true;
+    }
+
+    if(changeInResult || frame.memory.result == null) {
+      frame.memory.result = [
+        {
+          value: frame.memory.nodeSelected,
+          type: 'Node'
+        },
+        {
+          value: frame.memory.overNode,
+          type: 'Node'
+        }
+      ];
+    }
+
+    return frame.memory.result;
+
+  };
+
+  /**
+   * @ignore
+   */
+  TreeDraw._generateRectanglesDecision = function(node, hLevel) {
+
+    var weights = new NumberList();
+    node.toNodeList.forEach(function(node) {
+      weights.push(node.weight);
+    });
+
+    var rectangles = TreeDraw._horizontalRectanglesDecision(node._inRectangle, weights);
+
+    node.toNodeList.forEach(function(child, i) {
+      child._outRectangle = rectangles[i];
+      child._inRectangle = TreeDraw._inRectFromOutRectDecision(child._outRectangle, hLevel);
+      TreeDraw._generateRectanglesDecision(child, hLevel);
+    });
+  };
+  TreeDraw._inRectFromOutRectDecision = function(rect, hLevel) {
+    return new Rectangle(rect.x, rect.y + hLevel, rect.width, rect.height - hLevel);
+  };
+  TreeDraw._horizontalRectanglesDecision = function(rect, weights) {
+    var rects = new List();
+    var x0 = rect.x;
+    var w;
+    var newWeights = weights.getNormalizedToSum();
+
+    newWeights.forEach(function(weight) {
+      w = weight * rect.width;
+      rects.push(new Rectangle(x0, rect.y, w, rect.height));
+      x0 += w;
+    });
+
+    return rects;
+  };
+
+  exports.TreeDraw = TreeDraw;
 
   // jshint unused:false
 

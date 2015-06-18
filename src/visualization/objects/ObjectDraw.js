@@ -1,4 +1,5 @@
 function ObjectDraw() {}
+export default ObjectDraw;
 
 
 /**

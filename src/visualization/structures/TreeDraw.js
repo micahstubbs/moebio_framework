@@ -5,6 +5,7 @@
  * @category networks
  */
 function TreeDraw() {}
+export default TreeDraw;
 
 
 /**
