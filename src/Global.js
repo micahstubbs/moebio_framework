@@ -419,7 +419,7 @@ export function activateWheel(){
   window.onmousewheel = document.onmousewheel = _onWheel;
 
 }
-export function _onWheel(e) {
+function _onWheel(e) {
   //c.l('_onWheel, e:', e);
 
     if (!e) e = window.event; //IE
