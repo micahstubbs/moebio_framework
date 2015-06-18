@@ -1,9 +1,14 @@
+import { context } from "src/Global";
+import StringList from "src/dataStructures/strings/StringList";
+import { getTextW } from "src/tools/graphic/SimpleGraphics";
+
 /**
  * @classdesc static Class with methods to render text in canvas
  * @namespace
  * @category strings
  */
 function DrawTexts() {}
+export default DrawTexts;
 
 DrawTexts.POINT_TO_PIXEL = 1.3333;
 DrawTexts.PIXEL_TO_POINT = 0.75;

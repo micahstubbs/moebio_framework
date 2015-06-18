@@ -1,4 +1,7 @@
+import { cW, cH } from 'src/Global';
+
 function CanvasAndContext() {}
+export default CanvasAndContext;
 
 CanvasAndContext.createInvisibleContext = function(width, height) {
   width = width || cW;
