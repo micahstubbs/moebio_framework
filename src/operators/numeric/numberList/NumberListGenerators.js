@@ -1,4 +1,6 @@
 import NumberList from "src/dataStructures/numeric/NumberList";
+import Interval from "src/dataStructures/numeric/Interval";
+import NumberOperators from "src/operators/numeric/NumberOperators";
 
 function NumberListGenerators() {}
 export default NumberListGenerators;

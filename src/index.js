@@ -110,19 +110,28 @@ import TableOperators from "src/operators/lists/TableOperators";
 export { ListGenerators, ListOperators, TableConversions, TableEncodings,
 	TableGenerators, TableOperators };
 
+
+// operators/numeric
+import IntervalListOperators from "src/operators/numeric/interval/IntervalListOperators";
+import IntervalTableOperators from "src/operators/numeric/interval/IntervalTableOperators";
+import MatrixGenerators from "src/operators/numeric/MatrixGenerators";
+import NumberListGenerators from "src/operators/numeric/numberList/NumberListGenerators";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
+import NumberOperators from "src/operators/numeric/NumberOperators";
+import NumberTableConversions from "src/operators/numeric/numberTable/NumberTableConversions";
+import NumberTableFlowOperators from "src/operators/numeric/numberTable/NumberTableFlowOperators";
+import NumberTableOperators from "src/operators/numeric/numberTable/NumberTableOperators";
+export { IntervalListOperators, IntervalTableOperators, MatrixGenerators, NumberListGenerators,
+	NumberListOperators, NumberOperators, NumberTableConversions, NumberTableFlowOperators,
+	NumberTableOperators };
+
+
+
 // import ObjectOperators from "src/operators/objects/ObjectOperators";
 // import ObjectConversions from "src/operators/objects/ObjectConversions";
 
 
-// import IntervalListOperators from "src/operators/numeric/interval/IntervalListOperators";
-// import IntervalTableOperators from "src/operators/numeric/interval/IntervalTableOperators";
-// import MatrixGenerators from "src/operators/numeric/MatrixGenerators";
-// import NumberListGenerators from "src/operators/numeric/numberList/NumberListGenerators";
-// import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
-// import NumberOperators from "src/operators/numeric/NumberOperators";
-// import NumberTableConversions from "src/operators/numeric/numberTable/NumberTableConversions";
-// import NumberTableFlowOperators from "src/operators/numeric/numberTable/NumberTableFlowOperators";
-// import NumberTableOperators from "src/operators/numeric/numberTable/NumberTableOperators";
+
 // import StringConversions from "src/operators/strings/StringConversions";
 // import StringListOperators from "src/operators/strings/StringListOperators";
 // import StringOperators from "src/operators/strings/StringOperators";

@@ -1,4 +1,15 @@
+import NumberList from "src/dataStructures/numeric/NumberList";
+import NumberTable from "src/dataStructures/numeric/NumberTable";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
+import List from "src/dataStructures/lists/List";
+import Table from "src/dataStructures/lists/Table";
+import Relation from "src/dataStructures/structures/elements/Relation";
+import Node from "src/dataStructures/structures/elements/Node";
+import Network from "src/dataStructures/structures/networks/Network";
+import { instantiateWithSameType } from "src/tools/utils/code/ClassUtils";
+
 function NumberTableOperators() {}
+export default NumberTableOperators;
 
 /**
  * normlizes each NumberList to min and max values
@@ -23,7 +34,7 @@ NumberTableOperators.normalizeListsToMax = function(numberTable) {
 /**
  * smooth numberLists by calculating averages with neighbors
  * @param  {NumberTable} numberTable
- * 
+ *
  * @param  {Number} intensity weight for neighbors in average (0<=intensity<=0.5)
  * @param  {Number} nIterations number of ieterations
  * @return {NumberTable}
@@ -48,7 +59,7 @@ NumberTableOperators.averageSmootherOnLists = function(numberTable, intensity, n
  * <br>[!] regression still not built
  * @param  {NumberTable} numberTable
  * @param  {List} propertyList categories or values
- * 
+ *
  * @param  {Polygon} vectorList optional list of points to be tested, if provided classes or regressions are calculated, if not the function is returned
  * @param  {Number} k number of neighbors
  * @param  {Boolean} calculateClass if true propertyList is a list of categories for membership calculation, if false a numberList for regression
@@ -134,7 +145,7 @@ NumberTableOperators.kNN = function(numberTable, propertyList, vectorList, k, ca
       sumD += (1 / (table[1][i] + 0.000001));
     }
 
-    c.l('vector:', vector[0], vector[1], 'colsest:', Math.floor(100000000 * table[1][0]), Math.floor(100000000 * table[1][1]), 'categories', propertyList[table[0][0]], propertyList[table[0][1]], 'result', combination / sumD);
+    console.log('vector:', vector[0], vector[1], 'colsest:', Math.floor(100000000 * table[1][0]), Math.floor(100000000 * table[1][1]), 'categories', propertyList[table[0][0]], propertyList[table[0][1]], 'result', combination / sumD);
 
     return combination / sumD;
 

@@ -8784,6 +8784,162 @@ define('src/index', ['exports'], function (exports) {
 
 	exports.GeometryOperators = GeometryOperators__default;
 
+	function NumberOperators() {}
+
+
+	NumberOperators.numberToString = function(value, nDecimals, powersMode, unit) {
+	  var string = value.toFixed(nDecimals);
+	  while(string.charAt(string.length - 1) == '0') {
+	    string = string.substring(0, string.length - 1);
+	  }
+	  if(string.charAt(string.length - 1) == '.') string = string.substring(0, string.length - 1);
+	  return string;
+	};
+
+	/**
+	 * decent method to create pseudo random numbers
+	 * @param {Object} seed
+	 */
+	NumberOperators.getRandomWithSeed = function(seed) {
+	  seed = (seed * 9301 + 49297) % 233280;
+	  return seed / (233280.0);
+	};
+
+	NumberOperators.numberFromBinaryPositions = function(binaryPositions) {
+	  var i;
+	  var n = 0;
+	  for(i = 0; binaryPositions[i] != null; i++) {
+	    n += Math.pow(2, binaryPositions[i]);
+	  }
+	  return n;
+	};
+
+	NumberOperators.numberFromBinaryValues = function(binaryValues) {
+	  var n = 0;
+	  for(var i = 0; binaryValues[i] != null; i++) {
+	    n += binaryValues[i] == 1 ? Math.pow(2, i) : 0;
+	  }
+	  return n;
+	};
+
+	NumberOperators.powersOfTwoDecomposition = function(number, length) {
+	  // var i;
+	  // var powers = StringList.fromArray(Number(number).toString(2).split('')).toNumberList().getReversed();
+	  // var n = powers.length;
+	  // for(i=n; i<length; i++){
+	  //   powers.push(0);
+	  // }
+	  // return powers;
+
+
+
+	  var powers = new NumberList__default();
+
+	  var constructingNumber = 0;
+	  var biggestPower;
+
+	  while(constructingNumber < number) {
+	    biggestPower = Math.floor(Math.log(number) / Math.LN2);
+	    powers[biggestPower] = 1;
+	    number -= Math.pow(2, biggestPower);
+	  }
+
+	  var length = Math.max(powers.length, length == null ? 0 : length);
+
+	  for(var i = 0; i < length; i++) {
+	    powers[i] = powers[i] == 1 ? 1 : 0;
+	  }
+
+	  return powers;
+	};
+
+	NumberOperators.positionsFromBinaryValues = function(binaryValues) {
+	  var i;
+	  var positions = new NumberList__default();
+	  for(i = 0; binaryValues[i] != null; i++) {
+	    if(binaryValues[i] == 1) positions.push(i);
+	  }
+	  return positions;
+	};
+
+	//////////Random Generator with Seed, From http://baagoe.org/en/w/index.php/Better_random_numbers_for_javascript
+
+	NumberOperators._Alea = function() {
+	  return(function(args) {
+	    // Johannes Baagøe <baagoe@baagoe.com>, 2010
+	    var s0 = 0;
+	    var s1 = 0;
+	    var s2 = 0;
+	    var c = 1;
+
+	    if(args.length == 0) {
+	      args = [+new Date()];
+	    }
+	    var mash = NumberOperators._Mash();
+	    s0 = mash(' ');
+	    s1 = mash(' ');
+	    s2 = mash(' ');
+
+	    for(var i = 0; i < args.length; i++) {
+	      s0 -= mash(args[i]);
+	      if(s0 < 0) {
+	        s0 += 1;
+	      }
+	      s1 -= mash(args[i]);
+	      if(s1 < 0) {
+	        s1 += 1;
+	      }
+	      s2 -= mash(args[i]);
+	      if(s2 < 0) {
+	        s2 += 1;
+	      }
+	    }
+	    mash = null;
+
+	    var random = function() {
+	      var t = 2091639 * s0 + c * 2.3283064365386963e-10; // 2^-32
+	      s0 = s1;
+	      s1 = s2;
+	      return s2 = t - (c = t | 0);
+	    };
+	    random.uint32 = function() {
+	      return random() * 0x100000000; // 2^32
+	    };
+	    random.fract53 = function() {
+	      return random() +
+	        (random() * 0x200000 | 0) * 1.1102230246251565e-16; // 2^-53
+	    };
+	    random.version = 'Alea 0.9';
+	    random.args = args;
+	    return random;
+
+	  }(Array.prototype.slice.call(arguments)));
+	};
+
+	NumberOperators._Mash = function() {
+	  var n = 0xefc8249d;
+
+	  var mash = function(data) {
+	    data = data.toString();
+	    for(var i = 0; i < data.length; i++) {
+	      n += data.charCodeAt(i);
+	      var h = 0.02519603282416938 * n;
+	      n = h >>> 0;
+	      h -= n;
+	      h *= n;
+	      n = h >>> 0;
+	      h -= n;
+	      n += h * 0x100000000; // 2^32
+	    }
+	    return(n >>> 0) * 2.3283064365386963e-10; // 2^-32
+	  };
+
+	  mash.version = 'Mash 0.9';
+	  return mash;
+	};
+
+	exports.NumberOperators = NumberOperators;
+
 	function NumberListGenerators__NumberListGenerators() {}
 	var NumberListGenerators__default = NumberListGenerators__NumberListGenerators;
 
@@ -8810,7 +8966,7 @@ define('src/index', ['exports'], function (exports) {
 
 	// TODO: Should this function be here?
 	NumberList__default.createNumberListFromInterval = function(nElements, interval) {
-	  if(interval == null) interval = new Interval(0, 1);
+	  if(interval == null) interval = new Interval__default(0, 1);
 	  var numberList = new NumberList__default();
 	  var range = interval.getAmplitude();
 	  var i;
@@ -8831,7 +8987,7 @@ define('src/index', ['exports'], function (exports) {
 	 */
 	NumberListGenerators__NumberListGenerators.createRandomNumberList = function(nValues, interval, seed, func) {
 	  seed = seed == null ? -1 : seed;
-	  interval = interval == null ? new Interval(0, 1) : interval;
+	  interval = interval == null ? new Interval__default(0, 1) : interval;
 
 	  var numberList = new NumberList__default();
 	  var amplitude = interval.getAmplitude();
@@ -8847,6 +9003,8 @@ define('src/index', ['exports'], function (exports) {
 
 	  return numberList;
 	};
+
+	exports.NumberListGenerators = NumberListGenerators__default;
 
 	function setCursor(name) {
 	  name = name == null ? 'default' : name;
@@ -13113,166 +13271,6 @@ define('src/index', ['exports'], function (exports) {
 
 	exports.TableGenerators = TableGenerators;
 
-	/**
-	 * @classdesc Provides a set of tools that work with Numbers.
-	 *
-	 * @namespace
-	 * @category numbers
-	 */
-	function NumberOperators__NumberOperators() {}
-	var NumberOperators__default = NumberOperators__NumberOperators;
-
-	NumberOperators__NumberOperators.numberToString = function(value, nDecimals, powersMode, unit) {
-	  var string = value.toFixed(nDecimals);
-	  while(string.charAt(string.length - 1) == '0') {
-	    string = string.substring(0, string.length - 1);
-	  }
-	  if(string.charAt(string.length - 1) == '.') string = string.substring(0, string.length - 1);
-	  return string;
-	};
-
-	/**
-	 * decent method to create pseudo random numbers
-	 * @param {Object} seed
-	 */
-	NumberOperators__NumberOperators.getRandomWithSeed = function(seed) {
-	  seed = (seed * 9301 + 49297) % 233280;
-	  return seed / (233280.0);
-	};
-
-	NumberOperators__NumberOperators.numberFromBinaryPositions = function(binaryPositions) {
-	  var i;
-	  var n = 0;
-	  for(i = 0; binaryPositions[i] != null; i++) {
-	    n += Math.pow(2, binaryPositions[i]);
-	  }
-	  return n;
-	};
-
-	NumberOperators__NumberOperators.numberFromBinaryValues = function(binaryValues) {
-	  var n = 0;
-	  for(var i = 0; binaryValues[i] != null; i++) {
-	    n += binaryValues[i] == 1 ? Math.pow(2, i) : 0;
-	  }
-	  return n;
-	};
-
-	NumberOperators__NumberOperators.powersOfTwoDecomposition = function(number, length) {
-	  // var i;
-	  // var powers = StringList.fromArray(Number(number).toString(2).split('')).toNumberList().getReversed();
-	  // var n = powers.length;
-	  // for(i=n; i<length; i++){
-	  //   powers.push(0);
-	  // }
-	  // return powers;
-
-
-
-	  var powers = new NumberList();
-
-	  var constructingNumber = 0;
-	  var biggestPower;
-
-	  while(constructingNumber < number) {
-	    biggestPower = Math.floor(Math.log(number) / Math.LN2);
-	    powers[biggestPower] = 1;
-	    number -= Math.pow(2, biggestPower);
-	  }
-
-	  var length = Math.max(powers.length, length == null ? 0 : length);
-
-	  for(var i = 0; i < length; i++) {
-	    powers[i] = powers[i] == 1 ? 1 : 0;
-	  }
-
-	  return powers;
-	};
-
-	NumberOperators__NumberOperators.positionsFromBinaryValues = function(binaryValues) {
-	  var i;
-	  var positions = new NumberList();
-	  for(i = 0; binaryValues[i] != null; i++) {
-	    if(binaryValues[i] == 1) positions.push(i);
-	  }
-	  return positions;
-	};
-
-	//////////Random Generator with Seed, From http://baagoe.org/en/w/index.php/Better_random_numbers_for_javascript
-
-	NumberOperators__NumberOperators._Alea = function() {
-	  return(function(args) {
-	    // Johannes Baagøe <baagoe@baagoe.com>, 2010
-	    var s0 = 0;
-	    var s1 = 0;
-	    var s2 = 0;
-	    var c = 1;
-
-	    if(args.length == 0) {
-	      args = [+new Date()];
-	    }
-	    var mash = NumberOperators__NumberOperators._Mash();
-	    s0 = mash(' ');
-	    s1 = mash(' ');
-	    s2 = mash(' ');
-
-	    for(var i = 0; i < args.length; i++) {
-	      s0 -= mash(args[i]);
-	      if(s0 < 0) {
-	        s0 += 1;
-	      }
-	      s1 -= mash(args[i]);
-	      if(s1 < 0) {
-	        s1 += 1;
-	      }
-	      s2 -= mash(args[i]);
-	      if(s2 < 0) {
-	        s2 += 1;
-	      }
-	    }
-	    mash = null;
-
-	    var random = function() {
-	      var t = 2091639 * s0 + c * 2.3283064365386963e-10; // 2^-32
-	      s0 = s1;
-	      s1 = s2;
-	      return s2 = t - (c = t | 0);
-	    };
-	    random.uint32 = function() {
-	      return random() * 0x100000000; // 2^32
-	    };
-	    random.fract53 = function() {
-	      return random() +
-	        (random() * 0x200000 | 0) * 1.1102230246251565e-16; // 2^-53
-	    };
-	    random.version = 'Alea 0.9';
-	    random.args = args;
-	    return random;
-
-	  }(Array.prototype.slice.call(arguments)));
-	};
-
-	NumberOperators__NumberOperators._Mash = function() {
-	  var n = 0xefc8249d;
-
-	  var mash = function(data) {
-	    data = data.toString();
-	    for(var i = 0; i < data.length; i++) {
-	      n += data.charCodeAt(i);
-	      var h = 0.02519603282416938 * n;
-	      n = h >>> 0;
-	      h -= n;
-	      h *= n;
-	      n = h >>> 0;
-	      h -= n;
-	      n += h * 0x100000000; // 2^32
-	    }
-	    return(n >>> 0) * 2.3283064365386963e-10; // 2^-32
-	  };
-
-	  mash.version = 'Mash 0.9';
-	  return mash;
-	};
-
 	function TableOperators__TableOperators() {}
 	var TableOperators__default = TableOperators__TableOperators;
 
@@ -13352,7 +13350,7 @@ define('src/index', ['exports'], function (exports) {
 	  var indexesTr = new NumberList();
 	  var indexesTe = new NumberList();
 
-	  var random = mode == 1 ? new NumberOperators__default._Alea("my", seed, "seeds") : Math.random;
+	  var random = mode == 1 ? new NumberOperators._Alea("my", seed, "seeds") : Math.random;
 
 	  if(mode == 2) N_MOD = Math.floor(proportion / (1 - proportion) * 10);
 
@@ -13982,6 +13980,1015 @@ define('src/index', ['exports'], function (exports) {
 	};
 
 	exports.TableOperators = TableOperators__default;
+
+	function IntervalListOperators() {}
+
+
+
+	IntervalListOperators.scaleIntervals = function(intervalList, value) {
+	  var newIntervalList = new List__default();
+	  newIntervalList.name = intervalList.name;
+	  for(var i = 0; intervalList[i] !== null; i++) {
+	    newIntervalList[i] = intervalList[i].getScaled(value);
+	  }
+	  return newIntervalList;
+	};
+
+	exports.IntervalListOperators = IntervalListOperators;
+
+	function IntervalTableOperators() {}
+
+
+
+	IntervalTableOperators.scaleIntervals = function(intervalTable, value) {
+	  var newIntervalTable = new Table__default();
+	  newIntervalTable.name = intervalTable.name;
+	  for(var i = 0; intervalTable[i] !== null; i++) {
+	    newIntervalTable[i] = IntervalListOperators.scaleIntervals(intervalTable[i], value);
+	  }
+	  return newIntervalTable;
+	};
+
+	exports.IntervalTableOperators = IntervalTableOperators;
+
+	function MatrixGenerators() {}
+
+
+
+	/**
+	 * Returns a transformation matrix from a triangle mapping
+	 *
+	 * @returns Matrix
+	 *
+	 **/
+	// TODO: resolve particular cases (right angles)
+	MatrixGenerators.createMatrixFromTrianglesMapping = function(v0, v1, v2, w0, w1, w2) {
+	  if(v1.y != v0.y) {
+	    var k = (v2.y - v0.y) / (v1.y - v0.y);
+
+	    var a = (w2.x - w0.x - (w1.x - w0.x) * k) / (v2.x - v0.x - (v1.x - v0.x) * k);
+	    var b = k * (w1.x - w0.x) / (v2.y - v0.y) - a * (v1.x - v0.x) / (v1.y - v0.y);
+
+	    var c = (w2.y - w0.y - (w1.y - w0.y) * k) / (v2.x - v0.x - (v1.x - v0.x) * k);
+	    var d = k * (w1.y - w0.y) / (v2.y - v0.y) - c * (v1.x - v0.x) / (v1.y - v0.y);
+	  } else {
+	    a = (w1.x - w0.x) / (v1.x - v0.x);
+	    b = (w2.x - w0.x) / (v2.y - v0.y) - a * (v2.x - v0.x) / (v2.y - v0.y);
+
+	    c = (w1.y - w0.y) / (v1.x - v0.x);
+	    d = (w2.y - w0.y) / (v2.y - v0.y) - c * (v2.x - v0.x) / (v2.y - v0.y);
+	  }
+
+	  return new Matrix(a, c, b, d, w0.x - a * v0.x - b * v0.y, w0.y - c * v0.x - d * v0.y);
+	};
+
+
+	//TODO: place this in the correct place
+	MatrixGenerators.applyTransformationOnCanvasFromPoints = function(context, v0, v1, v2, w0, w1, w2) {
+	  if(v1.y != v0.y) {
+	    var k = (v2.y - v0.y) / (v1.y - v0.y);
+
+	    var a = (w2.x - w0.x - (w1.x - w0.x) * k) / (v2.x - v0.x - (v1.x - v0.x) * k);
+	    var b = k * (w1.x - w0.x) / (v2.y - v0.y) - a * (v1.x - v0.x) / (v1.y - v0.y);
+
+	    var c = (w2.y - w0.y - (w1.y - w0.y) * k) / (v2.x - v0.x - (v1.x - v0.x) * k);
+	    var d = k * (w1.y - w0.y) / (v2.y - v0.y) - c * (v1.x - v0.x) / (v1.y - v0.y);
+	  } else {
+	    a = (w1.x - w0.x) / (v1.x - v0.x);
+	    b = (w2.x - w0.x) / (v2.y - v0.y) - a * (v2.x - v0.x) / (v2.y - v0.y);
+
+	    c = (w1.y - w0.y) / (v1.x - v0.x);
+	    d = (w2.y - w0.y) / (v2.y - v0.y) - c * (v2.x - v0.x) / (v2.y - v0.y);
+	  }
+	  context.transform(a, c, b, d, w0.x - a * v0.x - b * v0.y, w0.y - c * v0.x - d * v0.y);
+	};
+
+
+
+
+	/**
+	 * Creates a matrix transformation that corresponds to the given rotation,
+	 * around (0,0) or the specified point.
+	 * @see Matrix#rotate
+	 *
+	 * @param {Number} theta Rotation in radians.
+	 * @param {Point} [aboutPoint] The point about which this rotation occurs. Defaults to (0,0).
+	 * @returns {Matrix}
+	 */
+	MatrixGenerators.createRotationMatrix = function(theta, aboutPoint) {
+	  var rotationMatrix = Matrix(
+	    Math.cos(theta),
+	    Math.sin(theta),
+	    -Math.sin(theta),
+	    Math.cos(theta)
+	  );
+
+	  if(aboutPoint) {
+	    rotationMatrix =
+	      Matrix.translation(aboutPoint.x, aboutPoint.y).concat(
+	        rotationMatrix
+	      ).concat(
+	        Matrix.translation(-aboutPoint.x, -aboutPoint.y)
+	      );
+	  }
+
+	  return rotationMatrix;
+	};
+
+	/**
+	 * Returns a matrix that corresponds to scaling by factors of sx, sy along
+	 * the x and y axis respectively.
+	 * If only one parameter is given the matrix is scaled uniformly along both axis.
+	 * If the optional aboutPoint parameter is given the scaling takes place
+	 * about the given point.
+	 * @see Matrix#scale
+	 *
+	 * @param {Number} sx The amount to scale by along the x axis or uniformly if no sy is given.
+	 * @param {Number} [sy] The amount to scale by along the y axis.
+	 * @param {Point} [aboutPoint] The point about which the scaling occurs. Defaults to (0,0).
+	 * @returns {Matrix} A matrix transformation representing scaling by sx and sy.
+	 */
+	MatrixGenerators.createScaleMatrix = function(sx, sy, aboutPoint) {
+	  sy = sy || sx;
+
+	  var scaleMatrix = Matrix(sx, 0, 0, sy);
+
+	  if(aboutPoint) {
+	    scaleMatrix =
+	      Matrix.translation(aboutPoint.x, aboutPoint.y).concat(
+	        scaleMatrix
+	      ).concat(
+	        Matrix.translation(-aboutPoint.x, -aboutPoint.y)
+	      );
+	  }
+
+	  return scaleMatrix;
+	};
+
+
+	/**
+	 * Returns a matrix that corresponds to a translation of tx, ty.
+	 * @see Matrix#translate
+	 *
+	 * @param {Number} tx The amount to translate in the x direction.
+	 * @param {Number} ty The amount to translate in the y direction.
+	 * @returns {Matrix} A matrix transformation representing a translation by tx and ty.
+	 */
+	MatrixGenerators.createTranslationMatrix = function(tx, ty) {
+	  return Matrix(1, 0, 0, 1, tx, ty);
+	};
+	//
+	// /**
+	// * A constant representing the identity matrix.
+	// * @name IDENTITY
+	// * @fieldOf Matrix
+	// */
+	// Matrix.IDENTITY = Matrix();
+	// /**
+	// * A constant representing the horizontal flip transformation matrix.
+	// * @name HORIZONTAL_FLIP
+	// * @fieldOf Matrix
+	// */
+	// Matrix.HORIZONTAL_FLIP = Matrix(-1, 0, 0, 1);
+	// /**
+	// * A constant representing the vertical flip transformation matrix.
+	// * @name VERTICAL_FLIP
+	// * @fieldOf Matrix
+	// */
+	// Matrix.VERTICAL_FLIP = Matrix(1, 0, 0, -1);
+
+	exports.MatrixGenerators = MatrixGenerators;
+
+	function NumberListOperators() {}
+
+
+	/**
+	 * cosine similarity, used to compare two NumberLists regardless of norm (see: http://en.wikipedia.org/wiki/Cosine_similarity)
+	 * @param  {NumberList} numberList0
+	 * @param  {NumberList} numberList1
+	 * @return {Number}
+	 * tags:statistics
+	 */
+	NumberListOperators.cosineSimilarity = function(numberList0, numberList1) {
+	  var norms = numberList0.getNorm() * numberList1.getNorm();
+	  if(norms == 0) return 0;
+	  return numberList0.dotProduct(numberList1) / norms;
+	};
+
+	/**
+	 * calculates the covariance
+	 * @param  {NumberList} numberList0
+	 * @param  {NumberList} numberList1
+	 * @return {Number}
+	 * tags:statistics
+	 */
+	NumberListOperators.covariance = function(numberList0, numberList1) { //TODO: improve efficiency
+	  var l = Math.min(numberList0.length, numberList1.length);
+	  var i;
+	  var av0 = numberList0.getAverage();
+	  var av1 = numberList1.getAverage();
+	  var s = 0;
+
+	  for(i = 0; i < l; i++) {
+	    s += (numberList0[i] - av0) * (numberList1[i] - av1);
+	  }
+
+	  return s / l;
+	};
+
+	/**
+	 * calculates k-means clusters of values in a numberList
+	 * @param  {NumberList} numberList
+	 * @param  {Number} k number of clusters
+	 *
+	 * @param {Boolean} returnIndexes return clusters of indexes rather than values (false by default)
+	 * @return {NumberTable} numberLists each being a cluster
+	 * tags:ds
+	 */
+	NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
+	  if(numberList == null || k == null || !k > 0) return null;
+
+	  //c.l('numberList:', numberList);
+
+	  var interval = numberList.getInterval();
+
+	  //c.l('interval:', interval);
+
+	  var min = interval.x;
+	  var max = interval.y;
+	  //var means = new NumberList();
+	  var clusters = new NumberTable();
+	  var i, j;
+	  var jK;
+	  var x;
+	  var dX = (max - min) / k;
+	  var d;
+	  var dMin;
+	  var n;
+	  var actualMean;
+	  var N = 1000;
+	  var means = new NumberList__default();
+	  var nextMeans = new NumberList__default();
+	  var nValuesInCluster = new NumberList__default();
+
+	  var initdMin = 1 + max - min;
+
+	  for(i = 0; i < k; i++) {
+	    clusters[i] = new NumberList__default();
+	    //clusters[i].actualMean = min + (i+0.5)*dX;//means[i];
+	    nextMeans[i] = min + (i + 0.5) * dX;
+	  }
+
+	  for(n = 0; n < N; n++) {
+
+	    //c.l('-------'+n);
+
+	    for(i = 0; i < k; i++) {
+	      //actualMean = means[i];//clusters[i].actualMean;
+	      //c.l(' ', i, nextMeans[i]);
+	      //clusters[i] = new NumberList();
+	      //clusters[i].mean = actualMean;
+	      //clusters[i].actualMean = 0;
+	      nValuesInCluster[i] = 0;
+	      means[i] = nextMeans[i];
+	      nextMeans[i] = 0;
+	    }
+
+	    for(i = 0; numberList[i] != null; i++) {
+	      x = numberList[i];
+	      dMin = initdMin;
+	      jK = 0;
+
+	      for(j = 0; j < k; j++) {
+	        //d = Math.abs(x-clusters[j].mean);
+	        d = Math.abs(x - means[j]);
+	        //c.l('   d', d);
+	        if(d < dMin) {
+	          dMin = d;
+	          jK = j;
+	        }
+	      }
+	      //c.l('    ', x,'-->',jK, 'with mean', clusters[jK].mean);
+	      if(n == N - 1) {
+	        //c.l('jK, clusters[jK]', jK, clusters[jK]);
+	        returnIndexes ? clusters[jK].push(i) : clusters[jK].push(x);
+	      }
+
+	      nValuesInCluster[jK]++;
+
+	      //clusters[jK].actualMean = ( (clusters[jK].length-1)*clusters[jK].actualMean + x )/clusters[jK].length;
+	      nextMeans[jK] = ((nValuesInCluster[jK] - 1) * nextMeans[jK] + x) / nValuesInCluster[jK];
+	    }
+	    //if(n%50==0) c.l(n+' --> ' + nValuesInCluster.join(',')+"|"+means.join(','));
+	  }
+
+	  return clusters;
+
+	};
+
+
+	NumberListOperators.standardDeviationBetweenTwoNumberLists = function(numberList0, numberList1) {
+	  var s = 0;
+	  var l = Math.min(numberList0.length, numberList1.length);
+
+	  for(var i = 0; i < l; i++) {
+	    s += Math.pow(numberList0[i] - numberList1[i], 2);
+	  }
+
+	  return s / l;
+	};
+
+	/**
+	 * returns Pearson Product Moment Correlation, the most common correlation coefficient ( covariance/(standard_deviation0*standard_deviation1) )
+	 * @param  {NumberList} numberList0
+	 * @param  {NumberList} numberList1
+	 * @return {Number}
+	 * tags:statistics
+	 */
+	NumberListOperators.pearsonProductMomentCorrelation = function(numberList0, numberList1) { //TODO:make more efficient
+	  return NumberListOperators.covariance(numberList0, numberList1) / (numberList0.getStandardDeviation() * numberList1.getStandardDeviation());
+	};
+
+
+	/**
+	 * smooth a numberList by calculating averages with neighbors
+	 * @param  {NumberList} numberList
+	 * @param  {Number} intensity weight for neighbors in average (0<=intensity<=0.5)
+	 * @param  {Number} nIterations number of ieterations
+	 * @return {NumberList}
+	 * tags:statistics
+	 */
+	NumberListOperators.averageSmoother = function(numberList, intensity, nIterations) {
+	  nIterations = nIterations == null ? 1 : nIterations;
+	  intensity = intensity == null ? 0.1 : intensity;
+
+	  intensity = Math.max(Math.min(intensity, 0.5), 0);
+	  var anti = 1 - 2 * intensity;
+	  var n = numberList.length - 1;
+
+	  var newNumberList = new NumberList__default();
+	  var i;
+
+	  newNumberList.name = numberList.name;
+
+	  for(i = 0; i < nIterations; i++) {
+	    if(i == 0) {
+	      numberList.forEach(function(val, i) {
+	        newNumberList[i] = anti * val + (i > 0 ? (numberList[i - 1] * intensity) : 0) + (i < n ? (numberList[i + 1] * intensity) : 0);
+	      });
+	    } else {
+	      newNumberList.forEach(function(val, i) {
+	        newNumberList[i] = anti * val + (i > 0 ? (newNumberList[i - 1] * intensity) : 0) + (i < n ? (newNumberList[i + 1] * intensity) : 0);
+	      });
+	    }
+	  }
+
+	  newNumberList.name = numberList.name;
+
+	  return newNumberList;
+	};
+
+
+	/**
+	 * accepted comparison operators: "<", "<=", ">", ">=", "==", "!="
+	 */
+	NumberListOperators.filterNumberListByNumber = function(numberList, value, comparisonOperator, returnIndexes) {
+	  returnIndexes = returnIndexes || false;
+	  var newNumberList = new NumberList__default();
+	  var i;
+
+	  if(returnIndexes) {
+	    switch(comparisonOperator) {
+	      case "<":
+	        for(i = 0; numberList[i] != null; i++) {
+	          if(numberList[i] < value) {
+	            newNumberList.push(i);
+	          }
+	        }
+	        break;
+	      case "<=":
+	        for(i = 0; numberList[i] != null; i++) {
+	          if(numberList[i] <= value) {
+	            newNumberList.push(i);
+	          }
+	        }
+	        break;
+	      case ">":
+	        for(i = 0; numberList[i] != null; i++) {
+	          if(numberList[i] > value) {
+	            newNumberList.push(i);
+	          }
+	        }
+	        break;
+	      case ">=":
+	        for(i = 0; numberList[i] != null; i++) {
+	          if(numberList[i] >= value) {
+	            newNumberList.push(i);
+	          }
+	        }
+	        break;
+	      case "==":
+	        for(i = 0; numberList[i] != null; i++) {
+	          if(numberList[i] == value) {
+	            newNumberList.push(i);
+	          }
+	        }
+	        break;
+	      case "!=":
+	        for(i = 0; numberList[i] != null; i++) {
+	          if(numberList[i] != value) {
+	            newNumberList.push(i);
+	          }
+	        }
+	        break;
+	    }
+
+	  } else {
+	    switch(comparisonOperator) {
+	      case "<":
+	        for(i = 0; numberList[i] != null; i++) {
+	          if(numberList[i] < value) {
+	            newNumberList.push(numberList[i]);
+	          }
+	        }
+	        break;
+	      case "<=":
+	        for(i = 0; numberList[i] != null; i++) {
+	          if(numberList[i] <= value) {
+	            newNumberList.push(numberList[i]);
+	          }
+	        }
+	        break;
+	      case ">":
+	        for(i = 0; numberList[i] != null; i++) {
+	          if(numberList[i] > value) {
+	            newNumberList.push(numberList[i]);
+	          }
+	        }
+	        break;
+	      case ">=":
+	        for(i = 0; numberList[i] != null; i++) {
+	          if(numberList[i] >= value) {
+	            newNumberList.push(numberList[i]);
+	          }
+	        }
+	        break;
+	      case "==":
+	        for(i = 0; numberList[i] != null; i++) {
+	          if(numberList[i] == value) {
+	            newNumberList.push(numberList[i]);
+	          }
+	        }
+	        break;
+	      case "!=":
+	        for(i = 0; numberList[i] != null; i++) {
+	          if(numberList[i] != value) {
+	            newNumberList.push(numberList[i]);
+	          }
+	        }
+	        break;
+	    }
+	  }
+
+	  return newNumberList;
+	};
+
+	/**
+	 * creates a NumberList that contains the union of two NumberList (removing repetitions)
+	 * @param  {NumberList} list A
+	 * @param  {NumberList} list B
+	 *
+	 * @return {NumberList} the union of both NumberLists
+	 * tags:
+	 */
+	NumberListOperators.union = function(x, y) {
+	  // Borrowed from here: http://stackoverflow.com/questions/3629817/getting-a-union-of-two-arrays-in-javascript
+	  var obj = {};
+	  for(var i = x.length - 1; i >= 0; --i)
+	    obj[x[i]] = x[i];
+	  for(var i = y.length - 1; i >= 0; --i)
+	    obj[y[i]] = y[i];
+	  var res = new NumberList__default();
+	  for(var k in obj) {
+	    if(obj.hasOwnProperty(k)) // <-- optional
+	      res.push(obj[k]);
+	  }
+	  return res;
+	};
+
+	/**
+	 * creates a NumberList that contains the intersection of two NumberList (elements present in BOTH lists)
+	 * @param  {NumberList} list A
+	 * @param  {NumberList} list B
+	 *
+	 * @return {NumberList} the intersection of both NumberLists
+	 * tags:
+	 */
+	NumberListOperators.intersection = function(a, b) {
+	  // Borrowed from here: http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
+	  //console.log( "arguments: ", arguments );
+	  if(arguments.length > 2) {
+	    var sets = [];
+	    for(var i = 0; i < arguments.length; i++) {
+	      sets.push(arguments[i]);
+	    }
+	    sets.sort(function(a, b) {
+	      return a.length - b.length;
+	    });
+	    console.log("sets: ", sets);
+	    var resultsTrail = sets[0];
+	    for(var i = 1; i < sets.length; i++) {
+	      var newSet = sets[i];
+	      resultsTrail = NumberListOperators.intersection(resultsTrail, newSet);
+	    }
+	    return resultsTrail;
+	  }
+
+	  var result = new NumberList__default();
+	  a = a.slice();
+	  b = b.slice();
+	  while(a.length > 0 && b.length > 0)
+	  {
+	    if(a[0] < b[0]) {
+	      a.shift();
+	    }
+	    else if(a[0] > b[0]) {
+	      b.shift();
+	    }
+	    else /* they're equal */
+	    {
+	      result.push(a.shift());
+	      b.shift();
+	    }
+	  }
+
+	  return result;
+	};
+
+	exports.NumberListOperators = NumberListOperators;
+
+	function NumberTableConversions() {}
+
+
+	/**
+	 * converts a numberTable with at least two lists into a Polygon
+	 * @param  {NumberTable} numberTable with at least two numberLists
+	 * @return {Polygon}
+	 * tags:conversion
+	 */
+	NumberTableConversions.numberTableToPolygon = function(numberTable) {
+	  if(numberTable.length < 2) return null;
+
+	  var i;
+	  var n = Math.min(numberTable[0].length, numberTable[1].length);
+	  var polygon = new Polygon__default();
+
+	  for(i = 0; i < n; i++) {
+	    polygon[i] = new Point__default(numberTable[0][i], numberTable[1][i]);
+	  }
+
+	  return polygon;
+	};
+
+	exports.NumberTableConversions = NumberTableConversions;
+
+	function NumberTableFlowOperators() {}
+
+
+	NumberTableFlowOperators.getFlowTable = function(numberTable, normalized, include0s) {
+	  if(numberTable == null) return;
+
+	  normalized = normalized || false;
+	  var nElements = numberTable.length;
+	  var nRows = numberTable[0].length;
+	  var numberList;
+	  var minList = new NumberList__default();
+	  var maxList = new NumberList__default();
+	  var sums = new NumberList__default();
+	  var minInRow;
+	  var maxInRow;
+	  var sumInRow;
+	  var MAX = -9999999;
+	  var MIN = 9999999;
+	  var MAXSUMS = -9999999;
+	  var i, j;
+	  for(i = 0; i < nRows; i++) {
+	    minInRow = 9999999; //TODO: what's the max Number?
+	    maxInRow = -9999999;
+	    sumInRow = 0;
+	    for(j = 0; j < nElements; j++) {
+	      numberList = numberTable[j];
+	      if(numberList.length != nRows) return;
+
+	      maxInRow = Math.max(maxInRow, numberList[i]);
+	      minInRow = Math.min(minInRow, numberList[i]);
+	      sumInRow += numberList[i];
+	    }
+	    minList.push(minInRow);
+	    maxList.push(maxInRow);
+	    sums.push(sumInRow);
+	    MIN = Math.min(MIN, minInRow);
+	    MAX = Math.max(MAX, maxInRow);
+	    MAXSUMS = Math.max(MAXSUMS, sumInRow);
+	  }
+
+	  var dMINMAX = MAXSUMS - MIN;
+	  var flowTable = new NumberTable__default();
+	  var flowNumberList;
+	  var minToNormalize;
+	  var maxToNormalize;
+
+	  var include0Add = include0s ? 1 : 0;
+
+
+	  if(normalized && include0s) {
+	    var max;
+
+	    flowTable = new NumberTable__default(numberTable.length + 1);
+
+	    numberTable[0].forEach(function() {
+	      flowTable[0].push(0);
+	    });
+
+	    numberTable.forEach(function(list, iList) {
+	      list.forEach(function(val, j) {
+	        sum = sums[j];
+	        flowTable[iList + 1][j] = val / (sum == 0 ? 0.00001 : sum) + flowTable[iList][j];
+	      });
+	    });
+
+	    return flowTable;
+	  }
+
+	  flowTable = new NumberTable__default();
+
+	  if(!normalized) {
+	    minToNormalize = MIN;
+	    maxToNormalize = dMINMAX;
+	  } else {
+	    minToNormalize = Math.max(MIN, 0);
+	  }
+	  for(i = 0; i < nElements; i++) {
+	    flowNumberList = new NumberList__default();
+	    flowTable.push(flowNumberList);
+	  }
+	  if(include0s) flowTable.push(new NumberList__default());
+
+	  for(i = 0; i < nRows; i++) {
+	    numberList = numberTable[0];
+	    if(normalized) {
+	      maxToNormalize = sums[i] - minToNormalize;
+	    }
+	    if(include0s) {
+	      flowTable[0][i] = 0;
+	    }
+	    if(maxToNormalize == 0) maxToNormalize = 0.00001;
+	    flowTable[include0Add][i] = (numberList[i] - minToNormalize) / maxToNormalize;
+	    for(j = 1; j < nElements; j++) {
+	      numberList = numberTable[j];
+	      flowTable[j + include0Add][i] = ((numberList[i] - minToNormalize) / maxToNormalize) + flowTable[j - 1 + include0Add][i];
+	    }
+	  }
+	  return flowTable;
+	};
+
+	NumberTableFlowOperators.getFlowTableIntervals = function(numberTable, normalized, sorted, stacked) {
+	  if(numberTable == null) return null;
+
+	  var table = NumberTableFlowOperators.getFlowTable(numberTable, normalized, true);
+
+	  var intervalTable = new Table__default();
+	  var i, j;
+
+	  var nElements = table.length;
+	  var nRows = table[0].length;
+
+	  var intervalList;
+
+	  var maxCols = new NumberList__default();
+
+	  for(i = 1; i < nElements; i++) {
+	    numberList = table[i];
+	    intervalList = new List();
+	    intervalTable[i - 1] = intervalList;
+	    for(j = 0; j < nRows; j++) {
+	      intervalList.push(new Interval(table[i - 1][j], table[i][j]));
+	      if(i == nElements - 1) maxCols[j] = table[i][j];
+	    }
+
+	  }
+
+	  if(sorted) {
+	    var amplitudes;
+	    var interval;
+	    var yy;
+	    for(j = 0; j < nRows; j++) {
+	      amplitudes = new NumberList__default();
+	      intervalList = intervalTable[i];
+	      for(i = 0; i < nElements - 1; i++) {
+	        amplitudes.push(intervalTable[i][j].getAmplitude());
+	      }
+	      var indexes = amplitudes.getSortIndexes();
+
+	      yy = (normalized || stacked) ? 0 : (1 - maxCols[j]) * 0.5;
+
+	      for(i = 0; i < nElements - 1; i++) {
+	        interval = intervalTable[indexes[i]][j];
+	        interval.y = yy + interval.getAmplitude();
+	        interval.x = yy;
+	        yy = interval.y;
+	      }
+	    }
+	  } else if(!normalized) {
+	    for(j = 0; j < nRows; j++) {
+	      for(i = 0; i < nElements - 1; i++) {
+	        interval = intervalTable[i][j];
+	        if(stacked) {
+	          intervalTable[i][j].x = 1 - intervalTable[i][j].x;
+	          intervalTable[i][j].y = 1 - intervalTable[i][j].y;
+	        } else {
+	          intervalTable[i][j] = interval.add((1 - maxCols[j]) * 0.5);
+	        }
+
+	      }
+	    }
+	  }
+
+	  return intervalTable;
+	};
+
+	exports.NumberTableFlowOperators = NumberTableFlowOperators;
+
+	function NumberTableOperators() {}
+
+
+	/**
+	 * normlizes each NumberList to min and max values
+	 * @param  {NumberTable} numberTable
+	 * @return {NumberTable}
+	 * tags:math
+	 */
+	NumberTableOperators.normalizeLists = function(numberTable) {
+	  return numberTable.getNumberListsNormalized();
+	};
+
+	NumberTableOperators.normalizeListsToMax = function(numberTable) {
+	  var newNumberTable = new NumberTable__default();
+	  newNumberTable.name = numberTable.name;
+	  var i;
+	  for(i = 0; numberTable[i] != null; i++) {
+	    newNumberTable[i] = numberTable[i].getNormalizedToMax();
+	  }
+	  return newNumberTable;
+	};
+
+	/**
+	 * smooth numberLists by calculating averages with neighbors
+	 * @param  {NumberTable} numberTable
+	 *
+	 * @param  {Number} intensity weight for neighbors in average (0<=intensity<=0.5)
+	 * @param  {Number} nIterations number of ieterations
+	 * @return {NumberTable}
+	 * tags:statistics
+	 */
+	NumberTableOperators.averageSmootherOnLists = function(numberTable, intensity, nIterations) {
+	  if(numberTable == null) return;
+
+	  intensity = intensity || 0.5;
+	  nIterations = nIterations || 1;
+
+	  var newNumberTable = new NumberTable__default();
+	  newNumberTable.name = numberTable.name;
+	  numberTable.forEach(function(nL, i) {
+	    newNumberTable[i] = NumberListOperators.averageSmoother(numberTable[i], intensity, nIterations);
+	  });
+	  return newNumberTable;
+	};
+
+	/**
+	 * builds a k-nearest neighbors function, that calculates a class membership or a regression, taking the vote or average of the k nearest instances, using Euclidean distance, and applies it to a list of points, see: http://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm
+	 * <br>[!] regression still not built
+	 * @param  {NumberTable} numberTable
+	 * @param  {List} propertyList categories or values
+	 *
+	 * @param  {Polygon} vectorList optional list of points to be tested, if provided classes or regressions are calculated, if not the function is returned
+	 * @param  {Number} k number of neighbors
+	 * @param  {Boolean} calculateClass if true propertyList is a list of categories for membership calculation, if false a numberList for regression
+	 * @param {Number} matrixN if provided, the result will be a numberTable with values in a grid in the numberTable ranges
+	 * @return {Object} kNN Function or a matrix (grid) of values if matrixN is provided, or classes or values from points if vectorList is provided
+	 * tags:ds
+	 */
+	NumberTableOperators.kNN = function(numberTable, propertyList, vectorList, k, calculateClass, matrixN) {
+	  if(numberTable == null ||  propertyList == null) return null;
+
+	  k = k || 1;
+	  calculateClass = calculateClass == null ? true : calculateClass;
+
+	  var i, j;
+
+	  var fKNN = function(vector) {
+	    var i, j;
+	    var d2;
+
+	    var table = new NumberTable__default();
+
+	    table[0] = new NumberList__default();
+	    table[1] = new NumberList__default();
+	    numberTable[0].forEach(function(val, i) {
+	      d2 = 0;
+	      numberTable.forEach(function(nList, j) {
+	        d2 += Math.pow(nList[i] - vector[j], 2);
+	      });
+	      if(table[1].length < k || table[1][k - 1] > d2) {
+	        var inserted = false;
+	        for(j = 0; table[1][j] < k; j++) {
+	          if(d2 < table[1][j]) {
+	            table[1].splice(j, 0, d2);
+	            table[0].splice(j, 0, i);
+	            inserted = true;
+	            break;
+	          }
+	        }
+	        if(!inserted && table[1].length < k) {
+	          table[1].push(d2);
+	          table[0].push(i);
+	        }
+	      }
+	      // table[0].push(i);
+	      // table[1].push(d2);
+	    });
+
+
+
+	    //table = table.getListsSortedByList(table[1]);
+
+	    if(calculateClass) {
+	      var classTable = new Table__default();
+	      classTable[0] = new List__default();
+	      classTable[1] = new NumberList__default();
+	      for(i = 0; i < k; i++) {
+	        clas = propertyList[table[0][i]];
+	        index = classTable[0].indexOf(clas);
+	        if(index == -1) {
+	          classTable[0].push(clas);
+	          classTable[1].push(1);
+	        } else {
+	          classTable[1][index]++;
+	        }
+	      }
+	      var max = classTable[1][0];
+	      var iMax = 0;
+	      classTable[1].slice(1).forEach(function(val, i) {
+	        if(val > max) {
+	          max = val;
+	          iMax = i + 1;
+	        }
+	      });
+	      return classTable[0][iMax];
+	    }
+
+	    var val;
+	    var combination = 0;
+	    var sumD = 0;
+	    for(i = 0; i < k; i++) {
+	      val = propertyList[table[0][i]];
+	      combination += val / (table[1][i] + 0.000001);
+	      sumD += (1 / (table[1][i] + 0.000001));
+	    }
+
+	    console.log('vector:', vector[0], vector[1], 'colsest:', Math.floor(100000000 * table[1][0]), Math.floor(100000000 * table[1][1]), 'categories', propertyList[table[0][0]], propertyList[table[0][1]], 'result', combination / sumD);
+
+	    return combination / sumD;
+
+	    //regression
+	    //…
+	  };
+
+	  if(vectorList == null) {
+
+	    if(matrixN != null && matrixN > 0) {
+	      var propertiesNumbers = {};
+	      var n = 0;
+
+	      propertyList.forEach(function(val) {
+	        if(propertiesNumbers[val] == null) {
+	          propertiesNumbers[val] = n;
+	          n++;
+	        }
+	      });
+
+	      var p;
+	      var matx = new NumberTable__default();
+	      var ix = numberTable[0].getMinMaxInterval();
+	      var minx = ix.x;
+	      var kx = ix.getAmplitude() / matrixN;
+	      var iy = numberTable[1].getMinMaxInterval();
+	      var miny = iy.x;
+	      var ky = iy.getAmplitude() / matrixN;
+
+	      for(i = 0; i < matrixN; i++) {
+	        matx[i] = new NumberList__default();
+
+	        for(j = 0; j < matrixN; j++) {
+	          p = [
+	            minx + kx * i,
+	            miny + ky * j
+	          ];
+
+	          fKNN(p);
+
+	          matx[i][j] = calculateClass ? propertiesNumbers[fKNN(p)] : fKNN(p);
+	        }
+	      }
+	      //return matrix
+	      return matx;
+	    }
+
+	    //return Function
+	    return fKNN;
+	  }
+
+	  var results = ClassUtils__instantiateWithSameType(propertyList);
+
+	  vectorList.forEach(function(vector) {
+	    results.push(fKNN(vector));
+	  });
+
+	  //return results
+	  return results;
+	};
+
+
+
+	//TODO: move to NumberTableConversions
+	NumberTableOperators.numberTableToNetwork = function(numberTable, method, tolerance) {
+	  tolerance = tolerance == null ? 0 : tolerance;
+
+	  var network = new Network__default();
+
+	  var list0;
+	  var list1;
+
+	  var i;
+	  var j;
+
+	  var node0;
+	  var node1;
+	  var relation;
+
+
+	  switch(method) {
+	    case 0: // standard deviation
+
+	      var sd;
+	      var w;
+
+	      for(i = 0; numberTable[i + 1] != null; i++) {
+	        list0 = numberTable[i];
+
+	        if(i == 0) {
+	          node0 = new Node__default(list0.name, list0.name);
+	          network.addNode(node0);
+	        } else {
+	          node0 = network.nodeList[i];
+	        }
+
+
+	        for(j = i + 1; numberTable[j] != null; j++) {
+	          list1 = numberTable[j];
+
+	          if(i == 0) {
+	            node1 = new Node__default(list1.name, list1.name);
+	            network.addNode(node1);
+	          } else {
+	            node1 = network.nodeList[j];
+	          }
+
+
+
+	          list1 = numberTable[j];
+	          sd = NumberListOperators.standardDeviationBetweenTwoNumberLists(list0, list1);
+
+	          w = 1 / (1 + sd);
+
+	          if(w >= tolerance) {
+	            relation = new Relation__default(i + "_" + j, node0.name + "_" + node1.name, node0, node1, w);
+	            network.addRelation(relation);
+	          }
+	        }
+	      }
+
+	      break;
+	    case 1:
+	      break;
+	    case 2:
+	      break;
+	  }
+
+	  return network;
+	};
+
+	exports.NumberTableOperators = NumberTableOperators;
 
 	// jshint unused:false
 
