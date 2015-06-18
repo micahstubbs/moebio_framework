@@ -1,3 +1,7 @@
+import GeometryOperators from "src/operators/geometry/GeometryOperators";
+import Rectangle from "src/dataStructures/geometry/Rectangle";
+import { context, TwoPi } from 'src/Global';
+
 //TODO: delete many functions that are deprectaed, replaced by SimpleGraphics.js functions
 
 //include(frameworksRoot+"operators/geometry/GeometryOperators.js");
@@ -361,22 +365,23 @@ Draw.drawLens = function(circle0, circle1) {
 };
 
 
+// Draw.drawAndCapture = function(drawFunction, frame, target) {
+//   // TODO refactor this to not reassign context as that prevents this
+//   // from building.
 
-Draw.drawAndCapture = function(drawFunction, frame, target) {
+//   var defaultContext = context;
+//   context = hiddenContext;
+//   context.canvas.setAttribute('width', frame.width);
+//   context.canvas.setAttribute('height', frame.height);
+//   context.clearRect(0, 0, frame.width, frame.height);
 
-  var defaultContext = context;
-  context = hiddenContext;
-  context.canvas.setAttribute('width', frame.width);
-  context.canvas.setAttribute('height', frame.height);
-  context.clearRect(0, 0, frame.width, frame.height);
+//   context.translate(-frame.x, -frame.y);
 
-  context.translate(-frame.x, -frame.y);
+//   drawFunction.call(target);
 
-  drawFunction.call(target);
+//   var image = new Image();
+//   image.src = context.canvas.toDataURL();
 
-  var image = new Image();
-  image.src = context.canvas.toDataURL();
-
-  context = defaultContext;
-  return image;
-};
+//   context = defaultContext;
+//   return image;
+// };

@@ -1,8 +1,9 @@
-//include(frameworksRoot+"operators/numeric/MatrixGenerators.js");
-
+import MatrixGenerators from "src/operators/numeric/MatrixGenerators";
+import Point from "src/dataStructures/geometry/Point";
+import { context } from 'src/Global';
 
 function DrawTextsAdvanced() {}
-
+export default DrawTextsAdvanced;
 
 DrawTextsAdvanced.characterOnQuadrilater = function(context, character, p0, p1, p2, p3, fontType) {
 

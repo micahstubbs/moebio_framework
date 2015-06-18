@@ -1,4 +1,8 @@
-//include(frameworksRoot+"operators/graphic/ColorListOperators.js");
+import ColorListOperators from "src/operators/graphic/ColorListOperators";
+import Point from "src/dataStructures/geometry/Point";
+import Rectangle from "src/dataStructures/geometry/Rectangle";
+import ColorScale from "src/dataStructures/graphic/ColorScale";
+import ColorOperators from "src/operators/graphic/ColorOperators";
 
 /*
  * DrawSimpleVis
@@ -18,7 +22,7 @@
  */
 
 function DrawSimpleVis() {}
-
+export default DrawSimpleVis;
 
 DrawSimpleVis.drawSimpleBarChart = function(context, numberList, frame, colors) { //TODO: complete cases (numberLists with negative (and positive) values)
   colors = colors == null ? ColorListOperators.colorListFromColorScale(new ColorScale()) : colors;
@@ -39,7 +43,7 @@ DrawSimpleVis.drawSimpleBarChart = function(context, numberList, frame, colors) 
 
 
 DrawSimpleVis.drawIntervalsFlowTable = function(context, intervalsFlowTable, frame, colors, bezier) {
-  c.log("[!] MOVED TO IntervalTableDraw.js");
+  console.log("[!] MOVED TO IntervalTableDraw.js");
   // var nElements = intervalsFlowTable.length;
   // var i;
   // var j;
@@ -129,7 +133,7 @@ DrawSimpleVis.drawIntervalsFlowTable = function(context, intervalsFlowTable, fra
 
 
 DrawSimpleVis.drawIntervalsWordsFlowTable = function(context, intervalsFlowTable, frame, texts, colors) {
-  c.log("[!] MOVED TO IntervalTableDraw.js");
+  console.log("[!] MOVED TO IntervalTableDraw.js");
   // var nElements = intervalsFlowTable.length;
   //
   // var i;
@@ -202,7 +206,7 @@ DrawSimpleVis.drawIntervalsWordsFlowTable = function(context, intervalsFlowTable
   // j=0;
   // t=0;
   //
-  // //c.log("-");
+  // //console.log("-");
   //
   // sY = (1-lastIntervalList[0].y)*0.5*dY+y;
   // point0 = new Point(x, intervalList[0].x*dY+sY);
@@ -257,7 +261,7 @@ DrawSimpleVis.drawIntervalsWordsFlowTable = function(context, intervalsFlowTable
   //
   // center = new Point(point0Prev.x+jumpX*0.5, (point0.y+point1.y+point0Prev.y+point1Prev.y)*0.25);
   //
-  // //c.log(jumpX);
+  // //console.log(jumpX);
   //
   // context.fillStyle = colors[i];
   // //context.beginPath();

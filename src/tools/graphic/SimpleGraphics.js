@@ -1,3 +1,8 @@
+import { context, TwoPi, mX, mY, mP } from 'src/Global';
+import Polygon from 'src/dataStructures/geometry/Polygon';
+import Point from 'src/dataStructures/geometry/Point';
+import GeometryOperators from 'src/operators/geometry/GeometryOperators';
+
 /**
  * @module SimpleGraphics
  *
@@ -21,7 +26,7 @@
  * fRect(10, 10, 40, 40);
  *
  */
-fRect = function(x, y, width, height) {
+export function fRect(x, y, width, height) {
   if(typeof x != 'number') {
     y = x.y;
     width = x.width;
@@ -44,7 +49,7 @@ fRect = function(x, y, width, height) {
  * sRect(10, 10, 40, 40);
  *
  */
-sRect = function(x, y, width, height) {
+export function sRect(x, y, width, height) {
   if(typeof x != 'number') {
     y = x.y;
     width = x.width;
@@ -69,7 +74,7 @@ sRect = function(x, y, width, height) {
  * fsRect(10, 10, 40, 40);
  *
  */
-fsRect = function(x, y, width, height) {
+export function fsRect(x, y, width, height) {
   if(typeof x != 'number') {
     y = x.y;
     width = x.width;
@@ -92,7 +97,7 @@ fsRect = function(x, y, width, height) {
  * fCircle(40, 40, 20);
  *
  */
-fCircle = function(x, y, r) {
+export function fCircle(x, y, r) {
   context.beginPath();
   context.arc(x, y, r, 0, TwoPi);
   context.fill();
@@ -110,7 +115,7 @@ fCircle = function(x, y, r) {
  * sCircle(40, 40, 20);
  *
  */
-sCircle = function(x, y, r) {
+export function sCircle(x, y, r) {
   context.beginPath();
   context.arc(x, y, r, 0, TwoPi);
   context.stroke();
@@ -129,7 +134,7 @@ sCircle = function(x, y, r) {
  * sCircle(40, 40, 20);
  *
  */
-fsCircle = function(x, y, r) {
+export function fsCircle(x, y, r) {
   context.beginPath();
   context.arc(x, y, r, 0, TwoPi);
   context.fill();
@@ -148,7 +153,7 @@ fsCircle = function(x, y, r) {
  * setFill('steelblue');
  * fEllipse(40, 40, 20, 30);
  */
-fEllipse = function(x, y, rW, rH) {
+export function fEllipse(x, y, rW, rH) {
   var k = 0.5522848, // 4 * ((√(2) - 1) / 3)
     ox = rW * k, // control point offset horizontal
     oy = rH * k, // control point offset vertical
@@ -177,7 +182,7 @@ fEllipse = function(x, y, rW, rH) {
  * setStroke('orange');
  * sEllipse(40, 40, 20, 30);
  */
-sEllipse = function(x, y, rW, rH) {
+export function sEllipse(x, y, rW, rH) {
   var k = 0.5522848,
     ox = rW * k,
     oy = rH * k,
@@ -208,7 +213,7 @@ sEllipse = function(x, y, rW, rH) {
  * setStroke('steelblue');
  * fsEllipse(40, 40, 20, 30);
  */
-fsEllipse = function(x, y, rW, rH) {
+export function fsEllipse(x, y, rW, rH) {
   var k = 0.5522848,
     ox = rW * k,
     oy = rH * k,
@@ -237,7 +242,7 @@ fsEllipse = function(x, y, rW, rH) {
  * setStroke('black');
  * line(0, 0, 40, 40);
  */
-line = function(x0, y0, x1, y1) {
+export function line(x0, y0, x1, y1) {
   context.beginPath();
   context.moveTo(x0, y0);
   context.lineTo(x1, y1);
@@ -259,7 +264,7 @@ line = function(x0, y0, x1, y1) {
  * setStroke('black');
  * bezier(10, 10, 10, 0, 40, 0, 40, 10);
  */
-bezier = function(x0, y0, cx0, cy0, cx1, cy1, x1, y1) {
+export function bezier(x0, y0, cx0, cy0, cx1, cy1, x1, y1) {
   context.beginPath();
   context.moveTo(x0, y0);
   context.bezierCurveTo(cx0, cy0, cx1, cy1, x1, y1);
@@ -270,7 +275,7 @@ bezier = function(x0, y0, cx0, cy0, cx1, cy1, x1, y1) {
 /**
  * @ignore
  */
-_lines = function() {
+function _lines() {
   if(arguments == null) return;
 
   var args = arguments[0];
@@ -284,7 +289,7 @@ _lines = function() {
 /**
  * @ignore
  */
-_linesM = function() {
+function _linesM() {
   if(arguments == null) return;
 
   var args = arguments[0];
@@ -311,7 +316,7 @@ _linesM = function() {
  * fLines(10, 10, 40, 10, 40, 40);
  *
  */
-fLines = function() {
+export function fLines() {
   _lines(arguments);
   context.fill();
 };
@@ -328,7 +333,7 @@ fLines = function() {
  * sLines(10, 10, 40, 10, 40, 40, 10, 10);
  *
  */
-sLines = function() {
+export function sLines() {
   _lines(arguments);
   context.stroke();
 };
@@ -346,7 +351,7 @@ sLines = function() {
  * fsLines(10, 10, 40, 10, 40, 40, 10, 10);
  *
  */
-fsLines = function() {
+export function fsLines() {
   _lines(arguments);
   context.fill();
   context.stroke();
@@ -370,7 +375,7 @@ fsLines = function() {
  * }
  *
  */
-fsLinesM = function() {
+export function fsLinesM() {
   var mouseOn = _linesM(arguments);
   context.fill();
   context.stroke();
@@ -380,7 +385,7 @@ fsLinesM = function() {
 /**
  * @ignore
  */
-_polygon = function(polygon) {
+function _polygon(polygon) {
   context.beginPath();
   context.moveTo(polygon[0].x, polygon[0].y);
   for(var i = 1; polygon[i] != null; i++) {
@@ -388,41 +393,41 @@ _polygon = function(polygon) {
   }
 };
 
-fPolygon = function(polygon) {
+export function fPolygon(polygon) {
   _polygon(polygon);
   context.fill();
 };
 
-sPolygon = function(polygon, closePath) {
-  _polygon(polygon);
-  if(closePath) context.closePath();
-  context.stroke();
-};
-
-fsPolygon = function(polygon, closePath) {
+export function sPolygon(polygon, closePath) {
   _polygon(polygon);
   if(closePath) context.closePath();
+  context.stroke();
+};
+
+export function fsPolygon(polygon, closePath) {
+  _polygon(polygon);
+  if(closePath) context.closePath();
   context.fill();
   context.stroke();
 };
 
-fEqTriangle = function(x, y, angle, r) {
+export function fEqTriangle(x, y, angle, r) {
   _eqTriangle(x, y, angle, r);
   context.fill();
 };
 
-sEqTriangle = function(x, y, angle, r) {
+export function sEqTriangle(x, y, angle, r) {
   _eqTriangle(x, y, angle, r);
   context.stroke();
 };
 
-fsEqTriangle = function(x, y, angle, r) {
+export function fsEqTriangle(x, y, angle, r) {
   _eqTriangle(x, y, angle, r);
   context.fill();
   context.stroke();
 };
 
-_eqTriangle = function(x, y, angle, r) {
+function _eqTriangle(x, y, angle, r) {
   context.beginPath();
   angle = angle || 0;
   context.moveTo(r * Math.cos(angle) + x, r * Math.sin(angle) + y);
@@ -453,7 +458,7 @@ _eqTriangle = function(x, y, angle, r) {
  *   fRect(10, 10, 40, 40);
  * }
  */
-fRectM = function(x, y, width, height, margin) {
+export function fRectM(x, y, width, height, margin) {
   margin = margin == null ? 0 : margin;
   context.fillRect(x, y, width, height);
   return mY > y - margin && mY < y + height + margin && mX > x - margin && mX < x + width + margin;
@@ -478,7 +483,7 @@ fRectM = function(x, y, width, height, margin) {
  *   sRect(10, 10, 40, 40);
  * }
  */
-sRectM = function(x, y, width, height, margin) {
+export function sRectM(x, y, width, height, margin) {
   margin = margin == null ? 0 : margin;
   context.strokeRect(x, y, width, height);
   return mY > y - margin && mY < y + height + margin && mX > x - margin && mX < x + width + margin;
@@ -506,7 +511,7 @@ sRectM = function(x, y, width, height, margin) {
  *   sRect(10, 10, 40, 40);
  * }
  */
-fsRectM = function(x, y, width, height, margin) {
+export function fsRectM(x, y, width, height, margin) {
   margin = margin == null ? 0 : margin;
   context.fillRect(x, y, width, height);
   context.strokeRect(x, y, width, height);
@@ -533,7 +538,7 @@ fsRectM = function(x, y, width, height, margin) {
  * }
  *
  */
-fCircleM = function(x, y, r, margin) { //check if you can avoid repeat
+export function fCircleM(x, y, r, margin) { //check if you can avoid repeat
   margin = margin == null ? 0 : margin;
   context.beginPath();
   context.arc(x, y, r, 0, TwoPi);
@@ -561,7 +566,7 @@ fCircleM = function(x, y, r, margin) { //check if you can avoid repeat
  * }
  *
  */
-sCircleM = function(x, y, r, margin) {
+export function sCircleM(x, y, r, margin) {
   margin = margin == null ? 0 : margin;
   context.beginPath();
   context.arc(x, y, r, 0, TwoPi);
@@ -592,7 +597,7 @@ sCircleM = function(x, y, r, margin) {
  * }
  *
  */
-fsCircleM = function(x, y, r, margin) {
+export function fsCircleM(x, y, r, margin) {
   margin = margin == null ? 0 : margin;
   context.beginPath();
   context.arc(x, y, r, 0, TwoPi);
@@ -619,7 +624,7 @@ fsCircleM = function(x, y, r, margin) {
  *  line(0, 0, 40, 40);
  * }
  */
-lineM = function(x0, y0, x1, y1, d) {
+export function lineM(x0, y0, x1, y1, d) {
   d = d || 4;
   context.beginPath();
   context.moveTo(x0, y0);
@@ -631,7 +636,7 @@ lineM = function(x0, y0, x1, y1, d) {
 /**
  * @ignore
  */
-_distToSegmentSquared = function(x0, y0, x1, y1) {
+function _distToSegmentSquared(x0, y0, x1, y1) {
   var l2 = Math.pow(x0 - x1, 2) + Math.pow(y0 - y1, 2);
   if(l2 === 0) return Math.pow(x0 - mX, 2) + Math.pow(y0 - mY, 2);
   var t = ((mX - x0) * (x1 - x0) + (mY - y0) * (y1 - y0)) / l2;
@@ -667,7 +672,7 @@ _distToSegmentSquared = function(x0, y0, x1, y1) {
  *  bezierM(10, 10, 10, 0, 40, 0, 40, 10);
  * }
  */
-bezierM = function(x0, y0, cx0, cy0, cx1, cy1, x1, y1, d) { //TODO: fix this mess!
+export function bezierM(x0, y0, cx0, cy0, cx1, cy1, x1, y1, d) { //TODO: fix this mess!
   d = d == null ? 2 : d;
   context.beginPath();
   context.moveTo(x0, y0);
@@ -688,7 +693,7 @@ bezierM = function(x0, y0, cx0, cy0, cx1, cy1, x1, y1, d) { //TODO: fix this mes
  *	drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh)
  *	@param {Image} image
  */
-drawImage = function(image) { //TODO: improve efficiency
+export function drawImage(image) { //TODO: improve efficiency
   if(image == null) return;
 
   switch(arguments.length) {
@@ -710,7 +715,7 @@ drawImage = function(image) { //TODO: improve efficiency
  * @param  {Image} image
  * @param  {Rectangle} rectangle frame of the image
  */
-fitImage = function(image, rectangle) {
+export function fitImage(image, rectangle) {
   if(image == null ||  rectangle == null) return;
 
   var propIm = image.width / image.height;
@@ -726,7 +731,7 @@ fitImage = function(image, rectangle) {
 
 // styles
 
-setFill = function(style) {
+export function setFill(style) {
   if(typeof style == "number") {
     if(arguments.length > 3) {
       context.fillStyle = 'rgba(' + arguments[0] + ',' + arguments[1] + ',' + arguments[2] + ',' + arguments[3] + ')';
@@ -749,7 +754,7 @@ setFill = function(style) {
  * setStroke(0,0,0,0.4); // sets stroke to black with partial opacity.
  * setStroke('black', 0.2); // provides lineWidth to stroke
  */
-setStroke = function(style, lineWidth) {
+export function setStroke(style, lineWidth) {
   if(typeof style == "number") {
     if(arguments.length > 3) {
       context.strokeStyle = 'rgba(' + arguments[0] + ',' + arguments[1] + ',' + arguments[2] + ',' + arguments[3] + ')';
@@ -763,7 +768,7 @@ setStroke = function(style, lineWidth) {
   if(lineWidth) context.lineWidth = lineWidth;
 };
 
-setLW = function(lineWidth) {
+export function setLW(lineWidth) {
   context.lineWidth = lineWidth;
 };
 
@@ -771,7 +776,7 @@ setLW = function(lineWidth) {
 
 //clipping
 
-clipCircle = function(x, y, r) {
+export function clipCircle(x, y, r) {
   context.save();
   context.beginPath();
   context.arc(x, y, r, 0, TwoPi, false);
@@ -779,7 +784,7 @@ clipCircle = function(x, y, r) {
   context.clip();
 };
 
-clipRectangle = function(x, y, w, h) {
+export function clipRectangle(x, y, w, h) {
   context.save();
   context.beginPath();
   context.moveTo(x, y);
@@ -789,7 +794,7 @@ clipRectangle = function(x, y, w, h) {
   context.clip();
 };
 
-restore = function() {
+export function restore() {
   context.restore();
 };
 
@@ -810,7 +815,7 @@ restore = function() {
  * fText("hello", 10, 10);
  *
  */
-fText = function(text, x, y) {
+export function fText(text, x, y) {
   context.fillText(text, x, y);
 };
 
@@ -829,7 +834,7 @@ fText = function(text, x, y) {
  * sText("hello", 10, 10);
  *
  */
-sText = function(text, x, y) {
+export function sText(text, x, y) {
   context.strokeText(text, x, y);
 };
 
@@ -849,7 +854,7 @@ sText = function(text, x, y) {
  * fsText("hello", 10, 10);
  *
  */
-fsText = function(text, x, y) {
+export function fsText(text, x, y) {
   context.strokeText(text, x, y);
   context.fillText(text, x, y);
 };
@@ -869,7 +874,7 @@ fsText = function(text, x, y) {
  * fTextRotated("hello", 40, 40, (20 * Math.PI / 180));
  *
  */
-fTextRotated = function(text, x, y, angle) {
+export function fTextRotated(text, x, y, angle) {
   context.save();
   context.translate(x, y);
   context.rotate(angle);
@@ -898,7 +903,7 @@ fTextRotated = function(text, x, y, angle) {
  * }
  *
  */
-fTextM = function(text, x, y, size) {
+export function fTextM(text, x, y, size) {
   size = size || 12;
   context.fillText(text, x, y);
   return mY > y && mY < y + size && mX > x && mX < x + context.measureText(text).width;
@@ -928,7 +933,7 @@ fTextM = function(text, x, y, size) {
  * }
  *
  */
-fsTextM = function(text, x, y, size) {
+export function fsTextM(text, x, y, size) {
   size = size || 12;
   context.strokeText(text, x, y);
   context.fillText(text, x, y);
@@ -958,7 +963,7 @@ fsTextM = function(text, x, y, size) {
  * }
  *
  */
-fTextRotatedM = function(text, x, y, angle, size) {
+export function fTextRotatedM(text, x, y, angle, size) {
   size = size || 12;
   context.save();
   context.translate(x, y);
@@ -976,7 +981,7 @@ fTextRotatedM = function(text, x, y, angle, size) {
   return mYT > y && mYT < y + size && mXT > x && mXT < x + context.measureText(text).width;
 };
 
-fTextW = function(text, x, y) {
+export function fTextW(text, x, y) {
   context.fillText(text, x, y);
   return context.measureText(text).width;
 };
@@ -992,7 +997,7 @@ fTextW = function(text, x, y) {
  * @param {Object} style optional font style ('bold', 'italic', 'underline')
  * @param {Object} ctx optional context
  */
-setText = function(color, fontSize, fontName, align, baseline, style) {
+export function setText(color, fontSize, fontName, align, baseline, style) {
   color = color || '#000000';
   fontSize = String(fontSize) || '14';
   fontName = fontName || LOADED_FONT;
@@ -1010,34 +1015,36 @@ setText = function(color, fontSize, fontName, align, baseline, style) {
   context.textBaseline = baseline;
 };
 
-getTextW = function(text) {
+export function getTextW(text) {
   return context.measureText(text).width;
 };
 
 
 // pixel data
 
-getPixelData = function(x, y) {
+export function getPixelData(x, y) {
   return context.getImageData(x, y, 1, 1).data;
 };
 
-getPixelColor = function(x, y) {
+export function getPixelColor(x, y) {
   var rgba = context.getImageData(x, y, 1, 1).data;
   return 'rgba(' + rgba[0] + ',' + rgba[1] + ',' + rgba[2] + ',' + rgba[3] + ')';
 };
 
-getPixelColorRGBA = function(x, y) { //repeated
+export function getPixelColorRGBA(x, y) { //repeated
   return context.getImageData(x, y, 1, 1).data;
 };
 
-captureCanvas = function() {
+export function captureCanvas() {
   var im = new Image();
   im.src = canvas.toDataURL();
   return im;
 };
 
 
-drawAndcapture = function(drawFunction, w, h, target) {
+/*
+TODO: refactor this to not reassign Global.context
+export function drawAndcapture(drawFunction, w, h, target) {
   var defaultContext = context;
 
   context = hiddenContext;
@@ -1056,6 +1063,8 @@ drawAndcapture = function(drawFunction, w, h, target) {
 
   return im;
 };
+*/
+
 
 
 //cursor
@@ -1064,14 +1073,14 @@ drawAndcapture = function(drawFunction, w, h, target) {
  * Change mouse cursor to given style. See {@link https://developer.mozilla.org/en-US/docs/Web/CSS/cursor|MDN Cursor Page} for all style options.
  * @param {String} name The name of the cursor style.
  */
-setCursor = function(name) {
+export function setCursor(name) {
   name = name == null ? 'default' : name;
   canvas.style.cursor = name;
 };
 
 //time
 
-getMilliseconds = function() {
+export function getMilliseconds() {
   var date = new Date();
   // TODO is the creation of the global below intentional?
   _ms = date.getTime();
