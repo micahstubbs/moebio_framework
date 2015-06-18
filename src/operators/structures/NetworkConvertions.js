@@ -1,3 +1,8 @@
+import NumberList from "src/dataStructures/numeric/NumberList";
+import Node from "src/dataStructures/structures/elements/Node";
+import Relation from "src/dataStructures/structures/elements/Relation";
+import NodeList from "src/dataStructures/structures/lists/NodeList";
+import { typeOf } from "src/tools/utils/code/ClassUtils";
 
 /**
  * @classdesc Includes functions to convert Networks into other DataTypes.

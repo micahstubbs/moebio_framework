@@ -1,11 +1,23 @@
+import ListOperators from "src/operators/lists/ListOperators";
+import NodeList from "src/dataStructures/structures/lists/NodeList";
+import List from "src/dataStructures/lists/List";
+import Table from "src/dataStructures/lists/Table";
+import Node from "src/dataStructures/structures/elements/Node";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import Tree from "src/dataStructures/structures/networks/Tree";
+import Relation from "src/dataStructures/structures/elements/Relation";
+import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
+import NetworkEncodings from "src/operators/structures/NetworkEncodings";
+import Network from "src/dataStructures/structures/networks/Network";
+
 /**
  * @classdesc Provides a set of tools that work with Networks.
  *
  * @namespace
  * @category networks
  */
-NetworkOperators = function() {};
-
+function NetworkOperators() {}
+export default NetworkOperators;
 
 /**
  * Filters Network in-place to remove Nodes with less then minDegree connections.
@@ -113,7 +125,7 @@ NetworkOperators.shortestPaths = function(network, node0, node1, shortPath) {
 
   var all = NetworkOperators._extendPaths(allPaths, node1, lengthShortestPaths);
 
-  c.l('1. all.length', all.length);
+  console.log('1. all.length', all.length);
 
   for(i = 0; all[i] != null; i++) {
     if(all[i][all[i].length - 1] != node1) {
@@ -122,7 +134,7 @@ NetworkOperators.shortestPaths = function(network, node0, node1, shortPath) {
     }
   }
 
-  c.l('2. all.length', all.length);
+  console.log('2. all.length', all.length);
 
   return all;
 };
@@ -175,7 +187,7 @@ NetworkOperators.loops = function(network, minSize) {
 
   var i, j, k, loops;
 
-  allLoops = new Table();
+  var allLoops = new Table();
 
   for(i = 0; network.nodeList[i] != null; i++) {
     loops = NetworkOperators._getLoopsOnNode(network.nodeList[i]);
@@ -198,7 +210,7 @@ NetworkOperators.loops = function(network, minSize) {
   });
 
   allLoops.forEach(function(loop) {
-    c.l(loop.getIds().join('-'));
+    console.log(loop.getIds().join('-'));
   });
 
   var same = NetworkOperators._sameLoop(allLoops[0], allLoops[1]);

@@ -1,3 +1,8 @@
+import StringList from "src/dataStructures/strings/StringList";
+import Network from "src/dataStructures/structures/networks/Network";
+import StringOperators from "src/operators/strings/StringOperators";
+import Relation from "src/dataStructures/structures/elements/Relation";
+import ColorOperators from "src/operators/graphic/ColorOperators";
 
 /**
  * @classdesc Serializes and deserializes {@link Network|Networks} using into

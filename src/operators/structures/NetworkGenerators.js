@@ -1,3 +1,12 @@
+import Node from "src/dataStructures/structures/elements/Node";
+import Relation from "src/dataStructures/structures/elements/Relation";
+import NodeList from "src/dataStructures/structures/lists/NodeList";
+import Network from "src/dataStructures/structures/networks/Network";
+import StringListOperators from "src/operators/strings/StringListOperators";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
+import StringList from "src/dataStructures/strings/StringList";
+import NetworkEncodings from "src/operators/structures/NetworkEncodings";
+
 /**
  * @classdesc NetworkGenerators provides a set of tools to generate Network
  * instances from a variety of sources.
@@ -5,6 +14,7 @@
  * @category networks
  */
 function NetworkGenerators() {}
+export default NetworkGenerators;
 
 
 /**
