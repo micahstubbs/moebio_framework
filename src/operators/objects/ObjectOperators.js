@@ -1,4 +1,16 @@
+import StringList from "src/dataStructures/strings/StringList";
+import List from "src/dataStructures/lists/List";
+import Table from "src/dataStructures/lists/Table";
+import { typeOf } from "src/tools/utils/code/ClassUtils";
+import Point from "src/dataStructures/geometry/Point";
+import Point3D from "src/dataStructures/geometry/Point3D";
+import Rectangle from "src/dataStructures/geometry/Rectangle";
+import Interval from "src/dataStructures/numeric/Interval";
+import DateInterval from "src/dataStructures/dates/DateInterval";
+import DateOperators from "src/operators/dates/DateOperators";
+
 function ObjectOperators() {}
+export default ObjectOperators;
 
 
 /**
@@ -117,7 +129,7 @@ ObjectOperators.getPropertiesNamesAndValues = function(object) {
  * interpolates two different objects of the same type<br>currently working with numbers, intervals and numberLists
  * @param  {Object} object0
  * @param  {Object} object1
- * 
+ *
  * @param  {Number} value
  * @param {Number} minDistance if objects are close enough, it delivers the orginal object
  * @return {Object}
@@ -187,9 +199,9 @@ ObjectOperators.toList = function(array) {
 
 
 /**
- * adds two or more objects, addition is performed according to the different types 
+ * adds two or more objects, addition is performed according to the different types
  * @param {Object} object0
- * 
+ *
  * @param {Object} object1
  * @param {Object} object2
  * @param {Object} object3
@@ -309,9 +321,9 @@ ObjectOperators.addition = function() {
 
 
 /**
- * multiplies two or more objects, multiplication is performed according to the different types 
+ * multiplies two or more objects, multiplication is performed according to the different types
  * @param {Object} object0
- * 
+ *
  * @param {Object} object1
  * @param {Object} object2
  * @param {Object} object3
@@ -419,9 +431,9 @@ ObjectOperators.multiplication = function() {
 };
 
 /**
- * divides two or more objects, division is performed according to the different types 
+ * divides two or more objects, division is performed according to the different types
  * @param {Object} object0
- * 
+ *
  * @param {Object} object1
  * @param {Object} object2
  * @param {Object} object3
@@ -511,7 +523,7 @@ ObjectOperators.division = function() {
       case 'DateInterval_DateInterval':
         return new DateInterval(ObjectOperators.division(a0.date0, a1.date0), ObjectOperators.division(a0.date1, a1.date1)); //todo: ???
       default:
-        c.log("[!] division didn't manage to resolve:", pairType, a0 / a1);
+        console.log("[!] division didn't manage to resolve:", pairType, a0 / a1);
         return null;
 
     }

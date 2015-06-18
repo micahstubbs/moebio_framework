@@ -6,7 +6,7 @@
  * @category networks
  */
 function NetworkConvertions() {}
-
+export default NetworkConvertions;
 
 /**
  * Builds a Network based on a two columns Table, creating relations on co-occurrences.

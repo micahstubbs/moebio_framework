@@ -125,16 +125,17 @@ export { IntervalListOperators, IntervalTableOperators, MatrixGenerators, Number
 	NumberListOperators, NumberOperators, NumberTableConversions, NumberTableFlowOperators,
 	NumberTableOperators };
 
+// operators/objects
+import ObjectOperators from "src/operators/objects/ObjectOperators";
+import ObjectConversions from "src/operators/objects/ObjectConversions";
+export { ObjectOperators, ObjectConversions };
 
+// operators/strings
+import StringConversions from "src/operators/strings/StringConversions";
+import StringListOperators from "src/operators/strings/StringListOperators";
+import StringOperators from "src/operators/strings/StringOperators";
+export { StringConversions, StringListOperators, StringOperators };
 
-// import ObjectOperators from "src/operators/objects/ObjectOperators";
-// import ObjectConversions from "src/operators/objects/ObjectConversions";
-
-
-
-// import StringConversions from "src/operators/strings/StringConversions";
-// import StringListOperators from "src/operators/strings/StringListOperators";
-// import StringOperators from "src/operators/strings/StringOperators";
 // import NetworkConvertions from "src/operators/structures/NetworkConvertions";
 // import NetworkEncodings from "src/operators/structures/NetworkEncodings";
 // import NetworkGenerators from "src/operators/structures/NetworkGenerators";
