@@ -1,3 +1,5 @@
+import ColorOperators from "src/operators/graphic/ColorOperators";
+
 /**
  * @classdesc Default color scales.
  *

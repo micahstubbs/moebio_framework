@@ -88,16 +88,23 @@ import RectangleOperators from "src/operators/geometry/RectangleOperators";
 export { GeometryConvertions, GeometryOperators, PointOperators, PolygonGenerators,
 	PolygonOperators, PolygonListEncodings, PolygonListOperators, RectangleOperators };
 
+// operators/graphic
+// import ColorConvertions from "src/operators/graphic/ColorConvertions";
+import ColorGenerators from "src/operators/graphic/ColorGenerators";
+import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
+import ColorListOperators from "src/operators/graphic/ColorListOperators";
+import ColorOperators from "src/operators/graphic/ColorOperators";
+import ColorScales from "src/operators/graphic/ColorScales";
+import ColorScaleGenerators from "src/operators/graphic/ColorScaleGenerators";
+// export ColorConvertions TODO: Deal with ambiguity between this and ColorOperators
+export { ColorGenerators, ColorListGenerators, ColorListOperators,
+	ColorOperators, ColorScales, ColorScaleGenerators };
+
+
 // import ObjectOperators from "src/operators/objects/ObjectOperators";
 // import ObjectConversions from "src/operators/objects/ObjectConversions";
 
-// import ColorConvertions from "src/operators/graphic/ColorConvertions";
-// import ColorGenerators from "src/operators/graphic/ColorGenerators";
-// import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
-// import ColorListOperators from "src/operators/graphic/ColorListOperators";
-// import ColorOperators from "src/operators/graphic/ColorOperators";
-// import ColorScales from "src/operators/graphic/ColorScales";
-// import ColorScaleGenerators from "src/operators/graphic/ColorScaleGenerators";
+
 // import ListGenerators from "src/operators/lists/ListGenerators";
 // import ListOperators from "src/operators/lists/ListOperators";
 // import TableConversions from "src/operators/lists/TableConversions";
