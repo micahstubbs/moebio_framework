@@ -1,4 +1,9 @@
+import NumberList from "src/dataStructures/numeric/NumberList";
+import NumberTable from "src/dataStructures/numeric/NumberTable";
+import Table from "src/dataStructures/lists/Table";
+
 function NumberTableFlowOperators() {}
+export default NumberTableFlowOperators;
 
 NumberTableFlowOperators.getFlowTable = function(numberTable, normalized, include0s) {
   if(numberTable == null) return;

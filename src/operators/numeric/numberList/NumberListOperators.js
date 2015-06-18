@@ -1,6 +1,7 @@
+import NumberList from "src/dataStructures/numeric/NumberList";
+
 function NumberListOperators() {}
-
-
+export default NumberListOperators;
 
 /**
  * cosine similarity, used to compare two NumberLists regardless of norm (see: http://en.wikipedia.org/wiki/Cosine_similarity)
@@ -297,7 +298,7 @@ NumberListOperators.filterNumberListByNumber = function(numberList, value, compa
  * creates a NumberList that contains the union of two NumberList (removing repetitions)
  * @param  {NumberList} list A
  * @param  {NumberList} list B
- * 
+ *
  * @return {NumberList} the union of both NumberLists
  * tags:
  */
@@ -320,13 +321,13 @@ NumberListOperators.union = function(x, y) {
  * creates a NumberList that contains the intersection of two NumberList (elements present in BOTH lists)
  * @param  {NumberList} list A
  * @param  {NumberList} list B
- * 
+ *
  * @return {NumberList} the intersection of both NumberLists
  * tags:
  */
 NumberListOperators.intersection = function(a, b) {
   // Borrowed from here: http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
-  //console.log( "arguments: ", arguments ); 
+  //console.log( "arguments: ", arguments );
   if(arguments.length > 2) {
     var sets = [];
     for(var i = 0; i < arguments.length; i++) {
