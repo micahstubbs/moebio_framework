@@ -1,4 +1,6 @@
 import StringList from "src/dataStructures/strings/StringList";
+import ListOperators from "src/operators/lists/ListOperators";
+import NumberList from "src/dataStructures/numeric/NumberList";
 
 function StringOperators() {}
 export default StringOperators;
@@ -251,7 +253,7 @@ StringOperators.getLinksFromHtml = function(html, urlSource, removeHash) {
 
     if(url.indexOf('=') != -1) url = url.split('=')[0];
 
-    //c.log(url);
+    //console.log(url);
     if(urlSource && url.indexOf('http://') == -1 && url.indexOf('https://') == -1 && url.indexOf('wwww.') == -1 && url.indexOf('file:') == -1 && url.indexOf('gopher:') == -1 && url.indexOf('//') != 0) {
       if(url.substr(0, 9) == "../../../") {
         url = urlSourceParts.slice(0, urlSourceParts.length - 3).join("/") + "/" + url.substr(9);
@@ -289,7 +291,7 @@ StringOperators.getLinksFromHtml = function(html, urlSource, removeHash) {
     if(url.substr(-1) == "/") url = url.substr(0, url.length - 1);
 
     if(url == urlSource) continue;
-    //c.log(urlSource+' | '+originalUrl+' -> '+url);
+    //console.log(urlSource+' | '+originalUrl+' -> '+url);
     urls.push(url);
   }
 
@@ -324,9 +326,9 @@ StringOperators.textContainsString = function(text, string, asWord, caseSensitiv
  */
 StringOperators.logInConsole = function(string, frame) {
   frame = frame == null ? true : frame;
-  if(frame) c.log('///////////////////////////////////////////////////');
-  c.log(string);
-  if(frame) c.log('///////////////////////////////////////////////////');
+  if(frame) console.log('///////////////////////////////////////////////////');
+  console.log(string);
+  if(frame) console.log('///////////////////////////////////////////////////');
 };
 
 

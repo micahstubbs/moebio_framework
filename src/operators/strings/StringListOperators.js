@@ -1,5 +1,16 @@
+import StringList from "src/dataStructures/strings/StringList";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import NumberTable from "src/dataStructures/numeric/NumberTable";
+import StringOperators from "src/operators/strings/StringOperators";
+import TableOperators from "src/operators/lists/TableOperators";
+import Network from "src/dataStructures/structures/networks/Network";
+import Relation from "src/dataStructures/structures/elements/Relation";
+import Node from "src/dataStructures/structures/elements/Node";
+
 function StringListOperators() {}
-/** 
+export default StringListOperators;
+
+/**
  * receives n arguments and performs addition
  */
 StringListOperators.concatStrings = function(stringList, joinString) { //deprecated
@@ -10,7 +21,7 @@ StringListOperators.concatStrings = function(stringList, joinString) { //depreca
 /**
  * join strings with a character
  * @param  {StringList} StringList strings to be joined
- * 
+ *
  * @param  {String} join character
  * @param  {String} prefix
  * @param  {String} sufix
@@ -31,7 +42,7 @@ StringListOperators.join = function(stringList, character, prefix, sufix) {
  * filters a StringList by a string
  * @param  {StringList} stringList    to be filtered
  * @param  {String} string        filter criteria (string or word that will be search in each string of the stringList)
- * 
+ *
  * @param  {Boolean} asWord        if true a word (string surrounded by separators such as space or punctuation) will be used as criteria, false by default
  * @param  {Boolean} returnIndexes if true a numberList with indexes will be returned, instead of a stringList
  * @return {List}               stringList or numberlist with filtered strings or indexes
@@ -89,7 +100,7 @@ StringListOperators.countStringsOccurrencesOnTexts = function(strings, texts) {
 /**
  * builds a table with a list of occurrent words and numberLists for occurrences in each string
  * @param  {StringList} strings
- * 
+ *
  * @param  {StringList} stopWords words to be excluded from the list
  * @param  {Boolean} includeLinks
  * @param  {Number} wordsLimitPerString number of words extracted per string
@@ -201,7 +212,7 @@ StringListOperators.createTextsNetwork = function(texts, stopWords, stressUnique
 /**
  * builds a network out of a list of short strings, adds a property wordsTable to each node (with words and weights)
  * @param  {StringList} texts
- * 
+ *
  * @param  {StringList} stopWords
  * @param  {Number} relationThreshold threshold to create a relation
  * @param {Number} mode <br>0:pseudoentropy, by finding key words with low entropy (words occurring in a single text or in all texts have maximum entropy, occuring in 0.25 texts minimum entropy (max weight))<br>1:originality<br>2:skewed entropy<br>3:originality except isolation
@@ -260,7 +271,7 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
       };
   }
 
-  c.l('A ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
+  console.log('A ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
   _time = new Date().getTime();
 
   texts.forEach(function(text, i) {
@@ -315,7 +326,7 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
   });
 
 
-  c.l('B ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
+  console.log('B ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
   _time = new Date().getTime();
 
   for(i = 0; network.nodeList[i + 1] != null; i++) {
