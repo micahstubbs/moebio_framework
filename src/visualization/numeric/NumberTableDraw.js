@@ -1,10 +1,11 @@
 function NumberTableDraw() {}
+export default NumberTableDraw;
 
 /**
  * draws a matrix, with cells colors associated to values from a ColorScale
  * @param  {Rectangle} frame
  * @param  {NumberTable} numberTable
- * 
+ *
  * @param  {ColorScale} colorScale
  * @param  {Boolean} listColorsIndependent if true each numberList will be colored to fit the colorScale range
  * @param  {Number} margin
@@ -59,7 +60,7 @@ NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listC
  * draws a ScatterPlot, if the provided NumberTable contains a third NumberList it also draws circles
  * @param  {Rectangle} frame
  * @param  {NumberTable} numberTable with two lists
- * 
+ *
  * @param  {StringList} texts
  * @param  {ColorList} colors
  * @param  {Number} maxRadius
@@ -173,7 +174,7 @@ NumberTableDraw.drawSlopeGraph = function(frame, numberTable, texts) {
  * based on a integers NumberTable draws a a matrix of rectangles with colors associated to number of elelments in overCoordinates
  * @param  {Rectangle} frame
  * @param  {Object} coordinates, it could be a polygon, or a numberTable with two lists
- * 
+ *
  * @param  {ColorScale} colorScale
  * @param  {Number} margin
  * @return {NumberList} list of positions of elements on clicked coordinates
@@ -324,7 +325,7 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
  *
  * @param {Boolean} normalized normalize each column, making the graph of constant height
  * @param {Boolean} sorted sort flow polygons
- * @param {Number} intervalsFactor number between 0 and 1, factors the height of flow polygons 
+ * @param {Number} intervalsFactor number between 0 and 1, factors the height of flow polygons
  * @param {Boolean} bezier draws bezier (soft) curves
  * @param {ColorList} colorList colors of polygons
  * @param {StringList} horizontalLabels to be placed in the bottom

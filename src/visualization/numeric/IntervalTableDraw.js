@@ -1,4 +1,13 @@
+import Rectangle from "src/dataStructures/geometry/Rectangle";
+import Point from "src/dataStructures/geometry/Point";
+import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
+import GeometryOperators from "src/operators/geometry/GeometryOperators";
+import ColorScales from "src/operators/graphic/ColorScales";
+import { context, TwoPi } from "src/Global";
+import DrawTextsAdvanced from "src/tools/graphic/DrawTextsAdvanced";
+
 function IntervalTableDraw() {}
+export default IntervalTableDraw;
 
 IntervalTableDraw.MIN_CHARACTERS_SIZE = 1;
 

@@ -1,15 +1,17 @@
 function ColorsDraw() {}
+export default ColorsDraw;
 
 /**
  * draws a color scale, with optional min and max associated values
  * @param  {Rectangle} frame
  * @param  {ColorScale} colorScale
- * 
+ *
  * @param  {Number} minValue value associated to min color
  * @param  {Number} maxValue value associated to max color
  * tags:draw
  */
 ColorsDraw.drawColorScaleLegend = function(frame, colorScale, minValue, maxValue) {
+  // TODO refactor this to import context from Global and not reassign it.
   var change = frame.memory == null || frame.width != frame.memory.w || frame.height != frame.memory.h || colorScale != frame.memory.cS || minValue != frame.memory.min || maxValue != frame.memory.max;
 
   if(change) {

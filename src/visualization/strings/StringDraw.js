@@ -1,10 +1,11 @@
 function StringDraw() {}
+export default StringDraw;
 
 /**
  * draws a String (if the object is not a string it displays the json)
  * @param  {Rectangle} frame
  * @param  {Object} object normally a String (if not, a conversion will be made)
- * 
+ *
  * @param  {Number} fontSize
  * @param  {String} fontStyle ex:'bold italic'
  * @param  {Number} margin

@@ -1,4 +1,5 @@
 function StringListDraw() {}
+export default StringListDraw;
 
 StringListDraw.tagCloudRectangles = function(stringList, weights, frame) {
 

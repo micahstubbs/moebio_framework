@@ -1,11 +1,14 @@
-function ImageDraw() {}
+import Draw from "src/tools/graphic/Draw";
+import Rectangle from "src/dataStructures/geometry/Rectangle";
 
+function ImageDraw() {}
+export default ImageDraw;
 
 /**
  * draws an image
  * @param  {Rectangle} frame
  * @param  {Image} image to be drawn
- * 
+ *
  * @param  {Number} mode: 0: adjust to rectangle, 1: center and mask, 2: center and eventual reduction (image smaller than rectangle), 3: adjust to rectangle preserving proportions (image bigger than rectangle), 4: fill repeated from corner, 5: fill repeated from 0,0
  * tags:draw
  */
@@ -29,7 +32,9 @@ ImageDraw.drawImage = function(frame, image, mode) {
  * tags:
  */
 ImageDraw.captureVisualizationImage = function(visFunctionName, width, height) {
-  c.log('visFunctionName', visFunctionName);
+  // TODO refactor this to import context from Global and not reassign it.
+
+  console.log('visFunctionName', visFunctionName);
   if(visFunctionName == null ||  width == null || (!width > 0) || height == null || !(height > 0)) return;
 
   var frame = new Rectangle(0, 0, width, height);
@@ -42,15 +47,15 @@ ImageDraw.captureVisualizationImage = function(visFunctionName, width, height) {
   if(visFunctionName.indexOf('.') == -1) {
     visFunction = this[visFunctionName];
   } else {
-    c.log(visFunctionName.split('.')[0], this[visFunctionName.split('.')[0]], this.mY);
+    console.log(visFunctionName.split('.')[0], this[visFunctionName.split('.')[0]], this.mY);
     if(this[visFunctionName.split('.')[0]] == null) return;
     visFunction = this[visFunctionName.split('.')[0]][visFunctionName.split('.')[1]];
   }
 
   if(visFunction == null) return null;
 
-  c.log('ImageDraw.captureVisualizationImage | args', args);
-  c.log('ImageDraw.captureVisualizationImage | visFunction==null', visFunction == null);
+  console.log('ImageDraw.captureVisualizationImage | args', args);
+  console.log('ImageDraw.captureVisualizationImage | visFunction==null', visFunction == null);
 
   var newCanvas = document.createElement("canvas");
   newCanvas.width = width;

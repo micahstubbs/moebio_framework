@@ -1,4 +1,10 @@
-NumberListDraw = function() {};
+import Rectangle from "src/dataStructures/geometry/Rectangle";
+import StringList from "src/dataStructures/strings/StringList";
+import { mX, mY, MOUSE_DOWN } from "src/Global";
+
+
+function NumberListDraw() {};
+export default NumberListDraw;
 
 /**
  * draws a simple graph

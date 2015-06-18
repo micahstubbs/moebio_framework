@@ -5,7 +5,7 @@
  * @category networks
  */
 function NetworkDraw() {}
-
+export default NetworkDraw;
 
 /**
  * @ignore
