@@ -251,15 +251,21 @@ import TreeDraw from "src/visualization/structures/TreeDraw";
 export { NetworkDraw, TreeDraw };
 
 
-
-
-
-
-
-
-// // Globals
-
-// import Global from "src/Global";
-
-
+// Global.js
+import { Global, onResize, clearContext, cycleOnMouseMovement, setFrameRate,
+  enterFrame, startCycle, stopCycle, onMoveCycle, reStartCycle,
+  addInteractionEventListener, onCanvasEvent, removeInteractionEventListener,
+  cancelAllInteractions, setBackgroundColor, activateKeyboard, onKey,
+  activateWheel, setStructureLocalStorageWithSeed,
+  setStructureLocalStorage, getStructureLocalStorageFromSeed,
+  getStructureLocalStorage, getDocWidth, getDocHeight
+} from "src/Global";
+export { Global, onResize, clearContext, cycleOnMouseMovement, setFrameRate,
+  enterFrame, startCycle, stopCycle, onMoveCycle, reStartCycle,
+  addInteractionEventListener, onCanvasEvent, removeInteractionEventListener,
+  cancelAllInteractions, setBackgroundColor, activateKeyboard, onKey,
+  activateWheel, setStructureLocalStorageWithSeed,
+  setStructureLocalStorage, getStructureLocalStorageFromSeed,
+  getStructureLocalStorage, getDocWidth, getDocHeight
+};
 

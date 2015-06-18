@@ -10389,6 +10389,31 @@ define('src/index', ['exports'], function (exports) {
       );
   }
 
+  exports.Global = Global;
+  exports.onResize = onResize;
+  exports.clearContext = clearContext;
+  exports.cycleOnMouseMovement = cycleOnMouseMovement;
+  exports.setFrameRate = setFrameRate;
+  exports.enterFrame = enterFrame;
+  exports.startCycle = startCycle;
+  exports.stopCycle = stopCycle;
+  exports.onMoveCycle = src_Global__onMoveCycle;
+  exports.reStartCycle = reStartCycle;
+  exports.addInteractionEventListener = addInteractionEventListener;
+  exports.onCanvasEvent = onCanvasEvent;
+  exports.removeInteractionEventListener = removeInteractionEventListener;
+  exports.cancelAllInteractions = cancelAllInteractions;
+  exports.setBackgroundColor = setBackgroundColor;
+  exports.activateKeyboard = activateKeyboard;
+  exports.onKey = onKey;
+  exports.activateWheel = activateWheel;
+  exports.setStructureLocalStorageWithSeed = setStructureLocalStorageWithSeed;
+  exports.setStructureLocalStorage = setStructureLocalStorage;
+  exports.getStructureLocalStorageFromSeed = getStructureLocalStorageFromSeed;
+  exports.getStructureLocalStorage = getStructureLocalStorage;
+  exports.getDocWidth = getDocWidth;
+  exports.getDocHeight = getDocHeight;
+
   function Draw() {}
 
 
