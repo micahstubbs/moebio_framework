@@ -16,6 +16,7 @@
 
 
 function MD5(){}
+export default MD5;
 
 /*
  * These are the functions you'll usually want to call

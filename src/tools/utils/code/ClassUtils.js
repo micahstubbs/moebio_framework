@@ -1,13 +1,6 @@
-/*
- * All these function are globally available since they are included in the Global class
- */
-
-
-
+import DateOperators from "src/operators/dates/DateOperators";
 
 export var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"}
-
-
 
 /*
  * types are:
@@ -30,9 +23,10 @@ export function typeOf(o) {
     var objectType = o.getType();
     return objectType;
   }
-  c.log("[!] ERROR: could not detect type for ", o);
+  console.log("[!] ERROR: could not detect type for ", o);
 }
 
+// TODO remove?
 function VOID() {}
 
 export function instantiate(className, args) {
@@ -87,7 +81,7 @@ export function instantiate(className, args) {
   return o;
 }
 
-function getTextFromObject(value, type) {
+export function getTextFromObject(value, type) {
   if(value == null) return "Null";
   if(value.isList) {
     if(value.length == 0) return "[]";
@@ -121,24 +115,24 @@ function getTextFromObject(value, type) {
   }
 }
 
-
 export function instantiateWithSameType(object, args) {
   return instantiate(typeOf(object), args);
 }
 
-function isArray(obj) {
+export function isArray(obj) {
   if(obj.constructor.toString().indexOf("Array") == -1)
     return false;
   else
     return true;
 }
+
 Date.prototype.getType = function() {
   return 'date';
 };
 
 
 
-function evalJavaScriptFunction(functionText, args, scope){
+export function evalJavaScriptFunction(functionText, args, scope){
 	if(functionText==null) return;
 
 	var res;
@@ -235,17 +229,11 @@ function evalJavaScriptFunction(functionText, args, scope){
   return resultObject;
 }
 
-function argumentsToArray(args) {
+export function argumentsToArray(args) {
   return Array.prototype.slice.call(args, 0);
 }
 
-
-
-
-
-
-
-function TimeLogger(name) {
+export function TimeLogger(name) {
   var scope = this;
   this.name = name;
   this.clocks = {};
@@ -260,8 +248,8 @@ function TimeLogger(name) {
     } else {
       var now = new Date().getTime();
       var diff = now - scope.clocks[clockName];
-      c.l("TimeLogger '" + clockName + "' took " + diff + " ms");
+      console.log("TimeLogger '" + clockName + "' took " + diff + " ms");
     }
   };
 }
-var tl = new TimeLogger("Global Time Logger");
+export var tl = new TimeLogger("Global Time Logger");

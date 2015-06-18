@@ -1,3 +1,5 @@
+import LoadEvent from "src/tools/loaders/LoadEvent";
+
 function Loader() {}
 export default Loader;
 
@@ -19,10 +21,11 @@ Loader.PHPurl = "http://intuitionanalytics.com/tests/proxy.php?url=";
  * @para, {Object} optional parameter that will be stored in the LoadEvent instance
  */
 Loader.loadData = function(url, onLoadData, callee, param, send_object_json) {
-  if(Loader.REPORT_LOADING) c.log('load data:', url);
+  if(Loader.REPORT_LOADING) console.log('load data:', url);
   Loader.n_loading++;
 
   if(Loader.LOCAL_STORAGE_ENABLED) {
+    // TODO track down LocalStorage. localStorage is a thing though (lowercase l);
     var result = LocalStorage.getItem(url);
     if(result) {
       var e = new LoadEvent();
@@ -105,6 +108,7 @@ Loader.loadData = function(url, onLoadData, callee, param, send_object_json) {
 };
 
 
+//TODO this method isn't reference by anything else.
 function LoaderRequest(url, method, data) {
   this.url = url;
   this.method = method ? method : "GET";
@@ -264,7 +268,7 @@ Loader.loadXML = function(url, onLoadData) {
         onLoadComplete(req.responseXML);
 
       } else {
-        c.log("There was a problem retrieving the XML data:\n" +
+        console.log("There was a problem retrieving the XML data:\n" +
           req.statusText);
       }
     }
@@ -297,7 +301,7 @@ Loader.sendDataToPhp = function(url, data, onLoadData, callee, param) {
   var target = callee ? callee : arguments.callee;
 
   var onLoadComplete = function() {
-    if(Loader.REPORT_LOADING) c.log('Loader.loadData | onLoadComplete, req.responseText:', req.responseText);
+    if(Loader.REPORT_LOADING) console.log('Loader.loadData | onLoadComplete, req.responseText:', req.responseText);
     if(req.readyState == 4) {
       Loader.n_loading--;
 
@@ -309,7 +313,7 @@ Loader.sendDataToPhp = function(url, data, onLoadData, callee, param) {
         e.result = req.responseText;
         onLoadData.call(target, e);
       } else {
-        if(Loader.REPORT_LOADING) c.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
+        if(Loader.REPORT_LOADING) console.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
         e.errorType = req.status;
         e.errorMessage = "[!] There was a problem retrieving the data [" + req.status + "]:" + req.statusText;
         onLoadData.call(target, e);

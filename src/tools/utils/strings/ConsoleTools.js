@@ -5,6 +5,7 @@
  * @category misc
  */
 function ConsoleTools() {}
+export default ConsoleTools;
 
 
 ConsoleTools._ticTime;
@@ -27,7 +28,7 @@ ConsoleTools.NumberTableOnConsole = function(table) {
     message += line + "\n";
   }
 
-  c.l(message);
+  console.log(message);
 
   return message;
 };
@@ -38,7 +39,7 @@ ConsoleTools.tic = function(message) {
 
   ConsoleTools._ticTime = ConsoleTools._tacTime = new Date().getTime();
   ConsoleTools._nTacs = 0;
-  c.l('°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° tic °°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° [' + message + ']');
+  console.log('°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° tic °°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° [' + message + ']');
 };
 
 ConsoleTools.tac = function(message) {
@@ -46,5 +47,5 @@ ConsoleTools.tac = function(message) {
 
   var lastTac = ConsoleTools._tacTime;
   ConsoleTools._tacTime = new Date().getTime();
-  c.l('°°°°°°° tac [' + message + '], t from tic:' + (ConsoleTools._tacTime - ConsoleTools._ticTime) + ', t from last tac:' + ((ConsoleTools._tacTime - lastTac)));
+  console.log('°°°°°°° tac [' + message + '], t from tic:' + (ConsoleTools._tacTime - ConsoleTools._ticTime) + ', t from last tac:' + ((ConsoleTools._tacTime - lastTac)));
 };
