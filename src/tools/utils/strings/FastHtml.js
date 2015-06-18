@@ -5,6 +5,7 @@
  * @category misc
  */
 function FastHtml() {}
+export default FastHtml;
 
 FastHtml.expand = function(abreviatedHTML, scope, onEvent) {
   if(abreviatedHTML == null || abreviatedHTML == "") return "";

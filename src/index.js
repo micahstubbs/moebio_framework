@@ -176,27 +176,37 @@ export {
   getPixelColorRGBA, captureCanvas, setCursor, getMilliseconds
 };
 
+// tools/interaction
+import DragDetection from "src/tools/interaction/DragDetection";
+import InputTextFieldHTML from "src/tools/interaction/InputTextFieldHTML";
+import TextBox from "src/tools/interaction/TextBox";
+import TextFieldHTML from "src/tools/interaction/TextFieldHTML";
+export { DragDetection, InputTextFieldHTML, TextBox, TextFieldHTML };
 
-// import DragDetection from "src/tools/interaction/DragDetection";
-// import InputTextFieldHTML from "src/tools/interaction/InputTextFieldHTML";
-// import TextBox from "src/tools/interaction/TextBox";
-// import TextFieldHTML from "src/tools/interaction/TextFieldHTML";
 
-// import Loader from "src/tools/loaders/Loader";
-// import LoadEvent from "src/tools/loaders/LoadEvent";
-// import MultiLoader from "src/tools/loaders/MultiLoader";
+// tools/loaders
+import Loader from "src/tools/loaders/Loader";
+import LoadEvent from "src/tools/loaders/LoadEvent";
+import MultiLoader from "src/tools/loaders/MultiLoader";
+export { Loader, LoadEvent, TextBox, MultiLoader };
+
+// tools/utils
+import Consoletools from "src/tools/utils/strings/Consoletools";
+import FastHtml from "src/tools/utils/strings/FastHtml";
+import JSONUtils from "src/tools/utils/strings/JSONUtils";
+import MD5 from "src/tools/utils/strings/MD5";
+import StringUtils from "src/tools/utils/strings/StringUtils";
+import Navigator from "src/tools/utils/system/Navigator";
+export { Consoletools, FastHtml, JSONUtils, MD5, StringUtils, Navigator };
+
+import { typeOf, instantiate, getTextFromObject, instantiateWithSameType, isArray,
+  evalJavaScriptFunction, argumentsToArray, TimeLogger } from "src/tools/utils/code/ClassUtils";
+export { typeOf, instantiate, getTextFromObject, instantiateWithSameType, isArray,
+  evalJavaScriptFunction, argumentsToArray, TimeLogger };
 
 // import Forces from "src/tools/physics/Forces";
-
 // import Engine3D from "src/tools/threeD/Engine3D";
 
-// import ClassUtils from "src/tools/utils/code/ClassUtils";
-// import Consoletools from "src/tools/utils/strings/Consoletools";
-// import FastHtml from "src/tools/utils/strings/FastHtml";
-// import JSONUtils from "src/tools/utils/strings/JSONUtils";
-// import MD5 from "src/tools/utils/strings/MD5";
-// import StringUtils from "src/tools/utils/strings/StringUtils";
-// import Navigator from "src/tools/utils/system/Navigator";
 
 // import CountryListDraw from "src/visualization/geo/CountryListDraw";
 // import CirclesVisOperators from "src/visualization/geometry/CirclesVisOperators";

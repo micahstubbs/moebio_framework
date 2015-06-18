@@ -2313,6 +2313,24 @@ define('src/index', ['exports'], function (exports) {
 
   exports.RelationList = RelationList;
 
+  LoadEvent.prototype = {};
+  LoadEvent.prototype.constructor = LoadEvent;
+
+  /**
+   * LoadEvent
+   * @constructor
+   * @category misc
+   */
+  function LoadEvent() {
+    Object.apply(this);
+    this.result = null;
+    this.errorType = 0;
+    this.errorMessage = "";
+    this.url;
+  }
+
+  exports.LoadEvent = LoadEvent;
+
   function Loader() {}
 
 
@@ -2334,10 +2352,11 @@ define('src/index', ['exports'], function (exports) {
    * @para, {Object} optional parameter that will be stored in the LoadEvent instance
    */
   Loader.loadData = function(url, onLoadData, callee, param, send_object_json) {
-    if(Loader.REPORT_LOADING) c.log('load data:', url);
+    if(Loader.REPORT_LOADING) console.log('load data:', url);
     Loader.n_loading++;
 
     if(Loader.LOCAL_STORAGE_ENABLED) {
+      // TODO track down LocalStorage. localStorage is a thing though (lowercase l);
       var result = LocalStorage.getItem(url);
       if(result) {
         var e = new LoadEvent();
@@ -2420,6 +2439,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  //TODO this method isn't reference by anything else.
   function LoaderRequest(url, method, data) {
     this.url = url;
     this.method = method ? method : "GET";
@@ -2579,7 +2599,7 @@ define('src/index', ['exports'], function (exports) {
           onLoadComplete(req.responseXML);
 
         } else {
-          c.log("There was a problem retrieving the XML data:\n" +
+          console.log("There was a problem retrieving the XML data:\n" +
             req.statusText);
         }
       }
@@ -2612,7 +2632,7 @@ define('src/index', ['exports'], function (exports) {
     var target = callee ? callee : arguments.callee;
 
     var onLoadComplete = function() {
-      if(Loader.REPORT_LOADING) c.log('Loader.loadData | onLoadComplete, req.responseText:', req.responseText);
+      if(Loader.REPORT_LOADING) console.log('Loader.loadData | onLoadComplete, req.responseText:', req.responseText);
       if(req.readyState == 4) {
         Loader.n_loading--;
 
@@ -2624,7 +2644,7 @@ define('src/index', ['exports'], function (exports) {
           e.result = req.responseText;
           onLoadData.call(target, e);
         } else {
-          if(Loader.REPORT_LOADING) c.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
+          if(Loader.REPORT_LOADING) console.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
           e.errorType = req.status;
           e.errorMessage = "[!] There was a problem retrieving the data [" + req.status + "]:" + req.statusText;
           onLoadData.call(target, e);
@@ -2634,6 +2654,8 @@ define('src/index', ['exports'], function (exports) {
 
     req.onreadystatechange = onLoadComplete;
   };
+
+  exports.Loader = Loader;
 
   Node__Node.prototype = new DataModel();
   Node__Node.prototype.constructor = Node__Node;
@@ -2913,16 +2935,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Point = Point__default;
 
-  /*
-   * All these function are globally available since they are included in the Global class
-   */
-
-
-
-
   var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"}
-
-
 
   /*
    * types are:
@@ -2945,9 +2958,10 @@ define('src/index', ['exports'], function (exports) {
       var objectType = o.getType();
       return objectType;
     }
-    c.log("[!] ERROR: could not detect type for ", o);
+    console.log("[!] ERROR: could not detect type for ", o);
   }
 
+  // TODO remove?
   function VOID() {}
 
   function ClassUtils__instantiate(className, args) {
@@ -3024,9 +3038,9 @@ define('src/index', ['exports'], function (exports) {
 
     switch(type) {
       case "date":
-        return DateOperators.dateToString(value);
+        return DateOperators__default.dateToString(value);
       case "DateInterval":
-        return DateOperators.dateToString(value.date0) + " - " + DateOperators.dateToString(value.date1);
+        return DateOperators__default.dateToString(value.date0) + " - " + DateOperators__default.dateToString(value.date1);
       case "string":
         return((value.length > 160) ? value.substr(0, 159) + "…" : value).replace(/\n/g, "↩");
       case "number":
@@ -3035,7 +3049,6 @@ define('src/index', ['exports'], function (exports) {
         return "{}"; //value.toString();
     }
   }
-
 
   function ClassUtils__instantiateWithSameType(object, args) {
     return ClassUtils__instantiate(ClassUtils__typeOf(object), args);
@@ -3047,6 +3060,7 @@ define('src/index', ['exports'], function (exports) {
     else
       return true;
   }
+
   Date.prototype.getType = function() {
     return 'date';
   };
@@ -3154,12 +3168,6 @@ define('src/index', ['exports'], function (exports) {
     return Array.prototype.slice.call(args, 0);
   }
 
-
-
-
-
-
-
   function TimeLogger(name) {
     var scope = this;
     this.name = name;
@@ -3175,11 +3183,20 @@ define('src/index', ['exports'], function (exports) {
       } else {
         var now = new Date().getTime();
         var diff = now - scope.clocks[clockName];
-        c.l("TimeLogger '" + clockName + "' took " + diff + " ms");
+        console.log("TimeLogger '" + clockName + "' took " + diff + " ms");
       }
     };
   }
   var tl = new TimeLogger("Global Time Logger");
+
+  exports.typeOf = ClassUtils__typeOf;
+  exports.instantiate = ClassUtils__instantiate;
+  exports.getTextFromObject = getTextFromObject;
+  exports.instantiateWithSameType = ClassUtils__instantiateWithSameType;
+  exports.isArray = isArray;
+  exports.evalJavaScriptFunction = evalJavaScriptFunction;
+  exports.argumentsToArray = argumentsToArray;
+  exports.TimeLogger = TimeLogger;
 
   Relation.prototype = new Node__default();
   Relation.prototype.constructor = Relation;
@@ -9915,8 +9932,8 @@ define('src/index', ['exports'], function (exports) {
   var listenerArray  = [];
   var src_Global__canvas;
   var removeDiv;
-  var userAgent="none";
-  var userAgentVersion;
+  var src_Global__userAgent="none";
+  var src_Global__userAgentVersion;
   var canvasResizeable=true;
 
 
@@ -9925,8 +9942,8 @@ define('src/index', ['exports'], function (exports) {
   var cH = 1; // canvas height
   var src_Global__cX = 1; // canvas center x
   var src_Global__cY = 1; // canvas center y
-  var mX = 0; // cursor x
-  var mY = 0; // cursor y
+  var src_Global__mX = 0; // cursor x
+  var src_Global__mY = 0; // cursor y
   var mP = new Point__default(0, 0); // cursor point
   var nF = 0; // number of current frame since first cycle
 
@@ -9956,7 +9973,7 @@ define('src/index', ['exports'], function (exports) {
   var cycleActive;
 
   //global constants
-  var context;
+  var src_Global__context;
   var TwoPi = 2*Math.PI;
   var HalfPi = 0.5*Math.PI;
   var radToGrad = 180/Math.PI;
@@ -9987,29 +10004,29 @@ define('src/index', ['exports'], function (exports) {
   window.addEventListener('load', function(){
 
     if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
-      userAgent='IE';
-      userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
-      if(userAgentVersion<9) return null;
+      src_Global__userAgent='IE';
+      src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+      if(src_Global__userAgentVersion<9) return null;
     } else if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent)){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
-      userAgent='FIREFOX';
-      userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+      src_Global__userAgent='FIREFOX';
+      src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
     } else if (navigator.userAgent.match(/Chrome/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
-      userAgent='CHROME';
-      userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+      src_Global__userAgent='CHROME';
+      src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
     } else if (/Mozilla[\/\s](\d+\.\d+)/.test(navigator.userAgent) || navigator.userAgent.match(/Mozilla/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
-      userAgent='MOZILLA';
-      userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+      src_Global__userAgent='MOZILLA';
+      src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
     } else if (navigator.userAgent.match(/Safari/) != null){ //test for MSIE x.x;
-      userAgent='Safari';
-      userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+      src_Global__userAgent='Safari';
+      src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
     } else if(navigator.userAgent.match(/iPad/i) != null){
-      userAgent='IOS';
+      src_Global__userAgent='IOS';
     } else if(navigator.userAgent.match(/iPhone/i) != null){
-      userAgent='IOS';
+      src_Global__userAgent='IOS';
     }
 
 
-    Global.userAgent=userAgent;
+    Global.userAgent=src_Global__userAgent;
     Global._frameRate=30;
 
     src_Global__canvas = document.getElementById('main');
@@ -10018,15 +10035,15 @@ define('src/index', ['exports'], function (exports) {
       removeDiv = document.getElementById('removeDiv');
       removeDiv.style.display = 'none';
 
-      context = src_Global__canvas.getContext('2d');
+      src_Global__context = src_Global__canvas.getContext('2d');
 
       _adjustCanvas();
 
-      src_Global__canvas.addEventListener("mousemove", _onMouse, false);
-      src_Global__canvas.addEventListener("mousedown", _onMouse, false);
-      src_Global__canvas.addEventListener("mouseup", _onMouse, false);
-      src_Global__canvas.addEventListener("mouseenter", _onMouse, false);
-      src_Global__canvas.addEventListener("mouseleave", _onMouse, false);
+      src_Global__canvas.addEventListener("mousemove", src_Global___onMouse, false);
+      src_Global__canvas.addEventListener("mousedown", src_Global___onMouse, false);
+      src_Global__canvas.addEventListener("mouseup", src_Global___onMouse, false);
+      src_Global__canvas.addEventListener("mouseenter", src_Global___onMouse, false);
+      src_Global__canvas.addEventListener("mouseleave", src_Global___onMouse, false);
 
 
       activateWheel();
@@ -10037,29 +10054,29 @@ define('src/index', ['exports'], function (exports) {
       init();
     }
 
-    src_Global__c.l('Moebio Framework v2.259 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(src_Global__canvas!=null));
+    src_Global__c.l('Moebio Framework v2.259 | user agent: '+src_Global__userAgent+' | user agent version: '+src_Global__userAgentVersion+' | canvas detected: '+(src_Global__canvas!=null));
 
   }, false);
 
-  function _onMouse(e) {
+  function src_Global___onMouse(e) {
 
     switch(e.type){
       case "mousemove":
-        PREV_mX=mX;
-        PREV_mY=mY;
+        PREV_mX=src_Global__mX;
+        PREV_mY=src_Global__mY;
 
         if(e.clientX){
-          mX = e.clientX;
-              mY = e.clientY;
+          src_Global__mX = e.clientX;
+              src_Global__mY = e.clientY;
         } else if(e.offsetX) {
-              mX = e.offsetX;
-              mY = e.offsetY;
+              src_Global__mX = e.offsetX;
+              src_Global__mY = e.offsetY;
           } else if(e.layerX) {
-              mX = e.layerX;
-              mY = e.layerY;
+              src_Global__mX = e.layerX;
+              src_Global__mY = e.layerY;
           }
-          mP.x = mX;
-          mP.y = mY;
+          mP.x = src_Global__mX;
+          mP.y = src_Global__mY;
           MOUSE_IN_DOCUMENT = true;
           break;
       case "mousedown":
@@ -10067,16 +10084,16 @@ define('src/index', ['exports'], function (exports) {
         MOUSE_PRESSED = true;
         T_MOUSE_PRESSED = 0;
         _tLastMouseDown = new Date().getTime();
-        mX_DOWN = mX;
-        mY_DOWN = mY;
+        mX_DOWN = src_Global__mX;
+        mY_DOWN = src_Global__mY;
         MOUSE_IN_DOCUMENT = true;
         break;
       case "mouseup":
         NF_UP = nF;
         MOUSE_PRESSED = false;
         T_MOUSE_PRESSED = 0;
-        mX_UP = mX;
-        mY_UP = mY;
+        mX_UP = src_Global__mX;
+        mY_UP = src_Global__mY;
         MOUSE_IN_DOCUMENT = true;
         break;
       case "mouseenter":
@@ -10109,20 +10126,20 @@ define('src/index', ['exports'], function (exports) {
 
 
   function clearContext(){
-    context.clearRect(0, 0, cW, cH);
+    src_Global__context.clearRect(0, 0, cW, cH);
   }
 
   function cycleOnMouseMovement(value, time){
     if(time!=null) END_CYCLE_DELAY = time;
 
     if(value){
-      context.canvas.addEventListener('mousemove', onMoveCycle, false);
-      addInteractionEventListener('mousewheel', onMoveCycle, this);
+      src_Global__context.canvas.addEventListener('mousemove', src_Global__onMoveCycle, false);
+      addInteractionEventListener('mousewheel', src_Global__onMoveCycle, this);
       _cycleOnMouseMovement = true;
       stopCycle();
     } else {
-      context.canvas.removeEventListener('mousemove', onMoveCycle, false);
-      removeInteractionEventListener('mousewheel', onMoveCycle, this);
+      src_Global__context.canvas.removeEventListener('mousemove', src_Global__onMoveCycle, false);
+      removeInteractionEventListener('mousewheel', src_Global__onMoveCycle, this);
       _cycleOnMouseMovement = false;
       startCycle();
     }
@@ -10137,10 +10154,10 @@ define('src/index', ['exports'], function (exports) {
 
   function enterFrame(){
     if(_alphaRefresh==0){
-        context.clearRect(0, 0, cW, cH);
+        src_Global__context.clearRect(0, 0, cW, cH);
     } else {
-      context.fillStyle = 'rgba('+backGroundColorRGB[0]+','+backGroundColorRGB[1]+','+backGroundColorRGB[2]+','+_alphaRefresh+')';
-      context.fillRect(0, 0, cW, cH);
+      src_Global__context.fillStyle = 'rgba('+backGroundColorRGB[0]+','+backGroundColorRGB[1]+','+backGroundColorRGB[2]+','+_alphaRefresh+')';
+      src_Global__context.fillRect(0, 0, cW, cH);
     }
 
       src_Global__setCursor('default');
@@ -10149,8 +10166,8 @@ define('src/index', ['exports'], function (exports) {
     MOUSE_UP = NF_UP==nF;
     MOUSE_UP_FAST = MOUSE_UP && (nF-NF_DOWN)<9;
 
-    DX_MOUSE = mX-PREV_mX;
-    DY_MOUSE = mY-PREV_mY;
+    DX_MOUSE = src_Global__mX-PREV_mX;
+    DY_MOUSE = src_Global__mY-PREV_mY;
     MOUSE_MOVED = DX_MOUSE!=0 || DY_MOUSE!=0;
 
     if(MOUSE_PRESSED) T_MOUSE_PRESSED = new Date().getTime() - _tLastMouseDown;
@@ -10159,8 +10176,8 @@ define('src/index', ['exports'], function (exports) {
 
       WHEEL_CHANGE = 0;
 
-      PREV_mX=mX;
-    PREV_mY=mY;
+      PREV_mX=src_Global__mX;
+    PREV_mY=src_Global__mY;
 
       nF++;
   }
@@ -10183,14 +10200,14 @@ define('src/index', ['exports'], function (exports) {
 
 
 
-  function onMoveCycle(e){
-    if(e.type=='mousemove' && _prevMouseX==mX && _prevMouseY==mY) return;
+  function src_Global__onMoveCycle(e){
+    if(e.type=='mousemove' && _prevMouseX==src_Global__mX && _prevMouseY==src_Global__mY) return;
     reStartCycle();
   }
 
   function reStartCycle(){
-    _prevMouseX=mX;
-    _prevMouseY=mY;
+    _prevMouseX=src_Global__mX;
+    _prevMouseY=src_Global__mY;
 
     if(!cycleActive){
       _setIntervalId = setInterval(enterFrame, Global._frameRate);
@@ -10209,7 +10226,7 @@ define('src/index', ['exports'], function (exports) {
       case 'mouseup':
       case 'click':
       case 'mousemove':
-        context.canvas.addEventListener(eventType, onCanvasEvent, false);
+        src_Global__context.canvas.addEventListener(eventType, onCanvasEvent, false);
         break;
       case 'mousewheel':
         if(!_wheelActivated) activateWheel();
@@ -10427,13 +10444,13 @@ define('src/index', ['exports'], function (exports) {
       var a = Math.atan2(polygon[1].y - polygon[0].y, polygon[1].x - polygon[0].x) - 0.5 * Math.PI;
       var cosa = amount * Math.cos(a);
       var sina = amount * Math.sin(a);
-      context.moveTo(polygon[0].x, polygon[0].y);
-      context.bezierCurveTo(
+      src_Global__context.moveTo(polygon[0].x, polygon[0].y);
+      src_Global__context.bezierCurveTo(
         polygon[0].x + cosa, polygon[0].y + sina,
         polygon[1].x + cosa, polygon[1].y + sina,
         polygon[1].x, polygon[1].y
       );
-      context.bezierCurveTo(
+      src_Global__context.bezierCurveTo(
         polygon[1].x - cosa, polygon[1].y - sina,
         polygon[0].x - cosa, polygon[0].y - sina,
         polygon[0].x, polygon[0].y
@@ -10448,7 +10465,7 @@ define('src/index', ['exports'], function (exports) {
     controlPoints = GeometryOperators.getSoftenControlPoints(prevPoint, point, nextPoint, amount);
     var prevCP = controlPoints[1];
     var cP;
-    context.moveTo(point.x, point.y);
+    src_Global__context.moveTo(point.x, point.y);
     prevPoint = point;
     var nSteps = nPoints + Number(closed);
     for(i = 1; i < nSteps; i++) {
@@ -10456,7 +10473,7 @@ define('src/index', ['exports'], function (exports) {
       nextPoint = polygon[(i + 1) % nPoints];
       controlPoints = GeometryOperators.getSoftenControlPoints(prevPoint, point, nextPoint, amount);
       cP = controlPoints[0];
-      context.bezierCurveTo(prevCP.x, prevCP.y, cP.x, cP.y, point.x, point.y);
+      src_Global__context.bezierCurveTo(prevCP.x, prevCP.y, cP.x, cP.y, point.x, point.y);
       prevCP = controlPoints[1];
       prevPoint = point;
     }
@@ -10473,10 +10490,10 @@ define('src/index', ['exports'], function (exports) {
    */
   Draw.fillRectangleWithImage = function(rectangle, image, mode, backColor) {
     if(backColor != null) {
-      context.fillStyle = backColor;
-      context.beginPath();
-      context.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
-      context.fill();
+      src_Global__context.fillStyle = backColor;
+      src_Global__context.beginPath();
+      src_Global__context.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+      src_Global__context.fill();
     }
 
     var sx;
@@ -10489,7 +10506,7 @@ define('src/index', ['exports'], function (exports) {
     switch(mode) {
 
       case 0:
-        context.drawImage(image, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+        src_Global__context.drawImage(image, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
         break;
       case 1:
         sx = Math.max(image.width - rectangle.width, 0) * 0.5;
@@ -10498,7 +10515,7 @@ define('src/index', ['exports'], function (exports) {
         dy = rectangle.y + Math.max(rectangle.height - image.height, 0) * 0.5;
         dWidth = Math.min(image.width, rectangle.width);
         dHeight = Math.min(image.height, rectangle.height);
-        context.drawImage(image, sx, sy, dWidth, dHeight, dx, dy, dWidth, dHeight);
+        src_Global__context.drawImage(image, sx, sy, dWidth, dHeight, dx, dy, dWidth, dHeight);
         break;
       case 2:
         sx = Math.max(image.width - rectangle.width, 0);
@@ -10511,7 +10528,7 @@ define('src/index', ['exports'], function (exports) {
         if(propD > propB) dWidth = dHeight / propB;
         dx = rectangle.x + (rectangle.width - dWidth) * 0.5;
         dy = rectangle.y + (rectangle.height - dHeight) * 0.5;
-        context.drawImage(image, 0, 0, image.width, image.height, dx, dy, dWidth, dHeight);
+        src_Global__context.drawImage(image, 0, 0, image.width, image.height, dx, dy, dWidth, dHeight);
         break;
       case 3:
         if(rectangle.width / rectangle.height < image.width / image.height) {
@@ -10527,7 +10544,7 @@ define('src/index', ['exports'], function (exports) {
           sy = 0.5 * (image.height - sh);
 
         }
-        context.drawImage(image, sx, sy, sw, sh, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+        src_Global__context.drawImage(image, sx, sy, sw, sh, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
         break;
       case 4:
         break;
@@ -10553,12 +10570,12 @@ define('src/index', ['exports'], function (exports) {
       xe = x + rW, // x-end
       ye = y + rH; // y-end
 
-    context.moveTo(x - rW, y);
-    context.bezierCurveTo(x - rW, y - oy, x - ox, y - rH, x, y - rH);
-    context.bezierCurveTo(x + ox, y - rH, xe, y - oy, xe, y);
-    context.bezierCurveTo(xe, y + oy, x + ox, ye, x, ye);
-    context.bezierCurveTo(x - ox, ye, x - rW, y + oy, x - rW, y);
-    context.moveTo(x - rW, y);
+    src_Global__context.moveTo(x - rW, y);
+    src_Global__context.bezierCurveTo(x - rW, y - oy, x - ox, y - rH, x, y - rH);
+    src_Global__context.bezierCurveTo(x + ox, y - rH, xe, y - oy, xe, y);
+    src_Global__context.bezierCurveTo(xe, y + oy, x + ox, ye, x, ye);
+    src_Global__context.bezierCurveTo(x - ox, ye, x - rW, y + oy, x - rW, y);
+    src_Global__context.moveTo(x - rW, y);
   };
 
   /**
@@ -10573,12 +10590,12 @@ define('src/index', ['exports'], function (exports) {
     tx = tx || 0;
     ty = ty || 0;
     var i;
-    context.moveTo(tx + polygon[0].x, ty + polygon[0].y);
+    src_Global__context.moveTo(tx + polygon[0].x, ty + polygon[0].y);
     for(i = 1; polygon[i] != null; i++) {
-      context.lineTo(tx + polygon[i].x, ty + polygon[i].y);
+      src_Global__context.lineTo(tx + polygon[i].x, ty + polygon[i].y);
     }
     if(close) {
-      context.lineTo(tx + polygon[0].x, ty + polygon[0].y);
+      src_Global__context.lineTo(tx + polygon[0].x, ty + polygon[0].y);
     }
   };
 
@@ -10586,9 +10603,9 @@ define('src/index', ['exports'], function (exports) {
     tx = tx || 0;
     ty = ty || 0;
     var i;
-    context.moveTo(tx + polygon[0].x, ty + polygon[0].y);
+    src_Global__context.moveTo(tx + polygon[0].x, ty + polygon[0].y);
     for(i = 1; polygon[i] != null; i++) {
-      context.bezierCurveTo(tx + controlPoints[(i - 1) * 2].x, ty + controlPoints[(i - 1) * 2].y,
+      src_Global__context.bezierCurveTo(tx + controlPoints[(i - 1) * 2].x, ty + controlPoints[(i - 1) * 2].y,
         tx + controlPoints[i * 2 - 1].x, ty + controlPoints[i * 2 - 1].y,
         tx + polygon[i].x, ty + polygon[i].y);
     }
@@ -10600,11 +10617,11 @@ define('src/index', ['exports'], function (exports) {
     var bI;
     var N = Math.floor((bezierPolygon.length - 1) / 3);
     var i;
-    context.moveTo(tx + bezierPolygon[0].x, ty + bezierPolygon[0].y);
+    src_Global__context.moveTo(tx + bezierPolygon[0].x, ty + bezierPolygon[0].y);
     for(i = 0; i < N; i++) {
       bI = i * 3 + 1;
 
-      context.bezierCurveTo(
+      src_Global__context.bezierCurveTo(
         tx + bezierPolygon[bI].x, ty + bezierPolygon[bI].y,
         tx + bezierPolygon[bI + 1].x, ty + bezierPolygon[bI + 1].y,
         tx + bezierPolygon[bI + 2].x, ty + bezierPolygon[bI + 2].y
@@ -10622,7 +10639,7 @@ define('src/index', ['exports'], function (exports) {
     var p1;
     var p2;
 
-    context.moveTo(p0.x, p0.y);
+    src_Global__context.moveTo(p0.x, p0.y);
     for(i = 0; i < N; i++) {
       bI = i * 3 + 1;
 
@@ -10630,7 +10647,7 @@ define('src/index', ['exports'], function (exports) {
       p1 = transformationFunction(bezierPolygon[bI + 1]);
       p2 = transformationFunction(bezierPolygon[bI + 2]);
 
-      context.bezierCurveTo(
+      src_Global__context.bezierCurveTo(
         p0.x, p0.y,
         p1.x, p1.y,
         p2.x, p2.y
@@ -10640,19 +10657,19 @@ define('src/index', ['exports'], function (exports) {
 
   Draw.drawPolygonTransformed = function(polygon, transformationFunction) {
     var p = transformationFunction(polygon[0]);
-    context.moveTo(p.x, p.y);
+    src_Global__context.moveTo(p.x, p.y);
     for(i = 0; polygon[i] != null; i++) {
       p = transformationFunction(polygon[i]);
-      context.lineTo(p.x, p.y);
+      src_Global__context.lineTo(p.x, p.y);
     }
   };
 
 
   Draw.drawSliderRectangle = function(x, y, width, height) {
-    context.arc(x + width * 0.5, y, width * 0.5, Math.PI, TwoPi);
-    context.lineTo(x + width, y);
-    context.arc(x + width * 0.5, y + height, width * 0.5, 0, Math.PI);
-    context.lineTo(x, y);
+    src_Global__context.arc(x + width * 0.5, y, width * 0.5, Math.PI, TwoPi);
+    src_Global__context.lineTo(x + width, y);
+    src_Global__context.arc(x + width * 0.5, y + height, width * 0.5, 0, Math.PI);
+    src_Global__context.lineTo(x, y);
     //context.fillRect(x, y, width, height);
   };
 
@@ -10672,23 +10689,23 @@ define('src/index', ['exports'], function (exports) {
   Draw.drawRoundRect = function(x, y, width, height, radius) {
     radius = radius || 0;
     var bottom = y + height;
-    context.moveTo(x + radius, y);
-    context.lineTo(x + width - radius, y);
-    context.quadraticCurveTo(x + width, y, x + width, y + radius);
-    context.lineTo(x + width, y + height - radius);
-    context.quadraticCurveTo(x + width, bottom, x + width - radius, bottom);
-    context.lineTo(x + radius, bottom);
-    context.quadraticCurveTo(x, bottom, x, bottom - radius);
-    context.lineTo(x, y + radius);
-    context.quadraticCurveTo(x, y, x + radius, y);
+    src_Global__context.moveTo(x + radius, y);
+    src_Global__context.lineTo(x + width - radius, y);
+    src_Global__context.quadraticCurveTo(x + width, y, x + width, y + radius);
+    src_Global__context.lineTo(x + width, y + height - radius);
+    src_Global__context.quadraticCurveTo(x + width, bottom, x + width - radius, bottom);
+    src_Global__context.lineTo(x + radius, bottom);
+    src_Global__context.quadraticCurveTo(x, bottom, x, bottom - radius);
+    src_Global__context.lineTo(x, y + radius);
+    src_Global__context.quadraticCurveTo(x, y, x + radius, y);
   };
 
   Draw.drawEquilateralTriangle = function(x, y, radius, angle) { //deprecated
     angle = angle || 0;
-    context.moveTo(radius * Math.cos(angle) + x, radius * Math.sin(angle) + y);
-    context.lineTo(radius * Math.cos(angle + 2.0944) + x, radius * Math.sin(angle + 2.0944) + y);
-    context.lineTo(radius * Math.cos(angle + 4.1888) + x, radius * Math.sin(angle + 4.1888) + y);
-    context.lineTo(radius * Math.cos(angle) + x, radius * Math.sin(angle) + y);
+    src_Global__context.moveTo(radius * Math.cos(angle) + x, radius * Math.sin(angle) + y);
+    src_Global__context.lineTo(radius * Math.cos(angle + 2.0944) + x, radius * Math.sin(angle + 2.0944) + y);
+    src_Global__context.lineTo(radius * Math.cos(angle + 4.1888) + x, radius * Math.sin(angle + 4.1888) + y);
+    src_Global__context.lineTo(radius * Math.cos(angle) + x, radius * Math.sin(angle) + y);
   };
 
   Draw.drawArrowTriangle = function(p0, p1, base) {
@@ -10698,18 +10715,18 @@ define('src/index', ['exports'], function (exports) {
   };
 
   Draw.drawTriangleFromBase = function(x, y, base, height, angle) {
-    context.moveTo(x + 0.5 * base * Math.cos(angle + Math.PI * 0.5), y + 0.5 * base * Math.sin(angle + Math.PI * 0.5));
-    context.lineTo(x + 0.5 * base * Math.cos(angle - Math.PI * 0.5), y + 0.5 * base * Math.sin(angle - Math.PI * 0.5));
-    context.lineTo(x + height * Math.cos(angle), y + height * Math.sin(angle));
-    context.lineTo(x + 0.5 * base * Math.cos(angle + Math.PI * 0.5), y + 0.5 * base * Math.sin(angle + Math.PI * 0.5));
+    src_Global__context.moveTo(x + 0.5 * base * Math.cos(angle + Math.PI * 0.5), y + 0.5 * base * Math.sin(angle + Math.PI * 0.5));
+    src_Global__context.lineTo(x + 0.5 * base * Math.cos(angle - Math.PI * 0.5), y + 0.5 * base * Math.sin(angle - Math.PI * 0.5));
+    src_Global__context.lineTo(x + height * Math.cos(angle), y + height * Math.sin(angle));
+    src_Global__context.lineTo(x + 0.5 * base * Math.cos(angle + Math.PI * 0.5), y + 0.5 * base * Math.sin(angle + Math.PI * 0.5));
   };
 
   Draw.drawHorizontalFlowPiece = function(x0, x1, y0U, y0D, y1U, y1D, offX) {
-    context.moveTo(x0, y0U);
-    context.bezierCurveTo(x0 + offX, y0U, x1 - offX, y1U, x1, y1U);
-    context.lineTo(x1, y1D);
-    context.bezierCurveTo(x1 - offX, y1D, x0 + offX, y0D, x0, y0D);
-    context.lineTo(x0, y0U);
+    src_Global__context.moveTo(x0, y0U);
+    src_Global__context.bezierCurveTo(x0 + offX, y0U, x1 - offX, y1U, x1, y1U);
+    src_Global__context.lineTo(x1, y1D);
+    src_Global__context.bezierCurveTo(x1 - offX, y1D, x0 + offX, y0D, x0, y0D);
+    src_Global__context.lineTo(x0, y0U);
   };
 
 
@@ -10724,25 +10741,25 @@ define('src/index', ['exports'], function (exports) {
     for(i = 0; rectangleList[i] != null; i++) {
       rect = rectangleList[i];
       if(rect.height <= margin || rect.width <= margin) continue;
-      if(colors != null) context.fillStyle = colors[i % nColors];
-      context.fillRect(rect.x + x + margin, rect.y + y + margin, rect.width - twoMargin, rect.height - twoMargin);
+      if(colors != null) src_Global__context.fillStyle = colors[i % nColors];
+      src_Global__context.fillRect(rect.x + x + margin, rect.y + y + margin, rect.width - twoMargin, rect.height - twoMargin);
       if(bitmapDataList != null && bitmapDataList[i] != null) {
         adjustedRect.x = rect.x + x + margin;
         adjustedRect.y = rect.y + y + margin;
         adjustedRect.width = rect.width - twoMargin;
         adjustedRect.height = rect.height - twoMargin;
-        Draw.fillRectangleWithImage(context, adjustedRect, bitmapDataList[i], bitmapDataDrawMode);
+        Draw.fillRectangleWithImage(src_Global__context, adjustedRect, bitmapDataList[i], bitmapDataDrawMode);
       }
     }
   };
 
   Draw.drawQuadrilater = function(p0, p1, p2, p3, close) {
     close = close == null ? true : close;
-    context.moveTo(p0.x, p0.y);
-    context.lineTo(p1.x, p1.y);
-    context.lineTo(p2.x, p2.y);
-    context.lineTo(p3.x, p3.y);
-    if(close) context.lineTo(p0.x, p0.y);
+    src_Global__context.moveTo(p0.x, p0.y);
+    src_Global__context.lineTo(p1.x, p1.y);
+    src_Global__context.lineTo(p2.x, p2.y);
+    src_Global__context.lineTo(p3.x, p3.y);
+    if(close) src_Global__context.lineTo(p0.x, p0.y);
   };
 
   /**
@@ -10755,17 +10772,17 @@ define('src/index', ['exports'], function (exports) {
       circle0 = _circle;
     }
     if(circle1.x + circle1.z <= circle0.x + circle0.z) {
-      context.arc(circle1.x, circle1.y, circle1.z, 0, TwoPi);
+      src_Global__context.arc(circle1.x, circle1.y, circle1.z, 0, TwoPi);
       return;
     } else if(circle0.x - circle0.z >= circle1.x - circle1.z) {
-      context.arc(circle0.x, circle0.y, circle0.z, 0, TwoPi);
+      src_Global__context.arc(circle0.x, circle0.y, circle0.z, 0, TwoPi);
       return;
     }
 
     var angles = GeometryOperators.circlesLensAngles(circle0, circle1);
 
-    context.arc(circle0.x, circle0.y, circle0.z, angles[0], angles[1]);
-    context.arc(circle1.x, circle1.y, circle1.z, angles[2], angles[3]);
+    src_Global__context.arc(circle0.x, circle0.y, circle0.z, angles[0], angles[1]);
+    src_Global__context.arc(circle1.x, circle1.y, circle1.z, angles[2], angles[3]);
   };
 
 
@@ -11250,18 +11267,18 @@ define('src/index', ['exports'], function (exports) {
   PolygonOperators.bezierPolygonContainsPoint = function(polygon, point, border) {
     var frame = polygon.getFrame();
     clearContext();
-    context.fillStyle = 'black';
-    context.fillRect(0, 0, frame.width, frame.height);
+    src_Global__context.fillStyle = 'black';
+    src_Global__context.fillRect(0, 0, frame.width, frame.height);
     if(border != null) {
-      context.strokeStyle = 'black';
-      context.lineWidth = border;
+      src_Global__context.strokeStyle = 'black';
+      src_Global__context.lineWidth = border;
     }
-    context.fillStyle = 'white';
-    context.beginPath();
-    Draw.drawBezierPolygon(context, polygon, -frame.x, -frame.y);
-    context.fill();
-    if(border != null) context.stroke();
-    var data = context.getImageData(point.x - frame.x, point.y - frame.y, 1, 1).data;
+    src_Global__context.fillStyle = 'white';
+    src_Global__context.beginPath();
+    Draw.drawBezierPolygon(src_Global__context, polygon, -frame.x, -frame.y);
+    src_Global__context.fill();
+    if(border != null) src_Global__context.stroke();
+    var data = src_Global__context.getImageData(point.x - frame.x, point.y - frame.y, 1, 1).data;
     clearContext();
     return data[0] > 0;
   };
@@ -11276,12 +11293,12 @@ define('src/index', ['exports'], function (exports) {
     nAttempts = nAttempts == null ? 500 : nAttempts;
 
     var frame = polygon.getFrame();
-    context.fillStyle = 'black';
-    context.fillRect(0, 0, frame.width, frame.height);
-    context.fillStyle = 'white';
-    context.beginPath();
-    Draw.drawBezierPolygon(context, polygon, -frame.x, -frame.y);
-    context.fill();
+    src_Global__context.fillStyle = 'black';
+    src_Global__context.fillRect(0, 0, frame.width, frame.height);
+    src_Global__context.fillStyle = 'white';
+    src_Global__context.beginPath();
+    Draw.drawBezierPolygon(src_Global__context, polygon, -frame.x, -frame.y);
+    src_Global__context.fill();
 
     var center;
     var testPoint;
@@ -11295,7 +11312,7 @@ define('src/index', ['exports'], function (exports) {
       center = frame.getRandomPoint();
       for(angle = 0; angle += 0.1; angle <= TwoPi) {
         r = angle;
-        var data = context.getImageData(center.x + r * Math.cos(angle) - frame.x, center.y + r * Math.sin(angle) - frame.y, 1, 1).data;
+        var data = src_Global__context.getImageData(center.x + r * Math.cos(angle) - frame.x, center.y + r * Math.sin(angle) - frame.y, 1, 1).data;
         if(data[0] == 0) {
           if(r > rMax) {
             rMax = r;
@@ -11927,8 +11944,8 @@ define('src/index', ['exports'], function (exports) {
       case 'mousedown':
         if(!this.active) return;
         this.dragging = true;
-        this.prev_mX = mX;
-        this.prev_mY = mY;
+        this.prev_mX = src_Global__mX;
+        this.prev_mY = src_Global__mY;
         addInteractionEventListener('mousemove', this.onMouse, this);
         break;
       case 'mouseup':
@@ -11937,10 +11954,10 @@ define('src/index', ['exports'], function (exports) {
         break;
       case 'mousemove':
         if(!this.active) return;
-        this.center.x += (this.prev_mX - mX) / this.scale;
-        this.center.y += (this.prev_mY - mY) / this.scale;
-        this.prev_mX = mX;
-        this.prev_mY = mY;
+        this.center.x += (this.prev_mX - src_Global__mX) / this.scale;
+        this.center.y += (this.prev_mY - src_Global__mY) / this.scale;
+        this.prev_mX = src_Global__mX;
+        this.prev_mY = src_Global__mY;
         break;
     }
   };
@@ -11957,7 +11974,7 @@ define('src/index', ['exports'], function (exports) {
       this.scale = this.MAX_SCALE;
       return;
     }
-    this.factorScaleFromPoint(new Point__default(mX - 0, mY - 0), (1 - 0.02 * e.value));
+    this.factorScaleFromPoint(new Point__default(src_Global__mX - 0, src_Global__mY - 0), (1 - 0.02 * e.value));
   };
 
   exports.Space2D = Space2D;
@@ -17826,7 +17843,7 @@ define('src/index', ['exports'], function (exports) {
       height = x.height;
       x = x.x;
     }
-    context.fillRect(x, y, width, height);
+    src_Global__context.fillRect(x, y, width, height);
   };
 
   /**
@@ -17849,7 +17866,7 @@ define('src/index', ['exports'], function (exports) {
       height = x.height;
       x = x.x;
     }
-    context.strokeRect(x, y, width, height);
+    src_Global__context.strokeRect(x, y, width, height);
   };
 
   /**
@@ -17874,8 +17891,8 @@ define('src/index', ['exports'], function (exports) {
       height = x.height;
       x = x.x;
     }
-    context.fillRect(x, y, width, height);
-    context.strokeRect(x, y, width, height);
+    src_Global__context.fillRect(x, y, width, height);
+    src_Global__context.strokeRect(x, y, width, height);
   };
 
   /**
@@ -17891,9 +17908,9 @@ define('src/index', ['exports'], function (exports) {
    *
    */
   function fCircle(x, y, r) {
-    context.beginPath();
-    context.arc(x, y, r, 0, TwoPi);
-    context.fill();
+    src_Global__context.beginPath();
+    src_Global__context.arc(x, y, r, 0, TwoPi);
+    src_Global__context.fill();
   };
 
   /**
@@ -17909,9 +17926,9 @@ define('src/index', ['exports'], function (exports) {
    *
    */
   function sCircle(x, y, r) {
-    context.beginPath();
-    context.arc(x, y, r, 0, TwoPi);
-    context.stroke();
+    src_Global__context.beginPath();
+    src_Global__context.arc(x, y, r, 0, TwoPi);
+    src_Global__context.stroke();
   };
 
   /**
@@ -17928,10 +17945,10 @@ define('src/index', ['exports'], function (exports) {
    *
    */
   function fsCircle(x, y, r) {
-    context.beginPath();
-    context.arc(x, y, r, 0, TwoPi);
-    context.fill();
-    context.stroke();
+    src_Global__context.beginPath();
+    src_Global__context.arc(x, y, r, 0, TwoPi);
+    src_Global__context.fill();
+    src_Global__context.stroke();
   };
 
   /**
@@ -17952,15 +17969,15 @@ define('src/index', ['exports'], function (exports) {
       oy = rH * k, // control point offset vertical
       xe = x + rW, // x-end
       ye = y + rH; // y-end
-    context.beginPath();
-    context.moveTo(x - rW, y);
-    context.bezierCurveTo(x - rW, y - oy, x - ox, y - rH, x, y - rH);
-    context.bezierCurveTo(x + ox, y - rH, xe, y - oy, xe, y);
-    context.bezierCurveTo(xe, y + oy, x + ox, ye, x, ye);
-    context.bezierCurveTo(x - ox, ye, x - rW, y + oy, x - rW, y);
-    context.moveTo(x - rW, y);
-    context.closePath();
-    context.fill();
+    src_Global__context.beginPath();
+    src_Global__context.moveTo(x - rW, y);
+    src_Global__context.bezierCurveTo(x - rW, y - oy, x - ox, y - rH, x, y - rH);
+    src_Global__context.bezierCurveTo(x + ox, y - rH, xe, y - oy, xe, y);
+    src_Global__context.bezierCurveTo(xe, y + oy, x + ox, ye, x, ye);
+    src_Global__context.bezierCurveTo(x - ox, ye, x - rW, y + oy, x - rW, y);
+    src_Global__context.moveTo(x - rW, y);
+    src_Global__context.closePath();
+    src_Global__context.fill();
   };
 
   /**
@@ -17981,15 +17998,15 @@ define('src/index', ['exports'], function (exports) {
       oy = rH * k,
       xe = x + rW,
       ye = y + rH;
-    context.beginPath();
-    context.moveTo(x - rW, y);
-    context.bezierCurveTo(x - rW, y - oy, x - ox, y - rH, x, y - rH);
-    context.bezierCurveTo(x + ox, y - rH, xe, y - oy, xe, y);
-    context.bezierCurveTo(xe, y + oy, x + ox, ye, x, ye);
-    context.bezierCurveTo(x - ox, ye, x - rW, y + oy, x - rW, y);
-    context.moveTo(x - rW, y);
-    context.closePath();
-    context.stroke();
+    src_Global__context.beginPath();
+    src_Global__context.moveTo(x - rW, y);
+    src_Global__context.bezierCurveTo(x - rW, y - oy, x - ox, y - rH, x, y - rH);
+    src_Global__context.bezierCurveTo(x + ox, y - rH, xe, y - oy, xe, y);
+    src_Global__context.bezierCurveTo(xe, y + oy, x + ox, ye, x, ye);
+    src_Global__context.bezierCurveTo(x - ox, ye, x - rW, y + oy, x - rW, y);
+    src_Global__context.moveTo(x - rW, y);
+    src_Global__context.closePath();
+    src_Global__context.stroke();
   };
 
   /**
@@ -18012,16 +18029,16 @@ define('src/index', ['exports'], function (exports) {
       oy = rH * k,
       xe = x + rW,
       ye = y + rH;
-    context.beginPath();
-    context.moveTo(x - rW, y);
-    context.bezierCurveTo(x - rW, y - oy, x - ox, y - rH, x, y - rH);
-    context.bezierCurveTo(x + ox, y - rH, xe, y - oy, xe, y);
-    context.bezierCurveTo(xe, y + oy, x + ox, ye, x, ye);
-    context.bezierCurveTo(x - ox, ye, x - rW, y + oy, x - rW, y);
-    context.moveTo(x - rW, y);
-    context.closePath();
-    context.fill();
-    context.stroke();
+    src_Global__context.beginPath();
+    src_Global__context.moveTo(x - rW, y);
+    src_Global__context.bezierCurveTo(x - rW, y - oy, x - ox, y - rH, x, y - rH);
+    src_Global__context.bezierCurveTo(x + ox, y - rH, xe, y - oy, xe, y);
+    src_Global__context.bezierCurveTo(xe, y + oy, x + ox, ye, x, ye);
+    src_Global__context.bezierCurveTo(x - ox, ye, x - rW, y + oy, x - rW, y);
+    src_Global__context.moveTo(x - rW, y);
+    src_Global__context.closePath();
+    src_Global__context.fill();
+    src_Global__context.stroke();
   };
 
   /**
@@ -18036,10 +18053,10 @@ define('src/index', ['exports'], function (exports) {
    * line(0, 0, 40, 40);
    */
   function line(x0, y0, x1, y1) {
-    context.beginPath();
-    context.moveTo(x0, y0);
-    context.lineTo(x1, y1);
-    context.stroke();
+    src_Global__context.beginPath();
+    src_Global__context.moveTo(x0, y0);
+    src_Global__context.lineTo(x1, y1);
+    src_Global__context.stroke();
   };
 
   /**
@@ -18058,10 +18075,10 @@ define('src/index', ['exports'], function (exports) {
    * bezier(10, 10, 10, 0, 40, 0, 40, 10);
    */
   function bezier(x0, y0, cx0, cy0, cx1, cy1, x1, y1) {
-    context.beginPath();
-    context.moveTo(x0, y0);
-    context.bezierCurveTo(cx0, cy0, cx1, cy1, x1, y1);
-    context.stroke();
+    src_Global__context.beginPath();
+    src_Global__context.moveTo(x0, y0);
+    src_Global__context.bezierCurveTo(cx0, cy0, cx1, cy1, x1, y1);
+    src_Global__context.stroke();
   };
 
 
@@ -18072,10 +18089,10 @@ define('src/index', ['exports'], function (exports) {
     if(arguments == null) return;
 
     var args = arguments[0];
-    context.beginPath();
-    context.moveTo(args[0], args[1]);
+    src_Global__context.beginPath();
+    src_Global__context.moveTo(args[0], args[1]);
     for(var i = 2; args[i + 1] != null; i += 2) {
-      context.lineTo(args[i], args[i + 1]);
+      src_Global__context.lineTo(args[i], args[i + 1]);
     }
   };
 
@@ -18087,11 +18104,11 @@ define('src/index', ['exports'], function (exports) {
 
     var args = arguments[0];
     var p = new Polygon__default();
-    context.beginPath();
-    context.moveTo(args[0], args[1]);
+    src_Global__context.beginPath();
+    src_Global__context.moveTo(args[0], args[1]);
     p[0] = new Point__default(args[0], args[1]);
     for(var i = 2; args[i + 1] != null; i += 2) {
-      context.lineTo(args[i], args[i + 1]);
+      src_Global__context.lineTo(args[i], args[i + 1]);
       p.push(new Point__default(args[i], args[i + 1]));
     }
     return p.containsPoint(mP);
@@ -18111,7 +18128,7 @@ define('src/index', ['exports'], function (exports) {
    */
   function fLines() {
     _lines(arguments);
-    context.fill();
+    src_Global__context.fill();
   };
 
   /**
@@ -18128,7 +18145,7 @@ define('src/index', ['exports'], function (exports) {
    */
   function sLines() {
     _lines(arguments);
-    context.stroke();
+    src_Global__context.stroke();
   };
 
   /**
@@ -18146,8 +18163,8 @@ define('src/index', ['exports'], function (exports) {
    */
   function fsLines() {
     _lines(arguments);
-    context.fill();
-    context.stroke();
+    src_Global__context.fill();
+    src_Global__context.stroke();
   };
 
   /**
@@ -18170,8 +18187,8 @@ define('src/index', ['exports'], function (exports) {
    */
   function fsLinesM() {
     var mouseOn = _linesM(arguments);
-    context.fill();
-    context.stroke();
+    src_Global__context.fill();
+    src_Global__context.stroke();
     return mouseOn;
   };
 
@@ -18179,54 +18196,54 @@ define('src/index', ['exports'], function (exports) {
    * @ignore
    */
   function _polygon(polygon) {
-    context.beginPath();
-    context.moveTo(polygon[0].x, polygon[0].y);
+    src_Global__context.beginPath();
+    src_Global__context.moveTo(polygon[0].x, polygon[0].y);
     for(var i = 1; polygon[i] != null; i++) {
-      context.lineTo(polygon[i].x, polygon[i].y);
+      src_Global__context.lineTo(polygon[i].x, polygon[i].y);
     }
   };
 
   function fPolygon(polygon) {
     _polygon(polygon);
-    context.fill();
+    src_Global__context.fill();
   };
 
   function sPolygon(polygon, closePath) {
     _polygon(polygon);
-    if(closePath) context.closePath();
-    context.stroke();
+    if(closePath) src_Global__context.closePath();
+    src_Global__context.stroke();
   };
 
   function fsPolygon(polygon, closePath) {
     _polygon(polygon);
-    if(closePath) context.closePath();
-    context.fill();
-    context.stroke();
+    if(closePath) src_Global__context.closePath();
+    src_Global__context.fill();
+    src_Global__context.stroke();
   };
 
   function fEqTriangle(x, y, angle, r) {
     _eqTriangle(x, y, angle, r);
-    context.fill();
+    src_Global__context.fill();
   };
 
   function sEqTriangle(x, y, angle, r) {
     _eqTriangle(x, y, angle, r);
-    context.stroke();
+    src_Global__context.stroke();
   };
 
   function fsEqTriangle(x, y, angle, r) {
     _eqTriangle(x, y, angle, r);
-    context.fill();
-    context.stroke();
+    src_Global__context.fill();
+    src_Global__context.stroke();
   };
 
   function _eqTriangle(x, y, angle, r) {
-    context.beginPath();
+    src_Global__context.beginPath();
     angle = angle || 0;
-    context.moveTo(r * Math.cos(angle) + x, r * Math.sin(angle) + y);
-    context.lineTo(r * Math.cos(angle + 2.0944) + x, r * Math.sin(angle + 2.0944) + y);
-    context.lineTo(r * Math.cos(angle + 4.1888) + x, r * Math.sin(angle + 4.1888) + y);
-    context.lineTo(r * Math.cos(angle) + x, r * Math.sin(angle) + y);
+    src_Global__context.moveTo(r * Math.cos(angle) + x, r * Math.sin(angle) + y);
+    src_Global__context.lineTo(r * Math.cos(angle + 2.0944) + x, r * Math.sin(angle + 2.0944) + y);
+    src_Global__context.lineTo(r * Math.cos(angle + 4.1888) + x, r * Math.sin(angle + 4.1888) + y);
+    src_Global__context.lineTo(r * Math.cos(angle) + x, r * Math.sin(angle) + y);
   };
 
 
@@ -18253,8 +18270,8 @@ define('src/index', ['exports'], function (exports) {
    */
   function fRectM(x, y, width, height, margin) {
     margin = margin == null ? 0 : margin;
-    context.fillRect(x, y, width, height);
-    return mY > y - margin && mY < y + height + margin && mX > x - margin && mX < x + width + margin;
+    src_Global__context.fillRect(x, y, width, height);
+    return src_Global__mY > y - margin && src_Global__mY < y + height + margin && src_Global__mX > x - margin && src_Global__mX < x + width + margin;
   };
 
   /**
@@ -18278,8 +18295,8 @@ define('src/index', ['exports'], function (exports) {
    */
   function sRectM(x, y, width, height, margin) {
     margin = margin == null ? 0 : margin;
-    context.strokeRect(x, y, width, height);
-    return mY > y - margin && mY < y + height + margin && mX > x - margin && mX < x + width + margin;
+    src_Global__context.strokeRect(x, y, width, height);
+    return src_Global__mY > y - margin && src_Global__mY < y + height + margin && src_Global__mX > x - margin && src_Global__mX < x + width + margin;
   };
 
   /**
@@ -18306,9 +18323,9 @@ define('src/index', ['exports'], function (exports) {
    */
   function fsRectM(x, y, width, height, margin) {
     margin = margin == null ? 0 : margin;
-    context.fillRect(x, y, width, height);
-    context.strokeRect(x, y, width, height);
-    return mY > y - margin && mY < y + height + margin && mX > x - margin && mX < x + width + margin;
+    src_Global__context.fillRect(x, y, width, height);
+    src_Global__context.strokeRect(x, y, width, height);
+    return src_Global__mY > y - margin && src_Global__mY < y + height + margin && src_Global__mX > x - margin && src_Global__mX < x + width + margin;
   };
 
   /**
@@ -18333,10 +18350,10 @@ define('src/index', ['exports'], function (exports) {
    */
   function fCircleM(x, y, r, margin) { //check if you can avoid repeat
     margin = margin == null ? 0 : margin;
-    context.beginPath();
-    context.arc(x, y, r, 0, TwoPi);
-    context.fill();
-    return Math.pow(x - mX, 2) + Math.pow(y - mY, 2) < Math.pow(r + margin, 2);
+    src_Global__context.beginPath();
+    src_Global__context.arc(x, y, r, 0, TwoPi);
+    src_Global__context.fill();
+    return Math.pow(x - src_Global__mX, 2) + Math.pow(y - src_Global__mY, 2) < Math.pow(r + margin, 2);
   };
 
   /**
@@ -18361,10 +18378,10 @@ define('src/index', ['exports'], function (exports) {
    */
   function sCircleM(x, y, r, margin) {
     margin = margin == null ? 0 : margin;
-    context.beginPath();
-    context.arc(x, y, r, 0, TwoPi);
-    context.stroke();
-    return Math.pow(x - mX, 2) + Math.pow(y - mY, 2) < Math.pow(r + margin, 2);
+    src_Global__context.beginPath();
+    src_Global__context.arc(x, y, r, 0, TwoPi);
+    src_Global__context.stroke();
+    return Math.pow(x - src_Global__mX, 2) + Math.pow(y - src_Global__mY, 2) < Math.pow(r + margin, 2);
   };
 
   /**
@@ -18392,11 +18409,11 @@ define('src/index', ['exports'], function (exports) {
    */
   function fsCircleM(x, y, r, margin) {
     margin = margin == null ? 0 : margin;
-    context.beginPath();
-    context.arc(x, y, r, 0, TwoPi);
-    context.stroke();
-    context.fill();
-    return Math.pow(x - mX, 2) + Math.pow(y - mY, 2) < Math.pow(r + margin, 2);
+    src_Global__context.beginPath();
+    src_Global__context.arc(x, y, r, 0, TwoPi);
+    src_Global__context.stroke();
+    src_Global__context.fill();
+    return Math.pow(x - src_Global__mX, 2) + Math.pow(y - src_Global__mY, 2) < Math.pow(r + margin, 2);
   };
 
   /**
@@ -18419,10 +18436,10 @@ define('src/index', ['exports'], function (exports) {
    */
   function lineM(x0, y0, x1, y1, d) {
     d = d || 4;
-    context.beginPath();
-    context.moveTo(x0, y0);
-    context.lineTo(x1, y1);
-    context.stroke();
+    src_Global__context.beginPath();
+    src_Global__context.moveTo(x0, y0);
+    src_Global__context.lineTo(x1, y1);
+    src_Global__context.stroke();
     return _distToSegmentSquared(x0, y0, x1, y1) < d * d;
   };
 
@@ -18431,13 +18448,13 @@ define('src/index', ['exports'], function (exports) {
    */
   function _distToSegmentSquared(x0, y0, x1, y1) {
     var l2 = Math.pow(x0 - x1, 2) + Math.pow(y0 - y1, 2);
-    if(l2 === 0) return Math.pow(x0 - mX, 2) + Math.pow(y0 - mY, 2);
-    var t = ((mX - x0) * (x1 - x0) + (mY - y0) * (y1 - y0)) / l2;
-    if(t <= 0) return Math.pow(x0 - mX, 2) + Math.pow(y0 - mY, 2);
-    if(t >= 1) return Math.pow(x1 - mX, 2) + Math.pow(y1 - mY, 2);
+    if(l2 === 0) return Math.pow(x0 - src_Global__mX, 2) + Math.pow(y0 - src_Global__mY, 2);
+    var t = ((src_Global__mX - x0) * (x1 - x0) + (src_Global__mY - y0) * (y1 - y0)) / l2;
+    if(t <= 0) return Math.pow(x0 - src_Global__mX, 2) + Math.pow(y0 - src_Global__mY, 2);
+    if(t >= 1) return Math.pow(x1 - src_Global__mX, 2) + Math.pow(y1 - src_Global__mY, 2);
     var px = x0 + t * (x1 - x0);
     var py = y0 + t * (y1 - y0);
-    return Math.pow(px - mX, 2) + Math.pow(py - mY, 2);
+    return Math.pow(px - src_Global__mX, 2) + Math.pow(py - src_Global__mY, 2);
   };
 
   //TODO:fEqTriangleM, fPolygonM
@@ -18467,11 +18484,11 @@ define('src/index', ['exports'], function (exports) {
    */
   function bezierM(x0, y0, cx0, cy0, cx1, cy1, x1, y1, d) { //TODO: fix this mess!
     d = d == null ? 2 : d;
-    context.beginPath();
-    context.moveTo(x0, y0);
-    context.bezierCurveTo(cx0, cy0, cx1, cy1, x1, y1);
-    context.stroke();
-    if(mX < Math.min(x0, x1, cx0, cx1) - d || mX > Math.max(x0, x1, cx0, cx1) + d || mY < Math.min(y0, y1, cy0, cy1) - d || mY > Math.max(y0, y1, cy0, cy1) + d) return false;
+    src_Global__context.beginPath();
+    src_Global__context.moveTo(x0, y0);
+    src_Global__context.bezierCurveTo(cx0, cy0, cx1, cy1, x1, y1);
+    src_Global__context.stroke();
+    if(src_Global__mX < Math.min(x0, x1, cx0, cx1) - d || src_Global__mX > Math.max(x0, x1, cx0, cx1) + d || src_Global__mY < Math.min(y0, y1, cy0, cy1) - d || src_Global__mY > Math.max(y0, y1, cy0, cy1) + d) return false;
     return GeometryOperators.distanceToBezierCurve(x0, y0, cx0, cy0, cx1, cy1, x1, y1, mP, false) < d;
   };
 
@@ -18491,13 +18508,13 @@ define('src/index', ['exports'], function (exports) {
 
     switch(arguments.length) {
       case 3:
-        context.drawImage(image, arguments[1], arguments[2]);
+        src_Global__context.drawImage(image, arguments[1], arguments[2]);
         break;
       case 5:
-        context.drawImage(image, arguments[1], arguments[2], arguments[3], arguments[4]);
+        src_Global__context.drawImage(image, arguments[1], arguments[2], arguments[3], arguments[4]);
         break;
       case 9:
-        context.drawImage(image, arguments[1], arguments[2], arguments[3], arguments[4], arguments[5], arguments[6], arguments[7], arguments[8]);
+        src_Global__context.drawImage(image, arguments[1], arguments[2], arguments[3], arguments[4], arguments[5], arguments[6], arguments[7], arguments[8]);
         break;
 
     }
@@ -18516,9 +18533,9 @@ define('src/index', ['exports'], function (exports) {
     var compProp = propIm / propRc;
 
     if(propIm > propRc) {
-      context.drawImage(image, 0.5 * (image.width - image.width / compProp), 0, image.width / compProp, image.height, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+      src_Global__context.drawImage(image, 0.5 * (image.width - image.width / compProp), 0, image.width / compProp, image.height, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
     } else {
-      context.drawImage(image, 0, 0.5 * (image.height - image.height * compProp), image.width, image.height * compProp, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+      src_Global__context.drawImage(image, 0, 0.5 * (image.height - image.height * compProp), image.width, image.height * compProp, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
     }
   };
 
@@ -18527,13 +18544,13 @@ define('src/index', ['exports'], function (exports) {
   function setFill(style) {
     if(typeof style == "number") {
       if(arguments.length > 3) {
-        context.fillStyle = 'rgba(' + arguments[0] + ',' + arguments[1] + ',' + arguments[2] + ',' + arguments[3] + ')';
+        src_Global__context.fillStyle = 'rgba(' + arguments[0] + ',' + arguments[1] + ',' + arguments[2] + ',' + arguments[3] + ')';
         return;
       }
-      context.fillStyle = 'rgb(' + arguments[0] + ',' + arguments[1] + ',' + arguments[2] + ')';
+      src_Global__context.fillStyle = 'rgb(' + arguments[0] + ',' + arguments[1] + ',' + arguments[2] + ')';
       return;
     }
-    context.fillStyle = style;
+    src_Global__context.fillStyle = style;
   };
 
   /**
@@ -18550,19 +18567,19 @@ define('src/index', ['exports'], function (exports) {
   function setStroke(style, lineWidth) {
     if(typeof style == "number") {
       if(arguments.length > 3) {
-        context.strokeStyle = 'rgba(' + arguments[0] + ',' + arguments[1] + ',' + arguments[2] + ',' + arguments[3] + ')';
+        src_Global__context.strokeStyle = 'rgba(' + arguments[0] + ',' + arguments[1] + ',' + arguments[2] + ',' + arguments[3] + ')';
         return;
       }
-      context.strokeStyle = 'rgb(' + arguments[0] + ',' + arguments[1] + ',' + arguments[2] + ')';
+      src_Global__context.strokeStyle = 'rgb(' + arguments[0] + ',' + arguments[1] + ',' + arguments[2] + ')';
       return;
     }
-    context.strokeStyle = style;
+    src_Global__context.strokeStyle = style;
     //TODO: will lineWidth still work if RGB or RGBA is used?
-    if(lineWidth) context.lineWidth = lineWidth;
+    if(lineWidth) src_Global__context.lineWidth = lineWidth;
   };
 
   function setLW(lineWidth) {
-    context.lineWidth = lineWidth;
+    src_Global__context.lineWidth = lineWidth;
   };
 
 
@@ -18570,25 +18587,25 @@ define('src/index', ['exports'], function (exports) {
   //clipping
 
   function clipCircle(x, y, r) {
-    context.save();
-    context.beginPath();
-    context.arc(x, y, r, 0, TwoPi, false);
-    context.closePath();
-    context.clip();
+    src_Global__context.save();
+    src_Global__context.beginPath();
+    src_Global__context.arc(x, y, r, 0, TwoPi, false);
+    src_Global__context.closePath();
+    src_Global__context.clip();
   };
 
   function clipRectangle(x, y, w, h) {
-    context.save();
-    context.beginPath();
-    context.moveTo(x, y);
-    context.lineTo(x + w, y);
-    context.lineTo(x + w, y + h);
-    context.lineTo(x, y + h);
-    context.clip();
+    src_Global__context.save();
+    src_Global__context.beginPath();
+    src_Global__context.moveTo(x, y);
+    src_Global__context.lineTo(x + w, y);
+    src_Global__context.lineTo(x + w, y + h);
+    src_Global__context.lineTo(x, y + h);
+    src_Global__context.clip();
   };
 
   function restore() {
-    context.restore();
+    src_Global__context.restore();
   };
 
 
@@ -18609,7 +18626,7 @@ define('src/index', ['exports'], function (exports) {
    *
    */
   function fText(text, x, y) {
-    context.fillText(text, x, y);
+    src_Global__context.fillText(text, x, y);
   };
 
   /**
@@ -18628,7 +18645,7 @@ define('src/index', ['exports'], function (exports) {
    *
    */
   function sText(text, x, y) {
-    context.strokeText(text, x, y);
+    src_Global__context.strokeText(text, x, y);
   };
 
   /**
@@ -18648,8 +18665,8 @@ define('src/index', ['exports'], function (exports) {
    *
    */
   function fsText(text, x, y) {
-    context.strokeText(text, x, y);
-    context.fillText(text, x, y);
+    src_Global__context.strokeText(text, x, y);
+    src_Global__context.fillText(text, x, y);
   };
 
   /**
@@ -18668,11 +18685,11 @@ define('src/index', ['exports'], function (exports) {
    *
    */
   function fTextRotated(text, x, y, angle) {
-    context.save();
-    context.translate(x, y);
-    context.rotate(angle);
-    context.fillText(text, 0, 0);
-    context.restore();
+    src_Global__context.save();
+    src_Global__context.translate(x, y);
+    src_Global__context.rotate(angle);
+    src_Global__context.fillText(text, 0, 0);
+    src_Global__context.restore();
   };
 
   /**
@@ -18698,8 +18715,8 @@ define('src/index', ['exports'], function (exports) {
    */
   function fTextM(text, x, y, size) {
     size = size || 12;
-    context.fillText(text, x, y);
-    return mY > y && mY < y + size && mX > x && mX < x + context.measureText(text).width;
+    src_Global__context.fillText(text, x, y);
+    return src_Global__mY > y && src_Global__mY < y + size && src_Global__mX > x && src_Global__mX < x + src_Global__context.measureText(text).width;
   };
 
   /**
@@ -18728,9 +18745,9 @@ define('src/index', ['exports'], function (exports) {
    */
   function fsTextM(text, x, y, size) {
     size = size || 12;
-    context.strokeText(text, x, y);
-    context.fillText(text, x, y);
-    return mY > y && mY < y + size && mX > x && mX < x + context.measureText(text).width;
+    src_Global__context.strokeText(text, x, y);
+    src_Global__context.fillText(text, x, y);
+    return src_Global__mY > y && src_Global__mY < y + size && src_Global__mX > x && src_Global__mX < x + src_Global__context.measureText(text).width;
   };
 
   /**
@@ -18758,25 +18775,25 @@ define('src/index', ['exports'], function (exports) {
    */
   function fTextRotatedM(text, x, y, angle, size) {
     size = size || 12;
-    context.save();
-    context.translate(x, y);
-    context.rotate(angle);
-    context.fillText(text, 0, 0);
-    context.restore();
+    src_Global__context.save();
+    src_Global__context.translate(x, y);
+    src_Global__context.rotate(angle);
+    src_Global__context.fillText(text, 0, 0);
+    src_Global__context.restore();
 
-    var dX = mX - x;
-    var dY = mY - y;
+    var dX = src_Global__mX - x;
+    var dY = src_Global__mY - y;
     var d = Math.sqrt(dX * dX + dY * dY);
     var a = Math.atan2(dY, dX) - angle;
     var mXT = x + d * Math.cos(a);
     var mYT = y + d * Math.sin(a);
 
-    return mYT > y && mYT < y + size && mXT > x && mXT < x + context.measureText(text).width;
+    return mYT > y && mYT < y + size && mXT > x && mXT < x + src_Global__context.measureText(text).width;
   };
 
   function fTextW(text, x, y) {
-    context.fillText(text, x, y);
-    return context.measureText(text).width;
+    src_Global__context.fillText(text, x, y);
+    return src_Global__context.measureText(text).width;
   };
 
   /**
@@ -18790,7 +18807,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Object} style optional font style ('bold', 'italic', 'underline')
    * @param {Object} ctx optional context
    */
-  function setText(color, fontSize, fontName, align, baseline, style) {
+  function SimpleGraphics__setText(color, fontSize, fontName, align, baseline, style) {
     color = color || '#000000';
     fontSize = String(fontSize) || '14';
     fontName = fontName || LOADED_FONT;
@@ -18802,30 +18819,30 @@ define('src/index', ['exports'], function (exports) {
       style += ' ';
     }
 
-    context.fillStyle = color;
-    context.font = style + fontSize + 'px ' + fontName;
-    context.textAlign = align;
-    context.textBaseline = baseline;
+    src_Global__context.fillStyle = color;
+    src_Global__context.font = style + fontSize + 'px ' + fontName;
+    src_Global__context.textAlign = align;
+    src_Global__context.textBaseline = baseline;
   };
 
   function getTextW(text) {
-    return context.measureText(text).width;
+    return src_Global__context.measureText(text).width;
   };
 
 
   // pixel data
 
   function getPixelData(x, y) {
-    return context.getImageData(x, y, 1, 1).data;
+    return src_Global__context.getImageData(x, y, 1, 1).data;
   };
 
   function getPixelColor(x, y) {
-    var rgba = context.getImageData(x, y, 1, 1).data;
+    var rgba = src_Global__context.getImageData(x, y, 1, 1).data;
     return 'rgba(' + rgba[0] + ',' + rgba[1] + ',' + rgba[2] + ',' + rgba[3] + ')';
   };
 
   function getPixelColorRGBA(x, y) { //repeated
-    return context.getImageData(x, y, 1, 1).data;
+    return src_Global__context.getImageData(x, y, 1, 1).data;
   };
 
   function captureCanvas() {
@@ -18925,7 +18942,7 @@ define('src/index', ['exports'], function (exports) {
   exports.fsTextM = fsTextM;
   exports.fTextRotatedM = fTextRotatedM;
   exports.fTextW = fTextW;
-  exports.setText = setText;
+  exports.setText = SimpleGraphics__setText;
   exports.getTextW = getTextW;
   exports.getPixelData = getPixelData;
   exports.getPixelColor = getPixelColor;
@@ -18981,11 +18998,11 @@ define('src/index', ['exports'], function (exports) {
    * @param {Number} angle in radians
    */
   DrawTexts.fillTextRotated = function(text, x, y, angle) { //TODO: remove (replaced by fTextRotated in SimpleGraphics)
-    context.save();
-    context.translate(x, y);
-    context.rotate(angle);
-    context.fillText(text, 0, 0);
-    context.restore();
+    src_Global__context.save();
+    src_Global__context.translate(x, y);
+    src_Global__context.rotate(angle);
+    src_Global__context.fillText(text, 0, 0);
+    src_Global__context.restore();
   };
 
 
@@ -18993,7 +19010,7 @@ define('src/index', ['exports'], function (exports) {
     height = height == 0 || height == null ? 99999 : height;
 
     for(var i = 0; textLines[i] != null; i++) {
-      context.fillText(textLines[i], x, y + i * lineHeight);
+      src_Global__context.fillText(textLines[i], x, y + i * lineHeight);
       if((i + 2) * lineHeight > height) break;
     }
     if(returnHeight) return textLines.length * lineHeight;
@@ -19033,7 +19050,7 @@ define('src/index', ['exports'], function (exports) {
       idx = 1;
       while(words.length > 0 && idx <= words.length) {
         str = words.slice(0, idx).join(' ');
-        w = context.measureText(str).width;
+        w = src_Global__context.measureText(str).width;
         if(w > fitWidth) {
           if(idx == 1) idx = 2;
           sentence = words.slice(0, idx - 1).join(' ');
@@ -19041,7 +19058,7 @@ define('src/index', ['exports'], function (exports) {
           if(lines.length == nLinesLimit) {
             if(ellipsis) {
               var lastLine = lines[lines.length - 1];
-              if(context.measureText(lastLine + "…").width <= fitWidth) {
+              if(src_Global__context.measureText(lastLine + "…").width <= fitWidth) {
                 lines[lines.length - 1] += "…";
               } else {
                 words = lastLine.split(" ");
@@ -19130,7 +19147,7 @@ define('src/index', ['exports'], function (exports) {
       DrawTextsAdvanced.textOnQuadrilater(text, p03, pc, p23, p3, fontSize, 5);
       return;
     }
-    var measure = context.measureText(text);
+    var measure = src_Global__context.measureText(text);
     var w = measure.width;
     var h = fontSize; // 64;//*96/72; //TODO: fix this
 
@@ -19163,124 +19180,124 @@ define('src/index', ['exports'], function (exports) {
     }
 
 
-    context.save();
+    src_Global__context.save();
     DrawTextsAdvanced.applyTransformationOnCanvasFromPoints(v0, v1, v2, p0, p1, p3);
 
-    context.beginPath();
-    context.moveTo(v0.x - 2, v0.y - 2);
-    context.lineTo(v1.x + 8, v1.y - 2);
-    context.lineTo(v2.x - 2, v2.y + 8);
-    context.clip();
+    src_Global__context.beginPath();
+    src_Global__context.moveTo(v0.x - 2, v0.y - 2);
+    src_Global__context.lineTo(v1.x + 8, v1.y - 2);
+    src_Global__context.lineTo(v2.x - 2, v2.y + 8);
+    src_Global__context.clip();
 
-    context.fillText(text, 0, 0);
+    src_Global__context.fillText(text, 0, 0);
 
-    context.restore();
+    src_Global__context.restore();
 
 
     v0.x = v1.x + 0.0001;
     v0.y = v2.y + 0.0001;
 
-    context.save();
+    src_Global__context.save();
 
     DrawTextsAdvanced.applyTransformationOnCanvasFromPoints(v0, v1, v2, p2, p1, p3);
 
-    context.beginPath();
-    context.moveTo(v0.x + 4, v0.y + 2);
-    context.lineTo(v1.x + 4, v1.y - 2);
-    context.lineTo(v2.x - 2, v2.y + 2);
-    context.clip();
+    src_Global__context.beginPath();
+    src_Global__context.moveTo(v0.x + 4, v0.y + 2);
+    src_Global__context.lineTo(v1.x + 4, v1.y - 2);
+    src_Global__context.lineTo(v2.x - 2, v2.y + 2);
+    src_Global__context.clip();
 
-    context.fillText(text, 0, 0);
+    src_Global__context.fillText(text, 0, 0);
 
-    context.restore();
+    src_Global__context.restore();
   };
 
   DrawTextsAdvanced.applyTransformationOnCanvasFromPoints = function(v0, v1, v2, w0, w1, w2) { //TODO:find the correct place for this
     var M = MatrixGenerators.createMatrixFromTrianglesMapping(v0, v1, v2, w0, w1, w2);
-    context.transform(M.a, M.b, M.c, M.d, M.tx, M.ty);
+    src_Global__context.transform(M.a, M.b, M.c, M.d, M.tx, M.ty);
   };
 
   DrawTextsAdvanced.mapRectangleIntoQuadrilater = function(image, xI, yI, wI, hI, v0, v1, v2, v3) { //TODO:find the correct place for this
-    context.save();
+    src_Global__context.save();
 
     var M = MatrixGenerators.createMatrixFromTrianglesMapping(new Point__default(0, 0), new Point__default(100, 0), new Point__default(100, 100), v0, v1, v2);
-    context.transform(M.a, M.b, M.c, M.d, M.tx, M.ty);
+    src_Global__context.transform(M.a, M.b, M.c, M.d, M.tx, M.ty);
 
-    context.beginPath();
-    context.moveTo(0, 0);
-    context.lineTo(100, 0);
-    context.lineTo(100, 100);
-    context.lineTo(0, 0);
-    context.clip();
+    src_Global__context.beginPath();
+    src_Global__context.moveTo(0, 0);
+    src_Global__context.lineTo(100, 0);
+    src_Global__context.lineTo(100, 100);
+    src_Global__context.lineTo(0, 0);
+    src_Global__context.clip();
 
-    context.drawImage(image,
+    src_Global__context.drawImage(image,
       xI, yI, wI, hI,
       0, 0, 100, 100);
 
 
-    context.restore();
+    src_Global__context.restore();
 
     //
 
-    context.save();
+    src_Global__context.save();
 
     var M = MatrixGenerators.createMatrixFromTrianglesMapping(new Point__default(0, 0), new Point__default(0, 2), new Point__default(2, 2), v0, v3, v2);
-    context.transform(M.a, M.b, M.c, M.d, M.tx, M.ty);
+    src_Global__context.transform(M.a, M.b, M.c, M.d, M.tx, M.ty);
 
-    context.beginPath();
-    context.moveTo(0, 0);
-    context.lineTo(0, 2);
-    context.lineTo(2, 2);
-    context.lineTo(0, 0);
-    context.clip();
+    src_Global__context.beginPath();
+    src_Global__context.moveTo(0, 0);
+    src_Global__context.lineTo(0, 2);
+    src_Global__context.lineTo(2, 2);
+    src_Global__context.lineTo(0, 0);
+    src_Global__context.clip();
 
-    context.drawImage(image,
+    src_Global__context.drawImage(image,
       xI, yI, wI, hI,
       0, 0, 2, 2);
 
 
-    context.restore();
+    src_Global__context.restore();
   };
 
   DrawTextsAdvanced.getClippedTrianglesData = function(image, xI, yI, wI, hI) {
     var object = {};
 
-    context.clearRect(0, 0, wI, hI);
-    context.save();
+    src_Global__context.clearRect(0, 0, wI, hI);
+    src_Global__context.save();
 
-    context.beginPath();
-    context.moveTo(0, 0);
-    context.lineTo(wI, 0);
-    context.lineTo(wI, hI);
-    context.lineTo(0, 0);
-    context.clip();
+    src_Global__context.beginPath();
+    src_Global__context.moveTo(0, 0);
+    src_Global__context.lineTo(wI, 0);
+    src_Global__context.lineTo(wI, hI);
+    src_Global__context.lineTo(0, 0);
+    src_Global__context.clip();
 
-    context.drawImage(image,
+    src_Global__context.drawImage(image,
       xI, yI, wI, hI,
       0, 0, wI, hI);
 
-    object.dataTriangle0 = context.getImageData(0, 0, wI, hI);
+    object.dataTriangle0 = src_Global__context.getImageData(0, 0, wI, hI);
 
-    context.restore();
+    src_Global__context.restore();
 
     //
-    context.clearRect(0, 0, wI, hI);
-    context.save();
+    src_Global__context.clearRect(0, 0, wI, hI);
+    src_Global__context.save();
 
-    context.beginPath();
-    context.moveTo(0, 0);
-    context.lineTo(0, hI);
-    context.lineTo(wI, hI);
-    context.lineTo(0, 0);
-    context.clip();
+    src_Global__context.beginPath();
+    src_Global__context.moveTo(0, 0);
+    src_Global__context.lineTo(0, hI);
+    src_Global__context.lineTo(wI, hI);
+    src_Global__context.lineTo(0, 0);
+    src_Global__context.clip();
 
-    context.drawImage(image,
+    src_Global__context.drawImage(image,
       xI, yI, wI, hI,
       0, 0, wI, hI);
 
-    object.dataTriangle1 = context.getImageData(0, 0, wI, hI);
+    object.dataTriangle1 = src_Global__context.getImageData(0, 0, wI, hI);
 
-    context.restore();
+    src_Global__context.restore();
 
     return object;
   };
@@ -19295,7 +19312,7 @@ define('src/index', ['exports'], function (exports) {
     var h0 = p3.y - p0.y;
     var h1 = p2.y - p1.y;
 
-    context.lineWidth = 0.01 + (h0 + h1) / 100;
+    src_Global__context.lineWidth = 0.01 + (h0 + h1) / 100;
     if(dX < 1.8) return;
 
     var polygonList = typodeObject[text];
@@ -19307,21 +19324,1670 @@ define('src/index', ['exports'], function (exports) {
 
     for(var i = 0; polygonList[i] != null; i++) {
       polygon = polygonList[i];
-      context.beginPath();
+      src_Global__context.beginPath();
       t = polygon[0].x;
       mint = 1 - t;
-      context.moveTo(Math.floor(t * dX + p0.x) + 0.5, Math.floor(polygon[0].y * (mint * h0 + t * h1) + mint * p0.y + t * p1.y) + 0.5);
+      src_Global__context.moveTo(Math.floor(t * dX + p0.x) + 0.5, Math.floor(polygon[0].y * (mint * h0 + t * h1) + mint * p0.y + t * p1.y) + 0.5);
       for(j = 1; polygon[j] != null; j++) {
         t = polygon[j].x;
         mint = 1 - t;
-        context.lineTo(Math.floor(t * dX + p0.x) + 0.5, Math.floor(polygon[j].y * (mint * h0 + t * h1) + mint * p0.y + t * p1.y) + 0.5);
+        src_Global__context.lineTo(Math.floor(t * dX + p0.x) + 0.5, Math.floor(polygon[j].y * (mint * h0 + t * h1) + mint * p0.y + t * p1.y) + 0.5);
       }
-      context.stroke();
+      src_Global__context.stroke();
     }
 
   };
 
   exports.DrawTextsAdvanced = DrawTextsAdvanced;
+
+  /* global clearInterval, setInterval */
+
+  DragDetection.prototype.constructor = DragDetection;
+
+  /**
+   * DragDetection -
+   * @param {Object} configuration
+   * @param {Number} configuration.mode Mode the DragDetection tool should work under.
+   * Possible options:
+   * <ul>
+   * <li><strong>0</strong>: frame to frame dragging vector (draggingInstance.dragVector register the vectorial change each frame).</li>
+   * <li><strong>1</strong>: from click point dragging (draggingInstance.dragVector register the vectorial change from the clicking point).</li>
+   * <li><strong>2</strong>: polar (draggingInstance.dragVector.x is dR, draggingInstance.dragVector.y is dA, according to the center).</li>
+   * </ul>
+   * @param {Object} configuration.target
+   * @param {Function} configuration.listenerFunction Callback function executed each time drag is detected.
+   * @param {Function} configuration.areaVerificationFunction
+   * @param {Number} configuration.factor
+   * @constructor
+   * @category interactions
+   */
+  function DragDetection(configuration) { //mode, listenerFunction, target, areaVerificationFunction){
+    this.mode = configuration.mode || 0;
+    this.listenerFunction = configuration.listenerFunction;
+    this.target = configuration.target;
+    this.areaVerificationFunction = configuration.areaVerificationFunction;
+
+    this.factor = configuration.factor == null ? 1 : configuration.factor;
+    this.center = new Point__default(0, 0);
+
+    addInteractionEventListener("mousedown", this.onMouse, this);
+    addInteractionEventListener("mouseup", this.onMouse, this);
+
+    this.dragging = false;
+    this.mouseClickPosition = new Point__default();
+    this.mousePosition = new Point__default();
+    this.r = 0;
+    this.a = 0;
+
+    this.idInterval = null;
+
+    this.dragVector = new Point__default();
+  }
+
+
+  DragDetection.prototype.enterframe = function(draggingInstance) {
+
+    switch(draggingInstance.mode) {
+      case 0:
+        draggingInstance.dragVector.x = (src_Global__mX - draggingInstance.mousePosition.x) * draggingInstance.factor;
+        draggingInstance.dragVector.y = (src_Global__mY - draggingInstance.mousePosition.y) * draggingInstance.factor;
+        draggingInstance.mousePosition.x = src_Global__mX;
+        draggingInstance.mousePosition.y = src_Global__mY;
+        break;
+      case 1:
+        draggingInstance.dragVector.x = src_Global__mX - draggingInstance.mouseClickPosition.x;
+        draggingInstance.dragVector.y = src_Global__mY - draggingInstance.mouseClickPosition.y;
+        break;
+      case 2:
+        var dX = src_Global__mX - draggingInstance.center.x;
+        var dY = src_Global__mY - draggingInstance.center.y;
+        var r = Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
+        var a = Math.atan2(dY, dX);
+        draggingInstance.dragVector.x = r - draggingInstance.r;
+        draggingInstance.dragVector.y = a - draggingInstance.a;
+        draggingInstance.r = r;
+        draggingInstance.a = a;
+        break;
+    }
+    //c.log(draggingInstance, draggingInstance.target, draggingInstance.dragVector);
+    draggingInstance.listenerFunction.call(draggingInstance.target, draggingInstance.dragVector);
+
+  };
+
+  DragDetection.prototype.onMouse = function(event) {
+    switch(event.type) {
+      case 'mousedown':
+        if(this.areaVerificationFunction != null && !this.areaVerificationFunction.call(this.target))
+        {
+          return;
+        }
+
+        this.dragging = true;
+
+        this.mouseClickPosition.x = src_Global__mX;
+        this.mouseClickPosition.y = src_Global__mY;
+        this.mousePosition.x = src_Global__mX;
+        this.mousePosition.y = src_Global__mY;
+
+        var dX = src_Global__mX - this.center.x;
+        var dY = src_Global__mY - this.center.y;
+        this.r = Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
+        this.a = Math.atan2(dY, dX);
+
+        this.dragVector.x = 0;
+        this.dragVector.y = 0;
+
+        if(this.idInterval != null) {
+          clearInterval(this.idInterval);
+        }
+        this.idInterval = setInterval(this.enterframe, 30, this); //[!] this won't work on IE, it´s better to create a new Listener for setInterval
+        break;
+      case 'mouseup':
+        this.simulateMouseUp();
+        break;
+    }
+  };
+
+  DragDetection.prototype.simulateMouseUp = function() {
+    this.dragging = false;
+    clearInterval(this.idInterval);
+    this.idInterval = null;
+  };
+
+  exports.DragDetection = DragDetection;
+
+  InputTextFieldHTML.prototype.constructor = InputTextFieldHTML;
+
+
+  function InputTextFieldHTML(configuration) {
+    this.id = configuration.id == null ? 0 : configuration.id;
+
+    this.target = configuration.target;
+
+    this.x = configuration.x == null ? 0 : configuration.x;
+    this.y = configuration.y == null ? 0 : configuration.y;
+    this.width = configuration.width == null ? 200 : configuration.width;
+    this.height = configuration.height == null ? 20 : configuration.height;
+    this.fontSize = configuration.fontSize == null ? 16 : configuration.fontSize;
+
+    this.enterFunction = configuration.enterFunction;
+    this.changeFunction = configuration.changeFunction;
+    this.focusFunction = configuration.focusFunction;
+    this.blurFunction = configuration.blurFunction;
+
+    this.text = configuration.text;
+
+    this.textarea = configuration.textarea == null ? true : configuration.textarea;
+    this.readOnly = configuration.readOnly == null ? false : configuration.readOnly;
+    this.border = configuration.border == null ? true : configuration.border;
+    this.password = configuration.password;
+
+    this._prevX;
+    this._prevY;
+    this._prevWidth;
+    this._prevHeight;
+    this._prevText;
+
+    this.zIndex = 30;
+
+    this.enterFunctionTarget;
+    this.changeFunctionTarget;
+    this.focusFunctionTarget;
+    this.blurFunctionTarget;
+
+    this.textColor = configuration.textColor == null ? 'black' : configuration.textColor;
+    this.backgroundColor = '#FFFFFF';
+
+    this.main = document.getElementById('maindiv');
+    this.div = document.createElement('div2');
+    this.textarea ? this.DOMtext = document.createElement("textarea") : this.DOMtext = document.createElement("input");
+    this.password ? this.DOMtext.setAttribute('type', 'password') : this.DOMtext.setAttribute('type', 'text');
+    this.div.setAttribute('style', 'position:absolute;top:' + this.y + 'px;left:' + this.x + 'px;z-index:' + this.zIndex + ';');
+
+    if(!this.border) this.DOMtext.setAttribute('style', 'border:none');
+
+    this.div.setAttribute('rows', '1');
+    this.main.appendChild(this.div);
+    this.div.appendChild(this.DOMtext);
+    this.DOMtext.parent = this;
+    this.added = true;
+
+    this.DOMtext.readOnly = this.readOnly;
+
+    this.DOMtext.onfocus = function(e) {
+      e.target = this.parent;
+      this.parent._onFocus(this.parent);
+    };
+    this.DOMtext.onblur = function(e) {
+      e.target = this.parent;
+      this.parent._onBlur(this.parent);
+    };
+
+    this.DOMtext.value = "";
+
+    addInteractionEventListener("keydown", this.onKeyDown, this);
+    this._eKeyDown;
+
+    this.timer;
+
+    this.focus = false;
+
+    if(this.changeFunction != null) this.setChangeFunction(this.changeFunction, this.target);
+    if(this.enterFunction != null) this.setEnterFunction(this.enterFunction, this.target);
+    if(this.focusFunction != null) this.setFocusFunction(this.focusFunction, this.target);
+    if(this.blurFunction != null) this.setBlurFunction(this.blurFunction, this.target);
+
+    if(this.text != null) {
+      this.setText(this.text);
+    } else {
+      this.draw();
+    }
+
+    this.DOMtext.addEventListener("mousemove", _onMouse, false);
+    if(_cycleOnMouseMovement) this.DOMtext.addEventListener('mousemove', onMoveCycle, false);
+  }
+
+
+  InputTextFieldHTML.prototype.setBorder = function(value) {
+    this.border = value;
+    this.DOMtext.setAttribute('style', 'border:0; color: ' + this.textColor + '; width:' + (this.width - 7) + 'px;height:' + (this.height - 7) + 'px; font-size:' + this.fontSize + 'px; border:' + (value ? 'yes' : 'none'));
+  };
+
+  InputTextFieldHTML.prototype.draw = function() {
+    if(this.x != this._prevX || this.y != this._prevY || this.width != this._prevWidth || this.height != this._prevHeight || this.text != this._prevText) {
+      this._prevX = this.x;
+      this._prevY = this.y;
+      this._prevWidth = this.width;
+      this._prevHeight = this.height;
+      this._prevText = this.text;
+
+      this.DOMtext.style = "none";
+      this.DOMtext.style.padding = "0px";
+      this.DOMtext.style.border = "0px";
+      this.DOMtext.style.borderColor = "#FFFFFF";
+      this.DOMtext.style.background = "transparent";
+      this.DOMtext.style.resize = "none";
+
+      this.DOMtext.setAttribute('style', 'border: 0; color: ' + this.textColor + '; width:' + (this.width - 7) + 'px;height:' + (this.height - 7) + 'px; font-size:' + this.fontSize + 'px');
+      this.div.setAttribute('style', 'border: 0; position:absolute;top:' + this.y + 'px;left:' + this.x + 'px;z-index:' + this.zIndex + ';');
+    }
+  };
+
+  InputTextFieldHTML.prototype.setText = function(text, activeChange) {
+    activeChange = activeChange == null ? true : activeChange;
+    this.text = text;
+    this.DOMtext.value = text;
+
+    //var timer = setTimeout(this.onKeyDownDelayed, 4, this);
+    this.draw();
+  };
+
+  InputTextFieldHTML.prototype.getText = function() {
+    return this.DOMtext.value;
+  };
+
+  InputTextFieldHTML.prototype.getSelectionStart = function() {
+    return this.DOMtext.selectionStart;
+  };
+
+  InputTextFieldHTML.prototype.onKeyDown = function(e) {
+    this._eKeyDown = e;
+    this._keyCode = e.keyCode;
+    this.timer = setTimeout(this.onKeyDownDelayed, 4, this);
+  };
+
+  InputTextFieldHTML.prototype.onKeyDownDelayed = function(target) {
+
+    if(target._keyCode == 13 && target.DOMtext == document.activeElement) {
+      if(target.enterFunction != null) {
+        target.enterFunction.call(target.enterFunctionTarget, target.id);
+      }
+    }
+
+    if(target.text != target.DOMtext.value) {
+
+      target.text = target.DOMtext.value;
+      var lastChar = target.text.charAt(target.text.length - 1);
+
+      if(target._keyCode != 13) {
+        if(target.changeFunction != null) {
+          target.changeFunction.call(target.changeFunctionTarget, target.id);
+        }
+      }
+    }
+
+    if(_cycleOnMouseMovement) reStartCycle();
+
+    this.timer = null;
+  };
+
+  InputTextFieldHTML.prototype.forceFocus = function() {
+    this.DOMtext.focus();
+    this.focus = true;
+  };
+
+  InputTextFieldHTML.prototype.forceUnfocus = function() {
+    console.log("[!] use InputTextFieldHTML.prototype.forceBlur instead");
+    a.push(0); // TODO where does this come from
+  };
+
+  InputTextFieldHTML.prototype.forceBlur = function() {
+    this.DOMtext.blur();
+    this.focus = false;
+  };
+
+
+  InputTextFieldHTML.prototype.setEnterFunction = function(enterFunction, target) {
+    this.enterFunction = enterFunction;
+    this.enterFunctionTarget = target;
+  };
+  InputTextFieldHTML.prototype.setChangeFunction = function(changeFunction, target) {
+    this.changeFunction = changeFunction;
+    this.changeFunctionTarget = target;
+  };
+  InputTextFieldHTML.prototype.setFocusFunction = function(focusFunction, target) {
+    this.focusFunction = focusFunction;
+    this.focusFunctionTarget = target;
+  };
+  InputTextFieldHTML.prototype.setBlurFunction = function(blurFunction, target) {
+    this.blurFunction = blurFunction;
+    this.blurFunctionTarget = target;
+  };
+
+  InputTextFieldHTML.prototype.setSelection = function(start, end) {
+    start = start == null ? 0 : start;
+    end = end == null ? this.DOMtext.value.length : end;
+    this.DOMtext.selectionStart = start;
+    this.DOMtext.selectionEnd = end;
+  };
+  InputTextFieldHTML.prototype.placeCursor = function(nChar) {
+    this.setSelection(nChar);
+  };
+
+  InputTextFieldHTML.prototype.setScrollPosition = function(y) {
+    if(y <= 1) y = Math.floor(y * this.DOMtext.scrollHeight);
+    this.DOMtext.scrollTop = y;
+  };
+  InputTextFieldHTML.prototype.getScrollPosition = function() {
+    return this.DOMtext.scrollTop;
+  };
+  InputTextFieldHTML.prototype.getTextHeight = function() {
+    return this.DOMtext.scrollHeight;
+  };
+
+
+  InputTextFieldHTML.prototype._onFocus = function(target) {
+    target.focus = true;
+    if(target.focusFunction != null) target.focusFunction.call(target.focusFunctionTarget, target.id);
+  };
+
+  InputTextFieldHTML.prototype._onBlur = function(target) {
+    target.focus = false;
+    if(target.blurFunction != null) target.blurFunction.call(target.blurFunctionTarget, target.id);
+  };
+
+  InputTextFieldHTML.prototype.remove = function() {
+    if(this.added) {
+      this.div.removeChild(this.DOMtext);
+      this.main.removeChild(this.div);
+      this.added = false;
+    }
+  };
+
+  InputTextFieldHTML.prototype.readd = function() {
+    if(!this.added) {
+      this.main.appendChild(this.div);
+      this.div.appendChild(this.DOMtext);
+      this.added = true;
+    }
+  };
+
+  InputTextFieldHTML.prototype.disappear = function() {
+    console.log('[!] InputTextFieldHTML.prototype.disappear replaced by remove');
+    a.push(0); // TODO where does this come from?
+    this.x = -10000;
+    this.draw();
+  };
+
+  exports.InputTextFieldHTML = InputTextFieldHTML;
+
+  TextBox.prototype.constructor = TextBox;
+
+  /**
+   * @classdesc Instanciable class that manages and renders a text on the canvas.
+   *
+   * @description create new TextBox.
+   * @param configuration configuration Object with parameters (x, y, width, text, fontColor, fontSize, fontName, fontStyle, warnFunction, target…)
+   * @constructor
+   * @category strings
+   */
+  function TextBox(configuration) {
+    configuration = configuration == null ? {} : configuration;
+
+    this.x = configuration.x == null ? 300 : configuration.x;
+    this.y = configuration.y == null ? 2 : configuration.y;
+    this.width = configuration.width == null ? 200 : configuration.width;
+
+    this.text = configuration.text == null ? '' : configuration.text;
+
+    this.fontColor = configuration.fontColor == null ? 'black' : configuration.fontColor;
+    this.fontSize = configuration.fontSize == null ? '14' : configuration.fontSize;
+    // TODO track down LOADED_FONT
+    this.fontName = configuration.fontName == null ? LOADED_FONT : configuration.fontName;
+    //this.fontStyle =  configuration.fontStyle==null?null:configuration.fontStyle;
+
+    this.warnFunction = configuration.warnFunction;
+    this.target = configuration.target;
+
+    this.lineHeight = configuration.lineHeight == null ? 14 : configuration.lineHeight;
+
+    this.backgroundColor = configuration.backgroundColor;
+    this.boxMargin = configuration.boxMargin == null ? 5 : configuration.boxMargin;
+
+    this.lineWidth = configuration.lineWidth == null ? 1 : configuration.lineWidth;
+
+    this.maxWidth;
+    this.links;
+    this.linksType;
+    this.pointPairs;
+    this.overLink;
+
+    this.setText(this.text);
+
+    addInteractionEventListener('mouseup', this.mouseUp, this);
+  }
+
+
+  TextBox.prototype.getMaxWidth = function() {
+    return DrawTexts.getMaxTextWidth(this.lines);
+  };
+
+  TextBox.prototype.update = function() {
+    this.setText(this.text);
+  };
+
+  TextBox.prototype.setText = function(text) {
+    this.text = String(text);
+
+    this.text = TextBox.replaceWikiLinks(this.text);
+
+    var i;
+    var j;
+    var blocks = this.text.split('<e');
+    if(blocks.length > 1) {
+      var index0;
+      var index0b;
+      var index1;
+
+      var names = [];
+      this.links = new StringList__default();
+      this.linksType = new StringList__default();
+      var indexesPairs = new List__default();
+      var lengthBefore;
+
+      var link;
+      var text;
+      var extra;
+      var rest;
+
+      for(i = 1; blocks[i] != null; i++) {
+        index0 = blocks[i].indexOf("*");
+        index1 = blocks[i].indexOf(">");
+        index0b = blocks[i].indexOf("*", index0 + 1);
+        if(index0 != -1 && index1 != -1 && index0 < index1) {
+          link = blocks[i].substr(0, index0);
+          //c.log("LINK:{"+link+"}");
+
+          this.links.push(link);
+
+          if(index0b != -1 && index0b < index1 && !blocks[i].charAt(index0b + 1) == "b") {
+            extra = blocks[i].charAt(index0b + 1);
+            //c.log("EXTRA:{"+extra+"}");
+
+            blocks[i] = blocks[i].substring(index0 + 1, index0b) + blocks[i].substr(index1 + 1);
+            this.linksType.push('self');
+          } else {
+            text = blocks[i].substring(index0 + 1, index1);
+            //c.log("TEXT:{"+text+"}");
+
+            rest = blocks[i].substr(index1 + 1);
+            //c.log("REST:{"+rest+"}");
+
+            blocks[i] = text + rest;
+            this.linksType.push('blank');
+          }
+
+          lengthBefore = blocks[i - 1].length;
+          lengthBefore -= 1 * (blocks[i - 1].split('\\n').length - 1);
+          for(j = 0; j < i - 1; j++) {
+            lengthBefore += blocks[j].length;
+            lengthBefore -= 1 * (blocks[j].split('\\n').length - 1);
+          }
+
+          indexesPairs.push(new Interval__default(lengthBefore, index1 - index0 - 1));
+        }
+      }
+
+      this.text = blocks.join('');
+
+    } else {
+      this.links = null;
+      this.pointPairs = null;
+    }
+
+    //DrawTexts.setContextTextProperties(this.fontColor, this.fontSize, this.fontName, null, null, this.fontStyle);
+
+    setText(this.fontColor, this.fontSize, this.fontName, null, null, this.fontStyle);
+
+    this.lines = DrawTexts.textWordWrapReturnLines(this.text, this.width, 0, this.lineHeight);
+    this.height = this.lines.length * this.lineHeight;
+
+
+    if(this.links != null) {
+      var interval;
+      var lengthAccumulated = 0;
+      this.pointPairs = [];
+      var w0;
+      var w1;
+      var y;
+      var line;
+      for(i = 0; this.links[i] != null; i++) {
+        interval = indexesPairs[i];
+        lengthAccumulated = 0;
+        for(j = 0; this.lines[j] != null; j++) {
+          line = this.lines[j];
+          if(interval.x >= lengthAccumulated && interval.x < lengthAccumulated + line.length) {
+            w0 = context.measureText(line.substr(0, interval.x - lengthAccumulated)).width;
+            w1 = context.measureText(line.substr(0, interval.x + interval.y - lengthAccumulated)).width;
+            y = j * this.lineHeight + 0.5;
+
+            this.pointPairs.push({
+              "x0": w0,
+              "x1": w1,
+              "y": y
+            });
+
+            break;
+          }
+          lengthAccumulated += (line.length + 1);
+        }
+      }
+    }
+
+    lengthAccumulated = 0;
+    for(j = 0; this.lines[j] != null; j++) {
+      line = this.lines[j];
+      lengthAccumulated += (line.length + 1);
+    }
+
+    // TODO is this supposed to be this.setText (also see below) or a diff setText
+    //DrawTexts.setContextTextProperties(this.fontColor, this.fontSize, this.fontName, null, null, this.fontStyle);
+    setText(this.fontColor, this.fontSize, this.fontName, null, null, this.fontStyle);
+
+    this.maxWidth = 0;
+    for(i = 0; this.lines[i] != null; i++) {
+      this.maxWidth = Math.max(this.maxWidth, context.measureText(this.lines[i]).width);
+    }
+  };
+
+  TextBox.prototype.draw = function(scale) {
+    scale = scale == null ? 1 : scale;
+
+    if(this.backgroundColor != null) {
+      context.fillStyle = this.backgroundColor;
+      context.fillRect(this.x - this.boxMargin, this.y - this.boxMargin, this.width + 2 * this.boxMargin, this.height + 2 * this.boxMargin);
+    }
+    //DrawTexts.setContextTextProperties(this.fontColor, this.fontSize*scale, this.fontName, null, null, this.fontStyle);
+    setText(this.fontColor, this.fontSize * scale, this.fontName, null, null, this.fontStyle);
+    DrawTexts.fillTextRectangleWithTextLines(this.lines, this.x, this.y, 0, this.lineHeight * scale);
+
+    var x0;
+    var x1;
+    var y0;
+    var y1;
+
+    this.overLink = null;
+
+    if(this.pointPairs != null) {
+      context.lineWidth = this.lineWidth;
+      context.strokeStyle = this.fontColor;
+      for(var i = 0; this.pointPairs[i] != null; i++) {
+        x0 = this.pointPairs[i].x0 * scale + this.x;
+        x1 = this.pointPairs[i].x1 * scale + this.x;
+        y0 = this.pointPairs[i].y * scale + this.y;
+        y1 = Math.floor(y0 + Number(this.fontSize * scale));
+        this.line(x0, x1, y1 + 0.5);
+        if(mY > y0 && mY < y1 && mX > x0 && mX < x1) {
+          context.canvas.style.cursor = 'pointer';
+          this.overLink = i;
+        }
+      }
+    }
+  };
+
+  TextBox.prototype.line = function(x0, x1, y) {
+    context.beginPath();
+    context.moveTo(x0, y);
+    context.lineTo(x1, y);
+    context.stroke();
+  };
+
+  TextBox.prototype.mouseUp = function(e) {
+    if(this.overLink != null) {
+      var link = this.links[this.overLink];
+      var linkType = this.linksType[this.overLink];
+      if(link.substr(0, 7) == 'http://' || link.substr(0, 8) == 'https://' || link.substr(0, 4) == 'www.') {
+        linkType == "blank" ? window.open(link) : window.open(link, "_self");
+      } else {
+        this.warnFunction.call(this.target, link);
+      }
+      this.overLink = null;
+    }
+  };
+
+  TextBox.prototype.deactivate = function() {
+    removeInteractionEventListener('mouseup', this.mouseUp, this);
+  };
+
+
+  ///
+
+  TextBox.replaceWikiLinks = function(text) {
+    var indexOpen = text.indexOf("[");
+    var indexClose;
+    var textInsideBrackets;
+    var parts;
+    var externalLink;
+    while(indexOpen != -1) {
+      indexClose = text.indexOf("]", indexOpen + 1);
+      if(indexClose == -1) {
+        indexOpen = -1;
+      } else {
+        textInsideBrackets = text.substring(indexOpen + 1, indexClose);
+        console.log('text inside brackets: {' + textInsideBrackets + '}');
+        if(textInsideBrackets.indexOf("[") == -1 && textInsideBrackets.indexOf("]") == -1) {
+          if(textInsideBrackets.indexOf(" ") != -1) {
+            parts = textInsideBrackets.split(" ");
+            //c.log('parts[0]: {'+parts[0]+'}');
+            //c.log('StringOperators.validateUrl(parts[0]):', StringOperators.validateUrl(parts[0]));
+            //c.log('StringOperators.validateUrl(parts[0]):', StringOperators.validateUrl(parts[0]));
+            if(StringOperators__default.validateUrl(parts[0])) {
+              //c.log('parts.slice(1).join: {'+parts.slice(1).join(" ")+'}');
+              text = text.substr(0, indexOpen) + "<e" + parts[0] + "*" + parts.slice(1).join(" ") + ">" + text.substr(indexClose + 1);
+              //c.log('text changed:', text);
+              externalLink = true;
+            }
+          }
+
+          if(!externalLink) {
+            text = text.substr(0, indexOpen) + "<e" + textInsideBrackets + "*" + textInsideBrackets + ">" + text.substr(indexClose + 1);
+          }
+
+        }
+        indexOpen = text.indexOf("[", indexClose);
+      }
+    }
+    //c.log('new text:', text);
+    return text;
+  };
+
+  exports.TextBox = TextBox;
+
+  /**
+   * @classdesc Fast Html
+   *
+   * @namespace
+   * @category misc
+   */
+  function FastHtml() {}
+
+
+  FastHtml.expand = function(abreviatedHTML, scope, onEvent) {
+    if(abreviatedHTML == null || abreviatedHTML == "") return "";
+
+    //c.log(abreviatedHTML.split("<").length, abreviatedHTML.split(">").length);
+
+    if(abreviatedHTML.split("<").length != abreviatedHTML.split(">").length) return abreviatedHTML;
+    var newText = abreviatedHTML;
+    var bit = "";
+    while(bit != null) {
+      bit = StringOperators.getFirstTextBetweenStrings(newText, "<fs", ">"); //OperacionesString.textEntreSubStrings(newText, "<fs", ">");
+      if(bit != null) newText = newText.replace("<fs" + bit + ">", "<font style=\"font-size:" + Number(bit) + "px\">");
+      if(newText.indexOf(">") == -1) bit = null;
+    }
+    bit = "";
+    while(bit != null) {
+      bit = StringOperators.getFirstTextBetweenStrings(newText, "<ff", ">");
+      if(bit != null) newText = newText.replace("<ff" + bit + ">", "<font face=\"" + bit + "\">");
+    }
+    newText = newText.replace(/¬/, "<br/>");
+    newText = newText.replace(/<fcBlack>/g, "<font color=\"#000000\">");
+    newText = newText.replace(/<fcWhite>/g, "<font color=\"#FFFFFF\">");
+    newText = newText.replace(/<fcRed>/g, "<font color=\"#FF0000\">");
+    newText = newText.replace(/<fcGreen>/g, "<font color=\"#00FF00\">");
+    newText = newText.replace(/<fcBlue>/g, "<font color=\"#0000FF\">");
+    newText = newText.replace(/<fcOrange>/g, "<font color=\"#FFAA00\">");
+
+    newText = newText.replace(/<fcCyan>/g, "<font color=\"#00FFFF\">");
+    newText = newText.replace(/<fcYellow>/g, "<font color=\"#FFFF00\">");
+    newText = newText.replace(/<fcMagenta>/g, "<font color=\"#FF00FF\">");
+    bit = "";
+    while(bit != null) {
+      bit = StringOperators.getFirstTextBetweenStrings(newText, "<fcuint", ">");
+      if(bit != null) newText = newText.replace("<fcuint" + bit + ">", "<font color=\"" + ColorOperators.uinttoHEX(bit) + "\">");
+    }
+    bit = "";
+    while(bit != null) {
+      bit = StringOperators.getFirstTextBetweenStrings(newText, "<frgb", ">");
+      if(bit != null) {
+        var rgb = bit.split(".");
+        newText = newText.replace("<frgb" + bit + ">", "<font color=\"" + ColorOperators.RGBtoHEX(Number(rgb[0]), Number(rgb[1]), Number(rgb[2])) + "\">");
+      }
+    }
+    bit = "";
+    while(bit != null) {
+      bit = StringOperators.getFirstTextBetweenStrings(newText, "<fc", ">");
+      if(bit != null) newText = newText.replace("<fc" + bit + ">", "<font color=\"#" + bit + "\">");
+    }
+
+    bit = "";
+    while(bit != null) {
+      bit = StringOperators.getFirstTextBetweenStrings(newText, "<tl", ">");
+      if(bit != null) newText = newText.replace("<tl" + bit + ">", "<textformat leftmargin=\"" + bit + "\">");
+    }
+    bit = "";
+    while(bit != null) {
+      bit = StringOperators.getFirstTextBetweenStrings(newText, "<tv", ">");
+      if(bit != null) newText = newText.replace("<tv" + bit + ">", "<textformat leading=\"" + bit + "\">");
+    }
+
+    bit = "";
+    var href;
+    var text;
+    var target;
+
+
+    while(bit != null) {
+      bit = StringOperators.getFirstTextBetweenStrings(newText, "<e", ">");
+      if(bit != null) {
+        href = bit.split("*")[0];
+        text = bit.split("*")[1];
+        if(bit.split("*").length > 2 && bit.split("*")[2] == "s") {
+          target = "_self";
+        } else {
+          target = "_blank";
+        }
+        if(href.substr(0, 7) == "http://" ||  href.substr(0, 8) == "https://") {
+          newText = newText.replace("<e" + bit + ">", "<u><a href='" + href + "' target='" + target + "'>" + text + "</a></u>");
+        } else {
+          //var index=getUniqueGlobalFunc(onEvent, scope);
+          //newText = newText.replace("<e"+bit+">", "<u><a href='javascript:clickLink()' onclick='event.preventDefault(); executeUniqueGlobalFunc("+index+", "+href+");return false; '>"+text+"</a></u>");
+          newText = newText.replace("<e" + bit + ">", "<u><a href='javascript:FastHtml.clickLink(\"" + href + "\")' FastHtml.onclick='event.preventDefault(); clickLink(\"" + href + "\"); return false; '>" + text + "</a></u>");
+        }
+      }
+    }
+
+    newText = newText.replace(/<pl>/g, "<p align=\"left\">");
+    newText = newText.replace(/<pc>/g, "<p align=\"center\">");
+    newText = newText.replace(/<pr>/g, "<p align=\"right\">");
+    newText = newText.replace(/<pj>/g, "<p align=\"justify\">");
+    newText = newText.replace(/<\/f>/g, "</font>");
+    newText = newText.replace(/<\/t>/g, "</textformat>");
+
+    // c.log("/////////FastHtml convertion////////");
+    // c.log(newText);
+    // c.log("////////////////////////////////////");
+
+    return newText;
+  };
+
+  FastHtml.clickLink = function(param) {
+    FastHtml.linkFunction.call(FastHtml.target, param);
+  };
+
+  FastHtml.findAndPlaceLinks = function(text) {
+    var newText = FastHtml._findAndPlaceLinksPrefix(text, "http");
+    return FastHtml._findAndPlaceLinksPrefix(newText, "https");
+  };
+  FastHtml._findAndPlaceLinksPrefix = function(text, prefix) {
+    var regexp = prefix == 'http' ? /http:\/\//g : /https:\/\//g;
+    var blocks = text.split(regexp);
+
+    if(blocks.length > 1) {
+      var blocks2 = [];
+      var indexS;
+      var url;
+
+      blocks2[0] = blocks[0];
+
+      for(var i = 1; blocks[i] != null; i++) {
+        indexS = blocks[i].search(/ |:|;/);
+        if(indexS > -1) {
+          url = prefix + '://' + blocks[i].substr(0, indexS);
+          blocks2[i] = '<e' + url + '*' + url + '>' + blocks[i].substr(indexS);
+        } else {
+          url = prefix + '://' + blocks[i].substr(0);
+          blocks2[i] = '<e' + url + '*' + url + '>';
+        }
+      }
+    }
+    return(blocks.length == 0 || blocks.length == 1) ? text : blocks2.join('');
+  };
+
+  FastHtml.findAndPlaceTwitterAdresses = function(text) {
+    var blocks = text.split(/@/g);
+
+    if(blocks.length > 1) {
+      var blocks2 = [];
+      var indexS;
+      var url;
+      var accountName;
+
+      blocks2[0] = blocks[0];
+
+      for(var i = 1; blocks[i] != null; i++) {
+        indexS = blocks[i].search(/ |:|;/);
+        if(indexS > -1) {
+          accountName = blocks[i].substr(0, indexS);
+          url = 'https://twitter.com/' + accountName;
+          blocks2[i] = '<e' + url + '*@' + accountName + '>' + blocks[i].substr(indexS);
+        } else {
+          accountName = blocks[i].substr(0);
+          url = 'https://twitter.com/' + accountName;
+          blocks2[i] = '<e' + url + '*@' + accountName + '>';
+        }
+      }
+    }
+
+    return(blocks.length == 0 || blocks.length == 1) ? text : blocks2.join('');
+  };
+
+  FastHtml.getColorTag = function(color) {
+    color = ColorOperators.colorStringToHEX(color);
+    return "<font color=\"" + color + "\">";
+  };
+
+  exports.FastHtml = FastHtml;
+
+  TextFieldHTML.prototype.constructor = TextFieldHTML;
+
+  /**
+   * @classdesc Instanciable class that manages and renders a text in an html div
+   *
+   * @param configuration configuration Object with parameters (x, y, width, text, fontColor, fontSize, fontName, fontStyle, linkFunction, target…)
+   * @constructor
+   * @category strings
+   */
+  function TextFieldHTML(configuration) {
+    configuration = configuration == null ? {} : configuration;
+
+    this.x = configuration.x == null ? 300 : configuration.x;
+    this.y = configuration.y == null ? 2 : configuration.y;
+    this.width = configuration.width == null ? 200 : configuration.width;
+
+    this.textColor = configuration.textColor == null ? 'black' : configuration.textColor;
+
+    this.backgroundColor = configuration.backgroundColor;
+
+    this.linkFunction = configuration.linkFunction;
+    this.target = configuration.target;
+
+    this.fastHTMLactive = configuration.fastHTMLactive == null ? true : configuration.fastHTMLactive;
+
+    this.text;
+
+    //////////
+
+    this._prevX;
+    this._prevY;
+    this._prevWidth;
+    this._prevHeight;
+
+    this.zIndex = 33;
+
+    this.main = document.getElementById('maindiv');
+    this.div = document.createElement('div2');
+    this.div.setAttribute('style', 'position:absolute;top:' + this.y + 'px;left:' + this.x + 'px;z-index:' + this.zIndex + ';');
+    this.main.appendChild(this.div);
+
+    this.setText(configuration.text == null ? '' : configuration.text);
+
+    this.draw();
+
+    var thisTextField = this;
+    var linkFunction = this.linkFunction;
+    var target = this.target;
+
+    if(this.target != null && this.linkFunction != null) {
+      FastHtml.target = this.target;
+      FastHtml.linkFunction = this.linkFunction;
+    }
+  }
+
+
+
+
+  TextFieldHTML.prototype.draw = function() {
+    //c.log('this.width, this._prevWidth', this.width, this._prevWidth);
+    if(this.x != this._prevX || this.y != this._prevY || this.width != this._prevWidth || this.height != this._prevHeight) {
+      this._prevX = this.x;
+      this._prevY = this.y;
+      this._prevWidth = this.width;
+      this._prevHeight = this.height;
+      //this.div.setAttribute('style', 'position:absolute;top:'+this.y+'px;left:'+this.x+'px;z-index:'+this.zIndex+'; width:'+this.width+'px;');//height:'+this.height+'px;');
+      this.div.setAttribute('style', 'position:absolute;top:' + this.y + 'px;left:' + this.x + 'px;z-index:' + this.zIndex + '; width:' + this.width + 'px; height:' + this.height + 'px;');
+    }
+  };
+
+  TextFieldHTML.prototype.setText = function(text) {
+    if(this.text != text) {
+      this.text = text;
+      this.div.innerHTML = this.fastHTMLactive ? FastHtml.expand(text) : text;
+    }
+  };
+
+  TextFieldHTML.prototype.getText = function() {
+    return this.DOMtext.value;
+  };
+
+  //
+
+  exports.TextFieldHTML = TextFieldHTML;
+
+  MultiLoader.prototype = {};
+  MultiLoader.prototype.constructor = MultiLoader;
+
+  //include(frameworksRoot+"Tools/loaders/Loader.js");
+
+  /**
+   * MultiLoader
+   * @constructor
+   * @category misc
+   */
+  function MultiLoader() {
+    this.urlList = null;
+    this.onComplete = null;
+    this.iLoaded = 0;
+    this.target = null;
+    this.loading = false;
+
+    this.indexLoading;
+
+    ////datas
+    this.datasLoaded = null;
+
+    ////images
+    this.imagesLoaded = null;
+
+    this.priorityWeights;
+    this.associativeArray = [];
+
+    this.url_to_image = {};
+
+    this.simulateDelay = false;
+    this.DELAY_MILLISECONDS = 1000;
+    this.timer;
+  }
+
+
+
+
+  MultiLoader.prototype.loadDatas = function(urlList, onComplete, callee) {
+
+    this.urlList = urlList;
+    this.target = callee ? callee : arguments.callee;
+    this.onComplete = onComplete;
+
+    this.datasLoaded = new List__default();
+    this.nextDataLoading();
+  };
+
+  MultiLoader.prototype.nextDataLoading = function() {
+    //c.log("MultiLoader.prototype.nextDataLoading | this.iLoaded, this.urlList[this.iLoaded]:", this.iLoaded, this.urlList[this.iLoaded]);
+    if(this.iLoaded < this.urlList.length) {
+      this.indexLoading = this.iLoaded;
+      Loader.loadData(this.urlList[this.indexLoading], this.onCompleteLoadData, this);
+      this.loading = true;
+    } else {
+      this.loading = false;
+    }
+  };
+
+  MultiLoader.prototype.onCompleteLoadData = function(e) {
+    if(this.priorityWeights != null) {
+      this.datasLoaded[this.urlList.indexOf(e.url)] = e.result;
+    } else {
+      this.datasLoaded.push(e.result);
+    }
+    this.associativeArray[this.indexLoading] = e.result;
+    //this.associativeArray[e.url] = e.result;
+    var multiE = new LoadEvent();
+    multiE.errorType = e.errorType;
+    multiE.result = this.datasLoaded;
+    multiE.url = e.url;
+
+    if(this.iLoaded + 1 >= this.urlList.length) this.loading = false;
+
+    this.onComplete.call(this.target, multiE);
+
+
+    this.iLoaded++;
+    //c.log('---> this.iLoaded, e.url', this.iLoaded, e.url);
+    this.nextDataLoading();
+  };
+
+
+  /////images
+
+
+
+  MultiLoader.prototype.loadImages = function(urlList, onComplete, target, priorityWeights) {
+
+    this.urlList = urlList;
+    this.target = target ? target : arguments.callee;
+    this.onComplete = onComplete;
+    this.priorityWeights = priorityWeights;
+
+    this.imagesLoaded = new List__default();
+
+    this.nextImageLoading();
+  };
+
+
+  MultiLoader.prototype.onCompleteLoadImage = function(e) {
+    //c.log("onCompleteLoadImage, e.url, e.result", e.url, e.result);
+    if(e.errorType == 1) {
+      if(this.priorityWeights != null) {
+        //this.imagesLoaded[this.urlList.indexOf(e.url)] = null;
+        this.imagesLoaded[this.indexLoading] = null;
+      } else {
+        this.imagesLoaded.push(null);
+      }
+      //this.associativeArray[e.url] = -1;
+      this.associativeArray[this.indexLoading] = -1;
+    } else {
+      if(this.priorityWeights != null) {
+        //this.imagesLoaded[this.urlList.indexOf(e.url)] = e.result;
+        this.imagesLoaded[this.indexLoading] = e.result;
+      } else {
+        this.imagesLoaded.push(e.result);
+      }
+      //this.associativeArray[e.url] = e.result;
+      this.associativeArray[this.indexLoading] = e.url;
+      this.url_to_image[e.url] = e.result;
+    }
+
+    var multiE = new LoadEvent();
+    multiE.result = this.imagesLoaded;
+    multiE.url = e.url;
+    multiE.lastImage = e.result;
+    multiE.indexImage = this.indexLoading;
+    if(this.onComplete != null) this.onComplete.call(this.target, multiE);
+
+    this.loading = false;
+
+    this.iLoaded++;
+    this.nextImageLoading();
+  };
+
+  MultiLoader.prototype.getImageFromUrl = function(url) {
+    return this.url_to_image[url];
+  };
+
+  MultiLoader.prototype.setPriorityWeights = function(weights) {
+    this.priorityWeights = weights;
+    //c.log("this.priorityWeights", this.priorityWeights);
+    if(!this.loading) {
+      this.nextImageLoading();
+    }
+  };
+
+  MultiLoader.prototype.nextImageLoading = function(target) {
+    //c.log('nextImageLoading', this.iLoaded, "/", this.urlList.length);
+
+    if(this.simulateDelay || target != null) {
+      if(target == null) {
+        this.loading = true;
+        this.timer = setTimeout(this.nextImageLoading, this.DELAY_MILLISECONDS, this);
+        return;
+      } else {
+        target.loading = false;
+        target.simulateDelay = false;
+        target.nextImageLoading();
+        target.simulateDelay = true;
+        return;
+      }
+    }
+
+    if(this.iLoaded < this.urlList.length) {
+      if(this.priorityWeights != null) {
+        var iMax;
+        var max = -99999999;
+        var i;
+
+        for(i = 0; this.urlList[i] != null; i++) {
+          //if(this.priorityWeights[i]>max && this.associativeArray[this.urlList[i]]==null){
+          if(this.priorityWeights[i] > max && this.associativeArray[i] == null) {
+            max = this.priorityWeights[i];
+            iMax = i;
+          }
+        }
+
+        //c.log('max:', max);
+
+        if(max > 0) {
+          //c.log("MultiLoader | nextImageLoading:", this.urlList[this.iLoaded]);
+
+          this.indexLoading = iMax;
+
+          Loader.loadImage(this.urlList[this.indexLoading], this.onCompleteLoadImage, this);
+          //Loader.loadImage(this.urlList[this.iLoaded], this.onCompleteLoadImage, this);
+
+          this.loading = true;
+        } else {
+          //c.log("MultiLoader stopped due to max wieght <= 0");
+        }
+
+      } else {
+        this.indexLoading = this.iLoaded;
+        //c.log("MultiLoader | nextImageLoading:", this.urlList[this.iLoaded]);
+        Loader.loadImage(this.urlList[this.indexLoading], this.onCompleteLoadImage, this);
+        this.loading = true;
+      }
+    } else {
+      this.loading = false;
+    }
+  };
+
+  MultiLoader.prototype.destroy = function() {
+    delete this.datasLoaded;
+    delete this.imagesLoaded;
+  };
+
+  exports.MultiLoader = MultiLoader;
+
+  /**
+   * @classdesc Functions to create interesting console output.
+   *
+   * @namespace
+   * @category misc
+   */
+  function ConsoleTools() {}
+  var Consoletools = ConsoleTools;
+
+
+  ConsoleTools._ticTime;
+  ConsoleTools._tacTime;
+
+  ConsoleTools.NumberTableOnConsole = function(table) {
+    var message = "";
+    var line;
+    var number;
+    var i;
+    var j;
+
+    for(j = 0; j < table[0].length; j++) {
+      line = "|";
+      for(i = 0; table[i] != null; i++) {
+        number = String(Math.floor(100 * table[i][j]) / 100).replace(/0./, ".");
+        while(number.length < 3) number = " " + number;
+        line += number + "|";
+      }
+      message += line + "\n";
+    }
+
+    console.log(message);
+
+    return message;
+  };
+
+
+  ConsoleTools.tic = function(message) {
+    message = message || "";
+
+    ConsoleTools._ticTime = ConsoleTools._tacTime = new Date().getTime();
+    ConsoleTools._nTacs = 0;
+    console.log('°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° tic °°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° [' + message + ']');
+  };
+
+  ConsoleTools.tac = function(message) {
+    message = message || "";
+
+    var lastTac = ConsoleTools._tacTime;
+    ConsoleTools._tacTime = new Date().getTime();
+    console.log('°°°°°°° tac [' + message + '], t from tic:' + (ConsoleTools._tacTime - ConsoleTools._ticTime) + ', t from last tac:' + ((ConsoleTools._tacTime - lastTac)));
+  };
+
+  exports.Consoletools = Consoletools;
+
+  /**
+   * @classdesc Provides a set of tools that work with JSON.
+   *
+   * @namespace
+   * @category misc
+   */
+  function JSONUtils() {}
+
+
+  JSONUtils.stringifyAndPrint = function(object) {
+    var jsonString = JSON.stringify(object);
+    console.log("__________________________________________________________________________________________________________________________________________________________");
+    console.log(jsonString);
+    console.log("__________________________________________________________________________________________________________________________________________________________");
+  };
+
+  /**
+   * This function is not used in the framework.
+   * It's used only for GIT / Jenkins tests
+   */
+  JSONUtils.dummy2 = function() {
+    return null;
+  };
+
+  exports.JSONUtils = JSONUtils;
+
+  /*
+   * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
+   * Digest Algorithm, as defined in RFC 1321.
+   * Version 2.2 Copyright (C) Paul Johnston 1999 - 2009
+   * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
+   * Distributed under the BSD License
+   * See http://pajhome.org.uk/crypt/md5 for more info.
+   */
+
+  /*
+   * Configurable variables. You may need to tweak these to be compatible with
+   * the server-side, but the defaults work in most cases.
+   */
+  //var hexcase = 0;   /* hex output format. 0 - lowercase; 1 - uppercase        */
+  //var b64pad  = "";  /* base-64 pad character. "=" for strict RFC compliance   */
+
+
+  function MD5__MD5(){}
+  var MD5__default = MD5__MD5;
+
+  /*
+   * These are the functions you'll usually want to call
+   * They take string arguments and return either hex or base-64 encoded strings
+   */
+  MD5__MD5.hex_md5 = function(s)    { return this.rstr2hex(this.rstr_md5(this.str2rstr_utf8(s))); };
+  MD5__MD5.b64_md5 = function(s)    { return this.rstr2b64(this.rstr_md5(this.str2rstr_utf8(s))); };
+  MD5__MD5.any_md5 = function(s, e) { return this.rstr2any(this.rstr_md5(this.str2rstr_utf8(s)), e); };
+  MD5__MD5.hex_hmac_md5 = function(k, d)
+    { return this.rstr2hex(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); };
+  MD5__MD5.b64_hmac_md5 = function(k, d)
+    { return this.rstr2b64(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); };
+  MD5__MD5.any_hmac_md5 = function(k, d, e)
+    { return this.rstr2any(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d)), e); };
+
+  /*
+   * Perform a simple self-test to see if the VM is working
+   */
+  MD5__MD5.md5_vm_test = function()
+  {
+    return this.hex_md5("abc").toLowerCase() == "900150983cd24fb0d6963f7d28e17f72";
+  };
+
+  /*
+   * Calculate the MD5 of a raw string
+   */
+  MD5__MD5.rstr_md5 = function(s)
+  {
+    return this.binl2rstr(this.binl_md5(this.rstr2binl(s), s.length * 8));
+  };
+
+  /*
+   * Calculate the HMAC-MD5, of a key and some data (raw strings)
+   */
+  MD5__MD5.rstr_hmac_md5 = function(key, data)
+  {
+    var bkey = rstr2binl(key);
+    if(bkey.length > 16) bkey = this.binl_md5(bkey, key.length * 8);
+
+    var ipad = Array(16), opad = Array(16);
+    for(var i = 0; i < 16; i++)
+    {
+      ipad[i] = bkey[i] ^ 0x36363636;
+      opad[i] = bkey[i] ^ 0x5C5C5C5C;
+    }
+
+    var hash = this.binl_md5(ipad.concat(this.rstr2binl(data)), 512 + data.length * 8);
+    return this.binl2rstr(this.binl_md5(opad.concat(hash), 512 + 128));
+  };
+
+  /*
+   * Convert a raw string to a hex string
+   */
+  MD5__MD5.rstr2hex = function(input)
+  {
+  	var hexcase = 0;
+    try { hexcase; } catch(e) { hexcase=0; }
+    var hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
+    var output = "";
+    var x;
+    for(var i = 0; i < input.length; i++)
+    {
+      x = input.charCodeAt(i);
+      output += hex_tab.charAt((x >>> 4) & 0x0F)
+             +  hex_tab.charAt( x        & 0x0F);
+    }
+    return output;
+  };
+
+  /*
+   * Convert a raw string to a base-64 string
+   */
+  MD5__MD5.rstr2b64 = function(input)
+  {
+  	var b64pad  = "";
+    try { b64pad; } catch(e) { b64pad=''; }
+    var tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    var output = "";
+    var len = input.length;
+    for(var i = 0; i < len; i += 3)
+    {
+      var triplet = (input.charCodeAt(i) << 16)
+                  | (i + 1 < len ? input.charCodeAt(i+1) << 8 : 0)
+                  | (i + 2 < len ? input.charCodeAt(i+2)      : 0);
+      for(var j = 0; j < 4; j++)
+      {
+        if(i * 8 + j * 6 > input.length * 8) output += b64pad;
+        else output += tab.charAt((triplet >>> 6*(3-j)) & 0x3F);
+      }
+    }
+    return output;
+  };
+
+  /*
+   * Convert a raw string to an arbitrary string encoding
+   */
+  MD5__MD5.rstr2any = function(input, encoding)
+  {
+    var divisor = encoding.length;
+    var i, j, q, x, quotient;
+
+    /* Convert to an array of 16-bit big-endian values, forming the dividend */
+    var dividend = Array(Math.ceil(input.length / 2));
+    for(i = 0; i < dividend.length; i++)
+    {
+      dividend[i] = (input.charCodeAt(i * 2) << 8) | input.charCodeAt(i * 2 + 1);
+    }
+
+    /*
+     * Repeatedly perform a long division. The binary array forms the dividend,
+     * the length of the encoding is the divisor. Once computed, the quotient
+     * forms the dividend for the next step. All remainders are stored for later
+     * use.
+     */
+    var full_length = Math.ceil(input.length * 8 /
+                                      (Math.log(encoding.length) / Math.log(2)));
+    var remainders = Array(full_length);
+    for(j = 0; j < full_length; j++)
+    {
+      quotient = Array();
+      x = 0;
+      for(i = 0; i < dividend.length; i++)
+      {
+        x = (x << 16) + dividend[i];
+        q = Math.floor(x / divisor);
+        x -= q * divisor;
+        if(quotient.length > 0 || q > 0)
+          quotient[quotient.length] = q;
+      }
+      remainders[j] = x;
+      dividend = quotient;
+    }
+
+    /* Convert the remainders to the output string */
+    var output = "";
+    for(i = remainders.length - 1; i >= 0; i--)
+      output += encoding.charAt(remainders[i]);
+
+    return output;
+  };
+
+  /*
+   * Encode a string as utf-8.
+   * For efficiency, this assumes the input is valid utf-16.
+   */
+  MD5__MD5.str2rstr_utf8 = function(input)
+  {
+    var output = "";
+    var i = -1;
+    var x, y;
+
+    while(++i < input.length)
+    {
+      /* Decode utf-16 surrogate pairs */
+      x = input.charCodeAt(i);
+      y = i + 1 < input.length ? input.charCodeAt(i + 1) : 0;
+      if(0xD800 <= x && x <= 0xDBFF && 0xDC00 <= y && y <= 0xDFFF)
+      {
+        x = 0x10000 + ((x & 0x03FF) << 10) + (y & 0x03FF);
+        i++;
+      }
+
+      /* Encode output as utf-8 */
+      if(x <= 0x7F)
+        output += String.fromCharCode(x);
+      else if(x <= 0x7FF)
+        output += String.fromCharCode(0xC0 | ((x >>> 6 ) & 0x1F),
+                                      0x80 | ( x         & 0x3F));
+      else if(x <= 0xFFFF)
+        output += String.fromCharCode(0xE0 | ((x >>> 12) & 0x0F),
+                                      0x80 | ((x >>> 6 ) & 0x3F),
+                                      0x80 | ( x         & 0x3F));
+      else if(x <= 0x1FFFFF)
+        output += String.fromCharCode(0xF0 | ((x >>> 18) & 0x07),
+                                      0x80 | ((x >>> 12) & 0x3F),
+                                      0x80 | ((x >>> 6 ) & 0x3F),
+                                      0x80 | ( x         & 0x3F));
+    }
+    return output;
+  };
+
+  /*
+   * Encode a string as utf-16
+   */
+  MD5__MD5.str2rstr_utf16le = function(input)
+  {
+    var output = "";
+    for(var i = 0; i < input.length; i++)
+      output += String.fromCharCode( input.charCodeAt(i)        & 0xFF,
+                                    (input.charCodeAt(i) >>> 8) & 0xFF);
+    return output;
+  };
+
+  MD5__MD5.str2rstr_utf16be = function(input)
+  {
+    var output = "";
+    for(var i = 0; i < input.length; i++)
+      output += String.fromCharCode((input.charCodeAt(i) >>> 8) & 0xFF,
+                                     input.charCodeAt(i)        & 0xFF);
+    return output;
+  };
+
+  /*
+   * Convert a raw string to an array of little-endian words
+   * Characters >255 have their high-byte silently ignored.
+   */
+  MD5__MD5.rstr2binl = function(input)
+  {
+    var output = Array(input.length >> 2);
+    for(var i = 0; i < output.length; i++)
+      output[i] = 0;
+    for(var i = 0; i < input.length * 8; i += 8)
+      output[i>>5] |= (input.charCodeAt(i / 8) & 0xFF) << (i%32);
+    return output;
+  };
+
+  /*
+   * Convert an array of little-endian words to a string
+   */
+  MD5__MD5.binl2rstr = function(input)
+  {
+    var output = "";
+    for(var i = 0; i < input.length * 32; i += 8)
+      output += String.fromCharCode((input[i>>5] >>> (i % 32)) & 0xFF);
+    return output;
+  };
+
+  /*
+   * Calculate the MD5 of an array of little-endian words, and a bit length.
+   */
+  MD5__MD5.binl_md5 = function(x, len)
+  {
+    /* append padding */
+    x[len >> 5] |= 0x80 << ((len) % 32);
+    x[(((len + 64) >>> 9) << 4) + 14] = len;
+
+    var a =  1732584193;
+    var b = -271733879;
+    var c = -1732584194;
+    var d =  271733878;
+
+    for(var i = 0; i < x.length; i += 16)
+    {
+      var olda = a;
+      var oldb = b;
+      var oldc = c;
+      var oldd = d;
+
+      a = this.md5_ff(a, b, c, d, x[i+ 0], 7 , -680876936);
+      d = this.md5_ff(d, a, b, c, x[i+ 1], 12, -389564586);
+      c = this.md5_ff(c, d, a, b, x[i+ 2], 17,  606105819);
+      b = this.md5_ff(b, c, d, a, x[i+ 3], 22, -1044525330);
+      a = this.md5_ff(a, b, c, d, x[i+ 4], 7 , -176418897);
+      d = this.md5_ff(d, a, b, c, x[i+ 5], 12,  1200080426);
+      c = this.md5_ff(c, d, a, b, x[i+ 6], 17, -1473231341);
+      b = this.md5_ff(b, c, d, a, x[i+ 7], 22, -45705983);
+      a = this.md5_ff(a, b, c, d, x[i+ 8], 7 ,  1770035416);
+      d = this.md5_ff(d, a, b, c, x[i+ 9], 12, -1958414417);
+      c = this.md5_ff(c, d, a, b, x[i+10], 17, -42063);
+      b = this.md5_ff(b, c, d, a, x[i+11], 22, -1990404162);
+      a = this.md5_ff(a, b, c, d, x[i+12], 7 ,  1804603682);
+      d = this.md5_ff(d, a, b, c, x[i+13], 12, -40341101);
+      c = this.md5_ff(c, d, a, b, x[i+14], 17, -1502002290);
+      b = this.md5_ff(b, c, d, a, x[i+15], 22,  1236535329);
+
+      a = this.md5_gg(a, b, c, d, x[i+ 1], 5 , -165796510);
+      d = this.md5_gg(d, a, b, c, x[i+ 6], 9 , -1069501632);
+      c = this.md5_gg(c, d, a, b, x[i+11], 14,  643717713);
+      b = this.md5_gg(b, c, d, a, x[i+ 0], 20, -373897302);
+      a = this.md5_gg(a, b, c, d, x[i+ 5], 5 , -701558691);
+      d = this.md5_gg(d, a, b, c, x[i+10], 9 ,  38016083);
+      c = this.md5_gg(c, d, a, b, x[i+15], 14, -660478335);
+      b = this.md5_gg(b, c, d, a, x[i+ 4], 20, -405537848);
+      a = this.md5_gg(a, b, c, d, x[i+ 9], 5 ,  568446438);
+      d = this.md5_gg(d, a, b, c, x[i+14], 9 , -1019803690);
+      c = this.md5_gg(c, d, a, b, x[i+ 3], 14, -187363961);
+      b = this.md5_gg(b, c, d, a, x[i+ 8], 20,  1163531501);
+      a = this.md5_gg(a, b, c, d, x[i+13], 5 , -1444681467);
+      d = this.md5_gg(d, a, b, c, x[i+ 2], 9 , -51403784);
+      c = this.md5_gg(c, d, a, b, x[i+ 7], 14,  1735328473);
+      b = this.md5_gg(b, c, d, a, x[i+12], 20, -1926607734);
+
+      a = this.md5_hh(a, b, c, d, x[i+ 5], 4 , -378558);
+      d = this.md5_hh(d, a, b, c, x[i+ 8], 11, -2022574463);
+      c = this.md5_hh(c, d, a, b, x[i+11], 16,  1839030562);
+      b = this.md5_hh(b, c, d, a, x[i+14], 23, -35309556);
+      a = this.md5_hh(a, b, c, d, x[i+ 1], 4 , -1530992060);
+      d = this.md5_hh(d, a, b, c, x[i+ 4], 11,  1272893353);
+      c = this.md5_hh(c, d, a, b, x[i+ 7], 16, -155497632);
+      b = this.md5_hh(b, c, d, a, x[i+10], 23, -1094730640);
+      a = this.md5_hh(a, b, c, d, x[i+13], 4 ,  681279174);
+      d = this.md5_hh(d, a, b, c, x[i+ 0], 11, -358537222);
+      c = this.md5_hh(c, d, a, b, x[i+ 3], 16, -722521979);
+      b = this.md5_hh(b, c, d, a, x[i+ 6], 23,  76029189);
+      a = this.md5_hh(a, b, c, d, x[i+ 9], 4 , -640364487);
+      d = this.md5_hh(d, a, b, c, x[i+12], 11, -421815835);
+      c = this.md5_hh(c, d, a, b, x[i+15], 16,  530742520);
+      b = this.md5_hh(b, c, d, a, x[i+ 2], 23, -995338651);
+
+      a = this.md5_ii(a, b, c, d, x[i+ 0], 6 , -198630844);
+      d = this.md5_ii(d, a, b, c, x[i+ 7], 10,  1126891415);
+      c = this.md5_ii(c, d, a, b, x[i+14], 15, -1416354905);
+      b = this.md5_ii(b, c, d, a, x[i+ 5], 21, -57434055);
+      a = this.md5_ii(a, b, c, d, x[i+12], 6 ,  1700485571);
+      d = this.md5_ii(d, a, b, c, x[i+ 3], 10, -1894986606);
+      c = this.md5_ii(c, d, a, b, x[i+10], 15, -1051523);
+      b = this.md5_ii(b, c, d, a, x[i+ 1], 21, -2054922799);
+      a = this.md5_ii(a, b, c, d, x[i+ 8], 6 ,  1873313359);
+      d = this.md5_ii(d, a, b, c, x[i+15], 10, -30611744);
+      c = this.md5_ii(c, d, a, b, x[i+ 6], 15, -1560198380);
+      b = this.md5_ii(b, c, d, a, x[i+13], 21,  1309151649);
+      a = this.md5_ii(a, b, c, d, x[i+ 4], 6 , -145523070);
+      d = this.md5_ii(d, a, b, c, x[i+11], 10, -1120210379);
+      c = this.md5_ii(c, d, a, b, x[i+ 2], 15,  718787259);
+      b = this.md5_ii(b, c, d, a, x[i+ 9], 21, -343485551);
+
+      a = this.safe_add(a, olda);
+      b = this.safe_add(b, oldb);
+      c = this.safe_add(c, oldc);
+      d = this.safe_add(d, oldd);
+    }
+    return Array(a, b, c, d);
+  };
+
+  /*
+   * These functions implement the four basic operations the algorithm uses.
+   */
+  MD5__MD5.md5_cmn = function(q, a, b, x, s, t)
+  {
+    return this.safe_add(this.bit_rol(this.safe_add(this.safe_add(a, q), this.safe_add(x, t)), s),b);
+  };
+  MD5__MD5.md5_ff = function(a, b, c, d, x, s, t)
+  {
+    return this.md5_cmn((b & c) | ((~b) & d), a, b, x, s, t);
+  };
+  MD5__MD5.md5_gg = function(a, b, c, d, x, s, t)
+  {
+    return this.md5_cmn((b & d) | (c & (~d)), a, b, x, s, t);
+  };
+  MD5__MD5.md5_hh = function(a, b, c, d, x, s, t)
+  {
+    return this.md5_cmn(b ^ c ^ d, a, b, x, s, t);
+  };
+  MD5__MD5.md5_ii = function(a, b, c, d, x, s, t)
+  {
+    return this.md5_cmn(c ^ (b | (~d)), a, b, x, s, t);
+  };
+
+  /*
+   * Add integers, wrapping at 2^32. This uses 16-bit operations internally
+   * to work around bugs in some JS interpreters.
+   */
+  MD5__MD5.safe_add = function(x, y)
+  {
+    var lsw = (x & 0xFFFF) + (y & 0xFFFF);
+    var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+    return (msw << 16) | (lsw & 0xFFFF);
+  };
+
+  /*
+   * Bitwise rotate a 32-bit number to the left.
+   */
+  MD5__MD5.bit_rol = function(num, cnt)
+  {
+    return (num << cnt) | (num >>> (32 - cnt));
+  };
+
+  exports.MD5 = MD5__default;
+
+  /**
+   * @classdesc StringUtils
+   *
+   * @namespace
+   * @category strings
+   */
+  function StringUtils() {}
+
+
+  StringUtils.stringtoXML = function(text) {
+    if(window.ActiveXObject) {
+      var doc = new ActiveXObject('Microsoft.XMLDOM');
+      doc.async = 'false';
+      doc.loadXML(text);
+    } else {
+      var parser = new DOMParser();
+      var doc = parser.parseFromString(text, 'text/xml');
+    }
+    return doc;
+  };
+
+  exports.StringUtils = StringUtils;
+
+  function Navigator() {}
+
+
+  var Navigator__userAgent;
+  var Navigator__userAgentVersion;
+  Navigator.IE = "IE";
+  Navigator.NS = "NS";
+  Navigator.IOS = "IOS";
+
+  function detectUserAgent() {
+    if(/MSIE (\d+\.\d+);/.test(navigator.userAgent)) { //test for MSIE x.x;
+      Navigator__userAgent = Navigator.IE;
+      Navigator__userAgentVersion = Number(RegExp.$1); // capture x.x portion and store as a number
+    }
+    if(navigator.userAgent.match(/iPad/i) != null) {
+      Navigator__userAgent = Navigator.IOS;
+    }
+    if(/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent)) { //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
+      Navigator__userAgent = Navigator.NS;
+      Navigator__userAgentVersion = Number(RegExp.$1); // capture x.x portion and store as a number
+    }
+  };
+
+  Navigator.getUserAgent = function() {
+    return Navigator__userAgent;
+  };
+  Navigator.getUserAgentVersion = function() {
+    return Navigator__userAgentVersion;
+  };
+
+  exports.Navigator = Navigator;
 
   // jshint unused:false
 

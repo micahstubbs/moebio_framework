@@ -1,3 +1,10 @@
+import { addInteractionEventListener, removeInteractionEventListener } from 'src/Global';
+import StringOperators from "src/operators/strings/StringOperators";
+import DrawTexts from "src/tools/graphic/DrawTexts";
+import StringList from "src/dataStructures/strings/StringList";
+import Interval from "src/dataStructures/numeric/Interval";
+import List from "src/dataStructures/lists/List";
+
 TextBox.prototype.constructor = TextBox;
 
 /**
@@ -19,6 +26,7 @@ function TextBox(configuration) {
 
   this.fontColor = configuration.fontColor == null ? 'black' : configuration.fontColor;
   this.fontSize = configuration.fontSize == null ? '14' : configuration.fontSize;
+  // TODO track down LOADED_FONT
   this.fontName = configuration.fontName == null ? LOADED_FONT : configuration.fontName;
   //this.fontStyle =  configuration.fontStyle==null?null:configuration.fontStyle;
 
@@ -42,6 +50,7 @@ function TextBox(configuration) {
 
   addInteractionEventListener('mouseup', this.mouseUp, this);
 }
+export default TextBox;
 
 TextBox.prototype.getMaxWidth = function() {
   return DrawTexts.getMaxTextWidth(this.lines);
@@ -165,6 +174,7 @@ TextBox.prototype.setText = function(text) {
     lengthAccumulated += (line.length + 1);
   }
 
+  // TODO is this supposed to be this.setText (also see below) or a diff setText
   //DrawTexts.setContextTextProperties(this.fontColor, this.fontSize, this.fontName, null, null, this.fontStyle);
   setText(this.fontColor, this.fontSize, this.fontName, null, null, this.fontStyle);
 
@@ -248,7 +258,7 @@ TextBox.replaceWikiLinks = function(text) {
       indexOpen = -1;
     } else {
       textInsideBrackets = text.substring(indexOpen + 1, indexClose);
-      c.log('text inside brackets: {' + textInsideBrackets + '}');
+      console.log('text inside brackets: {' + textInsideBrackets + '}');
       if(textInsideBrackets.indexOf("[") == -1 && textInsideBrackets.indexOf("]") == -1) {
         if(textInsideBrackets.indexOf(" ") != -1) {
           parts = textInsideBrackets.split(" ");

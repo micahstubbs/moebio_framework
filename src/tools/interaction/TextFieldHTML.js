@@ -1,3 +1,5 @@
+import FastHtml from "src/tools/utils/strings/FastHtml";
+
 TextFieldHTML.prototype.constructor = TextFieldHTML;
 
 /**
@@ -52,6 +54,7 @@ function TextFieldHTML(configuration) {
     FastHtml.linkFunction = this.linkFunction;
   }
 }
+export default TextFieldHTML;
 
 
 

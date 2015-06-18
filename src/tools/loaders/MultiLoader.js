@@ -1,3 +1,7 @@
+import Loader from "src/tools/loaders/Loader";
+import List from "src/dataStructures/lists/List";
+import LoadEvent from "src/tools/loaders/LoadEvent";
+
 MultiLoader.prototype = {};
 MultiLoader.prototype.constructor = MultiLoader;
 
@@ -32,6 +36,7 @@ function MultiLoader() {
   this.DELAY_MILLISECONDS = 1000;
   this.timer;
 }
+export default MultiLoader;
 
 
 
