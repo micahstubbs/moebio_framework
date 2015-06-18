@@ -66,7 +66,7 @@ module.exports = function (grunt) {
     // it can correctly handle circular dependencies.
     shell: {
       esperanto_bundle: {
-        command: './node_modules/esperanto/bin/index.js -b -i src/index.js -s -o dist/moebio_framework_concat.js -a src/index'
+        command: './node_modules/esperanto/bin/index.js -b -i src/index.js -s -o dist/moebio_framework_concat.js -a src/index -m'
       }
     },
 

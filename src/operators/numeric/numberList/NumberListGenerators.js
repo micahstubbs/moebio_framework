@@ -1,9 +1,12 @@
+import NumberList from "src/dataStructures/numeric/NumberList";
+
 function NumberListGenerators() {}
+export default NumberListGenerators;
 
 /**
  * Generate a NumberList with sorted Numbers
  * @param {Number} nValues length of the NumberList
- * 
+ *
  * @param {Number} start first value
  * @param {Number} step increment value
  * @return {NumberList} generated NumberList
@@ -21,6 +24,7 @@ NumberListGenerators.createSortedNumberList = function(nValues, start, step) {
   return numberList;
 };
 
+// TODO: Should this function be here?
 NumberList.createNumberListFromInterval = function(nElements, interval) {
   if(interval == null) interval = new Interval(0, 1);
   var numberList = new NumberList();
@@ -35,7 +39,7 @@ NumberList.createNumberListFromInterval = function(nElements, interval) {
 /**
  * create a list with random numbers
  * @param  {Number} nValues
- * 
+ *
  * @param  {Interval} interval range of the numberList
  * @param  {Number} seed optional seed for seeded random numbers
  * @return {NumberList}

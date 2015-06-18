@@ -5,6 +5,7 @@
  * @category geometry
  */
 function PointOperators() {}
+export default PointOperators;
 
 
 
