@@ -465,7 +465,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:sort
    */
   List__List.prototype.getReversed = function() {
-    var newList = instantiateWithSameType(this);
+    var newList = ClassUtils__instantiateWithSameType(this);
     for(var i = 0; this[i] != null; i++) {
       newList.unshift(this[i]);
     }
@@ -588,7 +588,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   List__List.prototype.clone = function() { //TODO:check this! fromArray should suffice
-    var clonedList = instantiateWithSameType(this);
+    var clonedList = ClassUtils__instantiateWithSameType(this);
     var i;
 
     for(i = 0; this[i] != null; i++) {
@@ -607,7 +607,7 @@ define('src/index', ['exports'], function (exports) {
     var i;
     var dictionary;
 
-    newList = instantiateWithSameType(this);
+    newList = ClassUtils__instantiateWithSameType(this);
     newList.name = this.name;
 
     if(this.type == 'NumberList' || this.type == 'StringList') {
@@ -748,7 +748,7 @@ define('src/index', ['exports'], function (exports) {
   List__List.prototype.add = function(value) {
     if(value.constructor == Number) {
       var i;
-      var array = instantiateWithSameType(this);
+      var array = ClassUtils__instantiateWithSameType(this);
       for(i = 0; i < this.length; i++) {
         array.push(this[i] + value);
       }
@@ -775,7 +775,7 @@ define('src/index', ['exports'], function (exports) {
   List__List.prototype.getRandomElements = function(n, avoidRepetitions) {
     avoidRepetitions = avoidRepetitions == null ? true : avoidRepetitions;
     n = Math.min(n, this.length);
-    var newList = instantiateWithSameType(this);
+    var newList = ClassUtils__instantiateWithSameType(this);
     var element;
 
     while(newList.length < n) {
@@ -881,7 +881,7 @@ define('src/index', ['exports'], function (exports) {
   // }
 
   List__List.prototype.sortOnIndexes = function(indexes) {
-    var result = instantiateWithSameType(this);
+    var result = ClassUtils__instantiateWithSameType(this);
     result.name = this.name;
     var i;
     for(i = 0; this[i] != null; i++) {
@@ -960,7 +960,7 @@ define('src/index', ['exports'], function (exports) {
 
     pairsArray = pairsArray.sort(comparator);
 
-    var newList = instantiateWithSameType(this);
+    var newList = ClassUtils__instantiateWithSameType(this);
     newList.name = this.name;
 
     for(i = 0; this[i] != null; i++) {
@@ -1245,7 +1245,7 @@ define('src/index', ['exports'], function (exports) {
     if(this.type == 'List') {
       var newList = new List__List();
     } else {
-      var newList = instantiateWithSameType(this);
+      var newList = ClassUtils__instantiateWithSameType(this);
     }
     for(var i = 0; this[i] != null; i++) {
       if(i != index) {
@@ -1264,7 +1264,7 @@ define('src/index', ['exports'], function (exports) {
     if(this.type == 'List') {
       var newList = new List__List();
     } else {
-      var newList = instantiateWithSameType(this);
+      var newList = ClassUtils__instantiateWithSameType(this);
     }
 
     newList.name = this.name;
@@ -1282,7 +1282,7 @@ define('src/index', ['exports'], function (exports) {
     if(this.type == 'List') {
       var newList = new List__List();
     } else {
-      var newList = instantiateWithSameType(this);
+      var newList = ClassUtils__instantiateWithSameType(this);
     }
     for(var i = 0; this[i] != null; i++) {
       if(list.indexOf(this[i]) == -1) {
@@ -1296,7 +1296,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   List__List.prototype.getFilteredByFunction = function(func) {
-    var newList = instantiateWithSameType(this);
+    var newList = ClassUtils__instantiateWithSameType(this);
     for(var i = 0; this[i] != null; i++) {
       if(func(this[i])) {
         newList.push(this[i]);
@@ -9931,7 +9931,7 @@ define('src/index', ['exports'], function (exports) {
 
   //global constants
   var src_Global__context;
-  var TwoPi = 2*Math.PI;
+  var src_Global__TwoPi = 2*Math.PI;
   var HalfPi = 0.5*Math.PI;
   var radToGrad = 180/Math.PI;
   var gradToRad = Math.PI/180;
@@ -10623,7 +10623,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   Draw.drawSliderRectangle = function(x, y, width, height) {
-    src_Global__context.arc(x + width * 0.5, y, width * 0.5, Math.PI, TwoPi);
+    src_Global__context.arc(x + width * 0.5, y, width * 0.5, Math.PI, src_Global__TwoPi);
     src_Global__context.lineTo(x + width, y);
     src_Global__context.arc(x + width * 0.5, y + height, width * 0.5, 0, Math.PI);
     src_Global__context.lineTo(x, y);
@@ -10729,10 +10729,10 @@ define('src/index', ['exports'], function (exports) {
       circle0 = _circle;
     }
     if(circle1.x + circle1.z <= circle0.x + circle0.z) {
-      src_Global__context.arc(circle1.x, circle1.y, circle1.z, 0, TwoPi);
+      src_Global__context.arc(circle1.x, circle1.y, circle1.z, 0, src_Global__TwoPi);
       return;
     } else if(circle0.x - circle0.z >= circle1.x - circle1.z) {
-      src_Global__context.arc(circle0.x, circle0.y, circle0.z, 0, TwoPi);
+      src_Global__context.arc(circle0.x, circle0.y, circle0.z, 0, src_Global__TwoPi);
       return;
     }
 
@@ -11267,7 +11267,7 @@ define('src/index', ['exports'], function (exports) {
 
     for(var i = 0; i < nAttempts; i++) {
       center = frame.getRandomPoint();
-      for(angle = 0; angle += 0.1; angle <= TwoPi) {
+      for(angle = 0; angle += 0.1; angle <= src_Global__TwoPi) {
         r = angle;
         var data = src_Global__context.getImageData(center.x + r * Math.cos(angle) - frame.x, center.y + r * Math.sin(angle) - frame.y, 1, 1).data;
         if(data[0] == 0) {
@@ -17866,7 +17866,7 @@ define('src/index', ['exports'], function (exports) {
    */
   function fCircle(x, y, r) {
     src_Global__context.beginPath();
-    src_Global__context.arc(x, y, r, 0, TwoPi);
+    src_Global__context.arc(x, y, r, 0, src_Global__TwoPi);
     src_Global__context.fill();
   };
 
@@ -17884,7 +17884,7 @@ define('src/index', ['exports'], function (exports) {
    */
   function sCircle(x, y, r) {
     src_Global__context.beginPath();
-    src_Global__context.arc(x, y, r, 0, TwoPi);
+    src_Global__context.arc(x, y, r, 0, src_Global__TwoPi);
     src_Global__context.stroke();
   };
 
@@ -17903,7 +17903,7 @@ define('src/index', ['exports'], function (exports) {
    */
   function fsCircle(x, y, r) {
     src_Global__context.beginPath();
-    src_Global__context.arc(x, y, r, 0, TwoPi);
+    src_Global__context.arc(x, y, r, 0, src_Global__TwoPi);
     src_Global__context.fill();
     src_Global__context.stroke();
   };
@@ -18308,7 +18308,7 @@ define('src/index', ['exports'], function (exports) {
   function fCircleM(x, y, r, margin) { //check if you can avoid repeat
     margin = margin == null ? 0 : margin;
     src_Global__context.beginPath();
-    src_Global__context.arc(x, y, r, 0, TwoPi);
+    src_Global__context.arc(x, y, r, 0, src_Global__TwoPi);
     src_Global__context.fill();
     return Math.pow(x - src_Global__mX, 2) + Math.pow(y - src_Global__mY, 2) < Math.pow(r + margin, 2);
   };
@@ -18336,7 +18336,7 @@ define('src/index', ['exports'], function (exports) {
   function sCircleM(x, y, r, margin) {
     margin = margin == null ? 0 : margin;
     src_Global__context.beginPath();
-    src_Global__context.arc(x, y, r, 0, TwoPi);
+    src_Global__context.arc(x, y, r, 0, src_Global__TwoPi);
     src_Global__context.stroke();
     return Math.pow(x - src_Global__mX, 2) + Math.pow(y - src_Global__mY, 2) < Math.pow(r + margin, 2);
   };
@@ -18367,7 +18367,7 @@ define('src/index', ['exports'], function (exports) {
   function fsCircleM(x, y, r, margin) {
     margin = margin == null ? 0 : margin;
     src_Global__context.beginPath();
-    src_Global__context.arc(x, y, r, 0, TwoPi);
+    src_Global__context.arc(x, y, r, 0, src_Global__TwoPi);
     src_Global__context.stroke();
     src_Global__context.fill();
     return Math.pow(x - src_Global__mX, 2) + Math.pow(y - src_Global__mY, 2) < Math.pow(r + margin, 2);
@@ -18546,7 +18546,7 @@ define('src/index', ['exports'], function (exports) {
   function clipCircle(x, y, r) {
     src_Global__context.save();
     src_Global__context.beginPath();
-    src_Global__context.arc(x, y, r, 0, TwoPi, false);
+    src_Global__context.arc(x, y, r, 0, src_Global__TwoPi, false);
     src_Global__context.closePath();
     src_Global__context.clip();
   };
@@ -20945,6 +20945,581 @@ define('src/index', ['exports'], function (exports) {
   };
 
   exports.Navigator = Navigator;
+
+  function Forces(configuration) {
+    this.k = configuration.k ? configuration.k : 0.01;
+    this.dEqSprings = configuration.dEqSprings ? configuration.dEqSprings : 100;
+    this.dEqRepulsors = configuration.dEqRepulsors ? configuration.dEqRepulsors : 500;
+    this.friction = configuration.friction ? configuration.friction : 0.8;
+
+    this.nodeList = new NodeList__default();
+
+    this.forcesList = new List__default();
+    this.equilibriumDistances = new NumberList__default();
+    this.forcesTypeList = new List__default();
+    this.fromNodeList = new NodeList__default();
+    this.toNodeList = new NodeList__default();
+
+    this._i0 = 0;
+  }
+
+
+  /**
+   * eqDistancesMode:
+   * 		0: all distances this.dEqSprings
+   * 		1: shorter distances for heavy relations
+   * 		2: nodes degrees sum proportional to distance
+   */
+  Forces.prototype.forcesForNetwork = function(network, initRadius, initCenter, eqDistancesMode, addShortRepulsorsOnRelated) {
+    initRadius = initRadius || 0;
+    initCenter = initCenter || new Point__default(0, 0);
+    eqDistancesMode = eqDistancesMode == null ? 0 : eqDistancesMode;
+    addShortRepulsorsOnRelated = addShortRepulsorsOnRelated == null ? false : addShortRepulsorsOnRelated;
+
+
+    this.forcesList = new List__default();
+    this.equilibriumDistances = new NumberList__default();
+    this.forcesTypeList = new List__default();
+    this.fromNodeList = new NodeList__default();
+    this.toNodeList = new NodeList__default();
+
+    var node0;
+    var node1;
+    var nNodes = network.nodeList.length;
+    var i;
+    var j;
+    var relations = network.relationList;
+    var angle;
+
+    for(i = 0; i < nNodes; i++) {
+      if(initRadius == 0) {
+        this.addNode(network.nodeList[i], new Point__default(network.nodeList[i].x, network.nodeList[i].y));
+      } else {
+        angle = Math.random() * TwoPi;
+        this.addNode(network.nodeList[i], new Point__default(initCenter.x + initRadius * Math.cos(angle), initCenter.y + initRadius * Math.sin(angle)));
+      }
+    }
+
+    for(i = 0; i < nNodes - 1; i++) {
+      node0 = network.nodeList[i];
+      for(j = i + 1; j < nNodes; j++) {
+        node1 = network.nodeList[j];
+        if(relations.nodesAreConnected(node0, node1)) {
+          switch(eqDistancesMode) {
+            case 0:
+              this.equilibriumDistances.push(this.dEqSprings);
+              break;
+            case 1:
+              this.equilibriumDistances.push((1.1 - relations.getFirstRelationByIds(node0.id, node1.id, false).weight) * this.dEqSprings);
+              break;
+            case 2:
+              this.equilibriumDistances.push(Math.sqrt(Math.min(node0.nodeList.length, node1.nodeList.length)) * this.dEqSprings * 0.1);
+              break;
+          }
+
+          this.addForce(node0, node1, "Spring");
+
+          if(addShortRepulsorsOnRelated) {
+            this.equilibriumDistances.push(this.dEqRepulsors * 0.5);
+            this.addForce(node0, node1, "Repulsor");
+          }
+
+        } else {
+          this.equilibriumDistances.push(this.dEqRepulsors);
+          this.addForce(node0, node1, "Repulsor");
+        }
+      }
+    }
+  };
+
+  Forces.prototype.addNode = function(node, initPosition, initSpeed) {
+    initPosition = initPosition == null ? new Point__default(Math.random() * 200 - 100, Math.random() * 200 - 100) : initPosition;
+    initSpeed = initSpeed == null ? new Point__default(0, 0) : initSpeed;
+    this.nodeList.addNode(node);
+    node.x = initPosition.x;
+    node.y = initPosition.y;
+    node.vx = initSpeed.x;
+    node.vy = initSpeed.y;
+    node.ax = 0;
+    node.ay = 0;
+  };
+
+  Forces.prototype.addForce = function(node0, node1, type, equilibriumDistance) {
+    this.fromNodeList.addNode(node0);
+    this.toNodeList.addNode(node1);
+    this.forcesList.push(node0.id + "*" + node1.id + "*" + type);
+    this.forcesTypeList.push(type);
+    if(equilibriumDistance != null) this.equilibriumDistances.push(equilibriumDistance);
+  };
+
+  Forces.prototype.calculate = function() {
+    var i;
+    var node0, node1;
+    var type;
+    var force;
+    var dx, dy, d;
+    var eqDistance;
+
+    // 1. reset accelerations
+    this._resetAccelerations(); //TODO: this can be removed if accelerations are resetd in applyForces [!]
+
+    // 2. calculate new accelerations from forces
+    for(i = 0; this.forcesList[i] != null; i++) {
+      node0 = this.fromNodeList[i];
+      node1 = this.toNodeList[i];
+      type = this.forcesTypeList[i];
+      dx = node1.x - node0.x;
+      dy = node1.y - node0.y;
+      d = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+      eqDistance = this.equilibriumDistances[i];
+      if(type == 'Repulsor' && d > eqDistance) continue;
+      if(type == 'Attractor' && d < eqDistance) continue;
+
+      switch(type) {
+        case "Spring":
+        case "Repulsor":
+        case "Attractor":
+          force = this.k * (d - eqDistance) / d;
+          node0.ax += force * dx;
+          node0.ay += force * dy;
+          node1.ax -= force * dx;
+          node1.ay -= force * dy;
+          break;
+        case "DirectedSpring":
+          force = this.k * (d - eqDistance) / d;
+          node1.ax -= force * dx;
+          node1.ay -= force * dy;
+          break;
+        case "DirectedRepulsor":
+          if(d < eqDistance) {
+            force = this.k * (d - eqDistance) / d;
+            node1.ax -= force * dx;
+            node1.ay -= force * dy;
+          }
+          break;
+      }
+    }
+  };
+
+  Forces.prototype.attractionToPoint = function(point, strength, limit) {
+    strength = strength == null ? 1 : strength;
+    var node;
+    var force;
+    var dx;
+    var dy;
+    var d2;
+    for(i = 0; this.nodeList[i] != null; i++) {
+      node = this.nodeList[i];
+      dx = point.x - node.x;
+      dy = point.y - node.y;
+      d2 = Math.pow(dx, 2) + Math.pow(dy, 2);
+      if(limit != null) {
+        force = Math.min(strength / d2, limit);
+      } else {
+        force = strength / d2;
+      }
+      node.ax += force * dx;
+      node.ay += force * dy;
+    }
+  };
+
+
+  Forces.prototype.avoidOverlapping = function(delta) {
+    delta = delta || 0;
+
+    var i;
+    var node0;
+    var node1;
+    var x0l, y0t, x0r, y0b, x1l, y1t, x1r, y1b;
+    var vx;
+    var vy;
+    var dM = delta * 0.5;
+    var l = this.nodeList.length;
+
+    console.log(this.nodeList.length);
+
+    for(i = 0; this.nodeList[i + 1] != null; i++) {
+      node0 = this.nodeList[(i + this._i0) % l];
+      x0l = node0.x - node0.width * 0.5 - dM;
+      x0r = node0.x + node0.width * 0.5 + dM;
+      y0t = node0.y - node0.height * 0.5 - dM;
+      y0b = node0.y + node0.height * 0.5 + dM;
+      for(j = i + 1; this.nodeList[j] != null; j++) {
+        node1 = this.nodeList[(j + this._i0 + i) % l];
+        x1l = node1.x - node1.width * 0.5 - dM;
+        x1r = node1.x + node1.width * 0.5 + dM;
+        y1t = node1.y - node1.height * 0.5 - dM;
+        y1b = node1.y + node1.height * 0.5 + dM;
+        if(((x0l > x1l && x0l < x1r) ||  (x0r > x1l && x0r < x1r)) && ((y0t > y1t && y0t < y1b) || (y0b > y1t && y0b < y1b))) {
+          vx = node1.x - node0.x;
+          vy = node1.y - node0.y;
+
+          if(Math.abs(vx) > Math.abs(vy)) {
+            if(vx > 0) {
+              node0.x -= (x0r - x1l) * 0.5;
+              node1.x += (x0r - x1l) * 0.5;
+            } else {
+              node0.x += (x1r - x0l) * 0.5;
+              node1.x -= (x1r - x0l) * 0.5;
+            }
+          } else {
+            if(vy > 0) {
+              node0.y -= (y0b - y1t) * 0.5;
+              node1.y += (y0b - y1t) * 0.5;
+            } else {
+              node0.y += (y1b - y0t) * 0.5;
+              node1.y -= (y1b - y0t) * 0.5;
+            }
+          }
+
+          //setStroke(Math.abs(vx)>Math.abs(vy)?'blue':'red');
+          //sCircle((node0.x+node1.x)*0.5, (node0.y+node1.y)*0.5, Math.max(Math.abs(vx), Math.abs(vy))*0.5);
+        }
+      }
+    }
+    this._i0++;
+  };
+
+  Forces.prototype.avoidOverlappingRadial = function(delta, K) {
+    delta = delta || 0;
+    K = K || 1;
+    var i;
+    var node0;
+    var node1;
+    var l = this.nodeList.length;
+    var vx;
+    var vy;
+    var d;
+    var dMin;
+    var k;
+    var delta2 = delta * 2;
+
+    for(i = 0; this.nodeList[i + 1] != null; i++) {
+      node0 = this.nodeList[(i + this._i0) % l];
+      for(j = i + 1; this.nodeList[j] != null; j++) {
+        node1 = this.nodeList[(j + this._i0 + i) % l];
+        vx = node1.x - node0.x;
+        vy = node1.y - node0.y;
+        d = Math.pow(vx, 2) + Math.pow(vy, 2);
+        dMin = Math.pow(node0.r + node1.r + delta2, 2);
+        if(d < dMin) {
+          dMin = Math.sqrt(dMin);
+          d = Math.sqrt(d);
+          k = 0.5 * (dMin - d) / d;
+          node0.x -= K * k * vx;
+          node0.y -= K * k * vy;
+          node1.x += K * k * vx;
+          node1.y += K * k * vy;
+        }
+      }
+    }
+    this._i0++;
+  };
+
+
+
+  Forces.prototype.applyForces = function() {
+    var node;
+
+    for(i = 0; this.nodeList[i] != null; i++) {
+      node = this.nodeList[i];
+      node.vx += node.ax;
+      node.vy += node.ay;
+      node.vx *= this.friction;
+      node.vy *= this.friction;
+      node.x += node.vx;
+      node.y += node.vy;
+    }
+  };
+
+  Forces.prototype.deactivateForcesFromNode = function(node) {
+    node.vx = node.vy = node.ax = node.ay = 0;
+  };
+
+  Forces.prototype.destroy = function() {
+    delete this.k;
+    delete this.dEqSprings;
+    delete this.dEqRepulsors;
+    delete this.friction;
+    this.nodeList.destroy();
+    delete this.nodeList;
+    this.forcesList.destroy();
+    delete this.forcesList;
+    this.equilibriumDistances.destroy();
+    delete this.equilibriumDistances;
+    this.forcesTypeList.destroy();
+    delete this.forcesTypeList;
+    this.fromNodeList.destroy();
+    delete this.fromNodeList;
+    this.toNodeList.destroy();
+    delete this.toNodeList;
+    delete this._i0;
+  };
+
+  ///////////////////////////////////////////PRIVATE
+
+
+  Forces.prototype._resetAccelerations = function() {
+    var node;
+    for(i = 0; this.nodeList[i] != null; i++) {
+      node = this.nodeList[i];
+      node.ax = 0;
+      node.ay = 0;
+    }
+  };
+
+  exports.Forces = Forces;
+
+  Engine3D.prototype.constructor = Engine3D;
+
+  /**
+   * @classdesc Engine3D
+   *
+   * @param {Object} configuration Configuration for engine
+   * @param {Number} configuration.lens Distance of camera from scene
+   * @param {Point3D} configuration.angles Initial angle of camera
+   * @constructor
+   * @example
+   * // creates a new Engine3D instance.
+   * var engine = new Engine3D({
+   *   lens:300
+   * });
+   * @category geometry
+   */
+  function Engine3D(configuration) {
+    configuration = configuration == null ? {} : configuration;
+    this.lens = configuration.lens == null ? 300 : configuration.lens;
+
+    this._freeRotation = false;
+
+    this.setBasis(new Polygon3D(new Point3D(1, 0, 0), new Point3D(0, 1, 0), new Point3D(0, 0, 1)));
+
+    this._cuttingPlane = 10;
+
+    if(configuration.angles != null) this.setAngles(configuration.angles);
+  }
+
+
+  Engine3D.prototype.setBasis = function(point3D) {
+    this._basis = point3D.clone();
+    this._basisBase = point3D.clone();
+    this._provisionalBase = point3D.clone();
+  }
+
+  /**
+   * setAngles - set viewing angle of camera on 3D scene.
+   *
+   * @param {Point3D} point3D viewing angle of the camera.
+   * @example
+   * var engine = new Engine3D();
+   * engine.setAngles(new Point3D(0.2,-HalfPi*1.2, 0.05));
+   */
+  Engine3D.prototype.setAngles = function(point3D) {
+    this._angles = point3D.clone();
+    this._freeRotation = false;
+    this._basis = this.basis3DRotation(this._basisBase, this._angles);
+  }
+
+  /**
+   * applyRotation - Add rotation to existing 3D scene.
+   *
+   * @param {Point3D} planeVector rotation vector to add to scene.
+   */
+  Engine3D.prototype.applyRotation = function(planeVector) {
+    if(!this._freeRotation) {
+      this._freeRotation = true;
+      this.updateAngles();
+      this._provisionalBase[0] = this._basis[0].clone();
+      this._provisionalBase[1] = this._basis[1].clone();
+      this._provisionalBase[2] = this._basis[2].clone();
+    }
+    this._basis[0] = this.point3DRotation(this._provisionalBase[0], new Point3D(-planeVector.y, planeVector.x, 0));
+    this._basis[1] = this.point3DRotation(this._provisionalBase[1], new Point3D(-planeVector.y, planeVector.x, 0));
+    this._basis[2] = this.point3DRotation(this._provisionalBase[2], new Point3D(-planeVector.y, planeVector.x, 0));
+    this._provisionalBase[0] = this._basis[0].clone();
+    this._provisionalBase[1] = this._basis[1].clone();
+    this._provisionalBase[2] = this._basis[2].clone();
+  }
+
+  /**
+   * projectPoint3D - Use the current rotation of the scene and the viewpoint
+   * of the camera to project a single point into this space.
+   *
+   * @param {Point3D} point3D point to project
+   */
+  Engine3D.prototype.projectPoint3D = function(point3D) {
+    var prescale = this.lens / (this.lens + (this._basis[0].z * point3D.x + this._basis[1].z * point3D.y + this._basis[2].z * point3D.z));
+    return new Point3D((this._basis[0].x * point3D.x + this._basis[1].x * point3D.y + this._basis[2].x * point3D.z) * prescale, (this._basis[0].y * point3D.x + this._basis[1].y * point3D.y + this._basis[2].y * point3D.z) * prescale, prescale);
+  }
+
+  Engine3D.prototype.projectCoordinates = function(x, y, z) {
+    var prescale = this.lens / (this.lens + (this._basis[0].z * x + this._basis[1].z * y + this._basis[2].z * z));
+    return new Point3D((this._basis[0].x * x + this._basis[1].x * y + this._basis[2].x * z) * prescale, (this._basis[0].y * x + this._basis[1].y * y + this._basis[2].y * z) * prescale, prescale);
+  }
+
+  Engine3D.prototype.projectPoint3DNode = function(node) {
+    var prescale = this.lens / (this.lens + (this._basis[0].z * node.x + this._basis[1].z * node.y + this._basis[2].z * node.z));
+    return new Point3D((this._basis[0].x * node.x + this._basis[1].x * node.y + this._basis[2].x * node.z) * prescale, (this._basis[0].y * node.x + this._basis[1].y * node.y + this._basis[2].y * node.z) * prescale, prescale);
+  }
+
+  Engine3D.prototype.scale = function(point3D) {
+    return this.lens / (this.lens + (this._basis[0].z * point3D.x + this._basis[1].z * point3D.y + this._basis[2].z * point3D.z));
+  }
+
+
+  Engine3D.prototype.sortedIndexesByPointsScale = function(polygon3D) {
+    var pairsArray = new Array();
+
+    for(var i = 0; polygon3D[i] != null; i++) {
+      pairsArray[i] = [polygon3D[i], i];
+    }
+
+    UTLITARY_GLOBAL_VAR = this._basis;
+    pairsArray = pairsArray.sort(this._sortingCriteria, this._basis);
+    UTLITARY_GLOBAL_VAR = null;
+
+    var indexes = new NumberList();
+
+    for(var i = 0; polygon3D[i] != null; i++) {
+      indexes[i] = pairsArray[i][1];
+    }
+
+    return indexes;
+  }
+
+  Engine3D.prototype.sortListByPointsScale = function(list, polygon3D) {
+    var pairsArray = new Array();
+
+    for(var i = 0; list[i] != null; i++) {
+      pairsArray[i] = [polygon3D[i], list[i]];
+    }
+
+    UTLITARY_GLOBAL_VAR = this._basis;
+    pairsArray = pairsArray.sort(this._sortingCriteria, this._basis);
+    UTLITARY_GLOBAL_VAR = null;
+
+    var newList = ClassUtils__instantiateWithSameType(list);
+    newList.name = list;
+
+    for(var i = 0; list[i] != null; i++) {
+      newList[i] = pairsArray[i][1];
+    }
+
+    return newList;
+  }
+  Engine3D.prototype._sortingCriteria = function(array0, array1, basis) {
+    var point3D0 = array0[0];
+    var point3D1 = array1[0];
+    return(UTLITARY_GLOBAL_VAR[0].z * point3D0.x + UTLITARY_GLOBAL_VAR[1].z * point3D0.y + UTLITARY_GLOBAL_VAR[2].z * point3D0.z < UTLITARY_GLOBAL_VAR[0].z * point3D1.x + UTLITARY_GLOBAL_VAR[1].z * point3D1.y + UTLITARY_GLOBAL_VAR[2].z * point3D1.z) ? 1 : -1;
+  }
+
+
+  //private methods
+
+  Engine3D.prototype.updateAngles = function() {
+    this._angles = this.getEulerAngles();
+  }
+  Engine3D.prototype.getEulerAngles = function() {
+    return new Point3D(Math.atan2(-this._basis[1].z, this._basis[2].z), Math.asin(this._basis[0].z), Math.atan2(-this._basis[0].y, this._basis[0].x));
+  }
+
+
+  //rotation
+
+
+  //these must be at Operators3D
+
+  Engine3D.prototype.basis3DRotation = function(basis, angles) {
+    ca = Math.cos(angles.x);
+    sa = Math.sin(angles.x);
+    cb = Math.cos(angles.y);
+    sb = Math.sin(angles.y);
+    cg = Math.cos(angles.z);
+    sg = Math.sin(angles.z);
+
+    return new Polygon3D(new Point3D(basis[0].x * cg * cb + basis[0].y * (cg * sa * sb + sg * ca) + basis[0].z * (sg * sa - cg * ca * sb), -basis[0].x * sg * cb + basis[0].y * (cg * ca - sg * sa * sb) + basis[0].z * (sg * ca * sb + cg * sa), basis[0].x * sb - basis[0].y * sa * cb + basis[0].z * cb * ca), new Point3D(basis[1].x * cg * cb + basis[1].y * (cg * sa * sb + sg * ca) + basis[1].z * (sg * sa - cg * ca * sb), -basis[1].x * sg * cb + basis[1].y * (cg * ca - sg * sa * sb) + basis[1].z * (sg * ca * sb + cg * sa), basis[1].x * sb - basis[1].y * sa * cb + basis[1].z * cb * ca), new Point3D(basis[2].x * cg * cb + basis[2].y * (cg * sa * sb + sg * ca) + basis[2].z * (sg * sa - cg * ca * sb), -basis[2].x * sg * cb + basis[2].y * (cg * ca - sg * sa * sb) + basis[2].z * (sg * ca * sb + cg * sa), basis[2].x * sb - basis[2].y * sa * cb + basis[2].z * cb * ca));
+
+  }
+
+  Engine3D.prototype.point3DRotation = function(point, angles) {
+    var ca = Math.cos(angles.x);
+    var sa = Math.sin(angles.x);
+    var cb = Math.cos(angles.y);
+    var sb = Math.sin(angles.y);
+    var cg = Math.cos(angles.z);
+    var sg = Math.sin(angles.z);
+    return new Point3D(
+      point.x * cg * cb + point.y * (cg * sa * sb + sg * ca) + point.z * (sg * sa - cg * ca * sb), -point.x * sg * cb + point.y * (cg * ca - sg * sa * sb) + point.z * (sg * ca * sb + cg * sa),
+      point.x * sb - point.y * sa * cb + point.z * cb * ca
+    );
+  }
+
+
+
+
+  Engine3D.prototype.line3D = function(point0, point1) {
+    var polygon = new Polygon__default();
+
+    var p0 = point0; //while there's no Transformation3D'
+    var prescale0 = this.lens / (this.lens + (this._basis[0].z * p0.x + this._basis[1].z * p0.y + this._basis[2].z * p0.z));
+
+    //
+    var p1 = point1;
+    var prescale1 = this.lens / (this.lens + (this._basis[0].z * p1.x + this._basis[1].z * p1.y + this._basis[2].z * p1.z));
+
+    if(prescale0 > 0 || prescale1 > 0) {
+      if(prescale0 > 0 && prescale1 > 0) {
+        polygon.push(new Point__default((this._basis[0].x * p0.x + this._basis[1].x * p0.y + this._basis[2].x * p0.z) * prescale0, (this._basis[0].y * p0.x + this._basis[1].y * p0.y + this._basis[2].y * p0.z) * prescale0));
+        polygon.push(new Point__default((this._basis[0].x * p1.x + this._basis[1].x * p1.y + this._basis[2].x * p1.z) * prescale1, (this._basis[0].y * p1.x + this._basis[1].y * p1.y + this._basis[2].y * p1.z) * prescale1));
+        return polygon;
+      } else {
+        var p0B = new Point3D(this._basis[0].x * p0.x + this._basis[1].x * p0.y + this._basis[2].x * p0.z, this._basis[0].y * p0.x + this._basis[1].y * p0.y + this._basis[2].y * p0.z, this._basis[0].z * p0.x + this._basis[1].z * p0.y + this._basis[2].z * p0.z);
+        var p1B = new Point3D(this._basis[0].x * p1.x + this._basis[1].x * p1.y + this._basis[2].x * p1.z, this._basis[0].y * p1.x + this._basis[1].y * p1.y + this._basis[2].y * p1.z, this._basis[0].z * p1.x + this._basis[1].z * p1.y + this._basis[2].z * p1.z);
+        var t = (-this.lens + this._cuttingPlane - p0B.z) / (p1B.z - p0B.z);
+        var pM = new Point3D(p0B.x + t * (p1B.x - p0B.x), p0B.y + t * (p1B.y - p0B.y), -this.lens + this._cuttingPlane);
+        var prescaleM = this.lens / (this.lens + pM.z);
+        if(prescale0 > 0) {
+          polygon.push(new Point__default(p0B.x * prescale0, p0B.y * prescale0));
+          polygon.push(new Point__default(pM.x * prescaleM, pM.y * prescaleM));
+        } else {
+          polygon.push(new Point__default(pM.x * prescaleM, pM.y * prescaleM));
+          polygon.push(new Point__default(p1B.x * prescale1, p1B.y * prescale1));
+        }
+        return polygon;
+      }
+    }
+    return null;
+  };
+
+  Engine3D.prototype.quadrilater = function(p0, p1, p2, p3) {
+    var polygon3D = new Polygon3D();
+
+    var l0 = this.line3D(p0, p1);
+    var l1 = this.line3D(p1, p2);
+    var l2 = this.line3D(p2, p3);
+    var l3 = this.line3D(p3, p0);
+
+    if(l0 != null) {
+      if(l3 == null ||  (l0[0].x != l3[1].x && l0[0].y != l3[1].y)) polygon3D.push(l0[0]);
+      polygon3D.push(l0[1]);
+    }
+    if(l1 != null) {
+      if(l0 == null ||  (l1[0].x != l0[1].x && l1[0].y != l0[1].y)) polygon3D.push(l1[0]);
+      polygon3D.push(l1[1]);
+    }
+    if(l2 != null) {
+      if(l1 == null || (l2[0].x != l1[1].x && l2[0].y != l1[1].y)) polygon3D.push(l2[0]);
+      polygon3D.push(l2[1]);
+    }
+    if(l3 != null) {
+      if(l2 == null || (l3[0].x != l2[1].x && l3[0].y != l2[1].y)) polygon3D.push(l3[0]);
+      polygon3D.push(l3[1]);
+    }
+
+    return polygon3D;
+  };
+
+  exports.Engine3D = Engine3D;
 
   // jshint unused:false
 

@@ -1,3 +1,9 @@
+import Point from "src/dataStructures/geometry/Point";
+import Point3D from "src/dataStructures/geometry/Point3D";
+import Polygon from "src/dataStructures/geometry/Polygon";
+import Polygon3D from "src/dataStructures/geometry/Polygon3D";
+import { instantiateWithSameType } from "src/tools/utils/code/ClassUtils";
+
 Engine3D.prototype.constructor = Engine3D;
 
 /**
@@ -26,6 +32,7 @@ function Engine3D(configuration) {
 
   if(configuration.angles != null) this.setAngles(configuration.angles);
 }
+export default Engine3D;
 
 Engine3D.prototype.setBasis = function(point3D) {
   this._basis = point3D.clone();
@@ -216,7 +223,7 @@ Engine3D.prototype.line3D = function(point0, point1) {
     }
   }
   return null;
-}
+};
 
 Engine3D.prototype.quadrilater = function(p0, p1, p2, p3) {
   var polygon3D = new Polygon3D();
@@ -244,4 +251,4 @@ Engine3D.prototype.quadrilater = function(p0, p1, p2, p3) {
   }
 
   return polygon3D;
-}
+};

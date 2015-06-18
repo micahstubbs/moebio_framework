@@ -8,6 +8,7 @@ import Polygon from "src/dataStructures/geometry/Polygon";
 import PolygonList from "src/dataStructures/geometry/PolygonList";
 import Table from "src/dataStructures/lists/Table";
 import NumberTable from "src/dataStructures/numeric/NumberTable";
+import { instantiateWithSameType } from "src/tools/utils/code/ClassUtils";
 
 List.prototype = new DataModel();
 List.prototype.constructor = List;

@@ -1,3 +1,8 @@
+import NodeList from "src/dataStructures/structures/lists/NodeList";
+import List from "src/dataStructures/lists/List";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import Point from "src/dataStructures/geometry/Point";
+
 /**
  * @classdesc Force layout
  *
@@ -20,6 +25,7 @@ function Forces(configuration) {
 
   this._i0 = 0;
 }
+export default Forces;
 
 /**
  * eqDistancesMode:
@@ -193,7 +199,7 @@ Forces.prototype.avoidOverlapping = function(delta) {
   var dM = delta * 0.5;
   var l = this.nodeList.length;
 
-  c.log(this.nodeList.length);
+  console.log(this.nodeList.length);
 
   for(i = 0; this.nodeList[i + 1] != null; i++) {
     node0 = this.nodeList[(i + this._i0) % l];

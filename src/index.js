@@ -204,9 +204,13 @@ import { typeOf, instantiate, getTextFromObject, instantiateWithSameType, isArra
 export { typeOf, instantiate, getTextFromObject, instantiateWithSameType, isArray,
   evalJavaScriptFunction, argumentsToArray, TimeLogger };
 
-// import Forces from "src/tools/physics/Forces";
-// import Engine3D from "src/tools/threeD/Engine3D";
+// tools/physics
+import Forces from "src/tools/physics/Forces";
+export { Forces };
 
+// tools/threeD
+import Engine3D from "src/tools/threeD/Engine3D";
+export { Engine3D };
 
 // import CountryListDraw from "src/visualization/geo/CountryListDraw";
 // import CirclesVisOperators from "src/visualization/geometry/CirclesVisOperators";
