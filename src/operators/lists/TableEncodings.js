@@ -1,5 +1,8 @@
-function TableEncodings() {}
+import Table from "src/dataStructures/lists/Table";
+import NetworkEncodings from "src/operators/structures/NetworkEncodings";
+import ListGenerators from "src/operators/lists/ListGenerators";
 
+function TableEncodings() {}
 export default TableEncodings;
 
 TableEncodings.ENTER = String.fromCharCode(13);

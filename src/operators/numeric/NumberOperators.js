@@ -5,6 +5,7 @@
  * @category numbers
  */
 function NumberOperators() {}
+export default NumberOperators;
 
 NumberOperators.numberToString = function(value, nDecimals, powersMode, unit) {
   var string = value.toFixed(nDecimals);
