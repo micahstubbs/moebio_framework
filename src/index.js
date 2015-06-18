@@ -176,11 +176,13 @@ export {
   getPixelColorRGBA, captureCanvas, setCursor, getMilliseconds
 };
 
+// tools/interaction
 
-// import DragDetection from "src/tools/interaction/DragDetection";
-// import InputTextFieldHTML from "src/tools/interaction/InputTextFieldHTML";
-// import TextBox from "src/tools/interaction/TextBox";
-// import TextFieldHTML from "src/tools/interaction/TextFieldHTML";
+import DragDetection from "src/tools/interaction/DragDetection";
+import InputTextFieldHTML from "src/tools/interaction/InputTextFieldHTML";
+import TextBox from "src/tools/interaction/TextBox";
+import TextFieldHTML from "src/tools/interaction/TextFieldHTML";
+export { DragDetection, InputTextFieldHTML, TextBox, TextFieldHTML };
 
 // import Loader from "src/tools/loaders/Loader";
 // import LoadEvent from "src/tools/loaders/LoadEvent";

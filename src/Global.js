@@ -97,7 +97,7 @@ var _prevMouseX = 0;
 var _prevMouseY = 0;
 var _setIntervalId;
 var _setTimeOutId;
-var _cycleOnMouseMovement = false;
+export var _cycleOnMouseMovement = false;
 var _interactionCancelledFrame;
 var _tLastMouseDown;
 

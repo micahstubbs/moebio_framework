@@ -1,3 +1,8 @@
+/* global clearInterval, setInterval */
+
+import Point from "src/dataStructures/geometry/Point";
+import { mX, mY, addInteractionEventListener } from 'src/Global';
+
 DragDetection.prototype.constructor = DragDetection;
 
 /**
@@ -39,6 +44,7 @@ function DragDetection(configuration) { //mode, listenerFunction, target, areaVe
 
   this.dragVector = new Point();
 }
+export default DragDetection;
 
 DragDetection.prototype.enterframe = function(draggingInstance) {
 
