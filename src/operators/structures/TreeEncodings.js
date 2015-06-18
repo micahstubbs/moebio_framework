@@ -1,4 +1,9 @@
+import Tree from "src/dataStructures/structures/networks/Tree";
+import Node from "src/dataStructures/structures/elements/Node";
+import StringOperators from "src/operators/strings/StringOperators";
+
 function TreeEncodings() {}
+export default TreeEncodings;
 
 //include(frameworksRoot+"operators/strings/StringOperators.js");
 

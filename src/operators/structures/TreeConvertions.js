@@ -1,4 +1,8 @@
+import Tree from "src/dataStructures/structures/networks/Tree";
+import Node from "src/dataStructures/structures/elements/Node";
+
 function TreeConvertions() {}
+export default TreeConvertions;
 
 /**
  * convert a table that describes a tree (higher hierarchies in first lists) into a Tree
