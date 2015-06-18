@@ -1,10 +1,11 @@
 function ListOperators() {}
+export default ListOperators;
 
 
 /**
  * gets an element in a specified position from a List
  * @param  {List} list
- * 
+ *
  * @param  {Number} index
  * @return {Object}
  * tags:
@@ -18,7 +19,7 @@ ListOperators.getElement = function(list, index) {
 /**
  * multi-ouput operator that gives acces to individual elements
  * @param  {List} list
- * 
+ *
  * @param  {Number} fromIndex (default 0)
  * @return {Object} first Object
  * @return {Object} second Object
@@ -126,7 +127,7 @@ ListOperators.indexOf = function(list, element) {
  * concats lists
  * @param  {List} list0
  * @param  {List} list1
- * 
+ *
  * @param  {List} list2
  * @param  {List} list3
  * @param  {List} list4
@@ -148,7 +149,7 @@ ListOperators.concat = function() {
 /**
  * assembles a List
  * @param  {Object} argument0
- * 
+ *
  * @param  {Object} argument1
  * @param  {Object} argument2
  * @param  {Object} argument3
@@ -164,7 +165,7 @@ ListOperators.assemble = function() {
 /**
  * returns a table with two Lists: words and occurrences
  * @param {List} list
- * 
+ *
  * @param {Boolean} sortListsByOccurrences optional, true by default, common words first
  * @param {Boolean} consecutiveRepetitions optional false by default, if true only counts consecutive repetitions
  * @param {Number} optional limit, limits the size of the lists
@@ -436,7 +437,7 @@ ListOperators.getCommonElements = function(list0, list1) {
  * creates a List that contains the union of two List (removing repetitions)
  * @param  {List} list A
  * @param  {List} list B
- * 
+ *
  * @return {List} the union of both NumberLists
  * tags:
  */
@@ -470,7 +471,7 @@ ListOperators.unionLists = function(x, y) {
  * creates a List that contains the intersection of two List (elements present in BOTH lists)
  * @param  {List} list A
  * @param  {List} list B
- * 
+ *
  * @return {List} the intersection of both NumberLists
  * tags:
  */

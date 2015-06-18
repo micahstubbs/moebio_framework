@@ -5,6 +5,7 @@
  * @category basics
  */
 function ListGenerators() {}
+export default ListGenerators;
 
 
 /**

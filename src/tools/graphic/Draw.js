@@ -3,11 +3,12 @@
 //include(frameworksRoot+"operators/geometry/GeometryOperators.js");
 /**
  * @classdesc Draw basic shapes
- * 
+ *
  * @namespace
  * @category geometry
  */
 function Draw() {}
+export default Draw;
 
 Draw.drawSmoothPolygon = function(polygon, closed, amount) { //TODO: add tx, ty
   amount = amount == null ? 30 : amount;

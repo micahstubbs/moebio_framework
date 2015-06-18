@@ -1,3 +1,10 @@
+import Interval from "src/dataStructures/numeric/Interval";
+import Rectangle from "src/dataStructures/geometry/Rectangle";
+import List from "src/dataStructures/lists/List";
+import ListOperators from "src/operators/lists/ListOperators";
+import RectangleList from "src/dataStructures/geometry/RectangleList";
+import ListGenerators from "src/operators/lists/ListGenerators";
+
 /**
  * @classdesc Provides a set of tools that work with Rectangles
  *
@@ -5,6 +12,7 @@
  * @category geometry
  */
 function RectangleOperators() {}
+export default RectangleOperators;
 
 
 /**

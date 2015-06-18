@@ -1,3 +1,6 @@
+import PolygonList from "src/dataStructures/geometry/PolygonList";
+import PolygonOperators from "src/operators/geometry/PolygonOperators";
+
 /**
  * @classdesc Tools to manipulate {@link PolygonList|Polygon Lists}.
  *
@@ -5,7 +8,7 @@
  * @category geometry
  */
 function PolygonListOperators() {}
-
+export default PolygonListOperators;
 
 PolygonListOperators.simplifyPolygons = function(polygonList, margin, removeEmptyPolygons) {
   var newPolygonList = new PolygonList();
