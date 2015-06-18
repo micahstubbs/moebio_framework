@@ -343,7 +343,7 @@ define('src/index', ['exports'], function (exports) {
 	      newList = PolygonList.fromArray(this, false);
 	      break;
 	    case "Node":
-	      newList = NodeList.fromArray(this, false);
+	      newList = NodeList__default.fromArray(this, false);
 	      break;
 	    case "Relation":
 	      newList = RelationList.fromArray(this, false);
@@ -1318,7 +1318,7 @@ define('src/index', ['exports'], function (exports) {
 	    } else if(this.type == "StringList") {
 	      return StringList__default.fromArray(this._concat.apply(this, arguments), false);
 	    } else if(this.type == "NodeList") { //[!] concat breaks the getNodeById in NodeList
-	      return NodeList.fromArray(this._concat.apply(this, arguments), false);
+	      return NodeList__default.fromArray(this._concat.apply(this, arguments), false);
 	    } else if(this.type == "DateList") {
 	      return DateList.fromArray(this._concat.apply(this, arguments), false);
 	    } else if(this.type == "Table") {
@@ -1471,7 +1471,7 @@ define('src/index', ['exports'], function (exports) {
 	      return StringList__default.fromArray(this._splice.apply(this, arguments));
 	      break;
 	    case 'NodeList':
-	      return NodeList.fromArray(this._splice.apply(this, arguments));
+	      return NodeList__default.fromArray(this._splice.apply(this, arguments));
 	      break;
 	    case 'DateList':
 	      return DateList.fromArray(this._splice.apply(this, arguments));
@@ -2342,7 +2342,7 @@ define('src/index', ['exports'], function (exports) {
 	  return list;
 	};
 
-	function removeAccentsAndDiacritics(string) {
+	function StringOperators__removeAccentsAndDiacritics(string) {
 	  var r = string.replace(new RegExp(/[àáâãäå]/g), "a");
 	  r = r.replace(new RegExp(/æ/g), "ae");
 	  r = r.replace(new RegExp(/ç/g), "c");
@@ -3745,8 +3745,8 @@ define('src/index', ['exports'], function (exports) {
 
 	exports.Polygon = Polygon__default;
 
-	NodeList.prototype = new List__default();
-	NodeList.prototype.constructor = NodeList;
+	NodeList__NodeList.prototype = new List__default();
+	NodeList__NodeList.prototype.constructor = NodeList__NodeList;
 
 	/**
 	 * @classdesc A sub-class of {@link List} for storing {@link Node|Nodes}.
@@ -3755,12 +3755,12 @@ define('src/index', ['exports'], function (exports) {
 	 * @constructor
 	 * @category networks
 	 */
-	function NodeList() {
+	function NodeList__NodeList() {
 	  //var array=List.apply(this, arguments);
 
 	  //if(arguments && arguments.length>0) {c.l('UEUEUEUE, arguments.length', arguments.length); var a; a.push(0)};
 
-	  var array = NodeList.fromArray([]);
+	  var array = NodeList__NodeList.fromArray([]);
 
 	  if(arguments && arguments.length > 0) {
 	    var args = Array.prototype.slice.call(arguments);
@@ -3772,7 +3772,7 @@ define('src/index', ['exports'], function (exports) {
 
 	  return array;
 	}
-
+	var NodeList__default = NodeList__NodeList;
 
 	/**
 	 * Creates NodeList from raw Array.
@@ -3782,14 +3782,14 @@ define('src/index', ['exports'], function (exports) {
 	 * convert strings to Node instances with the strings used as the Node's id and name.
 	 * @return {NodeList}
 	 */
-	NodeList.fromArray = function(array, forceToNode) {
+	NodeList__NodeList.fromArray = function(array, forceToNode) {
 	  forceToNode = forceToNode == null ? false : forceToNode;
 
 	  var result = List__default.fromArray(array);
 
 	  if(forceToNode) {
 	    for(var i = 0; i < result.length; i++) {
-	      result[i] = ClassUtils__typeOf(result[i]) == "Node" ? result[i] : (new Node(String(result[i]), String(result[i])));
+	      result[i] = ClassUtils__typeOf(result[i]) == "Node" ? result[i] : (new Node__default(String(result[i]), String(result[i])));
 	    }
 	  }
 
@@ -3801,20 +3801,20 @@ define('src/index', ['exports'], function (exports) {
 	  Array(); //????
 
 	  //assign methods to array:
-	  result.deleteNodes = NodeList.prototype.deleteNodes;
-	  result.addNode = NodeList.prototype.addNode;
-	  result.addNodes = NodeList.prototype.addNodes;
-	  result.removeNode = NodeList.prototype.removeNode;
-	  result.removeNodeAtIndex = NodeList.prototype.removeNodeAtIndex;
-	  result.getNodeByName = NodeList.prototype.getNodeByName;
-	  result.getNodeById = NodeList.prototype.getNodeById;
-	  result.getNodesByIds = NodeList.prototype.getNodesByIds;
-	  result.getNewId = NodeList.prototype.getNewId;
-	  result.normalizeWeights = NodeList.prototype.normalizeWeights;
-	  result.getWeights = NodeList.prototype.getWeights;
-	  result.getIds = NodeList.prototype.getIds;
-	  result.getDegrees = NodeList.prototype.getDegrees;
-	  result.getPolygon = NodeList.prototype.getPolygon;
+	  result.deleteNodes = NodeList__NodeList.prototype.deleteNodes;
+	  result.addNode = NodeList__NodeList.prototype.addNode;
+	  result.addNodes = NodeList__NodeList.prototype.addNodes;
+	  result.removeNode = NodeList__NodeList.prototype.removeNode;
+	  result.removeNodeAtIndex = NodeList__NodeList.prototype.removeNodeAtIndex;
+	  result.getNodeByName = NodeList__NodeList.prototype.getNodeByName;
+	  result.getNodeById = NodeList__NodeList.prototype.getNodeById;
+	  result.getNodesByIds = NodeList__NodeList.prototype.getNodesByIds;
+	  result.getNewId = NodeList__NodeList.prototype.getNewId;
+	  result.normalizeWeights = NodeList__NodeList.prototype.normalizeWeights;
+	  result.getWeights = NodeList__NodeList.prototype.getWeights;
+	  result.getIds = NodeList__NodeList.prototype.getIds;
+	  result.getDegrees = NodeList__NodeList.prototype.getDegrees;
+	  result.getPolygon = NodeList__NodeList.prototype.getPolygon;
 
 	  result._push = Array.prototype.push;
 	  result.push = function(a) {
@@ -3824,8 +3824,8 @@ define('src/index', ['exports'], function (exports) {
 	  };
 
 	  //overriden
-	  result.getWithoutRepetitions = NodeList.prototype.getWithoutRepetitions;
-	  result.clone = NodeList.prototype.clone;
+	  result.getWithoutRepetitions = NodeList__NodeList.prototype.getWithoutRepetitions;
+	  result.clone = NodeList__NodeList.prototype.clone;
 
 	  return result;
 	};
@@ -3834,7 +3834,7 @@ define('src/index', ['exports'], function (exports) {
 	 * Clears NodeList.
 	 *
 	 */
-	NodeList.prototype.removeNodes = function() {
+	NodeList__NodeList.prototype.removeNodes = function() {
 	  for(var i = 0; i < this.length; i++) {
 	    this.ids[this[i].id] = null;
 	    this.removeElement(this[i]);
@@ -3846,7 +3846,7 @@ define('src/index', ['exports'], function (exports) {
 	 *
 	 * @param {Node} node Node to add
 	 */
-	NodeList.prototype.addNode = function(node) {
+	NodeList__NodeList.prototype.addNode = function(node) {
 	  this.ids[node.id] = node;
 	  this._push(node);
 	};
@@ -3856,7 +3856,7 @@ define('src/index', ['exports'], function (exports) {
 	 *
 	 * @param {NodeList} nodes Nodes to add.
 	 */
-	NodeList.prototype.addNodes = function(nodes) {
+	NodeList__NodeList.prototype.addNodes = function(nodes) {
 	  var i;
 	  for(i = 0; nodes[i] != null; i++) {
 	    this.addNode(nodes[i]);
@@ -3868,7 +3868,7 @@ define('src/index', ['exports'], function (exports) {
 	 *
 	 * @param {Node} node Node to remove.
 	 */
-	NodeList.prototype.removeNode = function(node) {
+	NodeList__NodeList.prototype.removeNode = function(node) {
 	  this.ids[node.id] = null;
 	  this.removeElement(node);
 	};
@@ -3878,7 +3878,7 @@ define('src/index', ['exports'], function (exports) {
 	 *
 	 * @param {Number} index The index of the Node to remove.
 	 */
-	NodeList.prototype.removeNodeAtIndex = function(index) {
+	NodeList__NodeList.prototype.removeNodeAtIndex = function(index) {
 	  this.ids[this[index].id] = null;
 	  this.splice(index, 1);
 	};
@@ -3887,7 +3887,7 @@ define('src/index', ['exports'], function (exports) {
 	 * Normalizes all weights associated with Nodes in NodeList
 	 * to a value between 0 and 1. Works under the assumption that weights are >= 0.
 	 */
-	NodeList.prototype.normalizeWeights = function() {
+	NodeList__NodeList.prototype.normalizeWeights = function() {
 	  var i;
 	  var max = -9999999;
 	  for(i = 0; this[i] != null; i++) {
@@ -3905,7 +3905,7 @@ define('src/index', ['exports'], function (exports) {
 	 *
 	 * @return {Node} Node with name matching input name. Null if no such Node.
 	 */
-	NodeList.prototype.getNodeByName = function(name) {
+	NodeList__NodeList.prototype.getNodeByName = function(name) {
 	  var i;
 	  for(i = 0; i < this.length; i++) {
 	    if(this[i].name == name) {
@@ -3922,7 +3922,7 @@ define('src/index', ['exports'], function (exports) {
 	 * @return {Node}
 	 * tags:search
 	 */
-	NodeList.prototype.getNodeById = function(id) {
+	NodeList__NodeList.prototype.getNodeById = function(id) {
 	  return this.ids[id];
 	};
 
@@ -3934,8 +3934,8 @@ define('src/index', ['exports'], function (exports) {
 	 * @param {NumberList} ids Ids of Nodes to extract.
 	 * @return {NodeList}
 	 */
-	NodeList.prototype.getNodesByIds = function(ids) {
-	  newNodelist = new NodeList();
+	NodeList__NodeList.prototype.getNodesByIds = function(ids) {
+	  newNodelist = new NodeList__NodeList();
 	  var node;
 	  for(var i = 0; ids[i] != null; i++) {
 	    node = this.ids[ids[i]];
@@ -3951,7 +3951,7 @@ define('src/index', ['exports'], function (exports) {
 	 * @return {NumberList}
 	 * tags:
 	 */
-	NodeList.prototype.getWeights = function() {
+	NodeList__NodeList.prototype.getWeights = function() {
 	  var numberList = new NumberList__default();
 	  for(var i = 0; this[i] != null; i++) {
 	    numberList[i] = this[i].weight;
@@ -3966,7 +3966,7 @@ define('src/index', ['exports'], function (exports) {
 	 * @return {StringList}
 	 * tags:
 	 */
-	NodeList.prototype.getIds = function() {
+	NodeList__NodeList.prototype.getIds = function() {
 	  var list = new StringList__default();
 	  for(var i = 0; this[i] != null; i++) {
 	    list[i] = this[i].id;
@@ -3982,7 +3982,7 @@ define('src/index', ['exports'], function (exports) {
 	 * @return {NumberList} List containing the number
 	 * of Relations each Node has.
 	 */
-	NodeList.prototype.getDegrees = function() {
+	NodeList__NodeList.prototype.getDegrees = function() {
 	  var numberList = new NumberList__default();
 	  for(var i = 0; this[i] != null; i++) {
 	    numberList[i] = this[i].nodeList.length;
@@ -3999,7 +3999,7 @@ define('src/index', ['exports'], function (exports) {
 	 *
 	 * @return {Polygon}
 	 */
-	NodeList.prototype.getPolygon = function() {
+	NodeList__NodeList.prototype.getPolygon = function() {
 	  var polygon = new Polygon__default();
 	  for(var i = 0; this[i] != null; i++) {
 	    polygon[i] = new Point__default(this[i].x + cX, this[i].y + cY);
@@ -4007,7 +4007,7 @@ define('src/index', ['exports'], function (exports) {
 	  return polygon;
 	};
 
-	NodeList.prototype.getNewId = function() {
+	NodeList__NodeList.prototype.getNewId = function() {
 	  var n = this.length + 1;
 	  for(var i = 0; i < n; i++) {
 	    if(this.getNodeById(String(i)) == null) return String(i);
@@ -4019,8 +4019,8 @@ define('src/index', ['exports'], function (exports) {
 	 *
 	 * @return {NodeList}
 	 */
-	NodeList.prototype.clone = function() {
-	  var newNodeList = new NodeList();
+	NodeList__NodeList.prototype.clone = function() {
+	  var newNodeList = new NodeList__NodeList();
 	  this.forEach(function(node) {
 	    newNodeList.addNode(node);
 	  });
@@ -4037,8 +4037,8 @@ define('src/index', ['exports'], function (exports) {
 	 * @return {undefined}
 	 * @ignore
 	 */
-	NodeList.prototype.getWithoutRepetitions = function() {
-	  newList = new NodeList();
+	NodeList__NodeList.prototype.getWithoutRepetitions = function() {
+	  newList = new NodeList__NodeList();
 	  newList.name = this.name;
 	  for(i = 0; this[i] != null; i++) {
 	    if(newList.getNodeById(this[i].id) == null) newList.addNode(this[i]);
@@ -4046,9 +4046,9 @@ define('src/index', ['exports'], function (exports) {
 	  return newList;
 	};
 
-	exports.NodeList = NodeList;
+	exports.NodeList = NodeList__default;
 
-	RelationList.prototype = new NodeList();
+	RelationList.prototype = new NodeList__default();
 	RelationList.prototype.constructor = RelationList;
 	/**
 	 * RelationList
@@ -4063,7 +4063,7 @@ define('src/index', ['exports'], function (exports) {
 	 * @category networks
 	 */
 	function RelationList() {
-	  var array = NodeList.apply(this, arguments);
+	  var array = NodeList__default.apply(this, arguments);
 	  array.name = "";
 	  //assign methods to array:
 	  array = RelationList.fromArray(array);
@@ -4079,7 +4079,7 @@ define('src/index', ['exports'], function (exports) {
 	 * @return {RelationList}
 	 */
 	RelationList.fromArray = function(array) {
-	  var result = NodeList.fromArray(array);
+	  var result = NodeList__default.fromArray(array);
 	  result.type = "RelationList";
 	  //assign methods to array:
 	  result.addRelation = RelationList.prototype.addRelation;
@@ -4142,7 +4142,7 @@ define('src/index', ['exports'], function (exports) {
 	 */
 	RelationList.prototype.getRelatedNodesToNode = function(node) {
 	  var i;
-	  var relatedNodes = new NodeList();
+	  var relatedNodes = new NodeList__default();
 	  for(i = 0; i < this.length; i++) {
 	    var relation = this[i];
 	    if(relation.node0.id == node.id) {
@@ -4573,8 +4573,8 @@ define('src/index', ['exports'], function (exports) {
 	  req.onreadystatechange = onLoadComplete;
 	};
 
-	Node.prototype = new DataModel();
-	Node.prototype.constructor = Node;
+	Node__Node.prototype = new DataModel();
+	Node__Node.prototype.constructor = Node__Node;
 
 	/**
 	 * @classdesc Represents a single node element in a Network. Can have both an id as well
@@ -4586,7 +4586,7 @@ define('src/index', ['exports'], function (exports) {
 	 * @constructor
 	 * @category networks
 	 */
-	function Node(id, name) {
+	function Node__Node(id, name) {
 	  this.id = id == null ? '' : id;
 	  this.name = name != null ? name : '';
 	  this.type = "Node";
@@ -4597,13 +4597,13 @@ define('src/index', ['exports'], function (exports) {
 	  this.y = 0;
 	  this.z = 0;
 
-	  this.nodeList = new NodeList();
+	  this.nodeList = new NodeList__default();
 	  this.relationList = new RelationList();
 
-	  this.toNodeList = new NodeList();
+	  this.toNodeList = new NodeList__default();
 	  this.toRelationList = new RelationList();
 
-	  this.fromNodeList = new NodeList();
+	  this.fromNodeList = new NodeList__default();
 	  this.fromRelationList = new RelationList();
 
 	  this.weight = 1;
@@ -4621,25 +4621,25 @@ define('src/index', ['exports'], function (exports) {
 	  this.ay = 0;
 	  this.az = 0;
 	}
-
+	var Node__default = Node__Node;
 
 	/**
 	 * Removes all Relations and connected Nodes from
 	 * the current Node.
 	 */
-	Node.prototype.cleanRelations = function() {
-	  this.nodeList = new NodeList();
+	Node__Node.prototype.cleanRelations = function() {
+	  this.nodeList = new NodeList__default();
 	  this.relationList = new RelationList();
 
-	  this.toNodeList = new NodeList();
+	  this.toNodeList = new NodeList__default();
 	  this.toRelationList = new RelationList();
 
-	  this.fromNodeList = new NodeList();
+	  this.fromNodeList = new NodeList__default();
 	  this.fromRelationList = new RelationList();
 	};
 
 	//TODO: complete with all properties
-	Node.prototype.destroy = function() {
+	Node__Node.prototype.destroy = function() {
 	  DataModel.prototype.destroy.call(this);
 	  delete this.id;
 	  delete this.name;
@@ -4670,7 +4670,7 @@ define('src/index', ['exports'], function (exports) {
 	 *
 	 * @return {Number} Number of Relations (edges) connecting to this Node instance.
 	 */
-	Node.prototype.getDegree = function() {
+	Node__Node.prototype.getDegree = function() {
 	  return this.relationList.length;
 	};
 
@@ -4682,7 +4682,7 @@ define('src/index', ['exports'], function (exports) {
 	 *
 	 * @return {Node} Parent Node of this Node.
 	 */
-	Node.prototype.getParent = function() {
+	Node__Node.prototype.getParent = function() {
 	  return this.parent;
 	};
 
@@ -4693,8 +4693,8 @@ define('src/index', ['exports'], function (exports) {
 	 * @return {NodeList} Leaf Nodes of this Node.
 	 * tags:
 	 */
-	Node.prototype.getLeaves = function() {
-	    var leaves = new NodeList();
+	Node__Node.prototype.getLeaves = function() {
+	    var leaves = new NodeList__default();
 	    var addLeaves = function(node) {
 	      if(node.toNodeList.length === 0) {
 	        leaves.addNode(node);
@@ -4712,7 +4712,7 @@ define('src/index', ['exports'], function (exports) {
 	 *
 	 * @param {String} urlImage The URL of the image to load.
 	 */
-	Node.prototype.loadImage = function(urlImage) {
+	Node__Node.prototype.loadImage = function(urlImage) {
 	  Loader.loadImage(urlImage, function(e) {
 	    this.image = e.result;
 	  }, this);
@@ -4724,8 +4724,8 @@ define('src/index', ['exports'], function (exports) {
 	 *
 	 * @return {Node} New Node that is a copy of this Node.
 	 */
-	Node.prototype.clone = function() {
-	  var newNode = new Node(this.id, this.name);
+	Node__Node.prototype.clone = function() {
+	  var newNode = new Node__Node(this.id, this.name);
 
 	  newNode.x = this.x;
 	  newNode.y = this.y;
@@ -4739,161 +4739,1138 @@ define('src/index', ['exports'], function (exports) {
 	  return newNode;
 	};
 
-	exports.Node = Node;
-
-	function TableEncodings() {}
-
-
-
-	TableEncodings.ENTER = String.fromCharCode(13);
-	TableEncodings.ENTER2 = String.fromCharCode(10);
-	TableEncodings.ENTER3 = String.fromCharCode(8232);
-
-	TableEncodings.SPACE = String.fromCharCode(32);
-	TableEncodings.SPACE2 = String.fromCharCode(160);
-
-	TableEncodings.TAB = "	";
-	TableEncodings.TAB2 = String.fromCharCode(9);
-
+	exports.Node = Node__default;
 
 	/**
-	 * Decode a String in format CSV into a Table
-	 * @param {String} csv CSV formatted text
+	 * @classdesc Serializes and deserializes {@link Network|Networks} using into
+	 * a number of text based formats.
 	 *
-	 * @param {Boolean} first_row_header first row is header (default: false)
-	 * @param {String} separator separator character (default: ",")
-	 * @param {Object} value_for_nulls Object to be placed instead of null values
-	 * @return {Table} resulting Table
-	 * tags:decoder
+	 * @namespace
+	 * @category networks
 	 */
-	TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, valueForNulls) {
-	  valueForNulls = valueForNulls == null ? '' : valueForNulls;
-	  var i;
-	  var _firstRowIsHeader = firstRowIsHeader == null ? false : firstRowIsHeader;
+	function NetworkEncodings__NetworkEncodings() {}
+	var NetworkEncodings__default = NetworkEncodings__NetworkEncodings;
 
-	  if(csvString == null) return null;
-	  if(csvString == "") return new Table();
 
-	  csvString = csvString.replace(/\$/g, "");
+	//////////////NoteWork
 
-	  var blocks = csvString.split("\"");
-	  for(i = 1; blocks[i] != null; i += 2) {
-	    blocks[i] = blocks[i].replace(/\n/g, "*ENTER*");
+	NetworkEncodings__NetworkEncodings.nodeNameSeparators = ['|', ':', ' is ', ' are ', '.', ','];
+
+	/**
+	 * Converts a String in NoteWork format into a network
+	 *
+	 * @param  {String} code
+	 * @return {Network}
+	 * tags:decoding
+	 */
+	NetworkEncodings__NetworkEncodings.decodeNoteWork = function(code) {
+	  if(code == null) return;
+	  if(code == "") return new Network();
+
+	  c.l('\n\n*************////////// decodeNoteWork //////////*************');
+	  //code = "\n"+code;
+
+	  var i, j;
+	  var paragraph, line, simpleLine;
+	  var id, id2;
+	  var name;
+	  var index, index2, minIndex;
+	  var lines;
+	  var node, otherNode;
+	  var supNode = null;
+	  var relation;
+	  var prevLine;
+	  var sep;
+	  var colorLinesRelations = []; //for relations
+	  var colorLinesGroups = [];
+	  var colorSegments = [];
+	  var linesInfo = [];
+	  var simpleLine;
+	  var regex;
+	  var iEnd;
+	  var propertyName;
+	  var propertyValue;
+	  var network = new Network();
+	  var paragraphs = new StringList();
+	  var content;
+
+	  network.nodesPropertiesNames = new StringList();
+	  network.relationsPropertiesNames = new StringList();
+
+	  lines = code.split(/\n/g);
+	  lines.forEach(function(line, i) {
+	    lines[i] = line.trim();
+	  });
+
+	  code = lines.join('\n');
+
+
+	  var nLineParagraph = 0;
+	  while(code.charAt(0) == '\n') {
+	    code = code.substr(1);
+	    nLineParagraph++;
 	  }
-	  csvString = blocks.join("\""); //TODO: create a general method for replacements inside "", apply it to chomas
 
-	  var enterChar = TableEncodings.ENTER2;
-	  var lines = csvString.split(enterChar);
-	  if(lines.length == 1) {
-	    enterChar = TableEncodings.ENTER;
-	    lines = csvString.split(enterChar);
-	    if(lines.length == 1) {
-	      enterChar = TableEncodings.ENTER3;
-	      lines = csvString.split(enterChar);
+
+	  var left = code;
+
+	  index = left.search(/\n\n./g);
+
+	  while(index != -1) {
+	    paragraphs.push(left.substr(0, index));
+	    left = left.substr(index + 2);
+	    index = left.search(/\n\n./g);
+	  }
+
+	  paragraphs.push(left);
+
+	  var firstLine;
+
+
+	  paragraphs.forEach(function(paragraph, i) {
+
+	    if(paragraph.indexOf('\n') == -1) {
+	      line = paragraph;
+	      lines = null;
+	    } else {
+	      lines = paragraph.split(/\n/g);
+	      line = lines[0];
 	    }
-	  }
 
-	  var table = new Table();
-	  var comaCharacter = separator != undefined ? separator : ",";
+	    firstLine = line;
 
-	  if(csvString == null || csvString == "" || csvString == " " || lines.length == 0) return null;
+	    //c.l('firstLine: ['+firstLine+']');
 
-	  var startIndex = 0;
-	  if(_firstRowIsHeader) {
-	    startIndex = 1;
-	    var headerContent = lines[0].split(comaCharacter);
-	  }
+	    if(line == '\n' || line == '' || line == ' ' || line == '  ') { //use regex here
 
-	  var element;
-	  var cellContent;
-	  var numberCandidate;
-	  for(i = startIndex; i < lines.length; i++) {
-	    if(lines[i].length < 2) continue;
+	    } else if(line.indexOf('//') == 0) {
 
-	    var cellContents = NetworkEncodings.replaceChomasInLine(lines[i]).split(comaCharacter); //TODO: will be obsolete (see previous TODO)
+	      if(colorSegments[nLineParagraph] == null) colorSegments[nLineParagraph] = [];
 
-	    for(j = 0; j < cellContents.length; j++) {
-	      table[j] = table[j] == null ? new List() : table[j];
-	      if(_firstRowIsHeader && i == 1) {
-	        table[j].name = headerContent[j] == null ? "" : TableEncodings._removeQuotes(headerContent[j]);
+	      colorSegments[nLineParagraph].push({
+	        type: 'comment',
+	        iStart: 0,
+	        iEnd: line.length
+	      });
+
+	    } else if(line == "relations colors:" || line == "groups colors:" || line == "categories colors:") { //line.indexOf(':')!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){ // color in relations or groups
+	      // colorLinesRelations.push(line);
+
+	      // if(colorSegments[nLineParagraph]==null) colorSegments[nLineParagraph]=[];
+
+	      // colorSegments[nLineParagraph].push({
+	      // 	type:'relation_color',
+	      // 	iStart:0,
+	      // 	iEnd:line.length
+	      // });
+
+	      if(lines) {
+	        lines.slice(1).forEach(function(line, i) {
+
+	          index = line.indexOf(':');
+	          if(firstLine == "relations colors:" && index != -1 && ColorOperators.colorStringToRGB(line.split(':')[1]) != null) {
+	            //c.l('  more colors!');
+
+	            colorLinesRelations.push(line);
+
+	            if(colorSegments[nLineParagraph + i] == null) colorSegments[nLineParagraph + i] = [];
+
+	            colorSegments[nLineParagraph + i].push({
+	              type: 'relation_color',
+	              iStart: 0,
+	              iEnd: line.length
+	            });
+
+	          }
+
+	          if((firstLine == "groups colors:" || firstLine == "categories colors:") && index != -1 && ColorOperators.colorStringToRGB(line.split(':')[1]) != null) {
+	            //c.l(line)
+	            //c.l('  color to group!');
+
+	            colorLinesGroups.push(line);
+
+	            if(colorSegments[nLineParagraph + i] == null) colorSegments[nLineParagraph + i] = [];
+
+	            colorSegments[nLineParagraph + i].push({
+	              type: 'relation_color',
+	              iStart: 0,
+	              iEnd: line.length
+	            });
+
+	          }
+	        });
 	      }
-	      var actualIndex = _firstRowIsHeader ? (i - 1) : i;
 
-	      cellContent = cellContents[j].replace(/\*CHOMA\*/g, ",").replace(/\*ENTER\*/g, "\n");
+	    } else { //node
 
-	      cellContent = cellContent == '' ? valueForNulls : cellContent;
+	      minIndex = 99999999;
 
-	      numberCandidate = Number(cellContent.replace(',', '.'));
+	      index = line.indexOf(NetworkEncodings__NetworkEncodings.nodeNameSeparators[0]);
 
-	      element = (numberCandidate || (numberCandidate == 0 && cellContent != '')) ? numberCandidate : cellContent;
+	      if(index != -1) {
+	        minIndex = index;
+	        sep = NetworkEncodings__NetworkEncodings.nodeNameSeparators[0];
+	      }
 
-	      if(typeof element == 'string') element = TableEncodings._removeQuotes(element);
+	      j = 1;
 
-	      table[j][actualIndex] = element;
+	      while(j < NetworkEncodings__NetworkEncodings.nodeNameSeparators.length) {
+	        index = line.indexOf(NetworkEncodings__NetworkEncodings.nodeNameSeparators[j]);
+	        if(index != -1) {
+	          minIndex = Math.min(index, minIndex);
+	          sep = NetworkEncodings__NetworkEncodings.nodeNameSeparators[j];
+	        }
+	        j++;
+	      }
+
+
+	      index = minIndex == 99999999 ? -1 : minIndex;
+
+	      name = index == -1 ? line : line.substr(0, index);
+	      name = name.trim();
+
+	      if(name != "") {
+	        id = NetworkEncodings__NetworkEncodings._simplifyForNoteWork(name);
+
+	        node = network.nodeList.getNodeById(id);
+
+	        iEnd = index == -1 ? line.length : index;
+
+	        if(node == null) {
+
+	          node = new Node(id, name);
+	          node._nLine = nLineParagraph;
+	          network.addNode(node);
+	          node.content = index != -1 ? line.substr(index + sep.length).trim() : "";
+
+	          node._lines = lines ? lines.slice(1) : new StringList();
+
+	          node.position = network.nodeList.length - 1;
+
+	          if(colorSegments[nLineParagraph] == null) colorSegments[nLineParagraph] = [];
+
+	          colorSegments[nLineParagraph].push({
+	            type: 'node_name',
+	            iStart: 0,
+	            iEnd: iEnd
+	          });
+
+	        } else {
+	          if(lines != null) node._lines = node._lines.concat(lines.slice(1));
+
+	          node.content += index != -1 ? (" | " + line.substr(index + sep.length).trim()) : "";
+
+	          if(colorSegments[nLineParagraph] == null) colorSegments[nLineParagraph] = [];
+
+	          colorSegments[nLineParagraph].push({
+	            type: 'node_name_repeated',
+	            iStart: 0,
+	            iEnd: iEnd
+	          });
+	        }
+	      } else {
+
+	      }
+	    }
+
+	    nLineParagraph += (lines ? lines.length : 1) + 1;
+	  });
+
+
+	  //find equalities (synonyms)
+
+	  var foundEquivalences = true;
+
+	  while(foundEquivalences) {
+	    foundEquivalences = false;
+
+	    loop: for(i = 0; network.nodeList[i] != null; i++) {
+	      node = network.nodeList[i];
+
+	      loop2: for(j = 0; node._lines[j] != null; j++) {
+	        line = node._lines[j];
+
+	        if(line.indexOf('=') == 0) {
+
+	          id2 = NetworkEncodings__NetworkEncodings._simplifyForNoteWork(line.substr(1));
+	          otherNode = network.nodeList.getNodeById(id2);
+
+	          if(otherNode && node != otherNode) {
+
+	            foundEquivalences = true;
+
+	            node._lines = otherNode._lines.concat(otherNode._lines);
+
+	            network.nodeList.removeNode(otherNode);
+	            network.nodeList.ids[otherNode.id] = node;
+
+	            break loop;
+	            break loop2;
+	          } else {
+	            network.nodeList.ids[id2] = otherNode;
+	          }
+
+	          if(!node._otherIds) node._otherIds = [];
+	          node._otherIds.push(id2);
+	        }
+	      }
 	    }
 	  }
 
-	  for(i = 0; table[i] != null; i++) {
-	    table[i] = table[i].getImproved();
-	  }
 
-	  table = table.getImproved();
+	  //build relations and nodes properties
 
-	  return table;
+	  network.nodeList.forEach(function(node) {
+
+	    nLineParagraph = node._nLine;
+
+	    //c.l('node.nLineWeight', node.nLineWeight);
+
+	    node._lines.forEach(function(line, i) {
+
+	      if(line.indexOf('=') != -1) {
+
+	      } else if(line.indexOf(':') > 0) {
+
+	        simpleLine = line.trim();
+
+	        propertyName = removeAccentsAndDiacritics(simpleLine.split(':')[0]).replace(/\s/g, "_");
+
+	        propertyValue = line.split(':')[1].trim();
+	        if(propertyValue == String(Number(propertyValue))) propertyValue = Number(propertyValue);
+
+	        if(propertyValue != null) {
+	          node[propertyName] = propertyValue;
+	          if(network.nodesPropertiesNames.indexOf(propertyName) == -1) network.nodesPropertiesNames.push(propertyName);
+	        }
+
+	      } else {
+	        simpleLine = line;
+
+	        network.nodeList.forEach(function(otherNode) {
+	          regex = NetworkEncodings__NetworkEncodings._regexWordForNoteWork(otherNode.id);
+	          index = simpleLine.search(regex);
+
+	          if(index == -1 && otherNode._otherIds) {
+	            for(j = 0; otherNode._otherIds[j] != null; j++) {
+	              regex = NetworkEncodings__NetworkEncodings._regexWordForNoteWork(otherNode._otherIds[j]);
+	              index = simpleLine.search(regex);
+	              if(index != -1) break;
+	            }
+	          }
+
+	          if(index != -1) {
+	            iEnd = index + simpleLine.substr(index).match(regex)[0].length;
+
+	            relation = network.relationList.getFirstRelationBetweenNodes(node, otherNode, true);
+
+
+	            if(relation != null) {
+
+	              content = relation.node0.name + " " + line;
+
+	              relation.content += " | " + content;
+
+	              if(colorSegments[nLineParagraph + i + 1] == null) colorSegments[nLineParagraph + i + 1] = [];
+
+	              colorSegments[nLineParagraph + i + 1].push({
+	                type: 'node_name_in_repeated_relation',
+	                iStart: index,
+	                iEnd: iEnd
+	              });
+
+	            } else {
+	              relation = network.relationList.getFirstRelationBetweenNodes(otherNode, node, true);
+
+	              if(relation == null || relation.content != content) {
+
+	                var relationName = line;
+
+	                var regex = NetworkEncodings__NetworkEncodings._regexWordForNoteWork(node.id);
+	                index = relationName.search(regex);
+
+	                if(index != -1) {
+	                  relationName = relationName.substr(index);
+	                  relationName = relationName.replace(regex, "").trim();
+	                }
+
+	                //c.l(node.id, "*", line, "*", index, "*", line.substr(index));
+
+	                //line = line.replace(regex, "").trim();
+
+	                regex = NetworkEncodings__NetworkEncodings._regexWordForNoteWork(otherNode.id);
+	                index = relationName.search(regex);
+	                relationName = "… " + relationName.substr(0, index).trim() + " …";
+
+	                id = line;
+	                relation = new Relation(line, relationName, node, otherNode);
+
+	                content = relation.node0.name + " " + line;
+
+	                relation.content = content; //.substr(0,index);
+	                network.addRelation(relation);
+
+	                if(colorSegments[nLineParagraph + i + 1] == null) colorSegments[nLineParagraph + i + 1] = [];
+
+	                colorSegments[nLineParagraph + i + 1].push({
+	                  type: 'node_name_in_relation',
+	                  iStart: index,
+	                  iEnd: iEnd
+	                });
+
+	              }
+	            }
+	          }
+	        });
+	      }
+	    });
+
+	    node.positionWeight = Math.pow(network.nodeList.length - node.position - 1 / network.nodeList.length, 2);
+	    node.combinedWeight = node.positionWeight + node.nodeList.length * 0.1;
+
+	  });
+
+
+	  //colors in relations and groups
+
+	  colorLinesRelations.forEach(function(line) {
+	    index = line.indexOf(':');
+	    texts = line.substr(0, index).split(',');
+	    texts.forEach(function(text) {
+	      color = line.substr(index + 1);
+	      network.relationList.forEach(function(relation) {
+	        if(relation.name.indexOf(text) != -1) relation.color = color;
+	      });
+	    });
+	  });
+
+	  colorLinesGroups.forEach(function(line) {
+	    index = line.indexOf(':');
+	    texts = line.substr(0, index).split(',');
+	    texts.forEach(function(text) {
+	      color = line.substr(index + 1);
+	      network.nodeList.forEach(function(node) {
+	        if(node.group == text) node.color = color;
+	        if(node.category == text) node.color = color;
+	      });
+	    });
+	  });
+
+	  network.colorSegments = colorSegments;
+
+	  return network;
 	};
 
-	TableEncodings._removeQuotes = function(string) {
-	  if(string.length == 0) return string;
-	  if((string.charAt(0) == "\"" || string.charAt(0) == "'") && (string.charAt(string.length - 1) == "\"" || string.charAt(string.length - 1) == "'")) string = string.substr(1, string.length - 2);
+	/**
+	 * @ignore
+	 */
+	NetworkEncodings__NetworkEncodings._simplifyForNoteWork = function(name) {
+	  name = name.toLowerCase();
+	  if(name.substr(name.length - 2) == 'es') {
+	    name = name.substr(0, name.length - 1);
+	  } else if(name.charAt(name.length - 1) == 's') name = name.substr(0, name.length - 1);
+	  return name.trim();
+	};
+
+	/**
+	 * _regexWordForNoteWork
+	 *
+	 * @param word
+	 * @param global
+	 * @return {undefined}
+	 * @ignore
+	 */
+	NetworkEncodings__NetworkEncodings._regexWordForNoteWork = function(word, global) {
+	  global = global == null ? true : global;
+	  try {
+	    return new RegExp("(\\b)(" + word + "|" + word + "s|" + word + "es)(\\b)", global ? "gi" : "i");
+	  } catch(err) {
+	    return null;
+	  }
+	};
+
+	/**
+	 * Encodes a network into NoteWork notes.
+	 *
+	 * @param  {Network} network Network to encode.
+	 * @param  {String} nodeContentSeparator Separator between node name and content. Uses comma if not defined.
+	 * @param  {StringList} nodesPropertyNames Node properties to be encoded.
+	 * If not defined, no Node properties are encoded.
+	 * @param  {StringList} relationsPropertyNames Relations properties to be encoded.
+	 * If not defined, no Relation properties are encoded.
+	 * @return {String} NoteWork based representation of Network.
+	 * tags:encoding
+	 */
+	NetworkEncodings__NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesPropertyNames, relationsPropertyNames) {
+	  if(network == null) return;
+
+	  var node, relation, other;
+	  var propName;
+	  var code = "";
+	  var simpNodeName;
+	  var regex, lineRelation;
+
+	  var codedRelationsContents;
+
+	  nodeContentSeparator = nodeContentSeparator || ', ';
+	  nodesPropertyNames = nodesPropertyNames || [];
+	  relationsPropertyNames = relationsPropertyNames || [];
+
+	  network.nodeList.forEach(function(node) {
+	    code += node.name;
+	    if(node.content && node.content != "") code += nodeContentSeparator + node.content;
+	    code += "\n";
+
+	    nodesPropertyNames.forEach(function(propName) {
+	      if(node[propName] != null) code += propName + ":" + String(node[propName]) + "\n";
+	    });
+
+	    codedRelationsContents = new StringList();
+
+	    node.toRelationList.forEach(function(relation) {
+
+	      content = ((relation.content == null ||  relation.content == "") && relation.description) ? relation.description : relation.content;
+
+	      if(content && content != "") {
+	        regex = NetworkEncodings__NetworkEncodings._regexWordForNoteWork(relation.node1.name);
+	        lineRelation = content + ((regex != null && content.search(regex) == -1) ? (" " + relation.node1.name) : "");
+	      } else {
+	        lineRelation = "connected with " + relation.node1.name;
+	      }
+
+	      if(codedRelationsContents.indexOf(lineRelation) == -1) {
+	        code += lineRelation;
+	        code += "\n";
+	        codedRelationsContents.push(lineRelation);
+	      }
+
+	    });
+
+	    code += "\n";
+
+	  });
+
+	  return code;
+	};
+
+
+
+
+
+	//////////////GDF
+
+	/**
+	 * Creates Network from a GDF string representation.
+	 *
+	 * @param  {String} gdfCode GDF serialized Network representation.
+	 * @return {Network}
+	 * tags:decoder
+	 */
+	NetworkEncodings__NetworkEncodings.decodeGDF = function(gdfCode) {
+	  if(gdfCode == null || gdfCode == "") return;
+
+	  var network = new Network();
+	  var lines = gdfCode.split("\n"); //TODO: split by ENTERS OUTSIDE QUOTEMARKS
+	  if(lines.length == 0) return null;
+	  var line;
+	  var i;
+	  var j;
+	  var parts;
+
+	  var nodesPropertiesNames = lines[0].substr(8).split(",");
+
+	  var iEdges;
+
+	  for(i = 1; lines[i] != null; i++) {
+	    line = lines[i];
+	    if(line.substr(0, 8) == "edgedef>") {
+	      iEdges = i + 1;
+	      break;
+	    }
+	    line = NetworkEncodings__NetworkEncodings.replaceChomasInLine(line);
+	    parts = line.split(",");
+	    node = new Node(String(parts[0]), String(parts[1]));
+	    for(j = 0; (nodesPropertiesNames[j] != null && parts[j] != null); j++) {
+	      if(nodesPropertiesNames[j] == "weight") {
+	        node.weight = Number(parts[j]);
+	      } else if(nodesPropertiesNames[j] == "x") {
+	        node.x = Number(parts[j]);
+	      } else if(nodesPropertiesNames[j] == "y") {
+	        node.y = Number(parts[j]);
+	      } else {
+	        node[nodesPropertiesNames[j]] = parts[j].replace(/\*CHOMA\*/g, ",");
+	      }
+	    }
+	    network.addNode(node);
+	  }
+
+	  var relationsPropertiesNames = lines[iEdges - 1].substr(8).split(",");
+
+	  for(i = iEdges; lines[i] != null; i++) {
+	    line = lines[i];
+	    line = NetworkEncodings__NetworkEncodings.replaceChomasInLine(line);
+	    parts = line.split(",");
+	    if(parts.length >= 2) {
+	      node0 = network.nodeList.getNodeById(String(parts[0]));
+	      node1 = network.nodeList.getNodeById(String(parts[1]));
+	      if(node0 == null || node1 == null) {
+	        c.log("NetworkEncodings.decodeGDF | [!] problems with nodes ids:", parts[0], parts[1], "at line", i);
+	      } else {
+	        id = node0.id + "_" + node1.id + "_" + Math.floor(Math.random() * 999999);
+	        relation = new Relation(id, id, node0, node1);
+	        for(j = 2; (relationsPropertiesNames[j] != null && parts[j] != null); j++) {
+	          if(relationsPropertiesNames[j] == "weight") {
+	            relation.weight = Number(parts[j]);
+	          } else {
+	            relation[relationsPropertiesNames[j]] = parts[j].replace(/\*CHOMA\*/g, ",");
+	          }
+	        }
+	        network.addRelation(relation);
+	      }
+	    }
+
+	  }
+
+	  return network;
+	};
+
+	/**
+	 * Encodes a network in GDF Format, more info on GDF
+	 * format can be found from
+	 * {@link https://gephi.org/users/supported-graph-formats/gml-format/|Gephi}.
+	 *
+	 * @param  {Network} network Network to encode.
+	 * @param  {StringList} nodesPropertiesNames Names of nodes properties to be encoded.
+	 * @param  {StringList} relationsPropertiesNames Names of relations properties to be encoded
+	 * @return {String} GDF encoding of Network.
+	 * tags:encoder
+	 */
+	NetworkEncodings__NetworkEncodings.encodeGDF = function(network, nodesPropertiesNames, relationsPropertiesNames) {
+	  if(network == null) return;
+
+	  nodesPropertiesNames = nodesPropertiesNames == null ? new StringList() : nodesPropertiesNames;
+	  relationsPropertiesNames = relationsPropertiesNames == null ? new StringList() : relationsPropertiesNames;
+
+	  var code = "nodedef>id" + (nodesPropertiesNames.length > 0 ? "," : "") + nodesPropertiesNames.join(",");
+	  var i;
+	  var j;
+	  var node;
+	  for(i = 0; network.nodeList[i] != null; i++) {
+	    node = network.nodeList[i];
+	    code += "\n" + node.id;
+	    for(j = 0; nodesPropertiesNames[j] != null; j++) {
+
+	      if(typeof node[nodesPropertiesNames[j]] == 'string') {
+	        code += ",\"" + node[nodesPropertiesNames[j]] + "\"";
+	      } else {
+	        code += "," + node[nodesPropertiesNames[j]];
+	      }
+	    }
+	  }
+
+	  code += "\nedgedef>id0,id1" + (relationsPropertiesNames.length > 0 ? "," : "") + relationsPropertiesNames.join(",");
+	  var relation;
+	  for(i = 0; network.relationList[i] != null; i++) {
+	    relation = network.relationList[i];
+	    code += "\n" + relation.node0.id + "," + relation.node1.id;
+	    for(j = 0; relationsPropertiesNames[j] != null; j++) {
+
+	      if(typeof relation[relationsPropertiesNames[j]] == 'string') {
+	        code += ",\"" + relation[relationsPropertiesNames[j]] + "\"";
+	      } else {
+	        code += "," + relation[relationsPropertiesNames[j]];
+	      }
+	    }
+	  }
+
+	  return code;
+	};
+
+
+	//////////////GML
+
+	/**
+	 * Decodes a GML file into a new Network.
+	 *
+	 * @param  {String} gmlCode GML based representation of Network.
+	 * @return {Network}
+	 * tags:decoder
+	 */
+	NetworkEncodings__NetworkEncodings.decodeGML = function(gmlCode) {
+	  if(gmlCode == null) return null;
+
+	  gmlCode = gmlCode.substr(gmlCode.indexOf("[") + 1);
+
+	  var network = new Network();
+
+	  var firstEdgeIndex = gmlCode.search(/\bedge\b/);
+
+	  var nodesPart = gmlCode.substr(0, firstEdgeIndex);
+	  var edgesPart = gmlCode.substr(firstEdgeIndex);
+
+	  var part = nodesPart;
+
+	  var blocks = StringOperators.getParenthesisContents(part, true);
+
+	  //c.log('blocks.length', blocks.length);
+
+	  var graphicsBlock;
+	  var lines;
+	  var lineParts;
+
+	  var indexG0;
+	  var indexG1;
+
+	  var node;
+
+	  for(var i = 0; blocks[i] != null; i++) {
+	    blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\n");
+	    blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\r");
+
+	    indexG0 = blocks[i].indexOf('graphics');
+	    if(indexG0 != -1) {
+	      indexG1 = blocks[i].indexOf(']');
+	      graphicsBlock = blocks[i].substring(indexG0, indexG1 + 1);
+	      blocks[i] = blocks[i].substr(0, indexG0) + blocks[i].substr(indexG1 + 1);
+
+	      graphicsBlock = StringOperators.getFirstParenthesisContent(graphicsBlock, true);
+	      blocks[i] = blocks[i] + graphicsBlock;
+	    }
+
+	    lines = blocks[i].split('\n');
+
+	    lines[0] = NetworkEncodings__NetworkEncodings._cleanLineBeginning(lines[0]);
+
+	    lineParts = lines[0].split(" ");
+
+	    node = new Node(StringOperators.removeQuotes(lineParts[1]), StringOperators.removeQuotes(lineParts[1]));
+
+	    network.addNode(node);
+
+	    for(var j = 1; lines[j] != null; j++) {
+	      lines[j] = NetworkEncodings__NetworkEncodings._cleanLineBeginning(lines[j]);
+	      lines[j] = NetworkEncodings__NetworkEncodings._replaceSpacesInLine(lines[j]);
+	      if(lines[j] != "") {
+	        lineParts = lines[j].split(" ");
+	        if(lineParts[0] == 'label') lineParts[0] = 'name';
+	        node[lineParts[0]] = (lineParts[1].charAt(0) == "\"") ? StringOperators.removeQuotes(lineParts[1]).replace(/\*SPACE\*/g, " ") : Number(lineParts[1]);
+	      }
+	    }
+	  }
+
+	  part = edgesPart;
+	  blocks = StringOperators.getParenthesisContents(part, true);
+
+	  var id0;
+	  var id1;
+	  var node0;
+	  var node1;
+	  var relation;
+	  var nodes = network.nodeList;
+
+
+	  for(i = 0; blocks[i] != null; i++) {
+	    blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\n");
+	    blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\r");
+
+	    lines = blocks[i].split('\n');
+
+	    id0 = null;
+	    id1 = null;
+	    relation = null;
+
+	    for(j = 0; lines[j] != null; j++) {
+	      lines[j] = NetworkEncodings__NetworkEncodings._cleanLineBeginning(lines[j]);
+	      if(lines[j] != "") {
+	        lineParts = lines[j].split(" ");
+	        if(lineParts[0] == 'source') id0 = StringOperators.removeQuotes(lineParts[1]);
+	        if(lineParts[0] == 'target') id1 = StringOperators.removeQuotes(lineParts[1]);
+
+	        if(relation == null) {
+	          if(id0 != null && id1 != null) {
+	            node0 = nodes.getNodeById(id0);
+	            node1 = nodes.getNodeById(id1);
+	            if(node0 != null && node1 != null) {
+	              relation = new Relation(id0 + " " + id1, '', node0, node1);
+	              network.addRelation(relation);
+	            }
+	          }
+	        } else {
+	          if(lineParts[0] == 'value') lineParts[0] = 'weight';
+	          relation[lineParts[0]] = (lineParts[1].charAt(0) == "\"") ? StringOperators.removeQuotes(lineParts[1]) : Number(lineParts[1]);
+	        }
+	      }
+
+	    }
+
+	  }
+
+	  return network;
+	};
+
+	/**
+	 * _cleanLineBeginning
+	 *
+	 * @param string
+	 * @ignore
+	 */
+	NetworkEncodings__NetworkEncodings._cleanLineBeginning = function(string) {
+	  string = StringOperators.removeInitialRepeatedCharacter(string, "\n");
+	  string = StringOperators.removeInitialRepeatedCharacter(string, "\r");
+	  string = StringOperators.removeInitialRepeatedCharacter(string, " ");
+	  string = StringOperators.removeInitialRepeatedCharacter(string, "	");
 	  return string;
 	};
 
 
 	/**
-	 * Encode a Table into a String in format CSV
-	 * @param {Table} Table to be enconded
+	 * Encodes a network into GDF format.
 	 *
-	 * @param {String} separator character (default: ",")
-	 * @param {Boolean} first row as List names (default: false)
-	 * @return {String} resulting String in CSV format
+	 * @param  {Network} network The Network to encode.
+	 *
+	 * @param  {StringList} nodesPropertiesNames Names of Node properties to encode.
+	 * @param  {StringList} relationsPropertiesNames Names of Relation properties to encode.
+	 * @param {Boolean} idsAsInts If true, then the index of the Node is used as an ID.
+	 * GDF strong specification requires ids for nodes being int numbers.
+	 * @return {String} GDF string.
 	 * tags:encoder
 	 */
-	TableEncodings.TableToCSV = function(table, separator, namesAsHeaders) {
-	  separator = separator || ",";
+	NetworkEncodings__NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPropertiesNames, idsAsInts) {
+	  if(network == null) return;
+
+	  idsAsInts = idsAsInts == null ? true : idsAsInts;
+
+	  nodesPropertiesNames = nodesPropertiesNames == null ? new StringList() : nodesPropertiesNames;
+	  relationsPropertiesNames = relationsPropertiesNames == null ? new StringList() : relationsPropertiesNames;
+
+	  var code = "graph\n[";
+	  var ident = "	";
 	  var i;
 	  var j;
-	  var list;
-	  var type;
-	  var lines = ListGenerators.createListWithSameElement(table[0].length, "");
-	  var addSeparator;
-	  for(i = 0; table[i] != null; i++) {
-	    list = table[i];
-	    type = list.type;
-	    addSeparator = i != table.length - 1;
-	    for(j = 0; list[j] != null; j++) {
-	      switch(type) {
-	        case 'NumberList':
-	          lines[j] += list[j];
+	  var node;
+	  var isString;
+	  var value;
+	  for(i = 0; network.nodeList[i] != null; i++) {
+	    node = network.nodeList[i];
+	    code += "\n" + ident + "node\n" + ident + "[";
+	    ident = "		";
+	    if(idsAsInts) {
+	      code += "\n" + ident + "id " + i;
+	    } else {
+	      code += "\n" + ident + "id \"" + node.id + "\"";
+	    }
+	    if(node.name != '') code += "\n" + ident + "label \"" + node.name + "\"";
+	    for(j = 0; nodesPropertiesNames[j] != null; j++) {
+	      value = node[nodesPropertiesNames[j]];
+	      if(value == null) continue;
+	      if(value.getMonth) value = DateOperators.dateToString(value);
+	      isString = (typeof value == 'string');
+	      if(isString) value = value.replace(/\n/g, "\\n").replace(/\"/g, "'");
+	      code += "\n" + ident + nodesPropertiesNames[j] + " " + (isString ? "\"" + value + "\"" : value);
+	    }
+	    ident = "	";
+	    code += "\n" + ident + "]";
+	  }
+
+	  var relation;
+	  for(i = 0; network.relationList[i] != null; i++) {
+	    relation = network.relationList[i];
+	    code += "\n" + ident + "edge\n" + ident + "[";
+	    ident = "		";
+	    if(idsAsInts) {
+	      code += "\n" + ident + "source " + network.nodeList.indexOf(relation.node0);
+	      code += "\n" + ident + "target " + network.nodeList.indexOf(relation.node1);
+	    } else {
+	      code += "\n" + ident + "source \"" + relation.node0.id + "\"";
+	      code += "\n" + ident + "target \"" + relation.node1.id + "\"";
+	    }
+	    for(j = 0; relationsPropertiesNames[j] != null; j++) {
+	      value = relation[relationsPropertiesNames[j]];
+	      if(value == null) continue;
+	      if(value.getMonth) value = DateOperators.dateToString(value);
+	      isString = (typeof value == 'string');
+	      if(isString) value = value.replace(/\n/g, "\\n").replace(/\"|“|”/g, "'");
+	      code += "\n" + ident + relationsPropertiesNames[j] + " " + (isString ? "\"" + value + "\"" : value);
+	    }
+	    ident = "	";
+	    code += "\n" + ident + "]";
+	  }
+
+	  code += "\n]";
+	  return code;
+	};
+
+
+
+
+
+	//////////////SYM
+
+	/**
+	 * decodeSYM
+	 *
+	 * @param symCode
+	 * @return {Network}
+	 */
+	NetworkEncodings__NetworkEncodings.decodeSYM = function(symCode) {
+	  //c.log("/////// decodeSYM\n"+symCode+"\n/////////");
+	  var i;
+	  var j;
+
+	  var lines = StringOperators.splitByEnter(symCode);
+	  lines = lines == null ? [] : lines;
+
+	  var objectPattern = /((?:NODE|RELATION)|GROUP)\s*([A-Za-z0-9_,\s]*)/;
+
+	  var network = new Network();
+	  var groups = new Table();
+	  var name;
+	  var id;
+	  var node;
+	  var node1;
+	  var relation;
+	  var group;
+	  var groupName;
+	  var parts;
+	  var propName;
+	  var propCont;
+
+	  var nodePropertiesNames = [];
+	  var relationPropertiesNames = [];
+	  var groupsPropertiesNames = [];
+
+	  for(i = 0; lines[i] != null; i++) {
+	    var bits = objectPattern.exec(lines[i]);
+	    if(bits != null) {
+	      switch(bits[1]) {
+	        case "NODE":
+	          id = bits[2];
+	          name = lines[i + 1].substr(0, 5) == "name:" ? lines[i + 1].substr(5).trim() : "";
+	          name = name.replace(/\\n/g, '\n').replace(/\\'/g, "'");
+	          node = new Node(id, name);
+	          network.addNode(node);
+	          j = i + 1;
+	          while(j < lines.length && lines[j].indexOf(":") != -1) {
+	            parts = lines[j].split(":");
+	            propName = parts[0];
+	            propCont = parts.slice(1).join(":");
+	            if(propName != "name") {
+	              propCont = propCont.trim();
+	              node[propName] = String(Number(propCont)) == propCont ? Number(propCont) : propCont;
+	              if(typeof node[propName] == "string") node[propName] = node[propName].replace(/\\n/g, '\n').replace(/\\'/g, "'");
+	              if(nodePropertiesNames.indexOf(propName) == -1) nodePropertiesNames.push(propName);
+	            }
+	            j++;
+	          }
+	          if(node.color != null) {
+	            if(/.+,.+,.+/.test(node.color)) node.color = 'rgb(' + node.color + ')';
+	          }
+	          if(node.group != null) {
+	            group = groups.getFirstElementByPropertyValue("name", node.group);
+	            if(group == null) {
+	              c.log("NODES new group:[" + node.group + "]");
+	              group = new NodeList();
+	              group.name = node.group;
+	              group.name = group.name.replace(/\\n/g, '\n').replace(/\\'/g, "'");
+	              groups.push(group);
+	            }
+	            group.addNode(node);
+	            //node.group = group;
+	          }
 	          break;
-	        default:
-	          lines[j] += "\"" + list[j] + "\"";
+	        case "RELATION":
+	          var ids = bits[2].replace(/\s/g, "").split(",");
+	          //var ids = bits[2].split(",");
+	          node = network.nodeList.getNodeById(ids[0]);
+	          node1 = network.nodeList.getNodeById(ids[1]);
+	          if(node != null && node1 != null) {
+	            relation = new Relation(node.id + "_" + node1.id, node.id + "_" + node1.id, node, node1);
+	            network.addRelation(relation);
+	            j = i + 1;
+	            while(j < lines.length && lines[j].indexOf(":") != -1) {
+	              parts = lines[j].split(":");
+	              propName = parts[0];
+	              propCont = parts.slice(1).join(":").trim();
+	              if(propName != "name") {
+	                propCont = propCont.trim();
+	                relation[propName] = String(Number(propCont)) == propCont ? Number(propCont) : propCont;
+	                if(typeof relation[propName] == "string") relation[propName] = relation[propName].replace(/\\n/g, '\n').replace(/\\'/g, "'");
+	                if(relationPropertiesNames.indexOf(propName) == -1) relationPropertiesNames.push(propName);
+	              }
+	              j++;
+	            }
+	          }
+	          if(relation != null && relation.color != null) {
+	            relation.color = 'rgb(' + relation.color + ')';
+	          }
+	          break;
+	        case "GROUP":
+	          groupName = lines[i].substr(5).trim();
+
+	          group = groups.getFirstElementByPropertyValue("name", groupName);
+	          if(group == null) {
+	            group = new NodeList();
+	            group.name = groupName;
+	            groups.push(group);
+	          }
+	          j = i + 1;
+	          while(j < lines.length && lines[j].indexOf(":") != -1) {
+	            parts = lines[j].split(":");
+	            if(parts[0] != "name") {
+	              parts[1] = parts[1].trim();
+	              group[parts[0]] = String(Number(parts[1])) == parts[1] ? Number(parts[1]) : parts[1];
+	              if(groupsPropertiesNames.indexOf(parts[0]) == -1) groupsPropertiesNames.push(parts[0]);
+	            }
+	            j++;
+	          }
+
+	          if(/.+,.+,.+/.test(group.color)) group.color = 'rgb(' + group.color + ')';
+
 	          break;
 	      }
-	      if(addSeparator) lines[j] += separator;
 	    }
 	  }
 
-	  var headers = '';
-	  if(namesAsHeaders) {
-	    for(i = 0; table[i] != null; i++) {
-	      list = table[i];
-	      headers += "\"" + list.name + "\"";
-	      if(i != table.length - 1) headers += separator;
+	  for(i = 0; groups[i] != null; i++) {
+	    group = groups[i];
+	    if(group.color == null) group.color = CATEGORICAL_COLORS[i % CATEGORICAL_COLORS.length];
+	    for(j = 0; group[j] != null; j++) {
+	      node = group[j];
+	      if(node.color == null) node.color = group.color;
 	    }
-	    headers += '\n';
 	  }
 
-	  return headers + lines.getConcatenated("\n");
+	  network.groups = groups;
+
+
+
+	  network.nodePropertiesNames = nodePropertiesNames;
+	  network.relationPropertiesNames = relationPropertiesNames;
+	  network.groupsPropertiesNames = groupsPropertiesNames;
+
+	  return network;
+	};
+
+	/**
+	 * encodeSYM
+	 *
+	 * @param network
+	 * @param groups
+	 * @param nodesPropertiesNames
+	 * @param relationsPropertiesNames
+	 * @param groupsPropertiesNames
+	 * @return {String}
+	 */
+	NetworkEncodings__NetworkEncodings.encodeSYM = function(network, groups, nodesPropertiesNames, relationsPropertiesNames, groupsPropertiesNames) {
+	  nodesPropertiesNames = nodesPropertiesNames == null ? new StringList() : nodesPropertiesNames;
+	  relationsPropertiesNames = relationsPropertiesNames == null ? new StringList() : relationsPropertiesNames;
+
+	  var code = "";
+	  var i;
+	  var j;
+	  var node;
+	  var propertyName;
+	  for(i = 0; network.nodeList[i] != null; i++) {
+	    node = network.nodeList[i];
+	    code += (i == 0 ? "" : "\n\n") + "NODE " + node.id;
+	    if(node.name != "") code += "\nname:" + (node.name).replace(/\n/g, "\\n");
+	    for(j = 0; nodesPropertiesNames[j] != null; j++) {
+	      propertyName = nodesPropertiesNames[j];
+	      if(node[propertyName] != null) code += "\n" + propertyName + ":" + _processProperty(propertyName, node[propertyName]);
+	    }
+	  }
+
+	  var relation;
+	  for(i = 0; network.relationList[i] != null; i++) {
+	    relation = network.relationList[i];
+	    code += "\n\nRELATION " + relation.node0.id + ", " + relation.node1.id;
+	    for(j = 0; relationsPropertiesNames[j] != null; j++) {
+	      propertyName = relationsPropertiesNames[j];
+	      if(relation[propertyName] != null) code += "\n" + propertyName + ":" + _processProperty(propertyName, relation[propertyName]);
+	    }
+	  }
+
+	  if(groups == null) return code;
+
+	  var group;
+	  for(i = 0; groups[i] != null; i++) {
+	    group = groups[i];
+	    code += "\n\nGROUP " + group.name;
+	    for(j = 0; groupsPropertiesNames[j] != null; j++) {
+	      propertyName = groupsPropertiesNames[j];
+	      if(group[propertyName] != null) code += "\n" + propertyName + ":" + _processProperty(propertyName, group[propertyName]);
+	    }
+	  }
+
+	  //c.log("/////// encodeSYM\n"+code+"\n/////////");
+
+	  return code;
+	};
+
+	function _processProperty(propName, propValue) { //TODO: use this in other encoders
+	  switch(propName) {
+	    case "color":
+	      if(propValue.substr(0, 3) == "rgb") {
+	        var rgb = ColorOperators.colorStringToRGB(propValue);
+	        return rgb.join(',');
+	      }
+	      return propValue;
+	      break;
+	  }
+	  propValue = String(propValue).replace(/\n/g, "\\n");
+	  return propValue;
+	};
+
+
+
+
+
+	/////////////////
+
+	//Also used by CSVToTable
+
+	/**
+	 * replaceChomasInLine
+	 *
+	 * @param line
+	 * @return {undefined}
+	 * @ignore
+	 */
+	NetworkEncodings__NetworkEncodings.replaceChomasInLine = function(line) {
+	  var quoteBlocks = line.split("\"");
+	  if(quoteBlocks.length < 2) return line;
+	  var insideQuote;
+	  var i;
+	  for(i = 0; quoteBlocks[i] != null; i++) {
+	    insideQuote = i * 0.5 != Math.floor(i * 0.5);
+	    if(insideQuote) {
+	      quoteBlocks[i] = quoteBlocks[i].replace(/,/g, "*CHOMA*");
+	    }
+	  }
+	  line = StringList.fromArray(quoteBlocks).getConcatenated("");
+	  return line;
+	};
+
+	/**
+	 * _replaceSpacesInLine
+	 *
+	 * @param line
+	 * @return {undefined}
+	 * @ignore
+	 */
+	NetworkEncodings__NetworkEncodings._replaceSpacesInLine = function(line) {
+	  var quoteBlocks = line.split("\"");
+	  if(quoteBlocks.length < 2) return line;
+	  var insideQuote;
+	  var i;
+	  for(i = 0; quoteBlocks[i] != null; i++) {
+	    insideQuote = i * 0.5 != Math.floor(i * 0.5);
+	    if(insideQuote) {
+	      quoteBlocks[i] = quoteBlocks[i].replace(/ /g, "*SPACE*");
+	    }
+	  }
+	  line = StringList.fromArray(quoteBlocks).getConcatenated("\"");
+	  return line;
 	};
 
 	/* global console */
@@ -5232,100 +6209,6 @@ define('src/index', ['exports'], function (exports) {
 
 	exports.Table = Table__default;
 
-	PolygonList.prototype = new Table__default();
-	PolygonList.prototype.constructor = PolygonList;
-
-	/**
-	 * @classdesc A {@link List} structure for storing {@link Polygon} instances.
-	 *
-	 * @description Creates a new PolygonList.
-	 * @constructor
-	 * @category geometry
-	 */
-	function PolygonList() {
-	  var array = Table__default.apply(this, arguments);
-	  array = PolygonList.fromArray(array);
-	  return array;
-	}
-
-
-	PolygonList.fromArray = function(array) {
-	  var result = Table__default.fromArray(array);
-	  result.type = "PolygonList";
-	  result.getFrame = PolygonList.prototype.getFrame;
-	  result.add = PolygonList.prototype.add;
-	  result.factor = PolygonList.prototype.factor;
-	  result.clone = PolygonList.prototype.clone;
-	  result.getString = PolygonList.prototype.getString;
-	  return result;
-	};
-
-	PolygonList.prototype.getFrame = function() {
-	  if(this.length == 0) return null;
-	  var frameP = this[0].getFrame();
-	  var rectangle = new Rectangle(frameP.x, frameP.y, frameP.getRight(), frameP.getBottom());
-	  for(var i = 1; this[i] != null; i++) {
-	    frameP = this[i].getFrame();
-	    rectangle.x = Math.min(rectangle.x, frameP.x);
-	    rectangle.y = Math.min(rectangle.y, frameP.y);
-	    rectangle.width = Math.max(rectangle.width, frameP.getRight());
-	    rectangle.height = Math.max(rectangle.height, frameP.getBottom());
-	  }
-	  rectangle.width -= rectangle.x;
-	  rectangle.height -= rectangle.y;
-
-	  return rectangle;
-	};
-
-	PolygonList.prototype.add = function(object) {
-	  var type = typeOf(object);
-	  var i;
-	  switch(type) {
-	    case 'Point':
-	      var newPolygonList = new PolygonList();
-	      for(i = 0; this[i] != null; i++) {
-	        newPolygonList[i] = this[i].add(object);
-	      }
-	      newPolygonList.name = this.name;
-	      return newPolygonList;
-	      break;
-	  }
-	};
-
-	PolygonList.prototype.factor = function(value) {
-	  var newPolygonList = new PolygonList();
-	  for(var i = 0; this[i] != null; i++) {
-	    newPolygonList[i] = this[i].factor(value);
-	  }
-	  newPolygonList.name = this.name;
-	  return newPolygonList;
-	};
-
-	PolygonList.prototype.clone = function() {
-	  var newPolygonList = new PolygonList();
-	  for(var i = 0; this[i] != null; i++) {
-	    newPolygonList[i] = this[i].clone();
-	  }
-	  newPolygonList.name = this.name;
-	  return newPolygonList;
-	};
-
-	// PolygonList.prototype.getString=function(pointSeparator,polygonSeparator){
-	// pointSeparator = pointSeparator==null?',':pointSeparator;
-	// polygonSeparator = polygonSeparator==null?'/':polygonSeparator;
-	// var j;
-	// var t='';
-	// for(var i=0;this[i]!=null;i++){
-	// t+=(i==0?'':polygonSeparator);
-	// for(j=0; this[i][j]!=null; j++){
-	// t+=(j==0?'':pointSeparator)+this[i][j].x+pointSeparator+this[i][j].y;
-	// }
-	// }
-	// return t;
-	// }
-
-	exports.PolygonList = PolygonList;
-
 	NumberTable__NumberTable.prototype = new Table__default();
 	NumberTable__NumberTable.prototype.constructor = NumberTable__NumberTable;
 
@@ -5541,6 +6424,394 @@ define('src/index', ['exports'], function (exports) {
 	};
 
 	exports.NumberTable = NumberTable__default;
+
+	RectangleList.prototype = new List__default();
+	RectangleList.prototype.constructor = RectangleList;
+	/**
+	 * @classdesc A {@link List} structure for storing {@link Rectangle} instances.
+	 *
+	 * @description Creates a new RectangleList.
+	 * @constructor
+	 * @category geometry
+	 */
+	function RectangleList() {
+	  var array = List__default.apply(this, arguments);
+	  array = RectangleList.fromArray(array);
+	  return array;
+	}
+
+
+	RectangleList.fromArray = function(array) {
+	  var result = List__default.fromArray(array);
+	  result.type = "RectangleList";
+
+	  result.getFrame = RectangleList.prototype.getFrame;
+	  result.add = RectangleList.prototype.add;
+	  result.factor = RectangleList.prototype.factor;
+	  result.getAddedArea = RectangleList.prototype.getAddedArea;
+	  result.getIntersectionArea = RectangleList.prototype.getIntersectionArea;
+
+	  return result;
+	};
+
+	//TODO:finish RectangleList methods
+
+	RectangleList.prototype.getFrame = function() {
+	  if(this.length == 0) return null;
+	  var frame = this[0];
+	  frame.width = frame.getRight();
+	  frame.height = frame.getBottom();
+	  for(var i = 1; this[i] != null; i++) {
+	    frame.x = Math.min(frame.x, this[i].x);
+	    frame.y = Math.min(frame.y, this[i].y);
+
+	    frame.width = Math.max(this[i].getRight(), frame.width);
+	    frame.height = Math.max(this[i].getBottom(), frame.height);
+	  }
+
+	  frame.width -= frame.x;
+	  frame.height -= frame.y;
+
+	  return frame;
+	};
+
+	RectangleList.prototype.add = function() {
+
+	};
+
+	RectangleList.prototype.factor = function() {
+
+	};
+
+	RectangleList.prototype.getAddedArea = function() {};
+
+	RectangleList.prototype.getIntersectionArea = function() {
+	  var rect0;
+	  var rect1;
+	  var intersectionArea = 0;
+	  var intersection;
+	  for(var i = 0; this[i + 1] != null; i++) {
+	    rect0 = this[i];
+	    for(var j = i + 1; this[j] != null; j++) {
+	      rect1 = this[j];
+	      intersection = rect0.getIntersection(rect1);
+	      intersectionArea += intersection == null ? 0 : intersection.getArea();
+	    }
+	  }
+
+	  return intersectionArea;
+	};
+
+	exports.RectangleList = RectangleList;
+
+	function ListGenerators__ListGenerators() {}
+	var ListGenerators__default = ListGenerators__ListGenerators;
+
+
+	/**
+	 * Generates a List made of several copies of same element (returned List is improved)
+	 * @param {Object} nValues length of the List
+	 * @param {Object} element object to be placed in all positions
+	 * @return {List} generated List
+	 * tags:generator
+	 */
+	ListGenerators__ListGenerators.createListWithSameElement = function(nValues, element) {
+	  var list;
+	  switch(ClassUtils__typeOf(element)) {
+	    case 'number':
+	      list = new NumberList__default();
+	      break;
+	    case 'List':
+	      list = new Table__default();
+	      break;
+	    case 'NumberList':
+	      list = new NumberTable__default();
+	      break;
+	    case 'Rectangle':
+	      list = new RectangleList();
+	      break;
+	    case 'string':
+	      list = new StringList__default();
+	      break;
+	    case 'boolean':
+	      list = new List__default(); //TODO:update once BooleanList exists
+	      break;
+	    default:
+	      list = new List__default();
+	  }
+
+	  for(var i = 0; i < nValues; i++) {
+	    list[i] = element;
+	  }
+	  return list;
+	};
+
+	/**
+	 * Generates a List built froma seed element and a function that will be applied iteratively
+	 * @param {Object} nValues length of the List
+	 * @param {Object} firstElement first element
+	 * @param {Object} dynamicFunction sequence generator function, elementN+1 =  dynamicFunction(elementN)
+	 * @return {List} generated List
+	 */
+	ListGenerators__ListGenerators.createIterationSequence = function(nValues, firstElement, dynamicFunction) {
+	  var list = ListGenerators__ListGenerators.createListWithSameElement(1, firstElement);
+	  for(var i = 1; i < nValues; i++) {
+	    list[i] = dynamicFunction(list[i - 1]);
+	  }
+	  return list;
+	};
+
+	exports.ListGenerators = ListGenerators__default;
+
+	function TableEncodings() {}
+
+
+	TableEncodings.ENTER = String.fromCharCode(13);
+	TableEncodings.ENTER2 = String.fromCharCode(10);
+	TableEncodings.ENTER3 = String.fromCharCode(8232);
+
+	TableEncodings.SPACE = String.fromCharCode(32);
+	TableEncodings.SPACE2 = String.fromCharCode(160);
+
+	TableEncodings.TAB = "	";
+	TableEncodings.TAB2 = String.fromCharCode(9);
+
+
+	/**
+	 * Decode a String in format CSV into a Table
+	 * @param {String} csv CSV formatted text
+	 *
+	 * @param {Boolean} first_row_header first row is header (default: false)
+	 * @param {String} separator separator character (default: ",")
+	 * @param {Object} value_for_nulls Object to be placed instead of null values
+	 * @return {Table} resulting Table
+	 * tags:decoder
+	 */
+	TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, valueForNulls) {
+	  valueForNulls = valueForNulls == null ? '' : valueForNulls;
+	  var i;
+	  var _firstRowIsHeader = firstRowIsHeader == null ? false : firstRowIsHeader;
+
+	  if(csvString == null) return null;
+	  if(csvString == "") return new Table__default();
+
+	  csvString = csvString.replace(/\$/g, "");
+
+	  var blocks = csvString.split("\"");
+	  for(i = 1; blocks[i] != null; i += 2) {
+	    blocks[i] = blocks[i].replace(/\n/g, "*ENTER*");
+	  }
+	  csvString = blocks.join("\""); //TODO: create a general method for replacements inside "", apply it to chomas
+
+	  var enterChar = TableEncodings.ENTER2;
+	  var lines = csvString.split(enterChar);
+	  if(lines.length == 1) {
+	    enterChar = TableEncodings.ENTER;
+	    lines = csvString.split(enterChar);
+	    if(lines.length == 1) {
+	      enterChar = TableEncodings.ENTER3;
+	      lines = csvString.split(enterChar);
+	    }
+	  }
+
+	  var table = new Table__default();
+	  var comaCharacter = separator != undefined ? separator : ",";
+
+	  if(csvString == null || csvString == "" || csvString == " " || lines.length == 0) return null;
+
+	  var startIndex = 0;
+	  if(_firstRowIsHeader) {
+	    startIndex = 1;
+	    var headerContent = lines[0].split(comaCharacter);
+	  }
+
+	  var element;
+	  var cellContent;
+	  var numberCandidate;
+	  for(i = startIndex; i < lines.length; i++) {
+	    if(lines[i].length < 2) continue;
+
+	    var cellContents = NetworkEncodings__default.replaceChomasInLine(lines[i]).split(comaCharacter); //TODO: will be obsolete (see previous TODO)
+
+	    for(j = 0; j < cellContents.length; j++) {
+	      table[j] = table[j] == null ? new List() : table[j];
+	      if(_firstRowIsHeader && i == 1) {
+	        table[j].name = headerContent[j] == null ? "" : TableEncodings._removeQuotes(headerContent[j]);
+	      }
+	      var actualIndex = _firstRowIsHeader ? (i - 1) : i;
+
+	      cellContent = cellContents[j].replace(/\*CHOMA\*/g, ",").replace(/\*ENTER\*/g, "\n");
+
+	      cellContent = cellContent == '' ? valueForNulls : cellContent;
+
+	      numberCandidate = Number(cellContent.replace(',', '.'));
+
+	      element = (numberCandidate || (numberCandidate == 0 && cellContent != '')) ? numberCandidate : cellContent;
+
+	      if(typeof element == 'string') element = TableEncodings._removeQuotes(element);
+
+	      table[j][actualIndex] = element;
+	    }
+	  }
+
+	  for(i = 0; table[i] != null; i++) {
+	    table[i] = table[i].getImproved();
+	  }
+
+	  table = table.getImproved();
+
+	  return table;
+	};
+
+	TableEncodings._removeQuotes = function(string) {
+	  if(string.length == 0) return string;
+	  if((string.charAt(0) == "\"" || string.charAt(0) == "'") && (string.charAt(string.length - 1) == "\"" || string.charAt(string.length - 1) == "'")) string = string.substr(1, string.length - 2);
+	  return string;
+	};
+
+
+	/**
+	 * Encode a Table into a String in format CSV
+	 * @param {Table} Table to be enconded
+	 *
+	 * @param {String} separator character (default: ",")
+	 * @param {Boolean} first row as List names (default: false)
+	 * @return {String} resulting String in CSV format
+	 * tags:encoder
+	 */
+	TableEncodings.TableToCSV = function(table, separator, namesAsHeaders) {
+	  separator = separator || ",";
+	  var i;
+	  var j;
+	  var list;
+	  var type;
+	  var lines = ListGenerators__default.createListWithSameElement(table[0].length, "");
+	  var addSeparator;
+	  for(i = 0; table[i] != null; i++) {
+	    list = table[i];
+	    type = list.type;
+	    addSeparator = i != table.length - 1;
+	    for(j = 0; list[j] != null; j++) {
+	      switch(type) {
+	        case 'NumberList':
+	          lines[j] += list[j];
+	          break;
+	        default:
+	          lines[j] += "\"" + list[j] + "\"";
+	          break;
+	      }
+	      if(addSeparator) lines[j] += separator;
+	    }
+	  }
+
+	  var headers = '';
+	  if(namesAsHeaders) {
+	    for(i = 0; table[i] != null; i++) {
+	      list = table[i];
+	      headers += "\"" + list.name + "\"";
+	      if(i != table.length - 1) headers += separator;
+	    }
+	    headers += '\n';
+	  }
+
+	  return headers + lines.getConcatenated("\n");
+	};
+
+	exports.TableEncodings = TableEncodings;
+
+	PolygonList.prototype = new Table__default();
+	PolygonList.prototype.constructor = PolygonList;
+
+	/**
+	 * @classdesc A {@link List} structure for storing {@link Polygon} instances.
+	 *
+	 * @description Creates a new PolygonList.
+	 * @constructor
+	 * @category geometry
+	 */
+	function PolygonList() {
+	  var array = Table__default.apply(this, arguments);
+	  array = PolygonList.fromArray(array);
+	  return array;
+	}
+
+
+	PolygonList.fromArray = function(array) {
+	  var result = Table__default.fromArray(array);
+	  result.type = "PolygonList";
+	  result.getFrame = PolygonList.prototype.getFrame;
+	  result.add = PolygonList.prototype.add;
+	  result.factor = PolygonList.prototype.factor;
+	  result.clone = PolygonList.prototype.clone;
+	  result.getString = PolygonList.prototype.getString;
+	  return result;
+	};
+
+	PolygonList.prototype.getFrame = function() {
+	  if(this.length == 0) return null;
+	  var frameP = this[0].getFrame();
+	  var rectangle = new Rectangle(frameP.x, frameP.y, frameP.getRight(), frameP.getBottom());
+	  for(var i = 1; this[i] != null; i++) {
+	    frameP = this[i].getFrame();
+	    rectangle.x = Math.min(rectangle.x, frameP.x);
+	    rectangle.y = Math.min(rectangle.y, frameP.y);
+	    rectangle.width = Math.max(rectangle.width, frameP.getRight());
+	    rectangle.height = Math.max(rectangle.height, frameP.getBottom());
+	  }
+	  rectangle.width -= rectangle.x;
+	  rectangle.height -= rectangle.y;
+
+	  return rectangle;
+	};
+
+	PolygonList.prototype.add = function(object) {
+	  var type = typeOf(object);
+	  var i;
+	  switch(type) {
+	    case 'Point':
+	      var newPolygonList = new PolygonList();
+	      for(i = 0; this[i] != null; i++) {
+	        newPolygonList[i] = this[i].add(object);
+	      }
+	      newPolygonList.name = this.name;
+	      return newPolygonList;
+	      break;
+	  }
+	};
+
+	PolygonList.prototype.factor = function(value) {
+	  var newPolygonList = new PolygonList();
+	  for(var i = 0; this[i] != null; i++) {
+	    newPolygonList[i] = this[i].factor(value);
+	  }
+	  newPolygonList.name = this.name;
+	  return newPolygonList;
+	};
+
+	PolygonList.prototype.clone = function() {
+	  var newPolygonList = new PolygonList();
+	  for(var i = 0; this[i] != null; i++) {
+	    newPolygonList[i] = this[i].clone();
+	  }
+	  newPolygonList.name = this.name;
+	  return newPolygonList;
+	};
+
+	// PolygonList.prototype.getString=function(pointSeparator,polygonSeparator){
+	// pointSeparator = pointSeparator==null?',':pointSeparator;
+	// polygonSeparator = polygonSeparator==null?'/':polygonSeparator;
+	// var j;
+	// var t='';
+	// for(var i=0;this[i]!=null;i++){
+	// t+=(i==0?'':polygonSeparator);
+	// for(j=0; this[i][j]!=null; j++){
+	// t+=(j==0?'':pointSeparator)+this[i][j].x+pointSeparator+this[i][j].y;
+	// }
+	// }
+	// return t;
+	// }
+
+	exports.PolygonList = PolygonList;
 
 	/* global console */
 
@@ -5977,7 +7248,7 @@ define('src/index', ['exports'], function (exports) {
 
 	exports.CountryOperators = CountryOperators;
 
-	Country.prototype = new Node();
+	Country.prototype = new Node__default();
 	Country.prototype.constructor = Country;
 
 	/**
@@ -5991,7 +7262,7 @@ define('src/index', ['exports'], function (exports) {
 	 * @category geo
 	 */
 	function Country(id, name) {
-	  Node.apply(this, [id, name]);
+	  Node__default.apply(this, [id, name]);
 	  this.type = "Country";
 
 	  this.id = id;
@@ -6048,8 +7319,8 @@ define('src/index', ['exports'], function (exports) {
 
 	exports.Country = Country;
 
-	Relation.prototype = new Node();
-	Relation.prototype.constructor = Relation;
+	Relation__Relation.prototype = new Node__default();
+	Relation__Relation.prototype.constructor = Relation__Relation;
 
 	/**
 	 * Relation
@@ -6067,8 +7338,8 @@ define('src/index', ['exports'], function (exports) {
 	 * @param {String} content Other data to associate with this Relation.
 	 * @category networks
 	 */
-	function Relation(id, name, node0, node1, weight, content) {
-	  Node.apply(this, [id, name]);
+	function Relation__Relation(id, name, node0, node1, weight, content) {
+	  Node__default.apply(this, [id, name]);
 	  this.type = "Relation";
 
 	  this.node0 = node0;
@@ -6076,21 +7347,21 @@ define('src/index', ['exports'], function (exports) {
 	  this.weight = weight == null ? 1 : weight;
 	  this.content = content == null ? "" : content;
 	}
+	var Relation__default = Relation__Relation;
 
-
-	Relation.prototype.destroy = function() {
-	  Node.prototype.destroy.call(this);
+	Relation__Relation.prototype.destroy = function() {
+	  Node__default.prototype.destroy.call(this);
 	  delete this.node0;
 	  delete this.node1;
 	  delete this.content;
 	};
 
-	Relation.prototype.getOther = function(node) {
+	Relation__Relation.prototype.getOther = function(node) {
 	  return node == this.node0 ? this.node1 : this.node0;
 	};
 
-	Relation.prototype.clone = function() {
-	  var relation = new Relation(this.id, this.name, this.node0, this.node1);
+	Relation__Relation.prototype.clone = function() {
+	  var relation = new Relation__Relation(this.id, this.name, this.node0, this.node1);
 
 	  relation.x = this.x;
 	  relation.y = this.y;
@@ -6104,10 +7375,10 @@ define('src/index', ['exports'], function (exports) {
 	  return relation;
 	};
 
-	exports.Relation = Relation;
+	exports.Relation = Relation__default;
 
-	Network.prototype = new DataModel();
-	Network.prototype.constructor = Network;
+	Network__Network.prototype = new DataModel();
+	Network__Network.prototype.constructor = Network__Network;
 
 	/**
 	 * @classdesc Networks are a DataType to store network data.
@@ -6118,20 +7389,20 @@ define('src/index', ['exports'], function (exports) {
 	 * @constructor
 	 * @category networks
 	 */
-	function Network() {
+	function Network__Network() {
 	  this.type = "Network";
 
-	  this.nodeList = new NodeList();
+	  this.nodeList = new NodeList__default();
 	  this.relationList = new RelationList();
 	}
-
+	var Network__default = Network__Network;
 
 	/**
 	 * Get Nodes of the Network as a NodeList
 	 * @return {NodeList}
 	 * tags:
 	 */
-	Network.prototype.getNodes = function() {
+	Network__Network.prototype.getNodes = function() {
 	  return this.nodeList;
 	};
 
@@ -6141,7 +7412,7 @@ define('src/index', ['exports'], function (exports) {
 	 * @return {RelationList}
 	 * tags:
 	 */
-	Network.prototype.getRelations = function() {
+	Network__Network.prototype.getRelations = function() {
 	  return this.relationList;
 	};
 
@@ -6150,7 +7421,7 @@ define('src/index', ['exports'], function (exports) {
 	 * @return {StringList}
 	 * tags:
 	 */
-	Network.prototype.getNodesIds = function() {
+	Network__Network.prototype.getNodesIds = function() {
 	  return this.nodeList.getIds();
 	};
 
@@ -6164,7 +7435,7 @@ define('src/index', ['exports'], function (exports) {
 	 * Add a node to the network
 	 * @param {Node} node A new node that will be added to the network.
 	 */
-	Network.prototype.addNode = function(node) {
+	Network__Network.prototype.addNode = function(node) {
 	  this.nodeList.addNode(node);
 	};
 
@@ -6174,7 +7445,7 @@ define('src/index', ['exports'], function (exports) {
 	 * @return {Node} The node with the given name. Null if no node with that name
 	 * can be found in the Network.
 	 */
-	Network.prototype.getNodeWithName = function(name) {
+	Network__Network.prototype.getNodeWithName = function(name) {
 	  return this.nodeList.getNodeWithName(name);
 	};
 
@@ -6184,7 +7455,7 @@ define('src/index', ['exports'], function (exports) {
 	 * @return {Node} The node with the given id. Null if a node with this id is not
 	 * in the Network.
 	 */
-	Network.prototype.getNodeWithId = function(id) {
+	Network__Network.prototype.getNodeWithId = function(id) {
 	  return this.nodeList.getNodeWithId(id);
 	};
 
@@ -6196,15 +7467,15 @@ define('src/index', ['exports'], function (exports) {
 	 * @param {Number} weight A numerical weight associated with the relation (edge).
 	 * @param {String} content Information associated with the relation.
 	 */
-	Network.prototype.createRelation = function(node0, node1, id, weight, content) {
-	  this.addRelation(new Relation(id, id, node0, node1, weight, content));
+	Network__Network.prototype.createRelation = function(node0, node1, id, weight, content) {
+	  this.addRelation(new Relation__default(id, id, node0, node1, weight, content));
 	};
 
 	/**
 	 * Add an existing Relation (edge) to the Network.
 	 * @param {Relation} relation The relation to add to the network.
 	 */
-	Network.prototype.addRelation = function(relation) {
+	Network__Network.prototype.addRelation = function(relation) {
 	  this.relationList.addNode(relation);
 	  relation.node0.nodeList.addNode(relation.node1);
 	  relation.node0.relationList.addNode(relation);
@@ -6226,10 +7497,10 @@ define('src/index', ['exports'], function (exports) {
 	 * @param {String} content Information associated with the relation.
 	 * @return {Relation} The new relation added to the Network.
 	 */
-	Network.prototype.connect = function(node0, node1, id, weight, content) {
+	Network__Network.prototype.connect = function(node0, node1, id, weight, content) {
 	  id = id || (node0.id + "_" + node1.id);
 	  weight = weight || 1;
-	  var relation = new Relation(id, id, node0, node1, weight);
+	  var relation = new Relation__default(id, id, node0, node1, weight);
 	  this.addRelation(relation);
 	  relation.content = content;
 	  return relation;
@@ -6245,7 +7516,7 @@ define('src/index', ['exports'], function (exports) {
 	 * Remove a node from the Network
 	 * @param {Node} node The node to remove.
 	 */
-	Network.prototype.removeNode = function(node) {
+	Network__Network.prototype.removeNode = function(node) {
 	  this.removeNodeRelations(node);
 	  this.nodeList.removeNode(node);
 	};
@@ -6254,7 +7525,7 @@ define('src/index', ['exports'], function (exports) {
 	 * Remove all Relations connected to the node from the Network.
 	 * @param {Node} node Node who's relations will be removed.
 	 */
-	Network.prototype.removeNodeRelations = function(node) {
+	Network__Network.prototype.removeNodeRelations = function(node) {
 	  for(var i = 0; node.relationList[i] != null; i++) {
 	    this.removeRelation(node.relationList[i]);
 	    i--;
@@ -6264,12 +7535,12 @@ define('src/index', ['exports'], function (exports) {
 	/**
 	 * Remove all Nodes from the Network.
 	 */
-	Network.prototype.removeNodes = function() {
+	Network__Network.prototype.removeNodes = function() {
 	  this.nodeList.deleteNodes();
 	  this.relationList.deleteNodes();
 	};
 
-	Network.prototype.removeRelation = function(relation) {
+	Network__Network.prototype.removeRelation = function(relation) {
 	  this.relationList.removeElement(relation);
 	  relation.node0.nodeList.removeNode(relation.node1);
 	  relation.node0.relationList.removeRelation(relation);
@@ -6287,7 +7558,7 @@ define('src/index', ['exports'], function (exports) {
 	 * @return {Number} number of nodes removed
 	 * tags:transform
 	 */
-	Network.prototype.removeIsolatedNodes = function(minDegree) {
+	Network__Network.prototype.removeIsolatedNodes = function(minDegree) {
 	  var i;
 	  var nRemoved = 0;
 	  minDegree = minDegree == null ? 1 : minDegree;
@@ -6311,8 +7582,8 @@ define('src/index', ['exports'], function (exports) {
 
 
 
-	Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames, idsSubfix, namesSubfix) {
-	  var newNetwork = new Network();
+	Network__Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames, idsSubfix, namesSubfix) {
+	  var newNetwork = new Network__Network();
 	  var newNode, newRelation;
 	  var i;
 
@@ -6320,7 +7591,7 @@ define('src/index', ['exports'], function (exports) {
 	  namesSubfix = namesSubfix == null ? '' : String(namesSubfix);
 
 	  this.nodeList.forEach(function(node) {
-	    newNode = new Node(idsSubfix + node.id, namesSubfix + node.name);
+	    newNode = new Node__default(idsSubfix + node.id, namesSubfix + node.name);
 	    if(idsSubfix != '') newNode.basicId = node.id;
 	    if(namesSubfix != '') newNode.basicName = node.name;
 	    if(nodePropertiesNames) {
@@ -6332,7 +7603,7 @@ define('src/index', ['exports'], function (exports) {
 	  });
 
 	  this.relationList.forEach(function(relation) {
-	    newRelation = new Relation(idsSubfix + relation.id, namesSubfix + relation.name, newNetwork.nodeList.getNodeById(idsSubfix + relation.node0.id), newNetwork.nodeList.getNodeById(idsSubfix + relation.node1.id));
+	    newRelation = new Relation__default(idsSubfix + relation.id, namesSubfix + relation.name, newNetwork.nodeList.getNodeById(idsSubfix + relation.node0.id), newNetwork.nodeList.getNodeById(idsSubfix + relation.node1.id));
 	    if(idsSubfix != '') newRelation.basicId = relation.id;
 	    if(namesSubfix != '') newRelation.basicName = relation.name;
 	    if(relationPropertiesNames) {
@@ -6347,11 +7618,11 @@ define('src/index', ['exports'], function (exports) {
 	};
 
 
-	Network.prototype.getReport = function() {
+	Network__Network.prototype.getReport = function() {
 	  return "network contains " + this.nodeList.length + " nodes and " + this.relationList.length + " relations";
 	};
 
-	Network.prototype.destroy = function() {
+	Network__Network.prototype.destroy = function() {
 	  delete this.type;
 	  this.nodeList.destroy();
 	  this.relationList.destroy();
@@ -6359,10 +7630,10 @@ define('src/index', ['exports'], function (exports) {
 	  delete this.relationList;
 	};
 
-	exports.Network = Network;
+	exports.Network = Network__default;
 
-	Tree.prototype = new Network();
-	Tree.prototype.constructor = Tree;
+	Tree__Tree.prototype = new Network__default();
+	Tree__Tree.prototype.constructor = Tree__Tree;
 
 	/**
 	 * @classdesc Trees are Networks that have a hierarchical structure.
@@ -6371,15 +7642,15 @@ define('src/index', ['exports'], function (exports) {
 	 * @constructor
 	 * @category networks
 	 */
-	function Tree() {
-	  Network.apply(this);
+	function Tree__Tree() {
+	  Network__default.apply(this);
 	  this.type = "Tree";
 
 	  this.nLevels = 0;
 	  this._createRelation = this.createRelation;
 	  this.createRelation = this._newCreateRelation;
 	}
-
+	var Tree__default = Tree__Tree;
 
 	/**
 	 * Adds a given Node to the tree, under the given parent Node.
@@ -6387,13 +7658,13 @@ define('src/index', ['exports'], function (exports) {
 	 * @param {Node} node
 	 * @param {Node} parent
 	 */
-	Tree.prototype.addNodeToTree = function(node, parent) {
+	Tree__Tree.prototype.addNodeToTree = function(node, parent) {
 	  this.addNode(node);
 	  if(parent == null) {
 	    node.level = 0;
 	    node.parent = null;
 	  } else {
-	    var relation = new Relation(parent.id + "_" + node.id, parent.id + "_" + node.id, parent, node);
+	    var relation = new Relation__default(parent.id + "_" + node.id, parent.id + "_" + node.id, parent, node);
 	    this.addRelation(relation);
 	    //this._createRelation(parent, node);
 	    node.level = parent.level + 1;
@@ -6405,7 +7676,7 @@ define('src/index', ['exports'], function (exports) {
 	/**
 	 * @ignore
 	 */
-	Network.prototype._newCreateRelation = function(parent, node, id, weight) {
+	Network__default.prototype._newCreateRelation = function(parent, node, id, weight) {
 	  if(id == null) id = this.relationList.getNewId();
 	  this._createRelation(parent, node, id, weight);
 	  node.level = parent.level + 1;
@@ -6418,7 +7689,7 @@ define('src/index', ['exports'], function (exports) {
 	 *
 	 * @param {Node} node New Parent Node.
 	 */
-	Tree.prototype.addFather = function(node, children) {
+	Tree__Tree.prototype.addFather = function(node, children) {
 	  //TODO: is children supposed to be child?
 	  if(child.parent != null || this.nodeList.indexOf(child) == -1) return false;
 	  this.addNode(node);
@@ -6434,8 +7705,8 @@ define('src/index', ['exports'], function (exports) {
 	 * @param {Number} level Level (depth) of the Tree to extract Nodes at.
 	 * @return {NodeList} All Nodes at the given level of the tree.
 	 */
-	Tree.prototype.getNodesByLevel = function(level) {
-	  var newNodeList = new NodeList();
+	Tree__Tree.prototype.getNodesByLevel = function(level) {
+	  var newNodeList = new NodeList__default();
 	  for(i = 0; this.nodeList[i] != null; i++) {
 	    if(this.nodeList[i].level == level) newNodeList.addNode(this.nodeList[i]);
 	  }
@@ -6450,8 +7721,8 @@ define('src/index', ['exports'], function (exports) {
 	 * @return {NodeList} Leaves of the Tree or sub-tree.
 	 * tags:
 	 */
-	Tree.prototype.getLeaves = function(node) {
-	  var leaves = new NodeList();
+	Tree__Tree.prototype.getLeaves = function(node) {
+	  var leaves = new NodeList__default();
 	  if(node) {
 	    if(node.toNodeList.length == 0) {
 	      leaves.addNode(node);
@@ -6478,14 +7749,14 @@ define('src/index', ['exports'], function (exports) {
 	 *
 	 * @return {undefined}
 	 */
-	Tree.prototype.assignDescentWeightsToNodes = function() {
+	Tree__Tree.prototype.assignDescentWeightsToNodes = function() {
 	  this._assignDescentWeightsToNode(this.nodeList[0]);
 	};
 
 	/**
 	 * @ignore
 	 */
-	Tree.prototype._assignDescentWeightsToNode = function(node) {
+	Tree__Tree.prototype._assignDescentWeightsToNode = function(node) {
 	  var i;
 	  if(node.toNodeList.length == 0) {
 	    node.descentWeight = 1;
@@ -6502,12 +7773,12 @@ define('src/index', ['exports'], function (exports) {
 	 *
 	 * @return {String} Log message indicating Tree's size.
 	 */
-	Tree.prototype.getReport = function(relation) {
+	Tree__Tree.prototype.getReport = function(relation) {
 	  //TODO: remove relation input?
 	  return "Tree contains " + this.nodeList.length + " nodes and " + this.relationList.length + " relations";
 	};
 
-	exports.Tree = Tree;
+	exports.Tree = Tree__default;
 
 	//TODO: delete many functions that are deprectaed, replaced by SimpleGraphics.js functions
 
@@ -7513,8 +8784,8 @@ define('src/index', ['exports'], function (exports) {
 
 	exports.GeometryOperators = GeometryOperators__default;
 
-	function NumberListGenerators() {}
-
+	function NumberListGenerators__NumberListGenerators() {}
+	var NumberListGenerators__default = NumberListGenerators__NumberListGenerators;
 
 	/**
 	 * Generate a NumberList with sorted Numbers
@@ -7525,7 +8796,7 @@ define('src/index', ['exports'], function (exports) {
 	 * @return {NumberList} generated NumberList
 	 * tags:generator
 	 */
-	NumberListGenerators.createSortedNumberList = function(nValues, start, step) {
+	NumberListGenerators__NumberListGenerators.createSortedNumberList = function(nValues, start, step) {
 	  start = start || 0;
 	  step = step || 1;
 	  if(step == 0) step = 1;
@@ -7558,7 +8829,7 @@ define('src/index', ['exports'], function (exports) {
 	 * @return {NumberList}
 	 * tags:random
 	 */
-	NumberListGenerators.createRandomNumberList = function(nValues, interval, seed, func) {
+	NumberListGenerators__NumberListGenerators.createRandomNumberList = function(nValues, interval, seed, func) {
 	  seed = seed == null ? -1 : seed;
 	  interval = interval == null ? new Interval(0, 1) : interval;
 
@@ -8178,17 +9449,17 @@ define('src/index', ['exports'], function (exports) {
 	 * tags:geometry
 	 */
 	PolygonOperators.buildDendrogramFromPolygon = function(polygon) {
-	  var tree = new Tree();
+	  var tree = new Tree__default();
 	  var point, i;
 	  var node;
 	  var tW;
 	  var parent;
-	  var leaves = new NodeList();
+	  var leaves = new NodeList__default();
 
 	  var node0, node1, nodeList = new Polygon__default();
 
 	  polygon.forEach(function(point, i) {
-	    node = new Node('point_' + i, 'point_' + i);
+	    node = new Node__default('point_' + i, 'point_' + i);
 	    node.weight = 1;
 	    node.barycenter = point;
 	    node.point = point;
@@ -8203,7 +9474,7 @@ define('src/index', ['exports'], function (exports) {
 	  //c.l('-');
 
 	  var buildNodeFromPair = function(node0, node1) {
-	    var parent = new Node("(" + node0.id + "," + node1.id + ")", "(" + node0.id + "," + node1.id + ")");
+	    var parent = new Node__default("(" + node0.id + "," + node1.id + ")", "(" + node0.id + "," + node1.id + ")");
 	    parent.polygon = node0.polygon.concat(node1.polygon);
 	    //c.l("node0.polygon.length, node1.polygon.length, parent.polygon.length", node0.polygon.length, node1.polygon.length, parent.polygon.length);
 	    parent.weight = parent.polygon.length;
@@ -8414,7 +9685,7 @@ define('src/index', ['exports'], function (exports) {
 
 	PolygonOperators.convexHull = function(polygon, deepness) {
 	  var indexesHull = this.hull(polygon, true);
-	  var pointsLeftIndexes = NumberListGenerators.createSortedNumberList(polygon.length);
+	  var pointsLeftIndexes = NumberListGenerators__default.createSortedNumberList(polygon.length);
 	  pointsLeftIndexes = pointsLeftIndexes.getWithoutElementsAtIndexes(indexesHull);
 	  var i;
 	  var j;
@@ -8517,7 +9788,7 @@ define('src/index', ['exports'], function (exports) {
 
 	exports.PolygonOperators = PolygonOperators;
 
-	CountryList.prototype = new NodeList();
+	CountryList.prototype = new NodeList__default();
 	CountryList.prototype.constructor = CountryList;
 
 	/**
@@ -8528,7 +9799,7 @@ define('src/index', ['exports'], function (exports) {
 	 * @category geo
 	 */
 	function CountryList() {
-	  var array = NodeList.apply(this, arguments);
+	  var array = NodeList__default.apply(this, arguments);
 	  //
 	  array.name = "";
 	  //assign methods to array:
@@ -8539,7 +9810,7 @@ define('src/index', ['exports'], function (exports) {
 
 
 	CountryList.fromArray = function(array) {
-	  var result = NodeList.fromArray(array);
+	  var result = NodeList__default.fromArray(array);
 	  result.type = "CountryList";
 	  //assign methods to array:
 	  result.getCountryFromName = CountryList.prototype.getCountryFromName;
@@ -8852,85 +10123,6 @@ define('src/index', ['exports'], function (exports) {
 	};
 
 	exports.Rectangle = Rectangle__default;
-
-	RectangleList.prototype = new List__default();
-	RectangleList.prototype.constructor = RectangleList;
-	/**
-	 * @classdesc A {@link List} structure for storing {@link Rectangle} instances.
-	 *
-	 * @description Creates a new RectangleList.
-	 * @constructor
-	 * @category geometry
-	 */
-	function RectangleList() {
-	  var array = List__default.apply(this, arguments);
-	  array = RectangleList.fromArray(array);
-	  return array;
-	}
-
-
-	RectangleList.fromArray = function(array) {
-	  var result = List__default.fromArray(array);
-	  result.type = "RectangleList";
-
-	  result.getFrame = RectangleList.prototype.getFrame;
-	  result.add = RectangleList.prototype.add;
-	  result.factor = RectangleList.prototype.factor;
-	  result.getAddedArea = RectangleList.prototype.getAddedArea;
-	  result.getIntersectionArea = RectangleList.prototype.getIntersectionArea;
-
-	  return result;
-	};
-
-	//TODO:finish RectangleList methods
-
-	RectangleList.prototype.getFrame = function() {
-	  if(this.length == 0) return null;
-	  var frame = this[0];
-	  frame.width = frame.getRight();
-	  frame.height = frame.getBottom();
-	  for(var i = 1; this[i] != null; i++) {
-	    frame.x = Math.min(frame.x, this[i].x);
-	    frame.y = Math.min(frame.y, this[i].y);
-
-	    frame.width = Math.max(this[i].getRight(), frame.width);
-	    frame.height = Math.max(this[i].getBottom(), frame.height);
-	  }
-
-	  frame.width -= frame.x;
-	  frame.height -= frame.y;
-
-	  return frame;
-	};
-
-	RectangleList.prototype.add = function() {
-
-	};
-
-	RectangleList.prototype.factor = function() {
-
-	};
-
-	RectangleList.prototype.getAddedArea = function() {};
-
-	RectangleList.prototype.getIntersectionArea = function() {
-	  var rect0;
-	  var rect1;
-	  var intersectionArea = 0;
-	  var intersection;
-	  for(var i = 0; this[i + 1] != null; i++) {
-	    rect0 = this[i];
-	    for(var j = i + 1; this[j] != null; j++) {
-	      rect1 = this[j];
-	      intersection = rect0.getIntersection(rect1);
-	      intersectionArea += intersection == null ? 0 : intersection.getArea();
-	    }
-	  }
-
-	  return intersectionArea;
-	};
-
-	exports.RectangleList = RectangleList;
 
 	/**
 	 * @classdesc Provides a set of tools that work with Colors.
@@ -9839,7 +11031,7 @@ define('src/index', ['exports'], function (exports) {
 	DateListOperators.buildTimeTreeFromDates = function(dates) {
 	  if(dates == null) return;
 
-	  var tree = new Tree();
+	  var tree = new Tree__default();
 	  var minYear;
 	  var maxYear;
 
@@ -9856,7 +11048,7 @@ define('src/index', ['exports'], function (exports) {
 	  minYear = minDate.getFullYear();
 	  maxYear = minDate.getFullYear();
 
-	  var superior = new Node("years", "years");
+	  var superior = new Node__default("years", "years");
 	  tree.addNodeToTree(superior);
 	  superior.dates = dates.clone();
 
@@ -9867,7 +11059,7 @@ define('src/index', ['exports'], function (exports) {
 	  //var N=0;
 
 	  for(y = minYear; y <= maxYear; y++) {
-	    yNode = new Node(String(y), String(y));
+	    yNode = new Node__default(String(y), String(y));
 	    tree.addNodeToTree(yNode, superior);
 	  }
 
@@ -9879,7 +11071,7 @@ define('src/index', ['exports'], function (exports) {
 	      yNode.dates = new DateList();
 
 	      for(m = 0; m < 12; m++) {
-	        mNode = new Node(DateOperators__default.MONTH_NAMES[m] + "_" + y, DateOperators__default.MONTH_NAMES[m]);
+	        mNode = new Node__default(DateOperators__default.MONTH_NAMES[m] + "_" + y, DateOperators__default.MONTH_NAMES[m]);
 	        tree.addNodeToTree(mNode, yNode);
 	        nDaysOnMonth = DateOperators__default.getNDaysInMonth(y, m + 1);
 	      }
@@ -9892,7 +11084,7 @@ define('src/index', ['exports'], function (exports) {
 	    if(mNode.dates == null) {
 	      mNode.dates = new DateList();
 	      for(d = 0; d < nDaysOnMonth; d++) {
-	        dNode = new Node((d + 1) + "_" + mNode.id, String(d + 1));
+	        dNode = new Node__default((d + 1) + "_" + mNode.id, String(d + 1));
 	        tree.addNodeToTree(dNode, mNode);
 	      }
 	    }
@@ -9903,7 +11095,7 @@ define('src/index', ['exports'], function (exports) {
 	    if(dNode.dates == null) {
 	      dNode.dates = new DateList();
 	      for(h = 0; h < 24; h++) {
-	        hNode = new Node(h + "_" + dNode.id, String(h) + ":00");
+	        hNode = new Node__default(h + "_" + dNode.id, String(h) + ":00");
 	        tree.addNodeToTree(hNode, dNode);
 	      }
 	    }
@@ -9914,7 +11106,7 @@ define('src/index', ['exports'], function (exports) {
 	    if(hNode.dates == null) {
 	      hNode.dates = new DateList();
 	      for(mn = 0; mn < 60; mn++) {
-	        mnNode = new Node(mn + "_" + hNode.id, String(mn));
+	        mnNode = new Node__default(mn + "_" + hNode.id, String(mn));
 	        tree.addNodeToTree(mnNode, hNode);
 	      }
 	    }
@@ -10465,7 +11657,7 @@ define('src/index', ['exports'], function (exports) {
 	 * tags:
 	 */
 	ListOperators__ListOperators.assemble = function() {
-	  return List.fromArray(Array.prototype.slice.call(arguments, 0)).getImproved();
+	  return List__default.fromArray(Array.prototype.slice.call(arguments, 0)).getImproved();
 	};
 
 
@@ -10521,9 +11713,9 @@ define('src/index', ['exports'], function (exports) {
 	  }
 
 	  if(elementList.type == "NumberList") {
-	    var table = new NumberTable();
+	    var table = new NumberTable__default();
 	  } else {
-	    var table = new Table();
+	    var table = new Table__default();
 	  }
 	  table[0] = elementList;
 	  table[1] = numberList;
@@ -10561,7 +11753,7 @@ define('src/index', ['exports'], function (exports) {
 	 * tags:
 	 */
 	ListOperators__ListOperators.translateWithDictionary = function(list, dictionary, nullElement) {
-	  var newList = new List();
+	  var newList = new List__default();
 	  list.forEach(function(element, i) {
 	    index = dictionary[0].indexOf(element);
 	    if(nullElement != null) {
@@ -10655,7 +11847,7 @@ define('src/index', ['exports'], function (exports) {
 
 	ListOperators__ListOperators.slidingWindowOnList = function(list, subListsLength, step, finalizationMode) {
 	  finalizationMode = finalizationMode || 0;
-	  var table = new Table();
+	  var table = new Table__default();
 	  var newList;
 	  var nElements = list.length;
 	  var nList;
@@ -10669,7 +11861,7 @@ define('src/index', ['exports'], function (exports) {
 	    case 0: //all sub-Lists same length, doesn't cover the List
 	      for(i = 0; i < nElements; i += step) {
 	        if(i + subListsLength <= nElements) {
-	          newList = new List();
+	          newList = new List__default();
 	          for(j = 0; j < subListsLength; j++) {
 	            newList.push(list[i + j]);
 	          }
@@ -10679,7 +11871,7 @@ define('src/index', ['exports'], function (exports) {
 	      break;
 	    case 1: //last sub-List catches the last elements, with lesser length
 	      for(i = 0; i < nElements; i += step) {
-	        newList = new List();
+	        newList = new List__default();
 	        for(j = 0; j < Math.min(subListsLength, nElements - i); j++) {
 	          newList.push(list[i + j]);
 	        }
@@ -10688,7 +11880,7 @@ define('src/index', ['exports'], function (exports) {
 	      break;
 	    case 2: //all lists same length, last sub-list migth contain elements from the beginning of the List
 	      for(i = 0; i < nElements; i += step) {
-	        newList = new List();
+	        newList = new List__default();
 	        for(j = 0; j < subListsLength; j++) {
 	          newList.push(list[(i + j) % nElements]);
 	        }
@@ -10701,7 +11893,7 @@ define('src/index', ['exports'], function (exports) {
 	};
 
 	ListOperators__ListOperators.getNewListForObjectType = function(object) {
-	  var newList = new List();
+	  var newList = new List__default();
 	  newList[0] = object;
 	  return instantiateWithSameType(newList.getImproved());
 	};
@@ -10725,7 +11917,7 @@ define('src/index', ['exports'], function (exports) {
 	ListOperators__ListOperators.getCommonElements = function(list0, list1) {
 	  var nums = list0.type == 'NumberList' && list1.type == 'NumberList';
 	  var strs = list0.type == 'StringList' && list1.type == 'StringList';
-	  var newList = nums ? new NumberList() : (strs ? new StringList() : new List());
+	  var newList = nums ? new NumberList() : (strs ? new StringList() : new List__default());
 
 	  var list = list0.length < list1.length ? list0 : list1;
 	  var otherList = list0 == list ? list1 : list0;
@@ -10910,7 +12102,7 @@ define('src/index', ['exports'], function (exports) {
 
 	  feature.forEach(function(element, i) {
 	    if(childrenObject[element] == null) {
-	      childrenObject[element] = new List();
+	      childrenObject[element] = new List__default();
 	      childrenLists.push(childrenObject[element]);
 	    }
 	    childrenObject[element].push(supervised[i]);
@@ -10931,11 +12123,11 @@ define('src/index', ['exports'], function (exports) {
 	  var childrenLists = [];
 	  var N = feature.length;
 	  var entropy;
-	  var sets = new List();
+	  var sets = new List__default();
 
 	  feature.forEach(function(element, i) {
 	    if(childrenObject[element] == null) {
-	      childrenObject[element] = new List();
+	      childrenObject[element] = new List__default();
 	      childrenLists.push(childrenObject[element]);
 	    }
 	    childrenObject[element].push(supervised[i]);
@@ -11002,13 +12194,13 @@ define('src/index', ['exports'], function (exports) {
 	  if(mode == undefined)
 	    mode = 0;
 	  var resultOb = {};
-	  var resultTable = new Table();
+	  var resultTable = new Table__default();
 	  var pValue, item, minValue, maxValue;
 	  for(var i = 0; i < list.length; i++) {
 	    item = list[i];
 	    pValue = propertyName == undefined ? item : item[propertyName];
 	    if(resultOb[pValue] == undefined) {
-	      resultOb[pValue] = new List();
+	      resultOb[pValue] = new List__default();
 	      resultOb[pValue].name = pValue;
 	      resultOb[pValue].valProperty = pValue;
 	      resultTable.push(resultOb[pValue]);
@@ -11031,7 +12223,7 @@ define('src/index', ['exports'], function (exports) {
 	    var numBlanks = 0;
 	    for(var i = minValue; i < maxValue; i++) {
 	      if(resultOb[i] == undefined) {
-	        resultOb[i] = new List();
+	        resultOb[i] = new List__default();
 	        resultOb[i].name = i;
 	        resultOb[i].valProperty = i;
 	        resultTable.push(resultOb[i]);
@@ -11049,67 +12241,7 @@ define('src/index', ['exports'], function (exports) {
 
 	};
 
-	/**
-	 * @classdesc Create default lists
-	 *
-	 * @namespace
-	 * @category basics
-	 */
-	function ListGenerators__ListGenerators() {}
-	var ListGenerators__default = ListGenerators__ListGenerators;
-
-
-	/**
-	 * Generates a List made of several copies of same element (returned List is improved)
-	 * @param {Object} nValues length of the List
-	 * @param {Object} element object to be placed in all positions
-	 * @return {List} generated List
-	 * tags:generator
-	 */
-	ListGenerators__ListGenerators.createListWithSameElement = function(nValues, element) {
-	  switch(typeOf(element)) {
-	    case 'number':
-	      var list = new NumberList();
-	      break;
-	    case 'List':
-	      var list = new Table();
-	      break;
-	    case 'NumberList':
-	      var list = new NumberTable();
-	      break;
-	    case 'Rectangle':
-	      var list = new RectamgleList();
-	      break;
-	    case 'string':
-	      var list = new StringList();
-	      break;
-	    case 'boolean':
-	      var list = new List(); //TODO:update once BooleanList exists
-	      break;
-	    default:
-	      var list = new List();
-	  }
-
-	  for(var i = 0; i < nValues; i++) {
-	    list[i] = element;
-	  }
-	  return list;
-	};
-
-	/**
-	 * Generates a List built froma seed element and a function that will be applied iteratively
-	 * @param {Object} nValues length of the List
-	 * @param {Object} firstElement first element
-	 * @param {Object} dynamicFunction sequence generator function, elementN+1 =  dynamicFunction(elementN)
-	 * @return {List} generated List
-	 */
-	ListGenerators__ListGenerators.createIterationSequence = function(nValues, firstElement, dynamicFunction) {
-	  var list = ListGenerators__ListGenerators.createListWithSameElement(1, firstElement);
-	  for(var i = 1; i < nValues; i++) {
-	    list[i] = dynamicFunction(list[i - 1]);
-	  }
-	  return list;
-	};
+	exports.ListOperators = ListOperators__default;
 
 	function RectangleOperators() {}
 
@@ -11562,7 +12694,7 @@ define('src/index', ['exports'], function (exports) {
 	      }
 	      break;
 	    case 1: //seeded random numbers
-	      var values = NumberListGenerators.createRandomNumberList(nColors, null, 0);
+	      var values = NumberListGenerators__default.createRandomNumberList(nColors, null, 0);
 	      for(i = 0; i < nColors; i++) {
 	        colorList[i] = colorScaleFunction(values[i]);
 	      }
@@ -11573,9 +12705,9 @@ define('src/index', ['exports'], function (exports) {
 	      }
 	      break;
 	    case 5:
-	      var randomNumbersSource = NumberListGenerators.createRandomNumberList(1001, null, 0);
-	      var positions = NumberListGenerators.createSortedNumberList(nColors);
-	      var randomNumbers = NumberListGenerators.createRandomNumberList(nColors, null, 0);
+	      var randomNumbersSource = NumberListGenerators__default.createRandomNumberList(1001, null, 0);
+	      var positions = NumberListGenerators__default.createSortedNumberList(nColors);
+	      var randomNumbers = NumberListGenerators__default.createRandomNumberList(nColors, null, 0);
 	      var randomPositions = ListOperators__default.sortListByNumberList(positions, randomNumbers);
 
 	      var nGenerations = Math.floor(nColors * 2) + 100;
@@ -11804,6 +12936,1052 @@ define('src/index', ['exports'], function (exports) {
 	};
 
 	exports.ColorScaleGenerators = ColorScaleGenerators;
+
+	function TableConversions() {}
+
+
+	/**
+	 * Convert an object (or more typically an Array of objects) into a Table
+	 * @param {Object} object or array of objects
+	 *
+	 * @param {List} list of field names to include (by default will take all from first element in array of objects)
+	 * @return {Table} resulting Table
+	 * tags:decoder,dani
+	 */
+	TableConversions.ObjectToTable = function(object, fields) {
+	  // Formats:
+	  // 1: normal list of objects
+	  // 2: Object with single property, containing normal list of obejcts
+	  // 3: Object as CSV (each property represents a column)
+	  var format;
+
+	  // If it's an array, then it's format 1
+	  if(Array.isArray(object)) {
+	    format = 1;
+	    // If not field names supplied, get them from first element
+	    if(!fields)
+	    {
+	      fields = [];
+	      for(var p in object[0]) {
+	        fields.push(p);
+	      }
+	    }
+	    // Else (not array), it's an object
+	  } else {
+	    // Check how many properties the object has
+	    var properties = [];
+	    for(var p in object) {
+	      properties.push(p);
+	    }
+
+	    // If it has only one, and it's an array, it's foramt 2, so assume it's just a capsule
+	    // and extract the array as format 1
+	    if(properties.length == 1 && Array.isArray(object[properties[0]]))
+	    {
+	      format = 1;
+	      object = object[properties[0]];
+
+	      // If not field names supplied, get them from first element
+	      if(!fields)
+	      {
+	        fields = [];
+	        for(var p in object[0]) {
+	          fields.push(p);
+	        }
+	      }
+	    } else {
+	      // Finally, if the object has many properties, we assume it's a csv encoded as JSON
+	      // ( each property of the object represents a column of the CSV )
+	      format = 3;
+
+	      // If not fields supplied, use all properties
+	      if(!fields)
+	        fields = properties;
+	    }
+	  }
+
+
+	  // Create table and columns
+	  var result = new Table();
+	  for(var i = 0; i < fields.length; i++) {
+	    var fieldName = fields[i];
+	    var column = new List();
+	    result[i] = column;
+	    column.name = fieldName;
+	  }
+
+	  // Fill the table
+	  if(format == 1)
+	  {
+	    for(var i = 0; i < object.length; i++) {
+	      var row = object[i];
+	      for(var f = 0; f < fields.length; f++) {
+	        result[f].push(row[fields[f]]);
+	      }
+	    }
+	  } else {
+	    for(var f = 0; f < fields.length; f++) {
+	      var column = object[fields[f]];
+	      for(var i = 0; i < column.length; i++) {
+	        result[f].push(column[i]);
+	      }
+	    }
+	  }
+
+	  // Improve columns
+	  for(var i = 0; i < result.length; i++) {
+	    result[i] = result[i].getImproved();
+	  }
+
+	  //if(result.getLengths.getMax()==1) return result.getRow(0);
+
+	  // Improve table
+	  result = result.getImproved();
+
+	  // Return best possible
+	  return result;
+	};
+
+
+	/**
+	 * Convert an object (or more typically an Array of objects) into a Table
+	 * @param {Object} object or array of objects
+	 *
+	 * @param {List} list of field names to include (by default will take all from first element in array of objects)
+	 * @return {List} resulting list (probably a table)
+	 * tags:decoder
+	 */
+	TableConversions.ObjectToList = function(object, fields) {
+	  var result = TableConversions.ObjectToTable(object, fields);
+
+	  if(result.getLengths.getMax() == 1) return result.getRow(0);
+	};
+
+
+
+	/**
+	 * Convert a Table into an Object or Array of objects
+	 * @param {Object} table to be converted
+	 *
+	 * @param {List} list of field names to include (by default will take all from table)
+	 * @return {Object} containing list of rows from input Table
+	 * tags:decoder,dani
+	 */
+	TableConversions.TableToObject = function(table, fields) { // To-Do: should return a List instead of Array?
+	    if(!table)
+	      return;
+
+	    // If no field names supplied, take them from first element
+	    if(!fields)
+	    {
+	      fields = table.getNames();
+	    }
+	    var result = [];
+	    for(var i = 0; i < table[0].length; i++) {
+	      var row = {};
+	      for(var f = 0; f < fields.length; f++)
+	      {
+	        row[fields[f]] = table[f][i];
+	      }
+	      result.push(row);
+	    }
+	    return {
+	      array: result
+	    };
+	  };
+	  // Tests ObjectToTable / TableToObject
+	  /*
+	  var input = [ {name:"dani", age:36, other:"eee"}, {name:"alejandro", age:34}, {name:"anna", age:37} ];
+	  var table = TableEncodings.ObjectToTable( input );
+	  console.log( "ObjectToTable: ", table );
+	  var obj = TableEncodings.TableToObject(table);
+	  console.log( "ObjectToTable INVERSE: ", obj );
+	  */
+
+	exports.TableConversions = TableConversions;
+
+	function TableGenerators() {}
+
+
+	TableGenerators.createTableWithSameElement = function(nLists, nRows, element) {
+	  var table = new Table__default();
+	  for(var i = 0; i < nLists; i++) {
+	    table[i] = ListGenerators__default.createListWithSameElement(nRows, element);
+	  }
+	  return table.getImproved();
+	};
+
+	exports.TableGenerators = TableGenerators;
+
+	/**
+	 * @classdesc Provides a set of tools that work with Numbers.
+	 *
+	 * @namespace
+	 * @category numbers
+	 */
+	function NumberOperators__NumberOperators() {}
+	var NumberOperators__default = NumberOperators__NumberOperators;
+
+	NumberOperators__NumberOperators.numberToString = function(value, nDecimals, powersMode, unit) {
+	  var string = value.toFixed(nDecimals);
+	  while(string.charAt(string.length - 1) == '0') {
+	    string = string.substring(0, string.length - 1);
+	  }
+	  if(string.charAt(string.length - 1) == '.') string = string.substring(0, string.length - 1);
+	  return string;
+	};
+
+	/**
+	 * decent method to create pseudo random numbers
+	 * @param {Object} seed
+	 */
+	NumberOperators__NumberOperators.getRandomWithSeed = function(seed) {
+	  seed = (seed * 9301 + 49297) % 233280;
+	  return seed / (233280.0);
+	};
+
+	NumberOperators__NumberOperators.numberFromBinaryPositions = function(binaryPositions) {
+	  var i;
+	  var n = 0;
+	  for(i = 0; binaryPositions[i] != null; i++) {
+	    n += Math.pow(2, binaryPositions[i]);
+	  }
+	  return n;
+	};
+
+	NumberOperators__NumberOperators.numberFromBinaryValues = function(binaryValues) {
+	  var n = 0;
+	  for(var i = 0; binaryValues[i] != null; i++) {
+	    n += binaryValues[i] == 1 ? Math.pow(2, i) : 0;
+	  }
+	  return n;
+	};
+
+	NumberOperators__NumberOperators.powersOfTwoDecomposition = function(number, length) {
+	  // var i;
+	  // var powers = StringList.fromArray(Number(number).toString(2).split('')).toNumberList().getReversed();
+	  // var n = powers.length;
+	  // for(i=n; i<length; i++){
+	  //   powers.push(0);
+	  // }
+	  // return powers;
+
+
+
+	  var powers = new NumberList();
+
+	  var constructingNumber = 0;
+	  var biggestPower;
+
+	  while(constructingNumber < number) {
+	    biggestPower = Math.floor(Math.log(number) / Math.LN2);
+	    powers[biggestPower] = 1;
+	    number -= Math.pow(2, biggestPower);
+	  }
+
+	  var length = Math.max(powers.length, length == null ? 0 : length);
+
+	  for(var i = 0; i < length; i++) {
+	    powers[i] = powers[i] == 1 ? 1 : 0;
+	  }
+
+	  return powers;
+	};
+
+	NumberOperators__NumberOperators.positionsFromBinaryValues = function(binaryValues) {
+	  var i;
+	  var positions = new NumberList();
+	  for(i = 0; binaryValues[i] != null; i++) {
+	    if(binaryValues[i] == 1) positions.push(i);
+	  }
+	  return positions;
+	};
+
+	//////////Random Generator with Seed, From http://baagoe.org/en/w/index.php/Better_random_numbers_for_javascript
+
+	NumberOperators__NumberOperators._Alea = function() {
+	  return(function(args) {
+	    // Johannes Baagøe <baagoe@baagoe.com>, 2010
+	    var s0 = 0;
+	    var s1 = 0;
+	    var s2 = 0;
+	    var c = 1;
+
+	    if(args.length == 0) {
+	      args = [+new Date()];
+	    }
+	    var mash = NumberOperators__NumberOperators._Mash();
+	    s0 = mash(' ');
+	    s1 = mash(' ');
+	    s2 = mash(' ');
+
+	    for(var i = 0; i < args.length; i++) {
+	      s0 -= mash(args[i]);
+	      if(s0 < 0) {
+	        s0 += 1;
+	      }
+	      s1 -= mash(args[i]);
+	      if(s1 < 0) {
+	        s1 += 1;
+	      }
+	      s2 -= mash(args[i]);
+	      if(s2 < 0) {
+	        s2 += 1;
+	      }
+	    }
+	    mash = null;
+
+	    var random = function() {
+	      var t = 2091639 * s0 + c * 2.3283064365386963e-10; // 2^-32
+	      s0 = s1;
+	      s1 = s2;
+	      return s2 = t - (c = t | 0);
+	    };
+	    random.uint32 = function() {
+	      return random() * 0x100000000; // 2^32
+	    };
+	    random.fract53 = function() {
+	      return random() +
+	        (random() * 0x200000 | 0) * 1.1102230246251565e-16; // 2^-53
+	    };
+	    random.version = 'Alea 0.9';
+	    random.args = args;
+	    return random;
+
+	  }(Array.prototype.slice.call(arguments)));
+	};
+
+	NumberOperators__NumberOperators._Mash = function() {
+	  var n = 0xefc8249d;
+
+	  var mash = function(data) {
+	    data = data.toString();
+	    for(var i = 0; i < data.length; i++) {
+	      n += data.charCodeAt(i);
+	      var h = 0.02519603282416938 * n;
+	      n = h >>> 0;
+	      h -= n;
+	      h *= n;
+	      n = h >>> 0;
+	      h -= n;
+	      n += h * 0x100000000; // 2^32
+	    }
+	    return(n >>> 0) * 2.3283064365386963e-10; // 2^-32
+	  };
+
+	  mash.version = 'Mash 0.9';
+	  return mash;
+	};
+
+	function TableOperators__TableOperators() {}
+	var TableOperators__default = TableOperators__TableOperators;
+
+
+	TableOperators__TableOperators.getElementFromTable = function(table, i, j) {
+	  if(table[i] == null) return null;
+	  return table[i][j];
+	};
+
+	TableOperators__TableOperators.getSubTable = function(table, x, y, width, height) {
+	  if(table == null) return table;
+
+	  var nLists = table.length;
+	  if(nLists == 0) return null;
+	  var result = new Table();
+
+	  if(width <= 0) width = (nLists - x) + width;
+	  x = Math.min(x, nLists - 1);
+	  width = Math.min(width, nLists - x);
+
+	  var nRows = table[0].length;
+
+	  if(nRows == 0) return null;
+
+	  if(height <= 0) height = (nRows - y) + height;
+
+	  y = Math.min(y, nRows - 1);
+	  height = Math.min(height, nRows - y);
+
+	  var column;
+	  var newColumn;
+	  var i;
+	  var j;
+	  var element;
+	  for(i = x; i < x + width; i++) {
+	    column = table[i];
+	    newColumn = new List();
+	    newColumn.name = table[i].name;
+	    for(j = y; j < y + height; j++) {
+	      element = column[j];
+	      newColumn.push(element);
+	    }
+	    result.push(newColumn.getImproved());
+	  }
+	  return result.getImproved();
+	};
+
+	/**
+	 * transposes a table
+	 * @param  {Table} table to be transposed
+	 *
+	 * @param {Boolean} firstListAsHeaders removes first list of the table and uses it as names for the lists on the transposed table
+	 * @return {Table}
+	 * tags:matrixes
+	 */
+	TableOperators__TableOperators.transpose = function(table, firstListAsHeaders) {
+	  if(table == null) return null;
+	  return table.getTransposed(firstListAsHeaders);
+	};
+
+	/**
+	 * divides the instances of a table in two tables: the training table and the test table
+	 * @param  {Table} table
+	 * @param  {Number} proportion proportion of training instances/test instances, between 0 and 1
+	 *
+	 * @param  {Number} mode  0:random<br>1:random with seed<br>2:shuffle
+	 * @param {Number} seed seed for random numbers (mode 1)
+	 * @return {List} list containing the two tables
+	 * tags:ds
+	 */
+	TableOperators__TableOperators.trainingTestPartition = function(table, proportion, mode, seed) {
+	  if(table == null || proportion == null) return;
+
+	  mode = mode || 0;
+	  seed = seed || 0;
+
+	  var indexesTr = new NumberList();
+	  var indexesTe = new NumberList();
+
+	  var random = mode == 1 ? new NumberOperators__default._Alea("my", seed, "seeds") : Math.random;
+
+	  if(mode == 2) N_MOD = Math.floor(proportion / (1 - proportion) * 10);
+
+	  table[0].forEach(function(id, i) {
+	    if(mode == 0 ||  mode == 1) {
+	      if(random() < proportion) {
+	        indexesTr.push(i);
+	      } else {
+	        indexesTe.push(i);
+	      }
+	    } else {
+	      if(i % N_MOD != 0) {
+	        indexesTr.push(i);
+	      } else {
+	        indexesTe.push(i);
+	      }
+	    }
+	  });
+
+	  return new List(table.getSubListsByIndexes(indexesTr), table.getSubListsByIndexes(indexesTe));
+	};
+
+	/**
+	 * tests a model
+	 * @param  {NumberTable} numberTable coordinates of points
+	 * @param  {List} classes list of values of classes
+	 * @param  {Function} model function that receives two numbers and returns a guessed class
+	 *
+	 * @param  {Number} metric 0:error
+	 * @return {Number} metric value
+	 * tags:ds
+	 */
+	TableOperators__TableOperators.testClassificationModel = function(numberTable, classes, model, metric) {
+	  if(numberTable == null || classes == null || model == null) return null;
+
+	  metric = metric || 0;
+
+	  var i;
+	  var nErrors = 0;
+
+	  classes.forEach(function(clss, i) {
+	    if(model(numberTable[0][i], numberTable[1][i]) != clss) {
+	      nErrors++;
+	    }
+	  });
+
+	  return nErrors / classes.length;
+	};
+
+
+
+	TableOperators__TableOperators.getSubListsByIndexes = function(table, indexes) {
+	  var newTable = new Table();
+	  newTable.name = table.name;
+	  var i;
+	  var list;
+	  var newList;
+	  for(i = 0; table[i] != null; i++) {
+	    list = table[i];
+	    newList = ClassUtils__instantiateWithSameType(list);
+	    for(j = 0; indexes[j] != null; j++) {
+	      newList[j] = list[indexes[j]];
+	    }
+	    newTable[i] = newList.getImproved();
+	  }
+	  return newTable;
+	};
+
+	TableOperators__TableOperators.sortListsByNumberList = function(table, numberList, descending) {
+	  if(descending == null) descending = true;
+
+	  var newTable = instantiate(typeOf(table));
+	  newTable.name = table.name;
+	  var nElements = table.length;
+	  var i;
+	  // only need to do the sort once, not for each column
+	  var indexList = numberList.clone();
+	  // save original index
+	  for(i = 0; i < indexList.length; i++) {
+	    indexList[i] = i;
+	  }
+	  indexList = ListOperators.sortListByNumberList(indexList, numberList, descending);
+	  // now clone and then move from original based on index
+	  for(i = 0; i < nElements; i++) {
+	    newTable[i] = table[i].clone();
+	    for(var j = 0; j < indexList.length; j++) {
+	      newTable[i][j] = table[i][indexList[j]];
+	    }
+	  }
+	  return newTable;
+	};
+
+	// old version replaced by above version Dec 1st, 2014
+	// - fixed bug where descending with 'false' value gets changed to 'true'
+	// - performance improvements for tables with lots of lists
+	// TableOperators.sortListsByNumberList=function(table, numberList, descending){
+	// 	descending = descending || true;
+
+	// 	var newTable = instantiate(typeOf(table));
+	// 	newTable.name = table.name;
+	// 	var nElements = table.length;
+	// 	var i;
+	// 	for(i=0; i<nElements; i++){
+	// 		newTable[i] = ListOperators.sortListByNumberList(table[i], numberList, descending);
+	// 	}
+	// 	return newTable;
+	// }
+
+
+
+	/**
+	 * aggregates a table
+	 * @param  {Table} table to be aggregated
+	 *
+	 * @param  {Number} nList list in the table used as basis to aggregation
+	 * @param  {Number} mode mode of aggregation, 0:picks first element 1:adds numbers, 2:averages
+	 * @return {Table} aggregated table
+	 * tags:aggregation
+	 */
+	TableOperators__TableOperators.aggregateTable = function(table, nList, mode) {
+	  nList = nList == null ? 0 : nList;
+	  if(table == null || table[0] == null || table[0][0] == null || table[nList] == null) return null;
+	  mode = mode == null ? 0 : mode;
+
+	  var newTable = new Table();
+	  var i, j;
+	  var index;
+	  var notRepeated;
+
+	  newTable.name = table.name;
+
+	  for(j = 0; table[j] != null; j++) {
+	    newTable[j] = new List();
+	    newTable[j].name = table[j].name;
+	  }
+
+	  switch(mode) {
+	    case 0: //leaves the first element of the aggregated subLists
+	      for(i = 0; table[0][i] != null; i++) {
+	        notRepeated = newTable[nList].indexOf(table[nList][i]) == -1;
+	        if(notRepeated) {
+	          for(j = 0; table[j] != null; j++) {
+	            newTable[j].push(table[j][i]);
+	          }
+	        }
+	      }
+	      break;
+	    case 1: //adds values in numberLists
+	      for(i = 0; table[0][i] != null; i++) {
+	        index = newTable[nList].indexOf(table[nList][i]);
+	        notRepeated = index == -1;
+	        if(notRepeated) {
+	          for(j = 0; table[j] != null; j++) {
+	            newTable[j].push(table[j][i]);
+	          }
+	        } else {
+	          for(j = 0; table[j] != null; j++) {
+	            if(j != nList && table[j].type == 'NumberList') {
+	              newTable[j][index] += table[j][i];
+	            }
+	          }
+	        }
+	      }
+	      break;
+	    case 2: //averages values in numberLists
+	      var nRepetitionsList = table[nList].getElementsRepetitionCount(false);
+	      newTable = TableOperators__TableOperators.aggregateTable(table, nList, 1);
+
+	      for(j = 0; newTable[j] != null; j++) {
+	        if(j != nList && newTable[j].type == 'NumberList') {
+	          newTable[j] = newTable[j].divide(nRepetitionsList[1]);
+	        }
+	      }
+
+	      newTable.push(nRepetitionsList[1]);
+	      break;
+	  }
+	  for(j = 0; newTable[j] != null; j++) {
+	    newTable[j] = newTable[j].getImproved();
+	  }
+	  return newTable.getImproved();
+	};
+
+	/**
+	 * counts pairs of elements in same positions in two lists (the result is the adjacent matrix of the network defined by pairs)
+	 * @param  {Table} table with at least two lists
+	 * @return {NumberTable}
+	 * tags:
+	 */
+	TableOperators__TableOperators.getCountPairsMatrix = function(table) {
+	  if(table == null || table.length < 2 || table[0] == null || table[0][0] == null) return null;
+
+	  var list0 = table[0].getWithoutRepetitions();
+	  var list1 = table[1].getWithoutRepetitions();
+
+	  var matrix = new NumberTable(list1.length);
+
+	  list1.forEach(function(element1, i) {
+	    matrix[i].name = String(element1);
+	    list0.forEach(function(element0, j) {
+	      matrix[i][j] = 0;
+	    });
+	  });
+
+	  table[0].forEach(function(element0, i) {
+	    element1 = table[1][i];
+	    matrix[list1.indexOf(element1)][list0.indexOf(element0)]++;
+	  });
+
+	  return matrix;
+	};
+
+
+	/**
+	 * filter a table selecting rows that have an element on one of its lists
+	 * @param  {Table} table
+	 * @param  {Number} nList list that could contain the element in several positions
+	 * @param  {Object} element
+	 * @return {Table}
+	 * tags:filter
+	 */
+	TableOperators__TableOperators.filterTableByElementInList = function(table, nList, element) {
+	  if(table == null ||  !table.length > 1 || nList == null) return;
+	  if(element == null) return table;
+
+
+	  var newTable = new Table();
+	  var i, j;
+
+	  newTable.name = table.name;
+
+	  for(j = 0; table[j] != null; j++) {
+	    newTable[j] = new List();
+	  }
+
+	  for(i = 0; table[0][i] != null; i++) {
+	    if(table[nList][i] == element) {
+	      for(j = 0; table[j] != null; j++) {
+	        newTable[j].push(table[j][i]);
+	      }
+	    }
+	  }
+
+	  for(j = 0; newTable[j] != null; j++) {
+	    newTable[j] = newTable[j].getImproved();
+	  }
+
+	  return newTable;
+	};
+
+	TableOperators__TableOperators.mergeDataTablesInList = function(tableList) {
+	  if(tableList.length < 2) return tableList;
+
+	  var merged = tableList[0];
+
+	  for(var i = 1; tableList[i] != null; i++) {
+	    merged = TableOperators__TableOperators.mergeDataTables(merged, tableList[i]);
+	  }
+
+	  return merged;
+	};
+
+	/**
+	 * creates a new table with an updated first List of elements and an added new numberList with the new values
+	 */
+	TableOperators__TableOperators.mergeDataTables = function(table0, table1) {
+	  if(table1[0].length == 0) {
+	    var merged = table0.clone();
+	    merged.push(ListGenerators.createListWithSameElement(table0[0].length, 0));
+	    return merged;
+	  }
+
+	  var table = new Table();
+	  var list = ListOperators.concatWithoutRepetitions(table0[0], table1[0]);
+
+	  var nElements = list.length;
+
+	  var nNumbers0 = table0.length - 1;
+	  var nNumbers1 = table1.length - 1;
+
+	  var numberTable0 = new NumberTable();
+	  var numberTable1 = new NumberTable();
+
+	  var element;
+	  var index;
+
+	  var i, j;
+
+	  for(i = 0; i < nElements; i++) {
+	    index = table0[0].indexOf(list[i]);
+	    if(index > -1) {
+	      for(var j = 0; j < nNumbers0; j++) {
+	        if(i == 0) {
+	          numberTable0[j] = new NumberList();
+	          numberTable0[j].name = table0[j + 1].name;
+	        }
+	        numberTable0[j][i] = table0[j + 1][index];
+	      }
+	    } else {
+	      for(j = 0; j < nNumbers0; j++) {
+	        if(i == 0) {
+	          numberTable0[j] = new NumberList();
+	          numberTable0[j].name = table0[j + 1].name;
+	        }
+	        numberTable0[j][i] = 0;
+	      }
+	    }
+
+	    index = table1[0].indexOf(list[i]);
+	    if(index > -1) {
+	      for(j = 0; j < nNumbers1; j++) {
+	        if(i == 0) {
+	          numberTable1[j] = new NumberList();
+	          numberTable1[j].name = table1[j + 1].name;
+	        }
+	        numberTable1[j][i] = table1[j + 1][index];
+	      }
+	    } else {
+	      for(j = 0; j < nNumbers1; j++) {
+	        if(i == 0) {
+	          numberTable1[j] = new NumberList();
+	          numberTable1[j].name = table1[j + 1].name;
+	        }
+	        numberTable1[j][i] = 0;
+	      }
+	    }
+	  }
+
+	  table[0] = list;
+
+	  for(i = 0; numberTable0[i] != null; i++) {
+	    table.push(numberTable0[i]);
+	  }
+	  for(i = 0; numberTable1[i] != null; i++) {
+	    table.push(numberTable1[i]);
+	  }
+	  return table;
+	};
+
+	/**
+	 * From two DataTables creates a new DataTable with combined elements in the first List, and added values in the second
+	 * @param {Object} table0
+	 * @param {Object} table1
+	 * @return {Table}
+	 */
+	TableOperators__TableOperators.fusionDataTables = function(table0, table1) {
+	  var table = table0.clone();
+	  var index;
+	  var element;
+	  for(var i = 0; table1[0][i] != null; i++) {
+	    element = table1[0][i];
+	    index = table[0].indexOf(element);
+	    if(index == -1) {
+	      table[0].push(element);
+	      table[1].push(table1[1][i]);
+	    } else {
+	      table[1][index] += table1[1][i];
+	    }
+	  }
+	  return table;
+	};
+
+	TableOperators__TableOperators.completeTable = function(table, nRows, value) {
+	  value = value == null ? 0 : value;
+
+	  var newTable = new Table();
+	  newTable.name = table.name;
+
+	  var list;
+	  var newList;
+	  var j;
+
+	  for(var i = 0; i < table.length; i++) {
+	    list = table[i];
+	    newList = list == null ? ListOperators.getNewListForObjectType(value) : ClassUtils__instantiateWithSameType(list);
+	    newList.name = list == null ? '' : list.name;
+	    for(j = 0; j < nRows; j++) {
+	      newList[j] = (list == null || list[j] == null) ? value : list[j];
+	    }
+	    newTable[i] = newList;
+	  }
+	  return newTable;
+	};
+
+	/**
+	 * filters a Table keeping the NumberLists
+	 * @param  {Table} table to filter
+	 * @return {NumberTable}
+	 * tags:filter
+	 */
+	TableOperators__TableOperators.getNumberTableFromTable = function(table) {
+	  if(table == null ||  !table.length > 0) return null;
+
+	  var i;
+	  var newTable = new NumberTable();
+	  newTable.name = table.name;
+	  for(i = 0; table[i] != null; i++) {
+	    if(table[i].type == "NumberList") newTable.push(table[i]);
+	  }
+	  return newTable;
+	};
+
+	/**
+	 * calculates de information gain of all variables in a table and a supervised variable
+	 * @param  {Table} variablesTable
+	 * @param  {List} supervised
+	 * @return {NumberList}
+	 * tags:ds
+	 */
+	TableOperators__TableOperators.getVariablesInformationGain = function(variablesTable, supervised) {
+	  if(variablesTable == null) return null;
+
+	  var igs = new NumberList();
+	  variablesTable.forEach(function(feature) {
+	    igs.push(ListOperators.getInformationGain(feature, supervised));
+	  });
+	  return igs;
+	};
+
+	TableOperators__TableOperators.splitTableByCategoricList = function(table, list) {
+	  if(table == null || list == null) return null;
+
+	  var childrenTable;
+	  var tablesList = new List();
+	  var childrenObject = {};
+	  var N = list.length;
+
+	  list.forEach(function(element, i) {
+	    childrenTable = childrenObject[element];
+	    if(childrenTable == null) {
+	      childrenTable = new Table();
+	      childrenObject[element] = childrenTable;
+	      tablesList.push(childrenTable);
+	      table.forEach(function(list, j) {
+	        childrenTable[j] = new List();
+	        childrenTable[j].name = list.name;
+	      });
+	      childrenTable._element = element;
+	    }
+	    table.forEach(function(list, j) {
+	      childrenTable[j].push(table[j][i]);
+	    });
+	  });
+
+	  return tablesList;
+	};
+
+	/**
+	 * builds a decision tree based on a variables table and a supervised variable
+	 * @param  {Table} variablesTable
+	 * @param  {List} supervised
+	 * @param {Object} supervisedValue main value in supervised list (associated with blue)
+	 *
+	 * @param {Number} min_entropy minimum value of entropy on nodes (0.2 default)
+	 * @param {Number} min_size_node minimum population size associated with node (10 default)
+	 * @param {Number} min_info_gain minimum information gain by splitting by best feature (0.002 default)
+	 * @param {Boolean} generatePattern generates a pattern of points picturing proprtion of followed class in node
+	 * @return {Tree}
+	 * tags:ds
+	 */
+	TableOperators__TableOperators.buildDecisionTree = function(variablesTable, supervised, supervisedValue, min_entropy, min_size_node, min_info_gain, generatePattern) {
+	  if(variablesTable == null ||  supervised == null || supervisedValue == null) return;
+
+	  min_entropy = min_entropy == null ? 0.2 : min_entropy;
+	  min_size_node = min_size_node || 10;
+	  min_info_gain = min_info_gain || 0.002;
+
+	  var indexes = NumberListGenerators.createSortedNumberList(supervised.length);
+	  var tree = new Tree();
+
+	  TableOperators__TableOperators._buildDecisionTreeNode(tree, variablesTable, supervised, 0, min_entropy, min_size_node, min_info_gain, null, null, supervisedValue, indexes, generatePattern);
+
+	  return tree;
+	};
+
+
+	TableOperators__TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervised, level, min_entropy, min_size_node, min_info_gain, parent, value, supervisedValue, indexes, generatePattern) {
+
+	  var entropy = ListOperators.getListEntropy(supervised, supervisedValue);
+
+
+	  if(entropy >= min_entropy) {
+	    informationGains = TableOperators__TableOperators.getVariablesInformationGain(variablesTable, supervised);
+	    var maxIg = 0;
+	    var iBestFeature = 0;
+	    informationGains.forEach(function(ig, i) {
+	      if(ig > maxIg) {
+	        maxIg = ig;
+	        iBestFeature = i;
+	      }
+	    });
+	  }
+
+	  //console.log('informationGains', informationGains);
+
+
+
+	  var subDivide = entropy >= min_entropy && maxIg > min_info_gain && supervised.length >= min_size_node;
+
+	  var id = tree.nodeList.getNewId();
+	  var name = (value == null ? '' : value + ':') + (subDivide ? variablesTable[iBestFeature].name : 'P=' + supervised._biggestProbability + '(' + supervised._mostRepresentedValue + ')');
+	  var node = new Node(id, name);
+
+
+
+
+	  tree.addNodeToTree(node, parent);
+
+	  if(parent == null) {
+	    tree.informationGainTable = new Table();
+	    tree.informationGainTable[0] = variablesTable.getNames();
+	    if(informationGains) {
+	      tree.informationGainTable[1] = informationGains.clone();
+	      tree.informationGainTable = tree.informationGainTable.getListsSortedByList(informationGains, false);
+	    }
+	  }
+
+	  node.entropy = entropy;
+	  node.weight = supervised.length;
+	  node.supervised = supervised;
+	  node.indexes = indexes;
+	  node.value = value;
+	  node.mostRepresentedValue = supervised._mostRepresentedValue;
+	  node.biggestProbability = supervised._biggestProbability;
+	  node.valueFollowingProbability = supervised._P_valueFollowing;
+	  node.lift = node.valueFollowingProbability / tree.nodeList[0].valueFollowingProbability; //Math.log(node.valueFollowingProbability/tree.nodeList[0].valueFollowingProbability)/Math.log(2);
+
+
+	  if(level < 2) {
+	    console.log('\nlevel', level);
+	    console.log('supervised.countElement(supervisedValue)', supervised.countElement(supervisedValue));
+	    console.log('entropy', entropy);
+	    console.log('value', value);
+	    console.log('name', name);
+	    console.log('supervised.name', supervised.name);
+	    console.log('supervised.length', supervised.length);
+	    console.log('supervisedValue', supervisedValue);
+	    console.log('supervised._biggestProbability, supervised._P_valueFollowing', supervised._biggestProbability, supervised._P_valueFollowing);
+	    console.log('node.valueFollowingProbability (=supervised._P_valueFollowing):', node.valueFollowingProbability);
+	    console.log('tree.nodeList[0].valueFollowingProbability', tree.nodeList[0].valueFollowingProbability);
+	    console.log('node.biggestProbability (=_biggestProbability):', node.biggestProbability);
+	    console.log('node.mostRepresentedValue:', node.mostRepresentedValue);
+	    console.log('node.mostRepresentedValue==supervisedValue', node.mostRepresentedValue == supervisedValue);
+	  }
+
+	  node._color = TableOperators__TableOperators._decisionTreeColorScale(1 - node.valueFollowingProbability);
+
+	  // node._color = node.mostRepresentedValue==supervisedValue?
+	  // 	TableOperators._decisionTreeColorScale(1-node.biggestProbability)
+	  // 	:
+	  // 	TableOperators._decisionTreeColorScale(node.biggestProbability);
+
+
+	  if(generatePattern) {
+	    var newCanvas = document.createElement("canvas");
+	    newCanvas.width = 150;
+	    newCanvas.height = 100;
+	    var newContext = newCanvas.getContext("2d");
+	    newContext.clearRect(0, 0, 150, 100);
+
+	    TableOperators__TableOperators._decisionTreeGenerateColorsMixture(newContext, 150, 100, ['blue', 'red'],
+				node.mostRepresentedValue==supervisedValue?
+					[Math.floor(node.biggestProbability*node.weight), Math.floor((1-node.biggestProbability)*node.weight)]
+					:
+					[Math.floor((1-node.biggestProbability)*node.weight), Math.floor(node.biggestProbability*node.weight)]
+	    );
+
+
+	    var img = new Image();
+	    img.src = newCanvas.toDataURL();
+	    node.pattern = newContext.createPattern(img, "repeat");
+	  }
+
+
+
+	  if(!subDivide) {
+	    return node;
+	  }
+
+	  node.bestFeatureName = variablesTable[iBestFeature].name;
+	  node.iBestFeature = iBestFeature;
+	  node.informationGain = maxIg;
+
+	  var expanded = variablesTable.concat([supervised, indexes]);
+
+	  var tables = TableOperators__TableOperators.splitTableByCategoricList(expanded, variablesTable[iBestFeature]);
+	  var childTable;
+	  var childSupervised;
+	  var newNode;
+
+	  tables.forEach(function(expandedChild) {
+	    childTable = expandedChild.getSubList(0, expandedChild.length - 3);
+	    childSupervised = expandedChild[expandedChild.length - 2];
+	    childIndexes = expandedChild[expandedChild.length - 1];
+	    TableOperators__TableOperators._buildDecisionTreeNode(tree, childTable, childSupervised, level + 1, min_entropy, min_size_node, min_info_gain, node, expandedChild._element, supervisedValue, childIndexes, generatePattern);
+	  });
+
+	  node.toNodeList = node.toNodeList.getSortedByProperty('valueFollowingProbability', false);
+
+	  return node;
+	};
+	TableOperators__TableOperators._decisionTreeColorScale = function(value) {
+	  var rr = value < 0.5 ? Math.floor(510 * value) : 255;
+	  var gg = value < 0.5 ? Math.floor(510 * value) : Math.floor(510 * (1 - value));
+	  var bb = value < 0.5 ? 255 : Math.floor(510 * (1 - value));
+
+	  return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
+	};
+	TableOperators__TableOperators._decisionTreeGenerateColorsMixture = function(ctxt, width, height, colors, weights) {
+	  //var imageData=context.createImageData(width, height);
+	  var x, y, i; //, rgb;
+	  var allColors = ListGenerators.createListWithSameElement(weights[0], colors[0]);
+
+	  for(i = 1; colors[i] != null; i++) {
+	    allColors = allColors.concat(ListGenerators.createListWithSameElement(weights[i], colors[i]));
+	  }
+
+	  for(x = 0; x < width; x++) {
+	    for(y = 0; y < height; y++) {
+	      i = (x + y * width) * 4;
+	      ctxt.fillStyle = allColors.getRandomElement();
+	      ctxt.fillRect(x, y, 1, 1);
+	    }
+	  }
+
+	  //return imageData;
+	};
+
+	exports.TableOperators = TableOperators__default;
 
 	// jshint unused:false
 

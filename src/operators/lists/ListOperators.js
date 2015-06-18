@@ -1,3 +1,7 @@
+import List from "src/dataStructures/lists/List";
+import NumberTable from "src/dataStructures/numeric/NumberTable";
+import Table from "src/dataStructures/lists/Table";
+
 function ListOperators() {}
 export default ListOperators;
 

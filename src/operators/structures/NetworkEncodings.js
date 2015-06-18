@@ -7,7 +7,7 @@
  * @category networks
  */
 function NetworkEncodings() {}
-
+export default NetworkEncodings;
 
 
 //////////////NoteWork
@@ -1065,7 +1065,7 @@ NetworkEncodings.encodeSYM = function(network, groups, nodesPropertiesNames, rel
   return code;
 };
 
-_processProperty = function(propName, propValue) { //TODO: use this in other encoders
+function _processProperty(propName, propValue) { //TODO: use this in other encoders
   switch(propName) {
     case "color":
       if(propValue.substr(0, 3) == "rgb") {

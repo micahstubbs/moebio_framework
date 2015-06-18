@@ -1,4 +1,8 @@
+import NumberOperators from "src/operators/numeric/NumberOperators";
+import { instantiateWithSameType } from "src/tools/utils/code/ClassUtils";
+
 function TableOperators() {}
+export default TableOperators;
 
 
 TableOperators.getElementFromTable = function(table, i, j) {
@@ -61,7 +65,7 @@ TableOperators.transpose = function(table, firstListAsHeaders) {
  * divides the instances of a table in two tables: the training table and the test table
  * @param  {Table} table
  * @param  {Number} proportion proportion of training instances/test instances, between 0 and 1
- * 
+ *
  * @param  {Number} mode  0:random<br>1:random with seed<br>2:shuffle
  * @param {Number} seed seed for random numbers (mode 1)
  * @return {List} list containing the two tables
@@ -104,7 +108,7 @@ TableOperators.trainingTestPartition = function(table, proportion, mode, seed) {
  * @param  {NumberTable} numberTable coordinates of points
  * @param  {List} classes list of values of classes
  * @param  {Function} model function that receives two numbers and returns a guessed class
- * 
+ *
  * @param  {Number} metric 0:error
  * @return {Number} metric value
  * tags:ds
@@ -171,7 +175,7 @@ TableOperators.sortListsByNumberList = function(table, numberList, descending) {
 
 // old version replaced by above version Dec 1st, 2014
 // - fixed bug where descending with 'false' value gets changed to 'true'
-// - performance improvements for tables with lots of lists 
+// - performance improvements for tables with lots of lists
 // TableOperators.sortListsByNumberList=function(table, numberList, descending){
 // 	descending = descending || true;
 
@@ -190,7 +194,7 @@ TableOperators.sortListsByNumberList = function(table, numberList, descending) {
 /**
  * aggregates a table
  * @param  {Table} table to be aggregated
- * 
+ *
  * @param  {Number} nList list in the table used as basis to aggregation
  * @param  {Number} mode mode of aggregation, 0:picks first element 1:adds numbers, 2:averages
  * @return {Table} aggregated table
@@ -417,7 +421,7 @@ TableOperators.mergeDataTables = function(table0, table1) {
 };
 
 /**
- * From two DataTables creates a new DataTable with combined elements in the first List, and added values in the second 
+ * From two DataTables creates a new DataTable with combined elements in the first List, and added values in the second
  * @param {Object} table0
  * @param {Object} table1
  * @return {Table}
@@ -529,7 +533,7 @@ TableOperators.splitTableByCategoricList = function(table, list) {
  * @param  {Table} variablesTable
  * @param  {List} supervised
  * @param {Object} supervisedValue main value in supervised list (associated with blue)
- * 
+ *
  * @param {Number} min_entropy minimum value of entropy on nodes (0.2 default)
  * @param {Number} min_size_node minimum population size associated with node (10 default)
  * @param {Number} min_info_gain minimum information gain by splitting by best feature (0.002 default)
@@ -570,7 +574,7 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
     });
   }
 
-  //c.l('informationGains', informationGains);
+  //console.log('informationGains', informationGains);
 
 
 
@@ -606,20 +610,20 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
 
 
   if(level < 2) {
-    c.l('\nlevel', level);
-    c.l('supervised.countElement(supervisedValue)', supervised.countElement(supervisedValue));
-    c.l('entropy', entropy);
-    c.l('value', value);
-    c.l('name', name);
-    c.l('supervised.name', supervised.name);
-    c.l('supervised.length', supervised.length);
-    c.l('supervisedValue', supervisedValue);
-    c.l('supervised._biggestProbability, supervised._P_valueFollowing', supervised._biggestProbability, supervised._P_valueFollowing);
-    c.l('node.valueFollowingProbability (=supervised._P_valueFollowing):', node.valueFollowingProbability);
-    c.l('tree.nodeList[0].valueFollowingProbability', tree.nodeList[0].valueFollowingProbability);
-    c.l('node.biggestProbability (=_biggestProbability):', node.biggestProbability);
-    c.l('node.mostRepresentedValue:', node.mostRepresentedValue);
-    c.l('node.mostRepresentedValue==supervisedValue', node.mostRepresentedValue == supervisedValue);
+    console.log('\nlevel', level);
+    console.log('supervised.countElement(supervisedValue)', supervised.countElement(supervisedValue));
+    console.log('entropy', entropy);
+    console.log('value', value);
+    console.log('name', name);
+    console.log('supervised.name', supervised.name);
+    console.log('supervised.length', supervised.length);
+    console.log('supervisedValue', supervisedValue);
+    console.log('supervised._biggestProbability, supervised._P_valueFollowing', supervised._biggestProbability, supervised._P_valueFollowing);
+    console.log('node.valueFollowingProbability (=supervised._P_valueFollowing):', node.valueFollowingProbability);
+    console.log('tree.nodeList[0].valueFollowingProbability', tree.nodeList[0].valueFollowingProbability);
+    console.log('node.biggestProbability (=_biggestProbability):', node.biggestProbability);
+    console.log('node.mostRepresentedValue:', node.mostRepresentedValue);
+    console.log('node.mostRepresentedValue==supervisedValue', node.mostRepresentedValue == supervisedValue);
   }
 
   node._color = TableOperators._decisionTreeColorScale(1 - node.valueFollowingProbability);

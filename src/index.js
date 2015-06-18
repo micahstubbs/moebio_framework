@@ -100,17 +100,20 @@ import ColorScaleGenerators from "src/operators/graphic/ColorScaleGenerators";
 export { ColorGenerators, ColorListGenerators, ColorListOperators,
 	ColorOperators, ColorScales, ColorScaleGenerators };
 
+// operators/lists
+import ListGenerators from "src/operators/lists/ListGenerators";
+import ListOperators from "src/operators/lists/ListOperators";
+import TableConversions from "src/operators/lists/TableConversions";
+import TableEncodings from "src/operators/lists/TableEncodings";
+import TableGenerators from "src/operators/lists/TableGenerators";
+import TableOperators from "src/operators/lists/TableOperators";
+export { ListGenerators, ListOperators, TableConversions, TableEncodings,
+	TableGenerators, TableOperators };
 
 // import ObjectOperators from "src/operators/objects/ObjectOperators";
 // import ObjectConversions from "src/operators/objects/ObjectConversions";
 
 
-// import ListGenerators from "src/operators/lists/ListGenerators";
-// import ListOperators from "src/operators/lists/ListOperators";
-// import TableConversions from "src/operators/lists/TableConversions";
-// import TableEncodings from "src/operators/lists/TableEncodings";
-// import TableGenerators from "src/operators/lists/TableGenerators";
-// import TableOperators from "src/operators/lists/TableOperators";
 // import IntervalListOperators from "src/operators/numeric/interval/IntervalListOperators";
 // import IntervalTableOperators from "src/operators/numeric/interval/IntervalTableOperators";
 // import MatrixGenerators from "src/operators/numeric/MatrixGenerators";
