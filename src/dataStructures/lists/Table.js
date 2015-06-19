@@ -16,9 +16,14 @@ Table.prototype = new List();
 Table.prototype.constructor = Table;
 
 /**
- * @classdesc A Table provides a 2D array-like structure.
+ * @classdesc A sub-class of {@link List}, Table provides a 2D array-like structure.
+ *
+ * Each column is stored as its own {@link List}, making it a List of Lists.
+ * Cells in the table can be accessed using table[column][row].
  *
  * @description Creates a new Table.
+ * Input arguments are treated as the inital column values
+ * of the Table.
  * @constructor
  * @category basics
  */
@@ -36,6 +41,12 @@ function Table() {
 }
 export default Table;
 
+/**
+ * Creates a new Table from an array
+ *
+ * @param {Number[]} array
+ * @return {Table}
+ */
 Table.fromArray = function(array) {
   var result = List.fromArray(array);
   result.type = "Table";
@@ -67,7 +78,17 @@ Table.fromArray = function(array) {
   return result;
 };
 
-Table.prototype.applyFunction = function(func) { //TODO: to be tested!
+/**
+ * Executes a given function on all the columns
+ * in the Table, returning a new Table with the
+ * resulting values.
+ *
+ * @param {Function} func Function to apply to each
+ * column in the table. Columns are {@link List|Lists}.
+ * @return {Table} Table of values from applying function.
+ */
+Table.prototype.applyFunction = function(func) {
+  //TODO: to be tested!
   var i;
   var newTable = new Table();
 
@@ -80,8 +101,9 @@ Table.prototype.applyFunction = function(func) { //TODO: to be tested!
 };
 
 /**
- * returns a lis with all the alements of a row
- * @param  {Number} index
+ * Returns a {@link List} with all the elements of a row.
+ *
+ * @param  {Number} index Index of the row to get.
  * @return {List}
  * tags:filter
  */
@@ -95,20 +117,21 @@ Table.prototype.getRow = function(index) {
 };
 
 /**
- * returns the length of the list at given index (default 0)
+ * Returns the length a column of the Table.
  *
- * @param  {Number} index
- * @return {Number}
+ * @param  {Number} index The Column to return its length.
+ * Defaults to 0.
+ * @return {Number} Length of column at given index.
  * tags:
  */
 Table.prototype.getListLength = function(index) {
   return this[index || 0].length;
 };
 
-
-
 /**
- * overrides List.prototype.getLengths (see comments there)
+ * Returns the lengths of all the columns of the Table.
+ *
+ * @return {NumberList} Lengths of all columns in Table.
  */
 Table.prototype.getLengths = function() {
   var lengths = new NumberList();
@@ -119,10 +142,10 @@ Table.prototype.getLengths = function() {
 };
 
 /**
- * filter a table by selecting a section of rows, elements with last index included
- * @param  {Number} startIndex index of first element in all lists of the table
+ * Filters a Table by selecting a section of rows, elements with last index included.
  *
- * @param  {Number} endIndex index of last elements in all lists of the table
+ * @param  {Number} startIndex Index of first element in all lists of the table.
+ * @param  {Number} endIndex Index of last elements in all lists of the table.
  * @return {Table}
  * tags:filter
  */
@@ -143,7 +166,8 @@ Table.prototype.sliceRows = function(startIndex, endIndex) {
 };
 
 /**
- * filters the lists of the table by indexes
+ * Filters the lists of the table by indexes.
+ *
  * @param  {NumberList} indexes
  * @return {Table}
  * tags:filter
@@ -156,11 +180,23 @@ Table.prototype.getSubListsByIndexes = function(indexes) {
   return newTable.getImproved();
 };
 
+<<<<<<< HEAD
 //deprecated
+=======
+/**
+ * @ignore
+ */
+>>>>>>> b96b5bdcc8579abc9467a6a2013971ae034e617f
 Table.prototype.getRows = function(indexes) {
   return Table.prototype.getSubListsByIndexes(indexes);
 };
 
+/**
+ * Returns a new Table with the row at the given index removed.
+ *
+ * @param {Number} rowIndex Row to remove
+ * @return {Table} New Table.
+ */
 Table.prototype.getWithoutRow = function(rowIndex) {
   var newTable = new Table();
   newTable.name = this.name;
@@ -171,6 +207,12 @@ Table.prototype.getWithoutRow = function(rowIndex) {
   return newTable.getImproved();
 };
 
+/**
+ * Returns a new Table with the rows listed in the given array removed.
+ *
+ * @param {Number[]} rowsIndexes Array of row indecies to remove.
+ * @return {undefined}
+ */
 Table.prototype.getWithoutRows = function(rowsIndexes) {
   var newTable = new Table();
   newTable.name = this.name;
@@ -184,10 +226,10 @@ Table.prototype.getWithoutRows = function(rowsIndexes) {
   return newTable.getImproved();
 };
 
-
 /**
- * sort table's lists by a list
- * @param  {Object} listOrIndex kist used to sort, or index of list in the table
+ * Sort Table's lists by a list
+ *
+ * @param  {List|Number} listOrIndex List used to sort, or index of list in the table
  *
  * @param  {Boolean} ascending (true by default)
  * @return {Table} table (of the same type)
@@ -205,7 +247,12 @@ Table.prototype.getListsSortedByList = function(listOrIndex, ascending) { //depr
   return newTable;
 };
 
-
+/**
+ * Transposes Table.
+ *
+ * @param firstListAsHeaders
+ * @return {Table}
+ */
 Table.prototype.getTransposed = function(firstListAsHeaders) {
 
   var tableToTranspose = firstListAsHeaders ? this.getSubList(1) : this;
@@ -215,7 +262,7 @@ Table.prototype.getTransposed = function(firstListAsHeaders) {
   var i;
   var j;
   var list;
-  var rows = tableToTranspose[0].length;
+
   for(i = 0; tableToTranspose[i] != null; i++) {
     list = tableToTranspose[i];
     for(j = 0; list[j] != null; j++) {
@@ -236,7 +283,13 @@ Table.prototype.getTransposed = function(firstListAsHeaders) {
   return table;
 };
 
-
+/**
+ * Generates a string containing details about the current state
+ * of the Table. Useful for outputing to the console for debugging.
+ *
+ * @param {Number} level If greater then zero, will indent to that number of spaces.
+ * @return {String} Description String.
+ */
 Table.prototype.getReport = function(level) {
   var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
   var lengths = this.getLengths();
@@ -244,7 +297,6 @@ Table.prototype.getReport = function(level) {
   var maxLength = lengths.getMax();
   var averageLength = (minLength + maxLength) * 0.5;
   var sameLengths = minLength == maxLength;
-
 
   var text = level > 0 ? (ident + "////report of instance of Table////") : "///////////report of instance of Table//////////";
 
@@ -302,26 +354,29 @@ Table.prototype.getReport = function(level) {
   ///add ideas to: analyze, visualize
 
   return text;
-
 };
 
 Table.prototype.getReportHtml = function() {}; //TODO
 
 Table.prototype.getReportObject = function() {}; //TODO
 
-
-
-
-////transformative
+/**
+ * Remove a Row from Table.
+ *
+ * @param {Number} index The row to remove.
+ * @return {undefined}
+ */
 Table.prototype.removeRow = function(index) {
   for(var i = 0; this[i] != null; i++) {
     this[i].splice(index, 1);
   }
 };
 
-
-////
-
+/**
+ * Makes a copy of the Table.
+ *
+ * @return {Table} Copy of table.
+ */
 Table.prototype.clone = function() {
   var clonedTable = instantiateWithSameType(this);
   clonedTable.name = this.name;
@@ -331,6 +386,9 @@ Table.prototype.clone = function() {
   return clonedTable;
 };
 
+/**
+ * Removes all contents of the Table.
+ */
 Table.prototype.destroy = function() {
   for(var i = 0; this[i] != null; i++) {
     this[i].destroy();
@@ -338,6 +396,9 @@ Table.prototype.destroy = function() {
   }
 };
 
+/**
+ * Prints contents of Table to console.log.
+ */
 Table.prototype.print = function() {
   console.log("///////////// <" + this.name + "////////////////////////////////////////////////////");
   console.log(TableEncodings.TableToCSV(this, null, true));

@@ -10,6 +10,10 @@ function MatrixGenerators() {}
 export default MatrixGenerators;
 
 
+
+//all Matrix objects and methods should be ported to NumberTable (same at Matrix.json)
+
+
 /**
  * Returns a transformation matrix from a triangle mapping
  *

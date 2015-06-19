@@ -15,21 +15,21 @@ include(dataModelsRoot + 'geometry/Polygon3DList.js');
 include(dataModelsRoot + 'geometry/PolygonList.js');
 include(dataModelsRoot + 'geometry/Rectangle.js');
 
-include(dataModelsRoot + 'numeric/Interval.js');
-include(dataModelsRoot + 'numeric/NumberList.js');
-include(dataModelsRoot + 'numeric/NumberTable.js');
-include(dataModelsRoot + 'numeric/Axis.js');
-include(dataModelsRoot + 'numeric/Axis2D.js');
-include(dataModelsRoot + 'numeric/Matrix.js');
+include(dataModelsRoot + 'numbers/Interval.js');
+include(dataModelsRoot + 'numbers/NumberList.js');
+include(dataModelsRoot + 'numbers/NumberTable.js');
+include(dataModelsRoot + 'numbers/Axis.js');
+include(dataModelsRoot + 'numbers/Axis2D.js');
+include(dataModelsRoot + 'numbers/Matrix.js');
 
 include(dataModelsRoot + 'strings/StringList.js');
 
 include(dataModelsRoot + 'graphic/ColorScale.js');
 include(dataModelsRoot + 'graphic/ColorList.js');
 
-include(dataModelsRoot + 'structures/lists/NodeList.js');
-include(dataModelsRoot + 'structures/lists/RelationList.js');
-include(dataModelsRoot + 'structures/elements/Node.js');
-include(dataModelsRoot + 'structures/elements/Relation.js');
-include(dataModelsRoot + 'structures/networks/Network.js');
-include(dataModelsRoot + 'structures/networks/Tree.js');
+include(dataModelsRoot + 'networks/lists/NodeList.js');
+include(dataModelsRoot + 'networks/lists/RelationList.js');
+include(dataModelsRoot + 'networks/elements/Node.js');
+include(dataModelsRoot + 'networks/elements/Relation.js');
+include(dataModelsRoot + 'networks/networks/Network.js');
+include(dataModelsRoot + 'networks/networks/Tree.js');

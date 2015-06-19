@@ -6,6 +6,9 @@ import Interval from "src/dataStructures/numeric/Interval";
 Axis.prototype = new DataModel();
 Axis.prototype.constructor = Axis;
 
+
+//this object is deprecated
+
 /**
  * @classdesc Axis for 1D data.
  *

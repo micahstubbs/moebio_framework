@@ -4,6 +4,9 @@ import Point from "src/dataStructures/geometry/Point";
 Matrix.prototype = new DataModel();
 Matrix.prototype.constructor = Matrix;
 
+
+//all Matrix objects and methods should be ported to NumberTable (same at MatrixGenerators.json)
+
 /**
  * @classdesc Matrix implementation.
  * Some credits to http://strd6.com/2010/06/introducing-matrix-js/

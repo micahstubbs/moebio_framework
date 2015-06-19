@@ -25,6 +25,7 @@ ColorOperators.interpolateColors = function(color0, color1, value) {
   return ColorOperators.RGBtoHEX(resultArray[0], resultArray[1], resultArray[2]);
 };
 
+
 /**
  * return a color between color0 and color1
  * 0 -> color0
@@ -40,6 +41,16 @@ ColorOperators.interpolateColorsRGB = function(color0, color1, value) {
   return [Math.floor(s * color0[0] + value * color1[0]), Math.floor(s * color0[1] + value * color1[1]), Math.floor(s * color0[2] + value * color1[2])];
 };
 
+/**
+ * converts an hexadecimal color to RGB
+ * @param {String} an hexadecimal color string
+ * @return {Array} returns an RGB color Array
+ *
+ */
+ColorOperators.HEXtoRGB = function(hexColor) {
+  return [parseInt(hexColor.substr(1, 2), 16), parseInt(hexColor.substr(3, 2), 16), parseInt(hexColor.substr(5, 2), 16)];
+};
+
 
 ColorOperators.RGBtoHEX = function(red, green, blue) {
   return "#" + ColorOperators.toHex(red) + ColorOperators.toHex(green) + ColorOperators.toHex(blue);
@@ -51,15 +62,7 @@ ColorOperators.RGBArrayToString = function(array) {
 
 
 
-/**
- * converts an hexadecimal color to RGB
- * @param {String} an hexadecimal color string
- * @return {Array} returns an RGB color Array
- *
- */
-ColorOperators.HEXtoRGB = function(hexColor) {
-  return [parseInt(hexColor.substr(1, 2), 16), parseInt(hexColor.substr(3, 2), 16), parseInt(hexColor.substr(5, 2), 16)];
-};
+
 
 
 ColorOperators.colorStringToHEX = function(color_string) {
@@ -160,12 +163,12 @@ ColorOperators.RGBtoHSV = function(r, g, b) {
     if(h < 0) h += 360;
     return new Array(h, s, v);
   };
-  /**
-   * converts an HSV color to RGB
-   * @param {Array} a HSV color array
-   * @return {Array} returns a RGB color array
-   *
-   */
+
+/**
+ * converts an HSV color to RGB
+ * @param {Array} a HSV color array
+ * @return {Array} returns a RGB color array
+ */
 ColorOperators.HSVtoRGB = function(hue, saturation, value) {
   hue = hue ? hue : 0;
   saturation = saturation ? saturation : 0;
@@ -291,13 +294,10 @@ ColorOperators.getRandomColor = function() {
 
 
 /**
- * This method was partially obtained (and simplified) from a Class by Stoyan Stefanov:
- *
- * A class to parse color values
- * @author Stoyan Stefanov <sstoo@gmail.com>
- * @link   http://www.phpied.com/rgb-color-parser-in-javascript/
- * @license Use it if you like it
- *
+ * This method was partially obtained (and simplified) from a Class by Stoyan Stefanov: "A class to parse color values / @author Stoyan Stefanov <sstoo@gmail.com> / @link   http://www.phpied.com/rgb-color-parser-in-javascript/ / @license Use it if you like it"
+ * @param {String} color_string color as a string (e.g. "red", "#0044ff", "rgb(130,20,100)")
+ * @return {Array} rgb array
+ * tags:
  */
 ColorOperators.colorStringToRGB = function(color_string) {
   //c.log('color_string:['+color_string+']');
