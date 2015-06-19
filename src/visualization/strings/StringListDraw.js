@@ -1,12 +1,20 @@
+import List from "src/dataStructures/lists/List";
+import Polygon from "src/dataStructures/geometry/Polygon";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import Point from "src/dataStructures/geometry/Point";
+import DrawTexts from "src/tools/graphic/DrawTexts";
+import Rectangle from "src/dataStructures/geometry/Rectangle";
+
 function StringListDraw() {}
+export default StringListDraw;
 
 StringListDraw.tagCloudRectangles = function(stringList, weights, frame) {
 
   var normWeights = table[1].sqrt().getNormalizedToMax();
 
-  rectangles = new List();
-  textPositions = new Polygon();
-  textSizes = new NumberList();
+  var rectangles = new List();
+  var textPositions = new Polygon();
+  var textSizes = new NumberList();
 
   var rectanglesPlaced = new List();
 

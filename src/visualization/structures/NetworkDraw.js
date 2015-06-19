@@ -1,3 +1,32 @@
+import {
+  context,
+  mX,
+  mY,
+  mP,
+  TwoPi
+} from "src/Global";
+
+import {
+  setCursor,
+  line,
+  setStroke,
+  setFill,
+  fText,
+  setText,
+  drawImage,
+  restore,
+  bezier,
+  fCircleM,
+  clipCircle,
+  fRect,
+  getTextW
+} from "src/tools/graphic/SimpleGraphics";
+
+import Rectangle from "src/dataStructures/geometry/Rectangle";
+import ColorOperators from "src/operators/graphic/ColorOperators";
+import Point from "src/dataStructures/geometry/Point";
+import Polygon from "src/dataStructures/geometry/Polygon";
+
 /**
  * @classdesc Functions for drawing {@link Network|Networks}.
  *
@@ -5,7 +34,7 @@
  * @category networks
  */
 function NetworkDraw() {}
-
+export default NetworkDraw;
 
 /**
  * @ignore

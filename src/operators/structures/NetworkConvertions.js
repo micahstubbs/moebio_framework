@@ -1,3 +1,4 @@
+import Network from "src/dataStructures/structures/networks/Network";
 import NumberList from "src/dataStructures/numeric/NumberList";
 import Node from "src/dataStructures/structures/elements/Node";
 import Relation from "src/dataStructures/structures/elements/Relation";

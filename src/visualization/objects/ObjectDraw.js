@@ -1,4 +1,8 @@
+import { MOUSE_DOWN, mP } from "src/Global";
+import { setText, fText } from "src/tools/graphic/SimpleGraphics";
+
 function ObjectDraw() {}
+export default ObjectDraw;
 
 
 /**

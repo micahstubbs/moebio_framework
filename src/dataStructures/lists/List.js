@@ -1,3 +1,4 @@
+import StringOperators from "src/operators/strings/StringOperators";
 import DataModel from "src/dataStructures/DataModel";
 import NumberList from "src/dataStructures/numeric/NumberList";
 import StringList from "src/dataStructures/strings/StringList";
@@ -8,6 +9,9 @@ import Polygon from "src/dataStructures/geometry/Polygon";
 import PolygonList from "src/dataStructures/geometry/PolygonList";
 import Table from "src/dataStructures/lists/Table";
 import NumberTable from "src/dataStructures/numeric/NumberTable";
+import Interval from "src/dataStructures/numeric/Interval";
+import ListOperators from "src/operators/lists/ListOperators";
+import { instantiateWithSameType, typeOf } from "src/tools/utils/code/ClassUtils";
 
 List.prototype = new DataModel();
 List.prototype.constructor = List;
@@ -309,7 +313,7 @@ List.prototype.getTypeOfElements = function() {
  */
 List.prototype.getTypes = function() {
   var types = new StringList();
-  for(i = 0; this[i] != null; i++) {
+  for(var i = 0; this[i] != null; i++) {
     types[i] = typeOf(this[i]);
   }
   return types;
@@ -324,7 +328,7 @@ List.prototype.getTypes = function() {
 List.prototype.toString = function() {
   var i;
   var str = "[";
-  for(i = 0; i < this.length - 1; i++) {
+  for(var i = 0; i < this.length - 1; i++) {
     str += this[i] + ", ";
   }
   str += this[this.length - 1] + "]";
@@ -339,7 +343,7 @@ List.prototype.toString = function() {
  */
 List.prototype.getNames = function() {
   var stringList = new StringList();
-  for(i = 0; this[i] != null; i++) {
+  for(var i = 0; this[i] != null; i++) {
     stringList[i] = this[i].name;
   }
   return stringList;

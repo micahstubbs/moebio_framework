@@ -1,10 +1,54 @@
+import {
+  context,
+  mX,
+  mY,
+  mP,
+  TwoPi,
+  HalfPi,
+  MOUSE_UP_FAST,
+  MOUSE_DOWN,
+  MOUSE_UP,
+  WHEEL_CHANGE
+} from "src/Global";
+
+import {
+  setCursor,
+  line,
+  setStroke,
+  setFill,
+  fText,
+  setText,
+  drawImage,
+  fCircleM,
+  getTextW,
+  fRectM,
+  sRect,
+  fTextRotated,
+  clipRectangle
+} from "src/tools/graphic/SimpleGraphics";
+
+import Rectangle from "src/dataStructures/geometry/Rectangle";
+import ColorOperators from "src/operators/graphic/ColorOperators";
+import Point from "src/dataStructures/geometry/Point";
+import Polygon from "src/dataStructures/geometry/Polygon";
+import IntervalTableOperators from "src/operators/numeric/interval/IntervalTableOperators";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import NumberTableFlowOperators from "src/operators/numeric/numberTable/NumberTableFlowOperators";
+import ColorScales from "src/operators/graphic/ColorScales";
+import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
+import IntervalTableDraw from "src/visualization/numeric/IntervalTableDraw";
+import GeometryOperators from "src/operators/geometry/GeometryOperators";
+import NumberTable from "src/dataStructures/numeric/NumberTable";
+import StringList from "src/dataStructures/strings/StringList";
+
 function NumberTableDraw() {}
+export default NumberTableDraw;
 
 /**
  * draws a matrix, with cells colors associated to values from a ColorScale
  * @param  {Rectangle} frame
  * @param  {NumberTable} numberTable
- * 
+ *
  * @param  {ColorScale} colorScale
  * @param  {Boolean} listColorsIndependent if true each numberList will be colored to fit the colorScale range
  * @param  {Number} margin
@@ -59,7 +103,7 @@ NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listC
  * draws a ScatterPlot, if the provided NumberTable contains a third NumberList it also draws circles
  * @param  {Rectangle} frame
  * @param  {NumberTable} numberTable with two lists
- * 
+ *
  * @param  {StringList} texts
  * @param  {ColorList} colors
  * @param  {Number} maxRadius
@@ -173,7 +217,7 @@ NumberTableDraw.drawSlopeGraph = function(frame, numberTable, texts) {
  * based on a integers NumberTable draws a a matrix of rectangles with colors associated to number of elelments in overCoordinates
  * @param  {Rectangle} frame
  * @param  {Object} coordinates, it could be a polygon, or a numberTable with two lists
- * 
+ *
  * @param  {ColorScale} colorScale
  * @param  {Number} margin
  * @return {NumberList} list of positions of elements on clicked coordinates
@@ -324,7 +368,7 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
  *
  * @param {Boolean} normalized normalize each column, making the graph of constant height
  * @param {Boolean} sorted sort flow polygons
- * @param {Number} intervalsFactor number between 0 and 1, factors the height of flow polygons 
+ * @param {Number} intervalsFactor number between 0 and 1, factors the height of flow polygons
  * @param {Boolean} bezier draws bezier (soft) curves
  * @param {ColorList} colorList colors of polygons
  * @param {StringList} horizontalLabels to be placed in the bottom
@@ -373,18 +417,19 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
   var flowFrame = new Rectangle(0, 0, frame.width, horizontalLabels == null ? frame.height : (frame.height - 14));
 
   if(frame.memory.image == null) {
+    // TODO refactor to not reassign context
     ///// capture image
-    var newCanvas = document.createElement("canvas");
-    newCanvas.width = frame.width;
-    newCanvas.height = frame.height;
-    var newContext = newCanvas.getContext("2d");
-    newContext.clearRect(0, 0, frame.width, frame.height);
-    var mainContext = context;
-    context = newContext;
-    IntervalTableDraw.drawIntervalsFlowTable(frame.memory.flowIntervals, flowFrame, frame.memory.actualColorList, bezier, 0.3);
-    context = mainContext;
-    frame.memory.image = new Image();
-    frame.memory.image.src = newCanvas.toDataURL();
+    // var newCanvas = document.createElement("canvas");
+    // newCanvas.width = frame.width;
+    // newCanvas.height = frame.height;
+    // var newContext = newCanvas.getContext("2d");
+    // newContext.clearRect(0, 0, frame.width, frame.height);
+    // var mainContext = context;
+    // context = newContext;
+    // IntervalTableDraw.drawIntervalsFlowTable(frame.memory.flowIntervals, flowFrame, frame.memory.actualColorList, bezier, 0.3);
+    // context = mainContext;
+    // frame.memory.image = new Image();
+    // frame.memory.image.src = newCanvas.toDataURL();
     /////
   }
 
@@ -624,19 +669,20 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
     drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
   } else {
     if(captureImage) {
-      var newCanvas = document.createElement("canvas");
-      newCanvas.width = frame.width;
-      newCanvas.height = frame.height;
-      var newContext = newCanvas.getContext("2d");
-      newContext.clearRect(0, 0, frame.width, frame.height);
-      var mainContext = context;
-      context = newContext;
-      var prevFx = frame.x;
-      var prevFy = frame.y;
-      frame.x = 0;
-      frame.y = 0;
-      setFill('white');
-      fRect(0, 0, frame.width, frame.height);
+      // TODO refactor to not reassign context
+      // var newCanvas = document.createElement("canvas");
+      // newCanvas.width = frame.width;
+      // newCanvas.height = frame.height;
+      // var newContext = newCanvas.getContext("2d");
+      // newContext.clearRect(0, 0, frame.width, frame.height);
+      // var mainContext = context;
+      // context = newContext;
+      // var prevFx = frame.x;
+      // var prevFy = frame.y;
+      // frame.x = 0;
+      // frame.y = 0;
+      // setFill('white');
+      // fRect(0, 0, frame.width, frame.height);
     }
 
     context.save();
@@ -661,12 +707,13 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
 
 
     if(captureImage) {
-      context = mainContext;
-      frame.memory.image = new Image();
-      frame.memory.image.src = newCanvas.toDataURL();
-      frame.x = prevFx;
-      frame.y = prevFy;
-      drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+      // TODO refactor to not reassign context
+      // context = mainContext;
+      // frame.memory.image = new Image();
+      // frame.memory.image.src = newCanvas.toDataURL();
+      // frame.x = prevFx;
+      // frame.y = prevFy;
+      // drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
     }
   }
 };

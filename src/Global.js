@@ -1,4 +1,8 @@
 import Point from 'src/dataStructures/geometry/Point';
+import ColorOperators from "src/operators/graphic/ColorOperators";
+import MD5 from "src/tools/utils/strings/MD5";
+import NetworkEncodings from "src/operators/structures/NetworkEncodings";
+import { typeOf } from "src/tools/utils/code/ClassUtils";
 
 // TODO possibly remove this. it comes from simplegraphics
 function setCursor(name) {
@@ -97,7 +101,7 @@ var _prevMouseX = 0;
 var _prevMouseY = 0;
 var _setIntervalId;
 var _setTimeOutId;
-var _cycleOnMouseMovement = false;
+export var _cycleOnMouseMovement = false;
 var _interactionCancelledFrame;
 var _tLastMouseDown;
 
@@ -166,7 +170,7 @@ window.addEventListener('load', function(){
 
 }, false);
 
-function _onMouse(e) {
+export function _onMouse(e) {
 
   switch(e.type){
     case "mousemove":
@@ -419,7 +423,7 @@ export function activateWheel(){
   window.onmousewheel = document.onmousewheel = _onWheel;
 
 }
-export function _onWheel(e) {
+function _onWheel(e) {
   //c.l('_onWheel, e:', e);
 
     if (!e) e = window.event; //IE

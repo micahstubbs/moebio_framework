@@ -16,6 +16,7 @@
 
 
 function MD5(){}
+export default MD5;
 
 /*
  * These are the functions you'll usually want to call
@@ -52,7 +53,7 @@ MD5.rstr_md5 = function(s)
  */
 MD5.rstr_hmac_md5 = function(key, data)
 {
-  var bkey = rstr2binl(key);
+  var bkey = this.rstr2binl(key);
   if(bkey.length > 16) bkey = this.binl_md5(bkey, key.length * 8);
 
   var ipad = Array(16), opad = Array(16);

@@ -1,3 +1,10 @@
+import { addInteractionEventListener,
+  _cycleOnMouseMovement,
+  reStartCycle,
+  _onMouse,
+  onMoveCycle
+} from 'src/Global';
+
 InputTextFieldHTML.prototype.constructor = InputTextFieldHTML;
 
 
@@ -88,6 +95,7 @@ function InputTextFieldHTML(configuration) {
   this.DOMtext.addEventListener("mousemove", _onMouse, false);
   if(_cycleOnMouseMovement) this.DOMtext.addEventListener('mousemove', onMoveCycle, false);
 }
+export default InputTextFieldHTML;
 
 InputTextFieldHTML.prototype.setBorder = function(value) {
   this.border = value;
@@ -168,8 +176,8 @@ InputTextFieldHTML.prototype.forceFocus = function() {
 };
 
 InputTextFieldHTML.prototype.forceUnfocus = function() {
-  c.log("[!] use InputTextFieldHTML.prototype.forceBlur instead");
-  a.push(0);
+  console.log("[!] use InputTextFieldHTML.prototype.forceBlur instead");
+  a.push(0); // TODO where does this come from
 };
 
 InputTextFieldHTML.prototype.forceBlur = function() {
@@ -244,8 +252,8 @@ InputTextFieldHTML.prototype.readd = function() {
 };
 
 InputTextFieldHTML.prototype.disappear = function() {
-  c.log('[!] InputTextFieldHTML.prototype.disappear replaced by remove');
-  a.push(0);
+  console.log('[!] InputTextFieldHTML.prototype.disappear replaced by remove');
+  a.push(0); // TODO where does this come from?
   this.x = -10000;
   this.draw();
 };

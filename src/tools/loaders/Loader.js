@@ -1,3 +1,5 @@
+import LoadEvent from "src/tools/loaders/LoadEvent";
+
 function Loader() {}
 export default Loader;
 
@@ -19,10 +21,11 @@ Loader.PHPurl = "http://intuitionanalytics.com/tests/proxy.php?url=";
  * @para, {Object} optional parameter that will be stored in the LoadEvent instance
  */
 Loader.loadData = function(url, onLoadData, callee, param, send_object_json) {
-  if(Loader.REPORT_LOADING) c.log('load data:', url);
+  if(Loader.REPORT_LOADING) console.log('load data:', url);
   Loader.n_loading++;
 
   if(Loader.LOCAL_STORAGE_ENABLED) {
+    // TODO track down LocalStorage. localStorage is a thing though (lowercase l);
     var result = LocalStorage.getItem(url);
     if(result) {
       var e = new LoadEvent();
@@ -36,7 +39,7 @@ Loader.loadData = function(url, onLoadData, callee, param, send_object_json) {
 
 
 
-  if(Loader.REPORT_LOADING) c.log("Loader.loadData | url:", url);
+  if(Loader.REPORT_LOADING) console.log("Loader.loadData | url:", url);
 
   var useProxy = String(url).substr(0, 4) == "http";
 
@@ -44,7 +47,7 @@ Loader.loadData = function(url, onLoadData, callee, param, send_object_json) {
 
   var target = callee ? callee : arguments.callee;
   var onLoadComplete = function() {
-    if(Loader.REPORT_LOADING) c.log('Loader.loadData | onLoadComplete'); //, req.responseText:', req.responseText);
+    if(Loader.REPORT_LOADING) console.log('Loader.loadData | onLoadComplete'); //, req.responseText:', req.responseText);
     if(req.readyState == 4) {
       Loader.n_loading--;
 
@@ -56,7 +59,7 @@ Loader.loadData = function(url, onLoadData, callee, param, send_object_json) {
         e.result = req.responseText;
         onLoadData.call(target, e);
       } else {
-        if(Loader.REPORT_LOADING) c.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
+        if(Loader.REPORT_LOADING) console.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
         e.errorType = req.status;
         e.errorMessage = "[!] There was a problem retrieving the data [" + req.status + "]:" + req.statusText;
         onLoadData.call(target, e);
@@ -105,6 +108,7 @@ Loader.loadData = function(url, onLoadData, callee, param, send_object_json) {
 };
 
 
+//TODO this method isn't reference by anything else.
 function LoaderRequest(url, method, data) {
   this.url = url;
   this.method = method ? method : "GET";
@@ -114,7 +118,7 @@ function LoaderRequest(url, method, data) {
 Loader.loadImage = function(url, onComplete, callee, param) {
   Loader.n_loading++;
 
-  if(Loader.REPORT_LOADING) c.log("Loader.loadImage | url:", url);
+  if(Loader.REPORT_LOADING) console.log("Loader.loadImage | url:", url);
 
   var target = callee ? callee : arguments.callee;
   var img = document.createElement('img');
@@ -122,7 +126,7 @@ Loader.loadImage = function(url, onComplete, callee, param) {
   if(this.cacheActive) {
     if(this.associativeByUrls[url] != null) {
       Loader.n_loading--;
-      //c.log('=====>>>>+==>>>+====>>=====>>>+==>> in cache:', url);
+      //console.log('=====>>>>+==>>>+====>>=====>>>+==>> in cache:', url);
       var e = new LoadEvent();
       e.result = this.associativeByUrls[url];
       e.url = url;
@@ -183,7 +187,7 @@ Loader.loadJSONP = function(url, onLoadComplete, callee) {
 
   var target = callee ? callee : arguments.callee;
 
-  //c.log('Loader.loadJSONP, newUrl:', newUrl);
+  //console.log('Loader.loadJSONP, newUrl:', newUrl);
 
   $.ajax({
     url: newUrl,
@@ -201,14 +205,14 @@ Loader.loadJSONP = function(url, onLoadComplete, callee) {
     },
     error: function(data) {
       Loader.n_loading--;
-      c.log("Loader.loadJSONP | error, data:", data);
+      console.log("Loader.loadJSONP | error, data:", data);
 
       var e = new LoadEvent();
       e.errorType = 1;
       onLoadComplete.call(target, e);
     }
   }); //.error(function(e){
-  // c.log('---> (((error))) B');
+  // console.log('---> (((error))) B');
   //
   // var e=new LoadEvent();
   // e.errorType=1;
@@ -228,7 +232,7 @@ Loader.loadXML = function(url, onLoadData) {
   var req = new XMLHttpRequest();
   var onLoadComplete = onLoadData;
 
-  if(Loader.REPORT_LOADING) c.log('loadXML, url:', url);
+  if(Loader.REPORT_LOADING) console.log('loadXML, url:', url);
 
   // branch for native XMLHttpRequest object
   if(window.XMLHttpRequest && !(window.ActiveXObject)) {
@@ -264,7 +268,7 @@ Loader.loadXML = function(url, onLoadData) {
         onLoadComplete(req.responseXML);
 
       } else {
-        c.log("There was a problem retrieving the XML data:\n" +
+        console.log("There was a problem retrieving the XML data:\n" +
           req.statusText);
       }
     }
@@ -297,7 +301,7 @@ Loader.sendDataToPhp = function(url, data, onLoadData, callee, param) {
   var target = callee ? callee : arguments.callee;
 
   var onLoadComplete = function() {
-    if(Loader.REPORT_LOADING) c.log('Loader.loadData | onLoadComplete, req.responseText:', req.responseText);
+    if(Loader.REPORT_LOADING) console.log('Loader.loadData | onLoadComplete, req.responseText:', req.responseText);
     if(req.readyState == 4) {
       Loader.n_loading--;
 
@@ -309,7 +313,7 @@ Loader.sendDataToPhp = function(url, data, onLoadData, callee, param) {
         e.result = req.responseText;
         onLoadData.call(target, e);
       } else {
-        if(Loader.REPORT_LOADING) c.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
+        if(Loader.REPORT_LOADING) console.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
         e.errorType = req.status;
         e.errorMessage = "[!] There was a problem retrieving the data [" + req.status + "]:" + req.statusText;
         onLoadData.call(target, e);

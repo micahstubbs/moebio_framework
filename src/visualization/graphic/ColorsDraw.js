@@ -1,15 +1,28 @@
+import {
+  setFill,
+  setText,
+  fRect,
+  fsText,
+  drawImage,
+  setStroke
+} from "src/tools/graphic/SimpleGraphics";
+import { context } from "src/Global";
+
+
 function ColorsDraw() {}
+export default ColorsDraw;
 
 /**
  * draws a color scale, with optional min and max associated values
  * @param  {Rectangle} frame
  * @param  {ColorScale} colorScale
- * 
+ *
  * @param  {Number} minValue value associated to min color
  * @param  {Number} maxValue value associated to max color
  * tags:draw
  */
 ColorsDraw.drawColorScaleLegend = function(frame, colorScale, minValue, maxValue) {
+  // TODO refactor this to import context from Global and not reassign it.
   var change = frame.memory == null || frame.width != frame.memory.w || frame.height != frame.memory.h || colorScale != frame.memory.cS || minValue != frame.memory.min || maxValue != frame.memory.max;
 
   if(change) {
@@ -22,13 +35,14 @@ ColorsDraw.drawColorScaleLegend = function(frame, colorScale, minValue, maxValue
     };
 
     ///// capture image 1
-    var newCanvas = document.createElement("canvas");
-    newCanvas.width = frame.width;
-    newCanvas.height = frame.height;
-    var newContext = newCanvas.getContext("2d");
-    newContext.clearRect(0, 0, frame.width, frame.height);
-    var mainContext = context;
-    context = newContext;
+    // TODO refactor to not reassign context
+    // var newCanvas = document.createElement("canvas");
+    // newCanvas.width = frame.width;
+    // newCanvas.height = frame.height;
+    // var newContext = newCanvas.getContext("2d");
+    // newContext.clearRect(0, 0, frame.width, frame.height);
+    // var mainContext = context;
+    // context = newContext;
     /////
 
     var x;
@@ -65,9 +79,10 @@ ColorsDraw.drawColorScaleLegend = function(frame, colorScale, minValue, maxValue
 
 
     //// capture image 2
-    context = mainContext;
-    frame.memory.image = new Image();
-    frame.memory.image.src = newCanvas.toDataURL();
+    // TODO refactor to not reassign context
+    // context = mainContext;
+    // frame.memory.image = new Image();
+    // frame.memory.image.src = newCanvas.toDataURL();
     ////
   }
 

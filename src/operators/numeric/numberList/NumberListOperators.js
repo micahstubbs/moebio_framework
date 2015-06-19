@@ -1,4 +1,5 @@
 import NumberList from "src/dataStructures/numeric/NumberList";
+import NumberTable from "src/dataStructures/numeric/NumberTable";
 
 function NumberListOperators() {}
 export default NumberListOperators;

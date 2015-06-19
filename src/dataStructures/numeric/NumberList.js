@@ -1,6 +1,10 @@
 import List from "src/dataStructures/lists/List";
 import StringList from "src/dataStructures/strings/StringList";
 import Interval from "src/dataStructures/numeric/Interval";
+import ListGenerators from "src/operators/lists/ListGenerators";
+import Polygon from "src/dataStructures/geometry/Polygon";
+import Point from "src/dataStructures/geometry/Point";
+import { typeOf } from "src/tools/utils/code/ClassUtils";
 
 NumberList.prototype = new List();
 NumberList.prototype.constructor = NumberList;
