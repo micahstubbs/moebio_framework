@@ -157,7 +157,6 @@ List.prototype.getImproved = function() {
   var newList;
   switch(typeOfElements) {
     case "number":
-<<<<<<< HEAD
       newList = NumberList.fromArray(this, false);
       break;
     case "string":
@@ -190,7 +189,6 @@ List.prototype.getImproved = function() {
     case "Relation":
       newList = RelationList.fromArray(this, false);
       break;
-=======
       var newList = NumberList.fromArray(this, false);
     break;
     case "string":
@@ -223,7 +221,6 @@ List.prototype.getImproved = function() {
     case "Relation":
       var newList = RelationList.fromArray(this, false);
     break;
->>>>>>> b96b5bdcc8579abc9467a6a2013971ae034e617f
   }
 
   if(newList === null ||  newList === "") {
@@ -804,7 +801,6 @@ List.prototype.sortIndexed = function() {
   return result;
 };
 
-<<<<<<< HEAD
 // List.prototype.sortNumericIndexed=function() {
 //  var index = new Array();
 //  var i;
@@ -839,8 +835,6 @@ List.prototype.sortIndexed = function() {
 //  return this.sort(comparator);
 // }
 
-=======
->>>>>>> b96b5bdcc8579abc9467a6a2013971ae034e617f
 List.prototype.sortOnIndexes = function(indexes) {
   var result = instantiateWithSameType(this);
   result.name = this.name;

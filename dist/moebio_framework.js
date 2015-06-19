@@ -201,9 +201,9 @@ define('src/index', ['exports'], function (exports) {
    * @classdesc Provide reasoning around numeric intervals.
    *
    * @constructor
-   * @param {Number} x Interval's x value
-   * @param {Number} y Interval's y value
-   * @description Creates a new Interval
+   * @param {Number} x Interval's start value.
+   * @param {Number} y Interval's end value.
+   * @description Creates a new Interval.
    * @category numbers
    */
   function Interval__Interval(x, y) {
@@ -215,7 +215,7 @@ define('src/index', ['exports'], function (exports) {
   var Interval__default = Interval__Interval;
 
   /**
-   * getMin - find the minimum value of the interval
+   * Finds the minimum value of the Interval.
    *
    * @return {Number} the minimum value in the interval
    */
@@ -223,14 +223,31 @@ define('src/index', ['exports'], function (exports) {
     return Math.min(this.x, this.y);
   };
 
+  /**
+   * Finds the maximum value of the Interval.
+   *
+   * @return {Number} the max value in the interval
+   */
   Interval__Interval.prototype.getMax = function() {
     return Math.max(this.x, this.y);
   };
 
+  /**
+   * Finds the range between the min and max of the Interval.
+   *
+   * @return {Number} the absolute difference between the starting and ending values.
+   */
   Interval__Interval.prototype.getAmplitude = function() {
     return Math.abs(this.x - this.y);
   };
 
+  /**
+   * Finds the range between the min and max of the Interval.
+   * If the starting value of the Interval is less then the ending value,
+   * this will return a negative value.
+   *
+   * @return {Number} the difference between the starting and ending values.
+   */
   Interval__Interval.prototype.getSignedAmplitude = function() {
     return this.x - this.y;
   };
@@ -244,6 +261,11 @@ define('src/index', ['exports'], function (exports) {
     return this.getAmplitude() / this.getSignedAmplitude();
   };
 
+  /**
+   * Scales a value to
+   *
+   * @return {Interval}
+   */
   Interval__Interval.prototype.getScaled = function(value) {
     var midAmp = 0.5 * (this.y - this.x);
     var middle = (this.x + this.y) * 0.5;
@@ -269,19 +291,21 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * return a value in interval range
+   * Returns a value in interval range
    * 0 -> min
    * 1 -> max
    * @param value between 0 and 1 (to obtain values between min and max)
    *
    */
   Interval__Interval.prototype.getInterpolatedValue = function(value) {
+    //TODO: should this be unsigned amplitude?
     return value * Number(this.getSignedAmplitude()) + this.x;
   };
 
   Interval__Interval.prototype.getInverseInterpolatedValue = function(value) {
     return(value - this.x) / this.getSignedAmplitude();
   };
+
   Interval__Interval.prototype.getInterpolatedValues = function(numberList) {
     var newNumberList = [];
     var nElements = numberList.length;
@@ -315,9 +339,10 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * indicate wether a number is included in the interval
-   * @param value
-   * @return {Boolean}
+   * Indicates if a number is included in the Interval.
+   *
+   * @param value Number to test.
+   * @return {Boolean} True if the value is inside the Interval.
    *
    */
   Interval__Interval.prototype.contains = function(value) {
@@ -326,7 +351,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * indicate wether other interval contains the same values
+   * Indicate wether other interval contains the same values
+   *
    * @param interval
    * @return {Boolean}
    *
@@ -513,9 +539,11 @@ define('src/index', ['exports'], function (exports) {
 
    /**
     * @classdesc List is an Array with a type property.
+    * Lists have a number of methods to assist with working with
+    * them. There are also a number of
     *
     * @description Creates a new List.
-    * @param {} values Comma separated values to add to List
+    * @param {Number|String|Object} arguments Comma separated values to add to List
     * @constructor
     * @category basics
     */
@@ -533,113 +561,119 @@ define('src/index', ['exports'], function (exports) {
 
 
 
-  List.fromArray = function(array) { //TODO: clear some of these method declarations
-      array.type = "List";
-      array.name = array.name || "";
+  /**
+   * Creates a new List from a raw array of values
+   *
+   * @param {Number[]|String[]|Object[]} array Array of values.
+   * @return {List} New List.
+   */
+  List.fromArray = function(array) {
+    //TODO: clear some of these method declarations
+    array.type = "List";
+    array.name = array.name || "";
 
-      array.setType = List.prototype.setType;
-      array.setArray = List.prototype.setArray;
-      array._constructor = List;
+    array.setType = List.prototype.setType;
+    array.setArray = List.prototype.setArray;
+    array._constructor = List;
 
-      array.getImproved = List.prototype.getImproved;
-      array.sameElements = List.prototype.sameElements;
-      array.getLength = List.prototype.getLength;
-      array.getTypeOfElements = List.prototype.getTypeOfElements; //TODO: redundant?
-      array.getTypes = List.prototype.getTypes;
-      array.getType = List.prototype.getType;
-      array.getLengths = List.prototype.getLengths;
-      array.getWithoutRepetitions = List.prototype.getWithoutRepetitions;
-      array.getElementsRepetitionCount = List.prototype.getElementsRepetitionCount;
-      array.allElementsEqual = List.prototype.allElementsEqual;
-      array.countElement = List.prototype.countElement;
-      array.countOccurrences = List.prototype.countOccurrences;
-      array.getMostRepeatedElement = List.prototype.getMostRepeatedElement;
-      array.getMin = List.prototype.getMin;
-      array.getMax = List.prototype.getMax;
-      array.indexesOf = List.prototype.indexesOf;
-      array.indexOfElements = List.prototype.indexOfElements;
-      array.indexOfByPropertyValue = List.prototype.indexOfByPropertyValue;
-      array.getFirstElementByName = List.prototype.getFirstElementByName;
-      array.getElementsByNames = List.prototype.getElementsByNames;
-      array.getFirstElementByPropertyValue = List.prototype.getFirstElementByPropertyValue;
-      array.add = List.prototype.add;
-      array.multiply = List.prototype.multiply;
-      array.getSubList = List.prototype.getSubList;
-      array.getSubListByIndexes = List.prototype.getSubListByIndexes;
-      array.getSubListByType = List.prototype.getSubListByType;
-      array.getElementNumberOfOccurrences = List.prototype.getElementNumberOfOccurrences;
-      array.getPropertyValues = List.prototype.getPropertyValues;
-      array.getRandomElement = List.prototype.getRandomElement;
-      array.getRandomElements = List.prototype.getRandomElements;
-      array.containsElement = List.prototype.containsElement;
-      array.indexOfElement = List.prototype.indexOfElement;
-      //sorting:
-      array.sortIndexed = List.prototype.sortIndexed;
-      array.sortNumericIndexed = List.prototype.sortNumericIndexed;
-      array.sortNumeric = List.prototype.sortNumeric;
-      array.sortNumericIndexedDescending = List.prototype.sortNumericIndexedDescending;
-      array.sortNumericDescending = List.prototype.sortNumericDescending;
-      array.sortOnIndexes = List.prototype.sortOnIndexes;
-      array.getReversed = List.prototype.getReversed;
-      array.getSortedByProperty = List.prototype.getSortedByProperty;
-      array.getSorted = List.prototype.getSorted;
-      array.getSortedByList = List.prototype.getSortedByList;
-      array.getSortedRandom = List.prototype.getSortedRandom;
-      //filter:
-      array.getFilteredByPropertyValue = List.prototype.getFilteredByPropertyValue;
-      array.getFilteredByBooleanList = List.prototype.getFilteredByBooleanList;
-      //conversion
-      array.toNumberList = List.prototype.toNumberList;
-      array.toStringList = List.prototype.toStringList;
-      //
-      array.clone = List.prototype.clone;
-      array.toString = List.prototype.toString;
-      array.getNames = List.prototype.getNames;
-      array.applyFunction = List.prototype.applyFunction;
-      array.getWithoutElementAtIndex = List.prototype.getWithoutElementAtIndex;
-      array.getWithoutElement = List.prototype.getWithoutElement;
-      array.getWithoutElements = List.prototype.getWithoutElements;
-      array.getWithoutElementsAtIndexes = List.prototype.getWithoutElementsAtIndexes;
-      array.getFilteredByFunction = List.prototype.getFilteredByFunction;
-      array._concat = Array.prototype.concat;
-      array.concat = List.prototype.concat;
-      array.getReport = List.prototype.getReport;
-
-      //transformations
-      array.pushIfUnique = List.prototype.pushIfUnique;
-      array.removeElement = List.prototype.removeElement;
-      array.removeElementAtIndex = List.prototype.removeElementAtIndex;
-      array.removeElementsAtIndexes = List.prototype.removeElementsAtIndexes;
-      array.removeElements = List.prototype.removeElements;
-      array.removeRepetitions = List.prototype.removeRepetitions;
-      array.replace = List.prototype.replace;
-      array.assignNames = List.prototype.assignNames;
-      array._splice = Array.prototype.splice;
-      array.splice = List.prototype.splice;
-
-      array.isList = true;
-
-      array.destroy = List.prototype.destroy;
-
-
-      return array;
-    };
+    array.getImproved = List.prototype.getImproved;
+    array.sameElements = List.prototype.sameElements;
+    array.getLength = List.prototype.getLength;
+    array.getTypeOfElements = List.prototype.getTypeOfElements; //TODO: redundant?
+    array.getTypes = List.prototype.getTypes;
+    array.getType = List.prototype.getType;
+    array.getLengths = List.prototype.getLengths;
+    array.getWithoutRepetitions = List.prototype.getWithoutRepetitions;
+    array.getElementsRepetitionCount = List.prototype.getElementsRepetitionCount;
+    array.allElementsEqual = List.prototype.allElementsEqual;
+    array.countElement = List.prototype.countElement;
+    array.countOccurrences = List.prototype.countOccurrences;
+    array.getMostRepeatedElement = List.prototype.getMostRepeatedElement;
+    array.getMin = List.prototype.getMin;
+    array.getMax = List.prototype.getMax;
+    array.indexesOf = List.prototype.indexesOf;
+    array.indexOfElements = List.prototype.indexOfElements;
+    array.indexOfByPropertyValue = List.prototype.indexOfByPropertyValue;
+    array.getFirstElementByName = List.prototype.getFirstElementByName;
+    array.getElementsByNames = List.prototype.getElementsByNames;
+    array.getFirstElementByPropertyValue = List.prototype.getFirstElementByPropertyValue;
+    array.add = List.prototype.add;
+    array.multiply = List.prototype.multiply;
+    array.getSubList = List.prototype.getSubList;
+    array.getSubListByIndexes = List.prototype.getSubListByIndexes;
+    array.getSubListByType = List.prototype.getSubListByType;
+    array.getElementNumberOfOccurrences = List.prototype.getElementNumberOfOccurrences;
+    array.getPropertyValues = List.prototype.getPropertyValues;
+    array.getRandomElement = List.prototype.getRandomElement;
+    array.getRandomElements = List.prototype.getRandomElements;
+    array.containsElement = List.prototype.containsElement;
+    array.indexOfElement = List.prototype.indexOfElement;
+    //sorting:
+    array.sortIndexed = List.prototype.sortIndexed;
+    array.sortNumericIndexed = List.prototype.sortNumericIndexed;
+    array.sortNumeric = List.prototype.sortNumeric;
+    array.sortNumericIndexedDescending = List.prototype.sortNumericIndexedDescending;
+    array.sortNumericDescending = List.prototype.sortNumericDescending;
+    array.sortOnIndexes = List.prototype.sortOnIndexes;
+    array.getReversed = List.prototype.getReversed;
+    array.getSortedByProperty = List.prototype.getSortedByProperty;
+    array.getSorted = List.prototype.getSorted;
+    array.getSortedByList = List.prototype.getSortedByList;
+    array.getSortedRandom = List.prototype.getSortedRandom;
+    //filter:
+    array.getFilteredByPropertyValue = List.prototype.getFilteredByPropertyValue;
+    array.getFilteredByBooleanList = List.prototype.getFilteredByBooleanList;
+    //conversion
+    array.toNumberList = List.prototype.toNumberList;
+    array.toStringList = List.prototype.toStringList;
     //
+    array.clone = List.prototype.clone;
+    array.toString = List.prototype.toString;
+    array.getNames = List.prototype.getNames;
+    array.applyFunction = List.prototype.applyFunction;
+    array.getWithoutElementAtIndex = List.prototype.getWithoutElementAtIndex;
+    array.getWithoutElement = List.prototype.getWithoutElement;
+    array.getWithoutElements = List.prototype.getWithoutElements;
+    array.getWithoutElementsAtIndexes = List.prototype.getWithoutElementsAtIndexes;
+    array.getFilteredByFunction = List.prototype.getFilteredByFunction;
+    array._concat = Array.prototype.concat;
+    array.concat = List.prototype.concat;
+    array.getReport = List.prototype.getReport;
+
+    //transformations
+    array.pushIfUnique = List.prototype.pushIfUnique;
+    array.removeElement = List.prototype.removeElement;
+    array.removeElementAtIndex = List.prototype.removeElementAtIndex;
+    array.removeElementsAtIndexes = List.prototype.removeElementsAtIndexes;
+    array.removeElements = List.prototype.removeElements;
+    array.removeRepetitions = List.prototype.removeRepetitions;
+    array.replace = List.prototype.replace;
+    array.assignNames = List.prototype.assignNames;
+    array._splice = Array.prototype.splice;
+    array.splice = List.prototype.splice;
+
+    array.isList = true;
+
+    array.destroy = List.prototype.destroy;
+
+
+    return array;
+  };
 
   /**
-   * improve a List (refining type)
-   * @return {List}
+   * Improves a List by its refining type.
+   *
+   * @return {List} Specific sub-class of List
+   * based on the contents of the List.
    * tags:
    */
-  List.prototype.getImproved = function() { //TODO: still doesn't solve tha case of a list with several list of different types
-    if(this.length == 0) return this;
+  List.prototype.getImproved = function() {
+    //TODO: still doesn't solve tha case of a list with several list of different types
+    if(this.length === 0) {
+      return this;
+    }
+
     var typeOfElements = this.getTypeOfElements();
-
-    //var typeOfElements=="" allAreLists = … finish this
-
-    //c.log('List.getImproved | typeOfElements: ['+typeOfElements+']');
-
-    //if(typeOfElements=="" || typeOfElements=="undefined") return this;
 
     var newList;
     switch(typeOfElements) {
@@ -676,11 +710,41 @@ define('src/index', ['exports'], function (exports) {
       case "Relation":
         newList = RelationList.fromArray(this, false);
         break;
+        var newList = NumberList.fromArray(this, false);
+      break;
+      case "string":
+        var newList = StringList__default.fromArray(this, false);
+      break;
+      case "Rectangle":
+        return this;
+      case "date":
+        var newList = DateList.fromArray(this, false);
+      break;
+      case "List":
+        case "DateList":
+        case "IntervalList":
+        case "StringList":
+        case "Table":
+        var newList = Table__default.fromArray(this, false);
+      break;
+      case "NumberList":
+        var newList = NumberTable.fromArray(this, false);
+      break;
+      case "Point":
+        var newList = Polygon.fromArray(this, false);
+      break;
+      case "Polygon":
+        var newList = PolygonList.fromArray(this, false);
+      break;
+      case "Node":
+        var newList = NodeList__default.fromArray(this, false);
+      break;
+      case "Relation":
+        var newList = RelationList.fromArray(this, false);
+      break;
     }
 
-
-
-    if(newList == null ||  newList == "") {
+    if(newList === null ||  newList === "") {
       //c.l('getImproved | all elelemnts no same type')
 
       var allLists = true;
@@ -704,9 +768,10 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * compare elements with another list
-   * @param  {List} list to compare
-   * @return {Boolean} true if all elements are identical
+   * Compares elements with another list.
+   *
+   * @param  {List} list List to compare.
+   * @return {Boolean} true if all elements are identical.
    * tags:
    */
   List.prototype.sameElements = function(list) {
@@ -721,8 +786,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * return the number of elements of the list
-   * @return {Number}
+   * Returns the number of elements of the list.
+   *
+   * @return {Number} Length of the list.
    * tags:
    */
   List.prototype.getLength = function() {
@@ -730,18 +796,24 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * return a numberList with lists lengths (in case of a table) or strings lengths (in case of a stringList)
-   * @return {StringList}
+   * In sub-classes, this function returns a NumberList of lengths.
+   * Base function returns null.
+   *
+   * @return {null}
    * tags:
    */
   List.prototype.getLengths = function() {
     //overriden by different extentions of List
-
     return null;
   };
 
-
-
+  /**
+   * Returns the type of values contained in the List.
+   * Uses typeOf to determine type. If multiple types,
+   * returns an empty string.
+   *
+   * @return {String} Type of element stored in the List.
+   */
   List.prototype.getTypeOfElements = function() {
     var typeOfElements = ClassUtils__typeOf(this[0]);
     for(var i = 1; this[i] != null; i++) {
@@ -751,8 +823,10 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * return a stringList with elemnts types
-   * @return {StringList}
+   * Returns a {@link StringList} with elemnts types
+   * for all elements in the List.
+   *
+   * @return {StringList} List of types for each element.
    * tags:
    */
   List.prototype.getTypes = function() {
@@ -764,6 +838,11 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+   * Converts the List into a string.
+   *
+   * @return {String} String representation of the List.
+   */
   List.prototype.toString = function() {
     var i;
     var str = "[";
@@ -775,7 +854,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * return a list of names (if any) of elements of the list
+   * Returns a list of names (if any) of elements of the list.
+   *
    * @return {StringList}
    * tags:
    */
@@ -788,8 +868,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * reverse the list
-   * @return {List}
+   * Reverses the list.
+   *
+   * @return {List} New List reveresed from original.
    * tags:sort
    */
   List.prototype.getReversed = function() {
@@ -801,9 +882,10 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * return a sub-list, params could be: tw numbers, an interval or a NumberList
-   * @param {Object} argument0 number, interval (in this it will include elements with initial and end indexes) or numberList
+   * Returns a sub-list, params could be: tw numbers, an interval or a NumberList.
    *
+   * @param {Number|Interval} argument0 number, interval (in this it will
+   * include elements with initial and end indexes) or numberList
    * @param {Number} argument1 second index
    * @return {List}
    * tags:filter
@@ -851,24 +933,25 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * filters a list by picking elements of certain type
-   * @param  {String} type
-   * @return {List}
+   * Filters a list by picking elements of certain type.
+   *
+   * @param  {String} type The type to include in the new List.
+   * @return {List} A List only containing values from the original
+   * List of the input type.
    * tags:filter
    */
   List.prototype.getSubListByType = function(type) {
     var newList = new List();
-    var i;
     newList.name = this.name;
     this.forEach(function(element) {
       if(ClassUtils__typeOf(element) == type) newList.push(element);
     });
     return newList.getImproved();
-
   };
 
   /**
-   * returns all elements in indexes
+   * Returns all elements in indexes.
+   *
    * @param {NumberList} indexes
    * @return {List}
    * tags:filter
@@ -881,13 +964,21 @@ define('src/index', ['exports'], function (exports) {
     } else {
       indexes = arguments[0];
     }
-    if(indexes == null) return;
+
+    if(indexes == null) {
+      return;
+    }
+
+    var newList;
     if(this.type == 'List') {
-      var newList = new List();
+      newList = new List();
     } else {
       newList = instantiate(ClassUtils__typeOf(this));
     }
-    if(indexes.length == 0) return newList;
+
+    if(indexes.length === 0) {
+      return newList;
+    }
     newList.name = this.name;
     var nElements = this.length;
     var nPositions = indexes.length;
@@ -898,10 +989,18 @@ define('src/index', ['exports'], function (exports) {
       }
     }
 
-    if(this.type == 'List' || this.type == 'Table') return newList.getImproved();
+    if(this.type == 'List' || this.type == 'Table') {
+      return newList.getImproved();
+    }
     return newList;
   };
 
+  /**
+   * getElementNumberOfOccurrences
+   *
+   * @param {Object} element
+   * @return {Number}
+   */
   List.prototype.getElementNumberOfOccurrences = function(element) {
     var nOccurrences = 0;
     var from = 0;
@@ -915,7 +1014,13 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  List.prototype.clone = function() { //TODO:check this! fromArray should suffice
+  /**
+   * Creates a copy of the List.
+   *
+   * @return {List}
+   */
+  List.prototype.clone = function() {
+    //TODO:check this! fromArray should suffice
     var clonedList = instantiateWithSameType(this);
     var i;
 
@@ -927,7 +1032,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * create a new List without repeating elements
+   * Creates a new List without repeating elements.
+   *
    * @return {List}
    * tags:filter
    */
@@ -958,21 +1064,25 @@ define('src/index', ['exports'], function (exports) {
 
 
   /**
-   * return number of occurrences of an element on a list
-   * @param  {Object} element
+   * Returns the number of occurrences of an element in a list.
+   *
+   * @param  {Object} element The element to count
    * @return {Number}
    * tags:countt
    */
   List.prototype.countElement = function(element) {
     n = 0;
     this.forEach(function(elementInList) {
-      if(element == elementInList) n++;
+      if(element == elementInList) {
+        n++;
+      }
     });
     return n;
   };
 
   /**
-   * returns a numberList of same size as list with number of occurrences for each element
+   * Returns a NumberList of same size as list with number of occurrences for each element.
+   *
    * @return {numberList}
    * tags:count
    */
@@ -985,9 +1095,10 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * returns a table with a list of non repeated elements and a list with the numbers of occurrences for each one
+   * Returns a table with a list of non repeated elements and a list with the numbers of occurrences for each one.
+   *
    * @param  {Boolean} sortListsByOccurrences if true both lists in the table will be sorted by number of occurences (most frequent on top), true by default
-   * @return {Table} list (non-repeated elements) and numberList (frequency of each element)
+   * @return {Table} Table containing a List of non-repeated elements and a NumberList of the frequency of each element.
    * tags:count
    */
   List.prototype.getElementsRepetitionCount = function(sortListsByOccurrences) {
@@ -1025,6 +1136,11 @@ define('src/index', ['exports'], function (exports) {
     return table;
   };
 
+  /**
+   * Checks if all values in the list are equal to one another.
+   *
+   * @return {Boolean} Returns true if all values in the list are equal.
+   */
   List.prototype.allElementsEqual = function() {
     var i;
     if(this.length < 2) return true;
@@ -1039,17 +1155,24 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  List.prototype.getMostRepeatedElement = function() { //TODO: this method should be more efficient
+  /**
+   * Returns the value in the list that is repeated the most times.
+   *
+   * @return {Object} Most repeated value.
+   */
+  List.prototype.getMostRepeatedElement = function() {
+    //TODO: this method should be more efficient
     return ListOperators.countElementsRepetitionOnList(this, true)[0][0];
   };
 
   /**
-   * get minimum value
-   * @return {Number}
+   * Gets the minimum value.
+   *
+   * @return {Number} Minimum value in the List.
    * tags:
    */
   List.prototype.getMin = function() {
-    if(this.length == 0) return null;
+    if(this.length === 0) return null;
     var min = this[0];
     var i;
     for(i = 1; i < this.length; i++) {
@@ -1059,12 +1182,13 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * get maximum value
-   * @return {Number}
+   * Gets the maximum value.
+   *
+   * @return {Number} Max value in the List.
    * tags:
    */
   List.prototype.getMax = function() {
-    if(this.length == 0) return null;
+    if(this.length === 0) return null;
     var max = this[0];
     var i;
     for(i = 1; i < this.length; i++) {
@@ -1073,6 +1197,16 @@ define('src/index', ['exports'], function (exports) {
     return max;
   };
 
+  /**
+   * Creates a new List with the given value added
+   * to each element in the current List.
+   *
+   * @param {Number} value Number to be added to each
+   * element in the List.
+   * @return {List} New List with each element the result
+   * of adding the given value to the original elements
+   * in the List.
+   */
   List.prototype.add = function(value) {
     if(value.constructor == Number) {
       var i;
@@ -1085,7 +1219,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * selects a random element from list
+   * Selects a random element from list.
+   *
    * @return {Object}
    * tags:
    */
@@ -1094,7 +1229,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * creates a list with randomly selected elements
+   * Creates a List with randomly selected elements.
+   *
    * @param  {Number} n number of elements
    * @param  {Boolean} avoidRepetitions
    * @return {List}
@@ -1114,6 +1250,12 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+   * Returns true if the given element is in the List.
+   *
+   * @param {Object} element Element to look for in the List.
+   * @return {Boolean} True if given element is in the List.
+   */
   List.prototype.containsElement = function(element) { //TODO: test if this is faster than indexOf
     var i;
     for(i = 0; this[i] != null; i++) {
@@ -1122,6 +1264,13 @@ define('src/index', ['exports'], function (exports) {
     return false;
   };
 
+  /**
+   * Returns the index position of the given element in the List.
+   *
+   * @param {Object} element Value to search for in the List.
+   * @return {Number} Index of the given element in the List.
+   * If element is not found, -1 is returned.
+   */
   List.prototype.indexOfElement = function(element) { //TODO: test if this is faster than indexOf
     var i;
     for(i = 0; this[i] != null; i++) {
@@ -1130,10 +1279,9 @@ define('src/index', ['exports'], function (exports) {
     return -1;
   };
 
-
-
   /**
-   * return a list of values of a property of all elements
+   * Returns a List of values of a property of all elements.
+   *
    * @param  {String} propertyName
    *
    * @param  {Object} valueIfNull in case the property doesn't exist in the element
@@ -1235,7 +1383,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * return a sorted version of the list
+   * Returns a sorted version of the List.
    *
    * @param  {Boolean} ascending sort (true by default)
    * @return {List}
@@ -1258,8 +1406,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * sort the list by a list
-   * @param  {List} list used to sort (numberList, stringList, dateList…)
+   * Sorts the List by another List.
+   *
+   * @param  {List} list List used to sort (numberList, stringList, dateList…)
    *
    * @param  {Boolean} ascending (true by default)
    * @return {List} sorted list (of the same type)
@@ -1300,21 +1449,23 @@ define('src/index', ['exports'], function (exports) {
 
 
   /**
-   * returns a copy of the list with random sorting
+   * Returns a copy of the list with random sorting.
+   *
    * @return {List}
    * tags:sort
    */
   List.prototype.getSortedRandom = function() {
     var newList = this.clone();
     newList.name = this.name;
-    newList.sort(function(a, b) {
+    newList.sort(function() {
       return Math.random() < 0.5 ? 1 : -1;
     });
     return newList;
   };
 
   /**
-   * returns a numberList with the indexes (positions) of an element
+   * Returns a NumberList with the indexes (positions) of an element.
+   *
    * @param  {Object} element
    * @return {NumberList}
    * tags:
@@ -1330,7 +1481,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * return a numberList with indexes (first position) of elements in a list
+   * Returns a NumberList with indexes (first position) of elements in a list.
+   *
    * @param  {List} elements
    * @return {NumberList}
    * tags:
@@ -1344,7 +1496,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * returns the first element (or index) of an element in the with a given name
+   * Returns the first element (or index) of an element in the with a given name.
+   *
    * @param  {String} name of element
    * @param  {Boolean} returnIndex if true returns the index of element (false by default)
    * @return {List}
@@ -1358,7 +1511,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * returns the first element from each name ([!] to be tested)
+   * Returns the first element from each name ([!] to be tested).
+   *
    * @param  {StringList} names of elements to be filtered
    * @param  {Boolean} returnIndexes if true returns the indexes of elements (false by default)
    * @return {List}
@@ -1383,7 +1537,8 @@ define('src/index', ['exports'], function (exports) {
 
 
   /**
-   * get first elemenet that has some property with a given value
+   * Gets the first elemenet that has some property with a given value.
+   *
    * @param  {String} propertyName name of property
    * @param  {Object} value value of property
    * @return {Object}
@@ -1406,7 +1561,8 @@ define('src/index', ['exports'], function (exports) {
 
 
   /**
-   * filters the list by booleans (also accepts numberList with 0s as false a any other number as true)
+   * Filters the list by booleans (also accepts numberList with 0s as false a any other number as true).
+   *
    * @param  {List} booleanList booleanList or numberList
    * @return {List}
    * tags:filter
@@ -1422,10 +1578,12 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * filters a list by its elements, and a type of comparison (equal by default)
-   * @param  {Object} value object (for equal or different comparison) or number or date (for equal, different, greater, lesser)
-   * @param  {String} comparison equal (default), different, greater, lesser
-   * @return {List} filtered list
+   * Filters a list by its elements, and a type of comparison (equal by default).
+   *
+   * @param  {Object} value object (for equal or different comparison) or number or date
+   * (for equal, different, greater, lesser).
+   * @param  {String} comparison equal (default), different, greater, lesser.
+   * @return {List} Filtered list
    * tags:filter
    */
   List.prototype.getFilteredByValue = function(value, comparison) {
@@ -1437,31 +1595,32 @@ define('src/index', ['exports'], function (exports) {
     switch(comparison) {
       case "equal":
         for(i = 0; this[i] != null; i++) {
-          if(this[i][propertyName] == propertyValue) newList.push(this[i]);
-        }
-        break;
+        if(this[i][propertyName] == propertyValue) newList.push(this[i]);
+      }
+      break;
       case "different":
         for(i = 0; this[i] != null; i++) {
-          if(this[i][propertyName] != propertyValue) newList.push(this[i]);
-        }
-        break;
+        if(this[i][propertyName] != propertyValue) newList.push(this[i]);
+      }
+      break;
       case "greater":
         for(i = 0; this[i] != null; i++) {
-          if(this[i][propertyName] > propertyValue) newList.push(this[i]);
-        }
-        break;
+        if(this[i][propertyName] > propertyValue) newList.push(this[i]);
+      }
+      break;
       case "lower":
         for(i = 0; this[i] != null; i++) {
-          if(this[i][propertyName] > propertyValue) newList.push(this[i]);
-        }
-        break;
+        if(this[i][propertyName] > propertyValue) newList.push(this[i]);
+      }
+      break;
     }
 
     return newList.getImproved();
   };
 
   /**
-   * filters a list by the values of a property on its elements, and a type of comparison (equal by default)
+   * Filters a list by the values of a property on its elements, and a type of comparison (equal by default).
+   *
    * @param  {String} propertyName name of property
    * @param  {Object} propertyValue object (for equal or different comparison) or number or date (for equal, different, greater, lesser)
    * @param  {String} comparison equal (default), different, greater, lesser
@@ -1477,31 +1636,32 @@ define('src/index', ['exports'], function (exports) {
     switch(comparison) {
       case "equal":
         for(i = 0; this[i] != null; i++) {
-          if(this[i][propertyName] == propertyValue) newList.push(this[i]);
-        }
-        break;
+        if(this[i][propertyName] == propertyValue) newList.push(this[i]);
+      }
+      break;
       case "different":
         for(i = 0; this[i] != null; i++) {
-          if(this[i][propertyName] != propertyValue) newList.push(this[i]);
-        }
-        break;
+        if(this[i][propertyName] != propertyValue) newList.push(this[i]);
+      }
+      break;
       case "greater":
         for(i = 0; this[i] != null; i++) {
-          if(this[i][propertyName] > propertyValue) newList.push(this[i]);
-        }
-        break;
+        if(this[i][propertyName] > propertyValue) newList.push(this[i]);
+      }
+      break;
       case "lower":
         for(i = 0; this[i] != null; i++) {
-          if(this[i][propertyName] > propertyValue) newList.push(this[i]);
-        }
-        break;
+        if(this[i][propertyName] > propertyValue) newList.push(this[i]);
+      }
+      break;
     }
 
     return newList.getImproved();
   };
 
   /**
-   * conert a list into a NumberList
+   * Converts the List into a NumberList.
+   *
    * @return {NumberList}
    * tags:conversion
    */
@@ -1516,7 +1676,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * convert a list into a StringList
+   * Converts the List into a StringList.
+   *
    * @return {StringList}
    * tags:conversion
    */
@@ -1534,7 +1695,8 @@ define('src/index', ['exports'], function (exports) {
     return stringList;
   };
 
-  List.prototype.applyFunction = function(func) { //TODO: to be tested!
+  List.prototype.applyFunction = function(func) {
+    //TODO: to be tested!
     var newList = new List();
     newList.name = this.name;
     var i;
@@ -1549,8 +1711,9 @@ define('src/index', ['exports'], function (exports) {
 
   List.prototype.getWithoutElementsAtIndexes = function(indexes) { //[!] This DOESN'T transforms the List
     var i;
+    var newList;
     if(this.type == 'List') {
-      var newList = new List();
+      newList = new List();
     } else {
       newList = instantiate(ClassUtils__typeOf(this));
     }
@@ -1564,16 +1727,18 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * removes an element and returns a new list
+   * Removes an element and returns a new list.
+   *
    * @param  {Number} index of element to remove
    * @return {List}
    * tags:filter
    */
   List.prototype.getWithoutElementAtIndex = function(index) {
+    var newList;
     if(this.type == 'List') {
-      var newList = new List();
+      newList = new List();
     } else {
-      var newList = instantiateWithSameType(this);
+      newList = instantiateWithSameType(this);
     }
     for(var i = 0; this[i] != null; i++) {
       if(i != index) {
@@ -1585,14 +1750,23 @@ define('src/index', ['exports'], function (exports) {
     return newList;
   };
 
+  /**
+   * Creates a new List without the given element present.
+   * If multiple copies of the element exist, only exlcudes first copy.
+   *
+   * @param {Number|String|Object} element Element to exclude in the new List.
+   * @return {List} New List missing the given element.
+   */
   List.prototype.getWithoutElement = function(element) {
     var index = this.indexOf(element);
     if(index == -1) return this;
 
+    var newList;
+
     if(this.type == 'List') {
-      var newList = new List();
+      newList = new List();
     } else {
-      var newList = instantiateWithSameType(this);
+      newList = instantiateWithSameType(this);
     }
 
     newList.name = this.name;
@@ -1607,11 +1781,13 @@ define('src/index', ['exports'], function (exports) {
   };
 
   List.prototype.getWithoutElements = function(list) {
+    var newList;
     if(this.type == 'List') {
-      var newList = new List();
+      newList = new List();
     } else {
-      var newList = instantiateWithSameType(this);
+      newList = instantiateWithSameType(this);
     }
+
     for(var i = 0; this[i] != null; i++) {
       if(list.indexOf(this[i]) == -1) {
         newList.push(this[i]);
@@ -1623,6 +1799,15 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+   * Returns subset of List where true is returned from
+   * given function that is executed on each element in the List.
+   *
+   * @param {Function} func Function to run on each element.
+   * If the function returns true, the element is maintained in the
+   * returned List.
+   * @return {List} Filtered List.
+   */
   List.prototype.getFilteredByFunction = function(func) {
     var newList = instantiateWithSameType(this);
     for(var i = 0; this[i] != null; i++) {
@@ -1659,7 +1844,6 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-
   List.prototype.getReport = function(level) { //TODO:complete
     var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
     var text = level > 0 ? (ident + "////report of instance of List////") : "///////////report of instance of List//////////";
@@ -1681,38 +1865,38 @@ define('src/index', ['exports'], function (exports) {
     switch(this.type) {
       case "NumberList":
         var min = this.getMin();
-        var max = this.getMax();
-        var average = (min + max) * 0.5;
-        text += ident + "min: " + min;
-        text += ident + "max: " + max;
-        text += ident + "average: " + average;
-        if(length < 101) {
-          text += ident + "numbers: " + this.join(", ");
-        }
-        break;
+      var max = this.getMax();
+      var average = (min + max) * 0.5;
+      text += ident + "min: " + min;
+      text += ident + "max: " + max;
+      text += ident + "average: " + average;
+      if(length < 101) {
+        text += ident + "numbers: " + this.join(", ");
+      }
+      break;
       case "StringList":
-      case "List":
+        case "List":
         var freqTable = this.getElementsRepetitionCount(true);
-        text += ident + "number of different elements: " + freqTable[0].length;
-        if(freqTable[0].length < 10) {
-          text += ident + "elements frequency:";
-        } else {
-          text += ident + "some elements frequency:";
-        }
+      text += ident + "number of different elements: " + freqTable[0].length;
+      if(freqTable[0].length < 10) {
+        text += ident + "elements frequency:";
+      } else {
+        text += ident + "some elements frequency:";
+      }
 
-        for(i = 0; freqTable[0][i] != null && i < 10; i++) {
-          text += ident + "  [" + String(freqTable[0][i]) + "]: " + freqTable[1][i];
-        }
+      for(i = 0; freqTable[0][i] != null && i < 10; i++) {
+        text += ident + "  [" + String(freqTable[0][i]) + "]: " + freqTable[1][i];
+      }
 
-        var joined;
-        if(this.type == "List") {
-          joined = this.join("], [");
-        } else {
-          joined = this.toStringList().join("], [");
-        }
+      var joined;
+      if(this.type == "List") {
+        joined = this.join("], [");
+      } else {
+        joined = this.toStringList().join("], [");
+      }
 
-        if(joined.length < 2000) text += ident + "strings: [" + joined + "]";
-        break;
+      if(joined.length < 2000) text += ident + "strings: [" + joined + "]";
+      break;
 
     }
 
@@ -1794,16 +1978,16 @@ define('src/index', ['exports'], function (exports) {
     switch(this.type) {
       case 'NumberList':
         return NumberList.fromArray(this._splice.apply(this, arguments));
-        break;
+      break;
       case 'StringList':
         return StringList__default.fromArray(this._splice.apply(this, arguments));
-        break;
+      break;
       case 'NodeList':
         return NodeList__default.fromArray(this._splice.apply(this, arguments));
-        break;
+      break;
       case 'DateList':
         return DateList.fromArray(this._splice.apply(this, arguments));
-        break;
+      break;
     }
     return List.fromArray(this._splice.apply(this, arguments)).getImproved();
   };
@@ -3852,6 +4036,7 @@ define('src/index', ['exports'], function (exports) {
     return ColorOperators.RGBtoHEX(resultArray[0], resultArray[1], resultArray[2]);
   };
 
+
   /**
    * return a color between color0 and color1
    * 0 -> color0
@@ -3867,6 +4052,16 @@ define('src/index', ['exports'], function (exports) {
     return [Math.floor(s * color0[0] + value * color1[0]), Math.floor(s * color0[1] + value * color1[1]), Math.floor(s * color0[2] + value * color1[2])];
   };
 
+  /**
+   * converts an hexadecimal color to RGB
+   * @param {String} an hexadecimal color string
+   * @return {Array} returns an RGB color Array
+   *
+   */
+  ColorOperators.HEXtoRGB = function(hexColor) {
+    return [parseInt(hexColor.substr(1, 2), 16), parseInt(hexColor.substr(3, 2), 16), parseInt(hexColor.substr(5, 2), 16)];
+  };
+
 
   ColorOperators.RGBtoHEX = function(red, green, blue) {
     return "#" + ColorOperators.toHex(red) + ColorOperators.toHex(green) + ColorOperators.toHex(blue);
@@ -3878,15 +4073,7 @@ define('src/index', ['exports'], function (exports) {
 
 
 
-  /**
-   * converts an hexadecimal color to RGB
-   * @param {String} an hexadecimal color string
-   * @return {Array} returns an RGB color Array
-   *
-   */
-  ColorOperators.HEXtoRGB = function(hexColor) {
-    return [parseInt(hexColor.substr(1, 2), 16), parseInt(hexColor.substr(3, 2), 16), parseInt(hexColor.substr(5, 2), 16)];
-  };
+
 
 
   ColorOperators.colorStringToHEX = function(color_string) {
@@ -3987,12 +4174,12 @@ define('src/index', ['exports'], function (exports) {
       if(h < 0) h += 360;
       return new Array(h, s, v);
     };
-    /**
-     * converts an HSV color to RGB
-     * @param {Array} a HSV color array
-     * @return {Array} returns a RGB color array
-     *
-     */
+
+  /**
+   * converts an HSV color to RGB
+   * @param {Array} a HSV color array
+   * @return {Array} returns a RGB color array
+   */
   ColorOperators.HSVtoRGB = function(hue, saturation, value) {
     hue = hue ? hue : 0;
     saturation = saturation ? saturation : 0;
@@ -4118,13 +4305,10 @@ define('src/index', ['exports'], function (exports) {
 
 
   /**
-   * This method was partially obtained (and simplified) from a Class by Stoyan Stefanov:
-   *
-   * A class to parse color values
-   * @author Stoyan Stefanov <sstoo@gmail.com>
-   * @link   http://www.phpied.com/rgb-color-parser-in-javascript/
-   * @license Use it if you like it
-   *
+   * This method was partially obtained (and simplified) from a Class by Stoyan Stefanov: "A class to parse color values / @author Stoyan Stefanov <sstoo@gmail.com> / @link   http://www.phpied.com/rgb-color-parser-in-javascript/ / @license Use it if you like it"
+   * @param {String} color_string color as a string (e.g. "red", "#0044ff", "rgb(130,20,100)")
+   * @return {Array} rgb array
+   * tags:
    */
   ColorOperators.colorStringToRGB = function(color_string) {
     //c.log('color_string:['+color_string+']');
@@ -5642,9 +5826,14 @@ define('src/index', ['exports'], function (exports) {
   Table__Table.prototype.constructor = Table__Table;
 
   /**
-   * @classdesc A Table provides a 2D array-like structure.
+   * @classdesc A sub-class of {@link List}, Table provides a 2D array-like structure.
+   *
+   * Each column is stored as its own {@link List}, making it a List of Lists.
+   * Cells in the table can be accessed using table[column][row].
    *
    * @description Creates a new Table.
+   * Input arguments are treated as the inital column values
+   * of the Table.
    * @constructor
    * @category basics
    */
@@ -5662,6 +5851,12 @@ define('src/index', ['exports'], function (exports) {
   }
   var Table__default = Table__Table;
 
+  /**
+   * Creates a new Table from an array
+   *
+   * @param {Number[]} array
+   * @return {Table}
+   */
   Table__Table.fromArray = function(array) {
     var result = List.fromArray(array);
     result.type = "Table";
@@ -5693,7 +5888,17 @@ define('src/index', ['exports'], function (exports) {
     return result;
   };
 
-  Table__Table.prototype.applyFunction = function(func) { //TODO: to be tested!
+  /**
+   * Executes a given function on all the columns
+   * in the Table, returning a new Table with the
+   * resulting values.
+   *
+   * @param {Function} func Function to apply to each
+   * column in the table. Columns are {@link List|Lists}.
+   * @return {Table} Table of values from applying function.
+   */
+  Table__Table.prototype.applyFunction = function(func) {
+    //TODO: to be tested!
     var i;
     var newTable = new Table__Table();
 
@@ -5706,8 +5911,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * returns a lis with all the alements of a row
-   * @param  {Number} index
+   * Returns a {@link List} with all the elements of a row.
+   *
+   * @param  {Number} index Index of the row to get.
    * @return {List}
    * tags:filter
    */
@@ -5721,20 +5927,21 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * returns the length of the list at given index (default 0)
+   * Returns the length a column of the Table.
    *
-   * @param  {Number} index
-   * @return {Number}
+   * @param  {Number} index The Column to return its length.
+   * Defaults to 0.
+   * @return {Number} Length of column at given index.
    * tags:
    */
   Table__Table.prototype.getListLength = function(index) {
     return this[index || 0].length;
   };
 
-
-
   /**
-   * overrides List.prototype.getLengths (see comments there)
+   * Returns the lengths of all the columns of the Table.
+   *
+   * @return {NumberList} Lengths of all columns in Table.
    */
   Table__Table.prototype.getLengths = function() {
     var lengths = new NumberList();
@@ -5745,10 +5952,10 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * filter a table by selecting a section of rows, elements with last index included
-   * @param  {Number} startIndex index of first element in all lists of the table
+   * Filters a Table by selecting a section of rows, elements with last index included.
    *
-   * @param  {Number} endIndex index of last elements in all lists of the table
+   * @param  {Number} startIndex Index of first element in all lists of the table.
+   * @param  {Number} endIndex Index of last elements in all lists of the table.
    * @return {Table}
    * tags:filter
    */
@@ -5769,7 +5976,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * filters the lists of the table by indexes
+   * Filters the lists of the table by indexes.
+   *
    * @param  {NumberList} indexes
    * @return {Table}
    * tags:filter
@@ -5782,11 +5990,21 @@ define('src/index', ['exports'], function (exports) {
     return newTable.getImproved();
   };
 
+
   //deprecated
+  /**
+   * @ignore
+   */
   Table__Table.prototype.getRows = function(indexes) {
     return Table__Table.prototype.getSubListsByIndexes(indexes);
   };
 
+  /**
+   * Returns a new Table with the row at the given index removed.
+   *
+   * @param {Number} rowIndex Row to remove
+   * @return {Table} New Table.
+   */
   Table__Table.prototype.getWithoutRow = function(rowIndex) {
     var newTable = new Table__Table();
     newTable.name = this.name;
@@ -5797,6 +6015,12 @@ define('src/index', ['exports'], function (exports) {
     return newTable.getImproved();
   };
 
+  /**
+   * Returns a new Table with the rows listed in the given array removed.
+   *
+   * @param {Number[]} rowsIndexes Array of row indecies to remove.
+   * @return {undefined}
+   */
   Table__Table.prototype.getWithoutRows = function(rowsIndexes) {
     var newTable = new Table__Table();
     newTable.name = this.name;
@@ -5810,10 +6034,10 @@ define('src/index', ['exports'], function (exports) {
     return newTable.getImproved();
   };
 
-
   /**
-   * sort table's lists by a list
-   * @param  {Object} listOrIndex kist used to sort, or index of list in the table
+   * Sort Table's lists by a list
+   *
+   * @param  {List|Number} listOrIndex List used to sort, or index of list in the table
    *
    * @param  {Boolean} ascending (true by default)
    * @return {Table} table (of the same type)
@@ -5831,7 +6055,12 @@ define('src/index', ['exports'], function (exports) {
     return newTable;
   };
 
-
+  /**
+   * Transposes Table.
+   *
+   * @param firstListAsHeaders
+   * @return {Table}
+   */
   Table__Table.prototype.getTransposed = function(firstListAsHeaders) {
 
     var tableToTranspose = firstListAsHeaders ? this.getSubList(1) : this;
@@ -5841,7 +6070,7 @@ define('src/index', ['exports'], function (exports) {
     var i;
     var j;
     var list;
-    var rows = tableToTranspose[0].length;
+
     for(i = 0; tableToTranspose[i] != null; i++) {
       list = tableToTranspose[i];
       for(j = 0; list[j] != null; j++) {
@@ -5862,7 +6091,13 @@ define('src/index', ['exports'], function (exports) {
     return table;
   };
 
-
+  /**
+   * Generates a string containing details about the current state
+   * of the Table. Useful for outputing to the console for debugging.
+   *
+   * @param {Number} level If greater then zero, will indent to that number of spaces.
+   * @return {String} Description String.
+   */
   Table__Table.prototype.getReport = function(level) {
     var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
     var lengths = this.getLengths();
@@ -5870,7 +6105,6 @@ define('src/index', ['exports'], function (exports) {
     var maxLength = lengths.getMax();
     var averageLength = (minLength + maxLength) * 0.5;
     var sameLengths = minLength == maxLength;
-
 
     var text = level > 0 ? (ident + "////report of instance of Table////") : "///////////report of instance of Table//////////";
 
@@ -5928,26 +6162,29 @@ define('src/index', ['exports'], function (exports) {
     ///add ideas to: analyze, visualize
 
     return text;
-
   };
 
   Table__Table.prototype.getReportHtml = function() {}; //TODO
 
   Table__Table.prototype.getReportObject = function() {}; //TODO
 
-
-
-
-  ////transformative
+  /**
+   * Remove a Row from Table.
+   *
+   * @param {Number} index The row to remove.
+   * @return {undefined}
+   */
   Table__Table.prototype.removeRow = function(index) {
     for(var i = 0; this[i] != null; i++) {
       this[i].splice(index, 1);
     }
   };
 
-
-  ////
-
+  /**
+   * Makes a copy of the Table.
+   *
+   * @return {Table} Copy of table.
+   */
   Table__Table.prototype.clone = function() {
     var clonedTable = instantiateWithSameType(this);
     clonedTable.name = this.name;
@@ -5957,6 +6194,9 @@ define('src/index', ['exports'], function (exports) {
     return clonedTable;
   };
 
+  /**
+   * Removes all contents of the Table.
+   */
   Table__Table.prototype.destroy = function() {
     for(var i = 0; this[i] != null; i++) {
       this[i].destroy();
@@ -5964,6 +6204,9 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
+  /**
+   * Prints contents of Table to console.log.
+   */
   Table__Table.prototype.print = function() {
     console.log("///////////// <" + this.name + "////////////////////////////////////////////////////");
     console.log(TableEncodings.TableToCSV(this, null, true));
@@ -6340,15 +6583,21 @@ define('src/index', ['exports'], function (exports) {
     var args = [];
 
     for(var i = 0; i < arguments.length; i++) {
-      arguments[i] = Number(arguments[i]);
+      args[i] = Number(arguments[i]);
     }
-    var array = List.apply(this, arguments);
+    var array = List.apply(this, args);
     array = NumberList.fromArray(array);
-    //
     return array;
   }
 
 
+  /**
+   * Creates a new NumberList from a raw array of numbers.
+   *
+   * @param {Number[]} array The array of numbers to create the list from.
+   * @param {Boolean} forceToNumber If true, explicitly converts values in array to Numbers.
+   * @return {NumberList} New NumberList containing values in array
+   */
   NumberList.fromArray = function(array, forceToNumber) {
     forceToNumber = forceToNumber == null ? true : forceToNumber;
 
@@ -6410,11 +6659,18 @@ define('src/index', ['exports'], function (exports) {
 
     return result;
   };
+
   NumberList.prototype.unit = "";
   NumberList.prototype.tenPower = 0;
 
-  NumberList.prototype.getMin = function() { //TODO:store result and retrieve while the NumberList doesn't change;
-    if(this.length == 0) return null;
+  /**
+   * Returns minimum value in the List. Null if the NumberList is empty.
+   *
+   * @return {Number} The min value.
+   */
+  NumberList.prototype.getMin = function() {
+    //TODO:store result and retrieve while the NumberList doesn't change;
+    if(this.length === 0) return null;
     var i;
     var min = this[0];
     for(i = 1; i < this.length; i++) {
@@ -6423,8 +6679,14 @@ define('src/index', ['exports'], function (exports) {
     return min;
   };
 
-  NumberList.prototype.getMax = function() { //TODO:store result and retrieve while the NumberList doesn't change;
-    if(this.length == 0) return null;
+  /**
+   * Returns maximum value in the List. Null if the NumberList is empty.
+   *
+   * @return {Number} The max value.
+   */
+  NumberList.prototype.getMax = function() {
+    //TODO:store result and retrieve while the NumberList doesn't change;
+    if(this.length === 0) return null;
     var i;
     var max = this[0];
     for(i = 1; i < this.length; i++) {
@@ -6433,8 +6695,13 @@ define('src/index', ['exports'], function (exports) {
     return max;
   };
 
+  /**
+   * Finds the range of the values in the NumberList.
+   *
+   * @return {Number} The difference between the minimum and maximum value in the List.
+   */
   NumberList.prototype.getAmplitude = function() {
-    if(this.length == 0) return 0;
+    if(this.length === 0) return 0;
     var min = this[0];
     var max = this[0];
     for(var i = 1; this[i] != null; i++) {
@@ -6444,17 +6711,23 @@ define('src/index', ['exports'], function (exports) {
     return max - min;
   };
 
+  /**
+   * Provides the min and max values as an {@link Interval}.
+   *
+   * @return {Interval} Interval containing the min and max values of the List.
+   */
   NumberList.prototype.getMinMaxInterval = function() { //deprecated?
     return new Interval__default(this.getMin(), this.getMax());
   };
 
   /**
-   * returns the sum of values in the numberList
-   * @return {Number}
+   * Returns the total sum of values in the NumberList.
+   *
+   * @return {Number} Sum of all values in the List.
    * tags:
    */
   NumberList.prototype.getSum = function() {
-    if(this.length == 0) return 0;
+    if(this.length === 0) return 0;
     var i;
     var sum = this[0];
     for(i = 1; i < this.length; i++) {
@@ -6464,12 +6737,13 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * return the product of values in the numberList
-   * @return {Number}
+   * Returns the product of values in the NumberList.
+   *
+   * @return {Number} The product of all values in the NumberList.
    * tags:
    */
   NumberList.prototype.getProduct = function() {
-    if(this.length == 0) return null;
+    if(this.length === 0) return null;
     var i;
     var product = this[0];
     for(i = 1; i < this.length; i++) {
@@ -6479,19 +6753,23 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * returns a NumberList normalized to the sum
-   * @param {Number} factor optional
-   * @return {NumberList}
+   * Returns a NumberList normalized to the sum.
+   *
+   * @param {Number} factor Optional multiplier to modify the normalized values by.
+   * Defaults to 1.
+   * @param {Number} sum Optional sum to normalize to.
+   * If not provided, sum will be calculated automatically.
+   * @return {NumberList} New NumberList of values normalized to the sum.
    * tags:
    */
   NumberList.prototype.getNormalizedToSum = function(factor, sum) {
     factor = factor == null ? 1 : factor;
     var newNumberList = new NumberList();
     newNumberList.name = this.name;
-    if(this.length == 0) return newNumberList;
+    if(this.length === 0) return newNumberList;
     var i;
-    var sum = sum == null ? this.getSum() : sum;
-    if(sum == 0) return this.clone();
+    sum = sum == null ? this.getSum() : sum;
+    if(sum === 0) return this.clone();
 
     for(i = 0; i < this.length; i++) {
       newNumberList.push(factor * this[i] / sum);
@@ -6500,15 +6778,17 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * returns a numberList normalized to min-max interval
-   * @param {Number} factor optional
+   * Returns a NumberList normalized to min-max interval.
+   *
+   * @param {Number} factor Optional multiplier to modify the normalized values by.
+   * Defaults to 1.
    * @return {NumberList}
    * tags:
    */
   NumberList.prototype.getNormalized = function(factor) {
     factor = factor == null ? 1 : factor;
 
-    if(this.length == 0) return null;
+    if(this.length === 0) return null;
 
     var i;
     var interval = this.getMinMaxInterval();
@@ -6522,8 +6802,10 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * returns a numberList normalized to Max
-   * @param {Number} factor optional
+   * Returns a NumberList normalized to Max.
+   *
+   * @param {Number} factor Optional multiplier to modify the normalized values by.
+   * Defaults to 1.
    * @return {NumberList}
    * tags:
    */
@@ -6546,12 +6828,14 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * builds an Interval witn min and max value from the numberList
-   * @return {Interval}
+   * Builds an Interval with min and max value from the NumberList
+   *
+   * @return {Interval} with starting value as the min of the NumberList
+   * and ending value as the max.
    * tags:
    */
   NumberList.prototype.getInterval = function() {
-    if(this.length == 0) return null;
+    if(this.length === 0) return null;
     var max = this[0];
     var min = this[0];
     for(var i = 1; this[i] != null; i++) {
@@ -6563,8 +6847,16 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+   * Builds an {@link Polygon} from the NumberList,
+   * using each pair of values in the NumberList as
+   * x and y positions.
+   *
+   * @return {Polygon} Polygon representing the values
+   * in the NumberList as x/y coordinates.
+   */
   NumberList.prototype.toPolygon = function() {
-    if(this.length == 0) return null;
+    if(this.length === 0) return null;
     var polygon = new Polygon();
     for(var i = 0; this[i + 1] != null; i += 2) {
       polygon.push(new Point(this[i], this[i + 1]));
@@ -6573,13 +6865,12 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-
-
   /////////statistics
 
   /**
-   * calculates mean of numberList
-   * @return {Number}
+   * Calculates mean of the NumberList.
+   *
+   * @return {Number} Mean of all values in the List.
    * tags:statistics
    */
   NumberList.prototype.getAverage = function() {
@@ -6587,7 +6878,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * calculates geometric mean of numberList
+   * Calculates the geometric mean of the NumberList.
+   *
    * @return {Number}
    * tags:statistics
    */
@@ -6600,7 +6892,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * calculates de norm of the numberList (treated as a vector)
+   * Calculates the norm of the NumberList (treated as a vector).
+   *
    * @return {Number}
    * tags:statistics
    */
@@ -6613,7 +6906,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * calculates the variance of the numberList
+   * Calculates the variance of the NumberList.
+   *
    * @return {Number}
    * tags:statistics
    */
@@ -6627,7 +6921,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * calculates the standard deviation
+   * Calculates the standard deviation.
+   *
    * @return {Number}
    * tags:statistics
    */
@@ -6636,23 +6931,24 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * calculates the median of the numberList
+   * Calculates the median of the NumberList.
+   *
    * @return {Number}
    * tags:statistics
    */
-  NumberList.prototype.getMedian = function(nQuantiles) {
+  NumberList.prototype.getMedian = function() {
     var sorted = this.getSorted(true);
     var prop = (this.length - 1) / 2;
     var entProp = Math.floor(prop);
     var onIndex = prop == entProp;
-    var quantiles = new NumberList();
     return onIndex ? sorted[prop] : (0.5 * sorted[entProp] + 0.5 * sorted[entProp + 1]);
   };
 
   /**
-   * builds a partition of n quantiles from the numberList
+   * Builds a partition of n quantiles from the numberList.
+   *
    * @param {Number} nQuantiles number of quantiles
-   * @return {Number}
+   * @return {NumberList} A number list of the quantiles.
    * tags:statistics
    */
   NumberList.prototype.getQuantiles = function(nQuantiles) {
@@ -6672,6 +6968,13 @@ define('src/index', ['exports'], function (exports) {
 
   /////////sorting
 
+  /**
+   * Returns a new NumberList sorted in either ascending or descending order.
+   *
+   * @param {Boolean} ascending True if values should be sorted in ascending order.
+   * If false, values will be sorted in descending order.
+   * @return {NumberList} new sorted NumberList.
+   */
   NumberList.prototype.getSorted = function(ascending) {
     ascending = ascending == null ? true : ascending;
 
@@ -6685,13 +6988,26 @@ define('src/index', ['exports'], function (exports) {
     }), false);
   };
 
+  /**
+   * Returns a new NumberList containing the indicies of the values of
+   * the original NumberList in sorted order.
+   *
+   * @param {Boolean} descending If true, values are sorted in descending order.
+   * @return {NumberList} NumberList containing the indices of the original NumberList
+   * such that accessing the values of the original list at those indices would produce
+   * a sorted list.
+   * @example
+   * var nl = NumberList.fromArray([1,3,2]);
+   * var indices = nl.getSortIndexes();
+   * indices[0]; // produces 1 as nl[1] == 3.
+   */
   NumberList.prototype.getSortIndexes = function(descending) {
     if(descending == null) descending = true;
 
     var pairs = [];
     var newList = new NumberList();
 
-    if(this.length == 0) return newList;
+    if(this.length === 0) return newList;
 
     for(var i = 0; this[i] != null; i++) {
       pairs.push([i, this[i]]);
@@ -6716,6 +7032,14 @@ define('src/index', ['exports'], function (exports) {
     return newList;
   };
 
+  /**
+   * Returns a new NumberList with the values of
+   * the original list multiplied by the input value
+   *
+   * @param {Number} value The value to multiply each
+   * value in the list by.
+   * @return {NumberList} New NumberList with values multiplied.
+   */
   NumberList.prototype.factor = function(value) {
     var i;
     var newNumberList = new NumberList();
@@ -6726,6 +7050,20 @@ define('src/index', ['exports'], function (exports) {
     return newNumberList;
   };
 
+  /**
+   * Adds a value or values in a NumberList to the current list.
+   *
+   * If input is a Number, each value of the returned
+   * NumberList will be the sum of the original value and this
+   * input value.
+   *
+   * If the input is a NumberList, each value of the returned
+   * NumberList will be the sum of the original value and the
+   * value at the same index in the input list.
+   *
+   * @param {Number|NumberList} object Input value to add to the list.
+   * @return {NumberList}
+   */
   NumberList.prototype.add = function(object) {
     var i;
     var newNumberList = new NumberList();
@@ -6748,6 +7086,20 @@ define('src/index', ['exports'], function (exports) {
     return newNumberList;
   };
 
+  /**
+   * Subtracts a value or values in a NumberList from the current list.
+   *
+   * If input is a Number, each value of the returned
+   * NumberList will be the original value minus this
+   * input value.
+   *
+   * If the input is a NumberList, each value of the returned
+   * NumberList will be the original value minus the
+   * value at the same index in the input list.
+   *
+   * @param {Number|NumberList} object Input value to subract from the list.
+   * @return {NumberList}
+   */
   NumberList.prototype.subtract = function(object) {
     var i;
     var newNumberList = new NumberList();
@@ -6770,6 +7122,20 @@ define('src/index', ['exports'], function (exports) {
     return newNumberList;
   };
 
+  /**
+   * Returns a new NumberList with each value divided by a input value or values in a NumberList.
+   *
+   * If input is a Number, each value of the returned
+   * NumberList will be the original value divided by this
+   * input value.
+   *
+   * If the input is a NumberList, each value of the returned
+   * NumberList will be the original value divided by the
+   * value at the same index in the input list.
+   *
+   * @param {Number|NumberList} object Input value to divide by the list.
+   * @return {NumberList}
+   */
   NumberList.prototype.divide = function(object) {
     var i;
     var newNumberList = new NumberList();
@@ -6792,6 +7158,12 @@ define('src/index', ['exports'], function (exports) {
     return newNumberList;
   };
 
+  /**
+   * Returns a new NumberList containing the square root of
+   * the values of the current NumberList.
+   *
+   * @return {NumberList} NumberList with square rooted values.
+   */
   NumberList.prototype.sqrt = function() {
     var i;
     var newNumberList = new NumberList();
@@ -6802,6 +7174,13 @@ define('src/index', ['exports'], function (exports) {
     return newNumberList;
   };
 
+  /**
+   * Returns a new NumberList containing values raised to the power
+   * of the input value.
+   *
+   * @param {Number} power Power to raise each value by.
+   * @return {NumberList} New NumberList.
+   */
   NumberList.prototype.pow = function(power) {
     var i;
     var newNumberList = new NumberList();
@@ -6812,6 +7191,16 @@ define('src/index', ['exports'], function (exports) {
     return newNumberList;
   };
 
+  /**
+   * Returns a transformed version of the list with
+   * each value in the new list the log of the value
+   * in the current list, with an optional constant
+   * added to it.
+   *
+   * @param {Number} add Optional value to add to the log transformed values.
+   * Defaults to 0.
+   * @return {NumberList}
+   */
   NumberList.prototype.log = function(add) {
     add = add || 0;
 
@@ -6825,6 +7214,12 @@ define('src/index', ['exports'], function (exports) {
     return newNumberList;
   };
 
+  /**
+   * Returns dot product between current list and input NumberList.
+   *
+   * @param {NumberList} numberList Another NumberList.
+   * @return {Number} Dot product between two lists.
+   */
   NumberList.prototype.dotProduct = function(numberList) {
     var sum = 0;
     var i;
@@ -6836,9 +7231,11 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * calculates Euclidean distance between two numberLists
-   * @param  {NumberList} numberList
-   * @return {Number}
+   * Calculates Euclidean distance between two numberLists
+   *
+   * @param  {NumberList} numberList NumberList of the same length
+   * as current list.
+   * @return {Number} Summed Euclidean distance between all values.
    * tags:
    */
   NumberList.prototype.distance = function(numberList) {
@@ -6851,6 +7248,13 @@ define('src/index', ['exports'], function (exports) {
     return Math.sqrt(sum);
   };
 
+  /**
+   * Returns true if values in the input NumberList are the same
+   * as the values in the current list.
+   *
+   * @param numberList NumberList to compare.
+   * @return {Boolean} True if all values in both lists match.
+   */
   NumberList.prototype.isEquivalent = function(numberList) {
     for(i = 0; this[i] != null; i++) {
       if(this[i] != numberList[i]) return false;
@@ -6858,6 +7262,11 @@ define('src/index', ['exports'], function (exports) {
     return true;
   };
 
+  /**
+   * Returns a new {@link StringList} with all values converted to strings
+   *
+   * @return {StringList} New list.
+   */
   NumberList.prototype.toStringList = function() {
     var i;
     var stringList = new StringList__default();
@@ -9555,6 +9964,9 @@ define('src/index', ['exports'], function (exports) {
   Axis.prototype = new DataModel();
   Axis.prototype.constructor = Axis;
 
+
+  //this object is deprecated
+
   /**
    * @classdesc Axis for 1D data.
    *
@@ -9696,6 +10108,9 @@ define('src/index', ['exports'], function (exports) {
 
   Matrix.prototype = new DataModel();
   Matrix.prototype.constructor = Matrix;
+
+
+  //all Matrix objects and methods should be ported to NumberTable (same at MatrixGenerators.json)
 
   /**
    * @classdesc Matrix implementation.
@@ -14518,6 +14933,10 @@ define('src/index', ['exports'], function (exports) {
 
 
 
+
+  //all Matrix objects and methods should be ported to NumberTable (same at Matrix.json)
+
+
   /**
    * Returns a transformation matrix from a triangle mapping
    *
@@ -16260,11 +16679,12 @@ define('src/index', ['exports'], function (exports) {
 
 
 
+
   /**
    * converts a string in json format into an Object (JSON.parse(string))
    * @param  {String} string in format json
    * @return {Object}
-   * tags:convertion
+   * tags:conversion
    */
   StringConversions.stringToObject = function(string) {
     try {

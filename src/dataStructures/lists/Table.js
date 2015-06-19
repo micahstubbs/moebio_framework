@@ -180,13 +180,11 @@ Table.prototype.getSubListsByIndexes = function(indexes) {
   return newTable.getImproved();
 };
 
-<<<<<<< HEAD
+
 //deprecated
-=======
 /**
  * @ignore
  */
->>>>>>> b96b5bdcc8579abc9467a6a2013971ae034e617f
 Table.prototype.getRows = function(indexes) {
   return Table.prototype.getSubListsByIndexes(indexes);
 };
