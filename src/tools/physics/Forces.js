@@ -2,6 +2,7 @@ import NodeList from "src/dataStructures/structures/lists/NodeList";
 import List from "src/dataStructures/lists/List";
 import NumberList from "src/dataStructures/numeric/NumberList";
 import Point from "src/dataStructures/geometry/Point";
+import { TwoPi } from "src/Global";
 
 /**
  * @classdesc Force layout
@@ -171,7 +172,7 @@ Forces.prototype.attractionToPoint = function(point, strength, limit) {
   var dx;
   var dy;
   var d2;
-  for(i = 0; this.nodeList[i] != null; i++) {
+  for(var i = 0; this.nodeList[i] != null; i++) {
     node = this.nodeList[i];
     dx = point.x - node.x;
     dy = point.y - node.y;
@@ -207,7 +208,7 @@ Forces.prototype.avoidOverlapping = function(delta) {
     x0r = node0.x + node0.width * 0.5 + dM;
     y0t = node0.y - node0.height * 0.5 - dM;
     y0b = node0.y + node0.height * 0.5 + dM;
-    for(j = i + 1; this.nodeList[j] != null; j++) {
+    for(var j = i + 1; this.nodeList[j] != null; j++) {
       node1 = this.nodeList[(j + this._i0 + i) % l];
       x1l = node1.x - node1.width * 0.5 - dM;
       x1r = node1.x + node1.width * 0.5 + dM;
@@ -259,7 +260,7 @@ Forces.prototype.avoidOverlappingRadial = function(delta, K) {
 
   for(i = 0; this.nodeList[i + 1] != null; i++) {
     node0 = this.nodeList[(i + this._i0) % l];
-    for(j = i + 1; this.nodeList[j] != null; j++) {
+    for(var j = i + 1; this.nodeList[j] != null; j++) {
       node1 = this.nodeList[(j + this._i0 + i) % l];
       vx = node1.x - node0.x;
       vy = node1.y - node0.y;
@@ -284,7 +285,7 @@ Forces.prototype.avoidOverlappingRadial = function(delta, K) {
 Forces.prototype.applyForces = function() {
   var node;
 
-  for(i = 0; this.nodeList[i] != null; i++) {
+  for(var i = 0; this.nodeList[i] != null; i++) {
     node = this.nodeList[i];
     node.vx += node.ax;
     node.vy += node.ay;
@@ -324,7 +325,7 @@ Forces.prototype.destroy = function() {
 
 Forces.prototype._resetAccelerations = function() {
   var node;
-  for(i = 0; this.nodeList[i] != null; i++) {
+  for(var i = 0; this.nodeList[i] != null; i++) {
     node = this.nodeList[i];
     node.ax = 0;
     node.ay = 0;

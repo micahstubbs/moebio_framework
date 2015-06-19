@@ -1,4 +1,10 @@
-import { addInteractionEventListener, removeInteractionEventListener } from 'src/Global';
+import { addInteractionEventListener,
+  removeInteractionEventListener,
+  context,
+  mX,
+  mY
+} from 'src/Global';
+import { setText } from "src/tools/graphic/SimpleGraphics";
 import StringOperators from "src/operators/strings/StringOperators";
 import DrawTexts from "src/tools/graphic/DrawTexts";
 import StringList from "src/dataStructures/strings/StringList";

@@ -1,3 +1,12 @@
+import List from "src/dataStructures/lists/List";
+import Table from "src/dataStructures/lists/Table";
+import Point from "src/dataStructures/geometry/Point";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import Polygon from "src/dataStructures/geometry/Polygon";
+import Rectangle from "src/dataStructures/geometry/Rectangle";
+import { context } from "src/Global";
+import DrawTexts from "src/tools/graphic/DrawTexts";
+
 /**
  * @classdesc Operators that contain visualization method algoritms and return a Table with parameters for StringListPrimitive
  *
@@ -105,9 +114,9 @@ StringListVisOperators.tagCloudRectangles = function(stringList, weights, frame,
 
   var roundSizes = mode == 0;
 
-  rectangles = new List();
-  textPositions = new Polygon();
-  textSizes = new NumberList();
+  var rectangles = new List();
+  var textPositions = new Polygon();
+  var textSizes = new NumberList();
 
   var rectanglesPlaced = new List();
 

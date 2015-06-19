@@ -252,13 +252,14 @@ export { NetworkDraw, TreeDraw };
 
 
 // Global.js
+// Functions
 import { Global, onResize, clearContext, cycleOnMouseMovement, setFrameRate,
   enterFrame, startCycle, stopCycle, onMoveCycle, reStartCycle,
   addInteractionEventListener, onCanvasEvent, removeInteractionEventListener,
   cancelAllInteractions, setBackgroundColor, activateKeyboard, onKey,
   activateWheel, setStructureLocalStorageWithSeed,
   setStructureLocalStorage, getStructureLocalStorageFromSeed,
-  getStructureLocalStorage, getDocWidth, getDocHeight
+  getStructureLocalStorage, getDocWidth, getDocHeight, _onMouse
 } from "src/Global";
 export { Global, onResize, clearContext, cycleOnMouseMovement, setFrameRate,
   enterFrame, startCycle, stopCycle, onMoveCycle, reStartCycle,
@@ -266,6 +267,22 @@ export { Global, onResize, clearContext, cycleOnMouseMovement, setFrameRate,
   cancelAllInteractions, setBackgroundColor, activateKeyboard, onKey,
   activateWheel, setStructureLocalStorageWithSeed,
   setStructureLocalStorage, getStructureLocalStorageFromSeed,
-  getStructureLocalStorage, getDocWidth, getDocHeight
+  getStructureLocalStorage, getDocWidth, getDocHeight, _onMouse
 };
-
+// Variables
+import { listenerArray, canvas, removeDiv, userAgent, userAgentVersion,
+  canvasResizeable, cW, cH, cX, cY, mX, mY, mP, nF, MOUSE_DOWN,
+  MOUSE_UP, MOUSE_UP_FAST, WHEEL_CHANGE, NF_DOWN, NF_UP, MOUSE_PRESSED,
+  MOUSE_IN_DOCUMENT, mX_DOWN, mY_DOWN, mX_UP, mY_UP, PREV_mX, PREV_mY,
+  DX_MOUSE, DY_MOUSE, MOUSE_MOVED, T_MOUSE_PRESSED, cursorStyle, backGroundColor,
+  backGroundColorRGB, cycleActive, context, TwoPi, HalfPi, radToGrad, gradToRad,
+  c, _cycleOnMouseMovement
+} from "src/Global";
+export { listenerArray, canvas, removeDiv, userAgent, userAgentVersion,
+  canvasResizeable, cW, cH, cX, cY, mX, mY, mP, nF, MOUSE_DOWN,
+  MOUSE_UP, MOUSE_UP_FAST, WHEEL_CHANGE, NF_DOWN, NF_UP, MOUSE_PRESSED,
+  MOUSE_IN_DOCUMENT, mX_DOWN, mY_DOWN, mX_UP, mY_UP, PREV_mX, PREV_mY,
+  DX_MOUSE, DY_MOUSE, MOUSE_MOVED, T_MOUSE_PRESSED, cursorStyle, backGroundColor,
+  backGroundColorRGB, cycleActive, context, TwoPi, HalfPi, radToGrad, gradToRad,
+  c, _cycleOnMouseMovement
+};

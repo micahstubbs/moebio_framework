@@ -6,6 +6,7 @@ import TableOperators from "src/operators/lists/TableOperators";
 import Network from "src/dataStructures/structures/networks/Network";
 import Relation from "src/dataStructures/structures/elements/Relation";
 import Node from "src/dataStructures/structures/elements/Node";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 
 function StringListOperators() {}
 export default StringListOperators;
@@ -192,10 +193,10 @@ StringListOperators.createTextsNetwork = function(texts, stopWords, stressUnique
       weight = NumberListOperators.cosineSimilarity(node.wordsWeights, node1.wordsWeights);
 
       if(i == 0 && j == 1) {
-        c.log(node.wordsWeights.length, node1.wordsWeights.length, weight);
-        c.log(node.wordsWeights.type, node.wordsWeights);
-        c.log(node1.wordsWeights.type, node1.wordsWeights);
-        c.log(node.wordsWeights.getNorm() * node1.wordsWeights.getNorm());
+        console.log(node.wordsWeights.length, node1.wordsWeights.length, weight);
+        console.log(node.wordsWeights.type, node.wordsWeights);
+        console.log(node1.wordsWeights.type, node1.wordsWeights);
+        console.log(node.wordsWeights.getNorm() * node1.wordsWeights.getNorm());
       }
 
       if(weight > relationThreshold) {
@@ -303,7 +304,7 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
 
       if(wordsFrequencyTable) {
         index = wordsFrequencyTable[0].indexOf(word);
-        //c.log(' •>•>•>•>•>•>•>•>•>•>•>•>•>•>•>•>•> ', word, weights[j], index==-1?1:(1 - Math.pow(wordsFrequencyTable[1][index]/maxFreq, 0.2)) )
+        //console.log(' •>•>•>•>•>•>•>•>•>•>•>•>•>•>•>•>•> ', word, weights[j], index==-1?1:(1 - Math.pow(wordsFrequencyTable[1][index]/maxFreq, 0.2)) )
         weights[j] *= (index == -1 ? 1 : (1 - Math.pow(wordsFrequencyTable[1][index] / maxFreq, 0.2)));
       }
 
@@ -347,7 +348,7 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
     }
   }
 
-  c.l('C ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
+  console.log('C ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
 
   return network;
 };

@@ -1,3 +1,6 @@
+import List from "src/dataStructures/lists/List";
+import Table from "src/dataStructures/lists/Table";
+
 function TableConversions() {}
 export default TableConversions;
 

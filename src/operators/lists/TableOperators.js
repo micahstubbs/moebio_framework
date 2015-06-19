@@ -1,5 +1,12 @@
 import NumberOperators from "src/operators/numeric/NumberOperators";
-import { instantiateWithSameType } from "src/tools/utils/code/ClassUtils";
+import { instantiateWithSameType, typeOf, instantiate } from "src/tools/utils/code/ClassUtils";
+import List from "src/dataStructures/lists/List";
+import Table from "src/dataStructures/lists/Table";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import NumberTable from "src/dataStructures/numeric/NumberTable";
+import ListOperators from "src/operators/lists/ListOperators";
+import NumberListGenerators from "src/operators/numeric/numberList/NumberListGenerators";
+import ListGenerators from "src/operators/lists/ListGenerators";
 
 function TableOperators() {}
 export default TableOperators;

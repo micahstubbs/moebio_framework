@@ -1,4 +1,8 @@
 import List from "src/dataStructures/lists/List";
+import Rectangle from "src/dataStructures/geometry/Rectangle";
+import Point from "src/dataStructures/geometry/Point";
+import NumberList from "src/dataStructures/numeric/NumberList";
+
 
 Polygon.prototype = new List();
 Polygon.prototype.constructor = Polygon;

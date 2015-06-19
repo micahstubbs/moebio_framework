@@ -1,4 +1,8 @@
 import Point from 'src/dataStructures/geometry/Point';
+import ColorOperators from "src/operators/graphic/ColorOperators";
+import MD5 from "src/tools/utils/strings/MD5";
+import NetworkEncodings from "src/operators/structures/NetworkEncodings";
+import { typeOf } from "src/tools/utils/code/ClassUtils";
 
 // TODO possibly remove this. it comes from simplegraphics
 function setCursor(name) {
@@ -166,7 +170,7 @@ window.addEventListener('load', function(){
 
 }, false);
 
-function _onMouse(e) {
+export function _onMouse(e) {
 
   switch(e.type){
     case "mousemove":

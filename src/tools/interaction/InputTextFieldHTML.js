@@ -1,4 +1,9 @@
-import { addInteractionEventListener, _cycleOnMouseMovement, reStartCycle } from 'src/Global';
+import { addInteractionEventListener,
+  _cycleOnMouseMovement,
+  reStartCycle,
+  _onMouse,
+  onMoveCycle
+} from 'src/Global';
 
 InputTextFieldHTML.prototype.constructor = InputTextFieldHTML;
 

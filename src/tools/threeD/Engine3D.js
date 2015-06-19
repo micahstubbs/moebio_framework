@@ -2,6 +2,7 @@ import Point from "src/dataStructures/geometry/Point";
 import Point3D from "src/dataStructures/geometry/Point3D";
 import Polygon from "src/dataStructures/geometry/Polygon";
 import Polygon3D from "src/dataStructures/geometry/Polygon3D";
+import NumberList from "src/dataStructures/numeric/NumberList";
 import { instantiateWithSameType } from "src/tools/utils/code/ClassUtils";
 
 Engine3D.prototype.constructor = Engine3D;
@@ -152,10 +153,11 @@ Engine3D.prototype._sortingCriteria = function(array0, array1, basis) {
 
 Engine3D.prototype.updateAngles = function() {
   this._angles = this.getEulerAngles();
-}
+};
+
 Engine3D.prototype.getEulerAngles = function() {
   return new Point3D(Math.atan2(-this._basis[1].z, this._basis[2].z), Math.asin(this._basis[0].z), Math.atan2(-this._basis[0].y, this._basis[0].x));
-}
+};
 
 
 //rotation
@@ -164,16 +166,16 @@ Engine3D.prototype.getEulerAngles = function() {
 //these must be at Operators3D
 
 Engine3D.prototype.basis3DRotation = function(basis, angles) {
-  ca = Math.cos(angles.x);
-  sa = Math.sin(angles.x);
-  cb = Math.cos(angles.y);
-  sb = Math.sin(angles.y);
-  cg = Math.cos(angles.z);
-  sg = Math.sin(angles.z);
+  var ca = Math.cos(angles.x);
+  var sa = Math.sin(angles.x);
+  var cb = Math.cos(angles.y);
+  var sb = Math.sin(angles.y);
+  var cg = Math.cos(angles.z);
+  var sg = Math.sin(angles.z);
 
   return new Polygon3D(new Point3D(basis[0].x * cg * cb + basis[0].y * (cg * sa * sb + sg * ca) + basis[0].z * (sg * sa - cg * ca * sb), -basis[0].x * sg * cb + basis[0].y * (cg * ca - sg * sa * sb) + basis[0].z * (sg * ca * sb + cg * sa), basis[0].x * sb - basis[0].y * sa * cb + basis[0].z * cb * ca), new Point3D(basis[1].x * cg * cb + basis[1].y * (cg * sa * sb + sg * ca) + basis[1].z * (sg * sa - cg * ca * sb), -basis[1].x * sg * cb + basis[1].y * (cg * ca - sg * sa * sb) + basis[1].z * (sg * ca * sb + cg * sa), basis[1].x * sb - basis[1].y * sa * cb + basis[1].z * cb * ca), new Point3D(basis[2].x * cg * cb + basis[2].y * (cg * sa * sb + sg * ca) + basis[2].z * (sg * sa - cg * ca * sb), -basis[2].x * sg * cb + basis[2].y * (cg * ca - sg * sa * sb) + basis[2].z * (sg * ca * sb + cg * sa), basis[2].x * sb - basis[2].y * sa * cb + basis[2].z * cb * ca));
 
-}
+};
 
 Engine3D.prototype.point3DRotation = function(point, angles) {
   var ca = Math.cos(angles.x);
@@ -186,7 +188,7 @@ Engine3D.prototype.point3DRotation = function(point, angles) {
     point.x * cg * cb + point.y * (cg * sa * sb + sg * ca) + point.z * (sg * sa - cg * ca * sb), -point.x * sg * cb + point.y * (cg * ca - sg * sa * sb) + point.z * (sg * ca * sb + cg * sa),
     point.x * sb - point.y * sa * cb + point.z * cb * ca
   );
-}
+};
 
 
 

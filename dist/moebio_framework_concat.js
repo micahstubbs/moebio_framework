@@ -41,147 +41,432 @@ define('src/index', ['exports'], function (exports) {
 
   exports.DataModel = DataModel;
 
-  function DateOperators__DateOperators() {}
-  var DateOperators__default = DateOperators__DateOperators;
-
-  DateOperators__DateOperators.millisecondsToHours = 1 / (1000 * 60 * 60);
-  DateOperators__DateOperators.millisecondsToDays = 1 / (1000 * 60 * 60 * 24);
-  DateOperators__DateOperators.millisecondsToWeeks = 1 / (1000 * 60 * 60 * 24 * 7);
-  DateOperators__DateOperators.millisecondsToYears = 0.00000000003169;
-
-  DateOperators__DateOperators.MONTH_NAMES = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
-  DateOperators__DateOperators.MONTH_NAMES_SHORT = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
-  DateOperators__DateOperators.MONTH_NDAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
-  DateOperators__DateOperators.WEEK_NAMES = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+  Point.prototype = new DataModel();
+  Point.prototype.constructor = Point;
 
   /**
-   * parses a Date
-   * @param  {String} string date in string format
-   * @param  {String} formatCase 0: <br>MM-DD-YYYY<br>1: YYYY-MM-DD<br>2: MM-DD-YY<br>3: YY-MM-DD
-   * @param  {String} separator
-   * @return {Date}
-   * tags:decoder
+   * @classdesc Represents an individual 2D point in space.
+   *
+   * @description Creates a new Point
+   * @param {Number} x
+   * @param {Number} y
+   * @constructor
+   * @category geometry
    */
-  DateOperators__DateOperators.stringToDate = function(string, formatCase, separator) {
-    separator = separator == null ? "-" : separator;
-    formatCase = formatCase == null ? 1 : formatCase;
+  function Point(x, y) {
+    DataModel.apply(this, arguments);
+    this.type = "Point";
+    this.x = Number(x) || 0;
+    this.y = Number(y) || 0;
+  }
 
-    if(formatCase == 1) {
-      if(separator != "-") string = string.replace(new RegExp(string, "g"), "-");
-      return new Date(string);
-    }
 
-    var y;
-    var parts = string.split(separator);
-    switch(formatCase) {
-      case 0: //MM-DD-YYYY
-        return new Date(Number(parts[2]), Number(parts[0]) - 1, Number(parts[1]));
-      case 1: //YYYY-MM-DD
-        return new Date(string); //Number(parts[0]), Number(parts[1])-1, Number(parts[2]));
-      case 2: //MM-DD-YY
-        y = Number(parts[2]);
-        y = y >= 0 ? y + 2000 : y + 1900;
-        return new Date(y, Number(parts[0]) - 1, Number(parts[1]));
-      case 3: //YY-MM-DD
-        y = Number(parts[0]);
-        y = y >= 0 ? y + 2000 : y + 1900;
-        return new Date(y, Number(parts[1]) - 1, Number(parts[2]));
-    }
+
+  Point.prototype.getNorm = function() {
+    return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
+  };
+
+  Point.prototype.getAngle = function() {
+    return Math.atan2(this.y, this.x);
+  };
+
+
+
+  Point.prototype.factor = function(k) {
+    if(k >= 0 || k < 0) return new Point(this.x * k, this.y * k);
+    if(k.type != null && k.type == 'Point') return new Point(this.x * k.x, this.y * k.y);
+  };
+
+  Point.prototype.normalize = function() {
+    var norm = Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
+    return new Point(this.x / norm, this.y / norm);
+  };
+  Point.prototype.normalizeToValue = function(k) {
+    var factor = k / Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
+    return new Point(this.x * factor, this.y * factor);
+  };
+
+
+
+  Point.prototype.subtract = function(point) {
+    return new Point(this.x - point.x, this.y - point.y);
+  };
+
+  Point.prototype.add = function(point) {
+    return new Point(point.x + this.x, point.y + this.y);
+  };
+
+  Point.prototype.addCoordinates = function(x, y) {
+    return new Point(x + this.x, y + this.y);
+  };
+
+  Point.prototype.distanceToPoint = function(point) {
+    return Math.sqrt(Math.pow(this.x - point.x, 2) + Math.pow(this.y - point.y, 2));
+  };
+  Point.prototype.distanceToPointSquared = function(point) {
+    return Math.pow(this.x - point.x, 2) + Math.pow(this.y - point.y, 2);
+  };
+  Point.prototype.angleToPoint = function(point) {
+    return Math.atan2(point.y - this.y, point.x - this.x);
+  };
+  Point.prototype.expandFromPoint = function(point, factor) {
+    return new Point(point.x + factor * (this.x - point.x), point.y + factor * (this.y - point.y));
+  };
+
+
+  Point.prototype.interpolate = function(point, t) {
+    return new Point((1 - t) * this.x + t * point.x, (1 - t) * this.y + t * point.y);
+  };
+
+  Point.prototype.cross = function(point) {
+    return this.x * point.y - this.y * point.x;
+  };
+
+  Point.prototype.dot = function(point) {
+    return this.x * point.x + this.y * point.y;
+  };
+
+  Point.prototype.getRotated = function(angle, center) {
+    center = center == null ? new Point() : center;
+
+    return new Point(Math.cos(angle) * (this.x - center.x) - Math.sin(angle) * (this.y - center.y) + center.x, Math.sin(angle) * (this.x - center.x) + Math.cos(angle) * (this.y - center.y) + center.y);
+  };
+
+
+
+  Point.prototype.clone = function() {
+    return new Point(this.x, this.y);
+  };
+  Point.prototype.toString = function() {
+    return "(x=" + this.x + ", y=" + this.y + ")";
+  };
+
+
+  Point.prototype.destroy = function() {
+    delete this.type;
+    delete this.name;
+    delete this.x;
+    delete this.y;
+  };
+
+  exports.Point = Point;
+
+  Interval__Interval.prototype = new Point();
+  Interval__Interval.prototype.constructor = Interval__Interval;
+
+  /**
+   * @classdesc Provide reasoning around numeric intervals.
+   *
+   * @constructor
+   * @param {Number} x Interval's x value
+   * @param {Number} y Interval's y value
+   * @description Creates a new Interval
+   * @category numbers
+   */
+  function Interval__Interval(x, y) {
+    DataModel.apply(this, arguments);
+    this.x = Number(x);
+    this.y = Number(y);
+    this.type = "Interval";
+  }
+  var Interval__default = Interval__Interval;
+
+  /**
+   * getMin - find the minimum value of the interval
+   *
+   * @return {Number} the minimum value in the interval
+   */
+  Interval__Interval.prototype.getMin = function() {
+    return Math.min(this.x, this.y);
+  };
+
+  Interval__Interval.prototype.getMax = function() {
+    return Math.max(this.x, this.y);
+  };
+
+  Interval__Interval.prototype.getAmplitude = function() {
+    return Math.abs(this.x - this.y);
+  };
+
+  Interval__Interval.prototype.getSignedAmplitude = function() {
+    return this.x - this.y;
+  };
+
+  Interval__Interval.prototype.getMiddle = function() {
+    return(this.x + this.y) * 0.5;
+  };
+
+  Interval__Interval.prototype.getSign = function() {
+    if(this.x == this.y) return 0;
+    return this.getAmplitude() / this.getSignedAmplitude();
+  };
+
+  Interval__Interval.prototype.getScaled = function(value) {
+    var midAmp = 0.5 * (this.y - this.x);
+    var middle = (this.x + this.y) * 0.5;
+    return new Interval__Interval(middle - midAmp * value, middle + midAmp * value);
+  };
+
+  Interval__Interval.prototype.getScaledFromProportion = function(value, proportion) {
+    var antiP = 1 - proportion;
+    var amp0 = proportion * (this.y - this.x);
+    var amp1 = antiP * (this.y - this.x);
+    var middle = antiP * this.x + proportion * this.y;
+    return new Interval__Interval(middle - amp0 * value, middle + amp1 * value);
+  };
+
+  Interval__Interval.prototype.add = function(value) {
+    return new Interval__Interval(this.x + value, this.y + value);
+  };
+
+  Interval__Interval.prototype.invert = function() {
+    var swap = this.x;
+    this.x = this.y;
+    this.y = swap;
   };
 
   /**
-   * format cases
-   * 0: MM-DD-YYYY
-   * 1: YYYY-MM-DD
+   * return a value in interval range
+   * 0 -> min
+   * 1 -> max
+   * @param value between 0 and 1 (to obtain values between min and max)
+   *
    */
-  DateOperators__DateOperators.dateToString = function(date, formatCase, separator) {
-    separator = separator == null ? "-" : separator;
-    formatCase = formatCase == null ? 0 : formatCase;
-    var year = date.getFullYear();
-    var month = date.getMonth() + 1;
-    var day = date.getDate();
+  Interval__Interval.prototype.getInterpolatedValue = function(value) {
+    return value * Number(this.getSignedAmplitude()) + this.x;
+  };
 
-    switch(formatCase) {
-      case 0: //MM-DD-YYYY
-        return month + separator + day + separator + year;
-      case 1: //YYYY-MM-DD
-        return year + separator + month + separator + day;
+  Interval__Interval.prototype.getInverseInterpolatedValue = function(value) {
+    return(value - this.x) / this.getSignedAmplitude();
+  };
+  Interval__Interval.prototype.getInterpolatedValues = function(numberList) {
+    var newNumberList = [];
+    var nElements = numberList.length;
+    for(var i = 0; i < nElements; i++) {
+      newNumberList.push(this.getInterpolatedValue(numberList[i]));
     }
+    return newNumberList;
+  };
+  Interval__Interval.prototype.getInverseInterpolatedValues = function(numberList) {
+    var newNumberList = [];
+    var nElements = numberList.length;
+    for(var i = 0; i < nElements; i++) {
+      newNumberList.push(this.getInverseInterpolatedValue(numberList[i]));
+    }
+    return newNumberList;
+  };
+
+  Interval__Interval.prototype.intersect = function(interval) {
+    return new Interval__Interval(Math.max(this.x, interval.x), Math.min(this.y, interval.y));
   };
 
   /**
-   * generates current date Date
-   * @return {Date}
-   * tags:generate
+   * create a new interval with the same proporties values
+   * @return {Interval}
+   *
    */
-  DateOperators__DateOperators.currentDate = function() {
-    return new Date();
+  Interval__Interval.prototype.clone = function() {
+    var newInterval = new Interval__Interval(this.x, this.y);
+    newInterval.name = name;
+    return newInterval;
   };
-
-  DateOperators__DateOperators.addDaysToDate = function(date, nDays) {
-    return new Date(date.getTime() + (nDays / DateOperators__DateOperators.millisecondsToDays));
-  };
-
-  DateOperators__DateOperators.addMillisecondsToDate = function(date, nMilliseconds) {
-    return new Date(date.getTime() + nMilliseconds);
-  };
-
-
-  DateOperators__DateOperators.parseDate = function(string) {
-    return new Date(Date.parse(string.replace(/\./g, "-")));
-  };
-
-  DateOperators__DateOperators.parseDates = function(stringList) {
-    var dateList = new DateList();
-    var i;
-    for(i = 0; stringList[i] != null; i++) {
-      dateList.push(this.parseDate(stringList[i]));
-    }
-    return dateList;
-  };
-
-  DateOperators__DateOperators.getHoursBetweenDates = function(date0, date1) {
-    return(date1.getTime() - date0.getTime()) * DateOperators__DateOperators.millisecondsToHours;
-  };
-  DateOperators__DateOperators.getDaysBetweenDates = function(date0, date1) {
-    return(date1.getTime() - date0.getTime()) * DateOperators__DateOperators.millisecondsToDays;
-  };
-  DateOperators__DateOperators.getWeeksBetweenDates = function(date0, date1) {
-    return(date1.getTime() - date0.getTime()) * DateOperators__DateOperators.millisecondsToWeeks;
-  };
-  DateOperators__DateOperators.getYearsBetweenDates = function(date0, date1) {
-    return(date1.getTime() - date0.getTime()) * DateOperators__DateOperators.millisecondsToYears;
-  };
-
-  DateOperators__DateOperators.nDayInYear = function(date) {
-    return Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 1).getTime()) * DateOperators__DateOperators.millisecondsToDays);
-  };
-
-  DateOperators__DateOperators.getDateDaysAgo = function(nDays) {
-    return DateOperators__DateOperators.addDaysToDate(new Date(), -nDays);
-  };
-
 
   /**
-   * gets the week number within a year (weeks start on Sunday, first week may have less than 7 days if start in a day other than sunday
-   * @param {Date} The date whose week you want to retrieve
-   * @return {Number} The week number of the date in its year
-   * tags:generate
+   * indicate wether a number is included in the interval
+   * @param value
+   * @return {Boolean}
+   *
    */
-  DateOperators__DateOperators.getWeekInYear = function(date) {
-    var onejan = new Date(date.getFullYear(), 0, 1);
-    return Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+  Interval__Interval.prototype.contains = function(value) {
+    if(this.y > this.x) return value >= this.x && value <= this.y;
+    return value >= this.y && value <= this.y;
   };
 
-  DateOperators__DateOperators.getNDaysInMonth = function(month, year) {
-    return new Date(year, month, 0).getDate();
+  /**
+   * indicate wether other interval contains the same values
+   * @param interval
+   * @return {Boolean}
+   *
+   */
+  Interval__Interval.prototype.isEquivalent = function(interval) {
+    return this.x == interval.x && this.y == interval.y;
   };
 
-  exports.DateOperators = DateOperators__default;
+  /**
+   * create a new interval with the same proporties values
+   * @return {String}
+   *
+   */
 
-  List__List.prototype = new DataModel();
-  List__List.prototype.constructor = List__List;
+  Interval__Interval.prototype.toString = function() {
+    return "Interval[x:" + this.x + "| y:" + this.y + "| amplitude:" + this.getAmplitude() + "]";
+  };
+
+  exports.Interval = Interval__default;
+
+  Rectangle.prototype = new DataModel();
+  Rectangle.prototype.constructor = Rectangle;
+
+  /**
+   * @classdesc Rectangle shape
+   *
+   * @description Creates a new Rectangle.
+   * @param {Number} x
+   * @param {Number} y
+   * @param {Number} width
+   * @param {Number} height
+   * @constructor
+   * @category geometry
+   */
+  function Rectangle(x, y, width, height) {
+    DataModel.apply(this);
+    this.name = "";
+    this.type = "Rectangle";
+    this.x = Number(x) || 0;
+    this.y = Number(y) || 0;
+    this.width = Number(width) || 0;
+    this.height = Number(height) || 0;
+  }
+
+
+  Rectangle.prototype.getRight = function() {
+    return this.x + this.width;
+  };
+
+  Rectangle.prototype.getBottom = function() {
+    return this.y + this.height;
+  };
+
+  Rectangle.prototype.setRight = function(value) {
+    this.width = value - this.x;
+  };
+
+  Rectangle.prototype.setBottom = function(value) {
+    this.height = value - this.y;
+  };
+
+
+
+  Rectangle.prototype.getTopLeft = function() {
+    return new Point(this.x, this.y);
+  };
+  Rectangle.prototype.getTopRight = function() {
+    return new Point(this.x + this.width, this.y);
+  };
+
+  Rectangle.prototype.getBottomRight = function() {
+    return new Point(this.x + this.width, this.y + this.height);
+  };
+  Rectangle.prototype.getBottomLeft = function() {
+    return new Point(this.x, this.y + this.height);
+  };
+  Rectangle.prototype.getCenter = function() {
+    return new Point(this.x + 0.5 * this.width, this.y + 0.5 * this.height);
+  };
+  Rectangle.prototype.getRandomPoint = function() {
+    return new Point(this.x + Math.random() * this.width, this.y + Math.random() * this.height);
+  };
+
+  Rectangle.prototype.getIntersection = function(rectangle) {
+    if(rectangle.x + rectangle.width < this.x || rectangle.x > this.x + this.width || rectangle.y + rectangle.height < this.y || rectangle.y > this.y + this.height) return null;
+    var xR = Math.max(rectangle.x, this.x);
+    var yR = Math.max(rectangle.y, this.y);
+    return new Rectangle(xR, yR, Math.min(rectangle.x + rectangle.width, this.x + this.width) - xR, Math.min(rectangle.y + rectangle.height, this.y + this.height) - yR);
+  };
+
+  Rectangle.prototype.interpolate = function(rectangle, t) {
+    var mint = 1 - t;
+    return new Rectangle(mint * this.x + t * rectangle.x, mint * this.y + t * rectangle.y, mint * this.width + t * rectangle.width, mint * this.height + t * rectangle.height);
+  };
+
+  Rectangle.prototype.getRatio = function() {
+    return Math.max(this.width, this.height) / Math.min(this.width, this.height);
+  };
+
+  Rectangle.prototype.getArea = function() {
+    return this.width * this.height;
+  };
+
+  /**
+   * check if a point belong to the rectangle
+   * @param  {Point} point
+   * @return {Boolean}
+   * tags:geometry
+   */
+  Rectangle.prototype.containsPoint = function(point) {
+    return(this.x <= point.x && this.x + this.width >= point.x && this.y <= point.y && this.y + this.height >= point.y);
+  };
+
+
+  Rectangle.prototype.pointIsOnBorder = function(point, margin) {
+    margin = margin == null ? 1 : margin;
+    if(point.x >= this.x - margin && point.x <= this.x + this.width + margin) {
+      if(point.y >= this.y - margin && point.y <= this.y + margin) return true;
+      if(point.y >= this.y + this.height - margin && point.y <= this.y + this.height + margin) return true;
+      if(point.y >= this.y - margin && point.y <= this.y + this.height + margin) {
+        if(point.x < this.x + margin || point.x > this.x + this.width - margin) return true;
+      }
+    }
+    return false;
+  };
+
+
+
+
+  Rectangle.prototype.getNormalRectangle = function() {
+    return new Rectangle(Math.min(this.x, this.x + this.width), Math.min(this.y, this.y + this.height), Math.abs(this.width), Math.abs(this.height));
+  };
+
+  /**
+   * return true if it interstects a rectangle
+   * @param  {Rectangle} rectangle
+   * @return {Boolean}
+   * tags:geometry
+   */
+  Rectangle.prototype.intersectsRectangle = function(rectangle) {
+    return !(this.x + this.width < rectangle.x) && !(this.y + this.height < rectangle.y) && !(rectangle.x + rectangle.width < this.x) && !(rectangle.y + rectangle.height < this.y);
+
+
+    if(this.x + this.width < rectangle.x) return false;
+    if(this.y + this.height < rectangle.y) return false;
+    if(rectangle.x + rectangle.width < this.x) return false;
+    if(rectangle.y + rectangle.height < this.y) return false;
+    return true;
+
+
+
+  	return this.containsPoint(rectangle.getTopLeft()) || this.containsPoint(rectangle.getTopRight()) || this.containsPoint(rectangle.getBottomLeft()) || this.containsPoint(rectangle.getBottomRight())
+  	|| rectangle.containsPoint(this.getTopLeft()) || rectangle.containsPoint(this.getTopRight()) || rectangle.containsPoint(this.getBottomLeft()) || rectangle.containsPoint(this.getBottomRight());
+  };
+
+  Rectangle.prototype.expand = function(expantion, centerPoint) {
+    centerPoint = centerPoint || new Point(this.x + 0.5 * this.width, this.y + 0.5 * this.height);
+    return new Rectangle((this.x - centerPoint.x) * expantion + centerPoint.x, (this.y - centerPoint.y) * expantion + centerPoint.y, this.width * expantion, this.height * expantion);
+  };
+
+  Rectangle.prototype.isEqual = function(rectangle) {
+    return this.x == rectangle.x && this.y == rectangle.y && this.width == rectangle.width && this.height == rectangle.height;
+  };
+
+  Rectangle.prototype.clone = function() {
+    return new Rectangle(this.x, this.y, this.width, this.height);
+  };
+
+  Rectangle.prototype.toString = function() {
+    return "(x=" + this.x + ", y=" + this.y + ", w=" + this.width + ", h=" + this.height + ")";
+  };
+
+  Rectangle.prototype.destroy = function() {
+    delete this.x;
+    delete this.y;
+    delete this.width;
+    delete this.height;
+  };
+
+  exports.Rectangle = Rectangle;
+
+  List.prototype = new DataModel();
+  List.prototype.constructor = List;
 
    /**
     * @classdesc List is an Array with a type property.
@@ -191,107 +476,107 @@ define('src/index', ['exports'], function (exports) {
     * @constructor
     * @category basics
     */
-  function List__List() {
+  function List() {
     DataModel.apply(this);
     var array = [];
     var i;
     for(i = 0; i < arguments.length; i++) {
       array.push(arguments[i]);
     }
-    array = List__List.fromArray(array);
+    array = List.fromArray(array);
     //
     return array;
   }
-  var List__default = List__List;
 
 
-  List__List.fromArray = function(array) { //TODO: clear some of these method declarations
+
+  List.fromArray = function(array) { //TODO: clear some of these method declarations
       array.type = "List";
       array.name = array.name || "";
 
-      array.setType = List__List.prototype.setType;
-      array.setArray = List__List.prototype.setArray;
-      array._constructor = List__List;
+      array.setType = List.prototype.setType;
+      array.setArray = List.prototype.setArray;
+      array._constructor = List;
 
-      array.getImproved = List__List.prototype.getImproved;
-      array.sameElements = List__List.prototype.sameElements;
-      array.getLength = List__List.prototype.getLength;
-      array.getTypeOfElements = List__List.prototype.getTypeOfElements; //TODO: redundant?
-      array.getTypes = List__List.prototype.getTypes;
-      array.getType = List__List.prototype.getType;
-      array.getLengths = List__List.prototype.getLengths;
-      array.getWithoutRepetitions = List__List.prototype.getWithoutRepetitions;
-      array.getElementsRepetitionCount = List__List.prototype.getElementsRepetitionCount;
-      array.allElementsEqual = List__List.prototype.allElementsEqual;
-      array.countElement = List__List.prototype.countElement;
-      array.countOccurrences = List__List.prototype.countOccurrences;
-      array.getMostRepeatedElement = List__List.prototype.getMostRepeatedElement;
-      array.getMin = List__List.prototype.getMin;
-      array.getMax = List__List.prototype.getMax;
-      array.indexesOf = List__List.prototype.indexesOf;
-      array.indexOfElements = List__List.prototype.indexOfElements;
-      array.indexOfByPropertyValue = List__List.prototype.indexOfByPropertyValue;
-      array.getFirstElementByName = List__List.prototype.getFirstElementByName;
-      array.getElementsByNames = List__List.prototype.getElementsByNames;
-      array.getFirstElementByPropertyValue = List__List.prototype.getFirstElementByPropertyValue;
-      array.add = List__List.prototype.add;
-      array.multiply = List__List.prototype.multiply;
-      array.getSubList = List__List.prototype.getSubList;
-      array.getSubListByIndexes = List__List.prototype.getSubListByIndexes;
-      array.getSubListByType = List__List.prototype.getSubListByType;
-      array.getElementNumberOfOccurrences = List__List.prototype.getElementNumberOfOccurrences;
-      array.getPropertyValues = List__List.prototype.getPropertyValues;
-      array.getRandomElement = List__List.prototype.getRandomElement;
-      array.getRandomElements = List__List.prototype.getRandomElements;
-      array.containsElement = List__List.prototype.containsElement;
-      array.indexOfElement = List__List.prototype.indexOfElement;
+      array.getImproved = List.prototype.getImproved;
+      array.sameElements = List.prototype.sameElements;
+      array.getLength = List.prototype.getLength;
+      array.getTypeOfElements = List.prototype.getTypeOfElements; //TODO: redundant?
+      array.getTypes = List.prototype.getTypes;
+      array.getType = List.prototype.getType;
+      array.getLengths = List.prototype.getLengths;
+      array.getWithoutRepetitions = List.prototype.getWithoutRepetitions;
+      array.getElementsRepetitionCount = List.prototype.getElementsRepetitionCount;
+      array.allElementsEqual = List.prototype.allElementsEqual;
+      array.countElement = List.prototype.countElement;
+      array.countOccurrences = List.prototype.countOccurrences;
+      array.getMostRepeatedElement = List.prototype.getMostRepeatedElement;
+      array.getMin = List.prototype.getMin;
+      array.getMax = List.prototype.getMax;
+      array.indexesOf = List.prototype.indexesOf;
+      array.indexOfElements = List.prototype.indexOfElements;
+      array.indexOfByPropertyValue = List.prototype.indexOfByPropertyValue;
+      array.getFirstElementByName = List.prototype.getFirstElementByName;
+      array.getElementsByNames = List.prototype.getElementsByNames;
+      array.getFirstElementByPropertyValue = List.prototype.getFirstElementByPropertyValue;
+      array.add = List.prototype.add;
+      array.multiply = List.prototype.multiply;
+      array.getSubList = List.prototype.getSubList;
+      array.getSubListByIndexes = List.prototype.getSubListByIndexes;
+      array.getSubListByType = List.prototype.getSubListByType;
+      array.getElementNumberOfOccurrences = List.prototype.getElementNumberOfOccurrences;
+      array.getPropertyValues = List.prototype.getPropertyValues;
+      array.getRandomElement = List.prototype.getRandomElement;
+      array.getRandomElements = List.prototype.getRandomElements;
+      array.containsElement = List.prototype.containsElement;
+      array.indexOfElement = List.prototype.indexOfElement;
       //sorting:
-      array.sortIndexed = List__List.prototype.sortIndexed;
-      array.sortNumericIndexed = List__List.prototype.sortNumericIndexed;
-      array.sortNumeric = List__List.prototype.sortNumeric;
-      array.sortNumericIndexedDescending = List__List.prototype.sortNumericIndexedDescending;
-      array.sortNumericDescending = List__List.prototype.sortNumericDescending;
-      array.sortOnIndexes = List__List.prototype.sortOnIndexes;
-      array.getReversed = List__List.prototype.getReversed;
-      array.getSortedByProperty = List__List.prototype.getSortedByProperty;
-      array.getSorted = List__List.prototype.getSorted;
-      array.getSortedByList = List__List.prototype.getSortedByList;
-      array.getSortedRandom = List__List.prototype.getSortedRandom;
+      array.sortIndexed = List.prototype.sortIndexed;
+      array.sortNumericIndexed = List.prototype.sortNumericIndexed;
+      array.sortNumeric = List.prototype.sortNumeric;
+      array.sortNumericIndexedDescending = List.prototype.sortNumericIndexedDescending;
+      array.sortNumericDescending = List.prototype.sortNumericDescending;
+      array.sortOnIndexes = List.prototype.sortOnIndexes;
+      array.getReversed = List.prototype.getReversed;
+      array.getSortedByProperty = List.prototype.getSortedByProperty;
+      array.getSorted = List.prototype.getSorted;
+      array.getSortedByList = List.prototype.getSortedByList;
+      array.getSortedRandom = List.prototype.getSortedRandom;
       //filter:
-      array.getFilteredByPropertyValue = List__List.prototype.getFilteredByPropertyValue;
-      array.getFilteredByBooleanList = List__List.prototype.getFilteredByBooleanList;
+      array.getFilteredByPropertyValue = List.prototype.getFilteredByPropertyValue;
+      array.getFilteredByBooleanList = List.prototype.getFilteredByBooleanList;
       //conversion
-      array.toNumberList = List__List.prototype.toNumberList;
-      array.toStringList = List__List.prototype.toStringList;
+      array.toNumberList = List.prototype.toNumberList;
+      array.toStringList = List.prototype.toStringList;
       //
-      array.clone = List__List.prototype.clone;
-      array.toString = List__List.prototype.toString;
-      array.getNames = List__List.prototype.getNames;
-      array.applyFunction = List__List.prototype.applyFunction;
-      array.getWithoutElementAtIndex = List__List.prototype.getWithoutElementAtIndex;
-      array.getWithoutElement = List__List.prototype.getWithoutElement;
-      array.getWithoutElements = List__List.prototype.getWithoutElements;
-      array.getWithoutElementsAtIndexes = List__List.prototype.getWithoutElementsAtIndexes;
-      array.getFilteredByFunction = List__List.prototype.getFilteredByFunction;
+      array.clone = List.prototype.clone;
+      array.toString = List.prototype.toString;
+      array.getNames = List.prototype.getNames;
+      array.applyFunction = List.prototype.applyFunction;
+      array.getWithoutElementAtIndex = List.prototype.getWithoutElementAtIndex;
+      array.getWithoutElement = List.prototype.getWithoutElement;
+      array.getWithoutElements = List.prototype.getWithoutElements;
+      array.getWithoutElementsAtIndexes = List.prototype.getWithoutElementsAtIndexes;
+      array.getFilteredByFunction = List.prototype.getFilteredByFunction;
       array._concat = Array.prototype.concat;
-      array.concat = List__List.prototype.concat;
-      array.getReport = List__List.prototype.getReport;
+      array.concat = List.prototype.concat;
+      array.getReport = List.prototype.getReport;
 
       //transformations
-      array.pushIfUnique = List__List.prototype.pushIfUnique;
-      array.removeElement = List__List.prototype.removeElement;
-      array.removeElementAtIndex = List__List.prototype.removeElementAtIndex;
-      array.removeElementsAtIndexes = List__List.prototype.removeElementsAtIndexes;
-      array.removeElements = List__List.prototype.removeElements;
-      array.removeRepetitions = List__List.prototype.removeRepetitions;
-      array.replace = List__List.prototype.replace;
-      array.assignNames = List__List.prototype.assignNames;
+      array.pushIfUnique = List.prototype.pushIfUnique;
+      array.removeElement = List.prototype.removeElement;
+      array.removeElementAtIndex = List.prototype.removeElementAtIndex;
+      array.removeElementsAtIndexes = List.prototype.removeElementsAtIndexes;
+      array.removeElements = List.prototype.removeElements;
+      array.removeRepetitions = List.prototype.removeRepetitions;
+      array.replace = List.prototype.replace;
+      array.assignNames = List.prototype.assignNames;
       array._splice = Array.prototype.splice;
-      array.splice = List__List.prototype.splice;
+      array.splice = List.prototype.splice;
 
       array.isList = true;
 
-      array.destroy = List__List.prototype.destroy;
+      array.destroy = List.prototype.destroy;
 
 
       return array;
@@ -303,7 +588,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:
    */
-  List__List.prototype.getImproved = function() { //TODO: still doesn't solve tha case of a list with several list of different types
+  List.prototype.getImproved = function() { //TODO: still doesn't solve tha case of a list with several list of different types
     if(this.length == 0) return this;
     var typeOfElements = this.getTypeOfElements();
 
@@ -316,7 +601,7 @@ define('src/index', ['exports'], function (exports) {
     var newList;
     switch(typeOfElements) {
       case "number":
-        newList = NumberList__default.fromArray(this, false);
+        newList = NumberList.fromArray(this, false);
         break;
       case "string":
         newList = StringList__default.fromArray(this, false);
@@ -334,10 +619,10 @@ define('src/index', ['exports'], function (exports) {
         newList = Table__default.fromArray(this, false);
         break;
       case "NumberList":
-        newList = NumberTable__default.fromArray(this, false);
+        newList = NumberTable.fromArray(this, false);
         break;
       case "Point":
-        newList = Polygon__default.fromArray(this, false);
+        newList = Polygon.fromArray(this, false);
         break;
       case "Polygon":
         newList = PolygonList.fromArray(this, false);
@@ -381,7 +666,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Boolean} true if all elements are identical
    * tags:
    */
-  List__List.prototype.sameElements = function(list) {
+  List.prototype.sameElements = function(list) {
     if(this.length != list.length) return false;
 
     var i;
@@ -397,7 +682,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number}
    * tags:
    */
-  List__List.prototype.getLength = function() {
+  List.prototype.getLength = function() {
     return this.length;
   };
 
@@ -406,7 +691,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {StringList}
    * tags:
    */
-  List__List.prototype.getLengths = function() {
+  List.prototype.getLengths = function() {
     //overriden by different extentions of List
 
     return null;
@@ -414,10 +699,10 @@ define('src/index', ['exports'], function (exports) {
 
 
 
-  List__List.prototype.getTypeOfElements = function() {
-    var typeOfElements = typeOf(this[0]);
+  List.prototype.getTypeOfElements = function() {
+    var typeOfElements = ClassUtils__typeOf(this[0]);
     for(var i = 1; this[i] != null; i++) {
-      if(typeOf(this[i]) != typeOfElements) return "";
+      if(ClassUtils__typeOf(this[i]) != typeOfElements) return "";
     }
     return typeOfElements;
   };
@@ -427,19 +712,19 @@ define('src/index', ['exports'], function (exports) {
    * @return {StringList}
    * tags:
    */
-  List__List.prototype.getTypes = function() {
+  List.prototype.getTypes = function() {
     var types = new StringList__default();
-    for(i = 0; this[i] != null; i++) {
-      types[i] = typeOf(this[i]);
+    for(var i = 0; this[i] != null; i++) {
+      types[i] = ClassUtils__typeOf(this[i]);
     }
     return types;
   };
 
 
-  List__List.prototype.toString = function() {
+  List.prototype.toString = function() {
     var i;
     var str = "[";
-    for(i = 0; i < this.length - 1; i++) {
+    for(var i = 0; i < this.length - 1; i++) {
       str += this[i] + ", ";
     }
     str += this[this.length - 1] + "]";
@@ -451,9 +736,9 @@ define('src/index', ['exports'], function (exports) {
    * @return {StringList}
    * tags:
    */
-  List__List.prototype.getNames = function() {
+  List.prototype.getNames = function() {
     var stringList = new StringList__default();
-    for(i = 0; this[i] != null; i++) {
+    for(var i = 0; this[i] != null; i++) {
       stringList[i] = this[i].name;
     }
     return stringList;
@@ -464,8 +749,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:sort
    */
-  List__List.prototype.getReversed = function() {
-    var newList = ClassUtils__instantiateWithSameType(this);
+  List.prototype.getReversed = function() {
+    var newList = instantiateWithSameType(this);
     for(var i = 0; this[i] != null; i++) {
       newList.unshift(this[i]);
     }
@@ -480,26 +765,26 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List__List.prototype.getSubList = function() {
+  List.prototype.getSubList = function() {
     if(arguments[0].isList) {
       return this.getSubListByIndexes(arguments[0]);
     } else if(arguments.length > 2) {
       return this.getSubListByIndexes(arguments);
-    } else if(typeOf(arguments[0]) == 'number') {
-      if(typeOf(arguments[1]) != null && typeOf(arguments[1]) == 'number') {
-        interval = new Interval(arguments[0], arguments[1]);
+    } else if(ClassUtils__typeOf(arguments[0]) == 'number') {
+      if(ClassUtils__typeOf(arguments[1]) != null && ClassUtils__typeOf(arguments[1]) == 'number') {
+        interval = new Interval__default(arguments[0], arguments[1]);
       } else {
-        interval = new Interval(arguments[0], this.length - 1);
+        interval = new Interval__default(arguments[0], this.length - 1);
       }
     } else {
       interval = arguments[0];
     }
 
-    var newInterval = new Interval(Math.max(Math.min(Math.floor(interval.x), this.length), 0), Math.max(Math.min(Math.floor(interval.y), this.length - 1), 0));
+    var newInterval = new Interval__default(Math.max(Math.min(Math.floor(interval.x), this.length), 0), Math.max(Math.min(Math.floor(interval.y), this.length - 1), 0));
     var newList;
 
     if(this.type == "NumberList") {
-      newList = NumberList__default.fromArray(this.slice(interval.x, interval.y + 1), false);
+      newList = NumberList.fromArray(this.slice(interval.x, interval.y + 1), false);
       newList.name = this.name;
       return newList;
     } else if(this.type == "StringList") {
@@ -509,9 +794,9 @@ define('src/index', ['exports'], function (exports) {
     }
 
     if(this.type == 'List' || this.type == 'Table') {
-      newList = new List__List();
+      newList = new List();
     } else {
-      newList = instantiate(typeOf(this));
+      newList = instantiate(ClassUtils__typeOf(this));
     }
 
     for(var i = newInterval.x; i <= newInterval.y; i++) {
@@ -528,12 +813,12 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List__List.prototype.getSubListByType = function(type) {
-    var newList = new List__List();
+  List.prototype.getSubListByType = function(type) {
+    var newList = new List();
     var i;
     newList.name = this.name;
     this.forEach(function(element) {
-      if(typeOf(element) == type) newList.push(element);
+      if(ClassUtils__typeOf(element) == type) newList.push(element);
     });
     return newList.getImproved();
 
@@ -545,19 +830,19 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List__List.prototype.getSubListByIndexes = function() { //TODO: merge with getSubList
+  List.prototype.getSubListByIndexes = function() { //TODO: merge with getSubList
     if(this.length < 1) return this;
     var indexes;
-    if(typeOf(arguments[0]) == 'number') {
+    if(ClassUtils__typeOf(arguments[0]) == 'number') {
       indexes = arguments;
     } else {
       indexes = arguments[0];
     }
     if(indexes == null) return;
     if(this.type == 'List') {
-      var newList = new List__List();
+      var newList = new List();
     } else {
-      newList = instantiate(typeOf(this));
+      newList = instantiate(ClassUtils__typeOf(this));
     }
     if(indexes.length == 0) return newList;
     newList.name = this.name;
@@ -574,7 +859,7 @@ define('src/index', ['exports'], function (exports) {
     return newList;
   };
 
-  List__List.prototype.getElementNumberOfOccurrences = function(element) {
+  List.prototype.getElementNumberOfOccurrences = function(element) {
     var nOccurrences = 0;
     var from = 0;
     var index = this.indexOf(element, from);
@@ -587,8 +872,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  List__List.prototype.clone = function() { //TODO:check this! fromArray should suffice
-    var clonedList = ClassUtils__instantiateWithSameType(this);
+  List.prototype.clone = function() { //TODO:check this! fromArray should suffice
+    var clonedList = instantiateWithSameType(this);
     var i;
 
     for(i = 0; this[i] != null; i++) {
@@ -603,11 +888,11 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List__List.prototype.getWithoutRepetitions = function() {
+  List.prototype.getWithoutRepetitions = function() {
     var i;
     var dictionary;
 
-    newList = ClassUtils__instantiateWithSameType(this);
+    newList = instantiateWithSameType(this);
     newList.name = this.name;
 
     if(this.type == 'NumberList' || this.type == 'StringList') {
@@ -635,7 +920,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number}
    * tags:countt
    */
-  List__List.prototype.countElement = function(element) {
+  List.prototype.countElement = function(element) {
     n = 0;
     this.forEach(function(elementInList) {
       if(element == elementInList) n++;
@@ -648,8 +933,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {numberList}
    * tags:count
    */
-  List__List.prototype.countOccurrences = function() { //TODO: more efficient
-    var occurrences = new NumberList__default();
+  List.prototype.countOccurrences = function() { //TODO: more efficient
+    var occurrences = new NumberList();
     for(var i = 0; this[i] != null; i++) {
       occurrences[i] = this.indexesOf(this[i]).length;
     }
@@ -662,12 +947,12 @@ define('src/index', ['exports'], function (exports) {
    * @return {Table} list (non-repeated elements) and numberList (frequency of each element)
    * tags:count
    */
-  List__List.prototype.getElementsRepetitionCount = function(sortListsByOccurrences) {
+  List.prototype.getElementsRepetitionCount = function(sortListsByOccurrences) {
     sortListsByOccurrences = sortListsByOccurrences == null ? true : sortListsByOccurrences;
 
     var obj;
-    var elementList = new List__List();
-    var numberList = new NumberList__default();
+    var elementList = new List();
+    var numberList = new NumberList();
     var nElements = this.length;
     var index;
 
@@ -697,7 +982,7 @@ define('src/index', ['exports'], function (exports) {
     return table;
   };
 
-  List__List.prototype.allElementsEqual = function() {
+  List.prototype.allElementsEqual = function() {
     var i;
     if(this.length < 2) return true;
 
@@ -711,7 +996,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  List__List.prototype.getMostRepeatedElement = function() { //TODO: this method should be more efficient
+  List.prototype.getMostRepeatedElement = function() { //TODO: this method should be more efficient
     return ListOperators.countElementsRepetitionOnList(this, true)[0][0];
   };
 
@@ -720,7 +1005,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number}
    * tags:
    */
-  List__List.prototype.getMin = function() {
+  List.prototype.getMin = function() {
     if(this.length == 0) return null;
     var min = this[0];
     var i;
@@ -735,7 +1020,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number}
    * tags:
    */
-  List__List.prototype.getMax = function() {
+  List.prototype.getMax = function() {
     if(this.length == 0) return null;
     var max = this[0];
     var i;
@@ -745,10 +1030,10 @@ define('src/index', ['exports'], function (exports) {
     return max;
   };
 
-  List__List.prototype.add = function(value) {
+  List.prototype.add = function(value) {
     if(value.constructor == Number) {
       var i;
-      var array = ClassUtils__instantiateWithSameType(this);
+      var array = instantiateWithSameType(this);
       for(i = 0; i < this.length; i++) {
         array.push(this[i] + value);
       }
@@ -761,7 +1046,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Object}
    * tags:
    */
-  List__List.prototype.getRandomElement = function() {
+  List.prototype.getRandomElement = function() {
     return this[Math.floor(this.length * Math.random())];
   };
 
@@ -772,10 +1057,10 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List__List.prototype.getRandomElements = function(n, avoidRepetitions) {
+  List.prototype.getRandomElements = function(n, avoidRepetitions) {
     avoidRepetitions = avoidRepetitions == null ? true : avoidRepetitions;
     n = Math.min(n, this.length);
-    var newList = ClassUtils__instantiateWithSameType(this);
+    var newList = instantiateWithSameType(this);
     var element;
 
     while(newList.length < n) {
@@ -786,7 +1071,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  List__List.prototype.containsElement = function(element) { //TODO: test if this is faster than indexOf
+  List.prototype.containsElement = function(element) { //TODO: test if this is faster than indexOf
     var i;
     for(i = 0; this[i] != null; i++) {
       if(this[i] == element) return true;
@@ -794,7 +1079,7 @@ define('src/index', ['exports'], function (exports) {
     return false;
   };
 
-  List__List.prototype.indexOfElement = function(element) { //TODO: test if this is faster than indexOf
+  List.prototype.indexOfElement = function(element) { //TODO: test if this is faster than indexOf
     var i;
     for(i = 0; this[i] != null; i++) {
       if(this[i] == element) return i;
@@ -812,8 +1097,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:
    */
-  List__List.prototype.getPropertyValues = function(propertyName, valueIfNull) {
-    var newList = new List__List();
+  List.prototype.getPropertyValues = function(propertyName, valueIfNull) {
+    var newList = new List();
     newList.name = propertyName;
     var val;
     for(var i = 0; this[i] != null; i++) {
@@ -823,7 +1108,7 @@ define('src/index', ['exports'], function (exports) {
     return newList.getImproved();
   };
 
-  List__List.prototype.sortIndexed = function() {
+  List.prototype.sortIndexed = function() {
     var index = [];
     var i;
     for(i = 0; i < this.length; i++) {
@@ -839,7 +1124,7 @@ define('src/index', ['exports'], function (exports) {
       return array_a < array_b ? -1 : array_a > array_b ? 1 : 0;
     };
     index = index.sort(comparator);
-    var result = new NumberList__default();
+    var result = new NumberList();
     for(i = 0; i < index.length; i++) {
       result.push(index[i].index);
     }
@@ -880,8 +1165,8 @@ define('src/index', ['exports'], function (exports) {
   //  return this.sort(comparator);
   // }
 
-  List__List.prototype.sortOnIndexes = function(indexes) {
-    var result = ClassUtils__instantiateWithSameType(this);
+  List.prototype.sortOnIndexes = function(indexes) {
+    var result = instantiateWithSameType(this);
     result.name = this.name;
     var i;
     for(i = 0; this[i] != null; i++) {
@@ -890,7 +1175,7 @@ define('src/index', ['exports'], function (exports) {
     return result;
   };
 
-  List__List.prototype.getSortedByProperty = function(propertyName, ascending) {
+  List.prototype.getSortedByProperty = function(propertyName, ascending) {
     ascending = ascending == null ? true : ascending;
 
     var comparator;
@@ -913,7 +1198,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:sort
    */
-  List__List.prototype.getSorted = function(ascending) {
+  List.prototype.getSorted = function(ascending) {
     ascending = ascending == null ? true : ascending;
 
     var comparator;
@@ -937,7 +1222,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List} sorted list (of the same type)
    * tags:sort
    */
-  List__List.prototype.getSortedByList = function(list, ascending) {
+  List.prototype.getSortedByList = function(list, ascending) {
     ascending = ascending == null ? true : ascending;
 
     var pairsArray = [];
@@ -960,7 +1245,7 @@ define('src/index', ['exports'], function (exports) {
 
     pairsArray = pairsArray.sort(comparator);
 
-    var newList = ClassUtils__instantiateWithSameType(this);
+    var newList = instantiateWithSameType(this);
     newList.name = this.name;
 
     for(i = 0; this[i] != null; i++) {
@@ -976,7 +1261,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:sort
    */
-  List__List.prototype.getSortedRandom = function() {
+  List.prototype.getSortedRandom = function() {
     var newList = this.clone();
     newList.name = this.name;
     newList.sort(function(a, b) {
@@ -991,9 +1276,9 @@ define('src/index', ['exports'], function (exports) {
    * @return {NumberList}
    * tags:
    */
-  List__List.prototype.indexesOf = function(element) {
+  List.prototype.indexesOf = function(element) {
     var index = this.indexOf(element);
-    var numberList = new NumberList__default();
+    var numberList = new NumberList();
     while(index != -1) {
       numberList.push(index);
       index = this.indexOf(element, index + 1);
@@ -1007,8 +1292,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {NumberList}
    * tags:
    */
-  List__List.prototype.indexOfElements = function(elements) {
-    var numberList = new NumberList__default();
+  List.prototype.indexOfElements = function(elements) {
+    var numberList = new NumberList();
     for(var i = 0; elements[i] != null; i++) {
       numberList[i] = this.indexOf(elements[i]);
     }
@@ -1022,7 +1307,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags: filter
    */
-  List__List.prototype.getFirstElementByName = function(name, returnIndex) {
+  List.prototype.getFirstElementByName = function(name, returnIndex) {
     for(var i = 0; this[i] != null; i++) {
       if(this[i].name == name) return returnIndex ? i : this[i];
     }
@@ -1036,8 +1321,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List__List.prototype.getElementsByNames = function(names, returnIndex) {
-    var list = returnIndex ? new NumberList__default() : new List__List();
+  List.prototype.getElementsByNames = function(names, returnIndex) {
+    var list = returnIndex ? new NumberList() : new List();
     var i;
 
     names.forEach(function(name) {
@@ -1061,14 +1346,14 @@ define('src/index', ['exports'], function (exports) {
    * @return {Object}
    * tags:
    */
-  List__List.prototype.getFirstElementByPropertyValue = function(propertyName, value) {
+  List.prototype.getFirstElementByPropertyValue = function(propertyName, value) {
     for(var i = 0; this[i] != null; i++) {
       if(this[i][propertyName] == value) return this[i];
     }
     return null;
   };
 
-  List__List.prototype.indexOfByPropertyValue = function(propertyName, value) {
+  List.prototype.indexOfByPropertyValue = function(propertyName, value) {
     for(var i = 0; this[i] != null; i++) {
       if(this[i][propertyName] == value) return i;
     }
@@ -1083,8 +1368,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List__List.prototype.getFilteredByBooleanList = function(booleanList) {
-    var newList = new List__List();
+  List.prototype.getFilteredByBooleanList = function(booleanList) {
+    var newList = new List();
     newList.name = this.name;
     var i;
     for(i = 0; this[i] != null; i++) {
@@ -1100,10 +1385,10 @@ define('src/index', ['exports'], function (exports) {
    * @return {List} filtered list
    * tags:filter
    */
-  List__List.prototype.getFilteredByValue = function(value, comparison) {
+  List.prototype.getFilteredByValue = function(value, comparison) {
     comparison = comparison == null ? "equal" : comparison;
 
-    var newList = new List__List();
+    var newList = new List();
     newList.name = "filtered_" + this.name;
     var i;
     switch(comparison) {
@@ -1140,10 +1425,10 @@ define('src/index', ['exports'], function (exports) {
    * @return {List} filtered list
    * tags:filter
    */
-  List__List.prototype.getFilteredByPropertyValue = function(propertyName, propertyValue, comparison) {
+  List.prototype.getFilteredByPropertyValue = function(propertyName, propertyValue, comparison) {
     comparison = comparison == null ? "equal" : comparison;
 
-    var newList = new List__List();
+    var newList = new List();
     newList.name = "filtered_" + this.name;
     var i;
     switch(comparison) {
@@ -1177,8 +1462,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {NumberList}
    * tags:conversion
    */
-  List__List.prototype.toNumberList = function() {
-    var numberList = new NumberList__default();
+  List.prototype.toNumberList = function() {
+    var numberList = new NumberList();
     numberList.name = this.name;
     var i;
     for(i = 0; this[i] != null; i++) {
@@ -1192,7 +1477,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {StringList}
    * tags:conversion
    */
-  List__List.prototype.toStringList = function() {
+  List.prototype.toStringList = function() {
     var i;
     var stringList = new StringList__default();
     stringList.name = this.name;
@@ -1206,8 +1491,8 @@ define('src/index', ['exports'], function (exports) {
     return stringList;
   };
 
-  List__List.prototype.applyFunction = function(func) { //TODO: to be tested!
-    var newList = new List__List();
+  List.prototype.applyFunction = function(func) { //TODO: to be tested!
+    var newList = new List();
     newList.name = this.name;
     var i;
     for(i = 0; this[i] != null; i++) {
@@ -1219,12 +1504,12 @@ define('src/index', ['exports'], function (exports) {
 
   //filtering
 
-  List__List.prototype.getWithoutElementsAtIndexes = function(indexes) { //[!] This DOESN'T transforms the List
+  List.prototype.getWithoutElementsAtIndexes = function(indexes) { //[!] This DOESN'T transforms the List
     var i;
     if(this.type == 'List') {
-      var newList = new List__List();
+      var newList = new List();
     } else {
-      newList = instantiate(typeOf(this));
+      newList = instantiate(ClassUtils__typeOf(this));
     }
     for(i = 0; i < this.length; i++) {
       if(indexes.indexOf(i) == -1) {
@@ -1241,11 +1526,11 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List__List.prototype.getWithoutElementAtIndex = function(index) {
+  List.prototype.getWithoutElementAtIndex = function(index) {
     if(this.type == 'List') {
-      var newList = new List__List();
+      var newList = new List();
     } else {
-      var newList = ClassUtils__instantiateWithSameType(this);
+      var newList = instantiateWithSameType(this);
     }
     for(var i = 0; this[i] != null; i++) {
       if(i != index) {
@@ -1257,14 +1542,14 @@ define('src/index', ['exports'], function (exports) {
     return newList;
   };
 
-  List__List.prototype.getWithoutElement = function(element) {
+  List.prototype.getWithoutElement = function(element) {
     var index = this.indexOf(element);
     if(index == -1) return this;
 
     if(this.type == 'List') {
-      var newList = new List__List();
+      var newList = new List();
     } else {
-      var newList = ClassUtils__instantiateWithSameType(this);
+      var newList = instantiateWithSameType(this);
     }
 
     newList.name = this.name;
@@ -1278,11 +1563,11 @@ define('src/index', ['exports'], function (exports) {
     return newList;
   };
 
-  List__List.prototype.getWithoutElements = function(list) {
+  List.prototype.getWithoutElements = function(list) {
     if(this.type == 'List') {
-      var newList = new List__List();
+      var newList = new List();
     } else {
-      var newList = ClassUtils__instantiateWithSameType(this);
+      var newList = instantiateWithSameType(this);
     }
     for(var i = 0; this[i] != null; i++) {
       if(list.indexOf(this[i]) == -1) {
@@ -1295,8 +1580,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  List__List.prototype.getFilteredByFunction = function(func) {
-    var newList = ClassUtils__instantiateWithSameType(this);
+  List.prototype.getFilteredByFunction = function(func) {
+    var newList = instantiateWithSameType(this);
     for(var i = 0; this[i] != null; i++) {
       if(func(this[i])) {
         newList.push(this[i]);
@@ -1307,14 +1592,14 @@ define('src/index', ['exports'], function (exports) {
     return newList;
   };
 
-  List__List.prototype.concat = function() {
+  List.prototype.concat = function() {
     if(arguments[0] == null) return this;
 
     //c.l('concat | arguments[0].type, this.type', arguments[0].type, this.type);
 
     if(arguments[0].type == this.type) {
       if(this.type == "NumberList") {
-        return NumberList__default.fromArray(this._concat.apply(this, arguments), false);
+        return NumberList.fromArray(this._concat.apply(this, arguments), false);
       } else if(this.type == "StringList") {
         return StringList__default.fromArray(this._concat.apply(this, arguments), false);
       } else if(this.type == "NodeList") { //[!] concat breaks the getNodeById in NodeList
@@ -1324,15 +1609,15 @@ define('src/index', ['exports'], function (exports) {
       } else if(this.type == "Table") {
         return Table__default.fromArray(this._concat.apply(this, arguments), false);
       } else if(this.type == "NumberTable") {
-        return NumberTable__default.fromArray(this._concat.apply(this, arguments), false);
+        return NumberTable.fromArray(this._concat.apply(this, arguments), false);
       }
     }
-    return List__List.fromArray(this._concat.apply(this, arguments)).getImproved();
+    return List.fromArray(this._concat.apply(this, arguments)).getImproved();
   };
 
 
 
-  List__List.prototype.getReport = function(level) { //TODO:complete
+  List.prototype.getReport = function(level) { //TODO:complete
     var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
     var text = level > 0 ? (ident + "////report of instance of List////") : "///////////report of instance of List//////////";
 
@@ -1397,12 +1682,12 @@ define('src/index', ['exports'], function (exports) {
 
   ////transformations
 
-  List__List.prototype.pushIfUnique = function(element) {
+  List.prototype.pushIfUnique = function(element) {
     if(this.indexOf(element) != -1) return; //TODO: implement equivalence
     this.push(element);
   };
 
-  List__List.prototype.removeElements = function(elements) { //TODO: make it more efficient (avoiding the splice method)
+  List.prototype.removeElements = function(elements) { //TODO: make it more efficient (avoiding the splice method)
     for(var i = 0; i < this.length; i++) {
       if(elements.indexOf(this[i]) > -1) {
         this.splice(i, 1);
@@ -1411,16 +1696,16 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
-  List__List.prototype.removeElement = function(element) {
+  List.prototype.removeElement = function(element) {
     var index = this.indexOf(element);
     if(index != -1) this.splice(index, 1);
   };
 
-  List__List.prototype.removeElementAtIndex = function(index) { //deprecated
+  List.prototype.removeElementAtIndex = function(index) { //deprecated
     this.splice(index, 1);
   };
 
-  List__List.prototype.removeElementsAtIndexes = function(indexes) {
+  List.prototype.removeElementsAtIndexes = function(indexes) {
     indexes = indexes.sort(function(a, b) {
       return a - b;
     });
@@ -1430,7 +1715,7 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
-  List__List.prototype.removeRepetitions = function() {
+  List.prototype.removeRepetitions = function() {
     for(var i = 0; this[i] != null; i++) {
       if(this.indexOf(this[i], i + 1) != -1) {
         this.splice(i, 1);
@@ -1438,7 +1723,7 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
-  List__List.prototype.replace = function(elementToFind, elementToInsert) {
+  List.prototype.replace = function(elementToFind, elementToInsert) {
     var l = this.length;
     for(var i = 0; i < l; i++) {
       if(this[i] == elementToFind) this[i] = elementToInsert;
@@ -1451,7 +1736,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:transform
    */
-  List__List.prototype.assignNames = function(names) {
+  List.prototype.assignNames = function(names) {
     if(names == null) return this;
     var n = names.length;
 
@@ -1462,10 +1747,10 @@ define('src/index', ['exports'], function (exports) {
     return this;
   };
 
-  List__List.prototype.splice = function() { //TODO: replace
+  List.prototype.splice = function() { //TODO: replace
     switch(this.type) {
       case 'NumberList':
-        return NumberList__default.fromArray(this._splice.apply(this, arguments));
+        return NumberList.fromArray(this._splice.apply(this, arguments));
         break;
       case 'StringList':
         return StringList__default.fromArray(this._splice.apply(this, arguments));
@@ -1477,106 +1762,19 @@ define('src/index', ['exports'], function (exports) {
         return DateList.fromArray(this._splice.apply(this, arguments));
         break;
     }
-    return List__List.fromArray(this._splice.apply(this, arguments)).getImproved();
+    return List.fromArray(this._splice.apply(this, arguments)).getImproved();
   };
 
-  List__List.prototype.destroy = function() {
+  List.prototype.destroy = function() {
     for(var i = 0; this[i] != null; i++) {
       delete this[i];
     }
   };
 
-  exports.List = List__default;
+  exports.List = List;
 
-  DateList.prototype = new List__default();
-  DateList.prototype.constructor = DateList;
-
-  /**
-   * @classdesc A {@link List} for storing Dates.
-   *
-   * @description Creates a new DateList.
-   * @constructor
-   * @category dates
-   */
-  function DateList() {
-    var args = [];
-    for(var i = 0; i < arguments.length; i++) {
-      args[i] = Number(arguments[i]);
-    }
-    var array = List__default.apply(this, args);
-    array = DateList.fromArray(array);
-    //
-    return array;
-  }
-
-
-
-  DateList.fromArray = function(array, forceToDate) {
-    forceToDate = forceToDate == null ? true : forceToDate;
-    var result = List__default.fromArray(array);
-
-    if(forceToDate) {
-      for(var i = 0; i < result.length; i++) {
-        result[i] = Date(result[i]);
-      }
-    }
-
-    result.type = "DateList";
-    //assign methods to array:
-    result.getTimes = DateList.prototype.getTimes;
-    result.toStringList = DateList.prototype.toStringList;
-    result.getMin = DateList.prototype.getMin;
-    result.getMax = DateList.prototype.getMax;
-    return result;
-  };
-
-  /**
-   * get a numberList of time (milliseconds) values
-   * @return {NumberList}
-   * tags:conversor
-   */
-  DateList.prototype.getTimes = function() {
-    var i;
-    var numberList = new NumberList__default();
-    for(i = 0; this[i] != null; i++) {
-      numberList.push(this[i].getTime());
-    }
-    return numberList;
-  };
-
-
-  DateList.prototype.toStringList = function() {
-    var stringList = new StringList__default();
-    for(var i = 0; this[i] != null; i++) {
-      stringList[i] = DateOperators__default.dateToString(this[i]);
-    }
-    return stringList;
-  };
-
-  DateList.prototype.getMin = function() {
-    if(this.length === 0) return null;
-    var min = this[0];
-    var i;
-    for(i = 1; this[i] != null; i++) {
-      min = min < this[i] ? min : this[i];
-    }
-    return min;
-  };
-
-  DateList.prototype.getMax = function() {
-    if(this.length === 0) return null;
-    var max = this[0];
-    var i;
-    for(i = 1; this[i] != null; i++) {
-      max = max > this[i] ? max : this[i];
-    }
-    return max;
-  };
-
-  exports.DateList = DateList;
-
-  Polygon__Polygon.prototype = new List__default();
-  Polygon__Polygon.prototype.constructor = Polygon__Polygon;
+  Polygon.prototype = new List();
+  Polygon.prototype.constructor = Polygon;
 
   /**
    * @classdesc A Polygon is a shape created from a list of {@link Point|Points}.
@@ -1585,35 +1783,35 @@ define('src/index', ['exports'], function (exports) {
    * @constructor
    * @category geometry
    */
-  function Polygon__Polygon() {
-    var array = List__default.apply(this, arguments);
-    array = Polygon__Polygon.fromArray(array);
+  function Polygon() {
+    var array = List.apply(this, arguments);
+    array = Polygon.fromArray(array);
     return array;
   }
-  var Polygon__default = Polygon__Polygon;
 
-  Polygon__Polygon.fromArray = function(array) {
-    var result = List__default.fromArray(array);
+
+  Polygon.fromArray = function(array) {
+    var result = List.fromArray(array);
     result.type = "Polygon";
 
-    result.getFrame = Polygon__Polygon.prototype.getFrame;
-    result.getBarycenter = Polygon__Polygon.prototype.getBarycenter;
-    result.add = Polygon__Polygon.prototype.add;
-    result.factor = Polygon__Polygon.prototype.factor;
-    result.getRotated = Polygon__Polygon.prototype.getRotated;
-    result.getClosestPoint = Polygon__Polygon.prototype.getClosestPoint;
-    result.toNumberList = Polygon__Polygon.prototype.toNumberList;
-    result.containsPoint = Polygon__Polygon.prototype.containsPoint;
+    result.getFrame = Polygon.prototype.getFrame;
+    result.getBarycenter = Polygon.prototype.getBarycenter;
+    result.add = Polygon.prototype.add;
+    result.factor = Polygon.prototype.factor;
+    result.getRotated = Polygon.prototype.getRotated;
+    result.getClosestPoint = Polygon.prototype.getClosestPoint;
+    result.toNumberList = Polygon.prototype.toNumberList;
+    result.containsPoint = Polygon.prototype.containsPoint;
     //transform
-    result.approach = Polygon__Polygon.prototype.approach;
+    result.approach = Polygon.prototype.approach;
     //override
-    result.clone = Polygon__Polygon.prototype.clone;
+    result.clone = Polygon.prototype.clone;
 
     return result;
   };
 
 
-  Polygon__Polygon.prototype.getFrame = function() {
+  Polygon.prototype.getFrame = function() {
     if(this.length == 0) return null;
     var rectangle = new Rectangle(this[0].x, this[0].y, this[0].x, this[0].y);
     var p;
@@ -1631,7 +1829,7 @@ define('src/index', ['exports'], function (exports) {
     return rectangle;
   };
 
-  Polygon__Polygon.prototype.getBarycenter = function(countLastPoint) {
+  Polygon.prototype.getBarycenter = function(countLastPoint) {
     var i;
     countLastPoint = countLastPoint == null ? true : countLastPoint;
     cLPN = 1 - Number(countLastPoint);
@@ -1646,12 +1844,12 @@ define('src/index', ['exports'], function (exports) {
     return barycenter;
   };
 
-  Polygon__Polygon.prototype.add = function(object) {
+  Polygon.prototype.add = function(object) {
     var type = typeOf(object);
     var i;
     switch(type) {
       case 'Point':
-        var newPolygon = new Polygon__Polygon();
+        var newPolygon = new Polygon();
         for(i = 0; this[i] != null; i++) {
           newPolygon[i] = this[i].add(object);
         }
@@ -1667,9 +1865,9 @@ define('src/index', ['exports'], function (exports) {
    * @return {Polygon}
    * tags:
    */
-  Polygon__Polygon.prototype.factor = function(value) {
+  Polygon.prototype.factor = function(value) {
     var i;
-    var newPolygon = new Polygon__Polygon();
+    var newPolygon = new Polygon();
     newPolygon.name = this.name;
 
     if(value >= 0 || value < 0) {
@@ -1690,10 +1888,10 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  Polygon__Polygon.prototype.getRotated = function(angle, center) {
+  Polygon.prototype.getRotated = function(angle, center) {
     center = center == null ? new Point() : center;
 
-    var newPolygon = new Polygon__Polygon();
+    var newPolygon = new Polygon();
     for(var i = 0; this[i] != null; i++) {
       newPolygon[i] = new Point(Math.cos(angle) * (this[i].x - center.x) - Math.sin(angle) * (this[i].y - center.y) + center.x, Math.sin(angle) * (this[i].x - center.x) + Math.cos(angle) * (this[i].y - center.y) + center.y);
     }
@@ -1701,7 +1899,7 @@ define('src/index', ['exports'], function (exports) {
     return newPolygon;
   };
 
-  Polygon__Polygon.prototype.getClosestPoint = function(point) {
+  Polygon.prototype.getClosestPoint = function(point) {
     var closest = this[0];
     var d2Min = Math.pow(point.x - closest.x, 2) + Math.pow(point.y - closest.y, 2);
     var d2;
@@ -1716,7 +1914,7 @@ define('src/index', ['exports'], function (exports) {
     return closest;
   };
 
-  Polygon__Polygon.prototype.toNumberList = function() {
+  Polygon.prototype.toNumberList = function() {
     var numberList = new NumberList();
     var i;
     for(i = 0; this[i] != null; i++) {
@@ -1729,7 +1927,7 @@ define('src/index', ['exports'], function (exports) {
   /**
    * Thanks http://jsfromhell.com/math/is-point-in-poly AND http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
    */
-  Polygon__Polygon.prototype.containsPoint = function(point) {
+  Polygon.prototype.containsPoint = function(point) {
     var i;
     var j;
     var l;
@@ -1742,7 +1940,7 @@ define('src/index', ['exports'], function (exports) {
 
   //transform
 
-  Polygon__Polygon.prototype.approach = function(destiny, speed) {
+  Polygon.prototype.approach = function(destiny, speed) {
     speed = speed || 0.5;
     var antispeed = 1 - speed;
 
@@ -1753,8 +1951,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  Polygon__Polygon.prototype.clone = function() {
-    var newPolygon = new Polygon__Polygon();
+  Polygon.prototype.clone = function() {
+    var newPolygon = new Polygon();
     for(var i = 0; this[i] != null; i++) {
       newPolygon[i] = this[i].clone();
     }
@@ -1762,9 +1960,9 @@ define('src/index', ['exports'], function (exports) {
     return newPolygon;
   };
 
-  exports.Polygon = Polygon__default;
+  exports.Polygon = Polygon;
 
-  NodeList__NodeList.prototype = new List__default();
+  NodeList__NodeList.prototype = new List();
   NodeList__NodeList.prototype.constructor = NodeList__NodeList;
 
   /**
@@ -1804,7 +2002,7 @@ define('src/index', ['exports'], function (exports) {
   NodeList__NodeList.fromArray = function(array, forceToNode) {
     forceToNode = forceToNode == null ? false : forceToNode;
 
-    var result = List__default.fromArray(array);
+    var result = List.fromArray(array);
 
     if(forceToNode) {
       for(var i = 0; i < result.length; i++) {
@@ -1813,7 +2011,7 @@ define('src/index', ['exports'], function (exports) {
     }
 
     // TODO: Remove duplicate line?
-    var result = List__default.fromArray(array);
+    var result = List.fromArray(array);
     result.type = "NodeList";
     result.ids = {};
     // TODO: Fix
@@ -1971,7 +2169,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:
    */
   NodeList__NodeList.prototype.getWeights = function() {
-    var numberList = new NumberList__default();
+    var numberList = new NumberList();
     for(var i = 0; this[i] != null; i++) {
       numberList[i] = this[i].weight;
     }
@@ -2002,7 +2200,7 @@ define('src/index', ['exports'], function (exports) {
    * of Relations each Node has.
    */
   NodeList__NodeList.prototype.getDegrees = function() {
-    var numberList = new NumberList__default();
+    var numberList = new NumberList();
     for(var i = 0; this[i] != null; i++) {
       numberList[i] = this[i].nodeList.length;
     }
@@ -2019,9 +2217,9 @@ define('src/index', ['exports'], function (exports) {
    * @return {Polygon}
    */
   NodeList__NodeList.prototype.getPolygon = function() {
-    var polygon = new Polygon__default();
+    var polygon = new Polygon();
     for(var i = 0; this[i] != null; i++) {
-      polygon[i] = new Point__default(this[i].x + cX, this[i].y + cY);
+      polygon[i] = new Point(this[i].x + cX, this[i].y + cY);
     }
     return polygon;
   };
@@ -2327,7 +2525,7 @@ define('src/index', ['exports'], function (exports) {
 
 
 
-    if(Loader.REPORT_LOADING) c.log("Loader.loadData | url:", url);
+    if(Loader.REPORT_LOADING) console.log("Loader.loadData | url:", url);
 
     var useProxy = String(url).substr(0, 4) == "http";
 
@@ -2335,7 +2533,7 @@ define('src/index', ['exports'], function (exports) {
 
     var target = callee ? callee : arguments.callee;
     var onLoadComplete = function() {
-      if(Loader.REPORT_LOADING) c.log('Loader.loadData | onLoadComplete'); //, req.responseText:', req.responseText);
+      if(Loader.REPORT_LOADING) console.log('Loader.loadData | onLoadComplete'); //, req.responseText:', req.responseText);
       if(req.readyState == 4) {
         Loader.n_loading--;
 
@@ -2347,7 +2545,7 @@ define('src/index', ['exports'], function (exports) {
           e.result = req.responseText;
           onLoadData.call(target, e);
         } else {
-          if(Loader.REPORT_LOADING) c.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
+          if(Loader.REPORT_LOADING) console.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
           e.errorType = req.status;
           e.errorMessage = "[!] There was a problem retrieving the data [" + req.status + "]:" + req.statusText;
           onLoadData.call(target, e);
@@ -2406,7 +2604,7 @@ define('src/index', ['exports'], function (exports) {
   Loader.loadImage = function(url, onComplete, callee, param) {
     Loader.n_loading++;
 
-    if(Loader.REPORT_LOADING) c.log("Loader.loadImage | url:", url);
+    if(Loader.REPORT_LOADING) console.log("Loader.loadImage | url:", url);
 
     var target = callee ? callee : arguments.callee;
     var img = document.createElement('img');
@@ -2414,7 +2612,7 @@ define('src/index', ['exports'], function (exports) {
     if(this.cacheActive) {
       if(this.associativeByUrls[url] != null) {
         Loader.n_loading--;
-        //c.log('=====>>>>+==>>>+====>>=====>>>+==>> in cache:', url);
+        //console.log('=====>>>>+==>>>+====>>=====>>>+==>> in cache:', url);
         var e = new LoadEvent();
         e.result = this.associativeByUrls[url];
         e.url = url;
@@ -2475,7 +2673,7 @@ define('src/index', ['exports'], function (exports) {
 
     var target = callee ? callee : arguments.callee;
 
-    //c.log('Loader.loadJSONP, newUrl:', newUrl);
+    //console.log('Loader.loadJSONP, newUrl:', newUrl);
 
     $.ajax({
       url: newUrl,
@@ -2493,14 +2691,14 @@ define('src/index', ['exports'], function (exports) {
       },
       error: function(data) {
         Loader.n_loading--;
-        c.log("Loader.loadJSONP | error, data:", data);
+        console.log("Loader.loadJSONP | error, data:", data);
 
         var e = new LoadEvent();
         e.errorType = 1;
         onLoadComplete.call(target, e);
       }
     }); //.error(function(e){
-    // c.log('---> (((error))) B');
+    // console.log('---> (((error))) B');
     //
     // var e=new LoadEvent();
     // e.errorType=1;
@@ -2520,7 +2718,7 @@ define('src/index', ['exports'], function (exports) {
     var req = new XMLHttpRequest();
     var onLoadComplete = onLoadData;
 
-    if(Loader.REPORT_LOADING) c.log('loadXML, url:', url);
+    if(Loader.REPORT_LOADING) console.log('loadXML, url:', url);
 
     // branch for native XMLHttpRequest object
     if(window.XMLHttpRequest && !(window.ActiveXObject)) {
@@ -2782,115 +2980,231 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Node = Node__default;
 
-  Point__Point.prototype = new DataModel();
-  Point__Point.prototype.constructor = Point__Point;
+  DateList.prototype = new List();
+  DateList.prototype.constructor = DateList;
 
   /**
-   * @classdesc Represents an individual 2D point in space.
+   * @classdesc A {@link List} for storing Dates.
    *
-   * @description Creates a new Point
-   * @param {Number} x
-   * @param {Number} y
+   * @description Creates a new DateList.
    * @constructor
-   * @category geometry
+   * @category dates
    */
-  function Point__Point(x, y) {
-    DataModel.apply(this, arguments);
-    this.type = "Point";
-    this.x = Number(x) || 0;
-    this.y = Number(y) || 0;
+  function DateList() {
+    var args = [];
+    for(var i = 0; i < arguments.length; i++) {
+      args[i] = Number(arguments[i]);
+    }
+    var array = List.apply(this, args);
+    array = DateList.fromArray(array);
+    //
+    return array;
   }
-  var Point__default = Point__Point;
 
 
-  Point__Point.prototype.getNorm = function() {
-    return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
+
+  DateList.fromArray = function(array, forceToDate) {
+    forceToDate = forceToDate == null ? true : forceToDate;
+    var result = List.fromArray(array);
+
+    if(forceToDate) {
+      for(var i = 0; i < result.length; i++) {
+        result[i] = Date(result[i]);
+      }
+    }
+
+    result.type = "DateList";
+    //assign methods to array:
+    result.getTimes = DateList.prototype.getTimes;
+    result.toStringList = DateList.prototype.toStringList;
+    result.getMin = DateList.prototype.getMin;
+    result.getMax = DateList.prototype.getMax;
+    return result;
   };
 
-  Point__Point.prototype.getAngle = function() {
-    return Math.atan2(this.y, this.x);
-  };
-
-
-
-  Point__Point.prototype.factor = function(k) {
-    if(k >= 0 || k < 0) return new Point__Point(this.x * k, this.y * k);
-    if(k.type != null && k.type == 'Point') return new Point__Point(this.x * k.x, this.y * k.y);
-  };
-
-  Point__Point.prototype.normalize = function() {
-    var norm = Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
-    return new Point__Point(this.x / norm, this.y / norm);
-  };
-  Point__Point.prototype.normalizeToValue = function(k) {
-    var factor = k / Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
-    return new Point__Point(this.x * factor, this.y * factor);
-  };
-
-
-
-  Point__Point.prototype.subtract = function(point) {
-    return new Point__Point(this.x - point.x, this.y - point.y);
-  };
-
-  Point__Point.prototype.add = function(point) {
-    return new Point__Point(point.x + this.x, point.y + this.y);
-  };
-
-  Point__Point.prototype.addCoordinates = function(x, y) {
-    return new Point__Point(x + this.x, y + this.y);
-  };
-
-  Point__Point.prototype.distanceToPoint = function(point) {
-    return Math.sqrt(Math.pow(this.x - point.x, 2) + Math.pow(this.y - point.y, 2));
-  };
-  Point__Point.prototype.distanceToPointSquared = function(point) {
-    return Math.pow(this.x - point.x, 2) + Math.pow(this.y - point.y, 2);
-  };
-  Point__Point.prototype.angleToPoint = function(point) {
-    return Math.atan2(point.y - this.y, point.x - this.x);
-  };
-  Point__Point.prototype.expandFromPoint = function(point, factor) {
-    return new Point__Point(point.x + factor * (this.x - point.x), point.y + factor * (this.y - point.y));
+  /**
+   * get a numberList of time (milliseconds) values
+   * @return {NumberList}
+   * tags:conversor
+   */
+  DateList.prototype.getTimes = function() {
+    var i;
+    var numberList = new NumberList();
+    for(i = 0; this[i] != null; i++) {
+      numberList.push(this[i].getTime());
+    }
+    return numberList;
   };
 
 
-  Point__Point.prototype.interpolate = function(point, t) {
-    return new Point__Point((1 - t) * this.x + t * point.x, (1 - t) * this.y + t * point.y);
+  DateList.prototype.toStringList = function() {
+    var stringList = new StringList__default();
+    for(var i = 0; this[i] != null; i++) {
+      stringList[i] = DateOperators.dateToString(this[i]);
+    }
+    return stringList;
   };
 
-  Point__Point.prototype.cross = function(point) {
-    return this.x * point.y - this.y * point.x;
+  DateList.prototype.getMin = function() {
+    if(this.length === 0) return null;
+    var min = this[0];
+    var i;
+    for(i = 1; this[i] != null; i++) {
+      min = min < this[i] ? min : this[i];
+    }
+    return min;
   };
 
-  Point__Point.prototype.dot = function(point) {
-    return this.x * point.x + this.y * point.y;
+  DateList.prototype.getMax = function() {
+    if(this.length === 0) return null;
+    var max = this[0];
+    var i;
+    for(i = 1; this[i] != null; i++) {
+      max = max > this[i] ? max : this[i];
+    }
+    return max;
   };
 
-  Point__Point.prototype.getRotated = function(angle, center) {
-    center = center == null ? new Point__Point() : center;
+  exports.DateList = DateList;
 
-    return new Point__Point(Math.cos(angle) * (this.x - center.x) - Math.sin(angle) * (this.y - center.y) + center.x, Math.sin(angle) * (this.x - center.x) + Math.cos(angle) * (this.y - center.y) + center.y);
+  function DateOperators() {}
+
+
+  DateOperators.millisecondsToHours = 1 / (1000 * 60 * 60);
+  DateOperators.millisecondsToDays = 1 / (1000 * 60 * 60 * 24);
+  DateOperators.millisecondsToWeeks = 1 / (1000 * 60 * 60 * 24 * 7);
+  DateOperators.millisecondsToYears = 0.00000000003169;
+
+  DateOperators.MONTH_NAMES = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+  DateOperators.MONTH_NAMES_SHORT = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+  DateOperators.MONTH_NDAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+  DateOperators.WEEK_NAMES = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+  /**
+   * parses a Date
+   * @param  {String} string date in string format
+   * @param  {String} formatCase 0: <br>MM-DD-YYYY<br>1: YYYY-MM-DD<br>2: MM-DD-YY<br>3: YY-MM-DD
+   * @param  {String} separator
+   * @return {Date}
+   * tags:decoder
+   */
+  DateOperators.stringToDate = function(string, formatCase, separator) {
+    separator = separator == null ? "-" : separator;
+    formatCase = formatCase == null ? 1 : formatCase;
+
+    if(formatCase == 1) {
+      if(separator != "-") string = string.replace(new RegExp(string, "g"), "-");
+      return new Date(string);
+    }
+
+    var y;
+    var parts = string.split(separator);
+    switch(formatCase) {
+      case 0: //MM-DD-YYYY
+        return new Date(Number(parts[2]), Number(parts[0]) - 1, Number(parts[1]));
+      case 1: //YYYY-MM-DD
+        return new Date(string); //Number(parts[0]), Number(parts[1])-1, Number(parts[2]));
+      case 2: //MM-DD-YY
+        y = Number(parts[2]);
+        y = y >= 0 ? y + 2000 : y + 1900;
+        return new Date(y, Number(parts[0]) - 1, Number(parts[1]));
+      case 3: //YY-MM-DD
+        y = Number(parts[0]);
+        y = y >= 0 ? y + 2000 : y + 1900;
+        return new Date(y, Number(parts[1]) - 1, Number(parts[2]));
+    }
+  };
+
+  /**
+   * format cases
+   * 0: MM-DD-YYYY
+   * 1: YYYY-MM-DD
+   */
+  DateOperators.dateToString = function(date, formatCase, separator) {
+    separator = separator == null ? "-" : separator;
+    formatCase = formatCase == null ? 0 : formatCase;
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+
+    switch(formatCase) {
+      case 0: //MM-DD-YYYY
+        return month + separator + day + separator + year;
+      case 1: //YYYY-MM-DD
+        return year + separator + month + separator + day;
+    }
+  };
+
+  /**
+   * generates current date Date
+   * @return {Date}
+   * tags:generate
+   */
+  DateOperators.currentDate = function() {
+    return new Date();
+  };
+
+  DateOperators.addDaysToDate = function(date, nDays) {
+    return new Date(date.getTime() + (nDays / DateOperators.millisecondsToDays));
+  };
+
+  DateOperators.addMillisecondsToDate = function(date, nMilliseconds) {
+    return new Date(date.getTime() + nMilliseconds);
   };
 
 
-
-  Point__Point.prototype.clone = function() {
-    return new Point__Point(this.x, this.y);
-  };
-  Point__Point.prototype.toString = function() {
-    return "(x=" + this.x + ", y=" + this.y + ")";
+  DateOperators.parseDate = function(string) {
+    return new Date(Date.parse(string.replace(/\./g, "-")));
   };
 
-
-  Point__Point.prototype.destroy = function() {
-    delete this.type;
-    delete this.name;
-    delete this.x;
-    delete this.y;
+  DateOperators.parseDates = function(stringList) {
+    var dateList = new DateList();
+    var i;
+    for(i = 0; stringList[i] != null; i++) {
+      dateList.push(this.parseDate(stringList[i]));
+    }
+    return dateList;
   };
 
-  exports.Point = Point__default;
+  DateOperators.getHoursBetweenDates = function(date0, date1) {
+    return(date1.getTime() - date0.getTime()) * DateOperators.millisecondsToHours;
+  };
+  DateOperators.getDaysBetweenDates = function(date0, date1) {
+    return(date1.getTime() - date0.getTime()) * DateOperators.millisecondsToDays;
+  };
+  DateOperators.getWeeksBetweenDates = function(date0, date1) {
+    return(date1.getTime() - date0.getTime()) * DateOperators.millisecondsToWeeks;
+  };
+  DateOperators.getYearsBetweenDates = function(date0, date1) {
+    return(date1.getTime() - date0.getTime()) * DateOperators.millisecondsToYears;
+  };
+
+  DateOperators.nDayInYear = function(date) {
+    return Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 1).getTime()) * DateOperators.millisecondsToDays);
+  };
+
+  DateOperators.getDateDaysAgo = function(nDays) {
+    return DateOperators.addDaysToDate(new Date(), -nDays);
+  };
+
+
+  /**
+   * gets the week number within a year (weeks start on Sunday, first week may have less than 7 days if start in a day other than sunday
+   * @param {Date} The date whose week you want to retrieve
+   * @return {Number} The week number of the date in its year
+   * tags:generate
+   */
+  DateOperators.getWeekInYear = function(date) {
+    var onejan = new Date(date.getFullYear(), 0, 1);
+    return Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+  };
+
+  DateOperators.getNDaysInMonth = function(month, year) {
+    return new Date(year, month, 0).getDate();
+  };
+
+  exports.DateOperators = DateOperators;
 
   var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"}
 
@@ -2995,9 +3309,9 @@ define('src/index', ['exports'], function (exports) {
 
     switch(type) {
       case "date":
-        return DateOperators__default.dateToString(value);
+        return DateOperators.dateToString(value);
       case "DateInterval":
-        return DateOperators__default.dateToString(value.date0) + " - " + DateOperators__default.dateToString(value.date1);
+        return DateOperators.dateToString(value.date0) + " - " + DateOperators.dateToString(value.date1);
       case "string":
         return((value.length > 160) ? value.substr(0, 159) + "…" : value).replace(/\n/g, "↩");
       case "number":
@@ -3007,7 +3321,7 @@ define('src/index', ['exports'], function (exports) {
     }
   }
 
-  function ClassUtils__instantiateWithSameType(object, args) {
+  function instantiateWithSameType(object, args) {
     return ClassUtils__instantiate(ClassUtils__typeOf(object), args);
   }
 
@@ -3149,7 +3463,7 @@ define('src/index', ['exports'], function (exports) {
   exports.typeOf = ClassUtils__typeOf;
   exports.instantiate = ClassUtils__instantiate;
   exports.getTextFromObject = getTextFromObject;
-  exports.instantiateWithSameType = ClassUtils__instantiateWithSameType;
+  exports.instantiateWithSameType = instantiateWithSameType;
   exports.isArray = isArray;
   exports.evalJavaScriptFunction = evalJavaScriptFunction;
   exports.argumentsToArray = argumentsToArray;
@@ -3213,8 +3527,8 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Relation = Relation;
 
-  Network__Network.prototype = new DataModel();
-  Network__Network.prototype.constructor = Network__Network;
+  Network.prototype = new DataModel();
+  Network.prototype.constructor = Network;
 
   /**
    * @classdesc Networks are a DataType to store network data.
@@ -3225,20 +3539,20 @@ define('src/index', ['exports'], function (exports) {
    * @constructor
    * @category networks
    */
-  function Network__Network() {
+  function Network() {
     this.type = "Network";
 
     this.nodeList = new NodeList__default();
     this.relationList = new RelationList();
   }
-  var Network__default = Network__Network;
+
 
   /**
    * Get Nodes of the Network as a NodeList
    * @return {NodeList}
    * tags:
    */
-  Network__Network.prototype.getNodes = function() {
+  Network.prototype.getNodes = function() {
     return this.nodeList;
   };
 
@@ -3248,7 +3562,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {RelationList}
    * tags:
    */
-  Network__Network.prototype.getRelations = function() {
+  Network.prototype.getRelations = function() {
     return this.relationList;
   };
 
@@ -3257,7 +3571,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {StringList}
    * tags:
    */
-  Network__Network.prototype.getNodesIds = function() {
+  Network.prototype.getNodesIds = function() {
     return this.nodeList.getIds();
   };
 
@@ -3271,7 +3585,7 @@ define('src/index', ['exports'], function (exports) {
    * Add a node to the network
    * @param {Node} node A new node that will be added to the network.
    */
-  Network__Network.prototype.addNode = function(node) {
+  Network.prototype.addNode = function(node) {
     this.nodeList.addNode(node);
   };
 
@@ -3281,7 +3595,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Node} The node with the given name. Null if no node with that name
    * can be found in the Network.
    */
-  Network__Network.prototype.getNodeWithName = function(name) {
+  Network.prototype.getNodeWithName = function(name) {
     return this.nodeList.getNodeWithName(name);
   };
 
@@ -3291,7 +3605,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Node} The node with the given id. Null if a node with this id is not
    * in the Network.
    */
-  Network__Network.prototype.getNodeWithId = function(id) {
+  Network.prototype.getNodeWithId = function(id) {
     return this.nodeList.getNodeWithId(id);
   };
 
@@ -3303,7 +3617,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Number} weight A numerical weight associated with the relation (edge).
    * @param {String} content Information associated with the relation.
    */
-  Network__Network.prototype.createRelation = function(node0, node1, id, weight, content) {
+  Network.prototype.createRelation = function(node0, node1, id, weight, content) {
     this.addRelation(new Relation(id, id, node0, node1, weight, content));
   };
 
@@ -3311,7 +3625,7 @@ define('src/index', ['exports'], function (exports) {
    * Add an existing Relation (edge) to the Network.
    * @param {Relation} relation The relation to add to the network.
    */
-  Network__Network.prototype.addRelation = function(relation) {
+  Network.prototype.addRelation = function(relation) {
     this.relationList.addNode(relation);
     relation.node0.nodeList.addNode(relation.node1);
     relation.node0.relationList.addNode(relation);
@@ -3333,7 +3647,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {String} content Information associated with the relation.
    * @return {Relation} The new relation added to the Network.
    */
-  Network__Network.prototype.connect = function(node0, node1, id, weight, content) {
+  Network.prototype.connect = function(node0, node1, id, weight, content) {
     id = id || (node0.id + "_" + node1.id);
     weight = weight || 1;
     var relation = new Relation(id, id, node0, node1, weight);
@@ -3352,7 +3666,7 @@ define('src/index', ['exports'], function (exports) {
    * Remove a node from the Network
    * @param {Node} node The node to remove.
    */
-  Network__Network.prototype.removeNode = function(node) {
+  Network.prototype.removeNode = function(node) {
     this.removeNodeRelations(node);
     this.nodeList.removeNode(node);
   };
@@ -3361,7 +3675,7 @@ define('src/index', ['exports'], function (exports) {
    * Remove all Relations connected to the node from the Network.
    * @param {Node} node Node who's relations will be removed.
    */
-  Network__Network.prototype.removeNodeRelations = function(node) {
+  Network.prototype.removeNodeRelations = function(node) {
     for(var i = 0; node.relationList[i] != null; i++) {
       this.removeRelation(node.relationList[i]);
       i--;
@@ -3371,12 +3685,12 @@ define('src/index', ['exports'], function (exports) {
   /**
    * Remove all Nodes from the Network.
    */
-  Network__Network.prototype.removeNodes = function() {
+  Network.prototype.removeNodes = function() {
     this.nodeList.deleteNodes();
     this.relationList.deleteNodes();
   };
 
-  Network__Network.prototype.removeRelation = function(relation) {
+  Network.prototype.removeRelation = function(relation) {
     this.relationList.removeElement(relation);
     relation.node0.nodeList.removeNode(relation.node1);
     relation.node0.relationList.removeRelation(relation);
@@ -3394,7 +3708,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number} number of nodes removed
    * tags:transform
    */
-  Network__Network.prototype.removeIsolatedNodes = function(minDegree) {
+  Network.prototype.removeIsolatedNodes = function(minDegree) {
     var i;
     var nRemoved = 0;
     minDegree = minDegree == null ? 1 : minDegree;
@@ -3418,8 +3732,8 @@ define('src/index', ['exports'], function (exports) {
 
 
 
-  Network__Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames, idsSubfix, namesSubfix) {
-    var newNetwork = new Network__Network();
+  Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames, idsSubfix, namesSubfix) {
+    var newNetwork = new Network();
     var newNode, newRelation;
     var i;
 
@@ -3454,11 +3768,11 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  Network__Network.prototype.getReport = function() {
+  Network.prototype.getReport = function() {
     return "network contains " + this.nodeList.length + " nodes and " + this.relationList.length + " relations";
   };
 
-  Network__Network.prototype.destroy = function() {
+  Network.prototype.destroy = function() {
     delete this.type;
     this.nodeList.destroy();
     this.relationList.destroy();
@@ -3466,7 +3780,7 @@ define('src/index', ['exports'], function (exports) {
     delete this.relationList;
   };
 
-  exports.Network = Network__default;
+  exports.Network = Network;
 
   /**
    * @classdesc Provides a set of tools that work with Colors.
@@ -3474,8 +3788,8 @@ define('src/index', ['exports'], function (exports) {
    * @namespace
    * @category colors
    */
-  function ColorOperators__ColorOperators() {}
-  var ColorOperators__default = ColorOperators__ColorOperators;
+  function ColorOperators() {}
+
   // TODO: create Color struture to be used instead of arrays [255, 100,0] ?
 
 
@@ -3490,9 +3804,9 @@ define('src/index', ['exports'], function (exports) {
    * @return {String} interpolated color
    *
    */
-  ColorOperators__ColorOperators.interpolateColors = function(color0, color1, value) {
-    var resultArray = ColorOperators__ColorOperators.interpolateColorsRGB(ColorOperators__ColorOperators.colorStringToRGB(color0), ColorOperators__ColorOperators.colorStringToRGB(color1), value);
-    return ColorOperators__ColorOperators.RGBtoHEX(resultArray[0], resultArray[1], resultArray[2]);
+  ColorOperators.interpolateColors = function(color0, color1, value) {
+    var resultArray = ColorOperators.interpolateColorsRGB(ColorOperators.colorStringToRGB(color0), ColorOperators.colorStringToRGB(color1), value);
+    return ColorOperators.RGBtoHEX(resultArray[0], resultArray[1], resultArray[2]);
   };
 
   /**
@@ -3505,17 +3819,17 @@ define('src/index', ['exports'], function (exports) {
    * @return {Array} interpolated RGB color
    *
    */
-  ColorOperators__ColorOperators.interpolateColorsRGB = function(color0, color1, value) {
+  ColorOperators.interpolateColorsRGB = function(color0, color1, value) {
     var s = 1 - value;
     return [Math.floor(s * color0[0] + value * color1[0]), Math.floor(s * color0[1] + value * color1[1]), Math.floor(s * color0[2] + value * color1[2])];
   };
 
 
-  ColorOperators__ColorOperators.RGBtoHEX = function(red, green, blue) {
-    return "#" + ColorOperators__ColorOperators.toHex(red) + ColorOperators__ColorOperators.toHex(green) + ColorOperators__ColorOperators.toHex(blue);
+  ColorOperators.RGBtoHEX = function(red, green, blue) {
+    return "#" + ColorOperators.toHex(red) + ColorOperators.toHex(green) + ColorOperators.toHex(blue);
   };
 
-  ColorOperators__ColorOperators.RGBArrayToString = function(array) {
+  ColorOperators.RGBArrayToString = function(array) {
     return 'rgb(' + array[0] + ',' + array[1] + ',' + array[2] + ')';
   };
 
@@ -3527,46 +3841,46 @@ define('src/index', ['exports'], function (exports) {
    * @return {Array} returns an RGB color Array
    *
    */
-  ColorOperators__ColorOperators.HEXtoRGB = function(hexColor) {
+  ColorOperators.HEXtoRGB = function(hexColor) {
     return [parseInt(hexColor.substr(1, 2), 16), parseInt(hexColor.substr(3, 2), 16), parseInt(hexColor.substr(5, 2), 16)];
   };
 
 
-  ColorOperators__ColorOperators.colorStringToHEX = function(color_string) {
-    var rgb = ColorOperators__ColorOperators.colorStringToRGB(color_string);
-    return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  ColorOperators.colorStringToHEX = function(color_string) {
+    var rgb = ColorOperators.colorStringToRGB(color_string);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
 
-  ColorOperators__ColorOperators.numberToHex = function(number) {
+  ColorOperators.numberToHex = function(number) {
     var hex = number.toString(16);
     while(hex.length < 2) hex = "0" + hex;
     return hex;
   };
 
 
-  ColorOperators__ColorOperators.uinttoRGB = function(color) {
+  ColorOperators.uinttoRGB = function(color) {
     var rgbColor = new Array(color >> 16, (color >> 8) - ((color >> 16) << 8), color - ((color >> 8) << 8));
     return rgbColor;
   };
-  ColorOperators__ColorOperators.uinttoHEX = function(color) {
-    var rgbColor = ColorOperators__ColorOperators.uinttoRGB(color);
-    var hexColor = ColorOperators__ColorOperators.RGBToHEX(rgbColor[0], rgbColor[1], rgbColor[2]);
+  ColorOperators.uinttoHEX = function(color) {
+    var rgbColor = ColorOperators.uinttoRGB(color);
+    var hexColor = ColorOperators.RGBToHEX(rgbColor[0], rgbColor[1], rgbColor[2]);
     return hexColor;
   };
 
 
-  ColorOperators__ColorOperators.RGBtouint = function(red, green, blue) {
+  ColorOperators.RGBtouint = function(red, green, blue) {
     return Number(red) << 16 | Number(green) << 8 | Number(blue);
   };
 
-  ColorOperators__ColorOperators.HEXtouint = function(hexColor) {
-    var colorArray = ColorOperators__ColorOperators.HEXtoRGB(hexColor);
-    var color = ColorOperators__ColorOperators.RGBtouint(colorArray[0], colorArray[1], colorArray[2]);
+  ColorOperators.HEXtouint = function(hexColor) {
+    var colorArray = ColorOperators.HEXtoRGB(hexColor);
+    var color = ColorOperators.RGBtouint(colorArray[0], colorArray[1], colorArray[2]);
     return color;
   };
 
-  ColorOperators__ColorOperators.grayByLevel = function(level) {
+  ColorOperators.grayByLevel = function(level) {
     level = Math.floor(level * 255);
     return 'rgb(' + level + ',' + level + ',' + level + ')';
   };
@@ -3579,20 +3893,20 @@ define('src/index', ['exports'], function (exports) {
    * @return {Array} returns an HSV color Array
    *
    */
-  ColorOperators__ColorOperators.HEXtoHSV = function(hexColor) {
-    var rgb = ColorOperators__ColorOperators.HEXtoRGB(hexColor);
-    return ColorOperators__ColorOperators.RGBtoHSV(rgb[0], rgb[1], rgb[2]);
+  ColorOperators.HEXtoHSV = function(hexColor) {
+    var rgb = ColorOperators.HEXtoRGB(hexColor);
+    return ColorOperators.RGBtoHSV(rgb[0], rgb[1], rgb[2]);
   };
 
 
-  ColorOperators__ColorOperators.HSVtoHEX = function(hue, saturation, value) {
-    var rgb = ColorOperators__ColorOperators.HSVtoRGB(hue, saturation, value);
-    return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  ColorOperators.HSVtoHEX = function(hue, saturation, value) {
+    var rgb = ColorOperators.HSVtoRGB(hue, saturation, value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
-  ColorOperators__ColorOperators.HSLtoHEX = function(hue, saturation, light) {
-    var rgb = ColorOperators__ColorOperators.HSLtoRGB(hue, saturation, light);
-    return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  ColorOperators.HSLtoHEX = function(hue, saturation, light) {
+    var rgb = ColorOperators.HSLtoRGB(hue, saturation, light);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
 
@@ -3603,7 +3917,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Array} returns a HSV color array
    * H in [0,360], S in [0,1], V in [0,1]
    */
-  ColorOperators__ColorOperators.RGBtoHSV = function(r, g, b) {
+  ColorOperators.RGBtoHSV = function(r, g, b) {
       var h;
       var s;
       var v;
@@ -3636,7 +3950,7 @@ define('src/index', ['exports'], function (exports) {
      * @return {Array} returns a RGB color array
      *
      */
-  ColorOperators__ColorOperators.HSVtoRGB = function(hue, saturation, value) {
+  ColorOperators.HSVtoRGB = function(hue, saturation, value) {
     hue = hue ? hue : 0;
     saturation = saturation ? saturation : 0;
     value = value ? value : 0;
@@ -3699,7 +4013,7 @@ define('src/index', ['exports'], function (exports) {
    * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
    * Assumes hue is contained in the interval [0,360) and saturation and l are contained in the set [0, 1]
    */
-  ColorOperators__ColorOperators.HSLtoRGB = function(hue, saturation, light) {
+  ColorOperators.HSLtoRGB = function(hue, saturation, light) {
     var r, g, b;
 
     if(saturation == 0) {
@@ -3725,33 +4039,33 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  ColorOperators__ColorOperators.invertColorRGB = function(r, g, b) {
+  ColorOperators.invertColorRGB = function(r, g, b) {
     return [255 - r, 255 - g, 255 - b];
   };
 
-  ColorOperators__ColorOperators.addAlpha = function(color, alpha) {
+  ColorOperators.addAlpha = function(color, alpha) {
     //var rgb = color.substr(0,3)=='rgb'?ColorOperators.colorStringToRGB(color):ColorOperators.HEXtoRGB(color);
-    var rgb = ColorOperators__ColorOperators.colorStringToRGB(color);
+    var rgb = ColorOperators.colorStringToRGB(color);
     if(rgb == null) return 'black';
     return 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + alpha + ')';
   };
 
-  ColorOperators__ColorOperators.invertColor = function(color) {
-    var rgb = ColorOperators__ColorOperators.colorStringToRGB(color);
-    rgb = ColorOperators__ColorOperators.invertColorRGB(rgb[0], rgb[1], rgb[2]);
-    return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  ColorOperators.invertColor = function(color) {
+    var rgb = ColorOperators.colorStringToRGB(color);
+    rgb = ColorOperators.invertColorRGB(rgb[0], rgb[1], rgb[2]);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
 
 
-  ColorOperators__ColorOperators.toHex = function(number) {
+  ColorOperators.toHex = function(number) {
     var hex = number.toString(16);
     while(hex.length < 2) hex = "0" + hex;
     return hex;
   };
 
 
-  ColorOperators__ColorOperators.getRandomColor = function() {
+  ColorOperators.getRandomColor = function() {
     return 'rgb(' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ')';
   };
 
@@ -3769,7 +4083,7 @@ define('src/index', ['exports'], function (exports) {
    * @license Use it if you like it
    *
    */
-  ColorOperators__ColorOperators.colorStringToRGB = function(color_string) {
+  ColorOperators.colorStringToRGB = function(color_string) {
     //c.log('color_string:['+color_string+']');
     var ok = false;
 
@@ -3994,15 +4308,15 @@ define('src/index', ['exports'], function (exports) {
     return null;
   };
 
-  exports.ColorOperators = ColorOperators__default;
+  exports.ColorOperators = ColorOperators;
 
-  function NetworkEncodings__NetworkEncodings() {}
-  var NetworkEncodings__default = NetworkEncodings__NetworkEncodings;
+  function NetworkEncodings() {}
+
 
 
   //////////////NoteWork
 
-  NetworkEncodings__NetworkEncodings.nodeNameSeparators = ['|', ':', ' is ', ' are ', '.', ','];
+  NetworkEncodings.nodeNameSeparators = ['|', ':', ' is ', ' are ', '.', ','];
 
   /**
    * Converts a String in NoteWork format into a network
@@ -4011,11 +4325,11 @@ define('src/index', ['exports'], function (exports) {
    * @return {Network}
    * tags:decoding
    */
-  NetworkEncodings__NetworkEncodings.decodeNoteWork = function(code) {
+  NetworkEncodings.decodeNoteWork = function(code) {
     if(code == null) return;
-    if(code == "") return new Network__default();
+    if(code == "") return new Network();
 
-    c.l('\n\n*************////////// decodeNoteWork //////////*************');
+    console.log('\n\n*************////////// decodeNoteWork //////////*************');
     //code = "\n"+code;
 
     var i, j;
@@ -4038,7 +4352,7 @@ define('src/index', ['exports'], function (exports) {
     var iEnd;
     var propertyName;
     var propertyValue;
-    var network = new Network__default();
+    var network = new Network();
     var paragraphs = new StringList__default();
     var content;
 
@@ -4087,7 +4401,7 @@ define('src/index', ['exports'], function (exports) {
 
       firstLine = line;
 
-      //c.l('firstLine: ['+firstLine+']');
+      //console.log('firstLine: ['+firstLine+']');
 
       if(line == '\n' || line == '' || line == ' ' || line == '  ') { //use regex here
 
@@ -4116,8 +4430,8 @@ define('src/index', ['exports'], function (exports) {
           lines.slice(1).forEach(function(line, i) {
 
             index = line.indexOf(':');
-            if(firstLine == "relations colors:" && index != -1 && ColorOperators__default.colorStringToRGB(line.split(':')[1]) != null) {
-              //c.l('  more colors!');
+            if(firstLine == "relations colors:" && index != -1 && ColorOperators.colorStringToRGB(line.split(':')[1]) != null) {
+              //console.log('  more colors!');
 
               colorLinesRelations.push(line);
 
@@ -4131,9 +4445,9 @@ define('src/index', ['exports'], function (exports) {
 
             }
 
-            if((firstLine == "groups colors:" || firstLine == "categories colors:") && index != -1 && ColorOperators__default.colorStringToRGB(line.split(':')[1]) != null) {
-              //c.l(line)
-              //c.l('  color to group!');
+            if((firstLine == "groups colors:" || firstLine == "categories colors:") && index != -1 && ColorOperators.colorStringToRGB(line.split(':')[1]) != null) {
+              //console.log(line)
+              //console.log('  color to group!');
 
               colorLinesGroups.push(line);
 
@@ -4153,20 +4467,20 @@ define('src/index', ['exports'], function (exports) {
 
         minIndex = 99999999;
 
-        index = line.indexOf(NetworkEncodings__NetworkEncodings.nodeNameSeparators[0]);
+        index = line.indexOf(NetworkEncodings.nodeNameSeparators[0]);
 
         if(index != -1) {
           minIndex = index;
-          sep = NetworkEncodings__NetworkEncodings.nodeNameSeparators[0];
+          sep = NetworkEncodings.nodeNameSeparators[0];
         }
 
         j = 1;
 
-        while(j < NetworkEncodings__NetworkEncodings.nodeNameSeparators.length) {
-          index = line.indexOf(NetworkEncodings__NetworkEncodings.nodeNameSeparators[j]);
+        while(j < NetworkEncodings.nodeNameSeparators.length) {
+          index = line.indexOf(NetworkEncodings.nodeNameSeparators[j]);
           if(index != -1) {
             minIndex = Math.min(index, minIndex);
-            sep = NetworkEncodings__NetworkEncodings.nodeNameSeparators[j];
+            sep = NetworkEncodings.nodeNameSeparators[j];
           }
           j++;
         }
@@ -4178,7 +4492,7 @@ define('src/index', ['exports'], function (exports) {
         name = name.trim();
 
         if(name != "") {
-          id = NetworkEncodings__NetworkEncodings._simplifyForNoteWork(name);
+          id = NetworkEncodings._simplifyForNoteWork(name);
 
           node = network.nodeList.getNodeById(id);
 
@@ -4240,7 +4554,7 @@ define('src/index', ['exports'], function (exports) {
 
           if(line.indexOf('=') == 0) {
 
-            id2 = NetworkEncodings__NetworkEncodings._simplifyForNoteWork(line.substr(1));
+            id2 = NetworkEncodings._simplifyForNoteWork(line.substr(1));
             otherNode = network.nodeList.getNodeById(id2);
 
             if(otherNode && node != otherNode) {
@@ -4272,7 +4586,7 @@ define('src/index', ['exports'], function (exports) {
 
       nLineParagraph = node._nLine;
 
-      //c.l('node.nLineWeight', node.nLineWeight);
+      //console.log('node.nLineWeight', node.nLineWeight);
 
       node._lines.forEach(function(line, i) {
 
@@ -4296,12 +4610,12 @@ define('src/index', ['exports'], function (exports) {
           simpleLine = line;
 
           network.nodeList.forEach(function(otherNode) {
-            regex = NetworkEncodings__NetworkEncodings._regexWordForNoteWork(otherNode.id);
+            regex = NetworkEncodings._regexWordForNoteWork(otherNode.id);
             index = simpleLine.search(regex);
 
             if(index == -1 && otherNode._otherIds) {
               for(j = 0; otherNode._otherIds[j] != null; j++) {
-                regex = NetworkEncodings__NetworkEncodings._regexWordForNoteWork(otherNode._otherIds[j]);
+                regex = NetworkEncodings._regexWordForNoteWork(otherNode._otherIds[j]);
                 index = simpleLine.search(regex);
                 if(index != -1) break;
               }
@@ -4334,7 +4648,7 @@ define('src/index', ['exports'], function (exports) {
 
                   var relationName = line;
 
-                  var regex = NetworkEncodings__NetworkEncodings._regexWordForNoteWork(node.id);
+                  var regex = NetworkEncodings._regexWordForNoteWork(node.id);
                   index = relationName.search(regex);
 
                   if(index != -1) {
@@ -4342,11 +4656,11 @@ define('src/index', ['exports'], function (exports) {
                     relationName = relationName.replace(regex, "").trim();
                   }
 
-                  //c.l(node.id, "*", line, "*", index, "*", line.substr(index));
+                  //console.log(node.id, "*", line, "*", index, "*", line.substr(index));
 
                   //line = line.replace(regex, "").trim();
 
-                  regex = NetworkEncodings__NetworkEncodings._regexWordForNoteWork(otherNode.id);
+                  regex = NetworkEncodings._regexWordForNoteWork(otherNode.id);
                   index = relationName.search(regex);
                   relationName = "… " + relationName.substr(0, index).trim() + " …";
 
@@ -4412,7 +4726,7 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @ignore
    */
-  NetworkEncodings__NetworkEncodings._simplifyForNoteWork = function(name) {
+  NetworkEncodings._simplifyForNoteWork = function(name) {
     name = name.toLowerCase();
     if(name.substr(name.length - 2) == 'es') {
       name = name.substr(0, name.length - 1);
@@ -4428,7 +4742,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {undefined}
    * @ignore
    */
-  NetworkEncodings__NetworkEncodings._regexWordForNoteWork = function(word, global) {
+  NetworkEncodings._regexWordForNoteWork = function(word, global) {
     global = global == null ? true : global;
     try {
       return new RegExp("(\\b)(" + word + "|" + word + "s|" + word + "es)(\\b)", global ? "gi" : "i");
@@ -4449,7 +4763,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {String} NoteWork based representation of Network.
    * tags:encoding
    */
-  NetworkEncodings__NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesPropertyNames, relationsPropertyNames) {
+  NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesPropertyNames, relationsPropertyNames) {
     if(network == null) return;
 
     var node, relation, other;
@@ -4480,7 +4794,7 @@ define('src/index', ['exports'], function (exports) {
         content = ((relation.content == null ||  relation.content == "") && relation.description) ? relation.description : relation.content;
 
         if(content && content != "") {
-          regex = NetworkEncodings__NetworkEncodings._regexWordForNoteWork(relation.node1.name);
+          regex = NetworkEncodings._regexWordForNoteWork(relation.node1.name);
           lineRelation = content + ((regex != null && content.search(regex) == -1) ? (" " + relation.node1.name) : "");
         } else {
           lineRelation = "connected with " + relation.node1.name;
@@ -4514,10 +4828,10 @@ define('src/index', ['exports'], function (exports) {
    * @return {Network}
    * tags:decoder
    */
-  NetworkEncodings__NetworkEncodings.decodeGDF = function(gdfCode) {
+  NetworkEncodings.decodeGDF = function(gdfCode) {
     if(gdfCode == null || gdfCode == "") return;
 
-    var network = new Network__default();
+    var network = new Network();
     var lines = gdfCode.split("\n"); //TODO: split by ENTERS OUTSIDE QUOTEMARKS
     if(lines.length == 0) return null;
     var line;
@@ -4535,7 +4849,7 @@ define('src/index', ['exports'], function (exports) {
         iEdges = i + 1;
         break;
       }
-      line = NetworkEncodings__NetworkEncodings.replaceChomasInLine(line);
+      line = NetworkEncodings.replaceChomasInLine(line);
       parts = line.split(",");
       node = new Node(String(parts[0]), String(parts[1]));
       for(j = 0; (nodesPropertiesNames[j] != null && parts[j] != null); j++) {
@@ -4556,13 +4870,13 @@ define('src/index', ['exports'], function (exports) {
 
     for(i = iEdges; lines[i] != null; i++) {
       line = lines[i];
-      line = NetworkEncodings__NetworkEncodings.replaceChomasInLine(line);
+      line = NetworkEncodings.replaceChomasInLine(line);
       parts = line.split(",");
       if(parts.length >= 2) {
         node0 = network.nodeList.getNodeById(String(parts[0]));
         node1 = network.nodeList.getNodeById(String(parts[1]));
         if(node0 == null || node1 == null) {
-          c.log("NetworkEncodings.decodeGDF | [!] problems with nodes ids:", parts[0], parts[1], "at line", i);
+          console.log("NetworkEncodings.decodeGDF | [!] problems with nodes ids:", parts[0], parts[1], "at line", i);
         } else {
           id = node0.id + "_" + node1.id + "_" + Math.floor(Math.random() * 999999);
           relation = new Relation(id, id, node0, node1);
@@ -4593,7 +4907,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {String} GDF encoding of Network.
    * tags:encoder
    */
-  NetworkEncodings__NetworkEncodings.encodeGDF = function(network, nodesPropertiesNames, relationsPropertiesNames) {
+  NetworkEncodings.encodeGDF = function(network, nodesPropertiesNames, relationsPropertiesNames) {
     if(network == null) return;
 
     nodesPropertiesNames = nodesPropertiesNames == null ? new StringList__default() : nodesPropertiesNames;
@@ -4644,12 +4958,12 @@ define('src/index', ['exports'], function (exports) {
    * @return {Network}
    * tags:decoder
    */
-  NetworkEncodings__NetworkEncodings.decodeGML = function(gmlCode) {
+  NetworkEncodings.decodeGML = function(gmlCode) {
     if(gmlCode == null) return null;
 
     gmlCode = gmlCode.substr(gmlCode.indexOf("[") + 1);
 
-    var network = new Network__default();
+    var network = new Network();
 
     var firstEdgeIndex = gmlCode.search(/\bedge\b/);
 
@@ -4658,9 +4972,9 @@ define('src/index', ['exports'], function (exports) {
 
     var part = nodesPart;
 
-    var blocks = StringOperators__default.getParenthesisContents(part, true);
+    var blocks = StringOperators.getParenthesisContents(part, true);
 
-    //c.log('blocks.length', blocks.length);
+    //console.log('blocks.length', blocks.length);
 
     var graphicsBlock;
     var lines;
@@ -4672,8 +4986,8 @@ define('src/index', ['exports'], function (exports) {
     var node;
 
     for(var i = 0; blocks[i] != null; i++) {
-      blocks[i] = StringOperators__default.removeInitialRepeatedCharacter(blocks[i], "\n");
-      blocks[i] = StringOperators__default.removeInitialRepeatedCharacter(blocks[i], "\r");
+      blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\n");
+      blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\r");
 
       indexG0 = blocks[i].indexOf('graphics');
       if(indexG0 != -1) {
@@ -4681,33 +4995,33 @@ define('src/index', ['exports'], function (exports) {
         graphicsBlock = blocks[i].substring(indexG0, indexG1 + 1);
         blocks[i] = blocks[i].substr(0, indexG0) + blocks[i].substr(indexG1 + 1);
 
-        graphicsBlock = StringOperators__default.getFirstParenthesisContent(graphicsBlock, true);
+        graphicsBlock = StringOperators.getFirstParenthesisContent(graphicsBlock, true);
         blocks[i] = blocks[i] + graphicsBlock;
       }
 
       lines = blocks[i].split('\n');
 
-      lines[0] = NetworkEncodings__NetworkEncodings._cleanLineBeginning(lines[0]);
+      lines[0] = NetworkEncodings._cleanLineBeginning(lines[0]);
 
       lineParts = lines[0].split(" ");
 
-      node = new Node(StringOperators__default.removeQuotes(lineParts[1]), StringOperators__default.removeQuotes(lineParts[1]));
+      node = new Node(StringOperators.removeQuotes(lineParts[1]), StringOperators.removeQuotes(lineParts[1]));
 
       network.addNode(node);
 
       for(var j = 1; lines[j] != null; j++) {
-        lines[j] = NetworkEncodings__NetworkEncodings._cleanLineBeginning(lines[j]);
-        lines[j] = NetworkEncodings__NetworkEncodings._replaceSpacesInLine(lines[j]);
+        lines[j] = NetworkEncodings._cleanLineBeginning(lines[j]);
+        lines[j] = NetworkEncodings._replaceSpacesInLine(lines[j]);
         if(lines[j] != "") {
           lineParts = lines[j].split(" ");
           if(lineParts[0] == 'label') lineParts[0] = 'name';
-          node[lineParts[0]] = (lineParts[1].charAt(0) == "\"") ? StringOperators__default.removeQuotes(lineParts[1]).replace(/\*SPACE\*/g, " ") : Number(lineParts[1]);
+          node[lineParts[0]] = (lineParts[1].charAt(0) == "\"") ? StringOperators.removeQuotes(lineParts[1]).replace(/\*SPACE\*/g, " ") : Number(lineParts[1]);
         }
       }
     }
 
     part = edgesPart;
-    blocks = StringOperators__default.getParenthesisContents(part, true);
+    blocks = StringOperators.getParenthesisContents(part, true);
 
     var id0;
     var id1;
@@ -4718,8 +5032,8 @@ define('src/index', ['exports'], function (exports) {
 
 
     for(i = 0; blocks[i] != null; i++) {
-      blocks[i] = StringOperators__default.removeInitialRepeatedCharacter(blocks[i], "\n");
-      blocks[i] = StringOperators__default.removeInitialRepeatedCharacter(blocks[i], "\r");
+      blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\n");
+      blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\r");
 
       lines = blocks[i].split('\n');
 
@@ -4728,11 +5042,11 @@ define('src/index', ['exports'], function (exports) {
       relation = null;
 
       for(j = 0; lines[j] != null; j++) {
-        lines[j] = NetworkEncodings__NetworkEncodings._cleanLineBeginning(lines[j]);
+        lines[j] = NetworkEncodings._cleanLineBeginning(lines[j]);
         if(lines[j] != "") {
           lineParts = lines[j].split(" ");
-          if(lineParts[0] == 'source') id0 = StringOperators__default.removeQuotes(lineParts[1]);
-          if(lineParts[0] == 'target') id1 = StringOperators__default.removeQuotes(lineParts[1]);
+          if(lineParts[0] == 'source') id0 = StringOperators.removeQuotes(lineParts[1]);
+          if(lineParts[0] == 'target') id1 = StringOperators.removeQuotes(lineParts[1]);
 
           if(relation == null) {
             if(id0 != null && id1 != null) {
@@ -4745,7 +5059,7 @@ define('src/index', ['exports'], function (exports) {
             }
           } else {
             if(lineParts[0] == 'value') lineParts[0] = 'weight';
-            relation[lineParts[0]] = (lineParts[1].charAt(0) == "\"") ? StringOperators__default.removeQuotes(lineParts[1]) : Number(lineParts[1]);
+            relation[lineParts[0]] = (lineParts[1].charAt(0) == "\"") ? StringOperators.removeQuotes(lineParts[1]) : Number(lineParts[1]);
           }
         }
 
@@ -4762,11 +5076,11 @@ define('src/index', ['exports'], function (exports) {
    * @param string
    * @ignore
    */
-  NetworkEncodings__NetworkEncodings._cleanLineBeginning = function(string) {
-    string = StringOperators__default.removeInitialRepeatedCharacter(string, "\n");
-    string = StringOperators__default.removeInitialRepeatedCharacter(string, "\r");
-    string = StringOperators__default.removeInitialRepeatedCharacter(string, " ");
-    string = StringOperators__default.removeInitialRepeatedCharacter(string, "	");
+  NetworkEncodings._cleanLineBeginning = function(string) {
+    string = StringOperators.removeInitialRepeatedCharacter(string, "\n");
+    string = StringOperators.removeInitialRepeatedCharacter(string, "\r");
+    string = StringOperators.removeInitialRepeatedCharacter(string, " ");
+    string = StringOperators.removeInitialRepeatedCharacter(string, "	");
     return string;
   };
 
@@ -4783,7 +5097,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {String} GDF string.
    * tags:encoder
    */
-  NetworkEncodings__NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPropertiesNames, idsAsInts) {
+  NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPropertiesNames, idsAsInts) {
     if(network == null) return;
 
     idsAsInts = idsAsInts == null ? true : idsAsInts;
@@ -4860,18 +5174,18 @@ define('src/index', ['exports'], function (exports) {
    * @param symCode
    * @return {Network}
    */
-  NetworkEncodings__NetworkEncodings.decodeSYM = function(symCode) {
-    //c.log("/////// decodeSYM\n"+symCode+"\n/////////");
+  NetworkEncodings.decodeSYM = function(symCode) {
+    //console.log("/////// decodeSYM\n"+symCode+"\n/////////");
     var i;
     var j;
 
-    var lines = StringOperators__default.splitByEnter(symCode);
+    var lines = StringOperators.splitByEnter(symCode);
     lines = lines == null ? [] : lines;
 
     var objectPattern = /((?:NODE|RELATION)|GROUP)\s*([A-Za-z0-9_,\s]*)/;
 
-    var network = new Network__default();
-    var groups = new Table();
+    var network = new Network();
+    var groups = new Table__default();
     var name;
     var id;
     var node;
@@ -4916,7 +5230,7 @@ define('src/index', ['exports'], function (exports) {
             if(node.group != null) {
               group = groups.getFirstElementByPropertyValue("name", node.group);
               if(group == null) {
-                c.log("NODES new group:[" + node.group + "]");
+                console.log("NODES new group:[" + node.group + "]");
                 group = new NodeList();
                 group.name = node.group;
                 group.name = group.name.replace(/\\n/g, '\n').replace(/\\'/g, "'");
@@ -5009,7 +5323,7 @@ define('src/index', ['exports'], function (exports) {
    * @param groupsPropertiesNames
    * @return {String}
    */
-  NetworkEncodings__NetworkEncodings.encodeSYM = function(network, groups, nodesPropertiesNames, relationsPropertiesNames, groupsPropertiesNames) {
+  NetworkEncodings.encodeSYM = function(network, groups, nodesPropertiesNames, relationsPropertiesNames, groupsPropertiesNames) {
     nodesPropertiesNames = nodesPropertiesNames == null ? new StringList__default() : nodesPropertiesNames;
     relationsPropertiesNames = relationsPropertiesNames == null ? new StringList__default() : relationsPropertiesNames;
 
@@ -5050,7 +5364,7 @@ define('src/index', ['exports'], function (exports) {
       }
     }
 
-    //c.log("/////// encodeSYM\n"+code+"\n/////////");
+    //console.log("/////// encodeSYM\n"+code+"\n/////////");
 
     return code;
   };
@@ -5059,7 +5373,7 @@ define('src/index', ['exports'], function (exports) {
     switch(propName) {
       case "color":
         if(propValue.substr(0, 3) == "rgb") {
-          var rgb = ColorOperators__default.colorStringToRGB(propValue);
+          var rgb = ColorOperators.colorStringToRGB(propValue);
           return rgb.join(',');
         }
         return propValue;
@@ -5084,7 +5398,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {undefined}
    * @ignore
    */
-  NetworkEncodings__NetworkEncodings.replaceChomasInLine = function(line) {
+  NetworkEncodings.replaceChomasInLine = function(line) {
     var quoteBlocks = line.split("\"");
     if(quoteBlocks.length < 2) return line;
     var insideQuote;
@@ -5106,7 +5420,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {undefined}
    * @ignore
    */
-  NetworkEncodings__NetworkEncodings._replaceSpacesInLine = function(line) {
+  NetworkEncodings._replaceSpacesInLine = function(line) {
     var quoteBlocks = line.split("\"");
     if(quoteBlocks.length < 2) return line;
     var insideQuote;
@@ -5121,145 +5435,7 @@ define('src/index', ['exports'], function (exports) {
     return line;
   };
 
-  exports.NetworkEncodings = NetworkEncodings__default;
-
-  RectangleList.prototype = new List__default();
-  RectangleList.prototype.constructor = RectangleList;
-  /**
-   * @classdesc A {@link List} structure for storing {@link Rectangle} instances.
-   *
-   * @description Creates a new RectangleList.
-   * @constructor
-   * @category geometry
-   */
-  function RectangleList() {
-    var array = List__default.apply(this, arguments);
-    array = RectangleList.fromArray(array);
-    return array;
-  }
-
-
-  RectangleList.fromArray = function(array) {
-    var result = List__default.fromArray(array);
-    result.type = "RectangleList";
-
-    result.getFrame = RectangleList.prototype.getFrame;
-    result.add = RectangleList.prototype.add;
-    result.factor = RectangleList.prototype.factor;
-    result.getAddedArea = RectangleList.prototype.getAddedArea;
-    result.getIntersectionArea = RectangleList.prototype.getIntersectionArea;
-
-    return result;
-  };
-
-  //TODO:finish RectangleList methods
-
-  RectangleList.prototype.getFrame = function() {
-    if(this.length == 0) return null;
-    var frame = this[0];
-    frame.width = frame.getRight();
-    frame.height = frame.getBottom();
-    for(var i = 1; this[i] != null; i++) {
-      frame.x = Math.min(frame.x, this[i].x);
-      frame.y = Math.min(frame.y, this[i].y);
-
-      frame.width = Math.max(this[i].getRight(), frame.width);
-      frame.height = Math.max(this[i].getBottom(), frame.height);
-    }
-
-    frame.width -= frame.x;
-    frame.height -= frame.y;
-
-    return frame;
-  };
-
-  RectangleList.prototype.add = function() {
-
-  };
-
-  RectangleList.prototype.factor = function() {
-
-  };
-
-  RectangleList.prototype.getAddedArea = function() {};
-
-  RectangleList.prototype.getIntersectionArea = function() {
-    var rect0;
-    var rect1;
-    var intersectionArea = 0;
-    var intersection;
-    for(var i = 0; this[i + 1] != null; i++) {
-      rect0 = this[i];
-      for(var j = i + 1; this[j] != null; j++) {
-        rect1 = this[j];
-        intersection = rect0.getIntersection(rect1);
-        intersectionArea += intersection == null ? 0 : intersection.getArea();
-      }
-    }
-
-    return intersectionArea;
-  };
-
-  exports.RectangleList = RectangleList;
-
-  function ListGenerators__ListGenerators() {}
-  var ListGenerators__default = ListGenerators__ListGenerators;
-
-
-  /**
-   * Generates a List made of several copies of same element (returned List is improved)
-   * @param {Object} nValues length of the List
-   * @param {Object} element object to be placed in all positions
-   * @return {List} generated List
-   * tags:generator
-   */
-  ListGenerators__ListGenerators.createListWithSameElement = function(nValues, element) {
-    var list;
-    switch(ClassUtils__typeOf(element)) {
-      case 'number':
-        list = new NumberList__default();
-        break;
-      case 'List':
-        list = new Table__default();
-        break;
-      case 'NumberList':
-        list = new NumberTable__default();
-        break;
-      case 'Rectangle':
-        list = new RectangleList();
-        break;
-      case 'string':
-        list = new StringList__default();
-        break;
-      case 'boolean':
-        list = new List__default(); //TODO:update once BooleanList exists
-        break;
-      default:
-        list = new List__default();
-    }
-
-    for(var i = 0; i < nValues; i++) {
-      list[i] = element;
-    }
-    return list;
-  };
-
-  /**
-   * Generates a List built froma seed element and a function that will be applied iteratively
-   * @param {Object} nValues length of the List
-   * @param {Object} firstElement first element
-   * @param {Object} dynamicFunction sequence generator function, elementN+1 =  dynamicFunction(elementN)
-   * @return {List} generated List
-   */
-  ListGenerators__ListGenerators.createIterationSequence = function(nValues, firstElement, dynamicFunction) {
-    var list = ListGenerators__ListGenerators.createListWithSameElement(1, firstElement);
-    for(var i = 1; i < nValues; i++) {
-      list[i] = dynamicFunction(list[i - 1]);
-    }
-    return list;
-  };
-
-  exports.ListGenerators = ListGenerators__default;
+  exports.NetworkEncodings = NetworkEncodings;
 
   function TableEncodings() {}
 
@@ -5329,7 +5505,7 @@ define('src/index', ['exports'], function (exports) {
     for(i = startIndex; i < lines.length; i++) {
       if(lines[i].length < 2) continue;
 
-      var cellContents = NetworkEncodings__default.replaceChomasInLine(lines[i]).split(comaCharacter); //TODO: will be obsolete (see previous TODO)
+      var cellContents = NetworkEncodings.replaceChomasInLine(lines[i]).split(comaCharacter); //TODO: will be obsolete (see previous TODO)
 
       for(j = 0; j < cellContents.length; j++) {
         table[j] = table[j] == null ? new List() : table[j];
@@ -5383,7 +5559,7 @@ define('src/index', ['exports'], function (exports) {
     var j;
     var list;
     var type;
-    var lines = ListGenerators__default.createListWithSameElement(table[0].length, "");
+    var lines = ListGenerators.createListWithSameElement(table[0].length, "");
     var addSeparator;
     for(i = 0; table[i] != null; i++) {
       list = table[i];
@@ -5419,7 +5595,7 @@ define('src/index', ['exports'], function (exports) {
 
   /* global console */
 
-  Table__Table.prototype = new List__default();
+  Table__Table.prototype = new List();
   Table__Table.prototype.constructor = Table__Table;
 
   /**
@@ -5433,10 +5609,10 @@ define('src/index', ['exports'], function (exports) {
     var args = [];
     var i;
     for(i = 0; i < arguments.length; i++) {
-      args[i] = new List__default(arguments[i]);
+      args[i] = new List(arguments[i]);
     }
 
-    var array = List__default.apply(this, args);
+    var array = List.apply(this, args);
     array = Table__Table.fromArray(array);
 
     return array;
@@ -5444,7 +5620,7 @@ define('src/index', ['exports'], function (exports) {
   var Table__default = Table__Table;
 
   Table__Table.fromArray = function(array) {
-    var result = List__default.fromArray(array);
+    var result = List.fromArray(array);
     result.type = "Table";
     //assign methods to array:
     result.applyFunction = Table__Table.prototype.applyFunction;
@@ -5493,7 +5669,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:filter
    */
   Table__Table.prototype.getRow = function(index) {
-    var list = new List__default();
+    var list = new List();
     var i;
     for(i = 0; i < this.length; i++) {
       list[i] = this[i][index];
@@ -5518,7 +5694,7 @@ define('src/index', ['exports'], function (exports) {
    * overrides List.prototype.getLengths (see comments there)
    */
   Table__Table.prototype.getLengths = function() {
-    var lengths = new NumberList__default();
+    var lengths = new NumberList();
     for(var i = 0; this[i] != null; i++) {
       lengths[i] = this[i].length;
     }
@@ -5572,7 +5748,7 @@ define('src/index', ['exports'], function (exports) {
     var newTable = new Table__Table();
     newTable.name = this.name;
     for(var i = 0; this[i] != null; i++) {
-      newTable[i] = List__default.fromArray(this[i].slice(0, rowIndex).concat(this[i].slice(rowIndex + 1))).getImproved();
+      newTable[i] = List.fromArray(this[i].slice(0, rowIndex).concat(this[i].slice(rowIndex + 1))).getImproved();
       newTable[i].name = this[i].name;
     }
     return newTable.getImproved();
@@ -5582,7 +5758,7 @@ define('src/index', ['exports'], function (exports) {
     var newTable = new Table__Table();
     newTable.name = this.name;
     for(var i = 0; this[i] != null; i++) {
-      newTable[i] = new List__default();
+      newTable[i] = new List();
       for(var j = 0; this[i][j] != null; j++) {
         if(rowsIndexes.indexOf(j) == -1) newTable[i].push(this[i][j]);
       }
@@ -5602,7 +5778,7 @@ define('src/index', ['exports'], function (exports) {
    */
   Table__Table.prototype.getListsSortedByList = function(listOrIndex, ascending) { //depracated: use sortListsByList
     if(listOrIndex == null) return;
-    var newTable = ClassUtils__instantiateWithSameType(this);
+    var newTable = instantiateWithSameType(this);
     var sortinglist = listOrIndex.isList ? listOrIndex.clone() : this[listOrIndex];
 
     this.forEach(function(list) {
@@ -5626,7 +5802,7 @@ define('src/index', ['exports'], function (exports) {
     for(i = 0; tableToTranspose[i] != null; i++) {
       list = tableToTranspose[i];
       for(j = 0; list[j] != null; j++) {
-        if(i === 0) table[j] = new List__default();
+        if(i === 0) table[j] = new List();
         table[j][i] = tableToTranspose[i][j];
       }
     }
@@ -5645,7 +5821,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   Table__Table.prototype.getReport = function(level) {
-    var ident = "\n" + (level > 0 ? StringOperators__default.repeatString("  ", level) : "");
+    var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
     var lengths = this.getLengths();
     var minLength = lengths.getMin();
     var maxLength = lengths.getMax();
@@ -5730,7 +5906,7 @@ define('src/index', ['exports'], function (exports) {
   ////
 
   Table__Table.prototype.clone = function() {
-    var clonedTable = ClassUtils__instantiateWithSameType(this);
+    var clonedTable = instantiateWithSameType(this);
     clonedTable.name = this.name;
     for(var i = 0; this[i] != null; i++) {
       clonedTable.push(this[i].clone());
@@ -5753,8 +5929,8 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Table = Table__default;
 
-  NumberTable__NumberTable.prototype = new Table__default();
-  NumberTable__NumberTable.prototype.constructor = NumberTable__NumberTable;
+  NumberTable.prototype = new Table__default();
+  NumberTable.prototype.constructor = NumberTable;
 
   /**
    * @classdesc {@link Table} to store numbers.
@@ -5763,7 +5939,7 @@ define('src/index', ['exports'], function (exports) {
    * @description Creates a new NumberTable.
    * @category numbers
    */
-  function NumberTable__NumberTable() {
+  function NumberTable() {
     var args = [];
     var newNumberList;
     var array;
@@ -5772,45 +5948,45 @@ define('src/index', ['exports'], function (exports) {
       array = [];
       var i;
       for(i = 0; i < arguments[0]; i++) {
-        array.push(new NumberList__default());
+        array.push(new NumberList());
       }
     } else {
       for(i = 0; arguments[i] != null; i++) {
-        newNumberList = NumberList__default.fromArray(arguments[i]);
+        newNumberList = NumberList.fromArray(arguments[i]);
         newNumberList.name = arguments[i].name;
         arguments[i] = newNumberList;
       }
       array = Table__default.apply(this, arguments);
     }
-    array = NumberTable__NumberTable.fromArray(array);
+    array = NumberTable.fromArray(array);
     return array;
   }
-  var NumberTable__default = NumberTable__NumberTable;
 
-  NumberTable__NumberTable.fromArray = function(array) {
+
+  NumberTable.fromArray = function(array) {
     var result = Table__default.fromArray(array);
     result.type = "NumberTable";
 
-    result.getNumberListsNormalized = NumberTable__NumberTable.prototype.getNumberListsNormalized;
-    result.getNormalizedToMax = NumberTable__NumberTable.prototype.getNormalizedToMax;
-    result.getNumberListsNormalizedToMax = NumberTable__NumberTable.prototype.getNumberListsNormalizedToMax;
-    result.getNumberListsNormalizedToSum = NumberTable__NumberTable.prototype.getNumberListsNormalizedToSum;
-    result.getSums = NumberTable__NumberTable.prototype.getSums;
-    result.getRowsSums = NumberTable__NumberTable.prototype.getRowsSums;
-    result.getAverages = NumberTable__NumberTable.prototype.getAverages;
-    result.getRowsAverages = NumberTable__NumberTable.prototype.getRowsAverages;
-    result.factor = NumberTable__NumberTable.prototype.factor;
-    result.add = NumberTable__NumberTable.prototype.add;
-    result.getMax = NumberTable__NumberTable.prototype.getMax;
-    result.getMinMaxInterval = NumberTable__NumberTable.prototype.getMinMaxInterval;
+    result.getNumberListsNormalized = NumberTable.prototype.getNumberListsNormalized;
+    result.getNormalizedToMax = NumberTable.prototype.getNormalizedToMax;
+    result.getNumberListsNormalizedToMax = NumberTable.prototype.getNumberListsNormalizedToMax;
+    result.getNumberListsNormalizedToSum = NumberTable.prototype.getNumberListsNormalizedToSum;
+    result.getSums = NumberTable.prototype.getSums;
+    result.getRowsSums = NumberTable.prototype.getRowsSums;
+    result.getAverages = NumberTable.prototype.getAverages;
+    result.getRowsAverages = NumberTable.prototype.getRowsAverages;
+    result.factor = NumberTable.prototype.factor;
+    result.add = NumberTable.prototype.add;
+    result.getMax = NumberTable.prototype.getMax;
+    result.getMinMaxInterval = NumberTable.prototype.getMinMaxInterval;
 
     return result;
   };
 
-  NumberTable__NumberTable.prototype.getNumberListsNormalized = function(factor) {
+  NumberTable.prototype.getNumberListsNormalized = function(factor) {
     factor = factor == null ? 1 : factor;
 
-    var newTable = new NumberTable__NumberTable();
+    var newTable = new NumberTable();
     var i;
     for(i = 0; this[i] != null; i++) {
       numberList = this[i];
@@ -5820,10 +5996,10 @@ define('src/index', ['exports'], function (exports) {
     return newTable;
   };
 
-  NumberTable__NumberTable.prototype.getNormalizedToMax = function(factor) {
+  NumberTable.prototype.getNormalizedToMax = function(factor) {
     factor = factor == null ? 1 : factor;
 
-    var newTable = new NumberTable__NumberTable();
+    var newTable = new NumberTable();
     var i;
     var antimax = factor / this.getMax();
     for(i = 0; this[i] != null; i++) {
@@ -5833,8 +6009,8 @@ define('src/index', ['exports'], function (exports) {
     return newTable;
   };
 
-  NumberTable__NumberTable.prototype.getNumberListsNormalizedToMax = function(factorValue) {
-    var newTable = new NumberTable__NumberTable();
+  NumberTable.prototype.getNumberListsNormalizedToMax = function(factorValue) {
+    var newTable = new NumberTable();
     for(var i = 0; this[i] != null; i++) {
       numberList = this[i];
       newTable[i] = numberList.getNormalizedToMax(factorValue);
@@ -5843,8 +6019,8 @@ define('src/index', ['exports'], function (exports) {
     return newTable;
   };
 
-  NumberTable__NumberTable.prototype.getNumberListsNormalizedToSum = function() {
-    var newTable = new NumberTable__NumberTable();
+  NumberTable.prototype.getNumberListsNormalizedToSum = function() {
+    var newTable = new NumberTable();
     for(var i = 0; this[i] != null; i++) {
       numberList = this[i];
       newTable[i] = numberList.getNormalizedToSum();
@@ -5854,7 +6030,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  NumberTable__NumberTable.prototype.getMax = function() {
+  NumberTable.prototype.getMax = function() {
     if(this.length == 0) return null;
 
     var max = this[0].getMax();
@@ -5867,7 +6043,7 @@ define('src/index', ['exports'], function (exports) {
     return max;
   };
 
-  NumberTable__NumberTable.prototype.getMinMaxInterval = function() {
+  NumberTable.prototype.getMinMaxInterval = function() {
     if(this.length == 0) return null;
     var rangeInterval = (this[0]).getMinMaxInterval();
     for(var i = 1; this[i] != null; i++) {
@@ -5883,8 +6059,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {Numberlist}
    * tags:
    */
-  NumberTable__NumberTable.prototype.getSums = function() {
-    var numberList = new NumberList__default();
+  NumberTable.prototype.getSums = function() {
+    var numberList = new NumberList();
     for(var i = 0; this[i] != null; i++) {
       numberList[i] = this[i].getSum();
     }
@@ -5896,7 +6072,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {NumberList}
    * tags:
    */
-  NumberTable__NumberTable.prototype.getRowsSums = function() {
+  NumberTable.prototype.getRowsSums = function() {
     var sums = this[0].clone();
     var numberList;
     for(var i = 1; this[i] != null; i++) {
@@ -5908,15 +6084,15 @@ define('src/index', ['exports'], function (exports) {
     return sums;
   };
 
-  NumberTable__NumberTable.prototype.getAverages = function() {
-    var numberList = new NumberList__default();
+  NumberTable.prototype.getAverages = function() {
+    var numberList = new NumberList();
     for(var i = 0; this[i] != null; i++) {
       numberList[i] = this[i].getAverage();
     }
     return numberList;
   };
 
-  NumberTable__NumberTable.prototype.getRowsAverages = function() {
+  NumberTable.prototype.getRowsAverages = function() {
     var nLists = this.length;
     var averages = this[0].clone().factor(1 / nLists);
     var numberList;
@@ -5931,8 +6107,8 @@ define('src/index', ['exports'], function (exports) {
     return averages;
   };
 
-  NumberTable__NumberTable.prototype.factor = function(value) {
-    var newTable = new NumberTable__NumberTable();
+  NumberTable.prototype.factor = function(value) {
+    var newTable = new NumberTable();
     var i;
 
     switch(typeOf(value)) {
@@ -5955,8 +6131,8 @@ define('src/index', ['exports'], function (exports) {
     return newTable;
   };
 
-  NumberTable__NumberTable.prototype.add = function(value) {
-    var newTable = new NumberTable__NumberTable();
+  NumberTable.prototype.add = function(value) {
+    var newTable = new NumberTable();
 
     for(var i = 0; this[i] != null; i++) {
       numberList = this[i];
@@ -5967,10 +6143,1868 @@ define('src/index', ['exports'], function (exports) {
     return newTable;
   };
 
-  exports.NumberTable = NumberTable__default;
+  exports.NumberTable = NumberTable;
 
-  function ListOperators__ListOperators() {}
-  var ListOperators__default = ListOperators__ListOperators;
+  RectangleList.prototype = new List();
+  RectangleList.prototype.constructor = RectangleList;
+  /**
+   * @classdesc A {@link List} structure for storing {@link Rectangle} instances.
+   *
+   * @description Creates a new RectangleList.
+   * @constructor
+   * @category geometry
+   */
+  function RectangleList() {
+    var array = List.apply(this, arguments);
+    array = RectangleList.fromArray(array);
+    return array;
+  }
+
+
+  RectangleList.fromArray = function(array) {
+    var result = List.fromArray(array);
+    result.type = "RectangleList";
+
+    result.getFrame = RectangleList.prototype.getFrame;
+    result.add = RectangleList.prototype.add;
+    result.factor = RectangleList.prototype.factor;
+    result.getAddedArea = RectangleList.prototype.getAddedArea;
+    result.getIntersectionArea = RectangleList.prototype.getIntersectionArea;
+
+    return result;
+  };
+
+  //TODO:finish RectangleList methods
+
+  RectangleList.prototype.getFrame = function() {
+    if(this.length == 0) return null;
+    var frame = this[0];
+    frame.width = frame.getRight();
+    frame.height = frame.getBottom();
+    for(var i = 1; this[i] != null; i++) {
+      frame.x = Math.min(frame.x, this[i].x);
+      frame.y = Math.min(frame.y, this[i].y);
+
+      frame.width = Math.max(this[i].getRight(), frame.width);
+      frame.height = Math.max(this[i].getBottom(), frame.height);
+    }
+
+    frame.width -= frame.x;
+    frame.height -= frame.y;
+
+    return frame;
+  };
+
+  RectangleList.prototype.add = function() {
+
+  };
+
+  RectangleList.prototype.factor = function() {
+
+  };
+
+  RectangleList.prototype.getAddedArea = function() {};
+
+  RectangleList.prototype.getIntersectionArea = function() {
+    var rect0;
+    var rect1;
+    var intersectionArea = 0;
+    var intersection;
+    for(var i = 0; this[i + 1] != null; i++) {
+      rect0 = this[i];
+      for(var j = i + 1; this[j] != null; j++) {
+        rect1 = this[j];
+        intersection = rect0.getIntersection(rect1);
+        intersectionArea += intersection == null ? 0 : intersection.getArea();
+      }
+    }
+
+    return intersectionArea;
+  };
+
+  exports.RectangleList = RectangleList;
+
+  function ListGenerators() {}
+
+
+
+  /**
+   * Generates a List made of several copies of same element (returned List is improved)
+   * @param {Object} nValues length of the List
+   * @param {Object} element object to be placed in all positions
+   * @return {List} generated List
+   * tags:generator
+   */
+  ListGenerators.createListWithSameElement = function(nValues, element) {
+    var list;
+    switch(ClassUtils__typeOf(element)) {
+      case 'number':
+        list = new NumberList();
+        break;
+      case 'List':
+        list = new Table__default();
+        break;
+      case 'NumberList':
+        list = new NumberTable();
+        break;
+      case 'Rectangle':
+        list = new RectangleList();
+        break;
+      case 'string':
+        list = new StringList__default();
+        break;
+      case 'boolean':
+        list = new List(); //TODO:update once BooleanList exists
+        break;
+      default:
+        list = new List();
+    }
+
+    for(var i = 0; i < nValues; i++) {
+      list[i] = element;
+    }
+    return list;
+  };
+
+  /**
+   * Generates a List built froma seed element and a function that will be applied iteratively
+   * @param {Object} nValues length of the List
+   * @param {Object} firstElement first element
+   * @param {Object} dynamicFunction sequence generator function, elementN+1 =  dynamicFunction(elementN)
+   * @return {List} generated List
+   */
+  ListGenerators.createIterationSequence = function(nValues, firstElement, dynamicFunction) {
+    var list = ListGenerators.createListWithSameElement(1, firstElement);
+    for(var i = 1; i < nValues; i++) {
+      list[i] = dynamicFunction(list[i - 1]);
+    }
+    return list;
+  };
+
+  exports.ListGenerators = ListGenerators;
+
+  NumberList.prototype = new List();
+  NumberList.prototype.constructor = NumberList;
+
+  /**
+   * @classdesc List structure for Numbers.
+   *
+   * @constructor
+   * @description Creates a new NumberList.
+   * @category numbers
+   */
+  function NumberList() {
+    var args = [];
+
+    for(var i = 0; i < arguments.length; i++) {
+      arguments[i] = Number(arguments[i]);
+    }
+    var array = List.apply(this, arguments);
+    array = NumberList.fromArray(array);
+    //
+    return array;
+  }
+
+
+  NumberList.fromArray = function(array, forceToNumber) {
+    forceToNumber = forceToNumber == null ? true : forceToNumber;
+
+    var result = List.fromArray(array);
+
+    if(forceToNumber) {
+      for(var i = 0; i < result.length; i++) {
+        result[i] = Number(result[i]);
+      }
+    }
+
+    result.type = "NumberList";
+
+    //assign methods to array:
+    result.unit = NumberList.prototype.unit;
+    result.tenPower = NumberList.prototype.tenPower;
+    result.getMin = NumberList.prototype.getMin;
+    result.getMax = NumberList.prototype.getMax;
+    result.getAmplitude = NumberList.prototype.getAmplitude;
+    result.getMinMaxInterval = NumberList.prototype.getMinMaxInterval;
+    result.getSum = NumberList.prototype.getSum;
+    result.getProduct = NumberList.prototype.getProduct;
+    result.getInterval = NumberList.prototype.getInterval;
+    result.getNormalized = NumberList.prototype.getNormalized;
+    result.getNormalizedToMax = NumberList.prototype.getNormalizedToMax;
+    result.getNormalizedToSum = NumberList.prototype.getNormalizedToSum;
+    result.toPolygon = NumberList.prototype.toPolygon;
+
+    //statistics
+    result.getAverage = NumberList.prototype.getAverage;
+    result.getNorm = NumberList.prototype.getNorm;
+    result.getStandardDeviation = NumberList.prototype.getStandardDeviation;
+    result.getVariance = NumberList.prototype.getVariance;
+    result.getMedian = NumberList.prototype.getMedian;
+    result.getQuantiles = NumberList.prototype.getQuantiles;
+
+    //sorting
+    result.getSorted = NumberList.prototype.getSorted;
+    result.getSortIndexes = NumberList.prototype.getSortIndexes;
+    result.factor = NumberList.prototype.factor;
+    result.add = NumberList.prototype.add;
+    result.subtract = NumberList.prototype.subtract;
+    result.divide = NumberList.prototype.divide;
+    result.dotProduct = NumberList.prototype.dotProduct;
+    result.distance = NumberList.prototype.distance;
+    result.sqrt = NumberList.prototype.sqrt;
+    result.pow = NumberList.prototype.pow;
+    result.log = NumberList.prototype.log;
+    result.isEquivalent = NumberList.prototype.isEquivalent;
+    result.toStringList = NumberList.prototype.toStringList;
+
+    //transform
+    result.approach = NumberList.prototype.approach;
+
+    //override
+    result.clone = NumberList.prototype.clone;
+    result._slice = Array.prototype.slice;
+    result.slice = NumberList.prototype.slice;
+
+    return result;
+  };
+  NumberList.prototype.unit = "";
+  NumberList.prototype.tenPower = 0;
+
+  NumberList.prototype.getMin = function() { //TODO:store result and retrieve while the NumberList doesn't change;
+    if(this.length == 0) return null;
+    var i;
+    var min = this[0];
+    for(i = 1; i < this.length; i++) {
+      min = Math.min(min, this[i]);
+    }
+    return min;
+  };
+
+  NumberList.prototype.getMax = function() { //TODO:store result and retrieve while the NumberList doesn't change;
+    if(this.length == 0) return null;
+    var i;
+    var max = this[0];
+    for(i = 1; i < this.length; i++) {
+      max = Math.max(max, this[i]);
+    }
+    return max;
+  };
+
+  NumberList.prototype.getAmplitude = function() {
+    if(this.length == 0) return 0;
+    var min = this[0];
+    var max = this[0];
+    for(var i = 1; this[i] != null; i++) {
+      min = Math.min(min, this[i]);
+      max = Math.max(max, this[i]);
+    }
+    return max - min;
+  };
+
+  NumberList.prototype.getMinMaxInterval = function() { //deprecated?
+    return new Interval__default(this.getMin(), this.getMax());
+  };
+
+  /**
+   * returns the sum of values in the numberList
+   * @return {Number}
+   * tags:
+   */
+  NumberList.prototype.getSum = function() {
+    if(this.length == 0) return 0;
+    var i;
+    var sum = this[0];
+    for(i = 1; i < this.length; i++) {
+      sum += this[i];
+    }
+    return sum;
+  };
+
+  /**
+   * return the product of values in the numberList
+   * @return {Number}
+   * tags:
+   */
+  NumberList.prototype.getProduct = function() {
+    if(this.length == 0) return null;
+    var i;
+    var product = this[0];
+    for(i = 1; i < this.length; i++) {
+      product *= this[i];
+    }
+    return product;
+  };
+
+  /**
+   * returns a NumberList normalized to the sum
+   * @param {Number} factor optional
+   * @return {NumberList}
+   * tags:
+   */
+  NumberList.prototype.getNormalizedToSum = function(factor, sum) {
+    factor = factor == null ? 1 : factor;
+    var newNumberList = new NumberList();
+    newNumberList.name = this.name;
+    if(this.length == 0) return newNumberList;
+    var i;
+    var sum = sum == null ? this.getSum() : sum;
+    if(sum == 0) return this.clone();
+
+    for(i = 0; i < this.length; i++) {
+      newNumberList.push(factor * this[i] / sum);
+    }
+    return newNumberList;
+  };
+
+  /**
+   * returns a numberList normalized to min-max interval
+   * @param {Number} factor optional
+   * @return {NumberList}
+   * tags:
+   */
+  NumberList.prototype.getNormalized = function(factor) {
+    factor = factor == null ? 1 : factor;
+
+    if(this.length == 0) return null;
+
+    var i;
+    var interval = this.getMinMaxInterval();
+    var a = interval.getAmplitude();
+    var newNumberList = new NumberList();
+    for(i = 0; i < this.length; i++) {
+      newNumberList.push(factor * ((this[i] - interval.x) / a));
+    }
+    newNumberList.name = this.name;
+    return newNumberList;
+  };
+
+  /**
+   * returns a numberList normalized to Max
+   * @param {Number} factor optional
+   * @return {NumberList}
+   * tags:
+   */
+  NumberList.prototype.getNormalizedToMax = function(factor) {
+    factor = factor == null ? 1 : factor;
+
+    if(this.length == 0) return null;
+
+    var max = this.getMax();
+    if(max == 0) {
+      max = this.getMin();
+      if(max == 0) return ListGenerators.createListWithSameElement(this.length, 0);
+    }
+    var newNumberList = new NumberList();
+    for(var i = 0; this[i] != null; i++) {
+      newNumberList.push(factor * (this[i] / max));
+    }
+    newNumberList.name = this.name;
+    return newNumberList;
+  };
+
+  /**
+   * builds an Interval witn min and max value from the numberList
+   * @return {Interval}
+   * tags:
+   */
+  NumberList.prototype.getInterval = function() {
+    if(this.length == 0) return null;
+    var max = this[0];
+    var min = this[0];
+    for(var i = 1; this[i] != null; i++) {
+      max = Math.max(max, this[i]);
+      min = Math.min(min, this[i]);
+    }
+    var interval = new Interval__default(min, max);
+    return interval;
+  };
+
+
+  NumberList.prototype.toPolygon = function() {
+    if(this.length == 0) return null;
+    var polygon = new Polygon();
+    for(var i = 0; this[i + 1] != null; i += 2) {
+      polygon.push(new Point(this[i], this[i + 1]));
+    }
+    return polygon;
+  };
+
+
+
+
+  /////////statistics
+
+  /**
+   * calculates mean of numberList
+   * @return {Number}
+   * tags:statistics
+   */
+  NumberList.prototype.getAverage = function() {
+    return this.getSum() / this.length;
+  };
+
+  /**
+   * calculates geometric mean of numberList
+   * @return {Number}
+   * tags:statistics
+   */
+  NumberList.prototype.getGeometricMean = function() {
+    var s = 0;
+    this.forEach(function(val) {
+      s += Math.log(val);
+    });
+    return Math.pow(Math.E, s / this.length);
+  };
+
+  /**
+   * calculates de norm of the numberList (treated as a vector)
+   * @return {Number}
+   * tags:statistics
+   */
+  NumberList.prototype.getNorm = function() {
+    var sq = 0;
+    for(var i = 0; this[i] != null; i++) {
+      sq += Math.pow(this[i], 2);
+    }
+    return Math.sqrt(sq);
+  };
+
+  /**
+   * calculates the variance of the numberList
+   * @return {Number}
+   * tags:statistics
+   */
+  NumberList.prototype.getVariance = function() {
+    var sd = 0;
+    var average = this.getAverage();
+    for(var i = 0; this[i] != null; i++) {
+      sd += Math.pow(this[i] - average, 2);
+    }
+    return sd / this.length;
+  };
+
+  /**
+   * calculates the standard deviation
+   * @return {Number}
+   * tags:statistics
+   */
+  NumberList.prototype.getStandardDeviation = function() {
+    return Math.sqrt(this.getVariance());
+  };
+
+  /**
+   * calculates the median of the numberList
+   * @return {Number}
+   * tags:statistics
+   */
+  NumberList.prototype.getMedian = function(nQuantiles) {
+    var sorted = this.getSorted(true);
+    var prop = (this.length - 1) / 2;
+    var entProp = Math.floor(prop);
+    var onIndex = prop == entProp;
+    var quantiles = new NumberList();
+    return onIndex ? sorted[prop] : (0.5 * sorted[entProp] + 0.5 * sorted[entProp + 1]);
+  };
+
+  /**
+   * builds a partition of n quantiles from the numberList
+   * @param {Number} nQuantiles number of quantiles
+   * @return {Number}
+   * tags:statistics
+   */
+  NumberList.prototype.getQuantiles = function(nQuantiles) {
+    var sorted = this.getSorted(true);
+
+    var prop = this.length / nQuantiles;
+    var entProp = Math.floor(prop);
+    var onIndex = prop == entProp;
+    var quantiles = new NumberList();
+    for(var i = 0; i < nQuantiles - 1; i++) {
+      quantiles[i] = onIndex ? sorted[(i + 1) * prop] : (0.5 * sorted[(i + 1) * entProp] + 0.5 * sorted[(i + 1) * entProp + 1]);
+    }
+    return quantiles;
+  };
+
+
+
+  /////////sorting
+
+  NumberList.prototype.getSorted = function(ascending) {
+    ascending = ascending == null ? true : ascending;
+
+    if(ascending) {
+      return NumberList.fromArray(this.slice().sort(function(a, b) {
+        return a - b;
+      }), false);
+    }
+    return NumberList.fromArray(this.slice().sort(function(a, b) {
+      return b - a;
+    }), false);
+  };
+
+  NumberList.prototype.getSortIndexes = function(descending) {
+    if(descending == null) descending = true;
+
+    var pairs = [];
+    var newList = new NumberList();
+
+    if(this.length == 0) return newList;
+
+    for(var i = 0; this[i] != null; i++) {
+      pairs.push([i, this[i]]);
+    }
+
+    if(descending) {
+      pairs.sort(function(a, b) {
+        if(a[1] < b[1]) return 1;
+        return -1;
+      });
+    } else {
+      pairs.sort(function(a, b) {
+        if(a[1] < b[1]) return -1;
+        return 1;
+      });
+    }
+
+    for(i = 0; pairs[i] != null; i++) {
+      newList.push(pairs[i][0]);
+    }
+    newList.name = this.name;
+    return newList;
+  };
+
+  NumberList.prototype.factor = function(value) {
+    var i;
+    var newNumberList = new NumberList();
+    for(i = 0; i < this.length; i++) {
+      newNumberList.push(this[i] * value);
+    }
+    newNumberList.name = this.name;
+    return newNumberList;
+  };
+
+  NumberList.prototype.add = function(object) {
+    var i;
+    var newNumberList = new NumberList();
+    var type = ClassUtils__typeOf(object);
+
+    switch(type) {
+      case 'number':
+        for(i = 0; this[i] != null; i++) {
+          newNumberList[i] = this[i] + object;
+        }
+        break;
+      case 'NumberList':
+        for(i = 0; this[i] != null; i++) {
+          newNumberList[i] = this[i] + object[i % object.length];
+        }
+        break;
+    }
+
+    newNumberList.name = this.name;
+    return newNumberList;
+  };
+
+  NumberList.prototype.subtract = function(object) {
+    var i;
+    var newNumberList = new NumberList();
+    var type = ClassUtils__typeOf(object);
+
+    switch(type) {
+      case 'number':
+        for(i = 0; this[i] != null; i++) {
+          newNumberList[i] = this[i] - object;
+        }
+        break;
+      case 'NumberList':
+        for(i = 0; this[i] != null; i++) {
+          newNumberList[i] = this[i] - object[i % object.length];
+        }
+        break;
+    }
+
+    newNumberList.name = this.name;
+    return newNumberList;
+  };
+
+  NumberList.prototype.divide = function(object) {
+    var i;
+    var newNumberList = new NumberList();
+    var type = ClassUtils__typeOf(object);
+
+    switch(type) {
+      case 'number':
+        for(i = 0; this[i] != null; i++) {
+          newNumberList[i] = this[i] / object;
+        }
+        break;
+      case 'NumberList':
+        for(i = 0; this[i] != null; i++) {
+          newNumberList[i] = this[i] / object[i % object.length];
+        }
+        break;
+    }
+
+    newNumberList.name = this.name;
+    return newNumberList;
+  };
+
+  NumberList.prototype.sqrt = function() {
+    var i;
+    var newNumberList = new NumberList();
+    for(i = 0; i < this.length; i++) {
+      newNumberList.push(Math.sqrt(this[i]));
+    }
+    newNumberList.name = this.name;
+    return newNumberList;
+  };
+
+  NumberList.prototype.pow = function(power) {
+    var i;
+    var newNumberList = new NumberList();
+    for(i = 0; i < this.length; i++) {
+      newNumberList.push(Math.pow(this[i], power));
+    }
+    newNumberList.name = this.name;
+    return newNumberList;
+  };
+
+  NumberList.prototype.log = function(add) {
+    add = add || 0;
+
+    var i;
+    var newNumberList = new NumberList();
+    for(i = 0; this[i] != null; i++) {
+      newNumberList[i] = Math.log(this[i] + add);
+    }
+    newNumberList.name = this.name;
+
+    return newNumberList;
+  };
+
+  NumberList.prototype.dotProduct = function(numberList) {
+    var sum = 0;
+    var i;
+    var nElements = Math.min(this.length, numberList.length);
+    for(i = 0; i < nElements; i++) {
+      sum += this[i] * numberList[i];
+    }
+    return sum;
+  };
+
+  /**
+   * calculates Euclidean distance between two numberLists
+   * @param  {NumberList} numberList
+   * @return {Number}
+   * tags:
+   */
+  NumberList.prototype.distance = function(numberList) {
+    var sum = 0;
+    var i;
+    var nElements = Math.min(this.length, numberList.length);
+    for(i = 0; i < nElements; i++) {
+      sum += Math.pow(this[i] - numberList[i], 2);
+    }
+    return Math.sqrt(sum);
+  };
+
+  NumberList.prototype.isEquivalent = function(numberList) {
+    for(i = 0; this[i] != null; i++) {
+      if(this[i] != numberList[i]) return false;
+    }
+    return true;
+  };
+
+  NumberList.prototype.toStringList = function() {
+    var i;
+    var stringList = new StringList__default();
+    for(i = 0; this[i] != null; i++) {
+      stringList[i] = String(this[i]);
+    }
+    stringList.name = this.name;
+    return stringList;
+  };
+
+
+  //transform
+
+  NumberList.prototype.approach = function(destinty, speed) {
+    speed = speed || 0.5;
+
+    var i;
+    var antispeed = 1 - speed;
+
+    for(i = 0; this[i] != null; i++) {
+      this[i] = antispeed * this[i] + speed * destinty[i];
+    }
+  };
+
+
+  ///////overriding
+
+  NumberList.prototype.clone = function() {
+    var newList = NumberList.fromArray(this._slice(), false);
+    newList.name = this.name;
+    return newList;
+  };
+
+  NumberList.prototype.slice = function() {
+    return NumberList.fromArray(this._slice.apply(this, arguments), false);
+  };
+
+  exports.NumberList = NumberList;
+
+  StringList__StringList.prototype = new List();
+  StringList__StringList.prototype.constructor = StringList__StringList;
+
+  /**
+   * @classdesc {@link List} for storing Strings.
+   *
+   * @constructor
+   * @description Creates a new StringList
+   * @category strings
+   */
+  function StringList__StringList() {
+    var args = []; //TODO:why this?, ask M
+
+    for(var i = 0; i < arguments.length; i++) {
+      args[i] = String(arguments[i]);
+    }
+    var array = List.apply(this, args);
+    array = StringList__StringList.fromArray(array);
+    //
+    return array;
+  }
+  var StringList__default = StringList__StringList;
+
+  StringList__StringList.fromArray = function(array, forceToString) {
+    forceToString = forceToString == null ? true : forceToString;
+
+    var result = List.fromArray(array);
+    if(forceToString) {
+      for(var i = 0; i < result.length; i++) {
+        result[i] = String(result[i]);
+      }
+    }
+    result.type = "StringList";
+
+    //assign methods to array:
+    result.getLengths = StringList__StringList.prototype.getLengths;
+    result.toLowerCase = StringList__StringList.prototype.toLowerCase;
+    result.toUpperCase = StringList__StringList.prototype.toUpperCase;
+    result.append = StringList__StringList.prototype.append;
+    result.getSurrounded = StringList__StringList.prototype.getSurrounded;
+    result.replace = StringList__StringList.prototype.replace;
+    result.getConcatenated = StringList__StringList.prototype.getConcatenated;
+    result.toNumberList = StringList__StringList.prototype.toNumberList;
+    result.toDateList = StringList__StringList.prototype.toDateList;
+    result.trim = StringList__StringList.prototype.trim;
+
+    //override
+    result.clone = StringList__StringList.prototype.clone;
+
+    return result;
+  };
+
+  /**
+   * overrides List.prototype.getLengths (see comments there)
+   */
+  StringList__StringList.prototype.getLengths = function() {
+    var lengths = new NumberList();
+    var string;
+
+    this.forEach(function(string) {
+      lengths.push(string.length);
+    });
+
+    return lengths;
+  };
+
+  StringList__StringList.prototype.append = function(sufix, after) {
+    after = after == null ? true : after;
+    var newStringList = new StringList__StringList();
+    newStringList.name = this.name;
+    var sufixIsStringList = ClassUtils__typeOf(sufix) == "StringList";
+    var i;
+    if(after) {
+      for(i = 0; this[i] != null; i++) {
+        newStringList[i] = this[i] + (sufixIsStringList ? sufix[i] : sufix);
+      }
+    } else {
+      for(i = 0; this[i] != null; i++) {
+        newStringList[i] = (sufixIsStringList ? sufix[i] : sufix) + this[i];
+      }
+    }
+    return newStringList;
+  };
+
+  /**
+   * prefix and sufix can be string or a StringList
+   */
+  StringList__StringList.prototype.getSurrounded = function(prefix, sufix) {
+    var newStringList = new StringList__StringList();
+    newStringList.name = this.name;
+    var i;
+
+    var prefixIsStringList = Array.isArray(prefix);
+    var sufixIsStringList = Array.isArray(sufix);
+
+    for(i = 0; this[i] != null; i++) {
+      newStringList[i] = (prefixIsStringList ? prefix[i] : prefix) + this[i] + (sufixIsStringList ? sufix[i] : sufix);
+    }
+
+    return newStringList;
+  };
+
+
+  //deprectaed, replaced by replaceInStrings
+  StringList__StringList.prototype.replace = function(regExp, string) {
+    var newStringList = new StringList__StringList();
+    newStringList.name = this.name;
+
+    for(var i = 0; this[i] != null; i++) {
+      newStringList[i] = this[i].replace(regExp, string);
+    }
+
+    return newStringList;
+  };
+
+  /**
+   * replaces in each string, a sub-string by a string
+   * @param  {String} subString sub-string to be replaced in each string
+   * @param  {String} replacement string to be placed instead
+   * @return {StringList}
+   * tags:
+   */
+  StringList__StringList.prototype.replaceSubStringsInStrings = function(subString, replacement) {
+    var newStringList = new StringList__StringList();
+    newStringList.name = this.name;
+
+    for(var i = 0; this[i] != null; i++) {
+      newStringList[i] = StringOperators.replaceString(string, subString, replacement);
+    }
+
+    return newStringList;
+  };
+
+  StringList__StringList.prototype.getConcatenated = function(separator) {
+    var i;
+    var string = "";
+    for(i = 0; this[i] != null; i++) {
+      string += this[i];
+      if(i < this.length - 1) string += separator;
+    }
+    return string;
+  };
+
+
+  StringList__StringList.prototype.toLowerCase = function() {
+    var newStringList = new StringList__StringList();
+    newStringList.name = this.name;
+    var i;
+    for(i = 0; this[i] != null; i++) {
+      newStringList[i] = this[i].toLowerCase();
+    }
+    return newStringList;
+  };
+
+  StringList__StringList.prototype.toUpperCase = function() {
+    var newStringList = new StringList__StringList();
+    newStringList.name = this.name;
+    var i;
+    for(i = 0; this[i] != null; i++) {
+      newStringList[i] = this[i].toUpperCase();
+    }
+    return newStringList;
+  };
+
+  StringList__StringList.prototype.toNumberList = function() {
+    var numbers = new NumberList();
+    numbers.name = this.name;
+    var i;
+    for(i = 0; this[i] != null; i++) {
+      numbers[i] = Number(this[i]);
+    }
+    return numbers;
+  };
+
+
+  /**
+   * converts a stringList into a dateList
+   *
+   * @param  {String} formatCase format cases:<br>0: MM-DD-YYYY<br>1: YYYY-MM-DD (standard Javascript conversion)
+   * @param  {String} separator "-" by default
+   * @return {DateList}
+   * tags:
+   */
+  StringList__StringList.prototype.toDateList = function(formatCase, separator) {
+    var dateList = new DateList();
+    var i;
+    for(i = 0; this[i] != null; i++) {
+      dateList.push(DateOperators.stringToDate(this[i], formatCase, separator));
+    }
+    return dateList;
+  };
+
+  /**
+   * trims all the strings on the stringList
+   * @return {StringList}
+   * tags:
+   */
+  StringList__StringList.prototype.trim = function() {
+    var i;
+    var newStringList = new StringList__StringList();
+    for(i = 0; this[i] != null; i++) {
+      newStringList[i] = this[i].trim();
+    }
+    newStringList.name = this.name;
+    return newStringList;
+  };
+
+  ///////overriding
+
+  StringList__StringList.prototype.clone = function() {
+    var newList = StringList__StringList.fromArray(this.slice(), false);
+    newList.name = this.name;
+    return newList;
+  };
+
+  exports.StringList = StringList__default;
+
+  function NumberOperators() {}
+
+
+  NumberOperators.numberToString = function(value, nDecimals, powersMode, unit) {
+    var string = value.toFixed(nDecimals);
+    while(string.charAt(string.length - 1) == '0') {
+      string = string.substring(0, string.length - 1);
+    }
+    if(string.charAt(string.length - 1) == '.') string = string.substring(0, string.length - 1);
+    return string;
+  };
+
+  /**
+   * decent method to create pseudo random numbers
+   * @param {Object} seed
+   */
+  NumberOperators.getRandomWithSeed = function(seed) {
+    seed = (seed * 9301 + 49297) % 233280;
+    return seed / (233280.0);
+  };
+
+  NumberOperators.numberFromBinaryPositions = function(binaryPositions) {
+    var i;
+    var n = 0;
+    for(i = 0; binaryPositions[i] != null; i++) {
+      n += Math.pow(2, binaryPositions[i]);
+    }
+    return n;
+  };
+
+  NumberOperators.numberFromBinaryValues = function(binaryValues) {
+    var n = 0;
+    for(var i = 0; binaryValues[i] != null; i++) {
+      n += binaryValues[i] == 1 ? Math.pow(2, i) : 0;
+    }
+    return n;
+  };
+
+  NumberOperators.powersOfTwoDecomposition = function(number, length) {
+    // var i;
+    // var powers = StringList.fromArray(Number(number).toString(2).split('')).toNumberList().getReversed();
+    // var n = powers.length;
+    // for(i=n; i<length; i++){
+    //   powers.push(0);
+    // }
+    // return powers;
+
+
+
+    var powers = new NumberList();
+
+    var constructingNumber = 0;
+    var biggestPower;
+
+    while(constructingNumber < number) {
+      biggestPower = Math.floor(Math.log(number) / Math.LN2);
+      powers[biggestPower] = 1;
+      number -= Math.pow(2, biggestPower);
+    }
+
+    var length = Math.max(powers.length, length == null ? 0 : length);
+
+    for(var i = 0; i < length; i++) {
+      powers[i] = powers[i] == 1 ? 1 : 0;
+    }
+
+    return powers;
+  };
+
+  NumberOperators.positionsFromBinaryValues = function(binaryValues) {
+    var i;
+    var positions = new NumberList();
+    for(i = 0; binaryValues[i] != null; i++) {
+      if(binaryValues[i] == 1) positions.push(i);
+    }
+    return positions;
+  };
+
+  //////////Random Generator with Seed, From http://baagoe.org/en/w/index.php/Better_random_numbers_for_javascript
+
+  NumberOperators._Alea = function() {
+    return(function(args) {
+      // Johannes Baagøe <baagoe@baagoe.com>, 2010
+      var s0 = 0;
+      var s1 = 0;
+      var s2 = 0;
+      var c = 1;
+
+      if(args.length == 0) {
+        args = [+new Date()];
+      }
+      var mash = NumberOperators._Mash();
+      s0 = mash(' ');
+      s1 = mash(' ');
+      s2 = mash(' ');
+
+      for(var i = 0; i < args.length; i++) {
+        s0 -= mash(args[i]);
+        if(s0 < 0) {
+          s0 += 1;
+        }
+        s1 -= mash(args[i]);
+        if(s1 < 0) {
+          s1 += 1;
+        }
+        s2 -= mash(args[i]);
+        if(s2 < 0) {
+          s2 += 1;
+        }
+      }
+      mash = null;
+
+      var random = function() {
+        var t = 2091639 * s0 + c * 2.3283064365386963e-10; // 2^-32
+        s0 = s1;
+        s1 = s2;
+        return s2 = t - (c = t | 0);
+      };
+      random.uint32 = function() {
+        return random() * 0x100000000; // 2^32
+      };
+      random.fract53 = function() {
+        return random() +
+          (random() * 0x200000 | 0) * 1.1102230246251565e-16; // 2^-53
+      };
+      random.version = 'Alea 0.9';
+      random.args = args;
+      return random;
+
+    }(Array.prototype.slice.call(arguments)));
+  };
+
+  NumberOperators._Mash = function() {
+    var n = 0xefc8249d;
+
+    var mash = function(data) {
+      data = data.toString();
+      for(var i = 0; i < data.length; i++) {
+        n += data.charCodeAt(i);
+        var h = 0.02519603282416938 * n;
+        n = h >>> 0;
+        h -= n;
+        h *= n;
+        n = h >>> 0;
+        h -= n;
+        n += h * 0x100000000; // 2^32
+      }
+      return(n >>> 0) * 2.3283064365386963e-10; // 2^-32
+    };
+
+    mash.version = 'Mash 0.9';
+    return mash;
+  };
+
+  exports.NumberOperators = NumberOperators;
+
+  function NumberListGenerators() {}
+
+
+  /**
+   * Generate a NumberList with sorted Numbers
+   * @param {Number} nValues length of the NumberList
+   *
+   * @param {Number} start first value
+   * @param {Number} step increment value
+   * @return {NumberList} generated NumberList
+   * tags:generator
+   */
+  NumberListGenerators.createSortedNumberList = function(nValues, start, step) {
+    start = start || 0;
+    step = step || 1;
+    if(step == 0) step = 1;
+    var i;
+    var numberList = new NumberList();
+    for(i = 0; i < nValues; i++) {
+      numberList.push(start + i * step);
+    }
+    return numberList;
+  };
+
+  // TODO: Should this function be here?
+  NumberList.createNumberListFromInterval = function(nElements, interval) {
+    if(interval == null) interval = new Interval__default(0, 1);
+    var numberList = new NumberList();
+    var range = interval.getAmplitude();
+    var i;
+    for(i = 0; i < nElements; i++) {
+      numberList.push(Number(interval.getMin()) + Number(Math.random() * range));
+    }
+    return numberList;
+  };
+
+  /**
+   * create a list with random numbers
+   * @param  {Number} nValues
+   *
+   * @param  {Interval} interval range of the numberList
+   * @param  {Number} seed optional seed for seeded random numbers
+   * @return {NumberList}
+   * tags:random
+   */
+  NumberListGenerators.createRandomNumberList = function(nValues, interval, seed, func) {
+    seed = seed == null ? -1 : seed;
+    interval = interval == null ? new Interval__default(0, 1) : interval;
+
+    var numberList = new NumberList();
+    var amplitude = interval.getAmplitude();
+
+    var random = seed == -1 ? Math.random : new NumberOperators._Alea("my", seed, "seeds");
+
+    for(var i = 0; i < nValues; i++) {
+      //seed = (seed*9301+49297) % 233280; //old method, close enough: http://moebio.com/research/randomseedalgorithms/
+      //numberList[i] = interval.x + (seed/233280.0)*amplitude; //old method
+
+      numberList[i] = func == null ? (random() * amplitude + interval.x) : func(random() * amplitude + interval.x);
+    }
+
+    return numberList;
+  };
+
+  exports.NumberListGenerators = NumberListGenerators;
+
+  function TableOperators() {}
+
+
+
+  TableOperators.getElementFromTable = function(table, i, j) {
+    if(table[i] == null) return null;
+    return table[i][j];
+  };
+
+  TableOperators.getSubTable = function(table, x, y, width, height) {
+    if(table == null) return table;
+
+    var nLists = table.length;
+    if(nLists == 0) return null;
+    var result = new Table__default();
+
+    if(width <= 0) width = (nLists - x) + width;
+    x = Math.min(x, nLists - 1);
+    width = Math.min(width, nLists - x);
+
+    var nRows = table[0].length;
+
+    if(nRows == 0) return null;
+
+    if(height <= 0) height = (nRows - y) + height;
+
+    y = Math.min(y, nRows - 1);
+    height = Math.min(height, nRows - y);
+
+    var column;
+    var newColumn;
+    var i;
+    var j;
+    var element;
+    for(i = x; i < x + width; i++) {
+      column = table[i];
+      newColumn = new List();
+      newColumn.name = table[i].name;
+      for(j = y; j < y + height; j++) {
+        element = column[j];
+        newColumn.push(element);
+      }
+      result.push(newColumn.getImproved());
+    }
+    return result.getImproved();
+  };
+
+  /**
+   * transposes a table
+   * @param  {Table} table to be transposed
+   *
+   * @param {Boolean} firstListAsHeaders removes first list of the table and uses it as names for the lists on the transposed table
+   * @return {Table}
+   * tags:matrixes
+   */
+  TableOperators.transpose = function(table, firstListAsHeaders) {
+    if(table == null) return null;
+    return table.getTransposed(firstListAsHeaders);
+  };
+
+  /**
+   * divides the instances of a table in two tables: the training table and the test table
+   * @param  {Table} table
+   * @param  {Number} proportion proportion of training instances/test instances, between 0 and 1
+   *
+   * @param  {Number} mode  0:random<br>1:random with seed<br>2:shuffle
+   * @param {Number} seed seed for random numbers (mode 1)
+   * @return {List} list containing the two tables
+   * tags:ds
+   */
+  TableOperators.trainingTestPartition = function(table, proportion, mode, seed) {
+    if(table == null || proportion == null) return;
+
+    mode = mode || 0;
+    seed = seed || 0;
+
+    var indexesTr = new NumberList();
+    var indexesTe = new NumberList();
+
+    var random = mode == 1 ? new NumberOperators._Alea("my", seed, "seeds") : Math.random;
+
+    if(mode == 2) N_MOD = Math.floor(proportion / (1 - proportion) * 10);
+
+    table[0].forEach(function(id, i) {
+      if(mode == 0 ||  mode == 1) {
+        if(random() < proportion) {
+          indexesTr.push(i);
+        } else {
+          indexesTe.push(i);
+        }
+      } else {
+        if(i % N_MOD != 0) {
+          indexesTr.push(i);
+        } else {
+          indexesTe.push(i);
+        }
+      }
+    });
+
+    return new List(table.getSubListsByIndexes(indexesTr), table.getSubListsByIndexes(indexesTe));
+  };
+
+  /**
+   * tests a model
+   * @param  {NumberTable} numberTable coordinates of points
+   * @param  {List} classes list of values of classes
+   * @param  {Function} model function that receives two numbers and returns a guessed class
+   *
+   * @param  {Number} metric 0:error
+   * @return {Number} metric value
+   * tags:ds
+   */
+  TableOperators.testClassificationModel = function(numberTable, classes, model, metric) {
+    if(numberTable == null || classes == null || model == null) return null;
+
+    metric = metric || 0;
+
+    var i;
+    var nErrors = 0;
+
+    classes.forEach(function(clss, i) {
+      if(model(numberTable[0][i], numberTable[1][i]) != clss) {
+        nErrors++;
+      }
+    });
+
+    return nErrors / classes.length;
+  };
+
+
+
+  TableOperators.getSubListsByIndexes = function(table, indexes) {
+    var newTable = new Table__default();
+    newTable.name = table.name;
+    var i;
+    var list;
+    var newList;
+    for(i = 0; table[i] != null; i++) {
+      list = table[i];
+      newList = instantiateWithSameType(list);
+      for(j = 0; indexes[j] != null; j++) {
+        newList[j] = list[indexes[j]];
+      }
+      newTable[i] = newList.getImproved();
+    }
+    return newTable;
+  };
+
+  TableOperators.sortListsByNumberList = function(table, numberList, descending) {
+    if(descending == null) descending = true;
+
+    var newTable = ClassUtils__instantiate(ClassUtils__typeOf(table));
+    newTable.name = table.name;
+    var nElements = table.length;
+    var i;
+    // only need to do the sort once, not for each column
+    var indexList = numberList.clone();
+    // save original index
+    for(i = 0; i < indexList.length; i++) {
+      indexList[i] = i;
+    }
+    indexList = ListOperators.sortListByNumberList(indexList, numberList, descending);
+    // now clone and then move from original based on index
+    for(i = 0; i < nElements; i++) {
+      newTable[i] = table[i].clone();
+      for(var j = 0; j < indexList.length; j++) {
+        newTable[i][j] = table[i][indexList[j]];
+      }
+    }
+    return newTable;
+  };
+
+  // old version replaced by above version Dec 1st, 2014
+  // - fixed bug where descending with 'false' value gets changed to 'true'
+  // - performance improvements for tables with lots of lists
+  // TableOperators.sortListsByNumberList=function(table, numberList, descending){
+  // 	descending = descending || true;
+
+  // 	var newTable = instantiate(typeOf(table));
+  // 	newTable.name = table.name;
+  // 	var nElements = table.length;
+  // 	var i;
+  // 	for(i=0; i<nElements; i++){
+  // 		newTable[i] = ListOperators.sortListByNumberList(table[i], numberList, descending);
+  // 	}
+  // 	return newTable;
+  // }
+
+
+
+  /**
+   * aggregates a table
+   * @param  {Table} table to be aggregated
+   *
+   * @param  {Number} nList list in the table used as basis to aggregation
+   * @param  {Number} mode mode of aggregation, 0:picks first element 1:adds numbers, 2:averages
+   * @return {Table} aggregated table
+   * tags:aggregation
+   */
+  TableOperators.aggregateTable = function(table, nList, mode) {
+    nList = nList == null ? 0 : nList;
+    if(table == null || table[0] == null || table[0][0] == null || table[nList] == null) return null;
+    mode = mode == null ? 0 : mode;
+
+    var newTable = new Table__default();
+    var i, j;
+    var index;
+    var notRepeated;
+
+    newTable.name = table.name;
+
+    for(j = 0; table[j] != null; j++) {
+      newTable[j] = new List();
+      newTable[j].name = table[j].name;
+    }
+
+    switch(mode) {
+      case 0: //leaves the first element of the aggregated subLists
+        for(i = 0; table[0][i] != null; i++) {
+          notRepeated = newTable[nList].indexOf(table[nList][i]) == -1;
+          if(notRepeated) {
+            for(j = 0; table[j] != null; j++) {
+              newTable[j].push(table[j][i]);
+            }
+          }
+        }
+        break;
+      case 1: //adds values in numberLists
+        for(i = 0; table[0][i] != null; i++) {
+          index = newTable[nList].indexOf(table[nList][i]);
+          notRepeated = index == -1;
+          if(notRepeated) {
+            for(j = 0; table[j] != null; j++) {
+              newTable[j].push(table[j][i]);
+            }
+          } else {
+            for(j = 0; table[j] != null; j++) {
+              if(j != nList && table[j].type == 'NumberList') {
+                newTable[j][index] += table[j][i];
+              }
+            }
+          }
+        }
+        break;
+      case 2: //averages values in numberLists
+        var nRepetitionsList = table[nList].getElementsRepetitionCount(false);
+        newTable = TableOperators.aggregateTable(table, nList, 1);
+
+        for(j = 0; newTable[j] != null; j++) {
+          if(j != nList && newTable[j].type == 'NumberList') {
+            newTable[j] = newTable[j].divide(nRepetitionsList[1]);
+          }
+        }
+
+        newTable.push(nRepetitionsList[1]);
+        break;
+    }
+    for(j = 0; newTable[j] != null; j++) {
+      newTable[j] = newTable[j].getImproved();
+    }
+    return newTable.getImproved();
+  };
+
+  /**
+   * counts pairs of elements in same positions in two lists (the result is the adjacent matrix of the network defined by pairs)
+   * @param  {Table} table with at least two lists
+   * @return {NumberTable}
+   * tags:
+   */
+  TableOperators.getCountPairsMatrix = function(table) {
+    if(table == null || table.length < 2 || table[0] == null || table[0][0] == null) return null;
+
+    var list0 = table[0].getWithoutRepetitions();
+    var list1 = table[1].getWithoutRepetitions();
+
+    var matrix = new NumberTable(list1.length);
+
+    list1.forEach(function(element1, i) {
+      matrix[i].name = String(element1);
+      list0.forEach(function(element0, j) {
+        matrix[i][j] = 0;
+      });
+    });
+
+    table[0].forEach(function(element0, i) {
+      element1 = table[1][i];
+      matrix[list1.indexOf(element1)][list0.indexOf(element0)]++;
+    });
+
+    return matrix;
+  };
+
+
+  /**
+   * filter a table selecting rows that have an element on one of its lists
+   * @param  {Table} table
+   * @param  {Number} nList list that could contain the element in several positions
+   * @param  {Object} element
+   * @return {Table}
+   * tags:filter
+   */
+  TableOperators.filterTableByElementInList = function(table, nList, element) {
+    if(table == null ||  !table.length > 1 || nList == null) return;
+    if(element == null) return table;
+
+
+    var newTable = new Table__default();
+    var i, j;
+
+    newTable.name = table.name;
+
+    for(j = 0; table[j] != null; j++) {
+      newTable[j] = new List();
+    }
+
+    for(i = 0; table[0][i] != null; i++) {
+      if(table[nList][i] == element) {
+        for(j = 0; table[j] != null; j++) {
+          newTable[j].push(table[j][i]);
+        }
+      }
+    }
+
+    for(j = 0; newTable[j] != null; j++) {
+      newTable[j] = newTable[j].getImproved();
+    }
+
+    return newTable;
+  };
+
+  TableOperators.mergeDataTablesInList = function(tableList) {
+    if(tableList.length < 2) return tableList;
+
+    var merged = tableList[0];
+
+    for(var i = 1; tableList[i] != null; i++) {
+      merged = TableOperators.mergeDataTables(merged, tableList[i]);
+    }
+
+    return merged;
+  };
+
+  /**
+   * creates a new table with an updated first List of elements and an added new numberList with the new values
+   */
+  TableOperators.mergeDataTables = function(table0, table1) {
+    if(table1[0].length == 0) {
+      var merged = table0.clone();
+      merged.push(ListGenerators.createListWithSameElement(table0[0].length, 0));
+      return merged;
+    }
+
+    var table = new Table__default();
+    var list = ListOperators.concatWithoutRepetitions(table0[0], table1[0]);
+
+    var nElements = list.length;
+
+    var nNumbers0 = table0.length - 1;
+    var nNumbers1 = table1.length - 1;
+
+    var numberTable0 = new NumberTable();
+    var numberTable1 = new NumberTable();
+
+    var element;
+    var index;
+
+    var i, j;
+
+    for(i = 0; i < nElements; i++) {
+      index = table0[0].indexOf(list[i]);
+      if(index > -1) {
+        for(var j = 0; j < nNumbers0; j++) {
+          if(i == 0) {
+            numberTable0[j] = new NumberList();
+            numberTable0[j].name = table0[j + 1].name;
+          }
+          numberTable0[j][i] = table0[j + 1][index];
+        }
+      } else {
+        for(j = 0; j < nNumbers0; j++) {
+          if(i == 0) {
+            numberTable0[j] = new NumberList();
+            numberTable0[j].name = table0[j + 1].name;
+          }
+          numberTable0[j][i] = 0;
+        }
+      }
+
+      index = table1[0].indexOf(list[i]);
+      if(index > -1) {
+        for(j = 0; j < nNumbers1; j++) {
+          if(i == 0) {
+            numberTable1[j] = new NumberList();
+            numberTable1[j].name = table1[j + 1].name;
+          }
+          numberTable1[j][i] = table1[j + 1][index];
+        }
+      } else {
+        for(j = 0; j < nNumbers1; j++) {
+          if(i == 0) {
+            numberTable1[j] = new NumberList();
+            numberTable1[j].name = table1[j + 1].name;
+          }
+          numberTable1[j][i] = 0;
+        }
+      }
+    }
+
+    table[0] = list;
+
+    for(i = 0; numberTable0[i] != null; i++) {
+      table.push(numberTable0[i]);
+    }
+    for(i = 0; numberTable1[i] != null; i++) {
+      table.push(numberTable1[i]);
+    }
+    return table;
+  };
+
+  /**
+   * From two DataTables creates a new DataTable with combined elements in the first List, and added values in the second
+   * @param {Object} table0
+   * @param {Object} table1
+   * @return {Table}
+   */
+  TableOperators.fusionDataTables = function(table0, table1) {
+    var table = table0.clone();
+    var index;
+    var element;
+    for(var i = 0; table1[0][i] != null; i++) {
+      element = table1[0][i];
+      index = table[0].indexOf(element);
+      if(index == -1) {
+        table[0].push(element);
+        table[1].push(table1[1][i]);
+      } else {
+        table[1][index] += table1[1][i];
+      }
+    }
+    return table;
+  };
+
+  TableOperators.completeTable = function(table, nRows, value) {
+    value = value == null ? 0 : value;
+
+    var newTable = new Table__default();
+    newTable.name = table.name;
+
+    var list;
+    var newList;
+    var j;
+
+    for(var i = 0; i < table.length; i++) {
+      list = table[i];
+      newList = list == null ? ListOperators.getNewListForObjectType(value) : instantiateWithSameType(list);
+      newList.name = list == null ? '' : list.name;
+      for(j = 0; j < nRows; j++) {
+        newList[j] = (list == null || list[j] == null) ? value : list[j];
+      }
+      newTable[i] = newList;
+    }
+    return newTable;
+  };
+
+  /**
+   * filters a Table keeping the NumberLists
+   * @param  {Table} table to filter
+   * @return {NumberTable}
+   * tags:filter
+   */
+  TableOperators.getNumberTableFromTable = function(table) {
+    if(table == null ||  !table.length > 0) return null;
+
+    var i;
+    var newTable = new NumberTable();
+    newTable.name = table.name;
+    for(i = 0; table[i] != null; i++) {
+      if(table[i].type == "NumberList") newTable.push(table[i]);
+    }
+    return newTable;
+  };
+
+  /**
+   * calculates de information gain of all variables in a table and a supervised variable
+   * @param  {Table} variablesTable
+   * @param  {List} supervised
+   * @return {NumberList}
+   * tags:ds
+   */
+  TableOperators.getVariablesInformationGain = function(variablesTable, supervised) {
+    if(variablesTable == null) return null;
+
+    var igs = new NumberList();
+    variablesTable.forEach(function(feature) {
+      igs.push(ListOperators.getInformationGain(feature, supervised));
+    });
+    return igs;
+  };
+
+  TableOperators.splitTableByCategoricList = function(table, list) {
+    if(table == null || list == null) return null;
+
+    var childrenTable;
+    var tablesList = new List();
+    var childrenObject = {};
+    var N = list.length;
+
+    list.forEach(function(element, i) {
+      childrenTable = childrenObject[element];
+      if(childrenTable == null) {
+        childrenTable = new Table__default();
+        childrenObject[element] = childrenTable;
+        tablesList.push(childrenTable);
+        table.forEach(function(list, j) {
+          childrenTable[j] = new List();
+          childrenTable[j].name = list.name;
+        });
+        childrenTable._element = element;
+      }
+      table.forEach(function(list, j) {
+        childrenTable[j].push(table[j][i]);
+      });
+    });
+
+    return tablesList;
+  };
+
+  /**
+   * builds a decision tree based on a variables table and a supervised variable
+   * @param  {Table} variablesTable
+   * @param  {List} supervised
+   * @param {Object} supervisedValue main value in supervised list (associated with blue)
+   *
+   * @param {Number} min_entropy minimum value of entropy on nodes (0.2 default)
+   * @param {Number} min_size_node minimum population size associated with node (10 default)
+   * @param {Number} min_info_gain minimum information gain by splitting by best feature (0.002 default)
+   * @param {Boolean} generatePattern generates a pattern of points picturing proprtion of followed class in node
+   * @return {Tree}
+   * tags:ds
+   */
+  TableOperators.buildDecisionTree = function(variablesTable, supervised, supervisedValue, min_entropy, min_size_node, min_info_gain, generatePattern) {
+    if(variablesTable == null ||  supervised == null || supervisedValue == null) return;
+
+    min_entropy = min_entropy == null ? 0.2 : min_entropy;
+    min_size_node = min_size_node || 10;
+    min_info_gain = min_info_gain || 0.002;
+
+    var indexes = NumberListGenerators.createSortedNumberList(supervised.length);
+    var tree = new Tree();
+
+    TableOperators._buildDecisionTreeNode(tree, variablesTable, supervised, 0, min_entropy, min_size_node, min_info_gain, null, null, supervisedValue, indexes, generatePattern);
+
+    return tree;
+  };
+
+
+  TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervised, level, min_entropy, min_size_node, min_info_gain, parent, value, supervisedValue, indexes, generatePattern) {
+
+    var entropy = ListOperators.getListEntropy(supervised, supervisedValue);
+
+
+    if(entropy >= min_entropy) {
+      informationGains = TableOperators.getVariablesInformationGain(variablesTable, supervised);
+      var maxIg = 0;
+      var iBestFeature = 0;
+      informationGains.forEach(function(ig, i) {
+        if(ig > maxIg) {
+          maxIg = ig;
+          iBestFeature = i;
+        }
+      });
+    }
+
+    //console.log('informationGains', informationGains);
+
+
+
+    var subDivide = entropy >= min_entropy && maxIg > min_info_gain && supervised.length >= min_size_node;
+
+    var id = tree.nodeList.getNewId();
+    var name = (value == null ? '' : value + ':') + (subDivide ? variablesTable[iBestFeature].name : 'P=' + supervised._biggestProbability + '(' + supervised._mostRepresentedValue + ')');
+    var node = new Node(id, name);
+
+
+
+
+    tree.addNodeToTree(node, parent);
+
+    if(parent == null) {
+      tree.informationGainTable = new Table__default();
+      tree.informationGainTable[0] = variablesTable.getNames();
+      if(informationGains) {
+        tree.informationGainTable[1] = informationGains.clone();
+        tree.informationGainTable = tree.informationGainTable.getListsSortedByList(informationGains, false);
+      }
+    }
+
+    node.entropy = entropy;
+    node.weight = supervised.length;
+    node.supervised = supervised;
+    node.indexes = indexes;
+    node.value = value;
+    node.mostRepresentedValue = supervised._mostRepresentedValue;
+    node.biggestProbability = supervised._biggestProbability;
+    node.valueFollowingProbability = supervised._P_valueFollowing;
+    node.lift = node.valueFollowingProbability / tree.nodeList[0].valueFollowingProbability; //Math.log(node.valueFollowingProbability/tree.nodeList[0].valueFollowingProbability)/Math.log(2);
+
+
+    if(level < 2) {
+      console.log('\nlevel', level);
+      console.log('supervised.countElement(supervisedValue)', supervised.countElement(supervisedValue));
+      console.log('entropy', entropy);
+      console.log('value', value);
+      console.log('name', name);
+      console.log('supervised.name', supervised.name);
+      console.log('supervised.length', supervised.length);
+      console.log('supervisedValue', supervisedValue);
+      console.log('supervised._biggestProbability, supervised._P_valueFollowing', supervised._biggestProbability, supervised._P_valueFollowing);
+      console.log('node.valueFollowingProbability (=supervised._P_valueFollowing):', node.valueFollowingProbability);
+      console.log('tree.nodeList[0].valueFollowingProbability', tree.nodeList[0].valueFollowingProbability);
+      console.log('node.biggestProbability (=_biggestProbability):', node.biggestProbability);
+      console.log('node.mostRepresentedValue:', node.mostRepresentedValue);
+      console.log('node.mostRepresentedValue==supervisedValue', node.mostRepresentedValue == supervisedValue);
+    }
+
+    node._color = TableOperators._decisionTreeColorScale(1 - node.valueFollowingProbability);
+
+    // node._color = node.mostRepresentedValue==supervisedValue?
+    // 	TableOperators._decisionTreeColorScale(1-node.biggestProbability)
+    // 	:
+    // 	TableOperators._decisionTreeColorScale(node.biggestProbability);
+
+
+    if(generatePattern) {
+      var newCanvas = document.createElement("canvas");
+      newCanvas.width = 150;
+      newCanvas.height = 100;
+      var newContext = newCanvas.getContext("2d");
+      newContext.clearRect(0, 0, 150, 100);
+
+      TableOperators._decisionTreeGenerateColorsMixture(newContext, 150, 100, ['blue', 'red'],
+  			node.mostRepresentedValue==supervisedValue?
+  				[Math.floor(node.biggestProbability*node.weight), Math.floor((1-node.biggestProbability)*node.weight)]
+  				:
+  				[Math.floor((1-node.biggestProbability)*node.weight), Math.floor(node.biggestProbability*node.weight)]
+      );
+
+
+      var img = new Image();
+      img.src = newCanvas.toDataURL();
+      node.pattern = newContext.createPattern(img, "repeat");
+    }
+
+
+
+    if(!subDivide) {
+      return node;
+    }
+
+    node.bestFeatureName = variablesTable[iBestFeature].name;
+    node.iBestFeature = iBestFeature;
+    node.informationGain = maxIg;
+
+    var expanded = variablesTable.concat([supervised, indexes]);
+
+    var tables = TableOperators.splitTableByCategoricList(expanded, variablesTable[iBestFeature]);
+    var childTable;
+    var childSupervised;
+    var newNode;
+
+    tables.forEach(function(expandedChild) {
+      childTable = expandedChild.getSubList(0, expandedChild.length - 3);
+      childSupervised = expandedChild[expandedChild.length - 2];
+      childIndexes = expandedChild[expandedChild.length - 1];
+      TableOperators._buildDecisionTreeNode(tree, childTable, childSupervised, level + 1, min_entropy, min_size_node, min_info_gain, node, expandedChild._element, supervisedValue, childIndexes, generatePattern);
+    });
+
+    node.toNodeList = node.toNodeList.getSortedByProperty('valueFollowingProbability', false);
+
+    return node;
+  };
+  TableOperators._decisionTreeColorScale = function(value) {
+    var rr = value < 0.5 ? Math.floor(510 * value) : 255;
+    var gg = value < 0.5 ? Math.floor(510 * value) : Math.floor(510 * (1 - value));
+    var bb = value < 0.5 ? 255 : Math.floor(510 * (1 - value));
+
+    return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
+  };
+  TableOperators._decisionTreeGenerateColorsMixture = function(ctxt, width, height, colors, weights) {
+    //var imageData=context.createImageData(width, height);
+    var x, y, i; //, rgb;
+    var allColors = ListGenerators.createListWithSameElement(weights[0], colors[0]);
+
+    for(i = 1; colors[i] != null; i++) {
+      allColors = allColors.concat(ListGenerators.createListWithSameElement(weights[i], colors[i]));
+    }
+
+    for(x = 0; x < width; x++) {
+      for(y = 0; y < height; y++) {
+        i = (x + y * width) * 4;
+        ctxt.fillStyle = allColors.getRandomElement();
+        ctxt.fillRect(x, y, 1, 1);
+      }
+    }
+
+    //return imageData;
+  };
+
+  exports.TableOperators = TableOperators;
+
+  function ListOperators() {}
+
 
 
   /**
@@ -5981,7 +8015,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Object}
    * tags:
    */
-  ListOperators__ListOperators.getElement = function(list, index) {
+  ListOperators.getElement = function(list, index) {
     if(list == null) return null;
     index = index == null ? 0 : index % list.length;
     return list[index];
@@ -6004,7 +8038,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Object} tenth Object
    * tags:
    */
-  ListOperators__ListOperators.getFirstElements = function(list, fromIndex) {
+  ListOperators.getFirstElements = function(list, fromIndex) {
     if(list == null) return null;
 
     fromIndex = fromIndex == null ? 0 : Number(fromIndex);
@@ -6090,7 +8124,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number}
    * tags:
    */
-  ListOperators__ListOperators.indexOf = function(list, element) {
+  ListOperators.indexOf = function(list, element) {
     return list.indexOf(element);
   };
 
@@ -6105,7 +8139,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List} list5
    * tags:
    */
-  ListOperators__ListOperators.concat = function() {
+  ListOperators.concat = function() {
     if(arguments == null || arguments.length == 0 ||  arguments[0] == null) return null;
     if(arguments.length == 1) return arguments[0];
 
@@ -6128,8 +8162,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:
    */
-  ListOperators__ListOperators.assemble = function() {
-    return List__default.fromArray(Array.prototype.slice.call(arguments, 0)).getImproved();
+  ListOperators.assemble = function() {
+    return List.fromArray(Array.prototype.slice.call(arguments, 0)).getImproved();
   };
 
 
@@ -6143,7 +8177,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Table}
    * tags:count,toimprove
    */
-  ListOperators__ListOperators.countElementsRepetitionOnList = function(list, sortListsByOccurrences, consecutiveRepetitions, limit) { //transform this, use dictionary instead of indexOf !!!!!!!
+  ListOperators.countElementsRepetitionOnList = function(list, sortListsByOccurrences, consecutiveRepetitions, limit) { //transform this, use dictionary instead of indexOf !!!!!!!
     if(list == null) return;
 
     sortListsByOccurrences = sortListsByOccurrences == null ? true : sortListsByOccurrences;
@@ -6151,7 +8185,7 @@ define('src/index', ['exports'], function (exports) {
     limit = limit == null ? 0 : limit;
 
     var obj;
-    var elementList = instantiate(typeOf(list));
+    var elementList = ClassUtils__instantiate(ClassUtils__typeOf(list));
     var numberList = new NumberList();
     var index;
     var i;
@@ -6185,7 +8219,7 @@ define('src/index', ['exports'], function (exports) {
     }
 
     if(elementList.type == "NumberList") {
-      var table = new NumberTable__default();
+      var table = new NumberTable();
     } else {
       var table = new Table__default();
     }
@@ -6211,7 +8245,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:sorting
    */
-  ListOperators__ListOperators.reverse = function(list) {
+  ListOperators.reverse = function(list) {
     return list.getReversed();
   };
 
@@ -6224,8 +8258,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:
    */
-  ListOperators__ListOperators.translateWithDictionary = function(list, dictionary, nullElement) {
-    var newList = new List__default();
+  ListOperators.translateWithDictionary = function(list, dictionary, nullElement) {
+    var newList = new List();
     list.forEach(function(element, i) {
       index = dictionary[0].indexOf(element);
       if(nullElement != null) {
@@ -6258,13 +8292,13 @@ define('src/index', ['exports'], function (exports) {
   // }
 
 
-  ListOperators__ListOperators.sortListByNumberList = function(list, numberList, descending) {
+  ListOperators.sortListByNumberList = function(list, numberList, descending) {
     if(descending == null) descending = true;
     if(numberList.length == 0) return list;
     var newNumberList;
 
     var pairs = [];
-    var newList = instantiate(typeOf(list));
+    var newList = ClassUtils__instantiate(ClassUtils__typeOf(list));
 
     for(i = 0; list[i] != null; i++) {
       pairs.push([list[i], numberList[i]]);
@@ -6291,8 +8325,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  ListOperators__ListOperators.sortListByIndexes = function(list, indexedArray) {
-    var newList = instantiate(typeOf(list));
+  ListOperators.sortListByIndexes = function(list, indexedArray) {
+    var newList = ClassUtils__instantiate(ClassUtils__typeOf(list));
     newList.name = list.name;
     var nElements = list.length;
     var i;
@@ -6303,7 +8337,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  ListOperators__ListOperators.concatWithoutRepetitions = function() { //?
+  ListOperators.concatWithoutRepetitions = function() { //?
     var i;
     var newList = arguments[0].clone();
     for(i = 1; i < arguments.length; i++) {
@@ -6317,7 +8351,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  ListOperators__ListOperators.slidingWindowOnList = function(list, subListsLength, step, finalizationMode) {
+  ListOperators.slidingWindowOnList = function(list, subListsLength, step, finalizationMode) {
     finalizationMode = finalizationMode || 0;
     var table = new Table__default();
     var newList;
@@ -6333,7 +8367,7 @@ define('src/index', ['exports'], function (exports) {
       case 0: //all sub-Lists same length, doesn't cover the List
         for(i = 0; i < nElements; i += step) {
           if(i + subListsLength <= nElements) {
-            newList = new List__default();
+            newList = new List();
             for(j = 0; j < subListsLength; j++) {
               newList.push(list[i + j]);
             }
@@ -6343,7 +8377,7 @@ define('src/index', ['exports'], function (exports) {
         break;
       case 1: //last sub-List catches the last elements, with lesser length
         for(i = 0; i < nElements; i += step) {
-          newList = new List__default();
+          newList = new List();
           for(j = 0; j < Math.min(subListsLength, nElements - i); j++) {
             newList.push(list[i + j]);
           }
@@ -6352,7 +8386,7 @@ define('src/index', ['exports'], function (exports) {
         break;
       case 2: //all lists same length, last sub-list migth contain elements from the beginning of the List
         for(i = 0; i < nElements; i += step) {
-          newList = new List__default();
+          newList = new List();
           for(j = 0; j < subListsLength; j++) {
             newList.push(list[(i + j) % nElements]);
           }
@@ -6364,13 +8398,13 @@ define('src/index', ['exports'], function (exports) {
     return table.getImproved();
   };
 
-  ListOperators__ListOperators.getNewListForObjectType = function(object) {
-    var newList = new List__default();
+  ListOperators.getNewListForObjectType = function(object) {
+    var newList = new List();
     newList[0] = object;
     return instantiateWithSameType(newList.getImproved());
   };
 
-  ListOperators__ListOperators.listsIntersect = function(list0, list1) {
+  ListOperators.listsIntersect = function(list0, list1) {
     var list = list0.length < list1.length ? list0 : list1;
     var otherList = list0 == list ? list1 : list0;
     for(var i = 0; list[i] != null; i++) {
@@ -6386,10 +8420,10 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:
    */
-  ListOperators__ListOperators.getCommonElements = function(list0, list1) {
+  ListOperators.getCommonElements = function(list0, list1) {
     var nums = list0.type == 'NumberList' && list1.type == 'NumberList';
     var strs = list0.type == 'StringList' && list1.type == 'StringList';
-    var newList = nums ? new NumberList() : (strs ? new StringList() : new List__default());
+    var newList = nums ? new NumberList() : (strs ? new StringList__default() : new List());
 
     var list = list0.length < list1.length ? list0 : list1;
     var otherList = list0 == list ? list1 : list0;
@@ -6412,7 +8446,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List} the union of both NumberLists
    * tags:
    */
-  ListOperators__ListOperators.unionLists = function(x, y) {
+  ListOperators.unionLists = function(x, y) {
     // Borrowed from here: http://stackoverflow.com/questions/3629817/getting-a-union-of-two-arrays-in-javascript
     var result;
     if(x.type != x.type || (x.type != "StringList" && x.type != "NumberList"))
@@ -6429,7 +8463,7 @@ define('src/index', ['exports'], function (exports) {
         obj[x[i]] = x[i];
       for(var i = y.length - 1; i >= 0; --i)
         obj[y[i]] = y[i];
-      result = x.type == "StringList" ? new StringList() : new NumberList();
+      result = x.type == "StringList" ? new StringList__default() : new NumberList();
       for(var k in obj) {
         if(obj.hasOwnProperty(k)) // <-- optional
           result.push(obj[k]);
@@ -6446,16 +8480,16 @@ define('src/index', ['exports'], function (exports) {
    * @return {List} the intersection of both NumberLists
    * tags:
    */
-  ListOperators__ListOperators.intersectLists = function(a, b) {
+  ListOperators.intersectLists = function(a, b) {
     // Borrowed from here: http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
     var result;
     if(a.type != b.type || (a.type != "StringList" && a.type != "NumberList"))
     {
-      result = ListOperators__ListOperators.getCommonElements(a, b);
+      result = ListOperators.getCommonElements(a, b);
     }
     else
     {
-      result = a.type == "StringList" ? new StringList() : new NumberList();
+      result = a.type == "StringList" ? new StringList__default() : new NumberList();
       a = a.slice();
       b = b.slice();
       while(a.length > 0 && b.length > 0)
@@ -6488,7 +8522,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number}
    * tags:ds
    */
-  ListOperators__ListOperators.getListEntropy = function(list, valueFollowing) {
+  ListOperators.getListEntropy = function(list, valueFollowing) {
     if(list == null) return;
     if(list.length < 2) {
       if(list.length == 1) {
@@ -6499,7 +8533,7 @@ define('src/index', ['exports'], function (exports) {
       return 0;
     }
 
-    var table = ListOperators__ListOperators.countElementsRepetitionOnList(list, true);
+    var table = ListOperators.countElementsRepetitionOnList(list, true);
     c.l('    getListEntropy | table[0]', table[0]);
     c.l('    getListEntropy | table[1]', table[1]);
     list._mostRepresentedValue = table[0][0];
@@ -6564,49 +8598,49 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number}
    * tags:ds
    */
-  ListOperators__ListOperators.getInformationGain = function(feature, supervised) {
+  ListOperators.getInformationGain = function(feature, supervised) {
     if(feature == null || supervised == null || feature.length != supervised.length) return null;
 
-    var ig = ListOperators__ListOperators.getListEntropy(supervised);
+    var ig = ListOperators.getListEntropy(supervised);
     var childrenObject = {};
     var childrenLists = [];
     var N = feature.length;
 
     feature.forEach(function(element, i) {
       if(childrenObject[element] == null) {
-        childrenObject[element] = new List__default();
+        childrenObject[element] = new List();
         childrenLists.push(childrenObject[element]);
       }
       childrenObject[element].push(supervised[i]);
     });
 
     childrenLists.forEach(function(cl) {
-      ig -= (cl.length / N) * ListOperators__ListOperators.getListEntropy(cl);
+      ig -= (cl.length / N) * ListOperators.getListEntropy(cl);
     });
 
     return ig;
   };
 
-  ListOperators__ListOperators.getInformationGainAnalysis = function(feature, supervised) {
+  ListOperators.getInformationGainAnalysis = function(feature, supervised) {
     if(feature == null || supervised == null || feature.length != supervised.length) return null;
 
-    var ig = ListOperators__ListOperators.getListEntropy(supervised);
+    var ig = ListOperators.getListEntropy(supervised);
     var childrenObject = {};
     var childrenLists = [];
     var N = feature.length;
     var entropy;
-    var sets = new List__default();
+    var sets = new List();
 
     feature.forEach(function(element, i) {
       if(childrenObject[element] == null) {
-        childrenObject[element] = new List__default();
+        childrenObject[element] = new List();
         childrenLists.push(childrenObject[element]);
       }
       childrenObject[element].push(supervised[i]);
     });
 
     childrenLists.forEach(function(cl) {
-      entropy = ListOperators__ListOperators.getListEntropy(cl);
+      entropy = ListOperators.getListEntropy(cl);
       ig -= (cl.length / N) * entropy;
 
       sets.push({
@@ -6630,10 +8664,10 @@ define('src/index', ['exports'], function (exports) {
    * @return {Table}
    * tags:dani
    */
-  ListOperators__ListOperators.groupElements = function(list, sortedByValue, mode, fillBlanks) {
+  ListOperators.groupElements = function(list, sortedByValue, mode, fillBlanks) {
     if(!list)
       return;
-    var result = ListOperators__ListOperators._groupElements_Base(list, null, sortedByValue, mode, fillBlanks);
+    var result = ListOperators._groupElements_Base(list, null, sortedByValue, mode, fillBlanks);
     return result;
   };
 
@@ -6649,16 +8683,16 @@ define('src/index', ['exports'], function (exports) {
    * @return {Table}
    * tags:dani
    */
-  ListOperators__ListOperators.groupElementsByPropertyValue = function(list, propertyName, sortedByValue, mode, fillBlanks) {
+  ListOperators.groupElementsByPropertyValue = function(list, propertyName, sortedByValue, mode, fillBlanks) {
     if(!list)
       return;
-    var result = ListOperators__ListOperators._groupElements_Base(list, propertyName, sortedByValue, mode, fillBlanks);
+    var result = ListOperators._groupElements_Base(list, propertyName, sortedByValue, mode, fillBlanks);
     return result;
   };
 
 
 
-  ListOperators__ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, mode, fillBlanks) {
+  ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, mode, fillBlanks) {
     var result;
 
     if(!list)
@@ -6672,7 +8706,7 @@ define('src/index', ['exports'], function (exports) {
       item = list[i];
       pValue = propertyName == undefined ? item : item[propertyName];
       if(resultOb[pValue] == undefined) {
-        resultOb[pValue] = new List__default();
+        resultOb[pValue] = new List();
         resultOb[pValue].name = pValue;
         resultOb[pValue].valProperty = pValue;
         resultTable.push(resultOb[pValue]);
@@ -6695,7 +8729,7 @@ define('src/index', ['exports'], function (exports) {
       var numBlanks = 0;
       for(var i = minValue; i < maxValue; i++) {
         if(resultOb[i] == undefined) {
-          resultOb[i] = new List__default();
+          resultOb[i] = new List();
           resultOb[i].name = i;
           resultOb[i].valProperty = i;
           resultTable.push(resultOb[i]);
@@ -6713,241 +8747,24 @@ define('src/index', ['exports'], function (exports) {
 
   };
 
-  exports.ListOperators = ListOperators__default;
+  exports.ListOperators = ListOperators;
 
-  StringList__StringList.prototype = new List__default();
-  StringList__StringList.prototype.constructor = StringList__StringList;
-
-  /**
-   * @classdesc {@link List} for storing Strings.
-   *
-   * @constructor
-   * @description Creates a new StringList
-   * @category strings
-   */
-  function StringList__StringList() {
-    var args = []; //TODO:why this?, ask M
-
-    for(var i = 0; i < arguments.length; i++) {
-      args[i] = String(arguments[i]);
-    }
-    var array = List__default.apply(this, args);
-    array = StringList__StringList.fromArray(array);
-    //
-    return array;
-  }
-  var StringList__default = StringList__StringList;
-
-  StringList__StringList.fromArray = function(array, forceToString) {
-    forceToString = forceToString == null ? true : forceToString;
-
-    var result = List__default.fromArray(array);
-    if(forceToString) {
-      for(var i = 0; i < result.length; i++) {
-        result[i] = String(result[i]);
-      }
-    }
-    result.type = "StringList";
-
-    //assign methods to array:
-    result.getLengths = StringList__StringList.prototype.getLengths;
-    result.toLowerCase = StringList__StringList.prototype.toLowerCase;
-    result.toUpperCase = StringList__StringList.prototype.toUpperCase;
-    result.append = StringList__StringList.prototype.append;
-    result.getSurrounded = StringList__StringList.prototype.getSurrounded;
-    result.replace = StringList__StringList.prototype.replace;
-    result.getConcatenated = StringList__StringList.prototype.getConcatenated;
-    result.toNumberList = StringList__StringList.prototype.toNumberList;
-    result.toDateList = StringList__StringList.prototype.toDateList;
-    result.trim = StringList__StringList.prototype.trim;
-
-    //override
-    result.clone = StringList__StringList.prototype.clone;
-
-    return result;
-  };
-
-  /**
-   * overrides List.prototype.getLengths (see comments there)
-   */
-  StringList__StringList.prototype.getLengths = function() {
-    var lengths = new NumberList__default();
-    var string;
-
-    this.forEach(function(string) {
-      lengths.push(string.length);
-    });
-
-    return lengths;
-  };
-
-  StringList__StringList.prototype.append = function(sufix, after) {
-    after = after == null ? true : after;
-    var newStringList = new StringList__StringList();
-    newStringList.name = this.name;
-    var sufixIsStringList = ClassUtils__typeOf(sufix) == "StringList";
-    var i;
-    if(after) {
-      for(i = 0; this[i] != null; i++) {
-        newStringList[i] = this[i] + (sufixIsStringList ? sufix[i] : sufix);
-      }
-    } else {
-      for(i = 0; this[i] != null; i++) {
-        newStringList[i] = (sufixIsStringList ? sufix[i] : sufix) + this[i];
-      }
-    }
-    return newStringList;
-  };
-
-  /**
-   * prefix and sufix can be string or a StringList
-   */
-  StringList__StringList.prototype.getSurrounded = function(prefix, sufix) {
-    var newStringList = new StringList__StringList();
-    newStringList.name = this.name;
-    var i;
-
-    var prefixIsStringList = Array.isArray(prefix);
-    var sufixIsStringList = Array.isArray(sufix);
-
-    for(i = 0; this[i] != null; i++) {
-      newStringList[i] = (prefixIsStringList ? prefix[i] : prefix) + this[i] + (sufixIsStringList ? sufix[i] : sufix);
-    }
-
-    return newStringList;
-  };
+  function StringOperators() {}
 
 
-  //deprectaed, replaced by replaceInStrings
-  StringList__StringList.prototype.replace = function(regExp, string) {
-    var newStringList = new StringList__StringList();
-    newStringList.name = this.name;
+  StringOperators.ENTER = String.fromCharCode(13);
+  StringOperators.ENTER2 = String.fromCharCode(10);
+  StringOperators.ENTER3 = String.fromCharCode(8232);
 
-    for(var i = 0; this[i] != null; i++) {
-      newStringList[i] = this[i].replace(regExp, string);
-    }
+  StringOperators.SPACE = String.fromCharCode(32);
+  StringOperators.SPACE2 = String.fromCharCode(160);
 
-    return newStringList;
-  };
+  StringOperators.TAB = "	";
+  StringOperators.TAB2 = String.fromCharCode(9);
 
-  /**
-   * replaces in each string, a sub-string by a string
-   * @param  {String} subString sub-string to be replaced in each string
-   * @param  {String} replacement string to be placed instead
-   * @return {StringList}
-   * tags:
-   */
-  StringList__StringList.prototype.replaceSubStringsInStrings = function(subString, replacement) {
-    var newStringList = new StringList__StringList();
-    newStringList.name = this.name;
-
-    for(var i = 0; this[i] != null; i++) {
-      newStringList[i] = StringOperators__default.replaceString(string, subString, replacement);
-    }
-
-    return newStringList;
-  };
-
-  StringList__StringList.prototype.getConcatenated = function(separator) {
-    var i;
-    var string = "";
-    for(i = 0; this[i] != null; i++) {
-      string += this[i];
-      if(i < this.length - 1) string += separator;
-    }
-    return string;
-  };
-
-
-  StringList__StringList.prototype.toLowerCase = function() {
-    var newStringList = new StringList__StringList();
-    newStringList.name = this.name;
-    var i;
-    for(i = 0; this[i] != null; i++) {
-      newStringList[i] = this[i].toLowerCase();
-    }
-    return newStringList;
-  };
-
-  StringList__StringList.prototype.toUpperCase = function() {
-    var newStringList = new StringList__StringList();
-    newStringList.name = this.name;
-    var i;
-    for(i = 0; this[i] != null; i++) {
-      newStringList[i] = this[i].toUpperCase();
-    }
-    return newStringList;
-  };
-
-  StringList__StringList.prototype.toNumberList = function() {
-    var numbers = new NumberList__default();
-    numbers.name = this.name;
-    var i;
-    for(i = 0; this[i] != null; i++) {
-      numbers[i] = Number(this[i]);
-    }
-    return numbers;
-  };
-
-
-  /**
-   * converts a stringList into a dateList
-   *
-   * @param  {String} formatCase format cases:<br>0: MM-DD-YYYY<br>1: YYYY-MM-DD (standard Javascript conversion)
-   * @param  {String} separator "-" by default
-   * @return {DateList}
-   * tags:
-   */
-  StringList__StringList.prototype.toDateList = function(formatCase, separator) {
-    var dateList = new DateList();
-    var i;
-    for(i = 0; this[i] != null; i++) {
-      dateList.push(DateOperators__default.stringToDate(this[i], formatCase, separator));
-    }
-    return dateList;
-  };
-
-  /**
-   * trims all the strings on the stringList
-   * @return {StringList}
-   * tags:
-   */
-  StringList__StringList.prototype.trim = function() {
-    var i;
-    var newStringList = new StringList__StringList();
-    for(i = 0; this[i] != null; i++) {
-      newStringList[i] = this[i].trim();
-    }
-    newStringList.name = this.name;
-    return newStringList;
-  };
-
-  ///////overriding
-
-  StringList__StringList.prototype.clone = function() {
-    var newList = StringList__StringList.fromArray(this.slice(), false);
-    newList.name = this.name;
-    return newList;
-  };
-
-  exports.StringList = StringList__default;
-
-  function StringOperators__StringOperators() {}
-  var StringOperators__default = StringOperators__StringOperators;
-
-  StringOperators__StringOperators.ENTER = String.fromCharCode(13);
-  StringOperators__StringOperators.ENTER2 = String.fromCharCode(10);
-  StringOperators__StringOperators.ENTER3 = String.fromCharCode(8232);
-
-  StringOperators__StringOperators.SPACE = String.fromCharCode(32);
-  StringOperators__StringOperators.SPACE2 = String.fromCharCode(160);
-
-  StringOperators__StringOperators.TAB = "	";
-  StringOperators__StringOperators.TAB2 = String.fromCharCode(9);
-
-  StringOperators__StringOperators.LINK_REGEX = /(^|\s+)(https*\:\/\/\S+[^\.\s+])/;
-  StringOperators__StringOperators.MAIL_REGEX = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  StringOperators__StringOperators.STOP_WORDS = StringList__default.fromArray("t,s,mt,rt,re,m,http,amp,a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,or,other,our,own,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your".split(","));
+  StringOperators.LINK_REGEX = /(^|\s+)(https*\:\/\/\S+[^\.\s+])/;
+  StringOperators.MAIL_REGEX = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  StringOperators.STOP_WORDS = StringList__default.fromArray("t,s,mt,rt,re,m,http,amp,a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,or,other,our,own,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your".split(","));
 
   /**
    * splits a String by a character (entre by default)
@@ -6957,8 +8774,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {StringList}
    * tags:
    */
-  StringOperators__StringOperators.split = function(string, character) {
-    if(character == null) return StringOperators__StringOperators.splitByEnter(string);
+  StringOperators.split = function(string, character) {
+    if(character == null) return StringOperators.splitByEnter(string);
     return StringList__default.fromArray(string.split(character));
   };
 
@@ -6969,13 +8786,13 @@ define('src/index', ['exports'], function (exports) {
    * @return {StringList}
    * tags:
    */
-  StringOperators__StringOperators.splitByEnter = function(string) {
+  StringOperators.splitByEnter = function(string) {
     if(string == null) return null;
-    var stringList = StringOperators__StringOperators.splitString(string, "\n");
+    var stringList = StringOperators.splitString(string, "\n");
     if(stringList.length > 1) return stringList;
-    var stringList = StringOperators__StringOperators.splitString(string, StringOperators__StringOperators.ENTER2);
+    var stringList = StringOperators.splitString(string, StringOperators.ENTER2);
     if(stringList.length > 1) return stringList;
-    var stringList = StringOperators__StringOperators.splitString(string, StringOperators__StringOperators.ENTER3);
+    var stringList = StringOperators.splitString(string, StringOperators.ENTER3);
     if(stringList.length > 1) return stringList;
     return new StringList__default(string);
   };
@@ -6989,7 +8806,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {String}
    * tags:
    */
-  StringOperators__StringOperators.replaceSubString = function(string, subString, replacement) {
+  StringOperators.replaceSubString = function(string, subString, replacement) {
     if(string == null || subString == null || replacement == null) return null;
     return string.replace(new RegExp(subString, "g"), replacement);
   };
@@ -7002,13 +8819,13 @@ define('src/index', ['exports'], function (exports) {
    * @return {String}
    * tags:
    */
-  StringOperators__StringOperators.replaceSubStringsByString = function(string, subStrings, replacement) {
+  StringOperators.replaceSubStringsByString = function(string, subStrings, replacement) {
     if(subStrings == null) return;
 
     var subString;
 
     subStrings.forEach(function(subString) {
-      string = StringOperators__StringOperators.replaceSubString(string, subString, replacement);
+      string = StringOperators.replaceSubString(string, subString, replacement);
     });
 
     return string;
@@ -7022,7 +8839,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {String}
    * tags:
    */
-  StringOperators__StringOperators.replaceSubStringsByStrings = function(string, subStrings, replacements) {
+  StringOperators.replaceSubStringsByStrings = function(string, subStrings, replacements) {
     if(subStrings == null || replacements == null) return;
 
     var nElements = Math.min(subStrings.length, replacements.length);
@@ -7030,7 +8847,7 @@ define('src/index', ['exports'], function (exports) {
     var subString;
 
     for(i = 0; i < nElements; i++) {
-      string = StringOperators__StringOperators.replaceSubString(string, subStrings[i], replacements[i]);
+      string = StringOperators.replaceSubString(string, subStrings[i], replacements[i]);
     }
 
     return string;
@@ -7047,7 +8864,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {String}
    * tags:filter
    */
-  StringOperators__StringOperators.substr = function(string, i0, length) {
+  StringOperators.substr = function(string, i0, length) {
     i0 = i0 || 0;
     return string.substr(i0, length);
   };
@@ -7060,7 +8877,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {StringList}
    * tags:
    */
-  StringOperators__StringOperators.splitString = function(string, separator) {
+  StringOperators.splitString = function(string, separator) {
     if(string == null) return null;
     if(separator == null) separator = ",";
     if(typeof separator == "string") separator = separator.replace("\\n", "\n");
@@ -7077,7 +8894,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {String}
    * tags:filter
    */
-  StringOperators__StringOperators.getFirstTextBetweenStrings = function(text, subString0, subString1) {
+  StringOperators.getFirstTextBetweenStrings = function(text, subString0, subString1) {
     var i0 = text.indexOf(subString0);
     if(i0 == -1) return null;
     if(subString1 == "" || subString1 == null) return text.substr(i0 + subString0.length);
@@ -7094,7 +8911,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {StringList}
    * tags:filter
    */
-  StringOperators__StringOperators.getAllTextsBetweenStrings = function(text, subString0, subString1) { //TODO: improve using indexOf(string, START_INDEX)
+  StringOperators.getAllTextsBetweenStrings = function(text, subString0, subString1) { //TODO: improve using indexOf(string, START_INDEX)
     if(text.indexOf(subString0) == -1) return new StringList__default();
     var blocks = text.split(subString0);
     var nBlocks = blocks.length;
@@ -7126,13 +8943,13 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number}
    * tags:analysis
    */
-  StringOperators__StringOperators.countWordsDichotomyAnalysis = function(string, negativeStrings, positiveStrings, normalizeBySize) {
+  StringOperators.countWordsDichotomyAnalysis = function(string, negativeStrings, positiveStrings, normalizeBySize) {
     var val = 0;
     negativeStrings.forEach(function(word) {
-      val -= StringOperators__StringOperators.countWordOccurrences(string, word);
+      val -= StringOperators.countWordOccurrences(string, word);
     });
     positiveStrings.forEach(function(word) {
-      val += StringOperators__StringOperators.countWordOccurrences(string, word);
+      val += StringOperators.countWordOccurrences(string, word);
     });
     if(normalizeBySize) val /= string.length;
     return val;
@@ -7148,7 +8965,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {StringList} list of urls
    * tags:html
    */
-  StringOperators__StringOperators.getLinksFromHtml = function(html, urlSource, removeHash) {
+  StringOperators.getLinksFromHtml = function(html, urlSource, removeHash) {
     var doc = document.createElement("html");
     doc.innerHTML = html;
 
@@ -7240,7 +9057,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Boolean} caseSensitive (false by default)
    * @return {Boolean} returns true if string or word is contained
    */
-  StringOperators__StringOperators.textContainsString = function(text, string, asWord, caseSensitive) {
+  StringOperators.textContainsString = function(text, string, asWord, caseSensitive) {
     text = caseSensitive ? string : text.toLowerCase();
     string = caseSensitive ? string : string.toLowerCase();
     return asWord ?
@@ -7254,7 +9071,7 @@ define('src/index', ['exports'], function (exports) {
    * @param  {Boolean} frame  if true (default) prints ///////////////// on top and bottom
    * tags:
    */
-  StringOperators__StringOperators.logInConsole = function(string, frame) {
+  StringOperators.logInConsole = function(string, frame) {
     frame = frame == null ? true : frame;
     if(frame) console.log('///////////////////////////////////////////////////');
     console.log(string);
@@ -7267,27 +9084,27 @@ define('src/index', ['exports'], function (exports) {
   //////
 
 
-  StringOperators__StringOperators.getParenthesisContents = function(text, brackets) {
+  StringOperators.getParenthesisContents = function(text, brackets) {
     var contents = new StringList__default();
 
     var subText = text;
 
-    var contentObject = StringOperators__StringOperators.getFirstParenthesisContentWithIndexes(text, brackets);
+    var contentObject = StringOperators.getFirstParenthesisContentWithIndexes(text, brackets);
 
     var nAttempts = 0;
     while(contentObject.content != "" && contentObject.index1 < subText.length - 1 && nAttempts < text.length) {
       contents.push(contentObject.content);
       subText = subText.substr(contentObject.index1 + 2);
-      contentObject = StringOperators__StringOperators.getFirstParenthesisContentWithIndexes(subText, brackets);
+      contentObject = StringOperators.getFirstParenthesisContentWithIndexes(subText, brackets);
       nAttempts++;
     }
 
     return contents;
   };
-  StringOperators__StringOperators.getFirstParenthesisContent = function(text, brackets) {
-    return StringOperators__StringOperators.getFirstParenthesisContentWithIndexes(text, brackets).content;
+  StringOperators.getFirstParenthesisContent = function(text, brackets) {
+    return StringOperators.getFirstParenthesisContentWithIndexes(text, brackets).content;
   };
-  StringOperators__StringOperators.getFirstParenthesisContentWithIndexes = function(text, brackets) {
+  StringOperators.getFirstParenthesisContentWithIndexes = function(text, brackets) {
     var open = brackets ? "[" : "(";
     var close = brackets ? "]" : ")";
 
@@ -7332,28 +9149,28 @@ define('src/index', ['exports'], function (exports) {
     };
   };
 
-  StringOperators__StringOperators.placeString = function(string, stringToPlace, index) {
+  StringOperators.placeString = function(string, stringToPlace, index) {
     return string.substr(0, index) + stringToPlace + string.substr(index + stringToPlace.length);
   };
 
-  StringOperators__StringOperators.insertString = function(string, stringToInsert, index) {
+  StringOperators.insertString = function(string, stringToInsert, index) {
     return string.substr(0, index) + stringToInsert + string.substr(index);
   };
 
-  StringOperators__StringOperators.removeEnters = function(string) {
+  StringOperators.removeEnters = function(string) {
     return string.replace(/(\StringOperators.ENTER|\StringOperators.ENTER2|\StringOperators.ENTER3)/gi, " ");
   };
 
-  StringOperators__StringOperators.removeTabs = function(string) {
+  StringOperators.removeTabs = function(string) {
     return string.replace(/(\StringOperators.TAB|\StringOperators.TAB2|\t)/gi, "");
   };
 
-  StringOperators__StringOperators.removePunctuation = function(string, replaceBy) {
+  StringOperators.removePunctuation = function(string, replaceBy) {
     replaceBy = replaceBy || "";
     return string.replace(/[:,.;?!\(\)\"\']/gi, replaceBy);
   };
 
-  StringOperators__StringOperators.removeDoubleSpaces = function(string) {
+  StringOperators.removeDoubleSpaces = function(string) {
     var retString = string;
     var regExpr = RegExp(/  /);
     while(regExpr.test(retString)) {
@@ -7362,7 +9179,7 @@ define('src/index', ['exports'], function (exports) {
     return retString;
   };
 
-  StringOperators__StringOperators.removeInitialRepeatedCharacter = function(string, character) {
+  StringOperators.removeInitialRepeatedCharacter = function(string, character) {
     while(string.charAt(0) == character) string = string.substr(1);
     return string;
   };
@@ -7374,19 +9191,19 @@ define('src/index', ['exports'], function (exports) {
    * @return {String}
    * tags:
    */
-  StringOperators__StringOperators.removeHtmlTags = function(html) {
+  StringOperators.removeHtmlTags = function(html) {
     var tmp = document.createElement("DIV");
     tmp.innerHTML = html;
     return tmp.textContent || tmp.innerText;
   };
 
-  StringOperators__StringOperators.removeLinks = function(text) {
+  StringOperators.removeLinks = function(text) {
     text += ' ';
     var regexp = /http:\/\/[a-zA-Z0-9\/\.]+( |:|;|\r|\t|\n|\v)/g;
     return(text.replace(regexp, ' ')).substr(0, text.length - 2);
   };
 
-  StringOperators__StringOperators.removeQuotes = function(string) { //TODO:improve
+  StringOperators.removeQuotes = function(string) { //TODO:improve
     if(string.charAt(0) == "\"") string = string.substr(1);
     if(string.charAt(string.length - 1) == "\"") string = string.substr(0, string.length - 1);
     return string;
@@ -7409,7 +9226,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {StringList}
    * tags:
    */
-  StringOperators__StringOperators.getWords = function(string, withoutRepetitions, stopWords, sortedByFrequency, includeLinks, limit, minSizeWords) {
+  StringOperators.getWords = function(string, withoutRepetitions, stopWords, sortedByFrequency, includeLinks, limit, minSizeWords) {
     if(string == null) return null;
 
     minSizeWords = minSizeWords || 0;
@@ -7420,8 +9237,8 @@ define('src/index', ['exports'], function (exports) {
 
     var i, j;
 
-    if(includeLinks) var links = string.match(StringOperators__StringOperators.LINK_REGEX);
-    string = string.toLowerCase().replace(StringOperators__StringOperators.LINK_REGEX, "");
+    if(includeLinks) var links = string.match(StringOperators.LINK_REGEX);
+    string = string.toLowerCase().replace(StringOperators.LINK_REGEX, "");
 
     var list = string.match(/\w+/g);
     if(list == null) return new StringList__default();
@@ -7461,13 +9278,13 @@ define('src/index', ['exports'], function (exports) {
 
     if(sortedByFrequency) {
       if(withoutRepetitions) {
-        list = ListOperators__default.countElementsRepetitionOnList(list, true)[0];
+        list = ListOperators.countElementsRepetitionOnList(list, true)[0];
         if(limit != 0) list = list.substr(0, limit);
 
         return list;
       }
 
-      var occurrences = ListOperators__default.countOccurrencesOnList(list);
+      var occurrences = ListOperators.countOccurrencesOnList(list);
       list = list.getSortedByList(occurrences);
       if(limit != 0) list = list.substr(0, limit);
 
@@ -7519,18 +9336,18 @@ define('src/index', ['exports'], function (exports) {
    * @return {Table} contains a list of words, and a numberList of occurrences
    * tags:words
    */
-  StringOperators__StringOperators.getWordsOccurrencesTable = function(string, stopWords, includeLinks, limit, minSizeWords) {
+  StringOperators.getWordsOccurrencesTable = function(string, stopWords, includeLinks, limit, minSizeWords) {
     if(string == null) return;
-    if(string.length == 0) return new Table(new StringList__default(), new NumberList__default());
-    var words = StringOperators__StringOperators.getWords(string, false, stopWords, false, includeLinks, limit, minSizeWords);
+    if(string.length == 0) return new Table(new StringList__default(), new NumberList());
+    var words = StringOperators.getWords(string, false, stopWords, false, includeLinks, limit, minSizeWords);
 
-    return ListOperators__default.countElementsRepetitionOnList(words, true, false, limit);
+    return ListOperators.countElementsRepetitionOnList(words, true, false, limit);
   };
 
-  StringOperators__StringOperators.indexesOf = function(text, string) { //TODO:test
+  StringOperators.indexesOf = function(text, string) { //TODO:test
     var index = text.indexOf(string);
-    if(index == -1) return new NumberList__default();
-    var indexes = new NumberList__default(index);
+    if(index == -1) return new NumberList();
+    var indexes = new NumberList(index);
     index = text.indexOf(string, index + 1);
     while(index != -1) {
       indexes.push(index);
@@ -7546,7 +9363,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {String}
    * tags:
    */
-  StringOperators__StringOperators.repeatString = function(text, n) {
+  StringOperators.repeatString = function(text, n) {
     var i;
     var newText = "";
     for(i = 0; i < n; i++) {
@@ -7560,7 +9377,7 @@ define('src/index', ['exports'], function (exports) {
 
   //counting / statistics
 
-  StringOperators__StringOperators.countOccurrences = function(text, string) { //seems to be th emost efficient: http://stackoverflow.com/questions/4009756/how-to-count-string-occurrence-in-string
+  StringOperators.countOccurrences = function(text, string) { //seems to be th emost efficient: http://stackoverflow.com/questions/4009756/how-to-count-string-occurrence-in-string
     var n = 0;
     var index = text.indexOf(string);
     while(index != -1) {
@@ -7570,15 +9387,15 @@ define('src/index', ['exports'], function (exports) {
     return n;
   };
 
-  StringOperators__StringOperators.countWordOccurrences = function(string, word) {
+  StringOperators.countWordOccurrences = function(string, word) {
     var regex = new RegExp("\\b" + word + "\\b");
     var match = string.match(regex);
     return match == null ? 0 : match.length;
   };
 
-  StringOperators__StringOperators.countStringsOccurrences = function(text, strings) {
+  StringOperators.countStringsOccurrences = function(text, strings) {
     var i;
-    var numberList = new NumberList__default();
+    var numberList = new NumberList();
     for(i = 0; strings[i] != null; i++) {
       numberList[i] = text.split(strings[i]).length - 1;
     }
@@ -7587,738 +9404,14 @@ define('src/index', ['exports'], function (exports) {
 
   //validation
 
-  StringOperators__StringOperators.validateEmail = function(text) {
-    return StringOperators__StringOperators.MAIL_REGEX.test(text);
+  StringOperators.validateEmail = function(text) {
+    return StringOperators.MAIL_REGEX.test(text);
   };
-  StringOperators__StringOperators.validateUrl = function(text) {
-    return StringOperators__StringOperators.LINK_REGEX.test(text);
-  };
-
-  exports.StringOperators = StringOperators__default;
-
-  Interval__Interval.prototype = new Point__default();
-  Interval__Interval.prototype.constructor = Interval__Interval;
-
-  /**
-   * @classdesc Provide reasoning around numeric intervals.
-   *
-   * @constructor
-   * @param {Number} x Interval's x value
-   * @param {Number} y Interval's y value
-   * @description Creates a new Interval
-   * @category numbers
-   */
-  function Interval__Interval(x, y) {
-    DataModel.apply(this, arguments);
-    this.x = Number(x);
-    this.y = Number(y);
-    this.type = "Interval";
-  }
-  var Interval__default = Interval__Interval;
-
-  /**
-   * getMin - find the minimum value of the interval
-   *
-   * @return {Number} the minimum value in the interval
-   */
-  Interval__Interval.prototype.getMin = function() {
-    return Math.min(this.x, this.y);
+  StringOperators.validateUrl = function(text) {
+    return StringOperators.LINK_REGEX.test(text);
   };
 
-  Interval__Interval.prototype.getMax = function() {
-    return Math.max(this.x, this.y);
-  };
-
-  Interval__Interval.prototype.getAmplitude = function() {
-    return Math.abs(this.x - this.y);
-  };
-
-  Interval__Interval.prototype.getSignedAmplitude = function() {
-    return this.x - this.y;
-  };
-
-  Interval__Interval.prototype.getMiddle = function() {
-    return(this.x + this.y) * 0.5;
-  };
-
-  Interval__Interval.prototype.getSign = function() {
-    if(this.x == this.y) return 0;
-    return this.getAmplitude() / this.getSignedAmplitude();
-  };
-
-  Interval__Interval.prototype.getScaled = function(value) {
-    var midAmp = 0.5 * (this.y - this.x);
-    var middle = (this.x + this.y) * 0.5;
-    return new Interval__Interval(middle - midAmp * value, middle + midAmp * value);
-  };
-
-  Interval__Interval.prototype.getScaledFromProportion = function(value, proportion) {
-    var antiP = 1 - proportion;
-    var amp0 = proportion * (this.y - this.x);
-    var amp1 = antiP * (this.y - this.x);
-    var middle = antiP * this.x + proportion * this.y;
-    return new Interval__Interval(middle - amp0 * value, middle + amp1 * value);
-  };
-
-  Interval__Interval.prototype.add = function(value) {
-    return new Interval__Interval(this.x + value, this.y + value);
-  };
-
-  Interval__Interval.prototype.invert = function() {
-    var swap = this.x;
-    this.x = this.y;
-    this.y = swap;
-  };
-
-  /**
-   * return a value in interval range
-   * 0 -> min
-   * 1 -> max
-   * @param value between 0 and 1 (to obtain values between min and max)
-   *
-   */
-  Interval__Interval.prototype.getInterpolatedValue = function(value) {
-    return value * Number(this.getSignedAmplitude()) + this.x;
-  };
-
-  Interval__Interval.prototype.getInverseInterpolatedValue = function(value) {
-    return(value - this.x) / this.getSignedAmplitude();
-  };
-  Interval__Interval.prototype.getInterpolatedValues = function(numberList) {
-    var newNumberList = [];
-    var nElements = numberList.length;
-    for(var i = 0; i < nElements; i++) {
-      newNumberList.push(this.getInterpolatedValue(numberList[i]));
-    }
-    return newNumberList;
-  };
-  Interval__Interval.prototype.getInverseInterpolatedValues = function(numberList) {
-    var newNumberList = [];
-    var nElements = numberList.length;
-    for(var i = 0; i < nElements; i++) {
-      newNumberList.push(this.getInverseInterpolatedValue(numberList[i]));
-    }
-    return newNumberList;
-  };
-
-  Interval__Interval.prototype.intersect = function(interval) {
-    return new Interval__Interval(Math.max(this.x, interval.x), Math.min(this.y, interval.y));
-  };
-
-  /**
-   * create a new interval with the same proporties values
-   * @return {Interval}
-   *
-   */
-  Interval__Interval.prototype.clone = function() {
-    var newInterval = new Interval__Interval(this.x, this.y);
-    newInterval.name = name;
-    return newInterval;
-  };
-
-  /**
-   * indicate wether a number is included in the interval
-   * @param value
-   * @return {Boolean}
-   *
-   */
-  Interval__Interval.prototype.contains = function(value) {
-    if(this.y > this.x) return value >= this.x && value <= this.y;
-    return value >= this.y && value <= this.y;
-  };
-
-  /**
-   * indicate wether other interval contains the same values
-   * @param interval
-   * @return {Boolean}
-   *
-   */
-  Interval__Interval.prototype.isEquivalent = function(interval) {
-    return this.x == interval.x && this.y == interval.y;
-  };
-
-  /**
-   * create a new interval with the same proporties values
-   * @return {String}
-   *
-   */
-
-  Interval__Interval.prototype.toString = function() {
-    return "Interval[x:" + this.x + "| y:" + this.y + "| amplitude:" + this.getAmplitude() + "]";
-  };
-
-  exports.Interval = Interval__default;
-
-  NumberList__NumberList.prototype = new List__default();
-  NumberList__NumberList.prototype.constructor = NumberList__NumberList;
-
-  /**
-   * @classdesc List structure for Numbers.
-   *
-   * @constructor
-   * @description Creates a new NumberList.
-   * @category numbers
-   */
-  function NumberList__NumberList() {
-    var args = [];
-
-    for(var i = 0; i < arguments.length; i++) {
-      arguments[i] = Number(arguments[i]);
-    }
-    var array = List__default.apply(this, arguments);
-    array = NumberList__NumberList.fromArray(array);
-    //
-    return array;
-  }
-  var NumberList__default = NumberList__NumberList;
-
-  NumberList__NumberList.fromArray = function(array, forceToNumber) {
-    forceToNumber = forceToNumber == null ? true : forceToNumber;
-
-    var result = List__default.fromArray(array);
-
-    if(forceToNumber) {
-      for(var i = 0; i < result.length; i++) {
-        result[i] = Number(result[i]);
-      }
-    }
-
-    result.type = "NumberList";
-
-    //assign methods to array:
-    result.unit = NumberList__NumberList.prototype.unit;
-    result.tenPower = NumberList__NumberList.prototype.tenPower;
-    result.getMin = NumberList__NumberList.prototype.getMin;
-    result.getMax = NumberList__NumberList.prototype.getMax;
-    result.getAmplitude = NumberList__NumberList.prototype.getAmplitude;
-    result.getMinMaxInterval = NumberList__NumberList.prototype.getMinMaxInterval;
-    result.getSum = NumberList__NumberList.prototype.getSum;
-    result.getProduct = NumberList__NumberList.prototype.getProduct;
-    result.getInterval = NumberList__NumberList.prototype.getInterval;
-    result.getNormalized = NumberList__NumberList.prototype.getNormalized;
-    result.getNormalizedToMax = NumberList__NumberList.prototype.getNormalizedToMax;
-    result.getNormalizedToSum = NumberList__NumberList.prototype.getNormalizedToSum;
-    result.toPolygon = NumberList__NumberList.prototype.toPolygon;
-
-    //statistics
-    result.getAverage = NumberList__NumberList.prototype.getAverage;
-    result.getNorm = NumberList__NumberList.prototype.getNorm;
-    result.getStandardDeviation = NumberList__NumberList.prototype.getStandardDeviation;
-    result.getVariance = NumberList__NumberList.prototype.getVariance;
-    result.getMedian = NumberList__NumberList.prototype.getMedian;
-    result.getQuantiles = NumberList__NumberList.prototype.getQuantiles;
-
-    //sorting
-    result.getSorted = NumberList__NumberList.prototype.getSorted;
-    result.getSortIndexes = NumberList__NumberList.prototype.getSortIndexes;
-    result.factor = NumberList__NumberList.prototype.factor;
-    result.add = NumberList__NumberList.prototype.add;
-    result.subtract = NumberList__NumberList.prototype.subtract;
-    result.divide = NumberList__NumberList.prototype.divide;
-    result.dotProduct = NumberList__NumberList.prototype.dotProduct;
-    result.distance = NumberList__NumberList.prototype.distance;
-    result.sqrt = NumberList__NumberList.prototype.sqrt;
-    result.pow = NumberList__NumberList.prototype.pow;
-    result.log = NumberList__NumberList.prototype.log;
-    result.isEquivalent = NumberList__NumberList.prototype.isEquivalent;
-    result.toStringList = NumberList__NumberList.prototype.toStringList;
-
-    //transform
-    result.approach = NumberList__NumberList.prototype.approach;
-
-    //override
-    result.clone = NumberList__NumberList.prototype.clone;
-    result._slice = Array.prototype.slice;
-    result.slice = NumberList__NumberList.prototype.slice;
-
-    return result;
-  };
-  NumberList__NumberList.prototype.unit = "";
-  NumberList__NumberList.prototype.tenPower = 0;
-
-  NumberList__NumberList.prototype.getMin = function() { //TODO:store result and retrieve while the NumberList doesn't change;
-    if(this.length == 0) return null;
-    var i;
-    var min = this[0];
-    for(i = 1; i < this.length; i++) {
-      min = Math.min(min, this[i]);
-    }
-    return min;
-  };
-
-  NumberList__NumberList.prototype.getMax = function() { //TODO:store result and retrieve while the NumberList doesn't change;
-    if(this.length == 0) return null;
-    var i;
-    var max = this[0];
-    for(i = 1; i < this.length; i++) {
-      max = Math.max(max, this[i]);
-    }
-    return max;
-  };
-
-  NumberList__NumberList.prototype.getAmplitude = function() {
-    if(this.length == 0) return 0;
-    var min = this[0];
-    var max = this[0];
-    for(var i = 1; this[i] != null; i++) {
-      min = Math.min(min, this[i]);
-      max = Math.max(max, this[i]);
-    }
-    return max - min;
-  };
-
-  NumberList__NumberList.prototype.getMinMaxInterval = function() { //deprecated?
-    return new Interval__default(this.getMin(), this.getMax());
-  };
-
-  /**
-   * returns the sum of values in the numberList
-   * @return {Number}
-   * tags:
-   */
-  NumberList__NumberList.prototype.getSum = function() {
-    if(this.length == 0) return 0;
-    var i;
-    var sum = this[0];
-    for(i = 1; i < this.length; i++) {
-      sum += this[i];
-    }
-    return sum;
-  };
-
-  /**
-   * return the product of values in the numberList
-   * @return {Number}
-   * tags:
-   */
-  NumberList__NumberList.prototype.getProduct = function() {
-    if(this.length == 0) return null;
-    var i;
-    var product = this[0];
-    for(i = 1; i < this.length; i++) {
-      product *= this[i];
-    }
-    return product;
-  };
-
-  /**
-   * returns a NumberList normalized to the sum
-   * @param {Number} factor optional
-   * @return {NumberList}
-   * tags:
-   */
-  NumberList__NumberList.prototype.getNormalizedToSum = function(factor, sum) {
-    factor = factor == null ? 1 : factor;
-    var newNumberList = new NumberList__NumberList();
-    newNumberList.name = this.name;
-    if(this.length == 0) return newNumberList;
-    var i;
-    var sum = sum == null ? this.getSum() : sum;
-    if(sum == 0) return this.clone();
-
-    for(i = 0; i < this.length; i++) {
-      newNumberList.push(factor * this[i] / sum);
-    }
-    return newNumberList;
-  };
-
-  /**
-   * returns a numberList normalized to min-max interval
-   * @param {Number} factor optional
-   * @return {NumberList}
-   * tags:
-   */
-  NumberList__NumberList.prototype.getNormalized = function(factor) {
-    factor = factor == null ? 1 : factor;
-
-    if(this.length == 0) return null;
-
-    var i;
-    var interval = this.getMinMaxInterval();
-    var a = interval.getAmplitude();
-    var newNumberList = new NumberList__NumberList();
-    for(i = 0; i < this.length; i++) {
-      newNumberList.push(factor * ((this[i] - interval.x) / a));
-    }
-    newNumberList.name = this.name;
-    return newNumberList;
-  };
-
-  /**
-   * returns a numberList normalized to Max
-   * @param {Number} factor optional
-   * @return {NumberList}
-   * tags:
-   */
-  NumberList__NumberList.prototype.getNormalizedToMax = function(factor) {
-    factor = factor == null ? 1 : factor;
-
-    if(this.length == 0) return null;
-
-    var max = this.getMax();
-    if(max == 0) {
-      max = this.getMin();
-      if(max == 0) return ListGenerators.createListWithSameElement(this.length, 0);
-    }
-    var newNumberList = new NumberList__NumberList();
-    for(var i = 0; this[i] != null; i++) {
-      newNumberList.push(factor * (this[i] / max));
-    }
-    newNumberList.name = this.name;
-    return newNumberList;
-  };
-
-  /**
-   * builds an Interval witn min and max value from the numberList
-   * @return {Interval}
-   * tags:
-   */
-  NumberList__NumberList.prototype.getInterval = function() {
-    if(this.length == 0) return null;
-    var max = this[0];
-    var min = this[0];
-    for(var i = 1; this[i] != null; i++) {
-      max = Math.max(max, this[i]);
-      min = Math.min(min, this[i]);
-    }
-    var interval = new Interval__default(min, max);
-    return interval;
-  };
-
-
-  NumberList__NumberList.prototype.toPolygon = function() {
-    if(this.length == 0) return null;
-    var polygon = new Polygon();
-    for(var i = 0; this[i + 1] != null; i += 2) {
-      polygon.push(new Point(this[i], this[i + 1]));
-    }
-    return polygon;
-  };
-
-
-
-
-  /////////statistics
-
-  /**
-   * calculates mean of numberList
-   * @return {Number}
-   * tags:statistics
-   */
-  NumberList__NumberList.prototype.getAverage = function() {
-    return this.getSum() / this.length;
-  };
-
-  /**
-   * calculates geometric mean of numberList
-   * @return {Number}
-   * tags:statistics
-   */
-  NumberList__NumberList.prototype.getGeometricMean = function() {
-    var s = 0;
-    this.forEach(function(val) {
-      s += Math.log(val);
-    });
-    return Math.pow(Math.E, s / this.length);
-  };
-
-  /**
-   * calculates de norm of the numberList (treated as a vector)
-   * @return {Number}
-   * tags:statistics
-   */
-  NumberList__NumberList.prototype.getNorm = function() {
-    var sq = 0;
-    for(var i = 0; this[i] != null; i++) {
-      sq += Math.pow(this[i], 2);
-    }
-    return Math.sqrt(sq);
-  };
-
-  /**
-   * calculates the variance of the numberList
-   * @return {Number}
-   * tags:statistics
-   */
-  NumberList__NumberList.prototype.getVariance = function() {
-    var sd = 0;
-    var average = this.getAverage();
-    for(var i = 0; this[i] != null; i++) {
-      sd += Math.pow(this[i] - average, 2);
-    }
-    return sd / this.length;
-  };
-
-  /**
-   * calculates the standard deviation
-   * @return {Number}
-   * tags:statistics
-   */
-  NumberList__NumberList.prototype.getStandardDeviation = function() {
-    return Math.sqrt(this.getVariance());
-  };
-
-  /**
-   * calculates the median of the numberList
-   * @return {Number}
-   * tags:statistics
-   */
-  NumberList__NumberList.prototype.getMedian = function(nQuantiles) {
-    var sorted = this.getSorted(true);
-    var prop = (this.length - 1) / 2;
-    var entProp = Math.floor(prop);
-    var onIndex = prop == entProp;
-    var quantiles = new NumberList__NumberList();
-    return onIndex ? sorted[prop] : (0.5 * sorted[entProp] + 0.5 * sorted[entProp + 1]);
-  };
-
-  /**
-   * builds a partition of n quantiles from the numberList
-   * @param {Number} nQuantiles number of quantiles
-   * @return {Number}
-   * tags:statistics
-   */
-  NumberList__NumberList.prototype.getQuantiles = function(nQuantiles) {
-    var sorted = this.getSorted(true);
-
-    var prop = this.length / nQuantiles;
-    var entProp = Math.floor(prop);
-    var onIndex = prop == entProp;
-    var quantiles = new NumberList__NumberList();
-    for(var i = 0; i < nQuantiles - 1; i++) {
-      quantiles[i] = onIndex ? sorted[(i + 1) * prop] : (0.5 * sorted[(i + 1) * entProp] + 0.5 * sorted[(i + 1) * entProp + 1]);
-    }
-    return quantiles;
-  };
-
-
-
-  /////////sorting
-
-  NumberList__NumberList.prototype.getSorted = function(ascending) {
-    ascending = ascending == null ? true : ascending;
-
-    if(ascending) {
-      return NumberList__NumberList.fromArray(this.slice().sort(function(a, b) {
-        return a - b;
-      }), false);
-    }
-    return NumberList__NumberList.fromArray(this.slice().sort(function(a, b) {
-      return b - a;
-    }), false);
-  };
-
-  NumberList__NumberList.prototype.getSortIndexes = function(descending) {
-    if(descending == null) descending = true;
-
-    var pairs = [];
-    var newList = new NumberList__NumberList();
-
-    if(this.length == 0) return newList;
-
-    for(var i = 0; this[i] != null; i++) {
-      pairs.push([i, this[i]]);
-    }
-
-    if(descending) {
-      pairs.sort(function(a, b) {
-        if(a[1] < b[1]) return 1;
-        return -1;
-      });
-    } else {
-      pairs.sort(function(a, b) {
-        if(a[1] < b[1]) return -1;
-        return 1;
-      });
-    }
-
-    for(i = 0; pairs[i] != null; i++) {
-      newList.push(pairs[i][0]);
-    }
-    newList.name = this.name;
-    return newList;
-  };
-
-  NumberList__NumberList.prototype.factor = function(value) {
-    var i;
-    var newNumberList = new NumberList__NumberList();
-    for(i = 0; i < this.length; i++) {
-      newNumberList.push(this[i] * value);
-    }
-    newNumberList.name = this.name;
-    return newNumberList;
-  };
-
-  NumberList__NumberList.prototype.add = function(object) {
-    var i;
-    var newNumberList = new NumberList__NumberList();
-    var type = typeOf(object);
-
-    switch(type) {
-      case 'number':
-        for(i = 0; this[i] != null; i++) {
-          newNumberList[i] = this[i] + object;
-        }
-        break;
-      case 'NumberList':
-        for(i = 0; this[i] != null; i++) {
-          newNumberList[i] = this[i] + object[i % object.length];
-        }
-        break;
-    }
-
-    newNumberList.name = this.name;
-    return newNumberList;
-  };
-
-  NumberList__NumberList.prototype.subtract = function(object) {
-    var i;
-    var newNumberList = new NumberList__NumberList();
-    var type = typeOf(object);
-
-    switch(type) {
-      case 'number':
-        for(i = 0; this[i] != null; i++) {
-          newNumberList[i] = this[i] - object;
-        }
-        break;
-      case 'NumberList':
-        for(i = 0; this[i] != null; i++) {
-          newNumberList[i] = this[i] - object[i % object.length];
-        }
-        break;
-    }
-
-    newNumberList.name = this.name;
-    return newNumberList;
-  };
-
-  NumberList__NumberList.prototype.divide = function(object) {
-    var i;
-    var newNumberList = new NumberList__NumberList();
-    var type = typeOf(object);
-
-    switch(type) {
-      case 'number':
-        for(i = 0; this[i] != null; i++) {
-          newNumberList[i] = this[i] / object;
-        }
-        break;
-      case 'NumberList':
-        for(i = 0; this[i] != null; i++) {
-          newNumberList[i] = this[i] / object[i % object.length];
-        }
-        break;
-    }
-
-    newNumberList.name = this.name;
-    return newNumberList;
-  };
-
-  NumberList__NumberList.prototype.sqrt = function() {
-    var i;
-    var newNumberList = new NumberList__NumberList();
-    for(i = 0; i < this.length; i++) {
-      newNumberList.push(Math.sqrt(this[i]));
-    }
-    newNumberList.name = this.name;
-    return newNumberList;
-  };
-
-  NumberList__NumberList.prototype.pow = function(power) {
-    var i;
-    var newNumberList = new NumberList__NumberList();
-    for(i = 0; i < this.length; i++) {
-      newNumberList.push(Math.pow(this[i], power));
-    }
-    newNumberList.name = this.name;
-    return newNumberList;
-  };
-
-  NumberList__NumberList.prototype.log = function(add) {
-    add = add || 0;
-
-    var i;
-    var newNumberList = new NumberList__NumberList();
-    for(i = 0; this[i] != null; i++) {
-      newNumberList[i] = Math.log(this[i] + add);
-    }
-    newNumberList.name = this.name;
-
-    return newNumberList;
-  };
-
-  NumberList__NumberList.prototype.dotProduct = function(numberList) {
-    var sum = 0;
-    var i;
-    var nElements = Math.min(this.length, numberList.length);
-    for(i = 0; i < nElements; i++) {
-      sum += this[i] * numberList[i];
-    }
-    return sum;
-  };
-
-  /**
-   * calculates Euclidean distance between two numberLists
-   * @param  {NumberList} numberList
-   * @return {Number}
-   * tags:
-   */
-  NumberList__NumberList.prototype.distance = function(numberList) {
-    var sum = 0;
-    var i;
-    var nElements = Math.min(this.length, numberList.length);
-    for(i = 0; i < nElements; i++) {
-      sum += Math.pow(this[i] - numberList[i], 2);
-    }
-    return Math.sqrt(sum);
-  };
-
-  NumberList__NumberList.prototype.isEquivalent = function(numberList) {
-    for(i = 0; this[i] != null; i++) {
-      if(this[i] != numberList[i]) return false;
-    }
-    return true;
-  };
-
-  NumberList__NumberList.prototype.toStringList = function() {
-    var i;
-    var stringList = new StringList__default();
-    for(i = 0; this[i] != null; i++) {
-      stringList[i] = String(this[i]);
-    }
-    stringList.name = this.name;
-    return stringList;
-  };
-
-
-  //transform
-
-  NumberList__NumberList.prototype.approach = function(destinty, speed) {
-    speed = speed || 0.5;
-
-    var i;
-    var antispeed = 1 - speed;
-
-    for(i = 0; this[i] != null; i++) {
-      this[i] = antispeed * this[i] + speed * destinty[i];
-    }
-  };
-
-
-  ///////overriding
-
-  NumberList__NumberList.prototype.clone = function() {
-    var newList = NumberList__NumberList.fromArray(this._slice(), false);
-    newList.name = this.name;
-    return newList;
-  };
-
-  NumberList__NumberList.prototype.slice = function() {
-    return NumberList__NumberList.fromArray(this._slice.apply(this, arguments), false);
-  };
-
-  exports.NumberList = NumberList__default;
+  exports.StringOperators = StringOperators;
 
   PolygonList.prototype = new Table__default();
   PolygonList.prototype.constructor = PolygonList;
@@ -8366,7 +9459,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   PolygonList.prototype.add = function(object) {
-    var type = typeOf(object);
+    var type = ClassUtils__typeOf(object);
     var i;
     switch(type) {
       case 'Point':
@@ -8518,7 +9611,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   Axis2D.prototype.project = function(point) {
-    return new Point__default((point.x - this.departureFrame.x) * this.pW + this.arrivalFrame.x, (point.y - this.departureFrame.y) * this.pH + this.arrivalFrame.y);
+    return new Point((point.x - this.departureFrame.x) * this.pW + this.arrivalFrame.x, (point.y - this.departureFrame.y) * this.pH + this.arrivalFrame.y);
   };
 
 
@@ -8531,7 +9624,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   Axis2D.prototype.inverseProject = function(point) {
-    return new Point__default((point.x - this.arrivalFrame.x) / this.pW + this.departureFrame.x, (point.y - this.arrivalFrame.y) / this.pH + this.departureFrame.y);
+    return new Point((point.x - this.arrivalFrame.x) / this.pW + this.departureFrame.x, (point.y - this.arrivalFrame.y) / this.pH + this.departureFrame.y);
   };
 
 
@@ -8591,7 +9684,7 @@ define('src/index', ['exports'], function (exports) {
    * @returns {Point} A new point with the transformation applied.
    */
   Matrix.prototype.transformPoint = function(point) {
-    return new Point__default(
+    return new Point(
       this.a * point.x + this.c * point.y + this.tx,
       this.b * point.x + this.d * point.y + this.ty
     );
@@ -8636,7 +9729,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Point} A new point transformed by this matrix ignoring tx and ty.
    */
   Matrix.prototype.deltaTransformPoint = function(point) {
-    return Point__default(
+    return Point(
       this.a * point.x + this.c * point.y,
       this.b * point.x + this.d * point.y
     );
@@ -8920,7 +10013,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Country = Country;
 
-  Tree__Tree.prototype = new Network__default();
+  Tree__Tree.prototype = new Network();
   Tree__Tree.prototype.constructor = Tree__Tree;
 
   /**
@@ -8931,7 +10024,7 @@ define('src/index', ['exports'], function (exports) {
    * @category networks
    */
   function Tree__Tree() {
-    Network__default.apply(this);
+    Network.apply(this);
     this.type = "Tree";
 
     this.nLevels = 0;
@@ -8964,7 +10057,7 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @ignore
    */
-  Network__default.prototype._newCreateRelation = function(parent, node, id, weight) {
+  Network.prototype._newCreateRelation = function(parent, node, id, weight) {
     if(id == null) id = this.relationList.getNewId();
     this._createRelation(parent, node, id, weight);
     node.level = parent.level + 1;
@@ -9068,7 +10161,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Tree = Tree__default;
 
-  Point3D.prototype = new Point__default();
+  Point3D.prototype = new Point();
   Point3D.prototype.constructor = Point3D;
   /**
    * @classdesc Point3D represents a point in 3D space.
@@ -9081,7 +10174,7 @@ define('src/index', ['exports'], function (exports) {
    * @category geometry
    */
   function Point3D(x, y, z) {
-    Point__default.apply(this, arguments);
+    Point.apply(this, arguments);
     //this.name='';
     this.type = "Point3D";
     this.z = z;
@@ -9164,12 +10257,6 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Point3D = Point3D;
 
-  /**
-   * @classdesc Provides a set of tools that work with {@link Point|Points}.
-   *
-   * @namespace
-   * @category geometry
-   */
   function PointOperators() {}
 
 
@@ -9193,7 +10280,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.PointOperators = PointOperators;
 
-  Polygon3D.prototype = new List__default();
+  Polygon3D.prototype = new List();
   Polygon3D.prototype.constructor = Polygon3D;
 
   /**
@@ -9205,14 +10292,14 @@ define('src/index', ['exports'], function (exports) {
    * @category geometry
    */
   function Polygon3D() {
-    var array = List__default.apply(this, arguments);
+    var array = List.apply(this, arguments);
     array = Polygon3D.fromArray(array);
     return array;
   }
 
 
   Polygon3D.fromArray = function(array) {
-    var result = List__default.fromArray(array);
+    var result = List.fromArray(array);
     result.type = "Polygon3D";
     //assign methods to array:
     return result;
@@ -9220,23 +10307,23 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Polygon3D = Polygon3D;
 
-  function GeometryOperators__GeometryOperators() {}
-  var GeometryOperators__default = GeometryOperators__GeometryOperators;
+  function GeometryOperators() {}
+
 
 
   /**
    * from three Points calculates two control Points for the middle Point that will define a curve (using Bézier) that goes softly through the three points
    * TODO: finish method by taking into account distances
    */
-  GeometryOperators__GeometryOperators.getSoftenControlPoints = function(point0, point1, point2, controlVectorSize) {
+  GeometryOperators.getSoftenControlPoints = function(point0, point1, point2, controlVectorSize) {
     controlVectorSize = controlVectorSize || 10;
     var angle = PointOperators.angleFromTwoPoints(point0, point2);
-    var controlPoint0 = new Point__default(point1.x - controlVectorSize * Math.cos(angle), point1.y - controlVectorSize * Math.sin(angle));
-    var controlPoint1 = new Point__default(point1.x + controlVectorSize * Math.cos(angle), point1.y + controlVectorSize * Math.sin(angle));
+    var controlPoint0 = new Point(point1.x - controlVectorSize * Math.cos(angle), point1.y - controlVectorSize * Math.sin(angle));
+    var controlPoint1 = new Point(point1.x + controlVectorSize * Math.cos(angle), point1.y + controlVectorSize * Math.sin(angle));
     return [controlPoint0, controlPoint1];
   };
 
-  GeometryOperators__GeometryOperators.bezierCurvePoints = function(x0, y0, c0x, c0y, c1x, c1y, x1, y1, t) {
+  GeometryOperators.bezierCurvePoints = function(x0, y0, c0x, c0y, c1x, c1y, x1, y1, t) {
     var s = 1 - t;
     var ax = s * x0 + t * c0x;
     var ay = s * y0 + t * c0y;
@@ -9253,32 +10340,32 @@ define('src/index', ['exports'], function (exports) {
     var fx = s * bx + t * cx;
     var fy = s * by + t * cy;
 
-    return new Point__default(t * fx + s * ex, t * fy + s * ey);
+    return new Point(t * fx + s * ex, t * fy + s * ey);
   };
 
 
 
-  GeometryOperators__GeometryOperators.trueBezierCurveHeightHorizontalControlPoints = function(x0, x1, y0, y1, c0x, c1x, x) {
+  GeometryOperators.trueBezierCurveHeightHorizontalControlPoints = function(x0, x1, y0, y1, c0x, c1x, x) {
     var dx = x1 - x0;
     var x = (x - x0) / dx;
     var c0x = (c0x - x0) / dx;
     var c1x = (c1x - x0) / dx;
 
-    if(GeometryOperators__GeometryOperators._bezierSimpleCurveTable == null) {
+    if(GeometryOperators._bezierSimpleCurveTable == null) {
       var i, p;
 
-      GeometryOperators__GeometryOperators._bezierSimpleCurveTable = new NumberList();
+      GeometryOperators._bezierSimpleCurveTable = new NumberList();
 
       for(i = 1; i < 10000; i++) {
-        p = GeometryOperators__GeometryOperators.bezierCurvePoints(0, 0, c0x, 0, c1x, 1, 1, 1, i / 10000);
-        GeometryOperators__GeometryOperators._bezierSimpleCurveTable[Math.floor(1000 * p.x)] = p.y;
+        p = GeometryOperators.bezierCurvePoints(0, 0, c0x, 0, c1x, 1, 1, 1, i / 10000);
+        GeometryOperators._bezierSimpleCurveTable[Math.floor(1000 * p.x)] = p.y;
       }
 
-      GeometryOperators__GeometryOperators._bezierSimpleCurveTable[0] = 0;
-      GeometryOperators__GeometryOperators._bezierSimpleCurveTable[1] = 1;
+      GeometryOperators._bezierSimpleCurveTable[0] = 0;
+      GeometryOperators._bezierSimpleCurveTable[1] = 1;
     }
 
-    return GeometryOperators__GeometryOperators._bezierSimpleCurveTable[Math.floor(1000 * x)] * (y1 - y0) + y0;
+    return GeometryOperators._bezierSimpleCurveTable[Math.floor(1000 * x)] * (y1 - y0) + y0;
 
   };
 
@@ -9286,7 +10373,7 @@ define('src/index', ['exports'], function (exports) {
   /**
    * This an approximation, it doesn't take into account actual values of c0x and c1x
    */
-  GeometryOperators__GeometryOperators.bezierCurveHeightHorizontalControlPoints = function(y0, c0x, c1x, y1, t) { //TODO:fix
+  GeometryOperators.bezierCurveHeightHorizontalControlPoints = function(y0, c0x, c1x, y1, t) { //TODO:fix
 
     var cosinus = Math.cos(Math.PI * (t - 1));
     var sign = cosinus > 0 ? 1 : -1;
@@ -9297,14 +10384,14 @@ define('src/index', ['exports'], function (exports) {
   /**
    * unefficient method (uses Newton strategy)
    */
-  GeometryOperators__GeometryOperators.distanceToBezierCurve = function(x0, y0, c0x, c0y, c1x, c1y, x1, y1, p, returnPoint) {
+  GeometryOperators.distanceToBezierCurve = function(x0, y0, c0x, c0y, c1x, c1y, x1, y1, p, returnPoint) {
     var minDT = 0.01;
     var t0 = 0;
     var t1 = 1;
-    var p0 = new Point__default(x0, y0);
-    var p0I = GeometryOperators__GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, minDT);
-    var p1 = new Point__default(x1, y1);
-    var p1I = GeometryOperators__GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, 1 - minDT);
+    var p0 = new Point(x0, y0);
+    var p0I = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, minDT);
+    var p1 = new Point(x1, y1);
+    var p1I = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, 1 - minDT);
     var d0 = Math.pow(p0.x - p.x, 2) + Math.pow(p0.y - p.y, 2);
     var d0I = Math.pow(p0I.x - p.x, 2) + Math.pow(p0I.y - p.y, 2);
     var d1 = Math.pow(p1.x - p.x, 2) + Math.pow(p1.y - p.y, 2);
@@ -9316,19 +10403,19 @@ define('src/index', ['exports'], function (exports) {
     var pMI;
 
     for(i = 0; i < 10; i++) {
-      pM = GeometryOperators__GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, (t0 + t1) * 0.5);
-      pMI = GeometryOperators__GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, (t0 + t1) * 0.5 + minDT);
+      pM = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, (t0 + t1) * 0.5);
+      pMI = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, (t0 + t1) * 0.5 + minDT);
 
       d0 = Math.pow(pM.x - p.x, 2) + Math.pow(pM.y - p.y, 2);
       d0I = Math.pow(pMI.x - p.x, 2) + Math.pow(pMI.y - p.y, 2);
 
       if(d0 < d0I) {
         t1 = (t0 + t1) * 0.5;
-        p1 = GeometryOperators__GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, t1);
+        p1 = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, t1);
         d1 = Math.pow(p1.x - p.x, 2) + Math.pow(p1.y - p.y, 2);
       } else {
         t0 = (t0 + t1) * 0.5;
-        p0 = GeometryOperators__GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, t0);
+        p0 = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, t0);
         d0 = Math.pow(p0.x - p.x, 2) + Math.pow(p0.y - p.y, 2);
       }
     }
@@ -9337,27 +10424,27 @@ define('src/index', ['exports'], function (exports) {
     return Math.sqrt(Math.min(d0, d1));
   };
 
-  GeometryOperators__GeometryOperators.triangleContainsPoint = function(pT0, pT1, pT2, p) {
+  GeometryOperators.triangleContainsPoint = function(pT0, pT1, pT2, p) {
     var a = (pT0.x - p.x) * (pT1.y - p.y) - (pT1.x - p.x) * (pT0.y - p.y);
     var b = (pT1.x - p.x) * (pT2.y - p.y) - (pT2.x - p.x) * (pT1.y - p.y);
     var c = (pT2.x - p.x) * (pT0.y - p.y) - (pT0.x - p.x) * (pT2.y - p.y);
     return(a > 0 && b > 0 && c > 0) || (a >= 0 && b >= 0 && c >= 0);
   };
 
-  GeometryOperators__GeometryOperators.triangleArea = function(triangle) {
+  GeometryOperators.triangleArea = function(triangle) {
     return Math.abs(triangle.a.x * (triangle.b.y - triangle.c.y) + triangle.b.x * (triangle.c.y - triangle.a.y) + triangle.c.x * (triangle.a.y - triangle.b.y)) / 2;
   };
 
 
   /////////////lines (line is a Point with values m and b in y=mx+b)
 
-  GeometryOperators__GeometryOperators.lineFromTwoPoints = function(point0, point1) {
-    if(point0.x == point1.x) return new Point__default(Infinity, point0.x);
+  GeometryOperators.lineFromTwoPoints = function(point0, point1) {
+    if(point0.x == point1.x) return new Point(Infinity, point0.x);
     var m = (point1.y - point0.y) / (point1.x - point0.x);
-    return new Point__default(m, point0.y - m * point0.x);
+    return new Point(m, point0.y - m * point0.x);
   };
 
-  GeometryOperators__GeometryOperators.distancePointToLine = function(point, line) {
+  GeometryOperators.distancePointToLine = function(point, line) {
     var m2;
     var b2;
     if(line.x == 0) {
@@ -9367,13 +10454,13 @@ define('src/index', ['exports'], function (exports) {
       m2 = -1 / line.x;
       b2 = point.y - m2 * point.x;
     }
-    var interPoint = GeometryOperators__GeometryOperators.intersectionLines(line, new Point__default(m2, b2));
+    var interPoint = GeometryOperators.intersectionLines(line, new Point(m2, b2));
     return Math.sqrt(Math.pow(point.x - interPoint.x, 2) + Math.pow(point.y - interPoint.y, 2));
   };
 
-  GeometryOperators__GeometryOperators.distancePointToSegment = function(point, point0Segment, point1Segment) {
+  GeometryOperators.distancePointToSegment = function(point, point0Segment, point1Segment) {
     var m = point0Segment.x == point1Segment.x ? Infinity : (point1Segment.y - point0Segment.y) / (point1Segment.x - point0Segment.x);
-    var line = m == Infinity ? new Point__default(Infinity, point0Segment.x) : new Point__default(m, point0Segment.y - m * point0Segment.x);
+    var line = m == Infinity ? new Point(Infinity, point0Segment.x) : new Point(m, point0Segment.y - m * point0Segment.x);
     var m2;
     var b2;
     if(line.x == 0) {
@@ -9383,37 +10470,37 @@ define('src/index', ['exports'], function (exports) {
       m2 = -1 / line.x;
       b2 = point.y - m2 * point.x;
     }
-    var interPoint = GeometryOperators__GeometryOperators.intersectionLines(line, new Point__default(m2, b2));
+    var interPoint = GeometryOperators.intersectionLines(line, new Point(m2, b2));
     if(interPoint.x >= Math.min(point0Segment.x, point1Segment.x) && interPoint.x <= Math.max(point0Segment.x, point1Segment.x)) return point.distanceToPoint(interPoint);
     return Math.min(point.distanceToPoint(point0Segment), point.distanceToPoint(point1Segment));
   };
 
-  GeometryOperators__GeometryOperators.intersectionLines = function(line0, line1) {
+  GeometryOperators.intersectionLines = function(line0, line1) {
     if(line0.x == line1.x) {
       if(line0.y == line1.y) {
         if(line0.x == Infinity) {
-          return new Point__default(line0.y, 0);
+          return new Point(line0.y, 0);
         } else {
-          return new Point__default(0, line0.y);
+          return new Point(0, line0.y);
         }
       }
       return null;
     }
     if(line0.x == Infinity) {
-      return new Point__default(line0.y, line1.x * line0.y + line1.y);
+      return new Point(line0.y, line1.x * line0.y + line1.y);
     } else if(line1.x == Infinity) {
-      return new Point__default(line1.y, line0.x * line1.y + line0.y);
+      return new Point(line1.y, line0.x * line1.y + line0.y);
     }
 
     var xx = (line1.y - line0.y) / (line0.x - line1.x);
-    return new Point__default(xx, line0.x * xx + line0.y);
+    return new Point(xx, line0.x * xx + line0.y);
   };
 
 
-  GeometryOperators__GeometryOperators.VennCircles = function(area0, area1, areaIntersection, centerInLens, precision) {
+  GeometryOperators.VennCircles = function(area0, area1, areaIntersection, centerInLens, precision) {
     var rA = Math.sqrt(area0 / Math.PI);
     var rB = Math.sqrt(area1 / Math.PI);
-    var d = GeometryOperators__GeometryOperators.circleDistancesFromCommonArea(rA, rB, areaIntersection, precision);
+    var d = GeometryOperators.circleDistancesFromCommonArea(rA, rB, areaIntersection, precision);
 
     var circle0;
     var circle1;
@@ -9445,7 +10532,7 @@ define('src/index', ['exports'], function (exports) {
    * @param precision
    *
    */
-  GeometryOperators__GeometryOperators.circleDistancesFromCommonArea = function(r0, r1, commonArea, precision) {
+  GeometryOperators.circleDistancesFromCommonArea = function(r0, r1, commonArea, precision) {
     precision = precision || 0.1;
     var d0 = Math.max(r0, r1) - Math.min(r0, r1);
     var d1 = r0 + r1;
@@ -9453,7 +10540,7 @@ define('src/index', ['exports'], function (exports) {
 
     var attempts = 0;
 
-    var currentArea = GeometryOperators__GeometryOperators.circlesCommonArea(r0, r1, dM);
+    var currentArea = GeometryOperators.circlesCommonArea(r0, r1, dM);
 
     while(Math.abs(currentArea - commonArea) > precision && attempts < 200) {
       if(currentArea > commonArea) {
@@ -9464,12 +10551,12 @@ define('src/index', ['exports'], function (exports) {
         dM = (dM + d0) * 0.5;
       }
       attempts++;
-      currentArea = GeometryOperators__GeometryOperators.circlesCommonArea(r0, r1, dM);
+      currentArea = GeometryOperators.circlesCommonArea(r0, r1, dM);
     }
     return dM;
   };
 
-  GeometryOperators__GeometryOperators.circlesCommonArea = function(ra, rb, d) {
+  GeometryOperators.circlesCommonArea = function(ra, rb, d) {
     if(d >= (ra + rb)) return 0;
     if(d + Math.min(ra, rb) <= Math.max(ra, rb)) {
       return Math.PI * Math.pow(Math.min(ra, rb), 2);
@@ -9485,7 +10572,7 @@ define('src/index', ['exports'], function (exports) {
   /**
    * This method return the angles required to draw the intersection shape (lens) of two circles
    */
-  GeometryOperators__GeometryOperators.circlesLensAngles = function(circle0, circle1) {
+  GeometryOperators.circlesLensAngles = function(circle0, circle1) {
     if(circle1.x < circle0.x) {
       var _circle = circle1.clone();
       circle1 = circle0.clone();
@@ -9515,7 +10602,7 @@ define('src/index', ['exports'], function (exports) {
 
   //////Delauney
 
-  GeometryOperators__GeometryOperators.delauney = function(polygon) { /// ---> move to Polygon operators, chnge name to getDelauneyTriangulation
+  GeometryOperators.delauney = function(polygon) { /// ---> move to Polygon operators, chnge name to getDelauneyTriangulation
     return _triangulate(polygon);
   };
 
@@ -9687,172 +10774,399 @@ define('src/index', ['exports'], function (exports) {
     return closed;
   }
 
-  exports.GeometryOperators = GeometryOperators__default;
+  exports.GeometryOperators = GeometryOperators;
 
-  Rectangle__Rectangle.prototype = new DataModel();
-  Rectangle__Rectangle.prototype.constructor = Rectangle__Rectangle;
-
-  /**
-   * @classdesc Rectangle shape
-   *
-   * @description Creates a new Rectangle.
-   * @param {Number} x
-   * @param {Number} y
-   * @param {Number} width
-   * @param {Number} height
-   * @constructor
-   * @category geometry
+  /*
+   * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
+   * Digest Algorithm, as defined in RFC 1321.
+   * Version 2.2 Copyright (C) Paul Johnston 1999 - 2009
+   * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
+   * Distributed under the BSD License
+   * See http://pajhome.org.uk/crypt/md5 for more info.
    */
-  function Rectangle__Rectangle(x, y, width, height) {
-    DataModel.apply(this);
-    this.name = "";
-    this.type = "Rectangle";
-    this.x = Number(x) || 0;
-    this.y = Number(y) || 0;
-    this.width = Number(width) || 0;
-    this.height = Number(height) || 0;
-  }
-  var Rectangle__default = Rectangle__Rectangle;
 
-  Rectangle__Rectangle.prototype.getRight = function() {
-    return this.x + this.width;
-  };
-
-  Rectangle__Rectangle.prototype.getBottom = function() {
-    return this.y + this.height;
-  };
-
-  Rectangle__Rectangle.prototype.setRight = function(value) {
-    this.width = value - this.x;
-  };
-
-  Rectangle__Rectangle.prototype.setBottom = function(value) {
-    this.height = value - this.y;
-  };
-
-
-
-  Rectangle__Rectangle.prototype.getTopLeft = function() {
-    return new Point__default(this.x, this.y);
-  };
-  Rectangle__Rectangle.prototype.getTopRight = function() {
-    return new Point__default(this.x + this.width, this.y);
-  };
-
-  Rectangle__Rectangle.prototype.getBottomRight = function() {
-    return new Point__default(this.x + this.width, this.y + this.height);
-  };
-  Rectangle__Rectangle.prototype.getBottomLeft = function() {
-    return new Point__default(this.x, this.y + this.height);
-  };
-  Rectangle__Rectangle.prototype.getCenter = function() {
-    return new Point__default(this.x + 0.5 * this.width, this.y + 0.5 * this.height);
-  };
-  Rectangle__Rectangle.prototype.getRandomPoint = function() {
-    return new Point__default(this.x + Math.random() * this.width, this.y + Math.random() * this.height);
-  };
-
-  Rectangle__Rectangle.prototype.getIntersection = function(rectangle) {
-    if(rectangle.x + rectangle.width < this.x || rectangle.x > this.x + this.width || rectangle.y + rectangle.height < this.y || rectangle.y > this.y + this.height) return null;
-    var xR = Math.max(rectangle.x, this.x);
-    var yR = Math.max(rectangle.y, this.y);
-    return new Rectangle__Rectangle(xR, yR, Math.min(rectangle.x + rectangle.width, this.x + this.width) - xR, Math.min(rectangle.y + rectangle.height, this.y + this.height) - yR);
-  };
-
-  Rectangle__Rectangle.prototype.interpolate = function(rectangle, t) {
-    var mint = 1 - t;
-    return new Rectangle__Rectangle(mint * this.x + t * rectangle.x, mint * this.y + t * rectangle.y, mint * this.width + t * rectangle.width, mint * this.height + t * rectangle.height);
-  };
-
-  Rectangle__Rectangle.prototype.getRatio = function() {
-    return Math.max(this.width, this.height) / Math.min(this.width, this.height);
-  };
-
-  Rectangle__Rectangle.prototype.getArea = function() {
-    return this.width * this.height;
-  };
-
-  /**
-   * check if a point belong to the rectangle
-   * @param  {Point} point
-   * @return {Boolean}
-   * tags:geometry
+  /*
+   * Configurable variables. You may need to tweak these to be compatible with
+   * the server-side, but the defaults work in most cases.
    */
-  Rectangle__Rectangle.prototype.containsPoint = function(point) {
-    return(this.x <= point.x && this.x + this.width >= point.x && this.y <= point.y && this.y + this.height >= point.y);
+  //var hexcase = 0;   /* hex output format. 0 - lowercase; 1 - uppercase        */
+  //var b64pad  = "";  /* base-64 pad character. "=" for strict RFC compliance   */
+
+
+  function MD5(){}
+
+
+  /*
+   * These are the functions you'll usually want to call
+   * They take string arguments and return either hex or base-64 encoded strings
+   */
+  MD5.hex_md5 = function(s)    { return this.rstr2hex(this.rstr_md5(this.str2rstr_utf8(s))); };
+  MD5.b64_md5 = function(s)    { return this.rstr2b64(this.rstr_md5(this.str2rstr_utf8(s))); };
+  MD5.any_md5 = function(s, e) { return this.rstr2any(this.rstr_md5(this.str2rstr_utf8(s)), e); };
+  MD5.hex_hmac_md5 = function(k, d)
+    { return this.rstr2hex(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); };
+  MD5.b64_hmac_md5 = function(k, d)
+    { return this.rstr2b64(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); };
+  MD5.any_hmac_md5 = function(k, d, e)
+    { return this.rstr2any(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d)), e); };
+
+  /*
+   * Perform a simple self-test to see if the VM is working
+   */
+  MD5.md5_vm_test = function()
+  {
+    return this.hex_md5("abc").toLowerCase() == "900150983cd24fb0d6963f7d28e17f72";
   };
 
+  /*
+   * Calculate the MD5 of a raw string
+   */
+  MD5.rstr_md5 = function(s)
+  {
+    return this.binl2rstr(this.binl_md5(this.rstr2binl(s), s.length * 8));
+  };
 
-  Rectangle__Rectangle.prototype.pointIsOnBorder = function(point, margin) {
-    margin = margin == null ? 1 : margin;
-    if(point.x >= this.x - margin && point.x <= this.x + this.width + margin) {
-      if(point.y >= this.y - margin && point.y <= this.y + margin) return true;
-      if(point.y >= this.y + this.height - margin && point.y <= this.y + this.height + margin) return true;
-      if(point.y >= this.y - margin && point.y <= this.y + this.height + margin) {
-        if(point.x < this.x + margin || point.x > this.x + this.width - margin) return true;
+  /*
+   * Calculate the HMAC-MD5, of a key and some data (raw strings)
+   */
+  MD5.rstr_hmac_md5 = function(key, data)
+  {
+    var bkey = this.rstr2binl(key);
+    if(bkey.length > 16) bkey = this.binl_md5(bkey, key.length * 8);
+
+    var ipad = Array(16), opad = Array(16);
+    for(var i = 0; i < 16; i++)
+    {
+      ipad[i] = bkey[i] ^ 0x36363636;
+      opad[i] = bkey[i] ^ 0x5C5C5C5C;
+    }
+
+    var hash = this.binl_md5(ipad.concat(this.rstr2binl(data)), 512 + data.length * 8);
+    return this.binl2rstr(this.binl_md5(opad.concat(hash), 512 + 128));
+  };
+
+  /*
+   * Convert a raw string to a hex string
+   */
+  MD5.rstr2hex = function(input)
+  {
+  	var hexcase = 0;
+    try { hexcase; } catch(e) { hexcase=0; }
+    var hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
+    var output = "";
+    var x;
+    for(var i = 0; i < input.length; i++)
+    {
+      x = input.charCodeAt(i);
+      output += hex_tab.charAt((x >>> 4) & 0x0F)
+             +  hex_tab.charAt( x        & 0x0F);
+    }
+    return output;
+  };
+
+  /*
+   * Convert a raw string to a base-64 string
+   */
+  MD5.rstr2b64 = function(input)
+  {
+  	var b64pad  = "";
+    try { b64pad; } catch(e) { b64pad=''; }
+    var tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    var output = "";
+    var len = input.length;
+    for(var i = 0; i < len; i += 3)
+    {
+      var triplet = (input.charCodeAt(i) << 16)
+                  | (i + 1 < len ? input.charCodeAt(i+1) << 8 : 0)
+                  | (i + 2 < len ? input.charCodeAt(i+2)      : 0);
+      for(var j = 0; j < 4; j++)
+      {
+        if(i * 8 + j * 6 > input.length * 8) output += b64pad;
+        else output += tab.charAt((triplet >>> 6*(3-j)) & 0x3F);
       }
     }
-    return false;
+    return output;
   };
 
-
-
-
-  Rectangle__Rectangle.prototype.getNormalRectangle = function() {
-    return new Rectangle__Rectangle(Math.min(this.x, this.x + this.width), Math.min(this.y, this.y + this.height), Math.abs(this.width), Math.abs(this.height));
-  };
-
-  /**
-   * return true if it interstects a rectangle
-   * @param  {Rectangle} rectangle
-   * @return {Boolean}
-   * tags:geometry
+  /*
+   * Convert a raw string to an arbitrary string encoding
    */
-  Rectangle__Rectangle.prototype.intersectsRectangle = function(rectangle) {
-    return !(this.x + this.width < rectangle.x) && !(this.y + this.height < rectangle.y) && !(rectangle.x + rectangle.width < this.x) && !(rectangle.y + rectangle.height < this.y);
+  MD5.rstr2any = function(input, encoding)
+  {
+    var divisor = encoding.length;
+    var i, j, q, x, quotient;
 
+    /* Convert to an array of 16-bit big-endian values, forming the dividend */
+    var dividend = Array(Math.ceil(input.length / 2));
+    for(i = 0; i < dividend.length; i++)
+    {
+      dividend[i] = (input.charCodeAt(i * 2) << 8) | input.charCodeAt(i * 2 + 1);
+    }
 
-    if(this.x + this.width < rectangle.x) return false;
-    if(this.y + this.height < rectangle.y) return false;
-    if(rectangle.x + rectangle.width < this.x) return false;
-    if(rectangle.y + rectangle.height < this.y) return false;
-    return true;
+    /*
+     * Repeatedly perform a long division. The binary array forms the dividend,
+     * the length of the encoding is the divisor. Once computed, the quotient
+     * forms the dividend for the next step. All remainders are stored for later
+     * use.
+     */
+    var full_length = Math.ceil(input.length * 8 /
+                                      (Math.log(encoding.length) / Math.log(2)));
+    var remainders = Array(full_length);
+    for(j = 0; j < full_length; j++)
+    {
+      quotient = Array();
+      x = 0;
+      for(i = 0; i < dividend.length; i++)
+      {
+        x = (x << 16) + dividend[i];
+        q = Math.floor(x / divisor);
+        x -= q * divisor;
+        if(quotient.length > 0 || q > 0)
+          quotient[quotient.length] = q;
+      }
+      remainders[j] = x;
+      dividend = quotient;
+    }
 
+    /* Convert the remainders to the output string */
+    var output = "";
+    for(i = remainders.length - 1; i >= 0; i--)
+      output += encoding.charAt(remainders[i]);
 
-
-  	return this.containsPoint(rectangle.getTopLeft()) || this.containsPoint(rectangle.getTopRight()) || this.containsPoint(rectangle.getBottomLeft()) || this.containsPoint(rectangle.getBottomRight())
-  	|| rectangle.containsPoint(this.getTopLeft()) || rectangle.containsPoint(this.getTopRight()) || rectangle.containsPoint(this.getBottomLeft()) || rectangle.containsPoint(this.getBottomRight());
+    return output;
   };
 
-  Rectangle__Rectangle.prototype.expand = function(expantion, centerPoint) {
-    centerPoint = centerPoint || new Point__default(this.x + 0.5 * this.width, this.y + 0.5 * this.height);
-    return new Rectangle__Rectangle((this.x - centerPoint.x) * expantion + centerPoint.x, (this.y - centerPoint.y) * expantion + centerPoint.y, this.width * expantion, this.height * expantion);
+  /*
+   * Encode a string as utf-8.
+   * For efficiency, this assumes the input is valid utf-16.
+   */
+  MD5.str2rstr_utf8 = function(input)
+  {
+    var output = "";
+    var i = -1;
+    var x, y;
+
+    while(++i < input.length)
+    {
+      /* Decode utf-16 surrogate pairs */
+      x = input.charCodeAt(i);
+      y = i + 1 < input.length ? input.charCodeAt(i + 1) : 0;
+      if(0xD800 <= x && x <= 0xDBFF && 0xDC00 <= y && y <= 0xDFFF)
+      {
+        x = 0x10000 + ((x & 0x03FF) << 10) + (y & 0x03FF);
+        i++;
+      }
+
+      /* Encode output as utf-8 */
+      if(x <= 0x7F)
+        output += String.fromCharCode(x);
+      else if(x <= 0x7FF)
+        output += String.fromCharCode(0xC0 | ((x >>> 6 ) & 0x1F),
+                                      0x80 | ( x         & 0x3F));
+      else if(x <= 0xFFFF)
+        output += String.fromCharCode(0xE0 | ((x >>> 12) & 0x0F),
+                                      0x80 | ((x >>> 6 ) & 0x3F),
+                                      0x80 | ( x         & 0x3F));
+      else if(x <= 0x1FFFFF)
+        output += String.fromCharCode(0xF0 | ((x >>> 18) & 0x07),
+                                      0x80 | ((x >>> 12) & 0x3F),
+                                      0x80 | ((x >>> 6 ) & 0x3F),
+                                      0x80 | ( x         & 0x3F));
+    }
+    return output;
   };
 
-  Rectangle__Rectangle.prototype.isEqual = function(rectangle) {
-    return this.x == rectangle.x && this.y == rectangle.y && this.width == rectangle.width && this.height == rectangle.height;
+  /*
+   * Encode a string as utf-16
+   */
+  MD5.str2rstr_utf16le = function(input)
+  {
+    var output = "";
+    for(var i = 0; i < input.length; i++)
+      output += String.fromCharCode( input.charCodeAt(i)        & 0xFF,
+                                    (input.charCodeAt(i) >>> 8) & 0xFF);
+    return output;
   };
 
-  Rectangle__Rectangle.prototype.clone = function() {
-    return new Rectangle__Rectangle(this.x, this.y, this.width, this.height);
+  MD5.str2rstr_utf16be = function(input)
+  {
+    var output = "";
+    for(var i = 0; i < input.length; i++)
+      output += String.fromCharCode((input.charCodeAt(i) >>> 8) & 0xFF,
+                                     input.charCodeAt(i)        & 0xFF);
+    return output;
   };
 
-  Rectangle__Rectangle.prototype.toString = function() {
-    return "(x=" + this.x + ", y=" + this.y + ", w=" + this.width + ", h=" + this.height + ")";
+  /*
+   * Convert a raw string to an array of little-endian words
+   * Characters >255 have their high-byte silently ignored.
+   */
+  MD5.rstr2binl = function(input)
+  {
+    var output = Array(input.length >> 2);
+    for(var i = 0; i < output.length; i++)
+      output[i] = 0;
+    for(var i = 0; i < input.length * 8; i += 8)
+      output[i>>5] |= (input.charCodeAt(i / 8) & 0xFF) << (i%32);
+    return output;
   };
 
-  Rectangle__Rectangle.prototype.destroy = function() {
-    delete this.x;
-    delete this.y;
-    delete this.width;
-    delete this.height;
+  /*
+   * Convert an array of little-endian words to a string
+   */
+  MD5.binl2rstr = function(input)
+  {
+    var output = "";
+    for(var i = 0; i < input.length * 32; i += 8)
+      output += String.fromCharCode((input[i>>5] >>> (i % 32)) & 0xFF);
+    return output;
   };
 
-  exports.Rectangle = Rectangle__default;
+  /*
+   * Calculate the MD5 of an array of little-endian words, and a bit length.
+   */
+  MD5.binl_md5 = function(x, len)
+  {
+    /* append padding */
+    x[len >> 5] |= 0x80 << ((len) % 32);
+    x[(((len + 64) >>> 9) << 4) + 14] = len;
+
+    var a =  1732584193;
+    var b = -271733879;
+    var c = -1732584194;
+    var d =  271733878;
+
+    for(var i = 0; i < x.length; i += 16)
+    {
+      var olda = a;
+      var oldb = b;
+      var oldc = c;
+      var oldd = d;
+
+      a = this.md5_ff(a, b, c, d, x[i+ 0], 7 , -680876936);
+      d = this.md5_ff(d, a, b, c, x[i+ 1], 12, -389564586);
+      c = this.md5_ff(c, d, a, b, x[i+ 2], 17,  606105819);
+      b = this.md5_ff(b, c, d, a, x[i+ 3], 22, -1044525330);
+      a = this.md5_ff(a, b, c, d, x[i+ 4], 7 , -176418897);
+      d = this.md5_ff(d, a, b, c, x[i+ 5], 12,  1200080426);
+      c = this.md5_ff(c, d, a, b, x[i+ 6], 17, -1473231341);
+      b = this.md5_ff(b, c, d, a, x[i+ 7], 22, -45705983);
+      a = this.md5_ff(a, b, c, d, x[i+ 8], 7 ,  1770035416);
+      d = this.md5_ff(d, a, b, c, x[i+ 9], 12, -1958414417);
+      c = this.md5_ff(c, d, a, b, x[i+10], 17, -42063);
+      b = this.md5_ff(b, c, d, a, x[i+11], 22, -1990404162);
+      a = this.md5_ff(a, b, c, d, x[i+12], 7 ,  1804603682);
+      d = this.md5_ff(d, a, b, c, x[i+13], 12, -40341101);
+      c = this.md5_ff(c, d, a, b, x[i+14], 17, -1502002290);
+      b = this.md5_ff(b, c, d, a, x[i+15], 22,  1236535329);
+
+      a = this.md5_gg(a, b, c, d, x[i+ 1], 5 , -165796510);
+      d = this.md5_gg(d, a, b, c, x[i+ 6], 9 , -1069501632);
+      c = this.md5_gg(c, d, a, b, x[i+11], 14,  643717713);
+      b = this.md5_gg(b, c, d, a, x[i+ 0], 20, -373897302);
+      a = this.md5_gg(a, b, c, d, x[i+ 5], 5 , -701558691);
+      d = this.md5_gg(d, a, b, c, x[i+10], 9 ,  38016083);
+      c = this.md5_gg(c, d, a, b, x[i+15], 14, -660478335);
+      b = this.md5_gg(b, c, d, a, x[i+ 4], 20, -405537848);
+      a = this.md5_gg(a, b, c, d, x[i+ 9], 5 ,  568446438);
+      d = this.md5_gg(d, a, b, c, x[i+14], 9 , -1019803690);
+      c = this.md5_gg(c, d, a, b, x[i+ 3], 14, -187363961);
+      b = this.md5_gg(b, c, d, a, x[i+ 8], 20,  1163531501);
+      a = this.md5_gg(a, b, c, d, x[i+13], 5 , -1444681467);
+      d = this.md5_gg(d, a, b, c, x[i+ 2], 9 , -51403784);
+      c = this.md5_gg(c, d, a, b, x[i+ 7], 14,  1735328473);
+      b = this.md5_gg(b, c, d, a, x[i+12], 20, -1926607734);
+
+      a = this.md5_hh(a, b, c, d, x[i+ 5], 4 , -378558);
+      d = this.md5_hh(d, a, b, c, x[i+ 8], 11, -2022574463);
+      c = this.md5_hh(c, d, a, b, x[i+11], 16,  1839030562);
+      b = this.md5_hh(b, c, d, a, x[i+14], 23, -35309556);
+      a = this.md5_hh(a, b, c, d, x[i+ 1], 4 , -1530992060);
+      d = this.md5_hh(d, a, b, c, x[i+ 4], 11,  1272893353);
+      c = this.md5_hh(c, d, a, b, x[i+ 7], 16, -155497632);
+      b = this.md5_hh(b, c, d, a, x[i+10], 23, -1094730640);
+      a = this.md5_hh(a, b, c, d, x[i+13], 4 ,  681279174);
+      d = this.md5_hh(d, a, b, c, x[i+ 0], 11, -358537222);
+      c = this.md5_hh(c, d, a, b, x[i+ 3], 16, -722521979);
+      b = this.md5_hh(b, c, d, a, x[i+ 6], 23,  76029189);
+      a = this.md5_hh(a, b, c, d, x[i+ 9], 4 , -640364487);
+      d = this.md5_hh(d, a, b, c, x[i+12], 11, -421815835);
+      c = this.md5_hh(c, d, a, b, x[i+15], 16,  530742520);
+      b = this.md5_hh(b, c, d, a, x[i+ 2], 23, -995338651);
+
+      a = this.md5_ii(a, b, c, d, x[i+ 0], 6 , -198630844);
+      d = this.md5_ii(d, a, b, c, x[i+ 7], 10,  1126891415);
+      c = this.md5_ii(c, d, a, b, x[i+14], 15, -1416354905);
+      b = this.md5_ii(b, c, d, a, x[i+ 5], 21, -57434055);
+      a = this.md5_ii(a, b, c, d, x[i+12], 6 ,  1700485571);
+      d = this.md5_ii(d, a, b, c, x[i+ 3], 10, -1894986606);
+      c = this.md5_ii(c, d, a, b, x[i+10], 15, -1051523);
+      b = this.md5_ii(b, c, d, a, x[i+ 1], 21, -2054922799);
+      a = this.md5_ii(a, b, c, d, x[i+ 8], 6 ,  1873313359);
+      d = this.md5_ii(d, a, b, c, x[i+15], 10, -30611744);
+      c = this.md5_ii(c, d, a, b, x[i+ 6], 15, -1560198380);
+      b = this.md5_ii(b, c, d, a, x[i+13], 21,  1309151649);
+      a = this.md5_ii(a, b, c, d, x[i+ 4], 6 , -145523070);
+      d = this.md5_ii(d, a, b, c, x[i+11], 10, -1120210379);
+      c = this.md5_ii(c, d, a, b, x[i+ 2], 15,  718787259);
+      b = this.md5_ii(b, c, d, a, x[i+ 9], 21, -343485551);
+
+      a = this.safe_add(a, olda);
+      b = this.safe_add(b, oldb);
+      c = this.safe_add(c, oldc);
+      d = this.safe_add(d, oldd);
+    }
+    return Array(a, b, c, d);
+  };
+
+  /*
+   * These functions implement the four basic operations the algorithm uses.
+   */
+  MD5.md5_cmn = function(q, a, b, x, s, t)
+  {
+    return this.safe_add(this.bit_rol(this.safe_add(this.safe_add(a, q), this.safe_add(x, t)), s),b);
+  };
+  MD5.md5_ff = function(a, b, c, d, x, s, t)
+  {
+    return this.md5_cmn((b & c) | ((~b) & d), a, b, x, s, t);
+  };
+  MD5.md5_gg = function(a, b, c, d, x, s, t)
+  {
+    return this.md5_cmn((b & d) | (c & (~d)), a, b, x, s, t);
+  };
+  MD5.md5_hh = function(a, b, c, d, x, s, t)
+  {
+    return this.md5_cmn(b ^ c ^ d, a, b, x, s, t);
+  };
+  MD5.md5_ii = function(a, b, c, d, x, s, t)
+  {
+    return this.md5_cmn(c ^ (b | (~d)), a, b, x, s, t);
+  };
+
+  /*
+   * Add integers, wrapping at 2^32. This uses 16-bit operations internally
+   * to work around bugs in some JS interpreters.
+   */
+  MD5.safe_add = function(x, y)
+  {
+    var lsw = (x & 0xFFFF) + (y & 0xFFFF);
+    var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+    return (msw << 16) | (lsw & 0xFFFF);
+  };
+
+  /*
+   * Bitwise rotate a 32-bit number to the left.
+   */
+  MD5.bit_rol = function(num, cnt)
+  {
+    return (num << cnt) | (num >>> (32 - cnt));
+  };
+
+  exports.MD5 = MD5;
 
   function src_Global__setCursor(name) {
     name = name == null ? 'default' : name;
-    src_Global__canvas.style.cursor = name;
+    canvas.style.cursor = name;
   }
 
 
@@ -9887,7 +11201,7 @@ define('src/index', ['exports'], function (exports) {
   }
 
   var listenerArray  = [];
-  var src_Global__canvas;
+  var canvas;
   var removeDiv;
   var src_Global__userAgent="none";
   var src_Global__userAgentVersion;
@@ -9899,18 +11213,18 @@ define('src/index', ['exports'], function (exports) {
   var cH = 1; // canvas height
   var src_Global__cX = 1; // canvas center x
   var src_Global__cY = 1; // canvas center y
-  var src_Global__mX = 0; // cursor x
-  var src_Global__mY = 0; // cursor y
-  var src_Global__mP = new Point__default(0, 0); // cursor point
-  var src_Global__nF = 0; // number of current frame since first cycle
+  var mX = 0; // cursor x
+  var mY = 0; // cursor y
+  var mP = new Point(0, 0); // cursor point
+  var nF = 0; // number of current frame since first cycle
 
-  var src_Global__MOUSE_DOWN=false; //true on the frame of mousedown event
-  var src_Global__MOUSE_UP=false; //true on the frame of mouseup event
-  var src_Global__MOUSE_UP_FAST=false; //true on the frame of mouseup event
-  var src_Global__WHEEL_CHANGE=0; //differnt from 0 if mousewheel (or pad) moves / STATE
+  var MOUSE_DOWN=false; //true on the frame of mousedown event
+  var MOUSE_UP=false; //true on the frame of mouseup event
+  var MOUSE_UP_FAST=false; //true on the frame of mouseup event
+  var WHEEL_CHANGE=0; //differnt from 0 if mousewheel (or pad) moves / STATE
   var NF_DOWN; //number of frame of last mousedown event
   var NF_UP; //number of frame of last mouseup event
-  var src_Global__MOUSE_PRESSED; //true if mouse pressed / STATE
+  var MOUSE_PRESSED; //true if mouse pressed / STATE
   var MOUSE_IN_DOCUMENT = true; //true if cursor is inside document / STATE
   var mX_DOWN; // cursor x position on last mousedown event
   var mY_DOWN; // cursor x position on last mousedown event
@@ -9931,8 +11245,8 @@ define('src/index', ['exports'], function (exports) {
 
   //global constants
   var src_Global__context;
-  var src_Global__TwoPi = 2*Math.PI;
-  var src_Global__HalfPi = 0.5*Math.PI;
+  var TwoPi = 2*Math.PI;
+  var HalfPi = 0.5*Math.PI;
   var radToGrad = 180/Math.PI;
   var gradToRad = Math.PI/180;
   var src_Global__c = console;
@@ -9961,46 +11275,46 @@ define('src/index', ['exports'], function (exports) {
   window.addEventListener('load', function(){
 
     if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
-      src_Global__userAgent='IE';
-      src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+      exports.userAgent = src_Global__userAgent='IE';
+      exports.userAgentVersion = src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
       if(src_Global__userAgentVersion<9) return null;
     } else if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent)){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
-      src_Global__userAgent='FIREFOX';
-      src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+      exports.userAgent = src_Global__userAgent='FIREFOX';
+      exports.userAgentVersion = src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
     } else if (navigator.userAgent.match(/Chrome/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
-      src_Global__userAgent='CHROME';
-      src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+      exports.userAgent = src_Global__userAgent='CHROME';
+      exports.userAgentVersion = src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
     } else if (/Mozilla[\/\s](\d+\.\d+)/.test(navigator.userAgent) || navigator.userAgent.match(/Mozilla/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
-      src_Global__userAgent='MOZILLA';
-      src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+      exports.userAgent = src_Global__userAgent='MOZILLA';
+      exports.userAgentVersion = src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
     } else if (navigator.userAgent.match(/Safari/) != null){ //test for MSIE x.x;
-      src_Global__userAgent='Safari';
-      src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+      exports.userAgent = src_Global__userAgent='Safari';
+      exports.userAgentVersion = src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
     } else if(navigator.userAgent.match(/iPad/i) != null){
-      src_Global__userAgent='IOS';
+      exports.userAgent = src_Global__userAgent='IOS';
     } else if(navigator.userAgent.match(/iPhone/i) != null){
-      src_Global__userAgent='IOS';
+      exports.userAgent = src_Global__userAgent='IOS';
     }
 
 
     Global.userAgent=src_Global__userAgent;
     Global._frameRate=30;
 
-    src_Global__canvas = document.getElementById('main');
+    exports.canvas = canvas = document.getElementById('main');
 
-    if(src_Global__canvas!=null){
-      removeDiv = document.getElementById('removeDiv');
+    if(canvas!=null){
+      exports.removeDiv = removeDiv = document.getElementById('removeDiv');
       removeDiv.style.display = 'none';
 
-      src_Global__context = src_Global__canvas.getContext('2d');
+      exports.context = src_Global__context = canvas.getContext('2d');
 
       _adjustCanvas();
 
-      src_Global__canvas.addEventListener("mousemove", src_Global___onMouse, false);
-      src_Global__canvas.addEventListener("mousedown", src_Global___onMouse, false);
-      src_Global__canvas.addEventListener("mouseup", src_Global___onMouse, false);
-      src_Global__canvas.addEventListener("mouseenter", src_Global___onMouse, false);
-      src_Global__canvas.addEventListener("mouseleave", src_Global___onMouse, false);
+      canvas.addEventListener("mousemove", _onMouse, false);
+      canvas.addEventListener("mousedown", _onMouse, false);
+      canvas.addEventListener("mouseup", _onMouse, false);
+      canvas.addEventListener("mouseenter", _onMouse, false);
+      canvas.addEventListener("mouseleave", _onMouse, false);
 
 
       activateWheel();
@@ -10011,53 +11325,53 @@ define('src/index', ['exports'], function (exports) {
       init();
     }
 
-    src_Global__c.l('Moebio Framework v2.259 | user agent: '+src_Global__userAgent+' | user agent version: '+src_Global__userAgentVersion+' | canvas detected: '+(src_Global__canvas!=null));
+    src_Global__c.l('Moebio Framework v2.259 | user agent: '+src_Global__userAgent+' | user agent version: '+src_Global__userAgentVersion+' | canvas detected: '+(canvas!=null));
 
   }, false);
 
-  function src_Global___onMouse(e) {
+  function _onMouse(e) {
 
     switch(e.type){
       case "mousemove":
-        PREV_mX=src_Global__mX;
-        PREV_mY=src_Global__mY;
+        exports.PREV_mX = PREV_mX=mX;
+        exports.PREV_mY = PREV_mY=mY;
 
         if(e.clientX){
-          src_Global__mX = e.clientX;
-              src_Global__mY = e.clientY;
+          exports.mX = mX = e.clientX;
+              exports.mY = mY = e.clientY;
         } else if(e.offsetX) {
-              src_Global__mX = e.offsetX;
-              src_Global__mY = e.offsetY;
+              exports.mX = mX = e.offsetX;
+              exports.mY = mY = e.offsetY;
           } else if(e.layerX) {
-              src_Global__mX = e.layerX;
-              src_Global__mY = e.layerY;
+              exports.mX = mX = e.layerX;
+              exports.mY = mY = e.layerY;
           }
-          src_Global__mP.x = src_Global__mX;
-          src_Global__mP.y = src_Global__mY;
-          MOUSE_IN_DOCUMENT = true;
+          mP.x = mX;
+          mP.y = mY;
+          exports.MOUSE_IN_DOCUMENT = MOUSE_IN_DOCUMENT = true;
           break;
       case "mousedown":
-        NF_DOWN = src_Global__nF;
-        src_Global__MOUSE_PRESSED = true;
-        T_MOUSE_PRESSED = 0;
+        exports.NF_DOWN = NF_DOWN = nF;
+        exports.MOUSE_PRESSED = MOUSE_PRESSED = true;
+        exports.T_MOUSE_PRESSED = T_MOUSE_PRESSED = 0;
         _tLastMouseDown = new Date().getTime();
-        mX_DOWN = src_Global__mX;
-        mY_DOWN = src_Global__mY;
-        MOUSE_IN_DOCUMENT = true;
+        exports.mX_DOWN = mX_DOWN = mX;
+        exports.mY_DOWN = mY_DOWN = mY;
+        exports.MOUSE_IN_DOCUMENT = MOUSE_IN_DOCUMENT = true;
         break;
       case "mouseup":
-        NF_UP = src_Global__nF;
-        src_Global__MOUSE_PRESSED = false;
-        T_MOUSE_PRESSED = 0;
-        mX_UP = src_Global__mX;
-        mY_UP = src_Global__mY;
-        MOUSE_IN_DOCUMENT = true;
+        exports.NF_UP = NF_UP = nF;
+        exports.MOUSE_PRESSED = MOUSE_PRESSED = false;
+        exports.T_MOUSE_PRESSED = T_MOUSE_PRESSED = 0;
+        exports.mX_UP = mX_UP = mX;
+        exports.mY_UP = mY_UP = mY;
+        exports.MOUSE_IN_DOCUMENT = MOUSE_IN_DOCUMENT = true;
         break;
       case "mouseenter":
-        MOUSE_IN_DOCUMENT = true;
+        exports.MOUSE_IN_DOCUMENT = MOUSE_IN_DOCUMENT = true;
         break;
       case "mouseleave":
-        MOUSE_IN_DOCUMENT = false;
+        exports.MOUSE_IN_DOCUMENT = MOUSE_IN_DOCUMENT = false;
         break;
     }
   }
@@ -10071,14 +11385,14 @@ define('src/index', ['exports'], function (exports) {
   function _adjustCanvas(){
     if(canvasResizeable==false) return;
 
-    cW = getDocWidth();
-    cH = getDocHeight();
+    exports.cW = cW = getDocWidth();
+    exports.cH = cH = getDocHeight();
 
-    src_Global__canvas.setAttribute('width', cW);
-      src_Global__canvas.setAttribute('height', cH);
+    canvas.setAttribute('width', cW);
+      canvas.setAttribute('height', cH);
 
-    src_Global__cX = Math.floor(cW*0.5);
-    src_Global__cY = Math.floor(cH*0.5);
+    exports.cX = src_Global__cX = Math.floor(cW*0.5);
+    exports.cY = src_Global__cY = Math.floor(cH*0.5);
   }
 
 
@@ -10090,14 +11404,14 @@ define('src/index', ['exports'], function (exports) {
     if(time!=null) END_CYCLE_DELAY = time;
 
     if(value){
-      src_Global__context.canvas.addEventListener('mousemove', src_Global__onMoveCycle, false);
-      addInteractionEventListener('mousewheel', src_Global__onMoveCycle, this);
-      _cycleOnMouseMovement = true;
+      src_Global__context.canvas.addEventListener('mousemove', onMoveCycle, false);
+      addInteractionEventListener('mousewheel', onMoveCycle, this);
+      exports._cycleOnMouseMovement = _cycleOnMouseMovement = true;
       stopCycle();
     } else {
-      src_Global__context.canvas.removeEventListener('mousemove', src_Global__onMoveCycle, false);
-      removeInteractionEventListener('mousewheel', src_Global__onMoveCycle, this);
-      _cycleOnMouseMovement = false;
+      src_Global__context.canvas.removeEventListener('mousemove', onMoveCycle, false);
+      removeInteractionEventListener('mousewheel', onMoveCycle, this);
+      exports._cycleOnMouseMovement = _cycleOnMouseMovement = false;
       startCycle();
     }
   }
@@ -10119,37 +11433,37 @@ define('src/index', ['exports'], function (exports) {
 
       src_Global__setCursor('default');
 
-      src_Global__MOUSE_DOWN = NF_DOWN==src_Global__nF;
-    src_Global__MOUSE_UP = NF_UP==src_Global__nF;
-    src_Global__MOUSE_UP_FAST = src_Global__MOUSE_UP && (src_Global__nF-NF_DOWN)<9;
+      exports.MOUSE_DOWN = MOUSE_DOWN = NF_DOWN==nF;
+    exports.MOUSE_UP = MOUSE_UP = NF_UP==nF;
+    exports.MOUSE_UP_FAST = MOUSE_UP_FAST = MOUSE_UP && (nF-NF_DOWN)<9;
 
-    DX_MOUSE = src_Global__mX-PREV_mX;
-    DY_MOUSE = src_Global__mY-PREV_mY;
-    MOUSE_MOVED = DX_MOUSE!=0 || DY_MOUSE!=0;
+    exports.DX_MOUSE = DX_MOUSE = mX-PREV_mX;
+    exports.DY_MOUSE = DY_MOUSE = mY-PREV_mY;
+    exports.MOUSE_MOVED = MOUSE_MOVED = DX_MOUSE!=0 || DY_MOUSE!=0;
 
-    if(src_Global__MOUSE_PRESSED) T_MOUSE_PRESSED = new Date().getTime() - _tLastMouseDown;
+    if(MOUSE_PRESSED) exports.T_MOUSE_PRESSED = T_MOUSE_PRESSED = new Date().getTime() - _tLastMouseDown;
 
       cycle();
 
-      src_Global__WHEEL_CHANGE = 0;
+      exports.WHEEL_CHANGE = WHEEL_CHANGE = 0;
 
-      PREV_mX=src_Global__mX;
-    PREV_mY=src_Global__mY;
+      exports.PREV_mX = PREV_mX=mX;
+    exports.PREV_mY = PREV_mY=mY;
 
-      src_Global__nF++;
+      nF++, exports.nF = nF;
   }
 
   function startCycle(){
     clearTimeout(_setTimeOutId);
     clearInterval(_setIntervalId);
     _setIntervalId = setInterval(enterFrame, Global._frameRate);
-    cycleActive = true;
+    exports.cycleActive = cycleActive = true;
   }
 
 
   function stopCycle(){
     clearInterval(_setIntervalId);
-    cycleActive = false;
+    exports.cycleActive = cycleActive = false;
 
     lastCycle();
   }
@@ -10157,18 +11471,18 @@ define('src/index', ['exports'], function (exports) {
 
 
 
-  function src_Global__onMoveCycle(e){
-    if(e.type=='mousemove' && _prevMouseX==src_Global__mX && _prevMouseY==src_Global__mY) return;
+  function onMoveCycle(e){
+    if(e.type=='mousemove' && _prevMouseX==mX && _prevMouseY==mY) return;
     reStartCycle();
   }
 
   function reStartCycle(){
-    _prevMouseX=src_Global__mX;
-    _prevMouseY=src_Global__mY;
+    _prevMouseX=mX;
+    _prevMouseY=mY;
 
     if(!cycleActive){
       _setIntervalId = setInterval(enterFrame, Global._frameRate);
-      cycleActive = true;
+      exports.cycleActive = cycleActive = true;
     }
 
     clearTimeout(_setTimeOutId);
@@ -10199,7 +11513,7 @@ define('src/index', ['exports'], function (exports) {
     var i;
     for(i=0; listenerArray[i]!=null; i++){
       if(listenerArray[i][0]==e.type.replace('DOMMouseScroll', 'mousewheel')){
-        if(_interactionCancelledFrame==src_Global__nF) return;
+        if(_interactionCancelledFrame==nF) return;
         listenerArray[i][1].call(listenerArray[i][2], e);
       }
     }
@@ -10216,8 +11530,8 @@ define('src/index', ['exports'], function (exports) {
   }
 
   function cancelAllInteractions(){
-    src_Global__c.log("cancelAllInteractions, _interactionCancelledFrame:", src_Global__nF);
-    _interactionCancelledFrame = src_Global__nF;
+    src_Global__c.log("cancelAllInteractions, _interactionCancelledFrame:", nF);
+    _interactionCancelledFrame = nF;
   }
 
   function setBackgroundColor(color){
@@ -10230,9 +11544,9 @@ define('src/index', ['exports'], function (exports) {
     } else if(Array.isArray(color)){
       color = ColorOperators.RGBtoHEX(color[0], color[1], color[2]);
     }
-    backGroundColor = color;
+    exports.backGroundColor = backGroundColor = color;
 
-    backGroundColorRGB = ColorOperators.colorStringToRGB(backGroundColor);
+    exports.backGroundColorRGB = backGroundColorRGB = ColorOperators.colorStringToRGB(backGroundColor);
 
     var body = document.getElementById('index');
     body.setAttribute('bgcolor', backGroundColor);
@@ -10274,11 +11588,11 @@ define('src/index', ['exports'], function (exports) {
       if (!e) e = window.event; //IE
 
       if (e.wheelDelta){
-        src_Global__WHEEL_CHANGE = e.wheelDelta/120;
+        exports.WHEEL_CHANGE = WHEEL_CHANGE = e.wheelDelta/120;
       } else if (e.detail) { /** Mozilla case. */
-          src_Global__WHEEL_CHANGE = -e.detail/3;
+          exports.WHEEL_CHANGE = WHEEL_CHANGE = -e.detail/3;
       }
-      e.value = src_Global__WHEEL_CHANGE;
+      e.value = WHEEL_CHANGE;
       e.type = "mousewheel"; //why this doesn't work?
 
     onCanvasEvent(e);
@@ -10293,7 +11607,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   function setStructureLocalStorage(object, id, comments){
-    var type = typeOf(object);
+    var type = ClassUtils__typeOf(object);
     var code;
 
     switch(type){
@@ -10397,7 +11711,7 @@ define('src/index', ['exports'], function (exports) {
   exports.enterFrame = enterFrame;
   exports.startCycle = startCycle;
   exports.stopCycle = stopCycle;
-  exports.onMoveCycle = src_Global__onMoveCycle;
+  exports.onMoveCycle = onMoveCycle;
   exports.reStartCycle = reStartCycle;
   exports.addInteractionEventListener = addInteractionEventListener;
   exports.onCanvasEvent = onCanvasEvent;
@@ -10413,6 +11727,50 @@ define('src/index', ['exports'], function (exports) {
   exports.getStructureLocalStorage = getStructureLocalStorage;
   exports.getDocWidth = getDocWidth;
   exports.getDocHeight = getDocHeight;
+  exports._onMouse = _onMouse;
+  exports.listenerArray = listenerArray;
+  exports.canvas = canvas;
+  exports.removeDiv = removeDiv;
+  exports.userAgent = src_Global__userAgent;
+  exports.userAgentVersion = src_Global__userAgentVersion;
+  exports.canvasResizeable = canvasResizeable;
+  exports.cW = cW;
+  exports.cH = cH;
+  exports.cX = src_Global__cX;
+  exports.cY = src_Global__cY;
+  exports.mX = mX;
+  exports.mY = mY;
+  exports.mP = mP;
+  exports.nF = nF;
+  exports.MOUSE_DOWN = MOUSE_DOWN;
+  exports.MOUSE_UP = MOUSE_UP;
+  exports.MOUSE_UP_FAST = MOUSE_UP_FAST;
+  exports.WHEEL_CHANGE = WHEEL_CHANGE;
+  exports.NF_DOWN = NF_DOWN;
+  exports.NF_UP = NF_UP;
+  exports.MOUSE_PRESSED = MOUSE_PRESSED;
+  exports.MOUSE_IN_DOCUMENT = MOUSE_IN_DOCUMENT;
+  exports.mX_DOWN = mX_DOWN;
+  exports.mY_DOWN = mY_DOWN;
+  exports.mX_UP = mX_UP;
+  exports.mY_UP = mY_UP;
+  exports.PREV_mX = PREV_mX;
+  exports.PREV_mY = PREV_mY;
+  exports.DX_MOUSE = DX_MOUSE;
+  exports.DY_MOUSE = DY_MOUSE;
+  exports.MOUSE_MOVED = MOUSE_MOVED;
+  exports.T_MOUSE_PRESSED = T_MOUSE_PRESSED;
+  exports.cursorStyle = cursorStyle;
+  exports.backGroundColor = backGroundColor;
+  exports.backGroundColorRGB = backGroundColorRGB;
+  exports.cycleActive = cycleActive;
+  exports.context = src_Global__context;
+  exports.TwoPi = TwoPi;
+  exports.HalfPi = HalfPi;
+  exports.radToGrad = radToGrad;
+  exports.gradToRad = gradToRad;
+  exports.c = src_Global__c;
+  exports._cycleOnMouseMovement = _cycleOnMouseMovement;
 
   function Draw() {}
 
@@ -10444,7 +11802,7 @@ define('src/index', ['exports'], function (exports) {
     var prevPoint = polygon[nPoints - 1];
     var point = polygon[0];
     var nextPoint = polygon[1];
-    controlPoints = GeometryOperators__default.getSoftenControlPoints(prevPoint, point, nextPoint, amount);
+    controlPoints = GeometryOperators.getSoftenControlPoints(prevPoint, point, nextPoint, amount);
     var prevCP = controlPoints[1];
     var cP;
     src_Global__context.moveTo(point.x, point.y);
@@ -10453,7 +11811,7 @@ define('src/index', ['exports'], function (exports) {
     for(i = 1; i < nSteps; i++) {
       point = polygon[i % nPoints];
       nextPoint = polygon[(i + 1) % nPoints];
-      controlPoints = GeometryOperators__default.getSoftenControlPoints(prevPoint, point, nextPoint, amount);
+      controlPoints = GeometryOperators.getSoftenControlPoints(prevPoint, point, nextPoint, amount);
       cP = controlPoints[0];
       src_Global__context.bezierCurveTo(prevCP.x, prevCP.y, cP.x, cP.y, point.x, point.y);
       prevCP = controlPoints[1];
@@ -10513,6 +11871,7 @@ define('src/index', ['exports'], function (exports) {
         src_Global__context.drawImage(image, 0, 0, image.width, image.height, dx, dy, dWidth, dHeight);
         break;
       case 3:
+        var sh, sw;
         if(rectangle.width / rectangle.height < image.width / image.height) {
           sh = image.height;
           sw = sh * rectangle.width / rectangle.height;
@@ -10648,7 +12007,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   Draw.drawSliderRectangle = function(x, y, width, height) {
-    src_Global__context.arc(x + width * 0.5, y, width * 0.5, Math.PI, src_Global__TwoPi);
+    src_Global__context.arc(x + width * 0.5, y, width * 0.5, Math.PI, TwoPi);
     src_Global__context.lineTo(x + width, y);
     src_Global__context.arc(x + width * 0.5, y + height, width * 0.5, 0, Math.PI);
     src_Global__context.lineTo(x, y);
@@ -10719,7 +12078,7 @@ define('src/index', ['exports'], function (exports) {
     var i;
     var rect;
     if(colors != null) var nColors = colors.length;
-    var adjustedRect = new Rectangle__default();
+    var adjustedRect = new Rectangle();
     for(i = 0; rectangleList[i] != null; i++) {
       rect = rectangleList[i];
       if(rect.height <= margin || rect.width <= margin) continue;
@@ -10754,14 +12113,14 @@ define('src/index', ['exports'], function (exports) {
       circle0 = _circle;
     }
     if(circle1.x + circle1.z <= circle0.x + circle0.z) {
-      src_Global__context.arc(circle1.x, circle1.y, circle1.z, 0, src_Global__TwoPi);
+      src_Global__context.arc(circle1.x, circle1.y, circle1.z, 0, TwoPi);
       return;
     } else if(circle0.x - circle0.z >= circle1.x - circle1.z) {
-      src_Global__context.arc(circle0.x, circle0.y, circle0.z, 0, src_Global__TwoPi);
+      src_Global__context.arc(circle0.x, circle0.y, circle0.z, 0, TwoPi);
       return;
     }
 
-    var angles = GeometryOperators__default.circlesLensAngles(circle0, circle1);
+    var angles = GeometryOperators.circlesLensAngles(circle0, circle1);
 
     src_Global__context.arc(circle0.x, circle0.y, circle0.z, angles[0], angles[1]);
     src_Global__context.arc(circle1.x, circle1.y, circle1.z, angles[2], angles[3]);
@@ -10791,228 +12150,6 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Draw = Draw;
 
-  function NumberOperators() {}
-
-
-  NumberOperators.numberToString = function(value, nDecimals, powersMode, unit) {
-    var string = value.toFixed(nDecimals);
-    while(string.charAt(string.length - 1) == '0') {
-      string = string.substring(0, string.length - 1);
-    }
-    if(string.charAt(string.length - 1) == '.') string = string.substring(0, string.length - 1);
-    return string;
-  };
-
-  /**
-   * decent method to create pseudo random numbers
-   * @param {Object} seed
-   */
-  NumberOperators.getRandomWithSeed = function(seed) {
-    seed = (seed * 9301 + 49297) % 233280;
-    return seed / (233280.0);
-  };
-
-  NumberOperators.numberFromBinaryPositions = function(binaryPositions) {
-    var i;
-    var n = 0;
-    for(i = 0; binaryPositions[i] != null; i++) {
-      n += Math.pow(2, binaryPositions[i]);
-    }
-    return n;
-  };
-
-  NumberOperators.numberFromBinaryValues = function(binaryValues) {
-    var n = 0;
-    for(var i = 0; binaryValues[i] != null; i++) {
-      n += binaryValues[i] == 1 ? Math.pow(2, i) : 0;
-    }
-    return n;
-  };
-
-  NumberOperators.powersOfTwoDecomposition = function(number, length) {
-    // var i;
-    // var powers = StringList.fromArray(Number(number).toString(2).split('')).toNumberList().getReversed();
-    // var n = powers.length;
-    // for(i=n; i<length; i++){
-    //   powers.push(0);
-    // }
-    // return powers;
-
-
-
-    var powers = new NumberList__default();
-
-    var constructingNumber = 0;
-    var biggestPower;
-
-    while(constructingNumber < number) {
-      biggestPower = Math.floor(Math.log(number) / Math.LN2);
-      powers[biggestPower] = 1;
-      number -= Math.pow(2, biggestPower);
-    }
-
-    var length = Math.max(powers.length, length == null ? 0 : length);
-
-    for(var i = 0; i < length; i++) {
-      powers[i] = powers[i] == 1 ? 1 : 0;
-    }
-
-    return powers;
-  };
-
-  NumberOperators.positionsFromBinaryValues = function(binaryValues) {
-    var i;
-    var positions = new NumberList__default();
-    for(i = 0; binaryValues[i] != null; i++) {
-      if(binaryValues[i] == 1) positions.push(i);
-    }
-    return positions;
-  };
-
-  //////////Random Generator with Seed, From http://baagoe.org/en/w/index.php/Better_random_numbers_for_javascript
-
-  NumberOperators._Alea = function() {
-    return(function(args) {
-      // Johannes Baagøe <baagoe@baagoe.com>, 2010
-      var s0 = 0;
-      var s1 = 0;
-      var s2 = 0;
-      var c = 1;
-
-      if(args.length == 0) {
-        args = [+new Date()];
-      }
-      var mash = NumberOperators._Mash();
-      s0 = mash(' ');
-      s1 = mash(' ');
-      s2 = mash(' ');
-
-      for(var i = 0; i < args.length; i++) {
-        s0 -= mash(args[i]);
-        if(s0 < 0) {
-          s0 += 1;
-        }
-        s1 -= mash(args[i]);
-        if(s1 < 0) {
-          s1 += 1;
-        }
-        s2 -= mash(args[i]);
-        if(s2 < 0) {
-          s2 += 1;
-        }
-      }
-      mash = null;
-
-      var random = function() {
-        var t = 2091639 * s0 + c * 2.3283064365386963e-10; // 2^-32
-        s0 = s1;
-        s1 = s2;
-        return s2 = t - (c = t | 0);
-      };
-      random.uint32 = function() {
-        return random() * 0x100000000; // 2^32
-      };
-      random.fract53 = function() {
-        return random() +
-          (random() * 0x200000 | 0) * 1.1102230246251565e-16; // 2^-53
-      };
-      random.version = 'Alea 0.9';
-      random.args = args;
-      return random;
-
-    }(Array.prototype.slice.call(arguments)));
-  };
-
-  NumberOperators._Mash = function() {
-    var n = 0xefc8249d;
-
-    var mash = function(data) {
-      data = data.toString();
-      for(var i = 0; i < data.length; i++) {
-        n += data.charCodeAt(i);
-        var h = 0.02519603282416938 * n;
-        n = h >>> 0;
-        h -= n;
-        h *= n;
-        n = h >>> 0;
-        h -= n;
-        n += h * 0x100000000; // 2^32
-      }
-      return(n >>> 0) * 2.3283064365386963e-10; // 2^-32
-    };
-
-    mash.version = 'Mash 0.9';
-    return mash;
-  };
-
-  exports.NumberOperators = NumberOperators;
-
-  function NumberListGenerators__NumberListGenerators() {}
-  var NumberListGenerators__default = NumberListGenerators__NumberListGenerators;
-
-  /**
-   * Generate a NumberList with sorted Numbers
-   * @param {Number} nValues length of the NumberList
-   *
-   * @param {Number} start first value
-   * @param {Number} step increment value
-   * @return {NumberList} generated NumberList
-   * tags:generator
-   */
-  NumberListGenerators__NumberListGenerators.createSortedNumberList = function(nValues, start, step) {
-    start = start || 0;
-    step = step || 1;
-    if(step == 0) step = 1;
-    var i;
-    var numberList = new NumberList__default();
-    for(i = 0; i < nValues; i++) {
-      numberList.push(start + i * step);
-    }
-    return numberList;
-  };
-
-  // TODO: Should this function be here?
-  NumberList__default.createNumberListFromInterval = function(nElements, interval) {
-    if(interval == null) interval = new Interval__default(0, 1);
-    var numberList = new NumberList__default();
-    var range = interval.getAmplitude();
-    var i;
-    for(i = 0; i < nElements; i++) {
-      numberList.push(Number(interval.getMin()) + Number(Math.random() * range));
-    }
-    return numberList;
-  };
-
-  /**
-   * create a list with random numbers
-   * @param  {Number} nValues
-   *
-   * @param  {Interval} interval range of the numberList
-   * @param  {Number} seed optional seed for seeded random numbers
-   * @return {NumberList}
-   * tags:random
-   */
-  NumberListGenerators__NumberListGenerators.createRandomNumberList = function(nValues, interval, seed, func) {
-    seed = seed == null ? -1 : seed;
-    interval = interval == null ? new Interval__default(0, 1) : interval;
-
-    var numberList = new NumberList__default();
-    var amplitude = interval.getAmplitude();
-
-    var random = seed == -1 ? Math.random : new NumberOperators._Alea("my", seed, "seeds");
-
-    for(var i = 0; i < nValues; i++) {
-      //seed = (seed*9301+49297) % 233280; //old method, close enough: http://moebio.com/research/randomseedalgorithms/
-      //numberList[i] = interval.x + (seed/233280.0)*amplitude; //old method
-
-      numberList[i] = func == null ? (random() * amplitude + interval.x) : func(random() * amplitude + interval.x);
-    }
-
-    return numberList;
-  };
-
-  exports.NumberListGenerators = NumberListGenerators__default;
-
   function PolygonOperators() {}
 
 
@@ -11030,8 +12167,8 @@ define('src/index', ['exports'], function (exports) {
     var p = polygon;
     var n = p.length;
     var k = 0;
-    var h = new Polygon__default();
-    if(returnIndexes) var indexes = new NumberList__default();
+    var h = new Polygon();
+    if(returnIndexes) var indexes = new NumberList();
 
     p = PolygonOperators.sortOnXY(p);
 
@@ -11050,7 +12187,7 @@ define('src/index', ['exports'], function (exports) {
         indexes[k - 1] = i;
       }
 
-      return NumberList__default.fromArray(indexes.getSubList(new Interval__default(0, k - 2)));
+      return NumberList.fromArray(indexes.getSubList(new Interval__default(0, k - 2)));
     }
 
     for(i = 0; i < n; i++) {
@@ -11065,7 +12202,7 @@ define('src/index', ['exports'], function (exports) {
       h[k++] = p[i];
     }
 
-    return Polygon__default.fromArray(h.getSubList(new Interval__default(0, k - 2)));
+    return Polygon.fromArray(h.getSubList(new Interval__default(0, k - 2)));
   };
 
   /**
@@ -11082,14 +12219,14 @@ define('src/index', ['exports'], function (exports) {
     var parent;
     var leaves = new NodeList__default();
 
-    var node0, node1, nodeList = new Polygon__default();
+    var node0, node1, nodeList = new Polygon();
 
     polygon.forEach(function(point, i) {
       node = new Node__default('point_' + i, 'point_' + i);
       node.weight = 1;
       node.barycenter = point;
       node.point = point;
-      node.polygon = new Polygon__default(point);
+      node.polygon = new Polygon(point);
       tree.addNode(node);
       nodeList.push(node);
       leaves.push(node);
@@ -11105,7 +12242,7 @@ define('src/index', ['exports'], function (exports) {
       //c.l("node0.polygon.length, node1.polygon.length, parent.polygon.length", node0.polygon.length, node1.polygon.length, parent.polygon.length);
       parent.weight = parent.polygon.length;
       tW = node0.weight + node1.weight;
-      parent.barycenter = new Point__default((node0.weight * node0.barycenter.x + node1.weight * node1.barycenter.x) / tW, (node0.weight * node0.barycenter.y + node1.weight * node1.barycenter.y) / tW);
+      parent.barycenter = new Point((node0.weight * node0.barycenter.x + node1.weight * node1.barycenter.x) / tW, (node0.weight * node0.barycenter.y + node1.weight * node1.barycenter.y) / tW);
       //c.l('parent.barycenter.x', parent.barycenter.x, parent.barycenter.y);
       tree.addNode(parent);
       tree._newCreateRelation(parent, node0);
@@ -11179,7 +12316,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   PolygonOperators.expandFromBarycenter = function(polygon, factor) {
-    var newPolygon = new Polygon__default();
+    var newPolygon = new Polygon();
     var barycenter = polygon.getBarycenter();
 
     for(var i = 0; polygon[i] != null; i++) {
@@ -11190,7 +12327,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   PolygonOperators.expandInAngles = function(polygon, amount) { //TODO: test if it works with convex polygons
-    var newPolygon = new Polygon__default();
+    var newPolygon = new Polygon();
     var p0 = polygon[polygon.length - 1];
     var p1 = polygon[0];
     var p2 = polygon[1];
@@ -11200,7 +12337,7 @@ define('src/index', ['exports'], function (exports) {
     var sign;
 
     var a = 0.5 * Math.atan2(p1.y - p2.y, p1.x - p2.x) + 0.5 * Math.atan2(p1.y - p0.y, p1.x - p0.x);
-    var globalSign = polygon.containsPoint(new Point__default(p1.x + Math.floor(amount) * Math.cos(a), p1.y + Math.floor(amount) * Math.sin(a))) ? -1 : 1;
+    var globalSign = polygon.containsPoint(new Point(p1.x + Math.floor(amount) * Math.cos(a), p1.y + Math.floor(amount) * Math.sin(a))) ? -1 : 1;
 
 
     for(var i = 0; polygon[i] != null; i++) {
@@ -11212,7 +12349,7 @@ define('src/index', ['exports'], function (exports) {
       sign = Math.abs(a1 - a0) < Math.PI ? -1 : 1;
       a = 0.5 * a0 + 0.5 * a1;
       //sign = polygon.containsPoint(new Point(p1.x + Math.floor(amount)*Math.cos(a), p1.y + Math.floor(amount)*Math.sin(a)))?-1:1;
-      newPolygon[i] = new Point__default(p1.x + globalSign * sign * amount * Math.cos(a), p1.y + globalSign * sign * amount * Math.sin(a));
+      newPolygon[i] = new Point(p1.x + globalSign * sign * amount * Math.cos(a), p1.y + globalSign * sign * amount * Math.sin(a));
     }
 
     return newPolygon;
@@ -11231,8 +12368,8 @@ define('src/index', ['exports'], function (exports) {
       p0 = newPolygon[i];
       p1 = newPolygon[(i + 1) % nPoints];
       p2 = newPolygon[(i + 2) % nPoints];
-      line = GeometryOperators__default.lineFromTwoPoints(p0, p2);
-      if(GeometryOperators__default.distancePointToLine(p1, line) < margin) {
+      line = GeometryOperators.lineFromTwoPoints(p0, p2);
+      if(GeometryOperators.distancePointToLine(p1, line) < margin) {
         //newPolygon.splice((i+1)%nPoints, 1);
         newPolygon = newPolygon.getWithoutElementAtIndex((i + 1) % nPoints);
         i--;
@@ -11292,7 +12429,7 @@ define('src/index', ['exports'], function (exports) {
 
     for(var i = 0; i < nAttempts; i++) {
       center = frame.getRandomPoint();
-      for(angle = 0; angle += 0.1; angle <= src_Global__TwoPi) {
+      for(angle = 0; angle += 0.1; angle <= TwoPi) {
         r = angle;
         var data = src_Global__context.getImageData(center.x + r * Math.cos(angle) - frame.x, center.y + r * Math.sin(angle) - frame.y, 1, 1).data;
         if(data[0] == 0) {
@@ -11311,14 +12448,14 @@ define('src/index', ['exports'], function (exports) {
 
   PolygonOperators.convexHull = function(polygon, deepness) {
     var indexesHull = this.hull(polygon, true);
-    var pointsLeftIndexes = NumberListGenerators__default.createSortedNumberList(polygon.length);
+    var pointsLeftIndexes = NumberListGenerators.createSortedNumberList(polygon.length);
     pointsLeftIndexes = pointsLeftIndexes.getWithoutElementsAtIndexes(indexesHull);
     var i;
     var j;
     var k;
     var p0;
     var p1;
-    var pC = new Point__default();
+    var pC = new Point();
     var p;
     var d;
     var dMin = deepness - 1;
@@ -11366,24 +12503,24 @@ define('src/index', ['exports'], function (exports) {
   };
 
   PolygonOperators.controlPointsFromPointsAnglesIntensities = function(polygon, angles, intensities) {
-    var controlPoints = new Polygon__default();
+    var controlPoints = new Polygon();
     for(var i = 0; polygon[i] != null; i++) {
-      if(i > 0) controlPoints.push(new Point__default(polygon[i].x - intensities[i] * Math.cos(angles[i]), polygon[i].y - intensities[i] * Math.sin(angles[i])));
-      if(i < polygon.length - 1) controlPoints.push(new Point__default(polygon[i].x + intensities[i] * Math.cos(angles[i]), polygon[i].y + intensities[i] * Math.sin(angles[i])));
+      if(i > 0) controlPoints.push(new Point(polygon[i].x - intensities[i] * Math.cos(angles[i]), polygon[i].y - intensities[i] * Math.sin(angles[i])));
+      if(i < polygon.length - 1) controlPoints.push(new Point(polygon[i].x + intensities[i] * Math.cos(angles[i]), polygon[i].y + intensities[i] * Math.sin(angles[i])));
     }
     return controlPoints;
   };
 
 
   PolygonOperators.placePointsInsidePolygon = function(polygon, nPoints, mode) {
-    var points = new Polygon__default();
+    var points = new Polygon();
     var frame = polygon.getFrame();
     mode = mode || 0;
     switch(mode) {
       case 0: //random simple
         var p;
         while(points.length < nPoints) {
-          p = new Point__default(frame.x + Math.random() * frame.width, frame.y + Math.random() * frame.height);
+          p = new Point(frame.x + Math.random() * frame.width, frame.y + Math.random() * frame.height);
           if(PolygonOperators.polygonContainsPoint(polygon, p)) points.push(p);
         }
         return points;
@@ -11392,7 +12529,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   PolygonOperators.placePointsInsideBezierPolygon = function(polygon, nPoints, mode, border) {
-    var points = new Polygon__default();
+    var points = new Polygon();
     var frame = polygon.getFrame();
     mode = mode || 0;
     switch(mode) {
@@ -11400,7 +12537,7 @@ define('src/index', ['exports'], function (exports) {
         var p;
         var nAttempts = 0;
         while(points.length < nPoints && nAttempts < 1000) {
-          p = new Point__default(frame.x + Math.random() * frame.width, frame.y + Math.random() * frame.height);
+          p = new Point(frame.x + Math.random() * frame.width, frame.y + Math.random() * frame.height);
           nAttempts++;
           if(PolygonOperators.bezierPolygonContainsPoint(polygon, p, border)) {
             points.push(p);
@@ -11564,7 +12701,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.CountryList = CountryList;
 
-  Polygon3DList.prototype = new List__default();
+  Polygon3DList.prototype = new List();
   Polygon3DList.prototype.constructor = Polygon3DList;
 
   /**
@@ -11575,21 +12712,21 @@ define('src/index', ['exports'], function (exports) {
    * @category geometry
    */
   function Polygon3DList() {
-    var array = List__default.apply(this, arguments);
+    var array = List.apply(this, arguments);
     array = Polygon3DList.fromArray(array);
     return array;
   }
 
 
   Polygon3DList.fromArray = function(array) {
-    var result = List__default.fromArray(array);
+    var result = List.fromArray(array);
     result.type = "Polygon3DList";
     return result;
   };
 
   exports.Polygon3DList = Polygon3DList;
 
-  ColorList__ColorList.prototype = new List__default();
+  ColorList__ColorList.prototype = new List();
   ColorList__ColorList.prototype.constructor = ColorList__ColorList;
 
   /**
@@ -11605,7 +12742,7 @@ define('src/index', ['exports'], function (exports) {
     for(i = 0; i < arguments.length; i++) {
       args[i] = arguments[i];
     }
-    var array = List__default.apply(this, args);
+    var array = List.apply(this, args);
     array = ColorList__ColorList.fromArray(array);
 
     return array;
@@ -11613,7 +12750,7 @@ define('src/index', ['exports'], function (exports) {
   var ColorList__default = ColorList__ColorList;
 
   ColorList__ColorList.fromArray = function(array) {
-    var result = List__default.fromArray(array);
+    var result = List.fromArray(array);
     result.type = "ColorList";
     result.getRgbArrays = ColorList__ColorList.prototype.getRgbArrays;
     result.getInterpolated = ColorList__ColorList.prototype.getInterpolated;
@@ -11628,10 +12765,10 @@ define('src/index', ['exports'], function (exports) {
    * tags:
    */
   ColorList__ColorList.prototype.getRgbArrays = function() {
-    var rgbArrays = new List__default();
+    var rgbArrays = new List();
 
     for(var i = 0; this[i] != null; i++) {
-      rgbArrays[i] = ColorOperators__default.colorStringToRGB(this[i]);
+      rgbArrays[i] = ColorOperators.colorStringToRGB(this[i]);
     }
 
     return rgbArrays;
@@ -11648,7 +12785,7 @@ define('src/index', ['exports'], function (exports) {
     var newColorList = new ColorList__ColorList();
 
     for(var i = 0; this[i] != null; i++) {
-      newColorList[i] = ColorOperators__default.interpolateColors(this[i], color, value);
+      newColorList[i] = ColorOperators.interpolateColors(this[i], color, value);
     }
 
     newColorList.name = this.name;
@@ -11664,7 +12801,7 @@ define('src/index', ['exports'], function (exports) {
     var newColorList = new ColorList__ColorList();
 
     for(var i = 0; this[i] != null; i++) {
-      newColorList[i] = ColorOperators__default.invertColor(this[i]);
+      newColorList[i] = ColorOperators.invertColor(this[i]);
     }
 
     newColorList.name = this.name;
@@ -11681,7 +12818,7 @@ define('src/index', ['exports'], function (exports) {
     var newColorList = new ColorList__ColorList();
 
     for(var i = 0; this[i] != null; i++) {
-      newColorList[i] = ColorOperators__default.addAlpha(this[i], alpha);
+      newColorList[i] = ColorOperators.addAlpha(this[i], alpha);
     }
 
     newColorList.name = this.name;
@@ -11690,8 +12827,8 @@ define('src/index', ['exports'], function (exports) {
 
   exports.ColorList = ColorList__default;
 
-  function ColorScales__ColorScales() {}
-  var ColorScales__default = ColorScales__ColorScales;
+  function ColorScales() {}
+
   // *
   //  * return a colorScale from its name
   //  * @param  {String} string name of ColorScale
@@ -11702,105 +12839,105 @@ define('src/index', ['exports'], function (exports) {
   // 	return ColorScales[string];
   // }
 
-  ColorScales__ColorScales.blackScale = function(value) {
+  ColorScales.blackScale = function(value) {
     return 'black';
   };
 
-  ColorScales__ColorScales.grayscale = function(value) {
-    var rgb = ColorOperators__default.interpolateColorsRGB([0, 0, 0], [255, 255, 255], value);
-    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  ColorScales.grayscale = function(value) {
+    var rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], [255, 255, 255], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
-  ColorScales__ColorScales.antiGrayscale = function(value) {
-    var rgb = ColorOperators__default.interpolateColorsRGB([255, 255, 255], [0, 0, 0], value);
-    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  ColorScales.antiGrayscale = function(value) {
+    var rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [0, 0, 0], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
-  ColorScales__ColorScales.antiTemperature = function(value) {
-    return ColorScales__ColorScales.temperature(1 - value);
+  ColorScales.antiTemperature = function(value) {
+    return ColorScales.temperature(1 - value);
   };
 
-  ColorScales__ColorScales.temperature = function(value) { //todo:make it efficient
+  ColorScales.temperature = function(value) { //todo:make it efficient
     if(value < 0.2) {
-      var color = ColorOperators__default.interpolateColors('#000000', ColorOperators__default.HSVtoHEX(234, 1, 1), value * 5);
+      var color = ColorOperators.interpolateColors('#000000', ColorOperators.HSVtoHEX(234, 1, 1), value * 5);
     } else if(value > 0.85) {
-      color = ColorOperators__default.interpolateColors(ColorOperators__default.HSVtoHEX(0, 1, 1), '#FFFFFF', (value - 0.85) / 0.15);
+      color = ColorOperators.interpolateColors(ColorOperators.HSVtoHEX(0, 1, 1), '#FFFFFF', (value - 0.85) / 0.15);
     } else {
-      color = ColorOperators__default.HSVtoHEX(Math.round((0.65 - (value - 0.2)) * 360), 1, 1);
+      color = ColorOperators.HSVtoHEX(Math.round((0.65 - (value - 0.2)) * 360), 1, 1);
     }
     return color;
   };
 
-  ColorScales__ColorScales.sqrtTemperature = function(value) {
-    return ColorScales__ColorScales.temperature(Math.sqrt(value));
+  ColorScales.sqrtTemperature = function(value) {
+    return ColorScales.temperature(Math.sqrt(value));
   };
 
-  ColorScales__ColorScales.sqrt4Temperature = function(value) {
-    return ColorScales__ColorScales.temperature(Math.pow(value, 0.25));
+  ColorScales.sqrt4Temperature = function(value) {
+    return ColorScales.temperature(Math.pow(value, 0.25));
   };
 
-  ColorScales__ColorScales.quadraticTemperature = function(value) {
-    return ColorScales__ColorScales.temperature(Math.pow(value, 2));
+  ColorScales.quadraticTemperature = function(value) {
+    return ColorScales.temperature(Math.pow(value, 2));
   };
 
-  ColorScales__ColorScales.cubicTemperature = function(value) {
-    return ColorScales__ColorScales.temperature(Math.pow(value, 3));
+  ColorScales.cubicTemperature = function(value) {
+    return ColorScales.temperature(Math.pow(value, 3));
   };
 
-  ColorScales__ColorScales.greenToRed = function(value) { //todo:make it efficient
-    var rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [255, 50, 50], value);
-    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  ColorScales.greenToRed = function(value) { //todo:make it efficient
+    var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [255, 50, 50], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
-  ColorScales__ColorScales.greenToBlue = function(value) { //todo:make it efficient
-    var rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [50, 50, 255], value);
-    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-  };
-
-  ColorScales__ColorScales.grayToOrange = function(value) { //todo:make it efficient
-    var rgb = ColorOperators__default.interpolateColorsRGB([100, 100, 100], [255, 110, 0], value);
-    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  ColorScales.greenToBlue = function(value) { //todo:make it efficient
+    var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [50, 50, 255], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
-  ColorScales__ColorScales.blueToRed = function(value) {
+  ColorScales.grayToOrange = function(value) { //todo:make it efficient
+    var rgb = ColorOperators.interpolateColorsRGB([100, 100, 100], [255, 110, 0], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  ColorScales.blueToRed = function(value) {
     return 'rgb(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ')';
   };
 
-  ColorScales__ColorScales.blueToRedAlpha = function(value) { //todo:make it efficient
+  ColorScales.blueToRedAlpha = function(value) { //todo:make it efficient
     return 'rgba(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ', 0.5)';
   };
 
-  ColorScales__ColorScales.whiteToRed = function(value) {
+  ColorScales.whiteToRed = function(value) {
     var gg = Math.floor(255 - value * 255);
     return 'rgb(255,' + gg + ',' + gg + ')';
   };
 
-  ColorScales__ColorScales.redToBlue = function(value) {
-    var rgb = ColorOperators__default.interpolateColorsRGB([255, 0, 0], [0, 0, 255], value);
-    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  ColorScales.redToBlue = function(value) {
+    var rgb = ColorOperators.interpolateColorsRGB([255, 0, 0], [0, 0, 255], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
-  ColorScales__ColorScales.greenWhiteRed = function(value) {
+  ColorScales.greenWhiteRed = function(value) {
     if(value < 0.5) {
-      var rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [255, 255, 255], value * 2);
+      var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [255, 255, 255], value * 2);
     } else {
-      rgb = ColorOperators__default.interpolateColorsRGB([255, 255, 255], [255, 50, 50], (value - 0.5) * 2);
+      rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [255, 50, 50], (value - 0.5) * 2);
     }
-    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
 
-  ColorScales__ColorScales.solar = function(value) {
-    var rgb = ColorOperators__default.interpolateColorsRGB([0, 0, 0], ColorOperators__default.interpolateColorsRGB([255, 0, 0], [255, 255, 0], value), Math.pow(value * 0.99 + 0.01, 0.2));
-    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  ColorScales.solar = function(value) {
+    var rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], ColorOperators.interpolateColorsRGB([255, 0, 0], [255, 255, 0], value), Math.pow(value * 0.99 + 0.01, 0.2));
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
-  ColorScales__ColorScales.antiSolar = function(value) {
-    return ColorOperators__default.invertColor(ColorScales__ColorScales.solar(value));
+  ColorScales.antiSolar = function(value) {
+    return ColorOperators.invertColor(ColorScales.solar(value));
   };
 
-  exports.ColorScales = ColorScales__default;
+  exports.ColorScales = ColorScales;
 
-  ColorScale__ColorScale.prototype = new DataModel();
-  ColorScale__ColorScale.prototype.constructor = ColorScale__ColorScale;
+  ColorScale.prototype = new DataModel();
+  ColorScale.prototype.constructor = ColorScale;
 
   /**
    * @classdesc Color scale.
@@ -11810,20 +12947,20 @@ define('src/index', ['exports'], function (exports) {
    * @constructor
    * @category colors
    */
-  function ColorScale__ColorScale(colorScaleFunction) {
+  function ColorScale(colorScaleFunction) {
     DataModel.apply(this, arguments);
     this.name = "";
     this.type = "ColorScale";
 
-    this.colorScaleFunction = colorScaleFunction ? colorScaleFunction : ColorScales__default.blackScale;
+    this.colorScaleFunction = colorScaleFunction ? colorScaleFunction : ColorScales.blackScale;
   }
-  var ColorScale__default = ColorScale__ColorScale;
 
-  ColorScale__ColorScale.prototype.getColor = function(value) {
+
+  ColorScale.prototype.getColor = function(value) {
     return this.colorScaleFunction(value);
   };
 
-  ColorScale__ColorScale.prototype.getColorList = function(nColors) {
+  ColorScale.prototype.getColorList = function(nColors) {
     var colorList = new ColorList__default();
     var i;
     for(i = 0; i < nColors; i++) {
@@ -11832,12 +12969,12 @@ define('src/index', ['exports'], function (exports) {
     return colorList;
   };
 
-  exports.ColorScale = ColorScale__default;
+  exports.ColorScale = ColorScale;
 
   function Space2D(configuration) {
     configuration = configuration == null ? {} : configuration;
 
-    this.center = configuration.center == null ? new Point__default(0, 0) : configuration.center;
+    this.center = configuration.center == null ? new Point(0, 0) : configuration.center;
     this.scale = 1;
 
     if(configuration.interactionActive) this.activeInteraction();
@@ -11871,7 +13008,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   Space2D.prototype.project = function(point) {
-    return new Point__default((point.x - this.center.x) * this.scale, (point.y + this.center.y) * this.scale);
+    return new Point((point.x - this.center.x) * this.scale, (point.y + this.center.y) * this.scale);
   };
 
   Space2D.prototype.projectX = function(x) {
@@ -11884,7 +13021,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   Space2D.prototype.inverseProject = function(point) {
-    return new Point__default(point.x / this.scale + this.center.x, point.y / this.scale + this.center.y);
+    return new Point(point.x / this.scale + this.center.x, point.y / this.scale + this.center.y);
   };
 
   Space2D.prototype.inverseProjectX = function(x) {
@@ -11926,8 +13063,8 @@ define('src/index', ['exports'], function (exports) {
       case 'mousedown':
         if(!this.active) return;
         this.dragging = true;
-        this.prev_mX = src_Global__mX;
-        this.prev_mY = src_Global__mY;
+        this.prev_mX = mX;
+        this.prev_mY = mY;
         addInteractionEventListener('mousemove', this.onMouse, this);
         break;
       case 'mouseup':
@@ -11936,10 +13073,10 @@ define('src/index', ['exports'], function (exports) {
         break;
       case 'mousemove':
         if(!this.active) return;
-        this.center.x += (this.prev_mX - src_Global__mX) / this.scale;
-        this.center.y += (this.prev_mY - src_Global__mY) / this.scale;
-        this.prev_mX = src_Global__mX;
-        this.prev_mY = src_Global__mY;
+        this.center.x += (this.prev_mX - mX) / this.scale;
+        this.center.y += (this.prev_mY - mY) / this.scale;
+        this.prev_mX = mX;
+        this.prev_mY = mY;
         break;
     }
   };
@@ -11956,7 +13093,7 @@ define('src/index', ['exports'], function (exports) {
       this.scale = this.MAX_SCALE;
       return;
     }
-    this.factorScaleFromPoint(new Point__default(src_Global__mX - 0, src_Global__mY - 0), (1 - 0.02 * e.value));
+    this.factorScaleFromPoint(new Point(mX - 0, mY - 0), (1 - 0.02 * e.value));
   };
 
   exports.Space2D = Space2D;
@@ -12008,9 +13145,9 @@ define('src/index', ['exports'], function (exports) {
         yNode.dates = new DateList();
 
         for(m = 0; m < 12; m++) {
-          mNode = new Node__default(DateOperators__default.MONTH_NAMES[m] + "_" + y, DateOperators__default.MONTH_NAMES[m]);
+          mNode = new Node__default(DateOperators.MONTH_NAMES[m] + "_" + y, DateOperators.MONTH_NAMES[m]);
           tree.addNodeToTree(mNode, yNode);
-          nDaysOnMonth = DateOperators__default.getNDaysInMonth(y, m + 1);
+          nDaysOnMonth = DateOperators.getNDaysInMonth(y, m + 1);
         }
       }
       yNode.dates.push(date);
@@ -12210,9 +13347,9 @@ define('src/index', ['exports'], function (exports) {
 
   GeometryConvertions.twoNumberListsToPolygon = function(numberList0, numberList1) { //TODO:change name to NumberTableToPolygon
     var n = Math.min(numberList0.length, numberList1.length);
-    var polygon = new Polygon__default();
+    var polygon = new Polygon();
     for(var i = 0; i < n; i++) {
-      polygon[i] = new Point__default(numberList0[i], numberList1[i]);
+      polygon[i] = new Point(numberList0[i], numberList1[i]);
     }
     return polygon;
   };
@@ -12226,9 +13363,9 @@ define('src/index', ['exports'], function (exports) {
   GeometryConvertions.PolygonToNumberTable = function(polygon) {
     if(polygon == null) return null;
 
-    var numberTable = new NumberTable__default();
-    numberTable[0] = new NumberList__default();
-    numberTable[1] = new NumberList__default();
+    var numberTable = new NumberTable();
+    numberTable[0] = new NumberList();
+    numberTable[1] = new NumberList();
 
     polygon.forEach(function(p) {
       numberTable[0].push(p.x);
@@ -12244,12 +13381,12 @@ define('src/index', ['exports'], function (exports) {
 
 
   PolygonGenerators.createPolygon = function(nPoints, mode, frame) {
-    var polygon = new Polygon__default();
+    var polygon = new Polygon();
 
     switch(mode) {
       case 0: //random
         for(var i = 0; i < nPoints; i++) {
-          polygon.push(new Point__default(frame.x + frame.width * Math.random(), frame.y + frame.height * Math.random()));
+          polygon.push(new Point(frame.x + frame.width * Math.random(), frame.y + frame.height * Math.random()));
         }
         break;
       case 1: //circle
@@ -12374,15 +13511,15 @@ define('src/index', ['exports'], function (exports) {
     var polygon;
     var point;
 
-    var pols = StringOperators__default.splitString(string, separatorPolygons);
+    var pols = StringOperators.splitString(string, separatorPolygons);
 
     var j;
     var numbers;
     for(var i = 0; pols[i] != null; i++) {
-      polygon = new Polygon__default();
-      numbers = StringOperators__default.splitString(pols[i], separatorCoordinates);
+      polygon = new Polygon();
+      numbers = StringOperators.splitString(pols[i], separatorCoordinates);
       for(j = 0; numbers[j] != null; j += 2) {
-        point = new Point__default(Number(numbers[j]), Number(numbers[j + 1]));
+        point = new Point(Number(numbers[j]), Number(numbers[j + 1]));
         polygon.push(point);
       }
       polygonList.push(polygon);
@@ -12434,8 +13571,8 @@ define('src/index', ['exports'], function (exports) {
 
   exports.PolygonListOperators = PolygonListOperators;
 
-  function RectangleOperators__RectangleOperators() {}
-  var RectangleOperators__default = RectangleOperators__RectangleOperators;
+  function RectangleOperators() {}
+
 
 
   /**
@@ -12448,9 +13585,9 @@ define('src/index', ['exports'], function (exports) {
    * 5: vertical strips quadrification
    * 6: horizontal strips quadrification
    */
-  RectangleOperators__RectangleOperators.packingRectangles = function(weights, packingMode, rectangle, param) {
+  RectangleOperators.packingRectangles = function(weights, packingMode, rectangle, param) {
     //TODO: return RectangleList instead of List
-    if(rectangle == null) rectangle = new Rectangle__default(0, 0, 1, 1);
+    if(rectangle == null) rectangle = new Rectangle(0, 0, 1, 1);
     packingMode = packingMode ? packingMode : 0;
     switch(packingMode) {
       //0: quadrification
@@ -12460,7 +13597,7 @@ define('src/index', ['exports'], function (exports) {
       //4: europe quadrigram
       //5:vertical strips
       case 0:
-        return RectangleOperators__RectangleOperators.squarify(rectangle, weights);
+        return RectangleOperators.squarify(rectangle, weights);
       case 1:
         var minMax = weights.getMinMaxInterval();
         if(minMax.min < 0) {
@@ -12470,14 +13607,14 @@ define('src/index', ['exports'], function (exports) {
 
         var sum = weights.getSum();
 
-        var rectangleList = new List__default(); //RectangleList();
+        var rectangleList = new List(); //RectangleList();
         var dY = rectangle.y;
         var h;
         var vFactor = rectangle.height / sum;
         var i;
         for(i = 0; weights[i] != null; i++) {
           h = vFactor * weights[i];
-          rectangleList.push(new Rectangle__default(rectangle.x, dY, rectangle.width, h));
+          rectangleList.push(new Rectangle(rectangle.x, dY, rectangle.width, h));
           dY += h;
         }
         return rectangleList;
@@ -12489,13 +13626,13 @@ define('src/index', ['exports'], function (exports) {
         }
         sum = weights.getSum();
 
-        rectangleList = new List__default(); //RectangleList();
+        rectangleList = new List(); //RectangleList();
         var dX = rectangle.x;
         var w;
         var hFactor = rectangle.width / sum;
         for(i = 0; weights[i] != null; i++) {
           w = hFactor * weights[i];
-          rectangleList.push(new Rectangle__default(dX, rectangle.y, w, rectangle.height));
+          rectangleList.push(new Rectangle(dX, rectangle.y, w, rectangle.height));
           dX += w;
         }
         return rectangleList;
@@ -12504,10 +13641,10 @@ define('src/index', ['exports'], function (exports) {
         if(weights.length < 6) {
 
         } else if(weights.length == 6) {
-          var rAfrica = new Rectangle__default(0.44, 0.36, 0.16, 0.45);
-          var rAsia = new Rectangle__default(0.6, 0.15, 0.3, 0.3);
-          var rAustralasia = new Rectangle__default(0.72, 0.45, 0.28, 0.32);
-          var rEurope = new Rectangle__default(0.38, 0.04, 0.22, 0.32);
+          var rAfrica = new Rectangle(0.44, 0.36, 0.16, 0.45);
+          var rAsia = new Rectangle(0.6, 0.15, 0.3, 0.3);
+          var rAustralasia = new Rectangle(0.72, 0.45, 0.28, 0.32);
+          var rEurope = new Rectangle(0.38, 0.04, 0.22, 0.32);
 
           var pivotEuroafrasia = new Point(0.6, 0.36);
           rAfrica = expandRectangle(rAfrica, Math.sqrt(weights[0]), pivotEuroafrasia);
@@ -12522,8 +13659,8 @@ define('src/index', ['exports'], function (exports) {
 
           var pivotAmericas = new Point(0.26, 0.36 + Math.max(rAfrica.height * 0.3, rEurope.height * 0.2));
 
-          var rNorthAmerica = new Rectangle__default(0.1, pivotAmericas.y - 0.4, 0.2, 0.4);
-          var rSouthAmerica = new Rectangle__default(0.22, pivotAmericas.y, 0.16, 0.5);
+          var rNorthAmerica = new Rectangle(0.1, pivotAmericas.y - 0.4, 0.2, 0.4);
+          var rSouthAmerica = new Rectangle(0.22, pivotAmericas.y, 0.16, 0.5);
 
           rNorthAmerica = expandRectangle(rNorthAmerica, Math.sqrt(weights[4]), pivotAmericas);
           rSouthAmerica = expandRectangle(rSouthAmerica, Math.sqrt(weights[5]), pivotAmericas);
@@ -12534,7 +13671,7 @@ define('src/index', ['exports'], function (exports) {
           rSouthAmerica.x += delta;
           rNorthAmerica.x += delta;
 
-          return new List__default(rAfrica, rAsia, rAustralasia, rEurope, rNorthAmerica, rSouthAmerica); //RectangleList
+          return new List(rAfrica, rAsia, rAustralasia, rEurope, rNorthAmerica, rSouthAmerica); //RectangleList
 
         } else {
 
@@ -12553,15 +13690,15 @@ define('src/index', ['exports'], function (exports) {
         var nMissing = nLists * nRows - weights.length;
 
         var average = weights.getAverage();
-        var weigthsCompleted = ListOperators__default.concat(weights, ListGenerators__default.createListWithSameElement(nMissing, average));
-        var table = ListOperators__default.slidingWindowOnList(weigthsCompleted, nRows, nRows, 0);
+        var weigthsCompleted = ListOperators.concat(weights, ListGenerators.createListWithSameElement(nMissing, average));
+        var table = ListOperators.slidingWindowOnList(weigthsCompleted, nRows, nRows, 0);
         var sumList = table.getSums();
         var rectangleColumns = this.packingRectangles(sumList, 2, rectangle);
 
-        rectangleList = List__default(); //new RectangleList();
+        rectangleList = List(); //new RectangleList();
 
         for(i = 0; i < nLists; i++) {
-          rectangleList = ListOperators__default.concat(rectangleList, this.packingRectangles(table[i], 1, rectangleColumns[i]));
+          rectangleList = ListOperators.concat(rectangleList, this.packingRectangles(table[i], 1, rectangleColumns[i]));
         }
 
         return rectangleList;
@@ -12570,7 +13707,7 @@ define('src/index', ['exports'], function (exports) {
     return null;
   };
 
-  RectangleOperators__RectangleOperators.quadrification = RectangleOperators__RectangleOperators.squarify; //old name
+  RectangleOperators.quadrification = RectangleOperators.squarify; //old name
 
   /**
    * Squarified algorithm as described in (http://www.win.tue.nl/~vanwijk/stm.pdf)
@@ -12582,7 +13719,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List} a list of Rectangles
    * tags:
    */
-  RectangleOperators__RectangleOperators.squarify = function(frame, weights, isNormalizedWeights, isSortedWeights) { //, funcionEvaluacionnWeights:Function=null):Array{
+  RectangleOperators.squarify = function(frame, weights, isNormalizedWeights, isSortedWeights) { //, funcionEvaluacionnWeights:Function=null):Array{
     if(weights == null) return;
     if(weights.length == 0) return new RectangleList();
     if(weights.length == 1) return new RectangleList(frame);
@@ -12598,20 +13735,20 @@ define('src/index', ['exports'], function (exports) {
 
     if(!isSortedWeights) {
       var newPositions = newWeightList.getSortIndexes(); // ListOperators.sortListByNumberList();// newWeightList.sortNumericIndexedDescending();
-      newWeightList = ListOperators__default.sortListByNumberList(newWeightList, newWeightList);
+      newWeightList = ListOperators.sortListByNumberList(newWeightList, newWeightList);
     }
     //trace("RectangleOperators.squarified | ", newWeightList);
     var area = frame.width * frame.height;
     var rectangleList = new RectangleList();
     var freeRectangle = frame.clone();
     var subWeightList;
-    var subRectangleList = new List__default(); //RectangleList();//
+    var subRectangleList = new List(); //RectangleList();//
     var prevSubRectangleList;
     var proportion;
     var worstProportion;
     var index = 0;
     var subArea;
-    var freeSubRectangle = new Rectangle__default();
+    var freeSubRectangle = new Rectangle();
     var nWeights = weights.length;
     var lastRectangle;
     var isColumn;
@@ -12621,7 +13758,7 @@ define('src/index', ['exports'], function (exports) {
       for(i = index; i < nWeights; i++) {
         proportion = Number.MAX_VALUE;
         if(newWeightList[i] == 0) {
-          rectangleList.push(new Rectangle__default(freeSubRectangle.x, freeSubRectangle.y, 0, 0));
+          rectangleList.push(new Rectangle(freeSubRectangle.x, freeSubRectangle.y, 0, 0));
         } else {
           for(j = 1; j < nWeights; j++) {
             subWeightList = newWeightList.slice(i, i + j); //NumberList.fromArray(newWeightList.slice(i, i+j));//
@@ -12644,7 +13781,7 @@ define('src/index', ['exports'], function (exports) {
             // 	subWeightList[k]/=sum;
             // });
 
-            subRectangleList = RectangleOperators__RectangleOperators.partitionRectangle(freeSubRectangle, subWeightList, sum);
+            subRectangleList = RectangleOperators.partitionRectangle(freeSubRectangle, subWeightList, sum);
             worstProportion = subRectangleList.highestRatio; // RectangleOperators._getHighestRatio(subRectangleList);//
             if(proportion <= worstProportion) {
               break;
@@ -12654,10 +13791,10 @@ define('src/index', ['exports'], function (exports) {
           }
 
           if(prevSubRectangleList.length == 0) {
-            rectangleList.push(new Rectangle__default(freeRectangle.x, freeRectangle.y, freeRectangle.width, freeRectangle.height)); //freeRectangle.clone());
+            rectangleList.push(new Rectangle(freeRectangle.x, freeRectangle.y, freeRectangle.width, freeRectangle.height)); //freeRectangle.clone());
             if(rectangleList.length == nWeights) {
               if(!isSortedWeights) {
-                var newRectangleList = new List__default(); //RectangleList();
+                var newRectangleList = new List(); //RectangleList();
                 for(i = 0; rectangleList[i] != null; i++) {
                   newRectangleList[newPositions[i]] = rectangleList[i];
                 }
@@ -12670,7 +13807,7 @@ define('src/index', ['exports'], function (exports) {
             rectangleList = rectangleList.concat(prevSubRectangleList);
             if(rectangleList.length == nWeights) {
               if(!isSortedWeights) {
-                newRectangleList = new List__default();
+                newRectangleList = new List();
                 for(i = 0; rectangleList[i] != null; i++) {
                   newRectangleList[newPositions[i]] = rectangleList[i];
                 }
@@ -12694,14 +13831,14 @@ define('src/index', ['exports'], function (exports) {
     } else if(nWeights == 2) {
       subWeightList = newWeightList.slice(); //.clone();
       freeSubRectangle = frame.clone();
-      rectangleList = RectangleOperators__RectangleOperators.partitionRectangle(freeSubRectangle, subWeightList, subWeightList.getSum());
+      rectangleList = RectangleOperators.partitionRectangle(freeSubRectangle, subWeightList, subWeightList.getSum());
     } else {
-      rectangleList[0] = new Rectangle__default(frame.x, frame.y, frame.width, frame.height); //frame.clone();
+      rectangleList[0] = new Rectangle(frame.x, frame.y, frame.width, frame.height); //frame.clone();
     }
 
 
     if(!isSortedWeights) {
-      newRectangleList = new List__default(); //RectangleList();//
+      newRectangleList = new List(); //RectangleList();//
       for(i = 0; rectangleList[i] != null; i++) {
         newRectangleList[newPositions[i]] = rectangleList[i];
       }
@@ -12718,10 +13855,10 @@ define('src/index', ['exports'], function (exports) {
    *
    * @return {List} a list of Rectangles
    */
-  RectangleOperators__RectangleOperators.partitionRectangle = function(rectangle, normalizedWeightList, sum) {
+  RectangleOperators.partitionRectangle = function(rectangle, normalizedWeightList, sum) {
     var area = rectangle.width * rectangle.height;
-    var rectangleList = new List__default(); //RectangleList();
-    var freeRectangle = new Rectangle__default(rectangle.x, rectangle.y, rectangle.width, rectangle.height); //rectangle.clone();
+    var rectangleList = new List(); //RectangleList();
+    var freeRectangle = new Rectangle(rectangle.x, rectangle.y, rectangle.width, rectangle.height); //rectangle.clone();
     //trace("??", freeRectangle);
     var areai;
     var i;
@@ -12730,12 +13867,12 @@ define('src/index', ['exports'], function (exports) {
     for(i = 0; i < normalizedWeightList.length; i++) {
       areai = normalizedWeightList[i] * area / sum;
       if(rectangle.width > rectangle.height) {
-        rect = new Rectangle__default(freeRectangle.x, freeRectangle.y, areai / freeRectangle.height, freeRectangle.height);
+        rect = new Rectangle(freeRectangle.x, freeRectangle.y, areai / freeRectangle.height, freeRectangle.height);
         rectangleList.push(rect);
         freeRectangle.x += areai / freeRectangle.height;
         //rect.ratio = rect.width/rect.height;
       } else {
-        rect = new Rectangle__default(freeRectangle.x, freeRectangle.y, freeRectangle.width, areai / freeRectangle.width);
+        rect = new Rectangle(freeRectangle.x, freeRectangle.y, freeRectangle.width, areai / freeRectangle.width);
         rectangleList.push(rect);
         freeRectangle.y += areai / freeRectangle.width;
         //rect.ratio = rect.height/rect.width;
@@ -12755,7 +13892,7 @@ define('src/index', ['exports'], function (exports) {
    *
    * @return {Number} highestRatio
    */
-  RectangleOperators__RectangleOperators._getHighestRatio = function(rectangleList) {
+  RectangleOperators._getHighestRatio = function(rectangleList) {
     var highestRatio = 1;
     var rectangle;
     var i;
@@ -12766,7 +13903,7 @@ define('src/index', ['exports'], function (exports) {
     return highestRatio;
   };
 
-  exports.RectangleOperators = RectangleOperators__default;
+  exports.RectangleOperators = RectangleOperators;
 
   /**
    * @classdesc Tools for generating colors.
@@ -12785,7 +13922,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.ColorGenerators = ColorGenerators;
 
-  ColorListGenerators__ColorListGenerators._HARDCODED_CATEGORICAL_COLORS = new ColorList__default(
+  ColorListGenerators._HARDCODED_CATEGORICAL_COLORS = new ColorList__default(
     "#dd4411", "#2200bb", "#1f77b4", "#ff660e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#dd8811",
     "#dd0011", "#221140", "#1f66a3", "#ff220e", "#2ba01c", "#442728", "#945600", "#8c453a", "#e37700"
   );
@@ -12796,8 +13933,8 @@ define('src/index', ['exports'], function (exports) {
    * @namespace
    * @category colors
    */
-  function ColorListGenerators__ColorListGenerators() {}
-  var ColorListGenerators__default = ColorListGenerators__ColorListGenerators;
+  function ColorListGenerators() {}
+
 
   /**
    * create a simple list of categorical colors
@@ -12808,9 +13945,9 @@ define('src/index', ['exports'], function (exports) {
    * @return {ColorList}
    * tags:generator
    */
-  ColorListGenerators__ColorListGenerators.createDefaultCategoricalColorList = function(nColors, alpha, invert) {
+  ColorListGenerators.createDefaultCategoricalColorList = function(nColors, alpha, invert) {
     alpha = alpha == null ? 1 : alpha;
-    var colors = ColorListGenerators__ColorListGenerators.createCategoricalColors(1, nColors).getInterpolated('black', 0.15);
+    var colors = ColorListGenerators.createCategoricalColors(1, nColors).getInterpolated('black', 0.15);
     if(alpha < 1) colors = colors.addAlpha(alpha);
 
     if(invert) colors = colors.getInverted();
@@ -12827,7 +13964,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {ColorList}
    * tags:generator
    */
-  ColorListGenerators__ColorListGenerators.createColorListFromNumberList = function(numberList, colorScale, mode) {
+  ColorListGenerators.createColorListFromNumberList = function(numberList, colorScale, mode) {
     mode = mode == null ? 0 : mode;
 
     var colorList = new ColorList__default();
@@ -12852,7 +13989,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  ColorListGenerators__ColorListGenerators.createColorListWithSingleColor = function(nColors, color) {
+  ColorListGenerators.createColorListWithSingleColor = function(nColors, color) {
     var colorList = new ColorList__default();
     for(var i = 0; i < nColors; i++) {
       colorList.push(color);
@@ -12873,8 +14010,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {ColorList} ColorList with categorical colors
    * tags:generator
    */
-  ColorListGenerators__ColorListGenerators.createCategoricalColors = function(mode, nColors, colorScaleFunction, alpha, interpolateColor, interpolateValue) {
-    colorScaleFunction = colorScaleFunction == null ? ColorScales__default.temperature : colorScaleFunction;
+  ColorListGenerators.createCategoricalColors = function(mode, nColors, colorScaleFunction, alpha, interpolateColor, interpolateValue) {
+    colorScaleFunction = colorScaleFunction == null ? ColorScales.temperature : colorScaleFunction;
 
     var i;
     var colorList = new ColorList__default();
@@ -12885,25 +14022,25 @@ define('src/index', ['exports'], function (exports) {
         }
         break;
       case 1: //seeded random numbers
-        var values = NumberListGenerators__default.createRandomNumberList(nColors, null, 0);
+        var values = NumberListGenerators.createRandomNumberList(nColors, null, 0);
         for(i = 0; i < nColors; i++) {
           colorList[i] = colorScaleFunction(values[i]);
         }
         break;
       case 2:
         for(i = 0; i < nColors; i++) {
-          colorList[i] = ColorListGenerators__ColorListGenerators._HARDCODED_CATEGORICAL_COLORS[i % ColorListGenerators__ColorListGenerators._HARDCODED_CATEGORICAL_COLORS.length];
+          colorList[i] = ColorListGenerators._HARDCODED_CATEGORICAL_COLORS[i % ColorListGenerators._HARDCODED_CATEGORICAL_COLORS.length];
         }
         break;
       case 5:
-        var randomNumbersSource = NumberListGenerators__default.createRandomNumberList(1001, null, 0);
-        var positions = NumberListGenerators__default.createSortedNumberList(nColors);
-        var randomNumbers = NumberListGenerators__default.createRandomNumberList(nColors, null, 0);
-        var randomPositions = ListOperators__default.sortListByNumberList(positions, randomNumbers);
+        var randomNumbersSource = NumberListGenerators.createRandomNumberList(1001, null, 0);
+        var positions = NumberListGenerators.createSortedNumberList(nColors);
+        var randomNumbers = NumberListGenerators.createRandomNumberList(nColors, null, 0);
+        var randomPositions = ListOperators.sortListByNumberList(positions, randomNumbers);
 
         var nGenerations = Math.floor(nColors * 2) + 100;
         var nChildren = Math.floor(nColors * 0.6) + 5;
-        var bestEvaluation = ColorListGenerators__ColorListGenerators._evaluationFunction(randomPositions);
+        var bestEvaluation = ColorListGenerators._evaluationFunction(randomPositions);
         var child;
         var bestChildren = randomPositions;
         var j;
@@ -12912,9 +14049,9 @@ define('src/index', ['exports'], function (exports) {
 
         for(i = 0; i < nGenerations; i++) {
           for(j = 0; j < nChildren; j++) {
-            child = ColorListGenerators__ColorListGenerators._sortingVariation(randomPositions, randomNumbersSource[nr], randomNumbersSource[nr + 1]);
+            child = ColorListGenerators._sortingVariation(randomPositions, randomNumbersSource[nr], randomNumbersSource[nr + 1]);
             nr = (nr + 2) % 1001;
-            evaluation = ColorListGenerators__ColorListGenerators._evaluationFunction(child);
+            evaluation = ColorListGenerators._evaluationFunction(child);
             if(evaluation > bestEvaluation) {
               bestChildren = child;
               bestEvaluation = evaluation;
@@ -12940,7 +14077,7 @@ define('src/index', ['exports'], function (exports) {
     return colorList;
   };
 
-  ColorListGenerators__ColorListGenerators._sortingVariation = function(numberList, rnd0, rnd1) { //private
+  ColorListGenerators._sortingVariation = function(numberList, rnd0, rnd1) { //private
     var newNumberList = numberList.clone();
     var pos0 = Math.floor(rnd0 * newNumberList.length);
     var pos1 = Math.floor(rnd1 * newNumberList.length);
@@ -12949,7 +14086,7 @@ define('src/index', ['exports'], function (exports) {
     newNumberList[pos0] = cache;
     return newNumberList;
   };
-  ColorListGenerators__ColorListGenerators._evaluationFunction = function(numberList) { //private
+  ColorListGenerators._evaluationFunction = function(numberList) { //private
     var sum = 0;
     var i;
     for(i = 0; numberList[i + 1] != null; i++) {
@@ -12974,7 +14111,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Table} dictionary dictionary table with elemnts and matching colors
    * tags:generator
    */
-  ColorListGenerators__ColorListGenerators.createCategoricalColorListForList = function(list, colorList, alpha, color, interpolate, invert)
+  ColorListGenerators.createCategoricalColorListForList = function(list, colorList, alpha, color, interpolate, invert)
   {
 
     if(!list)
@@ -12986,13 +14123,13 @@ define('src/index', ['exports'], function (exports) {
     if(!interpolate)
       interpolate = 0;
 
-    list = List__default.fromArray(list);
+    list = List.fromArray(list);
     var diffValues = list.getWithoutRepetitions();
     var diffColors;
     if(colorList) {
       diffColors = colorList.getInterpolated(color, interpolate);
     } else {
-      diffColors = ColorListGenerators__ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate);
+      diffColors = ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate);
       //diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
     }
     diffColors = diffColors.addAlpha(alpha);
@@ -13000,7 +14137,7 @@ define('src/index', ['exports'], function (exports) {
     if(invert) diffColors = diffColors.getInverted();
 
     var colorDict = Table__default.fromArray([diffValues, diffColors]);
-    var fullColorList = ListOperators__default.translateWithDictionary(list, colorDict, "NULL");
+    var fullColorList = ListOperators.translateWithDictionary(list, colorDict, "NULL");
 
     fullColorList = ColorList__default.fromArray(fullColorList);
 
@@ -13021,19 +14158,19 @@ define('src/index', ['exports'], function (exports) {
     ];
   };
 
-  exports.ColorListGenerators = ColorListGenerators__default;
+  exports.ColorListGenerators = ColorListGenerators;
 
-  function ColorListOperators__ColorListOperators() {}
-  var ColorListOperators__default = ColorListOperators__ColorListOperators;
+  function ColorListOperators() {}
+
 
   /**
    * receives n arguments and performs addition
    */
-  ColorListOperators__ColorListOperators.colorListFromColorScale = function(colorScale, nColors) {
+  ColorListOperators.colorListFromColorScale = function(colorScale, nColors) {
     return colorScale.getColorList.apply(colorScale, [nColors]);
   };
 
-  ColorListOperators__ColorListOperators.colorListFromColorScaleFunction = function(colorScaleFunction, nColors) {
+  ColorListOperators.colorListFromColorScaleFunction = function(colorScaleFunction, nColors) {
     var colorList = new ColorList__default();
     var i;
     for(i = 0; i < nColors; i++) {
@@ -13043,7 +14180,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  ColorListOperators__ColorListOperators.colorListFromColorScaleFunctionAndNumberList = function(colorScaleFunction, numberList, normalize) {
+  ColorListOperators.colorListFromColorScaleFunctionAndNumberList = function(colorScaleFunction, numberList, normalize) {
     normalize = normalize == null ? true : normalize;
 
     if(normalize) numberList = numberList.getNormalized();
@@ -13058,26 +14195,26 @@ define('src/index', ['exports'], function (exports) {
 
 
 
-  ColorListOperators__ColorListOperators.polygon3DToColorList = function(polygon3D) {
+  ColorListOperators.polygon3DToColorList = function(polygon3D) {
     var nPoints = polygon3D.length;
     var colorList = new ColorList__default();
     var i;
     for(i = 0; i < nPoints; i++) {
-      colorList.push(ColorOperators__default.point3DToColor(polygon3D[i]));
+      colorList.push(ColorOperators.point3DToColor(polygon3D[i]));
     }
     return colorList;
   };
-  ColorListOperators__ColorListOperators.colorListToPolygon3D = function(colorList) {
+  ColorListOperators.colorListToPolygon3D = function(colorList) {
     var nColors = colorList.length;
     var polygon3D = new Polygon3D();
     var i;
     for(i = 0; i < nColors; i++) {
-      polygon3D.push(ColorOperators__default.colorToPoint3D(colorList[i]));
+      polygon3D.push(ColorOperators.colorToPoint3D(colorList[i]));
     }
     return polygon3D;
   };
 
-  exports.ColorListOperators = ColorListOperators__default;
+  exports.ColorListOperators = ColorListOperators;
 
   /**
    * @classdesc Generate {@link ColorScale|ColorScales} with various properties.
@@ -13193,7 +14330,7 @@ define('src/index', ['exports'], function (exports) {
 
 
     // Create table and columns
-    var result = new Table();
+    var result = new Table__default();
     for(var i = 0; i < fields.length; i++) {
       var fieldName = fields[i];
       var column = new List();
@@ -13297,729 +14434,19 @@ define('src/index', ['exports'], function (exports) {
   TableGenerators.createTableWithSameElement = function(nLists, nRows, element) {
     var table = new Table__default();
     for(var i = 0; i < nLists; i++) {
-      table[i] = ListGenerators__default.createListWithSameElement(nRows, element);
+      table[i] = ListGenerators.createListWithSameElement(nRows, element);
     }
     return table.getImproved();
   };
 
   exports.TableGenerators = TableGenerators;
 
-  function TableOperators__TableOperators() {}
-  var TableOperators__default = TableOperators__TableOperators;
-
-
-  TableOperators__TableOperators.getElementFromTable = function(table, i, j) {
-    if(table[i] == null) return null;
-    return table[i][j];
-  };
-
-  TableOperators__TableOperators.getSubTable = function(table, x, y, width, height) {
-    if(table == null) return table;
-
-    var nLists = table.length;
-    if(nLists == 0) return null;
-    var result = new Table();
-
-    if(width <= 0) width = (nLists - x) + width;
-    x = Math.min(x, nLists - 1);
-    width = Math.min(width, nLists - x);
-
-    var nRows = table[0].length;
-
-    if(nRows == 0) return null;
-
-    if(height <= 0) height = (nRows - y) + height;
-
-    y = Math.min(y, nRows - 1);
-    height = Math.min(height, nRows - y);
-
-    var column;
-    var newColumn;
-    var i;
-    var j;
-    var element;
-    for(i = x; i < x + width; i++) {
-      column = table[i];
-      newColumn = new List();
-      newColumn.name = table[i].name;
-      for(j = y; j < y + height; j++) {
-        element = column[j];
-        newColumn.push(element);
-      }
-      result.push(newColumn.getImproved());
-    }
-    return result.getImproved();
-  };
-
-  /**
-   * transposes a table
-   * @param  {Table} table to be transposed
-   *
-   * @param {Boolean} firstListAsHeaders removes first list of the table and uses it as names for the lists on the transposed table
-   * @return {Table}
-   * tags:matrixes
-   */
-  TableOperators__TableOperators.transpose = function(table, firstListAsHeaders) {
-    if(table == null) return null;
-    return table.getTransposed(firstListAsHeaders);
-  };
-
-  /**
-   * divides the instances of a table in two tables: the training table and the test table
-   * @param  {Table} table
-   * @param  {Number} proportion proportion of training instances/test instances, between 0 and 1
-   *
-   * @param  {Number} mode  0:random<br>1:random with seed<br>2:shuffle
-   * @param {Number} seed seed for random numbers (mode 1)
-   * @return {List} list containing the two tables
-   * tags:ds
-   */
-  TableOperators__TableOperators.trainingTestPartition = function(table, proportion, mode, seed) {
-    if(table == null || proportion == null) return;
-
-    mode = mode || 0;
-    seed = seed || 0;
-
-    var indexesTr = new NumberList();
-    var indexesTe = new NumberList();
-
-    var random = mode == 1 ? new NumberOperators._Alea("my", seed, "seeds") : Math.random;
-
-    if(mode == 2) N_MOD = Math.floor(proportion / (1 - proportion) * 10);
-
-    table[0].forEach(function(id, i) {
-      if(mode == 0 ||  mode == 1) {
-        if(random() < proportion) {
-          indexesTr.push(i);
-        } else {
-          indexesTe.push(i);
-        }
-      } else {
-        if(i % N_MOD != 0) {
-          indexesTr.push(i);
-        } else {
-          indexesTe.push(i);
-        }
-      }
-    });
-
-    return new List(table.getSubListsByIndexes(indexesTr), table.getSubListsByIndexes(indexesTe));
-  };
-
-  /**
-   * tests a model
-   * @param  {NumberTable} numberTable coordinates of points
-   * @param  {List} classes list of values of classes
-   * @param  {Function} model function that receives two numbers and returns a guessed class
-   *
-   * @param  {Number} metric 0:error
-   * @return {Number} metric value
-   * tags:ds
-   */
-  TableOperators__TableOperators.testClassificationModel = function(numberTable, classes, model, metric) {
-    if(numberTable == null || classes == null || model == null) return null;
-
-    metric = metric || 0;
-
-    var i;
-    var nErrors = 0;
-
-    classes.forEach(function(clss, i) {
-      if(model(numberTable[0][i], numberTable[1][i]) != clss) {
-        nErrors++;
-      }
-    });
-
-    return nErrors / classes.length;
-  };
-
-
-
-  TableOperators__TableOperators.getSubListsByIndexes = function(table, indexes) {
-    var newTable = new Table();
-    newTable.name = table.name;
-    var i;
-    var list;
-    var newList;
-    for(i = 0; table[i] != null; i++) {
-      list = table[i];
-      newList = ClassUtils__instantiateWithSameType(list);
-      for(j = 0; indexes[j] != null; j++) {
-        newList[j] = list[indexes[j]];
-      }
-      newTable[i] = newList.getImproved();
-    }
-    return newTable;
-  };
-
-  TableOperators__TableOperators.sortListsByNumberList = function(table, numberList, descending) {
-    if(descending == null) descending = true;
-
-    var newTable = instantiate(typeOf(table));
-    newTable.name = table.name;
-    var nElements = table.length;
-    var i;
-    // only need to do the sort once, not for each column
-    var indexList = numberList.clone();
-    // save original index
-    for(i = 0; i < indexList.length; i++) {
-      indexList[i] = i;
-    }
-    indexList = ListOperators.sortListByNumberList(indexList, numberList, descending);
-    // now clone and then move from original based on index
-    for(i = 0; i < nElements; i++) {
-      newTable[i] = table[i].clone();
-      for(var j = 0; j < indexList.length; j++) {
-        newTable[i][j] = table[i][indexList[j]];
-      }
-    }
-    return newTable;
-  };
-
-  // old version replaced by above version Dec 1st, 2014
-  // - fixed bug where descending with 'false' value gets changed to 'true'
-  // - performance improvements for tables with lots of lists
-  // TableOperators.sortListsByNumberList=function(table, numberList, descending){
-  // 	descending = descending || true;
-
-  // 	var newTable = instantiate(typeOf(table));
-  // 	newTable.name = table.name;
-  // 	var nElements = table.length;
-  // 	var i;
-  // 	for(i=0; i<nElements; i++){
-  // 		newTable[i] = ListOperators.sortListByNumberList(table[i], numberList, descending);
-  // 	}
-  // 	return newTable;
-  // }
-
-
-
-  /**
-   * aggregates a table
-   * @param  {Table} table to be aggregated
-   *
-   * @param  {Number} nList list in the table used as basis to aggregation
-   * @param  {Number} mode mode of aggregation, 0:picks first element 1:adds numbers, 2:averages
-   * @return {Table} aggregated table
-   * tags:aggregation
-   */
-  TableOperators__TableOperators.aggregateTable = function(table, nList, mode) {
-    nList = nList == null ? 0 : nList;
-    if(table == null || table[0] == null || table[0][0] == null || table[nList] == null) return null;
-    mode = mode == null ? 0 : mode;
-
-    var newTable = new Table();
-    var i, j;
-    var index;
-    var notRepeated;
-
-    newTable.name = table.name;
-
-    for(j = 0; table[j] != null; j++) {
-      newTable[j] = new List();
-      newTable[j].name = table[j].name;
-    }
-
-    switch(mode) {
-      case 0: //leaves the first element of the aggregated subLists
-        for(i = 0; table[0][i] != null; i++) {
-          notRepeated = newTable[nList].indexOf(table[nList][i]) == -1;
-          if(notRepeated) {
-            for(j = 0; table[j] != null; j++) {
-              newTable[j].push(table[j][i]);
-            }
-          }
-        }
-        break;
-      case 1: //adds values in numberLists
-        for(i = 0; table[0][i] != null; i++) {
-          index = newTable[nList].indexOf(table[nList][i]);
-          notRepeated = index == -1;
-          if(notRepeated) {
-            for(j = 0; table[j] != null; j++) {
-              newTable[j].push(table[j][i]);
-            }
-          } else {
-            for(j = 0; table[j] != null; j++) {
-              if(j != nList && table[j].type == 'NumberList') {
-                newTable[j][index] += table[j][i];
-              }
-            }
-          }
-        }
-        break;
-      case 2: //averages values in numberLists
-        var nRepetitionsList = table[nList].getElementsRepetitionCount(false);
-        newTable = TableOperators__TableOperators.aggregateTable(table, nList, 1);
-
-        for(j = 0; newTable[j] != null; j++) {
-          if(j != nList && newTable[j].type == 'NumberList') {
-            newTable[j] = newTable[j].divide(nRepetitionsList[1]);
-          }
-        }
-
-        newTable.push(nRepetitionsList[1]);
-        break;
-    }
-    for(j = 0; newTable[j] != null; j++) {
-      newTable[j] = newTable[j].getImproved();
-    }
-    return newTable.getImproved();
-  };
-
-  /**
-   * counts pairs of elements in same positions in two lists (the result is the adjacent matrix of the network defined by pairs)
-   * @param  {Table} table with at least two lists
-   * @return {NumberTable}
-   * tags:
-   */
-  TableOperators__TableOperators.getCountPairsMatrix = function(table) {
-    if(table == null || table.length < 2 || table[0] == null || table[0][0] == null) return null;
-
-    var list0 = table[0].getWithoutRepetitions();
-    var list1 = table[1].getWithoutRepetitions();
-
-    var matrix = new NumberTable(list1.length);
-
-    list1.forEach(function(element1, i) {
-      matrix[i].name = String(element1);
-      list0.forEach(function(element0, j) {
-        matrix[i][j] = 0;
-      });
-    });
-
-    table[0].forEach(function(element0, i) {
-      element1 = table[1][i];
-      matrix[list1.indexOf(element1)][list0.indexOf(element0)]++;
-    });
-
-    return matrix;
-  };
-
-
-  /**
-   * filter a table selecting rows that have an element on one of its lists
-   * @param  {Table} table
-   * @param  {Number} nList list that could contain the element in several positions
-   * @param  {Object} element
-   * @return {Table}
-   * tags:filter
-   */
-  TableOperators__TableOperators.filterTableByElementInList = function(table, nList, element) {
-    if(table == null ||  !table.length > 1 || nList == null) return;
-    if(element == null) return table;
-
-
-    var newTable = new Table();
-    var i, j;
-
-    newTable.name = table.name;
-
-    for(j = 0; table[j] != null; j++) {
-      newTable[j] = new List();
-    }
-
-    for(i = 0; table[0][i] != null; i++) {
-      if(table[nList][i] == element) {
-        for(j = 0; table[j] != null; j++) {
-          newTable[j].push(table[j][i]);
-        }
-      }
-    }
-
-    for(j = 0; newTable[j] != null; j++) {
-      newTable[j] = newTable[j].getImproved();
-    }
-
-    return newTable;
-  };
-
-  TableOperators__TableOperators.mergeDataTablesInList = function(tableList) {
-    if(tableList.length < 2) return tableList;
-
-    var merged = tableList[0];
-
-    for(var i = 1; tableList[i] != null; i++) {
-      merged = TableOperators__TableOperators.mergeDataTables(merged, tableList[i]);
-    }
-
-    return merged;
-  };
-
-  /**
-   * creates a new table with an updated first List of elements and an added new numberList with the new values
-   */
-  TableOperators__TableOperators.mergeDataTables = function(table0, table1) {
-    if(table1[0].length == 0) {
-      var merged = table0.clone();
-      merged.push(ListGenerators.createListWithSameElement(table0[0].length, 0));
-      return merged;
-    }
-
-    var table = new Table();
-    var list = ListOperators.concatWithoutRepetitions(table0[0], table1[0]);
-
-    var nElements = list.length;
-
-    var nNumbers0 = table0.length - 1;
-    var nNumbers1 = table1.length - 1;
-
-    var numberTable0 = new NumberTable();
-    var numberTable1 = new NumberTable();
-
-    var element;
-    var index;
-
-    var i, j;
-
-    for(i = 0; i < nElements; i++) {
-      index = table0[0].indexOf(list[i]);
-      if(index > -1) {
-        for(var j = 0; j < nNumbers0; j++) {
-          if(i == 0) {
-            numberTable0[j] = new NumberList();
-            numberTable0[j].name = table0[j + 1].name;
-          }
-          numberTable0[j][i] = table0[j + 1][index];
-        }
-      } else {
-        for(j = 0; j < nNumbers0; j++) {
-          if(i == 0) {
-            numberTable0[j] = new NumberList();
-            numberTable0[j].name = table0[j + 1].name;
-          }
-          numberTable0[j][i] = 0;
-        }
-      }
-
-      index = table1[0].indexOf(list[i]);
-      if(index > -1) {
-        for(j = 0; j < nNumbers1; j++) {
-          if(i == 0) {
-            numberTable1[j] = new NumberList();
-            numberTable1[j].name = table1[j + 1].name;
-          }
-          numberTable1[j][i] = table1[j + 1][index];
-        }
-      } else {
-        for(j = 0; j < nNumbers1; j++) {
-          if(i == 0) {
-            numberTable1[j] = new NumberList();
-            numberTable1[j].name = table1[j + 1].name;
-          }
-          numberTable1[j][i] = 0;
-        }
-      }
-    }
-
-    table[0] = list;
-
-    for(i = 0; numberTable0[i] != null; i++) {
-      table.push(numberTable0[i]);
-    }
-    for(i = 0; numberTable1[i] != null; i++) {
-      table.push(numberTable1[i]);
-    }
-    return table;
-  };
-
-  /**
-   * From two DataTables creates a new DataTable with combined elements in the first List, and added values in the second
-   * @param {Object} table0
-   * @param {Object} table1
-   * @return {Table}
-   */
-  TableOperators__TableOperators.fusionDataTables = function(table0, table1) {
-    var table = table0.clone();
-    var index;
-    var element;
-    for(var i = 0; table1[0][i] != null; i++) {
-      element = table1[0][i];
-      index = table[0].indexOf(element);
-      if(index == -1) {
-        table[0].push(element);
-        table[1].push(table1[1][i]);
-      } else {
-        table[1][index] += table1[1][i];
-      }
-    }
-    return table;
-  };
-
-  TableOperators__TableOperators.completeTable = function(table, nRows, value) {
-    value = value == null ? 0 : value;
-
-    var newTable = new Table();
-    newTable.name = table.name;
-
-    var list;
-    var newList;
-    var j;
-
-    for(var i = 0; i < table.length; i++) {
-      list = table[i];
-      newList = list == null ? ListOperators.getNewListForObjectType(value) : ClassUtils__instantiateWithSameType(list);
-      newList.name = list == null ? '' : list.name;
-      for(j = 0; j < nRows; j++) {
-        newList[j] = (list == null || list[j] == null) ? value : list[j];
-      }
-      newTable[i] = newList;
-    }
-    return newTable;
-  };
-
-  /**
-   * filters a Table keeping the NumberLists
-   * @param  {Table} table to filter
-   * @return {NumberTable}
-   * tags:filter
-   */
-  TableOperators__TableOperators.getNumberTableFromTable = function(table) {
-    if(table == null ||  !table.length > 0) return null;
-
-    var i;
-    var newTable = new NumberTable();
-    newTable.name = table.name;
-    for(i = 0; table[i] != null; i++) {
-      if(table[i].type == "NumberList") newTable.push(table[i]);
-    }
-    return newTable;
-  };
-
-  /**
-   * calculates de information gain of all variables in a table and a supervised variable
-   * @param  {Table} variablesTable
-   * @param  {List} supervised
-   * @return {NumberList}
-   * tags:ds
-   */
-  TableOperators__TableOperators.getVariablesInformationGain = function(variablesTable, supervised) {
-    if(variablesTable == null) return null;
-
-    var igs = new NumberList();
-    variablesTable.forEach(function(feature) {
-      igs.push(ListOperators.getInformationGain(feature, supervised));
-    });
-    return igs;
-  };
-
-  TableOperators__TableOperators.splitTableByCategoricList = function(table, list) {
-    if(table == null || list == null) return null;
-
-    var childrenTable;
-    var tablesList = new List();
-    var childrenObject = {};
-    var N = list.length;
-
-    list.forEach(function(element, i) {
-      childrenTable = childrenObject[element];
-      if(childrenTable == null) {
-        childrenTable = new Table();
-        childrenObject[element] = childrenTable;
-        tablesList.push(childrenTable);
-        table.forEach(function(list, j) {
-          childrenTable[j] = new List();
-          childrenTable[j].name = list.name;
-        });
-        childrenTable._element = element;
-      }
-      table.forEach(function(list, j) {
-        childrenTable[j].push(table[j][i]);
-      });
-    });
-
-    return tablesList;
-  };
-
-  /**
-   * builds a decision tree based on a variables table and a supervised variable
-   * @param  {Table} variablesTable
-   * @param  {List} supervised
-   * @param {Object} supervisedValue main value in supervised list (associated with blue)
-   *
-   * @param {Number} min_entropy minimum value of entropy on nodes (0.2 default)
-   * @param {Number} min_size_node minimum population size associated with node (10 default)
-   * @param {Number} min_info_gain minimum information gain by splitting by best feature (0.002 default)
-   * @param {Boolean} generatePattern generates a pattern of points picturing proprtion of followed class in node
-   * @return {Tree}
-   * tags:ds
-   */
-  TableOperators__TableOperators.buildDecisionTree = function(variablesTable, supervised, supervisedValue, min_entropy, min_size_node, min_info_gain, generatePattern) {
-    if(variablesTable == null ||  supervised == null || supervisedValue == null) return;
-
-    min_entropy = min_entropy == null ? 0.2 : min_entropy;
-    min_size_node = min_size_node || 10;
-    min_info_gain = min_info_gain || 0.002;
-
-    var indexes = NumberListGenerators.createSortedNumberList(supervised.length);
-    var tree = new Tree();
-
-    TableOperators__TableOperators._buildDecisionTreeNode(tree, variablesTable, supervised, 0, min_entropy, min_size_node, min_info_gain, null, null, supervisedValue, indexes, generatePattern);
-
-    return tree;
-  };
-
-
-  TableOperators__TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervised, level, min_entropy, min_size_node, min_info_gain, parent, value, supervisedValue, indexes, generatePattern) {
-
-    var entropy = ListOperators.getListEntropy(supervised, supervisedValue);
-
-
-    if(entropy >= min_entropy) {
-      informationGains = TableOperators__TableOperators.getVariablesInformationGain(variablesTable, supervised);
-      var maxIg = 0;
-      var iBestFeature = 0;
-      informationGains.forEach(function(ig, i) {
-        if(ig > maxIg) {
-          maxIg = ig;
-          iBestFeature = i;
-        }
-      });
-    }
-
-    //console.log('informationGains', informationGains);
-
-
-
-    var subDivide = entropy >= min_entropy && maxIg > min_info_gain && supervised.length >= min_size_node;
-
-    var id = tree.nodeList.getNewId();
-    var name = (value == null ? '' : value + ':') + (subDivide ? variablesTable[iBestFeature].name : 'P=' + supervised._biggestProbability + '(' + supervised._mostRepresentedValue + ')');
-    var node = new Node(id, name);
-
-
-
-
-    tree.addNodeToTree(node, parent);
-
-    if(parent == null) {
-      tree.informationGainTable = new Table();
-      tree.informationGainTable[0] = variablesTable.getNames();
-      if(informationGains) {
-        tree.informationGainTable[1] = informationGains.clone();
-        tree.informationGainTable = tree.informationGainTable.getListsSortedByList(informationGains, false);
-      }
-    }
-
-    node.entropy = entropy;
-    node.weight = supervised.length;
-    node.supervised = supervised;
-    node.indexes = indexes;
-    node.value = value;
-    node.mostRepresentedValue = supervised._mostRepresentedValue;
-    node.biggestProbability = supervised._biggestProbability;
-    node.valueFollowingProbability = supervised._P_valueFollowing;
-    node.lift = node.valueFollowingProbability / tree.nodeList[0].valueFollowingProbability; //Math.log(node.valueFollowingProbability/tree.nodeList[0].valueFollowingProbability)/Math.log(2);
-
-
-    if(level < 2) {
-      console.log('\nlevel', level);
-      console.log('supervised.countElement(supervisedValue)', supervised.countElement(supervisedValue));
-      console.log('entropy', entropy);
-      console.log('value', value);
-      console.log('name', name);
-      console.log('supervised.name', supervised.name);
-      console.log('supervised.length', supervised.length);
-      console.log('supervisedValue', supervisedValue);
-      console.log('supervised._biggestProbability, supervised._P_valueFollowing', supervised._biggestProbability, supervised._P_valueFollowing);
-      console.log('node.valueFollowingProbability (=supervised._P_valueFollowing):', node.valueFollowingProbability);
-      console.log('tree.nodeList[0].valueFollowingProbability', tree.nodeList[0].valueFollowingProbability);
-      console.log('node.biggestProbability (=_biggestProbability):', node.biggestProbability);
-      console.log('node.mostRepresentedValue:', node.mostRepresentedValue);
-      console.log('node.mostRepresentedValue==supervisedValue', node.mostRepresentedValue == supervisedValue);
-    }
-
-    node._color = TableOperators__TableOperators._decisionTreeColorScale(1 - node.valueFollowingProbability);
-
-    // node._color = node.mostRepresentedValue==supervisedValue?
-    // 	TableOperators._decisionTreeColorScale(1-node.biggestProbability)
-    // 	:
-    // 	TableOperators._decisionTreeColorScale(node.biggestProbability);
-
-
-    if(generatePattern) {
-      var newCanvas = document.createElement("canvas");
-      newCanvas.width = 150;
-      newCanvas.height = 100;
-      var newContext = newCanvas.getContext("2d");
-      newContext.clearRect(0, 0, 150, 100);
-
-      TableOperators__TableOperators._decisionTreeGenerateColorsMixture(newContext, 150, 100, ['blue', 'red'],
-  			node.mostRepresentedValue==supervisedValue?
-  				[Math.floor(node.biggestProbability*node.weight), Math.floor((1-node.biggestProbability)*node.weight)]
-  				:
-  				[Math.floor((1-node.biggestProbability)*node.weight), Math.floor(node.biggestProbability*node.weight)]
-      );
-
-
-      var img = new Image();
-      img.src = newCanvas.toDataURL();
-      node.pattern = newContext.createPattern(img, "repeat");
-    }
-
-
-
-    if(!subDivide) {
-      return node;
-    }
-
-    node.bestFeatureName = variablesTable[iBestFeature].name;
-    node.iBestFeature = iBestFeature;
-    node.informationGain = maxIg;
-
-    var expanded = variablesTable.concat([supervised, indexes]);
-
-    var tables = TableOperators__TableOperators.splitTableByCategoricList(expanded, variablesTable[iBestFeature]);
-    var childTable;
-    var childSupervised;
-    var newNode;
-
-    tables.forEach(function(expandedChild) {
-      childTable = expandedChild.getSubList(0, expandedChild.length - 3);
-      childSupervised = expandedChild[expandedChild.length - 2];
-      childIndexes = expandedChild[expandedChild.length - 1];
-      TableOperators__TableOperators._buildDecisionTreeNode(tree, childTable, childSupervised, level + 1, min_entropy, min_size_node, min_info_gain, node, expandedChild._element, supervisedValue, childIndexes, generatePattern);
-    });
-
-    node.toNodeList = node.toNodeList.getSortedByProperty('valueFollowingProbability', false);
-
-    return node;
-  };
-  TableOperators__TableOperators._decisionTreeColorScale = function(value) {
-    var rr = value < 0.5 ? Math.floor(510 * value) : 255;
-    var gg = value < 0.5 ? Math.floor(510 * value) : Math.floor(510 * (1 - value));
-    var bb = value < 0.5 ? 255 : Math.floor(510 * (1 - value));
-
-    return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
-  };
-  TableOperators__TableOperators._decisionTreeGenerateColorsMixture = function(ctxt, width, height, colors, weights) {
-    //var imageData=context.createImageData(width, height);
-    var x, y, i; //, rgb;
-    var allColors = ListGenerators.createListWithSameElement(weights[0], colors[0]);
-
-    for(i = 1; colors[i] != null; i++) {
-      allColors = allColors.concat(ListGenerators.createListWithSameElement(weights[i], colors[i]));
-    }
-
-    for(x = 0; x < width; x++) {
-      for(y = 0; y < height; y++) {
-        i = (x + y * width) * 4;
-        ctxt.fillStyle = allColors.getRandomElement();
-        ctxt.fillRect(x, y, 1, 1);
-      }
-    }
-
-    //return imageData;
-  };
-
-  exports.TableOperators = TableOperators__default;
-
   function IntervalListOperators() {}
 
 
 
   IntervalListOperators.scaleIntervals = function(intervalList, value) {
-    var newIntervalList = new List__default();
+    var newIntervalList = new List();
     newIntervalList.name = intervalList.name;
     for(var i = 0; intervalList[i] !== null; i++) {
       newIntervalList[i] = intervalList[i].getScaled(value);
@@ -14029,11 +14456,11 @@ define('src/index', ['exports'], function (exports) {
 
   exports.IntervalListOperators = IntervalListOperators;
 
-  function IntervalTableOperators__IntervalTableOperators() {}
-  var IntervalTableOperators__default = IntervalTableOperators__IntervalTableOperators;
+  function IntervalTableOperators() {}
 
 
-  IntervalTableOperators__IntervalTableOperators.scaleIntervals = function(intervalTable, value) {
+
+  IntervalTableOperators.scaleIntervals = function(intervalTable, value) {
     var newIntervalTable = new Table__default();
     newIntervalTable.name = intervalTable.name;
     for(var i = 0; intervalTable[i] !== null; i++) {
@@ -14042,7 +14469,7 @@ define('src/index', ['exports'], function (exports) {
     return newIntervalTable;
   };
 
-  exports.IntervalTableOperators = IntervalTableOperators__default;
+  exports.IntervalTableOperators = IntervalTableOperators;
 
   function MatrixGenerators() {}
 
@@ -14192,8 +14619,8 @@ define('src/index', ['exports'], function (exports) {
 
   exports.MatrixGenerators = MatrixGenerators;
 
-  function NumberListOperators__NumberListOperators() {}
-  var NumberListOperators__default = NumberListOperators__NumberListOperators;
+  function NumberListOperators() {}
+
 
   /**
    * cosine similarity, used to compare two NumberLists regardless of norm (see: http://en.wikipedia.org/wiki/Cosine_similarity)
@@ -14202,7 +14629,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number}
    * tags:statistics
    */
-  NumberListOperators__NumberListOperators.cosineSimilarity = function(numberList0, numberList1) {
+  NumberListOperators.cosineSimilarity = function(numberList0, numberList1) {
     var norms = numberList0.getNorm() * numberList1.getNorm();
     if(norms == 0) return 0;
     return numberList0.dotProduct(numberList1) / norms;
@@ -14215,7 +14642,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number}
    * tags:statistics
    */
-  NumberListOperators__NumberListOperators.covariance = function(numberList0, numberList1) { //TODO: improve efficiency
+  NumberListOperators.covariance = function(numberList0, numberList1) { //TODO: improve efficiency
     var l = Math.min(numberList0.length, numberList1.length);
     var i;
     var av0 = numberList0.getAverage();
@@ -14238,7 +14665,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {NumberTable} numberLists each being a cluster
    * tags:ds
    */
-  NumberListOperators__NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
+  NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
     if(numberList == null || k == null || !k > 0) return null;
 
     //c.l('numberList:', numberList);
@@ -14260,14 +14687,14 @@ define('src/index', ['exports'], function (exports) {
     var n;
     var actualMean;
     var N = 1000;
-    var means = new NumberList__default();
-    var nextMeans = new NumberList__default();
-    var nValuesInCluster = new NumberList__default();
+    var means = new NumberList();
+    var nextMeans = new NumberList();
+    var nValuesInCluster = new NumberList();
 
     var initdMin = 1 + max - min;
 
     for(i = 0; i < k; i++) {
-      clusters[i] = new NumberList__default();
+      clusters[i] = new NumberList();
       //clusters[i].actualMean = min + (i+0.5)*dX;//means[i];
       nextMeans[i] = min + (i + 0.5) * dX;
     }
@@ -14320,7 +14747,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  NumberListOperators__NumberListOperators.standardDeviationBetweenTwoNumberLists = function(numberList0, numberList1) {
+  NumberListOperators.standardDeviationBetweenTwoNumberLists = function(numberList0, numberList1) {
     var s = 0;
     var l = Math.min(numberList0.length, numberList1.length);
 
@@ -14338,8 +14765,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number}
    * tags:statistics
    */
-  NumberListOperators__NumberListOperators.pearsonProductMomentCorrelation = function(numberList0, numberList1) { //TODO:make more efficient
-    return NumberListOperators__NumberListOperators.covariance(numberList0, numberList1) / (numberList0.getStandardDeviation() * numberList1.getStandardDeviation());
+  NumberListOperators.pearsonProductMomentCorrelation = function(numberList0, numberList1) { //TODO:make more efficient
+    return NumberListOperators.covariance(numberList0, numberList1) / (numberList0.getStandardDeviation() * numberList1.getStandardDeviation());
   };
 
 
@@ -14351,7 +14778,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {NumberList}
    * tags:statistics
    */
-  NumberListOperators__NumberListOperators.averageSmoother = function(numberList, intensity, nIterations) {
+  NumberListOperators.averageSmoother = function(numberList, intensity, nIterations) {
     nIterations = nIterations == null ? 1 : nIterations;
     intensity = intensity == null ? 0.1 : intensity;
 
@@ -14359,7 +14786,7 @@ define('src/index', ['exports'], function (exports) {
     var anti = 1 - 2 * intensity;
     var n = numberList.length - 1;
 
-    var newNumberList = new NumberList__default();
+    var newNumberList = new NumberList();
     var i;
 
     newNumberList.name = numberList.name;
@@ -14385,9 +14812,9 @@ define('src/index', ['exports'], function (exports) {
   /**
    * accepted comparison operators: "<", "<=", ">", ">=", "==", "!="
    */
-  NumberListOperators__NumberListOperators.filterNumberListByNumber = function(numberList, value, comparisonOperator, returnIndexes) {
+  NumberListOperators.filterNumberListByNumber = function(numberList, value, comparisonOperator, returnIndexes) {
     returnIndexes = returnIndexes || false;
-    var newNumberList = new NumberList__default();
+    var newNumberList = new NumberList();
     var i;
 
     if(returnIndexes) {
@@ -14494,14 +14921,14 @@ define('src/index', ['exports'], function (exports) {
    * @return {NumberList} the union of both NumberLists
    * tags:
    */
-  NumberListOperators__NumberListOperators.union = function(x, y) {
+  NumberListOperators.union = function(x, y) {
     // Borrowed from here: http://stackoverflow.com/questions/3629817/getting-a-union-of-two-arrays-in-javascript
     var obj = {};
     for(var i = x.length - 1; i >= 0; --i)
       obj[x[i]] = x[i];
     for(var i = y.length - 1; i >= 0; --i)
       obj[y[i]] = y[i];
-    var res = new NumberList__default();
+    var res = new NumberList();
     for(var k in obj) {
       if(obj.hasOwnProperty(k)) // <-- optional
         res.push(obj[k]);
@@ -14517,7 +14944,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {NumberList} the intersection of both NumberLists
    * tags:
    */
-  NumberListOperators__NumberListOperators.intersection = function(a, b) {
+  NumberListOperators.intersection = function(a, b) {
     // Borrowed from here: http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
     //console.log( "arguments: ", arguments );
     if(arguments.length > 2) {
@@ -14532,12 +14959,12 @@ define('src/index', ['exports'], function (exports) {
       var resultsTrail = sets[0];
       for(var i = 1; i < sets.length; i++) {
         var newSet = sets[i];
-        resultsTrail = NumberListOperators__NumberListOperators.intersection(resultsTrail, newSet);
+        resultsTrail = NumberListOperators.intersection(resultsTrail, newSet);
       }
       return resultsTrail;
     }
 
-    var result = new NumberList__default();
+    var result = new NumberList();
     a = a.slice();
     b = b.slice();
     while(a.length > 0 && b.length > 0)
@@ -14558,7 +14985,7 @@ define('src/index', ['exports'], function (exports) {
     return result;
   };
 
-  exports.NumberListOperators = NumberListOperators__default;
+  exports.NumberListOperators = NumberListOperators;
 
   function NumberTableConversions() {}
 
@@ -14574,10 +15001,10 @@ define('src/index', ['exports'], function (exports) {
 
     var i;
     var n = Math.min(numberTable[0].length, numberTable[1].length);
-    var polygon = new Polygon__default();
+    var polygon = new Polygon();
 
     for(i = 0; i < n; i++) {
-      polygon[i] = new Point__default(numberTable[0][i], numberTable[1][i]);
+      polygon[i] = new Point(numberTable[0][i], numberTable[1][i]);
     }
 
     return polygon;
@@ -14585,19 +15012,19 @@ define('src/index', ['exports'], function (exports) {
 
   exports.NumberTableConversions = NumberTableConversions;
 
-  function NumberTableFlowOperators__NumberTableFlowOperators() {}
-  var NumberTableFlowOperators__default = NumberTableFlowOperators__NumberTableFlowOperators;
+  function NumberTableFlowOperators() {}
 
-  NumberTableFlowOperators__NumberTableFlowOperators.getFlowTable = function(numberTable, normalized, include0s) {
+
+  NumberTableFlowOperators.getFlowTable = function(numberTable, normalized, include0s) {
     if(numberTable == null) return;
 
     normalized = normalized || false;
     var nElements = numberTable.length;
     var nRows = numberTable[0].length;
     var numberList;
-    var minList = new NumberList__default();
-    var maxList = new NumberList__default();
-    var sums = new NumberList__default();
+    var minList = new NumberList();
+    var maxList = new NumberList();
+    var sums = new NumberList();
     var minInRow;
     var maxInRow;
     var sumInRow;
@@ -14626,7 +15053,7 @@ define('src/index', ['exports'], function (exports) {
     }
 
     var dMINMAX = MAXSUMS - MIN;
-    var flowTable = new NumberTable__default();
+    var flowTable = new NumberTable();
     var flowNumberList;
     var minToNormalize;
     var maxToNormalize;
@@ -14637,7 +15064,7 @@ define('src/index', ['exports'], function (exports) {
     if(normalized && include0s) {
       var max;
 
-      flowTable = new NumberTable__default(numberTable.length + 1);
+      flowTable = new NumberTable(numberTable.length + 1);
 
       numberTable[0].forEach(function() {
         flowTable[0].push(0);
@@ -14653,7 +15080,7 @@ define('src/index', ['exports'], function (exports) {
       return flowTable;
     }
 
-    flowTable = new NumberTable__default();
+    flowTable = new NumberTable();
 
     if(!normalized) {
       minToNormalize = MIN;
@@ -14662,10 +15089,10 @@ define('src/index', ['exports'], function (exports) {
       minToNormalize = Math.max(MIN, 0);
     }
     for(i = 0; i < nElements; i++) {
-      flowNumberList = new NumberList__default();
+      flowNumberList = new NumberList();
       flowTable.push(flowNumberList);
     }
-    if(include0s) flowTable.push(new NumberList__default());
+    if(include0s) flowTable.push(new NumberList());
 
     for(i = 0; i < nRows; i++) {
       numberList = numberTable[0];
@@ -14685,10 +15112,10 @@ define('src/index', ['exports'], function (exports) {
     return flowTable;
   };
 
-  NumberTableFlowOperators__NumberTableFlowOperators.getFlowTableIntervals = function(numberTable, normalized, sorted, stacked) {
+  NumberTableFlowOperators.getFlowTableIntervals = function(numberTable, normalized, sorted, stacked) {
     if(numberTable == null) return null;
 
-    var table = NumberTableFlowOperators__NumberTableFlowOperators.getFlowTable(numberTable, normalized, true);
+    var table = NumberTableFlowOperators.getFlowTable(numberTable, normalized, true);
 
     var intervalTable = new Table__default();
     var i, j;
@@ -14698,7 +15125,7 @@ define('src/index', ['exports'], function (exports) {
 
     var intervalList;
 
-    var maxCols = new NumberList__default();
+    var maxCols = new NumberList();
 
     for(i = 1; i < nElements; i++) {
       numberList = table[i];
@@ -14716,7 +15143,7 @@ define('src/index', ['exports'], function (exports) {
       var interval;
       var yy;
       for(j = 0; j < nRows; j++) {
-        amplitudes = new NumberList__default();
+        amplitudes = new NumberList();
         intervalList = intervalTable[i];
         for(i = 0; i < nElements - 1; i++) {
           amplitudes.push(intervalTable[i][j].getAmplitude());
@@ -14750,7 +15177,7 @@ define('src/index', ['exports'], function (exports) {
     return intervalTable;
   };
 
-  exports.NumberTableFlowOperators = NumberTableFlowOperators__default;
+  exports.NumberTableFlowOperators = NumberTableFlowOperators;
 
   function NumberTableOperators() {}
 
@@ -14766,7 +15193,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   NumberTableOperators.normalizeListsToMax = function(numberTable) {
-    var newNumberTable = new NumberTable__default();
+    var newNumberTable = new NumberTable();
     newNumberTable.name = numberTable.name;
     var i;
     for(i = 0; numberTable[i] != null; i++) {
@@ -14790,10 +15217,10 @@ define('src/index', ['exports'], function (exports) {
     intensity = intensity || 0.5;
     nIterations = nIterations || 1;
 
-    var newNumberTable = new NumberTable__default();
+    var newNumberTable = new NumberTable();
     newNumberTable.name = numberTable.name;
     numberTable.forEach(function(nL, i) {
-      newNumberTable[i] = NumberListOperators__default.averageSmoother(numberTable[i], intensity, nIterations);
+      newNumberTable[i] = NumberListOperators.averageSmoother(numberTable[i], intensity, nIterations);
     });
     return newNumberTable;
   };
@@ -14823,10 +15250,10 @@ define('src/index', ['exports'], function (exports) {
       var i, j;
       var d2;
 
-      var table = new NumberTable__default();
+      var table = new NumberTable();
 
-      table[0] = new NumberList__default();
-      table[1] = new NumberList__default();
+      table[0] = new NumberList();
+      table[1] = new NumberList();
       numberTable[0].forEach(function(val, i) {
         d2 = 0;
         numberTable.forEach(function(nList, j) {
@@ -14857,8 +15284,8 @@ define('src/index', ['exports'], function (exports) {
 
       if(calculateClass) {
         var classTable = new Table__default();
-        classTable[0] = new List__default();
-        classTable[1] = new NumberList__default();
+        classTable[0] = new List();
+        classTable[1] = new NumberList();
         for(i = 0; i < k; i++) {
           clas = propertyList[table[0][i]];
           index = classTable[0].indexOf(clas);
@@ -14911,7 +15338,7 @@ define('src/index', ['exports'], function (exports) {
         });
 
         var p;
-        var matx = new NumberTable__default();
+        var matx = new NumberTable();
         var ix = numberTable[0].getMinMaxInterval();
         var minx = ix.x;
         var kx = ix.getAmplitude() / matrixN;
@@ -14920,7 +15347,7 @@ define('src/index', ['exports'], function (exports) {
         var ky = iy.getAmplitude() / matrixN;
 
         for(i = 0; i < matrixN; i++) {
-          matx[i] = new NumberList__default();
+          matx[i] = new NumberList();
 
           for(j = 0; j < matrixN; j++) {
             p = [
@@ -14941,7 +15368,7 @@ define('src/index', ['exports'], function (exports) {
       return fKNN;
     }
 
-    var results = ClassUtils__instantiateWithSameType(propertyList);
+    var results = instantiateWithSameType(propertyList);
 
     vectorList.forEach(function(vector) {
       results.push(fKNN(vector));
@@ -14957,7 +15384,7 @@ define('src/index', ['exports'], function (exports) {
   NumberTableOperators.numberTableToNetwork = function(numberTable, method, tolerance) {
     tolerance = tolerance == null ? 0 : tolerance;
 
-    var network = new Network__default();
+    var network = new Network();
 
     var list0;
     var list1;
@@ -15000,7 +15427,7 @@ define('src/index', ['exports'], function (exports) {
 
 
             list1 = numberTable[j];
-            sd = NumberListOperators__default.standardDeviationBetweenTwoNumberLists(list0, list1);
+            sd = NumberListOperators.standardDeviationBetweenTwoNumberLists(list0, list1);
 
             w = 1 / (1 + sd);
 
@@ -15022,6 +15449,180 @@ define('src/index', ['exports'], function (exports) {
   };
 
   exports.NumberTableOperators = NumberTableOperators;
+
+  function NetworkConvertions() {}
+
+
+  /**
+   * Builds a Network based on a two columns Table, creating relations on co-occurrences.
+   *
+   * @param {Table} table table with at least two columns (commonly strings)
+   *
+   * @param {NumberList} numberList Weights of relations.
+   * @param {Number} threshold Minimum weight or number of co-occurrences to create a relation.
+   * @param {Boolean} allowMultipleRelations
+   * @param {Number} minRelationsInNode Remove nodes with number of relations below threshold.
+   * @param {StringList} stringList Contents of relations.
+   * @return {Network}
+   * tags:conversion
+   */
+  NetworkConvertions.TableToNetwork = function(table, numberList, threshold, allowMultipleRelations, minRelationsInNode, stringList) {
+    if(table == null || !table.isTable || table[0] == null || table[1] == null) return;
+
+    //trace("••••••• createNetworkFromPairsTable", table);
+    if(allowMultipleRelations == null) allowMultipleRelations = false;
+    if(table.length < 2) return null;
+    var network = new Network();
+
+    if(numberList == null) {
+      var nElements = Math.min(table[0].length, table[1].length);
+    } else {
+      nElements = Math.min(table[0].length, table[1].length, numberList.length);
+    }
+
+    //trace("nElements", nElements);
+
+    if(numberList == null && table.length > 2 && ClassUtils__typeOf(table[2]) == NumberList && table[2].length >= nElements) numberList = table[2];
+
+
+    if(ClassUtils__typeOf(table[0]) == NodeList__default && ClassUtils__typeOf(table[1]) == NodeList__default) {
+      //....    different methodology here
+    }
+
+    var node0;
+    var node1;
+    var name0;
+    var name1;
+    var relation;
+    var i;
+    for(i = 0; i < nElements; i++) {
+      name0 = "" + table[0][i];
+      name1 = "" + table[1][i];
+      //trace("______________ i, name0, name1:", i, name0, name1);
+      node0 = network.nodeList.getNodeById(name0);
+      if(node0 == null) {
+        node0 = new Node__default(name0, name0);
+        network.addNode(node0);
+      } else {
+        node0.weight++;
+      }
+      node1 = network.nodeList.getNodeById(name1);
+      if(node1 == null) {
+        node1 = new Node__default(name1, name1);
+        network.addNode(node1);
+      } else {
+        node1.weight++;
+      }
+      if(numberList == null) {
+        relation = network.relationList.getFirstRelationByIds(node0.id, node1.id, false);
+        if(relation == null ||  allowMultipleRelations) {
+          relation = new Relation(name0 + "_" + name1 + network.relationList.length, name0 + "_" + name1, node0, node1, 1);
+          network.addRelation(relation);
+        } else {
+          relation.weight++;
+        }
+      } else if(numberList[i] > threshold) {
+        relation = new Relation(name0 + "_" + name1, name0 + "_" + name1, node0, node1, numberList[i]);
+        network.addRelation(relation);
+      }
+
+      if(stringList) relation.content = stringList[i];
+    }
+
+    if(minRelationsInNode) {
+      for(i = 0; network.nodeList[i] != null; i++) {
+        if(network.nodeList[i].relationList.length < minRelationsInNode) {
+          network.removeNode(network.nodeList[i]);
+          i--;
+        }
+      }
+    }
+
+    return network;
+  };
+
+  exports.NetworkConvertions = NetworkConvertions;
+
+  function ObjectConversions() {}
+
+  // *
+  //  * convert an object into a json string (JSON.stringify(object))
+  //  * @param  {Object} object to convert
+  //  * @return {String} string in format json
+  //  * tags:conversion
+
+  // ObjectConversions.objectToString = function(object){
+  // 	return JSON.stringify(object);
+  // }
+
+
+  /**
+   * converts any Object into the desirde type, using the most obvious conversion (if exists)
+   * @param  {Object} object
+   * @param  {String} toType can be literal (ex: "string", "NumberList") or short (ex: "s", "#L")
+   * @return {Object} Object of the specified type
+   * tags:conversion
+   */
+  ObjectConversions.conversor = function(object, toType) {
+    var i;
+    var type = ClassUtils__typeOf(object);
+    var pairType = type + "_" + toType;
+    var newList;
+
+    console.log('ObjectConversions.conversor, pairType:', pairType);
+
+    switch(pairType) {
+      case 'NumberTable_Polygon':
+        var polygon = new Polygon();
+        var length2 = object.length > 1;
+        for(i = 0; object[0][i] != null; i++) {
+          polygon[i] = new Point(object[0][i], length2 ? object[1][i] : 0);
+        }
+        return polygon;
+      case 'date_string':
+        return DateOperators.dateToString(object);
+      case 'string_date':
+        return DateOperators.stringToDate(object);
+      case 'date_number':
+        return object.getTime();
+      case 'number_date':
+        return new Date(object);
+      case 'List_StringList':
+      case 'NumberList_StringList':
+        return object.toStringList();
+      case 'StringList_NumberList':
+        return object.toNumberList();
+      case 'Object_string':
+        return JSON.stringify(object, null, "\t");
+      case 'string_Object':
+        return JSON.parse(object);
+      case 'string_ColorScale':
+        return ColorScales[object]; //todo: not working, fix
+      case 'string_Table':
+        return TableEncodings.CSVtoTable(object);
+      case 'StringList_DateList': //TODO: solve cases of lists
+        newList = new DateList();
+        object.forEach(function(string) {
+          newList.push(DateOperators.stringToDate(string));
+        });
+        newList.name = object.name;
+        return newList;
+      case 'DateList_NumberList': //TODO: solve cases of lists
+        return object.getTimes();
+      case 'Table_Network':
+        return NetworkConvertions.TableToNetwork(object, null, 0, false);
+
+    }
+
+    switch(toType) {
+      case 'string':
+        return object.toString();
+      case 'number':
+        return Number(object);
+    }
+  };
+
+  exports.ObjectConversions = ObjectConversions;
 
   function ObjectOperators() {}
 
@@ -15127,7 +15728,7 @@ define('src/index', ['exports'], function (exports) {
     var value;
 
     table[0] = ObjectOperators.getPropertiesNames(object);
-    table[1] = new List__default();
+    table[1] = new List();
 
     table[0].forEach(function(value, i) {
       table[1][i] = object[value];
@@ -15201,7 +15802,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:conversion
    */
   ObjectOperators.toList = function(array) {
-    return List__default.fromArray(array).getImproved();
+    return List.fromArray(array).getImproved();
   };
 
 
@@ -15225,7 +15826,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:math
    */
   ObjectOperators.addition = function() {
-    //c.l("addition__________________________________arguments:", arguments);
+    //console.log("addition__________________________________arguments:", arguments);
     var objectType;
     var result;
     var i;
@@ -15244,10 +15845,10 @@ define('src/index', ['exports'], function (exports) {
       if(arguments[0] != null && arguments[0].isList && arguments[1] != null && arguments[1].isList) {
         return ObjectOperators._applyBinaryOperatorOnLists(arguments[0], arguments[1], ObjectOperators.addition);
       } else if(arguments[0] != null && arguments[0].isList) {
-        //c.l('list versus object');
+        //console.log('list versus object');
         return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[0], arguments[1], ObjectOperators.addition);
       } else if(arguments[1] != null && arguments[1].isList) {
-        //c.l('object versus list');
+        //console.log('object versus list');
         return ObjectOperators._applyBinaryOperatorOnObjectWithList(arguments[0], arguments[1], ObjectOperators.addition);
       }
 
@@ -15255,7 +15856,7 @@ define('src/index', ['exports'], function (exports) {
       var a1 = arguments[1];
       var a0Type = ClassUtils__typeOf(a0);
       var a1Type = ClassUtils__typeOf(a1);
-      //c.l('ObjectOperators.addition, a0Type, a1Type:['+a0Type, a1Type+']');
+      //console.log('ObjectOperators.addition, a0Type, a1Type:['+a0Type, a1Type+']');
       var reversed = false;
 
       if(a1Type < a0Type && a1Type != "string" && a0Type != "string") {
@@ -15267,13 +15868,13 @@ define('src/index', ['exports'], function (exports) {
       }
 
       var pairType = a0Type + "_" + a1Type;
-      //c.log('ObjectOperators.addition, pairType:['+pairType+']');
+      //console.log('ObjectOperators.addition, pairType:['+pairType+']');
       //
       switch(pairType) {
         case 'boolean_boolean':
           return a0 && a1;
         case 'date_string':
-          return reversed ? a1 + DateOperators__default.dateToString(a0) : DateOperators__default.dateToString(a0) + a1;
+          return reversed ? a1 + DateOperators.dateToString(a0) : DateOperators.dateToString(a0) + a1;
         case 'number_string':
         case 'string_string':
         case 'string_number':
@@ -15281,27 +15882,27 @@ define('src/index', ['exports'], function (exports) {
         case 'number_number':
           return a0 + a1;
         case 'Point_Point':
-          return new Point__default(a0.x + a1.x, a0.y + a1.y);
+          return new Point(a0.x + a1.x, a0.y + a1.y);
         case 'Point3D_Point3D':
           return new Point3D(a0.x + a1.x, a0.y + a1.y, a0.z + a1.z);
         case 'number_Point':
-          return new Point__default(a0.x + a1, a0.y + a1);
+          return new Point(a0.x + a1, a0.y + a1);
         case 'number_Point3D':
           return new Point3D(a0.x + a1, a0.y + a1, a0.z + a1);
         case 'Interval_number':
           return new Interval__default(a0.x + a1, a0.y + a1);
         case 'Interval_Point':
-          return new Point__default(a0.getMin() + a1.x, a0.getMax() + a1.y);
+          return new Point(a0.getMin() + a1.x, a0.getMax() + a1.y);
         case 'Interval_Interval':
-          return new Point__default(a0.getMin() + a1.getMin(), a0.getMax() + a1.getMax());
+          return new Point(a0.getMin() + a1.getMin(), a0.getMax() + a1.getMax());
         case 'Point_Rectangle':
-          return new Rectangle__default(a0.x + a1.x, a0.y + a1.y, a1.width, a1.height);
+          return new Rectangle(a0.x + a1.x, a0.y + a1.y, a1.width, a1.height);
         case 'Interval_Rectangle':
-          return new Rectangle__default(a0.getMin() + a1.x, a0.getMax() + a1.y, a1.width, a1.height);
+          return new Rectangle(a0.getMin() + a1.x, a0.getMax() + a1.y, a1.width, a1.height);
         case 'Rectangle_Rectangle':
-          return new Rectangle__default(a0.x + a1.x, a0.y + a1.y, a0.width + a1.width, a0.height + a1.height);
+          return new Rectangle(a0.x + a1.x, a0.y + a1.y, a0.width + a1.width, a0.height + a1.height);
         case 'date_number':
-          return new Date(a0.getTime() + (a1 / DateOperators__default.millisecondsToDays));
+          return new Date(a0.getTime() + (a1 / DateOperators.millisecondsToDays));
         case 'date_date':
           return new Date(Number(a0.getTime() + a1.getTime())); //?
         case 'date_DateInterval':
@@ -15317,7 +15918,7 @@ define('src/index', ['exports'], function (exports) {
         case 'StringList_string':
           return a1.append(a0, true);
         default:
-          c.log("[!] addition didn't manage to resolve:", pairType, a0 + a1);
+          console.log("[!] addition didn't manage to resolve:", pairType, a0 + a1);
           return null;
 
       }
@@ -15327,7 +15928,7 @@ define('src/index', ['exports'], function (exports) {
 
     result = arguments[0];
     for(i = 1; i < arguments.length; i++) {
-      //c.log(i, 'result:', result);
+      //console.log(i, 'result:', result);
       result = ObjectOperators.addition(result, arguments[i]);
     }
     return result;
@@ -15347,7 +15948,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:math
    */
   ObjectOperators.multiplication = function() {
-    //c.log("multiplication__________________________________arguments:", arguments);
+    //console.log("multiplication__________________________________arguments:", arguments);
     var objectType;
     var result;
     var i;
@@ -15367,7 +15968,7 @@ define('src/index', ['exports'], function (exports) {
       if(arguments[0].isList && arguments[1].isList) {
         return ObjectOperators._applyBinaryOperatorOnLists(arguments[0], arguments[1], ObjectOperators.multiplication);
       } else if(arguments[0].isList) {
-        //c.log('list versus object');
+        //console.log('list versus object');
         return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[0], arguments[1], ObjectOperators.multiplication);
       } else if(arguments[1].isList) {
         return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[1], arguments[0], ObjectOperators.multiplication);
@@ -15386,7 +15987,7 @@ define('src/index', ['exports'], function (exports) {
       }
 
       var pairType = a0Type + "_" + a1Type;
-      //c.log('pairType:['+pairType+']');
+      //console.log('pairType:['+pairType+']');
       //
       switch(pairType) {
         case 'number_number':
@@ -15397,27 +15998,27 @@ define('src/index', ['exports'], function (exports) {
         case 'string_string':
           return a0 * a1; //todo: what to do with strings?
         case 'Point_Point':
-          return new Point__default(a0.x * a1.x, a0.y * a1.y);
+          return new Point(a0.x * a1.x, a0.y * a1.y);
         case 'Point3D_Point3D':
           return new Point3D(a0.x * a1.x, a0.y * a1.y, a0.z * a1.z);
         case 'number_Point':
-          return new Point__default(a0.x * a1, a0.y * a1);
+          return new Point(a0.x * a1, a0.y * a1);
         case 'number_Point3D':
           return new Point3D(a0.x * a1, a0.y * a1, a0.z * a1);
         case 'Interval_number':
           return new Interval__default(a0.getMin() * a1, a0.getMax() * a1);
         case 'Interval_Point':
-          return new Point__default(a0.getMin() * a1.x, a0.getMax() * a1.y);
+          return new Point(a0.getMin() * a1.x, a0.getMax() * a1.y);
         case 'Interval_Interval':
-          return new Point__default(a0.getMin() + a1.getMin(), a0.getMax() + a1.getMax());
+          return new Point(a0.getMin() + a1.getMin(), a0.getMax() + a1.getMax());
         case 'Point_Rectangle':
-          return new Rectangle__default(a0.x * a1.x, a0.y * a1.y, a1.width, a1.height); //todo: no
+          return new Rectangle(a0.x * a1.x, a0.y * a1.y, a1.width, a1.height); //todo: no
         case 'Interval_Rectangle':
-          return new Rectangle__default(a0.getMin() * a1.x, a0.getMax() * a1.y, a1.width, a1.height); //todo: no
+          return new Rectangle(a0.getMin() * a1.x, a0.getMax() * a1.y, a1.width, a1.height); //todo: no
         case 'Rectangle_Rectangle':
-          return new Rectangle__default(a0.x * a1.x, a0.y * a1.y, a0.width * a1.width, a0.height * a1.height);
+          return new Rectangle(a0.x * a1.x, a0.y * a1.y, a0.width * a1.width, a0.height * a1.height);
         case 'date_number':
-          return new Date(a0.getTime() * (a1 / DateOperators__default.millisecondsToDays));
+          return new Date(a0.getTime() * (a1 / DateOperators.millisecondsToDays));
         case 'date_date':
           return new Date(Number(a0.getTime() + a1.getTime())); //todo: ???
         case 'date_DateInterval':
@@ -15429,7 +16030,7 @@ define('src/index', ['exports'], function (exports) {
         case 'DateInterval_DateInterval':
           return new DateInterval(ObjectOperators.multiplication(a0.date0, a1.date0), ObjectOperators.multiplication(a0.date1, a1.date1)); //todo: ???
         default:
-          c.log("[!] multiplication didn't manage to resolve:", pairType, a0 * a1);
+          console.log("[!] multiplication didn't manage to resolve:", pairType, a0 * a1);
           return null;
 
       }
@@ -15438,7 +16039,7 @@ define('src/index', ['exports'], function (exports) {
 
     result = arguments[0];
     for(i = 1; i < arguments.length; i++) {
-      //c.log(i, 'result:', result);
+      //console.log(i, 'result:', result);
       result = ObjectOperators.multiplication(result, arguments[i]);
     }
     return result;
@@ -15457,7 +16058,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:math
    */
   ObjectOperators.division = function() {
-    //c.log("addition__________________________________arguments:", arguments);
+    //console.log("addition__________________________________arguments:", arguments);
     var objectType;
     var result;
     var i;
@@ -15475,7 +16076,7 @@ define('src/index', ['exports'], function (exports) {
       if(arguments[0] != null && arguments[0].isList && arguments[1] != null && arguments[1].isList) {
         return ObjectOperators._applyBinaryOperatorOnLists(arguments[0], arguments[1], ObjectOperators.division);
       } else if(arguments[0] != null && arguments[0].isList) {
-        //c.log('list versus object');
+        //console.log('list versus object');
         return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[0], arguments[1], ObjectOperators.division);
       } else if(arguments[1] != null && arguments[1].isList) {
         return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[1], arguments[0], ObjectOperators.division);
@@ -15494,7 +16095,7 @@ define('src/index', ['exports'], function (exports) {
       }
 
       var pairType = a0Type + "_" + a1Type;
-      //c.log('pairType:['+pairType+']');
+      //console.log('pairType:['+pairType+']');
       //
       switch(pairType) {
         case 'number_number':
@@ -15505,27 +16106,27 @@ define('src/index', ['exports'], function (exports) {
         case 'string_string':
           return a0 / a1; //todo: what to do with strings?
         case 'Point_Point':
-          return new Point__default(a0.x / a1.x, a0.y / a1.y);
+          return new Point(a0.x / a1.x, a0.y / a1.y);
         case 'Point3D_Point3D':
           return new Point3D(a0.x / a1.x, a0.y / a1.y, a0.z / a1.z);
         case 'number_Point':
-          return new Point__default(a0.x / a1, a0.y / a1);
+          return new Point(a0.x / a1, a0.y / a1);
         case 'number_Point3D':
           return new Point3D(a0.x / a1, a0.y / a1, a0.z / a1);
         case 'Interval_number':
           return new Interval__default(a0.getMin() / a1, a0.getMax() / a1);
         case 'Interval_Point':
-          return new Point__default(a0.getMin() / a1.x, a0.getMax() / a1.y);
+          return new Point(a0.getMin() / a1.x, a0.getMax() / a1.y);
         case 'Interval_Interval':
-          return new Point__default(a0.getMin() + a1.getMin(), a0.getMax() + a1.getMax());
+          return new Point(a0.getMin() + a1.getMin(), a0.getMax() + a1.getMax());
         case 'Point_Rectangle':
-          return new Rectangle__default(a0.x / a1.x, a0.y / a1.y, a1.width, a1.height); //todo: no
+          return new Rectangle(a0.x / a1.x, a0.y / a1.y, a1.width, a1.height); //todo: no
         case 'Interval_Rectangle':
-          return new Rectangle__default(a0.getMin() / a1.x, a0.getMax() / a1.y, a1.width, a1.height); //todo: no
+          return new Rectangle(a0.getMin() / a1.x, a0.getMax() / a1.y, a1.width, a1.height); //todo: no
         case 'Rectangle_Rectangle':
-          return new Rectangle__default(a0.x / a1.x, a0.y / a1.y, a0.width / a1.width, a0.height / a1.height);
+          return new Rectangle(a0.x / a1.x, a0.y / a1.y, a0.width / a1.width, a0.height / a1.height);
         case 'date_number':
-          return new Date(a0.getTime() / (a1 / DateOperators__default.millisecondsToDays));
+          return new Date(a0.getTime() / (a1 / DateOperators.millisecondsToDays));
         case 'date_date':
           return new Date(Number(a0.getTime() + a1.getTime())); //todo: ???
         case 'date_DateInterval':
@@ -15546,7 +16147,7 @@ define('src/index', ['exports'], function (exports) {
 
     result = arguments[0];
     for(i = 1; i < arguments.length; i++) {
-      //c.log(i, 'result:', result);
+      //console.log(i, 'result:', result);
       result = ObjectOperators.division(result, arguments[i]);
     }
     return result;
@@ -15584,7 +16185,7 @@ define('src/index', ['exports'], function (exports) {
   ObjectOperators._applyBinaryOperatorOnLists = function(list0, list1, operator) {
     var n = Math.min(list0.length, list1.length);
     var i;
-    var resultList = new List__default();
+    var resultList = new List();
     for(i = 0; i < n; i++) {
       resultList.push(ObjectOperators._applyBinaryOperator(list0[i], list1[i], operator));
     }
@@ -15592,7 +16193,7 @@ define('src/index', ['exports'], function (exports) {
   };
   ObjectOperators._applyBinaryOperatorOnListWithObject = function(list, object, operator) {
     var i;
-    var resultList = new List__default();
+    var resultList = new List();
     for(i = 0; i < list.length; i++) {
       resultList.push(ObjectOperators._applyBinaryOperator(list[i], object, operator));
     }
@@ -15600,7 +16201,7 @@ define('src/index', ['exports'], function (exports) {
   };
   ObjectOperators._applyBinaryOperatorOnObjectWithList = function(object, list, operator) {
     var i;
-    var resultList = new List__default();
+    var resultList = new List();
     for(i = 0; i < list.length; i++) {
       resultList.push(ObjectOperators._applyBinaryOperator(object, list[i], operator));
     }
@@ -15611,180 +16212,6 @@ define('src/index', ['exports'], function (exports) {
   };
 
   exports.ObjectOperators = ObjectOperators;
-
-  function NetworkConvertions() {}
-
-
-  /**
-   * Builds a Network based on a two columns Table, creating relations on co-occurrences.
-   *
-   * @param {Table} table table with at least two columns (commonly strings)
-   *
-   * @param {NumberList} numberList Weights of relations.
-   * @param {Number} threshold Minimum weight or number of co-occurrences to create a relation.
-   * @param {Boolean} allowMultipleRelations
-   * @param {Number} minRelationsInNode Remove nodes with number of relations below threshold.
-   * @param {StringList} stringList Contents of relations.
-   * @return {Network}
-   * tags:conversion
-   */
-  NetworkConvertions.TableToNetwork = function(table, numberList, threshold, allowMultipleRelations, minRelationsInNode, stringList) {
-    if(table == null || !table.isTable || table[0] == null || table[1] == null) return;
-
-    //trace("••••••• createNetworkFromPairsTable", table);
-    if(allowMultipleRelations == null) allowMultipleRelations = false;
-    if(table.length < 2) return null;
-    var network = new Network();
-
-    if(numberList == null) {
-      var nElements = Math.min(table[0].length, table[1].length);
-    } else {
-      nElements = Math.min(table[0].length, table[1].length, numberList.length);
-    }
-
-    //trace("nElements", nElements);
-
-    if(numberList == null && table.length > 2 && ClassUtils__typeOf(table[2]) == NumberList__default && table[2].length >= nElements) numberList = table[2];
-
-
-    if(ClassUtils__typeOf(table[0]) == NodeList__default && ClassUtils__typeOf(table[1]) == NodeList__default) {
-      //....    different methodology here
-    }
-
-    var node0;
-    var node1;
-    var name0;
-    var name1;
-    var relation;
-    var i;
-    for(i = 0; i < nElements; i++) {
-      name0 = "" + table[0][i];
-      name1 = "" + table[1][i];
-      //trace("______________ i, name0, name1:", i, name0, name1);
-      node0 = network.nodeList.getNodeById(name0);
-      if(node0 == null) {
-        node0 = new Node__default(name0, name0);
-        network.addNode(node0);
-      } else {
-        node0.weight++;
-      }
-      node1 = network.nodeList.getNodeById(name1);
-      if(node1 == null) {
-        node1 = new Node__default(name1, name1);
-        network.addNode(node1);
-      } else {
-        node1.weight++;
-      }
-      if(numberList == null) {
-        relation = network.relationList.getFirstRelationByIds(node0.id, node1.id, false);
-        if(relation == null ||  allowMultipleRelations) {
-          relation = new Relation(name0 + "_" + name1 + network.relationList.length, name0 + "_" + name1, node0, node1, 1);
-          network.addRelation(relation);
-        } else {
-          relation.weight++;
-        }
-      } else if(numberList[i] > threshold) {
-        relation = new Relation(name0 + "_" + name1, name0 + "_" + name1, node0, node1, numberList[i]);
-        network.addRelation(relation);
-      }
-
-      if(stringList) relation.content = stringList[i];
-    }
-
-    if(minRelationsInNode) {
-      for(i = 0; network.nodeList[i] != null; i++) {
-        if(network.nodeList[i].relationList.length < minRelationsInNode) {
-          network.removeNode(network.nodeList[i]);
-          i--;
-        }
-      }
-    }
-
-    return network;
-  };
-
-  exports.NetworkConvertions = NetworkConvertions;
-
-  function ObjectConversions__ObjectConversions() {}
-  var ObjectConversions__default = ObjectConversions__ObjectConversions;
-  // *
-  //  * convert an object into a json string (JSON.stringify(object))
-  //  * @param  {Object} object to convert
-  //  * @return {String} string in format json
-  //  * tags:conversion
-
-  // ObjectConversions.objectToString = function(object){
-  // 	return JSON.stringify(object);
-  // }
-
-
-  /**
-   * converts any Object into the desirde type, using the most obvious conversion (if exists)
-   * @param  {Object} object
-   * @param  {String} toType can be literal (ex: "string", "NumberList") or short (ex: "s", "#L")
-   * @return {Object} Object of the specified type
-   * tags:conversion
-   */
-  ObjectConversions__ObjectConversions.conversor = function(object, toType) {
-    var i;
-    var type = ClassUtils__typeOf(object);
-    var pairType = type + "_" + toType;
-    var newList;
-
-    console.log('ObjectConversions.conversor, pairType:', pairType);
-
-    switch(pairType) {
-      case 'NumberTable_Polygon':
-        var polygon = new Polygon__default();
-        var length2 = object.length > 1;
-        for(i = 0; object[0][i] != null; i++) {
-          polygon[i] = new Point__default(object[0][i], length2 ? object[1][i] : 0);
-        }
-        return polygon;
-      case 'date_string':
-        return DateOperators__default.dateToString(object);
-      case 'string_date':
-        return DateOperators__default.stringToDate(object);
-      case 'date_number':
-        return object.getTime();
-      case 'number_date':
-        return new Date(object);
-      case 'List_StringList':
-      case 'NumberList_StringList':
-        return object.toStringList();
-      case 'StringList_NumberList':
-        return object.toNumberList();
-      case 'Object_string':
-        return JSON.stringify(object, null, "\t");
-      case 'string_Object':
-        return JSON.parse(object);
-      case 'string_ColorScale':
-        return ColorScales__default[object]; //todo: not working, fix
-      case 'string_Table':
-        return TableEncodings.CSVtoTable(object);
-      case 'StringList_DateList': //TODO: solve cases of lists
-        newList = new DateList();
-        object.forEach(function(string) {
-          newList.push(DateOperators__default.stringToDate(string));
-        });
-        newList.name = object.name;
-        return newList;
-      case 'DateList_NumberList': //TODO: solve cases of lists
-        return object.getTimes();
-      case 'Table_Network':
-        return NetworkConvertions.TableToNetwork(object, null, 0, false);
-
-    }
-
-    switch(toType) {
-      case 'string':
-        return object.toString();
-      case 'number':
-        return Number(object);
-    }
-  };
-
-  exports.ObjectConversions = ObjectConversions__default;
 
   function StringConversions() {}
 
@@ -15849,7 +16276,7 @@ define('src/index', ['exports'], function (exports) {
    */
   StringListOperators.filterStringListByString = function(stringList, string, asWord, returnIndexes) {
     var i;
-    var newList = returnIndexes ? new NumberList__default() : new StringList__default();
+    var newList = returnIndexes ? new NumberList() : new StringList__default();
     if(asWord) var regex = new RegExp("\\b" + string + "\\b");
 
     for(i = 0; stringList[i] != null; i++) {
@@ -15875,7 +16302,7 @@ define('src/index', ['exports'], function (exports) {
    * a classic function, but now it works with patterns!
    */
   StringListOperators.countStringsOccurrencesOnTexts = function(strings, texts) {
-    var occurrencesTable = new NumberTable__default();
+    var occurrencesTable = new NumberTable();
 
     var i;
     var j;
@@ -15885,7 +16312,7 @@ define('src/index', ['exports'], function (exports) {
 
     for(i = 0; strings[i] != null; i++) {
       pattern = strings[i];
-      numberList = new NumberList__default();
+      numberList = new NumberList();
       numberList.name = pattern;
       for(j = 0; texts[j] != null; j++) {
         splitArray = texts[j].split(pattern);
@@ -15921,19 +16348,19 @@ define('src/index', ['exports'], function (exports) {
     sortByTotalWeight = (sortByTotalWeight || true);
     minSizeWords = minSizeWords == null ? 3 : minSizeWords;
 
-    var matrix = StringOperators__default.getWordsOccurrencesTable(strings[0], stopWords, includeLinks, wordsLimitPerString, minSizeWords);
+    var matrix = StringOperators.getWordsOccurrencesTable(strings[0], stopWords, includeLinks, wordsLimitPerString, minSizeWords);
 
     var table;
     for(i = 1; strings[i] != null; i++) {
-      table = StringOperators__default.getWordsOccurrencesTable(strings[i], stopWords, includeLinks, wordsLimitPerString, minSizeWords);
-      matrix = TableOperators__default.mergeDataTables(matrix, table);
+      table = StringOperators.getWordsOccurrencesTable(strings[i], stopWords, includeLinks, wordsLimitPerString, minSizeWords);
+      matrix = TableOperators.mergeDataTables(matrix, table);
     }
 
 
     if(matrix[0].length > totalWordsLimit) sortByTotalWeight = true;
 
     if(stressUniqueness || sortByTotalWeight) {
-      var totalList = new NumberList__default();
+      var totalList = new NumberList();
       totalList = matrix[1].clone();
       matrix.forEach(function(occurrences, i) {
         if(i < 2) return;
@@ -15972,7 +16399,7 @@ define('src/index', ['exports'], function (exports) {
   //good approach for few large texts, to be tested
   StringListOperators.createTextsNetwork = function(texts, stopWords, stressUniqueness, relationThreshold) {
     var i, j;
-    var network = new Network__default();
+    var network = new Network();
 
     var matrix = StringListOperators.getWordsOccurrencesMatrix(texts, stopWords, false, 600, 800, false, true, false, 3);
 
@@ -15991,10 +16418,10 @@ define('src/index', ['exports'], function (exports) {
         weight = NumberListOperators.cosineSimilarity(node.wordsWeights, node1.wordsWeights);
 
         if(i == 0 && j == 1) {
-          c.log(node.wordsWeights.length, node1.wordsWeights.length, weight);
-          c.log(node.wordsWeights.type, node.wordsWeights);
-          c.log(node1.wordsWeights.type, node1.wordsWeights);
-          c.log(node.wordsWeights.getNorm() * node1.wordsWeights.getNorm());
+          console.log(node.wordsWeights.length, node1.wordsWeights.length, weight);
+          console.log(node.wordsWeights.type, node.wordsWeights);
+          console.log(node1.wordsWeights.type, node1.wordsWeights);
+          console.log(node.wordsWeights.getNorm() * node1.wordsWeights.getNorm());
         }
 
         if(weight > relationThreshold) {
@@ -16025,7 +16452,7 @@ define('src/index', ['exports'], function (exports) {
 
     var _time = new Date().getTime();
 
-    var network = new Network__default();
+    var network = new Network();
     var joined = texts.join(' *** ').toLowerCase();
     var textsLowerCase = joined.split(' *** ');
     var n_texts = texts.length;
@@ -16077,10 +16504,10 @@ define('src/index', ['exports'], function (exports) {
       node = new Node__default("_" + i, "_" + i);
       network.addNode(node);
       node.content = text;
-      words = StringOperators__default.getWords(text, true, stopWords, false, false, 0, 3);
+      words = StringOperators.getWords(text, true, stopWords, false, false, 0, 3);
 
       n_words = words.length;
-      weights = new NumberList__default();
+      weights = new NumberList();
       //words.forEach(function(word, j){
       for(j = 0; words[j] != null; j++) {
         word = words[j];
@@ -16098,11 +16525,11 @@ define('src/index', ['exports'], function (exports) {
 
         weights[j] = weightFunction(nOtherTexts); //1-Math.pow(2*Math.pow(nOtherTexts/(n_texts-1), 0.25)-1, 2);
 
-        if(applyIntensity) weights[j] *= (1 - 1 / (StringOperators__default.countOccurrences(textsLowerCase[i], word) + 1));
+        if(applyIntensity) weights[j] *= (1 - 1 / (StringOperators.countOccurrences(textsLowerCase[i], word) + 1));
 
         if(wordsFrequencyTable) {
           index = wordsFrequencyTable[0].indexOf(word);
-          //c.log(' •>•>•>•>•>•>•>•>•>•>•>•>•>•>•>•>•> ', word, weights[j], index==-1?1:(1 - Math.pow(wordsFrequencyTable[1][index]/maxFreq, 0.2)) )
+          //console.log(' •>•>•>•>•>•>•>•>•>•>•>•>•>•>•>•>•> ', word, weights[j], index==-1?1:(1 - Math.pow(wordsFrequencyTable[1][index]/maxFreq, 0.2)) )
           weights[j] *= (index == -1 ? 1 : (1 - Math.pow(wordsFrequencyTable[1][index] / maxFreq, 0.2)));
         }
 
@@ -16146,7 +16573,7 @@ define('src/index', ['exports'], function (exports) {
       }
     }
 
-    c.l('C ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
+    console.log('C ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
 
     return network;
   };
@@ -16176,7 +16603,7 @@ define('src/index', ['exports'], function (exports) {
     mode = mode == null ? 0 : mode;
 
     var i, j;
-    var network = new Network__default();
+    var network = new Network();
     var node;
 
     for(i = 0; i < nNodes; i++) {
@@ -16240,7 +16667,7 @@ define('src/index', ['exports'], function (exports) {
     weightsForRelationsMethod = weightsForRelationsMethod == null ? 0 : weightsForRelationsMethod;
     minimum = minimum == null ? 0 : minimum;
 
-    var network = new Network__default();
+    var network = new Network();
     var i;
     var j;
     var string0;
@@ -16276,7 +16703,7 @@ define('src/index', ['exports'], function (exports) {
             weight = occurrencesTable[i].dotProduct(occurrencesTable[j]);
             break;
           case 1:
-            weight = NumberListOperators__default.cosinus(occurrencesTable[i], occurrencesTable[j]);
+            weight = NumberListOperators.cosinus(occurrencesTable[i], occurrencesTable[j]);
             break;
         }
 
@@ -16302,7 +16729,7 @@ define('src/index', ['exports'], function (exports) {
     var j;
     var w;
     var node;
-    var network = new Network__default();
+    var network = new Network();
 
     for(var i = 0; list[i + 1] != null; i++) {
       if(i == 0) network.addNode(new Node__default("n_0", names == null ? "n_0" : names[i]));
@@ -16338,12 +16765,12 @@ define('src/index', ['exports'], function (exports) {
 
     splitCharacters = splitCharacters == null ? "\\.|\\n" : splitCharacters;
 
-    var network = new Network__default();
+    var network = new Network();
 
     nounPhrases = nounPhrases.getWithoutElements(new StringList__default("", " ", "\n"));
 
     nounPhrases.forEach(function(np) {
-      np = NetworkEncodings__default._simplifyForNoteWork(np);
+      np = NetworkEncodings._simplifyForNoteWork(np);
       if(np) nounPhrases.push(np);
     });
 
@@ -16367,7 +16794,7 @@ define('src/index', ['exports'], function (exports) {
     nounPhrases.forEach(function(np) {
       node = new Node__default(np, np);
       network.addNode(node);
-      mat = text.match(NetworkEncodings__default._regexWordForNoteWork(np));
+      mat = text.match(NetworkEncodings._regexWordForNoteWork(np));
       node.weight = mat == null ? 1 : mat.length;
     });
 
@@ -16377,7 +16804,7 @@ define('src/index', ['exports'], function (exports) {
       maxWeight = 0;
       nounPhrases.forEach(function(np) {
         node0 = network.nodeList.getNodeById(np);
-        regex = NetworkEncodings__default._regexWordForNoteWork(np);
+        regex = NetworkEncodings._regexWordForNoteWork(np);
         index = sentence.search(regex);
 
         if(index != -1) {
@@ -16424,7 +16851,7 @@ define('src/index', ['exports'], function (exports) {
 
     //nested NPs (example: "health", "health consequences")
     network.nodeList.forEach(function(node0) {
-      regex = NetworkEncodings__default._regexWordForNoteWork(node0.id);
+      regex = NetworkEncodings._regexWordForNoteWork(node0.id);
       network.nodeList.forEach(function(node1) {
         if(node0 != node1 && node1.id.search(regex) != -1) {
           id = node1.id + "_" + node0.id + "|contains " + node0.id;
@@ -16483,7 +16910,7 @@ define('src/index', ['exports'], function (exports) {
     while(nodes.getNodeById(node1.id) == null) {
       newNodes = nodes.clone();
       for(i = 0; nodes[i] != null; i++) {
-        newNodes = ListOperators__default.concat(newNodes, nodes[i].nodeList); //TODO: check if obsolete concat + check if a concatIfNew could be useful, specially if overriden in NodeList, with getNodeById
+        newNodes = ListOperators.concat(newNodes, nodes[i].nodeList); //TODO: check if obsolete concat + check if a concatIfNew could be useful, specially if overriden in NodeList, with getNodeById
       }
       newNodes = newNodes.getWithoutRepetitions();
       if(nodes.length == newNodes.length) return -1;
@@ -16897,7 +17324,7 @@ define('src/index', ['exports'], function (exports) {
   NetworkOperators.degreesFromNodeToNodes = function(network, node, nodeList) {
     //TODO: probably very unefficient
     var table = NetworkOperators.degreesPartition(network, node);
-    var degrees = new NumberList__default();
+    var degrees = new NumberList();
     degrees.max = 0;
     var j;
     for(var i = 0; nodeList[i] != null; i++) {
@@ -16980,7 +17407,7 @@ define('src/index', ['exports'], function (exports) {
         newNode.node.nodeList.addNode(node1.nodeList[i]);
         newNode.node.relationList.addRelation(node1.relationList[i]);
         //TODO: remove?
-        Network__default;
+        Network;
       }
 
       nodeList.removeElement(node0);
@@ -17187,11 +17614,11 @@ define('src/index', ['exports'], function (exports) {
    * @return {Network}
    */
   NetworkOperators.fusionNoteworks = function(noteworksList, hubsDistanceFactor, hubsForceWeight) {
-    networks = new List__default();
+    networks = new List();
 
     noteworksList.forEach(function(map, i) {
       subfix = "map_" + i + "_";
-      net = NetworkEncodings__default.decodeNoteWork(map);
+      net = NetworkEncodings.decodeNoteWork(map);
       net = net.clone(net.nodesPropertiesNames, net.relationsPropertiesNames, subfix);
       net.id = "map_" + i;
       networks.push(net);
@@ -17213,13 +17640,13 @@ define('src/index', ['exports'], function (exports) {
     hubsDistanceFactor = hubsDistanceFactor == null ? 1 : hubsDistanceFactor;
     hubsForceWeight = hubsForceWeight == null ? 1 : hubsForceWeight;
 
-    var fusionNet = new Network__default();
+    var fusionNet = new Network();
     var newNode;
     var newRelation;
     var i, j;
     var mapsCluster = new Table__default();
 
-    var colors = ColorListGenerators__default.createDefaultCategoricalColorList(networks.length).getInterpolated('black', 0.17).getInterpolated('white', 0.55);
+    var colors = ColorListGenerators.createDefaultCategoricalColorList(networks.length).getInterpolated('black', 0.17).getInterpolated('white', 0.55);
 
     networks.forEach(function(net, i) {
       mapsCluster[i] = new NodeList__default();
@@ -17364,7 +17791,7 @@ define('src/index', ['exports'], function (exports) {
 
     var tree = new Tree__default();
 
-    var lines = StringOperators__default.splitByEnter(indexedTree);
+    var lines = StringOperators.splitByEnter(indexedTree);
     var nLines = lines.length;
 
     if(nLines == 0 ||  (nLines == 1 && (lines[0] == null || lines[0] == ""))) return null;
@@ -17442,8 +17869,8 @@ define('src/index', ['exports'], function (exports) {
 
 
   DrawSimpleVis.drawSimpleBarChart = function(context, numberList, frame, colors) { //TODO: complete cases (numberLists with negative (and positive) values)
-    colors = colors == null ? ColorListOperators__default.colorListFromColorScale(new ColorScale__default()) : colors;
-    frame = frame == null ? new Rectangle__default(10, 10, 400, 300) : frame;
+    colors = colors == null ? ColorListOperators.colorListFromColorScale(new ColorScale()) : colors;
+    frame = frame == null ? new Rectangle(10, 10, 400, 300) : frame;
 
     var dX = frame.width / numberList.length;
 
@@ -17723,8 +18150,8 @@ define('src/index', ['exports'], function (exports) {
     var i;
     var j;
 
-    colors = colors == null ? ColorListOperators__default.colorListFromColorScale(new ColorScale__default(ColorOperators__default.temperatureScale), nElements) : colors;
-    frame = frame == null ? new Rectangle__default(10, 10, 400, 300) : frame;
+    colors = colors == null ? ColorListOperators.colorListFromColorScale(new ColorScale(ColorOperators.temperatureScale), nElements) : colors;
+    frame = frame == null ? new Rectangle(10, 10, 400, 300) : frame;
 
     var nCols = intervalsFlowTable[0].length;
     var dX = frame.width / (nCols - 1);
@@ -17762,10 +18189,10 @@ define('src/index', ['exports'], function (exports) {
       for(j = 1; j < nCols; j++) {
         sY = (1 - lastIntervalList[j].y) * 0.5 * dY + i * mY + y;
 
-        point0 = new Point__default(j * dX + x, intervalList[j].x * dY + sY);
-        point1 = new Point__default((j + 1) * dX + x, intervalList[j].x * dY + sY);
-        point2 = new Point__default((j + 1) * dX + x, intervalList[j].y * dY + sY);
-        point3 = new Point__default(j * dX + x, intervalList[j].y * dY + sY);
+        point0 = new Point(j * dX + x, intervalList[j].x * dY + sY);
+        point1 = new Point((j + 1) * dX + x, intervalList[j].x * dY + sY);
+        point2 = new Point((j + 1) * dX + x, intervalList[j].y * dY + sY);
+        point3 = new Point(j * dX + x, intervalList[j].y * dY + sY);
 
         context.fillStyle = colors[i];
         context.beginPath();
@@ -17818,7 +18245,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.DrawSimpleVis = DrawSimpleVis;
 
-  function SimpleGraphics__fRect(x, y, width, height) {
+  function fRect(x, y, width, height) {
     if(typeof x != 'number') {
       y = x.y;
       width = x.width;
@@ -17841,7 +18268,7 @@ define('src/index', ['exports'], function (exports) {
    * sRect(10, 10, 40, 40);
    *
    */
-  function SimpleGraphics__sRect(x, y, width, height) {
+  function sRect(x, y, width, height) {
     if(typeof x != 'number') {
       y = x.y;
       width = x.width;
@@ -17891,7 +18318,7 @@ define('src/index', ['exports'], function (exports) {
    */
   function fCircle(x, y, r) {
     src_Global__context.beginPath();
-    src_Global__context.arc(x, y, r, 0, src_Global__TwoPi);
+    src_Global__context.arc(x, y, r, 0, TwoPi);
     src_Global__context.fill();
   };
 
@@ -17909,7 +18336,7 @@ define('src/index', ['exports'], function (exports) {
    */
   function sCircle(x, y, r) {
     src_Global__context.beginPath();
-    src_Global__context.arc(x, y, r, 0, src_Global__TwoPi);
+    src_Global__context.arc(x, y, r, 0, TwoPi);
     src_Global__context.stroke();
   };
 
@@ -17928,7 +18355,7 @@ define('src/index', ['exports'], function (exports) {
    */
   function fsCircle(x, y, r) {
     src_Global__context.beginPath();
-    src_Global__context.arc(x, y, r, 0, src_Global__TwoPi);
+    src_Global__context.arc(x, y, r, 0, TwoPi);
     src_Global__context.fill();
     src_Global__context.stroke();
   };
@@ -18034,7 +18461,7 @@ define('src/index', ['exports'], function (exports) {
    * setStroke('black');
    * line(0, 0, 40, 40);
    */
-  function SimpleGraphics__line(x0, y0, x1, y1) {
+  function line(x0, y0, x1, y1) {
     src_Global__context.beginPath();
     src_Global__context.moveTo(x0, y0);
     src_Global__context.lineTo(x1, y1);
@@ -18056,7 +18483,7 @@ define('src/index', ['exports'], function (exports) {
    * setStroke('black');
    * bezier(10, 10, 10, 0, 40, 0, 40, 10);
    */
-  function SimpleGraphics__bezier(x0, y0, cx0, cy0, cx1, cy1, x1, y1) {
+  function bezier(x0, y0, cx0, cy0, cx1, cy1, x1, y1) {
     src_Global__context.beginPath();
     src_Global__context.moveTo(x0, y0);
     src_Global__context.bezierCurveTo(cx0, cy0, cx1, cy1, x1, y1);
@@ -18085,15 +18512,15 @@ define('src/index', ['exports'], function (exports) {
     if(arguments == null) return;
 
     var args = arguments[0];
-    var p = new Polygon__default();
+    var p = new Polygon();
     src_Global__context.beginPath();
     src_Global__context.moveTo(args[0], args[1]);
-    p[0] = new Point__default(args[0], args[1]);
+    p[0] = new Point(args[0], args[1]);
     for(var i = 2; args[i + 1] != null; i += 2) {
       src_Global__context.lineTo(args[i], args[i + 1]);
-      p.push(new Point__default(args[i], args[i + 1]));
+      p.push(new Point(args[i], args[i + 1]));
     }
-    return p.containsPoint(src_Global__mP);
+    return p.containsPoint(mP);
   };
 
   /**
@@ -18108,7 +18535,7 @@ define('src/index', ['exports'], function (exports) {
    * fLines(10, 10, 40, 10, 40, 40);
    *
    */
-  function SimpleGraphics__fLines() {
+  function fLines() {
     _lines(arguments);
     src_Global__context.fill();
   };
@@ -18250,10 +18677,10 @@ define('src/index', ['exports'], function (exports) {
    *   fRect(10, 10, 40, 40);
    * }
    */
-  function SimpleGraphics__fRectM(x, y, width, height, margin) {
+  function fRectM(x, y, width, height, margin) {
     margin = margin == null ? 0 : margin;
     src_Global__context.fillRect(x, y, width, height);
-    return src_Global__mY > y - margin && src_Global__mY < y + height + margin && src_Global__mX > x - margin && src_Global__mX < x + width + margin;
+    return mY > y - margin && mY < y + height + margin && mX > x - margin && mX < x + width + margin;
   };
 
   /**
@@ -18275,10 +18702,10 @@ define('src/index', ['exports'], function (exports) {
    *   sRect(10, 10, 40, 40);
    * }
    */
-  function SimpleGraphics__sRectM(x, y, width, height, margin) {
+  function sRectM(x, y, width, height, margin) {
     margin = margin == null ? 0 : margin;
     src_Global__context.strokeRect(x, y, width, height);
-    return src_Global__mY > y - margin && src_Global__mY < y + height + margin && src_Global__mX > x - margin && src_Global__mX < x + width + margin;
+    return mY > y - margin && mY < y + height + margin && mX > x - margin && mX < x + width + margin;
   };
 
   /**
@@ -18303,11 +18730,11 @@ define('src/index', ['exports'], function (exports) {
    *   sRect(10, 10, 40, 40);
    * }
    */
-  function SimpleGraphics__fsRectM(x, y, width, height, margin) {
+  function fsRectM(x, y, width, height, margin) {
     margin = margin == null ? 0 : margin;
     src_Global__context.fillRect(x, y, width, height);
     src_Global__context.strokeRect(x, y, width, height);
-    return src_Global__mY > y - margin && src_Global__mY < y + height + margin && src_Global__mX > x - margin && src_Global__mX < x + width + margin;
+    return mY > y - margin && mY < y + height + margin && mX > x - margin && mX < x + width + margin;
   };
 
   /**
@@ -18330,12 +18757,12 @@ define('src/index', ['exports'], function (exports) {
    * }
    *
    */
-  function SimpleGraphics__fCircleM(x, y, r, margin) { //check if you can avoid repeat
+  function fCircleM(x, y, r, margin) { //check if you can avoid repeat
     margin = margin == null ? 0 : margin;
     src_Global__context.beginPath();
-    src_Global__context.arc(x, y, r, 0, src_Global__TwoPi);
+    src_Global__context.arc(x, y, r, 0, TwoPi);
     src_Global__context.fill();
-    return Math.pow(x - src_Global__mX, 2) + Math.pow(y - src_Global__mY, 2) < Math.pow(r + margin, 2);
+    return Math.pow(x - mX, 2) + Math.pow(y - mY, 2) < Math.pow(r + margin, 2);
   };
 
   /**
@@ -18361,9 +18788,9 @@ define('src/index', ['exports'], function (exports) {
   function sCircleM(x, y, r, margin) {
     margin = margin == null ? 0 : margin;
     src_Global__context.beginPath();
-    src_Global__context.arc(x, y, r, 0, src_Global__TwoPi);
+    src_Global__context.arc(x, y, r, 0, TwoPi);
     src_Global__context.stroke();
-    return Math.pow(x - src_Global__mX, 2) + Math.pow(y - src_Global__mY, 2) < Math.pow(r + margin, 2);
+    return Math.pow(x - mX, 2) + Math.pow(y - mY, 2) < Math.pow(r + margin, 2);
   };
 
   /**
@@ -18392,10 +18819,10 @@ define('src/index', ['exports'], function (exports) {
   function fsCircleM(x, y, r, margin) {
     margin = margin == null ? 0 : margin;
     src_Global__context.beginPath();
-    src_Global__context.arc(x, y, r, 0, src_Global__TwoPi);
+    src_Global__context.arc(x, y, r, 0, TwoPi);
     src_Global__context.stroke();
     src_Global__context.fill();
-    return Math.pow(x - src_Global__mX, 2) + Math.pow(y - src_Global__mY, 2) < Math.pow(r + margin, 2);
+    return Math.pow(x - mX, 2) + Math.pow(y - mY, 2) < Math.pow(r + margin, 2);
   };
 
   /**
@@ -18430,13 +18857,13 @@ define('src/index', ['exports'], function (exports) {
    */
   function _distToSegmentSquared(x0, y0, x1, y1) {
     var l2 = Math.pow(x0 - x1, 2) + Math.pow(y0 - y1, 2);
-    if(l2 === 0) return Math.pow(x0 - src_Global__mX, 2) + Math.pow(y0 - src_Global__mY, 2);
-    var t = ((src_Global__mX - x0) * (x1 - x0) + (src_Global__mY - y0) * (y1 - y0)) / l2;
-    if(t <= 0) return Math.pow(x0 - src_Global__mX, 2) + Math.pow(y0 - src_Global__mY, 2);
-    if(t >= 1) return Math.pow(x1 - src_Global__mX, 2) + Math.pow(y1 - src_Global__mY, 2);
+    if(l2 === 0) return Math.pow(x0 - mX, 2) + Math.pow(y0 - mY, 2);
+    var t = ((mX - x0) * (x1 - x0) + (mY - y0) * (y1 - y0)) / l2;
+    if(t <= 0) return Math.pow(x0 - mX, 2) + Math.pow(y0 - mY, 2);
+    if(t >= 1) return Math.pow(x1 - mX, 2) + Math.pow(y1 - mY, 2);
     var px = x0 + t * (x1 - x0);
     var py = y0 + t * (y1 - y0);
-    return Math.pow(px - src_Global__mX, 2) + Math.pow(py - src_Global__mY, 2);
+    return Math.pow(px - mX, 2) + Math.pow(py - mY, 2);
   };
 
   //TODO:fEqTriangleM, fPolygonM
@@ -18470,8 +18897,8 @@ define('src/index', ['exports'], function (exports) {
     src_Global__context.moveTo(x0, y0);
     src_Global__context.bezierCurveTo(cx0, cy0, cx1, cy1, x1, y1);
     src_Global__context.stroke();
-    if(src_Global__mX < Math.min(x0, x1, cx0, cx1) - d || src_Global__mX > Math.max(x0, x1, cx0, cx1) + d || src_Global__mY < Math.min(y0, y1, cy0, cy1) - d || src_Global__mY > Math.max(y0, y1, cy0, cy1) + d) return false;
-    return GeometryOperators__default.distanceToBezierCurve(x0, y0, cx0, cy0, cx1, cy1, x1, y1, src_Global__mP, false) < d;
+    if(mX < Math.min(x0, x1, cx0, cx1) - d || mX > Math.max(x0, x1, cx0, cx1) + d || mY < Math.min(y0, y1, cy0, cy1) - d || mY > Math.max(y0, y1, cy0, cy1) + d) return false;
+    return GeometryOperators.distanceToBezierCurve(x0, y0, cx0, cy0, cx1, cy1, x1, y1, mP, false) < d;
   };
 
 
@@ -18485,7 +18912,7 @@ define('src/index', ['exports'], function (exports) {
    *	drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh)
    *	@param {Image} image
    */
-  function SimpleGraphics__drawImage(image) { //TODO: improve efficiency
+  function drawImage(image) { //TODO: improve efficiency
     if(image == null) return;
 
     switch(arguments.length) {
@@ -18523,7 +18950,7 @@ define('src/index', ['exports'], function (exports) {
 
   // styles
 
-  function SimpleGraphics__setFill(style) {
+  function setFill(style) {
     if(typeof style == "number") {
       if(arguments.length > 3) {
         src_Global__context.fillStyle = 'rgba(' + arguments[0] + ',' + arguments[1] + ',' + arguments[2] + ',' + arguments[3] + ')';
@@ -18546,7 +18973,7 @@ define('src/index', ['exports'], function (exports) {
    * setStroke(0,0,0,0.4); // sets stroke to black with partial opacity.
    * setStroke('black', 0.2); // provides lineWidth to stroke
    */
-  function SimpleGraphics__setStroke(style, lineWidth) {
+  function setStroke(style, lineWidth) {
     if(typeof style == "number") {
       if(arguments.length > 3) {
         src_Global__context.strokeStyle = 'rgba(' + arguments[0] + ',' + arguments[1] + ',' + arguments[2] + ',' + arguments[3] + ')';
@@ -18568,15 +18995,15 @@ define('src/index', ['exports'], function (exports) {
 
   //clipping
 
-  function SimpleGraphics__clipCircle(x, y, r) {
+  function clipCircle(x, y, r) {
     src_Global__context.save();
     src_Global__context.beginPath();
-    src_Global__context.arc(x, y, r, 0, src_Global__TwoPi, false);
+    src_Global__context.arc(x, y, r, 0, TwoPi, false);
     src_Global__context.closePath();
     src_Global__context.clip();
   };
 
-  function SimpleGraphics__clipRectangle(x, y, w, h) {
+  function clipRectangle(x, y, w, h) {
     src_Global__context.save();
     src_Global__context.beginPath();
     src_Global__context.moveTo(x, y);
@@ -18586,7 +19013,7 @@ define('src/index', ['exports'], function (exports) {
     src_Global__context.clip();
   };
 
-  function SimpleGraphics__restore() {
+  function restore() {
     src_Global__context.restore();
   };
 
@@ -18607,7 +19034,7 @@ define('src/index', ['exports'], function (exports) {
    * fText("hello", 10, 10);
    *
    */
-  function SimpleGraphics__fText(text, x, y) {
+  function fText(text, x, y) {
     src_Global__context.fillText(text, x, y);
   };
 
@@ -18646,7 +19073,7 @@ define('src/index', ['exports'], function (exports) {
    * fsText("hello", 10, 10);
    *
    */
-  function SimpleGraphics__fsText(text, x, y) {
+  function fsText(text, x, y) {
     src_Global__context.strokeText(text, x, y);
     src_Global__context.fillText(text, x, y);
   };
@@ -18666,7 +19093,7 @@ define('src/index', ['exports'], function (exports) {
    * fTextRotated("hello", 40, 40, (20 * Math.PI / 180));
    *
    */
-  function SimpleGraphics__fTextRotated(text, x, y, angle) {
+  function fTextRotated(text, x, y, angle) {
     src_Global__context.save();
     src_Global__context.translate(x, y);
     src_Global__context.rotate(angle);
@@ -18698,7 +19125,7 @@ define('src/index', ['exports'], function (exports) {
   function fTextM(text, x, y, size) {
     size = size || 12;
     src_Global__context.fillText(text, x, y);
-    return src_Global__mY > y && src_Global__mY < y + size && src_Global__mX > x && src_Global__mX < x + src_Global__context.measureText(text).width;
+    return mY > y && mY < y + size && mX > x && mX < x + src_Global__context.measureText(text).width;
   };
 
   /**
@@ -18729,7 +19156,7 @@ define('src/index', ['exports'], function (exports) {
     size = size || 12;
     src_Global__context.strokeText(text, x, y);
     src_Global__context.fillText(text, x, y);
-    return src_Global__mY > y && src_Global__mY < y + size && src_Global__mX > x && src_Global__mX < x + src_Global__context.measureText(text).width;
+    return mY > y && mY < y + size && mX > x && mX < x + src_Global__context.measureText(text).width;
   };
 
   /**
@@ -18763,8 +19190,8 @@ define('src/index', ['exports'], function (exports) {
     src_Global__context.fillText(text, 0, 0);
     src_Global__context.restore();
 
-    var dX = src_Global__mX - x;
-    var dY = src_Global__mY - y;
+    var dX = mX - x;
+    var dY = mY - y;
     var d = Math.sqrt(dX * dX + dY * dY);
     var a = Math.atan2(dY, dX) - angle;
     var mXT = x + d * Math.cos(a);
@@ -18789,7 +19216,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Object} style optional font style ('bold', 'italic', 'underline')
    * @param {Object} ctx optional context
    */
-  function SimpleGraphics__setText(color, fontSize, fontName, align, baseline, style) {
+  function setText(color, fontSize, fontName, align, baseline, style) {
     color = color || '#000000';
     fontSize = String(fontSize) || '14';
     fontName = fontName || LOADED_FONT;
@@ -18807,7 +19234,7 @@ define('src/index', ['exports'], function (exports) {
     src_Global__context.textBaseline = baseline;
   };
 
-  function SimpleGraphics__getTextW(text) {
+  function getTextW(text) {
     return src_Global__context.measureText(text).width;
   };
 
@@ -18879,8 +19306,8 @@ define('src/index', ['exports'], function (exports) {
     return _ms;
   };
 
-  exports.fRect = SimpleGraphics__fRect;
-  exports.sRect = SimpleGraphics__sRect;
+  exports.fRect = fRect;
+  exports.sRect = sRect;
   exports.fsRect = fsRect;
   exports.fCircle = fCircle;
   exports.sCircle = sCircle;
@@ -18888,9 +19315,9 @@ define('src/index', ['exports'], function (exports) {
   exports.fEllipse = fEllipse;
   exports.sEllipse = sEllipse;
   exports.fsEllipse = fsEllipse;
-  exports.line = SimpleGraphics__line;
-  exports.bezier = SimpleGraphics__bezier;
-  exports.fLines = SimpleGraphics__fLines;
+  exports.line = line;
+  exports.bezier = bezier;
+  exports.fLines = fLines;
   exports.sLines = sLines;
   exports.fsLines = fsLines;
   exports.fsLinesM = fsLinesM;
@@ -18900,32 +19327,32 @@ define('src/index', ['exports'], function (exports) {
   exports.fEqTriangle = fEqTriangle;
   exports.sEqTriangle = sEqTriangle;
   exports.fsEqTriangle = fsEqTriangle;
-  exports.fRectM = SimpleGraphics__fRectM;
-  exports.sRectM = SimpleGraphics__sRectM;
-  exports.fsRectM = SimpleGraphics__fsRectM;
-  exports.fCircleM = SimpleGraphics__fCircleM;
+  exports.fRectM = fRectM;
+  exports.sRectM = sRectM;
+  exports.fsRectM = fsRectM;
+  exports.fCircleM = fCircleM;
   exports.sCircleM = sCircleM;
   exports.fsCircleM = fsCircleM;
   exports.lineM = lineM;
   exports.bezierM = bezierM;
-  exports.drawImage = SimpleGraphics__drawImage;
+  exports.drawImage = drawImage;
   exports.fitImage = fitImage;
-  exports.setFill = SimpleGraphics__setFill;
-  exports.setStroke = SimpleGraphics__setStroke;
+  exports.setFill = setFill;
+  exports.setStroke = setStroke;
   exports.setLW = setLW;
-  exports.clipCircle = SimpleGraphics__clipCircle;
-  exports.clipRectangle = SimpleGraphics__clipRectangle;
-  exports.restore = SimpleGraphics__restore;
-  exports.fText = SimpleGraphics__fText;
+  exports.clipCircle = clipCircle;
+  exports.clipRectangle = clipRectangle;
+  exports.restore = restore;
+  exports.fText = fText;
   exports.sText = sText;
-  exports.fsText = SimpleGraphics__fsText;
-  exports.fTextRotated = SimpleGraphics__fTextRotated;
+  exports.fsText = fsText;
+  exports.fTextRotated = fTextRotated;
   exports.fTextM = fTextM;
   exports.fsTextM = fsTextM;
   exports.fTextRotatedM = fTextRotatedM;
   exports.fTextW = fTextW;
-  exports.setText = SimpleGraphics__setText;
-  exports.getTextW = SimpleGraphics__getTextW;
+  exports.setText = setText;
+  exports.getTextW = getTextW;
   exports.getPixelData = getPixelData;
   exports.getPixelColor = getPixelColor;
   exports.getPixelColorRGBA = getPixelColorRGBA;
@@ -18933,11 +19360,11 @@ define('src/index', ['exports'], function (exports) {
   exports.setCursor = SimpleGraphics__setCursor;
   exports.getMilliseconds = getMilliseconds;
 
-  function DrawTexts__DrawTexts() {}
-  var DrawTexts__default = DrawTexts__DrawTexts;
+  function DrawTexts() {}
 
-  DrawTexts__DrawTexts.POINT_TO_PIXEL = 1.3333;
-  DrawTexts__DrawTexts.PIXEL_TO_POINT = 0.75;
+
+  DrawTexts.POINT_TO_PIXEL = 1.3333;
+  DrawTexts.PIXEL_TO_POINT = 0.75;
 
 
   // /**
@@ -18967,9 +19394,9 @@ define('src/index', ['exports'], function (exports) {
   // }
 
 
-  DrawTexts__DrawTexts.fillTextRectangle = function(text, x, y, width, height, lineHeight, returnHeight, ellipsis) {
-    var textLines = DrawTexts__DrawTexts.textWordWrapReturnLines(text, width, height, lineHeight, ellipsis);
-    return DrawTexts__DrawTexts.fillTextRectangleWithTextLines(textLines, x, y, height, lineHeight, returnHeight);
+  DrawTexts.fillTextRectangle = function(text, x, y, width, height, lineHeight, returnHeight, ellipsis) {
+    var textLines = DrawTexts.textWordWrapReturnLines(text, width, height, lineHeight, ellipsis);
+    return DrawTexts.fillTextRectangleWithTextLines(textLines, x, y, height, lineHeight, returnHeight);
   };
 
   /**
@@ -18979,7 +19406,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Number} y
    * @param {Number} angle in radians
    */
-  DrawTexts__DrawTexts.fillTextRotated = function(text, x, y, angle) { //TODO: remove (replaced by fTextRotated in SimpleGraphics)
+  DrawTexts.fillTextRotated = function(text, x, y, angle) { //TODO: remove (replaced by fTextRotated in SimpleGraphics)
     src_Global__context.save();
     src_Global__context.translate(x, y);
     src_Global__context.rotate(angle);
@@ -18988,7 +19415,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  DrawTexts__DrawTexts.fillTextRectangleWithTextLines = function(textLines, x, y, height, lineHeight, returnHeight) {
+  DrawTexts.fillTextRectangleWithTextLines = function(textLines, x, y, height, lineHeight, returnHeight) {
     height = height == 0 || height == null ? 99999 : height;
 
     for(var i = 0; textLines[i] != null; i++) {
@@ -19000,7 +19427,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  DrawTexts__DrawTexts.textWordWrapReturnLines = function(text, fitWidth, fitHeight, lineHeight, ellipsis) {
+  DrawTexts.textWordWrapReturnLines = function(text, fitWidth, fitHeight, lineHeight, ellipsis) {
     fitWidth = fitWidth || 100;
     fitHeight = fitHeight || 600;
     lineHeight = lineHeight || 16;
@@ -19068,16 +19495,16 @@ define('src/index', ['exports'], function (exports) {
 
     return lines;
   };
-  DrawTexts__DrawTexts.getMaxTextWidth = function(texts) {
-    var max = SimpleGraphics__getTextW(texts[0]);
+  DrawTexts.getMaxTextWidth = function(texts) {
+    var max = getTextW(texts[0]);
     for(var i = 1; texts[i] != null; i++) {
-      max = Math.max(max, SimpleGraphics__getTextW(texts[i]));
+      max = Math.max(max, getTextW(texts[i]));
     }
     return max;
   };
 
 
-  DrawTexts__DrawTexts.cropString = function(ctx, string, fitWidth) {
+  DrawTexts.cropString = function(ctx, string, fitWidth) {
     if(string == null) return;
     fitWidth = fitWidth || 0;
 
@@ -19101,7 +19528,7 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
-  exports.DrawTexts = DrawTexts__default;
+  exports.DrawTexts = DrawTexts;
 
   function DrawTextsAdvanced() {}
 
@@ -19118,11 +19545,11 @@ define('src/index', ['exports'], function (exports) {
     n = n == null ? 0 : n;
 
     if(n == 1) {
-      var p01 = new Point__default((p0.x + p1.x) * 0.5, (p0.y + p1.y) * 0.5);
-      var p03 = new Point__default((p0.x + p3.x) * 0.5, (p0.y + p3.y) * 0.5);
-      var p23 = new Point__default((p2.x + p3.x) * 0.5, (p2.y + p3.y) * 0.5);
-      var p12 = new Point__default((p1.x + p2.x) * 0.5, (p1.y + p2.y) * 0.5);
-      var pc = new Point__default((p01.x + p23.x) * 0.5, (p01.y + p23.y) * 0.5);
+      var p01 = new Point((p0.x + p1.x) * 0.5, (p0.y + p1.y) * 0.5);
+      var p03 = new Point((p0.x + p3.x) * 0.5, (p0.y + p3.y) * 0.5);
+      var p23 = new Point((p2.x + p3.x) * 0.5, (p2.y + p3.y) * 0.5);
+      var p12 = new Point((p1.x + p2.x) * 0.5, (p1.y + p2.y) * 0.5);
+      var pc = new Point((p01.x + p23.x) * 0.5, (p01.y + p23.y) * 0.5);
       DrawTextsAdvanced.textOnQuadrilater(text, p0, p01, pc, p03, fontSize, 2);
       DrawTextsAdvanced.textOnQuadrilater(text, p01, p1, p12, pc, fontSize, 3);
       DrawTextsAdvanced.textOnQuadrilater(text, pc, p12, p2, p23, fontSize, 4);
@@ -19135,29 +19562,29 @@ define('src/index', ['exports'], function (exports) {
 
     switch(n) {
       case 0:
-        var v0 = new Point__default(0, 0);
-        var v1 = new Point__default(w, 0);
-        var v2 = new Point__default(0.000001, h + 0.000001);
+        var v0 = new Point(0, 0);
+        var v1 = new Point(w, 0);
+        var v2 = new Point(0.000001, h + 0.000001);
         break;
       case 2:
-        var v0 = new Point__default(0, 0);
-        var v1 = new Point__default(w * 0.5, 0);
-        var v2 = new Point__default(0.000001, h * 0.5 + 0.000001);
+        var v0 = new Point(0, 0);
+        var v1 = new Point(w * 0.5, 0);
+        var v2 = new Point(0.000001, h * 0.5 + 0.000001);
         break;
       case 3:
-        var v0 = new Point__default(w * 0.5, 0);
-        var v1 = new Point__default(w, 0);
-        var v2 = new Point__default(w * 0.5 + 0.000001, h * 0.5 + 0.000001);
+        var v0 = new Point(w * 0.5, 0);
+        var v1 = new Point(w, 0);
+        var v2 = new Point(w * 0.5 + 0.000001, h * 0.5 + 0.000001);
         break;
       case 4:
-        var v0 = new Point__default(w * 0.5, h * 0.5);
-        var v1 = new Point__default(w, h * 0.5);
-        var v2 = new Point__default(w * 0.5 + 0.000001, h + 0.000001);
+        var v0 = new Point(w * 0.5, h * 0.5);
+        var v1 = new Point(w, h * 0.5);
+        var v2 = new Point(w * 0.5 + 0.000001, h + 0.000001);
         break;
       case 5:
-        var v0 = new Point__default(0, h * 0.5);
-        var v1 = new Point__default(w * 0.5, h * 0.5);
-        var v2 = new Point__default(0.000001, h + 0.000001);
+        var v0 = new Point(0, h * 0.5);
+        var v1 = new Point(w * 0.5, h * 0.5);
+        var v2 = new Point(0.000001, h + 0.000001);
         break;
     }
 
@@ -19202,7 +19629,7 @@ define('src/index', ['exports'], function (exports) {
   DrawTextsAdvanced.mapRectangleIntoQuadrilater = function(image, xI, yI, wI, hI, v0, v1, v2, v3) { //TODO:find the correct place for this
     src_Global__context.save();
 
-    var M = MatrixGenerators.createMatrixFromTrianglesMapping(new Point__default(0, 0), new Point__default(100, 0), new Point__default(100, 100), v0, v1, v2);
+    var M = MatrixGenerators.createMatrixFromTrianglesMapping(new Point(0, 0), new Point(100, 0), new Point(100, 100), v0, v1, v2);
     src_Global__context.transform(M.a, M.b, M.c, M.d, M.tx, M.ty);
 
     src_Global__context.beginPath();
@@ -19223,7 +19650,7 @@ define('src/index', ['exports'], function (exports) {
 
     src_Global__context.save();
 
-    var M = MatrixGenerators.createMatrixFromTrianglesMapping(new Point__default(0, 0), new Point__default(0, 2), new Point__default(2, 2), v0, v3, v2);
+    var M = MatrixGenerators.createMatrixFromTrianglesMapping(new Point(0, 0), new Point(0, 2), new Point(2, 2), v0, v3, v2);
     src_Global__context.transform(M.a, M.b, M.c, M.d, M.tx, M.ty);
 
     src_Global__context.beginPath();
@@ -19350,20 +19777,20 @@ define('src/index', ['exports'], function (exports) {
     this.areaVerificationFunction = configuration.areaVerificationFunction;
 
     this.factor = configuration.factor == null ? 1 : configuration.factor;
-    this.center = new Point__default(0, 0);
+    this.center = new Point(0, 0);
 
     addInteractionEventListener("mousedown", this.onMouse, this);
     addInteractionEventListener("mouseup", this.onMouse, this);
 
     this.dragging = false;
-    this.mouseClickPosition = new Point__default();
-    this.mousePosition = new Point__default();
+    this.mouseClickPosition = new Point();
+    this.mousePosition = new Point();
     this.r = 0;
     this.a = 0;
 
     this.idInterval = null;
 
-    this.dragVector = new Point__default();
+    this.dragVector = new Point();
   }
 
 
@@ -19371,18 +19798,18 @@ define('src/index', ['exports'], function (exports) {
 
     switch(draggingInstance.mode) {
       case 0:
-        draggingInstance.dragVector.x = (src_Global__mX - draggingInstance.mousePosition.x) * draggingInstance.factor;
-        draggingInstance.dragVector.y = (src_Global__mY - draggingInstance.mousePosition.y) * draggingInstance.factor;
-        draggingInstance.mousePosition.x = src_Global__mX;
-        draggingInstance.mousePosition.y = src_Global__mY;
+        draggingInstance.dragVector.x = (mX - draggingInstance.mousePosition.x) * draggingInstance.factor;
+        draggingInstance.dragVector.y = (mY - draggingInstance.mousePosition.y) * draggingInstance.factor;
+        draggingInstance.mousePosition.x = mX;
+        draggingInstance.mousePosition.y = mY;
         break;
       case 1:
-        draggingInstance.dragVector.x = src_Global__mX - draggingInstance.mouseClickPosition.x;
-        draggingInstance.dragVector.y = src_Global__mY - draggingInstance.mouseClickPosition.y;
+        draggingInstance.dragVector.x = mX - draggingInstance.mouseClickPosition.x;
+        draggingInstance.dragVector.y = mY - draggingInstance.mouseClickPosition.y;
         break;
       case 2:
-        var dX = src_Global__mX - draggingInstance.center.x;
-        var dY = src_Global__mY - draggingInstance.center.y;
+        var dX = mX - draggingInstance.center.x;
+        var dY = mY - draggingInstance.center.y;
         var r = Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
         var a = Math.atan2(dY, dX);
         draggingInstance.dragVector.x = r - draggingInstance.r;
@@ -19406,13 +19833,13 @@ define('src/index', ['exports'], function (exports) {
 
         this.dragging = true;
 
-        this.mouseClickPosition.x = src_Global__mX;
-        this.mouseClickPosition.y = src_Global__mY;
-        this.mousePosition.x = src_Global__mX;
-        this.mousePosition.y = src_Global__mY;
+        this.mouseClickPosition.x = mX;
+        this.mouseClickPosition.y = mY;
+        this.mousePosition.x = mX;
+        this.mousePosition.y = mY;
 
-        var dX = src_Global__mX - this.center.x;
-        var dY = src_Global__mY - this.center.y;
+        var dX = mX - this.center.x;
+        var dY = mY - this.center.y;
         this.r = Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
         this.a = Math.atan2(dY, dX);
 
@@ -19741,7 +20168,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   TextBox.prototype.getMaxWidth = function() {
-    return DrawTexts__default.getMaxTextWidth(this.lines);
+    return DrawTexts.getMaxTextWidth(this.lines);
   };
 
   TextBox.prototype.update = function() {
@@ -19764,7 +20191,7 @@ define('src/index', ['exports'], function (exports) {
       var names = [];
       this.links = new StringList__default();
       this.linksType = new StringList__default();
-      var indexesPairs = new List__default();
+      var indexesPairs = new List();
       var lengthBefore;
 
       var link;
@@ -19821,7 +20248,7 @@ define('src/index', ['exports'], function (exports) {
 
     setText(this.fontColor, this.fontSize, this.fontName, null, null, this.fontStyle);
 
-    this.lines = DrawTexts__default.textWordWrapReturnLines(this.text, this.width, 0, this.lineHeight);
+    this.lines = DrawTexts.textWordWrapReturnLines(this.text, this.width, 0, this.lineHeight);
     this.height = this.lines.length * this.lineHeight;
 
 
@@ -19839,8 +20266,8 @@ define('src/index', ['exports'], function (exports) {
         for(j = 0; this.lines[j] != null; j++) {
           line = this.lines[j];
           if(interval.x >= lengthAccumulated && interval.x < lengthAccumulated + line.length) {
-            w0 = context.measureText(line.substr(0, interval.x - lengthAccumulated)).width;
-            w1 = context.measureText(line.substr(0, interval.x + interval.y - lengthAccumulated)).width;
+            w0 = src_Global__context.measureText(line.substr(0, interval.x - lengthAccumulated)).width;
+            w1 = src_Global__context.measureText(line.substr(0, interval.x + interval.y - lengthAccumulated)).width;
             y = j * this.lineHeight + 0.5;
 
             this.pointPairs.push({
@@ -19868,7 +20295,7 @@ define('src/index', ['exports'], function (exports) {
 
     this.maxWidth = 0;
     for(i = 0; this.lines[i] != null; i++) {
-      this.maxWidth = Math.max(this.maxWidth, context.measureText(this.lines[i]).width);
+      this.maxWidth = Math.max(this.maxWidth, src_Global__context.measureText(this.lines[i]).width);
     }
   };
 
@@ -19876,12 +20303,12 @@ define('src/index', ['exports'], function (exports) {
     scale = scale == null ? 1 : scale;
 
     if(this.backgroundColor != null) {
-      context.fillStyle = this.backgroundColor;
-      context.fillRect(this.x - this.boxMargin, this.y - this.boxMargin, this.width + 2 * this.boxMargin, this.height + 2 * this.boxMargin);
+      src_Global__context.fillStyle = this.backgroundColor;
+      src_Global__context.fillRect(this.x - this.boxMargin, this.y - this.boxMargin, this.width + 2 * this.boxMargin, this.height + 2 * this.boxMargin);
     }
     //DrawTexts.setContextTextProperties(this.fontColor, this.fontSize*scale, this.fontName, null, null, this.fontStyle);
     setText(this.fontColor, this.fontSize * scale, this.fontName, null, null, this.fontStyle);
-    DrawTexts__default.fillTextRectangleWithTextLines(this.lines, this.x, this.y, 0, this.lineHeight * scale);
+    DrawTexts.fillTextRectangleWithTextLines(this.lines, this.x, this.y, 0, this.lineHeight * scale);
 
     var x0;
     var x1;
@@ -19891,8 +20318,8 @@ define('src/index', ['exports'], function (exports) {
     this.overLink = null;
 
     if(this.pointPairs != null) {
-      context.lineWidth = this.lineWidth;
-      context.strokeStyle = this.fontColor;
+      src_Global__context.lineWidth = this.lineWidth;
+      src_Global__context.strokeStyle = this.fontColor;
       for(var i = 0; this.pointPairs[i] != null; i++) {
         x0 = this.pointPairs[i].x0 * scale + this.x;
         x1 = this.pointPairs[i].x1 * scale + this.x;
@@ -19900,7 +20327,7 @@ define('src/index', ['exports'], function (exports) {
         y1 = Math.floor(y0 + Number(this.fontSize * scale));
         this.line(x0, x1, y1 + 0.5);
         if(mY > y0 && mY < y1 && mX > x0 && mX < x1) {
-          context.canvas.style.cursor = 'pointer';
+          src_Global__context.canvas.style.cursor = 'pointer';
           this.overLink = i;
         }
       }
@@ -19908,10 +20335,10 @@ define('src/index', ['exports'], function (exports) {
   };
 
   TextBox.prototype.line = function(x0, x1, y) {
-    context.beginPath();
-    context.moveTo(x0, y);
-    context.lineTo(x1, y);
-    context.stroke();
+    src_Global__context.beginPath();
+    src_Global__context.moveTo(x0, y);
+    src_Global__context.lineTo(x1, y);
+    src_Global__context.stroke();
   };
 
   TextBox.prototype.mouseUp = function(e) {
@@ -19953,7 +20380,7 @@ define('src/index', ['exports'], function (exports) {
             //c.log('parts[0]: {'+parts[0]+'}');
             //c.log('StringOperators.validateUrl(parts[0]):', StringOperators.validateUrl(parts[0]));
             //c.log('StringOperators.validateUrl(parts[0]):', StringOperators.validateUrl(parts[0]));
-            if(StringOperators__default.validateUrl(parts[0])) {
+            if(StringOperators.validateUrl(parts[0])) {
               //c.log('parts.slice(1).join: {'+parts.slice(1).join(" ")+'}');
               text = text.substr(0, indexOpen) + "<e" + parts[0] + "*" + parts.slice(1).join(" ") + ">" + text.substr(indexClose + 1);
               //c.log('text changed:', text);
@@ -19975,12 +20402,6 @@ define('src/index', ['exports'], function (exports) {
 
   exports.TextBox = TextBox;
 
-  /**
-   * @classdesc Fast Html
-   *
-   * @namespace
-   * @category misc
-   */
   function FastHtml() {}
 
 
@@ -20280,7 +20701,7 @@ define('src/index', ['exports'], function (exports) {
     this.target = callee ? callee : arguments.callee;
     this.onComplete = onComplete;
 
-    this.datasLoaded = new List__default();
+    this.datasLoaded = new List();
     this.nextDataLoading();
   };
 
@@ -20330,7 +20751,7 @@ define('src/index', ['exports'], function (exports) {
     this.onComplete = onComplete;
     this.priorityWeights = priorityWeights;
 
-    this.imagesLoaded = new List__default();
+    this.imagesLoaded = new List();
 
     this.nextImageLoading();
   };
@@ -20528,394 +20949,6 @@ define('src/index', ['exports'], function (exports) {
 
   exports.JSONUtils = JSONUtils;
 
-  /*
-   * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
-   * Digest Algorithm, as defined in RFC 1321.
-   * Version 2.2 Copyright (C) Paul Johnston 1999 - 2009
-   * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
-   * Distributed under the BSD License
-   * See http://pajhome.org.uk/crypt/md5 for more info.
-   */
-
-  /*
-   * Configurable variables. You may need to tweak these to be compatible with
-   * the server-side, but the defaults work in most cases.
-   */
-  //var hexcase = 0;   /* hex output format. 0 - lowercase; 1 - uppercase        */
-  //var b64pad  = "";  /* base-64 pad character. "=" for strict RFC compliance   */
-
-
-  function MD5__MD5(){}
-  var MD5__default = MD5__MD5;
-
-  /*
-   * These are the functions you'll usually want to call
-   * They take string arguments and return either hex or base-64 encoded strings
-   */
-  MD5__MD5.hex_md5 = function(s)    { return this.rstr2hex(this.rstr_md5(this.str2rstr_utf8(s))); };
-  MD5__MD5.b64_md5 = function(s)    { return this.rstr2b64(this.rstr_md5(this.str2rstr_utf8(s))); };
-  MD5__MD5.any_md5 = function(s, e) { return this.rstr2any(this.rstr_md5(this.str2rstr_utf8(s)), e); };
-  MD5__MD5.hex_hmac_md5 = function(k, d)
-    { return this.rstr2hex(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); };
-  MD5__MD5.b64_hmac_md5 = function(k, d)
-    { return this.rstr2b64(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); };
-  MD5__MD5.any_hmac_md5 = function(k, d, e)
-    { return this.rstr2any(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d)), e); };
-
-  /*
-   * Perform a simple self-test to see if the VM is working
-   */
-  MD5__MD5.md5_vm_test = function()
-  {
-    return this.hex_md5("abc").toLowerCase() == "900150983cd24fb0d6963f7d28e17f72";
-  };
-
-  /*
-   * Calculate the MD5 of a raw string
-   */
-  MD5__MD5.rstr_md5 = function(s)
-  {
-    return this.binl2rstr(this.binl_md5(this.rstr2binl(s), s.length * 8));
-  };
-
-  /*
-   * Calculate the HMAC-MD5, of a key and some data (raw strings)
-   */
-  MD5__MD5.rstr_hmac_md5 = function(key, data)
-  {
-    var bkey = rstr2binl(key);
-    if(bkey.length > 16) bkey = this.binl_md5(bkey, key.length * 8);
-
-    var ipad = Array(16), opad = Array(16);
-    for(var i = 0; i < 16; i++)
-    {
-      ipad[i] = bkey[i] ^ 0x36363636;
-      opad[i] = bkey[i] ^ 0x5C5C5C5C;
-    }
-
-    var hash = this.binl_md5(ipad.concat(this.rstr2binl(data)), 512 + data.length * 8);
-    return this.binl2rstr(this.binl_md5(opad.concat(hash), 512 + 128));
-  };
-
-  /*
-   * Convert a raw string to a hex string
-   */
-  MD5__MD5.rstr2hex = function(input)
-  {
-  	var hexcase = 0;
-    try { hexcase; } catch(e) { hexcase=0; }
-    var hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
-    var output = "";
-    var x;
-    for(var i = 0; i < input.length; i++)
-    {
-      x = input.charCodeAt(i);
-      output += hex_tab.charAt((x >>> 4) & 0x0F)
-             +  hex_tab.charAt( x        & 0x0F);
-    }
-    return output;
-  };
-
-  /*
-   * Convert a raw string to a base-64 string
-   */
-  MD5__MD5.rstr2b64 = function(input)
-  {
-  	var b64pad  = "";
-    try { b64pad; } catch(e) { b64pad=''; }
-    var tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    var output = "";
-    var len = input.length;
-    for(var i = 0; i < len; i += 3)
-    {
-      var triplet = (input.charCodeAt(i) << 16)
-                  | (i + 1 < len ? input.charCodeAt(i+1) << 8 : 0)
-                  | (i + 2 < len ? input.charCodeAt(i+2)      : 0);
-      for(var j = 0; j < 4; j++)
-      {
-        if(i * 8 + j * 6 > input.length * 8) output += b64pad;
-        else output += tab.charAt((triplet >>> 6*(3-j)) & 0x3F);
-      }
-    }
-    return output;
-  };
-
-  /*
-   * Convert a raw string to an arbitrary string encoding
-   */
-  MD5__MD5.rstr2any = function(input, encoding)
-  {
-    var divisor = encoding.length;
-    var i, j, q, x, quotient;
-
-    /* Convert to an array of 16-bit big-endian values, forming the dividend */
-    var dividend = Array(Math.ceil(input.length / 2));
-    for(i = 0; i < dividend.length; i++)
-    {
-      dividend[i] = (input.charCodeAt(i * 2) << 8) | input.charCodeAt(i * 2 + 1);
-    }
-
-    /*
-     * Repeatedly perform a long division. The binary array forms the dividend,
-     * the length of the encoding is the divisor. Once computed, the quotient
-     * forms the dividend for the next step. All remainders are stored for later
-     * use.
-     */
-    var full_length = Math.ceil(input.length * 8 /
-                                      (Math.log(encoding.length) / Math.log(2)));
-    var remainders = Array(full_length);
-    for(j = 0; j < full_length; j++)
-    {
-      quotient = Array();
-      x = 0;
-      for(i = 0; i < dividend.length; i++)
-      {
-        x = (x << 16) + dividend[i];
-        q = Math.floor(x / divisor);
-        x -= q * divisor;
-        if(quotient.length > 0 || q > 0)
-          quotient[quotient.length] = q;
-      }
-      remainders[j] = x;
-      dividend = quotient;
-    }
-
-    /* Convert the remainders to the output string */
-    var output = "";
-    for(i = remainders.length - 1; i >= 0; i--)
-      output += encoding.charAt(remainders[i]);
-
-    return output;
-  };
-
-  /*
-   * Encode a string as utf-8.
-   * For efficiency, this assumes the input is valid utf-16.
-   */
-  MD5__MD5.str2rstr_utf8 = function(input)
-  {
-    var output = "";
-    var i = -1;
-    var x, y;
-
-    while(++i < input.length)
-    {
-      /* Decode utf-16 surrogate pairs */
-      x = input.charCodeAt(i);
-      y = i + 1 < input.length ? input.charCodeAt(i + 1) : 0;
-      if(0xD800 <= x && x <= 0xDBFF && 0xDC00 <= y && y <= 0xDFFF)
-      {
-        x = 0x10000 + ((x & 0x03FF) << 10) + (y & 0x03FF);
-        i++;
-      }
-
-      /* Encode output as utf-8 */
-      if(x <= 0x7F)
-        output += String.fromCharCode(x);
-      else if(x <= 0x7FF)
-        output += String.fromCharCode(0xC0 | ((x >>> 6 ) & 0x1F),
-                                      0x80 | ( x         & 0x3F));
-      else if(x <= 0xFFFF)
-        output += String.fromCharCode(0xE0 | ((x >>> 12) & 0x0F),
-                                      0x80 | ((x >>> 6 ) & 0x3F),
-                                      0x80 | ( x         & 0x3F));
-      else if(x <= 0x1FFFFF)
-        output += String.fromCharCode(0xF0 | ((x >>> 18) & 0x07),
-                                      0x80 | ((x >>> 12) & 0x3F),
-                                      0x80 | ((x >>> 6 ) & 0x3F),
-                                      0x80 | ( x         & 0x3F));
-    }
-    return output;
-  };
-
-  /*
-   * Encode a string as utf-16
-   */
-  MD5__MD5.str2rstr_utf16le = function(input)
-  {
-    var output = "";
-    for(var i = 0; i < input.length; i++)
-      output += String.fromCharCode( input.charCodeAt(i)        & 0xFF,
-                                    (input.charCodeAt(i) >>> 8) & 0xFF);
-    return output;
-  };
-
-  MD5__MD5.str2rstr_utf16be = function(input)
-  {
-    var output = "";
-    for(var i = 0; i < input.length; i++)
-      output += String.fromCharCode((input.charCodeAt(i) >>> 8) & 0xFF,
-                                     input.charCodeAt(i)        & 0xFF);
-    return output;
-  };
-
-  /*
-   * Convert a raw string to an array of little-endian words
-   * Characters >255 have their high-byte silently ignored.
-   */
-  MD5__MD5.rstr2binl = function(input)
-  {
-    var output = Array(input.length >> 2);
-    for(var i = 0; i < output.length; i++)
-      output[i] = 0;
-    for(var i = 0; i < input.length * 8; i += 8)
-      output[i>>5] |= (input.charCodeAt(i / 8) & 0xFF) << (i%32);
-    return output;
-  };
-
-  /*
-   * Convert an array of little-endian words to a string
-   */
-  MD5__MD5.binl2rstr = function(input)
-  {
-    var output = "";
-    for(var i = 0; i < input.length * 32; i += 8)
-      output += String.fromCharCode((input[i>>5] >>> (i % 32)) & 0xFF);
-    return output;
-  };
-
-  /*
-   * Calculate the MD5 of an array of little-endian words, and a bit length.
-   */
-  MD5__MD5.binl_md5 = function(x, len)
-  {
-    /* append padding */
-    x[len >> 5] |= 0x80 << ((len) % 32);
-    x[(((len + 64) >>> 9) << 4) + 14] = len;
-
-    var a =  1732584193;
-    var b = -271733879;
-    var c = -1732584194;
-    var d =  271733878;
-
-    for(var i = 0; i < x.length; i += 16)
-    {
-      var olda = a;
-      var oldb = b;
-      var oldc = c;
-      var oldd = d;
-
-      a = this.md5_ff(a, b, c, d, x[i+ 0], 7 , -680876936);
-      d = this.md5_ff(d, a, b, c, x[i+ 1], 12, -389564586);
-      c = this.md5_ff(c, d, a, b, x[i+ 2], 17,  606105819);
-      b = this.md5_ff(b, c, d, a, x[i+ 3], 22, -1044525330);
-      a = this.md5_ff(a, b, c, d, x[i+ 4], 7 , -176418897);
-      d = this.md5_ff(d, a, b, c, x[i+ 5], 12,  1200080426);
-      c = this.md5_ff(c, d, a, b, x[i+ 6], 17, -1473231341);
-      b = this.md5_ff(b, c, d, a, x[i+ 7], 22, -45705983);
-      a = this.md5_ff(a, b, c, d, x[i+ 8], 7 ,  1770035416);
-      d = this.md5_ff(d, a, b, c, x[i+ 9], 12, -1958414417);
-      c = this.md5_ff(c, d, a, b, x[i+10], 17, -42063);
-      b = this.md5_ff(b, c, d, a, x[i+11], 22, -1990404162);
-      a = this.md5_ff(a, b, c, d, x[i+12], 7 ,  1804603682);
-      d = this.md5_ff(d, a, b, c, x[i+13], 12, -40341101);
-      c = this.md5_ff(c, d, a, b, x[i+14], 17, -1502002290);
-      b = this.md5_ff(b, c, d, a, x[i+15], 22,  1236535329);
-
-      a = this.md5_gg(a, b, c, d, x[i+ 1], 5 , -165796510);
-      d = this.md5_gg(d, a, b, c, x[i+ 6], 9 , -1069501632);
-      c = this.md5_gg(c, d, a, b, x[i+11], 14,  643717713);
-      b = this.md5_gg(b, c, d, a, x[i+ 0], 20, -373897302);
-      a = this.md5_gg(a, b, c, d, x[i+ 5], 5 , -701558691);
-      d = this.md5_gg(d, a, b, c, x[i+10], 9 ,  38016083);
-      c = this.md5_gg(c, d, a, b, x[i+15], 14, -660478335);
-      b = this.md5_gg(b, c, d, a, x[i+ 4], 20, -405537848);
-      a = this.md5_gg(a, b, c, d, x[i+ 9], 5 ,  568446438);
-      d = this.md5_gg(d, a, b, c, x[i+14], 9 , -1019803690);
-      c = this.md5_gg(c, d, a, b, x[i+ 3], 14, -187363961);
-      b = this.md5_gg(b, c, d, a, x[i+ 8], 20,  1163531501);
-      a = this.md5_gg(a, b, c, d, x[i+13], 5 , -1444681467);
-      d = this.md5_gg(d, a, b, c, x[i+ 2], 9 , -51403784);
-      c = this.md5_gg(c, d, a, b, x[i+ 7], 14,  1735328473);
-      b = this.md5_gg(b, c, d, a, x[i+12], 20, -1926607734);
-
-      a = this.md5_hh(a, b, c, d, x[i+ 5], 4 , -378558);
-      d = this.md5_hh(d, a, b, c, x[i+ 8], 11, -2022574463);
-      c = this.md5_hh(c, d, a, b, x[i+11], 16,  1839030562);
-      b = this.md5_hh(b, c, d, a, x[i+14], 23, -35309556);
-      a = this.md5_hh(a, b, c, d, x[i+ 1], 4 , -1530992060);
-      d = this.md5_hh(d, a, b, c, x[i+ 4], 11,  1272893353);
-      c = this.md5_hh(c, d, a, b, x[i+ 7], 16, -155497632);
-      b = this.md5_hh(b, c, d, a, x[i+10], 23, -1094730640);
-      a = this.md5_hh(a, b, c, d, x[i+13], 4 ,  681279174);
-      d = this.md5_hh(d, a, b, c, x[i+ 0], 11, -358537222);
-      c = this.md5_hh(c, d, a, b, x[i+ 3], 16, -722521979);
-      b = this.md5_hh(b, c, d, a, x[i+ 6], 23,  76029189);
-      a = this.md5_hh(a, b, c, d, x[i+ 9], 4 , -640364487);
-      d = this.md5_hh(d, a, b, c, x[i+12], 11, -421815835);
-      c = this.md5_hh(c, d, a, b, x[i+15], 16,  530742520);
-      b = this.md5_hh(b, c, d, a, x[i+ 2], 23, -995338651);
-
-      a = this.md5_ii(a, b, c, d, x[i+ 0], 6 , -198630844);
-      d = this.md5_ii(d, a, b, c, x[i+ 7], 10,  1126891415);
-      c = this.md5_ii(c, d, a, b, x[i+14], 15, -1416354905);
-      b = this.md5_ii(b, c, d, a, x[i+ 5], 21, -57434055);
-      a = this.md5_ii(a, b, c, d, x[i+12], 6 ,  1700485571);
-      d = this.md5_ii(d, a, b, c, x[i+ 3], 10, -1894986606);
-      c = this.md5_ii(c, d, a, b, x[i+10], 15, -1051523);
-      b = this.md5_ii(b, c, d, a, x[i+ 1], 21, -2054922799);
-      a = this.md5_ii(a, b, c, d, x[i+ 8], 6 ,  1873313359);
-      d = this.md5_ii(d, a, b, c, x[i+15], 10, -30611744);
-      c = this.md5_ii(c, d, a, b, x[i+ 6], 15, -1560198380);
-      b = this.md5_ii(b, c, d, a, x[i+13], 21,  1309151649);
-      a = this.md5_ii(a, b, c, d, x[i+ 4], 6 , -145523070);
-      d = this.md5_ii(d, a, b, c, x[i+11], 10, -1120210379);
-      c = this.md5_ii(c, d, a, b, x[i+ 2], 15,  718787259);
-      b = this.md5_ii(b, c, d, a, x[i+ 9], 21, -343485551);
-
-      a = this.safe_add(a, olda);
-      b = this.safe_add(b, oldb);
-      c = this.safe_add(c, oldc);
-      d = this.safe_add(d, oldd);
-    }
-    return Array(a, b, c, d);
-  };
-
-  /*
-   * These functions implement the four basic operations the algorithm uses.
-   */
-  MD5__MD5.md5_cmn = function(q, a, b, x, s, t)
-  {
-    return this.safe_add(this.bit_rol(this.safe_add(this.safe_add(a, q), this.safe_add(x, t)), s),b);
-  };
-  MD5__MD5.md5_ff = function(a, b, c, d, x, s, t)
-  {
-    return this.md5_cmn((b & c) | ((~b) & d), a, b, x, s, t);
-  };
-  MD5__MD5.md5_gg = function(a, b, c, d, x, s, t)
-  {
-    return this.md5_cmn((b & d) | (c & (~d)), a, b, x, s, t);
-  };
-  MD5__MD5.md5_hh = function(a, b, c, d, x, s, t)
-  {
-    return this.md5_cmn(b ^ c ^ d, a, b, x, s, t);
-  };
-  MD5__MD5.md5_ii = function(a, b, c, d, x, s, t)
-  {
-    return this.md5_cmn(c ^ (b | (~d)), a, b, x, s, t);
-  };
-
-  /*
-   * Add integers, wrapping at 2^32. This uses 16-bit operations internally
-   * to work around bugs in some JS interpreters.
-   */
-  MD5__MD5.safe_add = function(x, y)
-  {
-    var lsw = (x & 0xFFFF) + (y & 0xFFFF);
-    var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
-    return (msw << 16) | (lsw & 0xFFFF);
-  };
-
-  /*
-   * Bitwise rotate a 32-bit number to the left.
-   */
-  MD5__MD5.bit_rol = function(num, cnt)
-  {
-    return (num << cnt) | (num >>> (32 - cnt));
-  };
-
-  exports.MD5 = MD5__default;
-
   /**
    * @classdesc StringUtils
    *
@@ -20979,9 +21012,9 @@ define('src/index', ['exports'], function (exports) {
 
     this.nodeList = new NodeList__default();
 
-    this.forcesList = new List__default();
-    this.equilibriumDistances = new NumberList__default();
-    this.forcesTypeList = new List__default();
+    this.forcesList = new List();
+    this.equilibriumDistances = new NumberList();
+    this.forcesTypeList = new List();
     this.fromNodeList = new NodeList__default();
     this.toNodeList = new NodeList__default();
 
@@ -20997,14 +21030,14 @@ define('src/index', ['exports'], function (exports) {
    */
   Forces.prototype.forcesForNetwork = function(network, initRadius, initCenter, eqDistancesMode, addShortRepulsorsOnRelated) {
     initRadius = initRadius || 0;
-    initCenter = initCenter || new Point__default(0, 0);
+    initCenter = initCenter || new Point(0, 0);
     eqDistancesMode = eqDistancesMode == null ? 0 : eqDistancesMode;
     addShortRepulsorsOnRelated = addShortRepulsorsOnRelated == null ? false : addShortRepulsorsOnRelated;
 
 
-    this.forcesList = new List__default();
-    this.equilibriumDistances = new NumberList__default();
-    this.forcesTypeList = new List__default();
+    this.forcesList = new List();
+    this.equilibriumDistances = new NumberList();
+    this.forcesTypeList = new List();
     this.fromNodeList = new NodeList__default();
     this.toNodeList = new NodeList__default();
 
@@ -21018,10 +21051,10 @@ define('src/index', ['exports'], function (exports) {
 
     for(i = 0; i < nNodes; i++) {
       if(initRadius == 0) {
-        this.addNode(network.nodeList[i], new Point__default(network.nodeList[i].x, network.nodeList[i].y));
+        this.addNode(network.nodeList[i], new Point(network.nodeList[i].x, network.nodeList[i].y));
       } else {
         angle = Math.random() * TwoPi;
-        this.addNode(network.nodeList[i], new Point__default(initCenter.x + initRadius * Math.cos(angle), initCenter.y + initRadius * Math.sin(angle)));
+        this.addNode(network.nodeList[i], new Point(initCenter.x + initRadius * Math.cos(angle), initCenter.y + initRadius * Math.sin(angle)));
       }
     }
 
@@ -21058,8 +21091,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
   Forces.prototype.addNode = function(node, initPosition, initSpeed) {
-    initPosition = initPosition == null ? new Point__default(Math.random() * 200 - 100, Math.random() * 200 - 100) : initPosition;
-    initSpeed = initSpeed == null ? new Point__default(0, 0) : initSpeed;
+    initPosition = initPosition == null ? new Point(Math.random() * 200 - 100, Math.random() * 200 - 100) : initPosition;
+    initSpeed = initSpeed == null ? new Point(0, 0) : initSpeed;
     this.nodeList.addNode(node);
     node.x = initPosition.x;
     node.y = initPosition.y;
@@ -21133,7 +21166,7 @@ define('src/index', ['exports'], function (exports) {
     var dx;
     var dy;
     var d2;
-    for(i = 0; this.nodeList[i] != null; i++) {
+    for(var i = 0; this.nodeList[i] != null; i++) {
       node = this.nodeList[i];
       dx = point.x - node.x;
       dy = point.y - node.y;
@@ -21169,7 +21202,7 @@ define('src/index', ['exports'], function (exports) {
       x0r = node0.x + node0.width * 0.5 + dM;
       y0t = node0.y - node0.height * 0.5 - dM;
       y0b = node0.y + node0.height * 0.5 + dM;
-      for(j = i + 1; this.nodeList[j] != null; j++) {
+      for(var j = i + 1; this.nodeList[j] != null; j++) {
         node1 = this.nodeList[(j + this._i0 + i) % l];
         x1l = node1.x - node1.width * 0.5 - dM;
         x1r = node1.x + node1.width * 0.5 + dM;
@@ -21221,7 +21254,7 @@ define('src/index', ['exports'], function (exports) {
 
     for(i = 0; this.nodeList[i + 1] != null; i++) {
       node0 = this.nodeList[(i + this._i0) % l];
-      for(j = i + 1; this.nodeList[j] != null; j++) {
+      for(var j = i + 1; this.nodeList[j] != null; j++) {
         node1 = this.nodeList[(j + this._i0 + i) % l];
         vx = node1.x - node0.x;
         vy = node1.y - node0.y;
@@ -21246,7 +21279,7 @@ define('src/index', ['exports'], function (exports) {
   Forces.prototype.applyForces = function() {
     var node;
 
-    for(i = 0; this.nodeList[i] != null; i++) {
+    for(var i = 0; this.nodeList[i] != null; i++) {
       node = this.nodeList[i];
       node.vx += node.ax;
       node.vy += node.ay;
@@ -21286,7 +21319,7 @@ define('src/index', ['exports'], function (exports) {
 
   Forces.prototype._resetAccelerations = function() {
     var node;
-    for(i = 0; this.nodeList[i] != null; i++) {
+    for(var i = 0; this.nodeList[i] != null; i++) {
       node = this.nodeList[i];
       node.ax = 0;
       node.ay = 0;
@@ -21423,7 +21456,7 @@ define('src/index', ['exports'], function (exports) {
     pairsArray = pairsArray.sort(this._sortingCriteria, this._basis);
     UTLITARY_GLOBAL_VAR = null;
 
-    var newList = ClassUtils__instantiateWithSameType(list);
+    var newList = instantiateWithSameType(list);
     newList.name = list;
 
     for(var i = 0; list[i] != null; i++) {
@@ -21443,10 +21476,11 @@ define('src/index', ['exports'], function (exports) {
 
   Engine3D.prototype.updateAngles = function() {
     this._angles = this.getEulerAngles();
-  }
+  };
+
   Engine3D.prototype.getEulerAngles = function() {
     return new Point3D(Math.atan2(-this._basis[1].z, this._basis[2].z), Math.asin(this._basis[0].z), Math.atan2(-this._basis[0].y, this._basis[0].x));
-  }
+  };
 
 
   //rotation
@@ -21455,16 +21489,16 @@ define('src/index', ['exports'], function (exports) {
   //these must be at Operators3D
 
   Engine3D.prototype.basis3DRotation = function(basis, angles) {
-    ca = Math.cos(angles.x);
-    sa = Math.sin(angles.x);
-    cb = Math.cos(angles.y);
-    sb = Math.sin(angles.y);
-    cg = Math.cos(angles.z);
-    sg = Math.sin(angles.z);
+    var ca = Math.cos(angles.x);
+    var sa = Math.sin(angles.x);
+    var cb = Math.cos(angles.y);
+    var sb = Math.sin(angles.y);
+    var cg = Math.cos(angles.z);
+    var sg = Math.sin(angles.z);
 
     return new Polygon3D(new Point3D(basis[0].x * cg * cb + basis[0].y * (cg * sa * sb + sg * ca) + basis[0].z * (sg * sa - cg * ca * sb), -basis[0].x * sg * cb + basis[0].y * (cg * ca - sg * sa * sb) + basis[0].z * (sg * ca * sb + cg * sa), basis[0].x * sb - basis[0].y * sa * cb + basis[0].z * cb * ca), new Point3D(basis[1].x * cg * cb + basis[1].y * (cg * sa * sb + sg * ca) + basis[1].z * (sg * sa - cg * ca * sb), -basis[1].x * sg * cb + basis[1].y * (cg * ca - sg * sa * sb) + basis[1].z * (sg * ca * sb + cg * sa), basis[1].x * sb - basis[1].y * sa * cb + basis[1].z * cb * ca), new Point3D(basis[2].x * cg * cb + basis[2].y * (cg * sa * sb + sg * ca) + basis[2].z * (sg * sa - cg * ca * sb), -basis[2].x * sg * cb + basis[2].y * (cg * ca - sg * sa * sb) + basis[2].z * (sg * ca * sb + cg * sa), basis[2].x * sb - basis[2].y * sa * cb + basis[2].z * cb * ca));
 
-  }
+  };
 
   Engine3D.prototype.point3DRotation = function(point, angles) {
     var ca = Math.cos(angles.x);
@@ -21477,13 +21511,13 @@ define('src/index', ['exports'], function (exports) {
       point.x * cg * cb + point.y * (cg * sa * sb + sg * ca) + point.z * (sg * sa - cg * ca * sb), -point.x * sg * cb + point.y * (cg * ca - sg * sa * sb) + point.z * (sg * ca * sb + cg * sa),
       point.x * sb - point.y * sa * cb + point.z * cb * ca
     );
-  }
+  };
 
 
 
 
   Engine3D.prototype.line3D = function(point0, point1) {
-    var polygon = new Polygon__default();
+    var polygon = new Polygon();
 
     var p0 = point0; //while there's no Transformation3D'
     var prescale0 = this.lens / (this.lens + (this._basis[0].z * p0.x + this._basis[1].z * p0.y + this._basis[2].z * p0.z));
@@ -21494,8 +21528,8 @@ define('src/index', ['exports'], function (exports) {
 
     if(prescale0 > 0 || prescale1 > 0) {
       if(prescale0 > 0 && prescale1 > 0) {
-        polygon.push(new Point__default((this._basis[0].x * p0.x + this._basis[1].x * p0.y + this._basis[2].x * p0.z) * prescale0, (this._basis[0].y * p0.x + this._basis[1].y * p0.y + this._basis[2].y * p0.z) * prescale0));
-        polygon.push(new Point__default((this._basis[0].x * p1.x + this._basis[1].x * p1.y + this._basis[2].x * p1.z) * prescale1, (this._basis[0].y * p1.x + this._basis[1].y * p1.y + this._basis[2].y * p1.z) * prescale1));
+        polygon.push(new Point((this._basis[0].x * p0.x + this._basis[1].x * p0.y + this._basis[2].x * p0.z) * prescale0, (this._basis[0].y * p0.x + this._basis[1].y * p0.y + this._basis[2].y * p0.z) * prescale0));
+        polygon.push(new Point((this._basis[0].x * p1.x + this._basis[1].x * p1.y + this._basis[2].x * p1.z) * prescale1, (this._basis[0].y * p1.x + this._basis[1].y * p1.y + this._basis[2].y * p1.z) * prescale1));
         return polygon;
       } else {
         var p0B = new Point3D(this._basis[0].x * p0.x + this._basis[1].x * p0.y + this._basis[2].x * p0.z, this._basis[0].y * p0.x + this._basis[1].y * p0.y + this._basis[2].y * p0.z, this._basis[0].z * p0.x + this._basis[1].z * p0.y + this._basis[2].z * p0.z);
@@ -21504,11 +21538,11 @@ define('src/index', ['exports'], function (exports) {
         var pM = new Point3D(p0B.x + t * (p1B.x - p0B.x), p0B.y + t * (p1B.y - p0B.y), -this.lens + this._cuttingPlane);
         var prescaleM = this.lens / (this.lens + pM.z);
         if(prescale0 > 0) {
-          polygon.push(new Point__default(p0B.x * prescale0, p0B.y * prescale0));
-          polygon.push(new Point__default(pM.x * prescaleM, pM.y * prescaleM));
+          polygon.push(new Point(p0B.x * prescale0, p0B.y * prescale0));
+          polygon.push(new Point(pM.x * prescaleM, pM.y * prescaleM));
         } else {
-          polygon.push(new Point__default(pM.x * prescaleM, pM.y * prescaleM));
-          polygon.push(new Point__default(p1B.x * prescale1, p1B.y * prescale1));
+          polygon.push(new Point(pM.x * prescaleM, pM.y * prescaleM));
+          polygon.push(new Point(p1B.x * prescale1, p1B.y * prescale1));
         }
         return polygon;
       }
@@ -21551,8 +21585,8 @@ define('src/index', ['exports'], function (exports) {
 
 
   CountryListDraw.drawCountriesAsCircles = function(context, countryList, radiusList, frame, geoFrame, colors) {
-    geoFrame = geoFrame == null ? new Rectangle__default(-180, -90, 360, 180) : geoFrame;
-    colors = colors == null ? ColorListGenerators__default.createColorListWithSingleColor(countryList.length, 'rgba(100,100,100,0.6)') : colors;
+    geoFrame = geoFrame == null ? new Rectangle(-180, -90, 360, 180) : geoFrame;
+    colors = colors == null ? ColorListGenerators.createColorListWithSingleColor(countryList.length, 'rgba(100,100,100,0.6)') : colors;
 
     var dX = frame.width / geoFrame.width;
     var dY = frame.height / geoFrame.height;
@@ -21566,14 +21600,14 @@ define('src/index', ['exports'], function (exports) {
 
       context.fillStyle = colors[i];
       context.beginPath();
-      context.arc(frame.x + dX * (country.geoCenter.x - geoFrame.x), frame.getBottom() - dY * (country.geoCenter.y - geoFrame.y), radiusList[i], 0, src_Global__TwoPi);
+      context.arc(frame.x + dX * (country.geoCenter.x - geoFrame.x), frame.getBottom() - dY * (country.geoCenter.y - geoFrame.y), radiusList[i], 0, TwoPi);
       context.fill();
     }
   };
 
   CountryListDraw.drawCountriesPolygons = function(context, countryList, frame, geoFrame, colors, lineWidth, lineColor) {
-    geoFrame = geoFrame == null ? new Rectangle__default(-180, -90, 360, 180) : geoFrame;
-    colors = colors == null ? ColorListGenerators__default.createColorListWithSingleColor(countryList.length, 'rgba(100,100,100,0.6)') : colors;
+    geoFrame = geoFrame == null ? new Rectangle(-180, -90, 360, 180) : geoFrame;
+    colors = colors == null ? ColorListGenerators.createColorListWithSingleColor(countryList.length, 'rgba(100,100,100,0.6)') : colors;
 
     var dX = frame.width / geoFrame.width;
     var dY = frame.height / geoFrame.height;
@@ -21705,13 +21739,14 @@ define('src/index', ['exports'], function (exports) {
       };
 
       ///// capture image 1
-      var newCanvas = document.createElement("canvas");
-      newCanvas.width = frame.width;
-      newCanvas.height = frame.height;
-      var newContext = newCanvas.getContext("2d");
-      newContext.clearRect(0, 0, frame.width, frame.height);
-      var mainContext = context;
-      context = newContext;
+      // TODO refactor to not reassign context
+      // var newCanvas = document.createElement("canvas");
+      // newCanvas.width = frame.width;
+      // newCanvas.height = frame.height;
+      // var newContext = newCanvas.getContext("2d");
+      // newContext.clearRect(0, 0, frame.width, frame.height);
+      // var mainContext = context;
+      // context = newContext;
       /////
 
       var x;
@@ -21748,9 +21783,10 @@ define('src/index', ['exports'], function (exports) {
 
 
       //// capture image 2
-      context = mainContext;
-      frame.memory.image = new Image();
-      frame.memory.image.src = newCanvas.toDataURL();
+      // TODO refactor to not reassign context
+      // context = mainContext;
+      // frame.memory.image = new Image();
+      // frame.memory.image.src = newCanvas.toDataURL();
       ////
     }
 
@@ -21793,55 +21829,55 @@ define('src/index', ['exports'], function (exports) {
    * @return {Image}
    * tags:
    */
-  ImageDraw.captureVisualizationImage = function(visFunctionName, width, height) {
-    // TODO refactor this to import context from Global and not reassign it.
+  // ImageDraw.captureVisualizationImage = function(visFunctionName, width, height) {
+  //   // TODO refactor this to import context from Global and not reassign it.
 
-    console.log('visFunctionName', visFunctionName);
-    if(visFunctionName == null ||  width == null || (!width > 0) || height == null || !(height > 0)) return;
+  //   console.log('visFunctionName', visFunctionName);
+  //   if(visFunctionName == null ||  width == null || (!width > 0) || height == null || !(height > 0)) return;
 
-    var frame = new Rectangle__default(0, 0, width, height);
+  //   var frame = new Rectangle(0, 0, width, height);
 
-    var args = Array.prototype.slice.call(arguments);
-    args = [frame].concat(args.slice(3));
+  //   var args = Array.prototype.slice.call(arguments);
+  //   args = [frame].concat(args.slice(3));
 
-    var visFunction;
+  //   var visFunction;
 
-    if(visFunctionName.indexOf('.') == -1) {
-      visFunction = this[visFunctionName];
-    } else {
-      console.log(visFunctionName.split('.')[0], this[visFunctionName.split('.')[0]], this.mY);
-      if(this[visFunctionName.split('.')[0]] == null) return;
-      visFunction = this[visFunctionName.split('.')[0]][visFunctionName.split('.')[1]];
-    }
+  //   if(visFunctionName.indexOf('.') == -1) {
+  //     visFunction = this[visFunctionName];
+  //   } else {
+  //     console.log(visFunctionName.split('.')[0], this[visFunctionName.split('.')[0]], this.mY);
+  //     if(this[visFunctionName.split('.')[0]] == null) return;
+  //     visFunction = this[visFunctionName.split('.')[0]][visFunctionName.split('.')[1]];
+  //   }
 
-    if(visFunction == null) return null;
+  //   if(visFunction == null) return null;
 
-    console.log('ImageDraw.captureVisualizationImage | args', args);
-    console.log('ImageDraw.captureVisualizationImage | visFunction==null', visFunction == null);
+  //   console.log('ImageDraw.captureVisualizationImage | args', args);
+  //   console.log('ImageDraw.captureVisualizationImage | visFunction==null', visFunction == null);
 
-    var newCanvas = document.createElement("canvas");
-    newCanvas.width = width;
-    newCanvas.height = height;
-    var newContext = newCanvas.getContext("2d");
-    newContext.clearRect(0, 0, width, height);
+  //   var newCanvas = document.createElement("canvas");
+  //   newCanvas.width = width;
+  //   newCanvas.height = height;
+  //   var newContext = newCanvas.getContext("2d");
+  //   newContext.clearRect(0, 0, width, height);
 
-    var mainContext = context;
-    context = newContext;
+  //   var mainContext = context;
+  //   context = newContext;
 
-    ////draw
-    //setStroke('black', 2);
-    //line(0,0,width,height);
-    //line(width,0,0,height);
-    visFunction.apply(this, args);
-    ////
+  //   ////draw
+  //   //setStroke('black', 2);
+  //   //line(0,0,width,height);
+  //   //line(width,0,0,height);
+  //   visFunction.apply(this, args);
+  //   ////
 
-    context = mainContext;
+  //   context = mainContext;
 
-    var im = new Image();
-    im.src = newCanvas.toDataURL();
+  //   var im = new Image();
+  //   im.src = newCanvas.toDataURL();
 
-    return im;
-  };
+  //   return im;
+  // };
 
   exports.ImageDraw = ImageDraw;
 
@@ -21867,19 +21903,19 @@ define('src/index', ['exports'], function (exports) {
     textSize = textSize || 14;
     returnMode = returnMode == null ? 0 : returnMode;
 
-    if(frame.memory == null) frame.memory = { selected: 0, y: 0, multiSelected: new List__default() };
+    if(frame.memory == null) frame.memory = { selected: 0, y: 0, multiSelected: new List() };
 
     var changeList = frame.memory.list != list;
     var changeExternallySelected = (changeList && selectedInit != null) || frame.memory.selectedInit != selectedInit;
 
     if(changeExternallySelected) {
       if(returnMode == 3) {
-        frame.memory.multiSelected = new List__default();
+        frame.memory.multiSelected = new List();
         selectedInit.forEach(function(index) {
           frame.memory.multiSelected.push(list[index]);
         });
       } else if(returnMode == 2) {
-        frame.memory.multiSelected = List__default.fromArray(selectedInit).getImproved();
+        frame.memory.multiSelected = List.fromArray(selectedInit).getImproved();
       } else {
         frame.memory.selected = selectedInit;
       }
@@ -21911,7 +21947,7 @@ define('src/index', ['exports'], function (exports) {
       y0 = frame.y + 10;
     } else {
       if(mouseIn) {
-        y0Follow = Math.min(10 - (hList - frame.height + 20) * ((src_Global__mY - (frame.y + 10)) / (frame.height - 20)), 10);
+        y0Follow = Math.min(10 - (hList - frame.height + 20) * ((mY - (frame.y + 10)) / (frame.height - 20)), 10);
       } else {
         y0Follow = 10 - (hList - frame.height + 20) * frame.memory.selected / list.length;
       }
@@ -21922,7 +21958,7 @@ define('src/index', ['exports'], function (exports) {
     }
 
 
-    SimpleGraphics__setText('black', textSize);
+    setText('black', textSize);
 
     for(i = 0; list[i] != null; i++) {
       y = y0 + dy * i;
@@ -21940,20 +21976,20 @@ define('src/index', ['exports'], function (exports) {
         isSelected = multi ? onMulti : frame.memory.selected == i;
 
         if(isSelected) {
-          SimpleGraphics__setFill('black');
-          SimpleGraphics__fRect(frame.x + 2, y, frame.width - 4, dy);
-          SimpleGraphics__setFill('white');
+          setFill('black');
+          fRect(frame.x + 2, y, frame.width - 4, dy);
+          setFill('white');
         } else {
-          SimpleGraphics__setFill('black');
+          setFill('black');
         }
-        SimpleGraphics__fText(list[i].toString(), xTexts, y + 2);
+        fText(list[i].toString(), xTexts, y + 2);
 
-        if(mouseIn && src_Global__mY >= y && src_Global__mY < y + dy) {
-          SimpleGraphics__setFill('rgba(150,150,150,0.3)');
-          if(SimpleGraphics__fRectM(frame.x + 2, y, frame.width - 4, dy)) {
+        if(mouseIn && mY >= y && mY < y + dy) {
+          setFill('rgba(150,150,150,0.3)');
+          if(fRectM(frame.x + 2, y, frame.width - 4, dy)) {
             SimpleGraphics__setCursor('pointer');
           }
-          if(src_Global__MOUSE_DOWN) {
+          if(MOUSE_DOWN) {
             if(multi) {
 
               if(onMulti) {
@@ -21970,12 +22006,12 @@ define('src/index', ['exports'], function (exports) {
           }
         }
       } else {
-        SimpleGraphics__setFill('black');
+        setFill('black');
       }
 
       if(colorList) {
-        SimpleGraphics__setFill(colorList == null ? 'rgb(200, 200, 200)' : colorList[i % n]);
-        SimpleGraphics__fRect(x, y + 4, 10, 10);
+        setFill(colorList == null ? 'rgb(200, 200, 200)' : colorList[i % n]);
+        fRect(x, y + 4, 10, 10);
       }
 
     }
@@ -21985,14 +22021,14 @@ define('src/index', ['exports'], function (exports) {
 
   exports.ListDraw = ListDraw;
 
-  function IntervalTableDraw__IntervalTableDraw() {}
-  var IntervalTableDraw__default = IntervalTableDraw__IntervalTableDraw;
+  function IntervalTableDraw() {}
 
-  IntervalTableDraw__IntervalTableDraw.MIN_CHARACTERS_SIZE = 1;
 
-  IntervalTableDraw__IntervalTableDraw.drawIntervalsFlowTable = function(intervalsFlowTable, frame, colors, bezier, offValue) { //, returnHovered){ //TODO: implement rollover detection, using _isOnShape (below)
-    frame = frame == null ? new Rectangle__default(10, 10, 400, 300) : frame;
-    colors = colors == null ? ColorListGenerators__default.createCategoricalColors(0, intervalsFlowTable.length, ColorScales__default.temperature) : colors;
+  IntervalTableDraw.MIN_CHARACTERS_SIZE = 1;
+
+  IntervalTableDraw.drawIntervalsFlowTable = function(intervalsFlowTable, frame, colors, bezier, offValue) { //, returnHovered){ //TODO: implement rollover detection, using _isOnShape (below)
+    frame = frame == null ? new Rectangle(10, 10, 400, 300) : frame;
+    colors = colors == null ? ColorListGenerators.createCategoricalColors(0, intervalsFlowTable.length, ColorScales.temperature) : colors;
     bezier = bezier || false;
     offValue = offValue == null ? 0.45 : offValue;
 
@@ -22030,7 +22066,7 @@ define('src/index', ['exports'], function (exports) {
 
       sY = y;
 
-      point = new Point__default(x, intervalList[0].y * dY + sY);
+      point = new Point(x, intervalList[0].y * dY + sY);
       src_Global__context.moveTo(point.x, point.y);
 
       prevPoint = point;
@@ -22038,7 +22074,7 @@ define('src/index', ['exports'], function (exports) {
       for(j = 1; j < nCols; j++) {
         sY = y;
 
-        point = new Point__default(j * dX + x, intervalList[j].y * dY + sY);
+        point = new Point(j * dX + x, intervalList[j].y * dY + sY);
 
         if(bezier) {
           offX = (point.x - prevPoint.x) * offValue;
@@ -22050,14 +22086,14 @@ define('src/index', ['exports'], function (exports) {
         prevPoint = point;
       }
 
-      point = new Point__default((nCols - 1) * dX + x, intervalList[nCols - 1].x * dY + sY);
+      point = new Point((nCols - 1) * dX + x, intervalList[nCols - 1].x * dY + sY);
       src_Global__context.lineTo(point.x, point.y);
       prevPoint = point;
 
       for(j = nCols - 2; j >= 0; j--) {
         sY = y;
 
-        point = new Point__default(j * dX + x, intervalList[j].x * dY + sY);
+        point = new Point(j * dX + x, intervalList[j].x * dY + sY);
 
         if(bezier) {
           offX = (point.x - prevPoint.x) * offValue;
@@ -22074,7 +22110,7 @@ define('src/index', ['exports'], function (exports) {
         prevPoint = point;
       }
 
-      point = new Point__default(x, intervalList[0].x * dY + sY);
+      point = new Point(x, intervalList[0].x * dY + sY);
       src_Global__context.lineTo(point.x, point.y);
 
       src_Global__context.fill();
@@ -22083,7 +22119,7 @@ define('src/index', ['exports'], function (exports) {
 
     //return nHovered;
   };
-  IntervalTableDraw__IntervalTableDraw._isOnShape = function(prevPoint, point, prevYsup, newYsup, offX, testX, textY) {
+  IntervalTableDraw._isOnShape = function(prevPoint, point, prevYsup, newYsup, offX, testX, textY) {
     var t = (testX - prevPoint.x) / (point.x - prevPoint.x);
     var u = 1 - t;
 
@@ -22118,19 +22154,19 @@ define('src/index', ['exports'], function (exports) {
 
 
 
-  IntervalTableDraw__IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, center, radius, r0, colors, texts, returnHovered, angles, angle0) {
+  IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, center, radius, r0, colors, texts, returnHovered, angles, angle0) {
     var nElements = intervalsFlowTable.length;
     var i;
     var j;
 
     colors = colors == null ? ColorListOperators.colorListFromColorScale(new ColorScale(ColorOperators.temperatureScale), nElements) : colors;
-    center = center == null ? new Point__default(100, 100) : center;
+    center = center == null ? new Point(100, 100) : center;
     radius = radius == null ? 200 : radius;
     r0 = r0 == null ? 10 : r0;
     angle0 = angle0 == null ? 0 : angle0;
 
     var nCols = intervalsFlowTable[0].length;
-    var dA = src_Global__TwoPi / nCols;
+    var dA = TwoPi / nCols;
     var dR = (radius - r0);
 
     var point;
@@ -22178,7 +22214,7 @@ define('src/index', ['exports'], function (exports) {
 
       src_Global__context.beginPath();
 
-      point = new Point__default(angles == null ? 0 : angles[0] + angle0, (1 - intervalList[0].y) * dR + r0);
+      point = new Point(angles == null ? 0 : angles[0] + angle0, (1 - intervalList[0].y) * dR + r0);
       src_Global__context.moveTo(point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
 
       prevPoint = point;
@@ -22186,7 +22222,7 @@ define('src/index', ['exports'], function (exports) {
       for(j = 1; j <= nCols; j++) {
 
         interval = intervalList[j % nCols];
-        point = new Point__default(angles == null ? j * dA : angles[j % nCols] + angle0, (1 - interval.y) * dR + r0);
+        point = new Point(angles == null ? j * dA : angles[j % nCols] + angle0, (1 - interval.y) * dR + r0);
 
         nR = prevPoint.y / cosOffA;
         nR2 = point.y / cosOffA;
@@ -22218,12 +22254,12 @@ define('src/index', ['exports'], function (exports) {
         }
       }
 
-      point = new Point__default(angles == null ? 0 : angles[0] + angle0, (1 - intervalList[0].x) * dR + r0);
+      point = new Point(angles == null ? 0 : angles[0] + angle0, (1 - intervalList[0].x) * dR + r0);
       src_Global__context.lineTo(point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
       prevPoint = point;
 
       for(j = nCols - 1; j >= 0; j--) {
-        point = new Point__default(angles == null ? j * dA : angles[j] + angle0, (1 - intervalList[j].x) * dR + r0);
+        point = new Point(angles == null ? j * dA : angles[j] + angle0, (1 - intervalList[j].x) * dR + r0);
 
         nR = prevPoint.y / cosOffA;
         nR2 = point.y / cosOffA;
@@ -22235,7 +22271,7 @@ define('src/index', ['exports'], function (exports) {
         prevPoint = point;
       }
 
-      point = new Point__default(angles == null ? 0 : angles[0] + angle0, (1 - intervalList[0].x) * dR + r0);
+      point = new Point(angles == null ? 0 : angles[0] + angle0, (1 - intervalList[0].x) * dR + r0);
       src_Global__context.lineTo(point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
 
       src_Global__context.fill();
@@ -22250,23 +22286,23 @@ define('src/index', ['exports'], function (exports) {
     return nHovered;
   };
 
-  IntervalTableDraw__IntervalTableDraw._isOnRadialShape = function(center, testPoint, a0, a1, r0a, r0b, r1a, r1b) {
-    if(a1 < a0) a1 += src_Global__TwoPi;
+  IntervalTableDraw._isOnRadialShape = function(center, testPoint, a0, a1, r0a, r0b, r1a, r1b) {
+    if(a1 < a0) a1 += TwoPi;
 
     var ang = center.angleToPoint(testPoint);
 
-    if(ang < 0) ang += src_Global__TwoPi;
-    if(ang > src_Global__TwoPi) ang -= src_Global__TwoPi;
+    if(ang < 0) ang += TwoPi;
+    if(ang > TwoPi) ang -= TwoPi;
 
-    if(ang + src_Global__TwoPi < a1) ang += src_Global__TwoPi;
-    if(ang - src_Global__TwoPi > a0) ang -= src_Global__TwoPi;
+    if(ang + TwoPi < a1) ang += TwoPi;
+    if(ang - TwoPi > a0) ang -= TwoPi;
 
     if(ang < a0 || ang > a1) return false;
     var dA = a1 - a0;
     var t = (ang - a0) / dA;
 
-    var pa = GeometryOperators__default.bezierCurvePoints(a0, r0a, a0 + dA * 0.5, r0a, a1 - dA * 0.5, r1a, a1, r1a, t);
-    var pb = GeometryOperators__default.bezierCurvePoints(a0, r0b, a0 + dA * 0.25, r0b, a1 - dA * 0.25, r1b, a1, r1b, t);
+    var pa = GeometryOperators.bezierCurvePoints(a0, r0a, a0 + dA * 0.5, r0a, a1 - dA * 0.5, r1a, a1, r1a, t);
+    var pb = GeometryOperators.bezierCurvePoints(a0, r0b, a0 + dA * 0.25, r0b, a1 - dA * 0.25, r1b, a1, r1b, t);
 
     r = testPoint.subtract(center).getNorm();
 
@@ -22275,14 +22311,14 @@ define('src/index', ['exports'], function (exports) {
 
 
 
-  IntervalTableDraw__IntervalTableDraw.drawIntervalsWordsFlowTable = function(frame, intervalsFlowTable, texts, colors, typode) {
+  IntervalTableDraw.drawIntervalsWordsFlowTable = function(frame, intervalsFlowTable, texts, colors, typode) {
     var nElements = intervalsFlowTable.length;
 
     var i;
     var j;
 
-    colors = colors == null ? ColorListGenerators__default.createCategoricalColors(0, intervalsFlowTable.length, ColorScales__default.temperature) : colors;
-    frame = frame == null ? new Rectangle__default(10, 10, 400, 300) : frame;
+    colors = colors == null ? ColorListGenerators.createCategoricalColors(0, intervalsFlowTable.length, ColorScales.temperature) : colors;
+    frame = frame == null ? new Rectangle(10, 10, 400, 300) : frame;
 
     var nCols = intervalsFlowTable[0].length;
     var dX = frame.width / (nCols - 1);
@@ -22294,8 +22330,8 @@ define('src/index', ['exports'], function (exports) {
     var nextPoint0;
     var nextPoint1;
 
-    var point0Prev = new Point__default();
-    var point1Prev = new Point__default();
+    var point0Prev = new Point();
+    var point1Prev = new Point();
 
     var center;
     var size;
@@ -22348,8 +22384,8 @@ define('src/index', ['exports'], function (exports) {
       t = 0;
 
       sY = (1 - lastIntervalList[0].y) * 0.5 * dY + y;
-      point0 = new Point__default(x, intervalList[0].x * dY + sY);
-      point1 = new Point__default(x, intervalList[0].y * dY + sY);
+      point0 = new Point(x, intervalList[0].x * dY + sY);
+      point1 = new Point(x, intervalList[0].y * dY + sY);
 
       do {
         nChar++;
@@ -22373,7 +22409,7 @@ define('src/index', ['exports'], function (exports) {
 
         offX = factX * 0.45;
 
-        valueLastInterval = IntervalTableDraw__IntervalTableDraw._bezierValue(xj0, xj1, lastIntervalList[j].y, lastIntervalList[j + 1].y, t, offX);
+        valueLastInterval = IntervalTableDraw._bezierValue(xj0, xj1, lastIntervalList[j].y, lastIntervalList[j + 1].y, t, offX);
 
 
         prevsY = sY;
@@ -22386,19 +22422,19 @@ define('src/index', ['exports'], function (exports) {
         point1Prev.y = point1.y;
 
 
-        valueX = IntervalTableDraw__IntervalTableDraw._bezierValue(xj0, xj1, intervalList[j].x, intervalList[j + 1].x, t, offX);
-        valueY = IntervalTableDraw__IntervalTableDraw._bezierValue(xj0, xj1, intervalList[j].y, intervalList[j + 1].y, t, offX);
+        valueX = IntervalTableDraw._bezierValue(xj0, xj1, intervalList[j].x, intervalList[j + 1].x, t, offX);
+        valueY = IntervalTableDraw._bezierValue(xj0, xj1, intervalList[j].y, intervalList[j + 1].y, t, offX);
 
 
-        point0 = new Point__default(xx + x, valueX * dY + sY);
-        point1 = new Point__default(xx + x, valueY * dY + sY);
+        point0 = new Point(xx + x, valueX * dY + sY);
+        point1 = new Point(xx + x, valueY * dY + sY);
 
-        center = new Point__default(point0Prev.x + jumpX * 0.5, (point0.y + point1.y + point0Prev.y + point1Prev.y) * 0.25);
+        center = new Point(point0Prev.x + jumpX * 0.5, (point0.y + point1.y + point0Prev.y + point1Prev.y) * 0.25);
 
         typode ? src_Global__context.strokeStyle = colors[i] : src_Global__context.fillStyle = colors[i];
 
 
-        if(size > IntervalTableDraw__IntervalTableDraw.MIN_CHARACTERS_SIZE) {
+        if(size > IntervalTableDraw.MIN_CHARACTERS_SIZE) {
           if(typode) {
             DrawTextsAdvanced.typodeOnQuadrilater(selectedChar, point0Prev, point0, point1, point1Prev);
           } else {
@@ -22412,19 +22448,19 @@ define('src/index', ['exports'], function (exports) {
       } while (j + 1 < nCols);
     }
   };
-  IntervalTableDraw__IntervalTableDraw._bezierValue = function(x0, x1, y0, y1, t, offX) {
+  IntervalTableDraw._bezierValue = function(x0, x1, y0, y1, t, offX) {
     var u = 1 - t;
-    var p0 = new Point__default(x0 + t * offX, y0);
-    var p1 = new Point__default(u * (x0 + offX) + t * (x1 - offX), u * y0 + t * y1);
-    var p2 = new Point__default(x1 - u * offX, y1);
+    var p0 = new Point(x0 + t * offX, y0);
+    var p1 = new Point(u * (x0 + offX) + t * (x1 - offX), u * y0 + t * y1);
+    var p2 = new Point(x1 - u * offX, y1);
 
-    var P0 = new Point__default(u * p0.x + t * p1.x, u * p0.y + t * p1.y);
-    var P1 = new Point__default(u * p1.x + t * p2.x, u * p1.y + t * p2.y);
+    var P0 = new Point(u * p0.x + t * p1.x, u * p0.y + t * p1.y);
+    var P1 = new Point(u * p1.x + t * p2.x, u * p1.y + t * p2.y);
 
     return u * P0.y + t * P1.y;
   };
 
-  exports.IntervalTableDraw = IntervalTableDraw__default;
+  exports.IntervalTableDraw = IntervalTableDraw;
 
   function NumberTableDraw() {}
 
@@ -22475,8 +22511,8 @@ define('src/index', ['exports'], function (exports) {
         amp = minMaxInterval.getAmplitude();
       }
       for(j = 0; numberList[j] != null; j++) {
-        context.fillStyle = colorScale((numberList[j] - minMaxInterval.x) / amp);
-        context.fillRect(x, Math.round(frame.y + j * dY), Math.ceil(dX) - margin, Math.ceil(dY) - margin);
+        src_Global__context.fillStyle = colorScale((numberList[j] - minMaxInterval.x) / amp);
+        src_Global__context.fillRect(x, Math.round(frame.y + j * dY), Math.ceil(dX) - margin, Math.ceil(dY) - margin);
         if(mouseXOnColumn && mY > frame.y + j * dY && mY <= frame.y + (j + 1) * dY) overCoordinates = new Point(i, j);
       }
     }
@@ -22541,7 +22577,7 @@ define('src/index', ['exports'], function (exports) {
     }
 
     if(iOver != null) {
-      setCursor('pointer');
+      SimpleGraphics__setCursor('pointer');
       return iOver;
     }
   };
@@ -22802,18 +22838,19 @@ define('src/index', ['exports'], function (exports) {
     var flowFrame = new Rectangle(0, 0, frame.width, horizontalLabels == null ? frame.height : (frame.height - 14));
 
     if(frame.memory.image == null) {
+      // TODO refactor to not reassign context
       ///// capture image
-      var newCanvas = document.createElement("canvas");
-      newCanvas.width = frame.width;
-      newCanvas.height = frame.height;
-      var newContext = newCanvas.getContext("2d");
-      newContext.clearRect(0, 0, frame.width, frame.height);
-      var mainContext = context;
-      context = newContext;
-      IntervalTableDraw.drawIntervalsFlowTable(frame.memory.flowIntervals, flowFrame, frame.memory.actualColorList, bezier, 0.3);
-      context = mainContext;
-      frame.memory.image = new Image();
-      frame.memory.image.src = newCanvas.toDataURL();
+      // var newCanvas = document.createElement("canvas");
+      // newCanvas.width = frame.width;
+      // newCanvas.height = frame.height;
+      // var newContext = newCanvas.getContext("2d");
+      // newContext.clearRect(0, 0, frame.width, frame.height);
+      // var mainContext = context;
+      // context = newContext;
+      // IntervalTableDraw.drawIntervalsFlowTable(frame.memory.flowIntervals, flowFrame, frame.memory.actualColorList, bezier, 0.3);
+      // context = mainContext;
+      // frame.memory.image = new Image();
+      // frame.memory.image.src = newCanvas.toDataURL();
       /////
     }
 
@@ -22824,8 +22861,8 @@ define('src/index', ['exports'], function (exports) {
       frame.memory.mXF = Math.min(Math.max(frame.memory.mXF, frame.x), frame.getRight());
 
       if(frame.memory.fOpen < 0.999) {
-        context.save();
-        context.translate(frame.x, frame.y);
+        src_Global__context.save();
+        src_Global__context.translate(frame.x, frame.y);
         var cut = frame.memory.mXF - frame.x;
         var x0 = Math.floor(cut * frame.memory.fOpen);
         var x1 = Math.ceil(frame.width - (frame.width - cut) * frame.memory.fOpen);
@@ -22835,7 +22872,7 @@ define('src/index', ['exports'], function (exports) {
 
         NumberTableDraw._drawPartialFlow(flowFrame, frame.memory.flowIntervals, frame.memory.names, frame.memory.actualColorList, cut, x0, x1, 0.3, sorted, showValues ? numberTable : null);
 
-        context.restore();
+        src_Global__context.restore();
       } else {
         drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
       }
@@ -22945,7 +22982,7 @@ define('src/index', ['exports'], function (exports) {
           setText('white', h / pt, null, null, 'middle');
         }
 
-        context.fillText(text, x0, y + h * 0.5);
+        src_Global__context.fillText(text, x0, y + h * 0.5);
 
         if(numberTable) {
           wt = getTextW(text);
@@ -23053,27 +23090,28 @@ define('src/index', ['exports'], function (exports) {
       drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
     } else {
       if(captureImage) {
-        var newCanvas = document.createElement("canvas");
-        newCanvas.width = frame.width;
-        newCanvas.height = frame.height;
-        var newContext = newCanvas.getContext("2d");
-        newContext.clearRect(0, 0, frame.width, frame.height);
-        var mainContext = context;
-        context = newContext;
-        var prevFx = frame.x;
-        var prevFy = frame.y;
-        frame.x = 0;
-        frame.y = 0;
-        setFill('white');
-        fRect(0, 0, frame.width, frame.height);
+        // TODO refactor to not reassign context
+        // var newCanvas = document.createElement("canvas");
+        // newCanvas.width = frame.width;
+        // newCanvas.height = frame.height;
+        // var newContext = newCanvas.getContext("2d");
+        // newContext.clearRect(0, 0, frame.width, frame.height);
+        // var mainContext = context;
+        // context = newContext;
+        // var prevFx = frame.x;
+        // var prevFy = frame.y;
+        // frame.x = 0;
+        // frame.y = 0;
+        // setFill('white');
+        // fRect(0, 0, frame.width, frame.height);
       }
 
-      context.save();
+      src_Global__context.save();
       clipRectangle(frame.x, frame.y, frame.width, frame.height);
 
       IntervalTableDraw.drawCircularIntervalsFlowTable(frame.memory.flowIntervals, frame.getCenter(), frame.memory.radius * frame.memory.zoom, frame.memory.r0, frame.memory.actualColorList, frame.memory.names, true, frame.memory.angles, frame.memory.angle0);
 
-      context.restore();
+      src_Global__context.restore();
 
       if(names) {
         var a;
@@ -23090,12 +23128,13 @@ define('src/index', ['exports'], function (exports) {
 
 
       if(captureImage) {
-        context = mainContext;
-        frame.memory.image = new Image();
-        frame.memory.image.src = newCanvas.toDataURL();
-        frame.x = prevFx;
-        frame.y = prevFy;
-        drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+        // TODO refactor to not reassign context
+        // context = mainContext;
+        // frame.memory.image = new Image();
+        // frame.memory.image.src = newCanvas.toDataURL();
+        // frame.x = prevFx;
+        // frame.y = prevFy;
+        // drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
       }
     }
   };
@@ -23134,7 +23173,7 @@ define('src/index', ['exports'], function (exports) {
         frame.memory.zero = -frame.memory.minmax.x / frame.memory.minmax.getAmplitude();
       }
 
-      frame.memory.xTexts = new StringList__default();
+      frame.memory.xTexts = new StringList();
 
       if(xValues != null && xValues.type == "Interval") {
         var kx = (xValues.getAmplitude() + 1) / numberList.length;
@@ -23146,7 +23185,7 @@ define('src/index', ['exports'], function (exports) {
     }
 
     var i;
-    var subframe = new Rectangle__default(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
+    var subframe = new Rectangle(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
     subframe.bottom = subframe.getBottom();
     var x;
     var dx = subframe.width / numberList.length;
@@ -23159,7 +23198,7 @@ define('src/index', ['exports'], function (exports) {
       var zeroY = subframe.bottom - subframe.height * frame.memory.zero; //Math.max(subframe.bottom - subframe.height*frame.memory.zero, subframe.y);
       for(i = 0; numberList[i] != null; i++) {
         x = subframe.x + i * dx;
-        if(mouseOnFrame && src_Global__mX > x && src_Global__mX < x + dx) {
+        if(mouseOnFrame && mX > x && mX < x + dx) {
           overI = i;
           setFill('black');
         } else {
@@ -23170,7 +23209,7 @@ define('src/index', ['exports'], function (exports) {
     } else {
       for(i = 0; numberList[i] != null; i++) {
         x = subframe.x + i * dx;
-        if(mouseOnFrame && src_Global__mX > x && src_Global__mX < x + dx) {
+        if(mouseOnFrame && mX > x && mX < x + dx) {
           overI = i;
           setFill('black');
         } else {
@@ -23188,16 +23227,16 @@ define('src/index', ['exports'], function (exports) {
       var w = getTextW(text);
       setFill('rgb(100,100,100)');
       fLines(
-        src_Global__mX, src_Global__mY,
-        src_Global__mX + 16, src_Global__mY - 10,
-        src_Global__mX + w + 16, src_Global__mY - 10,
-        src_Global__mX + w + 16, src_Global__mY - 30,
-        src_Global__mX + 6, src_Global__mY - 30,
-        src_Global__mX + 6, src_Global__mY - 10
+        mX, mY,
+        mX + 16, mY - 10,
+        mX + w + 16, mY - 10,
+        mX + w + 16, mY - 30,
+        mX + 6, mY - 30,
+        mX + 6, mY - 10
       );
       setFill('white');
-      fText(text, src_Global__mX + 10, src_Global__mY - 26);
-      if(src_Global__MOUSE_DOWN) clicked = overI;
+      fText(text, mX + 10, mY - 26);
+      if(MOUSE_DOWN) clicked = overI;
     }
 
     return clicked;
@@ -23263,7 +23302,7 @@ define('src/index', ['exports'], function (exports) {
 
     setText('black', fontSize, null, null, null, fontStyle);
 
-    significantChange = frame.memory == null || object != frame.memory.object || fontSize != frame.memory.fontSize || fontStyle != frame.memory.fontStyle || margin != frame.memory.margin || frame.width != frame.memory.width || frame.height != frame.memory.height;
+    var significantChange = frame.memory == null || object != frame.memory.object || fontSize != frame.memory.fontSize || fontStyle != frame.memory.fontStyle || margin != frame.memory.margin || frame.width != frame.memory.width || frame.height != frame.memory.height;
 
     //setup
     if(significantChange) {
@@ -23297,9 +23336,9 @@ define('src/index', ['exports'], function (exports) {
 
     var normWeights = table[1].sqrt().getNormalizedToMax();
 
-    rectangles = new List();
-    textPositions = new Polygon();
-    textSizes = new NumberList();
+    var rectangles = new List();
+    var textPositions = new Polygon();
+    var textSizes = new NumberList();
 
     var rectanglesPlaced = new List();
 
@@ -23345,12 +23384,6 @@ define('src/index', ['exports'], function (exports) {
 
   exports.StringListDraw = StringListDraw;
 
-  /**
-   * @classdesc Operators that contain visualization method algoritms and return a Table with parameters for StringListPrimitive
-   *
-   * @namespace
-   * @category strings
-   */
   function StringListVisOperators() {}
 
 
@@ -23397,8 +23430,8 @@ define('src/index', ['exports'], function (exports) {
 
         sizes.push(sT);
 
-        context.font = String(sT) + 'px ' + font;
-        wT = context.measureText(tag).width;
+        src_Global__context.font = String(sT) + 'px ' + font;
+        wT = src_Global__context.measureText(tag).width;
 
         if(xx + wT > frame.width) {
           xx = 0;
@@ -23434,7 +23467,7 @@ define('src/index', ['exports'], function (exports) {
       if(trys > 10) notFinished = false;
     }
 
-    table = new Table();
+    table = new Table__default();
     table[0] = stringList;
     table[1] = positions;
     table[2] = sizes;
@@ -23452,9 +23485,9 @@ define('src/index', ['exports'], function (exports) {
 
     var roundSizes = mode == 0;
 
-    rectangles = new List();
-    textPositions = new Polygon();
-    textSizes = new NumberList();
+    var rectangles = new List();
+    var textPositions = new Polygon();
+    var textSizes = new NumberList();
 
     var rectanglesPlaced = new List();
 
@@ -23493,7 +23526,7 @@ define('src/index', ['exports'], function (exports) {
       textSizes[i] = roundSizes ? Math.round(normWeights[i] * 12) * dL : normWeights[i] * 12 * dL;
 
       DrawTexts.setContextTextProperties('black', textSizes[i], LOADED_FONT, null, null, 'bold');
-      w = Math.ceil((2 + context.measureText(stringList[i]).width) / dL) * dL;
+      w = Math.ceil((2 + src_Global__context.measureText(stringList[i]).width) / dL) * dL;
       h = textSizes[i];
 
       switch(mode) {
@@ -23572,7 +23605,7 @@ define('src/index', ['exports'], function (exports) {
       }
     }
 
-    var table = new Table();
+    var table = new Table__default();
     table[0] = stringList;
     table[1] = rectangles;
     table[2] = textSizes;
@@ -23591,12 +23624,6 @@ define('src/index', ['exports'], function (exports) {
 
   exports.StringListVisOperators = StringListVisOperators;
 
-  /**
-   * @classdesc Functions for drawing {@link Network|Networks}.
-   *
-   * @namespace
-   * @category networks
-   */
   function NetworkDraw() {}
 
 
@@ -23614,7 +23641,7 @@ define('src/index', ['exports'], function (exports) {
       setFill(node.color == null ? 'rgb(50,50,50)' : node.color);
       over = fCircleM(x, y, r);
     }
-    if(over) setCursor('pointer');
+    if(over) SimpleGraphics__setCursor('pointer');
     return over;
   };
 
@@ -23877,12 +23904,12 @@ define('src/index', ['exports'], function (exports) {
     }
 
     for(i = 0; nodeList[i] != null; i++) {
-      context.fillStyle = colors[i];
+      src_Global__context.fillStyle = colors[i];
       if(useWeights) {
         ww = dX * normalizedNodeWeights[i];
         hh = dY * normalizedNodeWeights[i];
-        context.fillRect(frame.x + xx, frame.y, ww - margin, h);
-        context.fillRect(frame.x, frame.y + yy, w, hh - margin);
+        src_Global__context.fillRect(frame.x + xx, frame.y, ww - margin, h);
+        src_Global__context.fillRect(frame.x, frame.y + yy, w, hh - margin);
 
         if(returnHovered) {
           if(mouseX > frame.x + xx && mouseX < frame.x + xx + ww) hoverValues.x = i;
@@ -23898,23 +23925,23 @@ define('src/index', ['exports'], function (exports) {
 
 
       } else {
-        context.fillRect(frame.x + (i + 1) * dX, frame.y, w, h);
-        context.fillRect(frame.x, frame.y + (i + 1) * dY, w, h);
+        src_Global__context.fillRect(frame.x + (i + 1) * dX, frame.y, w, h);
+        src_Global__context.fillRect(frame.x, frame.y + (i + 1) * dY, w, h);
       }
     }
 
     for(i = 0; relationList[i] != null; i++) {
       relation = relationList[i];
-      context.fillStyle = relationsColorScaleFunction(relation.weight);
+      src_Global__context.fillStyle = relationsColorScaleFunction(relation.weight);
       if(useWeights) {
-        context.fillRect(frame.x + xNodes[relation.node0.id], frame.y + yNodes[relation.node1.id], wNodes[relation.node0.id] - margin, hNodes[relation.node1.id] - margin);
-        if(!directed) context.fillRect(frame.x + yNodes[relation.node1.id], frame.y + xNodes[relation.node0.id], hNodes[relation.node1.id] - margin, wNodes[relation.node0.id] - margin);
+        src_Global__context.fillRect(frame.x + xNodes[relation.node0.id], frame.y + yNodes[relation.node1.id], wNodes[relation.node0.id] - margin, hNodes[relation.node1.id] - margin);
+        if(!directed) src_Global__context.fillRect(frame.x + yNodes[relation.node1.id], frame.y + xNodes[relation.node0.id], hNodes[relation.node1.id] - margin, wNodes[relation.node0.id] - margin);
       } else {
         ix = nodeList.indexOf(relation.node0) + 1;
         iy = nodeList.indexOf(relation.node1) + 1;
-        context.fillRect(frame.x + ix * dX, frame.y + iy * dY, w, h);
+        src_Global__context.fillRect(frame.x + ix * dX, frame.y + iy * dY, w, h);
         if(!directed && (ix != iy)) {
-          context.fillRect(frame.x + iy * dX, frame.y + ix * dY, w, h);
+          src_Global__context.fillRect(frame.x + iy * dX, frame.y + ix * dY, w, h);
         }
       }
 
@@ -23924,12 +23951,6 @@ define('src/index', ['exports'], function (exports) {
 
   exports.NetworkDraw = NetworkDraw;
 
-  /**
-   * @classdesc Functions for drawing {@link Tree|Trees}.
-   *
-   * @namespace
-   * @category networks
-   */
   function TreeDraw() {}
 
 
@@ -23951,11 +23972,12 @@ define('src/index', ['exports'], function (exports) {
     var dX = frame.width / tree.nLevels;
     TreeDraw._drawRectanglesTreeChildren(tree.nodeList[0], new Rectangle(frame.x, frame.y, dX, frame.height), levelColors, margin);
   };
+
   TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin) {
-    context.fillStyle = colors[node.level];
-    context.fillRect(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
+    src_Global__context.fillStyle = colors[node.level];
+    src_Global__context.fillRect(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
     var children = node.toNodeList;
-    //c.log(node.level, node.name, children.length);
+    //console.log((node.level, node.name, children.length);
     if(children.length > 0) {
       var i;
       var dY = frame.height / (node.descentWeight - 1);
@@ -24050,8 +24072,8 @@ define('src/index', ['exports'], function (exports) {
       frame.memory.nFLastChange = nF;
       frame.memory.image = null;
       frame.memory.actualColorList = colorList == null ? ColorListGenerators.createCategoricalColors(0, tree.nLevels, ColorScales.grayToOrange, 0.1) : colorList;
-      frame.memory.nodesColorList = new ColorList();
-      if(textColor == null) frame.memory.textsColorList = new ColorList();
+      frame.memory.nodesColorList = new ColorList__default();
+      if(textColor == null) frame.memory.textsColorList = new ColorList__default();
 
       if(frame.memory.actualColorList.length <= tree.nLevels) {
         tree.nodeList.forEach(function(node, i) {
@@ -24142,22 +24164,23 @@ define('src/index', ['exports'], function (exports) {
       drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
     } else {
       if(captureImage) {
-        var newCanvas = document.createElement("canvas");
-        newCanvas.width = frame.width;
-        newCanvas.height = frame.height;
-        var newContext = newCanvas.getContext("2d");
-        newContext.clearRect(0, 0, frame.width, frame.height);
-        var mainContext = context;
-        context = newContext;
-        var prevFx = frame.x;
-        var prevFy = frame.y;
-        frame.x = 0;
-        frame.y = 0;
-        setFill('white');
-        fRect(0, 0, frame.width, frame.height);
-        setText('black', 12);
+        // TODO refactor this to not reassign context
+        // var newCanvas = document.createElement("canvas");
+        // newCanvas.width = frame.width;
+        // newCanvas.height = frame.height;
+        // var newContext = newCanvas.getContext("2d");
+        // newContext.clearRect(0, 0, frame.width, frame.height);
+        // var mainContext = context;
+        // context = newContext;
+        // var prevFx = frame.x;
+        // var prevFy = frame.y;
+        // frame.x = 0;
+        // frame.y = 0;
+        // setFill('white');
+        // fRect(0, 0, frame.width, frame.height);
+        // setText('black', 12);
       } else {
-        context.save();
+        src_Global__context.save();
         clipRectangle(frame.x, frame.y, frame.width, frame.height);
       }
 
@@ -24209,18 +24232,19 @@ define('src/index', ['exports'], function (exports) {
       });
 
       if(captureImage) {
-        context = mainContext;
-        frame.memory.image = new Image();
-        frame.memory.image.src = newCanvas.toDataURL();
-        frame.x = prevFx;
-        frame.y = prevFy;
-        drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+        // TODO refactor this to not reassign context
+        // context = mainContext;
+        // frame.memory.image = new Image();
+        // frame.memory.image.src = newCanvas.toDataURL();
+        // frame.x = prevFx;
+        // frame.y = prevFy;
+        // drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
       }
     }
 
     if(mouseOnFrame) {
       if(overNode) {
-        setCursor('pointer');
+        SimpleGraphics__setCursor('pointer');
 
         rect = new Rectangle(tx(overNode._outRectangle.x), ty(overNode._outRectangle.y), overNode._outRectangle.width * kx, overNode._outRectangle.height * ky);
         x = Math.round(frame.x + rect.x) + 0.5;
@@ -24266,7 +24290,7 @@ define('src/index', ['exports'], function (exports) {
       frame.memory.image = null;
     }
 
-    if(!captureImage && !drawingImage) context.restore();
+    if(!captureImage && !drawingImage) src_Global__context.restore();
 
 
     return frame.memory.nodeSelected;
@@ -24408,24 +24432,25 @@ define('src/index', ['exports'], function (exports) {
     if(drawingImage) {
       drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
     } else {
-      c.l('drawing');
+      console.log('drawing');
       if(captureImage) {
-        var newCanvas = document.createElement("canvas");
-        newCanvas.width = frame.width;
-        newCanvas.height = frame.height;
-        var newContext = newCanvas.getContext("2d");
-        newContext.clearRect(0, 0, frame.width, frame.height);
-        var mainContext = context;
-        context = newContext;
-        var prevFx = frame.x;
-        var prevFy = frame.y;
-        frame.x = 0;
-        frame.y = 0;
-        setFill('white');
-        fRect(0, 0, frame.width, frame.height);
-        setText('black', 12);
+        // TODO refactor this to not reassign context
+        // var newCanvas = document.createElement("canvas");
+        // newCanvas.width = frame.width;
+        // newCanvas.height = frame.height;
+        // var newContext = newCanvas.getContext("2d");
+        // newContext.clearRect(0, 0, frame.width, frame.height);
+        // var mainContext = context;
+        // context = newContext;
+        // var prevFx = frame.x;
+        // var prevFy = frame.y;
+        // frame.x = 0;
+        // frame.y = 0;
+        // setFill('white');
+        // fRect(0, 0, frame.width, frame.height);
+        // setText('black', 12);
       } else {
-        context.save();
+        src_Global__context.save();
         clipRectangle(frame.x, frame.y, frame.width, frame.height);
       }
 
@@ -24443,8 +24468,8 @@ define('src/index', ['exports'], function (exports) {
           y = Math.round(frame.y + rect.y) + 0.5;
 
           if(node.pattern) {
-            context.fillStyle = node.pattern;
-            context.fillRect(x, y, Math.floor(rect.width), Math.floor(rect.height));
+            src_Global__context.fillStyle = node.pattern;
+            src_Global__context.fillRect(x, y, Math.floor(rect.width), Math.floor(rect.height));
 
             if(sRectM(x, y, Math.floor(rect.width), Math.floor(rect.height))) {
               overNode = node;
@@ -24496,7 +24521,7 @@ define('src/index', ['exports'], function (exports) {
               fText("l=" + Math.round(node.lift * 100) / 100, Math.min(frame.x + rect.getRight(), frame.getRight()) - 2, y + 23 + (node.toNodeList.length > 0 ? 11 : 0));
             }
 
-            if(exceedes) context.restore();
+            if(exceedes) src_Global__context.restore();
           }
         }
       });
@@ -24519,8 +24544,8 @@ define('src/index', ['exports'], function (exports) {
         w = sx * node.weight;
 
         if(node.pattern) {
-          context.fillStyle = node.pattern;
-          context.fillRect(x0, yLeaves, w, hLevel);
+          src_Global__context.fillStyle = node.pattern;
+          src_Global__context.fillRect(x0, yLeaves, w, hLevel);
 
           if(sRectM(x0, yLeaves, w, hLevel)) {
             overNode = node;
@@ -24567,18 +24592,19 @@ define('src/index', ['exports'], function (exports) {
       });
 
       if(captureImage) {
-        context = mainContext;
-        frame.memory.image = new Image();
-        frame.memory.image.src = newCanvas.toDataURL();
-        frame.x = prevFx;
-        frame.y = prevFy;
-        drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+        // TODO refactor this to not reassign context
+        // context = mainContext;
+        // frame.memory.image = new Image();
+        // frame.memory.image.src = newCanvas.toDataURL();
+        // frame.x = prevFx;
+        // frame.y = prevFy;
+        // drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
       }
     }
 
     if(mouseOnFrame) {
       if(overNode) {
-        setCursor('pointer');
+        SimpleGraphics__setCursor('pointer');
 
         //rect = new Rectangle(tx(overNode._outRectangle.x), ty(overNode._outRectangle.y), overNode._outRectangle.width*kx, overNode._outRectangle.height*ky);
         rect = new Rectangle(tx(overNode._outRectangle.x), overNode._outRectangle.y, overNode._outRectangle.width * kx, overNode._outRectangle.height);
@@ -24589,13 +24615,13 @@ define('src/index', ['exports'], function (exports) {
 
         if(overNode._wLeaf) {
           setFill('rgba(0,0,0,0.5)');
-          context.beginPath();
+          src_Global__context.beginPath();
 
-          context.moveTo(x, yLeaves - gap);
-          context.bezierCurveTo(x, yLeaves - 0.65 * gap, overNode._xLeaf, yLeaves - gap * 0.35, overNode._xLeaf, yLeaves);
-          context.lineTo(overNode._xLeaf + overNode._wLeaf, yLeaves);
-          context.bezierCurveTo(overNode._xLeaf + overNode._wLeaf, yLeaves - gap * 0.35, x + rect.width, yLeaves - 0.65 * gap, x + rect.width, yLeaves - gap);
-          context.fill();
+          src_Global__context.moveTo(x, yLeaves - gap);
+          src_Global__context.bezierCurveTo(x, yLeaves - 0.65 * gap, overNode._xLeaf, yLeaves - gap * 0.35, overNode._xLeaf, yLeaves);
+          src_Global__context.lineTo(overNode._xLeaf + overNode._wLeaf, yLeaves);
+          src_Global__context.bezierCurveTo(overNode._xLeaf + overNode._wLeaf, yLeaves - gap * 0.35, x + rect.width, yLeaves - 0.65 * gap, x + rect.width, yLeaves - gap);
+          src_Global__context.fill();
 
           sRect(overNode._xLeaf, yLeaves, overNode._wLeaf, hLevel);
         }
@@ -24645,7 +24671,7 @@ define('src/index', ['exports'], function (exports) {
       }
     }
 
-    if(!captureImage && !drawingImage) context.restore();
+    if(!captureImage && !drawingImage) src_Global__context.restore();
 
 
     if(frame.memory.overNode != overNode) {

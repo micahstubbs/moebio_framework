@@ -3,6 +3,8 @@ import Network from "src/dataStructures/structures/networks/Network";
 import StringOperators from "src/operators/strings/StringOperators";
 import Relation from "src/dataStructures/structures/elements/Relation";
 import ColorOperators from "src/operators/graphic/ColorOperators";
+import DateOperators from "src/operators/dates/DateOperators";
+import Table from "src/dataStructures/lists/Table";
 
 /**
  * @classdesc Serializes and deserializes {@link Network|Networks} using into
@@ -30,7 +32,7 @@ NetworkEncodings.decodeNoteWork = function(code) {
   if(code == null) return;
   if(code == "") return new Network();
 
-  c.l('\n\n*************////////// decodeNoteWork //////////*************');
+  console.log('\n\n*************////////// decodeNoteWork //////////*************');
   //code = "\n"+code;
 
   var i, j;
@@ -102,7 +104,7 @@ NetworkEncodings.decodeNoteWork = function(code) {
 
     firstLine = line;
 
-    //c.l('firstLine: ['+firstLine+']');
+    //console.log('firstLine: ['+firstLine+']');
 
     if(line == '\n' || line == '' || line == ' ' || line == '  ') { //use regex here
 
@@ -132,7 +134,7 @@ NetworkEncodings.decodeNoteWork = function(code) {
 
           index = line.indexOf(':');
           if(firstLine == "relations colors:" && index != -1 && ColorOperators.colorStringToRGB(line.split(':')[1]) != null) {
-            //c.l('  more colors!');
+            //console.log('  more colors!');
 
             colorLinesRelations.push(line);
 
@@ -147,8 +149,8 @@ NetworkEncodings.decodeNoteWork = function(code) {
           }
 
           if((firstLine == "groups colors:" || firstLine == "categories colors:") && index != -1 && ColorOperators.colorStringToRGB(line.split(':')[1]) != null) {
-            //c.l(line)
-            //c.l('  color to group!');
+            //console.log(line)
+            //console.log('  color to group!');
 
             colorLinesGroups.push(line);
 
@@ -287,7 +289,7 @@ NetworkEncodings.decodeNoteWork = function(code) {
 
     nLineParagraph = node._nLine;
 
-    //c.l('node.nLineWeight', node.nLineWeight);
+    //console.log('node.nLineWeight', node.nLineWeight);
 
     node._lines.forEach(function(line, i) {
 
@@ -357,7 +359,7 @@ NetworkEncodings.decodeNoteWork = function(code) {
                   relationName = relationName.replace(regex, "").trim();
                 }
 
-                //c.l(node.id, "*", line, "*", index, "*", line.substr(index));
+                //console.log(node.id, "*", line, "*", index, "*", line.substr(index));
 
                 //line = line.replace(regex, "").trim();
 
@@ -577,7 +579,7 @@ NetworkEncodings.decodeGDF = function(gdfCode) {
       node0 = network.nodeList.getNodeById(String(parts[0]));
       node1 = network.nodeList.getNodeById(String(parts[1]));
       if(node0 == null || node1 == null) {
-        c.log("NetworkEncodings.decodeGDF | [!] problems with nodes ids:", parts[0], parts[1], "at line", i);
+        console.log("NetworkEncodings.decodeGDF | [!] problems with nodes ids:", parts[0], parts[1], "at line", i);
       } else {
         id = node0.id + "_" + node1.id + "_" + Math.floor(Math.random() * 999999);
         relation = new Relation(id, id, node0, node1);
@@ -675,7 +677,7 @@ NetworkEncodings.decodeGML = function(gmlCode) {
 
   var blocks = StringOperators.getParenthesisContents(part, true);
 
-  //c.log('blocks.length', blocks.length);
+  //console.log('blocks.length', blocks.length);
 
   var graphicsBlock;
   var lines;
@@ -876,7 +878,7 @@ NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPr
  * @return {Network}
  */
 NetworkEncodings.decodeSYM = function(symCode) {
-  //c.log("/////// decodeSYM\n"+symCode+"\n/////////");
+  //console.log("/////// decodeSYM\n"+symCode+"\n/////////");
   var i;
   var j;
 
@@ -931,7 +933,7 @@ NetworkEncodings.decodeSYM = function(symCode) {
           if(node.group != null) {
             group = groups.getFirstElementByPropertyValue("name", node.group);
             if(group == null) {
-              c.log("NODES new group:[" + node.group + "]");
+              console.log("NODES new group:[" + node.group + "]");
               group = new NodeList();
               group.name = node.group;
               group.name = group.name.replace(/\\n/g, '\n').replace(/\\'/g, "'");
@@ -1065,7 +1067,7 @@ NetworkEncodings.encodeSYM = function(network, groups, nodesPropertiesNames, rel
     }
   }
 
-  //c.log("/////// encodeSYM\n"+code+"\n/////////");
+  //console.log("/////// encodeSYM\n"+code+"\n/////////");
 
   return code;
 };

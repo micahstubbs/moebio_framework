@@ -3,8 +3,12 @@ import Point from "src/dataStructures/geometry/Point";
 import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
 import GeometryOperators from "src/operators/geometry/GeometryOperators";
 import ColorScales from "src/operators/graphic/ColorScales";
-import { context, TwoPi } from "src/Global";
+import { context, TwoPi, mP } from "src/Global";
 import DrawTextsAdvanced from "src/tools/graphic/DrawTextsAdvanced";
+import ColorScale from "src/dataStructures/graphic/ColorScale";
+import ColorListOperators from "src/operators/graphic/ColorListOperators";
+import { fTextRotated, setText } from "src/tools/graphic/SimpleGraphics";
+import ColorOperators from "src/operators/graphic/ColorOperators";
 
 function IntervalTableDraw() {}
 export default IntervalTableDraw;

@@ -1,4 +1,6 @@
 import Table from "src/dataStructures/lists/Table";
+import Rectangle from "src/dataStructures/geometry/Rectangle";
+import { typeOf } from "src/tools/utils/code/ClassUtils";
 
 PolygonList.prototype = new Table();
 PolygonList.prototype.constructor = PolygonList;
