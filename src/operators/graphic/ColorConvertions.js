@@ -7,7 +7,7 @@ import Point3D from "src/dataStructures/geometry/Point3D";
  * @category colors
  */
 function ColorOperators() {}
-export ColorOperators;
+export default ColorOperators;
 
 ColorOperators.point3DToColor = function(point3D) {
   return ColorUtils.RGBtouint(point3D.x, point3D.y, point3D.z);
