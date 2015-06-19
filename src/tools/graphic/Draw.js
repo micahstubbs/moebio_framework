@@ -110,6 +110,7 @@ Draw.fillRectangleWithImage = function(rectangle, image, mode, backColor) {
       context.drawImage(image, 0, 0, image.width, image.height, dx, dy, dWidth, dHeight);
       break;
     case 3:
+      var sh, sw;
       if(rectangle.width / rectangle.height < image.width / image.height) {
         sh = image.height;
         sw = sh * rectangle.width / rectangle.height;

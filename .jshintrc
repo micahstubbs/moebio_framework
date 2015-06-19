@@ -6,10 +6,12 @@
   "unused": true,
   "freeze": true,
   "globals": {
-  	"describe": true,
-  	"it": true,
-  	"expect": true
+    "describe": true,
+    "it": true,
+    "expect": true,
+    "console": false
   },
   "eqeqeq": false,
-  "esnext": true
+  "esnext": true,
+  "browser": true,
 }

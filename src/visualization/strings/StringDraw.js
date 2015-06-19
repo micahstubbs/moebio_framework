@@ -1,3 +1,7 @@
+import { setText } from "src/tools/graphic/SimpleGraphics";
+import Rectangle from "src/dataStructures/geometry/Rectangle";
+import DrawTexts from "src/tools/graphic/DrawTexts";
+
 function StringDraw() {}
 export default StringDraw;
 
@@ -25,7 +29,7 @@ StringDraw.drawText = function(frame, object, fontSize, fontStyle, margin) {
 
   setText('black', fontSize, null, null, null, fontStyle);
 
-  significantChange = frame.memory == null || object != frame.memory.object || fontSize != frame.memory.fontSize || fontStyle != frame.memory.fontStyle || margin != frame.memory.margin || frame.width != frame.memory.width || frame.height != frame.memory.height;
+  var significantChange = frame.memory == null || object != frame.memory.object || fontSize != frame.memory.fontSize || fontStyle != frame.memory.fontStyle || margin != frame.memory.margin || frame.width != frame.memory.width || frame.height != frame.memory.height;
 
   //setup
   if(significantChange) {

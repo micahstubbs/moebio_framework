@@ -1,4 +1,4 @@
-import { context, TwoPi, mX, mY, mP } from 'src/Global';
+import { context, TwoPi, mX, mY, mP, canvas } from 'src/Global';
 import Polygon from 'src/dataStructures/geometry/Polygon';
 import Point from 'src/dataStructures/geometry/Point';
 import GeometryOperators from 'src/operators/geometry/GeometryOperators';

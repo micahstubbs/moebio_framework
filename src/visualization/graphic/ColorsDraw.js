@@ -1,3 +1,14 @@
+import {
+  setFill,
+  setText,
+  fRect,
+  fsText,
+  drawImage,
+  setStroke
+} from "src/tools/graphic/SimpleGraphics";
+import { context } from "src/Global";
+
+
 function ColorsDraw() {}
 export default ColorsDraw;
 
@@ -24,13 +35,14 @@ ColorsDraw.drawColorScaleLegend = function(frame, colorScale, minValue, maxValue
     };
 
     ///// capture image 1
-    var newCanvas = document.createElement("canvas");
-    newCanvas.width = frame.width;
-    newCanvas.height = frame.height;
-    var newContext = newCanvas.getContext("2d");
-    newContext.clearRect(0, 0, frame.width, frame.height);
-    var mainContext = context;
-    context = newContext;
+    // TODO refactor to not reassign context
+    // var newCanvas = document.createElement("canvas");
+    // newCanvas.width = frame.width;
+    // newCanvas.height = frame.height;
+    // var newContext = newCanvas.getContext("2d");
+    // newContext.clearRect(0, 0, frame.width, frame.height);
+    // var mainContext = context;
+    // context = newContext;
     /////
 
     var x;
@@ -67,9 +79,10 @@ ColorsDraw.drawColorScaleLegend = function(frame, colorScale, minValue, maxValue
 
 
     //// capture image 2
-    context = mainContext;
-    frame.memory.image = new Image();
-    frame.memory.image.src = newCanvas.toDataURL();
+    // TODO refactor to not reassign context
+    // context = mainContext;
+    // frame.memory.image = new Image();
+    // frame.memory.image.src = newCanvas.toDataURL();
     ////
   }
 

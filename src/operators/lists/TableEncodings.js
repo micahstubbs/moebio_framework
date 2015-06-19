@@ -1,3 +1,4 @@
+import List from "src/dataStructures/lists/List";
 import Table from "src/dataStructures/lists/Table";
 import NetworkEncodings from "src/operators/structures/NetworkEncodings";
 import ListGenerators from "src/operators/lists/ListGenerators";

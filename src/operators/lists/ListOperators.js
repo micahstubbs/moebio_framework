@@ -1,6 +1,10 @@
 import List from "src/dataStructures/lists/List";
 import NumberTable from "src/dataStructures/numeric/NumberTable";
 import Table from "src/dataStructures/lists/Table";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import TableOperators from "src/operators/lists/TableOperators";
+import StringList from "src/dataStructures/strings/StringList";
+import { typeOf, instantiate, instantiateWithSameType } from "src/tools/utils/code/ClassUtils";
 
 function ListOperators() {}
 export default ListOperators;

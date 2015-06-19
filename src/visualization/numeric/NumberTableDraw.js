@@ -1,3 +1,46 @@
+import {
+  context,
+  mX,
+  mY,
+  mP,
+  TwoPi,
+  HalfPi,
+  MOUSE_UP_FAST,
+  MOUSE_DOWN,
+  MOUSE_UP,
+  WHEEL_CHANGE
+} from "src/Global";
+
+import {
+  setCursor,
+  line,
+  setStroke,
+  setFill,
+  fText,
+  setText,
+  drawImage,
+  fCircleM,
+  getTextW,
+  fRectM,
+  sRect,
+  fTextRotated,
+  clipRectangle
+} from "src/tools/graphic/SimpleGraphics";
+
+import Rectangle from "src/dataStructures/geometry/Rectangle";
+import ColorOperators from "src/operators/graphic/ColorOperators";
+import Point from "src/dataStructures/geometry/Point";
+import Polygon from "src/dataStructures/geometry/Polygon";
+import IntervalTableOperators from "src/operators/numeric/interval/IntervalTableOperators";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import NumberTableFlowOperators from "src/operators/numeric/numberTable/NumberTableFlowOperators";
+import ColorScales from "src/operators/graphic/ColorScales";
+import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
+import IntervalTableDraw from "src/visualization/numeric/IntervalTableDraw";
+import GeometryOperators from "src/operators/geometry/GeometryOperators";
+import NumberTable from "src/dataStructures/numeric/NumberTable";
+import StringList from "src/dataStructures/strings/StringList";
+
 function NumberTableDraw() {}
 export default NumberTableDraw;
 
@@ -374,18 +417,19 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
   var flowFrame = new Rectangle(0, 0, frame.width, horizontalLabels == null ? frame.height : (frame.height - 14));
 
   if(frame.memory.image == null) {
+    // TODO refactor to not reassign context
     ///// capture image
-    var newCanvas = document.createElement("canvas");
-    newCanvas.width = frame.width;
-    newCanvas.height = frame.height;
-    var newContext = newCanvas.getContext("2d");
-    newContext.clearRect(0, 0, frame.width, frame.height);
-    var mainContext = context;
-    context = newContext;
-    IntervalTableDraw.drawIntervalsFlowTable(frame.memory.flowIntervals, flowFrame, frame.memory.actualColorList, bezier, 0.3);
-    context = mainContext;
-    frame.memory.image = new Image();
-    frame.memory.image.src = newCanvas.toDataURL();
+    // var newCanvas = document.createElement("canvas");
+    // newCanvas.width = frame.width;
+    // newCanvas.height = frame.height;
+    // var newContext = newCanvas.getContext("2d");
+    // newContext.clearRect(0, 0, frame.width, frame.height);
+    // var mainContext = context;
+    // context = newContext;
+    // IntervalTableDraw.drawIntervalsFlowTable(frame.memory.flowIntervals, flowFrame, frame.memory.actualColorList, bezier, 0.3);
+    // context = mainContext;
+    // frame.memory.image = new Image();
+    // frame.memory.image.src = newCanvas.toDataURL();
     /////
   }
 
@@ -625,19 +669,20 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
     drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
   } else {
     if(captureImage) {
-      var newCanvas = document.createElement("canvas");
-      newCanvas.width = frame.width;
-      newCanvas.height = frame.height;
-      var newContext = newCanvas.getContext("2d");
-      newContext.clearRect(0, 0, frame.width, frame.height);
-      var mainContext = context;
-      context = newContext;
-      var prevFx = frame.x;
-      var prevFy = frame.y;
-      frame.x = 0;
-      frame.y = 0;
-      setFill('white');
-      fRect(0, 0, frame.width, frame.height);
+      // TODO refactor to not reassign context
+      // var newCanvas = document.createElement("canvas");
+      // newCanvas.width = frame.width;
+      // newCanvas.height = frame.height;
+      // var newContext = newCanvas.getContext("2d");
+      // newContext.clearRect(0, 0, frame.width, frame.height);
+      // var mainContext = context;
+      // context = newContext;
+      // var prevFx = frame.x;
+      // var prevFy = frame.y;
+      // frame.x = 0;
+      // frame.y = 0;
+      // setFill('white');
+      // fRect(0, 0, frame.width, frame.height);
     }
 
     context.save();
@@ -662,12 +707,13 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
 
 
     if(captureImage) {
-      context = mainContext;
-      frame.memory.image = new Image();
-      frame.memory.image.src = newCanvas.toDataURL();
-      frame.x = prevFx;
-      frame.y = prevFy;
-      drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+      // TODO refactor to not reassign context
+      // context = mainContext;
+      // frame.memory.image = new Image();
+      // frame.memory.image.src = newCanvas.toDataURL();
+      // frame.x = prevFx;
+      // frame.y = prevFy;
+      // drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
     }
   }
 };

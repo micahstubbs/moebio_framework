@@ -1,3 +1,5 @@
+import Point3D from "src/dataStructures/geometry/Point3D";
+
 /**
  * @classdesc Provides a set of tools that work with Colors.
  *

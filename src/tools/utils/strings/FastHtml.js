@@ -1,3 +1,6 @@
+import StringOperators from "src/operators/strings/StringOperators";
+import ColorOperators from "src/operators/graphic/ColorOperators";
+
 /**
  * @classdesc Fast Html
  *

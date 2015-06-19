@@ -6,7 +6,7 @@ import { setFill,
   fRect,
   setText
 } from "src/tools/graphic/SimpleGraphics";
-import { MOUSE_DOWN, mY } from "src/Global";
+import { MOUSE_DOWN, mY, mP } from "src/Global";
 
 function ListDraw() {}
 export default ListDraw;

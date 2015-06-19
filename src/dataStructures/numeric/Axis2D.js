@@ -1,5 +1,6 @@
 import DataModel from "src/dataStructures/DataModel";
 import Point from "src/dataStructures/geometry/Point";
+import Rectangle from "src/dataStructures/geometry/Rectangle";
 
 Axis2D.prototype = new DataModel();
 Axis2D.prototype.constructor = Axis2D;
