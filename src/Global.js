@@ -25,25 +25,24 @@ export function Global(){}
 
 Global.userAgent="unknown";
 
-function init(){
+window.init = function(){
   //console.log("init must be overriden!");
 }
 
-function cycle(){
+window.cycle = function(){
   //console.log("cycle must be overriden!");
 }
 
-function resizeWindow(){
+window.resizeWindow = function(){
   //console.log("resizeWindow must be overriden!");
 }
 
-function lastCycle(){
+window.lastCycle = function(){
   //override
 }
 
 export var listenerArray  = [];
 export var canvas;
-export var removeDiv;
 export var userAgent="none";
 export var userAgentVersion;
 export var canvasResizeable=true;
@@ -144,9 +143,6 @@ window.addEventListener('load', function(){
   canvas = document.getElementById('main');
 
   if(canvas!=null){
-    removeDiv = document.getElementById('removeDiv');
-    removeDiv.style.display = 'none';
-
     context = canvas.getContext('2d');
 
     _adjustCanvas();
@@ -163,7 +159,7 @@ window.addEventListener('load', function(){
     window.addEventListener("resize", onResize, false);
 
     startCycle();
-    init();
+    window.init();
   }
 
   c.l('Moebio Framework v2.259 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
@@ -220,7 +216,7 @@ export function _onMouse(e) {
 
 export function onResize(e){
   _adjustCanvas();
-  resizeWindow();
+  window.resizeWindow();
 }
 
 function _adjustCanvas(){
@@ -230,7 +226,7 @@ function _adjustCanvas(){
   cH = getDocHeight();
 
   canvas.setAttribute('width', cW);
-    canvas.setAttribute('height', cH);
+  canvas.setAttribute('height', cH);
 
   cX = Math.floor(cW*0.5);
   cY = Math.floor(cH*0.5);
@@ -284,7 +280,7 @@ export function enterFrame(){
 
   if(MOUSE_PRESSED) T_MOUSE_PRESSED = new Date().getTime() - _tLastMouseDown;
 
-    cycle();
+    window.cycle();
 
     WHEEL_CHANGE = 0;
 
@@ -306,7 +302,7 @@ export function stopCycle(){
   clearInterval(_setIntervalId);
   cycleActive = false;
 
-  lastCycle();
+  window.lastCycle();
 }
 
 
