@@ -3,6 +3,8 @@ describe("NumberList", function() {
   it("should be creatable", function() {
     var nl = new NumberList();
     expect(nl).toBeDefined();
+    expect(nl.type).toBe('NumberList');
+    
     expect(nl.length).toBe(0);
 
     nl = new NumberList(1,2,3);
