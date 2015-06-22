@@ -142,13 +142,12 @@ TableOperators.testClassificationModel = function(numberTable, classes, model, m
 TableOperators.getSubListsByIndexes = function(table, indexes) {
   var newTable = new Table();
   newTable.name = table.name;
-  var i;
   var list;
   var newList;
-  for(i = 0; table[i] != null; i++) {
+  for(var i = 0; table[i] != null; i++) {
     list = table[i];
     newList = instantiateWithSameType(list);
-    for(j = 0; indexes[j] != null; j++) {
+    for(var j = 0; indexes[j] != null; j++) {
       newList[j] = list[indexes[j]];
     }
     newTable[i] = newList.getImproved();
@@ -570,7 +569,7 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
 
 
   if(entropy >= min_entropy) {
-    informationGains = TableOperators.getVariablesInformationGain(variablesTable, supervised);
+    var informationGains = TableOperators.getVariablesInformationGain(variablesTable, supervised);
     var maxIg = 0;
     var iBestFeature = 0;
     informationGains.forEach(function(ig, i) {
@@ -676,6 +675,7 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
   var tables = TableOperators.splitTableByCategoricList(expanded, variablesTable[iBestFeature]);
   var childTable;
   var childSupervised;
+  var childIndexes;
   var newNode;
 
   tables.forEach(function(expandedChild) {

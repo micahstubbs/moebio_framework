@@ -73,7 +73,7 @@ TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, val
 
     var cellContents = NetworkEncodings.replaceChomasInLine(lines[i]).split(comaCharacter); //TODO: will be obsolete (see previous TODO)
 
-    for(j = 0; j < cellContents.length; j++) {
+    for(var j = 0; j < cellContents.length; j++) {
       table[j] = table[j] == null ? new List() : table[j];
       if(_firstRowIsHeader && i == 1) {
         table[j].name = headerContent[j] == null ? "" : TableEncodings._removeQuotes(headerContent[j]);

@@ -18,6 +18,7 @@ import { typeOf } from "src/tools/utils/code/ClassUtils";
 import Rectangle from "src/dataStructures/geometry/Rectangle";
 import Point from "src/dataStructures/geometry/Point";
 import ListOperators from "src/operators/lists/ListOperators";
+import StringList from "src/dataStructures/strings/StringList";
 
 function NumberListDraw() {};
 export default NumberListDraw;

@@ -116,8 +116,8 @@ NumberTableOperators.kNN = function(numberTable, propertyList, vectorList, k, ca
       classTable[0] = new List();
       classTable[1] = new NumberList();
       for(i = 0; i < k; i++) {
-        clas = propertyList[table[0][i]];
-        index = classTable[0].indexOf(clas);
+        var clas = propertyList[table[0][i]];
+        var index = classTable[0].indexOf(clas);
         if(index == -1) {
           classTable[0].push(clas);
           classTable[1].push(1);

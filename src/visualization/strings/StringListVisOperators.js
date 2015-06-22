@@ -44,7 +44,7 @@ StringListVisOperators.simpleTagCloud = function(stringList, weights, frame, fon
   var trys = 0;
 
   while(notFinished) {
-    interLine = K * interLineFactor;
+    var interLine = K * interLineFactor;
     xx = 0;
     yy = 0; //interLine;
     maxST = 0;

@@ -693,7 +693,7 @@ NumberList.prototype.distance = function(numberList) {
  * @return {Boolean} True if all values in both lists match.
  */
 NumberList.prototype.isEquivalent = function(numberList) {
-  for(i = 0; this[i] != null; i++) {
+  for(var i = 0; this[i] != null; i++) {
     if(this[i] != numberList[i]) return false;
   }
   return true;

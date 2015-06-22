@@ -63,7 +63,7 @@ NumberTableFlowOperators.getFlowTable = function(numberTable, normalized, includ
 
     numberTable.forEach(function(list, iList) {
       list.forEach(function(val, j) {
-        sum = sums[j];
+        var sum = sums[j];
         flowTable[iList + 1][j] = val / (sum == 0 ? 0.00001 : sum) + flowTable[iList][j];
       });
     });

@@ -77,7 +77,7 @@ Tree.prototype.addFather = function(node, children) {
  */
 Tree.prototype.getNodesByLevel = function(level) {
   var newNodeList = new NodeList();
-  for(i = 0; this.nodeList[i] != null; i++) {
+  for(var i = 0; this.nodeList[i] != null; i++) {
     if(this.nodeList[i].level == level) newNodeList.addNode(this.nodeList[i]);
   }
   return newNodeList;

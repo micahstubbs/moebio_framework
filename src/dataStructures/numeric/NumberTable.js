@@ -1,5 +1,6 @@
 import Table from "src/dataStructures/lists/Table";
 import NumberList from "src/dataStructures/numeric/NumberList";
+import { typeOf } from "src/tools/utils/code/ClassUtils";
 
 NumberTable.prototype = new Table();
 NumberTable.prototype.constructor = NumberTable;
@@ -61,7 +62,7 @@ NumberTable.prototype.getNumberListsNormalized = function(factor) {
   var newTable = new NumberTable();
   var i;
   for(i = 0; this[i] != null; i++) {
-    numberList = this[i];
+    var numberList = this[i];
     newTable[i] = numberList.getNormalized(factor);
   }
   newTable.name = this.name;
@@ -84,7 +85,7 @@ NumberTable.prototype.getNormalizedToMax = function(factor) {
 NumberTable.prototype.getNumberListsNormalizedToMax = function(factorValue) {
   var newTable = new NumberTable();
   for(var i = 0; this[i] != null; i++) {
-    numberList = this[i];
+    var numberList = this[i];
     newTable[i] = numberList.getNormalizedToMax(factorValue);
   }
   newTable.name = this.name;
@@ -94,7 +95,7 @@ NumberTable.prototype.getNumberListsNormalizedToMax = function(factorValue) {
 NumberTable.prototype.getNumberListsNormalizedToSum = function() {
   var newTable = new NumberTable();
   for(var i = 0; this[i] != null; i++) {
-    numberList = this[i];
+    var numberList = this[i];
     newTable[i] = numberList.getNormalizedToSum();
   }
   newTable.name = this.name;
@@ -182,6 +183,7 @@ NumberTable.prototype.getRowsAverages = function() {
 NumberTable.prototype.factor = function(value) {
   var newTable = new NumberTable();
   var i;
+  var numberList;
 
   switch(typeOf(value)) {
     case 'number':
@@ -205,6 +207,7 @@ NumberTable.prototype.factor = function(value) {
 
 NumberTable.prototype.add = function(value) {
   var newTable = new NumberTable();
+  var numberList;
 
   for(var i = 0; this[i] != null; i++) {
     numberList = this[i];

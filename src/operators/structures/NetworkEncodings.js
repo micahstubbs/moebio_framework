@@ -400,9 +400,9 @@ NetworkEncodings.decodeNoteWork = function(code) {
 
   colorLinesRelations.forEach(function(line) {
     index = line.indexOf(':');
-    texts = line.substr(0, index).split(',');
+    var texts = line.substr(0, index).split(',');
     texts.forEach(function(text) {
-      color = line.substr(index + 1);
+      var color = line.substr(index + 1);
       network.relationList.forEach(function(relation) {
         if(relation.name.indexOf(text) != -1) relation.color = color;
       });
@@ -411,9 +411,9 @@ NetworkEncodings.decodeNoteWork = function(code) {
 
   colorLinesGroups.forEach(function(line) {
     index = line.indexOf(':');
-    texts = line.substr(0, index).split(',');
+    var texts = line.substr(0, index).split(',');
     texts.forEach(function(text) {
-      color = line.substr(index + 1);
+      var color = line.substr(index + 1);
       network.nodeList.forEach(function(node) {
         if(node.group == text) node.color = color;
         if(node.category == text) node.color = color;
@@ -494,7 +494,7 @@ NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesP
 
     node.toRelationList.forEach(function(relation) {
 
-      content = ((relation.content == null ||  relation.content == "") && relation.description) ? relation.description : relation.content;
+      var content = ((relation.content == null ||  relation.content == "") && relation.description) ? relation.description : relation.content;
 
       if(content && content != "") {
         regex = NetworkEncodings._regexWordForNoteWork(relation.node1.name);
@@ -554,7 +554,7 @@ NetworkEncodings.decodeGDF = function(gdfCode) {
     }
     line = NetworkEncodings.replaceChomasInLine(line);
     parts = line.split(",");
-    node = new Node(String(parts[0]), String(parts[1]));
+    var node = new Node(String(parts[0]), String(parts[1]));
     for(j = 0; (nodesPropertiesNames[j] != null && parts[j] != null); j++) {
       if(nodesPropertiesNames[j] == "weight") {
         node.weight = Number(parts[j]);
@@ -576,13 +576,13 @@ NetworkEncodings.decodeGDF = function(gdfCode) {
     line = NetworkEncodings.replaceChomasInLine(line);
     parts = line.split(",");
     if(parts.length >= 2) {
-      node0 = network.nodeList.getNodeById(String(parts[0]));
-      node1 = network.nodeList.getNodeById(String(parts[1]));
+      var node0 = network.nodeList.getNodeById(String(parts[0]));
+      var node1 = network.nodeList.getNodeById(String(parts[1]));
       if(node0 == null || node1 == null) {
         console.log("NetworkEncodings.decodeGDF | [!] problems with nodes ids:", parts[0], parts[1], "at line", i);
       } else {
-        id = node0.id + "_" + node1.id + "_" + Math.floor(Math.random() * 999999);
-        relation = new Relation(id, id, node0, node1);
+        var id = node0.id + "_" + node1.id + "_" + Math.floor(Math.random() * 999999);
+        var relation = new Relation(id, id, node0, node1);
         for(j = 2; (relationsPropertiesNames[j] != null && parts[j] != null); j++) {
           if(relationsPropertiesNames[j] == "weight") {
             relation.weight = Number(parts[j]);

@@ -304,7 +304,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
           textSize = rect.height * TreeDraw.PROP_RECT_LABEL - 2;
           if(textSize >= 5) {
 
-            propTextSpace = (rect.width - 2 * margTextX) / (node._textWidth * textSize / 12);
+            var propTextSpace = (rect.width - 2 * margTextX) / (node._textWidth * textSize / 12);
             exceedes = propTextSpace < 1; //(node._textWidth*textSize/12)>(rect.width-1.2*margTextX);
 
             if(exceedes) {
@@ -354,7 +354,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
       frame.memory.prevMY = mY;
     }
     if(MOUSE_PRESSED) {
-      scale = 5 * frame.memory.focusFrame.width / frame.width;
+      var scale = 5 * frame.memory.focusFrame.width / frame.width;
       frame.memory.focusFrame.x -= (mX - frame.memory.prevMX) * scale;
       frame.memory.focusFrame.y -= (mY - frame.memory.prevMY) * scale;
 
@@ -581,7 +581,7 @@ TreeDraw.drawDecisionTree = function(frame, tree) {
         if(realWidth > 16) {
           margTextX = rect.width * TreeDraw.PROP_RECT_MARGIN * 0.8;
           margTextY = rect.height * TreeDraw.PROP_RECT_MARGIN * 0.15;
-          tC = textColor ? textColor : frame.memory.textsColorList[i];
+          var tC = textColor ? textColor : frame.memory.textsColorList[i];
           textSize = 18;
 
           setText(tC, textSize);
@@ -744,7 +744,7 @@ TreeDraw.drawDecisionTree = function(frame, tree) {
       frame.memory.prevMX = mX;
     }
     if(MOUSE_PRESSED) {
-      scale = 5 * frame.memory.focusFrame.width / frame.width;
+      var scale = 5 * frame.memory.focusFrame.width / frame.width;
       frame.memory.focusFrame.x -= (mX - frame.memory.prevMX) * scale;
       frame.memory.prevMX = mX;
     }

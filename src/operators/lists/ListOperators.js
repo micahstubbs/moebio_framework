@@ -264,7 +264,7 @@ ListOperators.reverse = function(list) {
 ListOperators.translateWithDictionary = function(list, dictionary, nullElement) {
   var newList = new List();
   list.forEach(function(element, i) {
-    index = dictionary[0].indexOf(element);
+    var index = dictionary[0].indexOf(element);
     if(nullElement != null) {
       newList[i] = index == -1 ? nullElement : dictionary[1][index];
     } else {
@@ -302,6 +302,7 @@ ListOperators.sortListByNumberList = function(list, numberList, descending) {
 
   var pairs = [];
   var newList = instantiate(typeOf(list));
+  var i;
 
   for(i = 0; list[i] != null; i++) {
     pairs.push([list[i], numberList[i]]);
@@ -455,7 +456,7 @@ ListOperators.unionLists = function(x, y) {
   if(x.type != x.type || (x.type != "StringList" && x.type != "NumberList"))
   {
     // To-do: call generic method here (not yet implemented)
-    //c.l( "ListOperators.unionLists for type '" + x.type + "' or '" + y.type + "' not yet implemented" );
+    //console.log( "ListOperators.unionLists for type '" + x.type + "' or '" + y.type + "' not yet implemented" );
     return x.concat(y).getWithoutRepetitions();
     return null;
   }
@@ -537,8 +538,8 @@ ListOperators.getListEntropy = function(list, valueFollowing) {
   }
 
   var table = ListOperators.countElementsRepetitionOnList(list, true);
-  c.l('    getListEntropy | table[0]', table[0]);
-  c.l('    getListEntropy | table[1]', table[1]);
+  console.log('    getListEntropy | table[0]', table[0]);
+  console.log('    getListEntropy | table[1]', table[1]);
   list._mostRepresentedValue = table[0][0];
   var N = list.length;
   list._biggestProbability = table[1][0] / N;
@@ -739,7 +740,7 @@ ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, 
         numBlanks++;
       }
     }
-    //c.l("numBlanks: ", numBlanks)
+    //console.log("numBlanks: ", numBlanks)
   }
 
   // To-do: looks like getSortedByProperty is removing the valProperty from the objects

@@ -5,7 +5,7 @@ import Polygon from "src/dataStructures/geometry/Polygon";
 import Node from "src/dataStructures/structures/elements/Node";
 import Point from "src/dataStructures/geometry/Point";
 import { typeOf } from "src/tools/utils/code/ClassUtils";
-
+import { cX, cY } from "src/Global";
 
 NodeList.prototype = new List();
 NodeList.prototype.constructor = NodeList;
@@ -197,7 +197,7 @@ NodeList.prototype.getNodeById = function(id) {
  * @return {NodeList}
  */
 NodeList.prototype.getNodesByIds = function(ids) {
-  newNodelist = new NodeList();
+  var newNodelist = new NodeList();
   var node;
   for(var i = 0; ids[i] != null; i++) {
     node = this.ids[ids[i]];
@@ -300,9 +300,9 @@ NodeList.prototype.clone = function() {
  * @ignore
  */
 NodeList.prototype.getWithoutRepetitions = function() {
-  newList = new NodeList();
+  var newList = new NodeList();
   newList.name = this.name;
-  for(i = 0; this[i] != null; i++) {
+  for(var i = 0; this[i] != null; i++) {
     if(newList.getNodeById(this[i].id) == null) newList.addNode(this[i]);
   }
   return newList;

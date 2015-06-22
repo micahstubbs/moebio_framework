@@ -238,6 +238,7 @@ NetworkOperators._getLoopsOnNode = function(central) {
   var columns = new Table();
   var nl = new NodeList();
   var n, i, j;
+  var node;
 
   nl.addNode(central);
   columns.push(nl);
@@ -413,7 +414,7 @@ NetworkOperators.spanningTree = function(network, node0, nodeLimit) { //TODO: th
     for(i = 0; newNodes[i] != null; i++) {
       newNode = new Node(newNodes[i].id, newNodes[i].name);
       newNode.node = newNodes[i];
-      for(j = 0; newNodes[i].nodeList[j] != null; j++) {
+      for(var j = 0; newNodes[i].nodeList[j] != null; j++) {
         id = newNodes[i].nodeList[j].id;
         nodeInPrevNodes = nodes.getNodeById(id);
         if(nodeInPrevNodes != null && newNode.id != id) {
@@ -763,11 +764,11 @@ NetworkOperators.addPageRankToNodes = function(network, from, useRelationsWeight
  * @return {Network}
  */
 NetworkOperators.fusionNoteworks = function(noteworksList, hubsDistanceFactor, hubsForceWeight) {
-  networks = new List();
+  var networks = new List();
 
   noteworksList.forEach(function(map, i) {
-    subfix = "map_" + i + "_";
-    net = NetworkEncodings.decodeNoteWork(map);
+    var subfix = "map_" + i + "_";
+    var net = NetworkEncodings.decodeNoteWork(map);
     net = net.clone(net.nodesPropertiesNames, net.relationsPropertiesNames, subfix);
     net.id = "map_" + i;
     networks.push(net);

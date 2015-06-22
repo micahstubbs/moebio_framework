@@ -238,7 +238,7 @@ Draw.drawBezierPolygonTransformed = function(bezierPolygon, transformationFuncti
 Draw.drawPolygonTransformed = function(polygon, transformationFunction) {
   var p = transformationFunction(polygon[0]);
   context.moveTo(p.x, p.y);
-  for(i = 0; polygon[i] != null; i++) {
+  for(var i = 0; polygon[i] != null; i++) {
     p = transformationFunction(polygon[i]);
     context.lineTo(p.x, p.y);
   }

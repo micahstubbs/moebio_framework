@@ -11,7 +11,7 @@ import Table from "src/dataStructures/lists/Table";
 import NumberTable from "src/dataStructures/numeric/NumberTable";
 import Interval from "src/dataStructures/numeric/Interval";
 import ListOperators from "src/operators/lists/ListOperators";
-import { instantiateWithSameType, typeOf } from "src/tools/utils/code/ClassUtils";
+import { instantiateWithSameType, typeOf, instantiate } from "src/tools/utils/code/ClassUtils";
 
 List.prototype = new DataModel();
 List.prototype.constructor = List;
@@ -370,6 +370,7 @@ List.prototype.getReversed = function() {
  * tags:filter
  */
 List.prototype.getSubList = function() {
+  var interval;
   if(arguments[0].isList) {
     return this.getSubListByIndexes(arguments[0]);
   } else if(arguments.length > 2) {
@@ -520,7 +521,7 @@ List.prototype.getWithoutRepetitions = function() {
   var i;
   var dictionary;
 
-  newList = instantiateWithSameType(this);
+  var newList = instantiateWithSameType(this);
   newList.name = this.name;
 
   if(this.type == 'NumberList' || this.type == 'StringList') {
@@ -550,7 +551,7 @@ List.prototype.getWithoutRepetitions = function() {
  * tags:countt
  */
 List.prototype.countElement = function(element) {
-  n = 0;
+  var n = 0;
   this.forEach(function(elementInList) {
     if(element == elementInList) {
       n++;
@@ -589,7 +590,7 @@ List.prototype.getElementsRepetitionCount = function(sortListsByOccurrences) {
   var nElements = this.length;
   var index;
 
-  for(i = 0; i < nElements; i++) {
+  for(var i = 0; i < nElements; i++) {
     obj = this[i];
     index = elementList.indexOf(obj);
     if(index != -1) {
@@ -624,7 +625,7 @@ List.prototype.allElementsEqual = function() {
   var i;
   if(this.length < 2) return true;
 
-  first = this[0];
+  var first = this[0];
 
   for(i = 1; this[i] != null; i++) {
     if(this[i] != first) return false;

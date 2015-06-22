@@ -155,6 +155,7 @@ PolygonOperators._findClosestNodes = function(nodeList) {
   var i, j;
   var d2;
   var d2Min = 9999999999;
+  var pair;
 
   for(i = 0; nodeList[i + 1] != null; i++) {
     for(j = i + 1; nodeList[j] != null; j++) {

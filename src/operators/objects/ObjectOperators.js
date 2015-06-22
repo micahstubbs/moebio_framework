@@ -50,7 +50,7 @@ ObjectOperators.getReport = function(object) {
   var propertyValues = new StringList();
   var popertyTypes = new StringList();
 
-  for(propName in object) {
+  for(var propName in object) {
     propertyNames.push(propName);
   }
 

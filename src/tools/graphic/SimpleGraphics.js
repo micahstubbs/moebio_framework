@@ -1081,8 +1081,5 @@ export function setCursor(name) {
 //time
 
 export function getMilliseconds() {
-  var date = new Date();
-  // TODO is the creation of the global below intentional?
-  _ms = date.getTime();
-  return _ms;
+  return new Date().getTime();
 };

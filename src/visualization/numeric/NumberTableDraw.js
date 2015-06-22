@@ -40,6 +40,8 @@ import IntervalTableDraw from "src/visualization/numeric/IntervalTableDraw";
 import GeometryOperators from "src/operators/geometry/GeometryOperators";
 import NumberTable from "src/dataStructures/numeric/NumberTable";
 import StringList from "src/dataStructures/strings/StringList";
+import Table from "src/dataStructures/lists/Table";
+import ColorList from "src/dataStructures/graphic/ColorList";
 
 function NumberTableDraw() {}
 export default NumberTableDraw;

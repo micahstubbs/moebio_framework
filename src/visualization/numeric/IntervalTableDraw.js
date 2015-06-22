@@ -293,7 +293,7 @@ IntervalTableDraw._isOnRadialShape = function(center, testPoint, a0, a1, r0a, r0
   var pa = GeometryOperators.bezierCurvePoints(a0, r0a, a0 + dA * 0.5, r0a, a1 - dA * 0.5, r1a, a1, r1a, t);
   var pb = GeometryOperators.bezierCurvePoints(a0, r0b, a0 + dA * 0.25, r0b, a1 - dA * 0.25, r1b, a1, r1b, t);
 
-  r = testPoint.subtract(center).getNorm();
+  var r = testPoint.subtract(center).getNorm();
 
   return r > pa.y && r < pb.y;
 };
