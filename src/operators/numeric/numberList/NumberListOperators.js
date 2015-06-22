@@ -22,18 +22,20 @@ NumberListOperators.cosineSimilarity = function(numberList0, numberList1) {
  * @return {Number}
  * tags:statistics
  */
-NumberListOperators.covariance = function(numberList0, numberList1) { //TODO: improve efficiency
+NumberListOperators.covariance = function(numberList0, numberList1) {
+  if(numberList0==null || numberList1==null) return;
+  
   var l = Math.min(numberList0.length, numberList1.length);
   var i;
   var av0 = numberList0.getAverage();
   var av1 = numberList1.getAverage();
   var s = 0;
 
-  for(i = 0; i < l; i++) {
-    s += (numberList0[i] - av0) * (numberList1[i] - av1);
+  for(i = 0; i<l; i++) {
+    s += (numberList0[i] - av0)*(numberList1[i] - av1);
   }
 
-  return s / l;
+  return s/l;
 };
 
 /**
@@ -48,11 +50,7 @@ NumberListOperators.covariance = function(numberList0, numberList1) { //TODO: im
 NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
   if(numberList == null || k == null || !k > 0) return null;
 
-  //c.l('numberList:', numberList);
-
   var interval = numberList.getInterval();
-
-  //c.l('interval:', interval);
 
   var min = interval.x;
   var max = interval.y;
@@ -75,20 +73,12 @@ NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
 
   for(i = 0; i < k; i++) {
     clusters[i] = new NumberList();
-    //clusters[i].actualMean = min + (i+0.5)*dX;//means[i];
     nextMeans[i] = min + (i + 0.5) * dX;
   }
 
   for(n = 0; n < N; n++) {
 
-    //c.l('-------'+n);
-
     for(i = 0; i < k; i++) {
-      //actualMean = means[i];//clusters[i].actualMean;
-      //c.l(' ', i, nextMeans[i]);
-      //clusters[i] = new NumberList();
-      //clusters[i].mean = actualMean;
-      //clusters[i].actualMean = 0;
       nValuesInCluster[i] = 0;
       means[i] = nextMeans[i];
       nextMeans[i] = 0;
@@ -100,30 +90,23 @@ NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
       jK = 0;
 
       for(j = 0; j < k; j++) {
-        //d = Math.abs(x-clusters[j].mean);
         d = Math.abs(x - means[j]);
-        //c.l('   d', d);
         if(d < dMin) {
           dMin = d;
           jK = j;
         }
       }
-      //c.l('    ', x,'-->',jK, 'with mean', clusters[jK].mean);
       if(n == N - 1) {
-        //c.l('jK, clusters[jK]', jK, clusters[jK]);
         returnIndexes ? clusters[jK].push(i) : clusters[jK].push(x);
       }
 
       nValuesInCluster[jK]++;
 
-      //clusters[jK].actualMean = ( (clusters[jK].length-1)*clusters[jK].actualMean + x )/clusters[jK].length;
       nextMeans[jK] = ((nValuesInCluster[jK] - 1) * nextMeans[jK] + x) / nValuesInCluster[jK];
     }
-    //if(n%50==0) c.l(n+' --> ' + nValuesInCluster.join(',')+"|"+means.join(','));
   }
 
   return clusters;
-
 };
 
 
@@ -135,7 +118,7 @@ NumberListOperators.standardDeviationBetweenTwoNumberLists = function(numberList
     s += Math.pow(numberList0[i] - numberList1[i], 2);
   }
 
-  return s / l;
+  return s/l;
 };
 
 /**
@@ -295,13 +278,13 @@ NumberListOperators.filterNumberListByNumber = function(numberList, value, compa
 
 /**
  * creates a NumberList that contains the union of two NumberList (removing repetitions)
- * @param  {NumberList} list A
- * @param  {NumberList} list B
+ * @param  {NumberList} x list A
+ * @param  {NumberList} y list B
  * 
  * @return {NumberList} the union of both NumberLists
  * tags:
  */
-NumberListOperators.union = function(x, y) {
+NumberListOperators.union = function(x, y) {//TODO: this should be refactored, and placed in ListOperators
   // Borrowed from here: http://stackoverflow.com/questions/3629817/getting-a-union-of-two-arrays-in-javascript
   var obj = {};
   for(var i = x.length - 1; i >= 0; --i)

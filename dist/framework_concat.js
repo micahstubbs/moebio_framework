@@ -4876,10 +4876,18 @@ NumberTable.fromArray = function(array) {
   result.add = NumberTable.prototype.add;
   result.getMax = NumberTable.prototype.getMax;
   result.getMinMaxInterval = NumberTable.prototype.getMinMaxInterval;
+  result.getCovarianceMatrix = NumberTable.prototype.getCovarianceMatrix;
 
   return result;
 };
 
+/**
+ * returns a table with having normalized all the numberLists
+ * 
+ * @param  {factor} factor optional factor
+ * @return {NumberTable}
+ * tags:normalization
+ */
 NumberTable.prototype.getNumberListsNormalized = function(factor) {
   factor = factor == null ? 1 : factor;
 
@@ -4893,6 +4901,13 @@ NumberTable.prototype.getNumberListsNormalized = function(factor) {
   return newTable;
 };
 
+/**
+ * normalizes the table to its maximal value
+ *
+ * @param  {factor} factor optional factor
+ * @return {NumberTable}
+ * tags:normalization
+ */
 NumberTable.prototype.getNormalizedToMax = function(factor) {
   factor = factor == null ? 1 : factor;
 
@@ -5030,8 +5045,9 @@ NumberTable.prototype.factor = function(value) {
 
 NumberTable.prototype.add = function(value) {
   var newTable = new NumberTable();
+  var i;
 
-  for(var i = 0; this[i] != null; i++) {
+  for(i = 0; this[i] != null; i++) {
     numberList = this[i];
     newTable[i] = numberList.add(value);
   }
@@ -5039,6 +5055,17 @@ NumberTable.prototype.add = function(value) {
   newTable.name = this.name;
   return newTable;
 };
+
+
+NumberTable.prototype.getCovarianceMatrix = function(){
+  var newTable = new NumberTable();
+  var i;
+  for(i = 0; this[i] != null; i++) {
+    
+  }
+
+}
+
 
 function Space2D(configuration) {
   configuration = configuration == null ? {} : configuration;
@@ -6168,8 +6195,18 @@ ObjectOperators.multiplication = function() {
     }
     return null;
   }
+
+  var a0 = arguments[0];
+  var a1 = arguments[1];
+  var a0Type = typeOf(a0);
+  var a1Type = typeOf(a1);
+  var pairType = a0Type + "_" + a1Type;
+  //c.log('pairType:['+pairType+']');
+
   if(arguments.length == 2) {
     if(arguments[0] == null) return null;
+
+    if(pairType=='NumberTable_NumberTable') return NumberTableOperators.product(a0, a1);
 
     if(arguments[0].isList && arguments[1].isList) {
       return ObjectOperators._applyBinaryOperatorOnLists(arguments[0], arguments[1], ObjectOperators.multiplication);
@@ -6180,20 +6217,14 @@ ObjectOperators.multiplication = function() {
       return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[1], arguments[0], ObjectOperators.multiplication);
     }
 
-    var a0 = arguments[0];
-    var a1 = arguments[1];
-    var a0Type = typeOf(a0);
-    var a1Type = typeOf(a1);
-
-    if(a1Type < a0Type) {
+    if(a1Type < a0Type){
       a0 = arguments[1];
       a1 = arguments[0];
       a0Type = typeOf(a0);
       a1Type = typeOf(a1);
     }
 
-    var pairType = a0Type + "_" + a1Type;
-    //c.log('pairType:['+pairType+']');
+   
     //
     switch(pairType) {
       case 'number_number':
@@ -11514,18 +11545,20 @@ NumberListOperators.cosineSimilarity = function(numberList0, numberList1) {
  * @return {Number}
  * tags:statistics
  */
-NumberListOperators.covariance = function(numberList0, numberList1) { //TODO: improve efficiency
+NumberListOperators.covariance = function(numberList0, numberList1) {
+  if(numberList0==null || numberList1==null) return;
+  
   var l = Math.min(numberList0.length, numberList1.length);
   var i;
   var av0 = numberList0.getAverage();
   var av1 = numberList1.getAverage();
   var s = 0;
 
-  for(i = 0; i < l; i++) {
-    s += (numberList0[i] - av0) * (numberList1[i] - av1);
+  for(i = 0; i<l; i++) {
+    s += (numberList0[i] - av0)*(numberList1[i] - av1);
   }
 
-  return s / l;
+  return s/l;
 };
 
 /**
@@ -11540,11 +11573,7 @@ NumberListOperators.covariance = function(numberList0, numberList1) { //TODO: im
 NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
   if(numberList == null || k == null || !k > 0) return null;
 
-  //c.l('numberList:', numberList);
-
   var interval = numberList.getInterval();
-
-  //c.l('interval:', interval);
 
   var min = interval.x;
   var max = interval.y;
@@ -11567,20 +11596,12 @@ NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
 
   for(i = 0; i < k; i++) {
     clusters[i] = new NumberList();
-    //clusters[i].actualMean = min + (i+0.5)*dX;//means[i];
     nextMeans[i] = min + (i + 0.5) * dX;
   }
 
   for(n = 0; n < N; n++) {
 
-    //c.l('-------'+n);
-
     for(i = 0; i < k; i++) {
-      //actualMean = means[i];//clusters[i].actualMean;
-      //c.l(' ', i, nextMeans[i]);
-      //clusters[i] = new NumberList();
-      //clusters[i].mean = actualMean;
-      //clusters[i].actualMean = 0;
       nValuesInCluster[i] = 0;
       means[i] = nextMeans[i];
       nextMeans[i] = 0;
@@ -11592,30 +11613,23 @@ NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
       jK = 0;
 
       for(j = 0; j < k; j++) {
-        //d = Math.abs(x-clusters[j].mean);
         d = Math.abs(x - means[j]);
-        //c.l('   d', d);
         if(d < dMin) {
           dMin = d;
           jK = j;
         }
       }
-      //c.l('    ', x,'-->',jK, 'with mean', clusters[jK].mean);
       if(n == N - 1) {
-        //c.l('jK, clusters[jK]', jK, clusters[jK]);
         returnIndexes ? clusters[jK].push(i) : clusters[jK].push(x);
       }
 
       nValuesInCluster[jK]++;
 
-      //clusters[jK].actualMean = ( (clusters[jK].length-1)*clusters[jK].actualMean + x )/clusters[jK].length;
       nextMeans[jK] = ((nValuesInCluster[jK] - 1) * nextMeans[jK] + x) / nValuesInCluster[jK];
     }
-    //if(n%50==0) c.l(n+' --> ' + nValuesInCluster.join(',')+"|"+means.join(','));
   }
 
   return clusters;
-
 };
 
 
@@ -11627,7 +11641,7 @@ NumberListOperators.standardDeviationBetweenTwoNumberLists = function(numberList
     s += Math.pow(numberList0[i] - numberList1[i], 2);
   }
 
-  return s / l;
+  return s/l;
 };
 
 /**
@@ -11787,13 +11801,13 @@ NumberListOperators.filterNumberListByNumber = function(numberList, value, compa
 
 /**
  * creates a NumberList that contains the union of two NumberList (removing repetitions)
- * @param  {NumberList} list A
- * @param  {NumberList} list B
+ * @param  {NumberList} x list A
+ * @param  {NumberList} y list B
  * 
  * @return {NumberList} the union of both NumberLists
  * tags:
  */
-NumberListOperators.union = function(x, y) {
+NumberListOperators.union = function(x, y) {//TODO: this should be refactored, and placed in ListOperators
   // Borrowed from here: http://stackoverflow.com/questions/3629817/getting-a-union-of-two-arrays-in-javascript
   var obj = {};
   for(var i = x.length - 1; i >= 0; --i)
@@ -12202,12 +12216,23 @@ NumberTableFlowOperators.getFlowTableIntervals = function(numberTable, normalize
 function NumberTableOperators() {}
 
 /**
- * normlizes each NumberList to min and max values
+ * a NumberTable as a matrix: has n lists, each with m values, being a mxn matrix
+ * the following NumberTable:
+ * [ [0, 4, 7], [3, 8, 1] ]
+ * is notated:
+ * | 0   4   7 |
+ * | 3   8   1 |
+ */
+
+
+
+/**
+ * normlizes each NumberList to min and max values (redundant with NumberTable.getNumberListsNormalized)
  * @param  {NumberTable} numberTable
  * @return {NumberTable}
- * tags:math
+ * tags:statistics,deprecated
  */
-NumberTableOperators.normalizeLists = function(numberTable) {
+NumberTableOperators.normalizeLists = function(numberTable) {//TODO: redundant with NumberTable.getNumberListsNormalized
   return numberTable.getNumberListsNormalized();
 };
 
@@ -12293,8 +12318,6 @@ NumberTableOperators.kNN = function(numberTable, propertyList, vectorList, k, ca
           table[0].push(i);
         }
       }
-      // table[0].push(i);
-      // table[1].push(d2);
     });
 
 
@@ -12334,8 +12357,6 @@ NumberTableOperators.kNN = function(numberTable, propertyList, vectorList, k, ca
       combination += val / (table[1][i] + 0.000001);
       sumD += (1 / (table[1][i] + 0.000001));
     }
-
-    c.l('vector:', vector[0], vector[1], 'colsest:', Math.floor(100000000 * table[1][0]), Math.floor(100000000 * table[1][1]), 'categories', propertyList[table[0][0]], propertyList[table[0][1]], 'result', combination / sumD);
 
     return combination / sumD;
 
@@ -12466,6 +12487,58 @@ NumberTableOperators.numberTableToNetwork = function(numberTable, method, tolera
 
   return network;
 };
+
+
+/**
+ * calculates the matrix product of two Numbertables
+ * @param  {NumberTable} numberTable0 first numberTable
+ * @param  {NumberTable} numberTable1 second numberTable
+ * @return {NumberTable} result
+ */
+NumberTableOperators.product = function(numberTable0, numberTable1){
+  if(numberTable0==null || numberTable1==null) return;
+  var n = numberTable0.length;
+  var m = numberTable0[0].length;
+  if(n==0 || m==0 || n!=numberTable1[0].length || m!=numberTable1.length) return;
+
+  var newTable = new NumberTable();
+  var i, j, k;
+  var val;
+
+  for(i=0; i<n; i++){
+    newTable[i] = new NumberList();
+    for(j=0; j<n; j++){
+      val = 0;
+      for(k=0; k<m; k++){
+        val+=numberTable0[i][k]*numberTable1[k][j];
+      }
+      newTable[i][j] = val;
+    }
+  }
+
+  return newTable;
+}
+
+
+
+/**
+ * calculates the covariance matrix
+ * @param  {NumberTable} numberTable
+ * @return {NumberTable}
+ * tags:statistics
+ */
+NumberTableOperators.getCovarianceMatrix = function(numberTable){//TODO:build more efficient method
+  if(numberTable==null) return;
+
+  c.l('>>',NumberTableOperators.product(numberTable, numberTable.getTransposed()));
+  return NumberTableOperators.product(numberTable, numberTable.getTransposed()).factor(1/numberTable.length);
+}
+
+
+
+
+
+
 function StringConversions() {}
 
 

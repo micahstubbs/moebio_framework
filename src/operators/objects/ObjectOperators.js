@@ -335,8 +335,18 @@ ObjectOperators.multiplication = function() {
     }
     return null;
   }
+
+  var a0 = arguments[0];
+  var a1 = arguments[1];
+  var a0Type = typeOf(a0);
+  var a1Type = typeOf(a1);
+  var pairType = a0Type + "_" + a1Type;
+  //c.log('pairType:['+pairType+']');
+
   if(arguments.length == 2) {
     if(arguments[0] == null) return null;
+
+    if(pairType=='NumberTable_NumberTable') return NumberTableOperators.product(a0, a1);
 
     if(arguments[0].isList && arguments[1].isList) {
       return ObjectOperators._applyBinaryOperatorOnLists(arguments[0], arguments[1], ObjectOperators.multiplication);
@@ -347,20 +357,14 @@ ObjectOperators.multiplication = function() {
       return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[1], arguments[0], ObjectOperators.multiplication);
     }
 
-    var a0 = arguments[0];
-    var a1 = arguments[1];
-    var a0Type = typeOf(a0);
-    var a1Type = typeOf(a1);
-
-    if(a1Type < a0Type) {
+    if(a1Type < a0Type){
       a0 = arguments[1];
       a1 = arguments[0];
       a0Type = typeOf(a0);
       a1Type = typeOf(a1);
     }
 
-    var pairType = a0Type + "_" + a1Type;
-    //c.log('pairType:['+pairType+']');
+   
     //
     switch(pairType) {
       case 'number_number':

@@ -47,10 +47,18 @@ NumberTable.fromArray = function(array) {
   result.add = NumberTable.prototype.add;
   result.getMax = NumberTable.prototype.getMax;
   result.getMinMaxInterval = NumberTable.prototype.getMinMaxInterval;
+  result.getCovarianceMatrix = NumberTable.prototype.getCovarianceMatrix;
 
   return result;
 };
 
+/**
+ * returns a table with having normalized all the numberLists
+ * 
+ * @param  {factor} factor optional factor
+ * @return {NumberTable}
+ * tags:normalization
+ */
 NumberTable.prototype.getNumberListsNormalized = function(factor) {
   factor = factor == null ? 1 : factor;
 
@@ -64,6 +72,13 @@ NumberTable.prototype.getNumberListsNormalized = function(factor) {
   return newTable;
 };
 
+/**
+ * normalizes the table to its maximal value
+ *
+ * @param  {factor} factor optional factor
+ * @return {NumberTable}
+ * tags:normalization
+ */
 NumberTable.prototype.getNormalizedToMax = function(factor) {
   factor = factor == null ? 1 : factor;
 
@@ -201,8 +216,9 @@ NumberTable.prototype.factor = function(value) {
 
 NumberTable.prototype.add = function(value) {
   var newTable = new NumberTable();
+  var i;
 
-  for(var i = 0; this[i] != null; i++) {
+  for(i = 0; this[i] != null; i++) {
     numberList = this[i];
     newTable[i] = numberList.add(value);
   }
@@ -210,3 +226,14 @@ NumberTable.prototype.add = function(value) {
   newTable.name = this.name;
   return newTable;
 };
+
+
+NumberTable.prototype.getCovarianceMatrix = function(){
+  var newTable = new NumberTable();
+  var i;
+  for(i = 0; this[i] != null; i++) {
+    
+  }
+
+}
+
