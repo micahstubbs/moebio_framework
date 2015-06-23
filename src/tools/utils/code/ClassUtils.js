@@ -3,34 +3,43 @@
  */
 
 
-
-
 var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"}
 
 
 
 /*
  * types are:
- * number, string, boolean, date
+ * number, string, boolean, date, Array, Object
  * and all data models classes names
  */
-function typeOf(o) {
-  var type = typeof o;
+function typeOf(object) {
+  if(object==null) return null;
 
-  if(type !== 'object') {
-    return type;
-  }
+  var type = typeof object;
+  if(type !== 'object') return type;
 
-  if(o === null) {
-    return 'null';
-  } else if(o.getDate != null) {
-    return 'date';
-  } else {
-    if(o.getType == null) return 'Object';
-    var objectType = o.getType();
-    return objectType;
-  }
-  c.log("[!] ERROR: could not detect type for ", o);
+  if(object.type!=null) return object.type;
+
+  if(Object.prototype.toString.call(object) == "[object Array]") return "Array";
+
+  if(object.getDate != null) return 'date';
+  
+  return 'Object';
+
+
+
+  
+
+  // if(o === null) {
+  //   return 'null';
+  // } else if(o.getDate != null) {
+  //   return 'date';
+  // } else {
+  //   if(o.getType == null) return 'Object';
+  //   var objectType = o.getType();
+  //   return objectType;
+  // }
+  // c.l("[!] ERROR: could not detect type for ", o);
 }
 
 function VOID() {}

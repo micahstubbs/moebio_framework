@@ -169,21 +169,6 @@ TableOperators.sortListsByNumberList = function(table, numberList, descending) {
   return newTable;
 };
 
-// old version replaced by above version Dec 1st, 2014
-// - fixed bug where descending with 'false' value gets changed to 'true'
-// - performance improvements for tables with lots of lists 
-// TableOperators.sortListsByNumberList=function(table, numberList, descending){
-// 	descending = descending || true;
-
-// 	var newTable = instantiate(typeOf(table));
-// 	newTable.name = table.name;
-// 	var nElements = table.length;
-// 	var i;
-// 	for(i=0; i<nElements; i++){
-// 		newTable[i] = ListOperators.sortListByNumberList(table[i], numberList, descending);
-// 	}
-// 	return newTable;
-// }
 
 
 
@@ -194,7 +179,7 @@ TableOperators.sortListsByNumberList = function(table, numberList, descending) {
  * @param  {Number} nList list in the table used as basis to aggregation
  * @param  {Number} mode mode of aggregation, 0:picks first element 1:adds numbers, 2:averages
  * @return {Table} aggregated table
- * tags:aggregation
+ * tags:
  */
 TableOperators.aggregateTable = function(table, nList, mode) {
   nList = nList == null ? 0 : nList;

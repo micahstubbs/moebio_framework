@@ -19,14 +19,18 @@ ObjectConversions = function() {};
  * tags:conversion
  */
 ObjectConversions.conversor = function(object, toType) {
+  if(object==null || toType==null) return;
+
   var i;
   var type = typeOf(object);
   var pairType = type + "_" + toType;
   var newList;
 
-  c.log('ObjectConversions.conversor, pairType:', pairType);
+  //c.log('ObjectConversions.conversor, pairType:', pairType);
 
   switch(pairType) {
+    case 'Array_List':
+      return ObjectConversions.ArrayToList(object);
     case 'NumberTable_Polygon':
       var polygon = new Polygon();
       var length2 = object.length > 1;
@@ -75,4 +79,20 @@ ObjectConversions.conversor = function(object, toType) {
     case 'number':
       return Number(object);
   }
+
+  // var short = TYPES_SHORT_NAMES_DICTIONARY[toType];
+  // if(short!=null && short!=toType){
+  //   return ObjectConversions.conversor(object, short);
+  // }
+
+  return null;
 };
+
+/**
+ * converts an array into an improved List
+ * @param {Array} array
+ * tags:conversion
+ */
+ObjectConversions.ArrayToList = function(array){
+  return List.fromArray(object).getImproved();
+}

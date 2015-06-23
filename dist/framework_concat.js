@@ -6351,6 +6351,7 @@ ObjectOperators.multiplication = function() {
   var a0Type = typeOf(a0);
   var a1Type = typeOf(a1);
   var pairType = a0Type + "_" + a1Type;
+
   //c.log('pairType:['+pairType+']');
 
   if(arguments.length == 2) {
@@ -6618,14 +6619,18 @@ ObjectConversions = function() {};
  * tags:conversion
  */
 ObjectConversions.conversor = function(object, toType) {
+  if(object==null || toType==null) return;
+
   var i;
   var type = typeOf(object);
   var pairType = type + "_" + toType;
   var newList;
 
-  c.log('ObjectConversions.conversor, pairType:', pairType);
+  //c.log('ObjectConversions.conversor, pairType:', pairType);
 
   switch(pairType) {
+    case 'Array_List':
+      return ObjectConversions.ArrayToList(object);
     case 'NumberTable_Polygon':
       var polygon = new Polygon();
       var length2 = object.length > 1;
@@ -6674,7 +6679,23 @@ ObjectConversions.conversor = function(object, toType) {
     case 'number':
       return Number(object);
   }
+
+  // var short = TYPES_SHORT_NAMES_DICTIONARY[toType];
+  // if(short!=null && short!=toType){
+  //   return ObjectConversions.conversor(object, short);
+  // }
+
+  return null;
 };
+
+/**
+ * converts an array into an improved List
+ * @param {Array} array
+ * tags:conversion
+ */
+ObjectConversions.ArrayToList = function(array){
+  return List.fromArray(object).getImproved();
+}
 /**
  * @classdesc Provides a set of tools that work with DateLists.
  *
@@ -9752,16 +9773,6 @@ ListOperators.getFirstElements = function(list, fromIndex) {
   }];
 };
 
-// *
-//  * filters a List, by a NumberList of indexes, or by an Interval
-//  * @param  {List} list to be filtered
-//  * @param  {Object} params NumberList or Interval
-//  * @return {List}
-
-// ListOperators.getSubList = function(list, params){
-// 	if(list==null || params==null) return null;
-// 	return list.getSubList.apply(list, params.isList?[params]:params);
-// }
 
 /**
  * first position of element in list (-1 if element doesn't belong to the list)
@@ -9811,6 +9822,7 @@ ListOperators.concat = function() {
 ListOperators.assemble = function() {
   return List.fromArray(Array.prototype.slice.call(arguments, 0)).getImproved();
 };
+
 
 
 /**
@@ -9996,7 +10008,15 @@ ListOperators.concatWithoutRepetitions = function() { //?
   return newList.getImproved();
 };
 
-
+/**
+ * builds a table: a list of sub-lists from the original list, each sub-list determined size subListsLength, and starting at certain indexes separated by step
+ * @param  {List} list
+ * @param  {Number} subListsLength length of each sub-list
+ * @param  {Number} step slifing step
+ * @param  {Number} finalizationMode<br>0:all sub-Lists same length, doesn't cover the List<br>1:last sub-List catches the last elements, with lesser length<br>2:all lists same length, last sub-list migth contain elements from the beginning of the List
+ * @return {Table}
+ * tags:
+ */
 ListOperators.slidingWindowOnList = function(list, subListsLength, step, finalizationMode) {
   finalizationMode = finalizationMode || 0;
   var table = new Table();
@@ -10059,12 +10079,38 @@ ListOperators.listsIntersect = function(list0, list1) {
   return false;
 };
 
+
 /**
- * returns the list of common elements between two lists
+ * creates a List that contains the union of two List (removing repetitions)
+ * @param  {List} list0 first list
+ * @param  {List} list1 second list
+ * 
+ * @return {List} the union of both Lists
+ * tags:
+ */
+ListOperators.union = function(list0, list1) {//TODO: this should be refactored, and placed in ListOperators
+  if(list0==null || list1==null) return;
+
+  var obj = {};
+  var i, k;
+
+  for(i = 0; list0[i]!=null; i++) obj[list0[i]] = list0[i];
+  for(i = 0; list1[i]!=null; i++) obj[list1[i]] = list1[i];
+  var union = new List();
+  for(k in obj) {
+    //if(obj.hasOwnProperty(k)) // <-- optional
+    union.push(obj[k]);
+  }
+  return union;
+};
+
+
+/**
+ * returns the list of common elements between two lists (deprecated, use union instead)
  * @param  {List} list0
  * @param  {List} list1
  * @return {List}
- * tags:
+ * tags:deprecated
  */
 ListOperators.getCommonElements = function(list0, list1) {
   var nums = list0.type == 'NumberList' && list1.type == 'NumberList';
@@ -10085,12 +10131,13 @@ ListOperators.getCommonElements = function(list0, list1) {
 
 
 /**
- * creates a List that contains the union of two List (removing repetitions)
+ * creates a List that contains the union of two List (removing repetitions) (deprecated, use union instead)
+ * @param  {List} list0
  * @param  {List} list A
  * @param  {List} list B
  * 
  * @return {List} the union of both NumberLists
- * tags:
+ * tags:deprecated
  */
 ListOperators.unionLists = function(x, y) {
   // Borrowed from here: http://stackoverflow.com/questions/3629817/getting-a-union-of-two-arrays-in-javascript
@@ -10126,7 +10173,7 @@ ListOperators.unionLists = function(x, y) {
  * @return {List} the intersection of both NumberLists
  * tags:
  */
-ListOperators.intersectLists = function(a, b) {
+ListOperators.intersectLists = function(a, b) {//TODO: change name to intersection
   // Borrowed from here: http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
   var result;
   if(a.type != b.type || (a.type != "StringList" && a.type != "NumberList"))
@@ -10156,7 +10203,159 @@ ListOperators.intersectLists = function(a, b) {
   return result;
 };
 
+/**
+ * builds a dictionary that matches an element of a List with all its indexes on the List (indexesDictionary[element] --> numberList of indexes of element on list)
+ * @param  {List} list
+ * @return {Object}
+ * tags:
+ */
+ListOperators.getIndexesDictionary = function(list){
+  var indexesDictionary = {};
+  var i;
 
+  list.forEach(function(element, i){
+    if(indexesDictionary[element]==null) indexesDictionary[element]=new NumberList();
+    indexesDictionary[element].push(i);
+  });
+
+  return indexesDictionary;
+}
+
+ListOperators.getIndexesTable = function(list){
+  var indexesTable = new Table();
+  indexesTable[0] = new List();
+  indexesTable[1] = new NumberTable();
+  var indexesDictionary = {};
+  var i;
+
+  list.forEach(function(element, i){
+    indexOnTable = indexesDictionary[element]
+    if(indexOnTable==null){
+      indexesTable[0].push(element);
+      indexesTable[1].push(new NumberList(i));
+      indexesDictionary[element]=indexesTable[0].length-1;
+    } else {
+      indexesTable[1][indexOnTable].push(i)
+    }
+  });
+
+  indexesTable[0] = indexesTable[0].getImproved();
+
+  return indexesTable;
+}
+
+/**
+ * aggregates values of a list using an aggregator list as reference
+ * @param  {List} aggregatorList aggregator list that typically contains several repeated elements
+ * @param  {List} toAggregateList list of elements that will be aggregated
+ * 
+ * @param  {Number} mode aggregation modes:<br>0:count (default)<br>1:sum<br>2:average<br>3:min<br>4:max<br>5:enlist (creates a list of elements)<br>6:first element<br>7:last element<br>8:most common element<br>9:random element<br>10:indexes
+ * @param  {Table} indexesTable optional already calculated table of indexes of elements on the aggregator list (if didn't provided, the method calculates it)
+ * @return {Table} contains a list with non repeated elements on the first list, and the aggregated elements on a second list
+ * tags:
+ */
+ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, indexesTable){
+  if(aggregatorList==null || toAggregateList==null) return null;
+  var table = new Table();
+
+  if(indexesTable==null) indexesTable = ListOperators.getIndexesTable(aggregatorList);
+
+  if(mode==10) return indexesTable;
+
+  table[0] = indexesTable[0];
+  
+  mode = mode==null?0:mode;
+  
+  switch(mode){
+    case 0://count
+      table[1] = new NumberList();
+      indexesTable[1].forEach(function(indexes){
+        table[1].push(indexes.length);
+      });
+      return table;
+    case 1://sum
+    case 2://average
+      var sum;
+      table[1] = new NumberList();
+      indexesTable[1].forEach(function(indexes){
+        sum = 0;
+        indexes.forEach(function(index){
+          sum+=toAggregateList[index];
+        });
+        if(mode==2) sum/=indexes.length;
+        table[1].push(sum);
+      });
+      return table;
+    case 3://min
+      var min;
+      table[1] = new NumberList();
+      indexesTable[1].forEach(function(indexes){
+        min = 99999999999;
+        indexes.forEach(function(index){
+          min=Math.min(min, toAggregateList[index]);
+        });
+        table[1].push(min);
+      });
+      return table;
+    case 4://average
+      var max;
+      table[1] = new NumberList();
+      indexesTable[1].forEach(function(indexes){
+        max = -99999999999;
+        indexes.forEach(function(index){
+          max=Math.max(max, toAggregateList[index]);
+        });
+        table[1].push(max);
+      });
+      return table;
+    case 5://enlist
+      table[1] = new Table();
+      var list;
+      indexesTable[1].forEach(function(indexes){
+        list = new List();
+        table[1].push(list)
+        indexes.forEach(function(index){
+          list.push(toAggregateList[index]);
+        });
+        list = list.getImproved();
+      });
+      return table.getImproved();
+    case 6://first
+      table[1] = new List();
+      var list;
+      indexesTable[1].forEach(function(indexes){
+        table[1].push(toAggregateList[indexes[0]]);
+      });
+      table[1] = table[1].getImproved();
+      return table;
+      break;
+    case 7://last
+      table[1] = new List();
+      var list;
+      indexesTable[1].forEach(function(indexes){
+        table[1].push(toAggregateList[indexes[indexes.length-1]]);
+      });
+      table[1] = table[1].getImproved();
+      return table;
+    case 8://most common
+      var elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 5, indexesTable);
+      elementsTable[1].forEach(function(elements){
+        table[1].push(elements.getMostRepeatedElement());
+      });
+      table[1] = table[1].getImproved();
+      return table;
+    case 9://random
+      table[1] = new List();
+      var list;
+      indexesTable[1].forEach(function(indexes){
+        table[1].push( toAggregateList[indexes[ Math.floor(Math.random()*indexes.length) ]] );
+      });
+      table[1] = table[1].getImproved();
+      return table;
+  }
+
+  return null;
+}
 
 
 
@@ -10180,8 +10379,6 @@ ListOperators.getListEntropy = function(list, valueFollowing) {
   }
 
   var table = ListOperators.countElementsRepetitionOnList(list, true);
-  c.l('    getListEntropy | table[0]', table[0]);
-  c.l('    getListEntropy | table[1]', table[1]);
   list._mostRepresentedValue = table[0][0];
   var N = list.length;
   list._biggestProbability = table[1][0] / N;
@@ -10203,38 +10400,6 @@ ListOperators.getListEntropy = function(list, valueFollowing) {
 
   return entropy;
 };
-
-
-/**
- * measures how much a feature decreases entropy when segmenting by its values a supervised variable
- * @param  {List} feature
- * @param  {List} supervised
- * @return {Number}
- * tags:ds
- */
-
-// ListOperators.getInformationGain = function(feature, supervised){
-// 	if(feature==null || supervised==null || feature.length!=supervised.length) return null;
-
-// 	var ig = ListOperators.getListEntropy(supervised);
-// 	var childrenObject = {};
-// 	var childrenLists = [];
-// 	var N = feature.length;
-
-// 	feature.forEach(function(element, i){
-// 		if(childrenObject[element]==null){
-// 			childrenObject[element]=new List();
-// 			childrenLists.push(childrenObject[element]);
-// 		}
-// 		childrenObject[element].push(supervised[i]);
-// 	});
-
-// 	childrenLists.forEach(function(cl){
-// 		ig -= (cl.length/N)*ListOperators.getListEntropy(cl);
-// 	});
-
-// 	return ig;
-// }
 
 
 /**
@@ -10883,21 +11048,6 @@ TableOperators.sortListsByNumberList = function(table, numberList, descending) {
   return newTable;
 };
 
-// old version replaced by above version Dec 1st, 2014
-// - fixed bug where descending with 'false' value gets changed to 'true'
-// - performance improvements for tables with lots of lists 
-// TableOperators.sortListsByNumberList=function(table, numberList, descending){
-// 	descending = descending || true;
-
-// 	var newTable = instantiate(typeOf(table));
-// 	newTable.name = table.name;
-// 	var nElements = table.length;
-// 	var i;
-// 	for(i=0; i<nElements; i++){
-// 		newTable[i] = ListOperators.sortListByNumberList(table[i], numberList, descending);
-// 	}
-// 	return newTable;
-// }
 
 
 
@@ -10908,7 +11058,7 @@ TableOperators.sortListsByNumberList = function(table, numberList, descending) {
  * @param  {Number} nList list in the table used as basis to aggregation
  * @param  {Number} mode mode of aggregation, 0:picks first element 1:adds numbers, 2:averages
  * @return {Table} aggregated table
- * tags:aggregation
+ * tags:
  */
 TableOperators.aggregateTable = function(table, nList, mode) {
   nList = nList == null ? 0 : nList;
@@ -11697,7 +11847,7 @@ NumberListOperators.cosineSimilarity = function(numberList0, numberList1) {
  */
 NumberListOperators.covariance = function(numberList0, numberList1) {
   if(numberList0==null || numberList1==null) return;
-  
+
   var l = Math.min(numberList0.length, numberList1.length);
   var i;
   var av0 = numberList0.getAverage();
@@ -11949,28 +12099,6 @@ NumberListOperators.filterNumberListByNumber = function(numberList, value, compa
   return newNumberList;
 };
 
-/**
- * creates a NumberList that contains the union of two NumberList (removing repetitions)
- * @param  {NumberList} x list A
- * @param  {NumberList} y list B
- * 
- * @return {NumberList} the union of both NumberLists
- * tags:
- */
-NumberListOperators.union = function(x, y) {//TODO: this should be refactored, and placed in ListOperators
-  // Borrowed from here: http://stackoverflow.com/questions/3629817/getting-a-union-of-two-arrays-in-javascript
-  var obj = {};
-  for(var i = x.length - 1; i >= 0; --i)
-    obj[x[i]] = x[i];
-  for(var i = y.length - 1; i >= 0; --i)
-    obj[y[i]] = y[i];
-  var res = new NumberList();
-  for(var k in obj) {
-    if(obj.hasOwnProperty(k)) // <-- optional
-      res.push(obj[k]);
-  }
-  return res;
-};
 
 /**
  * creates a NumberList that contains the intersection of two NumberList (elements present in BOTH lists)
@@ -11978,9 +12106,9 @@ NumberListOperators.union = function(x, y) {//TODO: this should be refactored, a
  * @param  {NumberList} list B
  * 
  * @return {NumberList} the intersection of both NumberLists
- * tags:
+ * tags:deprecated
  */
-NumberListOperators.intersection = function(a, b) {
+NumberListOperators.intersection = function(a, b) {//TODO: refactor this method that should be at ListOperators
   // Borrowed from here: http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
   //console.log( "arguments: ", arguments ); 
   if(arguments.length > 2) {
@@ -12679,8 +12807,6 @@ NumberTableOperators.product = function(numberTable0, numberTable1){
  */
 NumberTableOperators.getCovarianceMatrix = function(numberTable){//TODO:build more efficient method
   if(numberTable==null) return;
-
-  c.l('>>',NumberTableOperators.product(numberTable, numberTable.getTransposed()));
   return NumberTableOperators.product(numberTable, numberTable.getTransposed()).factor(1/numberTable.length);
 }
 
@@ -20314,34 +20440,43 @@ Engine3D.prototype.quadrilater = function(p0, p1, p2, p3) {
  */
 
 
-
-
 var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"}
 
 
 
 /*
  * types are:
- * number, string, boolean, date
+ * number, string, boolean, date, Array, Object
  * and all data models classes names
  */
-function typeOf(o) {
-  var type = typeof o;
+function typeOf(object) {
+  if(object==null) return null;
 
-  if(type !== 'object') {
-    return type;
-  }
+  var type = typeof object;
+  if(type !== 'object') return type;
 
-  if(o === null) {
-    return 'null';
-  } else if(o.getDate != null) {
-    return 'date';
-  } else {
-    if(o.getType == null) return 'Object';
-    var objectType = o.getType();
-    return objectType;
-  }
-  c.log("[!] ERROR: could not detect type for ", o);
+  if(object.type!=null) return object.type;
+
+  if(Object.prototype.toString.call(object) == "[object Array]") return "Array";
+
+  if(object.getDate != null) return 'date';
+  
+  return 'Object';
+
+
+
+  
+
+  // if(o === null) {
+  //   return 'null';
+  // } else if(o.getDate != null) {
+  //   return 'date';
+  // } else {
+  //   if(o.getType == null) return 'Object';
+  //   var objectType = o.getType();
+  //   return objectType;
+  // }
+  // c.l("[!] ERROR: could not detect type for ", o);
 }
 
 function VOID() {}
