@@ -4633,25 +4633,24 @@ define('src/index', ['exports'], function (exports) {
 
   Global.userAgent="unknown";
 
-  function init(){
+  window.init = function(){
     //console.log("init must be overriden!");
   }
 
-  function cycle(){
+  window.cycle = function(){
     //console.log("cycle must be overriden!");
   }
 
-  function resizeWindow(){
+  window.resizeWindow = function(){
     //console.log("resizeWindow must be overriden!");
   }
 
-  function lastCycle(){
+  window.lastCycle = function(){
     //override
   }
 
   var listenerArray  = [];
   var canvas;
-  var removeDiv;
   var src_Global__userAgent="none";
   var src_Global__userAgentVersion;
   var canvasResizeable=true;
@@ -4752,9 +4751,6 @@ define('src/index', ['exports'], function (exports) {
     exports.canvas = canvas = document.getElementById('main');
 
     if(canvas!=null){
-      exports.removeDiv = removeDiv = document.getElementById('removeDiv');
-      removeDiv.style.display = 'none';
-
       exports.context = src_Global__context = canvas.getContext('2d');
 
       _adjustCanvas();
@@ -4771,7 +4767,7 @@ define('src/index', ['exports'], function (exports) {
       window.addEventListener("resize", onResize, false);
 
       startCycle();
-      init();
+      window.init();
     }
 
     c.l('Moebio Framework v2.259 | user agent: '+src_Global__userAgent+' | user agent version: '+src_Global__userAgentVersion+' | canvas detected: '+(canvas!=null));
@@ -4828,7 +4824,7 @@ define('src/index', ['exports'], function (exports) {
 
   function onResize(e){
     _adjustCanvas();
-    resizeWindow();
+    window.resizeWindow();
   }
 
   function _adjustCanvas(){
@@ -4838,7 +4834,7 @@ define('src/index', ['exports'], function (exports) {
     exports.cH = cH = getDocHeight();
 
     canvas.setAttribute('width', cW);
-      canvas.setAttribute('height', cH);
+    canvas.setAttribute('height', cH);
 
     exports.cX = cX = Math.floor(cW*0.5);
     exports.cY = cY = Math.floor(cH*0.5);
@@ -4892,7 +4888,7 @@ define('src/index', ['exports'], function (exports) {
 
     if(MOUSE_PRESSED) exports.T_MOUSE_PRESSED = T_MOUSE_PRESSED = new Date().getTime() - _tLastMouseDown;
 
-      cycle();
+      window.cycle();
 
       exports.WHEEL_CHANGE = WHEEL_CHANGE = 0;
 
@@ -4914,7 +4910,7 @@ define('src/index', ['exports'], function (exports) {
     clearInterval(_setIntervalId);
     exports.cycleActive = cycleActive = false;
 
-    lastCycle();
+    window.lastCycle();
   }
 
 
@@ -5179,7 +5175,6 @@ define('src/index', ['exports'], function (exports) {
   exports._onMouse = _onMouse;
   exports.listenerArray = listenerArray;
   exports.canvas = canvas;
-  exports.removeDiv = removeDiv;
   exports.userAgent = src_Global__userAgent;
   exports.userAgentVersion = src_Global__userAgentVersion;
   exports.canvasResizeable = canvasResizeable;
@@ -25206,6 +25201,8 @@ define('src/index', ['exports'], function (exports) {
   // interface of the framework.
 
   // dataStructures/
+
+  exports.removeDiv = undefined;
 
 });
 //# sourceMappingURL=/Users/yannick/Bocoup/Projects/moebio/moebio_framework/dist/moebio_framework_concat.js.map
