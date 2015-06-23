@@ -23928,7 +23928,7 @@ define('src/index', ['exports'], function (exports) {
       if(trys > 10) notFinished = false;
     }
 
-    table = new Table();
+    var table = new Table();
     table[0] = stringList;
     table[1] = positions;
     table[2] = sizes;
