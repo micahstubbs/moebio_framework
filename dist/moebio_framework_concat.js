@@ -15089,7 +15089,7 @@ define('src/index', ['exports'], function (exports) {
    */
   NumberListOperators.covariance = function(numberList0, numberList1) {
     if(numberList0==null || numberList1==null) return;
-    
+
     var l = Math.min(numberList0.length, numberList1.length);
     var i;
     var av0 = numberList0.getAverage();
@@ -15343,15 +15343,10 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * creates a NumberList that contains the union of two NumberList (removing repetitions)
-  <<<<<<< HEAD
-   * @param  {NumberList} list A
-   * @param  {NumberList} list B
    *
-  =======
    * @param  {NumberList} x list A
    * @param  {NumberList} y list B
-   * 
-  >>>>>>> master
+   *
    * @return {NumberList} the union of both NumberLists
    * tags:
    */
