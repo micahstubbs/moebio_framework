@@ -4654,8 +4654,8 @@ define('src/index', ['exports'], function (exports) {
   var HalfPi = 0.5*Math.PI;
   var radToGrad = 180/Math.PI;
   var gradToRad = Math.PI/180;
-  var c = console;
-  c.l = c.log; //use c.l instead of console.log
+  var src_Global__c = console;
+  src_Global__c.l = src_Global__c.log; //use c.l instead of console.log
 
   //private
   var _wheelActivated = false;
@@ -4727,7 +4727,7 @@ define('src/index', ['exports'], function (exports) {
       window.init();
     }
 
-    c.l('Moebio Framework v2.259 | user agent: '+src_Global__userAgent+' | user agent version: '+src_Global__userAgentVersion+' | canvas detected: '+(canvas!=null));
+    src_Global__c.l('Moebio Framework v2.259 | user agent: '+src_Global__userAgent+' | user agent version: '+src_Global__userAgentVersion+' | canvas detected: '+(canvas!=null));
 
   }, false);
 
@@ -4932,7 +4932,7 @@ define('src/index', ['exports'], function (exports) {
   }
 
   function cancelAllInteractions(){
-    c.log("cancelAllInteractions, _interactionCancelledFrame:", nF);
+    src_Global__c.log("cancelAllInteractions, _interactionCancelledFrame:", nF);
     _interactionCancelledFrame = nF;
   }
 
@@ -5170,7 +5170,7 @@ define('src/index', ['exports'], function (exports) {
   exports.HalfPi = HalfPi;
   exports.radToGrad = radToGrad;
   exports.gradToRad = gradToRad;
-  exports.c = c;
+  exports.c = src_Global__c;
   exports._cycleOnMouseMovement = _cycleOnMouseMovement;
 
   Relation.prototype = new Node__default();
@@ -7214,10 +7214,18 @@ define('src/index', ['exports'], function (exports) {
     result.add = NumberTable.prototype.add;
     result.getMax = NumberTable.prototype.getMax;
     result.getMinMaxInterval = NumberTable.prototype.getMinMaxInterval;
+    result.getCovarianceMatrix = NumberTable.prototype.getCovarianceMatrix;
 
     return result;
   };
 
+  /**
+   * returns a table with having normalized all the numberLists
+   *
+   * @param  {factor} factor optional factor
+   * @return {NumberTable}
+   * tags:normalization
+   */
   NumberTable.prototype.getNumberListsNormalized = function(factor) {
     factor = factor == null ? 1 : factor;
 
@@ -7231,6 +7239,13 @@ define('src/index', ['exports'], function (exports) {
     return newTable;
   };
 
+  /**
+   * normalizes the table to its maximal value
+   *
+   * @param  {factor} factor optional factor
+   * @return {NumberTable}
+   * tags:normalization
+   */
   NumberTable.prototype.getNormalizedToMax = function(factor) {
     factor = factor == null ? 1 : factor;
 
@@ -7370,8 +7385,9 @@ define('src/index', ['exports'], function (exports) {
   NumberTable.prototype.add = function(value) {
     var newTable = new NumberTable();
     var numberList;
+    var i;
 
-    for(var i = 0; this[i] != null; i++) {
+    for(i = 0; this[i] != null; i++) {
       numberList = this[i];
       newTable[i] = numberList.add(value);
     }
@@ -7379,6 +7395,16 @@ define('src/index', ['exports'], function (exports) {
     newTable.name = this.name;
     return newTable;
   };
+
+
+  NumberTable.prototype.getCovarianceMatrix = function(){
+    var newTable = new NumberTable();
+    var i;
+    for(i = 0; this[i] != null; i++) {
+
+    }
+
+  }
 
   exports.NumberTable = NumberTable;
 
@@ -15061,18 +15087,20 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number}
    * tags:statistics
    */
-  NumberListOperators.covariance = function(numberList0, numberList1) { //TODO: improve efficiency
+  NumberListOperators.covariance = function(numberList0, numberList1) {
+    if(numberList0==null || numberList1==null) return;
+    
     var l = Math.min(numberList0.length, numberList1.length);
     var i;
     var av0 = numberList0.getAverage();
     var av1 = numberList1.getAverage();
     var s = 0;
 
-    for(i = 0; i < l; i++) {
-      s += (numberList0[i] - av0) * (numberList1[i] - av1);
+    for(i = 0; i<l; i++) {
+      s += (numberList0[i] - av0)*(numberList1[i] - av1);
     }
 
-    return s / l;
+    return s/l;
   };
 
   /**
@@ -15087,11 +15115,7 @@ define('src/index', ['exports'], function (exports) {
   NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
     if(numberList == null || k == null || !k > 0) return null;
 
-    //c.l('numberList:', numberList);
-
     var interval = numberList.getInterval();
-
-    //c.l('interval:', interval);
 
     var min = interval.x;
     var max = interval.y;
@@ -15114,20 +15138,12 @@ define('src/index', ['exports'], function (exports) {
 
     for(i = 0; i < k; i++) {
       clusters[i] = new NumberList();
-      //clusters[i].actualMean = min + (i+0.5)*dX;//means[i];
       nextMeans[i] = min + (i + 0.5) * dX;
     }
 
     for(n = 0; n < N; n++) {
 
-      //c.l('-------'+n);
-
       for(i = 0; i < k; i++) {
-        //actualMean = means[i];//clusters[i].actualMean;
-        //c.l(' ', i, nextMeans[i]);
-        //clusters[i] = new NumberList();
-        //clusters[i].mean = actualMean;
-        //clusters[i].actualMean = 0;
         nValuesInCluster[i] = 0;
         means[i] = nextMeans[i];
         nextMeans[i] = 0;
@@ -15139,30 +15155,23 @@ define('src/index', ['exports'], function (exports) {
         jK = 0;
 
         for(j = 0; j < k; j++) {
-          //d = Math.abs(x-clusters[j].mean);
           d = Math.abs(x - means[j]);
-          //c.l('   d', d);
           if(d < dMin) {
             dMin = d;
             jK = j;
           }
         }
-        //c.l('    ', x,'-->',jK, 'with mean', clusters[jK].mean);
         if(n == N - 1) {
-          //c.l('jK, clusters[jK]', jK, clusters[jK]);
           returnIndexes ? clusters[jK].push(i) : clusters[jK].push(x);
         }
 
         nValuesInCluster[jK]++;
 
-        //clusters[jK].actualMean = ( (clusters[jK].length-1)*clusters[jK].actualMean + x )/clusters[jK].length;
         nextMeans[jK] = ((nValuesInCluster[jK] - 1) * nextMeans[jK] + x) / nValuesInCluster[jK];
       }
-      //if(n%50==0) c.l(n+' --> ' + nValuesInCluster.join(',')+"|"+means.join(','));
     }
 
     return clusters;
-
   };
 
 
@@ -15174,7 +15183,7 @@ define('src/index', ['exports'], function (exports) {
       s += Math.pow(numberList0[i] - numberList1[i], 2);
     }
 
-    return s / l;
+    return s/l;
   };
 
   /**
@@ -15334,13 +15343,19 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * creates a NumberList that contains the union of two NumberList (removing repetitions)
+  <<<<<<< HEAD
    * @param  {NumberList} list A
    * @param  {NumberList} list B
    *
+  =======
+   * @param  {NumberList} x list A
+   * @param  {NumberList} y list B
+   * 
+  >>>>>>> master
    * @return {NumberList} the union of both NumberLists
    * tags:
    */
-  NumberListOperators.union = function(x, y) {
+  NumberListOperators.union = function(x, y) {//TODO: this should be refactored, and placed in ListOperators
     // Borrowed from here: http://stackoverflow.com/questions/3629817/getting-a-union-of-two-arrays-in-javascript
     var obj = {};
     for(var i = x.length - 1; i >= 0; --i)
@@ -15598,20 +15613,31 @@ define('src/index', ['exports'], function (exports) {
 
   exports.NumberTableFlowOperators = NumberTableFlowOperators;
 
-  function NumberTableOperators() {}
+  function NumberTableOperators__NumberTableOperators() {}
+  var NumberTableOperators__default = NumberTableOperators__NumberTableOperators;
+
+  /**
+   * a NumberTable as a matrix: has n lists, each with m values, being a mxn matrix
+   * the following NumberTable:
+   * [ [0, 4, 7], [3, 8, 1] ]
+   * is notated:
+   * | 0   4   7 |
+   * | 3   8   1 |
+   */
+
 
 
   /**
-   * normlizes each NumberList to min and max values
+   * normlizes each NumberList to min and max values (redundant with NumberTable.getNumberListsNormalized)
    * @param  {NumberTable} numberTable
    * @return {NumberTable}
-   * tags:math
+   * tags:statistics,deprecated
    */
-  NumberTableOperators.normalizeLists = function(numberTable) {
+  NumberTableOperators__NumberTableOperators.normalizeLists = function(numberTable) {//TODO: redundant with NumberTable.getNumberListsNormalized
     return numberTable.getNumberListsNormalized();
   };
 
-  NumberTableOperators.normalizeListsToMax = function(numberTable) {
+  NumberTableOperators__NumberTableOperators.normalizeListsToMax = function(numberTable) {
     var newNumberTable = new NumberTable();
     newNumberTable.name = numberTable.name;
     var i;
@@ -15630,7 +15656,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {NumberTable}
    * tags:statistics
    */
-  NumberTableOperators.averageSmootherOnLists = function(numberTable, intensity, nIterations) {
+  NumberTableOperators__NumberTableOperators.averageSmootherOnLists = function(numberTable, intensity, nIterations) {
     if(numberTable == null) return;
 
     intensity = intensity || 0.5;
@@ -15657,7 +15683,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Object} kNN Function or a matrix (grid) of values if matrixN is provided, or classes or values from points if vectorList is provided
    * tags:ds
    */
-  NumberTableOperators.kNN = function(numberTable, propertyList, vectorList, k, calculateClass, matrixN) {
+  NumberTableOperators__NumberTableOperators.kNN = function(numberTable, propertyList, vectorList, k, calculateClass, matrixN) {
     if(numberTable == null ||  propertyList == null) return null;
 
     k = k || 1;
@@ -15693,8 +15719,6 @@ define('src/index', ['exports'], function (exports) {
             table[0].push(i);
           }
         }
-        // table[0].push(i);
-        // table[1].push(d2);
       });
 
 
@@ -15800,7 +15824,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   //TODO: move to NumberTableConversions
-  NumberTableOperators.numberTableToNetwork = function(numberTable, method, tolerance) {
+  NumberTableOperators__NumberTableOperators.numberTableToNetwork = function(numberTable, method, tolerance) {
     tolerance = tolerance == null ? 0 : tolerance;
 
     var network = new Network();
@@ -15867,7 +15891,53 @@ define('src/index', ['exports'], function (exports) {
     return network;
   };
 
-  exports.NumberTableOperators = NumberTableOperators;
+
+  /**
+   * calculates the matrix product of two Numbertables
+   * @param  {NumberTable} numberTable0 first numberTable
+   * @param  {NumberTable} numberTable1 second numberTable
+   * @return {NumberTable} result
+   */
+  NumberTableOperators__NumberTableOperators.product = function(numberTable0, numberTable1){
+    if(numberTable0==null || numberTable1==null) return;
+    var n = numberTable0.length;
+    var m = numberTable0[0].length;
+    if(n==0 || m==0 || n!=numberTable1[0].length || m!=numberTable1.length) return;
+
+    var newTable = new NumberTable();
+    var i, j, k;
+    var val;
+
+    for(i=0; i<n; i++){
+      newTable[i] = new NumberList();
+      for(j=0; j<n; j++){
+        val = 0;
+        for(k=0; k<m; k++){
+          val+=numberTable0[i][k]*numberTable1[k][j];
+        }
+        newTable[i][j] = val;
+      }
+    }
+
+    return newTable;
+  }
+
+
+
+  /**
+   * calculates the covariance matrix
+   * @param  {NumberTable} numberTable
+   * @return {NumberTable}
+   * tags:statistics
+   */
+  NumberTableOperators__NumberTableOperators.getCovarianceMatrix = function(numberTable){//TODO:build more efficient method
+    if(numberTable==null) return;
+
+    c.l('>>',NumberTableOperators__NumberTableOperators.product(numberTable, numberTable.getTransposed()));
+    return NumberTableOperators__NumberTableOperators.product(numberTable, numberTable.getTransposed()).factor(1/numberTable.length);
+  }
+
+  exports.NumberTableOperators = NumberTableOperators__default;
 
   function NetworkConvertions() {}
 
@@ -16381,8 +16451,18 @@ define('src/index', ['exports'], function (exports) {
       }
       return null;
     }
+
+    var a0 = arguments[0];
+    var a1 = arguments[1];
+    var a0Type = typeOf(a0);
+    var a1Type = typeOf(a1);
+    var pairType = a0Type + "_" + a1Type;
+    //c.log('pairType:['+pairType+']');
+
     if(arguments.length == 2) {
       if(arguments[0] == null) return null;
+
+      if(pairType=='NumberTable_NumberTable') return NumberTableOperators.product(a0, a1);
 
       if(arguments[0].isList && arguments[1].isList) {
         return ObjectOperators._applyBinaryOperatorOnLists(arguments[0], arguments[1], ObjectOperators.multiplication);
@@ -16393,12 +16473,7 @@ define('src/index', ['exports'], function (exports) {
         return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[1], arguments[0], ObjectOperators.multiplication);
       }
 
-      var a0 = arguments[0];
-      var a1 = arguments[1];
-      var a0Type = typeOf(a0);
-      var a1Type = typeOf(a1);
-
-      if(a1Type < a0Type) {
+      if(a1Type < a0Type){
         a0 = arguments[1];
         a1 = arguments[0];
         a0Type = typeOf(a0);
@@ -16407,6 +16482,7 @@ define('src/index', ['exports'], function (exports) {
 
       var pairType = a0Type + "_" + a1Type;
       //console.log('pairType:['+pairType+']');
+
       //
       switch(pairType) {
         case 'number_number':

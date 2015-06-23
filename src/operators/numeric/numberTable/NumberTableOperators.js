@@ -12,12 +12,23 @@ function NumberTableOperators() {}
 export default NumberTableOperators;
 
 /**
- * normlizes each NumberList to min and max values
+ * a NumberTable as a matrix: has n lists, each with m values, being a mxn matrix
+ * the following NumberTable:
+ * [ [0, 4, 7], [3, 8, 1] ]
+ * is notated:
+ * | 0   4   7 |
+ * | 3   8   1 |
+ */
+
+
+
+/**
+ * normlizes each NumberList to min and max values (redundant with NumberTable.getNumberListsNormalized)
  * @param  {NumberTable} numberTable
  * @return {NumberTable}
- * tags:math
+ * tags:statistics,deprecated
  */
-NumberTableOperators.normalizeLists = function(numberTable) {
+NumberTableOperators.normalizeLists = function(numberTable) {//TODO: redundant with NumberTable.getNumberListsNormalized
   return numberTable.getNumberListsNormalized();
 };
 
@@ -103,8 +114,6 @@ NumberTableOperators.kNN = function(numberTable, propertyList, vectorList, k, ca
           table[0].push(i);
         }
       }
-      // table[0].push(i);
-      // table[1].push(d2);
     });
 
 
@@ -276,3 +285,54 @@ NumberTableOperators.numberTableToNetwork = function(numberTable, method, tolera
 
   return network;
 };
+
+
+/**
+ * calculates the matrix product of two Numbertables
+ * @param  {NumberTable} numberTable0 first numberTable
+ * @param  {NumberTable} numberTable1 second numberTable
+ * @return {NumberTable} result
+ */
+NumberTableOperators.product = function(numberTable0, numberTable1){
+  if(numberTable0==null || numberTable1==null) return;
+  var n = numberTable0.length;
+  var m = numberTable0[0].length;
+  if(n==0 || m==0 || n!=numberTable1[0].length || m!=numberTable1.length) return;
+
+  var newTable = new NumberTable();
+  var i, j, k;
+  var val;
+
+  for(i=0; i<n; i++){
+    newTable[i] = new NumberList();
+    for(j=0; j<n; j++){
+      val = 0;
+      for(k=0; k<m; k++){
+        val+=numberTable0[i][k]*numberTable1[k][j];
+      }
+      newTable[i][j] = val;
+    }
+  }
+
+  return newTable;
+}
+
+
+
+/**
+ * calculates the covariance matrix
+ * @param  {NumberTable} numberTable
+ * @return {NumberTable}
+ * tags:statistics
+ */
+NumberTableOperators.getCovarianceMatrix = function(numberTable){//TODO:build more efficient method
+  if(numberTable==null) return;
+
+  c.l('>>',NumberTableOperators.product(numberTable, numberTable.getTransposed()));
+  return NumberTableOperators.product(numberTable, numberTable.getTransposed()).factor(1/numberTable.length);
+}
+
+
+
+
+
