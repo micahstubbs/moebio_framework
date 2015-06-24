@@ -355,6 +355,7 @@ ObjectOperators.multiplication = function() {
   var a0Type = typeOf(a0);
   var a1Type = typeOf(a1);
   var pairType = a0Type + "_" + a1Type;
+
   //c.log('pairType:['+pairType+']');
 
   if(arguments.length == 2) {

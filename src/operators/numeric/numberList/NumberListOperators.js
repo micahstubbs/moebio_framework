@@ -308,9 +308,9 @@ NumberListOperators.union = function(x, y) {//TODO: this should be refactored, a
  * @param  {NumberList} list B
  *
  * @return {NumberList} the intersection of both NumberLists
- * tags:
+ * tags:deprecated
  */
-NumberListOperators.intersection = function(a, b) {
+NumberListOperators.intersection = function(a, b) {//TODO: refactor this method that should be at ListOperators
   // Borrowed from here: http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
   //console.log( "arguments: ", arguments );
   if(arguments.length > 2) {

@@ -155,6 +155,11 @@ TableOperators.getSubListsByIndexes = function(table, indexes) {
   return newTable;
 };
 
+// old version replaced by above version Dec 1st, 2014
+// - fixed bug where descending with 'false' value gets changed to 'true'
+// - performance improvements for tables with lots of lists
+// TableOperators.sortListsByNumberList=function(table, numberList, descending){
+//  descending = descending || true;
 TableOperators.sortListsByNumberList = function(table, numberList, descending) {
   if(descending == null) descending = true;
 
@@ -179,34 +184,43 @@ TableOperators.sortListsByNumberList = function(table, numberList, descending) {
   return newTable;
 };
 
-// old version replaced by above version Dec 1st, 2014
-// - fixed bug where descending with 'false' value gets changed to 'true'
-// - performance improvements for tables with lots of lists
-// TableOperators.sortListsByNumberList=function(table, numberList, descending){
-// 	descending = descending || true;
+/**
+ * aggregates lists from a table, using one of the list of the table as the aggregation list, and based on different modes for each list
+ * @param  {Table} table containing the aggregation list and lists to be aggregated
+ * @param  {Number} indexAggregationList index of the aggregation list on the table
+ * @param  {Numberlist} indexesListsToAggregate indexs of the lists to be aggregated; typically it also contains the index of the aggregation list at the beginning, to be aggregated using mode 0 (first element) thus resulting as the list of non repeated elements
+ * @param  {NumberList} modes list of modes of aggregation, these are the options:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:enlist (creates a list of elements)<br>7:last element<br>8:most common element<br>9:random element<br>10:indexes
+ * @return {Table} aggragated table
+ * tags:
+ */
+TableOperators.aggregateTable = function(table, indexAggregationList, indexesListsToAggregate, modes){
+  indexAggregationList = indexAggregationList||0;
 
-// 	var newTable = instantiate(typeOf(table));
-// 	newTable.name = table.name;
-// 	var nElements = table.length;
-// 	var i;
-// 	for(i=0; i<nElements; i++){
-// 		newTable[i] = ListOperators.sortListByNumberList(table[i], numberList, descending);
-// 	}
-// 	return newTable;
-// }
+  if(table==null || !table.length ||  table.length<indexAggregationList || indexesListsToAggregate==null || !indexesListsToAggregate.length || modes==null) return;
 
+  var aggregatorList = table[indexAggregationList];
+  var indexesTable = ListOperators.getIndexesTable(aggregatorList);
+  var newTable = new Table();
+  var toAggregateList;
+  var i;
 
+  indexesListsToAggregate.forEach(function(index, i){
+    toAggregateList = table[index];
+    newTable.push( ListOperators.aggregateList(aggregatorList, toAggregateList, modes[i%modes.length], indexesTable)[1] );
+  });
+
+  return newTable.getImproved();
+}
 
 /**
- * aggregates a table
+ * aggregates a table, deprecated: a new more powerful method has been built
  * @param  {Table} table to be aggregated
- *
  * @param  {Number} nList list in the table used as basis to aggregation
  * @param  {Number} mode mode of aggregation, 0:picks first element 1:adds numbers, 2:averages
  * @return {Table} aggregated table
- * tags:aggregation
+ * tags:deprecated
  */
-TableOperators.aggregateTable = function(table, nList, mode) {
+TableOperators.aggregateTableOld = function(table, nList, mode) {
   nList = nList == null ? 0 : nList;
   if(table == null || table[0] == null || table[0][0] == null || table[nList] == null) return null;
   mode = mode == null ? 0 : mode;

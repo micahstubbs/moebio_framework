@@ -327,8 +327,6 @@ NumberTableOperators.product = function(numberTable0, numberTable1){
  */
 NumberTableOperators.getCovarianceMatrix = function(numberTable){//TODO:build more efficient method
   if(numberTable==null) return;
-
-  c.l('>>',NumberTableOperators.product(numberTable, numberTable.getTransposed()));
   return NumberTableOperators.product(numberTable, numberTable.getTransposed()).factor(1/numberTable.length);
 }
 

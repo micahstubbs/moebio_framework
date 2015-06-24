@@ -9,16 +9,15 @@ import NetworkConvertions from "src/operators/structures/NetworkConvertions";
 
 function ObjectConversions() {}
 export default ObjectConversions;
+
 // *
 //  * convert an object into a json string (JSON.stringify(object))
 //  * @param  {Object} object to convert
 //  * @return {String} string in format json
 //  * tags:conversion
-
 // ObjectConversions.objectToString = function(object){
 // 	return JSON.stringify(object);
 // }
-
 
 /**
  * converts any Object into the desirde type, using the most obvious conversion (if exists)
@@ -28,6 +27,8 @@ export default ObjectConversions;
  * tags:conversion
  */
 ObjectConversions.conversor = function(object, toType) {
+  if(object==null || toType==null) return;
+
   var i;
   var type = typeOf(object);
   var pairType = type + "_" + toType;
@@ -36,6 +37,8 @@ ObjectConversions.conversor = function(object, toType) {
   console.log('ObjectConversions.conversor, pairType:', pairType);
 
   switch(pairType) {
+    case 'Array_List':
+      return ObjectConversions.ArrayToList(object);
     case 'NumberTable_Polygon':
       var polygon = new Polygon();
       var length2 = object.length > 1;
@@ -84,4 +87,20 @@ ObjectConversions.conversor = function(object, toType) {
     case 'number':
       return Number(object);
   }
+
+  // var short = TYPES_SHORT_NAMES_DICTIONARY[toType];
+  // if(short!=null && short!=toType){
+  //   return ObjectConversions.conversor(object, short);
+  // }
+
+  return null;
 };
+
+/**
+ * converts an array into an improved List
+ * @param {Array} array
+ * tags:conversion
+ */
+ObjectConversions.ArrayToList = function(array){
+  return List.fromArray(object).getImproved();
+}
