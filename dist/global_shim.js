@@ -3,7 +3,7 @@
 // previous structure of the project.
 (function(){
   var exportCount = 0;
-  var USE_OBJECT_OBSERVE = true;
+  var USE_OBJECT_OBSERVE = false;
 
   // This is is in the manner below using Object.observe, however that only
   // works in chrome. It in theory _should_ be more performant but i haven't actually

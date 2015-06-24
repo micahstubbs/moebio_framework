@@ -110,7 +110,7 @@ InputTextFieldHTML.prototype.draw = function() {
     this._prevHeight = this.height;
     this._prevText = this.text;
 
-    this.DOMtext.style = "none";
+    // this.DOMtext.style = "none";
     this.DOMtext.style.padding = "0px";
     this.DOMtext.style.border = "0px";
     this.DOMtext.style.borderColor = "#FFFFFF";

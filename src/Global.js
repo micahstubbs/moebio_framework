@@ -430,7 +430,7 @@ function _onWheel(e) {
         WHEEL_CHANGE = -e.detail/3;
     }
     e.value = WHEEL_CHANGE;
-    e.type = "mousewheel"; //why this doesn't work?
+    // e.type = "mousewheel"; //why this doesn't work?
 
   onCanvasEvent(e);
 }

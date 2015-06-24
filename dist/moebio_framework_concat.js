@@ -4995,7 +4995,7 @@ define('src/index', ['exports'], function (exports) {
           exports.WHEEL_CHANGE = WHEEL_CHANGE = -e.detail/3;
       }
       e.value = WHEEL_CHANGE;
-      e.type = "mousewheel"; //why this doesn't work?
+      // e.type = "mousewheel"; //why this doesn't work?
 
     onCanvasEvent(e);
   }
@@ -20459,7 +20459,7 @@ define('src/index', ['exports'], function (exports) {
       this._prevHeight = this.height;
       this._prevText = this.text;
 
-      this.DOMtext.style = "none";
+      // this.DOMtext.style = "none";
       this.DOMtext.style.padding = "0px";
       this.DOMtext.style.border = "0px";
       this.DOMtext.style.borderColor = "#FFFFFF";
