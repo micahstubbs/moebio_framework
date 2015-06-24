@@ -595,9 +595,9 @@ List.prototype.getMostRepeatedElement = function() {
 };
 
 /**
- * Gets the minimum value.
+ * returns the minimum value
  *
- * @return {Number} Minimum value in the List.
+ * @return {Number} minimum value in the list
  * tags:
  */
 List.prototype.getMin = function() {
@@ -611,9 +611,9 @@ List.prototype.getMin = function() {
 };
 
 /**
- * Gets the maximum value.
+ * returns the maximum value
  *
- * @return {Number} Max value in the List.
+ * @return {Number} maximum value in the list
  * tags:
  */
 List.prototype.getMax = function() {
