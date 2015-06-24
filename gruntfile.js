@@ -1,5 +1,9 @@
 /* global grunt, module, require, console */
 
+var SourceMap = require('source-map');
+var fs = require('fs');
+var path = require('path');
+
 'use strict';
 
 // Helper function to build the list of files that
@@ -7,8 +11,6 @@
 var _cachedFileList;
 function buildFileList() {
   if(_cachedFileList === undefined) {
-    var fs = require('fs');
-    var path = require('path');
     var root = "src";
     var filename = path.join(root, "all.json");
     var fileList = [];
@@ -109,7 +111,7 @@ module.exports = function (grunt) {
 
     watch: {
       js:  {
-        files: buildFileList(),
+        files: buildFileList().concat('gruntfile.js'),
         tasks: ['shell:esperanto_bundle', 'wrap:dist']
       },
     },
@@ -170,8 +172,66 @@ module.exports = function (grunt) {
         }
       }));
       output.push('})(window);');
+      var result = grunt.template.process(output.join("\n"));
 
-      grunt.file.write(f.dest, grunt.template.process(output.join("\n")));
+      // Make the link to the source map relative. We also have to move it
+      // to the right place since we have wrapped the concatenated file with
+      // some new stuff (the loader and IIFE).
+
+      var sourceMapUrl = result.match("//# sourceMappingURL=.+")[0];
+      result = result.replace(/\/\/# sourceMappingURL=.+/, "");
+
+      // Make sourceMapUrl relative
+      var sourceMapFilePath = sourceMapUrl.match("=(.+)")[0];
+      var smName = sourceMapFilePath.split("/")
+      smName = smName[smName.length - 1];
+
+      sourceMapFilePath = sourceMapUrl.replace(/=(.+)/, "=./" + smName);
+      sourceMapFilePath = sourceMapFilePath.replace("_concat", "");
+
+      // Append the source map link to the end.
+      result = result.concat("\n"+sourceMapFilePath);
+
+      grunt.file.write(f.dest, result);
+
+      // Adjust the sourcemap file itself to account for the loader and wrapping code.
+      // we will actually generate a new sourcemap file that corresponds to the
+      // new filed we generated about.
+      var srcMapStr = fs.readFileSync("./dist/moebio_framework_concat.js.map");
+      var srcMap = JSON.parse(srcMapStr);
+
+      var smc = new SourceMap.SourceMapConsumer(srcMap);
+      var newMappings = [];
+      smc.eachMapping(function (m) {
+        m.generatedLine = m.generatedLine + 38 + 1;
+        newMappings.push(m);
+      });
+
+      var newSrcMap = {};
+      newSrcMap.version = srcMap.version;
+      newSrcMap.file = srcMap.file;
+      newSrcMap.sources = srcMap.sources;
+      newSrcMap.sourcesContent = srcMap.sourcesContent;
+      newSrcMap.names = srcMap.names;
+
+      var smg = new SourceMap.SourceMapGenerator(newSrcMap);
+      newMappings.forEach(function(m){
+        var toAdd = {
+          generated: {
+            line: m.generatedLine,
+            column: m.generatedColumn
+          },
+          original: {
+            line: m.originalLine,
+            column: m.originalColumn
+          },
+          source: m.source
+        }
+        smg.addMapping(toAdd);
+      });
+
+      fs.writeFileSync('./dist/moebio_framework.js.map', smg.toString() , 'utf-8');
+
     });
   });
 

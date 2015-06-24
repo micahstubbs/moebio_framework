@@ -1,10 +1,7 @@
 (function(globals) {
 // From https://github.com/thomasboyt/grunt-microlib/blob/master/assets/loader.js
 // We could also use https://github.com/jrburke/almond
-
-
 var define, requireModule;
-
 (function() {
   var registry = {}, seen = {};
 
@@ -40,7 +37,6 @@ var define, requireModule;
     return seen[name] = exports || value;
   };
 })();
-
 define('src/index', ['exports'], function (exports) {
 
   'use strict';
@@ -25276,6 +25272,7 @@ define('src/index', ['exports'], function (exports) {
   exports.removeDiv = undefined;
 
 });
-//# sourceMappingURL=/Users/yannick/Bocoup/Projects/moebio/moebio_framework/dist/moebio_framework_concat.js.map
+
 window.MF = requireModule("src/index");
 })(window);
+//# sourceMappingURL=./moebio_framework.js.map

@@ -1,9 +1,6 @@
 // From https://github.com/thomasboyt/grunt-microlib/blob/master/assets/loader.js
 // We could also use https://github.com/jrburke/almond
-
-
 var define, requireModule;
-
 (function() {
   var registry = {}, seen = {};
 
