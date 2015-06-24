@@ -491,8 +491,8 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Rectangle = Rectangle;
 
-  List.prototype = new DataModel();
-  List.prototype.constructor = List;
+  List__List.prototype = new DataModel();
+  List__List.prototype.constructor = List__List;
 
    /**
     * @classdesc List is an Array with a type property.
@@ -504,18 +504,18 @@ define('src/index', ['exports'], function (exports) {
     * @constructor
     * @category basics
     */
-  function List() {
+  function List__List() {
     DataModel.apply(this);
     var array = [];
     var i;
     for(i = 0; i < arguments.length; i++) {
       array.push(arguments[i]);
     }
-    array = List.fromArray(array);
+    array = List__List.fromArray(array);
     //
     return array;
   }
-
+  var List__default = List__List;
 
 
   /**
@@ -524,94 +524,94 @@ define('src/index', ['exports'], function (exports) {
    * @param {Number[]|String[]|Object[]} array Array of values.
    * @return {List} New List.
    */
-  List.fromArray = function(array) {
+  List__List.fromArray = function(array) {
     //TODO: clear some of these method declarations
     array.type = "List";
     array.name = array.name || "";
 
-    array.setType = List.prototype.setType;
-    array.setArray = List.prototype.setArray;
-    array._constructor = List;
+    array.setType = List__List.prototype.setType;
+    array.setArray = List__List.prototype.setArray;
+    array._constructor = List__List;
 
-    array.getImproved = List.prototype.getImproved;
-    array.sameElements = List.prototype.sameElements;
-    array.getLength = List.prototype.getLength;
-    array.getTypeOfElements = List.prototype.getTypeOfElements; //TODO: redundant?
-    array.getTypes = List.prototype.getTypes;
-    array.getType = List.prototype.getType;
-    array.getLengths = List.prototype.getLengths;
-    array.getWithoutRepetitions = List.prototype.getWithoutRepetitions;
-    array.getElementsRepetitionCount = List.prototype.getElementsRepetitionCount;
-    array.allElementsEqual = List.prototype.allElementsEqual;
-    array.countElement = List.prototype.countElement;
-    array.countOccurrences = List.prototype.countOccurrences;
-    array.getMostRepeatedElement = List.prototype.getMostRepeatedElement;
-    array.getMin = List.prototype.getMin;
-    array.getMax = List.prototype.getMax;
-    array.indexesOf = List.prototype.indexesOf;
-    array.indexOfElements = List.prototype.indexOfElements;
-    array.indexOfByPropertyValue = List.prototype.indexOfByPropertyValue;
-    array.getFirstElementByName = List.prototype.getFirstElementByName;
-    array.getElementsByNames = List.prototype.getElementsByNames;
-    array.getFirstElementByPropertyValue = List.prototype.getFirstElementByPropertyValue;
-    array.add = List.prototype.add;
-    array.multiply = List.prototype.multiply;
-    array.getSubList = List.prototype.getSubList;
-    array.getSubListByIndexes = List.prototype.getSubListByIndexes;
-    array.getSubListByType = List.prototype.getSubListByType;
-    array.getElementNumberOfOccurrences = List.prototype.getElementNumberOfOccurrences;
-    array.getPropertyValues = List.prototype.getPropertyValues;
-    array.getRandomElement = List.prototype.getRandomElement;
-    array.getRandomElements = List.prototype.getRandomElements;
-    array.containsElement = List.prototype.containsElement;
-    array.indexOfElement = List.prototype.indexOfElement;
+    array.getImproved = List__List.prototype.getImproved;
+    array.sameElements = List__List.prototype.sameElements;
+    array.getLength = List__List.prototype.getLength;
+    array.getTypeOfElements = List__List.prototype.getTypeOfElements; //TODO: redundant?
+    array.getTypes = List__List.prototype.getTypes;
+    array.getType = List__List.prototype.getType;
+    array.getLengths = List__List.prototype.getLengths;
+    array.getWithoutRepetitions = List__List.prototype.getWithoutRepetitions;
+    array.getElementsRepetitionCount = List__List.prototype.getElementsRepetitionCount;
+    array.allElementsEqual = List__List.prototype.allElementsEqual;
+    array.countElement = List__List.prototype.countElement;
+    array.countOccurrences = List__List.prototype.countOccurrences;
+    array.getMostRepeatedElement = List__List.prototype.getMostRepeatedElement;
+    array.getMin = List__List.prototype.getMin;
+    array.getMax = List__List.prototype.getMax;
+    array.indexesOf = List__List.prototype.indexesOf;
+    array.indexOfElements = List__List.prototype.indexOfElements;
+    array.indexOfByPropertyValue = List__List.prototype.indexOfByPropertyValue;
+    array.getFirstElementByName = List__List.prototype.getFirstElementByName;
+    array.getElementsByNames = List__List.prototype.getElementsByNames;
+    array.getFirstElementByPropertyValue = List__List.prototype.getFirstElementByPropertyValue;
+    array.add = List__List.prototype.add;
+    array.multiply = List__List.prototype.multiply;
+    array.getSubList = List__List.prototype.getSubList;
+    array.getSubListByIndexes = List__List.prototype.getSubListByIndexes;
+    array.getSubListByType = List__List.prototype.getSubListByType;
+    array.getElementNumberOfOccurrences = List__List.prototype.getElementNumberOfOccurrences;
+    array.getPropertyValues = List__List.prototype.getPropertyValues;
+    array.getRandomElement = List__List.prototype.getRandomElement;
+    array.getRandomElements = List__List.prototype.getRandomElements;
+    array.containsElement = List__List.prototype.containsElement;
+    array.indexOfElement = List__List.prototype.indexOfElement;
     //sorting:
-    array.sortIndexed = List.prototype.sortIndexed;
-    array.sortNumericIndexed = List.prototype.sortNumericIndexed;
-    array.sortNumeric = List.prototype.sortNumeric;
-    array.sortNumericIndexedDescending = List.prototype.sortNumericIndexedDescending;
-    array.sortNumericDescending = List.prototype.sortNumericDescending;
-    array.sortOnIndexes = List.prototype.sortOnIndexes;
-    array.getReversed = List.prototype.getReversed;
-    array.getSortedByProperty = List.prototype.getSortedByProperty;
-    array.getSorted = List.prototype.getSorted;
-    array.getSortedByList = List.prototype.getSortedByList;
-    array.getSortedRandom = List.prototype.getSortedRandom;
+    array.sortIndexed = List__List.prototype.sortIndexed;
+    array.sortNumericIndexed = List__List.prototype.sortNumericIndexed;
+    array.sortNumeric = List__List.prototype.sortNumeric;
+    array.sortNumericIndexedDescending = List__List.prototype.sortNumericIndexedDescending;
+    array.sortNumericDescending = List__List.prototype.sortNumericDescending;
+    array.sortOnIndexes = List__List.prototype.sortOnIndexes;
+    array.getReversed = List__List.prototype.getReversed;
+    array.getSortedByProperty = List__List.prototype.getSortedByProperty;
+    array.getSorted = List__List.prototype.getSorted;
+    array.getSortedByList = List__List.prototype.getSortedByList;
+    array.getSortedRandom = List__List.prototype.getSortedRandom;
     //filter:
-    array.getFilteredByPropertyValue = List.prototype.getFilteredByPropertyValue;
-    array.getFilteredByBooleanList = List.prototype.getFilteredByBooleanList;
+    array.getFilteredByPropertyValue = List__List.prototype.getFilteredByPropertyValue;
+    array.getFilteredByBooleanList = List__List.prototype.getFilteredByBooleanList;
     //conversion
-    array.toNumberList = List.prototype.toNumberList;
-    array.toStringList = List.prototype.toStringList;
+    array.toNumberList = List__List.prototype.toNumberList;
+    array.toStringList = List__List.prototype.toStringList;
     //
-    array.clone = List.prototype.clone;
-    array.toString = List.prototype.toString;
-    array.getNames = List.prototype.getNames;
-    array.applyFunction = List.prototype.applyFunction;
-    array.getWithoutElementAtIndex = List.prototype.getWithoutElementAtIndex;
-    array.getWithoutElement = List.prototype.getWithoutElement;
-    array.getWithoutElements = List.prototype.getWithoutElements;
-    array.getWithoutElementsAtIndexes = List.prototype.getWithoutElementsAtIndexes;
-    array.getFilteredByFunction = List.prototype.getFilteredByFunction;
+    array.clone = List__List.prototype.clone;
+    array.toString = List__List.prototype.toString;
+    array.getNames = List__List.prototype.getNames;
+    array.applyFunction = List__List.prototype.applyFunction;
+    array.getWithoutElementAtIndex = List__List.prototype.getWithoutElementAtIndex;
+    array.getWithoutElement = List__List.prototype.getWithoutElement;
+    array.getWithoutElements = List__List.prototype.getWithoutElements;
+    array.getWithoutElementsAtIndexes = List__List.prototype.getWithoutElementsAtIndexes;
+    array.getFilteredByFunction = List__List.prototype.getFilteredByFunction;
     array._concat = Array.prototype.concat;
-    array.concat = List.prototype.concat;
-    array.getReport = List.prototype.getReport;
+    array.concat = List__List.prototype.concat;
+    array.getReport = List__List.prototype.getReport;
 
     //transformations
-    array.pushIfUnique = List.prototype.pushIfUnique;
-    array.removeElement = List.prototype.removeElement;
-    array.removeElementAtIndex = List.prototype.removeElementAtIndex;
-    array.removeElementsAtIndexes = List.prototype.removeElementsAtIndexes;
-    array.removeElements = List.prototype.removeElements;
-    array.removeRepetitions = List.prototype.removeRepetitions;
-    array.replace = List.prototype.replace;
-    array.assignNames = List.prototype.assignNames;
+    array.pushIfUnique = List__List.prototype.pushIfUnique;
+    array.removeElement = List__List.prototype.removeElement;
+    array.removeElementAtIndex = List__List.prototype.removeElementAtIndex;
+    array.removeElementsAtIndexes = List__List.prototype.removeElementsAtIndexes;
+    array.removeElements = List__List.prototype.removeElements;
+    array.removeRepetitions = List__List.prototype.removeRepetitions;
+    array.replace = List__List.prototype.replace;
+    array.assignNames = List__List.prototype.assignNames;
     array._splice = Array.prototype.splice;
-    array.splice = List.prototype.splice;
+    array.splice = List__List.prototype.splice;
 
     array.isList = true;
 
-    array.destroy = List.prototype.destroy;
+    array.destroy = List__List.prototype.destroy;
 
 
     return array;
@@ -624,7 +624,7 @@ define('src/index', ['exports'], function (exports) {
    * based on the contents of the List.
    * tags:
    */
-  List.prototype.getImproved = function() {
+  List__List.prototype.getImproved = function() {
     //TODO: still doesn't solve tha case of a list with several list of different types
     if(this.length === 0) {
       return this;
@@ -731,7 +731,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Boolean} true if all elements are identical.
    * tags:
    */
-  List.prototype.sameElements = function(list) {
+  List__List.prototype.sameElements = function(list) {
     if(this.length != list.length) return false;
 
     var i;
@@ -748,7 +748,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number} Length of the list.
    * tags:
    */
-  List.prototype.getLength = function() {
+  List__List.prototype.getLength = function() {
     return this.length;
   };
 
@@ -759,7 +759,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {null}
    * tags:
    */
-  List.prototype.getLengths = function() {
+  List__List.prototype.getLengths = function() {
     //overriden by different extentions of List
     return null;
   };
@@ -771,7 +771,7 @@ define('src/index', ['exports'], function (exports) {
    *
    * @return {String} Type of element stored in the List.
    */
-  List.prototype.getTypeOfElements = function() {
+  List__List.prototype.getTypeOfElements = function() {
     var typeOfElements = typeOf(this[0]);
     for(var i = 1; this[i] != null; i++) {
       if(typeOf(this[i]) != typeOfElements) return "";
@@ -786,7 +786,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {StringList} List of types for each element.
    * tags:
    */
-  List.prototype.getTypes = function() {
+  List__List.prototype.getTypes = function() {
     var types = new StringList();
     for(var i = 0; this[i] != null; i++) {
       types[i] = typeOf(this[i]);
@@ -800,7 +800,7 @@ define('src/index', ['exports'], function (exports) {
    *
    * @return {String} String representation of the List.
    */
-  List.prototype.toString = function() {
+  List__List.prototype.toString = function() {
     var i;
     var str = "[";
     for(var i = 0; i < this.length - 1; i++) {
@@ -816,7 +816,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {StringList}
    * tags:
    */
-  List.prototype.getNames = function() {
+  List__List.prototype.getNames = function() {
     var stringList = new StringList();
     for(var i = 0; this[i] != null; i++) {
       stringList[i] = this[i].name;
@@ -830,7 +830,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List} New List reveresed from original.
    * tags:sort
    */
-  List.prototype.getReversed = function() {
+  List__List.prototype.getReversed = function() {
     var newList = instantiateWithSameType(this);
     for(var i = 0; this[i] != null; i++) {
       newList.unshift(this[i]);
@@ -847,7 +847,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List.prototype.getSubList = function() {
+  List__List.prototype.getSubList = function() {
     var interval;
     if(arguments[0].isList) {
       return this.getSubListByIndexes(arguments[0]);
@@ -877,7 +877,7 @@ define('src/index', ['exports'], function (exports) {
     }
 
     if(this.type == 'List' || this.type == 'Table') {
-      newList = new List();
+      newList = new List__List();
     } else {
       newList = instantiate(typeOf(this));
     }
@@ -898,8 +898,8 @@ define('src/index', ['exports'], function (exports) {
    * List of the input type.
    * tags:filter
    */
-  List.prototype.getSubListByType = function(type) {
-    var newList = new List();
+  List__List.prototype.getSubListByType = function(type) {
+    var newList = new List__List();
     newList.name = this.name;
     this.forEach(function(element) {
       if(typeOf(element) == type) newList.push(element);
@@ -914,7 +914,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List.prototype.getSubListByIndexes = function() { //TODO: merge with getSubList
+  List__List.prototype.getSubListByIndexes = function() { //TODO: merge with getSubList
     if(this.length < 1) return this;
     var indexes;
     if(typeOf(arguments[0]) == 'number') {
@@ -929,7 +929,7 @@ define('src/index', ['exports'], function (exports) {
 
     var newList;
     if(this.type == 'List') {
-      newList = new List();
+      newList = new List__List();
     } else {
       newList = instantiate(typeOf(this));
     }
@@ -959,7 +959,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Object} element
    * @return {Number}
    */
-  List.prototype.getElementNumberOfOccurrences = function(element) {
+  List__List.prototype.getElementNumberOfOccurrences = function(element) {
     var nOccurrences = 0;
     var from = 0;
     var index = this.indexOf(element, from);
@@ -977,7 +977,7 @@ define('src/index', ['exports'], function (exports) {
    *
    * @return {List}
    */
-  List.prototype.clone = function() {
+  List__List.prototype.clone = function() {
     //TODO:check this! fromArray should suffice
     var clonedList = instantiateWithSameType(this);
     var i;
@@ -995,7 +995,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List.prototype.getWithoutRepetitions = function() {
+  List__List.prototype.getWithoutRepetitions = function() {
     var i;
     var dictionary;
 
@@ -1028,7 +1028,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number}
    * tags:countt
    */
-  List.prototype.countElement = function(element) {
+  List__List.prototype.countElement = function(element) {
     var n = 0;
     this.forEach(function(elementInList) {
       if(element == elementInList) {
@@ -1044,7 +1044,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {numberList}
    * tags:count
    */
-  List.prototype.countOccurrences = function() { //TODO: more efficient
+  List__List.prototype.countOccurrences = function() { //TODO: more efficient
     var occurrences = new NumberList();
     for(var i = 0; this[i] != null; i++) {
       occurrences[i] = this.indexesOf(this[i]).length;
@@ -1059,11 +1059,11 @@ define('src/index', ['exports'], function (exports) {
    * @return {Table} Table containing a List of non-repeated elements and a NumberList of the frequency of each element.
    * tags:count
    */
-  List.prototype.getElementsRepetitionCount = function(sortListsByOccurrences) {
+  List__List.prototype.getElementsRepetitionCount = function(sortListsByOccurrences) {
     sortListsByOccurrences = sortListsByOccurrences == null ? true : sortListsByOccurrences;
 
     var obj;
-    var elementList = new List();
+    var elementList = new List__List();
     var numberList = new NumberList();
     var nElements = this.length;
     var index;
@@ -1099,7 +1099,7 @@ define('src/index', ['exports'], function (exports) {
    *
    * @return {Boolean} Returns true if all values in the list are equal.
    */
-  List.prototype.allElementsEqual = function() {
+  List__List.prototype.allElementsEqual = function() {
     var i;
     if(this.length < 2) return true;
 
@@ -1118,18 +1118,18 @@ define('src/index', ['exports'], function (exports) {
    *
    * @return {Object} Most repeated value.
    */
-  List.prototype.getMostRepeatedElement = function() {
+  List__List.prototype.getMostRepeatedElement = function() {
     //TODO: this method should be more efficient
     return ListOperators.countElementsRepetitionOnList(this, true)[0][0];
   };
 
   /**
-   * Gets the minimum value.
+   * returns the minimum value
    *
-   * @return {Number} Minimum value in the List.
+   * @return {Number} minimum value in the list
    * tags:
    */
-  List.prototype.getMin = function() {
+  List__List.prototype.getMin = function() {
     if(this.length === 0) return null;
     var min = this[0];
     var i;
@@ -1140,12 +1140,12 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Gets the maximum value.
+   * returns the maximum value
    *
-   * @return {Number} Max value in the List.
+   * @return {Number} maximum value in the list
    * tags:
    */
-  List.prototype.getMax = function() {
+  List__List.prototype.getMax = function() {
     if(this.length === 0) return null;
     var max = this[0];
     var i;
@@ -1165,7 +1165,7 @@ define('src/index', ['exports'], function (exports) {
    * of adding the given value to the original elements
    * in the List.
    */
-  List.prototype.add = function(value) {
+  List__List.prototype.add = function(value) {
     if(value.constructor == Number) {
       var i;
       var array = instantiateWithSameType(this);
@@ -1182,7 +1182,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Object}
    * tags:
    */
-  List.prototype.getRandomElement = function() {
+  List__List.prototype.getRandomElement = function() {
     return this[Math.floor(this.length * Math.random())];
   };
 
@@ -1194,7 +1194,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List.prototype.getRandomElements = function(n, avoidRepetitions) {
+  List__List.prototype.getRandomElements = function(n, avoidRepetitions) {
     avoidRepetitions = avoidRepetitions == null ? true : avoidRepetitions;
     n = Math.min(n, this.length);
     var newList = instantiateWithSameType(this);
@@ -1214,7 +1214,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Object} element Element to look for in the List.
    * @return {Boolean} True if given element is in the List.
    */
-  List.prototype.containsElement = function(element) { //TODO: test if this is faster than indexOf
+  List__List.prototype.containsElement = function(element) { //TODO: test if this is faster than indexOf
     var i;
     for(i = 0; this[i] != null; i++) {
       if(this[i] == element) return true;
@@ -1229,7 +1229,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number} Index of the given element in the List.
    * If element is not found, -1 is returned.
    */
-  List.prototype.indexOfElement = function(element) { //TODO: test if this is faster than indexOf
+  List__List.prototype.indexOfElement = function(element) { //TODO: test if this is faster than indexOf
     var i;
     for(i = 0; this[i] != null; i++) {
       if(this[i] == element) return i;
@@ -1246,8 +1246,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:
    */
-  List.prototype.getPropertyValues = function(propertyName, valueIfNull) {
-    var newList = new List();
+  List__List.prototype.getPropertyValues = function(propertyName, valueIfNull) {
+    var newList = new List__List();
     newList.name = propertyName;
     var val;
     for(var i = 0; this[i] != null; i++) {
@@ -1257,7 +1257,7 @@ define('src/index', ['exports'], function (exports) {
     return newList.getImproved();
   };
 
-  List.prototype.sortIndexed = function() {
+  List__List.prototype.sortIndexed = function() {
     var index = [];
     var i;
     for(i = 0; i < this.length; i++) {
@@ -1314,7 +1314,7 @@ define('src/index', ['exports'], function (exports) {
   //  return this.sort(comparator);
   // }
 
-  List.prototype.sortOnIndexes = function(indexes) {
+  List__List.prototype.sortOnIndexes = function(indexes) {
     var result = instantiateWithSameType(this);
     result.name = this.name;
     var i;
@@ -1324,7 +1324,7 @@ define('src/index', ['exports'], function (exports) {
     return result;
   };
 
-  List.prototype.getSortedByProperty = function(propertyName, ascending) {
+  List__List.prototype.getSortedByProperty = function(propertyName, ascending) {
     ascending = ascending == null ? true : ascending;
 
     var comparator;
@@ -1347,7 +1347,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:sort
    */
-  List.prototype.getSorted = function(ascending) {
+  List__List.prototype.getSorted = function(ascending) {
     ascending = ascending == null ? true : ascending;
 
     var comparator;
@@ -1372,7 +1372,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List} sorted list (of the same type)
    * tags:sort
    */
-  List.prototype.getSortedByList = function(list, ascending) {
+  List__List.prototype.getSortedByList = function(list, ascending) {
     ascending = ascending == null ? true : ascending;
 
     var pairsArray = [];
@@ -1412,7 +1412,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:sort
    */
-  List.prototype.getSortedRandom = function() {
+  List__List.prototype.getSortedRandom = function() {
     var newList = this.clone();
     newList.name = this.name;
     newList.sort(function() {
@@ -1428,7 +1428,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {NumberList}
    * tags:
    */
-  List.prototype.indexesOf = function(element) {
+  List__List.prototype.indexesOf = function(element) {
     var index = this.indexOf(element);
     var numberList = new NumberList();
     while(index != -1) {
@@ -1445,7 +1445,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {NumberList}
    * tags:
    */
-  List.prototype.indexOfElements = function(elements) {
+  List__List.prototype.indexOfElements = function(elements) {
     var numberList = new NumberList();
     for(var i = 0; elements[i] != null; i++) {
       numberList[i] = this.indexOf(elements[i]);
@@ -1461,7 +1461,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags: filter
    */
-  List.prototype.getFirstElementByName = function(name, returnIndex) {
+  List__List.prototype.getFirstElementByName = function(name, returnIndex) {
     for(var i = 0; this[i] != null; i++) {
       if(this[i].name == name) return returnIndex ? i : this[i];
     }
@@ -1476,8 +1476,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List.prototype.getElementsByNames = function(names, returnIndex) {
-    var list = returnIndex ? new NumberList() : new List();
+  List__List.prototype.getElementsByNames = function(names, returnIndex) {
+    var list = returnIndex ? new NumberList() : new List__List();
     var i;
 
     names.forEach(function(name) {
@@ -1502,14 +1502,14 @@ define('src/index', ['exports'], function (exports) {
    * @return {Object}
    * tags:
    */
-  List.prototype.getFirstElementByPropertyValue = function(propertyName, value) {
+  List__List.prototype.getFirstElementByPropertyValue = function(propertyName, value) {
     for(var i = 0; this[i] != null; i++) {
       if(this[i][propertyName] == value) return this[i];
     }
     return null;
   };
 
-  List.prototype.indexOfByPropertyValue = function(propertyName, value) {
+  List__List.prototype.indexOfByPropertyValue = function(propertyName, value) {
     for(var i = 0; this[i] != null; i++) {
       if(this[i][propertyName] == value) return i;
     }
@@ -1525,8 +1525,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List.prototype.getFilteredByBooleanList = function(booleanList) {
-    var newList = new List();
+  List__List.prototype.getFilteredByBooleanList = function(booleanList) {
+    var newList = new List__List();
     newList.name = this.name;
     var i;
     for(i = 0; this[i] != null; i++) {
@@ -1544,10 +1544,10 @@ define('src/index', ['exports'], function (exports) {
    * @return {List} Filtered list
    * tags:filter
    */
-  List.prototype.getFilteredByValue = function(value, comparison) {
+  List__List.prototype.getFilteredByValue = function(value, comparison) {
     comparison = comparison == null ? "equal" : comparison;
 
-    var newList = new List();
+    var newList = new List__List();
     newList.name = "filtered_" + this.name;
     var i;
     switch(comparison) {
@@ -1585,10 +1585,10 @@ define('src/index', ['exports'], function (exports) {
    * @return {List} filtered list
    * tags:filter
    */
-  List.prototype.getFilteredByPropertyValue = function(propertyName, propertyValue, comparison) {
+  List__List.prototype.getFilteredByPropertyValue = function(propertyName, propertyValue, comparison) {
     comparison = comparison == null ? "equal" : comparison;
 
-    var newList = new List();
+    var newList = new List__List();
     newList.name = "filtered_" + this.name;
     var i;
     switch(comparison) {
@@ -1623,7 +1623,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {NumberList}
    * tags:conversion
    */
-  List.prototype.toNumberList = function() {
+  List__List.prototype.toNumberList = function() {
     var numberList = new NumberList();
     numberList.name = this.name;
     var i;
@@ -1639,7 +1639,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {StringList}
    * tags:conversion
    */
-  List.prototype.toStringList = function() {
+  List__List.prototype.toStringList = function() {
     var i;
     var stringList = new StringList();
     stringList.name = this.name;
@@ -1653,9 +1653,9 @@ define('src/index', ['exports'], function (exports) {
     return stringList;
   };
 
-  List.prototype.applyFunction = function(func) {
+  List__List.prototype.applyFunction = function(func) {
     //TODO: to be tested!
-    var newList = new List();
+    var newList = new List__List();
     newList.name = this.name;
     var i;
     for(i = 0; this[i] != null; i++) {
@@ -1667,11 +1667,11 @@ define('src/index', ['exports'], function (exports) {
 
   //filtering
 
-  List.prototype.getWithoutElementsAtIndexes = function(indexes) { //[!] This DOESN'T transforms the List
+  List__List.prototype.getWithoutElementsAtIndexes = function(indexes) { //[!] This DOESN'T transforms the List
     var i;
     var newList;
     if(this.type == 'List') {
-      newList = new List();
+      newList = new List__List();
     } else {
       newList = instantiate(typeOf(this));
     }
@@ -1691,10 +1691,10 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List.prototype.getWithoutElementAtIndex = function(index) {
+  List__List.prototype.getWithoutElementAtIndex = function(index) {
     var newList;
     if(this.type == 'List') {
-      newList = new List();
+      newList = new List__List();
     } else {
       newList = instantiateWithSameType(this);
     }
@@ -1715,14 +1715,14 @@ define('src/index', ['exports'], function (exports) {
    * @param {Number|String|Object} element Element to exclude in the new List.
    * @return {List} New List missing the given element.
    */
-  List.prototype.getWithoutElement = function(element) {
+  List__List.prototype.getWithoutElement = function(element) {
     var index = this.indexOf(element);
     if(index == -1) return this;
 
     var newList;
 
     if(this.type == 'List') {
-      newList = new List();
+      newList = new List__List();
     } else {
       newList = instantiateWithSameType(this);
     }
@@ -1738,10 +1738,10 @@ define('src/index', ['exports'], function (exports) {
     return newList;
   };
 
-  List.prototype.getWithoutElements = function(list) {
+  List__List.prototype.getWithoutElements = function(list) {
     var newList;
     if(this.type == 'List') {
-      newList = new List();
+      newList = new List__List();
     } else {
       newList = instantiateWithSameType(this);
     }
@@ -1766,7 +1766,7 @@ define('src/index', ['exports'], function (exports) {
    * returned List.
    * @return {List} Filtered List.
    */
-  List.prototype.getFilteredByFunction = function(func) {
+  List__List.prototype.getFilteredByFunction = function(func) {
     var newList = instantiateWithSameType(this);
     for(var i = 0; this[i] != null; i++) {
       if(func(this[i])) {
@@ -1778,7 +1778,7 @@ define('src/index', ['exports'], function (exports) {
     return newList;
   };
 
-  List.prototype.concat = function() {
+  List__List.prototype.concat = function() {
     if(arguments[0] == null) return this;
 
     //c.l('concat | arguments[0].type, this.type', arguments[0].type, this.type);
@@ -1798,11 +1798,11 @@ define('src/index', ['exports'], function (exports) {
         return NumberTable.fromArray(this._concat.apply(this, arguments), false);
       }
     }
-    return List.fromArray(this._concat.apply(this, arguments)).getImproved();
+    return List__List.fromArray(this._concat.apply(this, arguments)).getImproved();
   };
 
 
-  List.prototype.getReport = function(level) { //TODO:complete
+  List__List.prototype.getReport = function(level) { //TODO:complete
     var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
     var text = level > 0 ? (ident + "////report of instance of List////") : "///////////report of instance of List//////////";
 
@@ -1867,12 +1867,12 @@ define('src/index', ['exports'], function (exports) {
 
   ////transformations
 
-  List.prototype.pushIfUnique = function(element) {
+  List__List.prototype.pushIfUnique = function(element) {
     if(this.indexOf(element) != -1) return; //TODO: implement equivalence
     this.push(element);
   };
 
-  List.prototype.removeElements = function(elements) { //TODO: make it more efficient (avoiding the splice method)
+  List__List.prototype.removeElements = function(elements) { //TODO: make it more efficient (avoiding the splice method)
     for(var i = 0; i < this.length; i++) {
       if(elements.indexOf(this[i]) > -1) {
         this.splice(i, 1);
@@ -1881,16 +1881,16 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
-  List.prototype.removeElement = function(element) {
+  List__List.prototype.removeElement = function(element) {
     var index = this.indexOf(element);
     if(index != -1) this.splice(index, 1);
   };
 
-  List.prototype.removeElementAtIndex = function(index) { //deprecated
+  List__List.prototype.removeElementAtIndex = function(index) { //deprecated
     this.splice(index, 1);
   };
 
-  List.prototype.removeElementsAtIndexes = function(indexes) {
+  List__List.prototype.removeElementsAtIndexes = function(indexes) {
     indexes = indexes.sort(function(a, b) {
       return a - b;
     });
@@ -1900,7 +1900,7 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
-  List.prototype.removeRepetitions = function() {
+  List__List.prototype.removeRepetitions = function() {
     for(var i = 0; this[i] != null; i++) {
       if(this.indexOf(this[i], i + 1) != -1) {
         this.splice(i, 1);
@@ -1908,7 +1908,7 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
-  List.prototype.replace = function(elementToFind, elementToInsert) {
+  List__List.prototype.replace = function(elementToFind, elementToInsert) {
     var l = this.length;
     for(var i = 0; i < l; i++) {
       if(this[i] == elementToFind) this[i] = elementToInsert;
@@ -1921,7 +1921,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:transform
    */
-  List.prototype.assignNames = function(names) {
+  List__List.prototype.assignNames = function(names) {
     if(names == null) return this;
     var n = names.length;
 
@@ -1932,7 +1932,7 @@ define('src/index', ['exports'], function (exports) {
     return this;
   };
 
-  List.prototype.splice = function() { //TODO: replace
+  List__List.prototype.splice = function() { //TODO: replace
     switch(this.type) {
       case 'NumberList':
         return NumberList.fromArray(this._splice.apply(this, arguments));
@@ -1947,18 +1947,18 @@ define('src/index', ['exports'], function (exports) {
         return DateList.fromArray(this._splice.apply(this, arguments));
       break;
     }
-    return List.fromArray(this._splice.apply(this, arguments)).getImproved();
+    return List__List.fromArray(this._splice.apply(this, arguments)).getImproved();
   };
 
-  List.prototype.destroy = function() {
+  List__List.prototype.destroy = function() {
     for(var i = 0; this[i] != null; i++) {
       delete this[i];
     }
   };
 
-  exports.List = List;
+  exports.List = List__default;
 
-  DateList.prototype = new List();
+  DateList.prototype = new List__default();
   DateList.prototype.constructor = DateList;
 
   /**
@@ -1973,7 +1973,7 @@ define('src/index', ['exports'], function (exports) {
     for(var i = 0; i < arguments.length; i++) {
       args[i] = Number(arguments[i]);
     }
-    var array = List.apply(this, args);
+    var array = List__default.apply(this, args);
     array = DateList.fromArray(array);
     //
     return array;
@@ -1983,7 +1983,7 @@ define('src/index', ['exports'], function (exports) {
 
   DateList.fromArray = function(array, forceToDate) {
     forceToDate = forceToDate == null ? true : forceToDate;
-    var result = List.fromArray(array);
+    var result = List__default.fromArray(array);
 
     if(forceToDate) {
       for(var i = 0; i < result.length; i++) {
@@ -2188,26 +2188,38 @@ define('src/index', ['exports'], function (exports) {
 
   /*
    * types are:
-   * number, string, boolean, date
+   * number, string, boolean, date, Array, Object
    * and all data models classes names
    */
-  function typeOf(o) {
-    var type = typeof o;
 
-    if(type !== 'object') {
-      return type;
-    }
+  function typeOf(object) {
+    if(object==null) return null;
 
-    if(o === null) {
-      return 'null';
-    } else if(o.getDate != null) {
-      return 'date';
-    } else {
-      if(o.getType == null) return 'Object';
-      var objectType = o.getType();
-      return objectType;
-    }
-    console.log("[!] ERROR: could not detect type for ", o);
+    var type = typeof object;
+    if(type !== 'object') return type;
+
+    if(object.type!=null) return object.type;
+
+    if(Object.prototype.toString.call(object) == "[object Array]") return "Array";
+
+    if(object.getDate != null) return 'date';
+
+    return 'Object';
+
+
+
+
+
+    // if(o === null) {
+    //   return 'null';
+    // } else if(o.getDate != null) {
+    //   return 'date';
+    // } else {
+    //   if(o.getType == null) return 'Object';
+    //   var objectType = o.getType();
+    //   return objectType;
+    // }
+    // c.l("[!] ERROR: could not detect type for ", o);
   }
 
   // TODO remove?
@@ -2447,7 +2459,7 @@ define('src/index', ['exports'], function (exports) {
   exports.argumentsToArray = argumentsToArray;
   exports.TimeLogger = TimeLogger;
 
-  Polygon.prototype = new List();
+  Polygon.prototype = new List__default();
   Polygon.prototype.constructor = Polygon;
 
   /**
@@ -2458,14 +2470,14 @@ define('src/index', ['exports'], function (exports) {
    * @category geometry
    */
   function Polygon() {
-    var array = List.apply(this, arguments);
+    var array = List__default.apply(this, arguments);
     array = Polygon.fromArray(array);
     return array;
   }
 
 
   Polygon.fromArray = function(array) {
-    var result = List.fromArray(array);
+    var result = List__default.fromArray(array);
     result.type = "Polygon";
 
     result.getFrame = Polygon.prototype.getFrame;
@@ -2636,7 +2648,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Polygon = Polygon;
 
-  NodeList__NodeList.prototype = new List();
+  NodeList__NodeList.prototype = new List__default();
   NodeList__NodeList.prototype.constructor = NodeList__NodeList;
 
   /**
@@ -2676,7 +2688,7 @@ define('src/index', ['exports'], function (exports) {
   NodeList__NodeList.fromArray = function(array, forceToNode) {
     forceToNode = forceToNode == null ? false : forceToNode;
 
-    var result = List.fromArray(array);
+    var result = List__default.fromArray(array);
 
     if(forceToNode) {
       for(var i = 0; i < result.length; i++) {
@@ -2685,7 +2697,7 @@ define('src/index', ['exports'], function (exports) {
     }
 
     // TODO: Remove duplicate line?
-    var result = List.fromArray(array);
+    var result = List__default.fromArray(array);
     result.type = "NodeList";
     result.ids = {};
     // TODO: Fix
@@ -4654,8 +4666,8 @@ define('src/index', ['exports'], function (exports) {
   var HalfPi = 0.5*Math.PI;
   var radToGrad = 180/Math.PI;
   var gradToRad = Math.PI/180;
-  var src_Global__c = console;
-  src_Global__c.l = src_Global__c.log; //use c.l instead of console.log
+  var c = console;
+  c.l = c.log; //use c.l instead of console.log
 
   //private
   var _wheelActivated = false;
@@ -4727,7 +4739,7 @@ define('src/index', ['exports'], function (exports) {
       window.init();
     }
 
-    src_Global__c.l('Moebio Framework v2.259 | user agent: '+src_Global__userAgent+' | user agent version: '+src_Global__userAgentVersion+' | canvas detected: '+(canvas!=null));
+    c.l('Moebio Framework v2.259 | user agent: '+src_Global__userAgent+' | user agent version: '+src_Global__userAgentVersion+' | canvas detected: '+(canvas!=null));
 
   }, false);
 
@@ -4932,7 +4944,7 @@ define('src/index', ['exports'], function (exports) {
   }
 
   function cancelAllInteractions(){
-    src_Global__c.log("cancelAllInteractions, _interactionCancelledFrame:", nF);
+    c.log("cancelAllInteractions, _interactionCancelledFrame:", nF);
     _interactionCancelledFrame = nF;
   }
 
@@ -5170,7 +5182,7 @@ define('src/index', ['exports'], function (exports) {
   exports.HalfPi = HalfPi;
   exports.radToGrad = radToGrad;
   exports.gradToRad = gradToRad;
-  exports.c = src_Global__c;
+  exports.c = c;
   exports._cycleOnMouseMovement = _cycleOnMouseMovement;
 
   Relation.prototype = new Node__default();
@@ -6684,7 +6696,7 @@ define('src/index', ['exports'], function (exports) {
       var cellContents = NetworkEncodings.replaceChomasInLine(lines[i]).split(comaCharacter); //TODO: will be obsolete (see previous TODO)
 
       for(var j = 0; j < cellContents.length; j++) {
-        table[j] = table[j] == null ? new List() : table[j];
+        table[j] = table[j] == null ? new List__default() : table[j];
         if(_firstRowIsHeader && i == 1) {
           table[j].name = headerContent[j] == null ? "" : TableEncodings._removeQuotes(headerContent[j]);
         }
@@ -6771,7 +6783,7 @@ define('src/index', ['exports'], function (exports) {
 
   /* global console */
 
-  Table.prototype = new List();
+  Table.prototype = new List__default();
   Table.prototype.constructor = Table;
 
   /**
@@ -6790,10 +6802,10 @@ define('src/index', ['exports'], function (exports) {
     var args = [];
     var i;
     for(i = 0; i < arguments.length; i++) {
-      args[i] = new List(arguments[i]);
+      args[i] = new List__default(arguments[i]);
     }
 
-    var array = List.apply(this, args);
+    var array = List__default.apply(this, args);
     array = Table.fromArray(array);
 
     return array;
@@ -6807,7 +6819,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Table}
    */
   Table.fromArray = function(array) {
-    var result = List.fromArray(array);
+    var result = List__default.fromArray(array);
     result.type = "Table";
     //assign methods to array:
     result.applyFunction = Table.prototype.applyFunction;
@@ -6867,7 +6879,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:filter
    */
   Table.prototype.getRow = function(index) {
-    var list = new List();
+    var list = new List__default();
     var i;
     for(i = 0; i < this.length; i++) {
       list[i] = this[i][index];
@@ -6958,7 +6970,7 @@ define('src/index', ['exports'], function (exports) {
     var newTable = new Table();
     newTable.name = this.name;
     for(var i = 0; this[i] != null; i++) {
-      newTable[i] = List.fromArray(this[i].slice(0, rowIndex).concat(this[i].slice(rowIndex + 1))).getImproved();
+      newTable[i] = List__default.fromArray(this[i].slice(0, rowIndex).concat(this[i].slice(rowIndex + 1))).getImproved();
       newTable[i].name = this[i].name;
     }
     return newTable.getImproved();
@@ -6974,7 +6986,7 @@ define('src/index', ['exports'], function (exports) {
     var newTable = new Table();
     newTable.name = this.name;
     for(var i = 0; this[i] != null; i++) {
-      newTable[i] = new List();
+      newTable[i] = new List__default();
       for(var j = 0; this[i][j] != null; j++) {
         if(rowsIndexes.indexOf(j) == -1) newTable[i].push(this[i][j]);
       }
@@ -7023,7 +7035,7 @@ define('src/index', ['exports'], function (exports) {
     for(i = 0; tableToTranspose[i] != null; i++) {
       list = tableToTranspose[i];
       for(j = 0; list[j] != null; j++) {
-        if(i === 0) table[j] = new List();
+        if(i === 0) table[j] = new List__default();
         table[j][i] = tableToTranspose[i][j];
       }
     }
@@ -7408,7 +7420,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.NumberTable = NumberTable;
 
-  RectangleList.prototype = new List();
+  RectangleList.prototype = new List__default();
   RectangleList.prototype.constructor = RectangleList;
   /**
    * @classdesc A {@link List} structure for storing {@link Rectangle} instances.
@@ -7418,14 +7430,14 @@ define('src/index', ['exports'], function (exports) {
    * @category geometry
    */
   function RectangleList() {
-    var array = List.apply(this, arguments);
+    var array = List__default.apply(this, arguments);
     array = RectangleList.fromArray(array);
     return array;
   }
 
 
   RectangleList.fromArray = function(array) {
-    var result = List.fromArray(array);
+    var result = List__default.fromArray(array);
     result.type = "RectangleList";
 
     result.getFrame = RectangleList.prototype.getFrame;
@@ -7517,10 +7529,10 @@ define('src/index', ['exports'], function (exports) {
         list = new StringList();
         break;
       case 'boolean':
-        list = new List(); //TODO:update once BooleanList exists
+        list = new List__default(); //TODO:update once BooleanList exists
         break;
       default:
-        list = new List();
+        list = new List__default();
     }
 
     for(var i = 0; i < nValues; i++) {
@@ -7546,7 +7558,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.ListGenerators = ListGenerators;
 
-  NumberList.prototype = new List();
+  NumberList.prototype = new List__default();
   NumberList.prototype.constructor = NumberList;
 
   /**
@@ -7562,7 +7574,7 @@ define('src/index', ['exports'], function (exports) {
     for(var i = 0; i < arguments.length; i++) {
       args[i] = Number(arguments[i]);
     }
-    var array = List.apply(this, args);
+    var array = List__default.apply(this, args);
     array = NumberList.fromArray(array);
     return array;
   }
@@ -7578,7 +7590,7 @@ define('src/index', ['exports'], function (exports) {
   NumberList.fromArray = function(array, forceToNumber) {
     forceToNumber = forceToNumber == null ? true : forceToNumber;
 
-    var result = List.fromArray(array);
+    var result = List__default.fromArray(array);
 
     if(forceToNumber) {
       for(var i = 0; i < result.length; i++) {
@@ -8283,7 +8295,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.NumberList = NumberList;
 
-  StringList.prototype = new List();
+  StringList.prototype = new List__default();
   StringList.prototype.constructor = StringList;
 
   /**
@@ -8299,7 +8311,7 @@ define('src/index', ['exports'], function (exports) {
     for(var i = 0; i < arguments.length; i++) {
       args[i] = String(arguments[i]);
     }
-    var array = List.apply(this, args);
+    var array = List__default.apply(this, args);
     array = StringList.fromArray(array);
     //
     return array;
@@ -8309,7 +8321,7 @@ define('src/index', ['exports'], function (exports) {
   StringList.fromArray = function(array, forceToString) {
     forceToString = forceToString == null ? true : forceToString;
 
-    var result = List.fromArray(array);
+    var result = List__default.fromArray(array);
     if(forceToString) {
       for(var i = 0; i < result.length; i++) {
         result[i] = String(result[i]);
@@ -8758,7 +8770,7 @@ define('src/index', ['exports'], function (exports) {
     var element;
     for(i = x; i < x + width; i++) {
       column = table[i];
-      newColumn = new List();
+      newColumn = new List__default();
       newColumn.name = table[i].name;
       for(j = y; j < y + height; j++) {
         element = column[j];
@@ -8821,7 +8833,7 @@ define('src/index', ['exports'], function (exports) {
       }
     });
 
-    return new List(table.getSubListsByIndexes(indexesTr), table.getSubListsByIndexes(indexesTe));
+    return new List__default(table.getSubListsByIndexes(indexesTr), table.getSubListsByIndexes(indexesTe));
   };
 
   /**
@@ -8869,6 +8881,11 @@ define('src/index', ['exports'], function (exports) {
     return newTable;
   };
 
+  // old version replaced by above version Dec 1st, 2014
+  // - fixed bug where descending with 'false' value gets changed to 'true'
+  // - performance improvements for tables with lots of lists
+  // TableOperators.sortListsByNumberList=function(table, numberList, descending){
+  //  descending = descending || true;
   TableOperators.sortListsByNumberList = function(table, numberList, descending) {
     if(descending == null) descending = true;
 
@@ -8893,34 +8910,43 @@ define('src/index', ['exports'], function (exports) {
     return newTable;
   };
 
-  // old version replaced by above version Dec 1st, 2014
-  // - fixed bug where descending with 'false' value gets changed to 'true'
-  // - performance improvements for tables with lots of lists
-  // TableOperators.sortListsByNumberList=function(table, numberList, descending){
-  // 	descending = descending || true;
+  /**
+   * aggregates lists from a table, using one of the list of the table as the aggregation list, and based on different modes for each list
+   * @param  {Table} table containing the aggregation list and lists to be aggregated
+   * @param  {Number} indexAggregationList index of the aggregation list on the table
+   * @param  {Numberlist} indexesListsToAggregate indexs of the lists to be aggregated; typically it also contains the index of the aggregation list at the beginning, to be aggregated using mode 0 (first element) thus resulting as the list of non repeated elements
+   * @param  {NumberList} modes list of modes of aggregation, these are the options:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:enlist (creates a list of elements)<br>7:last element<br>8:most common element<br>9:random element<br>10:indexes
+   * @return {Table} aggragated table
+   * tags:
+   */
+  TableOperators.aggregateTable = function(table, indexAggregationList, indexesListsToAggregate, modes){
+    indexAggregationList = indexAggregationList||0;
 
-  // 	var newTable = instantiate(typeOf(table));
-  // 	newTable.name = table.name;
-  // 	var nElements = table.length;
-  // 	var i;
-  // 	for(i=0; i<nElements; i++){
-  // 		newTable[i] = ListOperators.sortListByNumberList(table[i], numberList, descending);
-  // 	}
-  // 	return newTable;
-  // }
+    if(table==null || !table.length ||  table.length<indexAggregationList || indexesListsToAggregate==null || !indexesListsToAggregate.length || modes==null) return;
 
+    var aggregatorList = table[indexAggregationList];
+    var indexesTable = ListOperators.getIndexesTable(aggregatorList);
+    var newTable = new Table();
+    var toAggregateList;
+    var i;
 
+    indexesListsToAggregate.forEach(function(index, i){
+      toAggregateList = table[index];
+      newTable.push( ListOperators.aggregateList(aggregatorList, toAggregateList, modes[i%modes.length], indexesTable)[1] );
+    });
+
+    return newTable.getImproved();
+  }
 
   /**
-   * aggregates a table
+   * aggregates a table, deprecated: a new more powerful method has been built
    * @param  {Table} table to be aggregated
-   *
    * @param  {Number} nList list in the table used as basis to aggregation
    * @param  {Number} mode mode of aggregation, 0:picks first element 1:adds numbers, 2:averages
    * @return {Table} aggregated table
-   * tags:aggregation
+   * tags:deprecated
    */
-  TableOperators.aggregateTable = function(table, nList, mode) {
+  TableOperators.aggregateTableOld = function(table, nList, mode) {
     nList = nList == null ? 0 : nList;
     if(table == null || table[0] == null || table[0][0] == null || table[nList] == null) return null;
     mode = mode == null ? 0 : mode;
@@ -8933,7 +8959,7 @@ define('src/index', ['exports'], function (exports) {
     newTable.name = table.name;
 
     for(j = 0; table[j] != null; j++) {
-      newTable[j] = new List();
+      newTable[j] = new List__default();
       newTable[j].name = table[j].name;
     }
 
@@ -9033,7 +9059,7 @@ define('src/index', ['exports'], function (exports) {
     newTable.name = table.name;
 
     for(j = 0; table[j] != null; j++) {
-      newTable[j] = new List();
+      newTable[j] = new List__default();
     }
 
     for(i = 0; table[0][i] != null; i++) {
@@ -9224,7 +9250,7 @@ define('src/index', ['exports'], function (exports) {
     if(table == null || list == null) return null;
 
     var childrenTable;
-    var tablesList = new List();
+    var tablesList = new List__default();
     var childrenObject = {};
     var N = list.length;
 
@@ -9235,7 +9261,7 @@ define('src/index', ['exports'], function (exports) {
         childrenObject[element] = childrenTable;
         tablesList.push(childrenTable);
         table.forEach(function(list, j) {
-          childrenTable[j] = new List();
+          childrenTable[j] = new List__default();
           childrenTable[j].name = list.name;
         });
         childrenTable._element = element;
@@ -9535,16 +9561,6 @@ define('src/index', ['exports'], function (exports) {
     }];
   };
 
-  // *
-  //  * filters a List, by a NumberList of indexes, or by an Interval
-  //  * @param  {List} list to be filtered
-  //  * @param  {Object} params NumberList or Interval
-  //  * @return {List}
-
-  // ListOperators.getSubList = function(list, params){
-  // 	if(list==null || params==null) return null;
-  // 	return list.getSubList.apply(list, params.isList?[params]:params);
-  // }
 
   /**
    * first position of element in list (-1 if element doesn't belong to the list)
@@ -9592,8 +9608,9 @@ define('src/index', ['exports'], function (exports) {
    * tags:
    */
   ListOperators.assemble = function() {
-    return List.fromArray(Array.prototype.slice.call(arguments, 0)).getImproved();
+    return List__default.fromArray(Array.prototype.slice.call(arguments, 0)).getImproved();
   };
+
 
 
   /**
@@ -9688,7 +9705,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:
    */
   ListOperators.translateWithDictionary = function(list, dictionary, nullElement) {
-    var newList = new List();
+    var newList = new List__default();
     list.forEach(function(element, i) {
       var index = dictionary[0].indexOf(element);
       if(nullElement != null) {
@@ -9780,7 +9797,15 @@ define('src/index', ['exports'], function (exports) {
     return newList.getImproved();
   };
 
-
+  /**
+   * builds a table: a list of sub-lists from the original list, each sub-list determined size subListsLength, and starting at certain indexes separated by step
+   * @param  {List} list
+   * @param  {Number} subListsLength length of each sub-list
+   * @param  {Number} step slifing step
+   * @param  {Number} finalizationMode<br>0:all sub-Lists same length, doesn't cover the List<br>1:last sub-List catches the last elements, with lesser length<br>2:all lists same length, last sub-list migth contain elements from the beginning of the List
+   * @return {Table}
+   * tags:
+   */
   ListOperators.slidingWindowOnList = function(list, subListsLength, step, finalizationMode) {
     finalizationMode = finalizationMode || 0;
     var table = new Table();
@@ -9797,7 +9822,7 @@ define('src/index', ['exports'], function (exports) {
       case 0: //all sub-Lists same length, doesn't cover the List
         for(i = 0; i < nElements; i += step) {
           if(i + subListsLength <= nElements) {
-            newList = new List();
+            newList = new List__default();
             for(j = 0; j < subListsLength; j++) {
               newList.push(list[i + j]);
             }
@@ -9807,7 +9832,7 @@ define('src/index', ['exports'], function (exports) {
         break;
       case 1: //last sub-List catches the last elements, with lesser length
         for(i = 0; i < nElements; i += step) {
-          newList = new List();
+          newList = new List__default();
           for(j = 0; j < Math.min(subListsLength, nElements - i); j++) {
             newList.push(list[i + j]);
           }
@@ -9816,7 +9841,7 @@ define('src/index', ['exports'], function (exports) {
         break;
       case 2: //all lists same length, last sub-list migth contain elements from the beginning of the List
         for(i = 0; i < nElements; i += step) {
-          newList = new List();
+          newList = new List__default();
           for(j = 0; j < subListsLength; j++) {
             newList.push(list[(i + j) % nElements]);
           }
@@ -9829,7 +9854,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   ListOperators.getNewListForObjectType = function(object) {
-    var newList = new List();
+    var newList = new List__default();
     newList[0] = object;
     return instantiateWithSameType(newList.getImproved());
   };
@@ -9843,17 +9868,43 @@ define('src/index', ['exports'], function (exports) {
     return false;
   };
 
+
   /**
-   * returns the list of common elements between two lists
+   * creates a List that contains the union of two List (removing repetitions)
+   * @param  {List} list0 first list
+   * @param  {List} list1 second list
+   *
+   * @return {List} the union of both Lists
+   * tags:
+   */
+  ListOperators.union = function(list0, list1) {//TODO: this should be refactored, and placed in ListOperators
+    if(list0==null || list1==null) return;
+
+    var obj = {};
+    var i, k;
+
+    for(i = 0; list0[i]!=null; i++) obj[list0[i]] = list0[i];
+    for(i = 0; list1[i]!=null; i++) obj[list1[i]] = list1[i];
+    var union = new List__default();
+    for(k in obj) {
+      //if(obj.hasOwnProperty(k)) // <-- optional
+      union.push(obj[k]);
+    }
+    return union;
+  };
+
+
+  /**
+   * returns the list of common elements between two lists (deprecated, use union instead)
    * @param  {List} list0
    * @param  {List} list1
    * @return {List}
-   * tags:
+   * tags:deprecated
    */
   ListOperators.getCommonElements = function(list0, list1) {
     var nums = list0.type == 'NumberList' && list1.type == 'NumberList';
     var strs = list0.type == 'StringList' && list1.type == 'StringList';
-    var newList = nums ? new NumberList() : (strs ? new StringList() : new List());
+    var newList = nums ? new NumberList() : (strs ? new StringList() : new List__default());
 
     var list = list0.length < list1.length ? list0 : list1;
     var otherList = list0 == list ? list1 : list0;
@@ -9869,12 +9920,13 @@ define('src/index', ['exports'], function (exports) {
 
 
   /**
-   * creates a List that contains the union of two List (removing repetitions)
+   * creates a List that contains the union of two List (removing repetitions) (deprecated, use union instead)
+   * @param  {List} list0
    * @param  {List} list A
    * @param  {List} list B
    *
    * @return {List} the union of both NumberLists
-   * tags:
+   * tags:deprecated
    */
   ListOperators.unionLists = function(x, y) {
     // Borrowed from here: http://stackoverflow.com/questions/3629817/getting-a-union-of-two-arrays-in-javascript
@@ -9910,7 +9962,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List} the intersection of both NumberLists
    * tags:
    */
-  ListOperators.intersectLists = function(a, b) {
+  ListOperators.intersectLists = function(a, b) {//TODO: change name to intersection
     // Borrowed from here: http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
     var result;
     if(a.type != b.type || (a.type != "StringList" && a.type != "NumberList"))
@@ -9940,7 +9992,164 @@ define('src/index', ['exports'], function (exports) {
     return result;
   };
 
+  /**
+   * builds a dictionary that matches an element of a List with all its indexes on the List (indexesDictionary[element] --> numberList of indexes of element on list)
+   * @param  {List} list
+   * @return {Object}
+   * tags:
+   */
+  ListOperators.getIndexesDictionary = function(list){
+    var indexesDictionary = {};
+    var i;
 
+    list.forEach(function(element, i){
+      if(indexesDictionary[element]==null) indexesDictionary[element]=new NumberList();
+      indexesDictionary[element].push(i);
+    });
+
+    return indexesDictionary;
+  }
+
+  ListOperators.getIndexesTable = function(list){
+    var indexesTable = new Table();
+    indexesTable[0] = new List__default();
+    indexesTable[1] = new NumberTable();
+    var indexesDictionary = {};
+    var i;
+
+    list.forEach(function(element, i){
+      indexOnTable = indexesDictionary[element]
+      if(indexOnTable==null){
+        indexesTable[0].push(element);
+        indexesTable[1].push(new NumberList(i));
+        indexesDictionary[element]=indexesTable[0].length-1;
+      } else {
+        indexesTable[1][indexOnTable].push(i)
+      }
+    });
+
+    indexesTable[0] = indexesTable[0].getImproved();
+
+    return indexesTable;
+  }
+
+  /**
+   * aggregates values of a list using an aggregator list as reference
+   * @param  {List} aggregatorList aggregator list that typically contains several repeated elements
+   * @param  {List} toAggregateList list of elements that will be aggregated
+   *
+   * @param  {Number} mode aggregation modes:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:enlist (creates a list of elements)<br>7:last element<br>8:most common element<br>9:random element<br>10:indexes
+   * @param  {Table} indexesTable optional already calculated table of indexes of elements on the aggregator list (if didn't provided, the method calculates it)
+   * @return {Table} contains a list with non repeated elements on the first list, and the aggregated elements on a second list
+   * tags:
+   */
+  ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, indexesTable){
+    if(aggregatorList==null || toAggregateList==null) return null;
+    var table = new Table();
+
+    if(indexesTable==null) indexesTable = ListOperators.getIndexesTable(aggregatorList);
+
+    if(mode==10) return indexesTable;
+
+    table[0] = indexesTable[0];
+
+    if(mode==0 && aggregatorList==toAggregateList){
+      table[1] = indexesTable[0];
+      return table;
+    }
+
+    mode = mode==null?0:mode;
+
+    switch(mode){
+      case 0://first element
+        table[1] = new List__default();
+        var list;
+        indexesTable[1].forEach(function(indexes){
+          table[1].push(toAggregateList[indexes[0]]);
+        });
+        table[1] = table[1].getImproved();
+        return table;
+      case 1://count
+        table[1] = new NumberList();
+        indexesTable[1].forEach(function(indexes){
+          table[1].push(indexes.length);
+        });
+        return table;
+      case 2://sum
+      case 3://average
+        var sum;
+        table[1] = new NumberList();
+        indexesTable[1].forEach(function(indexes){
+          sum = 0;
+          indexes.forEach(function(index){
+            sum+=toAggregateList[index];
+          });
+          if(mode==2) sum/=indexes.length;
+          table[1].push(sum);
+        });
+        return table;
+      case 4://min
+        var min;
+        table[1] = new NumberList();
+        indexesTable[1].forEach(function(indexes){
+          min = 99999999999;
+          indexes.forEach(function(index){
+            min=Math.min(min, toAggregateList[index]);
+          });
+          table[1].push(min);
+        });
+        return table;
+      case 5://average
+        var max;
+        table[1] = new NumberList();
+        indexesTable[1].forEach(function(indexes){
+          max = -99999999999;
+          indexes.forEach(function(index){
+            max=Math.max(max, toAggregateList[index]);
+          });
+          table[1].push(max);
+        });
+        return table;
+      case 6://enlist
+        table[1] = new Table();
+        var list;
+        indexesTable[1].forEach(function(indexes){
+          list = new List__default();
+          table[1].push(list)
+          indexes.forEach(function(index){
+            list.push(toAggregateList[index]);
+          });
+          list = list.getImproved();
+        });
+        return table.getImproved();
+      case 7://last element
+        table[1] = new List__default();
+        var list;
+        indexesTable[1].forEach(function(indexes){
+          table[1].push(toAggregateList[indexes[indexes.length-1]]);
+        });
+        table[1] = table[1].getImproved();
+        return table;
+      case 8://most common
+        table[1] = new List__default();
+        var elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 5, indexesTable);
+        elementsTable[1].forEach(function(elements){
+          table[1].push(elements.getMostRepeatedElement());
+        });
+        table[1] = table[1].getImproved();
+        return table;
+      case 9://random
+        table[1] = new List__default();
+        var list;
+        indexesTable[1].forEach(function(indexes){
+          table[1].push( toAggregateList[indexes[ Math.floor(Math.random()*indexes.length) ]] );
+        });
+        table[1] = table[1].getImproved();
+        return table;
+    }
+
+    return null;
+  }
 
 
 
@@ -9964,8 +10173,10 @@ define('src/index', ['exports'], function (exports) {
     }
 
     var table = ListOperators.countElementsRepetitionOnList(list, true);
+
     console.log('    getListEntropy | table[0]', table[0]);
     console.log('    getListEntropy | table[1]', table[1]);
+
     list._mostRepresentedValue = table[0][0];
     var N = list.length;
     list._biggestProbability = table[1][0] / N;
@@ -9996,38 +10207,6 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number}
    * tags:ds
    */
-
-  // ListOperators.getInformationGain = function(feature, supervised){
-  // 	if(feature==null || supervised==null || feature.length!=supervised.length) return null;
-
-  // 	var ig = ListOperators.getListEntropy(supervised);
-  // 	var childrenObject = {};
-  // 	var childrenLists = [];
-  // 	var N = feature.length;
-
-  // 	feature.forEach(function(element, i){
-  // 		if(childrenObject[element]==null){
-  // 			childrenObject[element]=new List();
-  // 			childrenLists.push(childrenObject[element]);
-  // 		}
-  // 		childrenObject[element].push(supervised[i]);
-  // 	});
-
-  // 	childrenLists.forEach(function(cl){
-  // 		ig -= (cl.length/N)*ListOperators.getListEntropy(cl);
-  // 	});
-
-  // 	return ig;
-  // }
-
-
-  /**
-   * measures how much a feature decreases entropy when segmenting by its values a supervised variable
-   * @param  {List} feature
-   * @param  {List} supervised
-   * @return {Number}
-   * tags:ds
-   */
   ListOperators.getInformationGain = function(feature, supervised) {
     if(feature == null || supervised == null || feature.length != supervised.length) return null;
 
@@ -10038,7 +10217,7 @@ define('src/index', ['exports'], function (exports) {
 
     feature.forEach(function(element, i) {
       if(childrenObject[element] == null) {
-        childrenObject[element] = new List();
+        childrenObject[element] = new List__default();
         childrenLists.push(childrenObject[element]);
       }
       childrenObject[element].push(supervised[i]);
@@ -10059,11 +10238,11 @@ define('src/index', ['exports'], function (exports) {
     var childrenLists = [];
     var N = feature.length;
     var entropy;
-    var sets = new List();
+    var sets = new List__default();
 
     feature.forEach(function(element, i) {
       if(childrenObject[element] == null) {
-        childrenObject[element] = new List();
+        childrenObject[element] = new List__default();
         childrenLists.push(childrenObject[element]);
       }
       childrenObject[element].push(supervised[i]);
@@ -10136,7 +10315,7 @@ define('src/index', ['exports'], function (exports) {
       item = list[i];
       pValue = propertyName == undefined ? item : item[propertyName];
       if(resultOb[pValue] == undefined) {
-        resultOb[pValue] = new List();
+        resultOb[pValue] = new List__default();
         resultOb[pValue].name = pValue;
         resultOb[pValue].valProperty = pValue;
         resultTable.push(resultOb[pValue]);
@@ -10159,7 +10338,7 @@ define('src/index', ['exports'], function (exports) {
       var numBlanks = 0;
       for(var i = minValue; i < maxValue; i++) {
         if(resultOb[i] == undefined) {
-          resultOb[i] = new List();
+          resultOb[i] = new List__default();
           resultOb[i].name = i;
           resultOb[i].valProperty = i;
           resultTable.push(resultOb[i]);
@@ -11716,7 +11895,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.PointOperators = PointOperators;
 
-  Polygon3D.prototype = new List();
+  Polygon3D.prototype = new List__default();
   Polygon3D.prototype.constructor = Polygon3D;
 
   /**
@@ -11728,14 +11907,14 @@ define('src/index', ['exports'], function (exports) {
    * @category geometry
    */
   function Polygon3D() {
-    var array = List.apply(this, arguments);
+    var array = List__default.apply(this, arguments);
     array = Polygon3D.fromArray(array);
     return array;
   }
 
 
   Polygon3D.fromArray = function(array) {
-    var result = List.fromArray(array);
+    var result = List__default.fromArray(array);
     result.type = "Polygon3D";
     //assign methods to array:
     return result;
@@ -13142,7 +13321,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.CountryList = CountryList;
 
-  Polygon3DList.prototype = new List();
+  Polygon3DList.prototype = new List__default();
   Polygon3DList.prototype.constructor = Polygon3DList;
 
   /**
@@ -13153,21 +13332,21 @@ define('src/index', ['exports'], function (exports) {
    * @category geometry
    */
   function Polygon3DList() {
-    var array = List.apply(this, arguments);
+    var array = List__default.apply(this, arguments);
     array = Polygon3DList.fromArray(array);
     return array;
   }
 
 
   Polygon3DList.fromArray = function(array) {
-    var result = List.fromArray(array);
+    var result = List__default.fromArray(array);
     result.type = "Polygon3DList";
     return result;
   };
 
   exports.Polygon3DList = Polygon3DList;
 
-  ColorList.prototype = new List();
+  ColorList.prototype = new List__default();
   ColorList.prototype.constructor = ColorList;
 
   /**
@@ -13183,7 +13362,7 @@ define('src/index', ['exports'], function (exports) {
     for(i = 0; i < arguments.length; i++) {
       args[i] = arguments[i];
     }
-    var array = List.apply(this, args);
+    var array = List__default.apply(this, args);
     array = ColorList.fromArray(array);
 
     return array;
@@ -13191,7 +13370,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   ColorList.fromArray = function(array) {
-    var result = List.fromArray(array);
+    var result = List__default.fromArray(array);
     result.type = "ColorList";
     result.getRgbArrays = ColorList.prototype.getRgbArrays;
     result.getInterpolated = ColorList.prototype.getInterpolated;
@@ -13206,7 +13385,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:
    */
   ColorList.prototype.getRgbArrays = function() {
-    var rgbArrays = new List();
+    var rgbArrays = new List__default();
 
     for(var i = 0; this[i] != null; i++) {
       rgbArrays[i] = ColorOperators.colorStringToRGB(this[i]);
@@ -14048,7 +14227,7 @@ define('src/index', ['exports'], function (exports) {
 
         var sum = weights.getSum();
 
-        var rectangleList = new List(); //RectangleList();
+        var rectangleList = new List__default(); //RectangleList();
         var dY = rectangle.y;
         var h;
         var vFactor = rectangle.height / sum;
@@ -14067,7 +14246,7 @@ define('src/index', ['exports'], function (exports) {
         }
         sum = weights.getSum();
 
-        rectangleList = new List(); //RectangleList();
+        rectangleList = new List__default(); //RectangleList();
         var dX = rectangle.x;
         var w;
         var hFactor = rectangle.width / sum;
@@ -14112,7 +14291,7 @@ define('src/index', ['exports'], function (exports) {
           rSouthAmerica.x += delta;
           rNorthAmerica.x += delta;
 
-          return new List(rAfrica, rAsia, rAustralasia, rEurope, rNorthAmerica, rSouthAmerica); //RectangleList
+          return new List__default(rAfrica, rAsia, rAustralasia, rEurope, rNorthAmerica, rSouthAmerica); //RectangleList
 
         } else {
 
@@ -14136,7 +14315,7 @@ define('src/index', ['exports'], function (exports) {
         var sumList = table.getSums();
         var rectangleColumns = this.packingRectangles(sumList, 2, rectangle);
 
-        rectangleList = List(); //new RectangleList();
+        rectangleList = List__default(); //new RectangleList();
 
         for(i = 0; i < nLists; i++) {
           rectangleList = ListOperators.concat(rectangleList, this.packingRectangles(table[i], 1, rectangleColumns[i]));
@@ -14183,7 +14362,7 @@ define('src/index', ['exports'], function (exports) {
     var rectangleList = new RectangleList();
     var freeRectangle = frame.clone();
     var subWeightList;
-    var subRectangleList = new List(); //RectangleList();//
+    var subRectangleList = new List__default(); //RectangleList();//
     var prevSubRectangleList;
     var proportion;
     var worstProportion;
@@ -14235,7 +14414,7 @@ define('src/index', ['exports'], function (exports) {
             rectangleList.push(new Rectangle(freeRectangle.x, freeRectangle.y, freeRectangle.width, freeRectangle.height)); //freeRectangle.clone());
             if(rectangleList.length == nWeights) {
               if(!isSortedWeights) {
-                var newRectangleList = new List(); //RectangleList();
+                var newRectangleList = new List__default(); //RectangleList();
                 for(i = 0; rectangleList[i] != null; i++) {
                   newRectangleList[newPositions[i]] = rectangleList[i];
                 }
@@ -14248,7 +14427,7 @@ define('src/index', ['exports'], function (exports) {
             rectangleList = rectangleList.concat(prevSubRectangleList);
             if(rectangleList.length == nWeights) {
               if(!isSortedWeights) {
-                newRectangleList = new List();
+                newRectangleList = new List__default();
                 for(i = 0; rectangleList[i] != null; i++) {
                   newRectangleList[newPositions[i]] = rectangleList[i];
                 }
@@ -14279,7 +14458,7 @@ define('src/index', ['exports'], function (exports) {
 
 
     if(!isSortedWeights) {
-      newRectangleList = new List(); //RectangleList();//
+      newRectangleList = new List__default(); //RectangleList();//
       for(i = 0; rectangleList[i] != null; i++) {
         newRectangleList[newPositions[i]] = rectangleList[i];
       }
@@ -14298,7 +14477,7 @@ define('src/index', ['exports'], function (exports) {
    */
   RectangleOperators.partitionRectangle = function(rectangle, normalizedWeightList, sum) {
     var area = rectangle.width * rectangle.height;
-    var rectangleList = new List(); //RectangleList();
+    var rectangleList = new List__default(); //RectangleList();
     var freeRectangle = new Rectangle(rectangle.x, rectangle.y, rectangle.width, rectangle.height); //rectangle.clone();
     //trace("??", freeRectangle);
     var areai;
@@ -14564,7 +14743,7 @@ define('src/index', ['exports'], function (exports) {
     if(!interpolate)
       interpolate = 0;
 
-    list = List.fromArray(list);
+    list = List__default.fromArray(list);
     var diffValues = list.getWithoutRepetitions();
     var diffColors;
     if(colorList) {
@@ -14774,7 +14953,7 @@ define('src/index', ['exports'], function (exports) {
     var result = new Table();
     for(var i = 0; i < fields.length; i++) {
       var fieldName = fields[i];
-      var column = new List();
+      var column = new List__default();
       result[i] = column;
       column.name = fieldName;
     }
@@ -14887,7 +15066,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   IntervalListOperators.scaleIntervals = function(intervalList, value) {
-    var newIntervalList = new List();
+    var newIntervalList = new List__default();
     newIntervalList.name = intervalList.name;
     for(var i = 0; intervalList[i] !== null; i++) {
       newIntervalList[i] = intervalList[i].getScaled(value);
@@ -15371,9 +15550,9 @@ define('src/index', ['exports'], function (exports) {
    * @param  {NumberList} list B
    *
    * @return {NumberList} the intersection of both NumberLists
-   * tags:
+   * tags:deprecated
    */
-  NumberListOperators.intersection = function(a, b) {
+  NumberListOperators.intersection = function(a, b) {//TODO: refactor this method that should be at ListOperators
     // Borrowed from here: http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
     //console.log( "arguments: ", arguments );
     if(arguments.length > 2) {
@@ -15558,7 +15737,7 @@ define('src/index', ['exports'], function (exports) {
 
     for(i = 1; i < nElements; i++) {
       numberList = table[i];
-      intervalList = new List();
+      intervalList = new List__default();
       intervalTable[i - 1] = intervalList;
       for(j = 0; j < nRows; j++) {
         intervalList.push(new Interval(table[i - 1][j], table[i][j]));
@@ -15722,7 +15901,7 @@ define('src/index', ['exports'], function (exports) {
 
       if(calculateClass) {
         var classTable = new Table();
-        classTable[0] = new List();
+        classTable[0] = new List__default();
         classTable[1] = new NumberList();
         for(i = 0; i < k; i++) {
           var clas = propertyList[table[0][i]];
@@ -15927,8 +16106,6 @@ define('src/index', ['exports'], function (exports) {
    */
   NumberTableOperators__NumberTableOperators.getCovarianceMatrix = function(numberTable){//TODO:build more efficient method
     if(numberTable==null) return;
-
-    c.l('>>',NumberTableOperators__NumberTableOperators.product(numberTable, numberTable.getTransposed()));
     return NumberTableOperators__NumberTableOperators.product(numberTable, numberTable.getTransposed()).factor(1/numberTable.length);
   }
 
@@ -16029,16 +16206,15 @@ define('src/index', ['exports'], function (exports) {
 
   function ObjectConversions() {}
 
+
   // *
   //  * convert an object into a json string (JSON.stringify(object))
   //  * @param  {Object} object to convert
   //  * @return {String} string in format json
   //  * tags:conversion
-
   // ObjectConversions.objectToString = function(object){
   // 	return JSON.stringify(object);
   // }
-
 
   /**
    * converts any Object into the desirde type, using the most obvious conversion (if exists)
@@ -16048,6 +16224,8 @@ define('src/index', ['exports'], function (exports) {
    * tags:conversion
    */
   ObjectConversions.conversor = function(object, toType) {
+    if(object==null || toType==null) return;
+
     var i;
     var type = typeOf(object);
     var pairType = type + "_" + toType;
@@ -16056,6 +16234,8 @@ define('src/index', ['exports'], function (exports) {
     console.log('ObjectConversions.conversor, pairType:', pairType);
 
     switch(pairType) {
+      case 'Array_List':
+        return ObjectConversions.ArrayToList(object);
       case 'NumberTable_Polygon':
         var polygon = new Polygon();
         var length2 = object.length > 1;
@@ -16104,7 +16284,23 @@ define('src/index', ['exports'], function (exports) {
       case 'number':
         return Number(object);
     }
+
+    // var short = TYPES_SHORT_NAMES_DICTIONARY[toType];
+    // if(short!=null && short!=toType){
+    //   return ObjectConversions.conversor(object, short);
+    // }
+
+    return null;
   };
+
+  /**
+   * converts an array into an improved List
+   * @param {Array} array
+   * tags:conversion
+   */
+  ObjectConversions.ArrayToList = function(array){
+    return List.fromArray(object).getImproved();
+  }
 
   exports.ObjectConversions = ObjectConversions;
 
@@ -16212,7 +16408,7 @@ define('src/index', ['exports'], function (exports) {
     var value;
 
     table[0] = ObjectOperators.getPropertiesNames(object);
-    table[1] = new List();
+    table[1] = new List__default();
 
     table[0].forEach(function(value, i) {
       table[1][i] = object[value];
@@ -16286,7 +16482,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:conversion
    */
   ObjectOperators.toList = function(array) {
-    return List.fromArray(array).getImproved();
+    return List__default.fromArray(array).getImproved();
   };
 
 
@@ -16452,6 +16648,7 @@ define('src/index', ['exports'], function (exports) {
     var a0Type = typeOf(a0);
     var a1Type = typeOf(a1);
     var pairType = a0Type + "_" + a1Type;
+
     //c.log('pairType:['+pairType+']');
 
     if(arguments.length == 2) {
@@ -16675,7 +16872,7 @@ define('src/index', ['exports'], function (exports) {
   ObjectOperators._applyBinaryOperatorOnLists = function(list0, list1, operator) {
     var n = Math.min(list0.length, list1.length);
     var i;
-    var resultList = new List();
+    var resultList = new List__default();
     for(i = 0; i < n; i++) {
       resultList.push(ObjectOperators._applyBinaryOperator(list0[i], list1[i], operator));
     }
@@ -16683,7 +16880,7 @@ define('src/index', ['exports'], function (exports) {
   };
   ObjectOperators._applyBinaryOperatorOnListWithObject = function(list, object, operator) {
     var i;
-    var resultList = new List();
+    var resultList = new List__default();
     for(i = 0; i < list.length; i++) {
       resultList.push(ObjectOperators._applyBinaryOperator(list[i], object, operator));
     }
@@ -16691,7 +16888,7 @@ define('src/index', ['exports'], function (exports) {
   };
   ObjectOperators._applyBinaryOperatorOnObjectWithList = function(object, list, operator) {
     var i;
-    var resultList = new List();
+    var resultList = new List__default();
     for(i = 0; i < list.length; i++) {
       resultList.push(ObjectOperators._applyBinaryOperator(object, list[i], operator));
     }
@@ -18106,7 +18303,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Network}
    */
   NetworkOperators.fusionNoteworks = function(noteworksList, hubsDistanceFactor, hubsForceWeight) {
-    var networks = new List();
+    var networks = new List__default();
 
     noteworksList.forEach(function(map, i) {
       var subfix = "map_" + i + "_";
@@ -20680,7 +20877,7 @@ define('src/index', ['exports'], function (exports) {
       var names = [];
       this.links = new StringList();
       this.linksType = new StringList();
-      var indexesPairs = new List();
+      var indexesPairs = new List__default();
       var lengthBefore;
 
       var link;
@@ -21190,7 +21387,7 @@ define('src/index', ['exports'], function (exports) {
     this.target = callee ? callee : arguments.callee;
     this.onComplete = onComplete;
 
-    this.datasLoaded = new List();
+    this.datasLoaded = new List__default();
     this.nextDataLoading();
   };
 
@@ -21240,7 +21437,7 @@ define('src/index', ['exports'], function (exports) {
     this.onComplete = onComplete;
     this.priorityWeights = priorityWeights;
 
-    this.imagesLoaded = new List();
+    this.imagesLoaded = new List__default();
 
     this.nextImageLoading();
   };
@@ -21501,9 +21698,9 @@ define('src/index', ['exports'], function (exports) {
 
     this.nodeList = new NodeList__default();
 
-    this.forcesList = new List();
+    this.forcesList = new List__default();
     this.equilibriumDistances = new NumberList();
-    this.forcesTypeList = new List();
+    this.forcesTypeList = new List__default();
     this.fromNodeList = new NodeList__default();
     this.toNodeList = new NodeList__default();
 
@@ -21524,9 +21721,9 @@ define('src/index', ['exports'], function (exports) {
     addShortRepulsorsOnRelated = addShortRepulsorsOnRelated == null ? false : addShortRepulsorsOnRelated;
 
 
-    this.forcesList = new List();
+    this.forcesList = new List__default();
     this.equilibriumDistances = new NumberList();
-    this.forcesTypeList = new List();
+    this.forcesTypeList = new List__default();
     this.fromNodeList = new NodeList__default();
     this.toNodeList = new NodeList__default();
 
@@ -22392,19 +22589,19 @@ define('src/index', ['exports'], function (exports) {
     textSize = textSize || 14;
     returnMode = returnMode == null ? 0 : returnMode;
 
-    if(frame.memory == null) frame.memory = { selected: 0, y: 0, multiSelected: new List() };
+    if(frame.memory == null) frame.memory = { selected: 0, y: 0, multiSelected: new List__default() };
 
     var changeList = frame.memory.list != list;
     var changeExternallySelected = (changeList && selectedInit != null) || frame.memory.selectedInit != selectedInit;
 
     if(changeExternallySelected) {
       if(returnMode == 3) {
-        frame.memory.multiSelected = new List();
+        frame.memory.multiSelected = new List__default();
         selectedInit.forEach(function(index) {
           frame.memory.multiSelected.push(list[index]);
         });
       } else if(returnMode == 2) {
-        frame.memory.multiSelected = List.fromArray(selectedInit).getImproved();
+        frame.memory.multiSelected = List__default.fromArray(selectedInit).getImproved();
       } else {
         frame.memory.selected = selectedInit;
       }
@@ -23825,11 +24022,11 @@ define('src/index', ['exports'], function (exports) {
 
     var normWeights = table[1].sqrt().getNormalizedToMax();
 
-    var rectangles = new List();
+    var rectangles = new List__default();
     var textPositions = new Polygon();
     var textSizes = new NumberList();
 
-    var rectanglesPlaced = new List();
+    var rectanglesPlaced = new List__default();
 
     var dL = 6;
 
@@ -23974,11 +24171,11 @@ define('src/index', ['exports'], function (exports) {
 
     var roundSizes = mode == 0;
 
-    var rectangles = new List();
+    var rectangles = new List__default();
     var textPositions = new Polygon();
     var textSizes = new NumberList();
 
-    var rectanglesPlaced = new List();
+    var rectanglesPlaced = new List__default();
 
     var dL = 6;
 
@@ -25207,7 +25404,7 @@ define('src/index', ['exports'], function (exports) {
     return new Rectangle(rect.x, rect.y + hLevel, rect.width, rect.height - hLevel);
   };
   TreeDraw._horizontalRectanglesDecision = function(rect, weights) {
-    var rects = new List();
+    var rects = new List__default();
     var x0 = rect.x;
     var w;
     var newWeights = weights.getNormalizedToSum();
