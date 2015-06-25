@@ -576,7 +576,7 @@ ListOperators.getIndexesTable = function(list){
  * @param  {List} aggregatorList aggregator list that typically contains several repeated elements
  * @param  {List} toAggregateList list of elements that will be aggregated
  * 
- * @param  {Number} mode aggregation modes:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:enlist (creates a list of elements)<br>7:last element<br>8:most common element<br>9:random element<br>10:indexes
+ * @param  {Number} mode aggregation modes:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes
  * @param  {Table} indexesTable optional already calculated table of indexes of elements on the aggregator list (if didn't provided, the method calculates it)
  * @return {Table} contains a list with non repeated elements on the first list, and the aggregated elements on a second list
  * tags:
@@ -587,7 +587,7 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
 
   if(indexesTable==null) indexesTable = ListOperators.getIndexesTable(aggregatorList);
 
-  if(mode==10) return indexesTable;
+  if(mode==11) return indexesTable;
 
   table[0] = indexesTable[0];
 
@@ -622,7 +622,7 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
         indexes.forEach(function(index){
           sum+=toAggregateList[index];
         });
-        if(mode==2) sum/=indexes.length;
+        if(mode==3) sum/=indexes.length;
         table[1].push(sum);
       });
       return table;
@@ -637,7 +637,7 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
         table[1].push(min);
       });
       return table;
-    case 5://average
+    case 5://max
       var max;
       table[1] = new NumberList();
       indexesTable[1].forEach(function(indexes){
@@ -648,7 +648,19 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
         table[1].push(max);
       });
       return table;
-    case 6://enlist
+    case 6://standard deviation
+      var average;
+      table = ListOperators.aggregateList(aggregatorList, toAggregateList, 3, indexesTable);
+      indexesTable[1].forEach(function(indexes, i){
+        sum = 0;
+        average = table[1][i];
+        indexes.forEach(function(index){
+          sum += Math.pow(toAggregateList[index] - average, 2);
+        });
+        table[1][i] = Math.sqrt(sum/indexes.length);
+      });
+      return table;
+    case 7://enlist
       table[1] = new Table();
       var list;
       indexesTable[1].forEach(function(indexes){
@@ -660,7 +672,7 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
         list = list.getImproved();
       });
       return table.getImproved();
-    case 7://last element
+    case 8://last element
       table[1] = new List();
       var list;
       indexesTable[1].forEach(function(indexes){
@@ -668,7 +680,7 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
       });
       table[1] = table[1].getImproved();
       return table;
-    case 8://most common
+    case 9://most common
       table[1] = new List();
       var elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 5, indexesTable);
       elementsTable[1].forEach(function(elements){
@@ -676,7 +688,7 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
       });
       table[1] = table[1].getImproved();
       return table;
-    case 9://random
+    case 10://random
       table[1] = new List();
       var list;
       indexesTable[1].forEach(function(indexes){

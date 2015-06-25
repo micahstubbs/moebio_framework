@@ -359,7 +359,7 @@ NumberList.prototype.getStandardDeviation = function() {
 };
 
 /**
- * Calculates the median of the NumberList.
+ * Calculates the median of the numberList
  *
  * @return {Number}
  * tags:statistics

@@ -177,7 +177,7 @@ TableOperators.sortListsByNumberList = function(table, numberList, descending) {
  * @param  {Table} table containing the aggregation list and lists to be aggregated
  * @param  {Number} indexAggregationList index of the aggregation list on the table
  * @param  {Numberlist} indexesListsToAggregate indexs of the lists to be aggregated; typically it also contains the index of the aggregation list at the beginning, to be aggregated using mode 0 (first element) thus resulting as the list of non repeated elements
- * @param  {NumberList} modes list of modes of aggregation, these are the options:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:enlist (creates a list of elements)<br>7:last element<br>8:most common element<br>9:random element<br>10:indexes
+ * @param  {NumberList} modes list of modes of aggregation, these are the options:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes
  * @return {Table} aggragated table
  * tags:
  */
@@ -199,6 +199,198 @@ TableOperators.aggregateTable = function(table, indexAggregationList, indexesLis
 
   return newTable.getImproved();
 }
+
+/**
+ * builds a pivot table
+ * @param  {table} table
+ * @param  {Number} indexFirstAggregationList index of first list
+ * @param  {Number} indexSecondAggregationList index of second list
+ * @param  {Number} indexListToAggregate index of list to be aggregated
+ * @param  {Number} aggregationMode aggregation mode:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>------not yet deployed:<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes
+ * @param {Object} nullValue value for null cases in non-numerical aggregation
+ * 
+ * @param  {Number} resultMode result mode:<br>0:classic pivot, a table of aggregations with first aggregation list elements without repetitions in the first list, and second aggregation elements as headers of the aggregation lists<br>1:two lists for combinations of first aggregated list and second aggregated list, and a third list for aggregated values(default)
+ * @return {Table}
+ * tags:
+ */
+TableOperators.pivotTable = function(table, indexFirstAggregationList, indexSecondAggregationList, indexListToAggregate, aggregationMode, resultMode, nullValue){
+  if(table==null || !table.length || indexFirstAggregationList==null || indexSecondAggregationList==null || indexListToAggregate==null || aggregationMode==null) return;
+
+  resultMode = resultMode||0;
+  nullValue = nullValue==null?"":nullValue;
+
+  var element0, element1;
+  var coordinate, indexes;
+  var listToAggregate = table[indexListToAggregate];
+
+  var newTable = new Table();
+  var sum;
+  var i, j, index;
+
+  if(resultMode==1){//two lists of elements and a list of aggregation value
+    var indexesDictionary = {};
+    var elementsDictionary = {};
+    
+    table[indexFirstAggregationList].forEach(function(element0, i){
+      element1 = table[indexSecondAggregationList][i];
+      coordinate = String(element0)+"∞"+String(element1);
+      if(indexesDictionary[coordinate]==null){
+        indexesDictionary[coordinate]=new NumberList();
+        elementsDictionary[coordinate]=new List();
+      }
+      indexesDictionary[coordinate].push(i);
+      elementsDictionary[coordinate].push(listToAggregate[i]);
+    });
+
+    newTable[0] = new List();
+    newTable[1] = new List();
+    switch(aggregationMode){
+      case 0://first element
+        newTable[2] = new List();
+        break;
+      case 1://count
+      case 2://sum
+      case 3://average
+        newTable[2] = new NumberList();
+        break;
+    }
+    
+
+    for(coordinate in indexesDictionary) {
+      indexes = indexesDictionary[coordinate];
+      newTable[0].push(table[indexFirstAggregationList][indexes[0]]);
+      newTable[1].push(table[indexSecondAggregationList][indexes[0]]);
+      
+      switch(aggregationMode){
+        case 0://first element    
+          newTable[2].push(listToAggregate[indexes[0]]);
+          break;
+        case 1://count
+          newTable[2].push(indexes.length);
+          break;
+        case 2://sum
+        case 3://average
+          sum = 0;
+          indexes.forEach(function(index){
+            sum+=listToAggregate[index];
+          });
+          if(aggregationMode==3) sum/=indexes.length;
+          newTable[2].push(sum);
+          break;
+      }
+    }
+
+    newTable[0] = newTable[0].getImproved();
+    newTable[1] = newTable[1].getImproved();
+
+    switch(aggregationMode){
+      case 0://first element
+        newTable[2] = newTable[2].getImproved();
+        break;
+    }
+
+    return newTable;
+  }
+
+  //resultMode==0, a table whose first list is the first aggregation list, and each i+i list is the aggregations with elements for the second aggregation list
+  
+  newTable[0] = new List();
+
+  var elementsPositions0 = {};
+  var elementsPositions1 = {};
+
+  var x, y;
+  var element;
+  
+  table[indexFirstAggregationList].forEach(function(element0, i){
+    element1 = table[indexSecondAggregationList][i];
+    element = listToAggregate[i];
+
+    c.l('•• element0, element1, element', element0, element1, element);
+
+    y = elementsPositions0[element0];
+    if(y==null){
+      newTable[0].push(element0);
+      y = newTable[0].length-1;
+      elementsPositions0[element0] = y;
+    }
+
+    x = elementsPositions1[element1];
+
+    
+
+    if(x==null){
+      newList = new List();
+      newTable.push(newList);
+      newList.name = String(element1);
+      x = newTable.length;
+      elementsPositions1[element1] = x;
+    }
+
+    c.l('x, y', x, y);
+
+    c.l('newTable', newTable);
+
+    switch(aggregationMode){
+        case 0://first element    
+          if(newTable[x][y]==null) newTable[x][y]=element;
+          break;
+        case 1://count
+          if(newTable[x][y]==null) newTable[x][y]=0;
+          newTable[x][y]++;
+          break;
+        case 2://sum
+          if(newTable[x][y]==null) newTable[x][y]=0;
+          newTable[x][y]+=element;
+        case 3://average
+          if(newTable[x][y]==null) newTable[x][y]=[0,0];
+          newTable[x][y][0]+=element;
+          newTable[x][y][1]++;
+          break;
+      }
+
+
+  });
+
+  switch(aggregationMode){
+    case 0://first element
+      for(i=1; i<newTable.length; i++){
+        if(newTable[i]==null) newTable[i]=new List();
+        
+        newTable[0].forEach(function(val, j){
+          if(newTable[i][j]==null) newTable[i][j]==nullValue;
+        });
+
+        newTable[i] = newTable[i].getImproved();
+      }
+      break;
+    case 1://count
+    case 2://sum
+      for(i=1; i<newTable.length; i++){
+        if(newTable[i]==null) newTable[i]=new NumberList();
+        newTable[0].forEach(function(val, j){
+          if(newTable[i][j]==null) newTable[i][j]==0;
+        });
+      }
+      break;
+    case 3://average
+      for(i=1; i<newTable.length; i++){
+        if(newTable[i]==null) newTable[i]=new NumberList();
+        newTable[0].forEach(function(val, j){
+          if(newTable[i][j]==null){
+            newTable[i][j]==0;
+          } else {
+            newTable[i][j]=newTable[i][j][0]/newTable[i][j][1];
+          }
+        });
+      }
+      break;
+  }
+
+
+}
+
+
 
 /**
  * aggregates a table
@@ -256,7 +448,7 @@ TableOperators.aggregateTableOld = function(table, nList, mode) {
       break;
     case 2: //averages values in numberLists
       var nRepetitionsList = table[nList].getElementsRepetitionCount(false);
-      newTable = TableOperators.aggregateTable(table, nList, 1);
+      newTable = TableOperators.aggregateTableOld(table, nList, 1);
 
       for(j = 0; newTable[j] != null; j++) {
         if(j != nList && newTable[j].type == 'NumberList') {
@@ -567,7 +759,6 @@ TableOperators.buildDecisionTree = function(variablesTable, supervised, supervis
 
 
 TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervised, level, min_entropy, min_size_node, min_info_gain, parent, value, supervisedValue, indexes, generatePattern) {
-
   var entropy = ListOperators.getListEntropy(supervised, supervisedValue);
 
 
@@ -583,18 +774,12 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
     });
   }
 
-  //c.l('informationGains', informationGains);
-
-
 
   var subDivide = entropy >= min_entropy && maxIg > min_info_gain && supervised.length >= min_size_node;
 
   var id = tree.nodeList.getNewId();
   var name = (value == null ? '' : value + ':') + (subDivide ? variablesTable[iBestFeature].name : 'P=' + supervised._biggestProbability + '(' + supervised._mostRepresentedValue + ')');
   var node = new Node(id, name);
-
-
-
 
   tree.addNodeToTree(node, parent);
 
@@ -617,31 +802,7 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
   node.valueFollowingProbability = supervised._P_valueFollowing;
   node.lift = node.valueFollowingProbability / tree.nodeList[0].valueFollowingProbability; //Math.log(node.valueFollowingProbability/tree.nodeList[0].valueFollowingProbability)/Math.log(2);
 
-
-  if(level < 2) {
-    c.l('\nlevel', level);
-    c.l('supervised.countElement(supervisedValue)', supervised.countElement(supervisedValue));
-    c.l('entropy', entropy);
-    c.l('value', value);
-    c.l('name', name);
-    c.l('supervised.name', supervised.name);
-    c.l('supervised.length', supervised.length);
-    c.l('supervisedValue', supervisedValue);
-    c.l('supervised._biggestProbability, supervised._P_valueFollowing', supervised._biggestProbability, supervised._P_valueFollowing);
-    c.l('node.valueFollowingProbability (=supervised._P_valueFollowing):', node.valueFollowingProbability);
-    c.l('tree.nodeList[0].valueFollowingProbability', tree.nodeList[0].valueFollowingProbability);
-    c.l('node.biggestProbability (=_biggestProbability):', node.biggestProbability);
-    c.l('node.mostRepresentedValue:', node.mostRepresentedValue);
-    c.l('node.mostRepresentedValue==supervisedValue', node.mostRepresentedValue == supervisedValue);
-  }
-
   node._color = TableOperators._decisionTreeColorScale(1 - node.valueFollowingProbability);
-
-  // node._color = node.mostRepresentedValue==supervisedValue?
-  // 	TableOperators._decisionTreeColorScale(1-node.biggestProbability)
-  // 	:
-  // 	TableOperators._decisionTreeColorScale(node.biggestProbability);
-
 
   if(generatePattern) {
     var newCanvas = document.createElement("canvas");
@@ -657,12 +818,10 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
 				[Math.floor((1-node.biggestProbability)*node.weight), Math.floor(node.biggestProbability*node.weight)]
     );
 
-
     var img = new Image();
     img.src = newCanvas.toDataURL();
     node.pattern = newContext.createPattern(img, "repeat");
   }
-
 
 
   if(!subDivide) {
@@ -691,6 +850,7 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
 
   return node;
 };
+
 TableOperators._decisionTreeColorScale = function(value) {
   var rr = value < 0.5 ? Math.floor(510 * value) : 255;
   var gg = value < 0.5 ? Math.floor(510 * value) : Math.floor(510 * (1 - value));
@@ -698,8 +858,8 @@ TableOperators._decisionTreeColorScale = function(value) {
 
   return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
 };
-TableOperators._decisionTreeGenerateColorsMixture = function(ctxt, width, height, colors, weights) {
-  //var imageData=context.createImageData(width, height);
+
+TableOperators._decisionTreeGenerateColorsMixture = function(ctxt, width, height, colors, weights){
   var x, y, i; //, rgb;
   var allColors = ListGenerators.createListWithSameElement(weights[0], colors[0]);
 
@@ -714,6 +874,4 @@ TableOperators._decisionTreeGenerateColorsMixture = function(ctxt, width, height
       ctxt.fillRect(x, y, 1, 1);
     }
   }
-
-  //return imageData;
 };
