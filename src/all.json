@@ -98,7 +98,7 @@
   "tools/physics/Forces.js",
   "tools/threeD/Engine3D.js",
   "tools/utils/code/ClassUtils.js",
-  "tools/utils/strings/Consoletools.js",
+  "tools/utils/strings/ConsoleTools.js",
   "tools/utils/strings/FastHtml.js",
   "tools/utils/strings/JSONUtils.js",
   "tools/utils/strings/MD5.js",
