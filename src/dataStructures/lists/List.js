@@ -481,8 +481,7 @@ List.prototype.getElementNumberOfOccurrences = function(element) {
 
 
 /**
- * Creates a copy of the List.
- *
+ * creates a copy of the List
  * @return {List}
  */
 List.prototype.clone = function() {
