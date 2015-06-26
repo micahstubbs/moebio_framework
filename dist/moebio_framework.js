@@ -21910,7 +21910,7 @@ define('src/index', ['exports'], function (exports) {
    * @category misc
    */
   function ConsoleTools() {}
-  var Consoletools = ConsoleTools;
+
 
 
   ConsoleTools._ticTime;
@@ -21955,7 +21955,7 @@ define('src/index', ['exports'], function (exports) {
     console.log('°°°°°°° tac [' + message + '], t from tic:' + (ConsoleTools._tacTime - ConsoleTools._ticTime) + ', t from last tac:' + ((ConsoleTools._tacTime - lastTac)));
   };
 
-  exports.Consoletools = Consoletools;
+  exports.ConsoleTools = ConsoleTools;
 
   /**
    * @classdesc Provides a set of tools that work with JSON.
