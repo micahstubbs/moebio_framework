@@ -2030,7 +2030,7 @@ define('src/index', ['exports'], function (exports) {
 
     if(forceToDate) {
       for(var i = 0; i < result.length; i++) {
-        result[i] = Date(result[i]);
+        result[i] = new Date(result[i]);
       }
     }
 
