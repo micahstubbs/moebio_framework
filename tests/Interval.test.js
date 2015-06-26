@@ -9,7 +9,24 @@ describe("Interval", function() {
     var inter = new Interval(0, 100);
     expect(inter.getAmplitude()).toBe(100);
     expect(inter.getSignedAmplitude()).toBe(-100);
+  });
 
+  it("should give min", function() {
+    var inter = new Interval(0, 100);
+    expect(inter.getMin()).toBe(0);
+    inter = new Interval(100,-5);
+    expect(inter.getMin()).toBe(-5);
+    inter = new Interval(-10,-5);
+    expect(inter.getMin()).toBe(-10);
+  });
+
+  it("should give max", function() {
+    var inter = new Interval(0, 100);
+    expect(inter.getMax()).toBe(100);
+    inter = new Interval(100,-5);
+    expect(inter.getMax()).toBe(100);
+    inter = new Interval(-10,-5);
+    expect(inter.getMax()).toBe(-5);
   });
 
   it("should interpolate", function() {
