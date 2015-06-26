@@ -494,41 +494,53 @@ ListOperators.unionLists = function(x, y) {
 
 /**
  * creates a List that contains the intersection of two List (elements present in BOTH lists)
- * @param  {List} list A
- * @param  {List} list B
+ * @param  {List} list0 list A
+ * @param  {List} list1 list B
  * 
- * @return {List} the intersection of both NumberLists
+ * @return {List} intersection of both NumberLists
  * tags:
  */
-ListOperators.intersectLists = function(a, b) {//TODO: change name to intersection
-  // Borrowed from here: http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
-  var result;
-  if(a.type != b.type || (a.type != "StringList" && a.type != "NumberList"))
-  {
-    result = ListOperators.getCommonElements(a, b);
-  }
-  else
-  {
-    result = a.type == "StringList" ? new StringList() : new NumberList();
-    a = a.slice();
-    b = b.slice();
-    while(a.length > 0 && b.length > 0)
-    {
-      if(a[0] < b[0]) {
-        a.shift();
-      }
-      else if(a[0] > b[0]) {
-        b.shift();
-      }
-      else /* they're equal */
-      {
-        result.push(a.shift());
-        b.shift();
-      }
+ListOperators.intersection = function(list0, list1) {
+  if(list0==null || list1==null) return;
+
+  var element;
+  var dictionary = {};
+  var dictionaryIntersected = {};
+  var intersection = new List();
+
+  list0.forEach(function(element){
+    dictionary[element] = true;
+  });
+  list1.forEach(function(element){
+    if(dictionary[element] && dictionaryIntersected[element]==null){
+      dictionaryIntersected[element]=true;
+      intersection.push(element);
     }
-  }
-  return result;
+  });
+  return intersection.getImproved();
 };
+
+/**
+ * calculates Jaccard index |list0 ∩ list1|/|list0 ∪ list1| see: https://en.wikipedia.org/wiki/Jaccard_index
+ * @param  {List} list0
+ * @param  {List} list1
+ * @return {Number}
+ * tags:
+ */
+ListOperators.jaccardIndex = function(list0, list1) {//TODO: see if this can be more efficient, maybe one idctionar for doing union and interstection at the same time
+  return ListOperators.intersection(list0, list1).length/ListOperators.unionLists(list0, list1).length;
+}
+
+/**
+ * calculates Jaccard distance 1 - |list0 ∩ list1|/|list0 ∪ list1| see: https://en.wikipedia.org/wiki/Jaccard_index
+ * @param  {List} list0
+ * @param  {List} list1
+ * @return {Number}
+ * tags:
+ */
+ListOperators.jaccardDistance = function(list0, list1) {
+  return 1 - ListOperators.jaccardIndex(list0, list1);
+}
 
 /**
  * builds a dictionary that matches an element of a List with all its indexes on the List (indexesDictionary[element] --> numberList of indexes of element on list)
@@ -576,7 +588,7 @@ ListOperators.getIndexesTable = function(list){
  * @param  {List} aggregatorList aggregator list that typically contains several repeated elements
  * @param  {List} toAggregateList list of elements that will be aggregated
  * 
- * @param  {Number} mode aggregation modes:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes
+ * @param  {Number} mode aggregation modes:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes<br>12:count non repeated elements<br>13:enlist non repeated elements
  * @param  {Table} indexesTable optional already calculated table of indexes of elements on the aggregator list (if didn't provided, the method calculates it)
  * @return {Table} contains a list with non repeated elements on the first list, and the aggregated elements on a second list
  * tags:
@@ -696,12 +708,71 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
       });
       table[1] = table[1].getImproved();
       return table;
+    case 11://indexes (returned previosuly)
+      break;
+    case 12://count non repeated
+      table[1] = new NumberList();
+      var elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
+      elementsTable[1].forEach(function(elements){
+        table[1].push(elements.getWithoutRepetitions().length);
+      });
+      return table;
+    case 13://enlist non repeated
+      table[1] = new List();
+      var elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
+      elementsTable[1].forEach(function(elements){
+        table[1].push(elements.getWithoutRepetitions());
+      });
+      table[1] = table[1].getImproved();
+      return table;
   }
 
   return null;
 }
 
+/**
+ * analyses wether two lists are categorical identical, one is subcategorical to the other, or there's no relation
+ * @param  {List} list0
+ * @param  {List} list1
+ * @return {Number} 0:no relation, 1:categorical identical, 2:list0 subcategorical to list1, 3:list1 subcategorical to list0
+ * tags:
+ */
+ListOperators.subCategoricalAnalysis = function(list0, list1){
+  if(list0==null || list1==null) return;
 
+  var dictionary = {};
+  var element, projection;
+  var i;
+  var list0SubCategorical = true;
+  for(i=0; list0[i]!=null; i++){
+    element = list0[i];
+    projection = dictionary[element];
+    if(projection==null){
+      dictionary[element] = list1[i]
+    } else if(projection!=list1[i]){
+      list0SubCategorical = false;
+      break;
+    }
+  };
+  
+  dictionary = {};
+  var list1SubCategorical = true;
+  for(i=0; list1[i]!=null; i++){
+    element = list1[i];
+    projection = dictionary[element];
+    if(projection==null){
+      dictionary[element] = list0[i]
+    } else if(projection!=list0[i]){
+      list1SubCategorical = false;
+      break;
+    }
+  };
+
+  if(list1SubCategorical && list0SubCategorical) return 1;
+  if(list0SubCategorical) return 2;
+  if(list1SubCategorical) return 3;
+  return 0;
+}
 
 /**
  * calculates de entropy of a list, properties _mostRepresentedValue and _biggestProbability are added to the list
@@ -747,7 +818,7 @@ ListOperators.getListEntropy = function(list, valueFollowing) {
 
 
 /**
- * measures how much a feature decreases entropy when segmenting by its values a supervised variable
+ * measures how much a feature decreases entropy when segmenting by its values by a supervised variable
  * @param  {List} feature
  * @param  {List} supervised
  * @return {Number}

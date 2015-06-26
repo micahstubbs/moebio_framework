@@ -70,7 +70,7 @@ TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, val
     for(j = 0; j < cellContents.length; j++) {
       table[j] = table[j] == null ? new List() : table[j];
       if(_firstRowIsHeader && i == 1) {
-        table[j].name = headerContent[j] == null ? "" : TableEncodings._removeQuotes(headerContent[j]);
+        table[j].name = ( headerContent[j] == null ? "" : TableEncodings._removeQuotes(headerContent[j]) ).trim();
       }
       var actualIndex = _firstRowIsHeader ? (i - 1) : i;
 

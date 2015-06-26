@@ -306,7 +306,7 @@ Table.prototype.getReport = function(level) {
 
   text += ident + "--";
   names.forEach(function(name, i){
-    text += ident + name + " ["+TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"]";
+    text += ident + i + ": " + name + " ["+TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"]";
   });
   text += ident + "--";
 
@@ -329,6 +329,50 @@ Table.prototype.getReport = function(level) {
       } catch(err){
         text += ident + "[!] something wrong with list " + err;
       }
+    }
+  }
+
+  if(this.length == 2) {
+    text += ident + ident + "--------lists comparisons---------";
+    if(this[0].type=="NumberList" && this[1].type=="NumberList"){
+      text += ident + "covariance:" + NumberListOperators.covariance(this[0], this[1]);
+      text += ident + "Pearson product moment correlation: " + NumberListOperators.pearsonProductMomentCorrelation(this[0], this[1]);
+    } else if(this[0].type!="NumberList" && this[1].type!="NumberList"){
+      var nUnion = ListOperators.union(this[0], this[1]).length;
+      text += ident + "union size: " + nUnion;
+      var intersected = ListOperators.intersection(this[0], this[1]);
+      var nIntersection = intersected.length;
+      text += ident + "intersection size: " + nIntersection;
+
+      if(this[0]._freqTable[0].length == nUnion && this[1]._freqTable[0].length == nUnion){
+        text += ident + "[!] both lists contain the same non repeated elements";
+      } else {
+        if(this[0]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in first list also occur on second list";
+        if(this[1]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in second list also occur on first list";
+      }
+      text += ident + "Jaccard distance: " + (1 - (nIntersection/nUnion));
+    }
+    //check for 1-1 matches, number of pairs, categorical, sub-categorical
+    var subCategoryCase = ListOperators.subCategoricalAnalysis(this[0], this[1]);
+
+    switch(subCategoryCase){
+      case 0:
+        text += ident + "no categorical relation found among lists";
+        break;
+      case 1:
+        text += ident + "[!] both lists are categorical identical";
+        break;
+      case 2:
+        text += ident + "[!] first list is subcategorical to second list";
+        break;
+      case 3:
+        text += ident + "[!] second list is subcategorical to first list";
+        break;
+    }
+
+    if(subCategoryCase!=1){
+      text += ident + "information gain when segmenting first list by the second: "+ListOperators.getInformationGain(this[0], this[1]);
+      text += ident + "information gain when segmenting second list by the first: "+ListOperators.getInformationGain(this[1], this[0]);
     }
   }
 

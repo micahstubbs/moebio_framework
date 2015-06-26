@@ -1260,38 +1260,42 @@ List.prototype.getReport = function(level) { //TODO:complete
   switch(this.type) {
     case "NumberList":
       var min = this.getMin();
-    var max = this.getMax();
-    var average = (min + max) * 0.5;
-    text += ident + "min: " + min;
-    text += ident + "max: " + max;
-    text += ident + "average: " + average;
-    if(length < 101) {
-      text += ident + "numbers: " + this.join(", ");
-    }
-    break;
-    case "StringList":
-      case "List":
+      var max = this.getMax();
+      this.min = min;
+      this.max = max;
+      var average = (min + max) * 0.5;
+      this.average = average;
+      text += ident + "min: " + min;
+      text += ident + "max: " + max;
+      text += ident + "average: " + average;
+      if(length < 101) {
+        text += ident + "numbers: " + this.join(", ");
+      }
+      break;
+      case "StringList":
+    case "List":
       var freqTable = this.getElementsRepetitionCount(true);
-    text += ident + "number of different elements: " + freqTable[0].length;
-    if(freqTable[0].length < 10) {
-      text += ident + "elements frequency:";
-    } else {
-      text += ident + "some elements frequency:";
-    }
+      this._freqTable = freqTable;
+      text += ident + "number of different elements: " + freqTable[0].length;
+      if(freqTable[0].length < 10) {
+        text += ident + "elements frequency:";
+      } else {
+        text += ident + "some elements frequency:";
+      }
 
-    for(i = 0; freqTable[0][i] != null && i < 10; i++) {
-      text += ident + "  [" + String(freqTable[0][i]) + "]: " + freqTable[1][i];
-    }
+      for(i = 0; freqTable[0][i] != null && i < 10; i++) {
+        text += ident + "  [" + String(freqTable[0][i]) + "]: " + freqTable[1][i];
+      }
 
-    var joined;
-    if(this.type == "List") {
-      joined = this.join("], [");
-    } else {
-      joined = this.toStringList().join("], [");
-    }
+      var joined;
+      if(this.type == "List") {
+        joined = this.join("], [");
+      } else {
+        joined = this.toStringList().join("], [");
+      }
 
-    if(joined.length < 2000) text += ident + "strings: [" + joined + "]";
-    break;
+      if(joined.length < 2000) text += ident + "strings: [" + joined + "]";
+      break;
 
   }
 

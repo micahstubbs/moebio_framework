@@ -177,7 +177,7 @@ TableOperators.sortListsByNumberList = function(table, numberList, descending) {
  * @param  {Table} table containing the aggregation list and lists to be aggregated
  * @param  {Number} indexAggregationList index of the aggregation list on the table
  * @param  {Numberlist} indexesListsToAggregate indexs of the lists to be aggregated; typically it also contains the index of the aggregation list at the beginning, to be aggregated using mode 0 (first element) thus resulting as the list of non repeated elements
- * @param  {NumberList} modes list of modes of aggregation, these are the options:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes
+ * @param  {NumberList} modes list of modes of aggregation, these are the options:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes<br>12:count non repeated elements<br>13:enlist non repeated elements
  * @return {Table} aggragated table
  * tags:
  */
@@ -292,7 +292,8 @@ TableOperators.pivotTable = function(table, indexFirstAggregationList, indexSeco
     return newTable;
   }
 
-  //resultMode==0, a table whose first list is the first aggregation list, and each i+i list is the aggregations with elements for the second aggregation list
+
+  ////////////////////////resultMode==0, a table whose first list is the first aggregation list, and each i+i list is the aggregations with elements for the second aggregation list
   
   newTable[0] = new List();
 
@@ -306,49 +307,49 @@ TableOperators.pivotTable = function(table, indexFirstAggregationList, indexSeco
     element1 = table[indexSecondAggregationList][i];
     element = listToAggregate[i];
 
-    c.l('•• element0, element1, element', element0, element1, element);
-
-    y = elementsPositions0[element0];
+    y = elementsPositions0[String(element0)];
     if(y==null){
       newTable[0].push(element0);
       y = newTable[0].length-1;
-      elementsPositions0[element0] = y;
+      elementsPositions0[String(element0)] = y;
     }
 
-    x = elementsPositions1[element1];
-
-    
-
+    x = elementsPositions1[String(element1)];
     if(x==null){
-      newList = new List();
-      newTable.push(newList);
-      newList.name = String(element1);
-      x = newTable.length;
-      elementsPositions1[element1] = x;
-    }
-
-    c.l('x, y', x, y);
-
-    c.l('newTable', newTable);
-
-    switch(aggregationMode){
-        case 0://first element    
-          if(newTable[x][y]==null) newTable[x][y]=element;
+      switch(aggregationMode){
+        case 0:
+          newList = new List();
           break;
-        case 1://count
-          if(newTable[x][y]==null) newTable[x][y]=0;
-          newTable[x][y]++;
-          break;
-        case 2://sum
-          if(newTable[x][y]==null) newTable[x][y]=0;
-          newTable[x][y]+=element;
-        case 3://average
-          if(newTable[x][y]==null) newTable[x][y]=[0,0];
-          newTable[x][y][0]+=element;
-          newTable[x][y][1]++;
+        case 1:
+        case 2:
+        case 3:
+          newList = new NumberList();
           break;
       }
+      newTable.push(newList);
+      newList.name = String(element1);
+      x = newTable.length-1;
+      elementsPositions1[String(element1)] = x;
+    }
 
+    switch(aggregationMode){
+      case 0://first element    
+        if(newTable[x][y]==null) newTable[x][y]=element;
+        break;
+      case 1://count
+        if(newTable[x][y]==null) newTable[x][y]=0;
+        newTable[x][y]++;
+        break;
+      case 2://sum
+        if(newTable[x][y]==null) newTable[x][y]=0;
+        newTable[x][y]+=element;
+        break;
+      case 3://average
+        if(newTable[x][y]==null) newTable[x][y]=[0,0];
+        newTable[x][y][0]+=element;
+        newTable[x][y][1]++;
+        break;
+    }
 
   });
 
@@ -358,7 +359,7 @@ TableOperators.pivotTable = function(table, indexFirstAggregationList, indexSeco
         if(newTable[i]==null) newTable[i]=new List();
         
         newTable[0].forEach(function(val, j){
-          if(newTable[i][j]==null) newTable[i][j]==nullValue;
+          if(newTable[i][j]==null) newTable[i][j]=nullValue;
         });
 
         newTable[i] = newTable[i].getImproved();
@@ -369,7 +370,7 @@ TableOperators.pivotTable = function(table, indexFirstAggregationList, indexSeco
       for(i=1; i<newTable.length; i++){
         if(newTable[i]==null) newTable[i]=new NumberList();
         newTable[0].forEach(function(val, j){
-          if(newTable[i][j]==null) newTable[i][j]==0;
+          if(newTable[i][j]==null) newTable[i][j]=0;
         });
       }
       break;
@@ -378,7 +379,7 @@ TableOperators.pivotTable = function(table, indexFirstAggregationList, indexSeco
         if(newTable[i]==null) newTable[i]=new NumberList();
         newTable[0].forEach(function(val, j){
           if(newTable[i][j]==null){
-            newTable[i][j]==0;
+            newTable[i][j]=0;
           } else {
             newTable[i][j]=newTable[i][j][0]/newTable[i][j][1];
           }
@@ -387,7 +388,7 @@ TableOperators.pivotTable = function(table, indexFirstAggregationList, indexSeco
       break;
   }
 
-
+  return newTable;
 }
 
 
