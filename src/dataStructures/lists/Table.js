@@ -1,3 +1,17 @@
+/* global console */
+
+import List from "src/dataStructures/lists/List";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import TableEncodings from "src/operators/lists/TableEncodings";
+import StringOperators from "src/operators/strings/StringOperators";
+import {
+  instantiate,
+  instantiateWithSameType,
+  TYPES_SHORT_NAMES_DICTIONARY,
+  typeOf
+  } from "src/tools/utils/code/ClassUtils";
+//
+
 Table.prototype = new List();
 Table.prototype.constructor = Table;
 
@@ -25,6 +39,7 @@ function Table() {
 
   return array;
 }
+export default Table;
 
 /**
  * Creates a new Table from an array
@@ -165,6 +180,8 @@ Table.prototype.getSubListsByIndexes = function(indexes) {
   return newTable.getImproved();
 };
 
+
+//deprecated
 /**
  * @ignore
  */
@@ -199,7 +216,7 @@ Table.prototype.getWithoutRows = function(rowsIndexes) {
   newTable.name = this.name;
   for(var i = 0; this[i] != null; i++) {
     newTable[i] = new List();
-    for(j = 0; this[i][j] != null; j++) {
+    for(var j = 0; this[i][j] != null; j++) {
       if(rowsIndexes.indexOf(j) == -1) newTable[i].push(this[i][j]);
     }
     newTable[i].name = this[i].name;

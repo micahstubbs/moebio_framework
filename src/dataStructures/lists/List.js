@@ -1,3 +1,18 @@
+import StringOperators from "src/operators/strings/StringOperators";
+import DataModel from "src/dataStructures/DataModel";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import StringList from "src/dataStructures/strings/StringList";
+import DateList from "src/dataStructures/dates/DateList";
+import NodeList from "src/dataStructures/structures/lists/NodeList";
+import RelationList from "src/dataStructures/structures/lists/RelationList";
+import Polygon from "src/dataStructures/geometry/Polygon";
+import PolygonList from "src/dataStructures/geometry/PolygonList";
+import Table from "src/dataStructures/lists/Table";
+import NumberTable from "src/dataStructures/numeric/NumberTable";
+import Interval from "src/dataStructures/numeric/Interval";
+import ListOperators from "src/operators/lists/ListOperators";
+import { instantiateWithSameType, typeOf, instantiate } from "src/tools/utils/code/ClassUtils";
+
 List.prototype = new DataModel();
 List.prototype.constructor = List;
 
@@ -22,6 +37,8 @@ function List() {
   //
   return array;
 }
+export default List;
+
 
 /**
  * Creates a new List from a raw array of values
@@ -137,8 +154,41 @@ List.prototype.getImproved = function() {
 
   var typeOfElements = this.getTypeOfElements();
 
+  var newList;
   switch(typeOfElements) {
     case "number":
+      newList = NumberList.fromArray(this, false);
+      break;
+    case "string":
+      newList = StringList.fromArray(this, false);
+      break;
+    case "Rectangle":
+      return this;
+    case "date":
+      newList = DateList.fromArray(this, false);
+      break;
+    case "List":
+    case "DateList":
+    case "IntervalList":
+    case "StringList":
+    case "Table":
+      newList = Table.fromArray(this, false);
+      break;
+    case "NumberList":
+      newList = NumberTable.fromArray(this, false);
+      break;
+    case "Point":
+      newList = Polygon.fromArray(this, false);
+      break;
+    case "Polygon":
+      newList = PolygonList.fromArray(this, false);
+      break;
+    case "Node":
+      newList = NodeList.fromArray(this, false);
+      break;
+    case "Relation":
+      newList = RelationList.fromArray(this, false);
+      break;
       var newList = NumberList.fromArray(this, false);
     break;
     case "string":
@@ -260,7 +310,7 @@ List.prototype.getTypeOfElements = function() {
  */
 List.prototype.getTypes = function() {
   var types = new StringList();
-  for(i = 0; this[i] != null; i++) {
+  for(var i = 0; this[i] != null; i++) {
     types[i] = typeOf(this[i]);
   }
   return types;
@@ -275,7 +325,7 @@ List.prototype.getTypes = function() {
 List.prototype.toString = function() {
   var i;
   var str = "[";
-  for(i = 0; i < this.length - 1; i++) {
+  for(var i = 0; i < this.length - 1; i++) {
     str += this[i] + ", ";
   }
   str += this[this.length - 1] + "]";
@@ -290,7 +340,7 @@ List.prototype.toString = function() {
  */
 List.prototype.getNames = function() {
   var stringList = new StringList();
-  for(i = 0; this[i] != null; i++) {
+  for(var i = 0; this[i] != null; i++) {
     stringList[i] = this[i].name;
   }
   return stringList;
@@ -320,6 +370,7 @@ List.prototype.getReversed = function() {
  * tags:filter
  */
 List.prototype.getSubList = function() {
+  var interval;
   if(arguments[0].isList) {
     return this.getSubListByIndexes(arguments[0]);
   } else if(arguments.length > 2) {
@@ -470,7 +521,7 @@ List.prototype.getWithoutRepetitions = function() {
   var i;
   var dictionary;
 
-  newList = instantiateWithSameType(this);
+  var newList = instantiateWithSameType(this);
   newList.name = this.name;
 
   if(this.type == 'NumberList' || this.type == 'StringList') {
@@ -500,7 +551,7 @@ List.prototype.getWithoutRepetitions = function() {
  * tags:countt
  */
 List.prototype.countElement = function(element) {
-  n = 0;
+  var n = 0;
   this.forEach(function(elementInList) {
     if(element == elementInList) {
       n++;
@@ -539,7 +590,7 @@ List.prototype.getElementsRepetitionCount = function(sortListsByOccurrences) {
   var nElements = this.length;
   var index;
 
-  for(i = 0; i < nElements; i++) {
+  for(var i = 0; i < nElements; i++) {
     obj = this[i];
     index = elementList.indexOf(obj);
     if(index != -1) {
@@ -557,7 +608,7 @@ List.prototype.getElementsRepetitionCount = function(sortListsByOccurrences) {
     // var indexArray=numberList.getSortIndexes();//sortNumericIndexed();
     // var j;
     // for(j=0; j<table.length; j++){
-    // 	table[j]=table[j].clone().sortOnIndexes(indexArray);
+    //  table[j]=table[j].clone().sortOnIndexes(indexArray);
     // }
     table = table.getListsSortedByList(numberList, false);
   }
@@ -574,7 +625,7 @@ List.prototype.allElementsEqual = function() {
   var i;
   if(this.length < 2) return true;
 
-  first = this[0];
+  var first = this[0];
 
   for(i = 1; this[i] != null; i++) {
     if(this[i] != first) return false;
@@ -750,6 +801,40 @@ List.prototype.sortIndexed = function() {
   }
   return result;
 };
+
+// List.prototype.sortNumericIndexed=function() {
+//  var index = new Array();
+//  var i;
+//  for(i=0; i<this.length; i++){
+//      index.push({index:i, value:this[i]});
+//  }
+//  var comparator = function(a, b) {
+//      var array_a = a.value;
+//      var array_b = b.value;;
+
+//      return array_a - array_b;
+//  }
+//  index=index.sort(comparator);
+//  var result = new NumberList();
+//  for(i=0; i<index.length; i++){
+//      result.push(index[i].index);
+//  }
+//  return result;
+// }
+
+// List.prototype.sortNumeric=function(descendant){
+//  var comparator;
+//  if(descendant){
+//    var comparator=function(a, b){
+//      return b - a;
+//    }
+//  } else {
+//    var comparator=function(a, b){
+//      return a - b;
+//    }
+//  }
+//  return this.sort(comparator);
+// }
 
 List.prototype.sortOnIndexes = function(indexes) {
   var result = instantiateWithSameType(this);

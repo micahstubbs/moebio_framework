@@ -1,3 +1,5 @@
+import ColorOperators from "src/operators/graphic/ColorOperators";
+
 /**
  * @classdesc Default color scales.
  *
@@ -6,7 +8,7 @@
  */
 
 function ColorScales() {}
-
+export default ColorScales;
 // *
 //  * return a colorScale from its name
 //  * @param  {String} string name of ColorScale

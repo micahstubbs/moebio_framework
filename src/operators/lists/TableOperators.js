@@ -1,4 +1,15 @@
+import NumberOperators from "src/operators/numeric/NumberOperators";
+import { instantiateWithSameType, typeOf, instantiate } from "src/tools/utils/code/ClassUtils";
+import List from "src/dataStructures/lists/List";
+import Table from "src/dataStructures/lists/Table";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import NumberTable from "src/dataStructures/numeric/NumberTable";
+import ListOperators from "src/operators/lists/ListOperators";
+import NumberListGenerators from "src/operators/numeric/numberList/NumberListGenerators";
+import ListGenerators from "src/operators/lists/ListGenerators";
+
 function TableOperators() {}
+export default TableOperators;
 
 
 TableOperators.getElementFromTable = function(table, i, j) {
@@ -61,7 +72,7 @@ TableOperators.transpose = function(table, firstListAsHeaders) {
  * divides the instances of a table in two tables: the training table and the test table
  * @param  {Table} table
  * @param  {Number} proportion proportion of training instances/test instances, between 0 and 1
- * 
+ *
  * @param  {Number} mode  0:random<br>1:random with seed<br>2:shuffle
  * @param {Number} seed seed for random numbers (mode 1)
  * @return {List} list containing the two tables
@@ -104,7 +115,7 @@ TableOperators.trainingTestPartition = function(table, proportion, mode, seed) {
  * @param  {NumberTable} numberTable coordinates of points
  * @param  {List} classes list of values of classes
  * @param  {Function} model function that receives two numbers and returns a guessed class
- * 
+ *
  * @param  {Number} metric 0:error
  * @return {Number} metric value
  * tags:ds
@@ -131,13 +142,12 @@ TableOperators.testClassificationModel = function(numberTable, classes, model, m
 TableOperators.getSubListsByIndexes = function(table, indexes) {
   var newTable = new Table();
   newTable.name = table.name;
-  var i;
   var list;
   var newList;
-  for(i = 0; table[i] != null; i++) {
+  for(var i = 0; table[i] != null; i++) {
     list = table[i];
     newList = instantiateWithSameType(list);
-    for(j = 0; indexes[j] != null; j++) {
+    for(var j = 0; indexes[j] != null; j++) {
       newList[j] = list[indexes[j]];
     }
     newTable[i] = newList.getImproved();
@@ -145,6 +155,11 @@ TableOperators.getSubListsByIndexes = function(table, indexes) {
   return newTable;
 };
 
+// old version replaced by above version Dec 1st, 2014
+// - fixed bug where descending with 'false' value gets changed to 'true'
+// - performance improvements for tables with lots of lists
+// TableOperators.sortListsByNumberList=function(table, numberList, descending){
+//  descending = descending || true;
 TableOperators.sortListsByNumberList = function(table, numberList, descending) {
   if(descending == null) descending = true;
 
@@ -168,9 +183,6 @@ TableOperators.sortListsByNumberList = function(table, numberList, descending) {
   }
   return newTable;
 };
-
-
-
 
 /**
  * aggregates lists from a table, using one of the list of the table as the aggregation list, and based on different modes for each list
@@ -208,7 +220,7 @@ TableOperators.aggregateTable = function(table, indexAggregationList, indexesLis
  * @param  {Number} indexListToAggregate index of list to be aggregated
  * @param  {Number} aggregationMode aggregation mode:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>------not yet deployed:<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes
  * @param {Object} nullValue value for null cases in non-numerical aggregation
- * 
+ *
  * @param  {Number} resultMode result mode:<br>0:classic pivot, a table of aggregations with first aggregation list elements without repetitions in the first list, and second aggregation elements as headers of the aggregation lists<br>1:two lists for combinations of first aggregated list and second aggregated list, and a third list for aggregated values(default)
  * @return {Table}
  * tags:
@@ -230,7 +242,7 @@ TableOperators.pivotTable = function(table, indexFirstAggregationList, indexSeco
   if(resultMode==1){//two lists of elements and a list of aggregation value
     var indexesDictionary = {};
     var elementsDictionary = {};
-    
+
     table[indexFirstAggregationList].forEach(function(element0, i){
       element1 = table[indexSecondAggregationList][i];
       coordinate = String(element0)+"∞"+String(element1);
@@ -254,15 +266,15 @@ TableOperators.pivotTable = function(table, indexFirstAggregationList, indexSeco
         newTable[2] = new NumberList();
         break;
     }
-    
+
 
     for(coordinate in indexesDictionary) {
       indexes = indexesDictionary[coordinate];
       newTable[0].push(table[indexFirstAggregationList][indexes[0]]);
       newTable[1].push(table[indexSecondAggregationList][indexes[0]]);
-      
+
       switch(aggregationMode){
-        case 0://first element    
+        case 0://first element
           newTable[2].push(listToAggregate[indexes[0]]);
           break;
         case 1://count
@@ -294,7 +306,7 @@ TableOperators.pivotTable = function(table, indexFirstAggregationList, indexSeco
 
 
   ////////////////////////resultMode==0, a table whose first list is the first aggregation list, and each i+i list is the aggregations with elements for the second aggregation list
-  
+
   newTable[0] = new List();
 
   var elementsPositions0 = {};
@@ -302,7 +314,7 @@ TableOperators.pivotTable = function(table, indexFirstAggregationList, indexSeco
 
   var x, y;
   var element;
-  
+
   table[indexFirstAggregationList].forEach(function(element0, i){
     element1 = table[indexSecondAggregationList][i];
     element = listToAggregate[i];
@@ -333,7 +345,7 @@ TableOperators.pivotTable = function(table, indexFirstAggregationList, indexSeco
     }
 
     switch(aggregationMode){
-      case 0://first element    
+      case 0://first element
         if(newTable[x][y]==null) newTable[x][y]=element;
         break;
       case 1://count
@@ -357,7 +369,7 @@ TableOperators.pivotTable = function(table, indexFirstAggregationList, indexSeco
     case 0://first element
       for(i=1; i<newTable.length; i++){
         if(newTable[i]==null) newTable[i]=new List();
-        
+
         newTable[0].forEach(function(val, j){
           if(newTable[i][j]==null) newTable[i][j]=nullValue;
         });
@@ -396,7 +408,6 @@ TableOperators.pivotTable = function(table, indexFirstAggregationList, indexSeco
 /**
  * aggregates a table
  * @param  {Table} table to be aggregated, deprecated: a new more powerful method has been built
- * 
  * @param  {Number} nList list in the table used as basis to aggregation
  * @param  {Number} mode mode of aggregation, 0:picks first element 1:adds numbers, 2:averages
  * @return {Table} aggregated table
@@ -623,7 +634,7 @@ TableOperators.mergeDataTables = function(table0, table1) {
 };
 
 /**
- * From two DataTables creates a new DataTable with combined elements in the first List, and added values in the second 
+ * From two DataTables creates a new DataTable with combined elements in the first List, and added values in the second
  * @param {Object} table0
  * @param {Object} table1
  * @return {Table}
@@ -735,7 +746,7 @@ TableOperators.splitTableByCategoricList = function(table, list) {
  * @param  {Table} variablesTable
  * @param  {List} supervised
  * @param {Object} supervisedValue main value in supervised list (associated with blue)
- * 
+ *
  * @param {Number} min_entropy minimum value of entropy on nodes (0.2 default)
  * @param {Number} min_size_node minimum population size associated with node (10 default)
  * @param {Number} min_info_gain minimum information gain by splitting by best feature (0.002 default)
@@ -764,7 +775,7 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
 
 
   if(entropy >= min_entropy) {
-    informationGains = TableOperators.getVariablesInformationGain(variablesTable, supervised);
+    var informationGains = TableOperators.getVariablesInformationGain(variablesTable, supervised);
     var maxIg = 0;
     var iBestFeature = 0;
     informationGains.forEach(function(ig, i) {
@@ -774,7 +785,6 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
       }
     });
   }
-
 
   var subDivide = entropy >= min_entropy && maxIg > min_info_gain && supervised.length >= min_size_node;
 
@@ -802,6 +812,24 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
   node.biggestProbability = supervised._biggestProbability;
   node.valueFollowingProbability = supervised._P_valueFollowing;
   node.lift = node.valueFollowingProbability / tree.nodeList[0].valueFollowingProbability; //Math.log(node.valueFollowingProbability/tree.nodeList[0].valueFollowingProbability)/Math.log(2);
+
+
+  if(level < 2) {
+    console.log('\nlevel', level);
+    console.log('supervised.countElement(supervisedValue)', supervised.countElement(supervisedValue));
+    console.log('entropy', entropy);
+    console.log('value', value);
+    console.log('name', name);
+    console.log('supervised.name', supervised.name);
+    console.log('supervised.length', supervised.length);
+    console.log('supervisedValue', supervisedValue);
+    console.log('supervised._biggestProbability, supervised._P_valueFollowing', supervised._biggestProbability, supervised._P_valueFollowing);
+    console.log('node.valueFollowingProbability (=supervised._P_valueFollowing):', node.valueFollowingProbability);
+    console.log('tree.nodeList[0].valueFollowingProbability', tree.nodeList[0].valueFollowingProbability);
+    console.log('node.biggestProbability (=_biggestProbability):', node.biggestProbability);
+    console.log('node.mostRepresentedValue:', node.mostRepresentedValue);
+    console.log('node.mostRepresentedValue==supervisedValue', node.mostRepresentedValue == supervisedValue);
+  }
 
   node._color = TableOperators._decisionTreeColorScale(1 - node.valueFollowingProbability);
 
@@ -838,6 +866,7 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
   var tables = TableOperators.splitTableByCategoricList(expanded, variablesTable[iBestFeature]);
   var childTable;
   var childSupervised;
+  var childIndexes;
   var newNode;
 
   tables.forEach(function(expandedChild) {

@@ -1,3 +1,7 @@
+import DataModel from "src/dataStructures/DataModel";
+import ColorList from "src/dataStructures/graphic/ColorList";
+import ColorScales from "src/operators/graphic/ColorScales";
+
 ColorScale.prototype = new DataModel();
 ColorScale.prototype.constructor = ColorScale;
 
@@ -16,6 +20,7 @@ function ColorScale(colorScaleFunction) {
 
   this.colorScaleFunction = colorScaleFunction ? colorScaleFunction : ColorScales.blackScale;
 }
+export default ColorScale;
 
 ColorScale.prototype.getColor = function(value) {
   return this.colorScaleFunction(value);

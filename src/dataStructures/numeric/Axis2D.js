@@ -1,3 +1,7 @@
+import DataModel from "src/dataStructures/DataModel";
+import Point from "src/dataStructures/geometry/Point";
+import Rectangle from "src/dataStructures/geometry/Rectangle";
+
 Axis2D.prototype = new DataModel();
 Axis2D.prototype.constructor = Axis2D;
 
@@ -21,6 +25,7 @@ function Axis2D(departureFrame, arrivalFrame) {
 
   this.type = "Axis2D";
 }
+export default Axis2D;
 
 Axis2D.prototype.setFrames = function(departureFrame, arrivalFrame) {
   this.departureFrame = departureFrame;

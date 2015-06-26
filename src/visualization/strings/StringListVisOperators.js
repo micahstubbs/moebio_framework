@@ -1,10 +1,20 @@
+import List from "src/dataStructures/lists/List";
+import Table from "src/dataStructures/lists/Table";
+import Point from "src/dataStructures/geometry/Point";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import Polygon from "src/dataStructures/geometry/Polygon";
+import Rectangle from "src/dataStructures/geometry/Rectangle";
+import { context } from "src/Global";
+import DrawTexts from "src/tools/graphic/DrawTexts";
+
 /**
  * @classdesc Operators that contain visualization method algoritms and return a Table with parameters for StringListPrimitive
- * 
+ *
  * @namespace
  * @category strings
  */
 function StringListVisOperators() {}
+export default StringListVisOperators;
 
 
 StringListVisOperators.simpleTagCloud = function(stringList, weights, frame, font, interLineFactor) {
@@ -34,7 +44,7 @@ StringListVisOperators.simpleTagCloud = function(stringList, weights, frame, fon
   var trys = 0;
 
   while(notFinished) {
-    interLine = K * interLineFactor;
+    var interLine = K * interLineFactor;
     xx = 0;
     yy = 0; //interLine;
     maxST = 0;
@@ -86,7 +96,7 @@ StringListVisOperators.simpleTagCloud = function(stringList, weights, frame, fon
     if(trys > 10) notFinished = false;
   }
 
-  table = new Table();
+  var table = new Table();
   table[0] = stringList;
   table[1] = positions;
   table[2] = sizes;
@@ -104,9 +114,9 @@ StringListVisOperators.tagCloudRectangles = function(stringList, weights, frame,
 
   var roundSizes = mode == 0;
 
-  rectangles = new List();
-  textPositions = new Polygon();
-  textSizes = new NumberList();
+  var rectangles = new List();
+  var textPositions = new Polygon();
+  var textSizes = new NumberList();
 
   var rectanglesPlaced = new List();
 

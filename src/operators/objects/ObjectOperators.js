@@ -1,4 +1,18 @@
+import StringList from "src/dataStructures/strings/StringList";
+import List from "src/dataStructures/lists/List";
+import Table from "src/dataStructures/lists/Table";
+import { typeOf } from "src/tools/utils/code/ClassUtils";
+import Point from "src/dataStructures/geometry/Point";
+import Point3D from "src/dataStructures/geometry/Point3D";
+import Rectangle from "src/dataStructures/geometry/Rectangle";
+import Interval from "src/dataStructures/numeric/Interval";
+import DateInterval from "src/dataStructures/dates/DateInterval";
+import DateOperators from "src/operators/dates/DateOperators";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import ObjectConversions from "src/operators/objects/ObjectConversions";
+
 function ObjectOperators() {}
+export default ObjectOperators;
 
 
 /**
@@ -36,7 +50,7 @@ ObjectOperators.getReport = function(object) {
   var propertyValues = new StringList();
   var popertyTypes = new StringList();
 
-  for(propName in object) {
+  for(var propName in object) {
     propertyNames.push(propName);
   }
 
@@ -117,7 +131,7 @@ ObjectOperators.getPropertiesNamesAndValues = function(object) {
  * interpolates two different objects of the same type<br>currently working with numbers, intervals and numberLists
  * @param  {Object} object0
  * @param  {Object} object1
- * 
+ *
  * @param  {Number} value
  * @param {Number} minDistance if objects are close enough, it delivers the orginal object
  * @return {Object}
@@ -187,9 +201,9 @@ ObjectOperators.toList = function(array) {
 
 
 /**
- * adds two or more objects, addition is performed according to the different types 
+ * adds two or more objects, addition is performed according to the different types
  * @param {Object} object0
- * 
+ *
  * @param {Object} object1
  * @param {Object} object2
  * @param {Object} object3
@@ -199,7 +213,7 @@ ObjectOperators.toList = function(array) {
  * tags:math
  */
 ObjectOperators.addition = function() {
-  //c.l("addition__________________________________arguments:", arguments);
+  //console.log("addition__________________________________arguments:", arguments);
   var objectType;
   var result;
   var i;
@@ -218,10 +232,10 @@ ObjectOperators.addition = function() {
     if(arguments[0] != null && arguments[0].isList && arguments[1] != null && arguments[1].isList) {
       return ObjectOperators._applyBinaryOperatorOnLists(arguments[0], arguments[1], ObjectOperators.addition);
     } else if(arguments[0] != null && arguments[0].isList) {
-      //c.l('list versus object');
+      //console.log('list versus object');
       return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[0], arguments[1], ObjectOperators.addition);
     } else if(arguments[1] != null && arguments[1].isList) {
-      //c.l('object versus list');
+      //console.log('object versus list');
       return ObjectOperators._applyBinaryOperatorOnObjectWithList(arguments[0], arguments[1], ObjectOperators.addition);
     }
 
@@ -229,7 +243,7 @@ ObjectOperators.addition = function() {
     var a1 = arguments[1];
     var a0Type = typeOf(a0);
     var a1Type = typeOf(a1);
-    //c.l('ObjectOperators.addition, a0Type, a1Type:['+a0Type, a1Type+']');
+    //console.log('ObjectOperators.addition, a0Type, a1Type:['+a0Type, a1Type+']');
     var reversed = false;
 
     if(a1Type < a0Type && a1Type != "string" && a0Type != "string") {
@@ -241,7 +255,7 @@ ObjectOperators.addition = function() {
     }
 
     var pairType = a0Type + "_" + a1Type;
-    //c.log('ObjectOperators.addition, pairType:['+pairType+']');
+    //console.log('ObjectOperators.addition, pairType:['+pairType+']');
     //
     switch(pairType) {
       case 'boolean_boolean':
@@ -291,7 +305,7 @@ ObjectOperators.addition = function() {
       case 'StringList_string':
         return a1.append(a0, true);
       default:
-        c.log("[!] addition didn't manage to resolve:", pairType, a0 + a1);
+        console.log("[!] addition didn't manage to resolve:", pairType, a0 + a1);
         return null;
 
     }
@@ -301,7 +315,7 @@ ObjectOperators.addition = function() {
 
   result = arguments[0];
   for(i = 1; i < arguments.length; i++) {
-    //c.log(i, 'result:', result);
+    //console.log(i, 'result:', result);
     result = ObjectOperators.addition(result, arguments[i]);
   }
   return result;
@@ -309,9 +323,9 @@ ObjectOperators.addition = function() {
 
 
 /**
- * multiplies two or more objects, multiplication is performed according to the different types 
+ * multiplies two or more objects, multiplication is performed according to the different types
  * @param {Object} object0
- * 
+ *
  * @param {Object} object1
  * @param {Object} object2
  * @param {Object} object3
@@ -321,7 +335,7 @@ ObjectOperators.addition = function() {
  * tags:math
  */
 ObjectOperators.multiplication = function() {
-  //c.log("multiplication__________________________________arguments:", arguments);
+  //console.log("multiplication__________________________________arguments:", arguments);
   var objectType;
   var result;
   var i;
@@ -352,7 +366,7 @@ ObjectOperators.multiplication = function() {
     if(arguments[0].isList && arguments[1].isList) {
       return ObjectOperators._applyBinaryOperatorOnLists(arguments[0], arguments[1], ObjectOperators.multiplication);
     } else if(arguments[0].isList) {
-      //c.log('list versus object');
+      //console.log('list versus object');
       return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[0], arguments[1], ObjectOperators.multiplication);
     } else if(arguments[1].isList) {
       return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[1], arguments[0], ObjectOperators.multiplication);
@@ -365,7 +379,9 @@ ObjectOperators.multiplication = function() {
       a1Type = typeOf(a1);
     }
 
-   
+    var pairType = a0Type + "_" + a1Type;
+    //console.log('pairType:['+pairType+']');
+
     //
     switch(pairType) {
       case 'number_number':
@@ -408,7 +424,7 @@ ObjectOperators.multiplication = function() {
       case 'DateInterval_DateInterval':
         return new DateInterval(ObjectOperators.multiplication(a0.date0, a1.date0), ObjectOperators.multiplication(a0.date1, a1.date1)); //todo: ???
       default:
-        c.log("[!] multiplication didn't manage to resolve:", pairType, a0 * a1);
+        console.log("[!] multiplication didn't manage to resolve:", pairType, a0 * a1);
         return null;
 
     }
@@ -417,16 +433,16 @@ ObjectOperators.multiplication = function() {
 
   result = arguments[0];
   for(i = 1; i < arguments.length; i++) {
-    //c.log(i, 'result:', result);
+    //console.log(i, 'result:', result);
     result = ObjectOperators.multiplication(result, arguments[i]);
   }
   return result;
 };
 
 /**
- * divides two or more objects, division is performed according to the different types 
+ * divides two or more objects, division is performed according to the different types
  * @param {Object} object0
- * 
+ *
  * @param {Object} object1
  * @param {Object} object2
  * @param {Object} object3
@@ -436,7 +452,7 @@ ObjectOperators.multiplication = function() {
  * tags:math
  */
 ObjectOperators.division = function() {
-  //c.log("addition__________________________________arguments:", arguments);
+  //console.log("addition__________________________________arguments:", arguments);
   var objectType;
   var result;
   var i;
@@ -454,7 +470,7 @@ ObjectOperators.division = function() {
     if(arguments[0] != null && arguments[0].isList && arguments[1] != null && arguments[1].isList) {
       return ObjectOperators._applyBinaryOperatorOnLists(arguments[0], arguments[1], ObjectOperators.division);
     } else if(arguments[0] != null && arguments[0].isList) {
-      //c.log('list versus object');
+      //console.log('list versus object');
       return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[0], arguments[1], ObjectOperators.division);
     } else if(arguments[1] != null && arguments[1].isList) {
       return ObjectOperators._applyBinaryOperatorOnListWithObject(arguments[1], arguments[0], ObjectOperators.division);
@@ -473,7 +489,7 @@ ObjectOperators.division = function() {
     }
 
     var pairType = a0Type + "_" + a1Type;
-    //c.log('pairType:['+pairType+']');
+    //console.log('pairType:['+pairType+']');
     //
     switch(pairType) {
       case 'number_number':
@@ -516,7 +532,7 @@ ObjectOperators.division = function() {
       case 'DateInterval_DateInterval':
         return new DateInterval(ObjectOperators.division(a0.date0, a1.date0), ObjectOperators.division(a0.date1, a1.date1)); //todo: ???
       default:
-        c.log("[!] division didn't manage to resolve:", pairType, a0 / a1);
+        console.log("[!] division didn't manage to resolve:", pairType, a0 / a1);
         return null;
 
     }
@@ -525,7 +541,7 @@ ObjectOperators.division = function() {
 
   result = arguments[0];
   for(i = 1; i < arguments.length; i++) {
-    //c.log(i, 'result:', result);
+    //console.log(i, 'result:', result);
     result = ObjectOperators.division(result, arguments[i]);
   }
   return result;

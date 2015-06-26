@@ -1,4 +1,8 @@
+import Polygon3D from "src/dataStructures/geometry/Polygon3D";
+import Point3D from "src/dataStructures/geometry/Point3D";
+
 function CirclesVisOperators() {}
+export default CirclesVisOperators;
 
 CirclesVisOperators.circlesCloud = function(weights, frame, margin) {
   if(weights == null ||  weights.length == 0) return null;
@@ -8,7 +12,7 @@ CirclesVisOperators.circlesCloud = function(weights, frame, margin) {
   var normWeights = weights.getNormalizedToMax().sqrt();
   var circlesPlaced = new Polygon3D();
 
-  c.l('  o', weights.length, normWeights);
+  console.log('  o', weights.length, normWeights);
 
   var dL = 6;
 

@@ -1,3 +1,8 @@
+import Tree from "src/dataStructures/structures/networks/Tree";
+import Node from "src/dataStructures/structures/elements/Node";
+import DateList from "src/dataStructures/dates/DateList";
+import DateOperators from "src/operators/dates/DateOperators";
+
 /**
  * @classdesc Provides a set of tools that work with DateLists.
  *
@@ -5,6 +10,7 @@
  * @category dates
  */
 function DateListOperators() {}
+export default DateListOperators;
 
 
 DateListOperators.buildTimeTreeFromDates = function(dates) {

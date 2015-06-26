@@ -1,4 +1,10 @@
+import NumberList from "src/dataStructures/numeric/NumberList";
+import NumberTable from "src/dataStructures/numeric/NumberTable";
+import Table from "src/dataStructures/lists/Table";
+import List from "src/dataStructures/lists/List";
+
 function NumberTableFlowOperators() {}
+export default NumberTableFlowOperators;
 
 NumberTableFlowOperators.getFlowTable = function(numberTable, normalized, include0s) {
   if(numberTable == null) return;
@@ -57,7 +63,7 @@ NumberTableFlowOperators.getFlowTable = function(numberTable, normalized, includ
 
     numberTable.forEach(function(list, iList) {
       list.forEach(function(val, j) {
-        sum = sums[j];
+        var sum = sums[j];
         flowTable[iList + 1][j] = val / (sum == 0 ? 0.00001 : sum) + flowTable[iList][j];
       });
     });

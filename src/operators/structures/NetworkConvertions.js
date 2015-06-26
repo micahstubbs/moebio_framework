@@ -1,3 +1,9 @@
+import Network from "src/dataStructures/structures/networks/Network";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import Node from "src/dataStructures/structures/elements/Node";
+import Relation from "src/dataStructures/structures/elements/Relation";
+import NodeList from "src/dataStructures/structures/lists/NodeList";
+import { typeOf } from "src/tools/utils/code/ClassUtils";
 
 /**
  * @classdesc Includes functions to convert Networks into other DataTypes.
@@ -6,7 +12,7 @@
  * @category networks
  */
 function NetworkConvertions() {}
-
+export default NetworkConvertions;
 
 /**
  * Builds a Network based on a two columns Table, creating relations on co-occurrences.

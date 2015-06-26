@@ -1,5 +1,19 @@
+import StringList from "src/dataStructures/strings/StringList";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import NumberTable from "src/dataStructures/numeric/NumberTable";
+import StringOperators from "src/operators/strings/StringOperators";
+import TableOperators from "src/operators/lists/TableOperators";
+import Network from "src/dataStructures/structures/networks/Network";
+import Relation from "src/dataStructures/structures/elements/Relation";
+import Node from "src/dataStructures/structures/elements/Node";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
+import Table from "src/dataStructures/lists/Table";
+
+
 function StringListOperators() {}
-/** 
+export default StringListOperators;
+
+/**
  * receives n arguments and performs addition
  */
 StringListOperators.concatStrings = function(stringList, joinString) { //deprecated
@@ -10,7 +24,7 @@ StringListOperators.concatStrings = function(stringList, joinString) { //depreca
 /**
  * join strings with a character
  * @param  {StringList} StringList strings to be joined
- * 
+ *
  * @param  {String} join character
  * @param  {String} prefix
  * @param  {String} sufix
@@ -31,7 +45,7 @@ StringListOperators.join = function(stringList, character, prefix, sufix) {
  * filters a StringList by a string
  * @param  {StringList} stringList    to be filtered
  * @param  {String} string        filter criteria (string or word that will be search in each string of the stringList)
- * 
+ *
  * @param  {Boolean} asWord        if true a word (string surrounded by separators such as space or punctuation) will be used as criteria, false by default
  * @param  {Boolean} returnIndexes if true a numberList with indexes will be returned, instead of a stringList
  * @return {List}               stringList or numberlist with filtered strings or indexes
@@ -89,7 +103,7 @@ StringListOperators.countStringsOccurrencesOnTexts = function(strings, texts) {
 /**
  * builds a table with a list of occurrent words and numberLists for occurrences in each string
  * @param  {StringList} strings
- * 
+ *
  * @param  {StringList} stopWords words to be excluded from the list
  * @param  {Boolean} includeLinks
  * @param  {Number} wordsLimitPerString number of words extracted per string
@@ -167,28 +181,28 @@ StringListOperators.createTextsNetwork = function(texts, stopWords, stressUnique
   var matrix = StringListOperators.getWordsOccurrencesMatrix(texts, stopWords, false, 600, 800, false, true, false, 3);
 
   texts.forEach(function(text, i) {
-    node = new Node("_" + i, "_" + i);
+    var node = new Node("_" + i, "_" + i);
     node.content = text;
     node.wordsWeights = matrix[i + 1];
     network.addNode(node);
   });
 
   for(i = 0; network.nodeList[i + 1] != null; i++) {
-    node = network.nodeList[i];
+    var node = network.nodeList[i];
     for(j = i + 1; network.nodeList[j] != null; j++) {
-      node1 = network.nodeList[j];
+      var node1 = network.nodeList[j];
 
-      weight = NumberListOperators.cosineSimilarity(node.wordsWeights, node1.wordsWeights);
+      var weight = NumberListOperators.cosineSimilarity(node.wordsWeights, node1.wordsWeights);
 
       if(i == 0 && j == 1) {
-        c.log(node.wordsWeights.length, node1.wordsWeights.length, weight);
-        c.log(node.wordsWeights.type, node.wordsWeights);
-        c.log(node1.wordsWeights.type, node1.wordsWeights);
-        c.log(node.wordsWeights.getNorm() * node1.wordsWeights.getNorm());
+        console.log(node.wordsWeights.length, node1.wordsWeights.length, weight);
+        console.log(node.wordsWeights.type, node.wordsWeights);
+        console.log(node1.wordsWeights.type, node1.wordsWeights);
+        console.log(node.wordsWeights.getNorm() * node1.wordsWeights.getNorm());
       }
 
       if(weight > relationThreshold) {
-        relation = new Relation(node.id + "_" + node1.id, node.id + "_" + node1.id, node, node1, weight);
+        var relation = new Relation(node.id + "_" + node1.id, node.id + "_" + node1.id, node, node1, weight);
         network.addRelation(relation);
       }
     }
@@ -201,7 +215,7 @@ StringListOperators.createTextsNetwork = function(texts, stopWords, stressUnique
 /**
  * builds a network out of a list of short strings, adds a property wordsTable to each node (with words and weights)
  * @param  {StringList} texts
- * 
+ *
  * @param  {StringList} stopWords
  * @param  {Number} relationThreshold threshold to create a relation
  * @param {Number} mode <br>0:pseudoentropy, by finding key words with low entropy (words occurring in a single text or in all texts have maximum entropy, occuring in 0.25 texts minimum entropy (max weight))<br>1:originality<br>2:skewed entropy<br>3:originality except isolation
@@ -260,21 +274,21 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
       };
   }
 
-  c.l('A ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
+  console.log('A ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
   _time = new Date().getTime();
 
   texts.forEach(function(text, i) {
-    node = new Node("_" + i, "_" + i);
+    var node = new Node("_" + i, "_" + i);
     network.addNode(node);
     node.content = text;
-    words = StringOperators.getWords(text, true, stopWords, false, false, 0, 3);
+    var words = StringOperators.getWords(text, true, stopWords, false, false, 0, 3);
 
     n_words = words.length;
     weights = new NumberList();
     //words.forEach(function(word, j){
     for(j = 0; words[j] != null; j++) {
       word = words[j];
-      nOtherTexts = 0;
+      var nOtherTexts = 0;
       textsLowerCase.forEach(function(text, k) {
         if(i == k) return;
         nOtherTexts += Number(text.indexOf(word) != -1); //is this the fastest way?
@@ -292,7 +306,7 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
 
       if(wordsFrequencyTable) {
         index = wordsFrequencyTable[0].indexOf(word);
-        //c.log(' •>•>•>•>•>•>•>•>•>•>•>•>•>•>•>•>•> ', word, weights[j], index==-1?1:(1 - Math.pow(wordsFrequencyTable[1][index]/maxFreq, 0.2)) )
+        //console.log(' •>•>•>•>•>•>•>•>•>•>•>•>•>•>•>•>•> ', word, weights[j], index==-1?1:(1 - Math.pow(wordsFrequencyTable[1][index]/maxFreq, 0.2)) )
         weights[j] *= (index == -1 ? 1 : (1 - Math.pow(wordsFrequencyTable[1][index] / maxFreq, 0.2)));
       }
 
@@ -315,13 +329,13 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
   });
 
 
-  c.l('B ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
+  console.log('B ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
   _time = new Date().getTime();
 
   for(i = 0; network.nodeList[i + 1] != null; i++) {
-    node = network.nodeList[i];
+    var node = network.nodeList[i];
     for(j = i + 1; network.nodeList[j] != null; j++) {
-      node1 = network.nodeList[j];
+      var node1 = network.nodeList[j];
       weight = 0;
       node.wordsTable[0].forEach(function(word, i) {
         //index = node1.wordsTable[0].indexOf(word);//TODO:this could be improved (as seen in forums, indexOf might be unneficient for arrays
@@ -330,13 +344,13 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
       });
       weight = Math.sqrt((weight / maxWeight) / Math.max(node.wordsTable[0].length, node1.wordsTable[0].length));
       if(weight > relationThreshold) {
-        relation = new Relation(node.id + "_" + node1.id, node.id + "_" + node1.id, node, node1, weight);
+        var relation = new Relation(node.id + "_" + node1.id, node.id + "_" + node1.id, node, node1, weight);
         network.addRelation(relation);
       }
     }
   }
 
-  c.l('C ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
+  console.log('C ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
 
   return network;
 };

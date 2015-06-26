@@ -1,3 +1,11 @@
+import List from "src/dataStructures/lists/List";
+import StringList from "src/dataStructures/strings/StringList";
+import Interval from "src/dataStructures/numeric/Interval";
+import ListGenerators from "src/operators/lists/ListGenerators";
+import Polygon from "src/dataStructures/geometry/Polygon";
+import Point from "src/dataStructures/geometry/Point";
+import { typeOf } from "src/tools/utils/code/ClassUtils";
+
 NumberList.prototype = new List();
 NumberList.prototype.constructor = NumberList;
 
@@ -18,6 +26,7 @@ function NumberList() {
   array = NumberList.fromArray(array);
   return array;
 }
+export default NumberList;
 
 /**
  * Creates a new NumberList from a raw array of numbers.
@@ -684,7 +693,7 @@ NumberList.prototype.distance = function(numberList) {
  * @return {Boolean} True if all values in both lists match.
  */
 NumberList.prototype.isEquivalent = function(numberList) {
-  for(i = 0; this[i] != null; i++) {
+  for(var i = 0; this[i] != null; i++) {
     if(this[i] != numberList[i]) return false;
   }
   return true;

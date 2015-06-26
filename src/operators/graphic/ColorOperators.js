@@ -5,6 +5,7 @@
  * @category colors
  */
 function ColorOperators() {}
+export default ColorOperators;
 // TODO: create Color struture to be used instead of arrays [255, 100,0] ?
 
 

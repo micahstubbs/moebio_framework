@@ -1,4 +1,5 @@
 function StringConversions() {}
+export default StringConversions;
 
 
 

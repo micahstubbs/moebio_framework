@@ -1,3 +1,7 @@
+import Table from "src/dataStructures/lists/Table";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import { typeOf } from "src/tools/utils/code/ClassUtils";
+
 NumberTable.prototype = new Table();
 NumberTable.prototype.constructor = NumberTable;
 
@@ -20,7 +24,7 @@ function NumberTable() {
       array.push(new NumberList());
     }
   } else {
-    for(var i = 0; arguments[i] != null; i++) {
+    for(i = 0; arguments[i] != null; i++) {
       newNumberList = NumberList.fromArray(arguments[i]);
       newNumberList.name = arguments[i].name;
       arguments[i] = newNumberList;
@@ -30,6 +34,7 @@ function NumberTable() {
   array = NumberTable.fromArray(array);
   return array;
 }
+export default NumberTable;
 
 NumberTable.fromArray = function(array) {
   var result = Table.fromArray(array);
@@ -54,7 +59,7 @@ NumberTable.fromArray = function(array) {
 
 /**
  * returns a table with having normalized all the numberLists
- * 
+ *
  * @param  {factor} factor optional factor
  * @return {NumberTable}
  * tags:normalization
@@ -65,7 +70,7 @@ NumberTable.prototype.getNumberListsNormalized = function(factor) {
   var newTable = new NumberTable();
   var i;
   for(i = 0; this[i] != null; i++) {
-    numberList = this[i];
+    var numberList = this[i];
     newTable[i] = numberList.getNormalized(factor);
   }
   newTable.name = this.name;
@@ -95,7 +100,7 @@ NumberTable.prototype.getNormalizedToMax = function(factor) {
 NumberTable.prototype.getNumberListsNormalizedToMax = function(factorValue) {
   var newTable = new NumberTable();
   for(var i = 0; this[i] != null; i++) {
-    numberList = this[i];
+    var numberList = this[i];
     newTable[i] = numberList.getNormalizedToMax(factorValue);
   }
   newTable.name = this.name;
@@ -105,7 +110,7 @@ NumberTable.prototype.getNumberListsNormalizedToMax = function(factorValue) {
 NumberTable.prototype.getNumberListsNormalizedToSum = function() {
   var newTable = new NumberTable();
   for(var i = 0; this[i] != null; i++) {
-    numberList = this[i];
+    var numberList = this[i];
     newTable[i] = numberList.getNormalizedToSum();
   }
   newTable.name = this.name;
@@ -193,6 +198,7 @@ NumberTable.prototype.getRowsAverages = function() {
 NumberTable.prototype.factor = function(value) {
   var newTable = new NumberTable();
   var i;
+  var numberList;
 
   switch(typeOf(value)) {
     case 'number':
@@ -216,6 +222,7 @@ NumberTable.prototype.factor = function(value) {
 
 NumberTable.prototype.add = function(value) {
   var newTable = new NumberTable();
+  var numberList;
   var i;
 
   for(i = 0; this[i] != null; i++) {
@@ -232,7 +239,7 @@ NumberTable.prototype.getCovarianceMatrix = function(){
   var newTable = new NumberTable();
   var i;
   for(i = 0; this[i] != null; i++) {
-    
+
   }
 
 }

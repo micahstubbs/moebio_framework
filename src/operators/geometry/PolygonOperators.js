@@ -1,3 +1,19 @@
+import Polygon from "src/dataStructures/geometry/Polygon";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import Tree from "src/dataStructures/structures/networks/Tree";
+import NodeList from "src/dataStructures/structures/lists/NodeList";
+import Draw from "src/tools/graphic/Draw";
+import Node from "src/dataStructures/structures/elements/Node";
+import Point from "src/dataStructures/geometry/Point";
+import GeometryOperators from "src/operators/geometry/GeometryOperators";
+import Interval from "src/dataStructures/numeric/Interval";
+import NumberListGenerators from "src/operators/numeric/numberList/NumberListGenerators";
+import {
+  context,
+  clearContext,
+  TwoPi
+} from "src/Global";
+
 /**
  * @classdesc Provides a set of tools that work with Polygons
  *
@@ -5,6 +21,7 @@
  * @category geometry
  */
 function PolygonOperators() {}
+export default PolygonOperators;
 
 /**
  * builds a Hull polygon from a set of points
@@ -103,13 +120,14 @@ PolygonOperators.buildDendrogramFromPolygon = function(polygon) {
     return parent;
   };
 
+  var closestPair;
   while(nodeList.length > 1) {
     closestPair = PolygonOperators._findClosestNodes(nodeList);
     node0 = nodeList[closestPair[0]];
     node1 = nodeList[closestPair[1]];
     parent = buildNodeFromPair(node0, node1);
     parent.distance = closestPair.distance;
-    c.l('distance:', parent.distance);
+    console.log('distance:', parent.distance);
     nodeList.splice(closestPair[0], 1);
     nodeList.splice(closestPair[1] - 1, 1);
     nodeList.push(parent);
@@ -137,6 +155,7 @@ PolygonOperators._findClosestNodes = function(nodeList) {
   var i, j;
   var d2;
   var d2Min = 9999999999;
+  var pair;
 
   for(i = 0; nodeList[i + 1] != null; i++) {
     for(j = i + 1; nodeList[j] != null; j++) {

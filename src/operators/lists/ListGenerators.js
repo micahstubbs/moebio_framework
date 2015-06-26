@@ -1,3 +1,11 @@
+import NumberList from "src/dataStructures/numeric/NumberList";
+import StringList from "src/dataStructures/strings/StringList";
+import Table from "src/dataStructures/lists/Table";
+import NumberTable from "src/dataStructures/numeric/NumberTable";
+import List from "src/dataStructures/lists/List";
+import RectangleList from "src/dataStructures/geometry/RectangleList";
+import { typeOf } from "src/tools/utils/code/ClassUtils";
+
 /**
  * @classdesc Create default lists
  *
@@ -5,6 +13,7 @@
  * @category basics
  */
 function ListGenerators() {}
+export default ListGenerators;
 
 
 /**
@@ -15,27 +24,28 @@ function ListGenerators() {}
  * tags:generator
  */
 ListGenerators.createListWithSameElement = function(nValues, element) {
+  var list;
   switch(typeOf(element)) {
     case 'number':
-      var list = new NumberList();
+      list = new NumberList();
       break;
     case 'List':
-      var list = new Table();
+      list = new Table();
       break;
     case 'NumberList':
-      var list = new NumberTable();
+      list = new NumberTable();
       break;
     case 'Rectangle':
-      var list = new RectamgleList();
+      list = new RectangleList();
       break;
     case 'string':
-      var list = new StringList();
+      list = new StringList();
       break;
     case 'boolean':
-      var list = new List(); //TODO:update once BooleanList exists
+      list = new List(); //TODO:update once BooleanList exists
       break;
     default:
-      var list = new List();
+      list = new List();
   }
 
   for(var i = 0; i < nValues; i++) {

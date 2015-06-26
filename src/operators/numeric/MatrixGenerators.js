@@ -1,3 +1,5 @@
+import Matrix from "src/dataStructures/numeric/Matrix";
+
 /**
  * @classdesc Create default Matrix instances.
  *
@@ -5,6 +7,7 @@
  * @category basics
  */
 function MatrixGenerators() {}
+export default MatrixGenerators;
 
 
 

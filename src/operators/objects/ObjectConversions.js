@@ -1,15 +1,23 @@
-ObjectConversions = function() {};
+import { typeOf } from "src/tools/utils/code/ClassUtils";
+import Point from "src/dataStructures/geometry/Point";
+import DateOperators from "src/operators/dates/DateOperators";
+import Polygon from "src/dataStructures/geometry/Polygon";
+import ColorScales from "src/operators/graphic/ColorScales";
+import TableEncodings from "src/operators/lists/TableEncodings";
+import DateList from "src/dataStructures/dates/DateList";
+import NetworkConvertions from "src/operators/structures/NetworkConvertions";
+
+function ObjectConversions() {}
+export default ObjectConversions;
 
 // *
 //  * convert an object into a json string (JSON.stringify(object))
 //  * @param  {Object} object to convert
 //  * @return {String} string in format json
 //  * tags:conversion
-
 // ObjectConversions.objectToString = function(object){
 // 	return JSON.stringify(object);
 // }
-
 
 /**
  * converts any Object into the desirde type, using the most obvious conversion (if exists)
@@ -26,7 +34,7 @@ ObjectConversions.conversor = function(object, toType) {
   var pairType = type + "_" + toType;
   var newList;
 
-  //c.log('ObjectConversions.conversor, pairType:', pairType);
+  console.log('ObjectConversions.conversor, pairType:', pairType);
 
   switch(pairType) {
     case 'Array_List':

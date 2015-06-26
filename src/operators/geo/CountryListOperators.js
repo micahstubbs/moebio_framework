@@ -1,3 +1,5 @@
+import CountryOperators from 'src/operators/geo/CountryOperators';
+
 /**
  * @classdesc Provides a set of tools that work with {@link countryList|CountryLists}.
  *
@@ -5,6 +7,7 @@
  * @category geo
  */
 function CountryListOperators() {}
+export default CountryListOperators;
 
 
 CountryListOperators.getCountryByName = function(countryList, name) {

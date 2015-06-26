@@ -1,4 +1,8 @@
-NumberTableConversions = function() {};
+import Polygon from "src/dataStructures/geometry/Polygon";
+import Point from "src/dataStructures/geometry/Point";
+
+function NumberTableConversions() {}
+export default NumberTableConversions;
 
 /**
  * converts a numberTable with at least two lists into a Polygon

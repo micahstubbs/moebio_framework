@@ -1,10 +1,19 @@
+import List from "src/dataStructures/lists/List";
+import NumberTable from "src/dataStructures/numeric/NumberTable";
+import Table from "src/dataStructures/lists/Table";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import TableOperators from "src/operators/lists/TableOperators";
+import StringList from "src/dataStructures/strings/StringList";
+import { typeOf, instantiate, instantiateWithSameType } from "src/tools/utils/code/ClassUtils";
+
 function ListOperators() {}
+export default ListOperators;
 
 
 /**
  * gets an element in a specified position from a List
  * @param  {List} list
- * 
+ *
  * @param  {Number} index
  * @return {Object}
  * tags:
@@ -18,7 +27,7 @@ ListOperators.getElement = function(list, index) {
 /**
  * multi-ouput operator that gives acces to individual elements
  * @param  {List} list
- * 
+ *
  * @param  {Number} fromIndex (default 0)
  * @return {Object} first Object
  * @return {Object} second Object
@@ -116,7 +125,7 @@ ListOperators.indexOf = function(list, element) {
  * concats lists
  * @param  {List} list0
  * @param  {List} list1
- * 
+ *
  * @param  {List} list2
  * @param  {List} list3
  * @param  {List} list4
@@ -138,7 +147,7 @@ ListOperators.concat = function() {
 /**
  * assembles a List
  * @param  {Object} argument0
- * 
+ *
  * @param  {Object} argument1
  * @param  {Object} argument2
  * @param  {Object} argument3
@@ -155,7 +164,7 @@ ListOperators.assemble = function() {
 /**
  * returns a table with two Lists: words and occurrences
  * @param {List} list
- * 
+ *
  * @param {Boolean} sortListsByOccurrences optional, true by default, common words first
  * @param {Boolean} consecutiveRepetitions optional false by default, if true only counts consecutive repetitions
  * @param {Number} optional limit, limits the size of the lists
@@ -246,7 +255,7 @@ ListOperators.reverse = function(list) {
 ListOperators.translateWithDictionary = function(list, dictionary, nullElement) {
   var newList = new List();
   list.forEach(function(element, i) {
-    index = dictionary[0].indexOf(element);
+    var index = dictionary[0].indexOf(element);
     if(nullElement != null) {
       newList[i] = index == -1 ? nullElement : dictionary[1][index];
     } else {
@@ -284,6 +293,7 @@ ListOperators.sortListByNumberList = function(list, numberList, descending) {
 
   var pairs = [];
   var newList = instantiate(typeOf(list));
+  var i;
 
   for(i = 0; list[i] != null; i++) {
     pairs.push([list[i], numberList[i]]);
@@ -411,7 +421,7 @@ ListOperators.listsIntersect = function(list0, list1) {
  * creates a List that contains the union of two List (removing repetitions)
  * @param  {List} list0 first list
  * @param  {List} list1 second list
- * 
+ *
  * @return {List} the union of both Lists
  * tags:
  */
@@ -462,7 +472,7 @@ ListOperators.getCommonElements = function(list0, list1) {
  * @param  {List} list0
  * @param  {List} list A
  * @param  {List} list B
- * 
+ *
  * @return {List} the union of both NumberLists
  * tags:deprecated
  */
@@ -472,7 +482,7 @@ ListOperators.unionLists = function(x, y) {
   if(x.type != x.type || (x.type != "StringList" && x.type != "NumberList"))
   {
     // To-do: call generic method here (not yet implemented)
-    //c.l( "ListOperators.unionLists for type '" + x.type + "' or '" + y.type + "' not yet implemented" );
+    //console.log( "ListOperators.unionLists for type '" + x.type + "' or '" + y.type + "' not yet implemented" );
     return x.concat(y).getWithoutRepetitions();
     return null;
   }
@@ -494,10 +504,12 @@ ListOperators.unionLists = function(x, y) {
 
 /**
  * creates a List that contains the intersection of two List (elements present in BOTH lists)
+ *
  * @param  {List} list0 list A
  * @param  {List} list1 list B
- * 
+ *
  * @return {List} intersection of both NumberLists
+ *
  * tags:
  */
 ListOperators.intersection = function(list0, list1) {
@@ -585,9 +597,9 @@ ListOperators.getIndexesTable = function(list){
 
 /**
  * aggregates values of a list using an aggregator list as reference
+ *
  * @param  {List} aggregatorList aggregator list that typically contains several repeated elements
  * @param  {List} toAggregateList list of elements that will be aggregated
- * 
  * @param  {Number} mode aggregation modes:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes<br>12:count non repeated elements<br>13:enlist non repeated elements
  * @param  {Table} indexesTable optional already calculated table of indexes of elements on the aggregator list (if didn't provided, the method calculates it)
  * @return {Table} contains a list with non repeated elements on the first list, and the aggregated elements on a second list
@@ -606,8 +618,8 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
   if(mode==0 && aggregatorList==toAggregateList){
     table[1] = indexesTable[0];
     return table;
-  } 
-  
+  }
+
   mode = mode==null?0:mode;
 
   switch(mode){
@@ -754,7 +766,7 @@ ListOperators.subCategoricalAnalysis = function(list0, list1){
       break;
     }
   };
-  
+
   dictionary = {};
   var list1SubCategorical = true;
   for(i=0; list1[i]!=null; i++){
@@ -794,6 +806,10 @@ ListOperators.getListEntropy = function(list, valueFollowing) {
   }
 
   var table = ListOperators.countElementsRepetitionOnList(list, true);
+
+  console.log('    getListEntropy | table[0]', table[0]);
+  console.log('    getListEntropy | table[1]', table[1]);
+
   list._mostRepresentedValue = table[0][0];
   var N = list.length;
   list._biggestProbability = table[1][0] / N;
@@ -962,7 +978,7 @@ ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, 
         numBlanks++;
       }
     }
-    //c.l("numBlanks: ", numBlanks)
+    //console.log("numBlanks: ", numBlanks)
   }
 
   // To-do: looks like getSortedByProperty is removing the valProperty from the objects

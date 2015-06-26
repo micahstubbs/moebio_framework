@@ -1,11 +1,15 @@
-function ImageDraw() {}
+import { context } from "src/Global";
+import Rectangle from "src/dataStructures/geometry/Rectangle";
+import Draw from "src/tools/graphic/Draw";
 
+function ImageDraw() {}
+export default ImageDraw;
 
 /**
  * draws an image
  * @param  {Rectangle} frame
  * @param  {Image} image to be drawn
- * 
+ *
  * @param  {Number} mode: 0: adjust to rectangle, 1: center and mask, 2: center and eventual reduction (image smaller than rectangle), 3: adjust to rectangle preserving proportions (image bigger than rectangle), 4: fill repeated from corner, 5: fill repeated from 0,0
  * tags:draw
  */
@@ -28,50 +32,52 @@ ImageDraw.drawImage = function(frame, image, mode) {
  * @return {Image}
  * tags:
  */
-ImageDraw.captureVisualizationImage = function(visFunctionName, width, height) {
-  c.log('visFunctionName', visFunctionName);
-  if(visFunctionName == null ||  width == null || (!width > 0) || height == null || !(height > 0)) return;
+// ImageDraw.captureVisualizationImage = function(visFunctionName, width, height) {
+//   // TODO refactor this to import context from Global and not reassign it.
 
-  var frame = new Rectangle(0, 0, width, height);
+//   console.log('visFunctionName', visFunctionName);
+//   if(visFunctionName == null ||  width == null || (!width > 0) || height == null || !(height > 0)) return;
 
-  var args = Array.prototype.slice.call(arguments);
-  args = [frame].concat(args.slice(3));
+//   var frame = new Rectangle(0, 0, width, height);
 
-  var visFunction;
+//   var args = Array.prototype.slice.call(arguments);
+//   args = [frame].concat(args.slice(3));
 
-  if(visFunctionName.indexOf('.') == -1) {
-    visFunction = this[visFunctionName];
-  } else {
-    c.log(visFunctionName.split('.')[0], this[visFunctionName.split('.')[0]], this.mY);
-    if(this[visFunctionName.split('.')[0]] == null) return;
-    visFunction = this[visFunctionName.split('.')[0]][visFunctionName.split('.')[1]];
-  }
+//   var visFunction;
 
-  if(visFunction == null) return null;
+//   if(visFunctionName.indexOf('.') == -1) {
+//     visFunction = this[visFunctionName];
+//   } else {
+//     console.log(visFunctionName.split('.')[0], this[visFunctionName.split('.')[0]], this.mY);
+//     if(this[visFunctionName.split('.')[0]] == null) return;
+//     visFunction = this[visFunctionName.split('.')[0]][visFunctionName.split('.')[1]];
+//   }
 
-  c.log('ImageDraw.captureVisualizationImage | args', args);
-  c.log('ImageDraw.captureVisualizationImage | visFunction==null', visFunction == null);
+//   if(visFunction == null) return null;
 
-  var newCanvas = document.createElement("canvas");
-  newCanvas.width = width;
-  newCanvas.height = height;
-  var newContext = newCanvas.getContext("2d");
-  newContext.clearRect(0, 0, width, height);
+//   console.log('ImageDraw.captureVisualizationImage | args', args);
+//   console.log('ImageDraw.captureVisualizationImage | visFunction==null', visFunction == null);
 
-  var mainContext = context;
-  context = newContext;
+//   var newCanvas = document.createElement("canvas");
+//   newCanvas.width = width;
+//   newCanvas.height = height;
+//   var newContext = newCanvas.getContext("2d");
+//   newContext.clearRect(0, 0, width, height);
 
-  ////draw
-  //setStroke('black', 2);
-  //line(0,0,width,height);
-  //line(width,0,0,height);
-  visFunction.apply(this, args);
-  ////
+//   var mainContext = context;
+//   context = newContext;
 
-  context = mainContext;
+//   ////draw
+//   //setStroke('black', 2);
+//   //line(0,0,width,height);
+//   //line(width,0,0,height);
+//   visFunction.apply(this, args);
+//   ////
 
-  var im = new Image();
-  im.src = newCanvas.toDataURL();
+//   context = mainContext;
 
-  return im;
-};
+//   var im = new Image();
+//   im.src = newCanvas.toDataURL();
+
+//   return im;
+// };

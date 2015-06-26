@@ -5,7 +5,7 @@
  * @category strings
  */
 function StringUtils() {}
-
+export default StringUtils;
 
 StringUtils.stringtoXML = function(text) {
   if(window.ActiveXObject) {

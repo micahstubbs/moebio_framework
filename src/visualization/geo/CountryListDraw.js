@@ -1,4 +1,10 @@
+import Rectangle from "src/dataStructures/geometry/Rectangle";
+import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
+import { TwoPi } from "src/Global";
+
+
 function CountryListDraw() {}
+export default CountryListDraw;
 
 
 CountryListDraw.drawCountriesAsCircles = function(context, countryList, radiusList, frame, geoFrame, colors) {
