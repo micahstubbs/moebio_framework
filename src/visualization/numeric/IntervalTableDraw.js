@@ -1,4 +1,17 @@
+import Rectangle from "src/dataStructures/geometry/Rectangle";
+import Point from "src/dataStructures/geometry/Point";
+import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
+import GeometryOperators from "src/operators/geometry/GeometryOperators";
+import ColorScales from "src/operators/graphic/ColorScales";
+import { context, TwoPi, mP } from "src/Global";
+import DrawTextsAdvanced from "src/tools/graphic/DrawTextsAdvanced";
+import ColorScale from "src/dataStructures/graphic/ColorScale";
+import ColorListOperators from "src/operators/graphic/ColorListOperators";
+import { fTextRotated, setText } from "src/tools/graphic/SimpleGraphics";
+import ColorOperators from "src/operators/graphic/ColorOperators";
+
 function IntervalTableDraw() {}
+export default IntervalTableDraw;
 
 IntervalTableDraw.MIN_CHARACTERS_SIZE = 1;
 
@@ -280,7 +293,7 @@ IntervalTableDraw._isOnRadialShape = function(center, testPoint, a0, a1, r0a, r0
   var pa = GeometryOperators.bezierCurvePoints(a0, r0a, a0 + dA * 0.5, r0a, a1 - dA * 0.5, r1a, a1, r1a, t);
   var pb = GeometryOperators.bezierCurvePoints(a0, r0b, a0 + dA * 0.25, r0b, a1 - dA * 0.25, r1b, a1, r1b, t);
 
-  r = testPoint.subtract(center).getNorm();
+  var r = testPoint.subtract(center).getNorm();
 
   return r > pa.y && r < pb.y;
 };

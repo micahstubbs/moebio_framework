@@ -5,6 +5,7 @@
  * @category colors
  */
 function ColorGenerators() {}
+export default ColorGenerators;
 
 
 ColorGenerators.randomColor = function(alpha) {

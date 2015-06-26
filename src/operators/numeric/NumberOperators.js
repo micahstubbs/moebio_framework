@@ -1,3 +1,5 @@
+import NumberList from "src/dataStructures/numeric/NumberList";
+
 /**
  * @classdesc Provides a set of tools that work with Numbers.
  *
@@ -5,6 +7,7 @@
  * @category numbers
  */
 function NumberOperators() {}
+export default NumberOperators;
 
 NumberOperators.numberToString = function(value, nDecimals, powersMode, unit) {
   var string = value.toFixed(nDecimals);

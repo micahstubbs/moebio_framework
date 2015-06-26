@@ -1,3 +1,5 @@
+import List from "src/dataStructures/lists/List";
+
 RectangleList.prototype = new List();
 RectangleList.prototype.constructor = RectangleList;
 /**
@@ -12,6 +14,7 @@ function RectangleList() {
   array = RectangleList.fromArray(array);
   return array;
 }
+export default RectangleList;
 
 RectangleList.fromArray = function(array) {
   var result = List.fromArray(array);

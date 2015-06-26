@@ -1,14 +1,17 @@
 {
   "curly": false,
   "eqnull": true,
-  "undef": false,
+  "undef": true,
   "forin": true,
   "unused": true,
   "freeze": true,
   "globals": {
-  	"describe": true,
-  	"it": true,
-  	"expect": true
+    "describe": true,
+    "it": true,
+    "expect": true,
+    "console": false
   },
-  "eqeqeq": false
+  "eqeqeq": false,
+  "esnext": true,
+  "browser": true,
 }

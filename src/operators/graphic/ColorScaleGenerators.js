@@ -5,6 +5,7 @@
  * @category colors
  */
 function ColorScaleGenerators() {}
+export default ColorScaleGenerators;
 
 
 /**

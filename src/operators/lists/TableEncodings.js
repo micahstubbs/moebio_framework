@@ -1,4 +1,10 @@
+import List from "src/dataStructures/lists/List";
+import Table from "src/dataStructures/lists/Table";
+import NetworkEncodings from "src/operators/structures/NetworkEncodings";
+import ListGenerators from "src/operators/lists/ListGenerators";
+
 function TableEncodings() {}
+export default TableEncodings;
 
 TableEncodings.ENTER = String.fromCharCode(13);
 TableEncodings.ENTER2 = String.fromCharCode(10);
@@ -14,7 +20,7 @@ TableEncodings.TAB2 = String.fromCharCode(9);
 /**
  * Decode a String in format CSV into a Table
  * @param {String} csv CSV formatted text
- * 
+ *
  * @param {Boolean} first_row_header first row is header (default: false)
  * @param {String} separator separator character (default: ",")
  * @param {Object} value_for_nulls Object to be placed instead of null values
@@ -67,7 +73,7 @@ TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, val
 
     var cellContents = NetworkEncodings.replaceChomasInLine(lines[i]).split(comaCharacter); //TODO: will be obsolete (see previous TODO)
 
-    for(j = 0; j < cellContents.length; j++) {
+    for(var j = 0; j < cellContents.length; j++) {
       table[j] = table[j] == null ? new List() : table[j];
       if(_firstRowIsHeader && i == 1) {
         table[j].name = ( headerContent[j] == null ? "" : TableEncodings._removeQuotes(headerContent[j]) ).trim();
@@ -107,7 +113,7 @@ TableEncodings._removeQuotes = function(string) {
 /**
  * Encode a Table into a String in format CSV
  * @param {Table} Table to be enconded
- * 
+ *
  * @param {String} separator character (default: ",")
  * @param {Boolean} first row as List names (default: false)
  * @return {String} resulting String in CSV format

@@ -1,3 +1,6 @@
+import Point from "src/dataStructures/geometry/Point";
+import Polygon from "src/dataStructures/geometry/Polygon";
+
 /**
  * @classdesc Functions to create Polygons from a set of points
  *
@@ -5,7 +8,7 @@
  * @category geometry
  */
 function PolygonGenerators() {}
-
+export default PolygonGenerators;
 
 PolygonGenerators.createPolygon = function(nPoints, mode, frame) {
   var polygon = new Polygon();

@@ -1,3 +1,6 @@
+import DataModel from "src/dataStructures/DataModel";
+import Interval from "src/dataStructures/numeric/Interval";
+
 DateInterval.prototype = new DataModel();
 DateInterval.prototype.constructor = DateInterval;
 
@@ -16,6 +19,8 @@ function DateInterval(date0, date1) {
   this.date1 = date1;
   this.type = "DateInterval";
 }
+export default DateInterval;
+
 DateInterval.prototype.toString = function() {
   return "DateInterval[" + this.date0 + ", " + this.date1 + "]";
 };

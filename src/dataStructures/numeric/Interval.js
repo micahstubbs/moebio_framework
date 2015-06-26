@@ -1,3 +1,6 @@
+import DataModel from "src/dataStructures/DataModel";
+import Point from "src/dataStructures/geometry/Point";
+
 Interval.prototype = new Point();
 Interval.prototype.constructor = Interval;
 
@@ -16,6 +19,7 @@ function Interval(x, y) {
   this.y = Number(y);
   this.type = "Interval";
 }
+export default Interval;
 
 /**
  * Finds the minimum value of the Interval.
@@ -23,7 +27,7 @@ function Interval(x, y) {
  * @return {Number} the minimum value in the interval
  */
 Interval.prototype.getMin = function() {
-  return Math.min(x, y);
+  return Math.min(this.x, this.y);
 };
 
 /**
@@ -32,7 +36,7 @@ Interval.prototype.getMin = function() {
  * @return {Number} the max value in the interval
  */
 Interval.prototype.getMax = function() {
-  return Math.max(x, y);
+  return Math.max(this.x, this.y);
 };
 
 /**

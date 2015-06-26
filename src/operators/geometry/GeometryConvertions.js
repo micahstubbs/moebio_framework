@@ -1,3 +1,8 @@
+import Polygon from "src/dataStructures/geometry/Polygon";
+import Point from "src/dataStructures/geometry/Point";
+import NumberTable from "src/dataStructures/numeric/NumberTable";
+import NumberList from "src/dataStructures/numeric/NumberList";
+
 /**
  * @classdesc Tools to convert geometric data types.
  *
@@ -5,6 +10,7 @@
  * @category geometry
  */
 function GeometryConvertions() {}
+export default GeometryConvertions;
 
 //include(frameworksRoot+"operators/strings/StringOperators.js")
 

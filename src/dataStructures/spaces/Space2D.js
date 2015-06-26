@@ -1,3 +1,12 @@
+import Point from "src/dataStructures/geometry/Point";
+import {
+  addInteractionEventListener,
+  removeInteractionEventListener,
+  mX,
+  mY,
+  cW
+} from "src/Global";
+
 function Space2D(configuration) {
   configuration = configuration == null ? {} : configuration;
 
@@ -11,6 +20,7 @@ function Space2D(configuration) {
 
   this.active = configuration.interactionActive;
 }
+export default Space2D;
 
 Space2D.prototype.activeInteraction = function() {
   if(this.active) return;

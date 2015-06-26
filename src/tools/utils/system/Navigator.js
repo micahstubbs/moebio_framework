@@ -1,11 +1,13 @@
 function Navigator() {}
+export default Navigator;
+
 var userAgent;
 var userAgentVersion;
 Navigator.IE = "IE";
 Navigator.NS = "NS";
 Navigator.IOS = "IOS";
 
-detectUserAgent = function() {
+function detectUserAgent() {
   if(/MSIE (\d+\.\d+);/.test(navigator.userAgent)) { //test for MSIE x.x;
     userAgent = Navigator.IE;
     userAgentVersion = Number(RegExp.$1); // capture x.x portion and store as a number
@@ -18,6 +20,7 @@ detectUserAgent = function() {
     userAgentVersion = Number(RegExp.$1); // capture x.x portion and store as a number
   }
 };
+
 Navigator.getUserAgent = function() {
   return userAgent;
 };

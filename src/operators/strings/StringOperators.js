@@ -1,4 +1,10 @@
+import StringList from "src/dataStructures/strings/StringList";
+import ListOperators from "src/operators/lists/ListOperators";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import Table from "src/dataStructures/lists/Table";
+
 function StringOperators() {}
+export default StringOperators;
 
 StringOperators.ENTER = String.fromCharCode(13);
 StringOperators.ENTER2 = String.fromCharCode(10);
@@ -17,7 +23,7 @@ StringOperators.STOP_WORDS = StringList.fromArray("t,s,mt,rt,re,m,http,amp,a,abl
 /**
  * splits a String by a character (entre by default)
  * @param  {String} string
- * 
+ *
  * @param  {String} character
  * @return {StringList}
  * tags:
@@ -26,6 +32,7 @@ StringOperators.split = function(string, character) {
   if(character == null) return StringOperators.splitByEnter(string);
   return StringList.fromArray(string.split(character));
 };
+
 
 /**
  * split a String by enter (using several codifications)
@@ -105,7 +112,7 @@ StringOperators.replaceSubStringsByStrings = function(string, subStrings, replac
 /**
  * return a substring
  * @param  {String} string
- * 
+ *
  * @param  {Number} i0 init index
  * @param  {Number} length of ths substring (if null returns substring from i0 to the end)
  * @return {String}
@@ -119,7 +126,7 @@ StringOperators.substr = function(string, i0, length) {
 /**
  * split a String by a separator (a String) and returns a StringList
  * @param  {String} string
- * 
+ *
  * @param  {String} separator
  * @return {StringList}
  * tags:
@@ -136,7 +143,7 @@ StringOperators.splitString = function(string, separator) {
  * searches for two Strings within a String and returns the String in between
  * @param  {String} text
  * @param  {String} subString0
- * 
+ *
  * @param  {String} subString1 if null returns the text after subString0
  * @return {String}
  * tags:filter
@@ -185,7 +192,7 @@ StringOperators.getAllTextsBetweenStrings = function(text, subString0, subString
  * @param  {String} string to be analized
  * @param  {StringList} negativeStrings list of 'negative' words
  * @param  {StringList} positiveStrings list of 'positive' words
- * 
+ *
  * @param  {Boolean} normalizeBySize divide score by the string size
  * @return {Number}
  * tags:analysis
@@ -247,7 +254,7 @@ StringOperators.getLinksFromHtml = function(html, urlSource, removeHash) {
 
     if(url.indexOf('=') != -1) url = url.split('=')[0];
 
-    //c.log(url);
+    //console.log(url);
     if(urlSource && url.indexOf('http://') == -1 && url.indexOf('https://') == -1 && url.indexOf('wwww.') == -1 && url.indexOf('file:') == -1 && url.indexOf('gopher:') == -1 && url.indexOf('//') != 0) {
       if(url.substr(0, 9) == "../../../") {
         url = urlSourceParts.slice(0, urlSourceParts.length - 3).join("/") + "/" + url.substr(9);
@@ -285,7 +292,7 @@ StringOperators.getLinksFromHtml = function(html, urlSource, removeHash) {
     if(url.substr(-1) == "/") url = url.substr(0, url.length - 1);
 
     if(url == urlSource) continue;
-    //c.log(urlSource+' | '+originalUrl+' -> '+url);
+    //console.log(urlSource+' | '+originalUrl+' -> '+url);
     urls.push(url);
   }
 
@@ -299,7 +306,7 @@ StringOperators.getLinksFromHtml = function(html, urlSource, removeHash) {
  * validates is string contains another string, as string or word (space or punctuation boundaries)
  * @param {String} text string to be validated
  * @param {String} string string or word to be searched
- * 
+ *
  * @param {Boolean} asWord if true a word will be searched (false by default)
  * @param {Boolean} caseSensitive (false by default)
  * @return {Boolean} returns true if string or word is contained
@@ -320,9 +327,9 @@ StringOperators.textContainsString = function(text, string, asWord, caseSensitiv
  */
 StringOperators.logInConsole = function(string, frame) {
   frame = frame == null ? true : frame;
-  if(frame) c.log('///////////////////////////////////////////////////');
-  c.log(string);
-  if(frame) c.log('///////////////////////////////////////////////////');
+  if(frame) console.log('///////////////////////////////////////////////////');
+  console.log(string);
+  if(frame) console.log('///////////////////////////////////////////////////');
 };
 
 
@@ -463,7 +470,7 @@ StringOperators.removeQuotes = function(string) { //TODO:improve
 /**
  * builds a stringList of words contained in the text
  * @param  {String} string text to be analyzed
- * 
+ *
  * @param  {Boolean} withoutRepetitions remove words repetitions
  * @param  {Boolean} stopWords remove stop words
  * @param  {Boolean} sortedByFrequency  sorted by frequency in text
@@ -546,7 +553,7 @@ StringOperators.getWords = function(string, withoutRepetitions, stopWords, sorte
   return list;
 };
 
-removeAccentsAndDiacritics = function(string) {
+function removeAccentsAndDiacritics(string) {
   var r = string.replace(new RegExp(/[àáâãäå]/g), "a");
   r = r.replace(new RegExp(/æ/g), "ae");
   r = r.replace(new RegExp(/ç/g), "c");
@@ -575,7 +582,7 @@ removeAccentsAndDiacritics = function(string) {
 /**
  * creates a table with frequent words and occurrences numbers
  * @param  {String} string text to be analyzed
- * 
+ *
  * @param  {StringList} stopWords
  * @param  {Boolean} includeLinks
  * @param  {Number} limit max size of rows

@@ -1,4 +1,8 @@
+import List from "src/dataStructures/lists/List";
+import Table from "src/dataStructures/lists/Table";
+
 function TableConversions() {}
+export default TableConversions;
 
 /**
  * Convert an object (or more typically an Array of objects) into a Table

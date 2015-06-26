@@ -1,4 +1,9 @@
+/* global console, Image */
+
+import { onResize, context, canvas } from "src/tools/utils/code/ClassUtils";
+
 function ImageGenerators() {}
+export default ImageGenerators;
 
 ImageGenerators.dashedPattern = function(colorBackground, colorLine, separationLines, widthLines) { //TODO: doesn't work because of two different issues
   separationLines = separationLines == null ? 2 : separationLines;
@@ -25,8 +30,8 @@ ImageGenerators.dashedPattern = function(colorBackground, colorLine, separationL
   var im = new Image(51, 51);
   im.src = canvas.toDataURL('image/png');
 
-  c.log('im', im);
-  c.log('im.width', im.width);
+  console.log('im', im);
+  console.log('im.width', im.width);
 
   onResize();
 

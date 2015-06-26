@@ -1,3 +1,8 @@
+/* global console */
+
+import DataModel from "src/dataStructures/DataModel";
+import Interval from "src/dataStructures/numeric/Interval";
+
 Axis.prototype = new DataModel();
 Axis.prototype.constructor = Axis;
 
@@ -12,6 +17,7 @@ Axis.prototype.constructor = Axis;
  * @category numbers
  */
 function Axis(departureInterval, arrivalInterval) {
+  //TODO why assign the incoming param, could this be moved to lines 20-21
   departureInterval = departureInterval == null ? new Interval(0, 1) : departureInterval;
   arrivalInterval = arrivalInterval == null ? new Interval(0, 1) : arrivalInterval;
 
@@ -19,20 +25,18 @@ function Axis(departureInterval, arrivalInterval) {
   this.departureInterval = departureInterval;
   this.arrivalInterval = arrivalInterval;
 
-  this.departureAmplitude;
-  this.arrivalAmplitude;
-
   this.setDepartureInterval(departureInterval);
   this.setArrivalInterval(arrivalInterval);
 
   this.type = "Axis";
 }
+export default Axis;
 
 
 
 Axis.prototype.setDepartureInterval = function(departureInterval) {
   this.departureInterval = departureInterval;
-  c.log('--> departureInterval', departureInterval);
+  console.log('--> departureInterval', departureInterval);
   this.departureAmplitude = departureInterval.getSignedAmplitude();
 
 };

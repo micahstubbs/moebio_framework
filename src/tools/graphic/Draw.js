@@ -1,13 +1,18 @@
+import GeometryOperators from "src/operators/geometry/GeometryOperators";
+import Rectangle from "src/dataStructures/geometry/Rectangle";
+import { context, TwoPi } from 'src/Global';
+
 //TODO: delete many functions that are deprectaed, replaced by SimpleGraphics.js functions
 
 //include(frameworksRoot+"operators/geometry/GeometryOperators.js");
 /**
  * @classdesc Draw basic shapes
- * 
+ *
  * @namespace
  * @category geometry
  */
 function Draw() {}
+export default Draw;
 
 Draw.drawSmoothPolygon = function(polygon, closed, amount) { //TODO: add tx, ty
   amount = amount == null ? 30 : amount;
@@ -105,6 +110,7 @@ Draw.fillRectangleWithImage = function(rectangle, image, mode, backColor) {
       context.drawImage(image, 0, 0, image.width, image.height, dx, dy, dWidth, dHeight);
       break;
     case 3:
+      var sh, sw;
       if(rectangle.width / rectangle.height < image.width / image.height) {
         sh = image.height;
         sw = sh * rectangle.width / rectangle.height;
@@ -232,7 +238,7 @@ Draw.drawBezierPolygonTransformed = function(bezierPolygon, transformationFuncti
 Draw.drawPolygonTransformed = function(polygon, transformationFunction) {
   var p = transformationFunction(polygon[0]);
   context.moveTo(p.x, p.y);
-  for(i = 0; polygon[i] != null; i++) {
+  for(var i = 0; polygon[i] != null; i++) {
     p = transformationFunction(polygon[i]);
     context.lineTo(p.x, p.y);
   }
@@ -360,22 +366,23 @@ Draw.drawLens = function(circle0, circle1) {
 };
 
 
+// Draw.drawAndCapture = function(drawFunction, frame, target) {
+//   // TODO refactor this to not reassign context as that prevents this
+//   // from building.
 
-Draw.drawAndCapture = function(drawFunction, frame, target) {
+//   var defaultContext = context;
+//   context = hiddenContext;
+//   context.canvas.setAttribute('width', frame.width);
+//   context.canvas.setAttribute('height', frame.height);
+//   context.clearRect(0, 0, frame.width, frame.height);
 
-  var defaultContext = context;
-  context = hiddenContext;
-  context.canvas.setAttribute('width', frame.width);
-  context.canvas.setAttribute('height', frame.height);
-  context.clearRect(0, 0, frame.width, frame.height);
+//   context.translate(-frame.x, -frame.y);
 
-  context.translate(-frame.x, -frame.y);
+//   drawFunction.call(target);
 
-  drawFunction.call(target);
+//   var image = new Image();
+//   image.src = context.canvas.toDataURL();
 
-  var image = new Image();
-  image.src = context.canvas.toDataURL();
-
-  context = defaultContext;
-  return image;
-};
+//   context = defaultContext;
+//   return image;
+// };

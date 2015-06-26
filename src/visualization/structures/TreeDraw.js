@@ -1,3 +1,40 @@
+import {
+  context,
+  MOUSE_PRESSED,
+  MOUSE_DOWN,
+  MOUSE_UP_FAST,
+  WHEEL_CHANGE,
+  nF,
+  mX,
+  mY,
+  mP
+} from "src/Global";
+
+import {
+  sRect,
+  setCursor,
+  line,
+  setStroke,
+  setFill,
+  fLines,
+  fText,
+  setText,
+  fsRectM,
+  drawImage,
+  getTextW,
+  clipRectangle,
+  sRectM
+} from "src/tools/graphic/SimpleGraphics";
+
+import Rectangle from "src/dataStructures/geometry/Rectangle";
+import RectangleOperators from "src/operators/geometry/RectangleOperators";
+import ColorOperators from "src/operators/graphic/ColorOperators";
+import List from "src/dataStructures/lists/List";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import ColorList from "src/dataStructures/graphic/ColorList";
+import ColorScales from "src/operators/graphic/ColorScales";
+import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
+
 /**
  * @classdesc Functions for drawing {@link Tree|Trees}.
  *
@@ -5,6 +42,7 @@
  * @category networks
  */
 function TreeDraw() {}
+export default TreeDraw;
 
 
 /**
@@ -24,11 +62,12 @@ TreeDraw.drawRectanglesTree = function(frame, tree, levelColors, margin) {
   var dX = frame.width / tree.nLevels;
   TreeDraw._drawRectanglesTreeChildren(tree.nodeList[0], new Rectangle(frame.x, frame.y, dX, frame.height), levelColors, margin);
 };
+
 TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin) {
   context.fillStyle = colors[node.level];
   context.fillRect(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
   var children = node.toNodeList;
-  //c.log(node.level, node.name, children.length);
+  //console.log((node.level, node.name, children.length);
   if(children.length > 0) {
     var i;
     var dY = frame.height / (node.descentWeight - 1);
@@ -215,20 +254,21 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
     drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
   } else {
     if(captureImage) {
-      var newCanvas = document.createElement("canvas");
-      newCanvas.width = frame.width;
-      newCanvas.height = frame.height;
-      var newContext = newCanvas.getContext("2d");
-      newContext.clearRect(0, 0, frame.width, frame.height);
-      var mainContext = context;
-      context = newContext;
-      var prevFx = frame.x;
-      var prevFy = frame.y;
-      frame.x = 0;
-      frame.y = 0;
-      setFill('white');
-      fRect(0, 0, frame.width, frame.height);
-      setText('black', 12);
+      // TODO refactor this to not reassign context
+      // var newCanvas = document.createElement("canvas");
+      // newCanvas.width = frame.width;
+      // newCanvas.height = frame.height;
+      // var newContext = newCanvas.getContext("2d");
+      // newContext.clearRect(0, 0, frame.width, frame.height);
+      // var mainContext = context;
+      // context = newContext;
+      // var prevFx = frame.x;
+      // var prevFy = frame.y;
+      // frame.x = 0;
+      // frame.y = 0;
+      // setFill('white');
+      // fRect(0, 0, frame.width, frame.height);
+      // setText('black', 12);
     } else {
       context.save();
       clipRectangle(frame.x, frame.y, frame.width, frame.height);
@@ -264,7 +304,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
           textSize = rect.height * TreeDraw.PROP_RECT_LABEL - 2;
           if(textSize >= 5) {
 
-            propTextSpace = (rect.width - 2 * margTextX) / (node._textWidth * textSize / 12);
+            var propTextSpace = (rect.width - 2 * margTextX) / (node._textWidth * textSize / 12);
             exceedes = propTextSpace < 1; //(node._textWidth*textSize/12)>(rect.width-1.2*margTextX);
 
             if(exceedes) {
@@ -282,12 +322,13 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
     });
 
     if(captureImage) {
-      context = mainContext;
-      frame.memory.image = new Image();
-      frame.memory.image.src = newCanvas.toDataURL();
-      frame.x = prevFx;
-      frame.y = prevFy;
-      drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+      // TODO refactor this to not reassign context
+      // context = mainContext;
+      // frame.memory.image = new Image();
+      // frame.memory.image.src = newCanvas.toDataURL();
+      // frame.x = prevFx;
+      // frame.y = prevFy;
+      // drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
     }
   }
 
@@ -313,7 +354,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
       frame.memory.prevMY = mY;
     }
     if(MOUSE_PRESSED) {
-      scale = 5 * frame.memory.focusFrame.width / frame.width;
+      var scale = 5 * frame.memory.focusFrame.width / frame.width;
       frame.memory.focusFrame.x -= (mX - frame.memory.prevMX) * scale;
       frame.memory.focusFrame.y -= (mY - frame.memory.prevMY) * scale;
 
@@ -481,22 +522,23 @@ TreeDraw.drawDecisionTree = function(frame, tree) {
   if(drawingImage) {
     drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
   } else {
-    c.l('drawing');
+    console.log('drawing');
     if(captureImage) {
-      var newCanvas = document.createElement("canvas");
-      newCanvas.width = frame.width;
-      newCanvas.height = frame.height;
-      var newContext = newCanvas.getContext("2d");
-      newContext.clearRect(0, 0, frame.width, frame.height);
-      var mainContext = context;
-      context = newContext;
-      var prevFx = frame.x;
-      var prevFy = frame.y;
-      frame.x = 0;
-      frame.y = 0;
-      setFill('white');
-      fRect(0, 0, frame.width, frame.height);
-      setText('black', 12);
+      // TODO refactor this to not reassign context
+      // var newCanvas = document.createElement("canvas");
+      // newCanvas.width = frame.width;
+      // newCanvas.height = frame.height;
+      // var newContext = newCanvas.getContext("2d");
+      // newContext.clearRect(0, 0, frame.width, frame.height);
+      // var mainContext = context;
+      // context = newContext;
+      // var prevFx = frame.x;
+      // var prevFy = frame.y;
+      // frame.x = 0;
+      // frame.y = 0;
+      // setFill('white');
+      // fRect(0, 0, frame.width, frame.height);
+      // setText('black', 12);
     } else {
       context.save();
       clipRectangle(frame.x, frame.y, frame.width, frame.height);
@@ -539,7 +581,7 @@ TreeDraw.drawDecisionTree = function(frame, tree) {
         if(realWidth > 16) {
           margTextX = rect.width * TreeDraw.PROP_RECT_MARGIN * 0.8;
           margTextY = rect.height * TreeDraw.PROP_RECT_MARGIN * 0.15;
-          tC = textColor ? textColor : frame.memory.textsColorList[i];
+          var tC = textColor ? textColor : frame.memory.textsColorList[i];
           textSize = 18;
 
           setText(tC, textSize);
@@ -640,12 +682,13 @@ TreeDraw.drawDecisionTree = function(frame, tree) {
     });
 
     if(captureImage) {
-      context = mainContext;
-      frame.memory.image = new Image();
-      frame.memory.image.src = newCanvas.toDataURL();
-      frame.x = prevFx;
-      frame.y = prevFy;
-      drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+      // TODO refactor this to not reassign context
+      // context = mainContext;
+      // frame.memory.image = new Image();
+      // frame.memory.image.src = newCanvas.toDataURL();
+      // frame.x = prevFx;
+      // frame.y = prevFy;
+      // drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
     }
   }
 
@@ -701,7 +744,7 @@ TreeDraw.drawDecisionTree = function(frame, tree) {
       frame.memory.prevMX = mX;
     }
     if(MOUSE_PRESSED) {
-      scale = 5 * frame.memory.focusFrame.width / frame.width;
+      var scale = 5 * frame.memory.focusFrame.width / frame.width;
       frame.memory.focusFrame.x -= (mX - frame.memory.prevMX) * scale;
       frame.memory.prevMX = mX;
     }

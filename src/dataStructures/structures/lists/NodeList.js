@@ -1,3 +1,12 @@
+import List from "src/dataStructures/lists/List";
+import StringList from "src/dataStructures/strings/StringList";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import Polygon from "src/dataStructures/geometry/Polygon";
+import Node from "src/dataStructures/structures/elements/Node";
+import Point from "src/dataStructures/geometry/Point";
+import { typeOf } from "src/tools/utils/code/ClassUtils";
+import { cX, cY } from "src/Global";
+
 NodeList.prototype = new List();
 NodeList.prototype.constructor = NodeList;
 
@@ -13,7 +22,7 @@ function NodeList() {
 
   //if(arguments && arguments.length>0) {c.l('UEUEUEUE, arguments.length', arguments.length); var a; a.push(0)};
 
-  array = NodeList.fromArray([]);
+  var array = NodeList.fromArray([]);
 
   if(arguments && arguments.length > 0) {
     var args = Array.prototype.slice.call(arguments);
@@ -25,6 +34,7 @@ function NodeList() {
 
   return array;
 }
+export default NodeList;
 
 /**
  * Creates NodeList from raw Array.
@@ -70,7 +80,7 @@ NodeList.fromArray = function(array, forceToNode) {
 
   result._push = Array.prototype.push;
   result.push = function(a) {
-    c.l('with nodeList, use addNode instead of push');
+    console.log('with nodeList, use addNode instead of push');
     var k;
     k.push(a);
   };
@@ -187,7 +197,7 @@ NodeList.prototype.getNodeById = function(id) {
  * @return {NodeList}
  */
 NodeList.prototype.getNodesByIds = function(ids) {
-  newNodelist = new NodeList();
+  var newNodelist = new NodeList();
   var node;
   for(var i = 0; ids[i] != null; i++) {
     node = this.ids[ids[i]];
@@ -290,9 +300,9 @@ NodeList.prototype.clone = function() {
  * @ignore
  */
 NodeList.prototype.getWithoutRepetitions = function() {
-  newList = new NodeList();
+  var newList = new NodeList();
   newList.name = this.name;
-  for(i = 0; this[i] != null; i++) {
+  for(var i = 0; this[i] != null; i++) {
     if(newList.getNodeById(this[i].id) == null) newList.addNode(this[i]);
   }
   return newList;

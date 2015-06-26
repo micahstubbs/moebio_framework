@@ -1,3 +1,5 @@
+import { gradToRad } from "src/Global";
+
 /**
  * @classdesc Provides a set of tools for dealing with distances and geometric
  * conversions.
@@ -6,6 +8,7 @@
  * @category geo
  */
 function GeoOperators() {}
+export default GeoOperators;
 
 GeoOperators.EARTH_RADIUS = 6371009;
 GeoOperators.EARTH_DIAMETER = GeoOperators.EARTH_RADIUS * 2;

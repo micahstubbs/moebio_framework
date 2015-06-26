@@ -1,4 +1,5 @@
 [
+  "index.js",
   "dataStructures/DataModel.js",
 
   "dataStructures/lists/List.js",

@@ -1,3 +1,7 @@
+import Network from "src/dataStructures/structures/networks/Network";
+import NodeList from "src/dataStructures/structures/lists/NodeList";
+import Relation from "src/dataStructures/structures/elements/Relation";
+
 Tree.prototype = new Network();
 Tree.prototype.constructor = Tree;
 
@@ -16,7 +20,7 @@ function Tree() {
   this._createRelation = this.createRelation;
   this.createRelation = this._newCreateRelation;
 }
-
+export default Tree;
 
 /**
  * Adds a given Node to the tree, under the given parent Node.
@@ -73,7 +77,7 @@ Tree.prototype.addFather = function(node, children) {
  */
 Tree.prototype.getNodesByLevel = function(level) {
   var newNodeList = new NodeList();
-  for(i = 0; this.nodeList[i] != null; i++) {
+  for(var i = 0; this.nodeList[i] != null; i++) {
     if(this.nodeList[i].level == level) newNodeList.addNode(this.nodeList[i]);
   }
   return newNodeList;
@@ -94,7 +98,7 @@ Tree.prototype.getLeaves = function(node) {
       leaves.addNode(node);
       return leaves;
     }
-    addLeaves = function(candidate) {
+    var addLeaves = function(candidate) {
       if(candidate.toNodeList.length == 0) {
         leaves.addNode(candidate);
       } else {

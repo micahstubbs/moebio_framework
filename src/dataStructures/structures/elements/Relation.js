@@ -1,3 +1,5 @@
+import Node from "src/dataStructures/structures/elements/Node";
+
 Relation.prototype = new Node();
 Relation.prototype.constructor = Relation;
 
@@ -26,7 +28,7 @@ function Relation(id, name, node0, node1, weight, content) {
   this.weight = weight == null ? 1 : weight;
   this.content = content == null ? "" : content;
 }
-
+export default Relation;
 
 Relation.prototype.destroy = function() {
   Node.prototype.destroy.call(this);

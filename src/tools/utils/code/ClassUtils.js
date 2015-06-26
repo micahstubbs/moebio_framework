@@ -1,18 +1,17 @@
+import DateOperators from "src/operators/dates/DateOperators";
+
 /*
  * All these function are globally available since they are included in the Global class
  */
-
-
-var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"}
-
-
+export var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"}
 
 /*
  * types are:
  * number, string, boolean, date, Array, Object
  * and all data models classes names
  */
-function typeOf(object) {
+
+export function typeOf(object) {
   if(object==null) return null;
 
   var type = typeof object;
@@ -23,12 +22,12 @@ function typeOf(object) {
   if(Object.prototype.toString.call(object) == "[object Array]") return "Array";
 
   if(object.getDate != null) return 'date';
-  
+
   return 'Object';
 
 
 
-  
+
 
   // if(o === null) {
   //   return 'null';
@@ -42,9 +41,10 @@ function typeOf(object) {
   // c.l("[!] ERROR: could not detect type for ", o);
 }
 
+// TODO remove?
 function VOID() {}
 
-function instantiate(className, args) {
+export function instantiate(className, args) {
   switch(className) {
     case 'number':
     case 'string':
@@ -96,7 +96,7 @@ function instantiate(className, args) {
   return o;
 }
 
-getTextFromObject = function(value, type) {
+export function getTextFromObject(value, type) {
   if(value == null) return "Null";
   if(value.isList) {
     if(value.length == 0) return "[]";
@@ -128,26 +128,26 @@ getTextFromObject = function(value, type) {
     default:
       return "{}"; //value.toString();
   }
-};
+}
 
-
-function instantiateWithSameType(object, args) {
+export function instantiateWithSameType(object, args) {
   return instantiate(typeOf(object), args);
 }
 
-function isArray(obj) {
+export function isArray(obj) {
   if(obj.constructor.toString().indexOf("Array") == -1)
     return false;
   else
     return true;
 }
+
 Date.prototype.getType = function() {
   return 'date';
 };
 
 
 
-evalJavaScriptFunction = function(functionText, args, scope){
+export function evalJavaScriptFunction(functionText, args, scope){
 	if(functionText==null) return;
 
 	var res;
@@ -161,9 +161,9 @@ evalJavaScriptFunction = function(functionText, args, scope){
 
 	var lines = functionText.split('\n');
 
-	for(i=0; lines[i]!=null; i++){
+	for(var i=0; lines[i]!=null; i++){
 		lines[i] = lines[i].trim();
-		if(lines[i]=="" || lines[i].substr(1)=="/"){
+		if(lines[i] === "" || lines[i].substr(1)=="/"){
 			lines.splice(i,1);
 			i--;
 		}
@@ -242,21 +242,13 @@ evalJavaScriptFunction = function(functionText, args, scope){
   };
 
   return resultObject;
-};
+}
 
-
-
-function argumentsToArray(args) {
+export function argumentsToArray(args) {
   return Array.prototype.slice.call(args, 0);
 }
 
-
-
-
-
-
-
-function TimeLogger(name) {
+export function TimeLogger(name) {
   var scope = this;
   this.name = name;
   this.clocks = {};
@@ -271,8 +263,8 @@ function TimeLogger(name) {
     } else {
       var now = new Date().getTime();
       var diff = now - scope.clocks[clockName];
-      c.l("TimeLogger '" + clockName + "' took " + diff + " ms");
+      console.log("TimeLogger '" + clockName + "' took " + diff + " ms");
     }
   };
 }
-var tl = new TimeLogger("Global Time Logger");
+export var tl = new TimeLogger("Global Time Logger");

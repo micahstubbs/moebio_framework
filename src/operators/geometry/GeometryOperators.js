@@ -1,3 +1,9 @@
+import Point from "src/dataStructures/geometry/Point";
+import Point3D from "src/dataStructures/geometry/Point3D";
+import PointOperators from "src/operators/geometry/PointOperators";
+import Polygon3D from "src/dataStructures/geometry/Polygon3D";
+import NumberList from "src/dataStructures/numeric/NumberList";
+
 /**
  * @classdesc Provides a set of tools that work with Geometric data.
  *
@@ -5,6 +11,7 @@
  * @category geometry
  */
 function GeometryOperators() {}
+export default GeometryOperators;
 
 
 /**

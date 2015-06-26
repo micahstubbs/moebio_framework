@@ -1,3 +1,7 @@
+import ColorList from "src/dataStructures/graphic/ColorList";
+import ColorOperators from "src/operators/graphic/ColorOperators";
+import Polygon3D from "src/dataStructures/geometry/Polygon3D";
+
 /**
  * @classdesc Tools for working with Lists of colors.
  *
@@ -5,6 +9,8 @@
  * @category colors
  */
 function ColorListOperators() {}
+export default ColorListOperators;
+
 /**
  * receives n arguments and performs addition
  */

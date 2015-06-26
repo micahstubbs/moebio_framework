@@ -1,3 +1,9 @@
+import DataModel from "src/dataStructures/DataModel";
+import NodeList from "src/dataStructures/structures/lists/NodeList";
+import RelationList from "src/dataStructures/structures/lists/RelationList";
+import Node from "src/dataStructures/structures/elements/Node";
+import Relation from "src/dataStructures/structures/elements/Relation";
+
 Network.prototype = new DataModel();
 Network.prototype.constructor = Network;
 
@@ -16,6 +22,7 @@ function Network() {
   this.nodeList = new NodeList();
   this.relationList = new RelationList();
 }
+export default Network;
 
 /**
  * Get Nodes of the Network as a NodeList

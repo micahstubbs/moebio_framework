@@ -13,3 +13,4 @@ function LoadEvent() {
   this.errorMessage = "";
   this.url;
 }
+export default LoadEvent;

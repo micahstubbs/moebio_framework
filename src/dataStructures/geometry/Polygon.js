@@ -1,3 +1,10 @@
+import List from "src/dataStructures/lists/List";
+import Rectangle from "src/dataStructures/geometry/Rectangle";
+import Point from "src/dataStructures/geometry/Point";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import { typeOf } from "src/tools/utils/code/ClassUtils";
+
+
 Polygon.prototype = new List();
 Polygon.prototype.constructor = Polygon;
 
@@ -13,6 +20,8 @@ function Polygon() {
   array = Polygon.fromArray(array);
   return array;
 }
+export default Polygon;
+
 Polygon.fromArray = function(array) {
   var result = List.fromArray(array);
   result.type = "Polygon";
@@ -55,7 +64,7 @@ Polygon.prototype.getFrame = function() {
 Polygon.prototype.getBarycenter = function(countLastPoint) {
   var i;
   countLastPoint = countLastPoint == null ? true : countLastPoint;
-  cLPN = 1 - Number(countLastPoint);
+  var cLPN = 1 - Number(countLastPoint);
   if(this.length == 0) return null;
   var barycenter = new Point(this[0].x, this[0].y);
   for(i = 1; this[i + cLPN] != null; i++) {
