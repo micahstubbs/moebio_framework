@@ -28,7 +28,6 @@ function Table() {
 
 /**
  * Creates a new Table from an array
- *
  * @param {Number[]} array
  * @return {Table}
  */
@@ -67,7 +66,6 @@ Table.fromArray = function(array) {
  * Executes a given function on all the columns
  * in the Table, returning a new Table with the
  * resulting values.
- *
  * @param {Function} func Function to apply to each
  * column in the table. Columns are {@link List|Lists}.
  * @return {Table} Table of values from applying function.
@@ -87,7 +85,6 @@ Table.prototype.applyFunction = function(func) {
 
 /**
  * Returns a {@link List} with all the elements of a row.
- *
  * @param  {Number} index Index of the row to get.
  * @return {List}
  * tags:filter
@@ -103,7 +100,6 @@ Table.prototype.getRow = function(index) {
 
 /**
  * Returns the length a column of the Table.
- *
  * @param  {Number} index The Column to return its length.
  * Defaults to 0.
  * @return {Number} Length of column at given index.
@@ -115,7 +111,6 @@ Table.prototype.getListLength = function(index) {
 
 /**
  * Returns the lengths of all the columns of the Table.
- *
  * @return {NumberList} Lengths of all columns in Table.
  */
 Table.prototype.getLengths = function() {
@@ -128,7 +123,6 @@ Table.prototype.getLengths = function() {
 
 /**
  * Filters a Table by selecting a section of rows, elements with last index included.
- *
  * @param  {Number} startIndex Index of first element in all lists of the table.
  * @param  {Number} endIndex Index of last elements in all lists of the table.
  * @return {Table}
@@ -152,7 +146,6 @@ Table.prototype.sliceRows = function(startIndex, endIndex) {
 
 /**
  * Filters the lists of the table by indexes.
- *
  * @param  {NumberList} indexes
  * @return {Table}
  * tags:filter
@@ -174,7 +167,6 @@ Table.prototype.getRows = function(indexes) {
 
 /**
  * Returns a new Table with the row at the given index removed.
- *
  * @param {Number} rowIndex Row to remove
  * @return {Table} New Table.
  */
@@ -190,7 +182,6 @@ Table.prototype.getWithoutRow = function(rowIndex) {
 
 /**
  * Returns a new Table with the rows listed in the given array removed.
- *
  * @param {Number[]} rowsIndexes Array of row indecies to remove.
  * @return {undefined}
  */
@@ -209,7 +200,6 @@ Table.prototype.getWithoutRows = function(rowsIndexes) {
 
 /**
  * Sort Table's lists by a list
- *
  * @param  {List|Number} listOrIndex List used to sort, or index of list in the table
  *
  * @param  {Boolean} ascending (true by default)
@@ -230,7 +220,6 @@ Table.prototype.getListsSortedByList = function(listOrIndex, ascending) { //depr
 
 /**
  * Transposes Table.
- *
  * @param firstListAsHeaders
  * @return {Table}
  */
@@ -267,7 +256,6 @@ Table.prototype.getTransposed = function(firstListAsHeaders) {
 /**
  * Generates a string containing details about the current state
  * of the Table. Useful for outputing to the console for debugging.
- *
  * @param {Number} level If greater then zero, will indent to that number of spaces.
  * @return {String} Description String.
  */
@@ -386,8 +374,7 @@ Table.prototype.getReportHtml = function() {}; //TODO
 Table.prototype.getReportObject = function() {}; //TODO
 
 /**
- * Remove a Row from Table.
- *
+ * removes a row from the table.
  * @param {Number} index The row to remove.
  * @return {undefined}
  */
@@ -398,8 +385,7 @@ Table.prototype.removeRow = function(index) {
 };
 
 /**
- * Makes a copy of the Table.
- *
+ * makes a copy of the Table.
  * @return {Table} Copy of table.
  */
 Table.prototype.clone = function() {
@@ -424,6 +410,9 @@ Table.prototype.destroy = function() {
 /**
  * Prints contents of Table to console.log.
  */
+
+
+
 Table.prototype.print = function() {
   console.log("///////////// <" + this.name + "////////////////////////////////////////////////////");
   console.log(TableEncodings.TableToCSV(this, null, true));
