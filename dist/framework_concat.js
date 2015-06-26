@@ -1290,38 +1290,42 @@ List.prototype.getReport = function(level) { //TODO:complete
   switch(this.type) {
     case "NumberList":
       var min = this.getMin();
-    var max = this.getMax();
-    var average = (min + max) * 0.5;
-    text += ident + "min: " + min;
-    text += ident + "max: " + max;
-    text += ident + "average: " + average;
-    if(length < 101) {
-      text += ident + "numbers: " + this.join(", ");
-    }
-    break;
-    case "StringList":
-      case "List":
+      var max = this.getMax();
+      this.min = min;
+      this.max = max;
+      var average = (min + max) * 0.5;
+      this.average = average;
+      text += ident + "min: " + min;
+      text += ident + "max: " + max;
+      text += ident + "average: " + average;
+      if(length < 101) {
+        text += ident + "numbers: " + this.join(", ");
+      }
+      break;
+      case "StringList":
+    case "List":
       var freqTable = this.getElementsRepetitionCount(true);
-    text += ident + "number of different elements: " + freqTable[0].length;
-    if(freqTable[0].length < 10) {
-      text += ident + "elements frequency:";
-    } else {
-      text += ident + "some elements frequency:";
-    }
+      this._freqTable = freqTable;
+      text += ident + "number of different elements: " + freqTable[0].length;
+      if(freqTable[0].length < 10) {
+        text += ident + "elements frequency:";
+      } else {
+        text += ident + "some elements frequency:";
+      }
 
-    for(i = 0; freqTable[0][i] != null && i < 10; i++) {
-      text += ident + "  [" + String(freqTable[0][i]) + "]: " + freqTable[1][i];
-    }
+      for(i = 0; freqTable[0][i] != null && i < 10; i++) {
+        text += ident + "  [" + String(freqTable[0][i]) + "]: " + freqTable[1][i];
+      }
 
-    var joined;
-    if(this.type == "List") {
-      joined = this.join("], [");
-    } else {
-      joined = this.toStringList().join("], [");
-    }
+      var joined;
+      if(this.type == "List") {
+        joined = this.join("], [");
+      } else {
+        joined = this.toStringList().join("], [");
+      }
 
-    if(joined.length < 2000) text += ident + "strings: [" + joined + "]";
-    break;
+      if(joined.length < 2000) text += ident + "strings: [" + joined + "]";
+      break;
 
   }
 
@@ -1784,7 +1788,7 @@ NumberList.prototype.getStandardDeviation = function() {
 };
 
 /**
- * Calculates the median of the NumberList.
+ * Calculates the median of the numberList
  *
  * @return {Number}
  * tags:statistics
@@ -3131,7 +3135,7 @@ Table.prototype.getReport = function(level) {
 
   text += ident + "--";
   names.forEach(function(name, i){
-    text += ident + name + " ["+TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"]";
+    text += ident + i + ": " + name + " ["+TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"]";
   });
   text += ident + "--";
 
@@ -3154,6 +3158,50 @@ Table.prototype.getReport = function(level) {
       } catch(err){
         text += ident + "[!] something wrong with list " + err;
       }
+    }
+  }
+
+  if(this.length == 2) {
+    text += ident + ident + "--------lists comparisons---------";
+    if(this[0].type=="NumberList" && this[1].type=="NumberList"){
+      text += ident + "covariance:" + NumberListOperators.covariance(this[0], this[1]);
+      text += ident + "Pearson product moment correlation: " + NumberListOperators.pearsonProductMomentCorrelation(this[0], this[1]);
+    } else if(this[0].type!="NumberList" && this[1].type!="NumberList"){
+      var nUnion = ListOperators.union(this[0], this[1]).length;
+      text += ident + "union size: " + nUnion;
+      var intersected = ListOperators.intersection(this[0], this[1]);
+      var nIntersection = intersected.length;
+      text += ident + "intersection size: " + nIntersection;
+
+      if(this[0]._freqTable[0].length == nUnion && this[1]._freqTable[0].length == nUnion){
+        text += ident + "[!] both lists contain the same non repeated elements";
+      } else {
+        if(this[0]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in first list also occur on second list";
+        if(this[1]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in second list also occur on first list";
+      }
+      text += ident + "Jaccard distance: " + (1 - (nIntersection/nUnion));
+    }
+    //check for 1-1 matches, number of pairs, categorical, sub-categorical
+    var subCategoryCase = ListOperators.subCategoricalAnalysis(this[0], this[1]);
+
+    switch(subCategoryCase){
+      case 0:
+        text += ident + "no categorical relation found among lists";
+        break;
+      case 1:
+        text += ident + "[!] both lists are categorical identical";
+        break;
+      case 2:
+        text += ident + "[!] first list is subcategorical to second list";
+        break;
+      case 3:
+        text += ident + "[!] second list is subcategorical to first list";
+        break;
+    }
+
+    if(subCategoryCase!=1){
+      text += ident + "information gain when segmenting first list by the second: "+ListOperators.getInformationGain(this[0], this[1]);
+      text += ident + "information gain when segmenting second list by the first: "+ListOperators.getInformationGain(this[1], this[0]);
     }
   }
 
@@ -10167,41 +10215,53 @@ ListOperators.unionLists = function(x, y) {
 
 /**
  * creates a List that contains the intersection of two List (elements present in BOTH lists)
- * @param  {List} list A
- * @param  {List} list B
+ * @param  {List} list0 list A
+ * @param  {List} list1 list B
  * 
- * @return {List} the intersection of both NumberLists
+ * @return {List} intersection of both NumberLists
  * tags:
  */
-ListOperators.intersectLists = function(a, b) {//TODO: change name to intersection
-  // Borrowed from here: http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
-  var result;
-  if(a.type != b.type || (a.type != "StringList" && a.type != "NumberList"))
-  {
-    result = ListOperators.getCommonElements(a, b);
-  }
-  else
-  {
-    result = a.type == "StringList" ? new StringList() : new NumberList();
-    a = a.slice();
-    b = b.slice();
-    while(a.length > 0 && b.length > 0)
-    {
-      if(a[0] < b[0]) {
-        a.shift();
-      }
-      else if(a[0] > b[0]) {
-        b.shift();
-      }
-      else /* they're equal */
-      {
-        result.push(a.shift());
-        b.shift();
-      }
+ListOperators.intersection = function(list0, list1) {
+  if(list0==null || list1==null) return;
+
+  var element;
+  var dictionary = {};
+  var dictionaryIntersected = {};
+  var intersection = new List();
+
+  list0.forEach(function(element){
+    dictionary[element] = true;
+  });
+  list1.forEach(function(element){
+    if(dictionary[element] && dictionaryIntersected[element]==null){
+      dictionaryIntersected[element]=true;
+      intersection.push(element);
     }
-  }
-  return result;
+  });
+  return intersection.getImproved();
 };
+
+/**
+ * calculates Jaccard index |list0 ∩ list1|/|list0 ∪ list1| see: https://en.wikipedia.org/wiki/Jaccard_index
+ * @param  {List} list0
+ * @param  {List} list1
+ * @return {Number}
+ * tags:
+ */
+ListOperators.jaccardIndex = function(list0, list1) {//TODO: see if this can be more efficient, maybe one idctionar for doing union and interstection at the same time
+  return ListOperators.intersection(list0, list1).length/ListOperators.unionLists(list0, list1).length;
+}
+
+/**
+ * calculates Jaccard distance 1 - |list0 ∩ list1|/|list0 ∪ list1| see: https://en.wikipedia.org/wiki/Jaccard_index
+ * @param  {List} list0
+ * @param  {List} list1
+ * @return {Number}
+ * tags:
+ */
+ListOperators.jaccardDistance = function(list0, list1) {
+  return 1 - ListOperators.jaccardIndex(list0, list1);
+}
 
 /**
  * builds a dictionary that matches an element of a List with all its indexes on the List (indexesDictionary[element] --> numberList of indexes of element on list)
@@ -10249,7 +10309,7 @@ ListOperators.getIndexesTable = function(list){
  * @param  {List} aggregatorList aggregator list that typically contains several repeated elements
  * @param  {List} toAggregateList list of elements that will be aggregated
  * 
- * @param  {Number} mode aggregation modes:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:enlist (creates a list of elements)<br>7:last element<br>8:most common element<br>9:random element<br>10:indexes
+ * @param  {Number} mode aggregation modes:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes<br>12:count non repeated elements<br>13:enlist non repeated elements
  * @param  {Table} indexesTable optional already calculated table of indexes of elements on the aggregator list (if didn't provided, the method calculates it)
  * @return {Table} contains a list with non repeated elements on the first list, and the aggregated elements on a second list
  * tags:
@@ -10260,7 +10320,7 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
 
   if(indexesTable==null) indexesTable = ListOperators.getIndexesTable(aggregatorList);
 
-  if(mode==10) return indexesTable;
+  if(mode==11) return indexesTable;
 
   table[0] = indexesTable[0];
 
@@ -10295,7 +10355,7 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
         indexes.forEach(function(index){
           sum+=toAggregateList[index];
         });
-        if(mode==2) sum/=indexes.length;
+        if(mode==3) sum/=indexes.length;
         table[1].push(sum);
       });
       return table;
@@ -10310,7 +10370,7 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
         table[1].push(min);
       });
       return table;
-    case 5://average
+    case 5://max
       var max;
       table[1] = new NumberList();
       indexesTable[1].forEach(function(indexes){
@@ -10321,7 +10381,19 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
         table[1].push(max);
       });
       return table;
-    case 6://enlist
+    case 6://standard deviation
+      var average;
+      table = ListOperators.aggregateList(aggregatorList, toAggregateList, 3, indexesTable);
+      indexesTable[1].forEach(function(indexes, i){
+        sum = 0;
+        average = table[1][i];
+        indexes.forEach(function(index){
+          sum += Math.pow(toAggregateList[index] - average, 2);
+        });
+        table[1][i] = Math.sqrt(sum/indexes.length);
+      });
+      return table;
+    case 7://enlist
       table[1] = new Table();
       var list;
       indexesTable[1].forEach(function(indexes){
@@ -10333,7 +10405,7 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
         list = list.getImproved();
       });
       return table.getImproved();
-    case 7://last element
+    case 8://last element
       table[1] = new List();
       var list;
       indexesTable[1].forEach(function(indexes){
@@ -10341,7 +10413,7 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
       });
       table[1] = table[1].getImproved();
       return table;
-    case 8://most common
+    case 9://most common
       table[1] = new List();
       var elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 5, indexesTable);
       elementsTable[1].forEach(function(elements){
@@ -10349,11 +10421,28 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
       });
       table[1] = table[1].getImproved();
       return table;
-    case 9://random
+    case 10://random
       table[1] = new List();
       var list;
       indexesTable[1].forEach(function(indexes){
         table[1].push( toAggregateList[indexes[ Math.floor(Math.random()*indexes.length) ]] );
+      });
+      table[1] = table[1].getImproved();
+      return table;
+    case 11://indexes (returned previosuly)
+      break;
+    case 12://count non repeated
+      table[1] = new NumberList();
+      var elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
+      elementsTable[1].forEach(function(elements){
+        table[1].push(elements.getWithoutRepetitions().length);
+      });
+      return table;
+    case 13://enlist non repeated
+      table[1] = new List();
+      var elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
+      elementsTable[1].forEach(function(elements){
+        table[1].push(elements.getWithoutRepetitions());
       });
       table[1] = table[1].getImproved();
       return table;
@@ -10362,7 +10451,49 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
   return null;
 }
 
+/**
+ * analyses wether two lists are categorical identical, one is subcategorical to the other, or there's no relation
+ * @param  {List} list0
+ * @param  {List} list1
+ * @return {Number} 0:no relation, 1:categorical identical, 2:list0 subcategorical to list1, 3:list1 subcategorical to list0
+ * tags:
+ */
+ListOperators.subCategoricalAnalysis = function(list0, list1){
+  if(list0==null || list1==null) return;
 
+  var dictionary = {};
+  var element, projection;
+  var i;
+  var list0SubCategorical = true;
+  for(i=0; list0[i]!=null; i++){
+    element = list0[i];
+    projection = dictionary[element];
+    if(projection==null){
+      dictionary[element] = list1[i]
+    } else if(projection!=list1[i]){
+      list0SubCategorical = false;
+      break;
+    }
+  };
+  
+  dictionary = {};
+  var list1SubCategorical = true;
+  for(i=0; list1[i]!=null; i++){
+    element = list1[i];
+    projection = dictionary[element];
+    if(projection==null){
+      dictionary[element] = list0[i]
+    } else if(projection!=list0[i]){
+      list1SubCategorical = false;
+      break;
+    }
+  };
+
+  if(list1SubCategorical && list0SubCategorical) return 1;
+  if(list0SubCategorical) return 2;
+  if(list1SubCategorical) return 3;
+  return 0;
+}
 
 /**
  * calculates de entropy of a list, properties _mostRepresentedValue and _biggestProbability are added to the list
@@ -10408,7 +10539,7 @@ ListOperators.getListEntropy = function(list, valueFollowing) {
 
 
 /**
- * measures how much a feature decreases entropy when segmenting by its values a supervised variable
+ * measures how much a feature decreases entropy when segmenting by its values by a supervised variable
  * @param  {List} feature
  * @param  {List} supervised
  * @return {Number}
@@ -10793,7 +10924,7 @@ TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, val
     for(j = 0; j < cellContents.length; j++) {
       table[j] = table[j] == null ? new List() : table[j];
       if(_firstRowIsHeader && i == 1) {
-        table[j].name = headerContent[j] == null ? "" : TableEncodings._removeQuotes(headerContent[j]);
+        table[j].name = ( headerContent[j] == null ? "" : TableEncodings._removeQuotes(headerContent[j]) ).trim();
       }
       var actualIndex = _firstRowIsHeader ? (i - 1) : i;
 
@@ -11061,7 +11192,7 @@ TableOperators.sortListsByNumberList = function(table, numberList, descending) {
  * @param  {Table} table containing the aggregation list and lists to be aggregated
  * @param  {Number} indexAggregationList index of the aggregation list on the table
  * @param  {Numberlist} indexesListsToAggregate indexs of the lists to be aggregated; typically it also contains the index of the aggregation list at the beginning, to be aggregated using mode 0 (first element) thus resulting as the list of non repeated elements
- * @param  {NumberList} modes list of modes of aggregation, these are the options:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:enlist (creates a list of elements)<br>7:last element<br>8:most common element<br>9:random element<br>10:indexes
+ * @param  {NumberList} modes list of modes of aggregation, these are the options:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes<br>12:count non repeated elements<br>13:enlist non repeated elements
  * @return {Table} aggragated table
  * tags:
  */
@@ -11083,6 +11214,199 @@ TableOperators.aggregateTable = function(table, indexAggregationList, indexesLis
 
   return newTable.getImproved();
 }
+
+/**
+ * builds a pivot table
+ * @param  {table} table
+ * @param  {Number} indexFirstAggregationList index of first list
+ * @param  {Number} indexSecondAggregationList index of second list
+ * @param  {Number} indexListToAggregate index of list to be aggregated
+ * @param  {Number} aggregationMode aggregation mode:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>------not yet deployed:<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes
+ * @param {Object} nullValue value for null cases in non-numerical aggregation
+ * 
+ * @param  {Number} resultMode result mode:<br>0:classic pivot, a table of aggregations with first aggregation list elements without repetitions in the first list, and second aggregation elements as headers of the aggregation lists<br>1:two lists for combinations of first aggregated list and second aggregated list, and a third list for aggregated values(default)
+ * @return {Table}
+ * tags:
+ */
+TableOperators.pivotTable = function(table, indexFirstAggregationList, indexSecondAggregationList, indexListToAggregate, aggregationMode, resultMode, nullValue){
+  if(table==null || !table.length || indexFirstAggregationList==null || indexSecondAggregationList==null || indexListToAggregate==null || aggregationMode==null) return;
+
+  resultMode = resultMode||0;
+  nullValue = nullValue==null?"":nullValue;
+
+  var element0, element1;
+  var coordinate, indexes;
+  var listToAggregate = table[indexListToAggregate];
+
+  var newTable = new Table();
+  var sum;
+  var i, j, index;
+
+  if(resultMode==1){//two lists of elements and a list of aggregation value
+    var indexesDictionary = {};
+    var elementsDictionary = {};
+    
+    table[indexFirstAggregationList].forEach(function(element0, i){
+      element1 = table[indexSecondAggregationList][i];
+      coordinate = String(element0)+"∞"+String(element1);
+      if(indexesDictionary[coordinate]==null){
+        indexesDictionary[coordinate]=new NumberList();
+        elementsDictionary[coordinate]=new List();
+      }
+      indexesDictionary[coordinate].push(i);
+      elementsDictionary[coordinate].push(listToAggregate[i]);
+    });
+
+    newTable[0] = new List();
+    newTable[1] = new List();
+    switch(aggregationMode){
+      case 0://first element
+        newTable[2] = new List();
+        break;
+      case 1://count
+      case 2://sum
+      case 3://average
+        newTable[2] = new NumberList();
+        break;
+    }
+    
+
+    for(coordinate in indexesDictionary) {
+      indexes = indexesDictionary[coordinate];
+      newTable[0].push(table[indexFirstAggregationList][indexes[0]]);
+      newTable[1].push(table[indexSecondAggregationList][indexes[0]]);
+      
+      switch(aggregationMode){
+        case 0://first element    
+          newTable[2].push(listToAggregate[indexes[0]]);
+          break;
+        case 1://count
+          newTable[2].push(indexes.length);
+          break;
+        case 2://sum
+        case 3://average
+          sum = 0;
+          indexes.forEach(function(index){
+            sum+=listToAggregate[index];
+          });
+          if(aggregationMode==3) sum/=indexes.length;
+          newTable[2].push(sum);
+          break;
+      }
+    }
+
+    newTable[0] = newTable[0].getImproved();
+    newTable[1] = newTable[1].getImproved();
+
+    switch(aggregationMode){
+      case 0://first element
+        newTable[2] = newTable[2].getImproved();
+        break;
+    }
+
+    return newTable;
+  }
+
+
+  ////////////////////////resultMode==0, a table whose first list is the first aggregation list, and each i+i list is the aggregations with elements for the second aggregation list
+  
+  newTable[0] = new List();
+
+  var elementsPositions0 = {};
+  var elementsPositions1 = {};
+
+  var x, y;
+  var element;
+  
+  table[indexFirstAggregationList].forEach(function(element0, i){
+    element1 = table[indexSecondAggregationList][i];
+    element = listToAggregate[i];
+
+    y = elementsPositions0[String(element0)];
+    if(y==null){
+      newTable[0].push(element0);
+      y = newTable[0].length-1;
+      elementsPositions0[String(element0)] = y;
+    }
+
+    x = elementsPositions1[String(element1)];
+    if(x==null){
+      switch(aggregationMode){
+        case 0:
+          newList = new List();
+          break;
+        case 1:
+        case 2:
+        case 3:
+          newList = new NumberList();
+          break;
+      }
+      newTable.push(newList);
+      newList.name = String(element1);
+      x = newTable.length-1;
+      elementsPositions1[String(element1)] = x;
+    }
+
+    switch(aggregationMode){
+      case 0://first element    
+        if(newTable[x][y]==null) newTable[x][y]=element;
+        break;
+      case 1://count
+        if(newTable[x][y]==null) newTable[x][y]=0;
+        newTable[x][y]++;
+        break;
+      case 2://sum
+        if(newTable[x][y]==null) newTable[x][y]=0;
+        newTable[x][y]+=element;
+        break;
+      case 3://average
+        if(newTable[x][y]==null) newTable[x][y]=[0,0];
+        newTable[x][y][0]+=element;
+        newTable[x][y][1]++;
+        break;
+    }
+
+  });
+
+  switch(aggregationMode){
+    case 0://first element
+      for(i=1; i<newTable.length; i++){
+        if(newTable[i]==null) newTable[i]=new List();
+        
+        newTable[0].forEach(function(val, j){
+          if(newTable[i][j]==null) newTable[i][j]=nullValue;
+        });
+
+        newTable[i] = newTable[i].getImproved();
+      }
+      break;
+    case 1://count
+    case 2://sum
+      for(i=1; i<newTable.length; i++){
+        if(newTable[i]==null) newTable[i]=new NumberList();
+        newTable[0].forEach(function(val, j){
+          if(newTable[i][j]==null) newTable[i][j]=0;
+        });
+      }
+      break;
+    case 3://average
+      for(i=1; i<newTable.length; i++){
+        if(newTable[i]==null) newTable[i]=new NumberList();
+        newTable[0].forEach(function(val, j){
+          if(newTable[i][j]==null){
+            newTable[i][j]=0;
+          } else {
+            newTable[i][j]=newTable[i][j][0]/newTable[i][j][1];
+          }
+        });
+      }
+      break;
+  }
+
+  return newTable;
+}
+
+
 
 /**
  * aggregates a table
@@ -11140,7 +11464,7 @@ TableOperators.aggregateTableOld = function(table, nList, mode) {
       break;
     case 2: //averages values in numberLists
       var nRepetitionsList = table[nList].getElementsRepetitionCount(false);
-      newTable = TableOperators.aggregateTable(table, nList, 1);
+      newTable = TableOperators.aggregateTableOld(table, nList, 1);
 
       for(j = 0; newTable[j] != null; j++) {
         if(j != nList && newTable[j].type == 'NumberList') {
@@ -11451,7 +11775,6 @@ TableOperators.buildDecisionTree = function(variablesTable, supervised, supervis
 
 
 TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervised, level, min_entropy, min_size_node, min_info_gain, parent, value, supervisedValue, indexes, generatePattern) {
-
   var entropy = ListOperators.getListEntropy(supervised, supervisedValue);
 
 
@@ -11467,18 +11790,12 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
     });
   }
 
-  //c.l('informationGains', informationGains);
-
-
 
   var subDivide = entropy >= min_entropy && maxIg > min_info_gain && supervised.length >= min_size_node;
 
   var id = tree.nodeList.getNewId();
   var name = (value == null ? '' : value + ':') + (subDivide ? variablesTable[iBestFeature].name : 'P=' + supervised._biggestProbability + '(' + supervised._mostRepresentedValue + ')');
   var node = new Node(id, name);
-
-
-
 
   tree.addNodeToTree(node, parent);
 
@@ -11501,31 +11818,7 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
   node.valueFollowingProbability = supervised._P_valueFollowing;
   node.lift = node.valueFollowingProbability / tree.nodeList[0].valueFollowingProbability; //Math.log(node.valueFollowingProbability/tree.nodeList[0].valueFollowingProbability)/Math.log(2);
 
-
-  if(level < 2) {
-    c.l('\nlevel', level);
-    c.l('supervised.countElement(supervisedValue)', supervised.countElement(supervisedValue));
-    c.l('entropy', entropy);
-    c.l('value', value);
-    c.l('name', name);
-    c.l('supervised.name', supervised.name);
-    c.l('supervised.length', supervised.length);
-    c.l('supervisedValue', supervisedValue);
-    c.l('supervised._biggestProbability, supervised._P_valueFollowing', supervised._biggestProbability, supervised._P_valueFollowing);
-    c.l('node.valueFollowingProbability (=supervised._P_valueFollowing):', node.valueFollowingProbability);
-    c.l('tree.nodeList[0].valueFollowingProbability', tree.nodeList[0].valueFollowingProbability);
-    c.l('node.biggestProbability (=_biggestProbability):', node.biggestProbability);
-    c.l('node.mostRepresentedValue:', node.mostRepresentedValue);
-    c.l('node.mostRepresentedValue==supervisedValue', node.mostRepresentedValue == supervisedValue);
-  }
-
   node._color = TableOperators._decisionTreeColorScale(1 - node.valueFollowingProbability);
-
-  // node._color = node.mostRepresentedValue==supervisedValue?
-  // 	TableOperators._decisionTreeColorScale(1-node.biggestProbability)
-  // 	:
-  // 	TableOperators._decisionTreeColorScale(node.biggestProbability);
-
 
   if(generatePattern) {
     var newCanvas = document.createElement("canvas");
@@ -11541,12 +11834,10 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
 				[Math.floor((1-node.biggestProbability)*node.weight), Math.floor(node.biggestProbability*node.weight)]
     );
 
-
     var img = new Image();
     img.src = newCanvas.toDataURL();
     node.pattern = newContext.createPattern(img, "repeat");
   }
-
 
 
   if(!subDivide) {
@@ -11575,6 +11866,7 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
 
   return node;
 };
+
 TableOperators._decisionTreeColorScale = function(value) {
   var rr = value < 0.5 ? Math.floor(510 * value) : 255;
   var gg = value < 0.5 ? Math.floor(510 * value) : Math.floor(510 * (1 - value));
@@ -11582,8 +11874,8 @@ TableOperators._decisionTreeColorScale = function(value) {
 
   return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
 };
-TableOperators._decisionTreeGenerateColorsMixture = function(ctxt, width, height, colors, weights) {
-  //var imageData=context.createImageData(width, height);
+
+TableOperators._decisionTreeGenerateColorsMixture = function(ctxt, width, height, colors, weights){
   var x, y, i; //, rgb;
   var allColors = ListGenerators.createListWithSameElement(weights[0], colors[0]);
 
@@ -11598,8 +11890,6 @@ TableOperators._decisionTreeGenerateColorsMixture = function(ctxt, width, height
       ctxt.fillRect(x, y, 1, 1);
     }
   }
-
-  //return imageData;
 };
 /**
  * @classdesc Provides a set of tools that work with Interval Lists.
