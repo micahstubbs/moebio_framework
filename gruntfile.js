@@ -42,6 +42,7 @@ module.exports = function (grunt) {
 
   grunt.loadNpmTasks('grunt-esperanto');
   grunt.loadNpmTasks('grunt-shell');
+
   grunt.loadNpmTasks('grunt-string-replace');
   grunt.loadNpmTasks('grunt-release');
 
@@ -135,8 +136,32 @@ module.exports = function (grunt) {
 
     release: {
       options: {
+        bump: false,
         npm: false,
-        afterBump: ['string-replace:version', 'default']
+        afterBump: ['string-replace:version']
+        beforeRelease: ['default', 'gitadd:build', 'gitcommit:build']
+      }
+    },
+
+    gitadd: {
+      build: {
+        options: {
+          force: false
+        },
+        files: {
+          src: ['src/Version.js', 'dest/*']
+        }
+      }
+    },
+
+    gitcommit: {
+      build: {
+        options: {
+          message: 'updating build to v' + pkg.version,
+        },
+        files: {
+          src: ['src/Version.js', 'dest/*']
+        }
       }
     },
 
@@ -274,5 +299,7 @@ module.exports = function (grunt) {
   // Run tests interactively
   //
   grunt.registerTask('test', [ 'karma' ]);
+
+  grunt.registerTask('build_commit', ['default', 'gitadd:build', 'gitcommit:build']);
 
 };

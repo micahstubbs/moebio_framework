@@ -50,7 +50,7 @@ Then the default Grunt task will concatenate the source files into the `dist` di
 grunt
 ```
 
-### Docs Build
+### Building the Docs
 
 The [JSDoc](http://usejsdoc.org/) format is used to annotate the source code and the JSDoc command line tool is used to generate the static API documentation used on the site.
 
@@ -68,6 +68,29 @@ docs/build
 
 JSDoc templates can be found in `docs/moebio-jsdoc` and are directly inspired by the documentation of [TurfJS](http://turfjs.org/).
 
-### Site Build
+### Building the Site
 
-Build the Moebio Framework is managed in the [Moebio Framework Site](https://github.com/bocoup/moebio_framework_site) repo.
+The website and the build process for managing it are housed in the [Moebio Framework Site Repository](https://github.com/bocoup/moebio_framework_site). Check out the details there.
+
+### Releasing the Framework
+
+The [grunt-release](https://github.com/geddski/grunt-release) tool is used for building releases of the framework. Additionally, [grunt-git]() is used to commit build files as part of the release process. Briefly, releasing entails the following procedure:
+
+ - bump the version number in `package.json`.
+ - bump version number in `src/Version.js`
+ - rebuild distribution files in `dest/`
+ - add and commit changed `src/Version.js` and `dest/` files.
+ - stage the package.json file's change.
+ - commit that change with a message like "release 0.6.22".
+ - create a new git tag for the release.
+ - push the changes out to GitHub.
+ - also push the new tag out to GitHub.
+ - create a .zip release on GitHub.
+
+All this can be done with
+
+```bash
+grunt release
+```
+
+for patch builds. Major and minor releases can also be automated using `grunt release:major` and `grunt release:minor`, respectively.
