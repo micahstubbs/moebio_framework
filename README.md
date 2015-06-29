@@ -78,8 +78,8 @@ The [grunt-release](https://github.com/geddski/grunt-release) tool is used for b
 
  - bump the version number in `package.json`.
  - bump version number in `src/Version.js`
- - rebuild distribution files in `dest/`
- - add and commit changed `src/Version.js` and `dest/` files.
+ - rebuild distribution files in `dist/`
+ - add and commit changed `src/Version.js` and `dist/` files.
  - stage the package.json file's change.
  - commit that change with a message like "release 0.6.22".
  - create a new git tag for the release.
