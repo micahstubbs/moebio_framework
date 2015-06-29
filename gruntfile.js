@@ -43,6 +43,9 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-esperanto');
   grunt.loadNpmTasks('grunt-shell');
 
+  grunt.loadNpmTasks('grunt-string-replace');
+  grunt.loadNpmTasks('grunt-release');
+
   grunt.initConfig({
 
     // Transpile source from es6 module syntax to AMD.
@@ -114,6 +117,52 @@ module.exports = function (grunt) {
         files: buildFileList().concat('gruntfile.js'),
         tasks: ['shell:esperanto_bundle', 'wrap:dist']
       },
+    },
+
+    'string-replace': {
+      version: {
+        files: {
+          'src/Version.js' : 'src/Version.js'
+        },
+        options: {
+          replacements: [{
+            pattern: /version\s*=\s*['"](\d+\.\d+\.\d+)['"]/g,
+            replacement: 'version = "<%= pkg.version %>"'
+          }]
+        }
+      }
+    },
+    pkg: grunt.file.readJSON('package.json'),
+
+    release: {
+      options: {
+        bump: false,
+        npm: false,
+        afterBump: ['string-replace:version']
+        beforeRelease: ['default', 'gitadd:build', 'gitcommit:build']
+      }
+    },
+
+    gitadd: {
+      build: {
+        options: {
+          force: false
+        },
+        files: {
+          src: ['src/Version.js', 'dest/*']
+        }
+      }
+    },
+
+    gitcommit: {
+      build: {
+        options: {
+          message: 'updating build to v' + pkg.version,
+        },
+        files: {
+          src: ['src/Version.js', 'dest/*']
+        }
+      }
     },
 
     jsdoc : {
@@ -250,5 +299,7 @@ module.exports = function (grunt) {
   // Run tests interactively
   //
   grunt.registerTask('test', [ 'karma' ]);
+
+  grunt.registerTask('build_commit', ['default', 'gitadd:build', 'gitcommit:build']);
 
 };

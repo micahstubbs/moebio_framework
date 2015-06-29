@@ -1,3 +1,4 @@
+import { version } from "src/Version";
 import Point from 'src/dataStructures/geometry/Point';
 import ColorOperators from "src/operators/graphic/ColorOperators";
 import MD5 from "src/tools/utils/strings/MD5";
@@ -346,7 +347,7 @@ export var dataModelsInfo = [
     level:"0",
     inherits:null,
     color:"#802046"
-  },  
+  },
   {
     type:"ImageList",
     short:"iL",
@@ -363,7 +364,7 @@ export var dataModelsInfo = [
     level:"0",
     inherits:null,
     color:"#FAA542"
-  },  
+  },
   {
     type:"Relation",
     short:"r",
@@ -530,7 +531,7 @@ window.addEventListener('load', function(){
     window.init();
   }
 
-  c.l('Moebio Framework v2.260 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
+  c.l('Moebio Framework v' + version + ' | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
 
 }, false);
 
