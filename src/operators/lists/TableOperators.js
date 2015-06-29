@@ -188,9 +188,9 @@ TableOperators.sortListsByNumberList = function(table, numberList, descending) {
  * aggregates lists from a table, using one of the list of the table as the aggregation list, and based on different modes for each list
  * @param  {Table} table containing the aggregation list and lists to be aggregated
  * @param  {Number} indexAggregationList index of the aggregation list on the table
- * @param  {Numberlist} indexesListsToAggregate indexs of the lists to be aggregated; typically it also contains the index of the aggregation list at the beginning, to be aggregated using mode 0 (first element) thus resulting as the list of non repeated elements
+ * @param  {NumberList} indexesListsToAggregate indexs of the lists to be aggregated; typically it also contains the index of the aggregation list at the beginning, to be aggregated using mode 0 (first element) thus resulting as the list of non repeated elements
  * @param  {NumberList} modes list of modes of aggregation, these are the options:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes<br>12:count non repeated elements<br>13:enlist non repeated elements
- * @return {Table} aggragated table
+ * @return {Table} aggregated table
  * tags:
  */
 TableOperators.aggregateTable = function(table, indexAggregationList, indexesListsToAggregate, modes){
@@ -680,7 +680,7 @@ TableOperators.completeTable = function(table, nRows, value) {
 
 /**
  * filters a Table keeping the NumberLists
- * @param  {Table} table to filter
+ * @param  {Table} table to filter<
  * @return {NumberTable}
  * tags:filter
  */

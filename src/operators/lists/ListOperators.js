@@ -743,7 +743,7 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
 }
 
 /**
- * analyses wether two lists are categorical identical, one is subcategorical to the other, or there's no relation
+ * Analyses wether two lists are categorical identical, one is subcategorical to the other, or there's no relation
  * @param  {List} list0
  * @param  {List} list1
  * @return {Number} 0:no relation, 1:categorical identical, 2:list0 subcategorical to list1, 3:list1 subcategorical to list0

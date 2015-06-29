@@ -657,10 +657,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Improves a List by its refining type.
-   *
-   * @return {List} Specific sub-class of List
-   * based on the contents of the List.
+   * improves a list by its refining type (if the List contains numbers it will return a NumberList)
+   * @return {List} Specific sub-class of List, based on the contents of the List.
    * tags:
    */
   List__List.prototype.getImproved = function() {
@@ -765,7 +763,6 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * Compares elements with another list.
-   *
    * @param  {List} list List to compare.
    * @return {Boolean} true if all elements are identical.
    * tags:
@@ -783,7 +780,6 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * Returns the number of elements of the list.
-   *
    * @return {Number} Length of the list.
    * tags:
    */
@@ -794,7 +790,6 @@ define('src/index', ['exports'], function (exports) {
   /**
    * In sub-classes, this function returns a NumberList of lengths.
    * Base function returns null.
-   *
    * @return {null}
    * tags:
    */
@@ -804,10 +799,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Returns the type of values contained in the List.
+   * returns the type of values contained in the List.
    * Uses typeOf to determine type. If multiple types,
    * returns an empty string.
-   *
    * @return {String} Type of element stored in the List.
    */
   List__List.prototype.getTypeOfElements = function() {
@@ -819,9 +813,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Returns a {@link StringList} with elemnts types
+   * returns a {@link StringList} with elemnts types
    * for all elements in the List.
-   *
    * @return {StringList} List of types for each element.
    * tags:
    */
@@ -835,8 +828,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   /**
-   * Converts the List into a string.
-   *
+   * converts the List into a string.
    * @return {String} String representation of the List.
    */
   List__List.prototype.toString = function() {
@@ -850,8 +842,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Returns a list of names (if any) of elements of the list.
-   *
+   * returns a list of names (if any) of elements of the list
    * @return {StringList}
    * tags:
    */
@@ -864,8 +855,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Reverses the list.
-   *
+   * reverses the list
    * @return {List} New List reveresed from original.
    * tags:sort
    */
@@ -878,8 +868,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Returns a sub-list, params could be: tw numbers, an interval or a NumberList.
-   *
+   * returns a sub-list, params could be: tw numbers, an interval or a NumberList.
    * @param {Number|Interval} argument0 number, interval (in this it will
    * include elements with initial and end indexes) or numberList
    * @param {Number} argument1 second index
@@ -930,8 +919,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Filters a list by picking elements of certain type.
-   *
+   * filters a list by picking elements of certain type.
    * @param  {String} type The type to include in the new List.
    * @return {List} A List only containing values from the original
    * List of the input type.
@@ -947,8 +935,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Returns all elements in indexes.
-   *
+   * returns all elements in indexes.
    * @param {NumberList} indexes
    * @return {List}
    * tags:filter
@@ -994,7 +981,6 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * getElementNumberOfOccurrences
-   *
    * @param {Object} element
    * @return {Number}
    */
@@ -1012,8 +998,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   /**
-   * Creates a copy of the List.
-   *
+   * creates a copy of the List
    * @return {List}
    */
   List__List.prototype.clone = function() {
@@ -1029,8 +1014,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Creates a new List without repeating elements.
-   *
+   * creates a new List without repeating elements.
    * @return {List}
    * tags:filter
    */
@@ -1061,8 +1045,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   /**
-   * Returns the number of occurrences of an element in a list.
-   *
+   * returns the number of occurrences of an element in a list.
    * @param  {Object} element The element to count
    * @return {Number}
    * tags:countt
@@ -1078,8 +1061,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Returns a NumberList of same size as list with number of occurrences for each element.
-   *
+   * returns a NumberList of same size as list with number of occurrences for each element.
    * @return {numberList}
    * tags:count
    */
@@ -1092,8 +1074,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Returns a table with a list of non repeated elements and a list with the numbers of occurrences for each one.
-   *
+   * returns a table with a list of non repeated elements and a list with the numbers of occurrences for each one.
    * @param  {Boolean} sortListsByOccurrences if true both lists in the table will be sorted by number of occurences (most frequent on top), true by default
    * @return {Table} Table containing a List of non-repeated elements and a NumberList of the frequency of each element.
    * tags:count
@@ -1134,8 +1115,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Checks if all values in the list are equal to one another.
-   *
+   * checks if all values in the list are equal to one another
    * @return {Boolean} Returns true if all values in the list are equal.
    */
   List__List.prototype.allElementsEqual = function() {
@@ -1164,7 +1144,6 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * returns the minimum value
-   *
    * @return {Number} minimum value in the list
    * tags:
    */
@@ -1180,7 +1159,6 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * returns the maximum value
-   *
    * @return {Number} maximum value in the list
    * tags:
    */
@@ -1226,8 +1204,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Creates a List with randomly selected elements.
-   *
+   * creates a List with randomly selected elements.
    * @param  {Number} n number of elements
    * @param  {Boolean} avoidRepetitions
    * @return {List}
@@ -1248,8 +1225,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   /**
-   * Returns true if the given element is in the List.
-   *
+   * returns true if the given element is in the List.
    * @param {Object} element Element to look for in the List.
    * @return {Boolean} True if given element is in the List.
    */
@@ -1262,8 +1238,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Returns the index position of the given element in the List.
-   *
+   * returns the index position of the given element in the List.
    * @param {Object} element Value to search for in the List.
    * @return {Number} Index of the given element in the List.
    * If element is not found, -1 is returned.
@@ -5374,6 +5349,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Node} node1 The destination of the relation.
    * @param {String} id The id of the relation.
    * @param {Number} weight A numerical weight associated with the relation (edge).
+   * 
    * @param {String} content Information associated with the relation.
    */
   Network.prototype.createRelation = function(node0, node1, id, weight, content) {
@@ -5490,7 +5466,17 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-
+  /**
+   * Clones the network
+   * 
+   * @param  {StringList} nodePropertiesNames list of preoperties names to be copied from old nodes into new nodes
+   * @param  {StringList} relationPropertiesNames
+   * 
+   * @param  {String} idsSubfix optional sufix to be added to ids
+   * @param  {String} namesSubfix optional sufix to be added to names
+   * @return {Networked} network with exact structure than original
+   * tags:
+   */
   Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames, idsSubfix, namesSubfix) {
     var newNetwork = new Network();
     var newNode, newRelation;
@@ -6857,7 +6843,6 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * Creates a new Table from an array
-   *
    * @param {Number[]} array
    * @return {Table}
    */
@@ -6896,7 +6881,6 @@ define('src/index', ['exports'], function (exports) {
    * Executes a given function on all the columns
    * in the Table, returning a new Table with the
    * resulting values.
-   *
    * @param {Function} func Function to apply to each
    * column in the table. Columns are {@link List|Lists}.
    * @return {Table} Table of values from applying function.
@@ -6916,7 +6900,6 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * Returns a {@link List} with all the elements of a row.
-   *
    * @param  {Number} index Index of the row to get.
    * @return {List}
    * tags:filter
@@ -6932,7 +6915,6 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * Returns the length a column of the Table.
-   *
    * @param  {Number} index The Column to return its length.
    * Defaults to 0.
    * @return {Number} Length of column at given index.
@@ -6944,7 +6926,6 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * Returns the lengths of all the columns of the Table.
-   *
    * @return {NumberList} Lengths of all columns in Table.
    */
   Table.prototype.getLengths = function() {
@@ -6957,7 +6938,6 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * Filters a Table by selecting a section of rows, elements with last index included.
-   *
    * @param  {Number} startIndex Index of first element in all lists of the table.
    * @param  {Number} endIndex Index of last elements in all lists of the table.
    * @return {Table}
@@ -6981,7 +6961,6 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * Filters the lists of the table by indexes.
-   *
    * @param  {NumberList} indexes
    * @return {Table}
    * tags:filter
@@ -7005,7 +6984,6 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * Returns a new Table with the row at the given index removed.
-   *
    * @param {Number} rowIndex Row to remove
    * @return {Table} New Table.
    */
@@ -7021,7 +6999,6 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * Returns a new Table with the rows listed in the given array removed.
-   *
    * @param {Number[]} rowsIndexes Array of row indecies to remove.
    * @return {undefined}
    */
@@ -7040,7 +7017,6 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * Sort Table's lists by a list
-   *
    * @param  {List|Number} listOrIndex List used to sort, or index of list in the table
    *
    * @param  {Boolean} ascending (true by default)
@@ -7061,7 +7037,6 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * Transposes Table.
-   *
    * @param firstListAsHeaders
    * @return {Table}
    */
@@ -7098,7 +7073,6 @@ define('src/index', ['exports'], function (exports) {
   /**
    * Generates a string containing details about the current state
    * of the Table. Useful for outputing to the console for debugging.
-   *
    * @param {Number} level If greater then zero, will indent to that number of spaces.
    * @return {String} Description String.
    */
@@ -7217,8 +7191,7 @@ define('src/index', ['exports'], function (exports) {
   Table.prototype.getReportObject = function() {}; //TODO
 
   /**
-   * Remove a Row from Table.
-   *
+   * removes a row from the table.
    * @param {Number} index The row to remove.
    * @return {undefined}
    */
@@ -7229,8 +7202,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Makes a copy of the Table.
-   *
+   * makes a copy of the Table.
    * @return {Table} Copy of table.
    */
   Table.prototype.clone = function() {
@@ -7255,6 +7227,9 @@ define('src/index', ['exports'], function (exports) {
   /**
    * Prints contents of Table to console.log.
    */
+
+
+
   Table.prototype.print = function() {
     console.log("///////////// <" + this.name + "////////////////////////////////////////////////////");
     console.log(TableEncodings.TableToCSV(this, null, true));
@@ -9001,9 +8976,9 @@ define('src/index', ['exports'], function (exports) {
    * aggregates lists from a table, using one of the list of the table as the aggregation list, and based on different modes for each list
    * @param  {Table} table containing the aggregation list and lists to be aggregated
    * @param  {Number} indexAggregationList index of the aggregation list on the table
-   * @param  {Numberlist} indexesListsToAggregate indexs of the lists to be aggregated; typically it also contains the index of the aggregation list at the beginning, to be aggregated using mode 0 (first element) thus resulting as the list of non repeated elements
+   * @param  {NumberList} indexesListsToAggregate indexs of the lists to be aggregated; typically it also contains the index of the aggregation list at the beginning, to be aggregated using mode 0 (first element) thus resulting as the list of non repeated elements
    * @param  {NumberList} modes list of modes of aggregation, these are the options:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes<br>12:count non repeated elements<br>13:enlist non repeated elements
-   * @return {Table} aggragated table
+   * @return {Table} aggregated table
    * tags:
    */
   TableOperators.aggregateTable = function(table, indexAggregationList, indexesListsToAggregate, modes){
@@ -9493,7 +9468,7 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * filters a Table keeping the NumberLists
-   * @param  {Table} table to filter
+   * @param  {Table} table to filter<
    * @return {NumberTable}
    * tags:filter
    */
@@ -10458,7 +10433,7 @@ define('src/index', ['exports'], function (exports) {
   }
 
   /**
-   * analyses wether two lists are categorical identical, one is subcategorical to the other, or there's no relation
+   * Analyses wether two lists are categorical identical, one is subcategorical to the other, or there's no relation
    * @param  {List} list0
    * @param  {List} list1
    * @return {Number} 0:no relation, 1:categorical identical, 2:list0 subcategorical to list1, 3:list1 subcategorical to list0

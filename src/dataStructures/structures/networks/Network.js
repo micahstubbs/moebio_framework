@@ -92,6 +92,7 @@ Network.prototype.getNodeWithId = function(id) {
  * @param {Node} node1 The destination of the relation.
  * @param {String} id The id of the relation.
  * @param {Number} weight A numerical weight associated with the relation (edge).
+ * 
  * @param {String} content Information associated with the relation.
  */
 Network.prototype.createRelation = function(node0, node1, id, weight, content) {
@@ -208,7 +209,17 @@ Network.prototype.removeIsolatedNodes = function(minDegree) {
 };
 
 
-
+/**
+ * Clones the network
+ * 
+ * @param  {StringList} nodePropertiesNames list of preoperties names to be copied from old nodes into new nodes
+ * @param  {StringList} relationPropertiesNames
+ * 
+ * @param  {String} idsSubfix optional sufix to be added to ids
+ * @param  {String} namesSubfix optional sufix to be added to names
+ * @return {Networked} network with exact structure than original
+ * tags:
+ */
 Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames, idsSubfix, namesSubfix) {
   var newNetwork = new Network();
   var newNode, newRelation;
