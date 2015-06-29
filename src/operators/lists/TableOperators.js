@@ -201,12 +201,15 @@ TableOperators.aggregateTable = function(table, indexAggregationList, indexesLis
   var aggregatorList = table[indexAggregationList];
   var indexesTable = ListOperators.getIndexesTable(aggregatorList);
   var newTable = new Table();
+  var newList;
   var toAggregateList;
   var i;
 
   indexesListsToAggregate.forEach(function(index, i){
     toAggregateList = table[index];
-    newTable.push( ListOperators.aggregateList(aggregatorList, toAggregateList, modes[i%modes.length], indexesTable)[1] );
+    newList = ListOperators.aggregateList(aggregatorList, toAggregateList, modes[i%modes.length], indexesTable)[1];
+    newList.name = toAggregateList.name;
+    newTable.push(newList);
   });
 
   return newTable.getImproved();

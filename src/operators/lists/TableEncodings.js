@@ -87,7 +87,6 @@ TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, val
       cellContent = cellContent == '' ? valueForNulls : cellContent;
 
       cellContent = String(cellContent);
-      c.l('>>>cellContent:['+cellContent+']');
 
       numberCandidate = Number(cellContent.replace(',', '.'));
 

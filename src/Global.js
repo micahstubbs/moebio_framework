@@ -414,8 +414,6 @@ export var dataModelsInfo = [
   }
 ];
 
-console.log(dataModelsInfo);
-
 
 //global useful vars
 export var cW = 1; // canvas width
