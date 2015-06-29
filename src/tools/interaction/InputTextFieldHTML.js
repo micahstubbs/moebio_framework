@@ -64,11 +64,11 @@ function InputTextFieldHTML(configuration) {
   this.DOMtext.readOnly = this.readOnly;
 
   this.DOMtext.onfocus = function(e) {
-    e.target = this.parent;
+    //e.target = this.parent;
     this.parent._onFocus(this.parent);
   };
   this.DOMtext.onblur = function(e) {
-    e.target = this.parent;
+    //e.target = this.parent;
     this.parent._onBlur(this.parent);
   };
 

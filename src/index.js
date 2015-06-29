@@ -191,13 +191,13 @@ import MultiLoader from "src/tools/loaders/MultiLoader";
 export { Loader, LoadEvent, TextBox, MultiLoader };
 
 // tools/utils
-import Consoletools from "src/tools/utils/strings/Consoletools";
+import ConsoleTools from "src/tools/utils/strings/ConsoleTools";
 import FastHtml from "src/tools/utils/strings/FastHtml";
 import JSONUtils from "src/tools/utils/strings/JSONUtils";
 import MD5 from "src/tools/utils/strings/MD5";
 import StringUtils from "src/tools/utils/strings/StringUtils";
 import Navigator from "src/tools/utils/system/Navigator";
-export { Consoletools, FastHtml, JSONUtils, MD5, StringUtils, Navigator };
+export { ConsoleTools, FastHtml, JSONUtils, MD5, StringUtils, Navigator };
 
 import { typeOf, instantiate, getTextFromObject, instantiateWithSameType, isArray,
   evalJavaScriptFunction, argumentsToArray, TimeLogger } from "src/tools/utils/code/ClassUtils";

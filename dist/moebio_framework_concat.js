@@ -4645,8 +4645,8 @@ define('src/index', ['exports'], function (exports) {
   var HalfPi = 0.5*Math.PI;
   var radToGrad = 180/Math.PI;
   var gradToRad = Math.PI/180;
-  var c = console;
-  c.l = c.log; //use c.l instead of console.log
+  var src_Global__c = console;
+  src_Global__c.l = src_Global__c.log; //use c.l instead of console.log
 
   //private
   var _wheelActivated = false;
@@ -4718,7 +4718,7 @@ define('src/index', ['exports'], function (exports) {
       window.init();
     }
 
-    c.l('Moebio Framework v2.259 | user agent: '+src_Global__userAgent+' | user agent version: '+src_Global__userAgentVersion+' | canvas detected: '+(canvas!=null));
+    src_Global__c.l('Moebio Framework v2.259 | user agent: '+src_Global__userAgent+' | user agent version: '+src_Global__userAgentVersion+' | canvas detected: '+(canvas!=null));
 
   }, false);
 
@@ -4923,7 +4923,7 @@ define('src/index', ['exports'], function (exports) {
   }
 
   function cancelAllInteractions(){
-    c.log("cancelAllInteractions, _interactionCancelledFrame:", nF);
+    src_Global__c.log("cancelAllInteractions, _interactionCancelledFrame:", nF);
     _interactionCancelledFrame = nF;
   }
 
@@ -5161,7 +5161,7 @@ define('src/index', ['exports'], function (exports) {
   exports.HalfPi = HalfPi;
   exports.radToGrad = radToGrad;
   exports.gradToRad = gradToRad;
-  exports.c = c;
+  exports.c = src_Global__c;
   exports._cycleOnMouseMovement = _cycleOnMouseMovement;
 
   Relation.prototype = new Node__default();
@@ -6640,8 +6640,10 @@ define('src/index', ['exports'], function (exports) {
    * tags:decoder
    */
   TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, valueForNulls) {
-    valueForNulls = valueForNulls == null ? '' : valueForNulls;
-    var i;
+    if(csvString==null) return null;
+    valueForNulls = valueForNulls == null ? 0 : valueForNulls;
+
+    var i, j;
     var _firstRowIsHeader = firstRowIsHeader == null ? false : firstRowIsHeader;
 
     if(csvString == null) return null;
@@ -6685,7 +6687,7 @@ define('src/index', ['exports'], function (exports) {
 
       var cellContents = NetworkEncodings.replaceChomasInLine(lines[i]).split(comaCharacter); //TODO: will be obsolete (see previous TODO)
 
-      for(var j = 0; j < cellContents.length; j++) {
+      for(j = 0; j < cellContents.length; j++) {
         table[j] = table[j] == null ? new List__default() : table[j];
         if(_firstRowIsHeader && i == 1) {
           table[j].name = ( headerContent[j] == null ? "" : TableEncodings._removeQuotes(headerContent[j]) ).trim();
@@ -6695,6 +6697,9 @@ define('src/index', ['exports'], function (exports) {
         cellContent = cellContents[j].replace(/\*CHOMA\*/g, ",").replace(/\*ENTER\*/g, "\n");
 
         cellContent = cellContent == '' ? valueForNulls : cellContent;
+
+        cellContent = String(cellContent);
+        c.l('>>>cellContent:['+cellContent+']');
 
         numberCandidate = Number(cellContent.replace(',', '.'));
 
@@ -20894,11 +20899,11 @@ define('src/index', ['exports'], function (exports) {
     this.DOMtext.readOnly = this.readOnly;
 
     this.DOMtext.onfocus = function(e) {
-      e.target = this.parent;
+      //e.target = this.parent;
       this.parent._onFocus(this.parent);
     };
     this.DOMtext.onblur = function(e) {
-      e.target = this.parent;
+      //e.target = this.parent;
       this.parent._onBlur(this.parent);
     };
 
@@ -21846,7 +21851,7 @@ define('src/index', ['exports'], function (exports) {
    * @category misc
    */
   function ConsoleTools() {}
-  var Consoletools = ConsoleTools;
+
 
 
   ConsoleTools._ticTime;
@@ -21891,7 +21896,7 @@ define('src/index', ['exports'], function (exports) {
     console.log('°°°°°°° tac [' + message + '], t from tic:' + (ConsoleTools._tacTime - ConsoleTools._ticTime) + ', t from last tac:' + ((ConsoleTools._tacTime - lastTac)));
   };
 
-  exports.Consoletools = Consoletools;
+  exports.ConsoleTools = ConsoleTools;
 
   /**
    * @classdesc Provides a set of tools that work with JSON.

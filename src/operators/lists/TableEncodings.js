@@ -28,8 +28,10 @@ TableEncodings.TAB2 = String.fromCharCode(9);
  * tags:decoder
  */
 TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, valueForNulls) {
-  valueForNulls = valueForNulls == null ? '' : valueForNulls;
-  var i;
+  if(csvString==null) return null;
+  valueForNulls = valueForNulls == null ? 0 : valueForNulls;
+
+  var i, j;
   var _firstRowIsHeader = firstRowIsHeader == null ? false : firstRowIsHeader;
 
   if(csvString == null) return null;
@@ -73,7 +75,7 @@ TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, val
 
     var cellContents = NetworkEncodings.replaceChomasInLine(lines[i]).split(comaCharacter); //TODO: will be obsolete (see previous TODO)
 
-    for(var j = 0; j < cellContents.length; j++) {
+    for(j = 0; j < cellContents.length; j++) {
       table[j] = table[j] == null ? new List() : table[j];
       if(_firstRowIsHeader && i == 1) {
         table[j].name = ( headerContent[j] == null ? "" : TableEncodings._removeQuotes(headerContent[j]) ).trim();
@@ -83,6 +85,9 @@ TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, val
       cellContent = cellContents[j].replace(/\*CHOMA\*/g, ",").replace(/\*ENTER\*/g, "\n");
 
       cellContent = cellContent == '' ? valueForNulls : cellContent;
+
+      cellContent = String(cellContent);
+      c.l('>>>cellContent:['+cellContent+']');
 
       numberCandidate = Number(cellContent.replace(',', '.'));
 
