@@ -149,7 +149,7 @@ module.exports = function (grunt) {
           force: false
         },
         files: {
-          src: ['src/Version.js', 'dest/*']
+          src: ['src/Version.js', 'dist/*']
         }
       }
     },
@@ -160,7 +160,7 @@ module.exports = function (grunt) {
           message: 'updating build ',
         },
         files: {
-          src: ['src/Version.js', 'dest/*']
+          src: ['src/Version.js', 'dist/*']
         }
       }
     },
