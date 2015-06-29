@@ -42,9 +42,11 @@ module.exports = function (grunt) {
 
   grunt.loadNpmTasks('grunt-esperanto');
   grunt.loadNpmTasks('grunt-shell');
+  grunt.loadNpmTasks('grunt-remove');
 
   grunt.loadNpmTasks('grunt-string-replace');
   grunt.loadNpmTasks('grunt-release');
+  grunt.loadNpmTasks('grunt-git');
 
   grunt.initConfig({
 
@@ -109,6 +111,15 @@ module.exports = function (grunt) {
         expand: true,    // allow dynamic building
         flatten: true,   // remove all unnecessary nesting
         ext: '.min.js'   // replace .js to .min.js
+      }
+    },
+
+    remove: {
+      concat: {
+        options: {
+          trace: true
+        },
+        fileList: ['dist/moebio_framework_concat.js', 'dist/moebio_framework_concat.js.map']
       }
     },
 
@@ -288,7 +299,7 @@ module.exports = function (grunt) {
   // Default task - build distribution source
   //
   // grunt.registerTask('default', ['esperanto', 'concat', 'wrap:dist', 'uglify']);
-  grunt.registerTask('default', ['shell:esperanto_bundle', 'wrap:dist', 'uglify']);
+  grunt.registerTask('default', ['shell:esperanto_bundle', 'wrap:dist', 'remove:concat', 'uglify']);
 
   //
   // Build documentation
