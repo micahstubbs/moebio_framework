@@ -271,7 +271,7 @@ export { Global, onResize, clearContext, cycleOnMouseMovement, setFrameRate,
 };
 // Variables
 import { listenerArray, canvas, userAgent, userAgentVersion,
-  canvasResizeable, cW, cH, cX, cY, mX, mY, mP, nF, MOUSE_DOWN,
+  canvasResizeable, dataModelsInfo, cW, cH, cX, cY, mX, mY, mP, nF, MOUSE_DOWN,
   MOUSE_UP, MOUSE_UP_FAST, WHEEL_CHANGE, NF_DOWN, NF_UP, MOUSE_PRESSED,
   MOUSE_IN_DOCUMENT, mX_DOWN, mY_DOWN, mX_UP, mY_UP, PREV_mX, PREV_mY,
   DX_MOUSE, DY_MOUSE, MOUSE_MOVED, T_MOUSE_PRESSED, cursorStyle, backGroundColor,
@@ -279,7 +279,7 @@ import { listenerArray, canvas, userAgent, userAgentVersion,
   c, _cycleOnMouseMovement
 } from "src/Global";
 export { listenerArray, canvas, removeDiv, userAgent, userAgentVersion,
-  canvasResizeable, cW, cH, cX, cY, mX, mY, mP, nF, MOUSE_DOWN,
+  canvasResizeable, dataModelsInfo, cW, cH, cX, cY, mX, mY, mP, nF, MOUSE_DOWN,
   MOUSE_UP, MOUSE_UP_FAST, WHEEL_CHANGE, NF_DOWN, NF_UP, MOUSE_PRESSED,
   MOUSE_IN_DOCUMENT, mX_DOWN, mY_DOWN, mX_UP, mY_UP, PREV_mX, PREV_mY,
   DX_MOUSE, DY_MOUSE, MOUSE_MOVED, T_MOUSE_PRESSED, cursorStyle, backGroundColor,
