@@ -93,4 +93,4 @@ All this can be done with
 grunt release
 ```
 
-for patch builds. Major and minor releases can also be automated using `grunt release:major` and `grunt release:minor`, respectively.
+for patch builds. Major and minor releases can also be automated using `grunt release:major` and `grunt release:minor`, respectively. For more on semantic versioning, check out [semver.org](http://semver.org/).
