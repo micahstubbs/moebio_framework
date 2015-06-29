@@ -3684,7 +3684,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Node = Node__default;
 
-  var version = "0.2.11";
+  var version = "0.2.12";
 
   /**
    * @classdesc Provides a set of tools that work with Colors.
