@@ -147,7 +147,7 @@ module.exports = function (grunt) {
 
     release: {
       options: {
-        bump: false,
+        bump: true,
         npm: false,
         afterBump: ['string-replace:version'],
         beforeRelease: ['default', 'gitadd:build', 'gitcommit:build']
@@ -168,7 +168,8 @@ module.exports = function (grunt) {
     gitcommit: {
       build: {
         options: {
-          message: 'updating build ',
+          message: 'updating dist files',
+          allowEmpty: true
         },
         files: {
           src: ['src/Version.js', 'dist/*']
