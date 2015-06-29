@@ -200,7 +200,7 @@ ListOperators.countElementsRepetitionOnList = function(list, sortListsByOccurren
       }
     }
   } else {
-    for(i = 0; list[i] != null; i++) {
+    for(i = 0; list[i] != null; i++){
       obj = list[i];
       index = elementList.indexOf(obj);
       if(index != -1) {
@@ -577,6 +577,7 @@ ListOperators.getIndexesTable = function(list){
   indexesTable[0] = new List();
   indexesTable[1] = new NumberTable();
   var indexesDictionary = {};
+  var indexOnTable;
   var i;
 
   list.forEach(function(element, i){

@@ -4969,8 +4969,6 @@ define('src/index', ['exports'], function (exports) {
     }
   ];
 
-  console.log(dataModelsInfo);
-
 
   //global useful vars
   var cW = 1; // canvas width
@@ -5013,8 +5011,8 @@ define('src/index', ['exports'], function (exports) {
   var HalfPi = 0.5*Math.PI;
   var radToGrad = 180/Math.PI;
   var gradToRad = Math.PI/180;
-  var src_Global__c = console;
-  src_Global__c.l = src_Global__c.log; //use c.l instead of console.log
+  var c = console;
+  c.l = c.log; //use c.l instead of console.log
 
   //private
   var _wheelActivated = false;
@@ -5086,7 +5084,7 @@ define('src/index', ['exports'], function (exports) {
       window.init();
     }
 
-    src_Global__c.l('Moebio Framework v2.260 | user agent: '+src_Global__userAgent+' | user agent version: '+src_Global__userAgentVersion+' | canvas detected: '+(canvas!=null));
+    c.l('Moebio Framework v2.260 | user agent: '+src_Global__userAgent+' | user agent version: '+src_Global__userAgentVersion+' | canvas detected: '+(canvas!=null));
 
   }, false);
 
@@ -5291,7 +5289,7 @@ define('src/index', ['exports'], function (exports) {
   }
 
   function cancelAllInteractions(){
-    src_Global__c.log("cancelAllInteractions, _interactionCancelledFrame:", nF);
+    c.log("cancelAllInteractions, _interactionCancelledFrame:", nF);
     _interactionCancelledFrame = nF;
   }
 
@@ -5530,7 +5528,7 @@ define('src/index', ['exports'], function (exports) {
   exports.HalfPi = HalfPi;
   exports.radToGrad = radToGrad;
   exports.gradToRad = gradToRad;
-  exports.c = src_Global__c;
+  exports.c = c;
   exports._cycleOnMouseMovement = _cycleOnMouseMovement;
 
   Relation.prototype = new Node__default();
@@ -7068,7 +7066,6 @@ define('src/index', ['exports'], function (exports) {
         cellContent = cellContent == '' ? valueForNulls : cellContent;
 
         cellContent = String(cellContent);
-        c.l('>>>cellContent:['+cellContent+']');
 
         numberCandidate = Number(cellContent.replace(',', '.'));
 
@@ -9324,12 +9321,15 @@ define('src/index', ['exports'], function (exports) {
     var aggregatorList = table[indexAggregationList];
     var indexesTable = ListOperators__default.getIndexesTable(aggregatorList);
     var newTable = new Table();
+    var newList;
     var toAggregateList;
     var i;
 
     indexesListsToAggregate.forEach(function(index, i){
       toAggregateList = table[index];
-      newTable.push( ListOperators__default.aggregateList(aggregatorList, toAggregateList, modes[i%modes.length], indexesTable)[1] );
+      newList = ListOperators__default.aggregateList(aggregatorList, toAggregateList, modes[i%modes.length], indexesTable)[1];
+      newList.name = toAggregateList.name;
+      newTable.push(newList);
     });
 
     return newTable.getImproved();
@@ -10225,7 +10225,7 @@ define('src/index', ['exports'], function (exports) {
         }
       }
     } else {
-      for(i = 0; list[i] != null; i++) {
+      for(i = 0; list[i] != null; i++){
         obj = list[i];
         index = elementList.indexOf(obj);
         if(index != -1) {
@@ -10602,6 +10602,7 @@ define('src/index', ['exports'], function (exports) {
     indexesTable[0] = new List__default();
     indexesTable[1] = new NumberTable();
     var indexesDictionary = {};
+    var indexOnTable;
     var i;
 
     list.forEach(function(element, i){
