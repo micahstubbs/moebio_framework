@@ -42,6 +42,8 @@ module.exports = function (grunt) {
 
   grunt.loadNpmTasks('grunt-esperanto');
   grunt.loadNpmTasks('grunt-shell');
+  grunt.loadNpmTasks('grunt-string-replace');
+  grunt.loadNpmTasks('grunt-release');
 
   grunt.initConfig({
 
@@ -114,6 +116,28 @@ module.exports = function (grunt) {
         files: buildFileList().concat('gruntfile.js'),
         tasks: ['shell:esperanto_bundle', 'wrap:dist']
       },
+    },
+
+    'string-replace': {
+      version: {
+        files: {
+          'src/Version.js' : 'src/Version.js'
+        },
+        options: {
+          replacements: [{
+            pattern: /version\s*=\s*['"](\d+\.\d+\.\d+)['"]/g,
+            replacement: 'version = "<%= pkg.version %>"'
+          }]
+        }
+      }
+    },
+    pkg: grunt.file.readJSON('package.json'),
+
+    release: {
+      options: {
+        npm: false,
+        afterBump: ['string-replace:version', 'default']
+      }
     },
 
     jsdoc : {

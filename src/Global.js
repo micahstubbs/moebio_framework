@@ -1,3 +1,4 @@
+import { version } from "src/Version";
 import Point from 'src/dataStructures/geometry/Point';
 import ColorOperators from "src/operators/graphic/ColorOperators";
 import MD5 from "src/tools/utils/strings/MD5";
@@ -162,7 +163,7 @@ window.addEventListener('load', function(){
     window.init();
   }
 
-  c.l('Moebio Framework v2.259 | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
+  c.l('Moebio Framework v' + version + ' | user agent: '+userAgent+' | user agent version: '+userAgentVersion+' | canvas detected: '+(canvas!=null));
 
 }, false);
 
