@@ -3645,6 +3645,8 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Node = Node__default;
 
+  var version = "0.2.13";
+
   /**
    * @classdesc Provides a set of tools that work with Colors.
    *
@@ -4902,7 +4904,7 @@ define('src/index', ['exports'], function (exports) {
       level:"0",
       inherits:null,
       color:"#802046"
-    },  
+    },
     {
       type:"ImageList",
       short:"iL",
@@ -4919,7 +4921,7 @@ define('src/index', ['exports'], function (exports) {
       level:"0",
       inherits:null,
       color:"#FAA542"
-    },  
+    },
     {
       type:"Relation",
       short:"r",
@@ -5084,7 +5086,7 @@ define('src/index', ['exports'], function (exports) {
       window.init();
     }
 
-    src_Global__c.l('Moebio Framework v2.260 | user agent: '+src_Global__userAgent+' | user agent version: '+src_Global__userAgentVersion+' | canvas detected: '+(canvas!=null));
+    src_Global__c.l('Moebio Framework v' + version + ' | user agent: '+src_Global__userAgent+' | user agent version: '+src_Global__userAgentVersion+' | canvas detected: '+(canvas!=null));
 
   }, false);
 

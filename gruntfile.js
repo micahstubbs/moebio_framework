@@ -42,6 +42,11 @@ module.exports = function (grunt) {
 
   grunt.loadNpmTasks('grunt-esperanto');
   grunt.loadNpmTasks('grunt-shell');
+  grunt.loadNpmTasks('grunt-remove');
+
+  grunt.loadNpmTasks('grunt-string-replace');
+  grunt.loadNpmTasks('grunt-release');
+  grunt.loadNpmTasks('grunt-git');
 
   grunt.initConfig({
 
@@ -109,11 +114,67 @@ module.exports = function (grunt) {
       }
     },
 
+    remove: {
+      concat: {
+        options: {
+          trace: true
+        },
+        fileList: ['dist/moebio_framework_concat.js', 'dist/moebio_framework_concat.js.map']
+      }
+    },
+
     watch: {
       js:  {
         files: buildFileList().concat('gruntfile.js'),
         tasks: ['shell:esperanto_bundle', 'wrap:dist']
       },
+    },
+
+    'string-replace': {
+      version: {
+        files: {
+          'src/Version.js' : 'src/Version.js'
+        },
+        options: {
+          replacements: [{
+            pattern: /version\s*=\s*['"](\d+\.\d+\.\d+)['"]/g,
+            replacement: 'version = "<%= pkg.version %>"'
+          }]
+        }
+      }
+    },
+    pkg: grunt.file.readJSON('package.json'),
+
+    release: {
+      options: {
+        bump: true,
+        npm: false,
+        afterBump: ['string-replace:version'],
+        beforeRelease: ['default', 'gitadd:build', 'gitcommit:build']
+      }
+    },
+
+    gitadd: {
+      build: {
+        options: {
+          force: false
+        },
+        files: {
+          src: ['src/Version.js', 'dist/*']
+        }
+      }
+    },
+
+    gitcommit: {
+      build: {
+        options: {
+          message: 'updating dist files',
+          allowEmpty: true
+        },
+        files: {
+          src: ['src/Version.js', 'dist/*']
+        }
+      }
     },
 
     jsdoc : {
@@ -239,7 +300,7 @@ module.exports = function (grunt) {
   // Default task - build distribution source
   //
   // grunt.registerTask('default', ['esperanto', 'concat', 'wrap:dist', 'uglify']);
-  grunt.registerTask('default', ['shell:esperanto_bundle', 'wrap:dist', 'uglify']);
+  grunt.registerTask('default', ['shell:esperanto_bundle', 'wrap:dist', 'remove:concat', 'uglify']);
 
   //
   // Build documentation
@@ -250,5 +311,7 @@ module.exports = function (grunt) {
   // Run tests interactively
   //
   grunt.registerTask('test', [ 'karma' ]);
+
+  grunt.registerTask('build_commit', ['default', 'gitadd:build', 'gitcommit:build']);
 
 };
