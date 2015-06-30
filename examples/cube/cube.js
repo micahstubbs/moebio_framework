@@ -76,13 +76,13 @@ cycle = function() {
   for(i=0; cubeSides[i]!=null; i++){
     polygon3D = cubeSides[i];
     p = e3D.projectPoint3D(polygon3D[0]);
-    context.beginPath();
-    context.moveTo(p.x+cX, p.y+cY);
+    mo.context.beginPath();
+    mo.context.moveTo(p.x+mo.cX, p.y+mo.cY);
     for(j=1; polygon3D[j]!=null; j++){
       p = e3D.projectPoint3D(polygon3D[j]);
-      context.lineTo(p.x+cX, p.y+cY);
+      mo.context.lineTo(p.x+mo.cX, p.y+mo.cY);
     }
-    context.stroke();
+    mo.context.stroke();
   }
 };
 
