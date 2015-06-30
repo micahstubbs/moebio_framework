@@ -1,4 +1,9 @@
 import DateOperators from "src/operators/dates/DateOperators";
+import Polygon from "src/dataStructures/geometry/Polygon";
+import List from "src/dataStructures/lists/List"
+import NumberList from "src/dataStructures/numeric/NumberList"
+import StringList from "src/dataStructures/strings/StringList"
+
 
 /*
  * All these function are globally available since they are included in the Global class
@@ -24,21 +29,6 @@ export function typeOf(object) {
   if(object.getDate != null) return 'date';
 
   return 'Object';
-
-
-
-
-
-  // if(o === null) {
-  //   return 'null';
-  // } else if(o.getDate != null) {
-  //   return 'date';
-  // } else {
-  //   if(o.getType == null) return 'Object';
-  //   var objectType = o.getType();
-  //   return objectType;
-  // }
-  // c.l("[!] ERROR: could not detect type for ", o);
 }
 
 // TODO remove?
