@@ -3684,7 +3684,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Node = Node__default;
 
-  var version = "0.2.13";
+  var version = "0.2.14";
 
   /**
    * @classdesc Provides a set of tools that work with Colors.
@@ -26131,6 +26131,6 @@ define('src/index', ['exports'], function (exports) {
 
 });
 
-window.MF = requireModule("src/index");
+window.mo = requireModule("src/index");
 })(window);
 //# sourceMappingURL=./moebio_framework.js.map
