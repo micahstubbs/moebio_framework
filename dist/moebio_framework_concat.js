@@ -2164,6 +2164,9 @@ define('src/index', ['exports'], function (exports) {
   exports.DateOperators = DateOperators;
 
   var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"}
+  var _shortFromTypeDictionary;
+  var _colorFromTypeDictionary;
+  var _lightColorFromTypeDictionary;
 
   /*
    * types are:
@@ -2184,21 +2187,6 @@ define('src/index', ['exports'], function (exports) {
     if(object.getDate != null) return 'date';
 
     return 'Object';
-
-
-
-
-
-    // if(o === null) {
-    //   return 'null';
-    // } else if(o.getDate != null) {
-    //   return 'date';
-    // } else {
-    //   if(o.getType == null) return 'Object';
-    //   var objectType = o.getType();
-    //   return objectType;
-    // }
-    // c.l("[!] ERROR: could not detect type for ", o);
   }
 
   // TODO remove?
@@ -2256,7 +2244,42 @@ define('src/index', ['exports'], function (exports) {
     return o;
   }
 
-  function getTextFromObject(value, type) {
+  function _createDataModelsInfoDictionaries(){
+    var i;
+    var type;
+
+    _shortFromTypeDictionary = {};
+    _colorFromTypeDictionary = {};
+    _lightColorFromTypeDictionary = {};
+
+    for(i=0; dataModelsInfo[i]!=null; i++){
+      type = dataModelsInfo[i].type;
+      _shortFromTypeDictionary[type] = dataModelsInfo[i].short;
+      _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.3);
+      _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.3);
+      type = type.toLowerCase();
+      _shortFromTypeDictionary[type] = dataModelsInfo[i].short;
+      _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.3);
+      _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.3);
+    }
+  }
+
+  function getShortNameFromDataModelType(type){
+    if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
+    return _shortFromTypeDictionary[type];
+  }
+
+  function getColorFromDataModelType(type){
+    if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
+    return _colorFromTypeDictionary[type];
+  }
+
+  function getLightColorFromDataModelType(type){
+    if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
+    return _lightColorFromTypeDictionary[type];
+  }
+
+  function getTextFromObject(value, type){
     if(value == null) return "Null";
     if(value.isList) {
       if(value.length == 0) return "[]";
@@ -2369,32 +2392,6 @@ define('src/index', ['exports'], function (exports) {
   		res = null;
   	}
 
-
-    // var isFunction = functionText.split('\n')[0].indexOf('function') != -1;
-
-    // if(isFunction) {
-    //   realCode = "myFunction = " + functionText;
-    // } else {
-    //   realCode = "myVar = " + functionText;
-    // }
-
-
-    // try {
-    //   if(isFunction) {
-    //     eval(realCode);
-    //     res = myFunction.apply(this, args);
-    //   } else {
-    //     eval(realCode);
-    //     res = myVar;
-    //   }
-    // } catch(err) {
-    //   good = false;
-    //   message = err.message;
-    //   res = null;
-    // }
-
-    //c.l('resultObject', resultObject);
-
     var resultObject = {
       result: res,
       success: good,
@@ -2431,6 +2428,9 @@ define('src/index', ['exports'], function (exports) {
 
   exports.typeOf = typeOf;
   exports.instantiate = instantiate;
+  exports.getShortNameFromDataModelType = getShortNameFromDataModelType;
+  exports.getColorFromDataModelType = getColorFromDataModelType;
+  exports.getLightColorFromDataModelType = getLightColorFromDataModelType;
   exports.getTextFromObject = getTextFromObject;
   exports.instantiateWithSameType = instantiateWithSameType;
   exports.isArray = isArray;
@@ -3651,8 +3651,8 @@ define('src/index', ['exports'], function (exports) {
    * @namespace
    * @category colors
    */
-  function ColorOperators() {}
-
+  function ColorOperators__ColorOperators() {}
+  var ColorOperators__default = ColorOperators__ColorOperators;
   // TODO: create Color struture to be used instead of arrays [255, 100,0] ?
 
 
@@ -3667,9 +3667,9 @@ define('src/index', ['exports'], function (exports) {
    * @return {String} interpolated color
    *
    */
-  ColorOperators.interpolateColors = function(color0, color1, value) {
-    var resultArray = ColorOperators.interpolateColorsRGB(ColorOperators.colorStringToRGB(color0), ColorOperators.colorStringToRGB(color1), value);
-    return ColorOperators.RGBtoHEX(resultArray[0], resultArray[1], resultArray[2]);
+  ColorOperators__ColorOperators.interpolateColors = function(color0, color1, value) {
+    var resultArray = ColorOperators__ColorOperators.interpolateColorsRGB(ColorOperators__ColorOperators.colorStringToRGB(color0), ColorOperators__ColorOperators.colorStringToRGB(color1), value);
+    return ColorOperators__ColorOperators.RGBtoHEX(resultArray[0], resultArray[1], resultArray[2]);
   };
 
 
@@ -3683,7 +3683,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Array} interpolated RGB color
    *
    */
-  ColorOperators.interpolateColorsRGB = function(color0, color1, value) {
+  ColorOperators__ColorOperators.interpolateColorsRGB = function(color0, color1, value) {
     var s = 1 - value;
     return [Math.floor(s * color0[0] + value * color1[0]), Math.floor(s * color0[1] + value * color1[1]), Math.floor(s * color0[2] + value * color1[2])];
   };
@@ -3694,16 +3694,16 @@ define('src/index', ['exports'], function (exports) {
    * @return {Array} returns an RGB color Array
    *
    */
-  ColorOperators.HEXtoRGB = function(hexColor) {
+  ColorOperators__ColorOperators.HEXtoRGB = function(hexColor) {
     return [parseInt(hexColor.substr(1, 2), 16), parseInt(hexColor.substr(3, 2), 16), parseInt(hexColor.substr(5, 2), 16)];
   };
 
 
-  ColorOperators.RGBtoHEX = function(red, green, blue) {
-    return "#" + ColorOperators.toHex(red) + ColorOperators.toHex(green) + ColorOperators.toHex(blue);
+  ColorOperators__ColorOperators.RGBtoHEX = function(red, green, blue) {
+    return "#" + ColorOperators__ColorOperators.toHex(red) + ColorOperators__ColorOperators.toHex(green) + ColorOperators__ColorOperators.toHex(blue);
   };
 
-  ColorOperators.RGBArrayToString = function(array) {
+  ColorOperators__ColorOperators.RGBArrayToString = function(array) {
     return 'rgb(' + array[0] + ',' + array[1] + ',' + array[2] + ')';
   };
 
@@ -3712,41 +3712,41 @@ define('src/index', ['exports'], function (exports) {
 
 
 
-  ColorOperators.colorStringToHEX = function(color_string) {
-    var rgb = ColorOperators.colorStringToRGB(color_string);
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  ColorOperators__ColorOperators.colorStringToHEX = function(color_string) {
+    var rgb = ColorOperators__ColorOperators.colorStringToRGB(color_string);
+    return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
 
-  ColorOperators.numberToHex = function(number) {
+  ColorOperators__ColorOperators.numberToHex = function(number) {
     var hex = number.toString(16);
     while(hex.length < 2) hex = "0" + hex;
     return hex;
   };
 
 
-  ColorOperators.uinttoRGB = function(color) {
+  ColorOperators__ColorOperators.uinttoRGB = function(color) {
     var rgbColor = new Array(color >> 16, (color >> 8) - ((color >> 16) << 8), color - ((color >> 8) << 8));
     return rgbColor;
   };
-  ColorOperators.uinttoHEX = function(color) {
-    var rgbColor = ColorOperators.uinttoRGB(color);
-    var hexColor = ColorOperators.RGBToHEX(rgbColor[0], rgbColor[1], rgbColor[2]);
+  ColorOperators__ColorOperators.uinttoHEX = function(color) {
+    var rgbColor = ColorOperators__ColorOperators.uinttoRGB(color);
+    var hexColor = ColorOperators__ColorOperators.RGBToHEX(rgbColor[0], rgbColor[1], rgbColor[2]);
     return hexColor;
   };
 
 
-  ColorOperators.RGBtouint = function(red, green, blue) {
+  ColorOperators__ColorOperators.RGBtouint = function(red, green, blue) {
     return Number(red) << 16 | Number(green) << 8 | Number(blue);
   };
 
-  ColorOperators.HEXtouint = function(hexColor) {
-    var colorArray = ColorOperators.HEXtoRGB(hexColor);
-    var color = ColorOperators.RGBtouint(colorArray[0], colorArray[1], colorArray[2]);
+  ColorOperators__ColorOperators.HEXtouint = function(hexColor) {
+    var colorArray = ColorOperators__ColorOperators.HEXtoRGB(hexColor);
+    var color = ColorOperators__ColorOperators.RGBtouint(colorArray[0], colorArray[1], colorArray[2]);
     return color;
   };
 
-  ColorOperators.grayByLevel = function(level) {
+  ColorOperators__ColorOperators.grayByLevel = function(level) {
     level = Math.floor(level * 255);
     return 'rgb(' + level + ',' + level + ',' + level + ')';
   };
@@ -3759,20 +3759,20 @@ define('src/index', ['exports'], function (exports) {
    * @return {Array} returns an HSV color Array
    *
    */
-  ColorOperators.HEXtoHSV = function(hexColor) {
-    var rgb = ColorOperators.HEXtoRGB(hexColor);
-    return ColorOperators.RGBtoHSV(rgb[0], rgb[1], rgb[2]);
+  ColorOperators__ColorOperators.HEXtoHSV = function(hexColor) {
+    var rgb = ColorOperators__ColorOperators.HEXtoRGB(hexColor);
+    return ColorOperators__ColorOperators.RGBtoHSV(rgb[0], rgb[1], rgb[2]);
   };
 
 
-  ColorOperators.HSVtoHEX = function(hue, saturation, value) {
-    var rgb = ColorOperators.HSVtoRGB(hue, saturation, value);
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  ColorOperators__ColorOperators.HSVtoHEX = function(hue, saturation, value) {
+    var rgb = ColorOperators__ColorOperators.HSVtoRGB(hue, saturation, value);
+    return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
-  ColorOperators.HSLtoHEX = function(hue, saturation, light) {
-    var rgb = ColorOperators.HSLtoRGB(hue, saturation, light);
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  ColorOperators__ColorOperators.HSLtoHEX = function(hue, saturation, light) {
+    var rgb = ColorOperators__ColorOperators.HSLtoRGB(hue, saturation, light);
+    return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
 
@@ -3783,7 +3783,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Array} returns a HSV color array
    * H in [0,360], S in [0,1], V in [0,1]
    */
-  ColorOperators.RGBtoHSV = function(r, g, b) {
+  ColorOperators__ColorOperators.RGBtoHSV = function(r, g, b) {
       var h;
       var s;
       var v;
@@ -3816,7 +3816,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Array} a HSV color array
    * @return {Array} returns a RGB color array
    */
-  ColorOperators.HSVtoRGB = function(hue, saturation, value) {
+  ColorOperators__ColorOperators.HSVtoRGB = function(hue, saturation, value) {
     hue = hue ? hue : 0;
     saturation = saturation ? saturation : 0;
     value = value ? value : 0;
@@ -3879,7 +3879,7 @@ define('src/index', ['exports'], function (exports) {
    * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
    * Assumes hue is contained in the interval [0,360) and saturation and l are contained in the set [0, 1]
    */
-  ColorOperators.HSLtoRGB = function(hue, saturation, light) {
+  ColorOperators__ColorOperators.HSLtoRGB = function(hue, saturation, light) {
     var r, g, b;
 
     if(saturation == 0) {
@@ -3905,33 +3905,33 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  ColorOperators.invertColorRGB = function(r, g, b) {
+  ColorOperators__ColorOperators.invertColorRGB = function(r, g, b) {
     return [255 - r, 255 - g, 255 - b];
   };
 
-  ColorOperators.addAlpha = function(color, alpha) {
+  ColorOperators__ColorOperators.addAlpha = function(color, alpha) {
     //var rgb = color.substr(0,3)=='rgb'?ColorOperators.colorStringToRGB(color):ColorOperators.HEXtoRGB(color);
-    var rgb = ColorOperators.colorStringToRGB(color);
+    var rgb = ColorOperators__ColorOperators.colorStringToRGB(color);
     if(rgb == null) return 'black';
     return 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + alpha + ')';
   };
 
-  ColorOperators.invertColor = function(color) {
-    var rgb = ColorOperators.colorStringToRGB(color);
-    rgb = ColorOperators.invertColorRGB(rgb[0], rgb[1], rgb[2]);
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  ColorOperators__ColorOperators.invertColor = function(color) {
+    var rgb = ColorOperators__ColorOperators.colorStringToRGB(color);
+    rgb = ColorOperators__ColorOperators.invertColorRGB(rgb[0], rgb[1], rgb[2]);
+    return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
 
 
-  ColorOperators.toHex = function(number) {
+  ColorOperators__ColorOperators.toHex = function(number) {
     var hex = number.toString(16);
     while(hex.length < 2) hex = "0" + hex;
     return hex;
   };
 
 
-  ColorOperators.getRandomColor = function() {
+  ColorOperators__ColorOperators.getRandomColor = function() {
     return 'rgb(' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ')';
   };
 
@@ -3946,7 +3946,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Array} rgb array
    * tags:
    */
-  ColorOperators.colorStringToRGB = function(color_string) {
+  ColorOperators__ColorOperators.colorStringToRGB = function(color_string) {
     //c.log('color_string:['+color_string+']');
     var ok = false;
 
@@ -4171,7 +4171,7 @@ define('src/index', ['exports'], function (exports) {
     return null;
   };
 
-  exports.ColorOperators = ColorOperators;
+  exports.ColorOperators = ColorOperators__default;
 
   /*
    * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
@@ -4605,7 +4605,7 @@ define('src/index', ['exports'], function (exports) {
   var canvasResizeable=true;
 
   //data models info
-  var dataModelsInfo = [
+  var src_Global__dataModelsInfo = [
     {
       type:"Null",
       short:"Ø",
@@ -5011,8 +5011,8 @@ define('src/index', ['exports'], function (exports) {
   var HalfPi = 0.5*Math.PI;
   var radToGrad = 180/Math.PI;
   var gradToRad = Math.PI/180;
-  var c = console;
-  c.l = c.log; //use c.l instead of console.log
+  var src_Global__c = console;
+  src_Global__c.l = src_Global__c.log; //use c.l instead of console.log
 
   //private
   var _wheelActivated = false;
@@ -5084,7 +5084,7 @@ define('src/index', ['exports'], function (exports) {
       window.init();
     }
 
-    c.l('Moebio Framework v2.260 | user agent: '+src_Global__userAgent+' | user agent version: '+src_Global__userAgentVersion+' | canvas detected: '+(canvas!=null));
+    src_Global__c.l('Moebio Framework v2.260 | user agent: '+src_Global__userAgent+' | user agent version: '+src_Global__userAgentVersion+' | canvas detected: '+(canvas!=null));
 
   }, false);
 
@@ -5289,7 +5289,7 @@ define('src/index', ['exports'], function (exports) {
   }
 
   function cancelAllInteractions(){
-    c.log("cancelAllInteractions, _interactionCancelledFrame:", nF);
+    src_Global__c.log("cancelAllInteractions, _interactionCancelledFrame:", nF);
     _interactionCancelledFrame = nF;
   }
 
@@ -5301,11 +5301,11 @@ define('src/index', ['exports'], function (exports) {
         color = 'rgb('+arguments[0]+','+arguments[1]+','+arguments[2]+')';
       }
     } else if(Array.isArray(color)){
-      color = ColorOperators.RGBtoHEX(color[0], color[1], color[2]);
+      color = ColorOperators__default.RGBtoHEX(color[0], color[1], color[2]);
     }
     exports.backGroundColor = backGroundColor = color;
 
-    exports.backGroundColorRGB = backGroundColorRGB = ColorOperators.colorStringToRGB(backGroundColor);
+    exports.backGroundColorRGB = backGroundColorRGB = ColorOperators__default.colorStringToRGB(backGroundColor);
 
     var body = document.getElementById('index');
     body.setAttribute('bgcolor', backGroundColor);
@@ -5492,7 +5492,7 @@ define('src/index', ['exports'], function (exports) {
   exports.userAgent = src_Global__userAgent;
   exports.userAgentVersion = src_Global__userAgentVersion;
   exports.canvasResizeable = canvasResizeable;
-  exports.dataModelsInfo = dataModelsInfo;
+  exports.dataModelsInfo = src_Global__dataModelsInfo;
   exports.cW = cW;
   exports.cH = cH;
   exports.cX = cX;
@@ -5528,7 +5528,7 @@ define('src/index', ['exports'], function (exports) {
   exports.HalfPi = HalfPi;
   exports.radToGrad = radToGrad;
   exports.gradToRad = gradToRad;
-  exports.c = c;
+  exports.c = src_Global__c;
   exports._cycleOnMouseMovement = _cycleOnMouseMovement;
 
   Relation.prototype = new Node__default();
@@ -5975,7 +5975,7 @@ define('src/index', ['exports'], function (exports) {
           lines.slice(1).forEach(function(line, i) {
 
             index = line.indexOf(':');
-            if(firstLine == "relations colors:" && index != -1 && ColorOperators.colorStringToRGB(line.split(':')[1]) != null) {
+            if(firstLine == "relations colors:" && index != -1 && ColorOperators__default.colorStringToRGB(line.split(':')[1]) != null) {
               //console.log('  more colors!');
 
               colorLinesRelations.push(line);
@@ -5990,7 +5990,7 @@ define('src/index', ['exports'], function (exports) {
 
             }
 
-            if((firstLine == "groups colors:" || firstLine == "categories colors:") && index != -1 && ColorOperators.colorStringToRGB(line.split(':')[1]) != null) {
+            if((firstLine == "groups colors:" || firstLine == "categories colors:") && index != -1 && ColorOperators__default.colorStringToRGB(line.split(':')[1]) != null) {
               //console.log(line)
               //console.log('  color to group!');
 
@@ -6918,7 +6918,7 @@ define('src/index', ['exports'], function (exports) {
     switch(propName) {
       case "color":
         if(propValue.substr(0, 3) == "rgb") {
-          var rgb = ColorOperators.colorStringToRGB(propValue);
+          var rgb = ColorOperators__default.colorStringToRGB(propValue);
           return rgb.join(',');
         }
         return propValue;
@@ -7003,12 +7003,14 @@ define('src/index', ['exports'], function (exports) {
    * @param {Boolean} first_row_header first row is header (default: false)
    * @param {String} separator separator character (default: ",")
    * @param {Object} value_for_nulls Object to be placed instead of null values
+   * @param {Boolean} listsToStringList if true (default value), converts lists that are not StringLists, NumberLists… (probably because they contain strings and numbers) into StringLists
    * @return {Table} resulting Table
    * tags:decoder
    */
-  TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, valueForNulls) {
+  TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, valueForNulls, listsToStringList) {
     if(csvString==null) return null;
     valueForNulls = valueForNulls == null ? 0 : valueForNulls;
+    listsToStringList = listsToStringList==null?true:listsToStringList;
 
     var i, j;
     var _firstRowIsHeader = firstRowIsHeader == null ? false : firstRowIsHeader;
@@ -7079,6 +7081,7 @@ define('src/index', ['exports'], function (exports) {
 
     for(i = 0; table[i] != null; i++) {
       table[i] = table[i].getImproved();
+      if(listsToStringList && table[i].type=="List") table[i] = table[i].toStringList();
     }
 
     table = table.getImproved();
@@ -7619,6 +7622,7 @@ define('src/index', ['exports'], function (exports) {
     result.factor = NumberTable.prototype.factor;
     result.add = NumberTable.prototype.add;
     result.getMax = NumberTable.prototype.getMax;
+    result.getMin = NumberTable.prototype.getMin;
     result.getMinMaxInterval = NumberTable.prototype.getMinMaxInterval;
     result.getCovarianceMatrix = NumberTable.prototype.getCovarianceMatrix;
 
@@ -7695,8 +7699,19 @@ define('src/index', ['exports'], function (exports) {
     for(i = 1; this[i] != null; i++) {
       max = Math.max(this[i].getMax(), max);
     }
-
     return max;
+  };
+
+  NumberTable.prototype.getMin = function() {
+    if(this.length == 0) return null;
+
+    var min = this[0].getMin();
+    var i;
+
+    for(i = 1; this[i] != null; i++) {
+      min = Math.min(this[i].getMin(), min);
+    }
+    return min;
   };
 
   NumberTable.prototype.getMinMaxInterval = function() {
@@ -9302,7 +9317,8 @@ define('src/index', ['exports'], function (exports) {
       }
     }
     return newTable;
-  };
+  }
+
 
   /**
    * aggregates lists from a table, using one of the list of the table as the aggregation list, and based on different modes for each list
@@ -9310,10 +9326,12 @@ define('src/index', ['exports'], function (exports) {
    * @param  {Number} indexAggregationList index of the aggregation list on the table
    * @param  {NumberList} indexesListsToAggregate indexs of the lists to be aggregated; typically it also contains the index of the aggregation list at the beginning, to be aggregated using mode 0 (first element) thus resulting as the list of non repeated elements
    * @param  {NumberList} modes list of modes of aggregation, these are the options:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes<br>12:count non repeated elements<br>13:enlist non repeated elements
+   *
+   * @param {StringList} newListsNames optional names for generated lists
    * @return {Table} aggregated table
    * tags:
    */
-  TableOperators.aggregateTable = function(table, indexAggregationList, indexesListsToAggregate, modes){
+  TableOperators.aggregateTable = function(table, indexAggregationList, indexesListsToAggregate, modes, newListsNames){
     indexAggregationList = indexAggregationList||0;
 
     if(table==null || !table.length ||  table.length<indexAggregationList || indexesListsToAggregate==null || !indexesListsToAggregate.length || modes==null) return;
@@ -9327,13 +9345,14 @@ define('src/index', ['exports'], function (exports) {
 
     indexesListsToAggregate.forEach(function(index, i){
       toAggregateList = table[index];
-      newList = ListOperators__default.aggregateList(aggregatorList, toAggregateList, modes[i%modes.length], indexesTable)[1];
-      newList.name = toAggregateList.name;
+      newList = ListOperators__default.aggregateList(aggregatorList, toAggregateList, i<modes.length?modes[i]:1, indexesTable)[1];
+      if(newListsNames && i<newListsNames.length) newList.name = newListsNames[i];
       newTable.push(newList);
     });
 
     return newTable.getImproved();
   }
+
 
   /**
    * builds a pivot table
@@ -14047,7 +14066,7 @@ define('src/index', ['exports'], function (exports) {
     var rgbArrays = new List__default();
 
     for(var i = 0; this[i] != null; i++) {
-      rgbArrays[i] = ColorOperators.colorStringToRGB(this[i]);
+      rgbArrays[i] = ColorOperators__default.colorStringToRGB(this[i]);
     }
 
     return rgbArrays;
@@ -14064,7 +14083,7 @@ define('src/index', ['exports'], function (exports) {
     var newColorList = new ColorList();
 
     for(var i = 0; this[i] != null; i++) {
-      newColorList[i] = ColorOperators.interpolateColors(this[i], color, value);
+      newColorList[i] = ColorOperators__default.interpolateColors(this[i], color, value);
     }
 
     newColorList.name = this.name;
@@ -14080,7 +14099,7 @@ define('src/index', ['exports'], function (exports) {
     var newColorList = new ColorList();
 
     for(var i = 0; this[i] != null; i++) {
-      newColorList[i] = ColorOperators.invertColor(this[i]);
+      newColorList[i] = ColorOperators__default.invertColor(this[i]);
     }
 
     newColorList.name = this.name;
@@ -14097,7 +14116,7 @@ define('src/index', ['exports'], function (exports) {
     var newColorList = new ColorList();
 
     for(var i = 0; this[i] != null; i++) {
-      newColorList[i] = ColorOperators.addAlpha(this[i], alpha);
+      newColorList[i] = ColorOperators__default.addAlpha(this[i], alpha);
     }
 
     newColorList.name = this.name;
@@ -14123,13 +14142,13 @@ define('src/index', ['exports'], function (exports) {
   };
 
   ColorScales.grayscale = function(value) {
-    var rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], [255, 255, 255], value);
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+    var rgb = ColorOperators__default.interpolateColorsRGB([0, 0, 0], [255, 255, 255], value);
+    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
   ColorScales.antiGrayscale = function(value) {
-    var rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [0, 0, 0], value);
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+    var rgb = ColorOperators__default.interpolateColorsRGB([255, 255, 255], [0, 0, 0], value);
+    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
   ColorScales.antiTemperature = function(value) {
@@ -14138,11 +14157,11 @@ define('src/index', ['exports'], function (exports) {
 
   ColorScales.temperature = function(value) { //todo:make it efficient
     if(value < 0.2) {
-      var color = ColorOperators.interpolateColors('#000000', ColorOperators.HSVtoHEX(234, 1, 1), value * 5);
+      var color = ColorOperators__default.interpolateColors('#000000', ColorOperators__default.HSVtoHEX(234, 1, 1), value * 5);
     } else if(value > 0.85) {
-      color = ColorOperators.interpolateColors(ColorOperators.HSVtoHEX(0, 1, 1), '#FFFFFF', (value - 0.85) / 0.15);
+      color = ColorOperators__default.interpolateColors(ColorOperators__default.HSVtoHEX(0, 1, 1), '#FFFFFF', (value - 0.85) / 0.15);
     } else {
-      color = ColorOperators.HSVtoHEX(Math.round((0.65 - (value - 0.2)) * 360), 1, 1);
+      color = ColorOperators__default.HSVtoHEX(Math.round((0.65 - (value - 0.2)) * 360), 1, 1);
     }
     return color;
   };
@@ -14164,17 +14183,17 @@ define('src/index', ['exports'], function (exports) {
   };
 
   ColorScales.greenToRed = function(value) { //todo:make it efficient
-    var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [255, 50, 50], value);
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+    var rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [255, 50, 50], value);
+    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
   ColorScales.greenToBlue = function(value) { //todo:make it efficient
-    var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [50, 50, 255], value);
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+    var rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [50, 50, 255], value);
+    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
   ColorScales.grayToOrange = function(value) { //todo:make it efficient
-    var rgb = ColorOperators.interpolateColorsRGB([100, 100, 100], [255, 110, 0], value);
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+    var rgb = ColorOperators__default.interpolateColorsRGB([100, 100, 100], [255, 110, 0], value);
+    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
   ColorScales.blueToRed = function(value) {
@@ -14191,26 +14210,26 @@ define('src/index', ['exports'], function (exports) {
   };
 
   ColorScales.redToBlue = function(value) {
-    var rgb = ColorOperators.interpolateColorsRGB([255, 0, 0], [0, 0, 255], value);
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+    var rgb = ColorOperators__default.interpolateColorsRGB([255, 0, 0], [0, 0, 255], value);
+    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
   ColorScales.greenWhiteRed = function(value) {
     if(value < 0.5) {
-      var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [255, 255, 255], value * 2);
+      var rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [255, 255, 255], value * 2);
     } else {
-      rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [255, 50, 50], (value - 0.5) * 2);
+      rgb = ColorOperators__default.interpolateColorsRGB([255, 255, 255], [255, 50, 50], (value - 0.5) * 2);
     }
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
 
   ColorScales.solar = function(value) {
-    var rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], ColorOperators.interpolateColorsRGB([255, 0, 0], [255, 255, 0], value), Math.pow(value * 0.99 + 0.01, 0.2));
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+    var rgb = ColorOperators__default.interpolateColorsRGB([0, 0, 0], ColorOperators__default.interpolateColorsRGB([255, 0, 0], [255, 255, 0], value), Math.pow(value * 0.99 + 0.01, 0.2));
+    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
   ColorScales.antiSolar = function(value) {
-    return ColorOperators.invertColor(ColorScales.solar(value));
+    return ColorOperators__default.invertColor(ColorScales.solar(value));
   };
 
   exports.ColorScales = ColorScales;
@@ -15002,6 +15021,7 @@ define('src/index', ['exports'], function (exports) {
     if(weights == null) return;
     if(weights.length == 0) return new RectangleList();
     if(weights.length == 1) return new RectangleList(frame);
+
     isNormalizedWeights = isNormalizedWeights ? isNormalizedWeights : false;
     isSortedWeights = isSortedWeights ? isSortedWeights : false;
     var newWeightList;
@@ -15016,7 +15036,7 @@ define('src/index', ['exports'], function (exports) {
       var newPositions = newWeightList.getSortIndexes(); // ListOperators.sortListByNumberList();// newWeightList.sortNumericIndexedDescending();
       newWeightList = ListOperators__default.sortListByNumberList(newWeightList, newWeightList);
     }
-    //trace("RectangleOperators.squarified | ", newWeightList);
+
     var area = frame.width * frame.height;
     var rectangleList = new RectangleList();
     var freeRectangle = frame.clone();
@@ -15030,7 +15050,7 @@ define('src/index', ['exports'], function (exports) {
     var freeSubRectangle = new Rectangle();
     var nWeights = weights.length;
     var lastRectangle;
-    var isColumn;
+
     if(nWeights > 2) {
       var i, j, k;
       var sum;
@@ -15049,16 +15069,10 @@ define('src/index', ['exports'], function (exports) {
             if(freeRectangle.width > freeRectangle.height) { //column
               freeSubRectangle.width = subArea / freeRectangle.height;
               freeSubRectangle.height = freeRectangle.height;
-              column = true;
             } else { //fila
               freeSubRectangle.width = freeRectangle.width;
               freeSubRectangle.height = subArea / freeRectangle.width;
-              column = false;
             }
-            //subWeightList = subWeightList.getNormalizedToSum(1,sum);
-            // subWeightList.forEach(function(val, k){
-            // 	subWeightList[k]/=sum;
-            // });
 
             subRectangleList = RectangleOperators.partitionRectangle(freeSubRectangle, subWeightList, sum);
             worstProportion = subRectangleList.highestRatio; // RectangleOperators._getHighestRatio(subRectangleList);//
@@ -15138,7 +15152,6 @@ define('src/index', ['exports'], function (exports) {
     var area = rectangle.width * rectangle.height;
     var rectangleList = new List__default(); //RectangleList();
     var freeRectangle = new Rectangle(rectangle.x, rectangle.y, rectangle.width, rectangle.height); //rectangle.clone();
-    //trace("??", freeRectangle);
     var areai;
     var i;
     var rect;
@@ -15239,11 +15252,14 @@ define('src/index', ['exports'], function (exports) {
    * create a colorList based on a colorScale and values from a numberList (that will be normalized)
    * @param  {NumberList} numberList
    * @param  {ColorScale} colorScale
+   * 
    * @param  {Number} mode 0:normalize numberList
    * @return {ColorList}
    * tags:generator
    */
   ColorListGenerators.createColorListFromNumberList = function(numberList, colorScale, mode) {
+    if(numberList==null) return null;
+    
     mode = mode == null ? 0 : mode;
 
     var colorList = new ColorList();
@@ -15479,7 +15495,7 @@ define('src/index', ['exports'], function (exports) {
     var colorList = new ColorList();
     var i;
     for(i = 0; i < nPoints; i++) {
-      colorList.push(ColorOperators.point3DToColor(polygon3D[i]));
+      colorList.push(ColorOperators__default.point3DToColor(polygon3D[i]));
     }
     return colorList;
   };
@@ -15488,7 +15504,7 @@ define('src/index', ['exports'], function (exports) {
     var polygon3D = new Polygon3D();
     var i;
     for(i = 0; i < nColors; i++) {
-      polygon3D.push(ColorOperators.colorToPoint3D(colorList[i]));
+      polygon3D.push(ColorOperators__default.colorToPoint3D(colorList[i]));
     }
     return polygon3D;
   };
@@ -15919,7 +15935,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * calculates the covariance
+   * calculates the covariance between two numberLists
    * @param  {NumberList} numberList0
    * @param  {NumberList} numberList1
    * @return {Number}
@@ -15957,7 +15973,6 @@ define('src/index', ['exports'], function (exports) {
 
     var min = interval.x;
     var max = interval.y;
-    //var means = new NumberList();
     var clusters = new NumberTable();
     var i, j;
     var jK;
@@ -19498,7 +19513,7 @@ define('src/index', ['exports'], function (exports) {
     var i;
     var j;
 
-    colors = colors == null ? ColorListOperators.colorListFromColorScale(new ColorScale(ColorOperators.temperatureScale), nElements) : colors;
+    colors = colors == null ? ColorListOperators.colorListFromColorScale(new ColorScale(ColorOperators__default.temperatureScale), nElements) : colors;
     frame = frame == null ? new Rectangle(10, 10, 400, 300) : frame;
 
     var nCols = intervalsFlowTable[0].length;
@@ -21782,14 +21797,14 @@ define('src/index', ['exports'], function (exports) {
     bit = "";
     while(bit != null) {
       bit = StringOperators.getFirstTextBetweenStrings(newText, "<fcuint", ">");
-      if(bit != null) newText = newText.replace("<fcuint" + bit + ">", "<font color=\"" + ColorOperators.uinttoHEX(bit) + "\">");
+      if(bit != null) newText = newText.replace("<fcuint" + bit + ">", "<font color=\"" + ColorOperators__default.uinttoHEX(bit) + "\">");
     }
     bit = "";
     while(bit != null) {
       bit = StringOperators.getFirstTextBetweenStrings(newText, "<frgb", ">");
       if(bit != null) {
         var rgb = bit.split(".");
-        newText = newText.replace("<frgb" + bit + ">", "<font color=\"" + ColorOperators.RGBtoHEX(Number(rgb[0]), Number(rgb[1]), Number(rgb[2])) + "\">");
+        newText = newText.replace("<frgb" + bit + ">", "<font color=\"" + ColorOperators__default.RGBtoHEX(Number(rgb[0]), Number(rgb[1]), Number(rgb[2])) + "\">");
       }
     }
     bit = "";
@@ -21911,7 +21926,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   FastHtml.getColorTag = function(color) {
-    color = ColorOperators.colorStringToHEX(color);
+    color = ColorOperators__default.colorStringToHEX(color);
     return "<font color=\"" + color + "\">";
   };
 
@@ -23504,7 +23519,7 @@ define('src/index', ['exports'], function (exports) {
     var i;
     var j;
 
-    colors = colors == null ? ColorListOperators.colorListFromColorScale(new ColorScale(ColorOperators.temperatureScale), nElements) : colors;
+    colors = colors == null ? ColorListOperators.colorListFromColorScale(new ColorScale(ColorOperators__default.temperatureScale), nElements) : colors;
     center = center == null ? new Point(100, 100) : center;
     radius = radius == null ? 200 : radius;
     r0 = r0 == null ? 10 : r0;
@@ -25210,7 +25225,7 @@ define('src/index', ['exports'], function (exports) {
    * @ignore
    */
   NetworkDraw.drawNetworkMatrix = function(frame, network, colors, relationsColorScaleFunction, margin, directed, normalizedNodeWeights, returnHovered) {
-    relationsColorScaleFunction = relationsColorScaleFunction == null ? ColorOperators.grayScale : relationsColorScaleFunction;
+    relationsColorScaleFunction = relationsColorScaleFunction == null ? ColorOperators__default.grayScale : relationsColorScaleFunction;
     margin = margin == null ? 2 : margin;
     directed = directed == null ? false : directed;
 
@@ -25402,6 +25417,8 @@ define('src/index', ['exports'], function (exports) {
       TreeDraw._generateRectangles(tree.nodeList[0]);
 
       frame.memory.focusFrame = TreeDraw._expandRect(tree.nodeList[0]._outRectangle);
+      c.l('>>>>>>>>>>>>>>>>>>>>>>>> frame.memory.focusFrame', frame.memory.focusFrame);
+
       frame.memory.kx = frame.width / frame.memory.focusFrame.width;
       frame.memory.mx = -frame.memory.kx * frame.memory.focusFrame.x;
       frame.memory.ky = frame.height / frame.memory.focusFrame.height;
@@ -25427,7 +25444,7 @@ define('src/index', ['exports'], function (exports) {
       } else if(frame.memory.actualColorList.length == frame.memory.leaves.length) {
         frame.memory.leaves.forEach(function(node, i) {
           node._color = frame.memory.actualColorList[i];
-          node._rgb = ColorOperators.colorStringToRGB(node._color);
+          node._rgb = ColorOperators__default.colorStringToRGB(node._color);
         });
         var assignColor = function(node) {
           var i;
@@ -25458,7 +25475,7 @@ define('src/index', ['exports'], function (exports) {
       if(textColor == null) {
         var rgb;
         tree.nodeList.forEach(function(node, i) {
-          rgb = node._color ? ColorOperators.colorStringToRGB(node._color) : [0, 0, 0];
+          rgb = node._color ? ColorOperators__default.colorStringToRGB(node._color) : [0, 0, 0];
           frame.memory.textsColorList[i] = (rgb[0] + rgb[1] + rgb[2] > 360) ? 'black' : 'white';
         });
       }
@@ -25577,6 +25594,7 @@ define('src/index', ['exports'], function (exports) {
       });
 
       if(captureImage) {
+        c.l('captureImage');
         // TODO refactor this to not reassign context
         // context = mainContext;
         // frame.memory.image = new Image();

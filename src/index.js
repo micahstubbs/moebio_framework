@@ -199,9 +199,9 @@ import StringUtils from "src/tools/utils/strings/StringUtils";
 import Navigator from "src/tools/utils/system/Navigator";
 export { ConsoleTools, FastHtml, JSONUtils, MD5, StringUtils, Navigator };
 
-import { typeOf, instantiate, getTextFromObject, instantiateWithSameType, isArray,
+import { typeOf, instantiate, getShortNameFromDataModelType, getColorFromDataModelType, getLightColorFromDataModelType, getTextFromObject, instantiateWithSameType, isArray,
   evalJavaScriptFunction, argumentsToArray, TimeLogger } from "src/tools/utils/code/ClassUtils";
-export { typeOf, instantiate, getTextFromObject, instantiateWithSameType, isArray,
+export { typeOf, instantiate, getShortNameFromDataModelType, getColorFromDataModelType, getLightColorFromDataModelType, getTextFromObject, instantiateWithSameType, isArray,
   evalJavaScriptFunction, argumentsToArray, TimeLogger };
 
 // tools/physics

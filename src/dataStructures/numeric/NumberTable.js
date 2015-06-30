@@ -51,6 +51,7 @@ NumberTable.fromArray = function(array) {
   result.factor = NumberTable.prototype.factor;
   result.add = NumberTable.prototype.add;
   result.getMax = NumberTable.prototype.getMax;
+  result.getMin = NumberTable.prototype.getMin;
   result.getMinMaxInterval = NumberTable.prototype.getMinMaxInterval;
   result.getCovarianceMatrix = NumberTable.prototype.getCovarianceMatrix;
 
@@ -127,8 +128,19 @@ NumberTable.prototype.getMax = function() {
   for(i = 1; this[i] != null; i++) {
     max = Math.max(this[i].getMax(), max);
   }
-
   return max;
+};
+
+NumberTable.prototype.getMin = function() {
+  if(this.length == 0) return null;
+
+  var min = this[0].getMin();
+  var i;
+
+  for(i = 1; this[i] != null; i++) {
+    min = Math.min(this[i].getMin(), min);
+  }
+  return min;
 };
 
 NumberTable.prototype.getMinMaxInterval = function() {

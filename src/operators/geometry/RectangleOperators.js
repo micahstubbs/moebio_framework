@@ -164,6 +164,7 @@ RectangleOperators.squarify = function(frame, weights, isNormalizedWeights, isSo
   if(weights == null) return;
   if(weights.length == 0) return new RectangleList();
   if(weights.length == 1) return new RectangleList(frame);
+
   isNormalizedWeights = isNormalizedWeights ? isNormalizedWeights : false;
   isSortedWeights = isSortedWeights ? isSortedWeights : false;
   var newWeightList;
@@ -178,7 +179,7 @@ RectangleOperators.squarify = function(frame, weights, isNormalizedWeights, isSo
     var newPositions = newWeightList.getSortIndexes(); // ListOperators.sortListByNumberList();// newWeightList.sortNumericIndexedDescending();
     newWeightList = ListOperators.sortListByNumberList(newWeightList, newWeightList);
   }
-  //trace("RectangleOperators.squarified | ", newWeightList);
+
   var area = frame.width * frame.height;
   var rectangleList = new RectangleList();
   var freeRectangle = frame.clone();
@@ -192,7 +193,7 @@ RectangleOperators.squarify = function(frame, weights, isNormalizedWeights, isSo
   var freeSubRectangle = new Rectangle();
   var nWeights = weights.length;
   var lastRectangle;
-  var isColumn;
+
   if(nWeights > 2) {
     var i, j, k;
     var sum;
@@ -211,16 +212,10 @@ RectangleOperators.squarify = function(frame, weights, isNormalizedWeights, isSo
           if(freeRectangle.width > freeRectangle.height) { //column
             freeSubRectangle.width = subArea / freeRectangle.height;
             freeSubRectangle.height = freeRectangle.height;
-            column = true;
           } else { //fila
             freeSubRectangle.width = freeRectangle.width;
             freeSubRectangle.height = subArea / freeRectangle.width;
-            column = false;
           }
-          //subWeightList = subWeightList.getNormalizedToSum(1,sum);
-          // subWeightList.forEach(function(val, k){
-          // 	subWeightList[k]/=sum;
-          // });
 
           subRectangleList = RectangleOperators.partitionRectangle(freeSubRectangle, subWeightList, sum);
           worstProportion = subRectangleList.highestRatio; // RectangleOperators._getHighestRatio(subRectangleList);//
@@ -300,7 +295,6 @@ RectangleOperators.partitionRectangle = function(rectangle, normalizedWeightList
   var area = rectangle.width * rectangle.height;
   var rectangleList = new List(); //RectangleList();
   var freeRectangle = new Rectangle(rectangle.x, rectangle.y, rectangle.width, rectangle.height); //rectangle.clone();
-  //trace("??", freeRectangle);
   var areai;
   var i;
   var rect;

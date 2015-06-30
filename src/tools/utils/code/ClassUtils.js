@@ -4,6 +4,9 @@ import DateOperators from "src/operators/dates/DateOperators";
  * All these function are globally available since they are included in the Global class
  */
 export var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"}
+export var _shortFromTypeDictionary;
+export var _colorFromTypeDictionary;
+export var _lightColorFromTypeDictionary;
 
 /*
  * types are:
@@ -24,21 +27,6 @@ export function typeOf(object) {
   if(object.getDate != null) return 'date';
 
   return 'Object';
-
-
-
-
-
-  // if(o === null) {
-  //   return 'null';
-  // } else if(o.getDate != null) {
-  //   return 'date';
-  // } else {
-  //   if(o.getType == null) return 'Object';
-  //   var objectType = o.getType();
-  //   return objectType;
-  // }
-  // c.l("[!] ERROR: could not detect type for ", o);
 }
 
 // TODO remove?
@@ -96,7 +84,42 @@ export function instantiate(className, args) {
   return o;
 }
 
-export function getTextFromObject(value, type) {
+export function _createDataModelsInfoDictionaries(){
+  var i;
+  var type;
+
+  _shortFromTypeDictionary = {};
+  _colorFromTypeDictionary = {};
+  _lightColorFromTypeDictionary = {};
+
+  for(i=0; dataModelsInfo[i]!=null; i++){
+    type = dataModelsInfo[i].type;
+    _shortFromTypeDictionary[type] = dataModelsInfo[i].short;
+    _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.3);
+    _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.3);
+    type = type.toLowerCase();
+    _shortFromTypeDictionary[type] = dataModelsInfo[i].short;
+    _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.3);
+    _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.3);
+  }
+}
+
+export function getShortNameFromDataModelType(type){
+  if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
+  return _shortFromTypeDictionary[type];
+}
+
+export function getColorFromDataModelType(type){
+  if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
+  return _colorFromTypeDictionary[type];
+}
+
+export function getLightColorFromDataModelType(type){
+  if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
+  return _lightColorFromTypeDictionary[type];
+}
+
+export function getTextFromObject(value, type){
   if(value == null) return "Null";
   if(value.isList) {
     if(value.length == 0) return "[]";
@@ -208,32 +231,6 @@ export function evalJavaScriptFunction(functionText, args, scope){
 		message = err.message;
 		res = null;
 	}
-
-
-  // var isFunction = functionText.split('\n')[0].indexOf('function') != -1;
-
-  // if(isFunction) {
-  //   realCode = "myFunction = " + functionText;
-  // } else {
-  //   realCode = "myVar = " + functionText;
-  // }
-
-
-  // try {
-  //   if(isFunction) {
-  //     eval(realCode);
-  //     res = myFunction.apply(this, args);
-  //   } else {
-  //     eval(realCode);
-  //     res = myVar;
-  //   }
-  // } catch(err) {
-  //   good = false;
-  //   message = err.message;
-  //   res = null;
-  // }
-
-  //c.l('resultObject', resultObject);
 
   var resultObject = {
     result: res,
