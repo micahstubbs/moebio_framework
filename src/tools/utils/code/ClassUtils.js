@@ -12,6 +12,10 @@ import PolygonList from "src/dataStructures/geometry/PolygonList";
 import DateList from "src/dataStructures/dates/DateList";
 import ColorList from "src/dataStructures/graphic/ColorList";
 
+
+// Provides a lookup table for instantiate classes.
+// This is used in the instantiate function to simplify the logic
+// around the creation of these classes.
 var typeDict = {
   List: List,
   Table: Table,
@@ -60,6 +64,7 @@ export function instantiate(className, args) {
   switch(className) {
     case 'number':
     case 'string':
+      // TODO: I don't think this works.
       return window[className](args);
     case 'date':
       if(!args || args.length == 0) return new Date();
@@ -77,6 +82,7 @@ export function instantiate(className, args) {
       }
       return new Date(Date.UTC.apply(null, args));
     case 'boolean':
+      // TODO: I don't think this works.
       return window[className]((args == "false" || args == "0") ? false : true);
     case 'List':
     case 'Table':
