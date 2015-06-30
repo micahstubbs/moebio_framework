@@ -16,7 +16,6 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       '../dist/moebio_framework.js',
-      '../dist/global_shim.js',
       './*.test.js'
     ],
 

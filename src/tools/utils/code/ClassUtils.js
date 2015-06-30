@@ -1,8 +1,30 @@
 import DateOperators from "src/operators/dates/DateOperators";
 import Polygon from "src/dataStructures/geometry/Polygon";
-import List from "src/dataStructures/lists/List"
-import NumberList from "src/dataStructures/numeric/NumberList"
-import StringList from "src/dataStructures/strings/StringList"
+import Polygon3D from "src/dataStructures/geometry/Polygon3D";
+import List from "src/dataStructures/lists/List";
+import Table from "src/dataStructures/lists/Table";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import StringList from "src/dataStructures/strings/StringList";
+import NumberTable from "src/dataStructures/numeric/NumberTable";
+import RelationList from "src/dataStructures/structures/lists/RelationList";
+import NodeList from "src/dataStructures/structures/lists/NodeList";
+import PolygonList from "src/dataStructures/geometry/PolygonList";
+import DateList from "src/dataStructures/dates/DateList";
+import ColorList from "src/dataStructures/graphic/ColorList";
+
+var typeDict = {
+  List: List,
+  Table: Table,
+  StringList: StringList,
+  NumberList: NumberList,
+  NumberTable: NumberTable,
+  NodeList: NodeList,
+  RelationList: RelationList,
+  Polygon: Polygon,
+  Polygon3D: Polygon3D,
+  DateList: DateList,
+  ColorList: ColorList
+};
 
 
 /*
@@ -39,6 +61,7 @@ export function instantiate(className, args) {
     case 'number':
     case 'string':
       return window[className](args);
+      break;
     case 'date':
       if(!args || args.length == 0) return new Date();
       if(args.length == 1) {
@@ -54,9 +77,10 @@ export function instantiate(className, args) {
         else return new Date(args[0]);
       }
       return new Date(Date.UTC.apply(null, args));
-      //
+      break;
     case 'boolean':
       return window[className]((args == "false" || args == "0") ? false : true);
+      break;
     case 'List':
     case 'Table':
     case 'StringList':
@@ -69,7 +93,8 @@ export function instantiate(className, args) {
     case 'PolygonList':
     case 'DateList':
     case 'ColorList':
-      return window[className].apply(window, args);
+      return typeDict[className].apply(new typeDict[className](), args);
+      //return window[className].apply(window, args);
     case null:
     case undefined:
     case 'undefined':
