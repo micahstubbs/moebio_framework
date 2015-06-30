@@ -61,7 +61,6 @@ export function instantiate(className, args) {
     case 'number':
     case 'string':
       return window[className](args);
-      break;
     case 'date':
       if(!args || args.length == 0) return new Date();
       if(args.length == 1) {
@@ -77,10 +76,8 @@ export function instantiate(className, args) {
         else return new Date(args[0]);
       }
       return new Date(Date.UTC.apply(null, args));
-      break;
     case 'boolean':
       return window[className]((args == "false" || args == "0") ? false : true);
-      break;
     case 'List':
     case 'Table':
     case 'StringList':
@@ -94,7 +91,6 @@ export function instantiate(className, args) {
     case 'DateList':
     case 'ColorList':
       return typeDict[className].apply(new typeDict[className](), args);
-      //return window[className].apply(window, args);
     case null:
     case undefined:
     case 'undefined':
