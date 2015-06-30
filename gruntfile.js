@@ -99,7 +99,7 @@ module.exports = function (grunt) {
         dest: "dist/moebio_framework.js",
         options: {
           barename: "src/index",
-          namespace: "MF"
+          namespace: "mo"
         }
       }
     },
