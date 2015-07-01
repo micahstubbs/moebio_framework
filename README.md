@@ -70,7 +70,7 @@ JSDoc templates can be found in `docs/moebio-jsdoc` and are directly inspired by
 
 ### Building the Site
 
-The website and the build process for managing it are housed in the [Moebio Framework Site Repository](https://github.com/bocoup/moebio_framework_site). Check out the details there.
+The website and the build process for managing it are housed in the [Moebio Framework Site Repository](https://github.com/moebiolabs/moebio_framework_site). Check out the details there.
 
 ### Releasing the Framework
 
