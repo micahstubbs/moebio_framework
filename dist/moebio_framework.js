@@ -10592,6 +10592,8 @@ define('src/index', ['exports'], function (exports) {
    * tags:
    */
   ListOperators__ListOperators.translateWithDictionary = function(list, dictionary, nullElement) {
+    if(list==null || dictionary==null || dictionary.length<2) return;
+    
     var newList = new List__default();
     list.forEach(function(element, i) {
       var index = dictionary[0].indexOf(element);
@@ -10601,6 +10603,9 @@ define('src/index', ['exports'], function (exports) {
         newList[i] = index == -1 ? list[i] : dictionary[1][index];
       }
     });
+
+    newList.name = dictionary[1].name;
+    
     return newList.getImproved();
   };
 

@@ -253,6 +253,8 @@ ListOperators.reverse = function(list) {
  * tags:
  */
 ListOperators.translateWithDictionary = function(list, dictionary, nullElement) {
+  if(list==null || dictionary==null || dictionary.length<2) return;
+  
   var newList = new List();
   list.forEach(function(element, i) {
     var index = dictionary[0].indexOf(element);
@@ -262,6 +264,9 @@ ListOperators.translateWithDictionary = function(list, dictionary, nullElement) 
       newList[i] = index == -1 ? list[i] : dictionary[1][index];
     }
   });
+
+  newList.name = dictionary[1].name;
+  
   return newList.getImproved();
 };
 
