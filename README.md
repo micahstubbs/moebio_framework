@@ -8,7 +8,7 @@ A set of tools for Moebio's projects
 
 Download the pre-built files (minified and unminified) from the `dist/` directory and start using in your project.
 
-For more info check out the website and docs at [http://bocoup.github.io/moebio_framework/](http://bocoup.github.io/moebio_framework/).
+For more info check out the website and docs at [http://moebiolabs.github.io/moebio_framework/](http://moebiolabs.github.io/moebio_framework/).
 
 ## Project Layout
 
@@ -70,7 +70,7 @@ JSDoc templates can be found in `docs/moebio-jsdoc` and are directly inspired by
 
 ### Building the Site
 
-The website and the build process for managing it are housed in the [Moebio Framework Site Repository](https://github.com/bocoup/moebio_framework_site). Check out the details there.
+The website and the build process for managing it are housed in the [Moebio Framework Site Repository](https://github.com/moebiolabs/moebio_framework_site). Check out the details there.
 
 ### Releasing the Framework
 
