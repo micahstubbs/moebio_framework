@@ -734,6 +734,7 @@ List.prototype.indexOfElement = function(element) { //TODO: test if this is fast
   return -1;
 };
 
+
 /**
  * Returns a List of values of a property of all elements.
  *
@@ -1432,6 +1433,7 @@ List.prototype.assignNames = function(names) {
 
   return this;
 };
+
 
 List.prototype.splice = function() { //TODO: replace
   switch(this.type) {

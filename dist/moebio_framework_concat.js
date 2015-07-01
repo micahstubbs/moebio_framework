@@ -1212,6 +1212,7 @@ define('src/index', ['exports'], function (exports) {
     return -1;
   };
 
+
   /**
    * Returns a List of values of a property of all elements.
    *
@@ -1910,6 +1911,7 @@ define('src/index', ['exports'], function (exports) {
 
     return this;
   };
+
 
   List__List.prototype.splice = function() { //TODO: replace
     switch(this.type) {
@@ -19719,9 +19721,7 @@ define('src/index', ['exports'], function (exports) {
    *
    */
   function fsCircle(x, y, r) {
-    src_Global__context.beginPath();
-    src_Global__context.arc(x, y, r, 0, TwoPi);
-    src_Global__context.fill();
+    fCircle(x, y, r);
     src_Global__context.stroke();
   };
 
@@ -19798,22 +19798,37 @@ define('src/index', ['exports'], function (exports) {
    * fsEllipse(40, 40, 20, 30);
    */
   function fsEllipse(x, y, rW, rH) {
-    var k = 0.5522848,
-      ox = rW * k,
-      oy = rH * k,
-      xe = x + rW,
-      ye = y + rH;
-    src_Global__context.beginPath();
-    src_Global__context.moveTo(x - rW, y);
-    src_Global__context.bezierCurveTo(x - rW, y - oy, x - ox, y - rH, x, y - rH);
-    src_Global__context.bezierCurveTo(x + ox, y - rH, xe, y - oy, xe, y);
-    src_Global__context.bezierCurveTo(xe, y + oy, x + ox, ye, x, ye);
-    src_Global__context.bezierCurveTo(x - ox, ye, x - rW, y + oy, x - rW, y);
-    src_Global__context.moveTo(x - rW, y);
-    src_Global__context.closePath();
-    src_Global__context.fill();
+    fEllipse(x, y, rW, rH);
     src_Global__context.stroke();
   };
+
+
+  /**
+   * @ignore
+   */
+  function _solidArc(x,y,a0,a1,r0,r1){
+    src_Global__context.beginPath();
+    src_Global__context.arc( x, y, r0, a0, a1 );
+    src_Global__context.lineTo( x + r1*Math.cos(a1), y + r1*Math.sin(a1) );
+    src_Global__context.arc( x, y, r1, a1, a0, true );
+    src_Global__context.lineTo( x + r0*Math.cos(a0), y + r0*Math.sin(a0) );
+  }
+
+  function fSolidArc(x,y,a0,a1,r0,r1){
+    _solidArc(x,y,a0,a1,r0,r1);
+    src_Global__context.fill();
+  }
+
+  function sSolidArc(x,y,a0,a1,r0,r1){
+    _solidArc(x,y,a0,a1,r0,r1);
+    src_Global__context.stroke();
+  }
+
+  function fsSolidArc(x,y,a0,a1,r0,r1){
+    fSolidArc(x,y,a0,a1,r0,r1);
+    src_Global__context.stroke();
+  }
+
 
   /**
    * Draws a line from a start position to an end position
@@ -20677,6 +20692,9 @@ define('src/index', ['exports'], function (exports) {
   exports.fEllipse = fEllipse;
   exports.sEllipse = sEllipse;
   exports.fsEllipse = fsEllipse;
+  exports.fSolidArc = fSolidArc;
+  exports.sSolidArc = sSolidArc;
+  exports.fsSolidArc = fsSolidArc;
   exports.line = line;
   exports.bezier = bezier;
   exports.fLines = fLines;

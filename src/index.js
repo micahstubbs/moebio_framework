@@ -156,7 +156,7 @@ export { CanvasAndContext, Draw, DrawSimpleVis, DrawTexts, DrawTextsAdvanced };
 
 import {
   fRect, sRect, fsRect, fCircle, sCircle, fsCircle, fEllipse,
-  sEllipse, fsEllipse, line, bezier, fLines, sLines, fsLines, fsLinesM,
+  sEllipse, fsEllipse, fSolidArc, sSolidArc, fsSolidArc, line, bezier, fLines, sLines, fsLines, fsLinesM,
   fPolygon, sPolygon, fsPolygon, fEqTriangle, sEqTriangle, fsEqTriangle,
   fRectM, sRectM, fsRectM, fCircleM, sCircleM, fsCircleM, lineM, bezierM,
   drawImage, fitImage, setFill, setStroke, setLW, clipCircle, clipRectangle,
@@ -167,7 +167,7 @@ import {
 
 export {
   fRect, sRect, fsRect, fCircle, sCircle, fsCircle, fEllipse,
-  sEllipse, fsEllipse, line, bezier, fLines, sLines, fsLines, fsLinesM,
+  sEllipse, fsEllipse, fSolidArc, sSolidArc, fsSolidArc, line, bezier, fLines, sLines, fsLines, fsLinesM,
   fPolygon, sPolygon, fsPolygon, fEqTriangle, sEqTriangle, fsEqTriangle,
   fRectM, sRectM, fsRectM, fCircleM, sCircleM, fsCircleM, lineM, bezierM,
   drawImage, fitImage, setFill, setStroke, setLW, clipCircle, clipRectangle,
