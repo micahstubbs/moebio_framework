@@ -1,4 +1,35 @@
 import DateOperators from "src/operators/dates/DateOperators";
+import Polygon from "src/dataStructures/geometry/Polygon";
+import Polygon3D from "src/dataStructures/geometry/Polygon3D";
+import List from "src/dataStructures/lists/List";
+import Table from "src/dataStructures/lists/Table";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import StringList from "src/dataStructures/strings/StringList";
+import NumberTable from "src/dataStructures/numeric/NumberTable";
+import RelationList from "src/dataStructures/structures/lists/RelationList";
+import NodeList from "src/dataStructures/structures/lists/NodeList";
+import PolygonList from "src/dataStructures/geometry/PolygonList";
+import DateList from "src/dataStructures/dates/DateList";
+import ColorList from "src/dataStructures/graphic/ColorList";
+
+
+// Provides a lookup table for instantiate classes.
+// This is used in the instantiate function to simplify the logic
+// around the creation of these classes.
+var typeDict = {
+  List: List,
+  Table: Table,
+  StringList: StringList,
+  NumberList: NumberList,
+  NumberTable: NumberTable,
+  NodeList: NodeList,
+  RelationList: RelationList,
+  Polygon: Polygon,
+  Polygon3D: Polygon3D,
+  DateList: DateList,
+  ColorList: ColorList
+};
+
 
 /*
  * All these function are globally available since they are included in the Global class
@@ -36,6 +67,7 @@ export function instantiate(className, args) {
   switch(className) {
     case 'number':
     case 'string':
+      // TODO: I don't think this works.
       return window[className](args);
     case 'date':
       if(!args || args.length == 0) return new Date();
@@ -52,8 +84,8 @@ export function instantiate(className, args) {
         else return new Date(args[0]);
       }
       return new Date(Date.UTC.apply(null, args));
-      //
     case 'boolean':
+      // TODO: I don't think this works.
       return window[className]((args == "false" || args == "0") ? false : true);
     case 'List':
     case 'Table':
@@ -67,7 +99,7 @@ export function instantiate(className, args) {
     case 'PolygonList':
     case 'DateList':
     case 'ColorList':
-      return window[className].apply(window, args);
+      return typeDict[className].apply(new typeDict[className](), args);
     case null:
     case undefined:
     case 'undefined':
@@ -245,23 +277,23 @@ export function argumentsToArray(args) {
   return Array.prototype.slice.call(args, 0);
 }
 
-export function TimeLogger(name) {
-  var scope = this;
-  this.name = name;
-  this.clocks = {};
+// export function TimeLogger(name) {
+//   var scope = this;
+//   this.name = name;
+//   this.clocks = {};
 
-  this.tic = function(clockName) {
-    scope.clocks[clockName] = new Date().getTime();
-    //c.l( "TimeLogger '"+clockName+"' has been started");
-  };
-  this.tac = function(clockName) {
-    if(scope.clocks[clockName] == null) {
-      scope.tic(clockName);
-    } else {
-      var now = new Date().getTime();
-      var diff = now - scope.clocks[clockName];
-      console.log("TimeLogger '" + clockName + "' took " + diff + " ms");
-    }
-  };
-}
-export var tl = new TimeLogger("Global Time Logger");
+//   this.tic = function(clockName) {
+//     scope.clocks[clockName] = new Date().getTime();
+//     //c.l( "TimeLogger '"+clockName+"' has been started");
+//   };
+//   this.tac = function(clockName) {
+//     if(scope.clocks[clockName] == null) {
+//       scope.tic(clockName);
+//     } else {
+//       var now = new Date().getTime();
+//       var diff = now - scope.clocks[clockName];
+//       console.log("TimeLogger '" + clockName + "' took " + diff + " ms");
+//     }
+//   };
+// }
+// export var tl = new TimeLogger("Global Time Logger");

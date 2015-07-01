@@ -362,7 +362,7 @@ Table.prototype.getReport = function(level) {
 
     switch(subCategoryCase){
       case 0:
-        text += ident + "no categorical relation found among lists";
+        text += ident + "no categorical relation found between lists";
         break;
       case 1:
         text += ident + "[!] both lists are categorical identical";

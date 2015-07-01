@@ -30,7 +30,7 @@ TableEncodings.TAB2 = String.fromCharCode(9);
  */
 TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, valueForNulls, listsToStringList) {
   if(csvString==null) return null;
-  valueForNulls = valueForNulls == null ? 0 : valueForNulls;
+  valueForNulls = valueForNulls == null ? "" : valueForNulls;
   listsToStringList = listsToStringList==null?true:listsToStringList;
 
   var i, j;
@@ -75,7 +75,7 @@ TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, val
   for(i = startIndex; i < lines.length; i++) {
     if(lines[i].length < 2) continue;
 
-    var cellContents = NetworkEncodings.replaceChomasInLine(lines[i]).split(comaCharacter); //TODO: will be obsolete (see previous TODO)
+    var cellContents = NetworkEncodings.replaceChomasInLine(lines[i], separator).split(comaCharacter); //TODO: will be obsolete (see previous TODO)
 
     for(j = 0; j < cellContents.length; j++) {
       table[j] = table[j] == null ? new List() : table[j];
@@ -84,8 +84,8 @@ TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, val
       }
       var actualIndex = _firstRowIsHeader ? (i - 1) : i;
 
-      cellContent = cellContents[j].replace(/\*CHOMA\*/g, ",").replace(/\*ENTER\*/g, "\n");
-
+      cellContent = cellContents[j].replace(/\*CHOMA\*/g, separator).replace(/\*ENTER\*/g, "\n");
+      
       cellContent = cellContent == '' ? valueForNulls : cellContent;
 
       cellContent = String(cellContent);

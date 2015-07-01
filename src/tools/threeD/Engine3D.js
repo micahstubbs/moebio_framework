@@ -142,6 +142,7 @@ Engine3D.prototype.sortListByPointsScale = function(list, polygon3D) {
 
   return newList;
 }
+
 Engine3D.prototype._sortingCriteria = function(array0, array1, basis) {
   var point3D0 = array0[0];
   var point3D1 = array1[0];

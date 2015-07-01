@@ -200,9 +200,9 @@ import Navigator from "src/tools/utils/system/Navigator";
 export { ConsoleTools, FastHtml, JSONUtils, MD5, StringUtils, Navigator };
 
 import { typeOf, instantiate, getShortNameFromDataModelType, getColorFromDataModelType, getLightColorFromDataModelType, getTextFromObject, instantiateWithSameType, isArray,
-  evalJavaScriptFunction, argumentsToArray, TimeLogger } from "src/tools/utils/code/ClassUtils";
+  evalJavaScriptFunction, argumentsToArray } from "src/tools/utils/code/ClassUtils";
 export { typeOf, instantiate, getShortNameFromDataModelType, getColorFromDataModelType, getLightColorFromDataModelType, getTextFromObject, instantiateWithSameType, isArray,
-  evalJavaScriptFunction, argumentsToArray, TimeLogger };
+  evalJavaScriptFunction, argumentsToArray };
 
 // tools/physics
 import Forces from "src/tools/physics/Forces";

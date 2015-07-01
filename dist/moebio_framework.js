@@ -2204,469 +2204,716 @@ define('src/index', ['exports'], function (exports) {
 
   exports.DateOperators = DateOperators;
 
-  var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"}
-  var _shortFromTypeDictionary;
-  var _colorFromTypeDictionary;
-  var _lightColorFromTypeDictionary;
-
-  /*
-   * types are:
-   * number, string, boolean, date, Array, Object
-   * and all data models classes names
-   */
-
-  function typeOf(object) {
-    if(object==null) return null;
-
-    var type = typeof object;
-    if(type !== 'object') return type;
-
-    if(object.type!=null) return object.type;
-
-    if(Object.prototype.toString.call(object) == "[object Array]") return "Array";
-
-    if(object.getDate != null) return 'date';
-
-    return 'Object';
-  }
-
-  // TODO remove?
-  function VOID() {}
-
-  function instantiate(className, args) {
-    switch(className) {
-      case 'number':
-      case 'string':
-        return window[className](args);
-      case 'date':
-        if(!args || args.length == 0) return new Date();
-        if(args.length == 1) {
-          if(args[0].match(/\d*.-\d*.-\d*\D\d*.:\d*.:\d*/)) {
-            var dateArray = args[0].split(" ");
-            dateArray[0] = dateArray[0].split("-");
-            if(dateArray[1]) dateArray[1] = dateArray[1].split(":");
-            else dateArray[1] = new Array(0, 0, 0);
-            return new Date(Date.UTC(dateArray[0][0], Number(dateArray[0][1]) - 1, dateArray[0][2], dateArray[1][0], dateArray[1][1], dateArray[1][2]));
-          }
-          //
-          if(Number(args[0]) != "NaN") return new Date(Number(args[0]));
-          else return new Date(args[0]);
-        }
-        return new Date(Date.UTC.apply(null, args));
-        //
-      case 'boolean':
-        return window[className]((args == "false" || args == "0") ? false : true);
-      case 'List':
-      case 'Table':
-      case 'StringList':
-      case 'NumberList':
-      case 'NumberTable':
-      case 'NodeList':
-      case 'RelationList':
-      case 'Polygon':
-      case 'Polygon3D':
-      case 'PolygonList':
-      case 'DateList':
-      case 'ColorList':
-        return window[className].apply(window, args);
-      case null:
-      case undefined:
-      case 'undefined':
-        return null;
-    }
-    //generic instantiation of object:
-    var o, dummyFunction, cl;
-    cl = window[className]; // get reference to class constructor function
-    dummyFunction = function() {}; // dummy function
-    dummyFunction.prototype = cl.prototype; // reference same prototype
-    o = new dummyFunction(); // instantiate dummy function to copy prototype properties
-    cl.apply(o, args); // call class constructor, supplying new object as context
-
-    return o;
-  }
-
-  function _createDataModelsInfoDictionaries(){
-    var i;
-    var type;
-
-    _shortFromTypeDictionary = {};
-    _colorFromTypeDictionary = {};
-    _lightColorFromTypeDictionary = {};
-
-    for(i=0; dataModelsInfo[i]!=null; i++){
-      type = dataModelsInfo[i].type;
-      _shortFromTypeDictionary[type] = dataModelsInfo[i].short;
-      _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.3);
-      _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.3);
-      type = type.toLowerCase();
-      _shortFromTypeDictionary[type] = dataModelsInfo[i].short;
-      _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.3);
-      _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.3);
-    }
-  }
-
-  function getShortNameFromDataModelType(type){
-    if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
-    return _shortFromTypeDictionary[type];
-  }
-
-  function getColorFromDataModelType(type){
-    if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
-    return _colorFromTypeDictionary[type];
-  }
-
-  function getLightColorFromDataModelType(type){
-    if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
-    return _lightColorFromTypeDictionary[type];
-  }
-
-  function getTextFromObject(value, type){
-    if(value == null) return "Null";
-    if(value.isList) {
-      if(value.length == 0) return "[]";
-      var text = value.toString(); // value.length>6?value.slice(0, 5).forEach(function(v){return getTextFromObject(v, typeOf(v))}).join(','):value.toStringList().join(',').forEach(function(v, typeOf(v)){return getTextFromObject(v, type)});
-      if(text.length > 160) {
-        var i;
-        var subtext;
-        text = "[";
-        for(i = 0; (value[i] != null && i < 6); i++) {
-          subtext = getTextFromObject(value[i], typeOf(value[i]));
-          if(subtext.length > 40) subtext = subtext.substr(0, 40) + (value[i].isList ? "…]" : "…");
-          text += (i != 0 ? ", " : "") + subtext;
-        }
-        if(value.length > 6) text += ",…";
-        text += "]";
-      }
-      return text;
-    }
-
-    switch(type) {
-      case "date":
-        return DateOperators.dateToString(value);
-      case "DateInterval":
-        return DateOperators.dateToString(value.date0) + " - " + DateOperators.dateToString(value.date1);
-      case "string":
-        return((value.length > 160) ? value.substr(0, 159) + "…" : value).replace(/\n/g, "↩");
-      case "number":
-        return String(value);
-      default:
-        return "{}"; //value.toString();
-    }
-  }
-
-  function instantiateWithSameType(object, args) {
-    return instantiate(typeOf(object), args);
-  }
-
-  function isArray(obj) {
-    if(obj.constructor.toString().indexOf("Array") == -1)
-      return false;
-    else
-      return true;
-  }
-
-  Date.prototype.getType = function() {
-    return 'date';
-  };
-
-
-
-  function evalJavaScriptFunction(functionText, args, scope){
-  	if(functionText==null) return;
-
-  	var res;
-
-  	var myFunction;
-
-  	var good = true;
-  	var message = '';
-
-  	var realCode;
-
-  	var lines = functionText.split('\n');
-
-  	for(var i=0; lines[i]!=null; i++){
-  		lines[i] = lines[i].trim();
-  		if(lines[i] === "" || lines[i].substr(1)=="/"){
-  			lines.splice(i,1);
-  			i--;
-  		}
-  	}
-
-  	var isFunction = lines[0].indexOf('function')!=-1;
-
-  	functionText = lines.join('\n');
-
-  	if(isFunction){
-  		if(scope){
-  			realCode = "scope.myFunction = " + functionText;
-  		} else {
-  			realCode = "myFunction = " + functionText;
-  		}
-  	} else {
-  		if(scope){
-  			realCode = "scope.myVar = " + functionText;
-  		} else {
-  			realCode = "myVar = " + functionText;
-  		}
-  	}
-
-  	try{
-  		if(isFunction){
-  			eval(realCode);
-  			if(scope){
-  				res = scope.myFunction.apply(scope, args);
-  			} else {
-  				res = myFunction.apply(this, args);
-  			}
-  		} else {
-  			eval(realCode);
-  			if(scope){
-  				res = scope.myVar;
-  			} else 	{
-  				res = myVar;
-  			}
-  		}
-  	} catch(err){
-  		good = false;
-  		message = err.message;
-  		res = null;
-  	}
-
-    var resultObject = {
-      result: res,
-      success: good,
-      errorMessage: message
-    };
-
-    return resultObject;
-  }
-
-  function argumentsToArray(args) {
-    return Array.prototype.slice.call(args, 0);
-  }
-
-  function TimeLogger(name) {
-    var scope = this;
-    this.name = name;
-    this.clocks = {};
-
-    this.tic = function(clockName) {
-      scope.clocks[clockName] = new Date().getTime();
-      //c.l( "TimeLogger '"+clockName+"' has been started");
-    };
-    this.tac = function(clockName) {
-      if(scope.clocks[clockName] == null) {
-        scope.tic(clockName);
-      } else {
-        var now = new Date().getTime();
-        var diff = now - scope.clocks[clockName];
-        console.log("TimeLogger '" + clockName + "' took " + diff + " ms");
-      }
-    };
-  }
-  var tl = new TimeLogger("Global Time Logger");
-
-  exports.typeOf = typeOf;
-  exports.instantiate = instantiate;
-  exports.getShortNameFromDataModelType = getShortNameFromDataModelType;
-  exports.getColorFromDataModelType = getColorFromDataModelType;
-  exports.getLightColorFromDataModelType = getLightColorFromDataModelType;
-  exports.getTextFromObject = getTextFromObject;
-  exports.instantiateWithSameType = instantiateWithSameType;
-  exports.isArray = isArray;
-  exports.evalJavaScriptFunction = evalJavaScriptFunction;
-  exports.argumentsToArray = argumentsToArray;
-  exports.TimeLogger = TimeLogger;
-
-  Polygon.prototype = new List__default();
-  Polygon.prototype.constructor = Polygon;
+  Polygon3D.prototype = new List__default();
+  Polygon3D.prototype.constructor = Polygon3D;
 
   /**
-   * @classdesc A Polygon is a shape created from a list of {@link Point|Points}.
+   * @classdesc Polygon3D brings the {@link Polygon} concept into three
+   * dimensions through the use of {@link Point3D}.
    *
-   * @description Creates a new Polygon.
+   * @description Creates a new Polygon3D.
    * @constructor
    * @category geometry
    */
-  function Polygon() {
+  function Polygon3D() {
     var array = List__default.apply(this, arguments);
-    array = Polygon.fromArray(array);
+    array = Polygon3D.fromArray(array);
     return array;
   }
 
 
-  Polygon.fromArray = function(array) {
+  Polygon3D.fromArray = function(array) {
     var result = List__default.fromArray(array);
-    result.type = "Polygon";
+    result.type = "Polygon3D";
+    //assign methods to array:
+    return result;
+  };
 
-    result.getFrame = Polygon.prototype.getFrame;
-    result.getBarycenter = Polygon.prototype.getBarycenter;
-    result.add = Polygon.prototype.add;
-    result.factor = Polygon.prototype.factor;
-    result.getRotated = Polygon.prototype.getRotated;
-    result.getClosestPoint = Polygon.prototype.getClosestPoint;
-    result.toNumberList = Polygon.prototype.toNumberList;
-    result.containsPoint = Polygon.prototype.containsPoint;
-    //transform
-    result.approach = Polygon.prototype.approach;
-    //override
-    result.clone = Polygon.prototype.clone;
+  exports.Polygon3D = Polygon3D;
+
+  /* global console */
+
+  Table.prototype = new List__default();
+  Table.prototype.constructor = Table;
+
+  /**
+   * @classdesc A sub-class of {@link List}, Table provides a 2D array-like structure.
+   *
+   * Each column is stored as its own {@link List}, making it a List of Lists.
+   * Cells in the table can be accessed using table[column][row].
+   *
+   * @description Creates a new Table.
+   * Input arguments are treated as the inital column values
+   * of the Table.
+   * @constructor
+   * @category basics
+   */
+  function Table() {
+    var args = [];
+    var i;
+    for(i = 0; i < arguments.length; i++) {
+      args[i] = new List__default(arguments[i]);
+    }
+
+    var array = List__default.apply(this, args);
+    array = Table.fromArray(array);
+
+    return array;
+  }
+
+
+  /**
+   * Creates a new Table from an array
+   * @param {Number[]} array
+   * @return {Table}
+   */
+  Table.fromArray = function(array) {
+    var result = List__default.fromArray(array);
+    result.type = "Table";
+    //assign methods to array:
+    result.applyFunction = Table.prototype.applyFunction;
+    result.getRow = Table.prototype.getRow;
+    result.getRows = Table.prototype.getRows;
+    result.getLengths = Table.prototype.getLengths;
+    result.getListLength = Table.prototype.getListLength;
+    result.sliceRows = Table.prototype.sliceRows;
+    result.getSubListsByIndexes = Table.prototype.getSubListsByIndexes;
+    result.getWithoutRow = Table.prototype.getWithoutRow;
+    result.getWithoutRows = Table.prototype.getWithoutRows;
+    result.getTransposed = Table.prototype.getTransposed;
+    result.getListsSortedByList = Table.prototype.getListsSortedByList;
+    result.sortListsByList = Table.prototype.sortListsByList;
+    result.getReport = Table.prototype.getReport;
+    result.clone = Table.prototype.clone;
+    result.print = Table.prototype.print;
+
+    //transformative
+    result.removeRow = Table.prototype.removeRow;
+
+    //overiden
+    result.destroy = Table.prototype.destroy;
+
+    result.isTable = true;
 
     return result;
   };
 
+  /**
+   * Executes a given function on all the columns
+   * in the Table, returning a new Table with the
+   * resulting values.
+   * @param {Function} func Function to apply to each
+   * column in the table. Columns are {@link List|Lists}.
+   * @return {Table} Table of values from applying function.
+   */
+  Table.prototype.applyFunction = function(func) {
+    //TODO: to be tested!
+    var i;
+    var newTable = new Table();
 
-  Polygon.prototype.getFrame = function() {
-    if(this.length == 0) return null;
-    var rectangle = new Rectangle(this[0].x, this[0].y, this[0].x, this[0].y);
-    var p;
-    for(var i = 1; this[i] != null; i++) {
-      p = this[i];
-      rectangle.x = Math.min(rectangle.x, p.x);
-      rectangle.y = Math.min(rectangle.y, p.y);
-      rectangle.width = Math.max(rectangle.width, p.x);
-      rectangle.height = Math.max(rectangle.height, p.y);
+    newTable.name = this.name;
+
+    for(i = 0; this[i] != null; i++) {
+      newTable[i] = this[i].applyFunction(func);
     }
-
-    rectangle.width -= rectangle.x;
-    rectangle.height -= rectangle.y;
-
-    return rectangle;
+    return newTable.getImproved();
   };
 
-  Polygon.prototype.getBarycenter = function(countLastPoint) {
+  /**
+   * Returns a {@link List} with all the elements of a row.
+   * @param  {Number} index Index of the row to get.
+   * @return {List}
+   * tags:filter
+   */
+  Table.prototype.getRow = function(index) {
+    var list = new List__default();
     var i;
-    countLastPoint = countLastPoint == null ? true : countLastPoint;
-    var cLPN = 1 - Number(countLastPoint);
-    if(this.length == 0) return null;
-    var barycenter = new Point(this[0].x, this[0].y);
-    for(i = 1; this[i + cLPN] != null; i++) {
-      barycenter.x += this[i].x;
-      barycenter.y += this[i].y;
+    for(i = 0; i < this.length; i++) {
+      list[i] = this[i][index];
     }
-    barycenter.x /= this.length;
-    barycenter.y /= this.length;
-    return barycenter;
+    return list.getImproved();
   };
 
-  Polygon.prototype.add = function(object) {
-    var type = typeOf(object);
+  /**
+   * Returns the length a column of the Table.
+   * @param  {Number} index The Column to return its length.
+   * Defaults to 0.
+   * @return {Number} Length of column at given index.
+   * tags:
+   */
+  Table.prototype.getListLength = function(index) {
+    return this[index || 0].length;
+  };
+
+  /**
+   * Returns the lengths of all the columns of the Table.
+   * @return {NumberList} Lengths of all columns in Table.
+   */
+  Table.prototype.getLengths = function() {
+    var lengths = new NumberList();
+    for(var i = 0; this[i] != null; i++) {
+      lengths[i] = this[i].length;
+    }
+    return lengths;
+  };
+
+  /**
+   * Filters a Table by selecting a section of rows, elements with last index included.
+   * @param  {Number} startIndex Index of first element in all lists of the table.
+   * @param  {Number} endIndex Index of last elements in all lists of the table.
+   * @return {Table}
+   * tags:filter
+   */
+  Table.prototype.sliceRows = function(startIndex, endIndex) {
+    endIndex = endIndex == null ? (this[0].length - 1) : endIndex;
+
     var i;
-    switch(type) {
-      case 'Point':
-        var newPolygon = new Polygon();
-        for(i = 0; this[i] != null; i++) {
-          newPolygon[i] = this[i].add(object);
+    var newTable = new Table();
+    var newList;
+
+    newTable.name = this.name;
+    for(i = 0; this[i] != null; i++) {
+      newList = this[i].getSubList(startIndex, endIndex);
+      newList.name = this[i].name;
+      newTable.push(newList);
+    }
+    return newTable.getImproved();
+  };
+
+  /**
+   * Filters the lists of the table by indexes.
+   * @param  {NumberList} indexes
+   * @return {Table}
+   * tags:filter
+   */
+  Table.prototype.getSubListsByIndexes = function(indexes) {
+    var newTable = new Table();
+    this.forEach(function(list) {
+      newTable.push(list.getSubListByIndexes(indexes));
+    });
+    return newTable.getImproved();
+  };
+
+
+  //deprecated
+  /**
+   * @ignore
+   */
+  Table.prototype.getRows = function(indexes) {
+    return Table.prototype.getSubListsByIndexes(indexes);
+  };
+
+  /**
+   * Returns a new Table with the row at the given index removed.
+   * @param {Number} rowIndex Row to remove
+   * @return {Table} New Table.
+   */
+  Table.prototype.getWithoutRow = function(rowIndex) {
+    var newTable = new Table();
+    newTable.name = this.name;
+    for(var i = 0; this[i] != null; i++) {
+      newTable[i] = List__default.fromArray(this[i].slice(0, rowIndex).concat(this[i].slice(rowIndex + 1))).getImproved();
+      newTable[i].name = this[i].name;
+    }
+    return newTable.getImproved();
+  };
+
+  /**
+   * Returns a new Table with the rows listed in the given array removed.
+   * @param {Number[]} rowsIndexes Array of row indecies to remove.
+   * @return {undefined}
+   */
+  Table.prototype.getWithoutRows = function(rowsIndexes) {
+    var newTable = new Table();
+    newTable.name = this.name;
+    for(var i = 0; this[i] != null; i++) {
+      newTable[i] = new List__default();
+      for(var j = 0; this[i][j] != null; j++) {
+        if(rowsIndexes.indexOf(j) == -1) newTable[i].push(this[i][j]);
+      }
+      newTable[i].name = this[i].name;
+    }
+    return newTable.getImproved();
+  };
+
+  /**
+   * Sort Table's lists by a list
+   * @param  {List|Number} listOrIndex List used to sort, or index of list in the table
+   *
+   * @param  {Boolean} ascending (true by default)
+   * @return {Table} table (of the same type)
+   * tags:sort
+   */
+  Table.prototype.getListsSortedByList = function(listOrIndex, ascending) { //depracated: use sortListsByList
+    if(listOrIndex == null) return;
+    var newTable = instantiateWithSameType(this);
+    var sortinglist = listOrIndex.isList ? listOrIndex.clone() : this[listOrIndex];
+
+    this.forEach(function(list) {
+      newTable.push(list.getSortedByList(sortinglist, ascending));
+    });
+
+    return newTable;
+  };
+
+  /**
+   * Transposes Table.
+   * @param firstListAsHeaders
+   * @return {Table}
+   */
+  Table.prototype.getTransposed = function(firstListAsHeaders) {
+
+    var tableToTranspose = firstListAsHeaders ? this.getSubList(1) : this;
+
+    var table = instantiate(typeOf(tableToTranspose));
+    if(tableToTranspose.length === 0) return table;
+    var i;
+    var j;
+    var list;
+
+    for(i = 0; tableToTranspose[i] != null; i++) {
+      list = tableToTranspose[i];
+      for(j = 0; list[j] != null; j++) {
+        if(i === 0) table[j] = new List__default();
+        table[j][i] = tableToTranspose[i][j];
+      }
+    }
+    for(j = 0; tableToTranspose[0][j] != null; j++) {
+      table[j] = table[j].getImproved();
+    }
+
+    if(firstListAsHeaders) {
+      this[0].forEach(function(name, i) {
+        table[i].name = String(name);
+      });
+    }
+
+    return table;
+  };
+
+  /**
+   * Generates a string containing details about the current state
+   * of the Table. Useful for outputing to the console for debugging.
+   * @param {Number} level If greater then zero, will indent to that number of spaces.
+   * @return {String} Description String.
+   */
+  Table.prototype.getReport = function(level) {
+    var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
+    var lengths = this.getLengths();
+    var minLength = lengths.getMin();
+    var maxLength = lengths.getMax();
+    var averageLength = (minLength + maxLength) * 0.5;
+    var sameLengths = minLength == maxLength;
+
+    var text = level > 0 ? (ident + "////report of instance of Table////") : "///////////report of instance of Table//////////";
+
+    if(this.length === 0) {
+      text += ident + "this table has no lists";
+      return text;
+    }
+
+    text += ident + "name: " + this.name;
+    text += ident + "type: " + this.type;
+    text += ident + "number of lists: " + this.length;
+
+    text += ident + "all lists have same length: " + (sameLengths ? "true" : "false");
+
+    if(sameLengths) {
+      text += ident + "lists length: " + this[0].length;
+    } else {
+      text += ident + "min length: " + minLength;
+      text += ident + "max length: " + maxLength;
+      text += ident + "average length: " + averageLength;
+      text += ident + "all lengths: " + lengths.join(", ");
+    }
+
+    var names = this.getNames();
+    var types = this.getTypes();
+
+    text += ident + "--";
+    names.forEach(function(name, i){
+      text += ident + i + ": " + name + " ["+TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"]";
+    });
+    text += ident + "--";
+
+    var sameTypes = types.allElementsEqual();
+    if(sameTypes) {
+      text += ident + "types of all lists: " + types[0];
+    } else {
+      text += ident + "types: " + types.join(", ");
+    }
+    text += ident + "names: " + names.join(", ");
+
+    if(this.length < 101) {
+      text += ident + ident + "--------lists reports---------";
+
+      var i;
+      for(i = 0; this[i] != null; i++) {
+        text += "\n" + ident + ("(" + (i) + "/0-" + (this.length - 1) + ")");
+        try{
+           text += this[i].getReport(1);
+        } catch(err){
+          text += ident + "[!] something wrong with list " + err;
         }
-        newPolygon.name = this.name;
-        return newPolygon;
-        break;
+      }
+    }
+
+    if(this.length == 2) {
+      text += ident + ident + "--------lists comparisons---------";
+      if(this[0].type=="NumberList" && this[1].type=="NumberList"){
+        text += ident + "covariance:" + NumberListOperators.covariance(this[0], this[1]);
+        text += ident + "Pearson product moment correlation: " + NumberListOperators.pearsonProductMomentCorrelation(this[0], this[1]);
+      } else if(this[0].type!="NumberList" && this[1].type!="NumberList"){
+        var nUnion = ListOperators.union(this[0], this[1]).length;
+        text += ident + "union size: " + nUnion;
+        var intersected = ListOperators.intersection(this[0], this[1]);
+        var nIntersection = intersected.length;
+        text += ident + "intersection size: " + nIntersection;
+
+        if(this[0]._freqTable[0].length == nUnion && this[1]._freqTable[0].length == nUnion){
+          text += ident + "[!] both lists contain the same non repeated elements";
+        } else {
+          if(this[0]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in first list also occur on second list";
+          if(this[1]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in second list also occur on first list";
+        }
+        text += ident + "Jaccard distance: " + (1 - (nIntersection/nUnion));
+      }
+      //check for 1-1 matches, number of pairs, categorical, sub-categorical
+      var subCategoryCase = ListOperators.subCategoricalAnalysis(this[0], this[1]);
+
+      switch(subCategoryCase){
+        case 0:
+          text += ident + "no categorical relation found between lists";
+          break;
+        case 1:
+          text += ident + "[!] both lists are categorical identical";
+          break;
+        case 2:
+          text += ident + "[!] first list is subcategorical to second list";
+          break;
+        case 3:
+          text += ident + "[!] second list is subcategorical to first list";
+          break;
+      }
+
+      if(subCategoryCase!=1){
+        text += ident + "information gain when segmenting first list by the second: "+ListOperators.getInformationGain(this[0], this[1]);
+        text += ident + "information gain when segmenting second list by the first: "+ListOperators.getInformationGain(this[1], this[0]);
+      }
+    }
+
+    ///add ideas to: analyze, visualize
+
+    return text;
+  };
+
+  Table.prototype.getReportHtml = function() {}; //TODO
+
+  Table.prototype.getReportObject = function() {}; //TODO
+
+  /**
+   * removes a row from the table.
+   * @param {Number} index The row to remove.
+   * @return {undefined}
+   */
+  Table.prototype.removeRow = function(index) {
+    for(var i = 0; this[i] != null; i++) {
+      this[i].splice(index, 1);
     }
   };
 
   /**
-   * scales the polygon by a number or a Point
-   * @param  {Object} value number or point
-   * @return {Polygon}
-   * tags:
+   * makes a copy of the Table.
+   * @return {Table} Copy of table.
    */
-  Polygon.prototype.factor = function(value) {
-    var i;
-    var newPolygon = new Polygon();
-    newPolygon.name = this.name;
-
-    if(value >= 0 || value < 0) {
-      for(i = 0; this[i] != null; i++) {
-        newPolygon[i] = new Point(this[i].x * value, this[i].y * value);
-      }
-
-      return newPolygon;
-    } else if(value.type != null && value.type == 'Point') {
-      for(i = 0; this[i] != null; i++) {
-        newPolygon[i] = new Point(this[i].x * value.x, this[i].y * value.y);
-      }
-
-      return newPolygon;
-    }
-
-    return null;
-  };
-
-
-  Polygon.prototype.getRotated = function(angle, center) {
-    center = center == null ? new Point() : center;
-
-    var newPolygon = new Polygon();
+  Table.prototype.clone = function() {
+    var clonedTable = instantiateWithSameType(this);
+    clonedTable.name = this.name;
     for(var i = 0; this[i] != null; i++) {
-      newPolygon[i] = new Point(Math.cos(angle) * (this[i].x - center.x) - Math.sin(angle) * (this[i].y - center.y) + center.x, Math.sin(angle) * (this[i].x - center.x) + Math.cos(angle) * (this[i].y - center.y) + center.y);
+      clonedTable.push(this[i].clone());
     }
-    newPolygon.name = this.name;
-    return newPolygon;
+    return clonedTable;
   };
 
-  Polygon.prototype.getClosestPoint = function(point) {
-    var closest = this[0];
-    var d2Min = Math.pow(point.x - closest.x, 2) + Math.pow(point.y - closest.y, 2);
-    var d2;
+  /**
+   * Removes all contents of the Table.
+   */
+  Table.prototype.destroy = function() {
+    for(var i = 0; this[i] != null; i++) {
+      this[i].destroy();
+      delete this[i];
+    }
+  };
 
-    for(var i = 1; this[i] != null; i++) {
-      d2 = Math.pow(point.x - this[i].x, 2) + Math.pow(point.y - this[i].y, 2);
-      if(d2 < d2Min) {
-        d2Min = d2;
-        closest = this[i];
+  /**
+   * Prints contents of Table to console.log.
+   */
+
+
+
+  Table.prototype.print = function() {
+    console.log("///////////// <" + this.name + "////////////////////////////////////////////////////");
+    console.log(TableEncodings.TableToCSV(this, null, true));
+    console.log("/////////////" + this.name + "> ////////////////////////////////////////////////////");
+  };
+
+  exports.Table = Table;
+
+  NumberTable.prototype = new Table();
+  NumberTable.prototype.constructor = NumberTable;
+
+  /**
+   * @classdesc {@link Table} to store numbers.
+   *
+   * @constructor
+   * @description Creates a new NumberTable.
+   * @category numbers
+   */
+  function NumberTable() {
+    var args = [];
+    var newNumberList;
+    var array;
+
+    if(arguments.length > 0 && Number(arguments[0]) == arguments[0]) {
+      array = [];
+      var i;
+      for(i = 0; i < arguments[0]; i++) {
+        array.push(new NumberList());
       }
+    } else {
+      for(i = 0; arguments[i] != null; i++) {
+        newNumberList = NumberList.fromArray(arguments[i]);
+        newNumberList.name = arguments[i].name;
+        arguments[i] = newNumberList;
+      }
+      array = Table.apply(this, arguments);
     }
-    return closest;
+    array = NumberTable.fromArray(array);
+    return array;
+  }
+
+
+  NumberTable.fromArray = function(array) {
+    var result = Table.fromArray(array);
+    result.type = "NumberTable";
+
+    result.getNumberListsNormalized = NumberTable.prototype.getNumberListsNormalized;
+    result.getNormalizedToMax = NumberTable.prototype.getNormalizedToMax;
+    result.getNumberListsNormalizedToMax = NumberTable.prototype.getNumberListsNormalizedToMax;
+    result.getNumberListsNormalizedToSum = NumberTable.prototype.getNumberListsNormalizedToSum;
+    result.getSums = NumberTable.prototype.getSums;
+    result.getRowsSums = NumberTable.prototype.getRowsSums;
+    result.getAverages = NumberTable.prototype.getAverages;
+    result.getRowsAverages = NumberTable.prototype.getRowsAverages;
+    result.factor = NumberTable.prototype.factor;
+    result.add = NumberTable.prototype.add;
+    result.getMax = NumberTable.prototype.getMax;
+    result.getMin = NumberTable.prototype.getMin;
+    result.getMinMaxInterval = NumberTable.prototype.getMinMaxInterval;
+    result.getCovarianceMatrix = NumberTable.prototype.getCovarianceMatrix;
+
+    return result;
   };
 
-  Polygon.prototype.toNumberList = function() {
-    var numberList = new NumberList();
+  /**
+   * returns a table with having normalized all the numberLists
+   *
+   * @param  {factor} factor optional factor
+   * @return {NumberTable}
+   * tags:normalization
+   */
+  NumberTable.prototype.getNumberListsNormalized = function(factor) {
+    factor = factor == null ? 1 : factor;
+
+    var newTable = new NumberTable();
     var i;
     for(i = 0; this[i] != null; i++) {
-      numberList[i * 2] = this[i].x;
-      numberList[i * 2 + 1] = this[i].y;
+      var numberList = this[i];
+      newTable[i] = numberList.getNormalized(factor);
+    }
+    newTable.name = this.name;
+    return newTable;
+  };
+
+  /**
+   * normalizes the table to its maximal value
+   *
+   * @param  {factor} factor optional factor
+   * @return {NumberTable}
+   * tags:normalization
+   */
+  NumberTable.prototype.getNormalizedToMax = function(factor) {
+    factor = factor == null ? 1 : factor;
+
+    var newTable = new NumberTable();
+    var i;
+    var antimax = factor / this.getMax();
+    for(i = 0; this[i] != null; i++) {
+      newTable[i] = this[i].factor(antimax);
+    }
+    newTable.name = this.name;
+    return newTable;
+  };
+
+  NumberTable.prototype.getNumberListsNormalizedToMax = function(factorValue) {
+    var newTable = new NumberTable();
+    for(var i = 0; this[i] != null; i++) {
+      var numberList = this[i];
+      newTable[i] = numberList.getNormalizedToMax(factorValue);
+    }
+    newTable.name = this.name;
+    return newTable;
+  };
+
+  NumberTable.prototype.getNumberListsNormalizedToSum = function() {
+    var newTable = new NumberTable();
+    for(var i = 0; this[i] != null; i++) {
+      var numberList = this[i];
+      newTable[i] = numberList.getNormalizedToSum();
+    }
+    newTable.name = this.name;
+    return newTable;
+  };
+
+
+  NumberTable.prototype.getMax = function() {
+    if(this.length == 0) return null;
+
+    var max = this[0].getMax();
+    var i;
+
+    for(i = 1; this[i] != null; i++) {
+      max = Math.max(this[i].getMax(), max);
+    }
+    return max;
+  };
+
+  NumberTable.prototype.getMin = function() {
+    if(this.length == 0) return null;
+
+    var min = this[0].getMin();
+    var i;
+
+    for(i = 1; this[i] != null; i++) {
+      min = Math.min(this[i].getMin(), min);
+    }
+    return min;
+  };
+
+  NumberTable.prototype.getMinMaxInterval = function() {
+    if(this.length == 0) return null;
+    var rangeInterval = (this[0]).getMinMaxInterval();
+    for(var i = 1; this[i] != null; i++) {
+      var newRange = (this[i]).getMinMaxInterval();
+      rangeInterval.x = Math.min(rangeInterval.x, newRange.x);
+      rangeInterval.y = Math.max(rangeInterval.y, newRange.y);
+    }
+    return rangeInterval;
+  };
+
+  /**
+   * returns a numberList with values from numberlists added
+   * @return {Numberlist}
+   * tags:
+   */
+  NumberTable.prototype.getSums = function() {
+    var numberList = new NumberList();
+    for(var i = 0; this[i] != null; i++) {
+      numberList[i] = this[i].getSum();
     }
     return numberList;
   };
 
   /**
-   * Thanks http://jsfromhell.com/math/is-point-in-poly AND http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+   * returns a numberList with all values fro rows added
+   * @return {NumberList}
+   * tags:
    */
-  Polygon.prototype.containsPoint = function(point) {
+  NumberTable.prototype.getRowsSums = function() {
+    var sums = this[0].clone();
+    var numberList;
+    for(var i = 1; this[i] != null; i++) {
+      numberList = this[i];
+      for(var j = 0; numberList[j] != null; j++) {
+        sums[j] += numberList[j];
+      }
+    }
+    return sums;
+  };
+
+  NumberTable.prototype.getAverages = function() {
+    var numberList = new NumberList();
+    for(var i = 0; this[i] != null; i++) {
+      numberList[i] = this[i].getAverage();
+    }
+    return numberList;
+  };
+
+  NumberTable.prototype.getRowsAverages = function() {
+    var nLists = this.length;
+    var averages = this[0].clone().factor(1 / nLists);
+    var numberList;
     var i;
     var j;
-    var l;
-    for(var c = false, i = -1, l = this.length, j = l - 1; ++i < l; j = i)
-          ((this[i].y <= point.y && point.y < this[j].y) || (this[j].y <= point.y && point.y < this[i].y))
-          && (point.x < (this[j].x - this[i].x) * (point.y - this[i].y) / (this[j].y - this[i].y) + this[i].x)
-          && (c = !c);
-    return c;
-  };
-
-  //transform
-
-  Polygon.prototype.approach = function(destiny, speed) {
-    speed = speed || 0.5;
-    var antispeed = 1 - speed;
-
-    this.forEach(function(point, i) {
-      point.x = antispeed * point.x + speed * destiny[i].x;
-      point.y = antispeed * point.y + speed * destiny[i].y;
-    });
-  };
-
-
-  Polygon.prototype.clone = function() {
-    var newPolygon = new Polygon();
-    for(var i = 0; this[i] != null; i++) {
-      newPolygon[i] = this[i].clone();
+    for(i = 1; this[i] != null; i++) {
+      numberList = this[i];
+      for(j = 0; numberList[j] != null; j++) {
+        averages[j] += numberList[j] / nLists;
+      }
     }
-    newPolygon.name = this.name;
-    return newPolygon;
+    return averages;
   };
 
-  exports.Polygon = Polygon;
+  NumberTable.prototype.factor = function(value) {
+    var newTable = new NumberTable();
+    var i;
+    var numberList;
+
+    switch(typeOf(value)) {
+      case 'number':
+        for(i = 0; this[i] != null; i++) {
+          numberList = this[i];
+          newTable[i] = numberList.factor(value);
+        }
+        break;
+      case 'NumberList':
+        for(i = 0; this[i] != null; i++) {
+          numberList = this[i];
+          newTable[i] = numberList.factor(value[i]);
+        }
+        break;
+
+    }
+
+    newTable.name = this.name;
+    return newTable;
+  };
+
+  NumberTable.prototype.add = function(value) {
+    var newTable = new NumberTable();
+    var numberList;
+    var i;
+
+    for(i = 0; this[i] != null; i++) {
+      numberList = this[i];
+      newTable[i] = numberList.add(value);
+    }
+
+    newTable.name = this.name;
+    return newTable;
+  };
+
+
+  NumberTable.prototype.getCovarianceMatrix = function(){
+    var newTable = new NumberTable();
+    var i;
+    for(i = 0; this[i] != null; i++) {
+
+    }
+
+  }
+
+  exports.NumberTable = NumberTable;
 
   NodeList__NodeList.prototype = new List__default();
   NodeList__NodeList.prototype.constructor = NodeList__NodeList;
@@ -3174,519 +3421,99 @@ define('src/index', ['exports'], function (exports) {
 
   exports.RelationList = RelationList;
 
-  LoadEvent.prototype = {};
-  LoadEvent.prototype.constructor = LoadEvent;
+  PolygonList.prototype = new Table();
+  PolygonList.prototype.constructor = PolygonList;
 
   /**
-   * LoadEvent
+   * @classdesc A {@link List} structure for storing {@link Polygon} instances.
+   *
+   * @description Creates a new PolygonList.
    * @constructor
-   * @category misc
+   * @category geometry
    */
-  function LoadEvent() {
-    Object.apply(this);
-    this.result = null;
-    this.errorType = 0;
-    this.errorMessage = "";
-    this.url;
+  function PolygonList() {
+    var array = Table.apply(this, arguments);
+    array = PolygonList.fromArray(array);
+    return array;
   }
 
-  exports.LoadEvent = LoadEvent;
 
-  function Loader() {}
+  PolygonList.fromArray = function(array) {
+    var result = Table.fromArray(array);
+    result.type = "PolygonList";
+    result.getFrame = PolygonList.prototype.getFrame;
+    result.add = PolygonList.prototype.add;
+    result.factor = PolygonList.prototype.factor;
+    result.clone = PolygonList.prototype.clone;
+    result.getString = PolygonList.prototype.getString;
+    return result;
+  };
 
-
-  Loader.proxy = ""; //TODO:install proxy created by Mig at moebio.com
-  Loader.cacheActive = false; //TODO: fix!
-  Loader.associativeByUrls = {};
-  Loader.REPORT_LOADING = false;
-  Loader.n_loading = 0;
-  Loader.LOCAL_STORAGE_ENABLED = false;
-
-  Loader.PHPurl = "http://intuitionanalytics.com/tests/proxy.php?url=";
-
-
-  /**
-   * loads string data from server. The defined Loader.proxy will be used.
-   * @param {String} url the URL of the file to be loaded
-   * @param {Function} onLoadData a function that will be called when complete. The function must receive a LoadEvent
-   * @param {callee} the Object containing the onLoadData function to be called
-   * @para, {Object} optional parameter that will be stored in the LoadEvent instance
-   */
-  Loader.loadData = function(url, onLoadData, callee, param, send_object_json) {
-    if(Loader.REPORT_LOADING) console.log('load data:', url);
-    Loader.n_loading++;
-
-    if(Loader.LOCAL_STORAGE_ENABLED) {
-      // TODO track down LocalStorage. localStorage is a thing though (lowercase l);
-      var result = LocalStorage.getItem(url);
-      if(result) {
-        var e = new LoadEvent();
-        e.url = url;
-        e.param = param;
-        e.result = result;
-
-        onLoadData.call(target, e);
-      }
+  PolygonList.prototype.getFrame = function() {
+    if(this.length == 0) return null;
+    var frameP = this[0].getFrame();
+    var rectangle = new Rectangle(frameP.x, frameP.y, frameP.getRight(), frameP.getBottom());
+    for(var i = 1; this[i] != null; i++) {
+      frameP = this[i].getFrame();
+      rectangle.x = Math.min(rectangle.x, frameP.x);
+      rectangle.y = Math.min(rectangle.y, frameP.y);
+      rectangle.width = Math.max(rectangle.width, frameP.getRight());
+      rectangle.height = Math.max(rectangle.height, frameP.getBottom());
     }
+    rectangle.width -= rectangle.x;
+    rectangle.height -= rectangle.y;
 
+    return rectangle;
+  };
 
-
-    if(Loader.REPORT_LOADING) console.log("Loader.loadData | url:", url);
-
-    var useProxy = String(url).substr(0, 4) == "http";
-
-    var req = new XMLHttpRequest();
-
-    var target = callee ? callee : arguments.callee;
-    var onLoadComplete = function() {
-      if(Loader.REPORT_LOADING) console.log('Loader.loadData | onLoadComplete'); //, req.responseText:', req.responseText);
-      if(req.readyState == 4) {
-        Loader.n_loading--;
-
-        var e = new LoadEvent();
-        e.url = url;
-        e.param = param;
-        //if (req.status == 200) { //MIG
-        if(req.status == 200 || (req.status == 0 && req.responseText != null)) {
-          e.result = req.responseText;
-          onLoadData.call(target, e);
-        } else {
-          if(Loader.REPORT_LOADING) console.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
-          e.errorType = req.status;
-          e.errorMessage = "[!] There was a problem retrieving the data [" + req.status + "]:" + req.statusText;
-          onLoadData.call(target, e);
+  PolygonList.prototype.add = function(object) {
+    var type = typeOf(object);
+    var i;
+    switch(type) {
+      case 'Point':
+        var newPolygonList = new PolygonList();
+        for(i = 0; this[i] != null; i++) {
+          newPolygonList[i] = this[i].add(object);
         }
-      }
-    };
-
-    // branch for native XMLHttpRequest object
-    if(window.XMLHttpRequest && !(window.ActiveXObject)) {
-      try {
-        req = new XMLHttpRequest();
-      } catch(e) {
-        req = false;
-      }
-      // branch for IE/Windows ActiveX version
-    } else if(window.ActiveXObject) {
-      try {
-        req = new ActiveXObject("Msxml2.XMLHTTP.6.0");
-      } catch(e) {
-        try {
-          req = new ActiveXObject("Msxml2.XMLHTTP.3.0");
-        } catch(e) {
-          try {
-            req = new ActiveXObject("Msxml2.XMLHTTP");
-          } catch(e) {
-            try {
-              req = new ActiveXObject("Microsoft.XMLHTTP");
-            } catch(e) {
-              req = false;
-            }
-          }
-        }
-      }
-    }
-    if(req) {
-      req.onreadystatechange = onLoadComplete; //processReqChange;
-      if(useProxy) {
-        req.open("GET", Loader.proxy + url, true);
-      } else {
-        req.open("GET", url, true);
-      }
-
-      send_object_json = send_object_json || "";
-      req.send(send_object_json);
+        newPolygonList.name = this.name;
+        return newPolygonList;
+        break;
     }
   };
 
-
-  //TODO this method isn't reference by anything else.
-  function LoaderRequest(url, method, data) {
-    this.url = url;
-    this.method = method ? method : "GET";
-    this.data = data;
-  }
-
-  Loader.loadImage = function(url, onComplete, callee, param) {
-    Loader.n_loading++;
-
-    if(Loader.REPORT_LOADING) console.log("Loader.loadImage | url:", url);
-
-    var target = callee ? callee : arguments.callee;
-    var img = document.createElement('img');
-
-    if(this.cacheActive) {
-      if(this.associativeByUrls[url] != null) {
-        Loader.n_loading--;
-        //console.log('=====>>>>+==>>>+====>>=====>>>+==>> in cache:', url);
-        var e = new LoadEvent();
-        e.result = this.associativeByUrls[url];
-        e.url = url;
-        e.param = param;
-        onComplete.call(target, e);
-      } else {
-        var cache = true;
-        var associative = this.associativeByUrls;
-      }
+  PolygonList.prototype.factor = function(value) {
+    var newPolygonList = new PolygonList();
+    for(var i = 0; this[i] != null; i++) {
+      newPolygonList[i] = this[i].factor(value);
     }
-
-    img.onload = function() {
-      Loader.n_loading--;
-      var e = new LoadEvent();
-      e.result = img;
-      e.url = url;
-      e.param = param;
-      if(cache) associative[url] = img;
-      onComplete.call(target, e);
-    };
-
-    img.onerror = function() {
-      Loader.n_loading--;
-      var e = new LoadEvent();
-      e.result = null;
-      e.errorType = 1; //TODO: set an error type!
-      e.errorMessage = "There was a problem retrieving the image [" + img.src + "]:";
-      e.url = url;
-      e.param = param;
-      onComplete.call(target, e);
-    };
-
-    img.src = Loader.proxy + url;
+    newPolygonList.name = this.name;
+    return newPolygonList;
   };
 
-
-
-  // Loader.loadJSON = function(url, onLoadComplete) {
-  //   Loader.n_loading++;
-
-  //   Loader.loadData(url, function(data) {
-  //     Loader.n_loading--;
-  //     onLoadComplete.call(arguments.callee, jQuery.parseJSON(data));
-  //   });
-  // };
-
-
-  /**
-  Loader.callIndex = 0;
-  Loader.loadJSONP = function(url, onLoadComplete, callee) {
-    Loader.n_loading++;
-
-    Loader.callIndex = Loader.callIndex + 1;
-    var index = Loader.callIndex;
-
-    var newUrl = url + "&callback=JSONcallback" + index;
-    //var newUrl=url+"?callback=JSONcallback"+index; //   <----  WFP suggestion
-
-    var target = callee ? callee : arguments.callee;
-
-    //console.log('Loader.loadJSONP, newUrl:', newUrl);
-
-    $.ajax({
-      url: newUrl,
-      type: 'GET',
-      data: {},
-      dataType: 'jsonp',
-      contentType: "application/json",
-      jsonp: 'jsonp',
-      jsonpCallback: 'JSONcallback' + index,
-      success: function(data) {
-        Loader.n_loading--;
-        var e = new LoadEvent();
-        e.result = data;
-        onLoadComplete.call(target, e);
-      },
-      error: function(data) {
-        Loader.n_loading--;
-        console.log("Loader.loadJSONP | error, data:", data);
-
-        var e = new LoadEvent();
-        e.errorType = 1;
-        onLoadComplete.call(target, e);
-      }
-    }); //.error(function(e){
-    // console.log('---> (((error))) B');
-    //
-    // var e=new LoadEvent();
-    // e.errorType=1;
-    // onLoadComplete.call(target, e);
-    // });
-  };
-  **/
-
-
-
-
-  //FIX THESE METHODS:
-
-  Loader.loadXML = function(url, onLoadData) {
-    Loader.n_loading++;
-
-    var req = new XMLHttpRequest();
-    var onLoadComplete = onLoadData;
-
-    if(Loader.REPORT_LOADING) console.log('loadXML, url:', url);
-
-    // branch for native XMLHttpRequest object
-    if(window.XMLHttpRequest && !(window.ActiveXObject)) {
-      try {
-        req = new XMLHttpRequest();
-      } catch(e) {
-        req = false;
-      }
-      // branch for IE/Windows ActiveX version
-    } else if(window.ActiveXObject) {
-      try {
-        req = new ActiveXObject("Msxml2.XMLHTTP");
-      } catch(e) {
-        try {
-          req = new ActiveXObject("Microsoft.XMLHTTP");
-        } catch(e) {
-          req = false;
-        }
-      }
+  PolygonList.prototype.clone = function() {
+    var newPolygonList = new PolygonList();
+    for(var i = 0; this[i] != null; i++) {
+      newPolygonList[i] = this[i].clone();
     }
-    if(req) {
-      req.onreadystatechange = processReqChange;
-      req.open("GET", url, true);
-      req.send("");
-    }
-
-    function processReqChange() {
-      Loader.n_loading--;
-      // only if req shows "loaded"
-      if(req.readyState == 4) {
-        // only if "OK"
-        if(req.status == 200 || req.status == 0) {
-          onLoadComplete(req.responseXML);
-
-        } else {
-          console.log("There was a problem retrieving the XML data:\n" +
-            req.statusText);
-        }
-      }
-    }
+    newPolygonList.name = this.name;
+    return newPolygonList;
   };
 
+  // PolygonList.prototype.getString=function(pointSeparator,polygonSeparator){
+  // pointSeparator = pointSeparator==null?',':pointSeparator;
+  // polygonSeparator = polygonSeparator==null?'/':polygonSeparator;
+  // var j;
+  // var t='';
+  // for(var i=0;this[i]!=null;i++){
+  // t+=(i==0?'':polygonSeparator);
+  // for(j=0; this[i][j]!=null; j++){
+  // t+=(j==0?'':pointSeparator)+this[i][j].x+pointSeparator+this[i][j].y;
+  // }
+  // }
+  // return t;
+  // }
 
-  ///////////////PHP
-
-  Loader.sendContentToVariableToPhp = function(url, varName, value, onLoadData, callee, param) {
-    var data = varName + "=" + encodeURIComponent(value);
-    Loader.sendDataToPhp(url, data, onLoadData, callee, param);
-  };
-
-  Loader.sendContentsToVariablesToPhp = function(url, varNames, values, onLoadData, callee, param) {
-    var data = varNames[0] + "=" + encodeURIComponent(values[0]);
-    for(var i = 1; varNames[i] != null; i++) {
-      data += "&" + varNames[i] + "=" + encodeURIComponent(values[i]);
-    }
-    Loader.sendDataToPhp(url, data, onLoadData, callee, param);
-  };
-
-  Loader.sendDataToPhp = function(url, data, onLoadData, callee, param) {
-    var req = new XMLHttpRequest();
-
-    req.open("POST", url, true);
-    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    req.send(data);
-
-    var target = callee ? callee : arguments.callee;
-
-    var onLoadComplete = function() {
-      if(Loader.REPORT_LOADING) console.log('Loader.loadData | onLoadComplete, req.responseText:', req.responseText);
-      if(req.readyState == 4) {
-        Loader.n_loading--;
-
-        var e = new LoadEvent();
-        e.url = url;
-        e.param = param;
-
-        if(req.status == 200 || (req.status == 0 && req.responseText != null)) {
-          e.result = req.responseText;
-          onLoadData.call(target, e);
-        } else {
-          if(Loader.REPORT_LOADING) console.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
-          e.errorType = req.status;
-          e.errorMessage = "[!] There was a problem retrieving the data [" + req.status + "]:" + req.statusText;
-          onLoadData.call(target, e);
-        }
-      }
-    };
-
-    req.onreadystatechange = onLoadComplete;
-  };
-
-  exports.Loader = Loader;
-
-  Node__Node.prototype = new DataModel();
-  Node__Node.prototype.constructor = Node__Node;
-
-  /**
-   * @classdesc Represents a single node element in a Network. Can have both an id as well
-   * as a name.
-   *
-   * @description Create a new Node.
-   * @param {String} id ID of the Node
-   * @param {String} name string (label) name to be assigned to node
-   * @constructor
-   * @category networks
-   */
-  function Node__Node(id, name) {
-    this.id = id == null ? '' : id;
-    this.name = name != null ? name : '';
-    this.type = "Node";
-
-    this.nodeType;
-
-    this.x = 0;
-    this.y = 0;
-    this.z = 0;
-
-    this.nodeList = new NodeList__default();
-    this.relationList = new RelationList();
-
-    this.toNodeList = new NodeList__default();
-    this.toRelationList = new RelationList();
-
-    this.fromNodeList = new NodeList__default();
-    this.fromRelationList = new RelationList();
-
-    this.weight = 1;
-    this.descentWeight = 1;
-
-    //tree
-    this.level = 0;
-    this.parent = null;
-
-    //physics:
-    this.vx = 0;
-    this.vy = 0;
-    this.vz = 0;
-    this.ax = 0;
-    this.ay = 0;
-    this.az = 0;
-  }
-  var Node__default = Node__Node;
-
-  /**
-   * Removes all Relations and connected Nodes from
-   * the current Node.
-   */
-  Node__Node.prototype.cleanRelations = function() {
-    this.nodeList = new NodeList__default();
-    this.relationList = new RelationList();
-
-    this.toNodeList = new NodeList__default();
-    this.toRelationList = new RelationList();
-
-    this.fromNodeList = new NodeList__default();
-    this.fromRelationList = new RelationList();
-  };
-
-  //TODO: complete with all properties
-  Node__Node.prototype.destroy = function() {
-    DataModel.prototype.destroy.call(this);
-    delete this.id;
-    delete this.name;
-    delete this.nodeType;
-    delete this.x;
-    delete this.y;
-    delete this.z;
-    delete this.nodeList;
-    delete this.relationList;
-    delete this.toNodeList;
-    delete this.toNodeList;
-    delete this.fromNodeList;
-    delete this.fromRelationList;
-    delete this.parent;
-    delete this.weight;
-    delete this.descentWeight;
-    delete this.level;
-    delete this.vx;
-    delete this.vy;
-    delete this.vz;
-    delete this.ax;
-    delete this.ay;
-    delete this.az;
-  };
-
-  /**
-   * Returns the number of Relations connected to this Node.
-   *
-   * @return {Number} Number of Relations (edges) connecting to this Node instance.
-   */
-  Node__Node.prototype.getDegree = function() {
-    return this.relationList.length;
-  };
-
-  //treeProperties:
-
-
-  /**
-   * Returns the parent Node of this Node if it is part of a {@link Tree}.
-   *
-   * @return {Node} Parent Node of this Node.
-   */
-  Node__Node.prototype.getParent = function() {
-    return this.parent;
-  };
-
-  /**
-   * Returns the leaves under a node in a Tree,
-   *
-   * <strong>Warning:</strong> If this Node is part of a Network that is not a tree, this method could run an infinite loop.
-   * @return {NodeList} Leaf Nodes of this Node.
-   * tags:
-   */
-  Node__Node.prototype.getLeaves = function() {
-      var leaves = new NodeList__default();
-      var addLeaves = function(node) {
-        if(node.toNodeList.length === 0) {
-          leaves.addNode(node);
-          return;
-        }
-        node.toNodeList.forEach(addLeaves);
-      };
-      addLeaves(this);
-      return leaves;
-    };
-
-
-  /**
-   * Uses an image as a visual representation to this Node.
-   *
-   * @param {String} urlImage The URL of the image to load.
-   */
-  Node__Node.prototype.loadImage = function(urlImage) {
-    Loader.loadImage(urlImage, function(e) {
-      this.image = e.result;
-    }, this);
-  };
-
-
-  /**
-   * Makes a copy of this Node.
-   *
-   * @return {Node} New Node that is a copy of this Node.
-   */
-  Node__Node.prototype.clone = function() {
-    var newNode = new Node__Node(this.id, this.name);
-
-    newNode.x = this.x;
-    newNode.y = this.y;
-    newNode.z = this.z;
-
-    newNode.nodeType = this.nodeType;
-
-    newNode.weight = this.weight;
-    newNode.descentWeight = this.descentWeight;
-
-    return newNode;
-  };
-
-  exports.Node = Node__default;
-
-  var version = "0.2.13";
+  exports.PolygonList = PolygonList;
 
   /**
    * @classdesc Provides a set of tools that work with Colors.
@@ -4215,6 +4042,2057 @@ define('src/index', ['exports'], function (exports) {
   };
 
   exports.ColorOperators = ColorOperators__default;
+
+  ColorList.prototype = new List__default();
+  ColorList.prototype.constructor = ColorList;
+
+  /**
+   * @classdesc A {@link List} for storing Colors.
+   *
+   * @description Creates a new ColorList.
+   * @constructor
+   * @category colors
+   */
+  function ColorList() {
+    var args = [];
+    var i;
+    for(i = 0; i < arguments.length; i++) {
+      args[i] = arguments[i];
+    }
+    var array = List__default.apply(this, args);
+    array = ColorList.fromArray(array);
+
+    return array;
+  }
+
+
+  ColorList.fromArray = function(array) {
+    var result = List__default.fromArray(array);
+    result.type = "ColorList";
+    result.getRgbArrays = ColorList.prototype.getRgbArrays;
+    result.getInterpolated = ColorList.prototype.getInterpolated;
+    result.getInverted = ColorList.prototype.getInverted;
+    result.addAlpha = ColorList.prototype.addAlpha;
+    return result;
+  };
+
+  /**
+   * return an arrays of rgb arrays ([rr,gg,bb])
+   * @return {array}
+   * tags:
+   */
+  ColorList.prototype.getRgbArrays = function() {
+    var rgbArrays = new List__default();
+
+    for(var i = 0; this[i] != null; i++) {
+      rgbArrays[i] = ColorOperators__default.colorStringToRGB(this[i]);
+    }
+
+    return rgbArrays;
+  };
+
+  /**
+   * interpolates colors with a given color and measure
+   * @param  {String} color to be interpolated with
+   * @param  {Number} value intenisty of interpolation [0,1]
+   * @return {ColorList}
+   * tags:
+   */
+  ColorList.prototype.getInterpolated = function(color, value) {
+    var newColorList = new ColorList();
+
+    for(var i = 0; this[i] != null; i++) {
+      newColorList[i] = ColorOperators__default.interpolateColors(this[i], color, value);
+    }
+
+    newColorList.name = this.name;
+    return newColorList;
+  };
+
+  /**
+   * inverts all colors
+   * @return {ColorList}
+   * tags:
+   */
+  ColorList.prototype.getInverted = function() {
+    var newColorList = new ColorList();
+
+    for(var i = 0; this[i] != null; i++) {
+      newColorList[i] = ColorOperators__default.invertColor(this[i]);
+    }
+
+    newColorList.name = this.name;
+    return newColorList;
+  };
+
+  /**
+   * adds alpha value to all colores
+   * @param {Number} alpha alpha value in [0,1]
+   * @return {ColorList}
+   * tags:
+   */
+  ColorList.prototype.addAlpha = function(alpha) {
+    var newColorList = new ColorList();
+
+    for(var i = 0; this[i] != null; i++) {
+      newColorList[i] = ColorOperators__default.addAlpha(this[i], alpha);
+    }
+
+    newColorList.name = this.name;
+    return newColorList;
+  };
+
+  exports.ColorList = ColorList;
+
+  Polygon.prototype = new List__default();
+  Polygon.prototype.constructor = Polygon;
+
+  /**
+   * @classdesc A Polygon is a shape created from a list of {@link Point|Points}.
+   *
+   * @description Creates a new Polygon.
+   * @constructor
+   * @category geometry
+   */
+  function Polygon() {
+    var array = List__default.apply(this, arguments);
+    array = Polygon.fromArray(array);
+    return array;
+  }
+
+
+  Polygon.fromArray = function(array) {
+    var result = List__default.fromArray(array);
+    result.type = "Polygon";
+
+    result.getFrame = Polygon.prototype.getFrame;
+    result.getBarycenter = Polygon.prototype.getBarycenter;
+    result.add = Polygon.prototype.add;
+    result.factor = Polygon.prototype.factor;
+    result.getRotated = Polygon.prototype.getRotated;
+    result.getClosestPoint = Polygon.prototype.getClosestPoint;
+    result.toNumberList = Polygon.prototype.toNumberList;
+    result.containsPoint = Polygon.prototype.containsPoint;
+    //transform
+    result.approach = Polygon.prototype.approach;
+    //override
+    result.clone = Polygon.prototype.clone;
+
+    return result;
+  };
+
+
+  Polygon.prototype.getFrame = function() {
+    if(this.length == 0) return null;
+    var rectangle = new Rectangle(this[0].x, this[0].y, this[0].x, this[0].y);
+    var p;
+    for(var i = 1; this[i] != null; i++) {
+      p = this[i];
+      rectangle.x = Math.min(rectangle.x, p.x);
+      rectangle.y = Math.min(rectangle.y, p.y);
+      rectangle.width = Math.max(rectangle.width, p.x);
+      rectangle.height = Math.max(rectangle.height, p.y);
+    }
+
+    rectangle.width -= rectangle.x;
+    rectangle.height -= rectangle.y;
+
+    return rectangle;
+  };
+
+  Polygon.prototype.getBarycenter = function(countLastPoint) {
+    var i;
+    countLastPoint = countLastPoint == null ? true : countLastPoint;
+    var cLPN = 1 - Number(countLastPoint);
+    if(this.length == 0) return null;
+    var barycenter = new Point(this[0].x, this[0].y);
+    for(i = 1; this[i + cLPN] != null; i++) {
+      barycenter.x += this[i].x;
+      barycenter.y += this[i].y;
+    }
+    barycenter.x /= this.length;
+    barycenter.y /= this.length;
+    return barycenter;
+  };
+
+  Polygon.prototype.add = function(object) {
+    var type = typeOf(object);
+    var i;
+    switch(type) {
+      case 'Point':
+        var newPolygon = new Polygon();
+        for(i = 0; this[i] != null; i++) {
+          newPolygon[i] = this[i].add(object);
+        }
+        newPolygon.name = this.name;
+        return newPolygon;
+        break;
+    }
+  };
+
+  /**
+   * scales the polygon by a number or a Point
+   * @param  {Object} value number or point
+   * @return {Polygon}
+   * tags:
+   */
+  Polygon.prototype.factor = function(value) {
+    var i;
+    var newPolygon = new Polygon();
+    newPolygon.name = this.name;
+
+    if(value >= 0 || value < 0) {
+      for(i = 0; this[i] != null; i++) {
+        newPolygon[i] = new Point(this[i].x * value, this[i].y * value);
+      }
+
+      return newPolygon;
+    } else if(value.type != null && value.type == 'Point') {
+      for(i = 0; this[i] != null; i++) {
+        newPolygon[i] = new Point(this[i].x * value.x, this[i].y * value.y);
+      }
+
+      return newPolygon;
+    }
+
+    return null;
+  };
+
+
+  Polygon.prototype.getRotated = function(angle, center) {
+    center = center == null ? new Point() : center;
+
+    var newPolygon = new Polygon();
+    for(var i = 0; this[i] != null; i++) {
+      newPolygon[i] = new Point(Math.cos(angle) * (this[i].x - center.x) - Math.sin(angle) * (this[i].y - center.y) + center.x, Math.sin(angle) * (this[i].x - center.x) + Math.cos(angle) * (this[i].y - center.y) + center.y);
+    }
+    newPolygon.name = this.name;
+    return newPolygon;
+  };
+
+  Polygon.prototype.getClosestPoint = function(point) {
+    var closest = this[0];
+    var d2Min = Math.pow(point.x - closest.x, 2) + Math.pow(point.y - closest.y, 2);
+    var d2;
+
+    for(var i = 1; this[i] != null; i++) {
+      d2 = Math.pow(point.x - this[i].x, 2) + Math.pow(point.y - this[i].y, 2);
+      if(d2 < d2Min) {
+        d2Min = d2;
+        closest = this[i];
+      }
+    }
+    return closest;
+  };
+
+  Polygon.prototype.toNumberList = function() {
+    var numberList = new NumberList();
+    var i;
+    for(i = 0; this[i] != null; i++) {
+      numberList[i * 2] = this[i].x;
+      numberList[i * 2 + 1] = this[i].y;
+    }
+    return numberList;
+  };
+
+  /**
+   * Thanks http://jsfromhell.com/math/is-point-in-poly AND http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+   */
+  Polygon.prototype.containsPoint = function(point) {
+    var i;
+    var j;
+    var l;
+    for(var c = false, i = -1, l = this.length, j = l - 1; ++i < l; j = i)
+          ((this[i].y <= point.y && point.y < this[j].y) || (this[j].y <= point.y && point.y < this[i].y))
+          && (point.x < (this[j].x - this[i].x) * (point.y - this[i].y) / (this[j].y - this[i].y) + this[i].x)
+          && (c = !c);
+    return c;
+  };
+
+  //transform
+
+  Polygon.prototype.approach = function(destiny, speed) {
+    speed = speed || 0.5;
+    var antispeed = 1 - speed;
+
+    this.forEach(function(point, i) {
+      point.x = antispeed * point.x + speed * destiny[i].x;
+      point.y = antispeed * point.y + speed * destiny[i].y;
+    });
+  };
+
+
+  Polygon.prototype.clone = function() {
+    var newPolygon = new Polygon();
+    for(var i = 0; this[i] != null; i++) {
+      newPolygon[i] = this[i].clone();
+    }
+    newPolygon.name = this.name;
+    return newPolygon;
+  };
+
+  exports.Polygon = Polygon;
+
+  NumberList.prototype = new List__default();
+  NumberList.prototype.constructor = NumberList;
+
+  /**
+   * @classdesc List structure for Numbers.
+   *
+   * @constructor
+   * @description Creates a new NumberList.
+   * @category numbers
+   */
+  function NumberList() {
+    var args = [];
+
+    for(var i = 0; i < arguments.length; i++) {
+      args[i] = Number(arguments[i]);
+    }
+    var array = List__default.apply(this, args);
+    array = NumberList.fromArray(array);
+    return array;
+  }
+
+
+  /**
+   * Creates a new NumberList from a raw array of numbers.
+   *
+   * @param {Number[]} array The array of numbers to create the list from.
+   * @param {Boolean} forceToNumber If true, explicitly converts values in array to Numbers.
+   * @return {NumberList} New NumberList containing values in array
+   */
+  NumberList.fromArray = function(array, forceToNumber) {
+    forceToNumber = forceToNumber == null ? true : forceToNumber;
+
+    var result = List__default.fromArray(array);
+
+    if(forceToNumber) {
+      for(var i = 0; i < result.length; i++) {
+        result[i] = Number(result[i]);
+      }
+    }
+
+    result.type = "NumberList";
+
+    //assign methods to array:
+    result.unit = NumberList.prototype.unit;
+    result.tenPower = NumberList.prototype.tenPower;
+    result.getMin = NumberList.prototype.getMin;
+    result.getMax = NumberList.prototype.getMax;
+    result.getAmplitude = NumberList.prototype.getAmplitude;
+    result.getMinMaxInterval = NumberList.prototype.getMinMaxInterval;
+    result.getSum = NumberList.prototype.getSum;
+    result.getProduct = NumberList.prototype.getProduct;
+    result.getInterval = NumberList.prototype.getInterval;
+    result.getNormalized = NumberList.prototype.getNormalized;
+    result.getNormalizedToMax = NumberList.prototype.getNormalizedToMax;
+    result.getNormalizedToSum = NumberList.prototype.getNormalizedToSum;
+    result.toPolygon = NumberList.prototype.toPolygon;
+
+    //statistics
+    result.getAverage = NumberList.prototype.getAverage;
+    result.getNorm = NumberList.prototype.getNorm;
+    result.getStandardDeviation = NumberList.prototype.getStandardDeviation;
+    result.getVariance = NumberList.prototype.getVariance;
+    result.getMedian = NumberList.prototype.getMedian;
+    result.getQuantiles = NumberList.prototype.getQuantiles;
+
+    //sorting
+    result.getSorted = NumberList.prototype.getSorted;
+    result.getSortIndexes = NumberList.prototype.getSortIndexes;
+    result.factor = NumberList.prototype.factor;
+    result.add = NumberList.prototype.add;
+    result.subtract = NumberList.prototype.subtract;
+    result.divide = NumberList.prototype.divide;
+    result.dotProduct = NumberList.prototype.dotProduct;
+    result.distance = NumberList.prototype.distance;
+    result.sqrt = NumberList.prototype.sqrt;
+    result.pow = NumberList.prototype.pow;
+    result.log = NumberList.prototype.log;
+    result.isEquivalent = NumberList.prototype.isEquivalent;
+    result.toStringList = NumberList.prototype.toStringList;
+
+    //transform
+    result.approach = NumberList.prototype.approach;
+
+    //override
+    result.clone = NumberList.prototype.clone;
+    result._slice = Array.prototype.slice;
+    result.slice = NumberList.prototype.slice;
+
+    return result;
+  };
+
+  NumberList.prototype.unit = "";
+  NumberList.prototype.tenPower = 0;
+
+  /**
+   * Returns minimum value in the List. Null if the NumberList is empty.
+   *
+   * @return {Number} The min value.
+   */
+  NumberList.prototype.getMin = function() {
+    //TODO:store result and retrieve while the NumberList doesn't change;
+    if(this.length === 0) return null;
+    var i;
+    var min = this[0];
+    for(i = 1; i < this.length; i++) {
+      min = Math.min(min, this[i]);
+    }
+    return min;
+  };
+
+  /**
+   * Returns maximum value in the List. Null if the NumberList is empty.
+   *
+   * @return {Number} The max value.
+   */
+  NumberList.prototype.getMax = function() {
+    //TODO:store result and retrieve while the NumberList doesn't change;
+    if(this.length === 0) return null;
+    var i;
+    var max = this[0];
+    for(i = 1; i < this.length; i++) {
+      max = Math.max(max, this[i]);
+    }
+    return max;
+  };
+
+  /**
+   * Finds the range of the values in the NumberList.
+   *
+   * @return {Number} The difference between the minimum and maximum value in the List.
+   */
+  NumberList.prototype.getAmplitude = function() {
+    if(this.length === 0) return 0;
+    var min = this[0];
+    var max = this[0];
+    for(var i = 1; this[i] != null; i++) {
+      min = Math.min(min, this[i]);
+      max = Math.max(max, this[i]);
+    }
+    return max - min;
+  };
+
+  /**
+   * Provides the min and max values as an {@link Interval}.
+   *
+   * @return {Interval} Interval containing the min and max values of the List.
+   */
+  NumberList.prototype.getMinMaxInterval = function() { //deprecated?
+    return new Interval__default(this.getMin(), this.getMax());
+  };
+
+  /**
+   * Returns the total sum of values in the NumberList.
+   *
+   * @return {Number} Sum of all values in the List.
+   * tags:
+   */
+  NumberList.prototype.getSum = function() {
+    if(this.length === 0) return 0;
+    var i;
+    var sum = this[0];
+    for(i = 1; i < this.length; i++) {
+      sum += this[i];
+    }
+    return sum;
+  };
+
+  /**
+   * Returns the product of values in the NumberList.
+   *
+   * @return {Number} The product of all values in the NumberList.
+   * tags:
+   */
+  NumberList.prototype.getProduct = function() {
+    if(this.length === 0) return null;
+    var i;
+    var product = this[0];
+    for(i = 1; i < this.length; i++) {
+      product *= this[i];
+    }
+    return product;
+  };
+
+  /**
+   * Returns a NumberList normalized to the sum.
+   *
+   * @param {Number} factor Optional multiplier to modify the normalized values by.
+   * Defaults to 1.
+   * @param {Number} sum Optional sum to normalize to.
+   * If not provided, sum will be calculated automatically.
+   * @return {NumberList} New NumberList of values normalized to the sum.
+   * tags:
+   */
+  NumberList.prototype.getNormalizedToSum = function(factor, sum) {
+    factor = factor == null ? 1 : factor;
+    var newNumberList = new NumberList();
+    newNumberList.name = this.name;
+    if(this.length === 0) return newNumberList;
+    var i;
+    sum = sum == null ? this.getSum() : sum;
+    if(sum === 0) return this.clone();
+
+    for(i = 0; i < this.length; i++) {
+      newNumberList.push(factor * this[i] / sum);
+    }
+    return newNumberList;
+  };
+
+  /**
+   * Returns a NumberList normalized to min-max interval.
+   *
+   * @param {Number} factor Optional multiplier to modify the normalized values by.
+   * Defaults to 1.
+   * @return {NumberList}
+   * tags:
+   */
+  NumberList.prototype.getNormalized = function(factor) {
+    factor = factor == null ? 1 : factor;
+
+    if(this.length === 0) return null;
+
+    var i;
+    var interval = this.getMinMaxInterval();
+    var a = interval.getAmplitude();
+    var newNumberList = new NumberList();
+    for(i = 0; i < this.length; i++) {
+      newNumberList.push(factor * ((this[i] - interval.x) / a));
+    }
+    newNumberList.name = this.name;
+    return newNumberList;
+  };
+
+  /**
+   * Returns a NumberList normalized to Max.
+   *
+   * @param {Number} factor Optional multiplier to modify the normalized values by.
+   * Defaults to 1.
+   * @return {NumberList}
+   * tags:
+   */
+  NumberList.prototype.getNormalizedToMax = function(factor) {
+    factor = factor == null ? 1 : factor;
+
+    if(this.length == 0) return null;
+
+    var max = this.getMax();
+    if(max == 0) {
+      max = this.getMin();
+      if(max == 0) return ListGenerators.createListWithSameElement(this.length, 0);
+    }
+    var newNumberList = new NumberList();
+    for(var i = 0; this[i] != null; i++) {
+      newNumberList.push(factor * (this[i] / max));
+    }
+    newNumberList.name = this.name;
+    return newNumberList;
+  };
+
+  /**
+   * Builds an Interval with min and max value from the NumberList
+   *
+   * @return {Interval} with starting value as the min of the NumberList
+   * and ending value as the max.
+   * tags:
+   */
+  NumberList.prototype.getInterval = function() {
+    if(this.length === 0) return null;
+    var max = this[0];
+    var min = this[0];
+    for(var i = 1; this[i] != null; i++) {
+      max = Math.max(max, this[i]);
+      min = Math.min(min, this[i]);
+    }
+    var interval = new Interval__default(min, max);
+    return interval;
+  };
+
+
+  /**
+   * Builds an {@link Polygon} from the NumberList,
+   * using each pair of values in the NumberList as
+   * x and y positions.
+   *
+   * @return {Polygon} Polygon representing the values
+   * in the NumberList as x/y coordinates.
+   */
+  NumberList.prototype.toPolygon = function() {
+    if(this.length === 0) return null;
+    var polygon = new Polygon();
+    for(var i = 0; this[i + 1] != null; i += 2) {
+      polygon.push(new Point(this[i], this[i + 1]));
+    }
+    return polygon;
+  };
+
+
+  /////////statistics
+
+  /**
+   * Calculates mean of the NumberList.
+   *
+   * @return {Number} Mean of all values in the List.
+   * tags:statistics
+   */
+  NumberList.prototype.getAverage = function() {
+    return this.getSum() / this.length;
+  };
+
+  /**
+   * Calculates the geometric mean of the NumberList.
+   *
+   * @return {Number}
+   * tags:statistics
+   */
+  NumberList.prototype.getGeometricMean = function() {
+    var s = 0;
+    this.forEach(function(val) {
+      s += Math.log(val);
+    });
+    return Math.pow(Math.E, s / this.length);
+  };
+
+  /**
+   * Calculates the norm of the NumberList (treated as a vector).
+   *
+   * @return {Number}
+   * tags:statistics
+   */
+  NumberList.prototype.getNorm = function() {
+    var sq = 0;
+    for(var i = 0; this[i] != null; i++) {
+      sq += Math.pow(this[i], 2);
+    }
+    return Math.sqrt(sq);
+  };
+
+  /**
+   * Calculates the variance of the NumberList.
+   *
+   * @return {Number}
+   * tags:statistics
+   */
+  NumberList.prototype.getVariance = function() {
+    var sd = 0;
+    var average = this.getAverage();
+    for(var i = 0; this[i] != null; i++) {
+      sd += Math.pow(this[i] - average, 2);
+    }
+    return sd / this.length;
+  };
+
+  /**
+   * Calculates the standard deviation.
+   *
+   * @return {Number}
+   * tags:statistics
+   */
+  NumberList.prototype.getStandardDeviation = function() {
+    return Math.sqrt(this.getVariance());
+  };
+
+  /**
+   * Calculates the median of the numberList
+   *
+   * @return {Number}
+   * tags:statistics
+   */
+  NumberList.prototype.getMedian = function() {
+    var sorted = this.getSorted(true);
+    var prop = (this.length - 1) / 2;
+    var entProp = Math.floor(prop);
+    var onIndex = prop == entProp;
+    return onIndex ? sorted[prop] : (0.5 * sorted[entProp] + 0.5 * sorted[entProp + 1]);
+  };
+
+  /**
+   * Builds a partition of n quantiles from the numberList.
+   *
+   * @param {Number} nQuantiles number of quantiles
+   * @return {NumberList} A number list of the quantiles.
+   * tags:statistics
+   */
+  NumberList.prototype.getQuantiles = function(nQuantiles) {
+    var sorted = this.getSorted(true);
+
+    var prop = this.length / nQuantiles;
+    var entProp = Math.floor(prop);
+    var onIndex = prop == entProp;
+    var quantiles = new NumberList();
+    for(var i = 0; i < nQuantiles - 1; i++) {
+      quantiles[i] = onIndex ? sorted[(i + 1) * prop] : (0.5 * sorted[(i + 1) * entProp] + 0.5 * sorted[(i + 1) * entProp + 1]);
+    }
+    return quantiles;
+  };
+
+
+
+  /////////sorting
+
+  /**
+   * Returns a new NumberList sorted in either ascending or descending order.
+   *
+   * @param {Boolean} ascending True if values should be sorted in ascending order.
+   * If false, values will be sorted in descending order.
+   * @return {NumberList} new sorted NumberList.
+   */
+  NumberList.prototype.getSorted = function(ascending) {
+    ascending = ascending == null ? true : ascending;
+
+    if(ascending) {
+      return NumberList.fromArray(this.slice().sort(function(a, b) {
+        return a - b;
+      }), false);
+    }
+    return NumberList.fromArray(this.slice().sort(function(a, b) {
+      return b - a;
+    }), false);
+  };
+
+  /**
+   * Returns a new NumberList containing the indicies of the values of
+   * the original NumberList in sorted order.
+   *
+   * @param {Boolean} descending If true, values are sorted in descending order.
+   * @return {NumberList} NumberList containing the indices of the original NumberList
+   * such that accessing the values of the original list at those indices would produce
+   * a sorted list.
+   * @example
+   * var nl = NumberList.fromArray([1,3,2]);
+   * var indices = nl.getSortIndexes();
+   * indices[0]; // produces 1 as nl[1] == 3.
+   */
+  NumberList.prototype.getSortIndexes = function(descending) {
+    if(descending == null) descending = true;
+
+    var pairs = [];
+    var newList = new NumberList();
+
+    if(this.length === 0) return newList;
+
+    for(var i = 0; this[i] != null; i++) {
+      pairs.push([i, this[i]]);
+    }
+
+    if(descending) {
+      pairs.sort(function(a, b) {
+        if(a[1] < b[1]) return 1;
+        return -1;
+      });
+    } else {
+      pairs.sort(function(a, b) {
+        if(a[1] < b[1]) return -1;
+        return 1;
+      });
+    }
+
+    for(i = 0; pairs[i] != null; i++) {
+      newList.push(pairs[i][0]);
+    }
+    newList.name = this.name;
+    return newList;
+  };
+
+  /**
+   * Returns a new NumberList with the values of
+   * the original list multiplied by the input value
+   *
+   * @param {Number} value The value to multiply each
+   * value in the list by.
+   * @return {NumberList} New NumberList with values multiplied.
+   */
+  NumberList.prototype.factor = function(value) {
+    var i;
+    var newNumberList = new NumberList();
+    for(i = 0; i < this.length; i++) {
+      newNumberList.push(this[i] * value);
+    }
+    newNumberList.name = this.name;
+    return newNumberList;
+  };
+
+  /**
+   * Adds a value or values in a NumberList to the current list.
+   *
+   * If input is a Number, each value of the returned
+   * NumberList will be the sum of the original value and this
+   * input value.
+   *
+   * If the input is a NumberList, each value of the returned
+   * NumberList will be the sum of the original value and the
+   * value at the same index in the input list.
+   *
+   * @param {Number|NumberList} object Input value to add to the list.
+   * @return {NumberList}
+   */
+  NumberList.prototype.add = function(object) {
+    var i;
+    var newNumberList = new NumberList();
+    var type = typeOf(object);
+
+    switch(type) {
+      case 'number':
+        for(i = 0; this[i] != null; i++) {
+          newNumberList[i] = this[i] + object;
+        }
+        break;
+      case 'NumberList':
+        for(i = 0; this[i] != null; i++) {
+          newNumberList[i] = this[i] + object[i % object.length];
+        }
+        break;
+    }
+
+    newNumberList.name = this.name;
+    return newNumberList;
+  };
+
+  /**
+   * Subtracts a value or values in a NumberList from the current list.
+   *
+   * If input is a Number, each value of the returned
+   * NumberList will be the original value minus this
+   * input value.
+   *
+   * If the input is a NumberList, each value of the returned
+   * NumberList will be the original value minus the
+   * value at the same index in the input list.
+   *
+   * @param {Number|NumberList} object Input value to subract from the list.
+   * @return {NumberList}
+   */
+  NumberList.prototype.subtract = function(object) {
+    var i;
+    var newNumberList = new NumberList();
+    var type = typeOf(object);
+
+    switch(type) {
+      case 'number':
+        for(i = 0; this[i] != null; i++) {
+          newNumberList[i] = this[i] - object;
+        }
+        break;
+      case 'NumberList':
+        for(i = 0; this[i] != null; i++) {
+          newNumberList[i] = this[i] - object[i % object.length];
+        }
+        break;
+    }
+
+    newNumberList.name = this.name;
+    return newNumberList;
+  };
+
+  /**
+   * Returns a new NumberList with each value divided by a input value or values in a NumberList.
+   *
+   * If input is a Number, each value of the returned
+   * NumberList will be the original value divided by this
+   * input value.
+   *
+   * If the input is a NumberList, each value of the returned
+   * NumberList will be the original value divided by the
+   * value at the same index in the input list.
+   *
+   * @param {Number|NumberList} object Input value to divide by the list.
+   * @return {NumberList}
+   */
+  NumberList.prototype.divide = function(object) {
+    var i;
+    var newNumberList = new NumberList();
+    var type = typeOf(object);
+
+    switch(type) {
+      case 'number':
+        for(i = 0; this[i] != null; i++) {
+          newNumberList[i] = this[i] / object;
+        }
+        break;
+      case 'NumberList':
+        for(i = 0; this[i] != null; i++) {
+          newNumberList[i] = this[i] / object[i % object.length];
+        }
+        break;
+    }
+
+    newNumberList.name = this.name;
+    return newNumberList;
+  };
+
+  /**
+   * Returns a new NumberList containing the square root of
+   * the values of the current NumberList.
+   *
+   * @return {NumberList} NumberList with square rooted values.
+   */
+  NumberList.prototype.sqrt = function() {
+    var i;
+    var newNumberList = new NumberList();
+    for(i = 0; i < this.length; i++) {
+      newNumberList.push(Math.sqrt(this[i]));
+    }
+    newNumberList.name = this.name;
+    return newNumberList;
+  };
+
+  /**
+   * Returns a new NumberList containing values raised to the power
+   * of the input value.
+   *
+   * @param {Number} power Power to raise each value by.
+   * @return {NumberList} New NumberList.
+   */
+  NumberList.prototype.pow = function(power) {
+    var i;
+    var newNumberList = new NumberList();
+    for(i = 0; i < this.length; i++) {
+      newNumberList.push(Math.pow(this[i], power));
+    }
+    newNumberList.name = this.name;
+    return newNumberList;
+  };
+
+  /**
+   * Returns a transformed version of the list with
+   * each value in the new list the log of the value
+   * in the current list, with an optional constant
+   * added to it.
+   *
+   * @param {Number} add Optional value to add to the log transformed values.
+   * Defaults to 0.
+   * @return {NumberList}
+   */
+  NumberList.prototype.log = function(add) {
+    add = add || 0;
+
+    var i;
+    var newNumberList = new NumberList();
+    for(i = 0; this[i] != null; i++) {
+      newNumberList[i] = Math.log(this[i] + add);
+    }
+    newNumberList.name = this.name;
+
+    return newNumberList;
+  };
+
+  /**
+   * Returns dot product between current list and input NumberList.
+   *
+   * @param {NumberList} numberList Another NumberList.
+   * @return {Number} Dot product between two lists.
+   */
+  NumberList.prototype.dotProduct = function(numberList) {
+    var sum = 0;
+    var i;
+    var nElements = Math.min(this.length, numberList.length);
+    for(i = 0; i < nElements; i++) {
+      sum += this[i] * numberList[i];
+    }
+    return sum;
+  };
+
+  /**
+   * Calculates Euclidean distance between two numberLists
+   *
+   * @param  {NumberList} numberList NumberList of the same length
+   * as current list.
+   * @return {Number} Summed Euclidean distance between all values.
+   * tags:
+   */
+  NumberList.prototype.distance = function(numberList) {
+    var sum = 0;
+    var i;
+    var nElements = Math.min(this.length, numberList.length);
+    for(i = 0; i < nElements; i++) {
+      sum += Math.pow(this[i] - numberList[i], 2);
+    }
+    return Math.sqrt(sum);
+  };
+
+  /**
+   * Returns true if values in the input NumberList are the same
+   * as the values in the current list.
+   *
+   * @param numberList NumberList to compare.
+   * @return {Boolean} True if all values in both lists match.
+   */
+  NumberList.prototype.isEquivalent = function(numberList) {
+    for(var i = 0; this[i] != null; i++) {
+      if(this[i] != numberList[i]) return false;
+    }
+    return true;
+  };
+
+  /**
+   * Returns a new {@link StringList} with all values converted to strings
+   *
+   * @return {StringList} New list.
+   */
+  NumberList.prototype.toStringList = function() {
+    var i;
+    var stringList = new StringList();
+    for(i = 0; this[i] != null; i++) {
+      stringList[i] = String(this[i]);
+    }
+    stringList.name = this.name;
+    return stringList;
+  };
+
+
+  //transform
+
+  NumberList.prototype.approach = function(destinty, speed) {
+    speed = speed || 0.5;
+
+    var i;
+    var antispeed = 1 - speed;
+
+    for(i = 0; this[i] != null; i++) {
+      this[i] = antispeed * this[i] + speed * destinty[i];
+    }
+  };
+
+
+  ///////overriding
+
+  NumberList.prototype.clone = function() {
+    var newList = NumberList.fromArray(this._slice(), false);
+    newList.name = this.name;
+    return newList;
+  };
+
+  NumberList.prototype.slice = function() {
+    return NumberList.fromArray(this._slice.apply(this, arguments), false);
+  };
+
+  exports.NumberList = NumberList;
+
+  StringList.prototype = new List__default();
+  StringList.prototype.constructor = StringList;
+
+  /**
+   * @classdesc {@link List} for storing Strings.
+   *
+   * @constructor
+   * @description Creates a new StringList
+   * @category strings
+   */
+  function StringList() {
+    var args = []; //TODO:why this?, ask M
+
+    for(var i = 0; i < arguments.length; i++) {
+      args[i] = String(arguments[i]);
+    }
+    var array = List__default.apply(this, args);
+    array = StringList.fromArray(array);
+    //
+    return array;
+  }
+
+
+  StringList.fromArray = function(array, forceToString) {
+    forceToString = forceToString == null ? true : forceToString;
+
+    var result = List__default.fromArray(array);
+    if(forceToString) {
+      for(var i = 0; i < result.length; i++) {
+        result[i] = String(result[i]);
+      }
+    }
+    result.type = "StringList";
+
+    //assign methods to array:
+    result.getLengths = StringList.prototype.getLengths;
+    result.toLowerCase = StringList.prototype.toLowerCase;
+    result.toUpperCase = StringList.prototype.toUpperCase;
+    result.append = StringList.prototype.append;
+    result.getSurrounded = StringList.prototype.getSurrounded;
+    result.replace = StringList.prototype.replace;
+    result.getConcatenated = StringList.prototype.getConcatenated;
+    result.toNumberList = StringList.prototype.toNumberList;
+    result.toDateList = StringList.prototype.toDateList;
+    result.trim = StringList.prototype.trim;
+
+    //override
+    result.clone = StringList.prototype.clone;
+
+    return result;
+  };
+
+  /**
+   * overrides List.prototype.getLengths (see comments there)
+   */
+  StringList.prototype.getLengths = function() {
+    var lengths = new NumberList();
+    var string;
+
+    this.forEach(function(string) {
+      lengths.push(string.length);
+    });
+
+    return lengths;
+  };
+
+  StringList.prototype.append = function(sufix, after) {
+    after = after == null ? true : after;
+    var newStringList = new StringList();
+    newStringList.name = this.name;
+    var sufixIsStringList = typeOf(sufix) == "StringList";
+    var i;
+    if(after) {
+      for(i = 0; this[i] != null; i++) {
+        newStringList[i] = this[i] + (sufixIsStringList ? sufix[i] : sufix);
+      }
+    } else {
+      for(i = 0; this[i] != null; i++) {
+        newStringList[i] = (sufixIsStringList ? sufix[i] : sufix) + this[i];
+      }
+    }
+    return newStringList;
+  };
+
+  /**
+   * prefix and sufix can be string or a StringList
+   */
+  StringList.prototype.getSurrounded = function(prefix, sufix) {
+    var newStringList = new StringList();
+    newStringList.name = this.name;
+    var i;
+
+    var prefixIsStringList = Array.isArray(prefix);
+    var sufixIsStringList = Array.isArray(sufix);
+
+    for(i = 0; this[i] != null; i++) {
+      newStringList[i] = (prefixIsStringList ? prefix[i] : prefix) + this[i] + (sufixIsStringList ? sufix[i] : sufix);
+    }
+
+    return newStringList;
+  };
+
+
+  //deprectaed, replaced by replaceInStrings
+  StringList.prototype.replace = function(regExp, string) {
+    var newStringList = new StringList();
+    newStringList.name = this.name;
+
+    for(var i = 0; this[i] != null; i++) {
+      newStringList[i] = this[i].replace(regExp, string);
+    }
+
+    return newStringList;
+  };
+
+  /**
+   * replaces in each string, a sub-string by a string
+   * @param  {String} subString sub-string to be replaced in each string
+   * @param  {String} replacement string to be placed instead
+   * @return {StringList}
+   * tags:
+   */
+  StringList.prototype.replaceSubStringsInStrings = function(subString, replacement) {
+    var newStringList = new StringList();
+    newStringList.name = this.name;
+
+    for(var i = 0; this[i] != null; i++) {
+      newStringList[i] = StringOperators.replaceString(string, subString, replacement);
+    }
+
+    return newStringList;
+  };
+
+  StringList.prototype.getConcatenated = function(separator) {
+    var i;
+    var string = "";
+    for(i = 0; this[i] != null; i++) {
+      string += this[i];
+      if(i < this.length - 1) string += separator;
+    }
+    return string;
+  };
+
+
+  StringList.prototype.toLowerCase = function() {
+    var newStringList = new StringList();
+    newStringList.name = this.name;
+    var i;
+    for(i = 0; this[i] != null; i++) {
+      newStringList[i] = this[i].toLowerCase();
+    }
+    return newStringList;
+  };
+
+  StringList.prototype.toUpperCase = function() {
+    var newStringList = new StringList();
+    newStringList.name = this.name;
+    var i;
+    for(i = 0; this[i] != null; i++) {
+      newStringList[i] = this[i].toUpperCase();
+    }
+    return newStringList;
+  };
+
+  StringList.prototype.toNumberList = function() {
+    var numbers = new NumberList();
+    numbers.name = this.name;
+    var i;
+    for(i = 0; this[i] != null; i++) {
+      numbers[i] = Number(this[i]);
+    }
+    return numbers;
+  };
+
+
+  /**
+   * converts a stringList into a dateList
+   *
+   * @param  {String} formatCase format cases:<br>0: MM-DD-YYYY<br>1: YYYY-MM-DD (standard Javascript conversion)
+   * @param  {String} separator "-" by default
+   * @return {DateList}
+   * tags:
+   */
+  StringList.prototype.toDateList = function(formatCase, separator) {
+    var dateList = new DateList();
+    var i;
+    for(i = 0; this[i] != null; i++) {
+      dateList.push(DateOperators.stringToDate(this[i], formatCase, separator));
+    }
+    return dateList;
+  };
+
+  /**
+   * trims all the strings on the stringList
+   * @return {StringList}
+   * tags:
+   */
+  StringList.prototype.trim = function() {
+    var i;
+    var newStringList = new StringList();
+    for(i = 0; this[i] != null; i++) {
+      newStringList[i] = this[i].trim();
+    }
+    newStringList.name = this.name;
+    return newStringList;
+  };
+
+  ///////overriding
+
+  StringList.prototype.clone = function() {
+    var newList = StringList.fromArray(this.slice(), false);
+    newList.name = this.name;
+    return newList;
+  };
+
+  exports.StringList = StringList;
+
+  var typeDict = {
+    List: List__default,
+    Table: Table,
+    StringList: StringList,
+    NumberList: NumberList,
+    NumberTable: NumberTable,
+    NodeList: NodeList__default,
+    RelationList: RelationList,
+    Polygon: Polygon,
+    Polygon3D: Polygon3D,
+    DateList: DateList,
+    ColorList: ColorList
+  };
+
+
+  /*
+   * All these function are globally available since they are included in the Global class
+   */
+  var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"}
+  var _shortFromTypeDictionary;
+  var _colorFromTypeDictionary;
+  var _lightColorFromTypeDictionary;
+
+  /*
+   * types are:
+   * number, string, boolean, date, Array, Object
+   * and all data models classes names
+   */
+
+  function typeOf(object) {
+    if(object==null) return null;
+
+    var type = typeof object;
+    if(type !== 'object') return type;
+
+    if(object.type!=null) return object.type;
+
+    if(Object.prototype.toString.call(object) == "[object Array]") return "Array";
+
+    if(object.getDate != null) return 'date';
+
+    return 'Object';
+  }
+
+  // TODO remove?
+  function VOID() {}
+
+  function instantiate(className, args) {
+    switch(className) {
+      case 'number':
+      case 'string':
+        // TODO: I don't think this works.
+        return window[className](args);
+      case 'date':
+        if(!args || args.length == 0) return new Date();
+        if(args.length == 1) {
+          if(args[0].match(/\d*.-\d*.-\d*\D\d*.:\d*.:\d*/)) {
+            var dateArray = args[0].split(" ");
+            dateArray[0] = dateArray[0].split("-");
+            if(dateArray[1]) dateArray[1] = dateArray[1].split(":");
+            else dateArray[1] = new Array(0, 0, 0);
+            return new Date(Date.UTC(dateArray[0][0], Number(dateArray[0][1]) - 1, dateArray[0][2], dateArray[1][0], dateArray[1][1], dateArray[1][2]));
+          }
+          //
+          if(Number(args[0]) != "NaN") return new Date(Number(args[0]));
+          else return new Date(args[0]);
+        }
+        return new Date(Date.UTC.apply(null, args));
+      case 'boolean':
+        // TODO: I don't think this works.
+        return window[className]((args == "false" || args == "0") ? false : true);
+      case 'List':
+      case 'Table':
+      case 'StringList':
+      case 'NumberList':
+      case 'NumberTable':
+      case 'NodeList':
+      case 'RelationList':
+      case 'Polygon':
+      case 'Polygon3D':
+      case 'PolygonList':
+      case 'DateList':
+      case 'ColorList':
+        return typeDict[className].apply(new typeDict[className](), args);
+      case null:
+      case undefined:
+      case 'undefined':
+        return null;
+    }
+    //generic instantiation of object:
+    var o, dummyFunction, cl;
+    cl = window[className]; // get reference to class constructor function
+    dummyFunction = function() {}; // dummy function
+    dummyFunction.prototype = cl.prototype; // reference same prototype
+    o = new dummyFunction(); // instantiate dummy function to copy prototype properties
+    cl.apply(o, args); // call class constructor, supplying new object as context
+
+    return o;
+  }
+
+  function _createDataModelsInfoDictionaries(){
+    var i;
+    var type;
+
+    _shortFromTypeDictionary = {};
+    _colorFromTypeDictionary = {};
+    _lightColorFromTypeDictionary = {};
+
+    for(i=0; dataModelsInfo[i]!=null; i++){
+      type = dataModelsInfo[i].type;
+      _shortFromTypeDictionary[type] = dataModelsInfo[i].short;
+      _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.3);
+      _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.3);
+      type = type.toLowerCase();
+      _shortFromTypeDictionary[type] = dataModelsInfo[i].short;
+      _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.3);
+      _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.3);
+    }
+  }
+
+  function getShortNameFromDataModelType(type){
+    if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
+    return _shortFromTypeDictionary[type];
+  }
+
+  function getColorFromDataModelType(type){
+    if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
+    return _colorFromTypeDictionary[type];
+  }
+
+  function getLightColorFromDataModelType(type){
+    if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
+    return _lightColorFromTypeDictionary[type];
+  }
+
+  function getTextFromObject(value, type){
+    if(value == null) return "Null";
+    if(value.isList) {
+      if(value.length == 0) return "[]";
+      var text = value.toString(); // value.length>6?value.slice(0, 5).forEach(function(v){return getTextFromObject(v, typeOf(v))}).join(','):value.toStringList().join(',').forEach(function(v, typeOf(v)){return getTextFromObject(v, type)});
+      if(text.length > 160) {
+        var i;
+        var subtext;
+        text = "[";
+        for(i = 0; (value[i] != null && i < 6); i++) {
+          subtext = getTextFromObject(value[i], typeOf(value[i]));
+          if(subtext.length > 40) subtext = subtext.substr(0, 40) + (value[i].isList ? "…]" : "…");
+          text += (i != 0 ? ", " : "") + subtext;
+        }
+        if(value.length > 6) text += ",…";
+        text += "]";
+      }
+      return text;
+    }
+
+    switch(type) {
+      case "date":
+        return DateOperators.dateToString(value);
+      case "DateInterval":
+        return DateOperators.dateToString(value.date0) + " - " + DateOperators.dateToString(value.date1);
+      case "string":
+        return((value.length > 160) ? value.substr(0, 159) + "…" : value).replace(/\n/g, "↩");
+      case "number":
+        return String(value);
+      default:
+        return "{}"; //value.toString();
+    }
+  }
+
+  function instantiateWithSameType(object, args) {
+    return instantiate(typeOf(object), args);
+  }
+
+  function isArray(obj) {
+    if(obj.constructor.toString().indexOf("Array") == -1)
+      return false;
+    else
+      return true;
+  }
+
+  Date.prototype.getType = function() {
+    return 'date';
+  };
+
+
+
+  function evalJavaScriptFunction(functionText, args, scope){
+  	if(functionText==null) return;
+
+  	var res;
+
+  	var myFunction;
+
+  	var good = true;
+  	var message = '';
+
+  	var realCode;
+
+  	var lines = functionText.split('\n');
+
+  	for(var i=0; lines[i]!=null; i++){
+  		lines[i] = lines[i].trim();
+  		if(lines[i] === "" || lines[i].substr(1)=="/"){
+  			lines.splice(i,1);
+  			i--;
+  		}
+  	}
+
+  	var isFunction = lines[0].indexOf('function')!=-1;
+
+  	functionText = lines.join('\n');
+
+  	if(isFunction){
+  		if(scope){
+  			realCode = "scope.myFunction = " + functionText;
+  		} else {
+  			realCode = "myFunction = " + functionText;
+  		}
+  	} else {
+  		if(scope){
+  			realCode = "scope.myVar = " + functionText;
+  		} else {
+  			realCode = "myVar = " + functionText;
+  		}
+  	}
+
+  	try{
+  		if(isFunction){
+  			eval(realCode);
+  			if(scope){
+  				res = scope.myFunction.apply(scope, args);
+  			} else {
+  				res = myFunction.apply(this, args);
+  			}
+  		} else {
+  			eval(realCode);
+  			if(scope){
+  				res = scope.myVar;
+  			} else 	{
+  				res = myVar;
+  			}
+  		}
+  	} catch(err){
+  		good = false;
+  		message = err.message;
+  		res = null;
+  	}
+
+    var resultObject = {
+      result: res,
+      success: good,
+      errorMessage: message
+    };
+
+    return resultObject;
+  }
+
+  function argumentsToArray(args) {
+    return Array.prototype.slice.call(args, 0);
+  }
+
+  // export function TimeLogger(name) {
+  //   var scope = this;
+  //   this.name = name;
+  //   this.clocks = {};
+
+  //   this.tic = function(clockName) {
+  //     scope.clocks[clockName] = new Date().getTime();
+  //     //c.l( "TimeLogger '"+clockName+"' has been started");
+  //   };
+  //   this.tac = function(clockName) {
+  //     if(scope.clocks[clockName] == null) {
+  //       scope.tic(clockName);
+  //     } else {
+  //       var now = new Date().getTime();
+  //       var diff = now - scope.clocks[clockName];
+  //       console.log("TimeLogger '" + clockName + "' took " + diff + " ms");
+  //     }
+  //   };
+  // }
+  // export var tl = new TimeLogger("Global Time Logger");
+
+  exports.typeOf = typeOf;
+  exports.instantiate = instantiate;
+  exports.getShortNameFromDataModelType = getShortNameFromDataModelType;
+  exports.getColorFromDataModelType = getColorFromDataModelType;
+  exports.getLightColorFromDataModelType = getLightColorFromDataModelType;
+  exports.getTextFromObject = getTextFromObject;
+  exports.instantiateWithSameType = instantiateWithSameType;
+  exports.isArray = isArray;
+  exports.evalJavaScriptFunction = evalJavaScriptFunction;
+  exports.argumentsToArray = argumentsToArray;
+
+  LoadEvent.prototype = {};
+  LoadEvent.prototype.constructor = LoadEvent;
+
+  /**
+   * LoadEvent
+   * @constructor
+   * @category misc
+   */
+  function LoadEvent() {
+    Object.apply(this);
+    this.result = null;
+    this.errorType = 0;
+    this.errorMessage = "";
+    this.url;
+  }
+
+  exports.LoadEvent = LoadEvent;
+
+  function Loader() {}
+
+
+  Loader.proxy = ""; //TODO:install proxy created by Mig at moebio.com
+  Loader.cacheActive = false; //TODO: fix!
+  Loader.associativeByUrls = {};
+  Loader.REPORT_LOADING = false;
+  Loader.n_loading = 0;
+  Loader.LOCAL_STORAGE_ENABLED = false;
+
+  Loader.PHPurl = "http://intuitionanalytics.com/tests/proxy.php?url=";
+
+
+  /**
+   * loads string data from server. The defined Loader.proxy will be used.
+   * @param {String} url the URL of the file to be loaded
+   * @param {Function} onLoadData a function that will be called when complete. The function must receive a LoadEvent
+   * @param {callee} the Object containing the onLoadData function to be called
+   * @para, {Object} optional parameter that will be stored in the LoadEvent instance
+   */
+  Loader.loadData = function(url, onLoadData, callee, param, send_object_json) {
+    if(Loader.REPORT_LOADING) console.log('load data:', url);
+    Loader.n_loading++;
+
+    if(Loader.LOCAL_STORAGE_ENABLED) {
+      // TODO track down LocalStorage. localStorage is a thing though (lowercase l);
+      var result = LocalStorage.getItem(url);
+      if(result) {
+        var e = new LoadEvent();
+        e.url = url;
+        e.param = param;
+        e.result = result;
+
+        onLoadData.call(target, e);
+      }
+    }
+
+
+
+    if(Loader.REPORT_LOADING) console.log("Loader.loadData | url:", url);
+
+    var useProxy = String(url).substr(0, 4) == "http";
+
+    var req = new XMLHttpRequest();
+
+    var target = callee ? callee : arguments.callee;
+    var onLoadComplete = function() {
+      if(Loader.REPORT_LOADING) console.log('Loader.loadData | onLoadComplete'); //, req.responseText:', req.responseText);
+      if(req.readyState == 4) {
+        Loader.n_loading--;
+
+        var e = new LoadEvent();
+        e.url = url;
+        e.param = param;
+        //if (req.status == 200) { //MIG
+        if(req.status == 200 || (req.status == 0 && req.responseText != null)) {
+          e.result = req.responseText;
+          onLoadData.call(target, e);
+        } else {
+          if(Loader.REPORT_LOADING) console.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
+          e.errorType = req.status;
+          e.errorMessage = "[!] There was a problem retrieving the data [" + req.status + "]:" + req.statusText;
+          onLoadData.call(target, e);
+        }
+      }
+    };
+
+    // branch for native XMLHttpRequest object
+    if(window.XMLHttpRequest && !(window.ActiveXObject)) {
+      try {
+        req = new XMLHttpRequest();
+      } catch(e) {
+        req = false;
+      }
+      // branch for IE/Windows ActiveX version
+    } else if(window.ActiveXObject) {
+      try {
+        req = new ActiveXObject("Msxml2.XMLHTTP.6.0");
+      } catch(e) {
+        try {
+          req = new ActiveXObject("Msxml2.XMLHTTP.3.0");
+        } catch(e) {
+          try {
+            req = new ActiveXObject("Msxml2.XMLHTTP");
+          } catch(e) {
+            try {
+              req = new ActiveXObject("Microsoft.XMLHTTP");
+            } catch(e) {
+              req = false;
+            }
+          }
+        }
+      }
+    }
+    if(req) {
+      req.onreadystatechange = onLoadComplete; //processReqChange;
+      if(useProxy) {
+        req.open("GET", Loader.proxy + url, true);
+      } else {
+        req.open("GET", url, true);
+      }
+
+      send_object_json = send_object_json || "";
+      req.send(send_object_json);
+    }
+  };
+
+
+  //TODO this method isn't reference by anything else.
+  function LoaderRequest(url, method, data) {
+    this.url = url;
+    this.method = method ? method : "GET";
+    this.data = data;
+  }
+
+  Loader.loadImage = function(url, onComplete, callee, param) {
+    Loader.n_loading++;
+
+    if(Loader.REPORT_LOADING) console.log("Loader.loadImage | url:", url);
+
+    var target = callee ? callee : arguments.callee;
+    var img = document.createElement('img');
+
+    if(this.cacheActive) {
+      if(this.associativeByUrls[url] != null) {
+        Loader.n_loading--;
+        //console.log('=====>>>>+==>>>+====>>=====>>>+==>> in cache:', url);
+        var e = new LoadEvent();
+        e.result = this.associativeByUrls[url];
+        e.url = url;
+        e.param = param;
+        onComplete.call(target, e);
+      } else {
+        var cache = true;
+        var associative = this.associativeByUrls;
+      }
+    }
+
+    img.onload = function() {
+      Loader.n_loading--;
+      var e = new LoadEvent();
+      e.result = img;
+      e.url = url;
+      e.param = param;
+      if(cache) associative[url] = img;
+      onComplete.call(target, e);
+    };
+
+    img.onerror = function() {
+      Loader.n_loading--;
+      var e = new LoadEvent();
+      e.result = null;
+      e.errorType = 1; //TODO: set an error type!
+      e.errorMessage = "There was a problem retrieving the image [" + img.src + "]:";
+      e.url = url;
+      e.param = param;
+      onComplete.call(target, e);
+    };
+
+    img.src = Loader.proxy + url;
+  };
+
+
+
+  // Loader.loadJSON = function(url, onLoadComplete) {
+  //   Loader.n_loading++;
+
+  //   Loader.loadData(url, function(data) {
+  //     Loader.n_loading--;
+  //     onLoadComplete.call(arguments.callee, jQuery.parseJSON(data));
+  //   });
+  // };
+
+
+  /**
+  Loader.callIndex = 0;
+  Loader.loadJSONP = function(url, onLoadComplete, callee) {
+    Loader.n_loading++;
+
+    Loader.callIndex = Loader.callIndex + 1;
+    var index = Loader.callIndex;
+
+    var newUrl = url + "&callback=JSONcallback" + index;
+    //var newUrl=url+"?callback=JSONcallback"+index; //   <----  WFP suggestion
+
+    var target = callee ? callee : arguments.callee;
+
+    //console.log('Loader.loadJSONP, newUrl:', newUrl);
+
+    $.ajax({
+      url: newUrl,
+      type: 'GET',
+      data: {},
+      dataType: 'jsonp',
+      contentType: "application/json",
+      jsonp: 'jsonp',
+      jsonpCallback: 'JSONcallback' + index,
+      success: function(data) {
+        Loader.n_loading--;
+        var e = new LoadEvent();
+        e.result = data;
+        onLoadComplete.call(target, e);
+      },
+      error: function(data) {
+        Loader.n_loading--;
+        console.log("Loader.loadJSONP | error, data:", data);
+
+        var e = new LoadEvent();
+        e.errorType = 1;
+        onLoadComplete.call(target, e);
+      }
+    }); //.error(function(e){
+    // console.log('---> (((error))) B');
+    //
+    // var e=new LoadEvent();
+    // e.errorType=1;
+    // onLoadComplete.call(target, e);
+    // });
+  };
+  **/
+
+
+
+
+  //FIX THESE METHODS:
+
+  Loader.loadXML = function(url, onLoadData) {
+    Loader.n_loading++;
+
+    var req = new XMLHttpRequest();
+    var onLoadComplete = onLoadData;
+
+    if(Loader.REPORT_LOADING) console.log('loadXML, url:', url);
+
+    // branch for native XMLHttpRequest object
+    if(window.XMLHttpRequest && !(window.ActiveXObject)) {
+      try {
+        req = new XMLHttpRequest();
+      } catch(e) {
+        req = false;
+      }
+      // branch for IE/Windows ActiveX version
+    } else if(window.ActiveXObject) {
+      try {
+        req = new ActiveXObject("Msxml2.XMLHTTP");
+      } catch(e) {
+        try {
+          req = new ActiveXObject("Microsoft.XMLHTTP");
+        } catch(e) {
+          req = false;
+        }
+      }
+    }
+    if(req) {
+      req.onreadystatechange = processReqChange;
+      req.open("GET", url, true);
+      req.send("");
+    }
+
+    function processReqChange() {
+      Loader.n_loading--;
+      // only if req shows "loaded"
+      if(req.readyState == 4) {
+        // only if "OK"
+        if(req.status == 200 || req.status == 0) {
+          onLoadComplete(req.responseXML);
+
+        } else {
+          console.log("There was a problem retrieving the XML data:\n" +
+            req.statusText);
+        }
+      }
+    }
+  };
+
+
+  ///////////////PHP
+
+  Loader.sendContentToVariableToPhp = function(url, varName, value, onLoadData, callee, param) {
+    var data = varName + "=" + encodeURIComponent(value);
+    Loader.sendDataToPhp(url, data, onLoadData, callee, param);
+  };
+
+  Loader.sendContentsToVariablesToPhp = function(url, varNames, values, onLoadData, callee, param) {
+    var data = varNames[0] + "=" + encodeURIComponent(values[0]);
+    for(var i = 1; varNames[i] != null; i++) {
+      data += "&" + varNames[i] + "=" + encodeURIComponent(values[i]);
+    }
+    Loader.sendDataToPhp(url, data, onLoadData, callee, param);
+  };
+
+  Loader.sendDataToPhp = function(url, data, onLoadData, callee, param) {
+    var req = new XMLHttpRequest();
+
+    req.open("POST", url, true);
+    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    req.send(data);
+
+    var target = callee ? callee : arguments.callee;
+
+    var onLoadComplete = function() {
+      if(Loader.REPORT_LOADING) console.log('Loader.loadData | onLoadComplete, req.responseText:', req.responseText);
+      if(req.readyState == 4) {
+        Loader.n_loading--;
+
+        var e = new LoadEvent();
+        e.url = url;
+        e.param = param;
+
+        if(req.status == 200 || (req.status == 0 && req.responseText != null)) {
+          e.result = req.responseText;
+          onLoadData.call(target, e);
+        } else {
+          if(Loader.REPORT_LOADING) console.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
+          e.errorType = req.status;
+          e.errorMessage = "[!] There was a problem retrieving the data [" + req.status + "]:" + req.statusText;
+          onLoadData.call(target, e);
+        }
+      }
+    };
+
+    req.onreadystatechange = onLoadComplete;
+  };
+
+  exports.Loader = Loader;
+
+  Node__Node.prototype = new DataModel();
+  Node__Node.prototype.constructor = Node__Node;
+
+  /**
+   * @classdesc Represents a single node element in a Network. Can have both an id as well
+   * as a name.
+   *
+   * @description Create a new Node.
+   * @param {String} id ID of the Node
+   * @param {String} name string (label) name to be assigned to node
+   * @constructor
+   * @category networks
+   */
+  function Node__Node(id, name) {
+    this.id = id == null ? '' : id;
+    this.name = name != null ? name : '';
+    this.type = "Node";
+
+    this.nodeType;
+
+    this.x = 0;
+    this.y = 0;
+    this.z = 0;
+
+    this.nodeList = new NodeList__default();
+    this.relationList = new RelationList();
+
+    this.toNodeList = new NodeList__default();
+    this.toRelationList = new RelationList();
+
+    this.fromNodeList = new NodeList__default();
+    this.fromRelationList = new RelationList();
+
+    this.weight = 1;
+    this.descentWeight = 1;
+
+    //tree
+    this.level = 0;
+    this.parent = null;
+
+    //physics:
+    this.vx = 0;
+    this.vy = 0;
+    this.vz = 0;
+    this.ax = 0;
+    this.ay = 0;
+    this.az = 0;
+  }
+  var Node__default = Node__Node;
+
+  /**
+   * Removes all Relations and connected Nodes from
+   * the current Node.
+   */
+  Node__Node.prototype.cleanRelations = function() {
+    this.nodeList = new NodeList__default();
+    this.relationList = new RelationList();
+
+    this.toNodeList = new NodeList__default();
+    this.toRelationList = new RelationList();
+
+    this.fromNodeList = new NodeList__default();
+    this.fromRelationList = new RelationList();
+  };
+
+  //TODO: complete with all properties
+  Node__Node.prototype.destroy = function() {
+    DataModel.prototype.destroy.call(this);
+    delete this.id;
+    delete this.name;
+    delete this.nodeType;
+    delete this.x;
+    delete this.y;
+    delete this.z;
+    delete this.nodeList;
+    delete this.relationList;
+    delete this.toNodeList;
+    delete this.toNodeList;
+    delete this.fromNodeList;
+    delete this.fromRelationList;
+    delete this.parent;
+    delete this.weight;
+    delete this.descentWeight;
+    delete this.level;
+    delete this.vx;
+    delete this.vy;
+    delete this.vz;
+    delete this.ax;
+    delete this.ay;
+    delete this.az;
+  };
+
+  /**
+   * Returns the number of Relations connected to this Node.
+   *
+   * @return {Number} Number of Relations (edges) connecting to this Node instance.
+   */
+  Node__Node.prototype.getDegree = function() {
+    return this.relationList.length;
+  };
+
+  //treeProperties:
+
+
+  /**
+   * Returns the parent Node of this Node if it is part of a {@link Tree}.
+   *
+   * @return {Node} Parent Node of this Node.
+   */
+  Node__Node.prototype.getParent = function() {
+    return this.parent;
+  };
+
+  /**
+   * Returns the leaves under a node in a Tree,
+   *
+   * <strong>Warning:</strong> If this Node is part of a Network that is not a tree, this method could run an infinite loop.
+   * @return {NodeList} Leaf Nodes of this Node.
+   * tags:
+   */
+  Node__Node.prototype.getLeaves = function() {
+      var leaves = new NodeList__default();
+      var addLeaves = function(node) {
+        if(node.toNodeList.length === 0) {
+          leaves.addNode(node);
+          return;
+        }
+        node.toNodeList.forEach(addLeaves);
+      };
+      addLeaves(this);
+      return leaves;
+    };
+
+
+  /**
+   * Uses an image as a visual representation to this Node.
+   *
+   * @param {String} urlImage The URL of the image to load.
+   */
+  Node__Node.prototype.loadImage = function(urlImage) {
+    Loader.loadImage(urlImage, function(e) {
+      this.image = e.result;
+    }, this);
+  };
+
+
+  /**
+   * Makes a copy of this Node.
+   *
+   * @return {Node} New Node that is a copy of this Node.
+   */
+  Node__Node.prototype.clone = function() {
+    var newNode = new Node__Node(this.id, this.name);
+
+    newNode.x = this.x;
+    newNode.y = this.y;
+    newNode.z = this.z;
+
+    newNode.nodeType = this.nodeType;
+
+    newNode.weight = this.weight;
+    newNode.descentWeight = this.descentWeight;
+
+    return newNode;
+  };
+
+  exports.Node = Node__default;
+
+  var version = "0.2.15";
 
   /*
    * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
@@ -5235,7 +7113,7 @@ define('src/index', ['exports'], function (exports) {
 
       src_Global__setCursor('default');
 
-      exports.MOUSE_DOWN = MOUSE_DOWN = NF_DOWN==nF;
+    exports.MOUSE_DOWN = MOUSE_DOWN = NF_DOWN==nF;
     exports.MOUSE_UP = MOUSE_UP = NF_UP==nF;
     exports.MOUSE_UP_FAST = MOUSE_UP_FAST = MOUSE_UP && (nF-NF_DOWN)<9;
 
@@ -5250,7 +7128,7 @@ define('src/index', ['exports'], function (exports) {
       exports.WHEEL_CHANGE = WHEEL_CHANGE = 0;
 
       exports.PREV_mX = PREV_mX=mX;
-    exports.PREV_mY = PREV_mY=mY;
+      exports.PREV_mY = PREV_mY=mY;
 
       nF++, exports.nF = nF;
   }
@@ -6986,15 +8864,27 @@ define('src/index', ['exports'], function (exports) {
    * @return {undefined}
    * @ignore
    */
-  NetworkEncodings.replaceChomasInLine = function(line) {
+  NetworkEncodings.replaceChomasInLine = function(line, separator) {
     var quoteBlocks = line.split("\"");
     if(quoteBlocks.length < 2) return line;
     var insideQuote;
     var i;
+    var re;
+    separator = separator==null?",":separator;
+
+    switch(separator){
+      case ",":
+        re = /,/g;
+        break;
+      case ";":
+        re = /;/g;
+        break;
+    }
+
     for(i = 0; quoteBlocks[i] != null; i++) {
       insideQuote = i * 0.5 != Math.floor(i * 0.5);
       if(insideQuote) {
-        quoteBlocks[i] = quoteBlocks[i].replace(/,/g, "*CHOMA*");
+        quoteBlocks[i] = quoteBlocks[i].replace(re, "*CHOMA*");
       }
     }
     line = StringList.fromArray(quoteBlocks).getConcatenated("");
@@ -7052,7 +8942,7 @@ define('src/index', ['exports'], function (exports) {
    */
   TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, valueForNulls, listsToStringList) {
     if(csvString==null) return null;
-    valueForNulls = valueForNulls == null ? 0 : valueForNulls;
+    valueForNulls = valueForNulls == null ? "" : valueForNulls;
     listsToStringList = listsToStringList==null?true:listsToStringList;
 
     var i, j;
@@ -7097,7 +8987,7 @@ define('src/index', ['exports'], function (exports) {
     for(i = startIndex; i < lines.length; i++) {
       if(lines[i].length < 2) continue;
 
-      var cellContents = NetworkEncodings.replaceChomasInLine(lines[i]).split(comaCharacter); //TODO: will be obsolete (see previous TODO)
+      var cellContents = NetworkEncodings.replaceChomasInLine(lines[i], separator).split(comaCharacter); //TODO: will be obsolete (see previous TODO)
 
       for(j = 0; j < cellContents.length; j++) {
         table[j] = table[j] == null ? new List__default() : table[j];
@@ -7106,8 +8996,8 @@ define('src/index', ['exports'], function (exports) {
         }
         var actualIndex = _firstRowIsHeader ? (i - 1) : i;
 
-        cellContent = cellContents[j].replace(/\*CHOMA\*/g, ",").replace(/\*ENTER\*/g, "\n");
-
+        cellContent = cellContents[j].replace(/\*CHOMA\*/g, separator).replace(/\*ENTER\*/g, "\n");
+        
         cellContent = cellContent == '' ? valueForNulls : cellContent;
 
         cellContent = String(cellContent);
@@ -7187,690 +9077,6 @@ define('src/index', ['exports'], function (exports) {
   };
 
   exports.TableEncodings = TableEncodings;
-
-  /* global console */
-
-  Table.prototype = new List__default();
-  Table.prototype.constructor = Table;
-
-  /**
-   * @classdesc A sub-class of {@link List}, Table provides a 2D array-like structure.
-   *
-   * Each column is stored as its own {@link List}, making it a List of Lists.
-   * Cells in the table can be accessed using table[column][row].
-   *
-   * @description Creates a new Table.
-   * Input arguments are treated as the inital column values
-   * of the Table.
-   * @constructor
-   * @category basics
-   */
-  function Table() {
-    var args = [];
-    var i;
-    for(i = 0; i < arguments.length; i++) {
-      args[i] = new List__default(arguments[i]);
-    }
-
-    var array = List__default.apply(this, args);
-    array = Table.fromArray(array);
-
-    return array;
-  }
-
-
-  /**
-   * Creates a new Table from an array
-   * @param {Number[]} array
-   * @return {Table}
-   */
-  Table.fromArray = function(array) {
-    var result = List__default.fromArray(array);
-    result.type = "Table";
-    //assign methods to array:
-    result.applyFunction = Table.prototype.applyFunction;
-    result.getRow = Table.prototype.getRow;
-    result.getRows = Table.prototype.getRows;
-    result.getLengths = Table.prototype.getLengths;
-    result.getListLength = Table.prototype.getListLength;
-    result.sliceRows = Table.prototype.sliceRows;
-    result.getSubListsByIndexes = Table.prototype.getSubListsByIndexes;
-    result.getWithoutRow = Table.prototype.getWithoutRow;
-    result.getWithoutRows = Table.prototype.getWithoutRows;
-    result.getTransposed = Table.prototype.getTransposed;
-    result.getListsSortedByList = Table.prototype.getListsSortedByList;
-    result.sortListsByList = Table.prototype.sortListsByList;
-    result.getReport = Table.prototype.getReport;
-    result.clone = Table.prototype.clone;
-    result.print = Table.prototype.print;
-
-    //transformative
-    result.removeRow = Table.prototype.removeRow;
-
-    //overiden
-    result.destroy = Table.prototype.destroy;
-
-    result.isTable = true;
-
-    return result;
-  };
-
-  /**
-   * Executes a given function on all the columns
-   * in the Table, returning a new Table with the
-   * resulting values.
-   * @param {Function} func Function to apply to each
-   * column in the table. Columns are {@link List|Lists}.
-   * @return {Table} Table of values from applying function.
-   */
-  Table.prototype.applyFunction = function(func) {
-    //TODO: to be tested!
-    var i;
-    var newTable = new Table();
-
-    newTable.name = this.name;
-
-    for(i = 0; this[i] != null; i++) {
-      newTable[i] = this[i].applyFunction(func);
-    }
-    return newTable.getImproved();
-  };
-
-  /**
-   * Returns a {@link List} with all the elements of a row.
-   * @param  {Number} index Index of the row to get.
-   * @return {List}
-   * tags:filter
-   */
-  Table.prototype.getRow = function(index) {
-    var list = new List__default();
-    var i;
-    for(i = 0; i < this.length; i++) {
-      list[i] = this[i][index];
-    }
-    return list.getImproved();
-  };
-
-  /**
-   * Returns the length a column of the Table.
-   * @param  {Number} index The Column to return its length.
-   * Defaults to 0.
-   * @return {Number} Length of column at given index.
-   * tags:
-   */
-  Table.prototype.getListLength = function(index) {
-    return this[index || 0].length;
-  };
-
-  /**
-   * Returns the lengths of all the columns of the Table.
-   * @return {NumberList} Lengths of all columns in Table.
-   */
-  Table.prototype.getLengths = function() {
-    var lengths = new NumberList();
-    for(var i = 0; this[i] != null; i++) {
-      lengths[i] = this[i].length;
-    }
-    return lengths;
-  };
-
-  /**
-   * Filters a Table by selecting a section of rows, elements with last index included.
-   * @param  {Number} startIndex Index of first element in all lists of the table.
-   * @param  {Number} endIndex Index of last elements in all lists of the table.
-   * @return {Table}
-   * tags:filter
-   */
-  Table.prototype.sliceRows = function(startIndex, endIndex) {
-    endIndex = endIndex == null ? (this[0].length - 1) : endIndex;
-
-    var i;
-    var newTable = new Table();
-    var newList;
-
-    newTable.name = this.name;
-    for(i = 0; this[i] != null; i++) {
-      newList = this[i].getSubList(startIndex, endIndex);
-      newList.name = this[i].name;
-      newTable.push(newList);
-    }
-    return newTable.getImproved();
-  };
-
-  /**
-   * Filters the lists of the table by indexes.
-   * @param  {NumberList} indexes
-   * @return {Table}
-   * tags:filter
-   */
-  Table.prototype.getSubListsByIndexes = function(indexes) {
-    var newTable = new Table();
-    this.forEach(function(list) {
-      newTable.push(list.getSubListByIndexes(indexes));
-    });
-    return newTable.getImproved();
-  };
-
-
-  //deprecated
-  /**
-   * @ignore
-   */
-  Table.prototype.getRows = function(indexes) {
-    return Table.prototype.getSubListsByIndexes(indexes);
-  };
-
-  /**
-   * Returns a new Table with the row at the given index removed.
-   * @param {Number} rowIndex Row to remove
-   * @return {Table} New Table.
-   */
-  Table.prototype.getWithoutRow = function(rowIndex) {
-    var newTable = new Table();
-    newTable.name = this.name;
-    for(var i = 0; this[i] != null; i++) {
-      newTable[i] = List__default.fromArray(this[i].slice(0, rowIndex).concat(this[i].slice(rowIndex + 1))).getImproved();
-      newTable[i].name = this[i].name;
-    }
-    return newTable.getImproved();
-  };
-
-  /**
-   * Returns a new Table with the rows listed in the given array removed.
-   * @param {Number[]} rowsIndexes Array of row indecies to remove.
-   * @return {undefined}
-   */
-  Table.prototype.getWithoutRows = function(rowsIndexes) {
-    var newTable = new Table();
-    newTable.name = this.name;
-    for(var i = 0; this[i] != null; i++) {
-      newTable[i] = new List__default();
-      for(var j = 0; this[i][j] != null; j++) {
-        if(rowsIndexes.indexOf(j) == -1) newTable[i].push(this[i][j]);
-      }
-      newTable[i].name = this[i].name;
-    }
-    return newTable.getImproved();
-  };
-
-  /**
-   * Sort Table's lists by a list
-   * @param  {List|Number} listOrIndex List used to sort, or index of list in the table
-   *
-   * @param  {Boolean} ascending (true by default)
-   * @return {Table} table (of the same type)
-   * tags:sort
-   */
-  Table.prototype.getListsSortedByList = function(listOrIndex, ascending) { //depracated: use sortListsByList
-    if(listOrIndex == null) return;
-    var newTable = instantiateWithSameType(this);
-    var sortinglist = listOrIndex.isList ? listOrIndex.clone() : this[listOrIndex];
-
-    this.forEach(function(list) {
-      newTable.push(list.getSortedByList(sortinglist, ascending));
-    });
-
-    return newTable;
-  };
-
-  /**
-   * Transposes Table.
-   * @param firstListAsHeaders
-   * @return {Table}
-   */
-  Table.prototype.getTransposed = function(firstListAsHeaders) {
-
-    var tableToTranspose = firstListAsHeaders ? this.getSubList(1) : this;
-
-    var table = instantiate(typeOf(tableToTranspose));
-    if(tableToTranspose.length === 0) return table;
-    var i;
-    var j;
-    var list;
-
-    for(i = 0; tableToTranspose[i] != null; i++) {
-      list = tableToTranspose[i];
-      for(j = 0; list[j] != null; j++) {
-        if(i === 0) table[j] = new List__default();
-        table[j][i] = tableToTranspose[i][j];
-      }
-    }
-    for(j = 0; tableToTranspose[0][j] != null; j++) {
-      table[j] = table[j].getImproved();
-    }
-
-    if(firstListAsHeaders) {
-      this[0].forEach(function(name, i) {
-        table[i].name = String(name);
-      });
-    }
-
-    return table;
-  };
-
-  /**
-   * Generates a string containing details about the current state
-   * of the Table. Useful for outputing to the console for debugging.
-   * @param {Number} level If greater then zero, will indent to that number of spaces.
-   * @return {String} Description String.
-   */
-  Table.prototype.getReport = function(level) {
-    var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
-    var lengths = this.getLengths();
-    var minLength = lengths.getMin();
-    var maxLength = lengths.getMax();
-    var averageLength = (minLength + maxLength) * 0.5;
-    var sameLengths = minLength == maxLength;
-
-    var text = level > 0 ? (ident + "////report of instance of Table////") : "///////////report of instance of Table//////////";
-
-    if(this.length === 0) {
-      text += ident + "this table has no lists";
-      return text;
-    }
-
-    text += ident + "name: " + this.name;
-    text += ident + "type: " + this.type;
-    text += ident + "number of lists: " + this.length;
-
-    text += ident + "all lists have same length: " + (sameLengths ? "true" : "false");
-
-    if(sameLengths) {
-      text += ident + "lists length: " + this[0].length;
-    } else {
-      text += ident + "min length: " + minLength;
-      text += ident + "max length: " + maxLength;
-      text += ident + "average length: " + averageLength;
-      text += ident + "all lengths: " + lengths.join(", ");
-    }
-
-    var names = this.getNames();
-    var types = this.getTypes();
-
-    text += ident + "--";
-    names.forEach(function(name, i){
-      text += ident + i + ": " + name + " ["+TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"]";
-    });
-    text += ident + "--";
-
-    var sameTypes = types.allElementsEqual();
-    if(sameTypes) {
-      text += ident + "types of all lists: " + types[0];
-    } else {
-      text += ident + "types: " + types.join(", ");
-    }
-    text += ident + "names: " + names.join(", ");
-
-    if(this.length < 101) {
-      text += ident + ident + "--------lists reports---------";
-
-      var i;
-      for(i = 0; this[i] != null; i++) {
-        text += "\n" + ident + ("(" + (i) + "/0-" + (this.length - 1) + ")");
-        try{
-           text += this[i].getReport(1);
-        } catch(err){
-          text += ident + "[!] something wrong with list " + err;
-        }
-      }
-    }
-
-    if(this.length == 2) {
-      text += ident + ident + "--------lists comparisons---------";
-      if(this[0].type=="NumberList" && this[1].type=="NumberList"){
-        text += ident + "covariance:" + NumberListOperators.covariance(this[0], this[1]);
-        text += ident + "Pearson product moment correlation: " + NumberListOperators.pearsonProductMomentCorrelation(this[0], this[1]);
-      } else if(this[0].type!="NumberList" && this[1].type!="NumberList"){
-        var nUnion = ListOperators.union(this[0], this[1]).length;
-        text += ident + "union size: " + nUnion;
-        var intersected = ListOperators.intersection(this[0], this[1]);
-        var nIntersection = intersected.length;
-        text += ident + "intersection size: " + nIntersection;
-
-        if(this[0]._freqTable[0].length == nUnion && this[1]._freqTable[0].length == nUnion){
-          text += ident + "[!] both lists contain the same non repeated elements";
-        } else {
-          if(this[0]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in first list also occur on second list";
-          if(this[1]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in second list also occur on first list";
-        }
-        text += ident + "Jaccard distance: " + (1 - (nIntersection/nUnion));
-      }
-      //check for 1-1 matches, number of pairs, categorical, sub-categorical
-      var subCategoryCase = ListOperators.subCategoricalAnalysis(this[0], this[1]);
-
-      switch(subCategoryCase){
-        case 0:
-          text += ident + "no categorical relation found among lists";
-          break;
-        case 1:
-          text += ident + "[!] both lists are categorical identical";
-          break;
-        case 2:
-          text += ident + "[!] first list is subcategorical to second list";
-          break;
-        case 3:
-          text += ident + "[!] second list is subcategorical to first list";
-          break;
-      }
-
-      if(subCategoryCase!=1){
-        text += ident + "information gain when segmenting first list by the second: "+ListOperators.getInformationGain(this[0], this[1]);
-        text += ident + "information gain when segmenting second list by the first: "+ListOperators.getInformationGain(this[1], this[0]);
-      }
-    }
-
-    ///add ideas to: analyze, visualize
-
-    return text;
-  };
-
-  Table.prototype.getReportHtml = function() {}; //TODO
-
-  Table.prototype.getReportObject = function() {}; //TODO
-
-  /**
-   * removes a row from the table.
-   * @param {Number} index The row to remove.
-   * @return {undefined}
-   */
-  Table.prototype.removeRow = function(index) {
-    for(var i = 0; this[i] != null; i++) {
-      this[i].splice(index, 1);
-    }
-  };
-
-  /**
-   * makes a copy of the Table.
-   * @return {Table} Copy of table.
-   */
-  Table.prototype.clone = function() {
-    var clonedTable = instantiateWithSameType(this);
-    clonedTable.name = this.name;
-    for(var i = 0; this[i] != null; i++) {
-      clonedTable.push(this[i].clone());
-    }
-    return clonedTable;
-  };
-
-  /**
-   * Removes all contents of the Table.
-   */
-  Table.prototype.destroy = function() {
-    for(var i = 0; this[i] != null; i++) {
-      this[i].destroy();
-      delete this[i];
-    }
-  };
-
-  /**
-   * Prints contents of Table to console.log.
-   */
-
-
-
-  Table.prototype.print = function() {
-    console.log("///////////// <" + this.name + "////////////////////////////////////////////////////");
-    console.log(TableEncodings.TableToCSV(this, null, true));
-    console.log("/////////////" + this.name + "> ////////////////////////////////////////////////////");
-  };
-
-  exports.Table = Table;
-
-  NumberTable.prototype = new Table();
-  NumberTable.prototype.constructor = NumberTable;
-
-  /**
-   * @classdesc {@link Table} to store numbers.
-   *
-   * @constructor
-   * @description Creates a new NumberTable.
-   * @category numbers
-   */
-  function NumberTable() {
-    var args = [];
-    var newNumberList;
-    var array;
-
-    if(arguments.length > 0 && Number(arguments[0]) == arguments[0]) {
-      array = [];
-      var i;
-      for(i = 0; i < arguments[0]; i++) {
-        array.push(new NumberList());
-      }
-    } else {
-      for(i = 0; arguments[i] != null; i++) {
-        newNumberList = NumberList.fromArray(arguments[i]);
-        newNumberList.name = arguments[i].name;
-        arguments[i] = newNumberList;
-      }
-      array = Table.apply(this, arguments);
-    }
-    array = NumberTable.fromArray(array);
-    return array;
-  }
-
-
-  NumberTable.fromArray = function(array) {
-    var result = Table.fromArray(array);
-    result.type = "NumberTable";
-
-    result.getNumberListsNormalized = NumberTable.prototype.getNumberListsNormalized;
-    result.getNormalizedToMax = NumberTable.prototype.getNormalizedToMax;
-    result.getNumberListsNormalizedToMax = NumberTable.prototype.getNumberListsNormalizedToMax;
-    result.getNumberListsNormalizedToSum = NumberTable.prototype.getNumberListsNormalizedToSum;
-    result.getSums = NumberTable.prototype.getSums;
-    result.getRowsSums = NumberTable.prototype.getRowsSums;
-    result.getAverages = NumberTable.prototype.getAverages;
-    result.getRowsAverages = NumberTable.prototype.getRowsAverages;
-    result.factor = NumberTable.prototype.factor;
-    result.add = NumberTable.prototype.add;
-    result.getMax = NumberTable.prototype.getMax;
-    result.getMin = NumberTable.prototype.getMin;
-    result.getMinMaxInterval = NumberTable.prototype.getMinMaxInterval;
-    result.getCovarianceMatrix = NumberTable.prototype.getCovarianceMatrix;
-
-    return result;
-  };
-
-  /**
-   * returns a table with having normalized all the numberLists
-   *
-   * @param  {factor} factor optional factor
-   * @return {NumberTable}
-   * tags:normalization
-   */
-  NumberTable.prototype.getNumberListsNormalized = function(factor) {
-    factor = factor == null ? 1 : factor;
-
-    var newTable = new NumberTable();
-    var i;
-    for(i = 0; this[i] != null; i++) {
-      var numberList = this[i];
-      newTable[i] = numberList.getNormalized(factor);
-    }
-    newTable.name = this.name;
-    return newTable;
-  };
-
-  /**
-   * normalizes the table to its maximal value
-   *
-   * @param  {factor} factor optional factor
-   * @return {NumberTable}
-   * tags:normalization
-   */
-  NumberTable.prototype.getNormalizedToMax = function(factor) {
-    factor = factor == null ? 1 : factor;
-
-    var newTable = new NumberTable();
-    var i;
-    var antimax = factor / this.getMax();
-    for(i = 0; this[i] != null; i++) {
-      newTable[i] = this[i].factor(antimax);
-    }
-    newTable.name = this.name;
-    return newTable;
-  };
-
-  NumberTable.prototype.getNumberListsNormalizedToMax = function(factorValue) {
-    var newTable = new NumberTable();
-    for(var i = 0; this[i] != null; i++) {
-      var numberList = this[i];
-      newTable[i] = numberList.getNormalizedToMax(factorValue);
-    }
-    newTable.name = this.name;
-    return newTable;
-  };
-
-  NumberTable.prototype.getNumberListsNormalizedToSum = function() {
-    var newTable = new NumberTable();
-    for(var i = 0; this[i] != null; i++) {
-      var numberList = this[i];
-      newTable[i] = numberList.getNormalizedToSum();
-    }
-    newTable.name = this.name;
-    return newTable;
-  };
-
-
-  NumberTable.prototype.getMax = function() {
-    if(this.length == 0) return null;
-
-    var max = this[0].getMax();
-    var i;
-
-    for(i = 1; this[i] != null; i++) {
-      max = Math.max(this[i].getMax(), max);
-    }
-    return max;
-  };
-
-  NumberTable.prototype.getMin = function() {
-    if(this.length == 0) return null;
-
-    var min = this[0].getMin();
-    var i;
-
-    for(i = 1; this[i] != null; i++) {
-      min = Math.min(this[i].getMin(), min);
-    }
-    return min;
-  };
-
-  NumberTable.prototype.getMinMaxInterval = function() {
-    if(this.length == 0) return null;
-    var rangeInterval = (this[0]).getMinMaxInterval();
-    for(var i = 1; this[i] != null; i++) {
-      var newRange = (this[i]).getMinMaxInterval();
-      rangeInterval.x = Math.min(rangeInterval.x, newRange.x);
-      rangeInterval.y = Math.max(rangeInterval.y, newRange.y);
-    }
-    return rangeInterval;
-  };
-
-  /**
-   * returns a numberList with values from numberlists added
-   * @return {Numberlist}
-   * tags:
-   */
-  NumberTable.prototype.getSums = function() {
-    var numberList = new NumberList();
-    for(var i = 0; this[i] != null; i++) {
-      numberList[i] = this[i].getSum();
-    }
-    return numberList;
-  };
-
-  /**
-   * returns a numberList with all values fro rows added
-   * @return {NumberList}
-   * tags:
-   */
-  NumberTable.prototype.getRowsSums = function() {
-    var sums = this[0].clone();
-    var numberList;
-    for(var i = 1; this[i] != null; i++) {
-      numberList = this[i];
-      for(var j = 0; numberList[j] != null; j++) {
-        sums[j] += numberList[j];
-      }
-    }
-    return sums;
-  };
-
-  NumberTable.prototype.getAverages = function() {
-    var numberList = new NumberList();
-    for(var i = 0; this[i] != null; i++) {
-      numberList[i] = this[i].getAverage();
-    }
-    return numberList;
-  };
-
-  NumberTable.prototype.getRowsAverages = function() {
-    var nLists = this.length;
-    var averages = this[0].clone().factor(1 / nLists);
-    var numberList;
-    var i;
-    var j;
-    for(i = 1; this[i] != null; i++) {
-      numberList = this[i];
-      for(j = 0; numberList[j] != null; j++) {
-        averages[j] += numberList[j] / nLists;
-      }
-    }
-    return averages;
-  };
-
-  NumberTable.prototype.factor = function(value) {
-    var newTable = new NumberTable();
-    var i;
-    var numberList;
-
-    switch(typeOf(value)) {
-      case 'number':
-        for(i = 0; this[i] != null; i++) {
-          numberList = this[i];
-          newTable[i] = numberList.factor(value);
-        }
-        break;
-      case 'NumberList':
-        for(i = 0; this[i] != null; i++) {
-          numberList = this[i];
-          newTable[i] = numberList.factor(value[i]);
-        }
-        break;
-
-    }
-
-    newTable.name = this.name;
-    return newTable;
-  };
-
-  NumberTable.prototype.add = function(value) {
-    var newTable = new NumberTable();
-    var numberList;
-    var i;
-
-    for(i = 0; this[i] != null; i++) {
-      numberList = this[i];
-      newTable[i] = numberList.add(value);
-    }
-
-    newTable.name = this.name;
-    return newTable;
-  };
-
-
-  NumberTable.prototype.getCovarianceMatrix = function(){
-    var newTable = new NumberTable();
-    var i;
-    for(i = 0; this[i] != null; i++) {
-
-    }
-
-  }
-
-  exports.NumberTable = NumberTable;
 
   RectangleList.prototype = new List__default();
   RectangleList.prototype.constructor = RectangleList;
@@ -8009,960 +9215,6 @@ define('src/index', ['exports'], function (exports) {
   };
 
   exports.ListGenerators = ListGenerators;
-
-  NumberList.prototype = new List__default();
-  NumberList.prototype.constructor = NumberList;
-
-  /**
-   * @classdesc List structure for Numbers.
-   *
-   * @constructor
-   * @description Creates a new NumberList.
-   * @category numbers
-   */
-  function NumberList() {
-    var args = [];
-
-    for(var i = 0; i < arguments.length; i++) {
-      args[i] = Number(arguments[i]);
-    }
-    var array = List__default.apply(this, args);
-    array = NumberList.fromArray(array);
-    return array;
-  }
-
-
-  /**
-   * Creates a new NumberList from a raw array of numbers.
-   *
-   * @param {Number[]} array The array of numbers to create the list from.
-   * @param {Boolean} forceToNumber If true, explicitly converts values in array to Numbers.
-   * @return {NumberList} New NumberList containing values in array
-   */
-  NumberList.fromArray = function(array, forceToNumber) {
-    forceToNumber = forceToNumber == null ? true : forceToNumber;
-
-    var result = List__default.fromArray(array);
-
-    if(forceToNumber) {
-      for(var i = 0; i < result.length; i++) {
-        result[i] = Number(result[i]);
-      }
-    }
-
-    result.type = "NumberList";
-
-    //assign methods to array:
-    result.unit = NumberList.prototype.unit;
-    result.tenPower = NumberList.prototype.tenPower;
-    result.getMin = NumberList.prototype.getMin;
-    result.getMax = NumberList.prototype.getMax;
-    result.getAmplitude = NumberList.prototype.getAmplitude;
-    result.getMinMaxInterval = NumberList.prototype.getMinMaxInterval;
-    result.getSum = NumberList.prototype.getSum;
-    result.getProduct = NumberList.prototype.getProduct;
-    result.getInterval = NumberList.prototype.getInterval;
-    result.getNormalized = NumberList.prototype.getNormalized;
-    result.getNormalizedToMax = NumberList.prototype.getNormalizedToMax;
-    result.getNormalizedToSum = NumberList.prototype.getNormalizedToSum;
-    result.toPolygon = NumberList.prototype.toPolygon;
-
-    //statistics
-    result.getAverage = NumberList.prototype.getAverage;
-    result.getNorm = NumberList.prototype.getNorm;
-    result.getStandardDeviation = NumberList.prototype.getStandardDeviation;
-    result.getVariance = NumberList.prototype.getVariance;
-    result.getMedian = NumberList.prototype.getMedian;
-    result.getQuantiles = NumberList.prototype.getQuantiles;
-
-    //sorting
-    result.getSorted = NumberList.prototype.getSorted;
-    result.getSortIndexes = NumberList.prototype.getSortIndexes;
-    result.factor = NumberList.prototype.factor;
-    result.add = NumberList.prototype.add;
-    result.subtract = NumberList.prototype.subtract;
-    result.divide = NumberList.prototype.divide;
-    result.dotProduct = NumberList.prototype.dotProduct;
-    result.distance = NumberList.prototype.distance;
-    result.sqrt = NumberList.prototype.sqrt;
-    result.pow = NumberList.prototype.pow;
-    result.log = NumberList.prototype.log;
-    result.isEquivalent = NumberList.prototype.isEquivalent;
-    result.toStringList = NumberList.prototype.toStringList;
-
-    //transform
-    result.approach = NumberList.prototype.approach;
-
-    //override
-    result.clone = NumberList.prototype.clone;
-    result._slice = Array.prototype.slice;
-    result.slice = NumberList.prototype.slice;
-
-    return result;
-  };
-
-  NumberList.prototype.unit = "";
-  NumberList.prototype.tenPower = 0;
-
-  /**
-   * Returns minimum value in the List. Null if the NumberList is empty.
-   *
-   * @return {Number} The min value.
-   */
-  NumberList.prototype.getMin = function() {
-    //TODO:store result and retrieve while the NumberList doesn't change;
-    if(this.length === 0) return null;
-    var i;
-    var min = this[0];
-    for(i = 1; i < this.length; i++) {
-      min = Math.min(min, this[i]);
-    }
-    return min;
-  };
-
-  /**
-   * Returns maximum value in the List. Null if the NumberList is empty.
-   *
-   * @return {Number} The max value.
-   */
-  NumberList.prototype.getMax = function() {
-    //TODO:store result and retrieve while the NumberList doesn't change;
-    if(this.length === 0) return null;
-    var i;
-    var max = this[0];
-    for(i = 1; i < this.length; i++) {
-      max = Math.max(max, this[i]);
-    }
-    return max;
-  };
-
-  /**
-   * Finds the range of the values in the NumberList.
-   *
-   * @return {Number} The difference between the minimum and maximum value in the List.
-   */
-  NumberList.prototype.getAmplitude = function() {
-    if(this.length === 0) return 0;
-    var min = this[0];
-    var max = this[0];
-    for(var i = 1; this[i] != null; i++) {
-      min = Math.min(min, this[i]);
-      max = Math.max(max, this[i]);
-    }
-    return max - min;
-  };
-
-  /**
-   * Provides the min and max values as an {@link Interval}.
-   *
-   * @return {Interval} Interval containing the min and max values of the List.
-   */
-  NumberList.prototype.getMinMaxInterval = function() { //deprecated?
-    return new Interval__default(this.getMin(), this.getMax());
-  };
-
-  /**
-   * Returns the total sum of values in the NumberList.
-   *
-   * @return {Number} Sum of all values in the List.
-   * tags:
-   */
-  NumberList.prototype.getSum = function() {
-    if(this.length === 0) return 0;
-    var i;
-    var sum = this[0];
-    for(i = 1; i < this.length; i++) {
-      sum += this[i];
-    }
-    return sum;
-  };
-
-  /**
-   * Returns the product of values in the NumberList.
-   *
-   * @return {Number} The product of all values in the NumberList.
-   * tags:
-   */
-  NumberList.prototype.getProduct = function() {
-    if(this.length === 0) return null;
-    var i;
-    var product = this[0];
-    for(i = 1; i < this.length; i++) {
-      product *= this[i];
-    }
-    return product;
-  };
-
-  /**
-   * Returns a NumberList normalized to the sum.
-   *
-   * @param {Number} factor Optional multiplier to modify the normalized values by.
-   * Defaults to 1.
-   * @param {Number} sum Optional sum to normalize to.
-   * If not provided, sum will be calculated automatically.
-   * @return {NumberList} New NumberList of values normalized to the sum.
-   * tags:
-   */
-  NumberList.prototype.getNormalizedToSum = function(factor, sum) {
-    factor = factor == null ? 1 : factor;
-    var newNumberList = new NumberList();
-    newNumberList.name = this.name;
-    if(this.length === 0) return newNumberList;
-    var i;
-    sum = sum == null ? this.getSum() : sum;
-    if(sum === 0) return this.clone();
-
-    for(i = 0; i < this.length; i++) {
-      newNumberList.push(factor * this[i] / sum);
-    }
-    return newNumberList;
-  };
-
-  /**
-   * Returns a NumberList normalized to min-max interval.
-   *
-   * @param {Number} factor Optional multiplier to modify the normalized values by.
-   * Defaults to 1.
-   * @return {NumberList}
-   * tags:
-   */
-  NumberList.prototype.getNormalized = function(factor) {
-    factor = factor == null ? 1 : factor;
-
-    if(this.length === 0) return null;
-
-    var i;
-    var interval = this.getMinMaxInterval();
-    var a = interval.getAmplitude();
-    var newNumberList = new NumberList();
-    for(i = 0; i < this.length; i++) {
-      newNumberList.push(factor * ((this[i] - interval.x) / a));
-    }
-    newNumberList.name = this.name;
-    return newNumberList;
-  };
-
-  /**
-   * Returns a NumberList normalized to Max.
-   *
-   * @param {Number} factor Optional multiplier to modify the normalized values by.
-   * Defaults to 1.
-   * @return {NumberList}
-   * tags:
-   */
-  NumberList.prototype.getNormalizedToMax = function(factor) {
-    factor = factor == null ? 1 : factor;
-
-    if(this.length == 0) return null;
-
-    var max = this.getMax();
-    if(max == 0) {
-      max = this.getMin();
-      if(max == 0) return ListGenerators.createListWithSameElement(this.length, 0);
-    }
-    var newNumberList = new NumberList();
-    for(var i = 0; this[i] != null; i++) {
-      newNumberList.push(factor * (this[i] / max));
-    }
-    newNumberList.name = this.name;
-    return newNumberList;
-  };
-
-  /**
-   * Builds an Interval with min and max value from the NumberList
-   *
-   * @return {Interval} with starting value as the min of the NumberList
-   * and ending value as the max.
-   * tags:
-   */
-  NumberList.prototype.getInterval = function() {
-    if(this.length === 0) return null;
-    var max = this[0];
-    var min = this[0];
-    for(var i = 1; this[i] != null; i++) {
-      max = Math.max(max, this[i]);
-      min = Math.min(min, this[i]);
-    }
-    var interval = new Interval__default(min, max);
-    return interval;
-  };
-
-
-  /**
-   * Builds an {@link Polygon} from the NumberList,
-   * using each pair of values in the NumberList as
-   * x and y positions.
-   *
-   * @return {Polygon} Polygon representing the values
-   * in the NumberList as x/y coordinates.
-   */
-  NumberList.prototype.toPolygon = function() {
-    if(this.length === 0) return null;
-    var polygon = new Polygon();
-    for(var i = 0; this[i + 1] != null; i += 2) {
-      polygon.push(new Point(this[i], this[i + 1]));
-    }
-    return polygon;
-  };
-
-
-  /////////statistics
-
-  /**
-   * Calculates mean of the NumberList.
-   *
-   * @return {Number} Mean of all values in the List.
-   * tags:statistics
-   */
-  NumberList.prototype.getAverage = function() {
-    return this.getSum() / this.length;
-  };
-
-  /**
-   * Calculates the geometric mean of the NumberList.
-   *
-   * @return {Number}
-   * tags:statistics
-   */
-  NumberList.prototype.getGeometricMean = function() {
-    var s = 0;
-    this.forEach(function(val) {
-      s += Math.log(val);
-    });
-    return Math.pow(Math.E, s / this.length);
-  };
-
-  /**
-   * Calculates the norm of the NumberList (treated as a vector).
-   *
-   * @return {Number}
-   * tags:statistics
-   */
-  NumberList.prototype.getNorm = function() {
-    var sq = 0;
-    for(var i = 0; this[i] != null; i++) {
-      sq += Math.pow(this[i], 2);
-    }
-    return Math.sqrt(sq);
-  };
-
-  /**
-   * Calculates the variance of the NumberList.
-   *
-   * @return {Number}
-   * tags:statistics
-   */
-  NumberList.prototype.getVariance = function() {
-    var sd = 0;
-    var average = this.getAverage();
-    for(var i = 0; this[i] != null; i++) {
-      sd += Math.pow(this[i] - average, 2);
-    }
-    return sd / this.length;
-  };
-
-  /**
-   * Calculates the standard deviation.
-   *
-   * @return {Number}
-   * tags:statistics
-   */
-  NumberList.prototype.getStandardDeviation = function() {
-    return Math.sqrt(this.getVariance());
-  };
-
-  /**
-   * Calculates the median of the numberList
-   *
-   * @return {Number}
-   * tags:statistics
-   */
-  NumberList.prototype.getMedian = function() {
-    var sorted = this.getSorted(true);
-    var prop = (this.length - 1) / 2;
-    var entProp = Math.floor(prop);
-    var onIndex = prop == entProp;
-    return onIndex ? sorted[prop] : (0.5 * sorted[entProp] + 0.5 * sorted[entProp + 1]);
-  };
-
-  /**
-   * Builds a partition of n quantiles from the numberList.
-   *
-   * @param {Number} nQuantiles number of quantiles
-   * @return {NumberList} A number list of the quantiles.
-   * tags:statistics
-   */
-  NumberList.prototype.getQuantiles = function(nQuantiles) {
-    var sorted = this.getSorted(true);
-
-    var prop = this.length / nQuantiles;
-    var entProp = Math.floor(prop);
-    var onIndex = prop == entProp;
-    var quantiles = new NumberList();
-    for(var i = 0; i < nQuantiles - 1; i++) {
-      quantiles[i] = onIndex ? sorted[(i + 1) * prop] : (0.5 * sorted[(i + 1) * entProp] + 0.5 * sorted[(i + 1) * entProp + 1]);
-    }
-    return quantiles;
-  };
-
-
-
-  /////////sorting
-
-  /**
-   * Returns a new NumberList sorted in either ascending or descending order.
-   *
-   * @param {Boolean} ascending True if values should be sorted in ascending order.
-   * If false, values will be sorted in descending order.
-   * @return {NumberList} new sorted NumberList.
-   */
-  NumberList.prototype.getSorted = function(ascending) {
-    ascending = ascending == null ? true : ascending;
-
-    if(ascending) {
-      return NumberList.fromArray(this.slice().sort(function(a, b) {
-        return a - b;
-      }), false);
-    }
-    return NumberList.fromArray(this.slice().sort(function(a, b) {
-      return b - a;
-    }), false);
-  };
-
-  /**
-   * Returns a new NumberList containing the indicies of the values of
-   * the original NumberList in sorted order.
-   *
-   * @param {Boolean} descending If true, values are sorted in descending order.
-   * @return {NumberList} NumberList containing the indices of the original NumberList
-   * such that accessing the values of the original list at those indices would produce
-   * a sorted list.
-   * @example
-   * var nl = NumberList.fromArray([1,3,2]);
-   * var indices = nl.getSortIndexes();
-   * indices[0]; // produces 1 as nl[1] == 3.
-   */
-  NumberList.prototype.getSortIndexes = function(descending) {
-    if(descending == null) descending = true;
-
-    var pairs = [];
-    var newList = new NumberList();
-
-    if(this.length === 0) return newList;
-
-    for(var i = 0; this[i] != null; i++) {
-      pairs.push([i, this[i]]);
-    }
-
-    if(descending) {
-      pairs.sort(function(a, b) {
-        if(a[1] < b[1]) return 1;
-        return -1;
-      });
-    } else {
-      pairs.sort(function(a, b) {
-        if(a[1] < b[1]) return -1;
-        return 1;
-      });
-    }
-
-    for(i = 0; pairs[i] != null; i++) {
-      newList.push(pairs[i][0]);
-    }
-    newList.name = this.name;
-    return newList;
-  };
-
-  /**
-   * Returns a new NumberList with the values of
-   * the original list multiplied by the input value
-   *
-   * @param {Number} value The value to multiply each
-   * value in the list by.
-   * @return {NumberList} New NumberList with values multiplied.
-   */
-  NumberList.prototype.factor = function(value) {
-    var i;
-    var newNumberList = new NumberList();
-    for(i = 0; i < this.length; i++) {
-      newNumberList.push(this[i] * value);
-    }
-    newNumberList.name = this.name;
-    return newNumberList;
-  };
-
-  /**
-   * Adds a value or values in a NumberList to the current list.
-   *
-   * If input is a Number, each value of the returned
-   * NumberList will be the sum of the original value and this
-   * input value.
-   *
-   * If the input is a NumberList, each value of the returned
-   * NumberList will be the sum of the original value and the
-   * value at the same index in the input list.
-   *
-   * @param {Number|NumberList} object Input value to add to the list.
-   * @return {NumberList}
-   */
-  NumberList.prototype.add = function(object) {
-    var i;
-    var newNumberList = new NumberList();
-    var type = typeOf(object);
-
-    switch(type) {
-      case 'number':
-        for(i = 0; this[i] != null; i++) {
-          newNumberList[i] = this[i] + object;
-        }
-        break;
-      case 'NumberList':
-        for(i = 0; this[i] != null; i++) {
-          newNumberList[i] = this[i] + object[i % object.length];
-        }
-        break;
-    }
-
-    newNumberList.name = this.name;
-    return newNumberList;
-  };
-
-  /**
-   * Subtracts a value or values in a NumberList from the current list.
-   *
-   * If input is a Number, each value of the returned
-   * NumberList will be the original value minus this
-   * input value.
-   *
-   * If the input is a NumberList, each value of the returned
-   * NumberList will be the original value minus the
-   * value at the same index in the input list.
-   *
-   * @param {Number|NumberList} object Input value to subract from the list.
-   * @return {NumberList}
-   */
-  NumberList.prototype.subtract = function(object) {
-    var i;
-    var newNumberList = new NumberList();
-    var type = typeOf(object);
-
-    switch(type) {
-      case 'number':
-        for(i = 0; this[i] != null; i++) {
-          newNumberList[i] = this[i] - object;
-        }
-        break;
-      case 'NumberList':
-        for(i = 0; this[i] != null; i++) {
-          newNumberList[i] = this[i] - object[i % object.length];
-        }
-        break;
-    }
-
-    newNumberList.name = this.name;
-    return newNumberList;
-  };
-
-  /**
-   * Returns a new NumberList with each value divided by a input value or values in a NumberList.
-   *
-   * If input is a Number, each value of the returned
-   * NumberList will be the original value divided by this
-   * input value.
-   *
-   * If the input is a NumberList, each value of the returned
-   * NumberList will be the original value divided by the
-   * value at the same index in the input list.
-   *
-   * @param {Number|NumberList} object Input value to divide by the list.
-   * @return {NumberList}
-   */
-  NumberList.prototype.divide = function(object) {
-    var i;
-    var newNumberList = new NumberList();
-    var type = typeOf(object);
-
-    switch(type) {
-      case 'number':
-        for(i = 0; this[i] != null; i++) {
-          newNumberList[i] = this[i] / object;
-        }
-        break;
-      case 'NumberList':
-        for(i = 0; this[i] != null; i++) {
-          newNumberList[i] = this[i] / object[i % object.length];
-        }
-        break;
-    }
-
-    newNumberList.name = this.name;
-    return newNumberList;
-  };
-
-  /**
-   * Returns a new NumberList containing the square root of
-   * the values of the current NumberList.
-   *
-   * @return {NumberList} NumberList with square rooted values.
-   */
-  NumberList.prototype.sqrt = function() {
-    var i;
-    var newNumberList = new NumberList();
-    for(i = 0; i < this.length; i++) {
-      newNumberList.push(Math.sqrt(this[i]));
-    }
-    newNumberList.name = this.name;
-    return newNumberList;
-  };
-
-  /**
-   * Returns a new NumberList containing values raised to the power
-   * of the input value.
-   *
-   * @param {Number} power Power to raise each value by.
-   * @return {NumberList} New NumberList.
-   */
-  NumberList.prototype.pow = function(power) {
-    var i;
-    var newNumberList = new NumberList();
-    for(i = 0; i < this.length; i++) {
-      newNumberList.push(Math.pow(this[i], power));
-    }
-    newNumberList.name = this.name;
-    return newNumberList;
-  };
-
-  /**
-   * Returns a transformed version of the list with
-   * each value in the new list the log of the value
-   * in the current list, with an optional constant
-   * added to it.
-   *
-   * @param {Number} add Optional value to add to the log transformed values.
-   * Defaults to 0.
-   * @return {NumberList}
-   */
-  NumberList.prototype.log = function(add) {
-    add = add || 0;
-
-    var i;
-    var newNumberList = new NumberList();
-    for(i = 0; this[i] != null; i++) {
-      newNumberList[i] = Math.log(this[i] + add);
-    }
-    newNumberList.name = this.name;
-
-    return newNumberList;
-  };
-
-  /**
-   * Returns dot product between current list and input NumberList.
-   *
-   * @param {NumberList} numberList Another NumberList.
-   * @return {Number} Dot product between two lists.
-   */
-  NumberList.prototype.dotProduct = function(numberList) {
-    var sum = 0;
-    var i;
-    var nElements = Math.min(this.length, numberList.length);
-    for(i = 0; i < nElements; i++) {
-      sum += this[i] * numberList[i];
-    }
-    return sum;
-  };
-
-  /**
-   * Calculates Euclidean distance between two numberLists
-   *
-   * @param  {NumberList} numberList NumberList of the same length
-   * as current list.
-   * @return {Number} Summed Euclidean distance between all values.
-   * tags:
-   */
-  NumberList.prototype.distance = function(numberList) {
-    var sum = 0;
-    var i;
-    var nElements = Math.min(this.length, numberList.length);
-    for(i = 0; i < nElements; i++) {
-      sum += Math.pow(this[i] - numberList[i], 2);
-    }
-    return Math.sqrt(sum);
-  };
-
-  /**
-   * Returns true if values in the input NumberList are the same
-   * as the values in the current list.
-   *
-   * @param numberList NumberList to compare.
-   * @return {Boolean} True if all values in both lists match.
-   */
-  NumberList.prototype.isEquivalent = function(numberList) {
-    for(var i = 0; this[i] != null; i++) {
-      if(this[i] != numberList[i]) return false;
-    }
-    return true;
-  };
-
-  /**
-   * Returns a new {@link StringList} with all values converted to strings
-   *
-   * @return {StringList} New list.
-   */
-  NumberList.prototype.toStringList = function() {
-    var i;
-    var stringList = new StringList();
-    for(i = 0; this[i] != null; i++) {
-      stringList[i] = String(this[i]);
-    }
-    stringList.name = this.name;
-    return stringList;
-  };
-
-
-  //transform
-
-  NumberList.prototype.approach = function(destinty, speed) {
-    speed = speed || 0.5;
-
-    var i;
-    var antispeed = 1 - speed;
-
-    for(i = 0; this[i] != null; i++) {
-      this[i] = antispeed * this[i] + speed * destinty[i];
-    }
-  };
-
-
-  ///////overriding
-
-  NumberList.prototype.clone = function() {
-    var newList = NumberList.fromArray(this._slice(), false);
-    newList.name = this.name;
-    return newList;
-  };
-
-  NumberList.prototype.slice = function() {
-    return NumberList.fromArray(this._slice.apply(this, arguments), false);
-  };
-
-  exports.NumberList = NumberList;
-
-  StringList.prototype = new List__default();
-  StringList.prototype.constructor = StringList;
-
-  /**
-   * @classdesc {@link List} for storing Strings.
-   *
-   * @constructor
-   * @description Creates a new StringList
-   * @category strings
-   */
-  function StringList() {
-    var args = []; //TODO:why this?, ask M
-
-    for(var i = 0; i < arguments.length; i++) {
-      args[i] = String(arguments[i]);
-    }
-    var array = List__default.apply(this, args);
-    array = StringList.fromArray(array);
-    //
-    return array;
-  }
-
-
-  StringList.fromArray = function(array, forceToString) {
-    forceToString = forceToString == null ? true : forceToString;
-
-    var result = List__default.fromArray(array);
-    if(forceToString) {
-      for(var i = 0; i < result.length; i++) {
-        result[i] = String(result[i]);
-      }
-    }
-    result.type = "StringList";
-
-    //assign methods to array:
-    result.getLengths = StringList.prototype.getLengths;
-    result.toLowerCase = StringList.prototype.toLowerCase;
-    result.toUpperCase = StringList.prototype.toUpperCase;
-    result.append = StringList.prototype.append;
-    result.getSurrounded = StringList.prototype.getSurrounded;
-    result.replace = StringList.prototype.replace;
-    result.getConcatenated = StringList.prototype.getConcatenated;
-    result.toNumberList = StringList.prototype.toNumberList;
-    result.toDateList = StringList.prototype.toDateList;
-    result.trim = StringList.prototype.trim;
-
-    //override
-    result.clone = StringList.prototype.clone;
-
-    return result;
-  };
-
-  /**
-   * overrides List.prototype.getLengths (see comments there)
-   */
-  StringList.prototype.getLengths = function() {
-    var lengths = new NumberList();
-    var string;
-
-    this.forEach(function(string) {
-      lengths.push(string.length);
-    });
-
-    return lengths;
-  };
-
-  StringList.prototype.append = function(sufix, after) {
-    after = after == null ? true : after;
-    var newStringList = new StringList();
-    newStringList.name = this.name;
-    var sufixIsStringList = typeOf(sufix) == "StringList";
-    var i;
-    if(after) {
-      for(i = 0; this[i] != null; i++) {
-        newStringList[i] = this[i] + (sufixIsStringList ? sufix[i] : sufix);
-      }
-    } else {
-      for(i = 0; this[i] != null; i++) {
-        newStringList[i] = (sufixIsStringList ? sufix[i] : sufix) + this[i];
-      }
-    }
-    return newStringList;
-  };
-
-  /**
-   * prefix and sufix can be string or a StringList
-   */
-  StringList.prototype.getSurrounded = function(prefix, sufix) {
-    var newStringList = new StringList();
-    newStringList.name = this.name;
-    var i;
-
-    var prefixIsStringList = Array.isArray(prefix);
-    var sufixIsStringList = Array.isArray(sufix);
-
-    for(i = 0; this[i] != null; i++) {
-      newStringList[i] = (prefixIsStringList ? prefix[i] : prefix) + this[i] + (sufixIsStringList ? sufix[i] : sufix);
-    }
-
-    return newStringList;
-  };
-
-
-  //deprectaed, replaced by replaceInStrings
-  StringList.prototype.replace = function(regExp, string) {
-    var newStringList = new StringList();
-    newStringList.name = this.name;
-
-    for(var i = 0; this[i] != null; i++) {
-      newStringList[i] = this[i].replace(regExp, string);
-    }
-
-    return newStringList;
-  };
-
-  /**
-   * replaces in each string, a sub-string by a string
-   * @param  {String} subString sub-string to be replaced in each string
-   * @param  {String} replacement string to be placed instead
-   * @return {StringList}
-   * tags:
-   */
-  StringList.prototype.replaceSubStringsInStrings = function(subString, replacement) {
-    var newStringList = new StringList();
-    newStringList.name = this.name;
-
-    for(var i = 0; this[i] != null; i++) {
-      newStringList[i] = StringOperators.replaceString(string, subString, replacement);
-    }
-
-    return newStringList;
-  };
-
-  StringList.prototype.getConcatenated = function(separator) {
-    var i;
-    var string = "";
-    for(i = 0; this[i] != null; i++) {
-      string += this[i];
-      if(i < this.length - 1) string += separator;
-    }
-    return string;
-  };
-
-
-  StringList.prototype.toLowerCase = function() {
-    var newStringList = new StringList();
-    newStringList.name = this.name;
-    var i;
-    for(i = 0; this[i] != null; i++) {
-      newStringList[i] = this[i].toLowerCase();
-    }
-    return newStringList;
-  };
-
-  StringList.prototype.toUpperCase = function() {
-    var newStringList = new StringList();
-    newStringList.name = this.name;
-    var i;
-    for(i = 0; this[i] != null; i++) {
-      newStringList[i] = this[i].toUpperCase();
-    }
-    return newStringList;
-  };
-
-  StringList.prototype.toNumberList = function() {
-    var numbers = new NumberList();
-    numbers.name = this.name;
-    var i;
-    for(i = 0; this[i] != null; i++) {
-      numbers[i] = Number(this[i]);
-    }
-    return numbers;
-  };
-
-
-  /**
-   * converts a stringList into a dateList
-   *
-   * @param  {String} formatCase format cases:<br>0: MM-DD-YYYY<br>1: YYYY-MM-DD (standard Javascript conversion)
-   * @param  {String} separator "-" by default
-   * @return {DateList}
-   * tags:
-   */
-  StringList.prototype.toDateList = function(formatCase, separator) {
-    var dateList = new DateList();
-    var i;
-    for(i = 0; this[i] != null; i++) {
-      dateList.push(DateOperators.stringToDate(this[i], formatCase, separator));
-    }
-    return dateList;
-  };
-
-  /**
-   * trims all the strings on the stringList
-   * @return {StringList}
-   * tags:
-   */
-  StringList.prototype.trim = function() {
-    var i;
-    var newStringList = new StringList();
-    for(i = 0; this[i] != null; i++) {
-      newStringList[i] = this[i].trim();
-    }
-    newStringList.name = this.name;
-    return newStringList;
-  };
-
-  ///////overriding
-
-  StringList.prototype.clone = function() {
-    var newList = StringList.fromArray(this.slice(), false);
-    newList.name = this.name;
-    return newList;
-  };
-
-  exports.StringList = StringList;
 
   function NumberOperators() {}
 
@@ -10895,9 +11147,6 @@ define('src/index', ['exports'], function (exports) {
 
     var table = ListOperators__ListOperators.countElementsRepetitionOnList(list, true);
 
-    console.log('    getListEntropy | table[0]', table[0]);
-    console.log('    getListEntropy | table[1]', table[1]);
-
     list._mostRepresentedValue = table[0][0];
     var N = list.length;
     list._biggestProbability = table[1][0] / N;
@@ -11743,100 +11992,6 @@ define('src/index', ['exports'], function (exports) {
 
   exports.StringOperators = StringOperators;
 
-  PolygonList.prototype = new Table();
-  PolygonList.prototype.constructor = PolygonList;
-
-  /**
-   * @classdesc A {@link List} structure for storing {@link Polygon} instances.
-   *
-   * @description Creates a new PolygonList.
-   * @constructor
-   * @category geometry
-   */
-  function PolygonList() {
-    var array = Table.apply(this, arguments);
-    array = PolygonList.fromArray(array);
-    return array;
-  }
-
-
-  PolygonList.fromArray = function(array) {
-    var result = Table.fromArray(array);
-    result.type = "PolygonList";
-    result.getFrame = PolygonList.prototype.getFrame;
-    result.add = PolygonList.prototype.add;
-    result.factor = PolygonList.prototype.factor;
-    result.clone = PolygonList.prototype.clone;
-    result.getString = PolygonList.prototype.getString;
-    return result;
-  };
-
-  PolygonList.prototype.getFrame = function() {
-    if(this.length == 0) return null;
-    var frameP = this[0].getFrame();
-    var rectangle = new Rectangle(frameP.x, frameP.y, frameP.getRight(), frameP.getBottom());
-    for(var i = 1; this[i] != null; i++) {
-      frameP = this[i].getFrame();
-      rectangle.x = Math.min(rectangle.x, frameP.x);
-      rectangle.y = Math.min(rectangle.y, frameP.y);
-      rectangle.width = Math.max(rectangle.width, frameP.getRight());
-      rectangle.height = Math.max(rectangle.height, frameP.getBottom());
-    }
-    rectangle.width -= rectangle.x;
-    rectangle.height -= rectangle.y;
-
-    return rectangle;
-  };
-
-  PolygonList.prototype.add = function(object) {
-    var type = typeOf(object);
-    var i;
-    switch(type) {
-      case 'Point':
-        var newPolygonList = new PolygonList();
-        for(i = 0; this[i] != null; i++) {
-          newPolygonList[i] = this[i].add(object);
-        }
-        newPolygonList.name = this.name;
-        return newPolygonList;
-        break;
-    }
-  };
-
-  PolygonList.prototype.factor = function(value) {
-    var newPolygonList = new PolygonList();
-    for(var i = 0; this[i] != null; i++) {
-      newPolygonList[i] = this[i].factor(value);
-    }
-    newPolygonList.name = this.name;
-    return newPolygonList;
-  };
-
-  PolygonList.prototype.clone = function() {
-    var newPolygonList = new PolygonList();
-    for(var i = 0; this[i] != null; i++) {
-      newPolygonList[i] = this[i].clone();
-    }
-    newPolygonList.name = this.name;
-    return newPolygonList;
-  };
-
-  // PolygonList.prototype.getString=function(pointSeparator,polygonSeparator){
-  // pointSeparator = pointSeparator==null?',':pointSeparator;
-  // polygonSeparator = polygonSeparator==null?'/':polygonSeparator;
-  // var j;
-  // var t='';
-  // for(var i=0;this[i]!=null;i++){
-  // t+=(i==0?'':polygonSeparator);
-  // for(j=0; this[i][j]!=null; j++){
-  // t+=(j==0?'':pointSeparator)+this[i][j].x+pointSeparator+this[i][j].y;
-  // }
-  // }
-  // return t;
-  // }
-
-  exports.PolygonList = PolygonList;
-
   /* global console */
 
   Axis.prototype = new DataModel();
@@ -12615,33 +12770,6 @@ define('src/index', ['exports'], function (exports) {
   };
 
   exports.PointOperators = PointOperators;
-
-  Polygon3D.prototype = new List__default();
-  Polygon3D.prototype.constructor = Polygon3D;
-
-  /**
-   * @classdesc Polygon3D brings the {@link Polygon} concept into three
-   * dimensions through the use of {@link Point3D}.
-   *
-   * @description Creates a new Polygon3D.
-   * @constructor
-   * @category geometry
-   */
-  function Polygon3D() {
-    var array = List__default.apply(this, arguments);
-    array = Polygon3D.fromArray(array);
-    return array;
-  }
-
-
-  Polygon3D.fromArray = function(array) {
-    var result = List__default.fromArray(array);
-    result.type = "Polygon3D";
-    //assign methods to array:
-    return result;
-  };
-
-  exports.Polygon3D = Polygon3D;
 
   function GeometryOperators() {}
 
@@ -14066,107 +14194,6 @@ define('src/index', ['exports'], function (exports) {
   };
 
   exports.Polygon3DList = Polygon3DList;
-
-  ColorList.prototype = new List__default();
-  ColorList.prototype.constructor = ColorList;
-
-  /**
-   * @classdesc A {@link List} for storing Colors.
-   *
-   * @description Creates a new ColorList.
-   * @constructor
-   * @category colors
-   */
-  function ColorList() {
-    var args = [];
-    var i;
-    for(i = 0; i < arguments.length; i++) {
-      args[i] = arguments[i];
-    }
-    var array = List__default.apply(this, args);
-    array = ColorList.fromArray(array);
-
-    return array;
-  }
-
-
-  ColorList.fromArray = function(array) {
-    var result = List__default.fromArray(array);
-    result.type = "ColorList";
-    result.getRgbArrays = ColorList.prototype.getRgbArrays;
-    result.getInterpolated = ColorList.prototype.getInterpolated;
-    result.getInverted = ColorList.prototype.getInverted;
-    result.addAlpha = ColorList.prototype.addAlpha;
-    return result;
-  };
-
-  /**
-   * return an arrays of rgb arrays ([rr,gg,bb])
-   * @return {array}
-   * tags:
-   */
-  ColorList.prototype.getRgbArrays = function() {
-    var rgbArrays = new List__default();
-
-    for(var i = 0; this[i] != null; i++) {
-      rgbArrays[i] = ColorOperators__default.colorStringToRGB(this[i]);
-    }
-
-    return rgbArrays;
-  };
-
-  /**
-   * interpolates colors with a given color and measure
-   * @param  {String} color to be interpolated with
-   * @param  {Number} value intenisty of interpolation [0,1]
-   * @return {ColorList}
-   * tags:
-   */
-  ColorList.prototype.getInterpolated = function(color, value) {
-    var newColorList = new ColorList();
-
-    for(var i = 0; this[i] != null; i++) {
-      newColorList[i] = ColorOperators__default.interpolateColors(this[i], color, value);
-    }
-
-    newColorList.name = this.name;
-    return newColorList;
-  };
-
-  /**
-   * inverts all colors
-   * @return {ColorList}
-   * tags:
-   */
-  ColorList.prototype.getInverted = function() {
-    var newColorList = new ColorList();
-
-    for(var i = 0; this[i] != null; i++) {
-      newColorList[i] = ColorOperators__default.invertColor(this[i]);
-    }
-
-    newColorList.name = this.name;
-    return newColorList;
-  };
-
-  /**
-   * adds alpha value to all colores
-   * @param {Number} alpha alpha value in [0,1]
-   * @return {ColorList}
-   * tags:
-   */
-  ColorList.prototype.addAlpha = function(alpha) {
-    var newColorList = new ColorList();
-
-    for(var i = 0; this[i] != null; i++) {
-      newColorList[i] = ColorOperators__default.addAlpha(this[i], alpha);
-    }
-
-    newColorList.name = this.name;
-    return newColorList;
-  };
-
-  exports.ColorList = ColorList;
 
   function ColorScales() {}
 
@@ -22884,6 +22911,7 @@ define('src/index', ['exports'], function (exports) {
 
     return newList;
   }
+
   Engine3D.prototype._sortingCriteria = function(array0, array1, basis) {
     var point3D0 = array0[0];
     var point3D1 = array1[0];
@@ -26167,6 +26195,6 @@ define('src/index', ['exports'], function (exports) {
 
 });
 
-window.MF = requireModule("src/index");
+window.mo = requireModule("src/index");
 })(window);
 //# sourceMappingURL=./moebio_framework.js.map

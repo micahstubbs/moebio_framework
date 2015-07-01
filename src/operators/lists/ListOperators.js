@@ -808,9 +808,6 @@ ListOperators.getListEntropy = function(list, valueFollowing) {
 
   var table = ListOperators.countElementsRepetitionOnList(list, true);
 
-  console.log('    getListEntropy | table[0]', table[0]);
-  console.log('    getListEntropy | table[1]', table[1]);
-
   list._mostRepresentedValue = table[0][0];
   var N = list.length;
   list._biggestProbability = table[1][0] / N;

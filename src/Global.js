@@ -637,7 +637,7 @@ export function enterFrame(){
 
     setCursor('default');
 
-    MOUSE_DOWN = NF_DOWN==nF;
+  MOUSE_DOWN = NF_DOWN==nF;
   MOUSE_UP = NF_UP==nF;
   MOUSE_UP_FAST = MOUSE_UP && (nF-NF_DOWN)<9;
 
@@ -652,7 +652,7 @@ export function enterFrame(){
     WHEEL_CHANGE = 0;
 
     PREV_mX=mX;
-  PREV_mY=mY;
+    PREV_mY=mY;
 
     nF++;
 }
