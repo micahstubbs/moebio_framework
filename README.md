@@ -34,6 +34,9 @@ For Development: Grunt is used as the build tool. So you need node.js and npm in
 
 If you would like to contribute to Moebio Framework, try out customizations locally, or just build from source, you can clone the repository and use the instructions below to get started.
 
+The project is built using grunt. Most of the grunt tasks are kept in separate
+files in the the ```/tasks``` folder.
+
 ### Building Code
 
 To build the source code, you will need [Node](https://nodejs.org/) and [Grunt](http://gruntjs.com/) installed on your system.
