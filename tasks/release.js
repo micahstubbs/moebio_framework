@@ -26,7 +26,7 @@ module.exports = function(grunt) {
   grunt.config.set('gitadd', {
     build: {
       options: {
-        force: false
+        force: true
       },
       files: {
         src: ['src/Version.js', 'dist/*']
