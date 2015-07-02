@@ -6092,7 +6092,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Node = Node__default;
 
-  var version = "0.2.18";
+  var version = "0.2.19";
 
   /*
    * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
@@ -6524,10 +6524,6 @@ define('src/index', ['exports'], function (exports) {
   var src_Global__userAgent="none";
   var src_Global__userAgentVersion;
   var canvasResizeable=true;
-
-  var unused = true;
-
-  unused = false;
 
   //data models info
   var src_Global__dataModelsInfo = [
