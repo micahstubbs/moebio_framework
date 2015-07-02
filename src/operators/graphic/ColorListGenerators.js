@@ -43,11 +43,14 @@ ColorListGenerators.createDefaultCategoricalColorList = function(nColors, alpha,
  * create a colorList based on a colorScale and values from a numberList (that will be normalized)
  * @param  {NumberList} numberList
  * @param  {ColorScale} colorScale
+ * 
  * @param  {Number} mode 0:normalize numberList
  * @return {ColorList}
  * tags:generator
  */
 ColorListGenerators.createColorListFromNumberList = function(numberList, colorScale, mode) {
+  if(numberList==null) return null;
+  
   mode = mode == null ? 0 : mode;
 
   var colorList = new ColorList();

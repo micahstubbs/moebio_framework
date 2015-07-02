@@ -1,9 +1,43 @@
 import DateOperators from "src/operators/dates/DateOperators";
+import Polygon from "src/dataStructures/geometry/Polygon";
+import Polygon3D from "src/dataStructures/geometry/Polygon3D";
+import List from "src/dataStructures/lists/List";
+import Table from "src/dataStructures/lists/Table";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import StringList from "src/dataStructures/strings/StringList";
+import NumberTable from "src/dataStructures/numeric/NumberTable";
+import RelationList from "src/dataStructures/structures/lists/RelationList";
+import NodeList from "src/dataStructures/structures/lists/NodeList";
+import PolygonList from "src/dataStructures/geometry/PolygonList";
+import DateList from "src/dataStructures/dates/DateList";
+import ColorList from "src/dataStructures/graphic/ColorList";
+
+
+// Provides a lookup table for instantiate classes.
+// This is used in the instantiate function to simplify the logic
+// around the creation of these classes.
+var typeDict = {
+  List: List,
+  Table: Table,
+  StringList: StringList,
+  NumberList: NumberList,
+  NumberTable: NumberTable,
+  NodeList: NodeList,
+  RelationList: RelationList,
+  Polygon: Polygon,
+  Polygon3D: Polygon3D,
+  DateList: DateList,
+  ColorList: ColorList
+};
+
 
 /*
  * All these function are globally available since they are included in the Global class
  */
 export var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"}
+export var _shortFromTypeDictionary;
+export var _colorFromTypeDictionary;
+export var _lightColorFromTypeDictionary;
 
 /*
  * types are:
@@ -24,21 +58,6 @@ export function typeOf(object) {
   if(object.getDate != null) return 'date';
 
   return 'Object';
-
-
-
-
-
-  // if(o === null) {
-  //   return 'null';
-  // } else if(o.getDate != null) {
-  //   return 'date';
-  // } else {
-  //   if(o.getType == null) return 'Object';
-  //   var objectType = o.getType();
-  //   return objectType;
-  // }
-  // c.l("[!] ERROR: could not detect type for ", o);
 }
 
 // TODO remove?
@@ -48,6 +67,7 @@ export function instantiate(className, args) {
   switch(className) {
     case 'number':
     case 'string':
+      // TODO: I don't think this works.
       return window[className](args);
     case 'date':
       if(!args || args.length == 0) return new Date();
@@ -64,8 +84,8 @@ export function instantiate(className, args) {
         else return new Date(args[0]);
       }
       return new Date(Date.UTC.apply(null, args));
-      //
     case 'boolean':
+      // TODO: I don't think this works.
       return window[className]((args == "false" || args == "0") ? false : true);
     case 'List':
     case 'Table':
@@ -79,7 +99,7 @@ export function instantiate(className, args) {
     case 'PolygonList':
     case 'DateList':
     case 'ColorList':
-      return window[className].apply(window, args);
+      return typeDict[className].apply(new typeDict[className](), args);
     case null:
     case undefined:
     case 'undefined':
@@ -96,7 +116,42 @@ export function instantiate(className, args) {
   return o;
 }
 
-export function getTextFromObject(value, type) {
+export function _createDataModelsInfoDictionaries(){
+  var i;
+  var type;
+
+  _shortFromTypeDictionary = {};
+  _colorFromTypeDictionary = {};
+  _lightColorFromTypeDictionary = {};
+
+  for(i=0; dataModelsInfo[i]!=null; i++){
+    type = dataModelsInfo[i].type;
+    _shortFromTypeDictionary[type] = dataModelsInfo[i].short;
+    _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.3);
+    _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.3);
+    type = type.toLowerCase();
+    _shortFromTypeDictionary[type] = dataModelsInfo[i].short;
+    _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.3);
+    _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.3);
+  }
+}
+
+export function getShortNameFromDataModelType(type){
+  if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
+  return _shortFromTypeDictionary[type];
+}
+
+export function getColorFromDataModelType(type){
+  if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
+  return _colorFromTypeDictionary[type];
+}
+
+export function getLightColorFromDataModelType(type){
+  if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
+  return _lightColorFromTypeDictionary[type];
+}
+
+export function getTextFromObject(value, type){
   if(value == null) return "Null";
   if(value.isList) {
     if(value.length == 0) return "[]";
@@ -209,32 +264,6 @@ export function evalJavaScriptFunction(functionText, args, scope){
 		res = null;
 	}
 
-
-  // var isFunction = functionText.split('\n')[0].indexOf('function') != -1;
-
-  // if(isFunction) {
-  //   realCode = "myFunction = " + functionText;
-  // } else {
-  //   realCode = "myVar = " + functionText;
-  // }
-
-
-  // try {
-  //   if(isFunction) {
-  //     eval(realCode);
-  //     res = myFunction.apply(this, args);
-  //   } else {
-  //     eval(realCode);
-  //     res = myVar;
-  //   }
-  // } catch(err) {
-  //   good = false;
-  //   message = err.message;
-  //   res = null;
-  // }
-
-  //c.l('resultObject', resultObject);
-
   var resultObject = {
     result: res,
     success: good,
@@ -248,23 +277,23 @@ export function argumentsToArray(args) {
   return Array.prototype.slice.call(args, 0);
 }
 
-export function TimeLogger(name) {
-  var scope = this;
-  this.name = name;
-  this.clocks = {};
+// export function TimeLogger(name) {
+//   var scope = this;
+//   this.name = name;
+//   this.clocks = {};
 
-  this.tic = function(clockName) {
-    scope.clocks[clockName] = new Date().getTime();
-    //c.l( "TimeLogger '"+clockName+"' has been started");
-  };
-  this.tac = function(clockName) {
-    if(scope.clocks[clockName] == null) {
-      scope.tic(clockName);
-    } else {
-      var now = new Date().getTime();
-      var diff = now - scope.clocks[clockName];
-      console.log("TimeLogger '" + clockName + "' took " + diff + " ms");
-    }
-  };
-}
-export var tl = new TimeLogger("Global Time Logger");
+//   this.tic = function(clockName) {
+//     scope.clocks[clockName] = new Date().getTime();
+//     //c.l( "TimeLogger '"+clockName+"' has been started");
+//   };
+//   this.tac = function(clockName) {
+//     if(scope.clocks[clockName] == null) {
+//       scope.tic(clockName);
+//     } else {
+//       var now = new Date().getTime();
+//       var diff = now - scope.clocks[clockName];
+//       console.log("TimeLogger '" + clockName + "' took " + diff + " ms");
+//     }
+//   };
+// }
+// export var tl = new TimeLogger("Global Time Logger");

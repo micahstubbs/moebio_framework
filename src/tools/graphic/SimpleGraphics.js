@@ -11,6 +11,7 @@ import GeometryOperators from 'src/operators/geometry/GeometryOperators';
  */
 
 
+
 //drawing
 
 /**
@@ -135,9 +136,7 @@ export function sCircle(x, y, r) {
  *
  */
 export function fsCircle(x, y, r) {
-  context.beginPath();
-  context.arc(x, y, r, 0, TwoPi);
-  context.fill();
+  fCircle(x, y, r);
   context.stroke();
 };
 
@@ -214,22 +213,37 @@ export function sEllipse(x, y, rW, rH) {
  * fsEllipse(40, 40, 20, 30);
  */
 export function fsEllipse(x, y, rW, rH) {
-  var k = 0.5522848,
-    ox = rW * k,
-    oy = rH * k,
-    xe = x + rW,
-    ye = y + rH;
-  context.beginPath();
-  context.moveTo(x - rW, y);
-  context.bezierCurveTo(x - rW, y - oy, x - ox, y - rH, x, y - rH);
-  context.bezierCurveTo(x + ox, y - rH, xe, y - oy, xe, y);
-  context.bezierCurveTo(xe, y + oy, x + ox, ye, x, ye);
-  context.bezierCurveTo(x - ox, ye, x - rW, y + oy, x - rW, y);
-  context.moveTo(x - rW, y);
-  context.closePath();
-  context.fill();
+  fEllipse(x, y, rW, rH);
   context.stroke();
 };
+
+
+/**
+ * @ignore
+ */
+function _solidArc(x,y,a0,a1,r0,r1){
+  context.beginPath();
+  context.arc( x, y, r0, a0, a1 );
+  context.lineTo( x + r1*Math.cos(a1), y + r1*Math.sin(a1) );
+  context.arc( x, y, r1, a1, a0, true );
+  context.lineTo( x + r0*Math.cos(a0), y + r0*Math.sin(a0) );
+}
+
+export function fSolidArc(x,y,a0,a1,r0,r1){
+  _solidArc(x,y,a0,a1,r0,r1);
+  context.fill();
+}
+
+export function sSolidArc(x,y,a0,a1,r0,r1){
+  _solidArc(x,y,a0,a1,r0,r1);
+  context.stroke();
+}
+
+export function fsSolidArc(x,y,a0,a1,r0,r1){
+  fSolidArc(x,y,a0,a1,r0,r1);
+  context.stroke();
+}
+
 
 /**
  * Draws a line from a start position to an end position

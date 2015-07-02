@@ -18,7 +18,7 @@ NumberListOperators.cosineSimilarity = function(numberList0, numberList1) {
 };
 
 /**
- * calculates the covariance
+ * calculates the covariance between two numberLists
  * @param  {NumberList} numberList0
  * @param  {NumberList} numberList1
  * @return {Number}
@@ -56,7 +56,6 @@ NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
 
   var min = interval.x;
   var max = interval.y;
-  //var means = new NumberList();
   var clusters = new NumberTable();
   var i, j;
   var jK;

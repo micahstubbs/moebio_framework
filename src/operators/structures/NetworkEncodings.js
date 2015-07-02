@@ -1101,15 +1101,27 @@ function _processProperty(propName, propValue) { //TODO: use this in other encod
  * @return {undefined}
  * @ignore
  */
-NetworkEncodings.replaceChomasInLine = function(line) {
+NetworkEncodings.replaceChomasInLine = function(line, separator) {
   var quoteBlocks = line.split("\"");
   if(quoteBlocks.length < 2) return line;
   var insideQuote;
   var i;
+  var re;
+  separator = separator==null?",":separator;
+
+  switch(separator){
+    case ",":
+      re = /,/g;
+      break;
+    case ";":
+      re = /;/g;
+      break;
+  }
+
   for(i = 0; quoteBlocks[i] != null; i++) {
     insideQuote = i * 0.5 != Math.floor(i * 0.5);
     if(insideQuote) {
-      quoteBlocks[i] = quoteBlocks[i].replace(/,/g, "*CHOMA*");
+      quoteBlocks[i] = quoteBlocks[i].replace(re, "*CHOMA*");
     }
   }
   line = StringList.fromArray(quoteBlocks).getConcatenated("");

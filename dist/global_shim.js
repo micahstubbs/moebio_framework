@@ -11,36 +11,36 @@
 
   if(Object.observe && USE_OBJECT_OBSERVE) {
     console.log("Using Object.observe")
-    for(var identifier in MF) {
-      if(MF.hasOwnProperty(identifier)) {
-        window[identifier] = MF[identifier];
+    for(var identifier in mo) {
+      if(mo.hasOwnProperty(identifier)) {
+        window[identifier] = mo[identifier];
         exportCount += 1;
       }
     }
 
-    // Set a listener on MF so that we can transport changes on the object
+    // Set a listener on mo so that we can transport changes on the object
     // e.g. cX, cY, to the window.
-    Object.observe(MF, function(changes){
+    Object.observe(mo, function(changes){
       changes.forEach(function(change) {
-        window[change.name] = MF[change.name];
+        window[change.name] = mo[change.name];
       });
     });
 
   } else {
 
-    // Add properties from MF to the window, but create
+    // Add properties from mo to the window, but create
     // the getters and setters such that these properties
-    // proxy to the underlying MF ones.
-    Object.keys(MF).forEach(function (prop) {
+    // proxy to the underlying mo ones.
+    Object.keys(mo).forEach(function (prop) {
       exportCount += 1;
       Object.defineProperty(window, prop, {
           // Create a new getter for the property
           get: function () {
-              return MF[prop];
+              return mo[prop];
           },
           // Create a new setter for the property
           set: function (val) {
-              MF[prop] = val;
+              mo[prop] = val;
           }
       })
     });
@@ -51,5 +51,3 @@
 
 
 }());
-
-

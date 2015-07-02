@@ -1251,6 +1251,7 @@ define('src/index', ['exports'], function (exports) {
     return -1;
   };
 
+
   /**
    * Returns a List of values of a property of all elements.
    *
@@ -1950,6 +1951,7 @@ define('src/index', ['exports'], function (exports) {
     return this;
   };
 
+
   List__List.prototype.splice = function() { //TODO: replace
     switch(this.type) {
       case 'NumberList':
@@ -2202,469 +2204,716 @@ define('src/index', ['exports'], function (exports) {
 
   exports.DateOperators = DateOperators;
 
-  var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"}
-
-  /*
-   * types are:
-   * number, string, boolean, date, Array, Object
-   * and all data models classes names
-   */
-
-  function typeOf(object) {
-    if(object==null) return null;
-
-    var type = typeof object;
-    if(type !== 'object') return type;
-
-    if(object.type!=null) return object.type;
-
-    if(Object.prototype.toString.call(object) == "[object Array]") return "Array";
-
-    if(object.getDate != null) return 'date';
-
-    return 'Object';
-
-
-
-
-
-    // if(o === null) {
-    //   return 'null';
-    // } else if(o.getDate != null) {
-    //   return 'date';
-    // } else {
-    //   if(o.getType == null) return 'Object';
-    //   var objectType = o.getType();
-    //   return objectType;
-    // }
-    // c.l("[!] ERROR: could not detect type for ", o);
-  }
-
-  // TODO remove?
-  function VOID() {}
-
-  function instantiate(className, args) {
-    switch(className) {
-      case 'number':
-      case 'string':
-        return window[className](args);
-      case 'date':
-        if(!args || args.length == 0) return new Date();
-        if(args.length == 1) {
-          if(args[0].match(/\d*.-\d*.-\d*\D\d*.:\d*.:\d*/)) {
-            var dateArray = args[0].split(" ");
-            dateArray[0] = dateArray[0].split("-");
-            if(dateArray[1]) dateArray[1] = dateArray[1].split(":");
-            else dateArray[1] = new Array(0, 0, 0);
-            return new Date(Date.UTC(dateArray[0][0], Number(dateArray[0][1]) - 1, dateArray[0][2], dateArray[1][0], dateArray[1][1], dateArray[1][2]));
-          }
-          //
-          if(Number(args[0]) != "NaN") return new Date(Number(args[0]));
-          else return new Date(args[0]);
-        }
-        return new Date(Date.UTC.apply(null, args));
-        //
-      case 'boolean':
-        return window[className]((args == "false" || args == "0") ? false : true);
-      case 'List':
-      case 'Table':
-      case 'StringList':
-      case 'NumberList':
-      case 'NumberTable':
-      case 'NodeList':
-      case 'RelationList':
-      case 'Polygon':
-      case 'Polygon3D':
-      case 'PolygonList':
-      case 'DateList':
-      case 'ColorList':
-        return window[className].apply(window, args);
-      case null:
-      case undefined:
-      case 'undefined':
-        return null;
-    }
-    //generic instantiation of object:
-    var o, dummyFunction, cl;
-    cl = window[className]; // get reference to class constructor function
-    dummyFunction = function() {}; // dummy function
-    dummyFunction.prototype = cl.prototype; // reference same prototype
-    o = new dummyFunction(); // instantiate dummy function to copy prototype properties
-    cl.apply(o, args); // call class constructor, supplying new object as context
-
-    return o;
-  }
-
-  function getTextFromObject(value, type) {
-    if(value == null) return "Null";
-    if(value.isList) {
-      if(value.length == 0) return "[]";
-      var text = value.toString(); // value.length>6?value.slice(0, 5).forEach(function(v){return getTextFromObject(v, typeOf(v))}).join(','):value.toStringList().join(',').forEach(function(v, typeOf(v)){return getTextFromObject(v, type)});
-      if(text.length > 160) {
-        var i;
-        var subtext;
-        text = "[";
-        for(i = 0; (value[i] != null && i < 6); i++) {
-          subtext = getTextFromObject(value[i], typeOf(value[i]));
-          if(subtext.length > 40) subtext = subtext.substr(0, 40) + (value[i].isList ? "…]" : "…");
-          text += (i != 0 ? ", " : "") + subtext;
-        }
-        if(value.length > 6) text += ",…";
-        text += "]";
-      }
-      return text;
-    }
-
-    switch(type) {
-      case "date":
-        return DateOperators.dateToString(value);
-      case "DateInterval":
-        return DateOperators.dateToString(value.date0) + " - " + DateOperators.dateToString(value.date1);
-      case "string":
-        return((value.length > 160) ? value.substr(0, 159) + "…" : value).replace(/\n/g, "↩");
-      case "number":
-        return String(value);
-      default:
-        return "{}"; //value.toString();
-    }
-  }
-
-  function instantiateWithSameType(object, args) {
-    return instantiate(typeOf(object), args);
-  }
-
-  function isArray(obj) {
-    if(obj.constructor.toString().indexOf("Array") == -1)
-      return false;
-    else
-      return true;
-  }
-
-  Date.prototype.getType = function() {
-    return 'date';
-  };
-
-
-
-  function evalJavaScriptFunction(functionText, args, scope){
-  	if(functionText==null) return;
-
-  	var res;
-
-  	var myFunction;
-
-  	var good = true;
-  	var message = '';
-
-  	var realCode;
-
-  	var lines = functionText.split('\n');
-
-  	for(var i=0; lines[i]!=null; i++){
-  		lines[i] = lines[i].trim();
-  		if(lines[i] === "" || lines[i].substr(1)=="/"){
-  			lines.splice(i,1);
-  			i--;
-  		}
-  	}
-
-  	var isFunction = lines[0].indexOf('function')!=-1;
-
-  	functionText = lines.join('\n');
-
-  	if(isFunction){
-  		if(scope){
-  			realCode = "scope.myFunction = " + functionText;
-  		} else {
-  			realCode = "myFunction = " + functionText;
-  		}
-  	} else {
-  		if(scope){
-  			realCode = "scope.myVar = " + functionText;
-  		} else {
-  			realCode = "myVar = " + functionText;
-  		}
-  	}
-
-  	try{
-  		if(isFunction){
-  			eval(realCode);
-  			if(scope){
-  				res = scope.myFunction.apply(scope, args);
-  			} else {
-  				res = myFunction.apply(this, args);
-  			}
-  		} else {
-  			eval(realCode);
-  			if(scope){
-  				res = scope.myVar;
-  			} else 	{
-  				res = myVar;
-  			}
-  		}
-  	} catch(err){
-  		good = false;
-  		message = err.message;
-  		res = null;
-  	}
-
-
-    // var isFunction = functionText.split('\n')[0].indexOf('function') != -1;
-
-    // if(isFunction) {
-    //   realCode = "myFunction = " + functionText;
-    // } else {
-    //   realCode = "myVar = " + functionText;
-    // }
-
-
-    // try {
-    //   if(isFunction) {
-    //     eval(realCode);
-    //     res = myFunction.apply(this, args);
-    //   } else {
-    //     eval(realCode);
-    //     res = myVar;
-    //   }
-    // } catch(err) {
-    //   good = false;
-    //   message = err.message;
-    //   res = null;
-    // }
-
-    //c.l('resultObject', resultObject);
-
-    var resultObject = {
-      result: res,
-      success: good,
-      errorMessage: message
-    };
-
-    return resultObject;
-  }
-
-  function argumentsToArray(args) {
-    return Array.prototype.slice.call(args, 0);
-  }
-
-  function TimeLogger(name) {
-    var scope = this;
-    this.name = name;
-    this.clocks = {};
-
-    this.tic = function(clockName) {
-      scope.clocks[clockName] = new Date().getTime();
-      //c.l( "TimeLogger '"+clockName+"' has been started");
-    };
-    this.tac = function(clockName) {
-      if(scope.clocks[clockName] == null) {
-        scope.tic(clockName);
-      } else {
-        var now = new Date().getTime();
-        var diff = now - scope.clocks[clockName];
-        console.log("TimeLogger '" + clockName + "' took " + diff + " ms");
-      }
-    };
-  }
-  var tl = new TimeLogger("Global Time Logger");
-
-  exports.typeOf = typeOf;
-  exports.instantiate = instantiate;
-  exports.getTextFromObject = getTextFromObject;
-  exports.instantiateWithSameType = instantiateWithSameType;
-  exports.isArray = isArray;
-  exports.evalJavaScriptFunction = evalJavaScriptFunction;
-  exports.argumentsToArray = argumentsToArray;
-  exports.TimeLogger = TimeLogger;
-
-  Polygon.prototype = new List__default();
-  Polygon.prototype.constructor = Polygon;
+  Polygon3D.prototype = new List__default();
+  Polygon3D.prototype.constructor = Polygon3D;
 
   /**
-   * @classdesc A Polygon is a shape created from a list of {@link Point|Points}.
+   * @classdesc Polygon3D brings the {@link Polygon} concept into three
+   * dimensions through the use of {@link Point3D}.
    *
-   * @description Creates a new Polygon.
+   * @description Creates a new Polygon3D.
    * @constructor
    * @category geometry
    */
-  function Polygon() {
+  function Polygon3D() {
     var array = List__default.apply(this, arguments);
-    array = Polygon.fromArray(array);
+    array = Polygon3D.fromArray(array);
     return array;
   }
 
 
-  Polygon.fromArray = function(array) {
+  Polygon3D.fromArray = function(array) {
     var result = List__default.fromArray(array);
-    result.type = "Polygon";
+    result.type = "Polygon3D";
+    //assign methods to array:
+    return result;
+  };
 
-    result.getFrame = Polygon.prototype.getFrame;
-    result.getBarycenter = Polygon.prototype.getBarycenter;
-    result.add = Polygon.prototype.add;
-    result.factor = Polygon.prototype.factor;
-    result.getRotated = Polygon.prototype.getRotated;
-    result.getClosestPoint = Polygon.prototype.getClosestPoint;
-    result.toNumberList = Polygon.prototype.toNumberList;
-    result.containsPoint = Polygon.prototype.containsPoint;
-    //transform
-    result.approach = Polygon.prototype.approach;
-    //override
-    result.clone = Polygon.prototype.clone;
+  exports.Polygon3D = Polygon3D;
+
+  /* global console */
+
+  Table.prototype = new List__default();
+  Table.prototype.constructor = Table;
+
+  /**
+   * @classdesc A sub-class of {@link List}, Table provides a 2D array-like structure.
+   *
+   * Each column is stored as its own {@link List}, making it a List of Lists.
+   * Cells in the table can be accessed using table[column][row].
+   *
+   * @description Creates a new Table.
+   * Input arguments are treated as the inital column values
+   * of the Table.
+   * @constructor
+   * @category basics
+   */
+  function Table() {
+    var args = [];
+    var i;
+    for(i = 0; i < arguments.length; i++) {
+      args[i] = new List__default(arguments[i]);
+    }
+
+    var array = List__default.apply(this, args);
+    array = Table.fromArray(array);
+
+    return array;
+  }
+
+
+  /**
+   * Creates a new Table from an array
+   * @param {Number[]} array
+   * @return {Table}
+   */
+  Table.fromArray = function(array) {
+    var result = List__default.fromArray(array);
+    result.type = "Table";
+    //assign methods to array:
+    result.applyFunction = Table.prototype.applyFunction;
+    result.getRow = Table.prototype.getRow;
+    result.getRows = Table.prototype.getRows;
+    result.getLengths = Table.prototype.getLengths;
+    result.getListLength = Table.prototype.getListLength;
+    result.sliceRows = Table.prototype.sliceRows;
+    result.getSubListsByIndexes = Table.prototype.getSubListsByIndexes;
+    result.getWithoutRow = Table.prototype.getWithoutRow;
+    result.getWithoutRows = Table.prototype.getWithoutRows;
+    result.getTransposed = Table.prototype.getTransposed;
+    result.getListsSortedByList = Table.prototype.getListsSortedByList;
+    result.sortListsByList = Table.prototype.sortListsByList;
+    result.getReport = Table.prototype.getReport;
+    result.clone = Table.prototype.clone;
+    result.print = Table.prototype.print;
+
+    //transformative
+    result.removeRow = Table.prototype.removeRow;
+
+    //overiden
+    result.destroy = Table.prototype.destroy;
+
+    result.isTable = true;
 
     return result;
   };
 
+  /**
+   * Executes a given function on all the columns
+   * in the Table, returning a new Table with the
+   * resulting values.
+   * @param {Function} func Function to apply to each
+   * column in the table. Columns are {@link List|Lists}.
+   * @return {Table} Table of values from applying function.
+   */
+  Table.prototype.applyFunction = function(func) {
+    //TODO: to be tested!
+    var i;
+    var newTable = new Table();
 
-  Polygon.prototype.getFrame = function() {
-    if(this.length == 0) return null;
-    var rectangle = new Rectangle(this[0].x, this[0].y, this[0].x, this[0].y);
-    var p;
-    for(var i = 1; this[i] != null; i++) {
-      p = this[i];
-      rectangle.x = Math.min(rectangle.x, p.x);
-      rectangle.y = Math.min(rectangle.y, p.y);
-      rectangle.width = Math.max(rectangle.width, p.x);
-      rectangle.height = Math.max(rectangle.height, p.y);
+    newTable.name = this.name;
+
+    for(i = 0; this[i] != null; i++) {
+      newTable[i] = this[i].applyFunction(func);
     }
-
-    rectangle.width -= rectangle.x;
-    rectangle.height -= rectangle.y;
-
-    return rectangle;
+    return newTable.getImproved();
   };
 
-  Polygon.prototype.getBarycenter = function(countLastPoint) {
+  /**
+   * Returns a {@link List} with all the elements of a row.
+   * @param  {Number} index Index of the row to get.
+   * @return {List}
+   * tags:filter
+   */
+  Table.prototype.getRow = function(index) {
+    var list = new List__default();
     var i;
-    countLastPoint = countLastPoint == null ? true : countLastPoint;
-    var cLPN = 1 - Number(countLastPoint);
-    if(this.length == 0) return null;
-    var barycenter = new Point(this[0].x, this[0].y);
-    for(i = 1; this[i + cLPN] != null; i++) {
-      barycenter.x += this[i].x;
-      barycenter.y += this[i].y;
+    for(i = 0; i < this.length; i++) {
+      list[i] = this[i][index];
     }
-    barycenter.x /= this.length;
-    barycenter.y /= this.length;
-    return barycenter;
+    return list.getImproved();
   };
 
-  Polygon.prototype.add = function(object) {
-    var type = typeOf(object);
+  /**
+   * Returns the length a column of the Table.
+   * @param  {Number} index The Column to return its length.
+   * Defaults to 0.
+   * @return {Number} Length of column at given index.
+   * tags:
+   */
+  Table.prototype.getListLength = function(index) {
+    return this[index || 0].length;
+  };
+
+  /**
+   * Returns the lengths of all the columns of the Table.
+   * @return {NumberList} Lengths of all columns in Table.
+   */
+  Table.prototype.getLengths = function() {
+    var lengths = new NumberList();
+    for(var i = 0; this[i] != null; i++) {
+      lengths[i] = this[i].length;
+    }
+    return lengths;
+  };
+
+  /**
+   * Filters a Table by selecting a section of rows, elements with last index included.
+   * @param  {Number} startIndex Index of first element in all lists of the table.
+   * @param  {Number} endIndex Index of last elements in all lists of the table.
+   * @return {Table}
+   * tags:filter
+   */
+  Table.prototype.sliceRows = function(startIndex, endIndex) {
+    endIndex = endIndex == null ? (this[0].length - 1) : endIndex;
+
     var i;
-    switch(type) {
-      case 'Point':
-        var newPolygon = new Polygon();
-        for(i = 0; this[i] != null; i++) {
-          newPolygon[i] = this[i].add(object);
+    var newTable = new Table();
+    var newList;
+
+    newTable.name = this.name;
+    for(i = 0; this[i] != null; i++) {
+      newList = this[i].getSubList(startIndex, endIndex);
+      newList.name = this[i].name;
+      newTable.push(newList);
+    }
+    return newTable.getImproved();
+  };
+
+  /**
+   * Filters the lists of the table by indexes.
+   * @param  {NumberList} indexes
+   * @return {Table}
+   * tags:filter
+   */
+  Table.prototype.getSubListsByIndexes = function(indexes) {
+    var newTable = new Table();
+    this.forEach(function(list) {
+      newTable.push(list.getSubListByIndexes(indexes));
+    });
+    return newTable.getImproved();
+  };
+
+
+  //deprecated
+  /**
+   * @ignore
+   */
+  Table.prototype.getRows = function(indexes) {
+    return Table.prototype.getSubListsByIndexes(indexes);
+  };
+
+  /**
+   * Returns a new Table with the row at the given index removed.
+   * @param {Number} rowIndex Row to remove
+   * @return {Table} New Table.
+   */
+  Table.prototype.getWithoutRow = function(rowIndex) {
+    var newTable = new Table();
+    newTable.name = this.name;
+    for(var i = 0; this[i] != null; i++) {
+      newTable[i] = List__default.fromArray(this[i].slice(0, rowIndex).concat(this[i].slice(rowIndex + 1))).getImproved();
+      newTable[i].name = this[i].name;
+    }
+    return newTable.getImproved();
+  };
+
+  /**
+   * Returns a new Table with the rows listed in the given array removed.
+   * @param {Number[]} rowsIndexes Array of row indecies to remove.
+   * @return {undefined}
+   */
+  Table.prototype.getWithoutRows = function(rowsIndexes) {
+    var newTable = new Table();
+    newTable.name = this.name;
+    for(var i = 0; this[i] != null; i++) {
+      newTable[i] = new List__default();
+      for(var j = 0; this[i][j] != null; j++) {
+        if(rowsIndexes.indexOf(j) == -1) newTable[i].push(this[i][j]);
+      }
+      newTable[i].name = this[i].name;
+    }
+    return newTable.getImproved();
+  };
+
+  /**
+   * Sort Table's lists by a list
+   * @param  {List|Number} listOrIndex List used to sort, or index of list in the table
+   *
+   * @param  {Boolean} ascending (true by default)
+   * @return {Table} table (of the same type)
+   * tags:sort
+   */
+  Table.prototype.getListsSortedByList = function(listOrIndex, ascending) { //depracated: use sortListsByList
+    if(listOrIndex == null) return;
+    var newTable = instantiateWithSameType(this);
+    var sortinglist = listOrIndex.isList ? listOrIndex.clone() : this[listOrIndex];
+
+    this.forEach(function(list) {
+      newTable.push(list.getSortedByList(sortinglist, ascending));
+    });
+
+    return newTable;
+  };
+
+  /**
+   * Transposes Table.
+   * @param firstListAsHeaders
+   * @return {Table}
+   */
+  Table.prototype.getTransposed = function(firstListAsHeaders) {
+
+    var tableToTranspose = firstListAsHeaders ? this.getSubList(1) : this;
+
+    var table = instantiate(typeOf(tableToTranspose));
+    if(tableToTranspose.length === 0) return table;
+    var i;
+    var j;
+    var list;
+
+    for(i = 0; tableToTranspose[i] != null; i++) {
+      list = tableToTranspose[i];
+      for(j = 0; list[j] != null; j++) {
+        if(i === 0) table[j] = new List__default();
+        table[j][i] = tableToTranspose[i][j];
+      }
+    }
+    for(j = 0; tableToTranspose[0][j] != null; j++) {
+      table[j] = table[j].getImproved();
+    }
+
+    if(firstListAsHeaders) {
+      this[0].forEach(function(name, i) {
+        table[i].name = String(name);
+      });
+    }
+
+    return table;
+  };
+
+  /**
+   * Generates a string containing details about the current state
+   * of the Table. Useful for outputing to the console for debugging.
+   * @param {Number} level If greater then zero, will indent to that number of spaces.
+   * @return {String} Description String.
+   */
+  Table.prototype.getReport = function(level) {
+    var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
+    var lengths = this.getLengths();
+    var minLength = lengths.getMin();
+    var maxLength = lengths.getMax();
+    var averageLength = (minLength + maxLength) * 0.5;
+    var sameLengths = minLength == maxLength;
+
+    var text = level > 0 ? (ident + "////report of instance of Table////") : "///////////report of instance of Table//////////";
+
+    if(this.length === 0) {
+      text += ident + "this table has no lists";
+      return text;
+    }
+
+    text += ident + "name: " + this.name;
+    text += ident + "type: " + this.type;
+    text += ident + "number of lists: " + this.length;
+
+    text += ident + "all lists have same length: " + (sameLengths ? "true" : "false");
+
+    if(sameLengths) {
+      text += ident + "lists length: " + this[0].length;
+    } else {
+      text += ident + "min length: " + minLength;
+      text += ident + "max length: " + maxLength;
+      text += ident + "average length: " + averageLength;
+      text += ident + "all lengths: " + lengths.join(", ");
+    }
+
+    var names = this.getNames();
+    var types = this.getTypes();
+
+    text += ident + "--";
+    names.forEach(function(name, i){
+      text += ident + i + ": " + name + " ["+TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"]";
+    });
+    text += ident + "--";
+
+    var sameTypes = types.allElementsEqual();
+    if(sameTypes) {
+      text += ident + "types of all lists: " + types[0];
+    } else {
+      text += ident + "types: " + types.join(", ");
+    }
+    text += ident + "names: " + names.join(", ");
+
+    if(this.length < 101) {
+      text += ident + ident + "--------lists reports---------";
+
+      var i;
+      for(i = 0; this[i] != null; i++) {
+        text += "\n" + ident + ("(" + (i) + "/0-" + (this.length - 1) + ")");
+        try{
+           text += this[i].getReport(1);
+        } catch(err){
+          text += ident + "[!] something wrong with list " + err;
         }
-        newPolygon.name = this.name;
-        return newPolygon;
-        break;
+      }
+    }
+
+    if(this.length == 2) {
+      text += ident + ident + "--------lists comparisons---------";
+      if(this[0].type=="NumberList" && this[1].type=="NumberList"){
+        text += ident + "covariance:" + NumberListOperators.covariance(this[0], this[1]);
+        text += ident + "Pearson product moment correlation: " + NumberListOperators.pearsonProductMomentCorrelation(this[0], this[1]);
+      } else if(this[0].type!="NumberList" && this[1].type!="NumberList"){
+        var nUnion = ListOperators.union(this[0], this[1]).length;
+        text += ident + "union size: " + nUnion;
+        var intersected = ListOperators.intersection(this[0], this[1]);
+        var nIntersection = intersected.length;
+        text += ident + "intersection size: " + nIntersection;
+
+        if(this[0]._freqTable[0].length == nUnion && this[1]._freqTable[0].length == nUnion){
+          text += ident + "[!] both lists contain the same non repeated elements";
+        } else {
+          if(this[0]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in first list also occur on second list";
+          if(this[1]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in second list also occur on first list";
+        }
+        text += ident + "Jaccard distance: " + (1 - (nIntersection/nUnion));
+      }
+      //check for 1-1 matches, number of pairs, categorical, sub-categorical
+      var subCategoryCase = ListOperators.subCategoricalAnalysis(this[0], this[1]);
+
+      switch(subCategoryCase){
+        case 0:
+          text += ident + "no categorical relation found between lists";
+          break;
+        case 1:
+          text += ident + "[!] both lists are categorical identical";
+          break;
+        case 2:
+          text += ident + "[!] first list is subcategorical to second list";
+          break;
+        case 3:
+          text += ident + "[!] second list is subcategorical to first list";
+          break;
+      }
+
+      if(subCategoryCase!=1){
+        text += ident + "information gain when segmenting first list by the second: "+ListOperators.getInformationGain(this[0], this[1]);
+        text += ident + "information gain when segmenting second list by the first: "+ListOperators.getInformationGain(this[1], this[0]);
+      }
+    }
+
+    ///add ideas to: analyze, visualize
+
+    return text;
+  };
+
+  Table.prototype.getReportHtml = function() {}; //TODO
+
+  Table.prototype.getReportObject = function() {}; //TODO
+
+  /**
+   * removes a row from the table.
+   * @param {Number} index The row to remove.
+   * @return {undefined}
+   */
+  Table.prototype.removeRow = function(index) {
+    for(var i = 0; this[i] != null; i++) {
+      this[i].splice(index, 1);
     }
   };
 
   /**
-   * scales the polygon by a number or a Point
-   * @param  {Object} value number or point
-   * @return {Polygon}
-   * tags:
+   * makes a copy of the Table.
+   * @return {Table} Copy of table.
    */
-  Polygon.prototype.factor = function(value) {
-    var i;
-    var newPolygon = new Polygon();
-    newPolygon.name = this.name;
-
-    if(value >= 0 || value < 0) {
-      for(i = 0; this[i] != null; i++) {
-        newPolygon[i] = new Point(this[i].x * value, this[i].y * value);
-      }
-
-      return newPolygon;
-    } else if(value.type != null && value.type == 'Point') {
-      for(i = 0; this[i] != null; i++) {
-        newPolygon[i] = new Point(this[i].x * value.x, this[i].y * value.y);
-      }
-
-      return newPolygon;
-    }
-
-    return null;
-  };
-
-
-  Polygon.prototype.getRotated = function(angle, center) {
-    center = center == null ? new Point() : center;
-
-    var newPolygon = new Polygon();
+  Table.prototype.clone = function() {
+    var clonedTable = instantiateWithSameType(this);
+    clonedTable.name = this.name;
     for(var i = 0; this[i] != null; i++) {
-      newPolygon[i] = new Point(Math.cos(angle) * (this[i].x - center.x) - Math.sin(angle) * (this[i].y - center.y) + center.x, Math.sin(angle) * (this[i].x - center.x) + Math.cos(angle) * (this[i].y - center.y) + center.y);
+      clonedTable.push(this[i].clone());
     }
-    newPolygon.name = this.name;
-    return newPolygon;
+    return clonedTable;
   };
 
-  Polygon.prototype.getClosestPoint = function(point) {
-    var closest = this[0];
-    var d2Min = Math.pow(point.x - closest.x, 2) + Math.pow(point.y - closest.y, 2);
-    var d2;
+  /**
+   * Removes all contents of the Table.
+   */
+  Table.prototype.destroy = function() {
+    for(var i = 0; this[i] != null; i++) {
+      this[i].destroy();
+      delete this[i];
+    }
+  };
 
-    for(var i = 1; this[i] != null; i++) {
-      d2 = Math.pow(point.x - this[i].x, 2) + Math.pow(point.y - this[i].y, 2);
-      if(d2 < d2Min) {
-        d2Min = d2;
-        closest = this[i];
+  /**
+   * Prints contents of Table to console.log.
+   */
+
+
+
+  Table.prototype.print = function() {
+    console.log("///////////// <" + this.name + "////////////////////////////////////////////////////");
+    console.log(TableEncodings.TableToCSV(this, null, true));
+    console.log("/////////////" + this.name + "> ////////////////////////////////////////////////////");
+  };
+
+  exports.Table = Table;
+
+  NumberTable.prototype = new Table();
+  NumberTable.prototype.constructor = NumberTable;
+
+  /**
+   * @classdesc {@link Table} to store numbers.
+   *
+   * @constructor
+   * @description Creates a new NumberTable.
+   * @category numbers
+   */
+  function NumberTable() {
+    var args = [];
+    var newNumberList;
+    var array;
+
+    if(arguments.length > 0 && Number(arguments[0]) == arguments[0]) {
+      array = [];
+      var i;
+      for(i = 0; i < arguments[0]; i++) {
+        array.push(new NumberList());
       }
+    } else {
+      for(i = 0; arguments[i] != null; i++) {
+        newNumberList = NumberList.fromArray(arguments[i]);
+        newNumberList.name = arguments[i].name;
+        arguments[i] = newNumberList;
+      }
+      array = Table.apply(this, arguments);
     }
-    return closest;
+    array = NumberTable.fromArray(array);
+    return array;
+  }
+
+
+  NumberTable.fromArray = function(array) {
+    var result = Table.fromArray(array);
+    result.type = "NumberTable";
+
+    result.getNumberListsNormalized = NumberTable.prototype.getNumberListsNormalized;
+    result.getNormalizedToMax = NumberTable.prototype.getNormalizedToMax;
+    result.getNumberListsNormalizedToMax = NumberTable.prototype.getNumberListsNormalizedToMax;
+    result.getNumberListsNormalizedToSum = NumberTable.prototype.getNumberListsNormalizedToSum;
+    result.getSums = NumberTable.prototype.getSums;
+    result.getRowsSums = NumberTable.prototype.getRowsSums;
+    result.getAverages = NumberTable.prototype.getAverages;
+    result.getRowsAverages = NumberTable.prototype.getRowsAverages;
+    result.factor = NumberTable.prototype.factor;
+    result.add = NumberTable.prototype.add;
+    result.getMax = NumberTable.prototype.getMax;
+    result.getMin = NumberTable.prototype.getMin;
+    result.getMinMaxInterval = NumberTable.prototype.getMinMaxInterval;
+    result.getCovarianceMatrix = NumberTable.prototype.getCovarianceMatrix;
+
+    return result;
   };
 
-  Polygon.prototype.toNumberList = function() {
-    var numberList = new NumberList();
+  /**
+   * returns a table with having normalized all the numberLists
+   *
+   * @param  {factor} factor optional factor
+   * @return {NumberTable}
+   * tags:normalization
+   */
+  NumberTable.prototype.getNumberListsNormalized = function(factor) {
+    factor = factor == null ? 1 : factor;
+
+    var newTable = new NumberTable();
     var i;
     for(i = 0; this[i] != null; i++) {
-      numberList[i * 2] = this[i].x;
-      numberList[i * 2 + 1] = this[i].y;
+      var numberList = this[i];
+      newTable[i] = numberList.getNormalized(factor);
+    }
+    newTable.name = this.name;
+    return newTable;
+  };
+
+  /**
+   * normalizes the table to its maximal value
+   *
+   * @param  {factor} factor optional factor
+   * @return {NumberTable}
+   * tags:normalization
+   */
+  NumberTable.prototype.getNormalizedToMax = function(factor) {
+    factor = factor == null ? 1 : factor;
+
+    var newTable = new NumberTable();
+    var i;
+    var antimax = factor / this.getMax();
+    for(i = 0; this[i] != null; i++) {
+      newTable[i] = this[i].factor(antimax);
+    }
+    newTable.name = this.name;
+    return newTable;
+  };
+
+  NumberTable.prototype.getNumberListsNormalizedToMax = function(factorValue) {
+    var newTable = new NumberTable();
+    for(var i = 0; this[i] != null; i++) {
+      var numberList = this[i];
+      newTable[i] = numberList.getNormalizedToMax(factorValue);
+    }
+    newTable.name = this.name;
+    return newTable;
+  };
+
+  NumberTable.prototype.getNumberListsNormalizedToSum = function() {
+    var newTable = new NumberTable();
+    for(var i = 0; this[i] != null; i++) {
+      var numberList = this[i];
+      newTable[i] = numberList.getNormalizedToSum();
+    }
+    newTable.name = this.name;
+    return newTable;
+  };
+
+
+  NumberTable.prototype.getMax = function() {
+    if(this.length == 0) return null;
+
+    var max = this[0].getMax();
+    var i;
+
+    for(i = 1; this[i] != null; i++) {
+      max = Math.max(this[i].getMax(), max);
+    }
+    return max;
+  };
+
+  NumberTable.prototype.getMin = function() {
+    if(this.length == 0) return null;
+
+    var min = this[0].getMin();
+    var i;
+
+    for(i = 1; this[i] != null; i++) {
+      min = Math.min(this[i].getMin(), min);
+    }
+    return min;
+  };
+
+  NumberTable.prototype.getMinMaxInterval = function() {
+    if(this.length == 0) return null;
+    var rangeInterval = (this[0]).getMinMaxInterval();
+    for(var i = 1; this[i] != null; i++) {
+      var newRange = (this[i]).getMinMaxInterval();
+      rangeInterval.x = Math.min(rangeInterval.x, newRange.x);
+      rangeInterval.y = Math.max(rangeInterval.y, newRange.y);
+    }
+    return rangeInterval;
+  };
+
+  /**
+   * returns a numberList with values from numberlists added
+   * @return {Numberlist}
+   * tags:
+   */
+  NumberTable.prototype.getSums = function() {
+    var numberList = new NumberList();
+    for(var i = 0; this[i] != null; i++) {
+      numberList[i] = this[i].getSum();
     }
     return numberList;
   };
 
   /**
-   * Thanks http://jsfromhell.com/math/is-point-in-poly AND http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+   * returns a numberList with all values fro rows added
+   * @return {NumberList}
+   * tags:
    */
-  Polygon.prototype.containsPoint = function(point) {
+  NumberTable.prototype.getRowsSums = function() {
+    var sums = this[0].clone();
+    var numberList;
+    for(var i = 1; this[i] != null; i++) {
+      numberList = this[i];
+      for(var j = 0; numberList[j] != null; j++) {
+        sums[j] += numberList[j];
+      }
+    }
+    return sums;
+  };
+
+  NumberTable.prototype.getAverages = function() {
+    var numberList = new NumberList();
+    for(var i = 0; this[i] != null; i++) {
+      numberList[i] = this[i].getAverage();
+    }
+    return numberList;
+  };
+
+  NumberTable.prototype.getRowsAverages = function() {
+    var nLists = this.length;
+    var averages = this[0].clone().factor(1 / nLists);
+    var numberList;
     var i;
     var j;
-    var l;
-    for(var c = false, i = -1, l = this.length, j = l - 1; ++i < l; j = i)
-          ((this[i].y <= point.y && point.y < this[j].y) || (this[j].y <= point.y && point.y < this[i].y))
-          && (point.x < (this[j].x - this[i].x) * (point.y - this[i].y) / (this[j].y - this[i].y) + this[i].x)
-          && (c = !c);
-    return c;
-  };
-
-  //transform
-
-  Polygon.prototype.approach = function(destiny, speed) {
-    speed = speed || 0.5;
-    var antispeed = 1 - speed;
-
-    this.forEach(function(point, i) {
-      point.x = antispeed * point.x + speed * destiny[i].x;
-      point.y = antispeed * point.y + speed * destiny[i].y;
-    });
-  };
-
-
-  Polygon.prototype.clone = function() {
-    var newPolygon = new Polygon();
-    for(var i = 0; this[i] != null; i++) {
-      newPolygon[i] = this[i].clone();
+    for(i = 1; this[i] != null; i++) {
+      numberList = this[i];
+      for(j = 0; numberList[j] != null; j++) {
+        averages[j] += numberList[j] / nLists;
+      }
     }
-    newPolygon.name = this.name;
-    return newPolygon;
+    return averages;
   };
 
-  exports.Polygon = Polygon;
+  NumberTable.prototype.factor = function(value) {
+    var newTable = new NumberTable();
+    var i;
+    var numberList;
+
+    switch(typeOf(value)) {
+      case 'number':
+        for(i = 0; this[i] != null; i++) {
+          numberList = this[i];
+          newTable[i] = numberList.factor(value);
+        }
+        break;
+      case 'NumberList':
+        for(i = 0; this[i] != null; i++) {
+          numberList = this[i];
+          newTable[i] = numberList.factor(value[i]);
+        }
+        break;
+
+    }
+
+    newTable.name = this.name;
+    return newTable;
+  };
+
+  NumberTable.prototype.add = function(value) {
+    var newTable = new NumberTable();
+    var numberList;
+    var i;
+
+    for(i = 0; this[i] != null; i++) {
+      numberList = this[i];
+      newTable[i] = numberList.add(value);
+    }
+
+    newTable.name = this.name;
+    return newTable;
+  };
+
+
+  NumberTable.prototype.getCovarianceMatrix = function(){
+    var newTable = new NumberTable();
+    var i;
+    for(i = 0; this[i] != null; i++) {
+
+    }
+
+  }
+
+  exports.NumberTable = NumberTable;
 
   NodeList__NodeList.prototype = new List__default();
   NodeList__NodeList.prototype.constructor = NodeList__NodeList;
@@ -3172,519 +3421,99 @@ define('src/index', ['exports'], function (exports) {
 
   exports.RelationList = RelationList;
 
-  LoadEvent.prototype = {};
-  LoadEvent.prototype.constructor = LoadEvent;
+  PolygonList.prototype = new Table();
+  PolygonList.prototype.constructor = PolygonList;
 
   /**
-   * LoadEvent
+   * @classdesc A {@link List} structure for storing {@link Polygon} instances.
+   *
+   * @description Creates a new PolygonList.
    * @constructor
-   * @category misc
+   * @category geometry
    */
-  function LoadEvent() {
-    Object.apply(this);
-    this.result = null;
-    this.errorType = 0;
-    this.errorMessage = "";
-    this.url;
+  function PolygonList() {
+    var array = Table.apply(this, arguments);
+    array = PolygonList.fromArray(array);
+    return array;
   }
 
-  exports.LoadEvent = LoadEvent;
 
-  function Loader() {}
+  PolygonList.fromArray = function(array) {
+    var result = Table.fromArray(array);
+    result.type = "PolygonList";
+    result.getFrame = PolygonList.prototype.getFrame;
+    result.add = PolygonList.prototype.add;
+    result.factor = PolygonList.prototype.factor;
+    result.clone = PolygonList.prototype.clone;
+    result.getString = PolygonList.prototype.getString;
+    return result;
+  };
 
-
-  Loader.proxy = ""; //TODO:install proxy created by Mig at moebio.com
-  Loader.cacheActive = false; //TODO: fix!
-  Loader.associativeByUrls = {};
-  Loader.REPORT_LOADING = false;
-  Loader.n_loading = 0;
-  Loader.LOCAL_STORAGE_ENABLED = false;
-
-  Loader.PHPurl = "http://intuitionanalytics.com/tests/proxy.php?url=";
-
-
-  /**
-   * loads string data from server. The defined Loader.proxy will be used.
-   * @param {String} url the URL of the file to be loaded
-   * @param {Function} onLoadData a function that will be called when complete. The function must receive a LoadEvent
-   * @param {callee} the Object containing the onLoadData function to be called
-   * @para, {Object} optional parameter that will be stored in the LoadEvent instance
-   */
-  Loader.loadData = function(url, onLoadData, callee, param, send_object_json) {
-    if(Loader.REPORT_LOADING) console.log('load data:', url);
-    Loader.n_loading++;
-
-    if(Loader.LOCAL_STORAGE_ENABLED) {
-      // TODO track down LocalStorage. localStorage is a thing though (lowercase l);
-      var result = LocalStorage.getItem(url);
-      if(result) {
-        var e = new LoadEvent();
-        e.url = url;
-        e.param = param;
-        e.result = result;
-
-        onLoadData.call(target, e);
-      }
+  PolygonList.prototype.getFrame = function() {
+    if(this.length == 0) return null;
+    var frameP = this[0].getFrame();
+    var rectangle = new Rectangle(frameP.x, frameP.y, frameP.getRight(), frameP.getBottom());
+    for(var i = 1; this[i] != null; i++) {
+      frameP = this[i].getFrame();
+      rectangle.x = Math.min(rectangle.x, frameP.x);
+      rectangle.y = Math.min(rectangle.y, frameP.y);
+      rectangle.width = Math.max(rectangle.width, frameP.getRight());
+      rectangle.height = Math.max(rectangle.height, frameP.getBottom());
     }
+    rectangle.width -= rectangle.x;
+    rectangle.height -= rectangle.y;
 
+    return rectangle;
+  };
 
-
-    if(Loader.REPORT_LOADING) console.log("Loader.loadData | url:", url);
-
-    var useProxy = String(url).substr(0, 4) == "http";
-
-    var req = new XMLHttpRequest();
-
-    var target = callee ? callee : arguments.callee;
-    var onLoadComplete = function() {
-      if(Loader.REPORT_LOADING) console.log('Loader.loadData | onLoadComplete'); //, req.responseText:', req.responseText);
-      if(req.readyState == 4) {
-        Loader.n_loading--;
-
-        var e = new LoadEvent();
-        e.url = url;
-        e.param = param;
-        //if (req.status == 200) { //MIG
-        if(req.status == 200 || (req.status == 0 && req.responseText != null)) {
-          e.result = req.responseText;
-          onLoadData.call(target, e);
-        } else {
-          if(Loader.REPORT_LOADING) console.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
-          e.errorType = req.status;
-          e.errorMessage = "[!] There was a problem retrieving the data [" + req.status + "]:" + req.statusText;
-          onLoadData.call(target, e);
+  PolygonList.prototype.add = function(object) {
+    var type = typeOf(object);
+    var i;
+    switch(type) {
+      case 'Point':
+        var newPolygonList = new PolygonList();
+        for(i = 0; this[i] != null; i++) {
+          newPolygonList[i] = this[i].add(object);
         }
-      }
-    };
-
-    // branch for native XMLHttpRequest object
-    if(window.XMLHttpRequest && !(window.ActiveXObject)) {
-      try {
-        req = new XMLHttpRequest();
-      } catch(e) {
-        req = false;
-      }
-      // branch for IE/Windows ActiveX version
-    } else if(window.ActiveXObject) {
-      try {
-        req = new ActiveXObject("Msxml2.XMLHTTP.6.0");
-      } catch(e) {
-        try {
-          req = new ActiveXObject("Msxml2.XMLHTTP.3.0");
-        } catch(e) {
-          try {
-            req = new ActiveXObject("Msxml2.XMLHTTP");
-          } catch(e) {
-            try {
-              req = new ActiveXObject("Microsoft.XMLHTTP");
-            } catch(e) {
-              req = false;
-            }
-          }
-        }
-      }
-    }
-    if(req) {
-      req.onreadystatechange = onLoadComplete; //processReqChange;
-      if(useProxy) {
-        req.open("GET", Loader.proxy + url, true);
-      } else {
-        req.open("GET", url, true);
-      }
-
-      send_object_json = send_object_json || "";
-      req.send(send_object_json);
+        newPolygonList.name = this.name;
+        return newPolygonList;
+        break;
     }
   };
 
-
-  //TODO this method isn't reference by anything else.
-  function LoaderRequest(url, method, data) {
-    this.url = url;
-    this.method = method ? method : "GET";
-    this.data = data;
-  }
-
-  Loader.loadImage = function(url, onComplete, callee, param) {
-    Loader.n_loading++;
-
-    if(Loader.REPORT_LOADING) console.log("Loader.loadImage | url:", url);
-
-    var target = callee ? callee : arguments.callee;
-    var img = document.createElement('img');
-
-    if(this.cacheActive) {
-      if(this.associativeByUrls[url] != null) {
-        Loader.n_loading--;
-        //console.log('=====>>>>+==>>>+====>>=====>>>+==>> in cache:', url);
-        var e = new LoadEvent();
-        e.result = this.associativeByUrls[url];
-        e.url = url;
-        e.param = param;
-        onComplete.call(target, e);
-      } else {
-        var cache = true;
-        var associative = this.associativeByUrls;
-      }
+  PolygonList.prototype.factor = function(value) {
+    var newPolygonList = new PolygonList();
+    for(var i = 0; this[i] != null; i++) {
+      newPolygonList[i] = this[i].factor(value);
     }
-
-    img.onload = function() {
-      Loader.n_loading--;
-      var e = new LoadEvent();
-      e.result = img;
-      e.url = url;
-      e.param = param;
-      if(cache) associative[url] = img;
-      onComplete.call(target, e);
-    };
-
-    img.onerror = function() {
-      Loader.n_loading--;
-      var e = new LoadEvent();
-      e.result = null;
-      e.errorType = 1; //TODO: set an error type!
-      e.errorMessage = "There was a problem retrieving the image [" + img.src + "]:";
-      e.url = url;
-      e.param = param;
-      onComplete.call(target, e);
-    };
-
-    img.src = Loader.proxy + url;
+    newPolygonList.name = this.name;
+    return newPolygonList;
   };
 
-
-
-  // Loader.loadJSON = function(url, onLoadComplete) {
-  //   Loader.n_loading++;
-
-  //   Loader.loadData(url, function(data) {
-  //     Loader.n_loading--;
-  //     onLoadComplete.call(arguments.callee, jQuery.parseJSON(data));
-  //   });
-  // };
-
-
-  /**
-  Loader.callIndex = 0;
-  Loader.loadJSONP = function(url, onLoadComplete, callee) {
-    Loader.n_loading++;
-
-    Loader.callIndex = Loader.callIndex + 1;
-    var index = Loader.callIndex;
-
-    var newUrl = url + "&callback=JSONcallback" + index;
-    //var newUrl=url+"?callback=JSONcallback"+index; //   <----  WFP suggestion
-
-    var target = callee ? callee : arguments.callee;
-
-    //console.log('Loader.loadJSONP, newUrl:', newUrl);
-
-    $.ajax({
-      url: newUrl,
-      type: 'GET',
-      data: {},
-      dataType: 'jsonp',
-      contentType: "application/json",
-      jsonp: 'jsonp',
-      jsonpCallback: 'JSONcallback' + index,
-      success: function(data) {
-        Loader.n_loading--;
-        var e = new LoadEvent();
-        e.result = data;
-        onLoadComplete.call(target, e);
-      },
-      error: function(data) {
-        Loader.n_loading--;
-        console.log("Loader.loadJSONP | error, data:", data);
-
-        var e = new LoadEvent();
-        e.errorType = 1;
-        onLoadComplete.call(target, e);
-      }
-    }); //.error(function(e){
-    // console.log('---> (((error))) B');
-    //
-    // var e=new LoadEvent();
-    // e.errorType=1;
-    // onLoadComplete.call(target, e);
-    // });
-  };
-  **/
-
-
-
-
-  //FIX THESE METHODS:
-
-  Loader.loadXML = function(url, onLoadData) {
-    Loader.n_loading++;
-
-    var req = new XMLHttpRequest();
-    var onLoadComplete = onLoadData;
-
-    if(Loader.REPORT_LOADING) console.log('loadXML, url:', url);
-
-    // branch for native XMLHttpRequest object
-    if(window.XMLHttpRequest && !(window.ActiveXObject)) {
-      try {
-        req = new XMLHttpRequest();
-      } catch(e) {
-        req = false;
-      }
-      // branch for IE/Windows ActiveX version
-    } else if(window.ActiveXObject) {
-      try {
-        req = new ActiveXObject("Msxml2.XMLHTTP");
-      } catch(e) {
-        try {
-          req = new ActiveXObject("Microsoft.XMLHTTP");
-        } catch(e) {
-          req = false;
-        }
-      }
+  PolygonList.prototype.clone = function() {
+    var newPolygonList = new PolygonList();
+    for(var i = 0; this[i] != null; i++) {
+      newPolygonList[i] = this[i].clone();
     }
-    if(req) {
-      req.onreadystatechange = processReqChange;
-      req.open("GET", url, true);
-      req.send("");
-    }
-
-    function processReqChange() {
-      Loader.n_loading--;
-      // only if req shows "loaded"
-      if(req.readyState == 4) {
-        // only if "OK"
-        if(req.status == 200 || req.status == 0) {
-          onLoadComplete(req.responseXML);
-
-        } else {
-          console.log("There was a problem retrieving the XML data:\n" +
-            req.statusText);
-        }
-      }
-    }
+    newPolygonList.name = this.name;
+    return newPolygonList;
   };
 
+  // PolygonList.prototype.getString=function(pointSeparator,polygonSeparator){
+  // pointSeparator = pointSeparator==null?',':pointSeparator;
+  // polygonSeparator = polygonSeparator==null?'/':polygonSeparator;
+  // var j;
+  // var t='';
+  // for(var i=0;this[i]!=null;i++){
+  // t+=(i==0?'':polygonSeparator);
+  // for(j=0; this[i][j]!=null; j++){
+  // t+=(j==0?'':pointSeparator)+this[i][j].x+pointSeparator+this[i][j].y;
+  // }
+  // }
+  // return t;
+  // }
 
-  ///////////////PHP
-
-  Loader.sendContentToVariableToPhp = function(url, varName, value, onLoadData, callee, param) {
-    var data = varName + "=" + encodeURIComponent(value);
-    Loader.sendDataToPhp(url, data, onLoadData, callee, param);
-  };
-
-  Loader.sendContentsToVariablesToPhp = function(url, varNames, values, onLoadData, callee, param) {
-    var data = varNames[0] + "=" + encodeURIComponent(values[0]);
-    for(var i = 1; varNames[i] != null; i++) {
-      data += "&" + varNames[i] + "=" + encodeURIComponent(values[i]);
-    }
-    Loader.sendDataToPhp(url, data, onLoadData, callee, param);
-  };
-
-  Loader.sendDataToPhp = function(url, data, onLoadData, callee, param) {
-    var req = new XMLHttpRequest();
-
-    req.open("POST", url, true);
-    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    req.send(data);
-
-    var target = callee ? callee : arguments.callee;
-
-    var onLoadComplete = function() {
-      if(Loader.REPORT_LOADING) console.log('Loader.loadData | onLoadComplete, req.responseText:', req.responseText);
-      if(req.readyState == 4) {
-        Loader.n_loading--;
-
-        var e = new LoadEvent();
-        e.url = url;
-        e.param = param;
-
-        if(req.status == 200 || (req.status == 0 && req.responseText != null)) {
-          e.result = req.responseText;
-          onLoadData.call(target, e);
-        } else {
-          if(Loader.REPORT_LOADING) console.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
-          e.errorType = req.status;
-          e.errorMessage = "[!] There was a problem retrieving the data [" + req.status + "]:" + req.statusText;
-          onLoadData.call(target, e);
-        }
-      }
-    };
-
-    req.onreadystatechange = onLoadComplete;
-  };
-
-  exports.Loader = Loader;
-
-  Node__Node.prototype = new DataModel();
-  Node__Node.prototype.constructor = Node__Node;
-
-  /**
-   * @classdesc Represents a single node element in a Network. Can have both an id as well
-   * as a name.
-   *
-   * @description Create a new Node.
-   * @param {String} id ID of the Node
-   * @param {String} name string (label) name to be assigned to node
-   * @constructor
-   * @category networks
-   */
-  function Node__Node(id, name) {
-    this.id = id == null ? '' : id;
-    this.name = name != null ? name : '';
-    this.type = "Node";
-
-    this.nodeType;
-
-    this.x = 0;
-    this.y = 0;
-    this.z = 0;
-
-    this.nodeList = new NodeList__default();
-    this.relationList = new RelationList();
-
-    this.toNodeList = new NodeList__default();
-    this.toRelationList = new RelationList();
-
-    this.fromNodeList = new NodeList__default();
-    this.fromRelationList = new RelationList();
-
-    this.weight = 1;
-    this.descentWeight = 1;
-
-    //tree
-    this.level = 0;
-    this.parent = null;
-
-    //physics:
-    this.vx = 0;
-    this.vy = 0;
-    this.vz = 0;
-    this.ax = 0;
-    this.ay = 0;
-    this.az = 0;
-  }
-  var Node__default = Node__Node;
-
-  /**
-   * Removes all Relations and connected Nodes from
-   * the current Node.
-   */
-  Node__Node.prototype.cleanRelations = function() {
-    this.nodeList = new NodeList__default();
-    this.relationList = new RelationList();
-
-    this.toNodeList = new NodeList__default();
-    this.toRelationList = new RelationList();
-
-    this.fromNodeList = new NodeList__default();
-    this.fromRelationList = new RelationList();
-  };
-
-  //TODO: complete with all properties
-  Node__Node.prototype.destroy = function() {
-    DataModel.prototype.destroy.call(this);
-    delete this.id;
-    delete this.name;
-    delete this.nodeType;
-    delete this.x;
-    delete this.y;
-    delete this.z;
-    delete this.nodeList;
-    delete this.relationList;
-    delete this.toNodeList;
-    delete this.toNodeList;
-    delete this.fromNodeList;
-    delete this.fromRelationList;
-    delete this.parent;
-    delete this.weight;
-    delete this.descentWeight;
-    delete this.level;
-    delete this.vx;
-    delete this.vy;
-    delete this.vz;
-    delete this.ax;
-    delete this.ay;
-    delete this.az;
-  };
-
-  /**
-   * Returns the number of Relations connected to this Node.
-   *
-   * @return {Number} Number of Relations (edges) connecting to this Node instance.
-   */
-  Node__Node.prototype.getDegree = function() {
-    return this.relationList.length;
-  };
-
-  //treeProperties:
-
-
-  /**
-   * Returns the parent Node of this Node if it is part of a {@link Tree}.
-   *
-   * @return {Node} Parent Node of this Node.
-   */
-  Node__Node.prototype.getParent = function() {
-    return this.parent;
-  };
-
-  /**
-   * Returns the leaves under a node in a Tree,
-   *
-   * <strong>Warning:</strong> If this Node is part of a Network that is not a tree, this method could run an infinite loop.
-   * @return {NodeList} Leaf Nodes of this Node.
-   * tags:
-   */
-  Node__Node.prototype.getLeaves = function() {
-      var leaves = new NodeList__default();
-      var addLeaves = function(node) {
-        if(node.toNodeList.length === 0) {
-          leaves.addNode(node);
-          return;
-        }
-        node.toNodeList.forEach(addLeaves);
-      };
-      addLeaves(this);
-      return leaves;
-    };
-
-
-  /**
-   * Uses an image as a visual representation to this Node.
-   *
-   * @param {String} urlImage The URL of the image to load.
-   */
-  Node__Node.prototype.loadImage = function(urlImage) {
-    Loader.loadImage(urlImage, function(e) {
-      this.image = e.result;
-    }, this);
-  };
-
-
-  /**
-   * Makes a copy of this Node.
-   *
-   * @return {Node} New Node that is a copy of this Node.
-   */
-  Node__Node.prototype.clone = function() {
-    var newNode = new Node__Node(this.id, this.name);
-
-    newNode.x = this.x;
-    newNode.y = this.y;
-    newNode.z = this.z;
-
-    newNode.nodeType = this.nodeType;
-
-    newNode.weight = this.weight;
-    newNode.descentWeight = this.descentWeight;
-
-    return newNode;
-  };
-
-  exports.Node = Node__default;
-
-  var version = "0.2.11";
+  exports.PolygonList = PolygonList;
 
   /**
    * @classdesc Provides a set of tools that work with Colors.
@@ -3692,8 +3521,8 @@ define('src/index', ['exports'], function (exports) {
    * @namespace
    * @category colors
    */
-  function ColorOperators() {}
-
+  function ColorOperators__ColorOperators() {}
+  var ColorOperators__default = ColorOperators__ColorOperators;
   // TODO: create Color struture to be used instead of arrays [255, 100,0] ?
 
 
@@ -3708,9 +3537,9 @@ define('src/index', ['exports'], function (exports) {
    * @return {String} interpolated color
    *
    */
-  ColorOperators.interpolateColors = function(color0, color1, value) {
-    var resultArray = ColorOperators.interpolateColorsRGB(ColorOperators.colorStringToRGB(color0), ColorOperators.colorStringToRGB(color1), value);
-    return ColorOperators.RGBtoHEX(resultArray[0], resultArray[1], resultArray[2]);
+  ColorOperators__ColorOperators.interpolateColors = function(color0, color1, value) {
+    var resultArray = ColorOperators__ColorOperators.interpolateColorsRGB(ColorOperators__ColorOperators.colorStringToRGB(color0), ColorOperators__ColorOperators.colorStringToRGB(color1), value);
+    return ColorOperators__ColorOperators.RGBtoHEX(resultArray[0], resultArray[1], resultArray[2]);
   };
 
 
@@ -3724,7 +3553,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Array} interpolated RGB color
    *
    */
-  ColorOperators.interpolateColorsRGB = function(color0, color1, value) {
+  ColorOperators__ColorOperators.interpolateColorsRGB = function(color0, color1, value) {
     var s = 1 - value;
     return [Math.floor(s * color0[0] + value * color1[0]), Math.floor(s * color0[1] + value * color1[1]), Math.floor(s * color0[2] + value * color1[2])];
   };
@@ -3735,16 +3564,16 @@ define('src/index', ['exports'], function (exports) {
    * @return {Array} returns an RGB color Array
    *
    */
-  ColorOperators.HEXtoRGB = function(hexColor) {
+  ColorOperators__ColorOperators.HEXtoRGB = function(hexColor) {
     return [parseInt(hexColor.substr(1, 2), 16), parseInt(hexColor.substr(3, 2), 16), parseInt(hexColor.substr(5, 2), 16)];
   };
 
 
-  ColorOperators.RGBtoHEX = function(red, green, blue) {
-    return "#" + ColorOperators.toHex(red) + ColorOperators.toHex(green) + ColorOperators.toHex(blue);
+  ColorOperators__ColorOperators.RGBtoHEX = function(red, green, blue) {
+    return "#" + ColorOperators__ColorOperators.toHex(red) + ColorOperators__ColorOperators.toHex(green) + ColorOperators__ColorOperators.toHex(blue);
   };
 
-  ColorOperators.RGBArrayToString = function(array) {
+  ColorOperators__ColorOperators.RGBArrayToString = function(array) {
     return 'rgb(' + array[0] + ',' + array[1] + ',' + array[2] + ')';
   };
 
@@ -3753,41 +3582,41 @@ define('src/index', ['exports'], function (exports) {
 
 
 
-  ColorOperators.colorStringToHEX = function(color_string) {
-    var rgb = ColorOperators.colorStringToRGB(color_string);
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  ColorOperators__ColorOperators.colorStringToHEX = function(color_string) {
+    var rgb = ColorOperators__ColorOperators.colorStringToRGB(color_string);
+    return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
 
-  ColorOperators.numberToHex = function(number) {
+  ColorOperators__ColorOperators.numberToHex = function(number) {
     var hex = number.toString(16);
     while(hex.length < 2) hex = "0" + hex;
     return hex;
   };
 
 
-  ColorOperators.uinttoRGB = function(color) {
+  ColorOperators__ColorOperators.uinttoRGB = function(color) {
     var rgbColor = new Array(color >> 16, (color >> 8) - ((color >> 16) << 8), color - ((color >> 8) << 8));
     return rgbColor;
   };
-  ColorOperators.uinttoHEX = function(color) {
-    var rgbColor = ColorOperators.uinttoRGB(color);
-    var hexColor = ColorOperators.RGBToHEX(rgbColor[0], rgbColor[1], rgbColor[2]);
+  ColorOperators__ColorOperators.uinttoHEX = function(color) {
+    var rgbColor = ColorOperators__ColorOperators.uinttoRGB(color);
+    var hexColor = ColorOperators__ColorOperators.RGBToHEX(rgbColor[0], rgbColor[1], rgbColor[2]);
     return hexColor;
   };
 
 
-  ColorOperators.RGBtouint = function(red, green, blue) {
+  ColorOperators__ColorOperators.RGBtouint = function(red, green, blue) {
     return Number(red) << 16 | Number(green) << 8 | Number(blue);
   };
 
-  ColorOperators.HEXtouint = function(hexColor) {
-    var colorArray = ColorOperators.HEXtoRGB(hexColor);
-    var color = ColorOperators.RGBtouint(colorArray[0], colorArray[1], colorArray[2]);
+  ColorOperators__ColorOperators.HEXtouint = function(hexColor) {
+    var colorArray = ColorOperators__ColorOperators.HEXtoRGB(hexColor);
+    var color = ColorOperators__ColorOperators.RGBtouint(colorArray[0], colorArray[1], colorArray[2]);
     return color;
   };
 
-  ColorOperators.grayByLevel = function(level) {
+  ColorOperators__ColorOperators.grayByLevel = function(level) {
     level = Math.floor(level * 255);
     return 'rgb(' + level + ',' + level + ',' + level + ')';
   };
@@ -3800,20 +3629,20 @@ define('src/index', ['exports'], function (exports) {
    * @return {Array} returns an HSV color Array
    *
    */
-  ColorOperators.HEXtoHSV = function(hexColor) {
-    var rgb = ColorOperators.HEXtoRGB(hexColor);
-    return ColorOperators.RGBtoHSV(rgb[0], rgb[1], rgb[2]);
+  ColorOperators__ColorOperators.HEXtoHSV = function(hexColor) {
+    var rgb = ColorOperators__ColorOperators.HEXtoRGB(hexColor);
+    return ColorOperators__ColorOperators.RGBtoHSV(rgb[0], rgb[1], rgb[2]);
   };
 
 
-  ColorOperators.HSVtoHEX = function(hue, saturation, value) {
-    var rgb = ColorOperators.HSVtoRGB(hue, saturation, value);
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  ColorOperators__ColorOperators.HSVtoHEX = function(hue, saturation, value) {
+    var rgb = ColorOperators__ColorOperators.HSVtoRGB(hue, saturation, value);
+    return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
-  ColorOperators.HSLtoHEX = function(hue, saturation, light) {
-    var rgb = ColorOperators.HSLtoRGB(hue, saturation, light);
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  ColorOperators__ColorOperators.HSLtoHEX = function(hue, saturation, light) {
+    var rgb = ColorOperators__ColorOperators.HSLtoRGB(hue, saturation, light);
+    return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
 
@@ -3824,7 +3653,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Array} returns a HSV color array
    * H in [0,360], S in [0,1], V in [0,1]
    */
-  ColorOperators.RGBtoHSV = function(r, g, b) {
+  ColorOperators__ColorOperators.RGBtoHSV = function(r, g, b) {
       var h;
       var s;
       var v;
@@ -3857,7 +3686,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Array} a HSV color array
    * @return {Array} returns a RGB color array
    */
-  ColorOperators.HSVtoRGB = function(hue, saturation, value) {
+  ColorOperators__ColorOperators.HSVtoRGB = function(hue, saturation, value) {
     hue = hue ? hue : 0;
     saturation = saturation ? saturation : 0;
     value = value ? value : 0;
@@ -3920,7 +3749,7 @@ define('src/index', ['exports'], function (exports) {
    * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
    * Assumes hue is contained in the interval [0,360) and saturation and l are contained in the set [0, 1]
    */
-  ColorOperators.HSLtoRGB = function(hue, saturation, light) {
+  ColorOperators__ColorOperators.HSLtoRGB = function(hue, saturation, light) {
     var r, g, b;
 
     if(saturation == 0) {
@@ -3946,33 +3775,33 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  ColorOperators.invertColorRGB = function(r, g, b) {
+  ColorOperators__ColorOperators.invertColorRGB = function(r, g, b) {
     return [255 - r, 255 - g, 255 - b];
   };
 
-  ColorOperators.addAlpha = function(color, alpha) {
+  ColorOperators__ColorOperators.addAlpha = function(color, alpha) {
     //var rgb = color.substr(0,3)=='rgb'?ColorOperators.colorStringToRGB(color):ColorOperators.HEXtoRGB(color);
-    var rgb = ColorOperators.colorStringToRGB(color);
+    var rgb = ColorOperators__ColorOperators.colorStringToRGB(color);
     if(rgb == null) return 'black';
     return 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + alpha + ')';
   };
 
-  ColorOperators.invertColor = function(color) {
-    var rgb = ColorOperators.colorStringToRGB(color);
-    rgb = ColorOperators.invertColorRGB(rgb[0], rgb[1], rgb[2]);
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  ColorOperators__ColorOperators.invertColor = function(color) {
+    var rgb = ColorOperators__ColorOperators.colorStringToRGB(color);
+    rgb = ColorOperators__ColorOperators.invertColorRGB(rgb[0], rgb[1], rgb[2]);
+    return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
 
 
-  ColorOperators.toHex = function(number) {
+  ColorOperators__ColorOperators.toHex = function(number) {
     var hex = number.toString(16);
     while(hex.length < 2) hex = "0" + hex;
     return hex;
   };
 
 
-  ColorOperators.getRandomColor = function() {
+  ColorOperators__ColorOperators.getRandomColor = function() {
     return 'rgb(' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ')';
   };
 
@@ -3987,7 +3816,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Array} rgb array
    * tags:
    */
-  ColorOperators.colorStringToRGB = function(color_string) {
+  ColorOperators__ColorOperators.colorStringToRGB = function(color_string) {
     //c.log('color_string:['+color_string+']');
     var ok = false;
 
@@ -4212,3786 +4041,297 @@ define('src/index', ['exports'], function (exports) {
     return null;
   };
 
-  exports.ColorOperators = ColorOperators;
+  exports.ColorOperators = ColorOperators__default;
 
-  /*
-   * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
-   * Digest Algorithm, as defined in RFC 1321.
-   * Version 2.2 Copyright (C) Paul Johnston 1999 - 2009
-   * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
-   * Distributed under the BSD License
-   * See http://pajhome.org.uk/crypt/md5 for more info.
-   */
-
-  /*
-   * Configurable variables. You may need to tweak these to be compatible with
-   * the server-side, but the defaults work in most cases.
-   */
-  //var hexcase = 0;   /* hex output format. 0 - lowercase; 1 - uppercase        */
-  //var b64pad  = "";  /* base-64 pad character. "=" for strict RFC compliance   */
-
-
-  function MD5(){}
-
-
-  /*
-   * These are the functions you'll usually want to call
-   * They take string arguments and return either hex or base-64 encoded strings
-   */
-  MD5.hex_md5 = function(s)    { return this.rstr2hex(this.rstr_md5(this.str2rstr_utf8(s))); };
-  MD5.b64_md5 = function(s)    { return this.rstr2b64(this.rstr_md5(this.str2rstr_utf8(s))); };
-  MD5.any_md5 = function(s, e) { return this.rstr2any(this.rstr_md5(this.str2rstr_utf8(s)), e); };
-  MD5.hex_hmac_md5 = function(k, d)
-    { return this.rstr2hex(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); };
-  MD5.b64_hmac_md5 = function(k, d)
-    { return this.rstr2b64(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); };
-  MD5.any_hmac_md5 = function(k, d, e)
-    { return this.rstr2any(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d)), e); };
-
-  /*
-   * Perform a simple self-test to see if the VM is working
-   */
-  MD5.md5_vm_test = function()
-  {
-    return this.hex_md5("abc").toLowerCase() == "900150983cd24fb0d6963f7d28e17f72";
-  };
-
-  /*
-   * Calculate the MD5 of a raw string
-   */
-  MD5.rstr_md5 = function(s)
-  {
-    return this.binl2rstr(this.binl_md5(this.rstr2binl(s), s.length * 8));
-  };
-
-  /*
-   * Calculate the HMAC-MD5, of a key and some data (raw strings)
-   */
-  MD5.rstr_hmac_md5 = function(key, data)
-  {
-    var bkey = this.rstr2binl(key);
-    if(bkey.length > 16) bkey = this.binl_md5(bkey, key.length * 8);
-
-    var ipad = Array(16), opad = Array(16);
-    for(var i = 0; i < 16; i++)
-    {
-      ipad[i] = bkey[i] ^ 0x36363636;
-      opad[i] = bkey[i] ^ 0x5C5C5C5C;
-    }
-
-    var hash = this.binl_md5(ipad.concat(this.rstr2binl(data)), 512 + data.length * 8);
-    return this.binl2rstr(this.binl_md5(opad.concat(hash), 512 + 128));
-  };
-
-  /*
-   * Convert a raw string to a hex string
-   */
-  MD5.rstr2hex = function(input)
-  {
-  	var hexcase = 0;
-    try { hexcase; } catch(e) { hexcase=0; }
-    var hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
-    var output = "";
-    var x;
-    for(var i = 0; i < input.length; i++)
-    {
-      x = input.charCodeAt(i);
-      output += hex_tab.charAt((x >>> 4) & 0x0F)
-             +  hex_tab.charAt( x        & 0x0F);
-    }
-    return output;
-  };
-
-  /*
-   * Convert a raw string to a base-64 string
-   */
-  MD5.rstr2b64 = function(input)
-  {
-  	var b64pad  = "";
-    try { b64pad; } catch(e) { b64pad=''; }
-    var tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    var output = "";
-    var len = input.length;
-    for(var i = 0; i < len; i += 3)
-    {
-      var triplet = (input.charCodeAt(i) << 16)
-                  | (i + 1 < len ? input.charCodeAt(i+1) << 8 : 0)
-                  | (i + 2 < len ? input.charCodeAt(i+2)      : 0);
-      for(var j = 0; j < 4; j++)
-      {
-        if(i * 8 + j * 6 > input.length * 8) output += b64pad;
-        else output += tab.charAt((triplet >>> 6*(3-j)) & 0x3F);
-      }
-    }
-    return output;
-  };
-
-  /*
-   * Convert a raw string to an arbitrary string encoding
-   */
-  MD5.rstr2any = function(input, encoding)
-  {
-    var divisor = encoding.length;
-    var i, j, q, x, quotient;
-
-    /* Convert to an array of 16-bit big-endian values, forming the dividend */
-    var dividend = Array(Math.ceil(input.length / 2));
-    for(i = 0; i < dividend.length; i++)
-    {
-      dividend[i] = (input.charCodeAt(i * 2) << 8) | input.charCodeAt(i * 2 + 1);
-    }
-
-    /*
-     * Repeatedly perform a long division. The binary array forms the dividend,
-     * the length of the encoding is the divisor. Once computed, the quotient
-     * forms the dividend for the next step. All remainders are stored for later
-     * use.
-     */
-    var full_length = Math.ceil(input.length * 8 /
-                                      (Math.log(encoding.length) / Math.log(2)));
-    var remainders = Array(full_length);
-    for(j = 0; j < full_length; j++)
-    {
-      quotient = Array();
-      x = 0;
-      for(i = 0; i < dividend.length; i++)
-      {
-        x = (x << 16) + dividend[i];
-        q = Math.floor(x / divisor);
-        x -= q * divisor;
-        if(quotient.length > 0 || q > 0)
-          quotient[quotient.length] = q;
-      }
-      remainders[j] = x;
-      dividend = quotient;
-    }
-
-    /* Convert the remainders to the output string */
-    var output = "";
-    for(i = remainders.length - 1; i >= 0; i--)
-      output += encoding.charAt(remainders[i]);
-
-    return output;
-  };
-
-  /*
-   * Encode a string as utf-8.
-   * For efficiency, this assumes the input is valid utf-16.
-   */
-  MD5.str2rstr_utf8 = function(input)
-  {
-    var output = "";
-    var i = -1;
-    var x, y;
-
-    while(++i < input.length)
-    {
-      /* Decode utf-16 surrogate pairs */
-      x = input.charCodeAt(i);
-      y = i + 1 < input.length ? input.charCodeAt(i + 1) : 0;
-      if(0xD800 <= x && x <= 0xDBFF && 0xDC00 <= y && y <= 0xDFFF)
-      {
-        x = 0x10000 + ((x & 0x03FF) << 10) + (y & 0x03FF);
-        i++;
-      }
-
-      /* Encode output as utf-8 */
-      if(x <= 0x7F)
-        output += String.fromCharCode(x);
-      else if(x <= 0x7FF)
-        output += String.fromCharCode(0xC0 | ((x >>> 6 ) & 0x1F),
-                                      0x80 | ( x         & 0x3F));
-      else if(x <= 0xFFFF)
-        output += String.fromCharCode(0xE0 | ((x >>> 12) & 0x0F),
-                                      0x80 | ((x >>> 6 ) & 0x3F),
-                                      0x80 | ( x         & 0x3F));
-      else if(x <= 0x1FFFFF)
-        output += String.fromCharCode(0xF0 | ((x >>> 18) & 0x07),
-                                      0x80 | ((x >>> 12) & 0x3F),
-                                      0x80 | ((x >>> 6 ) & 0x3F),
-                                      0x80 | ( x         & 0x3F));
-    }
-    return output;
-  };
-
-  /*
-   * Encode a string as utf-16
-   */
-  MD5.str2rstr_utf16le = function(input)
-  {
-    var output = "";
-    for(var i = 0; i < input.length; i++)
-      output += String.fromCharCode( input.charCodeAt(i)        & 0xFF,
-                                    (input.charCodeAt(i) >>> 8) & 0xFF);
-    return output;
-  };
-
-  MD5.str2rstr_utf16be = function(input)
-  {
-    var output = "";
-    for(var i = 0; i < input.length; i++)
-      output += String.fromCharCode((input.charCodeAt(i) >>> 8) & 0xFF,
-                                     input.charCodeAt(i)        & 0xFF);
-    return output;
-  };
-
-  /*
-   * Convert a raw string to an array of little-endian words
-   * Characters >255 have their high-byte silently ignored.
-   */
-  MD5.rstr2binl = function(input)
-  {
-    var output = Array(input.length >> 2);
-    for(var i = 0; i < output.length; i++)
-      output[i] = 0;
-    for(var i = 0; i < input.length * 8; i += 8)
-      output[i>>5] |= (input.charCodeAt(i / 8) & 0xFF) << (i%32);
-    return output;
-  };
-
-  /*
-   * Convert an array of little-endian words to a string
-   */
-  MD5.binl2rstr = function(input)
-  {
-    var output = "";
-    for(var i = 0; i < input.length * 32; i += 8)
-      output += String.fromCharCode((input[i>>5] >>> (i % 32)) & 0xFF);
-    return output;
-  };
-
-  /*
-   * Calculate the MD5 of an array of little-endian words, and a bit length.
-   */
-  MD5.binl_md5 = function(x, len)
-  {
-    /* append padding */
-    x[len >> 5] |= 0x80 << ((len) % 32);
-    x[(((len + 64) >>> 9) << 4) + 14] = len;
-
-    var a =  1732584193;
-    var b = -271733879;
-    var c = -1732584194;
-    var d =  271733878;
-
-    for(var i = 0; i < x.length; i += 16)
-    {
-      var olda = a;
-      var oldb = b;
-      var oldc = c;
-      var oldd = d;
-
-      a = this.md5_ff(a, b, c, d, x[i+ 0], 7 , -680876936);
-      d = this.md5_ff(d, a, b, c, x[i+ 1], 12, -389564586);
-      c = this.md5_ff(c, d, a, b, x[i+ 2], 17,  606105819);
-      b = this.md5_ff(b, c, d, a, x[i+ 3], 22, -1044525330);
-      a = this.md5_ff(a, b, c, d, x[i+ 4], 7 , -176418897);
-      d = this.md5_ff(d, a, b, c, x[i+ 5], 12,  1200080426);
-      c = this.md5_ff(c, d, a, b, x[i+ 6], 17, -1473231341);
-      b = this.md5_ff(b, c, d, a, x[i+ 7], 22, -45705983);
-      a = this.md5_ff(a, b, c, d, x[i+ 8], 7 ,  1770035416);
-      d = this.md5_ff(d, a, b, c, x[i+ 9], 12, -1958414417);
-      c = this.md5_ff(c, d, a, b, x[i+10], 17, -42063);
-      b = this.md5_ff(b, c, d, a, x[i+11], 22, -1990404162);
-      a = this.md5_ff(a, b, c, d, x[i+12], 7 ,  1804603682);
-      d = this.md5_ff(d, a, b, c, x[i+13], 12, -40341101);
-      c = this.md5_ff(c, d, a, b, x[i+14], 17, -1502002290);
-      b = this.md5_ff(b, c, d, a, x[i+15], 22,  1236535329);
-
-      a = this.md5_gg(a, b, c, d, x[i+ 1], 5 , -165796510);
-      d = this.md5_gg(d, a, b, c, x[i+ 6], 9 , -1069501632);
-      c = this.md5_gg(c, d, a, b, x[i+11], 14,  643717713);
-      b = this.md5_gg(b, c, d, a, x[i+ 0], 20, -373897302);
-      a = this.md5_gg(a, b, c, d, x[i+ 5], 5 , -701558691);
-      d = this.md5_gg(d, a, b, c, x[i+10], 9 ,  38016083);
-      c = this.md5_gg(c, d, a, b, x[i+15], 14, -660478335);
-      b = this.md5_gg(b, c, d, a, x[i+ 4], 20, -405537848);
-      a = this.md5_gg(a, b, c, d, x[i+ 9], 5 ,  568446438);
-      d = this.md5_gg(d, a, b, c, x[i+14], 9 , -1019803690);
-      c = this.md5_gg(c, d, a, b, x[i+ 3], 14, -187363961);
-      b = this.md5_gg(b, c, d, a, x[i+ 8], 20,  1163531501);
-      a = this.md5_gg(a, b, c, d, x[i+13], 5 , -1444681467);
-      d = this.md5_gg(d, a, b, c, x[i+ 2], 9 , -51403784);
-      c = this.md5_gg(c, d, a, b, x[i+ 7], 14,  1735328473);
-      b = this.md5_gg(b, c, d, a, x[i+12], 20, -1926607734);
-
-      a = this.md5_hh(a, b, c, d, x[i+ 5], 4 , -378558);
-      d = this.md5_hh(d, a, b, c, x[i+ 8], 11, -2022574463);
-      c = this.md5_hh(c, d, a, b, x[i+11], 16,  1839030562);
-      b = this.md5_hh(b, c, d, a, x[i+14], 23, -35309556);
-      a = this.md5_hh(a, b, c, d, x[i+ 1], 4 , -1530992060);
-      d = this.md5_hh(d, a, b, c, x[i+ 4], 11,  1272893353);
-      c = this.md5_hh(c, d, a, b, x[i+ 7], 16, -155497632);
-      b = this.md5_hh(b, c, d, a, x[i+10], 23, -1094730640);
-      a = this.md5_hh(a, b, c, d, x[i+13], 4 ,  681279174);
-      d = this.md5_hh(d, a, b, c, x[i+ 0], 11, -358537222);
-      c = this.md5_hh(c, d, a, b, x[i+ 3], 16, -722521979);
-      b = this.md5_hh(b, c, d, a, x[i+ 6], 23,  76029189);
-      a = this.md5_hh(a, b, c, d, x[i+ 9], 4 , -640364487);
-      d = this.md5_hh(d, a, b, c, x[i+12], 11, -421815835);
-      c = this.md5_hh(c, d, a, b, x[i+15], 16,  530742520);
-      b = this.md5_hh(b, c, d, a, x[i+ 2], 23, -995338651);
-
-      a = this.md5_ii(a, b, c, d, x[i+ 0], 6 , -198630844);
-      d = this.md5_ii(d, a, b, c, x[i+ 7], 10,  1126891415);
-      c = this.md5_ii(c, d, a, b, x[i+14], 15, -1416354905);
-      b = this.md5_ii(b, c, d, a, x[i+ 5], 21, -57434055);
-      a = this.md5_ii(a, b, c, d, x[i+12], 6 ,  1700485571);
-      d = this.md5_ii(d, a, b, c, x[i+ 3], 10, -1894986606);
-      c = this.md5_ii(c, d, a, b, x[i+10], 15, -1051523);
-      b = this.md5_ii(b, c, d, a, x[i+ 1], 21, -2054922799);
-      a = this.md5_ii(a, b, c, d, x[i+ 8], 6 ,  1873313359);
-      d = this.md5_ii(d, a, b, c, x[i+15], 10, -30611744);
-      c = this.md5_ii(c, d, a, b, x[i+ 6], 15, -1560198380);
-      b = this.md5_ii(b, c, d, a, x[i+13], 21,  1309151649);
-      a = this.md5_ii(a, b, c, d, x[i+ 4], 6 , -145523070);
-      d = this.md5_ii(d, a, b, c, x[i+11], 10, -1120210379);
-      c = this.md5_ii(c, d, a, b, x[i+ 2], 15,  718787259);
-      b = this.md5_ii(b, c, d, a, x[i+ 9], 21, -343485551);
-
-      a = this.safe_add(a, olda);
-      b = this.safe_add(b, oldb);
-      c = this.safe_add(c, oldc);
-      d = this.safe_add(d, oldd);
-    }
-    return Array(a, b, c, d);
-  };
-
-  /*
-   * These functions implement the four basic operations the algorithm uses.
-   */
-  MD5.md5_cmn = function(q, a, b, x, s, t)
-  {
-    return this.safe_add(this.bit_rol(this.safe_add(this.safe_add(a, q), this.safe_add(x, t)), s),b);
-  };
-  MD5.md5_ff = function(a, b, c, d, x, s, t)
-  {
-    return this.md5_cmn((b & c) | ((~b) & d), a, b, x, s, t);
-  };
-  MD5.md5_gg = function(a, b, c, d, x, s, t)
-  {
-    return this.md5_cmn((b & d) | (c & (~d)), a, b, x, s, t);
-  };
-  MD5.md5_hh = function(a, b, c, d, x, s, t)
-  {
-    return this.md5_cmn(b ^ c ^ d, a, b, x, s, t);
-  };
-  MD5.md5_ii = function(a, b, c, d, x, s, t)
-  {
-    return this.md5_cmn(c ^ (b | (~d)), a, b, x, s, t);
-  };
-
-  /*
-   * Add integers, wrapping at 2^32. This uses 16-bit operations internally
-   * to work around bugs in some JS interpreters.
-   */
-  MD5.safe_add = function(x, y)
-  {
-    var lsw = (x & 0xFFFF) + (y & 0xFFFF);
-    var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
-    return (msw << 16) | (lsw & 0xFFFF);
-  };
-
-  /*
-   * Bitwise rotate a 32-bit number to the left.
-   */
-  MD5.bit_rol = function(num, cnt)
-  {
-    return (num << cnt) | (num >>> (32 - cnt));
-  };
-
-  exports.MD5 = MD5;
-
-  function src_Global__setCursor(name) {
-    name = name == null ? 'default' : name;
-    canvas.style.cursor = name;
-  }
-
+  ColorList.prototype = new List__default();
+  ColorList.prototype.constructor = ColorList;
 
   /**
-   *Static class that:
-   * -includes all the data models (by including the class IncludeDataModels.js)
-   * -includes information about all those data models (on dataModelsInfo variable)
-   * -includes class utils (that contains methods such as instantiate)
-   * -contains the global variables (such as userAgent, canvas, nF, mX…), global
-   * -contains the listener methods
-   * -triggers de init, update and draw in Global class
-   * @namespace
-   * @category basics
-   */
-  function Global(){}
-
-  Global.userAgent="unknown";
-
-  window.init = function(){
-    //console.log("init must be overriden!");
-  }
-
-  window.cycle = function(){
-    //console.log("cycle must be overriden!");
-  }
-
-  window.resizeWindow = function(){
-    //console.log("resizeWindow must be overriden!");
-  }
-
-  window.lastCycle = function(){
-    //override
-  }
-
-  var listenerArray  = [];
-  var canvas;
-  var src_Global__userAgent="none";
-  var src_Global__userAgentVersion;
-  var canvasResizeable=true;
-
-  //data models info
-  var dataModelsInfo = [
-    {
-      type:"Null",
-      short:"Ø",
-      category:"object",
-      level:"0",
-      write:"true",
-      inherits:null,
-      color:"#ffffff"
-    },
-    {
-      type:"Object",
-      short:"{}",
-      category:"object",
-      level:"0",
-      write:"true",
-      inherits:null,
-      to:"String",
-      color:"#C0BFBF"
-    },
-    {
-      type:"Function",
-      short:"F",
-      category:"object",
-      level:"0",
-      inherits:null,
-      color:"#C0BFBF"
-    },  {
-      type:"Boolean",
-      short:"b",
-      category:"boolean",
-      level:"0",
-      write:"true",
-      inherits:null,
-      to:"Number",
-      color:"#4F60AB"
-    },
-    {
-      type:"Number",
-      short:"#",
-      category:"number",
-      level:"0",
-      write:"true",
-      inherits:null,
-      to:"String",
-      color:"#5DA1D8"
-    },
-    {
-      type:"Interval",
-      short:"##",
-      category:"number",
-      level:"0.5",
-      write:"true",
-      inherits:null,
-      to:"Point",
-      contains:"Number",
-      color:"#386080"
-    },
-    {
-      type:"Array",
-      short:"[]",
-      category:"object",
-      level:"1",
-      inherits:null,
-      to:"List",
-      contains:"Object,Null",
-      color:"#80807F"
-    },
-    {
-      type:"List",
-      short:"L",
-      category:"object",
-      level:"1",
-      inherits:"Array",
-      contains:"Object",
-      comments:"A List is an Array that doesn't contain nulls, and with enhanced functionalities",
-      color:"#80807F"
-    },
-    {
-      type:"Table",
-      short:"T",
-      category:"object",
-      level:"2",
-      inherits:"List",
-      contains:"List",
-      comments:"A Table is a List of Lists",
-      color:"#80807F"
-    },
-    {
-      type:"BooleanList",
-      short:"bL",
-      category:"boolean",
-      level:"1",
-      inherits:"List",
-      to:"NumberList",
-      contains:"Boolean",
-      color:"#3A4780"
-    },
-    {
-      type:"NumberList",
-      short:"#L",
-      category:"number",
-      level:"1",
-      write:"true",
-      inherits:"List",
-      to:"StringList",
-      contains:"Number",
-      color:"#386080"
-    },
-    {
-      type:"NumberTable",
-      short:"#T",
-      category:"number",
-      level:"2",
-      write:"true",
-      inherits:"Table",
-      to:"Network",
-      contains:"NumberList",
-      color:"#386080"
-    },
-    {
-      type:"String",
-      short:"s",
-      category:"string",
-      level:"0",
-      write:"true",
-      inherits:null,
-      color:"#8BC63F"
-    },
-    {
-      type:"StringList",
-      short:"sL",
-      category:"string",
-      level:"1",
-      write:"true",
-      inherits:"List",
-      contains:"String",
-      color:"#5A8039"
-    },
-    {
-      type:"StringTable",
-      short:"sT",
-      category:"string",
-      level:"2",
-      inherits:"Table",
-      contains:"StringList",
-      color:"#5A8039"
-    },
-    {
-      type:"Date",
-      short:"d",
-      category:"date",
-      level:"0.5",
-      write:"true",
-      inherits:null,
-      to:"Number,String",
-      color:"#7AC8A3"
-    },
-    {
-      type:"DateInterval",
-      short:"dd",
-      category:"date",
-      level:"0.75",
-      inherits:null,
-      to:"Interval",
-      contains:"Date",
-      color:"#218052"
-    },
-    {
-      type:"DateList",
-      short:"dL",
-      category:"date",
-      level:"1.5",
-      inherits:"List",
-      to:"NumberList,StringList",
-      contains:"Date",
-      color:"#218052"
-    },
-    {
-      type:"Point",
-      short:".",
-      category:"geometry",
-      level:"0.5",
-      write:"true",
-      inherits:null,
-      to:"Interval",
-      contains:"Number",
-      color:"#9D59A4"
-    },
-    {
-      type:"Rectangle",
-      short:"t",
-      category:"geometry",
-      level:"0.5",
-      inherits:null,
-      to:"Polygon",
-      contains:"Number",
-      color:"#9D59A4"
-    },
-    {
-      type:"Polygon",
-      short:".L",
-      category:"geometry",
-      level:"1.5",
-      inherits:"List",
-      to:"NumberTable",
-      contains:"Point",
-      comments:"A Polygon is a List of Points",
-      color:"#76297F"
-    },
-    {
-      type:"RectangleList",
-      short:"tL",
-      category:"geometry",
-      level:"1.5",
-      inherits:null,
-      to:"MultiPolygon",
-      contains:"Rectangle",
-      color:"#76297F"
-    },
-    {
-      type:"MultiPolygon",
-      short:".T",
-      category:"geometry",
-      level:"2.5",
-      inherits:"Table",
-      contains:"Polygon",
-      comments:"A MultiPolygon is a List of Polygons",
-      color:"#76297F"
-    },
-    {
-      type:"Point3D",
-      short:"3",
-      category:"geometry",
-      level:"0.5",
-      write:"true",
-      inherits:"Point",
-      to:"NumberList",
-      contains:"Number",
-      color:"#9D59A4"
-    },
-    {
-      type:"Polygon3D",
-      short:"3L",
-      category:"geometry",
-      level:"1.5",
-      inherits:"List",
-      to:"NumberTable",
-      contains:"Point3D",
-      color:"#76297F"
-    },
-    {
-      type:"MultiPolygon3D",
-      short:"3T",
-      category:"geometry",
-      level:"2.5",
-      inherits:"Table",
-      contains:"Polygon3D",
-      color:"#76297F"
-    },
-    {
-      type:"Color",
-      short:"c",
-      category:"color",
-      level:"0",
-      inherits:null,
-      to:"String",
-      comments:"a Color is just a string that can be interpreted as color",
-      color:"#EE4488"
-    },
-    {
-      type:"ColorScale",
-      short:"cS",
-      category:"color",
-      level:"0",
-      write:"true",
-      inherits:"Function",
-      color:"#802046"
-    },
-    {
-      type:"ColorList",
-      short:"cL",
-      category:"color",
-      level:"1",
-      write:"true",
-      inherits:"List",
-      to:"StringList",
-      contains:"Color",
-      color:"#802046"
-    },
-    {
-      type:"Image",
-      short:"i",
-      category:"graphic",
-      level:"0",
-      inherits:null,
-      color:"#802046"
-    },
-    {
-      type:"ImageList",
-      short:"iL",
-      category:"graphic",
-      level:"1",
-      inherits:"List",
-      contains:"Image",
-      color:"#802046"
-    },
-    {
-      type:"Node",
-      short:"n",
-      category:"structure",
-      level:"0",
-      inherits:null,
-      color:"#FAA542"
-    },
-    {
-      type:"Relation",
-      short:"r",
-      category:"structure",
-      level:"0.5",
-      inherits:"Node",
-      contains:"Node",
-      color:"#FAA542"
-    },
-    {
-      type:"NodeList",
-      short:"nL",
-      category:"structure",
-      level:"1",
-      inherits:"List",
-      contains:"Node",
-      color:"#805522"
-    },
-    {
-      type:"RelationList",
-      short:"rL",
-      category:"structure",
-      level:"1.5",
-      inherits:"NodeList",
-      contains:"Relation",
-      color:"#805522"
-    },
-    {
-      type:"Network",
-      short:"Nt",
-      category:"structure",
-      level:"2",
-      inherits:null,
-      to:"Table",
-      contains:"NodeList,RelationList",
-      color:"#805522"
-    },
-    {
-      type:"Tree",
-      short:"Tr",
-      category:"structure",
-      level:"2",
-      inherits:"Network",
-      to:"Table",
-      contains:"NodeList,RelationList",
-      color:"#805522"
-    }
-  ];
-
-
-  //global useful vars
-  var cW = 1; // canvas width
-  var cH = 1; // canvas height
-  var cX = 1; // canvas center x
-  var cY = 1; // canvas center y
-  var mX = 0; // cursor x
-  var mY = 0; // cursor y
-  var mP = new Point(0, 0); // cursor point
-  var nF = 0; // number of current frame since first cycle
-
-  var MOUSE_DOWN=false; //true on the frame of mousedown event
-  var MOUSE_UP=false; //true on the frame of mouseup event
-  var MOUSE_UP_FAST=false; //true on the frame of mouseup event
-  var WHEEL_CHANGE=0; //differnt from 0 if mousewheel (or pad) moves / STATE
-  var NF_DOWN; //number of frame of last mousedown event
-  var NF_UP; //number of frame of last mouseup event
-  var MOUSE_PRESSED; //true if mouse pressed / STATE
-  var MOUSE_IN_DOCUMENT = true; //true if cursor is inside document / STATE
-  var mX_DOWN; // cursor x position on last mousedown event
-  var mY_DOWN; // cursor x position on last mousedown event
-  var mX_UP; // cursor x position on last mousedown event
-  var mY_UP; // cursor y position on last mousedown event
-  var PREV_mX=0; // cursor x position previous frame
-  var PREV_mY=0; // cursor y position previous frame
-  var DX_MOUSE=0; //horizontal movement of cursor in last frame
-  var DY_MOUSE=0; //vertical movement of cursor in last frame
-  var MOUSE_MOVED = false; //boolean that indicates wether the mouse moved in the last frame / STATE
-  var T_MOUSE_PRESSED = 0; //time in milliseconds of mouse being pressed, useful for sutained pressure detection
-
-  //var deltaWheel = 0;
-  var cursorStyle = 'auto';
-  var backGroundColor = 'white';
-  var backGroundColorRGB = [255,255,255];
-  var cycleActive;
-
-  //global constants
-  var src_Global__context;
-  var TwoPi = 2*Math.PI;
-  var HalfPi = 0.5*Math.PI;
-  var radToGrad = 180/Math.PI;
-  var gradToRad = Math.PI/180;
-  var c = console;
-  c.l = c.log; //use c.l instead of console.log
-
-  //private
-  var _wheelActivated = false;
-  var _keyboardActivated = false;
-
-  var _prevMouseX = 0;
-  var _prevMouseY = 0;
-  var _setIntervalId;
-  var _setTimeOutId;
-  var _cycleOnMouseMovement = false;
-  var _interactionCancelledFrame;
-  var _tLastMouseDown;
-
-  var _alphaRefresh=0;//if _alphaRefresh>0 instead of clearing the canvas each frame, a transparent rectangle will be drawn
-
-  var END_CYCLE_DELAY = 3000; //time in milliseconds, from last mouse movement to the last cycle to be executed in case cycleOnMouseMovement has been activated
-
-  Array.prototype.last = function(){
-    return this[this.length-1];
-  };
-
-  window.addEventListener('load', function(){
-
-    if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
-      exports.userAgent = src_Global__userAgent='IE';
-      exports.userAgentVersion = src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
-      if(src_Global__userAgentVersion<9) return null;
-    } else if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent)){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
-      exports.userAgent = src_Global__userAgent='FIREFOX';
-      exports.userAgentVersion = src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
-    } else if (navigator.userAgent.match(/Chrome/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
-      exports.userAgent = src_Global__userAgent='CHROME';
-      exports.userAgentVersion = src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
-    } else if (/Mozilla[\/\s](\d+\.\d+)/.test(navigator.userAgent) || navigator.userAgent.match(/Mozilla/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
-      exports.userAgent = src_Global__userAgent='MOZILLA';
-      exports.userAgentVersion = src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
-    } else if (navigator.userAgent.match(/Safari/) != null){ //test for MSIE x.x;
-      exports.userAgent = src_Global__userAgent='Safari';
-      exports.userAgentVersion = src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
-    } else if(navigator.userAgent.match(/iPad/i) != null){
-      exports.userAgent = src_Global__userAgent='IOS';
-    } else if(navigator.userAgent.match(/iPhone/i) != null){
-      exports.userAgent = src_Global__userAgent='IOS';
-    }
-
-
-    Global.userAgent=src_Global__userAgent;
-    Global._frameRate=30;
-
-    exports.canvas = canvas = document.getElementById('main');
-
-    if(canvas!=null){
-      exports.context = src_Global__context = canvas.getContext('2d');
-
-      _adjustCanvas();
-
-      canvas.addEventListener("mousemove", _onMouse, false);
-      canvas.addEventListener("mousedown", _onMouse, false);
-      canvas.addEventListener("mouseup", _onMouse, false);
-      canvas.addEventListener("mouseenter", _onMouse, false);
-      canvas.addEventListener("mouseleave", _onMouse, false);
-
-
-      activateWheel();
-
-      window.addEventListener("resize", onResize, false);
-
-      startCycle();
-      window.init();
-    }
-
-    c.l('Moebio Framework v' + version + ' | user agent: '+src_Global__userAgent+' | user agent version: '+src_Global__userAgentVersion+' | canvas detected: '+(canvas!=null));
-
-  }, false);
-
-  function _onMouse(e) {
-
-    switch(e.type){
-      case "mousemove":
-        exports.PREV_mX = PREV_mX=mX;
-        exports.PREV_mY = PREV_mY=mY;
-
-        if(e.clientX){
-          exports.mX = mX = e.clientX;
-              exports.mY = mY = e.clientY;
-        } else if(e.offsetX) {
-              exports.mX = mX = e.offsetX;
-              exports.mY = mY = e.offsetY;
-          } else if(e.layerX) {
-              exports.mX = mX = e.layerX;
-              exports.mY = mY = e.layerY;
-          }
-          mP.x = mX;
-          mP.y = mY;
-          exports.MOUSE_IN_DOCUMENT = MOUSE_IN_DOCUMENT = true;
-          break;
-      case "mousedown":
-        exports.NF_DOWN = NF_DOWN = nF;
-        exports.MOUSE_PRESSED = MOUSE_PRESSED = true;
-        exports.T_MOUSE_PRESSED = T_MOUSE_PRESSED = 0;
-        _tLastMouseDown = new Date().getTime();
-        exports.mX_DOWN = mX_DOWN = mX;
-        exports.mY_DOWN = mY_DOWN = mY;
-        exports.MOUSE_IN_DOCUMENT = MOUSE_IN_DOCUMENT = true;
-        break;
-      case "mouseup":
-        exports.NF_UP = NF_UP = nF;
-        exports.MOUSE_PRESSED = MOUSE_PRESSED = false;
-        exports.T_MOUSE_PRESSED = T_MOUSE_PRESSED = 0;
-        exports.mX_UP = mX_UP = mX;
-        exports.mY_UP = mY_UP = mY;
-        exports.MOUSE_IN_DOCUMENT = MOUSE_IN_DOCUMENT = true;
-        break;
-      case "mouseenter":
-        exports.MOUSE_IN_DOCUMENT = MOUSE_IN_DOCUMENT = true;
-        break;
-      case "mouseleave":
-        exports.MOUSE_IN_DOCUMENT = MOUSE_IN_DOCUMENT = false;
-        break;
-    }
-  }
-
-
-  function onResize(e){
-    _adjustCanvas();
-    window.resizeWindow();
-  }
-
-  function _adjustCanvas(){
-    if(canvasResizeable==false) return;
-
-    exports.cW = cW = getDocWidth();
-    exports.cH = cH = getDocHeight();
-
-    canvas.setAttribute('width', cW);
-    canvas.setAttribute('height', cH);
-
-    exports.cX = cX = Math.floor(cW*0.5);
-    exports.cY = cY = Math.floor(cH*0.5);
-  }
-
-
-  function clearContext(){
-    src_Global__context.clearRect(0, 0, cW, cH);
-  }
-
-  function cycleOnMouseMovement(value, time){
-    if(time!=null) END_CYCLE_DELAY = time;
-
-    if(value){
-      src_Global__context.canvas.addEventListener('mousemove', onMoveCycle, false);
-      addInteractionEventListener('mousewheel', onMoveCycle, this);
-      exports._cycleOnMouseMovement = _cycleOnMouseMovement = true;
-      stopCycle();
-    } else {
-      src_Global__context.canvas.removeEventListener('mousemove', onMoveCycle, false);
-      removeInteractionEventListener('mousewheel', onMoveCycle, this);
-      exports._cycleOnMouseMovement = _cycleOnMouseMovement = false;
-      startCycle();
-    }
-  }
-
-  function setFrameRate(fr){
-    fr = fr||30;
-    Global._frameRate = fr;
-
-    if(cycleActive) startCycle();
-  }
-
-  function enterFrame(){
-    if(_alphaRefresh==0){
-        src_Global__context.clearRect(0, 0, cW, cH);
-    } else {
-      src_Global__context.fillStyle = 'rgba('+backGroundColorRGB[0]+','+backGroundColorRGB[1]+','+backGroundColorRGB[2]+','+_alphaRefresh+')';
-      src_Global__context.fillRect(0, 0, cW, cH);
-    }
-
-      src_Global__setCursor('default');
-
-      exports.MOUSE_DOWN = MOUSE_DOWN = NF_DOWN==nF;
-    exports.MOUSE_UP = MOUSE_UP = NF_UP==nF;
-    exports.MOUSE_UP_FAST = MOUSE_UP_FAST = MOUSE_UP && (nF-NF_DOWN)<9;
-
-    exports.DX_MOUSE = DX_MOUSE = mX-PREV_mX;
-    exports.DY_MOUSE = DY_MOUSE = mY-PREV_mY;
-    exports.MOUSE_MOVED = MOUSE_MOVED = DX_MOUSE!=0 || DY_MOUSE!=0;
-
-    if(MOUSE_PRESSED) exports.T_MOUSE_PRESSED = T_MOUSE_PRESSED = new Date().getTime() - _tLastMouseDown;
-
-      window.cycle();
-
-      exports.WHEEL_CHANGE = WHEEL_CHANGE = 0;
-
-      exports.PREV_mX = PREV_mX=mX;
-    exports.PREV_mY = PREV_mY=mY;
-
-      nF++, exports.nF = nF;
-  }
-
-  function startCycle(){
-    clearTimeout(_setTimeOutId);
-    clearInterval(_setIntervalId);
-    _setIntervalId = setInterval(enterFrame, Global._frameRate);
-    exports.cycleActive = cycleActive = true;
-  }
-
-
-  function stopCycle(){
-    clearInterval(_setIntervalId);
-    exports.cycleActive = cycleActive = false;
-
-    window.lastCycle();
-  }
-
-
-
-
-  function onMoveCycle(e){
-    if(e.type=='mousemove' && _prevMouseX==mX && _prevMouseY==mY) return;
-    reStartCycle();
-  }
-
-  function reStartCycle(){
-    _prevMouseX=mX;
-    _prevMouseY=mY;
-
-    if(!cycleActive){
-      _setIntervalId = setInterval(enterFrame, Global._frameRate);
-      exports.cycleActive = cycleActive = true;
-    }
-
-    clearTimeout(_setTimeOutId);
-    _setTimeOutId = setTimeout(stopCycle, END_CYCLE_DELAY);
-  }
-
-  //interaction events
-  function addInteractionEventListener(eventType, onFunction, target){//TODO: listenerArray contains objects instead of arrays
-    listenerArray.push(new Array(eventType, onFunction, target));
-    switch(eventType){
-      case 'mousedown':
-      case 'mouseup':
-      case 'click':
-      case 'mousemove':
-        src_Global__context.canvas.addEventListener(eventType, onCanvasEvent, false);
-        break;
-      case 'mousewheel':
-        if(!_wheelActivated) activateWheel();
-        break;
-      case 'keydown':
-      case 'keyup':
-        if(!_keyboardActivated) activateKeyboard();
-        break;
-    }
-  }
-
-  function onCanvasEvent(e){
-    var i;
-    for(i=0; listenerArray[i]!=null; i++){
-      if(listenerArray[i][0]==e.type.replace('DOMMouseScroll', 'mousewheel')){
-        if(_interactionCancelledFrame==nF) return;
-        listenerArray[i][1].call(listenerArray[i][2], e);
-      }
-    }
-  }
-
-  function removeInteractionEventListener(eventType, onFunction, target){ //TODO: finish this (requires single element removing method solved first)
-    for(var i=0; listenerArray[i]!=null; i++){
-      if(listenerArray[i][0]==eventType && listenerArray[i][1]==onFunction && listenerArray[i][2]==target){
-        delete listenerArray[i];
-        listenerArray.splice(i, 1);
-        i--;
-      }
-    }
-  }
-
-  function cancelAllInteractions(){
-    c.log("cancelAllInteractions, _interactionCancelledFrame:", nF);
-    _interactionCancelledFrame = nF;
-  }
-
-  function setBackgroundColor(color){
-    if(typeof color == "number"){
-      if(arguments.length>3){
-        color = 'rgba('+arguments[0]+','+arguments[1]+','+arguments[2]+','+arguments[3]+')';
-      } else {
-        color = 'rgb('+arguments[0]+','+arguments[1]+','+arguments[2]+')';
-      }
-    } else if(Array.isArray(color)){
-      color = ColorOperators.RGBtoHEX(color[0], color[1], color[2]);
-    }
-    exports.backGroundColor = backGroundColor = color;
-
-    exports.backGroundColorRGB = backGroundColorRGB = ColorOperators.colorStringToRGB(backGroundColor);
-
-    var body = document.getElementById('index');
-    body.setAttribute('bgcolor', backGroundColor);
-  }
-
-  function setDivPosition(div, x, y){
-    div.setAttribute('style', 'position:absolute;left:'+String(x)+'px;top:'+String(y)+'px;');
-  }
-
-
-  /////////////////////////////////// keyboard and wheel
-
-  function activateKeyboard(){
-    _keyboardActivated = true;
-    document.onkeydown = onKey;
-    document.onkeyup = onKey;
-  }
-
-  function onKey(e){
-    onCanvasEvent(e);
-  }
-
-  /*
-   * thanks http://www.adomas.org/javascript-mouse-wheel
-   */
-  function activateWheel(){
-    _wheelActivated = true;
-
-    if (window.addEventListener){
-      window.addEventListener('DOMMouseScroll', _onWheel, false);
-      //window.addEventListener("mousewheel", _onWheel, false); // testing
-    }
-    window.onmousewheel = document.onmousewheel = _onWheel;
-
-  }
-  function _onWheel(e) {
-    //c.l('_onWheel, e:', e);
-
-      if (!e) e = window.event; //IE
-
-      if (e.wheelDelta){
-        exports.WHEEL_CHANGE = WHEEL_CHANGE = e.wheelDelta/120;
-      } else if (e.detail) { /** Mozilla case. */
-          exports.WHEEL_CHANGE = WHEEL_CHANGE = -e.detail/3;
-      }
-      e.value = WHEEL_CHANGE;
-      // e.type = "mousewheel"; //why this doesn't work?
-
-    onCanvasEvent(e);
-  }
-
-
-
-  ////structures local storage
-
-  function setStructureLocalStorageWithSeed(object, seed, comments){
-    setStructureLocalStorage(object, MD5.hex_md5(seed), comments);
-  };
-
-  function setStructureLocalStorage(object, id, comments){
-    var type = typeOf(object);
-    var code;
-
-    switch(type){
-      case 'string':
-        code = object;
-        break;
-      case 'Network':
-        code = NetworkEncodings.encodeGDF(network);
-        break;
-      default:
-        type = 'object';
-        code = JSON.stringify(object);
-        break;
-    }
-
-    var storageObject = {
-      id:id,
-      type:type,
-      comments:comments,
-      date:new Date(),
-      code:code
-    };
-
-    var storageString = JSON.stringify(storageObject);
-
-    // c.l('storageObject', storageObject);
-    // c.l('id:['+id+']');
-    // c.l('code.length:', code.length);
-
-    localStorage.setItem(id, storageString);
-  };
-
-  function getStructureLocalStorageFromSeed(seed, returnStorageObject){
-    return getStructureLocalStorage(MD5.hex_md5(seed), returnStorageObject);
-  };
-
-  function getStructureLocalStorage(id, returnStorageObject){
-    returnStorageObject = returnStorageObject||false;
-
-    var item = localStorage.getItem(id);
-
-    if(item==null) return null;
-
-
-    try{
-      var storageObject = JSON.parse(item);
-    } catch(err){
-      return null;
-    }
-
-    if(storageObject.type==null && storageObject.code==null) return null;
-
-    var type = storageObject.type;
-    var code = storageObject.code;
-    var object;
-
-    switch(type){
-      case 'string':
-        object = code;
-        break;
-      case 'Network':
-        object = NetworkEncodings.decodeGDF(code);
-        break;
-      case 'object':
-        object = JSON.parse(code);
-        break;
-    }
-
-    if(returnStorageObject){
-      storageObject.object = object;
-      storageObject.size = storageObject.code.length;
-      storageObject.date = new Date(storageObject.date);
-
-      return storageObject;
-    }
-
-    return object;
-  };
-
-  function getDocWidth() {
-      var D = document;
-      return Math.max(
-          D.body.offsetWidth, D.documentElement.offsetWidth,
-          D.body.clientWidth, D.documentElement.clientWidth
-      );
-  }
-
-  function getDocHeight() {
-      var D = document;
-      return Math.max(
-          D.body.offsetHeight, D.documentElement.offsetHeight,
-          D.body.clientHeight, D.documentElement.clientHeight
-      );
-  }
-
-  exports.Global = Global;
-  exports.onResize = onResize;
-  exports.clearContext = clearContext;
-  exports.cycleOnMouseMovement = cycleOnMouseMovement;
-  exports.setFrameRate = setFrameRate;
-  exports.enterFrame = enterFrame;
-  exports.startCycle = startCycle;
-  exports.stopCycle = stopCycle;
-  exports.onMoveCycle = onMoveCycle;
-  exports.reStartCycle = reStartCycle;
-  exports.addInteractionEventListener = addInteractionEventListener;
-  exports.onCanvasEvent = onCanvasEvent;
-  exports.removeInteractionEventListener = removeInteractionEventListener;
-  exports.cancelAllInteractions = cancelAllInteractions;
-  exports.setBackgroundColor = setBackgroundColor;
-  exports.activateKeyboard = activateKeyboard;
-  exports.onKey = onKey;
-  exports.activateWheel = activateWheel;
-  exports.setStructureLocalStorageWithSeed = setStructureLocalStorageWithSeed;
-  exports.setStructureLocalStorage = setStructureLocalStorage;
-  exports.getStructureLocalStorageFromSeed = getStructureLocalStorageFromSeed;
-  exports.getStructureLocalStorage = getStructureLocalStorage;
-  exports.getDocWidth = getDocWidth;
-  exports.getDocHeight = getDocHeight;
-  exports._onMouse = _onMouse;
-  exports.listenerArray = listenerArray;
-  exports.canvas = canvas;
-  exports.userAgent = src_Global__userAgent;
-  exports.userAgentVersion = src_Global__userAgentVersion;
-  exports.canvasResizeable = canvasResizeable;
-  exports.dataModelsInfo = dataModelsInfo;
-  exports.cW = cW;
-  exports.cH = cH;
-  exports.cX = cX;
-  exports.cY = cY;
-  exports.mX = mX;
-  exports.mY = mY;
-  exports.mP = mP;
-  exports.nF = nF;
-  exports.MOUSE_DOWN = MOUSE_DOWN;
-  exports.MOUSE_UP = MOUSE_UP;
-  exports.MOUSE_UP_FAST = MOUSE_UP_FAST;
-  exports.WHEEL_CHANGE = WHEEL_CHANGE;
-  exports.NF_DOWN = NF_DOWN;
-  exports.NF_UP = NF_UP;
-  exports.MOUSE_PRESSED = MOUSE_PRESSED;
-  exports.MOUSE_IN_DOCUMENT = MOUSE_IN_DOCUMENT;
-  exports.mX_DOWN = mX_DOWN;
-  exports.mY_DOWN = mY_DOWN;
-  exports.mX_UP = mX_UP;
-  exports.mY_UP = mY_UP;
-  exports.PREV_mX = PREV_mX;
-  exports.PREV_mY = PREV_mY;
-  exports.DX_MOUSE = DX_MOUSE;
-  exports.DY_MOUSE = DY_MOUSE;
-  exports.MOUSE_MOVED = MOUSE_MOVED;
-  exports.T_MOUSE_PRESSED = T_MOUSE_PRESSED;
-  exports.cursorStyle = cursorStyle;
-  exports.backGroundColor = backGroundColor;
-  exports.backGroundColorRGB = backGroundColorRGB;
-  exports.cycleActive = cycleActive;
-  exports.context = src_Global__context;
-  exports.TwoPi = TwoPi;
-  exports.HalfPi = HalfPi;
-  exports.radToGrad = radToGrad;
-  exports.gradToRad = gradToRad;
-  exports.c = c;
-  exports._cycleOnMouseMovement = _cycleOnMouseMovement;
-
-  Relation.prototype = new Node__default();
-  Relation.prototype.constructor = Relation;
-
-  /**
-   * Relation
-   * @classdesc Relations represent the edges that connect Nodes
-   * in a Network DataType.
+   * @classdesc A {@link List} for storing Colors.
    *
-   * @description create a new Relation.
+   * @description Creates a new ColorList.
    * @constructor
-   * @param {String} id ID of the Relation.
-   * @param {String} name Name of the Relation.
-   * @param {Node} node0 Source of the Relation.
-   * @param {Node} node1 Destination of the Relation.
-   * @param {Number} weight Edge weight associated with Relation.
-   * Defaults to 1.
-   * @param {String} content Other data to associate with this Relation.
-   * @category networks
+   * @category colors
    */
-  function Relation(id, name, node0, node1, weight, content) {
-    Node__default.apply(this, [id, name]);
-    this.type = "Relation";
-
-    this.node0 = node0;
-    this.node1 = node1;
-    this.weight = weight == null ? 1 : weight;
-    this.content = content == null ? "" : content;
-  }
-
-
-  Relation.prototype.destroy = function() {
-    Node__default.prototype.destroy.call(this);
-    delete this.node0;
-    delete this.node1;
-    delete this.content;
-  };
-
-  Relation.prototype.getOther = function(node) {
-    return node == this.node0 ? this.node1 : this.node0;
-  };
-
-  Relation.prototype.clone = function() {
-    var relation = new Relation(this.id, this.name, this.node0, this.node1);
-
-    relation.x = this.x;
-    relation.y = this.y;
-    relation.z = this.z;
-
-    relation.nodeType = this.nodeType;
-
-    relation.weight = this.weight;
-    relation.descentWeight = this.descentWeight;
-
-    return relation;
-  };
-
-  exports.Relation = Relation;
-
-  Network.prototype = new DataModel();
-  Network.prototype.constructor = Network;
-
-  /**
-   * @classdesc Networks are a DataType to store network data.
-   *
-   * Networks have nodes stored in a NodeList,
-   * and relations (edges) stored in a RelationList.
-   * @description Create a new Network instance.
-   * @constructor
-   * @category networks
-   */
-  function Network() {
-    this.type = "Network";
-
-    this.nodeList = new NodeList__default();
-    this.relationList = new RelationList();
-  }
-
-
-  /**
-   * Get Nodes of the Network as a NodeList
-   * @return {NodeList}
-   * tags:
-   */
-  Network.prototype.getNodes = function() {
-    return this.nodeList;
-  };
-
-  /**
-   * Get Relations (edges) of the Network as
-   * a RelationList.
-   * @return {RelationList}
-   * tags:
-   */
-  Network.prototype.getRelations = function() {
-    return this.relationList;
-  };
-
-  /**
-   * get nodes ids property
-   * @return {StringList}
-   * tags:
-   */
-  Network.prototype.getNodesIds = function() {
-    return this.nodeList.getIds();
-  };
-
-
-
-  /*
-   * building methods
-   */
-
-  /**
-   * Add a node to the network
-   * @param {Node} node A new node that will be added to the network.
-   */
-  Network.prototype.addNode = function(node) {
-    this.nodeList.addNode(node);
-  };
-
-  /**
-   * Retrieve a node from the nodeList of the Network with the given name (label).
-   * @param {String} name The name of the node to retrieve from the Network.
-   * @return {Node} The node with the given name. Null if no node with that name
-   * can be found in the Network.
-   */
-  Network.prototype.getNodeWithName = function(name) {
-    return this.nodeList.getNodeWithName(name);
-  };
-
-  /**
-   * Retrieve node from Network with the given id.
-   * @param {String} id ID of the node to retrieve
-   * @return {Node} The node with the given id. Null if a node with this id is not
-   * in the Network.
-   */
-  Network.prototype.getNodeWithId = function(id) {
-    return this.nodeList.getNodeWithId(id);
-  };
-
-  /**
-   * Add a new Relation (edge) to the Network between two nodes.
-   * @param {Node} node0 The source of the relation.
-   * @param {Node} node1 The destination of the relation.
-   * @param {String} id The id of the relation.
-   * @param {Number} weight A numerical weight associated with the relation (edge).
-   * 
-   * @param {String} content Information associated with the relation.
-   */
-  Network.prototype.createRelation = function(node0, node1, id, weight, content) {
-    this.addRelation(new Relation(id, id, node0, node1, weight, content));
-  };
-
-  /**
-   * Add an existing Relation (edge) to the Network.
-   * @param {Relation} relation The relation to add to the network.
-   */
-  Network.prototype.addRelation = function(relation) {
-    this.relationList.addNode(relation);
-    relation.node0.nodeList.addNode(relation.node1);
-    relation.node0.relationList.addNode(relation);
-    relation.node0.toNodeList.addNode(relation.node1);
-    relation.node0.toRelationList.addNode(relation);
-    relation.node1.nodeList.addNode(relation.node0);
-    relation.node1.relationList.addNode(relation);
-    relation.node1.fromNodeList.addNode(relation.node0);
-    relation.node1.fromRelationList.addNode(relation);
-  };
-
-  /**
-   * Create a new Relation between two nodes in the network
-   * @param {Node} node0 The source of the relation.
-   * @param {Node} node1 The destination of the relation.
-   * @param {String} id The id of the relation. If missing, an id will be generated
-   * based on the id's of node0 and node1.
-   * @param {Number} weight=1 A numerical weight associated with the relation (edge).
-   * @param {String} content Information associated with the relation.
-   * @return {Relation} The new relation added to the Network.
-   */
-  Network.prototype.connect = function(node0, node1, id, weight, content) {
-    id = id || (node0.id + "_" + node1.id);
-    weight = weight || 1;
-    var relation = new Relation(id, id, node0, node1, weight);
-    this.addRelation(relation);
-    relation.content = content;
-    return relation;
-  };
-
-
-
-  /*
-   * removing methods
-   */
-
-  /**
-   * Remove a node from the Network
-   * @param {Node} node The node to remove.
-   */
-  Network.prototype.removeNode = function(node) {
-    this.removeNodeRelations(node);
-    this.nodeList.removeNode(node);
-  };
-
-  /**
-   * Remove all Relations connected to the node from the Network.
-   * @param {Node} node Node who's relations will be removed.
-   */
-  Network.prototype.removeNodeRelations = function(node) {
-    for(var i = 0; node.relationList[i] != null; i++) {
-      this.removeRelation(node.relationList[i]);
-      i--;
-    }
-  };
-
-  /**
-   * Remove all Nodes from the Network.
-   */
-  Network.prototype.removeNodes = function() {
-    this.nodeList.deleteNodes();
-    this.relationList.deleteNodes();
-  };
-
-  Network.prototype.removeRelation = function(relation) {
-    this.relationList.removeElement(relation);
-    relation.node0.nodeList.removeNode(relation.node1);
-    relation.node0.relationList.removeRelation(relation);
-    relation.node0.toNodeList.removeNode(relation.node1);
-    relation.node0.toRelationList.removeRelation(relation);
-    relation.node1.nodeList.removeNode(relation.node0);
-    relation.node1.relationList.removeRelation(relation);
-    relation.node1.fromNodeList.removeNode(relation.node0);
-    relation.node1.fromRelationList.removeRelation(relation);
-  };
-
-  /**
-   * Transformative method, removes nodes without a minimal number of connections
-   * @param  {Number} minDegree minimal degree
-   * @return {Number} number of nodes removed
-   * tags:transform
-   */
-  Network.prototype.removeIsolatedNodes = function(minDegree) {
-    var i;
-    var nRemoved = 0;
-    minDegree = minDegree == null ? 1 : minDegree;
-
-    for(i = 0; this.nodeList[i] != null; i++) {
-      if(this.nodeList[i].getDegree() < minDegree) {
-        this.nodeList[i]._toRemove = true;
-      }
-    }
-
-    for(i = 0; this.nodeList[i] != null; i++) {
-      if(this.nodeList[i]._toRemove) {
-        this.removeNode(this.nodeList[i]);
-        nRemoved++;
-        i--;
-      }
-    }
-
-    return nRemoved;
-  };
-
-
-  /**
-   * Clones the network
-   * 
-   * @param  {StringList} nodePropertiesNames list of preoperties names to be copied from old nodes into new nodes
-   * @param  {StringList} relationPropertiesNames
-   * 
-   * @param  {String} idsSubfix optional sufix to be added to ids
-   * @param  {String} namesSubfix optional sufix to be added to names
-   * @return {Networked} network with exact structure than original
-   * tags:
-   */
-  Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames, idsSubfix, namesSubfix) {
-    var newNetwork = new Network();
-    var newNode, newRelation;
-    var i;
-
-    idsSubfix = idsSubfix == null ? '' : String(idsSubfix);
-    namesSubfix = namesSubfix == null ? '' : String(namesSubfix);
-
-    this.nodeList.forEach(function(node) {
-      newNode = new Node__default(idsSubfix + node.id, namesSubfix + node.name);
-      if(idsSubfix != '') newNode.basicId = node.id;
-      if(namesSubfix != '') newNode.basicName = node.name;
-      if(nodePropertiesNames) {
-        nodePropertiesNames.forEach(function(propName) {
-          if(node[propName] != null) newNode[propName] = node[propName];
-        });
-      }
-      newNetwork.addNode(newNode);
-    });
-
-    this.relationList.forEach(function(relation) {
-      newRelation = new Relation(idsSubfix + relation.id, namesSubfix + relation.name, newNetwork.nodeList.getNodeById(idsSubfix + relation.node0.id), newNetwork.nodeList.getNodeById(idsSubfix + relation.node1.id));
-      if(idsSubfix != '') newRelation.basicId = relation.id;
-      if(namesSubfix != '') newRelation.basicName = relation.name;
-      if(relationPropertiesNames) {
-        relationPropertiesNames.forEach(function(propName) {
-          if(relation[propName] != null) newRelation[propName] = relation[propName];
-        });
-      }
-      newNetwork.addRelation(newRelation);
-    });
-
-    return newNetwork;
-  };
-
-
-  Network.prototype.getReport = function() {
-    return "network contains " + this.nodeList.length + " nodes and " + this.relationList.length + " relations";
-  };
-
-  Network.prototype.destroy = function() {
-    delete this.type;
-    this.nodeList.destroy();
-    this.relationList.destroy();
-    delete this.nodeList;
-    delete this.relationList;
-  };
-
-  exports.Network = Network;
-
-  function NetworkEncodings() {}
-
-
-
-  //////////////NoteWork
-
-  NetworkEncodings.nodeNameSeparators = ['|', ':', ' is ', ' are ', '.', ','];
-
-  /**
-   * Converts a String in NoteWork format into a network
-   *
-   * @param  {String} code
-   * @return {Network}
-   * tags:decoding
-   */
-  NetworkEncodings.decodeNoteWork = function(code) {
-    if(code == null) return;
-    if(code == "") return new Network();
-
-    console.log('\n\n*************////////// decodeNoteWork //////////*************');
-    //code = "\n"+code;
-
-    var i, j;
-    var paragraph, line, simpleLine;
-    var id, id2;
-    var name;
-    var index, index2, minIndex;
-    var lines;
-    var node, otherNode;
-    var supNode = null;
-    var relation;
-    var prevLine;
-    var sep;
-    var colorLinesRelations = []; //for relations
-    var colorLinesGroups = [];
-    var colorSegments = [];
-    var linesInfo = [];
-    var simpleLine;
-    var regex;
-    var iEnd;
-    var propertyName;
-    var propertyValue;
-    var network = new Network();
-    var paragraphs = new StringList();
-    var content;
-
-    network.nodesPropertiesNames = new StringList();
-    network.relationsPropertiesNames = new StringList();
-
-    lines = code.split(/\n/g);
-    lines.forEach(function(line, i) {
-      lines[i] = line.trim();
-    });
-
-    code = lines.join('\n');
-
-
-    var nLineParagraph = 0;
-    while(code.charAt(0) == '\n') {
-      code = code.substr(1);
-      nLineParagraph++;
-    }
-
-
-    var left = code;
-
-    index = left.search(/\n\n./g);
-
-    while(index != -1) {
-      paragraphs.push(left.substr(0, index));
-      left = left.substr(index + 2);
-      index = left.search(/\n\n./g);
-    }
-
-    paragraphs.push(left);
-
-    var firstLine;
-
-
-    paragraphs.forEach(function(paragraph, i) {
-
-      if(paragraph.indexOf('\n') == -1) {
-        line = paragraph;
-        lines = null;
-      } else {
-        lines = paragraph.split(/\n/g);
-        line = lines[0];
-      }
-
-      firstLine = line;
-
-      //console.log('firstLine: ['+firstLine+']');
-
-      if(line == '\n' || line == '' || line == ' ' || line == '  ') { //use regex here
-
-      } else if(line.indexOf('//') == 0) {
-
-        if(colorSegments[nLineParagraph] == null) colorSegments[nLineParagraph] = [];
-
-        colorSegments[nLineParagraph].push({
-          type: 'comment',
-          iStart: 0,
-          iEnd: line.length
-        });
-
-      } else if(line == "relations colors:" || line == "groups colors:" || line == "categories colors:") { //line.indexOf(':')!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){ // color in relations or groups
-        // colorLinesRelations.push(line);
-
-        // if(colorSegments[nLineParagraph]==null) colorSegments[nLineParagraph]=[];
-
-        // colorSegments[nLineParagraph].push({
-        // 	type:'relation_color',
-        // 	iStart:0,
-        // 	iEnd:line.length
-        // });
-
-        if(lines) {
-          lines.slice(1).forEach(function(line, i) {
-
-            index = line.indexOf(':');
-            if(firstLine == "relations colors:" && index != -1 && ColorOperators.colorStringToRGB(line.split(':')[1]) != null) {
-              //console.log('  more colors!');
-
-              colorLinesRelations.push(line);
-
-              if(colorSegments[nLineParagraph + i] == null) colorSegments[nLineParagraph + i] = [];
-
-              colorSegments[nLineParagraph + i].push({
-                type: 'relation_color',
-                iStart: 0,
-                iEnd: line.length
-              });
-
-            }
-
-            if((firstLine == "groups colors:" || firstLine == "categories colors:") && index != -1 && ColorOperators.colorStringToRGB(line.split(':')[1]) != null) {
-              //console.log(line)
-              //console.log('  color to group!');
-
-              colorLinesGroups.push(line);
-
-              if(colorSegments[nLineParagraph + i] == null) colorSegments[nLineParagraph + i] = [];
-
-              colorSegments[nLineParagraph + i].push({
-                type: 'relation_color',
-                iStart: 0,
-                iEnd: line.length
-              });
-
-            }
-          });
-        }
-
-      } else { //node
-
-        minIndex = 99999999;
-
-        index = line.indexOf(NetworkEncodings.nodeNameSeparators[0]);
-
-        if(index != -1) {
-          minIndex = index;
-          sep = NetworkEncodings.nodeNameSeparators[0];
-        }
-
-        j = 1;
-
-        while(j < NetworkEncodings.nodeNameSeparators.length) {
-          index = line.indexOf(NetworkEncodings.nodeNameSeparators[j]);
-          if(index != -1) {
-            minIndex = Math.min(index, minIndex);
-            sep = NetworkEncodings.nodeNameSeparators[j];
-          }
-          j++;
-        }
-
-
-        index = minIndex == 99999999 ? -1 : minIndex;
-
-        name = index == -1 ? line : line.substr(0, index);
-        name = name.trim();
-
-        if(name != "") {
-          id = NetworkEncodings._simplifyForNoteWork(name);
-
-          node = network.nodeList.getNodeById(id);
-
-          iEnd = index == -1 ? line.length : index;
-
-          if(node == null) {
-
-            node = new Node(id, name);
-            node._nLine = nLineParagraph;
-            network.addNode(node);
-            node.content = index != -1 ? line.substr(index + sep.length).trim() : "";
-
-            node._lines = lines ? lines.slice(1) : new StringList();
-
-            node.position = network.nodeList.length - 1;
-
-            if(colorSegments[nLineParagraph] == null) colorSegments[nLineParagraph] = [];
-
-            colorSegments[nLineParagraph].push({
-              type: 'node_name',
-              iStart: 0,
-              iEnd: iEnd
-            });
-
-          } else {
-            if(lines != null) node._lines = node._lines.concat(lines.slice(1));
-
-            node.content += index != -1 ? (" | " + line.substr(index + sep.length).trim()) : "";
-
-            if(colorSegments[nLineParagraph] == null) colorSegments[nLineParagraph] = [];
-
-            colorSegments[nLineParagraph].push({
-              type: 'node_name_repeated',
-              iStart: 0,
-              iEnd: iEnd
-            });
-          }
-        } else {
-
-        }
-      }
-
-      nLineParagraph += (lines ? lines.length : 1) + 1;
-    });
-
-
-    //find equalities (synonyms)
-
-    var foundEquivalences = true;
-
-    while(foundEquivalences) {
-      foundEquivalences = false;
-
-      loop: for(i = 0; network.nodeList[i] != null; i++) {
-        node = network.nodeList[i];
-
-        loop2: for(j = 0; node._lines[j] != null; j++) {
-          line = node._lines[j];
-
-          if(line.indexOf('=') == 0) {
-
-            id2 = NetworkEncodings._simplifyForNoteWork(line.substr(1));
-            otherNode = network.nodeList.getNodeById(id2);
-
-            if(otherNode && node != otherNode) {
-
-              foundEquivalences = true;
-
-              node._lines = otherNode._lines.concat(otherNode._lines);
-
-              network.nodeList.removeNode(otherNode);
-              network.nodeList.ids[otherNode.id] = node;
-
-              break loop;
-              break loop2;
-            } else {
-              network.nodeList.ids[id2] = otherNode;
-            }
-
-            if(!node._otherIds) node._otherIds = [];
-            node._otherIds.push(id2);
-          }
-        }
-      }
-    }
-
-
-    //build relations and nodes properties
-
-    network.nodeList.forEach(function(node) {
-
-      nLineParagraph = node._nLine;
-
-      //console.log('node.nLineWeight', node.nLineWeight);
-
-      node._lines.forEach(function(line, i) {
-
-        if(line.indexOf('=') != -1) {
-
-        } else if(line.indexOf(':') > 0) {
-
-          simpleLine = line.trim();
-
-          propertyName = removeAccentsAndDiacritics(simpleLine.split(':')[0]).replace(/\s/g, "_");
-
-          propertyValue = line.split(':')[1].trim();
-          if(propertyValue == String(Number(propertyValue))) propertyValue = Number(propertyValue);
-
-          if(propertyValue != null) {
-            node[propertyName] = propertyValue;
-            if(network.nodesPropertiesNames.indexOf(propertyName) == -1) network.nodesPropertiesNames.push(propertyName);
-          }
-
-        } else {
-          simpleLine = line;
-
-          network.nodeList.forEach(function(otherNode) {
-            regex = NetworkEncodings._regexWordForNoteWork(otherNode.id);
-            index = simpleLine.search(regex);
-
-            if(index == -1 && otherNode._otherIds) {
-              for(j = 0; otherNode._otherIds[j] != null; j++) {
-                regex = NetworkEncodings._regexWordForNoteWork(otherNode._otherIds[j]);
-                index = simpleLine.search(regex);
-                if(index != -1) break;
-              }
-            }
-
-            if(index != -1) {
-              iEnd = index + simpleLine.substr(index).match(regex)[0].length;
-
-              relation = network.relationList.getFirstRelationBetweenNodes(node, otherNode, true);
-
-
-              if(relation != null) {
-
-                content = relation.node0.name + " " + line;
-
-                relation.content += " | " + content;
-
-                if(colorSegments[nLineParagraph + i + 1] == null) colorSegments[nLineParagraph + i + 1] = [];
-
-                colorSegments[nLineParagraph + i + 1].push({
-                  type: 'node_name_in_repeated_relation',
-                  iStart: index,
-                  iEnd: iEnd
-                });
-
-              } else {
-                relation = network.relationList.getFirstRelationBetweenNodes(otherNode, node, true);
-
-                if(relation == null || relation.content != content) {
-
-                  var relationName = line;
-
-                  var regex = NetworkEncodings._regexWordForNoteWork(node.id);
-                  index = relationName.search(regex);
-
-                  if(index != -1) {
-                    relationName = relationName.substr(index);
-                    relationName = relationName.replace(regex, "").trim();
-                  }
-
-                  //console.log(node.id, "*", line, "*", index, "*", line.substr(index));
-
-                  //line = line.replace(regex, "").trim();
-
-                  regex = NetworkEncodings._regexWordForNoteWork(otherNode.id);
-                  index = relationName.search(regex);
-                  relationName = "… " + relationName.substr(0, index).trim() + " …";
-
-                  id = line;
-                  relation = new Relation(line, relationName, node, otherNode);
-
-                  content = relation.node0.name + " " + line;
-
-                  relation.content = content; //.substr(0,index);
-                  network.addRelation(relation);
-
-                  if(colorSegments[nLineParagraph + i + 1] == null) colorSegments[nLineParagraph + i + 1] = [];
-
-                  colorSegments[nLineParagraph + i + 1].push({
-                    type: 'node_name_in_relation',
-                    iStart: index,
-                    iEnd: iEnd
-                  });
-
-                }
-              }
-            }
-          });
-        }
-      });
-
-      node.positionWeight = Math.pow(network.nodeList.length - node.position - 1 / network.nodeList.length, 2);
-      node.combinedWeight = node.positionWeight + node.nodeList.length * 0.1;
-
-    });
-
-
-    //colors in relations and groups
-
-    colorLinesRelations.forEach(function(line) {
-      index = line.indexOf(':');
-      var texts = line.substr(0, index).split(',');
-      texts.forEach(function(text) {
-        var color = line.substr(index + 1);
-        network.relationList.forEach(function(relation) {
-          if(relation.name.indexOf(text) != -1) relation.color = color;
-        });
-      });
-    });
-
-    colorLinesGroups.forEach(function(line) {
-      index = line.indexOf(':');
-      var texts = line.substr(0, index).split(',');
-      texts.forEach(function(text) {
-        var color = line.substr(index + 1);
-        network.nodeList.forEach(function(node) {
-          if(node.group == text) node.color = color;
-          if(node.category == text) node.color = color;
-        });
-      });
-    });
-
-    network.colorSegments = colorSegments;
-
-    return network;
-  };
-
-  /**
-   * @ignore
-   */
-  NetworkEncodings._simplifyForNoteWork = function(name) {
-    name = name.toLowerCase();
-    if(name.substr(name.length - 2) == 'es') {
-      name = name.substr(0, name.length - 1);
-    } else if(name.charAt(name.length - 1) == 's') name = name.substr(0, name.length - 1);
-    return name.trim();
-  };
-
-  /**
-   * _regexWordForNoteWork
-   *
-   * @param word
-   * @param global
-   * @return {undefined}
-   * @ignore
-   */
-  NetworkEncodings._regexWordForNoteWork = function(word, global) {
-    global = global == null ? true : global;
-    try {
-      return new RegExp("(\\b)(" + word + "|" + word + "s|" + word + "es)(\\b)", global ? "gi" : "i");
-    } catch(err) {
-      return null;
-    }
-  };
-
-  /**
-   * Encodes a network into NoteWork notes.
-   *
-   * @param  {Network} network Network to encode.
-   * @param  {String} nodeContentSeparator Separator between node name and content. Uses comma if not defined.
-   * @param  {StringList} nodesPropertyNames Node properties to be encoded.
-   * If not defined, no Node properties are encoded.
-   * @param  {StringList} relationsPropertyNames Relations properties to be encoded.
-   * If not defined, no Relation properties are encoded.
-   * @return {String} NoteWork based representation of Network.
-   * tags:encoding
-   */
-  NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesPropertyNames, relationsPropertyNames) {
-    if(network == null) return;
-
-    var node, relation, other;
-    var propName;
-    var code = "";
-    var simpNodeName;
-    var regex, lineRelation;
-
-    var codedRelationsContents;
-
-    nodeContentSeparator = nodeContentSeparator || ', ';
-    nodesPropertyNames = nodesPropertyNames || [];
-    relationsPropertyNames = relationsPropertyNames || [];
-
-    network.nodeList.forEach(function(node) {
-      code += node.name;
-      if(node.content && node.content != "") code += nodeContentSeparator + node.content;
-      code += "\n";
-
-      nodesPropertyNames.forEach(function(propName) {
-        if(node[propName] != null) code += propName + ":" + String(node[propName]) + "\n";
-      });
-
-      codedRelationsContents = new StringList();
-
-      node.toRelationList.forEach(function(relation) {
-
-        var content = ((relation.content == null ||  relation.content == "") && relation.description) ? relation.description : relation.content;
-
-        if(content && content != "") {
-          regex = NetworkEncodings._regexWordForNoteWork(relation.node1.name);
-          lineRelation = content + ((regex != null && content.search(regex) == -1) ? (" " + relation.node1.name) : "");
-        } else {
-          lineRelation = "connected with " + relation.node1.name;
-        }
-
-        if(codedRelationsContents.indexOf(lineRelation) == -1) {
-          code += lineRelation;
-          code += "\n";
-          codedRelationsContents.push(lineRelation);
-        }
-
-      });
-
-      code += "\n";
-
-    });
-
-    return code;
-  };
-
-
-
-
-
-  //////////////GDF
-
-  /**
-   * Creates Network from a GDF string representation.
-   *
-   * @param  {String} gdfCode GDF serialized Network representation.
-   * @return {Network}
-   * tags:decoder
-   */
-  NetworkEncodings.decodeGDF = function(gdfCode) {
-    if(gdfCode == null || gdfCode == "") return;
-
-    var network = new Network();
-    var lines = gdfCode.split("\n"); //TODO: split by ENTERS OUTSIDE QUOTEMARKS
-    if(lines.length == 0) return null;
-    var line;
-    var i;
-    var j;
-    var parts;
-
-    var nodesPropertiesNames = lines[0].substr(8).split(",");
-
-    var iEdges;
-
-    for(i = 1; lines[i] != null; i++) {
-      line = lines[i];
-      if(line.substr(0, 8) == "edgedef>") {
-        iEdges = i + 1;
-        break;
-      }
-      line = NetworkEncodings.replaceChomasInLine(line);
-      parts = line.split(",");
-      var node = new Node(String(parts[0]), String(parts[1]));
-      for(j = 0; (nodesPropertiesNames[j] != null && parts[j] != null); j++) {
-        if(nodesPropertiesNames[j] == "weight") {
-          node.weight = Number(parts[j]);
-        } else if(nodesPropertiesNames[j] == "x") {
-          node.x = Number(parts[j]);
-        } else if(nodesPropertiesNames[j] == "y") {
-          node.y = Number(parts[j]);
-        } else {
-          node[nodesPropertiesNames[j]] = parts[j].replace(/\*CHOMA\*/g, ",");
-        }
-      }
-      network.addNode(node);
-    }
-
-    var relationsPropertiesNames = lines[iEdges - 1].substr(8).split(",");
-
-    for(i = iEdges; lines[i] != null; i++) {
-      line = lines[i];
-      line = NetworkEncodings.replaceChomasInLine(line);
-      parts = line.split(",");
-      if(parts.length >= 2) {
-        var node0 = network.nodeList.getNodeById(String(parts[0]));
-        var node1 = network.nodeList.getNodeById(String(parts[1]));
-        if(node0 == null || node1 == null) {
-          console.log("NetworkEncodings.decodeGDF | [!] problems with nodes ids:", parts[0], parts[1], "at line", i);
-        } else {
-          var id = node0.id + "_" + node1.id + "_" + Math.floor(Math.random() * 999999);
-          var relation = new Relation(id, id, node0, node1);
-          for(j = 2; (relationsPropertiesNames[j] != null && parts[j] != null); j++) {
-            if(relationsPropertiesNames[j] == "weight") {
-              relation.weight = Number(parts[j]);
-            } else {
-              relation[relationsPropertiesNames[j]] = parts[j].replace(/\*CHOMA\*/g, ",");
-            }
-          }
-          network.addRelation(relation);
-        }
-      }
-
-    }
-
-    return network;
-  };
-
-  /**
-   * Encodes a network in GDF Format, more info on GDF
-   * format can be found from
-   * {@link https://gephi.org/users/supported-graph-formats/gml-format/|Gephi}.
-   *
-   * @param  {Network} network Network to encode.
-   * @param  {StringList} nodesPropertiesNames Names of nodes properties to be encoded.
-   * @param  {StringList} relationsPropertiesNames Names of relations properties to be encoded
-   * @return {String} GDF encoding of Network.
-   * tags:encoder
-   */
-  NetworkEncodings.encodeGDF = function(network, nodesPropertiesNames, relationsPropertiesNames) {
-    if(network == null) return;
-
-    nodesPropertiesNames = nodesPropertiesNames == null ? new StringList() : nodesPropertiesNames;
-    relationsPropertiesNames = relationsPropertiesNames == null ? new StringList() : relationsPropertiesNames;
-
-    var code = "nodedef>id" + (nodesPropertiesNames.length > 0 ? "," : "") + nodesPropertiesNames.join(",");
-    var i;
-    var j;
-    var node;
-    for(i = 0; network.nodeList[i] != null; i++) {
-      node = network.nodeList[i];
-      code += "\n" + node.id;
-      for(j = 0; nodesPropertiesNames[j] != null; j++) {
-
-        if(typeof node[nodesPropertiesNames[j]] == 'string') {
-          code += ",\"" + node[nodesPropertiesNames[j]] + "\"";
-        } else {
-          code += "," + node[nodesPropertiesNames[j]];
-        }
-      }
-    }
-
-    code += "\nedgedef>id0,id1" + (relationsPropertiesNames.length > 0 ? "," : "") + relationsPropertiesNames.join(",");
-    var relation;
-    for(i = 0; network.relationList[i] != null; i++) {
-      relation = network.relationList[i];
-      code += "\n" + relation.node0.id + "," + relation.node1.id;
-      for(j = 0; relationsPropertiesNames[j] != null; j++) {
-
-        if(typeof relation[relationsPropertiesNames[j]] == 'string') {
-          code += ",\"" + relation[relationsPropertiesNames[j]] + "\"";
-        } else {
-          code += "," + relation[relationsPropertiesNames[j]];
-        }
-      }
-    }
-
-    return code;
-  };
-
-
-  //////////////GML
-
-  /**
-   * Decodes a GML file into a new Network.
-   *
-   * @param  {String} gmlCode GML based representation of Network.
-   * @return {Network}
-   * tags:decoder
-   */
-  NetworkEncodings.decodeGML = function(gmlCode) {
-    if(gmlCode == null) return null;
-
-    gmlCode = gmlCode.substr(gmlCode.indexOf("[") + 1);
-
-    var network = new Network();
-
-    var firstEdgeIndex = gmlCode.search(/\bedge\b/);
-
-    var nodesPart = gmlCode.substr(0, firstEdgeIndex);
-    var edgesPart = gmlCode.substr(firstEdgeIndex);
-
-    var part = nodesPart;
-
-    var blocks = StringOperators.getParenthesisContents(part, true);
-
-    //console.log('blocks.length', blocks.length);
-
-    var graphicsBlock;
-    var lines;
-    var lineParts;
-
-    var indexG0;
-    var indexG1;
-
-    var node;
-
-    for(var i = 0; blocks[i] != null; i++) {
-      blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\n");
-      blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\r");
-
-      indexG0 = blocks[i].indexOf('graphics');
-      if(indexG0 != -1) {
-        indexG1 = blocks[i].indexOf(']');
-        graphicsBlock = blocks[i].substring(indexG0, indexG1 + 1);
-        blocks[i] = blocks[i].substr(0, indexG0) + blocks[i].substr(indexG1 + 1);
-
-        graphicsBlock = StringOperators.getFirstParenthesisContent(graphicsBlock, true);
-        blocks[i] = blocks[i] + graphicsBlock;
-      }
-
-      lines = blocks[i].split('\n');
-
-      lines[0] = NetworkEncodings._cleanLineBeginning(lines[0]);
-
-      lineParts = lines[0].split(" ");
-
-      node = new Node(StringOperators.removeQuotes(lineParts[1]), StringOperators.removeQuotes(lineParts[1]));
-
-      network.addNode(node);
-
-      for(var j = 1; lines[j] != null; j++) {
-        lines[j] = NetworkEncodings._cleanLineBeginning(lines[j]);
-        lines[j] = NetworkEncodings._replaceSpacesInLine(lines[j]);
-        if(lines[j] != "") {
-          lineParts = lines[j].split(" ");
-          if(lineParts[0] == 'label') lineParts[0] = 'name';
-          node[lineParts[0]] = (lineParts[1].charAt(0) == "\"") ? StringOperators.removeQuotes(lineParts[1]).replace(/\*SPACE\*/g, " ") : Number(lineParts[1]);
-        }
-      }
-    }
-
-    part = edgesPart;
-    blocks = StringOperators.getParenthesisContents(part, true);
-
-    var id0;
-    var id1;
-    var node0;
-    var node1;
-    var relation;
-    var nodes = network.nodeList;
-
-
-    for(i = 0; blocks[i] != null; i++) {
-      blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\n");
-      blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\r");
-
-      lines = blocks[i].split('\n');
-
-      id0 = null;
-      id1 = null;
-      relation = null;
-
-      for(j = 0; lines[j] != null; j++) {
-        lines[j] = NetworkEncodings._cleanLineBeginning(lines[j]);
-        if(lines[j] != "") {
-          lineParts = lines[j].split(" ");
-          if(lineParts[0] == 'source') id0 = StringOperators.removeQuotes(lineParts[1]);
-          if(lineParts[0] == 'target') id1 = StringOperators.removeQuotes(lineParts[1]);
-
-          if(relation == null) {
-            if(id0 != null && id1 != null) {
-              node0 = nodes.getNodeById(id0);
-              node1 = nodes.getNodeById(id1);
-              if(node0 != null && node1 != null) {
-                relation = new Relation(id0 + " " + id1, '', node0, node1);
-                network.addRelation(relation);
-              }
-            }
-          } else {
-            if(lineParts[0] == 'value') lineParts[0] = 'weight';
-            relation[lineParts[0]] = (lineParts[1].charAt(0) == "\"") ? StringOperators.removeQuotes(lineParts[1]) : Number(lineParts[1]);
-          }
-        }
-
-      }
-
-    }
-
-    return network;
-  };
-
-  /**
-   * _cleanLineBeginning
-   *
-   * @param string
-   * @ignore
-   */
-  NetworkEncodings._cleanLineBeginning = function(string) {
-    string = StringOperators.removeInitialRepeatedCharacter(string, "\n");
-    string = StringOperators.removeInitialRepeatedCharacter(string, "\r");
-    string = StringOperators.removeInitialRepeatedCharacter(string, " ");
-    string = StringOperators.removeInitialRepeatedCharacter(string, "	");
-    return string;
-  };
-
-
-  /**
-   * Encodes a network into GDF format.
-   *
-   * @param  {Network} network The Network to encode.
-   *
-   * @param  {StringList} nodesPropertiesNames Names of Node properties to encode.
-   * @param  {StringList} relationsPropertiesNames Names of Relation properties to encode.
-   * @param {Boolean} idsAsInts If true, then the index of the Node is used as an ID.
-   * GDF strong specification requires ids for nodes being int numbers.
-   * @return {String} GDF string.
-   * tags:encoder
-   */
-  NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPropertiesNames, idsAsInts) {
-    if(network == null) return;
-
-    idsAsInts = idsAsInts == null ? true : idsAsInts;
-
-    nodesPropertiesNames = nodesPropertiesNames == null ? new StringList() : nodesPropertiesNames;
-    relationsPropertiesNames = relationsPropertiesNames == null ? new StringList() : relationsPropertiesNames;
-
-    var code = "graph\n[";
-    var ident = "	";
-    var i;
-    var j;
-    var node;
-    var isString;
-    var value;
-    for(i = 0; network.nodeList[i] != null; i++) {
-      node = network.nodeList[i];
-      code += "\n" + ident + "node\n" + ident + "[";
-      ident = "		";
-      if(idsAsInts) {
-        code += "\n" + ident + "id " + i;
-      } else {
-        code += "\n" + ident + "id \"" + node.id + "\"";
-      }
-      if(node.name != '') code += "\n" + ident + "label \"" + node.name + "\"";
-      for(j = 0; nodesPropertiesNames[j] != null; j++) {
-        value = node[nodesPropertiesNames[j]];
-        if(value == null) continue;
-        if(value.getMonth) value = DateOperators.dateToString(value);
-        isString = (typeof value == 'string');
-        if(isString) value = value.replace(/\n/g, "\\n").replace(/\"/g, "'");
-        code += "\n" + ident + nodesPropertiesNames[j] + " " + (isString ? "\"" + value + "\"" : value);
-      }
-      ident = "	";
-      code += "\n" + ident + "]";
-    }
-
-    var relation;
-    for(i = 0; network.relationList[i] != null; i++) {
-      relation = network.relationList[i];
-      code += "\n" + ident + "edge\n" + ident + "[";
-      ident = "		";
-      if(idsAsInts) {
-        code += "\n" + ident + "source " + network.nodeList.indexOf(relation.node0);
-        code += "\n" + ident + "target " + network.nodeList.indexOf(relation.node1);
-      } else {
-        code += "\n" + ident + "source \"" + relation.node0.id + "\"";
-        code += "\n" + ident + "target \"" + relation.node1.id + "\"";
-      }
-      for(j = 0; relationsPropertiesNames[j] != null; j++) {
-        value = relation[relationsPropertiesNames[j]];
-        if(value == null) continue;
-        if(value.getMonth) value = DateOperators.dateToString(value);
-        isString = (typeof value == 'string');
-        if(isString) value = value.replace(/\n/g, "\\n").replace(/\"|“|”/g, "'");
-        code += "\n" + ident + relationsPropertiesNames[j] + " " + (isString ? "\"" + value + "\"" : value);
-      }
-      ident = "	";
-      code += "\n" + ident + "]";
-    }
-
-    code += "\n]";
-    return code;
-  };
-
-
-
-
-
-  //////////////SYM
-
-  /**
-   * decodeSYM
-   *
-   * @param symCode
-   * @return {Network}
-   */
-  NetworkEncodings.decodeSYM = function(symCode) {
-    //console.log("/////// decodeSYM\n"+symCode+"\n/////////");
-    var i;
-    var j;
-
-    var lines = StringOperators.splitByEnter(symCode);
-    lines = lines == null ? [] : lines;
-
-    var objectPattern = /((?:NODE|RELATION)|GROUP)\s*([A-Za-z0-9_,\s]*)/;
-
-    var network = new Network();
-    var groups = new Table();
-    var name;
-    var id;
-    var node;
-    var node1;
-    var relation;
-    var group;
-    var groupName;
-    var parts;
-    var propName;
-    var propCont;
-
-    var nodePropertiesNames = [];
-    var relationPropertiesNames = [];
-    var groupsPropertiesNames = [];
-
-    for(i = 0; lines[i] != null; i++) {
-      var bits = objectPattern.exec(lines[i]);
-      if(bits != null) {
-        switch(bits[1]) {
-          case "NODE":
-            id = bits[2];
-            name = lines[i + 1].substr(0, 5) == "name:" ? lines[i + 1].substr(5).trim() : "";
-            name = name.replace(/\\n/g, '\n').replace(/\\'/g, "'");
-            node = new Node(id, name);
-            network.addNode(node);
-            j = i + 1;
-            while(j < lines.length && lines[j].indexOf(":") != -1) {
-              parts = lines[j].split(":");
-              propName = parts[0];
-              propCont = parts.slice(1).join(":");
-              if(propName != "name") {
-                propCont = propCont.trim();
-                node[propName] = String(Number(propCont)) == propCont ? Number(propCont) : propCont;
-                if(typeof node[propName] == "string") node[propName] = node[propName].replace(/\\n/g, '\n').replace(/\\'/g, "'");
-                if(nodePropertiesNames.indexOf(propName) == -1) nodePropertiesNames.push(propName);
-              }
-              j++;
-            }
-            if(node.color != null) {
-              if(/.+,.+,.+/.test(node.color)) node.color = 'rgb(' + node.color + ')';
-            }
-            if(node.group != null) {
-              group = groups.getFirstElementByPropertyValue("name", node.group);
-              if(group == null) {
-                console.log("NODES new group:[" + node.group + "]");
-                group = new NodeList();
-                group.name = node.group;
-                group.name = group.name.replace(/\\n/g, '\n').replace(/\\'/g, "'");
-                groups.push(group);
-              }
-              group.addNode(node);
-              //node.group = group;
-            }
-            break;
-          case "RELATION":
-            var ids = bits[2].replace(/\s/g, "").split(",");
-            //var ids = bits[2].split(",");
-            node = network.nodeList.getNodeById(ids[0]);
-            node1 = network.nodeList.getNodeById(ids[1]);
-            if(node != null && node1 != null) {
-              relation = new Relation(node.id + "_" + node1.id, node.id + "_" + node1.id, node, node1);
-              network.addRelation(relation);
-              j = i + 1;
-              while(j < lines.length && lines[j].indexOf(":") != -1) {
-                parts = lines[j].split(":");
-                propName = parts[0];
-                propCont = parts.slice(1).join(":").trim();
-                if(propName != "name") {
-                  propCont = propCont.trim();
-                  relation[propName] = String(Number(propCont)) == propCont ? Number(propCont) : propCont;
-                  if(typeof relation[propName] == "string") relation[propName] = relation[propName].replace(/\\n/g, '\n').replace(/\\'/g, "'");
-                  if(relationPropertiesNames.indexOf(propName) == -1) relationPropertiesNames.push(propName);
-                }
-                j++;
-              }
-            }
-            if(relation != null && relation.color != null) {
-              relation.color = 'rgb(' + relation.color + ')';
-            }
-            break;
-          case "GROUP":
-            groupName = lines[i].substr(5).trim();
-
-            group = groups.getFirstElementByPropertyValue("name", groupName);
-            if(group == null) {
-              group = new NodeList();
-              group.name = groupName;
-              groups.push(group);
-            }
-            j = i + 1;
-            while(j < lines.length && lines[j].indexOf(":") != -1) {
-              parts = lines[j].split(":");
-              if(parts[0] != "name") {
-                parts[1] = parts[1].trim();
-                group[parts[0]] = String(Number(parts[1])) == parts[1] ? Number(parts[1]) : parts[1];
-                if(groupsPropertiesNames.indexOf(parts[0]) == -1) groupsPropertiesNames.push(parts[0]);
-              }
-              j++;
-            }
-
-            if(/.+,.+,.+/.test(group.color)) group.color = 'rgb(' + group.color + ')';
-
-            break;
-        }
-      }
-    }
-
-    for(i = 0; groups[i] != null; i++) {
-      group = groups[i];
-      if(group.color == null) group.color = CATEGORICAL_COLORS[i % CATEGORICAL_COLORS.length];
-      for(j = 0; group[j] != null; j++) {
-        node = group[j];
-        if(node.color == null) node.color = group.color;
-      }
-    }
-
-    network.groups = groups;
-
-
-
-    network.nodePropertiesNames = nodePropertiesNames;
-    network.relationPropertiesNames = relationPropertiesNames;
-    network.groupsPropertiesNames = groupsPropertiesNames;
-
-    return network;
-  };
-
-  /**
-   * encodeSYM
-   *
-   * @param network
-   * @param groups
-   * @param nodesPropertiesNames
-   * @param relationsPropertiesNames
-   * @param groupsPropertiesNames
-   * @return {String}
-   */
-  NetworkEncodings.encodeSYM = function(network, groups, nodesPropertiesNames, relationsPropertiesNames, groupsPropertiesNames) {
-    nodesPropertiesNames = nodesPropertiesNames == null ? new StringList() : nodesPropertiesNames;
-    relationsPropertiesNames = relationsPropertiesNames == null ? new StringList() : relationsPropertiesNames;
-
-    var code = "";
-    var i;
-    var j;
-    var node;
-    var propertyName;
-    for(i = 0; network.nodeList[i] != null; i++) {
-      node = network.nodeList[i];
-      code += (i == 0 ? "" : "\n\n") + "NODE " + node.id;
-      if(node.name != "") code += "\nname:" + (node.name).replace(/\n/g, "\\n");
-      for(j = 0; nodesPropertiesNames[j] != null; j++) {
-        propertyName = nodesPropertiesNames[j];
-        if(node[propertyName] != null) code += "\n" + propertyName + ":" + _processProperty(propertyName, node[propertyName]);
-      }
-    }
-
-    var relation;
-    for(i = 0; network.relationList[i] != null; i++) {
-      relation = network.relationList[i];
-      code += "\n\nRELATION " + relation.node0.id + ", " + relation.node1.id;
-      for(j = 0; relationsPropertiesNames[j] != null; j++) {
-        propertyName = relationsPropertiesNames[j];
-        if(relation[propertyName] != null) code += "\n" + propertyName + ":" + _processProperty(propertyName, relation[propertyName]);
-      }
-    }
-
-    if(groups == null) return code;
-
-    var group;
-    for(i = 0; groups[i] != null; i++) {
-      group = groups[i];
-      code += "\n\nGROUP " + group.name;
-      for(j = 0; groupsPropertiesNames[j] != null; j++) {
-        propertyName = groupsPropertiesNames[j];
-        if(group[propertyName] != null) code += "\n" + propertyName + ":" + _processProperty(propertyName, group[propertyName]);
-      }
-    }
-
-    //console.log("/////// encodeSYM\n"+code+"\n/////////");
-
-    return code;
-  };
-
-  function _processProperty(propName, propValue) { //TODO: use this in other encoders
-    switch(propName) {
-      case "color":
-        if(propValue.substr(0, 3) == "rgb") {
-          var rgb = ColorOperators.colorStringToRGB(propValue);
-          return rgb.join(',');
-        }
-        return propValue;
-        break;
-    }
-    propValue = String(propValue).replace(/\n/g, "\\n");
-    return propValue;
-  };
-
-
-
-
-
-  /////////////////
-
-  //Also used by CSVToTable
-
-  /**
-   * replaceChomasInLine
-   *
-   * @param line
-   * @return {undefined}
-   * @ignore
-   */
-  NetworkEncodings.replaceChomasInLine = function(line) {
-    var quoteBlocks = line.split("\"");
-    if(quoteBlocks.length < 2) return line;
-    var insideQuote;
-    var i;
-    for(i = 0; quoteBlocks[i] != null; i++) {
-      insideQuote = i * 0.5 != Math.floor(i * 0.5);
-      if(insideQuote) {
-        quoteBlocks[i] = quoteBlocks[i].replace(/,/g, "*CHOMA*");
-      }
-    }
-    line = StringList.fromArray(quoteBlocks).getConcatenated("");
-    return line;
-  };
-
-  /**
-   * _replaceSpacesInLine
-   *
-   * @param line
-   * @return {undefined}
-   * @ignore
-   */
-  NetworkEncodings._replaceSpacesInLine = function(line) {
-    var quoteBlocks = line.split("\"");
-    if(quoteBlocks.length < 2) return line;
-    var insideQuote;
-    var i;
-    for(i = 0; quoteBlocks[i] != null; i++) {
-      insideQuote = i * 0.5 != Math.floor(i * 0.5);
-      if(insideQuote) {
-        quoteBlocks[i] = quoteBlocks[i].replace(/ /g, "*SPACE*");
-      }
-    }
-    line = StringList.fromArray(quoteBlocks).getConcatenated("\"");
-    return line;
-  };
-
-  exports.NetworkEncodings = NetworkEncodings;
-
-  function TableEncodings() {}
-
-
-  TableEncodings.ENTER = String.fromCharCode(13);
-  TableEncodings.ENTER2 = String.fromCharCode(10);
-  TableEncodings.ENTER3 = String.fromCharCode(8232);
-
-  TableEncodings.SPACE = String.fromCharCode(32);
-  TableEncodings.SPACE2 = String.fromCharCode(160);
-
-  TableEncodings.TAB = "	";
-  TableEncodings.TAB2 = String.fromCharCode(9);
-
-
-  /**
-   * Decode a String in format CSV into a Table
-   * @param {String} csv CSV formatted text
-   *
-   * @param {Boolean} first_row_header first row is header (default: false)
-   * @param {String} separator separator character (default: ",")
-   * @param {Object} value_for_nulls Object to be placed instead of null values
-   * @return {Table} resulting Table
-   * tags:decoder
-   */
-  TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, valueForNulls) {
-    if(csvString==null) return null;
-    valueForNulls = valueForNulls == null ? 0 : valueForNulls;
-
-    var i, j;
-    var _firstRowIsHeader = firstRowIsHeader == null ? false : firstRowIsHeader;
-
-    if(csvString == null) return null;
-    if(csvString == "") return new Table();
-
-    csvString = csvString.replace(/\$/g, "");
-
-    var blocks = csvString.split("\"");
-    for(i = 1; blocks[i] != null; i += 2) {
-      blocks[i] = blocks[i].replace(/\n/g, "*ENTER*");
-    }
-    csvString = blocks.join("\""); //TODO: create a general method for replacements inside "", apply it to chomas
-
-    var enterChar = TableEncodings.ENTER2;
-    var lines = csvString.split(enterChar);
-    if(lines.length == 1) {
-      enterChar = TableEncodings.ENTER;
-      lines = csvString.split(enterChar);
-      if(lines.length == 1) {
-        enterChar = TableEncodings.ENTER3;
-        lines = csvString.split(enterChar);
-      }
-    }
-
-    var table = new Table();
-    var comaCharacter = separator != undefined ? separator : ",";
-
-    if(csvString == null || csvString == "" || csvString == " " || lines.length == 0) return null;
-
-    var startIndex = 0;
-    if(_firstRowIsHeader) {
-      startIndex = 1;
-      var headerContent = lines[0].split(comaCharacter);
-    }
-
-    var element;
-    var cellContent;
-    var numberCandidate;
-    for(i = startIndex; i < lines.length; i++) {
-      if(lines[i].length < 2) continue;
-
-      var cellContents = NetworkEncodings.replaceChomasInLine(lines[i]).split(comaCharacter); //TODO: will be obsolete (see previous TODO)
-
-      for(j = 0; j < cellContents.length; j++) {
-        table[j] = table[j] == null ? new List__default() : table[j];
-        if(_firstRowIsHeader && i == 1) {
-          table[j].name = ( headerContent[j] == null ? "" : TableEncodings._removeQuotes(headerContent[j]) ).trim();
-        }
-        var actualIndex = _firstRowIsHeader ? (i - 1) : i;
-
-        cellContent = cellContents[j].replace(/\*CHOMA\*/g, ",").replace(/\*ENTER\*/g, "\n");
-
-        cellContent = cellContent == '' ? valueForNulls : cellContent;
-
-        cellContent = String(cellContent);
-
-        numberCandidate = Number(cellContent.replace(',', '.'));
-
-        element = (numberCandidate || (numberCandidate == 0 && cellContent != '')) ? numberCandidate : cellContent;
-
-        if(typeof element == 'string') element = TableEncodings._removeQuotes(element);
-
-        table[j][actualIndex] = element;
-      }
-    }
-
-    for(i = 0; table[i] != null; i++) {
-      table[i] = table[i].getImproved();
-    }
-
-    table = table.getImproved();
-
-    return table;
-  };
-
-  TableEncodings._removeQuotes = function(string) {
-    if(string.length == 0) return string;
-    if((string.charAt(0) == "\"" || string.charAt(0) == "'") && (string.charAt(string.length - 1) == "\"" || string.charAt(string.length - 1) == "'")) string = string.substr(1, string.length - 2);
-    return string;
-  };
-
-
-  /**
-   * Encode a Table into a String in format CSV
-   * @param {Table} Table to be enconded
-   *
-   * @param {String} separator character (default: ",")
-   * @param {Boolean} first row as List names (default: false)
-   * @return {String} resulting String in CSV format
-   * tags:encoder
-   */
-  TableEncodings.TableToCSV = function(table, separator, namesAsHeaders) {
-    separator = separator || ",";
-    var i;
-    var j;
-    var list;
-    var type;
-    var lines = ListGenerators.createListWithSameElement(table[0].length, "");
-    var addSeparator;
-    for(i = 0; table[i] != null; i++) {
-      list = table[i];
-      type = list.type;
-      addSeparator = i != table.length - 1;
-      for(j = 0; list[j] != null; j++) {
-        switch(type) {
-          case 'NumberList':
-            lines[j] += list[j];
-            break;
-          default:
-            lines[j] += "\"" + list[j] + "\"";
-            break;
-        }
-        if(addSeparator) lines[j] += separator;
-      }
-    }
-
-    var headers = '';
-    if(namesAsHeaders) {
-      for(i = 0; table[i] != null; i++) {
-        list = table[i];
-        headers += "\"" + list.name + "\"";
-        if(i != table.length - 1) headers += separator;
-      }
-      headers += '\n';
-    }
-
-    return headers + lines.getConcatenated("\n");
-  };
-
-  exports.TableEncodings = TableEncodings;
-
-  /* global console */
-
-  Table.prototype = new List__default();
-  Table.prototype.constructor = Table;
-
-  /**
-   * @classdesc A sub-class of {@link List}, Table provides a 2D array-like structure.
-   *
-   * Each column is stored as its own {@link List}, making it a List of Lists.
-   * Cells in the table can be accessed using table[column][row].
-   *
-   * @description Creates a new Table.
-   * Input arguments are treated as the inital column values
-   * of the Table.
-   * @constructor
-   * @category basics
-   */
-  function Table() {
+  function ColorList() {
     var args = [];
     var i;
     for(i = 0; i < arguments.length; i++) {
-      args[i] = new List__default(arguments[i]);
+      args[i] = arguments[i];
     }
-
     var array = List__default.apply(this, args);
-    array = Table.fromArray(array);
+    array = ColorList.fromArray(array);
 
     return array;
   }
 
 
-  /**
-   * Creates a new Table from an array
-   * @param {Number[]} array
-   * @return {Table}
-   */
-  Table.fromArray = function(array) {
+  ColorList.fromArray = function(array) {
     var result = List__default.fromArray(array);
-    result.type = "Table";
-    //assign methods to array:
-    result.applyFunction = Table.prototype.applyFunction;
-    result.getRow = Table.prototype.getRow;
-    result.getRows = Table.prototype.getRows;
-    result.getLengths = Table.prototype.getLengths;
-    result.getListLength = Table.prototype.getListLength;
-    result.sliceRows = Table.prototype.sliceRows;
-    result.getSubListsByIndexes = Table.prototype.getSubListsByIndexes;
-    result.getWithoutRow = Table.prototype.getWithoutRow;
-    result.getWithoutRows = Table.prototype.getWithoutRows;
-    result.getTransposed = Table.prototype.getTransposed;
-    result.getListsSortedByList = Table.prototype.getListsSortedByList;
-    result.sortListsByList = Table.prototype.sortListsByList;
-    result.getReport = Table.prototype.getReport;
-    result.clone = Table.prototype.clone;
-    result.print = Table.prototype.print;
-
-    //transformative
-    result.removeRow = Table.prototype.removeRow;
-
-    //overiden
-    result.destroy = Table.prototype.destroy;
-
-    result.isTable = true;
-
+    result.type = "ColorList";
+    result.getRgbArrays = ColorList.prototype.getRgbArrays;
+    result.getInterpolated = ColorList.prototype.getInterpolated;
+    result.getInverted = ColorList.prototype.getInverted;
+    result.addAlpha = ColorList.prototype.addAlpha;
     return result;
   };
 
   /**
-   * Executes a given function on all the columns
-   * in the Table, returning a new Table with the
-   * resulting values.
-   * @param {Function} func Function to apply to each
-   * column in the table. Columns are {@link List|Lists}.
-   * @return {Table} Table of values from applying function.
-   */
-  Table.prototype.applyFunction = function(func) {
-    //TODO: to be tested!
-    var i;
-    var newTable = new Table();
-
-    newTable.name = this.name;
-
-    for(i = 0; this[i] != null; i++) {
-      newTable[i] = this[i].applyFunction(func);
-    }
-    return newTable.getImproved();
-  };
-
-  /**
-   * Returns a {@link List} with all the elements of a row.
-   * @param  {Number} index Index of the row to get.
-   * @return {List}
-   * tags:filter
-   */
-  Table.prototype.getRow = function(index) {
-    var list = new List__default();
-    var i;
-    for(i = 0; i < this.length; i++) {
-      list[i] = this[i][index];
-    }
-    return list.getImproved();
-  };
-
-  /**
-   * Returns the length a column of the Table.
-   * @param  {Number} index The Column to return its length.
-   * Defaults to 0.
-   * @return {Number} Length of column at given index.
+   * return an arrays of rgb arrays ([rr,gg,bb])
+   * @return {array}
    * tags:
    */
-  Table.prototype.getListLength = function(index) {
-    return this[index || 0].length;
-  };
+  ColorList.prototype.getRgbArrays = function() {
+    var rgbArrays = new List__default();
 
-  /**
-   * Returns the lengths of all the columns of the Table.
-   * @return {NumberList} Lengths of all columns in Table.
-   */
-  Table.prototype.getLengths = function() {
-    var lengths = new NumberList();
     for(var i = 0; this[i] != null; i++) {
-      lengths[i] = this[i].length;
+      rgbArrays[i] = ColorOperators__default.colorStringToRGB(this[i]);
     }
-    return lengths;
+
+    return rgbArrays;
   };
 
   /**
-   * Filters a Table by selecting a section of rows, elements with last index included.
-   * @param  {Number} startIndex Index of first element in all lists of the table.
-   * @param  {Number} endIndex Index of last elements in all lists of the table.
-   * @return {Table}
-   * tags:filter
-   */
-  Table.prototype.sliceRows = function(startIndex, endIndex) {
-    endIndex = endIndex == null ? (this[0].length - 1) : endIndex;
-
-    var i;
-    var newTable = new Table();
-    var newList;
-
-    newTable.name = this.name;
-    for(i = 0; this[i] != null; i++) {
-      newList = this[i].getSubList(startIndex, endIndex);
-      newList.name = this[i].name;
-      newTable.push(newList);
-    }
-    return newTable.getImproved();
-  };
-
-  /**
-   * Filters the lists of the table by indexes.
-   * @param  {NumberList} indexes
-   * @return {Table}
-   * tags:filter
-   */
-  Table.prototype.getSubListsByIndexes = function(indexes) {
-    var newTable = new Table();
-    this.forEach(function(list) {
-      newTable.push(list.getSubListByIndexes(indexes));
-    });
-    return newTable.getImproved();
-  };
-
-
-  //deprecated
-  /**
-   * @ignore
-   */
-  Table.prototype.getRows = function(indexes) {
-    return Table.prototype.getSubListsByIndexes(indexes);
-  };
-
-  /**
-   * Returns a new Table with the row at the given index removed.
-   * @param {Number} rowIndex Row to remove
-   * @return {Table} New Table.
-   */
-  Table.prototype.getWithoutRow = function(rowIndex) {
-    var newTable = new Table();
-    newTable.name = this.name;
-    for(var i = 0; this[i] != null; i++) {
-      newTable[i] = List__default.fromArray(this[i].slice(0, rowIndex).concat(this[i].slice(rowIndex + 1))).getImproved();
-      newTable[i].name = this[i].name;
-    }
-    return newTable.getImproved();
-  };
-
-  /**
-   * Returns a new Table with the rows listed in the given array removed.
-   * @param {Number[]} rowsIndexes Array of row indecies to remove.
-   * @return {undefined}
-   */
-  Table.prototype.getWithoutRows = function(rowsIndexes) {
-    var newTable = new Table();
-    newTable.name = this.name;
-    for(var i = 0; this[i] != null; i++) {
-      newTable[i] = new List__default();
-      for(var j = 0; this[i][j] != null; j++) {
-        if(rowsIndexes.indexOf(j) == -1) newTable[i].push(this[i][j]);
-      }
-      newTable[i].name = this[i].name;
-    }
-    return newTable.getImproved();
-  };
-
-  /**
-   * Sort Table's lists by a list
-   * @param  {List|Number} listOrIndex List used to sort, or index of list in the table
-   *
-   * @param  {Boolean} ascending (true by default)
-   * @return {Table} table (of the same type)
-   * tags:sort
-   */
-  Table.prototype.getListsSortedByList = function(listOrIndex, ascending) { //depracated: use sortListsByList
-    if(listOrIndex == null) return;
-    var newTable = instantiateWithSameType(this);
-    var sortinglist = listOrIndex.isList ? listOrIndex.clone() : this[listOrIndex];
-
-    this.forEach(function(list) {
-      newTable.push(list.getSortedByList(sortinglist, ascending));
-    });
-
-    return newTable;
-  };
-
-  /**
-   * Transposes Table.
-   * @param firstListAsHeaders
-   * @return {Table}
-   */
-  Table.prototype.getTransposed = function(firstListAsHeaders) {
-
-    var tableToTranspose = firstListAsHeaders ? this.getSubList(1) : this;
-
-    var table = instantiate(typeOf(tableToTranspose));
-    if(tableToTranspose.length === 0) return table;
-    var i;
-    var j;
-    var list;
-
-    for(i = 0; tableToTranspose[i] != null; i++) {
-      list = tableToTranspose[i];
-      for(j = 0; list[j] != null; j++) {
-        if(i === 0) table[j] = new List__default();
-        table[j][i] = tableToTranspose[i][j];
-      }
-    }
-    for(j = 0; tableToTranspose[0][j] != null; j++) {
-      table[j] = table[j].getImproved();
-    }
-
-    if(firstListAsHeaders) {
-      this[0].forEach(function(name, i) {
-        table[i].name = String(name);
-      });
-    }
-
-    return table;
-  };
-
-  /**
-   * Generates a string containing details about the current state
-   * of the Table. Useful for outputing to the console for debugging.
-   * @param {Number} level If greater then zero, will indent to that number of spaces.
-   * @return {String} Description String.
-   */
-  Table.prototype.getReport = function(level) {
-    var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
-    var lengths = this.getLengths();
-    var minLength = lengths.getMin();
-    var maxLength = lengths.getMax();
-    var averageLength = (minLength + maxLength) * 0.5;
-    var sameLengths = minLength == maxLength;
-
-    var text = level > 0 ? (ident + "////report of instance of Table////") : "///////////report of instance of Table//////////";
-
-    if(this.length === 0) {
-      text += ident + "this table has no lists";
-      return text;
-    }
-
-    text += ident + "name: " + this.name;
-    text += ident + "type: " + this.type;
-    text += ident + "number of lists: " + this.length;
-
-    text += ident + "all lists have same length: " + (sameLengths ? "true" : "false");
-
-    if(sameLengths) {
-      text += ident + "lists length: " + this[0].length;
-    } else {
-      text += ident + "min length: " + minLength;
-      text += ident + "max length: " + maxLength;
-      text += ident + "average length: " + averageLength;
-      text += ident + "all lengths: " + lengths.join(", ");
-    }
-
-    var names = this.getNames();
-    var types = this.getTypes();
-
-    text += ident + "--";
-    names.forEach(function(name, i){
-      text += ident + i + ": " + name + " ["+TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"]";
-    });
-    text += ident + "--";
-
-    var sameTypes = types.allElementsEqual();
-    if(sameTypes) {
-      text += ident + "types of all lists: " + types[0];
-    } else {
-      text += ident + "types: " + types.join(", ");
-    }
-    text += ident + "names: " + names.join(", ");
-
-    if(this.length < 101) {
-      text += ident + ident + "--------lists reports---------";
-
-      var i;
-      for(i = 0; this[i] != null; i++) {
-        text += "\n" + ident + ("(" + (i) + "/0-" + (this.length - 1) + ")");
-        try{
-           text += this[i].getReport(1);
-        } catch(err){
-          text += ident + "[!] something wrong with list " + err;
-        }
-      }
-    }
-
-    if(this.length == 2) {
-      text += ident + ident + "--------lists comparisons---------";
-      if(this[0].type=="NumberList" && this[1].type=="NumberList"){
-        text += ident + "covariance:" + NumberListOperators.covariance(this[0], this[1]);
-        text += ident + "Pearson product moment correlation: " + NumberListOperators.pearsonProductMomentCorrelation(this[0], this[1]);
-      } else if(this[0].type!="NumberList" && this[1].type!="NumberList"){
-        var nUnion = ListOperators.union(this[0], this[1]).length;
-        text += ident + "union size: " + nUnion;
-        var intersected = ListOperators.intersection(this[0], this[1]);
-        var nIntersection = intersected.length;
-        text += ident + "intersection size: " + nIntersection;
-
-        if(this[0]._freqTable[0].length == nUnion && this[1]._freqTable[0].length == nUnion){
-          text += ident + "[!] both lists contain the same non repeated elements";
-        } else {
-          if(this[0]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in first list also occur on second list";
-          if(this[1]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in second list also occur on first list";
-        }
-        text += ident + "Jaccard distance: " + (1 - (nIntersection/nUnion));
-      }
-      //check for 1-1 matches, number of pairs, categorical, sub-categorical
-      var subCategoryCase = ListOperators.subCategoricalAnalysis(this[0], this[1]);
-
-      switch(subCategoryCase){
-        case 0:
-          text += ident + "no categorical relation found among lists";
-          break;
-        case 1:
-          text += ident + "[!] both lists are categorical identical";
-          break;
-        case 2:
-          text += ident + "[!] first list is subcategorical to second list";
-          break;
-        case 3:
-          text += ident + "[!] second list is subcategorical to first list";
-          break;
-      }
-
-      if(subCategoryCase!=1){
-        text += ident + "information gain when segmenting first list by the second: "+ListOperators.getInformationGain(this[0], this[1]);
-        text += ident + "information gain when segmenting second list by the first: "+ListOperators.getInformationGain(this[1], this[0]);
-      }
-    }
-
-    ///add ideas to: analyze, visualize
-
-    return text;
-  };
-
-  Table.prototype.getReportHtml = function() {}; //TODO
-
-  Table.prototype.getReportObject = function() {}; //TODO
-
-  /**
-   * removes a row from the table.
-   * @param {Number} index The row to remove.
-   * @return {undefined}
-   */
-  Table.prototype.removeRow = function(index) {
-    for(var i = 0; this[i] != null; i++) {
-      this[i].splice(index, 1);
-    }
-  };
-
-  /**
-   * makes a copy of the Table.
-   * @return {Table} Copy of table.
-   */
-  Table.prototype.clone = function() {
-    var clonedTable = instantiateWithSameType(this);
-    clonedTable.name = this.name;
-    for(var i = 0; this[i] != null; i++) {
-      clonedTable.push(this[i].clone());
-    }
-    return clonedTable;
-  };
-
-  /**
-   * Removes all contents of the Table.
-   */
-  Table.prototype.destroy = function() {
-    for(var i = 0; this[i] != null; i++) {
-      this[i].destroy();
-      delete this[i];
-    }
-  };
-
-  /**
-   * Prints contents of Table to console.log.
-   */
-
-
-
-  Table.prototype.print = function() {
-    console.log("///////////// <" + this.name + "////////////////////////////////////////////////////");
-    console.log(TableEncodings.TableToCSV(this, null, true));
-    console.log("/////////////" + this.name + "> ////////////////////////////////////////////////////");
-  };
-
-  exports.Table = Table;
-
-  NumberTable.prototype = new Table();
-  NumberTable.prototype.constructor = NumberTable;
-
-  /**
-   * @classdesc {@link Table} to store numbers.
-   *
-   * @constructor
-   * @description Creates a new NumberTable.
-   * @category numbers
-   */
-  function NumberTable() {
-    var args = [];
-    var newNumberList;
-    var array;
-
-    if(arguments.length > 0 && Number(arguments[0]) == arguments[0]) {
-      array = [];
-      var i;
-      for(i = 0; i < arguments[0]; i++) {
-        array.push(new NumberList());
-      }
-    } else {
-      for(i = 0; arguments[i] != null; i++) {
-        newNumberList = NumberList.fromArray(arguments[i]);
-        newNumberList.name = arguments[i].name;
-        arguments[i] = newNumberList;
-      }
-      array = Table.apply(this, arguments);
-    }
-    array = NumberTable.fromArray(array);
-    return array;
-  }
-
-
-  NumberTable.fromArray = function(array) {
-    var result = Table.fromArray(array);
-    result.type = "NumberTable";
-
-    result.getNumberListsNormalized = NumberTable.prototype.getNumberListsNormalized;
-    result.getNormalizedToMax = NumberTable.prototype.getNormalizedToMax;
-    result.getNumberListsNormalizedToMax = NumberTable.prototype.getNumberListsNormalizedToMax;
-    result.getNumberListsNormalizedToSum = NumberTable.prototype.getNumberListsNormalizedToSum;
-    result.getSums = NumberTable.prototype.getSums;
-    result.getRowsSums = NumberTable.prototype.getRowsSums;
-    result.getAverages = NumberTable.prototype.getAverages;
-    result.getRowsAverages = NumberTable.prototype.getRowsAverages;
-    result.factor = NumberTable.prototype.factor;
-    result.add = NumberTable.prototype.add;
-    result.getMax = NumberTable.prototype.getMax;
-    result.getMinMaxInterval = NumberTable.prototype.getMinMaxInterval;
-    result.getCovarianceMatrix = NumberTable.prototype.getCovarianceMatrix;
-
-    return result;
-  };
-
-  /**
-   * returns a table with having normalized all the numberLists
-   *
-   * @param  {factor} factor optional factor
-   * @return {NumberTable}
-   * tags:normalization
-   */
-  NumberTable.prototype.getNumberListsNormalized = function(factor) {
-    factor = factor == null ? 1 : factor;
-
-    var newTable = new NumberTable();
-    var i;
-    for(i = 0; this[i] != null; i++) {
-      var numberList = this[i];
-      newTable[i] = numberList.getNormalized(factor);
-    }
-    newTable.name = this.name;
-    return newTable;
-  };
-
-  /**
-   * normalizes the table to its maximal value
-   *
-   * @param  {factor} factor optional factor
-   * @return {NumberTable}
-   * tags:normalization
-   */
-  NumberTable.prototype.getNormalizedToMax = function(factor) {
-    factor = factor == null ? 1 : factor;
-
-    var newTable = new NumberTable();
-    var i;
-    var antimax = factor / this.getMax();
-    for(i = 0; this[i] != null; i++) {
-      newTable[i] = this[i].factor(antimax);
-    }
-    newTable.name = this.name;
-    return newTable;
-  };
-
-  NumberTable.prototype.getNumberListsNormalizedToMax = function(factorValue) {
-    var newTable = new NumberTable();
-    for(var i = 0; this[i] != null; i++) {
-      var numberList = this[i];
-      newTable[i] = numberList.getNormalizedToMax(factorValue);
-    }
-    newTable.name = this.name;
-    return newTable;
-  };
-
-  NumberTable.prototype.getNumberListsNormalizedToSum = function() {
-    var newTable = new NumberTable();
-    for(var i = 0; this[i] != null; i++) {
-      var numberList = this[i];
-      newTable[i] = numberList.getNormalizedToSum();
-    }
-    newTable.name = this.name;
-    return newTable;
-  };
-
-
-  NumberTable.prototype.getMax = function() {
-    if(this.length == 0) return null;
-
-    var max = this[0].getMax();
-    var i;
-
-    for(i = 1; this[i] != null; i++) {
-      max = Math.max(this[i].getMax(), max);
-    }
-
-    return max;
-  };
-
-  NumberTable.prototype.getMinMaxInterval = function() {
-    if(this.length == 0) return null;
-    var rangeInterval = (this[0]).getMinMaxInterval();
-    for(var i = 1; this[i] != null; i++) {
-      var newRange = (this[i]).getMinMaxInterval();
-      rangeInterval.x = Math.min(rangeInterval.x, newRange.x);
-      rangeInterval.y = Math.max(rangeInterval.y, newRange.y);
-    }
-    return rangeInterval;
-  };
-
-  /**
-   * returns a numberList with values from numberlists added
-   * @return {Numberlist}
+   * interpolates colors with a given color and measure
+   * @param  {String} color to be interpolated with
+   * @param  {Number} value intenisty of interpolation [0,1]
+   * @return {ColorList}
    * tags:
    */
-  NumberTable.prototype.getSums = function() {
-    var numberList = new NumberList();
+  ColorList.prototype.getInterpolated = function(color, value) {
+    var newColorList = new ColorList();
+
     for(var i = 0; this[i] != null; i++) {
-      numberList[i] = this[i].getSum();
+      newColorList[i] = ColorOperators__default.interpolateColors(this[i], color, value);
     }
-    return numberList;
+
+    newColorList.name = this.name;
+    return newColorList;
   };
 
   /**
-   * returns a numberList with all values fro rows added
-   * @return {NumberList}
+   * inverts all colors
+   * @return {ColorList}
    * tags:
    */
-  NumberTable.prototype.getRowsSums = function() {
-    var sums = this[0].clone();
-    var numberList;
-    for(var i = 1; this[i] != null; i++) {
-      numberList = this[i];
-      for(var j = 0; numberList[j] != null; j++) {
-        sums[j] += numberList[j];
-      }
-    }
-    return sums;
-  };
+  ColorList.prototype.getInverted = function() {
+    var newColorList = new ColorList();
 
-  NumberTable.prototype.getAverages = function() {
-    var numberList = new NumberList();
     for(var i = 0; this[i] != null; i++) {
-      numberList[i] = this[i].getAverage();
+      newColorList[i] = ColorOperators__default.invertColor(this[i]);
     }
-    return numberList;
+
+    newColorList.name = this.name;
+    return newColorList;
   };
 
-  NumberTable.prototype.getRowsAverages = function() {
-    var nLists = this.length;
-    var averages = this[0].clone().factor(1 / nLists);
-    var numberList;
-    var i;
-    var j;
-    for(i = 1; this[i] != null; i++) {
-      numberList = this[i];
-      for(j = 0; numberList[j] != null; j++) {
-        averages[j] += numberList[j] / nLists;
-      }
-    }
-    return averages;
-  };
-
-  NumberTable.prototype.factor = function(value) {
-    var newTable = new NumberTable();
-    var i;
-    var numberList;
-
-    switch(typeOf(value)) {
-      case 'number':
-        for(i = 0; this[i] != null; i++) {
-          numberList = this[i];
-          newTable[i] = numberList.factor(value);
-        }
-        break;
-      case 'NumberList':
-        for(i = 0; this[i] != null; i++) {
-          numberList = this[i];
-          newTable[i] = numberList.factor(value[i]);
-        }
-        break;
-
-    }
-
-    newTable.name = this.name;
-    return newTable;
-  };
-
-  NumberTable.prototype.add = function(value) {
-    var newTable = new NumberTable();
-    var numberList;
-    var i;
-
-    for(i = 0; this[i] != null; i++) {
-      numberList = this[i];
-      newTable[i] = numberList.add(value);
-    }
-
-    newTable.name = this.name;
-    return newTable;
-  };
-
-
-  NumberTable.prototype.getCovarianceMatrix = function(){
-    var newTable = new NumberTable();
-    var i;
-    for(i = 0; this[i] != null; i++) {
-
-    }
-
-  }
-
-  exports.NumberTable = NumberTable;
-
-  RectangleList.prototype = new List__default();
-  RectangleList.prototype.constructor = RectangleList;
   /**
-   * @classdesc A {@link List} structure for storing {@link Rectangle} instances.
+   * adds alpha value to all colores
+   * @param {Number} alpha alpha value in [0,1]
+   * @return {ColorList}
+   * tags:
+   */
+  ColorList.prototype.addAlpha = function(alpha) {
+    var newColorList = new ColorList();
+
+    for(var i = 0; this[i] != null; i++) {
+      newColorList[i] = ColorOperators__default.addAlpha(this[i], alpha);
+    }
+
+    newColorList.name = this.name;
+    return newColorList;
+  };
+
+  exports.ColorList = ColorList;
+
+  Polygon.prototype = new List__default();
+  Polygon.prototype.constructor = Polygon;
+
+  /**
+   * @classdesc A Polygon is a shape created from a list of {@link Point|Points}.
    *
-   * @description Creates a new RectangleList.
+   * @description Creates a new Polygon.
    * @constructor
    * @category geometry
    */
-  function RectangleList() {
+  function Polygon() {
     var array = List__default.apply(this, arguments);
-    array = RectangleList.fromArray(array);
+    array = Polygon.fromArray(array);
     return array;
   }
 
 
-  RectangleList.fromArray = function(array) {
+  Polygon.fromArray = function(array) {
     var result = List__default.fromArray(array);
-    result.type = "RectangleList";
+    result.type = "Polygon";
 
-    result.getFrame = RectangleList.prototype.getFrame;
-    result.add = RectangleList.prototype.add;
-    result.factor = RectangleList.prototype.factor;
-    result.getAddedArea = RectangleList.prototype.getAddedArea;
-    result.getIntersectionArea = RectangleList.prototype.getIntersectionArea;
+    result.getFrame = Polygon.prototype.getFrame;
+    result.getBarycenter = Polygon.prototype.getBarycenter;
+    result.add = Polygon.prototype.add;
+    result.factor = Polygon.prototype.factor;
+    result.getRotated = Polygon.prototype.getRotated;
+    result.getClosestPoint = Polygon.prototype.getClosestPoint;
+    result.toNumberList = Polygon.prototype.toNumberList;
+    result.containsPoint = Polygon.prototype.containsPoint;
+    //transform
+    result.approach = Polygon.prototype.approach;
+    //override
+    result.clone = Polygon.prototype.clone;
 
     return result;
   };
 
-  //TODO:finish RectangleList methods
 
-  RectangleList.prototype.getFrame = function() {
+  Polygon.prototype.getFrame = function() {
     if(this.length == 0) return null;
-    var frame = this[0];
-    frame.width = frame.getRight();
-    frame.height = frame.getBottom();
+    var rectangle = new Rectangle(this[0].x, this[0].y, this[0].x, this[0].y);
+    var p;
     for(var i = 1; this[i] != null; i++) {
-      frame.x = Math.min(frame.x, this[i].x);
-      frame.y = Math.min(frame.y, this[i].y);
-
-      frame.width = Math.max(this[i].getRight(), frame.width);
-      frame.height = Math.max(this[i].getBottom(), frame.height);
+      p = this[i];
+      rectangle.x = Math.min(rectangle.x, p.x);
+      rectangle.y = Math.min(rectangle.y, p.y);
+      rectangle.width = Math.max(rectangle.width, p.x);
+      rectangle.height = Math.max(rectangle.height, p.y);
     }
 
-    frame.width -= frame.x;
-    frame.height -= frame.y;
+    rectangle.width -= rectangle.x;
+    rectangle.height -= rectangle.y;
 
-    return frame;
+    return rectangle;
   };
 
-  RectangleList.prototype.add = function() {
-
+  Polygon.prototype.getBarycenter = function(countLastPoint) {
+    var i;
+    countLastPoint = countLastPoint == null ? true : countLastPoint;
+    var cLPN = 1 - Number(countLastPoint);
+    if(this.length == 0) return null;
+    var barycenter = new Point(this[0].x, this[0].y);
+    for(i = 1; this[i + cLPN] != null; i++) {
+      barycenter.x += this[i].x;
+      barycenter.y += this[i].y;
+    }
+    barycenter.x /= this.length;
+    barycenter.y /= this.length;
+    return barycenter;
   };
 
-  RectangleList.prototype.factor = function() {
-
+  Polygon.prototype.add = function(object) {
+    var type = typeOf(object);
+    var i;
+    switch(type) {
+      case 'Point':
+        var newPolygon = new Polygon();
+        for(i = 0; this[i] != null; i++) {
+          newPolygon[i] = this[i].add(object);
+        }
+        newPolygon.name = this.name;
+        return newPolygon;
+        break;
+    }
   };
 
-  RectangleList.prototype.getAddedArea = function() {};
+  /**
+   * scales the polygon by a number or a Point
+   * @param  {Object} value number or point
+   * @return {Polygon}
+   * tags:
+   */
+  Polygon.prototype.factor = function(value) {
+    var i;
+    var newPolygon = new Polygon();
+    newPolygon.name = this.name;
 
-  RectangleList.prototype.getIntersectionArea = function() {
-    var rect0;
-    var rect1;
-    var intersectionArea = 0;
-    var intersection;
-    for(var i = 0; this[i + 1] != null; i++) {
-      rect0 = this[i];
-      for(var j = i + 1; this[j] != null; j++) {
-        rect1 = this[j];
-        intersection = rect0.getIntersection(rect1);
-        intersectionArea += intersection == null ? 0 : intersection.getArea();
+    if(value >= 0 || value < 0) {
+      for(i = 0; this[i] != null; i++) {
+        newPolygon[i] = new Point(this[i].x * value, this[i].y * value);
+      }
+
+      return newPolygon;
+    } else if(value.type != null && value.type == 'Point') {
+      for(i = 0; this[i] != null; i++) {
+        newPolygon[i] = new Point(this[i].x * value.x, this[i].y * value.y);
+      }
+
+      return newPolygon;
+    }
+
+    return null;
+  };
+
+
+  Polygon.prototype.getRotated = function(angle, center) {
+    center = center == null ? new Point() : center;
+
+    var newPolygon = new Polygon();
+    for(var i = 0; this[i] != null; i++) {
+      newPolygon[i] = new Point(Math.cos(angle) * (this[i].x - center.x) - Math.sin(angle) * (this[i].y - center.y) + center.x, Math.sin(angle) * (this[i].x - center.x) + Math.cos(angle) * (this[i].y - center.y) + center.y);
+    }
+    newPolygon.name = this.name;
+    return newPolygon;
+  };
+
+  Polygon.prototype.getClosestPoint = function(point) {
+    var closest = this[0];
+    var d2Min = Math.pow(point.x - closest.x, 2) + Math.pow(point.y - closest.y, 2);
+    var d2;
+
+    for(var i = 1; this[i] != null; i++) {
+      d2 = Math.pow(point.x - this[i].x, 2) + Math.pow(point.y - this[i].y, 2);
+      if(d2 < d2Min) {
+        d2Min = d2;
+        closest = this[i];
       }
     }
-
-    return intersectionArea;
+    return closest;
   };
 
-  exports.RectangleList = RectangleList;
-
-  function ListGenerators() {}
-
-
-
-  /**
-   * Generates a List made of several copies of same element (returned List is improved)
-   * @param {Object} nValues length of the List
-   * @param {Object} element object to be placed in all positions
-   * @return {List} generated List
-   * tags:generator
-   */
-  ListGenerators.createListWithSameElement = function(nValues, element) {
-    var list;
-    switch(typeOf(element)) {
-      case 'number':
-        list = new NumberList();
-        break;
-      case 'List':
-        list = new Table();
-        break;
-      case 'NumberList':
-        list = new NumberTable();
-        break;
-      case 'Rectangle':
-        list = new RectangleList();
-        break;
-      case 'string':
-        list = new StringList();
-        break;
-      case 'boolean':
-        list = new List__default(); //TODO:update once BooleanList exists
-        break;
-      default:
-        list = new List__default();
+  Polygon.prototype.toNumberList = function() {
+    var numberList = new NumberList();
+    var i;
+    for(i = 0; this[i] != null; i++) {
+      numberList[i * 2] = this[i].x;
+      numberList[i * 2 + 1] = this[i].y;
     }
-
-    for(var i = 0; i < nValues; i++) {
-      list[i] = element;
-    }
-    return list;
+    return numberList;
   };
 
   /**
-   * Generates a List built froma seed element and a function that will be applied iteratively
-   * @param {Object} nValues length of the List
-   * @param {Object} firstElement first element
-   * @param {Object} dynamicFunction sequence generator function, elementN+1 =  dynamicFunction(elementN)
-   * @return {List} generated List
+   * Thanks http://jsfromhell.com/math/is-point-in-poly AND http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
    */
-  ListGenerators.createIterationSequence = function(nValues, firstElement, dynamicFunction) {
-    var list = ListGenerators.createListWithSameElement(1, firstElement);
-    for(var i = 1; i < nValues; i++) {
-      list[i] = dynamicFunction(list[i - 1]);
-    }
-    return list;
+  Polygon.prototype.containsPoint = function(point) {
+    var i;
+    var j;
+    var l;
+    for(var c = false, i = -1, l = this.length, j = l - 1; ++i < l; j = i)
+          ((this[i].y <= point.y && point.y < this[j].y) || (this[j].y <= point.y && point.y < this[i].y))
+          && (point.x < (this[j].x - this[i].x) * (point.y - this[i].y) / (this[j].y - this[i].y) + this[i].x)
+          && (c = !c);
+    return c;
   };
 
-  exports.ListGenerators = ListGenerators;
+  //transform
+
+  Polygon.prototype.approach = function(destiny, speed) {
+    speed = speed || 0.5;
+    var antispeed = 1 - speed;
+
+    this.forEach(function(point, i) {
+      point.x = antispeed * point.x + speed * destiny[i].x;
+      point.y = antispeed * point.y + speed * destiny[i].y;
+    });
+  };
+
+
+  Polygon.prototype.clone = function() {
+    var newPolygon = new Polygon();
+    for(var i = 0; this[i] != null; i++) {
+      newPolygon[i] = this[i].clone();
+    }
+    newPolygon.name = this.name;
+    return newPolygon;
+  };
+
+  exports.Polygon = Polygon;
 
   NumberList.prototype = new List__default();
   NumberList.prototype.constructor = NumberList;
@@ -8947,6 +5287,3935 @@ define('src/index', ['exports'], function (exports) {
 
   exports.StringList = StringList;
 
+  var typeDict = {
+    List: List__default,
+    Table: Table,
+    StringList: StringList,
+    NumberList: NumberList,
+    NumberTable: NumberTable,
+    NodeList: NodeList__default,
+    RelationList: RelationList,
+    Polygon: Polygon,
+    Polygon3D: Polygon3D,
+    DateList: DateList,
+    ColorList: ColorList
+  };
+
+
+  /*
+   * All these function are globally available since they are included in the Global class
+   */
+  var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"}
+  var _shortFromTypeDictionary;
+  var _colorFromTypeDictionary;
+  var _lightColorFromTypeDictionary;
+
+  /*
+   * types are:
+   * number, string, boolean, date, Array, Object
+   * and all data models classes names
+   */
+
+  function typeOf(object) {
+    if(object==null) return null;
+
+    var type = typeof object;
+    if(type !== 'object') return type;
+
+    if(object.type!=null) return object.type;
+
+    if(Object.prototype.toString.call(object) == "[object Array]") return "Array";
+
+    if(object.getDate != null) return 'date';
+
+    return 'Object';
+  }
+
+  // TODO remove?
+  function VOID() {}
+
+  function instantiate(className, args) {
+    switch(className) {
+      case 'number':
+      case 'string':
+        // TODO: I don't think this works.
+        return window[className](args);
+      case 'date':
+        if(!args || args.length == 0) return new Date();
+        if(args.length == 1) {
+          if(args[0].match(/\d*.-\d*.-\d*\D\d*.:\d*.:\d*/)) {
+            var dateArray = args[0].split(" ");
+            dateArray[0] = dateArray[0].split("-");
+            if(dateArray[1]) dateArray[1] = dateArray[1].split(":");
+            else dateArray[1] = new Array(0, 0, 0);
+            return new Date(Date.UTC(dateArray[0][0], Number(dateArray[0][1]) - 1, dateArray[0][2], dateArray[1][0], dateArray[1][1], dateArray[1][2]));
+          }
+          //
+          if(Number(args[0]) != "NaN") return new Date(Number(args[0]));
+          else return new Date(args[0]);
+        }
+        return new Date(Date.UTC.apply(null, args));
+      case 'boolean':
+        // TODO: I don't think this works.
+        return window[className]((args == "false" || args == "0") ? false : true);
+      case 'List':
+      case 'Table':
+      case 'StringList':
+      case 'NumberList':
+      case 'NumberTable':
+      case 'NodeList':
+      case 'RelationList':
+      case 'Polygon':
+      case 'Polygon3D':
+      case 'PolygonList':
+      case 'DateList':
+      case 'ColorList':
+        return typeDict[className].apply(new typeDict[className](), args);
+      case null:
+      case undefined:
+      case 'undefined':
+        return null;
+    }
+    //generic instantiation of object:
+    var o, dummyFunction, cl;
+    cl = window[className]; // get reference to class constructor function
+    dummyFunction = function() {}; // dummy function
+    dummyFunction.prototype = cl.prototype; // reference same prototype
+    o = new dummyFunction(); // instantiate dummy function to copy prototype properties
+    cl.apply(o, args); // call class constructor, supplying new object as context
+
+    return o;
+  }
+
+  function _createDataModelsInfoDictionaries(){
+    var i;
+    var type;
+
+    _shortFromTypeDictionary = {};
+    _colorFromTypeDictionary = {};
+    _lightColorFromTypeDictionary = {};
+
+    for(i=0; dataModelsInfo[i]!=null; i++){
+      type = dataModelsInfo[i].type;
+      _shortFromTypeDictionary[type] = dataModelsInfo[i].short;
+      _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.3);
+      _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.3);
+      type = type.toLowerCase();
+      _shortFromTypeDictionary[type] = dataModelsInfo[i].short;
+      _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.3);
+      _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.3);
+    }
+  }
+
+  function getShortNameFromDataModelType(type){
+    if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
+    return _shortFromTypeDictionary[type];
+  }
+
+  function getColorFromDataModelType(type){
+    if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
+    return _colorFromTypeDictionary[type];
+  }
+
+  function getLightColorFromDataModelType(type){
+    if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
+    return _lightColorFromTypeDictionary[type];
+  }
+
+  function getTextFromObject(value, type){
+    if(value == null) return "Null";
+    if(value.isList) {
+      if(value.length == 0) return "[]";
+      var text = value.toString(); // value.length>6?value.slice(0, 5).forEach(function(v){return getTextFromObject(v, typeOf(v))}).join(','):value.toStringList().join(',').forEach(function(v, typeOf(v)){return getTextFromObject(v, type)});
+      if(text.length > 160) {
+        var i;
+        var subtext;
+        text = "[";
+        for(i = 0; (value[i] != null && i < 6); i++) {
+          subtext = getTextFromObject(value[i], typeOf(value[i]));
+          if(subtext.length > 40) subtext = subtext.substr(0, 40) + (value[i].isList ? "…]" : "…");
+          text += (i != 0 ? ", " : "") + subtext;
+        }
+        if(value.length > 6) text += ",…";
+        text += "]";
+      }
+      return text;
+    }
+
+    switch(type) {
+      case "date":
+        return DateOperators.dateToString(value);
+      case "DateInterval":
+        return DateOperators.dateToString(value.date0) + " - " + DateOperators.dateToString(value.date1);
+      case "string":
+        return((value.length > 160) ? value.substr(0, 159) + "…" : value).replace(/\n/g, "↩");
+      case "number":
+        return String(value);
+      default:
+        return "{}"; //value.toString();
+    }
+  }
+
+  function instantiateWithSameType(object, args) {
+    return instantiate(typeOf(object), args);
+  }
+
+  function isArray(obj) {
+    if(obj.constructor.toString().indexOf("Array") == -1)
+      return false;
+    else
+      return true;
+  }
+
+  Date.prototype.getType = function() {
+    return 'date';
+  };
+
+
+
+  function evalJavaScriptFunction(functionText, args, scope){
+  	if(functionText==null) return;
+
+  	var res;
+
+  	var myFunction;
+
+  	var good = true;
+  	var message = '';
+
+  	var realCode;
+
+  	var lines = functionText.split('\n');
+
+  	for(var i=0; lines[i]!=null; i++){
+  		lines[i] = lines[i].trim();
+  		if(lines[i] === "" || lines[i].substr(1)=="/"){
+  			lines.splice(i,1);
+  			i--;
+  		}
+  	}
+
+  	var isFunction = lines[0].indexOf('function')!=-1;
+
+  	functionText = lines.join('\n');
+
+  	if(isFunction){
+  		if(scope){
+  			realCode = "scope.myFunction = " + functionText;
+  		} else {
+  			realCode = "myFunction = " + functionText;
+  		}
+  	} else {
+  		if(scope){
+  			realCode = "scope.myVar = " + functionText;
+  		} else {
+  			realCode = "myVar = " + functionText;
+  		}
+  	}
+
+  	try{
+  		if(isFunction){
+  			eval(realCode);
+  			if(scope){
+  				res = scope.myFunction.apply(scope, args);
+  			} else {
+  				res = myFunction.apply(this, args);
+  			}
+  		} else {
+  			eval(realCode);
+  			if(scope){
+  				res = scope.myVar;
+  			} else 	{
+  				res = myVar;
+  			}
+  		}
+  	} catch(err){
+  		good = false;
+  		message = err.message;
+  		res = null;
+  	}
+
+    var resultObject = {
+      result: res,
+      success: good,
+      errorMessage: message
+    };
+
+    return resultObject;
+  }
+
+  function argumentsToArray(args) {
+    return Array.prototype.slice.call(args, 0);
+  }
+
+  // export function TimeLogger(name) {
+  //   var scope = this;
+  //   this.name = name;
+  //   this.clocks = {};
+
+  //   this.tic = function(clockName) {
+  //     scope.clocks[clockName] = new Date().getTime();
+  //     //c.l( "TimeLogger '"+clockName+"' has been started");
+  //   };
+  //   this.tac = function(clockName) {
+  //     if(scope.clocks[clockName] == null) {
+  //       scope.tic(clockName);
+  //     } else {
+  //       var now = new Date().getTime();
+  //       var diff = now - scope.clocks[clockName];
+  //       console.log("TimeLogger '" + clockName + "' took " + diff + " ms");
+  //     }
+  //   };
+  // }
+  // export var tl = new TimeLogger("Global Time Logger");
+
+  exports.typeOf = typeOf;
+  exports.instantiate = instantiate;
+  exports.getShortNameFromDataModelType = getShortNameFromDataModelType;
+  exports.getColorFromDataModelType = getColorFromDataModelType;
+  exports.getLightColorFromDataModelType = getLightColorFromDataModelType;
+  exports.getTextFromObject = getTextFromObject;
+  exports.instantiateWithSameType = instantiateWithSameType;
+  exports.isArray = isArray;
+  exports.evalJavaScriptFunction = evalJavaScriptFunction;
+  exports.argumentsToArray = argumentsToArray;
+
+  LoadEvent.prototype = {};
+  LoadEvent.prototype.constructor = LoadEvent;
+
+  /**
+   * LoadEvent
+   * @constructor
+   * @category misc
+   */
+  function LoadEvent() {
+    Object.apply(this);
+    this.result = null;
+    this.errorType = 0;
+    this.errorMessage = "";
+    this.url;
+  }
+
+  exports.LoadEvent = LoadEvent;
+
+  function Loader() {}
+
+
+  Loader.proxy = ""; //TODO:install proxy created by Mig at moebio.com
+  Loader.cacheActive = false; //TODO: fix!
+  Loader.associativeByUrls = {};
+  Loader.REPORT_LOADING = false;
+  Loader.n_loading = 0;
+  Loader.LOCAL_STORAGE_ENABLED = false;
+
+  Loader.PHPurl = "http://intuitionanalytics.com/tests/proxy.php?url=";
+
+
+  /**
+   * loads string data from server. The defined Loader.proxy will be used.
+   * @param {String} url the URL of the file to be loaded
+   * @param {Function} onLoadData a function that will be called when complete. The function must receive a LoadEvent
+   * @param {callee} the Object containing the onLoadData function to be called
+   * @para, {Object} optional parameter that will be stored in the LoadEvent instance
+   */
+  Loader.loadData = function(url, onLoadData, callee, param, send_object_json) {
+    if(Loader.REPORT_LOADING) console.log('load data:', url);
+    Loader.n_loading++;
+
+    if(Loader.LOCAL_STORAGE_ENABLED) {
+      // TODO track down LocalStorage. localStorage is a thing though (lowercase l);
+      var result = LocalStorage.getItem(url);
+      if(result) {
+        var e = new LoadEvent();
+        e.url = url;
+        e.param = param;
+        e.result = result;
+
+        onLoadData.call(target, e);
+      }
+    }
+
+
+
+    if(Loader.REPORT_LOADING) console.log("Loader.loadData | url:", url);
+
+    var useProxy = String(url).substr(0, 4) == "http";
+
+    var req = new XMLHttpRequest();
+
+    var target = callee ? callee : arguments.callee;
+    var onLoadComplete = function() {
+      if(Loader.REPORT_LOADING) console.log('Loader.loadData | onLoadComplete'); //, req.responseText:', req.responseText);
+      if(req.readyState == 4) {
+        Loader.n_loading--;
+
+        var e = new LoadEvent();
+        e.url = url;
+        e.param = param;
+        //if (req.status == 200) { //MIG
+        if(req.status == 200 || (req.status == 0 && req.responseText != null)) {
+          e.result = req.responseText;
+          onLoadData.call(target, e);
+        } else {
+          if(Loader.REPORT_LOADING) console.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
+          e.errorType = req.status;
+          e.errorMessage = "[!] There was a problem retrieving the data [" + req.status + "]:" + req.statusText;
+          onLoadData.call(target, e);
+        }
+      }
+    };
+
+    // branch for native XMLHttpRequest object
+    if(window.XMLHttpRequest && !(window.ActiveXObject)) {
+      try {
+        req = new XMLHttpRequest();
+      } catch(e) {
+        req = false;
+      }
+      // branch for IE/Windows ActiveX version
+    } else if(window.ActiveXObject) {
+      try {
+        req = new ActiveXObject("Msxml2.XMLHTTP.6.0");
+      } catch(e) {
+        try {
+          req = new ActiveXObject("Msxml2.XMLHTTP.3.0");
+        } catch(e) {
+          try {
+            req = new ActiveXObject("Msxml2.XMLHTTP");
+          } catch(e) {
+            try {
+              req = new ActiveXObject("Microsoft.XMLHTTP");
+            } catch(e) {
+              req = false;
+            }
+          }
+        }
+      }
+    }
+    if(req) {
+      req.onreadystatechange = onLoadComplete; //processReqChange;
+      if(useProxy) {
+        req.open("GET", Loader.proxy + url, true);
+      } else {
+        req.open("GET", url, true);
+      }
+
+      send_object_json = send_object_json || "";
+      req.send(send_object_json);
+    }
+  };
+
+
+  //TODO this method isn't reference by anything else.
+  function LoaderRequest(url, method, data) {
+    this.url = url;
+    this.method = method ? method : "GET";
+    this.data = data;
+  }
+
+  Loader.loadImage = function(url, onComplete, callee, param) {
+    Loader.n_loading++;
+
+    if(Loader.REPORT_LOADING) console.log("Loader.loadImage | url:", url);
+
+    var target = callee ? callee : arguments.callee;
+    var img = document.createElement('img');
+
+    if(this.cacheActive) {
+      if(this.associativeByUrls[url] != null) {
+        Loader.n_loading--;
+        //console.log('=====>>>>+==>>>+====>>=====>>>+==>> in cache:', url);
+        var e = new LoadEvent();
+        e.result = this.associativeByUrls[url];
+        e.url = url;
+        e.param = param;
+        onComplete.call(target, e);
+      } else {
+        var cache = true;
+        var associative = this.associativeByUrls;
+      }
+    }
+
+    img.onload = function() {
+      Loader.n_loading--;
+      var e = new LoadEvent();
+      e.result = img;
+      e.url = url;
+      e.param = param;
+      if(cache) associative[url] = img;
+      onComplete.call(target, e);
+    };
+
+    img.onerror = function() {
+      Loader.n_loading--;
+      var e = new LoadEvent();
+      e.result = null;
+      e.errorType = 1; //TODO: set an error type!
+      e.errorMessage = "There was a problem retrieving the image [" + img.src + "]:";
+      e.url = url;
+      e.param = param;
+      onComplete.call(target, e);
+    };
+
+    img.src = Loader.proxy + url;
+  };
+
+
+
+  // Loader.loadJSON = function(url, onLoadComplete) {
+  //   Loader.n_loading++;
+
+  //   Loader.loadData(url, function(data) {
+  //     Loader.n_loading--;
+  //     onLoadComplete.call(arguments.callee, jQuery.parseJSON(data));
+  //   });
+  // };
+
+
+  /**
+  Loader.callIndex = 0;
+  Loader.loadJSONP = function(url, onLoadComplete, callee) {
+    Loader.n_loading++;
+
+    Loader.callIndex = Loader.callIndex + 1;
+    var index = Loader.callIndex;
+
+    var newUrl = url + "&callback=JSONcallback" + index;
+    //var newUrl=url+"?callback=JSONcallback"+index; //   <----  WFP suggestion
+
+    var target = callee ? callee : arguments.callee;
+
+    //console.log('Loader.loadJSONP, newUrl:', newUrl);
+
+    $.ajax({
+      url: newUrl,
+      type: 'GET',
+      data: {},
+      dataType: 'jsonp',
+      contentType: "application/json",
+      jsonp: 'jsonp',
+      jsonpCallback: 'JSONcallback' + index,
+      success: function(data) {
+        Loader.n_loading--;
+        var e = new LoadEvent();
+        e.result = data;
+        onLoadComplete.call(target, e);
+      },
+      error: function(data) {
+        Loader.n_loading--;
+        console.log("Loader.loadJSONP | error, data:", data);
+
+        var e = new LoadEvent();
+        e.errorType = 1;
+        onLoadComplete.call(target, e);
+      }
+    }); //.error(function(e){
+    // console.log('---> (((error))) B');
+    //
+    // var e=new LoadEvent();
+    // e.errorType=1;
+    // onLoadComplete.call(target, e);
+    // });
+  };
+  **/
+
+
+
+
+  //FIX THESE METHODS:
+
+  Loader.loadXML = function(url, onLoadData) {
+    Loader.n_loading++;
+
+    var req = new XMLHttpRequest();
+    var onLoadComplete = onLoadData;
+
+    if(Loader.REPORT_LOADING) console.log('loadXML, url:', url);
+
+    // branch for native XMLHttpRequest object
+    if(window.XMLHttpRequest && !(window.ActiveXObject)) {
+      try {
+        req = new XMLHttpRequest();
+      } catch(e) {
+        req = false;
+      }
+      // branch for IE/Windows ActiveX version
+    } else if(window.ActiveXObject) {
+      try {
+        req = new ActiveXObject("Msxml2.XMLHTTP");
+      } catch(e) {
+        try {
+          req = new ActiveXObject("Microsoft.XMLHTTP");
+        } catch(e) {
+          req = false;
+        }
+      }
+    }
+    if(req) {
+      req.onreadystatechange = processReqChange;
+      req.open("GET", url, true);
+      req.send("");
+    }
+
+    function processReqChange() {
+      Loader.n_loading--;
+      // only if req shows "loaded"
+      if(req.readyState == 4) {
+        // only if "OK"
+        if(req.status == 200 || req.status == 0) {
+          onLoadComplete(req.responseXML);
+
+        } else {
+          console.log("There was a problem retrieving the XML data:\n" +
+            req.statusText);
+        }
+      }
+    }
+  };
+
+
+  ///////////////PHP
+
+  Loader.sendContentToVariableToPhp = function(url, varName, value, onLoadData, callee, param) {
+    var data = varName + "=" + encodeURIComponent(value);
+    Loader.sendDataToPhp(url, data, onLoadData, callee, param);
+  };
+
+  Loader.sendContentsToVariablesToPhp = function(url, varNames, values, onLoadData, callee, param) {
+    var data = varNames[0] + "=" + encodeURIComponent(values[0]);
+    for(var i = 1; varNames[i] != null; i++) {
+      data += "&" + varNames[i] + "=" + encodeURIComponent(values[i]);
+    }
+    Loader.sendDataToPhp(url, data, onLoadData, callee, param);
+  };
+
+  Loader.sendDataToPhp = function(url, data, onLoadData, callee, param) {
+    var req = new XMLHttpRequest();
+
+    req.open("POST", url, true);
+    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    req.send(data);
+
+    var target = callee ? callee : arguments.callee;
+
+    var onLoadComplete = function() {
+      if(Loader.REPORT_LOADING) console.log('Loader.loadData | onLoadComplete, req.responseText:', req.responseText);
+      if(req.readyState == 4) {
+        Loader.n_loading--;
+
+        var e = new LoadEvent();
+        e.url = url;
+        e.param = param;
+
+        if(req.status == 200 || (req.status == 0 && req.responseText != null)) {
+          e.result = req.responseText;
+          onLoadData.call(target, e);
+        } else {
+          if(Loader.REPORT_LOADING) console.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
+          e.errorType = req.status;
+          e.errorMessage = "[!] There was a problem retrieving the data [" + req.status + "]:" + req.statusText;
+          onLoadData.call(target, e);
+        }
+      }
+    };
+
+    req.onreadystatechange = onLoadComplete;
+  };
+
+  exports.Loader = Loader;
+
+  Node__Node.prototype = new DataModel();
+  Node__Node.prototype.constructor = Node__Node;
+
+  /**
+   * @classdesc Represents a single node element in a Network. Can have both an id as well
+   * as a name.
+   *
+   * @description Create a new Node.
+   * @param {String} id ID of the Node
+   * @param {String} name string (label) name to be assigned to node
+   * @constructor
+   * @category networks
+   */
+  function Node__Node(id, name) {
+    this.id = id == null ? '' : id;
+    this.name = name != null ? name : '';
+    this.type = "Node";
+
+    this.nodeType;
+
+    this.x = 0;
+    this.y = 0;
+    this.z = 0;
+
+    this.nodeList = new NodeList__default();
+    this.relationList = new RelationList();
+
+    this.toNodeList = new NodeList__default();
+    this.toRelationList = new RelationList();
+
+    this.fromNodeList = new NodeList__default();
+    this.fromRelationList = new RelationList();
+
+    this.weight = 1;
+    this.descentWeight = 1;
+
+    //tree
+    this.level = 0;
+    this.parent = null;
+
+    //physics:
+    this.vx = 0;
+    this.vy = 0;
+    this.vz = 0;
+    this.ax = 0;
+    this.ay = 0;
+    this.az = 0;
+  }
+  var Node__default = Node__Node;
+
+  /**
+   * Removes all Relations and connected Nodes from
+   * the current Node.
+   */
+  Node__Node.prototype.cleanRelations = function() {
+    this.nodeList = new NodeList__default();
+    this.relationList = new RelationList();
+
+    this.toNodeList = new NodeList__default();
+    this.toRelationList = new RelationList();
+
+    this.fromNodeList = new NodeList__default();
+    this.fromRelationList = new RelationList();
+  };
+
+  //TODO: complete with all properties
+  Node__Node.prototype.destroy = function() {
+    DataModel.prototype.destroy.call(this);
+    delete this.id;
+    delete this.name;
+    delete this.nodeType;
+    delete this.x;
+    delete this.y;
+    delete this.z;
+    delete this.nodeList;
+    delete this.relationList;
+    delete this.toNodeList;
+    delete this.toNodeList;
+    delete this.fromNodeList;
+    delete this.fromRelationList;
+    delete this.parent;
+    delete this.weight;
+    delete this.descentWeight;
+    delete this.level;
+    delete this.vx;
+    delete this.vy;
+    delete this.vz;
+    delete this.ax;
+    delete this.ay;
+    delete this.az;
+  };
+
+  /**
+   * Returns the number of Relations connected to this Node.
+   *
+   * @return {Number} Number of Relations (edges) connecting to this Node instance.
+   */
+  Node__Node.prototype.getDegree = function() {
+    return this.relationList.length;
+  };
+
+  //treeProperties:
+
+
+  /**
+   * Returns the parent Node of this Node if it is part of a {@link Tree}.
+   *
+   * @return {Node} Parent Node of this Node.
+   */
+  Node__Node.prototype.getParent = function() {
+    return this.parent;
+  };
+
+  /**
+   * Returns the leaves under a node in a Tree,
+   *
+   * <strong>Warning:</strong> If this Node is part of a Network that is not a tree, this method could run an infinite loop.
+   * @return {NodeList} Leaf Nodes of this Node.
+   * tags:
+   */
+  Node__Node.prototype.getLeaves = function() {
+      var leaves = new NodeList__default();
+      var addLeaves = function(node) {
+        if(node.toNodeList.length === 0) {
+          leaves.addNode(node);
+          return;
+        }
+        node.toNodeList.forEach(addLeaves);
+      };
+      addLeaves(this);
+      return leaves;
+    };
+
+
+  /**
+   * Uses an image as a visual representation to this Node.
+   *
+   * @param {String} urlImage The URL of the image to load.
+   */
+  Node__Node.prototype.loadImage = function(urlImage) {
+    Loader.loadImage(urlImage, function(e) {
+      this.image = e.result;
+    }, this);
+  };
+
+
+  /**
+   * Makes a copy of this Node.
+   *
+   * @return {Node} New Node that is a copy of this Node.
+   */
+  Node__Node.prototype.clone = function() {
+    var newNode = new Node__Node(this.id, this.name);
+
+    newNode.x = this.x;
+    newNode.y = this.y;
+    newNode.z = this.z;
+
+    newNode.nodeType = this.nodeType;
+
+    newNode.weight = this.weight;
+    newNode.descentWeight = this.descentWeight;
+
+    return newNode;
+  };
+
+  exports.Node = Node__default;
+
+  var version = "0.2.15";
+
+  /*
+   * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
+   * Digest Algorithm, as defined in RFC 1321.
+   * Version 2.2 Copyright (C) Paul Johnston 1999 - 2009
+   * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
+   * Distributed under the BSD License
+   * See http://pajhome.org.uk/crypt/md5 for more info.
+   */
+
+  /*
+   * Configurable variables. You may need to tweak these to be compatible with
+   * the server-side, but the defaults work in most cases.
+   */
+  //var hexcase = 0;   /* hex output format. 0 - lowercase; 1 - uppercase        */
+  //var b64pad  = "";  /* base-64 pad character. "=" for strict RFC compliance   */
+
+
+  function MD5(){}
+
+
+  /*
+   * These are the functions you'll usually want to call
+   * They take string arguments and return either hex or base-64 encoded strings
+   */
+  MD5.hex_md5 = function(s)    { return this.rstr2hex(this.rstr_md5(this.str2rstr_utf8(s))); };
+  MD5.b64_md5 = function(s)    { return this.rstr2b64(this.rstr_md5(this.str2rstr_utf8(s))); };
+  MD5.any_md5 = function(s, e) { return this.rstr2any(this.rstr_md5(this.str2rstr_utf8(s)), e); };
+  MD5.hex_hmac_md5 = function(k, d)
+    { return this.rstr2hex(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); };
+  MD5.b64_hmac_md5 = function(k, d)
+    { return this.rstr2b64(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); };
+  MD5.any_hmac_md5 = function(k, d, e)
+    { return this.rstr2any(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d)), e); };
+
+  /*
+   * Perform a simple self-test to see if the VM is working
+   */
+  MD5.md5_vm_test = function()
+  {
+    return this.hex_md5("abc").toLowerCase() == "900150983cd24fb0d6963f7d28e17f72";
+  };
+
+  /*
+   * Calculate the MD5 of a raw string
+   */
+  MD5.rstr_md5 = function(s)
+  {
+    return this.binl2rstr(this.binl_md5(this.rstr2binl(s), s.length * 8));
+  };
+
+  /*
+   * Calculate the HMAC-MD5, of a key and some data (raw strings)
+   */
+  MD5.rstr_hmac_md5 = function(key, data)
+  {
+    var bkey = this.rstr2binl(key);
+    if(bkey.length > 16) bkey = this.binl_md5(bkey, key.length * 8);
+
+    var ipad = Array(16), opad = Array(16);
+    for(var i = 0; i < 16; i++)
+    {
+      ipad[i] = bkey[i] ^ 0x36363636;
+      opad[i] = bkey[i] ^ 0x5C5C5C5C;
+    }
+
+    var hash = this.binl_md5(ipad.concat(this.rstr2binl(data)), 512 + data.length * 8);
+    return this.binl2rstr(this.binl_md5(opad.concat(hash), 512 + 128));
+  };
+
+  /*
+   * Convert a raw string to a hex string
+   */
+  MD5.rstr2hex = function(input)
+  {
+  	var hexcase = 0;
+    try { hexcase; } catch(e) { hexcase=0; }
+    var hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
+    var output = "";
+    var x;
+    for(var i = 0; i < input.length; i++)
+    {
+      x = input.charCodeAt(i);
+      output += hex_tab.charAt((x >>> 4) & 0x0F)
+             +  hex_tab.charAt( x        & 0x0F);
+    }
+    return output;
+  };
+
+  /*
+   * Convert a raw string to a base-64 string
+   */
+  MD5.rstr2b64 = function(input)
+  {
+  	var b64pad  = "";
+    try { b64pad; } catch(e) { b64pad=''; }
+    var tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    var output = "";
+    var len = input.length;
+    for(var i = 0; i < len; i += 3)
+    {
+      var triplet = (input.charCodeAt(i) << 16)
+                  | (i + 1 < len ? input.charCodeAt(i+1) << 8 : 0)
+                  | (i + 2 < len ? input.charCodeAt(i+2)      : 0);
+      for(var j = 0; j < 4; j++)
+      {
+        if(i * 8 + j * 6 > input.length * 8) output += b64pad;
+        else output += tab.charAt((triplet >>> 6*(3-j)) & 0x3F);
+      }
+    }
+    return output;
+  };
+
+  /*
+   * Convert a raw string to an arbitrary string encoding
+   */
+  MD5.rstr2any = function(input, encoding)
+  {
+    var divisor = encoding.length;
+    var i, j, q, x, quotient;
+
+    /* Convert to an array of 16-bit big-endian values, forming the dividend */
+    var dividend = Array(Math.ceil(input.length / 2));
+    for(i = 0; i < dividend.length; i++)
+    {
+      dividend[i] = (input.charCodeAt(i * 2) << 8) | input.charCodeAt(i * 2 + 1);
+    }
+
+    /*
+     * Repeatedly perform a long division. The binary array forms the dividend,
+     * the length of the encoding is the divisor. Once computed, the quotient
+     * forms the dividend for the next step. All remainders are stored for later
+     * use.
+     */
+    var full_length = Math.ceil(input.length * 8 /
+                                      (Math.log(encoding.length) / Math.log(2)));
+    var remainders = Array(full_length);
+    for(j = 0; j < full_length; j++)
+    {
+      quotient = Array();
+      x = 0;
+      for(i = 0; i < dividend.length; i++)
+      {
+        x = (x << 16) + dividend[i];
+        q = Math.floor(x / divisor);
+        x -= q * divisor;
+        if(quotient.length > 0 || q > 0)
+          quotient[quotient.length] = q;
+      }
+      remainders[j] = x;
+      dividend = quotient;
+    }
+
+    /* Convert the remainders to the output string */
+    var output = "";
+    for(i = remainders.length - 1; i >= 0; i--)
+      output += encoding.charAt(remainders[i]);
+
+    return output;
+  };
+
+  /*
+   * Encode a string as utf-8.
+   * For efficiency, this assumes the input is valid utf-16.
+   */
+  MD5.str2rstr_utf8 = function(input)
+  {
+    var output = "";
+    var i = -1;
+    var x, y;
+
+    while(++i < input.length)
+    {
+      /* Decode utf-16 surrogate pairs */
+      x = input.charCodeAt(i);
+      y = i + 1 < input.length ? input.charCodeAt(i + 1) : 0;
+      if(0xD800 <= x && x <= 0xDBFF && 0xDC00 <= y && y <= 0xDFFF)
+      {
+        x = 0x10000 + ((x & 0x03FF) << 10) + (y & 0x03FF);
+        i++;
+      }
+
+      /* Encode output as utf-8 */
+      if(x <= 0x7F)
+        output += String.fromCharCode(x);
+      else if(x <= 0x7FF)
+        output += String.fromCharCode(0xC0 | ((x >>> 6 ) & 0x1F),
+                                      0x80 | ( x         & 0x3F));
+      else if(x <= 0xFFFF)
+        output += String.fromCharCode(0xE0 | ((x >>> 12) & 0x0F),
+                                      0x80 | ((x >>> 6 ) & 0x3F),
+                                      0x80 | ( x         & 0x3F));
+      else if(x <= 0x1FFFFF)
+        output += String.fromCharCode(0xF0 | ((x >>> 18) & 0x07),
+                                      0x80 | ((x >>> 12) & 0x3F),
+                                      0x80 | ((x >>> 6 ) & 0x3F),
+                                      0x80 | ( x         & 0x3F));
+    }
+    return output;
+  };
+
+  /*
+   * Encode a string as utf-16
+   */
+  MD5.str2rstr_utf16le = function(input)
+  {
+    var output = "";
+    for(var i = 0; i < input.length; i++)
+      output += String.fromCharCode( input.charCodeAt(i)        & 0xFF,
+                                    (input.charCodeAt(i) >>> 8) & 0xFF);
+    return output;
+  };
+
+  MD5.str2rstr_utf16be = function(input)
+  {
+    var output = "";
+    for(var i = 0; i < input.length; i++)
+      output += String.fromCharCode((input.charCodeAt(i) >>> 8) & 0xFF,
+                                     input.charCodeAt(i)        & 0xFF);
+    return output;
+  };
+
+  /*
+   * Convert a raw string to an array of little-endian words
+   * Characters >255 have their high-byte silently ignored.
+   */
+  MD5.rstr2binl = function(input)
+  {
+    var output = Array(input.length >> 2);
+    for(var i = 0; i < output.length; i++)
+      output[i] = 0;
+    for(var i = 0; i < input.length * 8; i += 8)
+      output[i>>5] |= (input.charCodeAt(i / 8) & 0xFF) << (i%32);
+    return output;
+  };
+
+  /*
+   * Convert an array of little-endian words to a string
+   */
+  MD5.binl2rstr = function(input)
+  {
+    var output = "";
+    for(var i = 0; i < input.length * 32; i += 8)
+      output += String.fromCharCode((input[i>>5] >>> (i % 32)) & 0xFF);
+    return output;
+  };
+
+  /*
+   * Calculate the MD5 of an array of little-endian words, and a bit length.
+   */
+  MD5.binl_md5 = function(x, len)
+  {
+    /* append padding */
+    x[len >> 5] |= 0x80 << ((len) % 32);
+    x[(((len + 64) >>> 9) << 4) + 14] = len;
+
+    var a =  1732584193;
+    var b = -271733879;
+    var c = -1732584194;
+    var d =  271733878;
+
+    for(var i = 0; i < x.length; i += 16)
+    {
+      var olda = a;
+      var oldb = b;
+      var oldc = c;
+      var oldd = d;
+
+      a = this.md5_ff(a, b, c, d, x[i+ 0], 7 , -680876936);
+      d = this.md5_ff(d, a, b, c, x[i+ 1], 12, -389564586);
+      c = this.md5_ff(c, d, a, b, x[i+ 2], 17,  606105819);
+      b = this.md5_ff(b, c, d, a, x[i+ 3], 22, -1044525330);
+      a = this.md5_ff(a, b, c, d, x[i+ 4], 7 , -176418897);
+      d = this.md5_ff(d, a, b, c, x[i+ 5], 12,  1200080426);
+      c = this.md5_ff(c, d, a, b, x[i+ 6], 17, -1473231341);
+      b = this.md5_ff(b, c, d, a, x[i+ 7], 22, -45705983);
+      a = this.md5_ff(a, b, c, d, x[i+ 8], 7 ,  1770035416);
+      d = this.md5_ff(d, a, b, c, x[i+ 9], 12, -1958414417);
+      c = this.md5_ff(c, d, a, b, x[i+10], 17, -42063);
+      b = this.md5_ff(b, c, d, a, x[i+11], 22, -1990404162);
+      a = this.md5_ff(a, b, c, d, x[i+12], 7 ,  1804603682);
+      d = this.md5_ff(d, a, b, c, x[i+13], 12, -40341101);
+      c = this.md5_ff(c, d, a, b, x[i+14], 17, -1502002290);
+      b = this.md5_ff(b, c, d, a, x[i+15], 22,  1236535329);
+
+      a = this.md5_gg(a, b, c, d, x[i+ 1], 5 , -165796510);
+      d = this.md5_gg(d, a, b, c, x[i+ 6], 9 , -1069501632);
+      c = this.md5_gg(c, d, a, b, x[i+11], 14,  643717713);
+      b = this.md5_gg(b, c, d, a, x[i+ 0], 20, -373897302);
+      a = this.md5_gg(a, b, c, d, x[i+ 5], 5 , -701558691);
+      d = this.md5_gg(d, a, b, c, x[i+10], 9 ,  38016083);
+      c = this.md5_gg(c, d, a, b, x[i+15], 14, -660478335);
+      b = this.md5_gg(b, c, d, a, x[i+ 4], 20, -405537848);
+      a = this.md5_gg(a, b, c, d, x[i+ 9], 5 ,  568446438);
+      d = this.md5_gg(d, a, b, c, x[i+14], 9 , -1019803690);
+      c = this.md5_gg(c, d, a, b, x[i+ 3], 14, -187363961);
+      b = this.md5_gg(b, c, d, a, x[i+ 8], 20,  1163531501);
+      a = this.md5_gg(a, b, c, d, x[i+13], 5 , -1444681467);
+      d = this.md5_gg(d, a, b, c, x[i+ 2], 9 , -51403784);
+      c = this.md5_gg(c, d, a, b, x[i+ 7], 14,  1735328473);
+      b = this.md5_gg(b, c, d, a, x[i+12], 20, -1926607734);
+
+      a = this.md5_hh(a, b, c, d, x[i+ 5], 4 , -378558);
+      d = this.md5_hh(d, a, b, c, x[i+ 8], 11, -2022574463);
+      c = this.md5_hh(c, d, a, b, x[i+11], 16,  1839030562);
+      b = this.md5_hh(b, c, d, a, x[i+14], 23, -35309556);
+      a = this.md5_hh(a, b, c, d, x[i+ 1], 4 , -1530992060);
+      d = this.md5_hh(d, a, b, c, x[i+ 4], 11,  1272893353);
+      c = this.md5_hh(c, d, a, b, x[i+ 7], 16, -155497632);
+      b = this.md5_hh(b, c, d, a, x[i+10], 23, -1094730640);
+      a = this.md5_hh(a, b, c, d, x[i+13], 4 ,  681279174);
+      d = this.md5_hh(d, a, b, c, x[i+ 0], 11, -358537222);
+      c = this.md5_hh(c, d, a, b, x[i+ 3], 16, -722521979);
+      b = this.md5_hh(b, c, d, a, x[i+ 6], 23,  76029189);
+      a = this.md5_hh(a, b, c, d, x[i+ 9], 4 , -640364487);
+      d = this.md5_hh(d, a, b, c, x[i+12], 11, -421815835);
+      c = this.md5_hh(c, d, a, b, x[i+15], 16,  530742520);
+      b = this.md5_hh(b, c, d, a, x[i+ 2], 23, -995338651);
+
+      a = this.md5_ii(a, b, c, d, x[i+ 0], 6 , -198630844);
+      d = this.md5_ii(d, a, b, c, x[i+ 7], 10,  1126891415);
+      c = this.md5_ii(c, d, a, b, x[i+14], 15, -1416354905);
+      b = this.md5_ii(b, c, d, a, x[i+ 5], 21, -57434055);
+      a = this.md5_ii(a, b, c, d, x[i+12], 6 ,  1700485571);
+      d = this.md5_ii(d, a, b, c, x[i+ 3], 10, -1894986606);
+      c = this.md5_ii(c, d, a, b, x[i+10], 15, -1051523);
+      b = this.md5_ii(b, c, d, a, x[i+ 1], 21, -2054922799);
+      a = this.md5_ii(a, b, c, d, x[i+ 8], 6 ,  1873313359);
+      d = this.md5_ii(d, a, b, c, x[i+15], 10, -30611744);
+      c = this.md5_ii(c, d, a, b, x[i+ 6], 15, -1560198380);
+      b = this.md5_ii(b, c, d, a, x[i+13], 21,  1309151649);
+      a = this.md5_ii(a, b, c, d, x[i+ 4], 6 , -145523070);
+      d = this.md5_ii(d, a, b, c, x[i+11], 10, -1120210379);
+      c = this.md5_ii(c, d, a, b, x[i+ 2], 15,  718787259);
+      b = this.md5_ii(b, c, d, a, x[i+ 9], 21, -343485551);
+
+      a = this.safe_add(a, olda);
+      b = this.safe_add(b, oldb);
+      c = this.safe_add(c, oldc);
+      d = this.safe_add(d, oldd);
+    }
+    return Array(a, b, c, d);
+  };
+
+  /*
+   * These functions implement the four basic operations the algorithm uses.
+   */
+  MD5.md5_cmn = function(q, a, b, x, s, t)
+  {
+    return this.safe_add(this.bit_rol(this.safe_add(this.safe_add(a, q), this.safe_add(x, t)), s),b);
+  };
+  MD5.md5_ff = function(a, b, c, d, x, s, t)
+  {
+    return this.md5_cmn((b & c) | ((~b) & d), a, b, x, s, t);
+  };
+  MD5.md5_gg = function(a, b, c, d, x, s, t)
+  {
+    return this.md5_cmn((b & d) | (c & (~d)), a, b, x, s, t);
+  };
+  MD5.md5_hh = function(a, b, c, d, x, s, t)
+  {
+    return this.md5_cmn(b ^ c ^ d, a, b, x, s, t);
+  };
+  MD5.md5_ii = function(a, b, c, d, x, s, t)
+  {
+    return this.md5_cmn(c ^ (b | (~d)), a, b, x, s, t);
+  };
+
+  /*
+   * Add integers, wrapping at 2^32. This uses 16-bit operations internally
+   * to work around bugs in some JS interpreters.
+   */
+  MD5.safe_add = function(x, y)
+  {
+    var lsw = (x & 0xFFFF) + (y & 0xFFFF);
+    var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+    return (msw << 16) | (lsw & 0xFFFF);
+  };
+
+  /*
+   * Bitwise rotate a 32-bit number to the left.
+   */
+  MD5.bit_rol = function(num, cnt)
+  {
+    return (num << cnt) | (num >>> (32 - cnt));
+  };
+
+  exports.MD5 = MD5;
+
+  function src_Global__setCursor(name) {
+    name = name == null ? 'default' : name;
+    canvas.style.cursor = name;
+  }
+
+
+  /**
+   *Static class that:
+   * -includes all the data models (by including the class IncludeDataModels.js)
+   * -includes information about all those data models (on dataModelsInfo variable)
+   * -includes class utils (that contains methods such as instantiate)
+   * -contains the global variables (such as userAgent, canvas, nF, mX…), global
+   * -contains the listener methods
+   * -triggers de init, update and draw in Global class
+   * @namespace
+   * @category basics
+   */
+  function Global(){}
+
+  Global.userAgent="unknown";
+
+  window.init = function(){
+    //console.log("init must be overriden!");
+  }
+
+  window.cycle = function(){
+    //console.log("cycle must be overriden!");
+  }
+
+  window.resizeWindow = function(){
+    //console.log("resizeWindow must be overriden!");
+  }
+
+  window.lastCycle = function(){
+    //override
+  }
+
+  var listenerArray  = [];
+  var canvas;
+  var src_Global__userAgent="none";
+  var src_Global__userAgentVersion;
+  var canvasResizeable=true;
+
+  //data models info
+  var src_Global__dataModelsInfo = [
+    {
+      type:"Null",
+      short:"Ø",
+      category:"object",
+      level:"0",
+      write:"true",
+      inherits:null,
+      color:"#ffffff"
+    },
+    {
+      type:"Object",
+      short:"{}",
+      category:"object",
+      level:"0",
+      write:"true",
+      inherits:null,
+      to:"String",
+      color:"#C0BFBF"
+    },
+    {
+      type:"Function",
+      short:"F",
+      category:"object",
+      level:"0",
+      inherits:null,
+      color:"#C0BFBF"
+    },  {
+      type:"Boolean",
+      short:"b",
+      category:"boolean",
+      level:"0",
+      write:"true",
+      inherits:null,
+      to:"Number",
+      color:"#4F60AB"
+    },
+    {
+      type:"Number",
+      short:"#",
+      category:"number",
+      level:"0",
+      write:"true",
+      inherits:null,
+      to:"String",
+      color:"#5DA1D8"
+    },
+    {
+      type:"Interval",
+      short:"##",
+      category:"number",
+      level:"0.5",
+      write:"true",
+      inherits:null,
+      to:"Point",
+      contains:"Number",
+      color:"#386080"
+    },
+    {
+      type:"Array",
+      short:"[]",
+      category:"object",
+      level:"1",
+      inherits:null,
+      to:"List",
+      contains:"Object,Null",
+      color:"#80807F"
+    },
+    {
+      type:"List",
+      short:"L",
+      category:"object",
+      level:"1",
+      inherits:"Array",
+      contains:"Object",
+      comments:"A List is an Array that doesn't contain nulls, and with enhanced functionalities",
+      color:"#80807F"
+    },
+    {
+      type:"Table",
+      short:"T",
+      category:"object",
+      level:"2",
+      inherits:"List",
+      contains:"List",
+      comments:"A Table is a List of Lists",
+      color:"#80807F"
+    },
+    {
+      type:"BooleanList",
+      short:"bL",
+      category:"boolean",
+      level:"1",
+      inherits:"List",
+      to:"NumberList",
+      contains:"Boolean",
+      color:"#3A4780"
+    },
+    {
+      type:"NumberList",
+      short:"#L",
+      category:"number",
+      level:"1",
+      write:"true",
+      inherits:"List",
+      to:"StringList",
+      contains:"Number",
+      color:"#386080"
+    },
+    {
+      type:"NumberTable",
+      short:"#T",
+      category:"number",
+      level:"2",
+      write:"true",
+      inherits:"Table",
+      to:"Network",
+      contains:"NumberList",
+      color:"#386080"
+    },
+    {
+      type:"String",
+      short:"s",
+      category:"string",
+      level:"0",
+      write:"true",
+      inherits:null,
+      color:"#8BC63F"
+    },
+    {
+      type:"StringList",
+      short:"sL",
+      category:"string",
+      level:"1",
+      write:"true",
+      inherits:"List",
+      contains:"String",
+      color:"#5A8039"
+    },
+    {
+      type:"StringTable",
+      short:"sT",
+      category:"string",
+      level:"2",
+      inherits:"Table",
+      contains:"StringList",
+      color:"#5A8039"
+    },
+    {
+      type:"Date",
+      short:"d",
+      category:"date",
+      level:"0.5",
+      write:"true",
+      inherits:null,
+      to:"Number,String",
+      color:"#7AC8A3"
+    },
+    {
+      type:"DateInterval",
+      short:"dd",
+      category:"date",
+      level:"0.75",
+      inherits:null,
+      to:"Interval",
+      contains:"Date",
+      color:"#218052"
+    },
+    {
+      type:"DateList",
+      short:"dL",
+      category:"date",
+      level:"1.5",
+      inherits:"List",
+      to:"NumberList,StringList",
+      contains:"Date",
+      color:"#218052"
+    },
+    {
+      type:"Point",
+      short:".",
+      category:"geometry",
+      level:"0.5",
+      write:"true",
+      inherits:null,
+      to:"Interval",
+      contains:"Number",
+      color:"#9D59A4"
+    },
+    {
+      type:"Rectangle",
+      short:"t",
+      category:"geometry",
+      level:"0.5",
+      inherits:null,
+      to:"Polygon",
+      contains:"Number",
+      color:"#9D59A4"
+    },
+    {
+      type:"Polygon",
+      short:".L",
+      category:"geometry",
+      level:"1.5",
+      inherits:"List",
+      to:"NumberTable",
+      contains:"Point",
+      comments:"A Polygon is a List of Points",
+      color:"#76297F"
+    },
+    {
+      type:"RectangleList",
+      short:"tL",
+      category:"geometry",
+      level:"1.5",
+      inherits:null,
+      to:"MultiPolygon",
+      contains:"Rectangle",
+      color:"#76297F"
+    },
+    {
+      type:"MultiPolygon",
+      short:".T",
+      category:"geometry",
+      level:"2.5",
+      inherits:"Table",
+      contains:"Polygon",
+      comments:"A MultiPolygon is a List of Polygons",
+      color:"#76297F"
+    },
+    {
+      type:"Point3D",
+      short:"3",
+      category:"geometry",
+      level:"0.5",
+      write:"true",
+      inherits:"Point",
+      to:"NumberList",
+      contains:"Number",
+      color:"#9D59A4"
+    },
+    {
+      type:"Polygon3D",
+      short:"3L",
+      category:"geometry",
+      level:"1.5",
+      inherits:"List",
+      to:"NumberTable",
+      contains:"Point3D",
+      color:"#76297F"
+    },
+    {
+      type:"MultiPolygon3D",
+      short:"3T",
+      category:"geometry",
+      level:"2.5",
+      inherits:"Table",
+      contains:"Polygon3D",
+      color:"#76297F"
+    },
+    {
+      type:"Color",
+      short:"c",
+      category:"color",
+      level:"0",
+      inherits:null,
+      to:"String",
+      comments:"a Color is just a string that can be interpreted as color",
+      color:"#EE4488"
+    },
+    {
+      type:"ColorScale",
+      short:"cS",
+      category:"color",
+      level:"0",
+      write:"true",
+      inherits:"Function",
+      color:"#802046"
+    },
+    {
+      type:"ColorList",
+      short:"cL",
+      category:"color",
+      level:"1",
+      write:"true",
+      inherits:"List",
+      to:"StringList",
+      contains:"Color",
+      color:"#802046"
+    },
+    {
+      type:"Image",
+      short:"i",
+      category:"graphic",
+      level:"0",
+      inherits:null,
+      color:"#802046"
+    },
+    {
+      type:"ImageList",
+      short:"iL",
+      category:"graphic",
+      level:"1",
+      inherits:"List",
+      contains:"Image",
+      color:"#802046"
+    },
+    {
+      type:"Node",
+      short:"n",
+      category:"structure",
+      level:"0",
+      inherits:null,
+      color:"#FAA542"
+    },
+    {
+      type:"Relation",
+      short:"r",
+      category:"structure",
+      level:"0.5",
+      inherits:"Node",
+      contains:"Node",
+      color:"#FAA542"
+    },
+    {
+      type:"NodeList",
+      short:"nL",
+      category:"structure",
+      level:"1",
+      inherits:"List",
+      contains:"Node",
+      color:"#805522"
+    },
+    {
+      type:"RelationList",
+      short:"rL",
+      category:"structure",
+      level:"1.5",
+      inherits:"NodeList",
+      contains:"Relation",
+      color:"#805522"
+    },
+    {
+      type:"Network",
+      short:"Nt",
+      category:"structure",
+      level:"2",
+      inherits:null,
+      to:"Table",
+      contains:"NodeList,RelationList",
+      color:"#805522"
+    },
+    {
+      type:"Tree",
+      short:"Tr",
+      category:"structure",
+      level:"2",
+      inherits:"Network",
+      to:"Table",
+      contains:"NodeList,RelationList",
+      color:"#805522"
+    }
+  ];
+
+
+  //global useful vars
+  var cW = 1; // canvas width
+  var cH = 1; // canvas height
+  var cX = 1; // canvas center x
+  var cY = 1; // canvas center y
+  var mX = 0; // cursor x
+  var mY = 0; // cursor y
+  var mP = new Point(0, 0); // cursor point
+  var nF = 0; // number of current frame since first cycle
+
+  var MOUSE_DOWN=false; //true on the frame of mousedown event
+  var MOUSE_UP=false; //true on the frame of mouseup event
+  var MOUSE_UP_FAST=false; //true on the frame of mouseup event
+  var WHEEL_CHANGE=0; //differnt from 0 if mousewheel (or pad) moves / STATE
+  var NF_DOWN; //number of frame of last mousedown event
+  var NF_UP; //number of frame of last mouseup event
+  var MOUSE_PRESSED; //true if mouse pressed / STATE
+  var MOUSE_IN_DOCUMENT = true; //true if cursor is inside document / STATE
+  var mX_DOWN; // cursor x position on last mousedown event
+  var mY_DOWN; // cursor x position on last mousedown event
+  var mX_UP; // cursor x position on last mousedown event
+  var mY_UP; // cursor y position on last mousedown event
+  var PREV_mX=0; // cursor x position previous frame
+  var PREV_mY=0; // cursor y position previous frame
+  var DX_MOUSE=0; //horizontal movement of cursor in last frame
+  var DY_MOUSE=0; //vertical movement of cursor in last frame
+  var MOUSE_MOVED = false; //boolean that indicates wether the mouse moved in the last frame / STATE
+  var T_MOUSE_PRESSED = 0; //time in milliseconds of mouse being pressed, useful for sutained pressure detection
+
+  //var deltaWheel = 0;
+  var cursorStyle = 'auto';
+  var backGroundColor = 'white';
+  var backGroundColorRGB = [255,255,255];
+  var cycleActive;
+
+  //global constants
+  var src_Global__context;
+  var TwoPi = 2*Math.PI;
+  var HalfPi = 0.5*Math.PI;
+  var radToGrad = 180/Math.PI;
+  var gradToRad = Math.PI/180;
+  var src_Global__c = console;
+  src_Global__c.l = src_Global__c.log; //use c.l instead of console.log
+
+  //private
+  var _wheelActivated = false;
+  var _keyboardActivated = false;
+
+  var _prevMouseX = 0;
+  var _prevMouseY = 0;
+  var _setIntervalId;
+  var _setTimeOutId;
+  var _cycleOnMouseMovement = false;
+  var _interactionCancelledFrame;
+  var _tLastMouseDown;
+
+  var _alphaRefresh=0;//if _alphaRefresh>0 instead of clearing the canvas each frame, a transparent rectangle will be drawn
+
+  var END_CYCLE_DELAY = 3000; //time in milliseconds, from last mouse movement to the last cycle to be executed in case cycleOnMouseMovement has been activated
+
+  Array.prototype.last = function(){
+    return this[this.length-1];
+  };
+
+  window.addEventListener('load', function(){
+
+    if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
+      exports.userAgent = src_Global__userAgent='IE';
+      exports.userAgentVersion = src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+      if(src_Global__userAgentVersion<9) return null;
+    } else if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent)){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
+      exports.userAgent = src_Global__userAgent='FIREFOX';
+      exports.userAgentVersion = src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+    } else if (navigator.userAgent.match(/Chrome/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
+      exports.userAgent = src_Global__userAgent='CHROME';
+      exports.userAgentVersion = src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+    } else if (/Mozilla[\/\s](\d+\.\d+)/.test(navigator.userAgent) || navigator.userAgent.match(/Mozilla/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
+      exports.userAgent = src_Global__userAgent='MOZILLA';
+      exports.userAgentVersion = src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+    } else if (navigator.userAgent.match(/Safari/) != null){ //test for MSIE x.x;
+      exports.userAgent = src_Global__userAgent='Safari';
+      exports.userAgentVersion = src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+    } else if(navigator.userAgent.match(/iPad/i) != null){
+      exports.userAgent = src_Global__userAgent='IOS';
+    } else if(navigator.userAgent.match(/iPhone/i) != null){
+      exports.userAgent = src_Global__userAgent='IOS';
+    }
+
+
+    Global.userAgent=src_Global__userAgent;
+    Global._frameRate=30;
+
+    exports.canvas = canvas = document.getElementById('main');
+
+    if(canvas!=null){
+      exports.context = src_Global__context = canvas.getContext('2d');
+
+      _adjustCanvas();
+
+      canvas.addEventListener("mousemove", _onMouse, false);
+      canvas.addEventListener("mousedown", _onMouse, false);
+      canvas.addEventListener("mouseup", _onMouse, false);
+      canvas.addEventListener("mouseenter", _onMouse, false);
+      canvas.addEventListener("mouseleave", _onMouse, false);
+
+
+      activateWheel();
+
+      window.addEventListener("resize", onResize, false);
+
+      startCycle();
+      window.init();
+    }
+
+    src_Global__c.l('Moebio Framework v' + version + ' | user agent: '+src_Global__userAgent+' | user agent version: '+src_Global__userAgentVersion+' | canvas detected: '+(canvas!=null));
+
+  }, false);
+
+  function _onMouse(e) {
+
+    switch(e.type){
+      case "mousemove":
+        exports.PREV_mX = PREV_mX=mX;
+        exports.PREV_mY = PREV_mY=mY;
+
+        if(e.clientX){
+          exports.mX = mX = e.clientX;
+              exports.mY = mY = e.clientY;
+        } else if(e.offsetX) {
+              exports.mX = mX = e.offsetX;
+              exports.mY = mY = e.offsetY;
+          } else if(e.layerX) {
+              exports.mX = mX = e.layerX;
+              exports.mY = mY = e.layerY;
+          }
+          mP.x = mX;
+          mP.y = mY;
+          exports.MOUSE_IN_DOCUMENT = MOUSE_IN_DOCUMENT = true;
+          break;
+      case "mousedown":
+        exports.NF_DOWN = NF_DOWN = nF;
+        exports.MOUSE_PRESSED = MOUSE_PRESSED = true;
+        exports.T_MOUSE_PRESSED = T_MOUSE_PRESSED = 0;
+        _tLastMouseDown = new Date().getTime();
+        exports.mX_DOWN = mX_DOWN = mX;
+        exports.mY_DOWN = mY_DOWN = mY;
+        exports.MOUSE_IN_DOCUMENT = MOUSE_IN_DOCUMENT = true;
+        break;
+      case "mouseup":
+        exports.NF_UP = NF_UP = nF;
+        exports.MOUSE_PRESSED = MOUSE_PRESSED = false;
+        exports.T_MOUSE_PRESSED = T_MOUSE_PRESSED = 0;
+        exports.mX_UP = mX_UP = mX;
+        exports.mY_UP = mY_UP = mY;
+        exports.MOUSE_IN_DOCUMENT = MOUSE_IN_DOCUMENT = true;
+        break;
+      case "mouseenter":
+        exports.MOUSE_IN_DOCUMENT = MOUSE_IN_DOCUMENT = true;
+        break;
+      case "mouseleave":
+        exports.MOUSE_IN_DOCUMENT = MOUSE_IN_DOCUMENT = false;
+        break;
+    }
+  }
+
+
+  function onResize(e){
+    _adjustCanvas();
+    window.resizeWindow();
+  }
+
+  function _adjustCanvas(){
+    if(canvasResizeable==false) return;
+
+    exports.cW = cW = getDocWidth();
+    exports.cH = cH = getDocHeight();
+
+    canvas.setAttribute('width', cW);
+    canvas.setAttribute('height', cH);
+
+    exports.cX = cX = Math.floor(cW*0.5);
+    exports.cY = cY = Math.floor(cH*0.5);
+  }
+
+
+  function clearContext(){
+    src_Global__context.clearRect(0, 0, cW, cH);
+  }
+
+  function cycleOnMouseMovement(value, time){
+    if(time!=null) END_CYCLE_DELAY = time;
+
+    if(value){
+      src_Global__context.canvas.addEventListener('mousemove', onMoveCycle, false);
+      addInteractionEventListener('mousewheel', onMoveCycle, this);
+      exports._cycleOnMouseMovement = _cycleOnMouseMovement = true;
+      stopCycle();
+    } else {
+      src_Global__context.canvas.removeEventListener('mousemove', onMoveCycle, false);
+      removeInteractionEventListener('mousewheel', onMoveCycle, this);
+      exports._cycleOnMouseMovement = _cycleOnMouseMovement = false;
+      startCycle();
+    }
+  }
+
+  function setFrameRate(fr){
+    fr = fr||30;
+    Global._frameRate = fr;
+
+    if(cycleActive) startCycle();
+  }
+
+  function enterFrame(){
+    if(_alphaRefresh==0){
+        src_Global__context.clearRect(0, 0, cW, cH);
+    } else {
+      src_Global__context.fillStyle = 'rgba('+backGroundColorRGB[0]+','+backGroundColorRGB[1]+','+backGroundColorRGB[2]+','+_alphaRefresh+')';
+      src_Global__context.fillRect(0, 0, cW, cH);
+    }
+
+      src_Global__setCursor('default');
+
+    exports.MOUSE_DOWN = MOUSE_DOWN = NF_DOWN==nF;
+    exports.MOUSE_UP = MOUSE_UP = NF_UP==nF;
+    exports.MOUSE_UP_FAST = MOUSE_UP_FAST = MOUSE_UP && (nF-NF_DOWN)<9;
+
+    exports.DX_MOUSE = DX_MOUSE = mX-PREV_mX;
+    exports.DY_MOUSE = DY_MOUSE = mY-PREV_mY;
+    exports.MOUSE_MOVED = MOUSE_MOVED = DX_MOUSE!=0 || DY_MOUSE!=0;
+
+    if(MOUSE_PRESSED) exports.T_MOUSE_PRESSED = T_MOUSE_PRESSED = new Date().getTime() - _tLastMouseDown;
+
+      window.cycle();
+
+      exports.WHEEL_CHANGE = WHEEL_CHANGE = 0;
+
+      exports.PREV_mX = PREV_mX=mX;
+      exports.PREV_mY = PREV_mY=mY;
+
+      nF++, exports.nF = nF;
+  }
+
+  function startCycle(){
+    clearTimeout(_setTimeOutId);
+    clearInterval(_setIntervalId);
+    _setIntervalId = setInterval(enterFrame, Global._frameRate);
+    exports.cycleActive = cycleActive = true;
+  }
+
+
+  function stopCycle(){
+    clearInterval(_setIntervalId);
+    exports.cycleActive = cycleActive = false;
+
+    window.lastCycle();
+  }
+
+
+
+
+  function onMoveCycle(e){
+    if(e.type=='mousemove' && _prevMouseX==mX && _prevMouseY==mY) return;
+    reStartCycle();
+  }
+
+  function reStartCycle(){
+    _prevMouseX=mX;
+    _prevMouseY=mY;
+
+    if(!cycleActive){
+      _setIntervalId = setInterval(enterFrame, Global._frameRate);
+      exports.cycleActive = cycleActive = true;
+    }
+
+    clearTimeout(_setTimeOutId);
+    _setTimeOutId = setTimeout(stopCycle, END_CYCLE_DELAY);
+  }
+
+  //interaction events
+  function addInteractionEventListener(eventType, onFunction, target){//TODO: listenerArray contains objects instead of arrays
+    listenerArray.push(new Array(eventType, onFunction, target));
+    switch(eventType){
+      case 'mousedown':
+      case 'mouseup':
+      case 'click':
+      case 'mousemove':
+        src_Global__context.canvas.addEventListener(eventType, onCanvasEvent, false);
+        break;
+      case 'mousewheel':
+        if(!_wheelActivated) activateWheel();
+        break;
+      case 'keydown':
+      case 'keyup':
+        if(!_keyboardActivated) activateKeyboard();
+        break;
+    }
+  }
+
+  function onCanvasEvent(e){
+    var i;
+    for(i=0; listenerArray[i]!=null; i++){
+      if(listenerArray[i][0]==e.type.replace('DOMMouseScroll', 'mousewheel')){
+        if(_interactionCancelledFrame==nF) return;
+        listenerArray[i][1].call(listenerArray[i][2], e);
+      }
+    }
+  }
+
+  function removeInteractionEventListener(eventType, onFunction, target){ //TODO: finish this (requires single element removing method solved first)
+    for(var i=0; listenerArray[i]!=null; i++){
+      if(listenerArray[i][0]==eventType && listenerArray[i][1]==onFunction && listenerArray[i][2]==target){
+        delete listenerArray[i];
+        listenerArray.splice(i, 1);
+        i--;
+      }
+    }
+  }
+
+  function cancelAllInteractions(){
+    src_Global__c.log("cancelAllInteractions, _interactionCancelledFrame:", nF);
+    _interactionCancelledFrame = nF;
+  }
+
+  function setBackgroundColor(color){
+    if(typeof color == "number"){
+      if(arguments.length>3){
+        color = 'rgba('+arguments[0]+','+arguments[1]+','+arguments[2]+','+arguments[3]+')';
+      } else {
+        color = 'rgb('+arguments[0]+','+arguments[1]+','+arguments[2]+')';
+      }
+    } else if(Array.isArray(color)){
+      color = ColorOperators__default.RGBtoHEX(color[0], color[1], color[2]);
+    }
+    exports.backGroundColor = backGroundColor = color;
+
+    exports.backGroundColorRGB = backGroundColorRGB = ColorOperators__default.colorStringToRGB(backGroundColor);
+
+    var body = document.getElementById('index');
+    body.setAttribute('bgcolor', backGroundColor);
+  }
+
+  function setDivPosition(div, x, y){
+    div.setAttribute('style', 'position:absolute;left:'+String(x)+'px;top:'+String(y)+'px;');
+  }
+
+
+  /////////////////////////////////// keyboard and wheel
+
+  function activateKeyboard(){
+    _keyboardActivated = true;
+    document.onkeydown = onKey;
+    document.onkeyup = onKey;
+  }
+
+  function onKey(e){
+    onCanvasEvent(e);
+  }
+
+  /*
+   * thanks http://www.adomas.org/javascript-mouse-wheel
+   */
+  function activateWheel(){
+    _wheelActivated = true;
+
+    if (window.addEventListener){
+      window.addEventListener('DOMMouseScroll', _onWheel, false);
+      //window.addEventListener("mousewheel", _onWheel, false); // testing
+    }
+    window.onmousewheel = document.onmousewheel = _onWheel;
+
+  }
+  function _onWheel(e) {
+    //c.l('_onWheel, e:', e);
+
+      if (!e) e = window.event; //IE
+
+      if (e.wheelDelta){
+        exports.WHEEL_CHANGE = WHEEL_CHANGE = e.wheelDelta/120;
+      } else if (e.detail) { /** Mozilla case. */
+          exports.WHEEL_CHANGE = WHEEL_CHANGE = -e.detail/3;
+      }
+      e.value = WHEEL_CHANGE;
+      // e.type = "mousewheel"; //why this doesn't work?
+
+    onCanvasEvent(e);
+  }
+
+
+
+  ////structures local storage
+
+  function setStructureLocalStorageWithSeed(object, seed, comments){
+    setStructureLocalStorage(object, MD5.hex_md5(seed), comments);
+  };
+
+  function setStructureLocalStorage(object, id, comments){
+    var type = typeOf(object);
+    var code;
+
+    switch(type){
+      case 'string':
+        code = object;
+        break;
+      case 'Network':
+        code = NetworkEncodings.encodeGDF(network);
+        break;
+      default:
+        type = 'object';
+        code = JSON.stringify(object);
+        break;
+    }
+
+    var storageObject = {
+      id:id,
+      type:type,
+      comments:comments,
+      date:new Date(),
+      code:code
+    };
+
+    var storageString = JSON.stringify(storageObject);
+
+    // c.l('storageObject', storageObject);
+    // c.l('id:['+id+']');
+    // c.l('code.length:', code.length);
+
+    localStorage.setItem(id, storageString);
+  };
+
+  function getStructureLocalStorageFromSeed(seed, returnStorageObject){
+    return getStructureLocalStorage(MD5.hex_md5(seed), returnStorageObject);
+  };
+
+  function getStructureLocalStorage(id, returnStorageObject){
+    returnStorageObject = returnStorageObject||false;
+
+    var item = localStorage.getItem(id);
+
+    if(item==null) return null;
+
+
+    try{
+      var storageObject = JSON.parse(item);
+    } catch(err){
+      return null;
+    }
+
+    if(storageObject.type==null && storageObject.code==null) return null;
+
+    var type = storageObject.type;
+    var code = storageObject.code;
+    var object;
+
+    switch(type){
+      case 'string':
+        object = code;
+        break;
+      case 'Network':
+        object = NetworkEncodings.decodeGDF(code);
+        break;
+      case 'object':
+        object = JSON.parse(code);
+        break;
+    }
+
+    if(returnStorageObject){
+      storageObject.object = object;
+      storageObject.size = storageObject.code.length;
+      storageObject.date = new Date(storageObject.date);
+
+      return storageObject;
+    }
+
+    return object;
+  };
+
+  function getDocWidth() {
+      var D = document;
+      return Math.max(
+          D.body.offsetWidth, D.documentElement.offsetWidth,
+          D.body.clientWidth, D.documentElement.clientWidth
+      );
+  }
+
+  function getDocHeight() {
+      var D = document;
+      return Math.max(
+          D.body.offsetHeight, D.documentElement.offsetHeight,
+          D.body.clientHeight, D.documentElement.clientHeight
+      );
+  }
+
+  exports.Global = Global;
+  exports.onResize = onResize;
+  exports.clearContext = clearContext;
+  exports.cycleOnMouseMovement = cycleOnMouseMovement;
+  exports.setFrameRate = setFrameRate;
+  exports.enterFrame = enterFrame;
+  exports.startCycle = startCycle;
+  exports.stopCycle = stopCycle;
+  exports.onMoveCycle = onMoveCycle;
+  exports.reStartCycle = reStartCycle;
+  exports.addInteractionEventListener = addInteractionEventListener;
+  exports.onCanvasEvent = onCanvasEvent;
+  exports.removeInteractionEventListener = removeInteractionEventListener;
+  exports.cancelAllInteractions = cancelAllInteractions;
+  exports.setBackgroundColor = setBackgroundColor;
+  exports.activateKeyboard = activateKeyboard;
+  exports.onKey = onKey;
+  exports.activateWheel = activateWheel;
+  exports.setStructureLocalStorageWithSeed = setStructureLocalStorageWithSeed;
+  exports.setStructureLocalStorage = setStructureLocalStorage;
+  exports.getStructureLocalStorageFromSeed = getStructureLocalStorageFromSeed;
+  exports.getStructureLocalStorage = getStructureLocalStorage;
+  exports.getDocWidth = getDocWidth;
+  exports.getDocHeight = getDocHeight;
+  exports._onMouse = _onMouse;
+  exports.listenerArray = listenerArray;
+  exports.canvas = canvas;
+  exports.userAgent = src_Global__userAgent;
+  exports.userAgentVersion = src_Global__userAgentVersion;
+  exports.canvasResizeable = canvasResizeable;
+  exports.dataModelsInfo = src_Global__dataModelsInfo;
+  exports.cW = cW;
+  exports.cH = cH;
+  exports.cX = cX;
+  exports.cY = cY;
+  exports.mX = mX;
+  exports.mY = mY;
+  exports.mP = mP;
+  exports.nF = nF;
+  exports.MOUSE_DOWN = MOUSE_DOWN;
+  exports.MOUSE_UP = MOUSE_UP;
+  exports.MOUSE_UP_FAST = MOUSE_UP_FAST;
+  exports.WHEEL_CHANGE = WHEEL_CHANGE;
+  exports.NF_DOWN = NF_DOWN;
+  exports.NF_UP = NF_UP;
+  exports.MOUSE_PRESSED = MOUSE_PRESSED;
+  exports.MOUSE_IN_DOCUMENT = MOUSE_IN_DOCUMENT;
+  exports.mX_DOWN = mX_DOWN;
+  exports.mY_DOWN = mY_DOWN;
+  exports.mX_UP = mX_UP;
+  exports.mY_UP = mY_UP;
+  exports.PREV_mX = PREV_mX;
+  exports.PREV_mY = PREV_mY;
+  exports.DX_MOUSE = DX_MOUSE;
+  exports.DY_MOUSE = DY_MOUSE;
+  exports.MOUSE_MOVED = MOUSE_MOVED;
+  exports.T_MOUSE_PRESSED = T_MOUSE_PRESSED;
+  exports.cursorStyle = cursorStyle;
+  exports.backGroundColor = backGroundColor;
+  exports.backGroundColorRGB = backGroundColorRGB;
+  exports.cycleActive = cycleActive;
+  exports.context = src_Global__context;
+  exports.TwoPi = TwoPi;
+  exports.HalfPi = HalfPi;
+  exports.radToGrad = radToGrad;
+  exports.gradToRad = gradToRad;
+  exports.c = src_Global__c;
+  exports._cycleOnMouseMovement = _cycleOnMouseMovement;
+
+  Relation.prototype = new Node__default();
+  Relation.prototype.constructor = Relation;
+
+  /**
+   * Relation
+   * @classdesc Relations represent the edges that connect Nodes
+   * in a Network DataType.
+   *
+   * @description create a new Relation.
+   * @constructor
+   * @param {String} id ID of the Relation.
+   * @param {String} name Name of the Relation.
+   * @param {Node} node0 Source of the Relation.
+   * @param {Node} node1 Destination of the Relation.
+   * @param {Number} weight Edge weight associated with Relation.
+   * Defaults to 1.
+   * @param {String} content Other data to associate with this Relation.
+   * @category networks
+   */
+  function Relation(id, name, node0, node1, weight, content) {
+    Node__default.apply(this, [id, name]);
+    this.type = "Relation";
+
+    this.node0 = node0;
+    this.node1 = node1;
+    this.weight = weight == null ? 1 : weight;
+    this.content = content == null ? "" : content;
+  }
+
+
+  Relation.prototype.destroy = function() {
+    Node__default.prototype.destroy.call(this);
+    delete this.node0;
+    delete this.node1;
+    delete this.content;
+  };
+
+  Relation.prototype.getOther = function(node) {
+    return node == this.node0 ? this.node1 : this.node0;
+  };
+
+  Relation.prototype.clone = function() {
+    var relation = new Relation(this.id, this.name, this.node0, this.node1);
+
+    relation.x = this.x;
+    relation.y = this.y;
+    relation.z = this.z;
+
+    relation.nodeType = this.nodeType;
+
+    relation.weight = this.weight;
+    relation.descentWeight = this.descentWeight;
+
+    return relation;
+  };
+
+  exports.Relation = Relation;
+
+  Network.prototype = new DataModel();
+  Network.prototype.constructor = Network;
+
+  /**
+   * @classdesc Networks are a DataType to store network data.
+   *
+   * Networks have nodes stored in a NodeList,
+   * and relations (edges) stored in a RelationList.
+   * @description Create a new Network instance.
+   * @constructor
+   * @category networks
+   */
+  function Network() {
+    this.type = "Network";
+
+    this.nodeList = new NodeList__default();
+    this.relationList = new RelationList();
+  }
+
+
+  /**
+   * Get Nodes of the Network as a NodeList
+   * @return {NodeList}
+   * tags:
+   */
+  Network.prototype.getNodes = function() {
+    return this.nodeList;
+  };
+
+  /**
+   * Get Relations (edges) of the Network as
+   * a RelationList.
+   * @return {RelationList}
+   * tags:
+   */
+  Network.prototype.getRelations = function() {
+    return this.relationList;
+  };
+
+  /**
+   * get nodes ids property
+   * @return {StringList}
+   * tags:
+   */
+  Network.prototype.getNodesIds = function() {
+    return this.nodeList.getIds();
+  };
+
+
+
+  /*
+   * building methods
+   */
+
+  /**
+   * Add a node to the network
+   * @param {Node} node A new node that will be added to the network.
+   */
+  Network.prototype.addNode = function(node) {
+    this.nodeList.addNode(node);
+  };
+
+  /**
+   * Retrieve a node from the nodeList of the Network with the given name (label).
+   * @param {String} name The name of the node to retrieve from the Network.
+   * @return {Node} The node with the given name. Null if no node with that name
+   * can be found in the Network.
+   */
+  Network.prototype.getNodeWithName = function(name) {
+    return this.nodeList.getNodeWithName(name);
+  };
+
+  /**
+   * Retrieve node from Network with the given id.
+   * @param {String} id ID of the node to retrieve
+   * @return {Node} The node with the given id. Null if a node with this id is not
+   * in the Network.
+   */
+  Network.prototype.getNodeWithId = function(id) {
+    return this.nodeList.getNodeWithId(id);
+  };
+
+  /**
+   * Add a new Relation (edge) to the Network between two nodes.
+   * @param {Node} node0 The source of the relation.
+   * @param {Node} node1 The destination of the relation.
+   * @param {String} id The id of the relation.
+   * @param {Number} weight A numerical weight associated with the relation (edge).
+   * 
+   * @param {String} content Information associated with the relation.
+   */
+  Network.prototype.createRelation = function(node0, node1, id, weight, content) {
+    this.addRelation(new Relation(id, id, node0, node1, weight, content));
+  };
+
+  /**
+   * Add an existing Relation (edge) to the Network.
+   * @param {Relation} relation The relation to add to the network.
+   */
+  Network.prototype.addRelation = function(relation) {
+    this.relationList.addNode(relation);
+    relation.node0.nodeList.addNode(relation.node1);
+    relation.node0.relationList.addNode(relation);
+    relation.node0.toNodeList.addNode(relation.node1);
+    relation.node0.toRelationList.addNode(relation);
+    relation.node1.nodeList.addNode(relation.node0);
+    relation.node1.relationList.addNode(relation);
+    relation.node1.fromNodeList.addNode(relation.node0);
+    relation.node1.fromRelationList.addNode(relation);
+  };
+
+  /**
+   * Create a new Relation between two nodes in the network
+   * @param {Node} node0 The source of the relation.
+   * @param {Node} node1 The destination of the relation.
+   * @param {String} id The id of the relation. If missing, an id will be generated
+   * based on the id's of node0 and node1.
+   * @param {Number} weight=1 A numerical weight associated with the relation (edge).
+   * @param {String} content Information associated with the relation.
+   * @return {Relation} The new relation added to the Network.
+   */
+  Network.prototype.connect = function(node0, node1, id, weight, content) {
+    id = id || (node0.id + "_" + node1.id);
+    weight = weight || 1;
+    var relation = new Relation(id, id, node0, node1, weight);
+    this.addRelation(relation);
+    relation.content = content;
+    return relation;
+  };
+
+
+
+  /*
+   * removing methods
+   */
+
+  /**
+   * Remove a node from the Network
+   * @param {Node} node The node to remove.
+   */
+  Network.prototype.removeNode = function(node) {
+    this.removeNodeRelations(node);
+    this.nodeList.removeNode(node);
+  };
+
+  /**
+   * Remove all Relations connected to the node from the Network.
+   * @param {Node} node Node who's relations will be removed.
+   */
+  Network.prototype.removeNodeRelations = function(node) {
+    for(var i = 0; node.relationList[i] != null; i++) {
+      this.removeRelation(node.relationList[i]);
+      i--;
+    }
+  };
+
+  /**
+   * Remove all Nodes from the Network.
+   */
+  Network.prototype.removeNodes = function() {
+    this.nodeList.deleteNodes();
+    this.relationList.deleteNodes();
+  };
+
+  Network.prototype.removeRelation = function(relation) {
+    this.relationList.removeElement(relation);
+    relation.node0.nodeList.removeNode(relation.node1);
+    relation.node0.relationList.removeRelation(relation);
+    relation.node0.toNodeList.removeNode(relation.node1);
+    relation.node0.toRelationList.removeRelation(relation);
+    relation.node1.nodeList.removeNode(relation.node0);
+    relation.node1.relationList.removeRelation(relation);
+    relation.node1.fromNodeList.removeNode(relation.node0);
+    relation.node1.fromRelationList.removeRelation(relation);
+  };
+
+  /**
+   * Transformative method, removes nodes without a minimal number of connections
+   * @param  {Number} minDegree minimal degree
+   * @return {Number} number of nodes removed
+   * tags:transform
+   */
+  Network.prototype.removeIsolatedNodes = function(minDegree) {
+    var i;
+    var nRemoved = 0;
+    minDegree = minDegree == null ? 1 : minDegree;
+
+    for(i = 0; this.nodeList[i] != null; i++) {
+      if(this.nodeList[i].getDegree() < minDegree) {
+        this.nodeList[i]._toRemove = true;
+      }
+    }
+
+    for(i = 0; this.nodeList[i] != null; i++) {
+      if(this.nodeList[i]._toRemove) {
+        this.removeNode(this.nodeList[i]);
+        nRemoved++;
+        i--;
+      }
+    }
+
+    return nRemoved;
+  };
+
+
+  /**
+   * Clones the network
+   * 
+   * @param  {StringList} nodePropertiesNames list of preoperties names to be copied from old nodes into new nodes
+   * @param  {StringList} relationPropertiesNames
+   * 
+   * @param  {String} idsSubfix optional sufix to be added to ids
+   * @param  {String} namesSubfix optional sufix to be added to names
+   * @return {Networked} network with exact structure than original
+   * tags:
+   */
+  Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames, idsSubfix, namesSubfix) {
+    var newNetwork = new Network();
+    var newNode, newRelation;
+    var i;
+
+    idsSubfix = idsSubfix == null ? '' : String(idsSubfix);
+    namesSubfix = namesSubfix == null ? '' : String(namesSubfix);
+
+    this.nodeList.forEach(function(node) {
+      newNode = new Node__default(idsSubfix + node.id, namesSubfix + node.name);
+      if(idsSubfix != '') newNode.basicId = node.id;
+      if(namesSubfix != '') newNode.basicName = node.name;
+      if(nodePropertiesNames) {
+        nodePropertiesNames.forEach(function(propName) {
+          if(node[propName] != null) newNode[propName] = node[propName];
+        });
+      }
+      newNetwork.addNode(newNode);
+    });
+
+    this.relationList.forEach(function(relation) {
+      newRelation = new Relation(idsSubfix + relation.id, namesSubfix + relation.name, newNetwork.nodeList.getNodeById(idsSubfix + relation.node0.id), newNetwork.nodeList.getNodeById(idsSubfix + relation.node1.id));
+      if(idsSubfix != '') newRelation.basicId = relation.id;
+      if(namesSubfix != '') newRelation.basicName = relation.name;
+      if(relationPropertiesNames) {
+        relationPropertiesNames.forEach(function(propName) {
+          if(relation[propName] != null) newRelation[propName] = relation[propName];
+        });
+      }
+      newNetwork.addRelation(newRelation);
+    });
+
+    return newNetwork;
+  };
+
+
+  Network.prototype.getReport = function() {
+    return "network contains " + this.nodeList.length + " nodes and " + this.relationList.length + " relations";
+  };
+
+  Network.prototype.destroy = function() {
+    delete this.type;
+    this.nodeList.destroy();
+    this.relationList.destroy();
+    delete this.nodeList;
+    delete this.relationList;
+  };
+
+  exports.Network = Network;
+
+  function NetworkEncodings() {}
+
+
+
+  //////////////NoteWork
+
+  NetworkEncodings.nodeNameSeparators = ['|', ':', ' is ', ' are ', '.', ','];
+
+  /**
+   * Converts a String in NoteWork format into a network
+   *
+   * @param  {String} code
+   * @return {Network}
+   * tags:decoding
+   */
+  NetworkEncodings.decodeNoteWork = function(code) {
+    if(code == null) return;
+    if(code == "") return new Network();
+
+    console.log('\n\n*************////////// decodeNoteWork //////////*************');
+    //code = "\n"+code;
+
+    var i, j;
+    var paragraph, line, simpleLine;
+    var id, id2;
+    var name;
+    var index, index2, minIndex;
+    var lines;
+    var node, otherNode;
+    var supNode = null;
+    var relation;
+    var prevLine;
+    var sep;
+    var colorLinesRelations = []; //for relations
+    var colorLinesGroups = [];
+    var colorSegments = [];
+    var linesInfo = [];
+    var simpleLine;
+    var regex;
+    var iEnd;
+    var propertyName;
+    var propertyValue;
+    var network = new Network();
+    var paragraphs = new StringList();
+    var content;
+
+    network.nodesPropertiesNames = new StringList();
+    network.relationsPropertiesNames = new StringList();
+
+    lines = code.split(/\n/g);
+    lines.forEach(function(line, i) {
+      lines[i] = line.trim();
+    });
+
+    code = lines.join('\n');
+
+
+    var nLineParagraph = 0;
+    while(code.charAt(0) == '\n') {
+      code = code.substr(1);
+      nLineParagraph++;
+    }
+
+
+    var left = code;
+
+    index = left.search(/\n\n./g);
+
+    while(index != -1) {
+      paragraphs.push(left.substr(0, index));
+      left = left.substr(index + 2);
+      index = left.search(/\n\n./g);
+    }
+
+    paragraphs.push(left);
+
+    var firstLine;
+
+
+    paragraphs.forEach(function(paragraph, i) {
+
+      if(paragraph.indexOf('\n') == -1) {
+        line = paragraph;
+        lines = null;
+      } else {
+        lines = paragraph.split(/\n/g);
+        line = lines[0];
+      }
+
+      firstLine = line;
+
+      //console.log('firstLine: ['+firstLine+']');
+
+      if(line == '\n' || line == '' || line == ' ' || line == '  ') { //use regex here
+
+      } else if(line.indexOf('//') == 0) {
+
+        if(colorSegments[nLineParagraph] == null) colorSegments[nLineParagraph] = [];
+
+        colorSegments[nLineParagraph].push({
+          type: 'comment',
+          iStart: 0,
+          iEnd: line.length
+        });
+
+      } else if(line == "relations colors:" || line == "groups colors:" || line == "categories colors:") { //line.indexOf(':')!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){ // color in relations or groups
+        // colorLinesRelations.push(line);
+
+        // if(colorSegments[nLineParagraph]==null) colorSegments[nLineParagraph]=[];
+
+        // colorSegments[nLineParagraph].push({
+        // 	type:'relation_color',
+        // 	iStart:0,
+        // 	iEnd:line.length
+        // });
+
+        if(lines) {
+          lines.slice(1).forEach(function(line, i) {
+
+            index = line.indexOf(':');
+            if(firstLine == "relations colors:" && index != -1 && ColorOperators__default.colorStringToRGB(line.split(':')[1]) != null) {
+              //console.log('  more colors!');
+
+              colorLinesRelations.push(line);
+
+              if(colorSegments[nLineParagraph + i] == null) colorSegments[nLineParagraph + i] = [];
+
+              colorSegments[nLineParagraph + i].push({
+                type: 'relation_color',
+                iStart: 0,
+                iEnd: line.length
+              });
+
+            }
+
+            if((firstLine == "groups colors:" || firstLine == "categories colors:") && index != -1 && ColorOperators__default.colorStringToRGB(line.split(':')[1]) != null) {
+              //console.log(line)
+              //console.log('  color to group!');
+
+              colorLinesGroups.push(line);
+
+              if(colorSegments[nLineParagraph + i] == null) colorSegments[nLineParagraph + i] = [];
+
+              colorSegments[nLineParagraph + i].push({
+                type: 'relation_color',
+                iStart: 0,
+                iEnd: line.length
+              });
+
+            }
+          });
+        }
+
+      } else { //node
+
+        minIndex = 99999999;
+
+        index = line.indexOf(NetworkEncodings.nodeNameSeparators[0]);
+
+        if(index != -1) {
+          minIndex = index;
+          sep = NetworkEncodings.nodeNameSeparators[0];
+        }
+
+        j = 1;
+
+        while(j < NetworkEncodings.nodeNameSeparators.length) {
+          index = line.indexOf(NetworkEncodings.nodeNameSeparators[j]);
+          if(index != -1) {
+            minIndex = Math.min(index, minIndex);
+            sep = NetworkEncodings.nodeNameSeparators[j];
+          }
+          j++;
+        }
+
+
+        index = minIndex == 99999999 ? -1 : minIndex;
+
+        name = index == -1 ? line : line.substr(0, index);
+        name = name.trim();
+
+        if(name != "") {
+          id = NetworkEncodings._simplifyForNoteWork(name);
+
+          node = network.nodeList.getNodeById(id);
+
+          iEnd = index == -1 ? line.length : index;
+
+          if(node == null) {
+
+            node = new Node(id, name);
+            node._nLine = nLineParagraph;
+            network.addNode(node);
+            node.content = index != -1 ? line.substr(index + sep.length).trim() : "";
+
+            node._lines = lines ? lines.slice(1) : new StringList();
+
+            node.position = network.nodeList.length - 1;
+
+            if(colorSegments[nLineParagraph] == null) colorSegments[nLineParagraph] = [];
+
+            colorSegments[nLineParagraph].push({
+              type: 'node_name',
+              iStart: 0,
+              iEnd: iEnd
+            });
+
+          } else {
+            if(lines != null) node._lines = node._lines.concat(lines.slice(1));
+
+            node.content += index != -1 ? (" | " + line.substr(index + sep.length).trim()) : "";
+
+            if(colorSegments[nLineParagraph] == null) colorSegments[nLineParagraph] = [];
+
+            colorSegments[nLineParagraph].push({
+              type: 'node_name_repeated',
+              iStart: 0,
+              iEnd: iEnd
+            });
+          }
+        } else {
+
+        }
+      }
+
+      nLineParagraph += (lines ? lines.length : 1) + 1;
+    });
+
+
+    //find equalities (synonyms)
+
+    var foundEquivalences = true;
+
+    while(foundEquivalences) {
+      foundEquivalences = false;
+
+      loop: for(i = 0; network.nodeList[i] != null; i++) {
+        node = network.nodeList[i];
+
+        loop2: for(j = 0; node._lines[j] != null; j++) {
+          line = node._lines[j];
+
+          if(line.indexOf('=') == 0) {
+
+            id2 = NetworkEncodings._simplifyForNoteWork(line.substr(1));
+            otherNode = network.nodeList.getNodeById(id2);
+
+            if(otherNode && node != otherNode) {
+
+              foundEquivalences = true;
+
+              node._lines = otherNode._lines.concat(otherNode._lines);
+
+              network.nodeList.removeNode(otherNode);
+              network.nodeList.ids[otherNode.id] = node;
+
+              break loop;
+              break loop2;
+            } else {
+              network.nodeList.ids[id2] = otherNode;
+            }
+
+            if(!node._otherIds) node._otherIds = [];
+            node._otherIds.push(id2);
+          }
+        }
+      }
+    }
+
+
+    //build relations and nodes properties
+
+    network.nodeList.forEach(function(node) {
+
+      nLineParagraph = node._nLine;
+
+      //console.log('node.nLineWeight', node.nLineWeight);
+
+      node._lines.forEach(function(line, i) {
+
+        if(line.indexOf('=') != -1) {
+
+        } else if(line.indexOf(':') > 0) {
+
+          simpleLine = line.trim();
+
+          propertyName = removeAccentsAndDiacritics(simpleLine.split(':')[0]).replace(/\s/g, "_");
+
+          propertyValue = line.split(':')[1].trim();
+          if(propertyValue == String(Number(propertyValue))) propertyValue = Number(propertyValue);
+
+          if(propertyValue != null) {
+            node[propertyName] = propertyValue;
+            if(network.nodesPropertiesNames.indexOf(propertyName) == -1) network.nodesPropertiesNames.push(propertyName);
+          }
+
+        } else {
+          simpleLine = line;
+
+          network.nodeList.forEach(function(otherNode) {
+            regex = NetworkEncodings._regexWordForNoteWork(otherNode.id);
+            index = simpleLine.search(regex);
+
+            if(index == -1 && otherNode._otherIds) {
+              for(j = 0; otherNode._otherIds[j] != null; j++) {
+                regex = NetworkEncodings._regexWordForNoteWork(otherNode._otherIds[j]);
+                index = simpleLine.search(regex);
+                if(index != -1) break;
+              }
+            }
+
+            if(index != -1) {
+              iEnd = index + simpleLine.substr(index).match(regex)[0].length;
+
+              relation = network.relationList.getFirstRelationBetweenNodes(node, otherNode, true);
+
+
+              if(relation != null) {
+
+                content = relation.node0.name + " " + line;
+
+                relation.content += " | " + content;
+
+                if(colorSegments[nLineParagraph + i + 1] == null) colorSegments[nLineParagraph + i + 1] = [];
+
+                colorSegments[nLineParagraph + i + 1].push({
+                  type: 'node_name_in_repeated_relation',
+                  iStart: index,
+                  iEnd: iEnd
+                });
+
+              } else {
+                relation = network.relationList.getFirstRelationBetweenNodes(otherNode, node, true);
+
+                if(relation == null || relation.content != content) {
+
+                  var relationName = line;
+
+                  var regex = NetworkEncodings._regexWordForNoteWork(node.id);
+                  index = relationName.search(regex);
+
+                  if(index != -1) {
+                    relationName = relationName.substr(index);
+                    relationName = relationName.replace(regex, "").trim();
+                  }
+
+                  //console.log(node.id, "*", line, "*", index, "*", line.substr(index));
+
+                  //line = line.replace(regex, "").trim();
+
+                  regex = NetworkEncodings._regexWordForNoteWork(otherNode.id);
+                  index = relationName.search(regex);
+                  relationName = "… " + relationName.substr(0, index).trim() + " …";
+
+                  id = line;
+                  relation = new Relation(line, relationName, node, otherNode);
+
+                  content = relation.node0.name + " " + line;
+
+                  relation.content = content; //.substr(0,index);
+                  network.addRelation(relation);
+
+                  if(colorSegments[nLineParagraph + i + 1] == null) colorSegments[nLineParagraph + i + 1] = [];
+
+                  colorSegments[nLineParagraph + i + 1].push({
+                    type: 'node_name_in_relation',
+                    iStart: index,
+                    iEnd: iEnd
+                  });
+
+                }
+              }
+            }
+          });
+        }
+      });
+
+      node.positionWeight = Math.pow(network.nodeList.length - node.position - 1 / network.nodeList.length, 2);
+      node.combinedWeight = node.positionWeight + node.nodeList.length * 0.1;
+
+    });
+
+
+    //colors in relations and groups
+
+    colorLinesRelations.forEach(function(line) {
+      index = line.indexOf(':');
+      var texts = line.substr(0, index).split(',');
+      texts.forEach(function(text) {
+        var color = line.substr(index + 1);
+        network.relationList.forEach(function(relation) {
+          if(relation.name.indexOf(text) != -1) relation.color = color;
+        });
+      });
+    });
+
+    colorLinesGroups.forEach(function(line) {
+      index = line.indexOf(':');
+      var texts = line.substr(0, index).split(',');
+      texts.forEach(function(text) {
+        var color = line.substr(index + 1);
+        network.nodeList.forEach(function(node) {
+          if(node.group == text) node.color = color;
+          if(node.category == text) node.color = color;
+        });
+      });
+    });
+
+    network.colorSegments = colorSegments;
+
+    return network;
+  };
+
+  /**
+   * @ignore
+   */
+  NetworkEncodings._simplifyForNoteWork = function(name) {
+    name = name.toLowerCase();
+    if(name.substr(name.length - 2) == 'es') {
+      name = name.substr(0, name.length - 1);
+    } else if(name.charAt(name.length - 1) == 's') name = name.substr(0, name.length - 1);
+    return name.trim();
+  };
+
+  /**
+   * _regexWordForNoteWork
+   *
+   * @param word
+   * @param global
+   * @return {undefined}
+   * @ignore
+   */
+  NetworkEncodings._regexWordForNoteWork = function(word, global) {
+    global = global == null ? true : global;
+    try {
+      return new RegExp("(\\b)(" + word + "|" + word + "s|" + word + "es)(\\b)", global ? "gi" : "i");
+    } catch(err) {
+      return null;
+    }
+  };
+
+  /**
+   * Encodes a network into NoteWork notes.
+   *
+   * @param  {Network} network Network to encode.
+   * @param  {String} nodeContentSeparator Separator between node name and content. Uses comma if not defined.
+   * @param  {StringList} nodesPropertyNames Node properties to be encoded.
+   * If not defined, no Node properties are encoded.
+   * @param  {StringList} relationsPropertyNames Relations properties to be encoded.
+   * If not defined, no Relation properties are encoded.
+   * @return {String} NoteWork based representation of Network.
+   * tags:encoding
+   */
+  NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesPropertyNames, relationsPropertyNames) {
+    if(network == null) return;
+
+    var node, relation, other;
+    var propName;
+    var code = "";
+    var simpNodeName;
+    var regex, lineRelation;
+
+    var codedRelationsContents;
+
+    nodeContentSeparator = nodeContentSeparator || ', ';
+    nodesPropertyNames = nodesPropertyNames || [];
+    relationsPropertyNames = relationsPropertyNames || [];
+
+    network.nodeList.forEach(function(node) {
+      code += node.name;
+      if(node.content && node.content != "") code += nodeContentSeparator + node.content;
+      code += "\n";
+
+      nodesPropertyNames.forEach(function(propName) {
+        if(node[propName] != null) code += propName + ":" + String(node[propName]) + "\n";
+      });
+
+      codedRelationsContents = new StringList();
+
+      node.toRelationList.forEach(function(relation) {
+
+        var content = ((relation.content == null ||  relation.content == "") && relation.description) ? relation.description : relation.content;
+
+        if(content && content != "") {
+          regex = NetworkEncodings._regexWordForNoteWork(relation.node1.name);
+          lineRelation = content + ((regex != null && content.search(regex) == -1) ? (" " + relation.node1.name) : "");
+        } else {
+          lineRelation = "connected with " + relation.node1.name;
+        }
+
+        if(codedRelationsContents.indexOf(lineRelation) == -1) {
+          code += lineRelation;
+          code += "\n";
+          codedRelationsContents.push(lineRelation);
+        }
+
+      });
+
+      code += "\n";
+
+    });
+
+    return code;
+  };
+
+
+
+
+
+  //////////////GDF
+
+  /**
+   * Creates Network from a GDF string representation.
+   *
+   * @param  {String} gdfCode GDF serialized Network representation.
+   * @return {Network}
+   * tags:decoder
+   */
+  NetworkEncodings.decodeGDF = function(gdfCode) {
+    if(gdfCode == null || gdfCode == "") return;
+
+    var network = new Network();
+    var lines = gdfCode.split("\n"); //TODO: split by ENTERS OUTSIDE QUOTEMARKS
+    if(lines.length == 0) return null;
+    var line;
+    var i;
+    var j;
+    var parts;
+
+    var nodesPropertiesNames = lines[0].substr(8).split(",");
+
+    var iEdges;
+
+    for(i = 1; lines[i] != null; i++) {
+      line = lines[i];
+      if(line.substr(0, 8) == "edgedef>") {
+        iEdges = i + 1;
+        break;
+      }
+      line = NetworkEncodings.replaceChomasInLine(line);
+      parts = line.split(",");
+      var node = new Node(String(parts[0]), String(parts[1]));
+      for(j = 0; (nodesPropertiesNames[j] != null && parts[j] != null); j++) {
+        if(nodesPropertiesNames[j] == "weight") {
+          node.weight = Number(parts[j]);
+        } else if(nodesPropertiesNames[j] == "x") {
+          node.x = Number(parts[j]);
+        } else if(nodesPropertiesNames[j] == "y") {
+          node.y = Number(parts[j]);
+        } else {
+          node[nodesPropertiesNames[j]] = parts[j].replace(/\*CHOMA\*/g, ",");
+        }
+      }
+      network.addNode(node);
+    }
+
+    var relationsPropertiesNames = lines[iEdges - 1].substr(8).split(",");
+
+    for(i = iEdges; lines[i] != null; i++) {
+      line = lines[i];
+      line = NetworkEncodings.replaceChomasInLine(line);
+      parts = line.split(",");
+      if(parts.length >= 2) {
+        var node0 = network.nodeList.getNodeById(String(parts[0]));
+        var node1 = network.nodeList.getNodeById(String(parts[1]));
+        if(node0 == null || node1 == null) {
+          console.log("NetworkEncodings.decodeGDF | [!] problems with nodes ids:", parts[0], parts[1], "at line", i);
+        } else {
+          var id = node0.id + "_" + node1.id + "_" + Math.floor(Math.random() * 999999);
+          var relation = new Relation(id, id, node0, node1);
+          for(j = 2; (relationsPropertiesNames[j] != null && parts[j] != null); j++) {
+            if(relationsPropertiesNames[j] == "weight") {
+              relation.weight = Number(parts[j]);
+            } else {
+              relation[relationsPropertiesNames[j]] = parts[j].replace(/\*CHOMA\*/g, ",");
+            }
+          }
+          network.addRelation(relation);
+        }
+      }
+
+    }
+
+    return network;
+  };
+
+  /**
+   * Encodes a network in GDF Format, more info on GDF
+   * format can be found from
+   * {@link https://gephi.org/users/supported-graph-formats/gml-format/|Gephi}.
+   *
+   * @param  {Network} network Network to encode.
+   * @param  {StringList} nodesPropertiesNames Names of nodes properties to be encoded.
+   * @param  {StringList} relationsPropertiesNames Names of relations properties to be encoded
+   * @return {String} GDF encoding of Network.
+   * tags:encoder
+   */
+  NetworkEncodings.encodeGDF = function(network, nodesPropertiesNames, relationsPropertiesNames) {
+    if(network == null) return;
+
+    nodesPropertiesNames = nodesPropertiesNames == null ? new StringList() : nodesPropertiesNames;
+    relationsPropertiesNames = relationsPropertiesNames == null ? new StringList() : relationsPropertiesNames;
+
+    var code = "nodedef>id" + (nodesPropertiesNames.length > 0 ? "," : "") + nodesPropertiesNames.join(",");
+    var i;
+    var j;
+    var node;
+    for(i = 0; network.nodeList[i] != null; i++) {
+      node = network.nodeList[i];
+      code += "\n" + node.id;
+      for(j = 0; nodesPropertiesNames[j] != null; j++) {
+
+        if(typeof node[nodesPropertiesNames[j]] == 'string') {
+          code += ",\"" + node[nodesPropertiesNames[j]] + "\"";
+        } else {
+          code += "," + node[nodesPropertiesNames[j]];
+        }
+      }
+    }
+
+    code += "\nedgedef>id0,id1" + (relationsPropertiesNames.length > 0 ? "," : "") + relationsPropertiesNames.join(",");
+    var relation;
+    for(i = 0; network.relationList[i] != null; i++) {
+      relation = network.relationList[i];
+      code += "\n" + relation.node0.id + "," + relation.node1.id;
+      for(j = 0; relationsPropertiesNames[j] != null; j++) {
+
+        if(typeof relation[relationsPropertiesNames[j]] == 'string') {
+          code += ",\"" + relation[relationsPropertiesNames[j]] + "\"";
+        } else {
+          code += "," + relation[relationsPropertiesNames[j]];
+        }
+      }
+    }
+
+    return code;
+  };
+
+
+  //////////////GML
+
+  /**
+   * Decodes a GML file into a new Network.
+   *
+   * @param  {String} gmlCode GML based representation of Network.
+   * @return {Network}
+   * tags:decoder
+   */
+  NetworkEncodings.decodeGML = function(gmlCode) {
+    if(gmlCode == null) return null;
+
+    gmlCode = gmlCode.substr(gmlCode.indexOf("[") + 1);
+
+    var network = new Network();
+
+    var firstEdgeIndex = gmlCode.search(/\bedge\b/);
+
+    var nodesPart = gmlCode.substr(0, firstEdgeIndex);
+    var edgesPart = gmlCode.substr(firstEdgeIndex);
+
+    var part = nodesPart;
+
+    var blocks = StringOperators.getParenthesisContents(part, true);
+
+    //console.log('blocks.length', blocks.length);
+
+    var graphicsBlock;
+    var lines;
+    var lineParts;
+
+    var indexG0;
+    var indexG1;
+
+    var node;
+
+    for(var i = 0; blocks[i] != null; i++) {
+      blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\n");
+      blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\r");
+
+      indexG0 = blocks[i].indexOf('graphics');
+      if(indexG0 != -1) {
+        indexG1 = blocks[i].indexOf(']');
+        graphicsBlock = blocks[i].substring(indexG0, indexG1 + 1);
+        blocks[i] = blocks[i].substr(0, indexG0) + blocks[i].substr(indexG1 + 1);
+
+        graphicsBlock = StringOperators.getFirstParenthesisContent(graphicsBlock, true);
+        blocks[i] = blocks[i] + graphicsBlock;
+      }
+
+      lines = blocks[i].split('\n');
+
+      lines[0] = NetworkEncodings._cleanLineBeginning(lines[0]);
+
+      lineParts = lines[0].split(" ");
+
+      node = new Node(StringOperators.removeQuotes(lineParts[1]), StringOperators.removeQuotes(lineParts[1]));
+
+      network.addNode(node);
+
+      for(var j = 1; lines[j] != null; j++) {
+        lines[j] = NetworkEncodings._cleanLineBeginning(lines[j]);
+        lines[j] = NetworkEncodings._replaceSpacesInLine(lines[j]);
+        if(lines[j] != "") {
+          lineParts = lines[j].split(" ");
+          if(lineParts[0] == 'label') lineParts[0] = 'name';
+          node[lineParts[0]] = (lineParts[1].charAt(0) == "\"") ? StringOperators.removeQuotes(lineParts[1]).replace(/\*SPACE\*/g, " ") : Number(lineParts[1]);
+        }
+      }
+    }
+
+    part = edgesPart;
+    blocks = StringOperators.getParenthesisContents(part, true);
+
+    var id0;
+    var id1;
+    var node0;
+    var node1;
+    var relation;
+    var nodes = network.nodeList;
+
+
+    for(i = 0; blocks[i] != null; i++) {
+      blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\n");
+      blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\r");
+
+      lines = blocks[i].split('\n');
+
+      id0 = null;
+      id1 = null;
+      relation = null;
+
+      for(j = 0; lines[j] != null; j++) {
+        lines[j] = NetworkEncodings._cleanLineBeginning(lines[j]);
+        if(lines[j] != "") {
+          lineParts = lines[j].split(" ");
+          if(lineParts[0] == 'source') id0 = StringOperators.removeQuotes(lineParts[1]);
+          if(lineParts[0] == 'target') id1 = StringOperators.removeQuotes(lineParts[1]);
+
+          if(relation == null) {
+            if(id0 != null && id1 != null) {
+              node0 = nodes.getNodeById(id0);
+              node1 = nodes.getNodeById(id1);
+              if(node0 != null && node1 != null) {
+                relation = new Relation(id0 + " " + id1, '', node0, node1);
+                network.addRelation(relation);
+              }
+            }
+          } else {
+            if(lineParts[0] == 'value') lineParts[0] = 'weight';
+            relation[lineParts[0]] = (lineParts[1].charAt(0) == "\"") ? StringOperators.removeQuotes(lineParts[1]) : Number(lineParts[1]);
+          }
+        }
+
+      }
+
+    }
+
+    return network;
+  };
+
+  /**
+   * _cleanLineBeginning
+   *
+   * @param string
+   * @ignore
+   */
+  NetworkEncodings._cleanLineBeginning = function(string) {
+    string = StringOperators.removeInitialRepeatedCharacter(string, "\n");
+    string = StringOperators.removeInitialRepeatedCharacter(string, "\r");
+    string = StringOperators.removeInitialRepeatedCharacter(string, " ");
+    string = StringOperators.removeInitialRepeatedCharacter(string, "	");
+    return string;
+  };
+
+
+  /**
+   * Encodes a network into GDF format.
+   *
+   * @param  {Network} network The Network to encode.
+   *
+   * @param  {StringList} nodesPropertiesNames Names of Node properties to encode.
+   * @param  {StringList} relationsPropertiesNames Names of Relation properties to encode.
+   * @param {Boolean} idsAsInts If true, then the index of the Node is used as an ID.
+   * GDF strong specification requires ids for nodes being int numbers.
+   * @return {String} GDF string.
+   * tags:encoder
+   */
+  NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPropertiesNames, idsAsInts) {
+    if(network == null) return;
+
+    idsAsInts = idsAsInts == null ? true : idsAsInts;
+
+    nodesPropertiesNames = nodesPropertiesNames == null ? new StringList() : nodesPropertiesNames;
+    relationsPropertiesNames = relationsPropertiesNames == null ? new StringList() : relationsPropertiesNames;
+
+    var code = "graph\n[";
+    var ident = "	";
+    var i;
+    var j;
+    var node;
+    var isString;
+    var value;
+    for(i = 0; network.nodeList[i] != null; i++) {
+      node = network.nodeList[i];
+      code += "\n" + ident + "node\n" + ident + "[";
+      ident = "		";
+      if(idsAsInts) {
+        code += "\n" + ident + "id " + i;
+      } else {
+        code += "\n" + ident + "id \"" + node.id + "\"";
+      }
+      if(node.name != '') code += "\n" + ident + "label \"" + node.name + "\"";
+      for(j = 0; nodesPropertiesNames[j] != null; j++) {
+        value = node[nodesPropertiesNames[j]];
+        if(value == null) continue;
+        if(value.getMonth) value = DateOperators.dateToString(value);
+        isString = (typeof value == 'string');
+        if(isString) value = value.replace(/\n/g, "\\n").replace(/\"/g, "'");
+        code += "\n" + ident + nodesPropertiesNames[j] + " " + (isString ? "\"" + value + "\"" : value);
+      }
+      ident = "	";
+      code += "\n" + ident + "]";
+    }
+
+    var relation;
+    for(i = 0; network.relationList[i] != null; i++) {
+      relation = network.relationList[i];
+      code += "\n" + ident + "edge\n" + ident + "[";
+      ident = "		";
+      if(idsAsInts) {
+        code += "\n" + ident + "source " + network.nodeList.indexOf(relation.node0);
+        code += "\n" + ident + "target " + network.nodeList.indexOf(relation.node1);
+      } else {
+        code += "\n" + ident + "source \"" + relation.node0.id + "\"";
+        code += "\n" + ident + "target \"" + relation.node1.id + "\"";
+      }
+      for(j = 0; relationsPropertiesNames[j] != null; j++) {
+        value = relation[relationsPropertiesNames[j]];
+        if(value == null) continue;
+        if(value.getMonth) value = DateOperators.dateToString(value);
+        isString = (typeof value == 'string');
+        if(isString) value = value.replace(/\n/g, "\\n").replace(/\"|“|”/g, "'");
+        code += "\n" + ident + relationsPropertiesNames[j] + " " + (isString ? "\"" + value + "\"" : value);
+      }
+      ident = "	";
+      code += "\n" + ident + "]";
+    }
+
+    code += "\n]";
+    return code;
+  };
+
+
+
+
+
+  //////////////SYM
+
+  /**
+   * decodeSYM
+   *
+   * @param symCode
+   * @return {Network}
+   */
+  NetworkEncodings.decodeSYM = function(symCode) {
+    //console.log("/////// decodeSYM\n"+symCode+"\n/////////");
+    var i;
+    var j;
+
+    var lines = StringOperators.splitByEnter(symCode);
+    lines = lines == null ? [] : lines;
+
+    var objectPattern = /((?:NODE|RELATION)|GROUP)\s*([A-Za-z0-9_,\s]*)/;
+
+    var network = new Network();
+    var groups = new Table();
+    var name;
+    var id;
+    var node;
+    var node1;
+    var relation;
+    var group;
+    var groupName;
+    var parts;
+    var propName;
+    var propCont;
+
+    var nodePropertiesNames = [];
+    var relationPropertiesNames = [];
+    var groupsPropertiesNames = [];
+
+    for(i = 0; lines[i] != null; i++) {
+      var bits = objectPattern.exec(lines[i]);
+      if(bits != null) {
+        switch(bits[1]) {
+          case "NODE":
+            id = bits[2];
+            name = lines[i + 1].substr(0, 5) == "name:" ? lines[i + 1].substr(5).trim() : "";
+            name = name.replace(/\\n/g, '\n').replace(/\\'/g, "'");
+            node = new Node(id, name);
+            network.addNode(node);
+            j = i + 1;
+            while(j < lines.length && lines[j].indexOf(":") != -1) {
+              parts = lines[j].split(":");
+              propName = parts[0];
+              propCont = parts.slice(1).join(":");
+              if(propName != "name") {
+                propCont = propCont.trim();
+                node[propName] = String(Number(propCont)) == propCont ? Number(propCont) : propCont;
+                if(typeof node[propName] == "string") node[propName] = node[propName].replace(/\\n/g, '\n').replace(/\\'/g, "'");
+                if(nodePropertiesNames.indexOf(propName) == -1) nodePropertiesNames.push(propName);
+              }
+              j++;
+            }
+            if(node.color != null) {
+              if(/.+,.+,.+/.test(node.color)) node.color = 'rgb(' + node.color + ')';
+            }
+            if(node.group != null) {
+              group = groups.getFirstElementByPropertyValue("name", node.group);
+              if(group == null) {
+                console.log("NODES new group:[" + node.group + "]");
+                group = new NodeList();
+                group.name = node.group;
+                group.name = group.name.replace(/\\n/g, '\n').replace(/\\'/g, "'");
+                groups.push(group);
+              }
+              group.addNode(node);
+              //node.group = group;
+            }
+            break;
+          case "RELATION":
+            var ids = bits[2].replace(/\s/g, "").split(",");
+            //var ids = bits[2].split(",");
+            node = network.nodeList.getNodeById(ids[0]);
+            node1 = network.nodeList.getNodeById(ids[1]);
+            if(node != null && node1 != null) {
+              relation = new Relation(node.id + "_" + node1.id, node.id + "_" + node1.id, node, node1);
+              network.addRelation(relation);
+              j = i + 1;
+              while(j < lines.length && lines[j].indexOf(":") != -1) {
+                parts = lines[j].split(":");
+                propName = parts[0];
+                propCont = parts.slice(1).join(":").trim();
+                if(propName != "name") {
+                  propCont = propCont.trim();
+                  relation[propName] = String(Number(propCont)) == propCont ? Number(propCont) : propCont;
+                  if(typeof relation[propName] == "string") relation[propName] = relation[propName].replace(/\\n/g, '\n').replace(/\\'/g, "'");
+                  if(relationPropertiesNames.indexOf(propName) == -1) relationPropertiesNames.push(propName);
+                }
+                j++;
+              }
+            }
+            if(relation != null && relation.color != null) {
+              relation.color = 'rgb(' + relation.color + ')';
+            }
+            break;
+          case "GROUP":
+            groupName = lines[i].substr(5).trim();
+
+            group = groups.getFirstElementByPropertyValue("name", groupName);
+            if(group == null) {
+              group = new NodeList();
+              group.name = groupName;
+              groups.push(group);
+            }
+            j = i + 1;
+            while(j < lines.length && lines[j].indexOf(":") != -1) {
+              parts = lines[j].split(":");
+              if(parts[0] != "name") {
+                parts[1] = parts[1].trim();
+                group[parts[0]] = String(Number(parts[1])) == parts[1] ? Number(parts[1]) : parts[1];
+                if(groupsPropertiesNames.indexOf(parts[0]) == -1) groupsPropertiesNames.push(parts[0]);
+              }
+              j++;
+            }
+
+            if(/.+,.+,.+/.test(group.color)) group.color = 'rgb(' + group.color + ')';
+
+            break;
+        }
+      }
+    }
+
+    for(i = 0; groups[i] != null; i++) {
+      group = groups[i];
+      if(group.color == null) group.color = CATEGORICAL_COLORS[i % CATEGORICAL_COLORS.length];
+      for(j = 0; group[j] != null; j++) {
+        node = group[j];
+        if(node.color == null) node.color = group.color;
+      }
+    }
+
+    network.groups = groups;
+
+
+
+    network.nodePropertiesNames = nodePropertiesNames;
+    network.relationPropertiesNames = relationPropertiesNames;
+    network.groupsPropertiesNames = groupsPropertiesNames;
+
+    return network;
+  };
+
+  /**
+   * encodeSYM
+   *
+   * @param network
+   * @param groups
+   * @param nodesPropertiesNames
+   * @param relationsPropertiesNames
+   * @param groupsPropertiesNames
+   * @return {String}
+   */
+  NetworkEncodings.encodeSYM = function(network, groups, nodesPropertiesNames, relationsPropertiesNames, groupsPropertiesNames) {
+    nodesPropertiesNames = nodesPropertiesNames == null ? new StringList() : nodesPropertiesNames;
+    relationsPropertiesNames = relationsPropertiesNames == null ? new StringList() : relationsPropertiesNames;
+
+    var code = "";
+    var i;
+    var j;
+    var node;
+    var propertyName;
+    for(i = 0; network.nodeList[i] != null; i++) {
+      node = network.nodeList[i];
+      code += (i == 0 ? "" : "\n\n") + "NODE " + node.id;
+      if(node.name != "") code += "\nname:" + (node.name).replace(/\n/g, "\\n");
+      for(j = 0; nodesPropertiesNames[j] != null; j++) {
+        propertyName = nodesPropertiesNames[j];
+        if(node[propertyName] != null) code += "\n" + propertyName + ":" + _processProperty(propertyName, node[propertyName]);
+      }
+    }
+
+    var relation;
+    for(i = 0; network.relationList[i] != null; i++) {
+      relation = network.relationList[i];
+      code += "\n\nRELATION " + relation.node0.id + ", " + relation.node1.id;
+      for(j = 0; relationsPropertiesNames[j] != null; j++) {
+        propertyName = relationsPropertiesNames[j];
+        if(relation[propertyName] != null) code += "\n" + propertyName + ":" + _processProperty(propertyName, relation[propertyName]);
+      }
+    }
+
+    if(groups == null) return code;
+
+    var group;
+    for(i = 0; groups[i] != null; i++) {
+      group = groups[i];
+      code += "\n\nGROUP " + group.name;
+      for(j = 0; groupsPropertiesNames[j] != null; j++) {
+        propertyName = groupsPropertiesNames[j];
+        if(group[propertyName] != null) code += "\n" + propertyName + ":" + _processProperty(propertyName, group[propertyName]);
+      }
+    }
+
+    //console.log("/////// encodeSYM\n"+code+"\n/////////");
+
+    return code;
+  };
+
+  function _processProperty(propName, propValue) { //TODO: use this in other encoders
+    switch(propName) {
+      case "color":
+        if(propValue.substr(0, 3) == "rgb") {
+          var rgb = ColorOperators__default.colorStringToRGB(propValue);
+          return rgb.join(',');
+        }
+        return propValue;
+        break;
+    }
+    propValue = String(propValue).replace(/\n/g, "\\n");
+    return propValue;
+  };
+
+
+
+
+
+  /////////////////
+
+  //Also used by CSVToTable
+
+  /**
+   * replaceChomasInLine
+   *
+   * @param line
+   * @return {undefined}
+   * @ignore
+   */
+  NetworkEncodings.replaceChomasInLine = function(line, separator) {
+    var quoteBlocks = line.split("\"");
+    if(quoteBlocks.length < 2) return line;
+    var insideQuote;
+    var i;
+    var re;
+    separator = separator==null?",":separator;
+
+    switch(separator){
+      case ",":
+        re = /,/g;
+        break;
+      case ";":
+        re = /;/g;
+        break;
+    }
+
+    for(i = 0; quoteBlocks[i] != null; i++) {
+      insideQuote = i * 0.5 != Math.floor(i * 0.5);
+      if(insideQuote) {
+        quoteBlocks[i] = quoteBlocks[i].replace(re, "*CHOMA*");
+      }
+    }
+    line = StringList.fromArray(quoteBlocks).getConcatenated("");
+    return line;
+  };
+
+  /**
+   * _replaceSpacesInLine
+   *
+   * @param line
+   * @return {undefined}
+   * @ignore
+   */
+  NetworkEncodings._replaceSpacesInLine = function(line) {
+    var quoteBlocks = line.split("\"");
+    if(quoteBlocks.length < 2) return line;
+    var insideQuote;
+    var i;
+    for(i = 0; quoteBlocks[i] != null; i++) {
+      insideQuote = i * 0.5 != Math.floor(i * 0.5);
+      if(insideQuote) {
+        quoteBlocks[i] = quoteBlocks[i].replace(/ /g, "*SPACE*");
+      }
+    }
+    line = StringList.fromArray(quoteBlocks).getConcatenated("\"");
+    return line;
+  };
+
+  exports.NetworkEncodings = NetworkEncodings;
+
+  function TableEncodings() {}
+
+
+  TableEncodings.ENTER = String.fromCharCode(13);
+  TableEncodings.ENTER2 = String.fromCharCode(10);
+  TableEncodings.ENTER3 = String.fromCharCode(8232);
+
+  TableEncodings.SPACE = String.fromCharCode(32);
+  TableEncodings.SPACE2 = String.fromCharCode(160);
+
+  TableEncodings.TAB = "	";
+  TableEncodings.TAB2 = String.fromCharCode(9);
+
+
+  /**
+   * Decode a String in format CSV into a Table
+   * @param {String} csv CSV formatted text
+   *
+   * @param {Boolean} first_row_header first row is header (default: false)
+   * @param {String} separator separator character (default: ",")
+   * @param {Object} value_for_nulls Object to be placed instead of null values
+   * @param {Boolean} listsToStringList if true (default value), converts lists that are not StringLists, NumberLists… (probably because they contain strings and numbers) into StringLists
+   * @return {Table} resulting Table
+   * tags:decoder
+   */
+  TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, valueForNulls, listsToStringList) {
+    if(csvString==null) return null;
+    valueForNulls = valueForNulls == null ? "" : valueForNulls;
+    listsToStringList = listsToStringList==null?true:listsToStringList;
+
+    var i, j;
+    var _firstRowIsHeader = firstRowIsHeader == null ? false : firstRowIsHeader;
+
+    if(csvString == null) return null;
+    if(csvString == "") return new Table();
+
+    csvString = csvString.replace(/\$/g, "");
+
+    var blocks = csvString.split("\"");
+    for(i = 1; blocks[i] != null; i += 2) {
+      blocks[i] = blocks[i].replace(/\n/g, "*ENTER*");
+    }
+    csvString = blocks.join("\""); //TODO: create a general method for replacements inside "", apply it to chomas
+
+    var enterChar = TableEncodings.ENTER2;
+    var lines = csvString.split(enterChar);
+    if(lines.length == 1) {
+      enterChar = TableEncodings.ENTER;
+      lines = csvString.split(enterChar);
+      if(lines.length == 1) {
+        enterChar = TableEncodings.ENTER3;
+        lines = csvString.split(enterChar);
+      }
+    }
+
+    var table = new Table();
+    var comaCharacter = separator != undefined ? separator : ",";
+
+    if(csvString == null || csvString == "" || csvString == " " || lines.length == 0) return null;
+
+    var startIndex = 0;
+    if(_firstRowIsHeader) {
+      startIndex = 1;
+      var headerContent = lines[0].split(comaCharacter);
+    }
+
+    var element;
+    var cellContent;
+    var numberCandidate;
+    for(i = startIndex; i < lines.length; i++) {
+      if(lines[i].length < 2) continue;
+
+      var cellContents = NetworkEncodings.replaceChomasInLine(lines[i], separator).split(comaCharacter); //TODO: will be obsolete (see previous TODO)
+
+      for(j = 0; j < cellContents.length; j++) {
+        table[j] = table[j] == null ? new List__default() : table[j];
+        if(_firstRowIsHeader && i == 1) {
+          table[j].name = ( headerContent[j] == null ? "" : TableEncodings._removeQuotes(headerContent[j]) ).trim();
+        }
+        var actualIndex = _firstRowIsHeader ? (i - 1) : i;
+
+        cellContent = cellContents[j].replace(/\*CHOMA\*/g, separator).replace(/\*ENTER\*/g, "\n");
+        
+        cellContent = cellContent == '' ? valueForNulls : cellContent;
+
+        cellContent = String(cellContent);
+
+        numberCandidate = Number(cellContent.replace(',', '.'));
+
+        element = (numberCandidate || (numberCandidate == 0 && cellContent != '')) ? numberCandidate : cellContent;
+
+        if(typeof element == 'string') element = TableEncodings._removeQuotes(element);
+
+        table[j][actualIndex] = element;
+      }
+    }
+
+    for(i = 0; table[i] != null; i++) {
+      table[i] = table[i].getImproved();
+      if(listsToStringList && table[i].type=="List") table[i] = table[i].toStringList();
+    }
+
+    table = table.getImproved();
+
+    return table;
+  };
+
+  TableEncodings._removeQuotes = function(string) {
+    if(string.length == 0) return string;
+    if((string.charAt(0) == "\"" || string.charAt(0) == "'") && (string.charAt(string.length - 1) == "\"" || string.charAt(string.length - 1) == "'")) string = string.substr(1, string.length - 2);
+    return string;
+  };
+
+
+  /**
+   * Encode a Table into a String in format CSV
+   * @param {Table} Table to be enconded
+   *
+   * @param {String} separator character (default: ",")
+   * @param {Boolean} first row as List names (default: false)
+   * @return {String} resulting String in CSV format
+   * tags:encoder
+   */
+  TableEncodings.TableToCSV = function(table, separator, namesAsHeaders) {
+    separator = separator || ",";
+    var i;
+    var j;
+    var list;
+    var type;
+    var lines = ListGenerators.createListWithSameElement(table[0].length, "");
+    var addSeparator;
+    for(i = 0; table[i] != null; i++) {
+      list = table[i];
+      type = list.type;
+      addSeparator = i != table.length - 1;
+      for(j = 0; list[j] != null; j++) {
+        switch(type) {
+          case 'NumberList':
+            lines[j] += list[j];
+            break;
+          default:
+            lines[j] += "\"" + list[j] + "\"";
+            break;
+        }
+        if(addSeparator) lines[j] += separator;
+      }
+    }
+
+    var headers = '';
+    if(namesAsHeaders) {
+      for(i = 0; table[i] != null; i++) {
+        list = table[i];
+        headers += "\"" + list.name + "\"";
+        if(i != table.length - 1) headers += separator;
+      }
+      headers += '\n';
+    }
+
+    return headers + lines.getConcatenated("\n");
+  };
+
+  exports.TableEncodings = TableEncodings;
+
+  RectangleList.prototype = new List__default();
+  RectangleList.prototype.constructor = RectangleList;
+  /**
+   * @classdesc A {@link List} structure for storing {@link Rectangle} instances.
+   *
+   * @description Creates a new RectangleList.
+   * @constructor
+   * @category geometry
+   */
+  function RectangleList() {
+    var array = List__default.apply(this, arguments);
+    array = RectangleList.fromArray(array);
+    return array;
+  }
+
+
+  RectangleList.fromArray = function(array) {
+    var result = List__default.fromArray(array);
+    result.type = "RectangleList";
+
+    result.getFrame = RectangleList.prototype.getFrame;
+    result.add = RectangleList.prototype.add;
+    result.factor = RectangleList.prototype.factor;
+    result.getAddedArea = RectangleList.prototype.getAddedArea;
+    result.getIntersectionArea = RectangleList.prototype.getIntersectionArea;
+
+    return result;
+  };
+
+  //TODO:finish RectangleList methods
+
+  RectangleList.prototype.getFrame = function() {
+    if(this.length == 0) return null;
+    var frame = this[0];
+    frame.width = frame.getRight();
+    frame.height = frame.getBottom();
+    for(var i = 1; this[i] != null; i++) {
+      frame.x = Math.min(frame.x, this[i].x);
+      frame.y = Math.min(frame.y, this[i].y);
+
+      frame.width = Math.max(this[i].getRight(), frame.width);
+      frame.height = Math.max(this[i].getBottom(), frame.height);
+    }
+
+    frame.width -= frame.x;
+    frame.height -= frame.y;
+
+    return frame;
+  };
+
+  RectangleList.prototype.add = function() {
+
+  };
+
+  RectangleList.prototype.factor = function() {
+
+  };
+
+  RectangleList.prototype.getAddedArea = function() {};
+
+  RectangleList.prototype.getIntersectionArea = function() {
+    var rect0;
+    var rect1;
+    var intersectionArea = 0;
+    var intersection;
+    for(var i = 0; this[i + 1] != null; i++) {
+      rect0 = this[i];
+      for(var j = i + 1; this[j] != null; j++) {
+        rect1 = this[j];
+        intersection = rect0.getIntersection(rect1);
+        intersectionArea += intersection == null ? 0 : intersection.getArea();
+      }
+    }
+
+    return intersectionArea;
+  };
+
+  exports.RectangleList = RectangleList;
+
+  function ListGenerators() {}
+
+
+
+  /**
+   * Generates a List made of several copies of same element (returned List is improved)
+   * @param {Object} nValues length of the List
+   * @param {Object} element object to be placed in all positions
+   * @return {List} generated List
+   * tags:generator
+   */
+  ListGenerators.createListWithSameElement = function(nValues, element) {
+    var list;
+    switch(typeOf(element)) {
+      case 'number':
+        list = new NumberList();
+        break;
+      case 'List':
+        list = new Table();
+        break;
+      case 'NumberList':
+        list = new NumberTable();
+        break;
+      case 'Rectangle':
+        list = new RectangleList();
+        break;
+      case 'string':
+        list = new StringList();
+        break;
+      case 'boolean':
+        list = new List__default(); //TODO:update once BooleanList exists
+        break;
+      default:
+        list = new List__default();
+    }
+
+    for(var i = 0; i < nValues; i++) {
+      list[i] = element;
+    }
+    return list;
+  };
+
+  /**
+   * Generates a List built froma seed element and a function that will be applied iteratively
+   * @param {Object} nValues length of the List
+   * @param {Object} firstElement first element
+   * @param {Object} dynamicFunction sequence generator function, elementN+1 =  dynamicFunction(elementN)
+   * @return {List} generated List
+   */
+  ListGenerators.createIterationSequence = function(nValues, firstElement, dynamicFunction) {
+    var list = ListGenerators.createListWithSameElement(1, firstElement);
+    for(var i = 1; i < nValues; i++) {
+      list[i] = dynamicFunction(list[i - 1]);
+    }
+    return list;
+  };
+
+  exports.ListGenerators = ListGenerators;
+
   function NumberOperators() {}
 
 
@@ -9343,7 +9612,8 @@ define('src/index', ['exports'], function (exports) {
       }
     }
     return newTable;
-  };
+  }
+
 
   /**
    * aggregates lists from a table, using one of the list of the table as the aggregation list, and based on different modes for each list
@@ -9351,10 +9621,12 @@ define('src/index', ['exports'], function (exports) {
    * @param  {Number} indexAggregationList index of the aggregation list on the table
    * @param  {NumberList} indexesListsToAggregate indexs of the lists to be aggregated; typically it also contains the index of the aggregation list at the beginning, to be aggregated using mode 0 (first element) thus resulting as the list of non repeated elements
    * @param  {NumberList} modes list of modes of aggregation, these are the options:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes<br>12:count non repeated elements<br>13:enlist non repeated elements
+   *
+   * @param {StringList} newListsNames optional names for generated lists
    * @return {Table} aggregated table
    * tags:
    */
-  TableOperators.aggregateTable = function(table, indexAggregationList, indexesListsToAggregate, modes){
+  TableOperators.aggregateTable = function(table, indexAggregationList, indexesListsToAggregate, modes, newListsNames){
     indexAggregationList = indexAggregationList||0;
 
     if(table==null || !table.length ||  table.length<indexAggregationList || indexesListsToAggregate==null || !indexesListsToAggregate.length || modes==null) return;
@@ -9368,13 +9640,14 @@ define('src/index', ['exports'], function (exports) {
 
     indexesListsToAggregate.forEach(function(index, i){
       toAggregateList = table[index];
-      newList = ListOperators__default.aggregateList(aggregatorList, toAggregateList, modes[i%modes.length], indexesTable)[1];
-      newList.name = toAggregateList.name;
+      newList = ListOperators__default.aggregateList(aggregatorList, toAggregateList, i<modes.length?modes[i]:1, indexesTable)[1];
+      if(newListsNames && i<newListsNames.length) newList.name = newListsNames[i];
       newTable.push(newList);
     });
 
     return newTable.getImproved();
   }
+
 
   /**
    * builds a pivot table
@@ -10319,6 +10592,8 @@ define('src/index', ['exports'], function (exports) {
    * tags:
    */
   ListOperators__ListOperators.translateWithDictionary = function(list, dictionary, nullElement) {
+    if(list==null || dictionary==null || dictionary.length<2) return;
+    
     var newList = new List__default();
     list.forEach(function(element, i) {
       var index = dictionary[0].indexOf(element);
@@ -10328,6 +10603,9 @@ define('src/index', ['exports'], function (exports) {
         newList[i] = index == -1 ? list[i] : dictionary[1][index];
       }
     });
+
+    newList.name = dictionary[1].name;
+    
     return newList.getImproved();
   };
 
@@ -10873,9 +11151,6 @@ define('src/index', ['exports'], function (exports) {
     }
 
     var table = ListOperators__ListOperators.countElementsRepetitionOnList(list, true);
-
-    console.log('    getListEntropy | table[0]', table[0]);
-    console.log('    getListEntropy | table[1]', table[1]);
 
     list._mostRepresentedValue = table[0][0];
     var N = list.length;
@@ -11722,100 +11997,6 @@ define('src/index', ['exports'], function (exports) {
 
   exports.StringOperators = StringOperators;
 
-  PolygonList.prototype = new Table();
-  PolygonList.prototype.constructor = PolygonList;
-
-  /**
-   * @classdesc A {@link List} structure for storing {@link Polygon} instances.
-   *
-   * @description Creates a new PolygonList.
-   * @constructor
-   * @category geometry
-   */
-  function PolygonList() {
-    var array = Table.apply(this, arguments);
-    array = PolygonList.fromArray(array);
-    return array;
-  }
-
-
-  PolygonList.fromArray = function(array) {
-    var result = Table.fromArray(array);
-    result.type = "PolygonList";
-    result.getFrame = PolygonList.prototype.getFrame;
-    result.add = PolygonList.prototype.add;
-    result.factor = PolygonList.prototype.factor;
-    result.clone = PolygonList.prototype.clone;
-    result.getString = PolygonList.prototype.getString;
-    return result;
-  };
-
-  PolygonList.prototype.getFrame = function() {
-    if(this.length == 0) return null;
-    var frameP = this[0].getFrame();
-    var rectangle = new Rectangle(frameP.x, frameP.y, frameP.getRight(), frameP.getBottom());
-    for(var i = 1; this[i] != null; i++) {
-      frameP = this[i].getFrame();
-      rectangle.x = Math.min(rectangle.x, frameP.x);
-      rectangle.y = Math.min(rectangle.y, frameP.y);
-      rectangle.width = Math.max(rectangle.width, frameP.getRight());
-      rectangle.height = Math.max(rectangle.height, frameP.getBottom());
-    }
-    rectangle.width -= rectangle.x;
-    rectangle.height -= rectangle.y;
-
-    return rectangle;
-  };
-
-  PolygonList.prototype.add = function(object) {
-    var type = typeOf(object);
-    var i;
-    switch(type) {
-      case 'Point':
-        var newPolygonList = new PolygonList();
-        for(i = 0; this[i] != null; i++) {
-          newPolygonList[i] = this[i].add(object);
-        }
-        newPolygonList.name = this.name;
-        return newPolygonList;
-        break;
-    }
-  };
-
-  PolygonList.prototype.factor = function(value) {
-    var newPolygonList = new PolygonList();
-    for(var i = 0; this[i] != null; i++) {
-      newPolygonList[i] = this[i].factor(value);
-    }
-    newPolygonList.name = this.name;
-    return newPolygonList;
-  };
-
-  PolygonList.prototype.clone = function() {
-    var newPolygonList = new PolygonList();
-    for(var i = 0; this[i] != null; i++) {
-      newPolygonList[i] = this[i].clone();
-    }
-    newPolygonList.name = this.name;
-    return newPolygonList;
-  };
-
-  // PolygonList.prototype.getString=function(pointSeparator,polygonSeparator){
-  // pointSeparator = pointSeparator==null?',':pointSeparator;
-  // polygonSeparator = polygonSeparator==null?'/':polygonSeparator;
-  // var j;
-  // var t='';
-  // for(var i=0;this[i]!=null;i++){
-  // t+=(i==0?'':polygonSeparator);
-  // for(j=0; this[i][j]!=null; j++){
-  // t+=(j==0?'':pointSeparator)+this[i][j].x+pointSeparator+this[i][j].y;
-  // }
-  // }
-  // return t;
-  // }
-
-  exports.PolygonList = PolygonList;
-
   /* global console */
 
   Axis.prototype = new DataModel();
@@ -12594,33 +12775,6 @@ define('src/index', ['exports'], function (exports) {
   };
 
   exports.PointOperators = PointOperators;
-
-  Polygon3D.prototype = new List__default();
-  Polygon3D.prototype.constructor = Polygon3D;
-
-  /**
-   * @classdesc Polygon3D brings the {@link Polygon} concept into three
-   * dimensions through the use of {@link Point3D}.
-   *
-   * @description Creates a new Polygon3D.
-   * @constructor
-   * @category geometry
-   */
-  function Polygon3D() {
-    var array = List__default.apply(this, arguments);
-    array = Polygon3D.fromArray(array);
-    return array;
-  }
-
-
-  Polygon3D.fromArray = function(array) {
-    var result = List__default.fromArray(array);
-    result.type = "Polygon3D";
-    //assign methods to array:
-    return result;
-  };
-
-  exports.Polygon3D = Polygon3D;
 
   function GeometryOperators() {}
 
@@ -14046,107 +14200,6 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Polygon3DList = Polygon3DList;
 
-  ColorList.prototype = new List__default();
-  ColorList.prototype.constructor = ColorList;
-
-  /**
-   * @classdesc A {@link List} for storing Colors.
-   *
-   * @description Creates a new ColorList.
-   * @constructor
-   * @category colors
-   */
-  function ColorList() {
-    var args = [];
-    var i;
-    for(i = 0; i < arguments.length; i++) {
-      args[i] = arguments[i];
-    }
-    var array = List__default.apply(this, args);
-    array = ColorList.fromArray(array);
-
-    return array;
-  }
-
-
-  ColorList.fromArray = function(array) {
-    var result = List__default.fromArray(array);
-    result.type = "ColorList";
-    result.getRgbArrays = ColorList.prototype.getRgbArrays;
-    result.getInterpolated = ColorList.prototype.getInterpolated;
-    result.getInverted = ColorList.prototype.getInverted;
-    result.addAlpha = ColorList.prototype.addAlpha;
-    return result;
-  };
-
-  /**
-   * return an arrays of rgb arrays ([rr,gg,bb])
-   * @return {array}
-   * tags:
-   */
-  ColorList.prototype.getRgbArrays = function() {
-    var rgbArrays = new List__default();
-
-    for(var i = 0; this[i] != null; i++) {
-      rgbArrays[i] = ColorOperators.colorStringToRGB(this[i]);
-    }
-
-    return rgbArrays;
-  };
-
-  /**
-   * interpolates colors with a given color and measure
-   * @param  {String} color to be interpolated with
-   * @param  {Number} value intenisty of interpolation [0,1]
-   * @return {ColorList}
-   * tags:
-   */
-  ColorList.prototype.getInterpolated = function(color, value) {
-    var newColorList = new ColorList();
-
-    for(var i = 0; this[i] != null; i++) {
-      newColorList[i] = ColorOperators.interpolateColors(this[i], color, value);
-    }
-
-    newColorList.name = this.name;
-    return newColorList;
-  };
-
-  /**
-   * inverts all colors
-   * @return {ColorList}
-   * tags:
-   */
-  ColorList.prototype.getInverted = function() {
-    var newColorList = new ColorList();
-
-    for(var i = 0; this[i] != null; i++) {
-      newColorList[i] = ColorOperators.invertColor(this[i]);
-    }
-
-    newColorList.name = this.name;
-    return newColorList;
-  };
-
-  /**
-   * adds alpha value to all colores
-   * @param {Number} alpha alpha value in [0,1]
-   * @return {ColorList}
-   * tags:
-   */
-  ColorList.prototype.addAlpha = function(alpha) {
-    var newColorList = new ColorList();
-
-    for(var i = 0; this[i] != null; i++) {
-      newColorList[i] = ColorOperators.addAlpha(this[i], alpha);
-    }
-
-    newColorList.name = this.name;
-    return newColorList;
-  };
-
-  exports.ColorList = ColorList;
-
   function ColorScales() {}
 
   // *
@@ -14164,13 +14217,13 @@ define('src/index', ['exports'], function (exports) {
   };
 
   ColorScales.grayscale = function(value) {
-    var rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], [255, 255, 255], value);
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+    var rgb = ColorOperators__default.interpolateColorsRGB([0, 0, 0], [255, 255, 255], value);
+    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
   ColorScales.antiGrayscale = function(value) {
-    var rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [0, 0, 0], value);
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+    var rgb = ColorOperators__default.interpolateColorsRGB([255, 255, 255], [0, 0, 0], value);
+    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
   ColorScales.antiTemperature = function(value) {
@@ -14179,11 +14232,11 @@ define('src/index', ['exports'], function (exports) {
 
   ColorScales.temperature = function(value) { //todo:make it efficient
     if(value < 0.2) {
-      var color = ColorOperators.interpolateColors('#000000', ColorOperators.HSVtoHEX(234, 1, 1), value * 5);
+      var color = ColorOperators__default.interpolateColors('#000000', ColorOperators__default.HSVtoHEX(234, 1, 1), value * 5);
     } else if(value > 0.85) {
-      color = ColorOperators.interpolateColors(ColorOperators.HSVtoHEX(0, 1, 1), '#FFFFFF', (value - 0.85) / 0.15);
+      color = ColorOperators__default.interpolateColors(ColorOperators__default.HSVtoHEX(0, 1, 1), '#FFFFFF', (value - 0.85) / 0.15);
     } else {
-      color = ColorOperators.HSVtoHEX(Math.round((0.65 - (value - 0.2)) * 360), 1, 1);
+      color = ColorOperators__default.HSVtoHEX(Math.round((0.65 - (value - 0.2)) * 360), 1, 1);
     }
     return color;
   };
@@ -14205,17 +14258,17 @@ define('src/index', ['exports'], function (exports) {
   };
 
   ColorScales.greenToRed = function(value) { //todo:make it efficient
-    var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [255, 50, 50], value);
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+    var rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [255, 50, 50], value);
+    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
   ColorScales.greenToBlue = function(value) { //todo:make it efficient
-    var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [50, 50, 255], value);
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+    var rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [50, 50, 255], value);
+    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
   ColorScales.grayToOrange = function(value) { //todo:make it efficient
-    var rgb = ColorOperators.interpolateColorsRGB([100, 100, 100], [255, 110, 0], value);
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+    var rgb = ColorOperators__default.interpolateColorsRGB([100, 100, 100], [255, 110, 0], value);
+    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
   ColorScales.blueToRed = function(value) {
@@ -14232,26 +14285,26 @@ define('src/index', ['exports'], function (exports) {
   };
 
   ColorScales.redToBlue = function(value) {
-    var rgb = ColorOperators.interpolateColorsRGB([255, 0, 0], [0, 0, 255], value);
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+    var rgb = ColorOperators__default.interpolateColorsRGB([255, 0, 0], [0, 0, 255], value);
+    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
   ColorScales.greenWhiteRed = function(value) {
     if(value < 0.5) {
-      var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [255, 255, 255], value * 2);
+      var rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [255, 255, 255], value * 2);
     } else {
-      rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [255, 50, 50], (value - 0.5) * 2);
+      rgb = ColorOperators__default.interpolateColorsRGB([255, 255, 255], [255, 50, 50], (value - 0.5) * 2);
     }
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
 
   ColorScales.solar = function(value) {
-    var rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], ColorOperators.interpolateColorsRGB([255, 0, 0], [255, 255, 0], value), Math.pow(value * 0.99 + 0.01, 0.2));
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+    var rgb = ColorOperators__default.interpolateColorsRGB([0, 0, 0], ColorOperators__default.interpolateColorsRGB([255, 0, 0], [255, 255, 0], value), Math.pow(value * 0.99 + 0.01, 0.2));
+    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
   ColorScales.antiSolar = function(value) {
-    return ColorOperators.invertColor(ColorScales.solar(value));
+    return ColorOperators__default.invertColor(ColorScales.solar(value));
   };
 
   exports.ColorScales = ColorScales;
@@ -15043,6 +15096,7 @@ define('src/index', ['exports'], function (exports) {
     if(weights == null) return;
     if(weights.length == 0) return new RectangleList();
     if(weights.length == 1) return new RectangleList(frame);
+
     isNormalizedWeights = isNormalizedWeights ? isNormalizedWeights : false;
     isSortedWeights = isSortedWeights ? isSortedWeights : false;
     var newWeightList;
@@ -15057,7 +15111,7 @@ define('src/index', ['exports'], function (exports) {
       var newPositions = newWeightList.getSortIndexes(); // ListOperators.sortListByNumberList();// newWeightList.sortNumericIndexedDescending();
       newWeightList = ListOperators__default.sortListByNumberList(newWeightList, newWeightList);
     }
-    //trace("RectangleOperators.squarified | ", newWeightList);
+
     var area = frame.width * frame.height;
     var rectangleList = new RectangleList();
     var freeRectangle = frame.clone();
@@ -15071,7 +15125,7 @@ define('src/index', ['exports'], function (exports) {
     var freeSubRectangle = new Rectangle();
     var nWeights = weights.length;
     var lastRectangle;
-    var isColumn;
+
     if(nWeights > 2) {
       var i, j, k;
       var sum;
@@ -15090,16 +15144,10 @@ define('src/index', ['exports'], function (exports) {
             if(freeRectangle.width > freeRectangle.height) { //column
               freeSubRectangle.width = subArea / freeRectangle.height;
               freeSubRectangle.height = freeRectangle.height;
-              column = true;
             } else { //fila
               freeSubRectangle.width = freeRectangle.width;
               freeSubRectangle.height = subArea / freeRectangle.width;
-              column = false;
             }
-            //subWeightList = subWeightList.getNormalizedToSum(1,sum);
-            // subWeightList.forEach(function(val, k){
-            // 	subWeightList[k]/=sum;
-            // });
 
             subRectangleList = RectangleOperators.partitionRectangle(freeSubRectangle, subWeightList, sum);
             worstProportion = subRectangleList.highestRatio; // RectangleOperators._getHighestRatio(subRectangleList);//
@@ -15179,7 +15227,6 @@ define('src/index', ['exports'], function (exports) {
     var area = rectangle.width * rectangle.height;
     var rectangleList = new List__default(); //RectangleList();
     var freeRectangle = new Rectangle(rectangle.x, rectangle.y, rectangle.width, rectangle.height); //rectangle.clone();
-    //trace("??", freeRectangle);
     var areai;
     var i;
     var rect;
@@ -15280,11 +15327,14 @@ define('src/index', ['exports'], function (exports) {
    * create a colorList based on a colorScale and values from a numberList (that will be normalized)
    * @param  {NumberList} numberList
    * @param  {ColorScale} colorScale
+   * 
    * @param  {Number} mode 0:normalize numberList
    * @return {ColorList}
    * tags:generator
    */
   ColorListGenerators.createColorListFromNumberList = function(numberList, colorScale, mode) {
+    if(numberList==null) return null;
+    
     mode = mode == null ? 0 : mode;
 
     var colorList = new ColorList();
@@ -15520,7 +15570,7 @@ define('src/index', ['exports'], function (exports) {
     var colorList = new ColorList();
     var i;
     for(i = 0; i < nPoints; i++) {
-      colorList.push(ColorOperators.point3DToColor(polygon3D[i]));
+      colorList.push(ColorOperators__default.point3DToColor(polygon3D[i]));
     }
     return colorList;
   };
@@ -15529,7 +15579,7 @@ define('src/index', ['exports'], function (exports) {
     var polygon3D = new Polygon3D();
     var i;
     for(i = 0; i < nColors; i++) {
-      polygon3D.push(ColorOperators.colorToPoint3D(colorList[i]));
+      polygon3D.push(ColorOperators__default.colorToPoint3D(colorList[i]));
     }
     return polygon3D;
   };
@@ -15960,7 +16010,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * calculates the covariance
+   * calculates the covariance between two numberLists
    * @param  {NumberList} numberList0
    * @param  {NumberList} numberList1
    * @return {Number}
@@ -15998,7 +16048,6 @@ define('src/index', ['exports'], function (exports) {
 
     var min = interval.x;
     var max = interval.y;
-    //var means = new NumberList();
     var clusters = new NumberTable();
     var i, j;
     var jK;
@@ -19539,7 +19588,7 @@ define('src/index', ['exports'], function (exports) {
     var i;
     var j;
 
-    colors = colors == null ? ColorListOperators.colorListFromColorScale(new ColorScale(ColorOperators.temperatureScale), nElements) : colors;
+    colors = colors == null ? ColorListOperators.colorListFromColorScale(new ColorScale(ColorOperators__default.temperatureScale), nElements) : colors;
     frame = frame == null ? new Rectangle(10, 10, 400, 300) : frame;
 
     var nCols = intervalsFlowTable[0].length;
@@ -19743,9 +19792,7 @@ define('src/index', ['exports'], function (exports) {
    *
    */
   function fsCircle(x, y, r) {
-    src_Global__context.beginPath();
-    src_Global__context.arc(x, y, r, 0, TwoPi);
-    src_Global__context.fill();
+    fCircle(x, y, r);
     src_Global__context.stroke();
   };
 
@@ -19822,22 +19869,37 @@ define('src/index', ['exports'], function (exports) {
    * fsEllipse(40, 40, 20, 30);
    */
   function fsEllipse(x, y, rW, rH) {
-    var k = 0.5522848,
-      ox = rW * k,
-      oy = rH * k,
-      xe = x + rW,
-      ye = y + rH;
-    src_Global__context.beginPath();
-    src_Global__context.moveTo(x - rW, y);
-    src_Global__context.bezierCurveTo(x - rW, y - oy, x - ox, y - rH, x, y - rH);
-    src_Global__context.bezierCurveTo(x + ox, y - rH, xe, y - oy, xe, y);
-    src_Global__context.bezierCurveTo(xe, y + oy, x + ox, ye, x, ye);
-    src_Global__context.bezierCurveTo(x - ox, ye, x - rW, y + oy, x - rW, y);
-    src_Global__context.moveTo(x - rW, y);
-    src_Global__context.closePath();
-    src_Global__context.fill();
+    fEllipse(x, y, rW, rH);
     src_Global__context.stroke();
   };
+
+
+  /**
+   * @ignore
+   */
+  function _solidArc(x,y,a0,a1,r0,r1){
+    src_Global__context.beginPath();
+    src_Global__context.arc( x, y, r0, a0, a1 );
+    src_Global__context.lineTo( x + r1*Math.cos(a1), y + r1*Math.sin(a1) );
+    src_Global__context.arc( x, y, r1, a1, a0, true );
+    src_Global__context.lineTo( x + r0*Math.cos(a0), y + r0*Math.sin(a0) );
+  }
+
+  function fSolidArc(x,y,a0,a1,r0,r1){
+    _solidArc(x,y,a0,a1,r0,r1);
+    src_Global__context.fill();
+  }
+
+  function sSolidArc(x,y,a0,a1,r0,r1){
+    _solidArc(x,y,a0,a1,r0,r1);
+    src_Global__context.stroke();
+  }
+
+  function fsSolidArc(x,y,a0,a1,r0,r1){
+    fSolidArc(x,y,a0,a1,r0,r1);
+    src_Global__context.stroke();
+  }
+
 
   /**
    * Draws a line from a start position to an end position
@@ -20701,6 +20763,9 @@ define('src/index', ['exports'], function (exports) {
   exports.fEllipse = fEllipse;
   exports.sEllipse = sEllipse;
   exports.fsEllipse = fsEllipse;
+  exports.fSolidArc = fSolidArc;
+  exports.sSolidArc = sSolidArc;
+  exports.fsSolidArc = fsSolidArc;
   exports.line = line;
   exports.bezier = bezier;
   exports.fLines = fLines;
@@ -21823,14 +21888,14 @@ define('src/index', ['exports'], function (exports) {
     bit = "";
     while(bit != null) {
       bit = StringOperators.getFirstTextBetweenStrings(newText, "<fcuint", ">");
-      if(bit != null) newText = newText.replace("<fcuint" + bit + ">", "<font color=\"" + ColorOperators.uinttoHEX(bit) + "\">");
+      if(bit != null) newText = newText.replace("<fcuint" + bit + ">", "<font color=\"" + ColorOperators__default.uinttoHEX(bit) + "\">");
     }
     bit = "";
     while(bit != null) {
       bit = StringOperators.getFirstTextBetweenStrings(newText, "<frgb", ">");
       if(bit != null) {
         var rgb = bit.split(".");
-        newText = newText.replace("<frgb" + bit + ">", "<font color=\"" + ColorOperators.RGBtoHEX(Number(rgb[0]), Number(rgb[1]), Number(rgb[2])) + "\">");
+        newText = newText.replace("<frgb" + bit + ">", "<font color=\"" + ColorOperators__default.RGBtoHEX(Number(rgb[0]), Number(rgb[1]), Number(rgb[2])) + "\">");
       }
     }
     bit = "";
@@ -21952,7 +22017,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   FastHtml.getColorTag = function(color) {
-    color = ColorOperators.colorStringToHEX(color);
+    color = ColorOperators__default.colorStringToHEX(color);
     return "<font color=\"" + color + "\">";
   };
 
@@ -22851,6 +22916,7 @@ define('src/index', ['exports'], function (exports) {
 
     return newList;
   }
+
   Engine3D.prototype._sortingCriteria = function(array0, array1, basis) {
     var point3D0 = array0[0];
     var point3D1 = array1[0];
@@ -23545,7 +23611,7 @@ define('src/index', ['exports'], function (exports) {
     var i;
     var j;
 
-    colors = colors == null ? ColorListOperators.colorListFromColorScale(new ColorScale(ColorOperators.temperatureScale), nElements) : colors;
+    colors = colors == null ? ColorListOperators.colorListFromColorScale(new ColorScale(ColorOperators__default.temperatureScale), nElements) : colors;
     center = center == null ? new Point(100, 100) : center;
     radius = radius == null ? 200 : radius;
     r0 = r0 == null ? 10 : r0;
@@ -25251,7 +25317,7 @@ define('src/index', ['exports'], function (exports) {
    * @ignore
    */
   NetworkDraw.drawNetworkMatrix = function(frame, network, colors, relationsColorScaleFunction, margin, directed, normalizedNodeWeights, returnHovered) {
-    relationsColorScaleFunction = relationsColorScaleFunction == null ? ColorOperators.grayScale : relationsColorScaleFunction;
+    relationsColorScaleFunction = relationsColorScaleFunction == null ? ColorOperators__default.grayScale : relationsColorScaleFunction;
     margin = margin == null ? 2 : margin;
     directed = directed == null ? false : directed;
 
@@ -25443,6 +25509,8 @@ define('src/index', ['exports'], function (exports) {
       TreeDraw._generateRectangles(tree.nodeList[0]);
 
       frame.memory.focusFrame = TreeDraw._expandRect(tree.nodeList[0]._outRectangle);
+      c.l('>>>>>>>>>>>>>>>>>>>>>>>> frame.memory.focusFrame', frame.memory.focusFrame);
+
       frame.memory.kx = frame.width / frame.memory.focusFrame.width;
       frame.memory.mx = -frame.memory.kx * frame.memory.focusFrame.x;
       frame.memory.ky = frame.height / frame.memory.focusFrame.height;
@@ -25468,7 +25536,7 @@ define('src/index', ['exports'], function (exports) {
       } else if(frame.memory.actualColorList.length == frame.memory.leaves.length) {
         frame.memory.leaves.forEach(function(node, i) {
           node._color = frame.memory.actualColorList[i];
-          node._rgb = ColorOperators.colorStringToRGB(node._color);
+          node._rgb = ColorOperators__default.colorStringToRGB(node._color);
         });
         var assignColor = function(node) {
           var i;
@@ -25499,7 +25567,7 @@ define('src/index', ['exports'], function (exports) {
       if(textColor == null) {
         var rgb;
         tree.nodeList.forEach(function(node, i) {
-          rgb = node._color ? ColorOperators.colorStringToRGB(node._color) : [0, 0, 0];
+          rgb = node._color ? ColorOperators__default.colorStringToRGB(node._color) : [0, 0, 0];
           frame.memory.textsColorList[i] = (rgb[0] + rgb[1] + rgb[2] > 360) ? 'black' : 'white';
         });
       }
@@ -25618,6 +25686,7 @@ define('src/index', ['exports'], function (exports) {
       });
 
       if(captureImage) {
+        c.l('captureImage');
         // TODO refactor this to not reassign context
         // context = mainContext;
         // frame.memory.image = new Image();
@@ -26131,6 +26200,6 @@ define('src/index', ['exports'], function (exports) {
 
 });
 
-window.MF = requireModule("src/index");
+window.mo = requireModule("src/index");
 })(window);
 //# sourceMappingURL=./moebio_framework.js.map

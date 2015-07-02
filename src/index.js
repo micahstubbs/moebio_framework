@@ -156,7 +156,7 @@ export { CanvasAndContext, Draw, DrawSimpleVis, DrawTexts, DrawTextsAdvanced };
 
 import {
   fRect, sRect, fsRect, fCircle, sCircle, fsCircle, fEllipse,
-  sEllipse, fsEllipse, line, bezier, fLines, sLines, fsLines, fsLinesM,
+  sEllipse, fsEllipse, fSolidArc, sSolidArc, fsSolidArc, line, bezier, fLines, sLines, fsLines, fsLinesM,
   fPolygon, sPolygon, fsPolygon, fEqTriangle, sEqTriangle, fsEqTriangle,
   fRectM, sRectM, fsRectM, fCircleM, sCircleM, fsCircleM, lineM, bezierM,
   drawImage, fitImage, setFill, setStroke, setLW, clipCircle, clipRectangle,
@@ -167,7 +167,7 @@ import {
 
 export {
   fRect, sRect, fsRect, fCircle, sCircle, fsCircle, fEllipse,
-  sEllipse, fsEllipse, line, bezier, fLines, sLines, fsLines, fsLinesM,
+  sEllipse, fsEllipse, fSolidArc, sSolidArc, fsSolidArc, line, bezier, fLines, sLines, fsLines, fsLinesM,
   fPolygon, sPolygon, fsPolygon, fEqTriangle, sEqTriangle, fsEqTriangle,
   fRectM, sRectM, fsRectM, fCircleM, sCircleM, fsCircleM, lineM, bezierM,
   drawImage, fitImage, setFill, setStroke, setLW, clipCircle, clipRectangle,
@@ -199,10 +199,10 @@ import StringUtils from "src/tools/utils/strings/StringUtils";
 import Navigator from "src/tools/utils/system/Navigator";
 export { ConsoleTools, FastHtml, JSONUtils, MD5, StringUtils, Navigator };
 
-import { typeOf, instantiate, getTextFromObject, instantiateWithSameType, isArray,
-  evalJavaScriptFunction, argumentsToArray, TimeLogger } from "src/tools/utils/code/ClassUtils";
-export { typeOf, instantiate, getTextFromObject, instantiateWithSameType, isArray,
-  evalJavaScriptFunction, argumentsToArray, TimeLogger };
+import { typeOf, instantiate, getShortNameFromDataModelType, getColorFromDataModelType, getLightColorFromDataModelType, getTextFromObject, instantiateWithSameType, isArray,
+  evalJavaScriptFunction, argumentsToArray } from "src/tools/utils/code/ClassUtils";
+export { typeOf, instantiate, getShortNameFromDataModelType, getColorFromDataModelType, getLightColorFromDataModelType, getTextFromObject, instantiateWithSameType, isArray,
+  evalJavaScriptFunction, argumentsToArray };
 
 // tools/physics
 import Forces from "src/tools/physics/Forces";

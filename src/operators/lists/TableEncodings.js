@@ -24,12 +24,14 @@ TableEncodings.TAB2 = String.fromCharCode(9);
  * @param {Boolean} first_row_header first row is header (default: false)
  * @param {String} separator separator character (default: ",")
  * @param {Object} value_for_nulls Object to be placed instead of null values
+ * @param {Boolean} listsToStringList if true (default value), converts lists that are not StringLists, NumberLists… (probably because they contain strings and numbers) into StringLists
  * @return {Table} resulting Table
  * tags:decoder
  */
-TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, valueForNulls) {
+TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, valueForNulls, listsToStringList) {
   if(csvString==null) return null;
-  valueForNulls = valueForNulls == null ? 0 : valueForNulls;
+  valueForNulls = valueForNulls == null ? "" : valueForNulls;
+  listsToStringList = listsToStringList==null?true:listsToStringList;
 
   var i, j;
   var _firstRowIsHeader = firstRowIsHeader == null ? false : firstRowIsHeader;
@@ -73,7 +75,7 @@ TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, val
   for(i = startIndex; i < lines.length; i++) {
     if(lines[i].length < 2) continue;
 
-    var cellContents = NetworkEncodings.replaceChomasInLine(lines[i]).split(comaCharacter); //TODO: will be obsolete (see previous TODO)
+    var cellContents = NetworkEncodings.replaceChomasInLine(lines[i], separator).split(comaCharacter); //TODO: will be obsolete (see previous TODO)
 
     for(j = 0; j < cellContents.length; j++) {
       table[j] = table[j] == null ? new List() : table[j];
@@ -82,8 +84,8 @@ TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, val
       }
       var actualIndex = _firstRowIsHeader ? (i - 1) : i;
 
-      cellContent = cellContents[j].replace(/\*CHOMA\*/g, ",").replace(/\*ENTER\*/g, "\n");
-
+      cellContent = cellContents[j].replace(/\*CHOMA\*/g, separator).replace(/\*ENTER\*/g, "\n");
+      
       cellContent = cellContent == '' ? valueForNulls : cellContent;
 
       cellContent = String(cellContent);
@@ -100,6 +102,7 @@ TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, val
 
   for(i = 0; table[i] != null; i++) {
     table[i] = table[i].getImproved();
+    if(listsToStringList && table[i].type=="List") table[i] = table[i].toStringList();
   }
 
   table = table.getImproved();

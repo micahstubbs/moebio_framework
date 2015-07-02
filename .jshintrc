@@ -13,5 +13,5 @@
   },
   "eqeqeq": false,
   "esnext": true,
-  "browser": true,
+  "browser": true
 }
