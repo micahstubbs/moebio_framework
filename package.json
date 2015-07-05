@@ -1,6 +1,6 @@
 {
   "name": "moebioFramework",
-  "version": "0.2.15",
+  "version": "0.2.19",
   "devDependencies": {
     "esperanto": "^0.7.2",
     "grunt": "~0.4.1",
@@ -18,7 +18,7 @@
     "grunt-shell": "^1.1.2",
     "grunt-string-replace": "^1.2.0",
     "jscs-stylish": "^0.3.1",
-    "jsdoc": "^3.3.0-beta1",
+    "jsdoc": "git+https://github.com/jsdoc3/jsdoc.git",
     "jshint-stylish": "^2.0.0",
     "karma": "~0.12.0",
     "karma-chrome-launcher": "^0.1.5",
