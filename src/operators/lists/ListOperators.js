@@ -254,7 +254,7 @@ ListOperators.reverse = function(list) {
  */
 ListOperators.translateWithDictionary = function(list, dictionary, nullElement) {
   if(list==null || dictionary==null || dictionary.length<2) return;
-  
+
   var newList = new List();
   list.forEach(function(element, i) {
     var index = dictionary[0].indexOf(element);
@@ -806,7 +806,7 @@ ListOperators.getListEntropy = function(list, valueFollowing) {
     if(list.length == 1) {
       list._mostRepresentedValue = list[0];
       list._biggestProbability = 1;
-      list._P_valueFollowing = list[0] == valueFollowing ? 1 : 0;
+      if(valueFollowing) list._P_valueFollowing = list[0] == valueFollowing ? 1 : 0;
     }
     return 0;
   }

@@ -155,23 +155,23 @@ import DrawTextsAdvanced from "src/tools/graphic/DrawTextsAdvanced";
 export { CanvasAndContext, Draw, DrawSimpleVis, DrawTexts, DrawTextsAdvanced };
 
 import {
-  fRect, sRect, fsRect, fCircle, sCircle, fsCircle, fEllipse,
+  fRect, sRect, fsRect, fArc, sArc, fCircle, sCircle, fsCircle, fEllipse,
   sEllipse, fsEllipse, fSolidArc, sSolidArc, fsSolidArc, line, bezier, fLines, sLines, fsLines, fsLinesM,
   fPolygon, sPolygon, fsPolygon, fEqTriangle, sEqTriangle, fsEqTriangle,
   fRectM, sRectM, fsRectM, fCircleM, sCircleM, fsCircleM, lineM, bezierM,
   drawImage, fitImage, setFill, setStroke, setLW, clipCircle, clipRectangle,
-  restore, fText, sText, fsText, fTextRotated, fTextM, fsTextM,
+  save, clip, restore, fText, sText, fsText, fTextRotated, fTextArc, fTextM, fsTextM,
   fTextRotatedM, fTextW, setText, getTextW, getPixelData, getPixelColor,
   getPixelColorRGBA, captureCanvas, setCursor, getMilliseconds
 } from "src/tools/graphic/SimpleGraphics";
 
 export {
-  fRect, sRect, fsRect, fCircle, sCircle, fsCircle, fEllipse,
+  fRect, sRect, fsRect, fArc, sArc, fCircle, sCircle, fsCircle, fEllipse,
   sEllipse, fsEllipse, fSolidArc, sSolidArc, fsSolidArc, line, bezier, fLines, sLines, fsLines, fsLinesM,
   fPolygon, sPolygon, fsPolygon, fEqTriangle, sEqTriangle, fsEqTriangle,
   fRectM, sRectM, fsRectM, fCircleM, sCircleM, fsCircleM, lineM, bezierM,
   drawImage, fitImage, setFill, setStroke, setLW, clipCircle, clipRectangle,
-  restore, fText, sText, fsText, fTextRotated, fTextM, fsTextM,
+  save, clip, restore, fText, sText, fsText, fTextRotated, fTextArc, fTextM, fsTextM,
   fTextRotatedM, fTextW, setText, getTextW, getPixelData, getPixelColor,
   getPixelColorRGBA, captureCanvas, setCursor, getMilliseconds
 };

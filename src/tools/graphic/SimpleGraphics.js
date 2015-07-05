@@ -87,6 +87,46 @@ export function fsRect(x, y, width, height) {
 };
 
 /**
+ * Draws a filled in Arc.
+ * Fill color is expected to be set using {@link setFill}.
+ *
+ * @param {Number} x X position of center of the Arc.
+ * @param {Number} y Y position of center of the Arc.
+ * @param {Number} r Radius of the Arc.
+ * @param {Number} a0 first angle of the Arc.
+ * @param {Number} a1 second angle of the Arc.
+ * @example
+ * setFill('steelblue');
+ * fArc(40, 40, 20, 0.5, 0.8);
+ *
+ */
+export function fArc(x, y, r, a0, a1, counterclockwise) {
+  context.beginPath();
+  context.arc(x, y, r, a0, a1, counterclockwise);
+  context.fill();
+};
+
+/**
+ * Draws a stroked Arc.
+ * Stroke color is expected to be set using {@link setStroke}.
+ *
+ * @param {Number} x X position of center of the Arc.
+ * @param {Number} y Y position of center of the Arc.
+ * @param {Number} r Radius of the Arc.
+ * @param {Number} a0 first angle of the Arc.
+ * @param {Number} a1 second angle of the Arc.
+ * @example
+ * setStroke('orange', 5);
+ * sArc(40, 40, 20, 0.5, 0.8);
+ *
+ */
+export function sArc(x, y, r, a0, a1, counterclockwise) {
+  context.beginPath();
+  context.arc(x, y, r, a0, a1, counterclockwise);
+  context.stroke();
+};
+
+/**
  * Draws a filled in Circle.
  * Fill color is expected to be set using {@link setFill}.
  *
@@ -112,7 +152,7 @@ export function fCircle(x, y, r) {
  * @param {Number} y Y position of center of the Circle.
  * @param {Number} r Radius of the Circle.
  * @example
- * setStroke('orange');
+ * setStroke('orange', 5);
  * sCircle(40, 40, 20);
  *
  */
@@ -808,6 +848,14 @@ export function clipRectangle(x, y, w, h) {
   context.clip();
 };
 
+export function save() {
+  context.save();
+};
+
+export function clip() {
+  context.clip();
+};
+
 export function restore() {
   context.restore();
 };
@@ -895,6 +943,42 @@ export function fTextRotated(text, x, y, angle) {
   context.fillText(text, 0, 0);
   context.restore();
 };
+
+/**
+ * Draws filled in text in an arc.
+ * Fill color is expected to be set using {@link setFill}.
+ * Alternatively, setText can be used to set a number of
+ * text rendering properties.
+ *
+ * @param {String} text Text to draw.
+ * @param {Number} x X position of control point, to start the text if not centered.
+ * @param {Number} y Y position of control point, to start the text if not centered.
+ * @param {Number} xCenter X position of center of arc.
+ * @param {Number} yCenter Y position of center of arc.
+ * @param {Boolean} centered if false (default) text starts on control point, if true the control point is the center of the text
+ * @example
+ * setText('black', 30, 'Ariel');
+ * fTextArc("Wheels on the Bus Go Round and Round", 500, 300, 200, 200, true);
+ *
+ */
+export function fTextArc(text, x, y, xCenter, yCenter, centered){
+  if(text==null || text=="") return;
+  
+  var i;
+  var xArc = 0;
+  var r = Math.sqrt(Math.pow(x - xCenter, 2)+Math.pow(y - yCenter, 2));
+  var a = Math.atan2(y - yCenter, x - xCenter);
+  if(centered) a-=getTextW(text)*0.5/r;
+  var xl, yl;
+
+    var letters = text.split('');
+    for(i=0; letters[i]!=null; i++){
+      xl = xCenter + r*Math.cos(a);
+      yl = yCenter + r*Math.sin(a);
+      fTextRotated(letters[i], xl, yl, a+HalfPi);
+      a+=getTextW(letters[i])/r;
+    }
+}
 
 /**
  * Draws a mouse-enabled filled in text.

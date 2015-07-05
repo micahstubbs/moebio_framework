@@ -5390,7 +5390,7 @@ define('src/index', ['exports'], function (exports) {
   function _createDataModelsInfoDictionaries(){
     var i;
     var type;
-
+    
     _shortFromTypeDictionary = {};
     _colorFromTypeDictionary = {};
     _lightColorFromTypeDictionary = {};
@@ -5398,12 +5398,12 @@ define('src/index', ['exports'], function (exports) {
     for(i=0; dataModelsInfo[i]!=null; i++){
       type = dataModelsInfo[i].type;
       _shortFromTypeDictionary[type] = dataModelsInfo[i].short;
-      _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.3);
-      _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.3);
+      _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.2);
+      _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.35);
       type = type.toLowerCase();
       _shortFromTypeDictionary[type] = dataModelsInfo[i].short;
-      _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.3);
-      _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.3);
+      _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.2);
+      _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.35);
     }
   }
 
@@ -6929,7 +6929,7 @@ define('src/index', ['exports'], function (exports) {
   //global constants
   var src_Global__context;
   var TwoPi = 2*Math.PI;
-  var HalfPi = 0.5*Math.PI;
+  var src_Global__HalfPi = 0.5*Math.PI;
   var radToGrad = 180/Math.PI;
   var gradToRad = Math.PI/180;
   var src_Global__c = console;
@@ -7446,7 +7446,7 @@ define('src/index', ['exports'], function (exports) {
   exports.cycleActive = cycleActive;
   exports.context = src_Global__context;
   exports.TwoPi = TwoPi;
-  exports.HalfPi = HalfPi;
+  exports.HalfPi = src_Global__HalfPi;
   exports.radToGrad = radToGrad;
   exports.gradToRad = gradToRad;
   exports.c = src_Global__c;
@@ -10593,7 +10593,7 @@ define('src/index', ['exports'], function (exports) {
    */
   ListOperators__ListOperators.translateWithDictionary = function(list, dictionary, nullElement) {
     if(list==null || dictionary==null || dictionary.length<2) return;
-    
+
     var newList = new List__default();
     list.forEach(function(element, i) {
       var index = dictionary[0].indexOf(element);
@@ -11145,7 +11145,7 @@ define('src/index', ['exports'], function (exports) {
       if(list.length == 1) {
         list._mostRepresentedValue = list[0];
         list._biggestProbability = 1;
-        list._P_valueFollowing = list[0] == valueFollowing ? 1 : 0;
+        if(valueFollowing) list._P_valueFollowing = list[0] == valueFollowing ? 1 : 0;
       }
       return 0;
     }
@@ -19743,6 +19743,46 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
+   * Draws a filled in Arc.
+   * Fill color is expected to be set using {@link setFill}.
+   *
+   * @param {Number} x X position of center of the Arc.
+   * @param {Number} y Y position of center of the Arc.
+   * @param {Number} r Radius of the Arc.
+   * @param {Number} a0 first angle of the Arc.
+   * @param {Number} a1 second angle of the Arc.
+   * @example
+   * setFill('steelblue');
+   * fArc(40, 40, 20, 0.5, 0.8);
+   *
+   */
+  function fArc(x, y, r, a0, a1, counterclockwise) {
+    src_Global__context.beginPath();
+    src_Global__context.arc(x, y, r, a0, a1, counterclockwise);
+    src_Global__context.fill();
+  };
+
+  /**
+   * Draws a stroked Arc.
+   * Stroke color is expected to be set using {@link setStroke}.
+   *
+   * @param {Number} x X position of center of the Arc.
+   * @param {Number} y Y position of center of the Arc.
+   * @param {Number} r Radius of the Arc.
+   * @param {Number} a0 first angle of the Arc.
+   * @param {Number} a1 second angle of the Arc.
+   * @example
+   * setStroke('orange', 5);
+   * sArc(40, 40, 20, 0.5, 0.8);
+   *
+   */
+  function sArc(x, y, r, a0, a1, counterclockwise) {
+    src_Global__context.beginPath();
+    src_Global__context.arc(x, y, r, a0, a1, counterclockwise);
+    src_Global__context.stroke();
+  };
+
+  /**
    * Draws a filled in Circle.
    * Fill color is expected to be set using {@link setFill}.
    *
@@ -19768,7 +19808,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Number} y Y position of center of the Circle.
    * @param {Number} r Radius of the Circle.
    * @example
-   * setStroke('orange');
+   * setStroke('orange', 5);
    * sCircle(40, 40, 20);
    *
    */
@@ -20464,6 +20504,14 @@ define('src/index', ['exports'], function (exports) {
     src_Global__context.clip();
   };
 
+  function save() {
+    src_Global__context.save();
+  };
+
+  function clip() {
+    src_Global__context.clip();
+  };
+
   function restore() {
     src_Global__context.restore();
   };
@@ -20551,6 +20599,42 @@ define('src/index', ['exports'], function (exports) {
     src_Global__context.fillText(text, 0, 0);
     src_Global__context.restore();
   };
+
+  /**
+   * Draws filled in text in an arc.
+   * Fill color is expected to be set using {@link setFill}.
+   * Alternatively, setText can be used to set a number of
+   * text rendering properties.
+   *
+   * @param {String} text Text to draw.
+   * @param {Number} x X position of control point, to start the text if not centered.
+   * @param {Number} y Y position of control point, to start the text if not centered.
+   * @param {Number} xCenter X position of center of arc.
+   * @param {Number} yCenter Y position of center of arc.
+   * @param {Boolean} centered if false (default) text starts on control point, if true the control point is the center of the text
+   * @example
+   * setText('black', 30, 'Ariel');
+   * fTextArc("Wheels on the Bus Go Round and Round", 500, 300, 200, 200, true);
+   *
+   */
+  function fTextArc(text, x, y, xCenter, yCenter, centered){
+    if(text==null || text=="") return;
+    
+    var i;
+    var xArc = 0;
+    var r = Math.sqrt(Math.pow(x - xCenter, 2)+Math.pow(y - yCenter, 2));
+    var a = Math.atan2(y - yCenter, x - xCenter);
+    if(centered) a-=getTextW(text)*0.5/r;
+    var xl, yl;
+
+      var letters = text.split('');
+      for(i=0; letters[i]!=null; i++){
+        xl = xCenter + r*Math.cos(a);
+        yl = yCenter + r*Math.sin(a);
+        fTextRotated(letters[i], xl, yl, a+HalfPi);
+        a+=getTextW(letters[i])/r;
+      }
+  }
 
   /**
    * Draws a mouse-enabled filled in text.
@@ -20757,6 +20841,8 @@ define('src/index', ['exports'], function (exports) {
   exports.fRect = fRect;
   exports.sRect = sRect;
   exports.fsRect = fsRect;
+  exports.fArc = fArc;
+  exports.sArc = sArc;
   exports.fCircle = fCircle;
   exports.sCircle = sCircle;
   exports.fsCircle = fsCircle;
@@ -20793,11 +20879,14 @@ define('src/index', ['exports'], function (exports) {
   exports.setLW = setLW;
   exports.clipCircle = clipCircle;
   exports.clipRectangle = clipRectangle;
+  exports.save = save;
+  exports.clip = clip;
   exports.restore = restore;
   exports.fText = fText;
   exports.sText = sText;
   exports.fsText = fsText;
   exports.fTextRotated = fTextRotated;
+  exports.fTextArc = fTextArc;
   exports.fTextM = fTextM;
   exports.fsTextM = fsTextM;
   exports.fTextRotatedM = fTextRotatedM;
@@ -24025,7 +24114,7 @@ define('src/index', ['exports'], function (exports) {
     if(margin > 7 && list0.name != "" && list1.name != "") {
       setText('black', 10, null, 'right', 'middle');
       fText(list0.name, subframe.getRight() - 2, subframe.bottom + margin * 0.5);
-      fTextRotated(list1.name, subframe.x - margin * 0.5, subframe.y + 1, -HalfPi);
+      fTextRotated(list1.name, subframe.x - margin * 0.5, subframe.y + 1, -src_Global__HalfPi);
     }
 
     if(iOver != null) {
@@ -24574,7 +24663,7 @@ define('src/index', ['exports'], function (exports) {
         names.forEach(function(name, i) {
           a = frame.memory.angle0 + frame.memory.angles[i];
 
-          fTextRotated(String(name), frame.getCenter().x + r * Math.cos(a), frame.getCenter().y + r * Math.sin(a), a + HalfPi);
+          fTextRotated(String(name), frame.getCenter().x + r * Math.cos(a), frame.getCenter().y + r * Math.sin(a), a + src_Global__HalfPi);
         });
       }
 

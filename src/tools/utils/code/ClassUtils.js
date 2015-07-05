@@ -119,7 +119,7 @@ export function instantiate(className, args) {
 export function _createDataModelsInfoDictionaries(){
   var i;
   var type;
-
+  
   _shortFromTypeDictionary = {};
   _colorFromTypeDictionary = {};
   _lightColorFromTypeDictionary = {};
@@ -127,12 +127,12 @@ export function _createDataModelsInfoDictionaries(){
   for(i=0; dataModelsInfo[i]!=null; i++){
     type = dataModelsInfo[i].type;
     _shortFromTypeDictionary[type] = dataModelsInfo[i].short;
-    _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.3);
-    _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.3);
+    _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.2);
+    _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.35);
     type = type.toLowerCase();
     _shortFromTypeDictionary[type] = dataModelsInfo[i].short;
-    _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.3);
-    _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.3);
+    _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.2);
+    _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.35);
   }
 }
 
