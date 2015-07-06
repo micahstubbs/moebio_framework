@@ -465,8 +465,8 @@ Table.prototype.getReportHtml = function(level) {
     text += "<hr>";
     text += ident + "<b>lists comparisons</b>";
     if(this[0].type=="NumberList" && this[1].type=="NumberList"){
-      text += ident + "covariance:" + NumberListOperators.covariance(this[0], this[1]);
-      text += ident + "Pearson product moment correlation: " + NumberListOperators.pearsonProductMomentCorrelation(this[0], this[1]);
+      text += ident + "covariance:" + NumberOperators.numberToString(NumberListOperators.covariance(this[0], this[1]), 4);
+      text += ident + "Pearson product moment correlation: " + NumberOperators.numberToString(NumberListOperators.pearsonProductMomentCorrelation(this[0], this[1]), 4);
     } else if(this[0].type!="NumberList" && this[1].type!="NumberList"){
       var nUnion = ListOperators.union(this[0], this[1]).length;
       text += ident + "union size: " + nUnion;
@@ -501,8 +501,8 @@ Table.prototype.getReportHtml = function(level) {
     }
 
     if(subCategoryCase!=1){
-      text += ident + "information gain when segmenting first list by the second: "+ListOperators.getInformationGain(this[0], this[1]);
-      text += ident + "information gain when segmenting second list by the first: "+ListOperators.getInformationGain(this[1], this[0]);
+      text += ident + "information gain when segmenting first list by the second: "+NumberOperators.numberToString( ListOperators.getInformationGain(this[0], this[1]), 4);
+      text += ident + "information gain when segmenting second list by the first: "+NumberOperators.numberToString( ListOperators.getInformationGain(this[1], this[0]), 4);
     }
   }
 
