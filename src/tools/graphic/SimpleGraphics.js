@@ -687,6 +687,7 @@ export function lineM(x0, y0, x1, y1, d) {
   return _distToSegmentSquared(x0, y0, x1, y1) < d * d;
 };
 
+
 /**
  * @ignore
  */
@@ -702,6 +703,7 @@ function _distToSegmentSquared(x0, y0, x1, y1) {
 };
 
 //TODO:fEqTriangleM, fPolygonM
+
 
 /**
  * Draws a mouse-enabled bezier curve using {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/bezierCurveTo|bezierCurveTo}.
@@ -735,7 +737,6 @@ export function bezierM(x0, y0, cx0, cy0, cx1, cy1, x1, y1, d) { //TODO: fix thi
   if(mX < Math.min(x0, x1, cx0, cx1) - d || mX > Math.max(x0, x1, cx0, cx1) + d || mY < Math.min(y0, y1, cy0, cy1) - d || mY > Math.max(y0, y1, cy0, cy1) + d) return false;
   return GeometryOperators.distanceToBezierCurve(x0, y0, cx0, cy0, cx1, cy1, x1, y1, mP, false) < d;
 };
-
 
 
 //images
@@ -825,7 +826,6 @@ export function setStroke(style, lineWidth) {
 export function setLW(lineWidth) {
   context.lineWidth = lineWidth;
 };
-
 
 
 //clipping
@@ -963,7 +963,7 @@ export function fTextRotated(text, x, y, angle) {
  */
 export function fTextArc(text, x, y, xCenter, yCenter, centered){
   if(text==null || text=="") return;
-  
+
   var i;
   var xArc = 0;
   var r = Math.sqrt(Math.pow(x - xCenter, 2)+Math.pow(y - yCenter, 2));
