@@ -63,6 +63,7 @@ Table.fromArray = function(array) {
   result.getListsSortedByList = Table.prototype.getListsSortedByList;
   result.sortListsByList = Table.prototype.sortListsByList;
   result.getReport = Table.prototype.getReport;
+  result.getReportHtml = Table.prototype.getReportHtml;
   result.clone = Table.prototype.clone;
   result.print = Table.prototype.print;
 
@@ -386,7 +387,125 @@ Table.prototype.getReport = function(level) {
   return text;
 };
 
-Table.prototype.getReportHtml = function() {}; //TODO
+
+Table.prototype.getReportHtml = function(level) {
+  var ident = "<br>" + (level > 0 ? StringOperators.repeatString("&nbsp", level) : "");
+  var lengths = this.getLengths();
+  var minLength = lengths.getMin();
+  var maxLength = lengths.getMax();
+  var averageLength = (minLength + maxLength) * 0.5;
+  var sameLengths = minLength == maxLength;
+
+  var text = "<b>" +( level > 0 ? (ident + "<fs16>table report</f>") : "<fs18>table report</f>" ) + "</b>";
+
+  if(this.length === 0) {
+    text += ident + "this table has no lists";
+    return text;
+  }
+
+  if(this.name){
+    text += ident + "name: <b>" + this.name + "</b>";
+  } else {
+    text += ident + "<i>no name</i>";
+  }
+  text += ident + "type: <b>" + this.type + "</b>";
+  text += ident + "number of lists: <b>" + this.length + "</b>";
+
+  text += ident + "all lists have same length: <b>" + (sameLengths ? "true" : "false") + "</b>";
+
+  if(sameLengths) {
+    text += ident + "lists length: <b>" + this[0].length + "</b>";
+  } else {
+    text += ident + "min length: <b>" + minLength + "</b>";
+    text += ident + "max length: <b>" + maxLength + "</b>";
+    text += ident + "average length: <b>" + averageLength + "</b>";
+    text += ident + "all lengths: <b>" + lengths.join(", ") + "</b>";
+  }
+
+  var names = this.getNames();
+  var types = this.getTypes();
+
+  text += "<hr>";
+  names.forEach(function(name, i){
+    text += ident + "<fs10>" +i + ":</f> <b>" + name + "</b> <fc"+getColorFromDataModelType(types[i])+ ">" + TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"</f>";
+  });
+  text += "<hr>";
+
+  var sameTypes = types.allElementsEqual();
+  if(sameTypes) {
+    text += ident + "types of all lists: " + "<b>" + types[0] + "</b>";
+  } else {
+    text += ident + "types: ";
+    types.forEach(function(type, i){
+      text += "<b><fc"+getColorFromDataModelType(type)+ ">" + type+"</f></b>";
+      if(i<types.length-1) text += ", ";
+    });
+  }
+  text += ident + "names: <b>" + names.join("</b>, <b>") + "</b>";
+
+  if(this.length < 101) {
+    text += "<hr>";
+    text += ident + ident + "<fs16><b>lists reports</b></f>";
+
+    var i;
+    for(i = 0; this[i] != null; i++) {
+      text += "\n" + ident + ("(" + (i) + "/0-" + (this.length - 1) + ")");
+      try{
+         text += this[i].getReportHtml(1);
+      } catch(err){
+        text += ident + "[!] something wrong with list " + err;
+      }
+    }
+  }
+
+  if(this.length == 2) {
+    text += ident + ident + "--------lists comparisons---------";
+    if(this[0].type=="NumberList" && this[1].type=="NumberList"){
+      text += ident + "covariance:" + NumberListOperators.covariance(this[0], this[1]);
+      text += ident + "Pearson product moment correlation: " + NumberListOperators.pearsonProductMomentCorrelation(this[0], this[1]);
+    } else if(this[0].type!="NumberList" && this[1].type!="NumberList"){
+      var nUnion = ListOperators.union(this[0], this[1]).length;
+      text += ident + "union size: " + nUnion;
+      var intersected = ListOperators.intersection(this[0], this[1]);
+      var nIntersection = intersected.length;
+      text += ident + "intersection size: " + nIntersection;
+
+      if(this[0]._freqTable[0].length == nUnion && this[1]._freqTable[0].length == nUnion){
+        text += ident + "[!] both lists contain the same non repeated elements";
+      } else {
+        if(this[0]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in first list also occur on second list";
+        if(this[1]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in second list also occur on first list";
+      }
+      text += ident + "Jaccard distance: " + (1 - (nIntersection/nUnion));
+    }
+    //check for 1-1 matches, number of pairs, categorical, sub-categorical
+    var subCategoryCase = ListOperators.subCategoricalAnalysis(this[0], this[1]);
+
+    switch(subCategoryCase){
+      case 0:
+        text += ident + "no categorical relation found between lists";
+        break;
+      case 1:
+        text += ident + "[!] both lists are categorical identical";
+        break;
+      case 2:
+        text += ident + "[!] first list is subcategorical to second list";
+        break;
+      case 3:
+        text += ident + "[!] second list is subcategorical to first list";
+        break;
+    }
+
+    if(subCategoryCase!=1){
+      text += ident + "information gain when segmenting first list by the second: "+ListOperators.getInformationGain(this[0], this[1]);
+      text += ident + "information gain when segmenting second list by the first: "+ListOperators.getInformationGain(this[1], this[0]);
+    }
+  }
+
+  ///add ideas to: analyze, visualize
+
+  return text;
+};
 
 Table.prototype.getReportObject = function() {}; //TODO
 

@@ -118,6 +118,7 @@ List.fromArray = function(array) {
   array._concat = Array.prototype.concat;
   array.concat = List.prototype.concat;
   array.getReport = List.prototype.getReport;
+  array.getReportHtml = List.prototype.getReportHtml;
 
   //transformations
   array.pushIfUnique = List.prototype.pushIfUnique;
@@ -593,7 +594,7 @@ List.prototype.getElementsRepetitionCount = function(sortListsByOccurrences) {
 
     return table;
   }
-  
+
   for(i = 0; this[i]!=null; i++) {
     element = this[i];
     index = elementList.indexOf(element);
@@ -1376,6 +1377,76 @@ List.prototype.getReport = function(level) { //TODO:complete
   ///add ideas to: analyze, visualize
 
 
+  return text;
+};
+
+
+List.prototype.getReportHtml = function(level) { //TODO:complete
+  var ident = "<br>" + (level > 0 ? StringOperators.repeatString("&nbsp", level) : "");
+  var text = "<b>" +( level > 0 ? (ident + "<fs16>report of instance of List</f>") : "<fs18>report of instance of List</f>" ) + "</b>";
+
+  var length = this.length;
+  var i;
+
+  if(this.name){
+    text += ident + "name: " + this.name;
+  } else {
+    text += ident + "<i>no name</i>";
+  }
+  text += ident + "type: " + this.type;
+
+  if(length == 0) {
+    text += ident + "single element: [" + this[0] + "]";
+    return text;
+  } else {
+    text += ident + "length: " + length;
+    text += ident + "first element: [" + this[0] + "]";
+  }
+
+  switch(this.type) {
+    case "NumberList":
+      var min = this.getMin();
+      var max = this.getMax();
+      this.min = min;
+      this.max = max;
+      var average = (min + max) * 0.5;
+      this.average = average;
+      text += ident + "min: " + min;
+      text += ident + "max: " + max;
+      text += ident + "average: " + average;
+      if(length < 101) {
+        text += ident + "numbers: " + this.join(", ");
+      }
+      break;
+      case "StringList":
+    case "List":
+      var freqTable = this.getElementsRepetitionCount(true);
+      this._freqTable = freqTable;
+      text += ident + "number of different elements: " + freqTable[0].length;
+      if(freqTable[0].length < 10) {
+        text += ident + "elements frequency:";
+      } else {
+        text += ident + "some elements frequency:";
+      }
+
+      for(i = 0; freqTable[0][i] != null && i < 10; i++) {
+        text += ident + "  [" + String(freqTable[0][i]) + "]: " + freqTable[1][i];
+      }
+
+      var joined;
+      if(this.type == "List") {
+        joined = this.join("], [");
+      } else {
+        joined = this.toStringList().join("], [");
+      }
+
+      if(joined.length < 2000) text += ident + "strings: [" + joined + "]";
+      break;
+
+  }
+
+
+  ///add ideas to: analyze, visualize
   return text;
 };
 

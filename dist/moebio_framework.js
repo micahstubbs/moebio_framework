@@ -635,6 +635,7 @@ define('src/index', ['exports'], function (exports) {
     array._concat = Array.prototype.concat;
     array.concat = List__List.prototype.concat;
     array.getReport = List__List.prototype.getReport;
+    array.getReportHtml = List__List.prototype.getReportHtml;
 
     //transformations
     array.pushIfUnique = List__List.prototype.pushIfUnique;
@@ -1025,7 +1026,7 @@ define('src/index', ['exports'], function (exports) {
     var newList = instantiateWithSameType(this);
     newList.name = this.name;
 
-    if(this.type == 'NumberList' || this.type == 'StringList') {
+    if(this.type == 'NumberList' || this.type == 'StringList') {//TODO:check other cases
       dictionary = {};
       for(i = 0; this[i] != null; i++) {
         if(!dictionary[this[i]]) {
@@ -1082,34 +1083,47 @@ define('src/index', ['exports'], function (exports) {
   List__List.prototype.getElementsRepetitionCount = function(sortListsByOccurrences) {
     sortListsByOccurrences = sortListsByOccurrences == null ? true : sortListsByOccurrences;
 
-    var obj;
+    var table = new Table();
     var elementList = new List__List();
     var numberList = new NumberList();
-    var nElements = this.length;
+    var i;
+    var dictionary = {};
     var index;
+    var element;
 
-    for(var i = 0; i < nElements; i++) {
-      obj = this[i];
-      index = elementList.indexOf(obj);
+    table[0] = elementList;
+    table[1] = numberList;
+
+    if(this.type == 'NumberList' || this.type == 'StringList') {//TODO:check other cases
+
+      for(i=0; this[i]!=null; i++){
+        index = dictionary[this[i]];
+        if(index==null){
+          index = elementList.length;
+          elementList[index] = this[i];
+          numberList[index] = 0;
+          dictionary[this[i]]= index;
+        }
+        numberList[index]++;
+      }
+
+      if(sortListsByOccurrences) table = table.getListsSortedByList(numberList, false);
+
+      return table;
+    }
+
+    for(i = 0; this[i]!=null; i++) {
+      element = this[i];
+      index = elementList.indexOf(element);
       if(index != -1) {
         numberList[index]++;
       } else {
-        elementList.push(obj);
+        elementList.push(element);
         numberList.push(1);
       }
     }
 
-    var table = new Table();
-    table.push(elementList);
-    table.push(numberList);
-    if(sortListsByOccurrences) {
-      // var indexArray=numberList.getSortIndexes();//sortNumericIndexed();
-      // var j;
-      // for(j=0; j<table.length; j++){
-      //  table[j]=table[j].clone().sortOnIndexes(indexArray);
-      // }
-      table = table.getListsSortedByList(numberList, false);
-    }
+    if(sortListsByOccurrences) table = table.getListsSortedByList(numberList, false);
 
     return table;
   };
@@ -1884,6 +1898,76 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  List__List.prototype.getReportHtml = function(level) { //TODO:complete
+    var ident = "<br>" + (level > 0 ? StringOperators.repeatString("&nbsp", level) : "");
+    var text = "<b>" +( level > 0 ? (ident + "<fs16>report of instance of List</f>") : "<fs18>report of instance of List</f>" ) + "</b>";
+
+    var length = this.length;
+    var i;
+
+    if(this.name){
+      text += ident + "name: " + this.name;
+    } else {
+      text += ident + "<i>no name</i>";
+    }
+    text += ident + "type: " + this.type;
+
+    if(length == 0) {
+      text += ident + "single element: [" + this[0] + "]";
+      return text;
+    } else {
+      text += ident + "length: " + length;
+      text += ident + "first element: [" + this[0] + "]";
+    }
+
+    switch(this.type) {
+      case "NumberList":
+        var min = this.getMin();
+        var max = this.getMax();
+        this.min = min;
+        this.max = max;
+        var average = (min + max) * 0.5;
+        this.average = average;
+        text += ident + "min: " + min;
+        text += ident + "max: " + max;
+        text += ident + "average: " + average;
+        if(length < 101) {
+          text += ident + "numbers: " + this.join(", ");
+        }
+        break;
+        case "StringList":
+      case "List":
+        var freqTable = this.getElementsRepetitionCount(true);
+        this._freqTable = freqTable;
+        text += ident + "number of different elements: " + freqTable[0].length;
+        if(freqTable[0].length < 10) {
+          text += ident + "elements frequency:";
+        } else {
+          text += ident + "some elements frequency:";
+        }
+
+        for(i = 0; freqTable[0][i] != null && i < 10; i++) {
+          text += ident + "  [" + String(freqTable[0][i]) + "]: " + freqTable[1][i];
+        }
+
+        var joined;
+        if(this.type == "List") {
+          joined = this.join("], [");
+        } else {
+          joined = this.toStringList().join("], [");
+        }
+
+        if(joined.length < 2000) text += ident + "strings: [" + joined + "]";
+        break;
+
+    }
+
+
+    ///add ideas to: analyze, visualize
+    return text;
+  };
+
+
   ////transformations
 
   List__List.prototype.pushIfUnique = function(element) {
@@ -2284,6 +2368,7 @@ define('src/index', ['exports'], function (exports) {
     result.getListsSortedByList = Table.prototype.getListsSortedByList;
     result.sortListsByList = Table.prototype.sortListsByList;
     result.getReport = Table.prototype.getReport;
+    result.getReportHtml = Table.prototype.getReportHtml;
     result.clone = Table.prototype.clone;
     result.print = Table.prototype.print;
 
@@ -2607,7 +2692,125 @@ define('src/index', ['exports'], function (exports) {
     return text;
   };
 
-  Table.prototype.getReportHtml = function() {}; //TODO
+
+  Table.prototype.getReportHtml = function(level) {
+    var ident = "<br>" + (level > 0 ? StringOperators.repeatString("&nbsp", level) : "");
+    var lengths = this.getLengths();
+    var minLength = lengths.getMin();
+    var maxLength = lengths.getMax();
+    var averageLength = (minLength + maxLength) * 0.5;
+    var sameLengths = minLength == maxLength;
+
+    var text = "<b>" +( level > 0 ? (ident + "<fs16>table report</f>") : "<fs18>table report</f>" ) + "</b>";
+
+    if(this.length === 0) {
+      text += ident + "this table has no lists";
+      return text;
+    }
+
+    if(this.name){
+      text += ident + "name: <b>" + this.name + "</b>";
+    } else {
+      text += ident + "<i>no name</i>";
+    }
+    text += ident + "type: <b>" + this.type + "</b>";
+    text += ident + "number of lists: <b>" + this.length + "</b>";
+
+    text += ident + "all lists have same length: <b>" + (sameLengths ? "true" : "false") + "</b>";
+
+    if(sameLengths) {
+      text += ident + "lists length: <b>" + this[0].length + "</b>";
+    } else {
+      text += ident + "min length: <b>" + minLength + "</b>";
+      text += ident + "max length: <b>" + maxLength + "</b>";
+      text += ident + "average length: <b>" + averageLength + "</b>";
+      text += ident + "all lengths: <b>" + lengths.join(", ") + "</b>";
+    }
+
+    var names = this.getNames();
+    var types = this.getTypes();
+
+    text += "<hr>";
+    names.forEach(function(name, i){
+      text += ident + "<fs10>" +i + ":</f> <b>" + name + "</b> <fc"+getColorFromDataModelType(types[i])+ ">" + TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"</f>";
+    });
+    text += "<hr>";
+
+    var sameTypes = types.allElementsEqual();
+    if(sameTypes) {
+      text += ident + "types of all lists: " + "<b>" + types[0] + "</b>";
+    } else {
+      text += ident + "types: ";
+      types.forEach(function(type, i){
+        text += "<b><fc"+getColorFromDataModelType(type)+ ">" + type+"</f></b>";
+        if(i<types.length-1) text += ", ";
+      });
+    }
+    text += ident + "names: <b>" + names.join("</b>, <b>") + "</b>";
+
+    if(this.length < 101) {
+      text += "<hr>";
+      text += ident + ident + "<fs16><b>lists reports</b></f>";
+
+      var i;
+      for(i = 0; this[i] != null; i++) {
+        text += "\n" + ident + ("(" + (i) + "/0-" + (this.length - 1) + ")");
+        try{
+           text += this[i].getReportHtml(1);
+        } catch(err){
+          text += ident + "[!] something wrong with list " + err;
+        }
+      }
+    }
+
+    if(this.length == 2) {
+      text += ident + ident + "--------lists comparisons---------";
+      if(this[0].type=="NumberList" && this[1].type=="NumberList"){
+        text += ident + "covariance:" + NumberListOperators.covariance(this[0], this[1]);
+        text += ident + "Pearson product moment correlation: " + NumberListOperators.pearsonProductMomentCorrelation(this[0], this[1]);
+      } else if(this[0].type!="NumberList" && this[1].type!="NumberList"){
+        var nUnion = ListOperators.union(this[0], this[1]).length;
+        text += ident + "union size: " + nUnion;
+        var intersected = ListOperators.intersection(this[0], this[1]);
+        var nIntersection = intersected.length;
+        text += ident + "intersection size: " + nIntersection;
+
+        if(this[0]._freqTable[0].length == nUnion && this[1]._freqTable[0].length == nUnion){
+          text += ident + "[!] both lists contain the same non repeated elements";
+        } else {
+          if(this[0]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in first list also occur on second list";
+          if(this[1]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in second list also occur on first list";
+        }
+        text += ident + "Jaccard distance: " + (1 - (nIntersection/nUnion));
+      }
+      //check for 1-1 matches, number of pairs, categorical, sub-categorical
+      var subCategoryCase = ListOperators.subCategoricalAnalysis(this[0], this[1]);
+
+      switch(subCategoryCase){
+        case 0:
+          text += ident + "no categorical relation found between lists";
+          break;
+        case 1:
+          text += ident + "[!] both lists are categorical identical";
+          break;
+        case 2:
+          text += ident + "[!] first list is subcategorical to second list";
+          break;
+        case 3:
+          text += ident + "[!] second list is subcategorical to first list";
+          break;
+      }
+
+      if(subCategoryCase!=1){
+        text += ident + "information gain when segmenting first list by the second: "+ListOperators.getInformationGain(this[0], this[1]);
+        text += ident + "information gain when segmenting second list by the first: "+ListOperators.getInformationGain(this[1], this[0]);
+      }
+    }
+
+    ///add ideas to: analyze, visualize
+
+    return text;
+  };
 
   Table.prototype.getReportObject = function() {}; //TODO
 
@@ -5412,7 +5615,7 @@ define('src/index', ['exports'], function (exports) {
     return _shortFromTypeDictionary[type];
   }
 
-  function getColorFromDataModelType(type){
+  function ClassUtils__getColorFromDataModelType(type){
     if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
     return _colorFromTypeDictionary[type];
   }
@@ -5572,7 +5775,7 @@ define('src/index', ['exports'], function (exports) {
   exports.typeOf = typeOf;
   exports.instantiate = instantiate;
   exports.getShortNameFromDataModelType = getShortNameFromDataModelType;
-  exports.getColorFromDataModelType = getColorFromDataModelType;
+  exports.getColorFromDataModelType = ClassUtils__getColorFromDataModelType;
   exports.getLightColorFromDataModelType = getLightColorFromDataModelType;
   exports.getTextFromObject = getTextFromObject;
   exports.instantiateWithSameType = instantiateWithSameType;
@@ -14267,8 +14470,13 @@ define('src/index', ['exports'], function (exports) {
   };
 
   ColorScales.grayToOrange = function(value) { //todo:make it efficient
-    var rgb = ColorOperators__default.interpolateColorsRGB([100, 100, 100], [255, 110, 0], value);
-    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+    // var rgb = ColorOperators.interpolateColorsRGB([100, 100, 100], [255, 110, 0], value);
+    // return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+    return 'rgb(' + Math.floor(100 + value*155) + ','+ Math.floor(100 + value*10) +',' + Math.floor(100 - value*100) + ')';
+  };
+
+  ColorScales.sqrt4GrayToOrange = function(value){
+    return ColorScales.grayToOrange(Math.pow(value, 0.25));
   };
 
   ColorScales.blueToRed = function(value) {
@@ -14303,6 +14511,7 @@ define('src/index', ['exports'], function (exports) {
     var rgb = ColorOperators__default.interpolateColorsRGB([0, 0, 0], ColorOperators__default.interpolateColorsRGB([255, 0, 0], [255, 255, 0], value), Math.pow(value * 0.99 + 0.01, 0.2));
     return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
+
   ColorScales.antiSolar = function(value) {
     return ColorOperators__default.invertColor(ColorScales.solar(value));
   };
@@ -17069,7 +17278,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   /**
-   * builds a string report of the object
+   * builds a string report of the object, with detailed information about its structure and contents
    * @param  {Object} object
    * @return {String}
    * tags:special
@@ -17080,6 +17289,7 @@ define('src/index', ['exports'], function (exports) {
     if(object.getReport) return object.getReport();
 
     var text = "///////////report of instance of Object//////////";
+    if(object.name) text += "name: "+object.name;
 
     var string = ObjectConversions.objectToString(object);
 
@@ -17103,8 +17313,29 @@ define('src/index', ['exports'], function (exports) {
     }
 
     return text;
-
   };
+
+
+
+
+  /**
+   * builds an html report of the object, with detailed information about its structure and contents
+   * @param  {Object} object
+   * @return {String}
+   * tags:special
+   */
+  ObjectOperators.getReportHtml = function(object) {
+    if(object == null) return null;
+
+    if(object.getReportHtml) return object.getReportHtml();
+
+    var text = "<fs18>report of instance of Object</f>";
+    if(object.name) text += "name: "+object.name;
+
+    return text;
+  };
+
+
 
   /**
    * uses a boolean to decide which of two objects it returns
@@ -20343,6 +20574,7 @@ define('src/index', ['exports'], function (exports) {
     return _distToSegmentSquared(x0, y0, x1, y1) < d * d;
   };
 
+
   /**
    * @ignore
    */
@@ -20358,6 +20590,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   //TODO:fEqTriangleM, fPolygonM
+
 
   /**
    * Draws a mouse-enabled bezier curve using {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/bezierCurveTo|bezierCurveTo}.
@@ -20391,7 +20624,6 @@ define('src/index', ['exports'], function (exports) {
     if(mX < Math.min(x0, x1, cx0, cx1) - d || mX > Math.max(x0, x1, cx0, cx1) + d || mY < Math.min(y0, y1, cy0, cy1) - d || mY > Math.max(y0, y1, cy0, cy1) + d) return false;
     return GeometryOperators.distanceToBezierCurve(x0, y0, cx0, cy0, cx1, cy1, x1, y1, mP, false) < d;
   };
-
 
 
   //images
@@ -20481,7 +20713,6 @@ define('src/index', ['exports'], function (exports) {
   function setLW(lineWidth) {
     src_Global__context.lineWidth = lineWidth;
   };
-
 
 
   //clipping
@@ -20619,7 +20850,7 @@ define('src/index', ['exports'], function (exports) {
    */
   function fTextArc(text, x, y, xCenter, yCenter, centered){
     if(text==null || text=="") return;
-    
+
     var i;
     var xArc = 0;
     var r = Math.sqrt(Math.pow(x - xCenter, 2)+Math.pow(y - yCenter, 2));

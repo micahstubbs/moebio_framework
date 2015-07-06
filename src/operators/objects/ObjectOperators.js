@@ -27,7 +27,7 @@ ObjectOperators.identity = function(object) {
 
 
 /**
- * builds a string report of the object
+ * builds a string report of the object, with detailed information about its structure and contents
  * @param  {Object} object
  * @return {String}
  * tags:special
@@ -38,6 +38,7 @@ ObjectOperators.getReport = function(object) {
   if(object.getReport) return object.getReport();
 
   var text = "///////////report of instance of Object//////////";
+  if(object.name) text += "name: "+object.name;
 
   var string = ObjectConversions.objectToString(object);
 
@@ -61,8 +62,29 @@ ObjectOperators.getReport = function(object) {
   }
 
   return text;
-
 };
+
+
+
+
+/**
+ * builds an html report of the object, with detailed information about its structure and contents
+ * @param  {Object} object
+ * @return {String}
+ * tags:special
+ */
+ObjectOperators.getReportHtml = function(object) {
+  if(object == null) return null;
+
+  if(object.getReportHtml) return object.getReportHtml();
+
+  var text = "<fs18>report of instance of Object</f>";
+  if(object.name) text += "name: "+object.name;
+
+  return text;
+};
+
+
 
 /**
  * uses a boolean to decide which of two objects it returns

@@ -74,8 +74,13 @@ ColorScales.greenToBlue = function(value) { //todo:make it efficient
 };
 
 ColorScales.grayToOrange = function(value) { //todo:make it efficient
-  var rgb = ColorOperators.interpolateColorsRGB([100, 100, 100], [255, 110, 0], value);
-  return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  // var rgb = ColorOperators.interpolateColorsRGB([100, 100, 100], [255, 110, 0], value);
+  // return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  return 'rgb(' + Math.floor(100 + value*155) + ','+ Math.floor(100 + value*10) +',' + Math.floor(100 - value*100) + ')';
+};
+
+ColorScales.sqrt4GrayToOrange = function(value){
+  return ColorScales.grayToOrange(Math.pow(value, 0.25));
 };
 
 ColorScales.blueToRed = function(value) {
