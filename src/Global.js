@@ -11,7 +11,6 @@ function setCursor(name) {
   canvas.style.cursor = name;
 }
 
-
 /**
  *Static class that:
  * -includes all the data models (by including the class IncludeDataModels.js)
