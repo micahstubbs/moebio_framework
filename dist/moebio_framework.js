@@ -1855,7 +1855,7 @@ define('src/index', ['exports'], function (exports) {
         var max = this.getMax();
         this.min = min;
         this.max = max;
-        var average = (min + max) * 0.5;
+        var average = this.getAverage();//(min + max) * 0.5;
         this.average = average;
         text += ident + "min: " + min;
         text += ident + "max: " + max;
@@ -1919,6 +1919,7 @@ define('src/index', ['exports'], function (exports) {
       text += ident + "length: <b>" + length + "</b>";
       text += ident + "first element: [<b>" + this[0] + "</b>]";
     }
+    text += ident + "entropy: <b>" + NumberOperators.numberToString(ListOperators__default.getListEntropy(this), 4) + "</b>";
 
     switch(this.type) {
       case "NumberList":
@@ -1934,19 +1935,20 @@ define('src/index', ['exports'], function (exports) {
         if(length < 101) {
           text += ident + "numbers: <b>" + this.join("</b>, <b>") + "</b>";
         }
-        var shorten = NumberListOperators.shorten(this, 60);
+        var shorten = NumberListOperators.shorten(this, 70);
         c.l('1 shorten', shorten);
         shorten = shorten.getNormalized();
         c.l('2 shorten', shorten);
         text += ident;
         for(i=0; shorten[i]!=null; i++){
-
           text += "<fs7><fc"+ColorOperators.colorStringToHEX(ColorScales.grayToOrange(shorten[i]))+">█</f></f>";
         }
         break;
-        case "StringList":
+      case "StringList":
       case "List":
         var freqTable = this.getElementsRepetitionCount(true);
+        var catColors = ColorListGenerators.createCategoricalColors(2, freqTable[0].length);
+
         this._freqTable = freqTable;
         text += ident + "number of different elements: <b>" + freqTable[0].length + "</b>";
         if(freqTable[0].length < 10) {
@@ -1956,7 +1958,7 @@ define('src/index', ['exports'], function (exports) {
         }
 
         for(i = 0; freqTable[0][i] != null && i < 10; i++) {
-          text += ident + "  [<b>" + String(freqTable[0][i]) + "</b>]: <fs10>" + freqTable[1][i] + "</f>";
+          text += ident + "  [<b>" + String(freqTable[0][i]) + "</b>]: <fs10><b><fc"+ColorOperators.colorStringToHEX(catColors[i])+">" + freqTable[1][i] + "</f></b></f>";
         }
 
         var joined;
@@ -1966,7 +1968,22 @@ define('src/index', ['exports'], function (exports) {
           joined = this.toStringList().join("], [");
         }
 
-        if(joined.length < 2000) text += ident + "strings: [" + joined + "]";
+        if(joined.length < 2000) text += ident + "contents: [" + joined + "]";
+        
+        var weights = freqTable[1].getNormalizedToSum(70);
+        c.l('weights:', weights);
+        var bars = "";
+        weights.forEach(function(w, j){
+          w = Math.floor(w) +  ( (w - Math.floor(w))>Math.random()?1:0 );
+          bars += "<fc"+ColorOperators.colorStringToHEX(catColors[j])+">";
+          for(i=0; i<w; i++){
+            bars += "█";
+          }
+          bars += "</f>";
+        });
+        text += ident;
+        text += "<fs7>"+bars+"</f>";
+
         break;
 
     }
@@ -2741,7 +2758,7 @@ define('src/index', ['exports'], function (exports) {
 
     text += "<hr>";
     names.forEach(function(name, i){
-      text += ident + "<fs10>" +i + ":</f> <b><a href=\"#anchor_"+i+"\">" + name + "</a></b> <fc"+getColorFromDataModelType(types[i])+ ">" + TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"</f>";
+      text += ident + "<fs10>" +i + ":</f><b>" + name + "</b> <fc"+getColorFromDataModelType(types[i])+ ">" + TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"</f>";
     });
     text += "<hr>";
 
@@ -2766,7 +2783,7 @@ define('src/index', ['exports'], function (exports) {
 
       var i;
       for(i = 0; this[i] != null; i++) {
-        text += "<a name=anchor_"+i+"><br>" + ident + i + ": " + (this[i].name?"<b>"+this[i].name+"</b>":"<i>no name</i>") + "</a>";
+        text += "<br>" + ident + i + ": " + (this[i].name?"<b>"+this[i].name+"</b>":"<i>no name</i>");
         try{
            text += this[i].getReportHtml(1);
         } catch(err){
@@ -3800,7 +3817,6 @@ define('src/index', ['exports'], function (exports) {
 
   ColorOperators__ColorOperators.colorStringToHEX = function(color_string) {
     var rgb = ColorOperators__ColorOperators.colorStringToRGB(color_string);
-    c.l(color_string+' -> '+rgb.join(',')+' -> '+ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]));
     return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
@@ -9433,10 +9449,10 @@ define('src/index', ['exports'], function (exports) {
 
   exports.ListGenerators = ListGenerators;
 
-  function NumberOperators() {}
+  function NumberOperators__NumberOperators() {}
+  var NumberOperators__default = NumberOperators__NumberOperators;
 
-
-  NumberOperators.numberToString = function(value, nDecimals, powersMode, unit) {
+  NumberOperators__NumberOperators.numberToString = function(value, nDecimals, powersMode, unit) {
     var string = value.toFixed(nDecimals);
     while(string.charAt(string.length - 1) == '0') {
       string = string.substring(0, string.length - 1);
@@ -9449,12 +9465,12 @@ define('src/index', ['exports'], function (exports) {
    * decent method to create pseudo random numbers
    * @param {Object} seed
    */
-  NumberOperators.getRandomWithSeed = function(seed) {
+  NumberOperators__NumberOperators.getRandomWithSeed = function(seed) {
     seed = (seed * 9301 + 49297) % 233280;
     return seed / (233280.0);
   };
 
-  NumberOperators.numberFromBinaryPositions = function(binaryPositions) {
+  NumberOperators__NumberOperators.numberFromBinaryPositions = function(binaryPositions) {
     var i;
     var n = 0;
     for(i = 0; binaryPositions[i] != null; i++) {
@@ -9463,7 +9479,7 @@ define('src/index', ['exports'], function (exports) {
     return n;
   };
 
-  NumberOperators.numberFromBinaryValues = function(binaryValues) {
+  NumberOperators__NumberOperators.numberFromBinaryValues = function(binaryValues) {
     var n = 0;
     for(var i = 0; binaryValues[i] != null; i++) {
       n += binaryValues[i] == 1 ? Math.pow(2, i) : 0;
@@ -9471,7 +9487,7 @@ define('src/index', ['exports'], function (exports) {
     return n;
   };
 
-  NumberOperators.powersOfTwoDecomposition = function(number, length) {
+  NumberOperators__NumberOperators.powersOfTwoDecomposition = function(number, length) {
     // var i;
     // var powers = StringList.fromArray(Number(number).toString(2).split('')).toNumberList().getReversed();
     // var n = powers.length;
@@ -9502,7 +9518,7 @@ define('src/index', ['exports'], function (exports) {
     return powers;
   };
 
-  NumberOperators.positionsFromBinaryValues = function(binaryValues) {
+  NumberOperators__NumberOperators.positionsFromBinaryValues = function(binaryValues) {
     var i;
     var positions = new NumberList();
     for(i = 0; binaryValues[i] != null; i++) {
@@ -9513,7 +9529,7 @@ define('src/index', ['exports'], function (exports) {
 
   //////////Random Generator with Seed, From http://baagoe.org/en/w/index.php/Better_random_numbers_for_javascript
 
-  NumberOperators._Alea = function() {
+  NumberOperators__NumberOperators._Alea = function() {
     return(function(args) {
       // Johannes Baagøe <baagoe@baagoe.com>, 2010
       var s0 = 0;
@@ -9524,7 +9540,7 @@ define('src/index', ['exports'], function (exports) {
       if(args.length == 0) {
         args = [+new Date()];
       }
-      var mash = NumberOperators._Mash();
+      var mash = NumberOperators__NumberOperators._Mash();
       s0 = mash(' ');
       s1 = mash(' ');
       s2 = mash(' ');
@@ -9565,7 +9581,7 @@ define('src/index', ['exports'], function (exports) {
     }(Array.prototype.slice.call(arguments)));
   };
 
-  NumberOperators._Mash = function() {
+  NumberOperators__NumberOperators._Mash = function() {
     var n = 0xefc8249d;
 
     var mash = function(data) {
@@ -9587,7 +9603,7 @@ define('src/index', ['exports'], function (exports) {
     return mash;
   };
 
-  exports.NumberOperators = NumberOperators;
+  exports.NumberOperators = NumberOperators__default;
 
   function NumberListGenerators() {}
 
@@ -9641,7 +9657,7 @@ define('src/index', ['exports'], function (exports) {
     var numberList = new NumberList();
     var amplitude = interval.getAmplitude();
 
-    var random = seed == -1 ? Math.random : new NumberOperators._Alea("my", seed, "seeds");
+    var random = seed == -1 ? Math.random : new NumberOperators__default._Alea("my", seed, "seeds");
 
     for(var i = 0; i < nValues; i++) {
       //seed = (seed*9301+49297) % 233280; //old method, close enough: http://moebio.com/research/randomseedalgorithms/
@@ -9734,7 +9750,7 @@ define('src/index', ['exports'], function (exports) {
     var indexesTr = new NumberList();
     var indexesTe = new NumberList();
 
-    var random = mode == 1 ? new NumberOperators._Alea("my", seed, "seeds") : Math.random;
+    var random = mode == 1 ? new NumberOperators__default._Alea("my", seed, "seeds") : Math.random;
 
     if(mode == 2) N_MOD = Math.floor(proportion / (1 - proportion) * 10);
 
@@ -15512,7 +15528,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.ColorGenerators = ColorGenerators;
 
-  ColorListGenerators._HARDCODED_CATEGORICAL_COLORS = new ColorList(
+  ColorListGenerators__ColorListGenerators._HARDCODED_CATEGORICAL_COLORS = new ColorList(
     "#dd4411", "#2200bb", "#1f77b4", "#ff660e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#dd8811",
     "#dd0011", "#221140", "#1f66a3", "#ff220e", "#2ba01c", "#442728", "#945600", "#8c453a", "#e37700"
   );
@@ -15523,8 +15539,8 @@ define('src/index', ['exports'], function (exports) {
    * @namespace
    * @category colors
    */
-  function ColorListGenerators() {}
-
+  function ColorListGenerators__ColorListGenerators() {}
+  var ColorListGenerators__default = ColorListGenerators__ColorListGenerators;
 
   /**
    * create a simple list of categorical colors
@@ -15535,9 +15551,9 @@ define('src/index', ['exports'], function (exports) {
    * @return {ColorList}
    * tags:generator
    */
-  ColorListGenerators.createDefaultCategoricalColorList = function(nColors, alpha, invert) {
+  ColorListGenerators__ColorListGenerators.createDefaultCategoricalColorList = function(nColors, alpha, invert) {
     alpha = alpha == null ? 1 : alpha;
-    var colors = ColorListGenerators.createCategoricalColors(1, nColors).getInterpolated('black', 0.15);
+    var colors = ColorListGenerators__ColorListGenerators.createCategoricalColors(1, nColors).getInterpolated('black', 0.15);
     if(alpha < 1) colors = colors.addAlpha(alpha);
 
     if(invert) colors = colors.getInverted();
@@ -15555,7 +15571,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {ColorList}
    * tags:generator
    */
-  ColorListGenerators.createColorListFromNumberList = function(numberList, colorScale, mode) {
+  ColorListGenerators__ColorListGenerators.createColorListFromNumberList = function(numberList, colorScale, mode) {
     if(numberList==null) return null;
     
     mode = mode == null ? 0 : mode;
@@ -15582,7 +15598,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  ColorListGenerators.createColorListWithSingleColor = function(nColors, color) {
+  ColorListGenerators__ColorListGenerators.createColorListWithSingleColor = function(nColors, color) {
     var colorList = new ColorList();
     for(var i = 0; i < nColors; i++) {
       colorList.push(color);
@@ -15603,7 +15619,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {ColorList} ColorList with categorical colors
    * tags:generator
    */
-  ColorListGenerators.createCategoricalColors = function(mode, nColors, colorScaleFunction, alpha, interpolateColor, interpolateValue) {
+  ColorListGenerators__ColorListGenerators.createCategoricalColors = function(mode, nColors, colorScaleFunction, alpha, interpolateColor, interpolateValue) {
     colorScaleFunction = colorScaleFunction == null ? ColorScales__default.temperature : colorScaleFunction;
 
     var i;
@@ -15622,7 +15638,7 @@ define('src/index', ['exports'], function (exports) {
         break;
       case 2:
         for(i = 0; i < nColors; i++) {
-          colorList[i] = ColorListGenerators._HARDCODED_CATEGORICAL_COLORS[i % ColorListGenerators._HARDCODED_CATEGORICAL_COLORS.length];
+          colorList[i] = ColorListGenerators__ColorListGenerators._HARDCODED_CATEGORICAL_COLORS[i % ColorListGenerators__ColorListGenerators._HARDCODED_CATEGORICAL_COLORS.length];
         }
         break;
       case 5:
@@ -15633,7 +15649,7 @@ define('src/index', ['exports'], function (exports) {
 
         var nGenerations = Math.floor(nColors * 2) + 100;
         var nChildren = Math.floor(nColors * 0.6) + 5;
-        var bestEvaluation = ColorListGenerators._evaluationFunction(randomPositions);
+        var bestEvaluation = ColorListGenerators__ColorListGenerators._evaluationFunction(randomPositions);
         var child;
         var bestChildren = randomPositions;
         var j;
@@ -15642,9 +15658,9 @@ define('src/index', ['exports'], function (exports) {
 
         for(i = 0; i < nGenerations; i++) {
           for(j = 0; j < nChildren; j++) {
-            child = ColorListGenerators._sortingVariation(randomPositions, randomNumbersSource[nr], randomNumbersSource[nr + 1]);
+            child = ColorListGenerators__ColorListGenerators._sortingVariation(randomPositions, randomNumbersSource[nr], randomNumbersSource[nr + 1]);
             nr = (nr + 2) % 1001;
-            evaluation = ColorListGenerators._evaluationFunction(child);
+            evaluation = ColorListGenerators__ColorListGenerators._evaluationFunction(child);
             if(evaluation > bestEvaluation) {
               bestChildren = child;
               bestEvaluation = evaluation;
@@ -15670,7 +15686,7 @@ define('src/index', ['exports'], function (exports) {
     return colorList;
   };
 
-  ColorListGenerators._sortingVariation = function(numberList, rnd0, rnd1) { //private
+  ColorListGenerators__ColorListGenerators._sortingVariation = function(numberList, rnd0, rnd1) { //private
     var newNumberList = numberList.clone();
     var pos0 = Math.floor(rnd0 * newNumberList.length);
     var pos1 = Math.floor(rnd1 * newNumberList.length);
@@ -15679,7 +15695,7 @@ define('src/index', ['exports'], function (exports) {
     newNumberList[pos0] = cache;
     return newNumberList;
   };
-  ColorListGenerators._evaluationFunction = function(numberList) { //private
+  ColorListGenerators__ColorListGenerators._evaluationFunction = function(numberList) { //private
     var sum = 0;
     var i;
     for(i = 0; numberList[i + 1] != null; i++) {
@@ -15704,7 +15720,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Table} dictionary dictionary table with elemnts and matching colors
    * tags:generator
    */
-  ColorListGenerators.createCategoricalColorListForList = function(list, colorList, alpha, color, interpolate, invert)
+  ColorListGenerators__ColorListGenerators.createCategoricalColorListForList = function(list, colorList, alpha, color, interpolate, invert)
   {
 
     if(!list)
@@ -15722,7 +15738,7 @@ define('src/index', ['exports'], function (exports) {
     if(colorList) {
       diffColors = colorList.getInterpolated(color, interpolate);
     } else {
-      diffColors = ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate);
+      diffColors = ColorListGenerators__ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate);
       //diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
     }
     diffColors = diffColors.addAlpha(alpha);
@@ -15751,7 +15767,7 @@ define('src/index', ['exports'], function (exports) {
     ];
   };
 
-  exports.ColorListGenerators = ColorListGenerators;
+  exports.ColorListGenerators = ColorListGenerators__default;
 
   function ColorListOperators() {}
 
@@ -19359,7 +19375,7 @@ define('src/index', ['exports'], function (exports) {
     var i, j;
     var mapsCluster = new Table();
 
-    var colors = ColorListGenerators.createDefaultCategoricalColorList(networks.length).getInterpolated('black', 0.17).getInterpolated('white', 0.55);
+    var colors = ColorListGenerators__default.createDefaultCategoricalColorList(networks.length).getInterpolated('black', 0.17).getInterpolated('white', 0.55);
 
     networks.forEach(function(net, i) {
       mapsCluster[i] = new NodeList__default();
@@ -23405,7 +23421,7 @@ define('src/index', ['exports'], function (exports) {
 
   CountryListDraw.drawCountriesAsCircles = function(context, countryList, radiusList, frame, geoFrame, colors) {
     geoFrame = geoFrame == null ? new Rectangle(-180, -90, 360, 180) : geoFrame;
-    colors = colors == null ? ColorListGenerators.createColorListWithSingleColor(countryList.length, 'rgba(100,100,100,0.6)') : colors;
+    colors = colors == null ? ColorListGenerators__default.createColorListWithSingleColor(countryList.length, 'rgba(100,100,100,0.6)') : colors;
 
     var dX = frame.width / geoFrame.width;
     var dY = frame.height / geoFrame.height;
@@ -23426,7 +23442,7 @@ define('src/index', ['exports'], function (exports) {
 
   CountryListDraw.drawCountriesPolygons = function(context, countryList, frame, geoFrame, colors, lineWidth, lineColor) {
     geoFrame = geoFrame == null ? new Rectangle(-180, -90, 360, 180) : geoFrame;
-    colors = colors == null ? ColorListGenerators.createColorListWithSingleColor(countryList.length, 'rgba(100,100,100,0.6)') : colors;
+    colors = colors == null ? ColorListGenerators__default.createColorListWithSingleColor(countryList.length, 'rgba(100,100,100,0.6)') : colors;
 
     var dX = frame.width / geoFrame.width;
     var dY = frame.height / geoFrame.height;
@@ -23847,7 +23863,7 @@ define('src/index', ['exports'], function (exports) {
 
   IntervalTableDraw.drawIntervalsFlowTable = function(intervalsFlowTable, frame, colors, bezier, offValue) { //, returnHovered){ //TODO: implement rollover detection, using _isOnShape (below)
     frame = frame == null ? new Rectangle(10, 10, 400, 300) : frame;
-    colors = colors == null ? ColorListGenerators.createCategoricalColors(0, intervalsFlowTable.length, ColorScales__default.temperature) : colors;
+    colors = colors == null ? ColorListGenerators__default.createCategoricalColors(0, intervalsFlowTable.length, ColorScales__default.temperature) : colors;
     bezier = bezier || false;
     offValue = offValue == null ? 0.45 : offValue;
 
@@ -24136,7 +24152,7 @@ define('src/index', ['exports'], function (exports) {
     var i;
     var j;
 
-    colors = colors == null ? ColorListGenerators.createCategoricalColors(0, intervalsFlowTable.length, ColorScales__default.temperature) : colors;
+    colors = colors == null ? ColorListGenerators__default.createCategoricalColors(0, intervalsFlowTable.length, ColorScales__default.temperature) : colors;
     frame = frame == null ? new Rectangle(10, 10, 400, 300) : frame;
 
     var nCols = intervalsFlowTable[0].length;
@@ -24650,7 +24666,7 @@ define('src/index', ['exports'], function (exports) {
     if(colorList && frame.memory.colorList != colorList) frame.memory.image = null;
 
     if(frame.memory.colorList != colorList || frame.memory.colorList == null) {
-      frame.memory.actualColorList = colorList == null ? ColorListGenerators.createDefaultCategoricalColorList(numberTable.length, 0.7) : colorList;
+      frame.memory.actualColorList = colorList == null ? ColorListGenerators__default.createDefaultCategoricalColorList(numberTable.length, 0.7) : colorList;
       frame.memory.colorList = colorList;
     }
 
@@ -24867,7 +24883,7 @@ define('src/index', ['exports'], function (exports) {
       });
     }
     if(frame.memory.colorList != colorList || frame.memory.colorList == null) {
-      frame.memory.actualColorList = colorList == null ? ColorListGenerators.createDefaultCategoricalColorList(numberTable.length, 0.4) : colorList;
+      frame.memory.actualColorList = colorList == null ? ColorListGenerators__default.createDefaultCategoricalColorList(numberTable.length, 0.4) : colorList;
       frame.memory.colorList = colorList;
     }
 
@@ -25785,7 +25801,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:draw
    */
   TreeDraw.drawRectanglesTree = function(frame, tree, levelColors, margin) {
-    levelColors = levelColors == null ? ColorListGenerators.createCategoricalColors(1, tree.nLevels) : levelColors;
+    levelColors = levelColors == null ? ColorListGenerators__default.createCategoricalColors(1, tree.nLevels) : levelColors;
     margin = margin || 1;
 
     var dX = frame.width / tree.nLevels;
@@ -25892,7 +25908,7 @@ define('src/index', ['exports'], function (exports) {
     if(frame.memory.colorList != colorList || frame.memory.colorList == null) {
       frame.memory.nFLastChange = nF;
       frame.memory.image = null;
-      frame.memory.actualColorList = colorList == null ? ColorListGenerators.createCategoricalColors(0, tree.nLevels, ColorScales__default.grayToOrange, 0.1) : colorList;
+      frame.memory.actualColorList = colorList == null ? ColorListGenerators__default.createCategoricalColors(0, tree.nLevels, ColorScales__default.grayToOrange, 0.1) : colorList;
       frame.memory.nodesColorList = new ColorList();
       if(textColor == null) frame.memory.textsColorList = new ColorList();
 

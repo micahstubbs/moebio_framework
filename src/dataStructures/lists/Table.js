@@ -427,7 +427,7 @@ Table.prototype.getReportHtml = function(level) {
 
   text += "<hr>";
   names.forEach(function(name, i){
-    text += ident + "<fs10>" +i + ":</f> <b><a href=\"#anchor_"+i+"\">" + name + "</a></b> <fc"+getColorFromDataModelType(types[i])+ ">" + TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"</f>";
+    text += ident + "<fs10>" +i + ":</f><b>" + name + "</b> <fc"+getColorFromDataModelType(types[i])+ ">" + TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"</f>";
   });
   text += "<hr>";
 
@@ -452,7 +452,7 @@ Table.prototype.getReportHtml = function(level) {
 
     var i;
     for(i = 0; this[i] != null; i++) {
-      text += "<a name=anchor_"+i+"><br>" + ident + i + ": " + (this[i].name?"<b>"+this[i].name+"</b>":"<i>no name</i>") + "</a>";
+      text += "<br>" + ident + i + ": " + (this[i].name?"<b>"+this[i].name+"</b>":"<i>no name</i>");
       try{
          text += this[i].getReportHtml(1);
       } catch(err){

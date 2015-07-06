@@ -1338,7 +1338,7 @@ List.prototype.getReport = function(level) { //TODO:complete
       var max = this.getMax();
       this.min = min;
       this.max = max;
-      var average = (min + max) * 0.5;
+      var average = this.getAverage();//(min + max) * 0.5;
       this.average = average;
       text += ident + "min: " + min;
       text += ident + "max: " + max;
@@ -1402,6 +1402,7 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
     text += ident + "length: <b>" + length + "</b>";
     text += ident + "first element: [<b>" + this[0] + "</b>]";
   }
+  text += ident + "entropy: <b>" + NumberOperators.numberToString(ListOperators.getListEntropy(this), 4) + "</b>";
 
   switch(this.type) {
     case "NumberList":
@@ -1417,7 +1418,7 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
       if(length < 101) {
         text += ident + "numbers: <b>" + this.join("</b>, <b>") + "</b>";
       }
-      var shorten = NumberListOperators.shorten(this, 60);
+      var shorten = NumberListOperators.shorten(this, 70);
       c.l('1 shorten', shorten);
       shorten = shorten.getNormalized();
       c.l('2 shorten', shorten);
@@ -1426,9 +1427,11 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
         text += "<fs7><fc"+ColorOperators.colorStringToHEX(ColorScales.grayToOrange(shorten[i]))+">█</f></f>";
       }
       break;
-      case "StringList":
+    case "StringList":
     case "List":
       var freqTable = this.getElementsRepetitionCount(true);
+      var catColors = ColorListGenerators.createCategoricalColors(2, freqTable[0].length);
+
       this._freqTable = freqTable;
       text += ident + "number of different elements: <b>" + freqTable[0].length + "</b>";
       if(freqTable[0].length < 10) {
@@ -1438,7 +1441,7 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
       }
 
       for(i = 0; freqTable[0][i] != null && i < 10; i++) {
-        text += ident + "  [<b>" + String(freqTable[0][i]) + "</b>]: <fs10>" + freqTable[1][i] + "</f>";
+        text += ident + "  [<b>" + String(freqTable[0][i]) + "</b>]: <fs10><b><fc"+ColorOperators.colorStringToHEX(catColors[i])+">" + freqTable[1][i] + "</f></b></f>";
       }
 
       var joined;
@@ -1448,7 +1451,22 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
         joined = this.toStringList().join("], [");
       }
 
-      if(joined.length < 2000) text += ident + "strings: [" + joined + "]";
+      if(joined.length < 2000) text += ident + "contents: [" + joined + "]";
+      
+      var weights = freqTable[1].getNormalizedToSum(70);
+      c.l('weights:', weights);
+      var bars = "";
+      weights.forEach(function(w, j){
+        w = Math.floor(w) +  ( (w - Math.floor(w))>Math.random()?1:0 );
+        bars += "<fc"+ColorOperators.colorStringToHEX(catColors[j])+">";
+        for(i=0; i<w; i++){
+          bars += "█";
+        }
+        bars += "</f>";
+      });
+      text += ident;
+      text += "<fs7>"+bars+"</f>";
+
       break;
 
   }
