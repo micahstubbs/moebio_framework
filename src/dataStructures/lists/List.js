@@ -508,7 +508,7 @@ List.prototype.getWithoutRepetitions = function() {
   var newList = instantiateWithSameType(this);
   newList.name = this.name;
 
-  if(this.type == 'NumberList' || this.type == 'StringList') {
+  if(this.type == 'NumberList' || this.type == 'StringList') {//TODO:check other cases
     dictionary = {};
     for(i = 0; this[i] != null; i++) {
       if(!dictionary[this[i]]) {
@@ -565,34 +565,47 @@ List.prototype.countOccurrences = function() { //TODO: more efficient
 List.prototype.getElementsRepetitionCount = function(sortListsByOccurrences) {
   sortListsByOccurrences = sortListsByOccurrences == null ? true : sortListsByOccurrences;
 
-  var obj;
+  var table = new Table();
   var elementList = new List();
   var numberList = new NumberList();
-  var nElements = this.length;
+  var i;
+  var dictionary = {};
   var index;
+  var element;
 
-  for(var i = 0; i < nElements; i++) {
-    obj = this[i];
-    index = elementList.indexOf(obj);
+  table[0] = elementList;
+  table[1] = numberList;
+
+  if(this.type == 'NumberList' || this.type == 'StringList') {//TODO:check other cases
+
+    for(i=0; this[i]!=null; i++){
+      index = dictionary[this[i]];
+      if(index==null){
+        index = elementList.length;
+        elementList[index] = this[i];
+        numberList[index] = 0;
+        dictionary[this[i]]= index;
+      }
+      numberList[index]++;
+    }
+
+    if(sortListsByOccurrences) table = table.getListsSortedByList(numberList, false);
+
+    return table;
+  }
+  
+  for(i = 0; this[i]!=null; i++) {
+    element = this[i];
+    index = elementList.indexOf(element);
     if(index != -1) {
       numberList[index]++;
     } else {
-      elementList.push(obj);
+      elementList.push(element);
       numberList.push(1);
     }
   }
 
-  var table = new Table();
-  table.push(elementList);
-  table.push(numberList);
-  if(sortListsByOccurrences) {
-    // var indexArray=numberList.getSortIndexes();//sortNumericIndexed();
-    // var j;
-    // for(j=0; j<table.length; j++){
-    //  table[j]=table[j].clone().sortOnIndexes(indexArray);
-    // }
-    table = table.getListsSortedByList(numberList, false);
-  }
+  if(sortListsByOccurrences) table = table.getListsSortedByList(numberList, false);
 
   return table;
 };

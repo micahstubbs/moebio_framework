@@ -110,6 +110,7 @@ ColorScales.solar = function(value) {
   var rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], ColorOperators.interpolateColorsRGB([255, 0, 0], [255, 255, 0], value), Math.pow(value * 0.99 + 0.01, 0.2));
   return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
 };
+
 ColorScales.antiSolar = function(value) {
   return ColorOperators.invertColor(ColorScales.solar(value));
 };
