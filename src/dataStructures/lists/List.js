@@ -1383,24 +1383,24 @@ List.prototype.getReport = function(level) { //TODO:complete
 
 List.prototype.getReportHtml = function(level) { //TODO:complete
   var ident = "<br>" + (level > 0 ? StringOperators.repeatString("&nbsp", level) : "");
-  var text = "<b>" +( level > 0 ? (ident + "<fs16>report of instance of List</f>") : "<fs18>report of instance of List</f>" ) + "</b>";
+  var text =  level > 0 ? "" : "<b><fs18>list report</f></b>";
 
   var length = this.length;
   var i;
 
   if(this.name){
-    text += ident + "name: " + this.name;
+    text += ident + "name: <b>" + this.name + "</b>";
   } else {
     text += ident + "<i>no name</i>";
   }
-  text += ident + "type: " + this.type;
+  text += ident + "type: <b>" + this.type + "</b>";
 
   if(length == 0) {
-    text += ident + "single element: [" + this[0] + "]";
+    text += ident + "single element: [<b>" + this[0] + "</b>]";
     return text;
   } else {
-    text += ident + "length: " + length;
-    text += ident + "first element: [" + this[0] + "]";
+    text += ident + "length: <b>" + length + "</b>";
+    text += ident + "first element: [<b>" + this[0] + "</b>]";
   }
 
   switch(this.type) {
@@ -1411,18 +1411,18 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
       this.max = max;
       var average = (min + max) * 0.5;
       this.average = average;
-      text += ident + "min: " + min;
-      text += ident + "max: " + max;
-      text += ident + "average: " + average;
+      text += ident + "min: <b>" + min + "</b>";
+      text += ident + "max: <b>" + max + "</b>";
+      text += ident + "average: <b>" + average + "</b>";
       if(length < 101) {
-        text += ident + "numbers: " + this.join(", ");
+        text += ident + "numbers: <b>" + this.join("</b>, <b>") + "</b>";
       }
       break;
       case "StringList":
     case "List":
       var freqTable = this.getElementsRepetitionCount(true);
       this._freqTable = freqTable;
-      text += ident + "number of different elements: " + freqTable[0].length;
+      text += ident + "number of different elements: <b>" + freqTable[0].length + "</b>";
       if(freqTable[0].length < 10) {
         text += ident + "elements frequency:";
       } else {
@@ -1430,7 +1430,7 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
       }
 
       for(i = 0; freqTable[0][i] != null && i < 10; i++) {
-        text += ident + "  [" + String(freqTable[0][i]) + "]: " + freqTable[1][i];
+        text += ident + "  [<b>" + String(freqTable[0][i]) + "</b>]: <fs10>" + freqTable[1][i] + "</f>";
       }
 
       var joined;

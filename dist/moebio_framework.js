@@ -1900,24 +1900,24 @@ define('src/index', ['exports'], function (exports) {
 
   List__List.prototype.getReportHtml = function(level) { //TODO:complete
     var ident = "<br>" + (level > 0 ? StringOperators.repeatString("&nbsp", level) : "");
-    var text = "<b>" +( level > 0 ? (ident + "<fs16>report of instance of List</f>") : "<fs18>report of instance of List</f>" ) + "</b>";
+    var text =  level > 0 ? "" : "<b><fs18>list report</f></b>";
 
     var length = this.length;
     var i;
 
     if(this.name){
-      text += ident + "name: " + this.name;
+      text += ident + "name: <b>" + this.name + "</b>";
     } else {
       text += ident + "<i>no name</i>";
     }
-    text += ident + "type: " + this.type;
+    text += ident + "type: <b>" + this.type + "</b>";
 
     if(length == 0) {
-      text += ident + "single element: [" + this[0] + "]";
+      text += ident + "single element: [<b>" + this[0] + "</b>]";
       return text;
     } else {
-      text += ident + "length: " + length;
-      text += ident + "first element: [" + this[0] + "]";
+      text += ident + "length: <b>" + length + "</b>";
+      text += ident + "first element: [<b>" + this[0] + "</b>]";
     }
 
     switch(this.type) {
@@ -1928,18 +1928,18 @@ define('src/index', ['exports'], function (exports) {
         this.max = max;
         var average = (min + max) * 0.5;
         this.average = average;
-        text += ident + "min: " + min;
-        text += ident + "max: " + max;
-        text += ident + "average: " + average;
+        text += ident + "min: <b>" + min + "</b>";
+        text += ident + "max: <b>" + max + "</b>";
+        text += ident + "average: <b>" + average + "</b>";
         if(length < 101) {
-          text += ident + "numbers: " + this.join(", ");
+          text += ident + "numbers: <b>" + this.join("</b>, <b>") + "</b>";
         }
         break;
         case "StringList":
       case "List":
         var freqTable = this.getElementsRepetitionCount(true);
         this._freqTable = freqTable;
-        text += ident + "number of different elements: " + freqTable[0].length;
+        text += ident + "number of different elements: <b>" + freqTable[0].length + "</b>";
         if(freqTable[0].length < 10) {
           text += ident + "elements frequency:";
         } else {
@@ -1947,7 +1947,7 @@ define('src/index', ['exports'], function (exports) {
         }
 
         for(i = 0; freqTable[0][i] != null && i < 10; i++) {
-          text += ident + "  [" + String(freqTable[0][i]) + "]: " + freqTable[1][i];
+          text += ident + "  [<b>" + String(freqTable[0][i]) + "</b>]: <fs10>" + freqTable[1][i] + "</f>";
         }
 
         var joined;
@@ -2732,7 +2732,7 @@ define('src/index', ['exports'], function (exports) {
 
     text += "<hr>";
     names.forEach(function(name, i){
-      text += ident + "<fs10>" +i + ":</f> <b>" + name + "</b> <fc"+getColorFromDataModelType(types[i])+ ">" + TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"</f>";
+      text += ident + "<fs10>" +i + ":</f> <b>" + name + "<a href=\"#anchor_"+i+"\"></b> <fc"+getColorFromDataModelType(types[i])+ ">" + TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"</f></a>";
     });
     text += "<hr>";
 
@@ -2746,25 +2746,29 @@ define('src/index', ['exports'], function (exports) {
         if(i<types.length-1) text += ", ";
       });
     }
-    text += ident + "names: <b>" + names.join("</b>, <b>") + "</b>";
+    text += "<br>" + ident + "names: <b>" + names.join("</b>, <b>") + "</b>";
 
-    if(this.length < 101) {
+
+    //list by list
+
+    if(this.length < 501) {
       text += "<hr>";
-      text += ident + ident + "<fs16><b>lists reports</b></f>";
+      text +=  ident + "<fs16><b>lists reports</b></f>";
 
       var i;
       for(i = 0; this[i] != null; i++) {
-        text += "\n" + ident + ("(" + (i) + "/0-" + (this.length - 1) + ")");
+        text += "<a name=anchor_"+i+"><br>" + ident + i + ": " + (this[i].name?"<b>"+this[i].name+"</b>":"<i>no name</i>") + "</a>";
         try{
            text += this[i].getReportHtml(1);
         } catch(err){
-          text += ident + "[!] something wrong with list " + err;
+          text += ident + "[!] something wrong with list <fs10>:" + err + "</f>";
         }
       }
     }
 
-    if(this.length == 2) {
-      text += ident + ident + "--------lists comparisons---------";
+    if(this.length == 2) {//TODO:finish
+      text += "<hr>";
+      text += ident + "<b>lists comparisons</b>";
       if(this[0].type=="NumberList" && this[1].type=="NumberList"){
         text += ident + "covariance:" + NumberListOperators.covariance(this[0], this[1]);
         text += ident + "Pearson product moment correlation: " + NumberListOperators.pearsonProductMomentCorrelation(this[0], this[1]);

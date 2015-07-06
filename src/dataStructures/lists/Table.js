@@ -427,7 +427,7 @@ Table.prototype.getReportHtml = function(level) {
 
   text += "<hr>";
   names.forEach(function(name, i){
-    text += ident + "<fs10>" +i + ":</f> <b>" + name + "</b> <fc"+getColorFromDataModelType(types[i])+ ">" + TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"</f>";
+    text += ident + "<fs10>" +i + ":</f> <b>" + name + "<a href=\"#anchor_"+i+"\"></b> <fc"+getColorFromDataModelType(types[i])+ ">" + TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"</f></a>";
   });
   text += "<hr>";
 
@@ -441,25 +441,29 @@ Table.prototype.getReportHtml = function(level) {
       if(i<types.length-1) text += ", ";
     });
   }
-  text += ident + "names: <b>" + names.join("</b>, <b>") + "</b>";
+  text += "<br>" + ident + "names: <b>" + names.join("</b>, <b>") + "</b>";
 
-  if(this.length < 101) {
+
+  //list by list
+
+  if(this.length < 501) {
     text += "<hr>";
-    text += ident + ident + "<fs16><b>lists reports</b></f>";
+    text +=  ident + "<fs16><b>lists reports</b></f>";
 
     var i;
     for(i = 0; this[i] != null; i++) {
-      text += "\n" + ident + ("(" + (i) + "/0-" + (this.length - 1) + ")");
+      text += "<a name=anchor_"+i+"><br>" + ident + i + ": " + (this[i].name?"<b>"+this[i].name+"</b>":"<i>no name</i>") + "</a>";
       try{
          text += this[i].getReportHtml(1);
       } catch(err){
-        text += ident + "[!] something wrong with list " + err;
+        text += ident + "[!] something wrong with list <fs10>:" + err + "</f>";
       }
     }
   }
 
-  if(this.length == 2) {
-    text += ident + ident + "--------lists comparisons---------";
+  if(this.length == 2) {//TODO:finish
+    text += "<hr>";
+    text += ident + "<b>lists comparisons</b>";
     if(this[0].type=="NumberList" && this[1].type=="NumberList"){
       text += ident + "covariance:" + NumberListOperators.covariance(this[0], this[1]);
       text += ident + "Pearson product moment correlation: " + NumberListOperators.pearsonProductMomentCorrelation(this[0], this[1]);
