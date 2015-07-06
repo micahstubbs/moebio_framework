@@ -55,7 +55,10 @@ FastHtml.expand = function(abreviatedHTML, scope, onEvent) {
   bit = "";
   while(bit != null) {
     bit = StringOperators.getFirstTextBetweenStrings(newText, "<fc", ">");
-    if(bit != null) newText = newText.replace("<fc" + bit + ">", "<font color=\"#" + bit + "\">");
+    if(bit != null){
+      var newbit = bit[0] == "#"?bit.substr(1):bit;
+      newText = newText.replace("<fc" + bit + ">", "<font color=\"#" + newbit + "\">");
+    }
   }
 
   bit = "";

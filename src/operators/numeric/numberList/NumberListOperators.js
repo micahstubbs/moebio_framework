@@ -41,6 +41,36 @@ NumberListOperators.covariance = function(numberList0, numberList1) {
 };
 
 /**
+ * generates a new numberList of desired size smaller than original, with elements claculated as averages of neighbors
+ * @param  {NumberList} numberList
+ * @param  {Number} newLength length of returned numberList
+ * @return {NumberList}
+ * tags:statistics
+ */
+NumberListOperators.shorten = function(numberList, newLength) {
+  if(numberList==null) return null;
+  if(newLength==null || newLength>=numberList.length) return numberList;
+
+  var windowSize = numberList.length/newLength;
+  var newNumberList = new NumberList();
+  var windowSizeInt = Math.floor(windowSize);
+  var val;
+  var i, j, j0;
+
+  newNumberList.name = numberList.name;
+
+  for(i=0; i<newLength; i++){
+    j0 = Math.floor(i*windowSize);
+    val = 0;
+    for(j=0; j<windowSizeInt; j++){
+      val += numberList[j0+j];
+    }
+    newNumberList[i] = val/windowSizeInt;
+  }
+  return newNumberList;
+}
+
+/**
  * calculates k-means clusters of values in a numberList
  * @param  {NumberList} numberList
  * @param  {Number} k number of clusters

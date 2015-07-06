@@ -427,7 +427,7 @@ Table.prototype.getReportHtml = function(level) {
 
   text += "<hr>";
   names.forEach(function(name, i){
-    text += ident + "<fs10>" +i + ":</f> <b>" + name + "<a href=\"#anchor_"+i+"\"></b> <fc"+getColorFromDataModelType(types[i])+ ">" + TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"</f></a>";
+    text += ident + "<fs10>" +i + ":</f> <b><a href=\"#anchor_"+i+"\">" + name + "</a></b> <fc"+getColorFromDataModelType(types[i])+ ">" + TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"</f>";
   });
   text += "<hr>";
 

@@ -1934,6 +1934,15 @@ define('src/index', ['exports'], function (exports) {
         if(length < 101) {
           text += ident + "numbers: <b>" + this.join("</b>, <b>") + "</b>";
         }
+        var shorten = NumberListOperators.shorten(this, 60);
+        c.l('1 shorten', shorten);
+        shorten = shorten.getNormalized();
+        c.l('2 shorten', shorten);
+        text += ident;
+        for(i=0; shorten[i]!=null; i++){
+
+          text += "<fs7><fc"+ColorOperators.colorStringToHEX(ColorScales.grayToOrange(shorten[i]))+">█</f></f>";
+        }
         break;
         case "StringList":
       case "List":
@@ -2732,7 +2741,7 @@ define('src/index', ['exports'], function (exports) {
 
     text += "<hr>";
     names.forEach(function(name, i){
-      text += ident + "<fs10>" +i + ":</f> <b>" + name + "<a href=\"#anchor_"+i+"\"></b> <fc"+getColorFromDataModelType(types[i])+ ">" + TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"</f></a>";
+      text += ident + "<fs10>" +i + ":</f> <b><a href=\"#anchor_"+i+"\">" + name + "</a></b> <fc"+getColorFromDataModelType(types[i])+ ">" + TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"</f>";
     });
     text += "<hr>";
 
@@ -3791,6 +3800,7 @@ define('src/index', ['exports'], function (exports) {
 
   ColorOperators__ColorOperators.colorStringToHEX = function(color_string) {
     var rgb = ColorOperators__ColorOperators.colorStringToRGB(color_string);
+    c.l(color_string+' -> '+rgb.join(',')+' -> '+ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]));
     return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
@@ -14407,8 +14417,8 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Polygon3DList = Polygon3DList;
 
-  function ColorScales() {}
-
+  function ColorScales__ColorScales() {}
+  var ColorScales__default = ColorScales__ColorScales;
   // *
   //  * return a colorScale from its name
   //  * @param  {String} string name of ColorScale
@@ -14419,25 +14429,25 @@ define('src/index', ['exports'], function (exports) {
   // 	return ColorScales[string];
   // }
 
-  ColorScales.blackScale = function(value) {
+  ColorScales__ColorScales.blackScale = function(value) {
     return 'black';
   };
 
-  ColorScales.grayscale = function(value) {
+  ColorScales__ColorScales.grayscale = function(value) {
     var rgb = ColorOperators__default.interpolateColorsRGB([0, 0, 0], [255, 255, 255], value);
     return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
-  ColorScales.antiGrayscale = function(value) {
+  ColorScales__ColorScales.antiGrayscale = function(value) {
     var rgb = ColorOperators__default.interpolateColorsRGB([255, 255, 255], [0, 0, 0], value);
     return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
-  ColorScales.antiTemperature = function(value) {
-    return ColorScales.temperature(1 - value);
+  ColorScales__ColorScales.antiTemperature = function(value) {
+    return ColorScales__ColorScales.temperature(1 - value);
   };
 
-  ColorScales.temperature = function(value) { //todo:make it efficient
+  ColorScales__ColorScales.temperature = function(value) { //todo:make it efficient
     if(value < 0.2) {
       var color = ColorOperators__default.interpolateColors('#000000', ColorOperators__default.HSVtoHEX(234, 1, 1), value * 5);
     } else if(value > 0.85) {
@@ -14448,60 +14458,60 @@ define('src/index', ['exports'], function (exports) {
     return color;
   };
 
-  ColorScales.sqrtTemperature = function(value) {
-    return ColorScales.temperature(Math.sqrt(value));
+  ColorScales__ColorScales.sqrtTemperature = function(value) {
+    return ColorScales__ColorScales.temperature(Math.sqrt(value));
   };
 
-  ColorScales.sqrt4Temperature = function(value) {
-    return ColorScales.temperature(Math.pow(value, 0.25));
+  ColorScales__ColorScales.sqrt4Temperature = function(value) {
+    return ColorScales__ColorScales.temperature(Math.pow(value, 0.25));
   };
 
-  ColorScales.quadraticTemperature = function(value) {
-    return ColorScales.temperature(Math.pow(value, 2));
+  ColorScales__ColorScales.quadraticTemperature = function(value) {
+    return ColorScales__ColorScales.temperature(Math.pow(value, 2));
   };
 
-  ColorScales.cubicTemperature = function(value) {
-    return ColorScales.temperature(Math.pow(value, 3));
+  ColorScales__ColorScales.cubicTemperature = function(value) {
+    return ColorScales__ColorScales.temperature(Math.pow(value, 3));
   };
 
-  ColorScales.greenToRed = function(value) { //todo:make it efficient
+  ColorScales__ColorScales.greenToRed = function(value) { //todo:make it efficient
     var rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [255, 50, 50], value);
     return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
-  ColorScales.greenToBlue = function(value) { //todo:make it efficient
+  ColorScales__ColorScales.greenToBlue = function(value) { //todo:make it efficient
     var rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [50, 50, 255], value);
     return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
-  ColorScales.grayToOrange = function(value) { //todo:make it efficient
+  ColorScales__ColorScales.grayToOrange = function(value) { //todo:make it efficient
     // var rgb = ColorOperators.interpolateColorsRGB([100, 100, 100], [255, 110, 0], value);
     // return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
     return 'rgb(' + Math.floor(100 + value*155) + ','+ Math.floor(100 + value*10) +',' + Math.floor(100 - value*100) + ')';
   };
 
-  ColorScales.sqrt4GrayToOrange = function(value){
-    return ColorScales.grayToOrange(Math.pow(value, 0.25));
+  ColorScales__ColorScales.sqrt4GrayToOrange = function(value){
+    return ColorScales__ColorScales.grayToOrange(Math.pow(value, 0.25));
   };
 
-  ColorScales.blueToRed = function(value) {
+  ColorScales__ColorScales.blueToRed = function(value) {
     return 'rgb(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ')';
   };
 
-  ColorScales.blueToRedAlpha = function(value) { //todo:make it efficient
+  ColorScales__ColorScales.blueToRedAlpha = function(value) { //todo:make it efficient
     return 'rgba(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ', 0.5)';
   };
 
-  ColorScales.whiteToRed = function(value) {
+  ColorScales__ColorScales.whiteToRed = function(value) {
     var gg = Math.floor(255 - value * 255);
     return 'rgb(255,' + gg + ',' + gg + ')';
   };
 
-  ColorScales.redToBlue = function(value) {
+  ColorScales__ColorScales.redToBlue = function(value) {
     var rgb = ColorOperators__default.interpolateColorsRGB([255, 0, 0], [0, 0, 255], value);
     return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
-  ColorScales.greenWhiteRed = function(value) {
+  ColorScales__ColorScales.greenWhiteRed = function(value) {
     if(value < 0.5) {
       var rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [255, 255, 255], value * 2);
     } else {
@@ -14511,16 +14521,16 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  ColorScales.solar = function(value) {
+  ColorScales__ColorScales.solar = function(value) {
     var rgb = ColorOperators__default.interpolateColorsRGB([0, 0, 0], ColorOperators__default.interpolateColorsRGB([255, 0, 0], [255, 255, 0], value), Math.pow(value * 0.99 + 0.01, 0.2));
     return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
-  ColorScales.antiSolar = function(value) {
-    return ColorOperators__default.invertColor(ColorScales.solar(value));
+  ColorScales__ColorScales.antiSolar = function(value) {
+    return ColorOperators__default.invertColor(ColorScales__ColorScales.solar(value));
   };
 
-  exports.ColorScales = ColorScales;
+  exports.ColorScales = ColorScales__default;
 
   ColorScale.prototype = new DataModel();
   ColorScale.prototype.constructor = ColorScale;
@@ -14538,7 +14548,7 @@ define('src/index', ['exports'], function (exports) {
     this.name = "";
     this.type = "ColorScale";
 
-    this.colorScaleFunction = colorScaleFunction ? colorScaleFunction : ColorScales.blackScale;
+    this.colorScaleFunction = colorScaleFunction ? colorScaleFunction : ColorScales__default.blackScale;
   }
 
 
@@ -15594,7 +15604,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:generator
    */
   ColorListGenerators.createCategoricalColors = function(mode, nColors, colorScaleFunction, alpha, interpolateColor, interpolateValue) {
-    colorScaleFunction = colorScaleFunction == null ? ColorScales.temperature : colorScaleFunction;
+    colorScaleFunction = colorScaleFunction == null ? ColorScales__default.temperature : colorScaleFunction;
 
     var i;
     var colorList = new ColorList();
@@ -16244,6 +16254,36 @@ define('src/index', ['exports'], function (exports) {
 
     return s/l;
   };
+
+  /**
+   * generates a new numberList of desired size smaller than original, with elements claculated as averages of neighbors
+   * @param  {NumberList} numberList
+   * @param  {Number} newLength length of returned numberList
+   * @return {NumberList}
+   * tags:statistics
+   */
+  NumberListOperators__NumberListOperators.shorten = function(numberList, newLength) {
+    if(numberList==null) return null;
+    if(newLength==null || newLength>=numberList.length) return numberList;
+
+    var windowSize = numberList.length/newLength;
+    var newNumberList = new NumberList();
+    var windowSizeInt = Math.floor(windowSize);
+    var val;
+    var i, j, j0;
+
+    newNumberList.name = numberList.name;
+
+    for(i=0; i<newLength; i++){
+      j0 = Math.floor(i*windowSize);
+      val = 0;
+      for(j=0; j<windowSizeInt; j++){
+        val += numberList[j0+j];
+      }
+      newNumberList[i] = val/windowSizeInt;
+    }
+    return newNumberList;
+  }
 
   /**
    * calculates k-means clusters of values in a numberList
@@ -17223,7 +17263,7 @@ define('src/index', ['exports'], function (exports) {
       case 'string_Object':
         return JSON.parse(object);
       case 'string_ColorScale':
-        return ColorScales[object]; //todo: not working, fix
+        return ColorScales__default[object]; //todo: not working, fix
       case 'string_Table':
         return TableEncodings.CSVtoTable(object);
       case 'StringList_DateList': //TODO: solve cases of lists
@@ -22225,7 +22265,10 @@ define('src/index', ['exports'], function (exports) {
     bit = "";
     while(bit != null) {
       bit = StringOperators.getFirstTextBetweenStrings(newText, "<fc", ">");
-      if(bit != null) newText = newText.replace("<fc" + bit + ">", "<font color=\"#" + bit + "\">");
+      if(bit != null){
+        var newbit = bit[0] == "#"?bit.substr(1):bit;
+        newText = newText.replace("<fc" + bit + ">", "<font color=\"#" + newbit + "\">");
+      }
     }
 
     bit = "";
@@ -23804,7 +23847,7 @@ define('src/index', ['exports'], function (exports) {
 
   IntervalTableDraw.drawIntervalsFlowTable = function(intervalsFlowTable, frame, colors, bezier, offValue) { //, returnHovered){ //TODO: implement rollover detection, using _isOnShape (below)
     frame = frame == null ? new Rectangle(10, 10, 400, 300) : frame;
-    colors = colors == null ? ColorListGenerators.createCategoricalColors(0, intervalsFlowTable.length, ColorScales.temperature) : colors;
+    colors = colors == null ? ColorListGenerators.createCategoricalColors(0, intervalsFlowTable.length, ColorScales__default.temperature) : colors;
     bezier = bezier || false;
     offValue = offValue == null ? 0.45 : offValue;
 
@@ -24093,7 +24136,7 @@ define('src/index', ['exports'], function (exports) {
     var i;
     var j;
 
-    colors = colors == null ? ColorListGenerators.createCategoricalColors(0, intervalsFlowTable.length, ColorScales.temperature) : colors;
+    colors = colors == null ? ColorListGenerators.createCategoricalColors(0, intervalsFlowTable.length, ColorScales__default.temperature) : colors;
     frame = frame == null ? new Rectangle(10, 10, 400, 300) : frame;
 
     var nCols = intervalsFlowTable[0].length;
@@ -24255,7 +24298,7 @@ define('src/index', ['exports'], function (exports) {
   NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listColorsIndependent, margin) {
     if(frame == null ||  numberTable == null || numberTable.type == null || numberTable.type != "NumberTable" ||  numberTable.length < 2) return null;
 
-    colorScale = colorScale == null ? ColorScales.blueToRed : colorScale;
+    colorScale = colorScale == null ? ColorScales__default.blueToRed : colorScale;
     listColorsIndependent = listColorsIndependent || false;
     margin = margin == null ? 2 : margin;
 
@@ -24424,10 +24467,10 @@ define('src/index', ['exports'], function (exports) {
     if(coordinates == null || coordinates[0] == null) return;
 
     colorScale = colorScale == null ?
-  								ColorScales.whiteToRed
+  								ColorScales__default.whiteToRed
   								:
       typeof colorScale == 'string' ?
-  									ColorScales[colorScale]
+  									ColorScales__default[colorScale]
   									:
       colorScale;
     margin = margin || 0;
@@ -25849,7 +25892,7 @@ define('src/index', ['exports'], function (exports) {
     if(frame.memory.colorList != colorList || frame.memory.colorList == null) {
       frame.memory.nFLastChange = nF;
       frame.memory.image = null;
-      frame.memory.actualColorList = colorList == null ? ColorListGenerators.createCategoricalColors(0, tree.nLevels, ColorScales.grayToOrange, 0.1) : colorList;
+      frame.memory.actualColorList = colorList == null ? ColorListGenerators.createCategoricalColors(0, tree.nLevels, ColorScales__default.grayToOrange, 0.1) : colorList;
       frame.memory.nodesColorList = new ColorList();
       if(textColor == null) frame.memory.textsColorList = new ColorList();
 

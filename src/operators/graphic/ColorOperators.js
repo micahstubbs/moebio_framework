@@ -67,6 +67,7 @@ ColorOperators.RGBArrayToString = function(array) {
 
 ColorOperators.colorStringToHEX = function(color_string) {
   var rgb = ColorOperators.colorStringToRGB(color_string);
+  c.l(color_string+' -> '+rgb.join(',')+' -> '+ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]));
   return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
 };
 

@@ -1417,6 +1417,14 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
       if(length < 101) {
         text += ident + "numbers: <b>" + this.join("</b>, <b>") + "</b>";
       }
+      var shorten = NumberListOperators.shorten(this, 60);
+      c.l('1 shorten', shorten);
+      shorten = shorten.getNormalized();
+      c.l('2 shorten', shorten);
+      text += ident;
+      for(i=0; shorten[i]!=null; i++){
+        text += "<fs7><fc"+ColorOperators.colorStringToHEX(ColorScales.grayToOrange(shorten[i]))+">█</f></f>";
+      }
       break;
       case "StringList":
     case "List":
