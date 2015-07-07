@@ -6325,7 +6325,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Node = Node__default;
 
-  var version = "0.2.20";
+  var version = "0.2.21";
 
   /*
    * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
