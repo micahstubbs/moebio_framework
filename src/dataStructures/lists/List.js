@@ -1406,11 +1406,42 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
 
   switch(this.type) {
     case "NumberList":
-      var min = this.getMin();
-      var max = this.getMax();
+      var min = 9999999;
+      var max = -9999999;
+      var average = 0;
+      var shorten = new NumberList();
+      var index = 0;
+      var accumsum = 0;
+      var maxAccumsum = -99999;
+      var sizeAccum = Math.max(Math.floor(this.length/70), 1);
+
+      this.forEach(function(val){
+        min = Math.min(min, val);
+        max = Math.max(max, val);
+        average += val;
+        accumsum += val;
+        index++;
+        if(index==sizeAccum){
+          c.l('index, accumsum', index, accumsum);
+          accumsum /= index;
+          maxAccumsum = Math.max(maxAccumsum, accumsum)
+          shorten.push(accumsum);
+          accumsum=0;
+          index=0;
+        }
+      });
+      if(index!=0){
+          accumsum /=index;
+          maxAccumsum = Math.max(maxAccumsum, accumsum)
+          shorten.push(accumsum);
+      }
+
+      shorten = shorten.factor(1/maxAccumsum);
+
+      average /= this.length;
+
       this.min = min;
       this.max = max;
-      var average = (min + max) * 0.5;
       this.average = average;
       text += ident + "min: <b>" + min + "</b>";
       text += ident + "max: <b>" + max + "</b>";
@@ -1418,10 +1449,8 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
       if(length < 101) {
         text += ident + "numbers: <b>" + this.join("</b>, <b>") + "</b>";
       }
-      var shorten = NumberListOperators.shorten(this, 70);
-      c.l('1 shorten', shorten);
-      shorten = shorten.getNormalized();
-      c.l('2 shorten', shorten);
+      //var shorten = NumberListOperators.shorten(this, 70);
+      //shorten = shorten.getNormalizedToMax();
       text += ident;
       for(i=0; shorten[i]!=null; i++){
         text += "<fs7><fc"+ColorOperators.colorStringToHEX(ColorScales.grayToOrange(shorten[i]))+">█</f></f>";
@@ -1454,7 +1483,6 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
       if(joined.length < 2000) text += ident + "contents: [" + joined + "]";
       
       var weights = freqTable[1].getNormalizedToSum(70);
-      c.l('weights:', weights);
       var bars = "";
       weights.forEach(function(w, j){
         w = Math.floor(w) +  ( (w - Math.floor(w))>Math.random()?1:0 );

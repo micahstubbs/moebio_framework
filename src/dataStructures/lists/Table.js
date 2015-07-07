@@ -457,6 +457,7 @@ Table.prototype.getReportHtml = function(level) {
          text += this[i].getReportHtml(1);
       } catch(err){
         text += ident + "[!] something wrong with list <fs10>:" + err + "</f>";
+        c.l('getReportHtml err', err);
       }
     }
   }
