@@ -169,68 +169,68 @@ ListOperators.assemble = function() {
  * @param {Boolean} consecutiveRepetitions optional false by default, if true only counts consecutive repetitions
  * @param {Number} optional limit, limits the size of the lists
  * @return {Table}
- * tags:count,toimprove
+ * tags:count,toimprove,deprecated
  */
-ListOperators.countElementsRepetitionOnList = function(list, sortListsByOccurrences, consecutiveRepetitions, limit) { //transform this, use dictionary instead of indexOf !!!!!!!
-  if(list == null) return;
+// ListOperators.countElementsRepetitionOnList = function(list, sortListsByOccurrences, consecutiveRepetitions, limit) { //transform this, use dictionary instead of indexOf !!!!!!!
+//   if(list == null) return;
 
-  sortListsByOccurrences = sortListsByOccurrences == null ? true : sortListsByOccurrences;
-  consecutiveRepetitions = consecutiveRepetitions || false;
-  limit = limit == null ? 0 : limit;
+//   sortListsByOccurrences = sortListsByOccurrences == null ? true : sortListsByOccurrences;
+//   consecutiveRepetitions = consecutiveRepetitions || false;
+//   limit = limit == null ? 0 : limit;
 
-  var obj;
-  var elementList = instantiate(typeOf(list));
-  var numberList = new NumberList();
-  var index;
-  var i;
+//   var obj;
+//   var elementList = instantiate(typeOf(list));
+//   var numberList = new NumberList();
+//   var index;
+//   var i;
 
-  if(consecutiveRepetitions) {
-    if(list.length == 0) return null;
-    var previousElement = list[0];
-    elementList.push(previousElement);
-    numberList.push(1);
-    for(i = 1; i < nElements; i++) {
-      obj = list[i];
-      if(obj == previousElement) {
-        numberList[numberList.length - 1] = numberList[numberList.length - 1] + 1;
-      } else {
-        elementList.push(obj);
-        numberList.push(1);
-        previousElement = obj;
-      }
-    }
-  } else {
-    for(i = 0; list[i] != null; i++){
-      obj = list[i];
-      index = elementList.indexOf(obj);
-      if(index != -1) {
-        numberList[index]++;
-      } else {
-        elementList.push(obj);
-        numberList.push(1);
-      }
-    }
-  }
+//   if(consecutiveRepetitions) {
+//     if(list.length == 0) return null;
+//     var previousElement = list[0];
+//     elementList.push(previousElement);
+//     numberList.push(1);
+//     for(i = 1; i < nElements; i++) {
+//       obj = list[i];
+//       if(obj == previousElement) {
+//         numberList[numberList.length - 1] = numberList[numberList.length - 1] + 1;
+//       } else {
+//         elementList.push(obj);
+//         numberList.push(1);
+//         previousElement = obj;
+//       }
+//     }
+//   } else {
+//     for(i = 0; list[i] != null; i++){
+//       obj = list[i];
+//       index = elementList.indexOf(obj);
+//       if(index != -1) {
+//         numberList[index]++;
+//       } else {
+//         elementList.push(obj);
+//         numberList.push(1);
+//       }
+//     }
+//   }
 
-  if(elementList.type == "NumberList") {
-    var table = new NumberTable();
-  } else {
-    var table = new Table();
-  }
-  table[0] = elementList;
-  table[1] = numberList;
+//   if(elementList.type == "NumberList") {
+//     var table = new NumberTable();
+//   } else {
+//     var table = new Table();
+//   }
+//   table[0] = elementList;
+//   table[1] = numberList;
 
-  if(sortListsByOccurrences) {
-    table = TableOperators.sortListsByNumberList(table, numberList);
-  }
+//   if(sortListsByOccurrences) {
+//     table = TableOperators.sortListsByNumberList(table, numberList);
+//   }
 
-  if(limit != 0 && limit < elementList.length) {
-    table[0] = table[0].splice(0, limit);
-    table[1] = table[1].splice(0, limit);
-  }
+//   if(limit != 0 && limit < elementList.length) {
+//     table[0] = table[0].splice(0, limit);
+//     table[1] = table[1].splice(0, limit);
+//   }
 
-  return table;
-};
+//   return table;
+// };
 
 
 /**
@@ -811,11 +811,13 @@ ListOperators.subCategoricalAnalysis = function(list0, list1){
  * @param  {List} list with repeated elements (actegorical list)
  *
  * @param {Object} valueFollowing if a value is provided, the property _P_valueFollowing will be added to the list, with proportion of that value in the list
+ * @param {Table} freqTable for saving time, in case the frequency table with sorted elements has been already calculated (with list.getElementsRepetitionCount(true))
  * @return {Number}
- * tags:ds
+ * tags:statistics
  */
-ListOperators.getListEntropy = function(list, valueFollowing) {
+ListOperators.getListEntropy = function(list, valueFollowing, freqTable) {
   if(list == null) return;
+
   if(list.length < 2) {
     if(list.length == 1) {
       list._mostRepresentedValue = list[0];
@@ -825,25 +827,25 @@ ListOperators.getListEntropy = function(list, valueFollowing) {
     return 0;
   }
 
-  var table = ListOperators.countElementsRepetitionOnList(list, true);
+  if(freqTable==null) freqTable = list.getElementsRepetitionCount(true);// ListOperators.countElementsRepetitionOnList(list, true);
 
-  list._mostRepresentedValue = table[0][0];
+  list._mostRepresentedValue = freqTable[0][0];
   var N = list.length;
-  list._biggestProbability = table[1][0] / N;
-  if(table[0].length == 1) {
+  list._biggestProbability = freqTable[1][0] / N;
+  if(freqTable[0].length == 1) {
     list._P_valueFollowing = list[0] == valueFollowing ? 1 : 0;
     return 0;
   }
   var entropy = 0;
 
-  var norm = Math.log(table[0].length);
-  table[1].forEach(function(val) {
+  var norm = Math.log(freqTable[0].length);
+  freqTable[1].forEach(function(val) {
     entropy -= (val / N) * Math.log(val / N) / norm;
   });
 
   if(valueFollowing != null) {
-    var index = table[0].indexOf(valueFollowing);
-    list._P_valueFollowing = index == -1 ? 0 : table[1][index] / N;
+    var index = freqTable[0].indexOf(valueFollowing);
+    list._P_valueFollowing = index == -1 ? 0 : freqTable[1][index] / N;
   }
 
   return entropy;

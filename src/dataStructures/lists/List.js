@@ -636,7 +636,7 @@ List.prototype.allElementsEqual = function() {
  */
 List.prototype.getMostRepeatedElement = function() {
   //TODO: this method should be more efficient
-  return ListOperators.countElementsRepetitionOnList(this, true)[0][0];
+  return this.getElementsRepetitionCount(true)[0][0];// ListOperators.countElementsRepetitionOnList(this, true)[0][0];
 };
 
 /**
@@ -1402,7 +1402,6 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
     text += ident + "length: <b>" + length + "</b>";
     text += ident + "first element: [<b>" + this[0] + "</b>]";
   }
-  text += ident + "entropy: <b>" + NumberOperators.numberToString(ListOperators.getListEntropy(this), 4) + "</b>";
 
   switch(this.type) {
     case "NumberList":
@@ -1413,7 +1412,7 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
       var index = 0;
       var accumsum = 0;
       var maxAccumsum = -99999;
-      var sizeAccum = Math.max(Math.floor(this.length/70), 1);
+      var sizeAccum = Math.max(Math.floor(this.length/50), 1);
 
       this.forEach(function(val){
         min = Math.min(min, val);
@@ -1422,7 +1421,6 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
         accumsum += val;
         index++;
         if(index==sizeAccum){
-          c.l('index, accumsum', index, accumsum);
           accumsum /= index;
           maxAccumsum = Math.max(maxAccumsum, accumsum)
           shorten.push(accumsum);
@@ -1459,9 +1457,11 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
     case "StringList":
     case "List":
       var freqTable = this.getElementsRepetitionCount(true);
+      this._freqTable = freqTable;
       var catColors = ColorListGenerators.createCategoricalColors(2, freqTable[0].length);
 
-      this._freqTable = freqTable;
+      text += ident + "entropy: <b>" + NumberOperators.numberToString(ListOperators.getListEntropy(this, null, freqTable), 4) + "</b>";
+      
       text += ident + "number of different elements: <b>" + freqTable[0].length + "</b>";
       if(freqTable[0].length < 10) {
         text += ident + "elements frequency:";
@@ -1482,7 +1482,7 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
 
       if(joined.length < 2000) text += ident + "contents: [" + joined + "]";
       
-      var weights = freqTable[1].getNormalizedToSum(70);
+      var weights = freqTable[1].getNormalizedToSum(55);
       var bars = "";
       weights.forEach(function(w, j){
         w = Math.floor(w) +  ( (w - Math.floor(w))>Math.random()?1:0 );

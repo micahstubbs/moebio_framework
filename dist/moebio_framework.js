@@ -1153,7 +1153,7 @@ define('src/index', ['exports'], function (exports) {
    */
   List__List.prototype.getMostRepeatedElement = function() {
     //TODO: this method should be more efficient
-    return ListOperators__default.countElementsRepetitionOnList(this, true)[0][0];
+    return this.getElementsRepetitionCount(true)[0][0];// ListOperators.countElementsRepetitionOnList(this, true)[0][0];
   };
 
   /**
@@ -1919,7 +1919,6 @@ define('src/index', ['exports'], function (exports) {
       text += ident + "length: <b>" + length + "</b>";
       text += ident + "first element: [<b>" + this[0] + "</b>]";
     }
-    text += ident + "entropy: <b>" + NumberOperators.numberToString(ListOperators__default.getListEntropy(this), 4) + "</b>";
 
     switch(this.type) {
       case "NumberList":
@@ -1930,7 +1929,7 @@ define('src/index', ['exports'], function (exports) {
         var index = 0;
         var accumsum = 0;
         var maxAccumsum = -99999;
-        var sizeAccum = Math.max(Math.floor(this.length/70), 1);
+        var sizeAccum = Math.max(Math.floor(this.length/50), 1);
 
         this.forEach(function(val){
           min = Math.min(min, val);
@@ -1939,7 +1938,6 @@ define('src/index', ['exports'], function (exports) {
           accumsum += val;
           index++;
           if(index==sizeAccum){
-            c.l('index, accumsum', index, accumsum);
             accumsum /= index;
             maxAccumsum = Math.max(maxAccumsum, accumsum)
             shorten.push(accumsum);
@@ -1976,9 +1974,11 @@ define('src/index', ['exports'], function (exports) {
       case "StringList":
       case "List":
         var freqTable = this.getElementsRepetitionCount(true);
+        this._freqTable = freqTable;
         var catColors = ColorListGenerators.createCategoricalColors(2, freqTable[0].length);
 
-        this._freqTable = freqTable;
+        text += ident + "entropy: <b>" + NumberOperators.numberToString(ListOperators__default.getListEntropy(this, null, freqTable), 4) + "</b>";
+        
         text += ident + "number of different elements: <b>" + freqTable[0].length + "</b>";
         if(freqTable[0].length < 10) {
           text += ident + "elements frequency:";
@@ -1999,7 +1999,7 @@ define('src/index', ['exports'], function (exports) {
 
         if(joined.length < 2000) text += ident + "contents: [" + joined + "]";
         
-        var weights = freqTable[1].getNormalizedToSum(70);
+        var weights = freqTable[1].getNormalizedToSum(55);
         var bars = "";
         weights.forEach(function(w, j){
           w = Math.floor(w) +  ( (w - Math.floor(w))>Math.random()?1:0 );
@@ -2960,7 +2960,7 @@ define('src/index', ['exports'], function (exports) {
     result.type = "NumberTable";
 
     result.getNumberListsNormalized = NumberTable.prototype.getNumberListsNormalized;
-    result.getNormalizedToMax = NumberTable.prototype.getNormalizedToMax;
+    result.getTableNormalizedToMax = NumberTable.prototype.getTableNormalizedToMax;
     result.getNumberListsNormalizedToMax = NumberTable.prototype.getNumberListsNormalizedToMax;
     result.getNumberListsNormalizedToSum = NumberTable.prototype.getNumberListsNormalizedToSum;
     result.getSums = NumberTable.prototype.getSums;
@@ -3000,11 +3000,11 @@ define('src/index', ['exports'], function (exports) {
   /**
    * normalizes the table to its maximal value
    *
-   * @param  {factor} factor optional factor
+   * @param  {Number} factor optional factor
    * @return {NumberTable}
    * tags:normalization
    */
-  NumberTable.prototype.getNormalizedToMax = function(factor) {
+  NumberTable.prototype.getTableNormalizedToMax = function(factor) {
     factor = factor == null ? 1 : factor;
 
     var newTable = new NumberTable();
@@ -4830,8 +4830,7 @@ define('src/index', ['exports'], function (exports) {
   /**
    * Returns a NumberList normalized to Max.
    *
-   * @param {Number} factor Optional multiplier to modify the normalized values by.
-   * Defaults to 1.
+   * @param {Number} factor Optional multiplier to modify the normalized values by. Defaults to 1.
    * @return {NumberList}
    * tags:
    */
@@ -10770,68 +10769,68 @@ define('src/index', ['exports'], function (exports) {
    * @param {Boolean} consecutiveRepetitions optional false by default, if true only counts consecutive repetitions
    * @param {Number} optional limit, limits the size of the lists
    * @return {Table}
-   * tags:count,toimprove
+   * tags:count,toimprove,deprecated
    */
-  ListOperators__ListOperators.countElementsRepetitionOnList = function(list, sortListsByOccurrences, consecutiveRepetitions, limit) { //transform this, use dictionary instead of indexOf !!!!!!!
-    if(list == null) return;
+  // ListOperators.countElementsRepetitionOnList = function(list, sortListsByOccurrences, consecutiveRepetitions, limit) { //transform this, use dictionary instead of indexOf !!!!!!!
+  //   if(list == null) return;
 
-    sortListsByOccurrences = sortListsByOccurrences == null ? true : sortListsByOccurrences;
-    consecutiveRepetitions = consecutiveRepetitions || false;
-    limit = limit == null ? 0 : limit;
+  //   sortListsByOccurrences = sortListsByOccurrences == null ? true : sortListsByOccurrences;
+  //   consecutiveRepetitions = consecutiveRepetitions || false;
+  //   limit = limit == null ? 0 : limit;
 
-    var obj;
-    var elementList = instantiate(typeOf(list));
-    var numberList = new NumberList();
-    var index;
-    var i;
+  //   var obj;
+  //   var elementList = instantiate(typeOf(list));
+  //   var numberList = new NumberList();
+  //   var index;
+  //   var i;
 
-    if(consecutiveRepetitions) {
-      if(list.length == 0) return null;
-      var previousElement = list[0];
-      elementList.push(previousElement);
-      numberList.push(1);
-      for(i = 1; i < nElements; i++) {
-        obj = list[i];
-        if(obj == previousElement) {
-          numberList[numberList.length - 1] = numberList[numberList.length - 1] + 1;
-        } else {
-          elementList.push(obj);
-          numberList.push(1);
-          previousElement = obj;
-        }
-      }
-    } else {
-      for(i = 0; list[i] != null; i++){
-        obj = list[i];
-        index = elementList.indexOf(obj);
-        if(index != -1) {
-          numberList[index]++;
-        } else {
-          elementList.push(obj);
-          numberList.push(1);
-        }
-      }
-    }
+  //   if(consecutiveRepetitions) {
+  //     if(list.length == 0) return null;
+  //     var previousElement = list[0];
+  //     elementList.push(previousElement);
+  //     numberList.push(1);
+  //     for(i = 1; i < nElements; i++) {
+  //       obj = list[i];
+  //       if(obj == previousElement) {
+  //         numberList[numberList.length - 1] = numberList[numberList.length - 1] + 1;
+  //       } else {
+  //         elementList.push(obj);
+  //         numberList.push(1);
+  //         previousElement = obj;
+  //       }
+  //     }
+  //   } else {
+  //     for(i = 0; list[i] != null; i++){
+  //       obj = list[i];
+  //       index = elementList.indexOf(obj);
+  //       if(index != -1) {
+  //         numberList[index]++;
+  //       } else {
+  //         elementList.push(obj);
+  //         numberList.push(1);
+  //       }
+  //     }
+  //   }
 
-    if(elementList.type == "NumberList") {
-      var table = new NumberTable();
-    } else {
-      var table = new Table();
-    }
-    table[0] = elementList;
-    table[1] = numberList;
+  //   if(elementList.type == "NumberList") {
+  //     var table = new NumberTable();
+  //   } else {
+  //     var table = new Table();
+  //   }
+  //   table[0] = elementList;
+  //   table[1] = numberList;
 
-    if(sortListsByOccurrences) {
-      table = TableOperators.sortListsByNumberList(table, numberList);
-    }
+  //   if(sortListsByOccurrences) {
+  //     table = TableOperators.sortListsByNumberList(table, numberList);
+  //   }
 
-    if(limit != 0 && limit < elementList.length) {
-      table[0] = table[0].splice(0, limit);
-      table[1] = table[1].splice(0, limit);
-    }
+  //   if(limit != 0 && limit < elementList.length) {
+  //     table[0] = table[0].splice(0, limit);
+  //     table[1] = table[1].splice(0, limit);
+  //   }
 
-    return table;
-  };
+  //   return table;
+  // };
 
 
   /**
@@ -11412,11 +11411,13 @@ define('src/index', ['exports'], function (exports) {
    * @param  {List} list with repeated elements (actegorical list)
    *
    * @param {Object} valueFollowing if a value is provided, the property _P_valueFollowing will be added to the list, with proportion of that value in the list
+   * @param {Table} freqTable for saving time, in case the frequency table with sorted elements has been already calculated (with list.getElementsRepetitionCount(true))
    * @return {Number}
-   * tags:ds
+   * tags:statistics
    */
-  ListOperators__ListOperators.getListEntropy = function(list, valueFollowing) {
+  ListOperators__ListOperators.getListEntropy = function(list, valueFollowing, freqTable) {
     if(list == null) return;
+
     if(list.length < 2) {
       if(list.length == 1) {
         list._mostRepresentedValue = list[0];
@@ -11426,25 +11427,25 @@ define('src/index', ['exports'], function (exports) {
       return 0;
     }
 
-    var table = ListOperators__ListOperators.countElementsRepetitionOnList(list, true);
+    if(freqTable==null) freqTable = list.getElementsRepetitionCount(true);// ListOperators.countElementsRepetitionOnList(list, true);
 
-    list._mostRepresentedValue = table[0][0];
+    list._mostRepresentedValue = freqTable[0][0];
     var N = list.length;
-    list._biggestProbability = table[1][0] / N;
-    if(table[0].length == 1) {
+    list._biggestProbability = freqTable[1][0] / N;
+    if(freqTable[0].length == 1) {
       list._P_valueFollowing = list[0] == valueFollowing ? 1 : 0;
       return 0;
     }
     var entropy = 0;
 
-    var norm = Math.log(table[0].length);
-    table[1].forEach(function(val) {
+    var norm = Math.log(freqTable[0].length);
+    freqTable[1].forEach(function(val) {
       entropy -= (val / N) * Math.log(val / N) / norm;
     });
 
     if(valueFollowing != null) {
-      var index = table[0].indexOf(valueFollowing);
-      list._P_valueFollowing = index == -1 ? 0 : table[1][index] / N;
+      var index = freqTable[0].indexOf(valueFollowing);
+      list._P_valueFollowing = index == -1 ? 0 : freqTable[1][index] / N;
     }
 
     return entropy;
@@ -12138,7 +12139,7 @@ define('src/index', ['exports'], function (exports) {
 
     if(sortedByFrequency) {
       if(withoutRepetitions) {
-        list = ListOperators__default.countElementsRepetitionOnList(list, true)[0];
+        list = list.getElementsRepetitionCount(true)[0];// //ListOperators.countElementsRepetitionOnList(list, true)[0];
         if(limit != 0) list = list.substr(0, limit);
 
         return list;
@@ -12200,8 +12201,8 @@ define('src/index', ['exports'], function (exports) {
     if(string == null) return;
     if(string.length == 0) return new Table(new StringList(), new NumberList());
     var words = StringOperators.getWords(string, false, stopWords, false, includeLinks, limit, minSizeWords);
-
-    return ListOperators__default.countElementsRepetitionOnList(words, true, false, limit);
+    var table = words.getElementsRepetitionCount(true).sliceRows(0, limit-1);
+    return table;// ListOperators.countElementsRepetitionOnList(words, true, false, limit);
   };
 
   StringOperators.indexesOf = function(text, string) { //TODO:test

@@ -241,8 +241,7 @@ NumberList.prototype.getNormalized = function(factor) {
 /**
  * Returns a NumberList normalized to Max.
  *
- * @param {Number} factor Optional multiplier to modify the normalized values by.
- * Defaults to 1.
+ * @param {Number} factor Optional multiplier to modify the normalized values by. Defaults to 1.
  * @return {NumberList}
  * tags:
  */

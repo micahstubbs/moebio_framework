@@ -41,7 +41,7 @@ NumberTable.fromArray = function(array) {
   result.type = "NumberTable";
 
   result.getNumberListsNormalized = NumberTable.prototype.getNumberListsNormalized;
-  result.getNormalizedToMax = NumberTable.prototype.getNormalizedToMax;
+  result.getTableNormalizedToMax = NumberTable.prototype.getTableNormalizedToMax;
   result.getNumberListsNormalizedToMax = NumberTable.prototype.getNumberListsNormalizedToMax;
   result.getNumberListsNormalizedToSum = NumberTable.prototype.getNumberListsNormalizedToSum;
   result.getSums = NumberTable.prototype.getSums;
@@ -81,11 +81,11 @@ NumberTable.prototype.getNumberListsNormalized = function(factor) {
 /**
  * normalizes the table to its maximal value
  *
- * @param  {factor} factor optional factor
+ * @param  {Number} factor optional factor
  * @return {NumberTable}
  * tags:normalization
  */
-NumberTable.prototype.getNormalizedToMax = function(factor) {
+NumberTable.prototype.getTableNormalizedToMax = function(factor) {
   factor = factor == null ? 1 : factor;
 
   var newTable = new NumberTable();
