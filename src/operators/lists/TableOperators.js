@@ -190,7 +190,7 @@ TableOperators.sortListsByNumberList = function(table, numberList, descending) {
  * @param  {Table} table containing the aggregation list and lists to be aggregated
  * @param  {Number} indexAggregationList index of the aggregation list on the table
  * @param  {NumberList} indexesListsToAggregate indexs of the lists to be aggregated; typically it also contains the index of the aggregation list at the beginning, to be aggregated using mode 0 (first element) thus resulting as the list of non repeated elements
- * @param  {NumberList} modes list of modes of aggregation, these are the options:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes<br>12:count non repeated elements<br>13:enlist non repeated elements
+ * @param  {NumberList} modes list of modes of aggregation, these are the options:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes<br>12:count non repeated elements<br>13:enlist non repeated elements<br>14:concat elements (string)<br>15:concat non-repeated elements
  *
  * @param {StringList} newListsNames optional names for generated lists
  * @return {Table} aggregated table
@@ -217,6 +217,7 @@ TableOperators.aggregateTable = function(table, indexAggregationList, indexesLis
 
   return newTable.getImproved();
 }
+
 
 
 /**

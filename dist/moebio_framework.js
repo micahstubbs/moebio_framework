@@ -6325,7 +6325,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Node = Node__default;
 
-  var version = "0.2.20";
+  var version = "0.2.21";
 
   /*
    * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
@@ -9852,7 +9852,7 @@ define('src/index', ['exports'], function (exports) {
    * @param  {Table} table containing the aggregation list and lists to be aggregated
    * @param  {Number} indexAggregationList index of the aggregation list on the table
    * @param  {NumberList} indexesListsToAggregate indexs of the lists to be aggregated; typically it also contains the index of the aggregation list at the beginning, to be aggregated using mode 0 (first element) thus resulting as the list of non repeated elements
-   * @param  {NumberList} modes list of modes of aggregation, these are the options:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes<br>12:count non repeated elements<br>13:enlist non repeated elements
+   * @param  {NumberList} modes list of modes of aggregation, these are the options:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes<br>12:count non repeated elements<br>13:enlist non repeated elements<br>14:concat elements (string)<br>15:concat non-repeated elements
    *
    * @param {StringList} newListsNames optional names for generated lists
    * @return {Table} aggregated table
@@ -9879,6 +9879,7 @@ define('src/index', ['exports'], function (exports) {
 
     return newTable.getImproved();
   }
+
 
 
   /**
@@ -11177,7 +11178,7 @@ define('src/index', ['exports'], function (exports) {
    *
    * @param  {List} aggregatorList aggregator list that typically contains several repeated elements
    * @param  {List} toAggregateList list of elements that will be aggregated
-   * @param  {Number} mode aggregation modes:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes<br>12:count non repeated elements<br>13:enlist non repeated elements
+   * @param  {Number} mode aggregation modes:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes<br>12:count non repeated elements<br>13:enlist non repeated elements<br>14:concat elements (string)<br>15:concat non-repeated elements
    * @param  {Table} indexesTable optional already calculated table of indexes of elements on the aggregator list (if didn't provided, the method calculates it)
    * @return {Table} contains a list with non repeated elements on the first list, and the aggregated elements on a second list
    * tags:
@@ -11283,7 +11284,7 @@ define('src/index', ['exports'], function (exports) {
         return table;
       case 9://most common
         table[1] = new List__default();
-        var elementsTable = ListOperators__ListOperators.aggregateList(aggregatorList, toAggregateList, 5, indexesTable);
+        var elementsTable = ListOperators__ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
         elementsTable[1].forEach(function(elements){
           table[1].push(elements.getMostRepeatedElement());
         });
@@ -11313,6 +11314,20 @@ define('src/index', ['exports'], function (exports) {
           table[1].push(elements.getWithoutRepetitions());
         });
         table[1] = table[1].getImproved();
+        return table;
+      case 14://concat string
+        table[1] = new StringList();
+        var elementsTable = ListOperators__ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
+        elementsTable[1].forEach(function(elements){
+          table[1].push( elements.join(', ') );
+        });
+        return table;
+      case 15://concat string non repeated
+        table[1] = new StringList();
+        var elementsTable = ListOperators__ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
+        elementsTable[1].forEach(function(elements){
+          table[1].push( elements.getWithoutRepetitions().join(', ') );
+        });
         return table;
     }
 
