@@ -18694,6 +18694,22 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
+   * return a nodeList with all the nodes connected to two given nodes
+   * @param  {Network} network
+   * @param  {Node} node0
+   * @param  {Node} node1
+   * @return {NodeList}
+   * tags:
+   */
+  NetworkOperators.getNodesBetweenTwoNodes = function(network, node0, node1){
+    var nodeList = new NodeList__default();
+    network.nodeList.forEach(function(node){
+      if(node.id!=node0.id && node.id!=node1.id && node0.nodeList.getNodeById(node.id)!=null && node1.nodeList.getNodeById(node.id)!=null) nodeList.addNode(node);
+    });
+    return nodeList;
+  }
+
+  /**
    * Returns a NodeList with the Nodes in the Network that are part of the
    * first shortest path found between the two input nodes.
    *
@@ -18748,8 +18764,6 @@ define('src/index', ['exports'], function (exports) {
 
     var all = NetworkOperators._extendPaths(allPaths, node1, lengthShortestPaths);
 
-    console.log('1. all.length', all.length);
-
     for(i = 0; all[i] != null; i++) {
       if(all[i][all[i].length - 1] != node1) {
         all.splice(i, 1);
@@ -18757,10 +18771,9 @@ define('src/index', ['exports'], function (exports) {
       }
     }
 
-    console.log('2. all.length', all.length);
-
     return all;
   };
+
 
   /**
    * @ignore
