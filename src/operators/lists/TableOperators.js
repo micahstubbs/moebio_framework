@@ -233,7 +233,7 @@ TableOperators.aggregateTable = function(table, indexAggregationList, indexesLis
  * @return {Table}
  * tags:
  */
-TableOperators.pivotTable = function(table, indexFirstAggregationList, indexSecondAggregationList, indexListToAggregate, aggregationMode, resultMode, nullValue){
+TableOperators.pivotTable = function(table, indexFirstAggregationList, indexSecondAggregationList, indexListToAggregate, aggregationMode, nullValue, resultMode){
   if(table==null || !table.length || indexFirstAggregationList==null || indexSecondAggregationList==null || indexListToAggregate==null || aggregationMode==null) return;
 
   resultMode = resultMode||0;
@@ -322,6 +322,7 @@ TableOperators.pivotTable = function(table, indexFirstAggregationList, indexSeco
 
   var x, y;
   var element;
+  var newList;
 
   table[indexFirstAggregationList].forEach(function(element0, i){
     element1 = table[indexSecondAggregationList][i];

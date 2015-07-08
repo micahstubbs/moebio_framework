@@ -16,12 +16,11 @@ export default NetworkConvertions;
 
 /**
  * Builds a Network based on a two columns Table, creating relations on co-occurrences.
- *
  * @param {Table} table table with at least two columns (commonly strings)
  *
  * @param {NumberList} numberList Weights of relations.
  * @param {Number} threshold Minimum weight or number of co-occurrences to create a relation.
- * @param {Boolean} allowMultipleRelations
+ * @param {Boolean} allowMultipleRelations (false by default)
  * @param {Number} minRelationsInNode Remove nodes with number of relations below threshold.
  * @param {StringList} stringList Contents of relations.
  * @return {Network}
@@ -43,7 +42,7 @@ NetworkConvertions.TableToNetwork = function(table, numberList, threshold, allow
 
   //trace("nElements", nElements);
 
-  if(numberList == null && table.length > 2 && typeOf(table[2]) == NumberList && table[2].length >= nElements) numberList = table[2];
+  if(numberList == null && table.length > 2 && typeOf(table[2]) == "NumberList" && table[2].length >= nElements) numberList = table[2];
 
 
   if(typeOf(table[0]) == NodeList && typeOf(table[1]) == NodeList) {
