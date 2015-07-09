@@ -13,21 +13,26 @@ export default FastHtml;
 FastHtml.expand = function(abreviatedHTML, scope, onEvent) {
   if(abreviatedHTML == null || abreviatedHTML == "") return "";
 
-  //c.log(abreviatedHTML.split("<").length, abreviatedHTML.split(">").length);
+  var T = new Date().getTime();
 
   if(abreviatedHTML.split("<").length != abreviatedHTML.split(">").length) return abreviatedHTML;
+
   var newText = abreviatedHTML;
-  var bit = "";
-  while(bit != null) {
-    bit = StringOperators.getFirstTextBetweenStrings(newText, "<fs", ">"); //OperacionesString.textEntreSubStrings(newText, "<fs", ">");
-    if(bit != null) newText = newText.replace("<fs" + bit + ">", "<font style=\"font-size:" + Number(bit) + "px\">");
-    if(newText.indexOf(">") == -1) bit = null;
+  if(newText.indexOf("<fs")!=-1){
+    var bit = "";
+    while(bit != null) {
+      bit = StringOperators.getFirstTextBetweenStrings(newText, "<fs", ">"); //OperacionesString.textEntreSubStrings(newText, "<fs", ">");
+      if(bit != null) newText = newText.replace("<fs" + bit + ">", "<font style=\"font-size:" + Number(bit) + "px\">");
+      if(newText.indexOf(">") == -1) bit = null;
+    }
   }
+
   bit = "";
   while(bit != null) {
     bit = StringOperators.getFirstTextBetweenStrings(newText, "<ff", ">");
     if(bit != null) newText = newText.replace("<ff" + bit + ">", "<font face=\"" + bit + "\">");
   }
+
   newText = newText.replace(/¬/, "<br/>");
   newText = newText.replace(/<fcBlack>/g, "<font color=\"#000000\">");
   newText = newText.replace(/<fcWhite>/g, "<font color=\"#FFFFFF\">");
@@ -39,11 +44,13 @@ FastHtml.expand = function(abreviatedHTML, scope, onEvent) {
   newText = newText.replace(/<fcCyan>/g, "<font color=\"#00FFFF\">");
   newText = newText.replace(/<fcYellow>/g, "<font color=\"#FFFF00\">");
   newText = newText.replace(/<fcMagenta>/g, "<font color=\"#FF00FF\">");
+
   bit = "";
   while(bit != null) {
     bit = StringOperators.getFirstTextBetweenStrings(newText, "<fcuint", ">");
     if(bit != null) newText = newText.replace("<fcuint" + bit + ">", "<font color=\"" + ColorOperators.uinttoHEX(bit) + "\">");
   }
+
   bit = "";
   while(bit != null) {
     bit = StringOperators.getFirstTextBetweenStrings(newText, "<frgb", ">");
@@ -52,12 +59,15 @@ FastHtml.expand = function(abreviatedHTML, scope, onEvent) {
       newText = newText.replace("<frgb" + bit + ">", "<font color=\"" + ColorOperators.RGBtoHEX(Number(rgb[0]), Number(rgb[1]), Number(rgb[2])) + "\">");
     }
   }
-  bit = "";
-  while(bit != null) {
-    bit = StringOperators.getFirstTextBetweenStrings(newText, "<fc", ">");
-    if(bit != null){
-      var newbit = bit[0] == "#"?bit.substr(1):bit;
-      newText = newText.replace("<fc" + bit + ">", "<font color=\"#" + newbit + "\">");
+
+  if(newText.indexOf("<fc")!=-1){
+    bit = "";
+    while(bit != null) {
+      bit = StringOperators.getFirstTextBetweenStrings(newText, "<fc", ">");
+      if(bit != null){
+        //var newbit = bit[0];// == "#"?bit.substr(1):bit;
+        newText = newText.replace("<fc" + bit + ">", "<font color=\"#" + bit + "\">");
+      }
     }
   }
 
@@ -66,11 +76,13 @@ FastHtml.expand = function(abreviatedHTML, scope, onEvent) {
     bit = StringOperators.getFirstTextBetweenStrings(newText, "<tl", ">");
     if(bit != null) newText = newText.replace("<tl" + bit + ">", "<textformat leftmargin=\"" + bit + "\">");
   }
+
   bit = "";
   while(bit != null) {
     bit = StringOperators.getFirstTextBetweenStrings(newText, "<tv", ">");
     if(bit != null) newText = newText.replace("<tv" + bit + ">", "<textformat leading=\"" + bit + "\">");
   }
+
 
   bit = "";
   var href;
@@ -91,12 +103,11 @@ FastHtml.expand = function(abreviatedHTML, scope, onEvent) {
       if(href.substr(0, 7) == "http://" ||  href.substr(0, 8) == "https://") {
         newText = newText.replace("<e" + bit + ">", "<u><a href='" + href + "' target='" + target + "'>" + text + "</a></u>");
       } else {
-        //var index=getUniqueGlobalFunc(onEvent, scope);
-        //newText = newText.replace("<e"+bit+">", "<u><a href='javascript:clickLink()' onclick='event.preventDefault(); executeUniqueGlobalFunc("+index+", "+href+");return false; '>"+text+"</a></u>");
         newText = newText.replace("<e" + bit + ">", "<u><a href='javascript:FastHtml.clickLink(\"" + href + "\")' FastHtml.onclick='event.preventDefault(); clickLink(\"" + href + "\"); return false; '>" + text + "</a></u>");
       }
     }
   }
+
 
   newText = newText.replace(/<pl>/g, "<p align=\"left\">");
   newText = newText.replace(/<pc>/g, "<p align=\"center\">");

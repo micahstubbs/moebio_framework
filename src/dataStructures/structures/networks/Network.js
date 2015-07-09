@@ -210,6 +210,18 @@ Network.prototype.removeIsolatedNodes = function(minDegree) {
 
 
 /**
+ * generates a light clone of the network, with the same nodeList and relationList as the original
+ * @return {Network}
+ */
+Network.prototype.lightClone = function(){
+  var newNetwork = new Network();
+  newNetwork.nodeList = this.nodeList;
+  newNetwork.relationList = this.relationList;
+  return newNetwork;
+}
+
+
+/**
  * Clones the network
  * 
  * @param  {StringList} nodePropertiesNames list of preoperties names to be copied from old nodes into new nodes

@@ -1383,7 +1383,7 @@ List.prototype.getReport = function(level) { //TODO:complete
 
 List.prototype.getReportHtml = function(level) { //TODO:complete
   var ident = "<br>" + (level > 0 ? StringOperators.repeatString("&nbsp", level) : "");
-  var text =  level > 0 ? "" : "<b><fs18>list report</f></b>";
+  var text =  level > 0 ? "" : "<b><font style=\"font-size:18px\">list report</f></b>";
 
   var length = this.length;
   var i;
@@ -1451,7 +1451,7 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
       //shorten = shorten.getNormalizedToMax();
       text += ident;
       for(i=0; shorten[i]!=null; i++){
-        text += "<fs7><fc"+ColorOperators.colorStringToHEX(ColorScales.grayToOrange(shorten[i]))+">█</f></f>";
+        text += "<font style=\"font-size:7px\"><font color=\""+ColorOperators.colorStringToHEX(ColorScales.grayToOrange(shorten[i]))+"\">█</f></f>";
       }
       break;
     case "StringList":
@@ -1470,7 +1470,7 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
       }
 
       for(i = 0; freqTable[0][i] != null && i < 10; i++) {
-        text += ident + "  [<b>" + String(freqTable[0][i]) + "</b>]: <fs10><b><fc"+ColorOperators.colorStringToHEX(catColors[i])+">" + freqTable[1][i] + "</f></b></f>";
+        text += ident + "  [<b>" + String(freqTable[0][i]) + "</b>]: <font style=\"font-size:10px\"><b><font color=\""+ColorOperators.colorStringToHEX(catColors[i])+"\">" + freqTable[1][i] + "</f></b></f>";
       }
 
       var joined;
@@ -1486,17 +1486,16 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
       var bars = "";
       weights.forEach(function(w, j){
         w = Math.floor(w) +  ( (w - Math.floor(w))>Math.random()?1:0 );
-        bars += "<fc"+ColorOperators.colorStringToHEX(catColors[j])+">";
+        bars += "<font color=\""+ColorOperators.colorStringToHEX(catColors[j])+"\">";
         for(i=0; i<w; i++){
           bars += "█";
         }
         bars += "</f>";
       });
       text += ident;
-      text += "<fs7>"+bars+"</f>";
+      text += "<font style=\"font-size:7px\">"+bars+"</f>";
 
       break;
-
   }
 
 

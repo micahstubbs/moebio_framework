@@ -1900,7 +1900,7 @@ define('src/index', ['exports'], function (exports) {
 
   List__List.prototype.getReportHtml = function(level) { //TODO:complete
     var ident = "<br>" + (level > 0 ? StringOperators.repeatString("&nbsp", level) : "");
-    var text =  level > 0 ? "" : "<b><fs18>list report</f></b>";
+    var text =  level > 0 ? "" : "<b><font style=\"font-size:18px\">list report</f></b>";
 
     var length = this.length;
     var i;
@@ -1968,7 +1968,7 @@ define('src/index', ['exports'], function (exports) {
         //shorten = shorten.getNormalizedToMax();
         text += ident;
         for(i=0; shorten[i]!=null; i++){
-          text += "<fs7><fc"+ColorOperators.colorStringToHEX(ColorScales.grayToOrange(shorten[i]))+">█</f></f>";
+          text += "<font style=\"font-size:7px\"><font color=\""+ColorOperators.colorStringToHEX(ColorScales.grayToOrange(shorten[i]))+"\">█</f></f>";
         }
         break;
       case "StringList":
@@ -1987,7 +1987,7 @@ define('src/index', ['exports'], function (exports) {
         }
 
         for(i = 0; freqTable[0][i] != null && i < 10; i++) {
-          text += ident + "  [<b>" + String(freqTable[0][i]) + "</b>]: <fs10><b><fc"+ColorOperators.colorStringToHEX(catColors[i])+">" + freqTable[1][i] + "</f></b></f>";
+          text += ident + "  [<b>" + String(freqTable[0][i]) + "</b>]: <font style=\"font-size:10px\"><b><font color=\""+ColorOperators.colorStringToHEX(catColors[i])+"\">" + freqTable[1][i] + "</f></b></f>";
         }
 
         var joined;
@@ -2003,17 +2003,16 @@ define('src/index', ['exports'], function (exports) {
         var bars = "";
         weights.forEach(function(w, j){
           w = Math.floor(w) +  ( (w - Math.floor(w))>Math.random()?1:0 );
-          bars += "<fc"+ColorOperators.colorStringToHEX(catColors[j])+">";
+          bars += "<font color=\""+ColorOperators.colorStringToHEX(catColors[j])+"\">";
           for(i=0; i<w; i++){
             bars += "█";
           }
           bars += "</f>";
         });
         text += ident;
-        text += "<fs7>"+bars+"</f>";
+        text += "<font style=\"font-size:7px\">"+bars+"</f>";
 
         break;
-
     }
 
 
@@ -2742,7 +2741,7 @@ define('src/index', ['exports'], function (exports) {
     }
 
     ///add ideas to: analyze, visualize
-
+    
     return text;
   };
 
@@ -2755,7 +2754,7 @@ define('src/index', ['exports'], function (exports) {
     var averageLength = (minLength + maxLength) * 0.5;
     var sameLengths = minLength == maxLength;
 
-    var text = "<b>" +( level > 0 ? (ident + "<fs16>table report</f>") : "<fs18>table report</f>" ) + "</b>";
+    var text = "<b>" +( level > 0 ? (ident + "<font style=\"font-size:16px\">table report</f>") : "<font style=\"font-size:18px\">table report</f>" ) + "</b>";
 
     if(this.length === 0) {
       text += ident + "this table has no lists";
@@ -2786,7 +2785,7 @@ define('src/index', ['exports'], function (exports) {
 
     text += "<hr>";
     names.forEach(function(name, i){
-      text += ident + "<fs10>" +i + ":</f><b>" + name + "</b> <fc"+getColorFromDataModelType(types[i])+ ">" + TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"</f>";
+      text += ident + "<font style=\"font-size:10px\">" +i + ":</f><b>" + name + "</b> <font color=\""+getColorFromDataModelType(types[i])+ "\">" + TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"</f>";
     });
     text += "<hr>";
 
@@ -2796,7 +2795,7 @@ define('src/index', ['exports'], function (exports) {
     } else {
       text += ident + "types: ";
       types.forEach(function(type, i){
-        text += "<b><fc"+getColorFromDataModelType(type)+ ">" + type+"</f></b>";
+        text += "<b><font color=\""+getColorFromDataModelType(type)+ "\">" + type+"</f></b>";
         if(i<types.length-1) text += ", ";
       });
     }
@@ -2807,7 +2806,7 @@ define('src/index', ['exports'], function (exports) {
 
     if(this.length < 501) {
       text += "<hr>";
-      text +=  ident + "<fs16><b>lists reports</b></f>";
+      text +=  ident + "<font style=\"font-size:16px\"><b>lists reports</b></f>";
 
       var i;
       for(i = 0; this[i] != null; i++) {
@@ -2815,7 +2814,7 @@ define('src/index', ['exports'], function (exports) {
         try{
            text += this[i].getReportHtml(1);
         } catch(err){
-          text += ident + "[!] something wrong with list <fs10>:" + err + "</f>";
+          text += ident + "[!] something wrong with list <font style=\"font-size:10px\">:" + err + "</f>";
           c.l('getReportHtml err', err);
         }
       }
@@ -7973,6 +7972,18 @@ define('src/index', ['exports'], function (exports) {
 
     return nRemoved;
   };
+
+
+  /**
+   * generates a light clone of the network, with the same nodeList and relationList as the original
+   * @return {Network}
+   */
+  Network.prototype.lightClone = function(){
+    var newNetwork = new Network();
+    newNetwork.nodeList = this.nodeList;
+    newNetwork.relationList = this.relationList;
+    return newNetwork;
+  }
 
 
   /**
@@ -15776,7 +15787,7 @@ define('src/index', ['exports'], function (exports) {
       color = "#fff";
     if(!interpolate)
       interpolate = 0;
-
+    
     list = List__default.fromArray(list);
     var diffValues = list.getWithoutRepetitions();
     var diffColors;
@@ -18694,7 +18705,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * return a nodeList with all the nodes connected to two given nodes
+   * return a nodeList with all the nodes connected to two given nodes in a network
    * @param  {Network} network
    * @param  {Node} node0
    * @param  {Node} node1
@@ -22296,21 +22307,26 @@ define('src/index', ['exports'], function (exports) {
   FastHtml.expand = function(abreviatedHTML, scope, onEvent) {
     if(abreviatedHTML == null || abreviatedHTML == "") return "";
 
-    //c.log(abreviatedHTML.split("<").length, abreviatedHTML.split(">").length);
+    var T = new Date().getTime();
 
     if(abreviatedHTML.split("<").length != abreviatedHTML.split(">").length) return abreviatedHTML;
+
     var newText = abreviatedHTML;
-    var bit = "";
-    while(bit != null) {
-      bit = StringOperators.getFirstTextBetweenStrings(newText, "<fs", ">"); //OperacionesString.textEntreSubStrings(newText, "<fs", ">");
-      if(bit != null) newText = newText.replace("<fs" + bit + ">", "<font style=\"font-size:" + Number(bit) + "px\">");
-      if(newText.indexOf(">") == -1) bit = null;
+    if(newText.indexOf("<fs")!=-1){
+      var bit = "";
+      while(bit != null) {
+        bit = StringOperators.getFirstTextBetweenStrings(newText, "<fs", ">"); //OperacionesString.textEntreSubStrings(newText, "<fs", ">");
+        if(bit != null) newText = newText.replace("<fs" + bit + ">", "<font style=\"font-size:" + Number(bit) + "px\">");
+        if(newText.indexOf(">") == -1) bit = null;
+      }
     }
+
     bit = "";
     while(bit != null) {
       bit = StringOperators.getFirstTextBetweenStrings(newText, "<ff", ">");
       if(bit != null) newText = newText.replace("<ff" + bit + ">", "<font face=\"" + bit + "\">");
     }
+
     newText = newText.replace(/¬/, "<br/>");
     newText = newText.replace(/<fcBlack>/g, "<font color=\"#000000\">");
     newText = newText.replace(/<fcWhite>/g, "<font color=\"#FFFFFF\">");
@@ -22322,11 +22338,13 @@ define('src/index', ['exports'], function (exports) {
     newText = newText.replace(/<fcCyan>/g, "<font color=\"#00FFFF\">");
     newText = newText.replace(/<fcYellow>/g, "<font color=\"#FFFF00\">");
     newText = newText.replace(/<fcMagenta>/g, "<font color=\"#FF00FF\">");
+
     bit = "";
     while(bit != null) {
       bit = StringOperators.getFirstTextBetweenStrings(newText, "<fcuint", ">");
       if(bit != null) newText = newText.replace("<fcuint" + bit + ">", "<font color=\"" + ColorOperators__default.uinttoHEX(bit) + "\">");
     }
+
     bit = "";
     while(bit != null) {
       bit = StringOperators.getFirstTextBetweenStrings(newText, "<frgb", ">");
@@ -22335,12 +22353,15 @@ define('src/index', ['exports'], function (exports) {
         newText = newText.replace("<frgb" + bit + ">", "<font color=\"" + ColorOperators__default.RGBtoHEX(Number(rgb[0]), Number(rgb[1]), Number(rgb[2])) + "\">");
       }
     }
-    bit = "";
-    while(bit != null) {
-      bit = StringOperators.getFirstTextBetweenStrings(newText, "<fc", ">");
-      if(bit != null){
-        var newbit = bit[0] == "#"?bit.substr(1):bit;
-        newText = newText.replace("<fc" + bit + ">", "<font color=\"#" + newbit + "\">");
+
+    if(newText.indexOf("<fc")!=-1){
+      bit = "";
+      while(bit != null) {
+        bit = StringOperators.getFirstTextBetweenStrings(newText, "<fc", ">");
+        if(bit != null){
+          //var newbit = bit[0];// == "#"?bit.substr(1):bit;
+          newText = newText.replace("<fc" + bit + ">", "<font color=\"#" + bit + "\">");
+        }
       }
     }
 
@@ -22349,11 +22370,13 @@ define('src/index', ['exports'], function (exports) {
       bit = StringOperators.getFirstTextBetweenStrings(newText, "<tl", ">");
       if(bit != null) newText = newText.replace("<tl" + bit + ">", "<textformat leftmargin=\"" + bit + "\">");
     }
+
     bit = "";
     while(bit != null) {
       bit = StringOperators.getFirstTextBetweenStrings(newText, "<tv", ">");
       if(bit != null) newText = newText.replace("<tv" + bit + ">", "<textformat leading=\"" + bit + "\">");
     }
+
 
     bit = "";
     var href;
@@ -22374,12 +22397,11 @@ define('src/index', ['exports'], function (exports) {
         if(href.substr(0, 7) == "http://" ||  href.substr(0, 8) == "https://") {
           newText = newText.replace("<e" + bit + ">", "<u><a href='" + href + "' target='" + target + "'>" + text + "</a></u>");
         } else {
-          //var index=getUniqueGlobalFunc(onEvent, scope);
-          //newText = newText.replace("<e"+bit+">", "<u><a href='javascript:clickLink()' onclick='event.preventDefault(); executeUniqueGlobalFunc("+index+", "+href+");return false; '>"+text+"</a></u>");
           newText = newText.replace("<e" + bit + ">", "<u><a href='javascript:FastHtml.clickLink(\"" + href + "\")' FastHtml.onclick='event.preventDefault(); clickLink(\"" + href + "\"); return false; '>" + text + "</a></u>");
         }
       }
     }
+
 
     newText = newText.replace(/<pl>/g, "<p align=\"left\">");
     newText = newText.replace(/<pc>/g, "<p align=\"center\">");

@@ -208,7 +208,7 @@ ColorListGenerators.createCategoricalColorListForList = function(list, colorList
     color = "#fff";
   if(!interpolate)
     interpolate = 0;
-
+  
   list = List.fromArray(list);
   var diffValues = list.getWithoutRepetitions();
   var diffColors;

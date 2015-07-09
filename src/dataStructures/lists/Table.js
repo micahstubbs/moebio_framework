@@ -383,7 +383,7 @@ Table.prototype.getReport = function(level) {
   }
 
   ///add ideas to: analyze, visualize
-
+  
   return text;
 };
 
@@ -396,7 +396,7 @@ Table.prototype.getReportHtml = function(level) {
   var averageLength = (minLength + maxLength) * 0.5;
   var sameLengths = minLength == maxLength;
 
-  var text = "<b>" +( level > 0 ? (ident + "<fs16>table report</f>") : "<fs18>table report</f>" ) + "</b>";
+  var text = "<b>" +( level > 0 ? (ident + "<font style=\"font-size:16px\">table report</f>") : "<font style=\"font-size:18px\">table report</f>" ) + "</b>";
 
   if(this.length === 0) {
     text += ident + "this table has no lists";
@@ -427,7 +427,7 @@ Table.prototype.getReportHtml = function(level) {
 
   text += "<hr>";
   names.forEach(function(name, i){
-    text += ident + "<fs10>" +i + ":</f><b>" + name + "</b> <fc"+getColorFromDataModelType(types[i])+ ">" + TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"</f>";
+    text += ident + "<font style=\"font-size:10px\">" +i + ":</f><b>" + name + "</b> <font color=\""+getColorFromDataModelType(types[i])+ "\">" + TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"</f>";
   });
   text += "<hr>";
 
@@ -437,7 +437,7 @@ Table.prototype.getReportHtml = function(level) {
   } else {
     text += ident + "types: ";
     types.forEach(function(type, i){
-      text += "<b><fc"+getColorFromDataModelType(type)+ ">" + type+"</f></b>";
+      text += "<b><font color=\""+getColorFromDataModelType(type)+ "\">" + type+"</f></b>";
       if(i<types.length-1) text += ", ";
     });
   }
@@ -448,7 +448,7 @@ Table.prototype.getReportHtml = function(level) {
 
   if(this.length < 501) {
     text += "<hr>";
-    text +=  ident + "<fs16><b>lists reports</b></f>";
+    text +=  ident + "<font style=\"font-size:16px\"><b>lists reports</b></f>";
 
     var i;
     for(i = 0; this[i] != null; i++) {
@@ -456,7 +456,7 @@ Table.prototype.getReportHtml = function(level) {
       try{
          text += this[i].getReportHtml(1);
       } catch(err){
-        text += ident + "[!] something wrong with list <fs10>:" + err + "</f>";
+        text += ident + "[!] something wrong with list <font style=\"font-size:10px\">:" + err + "</f>";
         c.l('getReportHtml err', err);
       }
     }
