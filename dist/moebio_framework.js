@@ -15621,8 +15621,8 @@ define('src/index', ['exports'], function (exports) {
   /**
    * create a colorList based on a colorScale and values from a numberList (that will be normalized)
    * @param  {NumberList} numberList
-   * @param  {ColorScale} colorScale
    * 
+   * @param  {ColorScale} colorScale
    * @param  {Number} mode 0:normalize numberList
    * @return {ColorList}
    * tags:generator
@@ -15631,6 +15631,7 @@ define('src/index', ['exports'], function (exports) {
     if(numberList==null) return null;
     
     mode = mode == null ? 0 : mode;
+    colorScale = colorScale==null?ColorScales__default.grayToOrange:colorScale;
 
     var colorList = new ColorList();
     var newNumberList;
