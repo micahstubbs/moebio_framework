@@ -1999,16 +1999,9 @@ define('src/index', ['exports'], function (exports) {
 
         if(joined.length < 2000) text += ident + "contents: [" + joined + "]";
         
-        var weights = freqTable[1].getNormalizedToSum(55);
-        var bars = "";
-        weights.forEach(function(w, j){
-          w = Math.floor(w) +  ( (w - Math.floor(w))>Math.random()?1:0 );
-          bars += "<font color=\""+ColorOperators.colorStringToHEX(catColors[j])+"\">";
-          for(i=0; i<w; i++){
-            bars += "█";
-          }
-          bars += "</f>";
-        });
+        var weights = freqTable[1].getNormalizedToSum();
+        
+        var bars = StringOperators.createsCategoricalColorsBlocksHtml(weights, 55, catColors);
         text += ident;
         text += "<font style=\"font-size:7px\">"+bars+"</f>";
 
@@ -2417,6 +2410,7 @@ define('src/index', ['exports'], function (exports) {
     result.getSubListsByIndexes = Table.prototype.getSubListsByIndexes;
     result.getWithoutRow = Table.prototype.getWithoutRow;
     result.getWithoutRows = Table.prototype.getWithoutRows;
+    result.getSubTableByElementOnList = Table.prototype.getSubTableByElementOnList;
     result.getTransposed = Table.prototype.getTransposed;
     result.getListsSortedByList = Table.prototype.getListsSortedByList;
     result.sortListsByList = Table.prototype.sortListsByList;
@@ -2545,6 +2539,7 @@ define('src/index', ['exports'], function (exports) {
    * Returns a new Table with the row at the given index removed.
    * @param {Number} rowIndex Row to remove
    * @return {Table} New Table.
+   * tags:filter
    */
   Table.prototype.getWithoutRow = function(rowIndex) {
     var newTable = new Table();
@@ -2557,9 +2552,10 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Returns a new Table with the rows listed in the given array removed.
-   * @param {Number[]} rowsIndexes Array of row indecies to remove.
-   * @return {undefined}
+   * Returns a new Table with the rows listed in the given numberList removed.
+   * @param {NumberList} rowsIndexes numberList of row indexes to remove.
+   * @return {Table}
+   * tags:filter
    */
   Table.prototype.getWithoutRows = function(rowsIndexes) {
     var newTable = new Table();
@@ -2573,6 +2569,47 @@ define('src/index', ['exports'], function (exports) {
     }
     return newTable.getImproved();
   };
+
+  /**
+   * filters lists on a table, keeping elements that are in teh same of row of a certain element of a given list from the table
+   * @param  {Number} nList index of list containing the element
+   * @param  {Object} element used to filter the lists on the table
+   * @return {Table}
+   * tags:filter
+   */
+  Table.prototype.getSubTableByElementOnList = function(nList, element){
+    if(nList==null || element==null) return;
+
+    var i, j, value, list;
+
+    if(nList<0) nList = this.length+nList;
+    nList = nList%this.length;
+
+    var newTable = instantiateWithSameType(this);
+    newTable.name = this.name;
+
+    this.forEach(function(list){
+      var newList = new List__default();
+      newList.name = list.name;
+      newTable.push(newList);
+    });
+
+    var supervised = this[nList];
+
+    for(i=0; supervised[i]!=null; i++){
+      if(element==supervised[i]){
+         for(j=0; newTable[j]!=null; j++){
+            newTable[j].push(this[j][i]);
+         }
+      }
+    }
+
+    newTable.forEach(function(list, i){
+      newTable[i] = list.getImproved();
+    });
+
+    return newTable.getImproved();
+  }
 
   /**
    * Sort Table's lists by a list
@@ -2741,7 +2778,7 @@ define('src/index', ['exports'], function (exports) {
     }
 
     ///add ideas to: analyze, visualize
-    
+
     return text;
   };
 
@@ -5742,6 +5779,7 @@ define('src/index', ['exports'], function (exports) {
 
   	var good = true;
   	var message = '';
+    var error;
 
   	var realCode;
 
@@ -5793,12 +5831,14 @@ define('src/index', ['exports'], function (exports) {
   		good = false;
   		message = err.message;
   		res = null;
+      error = err;
   	}
 
     var resultObject = {
       result: res,
       success: good,
-      errorMessage: message
+      errorMessage: message,
+      error: error
     };
 
     return resultObject;
@@ -10856,6 +10896,25 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
+   * builds a dictionar object (relational array) for a dictionar (table with two lists)
+   * @param  {Table} dictionary table with two lists, typically without repetitions, elements of the second list being the 'translation' of the correspdonent on the first
+   * @return {Object} relational array
+   * tags:
+   */
+  ListOperators__ListOperators.buildDictionaryObjectForDictionary = function(dictionary){
+    if(dictionary==null || dictionary.length<2) return;
+
+    var dictionaryObject = {};
+
+    dictionary[0].forEach(function(element, i){
+      dictionaryObject[element] = dictionary[1][i];
+    });
+
+    return dictionaryObject;
+  }
+
+
+  /**
    * using a table with two columns as a dictionary (first list elements to be read, second list result elements), translates a list
    * @param  {List} list to transalte
    * @param  {Table} dictionary table with two lists
@@ -10867,20 +10926,60 @@ define('src/index', ['exports'], function (exports) {
   ListOperators__ListOperators.translateWithDictionary = function(list, dictionary, nullElement) {
     if(list==null || dictionary==null || dictionary.length<2) return;
 
-    var newList = new List__default();
-    list.forEach(function(element, i) {
-      var index = dictionary[0].indexOf(element);
-      if(nullElement != null) {
-        newList[i] = index == -1 ? nullElement : dictionary[1][index];
-      } else {
-        newList[i] = index == -1 ? list[i] : dictionary[1][index];
-      }
-    });
+    var dictionaryObject = ListOperators__ListOperators.buildDictionaryObjectForDictionary(dictionary);
 
-    newList.name = dictionary[1].name;
+    var list = ListOperators__ListOperators.translateWithDictionaryObject(list, dictionaryObject, nullElement);
+
+    list.dictionaryObject = dictionaryObject;
     
-    return newList.getImproved();
+    return list;
+
+    // var newList = new List();
+    // list.forEach(function(element, i) {
+
+    //   var index = dictionary[0].indexOf(element);
+    //   if(nullElement != null) {
+    //     newList[i] = index == -1 ? nullElement : dictionary[1][index];
+    //   } else {
+    //     newList[i] = index == -1 ? list[i] : dictionary[1][index];
+    //   }
+    // });
+
+    // newList.name = dictionary[1].name;
+
+    // newList = newList.getImproved();
+    // newList.dictionaryObject = dictionaryObject;
+    
+    // return newList;
   };
+
+  /**
+   * creates a new list that is a translation of a list using a dictionar object (a relation array)
+   * @param  {List} list
+   * @param  {Object} dictionaryObject
+   * 
+   * @param  {Object} nullElement
+   * @return {List}
+   * tags:
+   */
+  ListOperators__ListOperators.translateWithDictionaryObject = function(list, dictionaryObject, nullElement) {
+    if(list==null || dictionaryObject==null) return;
+
+    var newList = new List__default();
+    var i;
+
+    list.forEach(function(element, i) {
+      newList[i] = dictionaryObject[element];
+    });
+    if(nullElement!=null){
+      var l = list.length;
+      for(i=0; i<l; i++){
+        if(newList[i]==null) newList[i]=nullElement;
+      }
+    }
+    newList.name = list.name;
+    return newList.getImproved();
+  }
 
 
   // ListOperators.getIndexesOfElements=function(list, elements){
@@ -11639,6 +11738,40 @@ define('src/index', ['exports'], function (exports) {
   StringOperators.MAIL_REGEX = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   StringOperators.STOP_WORDS = StringList.fromArray("t,s,mt,rt,re,m,http,amp,a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,or,other,our,own,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your".split(","));
 
+
+
+  /**
+   * creates an html string that depicts a proprtions bar with colors for categories
+   * @param  {NumberList} normalizedWeights normalized weights
+   * 
+   * @param  {Number} nChars width in characters
+   * @param  {ColorList} colors list of categorical colors
+   * @param  {String} character character or characters to be used as primitive
+   * @return {String} html depciting colored segments forming a bar in a single line
+   */
+  StringOperators.createsCategoricalColorsBlocksHtml = function(normalizedWeights, nChars, colors, character){
+    if(normalizedWeights==null) return "";
+
+    var bars="";
+
+    nChars = nChars==null?20:nChars;
+    colors = colors==null?ColorListGenerators.createDefaultCategoricalColorList(normalizedWeights.length):colors;
+    character = character==null?"█":character;
+
+    normalizedWeights.forEach(function(w, j){
+      w = Math.floor(w*nChars) +  ( (w*nChars - Math.floor(w*nChars))>Math.random()?1:0 );
+      bars += "<font color=\""+ColorOperators.colorStringToHEX(colors[j])+"\">";
+      for(i=0; i<w; i++){
+        bars += character;
+      }
+      bars += "</f>";
+    });
+
+    return bars;
+  }
+
+
+
   /**
    * splits a String by a character (entre by default)
    * @param  {String} string
@@ -11724,6 +11857,92 @@ define('src/index', ['exports'], function (exports) {
     }
 
     return string;
+  };
+
+  /**
+   * builds a stringList of words contained in the text
+   * @param  {String} string text to be analyzed
+   *
+   * @param  {Boolean} withoutRepetitions remove words repetitions
+   * @param  {Boolean} stopWords remove stop words
+   * @param  {Boolean} sortedByFrequency  sorted by frequency in text
+   * @param  {Boolean} includeLinks include html links
+   * @param  {Number} limit of words
+   * @param  {Number} minSizeWords minimal number of characters of words
+   * @return {StringList}
+   * tags:
+   */
+  StringOperators.getWords = function(string, withoutRepetitions, stopWords, sortedByFrequency, includeLinks, limit, minSizeWords) {
+    if(string == null) return null;
+
+    minSizeWords = minSizeWords || 0;
+    withoutRepetitions = withoutRepetitions == null ? true : withoutRepetitions;
+    sortedByFrequency = sortedByFrequency == null ? true : sortedByFrequency;
+    includeLinks = includeLinks == null ? true : includeLinks;
+    limit = limit == null ? 0 : limit;
+
+    var i, j;
+
+    if(includeLinks) var links = string.match(StringOperators.LINK_REGEX);
+    string = string.toLowerCase().replace(StringOperators.LINK_REGEX, "");
+
+    var list = string.match(/\w+/g);
+    if(list == null) return new StringList();
+
+    if(includeLinks && links != null) list = list.concat(links);
+    list = StringList.fromArray(list).replace(/ /g, "");
+
+    if(stopWords != null) { //TODO:check before if all stopwrds are strings
+      //list.removeElements(stopWords);
+
+      for(i = 0; list[i] != null; i++) {
+        for(j = 0; stopWords[j] != null; j++) {
+          if((typeof stopWords[j]) == 'string') {
+            if(stopWords[j] == list[i]) {
+              list.splice(i, 1);
+              i--;
+              break;
+            }
+          } else if(stopWords[j].test(list[i])) {
+            list.splice(i, 1);
+            i--;
+            break;
+          }
+        }
+      }
+
+    }
+
+    if(minSizeWords > 0) {
+      for(i = 0; list[i] != null; i++) {
+        if(list[i].length < minSizeWords) {
+          list.splice(i, 1);
+          i--;
+        }
+      }
+    }
+
+    if(sortedByFrequency) {
+      if(withoutRepetitions) {
+        list = list.getElementsRepetitionCount(true)[0];// //ListOperators.countElementsRepetitionOnList(list, true)[0];
+        if(limit != 0) list = list.substr(0, limit);
+
+        return list;
+      }
+
+      var occurrences = ListOperators__default.countOccurrencesOnList(list);
+      list = list.getSortedByList(occurrences);
+      if(limit != 0) list = list.substr(0, limit);
+
+      return list;
+    }
+
+    if(withoutRepetitions) {
+      list = list.getWithoutRepetitions();
+    }
+
+    if(limit != 0) list = list.splice(0, limit);
+    return list;
   };
 
 
@@ -12086,91 +12305,7 @@ define('src/index', ['exports'], function (exports) {
   // 	return string.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
   // }
 
-  /**
-   * builds a stringList of words contained in the text
-   * @param  {String} string text to be analyzed
-   *
-   * @param  {Boolean} withoutRepetitions remove words repetitions
-   * @param  {Boolean} stopWords remove stop words
-   * @param  {Boolean} sortedByFrequency  sorted by frequency in text
-   * @param  {Boolean} includeLinks include html links
-   * @param  {Number} limit of words
-   * @param  {Number} minSizeWords minimal number of characters of words
-   * @return {StringList}
-   * tags:
-   */
-  StringOperators.getWords = function(string, withoutRepetitions, stopWords, sortedByFrequency, includeLinks, limit, minSizeWords) {
-    if(string == null) return null;
 
-    minSizeWords = minSizeWords || 0;
-    withoutRepetitions = withoutRepetitions == null ? true : withoutRepetitions;
-    sortedByFrequency = sortedByFrequency == null ? true : sortedByFrequency;
-    includeLinks = includeLinks == null ? true : includeLinks;
-    limit = limit == null ? 0 : limit;
-
-    var i, j;
-
-    if(includeLinks) var links = string.match(StringOperators.LINK_REGEX);
-    string = string.toLowerCase().replace(StringOperators.LINK_REGEX, "");
-
-    var list = string.match(/\w+/g);
-    if(list == null) return new StringList();
-
-    if(includeLinks && links != null) list = list.concat(links);
-    list = StringList.fromArray(list).replace(/ /g, "");
-
-    if(stopWords != null) { //TODO:check before if all stopwrds are strings
-      //list.removeElements(stopWords);
-
-      for(i = 0; list[i] != null; i++) {
-        for(j = 0; stopWords[j] != null; j++) {
-          if((typeof stopWords[j]) == 'string') {
-            if(stopWords[j] == list[i]) {
-              list.splice(i, 1);
-              i--;
-              break;
-            }
-          } else if(stopWords[j].test(list[i])) {
-            list.splice(i, 1);
-            i--;
-            break;
-          }
-        }
-      }
-
-    }
-
-    if(minSizeWords > 0) {
-      for(i = 0; list[i] != null; i++) {
-        if(list[i].length < minSizeWords) {
-          list.splice(i, 1);
-          i--;
-        }
-      }
-    }
-
-    if(sortedByFrequency) {
-      if(withoutRepetitions) {
-        list = list.getElementsRepetitionCount(true)[0];// //ListOperators.countElementsRepetitionOnList(list, true)[0];
-        if(limit != 0) list = list.substr(0, limit);
-
-        return list;
-      }
-
-      var occurrences = ListOperators__default.countOccurrencesOnList(list);
-      list = list.getSortedByList(occurrences);
-      if(limit != 0) list = list.substr(0, limit);
-
-      return list;
-    }
-
-    if(withoutRepetitions) {
-      list = list.getWithoutRepetitions();
-    }
-
-    if(limit != 0) list = list.splice(0, limit);
-    return list;
-  };
 
   function StringOperators__removeAccentsAndDiacritics(string) {
     var r = string.replace(new RegExp(/[àáâãäå]/g), "a");
@@ -15673,29 +15808,31 @@ define('src/index', ['exports'], function (exports) {
    * @param {Number} alpha transparency
    * @param {String} interpolateColor color to interpolate
    * @param {Number} interpolateValue interpolation value [0, 1]
+   * @param {ColorList} colorList colorList to be used in mode 2 (if not colorList is provided it will use default categorical colors)
    * @return {ColorList} ColorList with categorical colors
    * tags:generator
    */
-  ColorListGenerators__ColorListGenerators.createCategoricalColors = function(mode, nColors, colorScaleFunction, alpha, interpolateColor, interpolateValue) {
+  ColorListGenerators__ColorListGenerators.createCategoricalColors = function(mode, nColors, colorScaleFunction, alpha, interpolateColor, interpolateValue, colorList) {
     colorScaleFunction = colorScaleFunction == null ? ColorScales__default.temperature : colorScaleFunction;
 
     var i;
-    var colorList = new ColorList();
+    var newColorList = new ColorList();
     switch(mode) {
       case 0: //picking from ColorScale
         for(i = 0; i < nColors; i++) {
-          colorList[i] = colorScaleFunction(i / (nColors - 1));
+          newColorList[i] = colorScaleFunction(i / (nColors - 1));
         }
         break;
       case 1: //seeded random numbers
         var values = NumberListGenerators.createRandomNumberList(nColors, null, 0);
         for(i = 0; i < nColors; i++) {
-          colorList[i] = colorScaleFunction(values[i]);
+          newColorList[i] = colorScaleFunction(values[i]);
         }
         break;
       case 2:
+        colorList = colorList==null?ColorListGenerators__ColorListGenerators._HARDCODED_CATEGORICAL_COLORS:colorList;
         for(i = 0; i < nColors; i++) {
-          colorList[i] = ColorListGenerators__ColorListGenerators._HARDCODED_CATEGORICAL_COLORS[i % ColorListGenerators__ColorListGenerators._HARDCODED_CATEGORICAL_COLORS.length];
+          newColorList[i] = colorList[i%colorList.length];
         }
         break;
       case 5:
@@ -15727,20 +15864,20 @@ define('src/index', ['exports'], function (exports) {
         }
 
         for(i = 0; i < nColors; i++) {
-          colorList.push(colorScaleFunction((1 / nColors) + randomPositions[i] / (nColors + 1))); //TODO: make more efficient by pre-nuilding the colorList
+          newColorList.push(colorScaleFunction((1 / nColors) + randomPositions[i] / (nColors + 1))); //TODO: make more efficient by pre-nuilding the colorList
         }
         break;
     }
 
     if(interpolateColor != null && interpolateValue != null) {
-      colorList = colorList.getInterpolated(interpolateColor, interpolateValue);
+      newColorList = newColorList.getInterpolated(interpolateColor, interpolateValue);
     }
 
     if(alpha) {
-      colorList = colorList.addAlpha(alpha);
+      newColorList = newColorList.addAlpha(alpha);
     }
 
-    return colorList;
+    return newColorList;
   };
 
   ColorListGenerators__ColorListGenerators._sortingVariation = function(numberList, rnd0, rnd1) { //private
@@ -15761,6 +15898,39 @@ define('src/index', ['exports'], function (exports) {
     return sum;
   };
 
+  /**
+   * Creates an object dictionary that matches elements from a list (that could contan repeated elements) with categorical colors
+   * @param {List} the list containing categorical data
+   *
+   * @param {ColorList} ColorList with categorical colors
+   * @param {Number} alpha transparency
+   * @param {String} color to mix
+   * @param {Number} interpolation value (0-1) for color mix
+   * @param {Boolean} invert invert colors
+   * @return {Object} object dictionar that delivers a color for each element on original list
+   * tags:generator
+   */
+  ColorListGenerators__ColorListGenerators.createCategoricalColorListDictionaryObject = function(list, colorList, alpha, color, interpolate, invert){
+    if(list==null) return;
+
+    c.l('ColorListGenerators.createCategoricalColorListDictionaryObject | list:', list);
+
+    var diffValues = list.getWithoutRepetitions();
+    var diffColors = ColorListGenerators__ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate, colorList);
+    if(invert) diffColors = diffColors.getInverted();
+
+    var dictionaryObject = {};
+
+    diffValues.forEach(function(element, i){
+      dictionaryObject[element] = diffColors[i];
+    });
+
+    c.l('ColorListGenerators.createCategoricalColorListDictionaryObject | dictionaryObject:', dictionaryObject);
+
+    return dictionaryObject;
+
+  }
+
 
   /**
    * Creates a ColorList of categorical colors based on an input List. All entries with the same value will get the same color.
@@ -15775,6 +15945,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List} elements list of elemnts that match colors (equivalent to getWithoutRepetions)
    * @return {ColorList} ColorList with different categorical colors
    * @return {Table} dictionary dictionary table with elemnts and matching colors
+   * @return {Object} citionaryObject (relational array, from objects to colors)
    * tags:generator
    */
   ColorListGenerators__ColorListGenerators.createCategoricalColorListForList = function(list, colorList, alpha, color, interpolate, invert)
@@ -15792,10 +15963,11 @@ define('src/index', ['exports'], function (exports) {
     list = List__default.fromArray(list);
     var diffValues = list.getWithoutRepetitions();
     var diffColors;
-    if(colorList) {
+    if(colorList && interpolate!=0) {
       diffColors = colorList.getInterpolated(color, interpolate);
     } else {
-      diffColors = ColorListGenerators__ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate);
+      diffColors = ColorListGenerators__ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate, colorList);
+      
       //diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
     }
     diffColors = diffColors.addAlpha(alpha);
@@ -15803,7 +15975,9 @@ define('src/index', ['exports'], function (exports) {
     if(invert) diffColors = diffColors.getInverted();
 
     var colorDict = Table.fromArray([diffValues, diffColors]);
-    var fullColorList = ListOperators__default.translateWithDictionary(list, colorDict, "NULL");
+    var dictionaryObject = ListOperators__default.buildDictionaryObjectForDictionary(colorDict);
+
+    var fullColorList = ListOperators__default.translateWithDictionaryObject(list, colorDict, 'black');// ListOperators.translateWithDictionary(list, colorDict, "NULL");
 
     fullColorList = ColorList.fromArray(fullColorList);
 
@@ -15820,6 +15994,9 @@ define('src/index', ['exports'], function (exports) {
       }, {
         value: new Table(diffValues, fullColorList),
         type: 'Table'
+      }, {
+        value: dictionaryObject,
+        type: 'Object'
       }
     ];
   };

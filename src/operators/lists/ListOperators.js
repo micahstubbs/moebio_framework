@@ -244,6 +244,25 @@ ListOperators.reverse = function(list) {
 };
 
 /**
+ * builds a dictionar object (relational array) for a dictionar (table with two lists)
+ * @param  {Table} dictionary table with two lists, typically without repetitions, elements of the second list being the 'translation' of the correspdonent on the first
+ * @return {Object} relational array
+ * tags:
+ */
+ListOperators.buildDictionaryObjectForDictionary = function(dictionary){
+  if(dictionary==null || dictionary.length<2) return;
+
+  var dictionaryObject = {};
+
+  dictionary[0].forEach(function(element, i){
+    dictionaryObject[element] = dictionary[1][i];
+  });
+
+  return dictionaryObject;
+}
+
+
+/**
  * using a table with two columns as a dictionary (first list elements to be read, second list result elements), translates a list
  * @param  {List} list to transalte
  * @param  {Table} dictionary table with two lists
@@ -255,20 +274,60 @@ ListOperators.reverse = function(list) {
 ListOperators.translateWithDictionary = function(list, dictionary, nullElement) {
   if(list==null || dictionary==null || dictionary.length<2) return;
 
-  var newList = new List();
-  list.forEach(function(element, i) {
-    var index = dictionary[0].indexOf(element);
-    if(nullElement != null) {
-      newList[i] = index == -1 ? nullElement : dictionary[1][index];
-    } else {
-      newList[i] = index == -1 ? list[i] : dictionary[1][index];
-    }
-  });
+  var dictionaryObject = ListOperators.buildDictionaryObjectForDictionary(dictionary);
 
-  newList.name = dictionary[1].name;
+  var list = ListOperators.translateWithDictionaryObject(list, dictionaryObject, nullElement);
+
+  list.dictionaryObject = dictionaryObject;
   
-  return newList.getImproved();
+  return list;
+
+  // var newList = new List();
+  // list.forEach(function(element, i) {
+
+  //   var index = dictionary[0].indexOf(element);
+  //   if(nullElement != null) {
+  //     newList[i] = index == -1 ? nullElement : dictionary[1][index];
+  //   } else {
+  //     newList[i] = index == -1 ? list[i] : dictionary[1][index];
+  //   }
+  // });
+
+  // newList.name = dictionary[1].name;
+
+  // newList = newList.getImproved();
+  // newList.dictionaryObject = dictionaryObject;
+  
+  // return newList;
 };
+
+/**
+ * creates a new list that is a translation of a list using a dictionar object (a relation array)
+ * @param  {List} list
+ * @param  {Object} dictionaryObject
+ * 
+ * @param  {Object} nullElement
+ * @return {List}
+ * tags:
+ */
+ListOperators.translateWithDictionaryObject = function(list, dictionaryObject, nullElement) {
+  if(list==null || dictionaryObject==null) return;
+
+  var newList = new List();
+  var i;
+
+  list.forEach(function(element, i) {
+    newList[i] = dictionaryObject[element];
+  });
+  if(nullElement!=null){
+    var l = list.length;
+    for(i=0; i<l; i++){
+      if(newList[i]==null) newList[i]=nullElement;
+    }
+  }
+  newList.name = list.name;
+  return newList.getImproved();
+}
 
 
 // ListOperators.getIndexesOfElements=function(list, elements){

@@ -1482,16 +1482,9 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
 
       if(joined.length < 2000) text += ident + "contents: [" + joined + "]";
       
-      var weights = freqTable[1].getNormalizedToSum(55);
-      var bars = "";
-      weights.forEach(function(w, j){
-        w = Math.floor(w) +  ( (w - Math.floor(w))>Math.random()?1:0 );
-        bars += "<font color=\""+ColorOperators.colorStringToHEX(catColors[j])+"\">";
-        for(i=0; i<w; i++){
-          bars += "█";
-        }
-        bars += "</f>";
-      });
+      var weights = freqTable[1].getNormalizedToSum();
+      
+      var bars = StringOperators.createsCategoricalColorsBlocksHtml(weights, 55, catColors);
       text += ident;
       text += "<font style=\"font-size:7px\">"+bars+"</f>";
 

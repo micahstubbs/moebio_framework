@@ -20,6 +20,40 @@ StringOperators.LINK_REGEX = /(^|\s+)(https*\:\/\/\S+[^\.\s+])/;
 StringOperators.MAIL_REGEX = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 StringOperators.STOP_WORDS = StringList.fromArray("t,s,mt,rt,re,m,http,amp,a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,or,other,our,own,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your".split(","));
 
+
+
+/**
+ * creates an html string that depicts a proprtions bar with colors for categories
+ * @param  {NumberList} normalizedWeights normalized weights
+ * 
+ * @param  {Number} nChars width in characters
+ * @param  {ColorList} colors list of categorical colors
+ * @param  {String} character character or characters to be used as primitive
+ * @return {String} html depciting colored segments forming a bar in a single line
+ */
+StringOperators.createsCategoricalColorsBlocksHtml = function(normalizedWeights, nChars, colors, character){
+  if(normalizedWeights==null) return "";
+
+  var bars="";
+
+  nChars = nChars==null?20:nChars;
+  colors = colors==null?ColorListGenerators.createDefaultCategoricalColorList(normalizedWeights.length):colors;
+  character = character==null?"█":character;
+
+  normalizedWeights.forEach(function(w, j){
+    w = Math.floor(w*nChars) +  ( (w*nChars - Math.floor(w*nChars))>Math.random()?1:0 );
+    bars += "<font color=\""+ColorOperators.colorStringToHEX(colors[j])+"\">";
+    for(i=0; i<w; i++){
+      bars += character;
+    }
+    bars += "</f>";
+  });
+
+  return bars;
+}
+
+
+
 /**
  * splits a String by a character (entre by default)
  * @param  {String} string
@@ -105,6 +139,92 @@ StringOperators.replaceSubStringsByStrings = function(string, subStrings, replac
   }
 
   return string;
+};
+
+/**
+ * builds a stringList of words contained in the text
+ * @param  {String} string text to be analyzed
+ *
+ * @param  {Boolean} withoutRepetitions remove words repetitions
+ * @param  {Boolean} stopWords remove stop words
+ * @param  {Boolean} sortedByFrequency  sorted by frequency in text
+ * @param  {Boolean} includeLinks include html links
+ * @param  {Number} limit of words
+ * @param  {Number} minSizeWords minimal number of characters of words
+ * @return {StringList}
+ * tags:
+ */
+StringOperators.getWords = function(string, withoutRepetitions, stopWords, sortedByFrequency, includeLinks, limit, minSizeWords) {
+  if(string == null) return null;
+
+  minSizeWords = minSizeWords || 0;
+  withoutRepetitions = withoutRepetitions == null ? true : withoutRepetitions;
+  sortedByFrequency = sortedByFrequency == null ? true : sortedByFrequency;
+  includeLinks = includeLinks == null ? true : includeLinks;
+  limit = limit == null ? 0 : limit;
+
+  var i, j;
+
+  if(includeLinks) var links = string.match(StringOperators.LINK_REGEX);
+  string = string.toLowerCase().replace(StringOperators.LINK_REGEX, "");
+
+  var list = string.match(/\w+/g);
+  if(list == null) return new StringList();
+
+  if(includeLinks && links != null) list = list.concat(links);
+  list = StringList.fromArray(list).replace(/ /g, "");
+
+  if(stopWords != null) { //TODO:check before if all stopwrds are strings
+    //list.removeElements(stopWords);
+
+    for(i = 0; list[i] != null; i++) {
+      for(j = 0; stopWords[j] != null; j++) {
+        if((typeof stopWords[j]) == 'string') {
+          if(stopWords[j] == list[i]) {
+            list.splice(i, 1);
+            i--;
+            break;
+          }
+        } else if(stopWords[j].test(list[i])) {
+          list.splice(i, 1);
+          i--;
+          break;
+        }
+      }
+    }
+
+  }
+
+  if(minSizeWords > 0) {
+    for(i = 0; list[i] != null; i++) {
+      if(list[i].length < minSizeWords) {
+        list.splice(i, 1);
+        i--;
+      }
+    }
+  }
+
+  if(sortedByFrequency) {
+    if(withoutRepetitions) {
+      list = list.getElementsRepetitionCount(true)[0];// //ListOperators.countElementsRepetitionOnList(list, true)[0];
+      if(limit != 0) list = list.substr(0, limit);
+
+      return list;
+    }
+
+    var occurrences = ListOperators.countOccurrencesOnList(list);
+    list = list.getSortedByList(occurrences);
+    if(limit != 0) list = list.substr(0, limit);
+
+    return list;
+  }
+
+  if(withoutRepetitions) {
+    list = list.getWithoutRepetitions();
+  }
+
+  if(limit != 0) list = list.splice(0, limit);
+  return list;
 };
 
 
@@ -467,91 +587,7 @@ StringOperators.removeQuotes = function(string) { //TODO:improve
 // 	return string.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 // }
 
-/**
- * builds a stringList of words contained in the text
- * @param  {String} string text to be analyzed
- *
- * @param  {Boolean} withoutRepetitions remove words repetitions
- * @param  {Boolean} stopWords remove stop words
- * @param  {Boolean} sortedByFrequency  sorted by frequency in text
- * @param  {Boolean} includeLinks include html links
- * @param  {Number} limit of words
- * @param  {Number} minSizeWords minimal number of characters of words
- * @return {StringList}
- * tags:
- */
-StringOperators.getWords = function(string, withoutRepetitions, stopWords, sortedByFrequency, includeLinks, limit, minSizeWords) {
-  if(string == null) return null;
 
-  minSizeWords = minSizeWords || 0;
-  withoutRepetitions = withoutRepetitions == null ? true : withoutRepetitions;
-  sortedByFrequency = sortedByFrequency == null ? true : sortedByFrequency;
-  includeLinks = includeLinks == null ? true : includeLinks;
-  limit = limit == null ? 0 : limit;
-
-  var i, j;
-
-  if(includeLinks) var links = string.match(StringOperators.LINK_REGEX);
-  string = string.toLowerCase().replace(StringOperators.LINK_REGEX, "");
-
-  var list = string.match(/\w+/g);
-  if(list == null) return new StringList();
-
-  if(includeLinks && links != null) list = list.concat(links);
-  list = StringList.fromArray(list).replace(/ /g, "");
-
-  if(stopWords != null) { //TODO:check before if all stopwrds are strings
-    //list.removeElements(stopWords);
-
-    for(i = 0; list[i] != null; i++) {
-      for(j = 0; stopWords[j] != null; j++) {
-        if((typeof stopWords[j]) == 'string') {
-          if(stopWords[j] == list[i]) {
-            list.splice(i, 1);
-            i--;
-            break;
-          }
-        } else if(stopWords[j].test(list[i])) {
-          list.splice(i, 1);
-          i--;
-          break;
-        }
-      }
-    }
-
-  }
-
-  if(minSizeWords > 0) {
-    for(i = 0; list[i] != null; i++) {
-      if(list[i].length < minSizeWords) {
-        list.splice(i, 1);
-        i--;
-      }
-    }
-  }
-
-  if(sortedByFrequency) {
-    if(withoutRepetitions) {
-      list = list.getElementsRepetitionCount(true)[0];// //ListOperators.countElementsRepetitionOnList(list, true)[0];
-      if(limit != 0) list = list.substr(0, limit);
-
-      return list;
-    }
-
-    var occurrences = ListOperators.countOccurrencesOnList(list);
-    list = list.getSortedByList(occurrences);
-    if(limit != 0) list = list.substr(0, limit);
-
-    return list;
-  }
-
-  if(withoutRepetitions) {
-    list = list.getWithoutRepetitions();
-  }
-
-  if(limit != 0) list = list.splice(0, limit);
-  return list;
-};
 
 function removeAccentsAndDiacritics(string) {
   var r = string.replace(new RegExp(/[àáâãäå]/g), "a");

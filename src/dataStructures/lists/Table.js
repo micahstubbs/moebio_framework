@@ -59,6 +59,7 @@ Table.fromArray = function(array) {
   result.getSubListsByIndexes = Table.prototype.getSubListsByIndexes;
   result.getWithoutRow = Table.prototype.getWithoutRow;
   result.getWithoutRows = Table.prototype.getWithoutRows;
+  result.getSubTableByElementOnList = Table.prototype.getSubTableByElementOnList;
   result.getTransposed = Table.prototype.getTransposed;
   result.getListsSortedByList = Table.prototype.getListsSortedByList;
   result.sortListsByList = Table.prototype.sortListsByList;
@@ -187,6 +188,7 @@ Table.prototype.getRows = function(indexes) {
  * Returns a new Table with the row at the given index removed.
  * @param {Number} rowIndex Row to remove
  * @return {Table} New Table.
+ * tags:filter
  */
 Table.prototype.getWithoutRow = function(rowIndex) {
   var newTable = new Table();
@@ -199,9 +201,10 @@ Table.prototype.getWithoutRow = function(rowIndex) {
 };
 
 /**
- * Returns a new Table with the rows listed in the given array removed.
- * @param {Number[]} rowsIndexes Array of row indecies to remove.
- * @return {undefined}
+ * Returns a new Table with the rows listed in the given numberList removed.
+ * @param {NumberList} rowsIndexes numberList of row indexes to remove.
+ * @return {Table}
+ * tags:filter
  */
 Table.prototype.getWithoutRows = function(rowsIndexes) {
   var newTable = new Table();
@@ -215,6 +218,47 @@ Table.prototype.getWithoutRows = function(rowsIndexes) {
   }
   return newTable.getImproved();
 };
+
+/**
+ * filters lists on a table, keeping elements that are in teh same of row of a certain element of a given list from the table
+ * @param  {Number} nList index of list containing the element
+ * @param  {Object} element used to filter the lists on the table
+ * @return {Table}
+ * tags:filter
+ */
+Table.prototype.getSubTableByElementOnList = function(nList, element){
+  if(nList==null || element==null) return;
+
+  var i, j, value, list;
+
+  if(nList<0) nList = this.length+nList;
+  nList = nList%this.length;
+
+  var newTable = instantiateWithSameType(this);
+  newTable.name = this.name;
+
+  this.forEach(function(list){
+    var newList = new List();
+    newList.name = list.name;
+    newTable.push(newList);
+  });
+
+  var supervised = this[nList];
+
+  for(i=0; supervised[i]!=null; i++){
+    if(element==supervised[i]){
+       for(j=0; newTable[j]!=null; j++){
+          newTable[j].push(this[j][i]);
+       }
+    }
+  }
+
+  newTable.forEach(function(list, i){
+    newTable[i] = list.getImproved();
+  });
+
+  return newTable.getImproved();
+}
 
 /**
  * Sort Table's lists by a list
@@ -383,7 +427,7 @@ Table.prototype.getReport = function(level) {
   }
 
   ///add ideas to: analyze, visualize
-  
+
   return text;
 };
 

@@ -94,29 +94,31 @@ ColorListGenerators.createColorListWithSingleColor = function(nColors, color) {
  * @param {Number} alpha transparency
  * @param {String} interpolateColor color to interpolate
  * @param {Number} interpolateValue interpolation value [0, 1]
+ * @param {ColorList} colorList colorList to be used in mode 2 (if not colorList is provided it will use default categorical colors)
  * @return {ColorList} ColorList with categorical colors
  * tags:generator
  */
-ColorListGenerators.createCategoricalColors = function(mode, nColors, colorScaleFunction, alpha, interpolateColor, interpolateValue) {
+ColorListGenerators.createCategoricalColors = function(mode, nColors, colorScaleFunction, alpha, interpolateColor, interpolateValue, colorList) {
   colorScaleFunction = colorScaleFunction == null ? ColorScales.temperature : colorScaleFunction;
 
   var i;
-  var colorList = new ColorList();
+  var newColorList = new ColorList();
   switch(mode) {
     case 0: //picking from ColorScale
       for(i = 0; i < nColors; i++) {
-        colorList[i] = colorScaleFunction(i / (nColors - 1));
+        newColorList[i] = colorScaleFunction(i / (nColors - 1));
       }
       break;
     case 1: //seeded random numbers
       var values = NumberListGenerators.createRandomNumberList(nColors, null, 0);
       for(i = 0; i < nColors; i++) {
-        colorList[i] = colorScaleFunction(values[i]);
+        newColorList[i] = colorScaleFunction(values[i]);
       }
       break;
     case 2:
+      colorList = colorList==null?ColorListGenerators._HARDCODED_CATEGORICAL_COLORS:colorList;
       for(i = 0; i < nColors; i++) {
-        colorList[i] = ColorListGenerators._HARDCODED_CATEGORICAL_COLORS[i % ColorListGenerators._HARDCODED_CATEGORICAL_COLORS.length];
+        newColorList[i] = colorList[i%colorList.length];
       }
       break;
     case 5:
@@ -148,20 +150,20 @@ ColorListGenerators.createCategoricalColors = function(mode, nColors, colorScale
       }
 
       for(i = 0; i < nColors; i++) {
-        colorList.push(colorScaleFunction((1 / nColors) + randomPositions[i] / (nColors + 1))); //TODO: make more efficient by pre-nuilding the colorList
+        newColorList.push(colorScaleFunction((1 / nColors) + randomPositions[i] / (nColors + 1))); //TODO: make more efficient by pre-nuilding the colorList
       }
       break;
   }
 
   if(interpolateColor != null && interpolateValue != null) {
-    colorList = colorList.getInterpolated(interpolateColor, interpolateValue);
+    newColorList = newColorList.getInterpolated(interpolateColor, interpolateValue);
   }
 
   if(alpha) {
-    colorList = colorList.addAlpha(alpha);
+    newColorList = newColorList.addAlpha(alpha);
   }
 
-  return colorList;
+  return newColorList;
 };
 
 ColorListGenerators._sortingVariation = function(numberList, rnd0, rnd1) { //private
@@ -182,6 +184,39 @@ ColorListGenerators._evaluationFunction = function(numberList) { //private
   return sum;
 };
 
+/**
+ * Creates an object dictionary that matches elements from a list (that could contan repeated elements) with categorical colors
+ * @param {List} the list containing categorical data
+ *
+ * @param {ColorList} ColorList with categorical colors
+ * @param {Number} alpha transparency
+ * @param {String} color to mix
+ * @param {Number} interpolation value (0-1) for color mix
+ * @param {Boolean} invert invert colors
+ * @return {Object} object dictionar that delivers a color for each element on original list
+ * tags:generator
+ */
+ColorListGenerators.createCategoricalColorListDictionaryObject = function(list, colorList, alpha, color, interpolate, invert){
+  if(list==null) return;
+
+  c.l('ColorListGenerators.createCategoricalColorListDictionaryObject | list:', list);
+
+  var diffValues = list.getWithoutRepetitions();
+  var diffColors = ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate, colorList);
+  if(invert) diffColors = diffColors.getInverted();
+
+  var dictionaryObject = {};
+
+  diffValues.forEach(function(element, i){
+    dictionaryObject[element] = diffColors[i];
+  });
+
+  c.l('ColorListGenerators.createCategoricalColorListDictionaryObject | dictionaryObject:', dictionaryObject);
+
+  return dictionaryObject;
+
+}
+
 
 /**
  * Creates a ColorList of categorical colors based on an input List. All entries with the same value will get the same color.
@@ -196,6 +231,7 @@ ColorListGenerators._evaluationFunction = function(numberList) { //private
  * @return {List} elements list of elemnts that match colors (equivalent to getWithoutRepetions)
  * @return {ColorList} ColorList with different categorical colors
  * @return {Table} dictionary dictionary table with elemnts and matching colors
+ * @return {Object} citionaryObject (relational array, from objects to colors)
  * tags:generator
  */
 ColorListGenerators.createCategoricalColorListForList = function(list, colorList, alpha, color, interpolate, invert)
@@ -213,10 +249,11 @@ ColorListGenerators.createCategoricalColorListForList = function(list, colorList
   list = List.fromArray(list);
   var diffValues = list.getWithoutRepetitions();
   var diffColors;
-  if(colorList) {
+  if(colorList && interpolate!=0) {
     diffColors = colorList.getInterpolated(color, interpolate);
   } else {
-    diffColors = ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate);
+    diffColors = ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate, colorList);
+    
     //diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
   }
   diffColors = diffColors.addAlpha(alpha);
@@ -224,7 +261,9 @@ ColorListGenerators.createCategoricalColorListForList = function(list, colorList
   if(invert) diffColors = diffColors.getInverted();
 
   var colorDict = Table.fromArray([diffValues, diffColors]);
-  var fullColorList = ListOperators.translateWithDictionary(list, colorDict, "NULL");
+  var dictionaryObject = ListOperators.buildDictionaryObjectForDictionary(colorDict);
+
+  var fullColorList = ListOperators.translateWithDictionaryObject(list, colorDict, 'black');// ListOperators.translateWithDictionary(list, colorDict, "NULL");
 
   fullColorList = ColorList.fromArray(fullColorList);
 
@@ -241,6 +280,9 @@ ColorListGenerators.createCategoricalColorListForList = function(list, colorList
     }, {
       value: new Table(diffValues, fullColorList),
       type: 'Table'
+    }, {
+      value: dictionaryObject,
+      type: 'Object'
     }
   ];
 };

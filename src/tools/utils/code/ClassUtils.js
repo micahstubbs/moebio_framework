@@ -211,6 +211,7 @@ export function evalJavaScriptFunction(functionText, args, scope){
 
 	var good = true;
 	var message = '';
+  var error;
 
 	var realCode;
 
@@ -262,12 +263,14 @@ export function evalJavaScriptFunction(functionText, args, scope){
 		good = false;
 		message = err.message;
 		res = null;
+    error = err;
 	}
 
   var resultObject = {
     result: res,
     success: good,
-    errorMessage: message
+    errorMessage: message,
+    error: error
   };
 
   return resultObject;
