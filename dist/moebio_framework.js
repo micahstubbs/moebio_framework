@@ -6392,7 +6392,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Node = Node__default;
 
-  var version = "0.2.23";
+  var version = "0.2.24";
 
   /*
    * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
@@ -6786,6 +6786,7 @@ define('src/index', ['exports'], function (exports) {
     name = name == null ? 'default' : name;
     canvas.style.cursor = name;
   }
+
 
   /**
    *Static class that:
