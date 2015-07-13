@@ -210,9 +210,7 @@ ColorListGenerators.createCategoricalColorListDictionaryObject = function(list, 
   diffValues.forEach(function(element, i){
     dictionaryObject[element] = diffColors[i];
   });
-
-  c.l('ColorListGenerators.createCategoricalColorListDictionaryObject | dictionaryObject:', dictionaryObject);
-
+  
   return dictionaryObject;
 
 }

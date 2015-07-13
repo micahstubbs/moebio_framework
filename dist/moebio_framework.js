@@ -15966,9 +15966,7 @@ define('src/index', ['exports'], function (exports) {
     diffValues.forEach(function(element, i){
       dictionaryObject[element] = diffColors[i];
     });
-
-    c.l('ColorListGenerators.createCategoricalColorListDictionaryObject | dictionaryObject:', dictionaryObject);
-
+    
     return dictionaryObject;
 
   }
