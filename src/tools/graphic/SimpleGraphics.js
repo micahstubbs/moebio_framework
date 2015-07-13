@@ -1118,6 +1118,7 @@ export function getTextW(text) {
 };
 
 
+
 // pixel data
 
 export function getPixelData(x, y) {
@@ -1176,8 +1177,91 @@ export function setCursor(name) {
   canvas.style.cursor = name;
 };
 
+
+
 //time
 
 export function getMilliseconds() {
   return new Date().getTime();
 };
+
+
+export function getWindowFrame(){
+  return new Rectangle(0,0,cW,cH);
+}
+
+
+
+//advanced graphics (rely on Axis2D projection object)
+
+/**
+ * @ignore
+ */
+export function _linesInFrame(axis2D, numberListX, numberListY){
+  var l = Math.min(numberListX.length, numberListY.length);
+  var i;
+
+  context.beginPath();
+  context.moveTo(axis2D.projectX(numberListX[0]), axis2D.projectY(numberListY[0]));
+
+  for(i=1; i<l; i++){
+    context.lineTo(axis2D.projectX(numberListX[i]), axis2D.projectY(numberListY[i]));
+  }
+}
+
+
+export function sLinesInFrame(axis2D, numberListX, numberListY){
+  _linesInFrame(axis2D, numberListX, numberListY);
+  context.stroke();
+}
+
+export function fLinesInFrame(axis2D, numberListX, numberListY){
+  _linesInFrame(axis2D, numberListX, numberListY);
+  context.fill();
+}
+
+export function fsLinesInFrame(axis2D, numberListX, numberListY){
+  _linesInFrame(axis2D, numberListX, numberListY);
+  context.fill();
+  context.stroke();
+}
+
+
+export function drawGridX(axis2D, dX, yLabel, stepsLabel){
+  var x0, y0;
+  var n;
+  var i;
+  var x, y, top, bottom;
+
+  x0 = Math.floor(axis2D.departureFrame.x/dX)*dX;
+  n = Math.min( Math.ceil(axis2D.departureFrame.width/dX), 1000 );
+  top = Math.min(axis2D.arrivalFrame.y, axis2D.arrivalFrame.y+axis2D.arrivalFrame.height)
+  bottom = Math.max(axis2D.arrivalFrame.y, axis2D.arrivalFrame.y+axis2D.arrivalFrame.height);
+  stepsLabel = stepsLabel==null?1:stepsLabel;
+  for(i=0; i<n; i++){
+    x = Math.floor(axis2D.projectX(x0 + i*dX))+0.5;
+    line(x, top, x, bottom);
+    if(yLabel!=null && i%stepsLabel==0) fText(String(x0 + i*dX), x, bottom+yLabel);
+  }
+}
+
+export function drawGridY(axis2D, dY, xLabel, stepsLabel){
+  var x0, y0;
+  var n;
+  var i;
+  var x, y, left, right;
+
+  y0 = Math.floor(axis2D.departureFrame.y/dY)*dY;
+  n = Math.min( Math.ceil(axis2D.departureFrame.height/dY), 1000 );
+  left = Math.min(axis2D.arrivalFrame.x, axis2D.arrivalFrame.x+axis2D.arrivalFrame.width)
+  right = Math.max(axis2D.arrivalFrame.x, axis2D.arrivalFrame.x+axis2D.arrivalFrame.width);
+  stepsLabel = stepsLabel==null?1:stepsLabel;
+  for(i=0; i<n; i++){
+    y = Math.floor(axis2D.projectY(y0 + i*dY))+0.5;
+    line(left, y, right, y);
+    if(xLabel!=null && i%stepsLabel==0) fText(String(y0 + i*dY), left+xLabel, y);
+  }
+}
+
+
+

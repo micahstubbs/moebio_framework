@@ -627,6 +627,10 @@ export function setFrameRate(fr){
   if(cycleActive) startCycle();
 }
 
+export function setAlphaRefresh(alphaRefresh){
+  _alphaRefresh = alphaRefresh;
+}
+
 export function enterFrame(){
   if(_alphaRefresh==0){
       context.clearRect(0, 0, cW, cH);

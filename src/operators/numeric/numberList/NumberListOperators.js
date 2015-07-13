@@ -379,3 +379,16 @@ NumberListOperators.intersection = function(a, b) {//TODO: refactor this method 
 
   return result;
 };
+
+
+/**
+ * builds a rectangle that defines the boundaries of two numberLists interpreted as x and y coordinates 
+ * @param  {NumberList} numberListX
+ * @param  {NumberList} numberListY
+ * @return {Rectangle}
+ */
+NumberListOperators.frameFromTwoNumberLists = function(numberListX, numberListY){
+  var intX = numberListX.getInterval();
+  var intY = numberListY.getInterval();
+  return new Rectangle(intX.x, intY.x, intX.getAmplitude(), intY.getAmplitude());
+}

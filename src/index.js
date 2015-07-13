@@ -162,7 +162,8 @@ import {
   drawImage, fitImage, setFill, setStroke, setLW, clipCircle, clipRectangle,
   save, clip, restore, fText, sText, fsText, fTextRotated, fTextArc, fTextM, fsTextM,
   fTextRotatedM, fTextW, setText, getTextW, getPixelData, getPixelColor,
-  getPixelColorRGBA, captureCanvas, setCursor, getMilliseconds
+  getPixelColorRGBA, captureCanvas, setCursor, getMilliseconds, 
+  getWindowFrame, sLinesInFrame, fLinesInFrame, fsLinesInFrame, drawGridX, drawGridY
 } from "src/tools/graphic/SimpleGraphics";
 
 export {
@@ -173,7 +174,8 @@ export {
   drawImage, fitImage, setFill, setStroke, setLW, clipCircle, clipRectangle,
   save, clip, restore, fText, sText, fsText, fTextRotated, fTextArc, fTextM, fsTextM,
   fTextRotatedM, fTextW, setText, getTextW, getPixelData, getPixelColor,
-  getPixelColorRGBA, captureCanvas, setCursor, getMilliseconds
+  getPixelColorRGBA, captureCanvas, setCursor, getMilliseconds, 
+  getWindowFrame, sLinesInFrame, fLinesInFrame, fsLinesInFrame, drawGridX, drawGridY
 };
 
 // tools/interaction
@@ -253,7 +255,7 @@ export { NetworkDraw, TreeDraw };
 
 // Global.js
 // Functions
-import { Global, onResize, clearContext, cycleOnMouseMovement, setFrameRate,
+import { Global, onResize, clearContext, cycleOnMouseMovement, setFrameRate, setAlphaRefresh,
   enterFrame, startCycle, stopCycle, onMoveCycle, reStartCycle,
   addInteractionEventListener, onCanvasEvent, removeInteractionEventListener,
   cancelAllInteractions, setBackgroundColor, activateKeyboard, onKey,
@@ -261,7 +263,7 @@ import { Global, onResize, clearContext, cycleOnMouseMovement, setFrameRate,
   setStructureLocalStorage, getStructureLocalStorageFromSeed,
   getStructureLocalStorage, getDocWidth, getDocHeight, _onMouse
 } from "src/Global";
-export { Global, onResize, clearContext, cycleOnMouseMovement, setFrameRate,
+export { Global, onResize, clearContext, cycleOnMouseMovement, setFrameRate, setAlphaRefresh,
   enterFrame, startCycle, stopCycle, onMoveCycle, reStartCycle,
   addInteractionEventListener, onCanvasEvent, removeInteractionEventListener,
   cancelAllInteractions, setBackgroundColor, activateKeyboard, onKey,

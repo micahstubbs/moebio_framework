@@ -369,8 +369,8 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Interval = Interval__default;
 
-  Rectangle.prototype = new DataModel();
-  Rectangle.prototype.constructor = Rectangle;
+  Rectangle__Rectangle.prototype = new DataModel();
+  Rectangle__Rectangle.prototype.constructor = Rectangle__Rectangle;
 
   /**
    * @classdesc Rectangle shape
@@ -383,7 +383,7 @@ define('src/index', ['exports'], function (exports) {
    * @constructor
    * @category geometry
    */
-  function Rectangle(x, y, width, height) {
+  function Rectangle__Rectangle(x, y, width, height) {
     DataModel.apply(this);
     this.name = "";
     this.type = "Rectangle";
@@ -392,63 +392,63 @@ define('src/index', ['exports'], function (exports) {
     this.width = Number(width) || 0;
     this.height = Number(height) || 0;
   }
+  var Rectangle__default = Rectangle__Rectangle;
 
-
-  Rectangle.prototype.getRight = function() {
+  Rectangle__Rectangle.prototype.getRight = function() {
     return this.x + this.width;
   };
 
-  Rectangle.prototype.getBottom = function() {
+  Rectangle__Rectangle.prototype.getBottom = function() {
     return this.y + this.height;
   };
 
-  Rectangle.prototype.setRight = function(value) {
+  Rectangle__Rectangle.prototype.setRight = function(value) {
     this.width = value - this.x;
   };
 
-  Rectangle.prototype.setBottom = function(value) {
+  Rectangle__Rectangle.prototype.setBottom = function(value) {
     this.height = value - this.y;
   };
 
 
 
-  Rectangle.prototype.getTopLeft = function() {
+  Rectangle__Rectangle.prototype.getTopLeft = function() {
     return new Point(this.x, this.y);
   };
-  Rectangle.prototype.getTopRight = function() {
+  Rectangle__Rectangle.prototype.getTopRight = function() {
     return new Point(this.x + this.width, this.y);
   };
 
-  Rectangle.prototype.getBottomRight = function() {
+  Rectangle__Rectangle.prototype.getBottomRight = function() {
     return new Point(this.x + this.width, this.y + this.height);
   };
-  Rectangle.prototype.getBottomLeft = function() {
+  Rectangle__Rectangle.prototype.getBottomLeft = function() {
     return new Point(this.x, this.y + this.height);
   };
-  Rectangle.prototype.getCenter = function() {
+  Rectangle__Rectangle.prototype.getCenter = function() {
     return new Point(this.x + 0.5 * this.width, this.y + 0.5 * this.height);
   };
-  Rectangle.prototype.getRandomPoint = function() {
+  Rectangle__Rectangle.prototype.getRandomPoint = function() {
     return new Point(this.x + Math.random() * this.width, this.y + Math.random() * this.height);
   };
 
-  Rectangle.prototype.getIntersection = function(rectangle) {
+  Rectangle__Rectangle.prototype.getIntersection = function(rectangle) {
     if(rectangle.x + rectangle.width < this.x || rectangle.x > this.x + this.width || rectangle.y + rectangle.height < this.y || rectangle.y > this.y + this.height) return null;
     var xR = Math.max(rectangle.x, this.x);
     var yR = Math.max(rectangle.y, this.y);
-    return new Rectangle(xR, yR, Math.min(rectangle.x + rectangle.width, this.x + this.width) - xR, Math.min(rectangle.y + rectangle.height, this.y + this.height) - yR);
+    return new Rectangle__Rectangle(xR, yR, Math.min(rectangle.x + rectangle.width, this.x + this.width) - xR, Math.min(rectangle.y + rectangle.height, this.y + this.height) - yR);
   };
 
-  Rectangle.prototype.interpolate = function(rectangle, t) {
+  Rectangle__Rectangle.prototype.interpolate = function(rectangle, t) {
     var mint = 1 - t;
-    return new Rectangle(mint * this.x + t * rectangle.x, mint * this.y + t * rectangle.y, mint * this.width + t * rectangle.width, mint * this.height + t * rectangle.height);
+    return new Rectangle__Rectangle(mint * this.x + t * rectangle.x, mint * this.y + t * rectangle.y, mint * this.width + t * rectangle.width, mint * this.height + t * rectangle.height);
   };
 
-  Rectangle.prototype.getRatio = function() {
+  Rectangle__Rectangle.prototype.getRatio = function() {
     return Math.max(this.width, this.height) / Math.min(this.width, this.height);
   };
 
-  Rectangle.prototype.getArea = function() {
+  Rectangle__Rectangle.prototype.getArea = function() {
     return this.width * this.height;
   };
 
@@ -458,12 +458,12 @@ define('src/index', ['exports'], function (exports) {
    * @return {Boolean}
    * tags:geometry
    */
-  Rectangle.prototype.containsPoint = function(point) {
+  Rectangle__Rectangle.prototype.containsPoint = function(point) {
     return(this.x <= point.x && this.x + this.width >= point.x && this.y <= point.y && this.y + this.height >= point.y);
   };
 
 
-  Rectangle.prototype.pointIsOnBorder = function(point, margin) {
+  Rectangle__Rectangle.prototype.pointIsOnBorder = function(point, margin) {
     margin = margin == null ? 1 : margin;
     if(point.x >= this.x - margin && point.x <= this.x + this.width + margin) {
       if(point.y >= this.y - margin && point.y <= this.y + margin) return true;
@@ -478,8 +478,8 @@ define('src/index', ['exports'], function (exports) {
 
 
 
-  Rectangle.prototype.getNormalRectangle = function() {
-    return new Rectangle(Math.min(this.x, this.x + this.width), Math.min(this.y, this.y + this.height), Math.abs(this.width), Math.abs(this.height));
+  Rectangle__Rectangle.prototype.getNormalRectangle = function() {
+    return new Rectangle__Rectangle(Math.min(this.x, this.x + this.width), Math.min(this.y, this.y + this.height), Math.abs(this.width), Math.abs(this.height));
   };
 
   /**
@@ -488,7 +488,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Boolean}
    * tags:geometry
    */
-  Rectangle.prototype.intersectsRectangle = function(rectangle) {
+  Rectangle__Rectangle.prototype.intersectsRectangle = function(rectangle) {
     return !(this.x + this.width < rectangle.x) && !(this.y + this.height < rectangle.y) && !(rectangle.x + rectangle.width < this.x) && !(rectangle.y + rectangle.height < this.y);
 
 
@@ -504,31 +504,31 @@ define('src/index', ['exports'], function (exports) {
   	|| rectangle.containsPoint(this.getTopLeft()) || rectangle.containsPoint(this.getTopRight()) || rectangle.containsPoint(this.getBottomLeft()) || rectangle.containsPoint(this.getBottomRight());
   };
 
-  Rectangle.prototype.expand = function(expantion, centerPoint) {
+  Rectangle__Rectangle.prototype.expand = function(expantion, centerPoint) {
     centerPoint = centerPoint || new Point(this.x + 0.5 * this.width, this.y + 0.5 * this.height);
-    return new Rectangle((this.x - centerPoint.x) * expantion + centerPoint.x, (this.y - centerPoint.y) * expantion + centerPoint.y, this.width * expantion, this.height * expantion);
+    return new Rectangle__Rectangle((this.x - centerPoint.x) * expantion + centerPoint.x, (this.y - centerPoint.y) * expantion + centerPoint.y, this.width * expantion, this.height * expantion);
   };
 
-  Rectangle.prototype.isEqual = function(rectangle) {
+  Rectangle__Rectangle.prototype.isEqual = function(rectangle) {
     return this.x == rectangle.x && this.y == rectangle.y && this.width == rectangle.width && this.height == rectangle.height;
   };
 
-  Rectangle.prototype.clone = function() {
-    return new Rectangle(this.x, this.y, this.width, this.height);
+  Rectangle__Rectangle.prototype.clone = function() {
+    return new Rectangle__Rectangle(this.x, this.y, this.width, this.height);
   };
 
-  Rectangle.prototype.toString = function() {
+  Rectangle__Rectangle.prototype.toString = function() {
     return "(x=" + this.x + ", y=" + this.y + ", w=" + this.width + ", h=" + this.height + ")";
   };
 
-  Rectangle.prototype.destroy = function() {
+  Rectangle__Rectangle.prototype.destroy = function() {
     delete this.x;
     delete this.y;
     delete this.width;
     delete this.height;
   };
 
-  exports.Rectangle = Rectangle;
+  exports.Rectangle = Rectangle__default;
 
   List__List.prototype = new DataModel();
   List__List.prototype.constructor = List__List;
@@ -2212,7 +2212,7 @@ define('src/index', ['exports'], function (exports) {
   /**
    * parses a Date
    * @param  {String} string date in string format
-   * @param  {String} formatCase 0: <br>MM-DD-YYYY<br>1: YYYY-MM-DD<br>2: MM-DD-YY<br>3: YY-MM-DD
+   * @param  {String} formatCase <br>0: MM-DD-YYYY<br>1: YYYY-MM-DD<br>2: MM-DD-YY<br>3: YY-MM-DD<br>4: DD-MM-YY<br>5: DD-MM-YYYY
    * @param  {String} separator
    * @return {Date}
    * tags:decoder
@@ -2241,6 +2241,13 @@ define('src/index', ['exports'], function (exports) {
         y = Number(parts[0]);
         y = y >= 0 ? y + 2000 : y + 1900;
         return new Date(y, Number(parts[1]) - 1, Number(parts[2]));
+      case 4: //DD-MM-YY
+        y = Number(parts[2]);
+        y = y >= 0 ? y + 2000 : y + 1900;
+        return new Date(y, Number(parts[1]) - 1, Number(parts[0]));
+      case 5: //DD-MM-YYYY
+        y = Number(parts[2]);
+        return new Date(y, Number(parts[1]) - 1, Number(parts[0]));
     }
   };
 
@@ -3750,7 +3757,7 @@ define('src/index', ['exports'], function (exports) {
   PolygonList.prototype.getFrame = function() {
     if(this.length == 0) return null;
     var frameP = this[0].getFrame();
-    var rectangle = new Rectangle(frameP.x, frameP.y, frameP.getRight(), frameP.getBottom());
+    var rectangle = new Rectangle__default(frameP.x, frameP.y, frameP.getRight(), frameP.getBottom());
     for(var i = 1; this[i] != null; i++) {
       frameP = this[i].getFrame();
       rectangle.x = Math.min(rectangle.x, frameP.x);
@@ -4482,7 +4489,7 @@ define('src/index', ['exports'], function (exports) {
 
   Polygon.prototype.getFrame = function() {
     if(this.length == 0) return null;
-    var rectangle = new Rectangle(this[0].x, this[0].y, this[0].x, this[0].y);
+    var rectangle = new Rectangle__default(this[0].x, this[0].y, this[0].x, this[0].y);
     var p;
     for(var i = 1; this[i] != null; i++) {
       p = this[i];
@@ -5545,7 +5552,7 @@ define('src/index', ['exports'], function (exports) {
   /**
    * converts a stringList into a dateList
    *
-   * @param  {String} formatCase format cases:<br>0: MM-DD-YYYY<br>1: YYYY-MM-DD (standard Javascript conversion)
+   * @param  {String} formatCase format cases:<br>0: MM-DD-YYYY<br>1: YYYY-MM-DD<br>2: MM-DD-YY<br>3: YY-MM-DD<br>4: DD-MM-YY<br>5: DD-MM-YYYY
    * @param  {String} separator "-" by default
    * @return {DateList}
    * tags:
@@ -6392,7 +6399,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Node = Node__default;
 
-  var version = "0.2.24";
+  var version = "0.2.25";
 
   /*
    * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
@@ -7192,8 +7199,8 @@ define('src/index', ['exports'], function (exports) {
 
 
   //global useful vars
-  var cW = 1; // canvas width
-  var cH = 1; // canvas height
+  var src_Global__cW = 1; // canvas width
+  var src_Global__cH = 1; // canvas height
   var cX = 1; // canvas center x
   var cY = 1; // canvas center y
   var mX = 0; // cursor x
@@ -7365,19 +7372,19 @@ define('src/index', ['exports'], function (exports) {
   function _adjustCanvas(){
     if(canvasResizeable==false) return;
 
-    exports.cW = cW = getDocWidth();
-    exports.cH = cH = getDocHeight();
+    exports.cW = src_Global__cW = getDocWidth();
+    exports.cH = src_Global__cH = getDocHeight();
 
-    canvas.setAttribute('width', cW);
-    canvas.setAttribute('height', cH);
+    canvas.setAttribute('width', src_Global__cW);
+    canvas.setAttribute('height', src_Global__cH);
 
-    exports.cX = cX = Math.floor(cW*0.5);
-    exports.cY = cY = Math.floor(cH*0.5);
+    exports.cX = cX = Math.floor(src_Global__cW*0.5);
+    exports.cY = cY = Math.floor(src_Global__cH*0.5);
   }
 
 
   function clearContext(){
-    src_Global__context.clearRect(0, 0, cW, cH);
+    src_Global__context.clearRect(0, 0, src_Global__cW, src_Global__cH);
   }
 
   function cycleOnMouseMovement(value, time){
@@ -7403,12 +7410,16 @@ define('src/index', ['exports'], function (exports) {
     if(cycleActive) startCycle();
   }
 
+  function setAlphaRefresh(alphaRefresh){
+    _alphaRefresh = alphaRefresh;
+  }
+
   function enterFrame(){
     if(_alphaRefresh==0){
-        src_Global__context.clearRect(0, 0, cW, cH);
+        src_Global__context.clearRect(0, 0, src_Global__cW, src_Global__cH);
     } else {
       src_Global__context.fillStyle = 'rgba('+backGroundColorRGB[0]+','+backGroundColorRGB[1]+','+backGroundColorRGB[2]+','+_alphaRefresh+')';
-      src_Global__context.fillRect(0, 0, cW, cH);
+      src_Global__context.fillRect(0, 0, src_Global__cW, src_Global__cH);
     }
 
       src_Global__setCursor('default');
@@ -7688,6 +7699,7 @@ define('src/index', ['exports'], function (exports) {
   exports.clearContext = clearContext;
   exports.cycleOnMouseMovement = cycleOnMouseMovement;
   exports.setFrameRate = setFrameRate;
+  exports.setAlphaRefresh = setAlphaRefresh;
   exports.enterFrame = enterFrame;
   exports.startCycle = startCycle;
   exports.stopCycle = stopCycle;
@@ -7714,8 +7726,8 @@ define('src/index', ['exports'], function (exports) {
   exports.userAgentVersion = src_Global__userAgentVersion;
   exports.canvasResizeable = canvasResizeable;
   exports.dataModelsInfo = src_Global__dataModelsInfo;
-  exports.cW = cW;
-  exports.cH = cH;
+  exports.cW = src_Global__cW;
+  exports.cH = src_Global__cH;
   exports.cX = cX;
   exports.cY = cY;
   exports.mX = mX;
@@ -9421,9 +9433,10 @@ define('src/index', ['exports'], function (exports) {
 
   //TODO:finish RectangleList methods
 
-  RectangleList.prototype.getFrame = function() {
+  RectangleList.prototype.getFrame = function() {//TODO: use RectangleOperators.minRect
     if(this.length == 0) return null;
-    var frame = this[0];
+
+    var frame = this[0].clone();
     frame.width = frame.getRight();
     frame.height = frame.getBottom();
     for(var i = 1; this[i] != null; i++) {
@@ -12497,7 +12510,7 @@ define('src/index', ['exports'], function (exports) {
    * @category numbers
    */
   function Axis2D(departureFrame, arrivalFrame) {
-    arrivalFrame = arrivalFrame == null ? new Rectangle(0, 0, 1, 1) : arrivalFrame;
+    arrivalFrame = arrivalFrame == null ? new Rectangle__default(0, 0, 1, 1) : arrivalFrame;
     DataModel.apply(this, arguments);
     this.departureFrame = departureFrame;
     this.arrivalFrame = arrivalFrame;
@@ -13976,7 +13989,7 @@ define('src/index', ['exports'], function (exports) {
     var i;
     var rect;
     if(colors != null) var nColors = colors.length;
-    var adjustedRect = new Rectangle();
+    var adjustedRect = new Rectangle__default();
     for(i = 0; rectangleList[i] != null; i++) {
       rect = rectangleList[i];
       if(rect.height <= margin || rect.width <= margin) continue;
@@ -14857,7 +14870,7 @@ define('src/index', ['exports'], function (exports) {
 
   Space2D.prototype.fixHorizontalInterval = function(departureInterval, arrivalInterval) {
     this.scale = arrivalInterval.getAmplitude() / departureInterval.getAmplitude();
-    this.fixX((departureInterval.x + departureInterval.y) * 0.5, cW * 0.5);
+    this.fixX((departureInterval.x + departureInterval.y) * 0.5, src_Global__cW * 0.5);
   };
 
   //////
@@ -15378,6 +15391,36 @@ define('src/index', ['exports'], function (exports) {
   function RectangleOperators() {}
 
 
+  /**
+   * finds the minimal rectangle containing two or more rectangles
+   * @param {Rectangle} param0 first rectangle
+   * @param {Rectangle} param1 second rectangle
+   * @param {Rectangle} param2 third rectangle
+   * @param {Rectangle} param3 fourth rectangle
+   * @param {Rectangle} param4 fifth rectangle
+   * @return {Rectangle}
+   */
+  RectangleOperators.minRect = function(){
+    if(arguments==null || arguments.length<1) return null;
+
+    var i;
+    var frame = arguments[0].clone();
+
+    frame.width = frame.getRight();
+    frame.height = frame.getBottom();
+    for(i = 1; arguments[i] != null; i++) {
+      frame.x = Math.min(frame.x, arguments[i].x);
+      frame.y = Math.min(frame.y, arguments[i].y);
+
+      frame.width = Math.max(arguments[i].getRight(), frame.width);
+      frame.height = Math.max(arguments[i].getBottom(), frame.height);
+    }
+
+    frame.width -= frame.x;
+    frame.height -= frame.y;
+
+    return frame;
+  }
 
   /**
    *
@@ -15391,7 +15434,7 @@ define('src/index', ['exports'], function (exports) {
    */
   RectangleOperators.packingRectangles = function(weights, packingMode, rectangle, param) {
     //TODO: return RectangleList instead of List
-    if(rectangle == null) rectangle = new Rectangle(0, 0, 1, 1);
+    if(rectangle == null) rectangle = new Rectangle__default(0, 0, 1, 1);
     packingMode = packingMode ? packingMode : 0;
     switch(packingMode) {
       //0: quadrification
@@ -15418,7 +15461,7 @@ define('src/index', ['exports'], function (exports) {
         var i;
         for(i = 0; weights[i] != null; i++) {
           h = vFactor * weights[i];
-          rectangleList.push(new Rectangle(rectangle.x, dY, rectangle.width, h));
+          rectangleList.push(new Rectangle__default(rectangle.x, dY, rectangle.width, h));
           dY += h;
         }
         return rectangleList;
@@ -15436,7 +15479,7 @@ define('src/index', ['exports'], function (exports) {
         var hFactor = rectangle.width / sum;
         for(i = 0; weights[i] != null; i++) {
           w = hFactor * weights[i];
-          rectangleList.push(new Rectangle(dX, rectangle.y, w, rectangle.height));
+          rectangleList.push(new Rectangle__default(dX, rectangle.y, w, rectangle.height));
           dX += w;
         }
         return rectangleList;
@@ -15445,10 +15488,10 @@ define('src/index', ['exports'], function (exports) {
         if(weights.length < 6) {
 
         } else if(weights.length == 6) {
-          var rAfrica = new Rectangle(0.44, 0.36, 0.16, 0.45);
-          var rAsia = new Rectangle(0.6, 0.15, 0.3, 0.3);
-          var rAustralasia = new Rectangle(0.72, 0.45, 0.28, 0.32);
-          var rEurope = new Rectangle(0.38, 0.04, 0.22, 0.32);
+          var rAfrica = new Rectangle__default(0.44, 0.36, 0.16, 0.45);
+          var rAsia = new Rectangle__default(0.6, 0.15, 0.3, 0.3);
+          var rAustralasia = new Rectangle__default(0.72, 0.45, 0.28, 0.32);
+          var rEurope = new Rectangle__default(0.38, 0.04, 0.22, 0.32);
 
           var pivotEuroafrasia = new Point(0.6, 0.36);
           rAfrica = expandRectangle(rAfrica, Math.sqrt(weights[0]), pivotEuroafrasia);
@@ -15463,8 +15506,8 @@ define('src/index', ['exports'], function (exports) {
 
           var pivotAmericas = new Point(0.26, 0.36 + Math.max(rAfrica.height * 0.3, rEurope.height * 0.2));
 
-          var rNorthAmerica = new Rectangle(0.1, pivotAmericas.y - 0.4, 0.2, 0.4);
-          var rSouthAmerica = new Rectangle(0.22, pivotAmericas.y, 0.16, 0.5);
+          var rNorthAmerica = new Rectangle__default(0.1, pivotAmericas.y - 0.4, 0.2, 0.4);
+          var rSouthAmerica = new Rectangle__default(0.22, pivotAmericas.y, 0.16, 0.5);
 
           rNorthAmerica = expandRectangle(rNorthAmerica, Math.sqrt(weights[4]), pivotAmericas);
           rSouthAmerica = expandRectangle(rSouthAmerica, Math.sqrt(weights[5]), pivotAmericas);
@@ -15511,8 +15554,6 @@ define('src/index', ['exports'], function (exports) {
     return null;
   };
 
-  RectangleOperators.quadrification = RectangleOperators.squarify; //old name
-
   /**
    * Squarified algorithm as described in (http://www.win.tue.nl/~vanwijk/stm.pdf)
    * @param {Rectangle} bounds Rectangle
@@ -15553,7 +15594,7 @@ define('src/index', ['exports'], function (exports) {
     var worstProportion;
     var index = 0;
     var subArea;
-    var freeSubRectangle = new Rectangle();
+    var freeSubRectangle = new Rectangle__default();
     var nWeights = weights.length;
     var lastRectangle;
 
@@ -15563,7 +15604,7 @@ define('src/index', ['exports'], function (exports) {
       for(i = index; i < nWeights; i++) {
         proportion = Number.MAX_VALUE;
         if(newWeightList[i] == 0) {
-          rectangleList.push(new Rectangle(freeSubRectangle.x, freeSubRectangle.y, 0, 0));
+          rectangleList.push(new Rectangle__default(freeSubRectangle.x, freeSubRectangle.y, 0, 0));
         } else {
           for(j = 1; j < nWeights; j++) {
             subWeightList = newWeightList.slice(i, i + j); //NumberList.fromArray(newWeightList.slice(i, i+j));//
@@ -15590,7 +15631,7 @@ define('src/index', ['exports'], function (exports) {
           }
 
           if(prevSubRectangleList.length == 0) {
-            rectangleList.push(new Rectangle(freeRectangle.x, freeRectangle.y, freeRectangle.width, freeRectangle.height)); //freeRectangle.clone());
+            rectangleList.push(new Rectangle__default(freeRectangle.x, freeRectangle.y, freeRectangle.width, freeRectangle.height)); //freeRectangle.clone());
             if(rectangleList.length == nWeights) {
               if(!isSortedWeights) {
                 var newRectangleList = new List__default(); //RectangleList();
@@ -15632,7 +15673,7 @@ define('src/index', ['exports'], function (exports) {
       freeSubRectangle = frame.clone();
       rectangleList = RectangleOperators.partitionRectangle(freeSubRectangle, subWeightList, subWeightList.getSum());
     } else {
-      rectangleList[0] = new Rectangle(frame.x, frame.y, frame.width, frame.height); //frame.clone();
+      rectangleList[0] = new Rectangle__default(frame.x, frame.y, frame.width, frame.height); //frame.clone();
     }
 
 
@@ -15657,7 +15698,7 @@ define('src/index', ['exports'], function (exports) {
   RectangleOperators.partitionRectangle = function(rectangle, normalizedWeightList, sum) {
     var area = rectangle.width * rectangle.height;
     var rectangleList = new List__default(); //RectangleList();
-    var freeRectangle = new Rectangle(rectangle.x, rectangle.y, rectangle.width, rectangle.height); //rectangle.clone();
+    var freeRectangle = new Rectangle__default(rectangle.x, rectangle.y, rectangle.width, rectangle.height); //rectangle.clone();
     var areai;
     var i;
     var rect;
@@ -15665,12 +15706,12 @@ define('src/index', ['exports'], function (exports) {
     for(i = 0; i < normalizedWeightList.length; i++) {
       areai = normalizedWeightList[i] * area / sum;
       if(rectangle.width > rectangle.height) {
-        rect = new Rectangle(freeRectangle.x, freeRectangle.y, areai / freeRectangle.height, freeRectangle.height);
+        rect = new Rectangle__default(freeRectangle.x, freeRectangle.y, areai / freeRectangle.height, freeRectangle.height);
         rectangleList.push(rect);
         freeRectangle.x += areai / freeRectangle.height;
         //rect.ratio = rect.width/rect.height;
       } else {
-        rect = new Rectangle(freeRectangle.x, freeRectangle.y, freeRectangle.width, areai / freeRectangle.width);
+        rect = new Rectangle__default(freeRectangle.x, freeRectangle.y, freeRectangle.width, areai / freeRectangle.width);
         rectangleList.push(rect);
         freeRectangle.y += areai / freeRectangle.width;
         //rect.ratio = rect.height/rect.width;
@@ -16846,6 +16887,19 @@ define('src/index', ['exports'], function (exports) {
     return result;
   };
 
+
+  /**
+   * builds a rectangle that defines the boundaries of two numberLists interpreted as x and y coordinates 
+   * @param  {NumberList} numberListX
+   * @param  {NumberList} numberListY
+   * @return {Rectangle}
+   */
+  NumberListOperators__NumberListOperators.frameFromTwoNumberLists = function(numberListX, numberListY){
+    var intX = numberListX.getInterval();
+    var intY = numberListY.getInterval();
+    return new Rectangle(intX.x, intY.x, intX.getAmplitude(), intY.getAmplitude());
+  }
+
   exports.NumberListOperators = NumberListOperators__default;
 
   function NumberTableConversions() {}
@@ -17850,11 +17904,11 @@ define('src/index', ['exports'], function (exports) {
         case 'Interval_Interval':
           return new Point(a0.getMin() + a1.getMin(), a0.getMax() + a1.getMax());
         case 'Point_Rectangle':
-          return new Rectangle(a0.x + a1.x, a0.y + a1.y, a1.width, a1.height);
+          return new Rectangle__default(a0.x + a1.x, a0.y + a1.y, a1.width, a1.height);
         case 'Interval_Rectangle':
-          return new Rectangle(a0.getMin() + a1.x, a0.getMax() + a1.y, a1.width, a1.height);
+          return new Rectangle__default(a0.getMin() + a1.x, a0.getMax() + a1.y, a1.width, a1.height);
         case 'Rectangle_Rectangle':
-          return new Rectangle(a0.x + a1.x, a0.y + a1.y, a0.width + a1.width, a0.height + a1.height);
+          return new Rectangle__default(a0.x + a1.x, a0.y + a1.y, a0.width + a1.width, a0.height + a1.height);
         case 'date_number':
           return new Date(a0.getTime() + (a1 / DateOperators.millisecondsToDays));
         case 'date_date':
@@ -17973,11 +18027,11 @@ define('src/index', ['exports'], function (exports) {
         case 'Interval_Interval':
           return new Point(a0.getMin() + a1.getMin(), a0.getMax() + a1.getMax());
         case 'Point_Rectangle':
-          return new Rectangle(a0.x * a1.x, a0.y * a1.y, a1.width, a1.height); //todo: no
+          return new Rectangle__default(a0.x * a1.x, a0.y * a1.y, a1.width, a1.height); //todo: no
         case 'Interval_Rectangle':
-          return new Rectangle(a0.getMin() * a1.x, a0.getMax() * a1.y, a1.width, a1.height); //todo: no
+          return new Rectangle__default(a0.getMin() * a1.x, a0.getMax() * a1.y, a1.width, a1.height); //todo: no
         case 'Rectangle_Rectangle':
-          return new Rectangle(a0.x * a1.x, a0.y * a1.y, a0.width * a1.width, a0.height * a1.height);
+          return new Rectangle__default(a0.x * a1.x, a0.y * a1.y, a0.width * a1.width, a0.height * a1.height);
         case 'date_number':
           return new Date(a0.getTime() * (a1 / DateOperators.millisecondsToDays));
         case 'date_date':
@@ -18081,11 +18135,11 @@ define('src/index', ['exports'], function (exports) {
         case 'Interval_Interval':
           return new Point(a0.getMin() + a1.getMin(), a0.getMax() + a1.getMax());
         case 'Point_Rectangle':
-          return new Rectangle(a0.x / a1.x, a0.y / a1.y, a1.width, a1.height); //todo: no
+          return new Rectangle__default(a0.x / a1.x, a0.y / a1.y, a1.width, a1.height); //todo: no
         case 'Interval_Rectangle':
-          return new Rectangle(a0.getMin() / a1.x, a0.getMax() / a1.y, a1.width, a1.height); //todo: no
+          return new Rectangle__default(a0.getMin() / a1.x, a0.getMax() / a1.y, a1.width, a1.height); //todo: no
         case 'Rectangle_Rectangle':
-          return new Rectangle(a0.x / a1.x, a0.y / a1.y, a0.width / a1.width, a0.height / a1.height);
+          return new Rectangle__default(a0.x / a1.x, a0.y / a1.y, a0.width / a1.width, a0.height / a1.height);
         case 'date_number':
           return new Date(a0.getTime() / (a1 / DateOperators.millisecondsToDays));
         case 'date_date':
@@ -19830,12 +19884,12 @@ define('src/index', ['exports'], function (exports) {
 
 
   CanvasAndContext.createInvisibleContext = function(width, height) {
-    width = width || cW;
-    height = height || cH;
+    width = width || src_Global__cW;
+    height = height || src_Global__cH;
 
     var tempCanvas = document.createElement('canvas');
-    tempCanvas.width = cW;
-    tempCanvas.height = cH;
+    tempCanvas.width = src_Global__cW;
+    tempCanvas.height = src_Global__cH;
     return tempCanvas.getContext('2d');
   };
 
@@ -19846,7 +19900,7 @@ define('src/index', ['exports'], function (exports) {
 
   DrawSimpleVis.drawSimpleBarChart = function(context, numberList, frame, colors) { //TODO: complete cases (numberLists with negative (and positive) values)
     colors = colors == null ? ColorListOperators.colorListFromColorScale(new ColorScale()) : colors;
-    frame = frame == null ? new Rectangle(10, 10, 400, 300) : frame;
+    frame = frame == null ? new Rectangle__default(10, 10, 400, 300) : frame;
 
     var dX = frame.width / numberList.length;
 
@@ -20127,7 +20181,7 @@ define('src/index', ['exports'], function (exports) {
     var j;
 
     colors = colors == null ? ColorListOperators.colorListFromColorScale(new ColorScale(ColorOperators__default.temperatureScale), nElements) : colors;
-    frame = frame == null ? new Rectangle(10, 10, 400, 300) : frame;
+    frame = frame == null ? new Rectangle__default(10, 10, 400, 300) : frame;
 
     var nCols = intervalsFlowTable[0].length;
     var dX = frame.width / (nCols - 1);
@@ -21312,6 +21366,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+
   // pixel data
 
   function getPixelData(x, y) {
@@ -21370,11 +21425,91 @@ define('src/index', ['exports'], function (exports) {
     canvas.style.cursor = name;
   };
 
+
+
   //time
 
   function getMilliseconds() {
     return new Date().getTime();
   };
+
+
+  function getWindowFrame(){
+    return new Rectangle(0,0,cW,cH);
+  }
+
+
+
+  //advanced graphics (rely on Axis2D projection object)
+
+  /**
+   * @ignore
+   */
+  function _linesInFrame(axis2D, numberListX, numberListY){
+    var l = Math.min(numberListX.length, numberListY.length);
+    var i;
+
+    src_Global__context.beginPath();
+    src_Global__context.moveTo(axis2D.projectX(numberListX[0]), axis2D.projectY(numberListY[0]));
+
+    for(i=1; i<l; i++){
+      src_Global__context.lineTo(axis2D.projectX(numberListX[i]), axis2D.projectY(numberListY[i]));
+    }
+  }
+
+
+  function sLinesInFrame(axis2D, numberListX, numberListY){
+    _linesInFrame(axis2D, numberListX, numberListY);
+    src_Global__context.stroke();
+  }
+
+  function fLinesInFrame(axis2D, numberListX, numberListY){
+    _linesInFrame(axis2D, numberListX, numberListY);
+    src_Global__context.fill();
+  }
+
+  function fsLinesInFrame(axis2D, numberListX, numberListY){
+    _linesInFrame(axis2D, numberListX, numberListY);
+    src_Global__context.fill();
+    src_Global__context.stroke();
+  }
+
+
+  function drawGridX(axis2D, dX, yLabel, stepsLabel){
+    var x0, y0;
+    var n;
+    var i;
+    var x, y, top, bottom;
+
+    x0 = Math.floor(axis2D.departureFrame.x/dX)*dX;
+    n = Math.min( Math.ceil(axis2D.departureFrame.width/dX), 1000 );
+    top = Math.min(axis2D.arrivalFrame.y, axis2D.arrivalFrame.y+axis2D.arrivalFrame.height)
+    bottom = Math.max(axis2D.arrivalFrame.y, axis2D.arrivalFrame.y+axis2D.arrivalFrame.height);
+    stepsLabel = stepsLabel==null?1:stepsLabel;
+    for(i=0; i<n; i++){
+      x = Math.floor(axis2D.projectX(x0 + i*dX))+0.5;
+      line(x, top, x, bottom);
+      if(yLabel!=null && i%stepsLabel==0) fText(String(x0 + i*dX), x, bottom+yLabel);
+    }
+  }
+
+  function drawGridY(axis2D, dY, xLabel, stepsLabel){
+    var x0, y0;
+    var n;
+    var i;
+    var x, y, left, right;
+
+    y0 = Math.floor(axis2D.departureFrame.y/dY)*dY;
+    n = Math.min( Math.ceil(axis2D.departureFrame.height/dY), 1000 );
+    left = Math.min(axis2D.arrivalFrame.x, axis2D.arrivalFrame.x+axis2D.arrivalFrame.width)
+    right = Math.max(axis2D.arrivalFrame.x, axis2D.arrivalFrame.x+axis2D.arrivalFrame.width);
+    stepsLabel = stepsLabel==null?1:stepsLabel;
+    for(i=0; i<n; i++){
+      y = Math.floor(axis2D.projectY(y0 + i*dY))+0.5;
+      line(left, y, right, y);
+      if(xLabel!=null && i%stepsLabel==0) fText(String(y0 + i*dY), left+xLabel, y);
+    }
+  }
 
   exports.fRect = fRect;
   exports.sRect = sRect;
@@ -21437,6 +21572,12 @@ define('src/index', ['exports'], function (exports) {
   exports.captureCanvas = captureCanvas;
   exports.setCursor = SimpleGraphics__setCursor;
   exports.getMilliseconds = getMilliseconds;
+  exports.getWindowFrame = getWindowFrame;
+  exports.sLinesInFrame = sLinesInFrame;
+  exports.fLinesInFrame = fLinesInFrame;
+  exports.fsLinesInFrame = fsLinesInFrame;
+  exports.drawGridX = drawGridX;
+  exports.drawGridY = drawGridY;
 
   function DrawTexts() {}
 
@@ -23678,7 +23819,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   CountryListDraw.drawCountriesAsCircles = function(context, countryList, radiusList, frame, geoFrame, colors) {
-    geoFrame = geoFrame == null ? new Rectangle(-180, -90, 360, 180) : geoFrame;
+    geoFrame = geoFrame == null ? new Rectangle__default(-180, -90, 360, 180) : geoFrame;
     colors = colors == null ? ColorListGenerators__default.createColorListWithSingleColor(countryList.length, 'rgba(100,100,100,0.6)') : colors;
 
     var dX = frame.width / geoFrame.width;
@@ -23699,7 +23840,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   CountryListDraw.drawCountriesPolygons = function(context, countryList, frame, geoFrame, colors, lineWidth, lineColor) {
-    geoFrame = geoFrame == null ? new Rectangle(-180, -90, 360, 180) : geoFrame;
+    geoFrame = geoFrame == null ? new Rectangle__default(-180, -90, 360, 180) : geoFrame;
     colors = colors == null ? ColorListGenerators__default.createColorListWithSingleColor(countryList.length, 'rgba(100,100,100,0.6)') : colors;
 
     var dX = frame.width / geoFrame.width;
@@ -24120,7 +24261,7 @@ define('src/index', ['exports'], function (exports) {
   IntervalTableDraw.MIN_CHARACTERS_SIZE = 1;
 
   IntervalTableDraw.drawIntervalsFlowTable = function(intervalsFlowTable, frame, colors, bezier, offValue) { //, returnHovered){ //TODO: implement rollover detection, using _isOnShape (below)
-    frame = frame == null ? new Rectangle(10, 10, 400, 300) : frame;
+    frame = frame == null ? new Rectangle__default(10, 10, 400, 300) : frame;
     colors = colors == null ? ColorListGenerators__default.createCategoricalColors(0, intervalsFlowTable.length, ColorScales__default.temperature) : colors;
     bezier = bezier || false;
     offValue = offValue == null ? 0.45 : offValue;
@@ -24411,7 +24552,7 @@ define('src/index', ['exports'], function (exports) {
     var j;
 
     colors = colors == null ? ColorListGenerators__default.createCategoricalColors(0, intervalsFlowTable.length, ColorScales__default.temperature) : colors;
-    frame = frame == null ? new Rectangle(10, 10, 400, 300) : frame;
+    frame = frame == null ? new Rectangle__default(10, 10, 400, 300) : frame;
 
     var nCols = intervalsFlowTable[0].length;
     var dX = frame.width / (nCols - 1);
@@ -24635,7 +24776,7 @@ define('src/index', ['exports'], function (exports) {
     loglog = loglog || false;
     margin = margin || 0;
 
-    var subframe = new Rectangle(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
+    var subframe = new Rectangle__default(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
     subframe.bottom = subframe.getBottom();
 
     var i;
@@ -24695,7 +24836,7 @@ define('src/index', ['exports'], function (exports) {
     if(numberTable.length < 2) return;
 
     var margin = 16;
-    var subframe = new Rectangle(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
+    var subframe = new Rectangle__default(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
     subframe.bottom = subframe.getBottom();
 
     var i;
@@ -24827,7 +24968,7 @@ define('src/index', ['exports'], function (exports) {
     //c.log(matrixColors.length, matrixColors[0].length, matrixColors[0][0]);
 
     //draw
-    var subframe = new Rectangle(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
+    var subframe = new Rectangle__default(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
     subframe.bottom = subframe.getBottom();
     var dx = subframe.width / matrixColors.length;
     var dy = subframe.height / matrixColors[0].length;
@@ -24928,7 +25069,7 @@ define('src/index', ['exports'], function (exports) {
       frame.memory.colorList = colorList;
     }
 
-    var flowFrame = new Rectangle(0, 0, frame.width, horizontalLabels == null ? frame.height : (frame.height - 14));
+    var flowFrame = new Rectangle__default(0, 0, frame.width, horizontalLabels == null ? frame.height : (frame.height - 14));
 
     if(frame.memory.image == null) {
       // TODO refactor to not reassign context
@@ -25278,7 +25419,7 @@ define('src/index', ['exports'], function (exports) {
     }
 
     var i;
-    var subframe = new Rectangle(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
+    var subframe = new Rectangle__default(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
     subframe.bottom = subframe.getBottom();
     var x;
     var dx = subframe.width / numberList.length;
@@ -25388,7 +25529,7 @@ define('src/index', ['exports'], function (exports) {
     margin = margin || 10;
     fontSize = fontSize || 12;
 
-    var subframe = new Rectangle(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
+    var subframe = new Rectangle__default(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
     subframe.bottom = subframe.getBottom();
 
     var lineHeight = Math.floor(fontSize * 1.2);
@@ -25461,7 +25602,7 @@ define('src/index', ['exports'], function (exports) {
         }
       }
 
-      rectangles[i] = new Rectangle(p.x, p.y, w, h);
+      rectangles[i] = new Rectangle__default(p.x, p.y, w, h);
       rectanglesPlaced.push(rectangles[i]);
     }
   };
@@ -25681,7 +25822,7 @@ define('src/index', ['exports'], function (exports) {
 
       }
 
-      rectangles[i] = new Rectangle(px, py, w, h);
+      rectangles[i] = new Rectangle__default(px, py, w, h);
       rectanglesPlaced.push(rectangles[i]);
     }
 
@@ -25840,7 +25981,7 @@ define('src/index', ['exports'], function (exports) {
 
       frame.bottom = frame.getBottom();
       frame.right = frame.getRight();
-      memory.frameMargin = new Rectangle(frame.x + margin, frame.y + margin, frame.width - 2 * margin, frame.height - 2 * margin);
+      memory.frameMargin = new Rectangle__default(frame.x + margin, frame.y + margin, frame.width - 2 * margin, frame.height - 2 * margin);
       frameMargin = memory.frameMargin;
       memory.frameMargin.right = memory.frameMargin.getRight();
       memory.frameMargin.bottom = memory.frameMargin.getBottom();
@@ -26063,7 +26204,7 @@ define('src/index', ['exports'], function (exports) {
     margin = margin || 1;
 
     var dX = frame.width / tree.nLevels;
-    TreeDraw._drawRectanglesTreeChildren(tree.nodeList[0], new Rectangle(frame.x, frame.y, dX, frame.height), levelColors, margin);
+    TreeDraw._drawRectanglesTreeChildren(tree.nodeList[0], new Rectangle__default(frame.x, frame.y, dX, frame.height), levelColors, margin);
   };
 
   TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin) {
@@ -26078,7 +26219,7 @@ define('src/index', ['exports'], function (exports) {
       var h;
       for(i = 0; children[i] != null; i++) {
         h = dY * (children[i].descentWeight);
-        TreeDraw._drawRectanglesTreeChildren(children[i], new Rectangle(frame.x + frame.width, yy, frame.width, h), colors, margin);
+        TreeDraw._drawRectanglesTreeChildren(children[i], new Rectangle__default(frame.x + frame.width, yy, frame.width, h), colors, margin);
         yy += h;
       }
     }
@@ -26145,7 +26286,7 @@ define('src/index', ['exports'], function (exports) {
         assignTreemapWeight(tree.nodeList[0]);
       }
 
-      tree.nodeList[0]._outRectangle = new Rectangle(0, 0, frame.width, frame.height);
+      tree.nodeList[0]._outRectangle = new Rectangle__default(0, 0, frame.width, frame.height);
       tree.nodeList[0]._inRectangle = TreeDraw._inRectFromOutRect(tree.nodeList[0]._outRectangle);
       TreeDraw._generateRectangles(tree.nodeList[0]);
 
@@ -26283,7 +26424,7 @@ define('src/index', ['exports'], function (exports) {
 
       tree.nodeList.forEach(function(node, i) {
 
-        rect = new Rectangle(tx(node._outRectangle.x), ty(node._outRectangle.y), node._outRectangle.width * kx, node._outRectangle.height * ky);
+        rect = new Rectangle__default(tx(node._outRectangle.x), ty(node._outRectangle.y), node._outRectangle.width * kx, node._outRectangle.height * ky);
 
         if(rect.width > 5 && rect.height > 4 && rect.x < frame.width && rect.getRight() > 0 && rect.y < frame.height && rect.getBottom() > 0) {
 
@@ -26342,7 +26483,7 @@ define('src/index', ['exports'], function (exports) {
       if(overNode) {
         SimpleGraphics__setCursor('pointer');
 
-        rect = new Rectangle(tx(overNode._outRectangle.x), ty(overNode._outRectangle.y), overNode._outRectangle.width * kx, overNode._outRectangle.height * ky);
+        rect = new Rectangle__default(tx(overNode._outRectangle.x), ty(overNode._outRectangle.y), overNode._outRectangle.width * kx, overNode._outRectangle.height * ky);
         x = Math.round(frame.x + rect.x) + 0.5;
         y = Math.round(frame.y + rect.y) + 0.5;
         setStroke(textColor ? textColor : frame.memory.textsColorList[overI], 2);
@@ -26416,13 +26557,13 @@ define('src/index', ['exports'], function (exports) {
    * @ignore
    */
   TreeDraw._reduceRect = function(rect) {
-    return new Rectangle(rect.x + rect.width * TreeDraw.PROP_RECT_REDUCTION_MARGIN, rect.y + rect.height * TreeDraw.PROP_RECT_REDUCTION_MARGIN, rect.width * (1 - 2 * TreeDraw.PROP_RECT_REDUCTION_MARGIN), rect.height * (1 - 2 * TreeDraw.PROP_RECT_REDUCTION_MARGIN));
+    return new Rectangle__default(rect.x + rect.width * TreeDraw.PROP_RECT_REDUCTION_MARGIN, rect.y + rect.height * TreeDraw.PROP_RECT_REDUCTION_MARGIN, rect.width * (1 - 2 * TreeDraw.PROP_RECT_REDUCTION_MARGIN), rect.height * (1 - 2 * TreeDraw.PROP_RECT_REDUCTION_MARGIN));
   };
   TreeDraw._expandRect = function(rect) {
-    return new Rectangle(rect.x - rect.width * TreeDraw.PROP_RECT_EXPANTION_MARGIN, rect.y - rect.height * TreeDraw.PROP_RECT_EXPANTION_MARGIN, rect.width * (1 + 2 * TreeDraw.PROP_RECT_EXPANTION_MARGIN), rect.height * (1 + 2 * TreeDraw.PROP_RECT_EXPANTION_MARGIN));
+    return new Rectangle__default(rect.x - rect.width * TreeDraw.PROP_RECT_EXPANTION_MARGIN, rect.y - rect.height * TreeDraw.PROP_RECT_EXPANTION_MARGIN, rect.width * (1 + 2 * TreeDraw.PROP_RECT_EXPANTION_MARGIN), rect.height * (1 + 2 * TreeDraw.PROP_RECT_EXPANTION_MARGIN));
   };
   TreeDraw._inRectFromOutRect = function(rect) {
-    return new Rectangle(rect.x + rect.width * TreeDraw.PROP_RECT_MARGIN, rect.y + rect.height * TreeDraw.PROP_RECT_LABEL, rect.width * (1 - 2 * TreeDraw.PROP_RECT_MARGIN), rect.height * (1 - TreeDraw.PROP_RECT_MARGIN - TreeDraw.PROP_RECT_LABEL));
+    return new Rectangle__default(rect.x + rect.width * TreeDraw.PROP_RECT_MARGIN, rect.y + rect.height * TreeDraw.PROP_RECT_LABEL, rect.width * (1 - 2 * TreeDraw.PROP_RECT_MARGIN), rect.height * (1 - TreeDraw.PROP_RECT_MARGIN - TreeDraw.PROP_RECT_LABEL));
   };
   TreeDraw.PROP_RECT_MARGIN = 0.03;
   TreeDraw.PROP_RECT_LABEL = 0.2;
@@ -26471,11 +26612,11 @@ define('src/index', ['exports'], function (exports) {
 
 
 
-      tree.nodeList[0]._outRectangle = new Rectangle(0, 0, frame.width, hTree);
+      tree.nodeList[0]._outRectangle = new Rectangle__default(0, 0, frame.width, hTree);
       tree.nodeList[0]._inRectangle = TreeDraw._inRectFromOutRectDecision(tree.nodeList[0]._outRectangle, hLevel);
       TreeDraw._generateRectanglesDecision(tree.nodeList[0], hLevel);
 
-      frame.memory.focusFrame = new Rectangle(0, 0, frame.width, frame.height);
+      frame.memory.focusFrame = new Rectangle__default(0, 0, frame.width, frame.height);
       frame.memory.kx = frame.width / frame.memory.focusFrame.width;
       frame.memory.mx = -frame.memory.kx * frame.memory.focusFrame.x;
       frame.memory.ky = frame.height / frame.memory.focusFrame.height;
@@ -26556,7 +26697,7 @@ define('src/index', ['exports'], function (exports) {
 
       tree.nodeList.forEach(function(node, i) {
 
-        rect = new Rectangle(tx(node._outRectangle.x), node._outRectangle.y, node._outRectangle.width * kx, node._outRectangle.height);
+        rect = new Rectangle__default(tx(node._outRectangle.x), node._outRectangle.y, node._outRectangle.width * kx, node._outRectangle.height);
 
         if(rect.x < frame.width && rect.getRight() > 0 && rect.y < frame.height && rect.getBottom() > 0) {
 
@@ -26703,7 +26844,7 @@ define('src/index', ['exports'], function (exports) {
         SimpleGraphics__setCursor('pointer');
 
         //rect = new Rectangle(tx(overNode._outRectangle.x), ty(overNode._outRectangle.y), overNode._outRectangle.width*kx, overNode._outRectangle.height*ky);
-        rect = new Rectangle(tx(overNode._outRectangle.x), overNode._outRectangle.y, overNode._outRectangle.width * kx, overNode._outRectangle.height);
+        rect = new Rectangle__default(tx(overNode._outRectangle.x), overNode._outRectangle.y, overNode._outRectangle.width * kx, overNode._outRectangle.height);
         x = Math.round(frame.x + rect.x) + 0.5;
         y = Math.round(frame.y + rect.y) + 0.5;
 
@@ -26727,7 +26868,7 @@ define('src/index', ['exports'], function (exports) {
 
 
         if(MOUSE_UP_FAST) {
-          frame.memory.focusFrame = new Rectangle(overNode._outRectangle.x - overNode._outRectangle.width * 0.025, 0, overNode._outRectangle.width * 1.05, frame.height); // TreeDraw._expandRect(overNode._outRectangle);
+          frame.memory.focusFrame = new Rectangle__default(overNode._outRectangle.x - overNode._outRectangle.width * 0.025, 0, overNode._outRectangle.width * 1.05, frame.height); // TreeDraw._expandRect(overNode._outRectangle);
 
           if(frame.memory.focusFrame.x < 0) {
             frame.memory.focusFrame.width += frame.memory.focusFrame.x;
@@ -26811,7 +26952,7 @@ define('src/index', ['exports'], function (exports) {
     });
   };
   TreeDraw._inRectFromOutRectDecision = function(rect, hLevel) {
-    return new Rectangle(rect.x, rect.y + hLevel, rect.width, rect.height - hLevel);
+    return new Rectangle__default(rect.x, rect.y + hLevel, rect.width, rect.height - hLevel);
   };
   TreeDraw._horizontalRectanglesDecision = function(rect, weights) {
     var rects = new List__default();
@@ -26821,7 +26962,7 @@ define('src/index', ['exports'], function (exports) {
 
     newWeights.forEach(function(weight) {
       w = weight * rect.width;
-      rects.push(new Rectangle(x0, rect.y, w, rect.height));
+      rects.push(new Rectangle__default(x0, rect.y, w, rect.height));
       x0 += w;
     });
 

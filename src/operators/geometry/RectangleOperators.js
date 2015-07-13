@@ -15,6 +15,36 @@ import Point from "src/dataStructures/geometry/Point";
 function RectangleOperators() {}
 export default RectangleOperators;
 
+/**
+ * finds the minimal rectangle containing two or more rectangles
+ * @param {Rectangle} param0 first rectangle
+ * @param {Rectangle} param1 second rectangle
+ * @param {Rectangle} param2 third rectangle
+ * @param {Rectangle} param3 fourth rectangle
+ * @param {Rectangle} param4 fifth rectangle
+ * @return {Rectangle}
+ */
+RectangleOperators.minRect = function(){
+  if(arguments==null || arguments.length<1) return null;
+
+  var i;
+  var frame = arguments[0].clone();
+
+  frame.width = frame.getRight();
+  frame.height = frame.getBottom();
+  for(i = 1; arguments[i] != null; i++) {
+    frame.x = Math.min(frame.x, arguments[i].x);
+    frame.y = Math.min(frame.y, arguments[i].y);
+
+    frame.width = Math.max(arguments[i].getRight(), frame.width);
+    frame.height = Math.max(arguments[i].getBottom(), frame.height);
+  }
+
+  frame.width -= frame.x;
+  frame.height -= frame.y;
+
+  return frame;
+}
 
 /**
  *
@@ -147,8 +177,6 @@ RectangleOperators.packingRectangles = function(weights, packingMode, rectangle,
   }
   return null;
 };
-
-RectangleOperators.quadrification = RectangleOperators.squarify; //old name
 
 /**
  * Squarified algorithm as described in (http://www.win.tue.nl/~vanwijk/stm.pdf)

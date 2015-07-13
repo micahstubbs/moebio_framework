@@ -31,9 +31,10 @@ RectangleList.fromArray = function(array) {
 
 //TODO:finish RectangleList methods
 
-RectangleList.prototype.getFrame = function() {
+RectangleList.prototype.getFrame = function() {//TODO: use RectangleOperators.minRect
   if(this.length == 0) return null;
-  var frame = this[0];
+
+  var frame = this[0].clone();
   frame.width = frame.getRight();
   frame.height = frame.getBottom();
   for(var i = 1; this[i] != null; i++) {
