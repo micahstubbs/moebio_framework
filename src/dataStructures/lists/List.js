@@ -570,7 +570,7 @@ List.prototype.countOccurrences = function() { //TODO: more efficient
  * previous_name:getElementsRepetitionCount
  */
 List.prototype.getFrequenciesTable = function(sortListsByOccurrences, addWeightsNormalizedToSum, addCategoricalColors) {
-  sortListsByOccurrences = sortListsByOccurrences == null ? true : sortListsByOccurrences;
+  sortListsByOccurrences = sortListsByOccurrences == null?true:sortListsByOccurrences;
 
   var table = new Table();
   var elementList = new List();
@@ -611,8 +611,8 @@ List.prototype.getFrequenciesTable = function(sortListsByOccurrences, addWeights
   }
 
   if(sortListsByOccurrences){
-    table[0] = elementList.getSorted();
-    table[1] = numberList.getSortedByList(numberList);//getSorted();
+    table[0] = elementList.getSortedByList(numberList, false);
+    table[1] = numberList.getSorted(false);
     
   }
 
@@ -877,7 +877,7 @@ List.prototype.getSortedByProperty = function(propertyName, ascending) {
  * tags:sort
  */
 List.prototype.getSorted = function(ascending) {
-  return this.getSortedByList(this); //<--- because tests, antiintuitively, have proven this to be faster
+  return this.getSortedByList(this, ascending); //<--- because tests, antiintuitively, have proven this to be faster
 
   // ascending = ascending == null ? true : ascending; 
 

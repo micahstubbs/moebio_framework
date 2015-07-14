@@ -1087,7 +1087,7 @@ define('src/index', ['exports'], function (exports) {
    * previous_name:getElementsRepetitionCount
    */
   List__List.prototype.getFrequenciesTable = function(sortListsByOccurrences, addWeightsNormalizedToSum, addCategoricalColors) {
-    sortListsByOccurrences = sortListsByOccurrences == null ? true : sortListsByOccurrences;
+    sortListsByOccurrences = sortListsByOccurrences == null?true:sortListsByOccurrences;
 
     var table = new Table();
     var elementList = new List__List();
@@ -1128,8 +1128,8 @@ define('src/index', ['exports'], function (exports) {
     }
 
     if(sortListsByOccurrences){
-      table[0] = elementList.getSorted();
-      table[1] = numberList.getSortedByList(numberList);//getSorted();
+      table[0] = elementList.getSortedByList(numberList, false);
+      table[1] = numberList.getSorted(false);
       
     }
 
@@ -1394,7 +1394,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:sort
    */
   List__List.prototype.getSorted = function(ascending) {
-    return this.getSortedByList(this); //<--- because tests, antiintuitively, have proven this to be faster
+    return this.getSortedByList(this, ascending); //<--- because tests, antiintuitively, have proven this to be faster
 
     // ascending = ascending == null ? true : ascending; 
 
