@@ -870,7 +870,7 @@ ListOperators.subCategoricalAnalysis = function(list0, list1){
  * @param  {List} list with repeated elements (actegorical list)
  *
  * @param {Object} valueFollowing if a value is provided, the property _P_valueFollowing will be added to the list, with proportion of that value in the list
- * @param {Table} freqTable for saving time, in case the frequency table with sorted elements has been already calculated (with list.getElementsRepetitionCount(true))
+ * @param {Table} freqTable for saving time, in case the frequency table with sorted elements has been already calculated (with list.getFrequenciesTable(true))
  * @return {Number}
  * tags:statistics
  */
@@ -886,7 +886,7 @@ ListOperators.getListEntropy = function(list, valueFollowing, freqTable) {
     return 0;
   }
 
-  if(freqTable==null) freqTable = list.getElementsRepetitionCount(true);// ListOperators.countElementsRepetitionOnList(list, true);
+  if(freqTable==null) freqTable = list.getFrequenciesTable(true);// ListOperators.countElementsRepetitionOnList(list, true);
 
   list._mostRepresentedValue = freqTable[0][0];
   var N = list.length;

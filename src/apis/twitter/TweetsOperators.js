@@ -91,7 +91,7 @@ TweetsOperators.getWordsFrequenciesTable = function(tweetsArray, removeStopWords
 
 TweetsOperators.getAccountsNamesFrequenciesTable = function(tweetsArray, limit) {
   var words = TweetsOperators.getAccountsNamesFromTweets(tweetsArray, false, false, null);
-  var table = words.getElementsRepetitionCount(true).sliceRows(0, limit-1);
+  var table = words.getFrequenciesTable(true).sliceRows(0, limit-1);
   return table;//ListOperators.countElementsRepetitionOnList(words, true, false, limit);
 };
 

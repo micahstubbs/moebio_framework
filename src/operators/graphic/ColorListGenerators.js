@@ -198,9 +198,7 @@ ColorListGenerators._evaluationFunction = function(numberList) { //private
  */
 ColorListGenerators.createCategoricalColorListDictionaryObject = function(list, colorList, alpha, color, interpolate, invert){
   if(list==null) return;
-
-  c.l('ColorListGenerators.createCategoricalColorListDictionaryObject | list:', list);
-
+  
   var diffValues = list.getWithoutRepetitions();
   var diffColors = ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate, colorList);
   if(invert) diffColors = diffColors.getInverted();
@@ -210,7 +208,7 @@ ColorListGenerators.createCategoricalColorListDictionaryObject = function(list, 
   diffValues.forEach(function(element, i){
     dictionaryObject[element] = diffColors[i];
   });
-  
+
   return dictionaryObject;
 
 }

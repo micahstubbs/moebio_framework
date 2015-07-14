@@ -113,7 +113,7 @@ TwitterSearchProcesses.buildAggregatedTable = function(table) {
   var texts = table[7];
   var users_names = table[3];
 
-  var repetitions = users_ids.getElementsRepetitionCount();// ListOperators.countElementsRepetitionOnList(users_ids);
+  var repetitions = users_ids.getFrequencyTable();// ListOperators.countElementsRepetitionOnList(users_ids);
 
   aggregatedTable = new Table();
 

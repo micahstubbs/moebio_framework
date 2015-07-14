@@ -206,7 +206,7 @@ StringOperators.getWords = function(string, withoutRepetitions, stopWords, sorte
 
   if(sortedByFrequency) {
     if(withoutRepetitions) {
-      list = list.getElementsRepetitionCount(true)[0];// //ListOperators.countElementsRepetitionOnList(list, true)[0];
+      list = list.getFrequenciesTable(true)[0];// //ListOperators.countElementsRepetitionOnList(list, true)[0];
       if(limit != 0) list = list.substr(0, limit);
 
       return list;
@@ -630,7 +630,7 @@ StringOperators.getWordsOccurrencesTable = function(string, stopWords, includeLi
   if(string == null) return;
   if(string.length == 0) return new Table(new StringList(), new NumberList());
   var words = StringOperators.getWords(string, false, stopWords, false, includeLinks, limit, minSizeWords);
-  var table = words.getElementsRepetitionCount(true).sliceRows(0, limit-1);
+  var table = words.getFrequenciesTable(true).sliceRows(0, limit-1);
   return table;// ListOperators.countElementsRepetitionOnList(words, true, false, limit);
 };
 

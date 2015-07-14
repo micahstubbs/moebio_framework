@@ -16,6 +16,7 @@ import { instantiateWithSameType, typeOf, instantiate } from "src/tools/utils/co
 List.prototype = new DataModel();
 List.prototype.constructor = List;
 
+
  /**
   * @classdesc List is an Array with a type property.
   * Lists have a number of methods to assist with working with
@@ -63,7 +64,7 @@ List.fromArray = function(array) {
   array.getType = List.prototype.getType;
   array.getLengths = List.prototype.getLengths;
   array.getWithoutRepetitions = List.prototype.getWithoutRepetitions;
-  array.getElementsRepetitionCount = List.prototype.getElementsRepetitionCount;
+  array.getFrequenciesTable = List.prototype.getFrequenciesTable;
   array.allElementsEqual = List.prototype.allElementsEqual;
   array.countElement = List.prototype.countElement;
   array.countOccurrences = List.prototype.countOccurrences;
@@ -557,20 +558,24 @@ List.prototype.countOccurrences = function() { //TODO: more efficient
   return occurrences;
 };
 
+
 /**
  * returns a table with a list of non repeated elements and a list with the numbers of occurrences for each one.
+ *
  * @param  {Boolean} sortListsByOccurrences if true both lists in the table will be sorted by number of occurences (most frequent on top), true by default
+ * @param {Boolean} addWeightsNormalizedToSum adds a 3rd list with weights normalized to sum (convenient to proportion visualizations)
+ * @param {Boolean} addCategoricalColors adds a list of categorical colors
  * @return {Table} Table containing a List of non-repeated elements and a NumberList of the frequency of each element.
  * tags:count
+ * previous_name:getElementsRepetitionCount
  */
-List.prototype.getElementsRepetitionCount = function(sortListsByOccurrences) {
+List.prototype.getFrequenciesTable = function(sortListsByOccurrences, addWeightsNormalizedToSum, addCategoricalColors) {
   sortListsByOccurrences = sortListsByOccurrences == null ? true : sortListsByOccurrences;
 
   var table = new Table();
   var elementList = new List();
   var numberList = new NumberList();
   var i;
-  var dictionary = {};
   var index;
   var element;
 
@@ -578,6 +583,8 @@ List.prototype.getElementsRepetitionCount = function(sortListsByOccurrences) {
   table[1] = numberList;
 
   if(this.type == 'NumberList' || this.type == 'StringList') {//TODO:check other cases
+    var dictionary = {};
+    var prevVal;
 
     for(i=0; this[i]!=null; i++){
       index = dictionary[this[i]];
@@ -590,23 +597,33 @@ List.prototype.getElementsRepetitionCount = function(sortListsByOccurrences) {
       numberList[index]++;
     }
 
-    if(sortListsByOccurrences) table = table.getListsSortedByList(numberList, false);
-
-    return table;
-  }
-
-  for(i = 0; this[i]!=null; i++) {
-    element = this[i];
-    index = elementList.indexOf(element);
-    if(index != -1) {
-      numberList[index]++;
-    } else {
-      elementList.push(element);
-      numberList.push(1);
+  } else {
+    for(i = 0; this[i]!=null; i++) {
+      element = this[i];
+      index = elementList.indexOf(element);
+      if(index != -1) {
+        numberList[index]++;
+      } else {
+        elementList.push(element);
+        numberList.push(1);
+      }
     }
   }
 
-  if(sortListsByOccurrences) table = table.getListsSortedByList(numberList, false);
+  if(sortListsByOccurrences){
+    table[0] = elementList.getSorted();
+    table[1] = numberList.getSortedByList(numberList);//getSorted();
+    
+  }
+
+  if(addWeightsNormalizedToSum) table[2] = table[1].getNormalizedToSum();
+  if(addCategoricalColors){
+    var colors = new ColorList();
+    for(i = 0; table[0][i]!=null; i++) {
+        colors[i] = ColorListGenerators._HARDCODED_CATEGORICAL_COLORS[i%ColorListGenerators._HARDCODED_CATEGORICAL_COLORS.length];
+      }
+    table.push(colors);
+  }
 
   return table;
 };
@@ -636,7 +653,7 @@ List.prototype.allElementsEqual = function() {
  */
 List.prototype.getMostRepeatedElement = function() {
   //TODO: this method should be more efficient
-  return this.getElementsRepetitionCount(true)[0][0];// ListOperators.countElementsRepetitionOnList(this, true)[0][0];
+  return this.getFrequenciesTable(true)[0][0];// ListOperators.countElementsRepetitionOnList(this, true)[0][0];
 };
 
 /**
@@ -860,19 +877,21 @@ List.prototype.getSortedByProperty = function(propertyName, ascending) {
  * tags:sort
  */
 List.prototype.getSorted = function(ascending) {
-  ascending = ascending == null ? true : ascending;
+  return this.getSortedByList(this); //<--- because tests, antiintuitively, have proven this to be faster
 
-  var comparator;
-  if(ascending) {
-    comparator = function(a, b) {
-      return a > b ? 1 : -1;
-    };
-  } else {
-    comparator = function(a, b) {
-      return a > b ? -1 : 1;
-    };
-  }
-  return this.clone().sort(comparator);
+  // ascending = ascending == null ? true : ascending; 
+
+  // var comparator;
+  // if(ascending) {
+  //   comparator = function(a, b) {
+  //     return a > b ? 1 : -1;
+  //   };
+  // } else {
+  //   comparator = function(a, b) {
+  //     return a > b ? -1 : 1;
+  //   };
+  // }
+  // return this.clone().sort(comparator);
 };
 
 /**
@@ -1349,7 +1368,7 @@ List.prototype.getReport = function(level) { //TODO:complete
       break;
       case "StringList":
     case "List":
-      var freqTable = this.getElementsRepetitionCount(true);
+      var freqTable = this.getFrequenciesTable(true);
       this._freqTable = freqTable;
       text += ident + "number of different elements: " + freqTable[0].length;
       if(freqTable[0].length < 10) {
@@ -1456,7 +1475,7 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
       break;
     case "StringList":
     case "List":
-      var freqTable = this.getElementsRepetitionCount(true);
+      var freqTable = this.getFrequenciesTable(true);
       this._freqTable = freqTable;
       var catColors = ColorListGenerators.createCategoricalColors(2, freqTable[0].length);
 

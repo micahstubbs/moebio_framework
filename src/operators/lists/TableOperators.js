@@ -468,7 +468,7 @@ TableOperators.aggregateTableOld = function(table, nList, mode) {
       }
       break;
     case 2: //averages values in numberLists
-      var nRepetitionsList = table[nList].getElementsRepetitionCount(false);
+      var nRepetitionsList = table[nList].getFrequenciesTable(false);
       newTable = TableOperators.aggregateTableOld(table, nList, 1);
 
       for(j = 0; newTable[j] != null; j++) {

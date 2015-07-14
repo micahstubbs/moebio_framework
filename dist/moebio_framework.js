@@ -533,6 +533,7 @@ define('src/index', ['exports'], function (exports) {
   List__List.prototype = new DataModel();
   List__List.prototype.constructor = List__List;
 
+
    /**
     * @classdesc List is an Array with a type property.
     * Lists have a number of methods to assist with working with
@@ -580,7 +581,7 @@ define('src/index', ['exports'], function (exports) {
     array.getType = List__List.prototype.getType;
     array.getLengths = List__List.prototype.getLengths;
     array.getWithoutRepetitions = List__List.prototype.getWithoutRepetitions;
-    array.getElementsRepetitionCount = List__List.prototype.getElementsRepetitionCount;
+    array.getFrequenciesTable = List__List.prototype.getFrequenciesTable;
     array.allElementsEqual = List__List.prototype.allElementsEqual;
     array.countElement = List__List.prototype.countElement;
     array.countOccurrences = List__List.prototype.countOccurrences;
@@ -1074,20 +1075,24 @@ define('src/index', ['exports'], function (exports) {
     return occurrences;
   };
 
+
   /**
    * returns a table with a list of non repeated elements and a list with the numbers of occurrences for each one.
+   *
    * @param  {Boolean} sortListsByOccurrences if true both lists in the table will be sorted by number of occurences (most frequent on top), true by default
+   * @param {Boolean} addWeightsNormalizedToSum adds a 3rd list with weights normalized to sum (convenient to proportion visualizations)
+   * @param {Boolean} addCategoricalColors adds a list of categorical colors
    * @return {Table} Table containing a List of non-repeated elements and a NumberList of the frequency of each element.
    * tags:count
+   * previous_name:getElementsRepetitionCount
    */
-  List__List.prototype.getElementsRepetitionCount = function(sortListsByOccurrences) {
+  List__List.prototype.getFrequenciesTable = function(sortListsByOccurrences, addWeightsNormalizedToSum, addCategoricalColors) {
     sortListsByOccurrences = sortListsByOccurrences == null ? true : sortListsByOccurrences;
 
     var table = new Table();
     var elementList = new List__List();
     var numberList = new NumberList();
     var i;
-    var dictionary = {};
     var index;
     var element;
 
@@ -1095,6 +1100,8 @@ define('src/index', ['exports'], function (exports) {
     table[1] = numberList;
 
     if(this.type == 'NumberList' || this.type == 'StringList') {//TODO:check other cases
+      var dictionary = {};
+      var prevVal;
 
       for(i=0; this[i]!=null; i++){
         index = dictionary[this[i]];
@@ -1107,23 +1114,33 @@ define('src/index', ['exports'], function (exports) {
         numberList[index]++;
       }
 
-      if(sortListsByOccurrences) table = table.getListsSortedByList(numberList, false);
-
-      return table;
-    }
-
-    for(i = 0; this[i]!=null; i++) {
-      element = this[i];
-      index = elementList.indexOf(element);
-      if(index != -1) {
-        numberList[index]++;
-      } else {
-        elementList.push(element);
-        numberList.push(1);
+    } else {
+      for(i = 0; this[i]!=null; i++) {
+        element = this[i];
+        index = elementList.indexOf(element);
+        if(index != -1) {
+          numberList[index]++;
+        } else {
+          elementList.push(element);
+          numberList.push(1);
+        }
       }
     }
 
-    if(sortListsByOccurrences) table = table.getListsSortedByList(numberList, false);
+    if(sortListsByOccurrences){
+      table[0] = elementList.getSorted();
+      table[1] = numberList.getSortedByList(numberList);//getSorted();
+      
+    }
+
+    if(addWeightsNormalizedToSum) table[2] = table[1].getNormalizedToSum();
+    if(addCategoricalColors){
+      var colors = new ColorList();
+      for(i = 0; table[0][i]!=null; i++) {
+          colors[i] = ColorListGenerators._HARDCODED_CATEGORICAL_COLORS[i%ColorListGenerators._HARDCODED_CATEGORICAL_COLORS.length];
+        }
+      table.push(colors);
+    }
 
     return table;
   };
@@ -1153,7 +1170,7 @@ define('src/index', ['exports'], function (exports) {
    */
   List__List.prototype.getMostRepeatedElement = function() {
     //TODO: this method should be more efficient
-    return this.getElementsRepetitionCount(true)[0][0];// ListOperators.countElementsRepetitionOnList(this, true)[0][0];
+    return this.getFrequenciesTable(true)[0][0];// ListOperators.countElementsRepetitionOnList(this, true)[0][0];
   };
 
   /**
@@ -1377,19 +1394,21 @@ define('src/index', ['exports'], function (exports) {
    * tags:sort
    */
   List__List.prototype.getSorted = function(ascending) {
-    ascending = ascending == null ? true : ascending;
+    return this.getSortedByList(this); //<--- because tests, antiintuitively, have proven this to be faster
 
-    var comparator;
-    if(ascending) {
-      comparator = function(a, b) {
-        return a > b ? 1 : -1;
-      };
-    } else {
-      comparator = function(a, b) {
-        return a > b ? -1 : 1;
-      };
-    }
-    return this.clone().sort(comparator);
+    // ascending = ascending == null ? true : ascending; 
+
+    // var comparator;
+    // if(ascending) {
+    //   comparator = function(a, b) {
+    //     return a > b ? 1 : -1;
+    //   };
+    // } else {
+    //   comparator = function(a, b) {
+    //     return a > b ? -1 : 1;
+    //   };
+    // }
+    // return this.clone().sort(comparator);
   };
 
   /**
@@ -1866,7 +1885,7 @@ define('src/index', ['exports'], function (exports) {
         break;
         case "StringList":
       case "List":
-        var freqTable = this.getElementsRepetitionCount(true);
+        var freqTable = this.getFrequenciesTable(true);
         this._freqTable = freqTable;
         text += ident + "number of different elements: " + freqTable[0].length;
         if(freqTable[0].length < 10) {
@@ -1973,7 +1992,7 @@ define('src/index', ['exports'], function (exports) {
         break;
       case "StringList":
       case "List":
-        var freqTable = this.getElementsRepetitionCount(true);
+        var freqTable = this.getFrequenciesTable(true);
         this._freqTable = freqTable;
         var catColors = ColorListGenerators.createCategoricalColors(2, freqTable[0].length);
 
@@ -4348,8 +4367,8 @@ define('src/index', ['exports'], function (exports) {
 
   exports.ColorOperators = ColorOperators__default;
 
-  ColorList.prototype = new List__default();
-  ColorList.prototype.constructor = ColorList;
+  ColorList__ColorList.prototype = new List__default();
+  ColorList__ColorList.prototype.constructor = ColorList__ColorList;
 
   /**
    * @classdesc A {@link List} for storing Colors.
@@ -4358,26 +4377,26 @@ define('src/index', ['exports'], function (exports) {
    * @constructor
    * @category colors
    */
-  function ColorList() {
+  function ColorList__ColorList() {
     var args = [];
     var i;
     for(i = 0; i < arguments.length; i++) {
       args[i] = arguments[i];
     }
     var array = List__default.apply(this, args);
-    array = ColorList.fromArray(array);
+    array = ColorList__ColorList.fromArray(array);
 
     return array;
   }
+  var ColorList__default = ColorList__ColorList;
 
-
-  ColorList.fromArray = function(array) {
+  ColorList__ColorList.fromArray = function(array) {
     var result = List__default.fromArray(array);
     result.type = "ColorList";
-    result.getRgbArrays = ColorList.prototype.getRgbArrays;
-    result.getInterpolated = ColorList.prototype.getInterpolated;
-    result.getInverted = ColorList.prototype.getInverted;
-    result.addAlpha = ColorList.prototype.addAlpha;
+    result.getRgbArrays = ColorList__ColorList.prototype.getRgbArrays;
+    result.getInterpolated = ColorList__ColorList.prototype.getInterpolated;
+    result.getInverted = ColorList__ColorList.prototype.getInverted;
+    result.addAlpha = ColorList__ColorList.prototype.addAlpha;
     return result;
   };
 
@@ -4386,7 +4405,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {array}
    * tags:
    */
-  ColorList.prototype.getRgbArrays = function() {
+  ColorList__ColorList.prototype.getRgbArrays = function() {
     var rgbArrays = new List__default();
 
     for(var i = 0; this[i] != null; i++) {
@@ -4403,8 +4422,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {ColorList}
    * tags:
    */
-  ColorList.prototype.getInterpolated = function(color, value) {
-    var newColorList = new ColorList();
+  ColorList__ColorList.prototype.getInterpolated = function(color, value) {
+    var newColorList = new ColorList__ColorList();
 
     for(var i = 0; this[i] != null; i++) {
       newColorList[i] = ColorOperators__default.interpolateColors(this[i], color, value);
@@ -4419,8 +4438,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {ColorList}
    * tags:
    */
-  ColorList.prototype.getInverted = function() {
-    var newColorList = new ColorList();
+  ColorList__ColorList.prototype.getInverted = function() {
+    var newColorList = new ColorList__ColorList();
 
     for(var i = 0; this[i] != null; i++) {
       newColorList[i] = ColorOperators__default.invertColor(this[i]);
@@ -4436,8 +4455,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {ColorList}
    * tags:
    */
-  ColorList.prototype.addAlpha = function(alpha) {
-    var newColorList = new ColorList();
+  ColorList__ColorList.prototype.addAlpha = function(alpha) {
+    var newColorList = new ColorList__ColorList();
 
     for(var i = 0; this[i] != null; i++) {
       newColorList[i] = ColorOperators__default.addAlpha(this[i], alpha);
@@ -4447,7 +4466,7 @@ define('src/index', ['exports'], function (exports) {
     return newColorList;
   };
 
-  exports.ColorList = ColorList;
+  exports.ColorList = ColorList__default;
 
   Polygon.prototype = new List__default();
   Polygon.prototype.constructor = Polygon;
@@ -4715,6 +4734,7 @@ define('src/index', ['exports'], function (exports) {
     result.sqrt = NumberList.prototype.sqrt;
     result.pow = NumberList.prototype.pow;
     result.log = NumberList.prototype.log;
+    result.floor = NumberList.prototype.floor;
     result.isEquivalent = NumberList.prototype.isEquivalent;
     result.toStringList = NumberList.prototype.toStringList;
 
@@ -5283,6 +5303,24 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
+   * Returns a new NumberList containing the floor values (removing decimals) of
+   * the values of the current NumberList.
+   *
+   * @return {NumberList} NumberList with integer values.
+   */
+  NumberList.prototype.floor = function() {
+    var i;
+    var newNumberList = new NumberList();
+    for(i = 0; i < this.length; i++) {
+      newNumberList.push(Math.floor(this[i]));
+    }
+    newNumberList.name = this.name;
+    
+    return newNumberList;
+  };
+
+
+  /**
    * Returns dot product between current list and input NumberList.
    *
    * @param {NumberList} numberList Another NumberList.
@@ -5602,7 +5640,7 @@ define('src/index', ['exports'], function (exports) {
     Polygon: Polygon,
     Polygon3D: Polygon3D,
     DateList: DateList,
-    ColorList: ColorList
+    ColorList: ColorList__default
   };
 
 
@@ -10223,7 +10261,7 @@ define('src/index', ['exports'], function (exports) {
         }
         break;
       case 2: //averages values in numberLists
-        var nRepetitionsList = table[nList].getElementsRepetitionCount(false);
+        var nRepetitionsList = table[nList].getFrequenciesTable(false);
         newTable = TableOperators.aggregateTableOld(table, nList, 1);
 
         for(j = 0; newTable[j] != null; j++) {
@@ -11536,7 +11574,7 @@ define('src/index', ['exports'], function (exports) {
    * @param  {List} list with repeated elements (actegorical list)
    *
    * @param {Object} valueFollowing if a value is provided, the property _P_valueFollowing will be added to the list, with proportion of that value in the list
-   * @param {Table} freqTable for saving time, in case the frequency table with sorted elements has been already calculated (with list.getElementsRepetitionCount(true))
+   * @param {Table} freqTable for saving time, in case the frequency table with sorted elements has been already calculated (with list.getFrequenciesTable(true))
    * @return {Number}
    * tags:statistics
    */
@@ -11552,7 +11590,7 @@ define('src/index', ['exports'], function (exports) {
       return 0;
     }
 
-    if(freqTable==null) freqTable = list.getElementsRepetitionCount(true);// ListOperators.countElementsRepetitionOnList(list, true);
+    if(freqTable==null) freqTable = list.getFrequenciesTable(true);// ListOperators.countElementsRepetitionOnList(list, true);
 
     list._mostRepresentedValue = freqTable[0][0];
     var N = list.length;
@@ -11938,7 +11976,7 @@ define('src/index', ['exports'], function (exports) {
 
     if(sortedByFrequency) {
       if(withoutRepetitions) {
-        list = list.getElementsRepetitionCount(true)[0];// //ListOperators.countElementsRepetitionOnList(list, true)[0];
+        list = list.getFrequenciesTable(true)[0];// //ListOperators.countElementsRepetitionOnList(list, true)[0];
         if(limit != 0) list = list.substr(0, limit);
 
         return list;
@@ -12362,7 +12400,7 @@ define('src/index', ['exports'], function (exports) {
     if(string == null) return;
     if(string.length == 0) return new Table(new StringList(), new NumberList());
     var words = StringOperators.getWords(string, false, stopWords, false, includeLinks, limit, minSizeWords);
-    var table = words.getElementsRepetitionCount(true).sliceRows(0, limit-1);
+    var table = words.getFrequenciesTable(true).sliceRows(0, limit-1);
     return table;// ListOperators.countElementsRepetitionOnList(words, true, false, limit);
   };
 
@@ -14778,7 +14816,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   ColorScale.prototype.getColorList = function(nColors) {
-    var colorList = new ColorList();
+    var colorList = new ColorList__default();
     var i;
     for(i = 0; i < nColors; i++) {
       colorList.push(this.getColor(i / (nColors - 1)));
@@ -15761,7 +15799,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.ColorGenerators = ColorGenerators;
 
-  ColorListGenerators__ColorListGenerators._HARDCODED_CATEGORICAL_COLORS = new ColorList(
+  ColorListGenerators__ColorListGenerators._HARDCODED_CATEGORICAL_COLORS = new ColorList__default(
     "#dd4411", "#2200bb", "#1f77b4", "#ff660e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#dd8811",
     "#dd0011", "#221140", "#1f66a3", "#ff220e", "#2ba01c", "#442728", "#945600", "#8c453a", "#e37700"
   );
@@ -15810,7 +15848,7 @@ define('src/index', ['exports'], function (exports) {
     mode = mode == null ? 0 : mode;
     colorScale = colorScale==null?ColorScales__default.grayToOrange:colorScale;
 
-    var colorList = new ColorList();
+    var colorList = new ColorList__default();
     var newNumberList;
     var i;
 
@@ -15833,7 +15871,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   ColorListGenerators__ColorListGenerators.createColorListWithSingleColor = function(nColors, color) {
-    var colorList = new ColorList();
+    var colorList = new ColorList__default();
     for(var i = 0; i < nColors; i++) {
       colorList.push(color);
     }
@@ -15858,7 +15896,7 @@ define('src/index', ['exports'], function (exports) {
     colorScaleFunction = colorScaleFunction == null ? ColorScales__default.temperature : colorScaleFunction;
 
     var i;
-    var newColorList = new ColorList();
+    var newColorList = new ColorList__default();
     switch(mode) {
       case 0: //picking from ColorScale
         for(i = 0; i < nColors; i++) {
@@ -15954,9 +15992,7 @@ define('src/index', ['exports'], function (exports) {
    */
   ColorListGenerators__ColorListGenerators.createCategoricalColorListDictionaryObject = function(list, colorList, alpha, color, interpolate, invert){
     if(list==null) return;
-
-    c.l('ColorListGenerators.createCategoricalColorListDictionaryObject | list:', list);
-
+    
     var diffValues = list.getWithoutRepetitions();
     var diffColors = ColorListGenerators__ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate, colorList);
     if(invert) diffColors = diffColors.getInverted();
@@ -15966,7 +16002,7 @@ define('src/index', ['exports'], function (exports) {
     diffValues.forEach(function(element, i){
       dictionaryObject[element] = diffColors[i];
     });
-    
+
     return dictionaryObject;
 
   }
@@ -15992,7 +16028,7 @@ define('src/index', ['exports'], function (exports) {
   {
 
     if(!list)
-      return new ColorList();
+      return new ColorList__default();
     if(!alpha)
       alpha = 1;
     if(!color)
@@ -16019,7 +16055,7 @@ define('src/index', ['exports'], function (exports) {
 
     var fullColorList = ListOperators__default.translateWithDictionaryObject(list, colorDict, 'black');// ListOperators.translateWithDictionary(list, colorDict, "NULL");
 
-    fullColorList = ColorList.fromArray(fullColorList);
+    fullColorList = ColorList__default.fromArray(fullColorList);
 
     return [
       {
@@ -16054,7 +16090,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   ColorListOperators.colorListFromColorScaleFunction = function(colorScaleFunction, nColors) {
-    var colorList = new ColorList();
+    var colorList = new ColorList__default();
     var i;
     for(i = 0; i < nColors; i++) {
       colorList[i] = colorScaleFunction(i / (nColors - 1));
@@ -16068,7 +16104,7 @@ define('src/index', ['exports'], function (exports) {
 
     if(normalize) numberList = numberList.getNormalized();
 
-    var colorList = new ColorList();
+    var colorList = new ColorList__default();
     var i;
     for(i = 0; numberList[i] != null; i++) {
       colorList[i] = colorScaleFunction(numberList[i]);
@@ -16080,7 +16116,7 @@ define('src/index', ['exports'], function (exports) {
 
   ColorListOperators.polygon3DToColorList = function(polygon3D) {
     var nPoints = polygon3D.length;
-    var colorList = new ColorList();
+    var colorList = new ColorList__default();
     var i;
     for(i = 0; i < nPoints; i++) {
       colorList.push(ColorOperators__default.point3DToColor(polygon3D[i]));
@@ -24946,7 +24982,7 @@ define('src/index', ['exports'], function (exports) {
 
       for(i = 0; i < nCols; i++) {
         if(matrix[i] == null) matrix[i] = new NumberList();
-        matrixColors[i] = new ColorList();
+        matrixColors[i] = new ColorList__default();
         for(j = 0; j < nLists; j++) {
           if(matrix[i][j] == null) matrix[i][j] = 0;
           matrixColors[i][j] = colorScale(matrix[i][j] / max);
@@ -26306,8 +26342,8 @@ define('src/index', ['exports'], function (exports) {
       frame.memory.nFLastChange = nF;
       frame.memory.image = null;
       frame.memory.actualColorList = colorList == null ? ColorListGenerators__default.createCategoricalColors(0, tree.nLevels, ColorScales__default.grayToOrange, 0.1) : colorList;
-      frame.memory.nodesColorList = new ColorList();
-      if(textColor == null) frame.memory.textsColorList = new ColorList();
+      frame.memory.nodesColorList = new ColorList__default();
+      if(textColor == null) frame.memory.textsColorList = new ColorList__default();
 
       if(frame.memory.actualColorList.length <= tree.nLevels) {
         tree.nodeList.forEach(function(node, i) {

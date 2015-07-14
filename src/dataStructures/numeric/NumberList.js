@@ -83,6 +83,7 @@ NumberList.fromArray = function(array, forceToNumber) {
   result.sqrt = NumberList.prototype.sqrt;
   result.pow = NumberList.prototype.pow;
   result.log = NumberList.prototype.log;
+  result.floor = NumberList.prototype.floor;
   result.isEquivalent = NumberList.prototype.isEquivalent;
   result.toStringList = NumberList.prototype.toStringList;
 
@@ -649,6 +650,24 @@ NumberList.prototype.log = function(add) {
 
   return newNumberList;
 };
+
+/**
+ * Returns a new NumberList containing the floor values (removing decimals) of
+ * the values of the current NumberList.
+ *
+ * @return {NumberList} NumberList with integer values.
+ */
+NumberList.prototype.floor = function() {
+  var i;
+  var newNumberList = new NumberList();
+  for(i = 0; i < this.length; i++) {
+    newNumberList.push(Math.floor(this[i]));
+  }
+  newNumberList.name = this.name;
+  
+  return newNumberList;
+};
+
 
 /**
  * Returns dot product between current list and input NumberList.
