@@ -87,6 +87,7 @@ NodeList.fromArray = function(array, forceToNode) {
 
   //overriden
   result.getWithoutRepetitions = NodeList.prototype.getWithoutRepetitions;
+  result.removeElements = NodeList.prototype.removeElements;
   result.clone = NodeList.prototype.clone;
 
   return result;
@@ -301,9 +302,32 @@ NodeList.prototype.clone = function() {
  */
 NodeList.prototype.getWithoutRepetitions = function() {
   var newList = new NodeList();
+  var i;
   newList.name = this.name;
-  for(var i = 0; this[i] != null; i++) {
+  for(i = 0; this[i]!=null; i++) {
     if(newList.getNodeById(this[i].id) == null) newList.addNode(this[i]);
   }
   return newList;
+};
+
+/**
+ * removeElements
+ *
+ * @return {undefined}
+ * @ignore
+ */
+NodeList.prototype.removeElements = function(nodeList) {
+  var i;
+  for(i = 0; this[i]!=null; i++) {
+    //if(elements.indexOf(this[i]) > -1) {
+    // c.l('                          this[i].id:', this[i].id);
+    // c.l('                          nodeList.getNodeById(this[i].id):', nodeList.getNodeById(this[i].id));
+    if( nodeList.getNodeById(this[i].id) != null ){
+      this.ids[this[i].id] = null;
+      this.splice(i, 1);
+      //this.removeNode(this[i]);
+      i--;
+      // c.l('                            X, i, this.length', i, this.length);
+    }
+  }
 };

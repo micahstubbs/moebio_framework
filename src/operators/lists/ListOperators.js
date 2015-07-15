@@ -471,14 +471,18 @@ ListOperators.getNewListForObjectType = function(object) {
   return instantiateWithSameType(newList.getImproved());
 };
 
-ListOperators.listsIntersect = function(list0, list1) {
-  var list = list0.length < list1.length ? list0 : list1;
-  var otherList = list0 == list ? list1 : list0;
-  for(var i = 0; list[i] != null; i++) {
-    if(otherList.indexOf(list[i]) != -1) return true;
-  }
-  return false;
-};
+
+/*
+deprectaed, use intersection instead
+ */
+// ListOperators.listsIntersect = function(list0, list1) {
+//   var list = list0.length < list1.length ? list0 : list1;
+//   var otherList = list0 == list ? list1 : list0;
+//   for(var i = 0; list[i] != null; i++) {
+//     if(otherList.indexOf(list[i]) != -1) return true;
+//   }
+//   return false;
+// };
 
 
 /**
@@ -579,10 +583,24 @@ ListOperators.unionLists = function(x, y) {
 ListOperators.intersection = function(list0, list1) {
   if(list0==null || list1==null) return;
 
+  var intersection;
+
+  if(list0.type=="NodeList" && list1.type=="NodeList"){
+    intersection = new NodeList();
+
+    list0.forEach(function(node){
+      if(list1.getNodeById(node.id)){
+        intersection.addNode(node);
+      }
+    });
+
+    return intersection;
+  }
+
   var element;
   var dictionary = {};
   var dictionaryIntersected = {};
-  var intersection = new List();
+  intersection = new List();
 
   list0.forEach(function(element){
     dictionary[element] = true;

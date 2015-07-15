@@ -37,6 +37,12 @@ Relation.prototype.destroy = function() {
   delete this.content;
 };
 
+/**
+ * given a node returns the other node of a relation
+ * @param  {Node} node
+ * @return {Node}
+ * tags:
+ */
 Relation.prototype.getOther = function(node) {
   return node == this.node0 ? this.node1 : this.node0;
 };

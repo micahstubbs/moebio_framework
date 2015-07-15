@@ -704,7 +704,7 @@ define('src/index', ['exports'], function (exports) {
         newList = NodeList__default.fromArray(this, false);
         break;
       case "Relation":
-        newList = RelationList.fromArray(this, false);
+        newList = RelationList__default.fromArray(this, false);
         break;
         var newList = NumberList.fromArray(this, false);
       break;
@@ -736,7 +736,7 @@ define('src/index', ['exports'], function (exports) {
         var newList = NodeList__default.fromArray(this, false);
       break;
       case "Relation":
-        var newList = RelationList.fromArray(this, false);
+        var newList = RelationList__default.fromArray(this, false);
       break;
     }
 
@@ -879,6 +879,8 @@ define('src/index', ['exports'], function (exports) {
    */
   List__List.prototype.getSubList = function() {
     var interval;
+    var i;
+
     if(arguments[0].isList) {
       return this.getSubListByIndexes(arguments[0]);
     } else if(arguments.length > 2) {
@@ -906,17 +908,26 @@ define('src/index', ['exports'], function (exports) {
       return newList;
     }
 
-    if(this.type == 'List' || this.type == 'Table') {
+    var type = this.type;
+
+    if(type == 'List' || type == 'Table') {
       newList = new List__List();
     } else {
-      newList = instantiate(typeOf(this));
+      newList = instantiate(type);
     }
 
-    for(var i = newInterval.x; i <= newInterval.y; i++) {
-      newList.push(this[i]);
+    if(type=='NodeList'){
+      for(i = newInterval.x; i <= newInterval.y; i++) {
+        newList.addNode(this[i]);
+      }
+    } else {
+      for(i = newInterval.x; i <= newInterval.y; i++) {
+        newList.push(this[i]);
+      }
     }
+
     newList.name = this.name;
-    if(this.type == 'List' || this.type == 'Table') return newList.getImproved();
+    if(type == 'List' || type == 'Table') return newList.getImproved();
     return newList;
   };
 
@@ -956,7 +967,8 @@ define('src/index', ['exports'], function (exports) {
     }
 
     var newList;
-    if(this.type == 'List') {
+    var type = this.type;
+    if(type == 'List') {
       newList = new List__List();
     } else {
       newList = instantiate(typeOf(this));
@@ -969,13 +981,22 @@ define('src/index', ['exports'], function (exports) {
     var nElements = this.length;
     var nPositions = indexes.length;
     var i;
-    for(i = 0; i < nPositions; i++) {
-      if(indexes[i] < nElements) {
-        newList.push(this[(indexes[i] + this.length) % this.length]);
+
+    if(type=="NodeList"){
+      for(i = 0; i < nPositions; i++) {
+        if(indexes[i] < nElements) {
+          newList.addNode(this[(indexes[i] + this.length) % this.length]);
+        }
+      }
+    } else {
+      for(i = 0; i < nPositions; i++) {
+        if(indexes[i] < nElements) {
+          newList.push(this[(indexes[i] + this.length) % this.length]);
+        }
       }
     }
 
-    if(this.type == 'List' || this.type == 'Table') {
+    if(type == 'List' || type == 'Table') {
       return newList.getImproved();
     }
     return newList;
@@ -1027,19 +1048,19 @@ define('src/index', ['exports'], function (exports) {
     var newList = instantiateWithSameType(this);
     newList.name = this.name;
 
-    if(this.type == 'NumberList' || this.type == 'StringList') {//TODO:check other cases
-      dictionary = {};
-      for(i = 0; this[i] != null; i++) {
-        if(!dictionary[this[i]]) {
-          newList.push(this[i]);
-          dictionary[this[i]] = true;
-        }
-      }
-    } else {
-      for(i = 0; this[i] != null; i++) {
-        if(newList.indexOf(this[i]) == -1) newList.push(this[i]);
+    //if(this.type == 'NumberList' || this.type == 'StringList') {//TODO:check other cases
+    dictionary = {};
+    for(i = 0; this[i] != null; i++) {
+      if(!dictionary[this[i]]) {
+        newList.push(this[i]);
+        dictionary[this[i]] = true;
       }
     }
+    // } else {
+    //   for(i = 0; this[i] != null; i++) {
+    //     if(newList.indexOf(this[i]) == -1) newList.push(this[i]);
+    //   }
+    // }
 
     return newList;
   };
@@ -1826,24 +1847,33 @@ define('src/index', ['exports'], function (exports) {
     return newList;
   };
 
+
+
   List__List.prototype.concat = function() {
     if(arguments[0] == null) return this;
 
-    //c.l('concat | arguments[0].type, this.type', arguments[0].type, this.type);
+    // c.l('concat | arguments[0].type, this.type', arguments[0].type, this.type);
 
-    if(arguments[0].type == this.type) {
+    if(arguments[0].type == this.type) {//var type = … / switch/case
       if(this.type == "NumberList") {
         return NumberList.fromArray(this._concat.apply(this, arguments), false);
       } else if(this.type == "StringList") {
         return StringList.fromArray(this._concat.apply(this, arguments), false);
-      } else if(this.type == "NodeList") { //[!] concat breaks the getNodeById in NodeList
-        return NodeList__default.fromArray(this._concat.apply(this, arguments), false);
       } else if(this.type == "DateList") {
         return DateList.fromArray(this._concat.apply(this, arguments), false);
       } else if(this.type == "Table") {
         return Table.fromArray(this._concat.apply(this, arguments), false);
       } else if(this.type == "NumberTable") {
         return NumberTable.fromArray(this._concat.apply(this, arguments), false);
+      } else if(this.type == "NodeList"){
+        var newList = this.clone();
+        var args = arguments[0];
+        var i;
+        for(i=0; args[i]!=null; i++){
+          // c.l('   +_+_+_+args[i]',args[i]);
+          newList.addNode(args[i]);
+        }
+        return newList;
       }
     }
     return List__List.fromArray(this._concat.apply(this, arguments)).getImproved();
@@ -2041,8 +2071,16 @@ define('src/index', ['exports'], function (exports) {
   };
 
   List__List.prototype.removeElements = function(elements) { //TODO: make it more efficient (avoiding the splice method)
-    for(var i = 0; i < this.length; i++) {
-      if(elements.indexOf(this[i]) > -1) {
+    var i;
+    var dictionary = {};
+
+    for(i=0; elements[i]!=null; i++){
+      dictionary[elements[i]] = true;
+    }
+
+    for(i = 0; this[i]!=null; i++) {
+      //if(elements.indexOf(this[i]) > -1) {
+      if(dictionary[this[i]]) {
         this.splice(i, 1);
         i--;
       }
@@ -3319,6 +3357,7 @@ define('src/index', ['exports'], function (exports) {
 
     //overriden
     result.getWithoutRepetitions = NodeList__NodeList.prototype.getWithoutRepetitions;
+    result.removeElements = NodeList__NodeList.prototype.removeElements;
     result.clone = NodeList__NodeList.prototype.clone;
 
     return result;
@@ -3533,17 +3572,40 @@ define('src/index', ['exports'], function (exports) {
    */
   NodeList__NodeList.prototype.getWithoutRepetitions = function() {
     var newList = new NodeList__NodeList();
+    var i;
     newList.name = this.name;
-    for(var i = 0; this[i] != null; i++) {
+    for(i = 0; this[i]!=null; i++) {
       if(newList.getNodeById(this[i].id) == null) newList.addNode(this[i]);
     }
     return newList;
   };
 
+  /**
+   * removeElements
+   *
+   * @return {undefined}
+   * @ignore
+   */
+  NodeList__NodeList.prototype.removeElements = function(nodeList) {
+    var i;
+    for(i = 0; this[i]!=null; i++) {
+      //if(elements.indexOf(this[i]) > -1) {
+      // c.l('                          this[i].id:', this[i].id);
+      // c.l('                          nodeList.getNodeById(this[i].id):', nodeList.getNodeById(this[i].id));
+      if( nodeList.getNodeById(this[i].id) != null ){
+        this.ids[this[i].id] = null;
+        this.splice(i, 1);
+        //this.removeNode(this[i]);
+        i--;
+        // c.l('                            X, i, this.length', i, this.length);
+      }
+    }
+  };
+
   exports.NodeList = NodeList__default;
 
-  RelationList.prototype = new NodeList__default();
-  RelationList.prototype.constructor = RelationList;
+  RelationList__RelationList.prototype = new NodeList__default();
+  RelationList__RelationList.prototype.constructor = RelationList__RelationList;
   /**
    * RelationList
    * @constructor
@@ -3556,15 +3618,15 @@ define('src/index', ['exports'], function (exports) {
    * @constructor
    * @category networks
    */
-  function RelationList() {
+  function RelationList__RelationList() {
     var array = NodeList__default.apply(this, arguments);
     array.name = "";
     //assign methods to array:
-    array = RelationList.fromArray(array);
+    array = RelationList__RelationList.fromArray(array);
     //
     return array;
   }
-
+  var RelationList__default = RelationList__RelationList;
 
   /**
    * Convert raw array of Relations into a RelationList.
@@ -3572,19 +3634,19 @@ define('src/index', ['exports'], function (exports) {
    * @param {Relation[]} array Array to convert to a RelationList.
    * @return {RelationList}
    */
-  RelationList.fromArray = function(array) {
+  RelationList__RelationList.fromArray = function(array) {
     var result = NodeList__default.fromArray(array);
     result.type = "RelationList";
     //assign methods to array:
-    result.addRelation = RelationList.prototype.addRelation;
-    result.addRelationIfNew = RelationList.prototype.addRelationIfNew;
-    result.removeRelation = RelationList.prototype.removeRelation;
-    result.getRelationsWithNode = RelationList.prototype.getRelationsWithNode;
-    result.getFirstRelationBetweenNodes = RelationList.prototype.getFirstRelationBetweenNodes;
-    result.getFirstRelationByIds = RelationList.prototype.getFirstRelationByIds;
-    result.getAllRelationsBetweenNodes = RelationList.prototype.getAllRelationsBetweenNodes;
-    result.getRelatedNodesToNode = RelationList.prototype.getRelatedNodesToNode;
-    result.nodesAreConnected = RelationList.prototype.nodesAreConnected;
+    result.addRelation = RelationList__RelationList.prototype.addRelation;
+    result.addRelationIfNew = RelationList__RelationList.prototype.addRelationIfNew;
+    result.removeRelation = RelationList__RelationList.prototype.removeRelation;
+    result.getRelationsWithNode = RelationList__RelationList.prototype.getRelationsWithNode;
+    result.getFirstRelationBetweenNodes = RelationList__RelationList.prototype.getFirstRelationBetweenNodes;
+    result.getFirstRelationByIds = RelationList__RelationList.prototype.getFirstRelationByIds;
+    result.getAllRelationsBetweenNodes = RelationList__RelationList.prototype.getAllRelationsBetweenNodes;
+    result.getRelatedNodesToNode = RelationList__RelationList.prototype.getRelatedNodesToNode;
+    result.nodesAreConnected = RelationList__RelationList.prototype.nodesAreConnected;
 
     return result;
   };
@@ -3595,7 +3657,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Relation} relation Relation to add.
    */
   //TODO:remove?
-  RelationList.prototype.addRelation = function(relation) {
+  RelationList__RelationList.prototype.addRelation = function(relation) {
     this.addNode(relation);
   };
 
@@ -3604,7 +3666,7 @@ define('src/index', ['exports'], function (exports) {
    *
    * @param {Relation} relation Relation to remove.
    */
-  RelationList.prototype.removeRelation = function(relation) {
+  RelationList__RelationList.prototype.removeRelation = function(relation) {
       this.removeNode(relation);
   };
 
@@ -3614,7 +3676,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Node} node Node to search
    * @return {Relation[]} Containing Relations that contain node.
    */
-  RelationList.prototype.getRelationsWithNode = function(node) {
+  RelationList__RelationList.prototype.getRelationsWithNode = function(node) {
     var i;
     var filteredRelations = [];
     for(i = 0; this[i] != null; i++) {
@@ -3634,7 +3696,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Node} node
    * @return a RelationList with relations that contain node
    */
-  RelationList.prototype.getRelatedNodesToNode = function(node) {
+  RelationList__RelationList.prototype.getRelatedNodesToNode = function(node) {
     var i;
     var relatedNodes = new NodeList__default();
     for(i = 0; i < this.length; i++) {
@@ -3660,7 +3722,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Relation[]} With Relations that contain node0 and node1.
    * tags:
    */
-  RelationList.prototype.getAllRelationsBetweenNodes = function(node0, node1, directed) {
+  RelationList__RelationList.prototype.getAllRelationsBetweenNodes = function(node0, node1, directed) {
     //TODO: to be improved (check node1 on node0.relationList) (see: nodesAreConnected)
     var i;
     directed = directed == null ? false : directed;
@@ -3685,7 +3747,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Boolean}
    * tags:
    */
-  RelationList.prototype.nodesAreConnected = function(node0, node1, directed) {
+  RelationList__RelationList.prototype.nodesAreConnected = function(node0, node1, directed) {
     if(node0.toNodeList.getNodeById(node1.id) != null) return true;
     return !directed && node1.toNodeList.getNodeById(node0.id) != null;
   };
@@ -3700,7 +3762,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Relation[]} With Relations that contain node0 and node1.
    * tags:
    */
-  RelationList.prototype.getFirstRelationBetweenNodes = function(node0, node1, directed) { //TODO: to be improved (check node1 on node0.relationList) (see: nodesAreConnected) //TODO: make it work with ids
+  RelationList__RelationList.prototype.getFirstRelationBetweenNodes = function(node0, node1, directed) { //TODO: to be improved (check node1 on node0.relationList) (see: nodesAreConnected) //TODO: make it work with ids
     directed = directed == null ? false : directed;
 
     for(var i = 0; this[i] != null; i++) {
@@ -3718,7 +3780,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Boolean} directed Consider relation directional (default: false).
    * @return {Relation[]} With Relations that contain node0 and node1 (with node0.id = id0 and node1.id = id1).
    */
-  RelationList.prototype.getFirstRelationByIds = function(id0, id1, directed) {
+  RelationList__RelationList.prototype.getFirstRelationByIds = function(id0, id1, directed) {
     //TODO: to be improved (check node1 on node0.relationList) (see: nodesAreConnected)
     //TODO: make it work with ids
     var i;
@@ -3743,7 +3805,7 @@ define('src/index', ['exports'], function (exports) {
     return null;
   };
 
-  exports.RelationList = RelationList;
+  exports.RelationList = RelationList__default;
 
   PolygonList.prototype = new Table();
   PolygonList.prototype.constructor = PolygonList;
@@ -5636,7 +5698,7 @@ define('src/index', ['exports'], function (exports) {
     NumberList: NumberList,
     NumberTable: NumberTable,
     NodeList: NodeList__default,
-    RelationList: RelationList,
+    RelationList: RelationList__default,
     Polygon: Polygon,
     Polygon3D: Polygon3D,
     DateList: DateList,
@@ -6294,13 +6356,13 @@ define('src/index', ['exports'], function (exports) {
     this.z = 0;
 
     this.nodeList = new NodeList__default();
-    this.relationList = new RelationList();
+    this.relationList = new RelationList__default();
 
     this.toNodeList = new NodeList__default();
-    this.toRelationList = new RelationList();
+    this.toRelationList = new RelationList__default();
 
     this.fromNodeList = new NodeList__default();
-    this.fromRelationList = new RelationList();
+    this.fromRelationList = new RelationList__default();
 
     this.weight = 1;
     this.descentWeight = 1;
@@ -6325,13 +6387,13 @@ define('src/index', ['exports'], function (exports) {
    */
   Node__Node.prototype.cleanRelations = function() {
     this.nodeList = new NodeList__default();
-    this.relationList = new RelationList();
+    this.relationList = new RelationList__default();
 
     this.toNodeList = new NodeList__default();
-    this.toRelationList = new RelationList();
+    this.toRelationList = new RelationList__default();
 
     this.fromNodeList = new NodeList__default();
-    this.fromRelationList = new RelationList();
+    this.fromRelationList = new RelationList__default();
   };
 
   //TODO: complete with all properties
@@ -7839,6 +7901,12 @@ define('src/index', ['exports'], function (exports) {
     delete this.content;
   };
 
+  /**
+   * given a node returns the other node of a relation
+   * @param  {Node} node
+   * @return {Node}
+   * tags:
+   */
   Relation.prototype.getOther = function(node) {
     return node == this.node0 ? this.node1 : this.node0;
   };
@@ -7876,7 +7944,7 @@ define('src/index', ['exports'], function (exports) {
     this.type = "Network";
 
     this.nodeList = new NodeList__default();
-    this.relationList = new RelationList();
+    this.relationList = new RelationList__default();
   }
 
 
@@ -11175,14 +11243,18 @@ define('src/index', ['exports'], function (exports) {
     return instantiateWithSameType(newList.getImproved());
   };
 
-  ListOperators__ListOperators.listsIntersect = function(list0, list1) {
-    var list = list0.length < list1.length ? list0 : list1;
-    var otherList = list0 == list ? list1 : list0;
-    for(var i = 0; list[i] != null; i++) {
-      if(otherList.indexOf(list[i]) != -1) return true;
-    }
-    return false;
-  };
+
+  /*
+  deprectaed, use intersection instead
+   */
+  // ListOperators.listsIntersect = function(list0, list1) {
+  //   var list = list0.length < list1.length ? list0 : list1;
+  //   var otherList = list0 == list ? list1 : list0;
+  //   for(var i = 0; list[i] != null; i++) {
+  //     if(otherList.indexOf(list[i]) != -1) return true;
+  //   }
+  //   return false;
+  // };
 
 
   /**
@@ -11283,10 +11355,24 @@ define('src/index', ['exports'], function (exports) {
   ListOperators__ListOperators.intersection = function(list0, list1) {
     if(list0==null || list1==null) return;
 
+    var intersection;
+
+    if(list0.type=="NodeList" && list1.type=="NodeList"){
+      intersection = new NodeList();
+
+      list0.forEach(function(node){
+        if(list1.getNodeById(node.id)){
+          intersection.addNode(node);
+        }
+      });
+
+      return intersection;
+    }
+
     var element;
     var dictionary = {};
     var dictionaryIntersected = {};
-    var intersection = new List__default();
+    intersection = new List__default();
 
     list0.forEach(function(element){
       dictionary[element] = true;
@@ -19000,16 +19086,40 @@ define('src/index', ['exports'], function (exports) {
   NetworkOperators.shortestPath = function(network, node0, node1, includeExtremes) {
     if(network == null || node0 == null || node1 == null) return null;
 
+    c.l('\n\n\n------------> shortestPath, network, node0, node1, includeExtremes', network, node0, node1, includeExtremes);
+    c.l('shortestPath | node0.id', node0.id);
+    c.l('shortestPath | node1.id', node1.id);
     var tree = NetworkOperators.spanningTree(network, node0, node1);
+    //c.l('shortestPath | tree.nodeList.getIds()['+tree.nodeList.getIds().join('-')+"]");
+    c.l('shortestPath | tree.nodeList.length:'+tree.nodeList.length);
+    c.l('shortestPath, tree', tree);
     var path = new NodeList__default();
     if(includeExtremes) path.addNode(node1);
+    //c.l('shortestPath, path', path);
+    c.l('shortestPath, path ids: ['+path.getIds().join('-')+"]");
     var node = tree.nodeList.getNodeById(node1.id);
+    c.l('shortestPath | node:', node);
+
+    if(node == null) c.l('node==null !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n\n\n');
+
     if(node == null) return null;
+
+    // c.l('---'); return;
+    // 
+    
+
+    c.l('  (pre while)>', node0.id, node1.id, node.id,  node.parent==null?'no parent!':node.parent.id);
     while(node.parent.id != node0.id) {
       path.addNode(node.parent.node);
       node = node.parent;
       if(node == null) return null;
+      c.l('    >', node0.id, node1.id, node.id,  node.parent==null?'no parent!':node.parent.id);
     }
+
+    c.l('shortestPath, path ids: ['+path.getIds().join('-')+"]");
+
+
+    // c.l('shortestPath, path', path);
     if(includeExtremes) path.addNode(node0);
     return path.getReversed();
   };
@@ -19023,16 +19133,155 @@ define('src/index', ['exports'], function (exports) {
    * @param  {Node} node1 Destination Node.
    *
    * @param  {NodeList} shortPath In case a shortPath has been calculated previously
+   * @param {Tree} spanningTree previously calculated spanning tree centered on node0
    * @return {Table} List of paths (NodeLists)
    */
-  NetworkOperators.shortestPaths = function(network, node0, node1, shortPath) {
+  NetworkOperators.shortestPaths = function(network, node0, node1, shortPath, spanningTree) {
     if(network == null || node0 == null || node1 == null) return null;
+
+
+    var allPaths = new Table();
+
+
+    if(node0.nodeList.getNodeById(node1)!=null){
+      allPaths.push(new NodeList__default(node0, node1));
+      return allPaths;
+    }
+
+    //c.clear();
+
+    if(spanningTree==null) spanningTree = NetworkOperators.spanningTree(network, node0, node1);
+    
+    // c.l('[•--•] node0.id, node1.id', node0.id, node1.id);
+    // c.l('[•--•] shortestPaths | spanningTree.nodeList.length, spanningTree.nLevels', spanningTree.nodeList.length, spanningTree.nLevels);
+
+    // for(var i=0; i<spanningTree.nLevels; i++){
+    //   // c.l('  [•--•] level:'+i, spanningTree.getNodesByLevel(i).getIds().join(','));
+    // }
+
+    //first we seek for the nodes in paths
+    
+    var n = spanningTree.nLevels;
+    // c.l('[•--•] n:', n);
+
+    // c.l('[•--•] spanningTree.getNodesByLevel(spanningTree.nLevels-1).getNodeById(node1.id)', spanningTree.getNodesByLevel(spanningTree.nLevels-1).getNodeById(node1.id) );
+    
+    var level1 = new NodeList__default(node1);
+    var extended_from_1 = NetworkOperators.adjacentNodeList(network, level1, false);
+    var level0 = ListOperators__default.intersection(extended_from_1, spanningTree.getNodesByLevel(n-2));//spanningTree.getNodesByLevel(n-2);
+
+    // c.l('[•--•] node1.nodeList', node1.nodeList.getIds().join(','));
+    // c.l('[•--•] level1', level1.getIds().join(','));
+    // c.l('[•--•] level on tree:', spanningTree.getNodesByLevel(n-2).getIds().join(','));
+    // c.l('[•--•] extended_from_1', extended_from_1.getIds().join(','));
+    // c.l('[•--•] ----> level0', level0.getIds().join(','));
+
+    var relationsTable = new Table();
+
+    relationsTable.push(NetworkOperators.getRelationsBetweenNodeLists(network, level0, level1, false));
+
+    // c.l('  [•--•] relationsTable[last]', relationsTable[relationsTable.length-1].getIds().join(','));
+
+    while(n>2){
+      n--;
+      level1 = level0;
+
+      //interection of level1 xpanded and level n-2 in tree
+
+      level0 = ListOperators__default.intersection(NetworkOperators.adjacentNodeList(network, level1, false), spanningTree.getNodesByLevel(n-2));
+      // c.l('\n  [•--•] n:', n);
+      // c.l('  [•--•] level1', level1.getIds().join(','));
+      // c.l('  [•--•] level0', level0.getIds().join(','));
+
+      relationsTable.push(NetworkOperators.getRelationsBetweenNodeLists(network, level0, level1, false));
+      // c.l('  [•--•] relationsTable[last]', relationsTable[relationsTable.length-1].getIds().join(','));
+    }
+
+    relationsTable = relationsTable.getReversed();
+
+    // c.l('\n  [•--•] relationsTable', relationsTable );
+
+    // c.l('[•--•] relationsTable.getLengths()', relationsTable.getLengths() );
+
+    //c.l('[•--•] STOP for now'); return;
+
+    // c.l('\n\n[•--•] /////////--- build paths ----///////')
+
+
+    for(i=0; relationsTable[0][i]!=null; i++){
+      allPaths.push( new NodeList__default(node0, relationsTable[0][i].getOther(node0)) );
+    }
+
+    var newPaths;
+
+    var _findNewPaths = function(path, relations){
+      var newPaths = new Table();
+      var finalNode = path[path.length-1];
+      var newPath;
+
+      // c.l('   finalNode.id:',finalNode.id);
+
+      relations.forEach(function(relation){
+        // c.l('         test relation:', relation.id);
+        if(finalNode.relationList.getNodeById(relation.id)){
+          newPath = path.clone();
+          newPath.addNode(relation.getOther(finalNode));
+          // c.l('                newPath:',newPath.getIds().join(','));
+          newPaths.push(newPath);
+        }
+      });
+
+      return newPaths;
+    }
+
+    var toAdd;
+
+    while(allPaths[0].length<spanningTree.nLevels){
+      // c.l('\nallPaths[0].length', allPaths[0].length);
+      newPaths = new Table();
+      allPaths.forEach(function(path){
+        // c.l('        path:',path.getIds().join(','));
+        toAdd = _findNewPaths(path, relationsTable[path.length-1]);
+        // c.l('          added '+toAdd.length+' paths');
+        newPaths = newPaths.concat(toAdd);
+      });
+      allPaths = newPaths;
+      // c.l('  [•--•] allPaths[0].length', allPaths[0].length);
+    }
+
+
+
+
+    // c.l('allPaths.length:',allPaths.length);
+    // c.l('allPaths!!!!:',allPaths);
+
+    // allPaths.forEach(function(path, i){
+    //   // c.l('[•--•] path '+i+': '+path.getIds().join(','));
+    // });
+
+    return allPaths;
+
+
+    
+
+    
+
+
+
+
+    ////////////////
+
+
+
+
+
+
 
     if(shortPath == null) shortPath = NetworkOperators.shortestPath(network, node0, node1, true);
 
     var lengthShortestPaths = shortPath.length;
 
-    var allPaths = new Table();
+    
     var firstPath = new NodeList__default();
     var i;
 
@@ -19051,6 +19300,35 @@ define('src/index', ['exports'], function (exports) {
 
     return all;
   };
+
+  /**
+   * finds all relations between two nodeLists
+   * @param  {Network} network
+   * @param  {NodeList} nodeList0
+   * @param  {NodeList} nodeList1
+   * @param  {Boolean} directed if true (default value), it finds relations pointing to first nodeList to second
+   * @return {RelationList}
+   * tags:
+   */
+  NetworkOperators.getRelationsBetweenNodeLists = function(network, nodeList0, nodeList1, directed){
+    if(nodeList0==null || nodeList1==null) return null;
+
+    if(directed==null) directed=true;
+
+    var relations = new RelationList();
+
+    network.relationList.forEach(function(relation){
+      if(
+        (nodeList0.getNodeById(relation.node0.id)!=null && nodeList1.getNodeById(relation.node1.id)!=null)
+        ||
+        (!directed && nodeList0.getNodeById(relation.node1.id)!=null && nodeList1.getNodeById(relation.node0.id)!=null)
+      ){
+        relations.addRelation(relation);
+      }
+    });
+
+    return relations;
+  }
 
 
   /**
@@ -19131,6 +19409,7 @@ define('src/index', ['exports'], function (exports) {
 
     return allLoops;
   };
+
   NetworkOperators._sameLoop = function(loop0, loop1) {
     if(loop0.length != loop1.length) return false;
     if(loop1.getNodeById(loop0[0].id) == null) return false;
@@ -19281,18 +19560,24 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * Builds a spanning tree of a Node in a Network (not very efficient)
-   *
    * @param  {Network} network
-   * @param  {Node} node0 Parent of the tree
+   * 
+   * @param  {Node} node0 Parent of the tree (first node on network.nodeList by default)
    * @param  {Node} nodeLimit Optional node in the network to prune the tree
    * @return {Tree}
    * tags:
    */
   NetworkOperators.spanningTree = function(network, node0, nodeLimit) { //TODO: this method is horribly inneficient // add: level limt
+    if(network==null) return;
+
+    node0 = node0==null?network.nodeList[0]:node0;
+
     var tree = new Tree__default();
     var parent = new Node__default(node0.id, node0.name);
     parent.node = node0;
     tree.addNodeToTree(parent);
+
+    //c.l('spanningTree | network, node0.id, nodeLimit.id', network, node0.id, nodeLimit==null?'nodeLimit=null':nodeLimit.id);
 
     var nodes = node0.nodeList;
     var newNodes;
@@ -19308,25 +19593,39 @@ define('src/index', ['exports'], function (exports) {
       if(newNode.id == parent.id) continue;
       newNode.node = nodes[i];
       tree.addNodeToTree(newNode, parent);
-      if(nodeLimit != null && newNode.id == nodeLimit.id) limitReached = true;
+      //c.l('  spanningTree | add:', newNode.id)
+      //c.l('                               spanningTree add node: newNode.id, nodeLimit.id', newNode.id, nodeLimit.id);
+      if(nodeLimit != null && newNode.id == nodeLimit.id){
+        limitReached = true;
+        //c.l('       spanningTree | limitReached!');
+      }
     }
+    //c.l('spanningTree |  limitReached A',  limitReached);
 
     if(limitReached) return tree;
 
     var accumulated = nodes.clone();
     accumulated.addNode(node0);
 
+    var N = 0;
+
     while(true) {
       newNodes = new NodeList__default(); //nodes.clone();
       for(i = 0; nodes[i] != null; i++) {
         newNodes.addNodes(nodes[i].nodeList); //TODO: check if obsolete concat + check if a concatIfNew could be useful, specially if overriden in NodeList, with getNodeById
       }
+      //c.l('N '+N);
       newNodes = newNodes.getWithoutRepetitions();
+      // c.l('      newNodes.getIds()', newNodes.getIds().join(','));
+      // c.l('      accumulated.getIds()', accumulated.getIds().join(','));
       newNodes.removeElements(accumulated);
+      // c.l('      newNodes.removeElements(accumulated) | newNodes.getIds()', newNodes.getIds().join(','));
+      //c.l('newNodes.length (if 0 return tree)', newNodes.length)
       if(newNodes.length == 0) return tree;
 
       for(i = 0; newNodes[i] != null; i++) {
         newNode = new Node__default(newNodes[i].id, newNodes[i].name);
+        // c.l('                   ++'+newNodes[i].id);
         newNode.node = newNodes[i];
         for(var j = 0; newNodes[i].nodeList[j] != null; j++) {
           id = newNodes[i].nodeList[j].id;
@@ -19336,17 +19635,70 @@ define('src/index', ['exports'], function (exports) {
             break;
           }
         }
-        if(nodeLimit != null && newNode.id == nodeLimit.id) limitReached = true;
+        if(nodeLimit != null && newNode.id == nodeLimit.id){
+          limitReached = true;
+        }
       }
 
+      //c.l('spanningTree |  limitReached B (if true return tree)',  limitReached);
       if(limitReached) limitReached = true;
 
+      if(limitReached) return tree;
+
       nodes = newNodes;
+      // c.l('     --concat');
       accumulated = accumulated.concat(newNodes);
+      
+      N++;
+      if(N>network.nodeList){
+        //c.l('/////////////////STOP');
+        return null;
+      }
     }
 
+    //c.l('return spanningTree:', tree);
     return tree;
   };
+
+  /**
+   * find nodes in next degree to a list of nodes (adjacent nodes)
+   * @param  {Network} network
+   * @param  {NodeList} nodeList
+   * @param  {Boolean} returnConcat if true (false bu default) return nodeList and adjacent, if false only adjacent
+   * @param {Boolean} directional (false by default) adjacent nodes are only the ones pointed by direct relations from nodes in the nodeList
+   * @return {NodeList}
+   * tags:
+   */
+  NetworkOperators.adjacentNodeList = function(network, nodeList, returnConcat, directional){
+    if(network==null || nodeList==null) return null;
+
+    var newNodeList = returnConcat?nodeList.clone():new NodeList__default();
+    var i, j;
+    var node0, node1;
+
+    if(directional){
+      for(i=0; nodeList[i]!=null; i++){
+        for(j=0; nodeList[i].toNodeList[j]!=null; j++){
+          node1 = nodeList[i].toNodeList[j].id;
+          if(nodeList.getNodeById(node1)==null && newNodeList.getNodeById(node1)==null) newNodeList.addNode(node1);
+        }
+      }
+
+      return newNodeList;
+    }
+
+    for(i=0; nodeList[i]!=null; i++){
+      for(j=0; nodeList[i].relationList[j]!=null; j++){
+        node0 = nodeList[i].relationList[j].node0;
+        node1 = nodeList[i].relationList[j].node1;
+        if(nodeList.getNodeById(node0.id)==null && newNodeList.getNodeById(node0.id)==null ) newNodeList.addNode(node0);
+        if(nodeList.getNodeById(node1.id)==null && newNodeList.getNodeById(node1.id)==null ) newNodeList.addNode(node1);
+      }
+    }
+
+    return newNodeList;
+
+  }
 
   NetworkOperators.degreesPartition = function(network, node) {
     //TODO:optionally add a NodeList of not connected Nodes

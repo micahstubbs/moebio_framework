@@ -99,16 +99,40 @@ NetworkOperators.getNodesBetweenTwoNodes = function(network, node0, node1){
 NetworkOperators.shortestPath = function(network, node0, node1, includeExtremes) {
   if(network == null || node0 == null || node1 == null) return null;
 
+  c.l('\n\n\n------------> shortestPath, network, node0, node1, includeExtremes', network, node0, node1, includeExtremes);
+  c.l('shortestPath | node0.id', node0.id);
+  c.l('shortestPath | node1.id', node1.id);
   var tree = NetworkOperators.spanningTree(network, node0, node1);
+  //c.l('shortestPath | tree.nodeList.getIds()['+tree.nodeList.getIds().join('-')+"]");
+  c.l('shortestPath | tree.nodeList.length:'+tree.nodeList.length);
+  c.l('shortestPath, tree', tree);
   var path = new NodeList();
   if(includeExtremes) path.addNode(node1);
+  //c.l('shortestPath, path', path);
+  c.l('shortestPath, path ids: ['+path.getIds().join('-')+"]");
   var node = tree.nodeList.getNodeById(node1.id);
+  c.l('shortestPath | node:', node);
+
+  if(node == null) c.l('node==null !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n\n\n');
+
   if(node == null) return null;
+
+  // c.l('---'); return;
+  // 
+  
+
+  c.l('  (pre while)>', node0.id, node1.id, node.id,  node.parent==null?'no parent!':node.parent.id);
   while(node.parent.id != node0.id) {
     path.addNode(node.parent.node);
     node = node.parent;
     if(node == null) return null;
+    c.l('    >', node0.id, node1.id, node.id,  node.parent==null?'no parent!':node.parent.id);
   }
+
+  c.l('shortestPath, path ids: ['+path.getIds().join('-')+"]");
+
+
+  // c.l('shortestPath, path', path);
   if(includeExtremes) path.addNode(node0);
   return path.getReversed();
 };
@@ -122,16 +146,155 @@ NetworkOperators.shortestPath = function(network, node0, node1, includeExtremes)
  * @param  {Node} node1 Destination Node.
  *
  * @param  {NodeList} shortPath In case a shortPath has been calculated previously
+ * @param {Tree} spanningTree previously calculated spanning tree centered on node0
  * @return {Table} List of paths (NodeLists)
  */
-NetworkOperators.shortestPaths = function(network, node0, node1, shortPath) {
+NetworkOperators.shortestPaths = function(network, node0, node1, shortPath, spanningTree) {
   if(network == null || node0 == null || node1 == null) return null;
+
+
+  var allPaths = new Table();
+
+
+  if(node0.nodeList.getNodeById(node1)!=null){
+    allPaths.push(new NodeList(node0, node1));
+    return allPaths;
+  }
+
+  //c.clear();
+
+  if(spanningTree==null) spanningTree = NetworkOperators.spanningTree(network, node0, node1);
+  
+  // c.l('[•--•] node0.id, node1.id', node0.id, node1.id);
+  // c.l('[•--•] shortestPaths | spanningTree.nodeList.length, spanningTree.nLevels', spanningTree.nodeList.length, spanningTree.nLevels);
+
+  // for(var i=0; i<spanningTree.nLevels; i++){
+  //   // c.l('  [•--•] level:'+i, spanningTree.getNodesByLevel(i).getIds().join(','));
+  // }
+
+  //first we seek for the nodes in paths
+  
+  var n = spanningTree.nLevels;
+  // c.l('[•--•] n:', n);
+
+  // c.l('[•--•] spanningTree.getNodesByLevel(spanningTree.nLevels-1).getNodeById(node1.id)', spanningTree.getNodesByLevel(spanningTree.nLevels-1).getNodeById(node1.id) );
+  
+  var level1 = new NodeList(node1);
+  var extended_from_1 = NetworkOperators.adjacentNodeList(network, level1, false);
+  var level0 = ListOperators.intersection(extended_from_1, spanningTree.getNodesByLevel(n-2));//spanningTree.getNodesByLevel(n-2);
+
+  // c.l('[•--•] node1.nodeList', node1.nodeList.getIds().join(','));
+  // c.l('[•--•] level1', level1.getIds().join(','));
+  // c.l('[•--•] level on tree:', spanningTree.getNodesByLevel(n-2).getIds().join(','));
+  // c.l('[•--•] extended_from_1', extended_from_1.getIds().join(','));
+  // c.l('[•--•] ----> level0', level0.getIds().join(','));
+
+  var relationsTable = new Table();
+
+  relationsTable.push(NetworkOperators.getRelationsBetweenNodeLists(network, level0, level1, false));
+
+  // c.l('  [•--•] relationsTable[last]', relationsTable[relationsTable.length-1].getIds().join(','));
+
+  while(n>2){
+    n--;
+    level1 = level0;
+
+    //interection of level1 xpanded and level n-2 in tree
+
+    level0 = ListOperators.intersection(NetworkOperators.adjacentNodeList(network, level1, false), spanningTree.getNodesByLevel(n-2));
+    // c.l('\n  [•--•] n:', n);
+    // c.l('  [•--•] level1', level1.getIds().join(','));
+    // c.l('  [•--•] level0', level0.getIds().join(','));
+
+    relationsTable.push(NetworkOperators.getRelationsBetweenNodeLists(network, level0, level1, false));
+    // c.l('  [•--•] relationsTable[last]', relationsTable[relationsTable.length-1].getIds().join(','));
+  }
+
+  relationsTable = relationsTable.getReversed();
+
+  // c.l('\n  [•--•] relationsTable', relationsTable );
+
+  // c.l('[•--•] relationsTable.getLengths()', relationsTable.getLengths() );
+
+  //c.l('[•--•] STOP for now'); return;
+
+  // c.l('\n\n[•--•] /////////--- build paths ----///////')
+
+
+  for(i=0; relationsTable[0][i]!=null; i++){
+    allPaths.push( new NodeList(node0, relationsTable[0][i].getOther(node0)) );
+  }
+
+  var newPaths;
+
+  var _findNewPaths = function(path, relations){
+    var newPaths = new Table();
+    var finalNode = path[path.length-1];
+    var newPath;
+
+    // c.l('   finalNode.id:',finalNode.id);
+
+    relations.forEach(function(relation){
+      // c.l('         test relation:', relation.id);
+      if(finalNode.relationList.getNodeById(relation.id)){
+        newPath = path.clone();
+        newPath.addNode(relation.getOther(finalNode));
+        // c.l('                newPath:',newPath.getIds().join(','));
+        newPaths.push(newPath);
+      }
+    });
+
+    return newPaths;
+  }
+
+  var toAdd;
+
+  while(allPaths[0].length<spanningTree.nLevels){
+    // c.l('\nallPaths[0].length', allPaths[0].length);
+    newPaths = new Table();
+    allPaths.forEach(function(path){
+      // c.l('        path:',path.getIds().join(','));
+      toAdd = _findNewPaths(path, relationsTable[path.length-1]);
+      // c.l('          added '+toAdd.length+' paths');
+      newPaths = newPaths.concat(toAdd);
+    });
+    allPaths = newPaths;
+    // c.l('  [•--•] allPaths[0].length', allPaths[0].length);
+  }
+
+
+
+
+  // c.l('allPaths.length:',allPaths.length);
+  // c.l('allPaths!!!!:',allPaths);
+
+  // allPaths.forEach(function(path, i){
+  //   // c.l('[•--•] path '+i+': '+path.getIds().join(','));
+  // });
+
+  return allPaths;
+
+
+  
+
+  
+
+
+
+
+  ////////////////
+
+
+
+
+
+
 
   if(shortPath == null) shortPath = NetworkOperators.shortestPath(network, node0, node1, true);
 
   var lengthShortestPaths = shortPath.length;
 
-  var allPaths = new Table();
+  
   var firstPath = new NodeList();
   var i;
 
@@ -150,6 +313,35 @@ NetworkOperators.shortestPaths = function(network, node0, node1, shortPath) {
 
   return all;
 };
+
+/**
+ * finds all relations between two nodeLists
+ * @param  {Network} network
+ * @param  {NodeList} nodeList0
+ * @param  {NodeList} nodeList1
+ * @param  {Boolean} directed if true (default value), it finds relations pointing to first nodeList to second
+ * @return {RelationList}
+ * tags:
+ */
+NetworkOperators.getRelationsBetweenNodeLists = function(network, nodeList0, nodeList1, directed){
+  if(nodeList0==null || nodeList1==null) return null;
+
+  if(directed==null) directed=true;
+
+  var relations = new RelationList();
+
+  network.relationList.forEach(function(relation){
+    if(
+      (nodeList0.getNodeById(relation.node0.id)!=null && nodeList1.getNodeById(relation.node1.id)!=null)
+      ||
+      (!directed && nodeList0.getNodeById(relation.node1.id)!=null && nodeList1.getNodeById(relation.node0.id)!=null)
+    ){
+      relations.addRelation(relation);
+    }
+  });
+
+  return relations;
+}
 
 
 /**
@@ -230,6 +422,7 @@ NetworkOperators.loops = function(network, minSize) {
 
   return allLoops;
 };
+
 NetworkOperators._sameLoop = function(loop0, loop1) {
   if(loop0.length != loop1.length) return false;
   if(loop1.getNodeById(loop0[0].id) == null) return false;
@@ -380,18 +573,24 @@ NetworkOperators._loopsColumns = function(nodeList, iColumn, columns) {
 
 /**
  * Builds a spanning tree of a Node in a Network (not very efficient)
- *
  * @param  {Network} network
- * @param  {Node} node0 Parent of the tree
+ * 
+ * @param  {Node} node0 Parent of the tree (first node on network.nodeList by default)
  * @param  {Node} nodeLimit Optional node in the network to prune the tree
  * @return {Tree}
  * tags:
  */
 NetworkOperators.spanningTree = function(network, node0, nodeLimit) { //TODO: this method is horribly inneficient // add: level limt
+  if(network==null) return;
+
+  node0 = node0==null?network.nodeList[0]:node0;
+
   var tree = new Tree();
   var parent = new Node(node0.id, node0.name);
   parent.node = node0;
   tree.addNodeToTree(parent);
+
+  //c.l('spanningTree | network, node0.id, nodeLimit.id', network, node0.id, nodeLimit==null?'nodeLimit=null':nodeLimit.id);
 
   var nodes = node0.nodeList;
   var newNodes;
@@ -407,25 +606,39 @@ NetworkOperators.spanningTree = function(network, node0, nodeLimit) { //TODO: th
     if(newNode.id == parent.id) continue;
     newNode.node = nodes[i];
     tree.addNodeToTree(newNode, parent);
-    if(nodeLimit != null && newNode.id == nodeLimit.id) limitReached = true;
+    //c.l('  spanningTree | add:', newNode.id)
+    //c.l('                               spanningTree add node: newNode.id, nodeLimit.id', newNode.id, nodeLimit.id);
+    if(nodeLimit != null && newNode.id == nodeLimit.id){
+      limitReached = true;
+      //c.l('       spanningTree | limitReached!');
+    }
   }
+  //c.l('spanningTree |  limitReached A',  limitReached);
 
   if(limitReached) return tree;
 
   var accumulated = nodes.clone();
   accumulated.addNode(node0);
 
+  var N = 0;
+
   while(true) {
     newNodes = new NodeList(); //nodes.clone();
     for(i = 0; nodes[i] != null; i++) {
       newNodes.addNodes(nodes[i].nodeList); //TODO: check if obsolete concat + check if a concatIfNew could be useful, specially if overriden in NodeList, with getNodeById
     }
+    //c.l('N '+N);
     newNodes = newNodes.getWithoutRepetitions();
+    // c.l('      newNodes.getIds()', newNodes.getIds().join(','));
+    // c.l('      accumulated.getIds()', accumulated.getIds().join(','));
     newNodes.removeElements(accumulated);
+    // c.l('      newNodes.removeElements(accumulated) | newNodes.getIds()', newNodes.getIds().join(','));
+    //c.l('newNodes.length (if 0 return tree)', newNodes.length)
     if(newNodes.length == 0) return tree;
 
     for(i = 0; newNodes[i] != null; i++) {
       newNode = new Node(newNodes[i].id, newNodes[i].name);
+      // c.l('                   ++'+newNodes[i].id);
       newNode.node = newNodes[i];
       for(var j = 0; newNodes[i].nodeList[j] != null; j++) {
         id = newNodes[i].nodeList[j].id;
@@ -435,17 +648,70 @@ NetworkOperators.spanningTree = function(network, node0, nodeLimit) { //TODO: th
           break;
         }
       }
-      if(nodeLimit != null && newNode.id == nodeLimit.id) limitReached = true;
+      if(nodeLimit != null && newNode.id == nodeLimit.id){
+        limitReached = true;
+      }
     }
 
+    //c.l('spanningTree |  limitReached B (if true return tree)',  limitReached);
     if(limitReached) limitReached = true;
 
+    if(limitReached) return tree;
+
     nodes = newNodes;
+    // c.l('     --concat');
     accumulated = accumulated.concat(newNodes);
+    
+    N++;
+    if(N>network.nodeList){
+      //c.l('/////////////////STOP');
+      return null;
+    }
   }
 
+  //c.l('return spanningTree:', tree);
   return tree;
 };
+
+/**
+ * find nodes in next degree to a list of nodes (adjacent nodes)
+ * @param  {Network} network
+ * @param  {NodeList} nodeList
+ * @param  {Boolean} returnConcat if true (false bu default) return nodeList and adjacent, if false only adjacent
+ * @param {Boolean} directional (false by default) adjacent nodes are only the ones pointed by direct relations from nodes in the nodeList
+ * @return {NodeList}
+ * tags:
+ */
+NetworkOperators.adjacentNodeList = function(network, nodeList, returnConcat, directional){
+  if(network==null || nodeList==null) return null;
+
+  var newNodeList = returnConcat?nodeList.clone():new NodeList();
+  var i, j;
+  var node0, node1;
+
+  if(directional){
+    for(i=0; nodeList[i]!=null; i++){
+      for(j=0; nodeList[i].toNodeList[j]!=null; j++){
+        node1 = nodeList[i].toNodeList[j].id;
+        if(nodeList.getNodeById(node1)==null && newNodeList.getNodeById(node1)==null) newNodeList.addNode(node1);
+      }
+    }
+
+    return newNodeList;
+  }
+
+  for(i=0; nodeList[i]!=null; i++){
+    for(j=0; nodeList[i].relationList[j]!=null; j++){
+      node0 = nodeList[i].relationList[j].node0;
+      node1 = nodeList[i].relationList[j].node1;
+      if(nodeList.getNodeById(node0.id)==null && newNodeList.getNodeById(node0.id)==null ) newNodeList.addNode(node0);
+      if(nodeList.getNodeById(node1.id)==null && newNodeList.getNodeById(node1.id)==null ) newNodeList.addNode(node1);
+    }
+  }
+
+  return newNodeList;
+
+}
 
 NetworkOperators.degreesPartition = function(network, node) {
   //TODO:optionally add a NodeList of not connected Nodes

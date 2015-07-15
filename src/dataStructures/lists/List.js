@@ -362,6 +362,8 @@ List.prototype.getReversed = function() {
  */
 List.prototype.getSubList = function() {
   var interval;
+  var i;
+
   if(arguments[0].isList) {
     return this.getSubListByIndexes(arguments[0]);
   } else if(arguments.length > 2) {
@@ -389,17 +391,26 @@ List.prototype.getSubList = function() {
     return newList;
   }
 
-  if(this.type == 'List' || this.type == 'Table') {
+  var type = this.type;
+
+  if(type == 'List' || type == 'Table') {
     newList = new List();
   } else {
-    newList = instantiate(typeOf(this));
+    newList = instantiate(type);
   }
 
-  for(var i = newInterval.x; i <= newInterval.y; i++) {
-    newList.push(this[i]);
+  if(type=='NodeList'){
+    for(i = newInterval.x; i <= newInterval.y; i++) {
+      newList.addNode(this[i]);
+    }
+  } else {
+    for(i = newInterval.x; i <= newInterval.y; i++) {
+      newList.push(this[i]);
+    }
   }
+
   newList.name = this.name;
-  if(this.type == 'List' || this.type == 'Table') return newList.getImproved();
+  if(type == 'List' || type == 'Table') return newList.getImproved();
   return newList;
 };
 
@@ -439,7 +450,8 @@ List.prototype.getSubListByIndexes = function() { //TODO: merge with getSubList
   }
 
   var newList;
-  if(this.type == 'List') {
+  var type = this.type;
+  if(type == 'List') {
     newList = new List();
   } else {
     newList = instantiate(typeOf(this));
@@ -452,13 +464,22 @@ List.prototype.getSubListByIndexes = function() { //TODO: merge with getSubList
   var nElements = this.length;
   var nPositions = indexes.length;
   var i;
-  for(i = 0; i < nPositions; i++) {
-    if(indexes[i] < nElements) {
-      newList.push(this[(indexes[i] + this.length) % this.length]);
+
+  if(type=="NodeList"){
+    for(i = 0; i < nPositions; i++) {
+      if(indexes[i] < nElements) {
+        newList.addNode(this[(indexes[i] + this.length) % this.length]);
+      }
+    }
+  } else {
+    for(i = 0; i < nPositions; i++) {
+      if(indexes[i] < nElements) {
+        newList.push(this[(indexes[i] + this.length) % this.length]);
+      }
     }
   }
 
-  if(this.type == 'List' || this.type == 'Table') {
+  if(type == 'List' || type == 'Table') {
     return newList.getImproved();
   }
   return newList;
@@ -510,19 +531,19 @@ List.prototype.getWithoutRepetitions = function() {
   var newList = instantiateWithSameType(this);
   newList.name = this.name;
 
-  if(this.type == 'NumberList' || this.type == 'StringList') {//TODO:check other cases
-    dictionary = {};
-    for(i = 0; this[i] != null; i++) {
-      if(!dictionary[this[i]]) {
-        newList.push(this[i]);
-        dictionary[this[i]] = true;
-      }
-    }
-  } else {
-    for(i = 0; this[i] != null; i++) {
-      if(newList.indexOf(this[i]) == -1) newList.push(this[i]);
+  //if(this.type == 'NumberList' || this.type == 'StringList') {//TODO:check other cases
+  dictionary = {};
+  for(i = 0; this[i] != null; i++) {
+    if(!dictionary[this[i]]) {
+      newList.push(this[i]);
+      dictionary[this[i]] = true;
     }
   }
+  // } else {
+  //   for(i = 0; this[i] != null; i++) {
+  //     if(newList.indexOf(this[i]) == -1) newList.push(this[i]);
+  //   }
+  // }
 
   return newList;
 };
@@ -1309,24 +1330,33 @@ List.prototype.getFilteredByFunction = function(func) {
   return newList;
 };
 
+
+
 List.prototype.concat = function() {
   if(arguments[0] == null) return this;
 
-  //c.l('concat | arguments[0].type, this.type', arguments[0].type, this.type);
+  // c.l('concat | arguments[0].type, this.type', arguments[0].type, this.type);
 
-  if(arguments[0].type == this.type) {
+  if(arguments[0].type == this.type) {//var type = … / switch/case
     if(this.type == "NumberList") {
       return NumberList.fromArray(this._concat.apply(this, arguments), false);
     } else if(this.type == "StringList") {
       return StringList.fromArray(this._concat.apply(this, arguments), false);
-    } else if(this.type == "NodeList") { //[!] concat breaks the getNodeById in NodeList
-      return NodeList.fromArray(this._concat.apply(this, arguments), false);
     } else if(this.type == "DateList") {
       return DateList.fromArray(this._concat.apply(this, arguments), false);
     } else if(this.type == "Table") {
       return Table.fromArray(this._concat.apply(this, arguments), false);
     } else if(this.type == "NumberTable") {
       return NumberTable.fromArray(this._concat.apply(this, arguments), false);
+    } else if(this.type == "NodeList"){
+      var newList = this.clone();
+      var args = arguments[0];
+      var i;
+      for(i=0; args[i]!=null; i++){
+        // c.l('   +_+_+_+args[i]',args[i]);
+        newList.addNode(args[i]);
+      }
+      return newList;
     }
   }
   return List.fromArray(this._concat.apply(this, arguments)).getImproved();
@@ -1524,8 +1554,16 @@ List.prototype.pushIfUnique = function(element) {
 };
 
 List.prototype.removeElements = function(elements) { //TODO: make it more efficient (avoiding the splice method)
-  for(var i = 0; i < this.length; i++) {
-    if(elements.indexOf(this[i]) > -1) {
+  var i;
+  var dictionary = {};
+
+  for(i=0; elements[i]!=null; i++){
+    dictionary[elements[i]] = true;
+  }
+
+  for(i = 0; this[i]!=null; i++) {
+    //if(elements.indexOf(this[i]) > -1) {
+    if(dictionary[this[i]]) {
       this.splice(i, 1);
       i--;
     }
