@@ -110,10 +110,17 @@ StringList.prototype.getSurrounded = function(prefix, sufix) {
 
 //deprectaed, replaced by replaceInStrings
 StringList.prototype.replace = function(regExp, string) {
+  if(regExp==null) return this;
+
   var newStringList = new StringList();
+  var i;
+
   newStringList.name = this.name;
 
-  for(var i = 0; this[i] != null; i++) {
+  c.l('regExp:', regExp);
+  c.l('string:', string);
+
+  for(i = 0; this[i] != null; i++){
     newStringList[i] = this[i].replace(regExp, string);
   }
 

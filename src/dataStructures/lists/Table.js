@@ -60,6 +60,7 @@ Table.fromArray = function(array) {
   result.getWithoutRow = Table.prototype.getWithoutRow;
   result.getWithoutRows = Table.prototype.getWithoutRows;
   result.getSubTableByElementOnList = Table.prototype.getSubTableByElementOnList;
+  result.getSubTableByElementsOnList = Table.prototype.getSubTableByElementsOnList;
   result.getTransposed = Table.prototype.getTransposed;
   result.getListsSortedByList = Table.prototype.getListsSortedByList;
   result.sortListsByList = Table.prototype.sortListsByList;
@@ -78,6 +79,7 @@ Table.fromArray = function(array) {
 
   return result;
 };
+
 
 /**
  * Executes a given function on all the columns
@@ -220,7 +222,7 @@ Table.prototype.getWithoutRows = function(rowsIndexes) {
 };
 
 /**
- * filters lists on a table, keeping elements that are in teh same of row of a certain element of a given list from the table
+ * filters lists on a table, keeping elements that are in the same of row of a certain element of a given list from the table
  * @param  {Number} nList index of list containing the element
  * @param  {Object} element used to filter the lists on the table
  * @return {Table}
@@ -247,6 +249,49 @@ Table.prototype.getSubTableByElementOnList = function(nList, element){
 
   for(i=0; supervised[i]!=null; i++){
     if(element==supervised[i]){
+       for(j=0; newTable[j]!=null; j++){
+          newTable[j].push(this[j][i]);
+       }
+    }
+  }
+
+  newTable.forEach(function(list, i){
+    newTable[i] = list.getImproved();
+  });
+
+  return newTable.getImproved();
+}
+
+/**
+ * filters lists on a table, keeping elements that are in the same of row of certain elements of a given list from the table
+ * @param  {Number} nList index of list containing the element
+ * @param  {List} elements used to filter the lists on the table
+ * @return {Table}
+ * tags:filter
+ */
+Table.prototype.getSubTableByElementsOnList = function(nList, list){
+  if(nList==null || list==null) return;
+
+  var i, j, value, list;
+
+  if(nList<0) nList = this.length+nList;
+  nList = nList%this.length;
+
+  var newTable = instantiateWithSameType(this);
+  newTable.name = this.name;
+
+  this.forEach(function(list){
+    var newList = new List();
+    newList.name = list.name;
+    newTable.push(newList);
+  });
+
+  var supervised = this[nList];
+
+  var listDictionary = ListOperators.getBooleanDictionaryForList(list);
+
+  for(i=0; supervised[i]!=null; i++){
+    if(listDictionary[supervised[i]]){
        for(j=0; newTable[j]!=null; j++){
           newTable[j].push(this[j][i]);
        }

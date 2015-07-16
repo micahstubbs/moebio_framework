@@ -2475,6 +2475,7 @@ define('src/index', ['exports'], function (exports) {
     result.getWithoutRow = Table.prototype.getWithoutRow;
     result.getWithoutRows = Table.prototype.getWithoutRows;
     result.getSubTableByElementOnList = Table.prototype.getSubTableByElementOnList;
+    result.getSubTableByElementsOnList = Table.prototype.getSubTableByElementsOnList;
     result.getTransposed = Table.prototype.getTransposed;
     result.getListsSortedByList = Table.prototype.getListsSortedByList;
     result.sortListsByList = Table.prototype.sortListsByList;
@@ -2493,6 +2494,7 @@ define('src/index', ['exports'], function (exports) {
 
     return result;
   };
+
 
   /**
    * Executes a given function on all the columns
@@ -2635,7 +2637,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * filters lists on a table, keeping elements that are in teh same of row of a certain element of a given list from the table
+   * filters lists on a table, keeping elements that are in the same of row of a certain element of a given list from the table
    * @param  {Number} nList index of list containing the element
    * @param  {Object} element used to filter the lists on the table
    * @return {Table}
@@ -2662,6 +2664,49 @@ define('src/index', ['exports'], function (exports) {
 
     for(i=0; supervised[i]!=null; i++){
       if(element==supervised[i]){
+         for(j=0; newTable[j]!=null; j++){
+            newTable[j].push(this[j][i]);
+         }
+      }
+    }
+
+    newTable.forEach(function(list, i){
+      newTable[i] = list.getImproved();
+    });
+
+    return newTable.getImproved();
+  }
+
+  /**
+   * filters lists on a table, keeping elements that are in the same of row of certain elements of a given list from the table
+   * @param  {Number} nList index of list containing the element
+   * @param  {List} elements used to filter the lists on the table
+   * @return {Table}
+   * tags:filter
+   */
+  Table.prototype.getSubTableByElementsOnList = function(nList, list){
+    if(nList==null || list==null) return;
+
+    var i, j, value, list;
+
+    if(nList<0) nList = this.length+nList;
+    nList = nList%this.length;
+
+    var newTable = instantiateWithSameType(this);
+    newTable.name = this.name;
+
+    this.forEach(function(list){
+      var newList = new List__default();
+      newList.name = list.name;
+      newTable.push(newList);
+    });
+
+    var supervised = this[nList];
+
+    var listDictionary = ListOperators.getBooleanDictionaryForList(list);
+
+    for(i=0; supervised[i]!=null; i++){
+      if(listDictionary[supervised[i]]){
          for(j=0; newTable[j]!=null; j++){
             newTable[j].push(this[j][i]);
          }
@@ -5579,10 +5624,17 @@ define('src/index', ['exports'], function (exports) {
 
   //deprectaed, replaced by replaceInStrings
   StringList.prototype.replace = function(regExp, string) {
+    if(regExp==null) return this;
+
     var newStringList = new StringList();
+    var i;
+
     newStringList.name = this.name;
 
-    for(var i = 0; this[i] != null; i++) {
+    c.l('regExp:', regExp);
+    c.l('string:', string);
+
+    for(i = 0; this[i] != null; i++){
       newStringList[i] = this[i].replace(regExp, string);
     }
 
@@ -10382,10 +10434,12 @@ define('src/index', ['exports'], function (exports) {
    * @param  {Table} table
    * @param  {Number} nList list that could contain the element in several positions
    * @param  {Object} element
+   * 
+   * @param {Boolean} keepRowIfElementIsPresent if true (default value) the row is selected if the list contains the given element, if false the row is discarded
    * @return {Table}
    * tags:filter
    */
-  TableOperators.filterTableByElementInList = function(table, nList, element) {
+  TableOperators.filterTableByElementInList = function(table, nList, element, keepRowIfElementIsPresent) {
     if(table == null ||  !table.length > 1 || nList == null) return;
     if(element == null) return table;
 
@@ -10397,12 +10451,23 @@ define('src/index', ['exports'], function (exports) {
 
     for(j = 0; table[j] != null; j++) {
       newTable[j] = new List__default();
+      newTable[j].name = table[j].name;
     }
 
-    for(i = 0; table[0][i] != null; i++) {
-      if(table[nList][i] == element) {
-        for(j = 0; table[j] != null; j++) {
-          newTable[j].push(table[j][i]);
+    if(keepRowIfElementIsPresent){
+      for(i = 0; table[0][i] != null; i++) {
+        if(table[nList][i] == element) {
+          for(j = 0; table[j] != null; j++) {
+            newTable[j].push(table[j][i]);
+          }
+        }
+      }
+    } else {
+      for(i = 0; table[0][i] != null; i++) {
+        if(table[nList][i] != element) {
+          for(j = 0; table[j] != null; j++) {
+            newTable[j].push(table[j][i]);
+          }
         }
       }
     }
@@ -11014,6 +11079,17 @@ define('src/index', ['exports'], function (exports) {
   ListOperators__ListOperators.reverse = function(list) {
     return list.getReversed();
   };
+
+  ListOperators__ListOperators.getBooleanDictionaryForList = function(list){
+    if(list==null) return;
+
+    var dictionary = {};
+    list.forEach(function(element){
+      dictionary[element] = true;
+    });
+
+    return dictionary;
+  }
 
   /**
    * builds a dictionar object (relational array) for a dictionar (table with two lists)
@@ -18728,14 +18804,26 @@ define('src/index', ['exports'], function (exports) {
    *
    * @param {Number} mode 0:simple random 1:clusterized
    * @param {Boolean} randomRelationsWeights adds a random weigth to relations
+   * @param {Number} seed random seed for stable random generation
    * @return {Network}
    * @example
    * // generate a sparsely connected network with 2000 Nodes
    * network = NetworkGenerators.createRandomNetwork(2000, 0.0006, 1);
    */
-  NetworkGenerators.createRandomNetwork = function(nNodes, pRelation, mode, randomRelationsWeights) {
+  NetworkGenerators.createRandomNetwork = function(nNodes, pRelation, mode, randomRelationsWeights, seed) {
     if(nNodes == null || pRelation == null) return null;
 
+    var funcRandom;
+
+    if(seed!=null){
+      funcRandom = function(){
+        seed++;
+       return NumberOperators.getRandomWithSeed(seed);
+     }
+    } else {
+      funcRandom = funcRandom;
+    }
+    
     mode = mode == null ? 0 : mode;
 
     var i, j;
@@ -18751,7 +18839,7 @@ define('src/index', ['exports'], function (exports) {
         for(i = 0; i < nNodes - 1; i++) {
           node = network.nodeList[i];
           for(j = i + 1; j < nNodes; j++) {
-            if(Math.random() < pRelation) network.addRelation(new Relation(i + "_" + j, i + "_" + j, node, network.nodeList[j], randomRelationsWeights ? Math.random() : 1));
+            if(funcRandom() < pRelation) network.addRelation(new Relation(i + "_" + j, i + "_" + j, node, network.nodeList[j], randomRelationsWeights ? funcRandom() : 1));
           }
         }
         return network;
@@ -18762,17 +18850,17 @@ define('src/index', ['exports'], function (exports) {
         var otherNode;
         var id;
         for(i = 0; i < nPairs; i++) {
-          if(Math.random() < pRelation) {
+          if(funcRandom() < pRelation) {
             pending = true;
             while(pending) {
-              node = network.nodeList[Math.floor(network.nodeList.length * Math.random())];
-              if(Math.random() < (node.nodeList.length + 1) / (maxDegree + 1)) {
+              node = network.nodeList[Math.floor(network.nodeList.length * funcRandom())];
+              if(funcRandom() < (node.nodeList.length + 1) / (maxDegree + 1)) {
                 while(pending) {
-                  otherNode = network.nodeList[Math.floor(network.nodeList.length * Math.random())];
+                  otherNode = network.nodeList[Math.floor(network.nodeList.length * funcRandom())];
                   id = node.id + "_" + otherNode.id;
                   if(network.relationList.getNodeById(id) != null || network.relationList.getNodeById(otherNode.id + "_" + node.id) != null) continue;
-                  if(Math.random() < (otherNode.nodeList.length + 1) / (maxDegree + 1)) {
-                    network.addRelation(new Relation(id, id, node, otherNode, randomRelationsWeights ? Math.random() : 1));
+                  if(funcRandom() < (otherNode.nodeList.length + 1) / (maxDegree + 1)) {
+                    network.addRelation(new Relation(id, id, node, otherNode, randomRelationsWeights ? funcRandom() : 1));
                     pending = false;
                   }
                 }
@@ -19904,7 +19992,7 @@ define('src/index', ['exports'], function (exports) {
       node0 = nodeList0[i];
       for(j = 0; node0.nodeList[j] != null; j++) {
         if(nodeList1.indexOf(node0.nodeList[j]) != -1) {
-          //if(nodeList1.containsElement(node0.nodeList[j])){
+        //if(nodeList1.getNodeById(node0.nodeList[j].id) != null) { // <----- seemed to be slower!
           strength += node0.relationList[j].weight;
         }
       }
@@ -24271,8 +24359,6 @@ define('src/index', ['exports'], function (exports) {
 
     var normWeights = weights.getNormalizedToMax().sqrt();
     var circlesPlaced = new Polygon3D();
-
-    console.log('  o', weights.length, normWeights);
 
     var dL = 6;
 

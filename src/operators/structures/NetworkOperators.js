@@ -917,7 +917,7 @@ NetworkOperators._strengthBetweenSets = function(nodeList0, nodeList1, pRelation
     node0 = nodeList0[i];
     for(j = 0; node0.nodeList[j] != null; j++) {
       if(nodeList1.indexOf(node0.nodeList[j]) != -1) {
-        //if(nodeList1.containsElement(node0.nodeList[j])){
+      //if(nodeList1.getNodeById(node0.nodeList[j].id) != null) { // <----- seemed to be slower!
         strength += node0.relationList[j].weight;
       }
     }

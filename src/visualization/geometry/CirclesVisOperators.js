@@ -12,8 +12,6 @@ CirclesVisOperators.circlesCloud = function(weights, frame, margin) {
   var normWeights = weights.getNormalizedToMax().sqrt();
   var circlesPlaced = new Polygon3D();
 
-  console.log('  o', weights.length, normWeights);
-
   var dL = 6;
 
   var a = 0;

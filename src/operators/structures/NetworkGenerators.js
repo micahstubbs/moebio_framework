@@ -25,14 +25,26 @@ export default NetworkGenerators;
  *
  * @param {Number} mode 0:simple random 1:clusterized
  * @param {Boolean} randomRelationsWeights adds a random weigth to relations
+ * @param {Number} seed random seed for stable random generation
  * @return {Network}
  * @example
  * // generate a sparsely connected network with 2000 Nodes
  * network = NetworkGenerators.createRandomNetwork(2000, 0.0006, 1);
  */
-NetworkGenerators.createRandomNetwork = function(nNodes, pRelation, mode, randomRelationsWeights) {
+NetworkGenerators.createRandomNetwork = function(nNodes, pRelation, mode, randomRelationsWeights, seed) {
   if(nNodes == null || pRelation == null) return null;
 
+  var funcRandom;
+
+  if(seed!=null){
+    funcRandom = function(){
+      seed++;
+     return NumberOperators.getRandomWithSeed(seed);
+   }
+  } else {
+    funcRandom = funcRandom;
+  }
+  
   mode = mode == null ? 0 : mode;
 
   var i, j;
@@ -48,7 +60,7 @@ NetworkGenerators.createRandomNetwork = function(nNodes, pRelation, mode, random
       for(i = 0; i < nNodes - 1; i++) {
         node = network.nodeList[i];
         for(j = i + 1; j < nNodes; j++) {
-          if(Math.random() < pRelation) network.addRelation(new Relation(i + "_" + j, i + "_" + j, node, network.nodeList[j], randomRelationsWeights ? Math.random() : 1));
+          if(funcRandom() < pRelation) network.addRelation(new Relation(i + "_" + j, i + "_" + j, node, network.nodeList[j], randomRelationsWeights ? funcRandom() : 1));
         }
       }
       return network;
@@ -59,17 +71,17 @@ NetworkGenerators.createRandomNetwork = function(nNodes, pRelation, mode, random
       var otherNode;
       var id;
       for(i = 0; i < nPairs; i++) {
-        if(Math.random() < pRelation) {
+        if(funcRandom() < pRelation) {
           pending = true;
           while(pending) {
-            node = network.nodeList[Math.floor(network.nodeList.length * Math.random())];
-            if(Math.random() < (node.nodeList.length + 1) / (maxDegree + 1)) {
+            node = network.nodeList[Math.floor(network.nodeList.length * funcRandom())];
+            if(funcRandom() < (node.nodeList.length + 1) / (maxDegree + 1)) {
               while(pending) {
-                otherNode = network.nodeList[Math.floor(network.nodeList.length * Math.random())];
+                otherNode = network.nodeList[Math.floor(network.nodeList.length * funcRandom())];
                 id = node.id + "_" + otherNode.id;
                 if(network.relationList.getNodeById(id) != null || network.relationList.getNodeById(otherNode.id + "_" + node.id) != null) continue;
-                if(Math.random() < (otherNode.nodeList.length + 1) / (maxDegree + 1)) {
-                  network.addRelation(new Relation(id, id, node, otherNode, randomRelationsWeights ? Math.random() : 1));
+                if(funcRandom() < (otherNode.nodeList.length + 1) / (maxDegree + 1)) {
+                  network.addRelation(new Relation(id, id, node, otherNode, randomRelationsWeights ? funcRandom() : 1));
                   pending = false;
                 }
               }
