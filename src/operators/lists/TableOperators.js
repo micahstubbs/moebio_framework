@@ -521,10 +521,12 @@ TableOperators.getCountPairsMatrix = function(table) {
  * @param  {Table} table
  * @param  {Number} nList list that could contain the element in several positions
  * @param  {Object} element
+ * 
+ * @param {Boolean} keepRowIfElementIsPresent if true (default value) the row is selected if the list contains the given element, if false the row is discarded
  * @return {Table}
  * tags:filter
  */
-TableOperators.filterTableByElementInList = function(table, nList, element) {
+TableOperators.filterTableByElementInList = function(table, nList, element, keepRowIfElementIsPresent) {
   if(table == null ||  !table.length > 1 || nList == null) return;
   if(element == null) return table;
 
@@ -536,12 +538,23 @@ TableOperators.filterTableByElementInList = function(table, nList, element) {
 
   for(j = 0; table[j] != null; j++) {
     newTable[j] = new List();
+    newTable[j].name = table[j].name;
   }
 
-  for(i = 0; table[0][i] != null; i++) {
-    if(table[nList][i] == element) {
-      for(j = 0; table[j] != null; j++) {
-        newTable[j].push(table[j][i]);
+  if(keepRowIfElementIsPresent){
+    for(i = 0; table[0][i] != null; i++) {
+      if(table[nList][i] == element) {
+        for(j = 0; table[j] != null; j++) {
+          newTable[j].push(table[j][i]);
+        }
+      }
+    }
+  } else {
+    for(i = 0; table[0][i] != null; i++) {
+      if(table[nList][i] != element) {
+        for(j = 0; table[j] != null; j++) {
+          newTable[j].push(table[j][i]);
+        }
       }
     }
   }

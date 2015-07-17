@@ -243,6 +243,17 @@ ListOperators.reverse = function(list) {
   return list.getReversed();
 };
 
+ListOperators.getBooleanDictionaryForList = function(list){
+  if(list==null) return;
+
+  var dictionary = {};
+  list.forEach(function(element){
+    dictionary[element] = true;
+  });
+
+  return dictionary;
+}
+
 /**
  * builds a dictionar object (relational array) for a dictionar (table with two lists)
  * @param  {Table} dictionary table with two lists, typically without repetitions, elements of the second list being the 'translation' of the correspdonent on the first
