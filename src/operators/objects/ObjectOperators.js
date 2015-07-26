@@ -105,10 +105,26 @@ ObjectOperators.booleanGate = function(boolean, object0, object1) {
  * @return {Object}
  * tags:
  */
-ObjectOperators.getPropertyValue = function(object, property_value) {
+ObjectOperators.getPropertyValue = function(object, property_name) {
   if(object == null) return;
 
-  return object == null ? null : object[property_value];
+  return object == null ? null : object[property_name];
+};
+
+/**
+ * return true if property value exists in object
+ * @param  {Object} object
+ * @param  {String} property_value
+ * @return {Boolean}
+ * tags:
+ */
+ObjectOperators.isPropertyValue = function(object, property_value) {
+  if(object == null) return false;
+  for (var property in object) {
+    if(object[property] === property_value)
+      return true;
+  }
+  return false;
 };
 
 /**
