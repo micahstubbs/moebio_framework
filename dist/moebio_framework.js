@@ -12562,7 +12562,11 @@ define('src/index', ['exports'], function (exports) {
     if(string == null) return;
     if(string.length == 0) return new Table(new StringList(), new NumberList());
     var words = StringOperators.getWords(string, false, stopWords, false, includeLinks, limit, minSizeWords);
-    var table = words.getFrequenciesTable(true).sliceRows(0, limit-1);
+    var table;
+    if(limit != null)
+      table = words.getFrequenciesTable(true).sliceRows(0, limit-1);
+    else
+      table = words.getFrequenciesTable(true);
     return table;// ListOperators.countElementsRepetitionOnList(words, true, false, limit);
   };
 
@@ -17900,10 +17904,26 @@ define('src/index', ['exports'], function (exports) {
    * @return {Object}
    * tags:
    */
-  ObjectOperators.getPropertyValue = function(object, property_value) {
+  ObjectOperators.getPropertyValue = function(object, property_name) {
     if(object == null) return;
 
-    return object == null ? null : object[property_value];
+    return object == null ? null : object[property_name];
+  };
+
+  /**
+   * return true if property value exists in object
+   * @param  {Object} object
+   * @param  {String} property_value
+   * @return {Boolean}
+   * tags:
+   */
+  ObjectOperators.isPropertyValue = function(object, property_value) {
+    if(object == null) return false;
+    for (var property in object) {
+      if(object[property] === property_value)
+        return true;
+    }
+    return false;
   };
 
   /**
