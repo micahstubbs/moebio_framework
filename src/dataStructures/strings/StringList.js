@@ -139,7 +139,7 @@ StringList.prototype.replaceSubStringsInStrings = function(subString, replacemen
   newStringList.name = this.name;
 
   for(var i = 0; this[i] != null; i++) {
-    newStringList[i] = StringOperators.replaceString(string, subString, replacement);
+    newStringList[i] = StringOperators.replaceString(this[i], subString, replacement);
   }
 
   return newStringList;
