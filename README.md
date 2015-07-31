@@ -37,6 +37,19 @@ If you would like to contribute to Moebio Framework, try out customizations loca
 The project is built using grunt. Most of the grunt tasks are kept in separate
 files in the the ```/tasks``` folder.
 
+## Common Grunt tasks
+
+Here's a short list of grunt tasks you might want to be familiar with:
+
+```
+grunt         # builds the dist/ files once
+grunt watch   # builds dist files after every source code change
+grunt doc     # build the docs using JSDoc
+grunt release # build and deploy a new release of the software
+grunt test    # run tests in a chrome window.
+grunt jshint  # run hinting tool
+```
+
 ### Building Code
 
 To build the source code, you will need [Node](https://nodejs.org/) and [Grunt](http://gruntjs.com/) installed on your system.

@@ -1,5 +1,7 @@
 //          getSortedByProperty
 // ======================================================
+
+/* global mo */
 describe("list.getSortedByProperty", function()
 {
   it("should be defined", function() {
@@ -103,7 +105,7 @@ describe("list.getSortedByProperty", function()
 
   it("should find repeated value counts", function() {
     var list = new mo.List.fromArray([1,1,1,1,2,1,1,1,11,3,1,1,11,'11']);
-    var ocrs = list.getFrequencyTable();
+    var ocrs = list.getFrequenciesTable();
     // first most repeated element
     expect(ocrs[0][0]).toBe(1);
     expect(ocrs[1][0]).toBe(9);
