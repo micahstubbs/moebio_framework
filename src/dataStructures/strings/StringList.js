@@ -117,9 +117,6 @@ StringList.prototype.replace = function(regExp, string) {
 
   newStringList.name = this.name;
 
-  c.l('regExp:', regExp);
-  c.l('string:', string);
-
   for(i = 0; this[i] != null; i++){
     newStringList[i] = this[i].replace(regExp, string);
   }
