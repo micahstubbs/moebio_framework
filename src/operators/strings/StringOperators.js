@@ -573,7 +573,7 @@ StringOperators.removeHtmlTags = function(html) {
 
 StringOperators.removeLinks = function(text) {
   text += ' ';
-  var regexp = /http:\/\/[a-zA-Z0-9\/\.]+( |:|;|\r|\t|\n|\v)/g;
+  var regexp = /https*:\/\/[a-zA-Z0-9\/\.]+( |:|;|\r|\t|\n|\v)/g;
   return(text.replace(regexp, ' ')).substr(0, text.length - 2);
 };
 
