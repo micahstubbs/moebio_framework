@@ -42,7 +42,7 @@ NetworkGenerators.createRandomNetwork = function(nNodes, pRelation, mode, random
      return NumberOperators.getRandomWithSeed(seed);
    }
   } else {
-    funcRandom = funcRandom;
+    funcRandom = Math.random;
   }
   
   mode = mode == null ? 0 : mode;
