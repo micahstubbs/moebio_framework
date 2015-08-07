@@ -16826,7 +16826,7 @@ define('src/index', ['exports'], function (exports) {
    */
   NumberListOperators__NumberListOperators.cosineSimilarity = function(numberList0, numberList1) {
     var norms = numberList0.getNorm() * numberList1.getNorm();
-    if(norms == 0) return 0;
+    if(norms === 0) return 0;
     return numberList0.dotProduct(numberList1) / norms;
   };
 
