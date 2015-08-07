@@ -764,20 +764,30 @@ TableOperators.splitTableByCategoricList = function(table, list) {
 };
 
 /**
- * builds a decision tree based on a variables table and a supervised variable
- * @param  {Table} variablesTable
- * @param  {List} supervised
+ * builds a decision tree based on a table made of categorical lists, a list (the values of a supervised variable), and a value from the supervised variable. The result is a tree that contains on its leaves different populations obtained by iterative filterings by category values, and that contain extremes probabilities for having or not the valu ein the supervised variable.
+ * [!] this method only works with categorical lists (in case you have lists with numbers, find a way to simplify by ranges or powers)
+ * @param  {Table} variablesTable predictors table
+ * @param  {Object} supervised variable: list, or index (number) in the table (in which case the list will be removed from the predictors table)
  * @param {Object} supervisedValue main value in supervised list (associated with blue)
  *
  * @param {Number} min_entropy minimum value of entropy on nodes (0.2 default)
  * @param {Number} min_size_node minimum population size associated with node (10 default)
  * @param {Number} min_info_gain minimum information gain by splitting by best feature (0.002 default)
  * @param {Boolean} generatePattern generates a pattern of points picturing proprtion of followed class in node
- * @return {Tree}
+ * @param {ColorScale} colorScale to assign color associated to probability (default: blueToRed)
+ * @return {Tree} tree with aditional information on its nodes, including: probablity, color, entropy, weight, lift
  * tags:ds
  */
-TableOperators.buildDecisionTree = function(variablesTable, supervised, supervisedValue, min_entropy, min_size_node, min_info_gain, generatePattern) {
+TableOperators.buildDecisionTree = function(variablesTable, supervised, supervisedValue, min_entropy, min_size_node, min_info_gain, generatePattern, colorScale){
   if(variablesTable == null ||  supervised == null || supervisedValue == null) return;
+
+  if(colorScale==null) colorScale = ColorScales.blueWhiteRed;
+
+  if(typeOf(supervised)=='number'){
+    var newTable = variablesTable.getWithoutElementAtIndex(supervised);
+    supervised = variablesTable[supervised];
+    variablesTable = newTable;
+  }
 
   min_entropy = min_entropy == null ? 0.2 : min_entropy;
   min_size_node = min_size_node || 10;
@@ -786,21 +796,23 @@ TableOperators.buildDecisionTree = function(variablesTable, supervised, supervis
   var indexes = NumberListGenerators.createSortedNumberList(supervised.length);
   var tree = new Tree();
 
-  TableOperators._buildDecisionTreeNode(tree, variablesTable, supervised, 0, min_entropy, min_size_node, min_info_gain, null, null, supervisedValue, indexes, generatePattern);
+  TableOperators._buildDecisionTreeNode(tree, variablesTable, supervised, 0, min_entropy, min_size_node, min_info_gain, null, null, supervisedValue, indexes, generatePattern, colorScale);
 
   return tree;
 };
 
 
-TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervised, level, min_entropy, min_size_node, min_info_gain, parent, value, supervisedValue, indexes, generatePattern) {
+TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervised, level, min_entropy, min_size_node, min_info_gain, parent, value, supervisedValue, indexes, generatePattern, colorScale) {
+  //if(level < 4) c.l('\nlevel', level);
   var entropy = ListOperators.getListEntropy(supervised, supervisedValue);
 
+  //if(level < 4) c.l('entropy, min_entropy', entropy, min_entropy);
 
   if(entropy >= min_entropy) {
     var informationGains = TableOperators.getVariablesInformationGain(variablesTable, supervised);
     var maxIg = 0;
     var iBestFeature = 0;
-    informationGains.forEach(function(ig, i) {
+    informationGains.forEach(function(ig, i){
       if(ig > maxIg) {
         maxIg = ig;
         iBestFeature = i;
@@ -836,25 +848,23 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
   node.lift = node.valueFollowingProbability / tree.nodeList[0].valueFollowingProbability; //Math.log(node.valueFollowingProbability/tree.nodeList[0].valueFollowingProbability)/Math.log(2);
 
 
-  if(level < 2) {
-    console.log('\nlevel', level);
-    console.log('supervised.countElement(supervisedValue)', supervised.countElement(supervisedValue));
-    console.log('entropy', entropy);
-    console.log('value', value);
-    console.log('name', name);
-    console.log('supervised.name', supervised.name);
-    console.log('supervised.length', supervised.length);
-    console.log('supervisedValue', supervisedValue);
-    console.log('supervised._biggestProbability, supervised._P_valueFollowing', supervised._biggestProbability, supervised._P_valueFollowing);
-    console.log('node.valueFollowingProbability (=supervised._P_valueFollowing):', node.valueFollowingProbability);
-    console.log('tree.nodeList[0].valueFollowingProbability', tree.nodeList[0].valueFollowingProbability);
-    console.log('node.biggestProbability (=_biggestProbability):', node.biggestProbability);
-    console.log('node.mostRepresentedValue:', node.mostRepresentedValue);
-    console.log('node.mostRepresentedValue==supervisedValue', node.mostRepresentedValue == supervisedValue);
-  }
+  // if(level < 4) {
+  //   c.l('supervised.countElement(supervisedValue)', supervised.countElement(supervisedValue));
+  //   c.l('value', value);
+  //   c.l('name', name);
+  //   c.l('supervised.name', supervised.name);
+  //   c.l('supervised.length', supervised.length);
+  //   c.l('supervisedValue', supervisedValue);
+  //   c.l('supervised._biggestProbability, supervised._P_valueFollowing', supervised._biggestProbability, supervised._P_valueFollowing);
+  //   c.l('node.valueFollowingProbability (=supervised._P_valueFollowing):', node.valueFollowingProbability);
+  //   c.l('tree.nodeList[0].valueFollowingProbability', tree.nodeList[0].valueFollowingProbability);
+  //   c.l('node.biggestProbability (=_biggestProbability):', node.biggestProbability);
+  //   c.l('node.mostRepresentedValue:', node.mostRepresentedValue);
+  //   c.l('node.mostRepresentedValue==supervisedValue', node.mostRepresentedValue == supervisedValue);
+  // }
 
-  node._color = TableOperators._decisionTreeColorScale(1 - node.valueFollowingProbability);
-
+  node._color = colorScale(node.valueFollowingProbability); //TableOperators._decisionTreeColorScale(1 - node.valueFollowingProbability, colorScale);
+  
   if(generatePattern) {
     var newCanvas = document.createElement("canvas");
     newCanvas.width = 150;
@@ -875,11 +885,12 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
   }
 
 
-  if(!subDivide) {
+  if(!subDivide){
     return node;
   }
 
   node.bestFeatureName = variablesTable[iBestFeature].name;
+  node.bestFeatureName = node.bestFeatureName == ""?"list "+iBestFeature:node.bestFeatureName;
   node.iBestFeature = iBestFeature;
   node.informationGain = maxIg;
 
@@ -895,7 +906,7 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
     childTable = expandedChild.getSubList(0, expandedChild.length - 3);
     childSupervised = expandedChild[expandedChild.length - 2];
     childIndexes = expandedChild[expandedChild.length - 1];
-    TableOperators._buildDecisionTreeNode(tree, childTable, childSupervised, level + 1, min_entropy, min_size_node, min_info_gain, node, expandedChild._element, supervisedValue, childIndexes, generatePattern);
+    TableOperators._buildDecisionTreeNode(tree, childTable, childSupervised, level + 1, min_entropy, min_size_node, min_info_gain, node, expandedChild._element, supervisedValue, childIndexes, generatePattern, colorScale);
   });
 
   node.toNodeList = node.toNodeList.getSortedByProperty('valueFollowingProbability', false);
@@ -903,13 +914,16 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
   return node;
 };
 
-TableOperators._decisionTreeColorScale = function(value) {
-  var rr = value < 0.5 ? Math.floor(510 * value) : 255;
-  var gg = value < 0.5 ? Math.floor(510 * value) : Math.floor(510 * (1 - value));
-  var bb = value < 0.5 ? 255 : Math.floor(510 * (1 - value));
+// TableOperators._decisionTreeColorScale = function(value, colorScale) {
+//   if(colorScale) return colorScale(value);
+//   return ColorScales.blueWhiteRed
 
-  return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
-};
+//   // var rr = value < 0.5 ? Math.floor(510 * value) : 255;
+//   // var gg = value < 0.5 ? Math.floor(510 * value) : Math.floor(510 * (1 - value));
+//   // var bb = value < 0.5 ? 255 : Math.floor(510 * (1 - value));
+
+//   // return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
+// };
 
 TableOperators._decisionTreeGenerateColorsMixture = function(ctxt, width, height, colors, weights){
   var x, y, i; //, rgb;

@@ -19,7 +19,6 @@ export default NetworkGenerators;
 
 /**
  * Build a random network based on the provided options
- * tags:generator
  * @param {Number} nNodes number of nodes
  * @param {Number} pRelation probability of a relation being created between 2 nodes
  *
@@ -30,6 +29,7 @@ export default NetworkGenerators;
  * @example
  * // generate a sparsely connected network with 2000 Nodes
  * network = NetworkGenerators.createRandomNetwork(2000, 0.0006, 1);
+ * tags:generator
  */
 NetworkGenerators.createRandomNetwork = function(nNodes, pRelation, mode, randomRelationsWeights, seed) {
   if(nNodes == null || pRelation == null) return null;
@@ -42,7 +42,7 @@ NetworkGenerators.createRandomNetwork = function(nNodes, pRelation, mode, random
      return NumberOperators.getRandomWithSeed(seed);
    }
   } else {
-    funcRandom = funcRandom;
+    funcRandom = Math.random;
   }
   
   mode = mode == null ? 0 : mode;

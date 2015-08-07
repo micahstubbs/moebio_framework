@@ -910,11 +910,13 @@ ListOperators.getListEntropy = function(list, valueFollowing, freqTable) {
     if(list.length == 1) {
       list._mostRepresentedValue = list[0];
       list._biggestProbability = 1;
-      if(valueFollowing) list._P_valueFollowing = list[0] == valueFollowing ? 1 : 0;
+      if(valueFollowing != null) list._P_valueFollowing = list[0] == valueFollowing ? 1 : 0;
+    } else {
+      if(valueFollowing != null) list._P_valueFollowing = 0;
     }
     return 0;
   }
-
+  
   if(freqTable==null) freqTable = list.getFrequenciesTable(true);// ListOperators.countElementsRepetitionOnList(list, true);
 
   list._mostRepresentedValue = freqTable[0][0];
@@ -935,7 +937,6 @@ ListOperators.getListEntropy = function(list, valueFollowing, freqTable) {
     var index = freqTable[0].indexOf(valueFollowing);
     list._P_valueFollowing = index == -1 ? 0 : freqTable[1][index] / N;
   }
-
   return entropy;
 };
 

@@ -58,6 +58,7 @@ NumberList.fromArray = function(array, forceToNumber) {
   result.getSum = NumberList.prototype.getSum;
   result.getProduct = NumberList.prototype.getProduct;
   result.getInterval = NumberList.prototype.getInterval;
+  result.getNumbersSimplified = NumberList.prototype.getNumbersSimplified;
   result.getNormalized = NumberList.prototype.getNormalized;
   result.getNormalizedToMax = NumberList.prototype.getNormalizedToMax;
   result.getNormalizedToSum = NumberList.prototype.getNormalizedToSum;
@@ -284,9 +285,43 @@ NumberList.prototype.getInterval = function() {
 };
 
 
+
+/**
+ * simplifies a categorical list, by keeping the nCategories-1 most common values, and replacing the others with an "other" element
+ * this method reduces the number of different values contained in the list, converting it into a categorical list
+ * @param  {Number} method simplification method:<b>0:significant digits<br>1:quantiles (value will be min value in percentile)<br>2:orders of magnitude
+ * 
+ * @param  {Number} param different meaning according to choosen method:<br>0:number of significant digits<br>1:number of quantiles<br>2:no need of param
+ * @return {NumberList} simplified list
+ * tags:
+ */
+NumberList.prototype.getNumbersSimplified = function(method, param) {
+  method = method||0;
+  param = param||0;
+
+  var newList = new NumberList();
+  newList.name = this.name;
+
+
+  switch(method){
+    case 0:
+      var power = Math.pow(10, param);
+      this.forEach(function(val){
+        newList.push(Math.floor(val/power)*power);
+      });
+      break;
+    case 1:
+      //deploy quantiles first (optional return of n percentile, min value, interval, numberTable with indexes, numberTable with values)
+      break;
+  }
+
+  return newList;
+}
+
+
 /**
  * Builds an {@link Polygon} from the NumberList,
- * using each pair of values in the NumberList as
+ * using each consecutive pair of values in the numberList as
  * x and y positions.
  *
  * @return {Polygon} Polygon representing the values
@@ -384,11 +419,13 @@ NumberList.prototype.getMedian = function() {
 /**
  * Builds a partition of n quantiles from the numberList.
  *
- * @param {Number} nQuantiles number of quantiles
+ * @param {Number} nQuantiles number of quantiles (the size of the resulting list is nQuantiles-1)
+ *
+ * @param {Number} returnMode 
  * @return {NumberList} A number list of the quantiles.
  * tags:statistics
  */
-NumberList.prototype.getQuantiles = function(nQuantiles) {
+NumberList.prototype.getQuantiles = function(nQuantiles, returnMode) {//TODO: defines different options for return
   var sorted = this.getSorted(true);
 
   var prop = this.length / nQuantiles;

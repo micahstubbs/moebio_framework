@@ -64,6 +64,7 @@ List.fromArray = function(array) {
   array.getType = List.prototype.getType;
   array.getLengths = List.prototype.getLengths;
   array.getWithoutRepetitions = List.prototype.getWithoutRepetitions;
+  array.getSimplified = List.prototype.getSimplified;
   array.getFrequenciesTable = List.prototype.getFrequenciesTable;
   array.allElementsEqual = List.prototype.allElementsEqual;
   array.countElement = List.prototype.countElement;
@@ -549,6 +550,33 @@ List.prototype.getWithoutRepetitions = function() {
 };
 
 
+/**
+ * simplifies a categorical list, by keeping the nCategories-1 most common values, and replacing the others with an "other" element
+ * @param  {Number} nCategories number of diferent elemenets in the resulting list
+ * 
+ * @param  {Object} othersElement to be placed instead of the less common elements ("other" by default)
+ * @return {List} simplified list
+ * tags:
+ */
+List.prototype.getSimplified = function(nCategories, othersElement) {
+  if(!nCategories) return;
+
+  var freqTable = this.getFrequenciesTable();
+
+  if(othersElement==null) othersElement = "other";
+
+  var newList = new List();
+  newList.name = this.name;
+
+  this.forEach(function(element, i){
+    newList.push(freqTable._indexesDictionary[element]<nCategories-1?element:othersElement);
+  });
+
+  return newList;
+}
+
+
+
 
 /**
  * returns the number of occurrences of an element in a list.
@@ -603,33 +631,36 @@ List.prototype.getFrequenciesTable = function(sortListsByOccurrences, addWeights
   table[0] = elementList;
   table[1] = numberList;
 
-  if(this.type == 'NumberList' || this.type == 'StringList') {//TODO:check other cases
-    var dictionary = {};
-    var prevVal;
+  //if(this.type == 'NumberList' || this.type == 'StringList') {//TODO:check other cases
+  var dictionary = {};
+  var prevVal;
 
-    for(i=0; this[i]!=null; i++){
-      index = dictionary[this[i]];
-      if(index==null){
-        index = elementList.length;
-        elementList[index] = this[i];
-        numberList[index] = 0;
-        dictionary[this[i]]= index;
-      }
-      numberList[index]++;
+  for(i=0; this[i]!=null; i++){
+    index = dictionary[this[i]];
+    if(index==null){
+      index = elementList.length;
+      elementList[index] = this[i];
+      numberList[index] = 0;
+      dictionary[this[i]]= index;
     }
-
-  } else {
-    for(i = 0; this[i]!=null; i++) {
-      element = this[i];
-      index = elementList.indexOf(element);
-      if(index != -1) {
-        numberList[index]++;
-      } else {
-        elementList.push(element);
-        numberList.push(1);
-      }
-    }
+    numberList[index]++;
   }
+
+  table._indexesDictionary = dictionary;
+
+
+  // } else {
+  //   for(i = 0; this[i]!=null; i++) {
+  //     element = this[i];
+  //     index = elementList.indexOf(element);
+  //     if(index != -1) {
+  //       numberList[index]++;
+  //     } else {
+  //       elementList.push(element);
+  //       numberList.push(1);
+  //     }
+  //   }
+  // }
 
   if(sortListsByOccurrences){
     table[0] = elementList.getSortedByList(numberList, false);

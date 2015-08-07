@@ -26,7 +26,7 @@ Loader.loadData = function(url, onLoadData, callee, param, send_object_json) {
 
   if(Loader.LOCAL_STORAGE_ENABLED) {
     // TODO track down LocalStorage. localStorage is a thing though (lowercase l);
-    var result = LocalStorage.getItem(url);
+    var result = localStorage.getItem(url);
     if(result) {
       var e = new LoadEvent();
       e.url = url;
@@ -55,7 +55,7 @@ Loader.loadData = function(url, onLoadData, callee, param, send_object_json) {
       e.url = url;
       e.param = param;
       //if (req.status == 200) { //MIG
-      if(req.status == 200 || (req.status == 0 && req.responseText != null)) {
+      if(req.status == 200 || (req.status === 0 && req.responseText !== null)) {
         e.result = req.responseText;
         onLoadData.call(target, e);
       } else {

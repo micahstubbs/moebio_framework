@@ -73,9 +73,7 @@ ColorScales.greenToBlue = function(value) { //todo:make it efficient
   return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
 };
 
-ColorScales.grayToOrange = function(value) { //todo:make it efficient
-  // var rgb = ColorOperators.interpolateColorsRGB([100, 100, 100], [255, 110, 0], value);
-  // return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+ColorScales.grayToOrange = function(value) {
   return 'rgb(' + Math.floor(100 + value*155) + ','+ Math.floor(100 + value*10) +',' + Math.floor(100 - value*100) + ')';
 };
 
@@ -101,13 +99,41 @@ ColorScales.redToBlue = function(value) {
   return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
 };
 
-ColorScales.greenWhiteRed = function(value) {
+//tricolor
+
+ColorScales.greenWhiteRed = function(value) { //TODO: make it + efficient
   if(value < 0.5) {
     var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [255, 255, 255], value * 2);
   } else {
     rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [255, 50, 50], (value - 0.5) * 2);
   }
-  return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
+};
+
+ColorScales.blueWhiteRed = function(value) {
+  var rr = value < 0.5 ? Math.floor(510 * value) : 255;
+  var gg = value < 0.5 ? Math.floor(510 * value) : Math.floor(510 * (1 - value));
+  var bb = value < 0.5 ? 255 : Math.floor(510 * (1 - value));
+
+  return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
+};
+
+ColorScales.grayBlackOrange = function(value){ //TODO: make it + efficient
+  if(value < 0.5) {
+    var rgb = ColorOperators.interpolateColorsRGB([100, 100, 100], [0, 0, 0], value * 2);
+  } else {
+    rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], [255, 110, 0], (value - 0.5) * 2);
+  }
+  return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
+};
+
+ColorScales.grayWhiteOrange = function(value){ //TODO: make it + efficient
+  if(value < 0.5) {
+    var rgb = ColorOperators.interpolateColorsRGB([100, 100, 100], [255, 255, 255], value * 2);
+  } else {
+    rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [255, 110, 0], (value - 0.5) * 2);
+  }
+  return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
 };
 
 
