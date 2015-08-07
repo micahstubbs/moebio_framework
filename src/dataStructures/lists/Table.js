@@ -59,6 +59,7 @@ Table.fromArray = function(array) {
   result.getSubListsByIndexes = Table.prototype.getSubListsByIndexes;
   result.getWithoutRow = Table.prototype.getWithoutRow;
   result.getWithoutRows = Table.prototype.getWithoutRows;
+  result.getTableSimplified = Table.prototype.getTableSimplified;
   result.getSubTableByElementOnList = Table.prototype.getSubTableByElementOnList;
   result.getSubTableByElementsOnList = Table.prototype.getSubTableByElementsOnList;
   result.getTransposed = Table.prototype.getTransposed;
@@ -210,15 +211,45 @@ Table.prototype.getWithoutRow = function(rowIndex) {
  */
 Table.prototype.getWithoutRows = function(rowsIndexes) {
   var newTable = new Table();
+  var i, j;
+
   newTable.name = this.name;
-  for(var i = 0; this[i] != null; i++) {
+  for(i = 0; this[i] != null; i++) {
     newTable[i] = new List();
-    for(var j = 0; this[i][j] != null; j++) {
+    for(j = 0; this[i][j] != null; j++){
       if(rowsIndexes.indexOf(j) == -1) newTable[i].push(this[i][j]);
     }
     newTable[i].name = this[i].name;
   }
   return newTable.getImproved();
+};
+
+/**
+ * takes a table and simplifies its lists, numberLists will be simplified using quantiles values (using getNumbersSimplified) and other lists reducing the number of different elements (using getSimplified)
+ * specially useful to build simpe decision trees using TableOperators.buildDecisionTree
+ * @param  {Number} nCategories number of different elements on each list
+ * 
+ * @param {Object} othersElement to be placed instead of the less common elements ("other" by default)
+ * @return {Table}
+ * tags:
+ */
+Table.prototype.getTableSimplified = function(nCategories, othersElement) {
+  if(nCategories===undefined) return null;
+
+  var i;
+  var newTable = new Table();
+  newTable.name = this.name;
+
+  for(i=0; this[i]!==undefined; i++){
+    newTable.push(
+      this[i].type==='NumberList'?
+      this[i].getNumbersSimplified(2, nCategories)
+      :
+      this[i].getSimplified(nCategories, othersElement)
+    );
+  }
+
+  return newTable;
 };
 
 /**

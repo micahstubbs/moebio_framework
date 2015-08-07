@@ -1080,15 +1080,15 @@ define('src/index', ['exports'], function (exports) {
 
     var freqTable = this.getFrequenciesTable();
 
-    if(othersElement==null) othersElement = "other";
+    if(othersElement===null) othersElement = "other";
 
-    var newList = new List__List();
+    var newList = this.type=="StringList"?new StringList():new List__List();
     newList.name = this.name;
 
     this.forEach(function(element, i){
       newList.push(freqTable._indexesDictionary[element]<nCategories-1?element:othersElement);
     });
-
+    
     return newList;
   }
 
@@ -2505,6 +2505,7 @@ define('src/index', ['exports'], function (exports) {
     result.getSubListsByIndexes = Table.prototype.getSubListsByIndexes;
     result.getWithoutRow = Table.prototype.getWithoutRow;
     result.getWithoutRows = Table.prototype.getWithoutRows;
+    result.getTableSimplified = Table.prototype.getTableSimplified;
     result.getSubTableByElementOnList = Table.prototype.getSubTableByElementOnList;
     result.getSubTableByElementsOnList = Table.prototype.getSubTableByElementsOnList;
     result.getTransposed = Table.prototype.getTransposed;
@@ -2656,15 +2657,45 @@ define('src/index', ['exports'], function (exports) {
    */
   Table.prototype.getWithoutRows = function(rowsIndexes) {
     var newTable = new Table();
+    var i, j;
+
     newTable.name = this.name;
-    for(var i = 0; this[i] != null; i++) {
+    for(i = 0; this[i] != null; i++) {
       newTable[i] = new List__default();
-      for(var j = 0; this[i][j] != null; j++) {
+      for(j = 0; this[i][j] != null; j++){
         if(rowsIndexes.indexOf(j) == -1) newTable[i].push(this[i][j]);
       }
       newTable[i].name = this[i].name;
     }
     return newTable.getImproved();
+  };
+
+  /**
+   * takes a table and simplifies its lists, numberLists will be simplified using quantiles values (using getNumbersSimplified) and other lists reducing the number of different elements (using getSimplified)
+   * specially useful to build simpe decision trees using TableOperators.buildDecisionTree
+   * @param  {Number} nCategories number of different elements on each list
+   * 
+   * @param {Object} othersElement to be placed instead of the less common elements ("other" by default)
+   * @return {Table}
+   * tags:
+   */
+  Table.prototype.getTableSimplified = function(nCategories, othersElement) {
+    if(nCategories===undefined) return null;
+
+    var i;
+    var newTable = new Table();
+    newTable.name = this.name;
+
+    for(i=0; this[i]!==undefined; i++){
+      newTable.push(
+        this[i].type==='NumberList'?
+        this[i].getNumbersSimplified(2, nCategories)
+        :
+        this[i].getSimplified(nCategories, othersElement)
+      );
+    }
+
+    return newTable;
   };
 
   /**
@@ -5076,21 +5107,22 @@ define('src/index', ['exports'], function (exports) {
 
 
   /**
-   * simplifies a categorical list, by keeping the nCategories-1 most common values, and replacing the others with an "other" element
-   * this method reduces the number of different values contained in the list, converting it into a categorical list
-   * @param  {Number} method simplification method:<b>0:significant digits<br>1:quantiles (value will be min value in percentile)<br>2:orders of magnitude
+   * simplifies the numberList either by replacing numbers by its order of magnitude, or by quantiles
    * 
-   * @param  {Number} param different meaning according to choosen method:<br>0:number of significant digits<br>1:number of quantiles<br>2:no need of param
+   * @param  {Number} method simplification method:<br>0:significant digits<br>1:number of quantile<br>2:rounded by quantile<br>3:order of magnitude<br>4:rounded by order of magnitude
+   * @param  {Number} param different meaning according to choosen method:<br>0:number of significant digits<br>1:number of quantiles<br>2:number of quantiles<br>3:no need of param<br>4:no need of param
    * @return {NumberList} simplified list
    * tags:
    */
   NumberList.prototype.getNumbersSimplified = function(method, param) {
+    var newList;
+    var i, j;
+
     method = method||0;
     param = param||0;
 
-    var newList = new NumberList();
+    newList = new NumberList();
     newList.name = this.name;
-
 
     switch(method){
       case 0:
@@ -5100,7 +5132,35 @@ define('src/index', ['exports'], function (exports) {
         });
         break;
       case 1:
-        //deploy quantiles first (optional return of n percentile, min value, interval, numberTable with indexes, numberTable with values)
+      case 2:
+        param = Math.min( param||10, Math.floor(this.length/2) );
+        var quantiles = this.getQuantiles(param);
+        var val;
+        for(i=0; this[i]!==undefined; i++){
+          val = this[i];
+          if(val<quantiles[0]){
+            method==1?newList.push(0):newList.push(quantiles._min);
+          } else {
+            for(j=0; quantiles[j]!==undefined; j++){
+              if( val>=quantiles[j] && (j+1==quantiles.length || val<quantiles[j+1]) ){
+                method==1?newList.push(j+1):newList.push(quantiles[j]);
+                break;
+              }
+            }
+          }
+        }
+        if(method==1) newList.name = this.name + " (n quantile)";
+        break;
+      case 3:
+        newList.name = this.name + " (order of magnitude)";
+        this.forEach(function(val){
+          newList.push(Math.floor( Math.log(val)/Math.log(10) ));
+        });
+        break;
+      case 4:
+        this.forEach(function(val){
+          newList.push( Math.pow ( 10, Math.floor( Math.log(val)/Math.log(10) ) ) );
+        });
         break;
     }
 
@@ -5135,7 +5195,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:statistics
    */
   NumberList.prototype.getAverage = function() {
-    return this.getSum() / this.length;
+    return this.getSum()/this.length;
   };
 
   /**
@@ -5209,21 +5269,26 @@ define('src/index', ['exports'], function (exports) {
    * Builds a partition of n quantiles from the numberList.
    *
    * @param {Number} nQuantiles number of quantiles (the size of the resulting list is nQuantiles-1)
-   *
-   * @param {Number} returnMode 
    * @return {NumberList} A number list of the quantiles.
    * tags:statistics
    */
-  NumberList.prototype.getQuantiles = function(nQuantiles, returnMode) {//TODO: defines different options for return
+  NumberList.prototype.getQuantiles = function(nQuantiles) {
+    //TODO: defines different options for return
+    
     var sorted = this.getSorted(true);
-
     var prop = this.length / nQuantiles;
     var entProp = Math.floor(prop);
     var onIndex = prop == entProp;
     var quantiles = new NumberList();
+    
     for(var i = 0; i < nQuantiles - 1; i++) {
       quantiles[i] = onIndex ? sorted[(i + 1) * prop] : (0.5 * sorted[(i + 1) * entProp] + 0.5 * sorted[(i + 1) * entProp + 1]);
     }
+
+    quantiles._sorted = sorted;
+    quantiles._min = sorted[0];
+    quantiles._max = sorted[sorted.length-1];
+
     return quantiles;
   };
 

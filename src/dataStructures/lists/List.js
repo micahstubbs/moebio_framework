@@ -563,15 +563,15 @@ List.prototype.getSimplified = function(nCategories, othersElement) {
 
   var freqTable = this.getFrequenciesTable();
 
-  if(othersElement==null) othersElement = "other";
+  if(othersElement===null) othersElement = "other";
 
-  var newList = new List();
+  var newList = this.type=="StringList"?new StringList():new List();
   newList.name = this.name;
 
   this.forEach(function(element, i){
     newList.push(freqTable._indexesDictionary[element]<nCategories-1?element:othersElement);
   });
-
+  
   return newList;
 }
 
