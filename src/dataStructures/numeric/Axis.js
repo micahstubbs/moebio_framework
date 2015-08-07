@@ -10,6 +10,8 @@ Axis.prototype.constructor = Axis;
 //this object is deprecated
 
 /**
+ * @ignore
+ * 
  * @classdesc Axis for 1D data.
  *
  * @constructor

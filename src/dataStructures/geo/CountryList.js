@@ -22,6 +22,9 @@ function CountryList() {
 }
 export default CountryList;
 
+/**
+* @todo write docs
+*/
 CountryList.fromArray = function(array) {
   var result = NodeList.fromArray(array);
   result.type = "CountryList";
@@ -51,10 +54,16 @@ CountryList.prototype.getCountryFromName = function(countryName) {
 
 //transformative
 
+/**
+* @todo write docs
+*/
 CountryList.prototype.removeAntarctica = function() {
   this.removeNode(this.getNodeById('AQ'));
 };
 
+/**
+* @todo write docs
+*/
 CountryList.prototype.removeTinyPolygonsFromCountries = function(minArea) {
   minArea = 0.2 || minArea;
   var country;
@@ -72,6 +81,9 @@ CountryList.prototype.removeTinyPolygonsFromCountries = function(minArea) {
   }
 };
 
+/**
+* @todo write docs
+*/
 CountryList.prototype.removeTinyCountries = function(minArea) {
   minArea = 0.5 || minArea;
   var country;
@@ -95,6 +107,9 @@ CountryList.prototype.removeTinyCountries = function(minArea) {
   }
 };
 
+/**
+* @todo write docs
+*/
 CountryList.prototype.simplifyPolygons = function(margin) {
   var country;
   var j;
@@ -136,6 +151,9 @@ CountryList.prototype.simplifyAntarctica = function() {
   }
 };
 
+/**
+* @todo write docs
+*/
 CountryList.prototype.assignValuesToCountriesFromTable = function(table, valueToNull) {
   var j;
   var country;

@@ -118,8 +118,8 @@ NetworkOperators.shortestPath = function(network, node0, node1, includeExtremes)
   if(node == null) return null;
 
   // c.l('---'); return;
-  // 
-  
+  //
+
 
   c.l('  (pre while)>', node0.id, node1.id, node.id,  node.parent==null?'no parent!':node.parent.id);
   while(node.parent.id != node0.id) {
@@ -164,7 +164,7 @@ NetworkOperators.shortestPaths = function(network, node0, node1, shortPath, span
   //c.clear();
 
   if(spanningTree==null) spanningTree = NetworkOperators.spanningTree(network, node0, node1);
-  
+
   // c.l('[•--•] node0.id, node1.id', node0.id, node1.id);
   // c.l('[•--•] shortestPaths | spanningTree.nodeList.length, spanningTree.nLevels', spanningTree.nodeList.length, spanningTree.nLevels);
 
@@ -173,12 +173,12 @@ NetworkOperators.shortestPaths = function(network, node0, node1, shortPath, span
   // }
 
   //first we seek for the nodes in paths
-  
+
   var n = spanningTree.nLevels;
   // c.l('[•--•] n:', n);
 
   // c.l('[•--•] spanningTree.getNodesByLevel(spanningTree.nLevels-1).getNodeById(node1.id)', spanningTree.getNodesByLevel(spanningTree.nLevels-1).getNodeById(node1.id) );
-  
+
   var level1 = new NodeList(node1);
   var extended_from_1 = NetworkOperators.adjacentNodeList(network, level1, false);
   var level0 = ListOperators.intersection(extended_from_1, spanningTree.getNodesByLevel(n-2));//spanningTree.getNodesByLevel(n-2);
@@ -275,9 +275,9 @@ NetworkOperators.shortestPaths = function(network, node0, node1, shortPath, span
   return allPaths;
 
 
-  
 
-  
+
+
 
 
 
@@ -294,7 +294,7 @@ NetworkOperators.shortestPaths = function(network, node0, node1, shortPath, span
 
   var lengthShortestPaths = shortPath.length;
 
-  
+
   var firstPath = new NodeList();
   var i;
 
@@ -574,7 +574,7 @@ NetworkOperators._loopsColumns = function(nodeList, iColumn, columns) {
 /**
  * Builds a spanning tree of a Node in a Network (not very efficient)
  * @param  {Network} network
- * 
+ *
  * @param  {Node} node0 Parent of the tree (first node on network.nodeList by default)
  * @param  {Node} nodeLimit Optional node in the network to prune the tree
  * @return {Tree}
@@ -661,7 +661,7 @@ NetworkOperators.spanningTree = function(network, node0, nodeLimit) { //TODO: th
     nodes = newNodes;
     // c.l('     --concat');
     accumulated = accumulated.concat(newNodes);
-    
+
     N++;
     if(N>network.nodeList){
       //c.l('/////////////////STOP');
@@ -1150,8 +1150,8 @@ NetworkOperators.fusionNetworks = function(networks, hubsDistanceFactor, hubsFor
   return fusionNet;
 };
 
-/**
- * @ignore
+/*
+ *
  * from https://github.com/upphiminn/jLouvain
  */
 NetworkOperators._jLouvain = function() {
@@ -1195,16 +1195,16 @@ NetworkOperators._jLouvain = function() {
     });
     return weight;
   };
-  
+
   function get_neighbours_of_node(graph, node){
     if(typeof graph._assoc_mat[node] == 'undefined')
       return [];
 
-    var neighbours = Object.keys(graph._assoc_mat[node]);   
+    var neighbours = Object.keys(graph._assoc_mat[node]);
     return neighbours;
   }
-  
-  
+
+
   function get_edge_weight(graph, node1, node2){
     return graph._assoc_mat[node1] ? graph._assoc_mat[node1][node2] : undefined;
   }
@@ -1260,7 +1260,7 @@ NetworkOperators._jLouvain = function() {
       return temp;
   }
 
-  //Core-Algorithm Related 
+  //Core-Algorithm Related
   function init_status(graph, status, part){
     status['nodes_to_com'] = {};
     status['total_weight'] = 0;
@@ -1331,13 +1331,13 @@ NetworkOperators._jLouvain = function() {
 
     var weights = {};
     var neighboorhood = get_neighbours_of_node(graph, node);//make iterable;
-    
+
     neighboorhood.forEach(function(neighbour, i){
       if(neighbour != node){
-        var weight = graph._assoc_mat[node][neighbour] || 1; 
+        var weight = graph._assoc_mat[node][neighbour] || 1;
         var neighbourcom = status.nodes_to_com[neighbour];
         weights[neighbourcom] = (weights[neighbourcom] || 0) + weight;
-      } 
+      }
     });
 
     return weights;
@@ -1359,7 +1359,7 @@ NetworkOperators._jLouvain = function() {
 
   function __renumber(dict){
     var count = 0;
-    var ret = clone(dict); //deep copy :) 
+    var ret = clone(dict); //deep copy :)
     var new_values = {};
     var dict_keys = Object.keys(dict);
     dict_keys.forEach(function(key){
@@ -1402,7 +1402,7 @@ NetworkOperators._jLouvain = function() {
             best_increase = incr;
             best_com = com;
           }
-        }); 
+        });
 
         __insert(node, best_com, neigh_communities[best_com] || 0, status);
 
@@ -1425,7 +1425,7 @@ NetworkOperators._jLouvain = function() {
       weight = edge.weight || 1;
       var com1 = partition[edge.source];
       var com2 = partition[edge.target];
-      w_prec = (get_edge_weight(ret, com1, com2) || 0); 
+      w_prec = (get_edge_weight(ret, com1, com2) || 0);
       var new_weight = (w_prec + weight);
       add_edge_to_graph(ret, {'source': com1, 'target': com2, 'weight': new_weight});
     });
@@ -1445,7 +1445,7 @@ NetworkOperators._jLouvain = function() {
 
 
   function generate_dendogram(graph, part_init){
-    
+
     if(graph.edges.length == 0){
       var part = {};
       graph.nodes.forEach(function(node,i){
@@ -1473,14 +1473,14 @@ NetworkOperators._jLouvain = function() {
         break;
 
       partition = __renumber(status.nodes_to_com);
-      status_list.push(partition); 
+      status_list.push(partition);
 
       mod = new_mod;
       current_graph = induced_graph(partition, current_graph);
       init_status(current_graph, status);
     }
 
-    return status_list; 
+    return status_list;
   }
 
   var core = function(){
@@ -1508,7 +1508,7 @@ NetworkOperators._jLouvain = function() {
                    '_assoc_mat': assoc_mat };
     }
     return core;
-    
+
   };
 
   core.partition_init = function(prttn){
@@ -1526,14 +1526,14 @@ NetworkOperators._jLouvain = function() {
  * @param {Network} network
  * @param {Boolean} bAddColors if true add colors to nodes based on community
  * @param {String} prop Node property to use to store community for each node
- * @return {Network} 
+ * @return {Network}
  * tags:analytics,transformative
  */
 NetworkOperators.addLouvainCommunityToNodes = function(network,bAddColors,prop) {
   if(network==null) return network;
   if(bAddColors==null) bAddColors=true;
   if(prop == null) prop='group';
-  
+
   var node_data = [];
   for(var i=0; i < network.nodeList.length; i++){
     // force nodes to be stringlike since they get used as properties in result
@@ -1589,4 +1589,3 @@ NetworkOperators.addLouvainCommunityToNodes = function(network,bAddColors,prop) 
   }
   return network;
 };
-

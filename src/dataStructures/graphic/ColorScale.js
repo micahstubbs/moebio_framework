@@ -22,10 +22,16 @@ function ColorScale(colorScaleFunction) {
 }
 export default ColorScale;
 
+/**
+* @todo write docs
+*/
 ColorScale.prototype.getColor = function(value) {
   return this.colorScaleFunction(value);
 };
 
+/**
+* @todo write docs
+*/
 ColorScale.prototype.getColorList = function(nColors) {
   var colorList = new ColorList();
   var i;

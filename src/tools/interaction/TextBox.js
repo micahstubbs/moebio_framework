@@ -58,14 +58,23 @@ function TextBox(configuration) {
 }
 export default TextBox;
 
+/**
+ * @todo write docs
+ */
 TextBox.prototype.getMaxWidth = function() {
   return DrawTexts.getMaxTextWidth(this.lines);
 };
 
+/**
+ * @todo write docs
+ */
 TextBox.prototype.update = function() {
   this.setText(this.text);
 };
 
+/**
+ * @todo write docs
+ */
 TextBox.prototype.setText = function(text) {
   this.text = String(text);
 
@@ -190,6 +199,9 @@ TextBox.prototype.setText = function(text) {
   }
 };
 
+/**
+ * @todo write docs
+ */
 TextBox.prototype.draw = function(scale) {
   scale = scale == null ? 1 : scale;
 
@@ -225,6 +237,9 @@ TextBox.prototype.draw = function(scale) {
   }
 };
 
+/**
+ * @todo write docs
+ */
 TextBox.prototype.line = function(x0, x1, y) {
   context.beginPath();
   context.moveTo(x0, y);
@@ -232,6 +247,9 @@ TextBox.prototype.line = function(x0, x1, y) {
   context.stroke();
 };
 
+/**
+ * @todo write docs
+ */
 TextBox.prototype.mouseUp = function(e) {
   if(this.overLink != null) {
     var link = this.links[this.overLink];
@@ -245,13 +263,16 @@ TextBox.prototype.mouseUp = function(e) {
   }
 };
 
+/**
+ * @todo write docs
+ */
 TextBox.prototype.deactivate = function() {
   removeInteractionEventListener('mouseup', this.mouseUp, this);
 };
 
-
-///
-
+/**
+ * @todo write docs
+ */
 TextBox.replaceWikiLinks = function(text) {
   var indexOpen = text.indexOf("[");
   var indexClose;

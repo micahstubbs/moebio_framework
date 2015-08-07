@@ -46,6 +46,9 @@ function DragDetection(configuration) { //mode, listenerFunction, target, areaVe
 }
 export default DragDetection;
 
+/**
+* @todo write docs
+*/
 DragDetection.prototype.enterframe = function(draggingInstance) {
 
   switch(draggingInstance.mode) {
@@ -75,6 +78,9 @@ DragDetection.prototype.enterframe = function(draggingInstance) {
 
 };
 
+/**
+* @todo write docs
+*/
 DragDetection.prototype.onMouse = function(event) {
   switch(event.type) {
     case 'mousedown':
@@ -109,6 +115,9 @@ DragDetection.prototype.onMouse = function(event) {
   }
 };
 
+/**
+* @todo write docs
+*/
 DragDetection.prototype.simulateMouseUp = function() {
   this.dragging = false;
   clearInterval(this.idInterval);

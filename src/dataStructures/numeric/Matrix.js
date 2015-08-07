@@ -43,12 +43,6 @@ Matrix.prototype.transformPoint = function(point) {
   );
 };
 
-// /**
-// * Applies Matrix to context transform
-// **/
-// Matrix.prototype.applyToContext=function(context){
-// context.transform(this.a, this.b, this.c, this.d, this.tx, this.ty);
-// }
 
 /**
  * Returns the result of this matrix multiplied by another matrix

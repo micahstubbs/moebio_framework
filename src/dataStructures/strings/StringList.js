@@ -28,6 +28,9 @@ function StringList() {
 }
 export default StringList;
 
+/**
+ * @todo write docs
+ */
 StringList.fromArray = function(array, forceToString) {
   forceToString = forceToString == null ? true : forceToString;
 
@@ -71,6 +74,9 @@ StringList.prototype.getLengths = function() {
   return lengths;
 };
 
+/**
+ * @todo write docs
+ */
 StringList.prototype.append = function(sufix, after) {
   after = after == null ? true : after;
   var newStringList = new StringList();
@@ -109,6 +115,9 @@ StringList.prototype.getSurrounded = function(prefix, sufix) {
 
 
 //deprectaed, replaced by replaceInStrings
+/**
+ * @ignore
+ */
 StringList.prototype.replace = function(regExp, string) {
   if(regExp==null) return this;
 
@@ -142,6 +151,9 @@ StringList.prototype.replaceSubStringsInStrings = function(subString, replacemen
   return newStringList;
 };
 
+/**
+ * @todo write docs
+ */
 StringList.prototype.getConcatenated = function(separator) {
   var i;
   var string = "";
@@ -153,6 +165,9 @@ StringList.prototype.getConcatenated = function(separator) {
 };
 
 
+/**
+ * @todo write docs
+ */
 StringList.prototype.toLowerCase = function() {
   var newStringList = new StringList();
   newStringList.name = this.name;
@@ -163,6 +178,9 @@ StringList.prototype.toLowerCase = function() {
   return newStringList;
 };
 
+/**
+ * @todo write docs
+ */
 StringList.prototype.toUpperCase = function() {
   var newStringList = new StringList();
   newStringList.name = this.name;
@@ -173,6 +191,9 @@ StringList.prototype.toUpperCase = function() {
   return newStringList;
 };
 
+/**
+ * @todo write docs
+ */
 StringList.prototype.toNumberList = function() {
   var numbers = new NumberList();
   numbers.name = this.name;
@@ -218,6 +239,9 @@ StringList.prototype.trim = function() {
 
 ///////overriding
 
+/**
+ * @todo write docs
+ */
 StringList.prototype.clone = function() {
   var newList = StringList.fromArray(this.slice(), false);
   newList.name = this.name;
