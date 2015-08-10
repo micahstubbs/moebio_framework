@@ -82,6 +82,7 @@
   "operators/structures/TreeConvertions.js",
   "operators/structures/TreeEncodings.js",
 
+  "tools/graphic/Graphics.js",
   "tools/graphic/CanvasAndContext.js",
   "tools/graphic/Draw.js",
   "tools/graphic/DrawSimpleVis.js",

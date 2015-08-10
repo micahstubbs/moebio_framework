@@ -178,6 +178,9 @@ export {
   getWindowFrame, sLinesInFrame, fLinesInFrame, fsLinesInFrame, drawGridX, drawGridY
 };
 
+import Graphics from "src/tools/graphic/Graphics";
+export { Graphics };
+
 // tools/interaction
 import DragDetection from "src/tools/interaction/DragDetection";
 import InputTextFieldHTML from "src/tools/interaction/InputTextFieldHTML";
