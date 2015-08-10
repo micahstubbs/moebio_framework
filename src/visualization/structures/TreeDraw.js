@@ -809,9 +809,17 @@ TreeDraw._generateRectanglesDecision = function(node, hLevel) {
     TreeDraw._generateRectanglesDecision(child, hLevel);
   });
 };
+
+/**
+ * @ignore
+ */
 TreeDraw._inRectFromOutRectDecision = function(rect, hLevel) {
   return new Rectangle(rect.x, rect.y + hLevel, rect.width, rect.height - hLevel);
 };
+
+/**
+ * @ignore
+ */
 TreeDraw._horizontalRectanglesDecision = function(rect, weights) {
   var rects = new List();
   var x0 = rect.x;

@@ -13,11 +13,21 @@ export default ColorListOperators;
 
 /**
  * receives n arguments and performs addition
+ *
+ * @todo finish docs
  */
 ColorListOperators.colorListFromColorScale = function(colorScale, nColors) {
   return colorScale.getColorList.apply(colorScale, [nColors]);
 };
 
+/**
+ * Creates a new ColorList from a given ColorScale, splitting the scale up into
+ * nColors number of colors
+ *
+ * @param  {ColorScale} colorScaleFunction The ColorScale to split up.
+ * @param  {Number} nColors The number of colors to add to the list.
+ * @return {ColorList} new ColorList.
+ */
 ColorListOperators.colorListFromColorScaleFunction = function(colorScaleFunction, nColors) {
   var colorList = new ColorList();
   var i;
@@ -28,6 +38,9 @@ ColorListOperators.colorListFromColorScaleFunction = function(colorScaleFunction
 };
 
 
+/**
+ * @todo write docs
+ */
 ColorListOperators.colorListFromColorScaleFunctionAndNumberList = function(colorScaleFunction, numberList, normalize) {
   normalize = normalize == null ? true : normalize;
 
@@ -42,7 +55,9 @@ ColorListOperators.colorListFromColorScaleFunctionAndNumberList = function(color
 };
 
 
-
+/**
+ * @todo write docs
+ */
 ColorListOperators.polygon3DToColorList = function(polygon3D) {
   var nPoints = polygon3D.length;
   var colorList = new ColorList();
@@ -52,6 +67,11 @@ ColorListOperators.polygon3DToColorList = function(polygon3D) {
   }
   return colorList;
 };
+
+
+/**
+ * @todo write docs
+ */
 ColorListOperators.colorListToPolygon3D = function(colorList) {
   var nColors = colorList.length;
   var polygon3D = new Polygon3D();

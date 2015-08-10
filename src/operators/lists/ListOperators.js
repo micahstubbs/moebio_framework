@@ -6,6 +6,12 @@ import TableOperators from "src/operators/lists/TableOperators";
 import StringList from "src/dataStructures/strings/StringList";
 import { typeOf, instantiate, instantiateWithSameType } from "src/tools/utils/code/ClassUtils";
 
+/**
+ * @classdesc List Operators
+ *
+ * @namespace
+ * @category basics
+ */
 function ListOperators() {}
 export default ListOperators;
 
@@ -243,6 +249,9 @@ ListOperators.reverse = function(list) {
   return list.getReversed();
 };
 
+/**
+ * @todo write docs
+ */
 ListOperators.getBooleanDictionaryForList = function(list){
   if(list==null) return;
 
@@ -252,7 +261,7 @@ ListOperators.getBooleanDictionaryForList = function(list){
   });
 
   return dictionary;
-}
+};
 
 /**
  * builds a dictionar object (relational array) for a dictionar (table with two lists)
@@ -270,7 +279,7 @@ ListOperators.buildDictionaryObjectForDictionary = function(dictionary){
   });
 
   return dictionaryObject;
-}
+};
 
 
 /**
@@ -290,7 +299,7 @@ ListOperators.translateWithDictionary = function(list, dictionary, nullElement) 
   var list = ListOperators.translateWithDictionaryObject(list, dictionaryObject, nullElement);
 
   list.dictionaryObject = dictionaryObject;
-  
+
   return list;
 
   // var newList = new List();
@@ -308,7 +317,7 @@ ListOperators.translateWithDictionary = function(list, dictionary, nullElement) 
 
   // newList = newList.getImproved();
   // newList.dictionaryObject = dictionaryObject;
-  
+
   // return newList;
 };
 
@@ -316,7 +325,7 @@ ListOperators.translateWithDictionary = function(list, dictionary, nullElement) 
  * creates a new list that is a translation of a list using a dictionar object (a relation array)
  * @param  {List} list
  * @param  {Object} dictionaryObject
- * 
+ *
  * @param  {Object} nullElement
  * @return {List}
  * tags:
@@ -338,7 +347,7 @@ ListOperators.translateWithDictionaryObject = function(list, dictionaryObject, n
   }
   newList.name = list.name;
   return newList.getImproved();
-}
+};
 
 
 // ListOperators.getIndexesOfElements=function(list, elements){
@@ -361,6 +370,9 @@ ListOperators.translateWithDictionaryObject = function(list, dictionaryObject, n
 // }
 
 
+/**
+ * @todo write docs
+ */
 ListOperators.sortListByNumberList = function(list, numberList, descending) {
   if(descending == null) descending = true;
   if(numberList.length == 0) return list;
@@ -395,6 +407,9 @@ ListOperators.sortListByNumberList = function(list, numberList, descending) {
 };
 
 
+/**
+ * @todo write docs
+ */
 ListOperators.sortListByIndexes = function(list, indexedArray) {
   var newList = instantiate(typeOf(list));
   newList.name = list.name;
@@ -407,6 +422,9 @@ ListOperators.sortListByIndexes = function(list, indexedArray) {
 };
 
 
+/**
+ * @todo write docs
+ */
 ListOperators.concatWithoutRepetitions = function() { //?
   var i;
   var newList = arguments[0].clone();
@@ -476,6 +494,9 @@ ListOperators.slidingWindowOnList = function(list, subListsLength, step, finaliz
   return table.getImproved();
 };
 
+/**
+ * @todo write docs
+ */
 ListOperators.getNewListForObjectType = function(object) {
   var newList = new List();
   newList[0] = object;
@@ -634,7 +655,7 @@ ListOperators.intersection = function(list0, list1) {
  */
 ListOperators.jaccardIndex = function(list0, list1) {//TODO: see if this can be more efficient, maybe one idctionar for doing union and interstection at the same time
   return ListOperators.intersection(list0, list1).length/ListOperators.unionLists(list0, list1).length;
-}
+};
 
 /**
  * calculates Jaccard distance 1 - |list0 ∩ list1|/|list0 ∪ list1| see: https://en.wikipedia.org/wiki/Jaccard_index
@@ -645,7 +666,7 @@ ListOperators.jaccardIndex = function(list0, list1) {//TODO: see if this can be 
  */
 ListOperators.jaccardDistance = function(list0, list1) {
   return 1 - ListOperators.jaccardIndex(list0, list1);
-}
+};
 
 /**
  * builds a dictionary that matches an element of a List with all its indexes on the List (indexesDictionary[element] --> numberList of indexes of element on list)
@@ -663,8 +684,11 @@ ListOperators.getIndexesDictionary = function(list){
   });
 
   return indexesDictionary;
-}
+};
 
+/**
+ * @todo write docs
+ */
 ListOperators.getIndexesTable = function(list){
   var indexesTable = new Table();
   indexesTable[0] = new List();
@@ -674,20 +698,20 @@ ListOperators.getIndexesTable = function(list){
   var i;
 
   list.forEach(function(element, i){
-    indexOnTable = indexesDictionary[element]
+    indexOnTable = indexesDictionary[element];
     if(indexOnTable==null){
       indexesTable[0].push(element);
       indexesTable[1].push(new NumberList(i));
       indexesDictionary[element]=indexesTable[0].length-1;
     } else {
-      indexesTable[1][indexOnTable].push(i)
+      indexesTable[1][indexOnTable].push(i);
     }
   });
 
   indexesTable[0] = indexesTable[0].getImproved();
 
   return indexesTable;
-}
+};
 
 /**
  * aggregates values of a list using an aggregator list as reference
@@ -783,7 +807,7 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
       var list;
       indexesTable[1].forEach(function(indexes){
         list = new List();
-        table[1].push(list)
+        table[1].push(list);
         indexes.forEach(function(index){
           list.push(toAggregateList[index]);
         });
@@ -848,7 +872,7 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
   }
 
   return null;
-}
+};
 
 /**
  * Analyses wether two lists are categorical identical, one is subcategorical to the other, or there's no relation
@@ -868,12 +892,12 @@ ListOperators.subCategoricalAnalysis = function(list0, list1){
     element = list0[i];
     projection = dictionary[element];
     if(projection==null){
-      dictionary[element] = list1[i]
+      dictionary[element] = list1[i];
     } else if(projection!=list1[i]){
       list0SubCategorical = false;
       break;
     }
-  };
+  }
 
   dictionary = {};
   var list1SubCategorical = true;
@@ -881,18 +905,18 @@ ListOperators.subCategoricalAnalysis = function(list0, list1){
     element = list1[i];
     projection = dictionary[element];
     if(projection==null){
-      dictionary[element] = list0[i]
+      dictionary[element] = list0[i];
     } else if(projection!=list0[i]){
       list1SubCategorical = false;
       break;
     }
-  };
+  }
 
   if(list1SubCategorical && list0SubCategorical) return 1;
   if(list0SubCategorical) return 2;
   if(list1SubCategorical) return 3;
   return 0;
-}
+};
 
 /**
  * calculates de entropy of a list, properties _mostRepresentedValue and _biggestProbability are added to the list
@@ -916,7 +940,7 @@ ListOperators.getListEntropy = function(list, valueFollowing, freqTable) {
     }
     return 0;
   }
-  
+
   if(freqTable==null) freqTable = list.getFrequenciesTable(true);// ListOperators.countElementsRepetitionOnList(list, true);
 
   list._mostRepresentedValue = freqTable[0][0];
@@ -971,6 +995,9 @@ ListOperators.getInformationGain = function(feature, supervised) {
   return ig;
 };
 
+/**
+ * @todo write docs
+ */
 ListOperators.getInformationGainAnalysis = function(feature, supervised) {
   if(feature == null || supervised == null || feature.length != supervised.length) return null;
 
@@ -1042,6 +1069,9 @@ ListOperators.groupElementsByPropertyValue = function(list, propertyName, sorted
 
 
 
+/**
+ * @ignore
+ */
 ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, mode, fillBlanks) {
   var result;
 

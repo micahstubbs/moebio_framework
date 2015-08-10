@@ -10,6 +10,9 @@ import PolygonOperators from "src/operators/geometry/PolygonOperators";
 function PolygonListOperators() {}
 export default PolygonListOperators;
 
+/**
+ * @todo write docs
+ */
 PolygonListOperators.simplifyPolygons = function(polygonList, margin, removeEmptyPolygons) {
   var newPolygonList = new PolygonList();
   var newPolygon;

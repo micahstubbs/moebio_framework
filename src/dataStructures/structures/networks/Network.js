@@ -218,7 +218,7 @@ Network.prototype.lightClone = function(){
   newNetwork.nodeList = this.nodeList;
   newNetwork.relationList = this.relationList;
   return newNetwork;
-}
+};
 
 
 /**

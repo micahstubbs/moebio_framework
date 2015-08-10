@@ -1,6 +1,12 @@
 import List from "src/dataStructures/lists/List";
 import Table from "src/dataStructures/lists/Table";
 
+/**
+ * @classdesc Tools to convert Tables to other data types
+ *
+ * @namespace
+ * @category basics
+ */
 function TableConversions() {}
 export default TableConversions;
 

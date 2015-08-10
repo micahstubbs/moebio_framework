@@ -91,19 +91,31 @@ DateOperators.currentDate = function() {
   return new Date();
 };
 
+/**
+ * @todo write docs
+ */
 DateOperators.addDaysToDate = function(date, nDays) {
   return new Date(date.getTime() + (nDays / DateOperators.millisecondsToDays));
 };
 
+/**
+ * @todo write docs
+ */
 DateOperators.addMillisecondsToDate = function(date, nMilliseconds) {
   return new Date(date.getTime() + nMilliseconds);
 };
 
 
+/**
+ * @todo write docs
+ */
 DateOperators.parseDate = function(string) {
   return new Date(Date.parse(string.replace(/\./g, "-")));
 };
 
+/**
+ * @todo write docs
+ */
 DateOperators.parseDates = function(stringList) {
   var dateList = new DateList();
   var i;
@@ -113,23 +125,44 @@ DateOperators.parseDates = function(stringList) {
   return dateList;
 };
 
+/**
+ * @todo write docs
+ */
 DateOperators.getHoursBetweenDates = function(date0, date1) {
   return(date1.getTime() - date0.getTime()) * DateOperators.millisecondsToHours;
 };
+
+/**
+ * @todo write docs
+ */
 DateOperators.getDaysBetweenDates = function(date0, date1) {
   return(date1.getTime() - date0.getTime()) * DateOperators.millisecondsToDays;
 };
+
+/**
+ * @todo write docs
+ */
 DateOperators.getWeeksBetweenDates = function(date0, date1) {
   return(date1.getTime() - date0.getTime()) * DateOperators.millisecondsToWeeks;
 };
+
+/**
+ * @todo write docs
+ */
 DateOperators.getYearsBetweenDates = function(date0, date1) {
   return(date1.getTime() - date0.getTime()) * DateOperators.millisecondsToYears;
 };
 
+/**
+ * @todo write docs
+ */
 DateOperators.nDayInYear = function(date) {
   return Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 1).getTime()) * DateOperators.millisecondsToDays);
 };
 
+/**
+ * @todo write docs
+ */
 DateOperators.getDateDaysAgo = function(nDays) {
   return DateOperators.addDaysToDate(new Date(), -nDays);
 };
@@ -146,6 +179,9 @@ DateOperators.getWeekInYear = function(date) {
   return Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
 };
 
+/**
+ * @todo write docs
+ */
 DateOperators.getNDaysInMonth = function(month, year) {
   return new Date(year, month, 0).getDate();
 };

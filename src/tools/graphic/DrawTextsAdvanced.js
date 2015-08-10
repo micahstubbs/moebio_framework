@@ -2,15 +2,25 @@ import MatrixGenerators from "src/operators/numeric/MatrixGenerators";
 import Point from "src/dataStructures/geometry/Point";
 import { context } from 'src/Global';
 
+/**
+ * @classdesc Draw Texts Advanced
+ *
+ * @namespace
+ * @category strings
+ */
 function DrawTextsAdvanced() {}
 export default DrawTextsAdvanced;
 
+/**
+ * @ignore
+ */
 DrawTextsAdvanced.characterOnQuadrilater = function(context, character, p0, p1, p2, p3, fontType) {
 
 };
 
 
 /**
+ * @todo finish docs
  * works only with n=1
  */
 DrawTextsAdvanced.textOnQuadrilater = function(text, p0, p1, p2, p3, fontSize, n) { //TODO:fix, finish
@@ -93,11 +103,17 @@ DrawTextsAdvanced.textOnQuadrilater = function(text, p0, p1, p2, p3, fontSize, n
   context.restore();
 };
 
+/**
+ * @todo finish docs
+ */
 DrawTextsAdvanced.applyTransformationOnCanvasFromPoints = function(v0, v1, v2, w0, w1, w2) { //TODO:find the correct place for this
   var M = MatrixGenerators.createMatrixFromTrianglesMapping(v0, v1, v2, w0, w1, w2);
   context.transform(M.a, M.b, M.c, M.d, M.tx, M.ty);
 };
 
+/**
+ * @todo finish docs
+ */
 DrawTextsAdvanced.mapRectangleIntoQuadrilater = function(image, xI, yI, wI, hI, v0, v1, v2, v3) { //TODO:find the correct place for this
   context.save();
 
@@ -140,6 +156,9 @@ DrawTextsAdvanced.mapRectangleIntoQuadrilater = function(image, xI, yI, wI, hI, 
   context.restore();
 };
 
+/**
+ * @todo finish docs
+ */
 DrawTextsAdvanced.getClippedTrianglesData = function(image, xI, yI, wI, hI) {
   var object = {};
 
@@ -184,9 +203,9 @@ DrawTextsAdvanced.getClippedTrianglesData = function(image, xI, yI, wI, hI) {
 };
 
 
-//
-
-
+/**
+ * @todo finish docs
+ */
 DrawTextsAdvanced.typodeOnQuadrilater = function(text, p0, p1, p2, p3) { //TODO:fix, finish
   var dX = p1.x - p0.x;
   var dY = p1.y - p0.y;

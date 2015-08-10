@@ -151,6 +151,9 @@ PolygonOperators.buildDendrogramFromPolygon = function(polygon) {
 
 };
 
+/**
+ * @todo write docs
+ */
 PolygonOperators._findClosestNodes = function(nodeList) {
   var i, j;
   var d2;
@@ -173,6 +176,9 @@ PolygonOperators._findClosestNodes = function(nodeList) {
 };
 
 
+/**
+ * @todo write docs
+ */
 PolygonOperators.sortOnXY = function(polygon) {
   return polygon.sort(function(p0, p1) {
     if(p0.x < p1.x) return -1;
@@ -182,10 +188,16 @@ PolygonOperators.sortOnXY = function(polygon) {
 };
 
 //TODO: move this to PointOperators
+/**
+ * @todo write docs
+ */
 PolygonOperators.crossProduct3Points = function(o, a, b) {
   return(a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
 };
 
+/**
+ * @todo write docs
+ */
 PolygonOperators.expandFromBarycenter = function(polygon, factor) {
   var newPolygon = new Polygon();
   var barycenter = polygon.getBarycenter();
@@ -197,6 +209,9 @@ PolygonOperators.expandFromBarycenter = function(polygon, factor) {
   return newPolygon;
 };
 
+/**
+ * @todo write docs
+ */
 PolygonOperators.expandInAngles = function(polygon, amount) { //TODO: test if it works with convex polygons
   var newPolygon = new Polygon();
   var p0 = polygon[polygon.length - 1];
@@ -226,6 +241,9 @@ PolygonOperators.expandInAngles = function(polygon, amount) { //TODO: test if it
   return newPolygon;
 };
 
+/**
+ * @todo write docs
+ */
 PolygonOperators.simplifyPolygon = function(polygon, margin) {
   margin = margin == null || margin == 0 ? 1 : margin;
   var newPolygon = polygon.clone();
@@ -251,8 +269,11 @@ PolygonOperators.simplifyPolygon = function(polygon, margin) {
 };
 
 
-/**
+/*
  * used techinique: draws the bézier polygon and checks color
+ */
+/**
+ * @todo write docs
  */
 PolygonOperators.bezierPolygonContainsPoint = function(polygon, point, border) {
   var frame = polygon.getFrame();
@@ -274,10 +295,13 @@ PolygonOperators.bezierPolygonContainsPoint = function(polygon, point, border) {
 };
 
 
-/**
+/*
  * used techinique: draws the bézier polygon and checks color
  * best center: the center of biggest circle within the polygon
  * [!] very unefficient
+ */
+/**
+ * @todo write docs
  */
 PolygonOperators.getBezierPolygonBestCenter = function(polygon, nAttempts) {
   nAttempts = nAttempts == null ? 500 : nAttempts;
@@ -317,6 +341,9 @@ PolygonOperators.getBezierPolygonBestCenter = function(polygon, nAttempts) {
 };
 
 
+/**
+ * @todo write docs
+ */
 PolygonOperators.convexHull = function(polygon, deepness) {
   var indexesHull = this.hull(polygon, true);
   var pointsLeftIndexes = NumberListGenerators.createSortedNumberList(polygon.length);
@@ -373,6 +400,9 @@ PolygonOperators.convexHull = function(polygon, deepness) {
   return indexesHull;
 };
 
+/**
+ * @todo write docs
+ */
 PolygonOperators.controlPointsFromPointsAnglesIntensities = function(polygon, angles, intensities) {
   var controlPoints = new Polygon();
   for(var i = 0; polygon[i] != null; i++) {
@@ -383,6 +413,9 @@ PolygonOperators.controlPointsFromPointsAnglesIntensities = function(polygon, an
 };
 
 
+/**
+ * @todo write docs
+ */
 PolygonOperators.placePointsInsidePolygon = function(polygon, nPoints, mode) {
   var points = new Polygon();
   var frame = polygon.getFrame();
@@ -399,6 +432,9 @@ PolygonOperators.placePointsInsidePolygon = function(polygon, nPoints, mode) {
   }
 };
 
+/**
+ * @todo write docs
+ */
 PolygonOperators.placePointsInsideBezierPolygon = function(polygon, nPoints, mode, border) {
   var points = new Polygon();
   var frame = polygon.getFrame();

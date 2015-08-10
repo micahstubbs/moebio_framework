@@ -44,7 +44,7 @@ NetworkGenerators.createRandomNetwork = function(nNodes, pRelation, mode, random
   } else {
     funcRandom = Math.random;
   }
-  
+
   mode = mode == null ? 0 : mode;
 
   var i, j;
@@ -108,6 +108,9 @@ NetworkGenerators.createTextsCoOccurrencesNetwork = function(strings, texts, wei
   return NetworkGenerators.createNetworkFromOccurrencesTable(occurrencesTable);
 };
 
+/**
+ * @todo write docs
+ */
 NetworkGenerators.createNetworkFromOccurrencesTable = function(occurrencesTable, weightsForRelationsMethod, minimum) {
   weightsForRelationsMethod = weightsForRelationsMethod == null ? 0 : weightsForRelationsMethod;
   minimum = minimum == null ? 0 : minimum;

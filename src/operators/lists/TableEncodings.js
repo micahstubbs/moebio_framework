@@ -3,6 +3,12 @@ import Table from "src/dataStructures/lists/Table";
 import NetworkEncodings from "src/operators/structures/NetworkEncodings";
 import ListGenerators from "src/operators/lists/ListGenerators";
 
+/**
+ * @classdesc Table Encodings
+ *
+ * @namespace
+ * @category basics
+ */
 function TableEncodings() {}
 export default TableEncodings;
 
@@ -85,7 +91,7 @@ TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, val
       var actualIndex = _firstRowIsHeader ? (i - 1) : i;
 
       cellContent = cellContents[j].replace(/\*CHOMA\*/g, separator).replace(/\*ENTER\*/g, "\n");
-      
+
       cellContent = cellContent == '' ? valueForNulls : cellContent;
 
       cellContent = String(cellContent);
@@ -110,6 +116,9 @@ TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, val
   return table;
 };
 
+/**
+ * @ignore
+ */
 TableEncodings._removeQuotes = function(string) {
   if(string.length == 0) return string;
   if((string.charAt(0) == "\"" || string.charAt(0) == "'") && (string.charAt(string.length - 1) == "\"" || string.charAt(string.length - 1) == "'")) string = string.substr(1, string.length - 2);

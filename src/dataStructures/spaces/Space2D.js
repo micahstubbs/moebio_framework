@@ -7,6 +7,15 @@ import {
   cW
 } from "src/Global";
 
+/**
+ * @classdesc 2D Interactions
+ *
+ * @todo Finish docs
+ *
+ * @description 2d interactions.
+ * @constructor
+ * @category geometry
+ */
 function Space2D(configuration) {
   configuration = configuration == null ? {} : configuration;
 
@@ -22,6 +31,9 @@ function Space2D(configuration) {
 }
 export default Space2D;
 
+/**
+ * @todo write docs
+ */
 Space2D.prototype.activeInteraction = function() {
   if(this.active) return;
   this.active = true;
@@ -30,6 +42,9 @@ Space2D.prototype.activeInteraction = function() {
   addInteractionEventListener('mousewheel', this.wheel, this);
 };
 
+/**
+ * @todo write docs
+ */
 Space2D.prototype.deActivate = function() {
   this.active = false;
   this.dragging = false;
@@ -39,39 +54,65 @@ Space2D.prototype.deActivate = function() {
   removeInteractionEventListener('mousewheel', this.wheel, this);
 };
 
+/**
+ * @todo write docs
+ */
 Space2D.prototype.stopDragging = function() {
   removeInteractionEventListener('mousemove', this.onMouse, this);
 };
 
+/**
+ * @todo write docs
+ */
 Space2D.prototype.project = function(point) {
   return new Point((point.x - this.center.x) * this.scale, (point.y + this.center.y) * this.scale);
 };
 
+/**
+ * @todo write docs
+ */
 Space2D.prototype.projectX = function(x) {
   return(x - this.center.x) * this.scale;
 };
 
+/**
+ * @todo write docs
+ */
 Space2D.prototype.projectY = function(y) {
   return(y - this.center.y) * this.scale;
 };
 
-
+/**
+ * @todo write docs
+ */
 Space2D.prototype.inverseProject = function(point) {
   return new Point(point.x / this.scale + this.center.x, point.y / this.scale + this.center.y);
 };
 
+/**
+ * @todo write docs
+ */
 Space2D.prototype.inverseProjectX = function(x) {
   return x / this.scale + this.center.x;
 };
 
+/**
+ * @todo write docs
+ */
 Space2D.prototype.inverseProjectY = function(y) {
   return y / this.scale + this.center.y;
 };
 
+/**
+ * @todo write docs
+ */
 Space2D.prototype.move = function(vector, projected) {
   this.center = this.center.subtract(projected ? vector.factor(1 / this.scale) : vector);
 };
 
+/**
+ * @todo write docs
+ */
 Space2D.prototype.factorScaleFromPoint = function(point, factor) {
   var k = (1 - 1 / factor) / this.scale;
   this.center.x = k * point.x + this.center.x;
@@ -80,13 +121,22 @@ Space2D.prototype.factorScaleFromPoint = function(point, factor) {
   this.scale *= factor;
 };
 
+/**
+ * @todo write docs
+ */
 Space2D.prototype.fixX = function(xDeparture, xArrival) {
   this.center.x = xDeparture - (xArrival / this.scale);
 };
+/**
+ * @todo write docs
+ */
 Space2D.prototype.fixY = function(yDeparture, yArrival) {
   this.center.y = yDeparture - (yArrival / this.scale);
 };
 
+/**
+ * @todo write docs
+ */
 Space2D.prototype.fixHorizontalInterval = function(departureInterval, arrivalInterval) {
   this.scale = arrivalInterval.getAmplitude() / departureInterval.getAmplitude();
   this.fixX((departureInterval.x + departureInterval.y) * 0.5, cW * 0.5);
@@ -94,6 +144,9 @@ Space2D.prototype.fixHorizontalInterval = function(departureInterval, arrivalInt
 
 //////
 
+/**
+ * @todo write docs
+ */
 Space2D.prototype.onMouse = function(e) {
   switch(e.type) {
     case 'mousedown':
@@ -119,6 +172,9 @@ Space2D.prototype.onMouse = function(e) {
 
 
 
+/**
+ * @todo write docs
+ */
 Space2D.prototype.wheel = function(e) {
   if(!this.active) return;
   if(this.scale <= this.MIN_SCALE && e.value > 0) {

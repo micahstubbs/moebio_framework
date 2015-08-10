@@ -43,6 +43,9 @@ MatrixGenerators.createMatrixFromTrianglesMapping = function(v0, v1, v2, w0, w1,
 
 
 //TODO: place this in the correct place
+/**
+ * @todo write docs
+ */
 MatrixGenerators.applyTransformationOnCanvasFromPoints = function(context, v0, v1, v2, w0, w1, w2) {
   if(v1.y != v0.y) {
     var k = (v2.y - v0.y) / (v1.y - v0.y);

@@ -10,6 +10,9 @@ function IntervalListOperators() {}
 export default IntervalListOperators;
 
 
+/**
+ * @todo write docs
+ */
 IntervalListOperators.scaleIntervals = function(intervalList, value) {
   var newIntervalList = new List();
   newIntervalList.name = intervalList.name;

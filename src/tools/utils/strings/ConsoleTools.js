@@ -1,4 +1,6 @@
 /**
+ * @ignore
+ *
  * @classdesc Functions to create interesting console output.
  *
  * @namespace
@@ -8,9 +10,12 @@ function ConsoleTools() {}
 export default ConsoleTools;
 
 
-ConsoleTools._ticTime;
-ConsoleTools._tacTime;
+ConsoleTools._ticTime = undefined;
+ConsoleTools._tacTime = undefined;
 
+/**
+ * @ignore
+ */
 ConsoleTools.NumberTableOnConsole = function(table) {
   var message = "";
   var line;
@@ -34,6 +39,9 @@ ConsoleTools.NumberTableOnConsole = function(table) {
 };
 
 
+/**
+ * @ignore
+ */
 ConsoleTools.tic = function(message) {
   message = message || "";
 
@@ -42,6 +50,9 @@ ConsoleTools.tic = function(message) {
   console.log('°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° tic °°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° [' + message + ']');
 };
 
+/**
+ * @ignore
+ */
 ConsoleTools.tac = function(message) {
   message = message || "";
 

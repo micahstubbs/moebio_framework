@@ -40,6 +40,9 @@ export default GeometryConvertions;
 // return polygonList;
 // }
 
+/**
+ * @todo write docs
+ */
 GeometryConvertions.twoNumberListsToPolygon = function(numberList0, numberList1) { //TODO:change name to NumberTableToPolygon
   var n = Math.min(numberList0.length, numberList1.length);
   var polygon = new Polygon();

@@ -8,15 +8,27 @@ import ListOperators from "src/operators/lists/ListOperators";
 import NumberListGenerators from "src/operators/numeric/numberList/NumberListGenerators";
 import ListGenerators from "src/operators/lists/ListGenerators";
 
+/**
+ * @classdesc Table Operators
+ *
+ * @namespace
+ * @category basic
+ */
 function TableOperators() {}
 export default TableOperators;
 
 
+/**
+ * @todo finish docs
+ */
 TableOperators.getElementFromTable = function(table, i, j) {
   if(table[i] == null) return null;
   return table[i][j];
 };
 
+/**
+ * @todo finish docs
+ */
 TableOperators.getSubTable = function(table, x, y, width, height) {
   if(table == null) return table;
 
@@ -139,6 +151,9 @@ TableOperators.testClassificationModel = function(numberTable, classes, model, m
 
 
 
+/**
+ * @todo finish docs
+ */
 TableOperators.getSubListsByIndexes = function(table, indexes) {
   var newTable = new Table();
   newTable.name = table.name;
@@ -160,6 +175,9 @@ TableOperators.getSubListsByIndexes = function(table, indexes) {
 // - performance improvements for tables with lots of lists
 // TableOperators.sortListsByNumberList=function(table, numberList, descending){
 //  descending = descending || true;
+/**
+ * @todo finish docs
+ */
 TableOperators.sortListsByNumberList = function(table, numberList, descending) {
   if(descending == null) descending = true;
 
@@ -182,7 +200,7 @@ TableOperators.sortListsByNumberList = function(table, numberList, descending) {
     }
   }
   return newTable;
-}
+};
 
 
 /**
@@ -216,7 +234,7 @@ TableOperators.aggregateTable = function(table, indexAggregationList, indexesLis
   });
 
   return newTable.getImproved();
-}
+};
 
 
 
@@ -410,7 +428,7 @@ TableOperators.pivotTable = function(table, indexFirstAggregationList, indexSeco
   }
 
   return newTable;
-}
+};
 
 
 
@@ -521,7 +539,7 @@ TableOperators.getCountPairsMatrix = function(table) {
  * @param  {Table} table
  * @param  {Number} nList list that could contain the element in several positions
  * @param  {Object} element
- * 
+ *
  * @param {Boolean} keepRowIfElementIsPresent if true (default value) the row is selected if the list contains the given element, if false the row is discarded
  * @return {Table}
  * tags:filter
@@ -566,6 +584,9 @@ TableOperators.filterTableByElementInList = function(table, nList, element, keep
   return newTable;
 };
 
+/**
+ * @todo finish docs
+ */
 TableOperators.mergeDataTablesInList = function(tableList) {
   if(tableList.length < 2) return tableList;
 
@@ -678,6 +699,9 @@ TableOperators.fusionDataTables = function(table0, table1) {
   return table;
 };
 
+/**
+ * @todo finish docs
+ */
 TableOperators.completeTable = function(table, nRows, value) {
   value = value == null ? 0 : value;
 
@@ -735,6 +759,9 @@ TableOperators.getVariablesInformationGain = function(variablesTable, supervised
   return igs;
 };
 
+/**
+ * @todo finish docs
+ */
 TableOperators.splitTableByCategoricList = function(table, list) {
   if(table == null || list == null) return null;
 
@@ -802,6 +829,9 @@ TableOperators.buildDecisionTree = function(variablesTable, supervised, supervis
 };
 
 
+/**
+ * @ignore
+ */
 TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervised, level, min_entropy, min_size_node, min_info_gain, parent, value, supervisedValue, indexes, generatePattern, colorScale) {
   //if(level < 4) c.l('\nlevel', level);
   var entropy = ListOperators.getListEntropy(supervised, supervisedValue);
@@ -864,7 +894,7 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
   // }
 
   node._color = colorScale(node.valueFollowingProbability); //TableOperators._decisionTreeColorScale(1 - node.valueFollowingProbability, colorScale);
-  
+
   if(generatePattern) {
     var newCanvas = document.createElement("canvas");
     newCanvas.width = 150;
@@ -925,6 +955,9 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
 //   // return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
 // };
 
+/**
+ * @ignore
+ */
 TableOperators._decisionTreeGenerateColorsMixture = function(ctxt, width, height, colors, weights){
   var x, y, i; //, rgb;
   var allColors = ListGenerators.createListWithSameElement(weights[0], colors[0]);

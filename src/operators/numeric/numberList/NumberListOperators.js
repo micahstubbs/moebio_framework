@@ -1,6 +1,12 @@
 import NumberList from "src/dataStructures/numeric/NumberList";
 import NumberTable from "src/dataStructures/numeric/NumberTable";
 
+/**
+ * @classdesc NumberList Operators
+ *
+ * @namespace
+ * @category numbers
+ */
 function NumberListOperators() {}
 export default NumberListOperators;
 
@@ -68,7 +74,7 @@ NumberListOperators.shorten = function(numberList, newLength) {
     newNumberList[i] = val/windowSizeInt;
   }
   return newNumberList;
-}
+};
 
 /**
  * calculates k-means clusters of values in a numberList
@@ -140,7 +146,9 @@ NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
   return clusters;
 };
 
-
+/**
+ * @todo finish docs
+ */
 NumberListOperators.standardDeviationBetweenTwoNumberLists = function(numberList0, numberList1) {
   var s = 0;
   var l = Math.min(numberList0.length, numberList1.length);
@@ -382,7 +390,7 @@ NumberListOperators.intersection = function(a, b) {//TODO: refactor this method 
 
 
 /**
- * builds a rectangle that defines the boundaries of two numberLists interpreted as x and y coordinates 
+ * builds a rectangle that defines the boundaries of two numberLists interpreted as x and y coordinates
  * @param  {NumberList} numberListX
  * @param  {NumberList} numberListY
  * @return {Rectangle}
@@ -391,4 +399,4 @@ NumberListOperators.frameFromTwoNumberLists = function(numberListX, numberListY)
   var intX = numberListX.getInterval();
   var intY = numberListY.getInterval();
   return new Rectangle(intX.x, intY.x, intX.getAmplitude(), intY.getAmplitude());
-}
+};

@@ -3,6 +3,12 @@ import ListOperators from "src/operators/lists/ListOperators";
 import NumberList from "src/dataStructures/numeric/NumberList";
 import Table from "src/dataStructures/lists/Table";
 
+/**
+ * @classdesc  String Operators
+ *
+ * @namespace
+ * @category strings
+ */
 function StringOperators() {}
 export default StringOperators;
 
@@ -25,7 +31,7 @@ StringOperators.STOP_WORDS = StringList.fromArray("t,s,mt,rt,re,m,http,amp,a,abl
 /**
  * creates an html string that depicts a proprtions bar with colors for categories
  * @param  {NumberList} normalizedWeights normalized weights
- * 
+ *
  * @param  {Number} nChars width in characters
  * @param  {ColorList} colors list of categorical colors
  * @param  {String} character character or characters to be used as primitive
@@ -50,7 +56,7 @@ StringOperators.createsCategoricalColorsBlocksHtml = function(normalizedWeights,
   });
 
   return bars;
-}
+};
 
 
 
@@ -458,6 +464,9 @@ StringOperators.logInConsole = function(string, frame) {
 //////
 
 
+/**
+ * @todo finish docs
+ */
 StringOperators.getParenthesisContents = function(text, brackets) {
   var contents = new StringList();
 
@@ -475,9 +484,17 @@ StringOperators.getParenthesisContents = function(text, brackets) {
 
   return contents;
 };
+
+/**
+ * @todo finish docs
+ */
 StringOperators.getFirstParenthesisContent = function(text, brackets) {
   return StringOperators.getFirstParenthesisContentWithIndexes(text, brackets).content;
 };
+
+/**
+ * @todo finish docs
+ */
 StringOperators.getFirstParenthesisContentWithIndexes = function(text, brackets) {
   var open = brackets ? "[" : "(";
   var close = brackets ? "]" : ")";
@@ -523,27 +540,45 @@ StringOperators.getFirstParenthesisContentWithIndexes = function(text, brackets)
   };
 };
 
+/**
+ * @todo finish docs
+ */
 StringOperators.placeString = function(string, stringToPlace, index) {
   return string.substr(0, index) + stringToPlace + string.substr(index + stringToPlace.length);
 };
 
+/**
+ * @todo finish docs
+ */
 StringOperators.insertString = function(string, stringToInsert, index) {
   return string.substr(0, index) + stringToInsert + string.substr(index);
 };
 
+/**
+ * @todo finish docs
+ */
 StringOperators.removeEnters = function(string) {
   return string.replace(/(\StringOperators.ENTER|\StringOperators.ENTER2|\StringOperators.ENTER3)/gi, " ");
 };
 
+/**
+ * @todo finish docs
+ */
 StringOperators.removeTabs = function(string) {
   return string.replace(/(\StringOperators.TAB|\StringOperators.TAB2|\t)/gi, "");
 };
 
+/**
+ * @todo finish docs
+ */
 StringOperators.removePunctuation = function(string, replaceBy) {
   replaceBy = replaceBy || "";
   return string.replace(/[:,.;?!\(\)\"\']/gi, replaceBy);
 };
 
+/**
+ * @todo finish docs
+ */
 StringOperators.removeDoubleSpaces = function(string) {
   var retString = string;
   var regExpr = RegExp(/  /);
@@ -553,6 +588,9 @@ StringOperators.removeDoubleSpaces = function(string) {
   return retString;
 };
 
+/**
+ * @todo finish docs
+ */
 StringOperators.removeInitialRepeatedCharacter = function(string, character) {
   while(string.charAt(0) == character) string = string.substr(1);
   return string;
@@ -571,12 +609,18 @@ StringOperators.removeHtmlTags = function(html) {
   return tmp.textContent || tmp.innerText;
 };
 
+/**
+ * @todo finish docs
+ */
 StringOperators.removeLinks = function(text) {
   text += ' ';
   var regexp = /https*:\/\/[a-zA-Z0-9\/\.]+( |:|;|\r|\t|\n|\v)/g;
   return(text.replace(regexp, ' ')).substr(0, text.length - 2);
 };
 
+/**
+ * @todo finish docs
+ */
 StringOperators.removeQuotes = function(string) { //TODO:improve
   if(string.charAt(0) == "\"") string = string.substr(1);
   if(string.charAt(string.length - 1) == "\"") string = string.substr(0, string.length - 1);
@@ -613,7 +657,7 @@ function removeAccentsAndDiacritics(string) {
   r = r.replace(new RegExp(/[Ÿ]/g), "Y");
 
   return r;
-};
+}
 
 /**
  * creates a table with frequent words and occurrences numbers
@@ -638,6 +682,9 @@ StringOperators.getWordsOccurrencesTable = function(string, stopWords, includeLi
   return table;// ListOperators.countElementsRepetitionOnList(words, true, false, limit);
 };
 
+/**
+ * @todo finish docs
+ */
 StringOperators.indexesOf = function(text, string) { //TODO:test
   var index = text.indexOf(string);
   if(index == -1) return new NumberList();
@@ -671,6 +718,9 @@ StringOperators.repeatString = function(text, n) {
 
 //counting / statistics
 
+/**
+ * @todo finish docs
+ */
 StringOperators.countOccurrences = function(text, string) { //seems to be th emost efficient: http://stackoverflow.com/questions/4009756/how-to-count-string-occurrence-in-string
   var n = 0;
   var index = text.indexOf(string);
@@ -681,12 +731,18 @@ StringOperators.countOccurrences = function(text, string) { //seems to be th emo
   return n;
 };
 
+/**
+ * @todo finish docs
+ */
 StringOperators.countWordOccurrences = function(string, word) {
   var regex = new RegExp("\\b" + word + "\\b");
   var match = string.match(regex);
   return match == null ? 0 : match.length;
 };
 
+/**
+ * @todo finish docs
+ */
 StringOperators.countStringsOccurrences = function(text, strings) {
   var i;
   var numberList = new NumberList();
@@ -698,9 +754,16 @@ StringOperators.countStringsOccurrences = function(text, strings) {
 
 //validation
 
+/**
+ * @todo finish docs
+ */
 StringOperators.validateEmail = function(text) {
   return StringOperators.MAIL_REGEX.test(text);
 };
+
+/**
+ * @todo finish docs
+ */
 StringOperators.validateUrl = function(text) {
   return StringOperators.LINK_REGEX.test(text);
 };

@@ -10,6 +10,12 @@ import NumberListOperators from "src/operators/numeric/numberList/NumberListOper
 import Table from "src/dataStructures/lists/Table";
 
 
+/**
+ * @classdesc  StringList Operators
+ *
+ * @namespace
+ * @category strings
+ */
 function StringListOperators() {}
 export default StringListOperators;
 
@@ -75,8 +81,11 @@ StringListOperators.filterStringListByString = function(stringList, string, asWo
 // var match = string.match(regex);
 // return match==null?0:match.length;
 
-/**
+/*
  * a classic function, but now it works with patterns!
+ */
+/**
+ * @todo finish docs
  */
 StringListOperators.countStringsOccurrencesOnTexts = function(strings, texts) {
   var occurrencesTable = new NumberTable();
@@ -174,6 +183,9 @@ StringListOperators.getWordsOccurrencesMatrix = function(strings, stopWords, inc
 };
 
 //good approach for few large texts, to be tested
+/**
+ * @todo finish docs
+ */
 StringListOperators.createTextsNetwork = function(texts, stopWords, stressUniqueness, relationThreshold) {
   var i, j;
   var network = new Network();

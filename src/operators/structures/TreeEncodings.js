@@ -2,11 +2,20 @@ import Tree from "src/dataStructures/structures/networks/Tree";
 import Node from "src/dataStructures/structures/elements/Node";
 import StringOperators from "src/operators/strings/StringOperators";
 
+/**
+ * @classdesc Tools to Encode Trees
+ *
+ * @namespace
+ * @category networks
+ */
 function TreeEncodings() {}
 export default TreeEncodings;
 
 //include(frameworksRoot+"operators/strings/StringOperators.js");
 
+/**
+ * @todo write docs
+ */
 TreeEncodings.decodeIdentedTree = function(indexedTree, superiorNodeName, identationCharacter) {
   superiorNodeName = superiorNodeName == null ? "" : superiorNodeName;
   identationCharacter = identationCharacter == null ? "\t" : identationCharacter;

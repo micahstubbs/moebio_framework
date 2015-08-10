@@ -1,6 +1,12 @@
 import Tree from "src/dataStructures/structures/networks/Tree";
 import Node from "src/dataStructures/structures/elements/Node";
 
+/**
+ * @classdesc Tools to convert Trees to other data types
+ *
+ * @namespace
+ * @category networks
+ */
 function TreeConvertions() {}
 export default TreeConvertions;
 
@@ -46,6 +52,10 @@ TreeConvertions.TableToTree = function(table, fatherName, lastListIsWeights) {
 
   return tree;
 };
+
+/**
+ * @todo write docs
+ */
 TreeConvertions.getId = function(table, i, j) {
   var iCol = 1;
   var id = String(table[0][j]);

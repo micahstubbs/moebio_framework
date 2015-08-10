@@ -16,7 +16,9 @@ import DrawTexts from "src/tools/graphic/DrawTexts";
 function StringListVisOperators() {}
 export default StringListVisOperators;
 
-
+/**
+ * @todo write docs
+ */
 StringListVisOperators.simpleTagCloud = function(stringList, weights, frame, font, interLineFactor) {
   font = font == null ? 'Arial' : font;
   interLineFactor = interLineFactor == null ? 1.2 : interLineFactor;
@@ -106,6 +108,9 @@ StringListVisOperators.simpleTagCloud = function(stringList, weights, frame, fon
 
 
 
+/**
+ * @todo write docs
+ */
 StringListVisOperators.tagCloudRectangles = function(stringList, weights, frame, mode, margin) {
   mode = mode == null ? 0 : mode;
   margin = margin == null ? 0 : margin;
@@ -242,6 +247,9 @@ StringListVisOperators.tagCloudRectangles = function(stringList, weights, frame,
   return table;
 };
 
+/**
+ * @ignore
+ */
 StringListVisOperators._pointInRectangles = function(rectangles, px, py, width, height, margin) {
   var rect;
   for(var i = 0; rectangles[i] != null; i++) {

@@ -8,10 +8,16 @@ import StringList from "src/dataStructures/strings/StringList";
 function CountryOperators() {}
 export default CountryOperators;
 
+/**
+ * @todo write docs
+ */
 CountryOperators.getSimplifiedName = function(name) {
   return name.replace(/[\.\- ,\']/g, "").toLowerCase();
 };
 
+/**
+ * @todo write docs
+ */
 CountryOperators.getSimplifiedNames = function(names) {
   var simplifiedNames = new StringList();
   var name;

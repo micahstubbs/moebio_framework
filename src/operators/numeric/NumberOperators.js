@@ -27,6 +27,9 @@ NumberOperators.getRandomWithSeed = function(seed) {
   return seed / (233280.0);
 };
 
+/**
+ * @todo write docs
+ */
 NumberOperators.numberFromBinaryPositions = function(binaryPositions) {
   var i;
   var n = 0;
@@ -36,6 +39,9 @@ NumberOperators.numberFromBinaryPositions = function(binaryPositions) {
   return n;
 };
 
+/**
+ * @todo write docs
+ */
 NumberOperators.numberFromBinaryValues = function(binaryValues) {
   var n = 0;
   for(var i = 0; binaryValues[i] != null; i++) {
@@ -44,6 +50,9 @@ NumberOperators.numberFromBinaryValues = function(binaryValues) {
   return n;
 };
 
+/**
+ * @todo write docs
+ */
 NumberOperators.powersOfTwoDecomposition = function(number, length) {
   // var i;
   // var powers = StringList.fromArray(Number(number).toString(2).split('')).toNumberList().getReversed();
@@ -75,6 +84,9 @@ NumberOperators.powersOfTwoDecomposition = function(number, length) {
   return powers;
 };
 
+/**
+ * @todo write docs
+ */
 NumberOperators.positionsFromBinaryValues = function(binaryValues) {
   var i;
   var positions = new NumberList();
@@ -86,6 +98,9 @@ NumberOperators.positionsFromBinaryValues = function(binaryValues) {
 
 //////////Random Generator with Seed, From http://baagoe.org/en/w/index.php/Better_random_numbers_for_javascript
 
+/**
+ * @ignore
+ */
 NumberOperators._Alea = function() {
   return(function(args) {
     // Johannes Baagøe <baagoe@baagoe.com>, 2010
@@ -138,6 +153,9 @@ NumberOperators._Alea = function() {
   }(Array.prototype.slice.call(arguments)));
 };
 
+/**
+ * @ignore
+ */
 NumberOperators._Mash = function() {
   var n = 0xefc8249d;
 

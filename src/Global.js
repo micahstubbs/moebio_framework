@@ -27,21 +27,33 @@ export function Global(){}
 
 Global.userAgent="unknown";
 
+/**
+ * @todo write docs
+ */
 window.init = function(){
   //console.log("init must be overriden!");
-}
+};
 
+/**
+ * @todo write docs
+ */
 window.cycle = function(){
   //console.log("cycle must be overriden!");
-}
+};
 
+/**
+ * @todo write docs
+ */
 window.resizeWindow = function(){
   //console.log("resizeWindow must be overriden!");
-}
+};
 
+/**
+ * @todo write docs
+ */
 window.lastCycle = function(){
   //override
-}
+};
 
 export var listenerArray  = [];
 export var canvas;
@@ -475,6 +487,9 @@ var _alphaRefresh=0;//if _alphaRefresh>0 instead of clearing the canvas each fra
 
 var END_CYCLE_DELAY = 3000; //time in milliseconds, from last mouse movement to the last cycle to be executed in case cycleOnMouseMovement has been activated
 
+/**
+ * @todo write docs
+ */
 Array.prototype.last = function(){
   return this[this.length-1];
 };
@@ -533,6 +548,9 @@ window.addEventListener('load', function(){
 
 }, false);
 
+/**
+ * @ignore
+ */
 export function _onMouse(e) {
 
   switch(e.type){
@@ -581,11 +599,17 @@ export function _onMouse(e) {
 }
 
 
+/**
+ * @todo write docs
+ */
 export function onResize(e){
   _adjustCanvas();
   window.resizeWindow();
 }
 
+/**
+ * @ignore
+ */
 function _adjustCanvas(){
   if(canvasResizeable==false) return;
 
@@ -600,10 +624,16 @@ function _adjustCanvas(){
 }
 
 
+/**
+ * @todo write docs
+ */
 export function clearContext(){
   context.clearRect(0, 0, cW, cH);
 }
 
+/**
+ * @todo write docs
+ */
 export function cycleOnMouseMovement(value, time){
   if(time!=null) END_CYCLE_DELAY = time;
 
@@ -620,6 +650,9 @@ export function cycleOnMouseMovement(value, time){
   }
 }
 
+/**
+ * @todo write docs
+ */
 export function setFrameRate(fr){
   fr = fr||30;
   Global._frameRate = fr;
@@ -627,10 +660,16 @@ export function setFrameRate(fr){
   if(cycleActive) startCycle();
 }
 
+/**
+ * @todo write docs
+ */
 export function setAlphaRefresh(alphaRefresh){
   _alphaRefresh = alphaRefresh;
 }
 
+/**
+ * @todo write docs
+ */
 export function enterFrame(){
   if(_alphaRefresh==0){
       context.clearRect(0, 0, cW, cH);
@@ -661,6 +700,9 @@ export function enterFrame(){
     nF++;
 }
 
+/**
+ * @todo write docs
+ */
 export function startCycle(){
   clearTimeout(_setTimeOutId);
   clearInterval(_setIntervalId);
@@ -669,6 +711,9 @@ export function startCycle(){
 }
 
 
+/**
+ * @todo write docs
+ */
 export function stopCycle(){
   clearInterval(_setIntervalId);
   cycleActive = false;
@@ -679,11 +724,17 @@ export function stopCycle(){
 
 
 
+/**
+ * @todo write docs
+ */
 export function onMoveCycle(e){
   if(e.type=='mousemove' && _prevMouseX==mX && _prevMouseY==mY) return;
   reStartCycle();
 }
 
+/**
+ * @todo write docs
+ */
 export function reStartCycle(){
   _prevMouseX=mX;
   _prevMouseY=mY;
@@ -698,6 +749,9 @@ export function reStartCycle(){
 }
 
 //interaction events
+/**
+ * @todo write docs
+ */
 export function addInteractionEventListener(eventType, onFunction, target){//TODO: listenerArray contains objects instead of arrays
   listenerArray.push(new Array(eventType, onFunction, target));
   switch(eventType){
@@ -717,6 +771,9 @@ export function addInteractionEventListener(eventType, onFunction, target){//TOD
   }
 }
 
+/**
+ * @todo write docs
+ */
 export function onCanvasEvent(e){
   var i;
   for(i=0; listenerArray[i]!=null; i++){
@@ -727,6 +784,9 @@ export function onCanvasEvent(e){
   }
 }
 
+/**
+ * @todo write docs
+ */
 export function removeInteractionEventListener(eventType, onFunction, target){ //TODO: finish this (requires single element removing method solved first)
   for(var i=0; listenerArray[i]!=null; i++){
     if(listenerArray[i][0]==eventType && listenerArray[i][1]==onFunction && listenerArray[i][2]==target){
@@ -737,11 +797,17 @@ export function removeInteractionEventListener(eventType, onFunction, target){ /
   }
 }
 
+/**
+ * @todo write docs
+ */
 export function cancelAllInteractions(){
   c.log("cancelAllInteractions, _interactionCancelledFrame:", nF);
   _interactionCancelledFrame = nF;
 }
 
+/**
+ * @todo write docs
+ */
 export function setBackgroundColor(color){
   if(typeof color == "number"){
     if(arguments.length>3){
@@ -760,6 +826,9 @@ export function setBackgroundColor(color){
   body.setAttribute('bgcolor', backGroundColor);
 }
 
+/**
+ * @todo write docs
+ */
 function setDivPosition(div, x, y){
   div.setAttribute('style', 'position:absolute;left:'+String(x)+'px;top:'+String(y)+'px;');
 }
@@ -767,18 +836,27 @@ function setDivPosition(div, x, y){
 
 /////////////////////////////////// keyboard and wheel
 
+/**
+ * @todo write docs
+ */
 export function activateKeyboard(){
   _keyboardActivated = true;
   document.onkeydown = onKey;
   document.onkeyup = onKey;
 }
 
+/**
+ * @todo write docs
+ */
 export function onKey(e){
   onCanvasEvent(e);
 }
 
 /*
  * thanks http://www.adomas.org/javascript-mouse-wheel
+ */
+/**
+ * @todo write docs
  */
 export function activateWheel(){
   _wheelActivated = true;
@@ -790,6 +868,10 @@ export function activateWheel(){
   window.onmousewheel = document.onmousewheel = _onWheel;
 
 }
+
+/**
+ * @ignore
+ */
 function _onWheel(e) {
   //c.l('_onWheel, e:', e);
 
@@ -810,10 +892,16 @@ function _onWheel(e) {
 
 ////structures local storage
 
+/**
+ * @todo write docs
+ */
 export function setStructureLocalStorageWithSeed(object, seed, comments){
   setStructureLocalStorage(object, MD5.hex_md5(seed), comments);
-};
+}
 
+/**
+ * @todo write docs
+ */
 export function setStructureLocalStorage(object, id, comments){
   var type = typeOf(object);
   var code;
@@ -846,12 +934,18 @@ export function setStructureLocalStorage(object, id, comments){
   // c.l('code.length:', code.length);
 
   localStorage.setItem(id, storageString);
-};
+}
 
+/**
+ * @todo write docs
+ */
 export function getStructureLocalStorageFromSeed(seed, returnStorageObject){
   return getStructureLocalStorage(MD5.hex_md5(seed), returnStorageObject);
-};
+}
 
+/**
+ * @todo write docs
+ */
 export function getStructureLocalStorage(id, returnStorageObject){
   returnStorageObject = returnStorageObject||false;
 
@@ -893,8 +987,11 @@ export function getStructureLocalStorage(id, returnStorageObject){
   }
 
   return object;
-};
+}
 
+/**
+ * @todo write docs
+ */
 export function getDocWidth() {
     var D = document;
     return Math.max(
@@ -903,6 +1000,9 @@ export function getDocWidth() {
     );
 }
 
+/**
+ * @todo write docs
+ */
 export function getDocHeight() {
     var D = document;
     return Math.max(
