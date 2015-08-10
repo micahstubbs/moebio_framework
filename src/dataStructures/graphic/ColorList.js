@@ -24,6 +24,12 @@ function ColorList() {
 }
 export default ColorList;
 
+/**
+ * Creates a new ColorList from a raw array of values
+ *
+ * @param {String[]} array Array of hex or other color values
+ * @return {ColorList} New ColorList.
+ */
 ColorList.fromArray = function(array) {
   var result = List.fromArray(array);
   result.type = "ColorList";
@@ -35,8 +41,8 @@ ColorList.fromArray = function(array) {
 };
 
 /**
- * return an arrays of rgb arrays ([rr,gg,bb])
- * @return {array}
+ * returns an arrays of rgb values, each stored in an array ([rr,gg,bb])
+ * @return {array} Array of array of RGB values.
  * tags:
  */
 ColorList.prototype.getRgbArrays = function() {
@@ -51,6 +57,7 @@ ColorList.prototype.getRgbArrays = function() {
 
 /**
  * interpolates colors with a given color and measure
+ * 
  * @param  {String} color to be interpolated with
  * @param  {Number} value intenisty of interpolation [0,1]
  * @return {ColorList}

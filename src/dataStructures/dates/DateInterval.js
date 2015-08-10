@@ -21,15 +21,24 @@ function DateInterval(date0, date1) {
 }
 export default DateInterval;
 
+/**
+* @todo write docs
+*/
 DateInterval.prototype.toString = function() {
   return "DateInterval[" + this.date0 + ", " + this.date1 + "]";
 };
 
+/**
+* @todo write docs
+*/
 DateInterval.prototype.getMax = function() {
   if(this.date1 > this.date0) return this.date1;
   return this.date0;
 };
 
+/**
+* @todo write docs
+*/
 DateInterval.prototype.getMin = function() {
   if(this.date0 < this.date1) return this.date0;
   return this.date1;

@@ -58,6 +58,9 @@ export default TextFieldHTML;
 
 
 
+/**
+ * @todo write docs
+ */
 TextFieldHTML.prototype.draw = function() {
   //c.log('this.width, this._prevWidth', this.width, this._prevWidth);
   if(this.x != this._prevX || this.y != this._prevY || this.width != this._prevWidth || this.height != this._prevHeight) {
@@ -70,6 +73,9 @@ TextFieldHTML.prototype.draw = function() {
   }
 };
 
+/**
+ * @todo write docs
+ */
 TextFieldHTML.prototype.setText = function(text) {
   if(this.text != text) {
     this.text = text;
@@ -77,6 +83,9 @@ TextFieldHTML.prototype.setText = function(text) {
   }
 };
 
+/**
+ * @todo write docs
+ */
 TextFieldHTML.prototype.getText = function() {
   return this.DOMtext.value;
 };

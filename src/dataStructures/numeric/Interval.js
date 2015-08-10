@@ -59,17 +59,24 @@ Interval.prototype.getSignedAmplitude = function() {
   return this.x - this.y;
 };
 
+/**
+* @todo write docs
+*/
 Interval.prototype.getMiddle = function() {
   return(this.x + this.y) * 0.5;
 };
 
+/**
+* @todo write docs
+*/
 Interval.prototype.getSign = function() {
   if(this.x == this.y) return 0;
   return this.getAmplitude() / this.getSignedAmplitude();
 };
 
 /**
- * Scales a value to
+ * Scales a value
+ * @todo finish docs
  *
  * @return {Interval}
  */
@@ -79,6 +86,9 @@ Interval.prototype.getScaled = function(value) {
   return new Interval(middle - midAmp * value, middle + midAmp * value);
 };
 
+/**
+* @todo write docs
+*/
 Interval.prototype.getScaledFromProportion = function(value, proportion) {
   var antiP = 1 - proportion;
   var amp0 = proportion * (this.y - this.x);
@@ -87,10 +97,16 @@ Interval.prototype.getScaledFromProportion = function(value, proportion) {
   return new Interval(middle - amp0 * value, middle + amp1 * value);
 };
 
+/**
+* @todo write docs
+*/
 Interval.prototype.add = function(value) {
   return new Interval(this.x + value, this.y + value);
 };
 
+/**
+* @todo write docs
+*/
 Interval.prototype.invert = function() {
   var swap = this.x;
   this.x = this.y;
@@ -109,10 +125,16 @@ Interval.prototype.getInterpolatedValue = function(value) {
   return value * Number(this.getSignedAmplitude()) + this.x;
 };
 
+/**
+* @todo write docs
+*/
 Interval.prototype.getInverseInterpolatedValue = function(value) {
   return(value - this.x) / this.getSignedAmplitude();
 };
 
+/**
+* @todo write docs
+*/
 Interval.prototype.getInterpolatedValues = function(numberList) {
   var newNumberList = [];
   var nElements = numberList.length;
@@ -121,6 +143,10 @@ Interval.prototype.getInterpolatedValues = function(numberList) {
   }
   return newNumberList;
 };
+
+/**
+* @todo write docs
+*/
 Interval.prototype.getInverseInterpolatedValues = function(numberList) {
   var newNumberList = [];
   var nElements = numberList.length;
@@ -130,6 +156,9 @@ Interval.prototype.getInverseInterpolatedValues = function(numberList) {
   return newNumberList;
 };
 
+/**
+* @todo write docs
+*/
 Interval.prototype.intersect = function(interval) {
   return new Interval(Math.max(this.x, interval.x), Math.min(this.y, interval.y));
 };
@@ -158,7 +187,7 @@ Interval.prototype.contains = function(value) {
 };
 
 /**
- * Indicate wether other interval contains the same values
+ * Indicates if provided interval contains the same values
  *
  * @param interval
  * @return {Boolean}
@@ -169,7 +198,7 @@ Interval.prototype.isEquivalent = function(interval) {
 };
 
 /**
- * create a new interval with the same proporties values
+ * creates a new interval with the same proporties values
  * @return {String}
  *
  */

@@ -19,6 +19,9 @@ function PolygonList() {
 }
 export default PolygonList;
 
+/**
+ * @todo write docs
+ */
 PolygonList.fromArray = function(array) {
   var result = Table.fromArray(array);
   result.type = "PolygonList";
@@ -30,6 +33,9 @@ PolygonList.fromArray = function(array) {
   return result;
 };
 
+/**
+ * @todo write docs
+ */
 PolygonList.prototype.getFrame = function() {
   if(this.length == 0) return null;
   var frameP = this[0].getFrame();
@@ -47,6 +53,9 @@ PolygonList.prototype.getFrame = function() {
   return rectangle;
 };
 
+/**
+ * @todo write docs
+ */
 PolygonList.prototype.add = function(object) {
   var type = typeOf(object);
   var i;
@@ -62,6 +71,9 @@ PolygonList.prototype.add = function(object) {
   }
 };
 
+/**
+ * @todo write docs
+ */
 PolygonList.prototype.factor = function(value) {
   var newPolygonList = new PolygonList();
   for(var i = 0; this[i] != null; i++) {
@@ -71,6 +83,9 @@ PolygonList.prototype.factor = function(value) {
   return newPolygonList;
 };
 
+/**
+ * @todo write docs
+ */
 PolygonList.prototype.clone = function() {
   var newPolygonList = new PolygonList();
   for(var i = 0; this[i] != null; i++) {

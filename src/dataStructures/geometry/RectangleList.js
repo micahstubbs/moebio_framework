@@ -16,6 +16,9 @@ function RectangleList() {
 }
 export default RectangleList;
 
+/**
+ * @todo write docs
+ */
 RectangleList.fromArray = function(array) {
   var result = List.fromArray(array);
   result.type = "RectangleList";
@@ -29,8 +32,10 @@ RectangleList.fromArray = function(array) {
   return result;
 };
 
-//TODO:finish RectangleList methods
 
+/**
+ * @todo write docs
+ */
 RectangleList.prototype.getFrame = function() {//TODO: use RectangleOperators.minRect
   if(this.length == 0) return null;
 
@@ -51,16 +56,31 @@ RectangleList.prototype.getFrame = function() {//TODO: use RectangleOperators.mi
   return frame;
 };
 
+// TODO:finish RectangleList methods
+
+/**
+ * @ignore
+ */
 RectangleList.prototype.add = function() {
 
 };
 
+/**
+ * @ignore
+ */
 RectangleList.prototype.factor = function() {
 
 };
 
+
+/**
+ * @ignore
+ */
 RectangleList.prototype.getAddedArea = function() {};
 
+/**
+ * @todo write docs
+ */
 RectangleList.prototype.getIntersectionArea = function() {
   var rect0;
   var rect1;

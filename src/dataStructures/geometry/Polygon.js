@@ -22,6 +22,9 @@ function Polygon() {
 }
 export default Polygon;
 
+/**
+* @todo write docs
+*/
 Polygon.fromArray = function(array) {
   var result = List.fromArray(array);
   result.type = "Polygon";
@@ -43,6 +46,9 @@ Polygon.fromArray = function(array) {
 };
 
 
+/**
+* @todo write docs
+*/
 Polygon.prototype.getFrame = function() {
   if(this.length == 0) return null;
   var rectangle = new Rectangle(this[0].x, this[0].y, this[0].x, this[0].y);
@@ -61,6 +67,9 @@ Polygon.prototype.getFrame = function() {
   return rectangle;
 };
 
+/**
+* @todo write docs
+*/
 Polygon.prototype.getBarycenter = function(countLastPoint) {
   var i;
   countLastPoint = countLastPoint == null ? true : countLastPoint;
@@ -76,6 +85,9 @@ Polygon.prototype.getBarycenter = function(countLastPoint) {
   return barycenter;
 };
 
+/**
+* @todo write docs
+*/
 Polygon.prototype.add = function(object) {
   var type = typeOf(object);
   var i;
@@ -120,6 +132,9 @@ Polygon.prototype.factor = function(value) {
 };
 
 
+/**
+* @todo write docs
+*/
 Polygon.prototype.getRotated = function(angle, center) {
   center = center == null ? new Point() : center;
 
@@ -131,6 +146,9 @@ Polygon.prototype.getRotated = function(angle, center) {
   return newPolygon;
 };
 
+/**
+ * @todo write docs
+ */
 Polygon.prototype.getClosestPoint = function(point) {
   var closest = this[0];
   var d2Min = Math.pow(point.x - closest.x, 2) + Math.pow(point.y - closest.y, 2);
@@ -146,6 +164,9 @@ Polygon.prototype.getClosestPoint = function(point) {
   return closest;
 };
 
+/**
+ * @todo write docs
+ */
 Polygon.prototype.toNumberList = function() {
   var numberList = new NumberList();
   var i;
@@ -157,8 +178,9 @@ Polygon.prototype.toNumberList = function() {
 };
 
 /**
- * Thanks http://jsfromhell.com/math/is-point-in-poly AND http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
- */
+* @todo write docs
+* Thanks http://jsfromhell.com/math/is-point-in-poly AND http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+*/
 Polygon.prototype.containsPoint = function(point) {
   var i;
   var j;
@@ -172,6 +194,9 @@ Polygon.prototype.containsPoint = function(point) {
 
 //transform
 
+/**
+ * @todo write docs
+ */
 Polygon.prototype.approach = function(destiny, speed) {
   speed = speed || 0.5;
   var antispeed = 1 - speed;
@@ -183,6 +208,9 @@ Polygon.prototype.approach = function(destiny, speed) {
 };
 
 
+/**
+ * @todo write docs
+ */
 Polygon.prototype.clone = function() {
   var newPolygon = new Polygon();
   for(var i = 0; this[i] != null; i++) {

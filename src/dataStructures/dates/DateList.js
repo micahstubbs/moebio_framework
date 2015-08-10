@@ -26,6 +26,9 @@ function DateList() {
 export default DateList;
 
 
+/**
+* @todo write docs
+*/
 DateList.fromArray = function(array, forceToDate) {
   forceToDate = forceToDate == null ? true : forceToDate;
   var result = List.fromArray(array);
@@ -60,6 +63,9 @@ DateList.prototype.getTimes = function() {
 };
 
 
+/**
+* @todo write docs
+*/
 DateList.prototype.toStringList = function() {
   var stringList = new StringList();
   for(var i = 0; this[i] != null; i++) {
@@ -68,6 +74,9 @@ DateList.prototype.toStringList = function() {
   return stringList;
 };
 
+/**
+* @todo write docs
+*/
 DateList.prototype.getMin = function() {
   if(this.length === 0) return null;
   var min = this[0];
@@ -78,6 +87,9 @@ DateList.prototype.getMin = function() {
   return min;
 };
 
+/**
+* @todo write docs
+*/
 DateList.prototype.getMax = function() {
   if(this.length === 0) return null;
   var max = this[0];

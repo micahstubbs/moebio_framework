@@ -46,6 +46,9 @@ function Country(id, name) {
 }
 export default Country;
 
+/**
+* @todo write docs
+*/
 Country.prototype.generatesSimplifiedNames = function() {
   this._simplifiedNames = CountryOperators.getSimplifiedNames(this.alternativeNames);
   this._simplifiedId = CountryOperators.getSimplifiedName(this.id);
@@ -56,6 +59,9 @@ Country.prototype.generatesSimplifiedNames = function() {
     .replace('United Arab', 'U.A.');
 };
 
+/**
+* @todo write docs
+*/
 Country.prototype.nameMatches = function(name) {
   if(this._simplifiedId == null) this.generatesSimplifiedNames();
   name = CountryOperators.getSimplifiedName(name);
@@ -63,6 +69,9 @@ Country.prototype.nameMatches = function(name) {
   return this._simplifiedNames.indexOf(name) != -1;
 };
 
+/**
+* @todo write docs
+*/
 Country.prototype.getFrame = function() {
   if(this._frame == null) {
     this._frame = this.simplePolygonList == null ? this.polygonList.getFrame() : this.simplePolygonList.getFrame();

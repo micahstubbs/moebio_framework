@@ -18,6 +18,9 @@ function Polygon3D() {
 }
 export default Polygon3D;
 
+/**
+ * @todo write docs
+ */
 Polygon3D.fromArray = function(array) {
   var result = List.fromArray(array);
   result.type = "Polygon3D";

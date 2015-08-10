@@ -74,7 +74,7 @@ Engine3D.prototype.applyRotation = function(planeVector) {
   this._provisionalBase[0] = this._basis[0].clone();
   this._provisionalBase[1] = this._basis[1].clone();
   this._provisionalBase[2] = this._basis[2].clone();
-}
+};
 
 /**
  * projectPoint3D - Use the current rotation of the scene and the viewpoint
@@ -85,23 +85,35 @@ Engine3D.prototype.applyRotation = function(planeVector) {
 Engine3D.prototype.projectPoint3D = function(point3D) {
   var prescale = this.lens / (this.lens + (this._basis[0].z * point3D.x + this._basis[1].z * point3D.y + this._basis[2].z * point3D.z));
   return new Point3D((this._basis[0].x * point3D.x + this._basis[1].x * point3D.y + this._basis[2].x * point3D.z) * prescale, (this._basis[0].y * point3D.x + this._basis[1].y * point3D.y + this._basis[2].y * point3D.z) * prescale, prescale);
-}
+};
 
+/**
+* @todo write docs
+*/
 Engine3D.prototype.projectCoordinates = function(x, y, z) {
   var prescale = this.lens / (this.lens + (this._basis[0].z * x + this._basis[1].z * y + this._basis[2].z * z));
   return new Point3D((this._basis[0].x * x + this._basis[1].x * y + this._basis[2].x * z) * prescale, (this._basis[0].y * x + this._basis[1].y * y + this._basis[2].y * z) * prescale, prescale);
-}
+};
 
+/**
+* @todo write docs
+*/
 Engine3D.prototype.projectPoint3DNode = function(node) {
   var prescale = this.lens / (this.lens + (this._basis[0].z * node.x + this._basis[1].z * node.y + this._basis[2].z * node.z));
   return new Point3D((this._basis[0].x * node.x + this._basis[1].x * node.y + this._basis[2].x * node.z) * prescale, (this._basis[0].y * node.x + this._basis[1].y * node.y + this._basis[2].y * node.z) * prescale, prescale);
 }
 
+/**
+* @todo write docs
+*/
 Engine3D.prototype.scale = function(point3D) {
   return this.lens / (this.lens + (this._basis[0].z * point3D.x + this._basis[1].z * point3D.y + this._basis[2].z * point3D.z));
 }
 
 
+/**
+* @todo write docs
+*/
 Engine3D.prototype.sortedIndexesByPointsScale = function(polygon3D) {
   var pairsArray = new Array();
 
@@ -122,6 +134,9 @@ Engine3D.prototype.sortedIndexesByPointsScale = function(polygon3D) {
   return indexes;
 }
 
+/**
+* @todo write docs
+*/
 Engine3D.prototype.sortListByPointsScale = function(list, polygon3D) {
   var pairsArray = new Array();
 
@@ -143,6 +158,9 @@ Engine3D.prototype.sortListByPointsScale = function(list, polygon3D) {
   return newList;
 }
 
+/**
+* @todo write docs
+*/
 Engine3D.prototype._sortingCriteria = function(array0, array1, basis) {
   var point3D0 = array0[0];
   var point3D1 = array1[0];
@@ -152,10 +170,16 @@ Engine3D.prototype._sortingCriteria = function(array0, array1, basis) {
 
 //private methods
 
+/**
+* @ignore
+*/
 Engine3D.prototype.updateAngles = function() {
   this._angles = this.getEulerAngles();
 };
 
+/**
+* @ignore
+*/
 Engine3D.prototype.getEulerAngles = function() {
   return new Point3D(Math.atan2(-this._basis[1].z, this._basis[2].z), Math.asin(this._basis[0].z), Math.atan2(-this._basis[0].y, this._basis[0].x));
 };

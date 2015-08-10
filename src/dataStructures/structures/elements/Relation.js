@@ -30,6 +30,9 @@ function Relation(id, name, node0, node1, weight, content) {
 }
 export default Relation;
 
+/**
+ * @todo write docs
+ */
 Relation.prototype.destroy = function() {
   Node.prototype.destroy.call(this);
   delete this.node0;
@@ -47,6 +50,9 @@ Relation.prototype.getOther = function(node) {
   return node == this.node0 ? this.node1 : this.node0;
 };
 
+/**
+ * @todo write docs
+ */
 Relation.prototype.clone = function() {
   var relation = new Relation(this.id, this.name, this.node0, this.node1);
 
