@@ -113,10 +113,27 @@ Graphics.prototype._initialize = function() {
   this.canvas.addEventListener("mouseup", boundMouse, false);
   this.canvas.addEventListener("mouseenter", boundMouse, false);
   this.canvas.addEventListener("mouseleave", boundMouse, false);
+  this.canvas.addEventListener("click", boundMouse, false);
+
+  this.canvas.addEventListener("DOMMouseScroll", boundMouse, false);
+  this.canvas.addEventListener("mousewheel", boundMouse, false);
 
   // Setup resize listeners
   var boundResize = this._onResize.bind(this);
   this.container.addEventListener("resize", boundResize, false);
+
+  // Infrastructure for custom event handlers
+  this._listeners = {
+    "mousemove": [],
+    "mousedown": [],
+    "mouseup": [],
+    "mouseenter": [],
+    "mouseleave": [],
+    "mousewheel": [],
+    "click": [],
+    "keydown": [],
+    "keyup": []
+  };
 
   // Call the user provided init function.
   this.init();
@@ -173,6 +190,8 @@ Graphics.prototype._onMouse = function(e) {
       this.MOUSE_IN_DOCUMENT = false;
       break;
   }
+
+  this._emit(e.type, e);
 };
 
 Graphics.prototype._onResize = function(e) {
@@ -270,6 +289,37 @@ Graphics.prototype._onCycle = function() {
   this.nF++;
 };
 
+/*
+ * Emit events to registered listeners.
+ *
+ * This function also does any normalization/customization 
+ * to the standard DOM events that the graphics object provides.
+ */
+Graphics.prototype._emit = function(eventName, e) {
+  switch(eventName) {
+    case 'mousewheel':
+    case 'DOMMouseScroll':
+      if (!e) {
+        e = window.event; //IE // YY is this still a thing
+      }
+      if (e.wheelDelta) {
+        // YY do we actually want to keep this here or is the 
+        // main goal to send this information to the listener.
+        this.WHEEL_CHANGE = e.wheelDelta/120;
+      } else if (e.detail) { /** Mozilla case. */
+        this.WHEEL_CHANGE = -e.detail/3;
+      }
+      e.value = this.WHEEL_CHANGE;
+    break;
+  }
+
+  // Actually dispatch the event after any special handling
+  var listenersLength = this._listeners[eventName].length;
+  for(var i = 0; i < listenersLength; i++) {
+    this._listeners[eventName][i].call(undefined, e);
+  }
+};
+
 /*****************************
  * Public lifecycle functions
  ****************************/
@@ -295,7 +345,13 @@ Graphics.prototype.stop = function() {
 
 Graphics.prototype.on = function(eventName, callback) {
   // allow clients to subscribe to events on the canvas.
+  this._listeners[eventName].push(callback);
 };
+
+Graphics.prototype.off = function(eventName, callback) {
+  // TODO
+};
+
 /*****************************
  * Public drawing functions
  *****************************/
