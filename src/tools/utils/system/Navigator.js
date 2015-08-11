@@ -19,7 +19,7 @@ function detectUserAgent() {
     userAgent = Navigator.NS;
     userAgentVersion = Number(RegExp.$1); // capture x.x portion and store as a number
   }
-};
+}
 
 Navigator.getUserAgent = function() {
   return userAgent;

@@ -4,6 +4,7 @@ import NodeList from "src/dataStructures/structures/lists/NodeList";
 import Network from "src/dataStructures/structures/networks/Network";
 import StringListOperators from "src/operators/strings/StringListOperators";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
+import NumberOperators from "src/operators/numeric/NumberOperators";
 import StringList from "src/dataStructures/strings/StringList";
 import NetworkEncodings from "src/operators/structures/NetworkEncodings";
 
@@ -40,7 +41,7 @@ NetworkGenerators.createRandomNetwork = function(nNodes, pRelation, mode, random
     funcRandom = function(){
       seed++;
      return NumberOperators.getRandomWithSeed(seed);
-   }
+   };
   } else {
     funcRandom = Math.random;
   }

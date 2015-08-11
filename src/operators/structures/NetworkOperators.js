@@ -1157,7 +1157,7 @@ NetworkOperators.fusionNetworks = function(networks, hubsDistanceFactor, hubsFor
 NetworkOperators._jLouvain = function() {
   //Constants
   var __PASS_MAX = -1;
-  var __MIN    = 0.0000001
+  var __MIN    = 0.0000001;
 
   //Local vars
   var original_graph_nodes;
@@ -1172,7 +1172,7 @@ NetworkOperators._jLouvain = function() {
       set[d] = true;
     });
     return Object.keys(set);
-  };
+  }
 
   function obj_values(obj){
      var vals = [];
@@ -1182,7 +1182,7 @@ NetworkOperators._jLouvain = function() {
          }
      }
      return vals;
-  };
+  }
 
   function get_degree_for_node(graph, node){
     var neighbours = graph._assoc_mat[node] ? Object.keys(graph._assoc_mat[node]) : [];
@@ -1194,7 +1194,7 @@ NetworkOperators._jLouvain = function() {
       weight += value;
     });
     return weight;
-  };
+  }
 
   function get_neighbours_of_node(graph, node){
     if(typeof graph._assoc_mat[node] == 'undefined')

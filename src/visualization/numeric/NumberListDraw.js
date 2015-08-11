@@ -20,7 +20,7 @@ import Point from "src/dataStructures/geometry/Point";
 import ListOperators from "src/operators/lists/ListOperators";
 import StringList from "src/dataStructures/strings/StringList";
 
-function NumberListDraw() {};
+function NumberListDraw() {}
 export default NumberListDraw;
 
 /**
