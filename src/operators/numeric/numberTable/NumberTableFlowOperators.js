@@ -3,6 +3,12 @@ import NumberTable from "src/dataStructures/numeric/NumberTable";
 import Table from "src/dataStructures/lists/Table";
 import List from "src/dataStructures/lists/List";
 
+/**
+ * @classdesc NumberTable Flow Operators
+ *
+ * @namespace
+ * @category numbers
+ */
 function NumberTableFlowOperators() {}
 export default NumberTableFlowOperators;
 
@@ -103,6 +109,9 @@ NumberTableFlowOperators.getFlowTable = function(numberTable, normalized, includ
   return flowTable;
 };
 
+/**
+ * @todo finish docs
+ */
 NumberTableFlowOperators.getFlowTableIntervals = function(numberTable, normalized, sorted, stacked) {
   if(numberTable == null) return null;
 

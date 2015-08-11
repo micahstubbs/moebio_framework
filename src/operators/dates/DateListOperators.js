@@ -13,6 +13,9 @@ function DateListOperators() {}
 export default DateListOperators;
 
 
+/**
+ * @todo write docs
+ */
 DateListOperators.buildTimeTreeFromDates = function(dates) {
   if(dates == null) return;
 
@@ -160,24 +163,51 @@ DateListOperators.buildTimeTreeFromDates = function(dates) {
   return tree;
 };
 
+/**
+ * @ignore
+ */
 DateListOperators._y = function(date) {
   return date.getFullYear();
 };
+
+/**
+ * @ignore
+ */
 DateListOperators._m = function(date) {
   return date.getMonth();
 };
+
+/**
+ * @ignore
+ */
 DateListOperators._d = function(date) {
   return date.getDate() - 1;
 };
+
+/**
+ * @ignore
+ */
 DateListOperators._h = function(date) {
   return date.getHours();
 };
+
+/**
+ * @ignore
+ */
 DateListOperators._mn = function(date) {
   return date.getMinutes();
 };
+
+/**
+ * @ignore
+ */
 DateListOperators._s = function(date) {
   return date.getSeconds();
 };
+
+/**
+ * @ignore
+ */
 DateListOperators._ms = function(date) {
   return date.getMilliseconds();
 };

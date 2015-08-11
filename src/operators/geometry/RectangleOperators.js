@@ -44,7 +44,7 @@ RectangleOperators.minRect = function(){
   frame.height -= frame.y;
 
   return frame;
-}
+};
 
 /**
  *

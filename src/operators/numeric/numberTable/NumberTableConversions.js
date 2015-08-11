@@ -1,6 +1,12 @@
 import Polygon from "src/dataStructures/geometry/Polygon";
 import Point from "src/dataStructures/geometry/Point";
 
+/**
+ * @classdesc NumberTable Conversions
+ *
+ * @namespace
+ * @category numbers
+ */
 function NumberTableConversions() {}
 export default NumberTableConversions;
 

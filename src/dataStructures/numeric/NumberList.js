@@ -290,7 +290,7 @@ NumberList.prototype.getInterval = function() {
  * simplifies a categorical list, by keeping the nCategories-1 most common values, and replacing the others with an "other" element
  * this method reduces the number of different values contained in the list, converting it into a categorical list
  * @param  {Number} method simplification method:<b>0:significant digits<br>1:quantiles (value will be min value in percentile)<br>2:orders of magnitude
- * 
+ *
  * @param  {Number} param different meaning according to choosen method:<br>0:number of significant digits<br>1:number of quantiles<br>2:no need of param
  * @return {NumberList} simplified list
  * tags:
@@ -316,7 +316,7 @@ NumberList.prototype.getNumbersSimplified = function(method, param) {
   }
 
   return newList;
-}
+};
 
 
 /**
@@ -421,7 +421,7 @@ NumberList.prototype.getMedian = function() {
  *
  * @param {Number} nQuantiles number of quantiles (the size of the resulting list is nQuantiles-1)
  *
- * @param {Number} returnMode 
+ * @param {Number} returnMode
  * @return {NumberList} A number list of the quantiles.
  * tags:statistics
  */
@@ -701,7 +701,7 @@ NumberList.prototype.floor = function() {
     newNumberList.push(Math.floor(this[i]));
   }
   newNumberList.name = this.name;
-  
+
   return newNumberList;
 };
 

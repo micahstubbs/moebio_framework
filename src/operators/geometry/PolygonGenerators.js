@@ -10,6 +10,9 @@ import Polygon from "src/dataStructures/geometry/Polygon";
 function PolygonGenerators() {}
 export default PolygonGenerators;
 
+/**
+ * @todo write docs
+ */
 PolygonGenerators.createPolygon = function(nPoints, mode, frame) {
   var polygon = new Polygon();
 

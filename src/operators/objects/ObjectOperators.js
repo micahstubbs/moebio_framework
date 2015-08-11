@@ -11,6 +11,12 @@ import DateOperators from "src/operators/dates/DateOperators";
 import NumberList from "src/dataStructures/numeric/NumberList";
 import ObjectConversions from "src/operators/objects/ObjectConversions";
 
+/**
+ * @classdesc  Object Operators
+ *
+ * @namespace
+ * @category basics
+ */
 function ObjectOperators() {}
 export default ObjectOperators;
 

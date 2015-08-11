@@ -41,6 +41,9 @@ DrawTexts.PIXEL_TO_POINT = 0.75;
 // }
 
 
+/**
+ * @todo write docs
+ */
 DrawTexts.fillTextRectangle = function(text, x, y, width, height, lineHeight, returnHeight, ellipsis) {
   var textLines = DrawTexts.textWordWrapReturnLines(text, width, height, lineHeight, ellipsis);
   return DrawTexts.fillTextRectangleWithTextLines(textLines, x, y, height, lineHeight, returnHeight);
@@ -62,6 +65,9 @@ DrawTexts.fillTextRotated = function(text, x, y, angle) { //TODO: remove (replac
 };
 
 
+/**
+ * @todo write docs
+ */
 DrawTexts.fillTextRectangleWithTextLines = function(textLines, x, y, height, lineHeight, returnHeight) {
   height = height == 0 || height == null ? 99999 : height;
 
@@ -74,6 +80,9 @@ DrawTexts.fillTextRectangleWithTextLines = function(textLines, x, y, height, lin
 };
 
 
+/**
+ * @todo write docs
+ */
 DrawTexts.textWordWrapReturnLines = function(text, fitWidth, fitHeight, lineHeight, ellipsis) {
   fitWidth = fitWidth || 100;
   fitHeight = fitHeight || 600;
@@ -142,6 +151,10 @@ DrawTexts.textWordWrapReturnLines = function(text, fitWidth, fitHeight, lineHeig
 
   return lines;
 };
+
+/**
+ * @todo write docs
+ */
 DrawTexts.getMaxTextWidth = function(texts) {
   var max = getTextW(texts[0]);
   for(var i = 1; texts[i] != null; i++) {
@@ -151,6 +164,9 @@ DrawTexts.getMaxTextWidth = function(texts) {
 };
 
 
+/**
+ * @todo write docs
+ */
 DrawTexts.cropString = function(ctx, string, fitWidth) {
   if(string == null) return;
   fitWidth = fitWidth || 0;

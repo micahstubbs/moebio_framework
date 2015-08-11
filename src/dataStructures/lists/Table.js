@@ -260,7 +260,7 @@ Table.prototype.getSubTableByElementOnList = function(nList, element){
   });
 
   return newTable.getImproved();
-}
+};
 
 /**
  * filters lists on a table, keeping elements that are in the same of row of certain elements of a given list from the table
@@ -303,7 +303,7 @@ Table.prototype.getSubTableByElementsOnList = function(nList, list){
   });
 
   return newTable.getImproved();
-}
+};
 
 /**
  * Sort Table's lists by a list

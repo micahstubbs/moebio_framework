@@ -26,6 +26,9 @@ GeometryOperators.getSoftenControlPoints = function(point0, point1, point2, cont
   return [controlPoint0, controlPoint1];
 };
 
+/**
+ * @todo write docs
+ */
 GeometryOperators.bezierCurvePoints = function(x0, y0, c0x, c0y, c1x, c1y, x1, y1, t) {
   var s = 1 - t;
   var ax = s * x0 + t * c0x;
@@ -48,6 +51,9 @@ GeometryOperators.bezierCurvePoints = function(x0, y0, c0x, c0y, c1x, c1y, x1, y
 
 
 
+/**
+ * @todo write docs
+ */
 GeometryOperators.trueBezierCurveHeightHorizontalControlPoints = function(x0, x1, y0, y1, c0x, c1x, x) {
   var dx = x1 - x0;
   var x = (x - x0) / dx;
@@ -74,6 +80,7 @@ GeometryOperators.trueBezierCurveHeightHorizontalControlPoints = function(x0, x1
 
 
 /**
+ * @todo write docs
  * This an approximation, it doesn't take into account actual values of c0x and c1x
  */
 GeometryOperators.bezierCurveHeightHorizontalControlPoints = function(y0, c0x, c1x, y1, t) { //TODO:fix
@@ -127,6 +134,9 @@ GeometryOperators.distanceToBezierCurve = function(x0, y0, c0x, c0y, c1x, c1y, x
   return Math.sqrt(Math.min(d0, d1));
 };
 
+/**
+ * @todo write docs
+ */
 GeometryOperators.triangleContainsPoint = function(pT0, pT1, pT2, p) {
   var a = (pT0.x - p.x) * (pT1.y - p.y) - (pT1.x - p.x) * (pT0.y - p.y);
   var b = (pT1.x - p.x) * (pT2.y - p.y) - (pT2.x - p.x) * (pT1.y - p.y);
@@ -134,6 +144,9 @@ GeometryOperators.triangleContainsPoint = function(pT0, pT1, pT2, p) {
   return(a > 0 && b > 0 && c > 0) || (a >= 0 && b >= 0 && c >= 0);
 };
 
+/**
+ * @todo write docs
+ */
 GeometryOperators.triangleArea = function(triangle) {
   return Math.abs(triangle.a.x * (triangle.b.y - triangle.c.y) + triangle.b.x * (triangle.c.y - triangle.a.y) + triangle.c.x * (triangle.a.y - triangle.b.y)) / 2;
 };
@@ -141,12 +154,18 @@ GeometryOperators.triangleArea = function(triangle) {
 
 /////////////lines (line is a Point with values m and b in y=mx+b)
 
+/**
+ * @todo write docs
+ */
 GeometryOperators.lineFromTwoPoints = function(point0, point1) {
   if(point0.x == point1.x) return new Point(Infinity, point0.x);
   var m = (point1.y - point0.y) / (point1.x - point0.x);
   return new Point(m, point0.y - m * point0.x);
 };
 
+/**
+ * @todo write docs
+ */
 GeometryOperators.distancePointToLine = function(point, line) {
   var m2;
   var b2;
@@ -161,6 +180,9 @@ GeometryOperators.distancePointToLine = function(point, line) {
   return Math.sqrt(Math.pow(point.x - interPoint.x, 2) + Math.pow(point.y - interPoint.y, 2));
 };
 
+/**
+ * @todo write docs
+ */
 GeometryOperators.distancePointToSegment = function(point, point0Segment, point1Segment) {
   var m = point0Segment.x == point1Segment.x ? Infinity : (point1Segment.y - point0Segment.y) / (point1Segment.x - point0Segment.x);
   var line = m == Infinity ? new Point(Infinity, point0Segment.x) : new Point(m, point0Segment.y - m * point0Segment.x);
@@ -178,6 +200,9 @@ GeometryOperators.distancePointToSegment = function(point, point0Segment, point1
   return Math.min(point.distanceToPoint(point0Segment), point.distanceToPoint(point1Segment));
 };
 
+/**
+ * @todo write docs
+ */
 GeometryOperators.intersectionLines = function(line0, line1) {
   if(line0.x == line1.x) {
     if(line0.y == line1.y) {
@@ -200,6 +225,9 @@ GeometryOperators.intersectionLines = function(line0, line1) {
 };
 
 
+/**
+ * @todo write docs
+ */
 GeometryOperators.VennCircles = function(area0, area1, areaIntersection, centerInLens, precision) {
   var rA = Math.sqrt(area0 / Math.PI);
   var rB = Math.sqrt(area1 / Math.PI);
@@ -259,6 +287,9 @@ GeometryOperators.circleDistancesFromCommonArea = function(r0, r1, commonArea, p
   return dM;
 };
 
+/**
+ * @todo write docs
+ */
 GeometryOperators.circlesCommonArea = function(ra, rb, d) {
   if(d >= (ra + rb)) return 0;
   if(d + Math.min(ra, rb) <= Math.max(ra, rb)) {
@@ -305,11 +336,17 @@ GeometryOperators.circlesLensAngles = function(circle0, circle1) {
 
 //////Delauney
 
+/**
+ * @todo write docs
+ */
 GeometryOperators.delauney = function(polygon) { /// ---> move to Polygon operators, chnge name to getDelauneyTriangulation
   return _triangulate(polygon);
 };
 
 
+/**
+ * @todo write docs
+ */
 function Triangle(a, b, c) {
   this.a = a;
   this.b = b;
@@ -347,10 +384,16 @@ function Triangle(a, b, c) {
 }
 
 
+/**
+ * @ignore
+ */
 function byX(a, b) {
   return b.x - a.x;
 }
 
+/**
+ * @ignore
+ */
 function dedup(edges) {
   var j = edges.length,
     a, b, i, m, n;
@@ -372,6 +415,9 @@ function dedup(edges) {
   }
 }
 
+/**
+ * @ignore
+ */
 function _triangulate(vertices) {
   /* Bail if there aren't enough vertices to form any triangles. */
   if(vertices.length < 3)

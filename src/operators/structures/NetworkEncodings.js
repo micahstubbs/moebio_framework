@@ -440,9 +440,6 @@ NetworkEncodings._simplifyForNoteWork = function(name) {
 /**
  * _regexWordForNoteWork
  *
- * @param word
- * @param global
- * @return {undefined}
  * @ignore
  */
 NetworkEncodings._regexWordForNoteWork = function(word, global) {
@@ -776,7 +773,6 @@ NetworkEncodings.decodeGML = function(gmlCode) {
 /**
  * _cleanLineBeginning
  *
- * @param string
  * @ignore
  */
 NetworkEncodings._cleanLineBeginning = function(string) {
@@ -1097,8 +1093,6 @@ function _processProperty(propName, propValue) { //TODO: use this in other encod
 /**
  * replaceChomasInLine
  *
- * @param line
- * @return {undefined}
  * @ignore
  */
 NetworkEncodings.replaceChomasInLine = function(line, separator) {
@@ -1131,8 +1125,6 @@ NetworkEncodings.replaceChomasInLine = function(line, separator) {
 /**
  * _replaceSpacesInLine
  *
- * @param line
- * @return {undefined}
  * @ignore
  */
 NetworkEncodings._replaceSpacesInLine = function(line) {

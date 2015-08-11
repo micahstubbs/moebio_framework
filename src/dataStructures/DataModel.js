@@ -15,6 +15,9 @@ function DataModel() {
 }
 export default DataModel;
 
+/**
+ * @todo write docs
+ */
 DataModel.prototype.destroy = function() {
 	// TODO. Why is this being done? It is in a few
 	// places in the codebase. Also this.name isn't
@@ -23,14 +26,23 @@ DataModel.prototype.destroy = function() {
   delete this.name;
 };
 
+/**
+ * @todo write docs
+ */
 DataModel.prototype.setType = function(type) {
   this.type = type;
 };
 
+/**
+ * @todo write docs
+ */
 DataModel.prototype.getType = function() {
   return this.type;
 };
 
+/**
+ * @todo write docs
+ */
 DataModel.prototype.toString = function() {
 
 };

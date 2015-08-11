@@ -84,7 +84,7 @@ NetworkOperators.getNodesBetweenTwoNodes = function(network, node0, node1){
     if(node.id!=node0.id && node.id!=node1.id && node0.nodeList.getNodeById(node.id)!=null && node1.nodeList.getNodeById(node.id)!=null) nodeList.addNode(node);
   });
   return nodeList;
-}
+};
 
 /**
  * Returns a NodeList with the Nodes in the Network that are part of the
@@ -245,7 +245,7 @@ NetworkOperators.shortestPaths = function(network, node0, node1, shortPath, span
     });
 
     return newPaths;
-  }
+  };
 
   var toAdd;
 
@@ -341,7 +341,7 @@ NetworkOperators.getRelationsBetweenNodeLists = function(network, nodeList0, nod
   });
 
   return relations;
-}
+};
 
 
 /**
@@ -711,7 +711,7 @@ NetworkOperators.adjacentNodeList = function(network, nodeList, returnConcat, di
 
   return newNodeList;
 
-}
+};
 
 NetworkOperators.degreesPartition = function(network, node) {
   //TODO:optionally add a NodeList of not connected Nodes
@@ -1156,8 +1156,8 @@ NetworkOperators.fusionNetworks = function(networks, hubsDistanceFactor, hubsFor
  */
 NetworkOperators._jLouvain = function() {
   //Constants
-  var __PASS_MAX = -1
-  var __MIN    = 0.0000001
+  var __PASS_MAX = -1;
+  var __MIN    = 0.0000001;
 
   //Local vars
   var original_graph_nodes;
@@ -1172,7 +1172,7 @@ NetworkOperators._jLouvain = function() {
       set[d] = true;
     });
     return Object.keys(set);
-  };
+  }
 
   function obj_values(obj){
      var vals = [];
@@ -1182,7 +1182,7 @@ NetworkOperators._jLouvain = function() {
          }
      }
      return vals;
-  };
+  }
 
   function get_degree_for_node(graph, node){
     var neighbours = graph._assoc_mat[node] ? Object.keys(graph._assoc_mat[node]) : [];
@@ -1194,7 +1194,7 @@ NetworkOperators._jLouvain = function() {
       weight += value;
     });
     return weight;
-  };
+  }
 
   function get_neighbours_of_node(graph, node){
     if(typeof graph._assoc_mat[node] == 'undefined')
@@ -1385,7 +1385,7 @@ NetworkOperators._jLouvain = function() {
     while (modif && nb_pass_done != __PASS_MAX){
       cur_mod = new_mod;
       modif = false;
-      nb_pass_done += 1
+      nb_pass_done += 1;
 
       graph.nodes.forEach(function(node,i){
         var com_node = status.nodes_to_com[node];
@@ -1578,7 +1578,7 @@ NetworkOperators.addLouvainCommunityToNodes = function(network,bAddColors,prop) 
     }
     if(nColors==0 && tFreq[0].length > 0)
       nColors=tFreq[0].length;
-    var colors = ColorListGenerators.createCategoricalColors(2, nColors)
+    var colors = ColorListGenerators.createCategoricalColors(2, nColors);
     for(var i=0;i<network.nodeList.length;i++){
       var iGroupIndex = mGroupIndex['g'+network.nodeList[i].group];
       if(tFreq[1][iGroupIndex] == 1)

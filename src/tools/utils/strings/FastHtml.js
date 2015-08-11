@@ -5,11 +5,14 @@ import ColorOperators from "src/operators/graphic/ColorOperators";
  * @classdesc Fast Html
  *
  * @namespace
- * @category misc
+ * @category basics
  */
 function FastHtml() {}
 export default FastHtml;
 
+/**
+ * @todo write docs
+ */
 FastHtml.expand = function(abreviatedHTML, scope, onEvent) {
   if(abreviatedHTML == null || abreviatedHTML == "") return "";
 
@@ -123,14 +126,24 @@ FastHtml.expand = function(abreviatedHTML, scope, onEvent) {
   return newText;
 };
 
+/**
+ * @todo write docs
+ */
 FastHtml.clickLink = function(param) {
   FastHtml.linkFunction.call(FastHtml.target, param);
 };
 
+/**
+ * @todo write docs
+ */
 FastHtml.findAndPlaceLinks = function(text) {
   var newText = FastHtml._findAndPlaceLinksPrefix(text, "http");
   return FastHtml._findAndPlaceLinksPrefix(newText, "https");
 };
+
+/**
+ * @ignore
+ */
 FastHtml._findAndPlaceLinksPrefix = function(text, prefix) {
   var regexp = prefix == 'http' ? /http:\/\//g : /https:\/\//g;
   var blocks = text.split(regexp);
@@ -156,6 +169,9 @@ FastHtml._findAndPlaceLinksPrefix = function(text, prefix) {
   return(blocks.length == 0 || blocks.length == 1) ? text : blocks2.join('');
 };
 
+/**
+ * @todo write docs
+ */
 FastHtml.findAndPlaceTwitterAdresses = function(text) {
   var blocks = text.split(/@/g);
 
@@ -184,6 +200,9 @@ FastHtml.findAndPlaceTwitterAdresses = function(text) {
   return(blocks.length == 0 || blocks.length == 1) ? text : blocks2.join('');
 };
 
+/**
+ * @todo write docs
+ */
 FastHtml.getColorTag = function(color) {
   color = ColorOperators.colorStringToHEX(color);
   return "<font color=\"" + color + "\">";

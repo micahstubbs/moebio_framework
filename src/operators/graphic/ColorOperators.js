@@ -8,8 +8,6 @@ function ColorOperators() {}
 export default ColorOperators;
 // TODO: create Color struture to be used instead of arrays [255, 100,0] ?
 
-
-
 /**
  * return a color between color0 and color1
  * 0 -> color0
@@ -52,59 +50,82 @@ ColorOperators.HEXtoRGB = function(hexColor) {
 };
 
 
+/**
+ * Converts RGB values to a hexadecimal color string.
+ * @param {Number} red R value.
+ * @param {Number} green G value.
+ * @param {Number} blue B value.
+ * @return {String} hexadecimal representation of the colors.
+ */
 ColorOperators.RGBtoHEX = function(red, green, blue) {
   return "#" + ColorOperators.toHex(red) + ColorOperators.toHex(green) + ColorOperators.toHex(blue);
 };
 
+/**
+ * @todo write docs
+ */
 ColorOperators.RGBArrayToString = function(array) {
   return 'rgb(' + array[0] + ',' + array[1] + ',' + array[2] + ')';
 };
 
-
-
-
-
-
+/**
+ * @todo write docs
+ */
 ColorOperators.colorStringToHEX = function(color_string) {
   var rgb = ColorOperators.colorStringToRGB(color_string);
   return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
 };
 
 
+/**
+ * @todo write docs
+ */
 ColorOperators.numberToHex = function(number) {
   var hex = number.toString(16);
   while(hex.length < 2) hex = "0" + hex;
   return hex;
 };
 
-
+/**
+ * @todo write docs
+ */
 ColorOperators.uinttoRGB = function(color) {
   var rgbColor = new Array(color >> 16, (color >> 8) - ((color >> 16) << 8), color - ((color >> 8) << 8));
   return rgbColor;
 };
+
+/**
+ * @todo write docs
+ */
 ColorOperators.uinttoHEX = function(color) {
   var rgbColor = ColorOperators.uinttoRGB(color);
   var hexColor = ColorOperators.RGBToHEX(rgbColor[0], rgbColor[1], rgbColor[2]);
   return hexColor;
 };
 
-
+/**
+ * @todo write docs
+ */
 ColorOperators.RGBtouint = function(red, green, blue) {
   return Number(red) << 16 | Number(green) << 8 | Number(blue);
 };
 
+/**
+ * @todo write docs
+ */
 ColorOperators.HEXtouint = function(hexColor) {
   var colorArray = ColorOperators.HEXtoRGB(hexColor);
   var color = ColorOperators.RGBtouint(colorArray[0], colorArray[1], colorArray[2]);
   return color;
 };
 
+/**
+ * @todo write docs
+ */
 ColorOperators.grayByLevel = function(level) {
   level = Math.floor(level * 255);
   return 'rgb(' + level + ',' + level + ',' + level + ')';
 };
-
-
 
 /**
  * converts an hexadecimal color to HSV
@@ -118,17 +139,21 @@ ColorOperators.HEXtoHSV = function(hexColor) {
 };
 
 
+/**
+ * @todo write docs
+ */
 ColorOperators.HSVtoHEX = function(hue, saturation, value) {
   var rgb = ColorOperators.HSVtoRGB(hue, saturation, value);
   return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
 };
 
+/**
+ * @todo write docs
+ */
 ColorOperators.HSLtoHEX = function(hue, saturation, light) {
   var rgb = ColorOperators.HSLtoRGB(hue, saturation, light);
   return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
 };
-
-
 
 /**
  * converts an RGB color to HSV
@@ -257,11 +282,16 @@ ColorOperators.HSLtoRGB = function(hue, saturation, light) {
   return [Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255)];
 };
 
-
+/**
+ * @todo write docs
+ */
 ColorOperators.invertColorRGB = function(r, g, b) {
   return [255 - r, 255 - g, 255 - b];
 };
 
+/**
+ * @todo write docs
+ */
 ColorOperators.addAlpha = function(color, alpha) {
   //var rgb = color.substr(0,3)=='rgb'?ColorOperators.colorStringToRGB(color):ColorOperators.HEXtoRGB(color);
   var rgb = ColorOperators.colorStringToRGB(color);
@@ -269,21 +299,27 @@ ColorOperators.addAlpha = function(color, alpha) {
   return 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + alpha + ')';
 };
 
+/**
+ * @todo write docs
+ */
 ColorOperators.invertColor = function(color) {
   var rgb = ColorOperators.colorStringToRGB(color);
   rgb = ColorOperators.invertColorRGB(rgb[0], rgb[1], rgb[2]);
   return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
 };
 
-
-
+/**
+ * @todo write docs
+ */
 ColorOperators.toHex = function(number) {
   var hex = number.toString(16);
   while(hex.length < 2) hex = "0" + hex;
   return hex;
 };
 
-
+/**
+ * @todo write docs
+ */
 ColorOperators.getRandomColor = function() {
   return 'rgb(' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ')';
 };

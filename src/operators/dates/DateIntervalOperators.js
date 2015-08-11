@@ -1,1 +1,1 @@
-function DateIntervalOperators() {};
+function DateIntervalOperators() {}

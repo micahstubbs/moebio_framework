@@ -39,7 +39,7 @@ Engine3D.prototype.setBasis = function(point3D) {
   this._basis = point3D.clone();
   this._basisBase = point3D.clone();
   this._provisionalBase = point3D.clone();
-}
+};
 
 /**
  * setAngles - set viewing angle of camera on 3D scene.
@@ -53,7 +53,7 @@ Engine3D.prototype.setAngles = function(point3D) {
   this._angles = point3D.clone();
   this._freeRotation = false;
   this._basis = this.basis3DRotation(this._basisBase, this._angles);
-}
+};
 
 /**
  * applyRotation - Add rotation to existing 3D scene.
@@ -101,14 +101,14 @@ Engine3D.prototype.projectCoordinates = function(x, y, z) {
 Engine3D.prototype.projectPoint3DNode = function(node) {
   var prescale = this.lens / (this.lens + (this._basis[0].z * node.x + this._basis[1].z * node.y + this._basis[2].z * node.z));
   return new Point3D((this._basis[0].x * node.x + this._basis[1].x * node.y + this._basis[2].x * node.z) * prescale, (this._basis[0].y * node.x + this._basis[1].y * node.y + this._basis[2].y * node.z) * prescale, prescale);
-}
+};
 
 /**
 * @todo write docs
 */
 Engine3D.prototype.scale = function(point3D) {
   return this.lens / (this.lens + (this._basis[0].z * point3D.x + this._basis[1].z * point3D.y + this._basis[2].z * point3D.z));
-}
+};
 
 
 /**
@@ -132,7 +132,7 @@ Engine3D.prototype.sortedIndexesByPointsScale = function(polygon3D) {
   }
 
   return indexes;
-}
+};
 
 /**
 * @todo write docs
@@ -156,7 +156,7 @@ Engine3D.prototype.sortListByPointsScale = function(list, polygon3D) {
   }
 
   return newList;
-}
+};
 
 /**
 * @todo write docs
@@ -165,7 +165,7 @@ Engine3D.prototype._sortingCriteria = function(array0, array1, basis) {
   var point3D0 = array0[0];
   var point3D1 = array1[0];
   return(UTLITARY_GLOBAL_VAR[0].z * point3D0.x + UTLITARY_GLOBAL_VAR[1].z * point3D0.y + UTLITARY_GLOBAL_VAR[2].z * point3D0.z < UTLITARY_GLOBAL_VAR[0].z * point3D1.x + UTLITARY_GLOBAL_VAR[1].z * point3D1.y + UTLITARY_GLOBAL_VAR[2].z * point3D1.z) ? 1 : -1;
-}
+};
 
 
 //private methods

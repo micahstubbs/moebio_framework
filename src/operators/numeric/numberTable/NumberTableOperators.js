@@ -8,6 +8,12 @@ import Node from "src/dataStructures/structures/elements/Node";
 import Network from "src/dataStructures/structures/networks/Network";
 import { instantiateWithSameType } from "src/tools/utils/code/ClassUtils";
 
+/**
+ * @classdesc NumberTable Operators
+ *
+ * @namespace
+ * @category numbers
+ */
 function NumberTableOperators() {}
 export default NumberTableOperators;
 
@@ -32,6 +38,9 @@ NumberTableOperators.normalizeLists = function(numberTable) {//TODO: redundant w
   return numberTable.getNumberListsNormalized();
 };
 
+/**
+ * @todo finish docs
+ */
 NumberTableOperators.normalizeListsToMax = function(numberTable) {
   var newNumberTable = new NumberTable();
   newNumberTable.name = numberTable.name;
@@ -219,6 +228,9 @@ NumberTableOperators.kNN = function(numberTable, propertyList, vectorList, k, ca
 
 
 //TODO: move to NumberTableConversions
+/**
+ * @todo finish docs
+ */
 NumberTableOperators.numberTableToNetwork = function(numberTable, method, tolerance) {
   tolerance = tolerance == null ? 0 : tolerance;
 
@@ -315,7 +327,7 @@ NumberTableOperators.product = function(numberTable0, numberTable1){
   }
 
   return newTable;
-}
+};
 
 
 
@@ -328,9 +340,4 @@ NumberTableOperators.product = function(numberTable0, numberTable1){
 NumberTableOperators.getCovarianceMatrix = function(numberTable){//TODO:build more efficient method
   if(numberTable==null) return;
   return NumberTableOperators.product(numberTable, numberTable.getTransposed()).factor(1/numberTable.length);
-}
-
-
-
-
-
+};

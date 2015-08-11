@@ -7,6 +7,9 @@
 function StringUtils() {}
 export default StringUtils;
 
+/**
+ * @todo write docs
+ */
 StringUtils.stringtoXML = function(text) {
   if(window.ActiveXObject) {
     var doc = new ActiveXObject('Microsoft.XMLDOM');

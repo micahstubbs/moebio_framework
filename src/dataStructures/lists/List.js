@@ -553,7 +553,7 @@ List.prototype.getWithoutRepetitions = function() {
 /**
  * simplifies a categorical list, by keeping the nCategories-1 most common values, and replacing the others with an "other" element
  * @param  {Number} nCategories number of diferent elemenets in the resulting list
- * 
+ *
  * @param  {Object} othersElement to be placed instead of the less common elements ("other" by default)
  * @return {List} simplified list
  * tags:
@@ -573,7 +573,7 @@ List.prototype.getSimplified = function(nCategories, othersElement) {
   });
 
   return newList;
-}
+};
 
 
 
@@ -665,7 +665,7 @@ List.prototype.getFrequenciesTable = function(sortListsByOccurrences, addWeights
   if(sortListsByOccurrences){
     table[0] = elementList.getSortedByList(numberList, false);
     table[1] = numberList.getSorted(false);
-    
+
   }
 
   if(addWeightsNormalizedToSum) table[2] = table[1].getNormalizedToSum();
@@ -931,7 +931,7 @@ List.prototype.getSortedByProperty = function(propertyName, ascending) {
 List.prototype.getSorted = function(ascending) {
   return this.getSortedByList(this, ascending); //<--- because tests, antiintuitively, have proven this to be faster
 
-  // ascending = ascending == null ? true : ascending; 
+  // ascending = ascending == null ? true : ascending;
 
   // var comparator;
   // if(ascending) {
@@ -1502,7 +1502,7 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
         index++;
         if(index==sizeAccum){
           accumsum /= index;
-          maxAccumsum = Math.max(maxAccumsum, accumsum)
+          maxAccumsum = Math.max(maxAccumsum, accumsum);
           shorten.push(accumsum);
           accumsum=0;
           index=0;
@@ -1510,7 +1510,7 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
       });
       if(index!=0){
           accumsum /=index;
-          maxAccumsum = Math.max(maxAccumsum, accumsum)
+          maxAccumsum = Math.max(maxAccumsum, accumsum);
           shorten.push(accumsum);
       }
 
@@ -1541,7 +1541,7 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
       var catColors = ColorListGenerators.createCategoricalColors(2, freqTable[0].length);
 
       text += ident + "entropy: <b>" + NumberOperators.numberToString(ListOperators.getListEntropy(this, null, freqTable), 4) + "</b>";
-      
+
       text += ident + "number of different elements: <b>" + freqTable[0].length + "</b>";
       if(freqTable[0].length < 10) {
         text += ident + "elements frequency:";
@@ -1561,9 +1561,9 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
       }
 
       if(joined.length < 2000) text += ident + "contents: [" + joined + "]";
-      
+
       var weights = freqTable[1].getNormalizedToSum();
-      
+
       var bars = StringOperators.createsCategoricalColorsBlocksHtml(weights, 55, catColors);
       text += ident;
       text += "<font style=\"font-size:7px\">"+bars+"</f>";

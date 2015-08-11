@@ -98,6 +98,9 @@ NumberTable.prototype.getTableNormalizedToMax = function(factor) {
   return newTable;
 };
 
+/**
+ * @todo write docs
+ */
 NumberTable.prototype.getNumberListsNormalizedToMax = function(factorValue) {
   var newTable = new NumberTable();
   for(var i = 0; this[i] != null; i++) {
@@ -108,6 +111,9 @@ NumberTable.prototype.getNumberListsNormalizedToMax = function(factorValue) {
   return newTable;
 };
 
+/**
+ * @todo write docs
+ */
 NumberTable.prototype.getNumberListsNormalizedToSum = function() {
   var newTable = new NumberTable();
   for(var i = 0; this[i] != null; i++) {
@@ -119,6 +125,9 @@ NumberTable.prototype.getNumberListsNormalizedToSum = function() {
 };
 
 
+/**
+ * @todo write docs
+ */
 NumberTable.prototype.getMax = function() {
   if(this.length == 0) return null;
 
@@ -131,6 +140,9 @@ NumberTable.prototype.getMax = function() {
   return max;
 };
 
+/**
+ * @todo write docs
+ */
 NumberTable.prototype.getMin = function() {
   if(this.length == 0) return null;
 
@@ -143,6 +155,9 @@ NumberTable.prototype.getMin = function() {
   return min;
 };
 
+/**
+ * @todo write docs
+ */
 NumberTable.prototype.getMinMaxInterval = function() {
   if(this.length == 0) return null;
   var rangeInterval = (this[0]).getMinMaxInterval();
@@ -184,6 +199,9 @@ NumberTable.prototype.getRowsSums = function() {
   return sums;
 };
 
+/**
+ * @todo write docs
+ */
 NumberTable.prototype.getAverages = function() {
   var numberList = new NumberList();
   for(var i = 0; this[i] != null; i++) {
@@ -192,6 +210,9 @@ NumberTable.prototype.getAverages = function() {
   return numberList;
 };
 
+/**
+ * @todo write docs
+ */
 NumberTable.prototype.getRowsAverages = function() {
   var nLists = this.length;
   var averages = this[0].clone().factor(1 / nLists);
@@ -207,6 +228,9 @@ NumberTable.prototype.getRowsAverages = function() {
   return averages;
 };
 
+/**
+ * @todo write docs
+ */
 NumberTable.prototype.factor = function(value) {
   var newTable = new NumberTable();
   var i;
@@ -232,6 +256,9 @@ NumberTable.prototype.factor = function(value) {
   return newTable;
 };
 
+/**
+ * @todo write docs
+ */
 NumberTable.prototype.add = function(value) {
   var newTable = new NumberTable();
   var numberList;
@@ -247,6 +274,9 @@ NumberTable.prototype.add = function(value) {
 };
 
 
+/**
+ * @todo write docs
+ */
 NumberTable.prototype.getCovarianceMatrix = function(){
   var newTable = new NumberTable();
   var i;
@@ -254,5 +284,4 @@ NumberTable.prototype.getCovarianceMatrix = function(){
 
   }
 
-}
-
+};

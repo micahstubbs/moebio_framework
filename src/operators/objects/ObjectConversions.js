@@ -7,6 +7,12 @@ import TableEncodings from "src/operators/lists/TableEncodings";
 import DateList from "src/dataStructures/dates/DateList";
 import NetworkConvertions from "src/operators/structures/NetworkConvertions";
 
+/**
+ * @classdesc  Object Conversions
+ *
+ * @namespace
+ * @category basics
+ */
 function ObjectConversions() {}
 export default ObjectConversions;
 
@@ -103,4 +109,4 @@ ObjectConversions.conversor = function(object, toType) {
  */
 ObjectConversions.ArrayToList = function(array){
   return List.fromArray(object).getImproved();
-}
+};

@@ -11,7 +11,9 @@ import IntervalListOperators from "src/operators/numeric/interval/IntervalListOp
 function IntervalTableOperators() {}
 export default IntervalTableOperators;
 
-
+/**
+ * @todo write docs
+ */
 IntervalTableOperators.scaleIntervals = function(intervalTable, value) {
   var newIntervalTable = new Table();
   newIntervalTable.name = intervalTable.name;

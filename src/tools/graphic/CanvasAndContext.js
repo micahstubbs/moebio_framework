@@ -1,5 +1,13 @@
 import { cW, cH } from 'src/Global';
 
+// TODO: remove completely?
+
+/**
+ * @classdesc CanvasAndContext
+ *
+ * @namespace
+ * @category basics
+ */
 function CanvasAndContext() {}
 export default CanvasAndContext;
 

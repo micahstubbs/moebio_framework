@@ -14,6 +14,9 @@ import { context, TwoPi } from 'src/Global';
 function Draw() {}
 export default Draw;
 
+/**
+ * @todo write docs
+ */
 Draw.drawSmoothPolygon = function(polygon, closed, amount) { //TODO: add tx, ty
   amount = amount == null ? 30 : amount;
   var controlPoints;
@@ -141,7 +144,6 @@ Draw.fillRectangleWithImage = function(rectangle, image, mode, backColor) {
  * @param {Number} y The center y coordinate
  * @param {Number} rW The horizontal radius of the ellipse
  * @param {Number} rH The vertical radius of the ellipse
-
  */
 Draw.drawEllipse = function(x, y, rW, rH) {
   var k = 0.5522848, // 4 * ((√(2) - 1) / 3)
@@ -179,6 +181,9 @@ Draw.drawPolygon = function(polygon, close, tx, ty) {
   }
 };
 
+/**
+ * @todo write docs
+ */
 Draw.drawPolygonWithControlPoints = function(polygon, controlPoints, tx, ty) {
   tx = tx || 0;
   ty = ty || 0;
@@ -191,6 +196,9 @@ Draw.drawPolygonWithControlPoints = function(polygon, controlPoints, tx, ty) {
   }
 };
 
+/**
+ * @todo write docs
+ */
 Draw.drawBezierPolygon = function(bezierPolygon, tx, ty) {
   tx = tx || 0;
   ty = ty || 0;
@@ -209,6 +217,9 @@ Draw.drawBezierPolygon = function(bezierPolygon, tx, ty) {
   }
 };
 
+/**
+ * @todo write docs
+ */
 Draw.drawBezierPolygonTransformed = function(bezierPolygon, transformationFunction) {
   if(bezierPolygon == null ||  bezierPolygon.length == 0) return;
 
@@ -235,6 +246,9 @@ Draw.drawBezierPolygonTransformed = function(bezierPolygon, transformationFuncti
   }
 };
 
+/**
+ * @todo write docs
+ */
 Draw.drawPolygonTransformed = function(polygon, transformationFunction) {
   var p = transformationFunction(polygon[0]);
   context.moveTo(p.x, p.y);
@@ -245,6 +259,9 @@ Draw.drawPolygonTransformed = function(polygon, transformationFunction) {
 };
 
 
+/**
+ * @todo write docs
+ */
 Draw.drawSliderRectangle = function(x, y, width, height) {
   context.arc(x + width * 0.5, y, width * 0.5, Math.PI, TwoPi);
   context.lineTo(x + width, y);
@@ -280,6 +297,9 @@ Draw.drawRoundRect = function(x, y, width, height, radius) {
   context.quadraticCurveTo(x, y, x + radius, y);
 };
 
+/**
+ * @todo write docs
+ */
 Draw.drawEquilateralTriangle = function(x, y, radius, angle) { //deprecated
   angle = angle || 0;
   context.moveTo(radius * Math.cos(angle) + x, radius * Math.sin(angle) + y);
@@ -288,12 +308,18 @@ Draw.drawEquilateralTriangle = function(x, y, radius, angle) { //deprecated
   context.lineTo(radius * Math.cos(angle) + x, radius * Math.sin(angle) + y);
 };
 
+/**
+ * @todo write docs
+ */
 Draw.drawArrowTriangle = function(p0, p1, base) {
   var angle = p0.angleToPoint(p1);
   var height = p0.distanceToPoint(p1);
   Draw.drawTriangleFromBase(p0.x, p0.y, base, height, angle);
 };
 
+/**
+ * @todo write docs
+ */
 Draw.drawTriangleFromBase = function(x, y, base, height, angle) {
   context.moveTo(x + 0.5 * base * Math.cos(angle + Math.PI * 0.5), y + 0.5 * base * Math.sin(angle + Math.PI * 0.5));
   context.lineTo(x + 0.5 * base * Math.cos(angle - Math.PI * 0.5), y + 0.5 * base * Math.sin(angle - Math.PI * 0.5));
@@ -301,6 +327,9 @@ Draw.drawTriangleFromBase = function(x, y, base, height, angle) {
   context.lineTo(x + 0.5 * base * Math.cos(angle + Math.PI * 0.5), y + 0.5 * base * Math.sin(angle + Math.PI * 0.5));
 };
 
+/**
+ * @todo write docs
+ */
 Draw.drawHorizontalFlowPiece = function(x0, x1, y0U, y0D, y1U, y1D, offX) {
   context.moveTo(x0, y0U);
   context.bezierCurveTo(x0 + offX, y0U, x1 - offX, y1U, x1, y1U);
@@ -311,6 +340,9 @@ Draw.drawHorizontalFlowPiece = function(x0, x1, y0U, y0D, y1U, y1D, offX) {
 
 
 
+/**
+ * @todo write docs
+ */
 Draw.drawRectangles = function(rectangleList, x, y, colors, margin, bitmapDataList, bitmapDataDrawMode) {
   margin = margin || 0;
   var twoMargin = 2 * margin;
@@ -333,6 +365,9 @@ Draw.drawRectangles = function(rectangleList, x, y, colors, margin, bitmapDataLi
   }
 };
 
+/**
+ * @todo write docs
+ */
 Draw.drawQuadrilater = function(p0, p1, p2, p3, close) {
   close = close == null ? true : close;
   context.moveTo(p0.x, p0.y);
@@ -343,6 +378,7 @@ Draw.drawQuadrilater = function(p0, p1, p2, p3, close) {
 };
 
 /**
+ * @todo write docs
  * it assumes that both circles centers have same y coordinates
  */
 Draw.drawLens = function(circle0, circle1) {
