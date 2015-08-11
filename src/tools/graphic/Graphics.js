@@ -103,8 +103,15 @@ Graphics.prototype._initialize = function() {
       
   // Create the canvas and get it ready for drawing
   this.canvas = document.createElement("canvas");
+  
+  //Allow the canvas to be focusable to enable keydown and keyup
+  this.canvas.setAttribute("tabindex", "10000"); 
+  //Hide the focus styling
+  var canvasStyle = "outline: none; -webkit-tap-highlight-color: rgba(255, 255, 255, 0);";
+  this.canvas.setAttribute("style", canvasStyle);
+
   this.container.appendChild(this.canvas);
-  this.context = this.canvas.getContext('2d');
+  this.context = this.canvas.getContext("2d");
 
   this._adjustCanvas(this.dimensions);
 
@@ -120,6 +127,9 @@ Graphics.prototype._initialize = function() {
 
   this.canvas.addEventListener("DOMMouseScroll", boundMouse, false);
   this.canvas.addEventListener("mousewheel", boundMouse, false);
+
+  this.canvas.addEventListener("keydown", boundMouse, false);
+  this.canvas.addEventListener("keyup", boundMouse, false);
 
   // Setup resize listeners
   var boundResize = this._onResize.bind(this);
@@ -213,7 +223,7 @@ Graphics.prototype._adjustCanvas = function(dimensions) {
   } else {    
     // https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model/Determining_the_dimensions_of_elements
     this.cW = this.container.offsetWidth;
-    this.cH = this.container.offsetHeight;    
+    this.cH = this.container.offsetHeight;
   }
 
   this.cX = Math.floor(this.cW * 0.5);
@@ -717,7 +727,7 @@ Graphics.prototype.bezier = function(x0, y0, cx0, cy0, cx1, cy1, x1, y1) {
 /**
  * @ignore
  */
-function _lines() {
+Graphics.prototype._lines = function() {
   if(arguments == null) return;
 
   var args = arguments[0];
@@ -726,12 +736,12 @@ function _lines() {
   for(var i = 2; args[i + 1] != null; i += 2) {
     this.context.lineTo(args[i], args[i + 1]);
   }
-}
+};
 
 /**
  * @ignore
  */
-function _linesM() {
+Graphics.prototype._linesM = function() {
   if(arguments == null) return;
 
   var args = arguments[0];
@@ -744,7 +754,7 @@ function _linesM() {
     p.push(new Point(args[i], args[i + 1]));
   }
   return p.containsPoint(this.mP);
-}
+};
 
 /**
  * Draws a filled polygon using a series of
@@ -759,7 +769,7 @@ function _linesM() {
  *
  */
 Graphics.prototype.fLines = function() {
-  _lines(arguments);
+  this._lines(arguments);
   this.context.fill();
 };
 
@@ -776,7 +786,7 @@ Graphics.prototype.fLines = function() {
  *
  */
 Graphics.prototype.sLines = function() {
-  _lines(arguments);
+  this._lines(arguments);
   this.context.stroke();
 };
 
@@ -794,7 +804,7 @@ Graphics.prototype.sLines = function() {
  *
  */
 Graphics.prototype.fsLines = function() {
-  _lines(arguments);
+  this._lines(arguments);
   this.context.fill();
   this.context.stroke();
 };
@@ -818,7 +828,7 @@ Graphics.prototype.fsLines = function() {
  *
  */
 Graphics.prototype.fsLinesM = function() {
-  var mouseOn = _linesM(arguments);
+  var mouseOn = this._linesM(arguments);
   this.context.fill();
   this.context.stroke();
   return mouseOn;
@@ -1080,14 +1090,14 @@ Graphics.prototype.lineM = function(x0, y0, x1, y1, d) {
   this.context.moveTo(x0, y0);
   this.context.lineTo(x1, y1);
   this.context.stroke();
-  return _distToSegmentSquared(x0, y0, x1, y1) < d * d;
+  return this._distToSegmentSquared(x0, y0, x1, y1) < d * d;
 };
 
 
 /**
  * @ignore
  */
-function _distToSegmentSquared(x0, y0, x1, y1) {
+Graphics.prototype._distToSegmentSquared = function(x0, y0, x1, y1) {
   var l2 = Math.pow(x0 - x1, 2) + Math.pow(y0 - y1, 2);
   if(l2 === 0) return Math.pow(x0 - this.mX, 2) + Math.pow(y0 - this.mY, 2);
   var t = ((this.mX - x0) * (x1 - x0) + (this.mY - y0) * (y1 - y0)) / l2;
@@ -1096,7 +1106,7 @@ function _distToSegmentSquared(x0, y0, x1, y1) {
   var px = x0 + t * (x1 - x0);
   var py = y0 + t * (y1 - y0);
   return Math.pow(px - this.mX, 2) + Math.pow(py - this.mY, 2);
-}
+};
 
 //TODO:fEqTriangleM, fPolygonM
 
