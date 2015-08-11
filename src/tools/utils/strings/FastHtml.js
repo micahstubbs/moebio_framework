@@ -5,7 +5,7 @@ import ColorOperators from "src/operators/graphic/ColorOperators";
  * @classdesc Fast Html
  *
  * @namespace
- * @category basic
+ * @category basics
  */
 function FastHtml() {}
 export default FastHtml;

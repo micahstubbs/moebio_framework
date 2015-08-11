@@ -12,7 +12,7 @@ import ListGenerators from "src/operators/lists/ListGenerators";
  * @classdesc Table Operators
  *
  * @namespace
- * @category basic
+ * @category basics
  */
 function TableOperators() {}
 export default TableOperators;

@@ -13,15 +13,17 @@ function setCursor(name) {
 
 
 /**
- *Static class that:
+ *
+ * @module Global
+ *
+ * @classdesc Static class that:
  * -includes all the data models (by including the class IncludeDataModels.js)
  * -includes information about all those data models (on dataModelsInfo variable)
  * -includes class utils (that contains methods such as instantiate)
  * -contains the global variables (such as userAgent, canvas, nF, mX…), global
  * -contains the listener methods
  * -triggers de init, update and draw in Global class
- * @namespace
- * @category basics
+ *
  */
 export function Global(){}
 

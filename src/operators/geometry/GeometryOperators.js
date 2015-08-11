@@ -385,14 +385,14 @@ function Triangle(a, b, c) {
 
 
 /**
- * @todo write docs
+ * @ignore
  */
 function byX(a, b) {
   return b.x - a.x;
 }
 
 /**
- * @todo write docs
+ * @ignore
  */
 function dedup(edges) {
   var j = edges.length,
