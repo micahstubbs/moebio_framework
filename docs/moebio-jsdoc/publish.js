@@ -1,6 +1,7 @@
 /*global env: true */
 'use strict';
 
+/*globals require*/
 var doop = require('jsdoc/util/doop');
 var fs = require('jsdoc/fs');
 var helper = require('jsdoc/util/templateHelper');
@@ -316,23 +317,73 @@ function buildMemberNav(items, itemHeading, itemsSeen, linktoFn) {
         if (itemsNav !== '') {
             nav += '<h3>' + itemHeading + '</h3><ul>' + itemsNav + '</ul>';
         }
-    }
-
-    function getCategory(item) {
-        var category = '';
-        if (item && item.tags) {
-            item.tags.forEach(function(t) {
-                if (t.title === 'category') category = t.text;
-            });
-        }
-        if (category === '') {
-            console.log(item.id);
-        }
-        return category;
-    }
+      }
 
     return nav;
 }
+
+
+function buildCategoryNav(items, itemsSeen, linktoFn) {
+  var nav = '';
+
+  if (items.length) {
+    var itemsNav = '';
+    var curSection = '';
+
+    _.pairs(_.groupBy(items, getCategory))
+    .forEach(function(pair) {
+      var items = pair[1], category = pair[0];
+      nav += '<h3>' + _.capitalize(category) + '</h3>\n';
+      items.forEach(function(item) {
+        if(getSection(item) !== curSection) {
+          if(curSection !== '') {
+            nav += '</ul>';
+            nav += '</div>';
+          }
+
+          curSection = getSection(item);
+
+          nav += '<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>' + curSection + '</strong></div><ul>\n';
+        }
+        // itemsNav += '<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>' + category + '</strong></div><ul>';
+        if (!hasOwnProp.call(item, 'longname')) {
+          nav += '<li class="code">' + linktoFn('', item.name) + '</li>';
+        }
+        else if (!hasOwnProp.call(itemsSeen, item.longname)) {
+          nav += '<li class="code">' + linktoFn(item.longname, item.name
+            .replace(/^module:/, '')
+            .replace('turf.', '')) + '</li>';
+            itemsSeen[item.longname] = true;
+          }
+        });
+         nav += '</ul></div>';
+         curSection = '';
+      });
+
+      // if (itemsNav !== '') {
+      //   nav += '<h3>' + itemHeading + '</h3><ul>' + itemsNav + '</ul>';
+      // }
+        //  nav += '</ul></div>';
+    }
+    return nav;
+  }
+
+  function getSection(item) {
+    return item.section;
+  }
+
+  function getCategory(item) {
+    var category = '';
+    if (item && item.tags) {
+      item.tags.forEach(function(t) {
+        if (t.title === 'category') category = t.text;
+      });
+    }
+    if (category === '') {
+      console.log(item.id);
+    }
+    return category;
+  }
 
 function linktoTutorial(longName, name) {
     return tutoriallink(name);
@@ -340,6 +391,14 @@ function linktoTutorial(longName, name) {
 
 function linktoExternal(longName, name) {
     return linkto(longName, name.replace(/(^"|"$)/g, ''));
+}
+
+function addSection(funcs, section) {
+
+    _.forEach(funcs, function(f){
+      f.section = section;
+    });
+    return funcs;
 }
 
 /**
@@ -360,14 +419,18 @@ function buildNav(members) {
     var nav = '',
         seen = {};
 
+    var functions = [];
+    functions = functions.concat(addSection(members.classes, 'Classes'));
+    functions = functions.concat(addSection(members.namespaces, 'Namespaces'));
+    functions = functions.concat(addSection(members.events, 'Events'));
+    functions = functions.concat(addSection(members.mixins, 'Mixins'));
+    functions = functions.concat(addSection(members.tutorials, 'Tutorials'));
+    functions = functions.concat(addSection(members.interfaces, 'Interfaces'));
+
+
     nav += buildMemberNav(members.modules, '', {}, linkto);
-    nav += buildMemberNav(members.externals, 'Externals', seen, linktoExternal);
-    nav += buildMemberNav(members.classes, 'Classes', seen, linkto);
-    nav += buildMemberNav(members.events, 'Events', seen, linkto);
-    nav += buildMemberNav(members.namespaces, 'Namespaces', seen, linkto);
-    nav += buildMemberNav(members.mixins, 'Mixins', seen, linkto);
-    nav += buildMemberNav(members.tutorials, 'Tutorials', seen, linktoTutorial);
-    nav += buildMemberNav(members.interfaces, 'Interfaces', seen, linkto);
+
+    nav += buildCategoryNav(functions, seen, linkto);
 
     if (members.globals.length) {
         var globalNav = '';
@@ -379,7 +442,7 @@ function buildNav(members) {
             seen[g.longname] = true;
         });
 
-        nav += '<h3>' + 'Functions' + '</h3>'
+        nav += '<h3>' + 'Functions' + '</h3>';
 
         nav += '<ul>' + globalNav + '</ul></div>';
     }
