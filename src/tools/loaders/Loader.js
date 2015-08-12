@@ -20,7 +20,7 @@ Loader.PHPurl = "http://intuitionanalytics.com/tests/proxy.php?url=";
  * @param {callee} the Object containing the onLoadData function to be called
  * @para, {Object} optional parameter that will be stored in the LoadEvent instance
  */
-Loader.loadData = function(url, onLoadData, callee, param, send_object_json) {
+Loader.loadData = function(url, onLoadData, callee, param, send_object_json, withCredentials) {
   if(Loader.REPORT_LOADING) console.log('load data:', url);
   Loader.n_loading++;
 
@@ -95,6 +95,9 @@ Loader.loadData = function(url, onLoadData, callee, param, send_object_json) {
     }
   }
   if(req) {
+    if(withCredentials === true ){
+        req.withCredentials = true;
+    }
     req.onreadystatechange = onLoadComplete; //processReqChange;
     if(useProxy) {
       req.open("GET", Loader.proxy + url, true);
