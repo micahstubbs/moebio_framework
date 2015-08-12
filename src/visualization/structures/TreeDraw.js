@@ -95,7 +95,7 @@ TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin) {
  * @return {Node} selected node
  * tags:draw
  */
-TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, externalSelectedNode) {
+TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, externalSelectedNode, graphics) {  
   var change = frame.memory == null || frame.memory.tree != tree || frame.memory.width != frame.width || frame.memory.height != frame.height || frame.memory.weights != weights;
 
   if(externalSelectedNode != null) externalSelectedNode = tree.nodeList.getNodeById(externalSelectedNode.id);
@@ -112,7 +112,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
       height: frame.height,
       weights: weights,
       nodeSelected: tree.nodeList[0],
-      nFLastChange: nF,
+      nFLastChange: graphics.nF,
       image: null
     };
 
@@ -129,7 +129,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
       });
       var assignTreemapWeight = function(node) {
         var i;
-        if(node.toNodeList.length == 0) {
+        if(node.toNodeList.length === 0) {
           return node._treeMapWeight;
         } else {
           node._treeMapWeight = 0;
@@ -154,14 +154,14 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
     frame.memory.ky = frame.height / frame.memory.focusFrame.height;
     frame.memory.my = -frame.memory.ky * frame.memory.focusFrame.y;
 
-    setText('black', 12);
+    graphics.setText('black', 12);
     tree.nodeList.forEach(function(node) {
-      node._textWidth = getTextW(node.name);
+      node._textWidth = graphics.getTextW(node.name);
     });
   }
 
   if(frame.memory.colorList != colorList || frame.memory.colorList == null) {
-    frame.memory.nFLastChange = nF;
+    frame.memory.nFLastChange = graphics.nF;
     frame.memory.image = null;
     frame.memory.actualColorList = colorList == null ? ColorListGenerators.createCategoricalColors(0, tree.nLevels, ColorScales.grayToOrange, 0.1) : colorList;
     frame.memory.nodesColorList = new ColorList();
@@ -178,7 +178,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
       });
       var assignColor = function(node) {
         var i;
-        if(node.toNodeList.length == 0) return;
+        if(node.toNodeList.length === 0) return;
 
         node._rgb = [0, 0, 0];
         for(i = 0; node.toNodeList[i] != null; i++) {
@@ -247,13 +247,13 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
   var rect;
   var overNode = null;
   var overI;
-  var mouseOnFrame = frame.containsPoint(mP);
-  var moving = nF - frame.memory.nFLastChange < 50 || Math.pow(frame.memory.kx - kxF, 2) + Math.pow(frame.memory.ky - kyF, 2) + Math.pow(frame.memory.mx - mxF, 2) + Math.pow(frame.memory.my - myF, 2) > 0.01;
+  var mouseOnFrame = frame.containsPoint(graphics.mP);
+  var moving = graphics.nF - frame.memory.nFLastChange < 50 || Math.pow(frame.memory.kx - kxF, 2) + Math.pow(frame.memory.ky - kyF, 2) + Math.pow(frame.memory.mx - mxF, 2) + Math.pow(frame.memory.my - myF, 2) > 0.01;
   var captureImage = !moving && frame.memory.image == null && !mouseOnFrame;
   var drawingImage = !moving && !mouseOnFrame && frame.memory.image != null &&  !captureImage && frame.memory.image.width > 0 && !changeSelection;
 
   if(drawingImage) {
-    drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+    graphics.drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
   } else {
     if(captureImage) {
       // TODO refactor this to not reassign context
@@ -272,11 +272,11 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
       // fRect(0, 0, frame.width, frame.height);
       // setText('black', 12);
     } else {
-      context.save();
-      clipRectangle(frame.x, frame.y, frame.width, frame.height);
+      graphics.context.save();
+      graphics.clipRectangle(frame.x, frame.y, frame.width, frame.height);
     }
 
-    setStroke('black', 0.2);
+    graphics.setStroke('black', 0.2);
 
     tree.nodeList.forEach(function(node, i) {
 
@@ -291,12 +291,12 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
           node._rgbF[0] = 0.95 * node._rgbF[0] + 0.05 * node._rgb[0];
           node._rgbF[1] = 0.95 * node._rgbF[1] + 0.05 * node._rgb[1];
           node._rgbF[2] = 0.95 * node._rgbF[2] + 0.05 * node._rgb[2];
-          setFill('rgb(' + Math.floor(node._rgbF[0]) + ',' + Math.floor(node._rgbF[1]) + ',' + Math.floor(node._rgbF[2]) + ')');
+          graphics.setFill('rgb(' + Math.floor(node._rgbF[0]) + ',' + Math.floor(node._rgbF[1]) + ',' + Math.floor(node._rgbF[2]) + ')');
         } else {
-          setFill(frame.memory.nodesColorList[i]);
+          graphics.setFill(frame.memory.nodesColorList[i]);
         }
 
-        if(fsRectM(x, y, Math.floor(rect.width), Math.floor(rect.height))) {
+        if(graphics.fsRectM(x, y, Math.floor(rect.width), Math.floor(rect.height))) {
           overNode = node;
           overI = i;
         }
@@ -311,12 +311,12 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
 
             if(exceedes) {
               //clipRectangle(x+margTextX, y+margTextY,rect.width-2*margTextX, textSize*2);
-              setText(textColor ? textColor : frame.memory.textsColorList[i], textSize * propTextSpace);
+              graphics.setText(textColor ? textColor : frame.memory.textsColorList[i], textSize * propTextSpace);
             } else {
-              setText(textColor ? textColor : frame.memory.textsColorList[i], textSize);
+              graphics.setText(textColor ? textColor : frame.memory.textsColorList[i], textSize);
             }
 
-            fText(node.name, x + margTextX, y + margTextY);
+            graphics.fText(node.name, x + margTextX, y + margTextY);
             //if(exceedes) context.restore();
           }
         }
@@ -337,42 +337,42 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
 
   if(mouseOnFrame) {
     if(overNode) {
-      setCursor('pointer');
+      graphics.setCursor('pointer');
 
       rect = new Rectangle(tx(overNode._outRectangle.x), ty(overNode._outRectangle.y), overNode._outRectangle.width * kx, overNode._outRectangle.height * ky);
       x = Math.round(frame.x + rect.x) + 0.5;
       y = Math.round(frame.y + rect.y) + 0.5;
-      setStroke(textColor ? textColor : frame.memory.textsColorList[overI], 2);
-      sRect(x, y, Math.floor(rect.width), Math.floor(rect.height));
+      graphics.setStroke(textColor ? textColor : frame.memory.textsColorList[overI], 2);
+      graphics.sRect(x, y, Math.floor(rect.width), Math.floor(rect.height));
 
-      if(MOUSE_UP_FAST) {
+      if(graphics.MOUSE_UP_FAST) {
         frame.memory.focusFrame = TreeDraw._expandRect(overNode._outRectangle);
         frame.memory.nodeSelected = overNode;
 
         frame.memory.image = null;
       }
     }
-    if(MOUSE_DOWN) {
-      frame.memory.prevMX = mX;
-      frame.memory.prevMY = mY;
+    if(graphics.MOUSE_DOWN) {
+      frame.memory.prevMX = graphics.mX;
+      frame.memory.prevMY = graphics.mY;
     }
-    if(MOUSE_PRESSED) {
+    if(graphics.MOUSE_PRESSED) {
       var scale = 5 * frame.memory.focusFrame.width / frame.width;
-      frame.memory.focusFrame.x -= (mX - frame.memory.prevMX) * scale;
-      frame.memory.focusFrame.y -= (mY - frame.memory.prevMY) * scale;
+      frame.memory.focusFrame.x -= (graphics.mX - frame.memory.prevMX) * scale;
+      frame.memory.focusFrame.y -= (graphics.mY - frame.memory.prevMY) * scale;
 
-      frame.memory.prevMX = mX;
-      frame.memory.prevMY = mY;
+      frame.memory.prevMX = graphics.mX;
+      frame.memory.prevMY = graphics.mY;
     }
-    if(WHEEL_CHANGE != 0) {
+    if(graphics.WHEEL_CHANGE !== 0) {
       var center = frame.memory.focusFrame.getCenter();
-      var zoom = 1 - 0.1 * WHEEL_CHANGE;
+      var zoom = 1 - 0.1 * graphics.WHEEL_CHANGE;
       frame.memory.focusFrame.x = center.x - frame.memory.focusFrame.width * 0.5 * zoom;
       frame.memory.focusFrame.y = center.y - frame.memory.focusFrame.height * 0.5 * zoom;
       frame.memory.focusFrame.width *= zoom;
       frame.memory.focusFrame.height *= zoom;
     }
-    if(MOUSE_PRESSED || WHEEL_CHANGE != 0) {
+    if(graphics.MOUSE_PRESSED || graphics.WHEEL_CHANGE !== 0) {
       frame.memory.image = null;
     }
   }
@@ -383,7 +383,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
     frame.memory.image = null;
   }
 
-  if(!captureImage && !drawingImage) context.restore();
+  if(!captureImage && !drawingImage) graphics.context.restore();
 
 
   return frame.memory.nodeSelected;

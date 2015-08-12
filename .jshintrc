@@ -9,7 +9,8 @@
     "describe": true,
     "it": true,
     "expect": true,
-    "console": false
+    "console": false,
+    "mo": false
   },
   "eqeqeq": false,
   "esnext": true,
