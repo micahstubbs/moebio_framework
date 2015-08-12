@@ -37,16 +37,17 @@ function Graphics(options) {
   }
   this.dimensions = options.dimensions;
   
-  function noOperation() {}
+  
 
   this.init = options.init || noOperation;
   this.cycle = options.cycle || noOperation;
-  this.onResize = options.onResize || Graphics.onResize;
+  this.onResize = options.onResize || noOperation;
   this._frameRate = options.frameRate === undefined ? 30 : options.frameRate;
 
   this._initialize();
 }
 export default Graphics;
+function noOperation() {}
 
 
 /*****************************
@@ -133,7 +134,7 @@ Graphics.prototype._initialize = function() {
 
   // Setup resize listeners
   var boundResize = this._onResize.bind(this);
-  this.container.addEventListener("resize", boundResize, false);
+  window.addEventListener("resize", boundResize, false);
 
   // Infrastructure for custom event handlers
   this._listeners = {
@@ -207,14 +208,36 @@ Graphics.prototype._onMouse = function(e) {
   this._emit(e.type, e);
 };
 
+//We may also want
+// to throttle this method
+// https://developer.mozilla.org/en-US/docs/Web/Events/resize
 Graphics.prototype._onResize = function(e) {
+  // If the user has set the dimensions explicitly
+  // we do not auto adjust the canvas.
   if(this.dimensions === undefined) {
     this._adjustCanvas();
   }
-  // Forward the event to the user defined resize handler
-  this.onResize(e);
+
+  if(this.onResize !== noOperation) {
+    var newDim = this._containerDimensions();
+    if(newDim.width !== this.cW || newDim.height !== this.cH) {    
+      console.log(newDim, this.cW, this.cH, newDim.width !== this.cW, newDim.height !== this.cH);
+      // Forward the event to the user defined resize handler  
+      this.onResize(e);  
+    }  
+  }
+  
  }; 
 
+
+Graphics.prototype._containerDimensions = function() {
+  // https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model/Determining_the_dimensions_of_elements
+  return {
+    width: this.container.scrollWidth,
+    height: this.container.scrollHeight
+  };
+  
+};
 
 Graphics.prototype._adjustCanvas = function(dimensions) {
   if(dimensions !== undefined) {    
@@ -222,8 +245,9 @@ Graphics.prototype._adjustCanvas = function(dimensions) {
     this.cH = dimensions.height;
   } else {    
     // https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model/Determining_the_dimensions_of_elements
-    this.cW = this.container.offsetWidth;
-    this.cH = this.container.offsetHeight;
+    var dim = this._containerDimensions();
+    this.cW = dim.width;
+    this.cH = dim.height;
   }
 
   this.cX = Math.floor(this.cW * 0.5);

@@ -214,6 +214,7 @@ function drawSimpleShapes() {
     }
   }
 
+
   var g = new mo.Graphics({
     container: "body",
     dimensions: {
@@ -227,9 +228,11 @@ function drawSimpleShapes() {
       drawText(this, 20, 300);
     }
   });
+  g.setBackgroundColor('Azure');
+  g.setAlphaRefresh(1);
 
   var g2 = new mo.Graphics({
-    container: "body",
+    container: "#container2",
     dimensions: {
       width: 600,
       height: 300
@@ -292,4 +295,7 @@ function drawSimpleShapes() {
 
 }
 
-drawSimpleShapes();
+window.onload = function() {
+  drawSimpleShapes();
+};
+
