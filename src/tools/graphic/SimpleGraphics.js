@@ -1,7 +1,8 @@
-import { context, TwoPi, mX, mY, mP, canvas } from 'src/Global';
+import { context, TwoPi, mX, mY, mP, canvas, HalfPi, cW, cH } from 'src/Global';
 import Polygon from 'src/dataStructures/geometry/Polygon';
 import Point from 'src/dataStructures/geometry/Point';
 import GeometryOperators from 'src/operators/geometry/GeometryOperators';
+import Rectangle from 'src/dataStructures/geometry/Rectangle';
 
 /**
  * @module SimpleGraphics
@@ -35,7 +36,7 @@ export function fRect(x, y, width, height) {
     x = x.x;
   }
   context.fillRect(x, y, width, height);
-};
+}
 
 /**
  * Draws a stroked Rectangle - showing just an outline.
@@ -58,7 +59,7 @@ export function sRect(x, y, width, height) {
     x = x.x;
   }
   context.strokeRect(x, y, width, height);
-};
+}
 
 /**
  * Draws a filled and stroked Rectangle.
@@ -84,7 +85,7 @@ export function fsRect(x, y, width, height) {
   }
   context.fillRect(x, y, width, height);
   context.strokeRect(x, y, width, height);
-};
+}
 
 /**
  * Draws a filled in Arc.
@@ -104,7 +105,7 @@ export function fArc(x, y, r, a0, a1, counterclockwise) {
   context.beginPath();
   context.arc(x, y, r, a0, a1, counterclockwise);
   context.fill();
-};
+}
 
 /**
  * Draws a stroked Arc.
@@ -124,7 +125,7 @@ export function sArc(x, y, r, a0, a1, counterclockwise) {
   context.beginPath();
   context.arc(x, y, r, a0, a1, counterclockwise);
   context.stroke();
-};
+}
 
 /**
  * Draws a filled in Circle.
@@ -142,7 +143,7 @@ export function fCircle(x, y, r) {
   context.beginPath();
   context.arc(x, y, r, 0, TwoPi);
   context.fill();
-};
+}
 
 /**
  * Draws a stroked Circle.
@@ -160,7 +161,7 @@ export function sCircle(x, y, r) {
   context.beginPath();
   context.arc(x, y, r, 0, TwoPi);
   context.stroke();
-};
+}
 
 /**
  * Draws a filled and stroked Circle.
@@ -178,7 +179,7 @@ export function sCircle(x, y, r) {
 export function fsCircle(x, y, r) {
   fCircle(x, y, r);
   context.stroke();
-};
+}
 
 /**
  * Draws a filled in Ellipse.
@@ -207,7 +208,7 @@ export function fEllipse(x, y, rW, rH) {
   context.moveTo(x - rW, y);
   context.closePath();
   context.fill();
-};
+}
 
 /**
  * Draws a stroked Ellipse.
@@ -236,7 +237,7 @@ export function sEllipse(x, y, rW, rH) {
   context.moveTo(x - rW, y);
   context.closePath();
   context.stroke();
-};
+}
 
 /**
  * Draws a filled and stroked Ellipse.
@@ -255,7 +256,7 @@ export function sEllipse(x, y, rW, rH) {
 export function fsEllipse(x, y, rW, rH) {
   fEllipse(x, y, rW, rH);
   context.stroke();
-};
+}
 
 
 /**
@@ -301,7 +302,7 @@ export function line(x0, y0, x1, y1) {
   context.moveTo(x0, y0);
   context.lineTo(x1, y1);
   context.stroke();
-};
+}
 
 /**
  * Draws a bezier curve using {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/bezierCurveTo|bezierCurveTo}
@@ -323,7 +324,7 @@ export function bezier(x0, y0, cx0, cy0, cx1, cy1, x1, y1) {
   context.moveTo(x0, y0);
   context.bezierCurveTo(cx0, cy0, cx1, cy1, x1, y1);
   context.stroke();
-};
+}
 
 
 /**
@@ -338,7 +339,7 @@ function _lines() {
   for(var i = 2; args[i + 1] != null; i += 2) {
     context.lineTo(args[i], args[i + 1]);
   }
-};
+}
 
 /**
  * @ignore
@@ -356,7 +357,7 @@ function _linesM() {
     p.push(new Point(args[i], args[i + 1]));
   }
   return p.containsPoint(mP);
-};
+}
 
 /**
  * Draws a filled polygon using a series of
@@ -373,7 +374,7 @@ function _linesM() {
 export function fLines() {
   _lines(arguments);
   context.fill();
-};
+}
 
 /**
  * Draws a set of line segments using a series of
@@ -390,7 +391,7 @@ export function fLines() {
 export function sLines() {
   _lines(arguments);
   context.stroke();
-};
+}
 
 /**
  * Draws a filled set of line segments using a series of
@@ -409,7 +410,7 @@ export function fsLines() {
   _lines(arguments);
   context.fill();
   context.stroke();
-};
+}
 
 /**
  * Draws a mouse-enabled filled set of line segments using a series of
@@ -434,7 +435,7 @@ export function fsLinesM() {
   context.fill();
   context.stroke();
   return mouseOn;
-};
+}
 
 /**
  * @ignore
@@ -445,41 +446,41 @@ function _polygon(polygon) {
   for(var i = 1; polygon[i] != null; i++) {
     context.lineTo(polygon[i].x, polygon[i].y);
   }
-};
+}
 
 export function fPolygon(polygon) {
   _polygon(polygon);
   context.fill();
-};
+}
 
 export function sPolygon(polygon, closePath) {
   _polygon(polygon);
   if(closePath) context.closePath();
   context.stroke();
-};
+}
 
 export function fsPolygon(polygon, closePath) {
   _polygon(polygon);
   if(closePath) context.closePath();
   context.fill();
   context.stroke();
-};
+}
 
 export function fEqTriangle(x, y, angle, r) {
   _eqTriangle(x, y, angle, r);
   context.fill();
-};
+}
 
 export function sEqTriangle(x, y, angle, r) {
   _eqTriangle(x, y, angle, r);
   context.stroke();
-};
+}
 
 export function fsEqTriangle(x, y, angle, r) {
   _eqTriangle(x, y, angle, r);
   context.fill();
   context.stroke();
-};
+}
 
 function _eqTriangle(x, y, angle, r) {
   context.beginPath();
@@ -488,7 +489,7 @@ function _eqTriangle(x, y, angle, r) {
   context.lineTo(r * Math.cos(angle + 2.0944) + x, r * Math.sin(angle + 2.0944) + y);
   context.lineTo(r * Math.cos(angle + 4.1888) + x, r * Math.sin(angle + 4.1888) + y);
   context.lineTo(r * Math.cos(angle) + x, r * Math.sin(angle) + y);
-};
+}
 
 
 //drawing and checking cursor
@@ -516,7 +517,7 @@ export function fRectM(x, y, width, height, margin) {
   margin = margin == null ? 0 : margin;
   context.fillRect(x, y, width, height);
   return mY > y - margin && mY < y + height + margin && mX > x - margin && mX < x + width + margin;
-};
+}
 
 /**
  * Draws a mouse-enabled stroked Rectangle.
@@ -541,7 +542,7 @@ export function sRectM(x, y, width, height, margin) {
   margin = margin == null ? 0 : margin;
   context.strokeRect(x, y, width, height);
   return mY > y - margin && mY < y + height + margin && mX > x - margin && mX < x + width + margin;
-};
+}
 
 /**
  * Draws a mouse-enabled filled and stroked Rectangle.
@@ -570,7 +571,7 @@ export function fsRectM(x, y, width, height, margin) {
   context.fillRect(x, y, width, height);
   context.strokeRect(x, y, width, height);
   return mY > y - margin && mY < y + height + margin && mX > x - margin && mX < x + width + margin;
-};
+}
 
 /**
  * Draws a mouse-enabled filled in Circle.
@@ -598,7 +599,7 @@ export function fCircleM(x, y, r, margin) { //check if you can avoid repeat
   context.arc(x, y, r, 0, TwoPi);
   context.fill();
   return Math.pow(x - mX, 2) + Math.pow(y - mY, 2) < Math.pow(r + margin, 2);
-};
+}
 
 /**
  * Draws a mouse-enabled stroked Circle.
@@ -626,7 +627,7 @@ export function sCircleM(x, y, r, margin) {
   context.arc(x, y, r, 0, TwoPi);
   context.stroke();
   return Math.pow(x - mX, 2) + Math.pow(y - mY, 2) < Math.pow(r + margin, 2);
-};
+}
 
 /**
  * Draws a mouse-enabled filled and stroked Circle.
@@ -658,7 +659,7 @@ export function fsCircleM(x, y, r, margin) {
   context.stroke();
   context.fill();
   return Math.pow(x - mX, 2) + Math.pow(y - mY, 2) < Math.pow(r + margin, 2);
-};
+}
 
 /**
  * Draws a mouse-enabled line from a start position to an end position.
@@ -685,7 +686,7 @@ export function lineM(x0, y0, x1, y1, d) {
   context.lineTo(x1, y1);
   context.stroke();
   return _distToSegmentSquared(x0, y0, x1, y1) < d * d;
-};
+}
 
 
 /**
@@ -700,7 +701,7 @@ function _distToSegmentSquared(x0, y0, x1, y1) {
   var px = x0 + t * (x1 - x0);
   var py = y0 + t * (y1 - y0);
   return Math.pow(px - mX, 2) + Math.pow(py - mY, 2);
-};
+}
 
 //TODO:fEqTriangleM, fPolygonM
 
@@ -736,7 +737,7 @@ export function bezierM(x0, y0, cx0, cy0, cx1, cy1, x1, y1, d) { //TODO: fix thi
   context.stroke();
   if(mX < Math.min(x0, x1, cx0, cx1) - d || mX > Math.max(x0, x1, cx0, cx1) + d || mY < Math.min(y0, y1, cy0, cy1) - d || mY > Math.max(y0, y1, cy0, cy1) + d) return false;
   return GeometryOperators.distanceToBezierCurve(x0, y0, cx0, cy0, cx1, cy1, x1, y1, mP, false) < d;
-};
+}
 
 
 //images
@@ -763,7 +764,7 @@ export function drawImage(image) { //TODO: improve efficiency
       break;
 
   }
-};
+}
 
 /**
  * fits an image into a rectangle without chagning its proportions (thus probably loosing top-bottom or left-right margins)
@@ -782,10 +783,13 @@ export function fitImage(image, rectangle) {
   } else {
     context.drawImage(image, 0, 0.5 * (image.height - image.height * compProp), image.width, image.height * compProp, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
   }
-};
+}
 
 // styles
 
+/**
+ * @todo write docs
+ */
 export function setFill(style) {
   if(typeof style == "number") {
     if(arguments.length > 3) {
@@ -796,7 +800,7 @@ export function setFill(style) {
     return;
   }
   context.fillStyle = style;
-};
+}
 
 /**
  * setStroke - set stroke to draw with in canvas
@@ -821,23 +825,32 @@ export function setStroke(style, lineWidth) {
   context.strokeStyle = style;
   //TODO: will lineWidth still work if RGB or RGBA is used?
   if(lineWidth) context.lineWidth = lineWidth;
-};
+}
 
+/**
+ * @todo write docs
+ */
 export function setLW(lineWidth) {
   context.lineWidth = lineWidth;
-};
+}
 
 
 //clipping
 
+/**
+ * @todo write docs
+ */
 export function clipCircle(x, y, r) {
   context.save();
   context.beginPath();
   context.arc(x, y, r, 0, TwoPi, false);
   context.closePath();
   context.clip();
-};
+}
 
+/**
+ * @todo write docs
+ */
 export function clipRectangle(x, y, w, h) {
   context.save();
   context.beginPath();
@@ -846,19 +859,28 @@ export function clipRectangle(x, y, w, h) {
   context.lineTo(x + w, y + h);
   context.lineTo(x, y + h);
   context.clip();
-};
+}
 
+/**
+ * @todo write docs
+ */
 export function save() {
   context.save();
-};
+}
 
+/**
+ * @todo write docs
+ */
 export function clip() {
   context.clip();
-};
+}
 
+/**
+ * @todo write docs
+ */
 export function restore() {
   context.restore();
-};
+}
 
 
 // texts
@@ -879,7 +901,7 @@ export function restore() {
  */
 export function fText(text, x, y) {
   context.fillText(text, x, y);
-};
+}
 
 /**
  * Draws stroked text.
@@ -898,7 +920,7 @@ export function fText(text, x, y) {
  */
 export function sText(text, x, y) {
   context.strokeText(text, x, y);
-};
+}
 
 /**
  * Draws stroked and filled in text.
@@ -919,7 +941,7 @@ export function sText(text, x, y) {
 export function fsText(text, x, y) {
   context.strokeText(text, x, y);
   context.fillText(text, x, y);
-};
+}
 
 /**
  * Draws filled in text, rotated by some angle.
@@ -942,7 +964,7 @@ export function fTextRotated(text, x, y, angle) {
   context.rotate(angle);
   context.fillText(text, 0, 0);
   context.restore();
-};
+}
 
 /**
  * Draws filled in text in an arc.
@@ -1005,7 +1027,7 @@ export function fTextM(text, x, y, size) {
   size = size || 12;
   context.fillText(text, x, y);
   return mY > y && mY < y + size && mX > x && mX < x + context.measureText(text).width;
-};
+}
 
 /**
  * Draws a mouse-enabled filled and stroked text.
@@ -1036,7 +1058,7 @@ export function fsTextM(text, x, y, size) {
   context.strokeText(text, x, y);
   context.fillText(text, x, y);
   return mY > y && mY < y + size && mX > x && mX < x + context.measureText(text).width;
-};
+}
 
 /**
  * Draws a mouse-enabled filled text rotated by some angle.
@@ -1077,12 +1099,12 @@ export function fTextRotatedM(text, x, y, angle, size) {
   var mYT = y + d * Math.sin(a);
 
   return mYT > y && mYT < y + size && mXT > x && mXT < x + context.measureText(text).width;
-};
+}
 
 export function fTextW(text, x, y) {
   context.fillText(text, x, y);
   return context.measureText(text).width;
-};
+}
 
 /**
  * Sets several text canvas rendering properties
@@ -1111,34 +1133,49 @@ export function setText(color, fontSize, fontName, align, baseline, style) {
   context.font = style + fontSize + 'px ' + fontName;
   context.textAlign = align;
   context.textBaseline = baseline;
-};
+}
 
+/**
+ * @todo write docs
+ */
 export function getTextW(text) {
   return context.measureText(text).width;
-};
+}
 
 
 
 // pixel data
 
+/**
+ * @todo write docs
+ */
 export function getPixelData(x, y) {
   return context.getImageData(x, y, 1, 1).data;
-};
+}
 
+/**
+ * @todo write docs
+ */
 export function getPixelColor(x, y) {
   var rgba = context.getImageData(x, y, 1, 1).data;
   return 'rgba(' + rgba[0] + ',' + rgba[1] + ',' + rgba[2] + ',' + rgba[3] + ')';
-};
+}
 
+/**
+ * @todo write docs
+ */
 export function getPixelColorRGBA(x, y) { //repeated
   return context.getImageData(x, y, 1, 1).data;
-};
+}
 
+/**
+ * @todo write docs
+ */
 export function captureCanvas() {
   var im = new Image();
   im.src = canvas.toDataURL();
   return im;
-};
+}
 
 
 /*
@@ -1175,17 +1212,23 @@ export function drawAndcapture(drawFunction, w, h, target) {
 export function setCursor(name) {
   name = name == null ? 'default' : name;
   canvas.style.cursor = name;
-};
+}
 
 
 
 //time
 
+/**
+ * @todo write docs
+ */
 export function getMilliseconds() {
   return new Date().getTime();
-};
+}
 
 
+/**
+ * @todo write docs
+ */
 export function getWindowFrame(){
   return new Rectangle(0,0,cW,cH);
 }
@@ -1210,16 +1253,25 @@ export function _linesInFrame(axis2D, numberListX, numberListY){
 }
 
 
+/**
+ * @todo write docs
+ */
 export function sLinesInFrame(axis2D, numberListX, numberListY){
   _linesInFrame(axis2D, numberListX, numberListY);
   context.stroke();
 }
 
+/**
+ * @todo write docs
+ */
 export function fLinesInFrame(axis2D, numberListX, numberListY){
   _linesInFrame(axis2D, numberListX, numberListY);
   context.fill();
 }
 
+/**
+ * @todo write docs
+ */
 export function fsLinesInFrame(axis2D, numberListX, numberListY){
   _linesInFrame(axis2D, numberListX, numberListY);
   context.fill();
@@ -1227,6 +1279,9 @@ export function fsLinesInFrame(axis2D, numberListX, numberListY){
 }
 
 
+/**
+ * @todo write docs
+ */
 export function drawGridX(axis2D, dX, yLabel, stepsLabel){
   var x0, y0;
   var n;
@@ -1235,7 +1290,7 @@ export function drawGridX(axis2D, dX, yLabel, stepsLabel){
 
   x0 = Math.floor(axis2D.departureFrame.x/dX)*dX;
   n = Math.min( Math.ceil(axis2D.departureFrame.width/dX), 1000 );
-  top = Math.min(axis2D.arrivalFrame.y, axis2D.arrivalFrame.y+axis2D.arrivalFrame.height)
+  top = Math.min(axis2D.arrivalFrame.y, axis2D.arrivalFrame.y+axis2D.arrivalFrame.height);
   bottom = Math.max(axis2D.arrivalFrame.y, axis2D.arrivalFrame.y+axis2D.arrivalFrame.height);
   stepsLabel = stepsLabel==null?1:stepsLabel;
   for(i=0; i<n; i++){
@@ -1245,6 +1300,9 @@ export function drawGridX(axis2D, dX, yLabel, stepsLabel){
   }
 }
 
+/**
+ * @todo write docs
+ */
 export function drawGridY(axis2D, dY, xLabel, stepsLabel){
   var x0, y0;
   var n;
@@ -1253,7 +1311,7 @@ export function drawGridY(axis2D, dY, xLabel, stepsLabel){
 
   y0 = Math.floor(axis2D.departureFrame.y/dY)*dY;
   n = Math.min( Math.ceil(axis2D.departureFrame.height/dY), 1000 );
-  left = Math.min(axis2D.arrivalFrame.x, axis2D.arrivalFrame.x+axis2D.arrivalFrame.width)
+  left = Math.min(axis2D.arrivalFrame.x, axis2D.arrivalFrame.x+axis2D.arrivalFrame.width);
   right = Math.max(axis2D.arrivalFrame.x, axis2D.arrivalFrame.x+axis2D.arrivalFrame.width);
   stepsLabel = stepsLabel==null?1:stepsLabel;
   for(i=0; i<n; i++){
@@ -1262,6 +1320,3 @@ export function drawGridY(axis2D, dY, xLabel, stepsLabel){
     if(xLabel!=null && i%stepsLabel==0) fText(String(y0 + i*dY), left+xLabel, y);
   }
 }
-
-
-

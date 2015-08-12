@@ -11,7 +11,7 @@ Axis.prototype.constructor = Axis;
 
 /**
  * @ignore
- * 
+ *
  * @classdesc Axis for 1D data.
  *
  * @constructor
@@ -36,31 +36,45 @@ export default Axis;
 
 
 
+/**
+ * @todo write docs
+ */
 Axis.prototype.setDepartureInterval = function(departureInterval) {
   this.departureInterval = departureInterval;
   console.log('--> departureInterval', departureInterval);
   this.departureAmplitude = departureInterval.getSignedAmplitude();
 
 };
+
+/**
+ * @todo write docs
+ */
 Axis.prototype.setArrivalInterval = function(arrivalInterval) {
   this.arrivalInterval = arrivalInterval;
   this.arrivalAmplitude = arrivalInterval.getSignedAmplitude();
 };
 
+/**
+ * @todo write docs
+ */
 Axis.prototype.project = function(x) {
   return this.arrivalInterval.x + this.arrivalAmplitude * (x - this.departureInterval.x) / this.departureAmplitude;
 };
 
-
-/**
+/*
  * to be called once interval values changed
+ */
+/**
+ * @todo write docs
  */
 Axis.prototype.update = function() {
   this.departureAmplitude = this.departureInterval.getSignedAmplitude();
   this.arrivalAmplitude = this.arrivalInterval.getSignedAmplitude();
 };
 
-
+/**
+ * @todo write docs
+ */
 Axis.prototype.toString = function() {
   return "Axis[" + this.departureInterval.toString() + ", " + this.arrivalInterval.toString() + "]";
 };
