@@ -1,5 +1,3 @@
-import { context } from "src/Global";
-import Rectangle from "src/dataStructures/geometry/Rectangle";
 import Draw from "src/tools/graphic/Draw";
 
 function ImageDraw() {}

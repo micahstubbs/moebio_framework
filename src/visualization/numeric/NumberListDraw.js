@@ -1,23 +1,4 @@
-import {
-  mX,
-  mY,
-  mP,
-  MOUSE_DOWN
-} from "src/Global";
-
-import {
-  setFill,
-  fText,
-  fRect,
-  getTextW,
-  setText,
-  fLines
-} from "src/tools/graphic/SimpleGraphics";
-
-import { typeOf } from "src/tools/utils/code/ClassUtils";
 import Rectangle from "src/dataStructures/geometry/Rectangle";
-import Point from "src/dataStructures/geometry/Point";
-import ListOperators from "src/operators/lists/ListOperators";
 import StringList from "src/dataStructures/strings/StringList";
 
 function NumberListDraw() {}
@@ -33,7 +14,7 @@ export default NumberListDraw;
  * @return {Number} index of element clicked
  * tags:draw
  */
-NumberListDraw.drawSimpleGraph = function(frame, numberList, margin, xValues) {
+NumberListDraw.drawSimpleGraph = function(frame, numberList, margin, xValues, graphics) {
   if(numberList == null || numberList.getNormalized == null) return;
 
   margin = margin || 0;
@@ -70,52 +51,54 @@ NumberListDraw.drawSimpleGraph = function(frame, numberList, margin, xValues) {
   var dx = subframe.width / numberList.length;
   var overI = -1;
 
-  var mouseOnFrame = subframe.containsPoint(mP);
+  var mouseOnFrame = subframe.containsPoint(graphics.mP);
   var normalColor = mouseOnFrame ? 'rgb(160,160,160)' : 'black';
 
   if(frame.memory.zero) {
     var zeroY = subframe.bottom - subframe.height * frame.memory.zero; //Math.max(subframe.bottom - subframe.height*frame.memory.zero, subframe.y);
     for(i = 0; numberList[i] != null; i++) {
       x = subframe.x + i * dx;
-      if(mouseOnFrame && mX > x && mX < x + dx) {
+      if(mouseOnFrame && graphics.mX > x && graphics.mX < x + dx) {
         overI = i;
-        setFill('black');
+        graphics.setFill('black');
       } else {
-        setFill(normalColor);
+        graphics.setFill(normalColor);
       }
-      fRect(subframe.x + i * dx, zeroY, dx, -subframe.height * (frame.memory.normalizedList[i] - frame.memory.zero));
+      graphics.fRect(subframe.x + i * dx, zeroY, dx, -subframe.height * (frame.memory.normalizedList[i] - frame.memory.zero));
     }
   } else {
     for(i = 0; numberList[i] != null; i++) {
       x = subframe.x + i * dx;
-      if(mouseOnFrame && mX > x && mX < x + dx) {
+      if(mouseOnFrame && graphics.mX > x && graphics.mX < x + dx) {
         overI = i;
-        setFill('black');
+        graphics.setFill('black');
       } else {
-        setFill(normalColor);
+        graphics.setFill(normalColor);
       }
-      fRect(x, subframe.bottom, dx, -subframe.height * frame.memory.normalizedList[i]);
+      graphics.fRect(x, subframe.bottom, dx, -subframe.height * frame.memory.normalizedList[i]);
     }
   }
 
   var clicked;
 
   if(overI != -1) {
-    setText('white', 12);
+    graphics.setText('white', 12);
     var text = frame.memory.xTexts[overI];
-    var w = getTextW(text);
-    setFill('rgb(100,100,100)');
-    fLines(
-      mX, mY,
-      mX + 16, mY - 10,
-      mX + w + 16, mY - 10,
-      mX + w + 16, mY - 30,
-      mX + 6, mY - 30,
-      mX + 6, mY - 10
+    var w = graphics.getTextW(text);
+    graphics.setFill('rgb(100,100,100)');
+    graphics.fLines(
+      graphics.mX, graphics.mY,
+      graphics.mX + 16, graphics.mY - 10,
+      graphics.mX + w + 16, graphics.mY - 10,
+      graphics.mX + w + 16, graphics.mY - 30,
+      graphics.mX + 6, graphics.mY - 30,
+      graphics.mX + 6, graphics.mY - 10
     );
-    setFill('white');
-    fText(text, mX + 10, mY - 26);
-    if(MOUSE_DOWN) clicked = overI;
+    graphics.setFill('white');
+    graphics.fText(text, graphics.mX + 10, graphics.mY - 26);
+    if(graphics.MOUSE_DOWN) {
+      clicked = overI;
+    }
   }
 
   return clicked;

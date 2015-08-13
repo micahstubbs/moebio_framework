@@ -1,10 +1,3 @@
-import { addInteractionEventListener,
-  _cycleOnMouseMovement,
-  reStartCycle,
-  _onMouse,
-  onMoveCycle
-} from 'src/Global';
-
 InputTextFieldHTML.prototype.constructor = InputTextFieldHTML;
 
 
@@ -15,8 +8,9 @@ InputTextFieldHTML.prototype.constructor = InputTextFieldHTML;
  * @constructor
  * @category strings
  */
-function InputTextFieldHTML(configuration) {
+function InputTextFieldHTML(configuration, graphics) {
   this.id = configuration.id == null ? 0 : configuration.id;
+  this.graphics = graphics;
 
   this.target = configuration.target;
 
@@ -81,7 +75,7 @@ function InputTextFieldHTML(configuration) {
 
   this.DOMtext.value = "";
 
-  addInteractionEventListener("keydown", this.onKeyDown, this);
+  this.graphics.on("keydown", this.onKeyDown, this);
   this._eKeyDown;
 
   this.timer;
@@ -99,8 +93,10 @@ function InputTextFieldHTML(configuration) {
     this.draw();
   }
 
-  this.DOMtext.addEventListener("mousemove", _onMouse, false);
-  if(_cycleOnMouseMovement) this.DOMtext.addEventListener('mousemove', onMoveCycle, false);
+  // TODO What is this supposed to do?
+  this.DOMtext.addEventListener("mousemove", this.graphics._onMouse, false);
+  // TODO find out what this was for onMoveCycle doesn't exist anymore
+  //if(this.graphics._cycleOnMouseMovement) this.DOMtext.addEventListener('mousemove', onMoveCycle, false);
 }
 export default InputTextFieldHTML;
 
@@ -192,8 +188,6 @@ InputTextFieldHTML.prototype.onKeyDownDelayed = function(target) {
       }
     }
   }
-
-  if(_cycleOnMouseMovement) reStartCycle();
 
   this.timer = null;
 };
