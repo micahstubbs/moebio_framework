@@ -247,54 +247,6 @@ function drawSimpleShapes() {
   g2.setBackgroundColor('AntiqueWhite');
   g2.setBackgroundAlpha(1);
 
-  // Add some custom event handlers just to g
-  g.on('keydown', function(e){
-    console.log('keydown event on g1', e.keyCode, e);
-  });
-
-  g.on('keyup', function(e){
-    console.log('keyup event on g1', e.keyCode, e);
-  });
-
-  // Add some custom event handlers just to g2
-  
-  g2.on('click', function(e){
-    console.log('click event on g2', e);
-  });
-
-  g2.on('mousemove', function(e){
-    // This works, its just noisy.
-    // console.log('mousemove event on g2', e);
-  });
-
-  g2.on('mousedown', function(e){
-    console.log('mousedown event on g2', e);
-  });
-
-  g2.on('mouseup', function(e){
-    console.log('mouseup event on g2', e);
-  });
-
-  g2.on('mouseenter', function(e){
-    console.log('mouseenter event on g2', e);
-  });
-
-  g2.on('mouseleave', function(e){
-    console.log('mouseleave event on g2', e);
-  });
-
-  g2.on('mousewheel', function(e){
-    console.log('mousewheel event on g2', e);
-  });
-
-  g2.on('keydown', function(e){
-    console.log('keydown event on g2', e.keyCode, e);
-  });
-
-  g2.on('keyup', function(e){
-    console.log('keyup event on g2', e.keyCode, e);
-  });
-
 }
 
 window.onload = function() {
