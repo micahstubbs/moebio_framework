@@ -2,6 +2,7 @@ import Point from 'src/dataStructures/geometry/Point';
 import Polygon from 'src/dataStructures/geometry/Polygon';
 import ColorOperators from "src/operators/graphic/ColorOperators";
 import GeometryOperators from 'src/operators/geometry/GeometryOperators';
+import Rectangle from 'src/dataStructures/geometry/Rectangle';
 import { TwoPi, HalfPi } from 'src/Global';
 
 /**
@@ -1860,4 +1861,104 @@ Graphics.prototype.captureCanvas = function() {
 Graphics.prototype.setCursor = function(name) {
   name = name == null ? 'default' : name;
   this.canvas.style.cursor = name;
+};
+
+/**
+ * @todo write docs
+ */
+Graphics.prototype.getFrame = function(){
+  return new Rectangle(0, 0, this.cW, this.cH);
+};
+
+//
+// Advanced graphics (rely on Axis2D projection object)
+//
+
+/**
+ * @ignore
+ * @todo
+ */
+Graphics.prototype._linesInFrame = function(axis2D, numberListX, numberListY){
+  var l = Math.min(numberListX.length, numberListY.length);
+  var i;
+
+  this.context.beginPath();
+  this.context.moveTo(axis2D.projectX(numberListX[0]), axis2D.projectY(numberListY[0]));
+
+  for(i=1; i<l; i++){
+    this.context.lineTo(axis2D.projectX(numberListX[i]), axis2D.projectY(numberListY[i]));
+  }
+};
+
+
+/**
+ * @todo write docs
+ */
+Graphics.prototype.sLinesInFrame = function(axis2D, numberListX, numberListY){
+  this._linesInFrame(axis2D, numberListX, numberListY);
+  this.context.stroke();
+};
+
+/**
+ * @todo write docs
+ */
+Graphics.prototype.fLinesInFrame = function(axis2D, numberListX, numberListY){
+  this._linesInFrame(axis2D, numberListX, numberListY);
+  this.context.fill();
+};
+
+/**
+ * @todo write docs
+ */
+Graphics.prototype.fsLinesInFrame = function(axis2D, numberListX, numberListY){
+  this._linesInFrame(axis2D, numberListX, numberListY);
+  this.context.fill();
+  this.context.stroke();
+};
+
+
+/**
+ * @todo write docs
+ */
+Graphics.prototype.drawGridX = function(axis2D, dX, yLabel, stepsLabel){
+  var x0;
+  var n;
+  var i;
+  var x, top, bottom;
+
+  x0 = Math.floor(axis2D.departureFrame.x/dX)*dX;
+  n = Math.min( Math.ceil(axis2D.departureFrame.width/dX), 1000 );
+  top = Math.min(axis2D.arrivalFrame.y, axis2D.arrivalFrame.y+axis2D.arrivalFrame.height);
+  bottom = Math.max(axis2D.arrivalFrame.y, axis2D.arrivalFrame.y+axis2D.arrivalFrame.height);
+  stepsLabel = stepsLabel==null?1:stepsLabel;
+  for(i=0; i<n; i++){
+    x = Math.floor(axis2D.projectX(x0 + i*dX))+0.5;
+    this.line(x, top, x, bottom);
+    if(yLabel!=null && i%stepsLabel===0) {
+      this.fText(String(x0 + i*dX), x, bottom+yLabel);
+    }
+  }
+};
+
+/**
+ * @todo write docs
+ */
+Graphics.prototype.drawGridY = function(axis2D, dY, xLabel, stepsLabel){
+  var y0;
+  var n;
+  var i;
+  var y, left, right;
+
+  y0 = Math.floor(axis2D.departureFrame.y/dY)*dY;
+  n = Math.min( Math.ceil(axis2D.departureFrame.height/dY), 1000 );
+  left = Math.min(axis2D.arrivalFrame.x, axis2D.arrivalFrame.x+axis2D.arrivalFrame.width);
+  right = Math.max(axis2D.arrivalFrame.x, axis2D.arrivalFrame.x+axis2D.arrivalFrame.width);
+  stepsLabel = stepsLabel==null?1:stepsLabel;
+  for(i=0; i<n; i++){
+    y = Math.floor(axis2D.projectY(y0 + i*dY))+0.5;
+    this.line(left, y, right, y);
+    if(xLabel!=null && i%stepsLabel===0) {
+      this.fText(String(y0 + i*dY), left+xLabel, y);
+    } 
+  }
 };
