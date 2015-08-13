@@ -284,8 +284,6 @@ NumberList.prototype.getInterval = function() {
   return interval;
 };
 
-
-
 /**
  * simplifies a categorical list, by keeping the nCategories-1 most common values, and replacing the others with an "other" element
  * this method reduces the number of different values contained in the list, converting it into a categorical list
@@ -317,25 +315,6 @@ NumberList.prototype.getNumbersSimplified = function(method, param) {
 
   return newList;
 };
-
-
-/**
- * Builds an {@link Polygon} from the NumberList,
- * using each consecutive pair of values in the numberList as
- * x and y positions.
- *
- * @return {Polygon} Polygon representing the values
- * in the NumberList as x/y coordinates.
- */
-NumberList.prototype.toPolygon = function() {
-  if(this.length === 0) return null;
-  var polygon = new Polygon();
-  for(var i = 0; this[i + 1] != null; i += 2) {
-    polygon.push(new Point(this[i], this[i + 1]));
-  }
-  return polygon;
-};
-
 
 /////////statistics
 
@@ -420,12 +399,10 @@ NumberList.prototype.getMedian = function() {
  * Builds a partition of n quantiles from the numberList.
  *
  * @param {Number} nQuantiles number of quantiles (the size of the resulting list is nQuantiles-1)
- *
- * @param {Number} returnMode
  * @return {NumberList} A number list of the quantiles.
  * tags:statistics
  */
-NumberList.prototype.getQuantiles = function(nQuantiles, returnMode) {//TODO: defines different options for return
+NumberList.prototype.getQuantiles = function(nQuantiles) {//TODO: defines different options for return
   var sorted = this.getSorted(true);
 
   var prop = this.length / nQuantiles;
@@ -524,113 +501,7 @@ NumberList.prototype.factor = function(value) {
   return newNumberList;
 };
 
-/**
- * Adds a value or values in a NumberList to the current list.
- *
- * If input is a Number, each value of the returned
- * NumberList will be the sum of the original value and this
- * input value.
- *
- * If the input is a NumberList, each value of the returned
- * NumberList will be the sum of the original value and the
- * value at the same index in the input list.
- *
- * @param {Number|NumberList} object Input value to add to the list.
- * @return {NumberList}
- */
-NumberList.prototype.add = function(object) {
-  var i;
-  var newNumberList = new NumberList();
-  var type = typeOf(object);
 
-  switch(type) {
-    case 'number':
-      for(i = 0; this[i] != null; i++) {
-        newNumberList[i] = this[i] + object;
-      }
-      break;
-    case 'NumberList':
-      for(i = 0; this[i] != null; i++) {
-        newNumberList[i] = this[i] + object[i % object.length];
-      }
-      break;
-  }
-
-  newNumberList.name = this.name;
-  return newNumberList;
-};
-
-/**
- * Subtracts a value or values in a NumberList from the current list.
- *
- * If input is a Number, each value of the returned
- * NumberList will be the original value minus this
- * input value.
- *
- * If the input is a NumberList, each value of the returned
- * NumberList will be the original value minus the
- * value at the same index in the input list.
- *
- * @param {Number|NumberList} object Input value to subract from the list.
- * @return {NumberList}
- */
-NumberList.prototype.subtract = function(object) {
-  var i;
-  var newNumberList = new NumberList();
-  var type = typeOf(object);
-
-  switch(type) {
-    case 'number':
-      for(i = 0; this[i] != null; i++) {
-        newNumberList[i] = this[i] - object;
-      }
-      break;
-    case 'NumberList':
-      for(i = 0; this[i] != null; i++) {
-        newNumberList[i] = this[i] - object[i % object.length];
-      }
-      break;
-  }
-
-  newNumberList.name = this.name;
-  return newNumberList;
-};
-
-/**
- * Returns a new NumberList with each value divided by a input value or values in a NumberList.
- *
- * If input is a Number, each value of the returned
- * NumberList will be the original value divided by this
- * input value.
- *
- * If the input is a NumberList, each value of the returned
- * NumberList will be the original value divided by the
- * value at the same index in the input list.
- *
- * @param {Number|NumberList} object Input value to divide by the list.
- * @return {NumberList}
- */
-NumberList.prototype.divide = function(object) {
-  var i;
-  var newNumberList = new NumberList();
-  var type = typeOf(object);
-
-  switch(type) {
-    case 'number':
-      for(i = 0; this[i] != null; i++) {
-        newNumberList[i] = this[i] / object;
-      }
-      break;
-    case 'NumberList':
-      for(i = 0; this[i] != null; i++) {
-        newNumberList[i] = this[i] / object[i % object.length];
-      }
-      break;
-  }
-
-  newNumberList.name = this.name;
-  return newNumberList;
-};
 
 /**
  * Returns a new NumberList containing the square root of
@@ -740,19 +611,6 @@ NumberList.prototype.distance = function(numberList) {
   return Math.sqrt(sum);
 };
 
-/**
- * Returns true if values in the input NumberList are the same
- * as the values in the current list.
- *
- * @param numberList NumberList to compare.
- * @return {Boolean} True if all values in both lists match.
- */
-NumberList.prototype.isEquivalent = function(numberList) {
-  for(var i = 0; this[i] != null; i++) {
-    if(this[i] != numberList[i]) return false;
-  }
-  return true;
-};
 
 /**
  * Returns a new {@link StringList} with all values converted to strings
@@ -770,8 +628,9 @@ NumberList.prototype.toStringList = function() {
 };
 
 
-//transform
-
+/**
+ * @todo write docs
+ */
 NumberList.prototype.approach = function(destinty, speed) {
   speed = speed || 0.5;
 
@@ -783,15 +642,20 @@ NumberList.prototype.approach = function(destinty, speed) {
   }
 };
 
-
 ///////overriding
 
+/**
+ * @todo write docs
+ */
 NumberList.prototype.clone = function() {
   var newList = NumberList.fromArray(this._slice(), false);
   newList.name = this.name;
   return newList;
 };
 
+/**
+ * @todo write docs
+ */
 NumberList.prototype.slice = function() {
   return NumberList.fromArray(this._slice.apply(this, arguments), false);
 };

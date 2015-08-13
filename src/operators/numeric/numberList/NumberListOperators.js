@@ -1,5 +1,6 @@
 import NumberList from "src/dataStructures/numeric/NumberList";
 import NumberTable from "src/dataStructures/numeric/NumberTable";
+import { typeOf } from "src/tools/utils/code/ClassUtils";
 
 /**
  * @classdesc NumberList Operators
@@ -9,6 +10,175 @@ import NumberTable from "src/dataStructures/numeric/NumberTable";
  */
 function NumberListOperators() {}
 export default NumberListOperators;
+
+/**
+ * Returns true if values in the input NumberList are the same
+ * as the values in the current list.
+ *
+ * @param numberList1 First NumberList to compare.
+ * @param numberList2 Second NumberList to compare.
+ * @return {Boolean} True if all values in both lists match.
+ */
+NumberListOperators.isEquivalent = function(numberList1, numberList2) {
+  if(numberList1.length !== numberList2.length) {
+    return false;
+  }
+
+  for(var i = 0; numberList1[i] != null; i++) {
+    if(numberList1[i] != numberList2[i]) return false;
+  }
+  return true;
+};
+
+/**
+ * Adds a value or values in a NumberList to the current list.
+ *
+ * If input is a Number, each value of the returned
+ * NumberList will be the sum of the original value and this
+ * input value.
+ *
+ * If the input is a NumberList, each value of the returned
+ * NumberList will be the sum of the original value and the
+ * value at the same index in the input list.
+ *
+ * @param {NumberList} nl NumberList to add to.
+ * @param {Number|NumberList} object Input value to add to the list.
+ * @return {NumberList}
+ */
+NumberListOperators.add = function(nl, object) {
+  var i;
+  var newNumberList = new NumberList();
+  var type = typeOf(object);
+
+  switch(type) {
+    case 'number':
+      for(i = 0; nl[i] != null; i++) {
+        newNumberList[i] = nl[i] + object;
+      }
+      break;
+    case 'NumberList':
+      for(i = 0; nl[i] != null; i++) {
+        newNumberList[i] = nl[i] + object[i % object.length];
+      }
+      break;
+  }
+
+  newNumberList.name = nl.name;
+  return newNumberList;
+};
+
+/**
+ * Subtracts a value or values in a NumberList from the current list.
+ *
+ * If input is a Number, each value of the returned
+ * NumberList will be the original value minus this
+ * input value.
+ *
+ * If the input is a NumberList, each value of the returned
+ * NumberList will be the original value minus the
+ * value at the same index in the input list.
+ *
+ * @param {NumberList} nl NumberList to add to.
+ * @param {Number|NumberList} object Input value to subract from the list.
+ * @return {NumberList}
+ */
+NumberListOperators.subtract = function(nl, object) {
+  var i;
+  var newNumberList = new NumberList();
+  var type = typeOf(object);
+
+  switch(type) {
+    case 'number':
+      for(i = 0; nl[i] != null; i++) {
+        newNumberList[i] = nl[i] - object;
+      }
+      break;
+    case 'NumberList':
+      for(i = 0; nl[i] != null; i++) {
+        newNumberList[i] = nl[i] - object[i % object.length];
+      }
+      break;
+  }
+
+  newNumberList.name = nl.name;
+  return newNumberList;
+};
+
+/**
+ * Returns a new NumberList with each value divided by a input value or values in a NumberList.
+ *
+ * If input is a Number, each value of the returned
+ * NumberList will be the original value divided by this
+ * input value.
+ *
+ * If the input is a NumberList, each value of the returned
+ * NumberList will be the original value divided by the
+ * value at the same index in the input list.
+ *
+ * @param {NumberList} nl NumberList to add to.
+ * @param {Number|NumberList} object Input value to divide by the list.
+ * @return {NumberList}
+ */
+NumberListOperators.divide = function(nl, object) {
+  var i;
+  var newNumberList = new NumberList();
+  var type = typeOf(object);
+
+  switch(type) {
+    case 'number':
+      for(i = 0; nl[i] != null; i++) {
+        newNumberList[i] = nl[i] / object;
+      }
+      break;
+    case 'NumberList':
+      for(i = 0; nl[i] != null; i++) {
+        newNumberList[i] = nl[i] / object[i % object.length];
+      }
+      break;
+  }
+
+  newNumberList.name = nl.name;
+  return newNumberList;
+};
+
+/**
+ * Returns dot product between two numberLists
+ *
+ * @param  {NumberList1} numberList NumberList of the same length
+ * as numberList2.
+ * @param  {NumberList2} numberList NumberList of the same length
+ * as numberList1.
+ * @return {Number} Dot product between two lists.
+ */
+NumberListOperators.dotProduct = function(numberList1, numberList2) {
+  var sum = 0;
+  var i;
+  var nElements = Math.min(numberList1.length, numberList2.length);
+  for(i = 0; i < nElements; i++) {
+    sum += numberList1[i] * numberList2[i];
+  }
+  return sum;
+};
+
+/**
+ * Calculates Euclidean distance between two numberLists
+ *
+ * @param  {NumberList1} numberList NumberList of the same length
+ * as numberList2.
+ * @param  {NumberList2} numberList NumberList of the same length
+ * as numberList1.
+ * @return {Number} Summed Euclidean distance between all values.
+ * tags:
+ */
+NumberListOperators.distance = function(numberList1, numberList2) {
+  var sum = 0;
+  var i;
+  var nElements = Math.min(numberList1.length, numberList2.length);
+  for(i = 0; i < nElements; i++) {
+    sum += Math.pow(numberList1[i] - numberList2[i], 2);
+  }
+  return Math.sqrt(sum);
+};
 
 /**
  * cosine similarity, used to compare two NumberLists regardless of norm (see: http://en.wikipedia.org/wiki/Cosine_similarity)

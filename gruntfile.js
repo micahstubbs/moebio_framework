@@ -41,5 +41,5 @@ module.exports = function (grunt) {
   //
   // Run tests interactively
   //
-  grunt.registerTask('test', [ 'karma' ]);
+  grunt.registerTask('test', [ 'build-fast', 'karma' ]);
 };

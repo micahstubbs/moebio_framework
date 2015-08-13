@@ -117,11 +117,12 @@ import IntervalTableOperators from "src/operators/numeric/interval/IntervalTable
 import MatrixGenerators from "src/operators/numeric/MatrixGenerators";
 import NumberListGenerators from "src/operators/numeric/numberList/NumberListGenerators";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
+import NumberListConversions from "src/operators/numeric/numberList/NumberListConversions";
 import NumberOperators from "src/operators/numeric/NumberOperators";
 import NumberTableConversions from "src/operators/numeric/numberTable/NumberTableConversions";
 import NumberTableFlowOperators from "src/operators/numeric/numberTable/NumberTableFlowOperators";
 import NumberTableOperators from "src/operators/numeric/numberTable/NumberTableOperators";
-export { IntervalListOperators, IntervalTableOperators, MatrixGenerators, NumberListGenerators,
+export { IntervalListOperators, NumberListConversions, IntervalTableOperators, MatrixGenerators, NumberListGenerators,
   NumberListOperators, NumberOperators, NumberTableConversions, NumberTableFlowOperators,
   NumberTableOperators };
 
@@ -162,7 +163,7 @@ import {
   drawImage, fitImage, setFill, setStroke, setLW, clipCircle, clipRectangle,
   save, clip, restore, fText, sText, fsText, fTextRotated, fTextArc, fTextM, fsTextM,
   fTextRotatedM, fTextW, setText, getTextW, getPixelData, getPixelColor,
-  getPixelColorRGBA, captureCanvas, setCursor, getMilliseconds, 
+  getPixelColorRGBA, captureCanvas, setCursor, getMilliseconds,
   getWindowFrame, sLinesInFrame, fLinesInFrame, fsLinesInFrame, drawGridX, drawGridY
 } from "src/tools/graphic/SimpleGraphics";
 
@@ -174,7 +175,7 @@ export {
   drawImage, fitImage, setFill, setStroke, setLW, clipCircle, clipRectangle,
   save, clip, restore, fText, sText, fsText, fTextRotated, fTextArc, fTextM, fsTextM,
   fTextRotatedM, fTextW, setText, getTextW, getPixelData, getPixelColor,
-  getPixelColorRGBA, captureCanvas, setCursor, getMilliseconds, 
+  getPixelColorRGBA, captureCanvas, setCursor, getMilliseconds,
   getWindowFrame, sLinesInFrame, fLinesInFrame, fsLinesInFrame, drawGridX, drawGridY
 };
 

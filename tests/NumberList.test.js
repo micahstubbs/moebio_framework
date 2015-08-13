@@ -1,4 +1,4 @@
-
+/* globals mo */
 describe("NumberList", function() {
   it("should be creatable", function() {
     var nl = new mo.NumberList();

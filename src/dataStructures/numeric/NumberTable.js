@@ -8,6 +8,11 @@ NumberTable.prototype.constructor = NumberTable;
 /**
  * @classdesc {@link Table} to store numbers.
  *
+ * @param [Number|[Number]] args If a single Number, indicates number of
+ * columns to make for the NumberTable. Each column is created as an empty
+ * NumberList. If an Array, or a set of Arrays, it will make a new NumberList
+ * for each array present, populating it with the contents of the array.
+ *
  * @constructor
  * @description Creates a new NumberTable.
  * @category numbers
@@ -16,10 +21,10 @@ function NumberTable() {
   var args = [];
   var newNumberList;
   var array;
+  var i;
 
   if(arguments.length > 0 && Number(arguments[0]) == arguments[0]) {
     array = [];
-    var i;
     for(i = 0; i < arguments[0]; i++) {
       array.push(new NumberList());
     }
@@ -27,9 +32,10 @@ function NumberTable() {
     for(i = 0; arguments[i] != null; i++) {
       newNumberList = NumberList.fromArray(arguments[i]);
       newNumberList.name = arguments[i].name;
-      arguments[i] = newNumberList;
+      args[i] = newNumberList;
     }
-    array = Table.apply(this, arguments);
+    // TODO: this converts all our NumberLists into Lists
+    array = Table.apply(this, args);
   }
   array = NumberTable.fromArray(array);
   return array;

@@ -1,4 +1,4 @@
-
+/* globals mo */
 describe("DateList", function() {
   it("should be creatable", function() {
     var dl = new mo.DateList();
