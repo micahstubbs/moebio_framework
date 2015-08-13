@@ -23,9 +23,9 @@ import { TwoPi, HalfPi } from 'src/Global';
  *                                things. Called once after base initialization.
  * @param {Function} options.cycle custom user function to render each frame. This
  *                                 is called once per frame of the draw loop unless
- *                                 frameRate is set to 0. 
+ *                                 cycleInterval is set to 0. 
  * @param {Function} options.onResize custom user function to run on resize of the canvas *                                    
- * @param {Number} options.frameRate TODO describe this. If set to zero, the draw cycle will
+ * @param {Number} options.cycleInterval TODO describe this. If set to zero, the draw cycle will
  *                                   not be started automatically. YY should this be called
  *                                   cycleInterval instead?
  */
@@ -42,7 +42,7 @@ function Graphics(options) {
   this.init = options.init || noOperation;
   this.cycle = options.cycle || noOperation;
   this.onResize = options.onResize || noOperation;
-  this._frameRate = options.frameRate === undefined ? 30 : options.frameRate;
+  this._cycleInterval = options.cycleInterval === undefined ? 30 : options.cycleInterval;
 
   this._initialize();
 }
@@ -55,6 +55,8 @@ function noOperation() {}
  ****************************/
 
 /*
+ * @ignore
+ * 
  * Initialize the graphics proper. Includes
  * things like actually creating the backing canvas and
  * setting up mousehandlers.
@@ -118,23 +120,23 @@ Graphics.prototype._initialize = function() {
 
   // YY TODO allow user to bind to these events as well. Probably 
   // through a generic event mechanism. c.f. global addInteractionEventListener
-  var boundMouse = this._onMouse.bind(this);
-  this.canvas.addEventListener("mousemove", boundMouse, false);
-  this.canvas.addEventListener("mousedown", boundMouse, false);
-  this.canvas.addEventListener("mouseup", boundMouse, false);
-  this.canvas.addEventListener("mouseenter", boundMouse, false);
-  this.canvas.addEventListener("mouseleave", boundMouse, false);
-  this.canvas.addEventListener("click", boundMouse, false);
+  var boundMouseOrKeyboard = this._onMouseOrKeyBoard.bind(this);
+  this.canvas.addEventListener("mousemove", boundMouseOrKeyboard, false);
+  this.canvas.addEventListener("mousedown", boundMouseOrKeyboard, false);
+  this.canvas.addEventListener("mouseup", boundMouseOrKeyboard, false);
+  this.canvas.addEventListener("mouseenter", boundMouseOrKeyboard, false);
+  this.canvas.addEventListener("mouseleave", boundMouseOrKeyboard, false);
+  this.canvas.addEventListener("click", boundMouseOrKeyboard, false);
 
-  this.canvas.addEventListener("DOMMouseScroll", boundMouse, false);
-  this.canvas.addEventListener("mousewheel", boundMouse, false);
+  this.canvas.addEventListener("DOMMouseScroll", boundMouseOrKeyboard, false);
+  this.canvas.addEventListener("mousewheel", boundMouseOrKeyboard, false);
 
-  this.canvas.addEventListener("keydown", boundMouse, false);
-  this.canvas.addEventListener("keyup", boundMouse, false);
+  this.canvas.addEventListener("keydown", boundMouseOrKeyboard, false);
+  this.canvas.addEventListener("keyup", boundMouseOrKeyboard, false);
 
   // Setup resize listeners
   var boundResize = this._onResize.bind(this);
-  window.addEventListener("resize", boundResize, false);
+  window.addEventListener("resize", resizeThrottler(boundResize, 66), false);  
 
   // Infrastructure for custom event handlers
   this._listeners = {
@@ -153,31 +155,51 @@ Graphics.prototype._initialize = function() {
   this.init();
 
   // Start the draw loop
-  if(this._frameRate > 0) {
+  if(this._cycleInterval > 0) {
     this._startCycle();  
   }
 };
 
 
-Graphics.prototype._onMouse = function(e) {
+/*
+  Helper function for getting the mouse position
+  see http://stackoverflow.com/a/19048340
+ */
+/**
+ * @ignore
+ * Helper function for getting the mouse position
+ * see http://stackoverflow.com/a/19048340
+ *  
+ * @param  {[type]} evt [description] 
+ */
+Graphics.prototype._getRelativeMousePos = function(evt) {
+  var rect = this.canvas.getBoundingClientRect();
+  return {
+    x: evt.clientX - rect.left,
+    y: evt.clientY - rect.top
+  };
+};
+
+/**
+ * @ignore
+ * This method is used to handle user interaction events (e.g. mouse events). * 
+ * Sets some internal state and then displatches to external event handlers.
+ * 
+ * @param  {Event} e event object 
+ */
+Graphics.prototype._onMouseOrKeyBoard = function(e) {  
   switch(e.type){
     case "mousemove":
+      var pos = this._getRelativeMousePos(e);
       this.PREV_mX = this.mX;
       this.PREV_mY= this.mY;
 
-      if(e.clientX) {
-        this.mX = e.clientX;
-        this.mY = e.clientY;
-      } else if(e.offsetX) {
-        this.mX = e.offsetX;
-        this.mY = e.offsetY;
-      } else if(e.layerX) {
-        this.mX = e.layerX;
-        this.mY = e.layerY;
-      }
+      this.mX = pos.x;
+      this.mY = pos.y;      
       
       this.mP.x = this.mX;
       this.mP.y = this.mY;
+
       this.MOUSE_IN_DOCUMENT = true;
       break;
     case "mousedown":
@@ -208,9 +230,30 @@ Graphics.prototype._onMouse = function(e) {
   this._emit(e.type, e);
 };
 
-//We may also want
-// to throttle this method
-// https://developer.mozilla.org/en-US/docs/Web/Events/resize
+
+/*
+ * Helper to throttle resize events for improved performance.
+ * See https://developer.mozilla.org/en-US/docs/Web/Events/resize
+ */
+var resizeTimeout;
+function resizeThrottler(actualResizeHandler, interval) {
+  // ignore resize events as long as an actualResizeHandler execution is in the queue
+  if ( !resizeTimeout ) {
+    resizeTimeout = setTimeout(function() {
+      resizeTimeout = null;
+      actualResizeHandler();
+     }, interval);
+  }
+}
+
+/**
+ * @ignore
+ * This method is used to handle resizes of the window, and then optionally
+ * pass that on to the user defined onResize method if the container dimensions
+ * have changed.
+ * 
+ * @param  {[type]} e resize event 
+ */
 Graphics.prototype._onResize = function(e) {
   // If the user has set the dimensions explicitly
   // we do not auto adjust the canvas.
@@ -225,11 +268,16 @@ Graphics.prototype._onResize = function(e) {
       // Forward the event to the user defined resize handler  
       this.onResize(e);  
     }  
-  }
-  
- }; 
+  }  
+};
 
-
+/**
+ * @ignore
+ * Return the dimensions of the container that this graphics object
+ * is associated with.
+ * 
+ * @return {Object} object with width and height properties. 
+ */
 Graphics.prototype._containerDimensions = function() {
   // https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model/Determining_the_dimensions_of_elements
   return {
@@ -259,21 +307,19 @@ Graphics.prototype._adjustCanvas = function(dimensions) {
 };
 
 /*
- * Starts or restarts the draw cycle at the current framerate
- * 
- * @param  {[type]} frameRate [description]
- * @return {[type]}           [description]
+ * @ignore
+ * Starts or restarts the draw cycle at the current cycleInterval 
  */
 Graphics.prototype._startCycle = function() {
   this.cycleActive = true;
-  // calculate the interval and then schedule a draw loop
-  
-  // YY i think this should use requestAnimationFrame
-  // clearTimeout(this._setTimeOutId); // YY Not sure why this is needed yet
   clearInterval(this._setIntervalId);  
-  this._setIntervalId = setInterval(this._onCycle.bind(this), this._frameRate);
+  this._setIntervalId = setInterval(this._onCycle.bind(this), this._cycleInterval);
 };
 
+/**
+ * @ignore
+ * Stops the draw cycle 
+ */
 Graphics.prototype._stopCycle = function() {  
   clearInterval(this._setIntervalId);
   this.cycleActive = false;
@@ -362,49 +408,75 @@ Graphics.prototype._emit = function(eventName, e) {
  ****************************/
 
 /**
- * Returns the current frameRate (interval between calls
- * to the cycle function).
- * @return {Number} the current framerate (in milliseconds)
+ * Returns the current interval between calls to the cycle function.
+ * @return {Number} the current cycleInterval (in milliseconds)
  */
-Graphics.prototype.getFrameRate = function() {
-  return this._frameRate;
+Graphics.prototype.getCycleInterval = function() {
+  return this._cycleInterval;
 };
 
 /**
- * Sets the current frameRate (interval between calls
- * to the cycle function).
- *
- * TODO: should this be called something else, like 
- * cycleInterval. I tend to think of this as number of
- * times cycle will be called in one second, which it isn't.
+ * Sets the current interval between calls to the cycle function.
  * 
- * @param {Number} frameRate the interval in milliseconds at which
- *                           the cycle function should be called. 
+ * @param {Number} cycleInterval the interval in milliseconds at which
+ *                               the cycle function should be called. 
  */
-Graphics.prototype.setFrameRate = function(frameRate) {
-  this._frameRate = frameRate;
+Graphics.prototype.setCycleInterval = function(cycleInterval) {
+  this._cycleInterval = cycleInterval;
   if(this.cycleActive) { // YY this should be removed
     this._startCycle();
   }
 };
 
 /**
- * [start description]
- * @return {[type]} [description]
+ * Starts the draw loop for this graphcis object.
+ *
+ * Note that the draw loop is typically automatically started on 
+ * creation of a graphics object. 
  */
 Graphics.prototype.start = function() {
   return this._startCycle();
 };
 
+/**
+ * Stops the draw loop for this graphics object.  
+ */
 Graphics.prototype.stop = function() {
   return this._stopCycle();
 };
 
+/**
+ * Subscribe to an event that is emitted by the graphics object. 
+ * 
+ * The graphics object emits the following events.
+ *
+ * "mousemove"
+ * "mousedown"
+ * "mouseup"
+ * "mouseenter
+ * "mouseleave
+ * "mousewheel
+ * "click"
+ * "keydown"
+ * "keyup"
+ * 
+ * @param  {String}   eventName one of the event types above
+ * @param  {Function} callback  function to call when that event occurs
+ *                              this function will be passed an event object 
+ */
 Graphics.prototype.on = function(eventName, callback) {
   // allow clients to subscribe to events on the canvas.
   this._listeners[eventName].push(callback);
 };
 
+/**
+ * Remove an event listener.
+ * @param  {String}   eventName one of the event types that the graphics object
+ *                              emits.
+ * @param  {Function} callback  the function you want to remove. Note that this should
+ *                              be a reference to a function that was previously added with 
+ *                              @see on 
+ */
 Graphics.prototype.off = function(eventName, callback) {
   var index = this._listeners[eventName].indexOf(callback);
   if (index > -1) {
@@ -416,6 +488,16 @@ Graphics.prototype.off = function(eventName, callback) {
  * Public drawing functions
  *****************************/
 
+/**
+ * Set the background color for the graphics object. 
+ * 
+ * On every cycle of the draw loop the canvas will be cleared to this color.
+ * Note that if you do set a color, you need to also set the background alpha as well
+ * 
+ * @see  setBackgroundAlpha
+ * 
+ * @param {[type]} color [description]
+ */
 Graphics.prototype.setBackgroundColor = function(color) {
   if(typeof color === "number") {
     if(arguments.length > 3) {
@@ -430,8 +512,13 @@ Graphics.prototype.setBackgroundColor = function(color) {
   this.backGroundColorRGB = ColorOperators.colorStringToRGB(this.backGroundColor);
 };
 
-Graphics.prototype.setAlphaRefresh = function(alphaRefresh){
-  this._alphaRefresh = alphaRefresh;
+/**
+ * Set the alpha (opacity) of the background color. Defaults to 0 (transparent).
+ * 
+ * @param {Number} backgroundAlpha a number from 0-1
+ */
+Graphics.prototype.setBackgroundAlpha = function(backgroundAlpha){
+  this._alphaRefresh = backgroundAlpha;
 };
 
 
@@ -682,25 +769,56 @@ Graphics.prototype.fsEllipse = function(x, y, rW, rH) {
 
 /**
  * @ignore
+ * TODO add comments to this to explain what it does.
  */
-function _solidArc(x,y,a0,a1,r0,r1){
+Graphics.prototype._solidArc = function(x,y,a0,a1,r0,r1){
   this.context.beginPath();
   this.context.arc( x, y, r0, a0, a1 );
   this.context.lineTo( x + r1*Math.cos(a1), y + r1*Math.sin(a1) );
   this.context.arc( x, y, r1, a1, a0, true );
   this.context.lineTo( x + r0*Math.cos(a0), y + r0*Math.sin(a0) );
-}
+};
 
+/**
+ * [fSolidArc description]
+ * @param  {[type]} x  [description]
+ * @param  {[type]} y  [description]
+ * @param  {[type]} a0 [description]
+ * @param  {[type]} a1 [description]
+ * @param  {[type]} r0 [description]
+ * @param  {[type]} r1 [description]
+ * @todo 
+ */
 Graphics.prototype.fSolidArc = function(x,y,a0,a1,r0,r1){
-  _solidArc(x,y,a0,a1,r0,r1);
+  this._solidArc(x,y,a0,a1,r0,r1);
   this.context.fill();
 };
 
+/**
+ * [sSolidArc description]
+ * @param  {[type]} x  [description]
+ * @param  {[type]} y  [description]
+ * @param  {[type]} a0 [description]
+ * @param  {[type]} a1 [description]
+ * @param  {[type]} r0 [description]
+ * @param  {[type]} r1 [description] 
+ * @todo
+ */
 Graphics.prototype.sSolidArc = function(x,y,a0,a1,r0,r1){
-  _solidArc(x,y,a0,a1,r0,r1);
+  this._solidArc(x,y,a0,a1,r0,r1);
   this.context.stroke();
 };
 
+/**
+ * [fsSolidArc description]
+ * @param  {[type]} x  [description]
+ * @param  {[type]} y  [description]
+ * @param  {[type]} a0 [description]
+ * @param  {[type]} a1 [description]
+ * @param  {[type]} r0 [description]
+ * @param  {[type]} r1 [description] 
+ * @todo
+ */
 Graphics.prototype.fsSolidArc = function(x,y,a0,a1,r0,r1){
   this.fSolidArc(x,y,a0,a1,r0,r1);
   this.context.stroke();
@@ -750,6 +868,7 @@ Graphics.prototype.bezier = function(x0, y0, cx0, cy0, cx1, cy1, x1, y1) {
 
 /**
  * @ignore
+ * TODO add comments to this to explain what it does.
  */
 Graphics.prototype._lines = function() {
   if(arguments == null) return;
@@ -764,9 +883,12 @@ Graphics.prototype._lines = function() {
 
 /**
  * @ignore
+ * TODO add comments to this to explain what it does.
  */
 Graphics.prototype._linesM = function() {
-  if(arguments == null) return;
+  if(arguments == null) {
+    return;
+  }
 
   var args = arguments[0];
   var p = new Polygon();
@@ -861,44 +983,87 @@ Graphics.prototype.fsLinesM = function() {
 /**
  * @ignore
  */
-function _polygon(polygon) {
+Graphics.prototype._polygon = function(polygon) {
   this.context.beginPath();
   this.context.moveTo(polygon[0].x, polygon[0].y);
   for(var i = 1; polygon[i] != null; i++) {
     this.context.lineTo(polygon[i].x, polygon[i].y);
   }
-}
+};
 
+/**
+ * [fPolygon description]
+ * @param  {[type]} polygon [description]
+ * @return {[type]}         [description]
+ * @todo
+ */
 Graphics.prototype.fPolygon = function(polygon) {
-  _polygon(polygon);
+  this._polygon(polygon);
   this.context.fill();
 };
 
+/**
+ * [sPolygon description]
+ * @param  {[type]} polygon   [description]
+ * @param  {[type]} closePath [description]
+ * @return {[type]}           [description]
+ * @todo
+ */
 Graphics.prototype.sPolygon = function(polygon, closePath) {
-  _polygon(polygon);
-  if(closePath) this.context.closePath();
-  this.context.stroke();
-};
-
-Graphics.prototype.fsPolygon = function(polygon, closePath) {
-  _polygon(polygon);
-  if(closePath) this.context.closePath();
-  this.context.fill();
-  this.context.stroke();
-};
-
-Graphics.prototype.fEqTriangle = function(x, y, angle, r) {
-  _eqTriangle(x, y, angle, r);
-  this.context.fill();
-};
-
-Graphics.prototype.sEqTriangle = function(x, y, angle, r) {
-  _eqTriangle(x, y, angle, r);
+  this._polygon(polygon);
+  if(closePath) {
+    this.context.closePath();
+  }
   this.context.stroke();
 };
 
 /**
- * [fsEqTriangle description]
+ * [fsPolygon description]
+ * @param  {[type]} polygon   [description]
+ * @param  {[type]} closePath [description]
+ * @return {[type]}           [description]
+ * @todo
+ */
+Graphics.prototype.fsPolygon = function(polygon, closePath) {
+  this._polygon(polygon);
+  if(closePath) {
+    this.context.closePath();
+  } 
+  this.context.fill();
+  this.context.stroke();
+};
+
+/**
+ * [fEqTriangle description]
+ * @param  {[type]} x     [description]
+ * @param  {[type]} y     [description]
+ * @param  {[type]} angle [description]
+ * @param  {[type]} r     [description]
+ * @return {[type]}       [description]
+ * @todo
+ */
+Graphics.prototype.fEqTriangle = function(x, y, angle, r) {
+  this._eqTriangle(x, y, angle, r);
+  this.context.fill();
+};
+
+/**
+ * Draws a stroked equilateral traiangle.
+ * @param  {[type]} x     [description]
+ * @param  {[type]} y     [description]
+ * @param  {[type]} angle [description]
+ * @param  {[type]} r     [description]
+ * @return {[type]}       [description]
+ * @todo
+ */
+Graphics.prototype.sEqTriangle = function(x, y, angle, r) {
+  this._eqTriangle(x, y, angle, r);
+  this.context.stroke();
+};
+
+/**
+ * Draws a filled and stroked equilateral triangle.
+ * 
  * @param  {[type]} x     [description]
  * @param  {[type]} y     [description]
  * @param  {[type]} angle [description]
@@ -907,19 +1072,31 @@ Graphics.prototype.sEqTriangle = function(x, y, angle, r) {
  * @todo
  */
 Graphics.prototype.fsEqTriangle = function(x, y, angle, r) {
-  _eqTriangle(x, y, angle, r);
+  this._eqTriangle(x, y, angle, r);
   this.context.fill();
   this.context.stroke();
 };
 
-function _eqTriangle(x, y, angle, r) {
+/**
+ * @ignore
+ * 
+ * @param  {[type]} x     [description]
+ * @param  {[type]} y     [description]
+ * @param  {[type]} angle [description]
+ * @param  {[type]} r     [description]
+ * @return {[type]}       [description]
+ *  
+ * TODO document this with non-javadoc comments to describe what this
+ * does.
+ */
+Graphics.prototype._eqTriangle = function(x, y, angle, r) {
   this.context.beginPath();
   angle = angle || 0;
   this.context.moveTo(r * Math.cos(angle) + x, r * Math.sin(angle) + y);
   this.context.lineTo(r * Math.cos(angle + 2.0944) + x, r * Math.sin(angle + 2.0944) + y);
   this.context.lineTo(r * Math.cos(angle + 4.1888) + x, r * Math.sin(angle + 4.1888) + y);
   this.context.lineTo(r * Math.cos(angle) + x, r * Math.sin(angle) + y);
-}
+};
 
 //drawing and checking cursor
 
@@ -1120,6 +1297,9 @@ Graphics.prototype.lineM = function(x0, y0, x1, y1, d) {
 
 /**
  * @ignore
+ * 
+ * TODO document this with non-javadoc comments to describe what this
+ * does.
  */
 Graphics.prototype._distToSegmentSquared = function(x0, y0, x1, y1) {
   var l2 = Math.pow(x0 - x1, 2) + Math.pow(y0 - y1, 2);
@@ -1172,11 +1352,14 @@ Graphics.prototype.bezierM = function(x0, y0, cx0, cy0, cx1, cy1, x1, y1, d) { /
 //images
 
 /**
- * draw an image on this.context. parameters options (s for source, d for destination):
+ *  Draw an image on this.context. parameters options (s for source, d for destination):
+ *  
  *  drawImage(image, dx, dy)
  *  drawImage(image, dx, dy, dw, dh)
  *  drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh)
  *  @param {Image} image
+ *  
+ *  @todo document parameters
  */
 Graphics.prototype.drawImage = function(image) { //TODO: improve efficiency
   if(image == null) return;
@@ -1216,6 +1399,12 @@ Graphics.prototype.fitImage = function(image, rectangle) {
 
 // styles
 
+/**
+ * [setFill description]
+ * @param {[type]} style [description]
+ *
+ * @todo
+ */
 Graphics.prototype.setFill = function(style) {
   if(typeof style == "number") {
     if(arguments.length > 3) {
@@ -1229,11 +1418,12 @@ Graphics.prototype.setFill = function(style) {
 };
 
 /**
- * setStroke - set stroke to draw with in canvas
+ * Set stroke to draw with in canvas
  *
  * @param {(String|Number)} style If string, then hex value or web color.
- * If Number, then a set of RGB or RGBA integers
+ *                                If Number, then a set of RGB or RGBA integers
  * @param {Number} lineWidth Optional width of line to use. Only valid if style parameter is a string.
+ *
  * @example
  * setStroke('steelblue'); // sets stroke to blue.
  * setStroke(0,0,0,0.4); // sets stroke to black with partial opacity.
@@ -1253,6 +1443,13 @@ Graphics.prototype.setStroke = function(style, lineWidth) {
   if(lineWidth) this.context.lineWidth = lineWidth;
 };
 
+/**
+ * Set the current lineWidth for strokes.
+ * 
+ * @param {Number} lineWidth [description]\
+ * 
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/lineWidth|lineWidth}
+ */
 Graphics.prototype.setLW = function(lineWidth) {
   this.context.lineWidth = lineWidth;
 };
@@ -1261,6 +1458,15 @@ Graphics.prototype.setLW = function(lineWidth) {
 // Clipping
 //
 
+/**
+ * Creates a clipping circle with the given dimensions
+ * 
+ * @param  {[type]} x x coordinate of the circle's center
+ * @param  {[type]} y y coordinate of the circle's center
+ * @param  {[type]} r radius of circle 
+ *
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/clip|Clip}
+ */
 Graphics.prototype.clipCircle = function(x, y, r) {
   this.context.save();
   this.context.beginPath();
@@ -1269,6 +1475,16 @@ Graphics.prototype.clipCircle = function(x, y, r) {
   this.context.clip();
 };
 
+/**
+ * Creates a clipping rectangle with the given dimensions
+ * 
+ * @param  {Number} x x coordinate of top left corner
+ * @param  {Number} y y coordinate of top left corner
+ * @param  {Number} w width of rect
+ * @param  {Number} h height of rect
+ *
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/clip|Clip}
+ */
 Graphics.prototype.clipRectangle = function(x, y, w, h) {
   this.context.save();
   this.context.beginPath();
@@ -1279,14 +1495,31 @@ Graphics.prototype.clipRectangle = function(x, y, w, h) {
   this.context.clip();
 };
 
+/**
+ * Saves the entire state of the canvas by pushing the current state onto a stack.
+ * 
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/save|Save}
+ */
 Graphics.prototype.save = function() {
   this.context.save();
 };
 
+/**
+ * Turns the path currently being built into the current clipping path. 
+ *
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/clip|Clip}
+ */
 Graphics.prototype.clip = function() {
   this.context.clip();
 };
 
+/**
+ * Restores the most recently saved canvas state by popping the top entry
+ * in the drawing state stack. If there is no saved state,
+ * this method does nothing.
+ *
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/restore|Restore}
+ */
 Graphics.prototype.restore = function() {
   this.context.restore();
 };
@@ -1351,6 +1584,19 @@ Graphics.prototype.sText = function(text, x, y) {
 Graphics.prototype.fsText = function(text, x, y) {
   this.context.strokeText(text, x, y);
   this.context.fillText(text, x, y);
+};
+
+/**
+ * Draws filled in text and returns its width.
+ * 
+ * @param  {String} text
+ * @param  {Number} x x coordinate of text
+ * @param  {Number} y x coordinate of text
+ * @return {Number} the width of the rendered text in pixels
+ */
+Graphics.prototype.fTextW = function(text, x, y) {
+  this.context.fillText(text, x, y);
+  return this.context.measureText(text).width;
 };
 
 /**
@@ -1513,11 +1759,6 @@ Graphics.prototype.fTextRotatedM = function(text, x, y, angle, size) {
   return mYT > y && mYT < y + size && mXT > x && mXT < x + this.context.measureText(text).width;
 };
 
-Graphics.prototype.fTextW = function(text, x, y) {
-  this.context.fillText(text, x, y);
-  return this.context.measureText(text).width;
-};
-
 /**
  * Sets several text canvas rendering properties
  *
@@ -1526,8 +1767,7 @@ Graphics.prototype.fTextW = function(text, x, y) {
  * @param {Object} fontName optional font name (default: LOADED_FONT)
  * @param {Object} align optional horizontal align ('left', 'center', 'right')
  * @param {Object} baseline optional vertical alignment ('bottom', 'middle', 'top')
- * @param {Object} style optional font style ('bold', 'italic', 'underline')
- * @param {Object} ctx optional context
+ * @param {Object} style optional font style ('bold', 'italic', 'underline') 
  */
 Graphics.prototype.setText = function(color, fontSize, fontName, align, baseline, style) {
   color = color || '#000000';
@@ -1547,6 +1787,16 @@ Graphics.prototype.setText = function(color, fontSize, fontName, align, baseline
   this.context.textBaseline = baseline;
 };
 
+/**
+ * Returns the width in pixels of the text passed in given the current
+ * state of the graphics canvas.
+ * 
+ * @param  {String} text
+ * @return {Number} width in pixels of the text if it were rendered.
+ *
+ * TODO it would be great to have a method that returned the whole
+ * TextMetrics object
+ */
 Graphics.prototype.getTextW = function(text) {
   return this.context.measureText(text).width;
 };
@@ -1555,16 +1805,31 @@ Graphics.prototype.getTextW = function(text) {
 // Pixel data
 // 
 
-Graphics.prototype.getPixelData = function(x, y) {
-  return this.context.getImageData(x, y, 1, 1).data;
-};
-
+/**
+ * Return the RGBA color of the pixel at a given x,y coordinate on 
+ * the graphics object canvas as a string.
+ * 
+ * @param  {Number} x x coordinate of pixel
+ * @param  {Number} y y coordinate of pixel
+ * @return {String} an rgba(r,g,b,a) string representation of the color
+ */
 Graphics.prototype.getPixelColor = function(x, y) {
   var rgba = this.context.getImageData(x, y, 1, 1).data;
   return 'rgba(' + rgba[0] + ',' + rgba[1] + ',' + rgba[2] + ',' + rgba[3] + ')';
 };
 
-Graphics.prototype.getPixelColorRGBA = function(x, y) { //repeated
+/**
+ * Return the RGBA color of the pixel at a given x,y coordinate on 
+ * the graphics object canvas as an array of integers.
+ * 
+ * @param  {Number} x x coordinate of pixel
+ * @param  {Number} y y coordinate of pixel
+ * @return {Uint8ClampedArray} Uint8ClampedArray  representing a one-dimensional 
+ *                                                array containing the data in the
+ *                                                RGBA order, with integer values 
+ *                                                between 0 and 255 
+ */
+Graphics.prototype.getPixelColorRGBA = function(x, y) {
   return this.context.getImageData(x, y, 1, 1).data;
 };
 
@@ -1572,6 +1837,12 @@ Graphics.prototype.getPixelColorRGBA = function(x, y) { //repeated
 // Capture
 //
 
+/**
+ * Cpatures the current state of this graphics objects' canvas
+ * to an image
+ * 
+ * @return {Image} HTML5 Image object of current state of the canvas.
+ */
 Graphics.prototype.captureCanvas = function() {
   var im = new Image();
   im.src = this.canvas.toDataURL();

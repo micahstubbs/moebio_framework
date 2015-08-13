@@ -229,7 +229,7 @@ function drawSimpleShapes() {
     }
   });
   g.setBackgroundColor('Azure');
-  g.setAlphaRefresh(1);
+  g.setBackgroundAlpha(1);
 
   var g2 = new mo.Graphics({
     container: "#container2",
@@ -239,11 +239,13 @@ function drawSimpleShapes() {
     },
     cycle: function() {
       drawRects(this, 20, 20);
-      drawText(this, 20, 100);
+      drawCircles(this, 40, 100);
+      drawLines(this, 20, 200);
+      drawText(this, 20, 300);      
     }
   });
   g2.setBackgroundColor('AntiqueWhite');
-  g2.setAlphaRefresh(1);
+  g2.setBackgroundAlpha(1);
 
   // Add some custom event handlers just to g
   g.on('keydown', function(e){
