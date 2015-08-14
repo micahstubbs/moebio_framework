@@ -1,5 +1,6 @@
 import List from "src/dataStructures/lists/List";
 import Interval from "src/dataStructures/numeric/Interval";
+import { typeOf } from "src/tools/utils/code/ClassUtils";
 
 NumberList.prototype = new List();
 NumberList.prototype.constructor = NumberList;
@@ -61,11 +62,6 @@ NumberList.fromArray = function(array, forceToNumber) {
   result.getSum = NumberList.prototype.getSum;
   result.getProduct = NumberList.prototype.getProduct;
   result.getInterval = NumberList.prototype.getInterval;
-  result.getNumbersSimplified = NumberList.prototype.getNumbersSimplified;
-  result.getNormalized = NumberList.prototype.getNormalized;
-  result.getNormalizedToMax = NumberList.prototype.getNormalizedToMax;
-  result.getNormalizedToSum = NumberList.prototype.getNormalizedToSum;
-  result.toPolygon = NumberList.prototype.toPolygon;
 
   //statistics
   result.getAverage = NumberList.prototype.getAverage;
@@ -82,8 +78,6 @@ NumberList.fromArray = function(array, forceToNumber) {
   result.add = NumberList.prototype.add;
   result.subtract = NumberList.prototype.subtract;
   result.divide = NumberList.prototype.divide;
-  result.dotProduct = NumberList.prototype.dotProduct;
-  result.distance = NumberList.prototype.distance;
   result.sqrt = NumberList.prototype.sqrt;
   result.pow = NumberList.prototype.pow;
   result.log = NumberList.prototype.log;
@@ -313,10 +307,28 @@ NumberList.prototype.getQuantiles = function(nQuantiles) {//TODO: defines differ
   return quantiles;
 };
 
-
-
 /////////sorting
 
+/**
+ * Returns a new NumberList sorted in either ascending or descending order.
+ *
+ * @param  {NumberList} numberList NumberList to sort
+ * @param {Boolean} ascending True if values should be sorted in ascending order.
+ * If false, values will be sorted in descending order.
+ * @return {NumberList} new sorted NumberList.
+ */
+NumberList.prototype.getSorted = function(ascending) {
+  ascending = ascending == null ? true : ascending;
+
+  if(ascending) {
+    return NumberList.fromArray(this.slice().sort(function(a, b) {
+      return a - b;
+    }), false);
+  }
+  return NumberList.fromArray(this.slice().sort(function(a, b) {
+    return b - a;
+  }), false);
+};
 
 /**
  * Returns a new NumberList containing the indicies of the values of
@@ -362,6 +374,207 @@ NumberList.prototype.getSortIndexes = function(descending) {
   return newList;
 };
 
+/**
+ * Adds a value or values in a NumberList to the current list.
+ *
+ * If input is a Number, each value of the returned
+ * NumberList will be the sum of the original value and this
+ * input value.
+ *
+ * If the input is a NumberList, each value of the returned
+ * NumberList will be the sum of the original value and the
+ * value at the same index in the input list.
+ *
+ * @param {Number|NumberList} object Input value to add to the list.
+ * @return {NumberList}
+ */
+NumberList.prototype.add = function(object) {
+  var i;
+  var newNumberList = new NumberList();
+  var type = typeOf(object);
+
+  switch(type) {
+    case 'number':
+      for(i = 0; this[i] != null; i++) {
+        newNumberList[i] = this[i] + object;
+      }
+      break;
+    case 'NumberList':
+      for(i = 0; this[i] != null; i++) {
+        newNumberList[i] = this[i] + object[i % object.length];
+      }
+      break;
+  }
+
+  newNumberList.name = this.name;
+  return newNumberList;
+};
+
+/**
+ * Subtracts a value or values in a NumberList from the current list.
+ *
+ * If input is a Number, each value of the returned
+ * NumberList will be the original value minus this
+ * input value.
+ *
+ * If the input is a NumberList, each value of the returned
+ * NumberList will be the original value minus the
+ * value at the same index in the input list.
+ *
+ * @param {Number|NumberList} object Input value to subract from the list.
+ * @return {NumberList}
+ */
+NumberList.prototype.subtract = function(object) {
+  var i;
+  var newNumberList = new NumberList();
+  var type = typeOf(object);
+
+  switch(type) {
+    case 'number':
+      for(i = 0; this[i] != null; i++) {
+        newNumberList[i] = this[i] - object;
+      }
+      break;
+    case 'NumberList':
+      for(i = 0; this[i] != null; i++) {
+        newNumberList[i] = this[i] - object[i % object.length];
+      }
+      break;
+  }
+
+  newNumberList.name = this.name;
+  return newNumberList;
+};
+
+/**
+ * Returns a new NumberList with each value divided by a input value or values in a NumberList.
+ *
+ * If input is a Number, each value of the returned
+ * NumberList will be the original value divided by this
+ * input value.
+ *
+ * If the input is a NumberList, each value of the returned
+ * NumberList will be the original value divided by the
+ * value at the same index in the input list.
+ *
+ * @param {Number|NumberList} object Input value to divide by the list.
+ * @return {NumberList}
+ */
+NumberList.prototype.divide = function(object) {
+  var i;
+  var newNumberList = new NumberList();
+  var type = typeOf(object);
+
+  switch(type) {
+    case 'number':
+      for(i = 0; this[i] != null; i++) {
+        newNumberList[i] = this[i] / object;
+      }
+      break;
+    case 'NumberList':
+      for(i = 0; this[i] != null; i++) {
+        newNumberList[i] = this[i] / object[i % object.length];
+      }
+      break;
+  }
+
+  newNumberList.name = this.name;
+  return newNumberList;
+};
+
+/**
+ * Returns a new NumberList with the values of
+ * the original list multiplied by the input value
+ *
+ * @param {Number} value The value to multiply each
+ * value in the list by.
+ * @return {NumberList} New NumberList with values multiplied.
+ */
+NumberList.prototype.factor = function(value) {
+  var i;
+  var newNumberList = new NumberList();
+  for(i = 0; i < this.length; i++) {
+    newNumberList.push(this[i] * value);
+  }
+  newNumberList.name = this.name;
+  return newNumberList;
+};
+
+
+/**
+ * Returns a new NumberList containing the square root of
+ * the values of the current NumberList.
+ *
+ * @return {NumberList} NumberList with square rooted values.
+ */
+NumberList.prototype.sqrt = function() {
+  var i;
+  var newNumberList = new NumberList();
+  for(i = 0; i < this.length; i++) {
+    newNumberList.push(Math.sqrt(this[i]));
+  }
+  newNumberList.name = this.name;
+  return newNumberList;
+};
+
+/**
+ * Returns a new NumberList containing values raised to the power
+ * of the input value.
+ *
+ * @param {Number} power Power to raise each value by.
+ * @return {NumberList} New NumberList.
+ */
+NumberList.prototype.pow = function(power) {
+  var i;
+  var newNumberList = new NumberList();
+  for(i = 0; i < this.length; i++) {
+    newNumberList.push(Math.pow(this[i], power));
+  }
+  newNumberList.name = this.name;
+  return newNumberList;
+};
+
+/**
+ * Returns a transformed version of the list with
+ * each value in the new list the log of the value
+ * in the current list, with an optional constant
+ * added to it.
+ *
+ * @param  {NumberList} numberList
+ * @param {Number} add Optional value to add to the log transformed values.
+ * Defaults to 0.
+ * @return {NumberList}
+ */
+NumberList.prototype.log = function(add) {
+  add = add || 0;
+
+  var i;
+  var newNumberList = new NumberList();
+  for(i = 0; this[i] != null; i++) {
+    newNumberList[i] = Math.log(this[i] + add);
+  }
+  newNumberList.name = this.name;
+
+  return newNumberList;
+};
+
+/**
+ * Returns a new NumberList containing the floor values (removing decimals) of
+ * the values of the current NumberList.
+ *
+ * @param  {NumberList} numberList
+ * @return {NumberList} NumberList with integer values.
+ */
+NumberList.prototype.floor = function() {
+  var i;
+  var newNumberList = new NumberList();
+  for(i = 0; i < this.length; i++) {
+    newNumberList.push(Math.floor(this[i]));
+  }
+  newNumberList.name = this.name;
+
+  return newNumberList;
+};
 
 /**
  * @todo write docs
@@ -375,6 +588,24 @@ NumberList.prototype.approach = function(destinty, speed) {
   for(i = 0; this[i] != null; i++) {
     this[i] = antispeed * this[i] + speed * destinty[i];
   }
+};
+
+/**
+ * Returns true if values in the input NumberList are the same
+ * as the values in the current list.
+ *
+ * @param numberList2 Second NumberList to compare.
+ * @return {Boolean} True if all values in both lists match.
+ */
+NumberList.prototype.isEquivalent = function(numberList2) {
+  if(this.length !== numberList2.length) {
+    return false;
+  }
+
+  for(var i = 0; this[i] != null; i++) {
+    if(this[i] != numberList2[i]) return false;
+  }
+  return true;
 };
 
 ///////overriding
