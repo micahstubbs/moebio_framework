@@ -68,6 +68,7 @@
   "operators/numeric/MatrixGenerators.js",
   "operators/numeric/numberList/NumberListGenerators.js",
   "operators/numeric/numberList/NumberListOperators.js",
+  "operators/numeric/numberList/NumberListConversions.js",
   "operators/numeric/NumberOperators.js",
   "operators/numeric/numberTable/NumberTableConversions.js",
   "operators/numeric/numberTable/NumberTableFlowOperators.js",

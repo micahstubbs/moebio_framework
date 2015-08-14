@@ -1,4 +1,4 @@
-/* global grunt, module, require, console */
+/* global module, require */
 
 var buildFileList = require('./tasks/shared').buildFileList;
 
