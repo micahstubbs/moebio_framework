@@ -577,55 +577,7 @@ NumberList.prototype.floor = function() {
 };
 
 
-/**
- * Returns dot product between current list and input NumberList.
- *
- * @param {NumberList} numberList Another NumberList.
- * @return {Number} Dot product between two lists.
- */
-NumberList.prototype.dotProduct = function(numberList) {
-  var sum = 0;
-  var i;
-  var nElements = Math.min(this.length, numberList.length);
-  for(i = 0; i < nElements; i++) {
-    sum += this[i] * numberList[i];
-  }
-  return sum;
-};
 
-/**
- * Calculates Euclidean distance between two numberLists
- *
- * @param  {NumberList} numberList NumberList of the same length
- * as current list.
- * @return {Number} Summed Euclidean distance between all values.
- * tags:
- */
-NumberList.prototype.distance = function(numberList) {
-  var sum = 0;
-  var i;
-  var nElements = Math.min(this.length, numberList.length);
-  for(i = 0; i < nElements; i++) {
-    sum += Math.pow(this[i] - numberList[i], 2);
-  }
-  return Math.sqrt(sum);
-};
-
-
-/**
- * Returns a new {@link StringList} with all values converted to strings
- *
- * @return {StringList} New list.
- */
-NumberList.prototype.toStringList = function() {
-  var i;
-  var stringList = new StringList();
-  for(i = 0; this[i] != null; i++) {
-    stringList[i] = String(this[i]);
-  }
-  stringList.name = this.name;
-  return stringList;
-};
 
 
 /**
