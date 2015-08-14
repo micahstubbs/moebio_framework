@@ -10,7 +10,15 @@ NumberList.prototype = new List();
 NumberList.prototype.constructor = NumberList;
 
 /**
- * @classdesc List structure for Numbers.
+ * @classdesc List structure for Numbers. Provides basic data type for
+ * storing and working with numbers in a List.
+ *
+ * Additional functions that work on NumberList can be found in:
+ * <ul>
+ *  <li>Operators:   {@link NumberListOperators}</li>
+ *  <li>Conversions: {@link NumberListConversions}</li>
+ *  <li>Generators: {@link NumberListGenerators}</li>
+ * </ul>
  *
  * @constructor
  * @description Creates a new NumberList.
