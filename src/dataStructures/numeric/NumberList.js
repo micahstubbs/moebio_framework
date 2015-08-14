@@ -1,10 +1,5 @@
 import List from "src/dataStructures/lists/List";
-import StringList from "src/dataStructures/strings/StringList";
 import Interval from "src/dataStructures/numeric/Interval";
-import ListGenerators from "src/operators/lists/ListGenerators";
-import Polygon from "src/dataStructures/geometry/Polygon";
-import Point from "src/dataStructures/geometry/Point";
-import { typeOf } from "src/tools/utils/code/ClassUtils";
 
 NumberList.prototype = new List();
 NumberList.prototype.constructor = NumberList;
@@ -200,80 +195,6 @@ NumberList.prototype.getProduct = function() {
 };
 
 /**
- * Returns a NumberList normalized to the sum.
- *
- * @param {Number} factor Optional multiplier to modify the normalized values by.
- * Defaults to 1.
- * @param {Number} sum Optional sum to normalize to.
- * If not provided, sum will be calculated automatically.
- * @return {NumberList} New NumberList of values normalized to the sum.
- * tags:
- */
-NumberList.prototype.getNormalizedToSum = function(factor, sum) {
-  factor = factor == null ? 1 : factor;
-  var newNumberList = new NumberList();
-  newNumberList.name = this.name;
-  if(this.length === 0) return newNumberList;
-  var i;
-  sum = sum == null ? this.getSum() : sum;
-  if(sum === 0) return this.clone();
-
-  for(i = 0; i < this.length; i++) {
-    newNumberList.push(factor * this[i] / sum);
-  }
-  return newNumberList;
-};
-
-/**
- * Returns a NumberList normalized to min-max interval.
- *
- * @param {Number} factor Optional multiplier to modify the normalized values by.
- * Defaults to 1.
- * @return {NumberList}
- * tags:
- */
-NumberList.prototype.getNormalized = function(factor) {
-  factor = factor == null ? 1 : factor;
-
-  if(this.length === 0) return null;
-
-  var i;
-  var interval = this.getMinMaxInterval();
-  var a = interval.getAmplitude();
-  var newNumberList = new NumberList();
-  for(i = 0; i < this.length; i++) {
-    newNumberList.push(factor * ((this[i] - interval.x) / a));
-  }
-  newNumberList.name = this.name;
-  return newNumberList;
-};
-
-/**
- * Returns a NumberList normalized to Max.
- *
- * @param {Number} factor Optional multiplier to modify the normalized values by. Defaults to 1.
- * @return {NumberList}
- * tags:
- */
-NumberList.prototype.getNormalizedToMax = function(factor) {
-  factor = factor == null ? 1 : factor;
-
-  if(this.length == 0) return null;
-
-  var max = this.getMax();
-  if(max == 0) {
-    max = this.getMin();
-    if(max == 0) return ListGenerators.createListWithSameElement(this.length, 0);
-  }
-  var newNumberList = new NumberList();
-  for(var i = 0; this[i] != null; i++) {
-    newNumberList.push(factor * (this[i] / max));
-  }
-  newNumberList.name = this.name;
-  return newNumberList;
-};
-
-/**
  * Builds an Interval with min and max value from the NumberList
  *
  * @return {Interval} with starting value as the min of the NumberList
@@ -292,37 +213,6 @@ NumberList.prototype.getInterval = function() {
   return interval;
 };
 
-/**
- * simplifies a categorical list, by keeping the nCategories-1 most common values, and replacing the others with an "other" element
- * this method reduces the number of different values contained in the list, converting it into a categorical list
- * @param  {Number} method simplification method:<b>0:significant digits<br>1:quantiles (value will be min value in percentile)<br>2:orders of magnitude
- *
- * @param  {Number} param different meaning according to choosen method:<br>0:number of significant digits<br>1:number of quantiles<br>2:no need of param
- * @return {NumberList} simplified list
- * tags:
- */
-NumberList.prototype.getNumbersSimplified = function(method, param) {
-  method = method||0;
-  param = param||0;
-
-  var newList = new NumberList();
-  newList.name = this.name;
-
-
-  switch(method){
-    case 0:
-      var power = Math.pow(10, param);
-      this.forEach(function(val){
-        newList.push(Math.floor(val/power)*power);
-      });
-      break;
-    case 1:
-      //deploy quantiles first (optional return of n percentile, min value, interval, numberTable with indexes, numberTable with values)
-      break;
-  }
-
-  return newList;
-};
 
 /////////statistics
 
@@ -427,25 +317,6 @@ NumberList.prototype.getQuantiles = function(nQuantiles) {//TODO: defines differ
 
 /////////sorting
 
-/**
- * Returns a new NumberList sorted in either ascending or descending order.
- *
- * @param {Boolean} ascending True if values should be sorted in ascending order.
- * If false, values will be sorted in descending order.
- * @return {NumberList} new sorted NumberList.
- */
-NumberList.prototype.getSorted = function(ascending) {
-  ascending = ascending == null ? true : ascending;
-
-  if(ascending) {
-    return NumberList.fromArray(this.slice().sort(function(a, b) {
-      return a - b;
-    }), false);
-  }
-  return NumberList.fromArray(this.slice().sort(function(a, b) {
-    return b - a;
-  }), false);
-};
 
 /**
  * Returns a new NumberList containing the indicies of the values of
@@ -490,102 +361,6 @@ NumberList.prototype.getSortIndexes = function(descending) {
   newList.name = this.name;
   return newList;
 };
-
-/**
- * Returns a new NumberList with the values of
- * the original list multiplied by the input value
- *
- * @param {Number} value The value to multiply each
- * value in the list by.
- * @return {NumberList} New NumberList with values multiplied.
- */
-NumberList.prototype.factor = function(value) {
-  var i;
-  var newNumberList = new NumberList();
-  for(i = 0; i < this.length; i++) {
-    newNumberList.push(this[i] * value);
-  }
-  newNumberList.name = this.name;
-  return newNumberList;
-};
-
-
-
-/**
- * Returns a new NumberList containing the square root of
- * the values of the current NumberList.
- *
- * @return {NumberList} NumberList with square rooted values.
- */
-NumberList.prototype.sqrt = function() {
-  var i;
-  var newNumberList = new NumberList();
-  for(i = 0; i < this.length; i++) {
-    newNumberList.push(Math.sqrt(this[i]));
-  }
-  newNumberList.name = this.name;
-  return newNumberList;
-};
-
-/**
- * Returns a new NumberList containing values raised to the power
- * of the input value.
- *
- * @param {Number} power Power to raise each value by.
- * @return {NumberList} New NumberList.
- */
-NumberList.prototype.pow = function(power) {
-  var i;
-  var newNumberList = new NumberList();
-  for(i = 0; i < this.length; i++) {
-    newNumberList.push(Math.pow(this[i], power));
-  }
-  newNumberList.name = this.name;
-  return newNumberList;
-};
-
-/**
- * Returns a transformed version of the list with
- * each value in the new list the log of the value
- * in the current list, with an optional constant
- * added to it.
- *
- * @param {Number} add Optional value to add to the log transformed values.
- * Defaults to 0.
- * @return {NumberList}
- */
-NumberList.prototype.log = function(add) {
-  add = add || 0;
-
-  var i;
-  var newNumberList = new NumberList();
-  for(i = 0; this[i] != null; i++) {
-    newNumberList[i] = Math.log(this[i] + add);
-  }
-  newNumberList.name = this.name;
-
-  return newNumberList;
-};
-
-/**
- * Returns a new NumberList containing the floor values (removing decimals) of
- * the values of the current NumberList.
- *
- * @return {NumberList} NumberList with integer values.
- */
-NumberList.prototype.floor = function() {
-  var i;
-  var newNumberList = new NumberList();
-  for(i = 0; i < this.length; i++) {
-    newNumberList.push(Math.floor(this[i]));
-  }
-  newNumberList.name = this.name;
-
-  return newNumberList;
-};
-
-
-
 
 
 /**

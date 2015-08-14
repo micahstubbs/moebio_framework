@@ -72,19 +72,6 @@ describe("NumberList", function() {
     expect(nl.getProduct()).toBe(12000000);
   });
 
-  it("should sort list", function() {
-    var nl = mo.NumberList.fromArray([20, 10, 40, 50]);
-    var sorted = nl.getSorted();
-
-    expect(sorted[0]).toBe(10);
-    // shouldn't change original lists values
-    expect(nl[0]).toBe(20);
-
-    sorted = nl.getSorted(false);
-    expect(sorted[0]).toBe(50);
-    // shouldn't change original lists values
-    expect(nl[0]).toBe(20);
-  });
 
   it("it should return the indices of the list in sorted order of the values", function() {
     var nl = mo.NumberList.fromArray([1,3,2]);
@@ -99,11 +86,5 @@ describe("NumberList", function() {
     expect(indices[2]).toBe(1);
   });
 
-  it("should factor values", function() {
-    var nl = mo.NumberList.fromArray([1,3,2]);
-    var factor = nl.factor(10);
-    expect(factor[0]).toBe(10);
-    expect(factor[1]).toBe(30);
-  });
 
 });

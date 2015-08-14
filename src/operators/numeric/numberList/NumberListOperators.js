@@ -1,5 +1,7 @@
+import Rectangle from "src/dataStructures/geometry/Rectangle";
 import NumberList from "src/dataStructures/numeric/NumberList";
 import NumberTable from "src/dataStructures/numeric/NumberTable";
+import ListGenerators from "src/operators/lists/ListGenerators";
 import { typeOf } from "src/tools/utils/code/ClassUtils";
 
 /**
@@ -217,6 +219,84 @@ NumberListOperators.covariance = function(numberList0, numberList1) {
 };
 
 /**
+ * Returns a NumberList normalized to the sum.
+ *
+ * @param  {NumberList} numberlist NumberList to Normalize.
+ * @param {Number} factor Optional multiplier to modify the normalized values by.
+ * Defaults to 1.
+ * @param {Number} sum Optional sum to normalize to.
+ * If not provided, sum will be calculated automatically.
+ * @return {NumberList} New NumberList of values normalized to the sum.
+ * tags:
+ */
+NumberListOperators.normalizedToSum = function(numberlist, factor, sum) {
+  factor = factor == null ? 1 : factor;
+  var newNumberList = new NumberList();
+  newNumberList.name = numberlist.name;
+  if(numberlist.length === 0) return newNumberList;
+  var i;
+  sum = sum == null ? numberlist.getSum() : sum;
+  if(sum === 0) return numberlist.clone();
+
+  for(i = 0; i < numberlist.length; i++) {
+    newNumberList.push(factor * numberlist[i] / sum);
+  }
+  return newNumberList;
+};
+
+/**
+ * Returns a NumberList normalized to min-max interval.
+ *
+ * @param  {NumberList} numberlist NumberList to Normalize.
+ * @param {Number} factor Optional multiplier to modify the normalized values by.
+ * Defaults to 1.
+ * @return {NumberList}
+ * tags:
+ */
+NumberListOperators.normalized = function(numberlist, factor) {
+  factor = factor == null ? 1 : factor;
+
+  if(numberlist.length === 0) return null;
+
+  var i;
+  var interval = numberlist.getMinMaxInterval();
+  var a = interval.getAmplitude();
+  var newNumberList = new NumberList();
+  for(i = 0; i < numberlist.length; i++) {
+    newNumberList.push(factor * ((numberlist[i] - interval.x) / a));
+  }
+  newNumberList.name = numberlist.name;
+  return newNumberList;
+};
+
+/**
+ * Returns a NumberList normalized to Max.
+ *
+ * @param  {NumberList} numberlist NumberList to Normalize.
+ * @param {Number} factor Optional multiplier to modify the normalized values by. Defaults to 1.
+ * @return {NumberList}
+ * tags:
+ */
+NumberListOperators.normalizedToMax = function(numberlist, factor) {
+  factor = factor == null ? 1 : factor;
+
+  if(numberlist.length === 0) return null;
+
+  var max = numberlist.getMax();
+  if(max === 0) {
+    max = numberlist.getMin();
+    if(max === 0) return ListGenerators.createListWithSameElement(numberlist.length, 0);
+  }
+  var newNumberList = new NumberList();
+  for(var i = 0; numberlist[i] != null; i++) {
+    newNumberList.push(factor * (numberlist[i] / max));
+  }
+  newNumberList.name = numberlist.name;
+  return newNumberList;
+};
+
+
+/**
  * generates a new numberList of desired size smaller than original, with elements claculated as averages of neighbors
  * @param  {NumberList} numberList
  * @param  {Number} newLength length of returned numberList
@@ -247,6 +327,156 @@ NumberListOperators.shorten = function(numberList, newLength) {
 };
 
 /**
+ * simplifies a numer list, by keeping the nCategories-1 most common values, and replacing the others with an "other" element
+ * this method reduces the number of different values contained in the list, converting it into a categorical list
+ * @param  {NumberList} numberList NumberList to shorten
+ * @param  {Number} method simplification method:<b>0:significant digits<br>1:quantiles (value will be min value in percentile)<br>2:orders of magnitude
+ *
+ * @param  {Number} param different meaning according to choosen method:<br>0:number of significant digits<br>1:number of quantiles<br>2:no need of param
+ * @return {NumberList} simplified list
+ * tags:
+ */
+NumberListOperators.simplify = function(numberlist, method, param) {
+  method = method||0;
+  param = param||0;
+
+  var newList = new NumberList();
+  newList.name = numberlist.name;
+
+
+  switch(method){
+    case 0:
+      var power = Math.pow(10, param);
+      numberlist.forEach(function(val){
+        newList.push(Math.floor(val/power)*power);
+      });
+      break;
+    case 1:
+      //deploy quantiles first (optional return of n percentile, min value, interval, numberTable with indexes, numberTable with values)
+      break;
+  }
+
+  return newList;
+};
+
+/**
+ * Returns a new NumberList sorted in either ascending or descending order.
+ *
+ * @param  {NumberList} numberList NumberList to sort
+ * @param {Boolean} ascending True if values should be sorted in ascending order.
+ * If false, values will be sorted in descending order.
+ * @return {NumberList} new sorted NumberList.
+ */
+NumberListOperators.sort = function(numberlist, ascending) {
+  ascending = ascending == null ? true : ascending;
+
+  if(ascending) {
+    return NumberList.fromArray(numberlist.slice().sort(function(a, b) {
+      return a - b;
+    }), false);
+  }
+  return NumberList.fromArray(numberlist.slice().sort(function(a, b) {
+    return b - a;
+  }), false);
+};
+
+/**
+ * Returns a new NumberList with the values of
+ * the original list multiplied by the input value
+ *
+ * @param  {NumberList} numberList
+ * @param {Number} value The value to multiply each
+ * value in the list by.
+ * @return {NumberList} New NumberList with values multiplied.
+ */
+NumberListOperators.factor = function(numberlist, value) {
+  var i;
+  var newNumberList = new NumberList();
+  for(i = 0; i < numberlist.length; i++) {
+    newNumberList.push(numberlist[i] * value);
+  }
+  newNumberList.name = numberlist.name;
+  return newNumberList;
+};
+
+
+/**
+ * Returns a new NumberList containing the square root of
+ * the values of the current NumberList.
+ *
+ * @param  {NumberList} numberList
+ * @return {NumberList} NumberList with square rooted values.
+ */
+NumberListOperators.sqrt = function(numberlist) {
+  var i;
+  var newNumberList = new NumberList();
+  for(i = 0; i < numberlist.length; i++) {
+    newNumberList.push(Math.sqrt(numberlist[i]));
+  }
+  newNumberList.name = numberlist.name;
+  return newNumberList;
+};
+
+/**
+ * Returns a new NumberList containing values raised to the power
+ * of the input value.
+ *
+ * @param  {NumberList} numberList
+ * @param {Number} power Power to raise each value by.
+ * @return {NumberList} New NumberList.
+ */
+NumberListOperators.pow = function(numberlist, power) {
+  var i;
+  var newNumberList = new NumberList();
+  for(i = 0; i < numberlist.length; i++) {
+    newNumberList.push(Math.pow(numberlist[i], power));
+  }
+  newNumberList.name = numberlist.name;
+  return newNumberList;
+};
+
+/**
+ * Returns a transformed version of the list with
+ * each value in the new list the log of the value
+ * in the current list, with an optional constant
+ * added to it.
+ *
+ * @param  {NumberList} numberList
+ * @param {Number} add Optional value to add to the log transformed values.
+ * Defaults to 0.
+ * @return {NumberList}
+ */
+NumberList.prototype.log = function(numberlist, add) {
+  add = add || 0;
+
+  var i;
+  var newNumberList = new NumberList();
+  for(i = 0; numberlist[i] != null; i++) {
+    newNumberList[i] = Math.log(numberlist[i] + add);
+  }
+  newNumberList.name = numberlist.name;
+
+  return newNumberList;
+};
+
+/**
+ * Returns a new NumberList containing the floor values (removing decimals) of
+ * the values of the current NumberList.
+ *
+ * @param  {NumberList} numberList
+ * @return {NumberList} NumberList with integer values.
+ */
+NumberList.prototype.floor = function(numberlist) {
+  var i;
+  var newNumberList = new NumberList();
+  for(i = 0; i < numberlist.length; i++) {
+    newNumberList.push(Math.floor(numberlist[i]));
+  }
+  newNumberList.name = numberlist.name;
+
+  return newNumberList;
+};
+/**
  * calculates k-means clusters of values in a numberList
  * @param  {NumberList} numberList
  * @param  {Number} k number of clusters
@@ -256,7 +486,9 @@ NumberListOperators.shorten = function(numberList, newLength) {
  * tags:ds
  */
 NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
-  if(numberList == null || k == null || !k > 0) return null;
+  if(numberList == null || k == null || (k <= 0)) {
+    return null;
+  }
 
   var interval = numberList.getInterval();
 
@@ -270,7 +502,6 @@ NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
   var d;
   var dMin;
   var n;
-  var actualMean;
   var N = 1000;
   var means = new NumberList();
   var nextMeans = new NumberList();
@@ -304,7 +535,11 @@ NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
         }
       }
       if(n == N - 1) {
-        returnIndexes ? clusters[jK].push(i) : clusters[jK].push(x);
+        if(returnIndexes) {
+          clusters[jK].push(i);
+        } else {
+          clusters[jK].push(x);
+        }
       }
 
       nValuesInCluster[jK]++;
@@ -364,7 +599,7 @@ NumberListOperators.averageSmoother = function(numberList, intensity, nIteration
   newNumberList.name = numberList.name;
 
   for(i = 0; i < nIterations; i++) {
-    if(i == 0) {
+    if(i === 0) {
       numberList.forEach(function(val, i) {
         newNumberList[i] = anti * val + (i > 0 ? (numberList[i - 1] * intensity) : 0) + (i < n ? (numberList[i + 1] * intensity) : 0);
       });
@@ -494,12 +729,13 @@ NumberListOperators.filterNumberListByNumber = function(numberList, value, compa
  * @return {NumberList} the union of both NumberLists
  * tags:
  */
-NumberListOperators.union = function(x, y) {//TODO: this should be refactored, and placed in ListOperators
+NumberListOperators.union = function(x, y) {//TODO: should be refactored, and placed in ListOperators
   // Borrowed from here: http://stackoverflow.com/questions/3629817/getting-a-union-of-two-arrays-in-javascript
+  var i;
   var obj = {};
-  for(var i = x.length - 1; i >= 0; --i)
+  for(i = x.length - 1; i >= 0; --i)
     obj[x[i]] = x[i];
-  for(var i = y.length - 1; i >= 0; --i)
+  for(i = y.length - 1; i >= 0; --i)
     obj[y[i]] = y[i];
   var res = new NumberList();
   for(var k in obj) {
@@ -517,12 +753,13 @@ NumberListOperators.union = function(x, y) {//TODO: this should be refactored, a
  * @return {NumberList} the intersection of both NumberLists
  * tags:deprecated
  */
-NumberListOperators.intersection = function(a, b) {//TODO: refactor this method that should be at ListOperators
+NumberListOperators.intersection = function(a, b) {//TODO: refactor method that should be at ListOperators
   // Borrowed from here: http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
   //console.log( "arguments: ", arguments );
+  var i;
   if(arguments.length > 2) {
     var sets = [];
-    for(var i = 0; i < arguments.length; i++) {
+    for(i = 0; i < arguments.length; i++) {
       sets.push(arguments[i]);
     }
     sets.sort(function(a, b) {
@@ -530,7 +767,7 @@ NumberListOperators.intersection = function(a, b) {//TODO: refactor this method 
     });
     console.log("sets: ", sets);
     var resultsTrail = sets[0];
-    for(var i = 1; i < sets.length; i++) {
+    for(i = 1; i < sets.length; i++) {
       var newSet = sets[i];
       resultsTrail = NumberListOperators.intersection(resultsTrail, newSet);
     }
