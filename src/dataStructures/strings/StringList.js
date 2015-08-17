@@ -1,7 +1,6 @@
 import List from "src/dataStructures/lists/List";
 import NumberList from "src/dataStructures/numeric/NumberList";
 import DateList from "src/dataStructures/dates/DateList";
-import StringOperators from "src/operators/strings/StringOperators";
 import DateOperators from "src/operators/dates/DateOperators";
 import { typeOf } from "src/tools/utils/code/ClassUtils";
 
@@ -65,7 +64,6 @@ StringList.fromArray = function(array, forceToString) {
  */
 StringList.prototype.getLengths = function() {
   var lengths = new NumberList();
-  var string;
 
   this.forEach(function(string) {
     lengths.push(string.length);
@@ -134,24 +132,6 @@ StringList.prototype.replace = function(regExp, string) {
 };
 
 /**
- * replaces in each string, a sub-string by a string
- * @param  {String} subString sub-string to be replaced in each string
- * @param  {String} replacement string to be placed instead
- * @return {StringList}
- * tags:
- */
-StringList.prototype.replaceSubStringsInStrings = function(subString, replacement) {
-  var newStringList = new StringList();
-  newStringList.name = this.name;
-
-  for(var i = 0; this[i] != null; i++) {
-    newStringList[i] = StringOperators.replaceString(this[i], subString, replacement);
-  }
-
-  return newStringList;
-};
-
-/**
  * @todo write docs
  */
 StringList.prototype.getConcatenated = function(separator) {
@@ -163,7 +143,6 @@ StringList.prototype.getConcatenated = function(separator) {
   }
   return string;
 };
-
 
 /**
  * @todo write docs
