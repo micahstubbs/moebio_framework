@@ -75,6 +75,7 @@
   "operators/numeric/numberTable/NumberTableOperators.js",
   "operators/strings/StringConversions.js",
   "operators/strings/StringListOperators.js",
+  "operators/strings/StringListConversions.js",
   "operators/strings/StringOperators.js",
   "operators/structures/NetworkConvertions.js",
   "operators/structures/NetworkEncodings.js",

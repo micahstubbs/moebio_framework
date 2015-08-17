@@ -134,8 +134,9 @@ export { ObjectOperators, ObjectConversions };
 // operators/strings
 import StringConversions from "src/operators/strings/StringConversions";
 import StringListOperators from "src/operators/strings/StringListOperators";
+import StringListConversions from "src/operators/strings/StringListConversions";
 import StringOperators from "src/operators/strings/StringOperators";
-export { StringConversions, StringListOperators, StringOperators };
+export { StringConversions, StringListOperators, StringListConversions, StringOperators };
 
 // operators/structures
 import NetworkConvertions from "src/operators/structures/NetworkConvertions";

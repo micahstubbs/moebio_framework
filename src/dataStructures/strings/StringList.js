@@ -1,7 +1,5 @@
 import List from "src/dataStructures/lists/List";
 import NumberList from "src/dataStructures/numeric/NumberList";
-import DateList from "src/dataStructures/dates/DateList";
-import DateOperators from "src/operators/dates/DateOperators";
 import { typeOf } from "src/tools/utils/code/ClassUtils";
 
 StringList.prototype = new List();
@@ -49,8 +47,6 @@ StringList.fromArray = function(array, forceToString) {
   result.getSurrounded = StringList.prototype.getSurrounded;
   result.replace = StringList.prototype.replace;
   result.getConcatenated = StringList.prototype.getConcatenated;
-  result.toNumberList = StringList.prototype.toNumberList;
-  result.toDateList = StringList.prototype.toDateList;
   result.trim = StringList.prototype.trim;
 
   //override
@@ -168,37 +164,6 @@ StringList.prototype.toUpperCase = function() {
     newStringList[i] = this[i].toUpperCase();
   }
   return newStringList;
-};
-
-/**
- * @todo write docs
- */
-StringList.prototype.toNumberList = function() {
-  var numbers = new NumberList();
-  numbers.name = this.name;
-  var i;
-  for(i = 0; this[i] != null; i++) {
-    numbers[i] = Number(this[i]);
-  }
-  return numbers;
-};
-
-
-/**
- * converts a stringList into a dateList
- *
- * @param  {String} formatCase format cases:<br>0: MM-DD-YYYY<br>1: YYYY-MM-DD<br>2: MM-DD-YY<br>3: YY-MM-DD<br>4: DD-MM-YY<br>5: DD-MM-YYYY
- * @param  {String} separator "-" by default
- * @return {DateList}
- * tags:
- */
-StringList.prototype.toDateList = function(formatCase, separator) {
-  var dateList = new DateList();
-  var i;
-  for(i = 0; this[i] != null; i++) {
-    dateList.push(DateOperators.stringToDate(this[i], formatCase, separator));
-  }
-  return dateList;
 };
 
 /**
