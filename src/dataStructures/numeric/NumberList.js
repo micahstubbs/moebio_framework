@@ -312,7 +312,6 @@ NumberList.prototype.getQuantiles = function(nQuantiles) {//TODO: defines differ
 /**
  * Returns a new NumberList sorted in either ascending or descending order.
  *
- * @param  {NumberList} numberList NumberList to sort
  * @param {Boolean} ascending True if values should be sorted in ascending order.
  * If false, values will be sorted in descending order.
  * @return {NumberList} new sorted NumberList.
@@ -540,7 +539,6 @@ NumberList.prototype.pow = function(power) {
  * in the current list, with an optional constant
  * added to it.
  *
- * @param  {NumberList} numberList
  * @param {Number} add Optional value to add to the log transformed values.
  * Defaults to 0.
  * @return {NumberList}
@@ -562,7 +560,6 @@ NumberList.prototype.log = function(add) {
  * Returns a new NumberList containing the floor values (removing decimals) of
  * the values of the current NumberList.
  *
- * @param  {NumberList} numberList
  * @return {NumberList} NumberList with integer values.
  */
 NumberList.prototype.floor = function() {
