@@ -57,7 +57,7 @@ List.fromArray = function(array) {
   array._constructor = List;
 
   array.getImproved = List.prototype.getImproved;
-  array.sameElements = List.prototype.sameElements;
+  array.isEquivalent = List.prototype.isEquivalent;
   array.getLength = List.prototype.getLength;
   array.getTypeOfElements = List.prototype.getTypeOfElements; //TODO: redundant?
   array.getTypes = List.prototype.getTypes;
@@ -253,7 +253,7 @@ List.prototype.getImproved = function() {
  * @return {Boolean} true if all elements are identical.
  * tags:
  */
-List.prototype.sameElements = function(list) {
+List.prototype.isEquivalent = function(list) {
   if(this.length != list.length) return false;
 
   var i;
