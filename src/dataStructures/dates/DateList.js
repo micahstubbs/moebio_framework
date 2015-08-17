@@ -42,7 +42,6 @@ DateList.fromArray = function(array, forceToDate) {
   result.type = "DateList";
   //assign methods to array:
   result.getTimes = DateList.prototype.getTimes;
-  result.toStringList = DateList.prototype.toStringList;
   result.getMin = DateList.prototype.getMin;
   result.getMax = DateList.prototype.getMax;
   return result;
@@ -63,16 +62,6 @@ DateList.prototype.getTimes = function() {
 };
 
 
-/**
-* @todo write docs
-*/
-DateList.prototype.toStringList = function() {
-  var stringList = new StringList();
-  for(var i = 0; this[i] != null; i++) {
-    stringList[i] = DateOperators.dateToString(this[i]);
-  }
-  return stringList;
-};
 
 /**
 * @todo write docs

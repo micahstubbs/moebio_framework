@@ -38,6 +38,7 @@
   "operators/objects/ObjectOperators.js",
   "operators/objects/ObjectConversions.js",
   "operators/dates/DateListOperators.js",
+  "operators/dates/DateListConversions.js",
   "operators/dates/DateOperators.js",
   "operators/geo/CountryListOperators.js",
   "operators/geo/CountryOperators.js",

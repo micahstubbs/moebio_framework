@@ -67,8 +67,9 @@ export { Node, Relation, NodeList, RelationList, Network, Tree };
 
 // operators/dates
 import DateListOperators from "src/operators/dates/DateListOperators";
+import DateListConversions from "src/operators/dates/DateListConversions";
 import DateOperators from "src/operators/dates/DateOperators";
-export { DateOperators, DateOperators };
+export { DateListOperators, DateListConversions, DateOperators };
 
 // operators/geo
 import CountryListOperators from "src/operators/geo/CountryListOperators";
