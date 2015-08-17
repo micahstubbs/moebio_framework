@@ -1522,18 +1522,14 @@ NetworkOperators._jLouvain = function() {
 };
 
 /**
- * Adds community to Nodes of network based on Louvain community detection.
+ * Builds a Table of clusters based on Louvain community detection.
  * @param {Network} network
- * @param {Boolean} bAddColors if true add colors to nodes based on community
- * @param {String} prop Node property to use to store community for each node
- * @return {Network}
- * tags:analytics,transformative
+ * @return {Table} List of NodeLists
+ * tags:analysis
  */
-NetworkOperators.addLouvainCommunityToNodes = function(network,bAddColors,prop) {
+NetworkOperators.buildNetworkClustersLouvain = function(network) {
   if(network==null) return network;
-  if(bAddColors==null) bAddColors=true;
-  if(prop == null) prop='group';
-
+  
   var node_data = [];
   for(var i=0; i < network.nodeList.length; i++){
     // force nodes to be stringlike since they get used as properties in result
@@ -1550,42 +1546,21 @@ NetworkOperators.addLouvainCommunityToNodes = function(network,bAddColors,prop) 
   // Object with ids of nodes as properties and community number assigned as value.
   var community = NetworkOperators._jLouvain().nodes(node_data).edges(edge_data);
   var result  = community();
+  var clusters = new Table();
+
   var nLGroupIDs = new NumberList();
   if(result)
     for(var i=0; i < network.nodeList.length; i++){
-      var group = result['n'+network.nodeList[i].id];
-      network.nodeList[i][prop] = group;
-      nLGroupIDs.push(group);
+      var j = result['n'+network.nodeList[i].id];
+      if(clusters[j] == undefined)
+        clusters[j]= new NodeList();
+      clusters[j].addNode(network.nodeList[i]);
     }
   else{
     // no results mean no communities, make them all unique
     for(var i=0; i < network.nodeList.length; i++){
-      network.nodeList[i][prop] = i;
-      nLGroupIDs.push(i);
+      clusters.push(new NodeList(network.nodeList[i]));
     }
   }
-  if(bAddColors){
-    // we will color all singleton items light grey
-    var tFreq = nLGroupIDs.getFrequenciesTable(true);
-    // find how many non-singleton groups (they are sorted by freq from above)
-    var nColors=0;
-    // also at same time build a map from groupId to index so we can efficiently get values
-    var mGroupIndex = {};
-    for(var i=0; i < tFreq[0].length; i++){
-      if(tFreq[1][i] == 1 && nColors == 0)
-        nColors=i;
-      mGroupIndex['g'+tFreq[0][i]] = i;
-    }
-    if(nColors==0 && tFreq[0].length > 0)
-      nColors=tFreq[0].length;
-    var colors = ColorListGenerators.createCategoricalColors(2, nColors);
-    for(var i=0;i<network.nodeList.length;i++){
-      var iGroupIndex = mGroupIndex['g'+network.nodeList[i].group];
-      if(tFreq[1][iGroupIndex] == 1)
-        network.nodeList[i].color = 'rgb(128,128,128)';
-      else
-        network.nodeList[i].color = colors[iGroupIndex];
-    }
-  }
-  return network;
+  return clusters;
 };
