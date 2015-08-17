@@ -2,7 +2,8 @@ import Point from 'src/dataStructures/geometry/Point';
 import Polygon from 'src/dataStructures/geometry/Polygon';
 import ColorOperators from "src/operators/graphic/ColorOperators";
 import GeometryOperators from 'src/operators/geometry/GeometryOperators';
-import { TwoPi, HalfPi } from 'src/Global';
+import Rectangle from 'src/dataStructures/geometry/Rectangle';
+import { TwoPi, HalfPi } from "src/Global";
 
 /**
  * A graphics object provides a surface for drawing and interaction
@@ -1861,3 +1862,288 @@ Graphics.prototype.setCursor = function(name) {
   name = name == null ? 'default' : name;
   this.canvas.style.cursor = name;
 };
+
+/**
+ * @todo write docs
+ */
+Graphics.prototype.getFrame = function(){
+  return new Rectangle(0, 0, this.cW, this.cH);
+};
+
+//
+// Advanced graphics (rely on Axis2D projection object)
+//
+
+/**
+ * @ignore
+ * @todo
+ */
+Graphics.prototype._linesInFrame = function(axis2D, numberListX, numberListY){
+  var l = Math.min(numberListX.length, numberListY.length);
+  var i;
+
+  this.context.beginPath();
+  this.context.moveTo(axis2D.projectX(numberListX[0]), axis2D.projectY(numberListY[0]));
+
+  for(i=1; i<l; i++){
+    this.context.lineTo(axis2D.projectX(numberListX[i]), axis2D.projectY(numberListY[i]));
+  }
+};
+
+
+/**
+ * @todo write docs
+ */
+Graphics.prototype.sLinesInFrame = function(axis2D, numberListX, numberListY){
+  this._linesInFrame(axis2D, numberListX, numberListY);
+  this.context.stroke();
+};
+
+/**
+ * @todo write docs
+ */
+Graphics.prototype.fLinesInFrame = function(axis2D, numberListX, numberListY){
+  this._linesInFrame(axis2D, numberListX, numberListY);
+  this.context.fill();
+};
+
+/**
+ * @todo write docs
+ */
+Graphics.prototype.fsLinesInFrame = function(axis2D, numberListX, numberListY){
+  this._linesInFrame(axis2D, numberListX, numberListY);
+  this.context.fill();
+  this.context.stroke();
+};
+
+
+/**
+ * @todo write docs
+ */
+Graphics.prototype.drawGridX = function(axis2D, dX, yLabel, stepsLabel){
+  var x0;
+  var n;
+  var i;
+  var x, top, bottom;
+
+  x0 = Math.floor(axis2D.departureFrame.x/dX)*dX;
+  n = Math.min( Math.ceil(axis2D.departureFrame.width/dX), 1000 );
+  top = Math.min(axis2D.arrivalFrame.y, axis2D.arrivalFrame.y+axis2D.arrivalFrame.height);
+  bottom = Math.max(axis2D.arrivalFrame.y, axis2D.arrivalFrame.y+axis2D.arrivalFrame.height);
+  stepsLabel = stepsLabel==null?1:stepsLabel;
+  for(i=0; i<n; i++){
+    x = Math.floor(axis2D.projectX(x0 + i*dX))+0.5;
+    this.line(x, top, x, bottom);
+    if(yLabel!=null && i%stepsLabel===0) {
+      this.fText(String(x0 + i*dX), x, bottom+yLabel);
+    }
+  }
+};
+
+/**
+ * @todo write docs
+ */
+Graphics.prototype.drawGridY = function(axis2D, dY, xLabel, stepsLabel){
+  var y0;
+  var n;
+  var i;
+  var y, left, right;
+
+  y0 = Math.floor(axis2D.departureFrame.y/dY)*dY;
+  n = Math.min( Math.ceil(axis2D.departureFrame.height/dY), 1000 );
+  left = Math.min(axis2D.arrivalFrame.x, axis2D.arrivalFrame.x+axis2D.arrivalFrame.width);
+  right = Math.max(axis2D.arrivalFrame.x, axis2D.arrivalFrame.x+axis2D.arrivalFrame.width);
+  stepsLabel = stepsLabel==null?1:stepsLabel;
+  for(i=0; i<n; i++){
+    y = Math.floor(axis2D.projectY(y0 + i*dY))+0.5;
+    this.line(left, y, right, y);
+    if(xLabel!=null && i%stepsLabel===0) {
+      this.fText(String(y0 + i*dY), left+xLabel, y);
+    } 
+  }
+};
+
+//
+// Ported from Draw.js TODO - organize these appropriately.
+//
+
+
+/**
+ * @todo write docs
+ */
+Graphics.prototype.drawSmoothPolygon = function(polygon, closed, amount) { //TODO: add tx, ty
+  amount = amount == null ? 30 : amount;
+  var controlPoints;
+
+  if(polygon.length < 2) return null;
+  if(polygon.length == 2) {
+    var a = Math.atan2(polygon[1].y - polygon[0].y, polygon[1].x - polygon[0].x) - 0.5 * Math.PI;
+    var cosa = amount * Math.cos(a);
+    var sina = amount * Math.sin(a);
+    this.context.moveTo(polygon[0].x, polygon[0].y);
+    this.context.bezierCurveTo(
+      polygon[0].x + cosa, polygon[0].y + sina,
+      polygon[1].x + cosa, polygon[1].y + sina,
+      polygon[1].x, polygon[1].y
+    );
+    this.context.bezierCurveTo(
+      polygon[1].x - cosa, polygon[1].y - sina,
+      polygon[0].x - cosa, polygon[0].y - sina,
+      polygon[0].x, polygon[0].y
+    );
+    return;
+  }
+  var i;
+  var nPoints = polygon.length;
+  var prevPoint = polygon[nPoints - 1];
+  var point = polygon[0];
+  var nextPoint = polygon[1];
+  controlPoints = GeometryOperators.getSoftenControlPoints(prevPoint, point, nextPoint, amount);
+  var prevCP = controlPoints[1];
+  var cP;
+  this.context.moveTo(point.x, point.y);
+  prevPoint = point;
+  var nSteps = nPoints + Number(closed);
+  for(i = 1; i < nSteps; i++) {
+    point = polygon[i % nPoints];
+    nextPoint = polygon[(i + 1) % nPoints];
+    controlPoints = GeometryOperators.getSoftenControlPoints(prevPoint, point, nextPoint, amount);
+    cP = controlPoints[0];
+    this.context.bezierCurveTo(prevCP.x, prevCP.y, cP.x, cP.y, point.x, point.y);
+    prevCP = controlPoints[1];
+    prevPoint = point;
+  }
+};
+
+
+
+
+/**
+ * Draws an ellipse using the current state of the canvas.
+ * @param {CanvasRenderingContext2D} context
+ * @param {Number} x The center x coordinate
+ * @param {Number} y The center y coordinate
+ * @param {Number} rW The horizontal radius of the ellipse
+ * @param {Number} rH The vertical radius of the ellipse
+ */
+Graphics.prototype.drawEllipse = function(x, y, rW, rH) {
+  var k = 0.5522848, // 4 * ((√(2) - 1) / 3)
+    ox = rW * k, // control point offset horizontal
+    oy = rH * k, // control point offset vertical
+    xe = x + rW, // x-end
+    ye = y + rH; // y-end
+
+  this.context.moveTo(x - rW, y);
+  this.context.bezierCurveTo(x - rW, y - oy, x - ox, y - rH, x, y - rH);
+  this.context.bezierCurveTo(x + ox, y - rH, xe, y - oy, xe, y);
+  this.context.bezierCurveTo(xe, y + oy, x + ox, ye, x, ye);
+  this.context.bezierCurveTo(x - ox, ye, x - rW, y + oy, x - rW, y);
+  this.context.moveTo(x - rW, y);
+};
+
+/**
+ * Draws a polygon
+ * @param {CanvasRenderingContext2D} context
+ * @param {Polygon} Polygon to draw
+ * @param {Boolean} close polygon
+ * @param {Number} tx horizontal translation
+ * @param {Number} ty vertical translation
+ */
+Graphics.prototype.drawPolygon = function(polygon, close, tx, ty) {
+  tx = tx || 0;
+  ty = ty || 0;
+  var i;
+  this.context.moveTo(tx + polygon[0].x, ty + polygon[0].y);
+  for(i = 1; polygon[i] != null; i++) {
+    this.context.lineTo(tx + polygon[i].x, ty + polygon[i].y);
+  }
+  if(close) {
+    this.context.lineTo(tx + polygon[0].x, ty + polygon[0].y);
+  }
+};
+
+/**
+ * @todo write docs
+ */
+Graphics.prototype.drawPolygonWithControlPoints = function(polygon, controlPoints, tx, ty) {
+  tx = tx || 0;
+  ty = ty || 0;
+  var i;
+  this.context.moveTo(tx + polygon[0].x, ty + polygon[0].y);
+  for(i = 1; polygon[i] != null; i++) {
+    this.context.bezierCurveTo(tx + controlPoints[(i - 1) * 2].x, ty + controlPoints[(i - 1) * 2].y,
+      tx + controlPoints[i * 2 - 1].x, ty + controlPoints[i * 2 - 1].y,
+      tx + polygon[i].x, ty + polygon[i].y);
+  }
+};
+
+/**
+ * @todo write docs
+ */
+Graphics.prototype.drawBezierPolygon = function(bezierPolygon, tx, ty) {
+  tx = tx || 0;
+  ty = ty || 0;
+  var bI;
+  var N = Math.floor((bezierPolygon.length - 1) / 3);
+  var i;
+  this.context.moveTo(tx + bezierPolygon[0].x, ty + bezierPolygon[0].y);
+  for(i = 0; i < N; i++) {
+    bI = i * 3 + 1;
+
+    this.context.bezierCurveTo(
+      tx + bezierPolygon[bI].x, ty + bezierPolygon[bI].y,
+      tx + bezierPolygon[bI + 1].x, ty + bezierPolygon[bI + 1].y,
+      tx + bezierPolygon[bI + 2].x, ty + bezierPolygon[bI + 2].y
+    );
+  }
+};
+
+/**
+ * Draws a rounded rectangle using the current state of the canvas.
+ * If you omit the last three params, it will draw a rectangle
+ * outline with a 5 pixel border radius
+ * @param {CanvasRenderingContext2D} context
+ * @param {Number} x The top left x coordinate
+ * @param {Number} y The top left y coordinate
+ * @param {Number} width The width of the rectangle
+ * @param {Number} height The height of the rectangle
+ * @param {Number} radius The corner radius. Defaults to 5;
+ */
+Graphics.prototype.drawRoundRect = function(x, y, width, height, radius) {
+  radius = radius || 0;
+  var bottom = y + height;
+  this.context.moveTo(x + radius, y);
+  this.context.lineTo(x + width - radius, y);
+  this.context.quadraticCurveTo(x + width, y, x + width, y + radius);
+  this.context.lineTo(x + width, y + height - radius);
+  this.context.quadraticCurveTo(x + width, bottom, x + width - radius, bottom);
+  this.context.lineTo(x + radius, bottom);
+  this.context.quadraticCurveTo(x, bottom, x, bottom - radius);
+  this.context.lineTo(x, y + radius);
+  this.context.quadraticCurveTo(x, y, x + radius, y);
+};
+
+/**
+ * @todo write docs
+ */
+Graphics.prototype.drawTriangleFromBase = function(x, y, base, height, angle) {
+  this.context.moveTo(x + 0.5 * base * Math.cos(angle + Math.PI * 0.5), y + 0.5 * base * Math.sin(angle + Math.PI * 0.5));
+  this.context.lineTo(x + 0.5 * base * Math.cos(angle - Math.PI * 0.5), y + 0.5 * base * Math.sin(angle - Math.PI * 0.5));
+  this.context.lineTo(x + height * Math.cos(angle), y + height * Math.sin(angle));
+  this.context.lineTo(x + 0.5 * base * Math.cos(angle + Math.PI * 0.5), y + 0.5 * base * Math.sin(angle + Math.PI * 0.5));
+};
+
+
+/**
+ * @todo write docs
+ */
+Graphics.prototype.drawQuadrilater = function(p0, p1, p2, p3, close) {
+  close = close == null ? true : close;
+  this.context.moveTo(p0.x, p0.y);
+  this.context.lineTo(p1.x, p1.y);
+  this.context.lineTo(p2.x, p2.y);
+  this.context.lineTo(p3.x, p3.y);
+  if(close) this.context.lineTo(p0.x, p0.y);
+};
+
+

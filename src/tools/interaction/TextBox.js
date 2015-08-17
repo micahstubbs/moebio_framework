@@ -1,10 +1,3 @@
-import { addInteractionEventListener,
-  removeInteractionEventListener,
-  context,
-  mX,
-  mY
-} from 'src/Global';
-import { setText } from "src/tools/graphic/SimpleGraphics";
 import StringOperators from "src/operators/strings/StringOperators";
 import DrawTexts from "src/tools/graphic/DrawTexts";
 import StringList from "src/dataStructures/strings/StringList";
@@ -21,8 +14,9 @@ TextBox.prototype.constructor = TextBox;
  * @constructor
  * @category strings
  */
-function TextBox(configuration) {
-  configuration = configuration == null ? {} : configuration;
+function TextBox(configuration, graphics) {
+  configuration = configuration == null ? {} : configuration; // TODO is this supposed to be an undefined check?
+  this.graphics = graphics;
 
   this.x = configuration.x == null ? 300 : configuration.x;
   this.y = configuration.y == null ? 2 : configuration.y;
@@ -31,10 +25,8 @@ function TextBox(configuration) {
   this.text = configuration.text == null ? '' : configuration.text;
 
   this.fontColor = configuration.fontColor == null ? 'black' : configuration.fontColor;
-  this.fontSize = configuration.fontSize == null ? '14' : configuration.fontSize;
-  // TODO track down LOADED_FONT
-  this.fontName = configuration.fontName == null ? LOADED_FONT : configuration.fontName;
-  //this.fontStyle =  configuration.fontStyle==null?null:configuration.fontStyle;
+  this.fontSize = configuration.fontSize == null ? '14' : configuration.fontSize;  
+  this.fontName = configuration.fontName == null ? 'arial' : configuration.fontName;  
 
   this.warnFunction = configuration.warnFunction;
   this.target = configuration.target;
@@ -46,15 +38,15 @@ function TextBox(configuration) {
 
   this.lineWidth = configuration.lineWidth == null ? 1 : configuration.lineWidth;
 
-  this.maxWidth;
-  this.links;
-  this.linksType;
-  this.pointPairs;
-  this.overLink;
+  this.maxWidth = undefined;
+  this.links = undefined;
+  this.linksType = undefined;
+  this.pointPairs = undefined;
+  this.overLink = undefined;
 
   this.setText(this.text);
 
-  addInteractionEventListener('mouseup', this.mouseUp, this);
+  this.graphics.on('mouseup', this.mouseUp, this);
 }
 export default TextBox;
 
@@ -87,15 +79,13 @@ TextBox.prototype.setText = function(text) {
     var index0;
     var index0b;
     var index1;
-
-    var names = [];
+    
     this.links = new StringList();
     this.linksType = new StringList();
     var indexesPairs = new List();
     var lengthBefore;
 
-    var link;
-    var text;
+    var link;    
     var extra;
     var rest;
 
@@ -146,7 +136,7 @@ TextBox.prototype.setText = function(text) {
 
   //DrawTexts.setContextTextProperties(this.fontColor, this.fontSize, this.fontName, null, null, this.fontStyle);
 
-  setText(this.fontColor, this.fontSize, this.fontName, null, null, this.fontStyle);
+  this.graphics.setText(this.fontColor, this.fontSize, this.fontName, null, null, this.fontStyle);
 
   this.lines = DrawTexts.textWordWrapReturnLines(this.text, this.width, 0, this.lineHeight);
   this.height = this.lines.length * this.lineHeight;
@@ -166,8 +156,8 @@ TextBox.prototype.setText = function(text) {
       for(j = 0; this.lines[j] != null; j++) {
         line = this.lines[j];
         if(interval.x >= lengthAccumulated && interval.x < lengthAccumulated + line.length) {
-          w0 = context.measureText(line.substr(0, interval.x - lengthAccumulated)).width;
-          w1 = context.measureText(line.substr(0, interval.x + interval.y - lengthAccumulated)).width;
+          w0 = this.graphics.context.measureText(line.substr(0, interval.x - lengthAccumulated)).width;
+          w1 = this.graphics.context.measureText(line.substr(0, interval.x + interval.y - lengthAccumulated)).width;
           y = j * this.lineHeight + 0.5;
 
           this.pointPairs.push({
@@ -191,11 +181,11 @@ TextBox.prototype.setText = function(text) {
 
   // TODO is this supposed to be this.setText (also see below) or a diff setText
   //DrawTexts.setContextTextProperties(this.fontColor, this.fontSize, this.fontName, null, null, this.fontStyle);
-  setText(this.fontColor, this.fontSize, this.fontName, null, null, this.fontStyle);
+  this.graphics.setText(this.fontColor, this.fontSize, this.fontName, null, null, this.fontStyle);
 
   this.maxWidth = 0;
   for(i = 0; this.lines[i] != null; i++) {
-    this.maxWidth = Math.max(this.maxWidth, context.measureText(this.lines[i]).width);
+    this.maxWidth = Math.max(this.maxWidth, this.graphics.context.measureText(this.lines[i]).width);
   }
 };
 
@@ -206,11 +196,11 @@ TextBox.prototype.draw = function(scale) {
   scale = scale == null ? 1 : scale;
 
   if(this.backgroundColor != null) {
-    context.fillStyle = this.backgroundColor;
-    context.fillRect(this.x - this.boxMargin, this.y - this.boxMargin, this.width + 2 * this.boxMargin, this.height + 2 * this.boxMargin);
+    this.graphics.context.fillStyle = this.backgroundColor;
+    this.graphics.context.fillRect(this.x - this.boxMargin, this.y - this.boxMargin, this.width + 2 * this.boxMargin, this.height + 2 * this.boxMargin);
   }
-  //DrawTexts.setContextTextProperties(this.fontColor, this.fontSize*scale, this.fontName, null, null, this.fontStyle);
-  setText(this.fontColor, this.fontSize * scale, this.fontName, null, null, this.fontStyle);
+  
+  this.graphics.setText(this.fontColor, this.fontSize * scale, this.fontName, null, null, this.fontStyle);
   DrawTexts.fillTextRectangleWithTextLines(this.lines, this.x, this.y, 0, this.lineHeight * scale);
 
   var x0;
@@ -221,16 +211,16 @@ TextBox.prototype.draw = function(scale) {
   this.overLink = null;
 
   if(this.pointPairs != null) {
-    context.lineWidth = this.lineWidth;
-    context.strokeStyle = this.fontColor;
+    this.graphics.context.lineWidth = this.lineWidth;
+    this.graphics.context.strokeStyle = this.fontColor;
     for(var i = 0; this.pointPairs[i] != null; i++) {
       x0 = this.pointPairs[i].x0 * scale + this.x;
       x1 = this.pointPairs[i].x1 * scale + this.x;
       y0 = this.pointPairs[i].y * scale + this.y;
       y1 = Math.floor(y0 + Number(this.fontSize * scale));
       this.line(x0, x1, y1 + 0.5);
-      if(mY > y0 && mY < y1 && mX > x0 && mX < x1) {
-        context.canvas.style.cursor = 'pointer';
+      if(this.graphics.mY > y0 && this.graphics.mY < y1 && this.graphics.mX > x0 && this.graphics.mX < x1) {
+        this.graphics.context.canvas.style.cursor = 'pointer';
         this.overLink = i;
       }
     }
@@ -241,10 +231,10 @@ TextBox.prototype.draw = function(scale) {
  * @todo write docs
  */
 TextBox.prototype.line = function(x0, x1, y) {
-  context.beginPath();
-  context.moveTo(x0, y);
-  context.lineTo(x1, y);
-  context.stroke();
+  this.graphics.context.beginPath();
+  this.graphics.context.moveTo(x0, y);
+  this.graphics.context.lineTo(x1, y);
+  this.graphics.context.stroke();
 };
 
 /**
@@ -255,7 +245,11 @@ TextBox.prototype.mouseUp = function(e) {
     var link = this.links[this.overLink];
     var linkType = this.linksType[this.overLink];
     if(link.substr(0, 7) == 'http://' || link.substr(0, 8) == 'https://' || link.substr(0, 4) == 'www.') {
-      linkType == "blank" ? window.open(link) : window.open(link, "_self");
+      if(linkType === "blank") {
+        window.open(link);
+      } else {
+        window.open(link, "_self");
+      }      
     } else {
       this.warnFunction.call(this.target, link);
     }
@@ -267,7 +261,7 @@ TextBox.prototype.mouseUp = function(e) {
  * @todo write docs
  */
 TextBox.prototype.deactivate = function() {
-  removeInteractionEventListener('mouseup', this.mouseUp, this);
+  this.graphics.off('mouseup', this.mouseUp, this);
 };
 
 /**

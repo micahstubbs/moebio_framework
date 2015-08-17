@@ -1,4 +1,3 @@
-import { setText } from "src/tools/graphic/SimpleGraphics";
 import Rectangle from "src/dataStructures/geometry/Rectangle";
 import DrawTexts from "src/tools/graphic/DrawTexts";
 
@@ -16,7 +15,7 @@ export default StringDraw;
  * @return {Object}
  * tags:draw
  */
-StringDraw.drawText = function(frame, object, fontSize, fontStyle, margin) {
+StringDraw.drawText = function(frame, object, fontSize, fontStyle, margin, graphics) {
   //var frame = frame;//StringDraw.drawText;
 
   margin = margin || 10;
@@ -27,7 +26,7 @@ StringDraw.drawText = function(frame, object, fontSize, fontStyle, margin) {
 
   var lineHeight = Math.floor(fontSize * 1.2);
 
-  setText('black', fontSize, null, null, null, fontStyle);
+  graphics.setText('black', fontSize, null, null, null, fontStyle);
 
   var significantChange = frame.memory == null || object != frame.memory.object || fontSize != frame.memory.fontSize || fontStyle != frame.memory.fontStyle || margin != frame.memory.margin || frame.width != frame.memory.width || frame.height != frame.memory.height;
 

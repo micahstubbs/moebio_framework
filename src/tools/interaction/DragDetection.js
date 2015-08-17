@@ -1,7 +1,6 @@
 /* global clearInterval, setInterval */
 
 import Point from "src/dataStructures/geometry/Point";
-import { mX, mY, addInteractionEventListener } from 'src/Global';
 
 DragDetection.prototype.constructor = DragDetection;
 
@@ -22,17 +21,18 @@ DragDetection.prototype.constructor = DragDetection;
  * @constructor
  * @category interactions
  */
-function DragDetection(configuration) { //mode, listenerFunction, target, areaVerificationFunction){
+function DragDetection(configuration, graphics) { //mode, listenerFunction, target, areaVerificationFunction){
   this.mode = configuration.mode || 0;
   this.listenerFunction = configuration.listenerFunction;
   this.target = configuration.target;
   this.areaVerificationFunction = configuration.areaVerificationFunction;
+  this.graphics = graphics;
 
   this.factor = configuration.factor == null ? 1 : configuration.factor;
   this.center = new Point(0, 0);
 
-  addInteractionEventListener("mousedown", this.onMouse, this);
-  addInteractionEventListener("mouseup", this.onMouse, this);
+  this.graphics.on("mousedown", this.onMouse, this);
+  this.graphics.on("mouseup", this.onMouse, this);
 
   this.dragging = false;
   this.mouseClickPosition = new Point();
@@ -53,18 +53,18 @@ DragDetection.prototype.enterframe = function(draggingInstance) {
 
   switch(draggingInstance.mode) {
     case 0:
-      draggingInstance.dragVector.x = (mX - draggingInstance.mousePosition.x) * draggingInstance.factor;
-      draggingInstance.dragVector.y = (mY - draggingInstance.mousePosition.y) * draggingInstance.factor;
-      draggingInstance.mousePosition.x = mX;
-      draggingInstance.mousePosition.y = mY;
+      draggingInstance.dragVector.x = (this.graphics.mX - draggingInstance.mousePosition.x) * draggingInstance.factor;
+      draggingInstance.dragVector.y = (this.graphics.mY - draggingInstance.mousePosition.y) * draggingInstance.factor;
+      draggingInstance.mousePosition.x = this.graphics.mX;
+      draggingInstance.mousePosition.y = this.graphics.mY;
       break;
     case 1:
-      draggingInstance.dragVector.x = mX - draggingInstance.mouseClickPosition.x;
-      draggingInstance.dragVector.y = mY - draggingInstance.mouseClickPosition.y;
+      draggingInstance.dragVector.x = this.graphics.mX - draggingInstance.mouseClickPosition.x;
+      draggingInstance.dragVector.y = this.graphics.mY - draggingInstance.mouseClickPosition.y;
       break;
     case 2:
-      var dX = mX - draggingInstance.center.x;
-      var dY = mY - draggingInstance.center.y;
+      var dX = this.graphics.mX - draggingInstance.center.x;
+      var dY = this.graphics.mY - draggingInstance.center.y;
       var r = Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
       var a = Math.atan2(dY, dX);
       draggingInstance.dragVector.x = r - draggingInstance.r;
@@ -91,13 +91,13 @@ DragDetection.prototype.onMouse = function(event) {
 
       this.dragging = true;
 
-      this.mouseClickPosition.x = mX;
-      this.mouseClickPosition.y = mY;
-      this.mousePosition.x = mX;
-      this.mousePosition.y = mY;
+      this.mouseClickPosition.x = this.graphics.mX;
+      this.mouseClickPosition.y = this.graphics.mY;
+      this.mousePosition.x = this.graphics.mX;
+      this.mousePosition.y = this.graphics.mY;
 
-      var dX = mX - this.center.x;
-      var dY = mY - this.center.y;
+      var dX = this.graphics.mX - this.center.x;
+      var dY = this.graphics.mY - this.center.y;
       this.r = Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
       this.a = Math.atan2(dY, dX);
 
