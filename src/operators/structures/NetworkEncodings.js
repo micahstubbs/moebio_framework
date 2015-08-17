@@ -299,7 +299,7 @@ NetworkEncodings.decodeNoteWork = function(code) {
 
         simpleLine = line.trim();
 
-        propertyName = removeAccentsAndDiacritics(simpleLine.split(':')[0]).replace(/\s/g, "_");
+        propertyName = StringOperators.removeAccentsAndDiacritics(simpleLine.split(':')[0]).replace(/\s/g, "_");
 
         propertyValue = line.split(':')[1].trim();
         if(propertyValue == String(Number(propertyValue))) propertyValue = Number(propertyValue);
