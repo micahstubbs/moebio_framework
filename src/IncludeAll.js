@@ -1,5 +1,5 @@
 function include(jsFile){
-	document.write('<script type="text/javascript" src="'+jsFile+'"></script>'); 
+	document.write('<script type="text/javascript" src="'+jsFile+'"></script>');
 }
 
 
@@ -85,7 +85,7 @@ include('../frameworks2/src/operators/networks/NetworkConvertions.js');
 include('../frameworks2/src/operators/networks/NetworkEncodings.js');
 include('../frameworks2/src/operators/networks/NetworkGenerators.js');
 include('../frameworks2/src/operators/networks/NetworkOperators.js');
-include('../frameworks2/src/operators/networks/TreeConvertions.js');
+include('../frameworks2/src/operators/networks/TreeConversions.js');
 include('../frameworks2/src/operators/networks/TreeEncodings.js');
 
 ////apis

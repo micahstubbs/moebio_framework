@@ -82,7 +82,7 @@
   "operators/structures/NetworkEncodings.js",
   "operators/structures/NetworkGenerators.js",
   "operators/structures/NetworkOperators.js",
-  "operators/structures/TreeConvertions.js",
+  "operators/structures/TreeConversions.js",
   "operators/structures/TreeEncodings.js",
 
   "tools/graphic/CanvasAndContext.js",

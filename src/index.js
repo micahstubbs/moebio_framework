@@ -144,10 +144,10 @@ import NetworkConvertions from "src/operators/structures/NetworkConvertions";
 import NetworkEncodings from "src/operators/structures/NetworkEncodings";
 import NetworkGenerators from "src/operators/structures/NetworkGenerators";
 import NetworkOperators from "src/operators/structures/NetworkOperators";
-import TreeConvertions from "src/operators/structures/TreeConvertions";
+import TreeConversions from "src/operators/structures/TreeConversions";
 import TreeEncodings from "src/operators/structures/TreeEncodings";
 export { NetworkConvertions, NetworkEncodings, NetworkGenerators, NetworkOperators,
-  TreeConvertions, TreeEncodings };
+  TreeConversions, TreeEncodings };
 
 // tools/graphic
 import CanvasAndContext from "src/tools/graphic/CanvasAndContext";
