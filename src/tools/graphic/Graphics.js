@@ -400,7 +400,8 @@ Graphics.prototype._emit = function(eventName, e) {
   // Actually dispatch the event after any special handling
   var listenersLength = this._listeners[eventName].length;
   for(var i = 0; i < listenersLength; i++) {
-    this._listeners[eventName][i].call(undefined, e);
+    var callback = this._listeners[eventName][i];
+    callback.call(callback.__context, e);
   }
 };
 
@@ -465,8 +466,9 @@ Graphics.prototype.stop = function() {
  * @param  {Function} callback  function to call when that event occurs
  *                              this function will be passed an event object 
  */
-Graphics.prototype.on = function(eventName, callback) {
+Graphics.prototype.on = function(eventName, callback, context) {
   // allow clients to subscribe to events on the canvas.
+  callback.__context = context;
   this._listeners[eventName].push(callback);
 };
 

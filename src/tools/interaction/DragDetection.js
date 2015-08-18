@@ -107,7 +107,7 @@ DragDetection.prototype.onMouse = function(event) {
       if(this.idInterval != null) {
         clearInterval(this.idInterval);
       }
-      this.idInterval = setInterval(this.enterframe, 30, this); //[!] this won't work on IE, it´s better to create a new Listener for setInterval
+      this.idInterval = setInterval(this.enterframe.bind(this), 30, this); //[!] this won't work on IE, it´s better to create a new Listener for setInterval
       break;
     case 'mouseup':
       this.simulateMouseUp();
