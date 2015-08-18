@@ -83,7 +83,6 @@ NumberList.fromArray = function(array, forceToNumber) {
   result.log = NumberList.prototype.log;
   result.floor = NumberList.prototype.floor;
   result.isEquivalent = NumberList.prototype.isEquivalent;
-  result.toStringList = NumberList.prototype.toStringList;
 
   //transform
   result.approach = NumberList.prototype.approach;

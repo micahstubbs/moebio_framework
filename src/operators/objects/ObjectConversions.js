@@ -8,6 +8,8 @@ import DateList from "src/dataStructures/dates/DateList";
 import NetworkConversions from "src/operators/structures/NetworkConversions";
 import List from "src/dataStructures/lists/List";
 import Table from "src/dataStructures/lists/Table";
+import StringListConversions from "src/operators/strings/StringListConversions";
+import NumberListConversions from "src/operators/numeric/numberList/NumberListConversions";
 
 /**
  * @classdesc  Object Conversions
@@ -187,9 +189,9 @@ ObjectConversions.conversor = function(object, toType) {
       return new Date(object);
     case 'List_StringList':
     case 'NumberList_StringList':
-      return object.toStringList();
+      return NumberListConversions.toStringList(object);
     case 'StringList_NumberList':
-      return object.toNumberList();
+      return StringListConversions.toNumberList(object);
     case 'Object_string':
       return JSON.stringify(object, null, "\t");
     case 'string_Object':

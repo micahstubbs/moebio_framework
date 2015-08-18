@@ -60,6 +60,7 @@
   "operators/graphic/ColorScaleGenerators.js",
   "operators/lists/ListGenerators.js",
   "operators/lists/ListOperators.js",
+  "operators/lists/ListConversions.js",
   "operators/lists/TableConversions.js",
   "operators/lists/TableEncodings.js",
   "operators/lists/TableGenerators.js",

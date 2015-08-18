@@ -104,11 +104,12 @@ export { ColorGenerators, ColorListGenerators, ColorListOperators,
 // operators/lists
 import ListGenerators from "src/operators/lists/ListGenerators";
 import ListOperators from "src/operators/lists/ListOperators";
+import ListConversions from "src/operators/lists/ListConversions";
 import TableConversions from "src/operators/lists/TableConversions";
 import TableEncodings from "src/operators/lists/TableEncodings";
 import TableGenerators from "src/operators/lists/TableGenerators";
 import TableOperators from "src/operators/lists/TableOperators";
-export { ListGenerators, ListOperators, TableConversions, TableEncodings,
+export { ListGenerators, ListOperators, ListConversions, TableConversions, TableEncodings,
   TableGenerators, TableOperators };
 
 
@@ -283,7 +284,7 @@ import { listenerArray, canvas, userAgent, userAgentVersion,
   backGroundColorRGB, cycleActive, context, TwoPi, HalfPi, radToGrad, gradToRad,
   c, _cycleOnMouseMovement
 } from "src/Global";
-export { listenerArray, canvas, removeDiv, userAgent, userAgentVersion,
+export { listenerArray, canvas, userAgent, userAgentVersion,
   canvasResizeable, dataModelsInfo, cW, cH, cX, cY, mX, mY, mP, nF, MOUSE_DOWN,
   MOUSE_UP, MOUSE_UP_FAST, WHEEL_CHANGE, NF_DOWN, NF_UP, MOUSE_PRESSED,
   MOUSE_IN_DOCUMENT, mX_DOWN, mY_DOWN, mX_UP, mY_UP, PREV_mX, PREV_mY,
