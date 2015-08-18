@@ -5,7 +5,7 @@ import Polygon from "src/dataStructures/geometry/Polygon";
 import ColorScales from "src/operators/graphic/ColorScales";
 import TableEncodings from "src/operators/lists/TableEncodings";
 import DateList from "src/dataStructures/dates/DateList";
-import NetworkConvertions from "src/operators/structures/NetworkConvertions";
+import NetworkConversions from "src/operators/structures/NetworkConversions";
 
 /**
  * @classdesc  Object Conversions
@@ -83,7 +83,7 @@ ObjectConversions.conversor = function(object, toType) {
     case 'DateList_NumberList': //TODO: solve cases of lists
       return object.getTimes();
     case 'Table_Network':
-      return NetworkConvertions.TableToNetwork(object, null, 0, false);
+      return NetworkConversions.TableToNetwork(object, null, 0, false);
 
   }
 
