@@ -51,7 +51,7 @@
   "operators/geometry/PolygonListOperators.js",
   "operators/geometry/PolygonOperators.js",
   "operators/geometry/RectangleOperators.js",
-  "operators/graphic/ColorConvertions.js",
+  "operators/graphic/ColorConversions.js",
   "operators/graphic/ColorGenerators.js",
   "operators/graphic/ColorListGenerators.js",
   "operators/graphic/ColorListOperators.js",

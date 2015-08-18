@@ -90,14 +90,14 @@ export { GeometryConversions, GeometryOperators, PointOperators, PolygonGenerato
   PolygonOperators, PolygonListEncodings, PolygonListOperators, RectangleOperators };
 
 // operators/graphic
-// import ColorConvertions from "src/operators/graphic/ColorConvertions";
+// import ColorConversions from "src/operators/graphic/ColorConversions";
 import ColorGenerators from "src/operators/graphic/ColorGenerators";
 import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
 import ColorListOperators from "src/operators/graphic/ColorListOperators";
 import ColorOperators from "src/operators/graphic/ColorOperators";
 import ColorScales from "src/operators/graphic/ColorScales";
 import ColorScaleGenerators from "src/operators/graphic/ColorScaleGenerators";
-// export ColorConvertions TODO: Deal with ambiguity between this and ColorOperators
+// export ColorConversions TODO: Deal with ambiguity between this and ColorOperators
 export { ColorGenerators, ColorListGenerators, ColorListOperators,
   ColorOperators, ColorScales, ColorScaleGenerators };
 

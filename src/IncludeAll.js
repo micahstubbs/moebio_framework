@@ -55,7 +55,7 @@ include('../frameworks2/src/operators/geometry/PolygonListEncodings.js');
 include('../frameworks2/src/operators/geometry/PolygonListOperators.js');
 include('../frameworks2/src/operators/geometry/PolygonOperators.js');
 include('../frameworks2/src/operators/geometry/RectangleOperators.js');
-include('../frameworks2/src/operators/graphic/ColorConvertions.js');
+include('../frameworks2/src/operators/graphic/ColorConversions.js');
 include('../frameworks2/src/operators/graphic/ColorGenerators.js');
 include('../frameworks2/src/operators/graphic/ColorListGenerators.js');
 include('../frameworks2/src/operators/graphic/ColorListOperators.js');
