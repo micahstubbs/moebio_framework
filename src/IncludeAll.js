@@ -81,7 +81,7 @@ include('../frameworks2/src/operators/numbers/numberTable/NumberTableOperators.j
 include('../frameworks2/src/operators/strings/StringConversions.js');
 include('../frameworks2/src/operators/strings/StringListOperators.js');
 include('../frameworks2/src/operators/strings/StringOperators.js');
-include('../frameworks2/src/operators/networks/NetworkConvertions.js');
+include('../frameworks2/src/operators/networks/NetworkConversions.js');
 include('../frameworks2/src/operators/networks/NetworkEncodings.js');
 include('../frameworks2/src/operators/networks/NetworkGenerators.js');
 include('../frameworks2/src/operators/networks/NetworkOperators.js');

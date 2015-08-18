@@ -82,7 +82,7 @@ include('../../frameworks2/operators/numeric/numberTable/NumberTableOperators.js
 include('../../frameworks2/operators/strings/StringConversions.js');
 include('../../frameworks2/operators/strings/StringListOperators.js');
 include('../../frameworks2/operators/strings/StringOperators.js');
-include('../../frameworks2/operators/structures/NetworkConvertions.js');
+include('../../frameworks2/operators/structures/NetworkConversions.js');
 include('../../frameworks2/operators/structures/NetworkEncodings.js');
 include('../../frameworks2/operators/structures/NetworkGenerators.js');
 include('../../frameworks2/operators/structures/NetworkOperators.js');

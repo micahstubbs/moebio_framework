@@ -140,13 +140,13 @@ import StringOperators from "src/operators/strings/StringOperators";
 export { StringConversions, StringListOperators, StringListConversions, StringOperators };
 
 // operators/structures
-import NetworkConvertions from "src/operators/structures/NetworkConvertions";
+import NetworkConversions from "src/operators/structures/NetworkConversions";
 import NetworkEncodings from "src/operators/structures/NetworkEncodings";
 import NetworkGenerators from "src/operators/structures/NetworkGenerators";
 import NetworkOperators from "src/operators/structures/NetworkOperators";
 import TreeConversions from "src/operators/structures/TreeConversions";
 import TreeEncodings from "src/operators/structures/TreeEncodings";
-export { NetworkConvertions, NetworkEncodings, NetworkGenerators, NetworkOperators,
+export { NetworkConversions, NetworkEncodings, NetworkGenerators, NetworkOperators,
   TreeConversions, TreeEncodings };
 
 // tools/graphic

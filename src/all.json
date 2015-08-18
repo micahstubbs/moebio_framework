@@ -78,7 +78,7 @@
   "operators/strings/StringListOperators.js",
   "operators/strings/StringListConversions.js",
   "operators/strings/StringOperators.js",
-  "operators/structures/NetworkConvertions.js",
+  "operators/structures/NetworkConversions.js",
   "operators/structures/NetworkEncodings.js",
   "operators/structures/NetworkGenerators.js",
   "operators/structures/NetworkOperators.js",
