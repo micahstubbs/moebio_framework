@@ -8,7 +8,7 @@ import Node from "src/dataStructures/structures/elements/Node";
  * @category networks
  */
 function TreeConversions() {}
-export default TreeConvertions;
+export default TreeConversions;
 
 /**
  * convert a table that describes a tree (higher hierarchies in first lists) into a Tree
