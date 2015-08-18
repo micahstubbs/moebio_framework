@@ -46,10 +46,6 @@ NumberTable.fromArray = function(array) {
   var result = Table.fromArray(array);
   result.type = "NumberTable";
 
-  result.getNumberListsNormalized = NumberTable.prototype.getNumberListsNormalized;
-  result.getTableNormalizedToMax = NumberTable.prototype.getTableNormalizedToMax;
-  result.getNumberListsNormalizedToMax = NumberTable.prototype.getNumberListsNormalizedToMax;
-  result.getNumberListsNormalizedToSum = NumberTable.prototype.getNumberListsNormalizedToSum;
   result.getSums = NumberTable.prototype.getSums;
   result.getRowsSums = NumberTable.prototype.getRowsSums;
   result.getAverages = NumberTable.prototype.getAverages;
@@ -65,77 +61,11 @@ NumberTable.fromArray = function(array) {
 };
 
 /**
- * returns a table with having normalized all the numberLists
- *
- * @param  {factor} factor optional factor
- * @return {NumberTable}
- * tags:normalization
- */
-NumberTable.prototype.getNumberListsNormalized = function(factor) {
-  factor = factor == null ? 1 : factor;
-
-  var newTable = new NumberTable();
-  var i;
-  for(i = 0; this[i] != null; i++) {
-    var numberList = this[i];
-    newTable[i] = numberList.getNormalized(factor);
-  }
-  newTable.name = this.name;
-  return newTable;
-};
-
-/**
- * normalizes the table to its maximal value
- *
- * @param  {Number} factor optional factor
- * @return {NumberTable}
- * tags:normalization
- */
-NumberTable.prototype.getTableNormalizedToMax = function(factor) {
-  factor = factor == null ? 1 : factor;
-
-  var newTable = new NumberTable();
-  var i;
-  var antimax = factor / this.getMax();
-  for(i = 0; this[i] != null; i++) {
-    newTable[i] = this[i].factor(antimax);
-  }
-  newTable.name = this.name;
-  return newTable;
-};
-
-/**
- * @todo write docs
- */
-NumberTable.prototype.getNumberListsNormalizedToMax = function(factorValue) {
-  var newTable = new NumberTable();
-  for(var i = 0; this[i] != null; i++) {
-    var numberList = this[i];
-    newTable[i] = numberList.getNormalizedToMax(factorValue);
-  }
-  newTable.name = this.name;
-  return newTable;
-};
-
-/**
- * @todo write docs
- */
-NumberTable.prototype.getNumberListsNormalizedToSum = function() {
-  var newTable = new NumberTable();
-  for(var i = 0; this[i] != null; i++) {
-    var numberList = this[i];
-    newTable[i] = numberList.getNormalizedToSum();
-  }
-  newTable.name = this.name;
-  return newTable;
-};
-
-
-/**
  * @todo write docs
  */
 NumberTable.prototype.getMax = function() {
-  if(this.length == 0) return null;
+  if(this.length === 0) return null;
+  console.log(this[0])
 
   var max = this[0].getMax();
   var i;
@@ -277,17 +207,4 @@ NumberTable.prototype.add = function(value) {
 
   newTable.name = this.name;
   return newTable;
-};
-
-
-/**
- * @todo write docs
- */
-NumberTable.prototype.getCovarianceMatrix = function(){
-  var newTable = new NumberTable();
-  var i;
-  for(i = 0; this[i] != null; i++) {
-
-  }
-
 };
