@@ -6,6 +6,8 @@ import ColorScales from "src/operators/graphic/ColorScales";
 import TableEncodings from "src/operators/lists/TableEncodings";
 import DateList from "src/dataStructures/dates/DateList";
 import NetworkConversions from "src/operators/structures/NetworkConversions";
+import List from "src/dataStructures/lists/List";
+import Table from "src/dataStructures/lists/Table";
 
 /**
  * @classdesc  Object Conversions
@@ -15,6 +17,129 @@ import NetworkConversions from "src/operators/structures/NetworkConversions";
  */
 function ObjectConversions() {}
 export default ObjectConversions;
+
+/**
+ * Convert an object (or more typically an Array of objects) into a Table
+ * @param {Object} object or array of objects
+ *
+ * @param {List} list of field names to include (by default will take all from first element in array of objects)
+ * @return {Table} resulting Table
+ * tags:decoder,dani
+ */
+ObjectConversions.ObjectToTable = function(object, fields) {
+  // Formats:
+  // 1: normal list of objects
+  // 2: Object with single property, containing normal list of obejcts
+  // 3: Object as CSV (each property represents a column)
+  var format;
+  var p;
+
+  // If it's an array, then it's format 1
+  if(Array.isArray(object)) {
+    format = 1;
+    // If not field names supplied, get them from first element
+    if(!fields)
+    {
+      fields = [];
+      for(p in object[0]) {
+        if (object[0].hasOwnProperty(p)) {
+          fields.push(p);
+        }
+      }
+    }
+    // Else (not array), it's an object
+  } else {
+    // Check how many properties the object has
+    var properties = [];
+    for(p in object) {
+      properties.push(p);
+    }
+
+    // If it has only one, and it's an array, it's foramt 2, so assume it's just a capsule
+    // and extract the array as format 1
+    if(properties.length == 1 && Array.isArray(object[properties[0]]))
+    {
+      format = 1;
+      object = object[properties[0]];
+
+      // If not field names supplied, get them from first element
+      if(!fields)
+      {
+        fields = [];
+        for(p in object[0]) {
+          fields.push(p);
+        }
+      }
+    } else {
+      // Finally, if the object has many properties, we assume it's a csv encoded as JSON
+      // ( each property of the object represents a column of the CSV )
+      format = 3;
+
+      // If not fields supplied, use all properties
+      if(!fields)
+        fields = properties;
+    }
+  }
+
+
+  // Create table and columns
+  var column, i, f;
+  var result = new Table();
+  for(i = 0; i < fields.length; i++) {
+    var fieldName = fields[i];
+    column = new List();
+    result[i] = column;
+    column.name = fieldName;
+  }
+
+  // Fill the table
+  if(format == 1)
+  {
+    for(i = 0; i < object.length; i++) {
+      var row = object[i];
+      for(f = 0; f < fields.length; f++) {
+        result[f].push(row[fields[f]]);
+      }
+    }
+  } else {
+    for(f = 0; f < fields.length; f++) {
+      column = object[fields[f]];
+      for(i = 0; i < column.length; i++) {
+        result[f].push(column[i]);
+      }
+    }
+  }
+
+  // Improve columns
+  for(i = 0; i < result.length; i++) {
+    result[i] = result[i].getImproved();
+  }
+
+  //if(result.getLengths.getMax()==1) return result.getRow(0);
+
+  // Improve table
+  result = result.getImproved();
+
+  // Return best possible
+  return result;
+};
+
+
+/**
+ * Convert an object (or more typically an Array of objects) into a Table
+ * @param {Object} object or array of objects
+ *
+ * @param {List} list of field names to include (by default will take all from first element in array of objects)
+ * @return {List} resulting list (probably a table)
+ * tags:decoder
+ */
+ObjectConversions.ObjectToList = function(object, fields) {
+  var result = ObjectConversions.ObjectToTable(object, fields);
+
+  if(result.getLengths.getMax() == 1) return result.getRow(0);
+};
+
+
 
 // *
 //  * convert an object into a json string (JSON.stringify(object))
@@ -108,5 +233,5 @@ ObjectConversions.conversor = function(object, toType) {
  * tags:conversion
  */
 ObjectConversions.ArrayToList = function(array){
-  return List.fromArray(object).getImproved();
+  return List.fromArray(array).getImproved();
 };
