@@ -43,7 +43,7 @@
   "operators/geo/CountryListOperators.js",
   "operators/geo/CountryOperators.js",
   "operators/geo/GeoOperators.js",
-  "operators/geometry/GeometryConvertions.js",
+  "operators/geometry/GeometryConversions.js",
   "operators/geometry/GeometryOperators.js",
   "operators/geometry/PointOperators.js",
   "operators/geometry/PolygonGenerators.js",

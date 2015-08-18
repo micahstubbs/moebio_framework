@@ -78,7 +78,7 @@ import GeoOperators from "src/operators/geo/GeoOperators";
 export { CountryListOperators, CountryOperators, GeoOperators };
 
 // operators/geometry
-import GeometryConvertions from "src/operators/geometry/GeometryConvertions";
+import GeometryConversions from "src/operators/geometry/GeometryConversions";
 import GeometryOperators from "src/operators/geometry/GeometryOperators";
 import PointOperators from "src/operators/geometry/PointOperators";
 import PolygonGenerators from "src/operators/geometry/PolygonGenerators";
@@ -86,7 +86,7 @@ import PolygonListEncodings from "src/operators/geometry/PolygonListEncodings";
 import PolygonListOperators from "src/operators/geometry/PolygonListOperators";
 import PolygonOperators from "src/operators/geometry/PolygonOperators";
 import RectangleOperators from "src/operators/geometry/RectangleOperators";
-export { GeometryConvertions, GeometryOperators, PointOperators, PolygonGenerators,
+export { GeometryConversions, GeometryOperators, PointOperators, PolygonGenerators,
   PolygonOperators, PolygonListEncodings, PolygonListOperators, RectangleOperators };
 
 // operators/graphic

@@ -47,7 +47,7 @@ include('../frameworks2/src/operators/dates/DateOperators.js');
 include('../frameworks2/src/operators/geo/CountryListOperators.js');
 include('../frameworks2/src/operators/geo/CountryOperators.js');
 include('../frameworks2/src/operators/geo/GeoOperators.js');
-include('../frameworks2/src/operators/geometry/GeometryConvertions.js');
+include('../frameworks2/src/operators/geometry/GeometryConversions.js');
 include('../frameworks2/src/operators/geometry/GeometryOperators.js');
 include('../frameworks2/src/operators/geometry/PointOperators.js');
 include('../frameworks2/src/operators/geometry/PolygonGenerators.js');
