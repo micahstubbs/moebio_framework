@@ -2,6 +2,7 @@ import StringOperators from "src/operators/strings/StringOperators";
 import NumberOperators from "src/operators/numeric/NumberOperators";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 import ListOperators from "src/operators/lists/ListOperators";
+import ListConversions from "src/operators/lists/ListConversions";
 import {
   TYPES_SHORT_NAMES_DICTIONARY,
   getColorFromDataModelType
@@ -109,7 +110,7 @@ TableConversions.toReport = function(table, level) {
     for(i = 0; table[i] != null; i++) {
       text += "\n" + ident + ("(" + (i) + "/0-" + (table.length - 1) + ")");
       try{
-         text += table[i].getReport(1);
+         text += ListConversions.toReport(table[i], 1);
       } catch(err){
         text += ident + "[!] something wrong with list " + err;
       }
@@ -238,7 +239,7 @@ TableConversions.toReportHtml = function(table,level) {
     for(i = 0; table[i] != null; i++) {
       text += "<br>" + ident + i + ": " + (table[i].name?"<b>"+table[i].name+"</b>":"<i>no name</i>");
       try{
-         text += table[i].getReportHtml(1);
+         text += ListConversions.getReportHtml(table[i], 1);
       } catch(err){
         text += ident + "[!] something wrong with list <font style=\"font-size:10px\">:" + err + "</f>";
         console.log('getReportHtml err', err);
