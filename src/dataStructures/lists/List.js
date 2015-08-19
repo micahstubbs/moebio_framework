@@ -20,7 +20,14 @@ List.prototype.constructor = List;
  /**
   * @classdesc List is an Array with a type property.
   * Lists have a number of methods to assist with working with
-  * them. There are also a number of
+  * them. There are also a number of helper functions in associated namespaces.
+  *
+  * Additional functions that work on List can be found in:
+  * <ul>
+  *  <li>Operators:   {@link ListOperators}</li>
+  *  <li>Conversions: {@link ListConversions}</li>
+  *  <li>Generators: {@link ListGenerators}</li>
+  * </ul>
   *
   * @description Creates a new List.
   * @param {Number|String|Object} arguments Comma separated values to add to List

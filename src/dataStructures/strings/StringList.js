@@ -8,19 +8,26 @@ StringList.prototype.constructor = StringList;
 /**
  * @classdesc {@link List} for storing Strings.
  *
+ * Additional functions that work on StringList can be found in:
+ * <ul>
+ *  <li>Operators:   {@link StringListOperators}</li>
+ *  <li>Conversions: {@link StringListConversions}</li>
+ * </ul>
+ *
  * @constructor
  * @description Creates a new StringList
+ *
  * @category strings
  */
 function StringList() {
-  var args = []; //TODO:why this?, ask M
+  var args = [];
 
   for(var i = 0; i < arguments.length; i++) {
     args[i] = String(arguments[i]);
   }
   var array = List.apply(this, args);
   array = StringList.fromArray(array);
-  //
+  
   return array;
 }
 export default StringList;

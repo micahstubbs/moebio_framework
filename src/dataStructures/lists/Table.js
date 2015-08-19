@@ -19,6 +19,14 @@ Table.prototype.constructor = Table;
  * Each column is stored as its own {@link List}, making it a List of Lists.
  * Cells in the table can be accessed using table[column][row].
  *
+ * Additional functions that work on Table can be found in:
+ * <ul>
+ *  <li>Operators:   {@link TableOperators}</li>
+ *  <li>Conversions: {@link TableConversions}</li>
+ *  <li>Generators: {@link TableGenerators}</li>
+ *  <li>Encodings: {@link TableEncodings}</li>
+ * </ul>
+ *
  * @description Creates a new Table.
  * Input arguments are treated as the inital column values
  * of the Table.

@@ -13,6 +13,12 @@ NumberTable.prototype.constructor = NumberTable;
  * NumberList. If an Array, or a set of Arrays, it will make a new NumberList
  * for each array present, populating it with the contents of the array.
  *
+ * Additional functions that work on NumberTable can be found in:
+ * <ul>
+ *  <li>Operators:   {@link NumberTableOperators}</li>
+ *  <li>Conversions: {@link NumberTableConversions}</li>
+ * </ul>
+ *
  * @constructor
  * @description Creates a new NumberTable.
  * @category numbers

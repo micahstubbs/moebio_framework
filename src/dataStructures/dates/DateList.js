@@ -9,6 +9,12 @@ DateList.prototype.constructor = DateList;
 /**
  * @classdesc A {@link List} for storing Dates.
  *
+ * Additional functions that work on DateList can be found in:
+ * <ul>
+ *  <li>Operators:   {@link DateListOperators}</li>
+ *  <li>Conversions: {@link DateListConversions}</li>
+ * </ul>
+ *
  * @description Creates a new DateList.
  * @constructor
  * @category dates
