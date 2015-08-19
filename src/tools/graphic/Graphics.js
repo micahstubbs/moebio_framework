@@ -9,9 +9,9 @@ import { TwoPi, HalfPi } from "src/Global";
  * A graphics object provides a surface for drawing and interaction
  * with drawn primitives.
  *
- * The constructor initializes basic configuration and 
+ * The constructor initializes basic configuration and
  * optionally starts the draw cycle.
- * 
+ *
  * @param {Object} options valid properties described below
  * @param {String|DOMNode|undefined|false} options.container a string selector or reference
  *                                                           to a node where the canvas for this
@@ -27,8 +27,8 @@ import { TwoPi, HalfPi } from "src/Global";
  *                                things. Called once after base initialization.
  * @param {Function} options.cycle custom user function to render each frame. This
  *                                 is called once per frame of the draw loop unless
- *                                 cycleInterval is set to 0. 
- * @param {Function} options.onResize custom user function to run on resize of the canvas *                                    
+ *                                 cycleInterval is set to 0.
+ * @param {Function} options.onResize custom user function to run on resize of the canvas *
  * @param {Number} options.cycleInterval TODO describe this. If set to zero, the draw cycle will
  *                                   not be started automatically. YY should this be called
  *                                   cycleInterval instead?
@@ -40,8 +40,8 @@ function Graphics(options) {
     this.container = document.querySelector(this.container);
   }
   this.dimensions = options.dimensions;
-  
-  
+
+
 
   this.init = options.init || noOperation;
   this.cycle = options.cycle || noOperation;
@@ -60,7 +60,7 @@ function noOperation() {}
 
 /*
  * @ignore
- * 
+ *
  * Initialize the graphics proper. Includes
  * things like actually creating the backing canvas and
  * setting up mousehandlers.
@@ -107,12 +107,12 @@ Graphics.prototype._initialize = function() {
   this._tLastMouseDown = undefined;
   this._alphaRefresh = 0; //if _alphaRefresh>0 instead of clearing the canvas each frame, a transparent rectangle will be drawn
   this.END_CYCLE_DELAY = 3000; //time in milliseconds, from last mouse movement to the last cycle to be executed in case cycleOnMouseMovement has been activated
-      
+
   // Create the canvas and get it ready for drawing
   this.canvas = document.createElement("canvas");
-  
+
   //Allow the canvas to be focusable to enable keydown and keyup
-  this.canvas.setAttribute("tabindex", "10000"); 
+  this.canvas.setAttribute("tabindex", "10000");
   //Hide the focus styling
   var canvasStyle = "outline: none; -webkit-tap-highlight-color: rgba(255, 255, 255, 0);";
   this.canvas.setAttribute("style", canvasStyle);
@@ -126,7 +126,7 @@ Graphics.prototype._initialize = function() {
 
   this._adjustCanvas(this.dimensions);
 
-  // YY TODO allow user to bind to these events as well. Probably 
+  // YY TODO allow user to bind to these events as well. Probably
   // through a generic event mechanism. c.f. global addInteractionEventListener
   var boundMouseOrKeyboard = this._onMouseOrKeyBoard.bind(this);
   this.canvas.addEventListener("mousemove", boundMouseOrKeyboard, false);
@@ -144,7 +144,7 @@ Graphics.prototype._initialize = function() {
 
   // Setup resize listeners
   var boundResize = this._onResize.bind(this);
-  window.addEventListener("resize", resizeThrottler(boundResize, 66), false);  
+  window.addEventListener("resize", resizeThrottler(boundResize, 66), false);
 
   // Infrastructure for custom event handlers
   this._listeners = {
@@ -164,7 +164,7 @@ Graphics.prototype._initialize = function() {
 
   // Start the draw loop
   if(this._cycleInterval > 0) {
-    this._startCycle();  
+    this._startCycle();
   }
 };
 
@@ -177,8 +177,8 @@ Graphics.prototype._initialize = function() {
  * @ignore
  * Helper function for getting the mouse position
  * see http://stackoverflow.com/a/19048340
- *  
- * @param  {[type]} evt [description] 
+ *
+ * @param  {[type]} evt [description]
  */
 Graphics.prototype._getRelativeMousePos = function(evt) {
   var rect = this.canvas.getBoundingClientRect();
@@ -190,12 +190,12 @@ Graphics.prototype._getRelativeMousePos = function(evt) {
 
 /**
  * @ignore
- * This method is used to handle user interaction events (e.g. mouse events). * 
+ * This method is used to handle user interaction events (e.g. mouse events). *
  * Sets some internal state and then displatches to external event handlers.
- * 
- * @param  {Event} e event object 
+ *
+ * @param  {Event} e event object
  */
-Graphics.prototype._onMouseOrKeyBoard = function(e) {  
+Graphics.prototype._onMouseOrKeyBoard = function(e) {
   switch(e.type){
     case "mousemove":
       var pos = this._getRelativeMousePos(e);
@@ -203,8 +203,8 @@ Graphics.prototype._onMouseOrKeyBoard = function(e) {
       this.PREV_mY= this.mY;
 
       this.mX = pos.x;
-      this.mY = pos.y;      
-      
+      this.mY = pos.y;
+
       this.mP.x = this.mX;
       this.mP.y = this.mY;
 
@@ -243,15 +243,17 @@ Graphics.prototype._onMouseOrKeyBoard = function(e) {
  * Helper to throttle resize events for improved performance.
  * See https://developer.mozilla.org/en-US/docs/Web/Events/resize
  */
-var resizeTimeout;
 function resizeThrottler(actualResizeHandler, interval) {
-  // ignore resize events as long as an actualResizeHandler execution is in the queue
-  if ( !resizeTimeout ) {
-    resizeTimeout = setTimeout(function() {
-      resizeTimeout = null;
-      actualResizeHandler();
-     }, interval);
-  }
+  var resizeTimeout;
+  return function(e){
+    // ignore resize events as long as an actualResizeHandler execution is in the queue
+    if (!resizeTimeout) {
+      resizeTimeout = setTimeout(function() {
+        resizeTimeout = null;
+        actualResizeHandler(e);
+       }, interval);
+    }
+  };
 }
 
 /**
@@ -259,8 +261,8 @@ function resizeThrottler(actualResizeHandler, interval) {
  * This method is used to handle resizes of the window, and then optionally
  * pass that on to the user defined onResize method if the container dimensions
  * have changed.
- * 
- * @param  {[type]} e resize event 
+ *
+ * @param  {[type]} e resize event
  */
 Graphics.prototype._onResize = function(e) {
   // If the user has set the dimensions explicitly
@@ -271,27 +273,26 @@ Graphics.prototype._onResize = function(e) {
 
   if(this.onResize !== noOperation) {
     var newDim = this._containerDimensions();
-    if(newDim.width !== this.cW || newDim.height !== this.cH) {    
-      console.log(newDim, this.cW, this.cH, newDim.width !== this.cW, newDim.height !== this.cH);
-      // Forward the event to the user defined resize handler  
-      this.onResize(e);  
-    }  
-  }  
+    if(newDim.width !== this.cW || newDim.height !== this.cH) {
+      // Forward the event to the user defined resize handler
+      this.onResize(e);
+    }
+  }
 };
 
 /**
  * @ignore
  * Return the dimensions of the container that this graphics object
  * is associated with.
- * 
- * @return {Object} object with width and height properties. 
+ *
+ * @return {Object} object with width and height properties.
  */
 Graphics.prototype._containerDimensions = function() {
   // https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model/Determining_the_dimensions_of_elements
   if(this.container) {
     return {
-      width: this.container.scrollWidth,
-      height: this.container.scrollHeight
+      width: this.container.clientWidth,
+      height: this.container.clientHeight
     };
   } else {
     return {
@@ -302,11 +303,12 @@ Graphics.prototype._containerDimensions = function() {
 };
 
 Graphics.prototype._adjustCanvas = function(dimensions) {
-  if(dimensions !== undefined) {    
+  if(dimensions !== undefined) {
     this.cW = dimensions.width;
     this.cH = dimensions.height;
-  } else {    
+  } else {
     // https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model/Determining_the_dimensions_of_elements
+
     var dim = this._containerDimensions();
     this.cW = dim.width;
     this.cH = dim.height;
@@ -316,25 +318,25 @@ Graphics.prototype._adjustCanvas = function(dimensions) {
   this.cY = Math.floor(this.cH * 0.5);
 
   this.canvas.setAttribute('width', this.cW);
-  this.canvas.setAttribute('height', this.cH);  
-  
+  this.canvas.setAttribute('height', this.cH);
+
 };
 
 /*
  * @ignore
- * Starts or restarts the draw cycle at the current cycleInterval 
+ * Starts or restarts the draw cycle at the current cycleInterval
  */
 Graphics.prototype._startCycle = function() {
   this.cycleActive = true;
-  clearInterval(this._setIntervalId);  
+  clearInterval(this._setIntervalId);
   this._setIntervalId = setInterval(this._onCycle.bind(this), this._cycleInterval);
 };
 
 /**
  * @ignore
- * Stops the draw cycle 
+ * Stops the draw cycle
  */
-Graphics.prototype._stopCycle = function() {  
+Graphics.prototype._stopCycle = function() {
   clearInterval(this._setIntervalId);
   this.cycleActive = false;
 
@@ -345,21 +347,21 @@ Graphics.prototype._stopCycle = function() {
  * This function is called on every cycle of the draw loop.
  * It is responsible for clearing the background and then calling
  * the user defined cycle function.
- * 
+ *
  */
-Graphics.prototype._onCycle = function() {    
+Graphics.prototype._onCycle = function() {
   // YY i don't think this interacts well with my expectations
   // of setting the background color. it basically needs to be greater than 0
   // if the bg color is not white and that isn't super obvious.
   if(this._alphaRefresh === 0){
     this.context.clearRect(0, 0, this.cW, this.cH);
   } else {
-    this.context.fillStyle = 
+    this.context.fillStyle =
       'rgba(' + this.backGroundColorRGB[0] +
       ',' + this.backGroundColorRGB[1] +
-      ',' + this.backGroundColorRGB[2] + 
+      ',' + this.backGroundColorRGB[2] +
       ',' + this._alphaRefresh+')';
-    
+
     this.context.fillRect(0, 0, this.cW, this.cH);
   }
 
@@ -375,7 +377,7 @@ Graphics.prototype._onCycle = function() {
 
   if(this.MOUSE_PRESSED) {
     this.T_MOUSE_PRESSED = new Date().getTime() - this._tLastMouseDown;
-  } 
+  }
 
   // Call the user provided cycle function.
   this.cycle();
@@ -389,7 +391,7 @@ Graphics.prototype._onCycle = function() {
 /*
  * Emit events to registered listeners.
  *
- * This function also does any normalization/customization 
+ * This function also does any normalization/customization
  * to the standard DOM events that the graphics object provides.
  */
 Graphics.prototype._emit = function(eventName, e) {
@@ -400,7 +402,7 @@ Graphics.prototype._emit = function(eventName, e) {
         e = window.event; //IE // YY is this still a thing
       }
       if (e.wheelDelta) {
-        // YY do we actually want to keep this here or is the 
+        // YY do we actually want to keep this here or is the
         // main goal to send this information to the listener.
         this.WHEEL_CHANGE = e.wheelDelta/120;
       } else if (e.detail) { /** Mozilla case. */
@@ -432,9 +434,9 @@ Graphics.prototype.getCycleInterval = function() {
 
 /**
  * Sets the current interval between calls to the cycle function.
- * 
+ *
  * @param {Number} cycleInterval the interval in milliseconds at which
- *                               the cycle function should be called. 
+ *                               the cycle function should be called.
  */
 Graphics.prototype.setCycleInterval = function(cycleInterval) {
   this._cycleInterval = cycleInterval;
@@ -446,23 +448,23 @@ Graphics.prototype.setCycleInterval = function(cycleInterval) {
 /**
  * Starts the draw loop for this graphcis object.
  *
- * Note that the draw loop is typically automatically started on 
- * creation of a graphics object. 
+ * Note that the draw loop is typically automatically started on
+ * creation of a graphics object.
  */
 Graphics.prototype.start = function() {
   return this._startCycle();
 };
 
 /**
- * Stops the draw loop for this graphics object.  
+ * Stops the draw loop for this graphics object.
  */
 Graphics.prototype.stop = function() {
   return this._stopCycle();
 };
 
 /**
- * Subscribe to an event that is emitted by the graphics object. 
- * 
+ * Subscribe to an event that is emitted by the graphics object.
+ *
  * The graphics object emits the following events.
  *
  * "mousemove"
@@ -474,10 +476,10 @@ Graphics.prototype.stop = function() {
  * "click"
  * "keydown"
  * "keyup"
- * 
+ *
  * @param  {String}   eventName one of the event types above
  * @param  {Function} callback  function to call when that event occurs
- *                              this function will be passed an event object 
+ *                              this function will be passed an event object
  */
 Graphics.prototype.on = function(eventName, callback, context) {
   // allow clients to subscribe to events on the canvas.
@@ -490,8 +492,8 @@ Graphics.prototype.on = function(eventName, callback, context) {
  * @param  {String}   eventName one of the event types that the graphics object
  *                              emits.
  * @param  {Function} callback  the function you want to remove. Note that this should
- *                              be a reference to a function that was previously added with 
- *                              @see on 
+ *                              be a reference to a function that was previously added with
+ *                              @see on
  */
 Graphics.prototype.off = function(eventName, callback) {
   var index = this._listeners[eventName].indexOf(callback);
@@ -505,13 +507,13 @@ Graphics.prototype.off = function(eventName, callback) {
  *****************************/
 
 /**
- * Set the background color for the graphics object. 
- * 
+ * Set the background color for the graphics object.
+ *
  * On every cycle of the draw loop the canvas will be cleared to this color.
  * Note that if you do set a color, you need to also set the background alpha as well
- * 
+ *
  * @see  setBackgroundAlpha
- * 
+ *
  * @param {[type]} color [description]
  */
 Graphics.prototype.setBackgroundColor = function(color) {
@@ -530,7 +532,7 @@ Graphics.prototype.setBackgroundColor = function(color) {
 
 /**
  * Set the alpha (opacity) of the background color. Defaults to 0 (transparent).
- * 
+ *
  * @param {Number} backgroundAlpha a number from 0-1
  */
 Graphics.prototype.setBackgroundAlpha = function(backgroundAlpha){
@@ -803,7 +805,7 @@ Graphics.prototype._solidArc = function(x,y,a0,a1,r0,r1){
  * @param  {[type]} a1 [description]
  * @param  {[type]} r0 [description]
  * @param  {[type]} r1 [description]
- * @todo 
+ * @todo
  */
 Graphics.prototype.fSolidArc = function(x,y,a0,a1,r0,r1){
   this._solidArc(x,y,a0,a1,r0,r1);
@@ -817,7 +819,7 @@ Graphics.prototype.fSolidArc = function(x,y,a0,a1,r0,r1){
  * @param  {[type]} a0 [description]
  * @param  {[type]} a1 [description]
  * @param  {[type]} r0 [description]
- * @param  {[type]} r1 [description] 
+ * @param  {[type]} r1 [description]
  * @todo
  */
 Graphics.prototype.sSolidArc = function(x,y,a0,a1,r0,r1){
@@ -832,7 +834,7 @@ Graphics.prototype.sSolidArc = function(x,y,a0,a1,r0,r1){
  * @param  {[type]} a0 [description]
  * @param  {[type]} a1 [description]
  * @param  {[type]} r0 [description]
- * @param  {[type]} r1 [description] 
+ * @param  {[type]} r1 [description]
  * @todo
  */
 Graphics.prototype.fsSolidArc = function(x,y,a0,a1,r0,r1){
@@ -1044,7 +1046,7 @@ Graphics.prototype.fsPolygon = function(polygon, closePath) {
   this._polygon(polygon);
   if(closePath) {
     this.context.closePath();
-  } 
+  }
   this.context.fill();
   this.context.stroke();
 };
@@ -1079,7 +1081,7 @@ Graphics.prototype.sEqTriangle = function(x, y, angle, r) {
 
 /**
  * Draws a filled and stroked equilateral triangle.
- * 
+ *
  * @param  {[type]} x     [description]
  * @param  {[type]} y     [description]
  * @param  {[type]} angle [description]
@@ -1095,13 +1097,13 @@ Graphics.prototype.fsEqTriangle = function(x, y, angle, r) {
 
 /**
  * @ignore
- * 
+ *
  * @param  {[type]} x     [description]
  * @param  {[type]} y     [description]
  * @param  {[type]} angle [description]
  * @param  {[type]} r     [description]
  * @return {[type]}       [description]
- *  
+ *
  * TODO document this with non-javadoc comments to describe what this
  * does.
  */
@@ -1313,7 +1315,7 @@ Graphics.prototype.lineM = function(x0, y0, x1, y1, d) {
 
 /**
  * @ignore
- * 
+ *
  * TODO document this with non-javadoc comments to describe what this
  * does.
  */
@@ -1369,12 +1371,12 @@ Graphics.prototype.bezierM = function(x0, y0, cx0, cy0, cx1, cy1, x1, y1, d) { /
 
 /**
  *  Draw an image on this.context. parameters options (s for source, d for destination):
- *  
+ *
  *  drawImage(image, dx, dy)
  *  drawImage(image, dx, dy, dw, dh)
  *  drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh)
  *  @param {Image} image
- *  
+ *
  *  @todo document parameters
  */
 Graphics.prototype.drawImage = function(image) { //TODO: improve efficiency
@@ -1461,9 +1463,9 @@ Graphics.prototype.setStroke = function(style, lineWidth) {
 
 /**
  * Set the current lineWidth for strokes.
- * 
+ *
  * @param {Number} lineWidth [description]\
- * 
+ *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/lineWidth|lineWidth}
  */
 Graphics.prototype.setLW = function(lineWidth) {
@@ -1476,10 +1478,10 @@ Graphics.prototype.setLW = function(lineWidth) {
 
 /**
  * Creates a clipping circle with the given dimensions
- * 
+ *
  * @param  {[type]} x x coordinate of the circle's center
  * @param  {[type]} y y coordinate of the circle's center
- * @param  {[type]} r radius of circle 
+ * @param  {[type]} r radius of circle
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/clip|Clip}
  */
@@ -1493,7 +1495,7 @@ Graphics.prototype.clipCircle = function(x, y, r) {
 
 /**
  * Creates a clipping rectangle with the given dimensions
- * 
+ *
  * @param  {Number} x x coordinate of top left corner
  * @param  {Number} y y coordinate of top left corner
  * @param  {Number} w width of rect
@@ -1513,7 +1515,7 @@ Graphics.prototype.clipRectangle = function(x, y, w, h) {
 
 /**
  * Saves the entire state of the canvas by pushing the current state onto a stack.
- * 
+ *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/save|Save}
  */
 Graphics.prototype.save = function() {
@@ -1521,7 +1523,7 @@ Graphics.prototype.save = function() {
 };
 
 /**
- * Turns the path currently being built into the current clipping path. 
+ * Turns the path currently being built into the current clipping path.
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/clip|Clip}
  */
@@ -1542,7 +1544,7 @@ Graphics.prototype.restore = function() {
 
 //
 // Text
-// 
+//
 
 /**
  * Draws filled in text.
@@ -1604,7 +1606,7 @@ Graphics.prototype.fsText = function(text, x, y) {
 
 /**
  * Draws filled in text and returns its width.
- * 
+ *
  * @param  {String} text
  * @param  {Number} x x coordinate of text
  * @param  {Number} y x coordinate of text
@@ -1658,7 +1660,7 @@ Graphics.prototype.fTextRotated = function(text, x, y, angle) {
 Graphics.prototype.fTextArc = function(text, x, y, xCenter, yCenter, centered){
   if(text == null || text === "") {
     return;
-  } 
+  }
 
   var i;
   var r = Math.sqrt(Math.pow(x - xCenter, 2)+Math.pow(y - yCenter, 2));
@@ -1783,7 +1785,7 @@ Graphics.prototype.fTextRotatedM = function(text, x, y, angle, size) {
  * @param {Object} fontName optional font name (default: LOADED_FONT)
  * @param {Object} align optional horizontal align ('left', 'center', 'right')
  * @param {Object} baseline optional vertical alignment ('bottom', 'middle', 'top')
- * @param {Object} style optional font style ('bold', 'italic', 'underline') 
+ * @param {Object} style optional font style ('bold', 'italic', 'underline')
  */
 Graphics.prototype.setText = function(color, fontSize, fontName, align, baseline, style) {
   color = color || '#000000';
@@ -1806,7 +1808,7 @@ Graphics.prototype.setText = function(color, fontSize, fontName, align, baseline
 /**
  * Returns the width in pixels of the text passed in given the current
  * state of the graphics canvas.
- * 
+ *
  * @param  {String} text
  * @return {Number} width in pixels of the text if it were rendered.
  *
@@ -1819,12 +1821,12 @@ Graphics.prototype.getTextW = function(text) {
 
 //
 // Pixel data
-// 
+//
 
 /**
- * Return the RGBA color of the pixel at a given x,y coordinate on 
+ * Return the RGBA color of the pixel at a given x,y coordinate on
  * the graphics object canvas as a string.
- * 
+ *
  * @param  {Number} x x coordinate of pixel
  * @param  {Number} y y coordinate of pixel
  * @return {String} an rgba(r,g,b,a) string representation of the color
@@ -1835,15 +1837,15 @@ Graphics.prototype.getPixelColor = function(x, y) {
 };
 
 /**
- * Return the RGBA color of the pixel at a given x,y coordinate on 
+ * Return the RGBA color of the pixel at a given x,y coordinate on
  * the graphics object canvas as an array of integers.
- * 
+ *
  * @param  {Number} x x coordinate of pixel
  * @param  {Number} y y coordinate of pixel
- * @return {Uint8ClampedArray} Uint8ClampedArray  representing a one-dimensional 
+ * @return {Uint8ClampedArray} Uint8ClampedArray  representing a one-dimensional
  *                                                array containing the data in the
- *                                                RGBA order, with integer values 
- *                                                between 0 and 255 
+ *                                                RGBA order, with integer values
+ *                                                between 0 and 255
  */
 Graphics.prototype.getPixelColorRGBA = function(x, y) {
   return this.context.getImageData(x, y, 1, 1).data;
@@ -1856,7 +1858,7 @@ Graphics.prototype.getPixelColorRGBA = function(x, y) {
 /**
  * Cpatures the current state of this graphics objects' canvas
  * to an image
- * 
+ *
  * @return {Image} HTML5 Image object of current state of the canvas.
  */
 Graphics.prototype.captureCanvas = function() {
@@ -1974,7 +1976,7 @@ Graphics.prototype.drawGridY = function(axis2D, dY, xLabel, stepsLabel){
     this.line(left, y, right, y);
     if(xLabel!=null && i%stepsLabel===0) {
       this.fText(String(y0 + i*dY), left+xLabel, y);
-    } 
+    }
   }
 };
 
