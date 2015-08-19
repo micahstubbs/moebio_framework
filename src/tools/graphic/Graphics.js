@@ -29,9 +29,10 @@ import { TwoPi, HalfPi } from "src/Global";
  *                                 is called once per frame of the draw loop unless
  *                                 cycleInterval is set to 0.
  * @param {Function} options.onResize custom user function to run on resize of the canvas *
- * @param {Number} options.cycleInterval TODO describe this. If set to zero, the draw cycle will
- *                                   not be started automatically. YY should this be called
- *                                   cycleInterval instead?
+ * @param {Number} options.cycleInterval how often in muilliseconds to run the cycle function
+ *                                       if set to zero the cycle function will only run once.
+ * @param {Boolean} noLoop if this is true only run the cycle function once,
+ * @param {Boolean} noStart if this is true the cycle function will not be automatically started.
  */
 function Graphics(options) {
   this.container = options.container;
@@ -47,8 +48,11 @@ function Graphics(options) {
   this.cycle = options.cycle || noOperation;
   this.onResize = options.onResize || noOperation;
   this._cycleInterval = options.cycleInterval === undefined ? 30 : options.cycleInterval;
+  if(options.noLoop) {
+    this._cycleInterval = 0;
+  }
 
-  this._initialize();
+  this._initialize(!options.noStart);
 }
 export default Graphics;
 function noOperation() {}
@@ -65,7 +69,7 @@ function noOperation() {}
  * things like actually creating the backing canvas and
  * setting up mousehandlers.
  */
-Graphics.prototype._initialize = function() {
+Graphics.prototype._initialize = function(autoStart) {
   this.cW = 1; // canvas width
   this.cH = 1; // canvas height
   this.cX = 1; // canvas center x
@@ -163,9 +167,10 @@ Graphics.prototype._initialize = function() {
   this.init();
 
   // Start the draw loop
-  if(this._cycleInterval > 0) {
-    this._startCycle();
+  if(autoStart) {
+    this._startCycle();  
   }
+  
 };
 
 
@@ -328,8 +333,13 @@ Graphics.prototype._adjustCanvas = function(dimensions) {
  */
 Graphics.prototype._startCycle = function() {
   this.cycleActive = true;
-  clearInterval(this._setIntervalId);
-  this._setIntervalId = setInterval(this._onCycle.bind(this), this._cycleInterval);
+  if(this._cycleInterval === 0) {
+    // Call the cycle only once function
+    setTimeout(this._onCycle.bind(this), 10);  
+  } else {
+    clearInterval(this._setIntervalId);
+    this._setIntervalId = setInterval(this._onCycle.bind(this), this._cycleInterval);  
+  }  
 };
 
 /**
