@@ -1,4 +1,3 @@
-import Table from "src/dataStructures/lists/Table";
 import StringOperators from "src/operators/strings/StringOperators";
 import NumberOperators from "src/operators/numeric/NumberOperators";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
@@ -173,7 +172,7 @@ TableConversions.toReport = function(table, level) {
  * @param {Number} level If greater then zero, will indent to that number of spaces.
  * @return {String} Description String.
  */
-Table.prototype.toReportHtml = function(table,level) {
+TableConversions.toReportHtml = function(table,level) {
   var ident = "<br>" + (level > 0 ? StringOperators.repeatString("&nbsp", level) : "");
   var lengths = table.getLengths();
   var minLength = lengths.getMin();
@@ -297,4 +296,4 @@ Table.prototype.toReportHtml = function(table,level) {
   return text;
 };
 
-Table.prototype.getReportObject = function() {}; //TODO
+TableConversions.getReportObject = function() {}; //TODO
