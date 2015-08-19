@@ -291,8 +291,8 @@ Graphics.prototype._containerDimensions = function() {
   // https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model/Determining_the_dimensions_of_elements
   if(this.container) {
     return {
-      width: this.container.scrollWidth,
-      height: this.container.scrollHeight
+      width: this.container.clientWidth,
+      height: this.container.clientHeight
     };
   } else {
     return {
