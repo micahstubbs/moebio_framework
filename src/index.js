@@ -147,12 +147,11 @@ export { NetworkConvertions, NetworkEncodings, NetworkGenerators, NetworkOperato
   TreeConvertions, TreeEncodings };
 
 // tools/graphic
-import CanvasAndContext from "src/tools/graphic/CanvasAndContext";
 import Draw from "src/tools/graphic/Draw";
 import DrawSimpleVis from "src/tools/graphic/DrawSimpleVis";
 import DrawTexts from "src/tools/graphic/DrawTexts";
 import DrawTextsAdvanced from "src/tools/graphic/DrawTextsAdvanced";
-export { CanvasAndContext, Draw, DrawSimpleVis, DrawTexts, DrawTextsAdvanced };
+export { Draw, DrawSimpleVis, DrawTexts, DrawTextsAdvanced };
 
 import Graphics from "src/tools/graphic/Graphics";
 export { Graphics };
