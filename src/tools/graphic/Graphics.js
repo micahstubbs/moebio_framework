@@ -102,7 +102,7 @@ Graphics.prototype._initialize = function(autoStart) {
   this.backGroundColorRGB = [255,255,255];
   this.cycleActive = undefined; // YY why do we need to maintain this state?
 
-  this._cycleOnMouseMovement = false;
+  // this._cycleOnMouseMovement = false;
   this._prevMouseX = 0;
   this._prevMouseY = 0;
   this._setIntervalId = undefined;
@@ -346,12 +346,47 @@ Graphics.prototype._startCycle = function() {
  * @ignore
  * Stops the draw cycle
  */
-Graphics.prototype._stopCycle = function() {
+Graphics.prototype._stopCycle = function(callback) {
   clearInterval(this._setIntervalId);
   this.cycleActive = false;
+  this._setIntervalId = undefined;
 
-  //this.lastCycle(); // YY would this be better as a callback
+  if(callback) {
+    callback();
+  }  
 };
+
+/**
+ * Run the cycle function for a certain amount of time and then stop it.
+ * 
+ * Can be called multiple times to delay the stop time to being time milliseconds
+ * after the last call to this function.
+ * @param  {[type]} time [description]
+ * @return {[type]}      [description]
+ */
+Graphics.prototype._cycleFor = function(time) {
+  if(this._setIntervalId) {
+    // If there was already a running cycle then just delay the 
+    // stop function to stop after time. This effectively debounces
+    // the _startCycle call.    
+    clearTimeout(this._setTimeOutId);
+    this._stopAfter(time);
+  } else {
+    this._startCycle();  
+    this._stopAfter(time);
+  }
+};
+
+Graphics.prototype._stopAfter = function(time, callback) {    
+  var self = this;
+  this._setTimeOutId = setTimeout(function(){    
+    self._stopCycle();
+    if(callback){
+      callback();  
+    }    
+  }, time);
+};
+
 
 /*
  * This function is called on every cycle of the draw loop.
@@ -470,6 +505,34 @@ Graphics.prototype.start = function() {
  */
 Graphics.prototype.stop = function() {
   return this._stopCycle();
+};
+
+/**
+ * Set the cycle function to only run mouse movement and have 
+ * it run for a given amount of time after the mouse movement 
+ * has ended.
+ *  
+ * @param  {[type]} time time in milliseconds after which the cycle function will 
+ *                       continue to run
+ * @return {[type]}      [description]
+ */
+Graphics.prototype.cycleOnMouseMovement = function(time) {
+  var self = this;  
+  this.stop();
+
+  if(this.cycleOnMouseMovementListener){
+    this.canvas.removeEventListener('mousemove', this.cycleOnMouseMovementListener, false);
+    this.canvas.removeEventListener('mousewheel', this.cycleOnMouseMovementListener, false);
+    this.canvas.removeEventListener('mousemove', this.cycleOnMouseMovementListener, false); 
+  }
+
+  this.cycleOnMouseMovementListener = function(){
+    self._cycleFor(time);  
+  };
+    
+  this.canvas.addEventListener('mousemove', this.cycleOnMouseMovementListener, false);
+  this.canvas.addEventListener('mousewheel', this.cycleOnMouseMovementListener, false);
+  this.canvas.addEventListener('mousemove', this.cycleOnMouseMovementListener, false); 
 };
 
 /**
