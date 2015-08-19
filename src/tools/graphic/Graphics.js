@@ -265,6 +265,8 @@ function resizeThrottler(actualResizeHandler, interval) {
  * @param  {[type]} e resize event
  */
 Graphics.prototype._onResize = function(e) {
+  var currentW = this.cW;
+  var currentH = this.cH;
   // If the user has set the dimensions explicitly
   // we do not auto adjust the canvas.
   if(this.dimensions === undefined) {
@@ -273,7 +275,7 @@ Graphics.prototype._onResize = function(e) {
 
   if(this.onResize !== noOperation) {
     var newDim = this._containerDimensions();
-    if(newDim.width !== this.cW || newDim.height !== this.cH) {
+    if(newDim.width !== currentW || newDim.height !== currentH) {
       // Forward the event to the user defined resize handler
       this.onResize(e);
     }
