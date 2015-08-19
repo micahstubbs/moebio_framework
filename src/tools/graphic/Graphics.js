@@ -13,9 +13,12 @@ import { TwoPi, HalfPi } from "src/Global";
  * optionally starts the draw cycle.
  *
  * @param {Object} options valid properties described below
- * @param {String|DOMNode} options.container a string selector or reference
- *                                           to a node where the canvas for this
- *                                           graphics object will be placed.
+ * @param {String|DOMNode|undefined|false} options.container a string selector or reference
+ *                                                           to a node where the canvas for this
+ *                                                           graphics object will be placed.
+ *                                                           If this is a falsy value, then the graphics object
+ *                                                           will not be attached to the DOM and can be used as an
+ *                                                           offscreen bugger.
  * @param {Object} options.dimensions object with width and height properties to specify
  *                                    the dimensions of the canvas. If this is not passed
  *                                    in, the canvas will grow to always fit the size of its
@@ -114,7 +117,11 @@ Graphics.prototype._initialize = function() {
   var canvasStyle = "outline: none; -webkit-tap-highlight-color: rgba(255, 255, 255, 0);";
   this.canvas.setAttribute("style", canvasStyle);
 
-  this.container.appendChild(this.canvas);
+  if(this.container) {
+    // If this container is falsy, then the canvas is not attached to the DOM
+    // and can be used as an offscreen buffer.
+    this.container.appendChild(this.canvas);  
+  }  
   this.context = this.canvas.getContext("2d");
 
   this._adjustCanvas(this.dimensions);
@@ -282,11 +289,17 @@ Graphics.prototype._onResize = function(e) {
  */
 Graphics.prototype._containerDimensions = function() {
   // https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model/Determining_the_dimensions_of_elements
-  return {
-    width: this.container.clientWidth,
-    height: this.container.clientHeight
-  };
-
+  if(this.container) {
+    return {
+      width: this.container.scrollWidth,
+      height: this.container.scrollHeight
+    };
+  } else {
+    return {
+      width: 0,
+      height: 0
+    };
+  }
 };
 
 Graphics.prototype._adjustCanvas = function(dimensions) {
