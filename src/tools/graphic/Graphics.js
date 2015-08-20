@@ -519,7 +519,10 @@ Graphics.prototype.stop = function() {
 /**
  * Set the cycle function to only run mouse movement and have 
  * it run for a given amount of time after the mouse movement 
- * has ended.
+ * has ended. If a cycle function is currently running it will 
+ * continue to run until time has elapsed. If you want it to stop
+ * immediately @see stop.
+ *
  *  
  * @param  {[type]} time time in milliseconds after which the cycle function will 
  *                       continue to run
@@ -527,7 +530,6 @@ Graphics.prototype.stop = function() {
  */
 Graphics.prototype.cycleOnMouseMovement = function(time) {
   var self = this;  
-  this.stop();
 
   if(this.cycleOnMouseMovementListener){
     this.canvas.removeEventListener('mousemove', this.cycleOnMouseMovementListener, false);
@@ -536,12 +538,14 @@ Graphics.prototype.cycleOnMouseMovement = function(time) {
   }
 
   this.cycleOnMouseMovementListener = function(){
-    self._cycleFor(time);  
+    self._cycleFor(time);
   };
     
   this.canvas.addEventListener('mousemove', this.cycleOnMouseMovementListener, false);
   this.canvas.addEventListener('mousewheel', this.cycleOnMouseMovementListener, false);
   this.canvas.addEventListener('mousemove', this.cycleOnMouseMovementListener, false); 
+
+  self._cycleFor(time);
 };
 
 /**
