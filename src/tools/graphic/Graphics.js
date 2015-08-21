@@ -1911,8 +1911,8 @@ Graphics.prototype.setTextDefaults = function(color, fontSize, fontName, align, 
  * @see  setTextDefaults
  *
  * @param {Object} color optional font color
- * @param {Object} fontSize optional font size
- * @param {Object} fontName optional font name (default: LOADED_FONT)
+ * @param {Object} fSize optional font size
+ * @param {Object} fName optional font name (default: LOADED_FONT)
  * @param {Object} align optional horizontal align ('left', 'center', 'right')
  * @param {Object} baseline optional vertical alignment ('bottom', 'middle', 'top')
  * @param {Object} style optional font style ('bold', 'italic', 'underline')
