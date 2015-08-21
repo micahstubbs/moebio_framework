@@ -32,13 +32,15 @@ export default NumberTableDraw;
 NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listColorsIndependent, margin, graphics) {
   if(frame == null ||  numberTable == null || numberTable.type == null || numberTable.type != "NumberTable" ||  numberTable.length < 2) return null;
 
+  if(graphics==null) graphics = frame.graphics; //momentary fix
+
   colorScale = colorScale == null ? ColorScales.blueToRed : colorScale;
   listColorsIndependent = listColorsIndependent || false;
   margin = margin == null ? 2 : margin;
 
   var dX = frame.width / numberTable.length;
   var dY = frame.height / numberTable[0].length;
-
+  
   var i;
   var j;
   var numberList;

@@ -67,7 +67,11 @@ TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin, gra
  * @return {Node} selected node
  * tags:draw
  */
-TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, externalSelectedNode, graphics) {  
+TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, externalSelectedNode, graphics) { 
+  if(frame==null || tree==null) return;
+
+  if(graphics==null) graphics = frame.graphics; //momentary fix
+
   var change = frame.memory == null || frame.memory.tree != tree || frame.memory.width != frame.width || frame.memory.height != frame.height || frame.memory.weights != weights;
 
   if(externalSelectedNode != null) externalSelectedNode = tree.nodeList.getNodeById(externalSelectedNode.id);
@@ -416,6 +420,10 @@ TreeDraw.PROP_RECT_EXPANTION_MARGIN = 0.05;
  * tags:draw,ds
  */
 TreeDraw.drawDecisionTree = function(frame, tree, textColor, graphics) {
+  if(frame==null || tree==null) return;
+
+  if(graphics==null) graphics = frame.graphics; //momentary fix
+
   var change = frame.memory == null || frame.memory.tree != tree || frame.memory.width != frame.width || frame.memory.height != frame.height;
 
   textColor = textColor||'black';

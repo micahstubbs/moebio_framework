@@ -17,6 +17,8 @@ export default NumberListDraw;
 NumberListDraw.drawSimpleGraph = function(frame, numberList, margin, xValues, graphics) {
   if(numberList == null || numberList.getNormalized == null) return;
 
+  if(graphics==null) graphics = frame.graphics; //momentary fix
+
   margin = margin || 0;
 
   //setup
