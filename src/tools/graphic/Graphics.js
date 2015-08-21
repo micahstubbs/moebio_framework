@@ -419,7 +419,7 @@ Graphics.prototype._onCycle = function() {
     this.context.fillRect(0, 0, this.cW, this.cH);
   }
 
-  // setCursor('default'); // YY why is this needed/done?
+  this.setCursor('default');
 
   this.MOUSE_DOWN = this.NF_DOWN == this.nF;
   this.MOUSE_UP = this.NF_UP == this.nF;
@@ -1787,7 +1787,8 @@ Graphics.prototype.fTextArc = function(text, x, y, xCenter, yCenter, centered){
  */
 Graphics.prototype.fTextM = function(text, x, y, size) {
   size = size || this.fontSize;
-  this.context.fillText(text, x, y);
+  //this.context.fillText(text, x, y);
+  this.fText(text, x, y);
   return this.mY > y && this.mY < y + size && this.mX > x && this.mX < x + this.context.measureText(text).width;
 };
 
@@ -1878,8 +1879,13 @@ function ifDef(value, fallback) {
     return fallback;
   }
 }
+
 /**
- * Sets several text canvas rendering properties
+ * Sets default values for several text rendering properties.
+ * Values that are undefined or null are not changed. Will also 
+ * call setText and set the current text properties to that.
+ *
+ * @see  setText
  *
  * @param {Object} color optional font color
  * @param {Object} fontSize optional font size
@@ -1888,7 +1894,7 @@ function ifDef(value, fallback) {
  * @param {Object} baseline optional vertical alignment ('bottom', 'middle', 'top')
  * @param {Object} style optional font style ('bold', 'italic', 'underline')
  */
-Graphics.prototype.setText = function(color, fontSize, fontName, align, baseline, style) {
+Graphics.prototype.setTextDefaults = function(color, fontSize, fontName, align, baseline, style) {
   this.fontColor = ifDef(color, this.fontColor);
   this.fontSize = ifDef(String(fontSize), this.fontSize);
   this.fontName = ifDef(fontName, this.fontName);
@@ -1896,14 +1902,38 @@ Graphics.prototype.setText = function(color, fontSize, fontName, align, baseline
   this.fontBaseline = ifDef(baseline, this.fontBaseline);
   this.fontStyle = ifDef(style, this.fontStyle);
 
-  if(style !== '') {
-    style += ' ';
+  this.setText();
+};
+
+/**
+ * Sets several text canvas rendering properties. If a value
+ * is null or undefined, use the currently set default value.
+ *
+ * @see  setTextDefaults
+ *
+ * @param {Object} color optional font color
+ * @param {Object} fSize optional font size
+ * @param {Object} fName optional font name (default: LOADED_FONT)
+ * @param {Object} align optional horizontal align ('left', 'center', 'right')
+ * @param {Object} baseline optional vertical alignment ('bottom', 'middle', 'top')
+ * @param {Object} style optional font style ('bold', 'italic', 'underline')
+ */
+Graphics.prototype.setText = function(color, fSize, fName, align, baseline, style) {
+  var fontColor = ifDef(color, this.fontColor);
+  var fontSize = ifDef(String(fSize), this.fontSize);
+  var fontName = ifDef(fName, this.fontName);
+  var fontAlign = ifDef(align, this.fontAlign);
+  var fontBaseline = ifDef(baseline, this.fontBaseline);
+  var fontStyle = ifDef(style, this.fontStyle);
+
+  if(fontStyle !== '') {
+    fontStyle += ' ';
   }
 
-  this.context.fillStyle = this.fontColor;
-  this.context.font = this.fontStyle + this.fontSize + 'px ' + this.fontName;
-  this.context.textAlign = this.fontAlign;
-  this.context.textBaseline = this.fontBaseline;
+  this.context.fillStyle = fontColor;
+  this.context.font = fontStyle + fontSize + 'px ' + fontName;
+  this.context.textAlign = fontAlign;
+  this.context.textBaseline = fontBaseline;
 };
 
 /**
