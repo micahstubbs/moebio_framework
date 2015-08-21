@@ -419,7 +419,7 @@ Graphics.prototype._onCycle = function() {
     this.context.fillRect(0, 0, this.cW, this.cH);
   }
 
-  // setCursor('default'); // YY why is this needed/done?
+  this.setCursor('default');
 
   this.MOUSE_DOWN = this.NF_DOWN == this.nF;
   this.MOUSE_UP = this.NF_UP == this.nF;
