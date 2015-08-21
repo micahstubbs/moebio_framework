@@ -16,7 +16,9 @@ export default StringDraw;
  * tags:draw
  */
 StringDraw.drawText = function(frame, object, fontSize, fontStyle, margin, graphics) {
-  //var frame = frame;//StringDraw.drawText;
+  if(frame==null || object==null) return;
+
+  if(graphics==null) graphics = frame.graphics; //momentary fix
 
   margin = margin || 10;
   fontSize = fontSize || 12;
@@ -40,7 +42,7 @@ StringDraw.drawText = function(frame, object, fontSize, fontStyle, margin, graph
 							:
       JSON.stringify(object, null, "\t");
     frame.memory = {
-      textLines: DrawTexts.textWordWrapReturnLines(realString, subframe.width, subframe.height, lineHeight, true),
+      textLines: DrawTexts.textWordWrapReturnLines(realString, subframe.width, subframe.height, lineHeight, true, graphics),
       object: object,
       fontSize: fontSize,
       fontStyle: fontStyle,
@@ -50,5 +52,5 @@ StringDraw.drawText = function(frame, object, fontSize, fontStyle, margin, graph
     };
   }
 
-  DrawTexts.fillTextRectangleWithTextLines(frame.memory.textLines, subframe.x, subframe.y, subframe.height, lineHeight);
+  DrawTexts.fillTextRectangleWithTextLines(frame.memory.textLines, subframe.x, subframe.y, subframe.height, lineHeight, null, graphics);
 };

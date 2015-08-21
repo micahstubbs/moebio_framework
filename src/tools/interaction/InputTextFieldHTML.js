@@ -32,23 +32,12 @@ function InputTextFieldHTML(configuration, graphics) {
   this.border = configuration.border == null ? true : configuration.border;
   this.password = configuration.password;
 
-  this._prevX;
-  this._prevY;
-  this._prevWidth;
-  this._prevHeight;
-  this._prevText;
-
   this.zIndex = 30;
-
-  this.enterFunctionTarget;
-  this.changeFunctionTarget;
-  this.focusFunctionTarget;
-  this.blurFunctionTarget;
 
   this.textColor = configuration.textColor == null ? 'black' : configuration.textColor;
   this.backgroundColor = '#FFFFFF';
 
-  this.main = document.getElementById('maindiv');
+  this.main = graphics.container;// document.getElementById('maindiv');
   this.div = document.createElement('div2');
   this.textarea ? this.DOMtext = document.createElement("textarea") : this.DOMtext = document.createElement("input");
   this.password ? this.DOMtext.setAttribute('type', 'password') : this.DOMtext.setAttribute('type', 'text');
@@ -75,10 +64,8 @@ function InputTextFieldHTML(configuration, graphics) {
 
   this.DOMtext.value = "";
 
-  this.graphics.on("keydown", this.onKeyDown, this);
-  this._eKeyDown;
-
-  this.timer;
+  //this.graphics.on("keydown", this.onKeyDown, this);
+  this.div.addEventListener("keydown", this.onKeyDown, this);
 
   this.focus = false;
 
@@ -161,15 +148,25 @@ InputTextFieldHTML.prototype.getSelectionStart = function() {
  * @todo write docs
  */
 InputTextFieldHTML.prototype.onKeyDown = function(e) {
-  this._eKeyDown = e;
-  this._keyCode = e.keyCode;
-  this.timer = setTimeout(this.onKeyDownDelayed, 4, this);
+  console.log('InputTextFieldHTML.prototype.onKeyDown, e', e);
+  console.log('e.srcElement', e.srcElement);
+  console.log('e.srcElement.parent', e.srcElement.parent);
+  console.log('e.srcElement.parent.onKeyDownDelayed', e.srcElement.parent.onKeyDownDelayed);
+
+  var target = e.srcElement.parent;
+
+  target._eKeyDown = e;
+  target._keyCode = e.keyCode;
+
+  target.timer = setTimeout(target.onKeyDownDelayed, 4, target);
+  console.log('timer>');
 };
 
 /**
  * @todo write docs
  */
 InputTextFieldHTML.prototype.onKeyDownDelayed = function(target) {
+  console.log('InputTextFieldHTML.prototype.onKeyDownDelayed, target, target.DOMtext', target, target.DOMtext);
 
   if(target._keyCode == 13 && target.DOMtext == document.activeElement) {
     if(target.enterFunction != null) {
@@ -180,10 +177,11 @@ InputTextFieldHTML.prototype.onKeyDownDelayed = function(target) {
   if(target.text != target.DOMtext.value) {
 
     target.text = target.DOMtext.value;
-    var lastChar = target.text.charAt(target.text.length - 1);
+    //var lastChar = target.text.charAt(target.text.length - 1);
 
     if(target._keyCode != 13) {
       if(target.changeFunction != null) {
+        console.log('call target.changeFunctionTarget');
         target.changeFunction.call(target.changeFunctionTarget, target.id);
       }
     }
@@ -203,15 +201,17 @@ InputTextFieldHTML.prototype.forceFocus = function() {
 /**
  * @todo write docs
  */
-InputTextFieldHTML.prototype.forceUnfocus = function() {
-  console.log("[!] use InputTextFieldHTML.prototype.forceBlur instead");
-  a.push(0); // TODO where does this come from
-};
+// InputTextFieldHTML.prototype.forceUnfocus = function() {
+//   console.log("[!] use InputTextFieldHTML.prototype.forceBlur instead");
+//   a.push(0); // TODO where does this come from
+// };
 
 /**
  * @todo write docs
  */
 InputTextFieldHTML.prototype.forceBlur = function() {
+  console.log('InputTextFieldHTML.prototype.forceBlur');
+
   this.DOMtext.blur();
   this.focus = false;
 };
@@ -263,6 +263,7 @@ InputTextFieldHTML.prototype.setSelection = function(start, end) {
  * @todo write docs
  */
 InputTextFieldHTML.prototype.placeCursor = function(nChar) {
+  console.log('InputTextFieldHTML.prototype.placeCursor, nChar', nChar);
   this.setSelection(nChar);
 };
 
@@ -308,6 +309,8 @@ InputTextFieldHTML.prototype._onBlur = function(target) {
  * @todo write docs
  */
 InputTextFieldHTML.prototype.remove = function() {
+  console.log('InputTextFieldHTML.prototype.remove, his.added', this.added);
+
   if(this.added) {
     this.div.removeChild(this.DOMtext);
     this.main.removeChild(this.div);
@@ -319,6 +322,8 @@ InputTextFieldHTML.prototype.remove = function() {
  * @todo write docs
  */
 InputTextFieldHTML.prototype.readd = function() {
+  console.log('InputTextFieldHTML.prototype.readd, his.added', this.added);
+
   if(!this.added) {
     this.main.appendChild(this.div);
     this.div.appendChild(this.DOMtext);
@@ -329,9 +334,9 @@ InputTextFieldHTML.prototype.readd = function() {
 /**
  * @todo write docs
  */
-InputTextFieldHTML.prototype.disappear = function() {
-  console.log('[!] InputTextFieldHTML.prototype.disappear replaced by remove');
-  a.push(0); // TODO where does this come from?
-  this.x = -10000;
-  this.draw();
-};
+// InputTextFieldHTML.prototype.disappear = function() {
+//   console.log('[!] InputTextFieldHTML.prototype.disappear replaced by remove');
+//   a.push(0); // TODO where does this come from?
+//   this.x = -10000;
+//   this.draw();
+// };

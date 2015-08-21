@@ -112,6 +112,13 @@ Graphics.prototype._initialize = function(autoStart) {
   this._alphaRefresh = 0; //if _alphaRefresh>0 instead of clearing the canvas each frame, a transparent rectangle will be drawn
   this.END_CYCLE_DELAY = 3000; //time in milliseconds, from last mouse movement to the last cycle to be executed in case cycleOnMouseMovement has been activated
 
+  this.fontColor = "#000000";
+  this.fontSize = "14";
+  this.fontName = "Arial";
+  this.fontAlign = 'left';
+  this.fontBaseline = "top";
+  this.fontStyle = "";
+
   // Create the canvas and get it ready for drawing
   this.canvas = document.createElement("canvas");
 
@@ -512,7 +519,10 @@ Graphics.prototype.stop = function() {
 /**
  * Set the cycle function to only run mouse movement and have 
  * it run for a given amount of time after the mouse movement 
- * has ended.
+ * has ended. If a cycle function is currently running it will 
+ * continue to run until time has elapsed. If you want it to stop
+ * immediately @see stop.
+ *
  *  
  * @param  {[type]} time time in milliseconds after which the cycle function will 
  *                       continue to run
@@ -520,7 +530,6 @@ Graphics.prototype.stop = function() {
  */
 Graphics.prototype.cycleOnMouseMovement = function(time) {
   var self = this;  
-  this.stop();
 
   if(this.cycleOnMouseMovementListener){
     this.canvas.removeEventListener('mousemove', this.cycleOnMouseMovementListener, false);
@@ -529,12 +538,14 @@ Graphics.prototype.cycleOnMouseMovement = function(time) {
   }
 
   this.cycleOnMouseMovementListener = function(){
-    self._cycleFor(time);  
+    self._cycleFor(time);
   };
     
   this.canvas.addEventListener('mousemove', this.cycleOnMouseMovementListener, false);
   this.canvas.addEventListener('mousewheel', this.cycleOnMouseMovementListener, false);
   this.canvas.addEventListener('mousemove', this.cycleOnMouseMovementListener, false); 
+
+  self._cycleFor(time);
 };
 
 /**
@@ -1775,7 +1786,7 @@ Graphics.prototype.fTextArc = function(text, x, y, xCenter, yCenter, centered){
  *
  */
 Graphics.prototype.fTextM = function(text, x, y, size) {
-  size = size || 12;
+  size = size || this.fontSize;
   this.context.fillText(text, x, y);
   return this.mY > y && this.mY < y + size && this.mX > x && this.mX < x + this.context.measureText(text).width;
 };
@@ -1805,7 +1816,7 @@ Graphics.prototype.fTextM = function(text, x, y, size) {
  *
  */
 Graphics.prototype.fsTextM = function(text, x, y, size) {
-  size = size || 12;
+  size = size || this.fontSize;
   this.context.strokeText(text, x, y);
   this.context.fillText(text, x, y);
   return this.mY > y && this.mY < y + size && this.mX > x && this.mX < x + this.context.measureText(text).width;
@@ -1853,6 +1864,21 @@ Graphics.prototype.fTextRotatedM = function(text, x, y, angle, size) {
 };
 
 /**
+ * @ignore
+ * Helper function, returns first param if it is not null or undefined
+ * esle returns second param.
+ * @param  {Object} value    
+ * @param  {Object} fallback 
+ * @return {Object} 
+ */
+function ifDef(value, fallback) {
+  if(value !== undefined && value !== null) {
+    return value;
+  } else {
+    return fallback;
+  }
+}
+/**
  * Sets several text canvas rendering properties
  *
  * @param {Object} color optional font color
@@ -1863,22 +1889,40 @@ Graphics.prototype.fTextRotatedM = function(text, x, y, angle, size) {
  * @param {Object} style optional font style ('bold', 'italic', 'underline')
  */
 Graphics.prototype.setText = function(color, fontSize, fontName, align, baseline, style) {
-  color = color || '#000000';
-  fontSize = String(fontSize) || '14';
-  fontName = fontName;
-  align = align == null ? 'left' : align;
-  baseline = baseline == null ? 'top' : baseline;
-  style = style == null ? '' : style;
+  this.fontColor = ifDef(color, this.fontColor);
+  this.fontSize = ifDef(String(fontSize), this.fontSize);
+  this.fontName = ifDef(fontName, this.fontName);
+  this.fontAlign = ifDef(align, this.fontAlign);
+  this.fontBaseline = ifDef(baseline, this.fontBaseline);
+  this.fontStyle = ifDef(style, this.fontStyle);
 
   if(style !== '') {
     style += ' ';
   }
 
-  this.context.fillStyle = color;
-  this.context.font = style + fontSize + 'px ' + fontName;
-  this.context.textAlign = align;
-  this.context.textBaseline = baseline;
+  this.context.fillStyle = this.fontColor;
+  this.context.font = this.fontStyle + this.fontSize + 'px ' + this.fontName;
+  this.context.textAlign = this.fontAlign;
+  this.context.textBaseline = this.fontBaseline;
 };
+
+/**
+ * Get the current font family
+ * @return {String} the current font family
+ */
+Graphics.prototype.getFontFamily = function() {
+  return this.fontName;
+};
+
+/**
+ * Sets the current font family
+ */
+Graphics.prototype.setFontFamily = function(fontName) {
+  this.setText(undefined, undefined, fontName);
+};
+
+
+
 
 /**
  * Returns the width in pixels of the text passed in given the current

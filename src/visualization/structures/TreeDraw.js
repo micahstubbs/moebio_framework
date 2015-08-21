@@ -80,7 +80,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
 
   if(change) {
     var changeInTree = frame.memory != null && frame.memory.tree != null != tree;
-    var changeInWeights = frame.memory != null && frame.memory.weights != weights;
+    //var changeInWeights = frame.memory != null && frame.memory.weights != weights;
 
     frame.memory = {
       tree: tree,
