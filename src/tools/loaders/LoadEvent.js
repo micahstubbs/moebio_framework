@@ -11,6 +11,6 @@ function LoadEvent() {
   this.result = null;
   this.errorType = 0;
   this.errorMessage = "";
-  this.url;
+  this.url = '';
 }
 export default LoadEvent;
