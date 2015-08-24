@@ -98,41 +98,20 @@ NetworkOperators.getNodesBetweenTwoNodes = function(network, node0, node1){
  */
 NetworkOperators.shortestPath = function(network, node0, node1, includeExtremes) {
   if(network == null || node0 == null || node1 == null) return null;
-
-  c.l('\n\n\n------------> shortestPath, network, node0, node1, includeExtremes', network, node0, node1, includeExtremes);
-  c.l('shortestPath | node0.id', node0.id);
-  c.l('shortestPath | node1.id', node1.id);
   var tree = NetworkOperators.spanningTree(network, node0, node1);
-  //c.l('shortestPath | tree.nodeList.getIds()['+tree.nodeList.getIds().join('-')+"]");
-  c.l('shortestPath | tree.nodeList.length:'+tree.nodeList.length);
-  c.l('shortestPath, tree', tree);
   var path = new NodeList();
   if(includeExtremes) path.addNode(node1);
-  //c.l('shortestPath, path', path);
-  c.l('shortestPath, path ids: ['+path.getIds().join('-')+"]");
   var node = tree.nodeList.getNodeById(node1.id);
-  c.l('shortestPath | node:', node);
-
-  if(node == null) c.l('node==null !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n\n\n');
 
   if(node == null) return null;
 
-  // c.l('---'); return;
-  //
-
-
-  c.l('  (pre while)>', node0.id, node1.id, node.id,  node.parent==null?'no parent!':node.parent.id);
   while(node.parent.id != node0.id) {
     path.addNode(node.parent.node);
     node = node.parent;
     if(node == null) return null;
-    c.l('    >', node0.id, node1.id, node.id,  node.parent==null?'no parent!':node.parent.id);
   }
 
-  c.l('shortestPath, path ids: ['+path.getIds().join('-')+"]");
 
-
-  // c.l('shortestPath, path', path);
   if(includeExtremes) path.addNode(node0);
   return path.getReversed();
 };
@@ -161,39 +140,20 @@ NetworkOperators.shortestPaths = function(network, node0, node1, shortPath, span
     return allPaths;
   }
 
-  //c.clear();
-
   if(spanningTree==null) spanningTree = NetworkOperators.spanningTree(network, node0, node1);
-
-  // c.l('[•--•] node0.id, node1.id', node0.id, node1.id);
-  // c.l('[•--•] shortestPaths | spanningTree.nodeList.length, spanningTree.nLevels', spanningTree.nodeList.length, spanningTree.nLevels);
-
-  // for(var i=0; i<spanningTree.nLevels; i++){
-  //   // c.l('  [•--•] level:'+i, spanningTree.getNodesByLevel(i).getIds().join(','));
-  // }
 
   //first we seek for the nodes in paths
 
   var n = spanningTree.nLevels;
-  // c.l('[•--•] n:', n);
-
-  // c.l('[•--•] spanningTree.getNodesByLevel(spanningTree.nLevels-1).getNodeById(node1.id)', spanningTree.getNodesByLevel(spanningTree.nLevels-1).getNodeById(node1.id) );
-
+  
   var level1 = new NodeList(node1);
   var extended_from_1 = NetworkOperators.adjacentNodeList(network, level1, false);
   var level0 = ListOperators.intersection(extended_from_1, spanningTree.getNodesByLevel(n-2));//spanningTree.getNodesByLevel(n-2);
 
-  // c.l('[•--•] node1.nodeList', node1.nodeList.getIds().join(','));
-  // c.l('[•--•] level1', level1.getIds().join(','));
-  // c.l('[•--•] level on tree:', spanningTree.getNodesByLevel(n-2).getIds().join(','));
-  // c.l('[•--•] extended_from_1', extended_from_1.getIds().join(','));
-  // c.l('[•--•] ----> level0', level0.getIds().join(','));
 
   var relationsTable = new Table();
 
   relationsTable.push(NetworkOperators.getRelationsBetweenNodeLists(network, level0, level1, false));
-
-  // c.l('  [•--•] relationsTable[last]', relationsTable[relationsTable.length-1].getIds().join(','));
 
   while(n>2){
     n--;
@@ -202,23 +162,12 @@ NetworkOperators.shortestPaths = function(network, node0, node1, shortPath, span
     //interection of level1 xpanded and level n-2 in tree
 
     level0 = ListOperators.intersection(NetworkOperators.adjacentNodeList(network, level1, false), spanningTree.getNodesByLevel(n-2));
-    // c.l('\n  [•--•] n:', n);
-    // c.l('  [•--•] level1', level1.getIds().join(','));
-    // c.l('  [•--•] level0', level0.getIds().join(','));
 
     relationsTable.push(NetworkOperators.getRelationsBetweenNodeLists(network, level0, level1, false));
-    // c.l('  [•--•] relationsTable[last]', relationsTable[relationsTable.length-1].getIds().join(','));
   }
 
   relationsTable = relationsTable.getReversed();
 
-  // c.l('\n  [•--•] relationsTable', relationsTable );
-
-  // c.l('[•--•] relationsTable.getLengths()', relationsTable.getLengths() );
-
-  //c.l('[•--•] STOP for now'); return;
-
-  // c.l('\n\n[•--•] /////////--- build paths ----///////')
 
 
   for(i=0; relationsTable[0][i]!=null; i++){
@@ -232,14 +181,10 @@ NetworkOperators.shortestPaths = function(network, node0, node1, shortPath, span
     var finalNode = path[path.length-1];
     var newPath;
 
-    // c.l('   finalNode.id:',finalNode.id);
-
     relations.forEach(function(relation){
-      // c.l('         test relation:', relation.id);
       if(finalNode.relationList.getNodeById(relation.id)){
         newPath = path.clone();
         newPath.addNode(relation.getOther(finalNode));
-        // c.l('                newPath:',newPath.getIds().join(','));
         newPaths.push(newPath);
       }
     });
@@ -263,55 +208,7 @@ NetworkOperators.shortestPaths = function(network, node0, node1, shortPath, span
   }
 
 
-
-
-  // c.l('allPaths.length:',allPaths.length);
-  // c.l('allPaths!!!!:',allPaths);
-
-  // allPaths.forEach(function(path, i){
-  //   // c.l('[•--•] path '+i+': '+path.getIds().join(','));
-  // });
-
   return allPaths;
-
-
-
-
-
-
-
-
-
-  ////////////////
-
-
-
-
-
-
-
-  if(shortPath == null) shortPath = NetworkOperators.shortestPath(network, node0, node1, true);
-
-  var lengthShortestPaths = shortPath.length;
-
-
-  var firstPath = new NodeList();
-  var i;
-
-  firstPath.addNode(node0);
-  allPaths.push(firstPath);
-
-
-  var all = NetworkOperators._extendPaths(allPaths, node1, lengthShortestPaths);
-
-  for(i = 0; all[i] != null; i++) {
-    if(all[i][all[i].length - 1] != node1) {
-      all.splice(i, 1);
-      i--;
-    }
-  }
-
-  return all;
 };
 
 /**
