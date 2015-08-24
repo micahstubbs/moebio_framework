@@ -148,26 +148,18 @@ InputTextFieldHTML.prototype.getSelectionStart = function() {
  * @todo write docs
  */
 InputTextFieldHTML.prototype.onKeyDown = function(e) {
-  console.log('InputTextFieldHTML.prototype.onKeyDown, e', e);
-  console.log('e.srcElement', e.srcElement);
-  console.log('e.srcElement.parent', e.srcElement.parent);
-  console.log('e.srcElement.parent.onKeyDownDelayed', e.srcElement.parent.onKeyDownDelayed);
-
   var target = e.srcElement.parent;
 
   target._eKeyDown = e;
   target._keyCode = e.keyCode;
 
   target.timer = setTimeout(target.onKeyDownDelayed, 4, target);
-  console.log('timer>');
 };
 
 /**
  * @todo write docs
  */
 InputTextFieldHTML.prototype.onKeyDownDelayed = function(target) {
-  console.log('InputTextFieldHTML.prototype.onKeyDownDelayed, target, target.DOMtext', target, target.DOMtext);
-
   if(target._keyCode == 13 && target.DOMtext == document.activeElement) {
     if(target.enterFunction != null) {
       target.enterFunction.call(target.enterFunctionTarget, target.id);
@@ -181,7 +173,6 @@ InputTextFieldHTML.prototype.onKeyDownDelayed = function(target) {
 
     if(target._keyCode != 13) {
       if(target.changeFunction != null) {
-        console.log('call target.changeFunctionTarget');
         target.changeFunction.call(target.changeFunctionTarget, target.id);
       }
     }
@@ -202,7 +193,6 @@ InputTextFieldHTML.prototype.forceFocus = function() {
  * @todo write docs
  */
 // InputTextFieldHTML.prototype.forceUnfocus = function() {
-//   console.log("[!] use InputTextFieldHTML.prototype.forceBlur instead");
 //   a.push(0); // TODO where does this come from
 // };
 
@@ -210,7 +200,6 @@ InputTextFieldHTML.prototype.forceFocus = function() {
  * @todo write docs
  */
 InputTextFieldHTML.prototype.forceBlur = function() {
-  console.log('InputTextFieldHTML.prototype.forceBlur');
 
   this.DOMtext.blur();
   this.focus = false;
@@ -263,7 +252,6 @@ InputTextFieldHTML.prototype.setSelection = function(start, end) {
  * @todo write docs
  */
 InputTextFieldHTML.prototype.placeCursor = function(nChar) {
-  console.log('InputTextFieldHTML.prototype.placeCursor, nChar', nChar);
   this.setSelection(nChar);
 };
 
@@ -309,8 +297,6 @@ InputTextFieldHTML.prototype._onBlur = function(target) {
  * @todo write docs
  */
 InputTextFieldHTML.prototype.remove = function() {
-  console.log('InputTextFieldHTML.prototype.remove, his.added', this.added);
-
   if(this.added) {
     this.div.removeChild(this.DOMtext);
     this.main.removeChild(this.div);
@@ -322,7 +308,6 @@ InputTextFieldHTML.prototype.remove = function() {
  * @todo write docs
  */
 InputTextFieldHTML.prototype.readd = function() {
-  console.log('InputTextFieldHTML.prototype.readd, his.added', this.added);
 
   if(!this.added) {
     this.main.appendChild(this.div);
@@ -330,13 +315,3 @@ InputTextFieldHTML.prototype.readd = function() {
     this.added = true;
   }
 };
-
-/**
- * @todo write docs
- */
-// InputTextFieldHTML.prototype.disappear = function() {
-//   console.log('[!] InputTextFieldHTML.prototype.disappear replaced by remove');
-//   a.push(0); // TODO where does this come from?
-//   this.x = -10000;
-//   this.draw();
-// };
