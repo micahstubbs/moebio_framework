@@ -119,6 +119,7 @@ Forces.prototype.addForce = function(node0, node1, type, equilibriumDistance) {
   this.toNodeList.addNode(node1);
   this.forcesList.push(node0.id + "*" + node1.id + "*" + type);
   this.forcesTypeList.push(type);
+
   if(equilibriumDistance != null) this.equilibriumDistances.push(equilibriumDistance);
 };
 
@@ -132,14 +133,16 @@ Forces.prototype.calculate = function() {
   var force;
   var dx, dy, d;
   var eqDistance;
+  var length = this.forcesList.length;
 
   // 1. reset accelerations
-  this._resetAccelerations(); //TODO: this can be removed if accelerations are resetd in applyForces [!]
+  //this._resetAccelerations(); //TODO: this can be removed if accelerations are resetd in applyForces [!]
 
   // 2. calculate new accelerations from forces
-  for(i = 0; this.forcesList[i] != null; i++) {
+  for(i = 0; i<length; i++) {
     node0 = this.fromNodeList[i];
     node1 = this.toNodeList[i];
+    
     type = this.forcesTypeList[i];
     dx = node1.x - node0.x;
     dy = node1.y - node0.y;
@@ -147,30 +150,30 @@ Forces.prototype.calculate = function() {
     eqDistance = this.equilibriumDistances[i];
     if(type == 'Repulsor' && d > eqDistance) continue;
     if(type == 'Attractor' && d < eqDistance) continue;
-
-    switch(type) {
-      case "Spring":
-      case "Repulsor":
-      case "Attractor":
+    
+    // switch(type) {
+    //   case "Spring":
+    //   case "Repulsor":
+    //   case "Attractor":
         force = this.k * (d - eqDistance) / d;
         node0.ax += force * dx;
         node0.ay += force * dy;
         node1.ax -= force * dx;
         node1.ay -= force * dy;
-        break;
-      case "DirectedSpring":
-        force = this.k * (d - eqDistance) / d;
-        node1.ax -= force * dx;
-        node1.ay -= force * dy;
-        break;
-      case "DirectedRepulsor":
-        if(d < eqDistance) {
-          force = this.k * (d - eqDistance) / d;
-          node1.ax -= force * dx;
-          node1.ay -= force * dy;
-        }
-        break;
-    }
+    //     break;
+    //   case "DirectedSpring":
+    //     force = this.k * (d - eqDistance) / d;
+    //     node1.ax -= force * dx;
+    //     node1.ay -= force * dy;
+    //     break;
+    //   case "DirectedRepulsor":
+    //     if(d < eqDistance) {
+    //       force = this.k * (d - eqDistance) / d;
+    //       node1.ax -= force * dx;
+    //       node1.ay -= force * dy;
+    //     }
+    //     break;
+    // }
   }
 };
 
@@ -214,16 +217,31 @@ Forces.prototype.avoidOverlapping = function(delta) {
   var vy;
   var dM = delta * 0.5;
   var l = this.nodeList.length;
+  var lminus1 = l-1;
 
-  console.log(this.nodeList.length);
+  // var cell_id;
+  // var cells = {};
+  // var dCell = 50;//dSep + 2*configuration.nodes.MAX_R;
 
-  for(i = 0; this.nodeList[i + 1] != null; i++) {
+  // for(i=0; i<length; i++){
+  //   node0 = this.nodeList[i];
+  //   cell_id = Math.floor(node0.x/dCell)+"_"+Math.floor(node0.y/dCell);
+  //   node0._cell_id = cell_id;
+  //   node0._idNumns = [Math.floor(node0.x/dCell), Math.floor(node0.y/dCell)];
+  //   if(cells[cell_id]==null) cells[cell_id]=[];
+  //   cells[cell_id].push(node0);
+  // }
+
+  // var neighbours = [];
+
+
+  for(i = 0; i<lminus1; i++) {
     node0 = this.nodeList[(i + this._i0) % l];
     x0l = node0.x - node0.width * 0.5 - dM;
     x0r = node0.x + node0.width * 0.5 + dM;
     y0t = node0.y - node0.height * 0.5 - dM;
     y0b = node0.y + node0.height * 0.5 + dM;
-    for(var j = i + 1; this.nodeList[j] != null; j++) {
+    for(var j = i + 1; j<l; j++) {
       node1 = this.nodeList[(j + this._i0 + i) % l];
       x1l = node1.x - node1.width * 0.5 - dM;
       x1r = node1.x + node1.width * 0.5 + dM;
@@ -312,7 +330,10 @@ Forces.prototype.applyForces = function() {
     node.vy *= this.friction;
     node.x += node.vx;
     node.y += node.vy;
+    node.ax = 0;
+    node.ay = 0;
   }
+
 };
 
 /**
@@ -351,11 +372,11 @@ Forces.prototype.destroy = function() {
 /**
  * @ignore
  */
-Forces.prototype._resetAccelerations = function() {
-  var node;
-  for(var i = 0; this.nodeList[i] != null; i++) {
-    node = this.nodeList[i];
-    node.ax = 0;
-    node.ay = 0;
-  }
-};
+// Forces.prototype._resetAccelerations = function() {
+//   var node;
+//   for(var i = 0; this.nodeList[i] != null; i++) {
+//     node = this.nodeList[i];
+//     node.ax = 0;
+//     node.ay = 0;
+//   }
+// };
