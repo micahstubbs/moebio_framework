@@ -7,8 +7,8 @@ window.onload = function() {
    */
   var network;
 
-  var N_NODES = 2000; // Number of nodes to put in visualization
-  var P_RELATION = 0.0006; //probablity that any two nodes are connected
+  var N_NODES = 3000; // Number of nodes to put in visualization
+  var P_RELATION = 0.0005; //probablity that any two nodes are connected
 
   new mo.Graphics({
     container: "#maindiv",
@@ -19,7 +19,7 @@ window.onload = function() {
      */
     init: function(){
       // create a sample network using NetworkGenerators
-      network = mo.NetworkGenerators.createRandomNetwork(N_NODES, P_RELATION, 1);
+      network = mo.NetworkGenerators.createRandomNetwork(N_NODES, P_RELATION);
 
       this.forces = new mo.Forces({
         dEqSprings:30,
@@ -42,6 +42,7 @@ window.onload = function() {
       var relation;
       var isOverCircle;
       var iOver = null;
+      var length = network.relationList.length;
 
       // update the forces applied to this network
       this.forces.calculate();
@@ -49,10 +50,10 @@ window.onload = function() {
 
       // set the drawing stroke to be black and thin
       this.setStroke('black', 0.2);
-
+      
 
       // for each edge in the network, create a line connecting them
-      for(i=0; network.relationList[i] != null; i++){
+      for(i=0; i<length; i++){
         relation = network.relationList[i];
         // cX, cY are the coordinates of the center of the canvas
         this.line(relation.node0.x + this.cX, relation.node0.y + this.cY,
@@ -60,10 +61,12 @@ window.onload = function() {
             );
       }
 
+      length = network.nodeList.length;
+
       this.setFill('black');
 
       // for each node in the network, draw it
-      for(i=0; network.nodeList[i] != null; i++){
+      for(i=0; i<length; i++){
         node = network.nodeList[i];
 
         // draws a node with radius = (2x number of node connections + 2) px, and detects wether the cursor is hovering
