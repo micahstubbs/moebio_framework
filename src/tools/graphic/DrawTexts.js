@@ -15,7 +15,7 @@ DrawTexts.PIXEL_TO_POINT = 0.75;
  * @todo write docs
  */
 DrawTexts.fillTextRectangle = function(text, x, y, width, height, lineHeight, returnHeight, ellipsis, graphics) {
-  var textLines = DrawTexts.textWordWrapReturnLines(text, width, height, lineHeight, ellipsis);
+  var textLines = DrawTexts.textWordWrapReturnLines(text, width, height, lineHeight, ellipsis, graphics);
   return DrawTexts.fillTextRectangleWithTextLines(textLines, x, y, height, lineHeight, returnHeight, graphics);
 };
 
@@ -121,18 +121,18 @@ DrawTexts.getMaxTextWidth = function(texts, graphics) {
 /**
  * @todo write docs
  */
-DrawTexts.cropString = function(ctx, string, fitWidth) {
+DrawTexts.cropString = function(graphics, string, fitWidth) {
   if(string == null) return;
   fitWidth = fitWidth || 0;
 
-  if(fitWidth <= 0 || ctx.measureText(string).width <= fitWidth) {
+  if(fitWidth <= 0 || graphics.context.measureText(string).width <= fitWidth) {
     return string;
   }
   var chars = string.split('');
   var idx = 1;
   while(chars.length > 0 && idx <= chars.length) {
     var str = chars.slice(0, idx).join('');
-    var w = ctx.measureText(str).width;
+    var w = graphics.context.measureText(str).width;
     if(w > fitWidth) {
       if(idx == 1) {
         idx = 2;
