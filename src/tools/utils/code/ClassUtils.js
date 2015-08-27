@@ -11,6 +11,8 @@ import NodeList from "src/dataStructures/structures/lists/NodeList";
 import PolygonList from "src/dataStructures/geometry/PolygonList";
 import DateList from "src/dataStructures/dates/DateList";
 import ColorList from "src/dataStructures/graphic/ColorList";
+import {dataModelsInfo} from "src/Global";
+import ColorOperators from "src/operators/graphic/ColorOperators";
 
 
 // Provides a lookup table for instantiate classes.
