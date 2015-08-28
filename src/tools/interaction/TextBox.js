@@ -15,6 +15,7 @@ TextBox.prototype.constructor = TextBox;
  * @category strings
  */
 function TextBox(configuration, graphics) {
+
   configuration = configuration == null ? {} : configuration; // TODO is this supposed to be an undefined check?
   this.graphics = graphics;
 
@@ -99,7 +100,7 @@ TextBox.prototype.setText = function(text) {
 
         this.links.push(link);
 
-        if(index0b != -1 && index0b < index1 && !blocks[i].charAt(index0b + 1) == "b") {
+        if(index0b != -1 && index0b < index1 && blocks[i].charAt(index0b + 1) != "b") {
           extra = blocks[i].charAt(index0b + 1);
           //c.log("EXTRA:{"+extra+"}");
 

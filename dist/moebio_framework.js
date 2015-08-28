@@ -58,6 +58,9 @@ define('src/index', ['exports'], function (exports) {
   }
 
 
+  /**
+   * @todo write docs
+   */
   DataModel.prototype.destroy = function() {
   	// TODO. Why is this being done? It is in a few
   	// places in the codebase. Also this.name isn't
@@ -66,14 +69,23 @@ define('src/index', ['exports'], function (exports) {
     delete this.name;
   };
 
+  /**
+   * @todo write docs
+   */
   DataModel.prototype.setType = function(type) {
     this.type = type;
   };
 
+  /**
+   * @todo write docs
+   */
   DataModel.prototype.getType = function() {
     return this.type;
   };
 
+  /**
+   * @todo write docs
+   */
   DataModel.prototype.toString = function() {
 
   };
@@ -101,25 +113,41 @@ define('src/index', ['exports'], function (exports) {
 
 
 
+  /**
+  * @todo write docs
+  */
   Point.prototype.getNorm = function() {
     return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
   };
 
+  /**
+  * @todo write docs
+  */
   Point.prototype.getAngle = function() {
     return Math.atan2(this.y, this.x);
   };
 
 
 
+  /**
+  * @todo write docs
+  */
   Point.prototype.factor = function(k) {
     if(k >= 0 || k < 0) return new Point(this.x * k, this.y * k);
     if(k.type != null && k.type == 'Point') return new Point(this.x * k.x, this.y * k.y);
   };
 
+  /**
+  * @todo write docs
+  */
   Point.prototype.normalize = function() {
     var norm = Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
     return new Point(this.x / norm, this.y / norm);
   };
+
+  /**
+  * @todo write docs
+  */
   Point.prototype.normalizeToValue = function(k) {
     var factor = k / Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
     return new Point(this.x * factor, this.y * factor);
@@ -127,60 +155,103 @@ define('src/index', ['exports'], function (exports) {
 
 
 
+  /**
+  * @todo write docs
+  */
   Point.prototype.subtract = function(point) {
     return new Point(this.x - point.x, this.y - point.y);
   };
 
+  /**
+  * @todo write docs
+  */
   Point.prototype.add = function(point) {
     return new Point(point.x + this.x, point.y + this.y);
   };
 
+  /**
+  * @todo write docs
+  */
   Point.prototype.addCoordinates = function(x, y) {
     return new Point(x + this.x, y + this.y);
   };
 
+  /**
+  * @todo write docs
+  */
   Point.prototype.distanceToPoint = function(point) {
     return Math.sqrt(Math.pow(this.x - point.x, 2) + Math.pow(this.y - point.y, 2));
   };
+
+  /**
+  * @todo write docs
+  */
   Point.prototype.distanceToPointSquared = function(point) {
     return Math.pow(this.x - point.x, 2) + Math.pow(this.y - point.y, 2);
   };
+
+  /**
+  * @todo write docs
+  */
   Point.prototype.angleToPoint = function(point) {
     return Math.atan2(point.y - this.y, point.x - this.x);
   };
+
+  /**
+  * @todo write docs
+  */
   Point.prototype.expandFromPoint = function(point, factor) {
     return new Point(point.x + factor * (this.x - point.x), point.y + factor * (this.y - point.y));
   };
 
 
+  /**
+  * @todo write docs
+  */
   Point.prototype.interpolate = function(point, t) {
     return new Point((1 - t) * this.x + t * point.x, (1 - t) * this.y + t * point.y);
   };
 
+  /**
+  * @todo write docs
+  */
   Point.prototype.cross = function(point) {
     return this.x * point.y - this.y * point.x;
   };
 
+  /**
+  * @todo write docs
+  */
   Point.prototype.dot = function(point) {
     return this.x * point.x + this.y * point.y;
   };
 
+  /**
+  * @todo write docs
+  */
   Point.prototype.getRotated = function(angle, center) {
     center = center == null ? new Point() : center;
 
     return new Point(Math.cos(angle) * (this.x - center.x) - Math.sin(angle) * (this.y - center.y) + center.x, Math.sin(angle) * (this.x - center.x) + Math.cos(angle) * (this.y - center.y) + center.y);
   };
 
-
-
+  /**
+  * @todo write docs
+  */
   Point.prototype.clone = function() {
     return new Point(this.x, this.y);
   };
+
+  /**
+  * @todo write docs
+  */
   Point.prototype.toString = function() {
     return "(x=" + this.x + ", y=" + this.y + ")";
   };
 
-
+  /**
+  * @todo write docs
+  */
   Point.prototype.destroy = function() {
     delete this.type;
     delete this.name;
@@ -248,17 +319,24 @@ define('src/index', ['exports'], function (exports) {
     return this.x - this.y;
   };
 
+  /**
+  * @todo write docs
+  */
   Interval__Interval.prototype.getMiddle = function() {
     return(this.x + this.y) * 0.5;
   };
 
+  /**
+  * @todo write docs
+  */
   Interval__Interval.prototype.getSign = function() {
     if(this.x == this.y) return 0;
     return this.getAmplitude() / this.getSignedAmplitude();
   };
 
   /**
-   * Scales a value to
+   * Scales a value
+   * @todo finish docs
    *
    * @return {Interval}
    */
@@ -268,6 +346,9 @@ define('src/index', ['exports'], function (exports) {
     return new Interval__Interval(middle - midAmp * value, middle + midAmp * value);
   };
 
+  /**
+  * @todo write docs
+  */
   Interval__Interval.prototype.getScaledFromProportion = function(value, proportion) {
     var antiP = 1 - proportion;
     var amp0 = proportion * (this.y - this.x);
@@ -276,10 +357,16 @@ define('src/index', ['exports'], function (exports) {
     return new Interval__Interval(middle - amp0 * value, middle + amp1 * value);
   };
 
+  /**
+  * @todo write docs
+  */
   Interval__Interval.prototype.add = function(value) {
     return new Interval__Interval(this.x + value, this.y + value);
   };
 
+  /**
+  * @todo write docs
+  */
   Interval__Interval.prototype.invert = function() {
     var swap = this.x;
     this.x = this.y;
@@ -298,10 +385,16 @@ define('src/index', ['exports'], function (exports) {
     return value * Number(this.getSignedAmplitude()) + this.x;
   };
 
+  /**
+  * @todo write docs
+  */
   Interval__Interval.prototype.getInverseInterpolatedValue = function(value) {
     return(value - this.x) / this.getSignedAmplitude();
   };
 
+  /**
+  * @todo write docs
+  */
   Interval__Interval.prototype.getInterpolatedValues = function(numberList) {
     var newNumberList = [];
     var nElements = numberList.length;
@@ -310,6 +403,10 @@ define('src/index', ['exports'], function (exports) {
     }
     return newNumberList;
   };
+
+  /**
+  * @todo write docs
+  */
   Interval__Interval.prototype.getInverseInterpolatedValues = function(numberList) {
     var newNumberList = [];
     var nElements = numberList.length;
@@ -319,6 +416,9 @@ define('src/index', ['exports'], function (exports) {
     return newNumberList;
   };
 
+  /**
+  * @todo write docs
+  */
   Interval__Interval.prototype.intersect = function(interval) {
     return new Interval__Interval(Math.max(this.x, interval.x), Math.min(this.y, interval.y));
   };
@@ -347,7 +447,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Indicate wether other interval contains the same values
+   * Indicates if provided interval contains the same values
    *
    * @param interval
    * @return {Boolean}
@@ -358,7 +458,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * create a new interval with the same proporties values
+   * creates a new interval with the same proporties values
    * @return {String}
    *
    */
@@ -394,44 +494,81 @@ define('src/index', ['exports'], function (exports) {
   }
   var Rectangle__default = Rectangle__Rectangle;
 
+  /**
+   * @todo write docs
+   */
   Rectangle__Rectangle.prototype.getRight = function() {
     return this.x + this.width;
   };
 
+  /**
+   * @todo write docs
+   */
   Rectangle__Rectangle.prototype.getBottom = function() {
     return this.y + this.height;
   };
 
+  /**
+   * @todo write docs
+   */
   Rectangle__Rectangle.prototype.setRight = function(value) {
     this.width = value - this.x;
   };
 
+  /**
+   * @todo write docs
+   */
   Rectangle__Rectangle.prototype.setBottom = function(value) {
     this.height = value - this.y;
   };
 
 
 
+  /**
+   * @todo write docs
+   */
   Rectangle__Rectangle.prototype.getTopLeft = function() {
     return new Point(this.x, this.y);
   };
+
+  /**
+   * @todo write docs
+   */
   Rectangle__Rectangle.prototype.getTopRight = function() {
     return new Point(this.x + this.width, this.y);
   };
 
+  /**
+   * @todo write docs
+   */
   Rectangle__Rectangle.prototype.getBottomRight = function() {
     return new Point(this.x + this.width, this.y + this.height);
   };
+
+  /**
+   * @todo write docs
+   */
   Rectangle__Rectangle.prototype.getBottomLeft = function() {
     return new Point(this.x, this.y + this.height);
   };
+
+  /**
+   * @todo write docs
+   */
   Rectangle__Rectangle.prototype.getCenter = function() {
     return new Point(this.x + 0.5 * this.width, this.y + 0.5 * this.height);
   };
+
+  /**
+   * @todo write docs
+   */
   Rectangle__Rectangle.prototype.getRandomPoint = function() {
     return new Point(this.x + Math.random() * this.width, this.y + Math.random() * this.height);
   };
 
+  /**
+   * @todo write docs
+   */
   Rectangle__Rectangle.prototype.getIntersection = function(rectangle) {
     if(rectangle.x + rectangle.width < this.x || rectangle.x > this.x + this.width || rectangle.y + rectangle.height < this.y || rectangle.y > this.y + this.height) return null;
     var xR = Math.max(rectangle.x, this.x);
@@ -439,15 +576,24 @@ define('src/index', ['exports'], function (exports) {
     return new Rectangle__Rectangle(xR, yR, Math.min(rectangle.x + rectangle.width, this.x + this.width) - xR, Math.min(rectangle.y + rectangle.height, this.y + this.height) - yR);
   };
 
+  /**
+   * @todo write docs
+   */
   Rectangle__Rectangle.prototype.interpolate = function(rectangle, t) {
     var mint = 1 - t;
     return new Rectangle__Rectangle(mint * this.x + t * rectangle.x, mint * this.y + t * rectangle.y, mint * this.width + t * rectangle.width, mint * this.height + t * rectangle.height);
   };
 
+  /**
+   * @todo write docs
+   */
   Rectangle__Rectangle.prototype.getRatio = function() {
     return Math.max(this.width, this.height) / Math.min(this.width, this.height);
   };
 
+  /**
+   * @todo write docs
+   */
   Rectangle__Rectangle.prototype.getArea = function() {
     return this.width * this.height;
   };
@@ -463,6 +609,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+   * @todo write docs
+   */
   Rectangle__Rectangle.prototype.pointIsOnBorder = function(point, margin) {
     margin = margin == null ? 1 : margin;
     if(point.x >= this.x - margin && point.x <= this.x + this.width + margin) {
@@ -478,6 +627,9 @@ define('src/index', ['exports'], function (exports) {
 
 
 
+  /**
+   * @todo write docs
+   */
   Rectangle__Rectangle.prototype.getNormalRectangle = function() {
     return new Rectangle__Rectangle(Math.min(this.x, this.x + this.width), Math.min(this.y, this.y + this.height), Math.abs(this.width), Math.abs(this.height));
   };
@@ -504,23 +656,38 @@ define('src/index', ['exports'], function (exports) {
   	|| rectangle.containsPoint(this.getTopLeft()) || rectangle.containsPoint(this.getTopRight()) || rectangle.containsPoint(this.getBottomLeft()) || rectangle.containsPoint(this.getBottomRight());
   };
 
+  /**
+   * @todo write docs
+   */
   Rectangle__Rectangle.prototype.expand = function(expantion, centerPoint) {
     centerPoint = centerPoint || new Point(this.x + 0.5 * this.width, this.y + 0.5 * this.height);
     return new Rectangle__Rectangle((this.x - centerPoint.x) * expantion + centerPoint.x, (this.y - centerPoint.y) * expantion + centerPoint.y, this.width * expantion, this.height * expantion);
   };
 
+  /**
+   * @todo write docs
+   */
   Rectangle__Rectangle.prototype.isEqual = function(rectangle) {
     return this.x == rectangle.x && this.y == rectangle.y && this.width == rectangle.width && this.height == rectangle.height;
   };
 
+  /**
+   * @todo write docs
+   */
   Rectangle__Rectangle.prototype.clone = function() {
     return new Rectangle__Rectangle(this.x, this.y, this.width, this.height);
   };
 
+  /**
+   * @todo write docs
+   */
   Rectangle__Rectangle.prototype.toString = function() {
     return "(x=" + this.x + ", y=" + this.y + ", w=" + this.width + ", h=" + this.height + ")";
   };
 
+  /**
+   * @todo write docs
+   */
   Rectangle__Rectangle.prototype.destroy = function() {
     delete this.x;
     delete this.y;
@@ -1070,7 +1237,7 @@ define('src/index', ['exports'], function (exports) {
   /**
    * simplifies a categorical list, by keeping the nCategories-1 most common values, and replacing the others with an "other" element
    * @param  {Number} nCategories number of diferent elemenets in the resulting list
-   * 
+   *
    * @param  {Object} othersElement to be placed instead of the less common elements ("other" by default)
    * @return {List} simplified list
    * tags:
@@ -1090,7 +1257,7 @@ define('src/index', ['exports'], function (exports) {
     });
 
     return newList;
-  }
+  };
 
 
 
@@ -1182,7 +1349,7 @@ define('src/index', ['exports'], function (exports) {
     if(sortListsByOccurrences){
       table[0] = elementList.getSortedByList(numberList, false);
       table[1] = numberList.getSorted(false);
-      
+
     }
 
     if(addWeightsNormalizedToSum) table[2] = table[1].getNormalizedToSum();
@@ -1448,7 +1615,7 @@ define('src/index', ['exports'], function (exports) {
   List__List.prototype.getSorted = function(ascending) {
     return this.getSortedByList(this, ascending); //<--- because tests, antiintuitively, have proven this to be faster
 
-    // ascending = ascending == null ? true : ascending; 
+    // ascending = ascending == null ? true : ascending;
 
     // var comparator;
     // if(ascending) {
@@ -2019,7 +2186,7 @@ define('src/index', ['exports'], function (exports) {
           index++;
           if(index==sizeAccum){
             accumsum /= index;
-            maxAccumsum = Math.max(maxAccumsum, accumsum)
+            maxAccumsum = Math.max(maxAccumsum, accumsum);
             shorten.push(accumsum);
             accumsum=0;
             index=0;
@@ -2027,7 +2194,7 @@ define('src/index', ['exports'], function (exports) {
         });
         if(index!=0){
             accumsum /=index;
-            maxAccumsum = Math.max(maxAccumsum, accumsum)
+            maxAccumsum = Math.max(maxAccumsum, accumsum);
             shorten.push(accumsum);
         }
 
@@ -2058,7 +2225,7 @@ define('src/index', ['exports'], function (exports) {
         var catColors = ColorListGenerators.createCategoricalColors(2, freqTable[0].length);
 
         text += ident + "entropy: <b>" + NumberOperators.numberToString(ListOperators__default.getListEntropy(this, null, freqTable), 4) + "</b>";
-        
+
         text += ident + "number of different elements: <b>" + freqTable[0].length + "</b>";
         if(freqTable[0].length < 10) {
           text += ident + "elements frequency:";
@@ -2078,9 +2245,9 @@ define('src/index', ['exports'], function (exports) {
         }
 
         if(joined.length < 2000) text += ident + "contents: [" + joined + "]";
-        
+
         var weights = freqTable[1].getNormalizedToSum();
-        
+
         var bars = StringOperators.createsCategoricalColorsBlocksHtml(weights, 55, catColors);
         text += ident;
         text += "<font style=\"font-size:7px\">"+bars+"</f>";
@@ -2219,6 +2386,9 @@ define('src/index', ['exports'], function (exports) {
 
 
 
+  /**
+  * @todo write docs
+  */
   DateList.fromArray = function(array, forceToDate) {
     forceToDate = forceToDate == null ? true : forceToDate;
     var result = List__default.fromArray(array);
@@ -2253,6 +2423,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+  * @todo write docs
+  */
   DateList.prototype.toStringList = function() {
     var stringList = new StringList();
     for(var i = 0; this[i] != null; i++) {
@@ -2261,6 +2434,9 @@ define('src/index', ['exports'], function (exports) {
     return stringList;
   };
 
+  /**
+  * @todo write docs
+  */
   DateList.prototype.getMin = function() {
     if(this.length === 0) return null;
     var min = this[0];
@@ -2271,6 +2447,9 @@ define('src/index', ['exports'], function (exports) {
     return min;
   };
 
+  /**
+  * @todo write docs
+  */
   DateList.prototype.getMax = function() {
     if(this.length === 0) return null;
     var max = this[0];
@@ -2368,19 +2547,31 @@ define('src/index', ['exports'], function (exports) {
     return new Date();
   };
 
+  /**
+   * @todo write docs
+   */
   DateOperators.addDaysToDate = function(date, nDays) {
     return new Date(date.getTime() + (nDays / DateOperators.millisecondsToDays));
   };
 
+  /**
+   * @todo write docs
+   */
   DateOperators.addMillisecondsToDate = function(date, nMilliseconds) {
     return new Date(date.getTime() + nMilliseconds);
   };
 
 
+  /**
+   * @todo write docs
+   */
   DateOperators.parseDate = function(string) {
     return new Date(Date.parse(string.replace(/\./g, "-")));
   };
 
+  /**
+   * @todo write docs
+   */
   DateOperators.parseDates = function(stringList) {
     var dateList = new DateList();
     var i;
@@ -2390,23 +2581,44 @@ define('src/index', ['exports'], function (exports) {
     return dateList;
   };
 
+  /**
+   * @todo write docs
+   */
   DateOperators.getHoursBetweenDates = function(date0, date1) {
     return(date1.getTime() - date0.getTime()) * DateOperators.millisecondsToHours;
   };
+
+  /**
+   * @todo write docs
+   */
   DateOperators.getDaysBetweenDates = function(date0, date1) {
     return(date1.getTime() - date0.getTime()) * DateOperators.millisecondsToDays;
   };
+
+  /**
+   * @todo write docs
+   */
   DateOperators.getWeeksBetweenDates = function(date0, date1) {
     return(date1.getTime() - date0.getTime()) * DateOperators.millisecondsToWeeks;
   };
+
+  /**
+   * @todo write docs
+   */
   DateOperators.getYearsBetweenDates = function(date0, date1) {
     return(date1.getTime() - date0.getTime()) * DateOperators.millisecondsToYears;
   };
 
+  /**
+   * @todo write docs
+   */
   DateOperators.nDayInYear = function(date) {
     return Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 1).getTime()) * DateOperators.millisecondsToDays);
   };
 
+  /**
+   * @todo write docs
+   */
   DateOperators.getDateDaysAgo = function(nDays) {
     return DateOperators.addDaysToDate(new Date(), -nDays);
   };
@@ -2423,6 +2635,9 @@ define('src/index', ['exports'], function (exports) {
     return Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
   };
 
+  /**
+   * @todo write docs
+   */
   DateOperators.getNDaysInMonth = function(month, year) {
     return new Date(year, month, 0).getDate();
   };
@@ -2447,6 +2662,9 @@ define('src/index', ['exports'], function (exports) {
   }
 
 
+  /**
+   * @todo write docs
+   */
   Polygon3D.fromArray = function(array) {
     var result = List__default.fromArray(array);
     result.type = "Polygon3D";
@@ -2706,7 +2924,7 @@ define('src/index', ['exports'], function (exports) {
     });
 
     return newTable.getImproved();
-  }
+  };
 
   /**
    * filters lists on a table, keeping elements that are in the same of row of certain elements of a given list from the table
@@ -2749,7 +2967,7 @@ define('src/index', ['exports'], function (exports) {
     });
 
     return newTable.getImproved();
-  }
+  };
 
   /**
    * Sort Table's lists by a list
@@ -3193,6 +3411,9 @@ define('src/index', ['exports'], function (exports) {
     return newTable;
   };
 
+  /**
+   * @todo write docs
+   */
   NumberTable.prototype.getNumberListsNormalizedToMax = function(factorValue) {
     var newTable = new NumberTable();
     for(var i = 0; this[i] != null; i++) {
@@ -3203,6 +3424,9 @@ define('src/index', ['exports'], function (exports) {
     return newTable;
   };
 
+  /**
+   * @todo write docs
+   */
   NumberTable.prototype.getNumberListsNormalizedToSum = function() {
     var newTable = new NumberTable();
     for(var i = 0; this[i] != null; i++) {
@@ -3214,6 +3438,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+   * @todo write docs
+   */
   NumberTable.prototype.getMax = function() {
     if(this.length == 0) return null;
 
@@ -3226,6 +3453,9 @@ define('src/index', ['exports'], function (exports) {
     return max;
   };
 
+  /**
+   * @todo write docs
+   */
   NumberTable.prototype.getMin = function() {
     if(this.length == 0) return null;
 
@@ -3238,6 +3468,9 @@ define('src/index', ['exports'], function (exports) {
     return min;
   };
 
+  /**
+   * @todo write docs
+   */
   NumberTable.prototype.getMinMaxInterval = function() {
     if(this.length == 0) return null;
     var rangeInterval = (this[0]).getMinMaxInterval();
@@ -3279,6 +3512,9 @@ define('src/index', ['exports'], function (exports) {
     return sums;
   };
 
+  /**
+   * @todo write docs
+   */
   NumberTable.prototype.getAverages = function() {
     var numberList = new NumberList();
     for(var i = 0; this[i] != null; i++) {
@@ -3287,6 +3523,9 @@ define('src/index', ['exports'], function (exports) {
     return numberList;
   };
 
+  /**
+   * @todo write docs
+   */
   NumberTable.prototype.getRowsAverages = function() {
     var nLists = this.length;
     var averages = this[0].clone().factor(1 / nLists);
@@ -3302,6 +3541,9 @@ define('src/index', ['exports'], function (exports) {
     return averages;
   };
 
+  /**
+   * @todo write docs
+   */
   NumberTable.prototype.factor = function(value) {
     var newTable = new NumberTable();
     var i;
@@ -3327,6 +3569,9 @@ define('src/index', ['exports'], function (exports) {
     return newTable;
   };
 
+  /**
+   * @todo write docs
+   */
   NumberTable.prototype.add = function(value) {
     var newTable = new NumberTable();
     var numberList;
@@ -3342,6 +3587,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+   * @todo write docs
+   */
   NumberTable.prototype.getCovarianceMatrix = function(){
     var newTable = new NumberTable();
     var i;
@@ -3349,7 +3597,7 @@ define('src/index', ['exports'], function (exports) {
 
     }
 
-  }
+  };
 
   exports.NumberTable = NumberTable;
 
@@ -3608,10 +3856,10 @@ define('src/index', ['exports'], function (exports) {
    *
    * @return {Polygon}
    */
-  NodeList__NodeList.prototype.getPolygon = function() {
+  NodeList__NodeList.prototype.getPolygon = function(graphics) {
     var polygon = new Polygon();
     for(var i = 0; this[i] != null; i++) {
-      polygon[i] = new Point(this[i].x + cX, this[i].y + cY);
+      polygon[i] = new Point(this[i].x + graphics.cX, this[i].y + graphics.cY);
     }
     return polygon;
   };
@@ -3900,6 +4148,9 @@ define('src/index', ['exports'], function (exports) {
   }
 
 
+  /**
+   * @todo write docs
+   */
   PolygonList.fromArray = function(array) {
     var result = Table.fromArray(array);
     result.type = "PolygonList";
@@ -3911,6 +4162,9 @@ define('src/index', ['exports'], function (exports) {
     return result;
   };
 
+  /**
+   * @todo write docs
+   */
   PolygonList.prototype.getFrame = function() {
     if(this.length == 0) return null;
     var frameP = this[0].getFrame();
@@ -3928,6 +4182,9 @@ define('src/index', ['exports'], function (exports) {
     return rectangle;
   };
 
+  /**
+   * @todo write docs
+   */
   PolygonList.prototype.add = function(object) {
     var type = typeOf(object);
     var i;
@@ -3943,6 +4200,9 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
+  /**
+   * @todo write docs
+   */
   PolygonList.prototype.factor = function(value) {
     var newPolygonList = new PolygonList();
     for(var i = 0; this[i] != null; i++) {
@@ -3952,6 +4212,9 @@ define('src/index', ['exports'], function (exports) {
     return newPolygonList;
   };
 
+  /**
+   * @todo write docs
+   */
   PolygonList.prototype.clone = function() {
     var newPolygonList = new PolygonList();
     for(var i = 0; this[i] != null; i++) {
@@ -3986,8 +4249,6 @@ define('src/index', ['exports'], function (exports) {
   function ColorOperators__ColorOperators() {}
   var ColorOperators__default = ColorOperators__ColorOperators;
   // TODO: create Color struture to be used instead of arrays [255, 100,0] ?
-
-
 
   /**
    * return a color between color0 and color1
@@ -4031,59 +4292,82 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+   * Converts RGB values to a hexadecimal color string.
+   * @param {Number} red R value.
+   * @param {Number} green G value.
+   * @param {Number} blue B value.
+   * @return {String} hexadecimal representation of the colors.
+   */
   ColorOperators__ColorOperators.RGBtoHEX = function(red, green, blue) {
     return "#" + ColorOperators__ColorOperators.toHex(red) + ColorOperators__ColorOperators.toHex(green) + ColorOperators__ColorOperators.toHex(blue);
   };
 
+  /**
+   * @todo write docs
+   */
   ColorOperators__ColorOperators.RGBArrayToString = function(array) {
     return 'rgb(' + array[0] + ',' + array[1] + ',' + array[2] + ')';
   };
 
-
-
-
-
-
+  /**
+   * @todo write docs
+   */
   ColorOperators__ColorOperators.colorStringToHEX = function(color_string) {
     var rgb = ColorOperators__ColorOperators.colorStringToRGB(color_string);
     return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
 
+  /**
+   * @todo write docs
+   */
   ColorOperators__ColorOperators.numberToHex = function(number) {
     var hex = number.toString(16);
     while(hex.length < 2) hex = "0" + hex;
     return hex;
   };
 
-
+  /**
+   * @todo write docs
+   */
   ColorOperators__ColorOperators.uinttoRGB = function(color) {
     var rgbColor = new Array(color >> 16, (color >> 8) - ((color >> 16) << 8), color - ((color >> 8) << 8));
     return rgbColor;
   };
+
+  /**
+   * @todo write docs
+   */
   ColorOperators__ColorOperators.uinttoHEX = function(color) {
     var rgbColor = ColorOperators__ColorOperators.uinttoRGB(color);
     var hexColor = ColorOperators__ColorOperators.RGBToHEX(rgbColor[0], rgbColor[1], rgbColor[2]);
     return hexColor;
   };
 
-
+  /**
+   * @todo write docs
+   */
   ColorOperators__ColorOperators.RGBtouint = function(red, green, blue) {
     return Number(red) << 16 | Number(green) << 8 | Number(blue);
   };
 
+  /**
+   * @todo write docs
+   */
   ColorOperators__ColorOperators.HEXtouint = function(hexColor) {
     var colorArray = ColorOperators__ColorOperators.HEXtoRGB(hexColor);
     var color = ColorOperators__ColorOperators.RGBtouint(colorArray[0], colorArray[1], colorArray[2]);
     return color;
   };
 
+  /**
+   * @todo write docs
+   */
   ColorOperators__ColorOperators.grayByLevel = function(level) {
     level = Math.floor(level * 255);
     return 'rgb(' + level + ',' + level + ',' + level + ')';
   };
-
-
 
   /**
    * converts an hexadecimal color to HSV
@@ -4097,17 +4381,21 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+   * @todo write docs
+   */
   ColorOperators__ColorOperators.HSVtoHEX = function(hue, saturation, value) {
     var rgb = ColorOperators__ColorOperators.HSVtoRGB(hue, saturation, value);
     return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
+  /**
+   * @todo write docs
+   */
   ColorOperators__ColorOperators.HSLtoHEX = function(hue, saturation, light) {
     var rgb = ColorOperators__ColorOperators.HSLtoRGB(hue, saturation, light);
     return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
-
-
 
   /**
    * converts an RGB color to HSV
@@ -4236,11 +4524,16 @@ define('src/index', ['exports'], function (exports) {
     return [Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255)];
   };
 
-
+  /**
+   * @todo write docs
+   */
   ColorOperators__ColorOperators.invertColorRGB = function(r, g, b) {
     return [255 - r, 255 - g, 255 - b];
   };
 
+  /**
+   * @todo write docs
+   */
   ColorOperators__ColorOperators.addAlpha = function(color, alpha) {
     //var rgb = color.substr(0,3)=='rgb'?ColorOperators.colorStringToRGB(color):ColorOperators.HEXtoRGB(color);
     var rgb = ColorOperators__ColorOperators.colorStringToRGB(color);
@@ -4248,21 +4541,27 @@ define('src/index', ['exports'], function (exports) {
     return 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + alpha + ')';
   };
 
+  /**
+   * @todo write docs
+   */
   ColorOperators__ColorOperators.invertColor = function(color) {
     var rgb = ColorOperators__ColorOperators.colorStringToRGB(color);
     rgb = ColorOperators__ColorOperators.invertColorRGB(rgb[0], rgb[1], rgb[2]);
     return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
-
-
+  /**
+   * @todo write docs
+   */
   ColorOperators__ColorOperators.toHex = function(number) {
     var hex = number.toString(16);
     while(hex.length < 2) hex = "0" + hex;
     return hex;
   };
 
-
+  /**
+   * @todo write docs
+   */
   ColorOperators__ColorOperators.getRandomColor = function() {
     return 'rgb(' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ')';
   };
@@ -4528,6 +4827,12 @@ define('src/index', ['exports'], function (exports) {
   }
   var ColorList__default = ColorList__ColorList;
 
+  /**
+   * Creates a new ColorList from a raw array of values
+   *
+   * @param {String[]} array Array of hex or other color values
+   * @return {ColorList} New ColorList.
+   */
   ColorList__ColorList.fromArray = function(array) {
     var result = List__default.fromArray(array);
     result.type = "ColorList";
@@ -4539,8 +4844,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * return an arrays of rgb arrays ([rr,gg,bb])
-   * @return {array}
+   * returns an arrays of rgb values, each stored in an array ([rr,gg,bb])
+   * @return {array} Array of array of RGB values.
    * tags:
    */
   ColorList__ColorList.prototype.getRgbArrays = function() {
@@ -4555,6 +4860,7 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * interpolates colors with a given color and measure
+   * 
    * @param  {String} color to be interpolated with
    * @param  {Number} value intenisty of interpolation [0,1]
    * @return {ColorList}
@@ -4606,6 +4912,929 @@ define('src/index', ['exports'], function (exports) {
 
   exports.ColorList = ColorList__default;
 
+  var version = "0.2.25";
+
+  /*
+   * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
+   * Digest Algorithm, as defined in RFC 1321.
+   * Version 2.2 Copyright (C) Paul Johnston 1999 - 2009
+   * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
+   * Distributed under the BSD License
+   * See http://pajhome.org.uk/crypt/md5 for more info.
+   */
+
+  /*
+   * Configurable variables. You may need to tweak these to be compatible with
+   * the server-side, but the defaults work in most cases.
+   */
+  //var hexcase = 0;   /* hex output format. 0 - lowercase; 1 - uppercase        */
+  //var b64pad  = "";  /* base-64 pad character. "=" for strict RFC compliance   */
+
+
+  function MD5(){}
+
+
+  /*
+   * These are the functions you'll usually want to call
+   * They take string arguments and return either hex or base-64 encoded strings
+   */
+  MD5.hex_md5 = function(s)    { return this.rstr2hex(this.rstr_md5(this.str2rstr_utf8(s))); };
+  MD5.b64_md5 = function(s)    { return this.rstr2b64(this.rstr_md5(this.str2rstr_utf8(s))); };
+  MD5.any_md5 = function(s, e) { return this.rstr2any(this.rstr_md5(this.str2rstr_utf8(s)), e); };
+  MD5.hex_hmac_md5 = function(k, d)
+    { return this.rstr2hex(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); };
+  MD5.b64_hmac_md5 = function(k, d)
+    { return this.rstr2b64(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); };
+  MD5.any_hmac_md5 = function(k, d, e)
+    { return this.rstr2any(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d)), e); };
+
+  /*
+   * Perform a simple self-test to see if the VM is working
+   */
+  MD5.md5_vm_test = function()
+  {
+    return this.hex_md5("abc").toLowerCase() == "900150983cd24fb0d6963f7d28e17f72";
+  };
+
+  /*
+   * Calculate the MD5 of a raw string
+   */
+  MD5.rstr_md5 = function(s)
+  {
+    return this.binl2rstr(this.binl_md5(this.rstr2binl(s), s.length * 8));
+  };
+
+  /*
+   * Calculate the HMAC-MD5, of a key and some data (raw strings)
+   */
+  MD5.rstr_hmac_md5 = function(key, data)
+  {
+    var bkey = this.rstr2binl(key);
+    if(bkey.length > 16) bkey = this.binl_md5(bkey, key.length * 8);
+
+    var ipad = Array(16), opad = Array(16);
+    for(var i = 0; i < 16; i++)
+    {
+      ipad[i] = bkey[i] ^ 0x36363636;
+      opad[i] = bkey[i] ^ 0x5C5C5C5C;
+    }
+
+    var hash = this.binl_md5(ipad.concat(this.rstr2binl(data)), 512 + data.length * 8);
+    return this.binl2rstr(this.binl_md5(opad.concat(hash), 512 + 128));
+  };
+
+  /*
+   * Convert a raw string to a hex string
+   */
+  MD5.rstr2hex = function(input)
+  {
+  	var hexcase = 0;
+    try { hexcase; } catch(e) { hexcase=0; }
+    var hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
+    var output = "";
+    var x;
+    for(var i = 0; i < input.length; i++)
+    {
+      x = input.charCodeAt(i);
+      output += hex_tab.charAt((x >>> 4) & 0x0F)
+             +  hex_tab.charAt( x        & 0x0F);
+    }
+    return output;
+  };
+
+  /*
+   * Convert a raw string to a base-64 string
+   */
+  MD5.rstr2b64 = function(input)
+  {
+  	var b64pad  = "";
+    try { b64pad; } catch(e) { b64pad=''; }
+    var tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    var output = "";
+    var len = input.length;
+    for(var i = 0; i < len; i += 3)
+    {
+      var triplet = (input.charCodeAt(i) << 16)
+                  | (i + 1 < len ? input.charCodeAt(i+1) << 8 : 0)
+                  | (i + 2 < len ? input.charCodeAt(i+2)      : 0);
+      for(var j = 0; j < 4; j++)
+      {
+        if(i * 8 + j * 6 > input.length * 8) output += b64pad;
+        else output += tab.charAt((triplet >>> 6*(3-j)) & 0x3F);
+      }
+    }
+    return output;
+  };
+
+  /*
+   * Convert a raw string to an arbitrary string encoding
+   */
+  MD5.rstr2any = function(input, encoding)
+  {
+    var divisor = encoding.length;
+    var i, j, q, x, quotient;
+
+    /* Convert to an array of 16-bit big-endian values, forming the dividend */
+    var dividend = Array(Math.ceil(input.length / 2));
+    for(i = 0; i < dividend.length; i++)
+    {
+      dividend[i] = (input.charCodeAt(i * 2) << 8) | input.charCodeAt(i * 2 + 1);
+    }
+
+    /*
+     * Repeatedly perform a long division. The binary array forms the dividend,
+     * the length of the encoding is the divisor. Once computed, the quotient
+     * forms the dividend for the next step. All remainders are stored for later
+     * use.
+     */
+    var full_length = Math.ceil(input.length * 8 /
+                                      (Math.log(encoding.length) / Math.log(2)));
+    var remainders = Array(full_length);
+    for(j = 0; j < full_length; j++)
+    {
+      quotient = Array();
+      x = 0;
+      for(i = 0; i < dividend.length; i++)
+      {
+        x = (x << 16) + dividend[i];
+        q = Math.floor(x / divisor);
+        x -= q * divisor;
+        if(quotient.length > 0 || q > 0)
+          quotient[quotient.length] = q;
+      }
+      remainders[j] = x;
+      dividend = quotient;
+    }
+
+    /* Convert the remainders to the output string */
+    var output = "";
+    for(i = remainders.length - 1; i >= 0; i--)
+      output += encoding.charAt(remainders[i]);
+
+    return output;
+  };
+
+  /*
+   * Encode a string as utf-8.
+   * For efficiency, this assumes the input is valid utf-16.
+   */
+  MD5.str2rstr_utf8 = function(input)
+  {
+    var output = "";
+    var i = -1;
+    var x, y;
+
+    while(++i < input.length)
+    {
+      /* Decode utf-16 surrogate pairs */
+      x = input.charCodeAt(i);
+      y = i + 1 < input.length ? input.charCodeAt(i + 1) : 0;
+      if(0xD800 <= x && x <= 0xDBFF && 0xDC00 <= y && y <= 0xDFFF)
+      {
+        x = 0x10000 + ((x & 0x03FF) << 10) + (y & 0x03FF);
+        i++;
+      }
+
+      /* Encode output as utf-8 */
+      if(x <= 0x7F)
+        output += String.fromCharCode(x);
+      else if(x <= 0x7FF)
+        output += String.fromCharCode(0xC0 | ((x >>> 6 ) & 0x1F),
+                                      0x80 | ( x         & 0x3F));
+      else if(x <= 0xFFFF)
+        output += String.fromCharCode(0xE0 | ((x >>> 12) & 0x0F),
+                                      0x80 | ((x >>> 6 ) & 0x3F),
+                                      0x80 | ( x         & 0x3F));
+      else if(x <= 0x1FFFFF)
+        output += String.fromCharCode(0xF0 | ((x >>> 18) & 0x07),
+                                      0x80 | ((x >>> 12) & 0x3F),
+                                      0x80 | ((x >>> 6 ) & 0x3F),
+                                      0x80 | ( x         & 0x3F));
+    }
+    return output;
+  };
+
+  /*
+   * Encode a string as utf-16
+   */
+  MD5.str2rstr_utf16le = function(input)
+  {
+    var output = "";
+    for(var i = 0; i < input.length; i++)
+      output += String.fromCharCode( input.charCodeAt(i)        & 0xFF,
+                                    (input.charCodeAt(i) >>> 8) & 0xFF);
+    return output;
+  };
+
+  MD5.str2rstr_utf16be = function(input)
+  {
+    var output = "";
+    for(var i = 0; i < input.length; i++)
+      output += String.fromCharCode((input.charCodeAt(i) >>> 8) & 0xFF,
+                                     input.charCodeAt(i)        & 0xFF);
+    return output;
+  };
+
+  /*
+   * Convert a raw string to an array of little-endian words
+   * Characters >255 have their high-byte silently ignored.
+   */
+  MD5.rstr2binl = function(input)
+  {
+    var output = Array(input.length >> 2);
+    for(var i = 0; i < output.length; i++)
+      output[i] = 0;
+    for(var i = 0; i < input.length * 8; i += 8)
+      output[i>>5] |= (input.charCodeAt(i / 8) & 0xFF) << (i%32);
+    return output;
+  };
+
+  /*
+   * Convert an array of little-endian words to a string
+   */
+  MD5.binl2rstr = function(input)
+  {
+    var output = "";
+    for(var i = 0; i < input.length * 32; i += 8)
+      output += String.fromCharCode((input[i>>5] >>> (i % 32)) & 0xFF);
+    return output;
+  };
+
+  /*
+   * Calculate the MD5 of an array of little-endian words, and a bit length.
+   */
+  MD5.binl_md5 = function(x, len)
+  {
+    /* append padding */
+    x[len >> 5] |= 0x80 << ((len) % 32);
+    x[(((len + 64) >>> 9) << 4) + 14] = len;
+
+    var a =  1732584193;
+    var b = -271733879;
+    var c = -1732584194;
+    var d =  271733878;
+
+    for(var i = 0; i < x.length; i += 16)
+    {
+      var olda = a;
+      var oldb = b;
+      var oldc = c;
+      var oldd = d;
+
+      a = this.md5_ff(a, b, c, d, x[i+ 0], 7 , -680876936);
+      d = this.md5_ff(d, a, b, c, x[i+ 1], 12, -389564586);
+      c = this.md5_ff(c, d, a, b, x[i+ 2], 17,  606105819);
+      b = this.md5_ff(b, c, d, a, x[i+ 3], 22, -1044525330);
+      a = this.md5_ff(a, b, c, d, x[i+ 4], 7 , -176418897);
+      d = this.md5_ff(d, a, b, c, x[i+ 5], 12,  1200080426);
+      c = this.md5_ff(c, d, a, b, x[i+ 6], 17, -1473231341);
+      b = this.md5_ff(b, c, d, a, x[i+ 7], 22, -45705983);
+      a = this.md5_ff(a, b, c, d, x[i+ 8], 7 ,  1770035416);
+      d = this.md5_ff(d, a, b, c, x[i+ 9], 12, -1958414417);
+      c = this.md5_ff(c, d, a, b, x[i+10], 17, -42063);
+      b = this.md5_ff(b, c, d, a, x[i+11], 22, -1990404162);
+      a = this.md5_ff(a, b, c, d, x[i+12], 7 ,  1804603682);
+      d = this.md5_ff(d, a, b, c, x[i+13], 12, -40341101);
+      c = this.md5_ff(c, d, a, b, x[i+14], 17, -1502002290);
+      b = this.md5_ff(b, c, d, a, x[i+15], 22,  1236535329);
+
+      a = this.md5_gg(a, b, c, d, x[i+ 1], 5 , -165796510);
+      d = this.md5_gg(d, a, b, c, x[i+ 6], 9 , -1069501632);
+      c = this.md5_gg(c, d, a, b, x[i+11], 14,  643717713);
+      b = this.md5_gg(b, c, d, a, x[i+ 0], 20, -373897302);
+      a = this.md5_gg(a, b, c, d, x[i+ 5], 5 , -701558691);
+      d = this.md5_gg(d, a, b, c, x[i+10], 9 ,  38016083);
+      c = this.md5_gg(c, d, a, b, x[i+15], 14, -660478335);
+      b = this.md5_gg(b, c, d, a, x[i+ 4], 20, -405537848);
+      a = this.md5_gg(a, b, c, d, x[i+ 9], 5 ,  568446438);
+      d = this.md5_gg(d, a, b, c, x[i+14], 9 , -1019803690);
+      c = this.md5_gg(c, d, a, b, x[i+ 3], 14, -187363961);
+      b = this.md5_gg(b, c, d, a, x[i+ 8], 20,  1163531501);
+      a = this.md5_gg(a, b, c, d, x[i+13], 5 , -1444681467);
+      d = this.md5_gg(d, a, b, c, x[i+ 2], 9 , -51403784);
+      c = this.md5_gg(c, d, a, b, x[i+ 7], 14,  1735328473);
+      b = this.md5_gg(b, c, d, a, x[i+12], 20, -1926607734);
+
+      a = this.md5_hh(a, b, c, d, x[i+ 5], 4 , -378558);
+      d = this.md5_hh(d, a, b, c, x[i+ 8], 11, -2022574463);
+      c = this.md5_hh(c, d, a, b, x[i+11], 16,  1839030562);
+      b = this.md5_hh(b, c, d, a, x[i+14], 23, -35309556);
+      a = this.md5_hh(a, b, c, d, x[i+ 1], 4 , -1530992060);
+      d = this.md5_hh(d, a, b, c, x[i+ 4], 11,  1272893353);
+      c = this.md5_hh(c, d, a, b, x[i+ 7], 16, -155497632);
+      b = this.md5_hh(b, c, d, a, x[i+10], 23, -1094730640);
+      a = this.md5_hh(a, b, c, d, x[i+13], 4 ,  681279174);
+      d = this.md5_hh(d, a, b, c, x[i+ 0], 11, -358537222);
+      c = this.md5_hh(c, d, a, b, x[i+ 3], 16, -722521979);
+      b = this.md5_hh(b, c, d, a, x[i+ 6], 23,  76029189);
+      a = this.md5_hh(a, b, c, d, x[i+ 9], 4 , -640364487);
+      d = this.md5_hh(d, a, b, c, x[i+12], 11, -421815835);
+      c = this.md5_hh(c, d, a, b, x[i+15], 16,  530742520);
+      b = this.md5_hh(b, c, d, a, x[i+ 2], 23, -995338651);
+
+      a = this.md5_ii(a, b, c, d, x[i+ 0], 6 , -198630844);
+      d = this.md5_ii(d, a, b, c, x[i+ 7], 10,  1126891415);
+      c = this.md5_ii(c, d, a, b, x[i+14], 15, -1416354905);
+      b = this.md5_ii(b, c, d, a, x[i+ 5], 21, -57434055);
+      a = this.md5_ii(a, b, c, d, x[i+12], 6 ,  1700485571);
+      d = this.md5_ii(d, a, b, c, x[i+ 3], 10, -1894986606);
+      c = this.md5_ii(c, d, a, b, x[i+10], 15, -1051523);
+      b = this.md5_ii(b, c, d, a, x[i+ 1], 21, -2054922799);
+      a = this.md5_ii(a, b, c, d, x[i+ 8], 6 ,  1873313359);
+      d = this.md5_ii(d, a, b, c, x[i+15], 10, -30611744);
+      c = this.md5_ii(c, d, a, b, x[i+ 6], 15, -1560198380);
+      b = this.md5_ii(b, c, d, a, x[i+13], 21,  1309151649);
+      a = this.md5_ii(a, b, c, d, x[i+ 4], 6 , -145523070);
+      d = this.md5_ii(d, a, b, c, x[i+11], 10, -1120210379);
+      c = this.md5_ii(c, d, a, b, x[i+ 2], 15,  718787259);
+      b = this.md5_ii(b, c, d, a, x[i+ 9], 21, -343485551);
+
+      a = this.safe_add(a, olda);
+      b = this.safe_add(b, oldb);
+      c = this.safe_add(c, oldc);
+      d = this.safe_add(d, oldd);
+    }
+    return Array(a, b, c, d);
+  };
+
+  /*
+   * These functions implement the four basic operations the algorithm uses.
+   */
+  MD5.md5_cmn = function(q, a, b, x, s, t)
+  {
+    return this.safe_add(this.bit_rol(this.safe_add(this.safe_add(a, q), this.safe_add(x, t)), s),b);
+  };
+  MD5.md5_ff = function(a, b, c, d, x, s, t)
+  {
+    return this.md5_cmn((b & c) | ((~b) & d), a, b, x, s, t);
+  };
+  MD5.md5_gg = function(a, b, c, d, x, s, t)
+  {
+    return this.md5_cmn((b & d) | (c & (~d)), a, b, x, s, t);
+  };
+  MD5.md5_hh = function(a, b, c, d, x, s, t)
+  {
+    return this.md5_cmn(b ^ c ^ d, a, b, x, s, t);
+  };
+  MD5.md5_ii = function(a, b, c, d, x, s, t)
+  {
+    return this.md5_cmn(c ^ (b | (~d)), a, b, x, s, t);
+  };
+
+  /*
+   * Add integers, wrapping at 2^32. This uses 16-bit operations internally
+   * to work around bugs in some JS interpreters.
+   */
+  MD5.safe_add = function(x, y)
+  {
+    var lsw = (x & 0xFFFF) + (y & 0xFFFF);
+    var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+    return (msw << 16) | (lsw & 0xFFFF);
+  };
+
+  /*
+   * Bitwise rotate a 32-bit number to the left.
+   */
+  MD5.bit_rol = function(num, cnt)
+  {
+    return (num << cnt) | (num >>> (32 - cnt));
+  };
+
+  exports.MD5 = MD5;
+
+  function Global(){}
+
+  Global.userAgent="unknown";
+
+
+  var src_Global__userAgent="none";
+  var src_Global__userAgentVersion;
+
+  //data models info
+  var dataModelsInfo = [
+    {
+      type:"Null",
+      short:"Ø",
+      category:"object",
+      level:"0",
+      write:"true",
+      inherits:null,
+      color:"#ffffff"
+    },
+    {
+      type:"Object",
+      short:"{}",
+      category:"object",
+      level:"0",
+      write:"true",
+      inherits:null,
+      to:"String",
+      color:"#C0BFBF"
+    },
+    {
+      type:"Function",
+      short:"F",
+      category:"object",
+      level:"0",
+      inherits:null,
+      color:"#C0BFBF"
+    },  {
+      type:"Boolean",
+      short:"b",
+      category:"boolean",
+      level:"0",
+      write:"true",
+      inherits:null,
+      to:"Number",
+      color:"#4F60AB"
+    },
+    {
+      type:"Number",
+      short:"#",
+      category:"number",
+      level:"0",
+      write:"true",
+      inherits:null,
+      to:"String",
+      color:"#5DA1D8"
+    },
+    {
+      type:"Interval",
+      short:"##",
+      category:"number",
+      level:"0.5",
+      write:"true",
+      inherits:null,
+      to:"Point",
+      contains:"Number",
+      color:"#386080"
+    },
+    {
+      type:"Array",
+      short:"[]",
+      category:"object",
+      level:"1",
+      inherits:null,
+      to:"List",
+      contains:"Object,Null",
+      color:"#80807F"
+    },
+    {
+      type:"List",
+      short:"L",
+      category:"object",
+      level:"1",
+      inherits:"Array",
+      contains:"Object",
+      comments:"A List is an Array that doesn't contain nulls, and with enhanced functionalities",
+      color:"#80807F"
+    },
+    {
+      type:"Table",
+      short:"T",
+      category:"object",
+      level:"2",
+      inherits:"List",
+      contains:"List",
+      comments:"A Table is a List of Lists",
+      color:"#80807F"
+    },
+    {
+      type:"BooleanList",
+      short:"bL",
+      category:"boolean",
+      level:"1",
+      inherits:"List",
+      to:"NumberList",
+      contains:"Boolean",
+      color:"#3A4780"
+    },
+    {
+      type:"NumberList",
+      short:"#L",
+      category:"number",
+      level:"1",
+      write:"true",
+      inherits:"List",
+      to:"StringList",
+      contains:"Number",
+      color:"#386080"
+    },
+    {
+      type:"NumberTable",
+      short:"#T",
+      category:"number",
+      level:"2",
+      write:"true",
+      inherits:"Table",
+      to:"Network",
+      contains:"NumberList",
+      color:"#386080"
+    },
+    {
+      type:"String",
+      short:"s",
+      category:"string",
+      level:"0",
+      write:"true",
+      inherits:null,
+      color:"#8BC63F"
+    },
+    {
+      type:"StringList",
+      short:"sL",
+      category:"string",
+      level:"1",
+      write:"true",
+      inherits:"List",
+      contains:"String",
+      color:"#5A8039"
+    },
+    {
+      type:"StringTable",
+      short:"sT",
+      category:"string",
+      level:"2",
+      inherits:"Table",
+      contains:"StringList",
+      color:"#5A8039"
+    },
+    {
+      type:"Date",
+      short:"d",
+      category:"date",
+      level:"0.5",
+      write:"true",
+      inherits:null,
+      to:"Number,String",
+      color:"#7AC8A3"
+    },
+    {
+      type:"DateInterval",
+      short:"dd",
+      category:"date",
+      level:"0.75",
+      inherits:null,
+      to:"Interval",
+      contains:"Date",
+      color:"#218052"
+    },
+    {
+      type:"DateList",
+      short:"dL",
+      category:"date",
+      level:"1.5",
+      inherits:"List",
+      to:"NumberList,StringList",
+      contains:"Date",
+      color:"#218052"
+    },
+    {
+      type:"Point",
+      short:".",
+      category:"geometry",
+      level:"0.5",
+      write:"true",
+      inherits:null,
+      to:"Interval",
+      contains:"Number",
+      color:"#9D59A4"
+    },
+    {
+      type:"Rectangle",
+      short:"t",
+      category:"geometry",
+      level:"0.5",
+      inherits:null,
+      to:"Polygon",
+      contains:"Number",
+      color:"#9D59A4"
+    },
+    {
+      type:"Polygon",
+      short:".L",
+      category:"geometry",
+      level:"1.5",
+      inherits:"List",
+      to:"NumberTable",
+      contains:"Point",
+      comments:"A Polygon is a List of Points",
+      color:"#76297F"
+    },
+    {
+      type:"RectangleList",
+      short:"tL",
+      category:"geometry",
+      level:"1.5",
+      inherits:null,
+      to:"MultiPolygon",
+      contains:"Rectangle",
+      color:"#76297F"
+    },
+    {
+      type:"MultiPolygon",
+      short:".T",
+      category:"geometry",
+      level:"2.5",
+      inherits:"Table",
+      contains:"Polygon",
+      comments:"A MultiPolygon is a List of Polygons",
+      color:"#76297F"
+    },
+    {
+      type:"Point3D",
+      short:"3",
+      category:"geometry",
+      level:"0.5",
+      write:"true",
+      inherits:"Point",
+      to:"NumberList",
+      contains:"Number",
+      color:"#9D59A4"
+    },
+    {
+      type:"Polygon3D",
+      short:"3L",
+      category:"geometry",
+      level:"1.5",
+      inherits:"List",
+      to:"NumberTable",
+      contains:"Point3D",
+      color:"#76297F"
+    },
+    {
+      type:"MultiPolygon3D",
+      short:"3T",
+      category:"geometry",
+      level:"2.5",
+      inherits:"Table",
+      contains:"Polygon3D",
+      color:"#76297F"
+    },
+    {
+      type:"Color",
+      short:"c",
+      category:"color",
+      level:"0",
+      inherits:null,
+      to:"String",
+      comments:"a Color is just a string that can be interpreted as color",
+      color:"#EE4488"
+    },
+    {
+      type:"ColorScale",
+      short:"cS",
+      category:"color",
+      level:"0",
+      write:"true",
+      inherits:"Function",
+      color:"#802046"
+    },
+    {
+      type:"ColorList",
+      short:"cL",
+      category:"color",
+      level:"1",
+      write:"true",
+      inherits:"List",
+      to:"StringList",
+      contains:"Color",
+      color:"#802046"
+    },
+    {
+      type:"Image",
+      short:"i",
+      category:"graphic",
+      level:"0",
+      inherits:null,
+      color:"#802046"
+    },
+    {
+      type:"ImageList",
+      short:"iL",
+      category:"graphic",
+      level:"1",
+      inherits:"List",
+      contains:"Image",
+      color:"#802046"
+    },
+    {
+      type:"Node",
+      short:"n",
+      category:"structure",
+      level:"0",
+      inherits:null,
+      color:"#FAA542"
+    },
+    {
+      type:"Relation",
+      short:"r",
+      category:"structure",
+      level:"0.5",
+      inherits:"Node",
+      contains:"Node",
+      color:"#FAA542"
+    },
+    {
+      type:"NodeList",
+      short:"nL",
+      category:"structure",
+      level:"1",
+      inherits:"List",
+      contains:"Node",
+      color:"#805522"
+    },
+    {
+      type:"RelationList",
+      short:"rL",
+      category:"structure",
+      level:"1.5",
+      inherits:"NodeList",
+      contains:"Relation",
+      color:"#805522"
+    },
+    {
+      type:"Network",
+      short:"Nt",
+      category:"structure",
+      level:"2",
+      inherits:null,
+      to:"Table",
+      contains:"NodeList,RelationList",
+      color:"#805522"
+    },
+    {
+      type:"Tree",
+      short:"Tr",
+      category:"structure",
+      level:"2",
+      inherits:"Network",
+      to:"Table",
+      contains:"NodeList,RelationList",
+      color:"#805522"
+    }
+  ];
+
+  //global constants
+  var src_Global__context;
+  var TwoPi = 2*Math.PI;
+  var HalfPi = 0.5*Math.PI;
+  var radToGrad = 180/Math.PI;
+  var gradToRad = Math.PI/180;
+  var src_Global__c = console;
+  src_Global__c.l = src_Global__c.log; //use c.l instead of console.log
+
+  /**
+   * @todo write docs
+   */
+  Array.prototype.last = function(){
+    return this[this.length-1];
+  };
+
+  window.addEventListener('load', function(){
+
+    if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
+      exports.userAgent = src_Global__userAgent='IE';
+      exports.userAgentVersion = src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+      if(src_Global__userAgentVersion<9) return null;
+    } else if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent)){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
+      exports.userAgent = src_Global__userAgent='FIREFOX';
+      exports.userAgentVersion = src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+    } else if (navigator.userAgent.match(/Chrome/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
+      exports.userAgent = src_Global__userAgent='CHROME';
+      exports.userAgentVersion = src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+    } else if (/Mozilla[\/\s](\d+\.\d+)/.test(navigator.userAgent) || navigator.userAgent.match(/Mozilla/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
+      exports.userAgent = src_Global__userAgent='MOZILLA';
+      exports.userAgentVersion = src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+    } else if (navigator.userAgent.match(/Safari/) != null){ //test for MSIE x.x;
+      exports.userAgent = src_Global__userAgent='Safari';
+      exports.userAgentVersion = src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
+    } else if(navigator.userAgent.match(/iPad/i) != null){
+      exports.userAgent = src_Global__userAgent='IOS';
+    } else if(navigator.userAgent.match(/iPhone/i) != null){
+      exports.userAgent = src_Global__userAgent='IOS';
+    }
+
+
+    Global.userAgent=src_Global__userAgent;
+    Global._frameRate=30;
+
+    console.log('Moebio Framework v' + version + ' | user agent: '+src_Global__userAgent+' | user agent version: '+src_Global__userAgentVersion);
+
+  }, false);
+
+
+  ////structures local storage
+
+  /**
+   * @todo write docs
+   */
+  function setStructureLocalStorageWithSeed(object, seed, comments){
+    setStructureLocalStorage(object, MD5.hex_md5(seed), comments);
+  }
+
+  /**
+   * @todo write docs
+   */
+  function setStructureLocalStorage(object, id, comments){
+    var type = typeOf(object);
+    var code;
+
+    switch(type){
+      case 'string':
+        code = object;
+        break;
+      case 'Network':
+        code = NetworkEncodings.encodeGDF(network);
+        break;
+      default:
+        type = 'object';
+        code = JSON.stringify(object);
+        break;
+    }
+
+    var storageObject = {
+      id:id,
+      type:type,
+      comments:comments,
+      date:new Date(),
+      code:code
+    };
+
+    var storageString = JSON.stringify(storageObject);
+
+    // c.l('storageObject', storageObject);
+    // c.l('id:['+id+']');
+    // c.l('code.length:', code.length);
+
+    localStorage.setItem(id, storageString);
+  }
+
+  /**
+   * @todo write docs
+   */
+  function getStructureLocalStorageFromSeed(seed, returnStorageObject){
+    return getStructureLocalStorage(MD5.hex_md5(seed), returnStorageObject);
+  }
+
+  /**
+   * @todo write docs
+   */
+  function getStructureLocalStorage(id, returnStorageObject){
+    returnStorageObject = returnStorageObject||false;
+
+    var item = localStorage.getItem(id);
+
+    if(item==null) return null;
+
+    var storageObject;
+    try{
+      storageObject = JSON.parse(item);
+    } catch(err){
+      return null;
+    }
+
+    if(storageObject.type==null && storageObject.code==null) return null;
+
+    var type = storageObject.type;
+    var code = storageObject.code;
+    var object;
+
+    switch(type){
+      case 'string':
+        object = code;
+        break;
+      case 'Network':
+        object = NetworkEncodings.decodeGDF(code);
+        break;
+      case 'object':
+        object = JSON.parse(code);
+        break;
+    }
+
+    if(returnStorageObject){
+      storageObject.object = object;
+      storageObject.size = storageObject.code.length;
+      storageObject.date = new Date(storageObject.date);
+
+      return storageObject;
+    }
+
+    return object;
+  }
+
+  exports.Global = Global;
+  exports.setStructureLocalStorage = setStructureLocalStorage;
+  exports.getStructureLocalStorageFromSeed = getStructureLocalStorageFromSeed;
+  exports.getStructureLocalStorage = getStructureLocalStorage;
+  exports.userAgent = src_Global__userAgent;
+  exports.userAgentVersion = src_Global__userAgentVersion;
+  exports.dataModelsInfo = dataModelsInfo;
+  exports.TwoPi = TwoPi;
+  exports.HalfPi = HalfPi;
+  exports.radToGrad = radToGrad;
+  exports.gradToRad = gradToRad;
+
   Polygon.prototype = new List__default();
   Polygon.prototype.constructor = Polygon;
 
@@ -4623,6 +5852,9 @@ define('src/index', ['exports'], function (exports) {
   }
 
 
+  /**
+  * @todo write docs
+  */
   Polygon.fromArray = function(array) {
     var result = List__default.fromArray(array);
     result.type = "Polygon";
@@ -4644,6 +5876,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+  * @todo write docs
+  */
   Polygon.prototype.getFrame = function() {
     if(this.length == 0) return null;
     var rectangle = new Rectangle__default(this[0].x, this[0].y, this[0].x, this[0].y);
@@ -4662,6 +5897,9 @@ define('src/index', ['exports'], function (exports) {
     return rectangle;
   };
 
+  /**
+  * @todo write docs
+  */
   Polygon.prototype.getBarycenter = function(countLastPoint) {
     var i;
     countLastPoint = countLastPoint == null ? true : countLastPoint;
@@ -4677,6 +5915,9 @@ define('src/index', ['exports'], function (exports) {
     return barycenter;
   };
 
+  /**
+  * @todo write docs
+  */
   Polygon.prototype.add = function(object) {
     var type = typeOf(object);
     var i;
@@ -4721,6 +5962,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+  * @todo write docs
+  */
   Polygon.prototype.getRotated = function(angle, center) {
     center = center == null ? new Point() : center;
 
@@ -4732,6 +5976,9 @@ define('src/index', ['exports'], function (exports) {
     return newPolygon;
   };
 
+  /**
+   * @todo write docs
+   */
   Polygon.prototype.getClosestPoint = function(point) {
     var closest = this[0];
     var d2Min = Math.pow(point.x - closest.x, 2) + Math.pow(point.y - closest.y, 2);
@@ -4747,6 +5994,9 @@ define('src/index', ['exports'], function (exports) {
     return closest;
   };
 
+  /**
+   * @todo write docs
+   */
   Polygon.prototype.toNumberList = function() {
     var numberList = new NumberList();
     var i;
@@ -4758,8 +6008,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Thanks http://jsfromhell.com/math/is-point-in-poly AND http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
-   */
+  * @todo write docs
+  * Thanks http://jsfromhell.com/math/is-point-in-poly AND http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+  */
   Polygon.prototype.containsPoint = function(point) {
     var i;
     var j;
@@ -4773,6 +6024,9 @@ define('src/index', ['exports'], function (exports) {
 
   //transform
 
+  /**
+   * @todo write docs
+   */
   Polygon.prototype.approach = function(destiny, speed) {
     speed = speed || 0.5;
     var antispeed = 1 - speed;
@@ -4784,6 +6038,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+   * @todo write docs
+   */
   Polygon.prototype.clone = function() {
     var newPolygon = new Polygon();
     for(var i = 0; this[i] != null; i++) {
@@ -5079,7 +6336,7 @@ define('src/index', ['exports'], function (exports) {
    * simplifies a categorical list, by keeping the nCategories-1 most common values, and replacing the others with an "other" element
    * this method reduces the number of different values contained in the list, converting it into a categorical list
    * @param  {Number} method simplification method:<b>0:significant digits<br>1:quantiles (value will be min value in percentile)<br>2:orders of magnitude
-   * 
+   *
    * @param  {Number} param different meaning according to choosen method:<br>0:number of significant digits<br>1:number of quantiles<br>2:no need of param
    * @return {NumberList} simplified list
    * tags:
@@ -5105,7 +6362,7 @@ define('src/index', ['exports'], function (exports) {
     }
 
     return newList;
-  }
+  };
 
 
   /**
@@ -5210,7 +6467,7 @@ define('src/index', ['exports'], function (exports) {
    *
    * @param {Number} nQuantiles number of quantiles (the size of the resulting list is nQuantiles-1)
    *
-   * @param {Number} returnMode 
+   * @param {Number} returnMode
    * @return {NumberList} A number list of the quantiles.
    * tags:statistics
    */
@@ -5490,7 +6747,7 @@ define('src/index', ['exports'], function (exports) {
       newNumberList.push(Math.floor(this[i]));
     }
     newNumberList.name = this.name;
-    
+
     return newNumberList;
   };
 
@@ -5610,6 +6867,9 @@ define('src/index', ['exports'], function (exports) {
   }
 
 
+  /**
+   * @todo write docs
+   */
   StringList.fromArray = function(array, forceToString) {
     forceToString = forceToString == null ? true : forceToString;
 
@@ -5653,6 +6913,9 @@ define('src/index', ['exports'], function (exports) {
     return lengths;
   };
 
+  /**
+   * @todo write docs
+   */
   StringList.prototype.append = function(sufix, after) {
     after = after == null ? true : after;
     var newStringList = new StringList();
@@ -5691,6 +6954,9 @@ define('src/index', ['exports'], function (exports) {
 
 
   //deprectaed, replaced by replaceInStrings
+  /**
+   * @ignore
+   */
   StringList.prototype.replace = function(regExp, string) {
     if(regExp==null) return this;
 
@@ -5724,6 +6990,9 @@ define('src/index', ['exports'], function (exports) {
     return newStringList;
   };
 
+  /**
+   * @todo write docs
+   */
   StringList.prototype.getConcatenated = function(separator) {
     var i;
     var string = "";
@@ -5735,6 +7004,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+   * @todo write docs
+   */
   StringList.prototype.toLowerCase = function() {
     var newStringList = new StringList();
     newStringList.name = this.name;
@@ -5745,6 +7017,9 @@ define('src/index', ['exports'], function (exports) {
     return newStringList;
   };
 
+  /**
+   * @todo write docs
+   */
   StringList.prototype.toUpperCase = function() {
     var newStringList = new StringList();
     newStringList.name = this.name;
@@ -5755,6 +7030,9 @@ define('src/index', ['exports'], function (exports) {
     return newStringList;
   };
 
+  /**
+   * @todo write docs
+   */
   StringList.prototype.toNumberList = function() {
     var numbers = new NumberList();
     numbers.name = this.name;
@@ -5800,6 +7078,9 @@ define('src/index', ['exports'], function (exports) {
 
   ///////overriding
 
+  /**
+   * @todo write docs
+   */
   StringList.prototype.clone = function() {
     var newList = StringList.fromArray(this.slice(), false);
     newList.name = this.name;
@@ -5826,7 +7107,7 @@ define('src/index', ['exports'], function (exports) {
   /*
    * All these function are globally available since they are included in the Global class
    */
-  var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"}
+  var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"};
   var _shortFromTypeDictionary;
   var _colorFromTypeDictionary;
   var _lightColorFromTypeDictionary;
@@ -5911,7 +7192,7 @@ define('src/index', ['exports'], function (exports) {
   function _createDataModelsInfoDictionaries(){
     var i;
     var type;
-    
+
     _shortFromTypeDictionary = {};
     _colorFromTypeDictionary = {};
     _lightColorFromTypeDictionary = {};
@@ -5919,12 +7200,12 @@ define('src/index', ['exports'], function (exports) {
     for(i=0; dataModelsInfo[i]!=null; i++){
       type = dataModelsInfo[i].type;
       _shortFromTypeDictionary[type] = dataModelsInfo[i].short;
-      _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.2);
-      _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.35);
+      _colorFromTypeDictionary[type] = ColorOperators__default.interpolateColors(dataModelsInfo[i].color, 'black', 0.2);
+      _lightColorFromTypeDictionary[type] = ColorOperators__default.interpolateColors(dataModelsInfo[i].color, 'white', 0.35);
       type = type.toLowerCase();
       _shortFromTypeDictionary[type] = dataModelsInfo[i].short;
-      _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.2);
-      _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.35);
+      _colorFromTypeDictionary[type] = ColorOperators__default.interpolateColors(dataModelsInfo[i].color, 'black', 0.2);
+      _lightColorFromTypeDictionary[type] = ColorOperators__default.interpolateColors(dataModelsInfo[i].color, 'white', 0.35);
     }
   }
 
@@ -5946,7 +7227,7 @@ define('src/index', ['exports'], function (exports) {
   function getTextFromObject(value, type){
     if(value == null) return "Null";
     if(value.isList) {
-      if(value.length == 0) return "[]";
+      if(value.length === 0) return "[]";
       var text = value.toString(); // value.length>6?value.slice(0, 5).forEach(function(v){return getTextFromObject(v, typeOf(v))}).join(','):value.toStringList().join(',').forEach(function(v, typeOf(v)){return getTextFromObject(v, type)});
       if(text.length > 160) {
         var i;
@@ -6616,1371 +7897,6 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Node = Node__default;
 
-  var version = "0.2.25";
-
-  /*
-   * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
-   * Digest Algorithm, as defined in RFC 1321.
-   * Version 2.2 Copyright (C) Paul Johnston 1999 - 2009
-   * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
-   * Distributed under the BSD License
-   * See http://pajhome.org.uk/crypt/md5 for more info.
-   */
-
-  /*
-   * Configurable variables. You may need to tweak these to be compatible with
-   * the server-side, but the defaults work in most cases.
-   */
-  //var hexcase = 0;   /* hex output format. 0 - lowercase; 1 - uppercase        */
-  //var b64pad  = "";  /* base-64 pad character. "=" for strict RFC compliance   */
-
-
-  function MD5(){}
-
-
-  /*
-   * These are the functions you'll usually want to call
-   * They take string arguments and return either hex or base-64 encoded strings
-   */
-  MD5.hex_md5 = function(s)    { return this.rstr2hex(this.rstr_md5(this.str2rstr_utf8(s))); };
-  MD5.b64_md5 = function(s)    { return this.rstr2b64(this.rstr_md5(this.str2rstr_utf8(s))); };
-  MD5.any_md5 = function(s, e) { return this.rstr2any(this.rstr_md5(this.str2rstr_utf8(s)), e); };
-  MD5.hex_hmac_md5 = function(k, d)
-    { return this.rstr2hex(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); };
-  MD5.b64_hmac_md5 = function(k, d)
-    { return this.rstr2b64(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); };
-  MD5.any_hmac_md5 = function(k, d, e)
-    { return this.rstr2any(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d)), e); };
-
-  /*
-   * Perform a simple self-test to see if the VM is working
-   */
-  MD5.md5_vm_test = function()
-  {
-    return this.hex_md5("abc").toLowerCase() == "900150983cd24fb0d6963f7d28e17f72";
-  };
-
-  /*
-   * Calculate the MD5 of a raw string
-   */
-  MD5.rstr_md5 = function(s)
-  {
-    return this.binl2rstr(this.binl_md5(this.rstr2binl(s), s.length * 8));
-  };
-
-  /*
-   * Calculate the HMAC-MD5, of a key and some data (raw strings)
-   */
-  MD5.rstr_hmac_md5 = function(key, data)
-  {
-    var bkey = this.rstr2binl(key);
-    if(bkey.length > 16) bkey = this.binl_md5(bkey, key.length * 8);
-
-    var ipad = Array(16), opad = Array(16);
-    for(var i = 0; i < 16; i++)
-    {
-      ipad[i] = bkey[i] ^ 0x36363636;
-      opad[i] = bkey[i] ^ 0x5C5C5C5C;
-    }
-
-    var hash = this.binl_md5(ipad.concat(this.rstr2binl(data)), 512 + data.length * 8);
-    return this.binl2rstr(this.binl_md5(opad.concat(hash), 512 + 128));
-  };
-
-  /*
-   * Convert a raw string to a hex string
-   */
-  MD5.rstr2hex = function(input)
-  {
-  	var hexcase = 0;
-    try { hexcase; } catch(e) { hexcase=0; }
-    var hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
-    var output = "";
-    var x;
-    for(var i = 0; i < input.length; i++)
-    {
-      x = input.charCodeAt(i);
-      output += hex_tab.charAt((x >>> 4) & 0x0F)
-             +  hex_tab.charAt( x        & 0x0F);
-    }
-    return output;
-  };
-
-  /*
-   * Convert a raw string to a base-64 string
-   */
-  MD5.rstr2b64 = function(input)
-  {
-  	var b64pad  = "";
-    try { b64pad; } catch(e) { b64pad=''; }
-    var tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    var output = "";
-    var len = input.length;
-    for(var i = 0; i < len; i += 3)
-    {
-      var triplet = (input.charCodeAt(i) << 16)
-                  | (i + 1 < len ? input.charCodeAt(i+1) << 8 : 0)
-                  | (i + 2 < len ? input.charCodeAt(i+2)      : 0);
-      for(var j = 0; j < 4; j++)
-      {
-        if(i * 8 + j * 6 > input.length * 8) output += b64pad;
-        else output += tab.charAt((triplet >>> 6*(3-j)) & 0x3F);
-      }
-    }
-    return output;
-  };
-
-  /*
-   * Convert a raw string to an arbitrary string encoding
-   */
-  MD5.rstr2any = function(input, encoding)
-  {
-    var divisor = encoding.length;
-    var i, j, q, x, quotient;
-
-    /* Convert to an array of 16-bit big-endian values, forming the dividend */
-    var dividend = Array(Math.ceil(input.length / 2));
-    for(i = 0; i < dividend.length; i++)
-    {
-      dividend[i] = (input.charCodeAt(i * 2) << 8) | input.charCodeAt(i * 2 + 1);
-    }
-
-    /*
-     * Repeatedly perform a long division. The binary array forms the dividend,
-     * the length of the encoding is the divisor. Once computed, the quotient
-     * forms the dividend for the next step. All remainders are stored for later
-     * use.
-     */
-    var full_length = Math.ceil(input.length * 8 /
-                                      (Math.log(encoding.length) / Math.log(2)));
-    var remainders = Array(full_length);
-    for(j = 0; j < full_length; j++)
-    {
-      quotient = Array();
-      x = 0;
-      for(i = 0; i < dividend.length; i++)
-      {
-        x = (x << 16) + dividend[i];
-        q = Math.floor(x / divisor);
-        x -= q * divisor;
-        if(quotient.length > 0 || q > 0)
-          quotient[quotient.length] = q;
-      }
-      remainders[j] = x;
-      dividend = quotient;
-    }
-
-    /* Convert the remainders to the output string */
-    var output = "";
-    for(i = remainders.length - 1; i >= 0; i--)
-      output += encoding.charAt(remainders[i]);
-
-    return output;
-  };
-
-  /*
-   * Encode a string as utf-8.
-   * For efficiency, this assumes the input is valid utf-16.
-   */
-  MD5.str2rstr_utf8 = function(input)
-  {
-    var output = "";
-    var i = -1;
-    var x, y;
-
-    while(++i < input.length)
-    {
-      /* Decode utf-16 surrogate pairs */
-      x = input.charCodeAt(i);
-      y = i + 1 < input.length ? input.charCodeAt(i + 1) : 0;
-      if(0xD800 <= x && x <= 0xDBFF && 0xDC00 <= y && y <= 0xDFFF)
-      {
-        x = 0x10000 + ((x & 0x03FF) << 10) + (y & 0x03FF);
-        i++;
-      }
-
-      /* Encode output as utf-8 */
-      if(x <= 0x7F)
-        output += String.fromCharCode(x);
-      else if(x <= 0x7FF)
-        output += String.fromCharCode(0xC0 | ((x >>> 6 ) & 0x1F),
-                                      0x80 | ( x         & 0x3F));
-      else if(x <= 0xFFFF)
-        output += String.fromCharCode(0xE0 | ((x >>> 12) & 0x0F),
-                                      0x80 | ((x >>> 6 ) & 0x3F),
-                                      0x80 | ( x         & 0x3F));
-      else if(x <= 0x1FFFFF)
-        output += String.fromCharCode(0xF0 | ((x >>> 18) & 0x07),
-                                      0x80 | ((x >>> 12) & 0x3F),
-                                      0x80 | ((x >>> 6 ) & 0x3F),
-                                      0x80 | ( x         & 0x3F));
-    }
-    return output;
-  };
-
-  /*
-   * Encode a string as utf-16
-   */
-  MD5.str2rstr_utf16le = function(input)
-  {
-    var output = "";
-    for(var i = 0; i < input.length; i++)
-      output += String.fromCharCode( input.charCodeAt(i)        & 0xFF,
-                                    (input.charCodeAt(i) >>> 8) & 0xFF);
-    return output;
-  };
-
-  MD5.str2rstr_utf16be = function(input)
-  {
-    var output = "";
-    for(var i = 0; i < input.length; i++)
-      output += String.fromCharCode((input.charCodeAt(i) >>> 8) & 0xFF,
-                                     input.charCodeAt(i)        & 0xFF);
-    return output;
-  };
-
-  /*
-   * Convert a raw string to an array of little-endian words
-   * Characters >255 have their high-byte silently ignored.
-   */
-  MD5.rstr2binl = function(input)
-  {
-    var output = Array(input.length >> 2);
-    for(var i = 0; i < output.length; i++)
-      output[i] = 0;
-    for(var i = 0; i < input.length * 8; i += 8)
-      output[i>>5] |= (input.charCodeAt(i / 8) & 0xFF) << (i%32);
-    return output;
-  };
-
-  /*
-   * Convert an array of little-endian words to a string
-   */
-  MD5.binl2rstr = function(input)
-  {
-    var output = "";
-    for(var i = 0; i < input.length * 32; i += 8)
-      output += String.fromCharCode((input[i>>5] >>> (i % 32)) & 0xFF);
-    return output;
-  };
-
-  /*
-   * Calculate the MD5 of an array of little-endian words, and a bit length.
-   */
-  MD5.binl_md5 = function(x, len)
-  {
-    /* append padding */
-    x[len >> 5] |= 0x80 << ((len) % 32);
-    x[(((len + 64) >>> 9) << 4) + 14] = len;
-
-    var a =  1732584193;
-    var b = -271733879;
-    var c = -1732584194;
-    var d =  271733878;
-
-    for(var i = 0; i < x.length; i += 16)
-    {
-      var olda = a;
-      var oldb = b;
-      var oldc = c;
-      var oldd = d;
-
-      a = this.md5_ff(a, b, c, d, x[i+ 0], 7 , -680876936);
-      d = this.md5_ff(d, a, b, c, x[i+ 1], 12, -389564586);
-      c = this.md5_ff(c, d, a, b, x[i+ 2], 17,  606105819);
-      b = this.md5_ff(b, c, d, a, x[i+ 3], 22, -1044525330);
-      a = this.md5_ff(a, b, c, d, x[i+ 4], 7 , -176418897);
-      d = this.md5_ff(d, a, b, c, x[i+ 5], 12,  1200080426);
-      c = this.md5_ff(c, d, a, b, x[i+ 6], 17, -1473231341);
-      b = this.md5_ff(b, c, d, a, x[i+ 7], 22, -45705983);
-      a = this.md5_ff(a, b, c, d, x[i+ 8], 7 ,  1770035416);
-      d = this.md5_ff(d, a, b, c, x[i+ 9], 12, -1958414417);
-      c = this.md5_ff(c, d, a, b, x[i+10], 17, -42063);
-      b = this.md5_ff(b, c, d, a, x[i+11], 22, -1990404162);
-      a = this.md5_ff(a, b, c, d, x[i+12], 7 ,  1804603682);
-      d = this.md5_ff(d, a, b, c, x[i+13], 12, -40341101);
-      c = this.md5_ff(c, d, a, b, x[i+14], 17, -1502002290);
-      b = this.md5_ff(b, c, d, a, x[i+15], 22,  1236535329);
-
-      a = this.md5_gg(a, b, c, d, x[i+ 1], 5 , -165796510);
-      d = this.md5_gg(d, a, b, c, x[i+ 6], 9 , -1069501632);
-      c = this.md5_gg(c, d, a, b, x[i+11], 14,  643717713);
-      b = this.md5_gg(b, c, d, a, x[i+ 0], 20, -373897302);
-      a = this.md5_gg(a, b, c, d, x[i+ 5], 5 , -701558691);
-      d = this.md5_gg(d, a, b, c, x[i+10], 9 ,  38016083);
-      c = this.md5_gg(c, d, a, b, x[i+15], 14, -660478335);
-      b = this.md5_gg(b, c, d, a, x[i+ 4], 20, -405537848);
-      a = this.md5_gg(a, b, c, d, x[i+ 9], 5 ,  568446438);
-      d = this.md5_gg(d, a, b, c, x[i+14], 9 , -1019803690);
-      c = this.md5_gg(c, d, a, b, x[i+ 3], 14, -187363961);
-      b = this.md5_gg(b, c, d, a, x[i+ 8], 20,  1163531501);
-      a = this.md5_gg(a, b, c, d, x[i+13], 5 , -1444681467);
-      d = this.md5_gg(d, a, b, c, x[i+ 2], 9 , -51403784);
-      c = this.md5_gg(c, d, a, b, x[i+ 7], 14,  1735328473);
-      b = this.md5_gg(b, c, d, a, x[i+12], 20, -1926607734);
-
-      a = this.md5_hh(a, b, c, d, x[i+ 5], 4 , -378558);
-      d = this.md5_hh(d, a, b, c, x[i+ 8], 11, -2022574463);
-      c = this.md5_hh(c, d, a, b, x[i+11], 16,  1839030562);
-      b = this.md5_hh(b, c, d, a, x[i+14], 23, -35309556);
-      a = this.md5_hh(a, b, c, d, x[i+ 1], 4 , -1530992060);
-      d = this.md5_hh(d, a, b, c, x[i+ 4], 11,  1272893353);
-      c = this.md5_hh(c, d, a, b, x[i+ 7], 16, -155497632);
-      b = this.md5_hh(b, c, d, a, x[i+10], 23, -1094730640);
-      a = this.md5_hh(a, b, c, d, x[i+13], 4 ,  681279174);
-      d = this.md5_hh(d, a, b, c, x[i+ 0], 11, -358537222);
-      c = this.md5_hh(c, d, a, b, x[i+ 3], 16, -722521979);
-      b = this.md5_hh(b, c, d, a, x[i+ 6], 23,  76029189);
-      a = this.md5_hh(a, b, c, d, x[i+ 9], 4 , -640364487);
-      d = this.md5_hh(d, a, b, c, x[i+12], 11, -421815835);
-      c = this.md5_hh(c, d, a, b, x[i+15], 16,  530742520);
-      b = this.md5_hh(b, c, d, a, x[i+ 2], 23, -995338651);
-
-      a = this.md5_ii(a, b, c, d, x[i+ 0], 6 , -198630844);
-      d = this.md5_ii(d, a, b, c, x[i+ 7], 10,  1126891415);
-      c = this.md5_ii(c, d, a, b, x[i+14], 15, -1416354905);
-      b = this.md5_ii(b, c, d, a, x[i+ 5], 21, -57434055);
-      a = this.md5_ii(a, b, c, d, x[i+12], 6 ,  1700485571);
-      d = this.md5_ii(d, a, b, c, x[i+ 3], 10, -1894986606);
-      c = this.md5_ii(c, d, a, b, x[i+10], 15, -1051523);
-      b = this.md5_ii(b, c, d, a, x[i+ 1], 21, -2054922799);
-      a = this.md5_ii(a, b, c, d, x[i+ 8], 6 ,  1873313359);
-      d = this.md5_ii(d, a, b, c, x[i+15], 10, -30611744);
-      c = this.md5_ii(c, d, a, b, x[i+ 6], 15, -1560198380);
-      b = this.md5_ii(b, c, d, a, x[i+13], 21,  1309151649);
-      a = this.md5_ii(a, b, c, d, x[i+ 4], 6 , -145523070);
-      d = this.md5_ii(d, a, b, c, x[i+11], 10, -1120210379);
-      c = this.md5_ii(c, d, a, b, x[i+ 2], 15,  718787259);
-      b = this.md5_ii(b, c, d, a, x[i+ 9], 21, -343485551);
-
-      a = this.safe_add(a, olda);
-      b = this.safe_add(b, oldb);
-      c = this.safe_add(c, oldc);
-      d = this.safe_add(d, oldd);
-    }
-    return Array(a, b, c, d);
-  };
-
-  /*
-   * These functions implement the four basic operations the algorithm uses.
-   */
-  MD5.md5_cmn = function(q, a, b, x, s, t)
-  {
-    return this.safe_add(this.bit_rol(this.safe_add(this.safe_add(a, q), this.safe_add(x, t)), s),b);
-  };
-  MD5.md5_ff = function(a, b, c, d, x, s, t)
-  {
-    return this.md5_cmn((b & c) | ((~b) & d), a, b, x, s, t);
-  };
-  MD5.md5_gg = function(a, b, c, d, x, s, t)
-  {
-    return this.md5_cmn((b & d) | (c & (~d)), a, b, x, s, t);
-  };
-  MD5.md5_hh = function(a, b, c, d, x, s, t)
-  {
-    return this.md5_cmn(b ^ c ^ d, a, b, x, s, t);
-  };
-  MD5.md5_ii = function(a, b, c, d, x, s, t)
-  {
-    return this.md5_cmn(c ^ (b | (~d)), a, b, x, s, t);
-  };
-
-  /*
-   * Add integers, wrapping at 2^32. This uses 16-bit operations internally
-   * to work around bugs in some JS interpreters.
-   */
-  MD5.safe_add = function(x, y)
-  {
-    var lsw = (x & 0xFFFF) + (y & 0xFFFF);
-    var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
-    return (msw << 16) | (lsw & 0xFFFF);
-  };
-
-  /*
-   * Bitwise rotate a 32-bit number to the left.
-   */
-  MD5.bit_rol = function(num, cnt)
-  {
-    return (num << cnt) | (num >>> (32 - cnt));
-  };
-
-  exports.MD5 = MD5;
-
-  function src_Global__setCursor(name) {
-    name = name == null ? 'default' : name;
-    canvas.style.cursor = name;
-  }
-
-
-  /**
-   *Static class that:
-   * -includes all the data models (by including the class IncludeDataModels.js)
-   * -includes information about all those data models (on dataModelsInfo variable)
-   * -includes class utils (that contains methods such as instantiate)
-   * -contains the global variables (such as userAgent, canvas, nF, mX…), global
-   * -contains the listener methods
-   * -triggers de init, update and draw in Global class
-   * @namespace
-   * @category basics
-   */
-  function Global(){}
-
-  Global.userAgent="unknown";
-
-  window.init = function(){
-    //console.log("init must be overriden!");
-  }
-
-  window.cycle = function(){
-    //console.log("cycle must be overriden!");
-  }
-
-  window.resizeWindow = function(){
-    //console.log("resizeWindow must be overriden!");
-  }
-
-  window.lastCycle = function(){
-    //override
-  }
-
-  var listenerArray  = [];
-  var canvas;
-  var src_Global__userAgent="none";
-  var src_Global__userAgentVersion;
-  var canvasResizeable=true;
-
-  //data models info
-  var src_Global__dataModelsInfo = [
-    {
-      type:"Null",
-      short:"Ø",
-      category:"object",
-      level:"0",
-      write:"true",
-      inherits:null,
-      color:"#ffffff"
-    },
-    {
-      type:"Object",
-      short:"{}",
-      category:"object",
-      level:"0",
-      write:"true",
-      inherits:null,
-      to:"String",
-      color:"#C0BFBF"
-    },
-    {
-      type:"Function",
-      short:"F",
-      category:"object",
-      level:"0",
-      inherits:null,
-      color:"#C0BFBF"
-    },  {
-      type:"Boolean",
-      short:"b",
-      category:"boolean",
-      level:"0",
-      write:"true",
-      inherits:null,
-      to:"Number",
-      color:"#4F60AB"
-    },
-    {
-      type:"Number",
-      short:"#",
-      category:"number",
-      level:"0",
-      write:"true",
-      inherits:null,
-      to:"String",
-      color:"#5DA1D8"
-    },
-    {
-      type:"Interval",
-      short:"##",
-      category:"number",
-      level:"0.5",
-      write:"true",
-      inherits:null,
-      to:"Point",
-      contains:"Number",
-      color:"#386080"
-    },
-    {
-      type:"Array",
-      short:"[]",
-      category:"object",
-      level:"1",
-      inherits:null,
-      to:"List",
-      contains:"Object,Null",
-      color:"#80807F"
-    },
-    {
-      type:"List",
-      short:"L",
-      category:"object",
-      level:"1",
-      inherits:"Array",
-      contains:"Object",
-      comments:"A List is an Array that doesn't contain nulls, and with enhanced functionalities",
-      color:"#80807F"
-    },
-    {
-      type:"Table",
-      short:"T",
-      category:"object",
-      level:"2",
-      inherits:"List",
-      contains:"List",
-      comments:"A Table is a List of Lists",
-      color:"#80807F"
-    },
-    {
-      type:"BooleanList",
-      short:"bL",
-      category:"boolean",
-      level:"1",
-      inherits:"List",
-      to:"NumberList",
-      contains:"Boolean",
-      color:"#3A4780"
-    },
-    {
-      type:"NumberList",
-      short:"#L",
-      category:"number",
-      level:"1",
-      write:"true",
-      inherits:"List",
-      to:"StringList",
-      contains:"Number",
-      color:"#386080"
-    },
-    {
-      type:"NumberTable",
-      short:"#T",
-      category:"number",
-      level:"2",
-      write:"true",
-      inherits:"Table",
-      to:"Network",
-      contains:"NumberList",
-      color:"#386080"
-    },
-    {
-      type:"String",
-      short:"s",
-      category:"string",
-      level:"0",
-      write:"true",
-      inherits:null,
-      color:"#8BC63F"
-    },
-    {
-      type:"StringList",
-      short:"sL",
-      category:"string",
-      level:"1",
-      write:"true",
-      inherits:"List",
-      contains:"String",
-      color:"#5A8039"
-    },
-    {
-      type:"StringTable",
-      short:"sT",
-      category:"string",
-      level:"2",
-      inherits:"Table",
-      contains:"StringList",
-      color:"#5A8039"
-    },
-    {
-      type:"Date",
-      short:"d",
-      category:"date",
-      level:"0.5",
-      write:"true",
-      inherits:null,
-      to:"Number,String",
-      color:"#7AC8A3"
-    },
-    {
-      type:"DateInterval",
-      short:"dd",
-      category:"date",
-      level:"0.75",
-      inherits:null,
-      to:"Interval",
-      contains:"Date",
-      color:"#218052"
-    },
-    {
-      type:"DateList",
-      short:"dL",
-      category:"date",
-      level:"1.5",
-      inherits:"List",
-      to:"NumberList,StringList",
-      contains:"Date",
-      color:"#218052"
-    },
-    {
-      type:"Point",
-      short:".",
-      category:"geometry",
-      level:"0.5",
-      write:"true",
-      inherits:null,
-      to:"Interval",
-      contains:"Number",
-      color:"#9D59A4"
-    },
-    {
-      type:"Rectangle",
-      short:"t",
-      category:"geometry",
-      level:"0.5",
-      inherits:null,
-      to:"Polygon",
-      contains:"Number",
-      color:"#9D59A4"
-    },
-    {
-      type:"Polygon",
-      short:".L",
-      category:"geometry",
-      level:"1.5",
-      inherits:"List",
-      to:"NumberTable",
-      contains:"Point",
-      comments:"A Polygon is a List of Points",
-      color:"#76297F"
-    },
-    {
-      type:"RectangleList",
-      short:"tL",
-      category:"geometry",
-      level:"1.5",
-      inherits:null,
-      to:"MultiPolygon",
-      contains:"Rectangle",
-      color:"#76297F"
-    },
-    {
-      type:"MultiPolygon",
-      short:".T",
-      category:"geometry",
-      level:"2.5",
-      inherits:"Table",
-      contains:"Polygon",
-      comments:"A MultiPolygon is a List of Polygons",
-      color:"#76297F"
-    },
-    {
-      type:"Point3D",
-      short:"3",
-      category:"geometry",
-      level:"0.5",
-      write:"true",
-      inherits:"Point",
-      to:"NumberList",
-      contains:"Number",
-      color:"#9D59A4"
-    },
-    {
-      type:"Polygon3D",
-      short:"3L",
-      category:"geometry",
-      level:"1.5",
-      inherits:"List",
-      to:"NumberTable",
-      contains:"Point3D",
-      color:"#76297F"
-    },
-    {
-      type:"MultiPolygon3D",
-      short:"3T",
-      category:"geometry",
-      level:"2.5",
-      inherits:"Table",
-      contains:"Polygon3D",
-      color:"#76297F"
-    },
-    {
-      type:"Color",
-      short:"c",
-      category:"color",
-      level:"0",
-      inherits:null,
-      to:"String",
-      comments:"a Color is just a string that can be interpreted as color",
-      color:"#EE4488"
-    },
-    {
-      type:"ColorScale",
-      short:"cS",
-      category:"color",
-      level:"0",
-      write:"true",
-      inherits:"Function",
-      color:"#802046"
-    },
-    {
-      type:"ColorList",
-      short:"cL",
-      category:"color",
-      level:"1",
-      write:"true",
-      inherits:"List",
-      to:"StringList",
-      contains:"Color",
-      color:"#802046"
-    },
-    {
-      type:"Image",
-      short:"i",
-      category:"graphic",
-      level:"0",
-      inherits:null,
-      color:"#802046"
-    },
-    {
-      type:"ImageList",
-      short:"iL",
-      category:"graphic",
-      level:"1",
-      inherits:"List",
-      contains:"Image",
-      color:"#802046"
-    },
-    {
-      type:"Node",
-      short:"n",
-      category:"structure",
-      level:"0",
-      inherits:null,
-      color:"#FAA542"
-    },
-    {
-      type:"Relation",
-      short:"r",
-      category:"structure",
-      level:"0.5",
-      inherits:"Node",
-      contains:"Node",
-      color:"#FAA542"
-    },
-    {
-      type:"NodeList",
-      short:"nL",
-      category:"structure",
-      level:"1",
-      inherits:"List",
-      contains:"Node",
-      color:"#805522"
-    },
-    {
-      type:"RelationList",
-      short:"rL",
-      category:"structure",
-      level:"1.5",
-      inherits:"NodeList",
-      contains:"Relation",
-      color:"#805522"
-    },
-    {
-      type:"Network",
-      short:"Nt",
-      category:"structure",
-      level:"2",
-      inherits:null,
-      to:"Table",
-      contains:"NodeList,RelationList",
-      color:"#805522"
-    },
-    {
-      type:"Tree",
-      short:"Tr",
-      category:"structure",
-      level:"2",
-      inherits:"Network",
-      to:"Table",
-      contains:"NodeList,RelationList",
-      color:"#805522"
-    }
-  ];
-
-
-  //global useful vars
-  var src_Global__cW = 1; // canvas width
-  var src_Global__cH = 1; // canvas height
-  var cX = 1; // canvas center x
-  var cY = 1; // canvas center y
-  var mX = 0; // cursor x
-  var mY = 0; // cursor y
-  var mP = new Point(0, 0); // cursor point
-  var nF = 0; // number of current frame since first cycle
-
-  var MOUSE_DOWN=false; //true on the frame of mousedown event
-  var MOUSE_UP=false; //true on the frame of mouseup event
-  var MOUSE_UP_FAST=false; //true on the frame of mouseup event
-  var WHEEL_CHANGE=0; //differnt from 0 if mousewheel (or pad) moves / STATE
-  var NF_DOWN; //number of frame of last mousedown event
-  var NF_UP; //number of frame of last mouseup event
-  var MOUSE_PRESSED; //true if mouse pressed / STATE
-  var MOUSE_IN_DOCUMENT = true; //true if cursor is inside document / STATE
-  var mX_DOWN; // cursor x position on last mousedown event
-  var mY_DOWN; // cursor x position on last mousedown event
-  var mX_UP; // cursor x position on last mousedown event
-  var mY_UP; // cursor y position on last mousedown event
-  var PREV_mX=0; // cursor x position previous frame
-  var PREV_mY=0; // cursor y position previous frame
-  var DX_MOUSE=0; //horizontal movement of cursor in last frame
-  var DY_MOUSE=0; //vertical movement of cursor in last frame
-  var MOUSE_MOVED = false; //boolean that indicates wether the mouse moved in the last frame / STATE
-  var T_MOUSE_PRESSED = 0; //time in milliseconds of mouse being pressed, useful for sutained pressure detection
-
-  //var deltaWheel = 0;
-  var cursorStyle = 'auto';
-  var backGroundColor = 'white';
-  var backGroundColorRGB = [255,255,255];
-  var cycleActive;
-
-  //global constants
-  var src_Global__context;
-  var TwoPi = 2*Math.PI;
-  var src_Global__HalfPi = 0.5*Math.PI;
-  var radToGrad = 180/Math.PI;
-  var gradToRad = Math.PI/180;
-  var src_Global__c = console;
-  src_Global__c.l = src_Global__c.log; //use c.l instead of console.log
-
-  //private
-  var _wheelActivated = false;
-  var _keyboardActivated = false;
-
-  var _prevMouseX = 0;
-  var _prevMouseY = 0;
-  var _setIntervalId;
-  var _setTimeOutId;
-  var _cycleOnMouseMovement = false;
-  var _interactionCancelledFrame;
-  var _tLastMouseDown;
-
-  var _alphaRefresh=0;//if _alphaRefresh>0 instead of clearing the canvas each frame, a transparent rectangle will be drawn
-
-  var END_CYCLE_DELAY = 3000; //time in milliseconds, from last mouse movement to the last cycle to be executed in case cycleOnMouseMovement has been activated
-
-  Array.prototype.last = function(){
-    return this[this.length-1];
-  };
-
-  window.addEventListener('load', function(){
-
-    if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
-      exports.userAgent = src_Global__userAgent='IE';
-      exports.userAgentVersion = src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
-      if(src_Global__userAgentVersion<9) return null;
-    } else if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent)){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
-      exports.userAgent = src_Global__userAgent='FIREFOX';
-      exports.userAgentVersion = src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
-    } else if (navigator.userAgent.match(/Chrome/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
-      exports.userAgent = src_Global__userAgent='CHROME';
-      exports.userAgentVersion = src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
-    } else if (/Mozilla[\/\s](\d+\.\d+)/.test(navigator.userAgent) || navigator.userAgent.match(/Mozilla/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
-      exports.userAgent = src_Global__userAgent='MOZILLA';
-      exports.userAgentVersion = src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
-    } else if (navigator.userAgent.match(/Safari/) != null){ //test for MSIE x.x;
-      exports.userAgent = src_Global__userAgent='Safari';
-      exports.userAgentVersion = src_Global__userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
-    } else if(navigator.userAgent.match(/iPad/i) != null){
-      exports.userAgent = src_Global__userAgent='IOS';
-    } else if(navigator.userAgent.match(/iPhone/i) != null){
-      exports.userAgent = src_Global__userAgent='IOS';
-    }
-
-
-    Global.userAgent=src_Global__userAgent;
-    Global._frameRate=30;
-
-    exports.canvas = canvas = document.getElementById('main');
-
-    if(canvas!=null){
-      exports.context = src_Global__context = canvas.getContext('2d');
-
-      _adjustCanvas();
-
-      canvas.addEventListener("mousemove", _onMouse, false);
-      canvas.addEventListener("mousedown", _onMouse, false);
-      canvas.addEventListener("mouseup", _onMouse, false);
-      canvas.addEventListener("mouseenter", _onMouse, false);
-      canvas.addEventListener("mouseleave", _onMouse, false);
-
-
-      activateWheel();
-
-      window.addEventListener("resize", onResize, false);
-
-      startCycle();
-      window.init();
-    }
-
-    src_Global__c.l('Moebio Framework v' + version + ' | user agent: '+src_Global__userAgent+' | user agent version: '+src_Global__userAgentVersion+' | canvas detected: '+(canvas!=null));
-
-  }, false);
-
-  function _onMouse(e) {
-
-    switch(e.type){
-      case "mousemove":
-        exports.PREV_mX = PREV_mX=mX;
-        exports.PREV_mY = PREV_mY=mY;
-
-        if(e.clientX){
-          exports.mX = mX = e.clientX;
-              exports.mY = mY = e.clientY;
-        } else if(e.offsetX) {
-              exports.mX = mX = e.offsetX;
-              exports.mY = mY = e.offsetY;
-          } else if(e.layerX) {
-              exports.mX = mX = e.layerX;
-              exports.mY = mY = e.layerY;
-          }
-          mP.x = mX;
-          mP.y = mY;
-          exports.MOUSE_IN_DOCUMENT = MOUSE_IN_DOCUMENT = true;
-          break;
-      case "mousedown":
-        exports.NF_DOWN = NF_DOWN = nF;
-        exports.MOUSE_PRESSED = MOUSE_PRESSED = true;
-        exports.T_MOUSE_PRESSED = T_MOUSE_PRESSED = 0;
-        _tLastMouseDown = new Date().getTime();
-        exports.mX_DOWN = mX_DOWN = mX;
-        exports.mY_DOWN = mY_DOWN = mY;
-        exports.MOUSE_IN_DOCUMENT = MOUSE_IN_DOCUMENT = true;
-        break;
-      case "mouseup":
-        exports.NF_UP = NF_UP = nF;
-        exports.MOUSE_PRESSED = MOUSE_PRESSED = false;
-        exports.T_MOUSE_PRESSED = T_MOUSE_PRESSED = 0;
-        exports.mX_UP = mX_UP = mX;
-        exports.mY_UP = mY_UP = mY;
-        exports.MOUSE_IN_DOCUMENT = MOUSE_IN_DOCUMENT = true;
-        break;
-      case "mouseenter":
-        exports.MOUSE_IN_DOCUMENT = MOUSE_IN_DOCUMENT = true;
-        break;
-      case "mouseleave":
-        exports.MOUSE_IN_DOCUMENT = MOUSE_IN_DOCUMENT = false;
-        break;
-    }
-  }
-
-
-  function onResize(e){
-    _adjustCanvas();
-    window.resizeWindow();
-  }
-
-  function _adjustCanvas(){
-    if(canvasResizeable==false) return;
-
-    exports.cW = src_Global__cW = getDocWidth();
-    exports.cH = src_Global__cH = getDocHeight();
-
-    canvas.setAttribute('width', src_Global__cW);
-    canvas.setAttribute('height', src_Global__cH);
-
-    exports.cX = cX = Math.floor(src_Global__cW*0.5);
-    exports.cY = cY = Math.floor(src_Global__cH*0.5);
-  }
-
-
-  function clearContext(){
-    src_Global__context.clearRect(0, 0, src_Global__cW, src_Global__cH);
-  }
-
-  function cycleOnMouseMovement(value, time){
-    if(time!=null) END_CYCLE_DELAY = time;
-
-    if(value){
-      src_Global__context.canvas.addEventListener('mousemove', onMoveCycle, false);
-      addInteractionEventListener('mousewheel', onMoveCycle, this);
-      exports._cycleOnMouseMovement = _cycleOnMouseMovement = true;
-      stopCycle();
-    } else {
-      src_Global__context.canvas.removeEventListener('mousemove', onMoveCycle, false);
-      removeInteractionEventListener('mousewheel', onMoveCycle, this);
-      exports._cycleOnMouseMovement = _cycleOnMouseMovement = false;
-      startCycle();
-    }
-  }
-
-  function setFrameRate(fr){
-    fr = fr||30;
-    Global._frameRate = fr;
-
-    if(cycleActive) startCycle();
-  }
-
-  function setAlphaRefresh(alphaRefresh){
-    _alphaRefresh = alphaRefresh;
-  }
-
-  function enterFrame(){
-    if(_alphaRefresh==0){
-        src_Global__context.clearRect(0, 0, src_Global__cW, src_Global__cH);
-    } else {
-      src_Global__context.fillStyle = 'rgba('+backGroundColorRGB[0]+','+backGroundColorRGB[1]+','+backGroundColorRGB[2]+','+_alphaRefresh+')';
-      src_Global__context.fillRect(0, 0, src_Global__cW, src_Global__cH);
-    }
-
-      src_Global__setCursor('default');
-
-    exports.MOUSE_DOWN = MOUSE_DOWN = NF_DOWN==nF;
-    exports.MOUSE_UP = MOUSE_UP = NF_UP==nF;
-    exports.MOUSE_UP_FAST = MOUSE_UP_FAST = MOUSE_UP && (nF-NF_DOWN)<9;
-
-    exports.DX_MOUSE = DX_MOUSE = mX-PREV_mX;
-    exports.DY_MOUSE = DY_MOUSE = mY-PREV_mY;
-    exports.MOUSE_MOVED = MOUSE_MOVED = DX_MOUSE!=0 || DY_MOUSE!=0;
-
-    if(MOUSE_PRESSED) exports.T_MOUSE_PRESSED = T_MOUSE_PRESSED = new Date().getTime() - _tLastMouseDown;
-
-      window.cycle();
-
-      exports.WHEEL_CHANGE = WHEEL_CHANGE = 0;
-
-      exports.PREV_mX = PREV_mX=mX;
-      exports.PREV_mY = PREV_mY=mY;
-
-      nF++, exports.nF = nF;
-  }
-
-  function startCycle(){
-    clearTimeout(_setTimeOutId);
-    clearInterval(_setIntervalId);
-    _setIntervalId = setInterval(enterFrame, Global._frameRate);
-    exports.cycleActive = cycleActive = true;
-  }
-
-
-  function stopCycle(){
-    clearInterval(_setIntervalId);
-    exports.cycleActive = cycleActive = false;
-
-    window.lastCycle();
-  }
-
-
-
-
-  function onMoveCycle(e){
-    if(e.type=='mousemove' && _prevMouseX==mX && _prevMouseY==mY) return;
-    reStartCycle();
-  }
-
-  function reStartCycle(){
-    _prevMouseX=mX;
-    _prevMouseY=mY;
-
-    if(!cycleActive){
-      _setIntervalId = setInterval(enterFrame, Global._frameRate);
-      exports.cycleActive = cycleActive = true;
-    }
-
-    clearTimeout(_setTimeOutId);
-    _setTimeOutId = setTimeout(stopCycle, END_CYCLE_DELAY);
-  }
-
-  //interaction events
-  function addInteractionEventListener(eventType, onFunction, target){//TODO: listenerArray contains objects instead of arrays
-    listenerArray.push(new Array(eventType, onFunction, target));
-    switch(eventType){
-      case 'mousedown':
-      case 'mouseup':
-      case 'click':
-      case 'mousemove':
-        src_Global__context.canvas.addEventListener(eventType, onCanvasEvent, false);
-        break;
-      case 'mousewheel':
-        if(!_wheelActivated) activateWheel();
-        break;
-      case 'keydown':
-      case 'keyup':
-        if(!_keyboardActivated) activateKeyboard();
-        break;
-    }
-  }
-
-  function onCanvasEvent(e){
-    var i;
-    for(i=0; listenerArray[i]!=null; i++){
-      if(listenerArray[i][0]==e.type.replace('DOMMouseScroll', 'mousewheel')){
-        if(_interactionCancelledFrame==nF) return;
-        listenerArray[i][1].call(listenerArray[i][2], e);
-      }
-    }
-  }
-
-  function removeInteractionEventListener(eventType, onFunction, target){ //TODO: finish this (requires single element removing method solved first)
-    for(var i=0; listenerArray[i]!=null; i++){
-      if(listenerArray[i][0]==eventType && listenerArray[i][1]==onFunction && listenerArray[i][2]==target){
-        delete listenerArray[i];
-        listenerArray.splice(i, 1);
-        i--;
-      }
-    }
-  }
-
-  function cancelAllInteractions(){
-    src_Global__c.log("cancelAllInteractions, _interactionCancelledFrame:", nF);
-    _interactionCancelledFrame = nF;
-  }
-
-  function setBackgroundColor(color){
-    if(typeof color == "number"){
-      if(arguments.length>3){
-        color = 'rgba('+arguments[0]+','+arguments[1]+','+arguments[2]+','+arguments[3]+')';
-      } else {
-        color = 'rgb('+arguments[0]+','+arguments[1]+','+arguments[2]+')';
-      }
-    } else if(Array.isArray(color)){
-      color = ColorOperators__default.RGBtoHEX(color[0], color[1], color[2]);
-    }
-    exports.backGroundColor = backGroundColor = color;
-
-    exports.backGroundColorRGB = backGroundColorRGB = ColorOperators__default.colorStringToRGB(backGroundColor);
-
-    var body = document.getElementById('index');
-    body.setAttribute('bgcolor', backGroundColor);
-  }
-
-  function setDivPosition(div, x, y){
-    div.setAttribute('style', 'position:absolute;left:'+String(x)+'px;top:'+String(y)+'px;');
-  }
-
-
-  /////////////////////////////////// keyboard and wheel
-
-  function activateKeyboard(){
-    _keyboardActivated = true;
-    document.onkeydown = onKey;
-    document.onkeyup = onKey;
-  }
-
-  function onKey(e){
-    onCanvasEvent(e);
-  }
-
-  /*
-   * thanks http://www.adomas.org/javascript-mouse-wheel
-   */
-  function activateWheel(){
-    _wheelActivated = true;
-
-    if (window.addEventListener){
-      window.addEventListener('DOMMouseScroll', _onWheel, false);
-      //window.addEventListener("mousewheel", _onWheel, false); // testing
-    }
-    window.onmousewheel = document.onmousewheel = _onWheel;
-
-  }
-  function _onWheel(e) {
-    //c.l('_onWheel, e:', e);
-
-      if (!e) e = window.event; //IE
-
-      if (e.wheelDelta){
-        exports.WHEEL_CHANGE = WHEEL_CHANGE = e.wheelDelta/120;
-      } else if (e.detail) { /** Mozilla case. */
-          exports.WHEEL_CHANGE = WHEEL_CHANGE = -e.detail/3;
-      }
-      e.value = WHEEL_CHANGE;
-      // e.type = "mousewheel"; //why this doesn't work?
-
-    onCanvasEvent(e);
-  }
-
-
-
-  ////structures local storage
-
-  function setStructureLocalStorageWithSeed(object, seed, comments){
-    setStructureLocalStorage(object, MD5.hex_md5(seed), comments);
-  };
-
-  function setStructureLocalStorage(object, id, comments){
-    var type = typeOf(object);
-    var code;
-
-    switch(type){
-      case 'string':
-        code = object;
-        break;
-      case 'Network':
-        code = NetworkEncodings.encodeGDF(network);
-        break;
-      default:
-        type = 'object';
-        code = JSON.stringify(object);
-        break;
-    }
-
-    var storageObject = {
-      id:id,
-      type:type,
-      comments:comments,
-      date:new Date(),
-      code:code
-    };
-
-    var storageString = JSON.stringify(storageObject);
-
-    // c.l('storageObject', storageObject);
-    // c.l('id:['+id+']');
-    // c.l('code.length:', code.length);
-
-    localStorage.setItem(id, storageString);
-  };
-
-  function getStructureLocalStorageFromSeed(seed, returnStorageObject){
-    return getStructureLocalStorage(MD5.hex_md5(seed), returnStorageObject);
-  };
-
-  function getStructureLocalStorage(id, returnStorageObject){
-    returnStorageObject = returnStorageObject||false;
-
-    var item = localStorage.getItem(id);
-
-    if(item==null) return null;
-
-
-    try{
-      var storageObject = JSON.parse(item);
-    } catch(err){
-      return null;
-    }
-
-    if(storageObject.type==null && storageObject.code==null) return null;
-
-    var type = storageObject.type;
-    var code = storageObject.code;
-    var object;
-
-    switch(type){
-      case 'string':
-        object = code;
-        break;
-      case 'Network':
-        object = NetworkEncodings.decodeGDF(code);
-        break;
-      case 'object':
-        object = JSON.parse(code);
-        break;
-    }
-
-    if(returnStorageObject){
-      storageObject.object = object;
-      storageObject.size = storageObject.code.length;
-      storageObject.date = new Date(storageObject.date);
-
-      return storageObject;
-    }
-
-    return object;
-  };
-
-  function getDocWidth() {
-      var D = document;
-      return Math.max(
-          D.body.offsetWidth, D.documentElement.offsetWidth,
-          D.body.clientWidth, D.documentElement.clientWidth
-      );
-  }
-
-  function getDocHeight() {
-      var D = document;
-      return Math.max(
-          D.body.offsetHeight, D.documentElement.offsetHeight,
-          D.body.clientHeight, D.documentElement.clientHeight
-      );
-  }
-
-  exports.Global = Global;
-  exports.onResize = onResize;
-  exports.clearContext = clearContext;
-  exports.cycleOnMouseMovement = cycleOnMouseMovement;
-  exports.setFrameRate = setFrameRate;
-  exports.setAlphaRefresh = setAlphaRefresh;
-  exports.enterFrame = enterFrame;
-  exports.startCycle = startCycle;
-  exports.stopCycle = stopCycle;
-  exports.onMoveCycle = onMoveCycle;
-  exports.reStartCycle = reStartCycle;
-  exports.addInteractionEventListener = addInteractionEventListener;
-  exports.onCanvasEvent = onCanvasEvent;
-  exports.removeInteractionEventListener = removeInteractionEventListener;
-  exports.cancelAllInteractions = cancelAllInteractions;
-  exports.setBackgroundColor = setBackgroundColor;
-  exports.activateKeyboard = activateKeyboard;
-  exports.onKey = onKey;
-  exports.activateWheel = activateWheel;
-  exports.setStructureLocalStorageWithSeed = setStructureLocalStorageWithSeed;
-  exports.setStructureLocalStorage = setStructureLocalStorage;
-  exports.getStructureLocalStorageFromSeed = getStructureLocalStorageFromSeed;
-  exports.getStructureLocalStorage = getStructureLocalStorage;
-  exports.getDocWidth = getDocWidth;
-  exports.getDocHeight = getDocHeight;
-  exports._onMouse = _onMouse;
-  exports.listenerArray = listenerArray;
-  exports.canvas = canvas;
-  exports.userAgent = src_Global__userAgent;
-  exports.userAgentVersion = src_Global__userAgentVersion;
-  exports.canvasResizeable = canvasResizeable;
-  exports.dataModelsInfo = src_Global__dataModelsInfo;
-  exports.cW = src_Global__cW;
-  exports.cH = src_Global__cH;
-  exports.cX = cX;
-  exports.cY = cY;
-  exports.mX = mX;
-  exports.mY = mY;
-  exports.mP = mP;
-  exports.nF = nF;
-  exports.MOUSE_DOWN = MOUSE_DOWN;
-  exports.MOUSE_UP = MOUSE_UP;
-  exports.MOUSE_UP_FAST = MOUSE_UP_FAST;
-  exports.WHEEL_CHANGE = WHEEL_CHANGE;
-  exports.NF_DOWN = NF_DOWN;
-  exports.NF_UP = NF_UP;
-  exports.MOUSE_PRESSED = MOUSE_PRESSED;
-  exports.MOUSE_IN_DOCUMENT = MOUSE_IN_DOCUMENT;
-  exports.mX_DOWN = mX_DOWN;
-  exports.mY_DOWN = mY_DOWN;
-  exports.mX_UP = mX_UP;
-  exports.mY_UP = mY_UP;
-  exports.PREV_mX = PREV_mX;
-  exports.PREV_mY = PREV_mY;
-  exports.DX_MOUSE = DX_MOUSE;
-  exports.DY_MOUSE = DY_MOUSE;
-  exports.MOUSE_MOVED = MOUSE_MOVED;
-  exports.T_MOUSE_PRESSED = T_MOUSE_PRESSED;
-  exports.cursorStyle = cursorStyle;
-  exports.backGroundColor = backGroundColor;
-  exports.backGroundColorRGB = backGroundColorRGB;
-  exports.cycleActive = cycleActive;
-  exports.context = src_Global__context;
-  exports.TwoPi = TwoPi;
-  exports.HalfPi = src_Global__HalfPi;
-  exports.radToGrad = radToGrad;
-  exports.gradToRad = gradToRad;
-  exports.c = src_Global__c;
-  exports._cycleOnMouseMovement = _cycleOnMouseMovement;
-
   Relation.prototype = new Node__default();
   Relation.prototype.constructor = Relation;
 
@@ -8011,6 +7927,9 @@ define('src/index', ['exports'], function (exports) {
   }
 
 
+  /**
+   * @todo write docs
+   */
   Relation.prototype.destroy = function() {
     Node__default.prototype.destroy.call(this);
     delete this.node0;
@@ -8028,6 +7947,9 @@ define('src/index', ['exports'], function (exports) {
     return node == this.node0 ? this.node1 : this.node0;
   };
 
+  /**
+   * @todo write docs
+   */
   Relation.prototype.clone = function() {
     var relation = new Relation(this.id, this.name, this.node0, this.node1);
 
@@ -8133,7 +8055,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Node} node1 The destination of the relation.
    * @param {String} id The id of the relation.
    * @param {Number} weight A numerical weight associated with the relation (edge).
-   * 
+   *
    * @param {String} content Information associated with the relation.
    */
   Network.prototype.createRelation = function(node0, node1, id, weight, content) {
@@ -8259,15 +8181,15 @@ define('src/index', ['exports'], function (exports) {
     newNetwork.nodeList = this.nodeList;
     newNetwork.relationList = this.relationList;
     return newNetwork;
-  }
+  };
 
 
   /**
    * Clones the network
-   * 
+   *
    * @param  {StringList} nodePropertiesNames list of preoperties names to be copied from old nodes into new nodes
    * @param  {StringList} relationPropertiesNames
-   * 
+   *
    * @param  {String} idsSubfix optional sufix to be added to ids
    * @param  {String} namesSubfix optional sufix to be added to names
    * @return {Networked} network with exact structure than original
@@ -8309,10 +8231,16 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+   * @todo write docs
+   */
   Network.prototype.getReport = function() {
     return "network contains " + this.nodeList.length + " nodes and " + this.relationList.length + " relations";
   };
 
+  /**
+   * @todo write docs
+   */
   Network.prototype.destroy = function() {
     delete this.type;
     this.nodeList.destroy();
@@ -8750,9 +8678,6 @@ define('src/index', ['exports'], function (exports) {
   /**
    * _regexWordForNoteWork
    *
-   * @param word
-   * @param global
-   * @return {undefined}
    * @ignore
    */
   NetworkEncodings._regexWordForNoteWork = function(word, global) {
@@ -9086,7 +9011,6 @@ define('src/index', ['exports'], function (exports) {
   /**
    * _cleanLineBeginning
    *
-   * @param string
    * @ignore
    */
   NetworkEncodings._cleanLineBeginning = function(string) {
@@ -9407,8 +9331,6 @@ define('src/index', ['exports'], function (exports) {
   /**
    * replaceChomasInLine
    *
-   * @param line
-   * @return {undefined}
    * @ignore
    */
   NetworkEncodings.replaceChomasInLine = function(line, separator) {
@@ -9441,8 +9363,6 @@ define('src/index', ['exports'], function (exports) {
   /**
    * _replaceSpacesInLine
    *
-   * @param line
-   * @return {undefined}
    * @ignore
    */
   NetworkEncodings._replaceSpacesInLine = function(line) {
@@ -9544,7 +9464,7 @@ define('src/index', ['exports'], function (exports) {
         var actualIndex = _firstRowIsHeader ? (i - 1) : i;
 
         cellContent = cellContents[j].replace(/\*CHOMA\*/g, separator).replace(/\*ENTER\*/g, "\n");
-        
+
         cellContent = cellContent == '' ? valueForNulls : cellContent;
 
         cellContent = String(cellContent);
@@ -9569,6 +9489,9 @@ define('src/index', ['exports'], function (exports) {
     return table;
   };
 
+  /**
+   * @ignore
+   */
   TableEncodings._removeQuotes = function(string) {
     if(string.length == 0) return string;
     if((string.charAt(0) == "\"" || string.charAt(0) == "'") && (string.charAt(string.length - 1) == "\"" || string.charAt(string.length - 1) == "'")) string = string.substr(1, string.length - 2);
@@ -9641,6 +9564,9 @@ define('src/index', ['exports'], function (exports) {
   }
 
 
+  /**
+   * @todo write docs
+   */
   RectangleList.fromArray = function(array) {
     var result = List__default.fromArray(array);
     result.type = "RectangleList";
@@ -9654,8 +9580,10 @@ define('src/index', ['exports'], function (exports) {
     return result;
   };
 
-  //TODO:finish RectangleList methods
 
+  /**
+   * @todo write docs
+   */
   RectangleList.prototype.getFrame = function() {//TODO: use RectangleOperators.minRect
     if(this.length == 0) return null;
 
@@ -9676,16 +9604,31 @@ define('src/index', ['exports'], function (exports) {
     return frame;
   };
 
+  // TODO:finish RectangleList methods
+
+  /**
+   * @ignore
+   */
   RectangleList.prototype.add = function() {
 
   };
 
+  /**
+   * @ignore
+   */
   RectangleList.prototype.factor = function() {
 
   };
 
+
+  /**
+   * @ignore
+   */
   RectangleList.prototype.getAddedArea = function() {};
 
+  /**
+   * @todo write docs
+   */
   RectangleList.prototype.getIntersectionArea = function() {
     var rect0;
     var rect1;
@@ -9785,6 +9728,9 @@ define('src/index', ['exports'], function (exports) {
     return seed / (233280.0);
   };
 
+  /**
+   * @todo write docs
+   */
   NumberOperators__NumberOperators.numberFromBinaryPositions = function(binaryPositions) {
     var i;
     var n = 0;
@@ -9794,6 +9740,9 @@ define('src/index', ['exports'], function (exports) {
     return n;
   };
 
+  /**
+   * @todo write docs
+   */
   NumberOperators__NumberOperators.numberFromBinaryValues = function(binaryValues) {
     var n = 0;
     for(var i = 0; binaryValues[i] != null; i++) {
@@ -9802,6 +9751,9 @@ define('src/index', ['exports'], function (exports) {
     return n;
   };
 
+  /**
+   * @todo write docs
+   */
   NumberOperators__NumberOperators.powersOfTwoDecomposition = function(number, length) {
     // var i;
     // var powers = StringList.fromArray(Number(number).toString(2).split('')).toNumberList().getReversed();
@@ -9833,6 +9785,9 @@ define('src/index', ['exports'], function (exports) {
     return powers;
   };
 
+  /**
+   * @todo write docs
+   */
   NumberOperators__NumberOperators.positionsFromBinaryValues = function(binaryValues) {
     var i;
     var positions = new NumberList();
@@ -9844,6 +9799,9 @@ define('src/index', ['exports'], function (exports) {
 
   //////////Random Generator with Seed, From http://baagoe.org/en/w/index.php/Better_random_numbers_for_javascript
 
+  /**
+   * @ignore
+   */
   NumberOperators__NumberOperators._Alea = function() {
     return(function(args) {
       // Johannes Baagøe <baagoe@baagoe.com>, 2010
@@ -9896,6 +9854,9 @@ define('src/index', ['exports'], function (exports) {
     }(Array.prototype.slice.call(arguments)));
   };
 
+  /**
+   * @ignore
+   */
   NumberOperators__NumberOperators._Mash = function() {
     var n = 0xefc8249d;
 
@@ -9945,6 +9906,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
   // TODO: Should this function be here?
+  /**
+   * @todo finish docs
+   */
   NumberList.createNumberListFromInterval = function(nElements, interval) {
     if(interval == null) interval = new Interval__default(0, 1);
     var numberList = new NumberList();
@@ -9957,7 +9921,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * create a list with random numbers
+   * creates a list with random numbers
+   *
    * @param  {Number} nValues
    *
    * @param  {Interval} interval range of the numberList
@@ -9990,11 +9955,17 @@ define('src/index', ['exports'], function (exports) {
 
 
 
+  /**
+   * @todo finish docs
+   */
   TableOperators.getElementFromTable = function(table, i, j) {
     if(table[i] == null) return null;
     return table[i][j];
   };
 
+  /**
+   * @todo finish docs
+   */
   TableOperators.getSubTable = function(table, x, y, width, height) {
     if(table == null) return table;
 
@@ -10117,6 +10088,9 @@ define('src/index', ['exports'], function (exports) {
 
 
 
+  /**
+   * @todo finish docs
+   */
   TableOperators.getSubListsByIndexes = function(table, indexes) {
     var newTable = new Table();
     newTable.name = table.name;
@@ -10138,6 +10112,9 @@ define('src/index', ['exports'], function (exports) {
   // - performance improvements for tables with lots of lists
   // TableOperators.sortListsByNumberList=function(table, numberList, descending){
   //  descending = descending || true;
+  /**
+   * @todo finish docs
+   */
   TableOperators.sortListsByNumberList = function(table, numberList, descending) {
     if(descending == null) descending = true;
 
@@ -10160,7 +10137,7 @@ define('src/index', ['exports'], function (exports) {
       }
     }
     return newTable;
-  }
+  };
 
 
   /**
@@ -10194,7 +10171,7 @@ define('src/index', ['exports'], function (exports) {
     });
 
     return newTable.getImproved();
-  }
+  };
 
 
 
@@ -10388,7 +10365,7 @@ define('src/index', ['exports'], function (exports) {
     }
 
     return newTable;
-  }
+  };
 
 
 
@@ -10499,7 +10476,7 @@ define('src/index', ['exports'], function (exports) {
    * @param  {Table} table
    * @param  {Number} nList list that could contain the element in several positions
    * @param  {Object} element
-   * 
+   *
    * @param {Boolean} keepRowIfElementIsPresent if true (default value) the row is selected if the list contains the given element, if false the row is discarded
    * @return {Table}
    * tags:filter
@@ -10544,6 +10521,9 @@ define('src/index', ['exports'], function (exports) {
     return newTable;
   };
 
+  /**
+   * @todo finish docs
+   */
   TableOperators.mergeDataTablesInList = function(tableList) {
     if(tableList.length < 2) return tableList;
 
@@ -10656,6 +10636,9 @@ define('src/index', ['exports'], function (exports) {
     return table;
   };
 
+  /**
+   * @todo finish docs
+   */
   TableOperators.completeTable = function(table, nRows, value) {
     value = value == null ? 0 : value;
 
@@ -10713,6 +10696,9 @@ define('src/index', ['exports'], function (exports) {
     return igs;
   };
 
+  /**
+   * @todo finish docs
+   */
   TableOperators.splitTableByCategoricList = function(table, list) {
     if(table == null || list == null) return null;
 
@@ -10780,6 +10766,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+   * @ignore
+   */
   TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervised, level, min_entropy, min_size_node, min_info_gain, parent, value, supervisedValue, indexes, generatePattern, colorScale) {
     //if(level < 4) c.l('\nlevel', level);
     var entropy = ListOperators__default.getListEntropy(supervised, supervisedValue);
@@ -10842,7 +10831,7 @@ define('src/index', ['exports'], function (exports) {
     // }
 
     node._color = colorScale(node.valueFollowingProbability); //TableOperators._decisionTreeColorScale(1 - node.valueFollowingProbability, colorScale);
-    
+
     if(generatePattern) {
       var newCanvas = document.createElement("canvas");
       newCanvas.width = 150;
@@ -10903,6 +10892,9 @@ define('src/index', ['exports'], function (exports) {
   //   // return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
   // };
 
+  /**
+   * @ignore
+   */
   TableOperators._decisionTreeGenerateColorsMixture = function(ctxt, width, height, colors, weights){
     var x, y, i; //, rgb;
     var allColors = ListGenerators.createListWithSameElement(weights[0], colors[0]);
@@ -11159,6 +11151,9 @@ define('src/index', ['exports'], function (exports) {
     return list.getReversed();
   };
 
+  /**
+   * @todo write docs
+   */
   ListOperators__ListOperators.getBooleanDictionaryForList = function(list){
     if(list==null) return;
 
@@ -11168,7 +11163,7 @@ define('src/index', ['exports'], function (exports) {
     });
 
     return dictionary;
-  }
+  };
 
   /**
    * builds a dictionar object (relational array) for a dictionar (table with two lists)
@@ -11186,7 +11181,7 @@ define('src/index', ['exports'], function (exports) {
     });
 
     return dictionaryObject;
-  }
+  };
 
 
   /**
@@ -11206,7 +11201,7 @@ define('src/index', ['exports'], function (exports) {
     var list = ListOperators__ListOperators.translateWithDictionaryObject(list, dictionaryObject, nullElement);
 
     list.dictionaryObject = dictionaryObject;
-    
+
     return list;
 
     // var newList = new List();
@@ -11224,7 +11219,7 @@ define('src/index', ['exports'], function (exports) {
 
     // newList = newList.getImproved();
     // newList.dictionaryObject = dictionaryObject;
-    
+
     // return newList;
   };
 
@@ -11232,7 +11227,7 @@ define('src/index', ['exports'], function (exports) {
    * creates a new list that is a translation of a list using a dictionar object (a relation array)
    * @param  {List} list
    * @param  {Object} dictionaryObject
-   * 
+   *
    * @param  {Object} nullElement
    * @return {List}
    * tags:
@@ -11254,7 +11249,7 @@ define('src/index', ['exports'], function (exports) {
     }
     newList.name = list.name;
     return newList.getImproved();
-  }
+  };
 
 
   // ListOperators.getIndexesOfElements=function(list, elements){
@@ -11277,6 +11272,9 @@ define('src/index', ['exports'], function (exports) {
   // }
 
 
+  /**
+   * @todo write docs
+   */
   ListOperators__ListOperators.sortListByNumberList = function(list, numberList, descending) {
     if(descending == null) descending = true;
     if(numberList.length == 0) return list;
@@ -11311,6 +11309,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+   * @todo write docs
+   */
   ListOperators__ListOperators.sortListByIndexes = function(list, indexedArray) {
     var newList = instantiate(typeOf(list));
     newList.name = list.name;
@@ -11323,6 +11324,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+   * @todo write docs
+   */
   ListOperators__ListOperators.concatWithoutRepetitions = function() { //?
     var i;
     var newList = arguments[0].clone();
@@ -11392,6 +11396,9 @@ define('src/index', ['exports'], function (exports) {
     return table.getImproved();
   };
 
+  /**
+   * @todo write docs
+   */
   ListOperators__ListOperators.getNewListForObjectType = function(object) {
     var newList = new List__default();
     newList[0] = object;
@@ -11550,7 +11557,7 @@ define('src/index', ['exports'], function (exports) {
    */
   ListOperators__ListOperators.jaccardIndex = function(list0, list1) {//TODO: see if this can be more efficient, maybe one idctionar for doing union and interstection at the same time
     return ListOperators__ListOperators.intersection(list0, list1).length/ListOperators__ListOperators.unionLists(list0, list1).length;
-  }
+  };
 
   /**
    * calculates Jaccard distance 1 - |list0 ∩ list1|/|list0 ∪ list1| see: https://en.wikipedia.org/wiki/Jaccard_index
@@ -11561,7 +11568,7 @@ define('src/index', ['exports'], function (exports) {
    */
   ListOperators__ListOperators.jaccardDistance = function(list0, list1) {
     return 1 - ListOperators__ListOperators.jaccardIndex(list0, list1);
-  }
+  };
 
   /**
    * builds a dictionary that matches an element of a List with all its indexes on the List (indexesDictionary[element] --> numberList of indexes of element on list)
@@ -11579,8 +11586,11 @@ define('src/index', ['exports'], function (exports) {
     });
 
     return indexesDictionary;
-  }
+  };
 
+  /**
+   * @todo write docs
+   */
   ListOperators__ListOperators.getIndexesTable = function(list){
     var indexesTable = new Table();
     indexesTable[0] = new List__default();
@@ -11590,20 +11600,20 @@ define('src/index', ['exports'], function (exports) {
     var i;
 
     list.forEach(function(element, i){
-      indexOnTable = indexesDictionary[element]
+      indexOnTable = indexesDictionary[element];
       if(indexOnTable==null){
         indexesTable[0].push(element);
         indexesTable[1].push(new NumberList(i));
         indexesDictionary[element]=indexesTable[0].length-1;
       } else {
-        indexesTable[1][indexOnTable].push(i)
+        indexesTable[1][indexOnTable].push(i);
       }
     });
 
     indexesTable[0] = indexesTable[0].getImproved();
 
     return indexesTable;
-  }
+  };
 
   /**
    * aggregates values of a list using an aggregator list as reference
@@ -11699,7 +11709,7 @@ define('src/index', ['exports'], function (exports) {
         var list;
         indexesTable[1].forEach(function(indexes){
           list = new List__default();
-          table[1].push(list)
+          table[1].push(list);
           indexes.forEach(function(index){
             list.push(toAggregateList[index]);
           });
@@ -11764,7 +11774,7 @@ define('src/index', ['exports'], function (exports) {
     }
 
     return null;
-  }
+  };
 
   /**
    * Analyses wether two lists are categorical identical, one is subcategorical to the other, or there's no relation
@@ -11784,12 +11794,12 @@ define('src/index', ['exports'], function (exports) {
       element = list0[i];
       projection = dictionary[element];
       if(projection==null){
-        dictionary[element] = list1[i]
+        dictionary[element] = list1[i];
       } else if(projection!=list1[i]){
         list0SubCategorical = false;
         break;
       }
-    };
+    }
 
     dictionary = {};
     var list1SubCategorical = true;
@@ -11797,18 +11807,18 @@ define('src/index', ['exports'], function (exports) {
       element = list1[i];
       projection = dictionary[element];
       if(projection==null){
-        dictionary[element] = list0[i]
+        dictionary[element] = list0[i];
       } else if(projection!=list0[i]){
         list1SubCategorical = false;
         break;
       }
-    };
+    }
 
     if(list1SubCategorical && list0SubCategorical) return 1;
     if(list0SubCategorical) return 2;
     if(list1SubCategorical) return 3;
     return 0;
-  }
+  };
 
   /**
    * calculates de entropy of a list, properties _mostRepresentedValue and _biggestProbability are added to the list
@@ -11832,7 +11842,7 @@ define('src/index', ['exports'], function (exports) {
       }
       return 0;
     }
-    
+
     if(freqTable==null) freqTable = list.getFrequenciesTable(true);// ListOperators.countElementsRepetitionOnList(list, true);
 
     list._mostRepresentedValue = freqTable[0][0];
@@ -11887,6 +11897,9 @@ define('src/index', ['exports'], function (exports) {
     return ig;
   };
 
+  /**
+   * @todo write docs
+   */
   ListOperators__ListOperators.getInformationGainAnalysis = function(feature, supervised) {
     if(feature == null || supervised == null || feature.length != supervised.length) return null;
 
@@ -11958,6 +11971,9 @@ define('src/index', ['exports'], function (exports) {
 
 
 
+  /**
+   * @ignore
+   */
   ListOperators__ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, mode, fillBlanks) {
     var result;
 
@@ -12037,7 +12053,7 @@ define('src/index', ['exports'], function (exports) {
   /**
    * creates an html string that depicts a proprtions bar with colors for categories
    * @param  {NumberList} normalizedWeights normalized weights
-   * 
+   *
    * @param  {Number} nChars width in characters
    * @param  {ColorList} colors list of categorical colors
    * @param  {String} character character or characters to be used as primitive
@@ -12062,7 +12078,7 @@ define('src/index', ['exports'], function (exports) {
     });
 
     return bars;
-  }
+  };
 
 
 
@@ -12470,6 +12486,9 @@ define('src/index', ['exports'], function (exports) {
   //////
 
 
+  /**
+   * @todo finish docs
+   */
   StringOperators.getParenthesisContents = function(text, brackets) {
     var contents = new StringList();
 
@@ -12487,9 +12506,17 @@ define('src/index', ['exports'], function (exports) {
 
     return contents;
   };
+
+  /**
+   * @todo finish docs
+   */
   StringOperators.getFirstParenthesisContent = function(text, brackets) {
     return StringOperators.getFirstParenthesisContentWithIndexes(text, brackets).content;
   };
+
+  /**
+   * @todo finish docs
+   */
   StringOperators.getFirstParenthesisContentWithIndexes = function(text, brackets) {
     var open = brackets ? "[" : "(";
     var close = brackets ? "]" : ")";
@@ -12535,27 +12562,45 @@ define('src/index', ['exports'], function (exports) {
     };
   };
 
+  /**
+   * @todo finish docs
+   */
   StringOperators.placeString = function(string, stringToPlace, index) {
     return string.substr(0, index) + stringToPlace + string.substr(index + stringToPlace.length);
   };
 
+  /**
+   * @todo finish docs
+   */
   StringOperators.insertString = function(string, stringToInsert, index) {
     return string.substr(0, index) + stringToInsert + string.substr(index);
   };
 
+  /**
+   * @todo finish docs
+   */
   StringOperators.removeEnters = function(string) {
     return string.replace(/(\StringOperators.ENTER|\StringOperators.ENTER2|\StringOperators.ENTER3)/gi, " ");
   };
 
+  /**
+   * @todo finish docs
+   */
   StringOperators.removeTabs = function(string) {
     return string.replace(/(\StringOperators.TAB|\StringOperators.TAB2|\t)/gi, "");
   };
 
+  /**
+   * @todo finish docs
+   */
   StringOperators.removePunctuation = function(string, replaceBy) {
     replaceBy = replaceBy || "";
     return string.replace(/[:,.;?!\(\)\"\']/gi, replaceBy);
   };
 
+  /**
+   * @todo finish docs
+   */
   StringOperators.removeDoubleSpaces = function(string) {
     var retString = string;
     var regExpr = RegExp(/  /);
@@ -12565,6 +12610,9 @@ define('src/index', ['exports'], function (exports) {
     return retString;
   };
 
+  /**
+   * @todo finish docs
+   */
   StringOperators.removeInitialRepeatedCharacter = function(string, character) {
     while(string.charAt(0) == character) string = string.substr(1);
     return string;
@@ -12583,12 +12631,18 @@ define('src/index', ['exports'], function (exports) {
     return tmp.textContent || tmp.innerText;
   };
 
+  /**
+   * @todo finish docs
+   */
   StringOperators.removeLinks = function(text) {
     text += ' ';
     var regexp = /https*:\/\/[a-zA-Z0-9\/\.]+( |:|;|\r|\t|\n|\v)/g;
     return(text.replace(regexp, ' ')).substr(0, text.length - 2);
   };
 
+  /**
+   * @todo finish docs
+   */
   StringOperators.removeQuotes = function(string) { //TODO:improve
     if(string.charAt(0) == "\"") string = string.substr(1);
     if(string.charAt(string.length - 1) == "\"") string = string.substr(0, string.length - 1);
@@ -12625,7 +12679,7 @@ define('src/index', ['exports'], function (exports) {
     r = r.replace(new RegExp(/[Ÿ]/g), "Y");
 
     return r;
-  };
+  }
 
   /**
    * creates a table with frequent words and occurrences numbers
@@ -12650,6 +12704,9 @@ define('src/index', ['exports'], function (exports) {
     return table;// ListOperators.countElementsRepetitionOnList(words, true, false, limit);
   };
 
+  /**
+   * @todo finish docs
+   */
   StringOperators.indexesOf = function(text, string) { //TODO:test
     var index = text.indexOf(string);
     if(index == -1) return new NumberList();
@@ -12683,6 +12740,9 @@ define('src/index', ['exports'], function (exports) {
 
   //counting / statistics
 
+  /**
+   * @todo finish docs
+   */
   StringOperators.countOccurrences = function(text, string) { //seems to be th emost efficient: http://stackoverflow.com/questions/4009756/how-to-count-string-occurrence-in-string
     var n = 0;
     var index = text.indexOf(string);
@@ -12693,12 +12753,18 @@ define('src/index', ['exports'], function (exports) {
     return n;
   };
 
+  /**
+   * @todo finish docs
+   */
   StringOperators.countWordOccurrences = function(string, word) {
     var regex = new RegExp("\\b" + word + "\\b");
     var match = string.match(regex);
     return match == null ? 0 : match.length;
   };
 
+  /**
+   * @todo finish docs
+   */
   StringOperators.countStringsOccurrences = function(text, strings) {
     var i;
     var numberList = new NumberList();
@@ -12710,9 +12776,16 @@ define('src/index', ['exports'], function (exports) {
 
   //validation
 
+  /**
+   * @todo finish docs
+   */
   StringOperators.validateEmail = function(text) {
     return StringOperators.MAIL_REGEX.test(text);
   };
+
+  /**
+   * @todo finish docs
+   */
   StringOperators.validateUrl = function(text) {
     return StringOperators.LINK_REGEX.test(text);
   };
@@ -12728,6 +12801,8 @@ define('src/index', ['exports'], function (exports) {
   //this object is deprecated
 
   /**
+   * @ignore
+   *
    * @classdesc Axis for 1D data.
    *
    * @constructor
@@ -12752,31 +12827,45 @@ define('src/index', ['exports'], function (exports) {
 
 
 
+  /**
+   * @todo write docs
+   */
   Axis.prototype.setDepartureInterval = function(departureInterval) {
     this.departureInterval = departureInterval;
     console.log('--> departureInterval', departureInterval);
     this.departureAmplitude = departureInterval.getSignedAmplitude();
 
   };
+
+  /**
+   * @todo write docs
+   */
   Axis.prototype.setArrivalInterval = function(arrivalInterval) {
     this.arrivalInterval = arrivalInterval;
     this.arrivalAmplitude = arrivalInterval.getSignedAmplitude();
   };
 
+  /**
+   * @todo write docs
+   */
   Axis.prototype.project = function(x) {
     return this.arrivalInterval.x + this.arrivalAmplitude * (x - this.departureInterval.x) / this.departureAmplitude;
   };
 
-
-  /**
+  /*
    * to be called once interval values changed
+   */
+  /**
+   * @todo write docs
    */
   Axis.prototype.update = function() {
     this.departureAmplitude = this.departureInterval.getSignedAmplitude();
     this.arrivalAmplitude = this.arrivalInterval.getSignedAmplitude();
   };
 
-
+  /**
+   * @todo write docs
+   */
   Axis.prototype.toString = function() {
     return "Axis[" + this.departureInterval.toString() + ", " + this.arrivalInterval.toString() + "]";
   };
@@ -12791,6 +12880,8 @@ define('src/index', ['exports'], function (exports) {
    *
    * @constructor
    * @description Creates a new 2d axis.
+   * @param  {Rectangle} departureFrame The Departure Frame
+   * @param  {Rectangle} arrivalFrame   The Arrival Frame
    * @category numbers
    */
   function Axis2D(departureFrame, arrivalFrame) {
@@ -12808,58 +12899,106 @@ define('src/index', ['exports'], function (exports) {
   }
 
 
+  /**
+   * Setup frames
+   * @param  {Rectangle} departureFrame The Departure Frame
+   * @param  {Rectangle} arrivalFrame   The Arrival Frame
+   */
   Axis2D.prototype.setFrames = function(departureFrame, arrivalFrame) {
     this.departureFrame = departureFrame;
     this.arrivalFrame = arrivalFrame;
     this._update();
   };
 
+  /**
+   * Set departure frame
+   * @param  {Object} departureFrame New Departure Frame.
+   */
   Axis2D.prototype.setDepartureFrame = function(departureFrame) {
     this.departureFrame = departureFrame;
     this._update();
   };
 
+  /**
+   * Set arrival frame
+   * @param  {Rectangle} arrivalFrame New arrival Frame.
+   */
   Axis2D.prototype.setArrivalFrame = function(arrivalFrame) {
     this.arrivalFrame = arrivalFrame;
     this._update();
   };
 
 
+  /**
+   * Projects a given point from the arrival frame to the departure frame.
+   * @param  {Point} point Point to project.
+   * @return {Point} projected Point.
+   */
   Axis2D.prototype.project = function(point) {
     return new Point((point.x - this.departureFrame.x) * this.pW + this.arrivalFrame.x, (point.y - this.departureFrame.y) * this.pH + this.arrivalFrame.y);
   };
 
 
+  /**
+   * Projects a given X value from the arrival frame to the departure frame.
+   * @param  {Number} x X value to project.
+   * @return {Number} new X value.
+   */
   Axis2D.prototype.projectX = function(x) {
     return(x - this.departureFrame.x) * this.pW + this.arrivalFrame.x;
   };
 
+  /**
+   * Projects a given y value from the arrival frame to the departure frame.
+   * @param  {Number} y Y value to project.
+   * @return {Number} new Y value.
+   */
   Axis2D.prototype.projectY = function(y) {
     return(y - this.departureFrame.y) * this.pH + this.arrivalFrame.y;
   };
 
+  /**
+   * Projects a given Point from the departure frame to the arrival frame.
+   * @param  {Point} point Point to project in the departure frame.
+   * @return {Point} reverse projected Point in the arrival frame.
+   */
   Axis2D.prototype.inverseProject = function(point) {
     return new Point((point.x - this.arrivalFrame.x) / this.pW + this.departureFrame.x, (point.y - this.arrivalFrame.y) / this.pH + this.departureFrame.y);
   };
 
 
+  /**
+   * Projects a given X value from the departure frame to the arrival frame.
+   * @param  {Number} x X value to project.
+   * @return {Number} new X value.
+   */
   Axis2D.prototype.inverseProjectX = function(x) {
     return(x - this.arrivalFrame.x) / this.pW + this.departureFrame.x;
   };
 
+  /**
+   * Projects a given Y value from the departure frame to the arrival frame.
+   * @param  {Number} y Y value to project.
+   * @return {Number} new Y value.
+   */
   Axis2D.prototype.inverseProjectY = function(y) {
     return(y - this.arrivalFrame.y) / this.pH + this.departureFrame.y;
   };
 
 
-
-
+  /**
+  * @ignore
+  */
   Axis2D.prototype._update = function() {
     this.pW = this.arrivalFrame.width / this.departureFrame.width;
     this.pH = this.arrivalFrame.height / this.departureFrame.height;
   };
 
 
+  /**
+   * Convert Axis to string
+   * @return {String} String representation of axis.
+   */
   Axis2D.prototype.toString = function() {
     return "Axis2D[" + this.departureFrame.toString() + ", " + this.arrivalFrame.toString() + "]";
   };
@@ -12908,12 +13047,6 @@ define('src/index', ['exports'], function (exports) {
     );
   };
 
-  // /**
-  // * Applies Matrix to context transform
-  // **/
-  // Matrix.prototype.applyToContext=function(context){
-  // context.transform(this.a, this.b, this.c, this.d, this.tx, this.ty);
-  // }
 
   /**
    * Returns the result of this matrix multiplied by another matrix
@@ -13042,6 +13175,9 @@ define('src/index', ['exports'], function (exports) {
 
 
 
+  /**
+  * @todo write docs
+  */
   DateAxis.prototype.setDepartureDateInterval = function(departureDateInterval) {
     this.departureDateInterval = departureDateInterval;
     this.time0 = this.departureDateInterval.date0.getTime();
@@ -13049,19 +13185,27 @@ define('src/index', ['exports'], function (exports) {
     this.dTime = this.time1 - this.time0;
 
   };
+
+  /**
+  * @todo write docs
+  */
   DateAxis.prototype.setArrivalInterval = function(arrivalInterval) {
     this.arrivalInterval = arrivalInterval;
     this.arrivalAmplitude = arrivalInterval.getAmplitude();
   };
 
+  /**
+  * @todo write docs
+  */
   DateAxis.prototype.project = function(date) {
     return this.arrivalInterval.x + this.arrivalAmplitude * (date.getTime() - this.time0) / this.dTime;
   };
 
 
   /**
-   * to be called once intreval values changed
-   */
+  * to be called once intreval values changed
+  * @todo write docs
+  */
   DateAxis.prototype.update = function() {
     this.time0 = this.departureDateInterval.date0.getTime();
     this.time1 = this.departureDateInterval.date1.getTime();
@@ -13070,6 +13214,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+  * @todo write docs
+  */
   DateAxis.prototype.toString = function() {
     return "DateAxis[" + this.departureDateInterval.toString() + ", " + this.arrivalInterval.toString() + "]";
   };
@@ -13096,15 +13243,24 @@ define('src/index', ['exports'], function (exports) {
   }
 
 
+  /**
+  * @todo write docs
+  */
   DateInterval.prototype.toString = function() {
     return "DateInterval[" + this.date0 + ", " + this.date1 + "]";
   };
 
+  /**
+  * @todo write docs
+  */
   DateInterval.prototype.getMax = function() {
     if(this.date1 > this.date0) return this.date1;
     return this.date0;
   };
 
+  /**
+  * @todo write docs
+  */
   DateInterval.prototype.getMin = function() {
     if(this.date0 < this.date1) return this.date0;
     return this.date1;
@@ -13144,10 +13300,16 @@ define('src/index', ['exports'], function (exports) {
   function CountryOperators() {}
 
 
+  /**
+   * @todo write docs
+   */
   CountryOperators.getSimplifiedName = function(name) {
     return name.replace(/[\.\- ,\']/g, "").toLowerCase();
   };
 
+  /**
+   * @todo write docs
+   */
   CountryOperators.getSimplifiedNames = function(names) {
     var simplifiedNames = new StringList();
     var name;
@@ -13205,6 +13367,9 @@ define('src/index', ['exports'], function (exports) {
   }
 
 
+  /**
+  * @todo write docs
+  */
   Country.prototype.generatesSimplifiedNames = function() {
     this._simplifiedNames = CountryOperators.getSimplifiedNames(this.alternativeNames);
     this._simplifiedId = CountryOperators.getSimplifiedName(this.id);
@@ -13215,6 +13380,9 @@ define('src/index', ['exports'], function (exports) {
       .replace('United Arab', 'U.A.');
   };
 
+  /**
+  * @todo write docs
+  */
   Country.prototype.nameMatches = function(name) {
     if(this._simplifiedId == null) this.generatesSimplifiedNames();
     name = CountryOperators.getSimplifiedName(name);
@@ -13222,6 +13390,9 @@ define('src/index', ['exports'], function (exports) {
     return this._simplifiedNames.indexOf(name) != -1;
   };
 
+  /**
+  * @todo write docs
+  */
   Country.prototype.getFrame = function() {
     if(this._frame == null) {
       this._frame = this.simplePolygonList == null ? this.polygonList.getFrame() : this.simplePolygonList.getFrame();
@@ -13399,43 +13570,83 @@ define('src/index', ['exports'], function (exports) {
   }
 
 
+  /**
+  * @todo write docs
+  */
   Point3D.prototype.distanceToPoint3D = function(point3D) {
     return Math.sqrt(Math.pow(Math.abs(this.x - point3D.x), 2) + Math.pow(Math.abs(this.y - point3D.y), 2) + Math.pow(Math.abs(this.z - point3D.z), 2));
   };
 
+  /**
+  * @todo write docs
+  */
   Point3D.prototype.distanceToPointSquared = function(point3D) {
     return Math.pow(Math.abs(this.x - point3D.x), 2) + Math.pow(Math.abs(this.y - point3D.y), 2) + Math.pow(Math.abs(this.z - point3D.z), 2);
   };
+
+  /**
+  * @todo write docs
+  */
   Point3D.prototype.getNorm = function() {
     return Math.sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z));
   };
 
+  /**
+  * @todo write docs
+  */
   Point3D.prototype.normalizeToValue = function(k) {
     var factor = k / Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2) + Math.pow(this.z, 2));
     return new Point3D(this.x * factor, this.y * factor, this.z * factor);
   };
 
+  /**
+  * @todo write docs
+  */
   Point3D.prototype.cross = function(point3D) {
     var _x = this.y * point3D.z - this.z * point3D.y;
     var _y = this.z * point3D.x - this.x * point3D.z;
     var _z = this.x * point3D.y - this.y * point3D.x;
     return new Point3D(_x, _y, _z);
   };
+
+  /**
+  * @todo write docs
+  */
   Point3D.prototype.dot = function(point3D) {
     return this.x * point3D.x + this.y * point3D.y + this.z * point3D.z;
   };
+
+  /**
+  * @todo write docs
+  */
   Point3D.prototype.add = function(point) {
     return new Point3D(point.x + this.x, point.y + this.y, point.z + this.z);
   };
+
+  /**
+  * @todo write docs
+  */
   Point3D.prototype.subtract = function(point) {
     return new Point3D(this.x - point.x, this.y - point.y, this.z - point.z);
   };
+
+  /**
+  * @todo write docs
+  */
   Point3D.prototype.factor = function(k) {
     return new Point3D(this.x * k, this.y * k, this.z * k);
   };
+
+  /**
+  * @todo write docs
+  */
   Point3D.prototype.interpolate = function(point3D, t) {
     return new Point3D((1 - t) * this.x + t * point3D.x, (1 - t) * this.y + t * point3D.y, (1 - t) * this.z + t * point3D.z);
   };
+
+  /**
+  * @todo write docs
+  */
   Point3D.prototype.getAngles = function() {
     var radius = Math.sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z));
     var alfa = 0.5 * Math.PI - Math.atan2(this.z / radius, this.y / radius);
@@ -13446,6 +13657,10 @@ define('src/index', ['exports'], function (exports) {
     if(beta > Math.PI) beta -= 2 * Math.PI;
     return new Point3D(alfa, beta, 0);
   };
+
+  /**
+  * @todo write docs
+  */
   Point3D.prototype.getInverseAngles = function() {
     var radius = Math.sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z));
     var alfa = -0.5 * Math.PI + Math.atan2(-this.z / radius, -this.y / radius);
@@ -13458,13 +13673,23 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+  * @todo write docs
+  */
   Point3D.prototype.clone = function() {
     return new Point3D(this.x, this.y, this.z);
   };
+
+  /**
+  * @todo write docs
+  */
   Point3D.prototype.toString = function() {
     return "(x=" + this.x + ", y=" + this.y + ", z=" + this.z + ")";
   };
 
+  /**
+  * @todo write docs
+  */
   Point3D.prototype.destroy = function() {
     delete this.type;
     delete this.name;
@@ -13479,19 +13704,30 @@ define('src/index', ['exports'], function (exports) {
 
 
 
-
+  /**
+   * @todo write docs
+   */
   PointOperators.angleBetweenVectors = function(point0, point1) {
     return Math.atan2(point1.y, point1.x) - Math.atan2(point0.y, point0.x);
   };
 
+  /**
+   * @todo write docs
+   */
   PointOperators.angleFromTwoPoints = function(point0, point1) {
     return Math.atan2(point1.y - point0.y, point1.x - point0.x);
   };
 
+  /**
+   * @todo write docs
+   */
   PointOperators.dot = function(point0, point1) {
     return point0.x * point1.x + point0.y * point1.y;
   };
 
+  /**
+   * @todo write docs
+   */
   PointOperators.twoPointsInterpolation = function(point0, point1, t) {
     return new Point((1 - t) * point0.x + t * point1.x, (1 - t) * point0.y + t * point1.y);
   };
@@ -13514,6 +13750,9 @@ define('src/index', ['exports'], function (exports) {
     return [controlPoint0, controlPoint1];
   };
 
+  /**
+   * @todo write docs
+   */
   GeometryOperators.bezierCurvePoints = function(x0, y0, c0x, c0y, c1x, c1y, x1, y1, t) {
     var s = 1 - t;
     var ax = s * x0 + t * c0x;
@@ -13536,6 +13775,9 @@ define('src/index', ['exports'], function (exports) {
 
 
 
+  /**
+   * @todo write docs
+   */
   GeometryOperators.trueBezierCurveHeightHorizontalControlPoints = function(x0, x1, y0, y1, c0x, c1x, x) {
     var dx = x1 - x0;
     var x = (x - x0) / dx;
@@ -13562,6 +13804,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   /**
+   * @todo write docs
    * This an approximation, it doesn't take into account actual values of c0x and c1x
    */
   GeometryOperators.bezierCurveHeightHorizontalControlPoints = function(y0, c0x, c1x, y1, t) { //TODO:fix
@@ -13615,6 +13858,9 @@ define('src/index', ['exports'], function (exports) {
     return Math.sqrt(Math.min(d0, d1));
   };
 
+  /**
+   * @todo write docs
+   */
   GeometryOperators.triangleContainsPoint = function(pT0, pT1, pT2, p) {
     var a = (pT0.x - p.x) * (pT1.y - p.y) - (pT1.x - p.x) * (pT0.y - p.y);
     var b = (pT1.x - p.x) * (pT2.y - p.y) - (pT2.x - p.x) * (pT1.y - p.y);
@@ -13622,6 +13868,9 @@ define('src/index', ['exports'], function (exports) {
     return(a > 0 && b > 0 && c > 0) || (a >= 0 && b >= 0 && c >= 0);
   };
 
+  /**
+   * @todo write docs
+   */
   GeometryOperators.triangleArea = function(triangle) {
     return Math.abs(triangle.a.x * (triangle.b.y - triangle.c.y) + triangle.b.x * (triangle.c.y - triangle.a.y) + triangle.c.x * (triangle.a.y - triangle.b.y)) / 2;
   };
@@ -13629,12 +13878,18 @@ define('src/index', ['exports'], function (exports) {
 
   /////////////lines (line is a Point with values m and b in y=mx+b)
 
+  /**
+   * @todo write docs
+   */
   GeometryOperators.lineFromTwoPoints = function(point0, point1) {
     if(point0.x == point1.x) return new Point(Infinity, point0.x);
     var m = (point1.y - point0.y) / (point1.x - point0.x);
     return new Point(m, point0.y - m * point0.x);
   };
 
+  /**
+   * @todo write docs
+   */
   GeometryOperators.distancePointToLine = function(point, line) {
     var m2;
     var b2;
@@ -13649,6 +13904,9 @@ define('src/index', ['exports'], function (exports) {
     return Math.sqrt(Math.pow(point.x - interPoint.x, 2) + Math.pow(point.y - interPoint.y, 2));
   };
 
+  /**
+   * @todo write docs
+   */
   GeometryOperators.distancePointToSegment = function(point, point0Segment, point1Segment) {
     var m = point0Segment.x == point1Segment.x ? Infinity : (point1Segment.y - point0Segment.y) / (point1Segment.x - point0Segment.x);
     var line = m == Infinity ? new Point(Infinity, point0Segment.x) : new Point(m, point0Segment.y - m * point0Segment.x);
@@ -13666,6 +13924,9 @@ define('src/index', ['exports'], function (exports) {
     return Math.min(point.distanceToPoint(point0Segment), point.distanceToPoint(point1Segment));
   };
 
+  /**
+   * @todo write docs
+   */
   GeometryOperators.intersectionLines = function(line0, line1) {
     if(line0.x == line1.x) {
       if(line0.y == line1.y) {
@@ -13688,6 +13949,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+   * @todo write docs
+   */
   GeometryOperators.VennCircles = function(area0, area1, areaIntersection, centerInLens, precision) {
     var rA = Math.sqrt(area0 / Math.PI);
     var rB = Math.sqrt(area1 / Math.PI);
@@ -13747,6 +14011,9 @@ define('src/index', ['exports'], function (exports) {
     return dM;
   };
 
+  /**
+   * @todo write docs
+   */
   GeometryOperators.circlesCommonArea = function(ra, rb, d) {
     if(d >= (ra + rb)) return 0;
     if(d + Math.min(ra, rb) <= Math.max(ra, rb)) {
@@ -13793,11 +14060,17 @@ define('src/index', ['exports'], function (exports) {
 
   //////Delauney
 
+  /**
+   * @todo write docs
+   */
   GeometryOperators.delauney = function(polygon) { /// ---> move to Polygon operators, chnge name to getDelauneyTriangulation
     return _triangulate(polygon);
   };
 
 
+  /**
+   * @todo write docs
+   */
   function Triangle(a, b, c) {
     this.a = a;
     this.b = b;
@@ -13835,10 +14108,16 @@ define('src/index', ['exports'], function (exports) {
   }
 
 
+  /**
+   * @ignore
+   */
   function byX(a, b) {
     return b.x - a.x;
   }
 
+  /**
+   * @ignore
+   */
   function dedup(edges) {
     var j = edges.length,
       a, b, i, m, n;
@@ -13860,6 +14139,9 @@ define('src/index', ['exports'], function (exports) {
     }
   }
 
+  /**
+   * @ignore
+   */
   function _triangulate(vertices) {
     /* Bail if there aren't enough vertices to form any triangles. */
     if(vertices.length < 3)
@@ -13970,49 +14252,6 @@ define('src/index', ['exports'], function (exports) {
   function Draw() {}
 
 
-  Draw.drawSmoothPolygon = function(polygon, closed, amount) { //TODO: add tx, ty
-    amount = amount == null ? 30 : amount;
-    var controlPoints;
-
-    if(polygon.length < 2) return null;
-    if(polygon.length == 2) {
-      var a = Math.atan2(polygon[1].y - polygon[0].y, polygon[1].x - polygon[0].x) - 0.5 * Math.PI;
-      var cosa = amount * Math.cos(a);
-      var sina = amount * Math.sin(a);
-      src_Global__context.moveTo(polygon[0].x, polygon[0].y);
-      src_Global__context.bezierCurveTo(
-        polygon[0].x + cosa, polygon[0].y + sina,
-        polygon[1].x + cosa, polygon[1].y + sina,
-        polygon[1].x, polygon[1].y
-      );
-      src_Global__context.bezierCurveTo(
-        polygon[1].x - cosa, polygon[1].y - sina,
-        polygon[0].x - cosa, polygon[0].y - sina,
-        polygon[0].x, polygon[0].y
-      );
-      return;
-    }
-    var i;
-    var nPoints = polygon.length;
-    var prevPoint = polygon[nPoints - 1];
-    var point = polygon[0];
-    var nextPoint = polygon[1];
-    controlPoints = GeometryOperators.getSoftenControlPoints(prevPoint, point, nextPoint, amount);
-    var prevCP = controlPoints[1];
-    var cP;
-    src_Global__context.moveTo(point.x, point.y);
-    prevPoint = point;
-    var nSteps = nPoints + Number(closed);
-    for(i = 1; i < nSteps; i++) {
-      point = polygon[i % nPoints];
-      nextPoint = polygon[(i + 1) % nPoints];
-      controlPoints = GeometryOperators.getSoftenControlPoints(prevPoint, point, nextPoint, amount);
-      cP = controlPoints[0];
-      src_Global__context.bezierCurveTo(prevCP.x, prevCP.y, cP.x, cP.y, point.x, point.y);
-      prevCP = controlPoints[1];
-      prevPoint = point;
-    }
-  };
 
   /**
    * modes:
@@ -14023,12 +14262,12 @@ define('src/index', ['exports'], function (exports) {
    * 4: fill repeated from corner
    * 5: fill repeated from 0,0
    */
-  Draw.fillRectangleWithImage = function(rectangle, image, mode, backColor) {
+  Draw.fillRectangleWithImage = function(rectangle, image, mode, backColor, graphics) {
     if(backColor != null) {
-      src_Global__context.fillStyle = backColor;
-      src_Global__context.beginPath();
-      src_Global__context.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
-      src_Global__context.fill();
+      graphics.context.fillStyle = backColor;
+      graphics.context.beginPath();
+      graphics.context.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+      graphics.context.fill();
     }
 
     var sx;
@@ -14041,7 +14280,7 @@ define('src/index', ['exports'], function (exports) {
     switch(mode) {
 
       case 0:
-        src_Global__context.drawImage(image, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+        graphics.context.drawImage(image, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
         break;
       case 1:
         sx = Math.max(image.width - rectangle.width, 0) * 0.5;
@@ -14050,7 +14289,7 @@ define('src/index', ['exports'], function (exports) {
         dy = rectangle.y + Math.max(rectangle.height - image.height, 0) * 0.5;
         dWidth = Math.min(image.width, rectangle.width);
         dHeight = Math.min(image.height, rectangle.height);
-        src_Global__context.drawImage(image, sx, sy, dWidth, dHeight, dx, dy, dWidth, dHeight);
+        graphics.context.drawImage(image, sx, sy, dWidth, dHeight, dx, dy, dWidth, dHeight);
         break;
       case 2:
         sx = Math.max(image.width - rectangle.width, 0);
@@ -14063,7 +14302,7 @@ define('src/index', ['exports'], function (exports) {
         if(propD > propB) dWidth = dHeight / propB;
         dx = rectangle.x + (rectangle.width - dWidth) * 0.5;
         dy = rectangle.y + (rectangle.height - dHeight) * 0.5;
-        src_Global__context.drawImage(image, 0, 0, image.width, image.height, dx, dy, dWidth, dHeight);
+        graphics.context.drawImage(image, 0, 0, image.width, image.height, dx, dy, dWidth, dHeight);
         break;
       case 3:
         var sh, sw;
@@ -14080,7 +14319,7 @@ define('src/index', ['exports'], function (exports) {
           sy = 0.5 * (image.height - sh);
 
         }
-        src_Global__context.drawImage(image, sx, sy, sw, sh, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+        graphics.context.drawImage(image, sx, sy, sw, sh, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
         break;
       case 4:
         break;
@@ -14089,84 +14328,11 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
-
   /**
-   * Draws an ellipse using the current state of the canvas.
-   * @param {CanvasRenderingContext2D} context
-   * @param {Number} x The center x coordinate
-   * @param {Number} y The center y coordinate
-   * @param {Number} rW The horizontal radius of the ellipse
-   * @param {Number} rH The vertical radius of the ellipse
-
+   * @todo write docs
    */
-  Draw.drawEllipse = function(x, y, rW, rH) {
-    var k = 0.5522848, // 4 * ((√(2) - 1) / 3)
-      ox = rW * k, // control point offset horizontal
-      oy = rH * k, // control point offset vertical
-      xe = x + rW, // x-end
-      ye = y + rH; // y-end
-
-    src_Global__context.moveTo(x - rW, y);
-    src_Global__context.bezierCurveTo(x - rW, y - oy, x - ox, y - rH, x, y - rH);
-    src_Global__context.bezierCurveTo(x + ox, y - rH, xe, y - oy, xe, y);
-    src_Global__context.bezierCurveTo(xe, y + oy, x + ox, ye, x, ye);
-    src_Global__context.bezierCurveTo(x - ox, ye, x - rW, y + oy, x - rW, y);
-    src_Global__context.moveTo(x - rW, y);
-  };
-
-  /**
-   * Draws a polygon
-   * @param {CanvasRenderingContext2D} context
-   * @param {Polygon} Polygon to draw
-   * @param {Boolean} close polygon
-   * @param {Number} tx horizontal translation
-   * @param {Number} ty vertical translation
-   */
-  Draw.drawPolygon = function(polygon, close, tx, ty) {
-    tx = tx || 0;
-    ty = ty || 0;
-    var i;
-    src_Global__context.moveTo(tx + polygon[0].x, ty + polygon[0].y);
-    for(i = 1; polygon[i] != null; i++) {
-      src_Global__context.lineTo(tx + polygon[i].x, ty + polygon[i].y);
-    }
-    if(close) {
-      src_Global__context.lineTo(tx + polygon[0].x, ty + polygon[0].y);
-    }
-  };
-
-  Draw.drawPolygonWithControlPoints = function(polygon, controlPoints, tx, ty) {
-    tx = tx || 0;
-    ty = ty || 0;
-    var i;
-    src_Global__context.moveTo(tx + polygon[0].x, ty + polygon[0].y);
-    for(i = 1; polygon[i] != null; i++) {
-      src_Global__context.bezierCurveTo(tx + controlPoints[(i - 1) * 2].x, ty + controlPoints[(i - 1) * 2].y,
-        tx + controlPoints[i * 2 - 1].x, ty + controlPoints[i * 2 - 1].y,
-        tx + polygon[i].x, ty + polygon[i].y);
-    }
-  };
-
-  Draw.drawBezierPolygon = function(bezierPolygon, tx, ty) {
-    tx = tx || 0;
-    ty = ty || 0;
-    var bI;
-    var N = Math.floor((bezierPolygon.length - 1) / 3);
-    var i;
-    src_Global__context.moveTo(tx + bezierPolygon[0].x, ty + bezierPolygon[0].y);
-    for(i = 0; i < N; i++) {
-      bI = i * 3 + 1;
-
-      src_Global__context.bezierCurveTo(
-        tx + bezierPolygon[bI].x, ty + bezierPolygon[bI].y,
-        tx + bezierPolygon[bI + 1].x, ty + bezierPolygon[bI + 1].y,
-        tx + bezierPolygon[bI + 2].x, ty + bezierPolygon[bI + 2].y
-      );
-    }
-  };
-
-  Draw.drawBezierPolygonTransformed = function(bezierPolygon, transformationFunction) {
-    if(bezierPolygon == null ||  bezierPolygon.length == 0) return;
+  Draw.drawBezierPolygonTransformed = function(bezierPolygon, transformationFunction, graphics) {
+    if(bezierPolygon == null ||  bezierPolygon.length === 0) return;
 
     var bI;
     var N = Math.floor((bezierPolygon.length - 1) / 3);
@@ -14175,7 +14341,7 @@ define('src/index', ['exports'], function (exports) {
     var p1;
     var p2;
 
-    src_Global__context.moveTo(p0.x, p0.y);
+    graphics.context.moveTo(p0.x, p0.y);
     for(i = 0; i < N; i++) {
       bI = i * 3 + 1;
 
@@ -14183,7 +14349,7 @@ define('src/index', ['exports'], function (exports) {
       p1 = transformationFunction(bezierPolygon[bI + 1]);
       p2 = transformationFunction(bezierPolygon[bI + 2]);
 
-      src_Global__context.bezierCurveTo(
+      graphics.context.bezierCurveTo(
         p0.x, p0.y,
         p1.x, p1.y,
         p2.x, p2.y
@@ -14191,83 +14357,34 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
-  Draw.drawPolygonTransformed = function(polygon, transformationFunction) {
+  /**
+   * @todo write docs
+   */
+  Draw.prototype.drawPolygonTransformed = function(polygon, transformationFunction, graphics) {
     var p = transformationFunction(polygon[0]);
-    src_Global__context.moveTo(p.x, p.y);
+    graphics.context.moveTo(p.x, p.y);
     for(var i = 0; polygon[i] != null; i++) {
       p = transformationFunction(polygon[i]);
-      src_Global__context.lineTo(p.x, p.y);
+      graphics.context.lineTo(p.x, p.y);
     }
   };
 
 
-  Draw.drawSliderRectangle = function(x, y, width, height) {
-    src_Global__context.arc(x + width * 0.5, y, width * 0.5, Math.PI, TwoPi);
-    src_Global__context.lineTo(x + width, y);
-    src_Global__context.arc(x + width * 0.5, y + height, width * 0.5, 0, Math.PI);
-    src_Global__context.lineTo(x, y);
+  /**
+   * @todo write docs
+   */
+  Draw.prototype.drawSliderRectangle = function(x, y, width, height, graphics) {
+    graphics.context.arc(x + width * 0.5, y, width * 0.5, Math.PI, TwoPi);
+    graphics.context.lineTo(x + width, y);
+    graphics.context.arc(x + width * 0.5, y + height, width * 0.5, 0, Math.PI);
+    graphics.context.lineTo(x, y);
     //context.fillRect(x, y, width, height);
   };
 
-
-
   /**
-   * Draws a rounded rectangle using the current state of the canvas.
-   * If you omit the last three params, it will draw a rectangle
-   * outline with a 5 pixel border radius
-   * @param {CanvasRenderingContext2D} context
-   * @param {Number} x The top left x coordinate
-   * @param {Number} y The top left y coordinate
-   * @param {Number} width The width of the rectangle
-   * @param {Number} height The height of the rectangle
-   * @param {Number} radius The corner radius. Defaults to 5;
+   * @todo write docs
    */
-  Draw.drawRoundRect = function(x, y, width, height, radius) {
-    radius = radius || 0;
-    var bottom = y + height;
-    src_Global__context.moveTo(x + radius, y);
-    src_Global__context.lineTo(x + width - radius, y);
-    src_Global__context.quadraticCurveTo(x + width, y, x + width, y + radius);
-    src_Global__context.lineTo(x + width, y + height - radius);
-    src_Global__context.quadraticCurveTo(x + width, bottom, x + width - radius, bottom);
-    src_Global__context.lineTo(x + radius, bottom);
-    src_Global__context.quadraticCurveTo(x, bottom, x, bottom - radius);
-    src_Global__context.lineTo(x, y + radius);
-    src_Global__context.quadraticCurveTo(x, y, x + radius, y);
-  };
-
-  Draw.drawEquilateralTriangle = function(x, y, radius, angle) { //deprecated
-    angle = angle || 0;
-    src_Global__context.moveTo(radius * Math.cos(angle) + x, radius * Math.sin(angle) + y);
-    src_Global__context.lineTo(radius * Math.cos(angle + 2.0944) + x, radius * Math.sin(angle + 2.0944) + y);
-    src_Global__context.lineTo(radius * Math.cos(angle + 4.1888) + x, radius * Math.sin(angle + 4.1888) + y);
-    src_Global__context.lineTo(radius * Math.cos(angle) + x, radius * Math.sin(angle) + y);
-  };
-
-  Draw.drawArrowTriangle = function(p0, p1, base) {
-    var angle = p0.angleToPoint(p1);
-    var height = p0.distanceToPoint(p1);
-    Draw.drawTriangleFromBase(p0.x, p0.y, base, height, angle);
-  };
-
-  Draw.drawTriangleFromBase = function(x, y, base, height, angle) {
-    src_Global__context.moveTo(x + 0.5 * base * Math.cos(angle + Math.PI * 0.5), y + 0.5 * base * Math.sin(angle + Math.PI * 0.5));
-    src_Global__context.lineTo(x + 0.5 * base * Math.cos(angle - Math.PI * 0.5), y + 0.5 * base * Math.sin(angle - Math.PI * 0.5));
-    src_Global__context.lineTo(x + height * Math.cos(angle), y + height * Math.sin(angle));
-    src_Global__context.lineTo(x + 0.5 * base * Math.cos(angle + Math.PI * 0.5), y + 0.5 * base * Math.sin(angle + Math.PI * 0.5));
-  };
-
-  Draw.drawHorizontalFlowPiece = function(x0, x1, y0U, y0D, y1U, y1D, offX) {
-    src_Global__context.moveTo(x0, y0U);
-    src_Global__context.bezierCurveTo(x0 + offX, y0U, x1 - offX, y1U, x1, y1U);
-    src_Global__context.lineTo(x1, y1D);
-    src_Global__context.bezierCurveTo(x1 - offX, y1D, x0 + offX, y0D, x0, y0D);
-    src_Global__context.lineTo(x0, y0U);
-  };
-
-
-
-  Draw.drawRectangles = function(rectangleList, x, y, colors, margin, bitmapDataList, bitmapDataDrawMode) {
+  Draw.drawRectangles = function(rectangleList, x, y, colors, margin, bitmapDataList, bitmapDataDrawMode, graphics) {
     margin = margin || 0;
     var twoMargin = 2 * margin;
     var i;
@@ -14277,71 +14394,62 @@ define('src/index', ['exports'], function (exports) {
     for(i = 0; rectangleList[i] != null; i++) {
       rect = rectangleList[i];
       if(rect.height <= margin || rect.width <= margin) continue;
-      if(colors != null) src_Global__context.fillStyle = colors[i % nColors];
-      src_Global__context.fillRect(rect.x + x + margin, rect.y + y + margin, rect.width - twoMargin, rect.height - twoMargin);
+      if(colors != null) graphics.context.fillStyle = colors[i % nColors];
+      graphics.context.fillRect(rect.x + x + margin, rect.y + y + margin, rect.width - twoMargin, rect.height - twoMargin);
       if(bitmapDataList != null && bitmapDataList[i] != null) {
         adjustedRect.x = rect.x + x + margin;
         adjustedRect.y = rect.y + y + margin;
         adjustedRect.width = rect.width - twoMargin;
         adjustedRect.height = rect.height - twoMargin;
-        Draw.fillRectangleWithImage(src_Global__context, adjustedRect, bitmapDataList[i], bitmapDataDrawMode);
+        this.fillRectangleWithImage(graphics.context, adjustedRect, bitmapDataList[i], bitmapDataDrawMode);
       }
     }
   };
 
-  Draw.drawQuadrilater = function(p0, p1, p2, p3, close) {
-    close = close == null ? true : close;
-    src_Global__context.moveTo(p0.x, p0.y);
-    src_Global__context.lineTo(p1.x, p1.y);
-    src_Global__context.lineTo(p2.x, p2.y);
-    src_Global__context.lineTo(p3.x, p3.y);
-    if(close) src_Global__context.lineTo(p0.x, p0.y);
+  /**
+   * @todo write docs
+   */
+  Draw.drawHorizontalFlowPiece = function(x0, x1, y0U, y0D, y1U, y1D, offX, graphics) {
+    graphics.context.moveTo(x0, y0U);
+    graphics.context.bezierCurveTo(x0 + offX, y0U, x1 - offX, y1U, x1, y1U);
+    graphics.context.lineTo(x1, y1D);
+    graphics.context.bezierCurveTo(x1 - offX, y1D, x0 + offX, y0D, x0, y0D);
+    graphics.context.lineTo(x0, y0U);
   };
 
+
   /**
+   * @todo write docs
    * it assumes that both circles centers have same y coordinates
    */
-  Draw.drawLens = function(circle0, circle1) {
+  Draw.drawLens = function(circle0, circle1, graphics) {
     if(circle1.x < circle0.x) {
       var _circle = circle1.clone();
       circle1 = circle0.clone();
       circle0 = _circle;
     }
     if(circle1.x + circle1.z <= circle0.x + circle0.z) {
-      src_Global__context.arc(circle1.x, circle1.y, circle1.z, 0, TwoPi);
+      graphics.context.arc(circle1.x, circle1.y, circle1.z, 0, TwoPi);
       return;
     } else if(circle0.x - circle0.z >= circle1.x - circle1.z) {
-      src_Global__context.arc(circle0.x, circle0.y, circle0.z, 0, TwoPi);
+      graphics.context.arc(circle0.x, circle0.y, circle0.z, 0, TwoPi);
       return;
     }
 
     var angles = GeometryOperators.circlesLensAngles(circle0, circle1);
 
-    src_Global__context.arc(circle0.x, circle0.y, circle0.z, angles[0], angles[1]);
-    src_Global__context.arc(circle1.x, circle1.y, circle1.z, angles[2], angles[3]);
+    graphics.context.arc(circle0.x, circle0.y, circle0.z, angles[0], angles[1]);
+    graphics.context.arc(circle1.x, circle1.y, circle1.z, angles[2], angles[3]);
   };
 
-
-  // Draw.drawAndCapture = function(drawFunction, frame, target) {
-  //   // TODO refactor this to not reassign context as that prevents this
-  //   // from building.
-
-  //   var defaultContext = context;
-  //   context = hiddenContext;
-  //   context.canvas.setAttribute('width', frame.width);
-  //   context.canvas.setAttribute('height', frame.height);
-  //   context.clearRect(0, 0, frame.width, frame.height);
-
-  //   context.translate(-frame.x, -frame.y);
-
-  //   drawFunction.call(target);
-
-  //   var image = new Image();
-  //   image.src = context.canvas.toDataURL();
-
-  //   context = defaultContext;
-  //   return image;
-  // };
+  /**
+   * @todo write docs
+   */
+  Draw.drawArrowTriangle = function(p0, p1, base, graphics) {
+    var angle = p0.angleToPoint(p1);
+    var height = p0.distanceToPoint(p1);
+    graphics.drawTriangleFromBase(p0.x, p0.y, base, height, angle);
+  };
 
   exports.Draw = Draw;
 
@@ -14476,6 +14584,9 @@ define('src/index', ['exports'], function (exports) {
 
   };
 
+  /**
+   * @todo write docs
+   */
   PolygonOperators._findClosestNodes = function(nodeList) {
     var i, j;
     var d2;
@@ -14498,6 +14609,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+   * @todo write docs
+   */
   PolygonOperators.sortOnXY = function(polygon) {
     return polygon.sort(function(p0, p1) {
       if(p0.x < p1.x) return -1;
@@ -14507,10 +14621,16 @@ define('src/index', ['exports'], function (exports) {
   };
 
   //TODO: move this to PointOperators
+  /**
+   * @todo write docs
+   */
   PolygonOperators.crossProduct3Points = function(o, a, b) {
     return(a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
   };
 
+  /**
+   * @todo write docs
+   */
   PolygonOperators.expandFromBarycenter = function(polygon, factor) {
     var newPolygon = new Polygon();
     var barycenter = polygon.getBarycenter();
@@ -14522,6 +14642,9 @@ define('src/index', ['exports'], function (exports) {
     return newPolygon;
   };
 
+  /**
+   * @todo write docs
+   */
   PolygonOperators.expandInAngles = function(polygon, amount) { //TODO: test if it works with convex polygons
     var newPolygon = new Polygon();
     var p0 = polygon[polygon.length - 1];
@@ -14551,6 +14674,9 @@ define('src/index', ['exports'], function (exports) {
     return newPolygon;
   };
 
+  /**
+   * @todo write docs
+   */
   PolygonOperators.simplifyPolygon = function(polygon, margin) {
     margin = margin == null || margin == 0 ? 1 : margin;
     var newPolygon = polygon.clone();
@@ -14576,44 +14702,50 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  /**
+  /*
    * used techinique: draws the bézier polygon and checks color
    */
-  PolygonOperators.bezierPolygonContainsPoint = function(polygon, point, border) {
+  /**
+   * @todo write docs
+   */
+  PolygonOperators.bezierPolygonContainsPoint = function(polygon, point, border, graphics) {
     var frame = polygon.getFrame();
-    clearContext();
-    src_Global__context.fillStyle = 'black';
-    src_Global__context.fillRect(0, 0, frame.width, frame.height);
+    graphics.clearContext();
+    graphics.context.fillStyle = 'black';
+    graphics.context.fillRect(0, 0, frame.width, frame.height);
     if(border != null) {
-      src_Global__context.strokeStyle = 'black';
-      src_Global__context.lineWidth = border;
+      graphics.context.strokeStyle = 'black';
+      graphics.context.lineWidth = border;
     }
-    src_Global__context.fillStyle = 'white';
-    src_Global__context.beginPath();
-    Draw.drawBezierPolygon(src_Global__context, polygon, -frame.x, -frame.y);
-    src_Global__context.fill();
-    if(border != null) src_Global__context.stroke();
-    var data = src_Global__context.getImageData(point.x - frame.x, point.y - frame.y, 1, 1).data;
-    clearContext();
+    graphics.context.fillStyle = 'white';
+    graphics.context.beginPath();
+    graphics.drawBezierPolygon(polygon, -frame.x, -frame.y);
+    graphics.context.fill();
+    if(border != null) graphics.context.stroke();
+    var data = graphics.context.getImageData(point.x - frame.x, point.y - frame.y, 1, 1).data;
+    graphics.clearContext();
     return data[0] > 0;
   };
 
 
-  /**
+  /*
    * used techinique: draws the bézier polygon and checks color
    * best center: the center of biggest circle within the polygon
    * [!] very unefficient
    */
-  PolygonOperators.getBezierPolygonBestCenter = function(polygon, nAttempts) {
+  /**
+   * @todo write docs
+   */
+  PolygonOperators.getBezierPolygonBestCenter = function(polygon, nAttempts, graphics) {
     nAttempts = nAttempts == null ? 500 : nAttempts;
 
     var frame = polygon.getFrame();
-    src_Global__context.fillStyle = 'black';
-    src_Global__context.fillRect(0, 0, frame.width, frame.height);
-    src_Global__context.fillStyle = 'white';
-    src_Global__context.beginPath();
-    Draw.drawBezierPolygon(src_Global__context, polygon, -frame.x, -frame.y);
-    src_Global__context.fill();
+    graphics.context.fillStyle = 'black';
+    graphics.context.fillRect(0, 0, frame.width, frame.height);
+    graphics.context.fillStyle = 'white';
+    graphics.context.beginPath();
+    graphics.drawBezierPolygon(polygon, -frame.x, -frame.y);
+    graphics.context.fill();
 
     var center;
     var testPoint;
@@ -14625,9 +14757,9 @@ define('src/index', ['exports'], function (exports) {
 
     for(var i = 0; i < nAttempts; i++) {
       center = frame.getRandomPoint();
-      for(angle = 0; angle += 0.1; angle <= TwoPi) {
+      for(angle = 0; angle <= TwoPi; angle += 0.1) {
         r = angle;
-        var data = src_Global__context.getImageData(center.x + r * Math.cos(angle) - frame.x, center.y + r * Math.sin(angle) - frame.y, 1, 1).data;
+        var data = graphics.context.getImageData(center.x + r * Math.cos(angle) - frame.x, center.y + r * Math.sin(angle) - frame.y, 1, 1).data;
         if(data[0] == 0) {
           if(r > rMax) {
             rMax = r;
@@ -14642,6 +14774,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+   * @todo write docs
+   */
   PolygonOperators.convexHull = function(polygon, deepness) {
     var indexesHull = this.hull(polygon, true);
     var pointsLeftIndexes = NumberListGenerators.createSortedNumberList(polygon.length);
@@ -14691,13 +14826,16 @@ define('src/index', ['exports'], function (exports) {
       //pointsLeftIndexes.removeElement(pointsLeftIndexes[kMin]); //!!!! TODO: FIX THIS!
       pointsLeftIndexes.splice(kMin, 1);
 
-      if(pointsLeftIndexes.length == 0) return indexesHull;
+      if(pointsLeftIndexes.length === 0) return indexesHull;
 
       nHull++;
     }
     return indexesHull;
   };
 
+  /**
+   * @todo write docs
+   */
   PolygonOperators.controlPointsFromPointsAnglesIntensities = function(polygon, angles, intensities) {
     var controlPoints = new Polygon();
     for(var i = 0; polygon[i] != null; i++) {
@@ -14708,6 +14846,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+   * @todo write docs
+   */
   PolygonOperators.placePointsInsidePolygon = function(polygon, nPoints, mode) {
     var points = new Polygon();
     var frame = polygon.getFrame();
@@ -14719,11 +14860,13 @@ define('src/index', ['exports'], function (exports) {
           p = new Point(frame.x + Math.random() * frame.width, frame.y + Math.random() * frame.height);
           if(PolygonOperators.polygonContainsPoint(polygon, p)) points.push(p);
         }
-        return points;
-        break;
+        return points;      
     }
   };
 
+  /**
+   * @todo write docs
+   */
   PolygonOperators.placePointsInsideBezierPolygon = function(polygon, nPoints, mode, border) {
     var points = new Polygon();
     var frame = polygon.getFrame();
@@ -14740,8 +14883,7 @@ define('src/index', ['exports'], function (exports) {
             nAttempts = 0;
           }
         }
-        return points;
-        break;
+        return points;      
     }
   };
 
@@ -14768,6 +14910,9 @@ define('src/index', ['exports'], function (exports) {
   }
 
 
+  /**
+  * @todo write docs
+  */
   CountryList.fromArray = function(array) {
     var result = NodeList__default.fromArray(array);
     result.type = "CountryList";
@@ -14797,10 +14942,16 @@ define('src/index', ['exports'], function (exports) {
 
   //transformative
 
+  /**
+  * @todo write docs
+  */
   CountryList.prototype.removeAntarctica = function() {
     this.removeNode(this.getNodeById('AQ'));
   };
 
+  /**
+  * @todo write docs
+  */
   CountryList.prototype.removeTinyPolygonsFromCountries = function(minArea) {
     minArea = 0.2 || minArea;
     var country;
@@ -14818,6 +14969,9 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
+  /**
+  * @todo write docs
+  */
   CountryList.prototype.removeTinyCountries = function(minArea) {
     minArea = 0.5 || minArea;
     var country;
@@ -14841,6 +14995,9 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
+  /**
+  * @todo write docs
+  */
   CountryList.prototype.simplifyPolygons = function(margin) {
     var country;
     var j;
@@ -14882,6 +15039,9 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
+  /**
+  * @todo write docs
+  */
   CountryList.prototype.assignValuesToCountriesFromTable = function(table, valueToNull) {
     var j;
     var country;
@@ -14924,37 +15084,44 @@ define('src/index', ['exports'], function (exports) {
 
   function ColorScales__ColorScales() {}
   var ColorScales__default = ColorScales__ColorScales;
-  // *
-  //  * return a colorScale from its name
-  //  * @param  {String} string name of ColorScale
-  //  * @return {Function} ColorScale function
-  //  * tags:conversion
 
-  // ColorScales.getColorScaleByName = function(string){
-  // 	return ColorScales[string];
-  // }
-
-  ColorScales__ColorScales.blackScale = function(value) {
+  /**
+   * @todo write docs
+   */
+  ColorScales__ColorScales.blackScale = function() {
     return 'black';
   };
 
+  /**
+   * @todo write docs
+   */
   ColorScales__ColorScales.grayscale = function(value) {
     var rgb = ColorOperators__default.interpolateColorsRGB([0, 0, 0], [255, 255, 255], value);
     return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
+  /**
+   * @todo write docs
+   */
   ColorScales__ColorScales.antiGrayscale = function(value) {
     var rgb = ColorOperators__default.interpolateColorsRGB([255, 255, 255], [0, 0, 0], value);
     return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
+  /**
+   * @todo write docs
+   */
   ColorScales__ColorScales.antiTemperature = function(value) {
     return ColorScales__ColorScales.temperature(1 - value);
   };
 
+  /**
+   * @todo write docs
+   */
   ColorScales__ColorScales.temperature = function(value) { //todo:make it efficient
+    var color = "#FFFFFF";
     if(value < 0.2) {
-      var color = ColorOperators__default.interpolateColors('#000000', ColorOperators__default.HSVtoHEX(234, 1, 1), value * 5);
+      color = ColorOperators__default.interpolateColors('#000000', ColorOperators__default.HSVtoHEX(234, 1, 1), value * 5);
     } else if(value > 0.85) {
       color = ColorOperators__default.interpolateColors(ColorOperators__default.HSVtoHEX(0, 1, 1), '#FFFFFF', (value - 0.85) / 0.15);
     } else {
@@ -14963,52 +15130,89 @@ define('src/index', ['exports'], function (exports) {
     return color;
   };
 
+  /**
+   * @todo write docs
+   */
   ColorScales__ColorScales.sqrtTemperature = function(value) {
     return ColorScales__ColorScales.temperature(Math.sqrt(value));
   };
 
+  /**
+   * @todo write docs
+   */
   ColorScales__ColorScales.sqrt4Temperature = function(value) {
     return ColorScales__ColorScales.temperature(Math.pow(value, 0.25));
   };
 
+  /**
+   * @todo write docs
+   */
   ColorScales__ColorScales.quadraticTemperature = function(value) {
     return ColorScales__ColorScales.temperature(Math.pow(value, 2));
   };
 
+  /**
+   * @todo write docs
+   */
   ColorScales__ColorScales.cubicTemperature = function(value) {
     return ColorScales__ColorScales.temperature(Math.pow(value, 3));
   };
 
+  /**
+   * @todo write docs
+   */
   ColorScales__ColorScales.greenToRed = function(value) { //todo:make it efficient
     var rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [255, 50, 50], value);
     return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
+
+  /**
+   * @todo write docs
+   */
   ColorScales__ColorScales.greenToBlue = function(value) { //todo:make it efficient
     var rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [50, 50, 255], value);
     return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
+  /**
+   * @todo write docs
+   */
   ColorScales__ColorScales.grayToOrange = function(value) {
     return 'rgb(' + Math.floor(100 + value*155) + ','+ Math.floor(100 + value*10) +',' + Math.floor(100 - value*100) + ')';
   };
 
+  /**
+   * @todo write docs
+   */
   ColorScales__ColorScales.sqrt4GrayToOrange = function(value){
     return ColorScales__ColorScales.grayToOrange(Math.pow(value, 0.25));
   };
 
+  /**
+   * @todo write docs
+   */
   ColorScales__ColorScales.blueToRed = function(value) {
     return 'rgb(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ')';
   };
 
+  /**
+   * @todo write docs
+   */
   ColorScales__ColorScales.blueToRedAlpha = function(value) { //todo:make it efficient
     return 'rgba(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ', 0.5)';
   };
 
+  /**
+   * @todo write docs
+   */
   ColorScales__ColorScales.whiteToRed = function(value) {
     var gg = Math.floor(255 - value * 255);
     return 'rgb(255,' + gg + ',' + gg + ')';
   };
 
+  /**
+   * @todo write docs
+   */
   ColorScales__ColorScales.redToBlue = function(value) {
     var rgb = ColorOperators__default.interpolateColorsRGB([255, 0, 0], [0, 0, 255], value);
     return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
@@ -15016,15 +15220,22 @@ define('src/index', ['exports'], function (exports) {
 
   //tricolor
 
+  /**
+   * @todo write docs
+   */
   ColorScales__ColorScales.greenWhiteRed = function(value) { //TODO: make it + efficient
+    var rgb = [0,0,0];
     if(value < 0.5) {
-      var rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [255, 255, 255], value * 2);
+      rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [255, 255, 255], value * 2);
     } else {
       rgb = ColorOperators__default.interpolateColorsRGB([255, 255, 255], [255, 50, 50], (value - 0.5) * 2);
     }
     return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
   };
 
+  /**
+   * @todo write docs
+   */
   ColorScales__ColorScales.blueWhiteRed = function(value) {
     var rr = value < 0.5 ? Math.floor(510 * value) : 255;
     var gg = value < 0.5 ? Math.floor(510 * value) : Math.floor(510 * (1 - value));
@@ -15033,18 +15244,26 @@ define('src/index', ['exports'], function (exports) {
     return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
   };
 
+  /**
+   * @todo write docs
+   */
   ColorScales__ColorScales.grayBlackOrange = function(value){ //TODO: make it + efficient
+    var rgb = [0,0,0];
     if(value < 0.5) {
-      var rgb = ColorOperators__default.interpolateColorsRGB([100, 100, 100], [0, 0, 0], value * 2);
+      rgb = ColorOperators__default.interpolateColorsRGB([100, 100, 100], [0, 0, 0], value * 2);
     } else {
       rgb = ColorOperators__default.interpolateColorsRGB([0, 0, 0], [255, 110, 0], (value - 0.5) * 2);
     }
     return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
   };
 
+  /**
+   * @todo write docs
+   */
   ColorScales__ColorScales.grayWhiteOrange = function(value){ //TODO: make it + efficient
+    var rgb = [0,0,0];
     if(value < 0.5) {
-      var rgb = ColorOperators__default.interpolateColorsRGB([100, 100, 100], [255, 255, 255], value * 2);
+      rgb = ColorOperators__default.interpolateColorsRGB([100, 100, 100], [255, 255, 255], value * 2);
     } else {
       rgb = ColorOperators__default.interpolateColorsRGB([255, 255, 255], [255, 110, 0], (value - 0.5) * 2);
     }
@@ -15052,11 +15271,17 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+   * @todo write docs
+   */
   ColorScales__ColorScales.solar = function(value) {
     var rgb = ColorOperators__default.interpolateColorsRGB([0, 0, 0], ColorOperators__default.interpolateColorsRGB([255, 0, 0], [255, 255, 0], value), Math.pow(value * 0.99 + 0.01, 0.2));
     return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
+  /**
+   * @todo write docs
+   */
   ColorScales__ColorScales.antiSolar = function(value) {
     return ColorOperators__default.invertColor(ColorScales__ColorScales.solar(value));
   };
@@ -15083,10 +15308,16 @@ define('src/index', ['exports'], function (exports) {
   }
 
 
+  /**
+  * @todo write docs
+  */
   ColorScale.prototype.getColor = function(value) {
     return this.colorScaleFunction(value);
   };
 
+  /**
+  * @todo write docs
+  */
   ColorScale.prototype.getColorList = function(nColors) {
     var colorList = new ColorList__default();
     var i;
@@ -15098,8 +15329,9 @@ define('src/index', ['exports'], function (exports) {
 
   exports.ColorScale = ColorScale;
 
-  function Space2D(configuration) {
+  function Space2D(configuration, graphics) {
     configuration = configuration == null ? {} : configuration;
+    this.graphics = graphics;
 
     this.center = configuration.center == null ? new Point(0, 0) : configuration.center;
     this.scale = 1;
@@ -15113,56 +15345,88 @@ define('src/index', ['exports'], function (exports) {
   }
 
 
+  /**
+   * @todo write docs
+   */
   Space2D.prototype.activeInteraction = function() {
     if(this.active) return;
     this.active = true;
-    addInteractionEventListener('mousedown', this.onMouse, this);
-    addInteractionEventListener('mouseup', this.onMouse, this);
-    addInteractionEventListener('mousewheel', this.wheel, this);
+    this.graphics.on('mousedown', this.onMouse, this);
+    this.graphics.on('mouseup', this.onMouse, this);
+    this.graphics.on('mousewheel', this.wheel, this);
   };
 
+  /**
+   * @todo write docs
+   */
   Space2D.prototype.deActivate = function() {
     this.active = false;
     this.dragging = false;
-    removeInteractionEventListener('mousedown', this.onMouse, this);
-    removeInteractionEventListener('mouseup', this.onMouse, this);
-    removeInteractionEventListener('mousemove', this.onMouse, this);
-    removeInteractionEventListener('mousewheel', this.wheel, this);
+    this.graphics.off('mousedown', this.onMouse, this);
+    this.graphics.off('mouseup', this.onMouse, this);
+    this.graphics.off('mousemove', this.onMouse, this);
+    this.graphics.off('mousewheel', this.wheel, this);
   };
 
+  /**
+   * @todo write docs
+   */
   Space2D.prototype.stopDragging = function() {
-    removeInteractionEventListener('mousemove', this.onMouse, this);
+    this.graphics.off('mousemove', this.onMouse, this);
   };
 
+  /**
+   * @todo write docs
+   */
   Space2D.prototype.project = function(point) {
     return new Point((point.x - this.center.x) * this.scale, (point.y + this.center.y) * this.scale);
   };
 
+  /**
+   * @todo write docs
+   */
   Space2D.prototype.projectX = function(x) {
     return(x - this.center.x) * this.scale;
   };
 
+  /**
+   * @todo write docs
+   */
   Space2D.prototype.projectY = function(y) {
     return(y - this.center.y) * this.scale;
   };
 
-
+  /**
+   * @todo write docs
+   */
   Space2D.prototype.inverseProject = function(point) {
     return new Point(point.x / this.scale + this.center.x, point.y / this.scale + this.center.y);
   };
 
+  /**
+   * @todo write docs
+   */
   Space2D.prototype.inverseProjectX = function(x) {
     return x / this.scale + this.center.x;
   };
 
+  /**
+   * @todo write docs
+   */
   Space2D.prototype.inverseProjectY = function(y) {
     return y / this.scale + this.center.y;
   };
 
+  /**
+   * @todo write docs
+   */
   Space2D.prototype.move = function(vector, projected) {
     this.center = this.center.subtract(projected ? vector.factor(1 / this.scale) : vector);
   };
 
+  /**
+   * @todo write docs
+   */
   Space2D.prototype.factorScaleFromPoint = function(point, factor) {
     var k = (1 - 1 / factor) / this.scale;
     this.center.x = k * point.x + this.center.x;
@@ -15171,45 +15435,60 @@ define('src/index', ['exports'], function (exports) {
     this.scale *= factor;
   };
 
+  /**
+   * @todo write docs
+   */
   Space2D.prototype.fixX = function(xDeparture, xArrival) {
     this.center.x = xDeparture - (xArrival / this.scale);
   };
+  /**
+   * @todo write docs
+   */
   Space2D.prototype.fixY = function(yDeparture, yArrival) {
     this.center.y = yDeparture - (yArrival / this.scale);
   };
 
+  /**
+   * @todo write docs
+   */
   Space2D.prototype.fixHorizontalInterval = function(departureInterval, arrivalInterval) {
     this.scale = arrivalInterval.getAmplitude() / departureInterval.getAmplitude();
-    this.fixX((departureInterval.x + departureInterval.y) * 0.5, src_Global__cW * 0.5);
+    this.fixX((departureInterval.x + departureInterval.y) * 0.5, this.graphics.cW * 0.5);
   };
 
   //////
 
+  /**
+   * @todo write docs
+   */
   Space2D.prototype.onMouse = function(e) {
     switch(e.type) {
       case 'mousedown':
         if(!this.active) return;
         this.dragging = true;
-        this.prev_mX = mX;
-        this.prev_mY = mY;
-        addInteractionEventListener('mousemove', this.onMouse, this);
+        this.prev_mX = this.graphics.mX;
+        this.prev_mY = this.graphics.mY;
+        this.graphics.on('mousemove', this.onMouse, this);
         break;
       case 'mouseup':
         this.dragging = false;
-        removeInteractionEventListener('mousemove', this.onMouse, this);
+        this.graphics.on('mousemove', this.onMouse, this);
         break;
       case 'mousemove':
         if(!this.active) return;
-        this.center.x += (this.prev_mX - mX) / this.scale;
-        this.center.y += (this.prev_mY - mY) / this.scale;
-        this.prev_mX = mX;
-        this.prev_mY = mY;
+        this.center.x += (this.prev_mX - this.graphics.mX) / this.scale;
+        this.center.y += (this.prev_mY - this.graphics.mY) / this.scale;
+        this.prev_mX = this.graphics.mX;
+        this.prev_mY = this.graphics.mY;
         break;
     }
   };
 
 
 
+  /**
+   * @todo write docs
+   */
   Space2D.prototype.wheel = function(e) {
     if(!this.active) return;
     if(this.scale <= this.MIN_SCALE && e.value > 0) {
@@ -15220,7 +15499,7 @@ define('src/index', ['exports'], function (exports) {
       this.scale = this.MAX_SCALE;
       return;
     }
-    this.factorScaleFromPoint(new Point(mX - 0, mY - 0), (1 - 0.02 * e.value));
+    this.factorScaleFromPoint(new Point(this.graphics.mX - 0, this.graphics.mY - 0), (1 - 0.02 * e.value));
   };
 
   exports.Space2D = Space2D;
@@ -15229,6 +15508,9 @@ define('src/index', ['exports'], function (exports) {
 
 
 
+  /**
+   * @todo write docs
+   */
   DateListOperators.buildTimeTreeFromDates = function(dates) {
     if(dates == null) return;
 
@@ -15376,24 +15658,51 @@ define('src/index', ['exports'], function (exports) {
     return tree;
   };
 
+  /**
+   * @ignore
+   */
   DateListOperators._y = function(date) {
     return date.getFullYear();
   };
+
+  /**
+   * @ignore
+   */
   DateListOperators._m = function(date) {
     return date.getMonth();
   };
+
+  /**
+   * @ignore
+   */
   DateListOperators._d = function(date) {
     return date.getDate() - 1;
   };
+
+  /**
+   * @ignore
+   */
   DateListOperators._h = function(date) {
     return date.getHours();
   };
+
+  /**
+   * @ignore
+   */
   DateListOperators._mn = function(date) {
     return date.getMinutes();
   };
+
+  /**
+   * @ignore
+   */
   DateListOperators._s = function(date) {
     return date.getSeconds();
   };
+
+  /**
+   * @ignore
+   */
   DateListOperators._ms = function(date) {
     return date.getMilliseconds();
   };
@@ -15402,6 +15711,9 @@ define('src/index', ['exports'], function (exports) {
 
 
 
+  /**
+   * @todo write docs
+   */
   CountryListOperators.getCountryByName = function(countryList, name) {
     var simplifiedName = CountryOperators.getSimplifiedName(name);
 
@@ -15421,14 +15733,24 @@ define('src/index', ['exports'], function (exports) {
   GeoOperators.EARTH_DIAMETER = GeoOperators.EARTH_RADIUS * 2;
 
 
+  /**
+   * @todo write docs
+   */
   GeoOperators.geoCoordinateToDecimal = function(value) {
     return Math.floor(value) + (value - Math.floor(value)) * 1.66667;
   };
 
+  /**
+   * @todo write docs
+   */
   GeoOperators.geoDistance = function(point0, point1) {
     var a = Math.pow(Math.sin((point1.y - point0.y) * 0.5 * gradToRad), 2) + Math.cos(point0.y * gradToRad) * Math.cos(point1.y * gradToRad) * Math.pow(Math.sin((point1.x - point0.x) * 0.5 * gradToRad), 2);
     return GeoOperators.EARTH_DIAMETER * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   };
+
+  /**
+   * @todo write docs
+   */
   GeoOperators.polygonLength = function(polygon) {
     if(polygon.length < 2) return 0;
 
@@ -15472,6 +15794,9 @@ define('src/index', ['exports'], function (exports) {
   // return polygonList;
   // }
 
+  /**
+   * @todo write docs
+   */
   GeometryConvertions.twoNumberListsToPolygon = function(numberList0, numberList1) { //TODO:change name to NumberTableToPolygon
     var n = Math.min(numberList0.length, numberList1.length);
     var polygon = new Polygon();
@@ -15507,6 +15832,9 @@ define('src/index', ['exports'], function (exports) {
   function PolygonGenerators() {}
 
 
+  /**
+   * @todo write docs
+   */
   PolygonGenerators.createPolygon = function(nPoints, mode, frame) {
     var polygon = new Polygon();
 
@@ -15684,6 +16012,9 @@ define('src/index', ['exports'], function (exports) {
   function PolygonListOperators() {}
 
 
+  /**
+   * @todo write docs
+   */
   PolygonListOperators.simplifyPolygons = function(polygonList, margin, removeEmptyPolygons) {
     var newPolygonList = new PolygonList();
     var newPolygon;
@@ -15730,7 +16061,7 @@ define('src/index', ['exports'], function (exports) {
     frame.height -= frame.y;
 
     return frame;
-  }
+  };
 
   /**
    *
@@ -16064,6 +16395,13 @@ define('src/index', ['exports'], function (exports) {
 
 
 
+  /**
+   * Generates a random color and provides rgba() CSS string for that color.
+   * Optionally can be provided an alpha value to set the opacity to.
+   *
+   * @param {Number} alpha Opacity value between 0 and 1. Defaults to 1.
+   * @return {String} Random color in the form of a RGBA string.
+   */
   ColorGenerators.randomColor = function(alpha) {
     alpha = alpha == null ? 1 : alpha;
     return 'rgba(' + Math.floor(256 * Math.random()) + ',' + Math.floor(256 * Math.random()) + ',' + Math.floor(256 * Math.random()) + ',' + alpha + ')';
@@ -16108,7 +16446,7 @@ define('src/index', ['exports'], function (exports) {
   /**
    * create a colorList based on a colorScale and values from a numberList (that will be normalized)
    * @param  {NumberList} numberList
-   * 
+   *
    * @param  {ColorScale} colorScale
    * @param  {Number} mode 0:normalize numberList
    * @return {ColorList}
@@ -16116,7 +16454,7 @@ define('src/index', ['exports'], function (exports) {
    */
   ColorListGenerators__ColorListGenerators.createColorListFromNumberList = function(numberList, colorScale, mode) {
     if(numberList==null) return null;
-    
+
     mode = mode == null ? 0 : mode;
     colorScale = colorScale==null?ColorScales__default.grayToOrange:colorScale;
 
@@ -16142,6 +16480,13 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+   * Creates a new ColorList that contains the provided color. Size of the List
+   * is controlled by the nColors input.
+   *
+   * @param {Number} nColors Length of the list.
+   * @param {Color} color Color to fill list with.
+   */
   ColorListGenerators__ColorListGenerators.createColorListWithSingleColor = function(nColors, color) {
     var colorList = new ColorList__default();
     for(var i = 0; i < nColors; i++) {
@@ -16232,6 +16577,9 @@ define('src/index', ['exports'], function (exports) {
     return newColorList;
   };
 
+  /**
+   * @ignore
+   */
   ColorListGenerators__ColorListGenerators._sortingVariation = function(numberList, rnd0, rnd1) { //private
     var newNumberList = numberList.clone();
     var pos0 = Math.floor(rnd0 * newNumberList.length);
@@ -16241,6 +16589,10 @@ define('src/index', ['exports'], function (exports) {
     newNumberList[pos0] = cache;
     return newNumberList;
   };
+
+  /**
+   * @ignore
+   */
   ColorListGenerators__ColorListGenerators._evaluationFunction = function(numberList) { //private
     var sum = 0;
     var i;
@@ -16264,7 +16616,7 @@ define('src/index', ['exports'], function (exports) {
    */
   ColorListGenerators__ColorListGenerators.createCategoricalColorListDictionaryObject = function(list, colorList, alpha, color, interpolate, invert){
     if(list==null) return;
-    
+
     var diffValues = list.getWithoutRepetitions();
     var diffColors = ColorListGenerators__ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate, colorList);
     if(invert) diffColors = diffColors.getInverted();
@@ -16277,8 +16629,7 @@ define('src/index', ['exports'], function (exports) {
 
     return dictionaryObject;
 
-  }
-
+  };
 
   /**
    * Creates a ColorList of categorical colors based on an input List. All entries with the same value will get the same color.
@@ -16307,7 +16658,7 @@ define('src/index', ['exports'], function (exports) {
       color = "#fff";
     if(!interpolate)
       interpolate = 0;
-    
+
     list = List__default.fromArray(list);
     var diffValues = list.getWithoutRepetitions();
     var diffColors;
@@ -16315,7 +16666,7 @@ define('src/index', ['exports'], function (exports) {
       diffColors = colorList.getInterpolated(color, interpolate);
     } else {
       diffColors = ColorListGenerators__ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate, colorList);
-      
+
       //diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
     }
     diffColors = diffColors.addAlpha(alpha);
@@ -16356,11 +16707,21 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * receives n arguments and performs addition
+   *
+   * @todo finish docs
    */
   ColorListOperators.colorListFromColorScale = function(colorScale, nColors) {
     return colorScale.getColorList.apply(colorScale, [nColors]);
   };
 
+  /**
+   * Creates a new ColorList from a given ColorScale, splitting the scale up into
+   * nColors number of colors
+   *
+   * @param  {ColorScale} colorScaleFunction The ColorScale to split up.
+   * @param  {Number} nColors The number of colors to add to the list.
+   * @return {ColorList} new ColorList.
+   */
   ColorListOperators.colorListFromColorScaleFunction = function(colorScaleFunction, nColors) {
     var colorList = new ColorList__default();
     var i;
@@ -16371,6 +16732,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+   * @todo write docs
+   */
   ColorListOperators.colorListFromColorScaleFunctionAndNumberList = function(colorScaleFunction, numberList, normalize) {
     normalize = normalize == null ? true : normalize;
 
@@ -16385,7 +16749,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-
+  /**
+   * @todo write docs
+   */
   ColorListOperators.polygon3DToColorList = function(polygon3D) {
     var nPoints = polygon3D.length;
     var colorList = new ColorList__default();
@@ -16395,6 +16761,11 @@ define('src/index', ['exports'], function (exports) {
     }
     return colorList;
   };
+
+
+  /**
+   * @todo write docs
+   */
   ColorListOperators.colorListToPolygon3D = function(colorList) {
     var nColors = colorList.length;
     var polygon3D = new Polygon3D();
@@ -16622,6 +16993,9 @@ define('src/index', ['exports'], function (exports) {
   function TableGenerators() {}
 
 
+  /**
+   * @todo finish docs
+   */
   TableGenerators.createTableWithSameElement = function(nLists, nRows, element) {
     var table = new Table();
     for(var i = 0; i < nLists; i++) {
@@ -16636,6 +17010,9 @@ define('src/index', ['exports'], function (exports) {
 
 
 
+  /**
+   * @todo write docs
+   */
   IntervalListOperators.scaleIntervals = function(intervalList, value) {
     var newIntervalList = new List__default();
     newIntervalList.name = intervalList.name;
@@ -16650,7 +17027,9 @@ define('src/index', ['exports'], function (exports) {
   function IntervalTableOperators() {}
 
 
-
+  /**
+   * @todo write docs
+   */
   IntervalTableOperators.scaleIntervals = function(intervalTable, value) {
     var newIntervalTable = new Table();
     newIntervalTable.name = intervalTable.name;
@@ -16699,6 +17078,9 @@ define('src/index', ['exports'], function (exports) {
 
 
   //TODO: place this in the correct place
+  /**
+   * @todo write docs
+   */
   MatrixGenerators.applyTransformationOnCanvasFromPoints = function(context, v0, v1, v2, w0, w1, w2) {
     if(v1.y != v0.y) {
       var k = (v2.y - v0.y) / (v1.y - v0.y);
@@ -16881,7 +17263,7 @@ define('src/index', ['exports'], function (exports) {
       newNumberList[i] = val/windowSizeInt;
     }
     return newNumberList;
-  }
+  };
 
   /**
    * calculates k-means clusters of values in a numberList
@@ -16953,7 +17335,9 @@ define('src/index', ['exports'], function (exports) {
     return clusters;
   };
 
-
+  /**
+   * @todo finish docs
+   */
   NumberListOperators__NumberListOperators.standardDeviationBetweenTwoNumberLists = function(numberList0, numberList1) {
     var s = 0;
     var l = Math.min(numberList0.length, numberList1.length);
@@ -17195,7 +17579,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   /**
-   * builds a rectangle that defines the boundaries of two numberLists interpreted as x and y coordinates 
+   * builds a rectangle that defines the boundaries of two numberLists interpreted as x and y coordinates
    * @param  {NumberList} numberListX
    * @param  {NumberList} numberListY
    * @return {Rectangle}
@@ -17204,7 +17588,7 @@ define('src/index', ['exports'], function (exports) {
     var intX = numberListX.getInterval();
     var intY = numberListY.getInterval();
     return new Rectangle(intX.x, intY.x, intX.getAmplitude(), intY.getAmplitude());
-  }
+  };
 
   exports.NumberListOperators = NumberListOperators__default;
 
@@ -17333,6 +17717,9 @@ define('src/index', ['exports'], function (exports) {
     return flowTable;
   };
 
+  /**
+   * @todo finish docs
+   */
   NumberTableFlowOperators.getFlowTableIntervals = function(numberTable, normalized, sorted, stacked) {
     if(numberTable == null) return null;
 
@@ -17424,6 +17811,9 @@ define('src/index', ['exports'], function (exports) {
     return numberTable.getNumberListsNormalized();
   };
 
+  /**
+   * @todo finish docs
+   */
   NumberTableOperators__NumberTableOperators.normalizeListsToMax = function(numberTable) {
     var newNumberTable = new NumberTable();
     newNumberTable.name = numberTable.name;
@@ -17611,6 +18001,9 @@ define('src/index', ['exports'], function (exports) {
 
 
   //TODO: move to NumberTableConversions
+  /**
+   * @todo finish docs
+   */
   NumberTableOperators__NumberTableOperators.numberTableToNetwork = function(numberTable, method, tolerance) {
     tolerance = tolerance == null ? 0 : tolerance;
 
@@ -17707,7 +18100,7 @@ define('src/index', ['exports'], function (exports) {
     }
 
     return newTable;
-  }
+  };
 
 
 
@@ -17720,7 +18113,7 @@ define('src/index', ['exports'], function (exports) {
   NumberTableOperators__NumberTableOperators.getCovarianceMatrix = function(numberTable){//TODO:build more efficient method
     if(numberTable==null) return;
     return NumberTableOperators__NumberTableOperators.product(numberTable, numberTable.getTransposed()).factor(1/numberTable.length);
-  }
+  };
 
   exports.NumberTableOperators = NumberTableOperators__default;
 
@@ -17912,7 +18305,7 @@ define('src/index', ['exports'], function (exports) {
    */
   ObjectConversions.ArrayToList = function(array){
     return List.fromArray(object).getImproved();
-  }
+  };
 
   exports.ObjectConversions = ObjectConversions;
 
@@ -18550,6 +18943,12 @@ define('src/index', ['exports'], function (exports) {
 
   exports.ObjectOperators = ObjectOperators;
 
+  /**
+   * @classdesc  String Conversions
+   *
+   * @namespace
+   * @category strings
+   */
   function StringConversions() {}
 
 
@@ -18636,8 +19035,11 @@ define('src/index', ['exports'], function (exports) {
   // var match = string.match(regex);
   // return match==null?0:match.length;
 
-  /**
+  /*
    * a classic function, but now it works with patterns!
+   */
+  /**
+   * @todo finish docs
    */
   StringListOperators.countStringsOccurrencesOnTexts = function(strings, texts) {
     var occurrencesTable = new NumberTable();
@@ -18735,6 +19137,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
   //good approach for few large texts, to be tested
+  /**
+   * @todo finish docs
+   */
   StringListOperators.createTextsNetwork = function(texts, stopWords, stressUniqueness, relationThreshold) {
     var i, j;
     var network = new Network();
@@ -18944,12 +19349,12 @@ define('src/index', ['exports'], function (exports) {
     if(seed!=null){
       funcRandom = function(){
         seed++;
-       return NumberOperators.getRandomWithSeed(seed);
-     }
+       return NumberOperators__default.getRandomWithSeed(seed);
+     };
     } else {
       funcRandom = Math.random;
     }
-    
+
     mode = mode == null ? 0 : mode;
 
     var i, j;
@@ -19013,6 +19418,9 @@ define('src/index', ['exports'], function (exports) {
     return NetworkGenerators.createNetworkFromOccurrencesTable(occurrencesTable);
   };
 
+  /**
+   * @todo write docs
+   */
   NetworkGenerators.createNetworkFromOccurrencesTable = function(occurrencesTable, weightsForRelationsMethod, minimum) {
     weightsForRelationsMethod = weightsForRelationsMethod == null ? 0 : weightsForRelationsMethod;
     minimum = minimum == null ? 0 : minimum;
@@ -19285,7 +19693,7 @@ define('src/index', ['exports'], function (exports) {
       if(node.id!=node0.id && node.id!=node1.id && node0.nodeList.getNodeById(node.id)!=null && node1.nodeList.getNodeById(node.id)!=null) nodeList.addNode(node);
     });
     return nodeList;
-  }
+  };
 
   /**
    * Returns a NodeList with the Nodes in the Network that are part of the
@@ -19319,8 +19727,8 @@ define('src/index', ['exports'], function (exports) {
     if(node == null) return null;
 
     // c.l('---'); return;
-    // 
-    
+    //
+
 
     c.l('  (pre while)>', node0.id, node1.id, node.id,  node.parent==null?'no parent!':node.parent.id);
     while(node.parent.id != node0.id) {
@@ -19365,7 +19773,7 @@ define('src/index', ['exports'], function (exports) {
     //c.clear();
 
     if(spanningTree==null) spanningTree = NetworkOperators.spanningTree(network, node0, node1);
-    
+
     // c.l('[•--•] node0.id, node1.id', node0.id, node1.id);
     // c.l('[•--•] shortestPaths | spanningTree.nodeList.length, spanningTree.nLevels', spanningTree.nodeList.length, spanningTree.nLevels);
 
@@ -19374,12 +19782,12 @@ define('src/index', ['exports'], function (exports) {
     // }
 
     //first we seek for the nodes in paths
-    
+
     var n = spanningTree.nLevels;
     // c.l('[•--•] n:', n);
 
     // c.l('[•--•] spanningTree.getNodesByLevel(spanningTree.nLevels-1).getNodeById(node1.id)', spanningTree.getNodesByLevel(spanningTree.nLevels-1).getNodeById(node1.id) );
-    
+
     var level1 = new NodeList__default(node1);
     var extended_from_1 = NetworkOperators.adjacentNodeList(network, level1, false);
     var level0 = ListOperators__default.intersection(extended_from_1, spanningTree.getNodesByLevel(n-2));//spanningTree.getNodesByLevel(n-2);
@@ -19446,7 +19854,7 @@ define('src/index', ['exports'], function (exports) {
       });
 
       return newPaths;
-    }
+    };
 
     var toAdd;
 
@@ -19476,9 +19884,9 @@ define('src/index', ['exports'], function (exports) {
     return allPaths;
 
 
-    
 
-    
+
+
 
 
 
@@ -19495,7 +19903,7 @@ define('src/index', ['exports'], function (exports) {
 
     var lengthShortestPaths = shortPath.length;
 
-    
+
     var firstPath = new NodeList__default();
     var i;
 
@@ -19542,7 +19950,7 @@ define('src/index', ['exports'], function (exports) {
     });
 
     return relations;
-  }
+  };
 
 
   /**
@@ -19775,7 +20183,7 @@ define('src/index', ['exports'], function (exports) {
   /**
    * Builds a spanning tree of a Node in a Network (not very efficient)
    * @param  {Network} network
-   * 
+   *
    * @param  {Node} node0 Parent of the tree (first node on network.nodeList by default)
    * @param  {Node} nodeLimit Optional node in the network to prune the tree
    * @return {Tree}
@@ -19862,7 +20270,7 @@ define('src/index', ['exports'], function (exports) {
       nodes = newNodes;
       // c.l('     --concat');
       accumulated = accumulated.concat(newNodes);
-      
+
       N++;
       if(N>network.nodeList){
         //c.l('/////////////////STOP');
@@ -19912,7 +20320,7 @@ define('src/index', ['exports'], function (exports) {
 
     return newNodeList;
 
-  }
+  };
 
   NetworkOperators.degreesPartition = function(network, node) {
     //TODO:optionally add a NodeList of not connected Nodes
@@ -20351,14 +20759,14 @@ define('src/index', ['exports'], function (exports) {
     return fusionNet;
   };
 
-  /**
-   * @ignore
+  /*
+   *
    * from https://github.com/upphiminn/jLouvain
    */
   NetworkOperators._jLouvain = function() {
     //Constants
-    var __PASS_MAX = -1
-    var __MIN    = 0.0000001
+    var __PASS_MAX = -1;
+    var __MIN    = 0.0000001;
 
     //Local vars
     var original_graph_nodes;
@@ -20373,7 +20781,7 @@ define('src/index', ['exports'], function (exports) {
         set[d] = true;
       });
       return Object.keys(set);
-    };
+    }
 
     function obj_values(obj){
        var vals = [];
@@ -20383,7 +20791,7 @@ define('src/index', ['exports'], function (exports) {
            }
        }
        return vals;
-    };
+    }
 
     function get_degree_for_node(graph, node){
       var neighbours = graph._assoc_mat[node] ? Object.keys(graph._assoc_mat[node]) : [];
@@ -20395,17 +20803,17 @@ define('src/index', ['exports'], function (exports) {
         weight += value;
       });
       return weight;
-    };
-    
+    }
+
     function get_neighbours_of_node(graph, node){
       if(typeof graph._assoc_mat[node] == 'undefined')
         return [];
 
-      var neighbours = Object.keys(graph._assoc_mat[node]);   
+      var neighbours = Object.keys(graph._assoc_mat[node]);
       return neighbours;
     }
-    
-    
+
+
     function get_edge_weight(graph, node1, node2){
       return graph._assoc_mat[node1] ? graph._assoc_mat[node1][node2] : undefined;
     }
@@ -20461,7 +20869,7 @@ define('src/index', ['exports'], function (exports) {
         return temp;
     }
 
-    //Core-Algorithm Related 
+    //Core-Algorithm Related
     function init_status(graph, status, part){
       status['nodes_to_com'] = {};
       status['total_weight'] = 0;
@@ -20532,13 +20940,13 @@ define('src/index', ['exports'], function (exports) {
 
       var weights = {};
       var neighboorhood = get_neighbours_of_node(graph, node);//make iterable;
-      
+
       neighboorhood.forEach(function(neighbour, i){
         if(neighbour != node){
-          var weight = graph._assoc_mat[node][neighbour] || 1; 
+          var weight = graph._assoc_mat[node][neighbour] || 1;
           var neighbourcom = status.nodes_to_com[neighbour];
           weights[neighbourcom] = (weights[neighbourcom] || 0) + weight;
-        } 
+        }
       });
 
       return weights;
@@ -20560,7 +20968,7 @@ define('src/index', ['exports'], function (exports) {
 
     function __renumber(dict){
       var count = 0;
-      var ret = clone(dict); //deep copy :) 
+      var ret = clone(dict); //deep copy :)
       var new_values = {};
       var dict_keys = Object.keys(dict);
       dict_keys.forEach(function(key){
@@ -20586,7 +20994,7 @@ define('src/index', ['exports'], function (exports) {
       while (modif && nb_pass_done != __PASS_MAX){
         cur_mod = new_mod;
         modif = false;
-        nb_pass_done += 1
+        nb_pass_done += 1;
 
         graph.nodes.forEach(function(node,i){
           var com_node = status.nodes_to_com[node];
@@ -20603,7 +21011,7 @@ define('src/index', ['exports'], function (exports) {
               best_increase = incr;
               best_com = com;
             }
-          }); 
+          });
 
           __insert(node, best_com, neigh_communities[best_com] || 0, status);
 
@@ -20626,7 +21034,7 @@ define('src/index', ['exports'], function (exports) {
         weight = edge.weight || 1;
         var com1 = partition[edge.source];
         var com2 = partition[edge.target];
-        w_prec = (get_edge_weight(ret, com1, com2) || 0); 
+        w_prec = (get_edge_weight(ret, com1, com2) || 0);
         var new_weight = (w_prec + weight);
         add_edge_to_graph(ret, {'source': com1, 'target': com2, 'weight': new_weight});
       });
@@ -20646,7 +21054,7 @@ define('src/index', ['exports'], function (exports) {
 
 
     function generate_dendogram(graph, part_init){
-      
+
       if(graph.edges.length == 0){
         var part = {};
         graph.nodes.forEach(function(node,i){
@@ -20674,14 +21082,14 @@ define('src/index', ['exports'], function (exports) {
           break;
 
         partition = __renumber(status.nodes_to_com);
-        status_list.push(partition); 
+        status_list.push(partition);
 
         mod = new_mod;
         current_graph = induced_graph(partition, current_graph);
         init_status(current_graph, status);
       }
 
-      return status_list; 
+      return status_list;
     }
 
     var core = function(){
@@ -20709,7 +21117,7 @@ define('src/index', ['exports'], function (exports) {
                      '_assoc_mat': assoc_mat };
       }
       return core;
-      
+
     };
 
     core.partition_init = function(prttn){
@@ -20727,14 +21135,14 @@ define('src/index', ['exports'], function (exports) {
    * @param {Network} network
    * @param {Boolean} bAddColors if true add colors to nodes based on community
    * @param {String} prop Node property to use to store community for each node
-   * @return {Network} 
+   * @return {Network}
    * tags:analytics,transformative
    */
   NetworkOperators.addLouvainCommunityToNodes = function(network,bAddColors,prop) {
     if(network==null) return network;
     if(bAddColors==null) bAddColors=true;
     if(prop == null) prop='group';
-    
+
     var node_data = [];
     for(var i=0; i < network.nodeList.length; i++){
       // force nodes to be stringlike since they get used as properties in result
@@ -20779,7 +21187,7 @@ define('src/index', ['exports'], function (exports) {
       }
       if(nColors==0 && tFreq[0].length > 0)
         nColors=tFreq[0].length;
-      var colors = ColorListGenerators__default.createCategoricalColors(2, nColors)
+      var colors = ColorListGenerators__default.createCategoricalColors(2, nColors);
       for(var i=0;i<network.nodeList.length;i++){
         var iGroupIndex = mGroupIndex['g'+network.nodeList[i].group];
         if(tFreq[1][iGroupIndex] == 1)
@@ -20838,6 +21246,10 @@ define('src/index', ['exports'], function (exports) {
 
     return tree;
   };
+
+  /**
+   * @todo write docs
+   */
   TreeConvertions.getId = function(table, i, j) {
     var iCol = 1;
     var id = String(table[0][j]);
@@ -20855,6 +21267,9 @@ define('src/index', ['exports'], function (exports) {
 
   //include(frameworksRoot+"operators/strings/StringOperators.js");
 
+  /**
+   * @todo write docs
+   */
   TreeEncodings.decodeIdentedTree = function(indexedTree, superiorNodeName, identationCharacter) {
     superiorNodeName = superiorNodeName == null ? "" : superiorNodeName;
     identationCharacter = identationCharacter == null ? "\t" : identationCharacter;
@@ -20919,21 +21334,6 @@ define('src/index', ['exports'], function (exports) {
   };
 
   exports.TreeEncodings = TreeEncodings;
-
-  function CanvasAndContext() {}
-
-
-  CanvasAndContext.createInvisibleContext = function(width, height) {
-    width = width || src_Global__cW;
-    height = height || src_Global__cH;
-
-    var tempCanvas = document.createElement('canvas');
-    tempCanvas.width = src_Global__cW;
-    tempCanvas.height = src_Global__cH;
-    return tempCanvas.getContext('2d');
-  };
-
-  exports.CanvasAndContext = CanvasAndContext;
 
   function DrawSimpleVis() {}
 
@@ -21315,1370 +21715,28 @@ define('src/index', ['exports'], function (exports) {
 
   exports.DrawSimpleVis = DrawSimpleVis;
 
-  function fRect(x, y, width, height) {
-    if(typeof x != 'number') {
-      y = x.y;
-      width = x.width;
-      height = x.height;
-      x = x.x;
-    }
-    src_Global__context.fillRect(x, y, width, height);
-  };
-
-  /**
-   * Draws a stroked Rectangle - showing just an outline.
-   * Stroke color is expected to be set using {@link setStroke}.
-   *
-   * @param {Number} x X position of upper-left corner of Rectangle.
-   * @param {Number} y Y position of upper-left corner of Rectangle.
-   * @param {Number} width Width of Rectangle in pixels.
-   * @param {Number} height Height of Rectangle in pixels.
-   * @example
-   * setStroke('orange');
-   * sRect(10, 10, 40, 40);
-   *
-   */
-  function sRect(x, y, width, height) {
-    if(typeof x != 'number') {
-      y = x.y;
-      width = x.width;
-      height = x.height;
-      x = x.x;
-    }
-    src_Global__context.strokeRect(x, y, width, height);
-  };
-
-  /**
-   * Draws a filled and stroked Rectangle.
-   * Fill color is expected to be set using {@link setFill}.
-   * Stroke color is expected to be set using {@link setStroke}.
-   *
-   * @param {Number} x X position of upper-left corner of Rectangle.
-   * @param {Number} y Y position of upper-left corner of Rectangle.
-   * @param {Number} width Width of Rectangle in pixels.
-   * @param {Number} height Height of Rectangle in pixels.
-   * @example
-   * setFill('steelblue');
-   * setStroke('orange');
-   * fsRect(10, 10, 40, 40);
-   *
-   */
-  function fsRect(x, y, width, height) {
-    if(typeof x != 'number') {
-      y = x.y;
-      width = x.width;
-      height = x.height;
-      x = x.x;
-    }
-    src_Global__context.fillRect(x, y, width, height);
-    src_Global__context.strokeRect(x, y, width, height);
-  };
-
-  /**
-   * Draws a filled in Arc.
-   * Fill color is expected to be set using {@link setFill}.
-   *
-   * @param {Number} x X position of center of the Arc.
-   * @param {Number} y Y position of center of the Arc.
-   * @param {Number} r Radius of the Arc.
-   * @param {Number} a0 first angle of the Arc.
-   * @param {Number} a1 second angle of the Arc.
-   * @example
-   * setFill('steelblue');
-   * fArc(40, 40, 20, 0.5, 0.8);
-   *
-   */
-  function fArc(x, y, r, a0, a1, counterclockwise) {
-    src_Global__context.beginPath();
-    src_Global__context.arc(x, y, r, a0, a1, counterclockwise);
-    src_Global__context.fill();
-  };
-
-  /**
-   * Draws a stroked Arc.
-   * Stroke color is expected to be set using {@link setStroke}.
-   *
-   * @param {Number} x X position of center of the Arc.
-   * @param {Number} y Y position of center of the Arc.
-   * @param {Number} r Radius of the Arc.
-   * @param {Number} a0 first angle of the Arc.
-   * @param {Number} a1 second angle of the Arc.
-   * @example
-   * setStroke('orange', 5);
-   * sArc(40, 40, 20, 0.5, 0.8);
-   *
-   */
-  function sArc(x, y, r, a0, a1, counterclockwise) {
-    src_Global__context.beginPath();
-    src_Global__context.arc(x, y, r, a0, a1, counterclockwise);
-    src_Global__context.stroke();
-  };
-
-  /**
-   * Draws a filled in Circle.
-   * Fill color is expected to be set using {@link setFill}.
-   *
-   * @param {Number} x X position of center of the Circle.
-   * @param {Number} y Y position of center of the Circle.
-   * @param {Number} r Radius of the Circle.
-   * @example
-   * setFill('steelblue');
-   * fCircle(40, 40, 20);
-   *
-   */
-  function fCircle(x, y, r) {
-    src_Global__context.beginPath();
-    src_Global__context.arc(x, y, r, 0, TwoPi);
-    src_Global__context.fill();
-  };
-
-  /**
-   * Draws a stroked Circle.
-   * Stroke color is expected to be set using {@link setStroke}.
-   *
-   * @param {Number} x X position of center of the Circle.
-   * @param {Number} y Y position of center of the Circle.
-   * @param {Number} r Radius of the Circle.
-   * @example
-   * setStroke('orange', 5);
-   * sCircle(40, 40, 20);
-   *
-   */
-  function sCircle(x, y, r) {
-    src_Global__context.beginPath();
-    src_Global__context.arc(x, y, r, 0, TwoPi);
-    src_Global__context.stroke();
-  };
-
-  /**
-   * Draws a filled and stroked Circle.
-   * Fill color is expected to be set using {@link setFill}.
-   * Stroke color is expected to be set using {@link setStroke}.
-   *
-   * @param {Number} x X position of center of the Circle.
-   * @param {Number} y Y position of center of the Circle.
-   * @param {Number} r Radius of the Circle.
-   * @example
-   * setStroke('steelblue');
-   * sCircle(40, 40, 20);
-   *
-   */
-  function fsCircle(x, y, r) {
-    fCircle(x, y, r);
-    src_Global__context.stroke();
-  };
-
-  /**
-   * Draws a filled in Ellipse.
-   * Fill color is expected to be set using {@link setFill}.
-   *
-   * @param {Number} x X position of center of the Ellipse.
-   * @param {Number} y Y position of center of the Ellipse.
-   * @param {Number} rW Radial width of the Ellipse.
-   * @param {Number} rH Radial height of the Ellipse.
-   * @example
-   * setFill('steelblue');
-   * fEllipse(40, 40, 20, 30);
-   */
-  function fEllipse(x, y, rW, rH) {
-    var k = 0.5522848, // 4 * ((√(2) - 1) / 3)
-      ox = rW * k, // control point offset horizontal
-      oy = rH * k, // control point offset vertical
-      xe = x + rW, // x-end
-      ye = y + rH; // y-end
-    src_Global__context.beginPath();
-    src_Global__context.moveTo(x - rW, y);
-    src_Global__context.bezierCurveTo(x - rW, y - oy, x - ox, y - rH, x, y - rH);
-    src_Global__context.bezierCurveTo(x + ox, y - rH, xe, y - oy, xe, y);
-    src_Global__context.bezierCurveTo(xe, y + oy, x + ox, ye, x, ye);
-    src_Global__context.bezierCurveTo(x - ox, ye, x - rW, y + oy, x - rW, y);
-    src_Global__context.moveTo(x - rW, y);
-    src_Global__context.closePath();
-    src_Global__context.fill();
-  };
-
-  /**
-   * Draws a stroked Ellipse.
-   * Stroke color is expected to be set using {@link setStroke}.
-   *
-   * @param {Number} x X position of center of the Ellipse.
-   * @param {Number} y Y position of center of the Ellipse.
-   * @param {Number} rW Radial width of the Ellipse.
-   * @param {Number} rH Radial height of the Ellipse.
-   * @example
-   * setStroke('orange');
-   * sEllipse(40, 40, 20, 30);
-   */
-  function sEllipse(x, y, rW, rH) {
-    var k = 0.5522848,
-      ox = rW * k,
-      oy = rH * k,
-      xe = x + rW,
-      ye = y + rH;
-    src_Global__context.beginPath();
-    src_Global__context.moveTo(x - rW, y);
-    src_Global__context.bezierCurveTo(x - rW, y - oy, x - ox, y - rH, x, y - rH);
-    src_Global__context.bezierCurveTo(x + ox, y - rH, xe, y - oy, xe, y);
-    src_Global__context.bezierCurveTo(xe, y + oy, x + ox, ye, x, ye);
-    src_Global__context.bezierCurveTo(x - ox, ye, x - rW, y + oy, x - rW, y);
-    src_Global__context.moveTo(x - rW, y);
-    src_Global__context.closePath();
-    src_Global__context.stroke();
-  };
-
-  /**
-   * Draws a filled and stroked Ellipse.
-   * Fill color is expected to be set using {@link setFill}.
-   * Stroke color is expected to be set using {@link setStroke}.
-   *
-   * @param {Number} x X position of center of the Ellipse.
-   * @param {Number} y Y position of center of the Ellipse.
-   * @param {Number} rW Radial width of the Ellipse.
-   * @param {Number} rH Radial height of the Ellipse.
-   * @example
-   * setFill('steelblue');
-   * setStroke('steelblue');
-   * fsEllipse(40, 40, 20, 30);
-   */
-  function fsEllipse(x, y, rW, rH) {
-    fEllipse(x, y, rW, rH);
-    src_Global__context.stroke();
-  };
-
-
-  /**
-   * @ignore
-   */
-  function SimpleGraphics___solidArc(x,y,a0,a1,r0,r1){
-    src_Global__context.beginPath();
-    src_Global__context.arc( x, y, r0, a0, a1 );
-    src_Global__context.lineTo( x + r1*Math.cos(a1), y + r1*Math.sin(a1) );
-    src_Global__context.arc( x, y, r1, a1, a0, true );
-    src_Global__context.lineTo( x + r0*Math.cos(a0), y + r0*Math.sin(a0) );
-  }
-
-  function fSolidArc(x,y,a0,a1,r0,r1){
-    SimpleGraphics___solidArc(x,y,a0,a1,r0,r1);
-    src_Global__context.fill();
-  }
-
-  function sSolidArc(x,y,a0,a1,r0,r1){
-    SimpleGraphics___solidArc(x,y,a0,a1,r0,r1);
-    src_Global__context.stroke();
-  }
-
-  function fsSolidArc(x,y,a0,a1,r0,r1){
-    fSolidArc(x,y,a0,a1,r0,r1);
-    src_Global__context.stroke();
-  }
-
-
-  /**
-   * Draws a line from a start position to an end position
-   *
-   * @param {Number} x0 Starting x position.
-   * @param {Number} y0 Starting y position.
-   * @param {Number} x1 Ending x position.
-   * @param {Number} y1 Ending y position.
-   * @example
-   * setStroke('black');
-   * line(0, 0, 40, 40);
-   */
-  function line(x0, y0, x1, y1) {
-    src_Global__context.beginPath();
-    src_Global__context.moveTo(x0, y0);
-    src_Global__context.lineTo(x1, y1);
-    src_Global__context.stroke();
-  };
-
-  /**
-   * Draws a bezier curve using {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/bezierCurveTo|bezierCurveTo}
-   *
-   * @param {Number} x0 Starting x position.
-   * @param {Number} y0 Starting y position.
-   * @param {Number} cx0 First curve control point x position.
-   * @param {Number} cy0 First cure control point y position.
-   * @param {Number} cx1 Second curve control point x position.
-   * @param {Number} cy1 Second cure control point y position.
-   * @param {Number} x1 Ending x position.
-   * @param {Number} y1 Ending y position.
-   * @example
-   * setStroke('black');
-   * bezier(10, 10, 10, 0, 40, 0, 40, 10);
-   */
-  function bezier(x0, y0, cx0, cy0, cx1, cy1, x1, y1) {
-    src_Global__context.beginPath();
-    src_Global__context.moveTo(x0, y0);
-    src_Global__context.bezierCurveTo(cx0, cy0, cx1, cy1, x1, y1);
-    src_Global__context.stroke();
-  };
-
-
-  /**
-   * @ignore
-   */
-  function _lines() {
-    if(arguments == null) return;
-
-    var args = arguments[0];
-    src_Global__context.beginPath();
-    src_Global__context.moveTo(args[0], args[1]);
-    for(var i = 2; args[i + 1] != null; i += 2) {
-      src_Global__context.lineTo(args[i], args[i + 1]);
-    }
-  };
-
-  /**
-   * @ignore
-   */
-  function _linesM() {
-    if(arguments == null) return;
-
-    var args = arguments[0];
-    var p = new Polygon();
-    src_Global__context.beginPath();
-    src_Global__context.moveTo(args[0], args[1]);
-    p[0] = new Point(args[0], args[1]);
-    for(var i = 2; args[i + 1] != null; i += 2) {
-      src_Global__context.lineTo(args[i], args[i + 1]);
-      p.push(new Point(args[i], args[i + 1]));
-    }
-    return p.containsPoint(mP);
-  };
-
-  /**
-   * Draws a filled polygon using a series of
-   * x/y positions.
-   *
-   * @param {...Number} positions x and y positions for the Polygon
-   * @example
-   * // This draws a filled triangle
-   * // Inputs are pairs of x/y positions.
-   * setFill('steelblue').
-   * fLines(10, 10, 40, 10, 40, 40);
-   *
-   */
-  function fLines() {
-    _lines(arguments);
-    src_Global__context.fill();
-  };
-
-  /**
-   * Draws a set of line segments using a series of
-   * x/y positions as input.
-   *
-   * @param {...Number} positions x and y positions for the Lines
-   * @example
-   * // This draws the outline of a triangle.
-   * // Inputs are pairs of x/y positions.
-   * setStroke('orange');
-   * sLines(10, 10, 40, 10, 40, 40, 10, 10);
-   *
-   */
-  function sLines() {
-    _lines(arguments);
-    src_Global__context.stroke();
-  };
-
-  /**
-   * Draws a filled set of line segments using a series of
-   * x/y positions as input.
-   *
-   * @param {...Number} positions x and y positions for the Lines
-   * @example
-   * // This draws a filled and outlined triangle.
-   * // Inputs are pairs of x/y positions.
-   * setFill('steelblue');
-   * setStroke('orange');
-   * fsLines(10, 10, 40, 10, 40, 40, 10, 10);
-   *
-   */
-  function fsLines() {
-    _lines(arguments);
-    src_Global__context.fill();
-    src_Global__context.stroke();
-  };
-
-  /**
-   * Draws a mouse-enabled filled set of line segments using a series of
-   * x/y positions as input. Returns true if moused over on current
-   * cycle iteration.
-   *
-   * @param {...Number} positions x and y positions for the Lines
-   * @returns {Boolean} if true, mouse is currently hovering over lines.
-   * @example
-   * // Turns Fill Red if moused over
-   * setFill('steelblue');
-   * setStroke('orange');
-   * var on = fsLinesM(10, 10, 40, 10, 40, 40, 10, 10);
-   * if(on) {
-   *   setFill('red');
-   *   fsLines(10, 10, 40, 10, 40, 40, 10, 10);
-   * }
-   *
-   */
-  function fsLinesM() {
-    var mouseOn = _linesM(arguments);
-    src_Global__context.fill();
-    src_Global__context.stroke();
-    return mouseOn;
-  };
-
-  /**
-   * @ignore
-   */
-  function SimpleGraphics___polygon(polygon) {
-    src_Global__context.beginPath();
-    src_Global__context.moveTo(polygon[0].x, polygon[0].y);
-    for(var i = 1; polygon[i] != null; i++) {
-      src_Global__context.lineTo(polygon[i].x, polygon[i].y);
-    }
-  };
-
-  function fPolygon(polygon) {
-    SimpleGraphics___polygon(polygon);
-    src_Global__context.fill();
-  };
-
-  function sPolygon(polygon, closePath) {
-    SimpleGraphics___polygon(polygon);
-    if(closePath) src_Global__context.closePath();
-    src_Global__context.stroke();
-  };
-
-  function fsPolygon(polygon, closePath) {
-    SimpleGraphics___polygon(polygon);
-    if(closePath) src_Global__context.closePath();
-    src_Global__context.fill();
-    src_Global__context.stroke();
-  };
-
-  function fEqTriangle(x, y, angle, r) {
-    SimpleGraphics___eqTriangle(x, y, angle, r);
-    src_Global__context.fill();
-  };
-
-  function sEqTriangle(x, y, angle, r) {
-    SimpleGraphics___eqTriangle(x, y, angle, r);
-    src_Global__context.stroke();
-  };
-
-  function fsEqTriangle(x, y, angle, r) {
-    SimpleGraphics___eqTriangle(x, y, angle, r);
-    src_Global__context.fill();
-    src_Global__context.stroke();
-  };
-
-  function SimpleGraphics___eqTriangle(x, y, angle, r) {
-    src_Global__context.beginPath();
-    angle = angle || 0;
-    src_Global__context.moveTo(r * Math.cos(angle) + x, r * Math.sin(angle) + y);
-    src_Global__context.lineTo(r * Math.cos(angle + 2.0944) + x, r * Math.sin(angle + 2.0944) + y);
-    src_Global__context.lineTo(r * Math.cos(angle + 4.1888) + x, r * Math.sin(angle + 4.1888) + y);
-    src_Global__context.lineTo(r * Math.cos(angle) + x, r * Math.sin(angle) + y);
-  };
-
-
-  //drawing and checking cursor
-
-  /**
-   * Draws a mouse-enabled filled in Rectangle.
-   * Fill color is expected to be set using {@link setFill}.
-   *
-   * @param {Number} x X position of upper-left corner of Rectangle.
-   * @param {Number} y Y position of upper-left corner of Rectangle.
-   * @param {Number} width Width of Rectangle in pixels.
-   * @param {Number} height Height of Rectangle in pixels.
-   * @param {Number} margin Parameter around rectangle to count towards mouse over.
-   * @return {Boolean} Returns true if the mouse is over the rectangle on the current
-   * iteration of the cycle function.
-   * @example
-   * setFill('steelblue');
-   * var on = fRectM(10, 10, 40, 40);
-   * if(on) {
-   *   setFill('red');
-   *   fRect(10, 10, 40, 40);
-   * }
-   */
-  function fRectM(x, y, width, height, margin) {
-    margin = margin == null ? 0 : margin;
-    src_Global__context.fillRect(x, y, width, height);
-    return mY > y - margin && mY < y + height + margin && mX > x - margin && mX < x + width + margin;
-  };
-
-  /**
-   * Draws a mouse-enabled stroked Rectangle.
-   * Stroke color is expected to be set using {@link setStroke}.
-   *
-   * @param {Number} x X position of upper-left corner of Rectangle.
-   * @param {Number} y Y position of upper-left corner of Rectangle.
-   * @param {Number} width Width of Rectangle in pixels.
-   * @param {Number} height Height of Rectangle in pixels.
-   * @param {Number} margin Parameter around rectangle to count towards mouse over.
-   * @return {Boolean} Returns true if the mouse is over the rectangle on the current
-   * iteration of the cycle function.
-   * @example
-   * setStroke('orange');
-   * var on = sRectM(10, 10, 40, 40);
-   * if(on) {
-   *   setStroke('black');
-   *   sRect(10, 10, 40, 40);
-   * }
-   */
-  function sRectM(x, y, width, height, margin) {
-    margin = margin == null ? 0 : margin;
-    src_Global__context.strokeRect(x, y, width, height);
-    return mY > y - margin && mY < y + height + margin && mX > x - margin && mX < x + width + margin;
-  };
-
-  /**
-   * Draws a mouse-enabled filled and stroked Rectangle.
-   * Fill color is expected to be set using {@link setFill}.
-   * Stroke color is expected to be set using {@link setStroke}.
-   *
-   * @param {Number} x X position of upper-left corner of Rectangle.
-   * @param {Number} y Y position of upper-left corner of Rectangle.
-   * @param {Number} width Width of Rectangle in pixels.
-   * @param {Number} height Height of Rectangle in pixels.
-   * @param {Number} margin Parameter around rectangle to count towards mouse over.
-   * @return {Boolean} Returns true if the mouse is over the rectangle on the current
-   * iteration of the cycle function.
-   * @example
-   * setFill('steelblue');
-   * setStroke('orange');
-   * var on = fsRectM(10, 10, 40, 40);
-   * if(on) {
-   *   setFill('red');
-   *   setStroke('black');
-   *   sRect(10, 10, 40, 40);
-   * }
-   */
-  function fsRectM(x, y, width, height, margin) {
-    margin = margin == null ? 0 : margin;
-    src_Global__context.fillRect(x, y, width, height);
-    src_Global__context.strokeRect(x, y, width, height);
-    return mY > y - margin && mY < y + height + margin && mX > x - margin && mX < x + width + margin;
-  };
-
-  /**
-   * Draws a mouse-enabled filled in Circle.
-   * Fill color is expected to be set using {@link setFill}.
-   * Returns true if mouse is over circle on current iteration of cycle.
-   *
-   * @param {Number} x X position of center of the Circle.
-   * @param {Number} y Y position of center of the Circle.
-   * @param {Number} r Radius of the Circle.
-   * @param {Number} margin Margin around Circle to consider part of mouse over.
-   * @return {Boolean} Returns true if the mouse is over the circle on the current
-   * iteration of the cycle function.
-   * @example
-   * setFill('steelblue');
-   * var on = fCircleM(40, 40, 20);
-   * if(on) {
-   *  setFill('red');
-   *  fCircle(40, 40, 20);
-   * }
-   *
-   */
-  function fCircleM(x, y, r, margin) { //check if you can avoid repeat
-    margin = margin == null ? 0 : margin;
-    src_Global__context.beginPath();
-    src_Global__context.arc(x, y, r, 0, TwoPi);
-    src_Global__context.fill();
-    return Math.pow(x - mX, 2) + Math.pow(y - mY, 2) < Math.pow(r + margin, 2);
-  };
-
-  /**
-   * Draws a mouse-enabled stroked Circle.
-   * Stroke color is expected to be set using {@link setStroke}.
-   * Returns true if mouse is over circle on current iteration of cycle.
-   *
-   * @param {Number} x X position of center of the Circle.
-   * @param {Number} y Y position of center of the Circle.
-   * @param {Number} r Radius of the Circle.
-   * @param {Number} margin Margin around Circle to consider part of mouse over.
-   * @return {Boolean} Returns true if the mouse is over the circle on the current
-   * iteration of the cycle function.
-   * @example
-   * setStroke('orange');
-   * var on = sCircleM(40, 40, 20);
-   * if(on) {
-   *  setStroke('black');
-   *  sCircle(40, 40, 20);
-   * }
-   *
-   */
-  function sCircleM(x, y, r, margin) {
-    margin = margin == null ? 0 : margin;
-    src_Global__context.beginPath();
-    src_Global__context.arc(x, y, r, 0, TwoPi);
-    src_Global__context.stroke();
-    return Math.pow(x - mX, 2) + Math.pow(y - mY, 2) < Math.pow(r + margin, 2);
-  };
-
-  /**
-   * Draws a mouse-enabled filled and stroked Circle.
-   * Fill color is expected to be set using {@link setFill}.
-   * Stroke color is expected to be set using {@link setStroke}.
-   * Returns true if mouse is over circle on current iteration of cycle.
-   *
-   * @param {Number} x X position of center of the Circle.
-   * @param {Number} y Y position of center of the Circle.
-   * @param {Number} r Radius of the Circle.
-   * @param {Number} margin Margin around Circle to consider part of mouse over.
-   * @return {Boolean} Returns true if the mouse is over the circle on the current
-   * iteration of the cycle function.
-   * @example
-   * setFill('steelblue');
-   * setStroke('orange');
-   * var on = fsCircleM(40, 40, 20);
-   * if(on) {
-   *  setFill('red');
-   *  setStroke('black');
-   *  fsCircle(40, 40, 20);
-   * }
-   *
-   */
-  function fsCircleM(x, y, r, margin) {
-    margin = margin == null ? 0 : margin;
-    src_Global__context.beginPath();
-    src_Global__context.arc(x, y, r, 0, TwoPi);
-    src_Global__context.stroke();
-    src_Global__context.fill();
-    return Math.pow(x - mX, 2) + Math.pow(y - mY, 2) < Math.pow(r + margin, 2);
-  };
-
-  /**
-   * Draws a mouse-enabled line from a start position to an end position.
-   *
-   * @param {Number} x0 Starting x position.
-   * @param {Number} y0 Starting y position.
-   * @param {Number} x1 Ending x position.
-   * @param {Number} y1 Ending y position.
-   * @param {Number} d Distance away from line to count towards mouse interaction.
-   * @return {Boolean} Returns true if the mouse is over the line on the current
-   * iteration of the cycle function.
-   * @example
-   * setStroke('black');
-   * var on = lineM(0, 0, 40, 40);
-   * if(on) {
-   *  setStroke('red');
-   *  line(0, 0, 40, 40);
-   * }
-   */
-  function lineM(x0, y0, x1, y1, d) {
-    d = d || 4;
-    src_Global__context.beginPath();
-    src_Global__context.moveTo(x0, y0);
-    src_Global__context.lineTo(x1, y1);
-    src_Global__context.stroke();
-    return _distToSegmentSquared(x0, y0, x1, y1) < d * d;
-  };
-
-
-  /**
-   * @ignore
-   */
-  function _distToSegmentSquared(x0, y0, x1, y1) {
-    var l2 = Math.pow(x0 - x1, 2) + Math.pow(y0 - y1, 2);
-    if(l2 === 0) return Math.pow(x0 - mX, 2) + Math.pow(y0 - mY, 2);
-    var t = ((mX - x0) * (x1 - x0) + (mY - y0) * (y1 - y0)) / l2;
-    if(t <= 0) return Math.pow(x0 - mX, 2) + Math.pow(y0 - mY, 2);
-    if(t >= 1) return Math.pow(x1 - mX, 2) + Math.pow(y1 - mY, 2);
-    var px = x0 + t * (x1 - x0);
-    var py = y0 + t * (y1 - y0);
-    return Math.pow(px - mX, 2) + Math.pow(py - mY, 2);
-  };
-
-  //TODO:fEqTriangleM, fPolygonM
-
-
-  /**
-   * Draws a mouse-enabled bezier curve using {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/bezierCurveTo|bezierCurveTo}.
-   *
-   *
-   * @param {Number} x0 Starting x position.
-   * @param {Number} y0 Starting y position.
-   * @param {Number} cx0 First curve control point x position.
-   * @param {Number} cy0 First cure control point y position.
-   * @param {Number} cx1 Second curve control point x position.
-   * @param {Number} cy1 Second cure control point y position.
-   * @param {Number} x1 Ending x position.
-   * @param {Number} y1 Ending y position.
-   * @param {Number} d Distance away from line to count towards mouse interaction.
-   * @return {Boolean} Returns true if the mouse is over the line on the current
-   * iteration of the cycle function.
-   * @example
-   * setStroke('black');
-   * var on = bezierM(10, 10, 10, 0, 40, 0, 40, 10);
-   * if(on) {
-   *  setStroke('red');
-   *  bezierM(10, 10, 10, 0, 40, 0, 40, 10);
-   * }
-   */
-  function bezierM(x0, y0, cx0, cy0, cx1, cy1, x1, y1, d) { //TODO: fix this mess!
-    d = d == null ? 2 : d;
-    src_Global__context.beginPath();
-    src_Global__context.moveTo(x0, y0);
-    src_Global__context.bezierCurveTo(cx0, cy0, cx1, cy1, x1, y1);
-    src_Global__context.stroke();
-    if(mX < Math.min(x0, x1, cx0, cx1) - d || mX > Math.max(x0, x1, cx0, cx1) + d || mY < Math.min(y0, y1, cy0, cy1) - d || mY > Math.max(y0, y1, cy0, cy1) + d) return false;
-    return GeometryOperators.distanceToBezierCurve(x0, y0, cx0, cy0, cx1, cy1, x1, y1, mP, false) < d;
-  };
-
-
-  //images
-
-  /**
-   * draw an image on context, parameters options (s for source, d for destination):
-   *	drawImage(image, dx, dy)
-   *	drawImage(image, dx, dy, dw, dh)
-   *	drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh)
-   *	@param {Image} image
-   */
-  function drawImage(image) { //TODO: improve efficiency
-    if(image == null) return;
-
-    switch(arguments.length) {
-      case 3:
-        src_Global__context.drawImage(image, arguments[1], arguments[2]);
-        break;
-      case 5:
-        src_Global__context.drawImage(image, arguments[1], arguments[2], arguments[3], arguments[4]);
-        break;
-      case 9:
-        src_Global__context.drawImage(image, arguments[1], arguments[2], arguments[3], arguments[4], arguments[5], arguments[6], arguments[7], arguments[8]);
-        break;
-
-    }
-  };
-
-  /**
-   * fits an image into a rectangle without chagning its proportions (thus probably loosing top-bottom or left-right margins)
-   * @param  {Image} image
-   * @param  {Rectangle} rectangle frame of the image
-   */
-  function fitImage(image, rectangle) {
-    if(image == null ||  rectangle == null) return;
-
-    var propIm = image.width / image.height;
-    var propRc = rectangle.width / rectangle.height;
-    var compProp = propIm / propRc;
-
-    if(propIm > propRc) {
-      src_Global__context.drawImage(image, 0.5 * (image.width - image.width / compProp), 0, image.width / compProp, image.height, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
-    } else {
-      src_Global__context.drawImage(image, 0, 0.5 * (image.height - image.height * compProp), image.width, image.height * compProp, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
-    }
-  };
-
-  // styles
-
-  function setFill(style) {
-    if(typeof style == "number") {
-      if(arguments.length > 3) {
-        src_Global__context.fillStyle = 'rgba(' + arguments[0] + ',' + arguments[1] + ',' + arguments[2] + ',' + arguments[3] + ')';
-        return;
-      }
-      src_Global__context.fillStyle = 'rgb(' + arguments[0] + ',' + arguments[1] + ',' + arguments[2] + ')';
-      return;
-    }
-    src_Global__context.fillStyle = style;
-  };
-
-  /**
-   * setStroke - set stroke to draw with in canvas
-   *
-   * @param {(String|Number)} style If string, then hex value or web color.
-   * If Number, then a set of RGB or RGBA integers
-   * @param {Number} lineWidth Optional width of line to use. Only valid if style parameter is a string.
-   * @example
-   * setStroke('steelblue'); // sets stroke to blue.
-   * setStroke(0,0,0,0.4); // sets stroke to black with partial opacity.
-   * setStroke('black', 0.2); // provides lineWidth to stroke
-   */
-  function setStroke(style, lineWidth) {
-    if(typeof style == "number") {
-      if(arguments.length > 3) {
-        src_Global__context.strokeStyle = 'rgba(' + arguments[0] + ',' + arguments[1] + ',' + arguments[2] + ',' + arguments[3] + ')';
-        return;
-      }
-      src_Global__context.strokeStyle = 'rgb(' + arguments[0] + ',' + arguments[1] + ',' + arguments[2] + ')';
-      return;
-    }
-    src_Global__context.strokeStyle = style;
-    //TODO: will lineWidth still work if RGB or RGBA is used?
-    if(lineWidth) src_Global__context.lineWidth = lineWidth;
-  };
-
-  function setLW(lineWidth) {
-    src_Global__context.lineWidth = lineWidth;
-  };
-
-
-  //clipping
-
-  function clipCircle(x, y, r) {
-    src_Global__context.save();
-    src_Global__context.beginPath();
-    src_Global__context.arc(x, y, r, 0, TwoPi, false);
-    src_Global__context.closePath();
-    src_Global__context.clip();
-  };
-
-  function clipRectangle(x, y, w, h) {
-    src_Global__context.save();
-    src_Global__context.beginPath();
-    src_Global__context.moveTo(x, y);
-    src_Global__context.lineTo(x + w, y);
-    src_Global__context.lineTo(x + w, y + h);
-    src_Global__context.lineTo(x, y + h);
-    src_Global__context.clip();
-  };
-
-  function save() {
-    src_Global__context.save();
-  };
-
-  function clip() {
-    src_Global__context.clip();
-  };
-
-  function restore() {
-    src_Global__context.restore();
-  };
-
-
-  // texts
-
-  /**
-   * Draws filled in text.
-   * Fill color is expected to be set using {@link setFill}.
-   * Alternatively, setText can be used to set a number of
-   * text rendering properties.
-   *
-   * @param {String} text Text to draw.
-   * @param {Number} x X position to start the text.
-   * @param {Number} y Y position to start the text.
-   * @example
-   * setText('black', 30, 'Ariel');
-   * fText("hello", 10, 10);
-   *
-   */
-  function fText(text, x, y) {
-    src_Global__context.fillText(text, x, y);
-  };
-
-  /**
-   * Draws stroked text.
-   * Stroke color is expected to be set using {@link setStroke}.
-   * Additionally, setText can be used to set a number of
-   * text rendering properties.
-   *
-   * @param {String} text Text to draw.
-   * @param {Number} x X position to start the text.
-   * @param {Number} y Y position to start the text.
-   * @example
-   * setText('black', 30, 'Ariel');
-   * setStroke('orange');
-   * sText("hello", 10, 10);
-   *
-   */
-  function sText(text, x, y) {
-    src_Global__context.strokeText(text, x, y);
-  };
-
-  /**
-   * Draws stroked and filled in text.
-   * Stroke color is expected to be set using {@link setStroke}.
-   * Fill color is expected to be set using {@link setFill}.
-   * Alternatively, setText can be used to set a number of
-   * text rendering properties.
-   *
-   * @param {String} text Text to draw.
-   * @param {Number} x X position to start the text.
-   * @param {Number} y Y position to start the text.
-   * @example
-   * setText('black', 30, 'Ariel');
-   * setStroke('orange');
-   * fsText("hello", 10, 10);
-   *
-   */
-  function fsText(text, x, y) {
-    src_Global__context.strokeText(text, x, y);
-    src_Global__context.fillText(text, x, y);
-  };
-
-  /**
-   * Draws filled in text, rotated by some angle.
-   * Fill color is expected to be set using {@link setFill}.
-   * Alternatively, setText can be used to set a number of
-   * text rendering properties.
-   *
-   * @param {String} text Text to draw.
-   * @param {Number} x X position to start the text.
-   * @param {Number} y Y position to start the text.
-   * @param {Number} angle The angle in radians to rotate the text
-   * @example
-   * setText('black', 30, 'Ariel');
-   * fTextRotated("hello", 40, 40, (20 * Math.PI / 180));
-   *
-   */
-  function fTextRotated(text, x, y, angle) {
-    src_Global__context.save();
-    src_Global__context.translate(x, y);
-    src_Global__context.rotate(angle);
-    src_Global__context.fillText(text, 0, 0);
-    src_Global__context.restore();
-  };
-
-  /**
-   * Draws filled in text in an arc.
-   * Fill color is expected to be set using {@link setFill}.
-   * Alternatively, setText can be used to set a number of
-   * text rendering properties.
-   *
-   * @param {String} text Text to draw.
-   * @param {Number} x X position of control point, to start the text if not centered.
-   * @param {Number} y Y position of control point, to start the text if not centered.
-   * @param {Number} xCenter X position of center of arc.
-   * @param {Number} yCenter Y position of center of arc.
-   * @param {Boolean} centered if false (default) text starts on control point, if true the control point is the center of the text
-   * @example
-   * setText('black', 30, 'Ariel');
-   * fTextArc("Wheels on the Bus Go Round and Round", 500, 300, 200, 200, true);
-   *
-   */
-  function fTextArc(text, x, y, xCenter, yCenter, centered){
-    if(text==null || text=="") return;
-
-    var i;
-    var xArc = 0;
-    var r = Math.sqrt(Math.pow(x - xCenter, 2)+Math.pow(y - yCenter, 2));
-    var a = Math.atan2(y - yCenter, x - xCenter);
-    if(centered) a-=getTextW(text)*0.5/r;
-    var xl, yl;
-
-      var letters = text.split('');
-      for(i=0; letters[i]!=null; i++){
-        xl = xCenter + r*Math.cos(a);
-        yl = yCenter + r*Math.sin(a);
-        fTextRotated(letters[i], xl, yl, a+HalfPi);
-        a+=getTextW(letters[i])/r;
-      }
-  }
-
-  /**
-   * Draws a mouse-enabled filled in text.
-   * Fill color is expected to be set using {@link setFill}.
-   * Alternatively, setText can be used to set a number of
-   * text rendering properties.
-   *
-   * @param {String} text Text to draw.
-   * @param {Number} x X position to start the text.
-   * @param {Number} y Y position to start the text.
-   * @param {Number} size Size of the text being drawn.
-   * @return {Boolean} Returns true if the mouse is over the text on the current
-   * iteration of the cycle function.
-   * @example
-   * setText('black', 30, 'Ariel');
-   * var on = fTextM("hello", 10, 10, 30);
-   * if(on) {
-   *   setText('red', 30, 'Ariel');
-   *   fText("hello", 10, 10);
-   * }
-   *
-   */
-  function fTextM(text, x, y, size) {
-    size = size || 12;
-    src_Global__context.fillText(text, x, y);
-    return mY > y && mY < y + size && mX > x && mX < x + src_Global__context.measureText(text).width;
-  };
-
-  /**
-   * Draws a mouse-enabled filled and stroked text.
-   * Fill color is expected to be set using {@link setFill}.
-   * Stroke color is expected to be set using {@link setStroke}.
-   * Alternatively, setText can be used to set a number of
-   * text rendering properties.
-   *
-   * @param {String} text Text to draw.
-   * @param {Number} x X position to start the text.
-   * @param {Number} y Y position to start the text.
-   * @param {Number} size Size of the text being drawn.
-   * @return {Boolean} Returns true if the mouse is over the text on the current
-   * iteration of the cycle function.
-   * @example
-   * setText('black', 30, 'Ariel');
-   * setStroke('orange')
-   * var on = fsTextM("hello", 10, 10, 30);
-   * if(on) {
-   *   setText('red', 30, 'Ariel');
-   *   setStroke('black')
-   *   fsText("hello", 10, 10);
-   * }
-   *
-   */
-  function fsTextM(text, x, y, size) {
-    size = size || 12;
-    src_Global__context.strokeText(text, x, y);
-    src_Global__context.fillText(text, x, y);
-    return mY > y && mY < y + size && mX > x && mX < x + src_Global__context.measureText(text).width;
-  };
-
-  /**
-   * Draws a mouse-enabled filled text rotated by some angle.
-   * Fill color is expected to be set using {@link setFill}.
-   * Alternatively, setText can be used to set a number of
-   * text rendering properties.
-   *
-   * @param {String} text Text to draw.
-   * @param {Number} x X position to start the text.
-   * @param {Number} y Y position to start the text.
-   * @param {Number} angle The angle in radians to rotate the text
-   * @param {Number} size Size of the text being drawn.
-   * @return {Boolean} Returns true if the mouse is over the text on the current
-   * iteration of the cycle function.
-   * @example
-   * setText('black', 30, 'Ariel');
-   * var on = fTextRotatedM("hello", 10, 10, (20 * Math.PI / 180), 30);
-   * if(on) {
-   *   setText('red', 30, 'Ariel');
-   *   setStroke('black')
-   *   fsText("hello", 10, 10);
-   * }
-   *
-   */
-  function fTextRotatedM(text, x, y, angle, size) {
-    size = size || 12;
-    src_Global__context.save();
-    src_Global__context.translate(x, y);
-    src_Global__context.rotate(angle);
-    src_Global__context.fillText(text, 0, 0);
-    src_Global__context.restore();
-
-    var dX = mX - x;
-    var dY = mY - y;
-    var d = Math.sqrt(dX * dX + dY * dY);
-    var a = Math.atan2(dY, dX) - angle;
-    var mXT = x + d * Math.cos(a);
-    var mYT = y + d * Math.sin(a);
-
-    return mYT > y && mYT < y + size && mXT > x && mXT < x + src_Global__context.measureText(text).width;
-  };
-
-  function fTextW(text, x, y) {
-    src_Global__context.fillText(text, x, y);
-    return src_Global__context.measureText(text).width;
-  };
-
-  /**
-   * Sets several text canvas rendering properties
-   *
-   * @param {Object} color optional font color
-   * @param {Object} fontSize optional font size
-   * @param {Object} fontName optional font name (default: LOADED_FONT)
-   * @param {Object} align optional horizontal align ('left', 'center', 'right')
-   * @param {Object} baseline optional vertical alignment ('bottom', 'middle', 'top')
-   * @param {Object} style optional font style ('bold', 'italic', 'underline')
-   * @param {Object} ctx optional context
-   */
-  function setText(color, fontSize, fontName, align, baseline, style) {
-    color = color || '#000000';
-    fontSize = String(fontSize) || '14';
-    fontName = fontName || LOADED_FONT;
-    align = align == null ? 'left' : align;
-    baseline = baseline == null ? 'top' : baseline;
-    style = style == null ? '' : style;
-
-    if(style != '') {
-      style += ' ';
-    }
-
-    src_Global__context.fillStyle = color;
-    src_Global__context.font = style + fontSize + 'px ' + fontName;
-    src_Global__context.textAlign = align;
-    src_Global__context.textBaseline = baseline;
-  };
-
-  function getTextW(text) {
-    return src_Global__context.measureText(text).width;
-  };
-
-
-
-  // pixel data
-
-  function getPixelData(x, y) {
-    return src_Global__context.getImageData(x, y, 1, 1).data;
-  };
-
-  function getPixelColor(x, y) {
-    var rgba = src_Global__context.getImageData(x, y, 1, 1).data;
-    return 'rgba(' + rgba[0] + ',' + rgba[1] + ',' + rgba[2] + ',' + rgba[3] + ')';
-  };
-
-  function getPixelColorRGBA(x, y) { //repeated
-    return src_Global__context.getImageData(x, y, 1, 1).data;
-  };
-
-  function captureCanvas() {
-    var im = new Image();
-    im.src = canvas.toDataURL();
-    return im;
-  };
-
-
-  /*
-  TODO: refactor this to not reassign Global.context
-  export function drawAndcapture(drawFunction, w, h, target) {
-    var defaultContext = context;
-
-    context = hiddenContext;
-
-    context.canvas.setAttribute('width', w);
-    context.canvas.setAttribute('height', h);
-
-    context.clearRect(0, 0, w, h);
-
-    target == null ? drawFunction.call() : drawFunction.call(target);
-
-    var im = new Image();
-    im.src = context.canvas.toDataURL();
-
-    context = defaultContext;
-
-    return im;
-  };
-  */
-
-
-
-  //cursor
-
-  /**
-   * Change mouse cursor to given style. See {@link https://developer.mozilla.org/en-US/docs/Web/CSS/cursor|MDN Cursor Page} for all style options.
-   * @param {String} name The name of the cursor style.
-   */
-  function SimpleGraphics__setCursor(name) {
-    name = name == null ? 'default' : name;
-    canvas.style.cursor = name;
-  };
-
-
-
-  //time
-
-  function getMilliseconds() {
-    return new Date().getTime();
-  };
-
-
-  function getWindowFrame(){
-    return new Rectangle(0,0,cW,cH);
-  }
-
-
-
-  //advanced graphics (rely on Axis2D projection object)
-
-  /**
-   * @ignore
-   */
-  function _linesInFrame(axis2D, numberListX, numberListY){
-    var l = Math.min(numberListX.length, numberListY.length);
-    var i;
-
-    src_Global__context.beginPath();
-    src_Global__context.moveTo(axis2D.projectX(numberListX[0]), axis2D.projectY(numberListY[0]));
-
-    for(i=1; i<l; i++){
-      src_Global__context.lineTo(axis2D.projectX(numberListX[i]), axis2D.projectY(numberListY[i]));
-    }
-  }
-
-
-  function sLinesInFrame(axis2D, numberListX, numberListY){
-    _linesInFrame(axis2D, numberListX, numberListY);
-    src_Global__context.stroke();
-  }
-
-  function fLinesInFrame(axis2D, numberListX, numberListY){
-    _linesInFrame(axis2D, numberListX, numberListY);
-    src_Global__context.fill();
-  }
-
-  function fsLinesInFrame(axis2D, numberListX, numberListY){
-    _linesInFrame(axis2D, numberListX, numberListY);
-    src_Global__context.fill();
-    src_Global__context.stroke();
-  }
-
-
-  function drawGridX(axis2D, dX, yLabel, stepsLabel){
-    var x0, y0;
-    var n;
-    var i;
-    var x, y, top, bottom;
-
-    x0 = Math.floor(axis2D.departureFrame.x/dX)*dX;
-    n = Math.min( Math.ceil(axis2D.departureFrame.width/dX), 1000 );
-    top = Math.min(axis2D.arrivalFrame.y, axis2D.arrivalFrame.y+axis2D.arrivalFrame.height)
-    bottom = Math.max(axis2D.arrivalFrame.y, axis2D.arrivalFrame.y+axis2D.arrivalFrame.height);
-    stepsLabel = stepsLabel==null?1:stepsLabel;
-    for(i=0; i<n; i++){
-      x = Math.floor(axis2D.projectX(x0 + i*dX))+0.5;
-      line(x, top, x, bottom);
-      if(yLabel!=null && i%stepsLabel==0) fText(String(x0 + i*dX), x, bottom+yLabel);
-    }
-  }
-
-  function drawGridY(axis2D, dY, xLabel, stepsLabel){
-    var x0, y0;
-    var n;
-    var i;
-    var x, y, left, right;
-
-    y0 = Math.floor(axis2D.departureFrame.y/dY)*dY;
-    n = Math.min( Math.ceil(axis2D.departureFrame.height/dY), 1000 );
-    left = Math.min(axis2D.arrivalFrame.x, axis2D.arrivalFrame.x+axis2D.arrivalFrame.width)
-    right = Math.max(axis2D.arrivalFrame.x, axis2D.arrivalFrame.x+axis2D.arrivalFrame.width);
-    stepsLabel = stepsLabel==null?1:stepsLabel;
-    for(i=0; i<n; i++){
-      y = Math.floor(axis2D.projectY(y0 + i*dY))+0.5;
-      line(left, y, right, y);
-      if(xLabel!=null && i%stepsLabel==0) fText(String(y0 + i*dY), left+xLabel, y);
-    }
-  }
-
-  exports.fRect = fRect;
-  exports.sRect = sRect;
-  exports.fsRect = fsRect;
-  exports.fArc = fArc;
-  exports.sArc = sArc;
-  exports.fCircle = fCircle;
-  exports.sCircle = sCircle;
-  exports.fsCircle = fsCircle;
-  exports.fEllipse = fEllipse;
-  exports.sEllipse = sEllipse;
-  exports.fsEllipse = fsEllipse;
-  exports.fSolidArc = fSolidArc;
-  exports.sSolidArc = sSolidArc;
-  exports.fsSolidArc = fsSolidArc;
-  exports.line = line;
-  exports.bezier = bezier;
-  exports.fLines = fLines;
-  exports.sLines = sLines;
-  exports.fsLines = fsLines;
-  exports.fsLinesM = fsLinesM;
-  exports.fPolygon = fPolygon;
-  exports.sPolygon = sPolygon;
-  exports.fsPolygon = fsPolygon;
-  exports.fEqTriangle = fEqTriangle;
-  exports.sEqTriangle = sEqTriangle;
-  exports.fsEqTriangle = fsEqTriangle;
-  exports.fRectM = fRectM;
-  exports.sRectM = sRectM;
-  exports.fsRectM = fsRectM;
-  exports.fCircleM = fCircleM;
-  exports.sCircleM = sCircleM;
-  exports.fsCircleM = fsCircleM;
-  exports.lineM = lineM;
-  exports.bezierM = bezierM;
-  exports.drawImage = drawImage;
-  exports.fitImage = fitImage;
-  exports.setFill = setFill;
-  exports.setStroke = setStroke;
-  exports.setLW = setLW;
-  exports.clipCircle = clipCircle;
-  exports.clipRectangle = clipRectangle;
-  exports.save = save;
-  exports.clip = clip;
-  exports.restore = restore;
-  exports.fText = fText;
-  exports.sText = sText;
-  exports.fsText = fsText;
-  exports.fTextRotated = fTextRotated;
-  exports.fTextArc = fTextArc;
-  exports.fTextM = fTextM;
-  exports.fsTextM = fsTextM;
-  exports.fTextRotatedM = fTextRotatedM;
-  exports.fTextW = fTextW;
-  exports.setText = setText;
-  exports.getTextW = getTextW;
-  exports.getPixelData = getPixelData;
-  exports.getPixelColor = getPixelColor;
-  exports.getPixelColorRGBA = getPixelColorRGBA;
-  exports.captureCanvas = captureCanvas;
-  exports.setCursor = SimpleGraphics__setCursor;
-  exports.getMilliseconds = getMilliseconds;
-  exports.getWindowFrame = getWindowFrame;
-  exports.sLinesInFrame = sLinesInFrame;
-  exports.fLinesInFrame = fLinesInFrame;
-  exports.fsLinesInFrame = fsLinesInFrame;
-  exports.drawGridX = drawGridX;
-  exports.drawGridY = drawGridY;
-
   function DrawTexts() {}
 
 
   DrawTexts.POINT_TO_PIXEL = 1.3333;
   DrawTexts.PIXEL_TO_POINT = 0.75;
 
-
-  // /**
-  //  * set several text canvas rendering properties
-  //  * to be deprecated, replaced by setText at SimpleGraphics
-  //  * @param {String} color optional font color
-  //  * @param {Number} fontSize optional font size
-  //  * @param {String} fontName optional font name (default: LOADED_FONT)
-  //  * @param {String} align optional horizontal align ('left', 'center', 'right')
-  //  * @param {Object} baseline optional vertical alignment ('bottom', 'middle', 'top')
-  //  * @param {Object} style optional font style ('bold', 'italic', 'underline')
-  //  */
-  // DrawTexts.setContextTextProperties=function(color, fontSize, fontName, align, baseline, style){ //context should be changed before calling the function
-  // 	color = color||'#000000';
-  // 	fontSize = String(fontSize)||'14';
-  // 	fontName = fontName||LOADED_FONT;
-  // 	align = align==null?'left':align;
-  // 	baseline = baseline==null?'top':baseline;
-  // 	style = style==null?'':style;
-
-  // 	if(style!='') style+=' ';
-
-  // 	context.fillStyle    = color;
-  //   	context.font         = style+fontSize+'px '+fontName;
-  //   	context.textAlign 	 = align;
-  //   	context.textBaseline = baseline;
-  // }
-
-
-  DrawTexts.fillTextRectangle = function(text, x, y, width, height, lineHeight, returnHeight, ellipsis) {
+  /**
+   * @todo write docs
+   */
+  DrawTexts.fillTextRectangle = function(text, x, y, width, height, lineHeight, returnHeight, ellipsis, graphics) {
     var textLines = DrawTexts.textWordWrapReturnLines(text, width, height, lineHeight, ellipsis);
-    return DrawTexts.fillTextRectangleWithTextLines(textLines, x, y, height, lineHeight, returnHeight);
+    return DrawTexts.fillTextRectangleWithTextLines(textLines, x, y, height, lineHeight, returnHeight, graphics);
   };
 
   /**
-   * fill a text rotated
-   * @param {String} text
-   * @param {Number} x
-   * @param {Number} y
-   * @param {Number} angle in radians
+   * @todo write docs
    */
-  DrawTexts.fillTextRotated = function(text, x, y, angle) { //TODO: remove (replaced by fTextRotated in SimpleGraphics)
-    src_Global__context.save();
-    src_Global__context.translate(x, y);
-    src_Global__context.rotate(angle);
-    src_Global__context.fillText(text, 0, 0);
-    src_Global__context.restore();
-  };
-
-
-  DrawTexts.fillTextRectangleWithTextLines = function(textLines, x, y, height, lineHeight, returnHeight) {
-    height = height == 0 || height == null ? 99999 : height;
+  DrawTexts.fillTextRectangleWithTextLines = function(textLines, x, y, height, lineHeight, returnHeight, graphics) {
+    height = height === 0 || height == null ? 99999 : height;
 
     for(var i = 0; textLines[i] != null; i++) {
-      src_Global__context.fillText(textLines[i], x, y + i * lineHeight);
+      graphics.context.fillText(textLines[i], x, y + i * lineHeight);
       if((i + 2) * lineHeight > height) break;
     }
     if(returnHeight) return textLines.length * lineHeight;
@@ -22686,12 +21744,15 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  DrawTexts.textWordWrapReturnLines = function(text, fitWidth, fitHeight, lineHeight, ellipsis) {
+  /**
+   * @todo write docs
+   */
+  DrawTexts.textWordWrapReturnLines = function(text, fitWidth, fitHeight, lineHeight, ellipsis, graphics) {
     fitWidth = fitWidth || 100;
     fitHeight = fitHeight || 600;
     lineHeight = lineHeight || 16;
 
-    var nLinesLimit = lineHeight == 0 ? -1 : Math.floor(fitHeight / lineHeight);
+    var nLinesLimit = lineHeight === 0 ? -1 : Math.floor(fitHeight / lineHeight);
     var lines = new StringList();
 
     if(fitWidth <= 0) {
@@ -22709,7 +21770,7 @@ define('src/index', ['exports'], function (exports) {
     var sentence;
 
     for(i = 0; i < sentences.length; i++) {
-      if(sentences[i] == '') {
+      if(sentences[i] === '') {
         lines.push('');
         currentLine++;
         continue;
@@ -22718,15 +21779,15 @@ define('src/index', ['exports'], function (exports) {
       idx = 1;
       while(words.length > 0 && idx <= words.length) {
         str = words.slice(0, idx).join(' ');
-        w = src_Global__context.measureText(str).width;
+        w = graphics.context.measureText(str).width;
         if(w > fitWidth) {
           if(idx == 1) idx = 2;
           sentence = words.slice(0, idx - 1).join(' ');
-          if(sentence != '') lines.push(sentence);
+          if(sentence !== '') lines.push(sentence);
           if(lines.length == nLinesLimit) {
             if(ellipsis) {
               var lastLine = lines[lines.length - 1];
-              if(src_Global__context.measureText(lastLine + "…").width <= fitWidth) {
+              if(graphics.context.measureText(lastLine + "…").width <= fitWidth) {
                 lines[lines.length - 1] += "…";
               } else {
                 words = lastLine.split(" ");
@@ -22745,7 +21806,7 @@ define('src/index', ['exports'], function (exports) {
       }
       if(idx > 0) {
         sentence = words.join(' ');
-        if(sentence != '') lines.push(sentence);
+        if(sentence !== '') lines.push(sentence);
       }
       currentLine++;
     }
@@ -22754,15 +21815,22 @@ define('src/index', ['exports'], function (exports) {
 
     return lines;
   };
-  DrawTexts.getMaxTextWidth = function(texts) {
-    var max = getTextW(texts[0]);
+
+  /**
+   * @todo write docs
+   */
+  DrawTexts.getMaxTextWidth = function(texts, graphics) {
+    var max = graphics.getTextW(texts[0]);
     for(var i = 1; texts[i] != null; i++) {
-      max = Math.max(max, getTextW(texts[i]));
+      max = Math.max(max, graphics.getTextW(texts[i]));
     }
     return max;
   };
 
 
+  /**
+   * @todo write docs
+   */
   DrawTexts.cropString = function(ctx, string, fitWidth) {
     if(string == null) return;
     fitWidth = fitWidth || 0;
@@ -22792,15 +21860,19 @@ define('src/index', ['exports'], function (exports) {
   function DrawTextsAdvanced() {}
 
 
+  /**
+   * @ignore
+   */
   DrawTextsAdvanced.characterOnQuadrilater = function(context, character, p0, p1, p2, p3, fontType) {
 
   };
 
 
   /**
+   * @todo finish docs
    * works only with n=1
    */
-  DrawTextsAdvanced.textOnQuadrilater = function(text, p0, p1, p2, p3, fontSize, n) { //TODO:fix, finish
+  DrawTextsAdvanced.textOnQuadrilater = function(text, p0, p1, p2, p3, fontSize, n, graphics) { //TODO:fix, finish
     n = n == null ? 0 : n;
 
     if(n == 1) {
@@ -22815,7 +21887,7 @@ define('src/index', ['exports'], function (exports) {
       DrawTextsAdvanced.textOnQuadrilater(text, p03, pc, p23, p3, fontSize, 5);
       return;
     }
-    var measure = src_Global__context.measureText(text);
+    var measure = graphics.context.measureText(text);
     var w = measure.width;
     var h = fontSize; // 64;//*96/72; //TODO: fix this
 
@@ -22848,139 +21920,148 @@ define('src/index', ['exports'], function (exports) {
     }
 
 
-    src_Global__context.save();
+    graphics.context.save();
     DrawTextsAdvanced.applyTransformationOnCanvasFromPoints(v0, v1, v2, p0, p1, p3);
 
-    src_Global__context.beginPath();
-    src_Global__context.moveTo(v0.x - 2, v0.y - 2);
-    src_Global__context.lineTo(v1.x + 8, v1.y - 2);
-    src_Global__context.lineTo(v2.x - 2, v2.y + 8);
-    src_Global__context.clip();
+    graphics.context.beginPath();
+    graphics.context.moveTo(v0.x - 2, v0.y - 2);
+    graphics.context.lineTo(v1.x + 8, v1.y - 2);
+    graphics.context.lineTo(v2.x - 2, v2.y + 8);
+    graphics.context.clip();
 
-    src_Global__context.fillText(text, 0, 0);
+    graphics.context.fillText(text, 0, 0);
 
-    src_Global__context.restore();
+    graphics.context.restore();
 
 
     v0.x = v1.x + 0.0001;
     v0.y = v2.y + 0.0001;
 
-    src_Global__context.save();
+    graphics.context.save();
 
     DrawTextsAdvanced.applyTransformationOnCanvasFromPoints(v0, v1, v2, p2, p1, p3);
 
-    src_Global__context.beginPath();
-    src_Global__context.moveTo(v0.x + 4, v0.y + 2);
-    src_Global__context.lineTo(v1.x + 4, v1.y - 2);
-    src_Global__context.lineTo(v2.x - 2, v2.y + 2);
-    src_Global__context.clip();
+    graphics.context.beginPath();
+    graphics.context.moveTo(v0.x + 4, v0.y + 2);
+    graphics.context.lineTo(v1.x + 4, v1.y - 2);
+    graphics.context.lineTo(v2.x - 2, v2.y + 2);
+    graphics.context.clip();
 
-    src_Global__context.fillText(text, 0, 0);
+    graphics.context.fillText(text, 0, 0);
 
-    src_Global__context.restore();
+    graphics.context.restore();
   };
 
-  DrawTextsAdvanced.applyTransformationOnCanvasFromPoints = function(v0, v1, v2, w0, w1, w2) { //TODO:find the correct place for this
+  /**
+   * @todo finish docs
+   */
+  DrawTextsAdvanced.applyTransformationOnCanvasFromPoints = function(v0, v1, v2, w0, w1, w2, graphics) { //TODO:find the correct place for this
     var M = MatrixGenerators.createMatrixFromTrianglesMapping(v0, v1, v2, w0, w1, w2);
-    src_Global__context.transform(M.a, M.b, M.c, M.d, M.tx, M.ty);
+    graphics.context.transform(M.a, M.b, M.c, M.d, M.tx, M.ty);
   };
 
-  DrawTextsAdvanced.mapRectangleIntoQuadrilater = function(image, xI, yI, wI, hI, v0, v1, v2, v3) { //TODO:find the correct place for this
-    src_Global__context.save();
+  /**
+   * @todo finish docs
+   */
+  DrawTextsAdvanced.mapRectangleIntoQuadrilater = function(image, xI, yI, wI, hI, v0, v1, v2, v3, graphics) { //TODO:find the correct place for this
+    graphics.context.save();
 
     var M = MatrixGenerators.createMatrixFromTrianglesMapping(new Point(0, 0), new Point(100, 0), new Point(100, 100), v0, v1, v2);
-    src_Global__context.transform(M.a, M.b, M.c, M.d, M.tx, M.ty);
+    graphics.context.transform(M.a, M.b, M.c, M.d, M.tx, M.ty);
 
-    src_Global__context.beginPath();
-    src_Global__context.moveTo(0, 0);
-    src_Global__context.lineTo(100, 0);
-    src_Global__context.lineTo(100, 100);
-    src_Global__context.lineTo(0, 0);
-    src_Global__context.clip();
+    graphics.context.beginPath();
+    graphics.context.moveTo(0, 0);
+    graphics.context.lineTo(100, 0);
+    graphics.context.lineTo(100, 100);
+    graphics.context.lineTo(0, 0);
+    graphics.context.clip();
 
-    src_Global__context.drawImage(image,
+    graphics.context.drawImage(image,
       xI, yI, wI, hI,
       0, 0, 100, 100);
 
 
-    src_Global__context.restore();
+    graphics.context.restore();
 
     //
 
-    src_Global__context.save();
+    graphics.context.save();
 
-    var M = MatrixGenerators.createMatrixFromTrianglesMapping(new Point(0, 0), new Point(0, 2), new Point(2, 2), v0, v3, v2);
-    src_Global__context.transform(M.a, M.b, M.c, M.d, M.tx, M.ty);
+    M = MatrixGenerators.createMatrixFromTrianglesMapping(new Point(0, 0), new Point(0, 2), new Point(2, 2), v0, v3, v2);
+    graphics.context.transform(M.a, M.b, M.c, M.d, M.tx, M.ty);
 
-    src_Global__context.beginPath();
-    src_Global__context.moveTo(0, 0);
-    src_Global__context.lineTo(0, 2);
-    src_Global__context.lineTo(2, 2);
-    src_Global__context.lineTo(0, 0);
-    src_Global__context.clip();
+    graphics.context.beginPath();
+    graphics.context.moveTo(0, 0);
+    graphics.context.lineTo(0, 2);
+    graphics.context.lineTo(2, 2);
+    graphics.context.lineTo(0, 0);
+    graphics.context.clip();
 
-    src_Global__context.drawImage(image,
+    graphics.context.drawImage(image,
       xI, yI, wI, hI,
       0, 0, 2, 2);
 
 
-    src_Global__context.restore();
+    graphics.context.restore();
   };
 
-  DrawTextsAdvanced.getClippedTrianglesData = function(image, xI, yI, wI, hI) {
+  /**
+   * @todo finish docs
+   */
+  DrawTextsAdvanced.getClippedTrianglesData = function(image, xI, yI, wI, hI, graphics) {
     var object = {};
 
-    src_Global__context.clearRect(0, 0, wI, hI);
-    src_Global__context.save();
+    graphics.context.clearRect(0, 0, wI, hI);
+    graphics.context.save();
 
-    src_Global__context.beginPath();
-    src_Global__context.moveTo(0, 0);
-    src_Global__context.lineTo(wI, 0);
-    src_Global__context.lineTo(wI, hI);
-    src_Global__context.lineTo(0, 0);
-    src_Global__context.clip();
+    graphics.context.beginPath();
+    graphics.context.moveTo(0, 0);
+    graphics.context.lineTo(wI, 0);
+    graphics.context.lineTo(wI, hI);
+    graphics.context.lineTo(0, 0);
+    graphics.context.clip();
 
-    src_Global__context.drawImage(image,
+    graphics.context.drawImage(image,
       xI, yI, wI, hI,
       0, 0, wI, hI);
 
-    object.dataTriangle0 = src_Global__context.getImageData(0, 0, wI, hI);
+    object.dataTriangle0 = graphics.context.getImageData(0, 0, wI, hI);
 
-    src_Global__context.restore();
+    graphics.context.restore();
 
     //
-    src_Global__context.clearRect(0, 0, wI, hI);
-    src_Global__context.save();
+    graphics.context.clearRect(0, 0, wI, hI);
+    graphics.context.save();
 
-    src_Global__context.beginPath();
-    src_Global__context.moveTo(0, 0);
-    src_Global__context.lineTo(0, hI);
-    src_Global__context.lineTo(wI, hI);
-    src_Global__context.lineTo(0, 0);
-    src_Global__context.clip();
+    graphics.context.beginPath();
+    graphics.context.moveTo(0, 0);
+    graphics.context.lineTo(0, hI);
+    graphics.context.lineTo(wI, hI);
+    graphics.context.lineTo(0, 0);
+    graphics.context.clip();
 
-    src_Global__context.drawImage(image,
+    graphics.context.drawImage(image,
       xI, yI, wI, hI,
       0, 0, wI, hI);
 
-    object.dataTriangle1 = src_Global__context.getImageData(0, 0, wI, hI);
+    object.dataTriangle1 = graphics.context.getImageData(0, 0, wI, hI);
 
-    src_Global__context.restore();
+    graphics.context.restore();
 
     return object;
   };
 
 
-  //
-
-
-  DrawTextsAdvanced.typodeOnQuadrilater = function(text, p0, p1, p2, p3) { //TODO:fix, finish
+  /**
+   * @todo finish docs
+   */
+  DrawTextsAdvanced.typodeOnQuadrilater = function(text, p0, p1, p2, p3, graphics) { //TODO:fix, finish
     var dX = p1.x - p0.x;
     var dY = p1.y - p0.y;
     var h0 = p3.y - p0.y;
     var h1 = p2.y - p1.y;
 
-    src_Global__context.lineWidth = 0.01 + (h0 + h1) / 100;
+    graphics.context.lineWidth = 0.01 + (h0 + h1) / 100;
     if(dX < 1.8) return;
 
     var polygonList = typodeObject[text];
@@ -22992,16 +22073,16 @@ define('src/index', ['exports'], function (exports) {
 
     for(var i = 0; polygonList[i] != null; i++) {
       polygon = polygonList[i];
-      src_Global__context.beginPath();
+      graphics.context.beginPath();
       t = polygon[0].x;
       mint = 1 - t;
-      src_Global__context.moveTo(Math.floor(t * dX + p0.x) + 0.5, Math.floor(polygon[0].y * (mint * h0 + t * h1) + mint * p0.y + t * p1.y) + 0.5);
+      graphics.context.moveTo(Math.floor(t * dX + p0.x) + 0.5, Math.floor(polygon[0].y * (mint * h0 + t * h1) + mint * p0.y + t * p1.y) + 0.5);
       for(j = 1; polygon[j] != null; j++) {
         t = polygon[j].x;
         mint = 1 - t;
-        src_Global__context.lineTo(Math.floor(t * dX + p0.x) + 0.5, Math.floor(polygon[j].y * (mint * h0 + t * h1) + mint * p0.y + t * p1.y) + 0.5);
+        graphics.context.lineTo(Math.floor(t * dX + p0.x) + 0.5, Math.floor(polygon[j].y * (mint * h0 + t * h1) + mint * p0.y + t * p1.y) + 0.5);
       }
-      src_Global__context.stroke();
+      graphics.context.stroke();
     }
 
   };
@@ -23015,15 +22096,18 @@ define('src/index', ['exports'], function (exports) {
       this.container = document.querySelector(this.container);
     }
     this.dimensions = options.dimensions;
-    
-    
+
+
 
     this.init = options.init || noOperation;
     this.cycle = options.cycle || noOperation;
     this.onResize = options.onResize || noOperation;
-    this._frameRate = options.frameRate === undefined ? 30 : options.frameRate;
+    this._cycleInterval = options.cycleInterval === undefined ? 30 : options.cycleInterval;
+    if(options.noLoop) {
+      this._cycleInterval = 0;
+    }
 
-    this._initialize();
+    this._initialize(!options.noStart);
   }
 
   function noOperation() {}
@@ -23034,11 +22118,13 @@ define('src/index', ['exports'], function (exports) {
    ****************************/
 
   /*
+   * @ignore
+   *
    * Initialize the graphics proper. Includes
    * things like actually creating the backing canvas and
    * setting up mousehandlers.
    */
-  Graphics.prototype._initialize = function() {
+  Graphics.prototype._initialize = function(autoStart) {
     this.cW = 1; // canvas width
     this.cH = 1; // canvas height
     this.cX = 1; // canvas center x
@@ -23071,7 +22157,7 @@ define('src/index', ['exports'], function (exports) {
     this.backGroundColorRGB = [255,255,255];
     this.cycleActive = undefined; // YY why do we need to maintain this state?
 
-    this._cycleOnMouseMovement = false;
+    // this._cycleOnMouseMovement = false;
     this._prevMouseX = 0;
     this._prevMouseY = 0;
     this._setIntervalId = undefined;
@@ -23080,40 +22166,51 @@ define('src/index', ['exports'], function (exports) {
     this._tLastMouseDown = undefined;
     this._alphaRefresh = 0; //if _alphaRefresh>0 instead of clearing the canvas each frame, a transparent rectangle will be drawn
     this.END_CYCLE_DELAY = 3000; //time in milliseconds, from last mouse movement to the last cycle to be executed in case cycleOnMouseMovement has been activated
-        
+
+    this.fontColor = "#000000";
+    this.fontSize = "14";
+    this.fontName = "Arial";
+    this.fontAlign = 'left';
+    this.fontBaseline = "top";
+    this.fontStyle = "";
+
     // Create the canvas and get it ready for drawing
     this.canvas = document.createElement("canvas");
-    
+
     //Allow the canvas to be focusable to enable keydown and keyup
-    this.canvas.setAttribute("tabindex", "10000"); 
+    this.canvas.setAttribute("tabindex", "10000");
     //Hide the focus styling
     var canvasStyle = "outline: none; -webkit-tap-highlight-color: rgba(255, 255, 255, 0);";
     this.canvas.setAttribute("style", canvasStyle);
 
-    this.container.appendChild(this.canvas);
+    if(this.container) {
+      // If this container is falsy, then the canvas is not attached to the DOM
+      // and can be used as an offscreen buffer.
+      this.container.appendChild(this.canvas);  
+    }  
     this.context = this.canvas.getContext("2d");
 
     this._adjustCanvas(this.dimensions);
 
-    // YY TODO allow user to bind to these events as well. Probably 
+    // YY TODO allow user to bind to these events as well. Probably
     // through a generic event mechanism. c.f. global addInteractionEventListener
-    var boundMouse = this._onMouse.bind(this);
-    this.canvas.addEventListener("mousemove", boundMouse, false);
-    this.canvas.addEventListener("mousedown", boundMouse, false);
-    this.canvas.addEventListener("mouseup", boundMouse, false);
-    this.canvas.addEventListener("mouseenter", boundMouse, false);
-    this.canvas.addEventListener("mouseleave", boundMouse, false);
-    this.canvas.addEventListener("click", boundMouse, false);
+    var boundMouseOrKeyboard = this._onMouseOrKeyBoard.bind(this);
+    this.canvas.addEventListener("mousemove", boundMouseOrKeyboard, false);
+    this.canvas.addEventListener("mousedown", boundMouseOrKeyboard, false);
+    this.canvas.addEventListener("mouseup", boundMouseOrKeyboard, false);
+    this.canvas.addEventListener("mouseenter", boundMouseOrKeyboard, false);
+    this.canvas.addEventListener("mouseleave", boundMouseOrKeyboard, false);
+    this.canvas.addEventListener("click", boundMouseOrKeyboard, false);
 
-    this.canvas.addEventListener("DOMMouseScroll", boundMouse, false);
-    this.canvas.addEventListener("mousewheel", boundMouse, false);
+    this.canvas.addEventListener("DOMMouseScroll", boundMouseOrKeyboard, false);
+    this.canvas.addEventListener("mousewheel", boundMouseOrKeyboard, false);
 
-    this.canvas.addEventListener("keydown", boundMouse, false);
-    this.canvas.addEventListener("keyup", boundMouse, false);
+    this.canvas.addEventListener("keydown", boundMouseOrKeyboard, false);
+    this.canvas.addEventListener("keyup", boundMouseOrKeyboard, false);
 
     // Setup resize listeners
     var boundResize = this._onResize.bind(this);
-    window.addEventListener("resize", boundResize, false);
+    window.addEventListener("resize", resizeThrottler(boundResize, 66), false);
 
     // Infrastructure for custom event handlers
     this._listeners = {
@@ -23132,31 +22229,52 @@ define('src/index', ['exports'], function (exports) {
     this.init();
 
     // Start the draw loop
-    if(this._frameRate > 0) {
+    if(autoStart) {
       this._startCycle();  
     }
+    
   };
 
 
-  Graphics.prototype._onMouse = function(e) {
+  /*
+    Helper function for getting the mouse position
+    see http://stackoverflow.com/a/19048340
+   */
+  /**
+   * @ignore
+   * Helper function for getting the mouse position
+   * see http://stackoverflow.com/a/19048340
+   *
+   * @param  {[type]} evt [description]
+   */
+  Graphics.prototype._getRelativeMousePos = function(evt) {
+    var rect = this.canvas.getBoundingClientRect();
+    return {
+      x: evt.clientX - rect.left,
+      y: evt.clientY - rect.top
+    };
+  };
+
+  /**
+   * @ignore
+   * This method is used to handle user interaction events (e.g. mouse events). *
+   * Sets some internal state and then displatches to external event handlers.
+   *
+   * @param  {Event} e event object
+   */
+  Graphics.prototype._onMouseOrKeyBoard = function(e) {
     switch(e.type){
       case "mousemove":
+        var pos = this._getRelativeMousePos(e);
         this.PREV_mX = this.mX;
         this.PREV_mY= this.mY;
 
-        if(e.clientX) {
-          this.mX = e.clientX;
-          this.mY = e.clientY;
-        } else if(e.offsetX) {
-          this.mX = e.offsetX;
-          this.mY = e.offsetY;
-        } else if(e.layerX) {
-          this.mX = e.layerX;
-          this.mY = e.layerY;
-        }
-        
+        this.mX = pos.x;
+        this.mY = pos.y;
+
         this.mP.x = this.mX;
         this.mP.y = this.mY;
+
         this.MOUSE_IN_DOCUMENT = true;
         break;
       case "mousedown":
@@ -23187,10 +22305,35 @@ define('src/index', ['exports'], function (exports) {
     this._emit(e.type, e);
   };
 
-  //We may also want
-  // to throttle this method
-  // https://developer.mozilla.org/en-US/docs/Web/Events/resize
+
+  /*
+   * Helper to throttle resize events for improved performance.
+   * See https://developer.mozilla.org/en-US/docs/Web/Events/resize
+   */
+  function resizeThrottler(actualResizeHandler, interval) {
+    var resizeTimeout;
+    return function(e){
+      // ignore resize events as long as an actualResizeHandler execution is in the queue
+      if (!resizeTimeout) {
+        resizeTimeout = setTimeout(function() {
+          resizeTimeout = null;
+          actualResizeHandler(e);
+         }, interval);
+      }
+    };
+  }
+
+  /**
+   * @ignore
+   * This method is used to handle resizes of the window, and then optionally
+   * pass that on to the user defined onResize method if the container dimensions
+   * have changed.
+   *
+   * @param  {[type]} e resize event
+   */
   Graphics.prototype._onResize = function(e) {
+    var currentW = this.cW;
+    var currentH = this.cH;
     // If the user has set the dimensions explicitly
     // we do not auto adjust the canvas.
     if(this.dimensions === undefined) {
@@ -23199,31 +22342,42 @@ define('src/index', ['exports'], function (exports) {
 
     if(this.onResize !== noOperation) {
       var newDim = this._containerDimensions();
-      if(newDim.width !== this.cW || newDim.height !== this.cH) {    
-        console.log(newDim, this.cW, this.cH, newDim.width !== this.cW, newDim.height !== this.cH);
-        // Forward the event to the user defined resize handler  
-        this.onResize(e);  
-      }  
+      if(newDim.width !== currentW || newDim.height !== currentH) {
+        // Forward the event to the user defined resize handler
+        this.onResize(e);
+      }
     }
-    
-   }; 
+  };
 
-
+  /**
+   * @ignore
+   * Return the dimensions of the container that this graphics object
+   * is associated with.
+   *
+   * @return {Object} object with width and height properties.
+   */
   Graphics.prototype._containerDimensions = function() {
     // https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model/Determining_the_dimensions_of_elements
-    return {
-      width: this.container.scrollWidth,
-      height: this.container.scrollHeight
-    };
-    
+    if(this.container) {
+      return {
+        width: this.container.clientWidth,
+        height: this.container.clientHeight
+      };
+    } else {
+      return {
+        width: 0,
+        height: 0
+      };
+    }
   };
 
   Graphics.prototype._adjustCanvas = function(dimensions) {
-    if(dimensions !== undefined) {    
+    if(dimensions !== undefined) {
       this.cW = dimensions.width;
       this.cH = dimensions.height;
-    } else {    
+    } else {
       // https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model/Determining_the_dimensions_of_elements
+
       var dim = this._containerDimensions();
       this.cW = dim.width;
       this.cH = dim.height;
@@ -23233,52 +22387,90 @@ define('src/index', ['exports'], function (exports) {
     this.cY = Math.floor(this.cH * 0.5);
 
     this.canvas.setAttribute('width', this.cW);
-    this.canvas.setAttribute('height', this.cH);  
-    
+    this.canvas.setAttribute('height', this.cH);
+
   };
 
   /*
-   * Starts or restarts the draw cycle at the current framerate
-   * 
-   * @param  {[type]} frameRate [description]
-   * @return {[type]}           [description]
+   * @ignore
+   * Starts or restarts the draw cycle at the current cycleInterval
    */
   Graphics.prototype._startCycle = function() {
     this.cycleActive = true;
-    // calculate the interval and then schedule a draw loop
-    
-    // YY i think this should use requestAnimationFrame
-    // clearTimeout(this._setTimeOutId); // YY Not sure why this is needed yet
-    clearInterval(this._setIntervalId);  
-    this._setIntervalId = setInterval(this._onCycle.bind(this), this._frameRate);
+    if(this._cycleInterval === 0) {
+      // Call the cycle only once function
+      setTimeout(this._onCycle.bind(this), 10);  
+    } else {
+      clearInterval(this._setIntervalId);
+      this._setIntervalId = setInterval(this._onCycle.bind(this), this._cycleInterval);  
+    }  
   };
 
-  Graphics.prototype._stopCycle = function() {  
+  /**
+   * @ignore
+   * Stops the draw cycle
+   */
+  Graphics.prototype._stopCycle = function(callback) {
     clearInterval(this._setIntervalId);
     this.cycleActive = false;
+    this._setIntervalId = undefined;
 
-    //this.lastCycle(); // YY would this be better as a callback
+    if(callback) {
+      callback();
+    }  
   };
+
+  /**
+   * Run the cycle function for a certain amount of time and then stop it.
+   * 
+   * Can be called multiple times to delay the stop time to being time milliseconds
+   * after the last call to this function.
+   * @param  {[type]} time [description]
+   * @return {[type]}      [description]
+   */
+  Graphics.prototype._cycleFor = function(time) {
+    if(this._setIntervalId) {
+      // If there was already a running cycle then just delay the 
+      // stop function to stop after time. This effectively debounces
+      // the _startCycle call.    
+      clearTimeout(this._setTimeOutId);
+      this._stopAfter(time);
+    } else {
+      this._startCycle();  
+      this._stopAfter(time);
+    }
+  };
+
+  Graphics.prototype._stopAfter = function(time, callback) {    
+    var self = this;
+    this._setTimeOutId = setTimeout(function(){    
+      self._stopCycle();
+      if(callback){
+        callback();  
+      }    
+    }, time);
+  };
+
 
   /*
    * This function is called on every cycle of the draw loop.
    * It is responsible for clearing the background and then calling
    * the user defined cycle function.
-   * 
+   *
    */
-  Graphics.prototype._onCycle = function() {    
+  Graphics.prototype._onCycle = function() {
     // YY i don't think this interacts well with my expectations
     // of setting the background color. it basically needs to be greater than 0
     // if the bg color is not white and that isn't super obvious.
     if(this._alphaRefresh === 0){
       this.context.clearRect(0, 0, this.cW, this.cH);
     } else {
-      this.context.fillStyle = 
+      this.context.fillStyle =
         'rgba(' + this.backGroundColorRGB[0] +
         ',' + this.backGroundColorRGB[1] +
-        ',' + this.backGroundColorRGB[2] + 
+        ',' + this.backGroundColorRGB[2] +
         ',' + this._alphaRefresh+')';
-      
+
       this.context.fillRect(0, 0, this.cW, this.cH);
     }
 
@@ -23294,7 +22486,7 @@ define('src/index', ['exports'], function (exports) {
 
     if(this.MOUSE_PRESSED) {
       this.T_MOUSE_PRESSED = new Date().getTime() - this._tLastMouseDown;
-    } 
+    }
 
     // Call the user provided cycle function.
     this.cycle();
@@ -23308,7 +22500,7 @@ define('src/index', ['exports'], function (exports) {
   /*
    * Emit events to registered listeners.
    *
-   * This function also does any normalization/customization 
+   * This function also does any normalization/customization
    * to the standard DOM events that the graphics object provides.
    */
   Graphics.prototype._emit = function(eventName, e) {
@@ -23319,7 +22511,7 @@ define('src/index', ['exports'], function (exports) {
           e = window.event; //IE // YY is this still a thing
         }
         if (e.wheelDelta) {
-          // YY do we actually want to keep this here or is the 
+          // YY do we actually want to keep this here or is the
           // main goal to send this information to the listener.
           this.WHEEL_CHANGE = e.wheelDelta/120;
         } else if (e.detail) { /** Mozilla case. */
@@ -23332,7 +22524,8 @@ define('src/index', ['exports'], function (exports) {
     // Actually dispatch the event after any special handling
     var listenersLength = this._listeners[eventName].length;
     for(var i = 0; i < listenersLength; i++) {
-      this._listeners[eventName][i].call(undefined, e);
+      var callback = this._listeners[eventName][i];
+      callback.call(callback.__context, e);
     }
   };
 
@@ -23341,49 +22534,108 @@ define('src/index', ['exports'], function (exports) {
    ****************************/
 
   /**
-   * Returns the current frameRate (interval between calls
-   * to the cycle function).
-   * @return {Number} the current framerate (in milliseconds)
+   * Returns the current interval between calls to the cycle function.
+   * @return {Number} the current cycleInterval (in milliseconds)
    */
-  Graphics.prototype.getFrameRate = function() {
-    return this._frameRate;
+  Graphics.prototype.getCycleInterval = function() {
+    return this._cycleInterval;
   };
 
   /**
-   * Sets the current frameRate (interval between calls
-   * to the cycle function).
+   * Sets the current interval between calls to the cycle function.
    *
-   * TODO: should this be called something else, like 
-   * cycleInterval. I tend to think of this as number of
-   * times cycle will be called in one second, which it isn't.
-   * 
-   * @param {Number} frameRate the interval in milliseconds at which
-   *                           the cycle function should be called. 
+   * @param {Number} cycleInterval the interval in milliseconds at which
+   *                               the cycle function should be called.
    */
-  Graphics.prototype.setFrameRate = function(frameRate) {
-    this._frameRate = frameRate;
+  Graphics.prototype.setCycleInterval = function(cycleInterval) {
+    this._cycleInterval = cycleInterval;
     if(this.cycleActive) { // YY this should be removed
       this._startCycle();
     }
   };
 
   /**
-   * [start description]
-   * @return {[type]} [description]
+   * Starts the draw loop for this graphcis object.
+   *
+   * Note that the draw loop is typically automatically started on
+   * creation of a graphics object.
    */
   Graphics.prototype.start = function() {
     return this._startCycle();
   };
 
+  /**
+   * Stops the draw loop for this graphics object.
+   */
   Graphics.prototype.stop = function() {
     return this._stopCycle();
   };
 
-  Graphics.prototype.on = function(eventName, callback) {
+  /**
+   * Set the cycle function to only run mouse movement and have 
+   * it run for a given amount of time after the mouse movement 
+   * has ended. If a cycle function is currently running it will 
+   * continue to run until time has elapsed. If you want it to stop
+   * immediately @see stop.
+   *
+   *  
+   * @param  {[type]} time time in milliseconds after which the cycle function will 
+   *                       continue to run
+   * @return {[type]}      [description]
+   */
+  Graphics.prototype.cycleOnMouseMovement = function(time) {
+    var self = this;  
+
+    if(this.cycleOnMouseMovementListener){
+      this.canvas.removeEventListener('mousemove', this.cycleOnMouseMovementListener, false);
+      this.canvas.removeEventListener('mousewheel', this.cycleOnMouseMovementListener, false);
+      this.canvas.removeEventListener('mousemove', this.cycleOnMouseMovementListener, false); 
+    }
+
+    this.cycleOnMouseMovementListener = function(){
+      self._cycleFor(time);
+    };
+      
+    this.canvas.addEventListener('mousemove', this.cycleOnMouseMovementListener, false);
+    this.canvas.addEventListener('mousewheel', this.cycleOnMouseMovementListener, false);
+    this.canvas.addEventListener('mousemove', this.cycleOnMouseMovementListener, false); 
+
+    self._cycleFor(time);
+  };
+
+  /**
+   * Subscribe to an event that is emitted by the graphics object.
+   *
+   * The graphics object emits the following events.
+   *
+   * "mousemove"
+   * "mousedown"
+   * "mouseup"
+   * "mouseenter
+   * "mouseleave
+   * "mousewheel
+   * "click"
+   * "keydown"
+   * "keyup"
+   *
+   * @param  {String}   eventName one of the event types above
+   * @param  {Function} callback  function to call when that event occurs
+   *                              this function will be passed an event object
+   */
+  Graphics.prototype.on = function(eventName, callback, context) {
     // allow clients to subscribe to events on the canvas.
+    callback.__context = context;
     this._listeners[eventName].push(callback);
   };
 
+  /**
+   * Remove an event listener.
+   * @param  {String}   eventName one of the event types that the graphics object
+   *                              emits.
+   * @param  {Function} callback  the function you want to remove. Note that this should
+   *                              be a reference to a function that was previously added with
+   *                              @see on
+   */
   Graphics.prototype.off = function(eventName, callback) {
     var index = this._listeners[eventName].indexOf(callback);
     if (index > -1) {
@@ -23395,6 +22647,16 @@ define('src/index', ['exports'], function (exports) {
    * Public drawing functions
    *****************************/
 
+  /**
+   * Set the background color for the graphics object.
+   *
+   * On every cycle of the draw loop the canvas will be cleared to this color.
+   * Note that if you do set a color, you need to also set the background alpha as well
+   *
+   * @see  setBackgroundAlpha
+   *
+   * @param {[type]} color [description]
+   */
   Graphics.prototype.setBackgroundColor = function(color) {
     if(typeof color === "number") {
       if(arguments.length > 3) {
@@ -23409,8 +22671,13 @@ define('src/index', ['exports'], function (exports) {
     this.backGroundColorRGB = ColorOperators__default.colorStringToRGB(this.backGroundColor);
   };
 
-  Graphics.prototype.setAlphaRefresh = function(alphaRefresh){
-    this._alphaRefresh = alphaRefresh;
+  /**
+   * Set the alpha (opacity) of the background color. Defaults to 0 (transparent).
+   *
+   * @param {Number} backgroundAlpha a number from 0-1
+   */
+  Graphics.prototype.setBackgroundAlpha = function(backgroundAlpha){
+    this._alphaRefresh = backgroundAlpha;
   };
 
 
@@ -23661,25 +22928,56 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * @ignore
+   * TODO add comments to this to explain what it does.
    */
-  function Graphics___solidArc(x,y,a0,a1,r0,r1){
+  Graphics.prototype._solidArc = function(x,y,a0,a1,r0,r1){
     this.context.beginPath();
     this.context.arc( x, y, r0, a0, a1 );
     this.context.lineTo( x + r1*Math.cos(a1), y + r1*Math.sin(a1) );
     this.context.arc( x, y, r1, a1, a0, true );
     this.context.lineTo( x + r0*Math.cos(a0), y + r0*Math.sin(a0) );
-  }
+  };
 
+  /**
+   * [fSolidArc description]
+   * @param  {[type]} x  [description]
+   * @param  {[type]} y  [description]
+   * @param  {[type]} a0 [description]
+   * @param  {[type]} a1 [description]
+   * @param  {[type]} r0 [description]
+   * @param  {[type]} r1 [description]
+   * @todo
+   */
   Graphics.prototype.fSolidArc = function(x,y,a0,a1,r0,r1){
-    Graphics___solidArc(x,y,a0,a1,r0,r1);
+    this._solidArc(x,y,a0,a1,r0,r1);
     this.context.fill();
   };
 
+  /**
+   * [sSolidArc description]
+   * @param  {[type]} x  [description]
+   * @param  {[type]} y  [description]
+   * @param  {[type]} a0 [description]
+   * @param  {[type]} a1 [description]
+   * @param  {[type]} r0 [description]
+   * @param  {[type]} r1 [description]
+   * @todo
+   */
   Graphics.prototype.sSolidArc = function(x,y,a0,a1,r0,r1){
-    Graphics___solidArc(x,y,a0,a1,r0,r1);
+    this._solidArc(x,y,a0,a1,r0,r1);
     this.context.stroke();
   };
 
+  /**
+   * [fsSolidArc description]
+   * @param  {[type]} x  [description]
+   * @param  {[type]} y  [description]
+   * @param  {[type]} a0 [description]
+   * @param  {[type]} a1 [description]
+   * @param  {[type]} r0 [description]
+   * @param  {[type]} r1 [description]
+   * @todo
+   */
   Graphics.prototype.fsSolidArc = function(x,y,a0,a1,r0,r1){
     this.fSolidArc(x,y,a0,a1,r0,r1);
     this.context.stroke();
@@ -23729,6 +23027,7 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * @ignore
+   * TODO add comments to this to explain what it does.
    */
   Graphics.prototype._lines = function() {
     if(arguments == null) return;
@@ -23743,9 +23042,12 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * @ignore
+   * TODO add comments to this to explain what it does.
    */
   Graphics.prototype._linesM = function() {
-    if(arguments == null) return;
+    if(arguments == null) {
+      return;
+    }
 
     var args = arguments[0];
     var p = new Polygon();
@@ -23840,44 +23142,87 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @ignore
    */
-  function Graphics___polygon(polygon) {
+  Graphics.prototype._polygon = function(polygon) {
     this.context.beginPath();
     this.context.moveTo(polygon[0].x, polygon[0].y);
     for(var i = 1; polygon[i] != null; i++) {
       this.context.lineTo(polygon[i].x, polygon[i].y);
     }
-  }
+  };
 
+  /**
+   * [fPolygon description]
+   * @param  {[type]} polygon [description]
+   * @return {[type]}         [description]
+   * @todo
+   */
   Graphics.prototype.fPolygon = function(polygon) {
-    Graphics___polygon(polygon);
+    this._polygon(polygon);
     this.context.fill();
   };
 
+  /**
+   * [sPolygon description]
+   * @param  {[type]} polygon   [description]
+   * @param  {[type]} closePath [description]
+   * @return {[type]}           [description]
+   * @todo
+   */
   Graphics.prototype.sPolygon = function(polygon, closePath) {
-    Graphics___polygon(polygon);
-    if(closePath) this.context.closePath();
-    this.context.stroke();
-  };
-
-  Graphics.prototype.fsPolygon = function(polygon, closePath) {
-    Graphics___polygon(polygon);
-    if(closePath) this.context.closePath();
-    this.context.fill();
-    this.context.stroke();
-  };
-
-  Graphics.prototype.fEqTriangle = function(x, y, angle, r) {
-    Graphics___eqTriangle(x, y, angle, r);
-    this.context.fill();
-  };
-
-  Graphics.prototype.sEqTriangle = function(x, y, angle, r) {
-    Graphics___eqTriangle(x, y, angle, r);
+    this._polygon(polygon);
+    if(closePath) {
+      this.context.closePath();
+    }
     this.context.stroke();
   };
 
   /**
-   * [fsEqTriangle description]
+   * [fsPolygon description]
+   * @param  {[type]} polygon   [description]
+   * @param  {[type]} closePath [description]
+   * @return {[type]}           [description]
+   * @todo
+   */
+  Graphics.prototype.fsPolygon = function(polygon, closePath) {
+    this._polygon(polygon);
+    if(closePath) {
+      this.context.closePath();
+    }
+    this.context.fill();
+    this.context.stroke();
+  };
+
+  /**
+   * [fEqTriangle description]
+   * @param  {[type]} x     [description]
+   * @param  {[type]} y     [description]
+   * @param  {[type]} angle [description]
+   * @param  {[type]} r     [description]
+   * @return {[type]}       [description]
+   * @todo
+   */
+  Graphics.prototype.fEqTriangle = function(x, y, angle, r) {
+    this._eqTriangle(x, y, angle, r);
+    this.context.fill();
+  };
+
+  /**
+   * Draws a stroked equilateral traiangle.
+   * @param  {[type]} x     [description]
+   * @param  {[type]} y     [description]
+   * @param  {[type]} angle [description]
+   * @param  {[type]} r     [description]
+   * @return {[type]}       [description]
+   * @todo
+   */
+  Graphics.prototype.sEqTriangle = function(x, y, angle, r) {
+    this._eqTriangle(x, y, angle, r);
+    this.context.stroke();
+  };
+
+  /**
+   * Draws a filled and stroked equilateral triangle.
+   *
    * @param  {[type]} x     [description]
    * @param  {[type]} y     [description]
    * @param  {[type]} angle [description]
@@ -23886,19 +23231,31 @@ define('src/index', ['exports'], function (exports) {
    * @todo
    */
   Graphics.prototype.fsEqTriangle = function(x, y, angle, r) {
-    Graphics___eqTriangle(x, y, angle, r);
+    this._eqTriangle(x, y, angle, r);
     this.context.fill();
     this.context.stroke();
   };
 
-  function Graphics___eqTriangle(x, y, angle, r) {
+  /**
+   * @ignore
+   *
+   * @param  {[type]} x     [description]
+   * @param  {[type]} y     [description]
+   * @param  {[type]} angle [description]
+   * @param  {[type]} r     [description]
+   * @return {[type]}       [description]
+   *
+   * TODO document this with non-javadoc comments to describe what this
+   * does.
+   */
+  Graphics.prototype._eqTriangle = function(x, y, angle, r) {
     this.context.beginPath();
     angle = angle || 0;
     this.context.moveTo(r * Math.cos(angle) + x, r * Math.sin(angle) + y);
     this.context.lineTo(r * Math.cos(angle + 2.0944) + x, r * Math.sin(angle + 2.0944) + y);
     this.context.lineTo(r * Math.cos(angle + 4.1888) + x, r * Math.sin(angle + 4.1888) + y);
     this.context.lineTo(r * Math.cos(angle) + x, r * Math.sin(angle) + y);
-  }
+  };
 
   //drawing and checking cursor
 
@@ -24099,6 +23456,9 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * @ignore
+   *
+   * TODO document this with non-javadoc comments to describe what this
+   * does.
    */
   Graphics.prototype._distToSegmentSquared = function(x0, y0, x1, y1) {
     var l2 = Math.pow(x0 - x1, 2) + Math.pow(y0 - y1, 2);
@@ -24151,11 +23511,14 @@ define('src/index', ['exports'], function (exports) {
   //images
 
   /**
-   * draw an image on this.context. parameters options (s for source, d for destination):
+   *  Draw an image on this.context. parameters options (s for source, d for destination):
+   *
    *  drawImage(image, dx, dy)
    *  drawImage(image, dx, dy, dw, dh)
    *  drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh)
    *  @param {Image} image
+   *
+   *  @todo document parameters
    */
   Graphics.prototype.drawImage = function(image) { //TODO: improve efficiency
     if(image == null) return;
@@ -24195,6 +23558,12 @@ define('src/index', ['exports'], function (exports) {
 
   // styles
 
+  /**
+   * [setFill description]
+   * @param {[type]} style [description]
+   *
+   * @todo
+   */
   Graphics.prototype.setFill = function(style) {
     if(typeof style == "number") {
       if(arguments.length > 3) {
@@ -24208,11 +23577,12 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * setStroke - set stroke to draw with in canvas
+   * Set stroke to draw with in canvas
    *
    * @param {(String|Number)} style If string, then hex value or web color.
-   * If Number, then a set of RGB or RGBA integers
+   *                                If Number, then a set of RGB or RGBA integers
    * @param {Number} lineWidth Optional width of line to use. Only valid if style parameter is a string.
+   *
    * @example
    * setStroke('steelblue'); // sets stroke to blue.
    * setStroke(0,0,0,0.4); // sets stroke to black with partial opacity.
@@ -24232,6 +23602,13 @@ define('src/index', ['exports'], function (exports) {
     if(lineWidth) this.context.lineWidth = lineWidth;
   };
 
+  /**
+   * Set the current lineWidth for strokes.
+   *
+   * @param {Number} lineWidth [description]\
+   *
+   * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/lineWidth|lineWidth}
+   */
   Graphics.prototype.setLW = function(lineWidth) {
     this.context.lineWidth = lineWidth;
   };
@@ -24240,6 +23617,15 @@ define('src/index', ['exports'], function (exports) {
   // Clipping
   //
 
+  /**
+   * Creates a clipping circle with the given dimensions
+   *
+   * @param  {[type]} x x coordinate of the circle's center
+   * @param  {[type]} y y coordinate of the circle's center
+   * @param  {[type]} r radius of circle
+   *
+   * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/clip|Clip}
+   */
   Graphics.prototype.clipCircle = function(x, y, r) {
     this.context.save();
     this.context.beginPath();
@@ -24248,6 +23634,16 @@ define('src/index', ['exports'], function (exports) {
     this.context.clip();
   };
 
+  /**
+   * Creates a clipping rectangle with the given dimensions
+   *
+   * @param  {Number} x x coordinate of top left corner
+   * @param  {Number} y y coordinate of top left corner
+   * @param  {Number} w width of rect
+   * @param  {Number} h height of rect
+   *
+   * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/clip|Clip}
+   */
   Graphics.prototype.clipRectangle = function(x, y, w, h) {
     this.context.save();
     this.context.beginPath();
@@ -24258,21 +23654,38 @@ define('src/index', ['exports'], function (exports) {
     this.context.clip();
   };
 
+  /**
+   * Saves the entire state of the canvas by pushing the current state onto a stack.
+   *
+   * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/save|Save}
+   */
   Graphics.prototype.save = function() {
     this.context.save();
   };
 
+  /**
+   * Turns the path currently being built into the current clipping path.
+   *
+   * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/clip|Clip}
+   */
   Graphics.prototype.clip = function() {
     this.context.clip();
   };
 
+  /**
+   * Restores the most recently saved canvas state by popping the top entry
+   * in the drawing state stack. If there is no saved state,
+   * this method does nothing.
+   *
+   * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/restore|Restore}
+   */
   Graphics.prototype.restore = function() {
     this.context.restore();
   };
 
   //
   // Text
-  // 
+  //
 
   /**
    * Draws filled in text.
@@ -24333,6 +23746,19 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
+   * Draws filled in text and returns its width.
+   *
+   * @param  {String} text
+   * @param  {Number} x x coordinate of text
+   * @param  {Number} y x coordinate of text
+   * @return {Number} the width of the rendered text in pixels
+   */
+  Graphics.prototype.fTextW = function(text, x, y) {
+    this.context.fillText(text, x, y);
+    return this.context.measureText(text).width;
+  };
+
+  /**
    * Draws filled in text, rotated by some angle.
    * Fill color is expected to be set using {@link setFill}.
    * Alternatively, setText can be used to set a number of
@@ -24375,7 +23801,7 @@ define('src/index', ['exports'], function (exports) {
   Graphics.prototype.fTextArc = function(text, x, y, xCenter, yCenter, centered){
     if(text == null || text === "") {
       return;
-    } 
+    }
 
     var i;
     var r = Math.sqrt(Math.pow(x - xCenter, 2)+Math.pow(y - yCenter, 2));
@@ -24388,7 +23814,7 @@ define('src/index', ['exports'], function (exports) {
     for(i=0; letters[i]!=null; i++){
       xl = xCenter + r*Math.cos(a);
       yl = yCenter + r*Math.sin(a);
-      this.fTextRotated(letters[i], xl, yl, a + src_Global__HalfPi);
+      this.fTextRotated(letters[i], xl, yl, a + HalfPi);
       a += this.getTextW(letters[i])/r;
     }
   };
@@ -24415,7 +23841,7 @@ define('src/index', ['exports'], function (exports) {
    *
    */
   Graphics.prototype.fTextM = function(text, x, y, size) {
-    size = size || 12;
+    size = size || this.fontSize;
     this.context.fillText(text, x, y);
     return this.mY > y && this.mY < y + size && this.mX > x && this.mX < x + this.context.measureText(text).width;
   };
@@ -24445,7 +23871,7 @@ define('src/index', ['exports'], function (exports) {
    *
    */
   Graphics.prototype.fsTextM = function(text, x, y, size) {
-    size = size || 12;
+    size = size || this.fontSize;
     this.context.strokeText(text, x, y);
     this.context.fillText(text, x, y);
     return this.mY > y && this.mY < y + size && this.mX > x && this.mX < x + this.context.measureText(text).width;
@@ -24492,11 +23918,21 @@ define('src/index', ['exports'], function (exports) {
     return mYT > y && mYT < y + size && mXT > x && mXT < x + this.context.measureText(text).width;
   };
 
-  Graphics.prototype.fTextW = function(text, x, y) {
-    this.context.fillText(text, x, y);
-    return this.context.measureText(text).width;
-  };
-
+  /**
+   * @ignore
+   * Helper function, returns first param if it is not null or undefined
+   * esle returns second param.
+   * @param  {Object} value    
+   * @param  {Object} fallback 
+   * @return {Object} 
+   */
+  function ifDef(value, fallback) {
+    if(value !== undefined && value !== null) {
+      return value;
+    } else {
+      return fallback;
+    }
+  }
   /**
    * Sets several text canvas rendering properties
    *
@@ -24506,44 +23942,86 @@ define('src/index', ['exports'], function (exports) {
    * @param {Object} align optional horizontal align ('left', 'center', 'right')
    * @param {Object} baseline optional vertical alignment ('bottom', 'middle', 'top')
    * @param {Object} style optional font style ('bold', 'italic', 'underline')
-   * @param {Object} ctx optional context
    */
   Graphics.prototype.setText = function(color, fontSize, fontName, align, baseline, style) {
-    color = color || '#000000';
-    fontSize = String(fontSize) || '14';
-    fontName = fontName;
-    align = align == null ? 'left' : align;
-    baseline = baseline == null ? 'top' : baseline;
-    style = style == null ? '' : style;
+    this.fontColor = ifDef(color, this.fontColor);
+    this.fontSize = ifDef(String(fontSize), this.fontSize);
+    this.fontName = ifDef(fontName, this.fontName);
+    this.fontAlign = ifDef(align, this.fontAlign);
+    this.fontBaseline = ifDef(baseline, this.fontBaseline);
+    this.fontStyle = ifDef(style, this.fontStyle);
 
     if(style !== '') {
       style += ' ';
     }
 
-    this.context.fillStyle = color;
-    this.context.font = style + fontSize + 'px ' + fontName;
-    this.context.textAlign = align;
-    this.context.textBaseline = baseline;
+    this.context.fillStyle = this.fontColor;
+    this.context.font = this.fontStyle + this.fontSize + 'px ' + this.fontName;
+    this.context.textAlign = this.fontAlign;
+    this.context.textBaseline = this.fontBaseline;
   };
 
+  /**
+   * Get the current font family
+   * @return {String} the current font family
+   */
+  Graphics.prototype.getFontFamily = function() {
+    return this.fontName;
+  };
+
+  /**
+   * Sets the current font family
+   */
+  Graphics.prototype.setFontFamily = function(fontName) {
+    this.setText(undefined, undefined, fontName);
+  };
+
+
+
+
+  /**
+   * Returns the width in pixels of the text passed in given the current
+   * state of the graphics canvas.
+   *
+   * @param  {String} text
+   * @return {Number} width in pixels of the text if it were rendered.
+   *
+   * TODO it would be great to have a method that returned the whole
+   * TextMetrics object
+   */
   Graphics.prototype.getTextW = function(text) {
     return this.context.measureText(text).width;
   };
 
   //
   // Pixel data
-  // 
+  //
 
-  Graphics.prototype.getPixelData = function(x, y) {
-    return this.context.getImageData(x, y, 1, 1).data;
-  };
-
+  /**
+   * Return the RGBA color of the pixel at a given x,y coordinate on
+   * the graphics object canvas as a string.
+   *
+   * @param  {Number} x x coordinate of pixel
+   * @param  {Number} y y coordinate of pixel
+   * @return {String} an rgba(r,g,b,a) string representation of the color
+   */
   Graphics.prototype.getPixelColor = function(x, y) {
     var rgba = this.context.getImageData(x, y, 1, 1).data;
     return 'rgba(' + rgba[0] + ',' + rgba[1] + ',' + rgba[2] + ',' + rgba[3] + ')';
   };
 
-  Graphics.prototype.getPixelColorRGBA = function(x, y) { //repeated
+  /**
+   * Return the RGBA color of the pixel at a given x,y coordinate on
+   * the graphics object canvas as an array of integers.
+   *
+   * @param  {Number} x x coordinate of pixel
+   * @param  {Number} y y coordinate of pixel
+   * @return {Uint8ClampedArray} Uint8ClampedArray  representing a one-dimensional
+   *                                                array containing the data in the
+   *                                                RGBA order, with integer values
+   *                                                between 0 and 255
+   */
+  Graphics.prototype.getPixelColorRGBA = function(x, y) {
     return this.context.getImageData(x, y, 1, 1).data;
   };
 
@@ -24551,6 +24029,12 @@ define('src/index', ['exports'], function (exports) {
   // Capture
   //
 
+  /**
+   * Cpatures the current state of this graphics objects' canvas
+   * to an image
+   *
+   * @return {Image} HTML5 Image object of current state of the canvas.
+   */
   Graphics.prototype.captureCanvas = function() {
     var im = new Image();
     im.src = this.canvas.toDataURL();
@@ -24568,6 +24052,289 @@ define('src/index', ['exports'], function (exports) {
   Graphics.prototype.setCursor = function(name) {
     name = name == null ? 'default' : name;
     this.canvas.style.cursor = name;
+  };
+
+  /**
+   * @todo write docs
+   */
+  Graphics.prototype.getFrame = function(){
+    return new Rectangle__default(0, 0, this.cW, this.cH);
+  };
+
+  //
+  // Advanced graphics (rely on Axis2D projection object)
+  //
+
+  /**
+   * @ignore
+   * @todo
+   */
+  Graphics.prototype._linesInFrame = function(axis2D, numberListX, numberListY){
+    var l = Math.min(numberListX.length, numberListY.length);
+    var i;
+
+    this.context.beginPath();
+    this.context.moveTo(axis2D.projectX(numberListX[0]), axis2D.projectY(numberListY[0]));
+
+    for(i=1; i<l; i++){
+      this.context.lineTo(axis2D.projectX(numberListX[i]), axis2D.projectY(numberListY[i]));
+    }
+  };
+
+
+  /**
+   * @todo write docs
+   */
+  Graphics.prototype.sLinesInFrame = function(axis2D, numberListX, numberListY){
+    this._linesInFrame(axis2D, numberListX, numberListY);
+    this.context.stroke();
+  };
+
+  /**
+   * @todo write docs
+   */
+  Graphics.prototype.fLinesInFrame = function(axis2D, numberListX, numberListY){
+    this._linesInFrame(axis2D, numberListX, numberListY);
+    this.context.fill();
+  };
+
+  /**
+   * @todo write docs
+   */
+  Graphics.prototype.fsLinesInFrame = function(axis2D, numberListX, numberListY){
+    this._linesInFrame(axis2D, numberListX, numberListY);
+    this.context.fill();
+    this.context.stroke();
+  };
+
+
+  /**
+   * @todo write docs
+   */
+  Graphics.prototype.drawGridX = function(axis2D, dX, yLabel, stepsLabel){
+    var x0;
+    var n;
+    var i;
+    var x, top, bottom;
+
+    x0 = Math.floor(axis2D.departureFrame.x/dX)*dX;
+    n = Math.min( Math.ceil(axis2D.departureFrame.width/dX), 1000 );
+    top = Math.min(axis2D.arrivalFrame.y, axis2D.arrivalFrame.y+axis2D.arrivalFrame.height);
+    bottom = Math.max(axis2D.arrivalFrame.y, axis2D.arrivalFrame.y+axis2D.arrivalFrame.height);
+    stepsLabel = stepsLabel==null?1:stepsLabel;
+    for(i=0; i<n; i++){
+      x = Math.floor(axis2D.projectX(x0 + i*dX))+0.5;
+      this.line(x, top, x, bottom);
+      if(yLabel!=null && i%stepsLabel===0) {
+        this.fText(String(x0 + i*dX), x, bottom+yLabel);
+      }
+    }
+  };
+
+  /**
+   * @todo write docs
+   */
+  Graphics.prototype.drawGridY = function(axis2D, dY, xLabel, stepsLabel){
+    var y0;
+    var n;
+    var i;
+    var y, left, right;
+
+    y0 = Math.floor(axis2D.departureFrame.y/dY)*dY;
+    n = Math.min( Math.ceil(axis2D.departureFrame.height/dY), 1000 );
+    left = Math.min(axis2D.arrivalFrame.x, axis2D.arrivalFrame.x+axis2D.arrivalFrame.width);
+    right = Math.max(axis2D.arrivalFrame.x, axis2D.arrivalFrame.x+axis2D.arrivalFrame.width);
+    stepsLabel = stepsLabel==null?1:stepsLabel;
+    for(i=0; i<n; i++){
+      y = Math.floor(axis2D.projectY(y0 + i*dY))+0.5;
+      this.line(left, y, right, y);
+      if(xLabel!=null && i%stepsLabel===0) {
+        this.fText(String(y0 + i*dY), left+xLabel, y);
+      }
+    }
+  };
+
+  //
+  // Ported from Draw.js TODO - organize these appropriately.
+  //
+
+
+  /**
+   * @todo write docs
+   */
+  Graphics.prototype.drawSmoothPolygon = function(polygon, closed, amount) { //TODO: add tx, ty
+    amount = amount == null ? 30 : amount;
+    var controlPoints;
+
+    if(polygon.length < 2) return null;
+    if(polygon.length == 2) {
+      var a = Math.atan2(polygon[1].y - polygon[0].y, polygon[1].x - polygon[0].x) - 0.5 * Math.PI;
+      var cosa = amount * Math.cos(a);
+      var sina = amount * Math.sin(a);
+      this.context.moveTo(polygon[0].x, polygon[0].y);
+      this.context.bezierCurveTo(
+        polygon[0].x + cosa, polygon[0].y + sina,
+        polygon[1].x + cosa, polygon[1].y + sina,
+        polygon[1].x, polygon[1].y
+      );
+      this.context.bezierCurveTo(
+        polygon[1].x - cosa, polygon[1].y - sina,
+        polygon[0].x - cosa, polygon[0].y - sina,
+        polygon[0].x, polygon[0].y
+      );
+      return;
+    }
+    var i;
+    var nPoints = polygon.length;
+    var prevPoint = polygon[nPoints - 1];
+    var point = polygon[0];
+    var nextPoint = polygon[1];
+    controlPoints = GeometryOperators.getSoftenControlPoints(prevPoint, point, nextPoint, amount);
+    var prevCP = controlPoints[1];
+    var cP;
+    this.context.moveTo(point.x, point.y);
+    prevPoint = point;
+    var nSteps = nPoints + Number(closed);
+    for(i = 1; i < nSteps; i++) {
+      point = polygon[i % nPoints];
+      nextPoint = polygon[(i + 1) % nPoints];
+      controlPoints = GeometryOperators.getSoftenControlPoints(prevPoint, point, nextPoint, amount);
+      cP = controlPoints[0];
+      this.context.bezierCurveTo(prevCP.x, prevCP.y, cP.x, cP.y, point.x, point.y);
+      prevCP = controlPoints[1];
+      prevPoint = point;
+    }
+  };
+
+
+
+
+  /**
+   * Draws an ellipse using the current state of the canvas.
+   * @param {CanvasRenderingContext2D} context
+   * @param {Number} x The center x coordinate
+   * @param {Number} y The center y coordinate
+   * @param {Number} rW The horizontal radius of the ellipse
+   * @param {Number} rH The vertical radius of the ellipse
+   */
+  Graphics.prototype.drawEllipse = function(x, y, rW, rH) {
+    var k = 0.5522848, // 4 * ((√(2) - 1) / 3)
+      ox = rW * k, // control point offset horizontal
+      oy = rH * k, // control point offset vertical
+      xe = x + rW, // x-end
+      ye = y + rH; // y-end
+
+    this.context.moveTo(x - rW, y);
+    this.context.bezierCurveTo(x - rW, y - oy, x - ox, y - rH, x, y - rH);
+    this.context.bezierCurveTo(x + ox, y - rH, xe, y - oy, xe, y);
+    this.context.bezierCurveTo(xe, y + oy, x + ox, ye, x, ye);
+    this.context.bezierCurveTo(x - ox, ye, x - rW, y + oy, x - rW, y);
+    this.context.moveTo(x - rW, y);
+  };
+
+  /**
+   * Draws a polygon
+   * @param {CanvasRenderingContext2D} context
+   * @param {Polygon} Polygon to draw
+   * @param {Boolean} close polygon
+   * @param {Number} tx horizontal translation
+   * @param {Number} ty vertical translation
+   */
+  Graphics.prototype.drawPolygon = function(polygon, close, tx, ty) {
+    tx = tx || 0;
+    ty = ty || 0;
+    var i;
+    this.context.moveTo(tx + polygon[0].x, ty + polygon[0].y);
+    for(i = 1; polygon[i] != null; i++) {
+      this.context.lineTo(tx + polygon[i].x, ty + polygon[i].y);
+    }
+    if(close) {
+      this.context.lineTo(tx + polygon[0].x, ty + polygon[0].y);
+    }
+  };
+
+  /**
+   * @todo write docs
+   */
+  Graphics.prototype.drawPolygonWithControlPoints = function(polygon, controlPoints, tx, ty) {
+    tx = tx || 0;
+    ty = ty || 0;
+    var i;
+    this.context.moveTo(tx + polygon[0].x, ty + polygon[0].y);
+    for(i = 1; polygon[i] != null; i++) {
+      this.context.bezierCurveTo(tx + controlPoints[(i - 1) * 2].x, ty + controlPoints[(i - 1) * 2].y,
+        tx + controlPoints[i * 2 - 1].x, ty + controlPoints[i * 2 - 1].y,
+        tx + polygon[i].x, ty + polygon[i].y);
+    }
+  };
+
+  /**
+   * @todo write docs
+   */
+  Graphics.prototype.drawBezierPolygon = function(bezierPolygon, tx, ty) {
+    tx = tx || 0;
+    ty = ty || 0;
+    var bI;
+    var N = Math.floor((bezierPolygon.length - 1) / 3);
+    var i;
+    this.context.moveTo(tx + bezierPolygon[0].x, ty + bezierPolygon[0].y);
+    for(i = 0; i < N; i++) {
+      bI = i * 3 + 1;
+
+      this.context.bezierCurveTo(
+        tx + bezierPolygon[bI].x, ty + bezierPolygon[bI].y,
+        tx + bezierPolygon[bI + 1].x, ty + bezierPolygon[bI + 1].y,
+        tx + bezierPolygon[bI + 2].x, ty + bezierPolygon[bI + 2].y
+      );
+    }
+  };
+
+  /**
+   * Draws a rounded rectangle using the current state of the canvas.
+   * If you omit the last three params, it will draw a rectangle
+   * outline with a 5 pixel border radius
+   * @param {CanvasRenderingContext2D} context
+   * @param {Number} x The top left x coordinate
+   * @param {Number} y The top left y coordinate
+   * @param {Number} width The width of the rectangle
+   * @param {Number} height The height of the rectangle
+   * @param {Number} radius The corner radius. Defaults to 5;
+   */
+  Graphics.prototype.drawRoundRect = function(x, y, width, height, radius) {
+    radius = radius || 0;
+    var bottom = y + height;
+    this.context.moveTo(x + radius, y);
+    this.context.lineTo(x + width - radius, y);
+    this.context.quadraticCurveTo(x + width, y, x + width, y + radius);
+    this.context.lineTo(x + width, y + height - radius);
+    this.context.quadraticCurveTo(x + width, bottom, x + width - radius, bottom);
+    this.context.lineTo(x + radius, bottom);
+    this.context.quadraticCurveTo(x, bottom, x, bottom - radius);
+    this.context.lineTo(x, y + radius);
+    this.context.quadraticCurveTo(x, y, x + radius, y);
+  };
+
+  /**
+   * @todo write docs
+   */
+  Graphics.prototype.drawTriangleFromBase = function(x, y, base, height, angle) {
+    this.context.moveTo(x + 0.5 * base * Math.cos(angle + Math.PI * 0.5), y + 0.5 * base * Math.sin(angle + Math.PI * 0.5));
+    this.context.lineTo(x + 0.5 * base * Math.cos(angle - Math.PI * 0.5), y + 0.5 * base * Math.sin(angle - Math.PI * 0.5));
+    this.context.lineTo(x + height * Math.cos(angle), y + height * Math.sin(angle));
+    this.context.lineTo(x + 0.5 * base * Math.cos(angle + Math.PI * 0.5), y + 0.5 * base * Math.sin(angle + Math.PI * 0.5));
+  };
+
+
+  /**
+   * @todo write docs
+   */
+  Graphics.prototype.drawQuadrilater = function(p0, p1, p2, p3, close) {
+    close = close == null ? true : close;
+    this.context.moveTo(p0.x, p0.y);
+    this.context.lineTo(p1.x, p1.y);
+    this.context.lineTo(p2.x, p2.y);
+    this.context.lineTo(p3.x, p3.y);
+    if(close) this.context.lineTo(p0.x, p0.y);
   };
 
   exports.Graphics = Graphics;
@@ -24593,17 +24360,18 @@ define('src/index', ['exports'], function (exports) {
    * @constructor
    * @category interactions
    */
-  function DragDetection(configuration) { //mode, listenerFunction, target, areaVerificationFunction){
+  function DragDetection(configuration, graphics) { //mode, listenerFunction, target, areaVerificationFunction){
     this.mode = configuration.mode || 0;
     this.listenerFunction = configuration.listenerFunction;
     this.target = configuration.target;
     this.areaVerificationFunction = configuration.areaVerificationFunction;
+    this.graphics = graphics;
 
     this.factor = configuration.factor == null ? 1 : configuration.factor;
     this.center = new Point(0, 0);
 
-    addInteractionEventListener("mousedown", this.onMouse, this);
-    addInteractionEventListener("mouseup", this.onMouse, this);
+    this.graphics.on("mousedown", this.onMouse, this);
+    this.graphics.on("mouseup", this.onMouse, this);
 
     this.dragging = false;
     this.mouseClickPosition = new Point();
@@ -24617,22 +24385,25 @@ define('src/index', ['exports'], function (exports) {
   }
 
 
+  /**
+  * @todo write docs
+  */
   DragDetection.prototype.enterframe = function(draggingInstance) {
 
     switch(draggingInstance.mode) {
       case 0:
-        draggingInstance.dragVector.x = (mX - draggingInstance.mousePosition.x) * draggingInstance.factor;
-        draggingInstance.dragVector.y = (mY - draggingInstance.mousePosition.y) * draggingInstance.factor;
-        draggingInstance.mousePosition.x = mX;
-        draggingInstance.mousePosition.y = mY;
+        draggingInstance.dragVector.x = (this.graphics.mX - draggingInstance.mousePosition.x) * draggingInstance.factor;
+        draggingInstance.dragVector.y = (this.graphics.mY - draggingInstance.mousePosition.y) * draggingInstance.factor;
+        draggingInstance.mousePosition.x = this.graphics.mX;
+        draggingInstance.mousePosition.y = this.graphics.mY;
         break;
       case 1:
-        draggingInstance.dragVector.x = mX - draggingInstance.mouseClickPosition.x;
-        draggingInstance.dragVector.y = mY - draggingInstance.mouseClickPosition.y;
+        draggingInstance.dragVector.x = this.graphics.mX - draggingInstance.mouseClickPosition.x;
+        draggingInstance.dragVector.y = this.graphics.mY - draggingInstance.mouseClickPosition.y;
         break;
       case 2:
-        var dX = mX - draggingInstance.center.x;
-        var dY = mY - draggingInstance.center.y;
+        var dX = this.graphics.mX - draggingInstance.center.x;
+        var dY = this.graphics.mY - draggingInstance.center.y;
         var r = Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
         var a = Math.atan2(dY, dX);
         draggingInstance.dragVector.x = r - draggingInstance.r;
@@ -24646,6 +24417,9 @@ define('src/index', ['exports'], function (exports) {
 
   };
 
+  /**
+  * @todo write docs
+  */
   DragDetection.prototype.onMouse = function(event) {
     switch(event.type) {
       case 'mousedown':
@@ -24656,13 +24430,13 @@ define('src/index', ['exports'], function (exports) {
 
         this.dragging = true;
 
-        this.mouseClickPosition.x = mX;
-        this.mouseClickPosition.y = mY;
-        this.mousePosition.x = mX;
-        this.mousePosition.y = mY;
+        this.mouseClickPosition.x = this.graphics.mX;
+        this.mouseClickPosition.y = this.graphics.mY;
+        this.mousePosition.x = this.graphics.mX;
+        this.mousePosition.y = this.graphics.mY;
 
-        var dX = mX - this.center.x;
-        var dY = mY - this.center.y;
+        var dX = this.graphics.mX - this.center.x;
+        var dY = this.graphics.mY - this.center.y;
         this.r = Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
         this.a = Math.atan2(dY, dX);
 
@@ -24672,7 +24446,7 @@ define('src/index', ['exports'], function (exports) {
         if(this.idInterval != null) {
           clearInterval(this.idInterval);
         }
-        this.idInterval = setInterval(this.enterframe, 30, this); //[!] this won't work on IE, it´s better to create a new Listener for setInterval
+        this.idInterval = setInterval(this.enterframe.bind(this), 30, this); //[!] this won't work on IE, it´s better to create a new Listener for setInterval
         break;
       case 'mouseup':
         this.simulateMouseUp();
@@ -24680,6 +24454,9 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
+  /**
+  * @todo write docs
+  */
   DragDetection.prototype.simulateMouseUp = function() {
     this.dragging = false;
     clearInterval(this.idInterval);
@@ -24691,8 +24468,16 @@ define('src/index', ['exports'], function (exports) {
   InputTextFieldHTML.prototype.constructor = InputTextFieldHTML;
 
 
-  function InputTextFieldHTML(configuration) {
+  /**
+   * @classdesc Instanciable class that manages and renders a text in a html text area.
+   *
+   * @param configuration configuration Object with parameters (x, y, width, height, text, fontColor, fontSize, fontName, fontStyle, linkFunction, target…)
+   * @constructor
+   * @category strings
+   */
+  function InputTextFieldHTML(configuration, graphics) {
     this.id = configuration.id == null ? 0 : configuration.id;
+    this.graphics = graphics;
 
     this.target = configuration.target;
 
@@ -24714,23 +24499,12 @@ define('src/index', ['exports'], function (exports) {
     this.border = configuration.border == null ? true : configuration.border;
     this.password = configuration.password;
 
-    this._prevX;
-    this._prevY;
-    this._prevWidth;
-    this._prevHeight;
-    this._prevText;
-
     this.zIndex = 30;
-
-    this.enterFunctionTarget;
-    this.changeFunctionTarget;
-    this.focusFunctionTarget;
-    this.blurFunctionTarget;
 
     this.textColor = configuration.textColor == null ? 'black' : configuration.textColor;
     this.backgroundColor = '#FFFFFF';
 
-    this.main = document.getElementById('maindiv');
+    this.main = graphics.container;// document.getElementById('maindiv');
     this.div = document.createElement('div2');
     this.textarea ? this.DOMtext = document.createElement("textarea") : this.DOMtext = document.createElement("input");
     this.password ? this.DOMtext.setAttribute('type', 'password') : this.DOMtext.setAttribute('type', 'text');
@@ -24746,21 +24520,19 @@ define('src/index', ['exports'], function (exports) {
 
     this.DOMtext.readOnly = this.readOnly;
 
-    this.DOMtext.onfocus = function(e) {
+    this.DOMtext.onfocus = function() {
       //e.target = this.parent;
       this.parent._onFocus(this.parent);
     };
-    this.DOMtext.onblur = function(e) {
+    this.DOMtext.onblur = function() {
       //e.target = this.parent;
       this.parent._onBlur(this.parent);
     };
 
     this.DOMtext.value = "";
 
-    addInteractionEventListener("keydown", this.onKeyDown, this);
-    this._eKeyDown;
-
-    this.timer;
+    //this.graphics.on("keydown", this.onKeyDown, this);
+    this.div.addEventListener("keydown", this.onKeyDown, this);
 
     this.focus = false;
 
@@ -24775,16 +24547,24 @@ define('src/index', ['exports'], function (exports) {
       this.draw();
     }
 
-    this.DOMtext.addEventListener("mousemove", _onMouse, false);
-    if(_cycleOnMouseMovement) this.DOMtext.addEventListener('mousemove', onMoveCycle, false);
+    // TODO What is this supposed to do?
+    this.DOMtext.addEventListener("mousemove", this.graphics._onMouse, false);
+    // TODO find out what this was for onMoveCycle doesn't exist anymore
+    //if(this.graphics._cycleOnMouseMovement) this.DOMtext.addEventListener('mousemove', onMoveCycle, false);
   }
 
 
+  /**
+   * @todo write docs
+   */
   InputTextFieldHTML.prototype.setBorder = function(value) {
     this.border = value;
     this.DOMtext.setAttribute('style', 'border:0; color: ' + this.textColor + '; width:' + (this.width - 7) + 'px;height:' + (this.height - 7) + 'px; font-size:' + this.fontSize + 'px; border:' + (value ? 'yes' : 'none'));
   };
 
+  /**
+   * @todo write docs
+   */
   InputTextFieldHTML.prototype.draw = function() {
     if(this.x != this._prevX || this.y != this._prevY || this.width != this._prevWidth || this.height != this._prevHeight || this.text != this._prevText) {
       this._prevX = this.x;
@@ -24805,6 +24585,9 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
+  /**
+   * @todo write docs
+   */
   InputTextFieldHTML.prototype.setText = function(text, activeChange) {
     activeChange = activeChange == null ? true : activeChange;
     this.text = text;
@@ -24814,21 +24597,43 @@ define('src/index', ['exports'], function (exports) {
     this.draw();
   };
 
+  /**
+   * @todo write docs
+   */
   InputTextFieldHTML.prototype.getText = function() {
     return this.DOMtext.value;
   };
 
+  /**
+   * @todo write docs
+   */
   InputTextFieldHTML.prototype.getSelectionStart = function() {
     return this.DOMtext.selectionStart;
   };
 
+  /**
+   * @todo write docs
+   */
   InputTextFieldHTML.prototype.onKeyDown = function(e) {
-    this._eKeyDown = e;
-    this._keyCode = e.keyCode;
-    this.timer = setTimeout(this.onKeyDownDelayed, 4, this);
+    console.log('InputTextFieldHTML.prototype.onKeyDown, e', e);
+    console.log('e.srcElement', e.srcElement);
+    console.log('e.srcElement.parent', e.srcElement.parent);
+    console.log('e.srcElement.parent.onKeyDownDelayed', e.srcElement.parent.onKeyDownDelayed);
+
+    var target = e.srcElement.parent;
+
+    target._eKeyDown = e;
+    target._keyCode = e.keyCode;
+
+    target.timer = setTimeout(target.onKeyDownDelayed, 4, target);
+    console.log('timer>');
   };
 
+  /**
+   * @todo write docs
+   */
   InputTextFieldHTML.prototype.onKeyDownDelayed = function(target) {
+    console.log('InputTextFieldHTML.prototype.onKeyDownDelayed, target, target.DOMtext', target, target.DOMtext);
 
     if(target._keyCode == 13 && target.DOMtext == document.activeElement) {
       if(target.enterFunction != null) {
@@ -24839,86 +24644,140 @@ define('src/index', ['exports'], function (exports) {
     if(target.text != target.DOMtext.value) {
 
       target.text = target.DOMtext.value;
-      var lastChar = target.text.charAt(target.text.length - 1);
+      //var lastChar = target.text.charAt(target.text.length - 1);
 
       if(target._keyCode != 13) {
         if(target.changeFunction != null) {
+          console.log('call target.changeFunctionTarget');
           target.changeFunction.call(target.changeFunctionTarget, target.id);
         }
       }
     }
 
-    if(_cycleOnMouseMovement) reStartCycle();
-
     this.timer = null;
   };
 
+  /**
+   * @todo write docs
+   */
   InputTextFieldHTML.prototype.forceFocus = function() {
     this.DOMtext.focus();
     this.focus = true;
   };
 
-  InputTextFieldHTML.prototype.forceUnfocus = function() {
-    console.log("[!] use InputTextFieldHTML.prototype.forceBlur instead");
-    a.push(0); // TODO where does this come from
-  };
+  /**
+   * @todo write docs
+   */
+  // InputTextFieldHTML.prototype.forceUnfocus = function() {
+  //   console.log("[!] use InputTextFieldHTML.prototype.forceBlur instead");
+  //   a.push(0); // TODO where does this come from
+  // };
 
+  /**
+   * @todo write docs
+   */
   InputTextFieldHTML.prototype.forceBlur = function() {
+    console.log('InputTextFieldHTML.prototype.forceBlur');
+
     this.DOMtext.blur();
     this.focus = false;
   };
 
 
+  /**
+   * @todo write docs
+   */
   InputTextFieldHTML.prototype.setEnterFunction = function(enterFunction, target) {
     this.enterFunction = enterFunction;
     this.enterFunctionTarget = target;
   };
+
+  /**
+   * @todo write docs
+   */
   InputTextFieldHTML.prototype.setChangeFunction = function(changeFunction, target) {
     this.changeFunction = changeFunction;
     this.changeFunctionTarget = target;
   };
+
+  /**
+   * @todo write docs
+   */
   InputTextFieldHTML.prototype.setFocusFunction = function(focusFunction, target) {
     this.focusFunction = focusFunction;
     this.focusFunctionTarget = target;
   };
+
+  /**
+   * @todo write docs
+   */
   InputTextFieldHTML.prototype.setBlurFunction = function(blurFunction, target) {
     this.blurFunction = blurFunction;
     this.blurFunctionTarget = target;
   };
 
+  /**
+   * @todo write docs
+   */
   InputTextFieldHTML.prototype.setSelection = function(start, end) {
     start = start == null ? 0 : start;
     end = end == null ? this.DOMtext.value.length : end;
     this.DOMtext.selectionStart = start;
     this.DOMtext.selectionEnd = end;
   };
+
+  /**
+   * @todo write docs
+   */
   InputTextFieldHTML.prototype.placeCursor = function(nChar) {
+    console.log('InputTextFieldHTML.prototype.placeCursor, nChar', nChar);
     this.setSelection(nChar);
   };
 
+  /**
+   * @todo write docs
+   */
   InputTextFieldHTML.prototype.setScrollPosition = function(y) {
     if(y <= 1) y = Math.floor(y * this.DOMtext.scrollHeight);
     this.DOMtext.scrollTop = y;
   };
+
+  /**
+   * @todo write docs
+   */
   InputTextFieldHTML.prototype.getScrollPosition = function() {
     return this.DOMtext.scrollTop;
   };
+
+  /**
+   * @todo write docs
+   */
   InputTextFieldHTML.prototype.getTextHeight = function() {
     return this.DOMtext.scrollHeight;
   };
 
-
+  /**
+   * @ignore
+   */
   InputTextFieldHTML.prototype._onFocus = function(target) {
     target.focus = true;
     if(target.focusFunction != null) target.focusFunction.call(target.focusFunctionTarget, target.id);
   };
 
+  /**
+   * @ignore
+   */
   InputTextFieldHTML.prototype._onBlur = function(target) {
     target.focus = false;
     if(target.blurFunction != null) target.blurFunction.call(target.blurFunctionTarget, target.id);
   };
 
+  /**
+   * @todo write docs
+   */
   InputTextFieldHTML.prototype.remove = function() {
+    console.log('InputTextFieldHTML.prototype.remove, his.added', this.added);
+
     if(this.added) {
       this.div.removeChild(this.DOMtext);
       this.main.removeChild(this.div);
@@ -24926,7 +24785,12 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
+  /**
+   * @todo write docs
+   */
   InputTextFieldHTML.prototype.readd = function() {
+    console.log('InputTextFieldHTML.prototype.readd, his.added', this.added);
+
     if(!this.added) {
       this.main.appendChild(this.div);
       this.div.appendChild(this.DOMtext);
@@ -24934,12 +24798,15 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
-  InputTextFieldHTML.prototype.disappear = function() {
-    console.log('[!] InputTextFieldHTML.prototype.disappear replaced by remove');
-    a.push(0); // TODO where does this come from?
-    this.x = -10000;
-    this.draw();
-  };
+  /**
+   * @todo write docs
+   */
+  // InputTextFieldHTML.prototype.disappear = function() {
+  //   console.log('[!] InputTextFieldHTML.prototype.disappear replaced by remove');
+  //   a.push(0); // TODO where does this come from?
+  //   this.x = -10000;
+  //   this.draw();
+  // };
 
   exports.InputTextFieldHTML = InputTextFieldHTML;
 
@@ -24953,8 +24820,10 @@ define('src/index', ['exports'], function (exports) {
    * @constructor
    * @category strings
    */
-  function TextBox(configuration) {
-    configuration = configuration == null ? {} : configuration;
+  function TextBox(configuration, graphics) {
+
+    configuration = configuration == null ? {} : configuration; // TODO is this supposed to be an undefined check?
+    this.graphics = graphics;
 
     this.x = configuration.x == null ? 300 : configuration.x;
     this.y = configuration.y == null ? 2 : configuration.y;
@@ -24963,10 +24832,8 @@ define('src/index', ['exports'], function (exports) {
     this.text = configuration.text == null ? '' : configuration.text;
 
     this.fontColor = configuration.fontColor == null ? 'black' : configuration.fontColor;
-    this.fontSize = configuration.fontSize == null ? '14' : configuration.fontSize;
-    // TODO track down LOADED_FONT
-    this.fontName = configuration.fontName == null ? LOADED_FONT : configuration.fontName;
-    //this.fontStyle =  configuration.fontStyle==null?null:configuration.fontStyle;
+    this.fontSize = configuration.fontSize == null ? '14' : configuration.fontSize;  
+    this.fontName = configuration.fontName == null ? 'arial' : configuration.fontName;  
 
     this.warnFunction = configuration.warnFunction;
     this.target = configuration.target;
@@ -24978,26 +24845,35 @@ define('src/index', ['exports'], function (exports) {
 
     this.lineWidth = configuration.lineWidth == null ? 1 : configuration.lineWidth;
 
-    this.maxWidth;
-    this.links;
-    this.linksType;
-    this.pointPairs;
-    this.overLink;
+    this.maxWidth = undefined;
+    this.links = undefined;
+    this.linksType = undefined;
+    this.pointPairs = undefined;
+    this.overLink = undefined;
 
     this.setText(this.text);
 
-    addInteractionEventListener('mouseup', this.mouseUp, this);
+    this.graphics.on('mouseup', this.mouseUp, this);
   }
 
 
+  /**
+   * @todo write docs
+   */
   TextBox.prototype.getMaxWidth = function() {
     return DrawTexts.getMaxTextWidth(this.lines);
   };
 
+  /**
+   * @todo write docs
+   */
   TextBox.prototype.update = function() {
     this.setText(this.text);
   };
 
+  /**
+   * @todo write docs
+   */
   TextBox.prototype.setText = function(text) {
     this.text = String(text);
 
@@ -25010,15 +24886,13 @@ define('src/index', ['exports'], function (exports) {
       var index0;
       var index0b;
       var index1;
-
-      var names = [];
+      
       this.links = new StringList();
       this.linksType = new StringList();
       var indexesPairs = new List__default();
       var lengthBefore;
 
-      var link;
-      var text;
+      var link;    
       var extra;
       var rest;
 
@@ -25032,7 +24906,7 @@ define('src/index', ['exports'], function (exports) {
 
           this.links.push(link);
 
-          if(index0b != -1 && index0b < index1 && !blocks[i].charAt(index0b + 1) == "b") {
+          if(index0b != -1 && index0b < index1 && blocks[i].charAt(index0b + 1) != "b") {
             extra = blocks[i].charAt(index0b + 1);
             //c.log("EXTRA:{"+extra+"}");
 
@@ -25069,7 +24943,7 @@ define('src/index', ['exports'], function (exports) {
 
     //DrawTexts.setContextTextProperties(this.fontColor, this.fontSize, this.fontName, null, null, this.fontStyle);
 
-    setText(this.fontColor, this.fontSize, this.fontName, null, null, this.fontStyle);
+    this.graphics.setText(this.fontColor, this.fontSize, this.fontName, null, null, this.fontStyle);
 
     this.lines = DrawTexts.textWordWrapReturnLines(this.text, this.width, 0, this.lineHeight);
     this.height = this.lines.length * this.lineHeight;
@@ -25089,8 +24963,8 @@ define('src/index', ['exports'], function (exports) {
         for(j = 0; this.lines[j] != null; j++) {
           line = this.lines[j];
           if(interval.x >= lengthAccumulated && interval.x < lengthAccumulated + line.length) {
-            w0 = src_Global__context.measureText(line.substr(0, interval.x - lengthAccumulated)).width;
-            w1 = src_Global__context.measureText(line.substr(0, interval.x + interval.y - lengthAccumulated)).width;
+            w0 = this.graphics.context.measureText(line.substr(0, interval.x - lengthAccumulated)).width;
+            w1 = this.graphics.context.measureText(line.substr(0, interval.x + interval.y - lengthAccumulated)).width;
             y = j * this.lineHeight + 0.5;
 
             this.pointPairs.push({
@@ -25114,23 +24988,26 @@ define('src/index', ['exports'], function (exports) {
 
     // TODO is this supposed to be this.setText (also see below) or a diff setText
     //DrawTexts.setContextTextProperties(this.fontColor, this.fontSize, this.fontName, null, null, this.fontStyle);
-    setText(this.fontColor, this.fontSize, this.fontName, null, null, this.fontStyle);
+    this.graphics.setText(this.fontColor, this.fontSize, this.fontName, null, null, this.fontStyle);
 
     this.maxWidth = 0;
     for(i = 0; this.lines[i] != null; i++) {
-      this.maxWidth = Math.max(this.maxWidth, src_Global__context.measureText(this.lines[i]).width);
+      this.maxWidth = Math.max(this.maxWidth, this.graphics.context.measureText(this.lines[i]).width);
     }
   };
 
+  /**
+   * @todo write docs
+   */
   TextBox.prototype.draw = function(scale) {
     scale = scale == null ? 1 : scale;
 
     if(this.backgroundColor != null) {
-      src_Global__context.fillStyle = this.backgroundColor;
-      src_Global__context.fillRect(this.x - this.boxMargin, this.y - this.boxMargin, this.width + 2 * this.boxMargin, this.height + 2 * this.boxMargin);
+      this.graphics.context.fillStyle = this.backgroundColor;
+      this.graphics.context.fillRect(this.x - this.boxMargin, this.y - this.boxMargin, this.width + 2 * this.boxMargin, this.height + 2 * this.boxMargin);
     }
-    //DrawTexts.setContextTextProperties(this.fontColor, this.fontSize*scale, this.fontName, null, null, this.fontStyle);
-    setText(this.fontColor, this.fontSize * scale, this.fontName, null, null, this.fontStyle);
+    
+    this.graphics.setText(this.fontColor, this.fontSize * scale, this.fontName, null, null, this.fontStyle);
     DrawTexts.fillTextRectangleWithTextLines(this.lines, this.x, this.y, 0, this.lineHeight * scale);
 
     var x0;
@@ -25141,35 +25018,45 @@ define('src/index', ['exports'], function (exports) {
     this.overLink = null;
 
     if(this.pointPairs != null) {
-      src_Global__context.lineWidth = this.lineWidth;
-      src_Global__context.strokeStyle = this.fontColor;
+      this.graphics.context.lineWidth = this.lineWidth;
+      this.graphics.context.strokeStyle = this.fontColor;
       for(var i = 0; this.pointPairs[i] != null; i++) {
         x0 = this.pointPairs[i].x0 * scale + this.x;
         x1 = this.pointPairs[i].x1 * scale + this.x;
         y0 = this.pointPairs[i].y * scale + this.y;
         y1 = Math.floor(y0 + Number(this.fontSize * scale));
         this.line(x0, x1, y1 + 0.5);
-        if(mY > y0 && mY < y1 && mX > x0 && mX < x1) {
-          src_Global__context.canvas.style.cursor = 'pointer';
+        if(this.graphics.mY > y0 && this.graphics.mY < y1 && this.graphics.mX > x0 && this.graphics.mX < x1) {
+          this.graphics.context.canvas.style.cursor = 'pointer';
           this.overLink = i;
         }
       }
     }
   };
 
+  /**
+   * @todo write docs
+   */
   TextBox.prototype.line = function(x0, x1, y) {
-    src_Global__context.beginPath();
-    src_Global__context.moveTo(x0, y);
-    src_Global__context.lineTo(x1, y);
-    src_Global__context.stroke();
+    this.graphics.context.beginPath();
+    this.graphics.context.moveTo(x0, y);
+    this.graphics.context.lineTo(x1, y);
+    this.graphics.context.stroke();
   };
 
+  /**
+   * @todo write docs
+   */
   TextBox.prototype.mouseUp = function(e) {
     if(this.overLink != null) {
       var link = this.links[this.overLink];
       var linkType = this.linksType[this.overLink];
       if(link.substr(0, 7) == 'http://' || link.substr(0, 8) == 'https://' || link.substr(0, 4) == 'www.') {
-        linkType == "blank" ? window.open(link) : window.open(link, "_self");
+        if(linkType === "blank") {
+          window.open(link);
+        } else {
+          window.open(link, "_self");
+        }      
       } else {
         this.warnFunction.call(this.target, link);
       }
@@ -25177,13 +25064,16 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
+  /**
+   * @todo write docs
+   */
   TextBox.prototype.deactivate = function() {
-    removeInteractionEventListener('mouseup', this.mouseUp, this);
+    this.graphics.off('mouseup', this.mouseUp, this);
   };
 
-
-  ///
-
+  /**
+   * @todo write docs
+   */
   TextBox.replaceWikiLinks = function(text) {
     var indexOpen = text.indexOf("[");
     var indexClose;
@@ -25228,6 +25118,9 @@ define('src/index', ['exports'], function (exports) {
   function FastHtml() {}
 
 
+  /**
+   * @todo write docs
+   */
   FastHtml.expand = function(abreviatedHTML, scope, onEvent) {
     if(abreviatedHTML == null || abreviatedHTML == "") return "";
 
@@ -25341,14 +25234,24 @@ define('src/index', ['exports'], function (exports) {
     return newText;
   };
 
+  /**
+   * @todo write docs
+   */
   FastHtml.clickLink = function(param) {
     FastHtml.linkFunction.call(FastHtml.target, param);
   };
 
+  /**
+   * @todo write docs
+   */
   FastHtml.findAndPlaceLinks = function(text) {
     var newText = FastHtml._findAndPlaceLinksPrefix(text, "http");
     return FastHtml._findAndPlaceLinksPrefix(newText, "https");
   };
+
+  /**
+   * @ignore
+   */
   FastHtml._findAndPlaceLinksPrefix = function(text, prefix) {
     var regexp = prefix == 'http' ? /http:\/\//g : /https:\/\//g;
     var blocks = text.split(regexp);
@@ -25374,6 +25277,9 @@ define('src/index', ['exports'], function (exports) {
     return(blocks.length == 0 || blocks.length == 1) ? text : blocks2.join('');
   };
 
+  /**
+   * @todo write docs
+   */
   FastHtml.findAndPlaceTwitterAdresses = function(text) {
     var blocks = text.split(/@/g);
 
@@ -25402,6 +25308,9 @@ define('src/index', ['exports'], function (exports) {
     return(blocks.length == 0 || blocks.length == 1) ? text : blocks2.join('');
   };
 
+  /**
+   * @todo write docs
+   */
   FastHtml.getColorTag = function(color) {
     color = ColorOperators__default.colorStringToHEX(color);
     return "<font color=\"" + color + "\">";
@@ -25467,6 +25376,9 @@ define('src/index', ['exports'], function (exports) {
 
 
 
+  /**
+   * @todo write docs
+   */
   TextFieldHTML.prototype.draw = function() {
     //c.log('this.width, this._prevWidth', this.width, this._prevWidth);
     if(this.x != this._prevX || this.y != this._prevY || this.width != this._prevWidth || this.height != this._prevHeight) {
@@ -25479,6 +25391,9 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
+  /**
+   * @todo write docs
+   */
   TextFieldHTML.prototype.setText = function(text) {
     if(this.text != text) {
       this.text = text;
@@ -25486,6 +25401,9 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
+  /**
+   * @todo write docs
+   */
   TextFieldHTML.prototype.getText = function() {
     return this.DOMtext.value;
   };
@@ -25707,6 +25625,8 @@ define('src/index', ['exports'], function (exports) {
   exports.MultiLoader = MultiLoader;
 
   /**
+   * @ignore
+   *
    * @classdesc Functions to create interesting console output.
    *
    * @namespace
@@ -25716,9 +25636,12 @@ define('src/index', ['exports'], function (exports) {
 
 
 
-  ConsoleTools._ticTime;
-  ConsoleTools._tacTime;
+  ConsoleTools._ticTime = undefined;
+  ConsoleTools._tacTime = undefined;
 
+  /**
+   * @ignore
+   */
   ConsoleTools.NumberTableOnConsole = function(table) {
     var message = "";
     var line;
@@ -25742,6 +25665,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+   * @ignore
+   */
   ConsoleTools.tic = function(message) {
     message = message || "";
 
@@ -25750,6 +25676,9 @@ define('src/index', ['exports'], function (exports) {
     console.log('°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° tic °°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° [' + message + ']');
   };
 
+  /**
+   * @ignore
+   */
   ConsoleTools.tac = function(message) {
     message = message || "";
 
@@ -25761,6 +25690,9 @@ define('src/index', ['exports'], function (exports) {
   exports.ConsoleTools = ConsoleTools;
 
   /**
+   *
+   * @ignore
+   *
    * @classdesc Provides a set of tools that work with JSON.
    *
    * @namespace
@@ -25776,10 +25708,14 @@ define('src/index', ['exports'], function (exports) {
     console.log("__________________________________________________________________________________________________________________________________________________________");
   };
 
-  /**
+  /*
    * This function is not used in the framework.
    * It's used only for GIT / Jenkins tests
    */
+
+   /**
+    * @ignore
+    */
   JSONUtils.dummy2 = function() {
     return null;
   };
@@ -25795,6 +25731,9 @@ define('src/index', ['exports'], function (exports) {
   function StringUtils() {}
 
 
+  /**
+   * @todo write docs
+   */
   StringUtils.stringtoXML = function(text) {
     if(window.ActiveXObject) {
       var doc = new ActiveXObject('Microsoft.XMLDOM');
@@ -25830,7 +25769,7 @@ define('src/index', ['exports'], function (exports) {
       Navigator__userAgent = Navigator.NS;
       Navigator__userAgentVersion = Number(RegExp.$1); // capture x.x portion and store as a number
     }
-  };
+  }
 
   Navigator.getUserAgent = function() {
     return Navigator__userAgent;
@@ -25927,6 +25866,9 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
+  /**
+   * @todo write docs
+   */
   Forces.prototype.addNode = function(node, initPosition, initSpeed) {
     initPosition = initPosition == null ? new Point(Math.random() * 200 - 100, Math.random() * 200 - 100) : initPosition;
     initSpeed = initSpeed == null ? new Point(0, 0) : initSpeed;
@@ -25939,6 +25881,9 @@ define('src/index', ['exports'], function (exports) {
     node.ay = 0;
   };
 
+  /**
+   * @todo write docs
+   */
   Forces.prototype.addForce = function(node0, node1, type, equilibriumDistance) {
     this.fromNodeList.addNode(node0);
     this.toNodeList.addNode(node1);
@@ -25947,6 +25892,9 @@ define('src/index', ['exports'], function (exports) {
     if(equilibriumDistance != null) this.equilibriumDistances.push(equilibriumDistance);
   };
 
+  /**
+   * @todo write docs
+   */
   Forces.prototype.calculate = function() {
     var i;
     var node0, node1;
@@ -25996,6 +25944,9 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
+  /**
+   * @todo write docs
+   */
   Forces.prototype.attractionToPoint = function(point, strength, limit) {
     strength = strength == null ? 1 : strength;
     var node;
@@ -26019,6 +25970,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
+  /**
+   * @todo write docs
+   */
   Forces.prototype.avoidOverlapping = function(delta) {
     delta = delta || 0;
 
@@ -26075,6 +26029,9 @@ define('src/index', ['exports'], function (exports) {
     this._i0++;
   };
 
+  /**
+   * @todo write docs
+   */
   Forces.prototype.avoidOverlappingRadial = function(delta, K) {
     delta = delta || 0;
     K = K || 1;
@@ -26111,8 +26068,9 @@ define('src/index', ['exports'], function (exports) {
     this._i0++;
   };
 
-
-
+  /**
+   * @todo write docs
+   */
   Forces.prototype.applyForces = function() {
     var node;
 
@@ -26127,10 +26085,16 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
+  /**
+   * @todo write docs
+   */
   Forces.prototype.deactivateForcesFromNode = function(node) {
     node.vx = node.vy = node.ax = node.ay = 0;
   };
 
+  /**
+   * @todo write docs
+   */
   Forces.prototype.destroy = function() {
     delete this.k;
     delete this.dEqSprings;
@@ -26154,6 +26118,9 @@ define('src/index', ['exports'], function (exports) {
   ///////////////////////////////////////////PRIVATE
 
 
+  /**
+   * @ignore
+   */
   Forces.prototype._resetAccelerations = function() {
     var node;
     for(var i = 0; this.nodeList[i] != null; i++) {
@@ -26199,7 +26166,7 @@ define('src/index', ['exports'], function (exports) {
     this._basis = point3D.clone();
     this._basisBase = point3D.clone();
     this._provisionalBase = point3D.clone();
-  }
+  };
 
   /**
    * setAngles - set viewing angle of camera on 3D scene.
@@ -26213,7 +26180,7 @@ define('src/index', ['exports'], function (exports) {
     this._angles = point3D.clone();
     this._freeRotation = false;
     this._basis = this.basis3DRotation(this._basisBase, this._angles);
-  }
+  };
 
   /**
    * applyRotation - Add rotation to existing 3D scene.
@@ -26234,7 +26201,7 @@ define('src/index', ['exports'], function (exports) {
     this._provisionalBase[0] = this._basis[0].clone();
     this._provisionalBase[1] = this._basis[1].clone();
     this._provisionalBase[2] = this._basis[2].clone();
-  }
+  };
 
   /**
    * projectPoint3D - Use the current rotation of the scene and the viewpoint
@@ -26245,23 +26212,35 @@ define('src/index', ['exports'], function (exports) {
   Engine3D.prototype.projectPoint3D = function(point3D) {
     var prescale = this.lens / (this.lens + (this._basis[0].z * point3D.x + this._basis[1].z * point3D.y + this._basis[2].z * point3D.z));
     return new Point3D((this._basis[0].x * point3D.x + this._basis[1].x * point3D.y + this._basis[2].x * point3D.z) * prescale, (this._basis[0].y * point3D.x + this._basis[1].y * point3D.y + this._basis[2].y * point3D.z) * prescale, prescale);
-  }
+  };
 
+  /**
+  * @todo write docs
+  */
   Engine3D.prototype.projectCoordinates = function(x, y, z) {
     var prescale = this.lens / (this.lens + (this._basis[0].z * x + this._basis[1].z * y + this._basis[2].z * z));
     return new Point3D((this._basis[0].x * x + this._basis[1].x * y + this._basis[2].x * z) * prescale, (this._basis[0].y * x + this._basis[1].y * y + this._basis[2].y * z) * prescale, prescale);
-  }
+  };
 
+  /**
+  * @todo write docs
+  */
   Engine3D.prototype.projectPoint3DNode = function(node) {
     var prescale = this.lens / (this.lens + (this._basis[0].z * node.x + this._basis[1].z * node.y + this._basis[2].z * node.z));
     return new Point3D((this._basis[0].x * node.x + this._basis[1].x * node.y + this._basis[2].x * node.z) * prescale, (this._basis[0].y * node.x + this._basis[1].y * node.y + this._basis[2].y * node.z) * prescale, prescale);
-  }
+  };
 
+  /**
+  * @todo write docs
+  */
   Engine3D.prototype.scale = function(point3D) {
     return this.lens / (this.lens + (this._basis[0].z * point3D.x + this._basis[1].z * point3D.y + this._basis[2].z * point3D.z));
-  }
+  };
 
 
+  /**
+  * @todo write docs
+  */
   Engine3D.prototype.sortedIndexesByPointsScale = function(polygon3D) {
     var pairsArray = new Array();
 
@@ -26280,8 +26259,11 @@ define('src/index', ['exports'], function (exports) {
     }
 
     return indexes;
-  }
+  };
 
+  /**
+  * @todo write docs
+  */
   Engine3D.prototype.sortListByPointsScale = function(list, polygon3D) {
     var pairsArray = new Array();
 
@@ -26301,21 +26283,30 @@ define('src/index', ['exports'], function (exports) {
     }
 
     return newList;
-  }
+  };
 
+  /**
+  * @todo write docs
+  */
   Engine3D.prototype._sortingCriteria = function(array0, array1, basis) {
     var point3D0 = array0[0];
     var point3D1 = array1[0];
     return(UTLITARY_GLOBAL_VAR[0].z * point3D0.x + UTLITARY_GLOBAL_VAR[1].z * point3D0.y + UTLITARY_GLOBAL_VAR[2].z * point3D0.z < UTLITARY_GLOBAL_VAR[0].z * point3D1.x + UTLITARY_GLOBAL_VAR[1].z * point3D1.y + UTLITARY_GLOBAL_VAR[2].z * point3D1.z) ? 1 : -1;
-  }
+  };
 
 
   //private methods
 
+  /**
+  * @ignore
+  */
   Engine3D.prototype.updateAngles = function() {
     this._angles = this.getEulerAngles();
   };
 
+  /**
+  * @ignore
+  */
   Engine3D.prototype.getEulerAngles = function() {
     return new Point3D(Math.atan2(-this._basis[1].z, this._basis[2].z), Math.asin(this._basis[0].z), Math.atan2(-this._basis[0].y, this._basis[0].x));
   };
@@ -26561,7 +26552,7 @@ define('src/index', ['exports'], function (exports) {
    * @param  {Number} maxValue value associated to max color
    * tags:draw
    */
-  ColorsDraw.drawColorScaleLegend = function(frame, colorScale, minValue, maxValue) {
+  ColorsDraw.drawColorScaleLegend = function(frame, colorScale, minValue, maxValue, graphics) {
     // TODO refactor this to import context from Global and not reassign it.
     var change = frame.memory == null || frame.width != frame.memory.w || frame.height != frame.memory.h || colorScale != frame.memory.cS || minValue != frame.memory.min || maxValue != frame.memory.max;
 
@@ -26590,33 +26581,30 @@ define('src/index', ['exports'], function (exports) {
       if(frame.width > frame.height) {
 
         for(x = 0; x < frame.width; x += 2) {
-          setFill(colorScale(x / frame.width));
-          fRect(x, 0, 2, frame.height);
+          graphics.setFill(colorScale(x / frame.width));
+          graphics.fRect(x, 0, 2, frame.height);
         }
 
-        setStroke('rgba(0,0,0,0.8)', 3);
+        graphics.setStroke('rgba(0,0,0,0.8)', 3);
 
         if(minValue != null) {
-          setText('white', 12, null, 'left', 'middle');
-          fsText(minValue, 2, frame.height * 0.5);
+          graphics.setText('white', 12, null, 'left', 'middle');
+          graphics.fsText(minValue, 2, frame.height * 0.5);
         }
 
         if(maxValue != null) {
-          setText('white', 12, null, 'right', 'middle');
-          fsText(maxValue, frame.width - 2, frame.height * 0.5);
+          graphics.setText('white', 12, null, 'right', 'middle');
+          graphics.fsText(maxValue, frame.width - 2, frame.height * 0.5);
         }
       } else {
 
         //finis this, with color scale going uppwards, and texts for min max values
 
         for(x = 0; x < frame.height; x += 2) {
-          setFill(colorScale(x / frame.height));
-          fRect(0, x, frame.width, 2);
+          graphics.setFill(colorScale(x / frame.height));
+          graphics.fRect(0, x, frame.width, 2);
         }
       }
-
-
-
 
       //// capture image 2
       // TODO refactor to not reassign context
@@ -26628,7 +26616,7 @@ define('src/index', ['exports'], function (exports) {
 
 
     if(frame.memory.image) {
-      drawImage(frame.memory.image, frame.x, frame.y);
+      graphics.drawImage(frame.memory.image, frame.x, frame.y);
     }
 
   };
@@ -26733,7 +26721,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Object} returns the index of the selected element, the element, a list of indexes or a list of elements
    * tags:draw
    */
-  ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode, selectedInit) {
+  ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode, selectedInit, graphics) {
     if(list == null || !list.length > 0) return;
 
     textSize = textSize || 14;
@@ -26770,7 +26758,7 @@ define('src/index', ['exports'], function (exports) {
     var dy = textSize + 4;
     var n = list.length;
     var bottom = frame.getBottom();
-    var mouseIn = frame.containsPoint(mP);
+    var mouseIn = frame.containsPoint(graphics.mP);
     var y0Follow = 0;
     var y0;
     var isSelected;
@@ -26783,7 +26771,7 @@ define('src/index', ['exports'], function (exports) {
       y0 = frame.y + 10;
     } else {
       if(mouseIn) {
-        y0Follow = Math.min(10 - (hList - frame.height + 20) * ((mY - (frame.y + 10)) / (frame.height - 20)), 10);
+        y0Follow = Math.min(10 - (hList - frame.height + 20) * ((graphics.mY - (frame.y + 10)) / (frame.height - 20)), 10);
       } else {
         y0Follow = 10 - (hList - frame.height + 20) * frame.memory.selected / list.length;
       }
@@ -26794,7 +26782,7 @@ define('src/index', ['exports'], function (exports) {
     }
 
 
-    setText('black', textSize);
+    graphics.setText('black', textSize);
 
     for(i = 0; list[i] != null; i++) {
       y = y0 + dy * i;
@@ -26812,20 +26800,20 @@ define('src/index', ['exports'], function (exports) {
         isSelected = multi ? onMulti : frame.memory.selected == i;
 
         if(isSelected) {
-          setFill('black');
-          fRect(frame.x + 2, y, frame.width - 4, dy);
-          setFill('white');
+          graphics.setFill('black');
+          graphics.fRect(frame.x + 2, y, frame.width - 4, dy);
+          graphics.setFill('white');
         } else {
-          setFill('black');
+          graphics.setFill('black');
         }
-        fText(list[i].toString(), xTexts, y + 2);
+        graphics.fText(list[i].toString(), xTexts, y + 2);
 
-        if(mouseIn && mY >= y && mY < y + dy) {
-          setFill('rgba(150,150,150,0.3)');
-          if(fRectM(frame.x + 2, y, frame.width - 4, dy)) {
-            SimpleGraphics__setCursor('pointer');
+        if(mouseIn && graphics.mY >= y && graphics.mY < y + dy) {
+          graphics.setFill('rgba(150,150,150,0.3)');
+          if(graphics.fRectM(frame.x + 2, y, frame.width - 4, dy)) {
+            graphics.setCursor('pointer');
           }
-          if(MOUSE_DOWN) {
+          if(graphics.MOUSE_DOWN) {
             if(multi) {
 
               if(onMulti) {
@@ -26842,12 +26830,12 @@ define('src/index', ['exports'], function (exports) {
           }
         }
       } else {
-        setFill('black');
+        graphics.setFill('black');
       }
 
       if(colorList) {
-        setFill(colorList == null ? 'rgb(200, 200, 200)' : colorList[i % n]);
-        fRect(x, y + 4, 10, 10);
+        graphics.setFill(colorList == null ? 'rgb(200, 200, 200)' : colorList[i % n]);
+        graphics.fRect(x, y + 4, 10, 10);
       }
 
     }
@@ -26862,13 +26850,12 @@ define('src/index', ['exports'], function (exports) {
 
   IntervalTableDraw.MIN_CHARACTERS_SIZE = 1;
 
-  IntervalTableDraw.drawIntervalsFlowTable = function(intervalsFlowTable, frame, colors, bezier, offValue) { //, returnHovered){ //TODO: implement rollover detection, using _isOnShape (below)
+  IntervalTableDraw.drawIntervalsFlowTable = function(intervalsFlowTable, frame, colors, bezier, offValue, graphics) { //, returnHovered){ //TODO: implement rollover detection, using _isOnShape (below)
     frame = frame == null ? new Rectangle__default(10, 10, 400, 300) : frame;
     colors = colors == null ? ColorListGenerators__default.createCategoricalColors(0, intervalsFlowTable.length, ColorScales__default.temperature) : colors;
     bezier = bezier || false;
     offValue = offValue == null ? 0.45 : offValue;
 
-    var nElements = intervalsFlowTable.length;
     var i;
     var j;
 
@@ -26878,18 +26865,12 @@ define('src/index', ['exports'], function (exports) {
 
     var point;
 
-    var intervalList;
-    var lastIntervalList = intervalsFlowTable[nElements - 1];
-    var sY = 0;
-    var mY = 0;
+    var intervalList;  
+    var sY = 0;  
     var x = frame.x;
     var y = frame.y;
 
     var prevPoint;
-    var prevYsup;
-    var prevsY;
-    var newYsup;
-
     var offX;
 
     //var nHovered = -1;
@@ -26897,13 +26878,13 @@ define('src/index', ['exports'], function (exports) {
     for(i = 0; intervalsFlowTable[i] != null; i++) {
       intervalList = intervalsFlowTable[i];
 
-      src_Global__context.fillStyle = colors[i];
-      src_Global__context.beginPath();
+      graphics.context.fillStyle = colors[i];
+      graphics.context.beginPath();
 
       sY = y;
 
       point = new Point(x, intervalList[0].y * dY + sY);
-      src_Global__context.moveTo(point.x, point.y);
+      graphics.context.moveTo(point.x, point.y);
 
       prevPoint = point;
 
@@ -26914,16 +26895,16 @@ define('src/index', ['exports'], function (exports) {
 
         if(bezier) {
           offX = (point.x - prevPoint.x) * offValue;
-          src_Global__context.bezierCurveTo(prevPoint.x + offX, prevPoint.y, point.x - offX, point.y, point.x, point.y);
+          graphics.context.bezierCurveTo(prevPoint.x + offX, prevPoint.y, point.x - offX, point.y, point.x, point.y);
         } else {
-          src_Global__context.lineTo(point.x, point.y);
+          graphics.context.lineTo(point.x, point.y);
         }
 
         prevPoint = point;
       }
 
       point = new Point((nCols - 1) * dX + x, intervalList[nCols - 1].x * dY + sY);
-      src_Global__context.lineTo(point.x, point.y);
+      graphics.context.lineTo(point.x, point.y);
       prevPoint = point;
 
       for(j = nCols - 2; j >= 0; j--) {
@@ -26933,23 +26914,23 @@ define('src/index', ['exports'], function (exports) {
 
         if(bezier) {
           offX = (point.x - prevPoint.x) * offValue;
-          src_Global__context.bezierCurveTo(prevPoint.x + offX, prevPoint.y, point.x - offX, point.y, point.x, point.y);
+          graphics.context.bezierCurveTo(prevPoint.x + offX, prevPoint.y, point.x - offX, point.y, point.x, point.y);
 
           // if(returnHovered && nHovered==-1 && IntervalTableDraw._isOnShape(prevPoint, point, intervalList[j-1].y*dY+sY, intervalList[j].y*dY+sY, offX, mX, mY)){
           // nHovered = i;
           // }
 
         } else {
-          src_Global__context.lineTo(point.x, point.y);
+          graphics.context.lineTo(point.x, point.y);
         }
 
         prevPoint = point;
       }
 
       point = new Point(x, intervalList[0].x * dY + sY);
-      src_Global__context.lineTo(point.x, point.y);
+      graphics.context.lineTo(point.x, point.y);
 
-      src_Global__context.fill();
+      graphics.context.fill();
 
     }
 
@@ -26990,7 +26971,7 @@ define('src/index', ['exports'], function (exports) {
 
 
 
-  IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, center, radius, r0, colors, texts, returnHovered, angles, angle0) {
+  IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, center, radius, r0, colors, texts, returnHovered, angles, angle0, graphics) {
     var nElements = intervalsFlowTable.length;
     var i;
     var j;
@@ -27007,32 +26988,20 @@ define('src/index', ['exports'], function (exports) {
 
     var point;
 
-    var intervalList;
-    var lastIntervalList = intervalsFlowTable[nElements - 1];
+    var intervalList;  
     var interval;
 
-    var r = r0;
     var s, textS;
 
     var prevPoint;
-    var prevRsup;
-    var prevsR;
-    var newRsup;
-
-    var breaks = false;
-
+    
     var nR;
     var nR2;
 
     var offA = dA * 0.3;
     var cosOffA = Math.cos(offA);
 
-    var s;
-    var amp;
     var rT;
-
-    var xT;
-    var yT;
 
     var nHovered = -1;
 
@@ -27046,12 +27015,12 @@ define('src/index', ['exports'], function (exports) {
 
       intervalList = intervalsFlowTable[i];
 
-      src_Global__context.fillStyle = colors[i % nElements];
+      graphics.context.fillStyle = colors[i % nElements];
 
-      src_Global__context.beginPath();
+      graphics.context.beginPath();
 
       point = new Point(angles == null ? 0 : angles[0] + angle0, (1 - intervalList[0].y) * dR + r0);
-      src_Global__context.moveTo(point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
+      graphics.context.moveTo(point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
 
       prevPoint = point;
 
@@ -27063,11 +27032,11 @@ define('src/index', ['exports'], function (exports) {
         nR = prevPoint.y / cosOffA;
         nR2 = point.y / cosOffA;
 
-        src_Global__context.bezierCurveTo(nR * Math.cos(prevPoint.x + offA) + center.x, nR * Math.sin(prevPoint.x + offA) + center.y,
+        graphics.context.bezierCurveTo(nR * Math.cos(prevPoint.x + offA) + center.x, nR * Math.sin(prevPoint.x + offA) + center.y,
           nR2 * Math.cos(point.x - offA) + center.x, nR2 * Math.sin(point.x - offA) + center.y,
           point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
 
-        if(returnHovered && nHovered == -1 && this._isOnRadialShape(center, mP, prevPoint.x, point.x, dR * (1 - intervalList[(j - 1) % nCols].y) + r0, dR * (1 - intervalList[(j - 1) % nCols].x) + r0, dR * (1 - intervalList[j % nCols].y) + r0, dR * (1 - intervalList[j % nCols].x) + r0)) {
+        if(returnHovered && nHovered == -1 && this._isOnRadialShape(center, graphics.mP, prevPoint.x, point.x, dR * (1 - intervalList[(j - 1) % nCols].y) + r0, dR * (1 - intervalList[(j - 1) % nCols].x) + r0, dR * (1 - intervalList[j % nCols].y) + r0, dR * (1 - intervalList[j % nCols].x) + r0)) {
           nHovered = i;
         }
 
@@ -27091,7 +27060,7 @@ define('src/index', ['exports'], function (exports) {
       }
 
       point = new Point(angles == null ? 0 : angles[0] + angle0, (1 - intervalList[0].x) * dR + r0);
-      src_Global__context.lineTo(point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
+      graphics.context.lineTo(point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
       prevPoint = point;
 
       for(j = nCols - 1; j >= 0; j--) {
@@ -27100,7 +27069,7 @@ define('src/index', ['exports'], function (exports) {
         nR = prevPoint.y / cosOffA;
         nR2 = point.y / cosOffA;
 
-        src_Global__context.bezierCurveTo(nR * Math.cos(prevPoint.x - offA) + center.x, nR * Math.sin(prevPoint.x - offA) + center.y,
+        graphics.context.bezierCurveTo(nR * Math.cos(prevPoint.x - offA) + center.x, nR * Math.sin(prevPoint.x - offA) + center.y,
           nR2 * Math.cos(point.x + offA) + center.x, nR2 * Math.sin(point.x + offA) + center.y,
           point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
 
@@ -27108,15 +27077,15 @@ define('src/index', ['exports'], function (exports) {
       }
 
       point = new Point(angles == null ? 0 : angles[0] + angle0, (1 - intervalList[0].x) * dR + r0);
-      src_Global__context.lineTo(point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
+      graphics.context.lineTo(point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
 
-      src_Global__context.fill();
+      graphics.context.fill();
 
     }
 
     for(i = 0; filteredTexts[i] != null; i++) {
-      setText('black', textsSizes[i], null, 'center', 'middle');
-      fTextRotated(filteredTexts[i], textsX[i], textsY[i], textsAngles[i]);
+      graphics.setText('black', textsSizes[i], null, 'center', 'middle');
+      graphics.fTextRotated(filteredTexts[i], textsX[i], textsY[i], textsAngles[i]);
     }
 
     return nHovered;
@@ -27147,7 +27116,7 @@ define('src/index', ['exports'], function (exports) {
 
 
 
-  IntervalTableDraw.drawIntervalsWordsFlowTable = function(frame, intervalsFlowTable, texts, colors, typode) {
+  IntervalTableDraw.drawIntervalsWordsFlowTable = function(frame, intervalsFlowTable, texts, colors, typode, graphics) {
     var nElements = intervalsFlowTable.length;
 
     var i;
@@ -27162,9 +27131,6 @@ define('src/index', ['exports'], function (exports) {
 
     var point0;
     var point1;
-
-    var nextPoint0;
-    var nextPoint1;
 
     var point0Prev = new Point();
     var point1Prev = new Point();
@@ -27182,10 +27148,12 @@ define('src/index', ['exports'], function (exports) {
 
     var text;
 
-    if(!typode) src_Global__context.strokeStyle = "rgba(255,255,255,0.4)";
+    if(!typode) {
+      graphics.context.strokeStyle = "rgba(255,255,255,0.4)";
+    }
 
-    src_Global__context.textBaseline = "top";
-    src_Global__context.textAlign = "left";
+    graphics.context.textBaseline = "top";
+    graphics.context.textAlign = "left";
 
     var position;
     var xx;
@@ -27198,8 +27166,6 @@ define('src/index', ['exports'], function (exports) {
     var selectedChar;
     var charWidth;
     var fontSize;
-
-    var offX;
 
     var factX = (nCols - 1) / frame.width;
 
@@ -27227,9 +27193,9 @@ define('src/index', ['exports'], function (exports) {
         nChar++;
         size = (point1.y - point0.y);
         fontSize = Math.floor(0.3 * size + 1);
-        if(!typode) src_Global__context.font = fontSize + 'px ' + LOADED_FONT;
+        if(!typode) graphics.context.font = fontSize + 'px ';
         selectedChar = text.charAt(nChar % text.length);
-        charWidth = typode ? fontSize * widthsTypode[selectedChar] : src_Global__context.measureText(selectedChar).width + 2;
+        charWidth = typode ? fontSize * widthsTypode[selectedChar] : graphics.context.measureText(selectedChar).width + 2;
         jumpX = charWidth * 0.9 || 1;
 
         xx += jumpX;
@@ -27247,37 +27213,35 @@ define('src/index', ['exports'], function (exports) {
 
         valueLastInterval = IntervalTableDraw._bezierValue(xj0, xj1, lastIntervalList[j].y, lastIntervalList[j + 1].y, t, offX);
 
-
-        prevsY = sY;
         sY = (1 - valueLastInterval) * 0.5 * dY + y;
-
 
         point0Prev.x = point0.x;
         point0Prev.y = point0.y;
         point1Prev.x = point1.x;
         point1Prev.y = point1.y;
 
-
         valueX = IntervalTableDraw._bezierValue(xj0, xj1, intervalList[j].x, intervalList[j + 1].x, t, offX);
         valueY = IntervalTableDraw._bezierValue(xj0, xj1, intervalList[j].y, intervalList[j + 1].y, t, offX);
-
 
         point0 = new Point(xx + x, valueX * dY + sY);
         point1 = new Point(xx + x, valueY * dY + sY);
 
         center = new Point(point0Prev.x + jumpX * 0.5, (point0.y + point1.y + point0Prev.y + point1Prev.y) * 0.25);
 
-        typode ? src_Global__context.strokeStyle = colors[i] : src_Global__context.fillStyle = colors[i];
-
+        if(typode) {
+          graphics.context.strokeStyle = colors[i];
+        } else {
+          graphics.context.fillStyle = colors[i];
+        }
 
         if(size > IntervalTableDraw.MIN_CHARACTERS_SIZE) {
           if(typode) {
             DrawTextsAdvanced.typodeOnQuadrilater(selectedChar, point0Prev, point0, point1, point1Prev);
           } else {
-            src_Global__context.save();
-            src_Global__context.globalAlpha = size / 15;
-            DrawTextsAdvanced.textOnQuadrilater(src_Global__context, selectedChar, point0Prev, point0, point1, point1Prev, fontSize, 1);
-            src_Global__context.restore();
+            graphics.context.save();
+            graphics.context.globalAlpha = size / 15;
+            DrawTextsAdvanced.textOnQuadrilater(graphics.context, selectedChar, point0Prev, point0, point1, point1Prev, fontSize, 1);
+            graphics.context.restore();
           }
 
         }
@@ -27312,8 +27276,10 @@ define('src/index', ['exports'], function (exports) {
    * @return {Point}
    * tags:draw
    */
-  NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listColorsIndependent, margin) {
+  NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listColorsIndependent, margin, graphics) {
     if(frame == null ||  numberTable == null || numberTable.type == null || numberTable.type != "NumberTable" ||  numberTable.length < 2) return null;
+
+    if(graphics==null) graphics = frame.graphics; //momentary fix
 
     colorScale = colorScale == null ? ColorScales__default.blueToRed : colorScale;
     listColorsIndependent = listColorsIndependent || false;
@@ -27321,7 +27287,7 @@ define('src/index', ['exports'], function (exports) {
 
     var dX = frame.width / numberTable.length;
     var dY = frame.height / numberTable[0].length;
-
+    
     var i;
     var j;
     var numberList;
@@ -27341,15 +27307,15 @@ define('src/index', ['exports'], function (exports) {
     for(i = 0; numberTable[i] != null; i++) {
       numberList = numberTable[i];
       x = Math.round(frame.x + i * dX);
-      mouseXOnColumn = mX > x && mX <= x + dX;
+      mouseXOnColumn = graphics.mX > x && graphics.mX <= x + dX;
       if(listColorsIndependent) {
         minMaxInterval = numberList.getMinMaxInterval();
         amp = minMaxInterval.getAmplitude();
       }
       for(j = 0; numberList[j] != null; j++) {
-        src_Global__context.fillStyle = colorScale((numberList[j] - minMaxInterval.x) / amp);
-        src_Global__context.fillRect(x, Math.round(frame.y + j * dY), Math.ceil(dX) - margin, Math.ceil(dY) - margin);
-        if(mouseXOnColumn && mY > frame.y + j * dY && mY <= frame.y + (j + 1) * dY) overCoordinates = new Point(i, j);
+        graphics.context.fillStyle = colorScale((numberList[j] - minMaxInterval.x) / amp);
+        graphics.context.fillRect(x, Math.round(frame.y + j * dY), Math.ceil(dX) - margin, Math.ceil(dY) - margin);
+        if(mouseXOnColumn && graphics.mY > frame.y + j * dY && graphics.mY <= frame.y + (j + 1) * dY) overCoordinates = new Point(i, j);
       }
     }
 
@@ -27369,7 +27335,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number} index of rollovered element
    * tags:draw
    */
-  NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colors, maxRadius, loglog, margin) {
+  NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colors, maxRadius, loglog, margin, graphics) {
     if(frame == null ||  numberTable == null || numberTable.type != "NumberTable" ||  numberTable.length < 2 ||  numberTable[0].length == 0 || numberTable[1].length == 0) return; //todo:provisional, this is System's work
 
     if(numberTable.length < 2) return;
@@ -27397,31 +27363,32 @@ define('src/index', ['exports'], function (exports) {
       if(radii == null) {
         if(NumberTableDraw._drawCrossScatterPlot(x, y, colors == null ? 'rgb(150,150,150)' : colors[i % nColors])) iOver = i;
       } else {
-        setFill(colors == null ? 'rgb(150,150,150)' : colors[i % nColors]);
-        if(fCircleM(x, y, radii[i], radii[i] + 1)) iOver = i;
+        graphics.setFill(colors == null ? 'rgb(150,150,150)' : colors[i % nColors]);
+        if(graphics.fCircleM(x, y, radii[i], radii[i] + 1)) iOver = i;
       }
       if(texts != null) {
-        setText('black', 10);
-        fText(texts[i], x, y);
+        graphics.setText('black', 10);
+        graphics.fText(texts[i], x, y);
       }
     }
 
     if(margin > 7 && list0.name != "" && list1.name != "") {
-      setText('black', 10, null, 'right', 'middle');
-      fText(list0.name, subframe.getRight() - 2, subframe.bottom + margin * 0.5);
-      fTextRotated(list1.name, subframe.x - margin * 0.5, subframe.y + 1, -src_Global__HalfPi);
+      graphics.setText('black', 10, null, 'right', 'middle');
+      graphics.fText(list0.name, subframe.getRight() - 2, subframe.bottom + margin * 0.5);
+      graphics.fTextRotated(list1.name, subframe.x - margin * 0.5, subframe.y + 1, -HalfPi);
     }
 
     if(iOver != null) {
-      SimpleGraphics__setCursor('pointer');
+      graphics.setCursor('pointer');
       return iOver;
     }
   };
-  NumberTableDraw._drawCrossScatterPlot = function(x, y, color) {
-    setStroke(color, 1);
-    line(x, y - 2, x, y + 2);
-    line(x - 2, y, x + 2, y);
-    return Math.pow(mX - x, 2) + Math.pow(mY - y, 2) < 25;
+
+  NumberTableDraw._drawCrossScatterPlot = function(x, y, color, graphics) {
+    graphics.setStroke(color, 1);
+    graphics.line(x, y - 2, x, y + 2);
+    graphics.line(x - 2, y, x + 2, y);
+    return Math.pow(graphics.mX - x, 2) + Math.pow(graphics.mY - y, 2) < 25;
   };
 
   /**
@@ -27432,7 +27399,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Object}
    * tags:draw
    */
-  NumberTableDraw.drawSlopeGraph = function(frame, numberTable, texts) {
+  NumberTableDraw.drawSlopeGraph = function(frame, numberTable, texts, graphics) {
     if(frame == null ||  numberTable == null || numberTable.type != "NumberTable") return; //todo:provisional, this is System's work
 
     if(numberTable.length < 2) return;
@@ -27450,21 +27417,21 @@ define('src/index', ['exports'], function (exports) {
     var x0 = subframe.x + (texts == null ? 10 : 0.25 * subframe.width);
     var x1 = subframe.getRight() - (texts == null ? 10 : 0.25 * subframe.width);
 
-    setStroke('black', 1);
+    graphics.setStroke('black', 1);
 
     for(i = 0; i < n; i++) {
       y0 = subframe.bottom - list0[i] * subframe.height;
       y1 = subframe.bottom - list1[i] * subframe.height;
 
-      line(x0, y0, x1, y1);
+      graphics.line(x0, y0, x1, y1);
 
       if(texts != null && (subframe.bottom - y0) >= 9) {
-        setText('black', 9, null, 'right', 'middle');
-        fText(texts[i], x0 - 2, y0);
+        graphics.setText('black', 9, null, 'right', 'middle');
+        graphics.fText(texts[i], x0 - 2, y0);
       }
       if(texts != null && (subframe.bottom - y1) >= 9) {
-        setText('black', 9, null, 'left', 'middle');
-        fText(texts[i], x1 + 2, y1);
+        graphics.setText('black', 9, null, 'left', 'middle');
+        graphics.fText(texts[i], x1 + 2, y1);
       }
     }
   };
@@ -27480,7 +27447,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {NumberList} list of positions of elements on clicked coordinates
    * tags:draw
    */
-  NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, margin) {
+  NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, margin, graphics) {
     if(coordinates == null || coordinates[0] == null) return;
 
     colorScale = colorScale == null ?
@@ -27576,12 +27543,12 @@ define('src/index', ['exports'], function (exports) {
     var dy = subframe.height / matrixColors[0].length;
     var prevSelected = frame.memory.selected;
 
-    if(MOUSE_UP_FAST) frame.memory.selected = null;
+    if(graphics.MOUSE_UP_FAST) frame.memory.selected = null;
 
     for(i = 0; matrixColors[i] != null; i++) {
       for(j = 0; matrixColors[0][j] != null; j++) {
-        setFill(matrixColors[i][j]);
-        if(fRectM(subframe.x + i * dx, subframe.bottom - (j + 1) * dy, dx + 0.5, dy + 0.5) && MOUSE_UP_FAST) {
+        graphics.setFill(matrixColors[i][j]);
+        if(graphics.fRectM(subframe.x + i * dx, subframe.bottom - (j + 1) * dy, dx + 0.5, dy + 0.5) && graphics.MOUSE_UP_FAST) {
           frame.memory.selected = [i, j];
         }
       }
@@ -27590,10 +27557,10 @@ define('src/index', ['exports'], function (exports) {
 
     //selection
     if(frame.memory.selected) {
-      setStroke('white', 5);
-      sRect(subframe.x + frame.memory.selected[0] * dx - 1, subframe.bottom - (frame.memory.selected[1] + 1) * dy - 1, dx + 1, dy + 1);
-      setStroke('black', 1);
-      sRect(subframe.x + frame.memory.selected[0] * dx - 1, subframe.bottom - (frame.memory.selected[1] + 1) * dy - 1, dx + 1, dy + 1);
+      graphics.setStroke('white', 5);
+      graphics.sRect(subframe.x + frame.memory.selected[0] * dx - 1, subframe.bottom - (frame.memory.selected[1] + 1) * dy - 1, dx + 1, dy + 1);
+      graphics.setStroke('black', 1);
+      graphics.sRect(subframe.x + frame.memory.selected[0] * dx - 1, subframe.bottom - (frame.memory.selected[1] + 1) * dy - 1, dx + 1, dy + 1);
     }
 
     if(prevSelected != frame.memory.selected) {
@@ -27634,7 +27601,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {NumberList} list of positions of elements on clicked coordinates
    * tags:draw
    */
-  NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, bezier, colorList, horizontalLabels, showValues, logFactor) {
+  NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, bezier, colorList, horizontalLabels, showValues, logFactor, graphics) {
     if(numberTable == null ||  numberTable.length < 2 || numberTable.type != "NumberTable") return;
 
     bezier = bezier == null ? true : bezier;
@@ -27656,7 +27623,7 @@ define('src/index', ['exports'], function (exports) {
         flowIntervals: IntervalTableOperators.scaleIntervals(NumberTableFlowOperators.getFlowTableIntervals(nT2, normalized, sorted), intervalsFactor),
         fOpen: 1,
         names: numberTable.getNames(),
-        mXF: mX,
+        mXF: graphics.mX,
         width: frame.width,
         height: frame.height,
         logFactor: logFactor,
@@ -27697,26 +27664,27 @@ define('src/index', ['exports'], function (exports) {
       frame.memory.mXF = Math.min(Math.max(frame.memory.mXF, frame.x), frame.getRight());
 
       if(frame.memory.fOpen < 0.999) {
-        src_Global__context.save();
-        src_Global__context.translate(frame.x, frame.y);
+        graphics.context.save();
+        graphics.context.translate(frame.x, frame.y);
         var cut = frame.memory.mXF - frame.x;
         var x0 = Math.floor(cut * frame.memory.fOpen);
         var x1 = Math.ceil(frame.width - (frame.width - cut) * frame.memory.fOpen);
 
-        drawImage(frame.memory.image, 0, 0, cut, flowFrame.height, 0, 0, x0, flowFrame.height);
-        drawImage(frame.memory.image, cut, 0, (frame.width - cut), flowFrame.height, x1, 0, (frame.width - cut) * frame.memory.fOpen, flowFrame.height);
+        graphics.drawImage(frame.memory.image, 0, 0, cut, flowFrame.height, 0, 0, x0, flowFrame.height);
+        graphics.drawImage(frame.memory.image, cut, 0, (frame.width - cut), flowFrame.height, x1, 0, (frame.width - cut) * frame.memory.fOpen, flowFrame.height);
 
         NumberTableDraw._drawPartialFlow(flowFrame, frame.memory.flowIntervals, frame.memory.names, frame.memory.actualColorList, cut, x0, x1, 0.3, sorted, showValues ? numberTable : null);
 
-        src_Global__context.restore();
+        graphics.context.restore();
       } else {
-        drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+        graphics.drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
       }
     }
 
     if(horizontalLabels) NumberTableDraw._drawHorizontalLabels(frame, frame.getBottom() - 5, numberTable, horizontalLabels, x0, x1);
   };
-  NumberTableDraw._drawHorizontalLabels = function(frame, y, numberTable, horizontalLabels, x0, x1) {
+
+  NumberTableDraw._drawHorizontalLabels = function(frame, y, numberTable, horizontalLabels, x0, x1, graphics) {
     var dx = frame.width / (numberTable[0].length - 1);
     var x;
     var mX2 = Math.min(Math.max(mX, frame.x + 1), frame.getRight() - 1);
@@ -27727,7 +27695,7 @@ define('src/index', ['exports'], function (exports) {
     x1 = x1 == null ? frame.x : x1 + frame.x;
 
     horizontalLabels.forEach(function(label, i) {
-      setText('black', (i == iPos && x1 > (x0 + 4)) ? 14 : 10, null, 'center', 'middle');
+      graphics.setText('black', (i == iPos && x1 > (x0 + 4)) ? 14 : 10, null, 'center', 'middle');
 
       if(x0 > x1 - 5) {
         x = frame.x + i * dx;
@@ -27741,10 +27709,11 @@ define('src/index', ['exports'], function (exports) {
           x = frame.x + i * dx * frame.memory.fOpen + (x1 - x0);
         }
       }
-      fText(horizontalLabels[i], x, y);
+      graphics.fText(horizontalLabels[i], x, y);
     });
   };
-  NumberTableDraw._drawPartialFlow = function(frame, flowIntervals, labels, colors, x, x0, x1, OFF_X, sorted, numberTable) {
+
+  NumberTableDraw._drawPartialFlow = function(frame, flowIntervals, labels, colors, x, x0, x1, OFF_X, sorted, numberTable, graphics) {
     var w = x1 - x0;
     var wForText = numberTable == null ? (x1 - x0) : (x1 - x0) * 0.85;
 
@@ -27753,8 +27722,7 @@ define('src/index', ['exports'], function (exports) {
     var wDay = frame.width / (nDays - 1);
 
     var iDay = (x - frame.x) / wDay; // Math.min(Math.max((nDays-1)*(x-frame.x)/frame.width, 0), nDays-1);
-
-    var iDay = Math.max(Math.min(iDay, nDays - 1), 0);
+    iDay = Math.max(Math.min(iDay, nDays - 1), 0);
 
     var i;
     var i0 = Math.floor(iDay);
@@ -27787,7 +27755,7 @@ define('src/index', ['exports'], function (exports) {
 
     for(i = 0; flowIntervals[i] != null; i++) {
 
-      setFill(colors[i]);
+      graphics.setFill(colors[i]);
       interval0 = flowIntervals[i][i0];
       interval1 = flowIntervals[i][i1];
 
@@ -27804,30 +27772,30 @@ define('src/index', ['exports'], function (exports) {
 
       //if(h<1) continue;
 
-      if(fRectM(x0, y, w, h)) iOver = i;
+      if(graphics.fRectM(x0, y, w, h)) iOver = i;
 
       if(h >= 5 && w > 40) {
-        setText('white', h, null, null, 'middle');
+        graphics.setText('white', h, null, null, 'middle');
 
         text = labels[i];
 
-        wt = getTextW(text);
+        wt = graphics.getTextW(text);
         pt = wt / wForText;
 
         if(pt > 1) {
-          setText('white', h / pt, null, null, 'middle');
+          graphics.setText('white', h / pt, null, null, 'middle');
         }
 
-        src_Global__context.fillText(text, x0, y + h * 0.5);
+        graphics.context.fillText(text, x0, y + h * 0.5);
 
         if(numberTable) {
-          wt = getTextW(text);
+          wt = graphics.getTextW(text);
 
           ts0 = Math.min(h, h / pt);
           ts1 = Math.max(ts0 * 0.6, 8);
 
-          setText('white', ts1, null, null, 'middle');
-          fText(Math.round(numberTable[i][i0]), x0 + wt + w * 0.03, y + (h + (ts0 - ts1) * 0.5) * 0.5);
+          graphics.setText('white', ts1, null, null, 'middle');
+          graphics.fText(Math.round(numberTable[i][i0]), x0 + wt + w * 0.03, y + (h + (ts0 - ts1) * 0.5) * 0.5);
         }
 
 
@@ -27852,7 +27820,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {NumberList} list of positions of elements on clicked coordinates
    * tags:draw
    */
-  NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, colorList, names) {
+  NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, colorList, names, graphics) {
     if(numberTable == null ||  numberTable.length < 2 || numberTable[0].length < 2 || numberTable.type != "NumberTable") return;
 
     intervalsFactor = intervalsFactor == null ? 1 : intervalsFactor;
@@ -27867,7 +27835,7 @@ define('src/index', ['exports'], function (exports) {
         flowIntervals: IntervalTableOperators.scaleIntervals(NumberTableFlowOperators.getFlowTableIntervals(numberTable, normalized, sorted), intervalsFactor),
         fOpen: 1,
         names: numberTable.getNames(),
-        mXF: mX,
+        mXF: graphics.mX,
         width: frame.width,
         height: frame.height,
         radius: Math.min(frame.width, frame.height) * 0.46 - (names == null ? 0 : 8),
@@ -27888,28 +27856,28 @@ define('src/index', ['exports'], function (exports) {
       frame.memory.colorList = colorList;
     }
 
-    var mouseOnFrame = frame.containsPoint(mP);
+    var mouseOnFrame = frame.containsPoint(graphics.mP);
 
     if(mouseOnFrame) {
-      if(MOUSE_DOWN) {
-        frame.memory.downX = mX;
-        frame.memory.downY = mY;
+      if(graphics.MOUSE_DOWN) {
+        frame.memory.downX = graphics.mX;
+        frame.memory.downY = graphics.mY;
         frame.memory.pressed = true;
         frame.memory.zoomPressed = frame.memory.zoom;
         frame.memory.anglePressed = frame.memory.angle0;
       }
 
-      frame.memory.zoom *= (1 - 0.4 * WHEEL_CHANGE);
+      frame.memory.zoom *= (1 - 0.4 * graphics.WHEEL_CHANGE);
     }
 
-    if(MOUSE_UP) frame.memory.pressed = false;
+    if(graphics.MOUSE_UP) frame.memory.pressed = false;
     if(frame.memory.pressed) {
       var center = frame.getCenter();
       var dx0 = frame.memory.downX - center.x;
       var dy0 = frame.memory.downY - center.y;
       var d0 = Math.sqrt(Math.pow(dx0, 2) + Math.pow(dy0, 2));
-      var dx1 = mX - center.x;
-      var dy1 = mY - center.y;
+      var dx1 = graphics.mX - center.x;
+      var dy1 = graphics.mY - center.y;
       var d1 = Math.sqrt(Math.pow(dx1, 2) + Math.pow(dy1, 2));
       frame.memory.zoom = frame.memory.zoomPressed * ((d1 + 5) / (d0 + 5));
       var a0 = Math.atan2(dy0, dx0);
@@ -27923,7 +27891,7 @@ define('src/index', ['exports'], function (exports) {
     var drawingImage = !mouseOnFrame && frame.memory.image != null &&  !captureImage;
 
     if(drawingImage) {
-      drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+      graphics.drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
     } else {
       if(captureImage) {
         // TODO refactor to not reassign context
@@ -27942,23 +27910,23 @@ define('src/index', ['exports'], function (exports) {
         // fRect(0, 0, frame.width, frame.height);
       }
 
-      src_Global__context.save();
-      clipRectangle(frame.x, frame.y, frame.width, frame.height);
+      graphics.context.save();
+      graphics.clipRectangle(frame.x, frame.y, frame.width, frame.height);
 
       IntervalTableDraw.drawCircularIntervalsFlowTable(frame.memory.flowIntervals, frame.getCenter(), frame.memory.radius * frame.memory.zoom, frame.memory.r0, frame.memory.actualColorList, frame.memory.names, true, frame.memory.angles, frame.memory.angle0);
 
-      src_Global__context.restore();
+      graphics.context.restore();
 
       if(names) {
         var a;
         var r = frame.memory.radius * frame.memory.zoom + 8;
 
-        setText('black', 14, null, 'center', 'middle');
+        graphics.setText('black', 14, null, 'center', 'middle');
 
         names.forEach(function(name, i) {
           a = frame.memory.angle0 + frame.memory.angles[i];
 
-          fTextRotated(String(name), frame.getCenter().x + r * Math.cos(a), frame.getCenter().y + r * Math.sin(a), a + src_Global__HalfPi);
+          graphics.fTextRotated(String(name), frame.getCenter().x + r * Math.cos(a), frame.getCenter().y + r * Math.sin(a), a + HalfPi);
         });
       }
 
@@ -27977,7 +27945,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.NumberTableDraw = NumberTableDraw;
 
-  function NumberListDraw() {};
+  function NumberListDraw() {}
 
 
   /**
@@ -27990,8 +27958,10 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number} index of element clicked
    * tags:draw
    */
-  NumberListDraw.drawSimpleGraph = function(frame, numberList, margin, xValues) {
+  NumberListDraw.drawSimpleGraph = function(frame, numberList, margin, xValues, graphics) {
     if(numberList == null || numberList.getNormalized == null) return;
+
+    if(graphics==null) graphics = frame.graphics; //momentary fix
 
     margin = margin || 0;
 
@@ -28027,52 +27997,54 @@ define('src/index', ['exports'], function (exports) {
     var dx = subframe.width / numberList.length;
     var overI = -1;
 
-    var mouseOnFrame = subframe.containsPoint(mP);
+    var mouseOnFrame = subframe.containsPoint(graphics.mP);
     var normalColor = mouseOnFrame ? 'rgb(160,160,160)' : 'black';
 
     if(frame.memory.zero) {
       var zeroY = subframe.bottom - subframe.height * frame.memory.zero; //Math.max(subframe.bottom - subframe.height*frame.memory.zero, subframe.y);
       for(i = 0; numberList[i] != null; i++) {
         x = subframe.x + i * dx;
-        if(mouseOnFrame && mX > x && mX < x + dx) {
+        if(mouseOnFrame && graphics.mX > x && graphics.mX < x + dx) {
           overI = i;
-          setFill('black');
+          graphics.setFill('black');
         } else {
-          setFill(normalColor);
+          graphics.setFill(normalColor);
         }
-        fRect(subframe.x + i * dx, zeroY, dx, -subframe.height * (frame.memory.normalizedList[i] - frame.memory.zero));
+        graphics.fRect(subframe.x + i * dx, zeroY, dx, -subframe.height * (frame.memory.normalizedList[i] - frame.memory.zero));
       }
     } else {
       for(i = 0; numberList[i] != null; i++) {
         x = subframe.x + i * dx;
-        if(mouseOnFrame && mX > x && mX < x + dx) {
+        if(mouseOnFrame && graphics.mX > x && graphics.mX < x + dx) {
           overI = i;
-          setFill('black');
+          graphics.setFill('black');
         } else {
-          setFill(normalColor);
+          graphics.setFill(normalColor);
         }
-        fRect(x, subframe.bottom, dx, -subframe.height * frame.memory.normalizedList[i]);
+        graphics.fRect(x, subframe.bottom, dx, -subframe.height * frame.memory.normalizedList[i]);
       }
     }
 
     var clicked;
 
     if(overI != -1) {
-      setText('white', 12);
+      graphics.setText('white', 12);
       var text = frame.memory.xTexts[overI];
-      var w = getTextW(text);
-      setFill('rgb(100,100,100)');
-      fLines(
-        mX, mY,
-        mX + 16, mY - 10,
-        mX + w + 16, mY - 10,
-        mX + w + 16, mY - 30,
-        mX + 6, mY - 30,
-        mX + 6, mY - 10
+      var w = graphics.getTextW(text);
+      graphics.setFill('rgb(100,100,100)');
+      graphics.fLines(
+        graphics.mX, graphics.mY,
+        graphics.mX + 16, graphics.mY - 10,
+        graphics.mX + w + 16, graphics.mY - 10,
+        graphics.mX + w + 16, graphics.mY - 30,
+        graphics.mX + 6, graphics.mY - 30,
+        graphics.mX + 6, graphics.mY - 10
       );
-      setFill('white');
-      fText(text, mX + 10, mY - 26);
-      if(MOUSE_DOWN) clicked = overI;
+      graphics.setFill('white');
+      graphics.fText(text, graphics.mX + 10, graphics.mY - 26);
+      if(graphics.MOUSE_DOWN) {
+        clicked = overI;
+      }
     }
 
     return clicked;
@@ -28090,7 +28062,7 @@ define('src/index', ['exports'], function (exports) {
    * @param  {Object} object
    * tags:draw
    */
-  ObjectDraw.count = function(frame, object) {
+  ObjectDraw.count = function(frame, object, graphics) {
     if(frame.memory == null) {
       frame.memory = {
         n: 1,
@@ -28103,10 +28075,10 @@ define('src/index', ['exports'], function (exports) {
       frame.memory.n++;
     }
 
-    if(MOUSE_DOWN && frame.containsPoint(mP)) frame.memory.n = 0;
+    if(graphics.MOUSE_DOWN && frame.containsPoint(graphics.mP)) frame.memory.n = 0;
 
-    setText('black', 12);
-    fText(frame.memory.n, frame.x + 10, frame.y + 10);
+    graphics.setText('black', 12);
+    graphics.fText(frame.memory.n, frame.x + 10, frame.y + 10);
   };
 
   exports.ObjectDraw = ObjectDraw;
@@ -28125,8 +28097,10 @@ define('src/index', ['exports'], function (exports) {
    * @return {Object}
    * tags:draw
    */
-  StringDraw.drawText = function(frame, object, fontSize, fontStyle, margin) {
-    //var frame = frame;//StringDraw.drawText;
+  StringDraw.drawText = function(frame, object, fontSize, fontStyle, margin, graphics) {
+    if(frame==null || object==null) return;
+
+    if(graphics==null) graphics = frame.graphics; //momentary fix
 
     margin = margin || 10;
     fontSize = fontSize || 12;
@@ -28136,7 +28110,7 @@ define('src/index', ['exports'], function (exports) {
 
     var lineHeight = Math.floor(fontSize * 1.2);
 
-    setText('black', fontSize, null, null, null, fontStyle);
+    graphics.setText('black', fontSize, null, null, null, fontStyle);
 
     var significantChange = frame.memory == null || object != frame.memory.object || fontSize != frame.memory.fontSize || fontStyle != frame.memory.fontStyle || margin != frame.memory.margin || frame.width != frame.memory.width || frame.height != frame.memory.height;
 
@@ -28150,7 +28124,7 @@ define('src/index', ['exports'], function (exports) {
   							:
         JSON.stringify(object, null, "\t");
       frame.memory = {
-        textLines: DrawTexts.textWordWrapReturnLines(realString, subframe.width, subframe.height, lineHeight, true),
+        textLines: DrawTexts.textWordWrapReturnLines(realString, subframe.width, subframe.height, lineHeight, true, graphics),
         object: object,
         fontSize: fontSize,
         fontStyle: fontStyle,
@@ -28160,7 +28134,7 @@ define('src/index', ['exports'], function (exports) {
       };
     }
 
-    DrawTexts.fillTextRectangleWithTextLines(frame.memory.textLines, subframe.x, subframe.y, subframe.height, lineHeight);
+    DrawTexts.fillTextRectangleWithTextLines(frame.memory.textLines, subframe.x, subframe.y, subframe.height, lineHeight, null, graphics);
   };
 
   exports.StringDraw = StringDraw;
@@ -28223,8 +28197,10 @@ define('src/index', ['exports'], function (exports) {
   function StringListVisOperators() {}
 
 
-
-  StringListVisOperators.simpleTagCloud = function(stringList, weights, frame, font, interLineFactor) {
+  /**
+   * @todo write docs
+   */
+  StringListVisOperators.simpleTagCloud = function(stringList, weights, frame, font, interLineFactor, graphics) {
     font = font == null ? 'Arial' : font;
     interLineFactor = interLineFactor == null ? 1.2 : interLineFactor;
 
@@ -28266,8 +28242,8 @@ define('src/index', ['exports'], function (exports) {
 
         sizes.push(sT);
 
-        src_Global__context.font = String(sT) + 'px ' + font;
-        wT = src_Global__context.measureText(tag).width;
+        graphics.context.font = String(sT) + 'px ' + font;
+        wT = graphics.context.measureText(tag).width;
 
         if(xx + wT > frame.width) {
           xx = 0;
@@ -28313,7 +28289,10 @@ define('src/index', ['exports'], function (exports) {
 
 
 
-  StringListVisOperators.tagCloudRectangles = function(stringList, weights, frame, mode, margin) {
+  /**
+   * @todo write docs
+   */
+  StringListVisOperators.tagCloudRectangles = function(stringList, weights, frame, mode, margin, graphics) {
     mode = mode == null ? 0 : mode;
     margin = margin == null ? 0 : margin;
 
@@ -28347,6 +28326,7 @@ define('src/index', ['exports'], function (exports) {
         var nStep = 0;
         var nSteps = 1;
         var pc = new Point();
+        break;
       case 1: //circle
         px = 0;
         py = 0;
@@ -28362,7 +28342,7 @@ define('src/index', ['exports'], function (exports) {
       textSizes[i] = roundSizes ? Math.round(normWeights[i] * 12) * dL : normWeights[i] * 12 * dL;
 
       DrawTexts.setContextTextProperties('black', textSizes[i], LOADED_FONT, null, null, 'bold');
-      w = Math.ceil((2 + src_Global__context.measureText(stringList[i]).width) / dL) * dL;
+      w = Math.ceil((2 + graphics.context.measureText(stringList[i]).width) / dL) * dL;
       h = textSizes[i];
 
       switch(mode) {
@@ -28377,7 +28357,7 @@ define('src/index', ['exports'], function (exports) {
           }
           break;
         case 1: //circle
-          if(i == 0) {
+          if(i === 0) {
             px = center.x - w * 0.5;
             py = center.y - h * 0.5;
           } else {
@@ -28394,7 +28374,7 @@ define('src/index', ['exports'], function (exports) {
           }
           break;
         case 2: //rectangle
-          if(i == 0) {
+          if(i === 0) {
             pc = center.clone();
             px = pc.x - w * 0.5;
             py = pc.y - h * 0.5;
@@ -28449,6 +28429,9 @@ define('src/index', ['exports'], function (exports) {
     return table;
   };
 
+  /**
+   * @ignore
+   */
   StringListVisOperators._pointInRectangles = function(rectangles, px, py, width, height, margin) {
     var rect;
     for(var i = 0; rectangles[i] != null; i++) {
@@ -28466,18 +28449,20 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @ignore
    */
-  NetworkDraw._drawNode = function(node, x, y, r) {
+  NetworkDraw._drawNode = function(node, x, y, r, graphics) {
     var over = false;
     if(node.image) {
-      clipCircle(x, y, r);
-      drawImage(node.image, x - r, y - r * 1.3, r * 2, r * 3); //[!] this assumes a 3/2 proportioned image
-      restore();
-      over = Math.pow(x - mX, 2) + Math.pow(y - mY, 2) <= r * r;
+      graphics.clipCircle(x, y, r);
+      graphics.drawImage(node.image, x - r, y - r * 1.3, r * 2, r * 3); //[!] this assumes a 3/2 proportioned image
+      graphics.restore();
+      over = Math.pow(x - graphics.mX, 2) + Math.pow(y - graphics.mY, 2) <= r * r;
     } else {
-      setFill(node.color == null ? 'rgb(50,50,50)' : node.color);
-      over = fCircleM(x, y, r);
+      graphics.setFill(node.color == null ? 'rgb(50,50,50)' : node.color);
+      over = graphics.fCircleM(x, y, r);
     }
-    if(over) SimpleGraphics__setCursor('pointer');
+    if(over) {
+      graphics.setCursor('pointer');
+    }
     return over;
   };
 
@@ -28491,7 +28476,7 @@ define('src/index', ['exports'], function (exports) {
    * If no Node is being interacted with, undefined is returned.
    * tags:draw
    */
-  NetworkDraw.drawRadialNetwork = function(frame, network) {
+  NetworkDraw.drawRadialNetwork = function(frame, network, graphics) {
     var r = 1.1 * Math.min(frame.width, frame.height) / network.nodeList.length;
     var rw = frame.width * 0.5 - r;
     var rh = frame.height * 0.5 - r;
@@ -28503,7 +28488,7 @@ define('src/index', ['exports'], function (exports) {
 
     var polygon = new Polygon();
 
-    setFill('black');
+    graphics.setFill('black');
 
     network.nodeList.forEach(function(node, i) {
       node._drawRadialNetwork_x = cxf + rw * Math.cos(i * dA);
@@ -28511,13 +28496,13 @@ define('src/index', ['exports'], function (exports) {
     });
 
     network.relationList.forEach(function(relation) {
-      setStroke('black', relation.weight * 0.25);
+      graphics.setStroke('black', relation.weight * 0.25);
       mx = (relation.node0._drawRadialNetwork_x + relation.node1._drawRadialNetwork_x) * 0.5;
       my = (relation.node0._drawRadialNetwork_y + relation.node1._drawRadialNetwork_y) * 0.5;
       d = Math.sqrt(Math.pow(relation.node0._drawRadialNetwork_x - relation.node1._drawRadialNetwork_x, 2), Math.pow(relation.node0._drawRadialNetwork_y - relation.node1._drawRadialNetwork_y, 2)) + 1;
       mx = (1 - 0.5 * (d / rw)) * mx + 0.5 * (d / rw) * cxf;
       my = (1 - 0.5 * (d / rh)) * my + 0.5 * (d / rh) * cyf;
-      bezier(relation.node0._drawRadialNetwork_x, relation.node0._drawRadialNetwork_y,
+      graphics.bezier(relation.node0._drawRadialNetwork_x, relation.node0._drawRadialNetwork_y,
         mx, my,
         mx, my,
         relation.node1._drawRadialNetwork_x, relation.node1._drawRadialNetwork_y);
@@ -28546,7 +28531,7 @@ define('src/index', ['exports'], function (exports) {
    * If no Node is being interacted with, undefined is returned.
    * tags:draw
    */
-  NetworkDraw.drawNetwork2D = function(frame, network, polygon, respectProportions, logScale, drawGrid, margin) {
+  NetworkDraw.drawNetwork2D = function(frame, network, polygon, respectProportions, logScale, drawGrid, margin, graphics) {
     if(network == null || polygon == null || polygon.type != 'Polygon') return;
 
     respectProportions = respectProportions || false;
@@ -28628,15 +28613,19 @@ define('src/index', ['exports'], function (exports) {
       frameMargin = memory.frameMargin;
     }
 
-    setStroke('rgb(50,50,50)', 2);
+    graphics.setStroke('rgb(50,50,50)', 2);
 
-    if(memory.xAxis) line(frameMargin.x, memory.xAxis, memory.frameMargin.right, memory.xAxis);
-    if(memory.yAxis) line(memory.yAxis, memory.frameMargin.y, memory.yAxis, memory.frameMargin.bottom);
+    if(memory.xAxis) {
+      graphics.line(frameMargin.x, memory.xAxis, memory.frameMargin.right, memory.xAxis);
+    }
+    if(memory.yAxis) {
+      graphics.line(memory.yAxis, memory.frameMargin.y, memory.yAxis, memory.frameMargin.bottom);
+    }
 
-    if(frame.containsPoint(mP)) {
-      setStroke('rgb(50,50,50)', 0.5);
-      line(frame.x + 2, mY + 0.5, frame.right - 4, mY + 0.5);
-      line(mX + 0.5, frame.y + 2, mX + 0.5, frame.bottom - 4);
+    if(frame.containsPoint(graphics.mP)) {
+      graphics.setStroke('rgb(50,50,50)', 0.5);
+      graphics.line(frame.x + 2, graphics.mY + 0.5, frame.right - 4, graphics.mY + 0.5);
+      graphics.line(graphics.mX + 0.5, frame.y + 2, graphics.mX + 0.5, frame.bottom - 4);
     }
 
     memory.projectPolygonConvergent.approach(memory.projectedPolygon, 0.1);
@@ -28647,8 +28636,8 @@ define('src/index', ['exports'], function (exports) {
     });
 
     network.relationList.forEach(function(relation) {
-      setStroke('black', relation.weight * 0.25);
-      line(relation.node0.x, relation.node0.y, relation.node1.x, relation.node1.y);
+      graphics.setStroke('black', relation.weight * 0.25);
+      graphics.line(relation.node0.x, relation.node0.y, relation.node1.x, relation.node1.y);
     });
 
     network.nodeList.forEach(function(node) {
@@ -28659,17 +28648,17 @@ define('src/index', ['exports'], function (exports) {
 
     //values label
 
-    if(frame.containsPoint(mP)) {
+    if(frame.containsPoint(graphics.mP)) {
       if(nodeOver == null) {
         if(memory.actualLogScale) {
           NetworkDraw._drawNodeValues(
-            Math.floor(10 * (Math.pow(Math.E, Math.log((frameP.right + 1) / (frameP.x + 1)) * (mX - frameMargin.x) / frameMargin.width) - 1)) / 10,
-            Math.floor(10 * (Math.pow(Math.E, Math.log((frameP.bottom + 1) / (frameP.y + 1)) * (frameMargin.bottom - mY) / frameMargin.height) - 1)) / 10
+            Math.floor(10 * (Math.pow(Math.E, Math.log((frameP.right + 1) / (frameP.x + 1)) * (graphics.mX - frameMargin.x) / frameMargin.width) - 1)) / 10,
+            Math.floor(10 * (Math.pow(Math.E, Math.log((frameP.bottom + 1) / (frameP.y + 1)) * (frameMargin.bottom - graphics.mY) / frameMargin.height) - 1)) / 10
           );
         } else {
           NetworkDraw._drawNodeValues(
-            Math.floor(10 * (frameP.x + frameP.width * (mX - memory.frameMargin.x) / memory.frameMargin.width)) / 10,
-            Math.floor(10 * (frameP.y + frameP.height * (memory.frameMargin.bottom - mY) / memory.frameMargin.height)) / 10
+            Math.floor(10 * (frameP.x + frameP.width * (graphics.mX - memory.frameMargin.x) / memory.frameMargin.width)) / 10,
+            Math.floor(10 * (frameP.y + frameP.height * (memory.frameMargin.bottom - graphics.mY) / memory.frameMargin.height)) / 10
           );
         }
       } else {
@@ -28685,12 +28674,12 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @ignore
    */
-  NetworkDraw._drawNodeValues = function(vx, vy, name) {
+  NetworkDraw._drawNodeValues = function(vx, vy, name, graphics) {
     var text = (name == null ? '' : (name + ': ')) + vx + ", " + vy;
-    setFill('rgba(50,50,50,0.8)');
-    fRect(mX - 2, mY - 2, -getTextW(text) - 4, -14);
-    setText('white', 12, null, 'right', 'bottom');
-    fText(text, mX - 4, mY - 2);
+    graphics.setFill('rgba(50,50,50,0.8)');
+    graphics.fRect(graphics.mX - 2, graphics.mY - 2, - graphics.getTextW(text) - 4, -14);
+    graphics.setText('white', 12, null, 'right', 'bottom');
+    graphics.fText(text, graphics.mX - 4, graphics.mY - 2);
   };
 
 
@@ -28700,7 +28689,7 @@ define('src/index', ['exports'], function (exports) {
    * drawNetworkMatrix
    * @ignore
    */
-  NetworkDraw.drawNetworkMatrix = function(frame, network, colors, relationsColorScaleFunction, margin, directed, normalizedNodeWeights, returnHovered) {
+  NetworkDraw.drawNetworkMatrix = function(frame, network, colors, relationsColorScaleFunction, margin, directed, normalizedNodeWeights, returnHovered, graphics) {
     relationsColorScaleFunction = relationsColorScaleFunction == null ? ColorOperators__default.grayScale : relationsColorScaleFunction;
     margin = margin == null ? 2 : margin;
     directed = directed == null ? false : directed;
@@ -28723,7 +28712,7 @@ define('src/index', ['exports'], function (exports) {
     var xx = dX;
     var yy = dY;
 
-    returnHovered = returnHovered && frame.pointIsInside(mousePoint);
+    returnHovered = returnHovered && frame.pointIsInside(graphics.mousePoint);
 
     if(returnHovered) var hoverValues = new Point(-1, -1);
 
@@ -28740,12 +28729,12 @@ define('src/index', ['exports'], function (exports) {
     }
 
     for(i = 0; nodeList[i] != null; i++) {
-      src_Global__context.fillStyle = colors[i];
+      graphics.context.fillStyle = colors[i];
       if(useWeights) {
         ww = dX * normalizedNodeWeights[i];
         hh = dY * normalizedNodeWeights[i];
-        src_Global__context.fillRect(frame.x + xx, frame.y, ww - margin, h);
-        src_Global__context.fillRect(frame.x, frame.y + yy, w, hh - margin);
+        graphics.context.fillRect(frame.x + xx, frame.y, ww - margin, h);
+        graphics.context.fillRect(frame.x, frame.y + yy, w, hh - margin);
 
         if(returnHovered) {
           if(mouseX > frame.x + xx && mouseX < frame.x + xx + ww) hoverValues.x = i;
@@ -28761,23 +28750,23 @@ define('src/index', ['exports'], function (exports) {
 
 
       } else {
-        src_Global__context.fillRect(frame.x + (i + 1) * dX, frame.y, w, h);
-        src_Global__context.fillRect(frame.x, frame.y + (i + 1) * dY, w, h);
+        graphics.context.fillRect(frame.x + (i + 1) * dX, frame.y, w, h);
+        graphics.context.fillRect(frame.x, frame.y + (i + 1) * dY, w, h);
       }
     }
 
     for(i = 0; relationList[i] != null; i++) {
       relation = relationList[i];
-      src_Global__context.fillStyle = relationsColorScaleFunction(relation.weight);
+      graphics.context.fillStyle = relationsColorScaleFunction(relation.weight);
       if(useWeights) {
-        src_Global__context.fillRect(frame.x + xNodes[relation.node0.id], frame.y + yNodes[relation.node1.id], wNodes[relation.node0.id] - margin, hNodes[relation.node1.id] - margin);
-        if(!directed) src_Global__context.fillRect(frame.x + yNodes[relation.node1.id], frame.y + xNodes[relation.node0.id], hNodes[relation.node1.id] - margin, wNodes[relation.node0.id] - margin);
+        graphics.context.fillRect(frame.x + xNodes[relation.node0.id], frame.y + yNodes[relation.node1.id], wNodes[relation.node0.id] - margin, hNodes[relation.node1.id] - margin);
+        if(!directed) graphics.context.fillRect(frame.x + yNodes[relation.node1.id], frame.y + xNodes[relation.node0.id], hNodes[relation.node1.id] - margin, wNodes[relation.node0.id] - margin);
       } else {
         ix = nodeList.indexOf(relation.node0) + 1;
         iy = nodeList.indexOf(relation.node1) + 1;
-        src_Global__context.fillRect(frame.x + ix * dX, frame.y + iy * dY, w, h);
+        graphics.context.fillRect(frame.x + ix * dX, frame.y + iy * dY, w, h);
         if(!directed && (ix != iy)) {
-          src_Global__context.fillRect(frame.x + iy * dX, frame.y + ix * dY, w, h);
+          graphics.context.fillRect(frame.x + iy * dX, frame.y + ix * dY, w, h);
         }
       }
 
@@ -28809,9 +28798,9 @@ define('src/index', ['exports'], function (exports) {
     TreeDraw._drawRectanglesTreeChildren(tree.nodeList[0], new Rectangle__default(frame.x, frame.y, dX, frame.height), levelColors, margin);
   };
 
-  TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin) {
-    src_Global__context.fillStyle = colors[node.level];
-    src_Global__context.fillRect(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
+  TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin, graphics) {
+    graphics.context.fillStyle = colors[node.level];
+    graphics.context.fillRect(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
     var children = node.toNodeList;
     //console.log((node.level, node.name, children.length);
     if(children.length > 0) {
@@ -28841,7 +28830,11 @@ define('src/index', ['exports'], function (exports) {
    * @return {Node} selected node
    * tags:draw
    */
-  TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, externalSelectedNode, graphics) {  
+  TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, externalSelectedNode, graphics) { 
+    if(frame==null || tree==null) return;
+
+    if(graphics==null) graphics = frame.graphics; //momentary fix
+
     var change = frame.memory == null || frame.memory.tree != tree || frame.memory.width != frame.width || frame.memory.height != frame.height || frame.memory.weights != weights;
 
     if(externalSelectedNode != null) externalSelectedNode = tree.nodeList.getNodeById(externalSelectedNode.id);
@@ -28850,7 +28843,7 @@ define('src/index', ['exports'], function (exports) {
 
     if(change) {
       var changeInTree = frame.memory != null && frame.memory.tree != null != tree;
-      var changeInWeights = frame.memory != null && frame.memory.weights != weights;
+      //var changeInWeights = frame.memory != null && frame.memory.weights != weights;
 
       frame.memory = {
         tree: tree,
@@ -29189,7 +29182,11 @@ define('src/index', ['exports'], function (exports) {
    * @return {Node} hovered node
    * tags:draw,ds
    */
-  TreeDraw.drawDecisionTree = function(frame, tree, textColor) {
+  TreeDraw.drawDecisionTree = function(frame, tree, textColor, graphics) {
+    if(frame==null || tree==null) return;
+
+    if(graphics==null) graphics = frame.graphics; //momentary fix
+
     var change = frame.memory == null || frame.memory.tree != tree || frame.memory.width != frame.width || frame.memory.height != frame.height;
 
     textColor = textColor||'black';
@@ -29207,7 +29204,7 @@ define('src/index', ['exports'], function (exports) {
         width: frame.width,
         height: frame.height,
         nodeSelected: tree.nodeList[0],
-        nFLastChange: nF,
+        nFLastChange: graphics.nF,
         leaves: null,
         image: null
       };
@@ -29228,10 +29225,10 @@ define('src/index', ['exports'], function (exports) {
       frame.memory.ky = frame.height / frame.memory.focusFrame.height;
       frame.memory.my = -frame.memory.ky * frame.memory.focusFrame.y;
 
-      setText(textColor, 12);
+      graphics.setText(textColor, 12);
       tree.nodeList.forEach(function(node) {
         node.label = node.toNodeList.length == 0 ? Math.round(node.valueFollowingProbability * 100) / 100 : node.bestFeatureName;
-        node._textWidth = getTextW(node.label);
+        node._textWidth = graphics.getTextW(node.label);
       });
 
 
@@ -29265,13 +29262,13 @@ define('src/index', ['exports'], function (exports) {
     var rect;
     var overNode = null;
     var overI;
-    var mouseOnFrame = frame.containsPoint(mP);
-    var moving = nF - frame.memory.nFLastChange < 80 || Math.pow(frame.memory.kx - kxF, 2) + Math.pow(frame.memory.mx - mxF, 2) > 0.001;
+    var mouseOnFrame = frame.containsPoint(graphics.mP);
+    var moving = graphics.nF - frame.memory.nFLastChange < 80 || Math.pow(frame.memory.kx - kxF, 2) + Math.pow(frame.memory.mx - mxF, 2) > 0.001;
     var captureImage = false;//provisional // !moving && frame.memory.image == null && !mouseOnFrame;
     var drawingImage = false;//provisional // !moving && !mouseOnFrame && frame.memory.image != null &&  !captureImage && frame.memory.image.width > 0;
 
     if(drawingImage) {
-      drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+      graphics.drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
     } else {
       //c.l('drawing');
       if(captureImage) {
@@ -29291,13 +29288,13 @@ define('src/index', ['exports'], function (exports) {
         // fRect(0, 0, frame.width, frame.height);
         // setText('black', 12);
       } else {
-        src_Global__context.save();
-        clipRectangle(frame.x, frame.y, frame.width, frame.height);
+        graphics.context.save();
+        graphics.clipRectangle(frame.x, frame.y, frame.width, frame.height);
       }
 
       var yLeaves = frame.y + hTree + gap;
 
-      setStroke('black', 0.2);
+      graphics.setStroke('black', 0.2);
 
       tree.nodeList.forEach(function(node, i) {
 
@@ -29309,19 +29306,19 @@ define('src/index', ['exports'], function (exports) {
           y = Math.round(frame.y + rect.y) + 0.5;
 
           if(node.pattern) {
-            src_Global__context.fillStyle = node.pattern;
-            src_Global__context.fillRect(x, y, Math.floor(rect.width), Math.floor(rect.height));
+            graphics.context.fillStyle = node.pattern;
+            graphics.context.fillRect(x, y, Math.floor(rect.width), Math.floor(rect.height));
 
-            if(sRectM(x, y, Math.floor(rect.width), Math.floor(rect.height))) {
+            if(graphics.sRectM(x, y, Math.floor(rect.width), Math.floor(rect.height))) {
               overNode = node;
               overI = i;
             }
 
           } else {
 
-            setFill(node._color);
+            graphics.setFill(node._color);
 
-            if(fsRectM(x, y, Math.floor(rect.width), Math.floor(rect.height))) {
+            if(graphics.fsRectM(x, y, Math.floor(rect.width), Math.floor(rect.height))) {
               overNode = node;
               overI = i;
             }
@@ -29335,34 +29332,38 @@ define('src/index', ['exports'], function (exports) {
             var tC = textColor ? textColor : frame.memory.textsColorList[i];
             textSize = 18;
 
-            setText(tC, textSize);
+            graphics.setText(tC, textSize);
             exceedes = true; //(node._textWidth*textSize/12)>(rect.width-1.2*margTextX);
             if(exceedes) {
-              clipRectangle(x, y - 17, rect.width, rect.height);
+              graphics.clipRectangle(x, y - 17, rect.width, rect.height);
             }
 
             //feature or P
-            fText(node.label, Math.max(x, frame.x) + 8, y + 1);
+            graphics.fText(node.label, Math.max(x, frame.x) + 8, y + 1);
 
             if(node.value) {
               textSize = 14;
-              setText(tC, textSize);
+              graphics.setText(tC, textSize);
 
-              fText(node.value, Math.max(x, frame.x) + 8, y - 17);
+              graphics.fText(node.value, Math.max(x, frame.x) + 8, y - 17);
             }
 
             //size
             if(realWidth - node._textWidth > 60) {
               textSize = 12;
-              setText(tC, textSize, null, 'right');
+              graphics.setText(tC, textSize, null, 'right');
 
-              fText("s=" + node.weight, Math.min(frame.x + rect.getRight(), frame.getRight()) - 2, y + 1);
-              fText("e=" + Math.round(node.entropy * 100) / 100, Math.min(frame.x + rect.getRight(), frame.getRight()) - 2, y + 12);
-              if(node.toNodeList.length > 0) fText("P=" + Math.round(node.valueFollowingProbability * 100) / 100, Math.min(frame.x + rect.getRight(), frame.getRight()) - 2, y + 23);
-              fText("l=" + Math.round(node.lift * 100) / 100, Math.min(frame.x + rect.getRight(), frame.getRight()) - 2, y + 23 + (node.toNodeList.length > 0 ? 11 : 0));
+              graphics.fText("s=" + node.weight, Math.min(frame.x + rect.getRight(), frame.getRight()) - 2, y + 1);
+              graphics.fText("e=" + Math.round(node.entropy * 100) / 100, Math.min(frame.x + rect.getRight(), frame.getRight()) - 2, y + 12);
+              if(node.toNodeList.length > 0) {
+                graphics.fText("P=" + Math.round(node.valueFollowingProbability * 100) / 100, Math.min(frame.x + rect.getRight(), frame.getRight()) - 2, y + 23);
+              }
+              graphics.fText("l=" + Math.round(node.lift * 100) / 100, Math.min(frame.x + rect.getRight(), frame.getRight()) - 2, y + 23 + (node.toNodeList.length > 0 ? 11 : 0));
             }
 
-            if(exceedes) src_Global__context.restore();
+            if(exceedes) {
+              graphics.context.restore();
+            }
           }
         }
       });
@@ -29380,22 +29381,22 @@ define('src/index', ['exports'], function (exports) {
 
 
       frame.memory.leaves.forEach(function(node) {
-        setStroke('black', 0.2);
+        graphics.setStroke('black', 0.2);
 
         w = sx * node.weight;
 
         if(node.pattern) {
-          src_Global__context.fillStyle = node.pattern;
-          src_Global__context.fillRect(x0, yLeaves, w, hLevel);
+          graphics.context.fillStyle = node.pattern;
+          graphics.context.fillRect(x0, yLeaves, w, hLevel);
 
-          if(sRectM(x0, yLeaves, w, hLevel)) {
+          if(graphics.sRectM(x0, yLeaves, w, hLevel)) {
             overNode = node;
             overI = tree.nodeList.indexOf(node);
           }
 
         } else {
-          setFill(node._color);
-          if(fsRectM(x0, yLeaves, w, hLevel)) {
+          graphics.setFill(node._color);
+          if(graphics.fsRectM(x0, yLeaves, w, hLevel)) {
             overNode = node;
             overI = tree.nodeList.indexOf(node);
           }
@@ -29404,28 +29405,28 @@ define('src/index', ['exports'], function (exports) {
         node._xLeaf = x0;
         node._wLeaf = w;
 
-        setStroke('black', 1);
+        graphics.setStroke('black', 1);
 
         if(waitingForMark && node.valueFollowingProbability < tree.nodeList[0].valueFollowingProbability) {
           waitingForMark = false;
-          setFill('black');
-          fLines(x0, yLeaves - 14, x0 + 4, yLeaves - 8, x0, yLeaves - 2, x0 - 4, yLeaves - 8);
+          graphics.setFill('black');
+          graphics.fLines(x0, yLeaves - 14, x0 + 4, yLeaves - 8, x0, yLeaves - 2, x0 - 4, yLeaves - 8);
         }
         if(waitingForDoubleMark && node.valueFollowingProbability <= tree.nodeList[0].valueFollowingProbability * 2) {
           waitingForDoubleMark = false;
-          line(x0, yLeaves - 14, x0, yLeaves - 2);
+          graphics.line(x0, yLeaves - 14, x0, yLeaves - 2);
         }
         if(waitingForHalfMark && node.valueFollowingProbability < tree.nodeList[0].valueFollowingProbability * 0.5) {
           waitingForHalfMark = false;
-          line(x0, yLeaves - 14, x0, yLeaves - 2);
+          graphics.line(x0, yLeaves - 14, x0, yLeaves - 2);
         }
         if(waitingFor15Mark && node.valueFollowingProbability <= tree.nodeList[0].valueFollowingProbability * 1.5) {
           waitingFor15Mark = false;
-          line(x0, yLeaves - 8, x0, yLeaves - 2);
+          graphics.line(x0, yLeaves - 8, x0, yLeaves - 2);
         }
         if(waitingFor067Mark && node.valueFollowingProbability < tree.nodeList[0].valueFollowingProbability * 0.66667) {
           waitingFor067Mark = false;
-          line(x0, yLeaves - 8, x0, yLeaves - 2);
+          graphics.line(x0, yLeaves - 8, x0, yLeaves - 2);
         }
 
         x0 += w;
@@ -29445,33 +29446,31 @@ define('src/index', ['exports'], function (exports) {
 
     if(mouseOnFrame) {
       if(overNode) {
-        SimpleGraphics__setCursor('pointer');
+        graphics.setCursor('pointer');
 
         //rect = new Rectangle(tx(overNode._outRectangle.x), ty(overNode._outRectangle.y), overNode._outRectangle.width*kx, overNode._outRectangle.height*ky);
         rect = new Rectangle__default(tx(overNode._outRectangle.x), overNode._outRectangle.y, overNode._outRectangle.width * kx, overNode._outRectangle.height);
         x = Math.round(frame.x + rect.x) + 0.5;
         y = Math.round(frame.y + rect.y) + 0.5;
 
-        setStroke(textColor ? textColor : frame.memory.textsColorList[overI], 2);
+        graphics.setStroke(textColor ? textColor : frame.memory.textsColorList[overI], 2);
 
         if(overNode._wLeaf) {
-          setFill('rgba(0,0,0,0.5)');
-          src_Global__context.beginPath();
+          graphics.setFill('rgba(0,0,0,0.5)');
+          graphics.context.beginPath();
 
-          src_Global__context.moveTo(x, yLeaves - gap);
-          src_Global__context.bezierCurveTo(x, yLeaves - 0.65 * gap, overNode._xLeaf, yLeaves - gap * 0.35, overNode._xLeaf, yLeaves);
-          src_Global__context.lineTo(overNode._xLeaf + overNode._wLeaf, yLeaves);
-          src_Global__context.bezierCurveTo(overNode._xLeaf + overNode._wLeaf, yLeaves - gap * 0.35, x + rect.width, yLeaves - 0.65 * gap, x + rect.width, yLeaves - gap);
-          src_Global__context.fill();
+          graphics.context.moveTo(x, yLeaves - gap);
+          graphics.context.bezierCurveTo(x, yLeaves - 0.65 * gap, overNode._xLeaf, yLeaves - gap * 0.35, overNode._xLeaf, yLeaves);
+          graphics.context.lineTo(overNode._xLeaf + overNode._wLeaf, yLeaves);
+          graphics.context.bezierCurveTo(overNode._xLeaf + overNode._wLeaf, yLeaves - gap * 0.35, x + rect.width, yLeaves - 0.65 * gap, x + rect.width, yLeaves - gap);
+          graphics.context.fill();
 
-          sRect(overNode._xLeaf, yLeaves, overNode._wLeaf, hLevel);
+          graphics.sRect(overNode._xLeaf, yLeaves, overNode._wLeaf, hLevel);
         }
 
-        sRect(x, y, Math.floor(rect.width), Math.floor(rect.height));
+        graphics.sRect(x, y, Math.floor(rect.width), Math.floor(rect.height));
 
-
-
-        if(MOUSE_UP_FAST) {
+        if(graphics.MOUSE_UP_FAST) {
           frame.memory.focusFrame = new Rectangle__default(overNode._outRectangle.x - overNode._outRectangle.width * 0.025, 0, overNode._outRectangle.width * 1.05, frame.height); // TreeDraw._expandRect(overNode._outRectangle);
 
           if(frame.memory.focusFrame.x < 0) {
@@ -29491,28 +29490,30 @@ define('src/index', ['exports'], function (exports) {
           frame.memory.image = null;
         }
       }
-      if(MOUSE_DOWN) {
-        frame.memory.prevMX = mX;
+      if(graphics.MOUSE_DOWN) {
+        frame.memory.prevMX = graphics.mX;
       }
-      if(MOUSE_PRESSED) {
+      if(graphics.MOUSE_PRESSED) {
         var scale = 5 * frame.memory.focusFrame.width / frame.width;
-        frame.memory.focusFrame.x -= (mX - frame.memory.prevMX) * scale;
-        frame.memory.prevMX = mX;
+        frame.memory.focusFrame.x -= (graphics.mX - frame.memory.prevMX) * scale;
+        frame.memory.prevMX = graphics.mX;
       }
-      if(WHEEL_CHANGE != 0) {
+      if(graphics.WHEEL_CHANGE != 0) {
         var center = frame.memory.focusFrame.getCenter();
-        var zoom = 1 + 0.1 * WHEEL_CHANGE;
+        var zoom = 1 + 0.1 * graphics.WHEEL_CHANGE;
         frame.memory.focusFrame.x = center.x - frame.memory.focusFrame.width * 0.5 * zoom;
         frame.memory.focusFrame.width *= zoom;
       }
-      if(MOUSE_PRESSED || WHEEL_CHANGE != 0) {
+      if(graphics.MOUSE_PRESSED || graphics.WHEEL_CHANGE != 0) {
 
         frame.memory.image = null;
 
       }
     }
 
-    if(!captureImage && !drawingImage) src_Global__context.restore();
+    if(!captureImage && !drawingImage) {
+      graphics.context.restore();
+    }
 
 
     if(frame.memory.overNode != overNode) {
@@ -29555,9 +29556,17 @@ define('src/index', ['exports'], function (exports) {
       TreeDraw._generateRectanglesDecision(child, hLevel);
     });
   };
+
+  /**
+   * @ignore
+   */
   TreeDraw._inRectFromOutRectDecision = function(rect, hLevel) {
     return new Rectangle__default(rect.x, rect.y + hLevel, rect.width, rect.height - hLevel);
   };
+
+  /**
+   * @ignore
+   */
   TreeDraw._horizontalRectanglesDecision = function(rect, weights) {
     var rects = new List__default();
     var x0 = rect.x;
@@ -29581,8 +29590,6 @@ define('src/index', ['exports'], function (exports) {
   // interface of the framework.
 
   // dataStructures/
-
-  exports.removeDiv = undefined;
 
 });
 

@@ -11,9 +11,8 @@ import NodeList from "src/dataStructures/structures/lists/NodeList";
 import PolygonList from "src/dataStructures/geometry/PolygonList";
 import DateList from "src/dataStructures/dates/DateList";
 import ColorList from "src/dataStructures/graphic/ColorList";
-import {dataModelsInfo} from "src/Global";
 import ColorOperators from "src/operators/graphic/ColorOperators";
-
+import { dataModelsInfo } from "src/Global";
 
 // Provides a lookup table for instantiate classes.
 // This is used in the instantiate function to simplify the logic
@@ -156,7 +155,7 @@ export function getLightColorFromDataModelType(type){
 export function getTextFromObject(value, type){
   if(value == null) return "Null";
   if(value.isList) {
-    if(value.length == 0) return "[]";
+    if(value.length === 0) return "[]";
     var text = value.toString(); // value.length>6?value.slice(0, 5).forEach(function(v){return getTextFromObject(v, typeOf(v))}).join(','):value.toStringList().join(',').forEach(function(v, typeOf(v)){return getTextFromObject(v, type)});
     if(text.length > 160) {
       var i;

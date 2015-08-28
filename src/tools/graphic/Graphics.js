@@ -1787,7 +1787,8 @@ Graphics.prototype.fTextArc = function(text, x, y, xCenter, yCenter, centered){
  */
 Graphics.prototype.fTextM = function(text, x, y, size) {
   size = size || this.fontSize;
-  this.context.fillText(text, x, y);
+  //this.context.fillText(text, x, y);
+  this.fText(text, x, y);
   return this.mY > y && this.mY < y + size && this.mX > x && this.mX < x + this.context.measureText(text).width;
 };
 
@@ -1925,8 +1926,8 @@ Graphics.prototype.setText = function(color, fSize, fName, align, baseline, styl
   var fontBaseline = ifDef(baseline, this.fontBaseline);
   var fontStyle = ifDef(style, this.fontStyle);
 
-  if(style !== '') {
-    style += ' ';
+  if(fontStyle !== '') {
+    fontStyle += ' ';
   }
 
   this.context.fillStyle = fontColor;
