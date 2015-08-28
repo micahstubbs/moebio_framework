@@ -202,8 +202,7 @@ export { CirclesVisOperators };
 
 // visualization/graphic
 import ColorsDraw from "src/visualization/graphic/ColorsDraw";
-import ImageDraw from "src/visualization/graphic/ImageDraw";
-export { ColorsDraw, ImageDraw };
+export { ColorsDraw };
 
 // visualization/lists
 import ListDraw from "src/visualization/lists/ListDraw";
