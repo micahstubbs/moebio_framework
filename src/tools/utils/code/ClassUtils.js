@@ -14,7 +14,6 @@ import ColorList from "src/dataStructures/graphic/ColorList";
 import ColorOperators from "src/operators/graphic/ColorOperators";
 import { dataModelsInfo } from "src/Global";
 
-
 // Provides a lookup table for instantiate classes.
 // This is used in the instantiate function to simplify the logic
 // around the creation of these classes.
