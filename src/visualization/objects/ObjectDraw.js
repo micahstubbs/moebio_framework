@@ -1,6 +1,3 @@
-import { MOUSE_DOWN, mP } from "src/Global";
-import { setText, fText } from "src/tools/graphic/SimpleGraphics";
-
 function ObjectDraw() {}
 export default ObjectDraw;
 
@@ -11,7 +8,7 @@ export default ObjectDraw;
  * @param  {Object} object
  * tags:draw
  */
-ObjectDraw.count = function(frame, object) {
+ObjectDraw.count = function(frame, object, graphics) {
   if(frame.memory == null) {
     frame.memory = {
       n: 1,
@@ -24,8 +21,8 @@ ObjectDraw.count = function(frame, object) {
     frame.memory.n++;
   }
 
-  if(MOUSE_DOWN && frame.containsPoint(mP)) frame.memory.n = 0;
+  if(graphics.MOUSE_DOWN && frame.containsPoint(graphics.mP)) frame.memory.n = 0;
 
-  setText('black', 12);
-  fText(frame.memory.n, frame.x + 10, frame.y + 10);
+  graphics.setText('black', 12);
+  graphics.fText(frame.memory.n, frame.x + 10, frame.y + 10);
 };

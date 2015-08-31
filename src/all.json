@@ -82,7 +82,7 @@
   "operators/structures/TreeConvertions.js",
   "operators/structures/TreeEncodings.js",
 
-  "tools/graphic/CanvasAndContext.js",
+  "tools/graphic/Graphics.js",
   "tools/graphic/Draw.js",
   "tools/graphic/DrawSimpleVis.js",
   "tools/graphic/DrawTexts.js",
@@ -108,7 +108,6 @@
   "visualization/geo/CountryListDraw.js",
   "visualization/geometry/CirclesVisOperators.js",
   "visualization/graphic/ColorsDraw.js",
-  "visualization/graphic/ImageDraw.js",
   "visualization/lists/ListDraw.js",
   "visualization/numeric/IntervalTableDraw.js",
   "visualization/numeric/NumberTableDraw.js",

@@ -124,7 +124,7 @@ TableConversions.ObjectToTable = function(object, fields) {
 TableConversions.ObjectToList = function(object, fields) {
   var result = TableConversions.ObjectToTable(object, fields);
 
-  if(result.getLengths.getMax() == 1) return result.getRow(0);
+  if(result.getLengths().getMax() == 1) return result.getRow(0);
 };
 
 
