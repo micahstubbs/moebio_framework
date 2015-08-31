@@ -5,7 +5,6 @@ import Polygon from "src/dataStructures/geometry/Polygon";
 import Node from "src/dataStructures/structures/elements/Node";
 import Point from "src/dataStructures/geometry/Point";
 import { typeOf } from "src/tools/utils/code/ClassUtils";
-import { cX, cY } from "src/Global";
 
 NodeList.prototype = new List();
 NodeList.prototype.constructor = NodeList;
@@ -260,10 +259,10 @@ NodeList.prototype.getDegrees = function() {
  *
  * @return {Polygon}
  */
-NodeList.prototype.getPolygon = function() {
+NodeList.prototype.getPolygon = function(graphics) {
   var polygon = new Polygon();
   for(var i = 0; this[i] != null; i++) {
-    polygon[i] = new Point(this[i].x + cX, this[i].y + cY);
+    polygon[i] = new Point(this[i].x + graphics.cX, this[i].y + graphics.cY);
   }
   return polygon;
 };

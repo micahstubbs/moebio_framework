@@ -1,27 +1,4 @@
-import {
-  context,
-  mX,
-  mY,
-  mP,
-  TwoPi
-} from "src/Global";
-
-import {
-  setCursor,
-  line,
-  setStroke,
-  setFill,
-  fText,
-  setText,
-  drawImage,
-  restore,
-  bezier,
-  fCircleM,
-  clipCircle,
-  fRect,
-  getTextW
-} from "src/tools/graphic/SimpleGraphics";
-
+import { TwoPi } from "src/Global";
 import Rectangle from "src/dataStructures/geometry/Rectangle";
 import ColorOperators from "src/operators/graphic/ColorOperators";
 import Point from "src/dataStructures/geometry/Point";
@@ -39,18 +16,20 @@ export default NetworkDraw;
 /**
  * @ignore
  */
-NetworkDraw._drawNode = function(node, x, y, r) {
+NetworkDraw._drawNode = function(node, x, y, r, graphics) {
   var over = false;
   if(node.image) {
-    clipCircle(x, y, r);
-    drawImage(node.image, x - r, y - r * 1.3, r * 2, r * 3); //[!] this assumes a 3/2 proportioned image
-    restore();
-    over = Math.pow(x - mX, 2) + Math.pow(y - mY, 2) <= r * r;
+    graphics.clipCircle(x, y, r);
+    graphics.drawImage(node.image, x - r, y - r * 1.3, r * 2, r * 3); //[!] this assumes a 3/2 proportioned image
+    graphics.restore();
+    over = Math.pow(x - graphics.mX, 2) + Math.pow(y - graphics.mY, 2) <= r * r;
   } else {
-    setFill(node.color == null ? 'rgb(50,50,50)' : node.color);
-    over = fCircleM(x, y, r);
+    graphics.setFill(node.color == null ? 'rgb(50,50,50)' : node.color);
+    over = graphics.fCircleM(x, y, r);
   }
-  if(over) setCursor('pointer');
+  if(over) {
+    graphics.setCursor('pointer');
+  }
   return over;
 };
 
@@ -64,7 +43,7 @@ NetworkDraw._drawNode = function(node, x, y, r) {
  * If no Node is being interacted with, undefined is returned.
  * tags:draw
  */
-NetworkDraw.drawRadialNetwork = function(frame, network) {
+NetworkDraw.drawRadialNetwork = function(frame, network, graphics) {
   var r = 1.1 * Math.min(frame.width, frame.height) / network.nodeList.length;
   var rw = frame.width * 0.5 - r;
   var rh = frame.height * 0.5 - r;
@@ -76,7 +55,7 @@ NetworkDraw.drawRadialNetwork = function(frame, network) {
 
   var polygon = new Polygon();
 
-  setFill('black');
+  graphics.setFill('black');
 
   network.nodeList.forEach(function(node, i) {
     node._drawRadialNetwork_x = cxf + rw * Math.cos(i * dA);
@@ -84,13 +63,13 @@ NetworkDraw.drawRadialNetwork = function(frame, network) {
   });
 
   network.relationList.forEach(function(relation) {
-    setStroke('black', relation.weight * 0.25);
+    graphics.setStroke('black', relation.weight * 0.25);
     mx = (relation.node0._drawRadialNetwork_x + relation.node1._drawRadialNetwork_x) * 0.5;
     my = (relation.node0._drawRadialNetwork_y + relation.node1._drawRadialNetwork_y) * 0.5;
     d = Math.sqrt(Math.pow(relation.node0._drawRadialNetwork_x - relation.node1._drawRadialNetwork_x, 2), Math.pow(relation.node0._drawRadialNetwork_y - relation.node1._drawRadialNetwork_y, 2)) + 1;
     mx = (1 - 0.5 * (d / rw)) * mx + 0.5 * (d / rw) * cxf;
     my = (1 - 0.5 * (d / rh)) * my + 0.5 * (d / rh) * cyf;
-    bezier(relation.node0._drawRadialNetwork_x, relation.node0._drawRadialNetwork_y,
+    graphics.bezier(relation.node0._drawRadialNetwork_x, relation.node0._drawRadialNetwork_y,
       mx, my,
       mx, my,
       relation.node1._drawRadialNetwork_x, relation.node1._drawRadialNetwork_y);
@@ -119,7 +98,7 @@ NetworkDraw.drawRadialNetwork = function(frame, network) {
  * If no Node is being interacted with, undefined is returned.
  * tags:draw
  */
-NetworkDraw.drawNetwork2D = function(frame, network, polygon, respectProportions, logScale, drawGrid, margin) {
+NetworkDraw.drawNetwork2D = function(frame, network, polygon, respectProportions, logScale, drawGrid, margin, graphics) {
   if(network == null || polygon == null || polygon.type != 'Polygon') return;
 
   respectProportions = respectProportions || false;
@@ -201,15 +180,19 @@ NetworkDraw.drawNetwork2D = function(frame, network, polygon, respectProportions
     frameMargin = memory.frameMargin;
   }
 
-  setStroke('rgb(50,50,50)', 2);
+  graphics.setStroke('rgb(50,50,50)', 2);
 
-  if(memory.xAxis) line(frameMargin.x, memory.xAxis, memory.frameMargin.right, memory.xAxis);
-  if(memory.yAxis) line(memory.yAxis, memory.frameMargin.y, memory.yAxis, memory.frameMargin.bottom);
+  if(memory.xAxis) {
+    graphics.line(frameMargin.x, memory.xAxis, memory.frameMargin.right, memory.xAxis);
+  }
+  if(memory.yAxis) {
+    graphics.line(memory.yAxis, memory.frameMargin.y, memory.yAxis, memory.frameMargin.bottom);
+  }
 
-  if(frame.containsPoint(mP)) {
-    setStroke('rgb(50,50,50)', 0.5);
-    line(frame.x + 2, mY + 0.5, frame.right - 4, mY + 0.5);
-    line(mX + 0.5, frame.y + 2, mX + 0.5, frame.bottom - 4);
+  if(frame.containsPoint(graphics.mP)) {
+    graphics.setStroke('rgb(50,50,50)', 0.5);
+    graphics.line(frame.x + 2, graphics.mY + 0.5, frame.right - 4, graphics.mY + 0.5);
+    graphics.line(graphics.mX + 0.5, frame.y + 2, graphics.mX + 0.5, frame.bottom - 4);
   }
 
   memory.projectPolygonConvergent.approach(memory.projectedPolygon, 0.1);
@@ -220,8 +203,8 @@ NetworkDraw.drawNetwork2D = function(frame, network, polygon, respectProportions
   });
 
   network.relationList.forEach(function(relation) {
-    setStroke('black', relation.weight * 0.25);
-    line(relation.node0.x, relation.node0.y, relation.node1.x, relation.node1.y);
+    graphics.setStroke('black', relation.weight * 0.25);
+    graphics.line(relation.node0.x, relation.node0.y, relation.node1.x, relation.node1.y);
   });
 
   network.nodeList.forEach(function(node) {
@@ -232,17 +215,17 @@ NetworkDraw.drawNetwork2D = function(frame, network, polygon, respectProportions
 
   //values label
 
-  if(frame.containsPoint(mP)) {
+  if(frame.containsPoint(graphics.mP)) {
     if(nodeOver == null) {
       if(memory.actualLogScale) {
         NetworkDraw._drawNodeValues(
-          Math.floor(10 * (Math.pow(Math.E, Math.log((frameP.right + 1) / (frameP.x + 1)) * (mX - frameMargin.x) / frameMargin.width) - 1)) / 10,
-          Math.floor(10 * (Math.pow(Math.E, Math.log((frameP.bottom + 1) / (frameP.y + 1)) * (frameMargin.bottom - mY) / frameMargin.height) - 1)) / 10
+          Math.floor(10 * (Math.pow(Math.E, Math.log((frameP.right + 1) / (frameP.x + 1)) * (graphics.mX - frameMargin.x) / frameMargin.width) - 1)) / 10,
+          Math.floor(10 * (Math.pow(Math.E, Math.log((frameP.bottom + 1) / (frameP.y + 1)) * (frameMargin.bottom - graphics.mY) / frameMargin.height) - 1)) / 10
         );
       } else {
         NetworkDraw._drawNodeValues(
-          Math.floor(10 * (frameP.x + frameP.width * (mX - memory.frameMargin.x) / memory.frameMargin.width)) / 10,
-          Math.floor(10 * (frameP.y + frameP.height * (memory.frameMargin.bottom - mY) / memory.frameMargin.height)) / 10
+          Math.floor(10 * (frameP.x + frameP.width * (graphics.mX - memory.frameMargin.x) / memory.frameMargin.width)) / 10,
+          Math.floor(10 * (frameP.y + frameP.height * (memory.frameMargin.bottom - graphics.mY) / memory.frameMargin.height)) / 10
         );
       }
     } else {
@@ -258,12 +241,12 @@ NetworkDraw.drawNetwork2D = function(frame, network, polygon, respectProportions
 /**
  * @ignore
  */
-NetworkDraw._drawNodeValues = function(vx, vy, name) {
+NetworkDraw._drawNodeValues = function(vx, vy, name, graphics) {
   var text = (name == null ? '' : (name + ': ')) + vx + ", " + vy;
-  setFill('rgba(50,50,50,0.8)');
-  fRect(mX - 2, mY - 2, -getTextW(text) - 4, -14);
-  setText('white', 12, null, 'right', 'bottom');
-  fText(text, mX - 4, mY - 2);
+  graphics.setFill('rgba(50,50,50,0.8)');
+  graphics.fRect(graphics.mX - 2, graphics.mY - 2, - graphics.getTextW(text) - 4, -14);
+  graphics.setText('white', 12, null, 'right', 'bottom');
+  graphics.fText(text, graphics.mX - 4, graphics.mY - 2);
 };
 
 
@@ -273,7 +256,7 @@ NetworkDraw._drawNodeValues = function(vx, vy, name) {
  * drawNetworkMatrix
  * @ignore
  */
-NetworkDraw.drawNetworkMatrix = function(frame, network, colors, relationsColorScaleFunction, margin, directed, normalizedNodeWeights, returnHovered) {
+NetworkDraw.drawNetworkMatrix = function(frame, network, colors, relationsColorScaleFunction, margin, directed, normalizedNodeWeights, returnHovered, graphics) {
   relationsColorScaleFunction = relationsColorScaleFunction == null ? ColorOperators.grayScale : relationsColorScaleFunction;
   margin = margin == null ? 2 : margin;
   directed = directed == null ? false : directed;
@@ -296,7 +279,7 @@ NetworkDraw.drawNetworkMatrix = function(frame, network, colors, relationsColorS
   var xx = dX;
   var yy = dY;
 
-  returnHovered = returnHovered && frame.pointIsInside(mousePoint);
+  returnHovered = returnHovered && frame.pointIsInside(graphics.mousePoint);
 
   if(returnHovered) var hoverValues = new Point(-1, -1);
 
@@ -313,12 +296,12 @@ NetworkDraw.drawNetworkMatrix = function(frame, network, colors, relationsColorS
   }
 
   for(i = 0; nodeList[i] != null; i++) {
-    context.fillStyle = colors[i];
+    graphics.context.fillStyle = colors[i];
     if(useWeights) {
       ww = dX * normalizedNodeWeights[i];
       hh = dY * normalizedNodeWeights[i];
-      context.fillRect(frame.x + xx, frame.y, ww - margin, h);
-      context.fillRect(frame.x, frame.y + yy, w, hh - margin);
+      graphics.context.fillRect(frame.x + xx, frame.y, ww - margin, h);
+      graphics.context.fillRect(frame.x, frame.y + yy, w, hh - margin);
 
       if(returnHovered) {
         if(mouseX > frame.x + xx && mouseX < frame.x + xx + ww) hoverValues.x = i;
@@ -334,23 +317,23 @@ NetworkDraw.drawNetworkMatrix = function(frame, network, colors, relationsColorS
 
 
     } else {
-      context.fillRect(frame.x + (i + 1) * dX, frame.y, w, h);
-      context.fillRect(frame.x, frame.y + (i + 1) * dY, w, h);
+      graphics.context.fillRect(frame.x + (i + 1) * dX, frame.y, w, h);
+      graphics.context.fillRect(frame.x, frame.y + (i + 1) * dY, w, h);
     }
   }
 
   for(i = 0; relationList[i] != null; i++) {
     relation = relationList[i];
-    context.fillStyle = relationsColorScaleFunction(relation.weight);
+    graphics.context.fillStyle = relationsColorScaleFunction(relation.weight);
     if(useWeights) {
-      context.fillRect(frame.x + xNodes[relation.node0.id], frame.y + yNodes[relation.node1.id], wNodes[relation.node0.id] - margin, hNodes[relation.node1.id] - margin);
-      if(!directed) context.fillRect(frame.x + yNodes[relation.node1.id], frame.y + xNodes[relation.node0.id], hNodes[relation.node1.id] - margin, wNodes[relation.node0.id] - margin);
+      graphics.context.fillRect(frame.x + xNodes[relation.node0.id], frame.y + yNodes[relation.node1.id], wNodes[relation.node0.id] - margin, hNodes[relation.node1.id] - margin);
+      if(!directed) graphics.context.fillRect(frame.x + yNodes[relation.node1.id], frame.y + xNodes[relation.node0.id], hNodes[relation.node1.id] - margin, wNodes[relation.node0.id] - margin);
     } else {
       ix = nodeList.indexOf(relation.node0) + 1;
       iy = nodeList.indexOf(relation.node1) + 1;
-      context.fillRect(frame.x + ix * dX, frame.y + iy * dY, w, h);
+      graphics.context.fillRect(frame.x + ix * dX, frame.y + iy * dY, w, h);
       if(!directed && (ix != iy)) {
-        context.fillRect(frame.x + iy * dX, frame.y + ix * dY, w, h);
+        graphics.context.fillRect(frame.x + iy * dX, frame.y + ix * dY, w, h);
       }
     }
 

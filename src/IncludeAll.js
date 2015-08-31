@@ -107,7 +107,7 @@ include('../frameworks2/src/operators/networks/TreeEncodings.js');
 //include('../frameworks2/src/apis/wikipedia/WikipediaArticlesVisits.js');
 
 ////Tools
-include('../frameworks2/src/Tools/graphic/CanvasAndContext.js');
+// include('../frameworks2/src/Tools/graphic/CanvasAndContext.js');
 include('../frameworks2/src/Tools/graphic/Draw.js');
 include('../frameworks2/src/Tools/graphic/DrawSimpleVis.js');
 include('../frameworks2/src/Tools/graphic/DrawTexts.js');

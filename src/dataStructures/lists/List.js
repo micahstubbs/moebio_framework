@@ -1,5 +1,6 @@
 import DataModel from "src/dataStructures/DataModel";
 import NumberList from "src/dataStructures/numeric/NumberList";
+import ColorList from "src/dataStructures/graphic/ColorList";
 import StringList from "src/dataStructures/strings/StringList";
 import DateList from "src/dataStructures/dates/DateList";
 import NodeList from "src/dataStructures/structures/lists/NodeList";
@@ -9,7 +10,6 @@ import PolygonList from "src/dataStructures/geometry/PolygonList";
 import Table from "src/dataStructures/lists/Table";
 import NumberTable from "src/dataStructures/numeric/NumberTable";
 import Interval from "src/dataStructures/numeric/Interval";
-import ColorList from "src/dataStructures/graphic/ColorList";
 import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
 import { instantiateWithSameType, typeOf, instantiate } from "src/tools/utils/code/ClassUtils";
 

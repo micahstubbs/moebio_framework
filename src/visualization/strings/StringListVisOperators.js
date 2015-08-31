@@ -4,7 +4,6 @@ import Point from "src/dataStructures/geometry/Point";
 import NumberList from "src/dataStructures/numeric/NumberList";
 import Polygon from "src/dataStructures/geometry/Polygon";
 import Rectangle from "src/dataStructures/geometry/Rectangle";
-import { context } from "src/Global";
 import DrawTexts from "src/tools/graphic/DrawTexts";
 
 /**
@@ -19,7 +18,7 @@ export default StringListVisOperators;
 /**
  * @todo write docs
  */
-StringListVisOperators.simpleTagCloud = function(stringList, weights, frame, font, interLineFactor) {
+StringListVisOperators.simpleTagCloud = function(stringList, weights, frame, font, interLineFactor, graphics) {
   font = font == null ? 'Arial' : font;
   interLineFactor = interLineFactor == null ? 1.2 : interLineFactor;
 
@@ -61,8 +60,8 @@ StringListVisOperators.simpleTagCloud = function(stringList, weights, frame, fon
 
       sizes.push(sT);
 
-      context.font = String(sT) + 'px ' + font;
-      wT = context.measureText(tag).width;
+      graphics.context.font = String(sT) + 'px ' + font;
+      wT = graphics.context.measureText(tag).width;
 
       if(xx + wT > frame.width) {
         xx = 0;
@@ -111,7 +110,7 @@ StringListVisOperators.simpleTagCloud = function(stringList, weights, frame, fon
 /**
  * @todo write docs
  */
-StringListVisOperators.tagCloudRectangles = function(stringList, weights, frame, mode, margin) {
+StringListVisOperators.tagCloudRectangles = function(stringList, weights, frame, mode, margin, graphics) {
   mode = mode == null ? 0 : mode;
   margin = margin == null ? 0 : margin;
 
@@ -145,6 +144,7 @@ StringListVisOperators.tagCloudRectangles = function(stringList, weights, frame,
       var nStep = 0;
       var nSteps = 1;
       var pc = new Point();
+      break;
     case 1: //circle
       px = 0;
       py = 0;
@@ -160,7 +160,7 @@ StringListVisOperators.tagCloudRectangles = function(stringList, weights, frame,
     textSizes[i] = roundSizes ? Math.round(normWeights[i] * 12) * dL : normWeights[i] * 12 * dL;
 
     DrawTexts.setContextTextProperties('black', textSizes[i], LOADED_FONT, null, null, 'bold');
-    w = Math.ceil((2 + context.measureText(stringList[i]).width) / dL) * dL;
+    w = Math.ceil((2 + graphics.context.measureText(stringList[i]).width) / dL) * dL;
     h = textSizes[i];
 
     switch(mode) {
@@ -175,7 +175,7 @@ StringListVisOperators.tagCloudRectangles = function(stringList, weights, frame,
         }
         break;
       case 1: //circle
-        if(i == 0) {
+        if(i === 0) {
           px = center.x - w * 0.5;
           py = center.y - h * 0.5;
         } else {
@@ -192,7 +192,7 @@ StringListVisOperators.tagCloudRectangles = function(stringList, weights, frame,
         }
         break;
       case 2: //rectangle
-        if(i == 0) {
+        if(i === 0) {
           pc = center.clone();
           px = pc.x - w * 0.5;
           py = pc.y - h * 0.5;

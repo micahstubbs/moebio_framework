@@ -151,36 +151,15 @@ export { NetworkConversions, NetworkEncodings, NetworkGenerators, NetworkOperato
   TreeConversions, TreeEncodings };
 
 // tools/graphic
-import CanvasAndContext from "src/tools/graphic/CanvasAndContext";
 import Draw from "src/tools/graphic/Draw";
 import DrawSimpleVis from "src/tools/graphic/DrawSimpleVis";
 import DrawTexts from "src/tools/graphic/DrawTexts";
 import DrawTextsAdvanced from "src/tools/graphic/DrawTextsAdvanced";
-export { CanvasAndContext, Draw, DrawSimpleVis, DrawTexts, DrawTextsAdvanced };
 
-import {
-  fRect, sRect, fsRect, fArc, sArc, fCircle, sCircle, fsCircle, fEllipse,
-  sEllipse, fsEllipse, fSolidArc, sSolidArc, fsSolidArc, line, bezier, fLines, sLines, fsLines, fsLinesM,
-  fPolygon, sPolygon, fsPolygon, fEqTriangle, sEqTriangle, fsEqTriangle,
-  fRectM, sRectM, fsRectM, fCircleM, sCircleM, fsCircleM, lineM, bezierM,
-  drawImage, fitImage, setFill, setStroke, setLW, clipCircle, clipRectangle,
-  save, clip, restore, fText, sText, fsText, fTextRotated, fTextArc, fTextM, fsTextM,
-  fTextRotatedM, fTextW, setText, getTextW, getPixelData, getPixelColor,
-  getPixelColorRGBA, captureCanvas, setCursor, getMilliseconds,
-  getWindowFrame, sLinesInFrame, fLinesInFrame, fsLinesInFrame, drawGridX, drawGridY
-} from "src/tools/graphic/SimpleGraphics";
+export { Draw, DrawSimpleVis, DrawTexts, DrawTextsAdvanced };
 
-export {
-  fRect, sRect, fsRect, fArc, sArc, fCircle, sCircle, fsCircle, fEllipse,
-  sEllipse, fsEllipse, fSolidArc, sSolidArc, fsSolidArc, line, bezier, fLines, sLines, fsLines, fsLinesM,
-  fPolygon, sPolygon, fsPolygon, fEqTriangle, sEqTriangle, fsEqTriangle,
-  fRectM, sRectM, fsRectM, fCircleM, sCircleM, fsCircleM, lineM, bezierM,
-  drawImage, fitImage, setFill, setStroke, setLW, clipCircle, clipRectangle,
-  save, clip, restore, fText, sText, fsText, fTextRotated, fTextArc, fTextM, fsTextM,
-  fTextRotatedM, fTextW, setText, getTextW, getPixelData, getPixelColor,
-  getPixelColorRGBA, captureCanvas, setCursor, getMilliseconds,
-  getWindowFrame, sLinesInFrame, fLinesInFrame, fsLinesInFrame, drawGridX, drawGridY
-};
+import Graphics from "src/tools/graphic/Graphics";
+export { Graphics };
 
 // tools/interaction
 import DragDetection from "src/tools/interaction/DragDetection";
@@ -228,8 +207,7 @@ export { CirclesVisOperators };
 
 // visualization/graphic
 import ColorsDraw from "src/visualization/graphic/ColorsDraw";
-import ImageDraw from "src/visualization/graphic/ImageDraw";
-export { ColorsDraw, ImageDraw };
+export { ColorsDraw };
 
 // visualization/lists
 import ListDraw from "src/visualization/lists/ListDraw";
@@ -259,36 +237,19 @@ export { NetworkDraw, TreeDraw };
 
 // Global.js
 // Functions
-import { Global, onResize, clearContext, cycleOnMouseMovement, setFrameRate, setAlphaRefresh,
-  enterFrame, startCycle, stopCycle, onMoveCycle, reStartCycle,
-  addInteractionEventListener, onCanvasEvent, removeInteractionEventListener,
-  cancelAllInteractions, setBackgroundColor, activateKeyboard, onKey,
-  activateWheel, setStructureLocalStorageWithSeed,
-  setStructureLocalStorage, getStructureLocalStorageFromSeed,
-  getStructureLocalStorage, getDocWidth, getDocHeight, _onMouse
+import { Global,
+  setStructureLocalStorage,
+  getStructureLocalStorageFromSeed,
+  getStructureLocalStorage
 } from "src/Global";
-export { Global, onResize, clearContext, cycleOnMouseMovement, setFrameRate, setAlphaRefresh,
-  enterFrame, startCycle, stopCycle, onMoveCycle, reStartCycle,
-  addInteractionEventListener, onCanvasEvent, removeInteractionEventListener,
-  cancelAllInteractions, setBackgroundColor, activateKeyboard, onKey,
-  activateWheel, setStructureLocalStorageWithSeed,
-  setStructureLocalStorage, getStructureLocalStorageFromSeed,
-  getStructureLocalStorage, getDocWidth, getDocHeight, _onMouse
+export { Global,
+  setStructureLocalStorage,
+  getStructureLocalStorageFromSeed,
+  getStructureLocalStorage
 };
 // Variables
-import { listenerArray, canvas, userAgent, userAgentVersion,
-  canvasResizeable, dataModelsInfo, cW, cH, cX, cY, mX, mY, mP, nF, MOUSE_DOWN,
-  MOUSE_UP, MOUSE_UP_FAST, WHEEL_CHANGE, NF_DOWN, NF_UP, MOUSE_PRESSED,
-  MOUSE_IN_DOCUMENT, mX_DOWN, mY_DOWN, mX_UP, mY_UP, PREV_mX, PREV_mY,
-  DX_MOUSE, DY_MOUSE, MOUSE_MOVED, T_MOUSE_PRESSED, cursorStyle, backGroundColor,
-  backGroundColorRGB, cycleActive, context, TwoPi, HalfPi, radToGrad, gradToRad,
-  c, _cycleOnMouseMovement
-} from "src/Global";
-export { listenerArray, canvas, userAgent, userAgentVersion,
-  canvasResizeable, dataModelsInfo, cW, cH, cX, cY, mX, mY, mP, nF, MOUSE_DOWN,
-  MOUSE_UP, MOUSE_UP_FAST, WHEEL_CHANGE, NF_DOWN, NF_UP, MOUSE_PRESSED,
-  MOUSE_IN_DOCUMENT, mX_DOWN, mY_DOWN, mX_UP, mY_UP, PREV_mX, PREV_mY,
-  DX_MOUSE, DY_MOUSE, MOUSE_MOVED, T_MOUSE_PRESSED, cursorStyle, backGroundColor,
-  backGroundColorRGB, cycleActive, context, TwoPi, HalfPi, radToGrad, gradToRad,
-  c, _cycleOnMouseMovement
-};
+
+import { userAgent, userAgentVersion, dataModelsInfo,
+  TwoPi, HalfPi, radToGrad, gradToRad } from "src/Global";
+export { userAgent, userAgentVersion, dataModelsInfo,
+  TwoPi, HalfPi, radToGrad, gradToRad };

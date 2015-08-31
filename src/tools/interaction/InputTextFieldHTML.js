@@ -1,10 +1,3 @@
-import { addInteractionEventListener,
-  _cycleOnMouseMovement,
-  reStartCycle,
-  _onMouse,
-  onMoveCycle
-} from 'src/Global';
-
 InputTextFieldHTML.prototype.constructor = InputTextFieldHTML;
 
 
@@ -15,8 +8,9 @@ InputTextFieldHTML.prototype.constructor = InputTextFieldHTML;
  * @constructor
  * @category strings
  */
-function InputTextFieldHTML(configuration) {
+function InputTextFieldHTML(configuration, graphics) {
   this.id = configuration.id == null ? 0 : configuration.id;
+  this.graphics = graphics;
 
   this.target = configuration.target;
 
@@ -38,23 +32,12 @@ function InputTextFieldHTML(configuration) {
   this.border = configuration.border == null ? true : configuration.border;
   this.password = configuration.password;
 
-  this._prevX;
-  this._prevY;
-  this._prevWidth;
-  this._prevHeight;
-  this._prevText;
-
   this.zIndex = 30;
-
-  this.enterFunctionTarget;
-  this.changeFunctionTarget;
-  this.focusFunctionTarget;
-  this.blurFunctionTarget;
 
   this.textColor = configuration.textColor == null ? 'black' : configuration.textColor;
   this.backgroundColor = '#FFFFFF';
 
-  this.main = document.getElementById('maindiv');
+  this.main = graphics.container;// document.getElementById('maindiv');
   this.div = document.createElement('div2');
   this.textarea ? this.DOMtext = document.createElement("textarea") : this.DOMtext = document.createElement("input");
   this.password ? this.DOMtext.setAttribute('type', 'password') : this.DOMtext.setAttribute('type', 'text');
@@ -81,10 +64,8 @@ function InputTextFieldHTML(configuration) {
 
   this.DOMtext.value = "";
 
-  addInteractionEventListener("keydown", this.onKeyDown, this);
-  this._eKeyDown;
-
-  this.timer;
+  //this.graphics.on("keydown", this.onKeyDown, this);
+  this.div.addEventListener("keydown", this.onKeyDown, this);
 
   this.focus = false;
 
@@ -99,8 +80,10 @@ function InputTextFieldHTML(configuration) {
     this.draw();
   }
 
-  this.DOMtext.addEventListener("mousemove", _onMouse, false);
-  if(_cycleOnMouseMovement) this.DOMtext.addEventListener('mousemove', onMoveCycle, false);
+  // TODO What is this supposed to do?
+  this.DOMtext.addEventListener("mousemove", this.graphics._onMouse, false);
+  // TODO find out what this was for onMoveCycle doesn't exist anymore
+  //if(this.graphics._cycleOnMouseMovement) this.DOMtext.addEventListener('mousemove', onMoveCycle, false);
 }
 export default InputTextFieldHTML;
 
@@ -165,16 +148,18 @@ InputTextFieldHTML.prototype.getSelectionStart = function() {
  * @todo write docs
  */
 InputTextFieldHTML.prototype.onKeyDown = function(e) {
-  this._eKeyDown = e;
-  this._keyCode = e.keyCode;
-  this.timer = setTimeout(this.onKeyDownDelayed, 4, this);
+  var target = e.srcElement.parent;
+
+  target._eKeyDown = e;
+  target._keyCode = e.keyCode;
+
+  target.timer = setTimeout(target.onKeyDownDelayed, 4, target);
 };
 
 /**
  * @todo write docs
  */
 InputTextFieldHTML.prototype.onKeyDownDelayed = function(target) {
-
   if(target._keyCode == 13 && target.DOMtext == document.activeElement) {
     if(target.enterFunction != null) {
       target.enterFunction.call(target.enterFunctionTarget, target.id);
@@ -184,7 +169,7 @@ InputTextFieldHTML.prototype.onKeyDownDelayed = function(target) {
   if(target.text != target.DOMtext.value) {
 
     target.text = target.DOMtext.value;
-    var lastChar = target.text.charAt(target.text.length - 1);
+    //var lastChar = target.text.charAt(target.text.length - 1);
 
     if(target._keyCode != 13) {
       if(target.changeFunction != null) {
@@ -192,8 +177,6 @@ InputTextFieldHTML.prototype.onKeyDownDelayed = function(target) {
       }
     }
   }
-
-  if(_cycleOnMouseMovement) reStartCycle();
 
   this.timer = null;
 };
@@ -209,15 +192,15 @@ InputTextFieldHTML.prototype.forceFocus = function() {
 /**
  * @todo write docs
  */
-InputTextFieldHTML.prototype.forceUnfocus = function() {
-  console.log("[!] use InputTextFieldHTML.prototype.forceBlur instead");
-  a.push(0); // TODO where does this come from
-};
+// InputTextFieldHTML.prototype.forceUnfocus = function() {
+//   a.push(0); // TODO where does this come from
+// };
 
 /**
  * @todo write docs
  */
 InputTextFieldHTML.prototype.forceBlur = function() {
+
   this.DOMtext.blur();
   this.focus = false;
 };
@@ -325,19 +308,10 @@ InputTextFieldHTML.prototype.remove = function() {
  * @todo write docs
  */
 InputTextFieldHTML.prototype.readd = function() {
+
   if(!this.added) {
     this.main.appendChild(this.div);
     this.div.appendChild(this.DOMtext);
     this.added = true;
   }
-};
-
-/**
- * @todo write docs
- */
-InputTextFieldHTML.prototype.disappear = function() {
-  console.log('[!] InputTextFieldHTML.prototype.disappear replaced by remove');
-  a.push(0); // TODO where does this come from?
-  this.x = -10000;
-  this.draw();
 };
