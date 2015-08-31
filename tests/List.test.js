@@ -111,7 +111,7 @@ describe("list.getSortedByProperty", function()
     expect(ocrs[1][0]).toBe(9);
     // second most repeated element
     expect(ocrs[0][1]).toBe(11);
-    expect(ocrs[1][1]).toBe(2);
+    expect(ocrs[1][1]).toBe(3);
   });
 
   it("should remove element", function() {
