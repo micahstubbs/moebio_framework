@@ -1,5 +1,6 @@
 import Table from "src/dataStructures/lists/Table";
 import NumberList from "src/dataStructures/numeric/NumberList";
+import List from "src/dataStructures/lists/List";
 import { typeOf } from "src/tools/utils/code/ClassUtils";
 
 NumberTable.prototype = new Table();
@@ -16,10 +17,10 @@ function NumberTable() {
   var args = [];
   var newNumberList;
   var array;
+  var i;
 
   if(arguments.length > 0 && Number(arguments[0]) == arguments[0]) {
     array = [];
-    var i;
     for(i = 0; i < arguments[0]; i++) {
       array.push(new NumberList());
     }
@@ -48,6 +49,7 @@ NumberTable.fromArray = function(array) {
   result.getRowsSums = NumberTable.prototype.getRowsSums;
   result.getAverages = NumberTable.prototype.getAverages;
   result.getRowsAverages = NumberTable.prototype.getRowsAverages;
+  result.getIntervals = NumberTable.prototype.getIntervals;
   result.factor = NumberTable.prototype.factor;
   result.add = NumberTable.prototype.add;
   result.getMax = NumberTable.prototype.getMax;
@@ -144,7 +146,7 @@ NumberTable.prototype.getMax = function() {
  * @todo write docs
  */
 NumberTable.prototype.getMin = function() {
-  if(this.length == 0) return null;
+  if(this.length === 0) return null;
 
   var min = this[0].getMin();
   var i;
@@ -159,7 +161,7 @@ NumberTable.prototype.getMin = function() {
  * @todo write docs
  */
 NumberTable.prototype.getMinMaxInterval = function() {
-  if(this.length == 0) return null;
+  if(this.length === 0) return null;
   var rangeInterval = (this[0]).getMinMaxInterval();
   for(var i = 1; this[i] != null; i++) {
     var newRange = (this[i]).getMinMaxInterval();
@@ -217,16 +219,33 @@ NumberTable.prototype.getRowsAverages = function() {
   var nLists = this.length;
   var averages = this[0].clone().factor(1 / nLists);
   var numberList;
-  var i;
-  var j;
-  for(i = 1; this[i] != null; i++) {
+  var i, j;
+  var length;
+  for(i = 1; i<nLists; i++) {
     numberList = this[i];
-    for(j = 0; numberList[j] != null; j++) {
+    length = numberList.length;
+    for(j = 0; j<length; j++) {
       averages[j] += numberList[j] / nLists;
     }
   }
   return averages;
 };
+
+/**
+ * @todo write docs
+ */
+NumberTable.prototype.getIntervals = function() {
+  var nLists = this.length;
+  var numberList;
+  var i;
+  var intervalList = new List();//TODO: convert into IntervalList once available
+  for(i = 1; i<nLists; i++) {
+    numberList = this[i];
+    intervalList.push(numberList.getInterval());
+  }
+  return intervalList;
+};
+
 
 /**
  * @todo write docs
@@ -277,7 +296,7 @@ NumberTable.prototype.add = function(value) {
 /**
  * @todo write docs
  */
-NumberTable.prototype.getCovarianceMatrix = function(){
+NumberTable.prototype.getCovarianceMatrix = function(){//TODO:move to NumberTableOperators and finish it!
   var newTable = new NumberTable();
   var i;
   for(i = 0; this[i] != null; i++) {
