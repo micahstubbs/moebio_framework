@@ -3,9 +3,6 @@ import NumberTable from "src/dataStructures/numeric/NumberTable";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 import List from "src/dataStructures/lists/List";
 import Table from "src/dataStructures/lists/Table";
-import Relation from "src/dataStructures/structures/elements/Relation";
-import Node from "src/dataStructures/structures/elements/Node";
-import Network from "src/dataStructures/structures/networks/Network";
 import { instantiateWithSameType } from "src/tools/utils/code/ClassUtils";
 
 /**
@@ -57,7 +54,7 @@ NumberTableOperators.normalizeListsToMax = function(numberTable) {
  *
  * @param  {Number} intensity weight for neighbors in average (0<=intensity<=0.5)
  * @param  {Number} nIterations number of ieterations
- * @return {NumberTable}
+ * @return {List} numberList of indexes, or list of numberTables 
  * tags:statistics
  */
 NumberTableOperators.averageSmootherOnLists = function(numberTable, intensity, nIterations) {
@@ -72,6 +69,121 @@ NumberTableOperators.averageSmootherOnLists = function(numberTable, intensity, n
     newNumberTable[i] = NumberListOperators.averageSmoother(numberTable[i], intensity, nIterations);
   });
   return newNumberTable;
+};
+
+
+/**
+ * return k means for k clusters of rows
+ * @param  {NumberTable} numberTable
+ *
+ * @param  {Number} k number of means
+ * @param  {Number} returnIndexesMode return mode:<br>0:return list of lists of indexes of rows (default)<br>1:return means<br>return list of sub-tables<br>return object with list indexes (of clustered rows), means and subtables
+ * @return {Object} numberTable with numberLists of indexes, numberTable with means, list of numberTables of clustered rows, object with all the previous
+ * tags:statistics
+ */
+NumberTableOperators.kMeans = function(numberTable, k, returnIndexesMode){
+  if(numberTable == null || numberTable[0]==null || k == null || k <= 0 || numberTable.getLengths().getInterval().getAmplitude()!==0) return null;
+
+  returnIndexesMode = returnIndexesMode==null?0:returnIndexesMode;
+
+  var intervals = numberTable.getIntervals();
+
+  var clusters;// = returnIndexesMode?new NumberList():new NumberTable();
+
+  switch(returnIndexesMode){
+    case 0://return list of lists of indexes of rows
+      clusters = new NumberTable();
+      break;
+    case 1://return means
+      clusters = new NumberTable();
+      break;
+    case 2://return list of sub-tables
+      clusters = new List();
+      break;
+    case 3://return object with list of indexes of rows, means and list of sub-tables
+      clusters = {indexes:new NumberTable(), means:new NumberTable(), subtables:new List()};
+      break;
+  }
+
+  var i, j, l;
+  var jK;
+  var row;
+  var d;
+  var dMin;
+  var n;
+  var N = 1000;
+  var means = new NumberTable();
+  var length = numberTable.length;
+  var nRows = numberTable[0].length;
+  var rows = numberTable.getTransposed();
+  var initdMin = 99999999;
+  var nRowsMean;
+  var meanRows;
+  var newMean;
+
+  for(j = 0; j < k; j++) {
+    clusters[j] = new NumberList();
+    means[j] = new NumberList();
+    for(i = 0; i<length; i++){
+      means[j].push(intervals[i].getRandom());
+    }
+  }
+
+  for(n = 0; n < N; n++) {
+    //iterations
+
+    //for each row finds its closer mean
+    for(i = 0; i<nRows; i++) {
+      row = rows[i];
+      dMin = initdMin;
+      jK = 0;
+
+      for(j = 0; j < k; j++) {
+        d = row.distance(means[j]);
+        if(d < dMin) {
+          dMin = d;
+          jK = j;
+        }
+      }
+
+      //closer mean to row i is in index jK
+      //row i assigned to cluster jK
+      clusters[jK].push(i);
+    }
+
+    //for each mean it calculates its new values, based on its recently assigned rows
+    for(j=0; j<k; j++){
+      meanRows = clusters[j];
+      nRowsMean = meanRows.length;
+      means[j] = new NumberList();
+      newMean = means[j];
+
+      row = rows[meanRows[0]];
+      for(l=0; l<length; l++){
+        newMean[k] = row[l]/nRowsMean;
+      }
+
+      for(i=1; i<nRowsMean; i++){
+        row = rows[meanRows[i]];
+        for(l=0; l<length; l++){
+            newMean[l] += row[l]/nRowsMean;
+        }
+      }
+    }
+
+  }
+
+  switch(returnIndexesMode){
+    case 0://return list of indexes of rows
+      return clusters;
+    case 1://return means
+      return means;
+    case 2://return list of sub-tables
+      //TODO:build and return
+      break;
+    case 3://return object with list of indexes of rows, means and list of sub-tables
+      return {indexes:clusters, means:means, subtables:null};
+  }
 };
 
 /**
@@ -103,7 +215,7 @@ NumberTableOperators.kNN = function(numberTable, propertyList, vectorList, k, ca
 
     table[0] = new NumberList();
     table[1] = new NumberList();
-    numberTable[0].forEach(function(val, i) {
+    numberTable[0].forEach(function(val, i) {//TODO: make it more efficient by using for
       d2 = 0;
       numberTable.forEach(function(nList, j) {
         d2 += Math.pow(nList[i] - vector[j], 2);
@@ -124,10 +236,6 @@ NumberTableOperators.kNN = function(numberTable, propertyList, vectorList, k, ca
         }
       }
     });
-
-
-
-    //table = table.getListsSortedByList(table[1]);
 
     if(calculateClass) {
       var classTable = new Table();
@@ -163,7 +271,7 @@ NumberTableOperators.kNN = function(numberTable, propertyList, vectorList, k, ca
       sumD += (1 / (table[1][i] + 0.000001));
     }
 
-    console.log('vector:', vector[0], vector[1], 'colsest:', Math.floor(100000000 * table[1][0]), Math.floor(100000000 * table[1][1]), 'categories', propertyList[table[0][0]], propertyList[table[0][1]], 'result', combination / sumD);
+    //console.log('vector:', vector[0], vector[1], 'colsest:', Math.floor(100000000 * table[1][0]), Math.floor(100000000 * table[1][1]), 'categories', propertyList[table[0][0]], propertyList[table[0][1]], 'result', combination / sumD);
 
     return combination / sumD;
 
@@ -227,76 +335,7 @@ NumberTableOperators.kNN = function(numberTable, propertyList, vectorList, k, ca
 
 
 
-//TODO: move to NumberTableConversions
-/**
- * @todo finish docs
- */
-NumberTableOperators.numberTableToNetwork = function(numberTable, method, tolerance) {
-  tolerance = tolerance == null ? 0 : tolerance;
 
-  var network = new Network();
-
-  var list0;
-  var list1;
-
-  var i;
-  var j;
-
-  var node0;
-  var node1;
-  var relation;
-
-
-  switch(method) {
-    case 0: // standard deviation
-
-      var sd;
-      var w;
-
-      for(i = 0; numberTable[i + 1] != null; i++) {
-        list0 = numberTable[i];
-
-        if(i == 0) {
-          node0 = new Node(list0.name, list0.name);
-          network.addNode(node0);
-        } else {
-          node0 = network.nodeList[i];
-        }
-
-
-        for(j = i + 1; numberTable[j] != null; j++) {
-          list1 = numberTable[j];
-
-          if(i == 0) {
-            node1 = new Node(list1.name, list1.name);
-            network.addNode(node1);
-          } else {
-            node1 = network.nodeList[j];
-          }
-
-
-
-          list1 = numberTable[j];
-          sd = NumberListOperators.standardDeviationBetweenTwoNumberLists(list0, list1);
-
-          w = 1 / (1 + sd);
-
-          if(w >= tolerance) {
-            relation = new Relation(i + "_" + j, node0.name + "_" + node1.name, node0, node1, w);
-            network.addRelation(relation);
-          }
-        }
-      }
-
-      break;
-    case 1:
-      break;
-    case 2:
-      break;
-  }
-
-  return network;
-};
 
 
 /**
@@ -309,7 +348,7 @@ NumberTableOperators.product = function(numberTable0, numberTable1){
   if(numberTable0==null || numberTable1==null) return;
   var n = numberTable0.length;
   var m = numberTable0[0].length;
-  if(n==0 || m==0 || n!=numberTable1[0].length || m!=numberTable1.length) return;
+  if(n===0 || m===0 || n!=numberTable1[0].length || m!=numberTable1.length) return;
 
   var newTable = new NumberTable();
   var i, j, k;
