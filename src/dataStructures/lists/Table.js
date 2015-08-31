@@ -369,8 +369,9 @@ Table.prototype.getTransposed = function(firstListAsHeaders) {
 Table.prototype.getReport = function(level) {
   var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
   var lengths = this.getLengths();
-  var minLength = lengths.getMin();
-  var maxLength = lengths.getMax();
+  var intervalLengths = lengths.getInterval();
+  var minLength = intervalLengths.x;
+  var maxLength = intervalLengths.y;
   var averageLength = (minLength + maxLength) * 0.5;
   var sameLengths = minLength == maxLength;
 
