@@ -4,13 +4,14 @@ import NumberList from "src/dataStructures/numeric/NumberList";
 import Point from "src/dataStructures/geometry/Point";
 import DrawTexts from "src/tools/graphic/DrawTexts";
 import Rectangle from "src/dataStructures/geometry/Rectangle";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 
 function StringListDraw() {}
 export default StringListDraw;
 
 StringListDraw.tagCloudRectangles = function(stringList, weights, frame) {
 
-  var normWeights = table[1].sqrt().getNormalizedToMax();
+  var normWeights = NumberListOperators.normalizedToMax(table[1].sqrt());
 
   var rectangles = new List();
   var textPositions = new Polygon();

@@ -193,7 +193,7 @@ StringListOperators.getWordsOccurrencesMatrix = function(strings, stopWords, inc
   if(normalize) {
     matrix.forEach(function(occurrences, i) {
       if(i == 0) return;
-      matrix[i] = matrix[i].getNormalizedToSum();
+      matrix[i] = NumberListOperators.normalizedToSum(matrix[i]);
     });
   }
 

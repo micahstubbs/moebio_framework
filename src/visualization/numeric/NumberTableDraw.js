@@ -14,6 +14,7 @@ import NumberTable from "src/dataStructures/numeric/NumberTable";
 import StringList from "src/dataStructures/strings/StringList";
 import Table from "src/dataStructures/lists/Table";
 import ColorList from "src/dataStructures/graphic/ColorList";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 
 function NumberTableDraw() {}
 export default NumberTableDraw;
@@ -40,7 +41,7 @@ NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listC
 
   var dX = frame.width / numberTable.length;
   var dY = frame.height / numberTable[0].length;
-  
+
   var i;
   var j;
   var numberList;
@@ -102,9 +103,9 @@ NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colo
 
   var i;
   var x, y;
-  var list0 = (loglog ? numberTable[0].log(1) : numberTable[0]).getNormalized();
-  var list1 = (loglog ? numberTable[1].log(1) : numberTable[1]).getNormalized();
-  var radii = numberTable.length <= 2 ? null : numberTable[2].getNormalized().sqrt().factor(maxRadius);
+  var list0 = NumberListOperators.normalized(loglog ? numberTable[0].log(1) : numberTable[0]);
+  var list1 = (loglog ? numberTable[1].log(1) :  NumberListOperators.normalized(numberTable[1]));
+  var radii = numberTable.length <= 2 ? null :  NumberListOperators.normalized(numberTable[2]).sqrt().factor(maxRadius);
   var nColors = (colors == null) ? null : colors.length;
   var n = Math.min(list0.length, list1.length, (radii == null) ? 300000 : radii.length, (texts == null) ? 300000 : texts.length);
   var iOver;
@@ -163,8 +164,8 @@ NumberTableDraw.drawSlopeGraph = function(frame, numberTable, texts, graphics) {
 
   var i;
   var y0, y1;
-  var list0 = numberTable[0].getNormalized();
-  var list1 = numberTable[1].getNormalized();
+  var list0 =  NumberListOperators.normalized(numberTable[0]);
+  var list1 =  NumberListOperators.normalized(numberTable[1]);
   var n = Math.min(list0.length, list1.length, texts == null ? 2000 : texts.length);
 
   var x0 = subframe.x + (texts == null ? 10 : 0.25 * subframe.width);

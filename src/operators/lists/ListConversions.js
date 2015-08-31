@@ -6,6 +6,7 @@ import ColorScales from "src/operators/graphic/ColorScales";
 import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
 import NumberOperators from "src/operators/numeric/NumberOperators";
 import StringList from "src/dataStructures/strings/StringList";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 
 /**
  * @classdesc List Operators
@@ -227,7 +228,7 @@ ListConversions.toReportHtml = function(list, level) { //TODO:complete
 
       if(joined.length < 2000) text += ident + "contents: [" + joined + "]";
 
-      var weights = freqTable[1].getNormalizedToSum();
+      var weights = NumberListOperators.normalizedToSum(freqTable[1]);
 
       var bars = StringOperators.createsCategoricalColorsBlocksHtml(weights, 55, catColors);
       text += ident;

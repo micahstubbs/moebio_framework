@@ -11,6 +11,7 @@ import Table from "src/dataStructures/lists/Table";
 import NumberTable from "src/dataStructures/numeric/NumberTable";
 import Interval from "src/dataStructures/numeric/Interval";
 import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 import { instantiateWithSameType, typeOf, instantiate } from "src/tools/utils/code/ClassUtils";
 
 List.prototype = new DataModel();
@@ -632,7 +633,7 @@ List.prototype.getFrequenciesTable = function(sortListsByOccurrences, addWeights
 
   }
 
-  if(addWeightsNormalizedToSum) table[2] = table[1].getNormalizedToSum();
+  if(addWeightsNormalizedToSum) table[2] = NumberListOperators.normalizedToSum(table[1]);
   if(addCategoricalColors){
     var colors = new ColorList();
     for(i = 0; table[0][i]!=null; i++) {

@@ -156,7 +156,7 @@ export function getTextFromObject(value, type){
   if(value == null) return "Null";
   if(value.isList) {
     if(value.length === 0) return "[]";
-    var text = value.toString(); // value.length>6?value.slice(0, 5).forEach(function(v){return getTextFromObject(v, typeOf(v))}).join(','):value.toStringList().join(',').forEach(function(v, typeOf(v)){return getTextFromObject(v, type)});
+    var text = value.toString(); 
     if(text.length > 160) {
       var i;
       var subtext;

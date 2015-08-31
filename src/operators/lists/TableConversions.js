@@ -239,7 +239,7 @@ TableConversions.toReportHtml = function(table,level) {
     for(i = 0; table[i] != null; i++) {
       text += "<br>" + ident + i + ": " + (table[i].name?"<b>"+table[i].name+"</b>":"<i>no name</i>");
       try{
-         text += ListConversions.getReportHtml(table[i], 1);
+         text += ListConversions.toReportHtml(table[i], 1);
       } catch(err){
         text += ident + "[!] something wrong with list <font style=\"font-size:10px\">:" + err + "</f>";
         console.log('getReportHtml err', err);
@@ -297,4 +297,4 @@ TableConversions.toReportHtml = function(table,level) {
   return text;
 };
 
-TableConversions.getReportObject = function() {}; //TODO
+TableConversions.toReportObject = function() {}; //TODO
