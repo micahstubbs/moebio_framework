@@ -86,7 +86,7 @@ NumberListOperators.shorten = function(numberList, newLength) {
  * tags:ds
  */
 NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
-  if(numberList == null || k == null || !k > 0) return null;
+  if(numberList == null || k == null || k <= 0) return null;
 
   var interval = numberList.getInterval();
 
@@ -100,11 +100,11 @@ NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
   var d;
   var dMin;
   var n;
-  var actualMean;
   var N = 1000;
   var means = new NumberList();
   var nextMeans = new NumberList();
   var nValuesInCluster = new NumberList();
+  var length = numberList.length;
 
   var initdMin = 1 + max - min;
 
@@ -121,7 +121,7 @@ NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
       nextMeans[i] = 0;
     }
 
-    for(i = 0; numberList[i] != null; i++) {
+    for(i = 0; i<length; i++) {
       x = numberList[i];
       dMin = initdMin;
       jK = 0;
