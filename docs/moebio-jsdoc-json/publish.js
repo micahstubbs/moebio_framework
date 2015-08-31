@@ -1,4 +1,5 @@
 var striptags = require('striptags');
+var fs = require('jsdoc/fs');
 
 /*eslint no-nested-ternary:0, space-infix-ops: 0 */
 function clean(childNodes) {
@@ -64,10 +65,11 @@ exports.publish = function(data, opts) {
 
     var cleaned = clean(docs);
 
-    if (opts.destination === 'console') {
-      global.dump(cleaned);
-    }
-    else {
-        console.log('This template only supports output to the console. Use the option "-d console" when you run JSDoc.');
-    }
+    // if (opts.destination === 'console') {
+      // console.log(JSON.stringify(cleaned));
+      fs.writeFileSync("docs.json", JSON.stringify(cleaned, null, 2), 'utf8');
+    // }
+    // else {
+        // console.log('This template only supports output to the console. Use the option "-d console" when you run JSDoc.');
+    // }
 };

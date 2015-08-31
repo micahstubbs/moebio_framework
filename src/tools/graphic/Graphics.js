@@ -1925,8 +1925,8 @@ Graphics.prototype.setText = function(color, fSize, fName, align, baseline, styl
   var fontBaseline = ifDef(baseline, this.fontBaseline);
   var fontStyle = ifDef(style, this.fontStyle);
 
-  if(style !== '') {
-    style += ' ';
+  if(fontStyle !== '') {
+    fontStyle += ' ';
   }
 
   this.context.fillStyle = fontColor;

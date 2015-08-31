@@ -8,6 +8,13 @@ PolygonList.prototype.constructor = PolygonList;
 /**
  * @classdesc A {@link List} structure for storing {@link Polygon} instances.
  *
+ * Additional functions that work on NumberTable can be found in:
+ * <ul>
+ *  <li>Operators:   {@link PolygonListOperators}</li>
+ *  <li>Encodings: {@link PolygonListEncodings}</li>
+ * </ul>
+ *
+ *
  * @description Creates a new PolygonList.
  * @constructor
  * @category geometry
