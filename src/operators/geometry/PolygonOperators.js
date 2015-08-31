@@ -8,11 +8,7 @@ import Point from "src/dataStructures/geometry/Point";
 import GeometryOperators from "src/operators/geometry/GeometryOperators";
 import Interval from "src/dataStructures/numeric/Interval";
 import NumberListGenerators from "src/operators/numeric/numberList/NumberListGenerators";
-import {
-  context,
-  clearContext,
-  TwoPi
-} from "src/Global";
+import { TwoPi } from "src/Global";
 
 /**
  * @classdesc Provides a set of tools that work with Polygons
@@ -275,22 +271,22 @@ PolygonOperators.simplifyPolygon = function(polygon, margin) {
 /**
  * @todo write docs
  */
-PolygonOperators.bezierPolygonContainsPoint = function(polygon, point, border) {
+PolygonOperators.bezierPolygonContainsPoint = function(polygon, point, border, graphics) {
   var frame = polygon.getFrame();
-  clearContext();
-  context.fillStyle = 'black';
-  context.fillRect(0, 0, frame.width, frame.height);
+  graphics.clearContext();
+  graphics.context.fillStyle = 'black';
+  graphics.context.fillRect(0, 0, frame.width, frame.height);
   if(border != null) {
-    context.strokeStyle = 'black';
-    context.lineWidth = border;
+    graphics.context.strokeStyle = 'black';
+    graphics.context.lineWidth = border;
   }
-  context.fillStyle = 'white';
-  context.beginPath();
-  Draw.drawBezierPolygon(context, polygon, -frame.x, -frame.y);
-  context.fill();
-  if(border != null) context.stroke();
-  var data = context.getImageData(point.x - frame.x, point.y - frame.y, 1, 1).data;
-  clearContext();
+  graphics.context.fillStyle = 'white';
+  graphics.context.beginPath();
+  graphics.drawBezierPolygon(polygon, -frame.x, -frame.y);
+  graphics.context.fill();
+  if(border != null) graphics.context.stroke();
+  var data = graphics.context.getImageData(point.x - frame.x, point.y - frame.y, 1, 1).data;
+  graphics.clearContext();
   return data[0] > 0;
 };
 
@@ -303,16 +299,16 @@ PolygonOperators.bezierPolygonContainsPoint = function(polygon, point, border) {
 /**
  * @todo write docs
  */
-PolygonOperators.getBezierPolygonBestCenter = function(polygon, nAttempts) {
+PolygonOperators.getBezierPolygonBestCenter = function(polygon, nAttempts, graphics) {
   nAttempts = nAttempts == null ? 500 : nAttempts;
 
   var frame = polygon.getFrame();
-  context.fillStyle = 'black';
-  context.fillRect(0, 0, frame.width, frame.height);
-  context.fillStyle = 'white';
-  context.beginPath();
-  Draw.drawBezierPolygon(context, polygon, -frame.x, -frame.y);
-  context.fill();
+  graphics.context.fillStyle = 'black';
+  graphics.context.fillRect(0, 0, frame.width, frame.height);
+  graphics.context.fillStyle = 'white';
+  graphics.context.beginPath();
+  graphics.drawBezierPolygon(polygon, -frame.x, -frame.y);
+  graphics.context.fill();
 
   var center;
   var testPoint;
@@ -324,9 +320,9 @@ PolygonOperators.getBezierPolygonBestCenter = function(polygon, nAttempts) {
 
   for(var i = 0; i < nAttempts; i++) {
     center = frame.getRandomPoint();
-    for(angle = 0; angle += 0.1; angle <= TwoPi) {
+    for(angle = 0; angle <= TwoPi; angle += 0.1) {
       r = angle;
-      var data = context.getImageData(center.x + r * Math.cos(angle) - frame.x, center.y + r * Math.sin(angle) - frame.y, 1, 1).data;
+      var data = graphics.context.getImageData(center.x + r * Math.cos(angle) - frame.x, center.y + r * Math.sin(angle) - frame.y, 1, 1).data;
       if(data[0] == 0) {
         if(r > rMax) {
           rMax = r;
@@ -393,7 +389,7 @@ PolygonOperators.convexHull = function(polygon, deepness) {
     //pointsLeftIndexes.removeElement(pointsLeftIndexes[kMin]); //!!!! TODO: FIX THIS!
     pointsLeftIndexes.splice(kMin, 1);
 
-    if(pointsLeftIndexes.length == 0) return indexesHull;
+    if(pointsLeftIndexes.length === 0) return indexesHull;
 
     nHull++;
   }
@@ -427,8 +423,7 @@ PolygonOperators.placePointsInsidePolygon = function(polygon, nPoints, mode) {
         p = new Point(frame.x + Math.random() * frame.width, frame.y + Math.random() * frame.height);
         if(PolygonOperators.polygonContainsPoint(polygon, p)) points.push(p);
       }
-      return points;
-      break;
+      return points;      
   }
 };
 
@@ -451,7 +446,6 @@ PolygonOperators.placePointsInsideBezierPolygon = function(polygon, nPoints, mod
           nAttempts = 0;
         }
       }
-      return points;
-      break;
+      return points;      
   }
 };

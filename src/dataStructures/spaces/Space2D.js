@@ -1,11 +1,4 @@
 import Point from "src/dataStructures/geometry/Point";
-import {
-  addInteractionEventListener,
-  removeInteractionEventListener,
-  mX,
-  mY,
-  cW
-} from "src/Global";
 
 /**
  * @classdesc 2D Interactions
@@ -16,8 +9,9 @@ import {
  * @constructor
  * @category geometry
  */
-function Space2D(configuration) {
+function Space2D(configuration, graphics) {
   configuration = configuration == null ? {} : configuration;
+  this.graphics = graphics;
 
   this.center = configuration.center == null ? new Point(0, 0) : configuration.center;
   this.scale = 1;
@@ -37,9 +31,9 @@ export default Space2D;
 Space2D.prototype.activeInteraction = function() {
   if(this.active) return;
   this.active = true;
-  addInteractionEventListener('mousedown', this.onMouse, this);
-  addInteractionEventListener('mouseup', this.onMouse, this);
-  addInteractionEventListener('mousewheel', this.wheel, this);
+  this.graphics.on('mousedown', this.onMouse, this);
+  this.graphics.on('mouseup', this.onMouse, this);
+  this.graphics.on('mousewheel', this.wheel, this);
 };
 
 /**
@@ -48,17 +42,17 @@ Space2D.prototype.activeInteraction = function() {
 Space2D.prototype.deActivate = function() {
   this.active = false;
   this.dragging = false;
-  removeInteractionEventListener('mousedown', this.onMouse, this);
-  removeInteractionEventListener('mouseup', this.onMouse, this);
-  removeInteractionEventListener('mousemove', this.onMouse, this);
-  removeInteractionEventListener('mousewheel', this.wheel, this);
+  this.graphics.off('mousedown', this.onMouse, this);
+  this.graphics.off('mouseup', this.onMouse, this);
+  this.graphics.off('mousemove', this.onMouse, this);
+  this.graphics.off('mousewheel', this.wheel, this);
 };
 
 /**
  * @todo write docs
  */
 Space2D.prototype.stopDragging = function() {
-  removeInteractionEventListener('mousemove', this.onMouse, this);
+  this.graphics.off('mousemove', this.onMouse, this);
 };
 
 /**
@@ -139,7 +133,7 @@ Space2D.prototype.fixY = function(yDeparture, yArrival) {
  */
 Space2D.prototype.fixHorizontalInterval = function(departureInterval, arrivalInterval) {
   this.scale = arrivalInterval.getAmplitude() / departureInterval.getAmplitude();
-  this.fixX((departureInterval.x + departureInterval.y) * 0.5, cW * 0.5);
+  this.fixX((departureInterval.x + departureInterval.y) * 0.5, this.graphics.cW * 0.5);
 };
 
 //////
@@ -152,20 +146,20 @@ Space2D.prototype.onMouse = function(e) {
     case 'mousedown':
       if(!this.active) return;
       this.dragging = true;
-      this.prev_mX = mX;
-      this.prev_mY = mY;
-      addInteractionEventListener('mousemove', this.onMouse, this);
+      this.prev_mX = this.graphics.mX;
+      this.prev_mY = this.graphics.mY;
+      this.graphics.on('mousemove', this.onMouse, this);
       break;
     case 'mouseup':
       this.dragging = false;
-      removeInteractionEventListener('mousemove', this.onMouse, this);
+      this.graphics.on('mousemove', this.onMouse, this);
       break;
     case 'mousemove':
       if(!this.active) return;
-      this.center.x += (this.prev_mX - mX) / this.scale;
-      this.center.y += (this.prev_mY - mY) / this.scale;
-      this.prev_mX = mX;
-      this.prev_mY = mY;
+      this.center.x += (this.prev_mX - this.graphics.mX) / this.scale;
+      this.center.y += (this.prev_mY - this.graphics.mY) / this.scale;
+      this.prev_mX = this.graphics.mX;
+      this.prev_mY = this.graphics.mY;
       break;
   }
 };
@@ -185,5 +179,5 @@ Space2D.prototype.wheel = function(e) {
     this.scale = this.MAX_SCALE;
     return;
   }
-  this.factorScaleFromPoint(new Point(mX - 0, mY - 0), (1 - 0.02 * e.value));
+  this.factorScaleFromPoint(new Point(this.graphics.mX - 0, this.graphics.mY - 0), (1 - 0.02 * e.value));
 };
