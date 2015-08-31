@@ -75,8 +75,8 @@ NumberTableOperators.averageSmootherOnLists = function(numberTable, intensity, n
 /**
  * return k means for k clusters of rows
  * @param  {NumberTable} numberTable
- *
  * @param  {Number} k number of means
+ *
  * @param  {Number} returnIndexesMode return mode:<br>0:return list of lists of indexes of rows (default)<br>1:return means<br>return list of sub-tables<br>return object with list indexes (of clustered rows), means and subtables
  * @return {Object} numberTable with numberLists of indexes, numberTable with means, list of numberTables of clustered rows, object with all the previous
  * tags:statistics
@@ -87,7 +87,6 @@ NumberTableOperators.kMeans = function(numberTable, k, returnIndexesMode){
   returnIndexesMode = returnIndexesMode==null?0:returnIndexesMode;
 
   var intervals = numberTable.getIntervals();
-
   var clusters;// = returnIndexesMode?new NumberList():new NumberTable();
 
   switch(returnIndexesMode){
@@ -184,6 +183,8 @@ NumberTableOperators.kMeans = function(numberTable, k, returnIndexesMode){
     case 3://return object with list of indexes of rows, means and list of sub-tables
       return {indexes:clusters, means:means, subtables:null};
   }
+
+  return null;
 };
 
 /**
