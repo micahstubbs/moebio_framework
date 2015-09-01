@@ -216,7 +216,7 @@ function drawSimpleShapes() {
 
 
   var g = new mo.Graphics({
-    container: "body",
+    container: "#maindiv",
     dimensions: {
       width: 600,
       height: 500
@@ -241,7 +241,7 @@ function drawSimpleShapes() {
       drawRects(this, 20, 20);
       drawCircles(this, 40, 100);
       drawLines(this, 20, 200);
-      drawText(this, 20, 300);      
+      drawText(this, 20, 300);
     }
   });
   g2.setBackgroundColor('AntiqueWhite');
@@ -252,4 +252,3 @@ function drawSimpleShapes() {
 window.onload = function() {
   drawSimpleShapes();
 };
-
