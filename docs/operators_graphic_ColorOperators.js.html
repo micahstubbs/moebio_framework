@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Moebio Framework: Source: operators/graphic/ColorOperators.js</title>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:700italic,400,700' rel='stylesheet' type='text/css'>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/style.css">
+</head>
+
+<body onload="prettyPrint()">
+
+<div class='hide-mobile pin-left pint-top pin-bottom col2 quiet-scroll scroll-styled fixed'>
+
+  <div class='clearfix fill-background dark center'>
+    <div class='inline pad2y'>
+      <a href="../">Moebio Platform</a> / <a href="index.html">Docs</a>
+    </div>
+  </div>
+  <div class='pad1 small'>
+    <div class="filter-block clearfix">
+      <input type="text" id="filter-input" placeholder="Type to filter">
+      <a href="#" id="clear-filter-button">x</a>
+    </div>
+    <div class='side'>
+      <h3></h3><ul><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all></strong></div><ul><li class="code"><a href="module-Global.html">Global</a></li></ul></div></ul><h3>Numbers</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Axis2D.html">Axis2D</a></li><li class="code"><a href="Interval.html">Interval</a></li><li class="code"><a href="Matrix.html">Matrix</a></li><li class="code"><a href="NumberList.html">NumberList</a></li><li class="code"><a href="NumberTable.html">NumberTable</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="IntervalListOperators.html">IntervalListOperators</a></li><li class="code"><a href="IntervalTableOperators.html">IntervalTableOperators</a></li><li class="code"><a href="NumberListGenerators.html">NumberListGenerators</a></li><li class="code"><a href="NumberListOperators.html">NumberListOperators</a></li><li class="code"><a href="NumberOperators.html">NumberOperators</a></li><li class="code"><a href="NumberTableConversions.html">NumberTableConversions</a></li><li class="code"><a href="NumberTableFlowOperators.html">NumberTableFlowOperators</a></li><li class="code"><a href="NumberTableOperators.html">NumberTableOperators</a></li></ul></div><h3>Colors</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="ColorList.html">ColorList</a></li><li class="code"><a href="ColorScale.html">ColorScale</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="ColorGenerators.html">ColorGenerators</a></li><li class="code"><a href="ColorListGenerators.html">ColorListGenerators</a></li><li class="code"><a href="ColorListOperators.html">ColorListOperators</a></li><li class="code"><a href="ColorOperators.html">ColorOperators</a></li><li class="code"><a href="ColorScaleGenerators.html">ColorScaleGenerators</a></li><li class="code"><a href="ColorScales.html">ColorScales</a></li></ul></div><h3>Geo</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Country.html">Country</a></li><li class="code"><a href="CountryList.html">CountryList</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="CountryListOperators.html">CountryListOperators</a></li><li class="code"><a href="CountryOperators.html">CountryOperators</a></li><li class="code"><a href="GeoOperators.html">GeoOperators</a></li></ul></div><h3>Basics</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DataModel.html">DataModel</a></li><li class="code"><a href="List.html">List</a></li><li class="code"><a href="Table.html">Table</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="FastHtml.html">FastHtml</a></li><li class="code"><a href="ListGenerators.html">ListGenerators</a></li><li class="code"><a href="ListOperators.html">ListOperators</a></li><li class="code"><a href="MatrixGenerators.html">MatrixGenerators</a></li><li class="code"><a href="ObjectConversions.html">ObjectConversions</a></li><li class="code"><a href="ObjectOperators.html">ObjectOperators</a></li><li class="code"><a href="TableConversions.html">TableConversions</a></li><li class="code"><a href="TableEncodings.html">TableEncodings</a></li><li class="code"><a href="TableGenerators.html">TableGenerators</a></li><li class="code"><a href="TableOperators.html">TableOperators</a></li></ul></div><h3>Dates</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DateAxis.html">DateAxis</a></li><li class="code"><a href="DateInterval.html">DateInterval</a></li><li class="code"><a href="DateList.html">DateList</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="DateListOperators.html">DateListOperators</a></li><li class="code"><a href="DateOperators.html">DateOperators</a></li></ul></div><h3>Interactions</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DragDetection.html">DragDetection</a></li></ul></div><h3>Geometry</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Engine3D.html">Engine3D</a></li><li class="code"><a href="Point.html">Point</a></li><li class="code"><a href="Point3D.html">Point3D</a></li><li class="code"><a href="Polygon.html">Polygon</a></li><li class="code"><a href="Polygon3D.html">Polygon3D</a></li><li class="code"><a href="Polygon3DList.html">Polygon3DList</a></li><li class="code"><a href="PolygonList.html">PolygonList</a></li><li class="code"><a href="Rectangle.html">Rectangle</a></li><li class="code"><a href="RectangleList.html">RectangleList</a></li><li class="code"><a href="Space2D.html">Space2D</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="Draw.html">Draw</a></li><li class="code"><a href="GeometryConvertions.html">GeometryConvertions</a></li><li class="code"><a href="GeometryOperators.html">GeometryOperators</a></li><li class="code"><a href="PointOperators.html">PointOperators</a></li><li class="code"><a href="PolygonGenerators.html">PolygonGenerators</a></li><li class="code"><a href="PolygonListEncodings.html">PolygonListEncodings</a></li><li class="code"><a href="PolygonListOperators.html">PolygonListOperators</a></li><li class="code"><a href="PolygonOperators.html">PolygonOperators</a></li><li class="code"><a href="RectangleOperators.html">RectangleOperators</a></li></ul></div><h3>Networks</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Forces.html">Forces</a></li><li class="code"><a href="Network.html">Network</a></li><li class="code"><a href="Node.html">Node</a></li><li class="code"><a href="NodeList.html">NodeList</a></li><li class="code"><a href="Relation.html">Relation</a></li><li class="code"><a href="RelationList.html">RelationList</a></li><li class="code"><a href="Tree.html">Tree</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="NetworkConvertions.html">NetworkConvertions</a></li><li class="code"><a href="NetworkDraw.html">NetworkDraw</a></li><li class="code"><a href="NetworkEncodings.html">NetworkEncodings</a></li><li class="code"><a href="NetworkGenerators.html">NetworkGenerators</a></li><li class="code"><a href="NetworkOperators.html">NetworkOperators</a></li><li class="code"><a href="TreeConvertions.html">TreeConvertions</a></li><li class="code"><a href="TreeDraw.html">TreeDraw</a></li><li class="code"><a href="TreeEncodings.html">TreeEncodings</a></li></ul></div><h3>Strings</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="InputTextFieldHTML.html">InputTextFieldHTML</a></li><li class="code"><a href="StringList.html">StringList</a></li><li class="code"><a href="TextBox.html">TextBox</a></li><li class="code"><a href="TextFieldHTML.html">TextFieldHTML</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="DrawTexts.html">DrawTexts</a></li><li class="code"><a href="DrawTextsAdvanced.html">DrawTextsAdvanced</a></li><li class="code"><a href="StringConversions.html">StringConversions</a></li><li class="code"><a href="StringListOperators.html">StringListOperators</a></li><li class="code"><a href="StringListVisOperators.html">StringListVisOperators</a></li><li class="code"><a href="StringOperators.html">StringOperators</a></li><li class="code"><a href="StringUtils.html">StringUtils</a></li></ul></div><h3>Misc</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="LoadEvent.html">LoadEvent</a></li><li class="code"><a href="MultiLoader.html">MultiLoader</a></li></ul></div><h3>Functions</h3><ul><li class="small"><a href="global.html#Graphics">Graphics</a></li><li class="small"><a href="global.html#Triangle">Triangle</a></li></ul></div>
+    </div>
+  </div>
+</div>
+<div class='limiter margin2'>
+    <div class='pad1y pad2x fill-white'>
+      <div class='prose'>
+        <div class='pad2y'>
+          <h1 class='code'>Source: operators/graphic/ColorOperators.js</h1>
+        </div>
+        
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @classdesc Provides a set of tools that work with Colors.
+ *
+ * @namespace
+ * @category colors
+ */
+function ColorOperators() {}
+export default ColorOperators;
+// TODO: create Color struture to be used instead of arrays [255, 100,0] ?
+
+/**
+ * return a color between color0 and color1
+ * 0 -> color0
+ * 1 -> color1
+ * @param {String} color0
+ * @param {String} color1
+ * @param value between 0 and 1 (to obtain color between color0 and color1)
+ * @return {String} interpolated color
+ *
+ */
+ColorOperators.interpolateColors = function(color0, color1, value) {
+  var resultArray = ColorOperators.interpolateColorsRGB(ColorOperators.colorStringToRGB(color0), ColorOperators.colorStringToRGB(color1), value);
+  return ColorOperators.RGBtoHEX(resultArray[0], resultArray[1], resultArray[2]);
+};
+
+
+/**
+ * return a color between color0 and color1
+ * 0 -> color0
+ * 1 -> color1
+ * @param {Array} color0 RGB
+ * @param {Array} color1 RGB
+ * @param value between 0 and 1 (to obtain values between color0 and color1)
+ * @return {Array} interpolated RGB color
+ *
+ */
+ColorOperators.interpolateColorsRGB = function(color0, color1, value) {
+  var s = 1 - value;
+  return [Math.floor(s * color0[0] + value * color1[0]), Math.floor(s * color0[1] + value * color1[1]), Math.floor(s * color0[2] + value * color1[2])];
+};
+
+/**
+ * converts an hexadecimal color to RGB
+ * @param {String} an hexadecimal color string
+ * @return {Array} returns an RGB color Array
+ *
+ */
+ColorOperators.HEXtoRGB = function(hexColor) {
+  return [parseInt(hexColor.substr(1, 2), 16), parseInt(hexColor.substr(3, 2), 16), parseInt(hexColor.substr(5, 2), 16)];
+};
+
+
+/**
+ * Converts RGB values to a hexadecimal color string.
+ * @param {Number} red R value.
+ * @param {Number} green G value.
+ * @param {Number} blue B value.
+ * @return {String} hexadecimal representation of the colors.
+ */
+ColorOperators.RGBtoHEX = function(red, green, blue) {
+  return "#" + ColorOperators.toHex(red) + ColorOperators.toHex(green) + ColorOperators.toHex(blue);
+};
+
+/**
+ * @todo write docs
+ */
+ColorOperators.RGBArrayToString = function(array) {
+  return 'rgb(' + array[0] + ',' + array[1] + ',' + array[2] + ')';
+};
+
+/**
+ * @todo write docs
+ */
+ColorOperators.colorStringToHEX = function(color_string) {
+  var rgb = ColorOperators.colorStringToRGB(color_string);
+  return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+};
+
+
+/**
+ * @todo write docs
+ */
+ColorOperators.numberToHex = function(number) {
+  var hex = number.toString(16);
+  while(hex.length &lt; 2) hex = "0" + hex;
+  return hex;
+};
+
+/**
+ * @todo write docs
+ */
+ColorOperators.uinttoRGB = function(color) {
+  var rgbColor = new Array(color >> 16, (color >> 8) - ((color >> 16) &lt;&lt; 8), color - ((color >> 8) &lt;&lt; 8));
+  return rgbColor;
+};
+
+/**
+ * @todo write docs
+ */
+ColorOperators.uinttoHEX = function(color) {
+  var rgbColor = ColorOperators.uinttoRGB(color);
+  var hexColor = ColorOperators.RGBToHEX(rgbColor[0], rgbColor[1], rgbColor[2]);
+  return hexColor;
+};
+
+/**
+ * @todo write docs
+ */
+ColorOperators.RGBtouint = function(red, green, blue) {
+  return Number(red) &lt;&lt; 16 | Number(green) &lt;&lt; 8 | Number(blue);
+};
+
+/**
+ * @todo write docs
+ */
+ColorOperators.HEXtouint = function(hexColor) {
+  var colorArray = ColorOperators.HEXtoRGB(hexColor);
+  var color = ColorOperators.RGBtouint(colorArray[0], colorArray[1], colorArray[2]);
+  return color;
+};
+
+/**
+ * @todo write docs
+ */
+ColorOperators.grayByLevel = function(level) {
+  level = Math.floor(level * 255);
+  return 'rgb(' + level + ',' + level + ',' + level + ')';
+};
+
+/**
+ * converts an hexadecimal color to HSV
+ * @param {String} an hexadecimal color string
+ * @return {Array} returns an HSV color Array
+ *
+ */
+ColorOperators.HEXtoHSV = function(hexColor) {
+  var rgb = ColorOperators.HEXtoRGB(hexColor);
+  return ColorOperators.RGBtoHSV(rgb[0], rgb[1], rgb[2]);
+};
+
+
+/**
+ * @todo write docs
+ */
+ColorOperators.HSVtoHEX = function(hue, saturation, value) {
+  var rgb = ColorOperators.HSVtoRGB(hue, saturation, value);
+  return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+};
+
+/**
+ * @todo write docs
+ */
+ColorOperators.HSLtoHEX = function(hue, saturation, light) {
+  var rgb = ColorOperators.HSLtoRGB(hue, saturation, light);
+  return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+};
+
+/**
+ * converts an RGB color to HSV
+ * @param {Array} a RGB color array
+ * @return {Array} returns a HSV color array
+ * H in [0,360], S in [0,1], V in [0,1]
+ */
+ColorOperators.RGBtoHSV = function(r, g, b) {
+    var h;
+    var s;
+    var v;
+    var min = Math.min(Math.min(r, g), b);
+    var max = Math.max(Math.max(r, g), b);
+    v = max / 255;
+    var delta = max - min;
+    if(delta == 0) return new Array(0, 0, r / 255);
+    if(max != 0) {
+      s = delta / max;
+    } else {
+      s = 0;
+      h = -1;
+      return new Array(h, s, v);
+    }
+    if(r == max) {
+      h = (g - b) / delta;
+    } else if(g == max) {
+      h = 2 + (b - r) / delta;
+    } else {
+      h = 4 + (r - g) / delta;
+    }
+    h *= 60;
+    if(h &lt; 0) h += 360;
+    return new Array(h, s, v);
+  };
+
+/**
+ * converts an HSV color to RGB
+ * @param {Array} a HSV color array
+ * @return {Array} returns a RGB color array
+ */
+ColorOperators.HSVtoRGB = function(hue, saturation, value) {
+  hue = hue ? hue : 0;
+  saturation = saturation ? saturation : 0;
+  value = value ? value : 0;
+  var r;
+  var g;
+  var b;
+  //
+  var i;
+  var f;
+  var p;
+  var q;
+  var t;
+  if(saturation == 0) {
+    r = g = b = value;
+    return [Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255)];
+  }
+  hue /= 60;
+  i = Math.floor(hue);
+  f = hue - i;
+  p = value * (1 - saturation);
+  q = value * (1 - saturation * f);
+  t = value * (1 - saturation * (1 - f));
+  switch(i) {
+    case 0:
+      r = value;
+      g = t;
+      b = p;
+      break;
+    case 1:
+      r = q;
+      g = value;
+      b = p;
+      break;
+    case 2:
+      r = p;
+      g = value;
+      b = t;
+      break;
+    case 3:
+      r = p;
+      g = q;
+      b = value;
+      break;
+    case 4:
+      r = t;
+      g = p;
+      b = value;
+      break;
+    default:
+      r = value;
+      g = p;
+      b = q;
+      break;
+  }
+  return new Array(Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255));
+};
+
+/**
+ * Converts an HSL color value to RGB. Conversion formula
+ * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
+ * Assumes hue is contained in the interval [0,360) and saturation and l are contained in the set [0, 1]
+ */
+ColorOperators.HSLtoRGB = function(hue, saturation, light) {
+  var r, g, b;
+
+  if(saturation == 0) {
+    r = g = b = light; // achromatic
+  } else {
+    function hue2rgb(p, q, t) {
+      if(t &lt; 0) t += 1;
+      if(t > 1) t -= 1;
+      if(t &lt; 1 / 6) return p + (q - p) * 6 * t;
+      if(t &lt; 1 / 2) return q;
+      if(t &lt; 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+      return p;
+    }
+
+    var q = light &lt; 0.5 ? light * (1 + saturation) : light + saturation - light * saturation;
+    var p = 2 * light - q;
+    r = hue2rgb(p, q, (hue / 360) + 1 / 3);
+    g = hue2rgb(p, q, hue / 360);
+    b = hue2rgb(p, q, (hue / 360) - 1 / 3);
+  }
+
+  return [Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255)];
+};
+
+/**
+ * @todo write docs
+ */
+ColorOperators.invertColorRGB = function(r, g, b) {
+  return [255 - r, 255 - g, 255 - b];
+};
+
+/**
+ * @todo write docs
+ */
+ColorOperators.addAlpha = function(color, alpha) {
+  //var rgb = color.substr(0,3)=='rgb'?ColorOperators.colorStringToRGB(color):ColorOperators.HEXtoRGB(color);
+  var rgb = ColorOperators.colorStringToRGB(color);
+  if(rgb == null) return 'black';
+  return 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + alpha + ')';
+};
+
+/**
+ * @todo write docs
+ */
+ColorOperators.invertColor = function(color) {
+  var rgb = ColorOperators.colorStringToRGB(color);
+  rgb = ColorOperators.invertColorRGB(rgb[0], rgb[1], rgb[2]);
+  return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+};
+
+/**
+ * @todo write docs
+ */
+ColorOperators.toHex = function(number) {
+  var hex = number.toString(16);
+  while(hex.length &lt; 2) hex = "0" + hex;
+  return hex;
+};
+
+/**
+ * @todo write docs
+ */
+ColorOperators.getRandomColor = function() {
+  return 'rgb(' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ')';
+};
+
+
+/////// Universal matching
+
+
+
+/**
+ * This method was partially obtained (and simplified) from a Class by Stoyan Stefanov: "A class to parse color values / @author Stoyan Stefanov &lt;sstoo@gmail.com> / @link   http://www.phpied.com/rgb-color-parser-in-javascript/ / @license Use it if you like it"
+ * @param {String} color_string color as a string (e.g. "red", "#0044ff", "rgb(130,20,100)")
+ * @return {Array} rgb array
+ * tags:
+ */
+ColorOperators.colorStringToRGB = function(color_string) {
+  //c.log('color_string:['+color_string+']');
+  var ok = false;
+
+  // strip any leading #
+  if(color_string.charAt(0) == '#') { // remove # if any
+    color_string = color_string.substr(1, 6);
+    //c.log('-> color_string:['+color_string+']');
+  }
+
+  color_string = color_string.replace(/ /g, '');
+  color_string = color_string.toLowerCase();
+
+  // before getting into regexps, try simple matches
+  // and overwrite the input
+  var simple_colors = {
+    aliceblue: 'f0f8ff',
+    antiquewhite: 'faebd7',
+    aqua: '00ffff',
+    aquamarine: '7fffd4',
+    azure: 'f0ffff',
+    beige: 'f5f5dc',
+    bisque: 'ffe4c4',
+    black: '000000',
+    blanchedalmond: 'ffebcd',
+    blue: '0000ff',
+    blueviolet: '8a2be2',
+    brown: 'a52a2a',
+    burlywood: 'deb887',
+    cadetblue: '5f9ea0',
+    chartreuse: '7fff00',
+    chocolate: 'd2691e',
+    coral: 'ff7f50',
+    cornflowerblue: '6495ed',
+    cornsilk: 'fff8dc',
+    crimson: 'dc143c',
+    cyan: '00ffff',
+    darkblue: '00008b',
+    darkcyan: '008b8b',
+    darkgoldenrod: 'b8860b',
+    darkgray: 'a9a9a9',
+    darkgreen: '006400',
+    darkkhaki: 'bdb76b',
+    darkmagenta: '8b008b',
+    darkolivegreen: '556b2f',
+    darkorange: 'ff8c00',
+    darkorchid: '9932cc',
+    darkred: '8b0000',
+    darksalmon: 'e9967a',
+    darkseagreen: '8fbc8f',
+    darkslateblue: '483d8b',
+    darkslategray: '2f4f4f',
+    darkturquoise: '00ced1',
+    darkviolet: '9400d3',
+    deeppink: 'ff1493',
+    deepskyblue: '00bfff',
+    dimgray: '696969',
+    dodgerblue: '1e90ff',
+    feldspar: 'd19275',
+    firebrick: 'b22222',
+    floralwhite: 'fffaf0',
+    forestgreen: '228b22',
+    fuchsia: 'ff00ff',
+    gainsboro: 'dcdcdc',
+    ghostwhite: 'f8f8ff',
+    gold: 'ffd700',
+    goldenrod: 'daa520',
+    gray: '808080',
+    green: '008000',
+    greenyellow: 'adff2f',
+    honeydew: 'f0fff0',
+    hotpink: 'ff69b4',
+    indianred: 'cd5c5c',
+    indigo: '4b0082',
+    ivory: 'fffff0',
+    khaki: 'f0e68c',
+    lavender: 'e6e6fa',
+    lavenderblush: 'fff0f5',
+    lawngreen: '7cfc00',
+    lemonchiffon: 'fffacd',
+    lightblue: 'add8e6',
+    lightcoral: 'f08080',
+    lightcyan: 'e0ffff',
+    lightgoldenrodyellow: 'fafad2',
+    lightgrey: 'd3d3d3',
+    lightgreen: '90ee90',
+    lightpink: 'ffb6c1',
+    lightsalmon: 'ffa07a',
+    lightseagreen: '20b2aa',
+    lightskyblue: '87cefa',
+    lightslateblue: '8470ff',
+    lightslategray: '778899',
+    lightsteelblue: 'b0c4de',
+    lightyellow: 'ffffe0',
+    lime: '00ff00',
+    limegreen: '32cd32',
+    linen: 'faf0e6',
+    magenta: 'ff00ff',
+    maroon: '800000',
+    mediumaquamarine: '66cdaa',
+    mediumblue: '0000cd',
+    mediumorchid: 'ba55d3',
+    mediumpurple: '9370d8',
+    mediumseagreen: '3cb371',
+    mediumslateblue: '7b68ee',
+    mediumspringgreen: '00fa9a',
+    mediumturquoise: '48d1cc',
+    mediumvioletred: 'c71585',
+    midnightblue: '191970',
+    mintcream: 'f5fffa',
+    mistyrose: 'ffe4e1',
+    moccasin: 'ffe4b5',
+    navajowhite: 'ffdead',
+    navy: '000080',
+    oldlace: 'fdf5e6',
+    olive: '808000',
+    olivedrab: '6b8e23',
+    orange: 'ffa500',
+    orangered: 'ff4500',
+    orchid: 'da70d6',
+    palegoldenrod: 'eee8aa',
+    palegreen: '98fb98',
+    paleturquoise: 'afeeee',
+    palevioletred: 'd87093',
+    papayawhip: 'ffefd5',
+    peachpuff: 'ffdab9',
+    peru: 'cd853f',
+    pink: 'ffc0cb',
+    plum: 'dda0dd',
+    powderblue: 'b0e0e6',
+    purple: '800080',
+    red: 'ff0000',
+    rosybrown: 'bc8f8f',
+    royalblue: '4169e1',
+    saddlebrown: '8b4513',
+    salmon: 'fa8072',
+    sandybrown: 'f4a460',
+    seagreen: '2e8b57',
+    seashell: 'fff5ee',
+    sienna: 'a0522d',
+    silver: 'c0c0c0',
+    skyblue: '87ceeb',
+    slateblue: '6a5acd',
+    slategray: '708090',
+    snow: 'fffafa',
+    springgreen: '00ff7f',
+    steelblue: '4682b4',
+    tan: 'd2b48c',
+    teal: '008080',
+    thistle: 'd8bfd8',
+    tomato: 'ff6347',
+    turquoise: '40e0d0',
+    violet: 'ee82ee',
+    violetred: 'd02090',
+    wheat: 'f5deb3',
+    white: 'ffffff',
+    whitesmoke: 'f5f5f5',
+    yellow: 'ffff00',
+    yellowgreen: '9acd32'
+  };
+
+  if(simple_colors[color_string] != null) color_string = simple_colors[color_string];
+
+
+  // array of color definition objects
+  var color_defs = [
+  {
+    re: /^rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)$/,
+    //example: ['rgb(123, 234, 45)', 'rgb(255,234,245)'],
+    process: function(bits) {
+      return [
+        parseInt(bits[1]),
+        parseInt(bits[2]),
+        parseInt(bits[3])
+      ];
+    }
+  },
+  {
+    re: /^rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),[\.0123456789]+\)$/,
+    //example: ['rgb(123, 234, 45)', 'rgb(255,234,245)', 'rgba(200,100,120,0.3)'],
+    process: function(bits) {
+      return [
+        parseInt(bits[1]),
+        parseInt(bits[2]),
+        parseInt(bits[3])
+      ];
+    }
+  },
+  {
+    re: /^(\w{2})(\w{2})(\w{2})$/,
+    //example: ['#00ff00', '336699'],
+    process: function(bits) {
+      return [
+        parseInt(bits[1], 16),
+        parseInt(bits[2], 16),
+        parseInt(bits[3], 16)
+      ];
+    }
+  },
+  {
+    re: /^(\w{1})(\w{1})(\w{1})$/,
+    //example: ['#fb0', 'f0f'],
+    process: function(bits) {
+      return [
+        parseInt(bits[1] + bits[1], 16),
+        parseInt(bits[2] + bits[2], 16),
+        parseInt(bits[3] + bits[3], 16)
+      ];
+    }
+  }];
+
+  // search through the definitions to find a match
+  for(var i = 0; i &lt; color_defs.length; i++) {
+    var re = color_defs[i].re;
+    var processor = color_defs[i].process;
+    var bits = re.exec(color_string);
+    if(bits) {
+      return processor(bits);
+    }
+
+  }
+
+  return null;
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+      </div>
+    </div>
+    <div class='quiet small center pad1y'>
+    </div>
+  </div>
+  <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <script src="scripts/filter.js"></script>
+  <script src="scripts/prettify/prettify.js"></script>
+</body>
+</html>

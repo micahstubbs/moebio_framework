@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Moebio Framework: Source: operators/graphic/ColorScales.js</title>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:700italic,400,700' rel='stylesheet' type='text/css'>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/style.css">
+</head>
+
+<body onload="prettyPrint()">
+
+<div class='hide-mobile pin-left pint-top pin-bottom col2 quiet-scroll scroll-styled fixed'>
+
+  <div class='clearfix fill-background dark center'>
+    <div class='inline pad2y'>
+      <a href="../">Moebio Platform</a> / <a href="index.html">Docs</a>
+    </div>
+  </div>
+  <div class='pad1 small'>
+    <div class="filter-block clearfix">
+      <input type="text" id="filter-input" placeholder="Type to filter">
+      <a href="#" id="clear-filter-button">x</a>
+    </div>
+    <div class='side'>
+      <h3></h3><ul><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all></strong></div><ul><li class="code"><a href="module-Global.html">Global</a></li></ul></div></ul><h3>Numbers</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Axis2D.html">Axis2D</a></li><li class="code"><a href="Interval.html">Interval</a></li><li class="code"><a href="Matrix.html">Matrix</a></li><li class="code"><a href="NumberList.html">NumberList</a></li><li class="code"><a href="NumberTable.html">NumberTable</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="IntervalListOperators.html">IntervalListOperators</a></li><li class="code"><a href="IntervalTableOperators.html">IntervalTableOperators</a></li><li class="code"><a href="NumberListGenerators.html">NumberListGenerators</a></li><li class="code"><a href="NumberListOperators.html">NumberListOperators</a></li><li class="code"><a href="NumberOperators.html">NumberOperators</a></li><li class="code"><a href="NumberTableConversions.html">NumberTableConversions</a></li><li class="code"><a href="NumberTableFlowOperators.html">NumberTableFlowOperators</a></li><li class="code"><a href="NumberTableOperators.html">NumberTableOperators</a></li></ul></div><h3>Colors</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="ColorList.html">ColorList</a></li><li class="code"><a href="ColorScale.html">ColorScale</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="ColorGenerators.html">ColorGenerators</a></li><li class="code"><a href="ColorListGenerators.html">ColorListGenerators</a></li><li class="code"><a href="ColorListOperators.html">ColorListOperators</a></li><li class="code"><a href="ColorOperators.html">ColorOperators</a></li><li class="code"><a href="ColorScaleGenerators.html">ColorScaleGenerators</a></li><li class="code"><a href="ColorScales.html">ColorScales</a></li></ul></div><h3>Geo</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Country.html">Country</a></li><li class="code"><a href="CountryList.html">CountryList</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="CountryListOperators.html">CountryListOperators</a></li><li class="code"><a href="CountryOperators.html">CountryOperators</a></li><li class="code"><a href="GeoOperators.html">GeoOperators</a></li></ul></div><h3>Basics</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DataModel.html">DataModel</a></li><li class="code"><a href="List.html">List</a></li><li class="code"><a href="Table.html">Table</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="FastHtml.html">FastHtml</a></li><li class="code"><a href="ListGenerators.html">ListGenerators</a></li><li class="code"><a href="ListOperators.html">ListOperators</a></li><li class="code"><a href="MatrixGenerators.html">MatrixGenerators</a></li><li class="code"><a href="ObjectConversions.html">ObjectConversions</a></li><li class="code"><a href="ObjectOperators.html">ObjectOperators</a></li><li class="code"><a href="TableConversions.html">TableConversions</a></li><li class="code"><a href="TableEncodings.html">TableEncodings</a></li><li class="code"><a href="TableGenerators.html">TableGenerators</a></li><li class="code"><a href="TableOperators.html">TableOperators</a></li></ul></div><h3>Dates</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DateAxis.html">DateAxis</a></li><li class="code"><a href="DateInterval.html">DateInterval</a></li><li class="code"><a href="DateList.html">DateList</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="DateListOperators.html">DateListOperators</a></li><li class="code"><a href="DateOperators.html">DateOperators</a></li></ul></div><h3>Interactions</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DragDetection.html">DragDetection</a></li></ul></div><h3>Geometry</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Engine3D.html">Engine3D</a></li><li class="code"><a href="Point.html">Point</a></li><li class="code"><a href="Point3D.html">Point3D</a></li><li class="code"><a href="Polygon.html">Polygon</a></li><li class="code"><a href="Polygon3D.html">Polygon3D</a></li><li class="code"><a href="Polygon3DList.html">Polygon3DList</a></li><li class="code"><a href="PolygonList.html">PolygonList</a></li><li class="code"><a href="Rectangle.html">Rectangle</a></li><li class="code"><a href="RectangleList.html">RectangleList</a></li><li class="code"><a href="Space2D.html">Space2D</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="Draw.html">Draw</a></li><li class="code"><a href="GeometryConvertions.html">GeometryConvertions</a></li><li class="code"><a href="GeometryOperators.html">GeometryOperators</a></li><li class="code"><a href="PointOperators.html">PointOperators</a></li><li class="code"><a href="PolygonGenerators.html">PolygonGenerators</a></li><li class="code"><a href="PolygonListEncodings.html">PolygonListEncodings</a></li><li class="code"><a href="PolygonListOperators.html">PolygonListOperators</a></li><li class="code"><a href="PolygonOperators.html">PolygonOperators</a></li><li class="code"><a href="RectangleOperators.html">RectangleOperators</a></li></ul></div><h3>Networks</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Forces.html">Forces</a></li><li class="code"><a href="Network.html">Network</a></li><li class="code"><a href="Node.html">Node</a></li><li class="code"><a href="NodeList.html">NodeList</a></li><li class="code"><a href="Relation.html">Relation</a></li><li class="code"><a href="RelationList.html">RelationList</a></li><li class="code"><a href="Tree.html">Tree</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="NetworkConvertions.html">NetworkConvertions</a></li><li class="code"><a href="NetworkDraw.html">NetworkDraw</a></li><li class="code"><a href="NetworkEncodings.html">NetworkEncodings</a></li><li class="code"><a href="NetworkGenerators.html">NetworkGenerators</a></li><li class="code"><a href="NetworkOperators.html">NetworkOperators</a></li><li class="code"><a href="TreeConvertions.html">TreeConvertions</a></li><li class="code"><a href="TreeDraw.html">TreeDraw</a></li><li class="code"><a href="TreeEncodings.html">TreeEncodings</a></li></ul></div><h3>Strings</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="InputTextFieldHTML.html">InputTextFieldHTML</a></li><li class="code"><a href="StringList.html">StringList</a></li><li class="code"><a href="TextBox.html">TextBox</a></li><li class="code"><a href="TextFieldHTML.html">TextFieldHTML</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="DrawTexts.html">DrawTexts</a></li><li class="code"><a href="DrawTextsAdvanced.html">DrawTextsAdvanced</a></li><li class="code"><a href="StringConversions.html">StringConversions</a></li><li class="code"><a href="StringListOperators.html">StringListOperators</a></li><li class="code"><a href="StringListVisOperators.html">StringListVisOperators</a></li><li class="code"><a href="StringOperators.html">StringOperators</a></li><li class="code"><a href="StringUtils.html">StringUtils</a></li></ul></div><h3>Misc</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="LoadEvent.html">LoadEvent</a></li><li class="code"><a href="MultiLoader.html">MultiLoader</a></li></ul></div><h3>Functions</h3><ul><li class="small"><a href="global.html#Graphics">Graphics</a></li><li class="small"><a href="global.html#Triangle">Triangle</a></li></ul></div>
+    </div>
+  </div>
+</div>
+<div class='limiter margin2'>
+    <div class='pad1y pad2x fill-white'>
+      <div class='prose'>
+        <div class='pad2y'>
+          <h1 class='code'>Source: operators/graphic/ColorScales.js</h1>
+        </div>
+        
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import ColorOperators from "src/operators/graphic/ColorOperators";
+
+/**
+ * @classdesc Default color scales.
+ *
+ * @namespace
+ * @category colors
+ */
+function ColorScales() {}
+export default ColorScales;
+
+/**
+ * @todo write docs
+ */
+ColorScales.blackScale = function() {
+  return 'black';
+};
+
+/**
+ * @todo write docs
+ */
+ColorScales.grayscale = function(value) {
+  var rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], [255, 255, 255], value);
+  return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+};
+
+/**
+ * @todo write docs
+ */
+ColorScales.antiGrayscale = function(value) {
+  var rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [0, 0, 0], value);
+  return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+};
+
+/**
+ * @todo write docs
+ */
+ColorScales.antiTemperature = function(value) {
+  return ColorScales.temperature(1 - value);
+};
+
+/**
+ * @todo write docs
+ */
+ColorScales.temperature = function(value) { //todo:make it efficient
+  var color = "#FFFFFF";
+  if(value &lt; 0.2) {
+    color = ColorOperators.interpolateColors('#000000', ColorOperators.HSVtoHEX(234, 1, 1), value * 5);
+  } else if(value > 0.85) {
+    color = ColorOperators.interpolateColors(ColorOperators.HSVtoHEX(0, 1, 1), '#FFFFFF', (value - 0.85) / 0.15);
+  } else {
+    color = ColorOperators.HSVtoHEX(Math.round((0.65 - (value - 0.2)) * 360), 1, 1);
+  }
+  return color;
+};
+
+/**
+ * @todo write docs
+ */
+ColorScales.sqrtTemperature = function(value) {
+  return ColorScales.temperature(Math.sqrt(value));
+};
+
+/**
+ * @todo write docs
+ */
+ColorScales.sqrt4Temperature = function(value) {
+  return ColorScales.temperature(Math.pow(value, 0.25));
+};
+
+/**
+ * @todo write docs
+ */
+ColorScales.quadraticTemperature = function(value) {
+  return ColorScales.temperature(Math.pow(value, 2));
+};
+
+/**
+ * @todo write docs
+ */
+ColorScales.cubicTemperature = function(value) {
+  return ColorScales.temperature(Math.pow(value, 3));
+};
+
+/**
+ * @todo write docs
+ */
+ColorScales.greenToRed = function(value) { //todo:make it efficient
+  var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [255, 50, 50], value);
+  return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+};
+
+/**
+ * @todo write docs
+ */
+ColorScales.greenToBlue = function(value) { //todo:make it efficient
+  var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [50, 50, 255], value);
+  return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+};
+
+/**
+ * @todo write docs
+ */
+ColorScales.grayToOrange = function(value) {
+  return 'rgb(' + Math.floor(100 + value*155) + ','+ Math.floor(100 + value*10) +',' + Math.floor(100 - value*100) + ')';
+};
+
+/**
+ * @todo write docs
+ */
+ColorScales.sqrt4GrayToOrange = function(value){
+  return ColorScales.grayToOrange(Math.pow(value, 0.25));
+};
+
+/**
+ * @todo write docs
+ */
+ColorScales.blueToRed = function(value) {
+  return 'rgb(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ')';
+};
+
+/**
+ * @todo write docs
+ */
+ColorScales.blueToRedAlpha = function(value) { //todo:make it efficient
+  return 'rgba(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ', 0.5)';
+};
+
+/**
+ * @todo write docs
+ */
+ColorScales.whiteToRed = function(value) {
+  var gg = Math.floor(255 - value * 255);
+  return 'rgb(255,' + gg + ',' + gg + ')';
+};
+
+/**
+ * @todo write docs
+ */
+ColorScales.redToBlue = function(value) {
+  var rgb = ColorOperators.interpolateColorsRGB([255, 0, 0], [0, 0, 255], value);
+  return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+};
+
+//tricolor
+
+/**
+ * @todo write docs
+ */
+ColorScales.greenWhiteRed = function(value) { //TODO: make it + efficient
+  var rgb = [0,0,0];
+  if(value &lt; 0.5) {
+    rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [255, 255, 255], value * 2);
+  } else {
+    rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [255, 50, 50], (value - 0.5) * 2);
+  }
+  return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
+};
+
+/**
+ * @todo write docs
+ */
+ColorScales.blueWhiteRed = function(value) {
+  var rr = value &lt; 0.5 ? Math.floor(510 * value) : 255;
+  var gg = value &lt; 0.5 ? Math.floor(510 * value) : Math.floor(510 * (1 - value));
+  var bb = value &lt; 0.5 ? 255 : Math.floor(510 * (1 - value));
+
+  return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
+};
+
+/**
+ * @todo write docs
+ */
+ColorScales.grayBlackOrange = function(value){ //TODO: make it + efficient
+  var rgb = [0,0,0];
+  if(value &lt; 0.5) {
+    rgb = ColorOperators.interpolateColorsRGB([100, 100, 100], [0, 0, 0], value * 2);
+  } else {
+    rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], [255, 110, 0], (value - 0.5) * 2);
+  }
+  return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
+};
+
+/**
+ * @todo write docs
+ */
+ColorScales.grayWhiteOrange = function(value){ //TODO: make it + efficient
+  var rgb = [0,0,0];
+  if(value &lt; 0.5) {
+    rgb = ColorOperators.interpolateColorsRGB([100, 100, 100], [255, 255, 255], value * 2);
+  } else {
+    rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [255, 110, 0], (value - 0.5) * 2);
+  }
+  return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
+};
+
+
+/**
+ * @todo write docs
+ */
+ColorScales.solar = function(value) {
+  var rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], ColorOperators.interpolateColorsRGB([255, 0, 0], [255, 255, 0], value), Math.pow(value * 0.99 + 0.01, 0.2));
+  return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+};
+
+/**
+ * @todo write docs
+ */
+ColorScales.antiSolar = function(value) {
+  return ColorOperators.invertColor(ColorScales.solar(value));
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+      </div>
+    </div>
+    <div class='quiet small center pad1y'>
+    </div>
+  </div>
+  <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <script src="scripts/filter.js"></script>
+  <script src="scripts/prettify/prettify.js"></script>
+</body>
+</html>

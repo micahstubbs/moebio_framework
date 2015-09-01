@@ -1,0 +1,19 @@
+.example {
+  width:100%;
+  float:left;
+  margin-bottom: 20px;
+  border-bottom: 1px dotted lightgrey;
+}
+.example-image {
+  float:left;
+  margin-right: 20px;
+}
+
+.example-description {
+
+}
+
+
+h1.post-title {
+  border-bottom: 1px solid #2D3E50;
+}

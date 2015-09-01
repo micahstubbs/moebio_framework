@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Getting Started &middot; Moebio Framework
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/moebio_framework/public/css/poole.css">
+  <link rel="stylesheet" href="/moebio_framework/public/css/syntax.css">
+  <link rel="stylesheet" href="/moebio_framework/public/css/hyde.css">
+  <link rel="stylesheet" href="/moebio_framework/public/css/site.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/moebio_framework/public/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/moebio_framework/public/favicon.png">
+
+</head>
+
+
+  <body>
+
+    <div class="sidebar">
+  <div class="container">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/moebio_framework/">
+          Moebio Framework
+        </a>
+      </h1>
+      <p class="lead"></p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/moebio_framework/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+        
+      
+        
+          
+        
+        
+          
+            <a class="sidebar-sub-nav-item" href="/about.html">About</a>
+          
+            <a class="sidebar-sub-nav-item" href="/examples.html">Examples</a>
+          
+            <a class="sidebar-sub-nav-item" href="/getting-started.html">Getting Started</a>
+          
+        
+      
+
+
+      <a class="sidebar-nav-item" href="docs">Docs</a>
+      <a class="sidebar-nav-item" href="https://github.com/moebiolabs/moebio_framework/archive/v0.2.12.zip">Download</a>
+      <a class="sidebar-nav-item" href="https://github.com/moebiolabs/moebio_framework">GitHub project</a>
+      <span class="sidebar-nav-item">Currently v0.2.12</span>
+    </nav>
+
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">Getting Started</h1>
+  <h2>Getting Started With Moebio Framework</h2>
+
+<p>Let&#39;s start by making a simple example with the Moebio Framework.</p>
+
+<p>If you like, you can <a href="/moebio_framework//examples/playground#mouse_movements">follow along with the code</a>.</p>
+
+<h3>Including the script</h3>
+
+<p>First add the framework source file and shim to an html page.</p>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;js/moebio_framework.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;js/global_shim.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</code></pre></div>
+<p>The <code>global_shim</code> adds all the functions and data types in <code>moebio_framework</code>
+into the global environment.</p>
+
+<p>This should go near the bottom of the page, right before the closing <code>body</code> tag - which allows the rest of the page to load before needing to load this JavaScript.</p>
+
+<h3>Setting up the Canvas</h3>
+
+<p>Moebio Framework harnesses <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API">canvas</a> for much of its visualization capabilities. So, we need to provide it with a canvas element to draw in.</p>
+
+<p>This canvas element is expected to have an id of <code>main</code>. So, the HTML could look something like this:</p>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;maindiv&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;canvas</span> <span class="na">id=</span><span class="s">&quot;main&quot;</span><span class="nt">&gt;&lt;/canvas&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></div>
+<p>With this, we are ready to use Moebio Framework.</p>
+
+<h3>init and cycle</h3>
+
+<p>Moebio Framework is built around the concept of a drawing loop. The drawing loop is called over and over again, and it is responsible for drawing the visualization for each <em>frame</em>. If you have worked with something like <a href="https://processing.org/">Processing</a>, then this will look familiar.</p>
+
+<p>In Moebio there are two main functions to implement: <code>init</code> which gets called before the looping starts, and <code>cycle</code> which draws the visualization for each iteration of the loop.</p>
+
+<p>For this simple example, we can start to implement them inside a <code>script</code> tag in our html page:</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// setup code goes here</span>
+<span class="p">}</span>
+
+<span class="nx">cycle</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// drawing code goes here</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3>Visualization Attributes</h3>
+
+<p>The Moebio Framework provides access to a number of useful attributes that let you reason about the current state of the visualization and handle various types of interations.</p>
+
+<p>These attributes are accessible at any point in your code. Lets use <a href="https://developer.mozilla.org/en-US/docs/Web/API/Console/log">console.log</a> to monitor some of them.</p>
+
+<p>In <code>cycle</code>, add the following logging:</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">cycle</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;canvas width: &quot;</span> <span class="o">+</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">cW</span> <span class="o">+</span> <span class="s2">&quot; canvas height: &quot;</span> <span class="o">+</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">cH</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;mouse x: &quot;</span> <span class="o">+</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">mX</span> <span class="o">+</span> <span class="s2">&quot; mouse y: &quot;</span> <span class="o">+</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">mY</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Now open up this page in a web browser and also open the browser&#39;s console.</p>
+
+<p>You should see a bunch of logs scrolling past in the console. Mousing over the window will show the change in the <code>mX</code> and <code>mY</code>, the mouse X and Y position. Resizing the window will change <code>cW</code> and <code>cH</code>, the canvas&#39;s width and height.</p>
+
+<p>Here, <code>mo</code> is the Moebio Framework namespace. So all of its functions, classes, and capabilities will be inside this object.</p>
+
+<p>We will look at some of the other attributes later, but these should be enough to get us started.</p>
+
+<h3>Drawing Functions</h3>
+
+<p>Part of what makes Moebio Framework a powerful tool is its collection of drawing functions. We can think of these as helper functions that simplify the canvas API to allow for quickly displaying common shapes.</p>
+
+<p>Let&#39;s use just one of these functions, <code>fRect</code>, to draw a rectangle. We will also use <code>setFill</code> to provide the rectangle&#39;s color.</p>
+
+<p>Modify the cycle function to look like this:</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">cycle</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">mo</span><span class="p">.</span><span class="nx">setFill</span><span class="p">(</span><span class="s1">&#39;steelblue&#39;</span><span class="p">);</span>
+  <span class="nx">mo</span><span class="p">.</span><span class="nx">fRect</span><span class="p">(</span><span class="nx">mo</span><span class="p">.</span><span class="nx">cW</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">cH</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="nx">mo</span><span class="p">.</span><span class="nx">mX</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="nx">mo</span><span class="p">.</span><span class="nx">mY</span> <span class="o">/</span> <span class="mi">2</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Reloading the page gives us a blue rectangle in the middle of the visualization, with dimensions based on the current location of the mouse.</p>
+
+<p><img src="/moebio_framework//public/img/getting_started/square.png" alt="blue square"></p>
+
+<h3>Basic Interaction</h3>
+
+<p>So we have a rectangle updating with every <code>cycle</code>. Let&#39;s add another shape that is interactive and responds to mouse events.</p>
+
+<p>Still in cycle, add this to create a circle:</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript">  <span class="nx">mo</span><span class="p">.</span><span class="nx">setFill</span><span class="p">(</span><span class="s1">&#39;grey&#39;</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">over</span> <span class="o">=</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">fCircleM</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">60</span><span class="p">);</span>
+</code></pre></div>
+<p><img src="/moebio_framework//public/img/getting_started/circle.png" alt="grey circle"></p>
+
+<p>Right now, this is just a grey circle, but drawing functions that end in <code>M</code> return <code>true</code> if the mouse is hovering over the drawn shape during the current iteration of <code>cycle</code>.</p>
+
+<p>We can use this returned value to visually update the shape when it is moused over:</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript">  <span class="k">if</span><span class="p">(</span><span class="nx">over</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">mo</span><span class="p">.</span><span class="nx">setFill</span><span class="p">(</span><span class="s1">&#39;orange&#39;</span><span class="p">);</span>
+    <span class="nx">mo</span><span class="p">.</span><span class="nx">fCircle</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">60</span><span class="p">);</span>
+    <span class="nx">mo</span><span class="p">.</span><span class="nx">setStroke</span><span class="p">(</span><span class="s1">&#39;grey&#39;</span><span class="p">);</span>
+    <span class="nx">mo</span><span class="p">.</span><span class="nx">sCircle</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">70</span><span class="p">);</span>
+  <span class="p">}</span>
+</code></pre></div>
+<p>Now, if <code>over</code> is true, meaning this circle is currently being moused over, we change the fill and re-draw an orange circle on top of our original grey circle. We also add a ring around this circle using <code>sCircle</code>.</p>
+
+<p><img src="/moebio_framework//public/img/getting_started/circle_hover.png" alt="orange circle"></p>
+
+<p>As an aside, the use of <code>sCircle</code> hints that there are a number of different draw functions availible to us for each type of basic shape. Functions that start with <code>f</code>, like <code>fRect</code> and <code>fCircle</code> draw a filled in shape. Those starting with <code>s</code> draw just a stroke. And those that start with <code>fs</code>, like <code>fsRect</code> draw the shape both filled in and with an outline. Check out the documentation to find out more!</p>
+
+<p>Finally, let&#39;s add a basic mouse click interaction. Moebio Framework indicates mouse interactions by setting a few globally accessible variables:</p>
+
+<ul>
+<li><code>mo.MOUSE_DOWN</code> - true if the current <code>cycle</code> has a mouse down event.</li>
+<li><code>mo.MOUSE_UP</code> - true if the current <code>cycle</code> has a mouse up event.</li>
+<li><code>mo.MOUSE_PRESSED</code> - true if the mouse is currently being pressed.</li>
+</ul>
+
+<p>Let&#39;s change the color of the circle to be red if the mouse clicks on it. For this, we will want to handle both <code>MOUSE_DOWN</code> and <code>MOUSE_PRESSED</code> to ensure it stays red if the mouse is held down.</p>
+
+<p>Add this to the end of the <code>cycle</code> function:</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"> <span class="k">if</span><span class="p">((</span><span class="nx">mo</span><span class="p">.</span><span class="nx">MOUSE_DOWN</span> <span class="o">||</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">MOUSE_PRESSED</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">over</span><span class="p">)</span> <span class="p">{</span>
+   <span class="nx">mo</span><span class="p">.</span><span class="nx">setFill</span><span class="p">(</span><span class="s1">&#39;red&#39;</span><span class="p">);</span>
+   <span class="nx">mo</span><span class="p">.</span><span class="nx">fCircle</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">60</span><span class="p">);</span>
+ <span class="p">}</span>
+</code></pre></div>
+<p>Now, if the mouse is over the circle, and it is being pressed down, the circle will turn red.</p>
+
+<p>Just to see it all together, here is our complete <code>cycle</code> function:</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">cycle</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">cycle</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">mo</span><span class="p">.</span><span class="nx">setFill</span><span class="p">(</span><span class="s1">&#39;steelblue&#39;</span><span class="p">);</span>
+  <span class="nx">mo</span><span class="p">.</span><span class="nx">fRect</span><span class="p">(</span><span class="nx">mo</span><span class="p">.</span><span class="nx">cW</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">cH</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="nx">mo</span><span class="p">.</span><span class="nx">mX</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="nx">mo</span><span class="p">.</span><span class="nx">mY</span> <span class="o">/</span> <span class="mi">2</span><span class="p">));</span>
+
+  <span class="nx">mo</span><span class="p">.</span><span class="nx">setFill</span><span class="p">(</span><span class="s1">&#39;grey&#39;</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">over</span> <span class="o">=</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">fCircleM</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">60</span><span class="p">);</span>
+
+  <span class="k">if</span><span class="p">(</span><span class="nx">over</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">mo</span><span class="p">.</span><span class="nx">setFill</span><span class="p">(</span><span class="s1">&#39;orange&#39;</span><span class="p">);</span>
+    <span class="nx">mo</span><span class="p">.</span><span class="nx">fCircle</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">60</span><span class="p">);</span>
+    <span class="nx">mo</span><span class="p">.</span><span class="nx">setStroke</span><span class="p">(</span><span class="s1">&#39;grey&#39;</span><span class="p">);</span>
+    <span class="nx">mo</span><span class="p">.</span><span class="nx">sCircle</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">70</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="k">if</span><span class="p">((</span><span class="nx">mo</span><span class="p">.</span><span class="nx">MOUSE_DOWN</span> <span class="o">||</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">MOUSE_PRESSED</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">over</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">mo</span><span class="p">.</span><span class="nx">setFill</span><span class="p">(</span><span class="s1">&#39;red&#39;</span><span class="p">);</span>
+    <span class="nx">mo</span><span class="p">.</span><span class="nx">fCircle</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">60</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>Check out the <a href="/moebio_framework//examples/playground#mouse_movements">full example</a> and the <a href="/moebio_framework//docs">framework&#39;s documentation</a> to see what else you can try!</p>
+
+</div>
+    </div>
+
+  </body>
+</html>

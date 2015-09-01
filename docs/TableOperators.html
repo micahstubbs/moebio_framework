@@ -1,0 +1,2446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Moebio Framework: Namespace: TableOperators</title>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:700italic,400,700' rel='stylesheet' type='text/css'>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/style.css">
+</head>
+
+<body onload="prettyPrint()">
+
+<div class='hide-mobile pin-left pint-top pin-bottom col2 quiet-scroll scroll-styled fixed'>
+
+  <div class='clearfix fill-background dark center'>
+    <div class='inline pad2y'>
+      <a href="../">Moebio Platform</a> / <a href="index.html">Docs</a>
+    </div>
+  </div>
+  <div class='pad1 small'>
+    <div class="filter-block clearfix">
+      <input type="text" id="filter-input" placeholder="Type to filter">
+      <a href="#" id="clear-filter-button">x</a>
+    </div>
+    <div class='side'>
+      <h3></h3><ul><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all></strong></div><ul><li class="code"><a href="module-Global.html">Global</a></li></ul></div></ul><h3>Numbers</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Axis2D.html">Axis2D</a></li><li class="code"><a href="Interval.html">Interval</a></li><li class="code"><a href="Matrix.html">Matrix</a></li><li class="code"><a href="NumberList.html">NumberList</a></li><li class="code"><a href="NumberTable.html">NumberTable</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="IntervalListOperators.html">IntervalListOperators</a></li><li class="code"><a href="IntervalTableOperators.html">IntervalTableOperators</a></li><li class="code"><a href="NumberListGenerators.html">NumberListGenerators</a></li><li class="code"><a href="NumberListOperators.html">NumberListOperators</a></li><li class="code"><a href="NumberOperators.html">NumberOperators</a></li><li class="code"><a href="NumberTableConversions.html">NumberTableConversions</a></li><li class="code"><a href="NumberTableFlowOperators.html">NumberTableFlowOperators</a></li><li class="code"><a href="NumberTableOperators.html">NumberTableOperators</a></li></ul></div><h3>Colors</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="ColorList.html">ColorList</a></li><li class="code"><a href="ColorScale.html">ColorScale</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="ColorGenerators.html">ColorGenerators</a></li><li class="code"><a href="ColorListGenerators.html">ColorListGenerators</a></li><li class="code"><a href="ColorListOperators.html">ColorListOperators</a></li><li class="code"><a href="ColorOperators.html">ColorOperators</a></li><li class="code"><a href="ColorScaleGenerators.html">ColorScaleGenerators</a></li><li class="code"><a href="ColorScales.html">ColorScales</a></li></ul></div><h3>Geo</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Country.html">Country</a></li><li class="code"><a href="CountryList.html">CountryList</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="CountryListOperators.html">CountryListOperators</a></li><li class="code"><a href="CountryOperators.html">CountryOperators</a></li><li class="code"><a href="GeoOperators.html">GeoOperators</a></li></ul></div><h3>Basics</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DataModel.html">DataModel</a></li><li class="code"><a href="List.html">List</a></li><li class="code"><a href="Table.html">Table</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="FastHtml.html">FastHtml</a></li><li class="code"><a href="ListGenerators.html">ListGenerators</a></li><li class="code"><a href="ListOperators.html">ListOperators</a></li><li class="code"><a href="MatrixGenerators.html">MatrixGenerators</a></li><li class="code"><a href="ObjectConversions.html">ObjectConversions</a></li><li class="code"><a href="ObjectOperators.html">ObjectOperators</a></li><li class="code"><a href="TableConversions.html">TableConversions</a></li><li class="code"><a href="TableEncodings.html">TableEncodings</a></li><li class="code"><a href="TableGenerators.html">TableGenerators</a></li><li class="code"><a href="TableOperators.html">TableOperators</a></li></ul></div><h3>Dates</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DateAxis.html">DateAxis</a></li><li class="code"><a href="DateInterval.html">DateInterval</a></li><li class="code"><a href="DateList.html">DateList</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="DateListOperators.html">DateListOperators</a></li><li class="code"><a href="DateOperators.html">DateOperators</a></li></ul></div><h3>Interactions</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DragDetection.html">DragDetection</a></li></ul></div><h3>Geometry</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Engine3D.html">Engine3D</a></li><li class="code"><a href="Point.html">Point</a></li><li class="code"><a href="Point3D.html">Point3D</a></li><li class="code"><a href="Polygon.html">Polygon</a></li><li class="code"><a href="Polygon3D.html">Polygon3D</a></li><li class="code"><a href="Polygon3DList.html">Polygon3DList</a></li><li class="code"><a href="PolygonList.html">PolygonList</a></li><li class="code"><a href="Rectangle.html">Rectangle</a></li><li class="code"><a href="RectangleList.html">RectangleList</a></li><li class="code"><a href="Space2D.html">Space2D</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="Draw.html">Draw</a></li><li class="code"><a href="GeometryConvertions.html">GeometryConvertions</a></li><li class="code"><a href="GeometryOperators.html">GeometryOperators</a></li><li class="code"><a href="PointOperators.html">PointOperators</a></li><li class="code"><a href="PolygonGenerators.html">PolygonGenerators</a></li><li class="code"><a href="PolygonListEncodings.html">PolygonListEncodings</a></li><li class="code"><a href="PolygonListOperators.html">PolygonListOperators</a></li><li class="code"><a href="PolygonOperators.html">PolygonOperators</a></li><li class="code"><a href="RectangleOperators.html">RectangleOperators</a></li></ul></div><h3>Networks</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Forces.html">Forces</a></li><li class="code"><a href="Network.html">Network</a></li><li class="code"><a href="Node.html">Node</a></li><li class="code"><a href="NodeList.html">NodeList</a></li><li class="code"><a href="Relation.html">Relation</a></li><li class="code"><a href="RelationList.html">RelationList</a></li><li class="code"><a href="Tree.html">Tree</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="NetworkConvertions.html">NetworkConvertions</a></li><li class="code"><a href="NetworkDraw.html">NetworkDraw</a></li><li class="code"><a href="NetworkEncodings.html">NetworkEncodings</a></li><li class="code"><a href="NetworkGenerators.html">NetworkGenerators</a></li><li class="code"><a href="NetworkOperators.html">NetworkOperators</a></li><li class="code"><a href="TreeConvertions.html">TreeConvertions</a></li><li class="code"><a href="TreeDraw.html">TreeDraw</a></li><li class="code"><a href="TreeEncodings.html">TreeEncodings</a></li></ul></div><h3>Strings</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="InputTextFieldHTML.html">InputTextFieldHTML</a></li><li class="code"><a href="StringList.html">StringList</a></li><li class="code"><a href="TextBox.html">TextBox</a></li><li class="code"><a href="TextFieldHTML.html">TextFieldHTML</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="DrawTexts.html">DrawTexts</a></li><li class="code"><a href="DrawTextsAdvanced.html">DrawTextsAdvanced</a></li><li class="code"><a href="StringConversions.html">StringConversions</a></li><li class="code"><a href="StringListOperators.html">StringListOperators</a></li><li class="code"><a href="StringListVisOperators.html">StringListVisOperators</a></li><li class="code"><a href="StringOperators.html">StringOperators</a></li><li class="code"><a href="StringUtils.html">StringUtils</a></li></ul></div><h3>Misc</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="LoadEvent.html">LoadEvent</a></li><li class="code"><a href="MultiLoader.html">MultiLoader</a></li></ul></div><h3>Functions</h3><ul><li class="small"><a href="global.html#Graphics">Graphics</a></li><li class="small"><a href="global.html#Triangle">Triangle</a></li></ul></div>
+    </div>
+  </div>
+</div>
+<div class='limiter margin2'>
+    <div class='pad1y pad2x fill-white'>
+      <div class='prose'>
+        <div class='pad2y'>
+          <h1 class='code'>Namespace: TableOperators</h1>
+        </div>
+        
+
+
+
+
+<section>
+
+
+  <h2>
+  TableOperators
+  </h2>
+  
+      <div class="class-description"><p>Table Operators</p></div>
+  
+  
+
+<div>
+    <div class=''>
+        <div class="container-overview">
+        
+            
+
+            
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+            
+        
+        </div>
+
+        
+
+        
+
+        
+
+         
+
+        
+
+        
+
+        
+            <h3 class="subsection-title">Methods</h3>
+
+            
+                
+
+    
+
+
+    <h3 class="name" id=".aggregateTable"><span class="type-signature">(static) </span>aggregateTable<span class="signature">(table, indexAggregationList, indexesListsToAggregate, modes, newListsNames)</span><span class="type-signature"> &rarr; {<a href="Table.html">Table</a>}</span></h3>
+
+    
+
+
+
+<p>
+    <p>aggregates lists from a table, using one of the list of the table as the aggregation list, and based on different modes for each list</p>
+</p>
+
+
+
+
+
+
+
+
+
+  <h4>Parameters</h4>
+  <p>
+  
+
+<table>
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>table</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Table.html">Table</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>containing the aggregation list and lists to be aggregated</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>indexAggregationList</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>index of the aggregation list on the table</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>indexesListsToAggregate</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="NumberList.html">NumberList</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>indexs of the lists to be aggregated; typically it also contains the index of the aggregation list at the beginning, to be aggregated using mode 0 (first element) thus resulting as the list of non repeated elements</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>modes</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="NumberList.html">NumberList</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>list of modes of aggregation, these are the options:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes<br>12:count non repeated elements<br>13:enlist non repeated elements<br>14:concat elements (string)<br>15:concat non-repeated elements</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>newListsNames</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="StringList.html">StringList</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>optional names for generated lists</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+  </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<span class='force-inline'>
+
+        
+<p>
+  
+      <strong>Returns 
+<span class="param-type"><a href="Table.html">Table</a></span>
+
+</strong>
+  
+  <p>aggregated table
+tags:</p>
+  
+</p>
+
+    
+</span>
+
+
+
+
+            
+                
+
+    
+
+
+    <h3 class="name" id=".aggregateTableOld"><span class="type-signature">(static) </span>aggregateTableOld<span class="signature">(table, nList, mode)</span><span class="type-signature"> &rarr; {<a href="Table.html">Table</a>}</span></h3>
+
+    
+
+
+
+<p>
+    <p>aggregates a table</p>
+</p>
+
+
+
+
+
+
+
+
+
+  <h4>Parameters</h4>
+  <p>
+  
+
+<table>
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>table</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Table.html">Table</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>to be aggregated, deprecated: a new more powerful method has been built</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>nList</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>list in the table used as basis to aggregation</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>mode</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>mode of aggregation, 0:picks first element 1:adds numbers, 2:averages</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+  </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<span class='force-inline'>
+
+        
+<p>
+  
+      <strong>Returns 
+<span class="param-type"><a href="Table.html">Table</a></span>
+
+</strong>
+  
+  <p>aggregated table
+tags:deprecated</p>
+  
+</p>
+
+    
+</span>
+
+
+
+
+            
+                
+
+    
+
+
+    <h3 class="name" id=".buildDecisionTree"><span class="type-signature">(static) </span>buildDecisionTree<span class="signature">(variablesTable, supervised, supervisedValue, min_entropy, min_size_node, min_info_gain, generatePattern, colorScale)</span><span class="type-signature"> &rarr; {<a href="Tree.html">Tree</a>}</span></h3>
+
+    
+
+
+
+<p>
+    <p>builds a decision tree based on a table made of categorical lists, a list (the values of a supervised variable), and a value from the supervised variable. The result is a tree that contains on its leaves different populations obtained by iterative filterings by category values, and that contain extremes probabilities for having or not the valu ein the supervised variable.
+[!] this method only works with categorical lists (in case you have lists with numbers, find a way to simplify by ranges or powers)</p>
+</p>
+
+
+
+
+
+
+
+
+
+  <h4>Parameters</h4>
+  <p>
+  
+
+<table>
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>variablesTable</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Table.html">Table</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>predictors table</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>supervised</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>variable: list, or index (number) in the table (in which case the list will be removed from the predictors table)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>supervisedValue</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>main value in supervised list (associated with blue)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>min_entropy</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>minimum value of entropy on nodes (0.2 default)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>min_size_node</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>minimum population size associated with node (10 default)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>min_info_gain</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>minimum information gain by splitting by best feature (0.002 default)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>generatePattern</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>generates a pattern of points picturing proprtion of followed class in node</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>colorScale</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="ColorScale.html">ColorScale</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>to assign color associated to probability (default: blueToRed)</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+  </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<span class='force-inline'>
+
+        
+<p>
+  
+      <strong>Returns 
+<span class="param-type"><a href="Tree.html">Tree</a></span>
+
+</strong>
+  
+  <p>tree with aditional information on its nodes, including: probablity, color, entropy, weight, lift
+tags:ds</p>
+  
+</p>
+
+    
+</span>
+
+
+
+
+            
+                
+
+    
+
+
+    <h3 class="name" id=".completeTable"><span class="type-signature">(static) </span>completeTable<span class="signature">()</span><span class="type-signature"></span></h3>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+                
+
+    
+
+
+    <h3 class="name" id=".filterTableByElementInList"><span class="type-signature">(static) </span>filterTableByElementInList<span class="signature">(table, nList, element, keepRowIfElementIsPresent)</span><span class="type-signature"> &rarr; {<a href="Table.html">Table</a>}</span></h3>
+
+    
+
+
+
+<p>
+    <p>filter a table selecting rows that have an element on one of its lists</p>
+</p>
+
+
+
+
+
+
+
+
+
+  <h4>Parameters</h4>
+  <p>
+  
+
+<table>
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>table</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Table.html">Table</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>nList</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>list that could contain the element in several positions</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>element</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>keepRowIfElementIsPresent</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>if true (default value) the row is selected if the list contains the given element, if false the row is discarded</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+  </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<span class='force-inline'>
+
+        
+<p>
+  
+      <strong>Returns 
+<span class="param-type"><a href="Table.html">Table</a></span>
+
+</strong>
+  
+  <p>tags:filter</p>
+  
+</p>
+
+    
+</span>
+
+
+
+
+            
+                
+
+    
+
+
+    <h3 class="name" id=".fusionDataTables"><span class="type-signature">(static) </span>fusionDataTables<span class="signature">(table0, table1)</span><span class="type-signature"> &rarr; {<a href="Table.html">Table</a>}</span></h3>
+
+    
+
+
+
+<p>
+    <p>From two DataTables creates a new DataTable with combined elements in the first List, and added values in the second</p>
+</p>
+
+
+
+
+
+
+
+
+
+  <h4>Parameters</h4>
+  <p>
+  
+
+<table>
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>table0</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>table1</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+  </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<span class='force-inline'>
+
+        
+</p>
+
+    
+</span>
+
+
+
+
+            
+                
+
+    
+
+
+    <h3 class="name" id=".getCountPairsMatrix"><span class="type-signature">(static) </span>getCountPairsMatrix<span class="signature">(table)</span><span class="type-signature"> &rarr; {<a href="NumberTable.html">NumberTable</a>}</span></h3>
+
+    
+
+
+
+<p>
+    <p>counts pairs of elements in same positions in two lists (the result is the adjacent matrix of the network defined by pairs)</p>
+</p>
+
+
+
+
+
+
+
+
+
+  <h4>Parameters</h4>
+  <p>
+  
+
+<table>
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>table</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Table.html">Table</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>with at least two lists</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+  </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<span class='force-inline'>
+
+        
+<p>
+  
+      <strong>Returns 
+<span class="param-type"><a href="NumberTable.html">NumberTable</a></span>
+
+</strong>
+  
+  <p>tags:</p>
+  
+</p>
+
+    
+</span>
+
+
+
+
+            
+                
+
+    
+
+
+    <h3 class="name" id=".getElementFromTable"><span class="type-signature">(static) </span>getElementFromTable<span class="signature">()</span><span class="type-signature"></span></h3>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+                
+
+    
+
+
+    <h3 class="name" id=".getNumberTableFromTable"><span class="type-signature">(static) </span>getNumberTableFromTable<span class="signature">(table)</span><span class="type-signature"> &rarr; {<a href="NumberTable.html">NumberTable</a>}</span></h3>
+
+    
+
+
+
+<p>
+    <p>filters a Table keeping the NumberLists</p>
+</p>
+
+
+
+
+
+
+
+
+
+  <h4>Parameters</h4>
+  <p>
+  
+
+<table>
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>table</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Table.html">Table</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>to filter&lt;</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+  </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<span class='force-inline'>
+
+        
+<p>
+  
+      <strong>Returns 
+<span class="param-type"><a href="NumberTable.html">NumberTable</a></span>
+
+</strong>
+  
+  <p>tags:filter</p>
+  
+</p>
+
+    
+</span>
+
+
+
+
+            
+                
+
+    
+
+
+    <h3 class="name" id=".getSubListsByIndexes"><span class="type-signature">(static) </span>getSubListsByIndexes<span class="signature">()</span><span class="type-signature"></span></h3>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+                
+
+    
+
+
+    <h3 class="name" id=".getSubTable"><span class="type-signature">(static) </span>getSubTable<span class="signature">()</span><span class="type-signature"></span></h3>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+                
+
+    
+
+
+    <h3 class="name" id=".getVariablesInformationGain"><span class="type-signature">(static) </span>getVariablesInformationGain<span class="signature">(variablesTable, supervised)</span><span class="type-signature"> &rarr; {<a href="NumberList.html">NumberList</a>}</span></h3>
+
+    
+
+
+
+<p>
+    <p>calculates de information gain of all variables in a table and a supervised variable</p>
+</p>
+
+
+
+
+
+
+
+
+
+  <h4>Parameters</h4>
+  <p>
+  
+
+<table>
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>variablesTable</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Table.html">Table</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>supervised</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="List.html">List</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+  </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<span class='force-inline'>
+
+        
+<p>
+  
+      <strong>Returns 
+<span class="param-type"><a href="NumberList.html">NumberList</a></span>
+
+</strong>
+  
+  <p>tags:ds</p>
+  
+</p>
+
+    
+</span>
+
+
+
+
+            
+                
+
+    
+
+
+    <h3 class="name" id=".mergeDataTables"><span class="type-signature">(static) </span>mergeDataTables<span class="signature">()</span><span class="type-signature"></span></h3>
+
+    
+
+
+
+<p>
+    <p>creates a new table with an updated first List of elements and an added new numberList with the new values</p>
+</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+                
+
+    
+
+
+    <h3 class="name" id=".mergeDataTablesInList"><span class="type-signature">(static) </span>mergeDataTablesInList<span class="signature">()</span><span class="type-signature"></span></h3>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+                
+
+    
+
+
+    <h3 class="name" id=".pivotTable"><span class="type-signature">(static) </span>pivotTable<span class="signature">(table, indexFirstAggregationList, indexSecondAggregationList, indexListToAggregate, aggregationMode, nullValue, resultMode)</span><span class="type-signature"> &rarr; {<a href="Table.html">Table</a>}</span></h3>
+
+    
+
+
+
+<p>
+    <p>builds a pivot table</p>
+</p>
+
+
+
+
+
+
+
+
+
+  <h4>Parameters</h4>
+  <p>
+  
+
+<table>
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>table</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">table</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>indexFirstAggregationList</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>index of first list</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>indexSecondAggregationList</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>index of second list</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>indexListToAggregate</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>index of list to be aggregated</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>aggregationMode</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>aggregation mode:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>------not yet deployed:<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>nullValue</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>value for null cases in non-numerical aggregation</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>resultMode</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>result mode:<br>0:classic pivot, a table of aggregations with first aggregation list elements without repetitions in the first list, and second aggregation elements as headers of the aggregation lists<br>1:two lists for combinations of first aggregated list and second aggregated list, and a third list for aggregated values(default)</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+  </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<span class='force-inline'>
+
+        
+<p>
+  
+      <strong>Returns 
+<span class="param-type"><a href="Table.html">Table</a></span>
+
+</strong>
+  
+  <p>tags:</p>
+  
+</p>
+
+    
+</span>
+
+
+
+
+            
+                
+
+    
+
+
+    <h3 class="name" id=".sortListsByNumberList"><span class="type-signature">(static) </span>sortListsByNumberList<span class="signature">()</span><span class="type-signature"></span></h3>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+                
+
+    
+
+
+    <h3 class="name" id=".splitTableByCategoricList"><span class="type-signature">(static) </span>splitTableByCategoricList<span class="signature">()</span><span class="type-signature"></span></h3>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+                
+
+    
+
+
+    <h3 class="name" id=".testClassificationModel"><span class="type-signature">(static) </span>testClassificationModel<span class="signature">(numberTable, classes, model, metric)</span><span class="type-signature"> &rarr; {Number}</span></h3>
+
+    
+
+
+
+<p>
+    <p>tests a model</p>
+</p>
+
+
+
+
+
+
+
+
+
+  <h4>Parameters</h4>
+  <p>
+  
+
+<table>
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>numberTable</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="NumberTable.html">NumberTable</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>coordinates of points</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>classes</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="List.html">List</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>list of values of classes</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>model</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>function that receives two numbers and returns a guessed class</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>metric</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>0:error</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+  </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<span class='force-inline'>
+
+        
+<p>
+  
+      <strong>Returns 
+<span class="param-type">Number</span>
+
+</strong>
+  
+  <p>metric value
+tags:ds</p>
+  
+</p>
+
+    
+</span>
+
+
+
+
+            
+                
+
+    
+
+
+    <h3 class="name" id=".trainingTestPartition"><span class="type-signature">(static) </span>trainingTestPartition<span class="signature">(table, proportion, mode, seed)</span><span class="type-signature"> &rarr; {<a href="List.html">List</a>}</span></h3>
+
+    
+
+
+
+<p>
+    <p>divides the instances of a table in two tables: the training table and the test table</p>
+</p>
+
+
+
+
+
+
+
+
+
+  <h4>Parameters</h4>
+  <p>
+  
+
+<table>
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>table</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Table.html">Table</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>proportion</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>proportion of training instances/test instances, between 0 and 1</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>mode</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>0:random<br>1:random with seed<br>2:shuffle</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>seed</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>seed for random numbers (mode 1)</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+  </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<span class='force-inline'>
+
+        
+<p>
+  
+      <strong>Returns 
+<span class="param-type"><a href="List.html">List</a></span>
+
+</strong>
+  
+  <p>list containing the two tables
+tags:ds</p>
+  
+</p>
+
+    
+</span>
+
+
+
+
+            
+                
+
+    
+
+
+    <h3 class="name" id=".transpose"><span class="type-signature">(static) </span>transpose<span class="signature">(table, firstListAsHeaders)</span><span class="type-signature"> &rarr; {<a href="Table.html">Table</a>}</span></h3>
+
+    
+
+
+
+<p>
+    <p>transposes a table</p>
+</p>
+
+
+
+
+
+
+
+
+
+  <h4>Parameters</h4>
+  <p>
+  
+
+<table>
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>table</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Table.html">Table</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>to be transposed</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>firstListAsHeaders</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>removes first list of the table and uses it as names for the lists on the transposed table</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+  </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<span class='force-inline'>
+
+        
+<p>
+  
+      <strong>Returns 
+<span class="param-type"><a href="Table.html">Table</a></span>
+
+</strong>
+  
+  <p>tags:matrixes</p>
+  
+</p>
+
+    
+</span>
+
+
+
+
+            
+        
+
+        
+
+        
+    </div>
+</div>
+
+</section>
+
+
+
+
+      </div>
+    </div>
+    <div class='quiet small center pad1y'>
+    </div>
+  </div>
+  <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <script src="scripts/filter.js"></script>
+  <script src="scripts/prettify/prettify.js"></script>
+</body>
+</html>

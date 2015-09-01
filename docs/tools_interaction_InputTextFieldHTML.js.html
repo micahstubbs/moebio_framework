@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Moebio Framework: Source: tools/interaction/InputTextFieldHTML.js</title>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:700italic,400,700' rel='stylesheet' type='text/css'>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/style.css">
+</head>
+
+<body onload="prettyPrint()">
+
+<div class='hide-mobile pin-left pint-top pin-bottom col2 quiet-scroll scroll-styled fixed'>
+
+  <div class='clearfix fill-background dark center'>
+    <div class='inline pad2y'>
+      <a href="../">Moebio Platform</a> / <a href="index.html">Docs</a>
+    </div>
+  </div>
+  <div class='pad1 small'>
+    <div class="filter-block clearfix">
+      <input type="text" id="filter-input" placeholder="Type to filter">
+      <a href="#" id="clear-filter-button">x</a>
+    </div>
+    <div class='side'>
+      <h3></h3><ul><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all></strong></div><ul><li class="code"><a href="module-Global.html">Global</a></li></ul></div></ul><h3>Numbers</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Axis2D.html">Axis2D</a></li><li class="code"><a href="Interval.html">Interval</a></li><li class="code"><a href="Matrix.html">Matrix</a></li><li class="code"><a href="NumberList.html">NumberList</a></li><li class="code"><a href="NumberTable.html">NumberTable</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="IntervalListOperators.html">IntervalListOperators</a></li><li class="code"><a href="IntervalTableOperators.html">IntervalTableOperators</a></li><li class="code"><a href="NumberListGenerators.html">NumberListGenerators</a></li><li class="code"><a href="NumberListOperators.html">NumberListOperators</a></li><li class="code"><a href="NumberOperators.html">NumberOperators</a></li><li class="code"><a href="NumberTableConversions.html">NumberTableConversions</a></li><li class="code"><a href="NumberTableFlowOperators.html">NumberTableFlowOperators</a></li><li class="code"><a href="NumberTableOperators.html">NumberTableOperators</a></li></ul></div><h3>Colors</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="ColorList.html">ColorList</a></li><li class="code"><a href="ColorScale.html">ColorScale</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="ColorGenerators.html">ColorGenerators</a></li><li class="code"><a href="ColorListGenerators.html">ColorListGenerators</a></li><li class="code"><a href="ColorListOperators.html">ColorListOperators</a></li><li class="code"><a href="ColorOperators.html">ColorOperators</a></li><li class="code"><a href="ColorScaleGenerators.html">ColorScaleGenerators</a></li><li class="code"><a href="ColorScales.html">ColorScales</a></li></ul></div><h3>Geo</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Country.html">Country</a></li><li class="code"><a href="CountryList.html">CountryList</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="CountryListOperators.html">CountryListOperators</a></li><li class="code"><a href="CountryOperators.html">CountryOperators</a></li><li class="code"><a href="GeoOperators.html">GeoOperators</a></li></ul></div><h3>Basics</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DataModel.html">DataModel</a></li><li class="code"><a href="List.html">List</a></li><li class="code"><a href="Table.html">Table</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="FastHtml.html">FastHtml</a></li><li class="code"><a href="ListGenerators.html">ListGenerators</a></li><li class="code"><a href="ListOperators.html">ListOperators</a></li><li class="code"><a href="MatrixGenerators.html">MatrixGenerators</a></li><li class="code"><a href="ObjectConversions.html">ObjectConversions</a></li><li class="code"><a href="ObjectOperators.html">ObjectOperators</a></li><li class="code"><a href="TableConversions.html">TableConversions</a></li><li class="code"><a href="TableEncodings.html">TableEncodings</a></li><li class="code"><a href="TableGenerators.html">TableGenerators</a></li><li class="code"><a href="TableOperators.html">TableOperators</a></li></ul></div><h3>Dates</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DateAxis.html">DateAxis</a></li><li class="code"><a href="DateInterval.html">DateInterval</a></li><li class="code"><a href="DateList.html">DateList</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="DateListOperators.html">DateListOperators</a></li><li class="code"><a href="DateOperators.html">DateOperators</a></li></ul></div><h3>Interactions</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DragDetection.html">DragDetection</a></li></ul></div><h3>Geometry</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Engine3D.html">Engine3D</a></li><li class="code"><a href="Point.html">Point</a></li><li class="code"><a href="Point3D.html">Point3D</a></li><li class="code"><a href="Polygon.html">Polygon</a></li><li class="code"><a href="Polygon3D.html">Polygon3D</a></li><li class="code"><a href="Polygon3DList.html">Polygon3DList</a></li><li class="code"><a href="PolygonList.html">PolygonList</a></li><li class="code"><a href="Rectangle.html">Rectangle</a></li><li class="code"><a href="RectangleList.html">RectangleList</a></li><li class="code"><a href="Space2D.html">Space2D</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="Draw.html">Draw</a></li><li class="code"><a href="GeometryConvertions.html">GeometryConvertions</a></li><li class="code"><a href="GeometryOperators.html">GeometryOperators</a></li><li class="code"><a href="PointOperators.html">PointOperators</a></li><li class="code"><a href="PolygonGenerators.html">PolygonGenerators</a></li><li class="code"><a href="PolygonListEncodings.html">PolygonListEncodings</a></li><li class="code"><a href="PolygonListOperators.html">PolygonListOperators</a></li><li class="code"><a href="PolygonOperators.html">PolygonOperators</a></li><li class="code"><a href="RectangleOperators.html">RectangleOperators</a></li></ul></div><h3>Networks</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Forces.html">Forces</a></li><li class="code"><a href="Network.html">Network</a></li><li class="code"><a href="Node.html">Node</a></li><li class="code"><a href="NodeList.html">NodeList</a></li><li class="code"><a href="Relation.html">Relation</a></li><li class="code"><a href="RelationList.html">RelationList</a></li><li class="code"><a href="Tree.html">Tree</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="NetworkConvertions.html">NetworkConvertions</a></li><li class="code"><a href="NetworkDraw.html">NetworkDraw</a></li><li class="code"><a href="NetworkEncodings.html">NetworkEncodings</a></li><li class="code"><a href="NetworkGenerators.html">NetworkGenerators</a></li><li class="code"><a href="NetworkOperators.html">NetworkOperators</a></li><li class="code"><a href="TreeConvertions.html">TreeConvertions</a></li><li class="code"><a href="TreeDraw.html">TreeDraw</a></li><li class="code"><a href="TreeEncodings.html">TreeEncodings</a></li></ul></div><h3>Strings</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="InputTextFieldHTML.html">InputTextFieldHTML</a></li><li class="code"><a href="StringList.html">StringList</a></li><li class="code"><a href="TextBox.html">TextBox</a></li><li class="code"><a href="TextFieldHTML.html">TextFieldHTML</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="DrawTexts.html">DrawTexts</a></li><li class="code"><a href="DrawTextsAdvanced.html">DrawTextsAdvanced</a></li><li class="code"><a href="StringConversions.html">StringConversions</a></li><li class="code"><a href="StringListOperators.html">StringListOperators</a></li><li class="code"><a href="StringListVisOperators.html">StringListVisOperators</a></li><li class="code"><a href="StringOperators.html">StringOperators</a></li><li class="code"><a href="StringUtils.html">StringUtils</a></li></ul></div><h3>Misc</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="LoadEvent.html">LoadEvent</a></li><li class="code"><a href="MultiLoader.html">MultiLoader</a></li></ul></div><h3>Functions</h3><ul><li class="small"><a href="global.html#Graphics">Graphics</a></li><li class="small"><a href="global.html#Triangle">Triangle</a></li></ul></div>
+    </div>
+  </div>
+</div>
+<div class='limiter margin2'>
+    <div class='pad1y pad2x fill-white'>
+      <div class='prose'>
+        <div class='pad2y'>
+          <h1 class='code'>Source: tools/interaction/InputTextFieldHTML.js</h1>
+        </div>
+        
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>InputTextFieldHTML.prototype.constructor = InputTextFieldHTML;
+
+
+/**
+ * @classdesc Instanciable class that manages and renders a text in a html text area.
+ *
+ * @param configuration configuration Object with parameters (x, y, width, height, text, fontColor, fontSize, fontName, fontStyle, linkFunction, target…)
+ * @constructor
+ * @category strings
+ */
+function InputTextFieldHTML(configuration, graphics) {
+  this.id = configuration.id == null ? 0 : configuration.id;
+  this.graphics = graphics;
+
+  this.target = configuration.target;
+
+  this.x = configuration.x == null ? 0 : configuration.x;
+  this.y = configuration.y == null ? 0 : configuration.y;
+  this.width = configuration.width == null ? 200 : configuration.width;
+  this.height = configuration.height == null ? 20 : configuration.height;
+  this.fontSize = configuration.fontSize == null ? 16 : configuration.fontSize;
+
+  this.enterFunction = configuration.enterFunction;
+  this.changeFunction = configuration.changeFunction;
+  this.focusFunction = configuration.focusFunction;
+  this.blurFunction = configuration.blurFunction;
+
+  this.text = configuration.text;
+
+  this.textarea = configuration.textarea == null ? true : configuration.textarea;
+  this.readOnly = configuration.readOnly == null ? false : configuration.readOnly;
+  this.border = configuration.border == null ? true : configuration.border;
+  this.password = configuration.password;
+
+  this.zIndex = 30;
+
+  this.textColor = configuration.textColor == null ? 'black' : configuration.textColor;
+  this.backgroundColor = '#FFFFFF';
+
+  this.main = graphics.container;// document.getElementById('maindiv');
+  this.div = document.createElement('div2');
+  this.textarea ? this.DOMtext = document.createElement("textarea") : this.DOMtext = document.createElement("input");
+  this.password ? this.DOMtext.setAttribute('type', 'password') : this.DOMtext.setAttribute('type', 'text');
+  this.div.setAttribute('style', 'position:absolute;top:' + this.y + 'px;left:' + this.x + 'px;z-index:' + this.zIndex + ';');
+
+  if(!this.border) this.DOMtext.setAttribute('style', 'border:none');
+
+  this.div.setAttribute('rows', '1');
+  this.main.appendChild(this.div);
+  this.div.appendChild(this.DOMtext);
+  this.DOMtext.parent = this;
+  this.added = true;
+
+  this.DOMtext.readOnly = this.readOnly;
+
+  this.DOMtext.onfocus = function() {
+    //e.target = this.parent;
+    this.parent._onFocus(this.parent);
+  };
+  this.DOMtext.onblur = function() {
+    //e.target = this.parent;
+    this.parent._onBlur(this.parent);
+  };
+
+  this.DOMtext.value = "";
+
+  //this.graphics.on("keydown", this.onKeyDown, this);
+  this.div.addEventListener("keydown", this.onKeyDown, this);
+
+  this.focus = false;
+
+  if(this.changeFunction != null) this.setChangeFunction(this.changeFunction, this.target);
+  if(this.enterFunction != null) this.setEnterFunction(this.enterFunction, this.target);
+  if(this.focusFunction != null) this.setFocusFunction(this.focusFunction, this.target);
+  if(this.blurFunction != null) this.setBlurFunction(this.blurFunction, this.target);
+
+  if(this.text != null) {
+    this.setText(this.text);
+  } else {
+    this.draw();
+  }
+
+  // TODO What is this supposed to do?
+  this.DOMtext.addEventListener("mousemove", this.graphics._onMouse, false);
+  // TODO find out what this was for onMoveCycle doesn't exist anymore
+  //if(this.graphics._cycleOnMouseMovement) this.DOMtext.addEventListener('mousemove', onMoveCycle, false);
+}
+export default InputTextFieldHTML;
+
+/**
+ * @todo write docs
+ */
+InputTextFieldHTML.prototype.setBorder = function(value) {
+  this.border = value;
+  this.DOMtext.setAttribute('style', 'border:0; color: ' + this.textColor + '; width:' + (this.width - 7) + 'px;height:' + (this.height - 7) + 'px; font-size:' + this.fontSize + 'px; border:' + (value ? 'yes' : 'none'));
+};
+
+/**
+ * @todo write docs
+ */
+InputTextFieldHTML.prototype.draw = function() {
+  if(this.x != this._prevX || this.y != this._prevY || this.width != this._prevWidth || this.height != this._prevHeight || this.text != this._prevText) {
+    this._prevX = this.x;
+    this._prevY = this.y;
+    this._prevWidth = this.width;
+    this._prevHeight = this.height;
+    this._prevText = this.text;
+
+    // this.DOMtext.style = "none";
+    this.DOMtext.style.padding = "0px";
+    this.DOMtext.style.border = "0px";
+    this.DOMtext.style.borderColor = "#FFFFFF";
+    this.DOMtext.style.background = "transparent";
+    this.DOMtext.style.resize = "none";
+
+    this.DOMtext.setAttribute('style', 'border: 0; color: ' + this.textColor + '; width:' + (this.width - 7) + 'px;height:' + (this.height - 7) + 'px; font-size:' + this.fontSize + 'px');
+    this.div.setAttribute('style', 'border: 0; position:absolute;top:' + this.y + 'px;left:' + this.x + 'px;z-index:' + this.zIndex + ';');
+  }
+};
+
+/**
+ * @todo write docs
+ */
+InputTextFieldHTML.prototype.setText = function(text, activeChange) {
+  activeChange = activeChange == null ? true : activeChange;
+  this.text = text;
+  this.DOMtext.value = text;
+
+  //var timer = setTimeout(this.onKeyDownDelayed, 4, this);
+  this.draw();
+};
+
+/**
+ * @todo write docs
+ */
+InputTextFieldHTML.prototype.getText = function() {
+  return this.DOMtext.value;
+};
+
+/**
+ * @todo write docs
+ */
+InputTextFieldHTML.prototype.getSelectionStart = function() {
+  return this.DOMtext.selectionStart;
+};
+
+/**
+ * @todo write docs
+ */
+InputTextFieldHTML.prototype.onKeyDown = function(e) {
+  var target = e.srcElement.parent;
+
+  target._eKeyDown = e;
+  target._keyCode = e.keyCode;
+
+  target.timer = setTimeout(target.onKeyDownDelayed, 4, target);
+};
+
+/**
+ * @todo write docs
+ */
+InputTextFieldHTML.prototype.onKeyDownDelayed = function(target) {
+  if(target._keyCode == 13 &amp;&amp; target.DOMtext == document.activeElement) {
+    if(target.enterFunction != null) {
+      target.enterFunction.call(target.enterFunctionTarget, target.id);
+    }
+  }
+
+  if(target.text != target.DOMtext.value) {
+
+    target.text = target.DOMtext.value;
+    //var lastChar = target.text.charAt(target.text.length - 1);
+
+    if(target._keyCode != 13) {
+      if(target.changeFunction != null) {
+        target.changeFunction.call(target.changeFunctionTarget, target.id);
+      }
+    }
+  }
+
+  this.timer = null;
+};
+
+/**
+ * @todo write docs
+ */
+InputTextFieldHTML.prototype.forceFocus = function() {
+  this.DOMtext.focus();
+  this.focus = true;
+};
+
+/**
+ * @todo write docs
+ */
+// InputTextFieldHTML.prototype.forceUnfocus = function() {
+//   a.push(0); // TODO where does this come from
+// };
+
+/**
+ * @todo write docs
+ */
+InputTextFieldHTML.prototype.forceBlur = function() {
+
+  this.DOMtext.blur();
+  this.focus = false;
+};
+
+
+/**
+ * @todo write docs
+ */
+InputTextFieldHTML.prototype.setEnterFunction = function(enterFunction, target) {
+  this.enterFunction = enterFunction;
+  this.enterFunctionTarget = target;
+};
+
+/**
+ * @todo write docs
+ */
+InputTextFieldHTML.prototype.setChangeFunction = function(changeFunction, target) {
+  this.changeFunction = changeFunction;
+  this.changeFunctionTarget = target;
+};
+
+/**
+ * @todo write docs
+ */
+InputTextFieldHTML.prototype.setFocusFunction = function(focusFunction, target) {
+  this.focusFunction = focusFunction;
+  this.focusFunctionTarget = target;
+};
+
+/**
+ * @todo write docs
+ */
+InputTextFieldHTML.prototype.setBlurFunction = function(blurFunction, target) {
+  this.blurFunction = blurFunction;
+  this.blurFunctionTarget = target;
+};
+
+/**
+ * @todo write docs
+ */
+InputTextFieldHTML.prototype.setSelection = function(start, end) {
+  start = start == null ? 0 : start;
+  end = end == null ? this.DOMtext.value.length : end;
+  this.DOMtext.selectionStart = start;
+  this.DOMtext.selectionEnd = end;
+};
+
+/**
+ * @todo write docs
+ */
+InputTextFieldHTML.prototype.placeCursor = function(nChar) {
+  this.setSelection(nChar);
+};
+
+/**
+ * @todo write docs
+ */
+InputTextFieldHTML.prototype.setScrollPosition = function(y) {
+  if(y &lt;= 1) y = Math.floor(y * this.DOMtext.scrollHeight);
+  this.DOMtext.scrollTop = y;
+};
+
+/**
+ * @todo write docs
+ */
+InputTextFieldHTML.prototype.getScrollPosition = function() {
+  return this.DOMtext.scrollTop;
+};
+
+/**
+ * @todo write docs
+ */
+InputTextFieldHTML.prototype.getTextHeight = function() {
+  return this.DOMtext.scrollHeight;
+};
+
+/**
+ * @ignore
+ */
+InputTextFieldHTML.prototype._onFocus = function(target) {
+  target.focus = true;
+  if(target.focusFunction != null) target.focusFunction.call(target.focusFunctionTarget, target.id);
+};
+
+/**
+ * @ignore
+ */
+InputTextFieldHTML.prototype._onBlur = function(target) {
+  target.focus = false;
+  if(target.blurFunction != null) target.blurFunction.call(target.blurFunctionTarget, target.id);
+};
+
+/**
+ * @todo write docs
+ */
+InputTextFieldHTML.prototype.remove = function() {
+  if(this.added) {
+    this.div.removeChild(this.DOMtext);
+    this.main.removeChild(this.div);
+    this.added = false;
+  }
+};
+
+/**
+ * @todo write docs
+ */
+InputTextFieldHTML.prototype.readd = function() {
+
+  if(!this.added) {
+    this.main.appendChild(this.div);
+    this.div.appendChild(this.DOMtext);
+    this.added = true;
+  }
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+      </div>
+    </div>
+    <div class='quiet small center pad1y'>
+    </div>
+  </div>
+  <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <script src="scripts/filter.js"></script>
+  <script src="scripts/prettify/prettify.js"></script>
+</body>
+</html>

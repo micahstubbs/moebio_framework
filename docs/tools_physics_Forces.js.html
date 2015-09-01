@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Moebio Framework: Source: tools/physics/Forces.js</title>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:700italic,400,700' rel='stylesheet' type='text/css'>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/style.css">
+</head>
+
+<body onload="prettyPrint()">
+
+<div class='hide-mobile pin-left pint-top pin-bottom col2 quiet-scroll scroll-styled fixed'>
+
+  <div class='clearfix fill-background dark center'>
+    <div class='inline pad2y'>
+      <a href="../">Moebio Platform</a> / <a href="index.html">Docs</a>
+    </div>
+  </div>
+  <div class='pad1 small'>
+    <div class="filter-block clearfix">
+      <input type="text" id="filter-input" placeholder="Type to filter">
+      <a href="#" id="clear-filter-button">x</a>
+    </div>
+    <div class='side'>
+      <h3></h3><ul><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all></strong></div><ul><li class="code"><a href="module-Global.html">Global</a></li></ul></div></ul><h3>Numbers</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Axis2D.html">Axis2D</a></li><li class="code"><a href="Interval.html">Interval</a></li><li class="code"><a href="Matrix.html">Matrix</a></li><li class="code"><a href="NumberList.html">NumberList</a></li><li class="code"><a href="NumberTable.html">NumberTable</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="IntervalListOperators.html">IntervalListOperators</a></li><li class="code"><a href="IntervalTableOperators.html">IntervalTableOperators</a></li><li class="code"><a href="NumberListGenerators.html">NumberListGenerators</a></li><li class="code"><a href="NumberListOperators.html">NumberListOperators</a></li><li class="code"><a href="NumberOperators.html">NumberOperators</a></li><li class="code"><a href="NumberTableConversions.html">NumberTableConversions</a></li><li class="code"><a href="NumberTableFlowOperators.html">NumberTableFlowOperators</a></li><li class="code"><a href="NumberTableOperators.html">NumberTableOperators</a></li></ul></div><h3>Colors</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="ColorList.html">ColorList</a></li><li class="code"><a href="ColorScale.html">ColorScale</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="ColorGenerators.html">ColorGenerators</a></li><li class="code"><a href="ColorListGenerators.html">ColorListGenerators</a></li><li class="code"><a href="ColorListOperators.html">ColorListOperators</a></li><li class="code"><a href="ColorOperators.html">ColorOperators</a></li><li class="code"><a href="ColorScaleGenerators.html">ColorScaleGenerators</a></li><li class="code"><a href="ColorScales.html">ColorScales</a></li></ul></div><h3>Geo</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Country.html">Country</a></li><li class="code"><a href="CountryList.html">CountryList</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="CountryListOperators.html">CountryListOperators</a></li><li class="code"><a href="CountryOperators.html">CountryOperators</a></li><li class="code"><a href="GeoOperators.html">GeoOperators</a></li></ul></div><h3>Basics</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DataModel.html">DataModel</a></li><li class="code"><a href="List.html">List</a></li><li class="code"><a href="Table.html">Table</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="FastHtml.html">FastHtml</a></li><li class="code"><a href="ListGenerators.html">ListGenerators</a></li><li class="code"><a href="ListOperators.html">ListOperators</a></li><li class="code"><a href="MatrixGenerators.html">MatrixGenerators</a></li><li class="code"><a href="ObjectConversions.html">ObjectConversions</a></li><li class="code"><a href="ObjectOperators.html">ObjectOperators</a></li><li class="code"><a href="TableConversions.html">TableConversions</a></li><li class="code"><a href="TableEncodings.html">TableEncodings</a></li><li class="code"><a href="TableGenerators.html">TableGenerators</a></li><li class="code"><a href="TableOperators.html">TableOperators</a></li></ul></div><h3>Dates</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DateAxis.html">DateAxis</a></li><li class="code"><a href="DateInterval.html">DateInterval</a></li><li class="code"><a href="DateList.html">DateList</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="DateListOperators.html">DateListOperators</a></li><li class="code"><a href="DateOperators.html">DateOperators</a></li></ul></div><h3>Interactions</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DragDetection.html">DragDetection</a></li></ul></div><h3>Geometry</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Engine3D.html">Engine3D</a></li><li class="code"><a href="Point.html">Point</a></li><li class="code"><a href="Point3D.html">Point3D</a></li><li class="code"><a href="Polygon.html">Polygon</a></li><li class="code"><a href="Polygon3D.html">Polygon3D</a></li><li class="code"><a href="Polygon3DList.html">Polygon3DList</a></li><li class="code"><a href="PolygonList.html">PolygonList</a></li><li class="code"><a href="Rectangle.html">Rectangle</a></li><li class="code"><a href="RectangleList.html">RectangleList</a></li><li class="code"><a href="Space2D.html">Space2D</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="Draw.html">Draw</a></li><li class="code"><a href="GeometryConvertions.html">GeometryConvertions</a></li><li class="code"><a href="GeometryOperators.html">GeometryOperators</a></li><li class="code"><a href="PointOperators.html">PointOperators</a></li><li class="code"><a href="PolygonGenerators.html">PolygonGenerators</a></li><li class="code"><a href="PolygonListEncodings.html">PolygonListEncodings</a></li><li class="code"><a href="PolygonListOperators.html">PolygonListOperators</a></li><li class="code"><a href="PolygonOperators.html">PolygonOperators</a></li><li class="code"><a href="RectangleOperators.html">RectangleOperators</a></li></ul></div><h3>Networks</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Forces.html">Forces</a></li><li class="code"><a href="Network.html">Network</a></li><li class="code"><a href="Node.html">Node</a></li><li class="code"><a href="NodeList.html">NodeList</a></li><li class="code"><a href="Relation.html">Relation</a></li><li class="code"><a href="RelationList.html">RelationList</a></li><li class="code"><a href="Tree.html">Tree</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="NetworkConvertions.html">NetworkConvertions</a></li><li class="code"><a href="NetworkDraw.html">NetworkDraw</a></li><li class="code"><a href="NetworkEncodings.html">NetworkEncodings</a></li><li class="code"><a href="NetworkGenerators.html">NetworkGenerators</a></li><li class="code"><a href="NetworkOperators.html">NetworkOperators</a></li><li class="code"><a href="TreeConvertions.html">TreeConvertions</a></li><li class="code"><a href="TreeDraw.html">TreeDraw</a></li><li class="code"><a href="TreeEncodings.html">TreeEncodings</a></li></ul></div><h3>Strings</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="InputTextFieldHTML.html">InputTextFieldHTML</a></li><li class="code"><a href="StringList.html">StringList</a></li><li class="code"><a href="TextBox.html">TextBox</a></li><li class="code"><a href="TextFieldHTML.html">TextFieldHTML</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="DrawTexts.html">DrawTexts</a></li><li class="code"><a href="DrawTextsAdvanced.html">DrawTextsAdvanced</a></li><li class="code"><a href="StringConversions.html">StringConversions</a></li><li class="code"><a href="StringListOperators.html">StringListOperators</a></li><li class="code"><a href="StringListVisOperators.html">StringListVisOperators</a></li><li class="code"><a href="StringOperators.html">StringOperators</a></li><li class="code"><a href="StringUtils.html">StringUtils</a></li></ul></div><h3>Misc</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="LoadEvent.html">LoadEvent</a></li><li class="code"><a href="MultiLoader.html">MultiLoader</a></li></ul></div><h3>Functions</h3><ul><li class="small"><a href="global.html#Graphics">Graphics</a></li><li class="small"><a href="global.html#Triangle">Triangle</a></li></ul></div>
+    </div>
+  </div>
+</div>
+<div class='limiter margin2'>
+    <div class='pad1y pad2x fill-white'>
+      <div class='prose'>
+        <div class='pad2y'>
+          <h1 class='code'>Source: tools/physics/Forces.js</h1>
+        </div>
+        
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import NodeList from "src/dataStructures/structures/lists/NodeList";
+import List from "src/dataStructures/lists/List";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import Point from "src/dataStructures/geometry/Point";
+import { TwoPi } from "src/Global";
+
+/**
+ * @classdesc Force layout
+ *
+ * @constructor
+ * @category networks
+ */
+function Forces(configuration) {
+  this.k = configuration.k ? configuration.k : 0.01;
+  this.dEqSprings = configuration.dEqSprings ? configuration.dEqSprings : 100;
+  this.dEqRepulsors = configuration.dEqRepulsors ? configuration.dEqRepulsors : 500;
+  this.friction = configuration.friction ? configuration.friction : 0.8;
+
+  this.nodeList = new NodeList();
+
+  this.forcesList = new List();
+  this.equilibriumDistances = new NumberList();
+  this.forcesTypeList = new List();
+  this.fromNodeList = new NodeList();
+  this.toNodeList = new NodeList();
+
+  this._i0 = 0;
+}
+export default Forces;
+
+/**
+ * eqDistancesMode:
+ * 		0: all distances this.dEqSprings
+ * 		1: shorter distances for heavy relations
+ * 		2: nodes degrees sum proportional to distance
+ */
+Forces.prototype.forcesForNetwork = function(network, initRadius, initCenter, eqDistancesMode, addShortRepulsorsOnRelated) {
+  initRadius = initRadius || 0;
+  initCenter = initCenter || new Point(0, 0);
+  eqDistancesMode = eqDistancesMode == null ? 0 : eqDistancesMode;
+  addShortRepulsorsOnRelated = addShortRepulsorsOnRelated == null ? false : addShortRepulsorsOnRelated;
+
+
+  this.forcesList = new List();
+  this.equilibriumDistances = new NumberList();
+  this.forcesTypeList = new List();
+  this.fromNodeList = new NodeList();
+  this.toNodeList = new NodeList();
+
+  var node0;
+  var node1;
+  var nNodes = network.nodeList.length;
+  var i;
+  var j;
+  var relations = network.relationList;
+  var angle;
+
+  for(i = 0; i &lt; nNodes; i++) {
+    if(initRadius == 0) {
+      this.addNode(network.nodeList[i], new Point(network.nodeList[i].x, network.nodeList[i].y));
+    } else {
+      angle = Math.random() * TwoPi;
+      this.addNode(network.nodeList[i], new Point(initCenter.x + initRadius * Math.cos(angle), initCenter.y + initRadius * Math.sin(angle)));
+    }
+  }
+
+  for(i = 0; i &lt; nNodes - 1; i++) {
+    node0 = network.nodeList[i];
+    for(j = i + 1; j &lt; nNodes; j++) {
+      node1 = network.nodeList[j];
+      if(relations.nodesAreConnected(node0, node1)) {
+        switch(eqDistancesMode) {
+          case 0:
+            this.equilibriumDistances.push(this.dEqSprings);
+            break;
+          case 1:
+            this.equilibriumDistances.push((1.1 - relations.getFirstRelationByIds(node0.id, node1.id, false).weight) * this.dEqSprings);
+            break;
+          case 2:
+            this.equilibriumDistances.push(Math.sqrt(Math.min(node0.nodeList.length, node1.nodeList.length)) * this.dEqSprings * 0.1);
+            break;
+        }
+
+        this.addForce(node0, node1, "Spring");
+
+        if(addShortRepulsorsOnRelated) {
+          this.equilibriumDistances.push(this.dEqRepulsors * 0.5);
+          this.addForce(node0, node1, "Repulsor");
+        }
+
+      } else {
+        this.equilibriumDistances.push(this.dEqRepulsors);
+        this.addForce(node0, node1, "Repulsor");
+      }
+    }
+  }
+};
+
+/**
+ * @todo write docs
+ */
+Forces.prototype.addNode = function(node, initPosition, initSpeed) {
+  initPosition = initPosition == null ? new Point(Math.random() * 200 - 100, Math.random() * 200 - 100) : initPosition;
+  initSpeed = initSpeed == null ? new Point(0, 0) : initSpeed;
+  this.nodeList.addNode(node);
+  node.x = initPosition.x;
+  node.y = initPosition.y;
+  node.vx = initSpeed.x;
+  node.vy = initSpeed.y;
+  node.ax = 0;
+  node.ay = 0;
+};
+
+/**
+ * @todo write docs
+ */
+Forces.prototype.addForce = function(node0, node1, type, equilibriumDistance) {
+  this.fromNodeList.addNode(node0);
+  this.toNodeList.addNode(node1);
+  this.forcesList.push(node0.id + "*" + node1.id + "*" + type);
+  this.forcesTypeList.push(type);
+  if(equilibriumDistance != null) this.equilibriumDistances.push(equilibriumDistance);
+};
+
+/**
+ * @todo write docs
+ */
+Forces.prototype.calculate = function() {
+  var i;
+  var node0, node1;
+  var type;
+  var force;
+  var dx, dy, d;
+  var eqDistance;
+
+  // 1. reset accelerations
+  this._resetAccelerations(); //TODO: this can be removed if accelerations are resetd in applyForces [!]
+
+  // 2. calculate new accelerations from forces
+  for(i = 0; this.forcesList[i] != null; i++) {
+    node0 = this.fromNodeList[i];
+    node1 = this.toNodeList[i];
+    type = this.forcesTypeList[i];
+    dx = node1.x - node0.x;
+    dy = node1.y - node0.y;
+    d = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+    eqDistance = this.equilibriumDistances[i];
+    if(type == 'Repulsor' &amp;&amp; d > eqDistance) continue;
+    if(type == 'Attractor' &amp;&amp; d &lt; eqDistance) continue;
+
+    switch(type) {
+      case "Spring":
+      case "Repulsor":
+      case "Attractor":
+        force = this.k * (d - eqDistance) / d;
+        node0.ax += force * dx;
+        node0.ay += force * dy;
+        node1.ax -= force * dx;
+        node1.ay -= force * dy;
+        break;
+      case "DirectedSpring":
+        force = this.k * (d - eqDistance) / d;
+        node1.ax -= force * dx;
+        node1.ay -= force * dy;
+        break;
+      case "DirectedRepulsor":
+        if(d &lt; eqDistance) {
+          force = this.k * (d - eqDistance) / d;
+          node1.ax -= force * dx;
+          node1.ay -= force * dy;
+        }
+        break;
+    }
+  }
+};
+
+/**
+ * @todo write docs
+ */
+Forces.prototype.attractionToPoint = function(point, strength, limit) {
+  strength = strength == null ? 1 : strength;
+  var node;
+  var force;
+  var dx;
+  var dy;
+  var d2;
+  for(var i = 0; this.nodeList[i] != null; i++) {
+    node = this.nodeList[i];
+    dx = point.x - node.x;
+    dy = point.y - node.y;
+    d2 = Math.pow(dx, 2) + Math.pow(dy, 2);
+    if(limit != null) {
+      force = Math.min(strength / d2, limit);
+    } else {
+      force = strength / d2;
+    }
+    node.ax += force * dx;
+    node.ay += force * dy;
+  }
+};
+
+
+/**
+ * @todo write docs
+ */
+Forces.prototype.avoidOverlapping = function(delta) {
+  delta = delta || 0;
+
+  var i;
+  var node0;
+  var node1;
+  var x0l, y0t, x0r, y0b, x1l, y1t, x1r, y1b;
+  var vx;
+  var vy;
+  var dM = delta * 0.5;
+  var l = this.nodeList.length;
+
+  console.log(this.nodeList.length);
+
+  for(i = 0; this.nodeList[i + 1] != null; i++) {
+    node0 = this.nodeList[(i + this._i0) % l];
+    x0l = node0.x - node0.width * 0.5 - dM;
+    x0r = node0.x + node0.width * 0.5 + dM;
+    y0t = node0.y - node0.height * 0.5 - dM;
+    y0b = node0.y + node0.height * 0.5 + dM;
+    for(var j = i + 1; this.nodeList[j] != null; j++) {
+      node1 = this.nodeList[(j + this._i0 + i) % l];
+      x1l = node1.x - node1.width * 0.5 - dM;
+      x1r = node1.x + node1.width * 0.5 + dM;
+      y1t = node1.y - node1.height * 0.5 - dM;
+      y1b = node1.y + node1.height * 0.5 + dM;
+      if(((x0l > x1l &amp;&amp; x0l &lt; x1r) ||  (x0r > x1l &amp;&amp; x0r &lt; x1r)) &amp;&amp; ((y0t > y1t &amp;&amp; y0t &lt; y1b) || (y0b > y1t &amp;&amp; y0b &lt; y1b))) {
+        vx = node1.x - node0.x;
+        vy = node1.y - node0.y;
+
+        if(Math.abs(vx) > Math.abs(vy)) {
+          if(vx > 0) {
+            node0.x -= (x0r - x1l) * 0.5;
+            node1.x += (x0r - x1l) * 0.5;
+          } else {
+            node0.x += (x1r - x0l) * 0.5;
+            node1.x -= (x1r - x0l) * 0.5;
+          }
+        } else {
+          if(vy > 0) {
+            node0.y -= (y0b - y1t) * 0.5;
+            node1.y += (y0b - y1t) * 0.5;
+          } else {
+            node0.y += (y1b - y0t) * 0.5;
+            node1.y -= (y1b - y0t) * 0.5;
+          }
+        }
+
+        //setStroke(Math.abs(vx)>Math.abs(vy)?'blue':'red');
+        //sCircle((node0.x+node1.x)*0.5, (node0.y+node1.y)*0.5, Math.max(Math.abs(vx), Math.abs(vy))*0.5);
+      }
+    }
+  }
+  this._i0++;
+};
+
+/**
+ * @todo write docs
+ */
+Forces.prototype.avoidOverlappingRadial = function(delta, K) {
+  delta = delta || 0;
+  K = K || 1;
+  var i;
+  var node0;
+  var node1;
+  var l = this.nodeList.length;
+  var vx;
+  var vy;
+  var d;
+  var dMin;
+  var k;
+  var delta2 = delta * 2;
+
+  for(i = 0; this.nodeList[i + 1] != null; i++) {
+    node0 = this.nodeList[(i + this._i0) % l];
+    for(var j = i + 1; this.nodeList[j] != null; j++) {
+      node1 = this.nodeList[(j + this._i0 + i) % l];
+      vx = node1.x - node0.x;
+      vy = node1.y - node0.y;
+      d = Math.pow(vx, 2) + Math.pow(vy, 2);
+      dMin = Math.pow(node0.r + node1.r + delta2, 2);
+      if(d &lt; dMin) {
+        dMin = Math.sqrt(dMin);
+        d = Math.sqrt(d);
+        k = 0.5 * (dMin - d) / d;
+        node0.x -= K * k * vx;
+        node0.y -= K * k * vy;
+        node1.x += K * k * vx;
+        node1.y += K * k * vy;
+      }
+    }
+  }
+  this._i0++;
+};
+
+/**
+ * @todo write docs
+ */
+Forces.prototype.applyForces = function() {
+  var node;
+
+  for(var i = 0; this.nodeList[i] != null; i++) {
+    node = this.nodeList[i];
+    node.vx += node.ax;
+    node.vy += node.ay;
+    node.vx *= this.friction;
+    node.vy *= this.friction;
+    node.x += node.vx;
+    node.y += node.vy;
+  }
+};
+
+/**
+ * @todo write docs
+ */
+Forces.prototype.deactivateForcesFromNode = function(node) {
+  node.vx = node.vy = node.ax = node.ay = 0;
+};
+
+/**
+ * @todo write docs
+ */
+Forces.prototype.destroy = function() {
+  delete this.k;
+  delete this.dEqSprings;
+  delete this.dEqRepulsors;
+  delete this.friction;
+  this.nodeList.destroy();
+  delete this.nodeList;
+  this.forcesList.destroy();
+  delete this.forcesList;
+  this.equilibriumDistances.destroy();
+  delete this.equilibriumDistances;
+  this.forcesTypeList.destroy();
+  delete this.forcesTypeList;
+  this.fromNodeList.destroy();
+  delete this.fromNodeList;
+  this.toNodeList.destroy();
+  delete this.toNodeList;
+  delete this._i0;
+};
+
+///////////////////////////////////////////PRIVATE
+
+
+/**
+ * @ignore
+ */
+Forces.prototype._resetAccelerations = function() {
+  var node;
+  for(var i = 0; this.nodeList[i] != null; i++) {
+    node = this.nodeList[i];
+    node.ax = 0;
+    node.ay = 0;
+  }
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+      </div>
+    </div>
+    <div class='quiet small center pad1y'>
+    </div>
+  </div>
+  <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <script src="scripts/filter.js"></script>
+  <script src="scripts/prettify/prettify.js"></script>
+</body>
+</html>

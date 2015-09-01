@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Moebio Framework: Source: operators/strings/StringListOperators.js</title>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:700italic,400,700' rel='stylesheet' type='text/css'>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/style.css">
+</head>
+
+<body onload="prettyPrint()">
+
+<div class='hide-mobile pin-left pint-top pin-bottom col2 quiet-scroll scroll-styled fixed'>
+
+  <div class='clearfix fill-background dark center'>
+    <div class='inline pad2y'>
+      <a href="../">Moebio Platform</a> / <a href="index.html">Docs</a>
+    </div>
+  </div>
+  <div class='pad1 small'>
+    <div class="filter-block clearfix">
+      <input type="text" id="filter-input" placeholder="Type to filter">
+      <a href="#" id="clear-filter-button">x</a>
+    </div>
+    <div class='side'>
+      <h3></h3><ul><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all></strong></div><ul><li class="code"><a href="module-Global.html">Global</a></li></ul></div></ul><h3>Numbers</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Axis2D.html">Axis2D</a></li><li class="code"><a href="Interval.html">Interval</a></li><li class="code"><a href="Matrix.html">Matrix</a></li><li class="code"><a href="NumberList.html">NumberList</a></li><li class="code"><a href="NumberTable.html">NumberTable</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="IntervalListOperators.html">IntervalListOperators</a></li><li class="code"><a href="IntervalTableOperators.html">IntervalTableOperators</a></li><li class="code"><a href="NumberListGenerators.html">NumberListGenerators</a></li><li class="code"><a href="NumberListOperators.html">NumberListOperators</a></li><li class="code"><a href="NumberOperators.html">NumberOperators</a></li><li class="code"><a href="NumberTableConversions.html">NumberTableConversions</a></li><li class="code"><a href="NumberTableFlowOperators.html">NumberTableFlowOperators</a></li><li class="code"><a href="NumberTableOperators.html">NumberTableOperators</a></li></ul></div><h3>Colors</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="ColorList.html">ColorList</a></li><li class="code"><a href="ColorScale.html">ColorScale</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="ColorGenerators.html">ColorGenerators</a></li><li class="code"><a href="ColorListGenerators.html">ColorListGenerators</a></li><li class="code"><a href="ColorListOperators.html">ColorListOperators</a></li><li class="code"><a href="ColorOperators.html">ColorOperators</a></li><li class="code"><a href="ColorScaleGenerators.html">ColorScaleGenerators</a></li><li class="code"><a href="ColorScales.html">ColorScales</a></li></ul></div><h3>Geo</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Country.html">Country</a></li><li class="code"><a href="CountryList.html">CountryList</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="CountryListOperators.html">CountryListOperators</a></li><li class="code"><a href="CountryOperators.html">CountryOperators</a></li><li class="code"><a href="GeoOperators.html">GeoOperators</a></li></ul></div><h3>Basics</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DataModel.html">DataModel</a></li><li class="code"><a href="List.html">List</a></li><li class="code"><a href="Table.html">Table</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="FastHtml.html">FastHtml</a></li><li class="code"><a href="ListGenerators.html">ListGenerators</a></li><li class="code"><a href="ListOperators.html">ListOperators</a></li><li class="code"><a href="MatrixGenerators.html">MatrixGenerators</a></li><li class="code"><a href="ObjectConversions.html">ObjectConversions</a></li><li class="code"><a href="ObjectOperators.html">ObjectOperators</a></li><li class="code"><a href="TableConversions.html">TableConversions</a></li><li class="code"><a href="TableEncodings.html">TableEncodings</a></li><li class="code"><a href="TableGenerators.html">TableGenerators</a></li><li class="code"><a href="TableOperators.html">TableOperators</a></li></ul></div><h3>Dates</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DateAxis.html">DateAxis</a></li><li class="code"><a href="DateInterval.html">DateInterval</a></li><li class="code"><a href="DateList.html">DateList</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="DateListOperators.html">DateListOperators</a></li><li class="code"><a href="DateOperators.html">DateOperators</a></li></ul></div><h3>Interactions</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DragDetection.html">DragDetection</a></li></ul></div><h3>Geometry</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Engine3D.html">Engine3D</a></li><li class="code"><a href="Point.html">Point</a></li><li class="code"><a href="Point3D.html">Point3D</a></li><li class="code"><a href="Polygon.html">Polygon</a></li><li class="code"><a href="Polygon3D.html">Polygon3D</a></li><li class="code"><a href="Polygon3DList.html">Polygon3DList</a></li><li class="code"><a href="PolygonList.html">PolygonList</a></li><li class="code"><a href="Rectangle.html">Rectangle</a></li><li class="code"><a href="RectangleList.html">RectangleList</a></li><li class="code"><a href="Space2D.html">Space2D</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="Draw.html">Draw</a></li><li class="code"><a href="GeometryConvertions.html">GeometryConvertions</a></li><li class="code"><a href="GeometryOperators.html">GeometryOperators</a></li><li class="code"><a href="PointOperators.html">PointOperators</a></li><li class="code"><a href="PolygonGenerators.html">PolygonGenerators</a></li><li class="code"><a href="PolygonListEncodings.html">PolygonListEncodings</a></li><li class="code"><a href="PolygonListOperators.html">PolygonListOperators</a></li><li class="code"><a href="PolygonOperators.html">PolygonOperators</a></li><li class="code"><a href="RectangleOperators.html">RectangleOperators</a></li></ul></div><h3>Networks</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Forces.html">Forces</a></li><li class="code"><a href="Network.html">Network</a></li><li class="code"><a href="Node.html">Node</a></li><li class="code"><a href="NodeList.html">NodeList</a></li><li class="code"><a href="Relation.html">Relation</a></li><li class="code"><a href="RelationList.html">RelationList</a></li><li class="code"><a href="Tree.html">Tree</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="NetworkConvertions.html">NetworkConvertions</a></li><li class="code"><a href="NetworkDraw.html">NetworkDraw</a></li><li class="code"><a href="NetworkEncodings.html">NetworkEncodings</a></li><li class="code"><a href="NetworkGenerators.html">NetworkGenerators</a></li><li class="code"><a href="NetworkOperators.html">NetworkOperators</a></li><li class="code"><a href="TreeConvertions.html">TreeConvertions</a></li><li class="code"><a href="TreeDraw.html">TreeDraw</a></li><li class="code"><a href="TreeEncodings.html">TreeEncodings</a></li></ul></div><h3>Strings</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="InputTextFieldHTML.html">InputTextFieldHTML</a></li><li class="code"><a href="StringList.html">StringList</a></li><li class="code"><a href="TextBox.html">TextBox</a></li><li class="code"><a href="TextFieldHTML.html">TextFieldHTML</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="DrawTexts.html">DrawTexts</a></li><li class="code"><a href="DrawTextsAdvanced.html">DrawTextsAdvanced</a></li><li class="code"><a href="StringConversions.html">StringConversions</a></li><li class="code"><a href="StringListOperators.html">StringListOperators</a></li><li class="code"><a href="StringListVisOperators.html">StringListVisOperators</a></li><li class="code"><a href="StringOperators.html">StringOperators</a></li><li class="code"><a href="StringUtils.html">StringUtils</a></li></ul></div><h3>Misc</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="LoadEvent.html">LoadEvent</a></li><li class="code"><a href="MultiLoader.html">MultiLoader</a></li></ul></div><h3>Functions</h3><ul><li class="small"><a href="global.html#Graphics">Graphics</a></li><li class="small"><a href="global.html#Triangle">Triangle</a></li></ul></div>
+    </div>
+  </div>
+</div>
+<div class='limiter margin2'>
+    <div class='pad1y pad2x fill-white'>
+      <div class='prose'>
+        <div class='pad2y'>
+          <h1 class='code'>Source: operators/strings/StringListOperators.js</h1>
+        </div>
+        
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import StringList from "src/dataStructures/strings/StringList";
+import NumberList from "src/dataStructures/numeric/NumberList";
+import NumberTable from "src/dataStructures/numeric/NumberTable";
+import StringOperators from "src/operators/strings/StringOperators";
+import TableOperators from "src/operators/lists/TableOperators";
+import Network from "src/dataStructures/structures/networks/Network";
+import Relation from "src/dataStructures/structures/elements/Relation";
+import Node from "src/dataStructures/structures/elements/Node";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
+import Table from "src/dataStructures/lists/Table";
+
+
+/**
+ * @classdesc  StringList Operators
+ *
+ * @namespace
+ * @category strings
+ */
+function StringListOperators() {}
+export default StringListOperators;
+
+/**
+ * receives n arguments and performs addition
+ */
+StringListOperators.concatStrings = function(stringList, joinString) { //deprecated
+  if(joinString == null) joinString = "";
+  return StringList.fromArray(stringList.join(joinString));
+};
+
+/**
+ * join strings with a character
+ * @param  {StringList} StringList strings to be joined
+ *
+ * @param  {String} join character
+ * @param  {String} prefix
+ * @param  {String} sufix
+ * @return {String}
+ * tags:
+ */
+StringListOperators.join = function(stringList, character, prefix, sufix) {
+  if(stringList == null) return;
+
+  character = character == null ? "" : character;
+  prefix = prefix == null ? "" : prefix;
+  sufix = sufix == null ? "" : sufix;
+  return prefix + stringList.join(character) + sufix;
+};
+
+
+/**
+ * filters a StringList by a string
+ * @param  {StringList} stringList    to be filtered
+ * @param  {String} string        filter criteria (string or word that will be search in each string of the stringList)
+ *
+ * @param  {Boolean} asWord        if true a word (string surrounded by separators such as space or punctuation) will be used as criteria, false by default
+ * @param  {Boolean} returnIndexes if true a numberList with indexes will be returned, instead of a stringList
+ * @return {List}               stringList or numberlist with filtered strings or indexes
+ * tags:filter
+ */
+StringListOperators.filterStringListByString = function(stringList, string, asWord, returnIndexes) {
+  var i;
+  var newList = returnIndexes ? new NumberList() : new StringList();
+  if(asWord) var regex = new RegExp("\\b" + string + "\\b");
+
+  for(i = 0; stringList[i] != null; i++) {
+    if(asWord) {
+      if(stringList[i].match(regex).length > 0) {
+        newList.push(returnIndexes ? i : stringList[i]);
+      }
+    } else {
+      if(stringList[i].indexOf(string) != -1) {
+        newList.push(returnIndexes ? i : stringList[i]);
+      }
+    }
+  }
+  return newList;
+};
+
+
+// var regex = new RegExp("\\b"+word+"\\b");
+// var match = string.match(regex);
+// return match==null?0:match.length;
+
+/*
+ * a classic function, but now it works with patterns!
+ */
+/**
+ * @todo finish docs
+ */
+StringListOperators.countStringsOccurrencesOnTexts = function(strings, texts) {
+  var occurrencesTable = new NumberTable();
+
+  var i;
+  var j;
+  var pattern;
+  var numberList;
+  var splitArray;
+
+  for(i = 0; strings[i] != null; i++) {
+    pattern = strings[i];
+    numberList = new NumberList();
+    numberList.name = pattern;
+    for(j = 0; texts[j] != null; j++) {
+      splitArray = texts[j].split(pattern);
+      numberList[j] = splitArray.length - 1;
+    }
+    occurrencesTable[i] = numberList;
+  }
+  return occurrencesTable;
+};
+
+/**
+ * builds a table with a list of occurrent words and numberLists for occurrences in each string
+ * @param  {StringList} strings
+ *
+ * @param  {StringList} stopWords words to be excluded from the list
+ * @param  {Boolean} includeLinks
+ * @param  {Number} wordsLimitPerString number of words extracted per string
+ * @param  {Number} totalWordsLimit final number of words
+ * @param  {Boolean} normalize normalize lists to sum
+ * @param {Boolean} stressUniqueness divide number of occurrences in string by total number of occurrences (words that appear in one or only few texts become more weighed)
+ * @param {Boolean} sortByTotalWeight sort all columns by total weights of words
+ * @param  {Number} minSizeWords
+ * @return {Table}
+ * tags:count
+ */
+StringListOperators.getWordsOccurrencesMatrix = function(strings, stopWords, includeLinks, wordsLimitPerString, totalWordsLimit, normalize, stressUniqueness, sortByTotalWeight, minSizeWords) {
+  var i;
+
+  wordsLimitPerString = wordsLimitPerString || 500;
+  totalWordsLimit = totalWordsLimit || 1000;
+  normalize = normalize == null ? true : normalize;
+  stressUniqueness = stressUniqueness || false;
+  sortByTotalWeight = (sortByTotalWeight || true);
+  minSizeWords = minSizeWords == null ? 3 : minSizeWords;
+
+  var matrix = StringOperators.getWordsOccurrencesTable(strings[0], stopWords, includeLinks, wordsLimitPerString, minSizeWords);
+
+  var table;
+  for(i = 1; strings[i] != null; i++) {
+    table = StringOperators.getWordsOccurrencesTable(strings[i], stopWords, includeLinks, wordsLimitPerString, minSizeWords);
+    matrix = TableOperators.mergeDataTables(matrix, table);
+  }
+
+
+  if(matrix[0].length > totalWordsLimit) sortByTotalWeight = true;
+
+  if(stressUniqueness || sortByTotalWeight) {
+    var totalList = new NumberList();
+    totalList = matrix[1].clone();
+    matrix.forEach(function(occurrences, i) {
+      if(i &lt; 2) return;
+      occurrences.forEach(function(value, j) {
+        totalList[j] += value;
+      });
+    });
+
+    if(stressUniqueness) {
+      matrix.forEach(function(occurrences, i) {
+        if(i == 0) return;
+        occurrences.forEach(function(value, j) {
+          occurrences[j] = value / totalList[j];
+        });
+      });
+    }
+
+    if(sortByTotalWeight) {
+      matrix = matrix.getListsSortedByList(totalList, false);
+    }
+  }
+
+  if(normalize) {
+    matrix.forEach(function(occurrences, i) {
+      if(i == 0) return;
+      matrix[i] = matrix[i].getNormalizedToSum();
+    });
+  }
+
+
+  if(totalWordsLimit > 0) matrix = matrix.sliceRows(0, totalWordsLimit - 1);
+
+  return matrix;
+};
+
+//good approach for few large texts, to be tested
+/**
+ * @todo finish docs
+ */
+StringListOperators.createTextsNetwork = function(texts, stopWords, stressUniqueness, relationThreshold) {
+  var i, j;
+  var network = new Network();
+
+  var matrix = StringListOperators.getWordsOccurrencesMatrix(texts, stopWords, false, 600, 800, false, true, false, 3);
+
+  texts.forEach(function(text, i) {
+    var node = new Node("_" + i, "_" + i);
+    node.content = text;
+    node.wordsWeights = matrix[i + 1];
+    network.addNode(node);
+  });
+
+  for(i = 0; network.nodeList[i + 1] != null; i++) {
+    var node = network.nodeList[i];
+    for(j = i + 1; network.nodeList[j] != null; j++) {
+      var node1 = network.nodeList[j];
+
+      var weight = NumberListOperators.cosineSimilarity(node.wordsWeights, node1.wordsWeights);
+
+      if(i == 0 &amp;&amp; j == 1) {
+        console.log(node.wordsWeights.length, node1.wordsWeights.length, weight);
+        console.log(node.wordsWeights.type, node.wordsWeights);
+        console.log(node1.wordsWeights.type, node1.wordsWeights);
+        console.log(node.wordsWeights.getNorm() * node1.wordsWeights.getNorm());
+      }
+
+      if(weight > relationThreshold) {
+        var relation = new Relation(node.id + "_" + node1.id, node.id + "_" + node1.id, node, node1, weight);
+        network.addRelation(relation);
+      }
+    }
+  }
+
+  return network;
+};
+
+
+/**
+ * builds a network out of a list of short strings, adds a property wordsTable to each node (with words and weights)
+ * @param  {StringList} texts
+ *
+ * @param  {StringList} stopWords
+ * @param  {Number} relationThreshold threshold to create a relation
+ * @param {Number} mode &lt;br>0:pseudoentropy, by finding key words with low entropy (words occurring in a single text or in all texts have maximum entropy, occuring in 0.25 texts minimum entropy (max weight))&lt;br>1:originality&lt;br>2:skewed entropy&lt;br>3:originality except isolation
+ * @param {Boolean} applyIntensity takes into account occurrences of word into each text
+ * @param {Table} [varname] if a words frquency table is provided, les frequent words are weighed
+ * @return {Network}
+ * tags:generator
+ */
+StringListOperators.createShortTextsNetwork = function(texts, stopWords, relationThreshold, mode, applyIntensity, wordsFrequencyTable) {
+  if(texts == null ||  texts.length == null || texts.length == 0) return;
+
+  var _time = new Date().getTime();
+
+  var network = new Network();
+  var joined = texts.join(' *** ').toLowerCase();
+  var textsLowerCase = joined.split(' *** ');
+  var n_texts = texts.length;
+  var i, j;
+  var word;
+  var w;
+  var nWords;
+  var n_words;
+  var weights;
+  var weight;
+  var maxWeight = 0;
+
+  relationThreshold = relationThreshold || 0.2;
+  mode = mode || 0;
+
+  if(wordsFrequencyTable) {
+    wordsFrequencyTable[0] = wordsFrequencyTable[0].toLowerCase();
+    var maxFreq = wordsFrequencyTable[1][0];
+    var index;
+  }
+
+  var weightFunction;
+  switch(mode) {
+    case 0: //pseudo-entropy
+      weightFunction = function(nOtherTexts) {
+        return 1 - Math.pow(2 * nOtherTexts / (n_texts - 1) - 1, 2);
+      };
+      break;
+    case 1: //originality
+      weightFunction = function(nOtherTexts) {
+        return 1 / (nOtherTexts + 1);
+      };
+      break;
+    case 2: //skewed entropy (favoring very few external occurrences)
+      weightFunction = function(nOtherTexts) {
+        return 1 - Math.pow(2 * Math.pow(nOtherTexts / (n_texts - 1), 0.2) - 1, 2);
+      };
+    default: //originality except isolation
+      weightFunction = function(nOtherTexts) {
+        if(nOtherTexts == 0) return 0;
+        return 1 / nOtherTexts;
+      };
+  }
+
+  console.log('A ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
+  _time = new Date().getTime();
+
+  texts.forEach(function(text, i) {
+    var node = new Node("_" + i, "_" + i);
+    network.addNode(node);
+    node.content = text;
+    var words = StringOperators.getWords(text, true, stopWords, false, false, 0, 3);
+
+    n_words = words.length;
+    weights = new NumberList();
+    //words.forEach(function(word, j){
+    for(j = 0; words[j] != null; j++) {
+      word = words[j];
+      var nOtherTexts = 0;
+      textsLowerCase.forEach(function(text, k) {
+        if(i == k) return;
+        nOtherTexts += Number(text.indexOf(word) != -1); //is this the fastest way?
+      });
+
+      if(nOtherTexts == 0) {
+        words.splice(j, 1);
+        j--;
+        continue;
+      }
+
+      weights[j] = weightFunction(nOtherTexts); //1-Math.pow(2*Math.pow(nOtherTexts/(n_texts-1), 0.25)-1, 2);
+
+      if(applyIntensity) weights[j] *= (1 - 1 / (StringOperators.countOccurrences(textsLowerCase[i], word) + 1));
+
+      if(wordsFrequencyTable) {
+        index = wordsFrequencyTable[0].indexOf(word);
+        //console.log(' •>•>•>•>•>•>•>•>•>•>•>•>•>•>•>•>•> ', word, weights[j], index==-1?1:(1 - Math.pow(wordsFrequencyTable[1][index]/maxFreq, 0.2)) )
+        weights[j] *= (index == -1 ? 1 : (1 - Math.pow(wordsFrequencyTable[1][index] / maxFreq, 0.2)));
+      }
+
+      maxWeight = Math.max(maxWeight, weights[j]);
+    }
+
+    nWords = Math.floor(Math.log(n_words + 1) * 3);
+
+    words = words.getSortedByList(weights, false).slice(0, nWords);
+
+    words.position = {};
+    words.forEach(function(word, j) {
+      words.position[word] = j;
+    });
+
+    weights = weights.getSorted(false).slice(0, nWords);
+    node.wordsTable = new Table();
+    node.wordsTable[0] = words;
+    node.wordsTable[1] = weights;
+  });
+
+
+  console.log('B ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
+  _time = new Date().getTime();
+
+  for(i = 0; network.nodeList[i + 1] != null; i++) {
+    var node = network.nodeList[i];
+    for(j = i + 1; network.nodeList[j] != null; j++) {
+      var node1 = network.nodeList[j];
+      weight = 0;
+      node.wordsTable[0].forEach(function(word, i) {
+        //index = node1.wordsTable[0].indexOf(word);//TODO:this could be improved (as seen in forums, indexOf might be unneficient for arrays
+        index = node1.wordsTable[0].position[word];
+        if(index != null) weight += node.wordsTable[1][i] * node1.wordsTable[1][index];
+      });
+      weight = Math.sqrt((weight / maxWeight) / Math.max(node.wordsTable[0].length, node1.wordsTable[0].length));
+      if(weight > relationThreshold) {
+        var relation = new Relation(node.id + "_" + node1.id, node.id + "_" + node1.id, node, node1, weight);
+        network.addRelation(relation);
+      }
+    }
+  }
+
+  console.log('C ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);
+
+  return network;
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+      </div>
+    </div>
+    <div class='quiet small center pad1y'>
+    </div>
+  </div>
+  <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <script src="scripts/filter.js"></script>
+  <script src="scripts/prettify/prettify.js"></script>
+</body>
+</html>

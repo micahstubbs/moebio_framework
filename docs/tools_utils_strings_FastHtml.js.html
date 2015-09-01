@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Moebio Framework: Source: tools/utils/strings/FastHtml.js</title>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:700italic,400,700' rel='stylesheet' type='text/css'>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/style.css">
+</head>
+
+<body onload="prettyPrint()">
+
+<div class='hide-mobile pin-left pint-top pin-bottom col2 quiet-scroll scroll-styled fixed'>
+
+  <div class='clearfix fill-background dark center'>
+    <div class='inline pad2y'>
+      <a href="../">Moebio Platform</a> / <a href="index.html">Docs</a>
+    </div>
+  </div>
+  <div class='pad1 small'>
+    <div class="filter-block clearfix">
+      <input type="text" id="filter-input" placeholder="Type to filter">
+      <a href="#" id="clear-filter-button">x</a>
+    </div>
+    <div class='side'>
+      <h3></h3><ul><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all></strong></div><ul><li class="code"><a href="module-Global.html">Global</a></li></ul></div></ul><h3>Numbers</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Axis2D.html">Axis2D</a></li><li class="code"><a href="Interval.html">Interval</a></li><li class="code"><a href="Matrix.html">Matrix</a></li><li class="code"><a href="NumberList.html">NumberList</a></li><li class="code"><a href="NumberTable.html">NumberTable</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="IntervalListOperators.html">IntervalListOperators</a></li><li class="code"><a href="IntervalTableOperators.html">IntervalTableOperators</a></li><li class="code"><a href="NumberListGenerators.html">NumberListGenerators</a></li><li class="code"><a href="NumberListOperators.html">NumberListOperators</a></li><li class="code"><a href="NumberOperators.html">NumberOperators</a></li><li class="code"><a href="NumberTableConversions.html">NumberTableConversions</a></li><li class="code"><a href="NumberTableFlowOperators.html">NumberTableFlowOperators</a></li><li class="code"><a href="NumberTableOperators.html">NumberTableOperators</a></li></ul></div><h3>Colors</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="ColorList.html">ColorList</a></li><li class="code"><a href="ColorScale.html">ColorScale</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="ColorGenerators.html">ColorGenerators</a></li><li class="code"><a href="ColorListGenerators.html">ColorListGenerators</a></li><li class="code"><a href="ColorListOperators.html">ColorListOperators</a></li><li class="code"><a href="ColorOperators.html">ColorOperators</a></li><li class="code"><a href="ColorScaleGenerators.html">ColorScaleGenerators</a></li><li class="code"><a href="ColorScales.html">ColorScales</a></li></ul></div><h3>Geo</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Country.html">Country</a></li><li class="code"><a href="CountryList.html">CountryList</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="CountryListOperators.html">CountryListOperators</a></li><li class="code"><a href="CountryOperators.html">CountryOperators</a></li><li class="code"><a href="GeoOperators.html">GeoOperators</a></li></ul></div><h3>Basics</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DataModel.html">DataModel</a></li><li class="code"><a href="List.html">List</a></li><li class="code"><a href="Table.html">Table</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="FastHtml.html">FastHtml</a></li><li class="code"><a href="ListGenerators.html">ListGenerators</a></li><li class="code"><a href="ListOperators.html">ListOperators</a></li><li class="code"><a href="MatrixGenerators.html">MatrixGenerators</a></li><li class="code"><a href="ObjectConversions.html">ObjectConversions</a></li><li class="code"><a href="ObjectOperators.html">ObjectOperators</a></li><li class="code"><a href="TableConversions.html">TableConversions</a></li><li class="code"><a href="TableEncodings.html">TableEncodings</a></li><li class="code"><a href="TableGenerators.html">TableGenerators</a></li><li class="code"><a href="TableOperators.html">TableOperators</a></li></ul></div><h3>Dates</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DateAxis.html">DateAxis</a></li><li class="code"><a href="DateInterval.html">DateInterval</a></li><li class="code"><a href="DateList.html">DateList</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="DateListOperators.html">DateListOperators</a></li><li class="code"><a href="DateOperators.html">DateOperators</a></li></ul></div><h3>Interactions</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DragDetection.html">DragDetection</a></li></ul></div><h3>Geometry</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Engine3D.html">Engine3D</a></li><li class="code"><a href="Point.html">Point</a></li><li class="code"><a href="Point3D.html">Point3D</a></li><li class="code"><a href="Polygon.html">Polygon</a></li><li class="code"><a href="Polygon3D.html">Polygon3D</a></li><li class="code"><a href="Polygon3DList.html">Polygon3DList</a></li><li class="code"><a href="PolygonList.html">PolygonList</a></li><li class="code"><a href="Rectangle.html">Rectangle</a></li><li class="code"><a href="RectangleList.html">RectangleList</a></li><li class="code"><a href="Space2D.html">Space2D</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="Draw.html">Draw</a></li><li class="code"><a href="GeometryConvertions.html">GeometryConvertions</a></li><li class="code"><a href="GeometryOperators.html">GeometryOperators</a></li><li class="code"><a href="PointOperators.html">PointOperators</a></li><li class="code"><a href="PolygonGenerators.html">PolygonGenerators</a></li><li class="code"><a href="PolygonListEncodings.html">PolygonListEncodings</a></li><li class="code"><a href="PolygonListOperators.html">PolygonListOperators</a></li><li class="code"><a href="PolygonOperators.html">PolygonOperators</a></li><li class="code"><a href="RectangleOperators.html">RectangleOperators</a></li></ul></div><h3>Networks</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Forces.html">Forces</a></li><li class="code"><a href="Network.html">Network</a></li><li class="code"><a href="Node.html">Node</a></li><li class="code"><a href="NodeList.html">NodeList</a></li><li class="code"><a href="Relation.html">Relation</a></li><li class="code"><a href="RelationList.html">RelationList</a></li><li class="code"><a href="Tree.html">Tree</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="NetworkConvertions.html">NetworkConvertions</a></li><li class="code"><a href="NetworkDraw.html">NetworkDraw</a></li><li class="code"><a href="NetworkEncodings.html">NetworkEncodings</a></li><li class="code"><a href="NetworkGenerators.html">NetworkGenerators</a></li><li class="code"><a href="NetworkOperators.html">NetworkOperators</a></li><li class="code"><a href="TreeConvertions.html">TreeConvertions</a></li><li class="code"><a href="TreeDraw.html">TreeDraw</a></li><li class="code"><a href="TreeEncodings.html">TreeEncodings</a></li></ul></div><h3>Strings</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="InputTextFieldHTML.html">InputTextFieldHTML</a></li><li class="code"><a href="StringList.html">StringList</a></li><li class="code"><a href="TextBox.html">TextBox</a></li><li class="code"><a href="TextFieldHTML.html">TextFieldHTML</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="DrawTexts.html">DrawTexts</a></li><li class="code"><a href="DrawTextsAdvanced.html">DrawTextsAdvanced</a></li><li class="code"><a href="StringConversions.html">StringConversions</a></li><li class="code"><a href="StringListOperators.html">StringListOperators</a></li><li class="code"><a href="StringListVisOperators.html">StringListVisOperators</a></li><li class="code"><a href="StringOperators.html">StringOperators</a></li><li class="code"><a href="StringUtils.html">StringUtils</a></li></ul></div><h3>Misc</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="LoadEvent.html">LoadEvent</a></li><li class="code"><a href="MultiLoader.html">MultiLoader</a></li></ul></div><h3>Functions</h3><ul><li class="small"><a href="global.html#Graphics">Graphics</a></li><li class="small"><a href="global.html#Triangle">Triangle</a></li></ul></div>
+    </div>
+  </div>
+</div>
+<div class='limiter margin2'>
+    <div class='pad1y pad2x fill-white'>
+      <div class='prose'>
+        <div class='pad2y'>
+          <h1 class='code'>Source: tools/utils/strings/FastHtml.js</h1>
+        </div>
+        
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import StringOperators from "src/operators/strings/StringOperators";
+import ColorOperators from "src/operators/graphic/ColorOperators";
+
+/**
+ * @classdesc Fast Html
+ *
+ * @namespace
+ * @category basics
+ */
+function FastHtml() {}
+export default FastHtml;
+
+/**
+ * @todo write docs
+ */
+FastHtml.expand = function(abreviatedHTML, scope, onEvent) {
+  if(abreviatedHTML == null || abreviatedHTML == "") return "";
+
+  var T = new Date().getTime();
+
+  if(abreviatedHTML.split("&lt;").length != abreviatedHTML.split(">").length) return abreviatedHTML;
+
+  var newText = abreviatedHTML;
+  if(newText.indexOf("&lt;fs")!=-1){
+    var bit = "";
+    while(bit != null) {
+      bit = StringOperators.getFirstTextBetweenStrings(newText, "&lt;fs", ">"); //OperacionesString.textEntreSubStrings(newText, "&lt;fs", ">");
+      if(bit != null) newText = newText.replace("&lt;fs" + bit + ">", "&lt;font style=\"font-size:" + Number(bit) + "px\">");
+      if(newText.indexOf(">") == -1) bit = null;
+    }
+  }
+
+  bit = "";
+  while(bit != null) {
+    bit = StringOperators.getFirstTextBetweenStrings(newText, "&lt;ff", ">");
+    if(bit != null) newText = newText.replace("&lt;ff" + bit + ">", "&lt;font face=\"" + bit + "\">");
+  }
+
+  newText = newText.replace(/¬/, "&lt;br/>");
+  newText = newText.replace(/&lt;fcBlack>/g, "&lt;font color=\"#000000\">");
+  newText = newText.replace(/&lt;fcWhite>/g, "&lt;font color=\"#FFFFFF\">");
+  newText = newText.replace(/&lt;fcRed>/g, "&lt;font color=\"#FF0000\">");
+  newText = newText.replace(/&lt;fcGreen>/g, "&lt;font color=\"#00FF00\">");
+  newText = newText.replace(/&lt;fcBlue>/g, "&lt;font color=\"#0000FF\">");
+  newText = newText.replace(/&lt;fcOrange>/g, "&lt;font color=\"#FFAA00\">");
+
+  newText = newText.replace(/&lt;fcCyan>/g, "&lt;font color=\"#00FFFF\">");
+  newText = newText.replace(/&lt;fcYellow>/g, "&lt;font color=\"#FFFF00\">");
+  newText = newText.replace(/&lt;fcMagenta>/g, "&lt;font color=\"#FF00FF\">");
+
+  bit = "";
+  while(bit != null) {
+    bit = StringOperators.getFirstTextBetweenStrings(newText, "&lt;fcuint", ">");
+    if(bit != null) newText = newText.replace("&lt;fcuint" + bit + ">", "&lt;font color=\"" + ColorOperators.uinttoHEX(bit) + "\">");
+  }
+
+  bit = "";
+  while(bit != null) {
+    bit = StringOperators.getFirstTextBetweenStrings(newText, "&lt;frgb", ">");
+    if(bit != null) {
+      var rgb = bit.split(".");
+      newText = newText.replace("&lt;frgb" + bit + ">", "&lt;font color=\"" + ColorOperators.RGBtoHEX(Number(rgb[0]), Number(rgb[1]), Number(rgb[2])) + "\">");
+    }
+  }
+
+  if(newText.indexOf("&lt;fc")!=-1){
+    bit = "";
+    while(bit != null) {
+      bit = StringOperators.getFirstTextBetweenStrings(newText, "&lt;fc", ">");
+      if(bit != null){
+        //var newbit = bit[0];// == "#"?bit.substr(1):bit;
+        newText = newText.replace("&lt;fc" + bit + ">", "&lt;font color=\"#" + bit + "\">");
+      }
+    }
+  }
+
+  bit = "";
+  while(bit != null) {
+    bit = StringOperators.getFirstTextBetweenStrings(newText, "&lt;tl", ">");
+    if(bit != null) newText = newText.replace("&lt;tl" + bit + ">", "&lt;textformat leftmargin=\"" + bit + "\">");
+  }
+
+  bit = "";
+  while(bit != null) {
+    bit = StringOperators.getFirstTextBetweenStrings(newText, "&lt;tv", ">");
+    if(bit != null) newText = newText.replace("&lt;tv" + bit + ">", "&lt;textformat leading=\"" + bit + "\">");
+  }
+
+
+  bit = "";
+  var href;
+  var text;
+  var target;
+
+
+  while(bit != null) {
+    bit = StringOperators.getFirstTextBetweenStrings(newText, "&lt;e", ">");
+    if(bit != null) {
+      href = bit.split("*")[0];
+      text = bit.split("*")[1];
+      if(bit.split("*").length > 2 &amp;&amp; bit.split("*")[2] == "s") {
+        target = "_self";
+      } else {
+        target = "_blank";
+      }
+      if(href.substr(0, 7) == "http://" ||  href.substr(0, 8) == "https://") {
+        newText = newText.replace("&lt;e" + bit + ">", "&lt;u>&lt;a href='" + href + "' target='" + target + "'>" + text + "&lt;/a>&lt;/u>");
+      } else {
+        newText = newText.replace("&lt;e" + bit + ">", "&lt;u>&lt;a href='javascript:FastHtml.clickLink(\"" + href + "\")' FastHtml.onclick='event.preventDefault(); clickLink(\"" + href + "\"); return false; '>" + text + "&lt;/a>&lt;/u>");
+      }
+    }
+  }
+
+
+  newText = newText.replace(/&lt;pl>/g, "&lt;p align=\"left\">");
+  newText = newText.replace(/&lt;pc>/g, "&lt;p align=\"center\">");
+  newText = newText.replace(/&lt;pr>/g, "&lt;p align=\"right\">");
+  newText = newText.replace(/&lt;pj>/g, "&lt;p align=\"justify\">");
+  newText = newText.replace(/&lt;\/f>/g, "&lt;/font>");
+  newText = newText.replace(/&lt;\/t>/g, "&lt;/textformat>");
+
+  // c.log("/////////FastHtml convertion////////");
+  // c.log(newText);
+  // c.log("////////////////////////////////////");
+
+  return newText;
+};
+
+/**
+ * @todo write docs
+ */
+FastHtml.clickLink = function(param) {
+  FastHtml.linkFunction.call(FastHtml.target, param);
+};
+
+/**
+ * @todo write docs
+ */
+FastHtml.findAndPlaceLinks = function(text) {
+  var newText = FastHtml._findAndPlaceLinksPrefix(text, "http");
+  return FastHtml._findAndPlaceLinksPrefix(newText, "https");
+};
+
+/**
+ * @ignore
+ */
+FastHtml._findAndPlaceLinksPrefix = function(text, prefix) {
+  var regexp = prefix == 'http' ? /http:\/\//g : /https:\/\//g;
+  var blocks = text.split(regexp);
+
+  if(blocks.length > 1) {
+    var blocks2 = [];
+    var indexS;
+    var url;
+
+    blocks2[0] = blocks[0];
+
+    for(var i = 1; blocks[i] != null; i++) {
+      indexS = blocks[i].search(/ |:|;/);
+      if(indexS > -1) {
+        url = prefix + '://' + blocks[i].substr(0, indexS);
+        blocks2[i] = '&lt;e' + url + '*' + url + '>' + blocks[i].substr(indexS);
+      } else {
+        url = prefix + '://' + blocks[i].substr(0);
+        blocks2[i] = '&lt;e' + url + '*' + url + '>';
+      }
+    }
+  }
+  return(blocks.length == 0 || blocks.length == 1) ? text : blocks2.join('');
+};
+
+/**
+ * @todo write docs
+ */
+FastHtml.findAndPlaceTwitterAdresses = function(text) {
+  var blocks = text.split(/@/g);
+
+  if(blocks.length > 1) {
+    var blocks2 = [];
+    var indexS;
+    var url;
+    var accountName;
+
+    blocks2[0] = blocks[0];
+
+    for(var i = 1; blocks[i] != null; i++) {
+      indexS = blocks[i].search(/ |:|;/);
+      if(indexS > -1) {
+        accountName = blocks[i].substr(0, indexS);
+        url = 'https://twitter.com/' + accountName;
+        blocks2[i] = '&lt;e' + url + '*@' + accountName + '>' + blocks[i].substr(indexS);
+      } else {
+        accountName = blocks[i].substr(0);
+        url = 'https://twitter.com/' + accountName;
+        blocks2[i] = '&lt;e' + url + '*@' + accountName + '>';
+      }
+    }
+  }
+
+  return(blocks.length == 0 || blocks.length == 1) ? text : blocks2.join('');
+};
+
+/**
+ * @todo write docs
+ */
+FastHtml.getColorTag = function(color) {
+  color = ColorOperators.colorStringToHEX(color);
+  return "&lt;font color=\"" + color + "\">";
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+      </div>
+    </div>
+    <div class='quiet small center pad1y'>
+    </div>
+  </div>
+  <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <script src="scripts/filter.js"></script>
+  <script src="scripts/prettify/prettify.js"></script>
+</body>
+</html>

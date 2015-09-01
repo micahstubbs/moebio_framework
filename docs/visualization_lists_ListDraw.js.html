@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Moebio Framework: Source: visualization/lists/ListDraw.js</title>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:700italic,400,700' rel='stylesheet' type='text/css'>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/style.css">
+</head>
+
+<body onload="prettyPrint()">
+
+<div class='hide-mobile pin-left pint-top pin-bottom col2 quiet-scroll scroll-styled fixed'>
+
+  <div class='clearfix fill-background dark center'>
+    <div class='inline pad2y'>
+      <a href="../">Moebio Platform</a> / <a href="index.html">Docs</a>
+    </div>
+  </div>
+  <div class='pad1 small'>
+    <div class="filter-block clearfix">
+      <input type="text" id="filter-input" placeholder="Type to filter">
+      <a href="#" id="clear-filter-button">x</a>
+    </div>
+    <div class='side'>
+      <h3></h3><ul><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all></strong></div><ul><li class="code"><a href="module-Global.html">Global</a></li></ul></div></ul><h3>Numbers</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Axis2D.html">Axis2D</a></li><li class="code"><a href="Interval.html">Interval</a></li><li class="code"><a href="Matrix.html">Matrix</a></li><li class="code"><a href="NumberList.html">NumberList</a></li><li class="code"><a href="NumberTable.html">NumberTable</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="IntervalListOperators.html">IntervalListOperators</a></li><li class="code"><a href="IntervalTableOperators.html">IntervalTableOperators</a></li><li class="code"><a href="NumberListGenerators.html">NumberListGenerators</a></li><li class="code"><a href="NumberListOperators.html">NumberListOperators</a></li><li class="code"><a href="NumberOperators.html">NumberOperators</a></li><li class="code"><a href="NumberTableConversions.html">NumberTableConversions</a></li><li class="code"><a href="NumberTableFlowOperators.html">NumberTableFlowOperators</a></li><li class="code"><a href="NumberTableOperators.html">NumberTableOperators</a></li></ul></div><h3>Colors</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="ColorList.html">ColorList</a></li><li class="code"><a href="ColorScale.html">ColorScale</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="ColorGenerators.html">ColorGenerators</a></li><li class="code"><a href="ColorListGenerators.html">ColorListGenerators</a></li><li class="code"><a href="ColorListOperators.html">ColorListOperators</a></li><li class="code"><a href="ColorOperators.html">ColorOperators</a></li><li class="code"><a href="ColorScaleGenerators.html">ColorScaleGenerators</a></li><li class="code"><a href="ColorScales.html">ColorScales</a></li></ul></div><h3>Geo</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Country.html">Country</a></li><li class="code"><a href="CountryList.html">CountryList</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="CountryListOperators.html">CountryListOperators</a></li><li class="code"><a href="CountryOperators.html">CountryOperators</a></li><li class="code"><a href="GeoOperators.html">GeoOperators</a></li></ul></div><h3>Basics</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DataModel.html">DataModel</a></li><li class="code"><a href="List.html">List</a></li><li class="code"><a href="Table.html">Table</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="FastHtml.html">FastHtml</a></li><li class="code"><a href="ListGenerators.html">ListGenerators</a></li><li class="code"><a href="ListOperators.html">ListOperators</a></li><li class="code"><a href="MatrixGenerators.html">MatrixGenerators</a></li><li class="code"><a href="ObjectConversions.html">ObjectConversions</a></li><li class="code"><a href="ObjectOperators.html">ObjectOperators</a></li><li class="code"><a href="TableConversions.html">TableConversions</a></li><li class="code"><a href="TableEncodings.html">TableEncodings</a></li><li class="code"><a href="TableGenerators.html">TableGenerators</a></li><li class="code"><a href="TableOperators.html">TableOperators</a></li></ul></div><h3>Dates</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DateAxis.html">DateAxis</a></li><li class="code"><a href="DateInterval.html">DateInterval</a></li><li class="code"><a href="DateList.html">DateList</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="DateListOperators.html">DateListOperators</a></li><li class="code"><a href="DateOperators.html">DateOperators</a></li></ul></div><h3>Interactions</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DragDetection.html">DragDetection</a></li></ul></div><h3>Geometry</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Engine3D.html">Engine3D</a></li><li class="code"><a href="Point.html">Point</a></li><li class="code"><a href="Point3D.html">Point3D</a></li><li class="code"><a href="Polygon.html">Polygon</a></li><li class="code"><a href="Polygon3D.html">Polygon3D</a></li><li class="code"><a href="Polygon3DList.html">Polygon3DList</a></li><li class="code"><a href="PolygonList.html">PolygonList</a></li><li class="code"><a href="Rectangle.html">Rectangle</a></li><li class="code"><a href="RectangleList.html">RectangleList</a></li><li class="code"><a href="Space2D.html">Space2D</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="Draw.html">Draw</a></li><li class="code"><a href="GeometryConvertions.html">GeometryConvertions</a></li><li class="code"><a href="GeometryOperators.html">GeometryOperators</a></li><li class="code"><a href="PointOperators.html">PointOperators</a></li><li class="code"><a href="PolygonGenerators.html">PolygonGenerators</a></li><li class="code"><a href="PolygonListEncodings.html">PolygonListEncodings</a></li><li class="code"><a href="PolygonListOperators.html">PolygonListOperators</a></li><li class="code"><a href="PolygonOperators.html">PolygonOperators</a></li><li class="code"><a href="RectangleOperators.html">RectangleOperators</a></li></ul></div><h3>Networks</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Forces.html">Forces</a></li><li class="code"><a href="Network.html">Network</a></li><li class="code"><a href="Node.html">Node</a></li><li class="code"><a href="NodeList.html">NodeList</a></li><li class="code"><a href="Relation.html">Relation</a></li><li class="code"><a href="RelationList.html">RelationList</a></li><li class="code"><a href="Tree.html">Tree</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="NetworkConvertions.html">NetworkConvertions</a></li><li class="code"><a href="NetworkDraw.html">NetworkDraw</a></li><li class="code"><a href="NetworkEncodings.html">NetworkEncodings</a></li><li class="code"><a href="NetworkGenerators.html">NetworkGenerators</a></li><li class="code"><a href="NetworkOperators.html">NetworkOperators</a></li><li class="code"><a href="TreeConvertions.html">TreeConvertions</a></li><li class="code"><a href="TreeDraw.html">TreeDraw</a></li><li class="code"><a href="TreeEncodings.html">TreeEncodings</a></li></ul></div><h3>Strings</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="InputTextFieldHTML.html">InputTextFieldHTML</a></li><li class="code"><a href="StringList.html">StringList</a></li><li class="code"><a href="TextBox.html">TextBox</a></li><li class="code"><a href="TextFieldHTML.html">TextFieldHTML</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="DrawTexts.html">DrawTexts</a></li><li class="code"><a href="DrawTextsAdvanced.html">DrawTextsAdvanced</a></li><li class="code"><a href="StringConversions.html">StringConversions</a></li><li class="code"><a href="StringListOperators.html">StringListOperators</a></li><li class="code"><a href="StringListVisOperators.html">StringListVisOperators</a></li><li class="code"><a href="StringOperators.html">StringOperators</a></li><li class="code"><a href="StringUtils.html">StringUtils</a></li></ul></div><h3>Misc</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="LoadEvent.html">LoadEvent</a></li><li class="code"><a href="MultiLoader.html">MultiLoader</a></li></ul></div><h3>Functions</h3><ul><li class="small"><a href="global.html#Graphics">Graphics</a></li><li class="small"><a href="global.html#Triangle">Triangle</a></li></ul></div>
+    </div>
+  </div>
+</div>
+<div class='limiter margin2'>
+    <div class='pad1y pad2x fill-white'>
+      <div class='prose'>
+        <div class='pad2y'>
+          <h1 class='code'>Source: visualization/lists/ListDraw.js</h1>
+        </div>
+        
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import List from "src/dataStructures/lists/List";
+
+function ListDraw() {}
+export default ListDraw;
+
+/**
+ * draws a list in a vertical stack
+ * @param  {Rectangle} frame
+ * @param  {List} list to be drawn
+ *
+ * @param {Number} returnMode:&lt;br>-1:no selection&lt;br>0:return index&lt;br>1:return element&lt;br>2:indexes&lt;br>3:elements
+ * @param  {ColorList} colorList colors of elements
+ * @param {Number} textSize
+ * @param  {Number} mode 0:color in square if any
+ * @param {Object} [varname] index or list of indexes of externally selected
+ * @return {Object} returns the index of the selected element, the element, a list of indexes or a list of elements
+ * tags:draw
+ */
+ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode, selectedInit, graphics) {
+  if(list == null || !list.length > 0) return;
+
+  textSize = textSize || 14;
+  returnMode = returnMode == null ? 0 : returnMode;
+
+  if(frame.memory == null) frame.memory = { selected: 0, y: 0, multiSelected: new List() };
+
+  var changeList = frame.memory.list != list;
+  var changeExternallySelected = (changeList &amp;&amp; selectedInit != null) || frame.memory.selectedInit != selectedInit;
+
+  if(changeExternallySelected) {
+    if(returnMode == 3) {
+      frame.memory.multiSelected = new List();
+      selectedInit.forEach(function(index) {
+        frame.memory.multiSelected.push(list[index]);
+      });
+    } else if(returnMode == 2) {
+      frame.memory.multiSelected = List.fromArray(selectedInit).getImproved();
+    } else {
+      frame.memory.selected = selectedInit;
+    }
+
+    frame.memory.selectedInit = selectedInit;
+  }
+
+  if(changeList) {
+    frame.memory.list = list;
+  }
+
+  var i;
+  var x = frame.x + 5;
+  var xTexts = x + (colorList ? 15 : 0);
+  var y;
+  var dy = textSize + 4;
+  var n = list.length;
+  var bottom = frame.getBottom();
+  var mouseIn = frame.containsPoint(graphics.mP);
+  var y0Follow = 0;
+  var y0;
+  var isSelected;
+  var multi = returnMode == 2 || returnMode == 3;
+  var index, onMulti;
+
+  var hList = list.length * dy;
+
+  if(hList &lt;= frame.height - 20) {
+    y0 = frame.y + 10;
+  } else {
+    if(mouseIn) {
+      y0Follow = Math.min(10 - (hList - frame.height + 20) * ((graphics.mY - (frame.y + 10)) / (frame.height - 20)), 10);
+    } else {
+      y0Follow = 10 - (hList - frame.height + 20) * frame.memory.selected / list.length;
+    }
+
+    frame.memory.y = 0.95 * frame.memory.y + 0.05 * y0Follow;
+
+    y0 = frame.y + frame.memory.y;
+  }
+
+
+  graphics.setText('black', textSize);
+
+  for(i = 0; list[i] != null; i++) {
+    y = y0 + dy * i;
+
+    if(y &lt; frame.y) continue;
+    if(y + 12 > bottom) break;
+
+
+
+    if(returnMode != -1) {
+
+      index = frame.memory.multiSelected.indexOf(i);
+      onMulti = multi &amp;&amp; index != -1;
+
+      isSelected = multi ? onMulti : frame.memory.selected == i;
+
+      if(isSelected) {
+        graphics.setFill('black');
+        graphics.fRect(frame.x + 2, y, frame.width - 4, dy);
+        graphics.setFill('white');
+      } else {
+        graphics.setFill('black');
+      }
+      graphics.fText(list[i].toString(), xTexts, y + 2);
+
+      if(mouseIn &amp;&amp; graphics.mY >= y &amp;&amp; graphics.mY &lt; y + dy) {
+        graphics.setFill('rgba(150,150,150,0.3)');
+        if(graphics.fRectM(frame.x + 2, y, frame.width - 4, dy)) {
+          graphics.setCursor('pointer');
+        }
+        if(graphics.MOUSE_DOWN) {
+          if(multi) {
+
+            if(onMulti) {
+              frame.memory.multiSelected = frame.memory.multiSelected.getWithoutElementAtIndex(index);
+            } else {
+              frame.memory.multiSelected = frame.memory.multiSelected.clone();
+              frame.memory.multiSelected.push(returnMode == 2 ? i : list[i]);
+              frame.memory.multiSelected = frame.memory.multiSelected.getImproved();
+            }
+
+          } else {
+            frame.memory.selected = i;
+          }
+        }
+      }
+    } else {
+      graphics.setFill('black');
+    }
+
+    if(colorList) {
+      graphics.setFill(colorList == null ? 'rgb(200, 200, 200)' : colorList[i % n]);
+      graphics.fRect(x, y + 4, 10, 10);
+    }
+
+  }
+
+  return returnMode == 1 ? list[frame.memory.selected] : (multi ? frame.memory.multiSelected : frame.memory.selected);
+};</code></pre>
+        </article>
+    </section>
+
+
+
+
+      </div>
+    </div>
+    <div class='quiet small center pad1y'>
+    </div>
+  </div>
+  <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <script src="scripts/filter.js"></script>
+  <script src="scripts/prettify/prettify.js"></script>
+</body>
+</html>

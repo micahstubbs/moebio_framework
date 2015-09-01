@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Moebio Framework: Source: tools/loaders/Loader.js</title>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:700italic,400,700' rel='stylesheet' type='text/css'>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/style.css">
+</head>
+
+<body onload="prettyPrint()">
+
+<div class='hide-mobile pin-left pint-top pin-bottom col2 quiet-scroll scroll-styled fixed'>
+
+  <div class='clearfix fill-background dark center'>
+    <div class='inline pad2y'>
+      <a href="../">Moebio Platform</a> / <a href="index.html">Docs</a>
+    </div>
+  </div>
+  <div class='pad1 small'>
+    <div class="filter-block clearfix">
+      <input type="text" id="filter-input" placeholder="Type to filter">
+      <a href="#" id="clear-filter-button">x</a>
+    </div>
+    <div class='side'>
+      <h3></h3><ul><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all></strong></div><ul><li class="code"><a href="module-Global.html">Global</a></li></ul></div></ul><h3>Numbers</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Axis2D.html">Axis2D</a></li><li class="code"><a href="Interval.html">Interval</a></li><li class="code"><a href="Matrix.html">Matrix</a></li><li class="code"><a href="NumberList.html">NumberList</a></li><li class="code"><a href="NumberTable.html">NumberTable</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="IntervalListOperators.html">IntervalListOperators</a></li><li class="code"><a href="IntervalTableOperators.html">IntervalTableOperators</a></li><li class="code"><a href="NumberListGenerators.html">NumberListGenerators</a></li><li class="code"><a href="NumberListOperators.html">NumberListOperators</a></li><li class="code"><a href="NumberOperators.html">NumberOperators</a></li><li class="code"><a href="NumberTableConversions.html">NumberTableConversions</a></li><li class="code"><a href="NumberTableFlowOperators.html">NumberTableFlowOperators</a></li><li class="code"><a href="NumberTableOperators.html">NumberTableOperators</a></li></ul></div><h3>Colors</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="ColorList.html">ColorList</a></li><li class="code"><a href="ColorScale.html">ColorScale</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="ColorGenerators.html">ColorGenerators</a></li><li class="code"><a href="ColorListGenerators.html">ColorListGenerators</a></li><li class="code"><a href="ColorListOperators.html">ColorListOperators</a></li><li class="code"><a href="ColorOperators.html">ColorOperators</a></li><li class="code"><a href="ColorScaleGenerators.html">ColorScaleGenerators</a></li><li class="code"><a href="ColorScales.html">ColorScales</a></li></ul></div><h3>Geo</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Country.html">Country</a></li><li class="code"><a href="CountryList.html">CountryList</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="CountryListOperators.html">CountryListOperators</a></li><li class="code"><a href="CountryOperators.html">CountryOperators</a></li><li class="code"><a href="GeoOperators.html">GeoOperators</a></li></ul></div><h3>Basics</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DataModel.html">DataModel</a></li><li class="code"><a href="List.html">List</a></li><li class="code"><a href="Table.html">Table</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="FastHtml.html">FastHtml</a></li><li class="code"><a href="ListGenerators.html">ListGenerators</a></li><li class="code"><a href="ListOperators.html">ListOperators</a></li><li class="code"><a href="MatrixGenerators.html">MatrixGenerators</a></li><li class="code"><a href="ObjectConversions.html">ObjectConversions</a></li><li class="code"><a href="ObjectOperators.html">ObjectOperators</a></li><li class="code"><a href="TableConversions.html">TableConversions</a></li><li class="code"><a href="TableEncodings.html">TableEncodings</a></li><li class="code"><a href="TableGenerators.html">TableGenerators</a></li><li class="code"><a href="TableOperators.html">TableOperators</a></li></ul></div><h3>Dates</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DateAxis.html">DateAxis</a></li><li class="code"><a href="DateInterval.html">DateInterval</a></li><li class="code"><a href="DateList.html">DateList</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="DateListOperators.html">DateListOperators</a></li><li class="code"><a href="DateOperators.html">DateOperators</a></li></ul></div><h3>Interactions</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DragDetection.html">DragDetection</a></li></ul></div><h3>Geometry</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Engine3D.html">Engine3D</a></li><li class="code"><a href="Point.html">Point</a></li><li class="code"><a href="Point3D.html">Point3D</a></li><li class="code"><a href="Polygon.html">Polygon</a></li><li class="code"><a href="Polygon3D.html">Polygon3D</a></li><li class="code"><a href="Polygon3DList.html">Polygon3DList</a></li><li class="code"><a href="PolygonList.html">PolygonList</a></li><li class="code"><a href="Rectangle.html">Rectangle</a></li><li class="code"><a href="RectangleList.html">RectangleList</a></li><li class="code"><a href="Space2D.html">Space2D</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="Draw.html">Draw</a></li><li class="code"><a href="GeometryConvertions.html">GeometryConvertions</a></li><li class="code"><a href="GeometryOperators.html">GeometryOperators</a></li><li class="code"><a href="PointOperators.html">PointOperators</a></li><li class="code"><a href="PolygonGenerators.html">PolygonGenerators</a></li><li class="code"><a href="PolygonListEncodings.html">PolygonListEncodings</a></li><li class="code"><a href="PolygonListOperators.html">PolygonListOperators</a></li><li class="code"><a href="PolygonOperators.html">PolygonOperators</a></li><li class="code"><a href="RectangleOperators.html">RectangleOperators</a></li></ul></div><h3>Networks</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Forces.html">Forces</a></li><li class="code"><a href="Network.html">Network</a></li><li class="code"><a href="Node.html">Node</a></li><li class="code"><a href="NodeList.html">NodeList</a></li><li class="code"><a href="Relation.html">Relation</a></li><li class="code"><a href="RelationList.html">RelationList</a></li><li class="code"><a href="Tree.html">Tree</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="NetworkConvertions.html">NetworkConvertions</a></li><li class="code"><a href="NetworkDraw.html">NetworkDraw</a></li><li class="code"><a href="NetworkEncodings.html">NetworkEncodings</a></li><li class="code"><a href="NetworkGenerators.html">NetworkGenerators</a></li><li class="code"><a href="NetworkOperators.html">NetworkOperators</a></li><li class="code"><a href="TreeConvertions.html">TreeConvertions</a></li><li class="code"><a href="TreeDraw.html">TreeDraw</a></li><li class="code"><a href="TreeEncodings.html">TreeEncodings</a></li></ul></div><h3>Strings</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="InputTextFieldHTML.html">InputTextFieldHTML</a></li><li class="code"><a href="StringList.html">StringList</a></li><li class="code"><a href="TextBox.html">TextBox</a></li><li class="code"><a href="TextFieldHTML.html">TextFieldHTML</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="DrawTexts.html">DrawTexts</a></li><li class="code"><a href="DrawTextsAdvanced.html">DrawTextsAdvanced</a></li><li class="code"><a href="StringConversions.html">StringConversions</a></li><li class="code"><a href="StringListOperators.html">StringListOperators</a></li><li class="code"><a href="StringListVisOperators.html">StringListVisOperators</a></li><li class="code"><a href="StringOperators.html">StringOperators</a></li><li class="code"><a href="StringUtils.html">StringUtils</a></li></ul></div><h3>Misc</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="LoadEvent.html">LoadEvent</a></li><li class="code"><a href="MultiLoader.html">MultiLoader</a></li></ul></div><h3>Functions</h3><ul><li class="small"><a href="global.html#Graphics">Graphics</a></li><li class="small"><a href="global.html#Triangle">Triangle</a></li></ul></div>
+    </div>
+  </div>
+</div>
+<div class='limiter margin2'>
+    <div class='pad1y pad2x fill-white'>
+      <div class='prose'>
+        <div class='pad2y'>
+          <h1 class='code'>Source: tools/loaders/Loader.js</h1>
+        </div>
+        
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import LoadEvent from "src/tools/loaders/LoadEvent";
+
+function Loader() {}
+export default Loader;
+
+Loader.proxy = ""; //TODO:install proxy created by Mig at moebio.com
+Loader.cacheActive = false; //TODO: fix!
+Loader.associativeByUrls = {};
+Loader.REPORT_LOADING = false;
+Loader.n_loading = 0;
+Loader.LOCAL_STORAGE_ENABLED = false;
+
+Loader.PHPurl = "http://intuitionanalytics.com/tests/proxy.php?url=";
+
+
+/**
+ * loads string data from server. The defined Loader.proxy will be used.
+ * @param {String} url the URL of the file to be loaded
+ * @param {Function} onLoadData a function that will be called when complete. The function must receive a LoadEvent
+ * @param {callee} the Object containing the onLoadData function to be called
+ * @para, {Object} optional parameter that will be stored in the LoadEvent instance
+ */
+Loader.loadData = function(url, onLoadData, callee, param, send_object_json, withCredentials) {
+  if(Loader.REPORT_LOADING) console.log('load data:', url);
+  Loader.n_loading++;
+
+  if(Loader.LOCAL_STORAGE_ENABLED) {
+    // TODO track down LocalStorage. localStorage is a thing though (lowercase l);
+    var result = localStorage.getItem(url);
+    if(result) {
+      var e = new LoadEvent();
+      e.url = url;
+      e.param = param;
+      e.result = result;
+
+      onLoadData.call(target, e);
+    }
+  }
+
+
+
+  if(Loader.REPORT_LOADING) console.log("Loader.loadData | url:", url);
+
+  var useProxy = String(url).substr(0, 4) == "http";
+
+  var req = new XMLHttpRequest();
+
+  var target = callee ? callee : arguments.callee;
+  var onLoadComplete = function() {
+    if(Loader.REPORT_LOADING) console.log('Loader.loadData | onLoadComplete'); //, req.responseText:', req.responseText);
+    if(req.readyState == 4) {
+      Loader.n_loading--;
+
+      var e = new LoadEvent();
+      e.url = url;
+      e.param = param;
+      //if (req.status == 200) { //MIG
+      if(req.status == 200 || (req.status === 0 &amp;&amp; req.responseText !== null)) {
+        e.result = req.responseText;
+        onLoadData.call(target, e);
+      } else {
+        if(Loader.REPORT_LOADING) console.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
+        e.errorType = req.status;
+        e.errorMessage = "[!] There was a problem retrieving the data [" + req.status + "]:" + req.statusText;
+        onLoadData.call(target, e);
+      }
+    }
+  };
+
+  // branch for native XMLHttpRequest object
+  if(window.XMLHttpRequest &amp;&amp; !(window.ActiveXObject)) {
+    try {
+      req = new XMLHttpRequest();
+    } catch(e) {
+      req = false;
+    }
+    // branch for IE/Windows ActiveX version
+  } else if(window.ActiveXObject) {
+    try {
+      req = new ActiveXObject("Msxml2.XMLHTTP.6.0");
+    } catch(e) {
+      try {
+        req = new ActiveXObject("Msxml2.XMLHTTP.3.0");
+      } catch(e) {
+        try {
+          req = new ActiveXObject("Msxml2.XMLHTTP");
+        } catch(e) {
+          try {
+            req = new ActiveXObject("Microsoft.XMLHTTP");
+          } catch(e) {
+            req = false;
+          }
+        }
+      }
+    }
+  }
+  if(req) {
+    if(withCredentials === true ){
+        req.withCredentials = true;
+    }
+    req.onreadystatechange = onLoadComplete; //processReqChange;
+    if(useProxy) {
+      req.open("GET", Loader.proxy + url, true);
+    } else {
+      req.open("GET", url, true);
+    }
+
+    send_object_json = send_object_json || "";
+    req.send(send_object_json);
+  }
+};
+
+
+//TODO this method isn't reference by anything else.
+function LoaderRequest(url, method, data) {
+  this.url = url;
+  this.method = method ? method : "GET";
+  this.data = data;
+}
+
+Loader.loadImage = function(url, onComplete, callee, param) {
+  Loader.n_loading++;
+
+  if(Loader.REPORT_LOADING) console.log("Loader.loadImage | url:", url);
+
+  var target = callee ? callee : arguments.callee;
+  var img = document.createElement('img');
+
+  if(this.cacheActive) {
+    if(this.associativeByUrls[url] != null) {
+      Loader.n_loading--;
+      //console.log('=====>>>>+==>>>+====>>=====>>>+==>> in cache:', url);
+      var e = new LoadEvent();
+      e.result = this.associativeByUrls[url];
+      e.url = url;
+      e.param = param;
+      onComplete.call(target, e);
+    } else {
+      var cache = true;
+      var associative = this.associativeByUrls;
+    }
+  }
+
+  img.onload = function() {
+    Loader.n_loading--;
+    var e = new LoadEvent();
+    e.result = img;
+    e.url = url;
+    e.param = param;
+    if(cache) associative[url] = img;
+    onComplete.call(target, e);
+  };
+
+  img.onerror = function() {
+    Loader.n_loading--;
+    var e = new LoadEvent();
+    e.result = null;
+    e.errorType = 1; //TODO: set an error type!
+    e.errorMessage = "There was a problem retrieving the image [" + img.src + "]:";
+    e.url = url;
+    e.param = param;
+    onComplete.call(target, e);
+  };
+
+  img.src = Loader.proxy + url;
+};
+
+
+
+// Loader.loadJSON = function(url, onLoadComplete) {
+//   Loader.n_loading++;
+
+//   Loader.loadData(url, function(data) {
+//     Loader.n_loading--;
+//     onLoadComplete.call(arguments.callee, jQuery.parseJSON(data));
+//   });
+// };
+
+
+/**
+Loader.callIndex = 0;
+Loader.loadJSONP = function(url, onLoadComplete, callee) {
+  Loader.n_loading++;
+
+  Loader.callIndex = Loader.callIndex + 1;
+  var index = Loader.callIndex;
+
+  var newUrl = url + "&amp;callback=JSONcallback" + index;
+  //var newUrl=url+"?callback=JSONcallback"+index; //   &lt;----  WFP suggestion
+
+  var target = callee ? callee : arguments.callee;
+
+  //console.log('Loader.loadJSONP, newUrl:', newUrl);
+
+  $.ajax({
+    url: newUrl,
+    type: 'GET',
+    data: {},
+    dataType: 'jsonp',
+    contentType: "application/json",
+    jsonp: 'jsonp',
+    jsonpCallback: 'JSONcallback' + index,
+    success: function(data) {
+      Loader.n_loading--;
+      var e = new LoadEvent();
+      e.result = data;
+      onLoadComplete.call(target, e);
+    },
+    error: function(data) {
+      Loader.n_loading--;
+      console.log("Loader.loadJSONP | error, data:", data);
+
+      var e = new LoadEvent();
+      e.errorType = 1;
+      onLoadComplete.call(target, e);
+    }
+  }); //.error(function(e){
+  // console.log('---> (((error))) B');
+  //
+  // var e=new LoadEvent();
+  // e.errorType=1;
+  // onLoadComplete.call(target, e);
+  // });
+};
+**/
+
+
+
+
+//FIX THESE METHODS:
+
+Loader.loadXML = function(url, onLoadData) {
+  Loader.n_loading++;
+
+  var req = new XMLHttpRequest();
+  var onLoadComplete = onLoadData;
+
+  if(Loader.REPORT_LOADING) console.log('loadXML, url:', url);
+
+  // branch for native XMLHttpRequest object
+  if(window.XMLHttpRequest &amp;&amp; !(window.ActiveXObject)) {
+    try {
+      req = new XMLHttpRequest();
+    } catch(e) {
+      req = false;
+    }
+    // branch for IE/Windows ActiveX version
+  } else if(window.ActiveXObject) {
+    try {
+      req = new ActiveXObject("Msxml2.XMLHTTP");
+    } catch(e) {
+      try {
+        req = new ActiveXObject("Microsoft.XMLHTTP");
+      } catch(e) {
+        req = false;
+      }
+    }
+  }
+  if(req) {
+    req.onreadystatechange = processReqChange;
+    req.open("GET", url, true);
+    req.send("");
+  }
+
+  function processReqChange() {
+    Loader.n_loading--;
+    // only if req shows "loaded"
+    if(req.readyState == 4) {
+      // only if "OK"
+      if(req.status == 200 || req.status == 0) {
+        onLoadComplete(req.responseXML);
+
+      } else {
+        console.log("There was a problem retrieving the XML data:\n" +
+          req.statusText);
+      }
+    }
+  }
+};
+
+
+///////////////PHP
+
+Loader.sendContentToVariableToPhp = function(url, varName, value, onLoadData, callee, param) {
+  var data = varName + "=" + encodeURIComponent(value);
+  Loader.sendDataToPhp(url, data, onLoadData, callee, param);
+};
+
+Loader.sendContentsToVariablesToPhp = function(url, varNames, values, onLoadData, callee, param) {
+  var data = varNames[0] + "=" + encodeURIComponent(values[0]);
+  for(var i = 1; varNames[i] != null; i++) {
+    data += "&amp;" + varNames[i] + "=" + encodeURIComponent(values[i]);
+  }
+  Loader.sendDataToPhp(url, data, onLoadData, callee, param);
+};
+
+Loader.sendDataToPhp = function(url, data, onLoadData, callee, param) {
+  var req = new XMLHttpRequest();
+
+  req.open("POST", url, true);
+  req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  req.send(data);
+
+  var target = callee ? callee : arguments.callee;
+
+  var onLoadComplete = function() {
+    if(Loader.REPORT_LOADING) console.log('Loader.loadData | onLoadComplete, req.responseText:', req.responseText);
+    if(req.readyState == 4) {
+      Loader.n_loading--;
+
+      var e = new LoadEvent();
+      e.url = url;
+      e.param = param;
+
+      if(req.status == 200 || (req.status == 0 &amp;&amp; req.responseText != null)) {
+        e.result = req.responseText;
+        onLoadData.call(target, e);
+      } else {
+        if(Loader.REPORT_LOADING) console.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
+        e.errorType = req.status;
+        e.errorMessage = "[!] There was a problem retrieving the data [" + req.status + "]:" + req.statusText;
+        onLoadData.call(target, e);
+      }
+    }
+  };
+
+  req.onreadystatechange = onLoadComplete;
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+      </div>
+    </div>
+    <div class='quiet small center pad1y'>
+    </div>
+  </div>
+  <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <script src="scripts/filter.js"></script>
+  <script src="scripts/prettify/prettify.js"></script>
+</body>
+</html>

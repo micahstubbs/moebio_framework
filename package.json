@@ -1,0 +1,24 @@
+{
+  "name": "moebio_framework_site",
+  "version": "0.2.0",
+  "description": "static site for moebio framework",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moebiolabs/moebio_framework_site"
+  },
+  "homepage": "https://moebiolabs.github.io/moebio_framework",
+  "dependencies": {
+    "moebio_framework": "git+ssh://git@github.com:moebiolabs/moebio_framework.git"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-copy": "~0.4.1",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-gh-pages": "^0.10.0",
+    "grunt-jekyll": "^0.4.2",
+    "grunt-jsdoc": "^0.6.4",
+    "grunt-npm-install": "^0.2.0",
+    "jsdoc": "git+https://github.com/jsdoc3/jsdoc.git",
+    "lodash": "^3.3.1"
+  }
+}

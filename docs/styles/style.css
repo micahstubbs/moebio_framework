@@ -1,0 +1,554 @@
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans'), local('OpenSans'), url(http://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3aCWcynf_cDxXwCLxiixG1c.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Open Sans Bold'), local('OpenSans-Bold'), url(http://fonts.gstatic.com/s/opensans/v13/k3k702ZOKiLJc3WVjuplzInF5uFdDttMLvmWuJdhhgs.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 700;
+  src: local('Open Sans Bold Italic'), local('OpenSans-BoldItalic'), url(http://fonts.gstatic.com/s/opensans/v13/PRmiXeptR36kaC0GEAetxp_TkvowlIOtbR7ePgFOpF4.ttf) format('truetype');
+}
+
+.fill-background {
+  background: rgb(45, 62, 80);
+}
+
+
+html,
+body,
+div,
+h1,
+h2,
+h3,
+h4,
+a,
+strong,
+ul,
+li,
+article,
+section {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+
+article,
+section {
+  display: block;
+}
+
+body {
+  line-height: 1;
+}
+
+ul {
+  list-style: none;
+}
+
+:focus {
+  outline: 0;
+}
+
+*,
+*:after,
+*:before {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+body {
+  color: #404040;
+  color: rgba(0,0,0,0.75);
+  font: 15px/20px 'Open Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background: #fff;
+}
+
+.dark {
+  color: #fff;
+}
+
+table { border-collapse: collapse; border-spacing:0; }
+
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 700;
+  margin: 0;
+}
+
+h1 {
+  font-size: 30px;
+  line-height: 40px;
+}
+
+h2 {
+  font-size: 22px;
+  line-height: 30px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+h3 {
+  font-size: 19px;
+  line-height: 24px;
+}
+
+h3.name {
+  border-top: black 1px solid;
+  margin-top: 10px;
+}
+
+h4 {
+  font-size: 15px;
+  line-height: 20px;
+}
+
+.small {
+  font-size: 12px;
+  line-height: 20px;
+  letter-spacing: 0;
+}
+
+strong {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 700;
+}
+
+
+a {
+  color: #3887BE;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #63b6e5;
+}
+
+a:focus {
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
+}
+
+.dark a {
+  color: rgba(255,255,255,.5);
+}
+
+.dark a:hover {
+  color: white;
+}
+
+.dark a:focus {
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+}
+
+
+.code {
+  font-family: Menlo, Bitstream Vera Sans Mono, Monaco, Consolas, monospace;
+  white-space: pre-wrap;
+}
+
+
+/* Tables
+-------------------------------------------------- */
+table {
+  width:100%;
+  background-color:transparent;
+  border-collapse:collapse;
+  border-spacing:0;
+  }
+  table th,
+  table td {
+    padding:4px 0;
+    text-align:left;
+    vertical-align:top;
+    border-bottom:1px solid #ddd;
+    }
+  table th {
+    font-family:'Open Sans Bold', sans-serif;
+    }
+  table thead th {
+    vertical-align:bottom;
+    }
+
+table.fixed {
+  table-layout:fixed;
+  }
+
+
+.scroll-styled {
+  overflow: auto;
+}
+
+.scroll-styled .highlight pre::webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  border-left: 0;
+  background: rgba(0,0,0,0.1);
+}
+
+.scroll-styled .highlight pre::webkit-scrollbar:hover {
+  background: rgba(0,0,0,0.15);
+}
+
+.scroll-styled .highlight pre::webkit-scrollbar-track {
+  background: none;
+}
+
+.scroll-styled .highlight pre::webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.1);
+  border-radius: 0;
+}
+
+/* Inline Elements: Formatted for read content
+------------------------------------------------------- */
+
+.prose {
+  line-height: 25px;
+}
+
+.prose section {
+  margin-bottom: 20px;
+}
+
+.prose h1,
+.prose h2,
+.prose h3 {
+  display: block;
+  margin-bottom: 20px;
+  word-wrap: break-word;
+}
+
+.prose h2 {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.prose h1,
+.prose h2 {
+  padding-top: 40px;
+}
+
+.prose h3 {
+  padding-top: 20px;
+}
+
+.prose h1:first-child,
+.prose h2:first-child {
+  padding-top: 0;
+}
+
+table.prose,
+.prose table {
+  border:1px solid #ddd;
+  }
+table.prose th,
+table.prose td,
+.prose table th,
+.prose table td {
+  padding:8px;
+  border:1px solid #ddd;
+  }
+table.prose th,
+.prose table th {
+  background-color:rgba(0,0,0,0.05);
+  }
+
+.prose ul {
+  list-style:disc;
+  margin-left:40px;
+  }
+.prose ol {
+  list-style:decimal;
+  margin-left:40px;
+  }
+.prose ul li,
+.prose ol li {
+  margin-bottom:10px;
+  }
+
+
+/* Dark read content styling */
+
+.prose h1:last-child,
+.prose h2:last-child {
+  margin-bottom: 0;
+}
+
+/* Columns
+------------------------------------------------------- */
+
+.limiter {
+  width: 83.3333%;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.col2 {
+  float: left;
+  width: 16.6666%;
+  max-width: 200px;
+}
+
+.margin2 {
+  margin-left: 16.6666%;
+}
+
+/* Padding
+------------------------------------------------------- */
+
+.pad0y {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.pad1 {
+  padding: 10px;
+}
+
+.pad2x {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.pad1y {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.pad2y {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+/* Absolute containers
+------------------------------------------------------- */
+.pin-top,
+.pin-right,
+.pin-bottom,
+.pin-left,
+.pin-topleft,
+.pin-topright,
+.pin-bottomleft,
+.pin-bottomright {
+  position:absolute;
+  }
+  .pin-bottom { right:0; bottom:0; left:0; }
+  .pin-top    { top:0; right:0; left:0; }
+  .pin-left   { top:0; bottom:0; left:0; }
+  .pin-right  { top:0; right:0; bottom:0; }
+  .pin-bottomright { bottom:0; right:0; }
+  .pin-bottomleft  { bottom:0; left:0; }
+  .pin-topright    { top:0; right:0; }
+  .pin-topleft     { top:0; left:0; }
+
+.tall {
+  height: 100%;
+}
+
+/* Fixed containers
+------------------------------------------------------- */
+.fixed-top,
+.fixed-right,
+.fixed-bottom,
+.fixed-left,
+.fixed-topleft,
+.fixed-topright,
+.fixed-bottomleft,
+.fixed-bottomright {
+  position:fixed;
+  }
+  .fixed-bottom { right:0; bottom:0; left:0; }
+  .fixed-top    { top:0; right:0; left:0; }
+  .fixed-left   { top:0; bottom:0; left:0; }
+  .fixed-right  { top:0; right:0; bottom:0; }
+  .fixed-bottomright { bottom:0; right:0; }
+  .fixed-bottomleft  { bottom:0; left:0; }
+  .fixed-topright    { top:0; right:0; }
+  .fixed-topleft     { top:0; left:0; }
+
+
+/* Fills
+-------------------------------------------------------- */
+
+.fill-white {
+  background: #fff;
+}
+
+.clearfix {
+  display: block;
+}
+
+.clearfix:after {
+  content: '';
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+
+/* Additional Utility Classes
+------------------------------------------------------- */
+
+.quiet {
+  color: #7f7f7f;
+  color: rgba(0,0,0,.5);
+}
+
+.center {
+  text-align: center;
+}
+
+.space-bottom1 {
+  margin-bottom: 10px;
+}
+
+.space-top1 {
+  margin-top: 10px;
+}
+
+.hide-mobile {
+  display: block;
+}
+
+.inline {
+  display: inline-block;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+.force-inline * {
+  display:inline !important;
+}
+
+.fixed {
+  position: fixed;
+}
+
+/* Small Screen Layout
+------------------------------------------------------- */
+
+@media only screen and (max-width:900px) {
+  .limiter {
+    width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+/* Mobile Layout
+------------------------------------------------------- */
+
+@media only screen and (max-width:640px) {
+  a:link {
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+  }
+
+  .col2 {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .margin2 {
+    margin-left: 0;
+  }
+
+  .pad2y {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .pad2x {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .hide-mobile {
+    display: none!important;
+  }
+
+}
+
+/* Print
+------------------------------------------------------- */
+
+@media print {
+  /* Inline rules */
+
+  body {
+    color: #000;
+    font: 12px/20px 'Open Sans', sans-serif;
+  }
+
+  /* Cut pad rules in half, matches mobile rules */
+
+  .pad2y {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .pad2x {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+}
+
+.filter-block {
+  margin: 0;
+  margin-bottom: 15px;
+  position: relative;
+}
+
+#filter-input {
+  width: 100%;
+  padding: 5px;
+  font-family: inherit;
+  font-size: 15px;
+  outline: none;
+  border: 1px solid #dedede;
+}
+
+#clear-filter-button {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  margin-top: -8px;
+  width: 16px;
+  height: 16px;
+  font-size: 14px;
+  color: grey;
+  text-align: center;
+  line-height: 0;
+  padding-top: 7px;
+  opacity: .5;
+}
+
+.filtered {
+  display: none;
+}
