@@ -98,7 +98,7 @@ module.exports = function (grunt) {
 
   });
 
-  grunt.registerTask('build', ['npm-install', 'copy', 'jekyll:build', 'doc']);
+  grunt.registerTask('build', ['npm-install', 'copy:examples', 'copy:js', 'jekyll:build', 'doc']);
 
   //
   // Default task - build distribution source

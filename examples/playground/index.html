@@ -83,7 +83,7 @@ function setupEditor() {
   function generate() {
     var session = editor.getSession().getValue();
     // hack to re-run init
-    session += "init();";
+    session += "window.onload();";
     var iframe = document.getElementById('moebio_out');
     iframe.contentWindow.eval(session);
 
