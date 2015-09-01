@@ -1,5 +1,6 @@
 import Polygon3D from "src/dataStructures/geometry/Polygon3D";
 import Point3D from "src/dataStructures/geometry/Point3D";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 
 function CirclesVisOperators() {}
 export default CirclesVisOperators;
@@ -9,7 +10,7 @@ CirclesVisOperators.circlesCloud = function(weights, frame, margin) {
 
   margin = margin == null ? 0 : margin;
 
-  var normWeights = weights.getNormalizedToMax().sqrt();
+  var normWeights = NumberListOperators.normalizedToMax(weights).sqrt();
   var circlesPlaced = new Polygon3D();
 
   var dL = 6;

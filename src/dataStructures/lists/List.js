@@ -1,4 +1,3 @@
-import StringOperators from "src/operators/strings/StringOperators";
 import DataModel from "src/dataStructures/DataModel";
 import NumberList from "src/dataStructures/numeric/NumberList";
 import ColorList from "src/dataStructures/graphic/ColorList";
@@ -11,8 +10,8 @@ import PolygonList from "src/dataStructures/geometry/PolygonList";
 import Table from "src/dataStructures/lists/Table";
 import NumberTable from "src/dataStructures/numeric/NumberTable";
 import Interval from "src/dataStructures/numeric/Interval";
-import ListOperators from "src/operators/lists/ListOperators";
 import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 import { instantiateWithSameType, typeOf, instantiate } from "src/tools/utils/code/ClassUtils";
 
 List.prototype = new DataModel();
@@ -22,7 +21,14 @@ List.prototype.constructor = List;
  /**
   * @classdesc List is an Array with a type property.
   * Lists have a number of methods to assist with working with
-  * them. There are also a number of
+  * them. There are also a number of helper functions in associated namespaces.
+  *
+  * Additional functions that work on List can be found in:
+  * <ul>
+  *  <li>Operators:   {@link ListOperators}</li>
+  *  <li>Conversions: {@link ListConversions}</li>
+  *  <li>Generators: {@link ListGenerators}</li>
+  * </ul>
   *
   * @description Creates a new List.
   * @param {Number|String|Object} arguments Comma separated values to add to List
@@ -59,7 +65,7 @@ List.fromArray = function(array) {
   array._constructor = List;
 
   array.getImproved = List.prototype.getImproved;
-  array.sameElements = List.prototype.sameElements;
+  array.isEquivalent = List.prototype.isEquivalent;
   array.getLength = List.prototype.getLength;
   array.getTypeOfElements = List.prototype.getTypeOfElements; //TODO: redundant?
   array.getTypes = List.prototype.getTypes;
@@ -106,10 +112,7 @@ List.fromArray = function(array) {
   //filter:
   array.getFilteredByPropertyValue = List.prototype.getFilteredByPropertyValue;
   array.getFilteredByBooleanList = List.prototype.getFilteredByBooleanList;
-  //conversion
-  array.toNumberList = List.prototype.toNumberList;
-  array.toStringList = List.prototype.toStringList;
-  //
+
   array.clone = List.prototype.clone;
   array.toString = List.prototype.toString;
   array.getNames = List.prototype.getNames;
@@ -121,8 +124,6 @@ List.fromArray = function(array) {
   array.getFilteredByFunction = List.prototype.getFilteredByFunction;
   array._concat = Array.prototype.concat;
   array.concat = List.prototype.concat;
-  array.getReport = List.prototype.getReport;
-  array.getReportHtml = List.prototype.getReportHtml;
 
   //transformations
   array.pushIfUnique = List.prototype.pushIfUnique;
@@ -139,7 +140,6 @@ List.fromArray = function(array) {
   array.isList = true;
 
   array.destroy = List.prototype.destroy;
-
 
   return array;
 };
@@ -192,38 +192,6 @@ List.prototype.getImproved = function() {
     case "Relation":
       newList = RelationList.fromArray(this, false);
       break;
-      var newList = NumberList.fromArray(this, false);
-    break;
-    case "string":
-      var newList = StringList.fromArray(this, false);
-    break;
-    case "Rectangle":
-      return this;
-    case "date":
-      var newList = DateList.fromArray(this, false);
-    break;
-    case "List":
-      case "DateList":
-      case "IntervalList":
-      case "StringList":
-      case "Table":
-      var newList = Table.fromArray(this, false);
-    break;
-    case "NumberList":
-      var newList = NumberTable.fromArray(this, false);
-    break;
-    case "Point":
-      var newList = Polygon.fromArray(this, false);
-    break;
-    case "Polygon":
-      var newList = PolygonList.fromArray(this, false);
-    break;
-    case "Node":
-      var newList = NodeList.fromArray(this, false);
-    break;
-    case "Relation":
-      var newList = RelationList.fromArray(this, false);
-    break;
   }
 
   if(newList === null ||  newList === "") {
@@ -255,7 +223,7 @@ List.prototype.getImproved = function() {
  * @return {Boolean} true if all elements are identical.
  * tags:
  */
-List.prototype.sameElements = function(list) {
+List.prototype.isEquivalent = function(list) {
   if(this.length != list.length) return false;
 
   var i;
@@ -320,7 +288,6 @@ List.prototype.getTypes = function() {
  * @return {String} String representation of the List.
  */
 List.prototype.toString = function() {
-  var i;
   var str = "[";
   for(var i = 0; i < this.length - 1; i++) {
     str += this[i] + ", ";
@@ -570,14 +537,12 @@ List.prototype.getSimplified = function(nCategories, othersElement) {
   var newList = new List();
   newList.name = this.name;
 
-  this.forEach(function(element, i){
+  this.forEach(function(element){
     newList.push(freqTable._indexesDictionary[element]<nCategories-1?element:othersElement);
   });
 
   return newList;
 };
-
-
 
 
 /**
@@ -628,14 +593,12 @@ List.prototype.getFrequenciesTable = function(sortListsByOccurrences, addWeights
   var numberList = new NumberList();
   var i;
   var index;
-  var element;
 
   table[0] = elementList;
   table[1] = numberList;
 
   //if(this.type == 'NumberList' || this.type == 'StringList') {//TODO:check other cases
   var dictionary = {};
-  var prevVal;
 
   for(i=0; this[i]!=null; i++){
     index = dictionary[this[i]];
@@ -670,7 +633,7 @@ List.prototype.getFrequenciesTable = function(sortListsByOccurrences, addWeights
 
   }
 
-  if(addWeightsNormalizedToSum) table[2] = table[1].getNormalizedToSum();
+  if(addWeightsNormalizedToSum) table[2] = NumberListOperators.normalizedToSum(table[1]);
   if(addCategoricalColors){
     var colors = new ColorList();
     for(i = 0; table[0][i]!=null; i++) {
@@ -819,7 +782,6 @@ List.prototype.indexOfElement = function(element) { //TODO: test if this is fast
   return -1;
 };
 
-
 /**
  * Returns a List of values of a property of all elements.
  *
@@ -863,40 +825,6 @@ List.prototype.sortIndexed = function() {
   return result;
 };
 
-// List.prototype.sortNumericIndexed=function() {
-//  var index = new Array();
-//  var i;
-//  for(i=0; i<this.length; i++){
-//      index.push({index:i, value:this[i]});
-//  }
-//  var comparator = function(a, b) {
-//      var array_a = a.value;
-//      var array_b = b.value;;
-
-//      return array_a - array_b;
-//  }
-//  index=index.sort(comparator);
-//  var result = new NumberList();
-//  for(i=0; i<index.length; i++){
-//      result.push(index[i].index);
-//  }
-//  return result;
-// }
-
-// List.prototype.sortNumeric=function(descendant){
-//  var comparator;
-//  if(descendant){
-//    var comparator=function(a, b){
-//      return b - a;
-//    }
-//  } else {
-//    var comparator=function(a, b){
-//      return a - b;
-//    }
-//  }
-//  return this.sort(comparator);
-// }
-
 List.prototype.sortOnIndexes = function(indexes) {
   var result = instantiateWithSameType(this);
   result.name = this.name;
@@ -931,21 +859,7 @@ List.prototype.getSortedByProperty = function(propertyName, ascending) {
  * tags:sort
  */
 List.prototype.getSorted = function(ascending) {
-  return this.getSortedByList(this, ascending); //<--- because tests, antiintuitively, have proven this to be faster
-
-  // ascending = ascending == null ? true : ascending;
-
-  // var comparator;
-  // if(ascending) {
-  //   comparator = function(a, b) {
-  //     return a > b ? 1 : -1;
-  //   };
-  // } else {
-  //   comparator = function(a, b) {
-  //     return a > b ? -1 : 1;
-  //   };
-  // }
-  // return this.clone().sort(comparator);
+  return this.getSortedByList(this, ascending);
 };
 
 /**
@@ -1123,13 +1037,14 @@ List.prototype.getFilteredByBooleanList = function(booleanList) {
 /**
  * Filters a list by its elements, and a type of comparison (equal by default).
  *
- * @param  {Object} value object (for equal or different comparison) or number or date
+ * @param  {String} propertyName property to check.
+ * @param  {Object} propertyValue object (for equal or different comparison) or number or date
  * (for equal, different, greater, lesser).
  * @param  {String} comparison equal (default), different, greater, lesser.
  * @return {List} Filtered list
  * tags:filter
  */
-List.prototype.getFilteredByValue = function(value, comparison) {
+List.prototype.getFilteredByValue = function(propertyName, propertyValue, comparison) {
   comparison = comparison == null ? "equal" : comparison;
 
   var newList = new List();
@@ -1200,42 +1115,6 @@ List.prototype.getFilteredByPropertyValue = function(propertyName, propertyValue
   }
 
   return newList.getImproved();
-};
-
-/**
- * Converts the List into a NumberList.
- *
- * @return {NumberList}
- * tags:conversion
- */
-List.prototype.toNumberList = function() {
-  var numberList = new NumberList();
-  numberList.name = this.name;
-  var i;
-  for(i = 0; this[i] != null; i++) {
-    numberList[i] = Number(this[i]);
-  }
-  return numberList;
-};
-
-/**
- * Converts the List into a StringList.
- *
- * @return {StringList}
- * tags:conversion
- */
-List.prototype.toStringList = function() {
-  var i;
-  var stringList = new StringList();
-  stringList.name = this.name;
-  for(i = 0; this[i] != null; i++) {
-    if(typeof this[i] == 'number') {
-      stringList[i] = String(this[i]);
-    } else {
-      stringList[i] = this[i].toString();
-    }
-  }
-  return stringList;
 };
 
 List.prototype.applyFunction = function(func) {
@@ -1396,189 +1275,6 @@ List.prototype.concat = function() {
 };
 
 
-List.prototype.getReport = function(level) { //TODO:complete
-  var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
-  var text = level > 0 ? (ident + "////report of instance of List////") : "///////////report of instance of List//////////";
-
-  var length = this.length;
-  var i;
-
-  text += ident + "name: " + this.name;
-  text += ident + "type: " + this.type;
-
-  if(length == 0) {
-    text += ident + "single element: [" + this[0] + "]";
-    return text;
-  } else {
-    text += ident + "length: " + length;
-    text += ident + "first element: [" + this[0] + "]";
-  }
-
-  switch(this.type) {
-    case "NumberList":
-      var min = this.getMin();
-      var max = this.getMax();
-      this.min = min;
-      this.max = max;
-      var average = this.getAverage();//(min + max) * 0.5;
-      this.average = average;
-      text += ident + "min: " + min;
-      text += ident + "max: " + max;
-      text += ident + "average: " + average;
-      if(length < 101) {
-        text += ident + "numbers: " + this.join(", ");
-      }
-      break;
-      case "StringList":
-    case "List":
-      var freqTable = this.getFrequenciesTable(true);
-      this._freqTable = freqTable;
-      text += ident + "number of different elements: " + freqTable[0].length;
-      if(freqTable[0].length < 10) {
-        text += ident + "elements frequency:";
-      } else {
-        text += ident + "some elements frequency:";
-      }
-
-      for(i = 0; freqTable[0][i] != null && i < 10; i++) {
-        text += ident + "  [" + String(freqTable[0][i]) + "]: " + freqTable[1][i];
-      }
-
-      var joined;
-      if(this.type == "List") {
-        joined = this.join("], [");
-      } else {
-        joined = this.toStringList().join("], [");
-      }
-
-      if(joined.length < 2000) text += ident + "strings: [" + joined + "]";
-      break;
-
-  }
-
-  ///add ideas to: analyze, visualize
-
-
-  return text;
-};
-
-
-List.prototype.getReportHtml = function(level) { //TODO:complete
-  var ident = "<br>" + (level > 0 ? StringOperators.repeatString("&nbsp", level) : "");
-  var text =  level > 0 ? "" : "<b><font style=\"font-size:18px\">list report</f></b>";
-
-  var length = this.length;
-  var i;
-
-  if(this.name){
-    text += ident + "name: <b>" + this.name + "</b>";
-  } else {
-    text += ident + "<i>no name</i>";
-  }
-  text += ident + "type: <b>" + this.type + "</b>";
-
-  if(length == 0) {
-    text += ident + "single element: [<b>" + this[0] + "</b>]";
-    return text;
-  } else {
-    text += ident + "length: <b>" + length + "</b>";
-    text += ident + "first element: [<b>" + this[0] + "</b>]";
-  }
-
-  switch(this.type) {
-    case "NumberList":
-      var min = 9999999;
-      var max = -9999999;
-      var average = 0;
-      var shorten = new NumberList();
-      var index = 0;
-      var accumsum = 0;
-      var maxAccumsum = -99999;
-      var sizeAccum = Math.max(Math.floor(this.length/50), 1);
-
-      this.forEach(function(val){
-        min = Math.min(min, val);
-        max = Math.max(max, val);
-        average += val;
-        accumsum += val;
-        index++;
-        if(index==sizeAccum){
-          accumsum /= index;
-          maxAccumsum = Math.max(maxAccumsum, accumsum);
-          shorten.push(accumsum);
-          accumsum=0;
-          index=0;
-        }
-      });
-      if(index!=0){
-          accumsum /=index;
-          maxAccumsum = Math.max(maxAccumsum, accumsum);
-          shorten.push(accumsum);
-      }
-
-      shorten = shorten.factor(1/maxAccumsum);
-
-      average /= this.length;
-
-      this.min = min;
-      this.max = max;
-      this.average = average;
-      text += ident + "min: <b>" + min + "</b>";
-      text += ident + "max: <b>" + max + "</b>";
-      text += ident + "average: <b>" + average + "</b>";
-      if(length < 101) {
-        text += ident + "numbers: <b>" + this.join("</b>, <b>") + "</b>";
-      }
-      //var shorten = NumberListOperators.shorten(this, 70);
-      //shorten = shorten.getNormalizedToMax();
-      text += ident;
-      for(i=0; shorten[i]!=null; i++){
-        text += "<font style=\"font-size:7px\"><font color=\""+ColorOperators.colorStringToHEX(ColorScales.grayToOrange(shorten[i]))+"\">█</f></f>";
-      }
-      break;
-    case "StringList":
-    case "List":
-      var freqTable = this.getFrequenciesTable(true);
-      this._freqTable = freqTable;
-      var catColors = ColorListGenerators.createCategoricalColors(2, freqTable[0].length);
-
-      text += ident + "entropy: <b>" + NumberOperators.numberToString(ListOperators.getListEntropy(this, null, freqTable), 4) + "</b>";
-
-      text += ident + "number of different elements: <b>" + freqTable[0].length + "</b>";
-      if(freqTable[0].length < 10) {
-        text += ident + "elements frequency:";
-      } else {
-        text += ident + "some elements frequency:";
-      }
-
-      for(i = 0; freqTable[0][i] != null && i < 10; i++) {
-        text += ident + "  [<b>" + String(freqTable[0][i]) + "</b>]: <font style=\"font-size:10px\"><b><font color=\""+ColorOperators.colorStringToHEX(catColors[i])+"\">" + freqTable[1][i] + "</f></b></f>";
-      }
-
-      var joined;
-      if(this.type == "List") {
-        joined = this.join("], [");
-      } else {
-        joined = this.toStringList().join("], [");
-      }
-
-      if(joined.length < 2000) text += ident + "contents: [" + joined + "]";
-
-      var weights = freqTable[1].getNormalizedToSum();
-
-      var bars = StringOperators.createsCategoricalColorsBlocksHtml(weights, 55, catColors);
-      text += ident;
-      text += "<font style=\"font-size:7px\">"+bars+"</f>";
-
-      break;
-  }
-
-
-  ///add ideas to: analyze, visualize
-  return text;
-};
-
-
 ////transformations
 
 List.prototype.pushIfUnique = function(element) {
@@ -1659,16 +1355,12 @@ List.prototype.splice = function() { //TODO: replace
   switch(this.type) {
     case 'NumberList':
       return NumberList.fromArray(this._splice.apply(this, arguments));
-    break;
     case 'StringList':
       return StringList.fromArray(this._splice.apply(this, arguments));
-    break;
     case 'NodeList':
       return NodeList.fromArray(this._splice.apply(this, arguments));
-    break;
     case 'DateList':
       return DateList.fromArray(this._splice.apply(this, arguments));
-    break;
   }
   return List.fromArray(this._splice.apply(this, arguments)).getImproved();
 };

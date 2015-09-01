@@ -1,4 +1,4 @@
-/* global grunt, module, require, console */
+/* global module, require */
 
 var buildFileList = require('./tasks/shared').buildFileList;
 
@@ -41,5 +41,5 @@ module.exports = function (grunt) {
   //
   // Run tests interactively
   //
-  grunt.registerTask('test', [ 'karma' ]);
+  grunt.registerTask('test', [ 'build-fast', 'karma' ]);
 };

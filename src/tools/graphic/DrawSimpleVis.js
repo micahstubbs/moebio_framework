@@ -3,6 +3,7 @@ import Point from "src/dataStructures/geometry/Point";
 import Rectangle from "src/dataStructures/geometry/Rectangle";
 import ColorScale from "src/dataStructures/graphic/ColorScale";
 import ColorOperators from "src/operators/graphic/ColorOperators";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 
 /*
  * DrawSimpleVis
@@ -31,7 +32,7 @@ DrawSimpleVis.drawSimpleBarChart = function(context, numberList, frame, colors) 
   var dX = frame.width / numberList.length;
 
   var bottom = frame.getBottom();
-  var normalizedNumberList = numberList.getNormalizedToMax(frame.height);
+  var normalizedNumberList = NumberListOperators.normalizedToMax(numberList, frame.height);
 
   var i;
   for(i = 0; numberList[i] != null; i++) {

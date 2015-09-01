@@ -4,6 +4,7 @@ import NumberListGenerators from "src/operators/numeric/numberList/NumberListGen
 import ListOperators from "src/operators/lists/ListOperators";
 import Table from "src/dataStructures/lists/Table";
 import List from "src/dataStructures/lists/List";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 
 ColorListGenerators._HARDCODED_CATEGORICAL_COLORS = new ColorList(
   "#dd4411", "#2200bb", "#1f77b4", "#ff660e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#dd8811",
@@ -60,7 +61,7 @@ ColorListGenerators.createColorListFromNumberList = function(numberList, colorSc
 
   switch(mode) {
     case 0: //0 to max
-      newNumberList = numberList.getNormalizedToMax();
+      newNumberList = NumberListOperators.normalizedToMax(numberList);
       break;
     case 1: //min to max
       break;

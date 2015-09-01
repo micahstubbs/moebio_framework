@@ -5,6 +5,8 @@ import ListOperators from "src/operators/lists/ListOperators";
 import RectangleList from "src/dataStructures/geometry/RectangleList";
 import ListGenerators from "src/operators/lists/ListGenerators";
 import Point from "src/dataStructures/geometry/Point";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
+
 
 /**
  * @classdesc Provides a set of tools that work with Rectangles
@@ -200,7 +202,7 @@ RectangleOperators.squarify = function(frame, weights, isNormalizedWeights, isSo
   if(isNormalizedWeights) {
     newWeightList = weights; // new NumberList(arregloPesos);
   } else {
-    newWeightList = weights.getNormalizedToSum();
+    newWeightList = NumberListOperators.normalizedToSum(weights);
   }
 
   if(!isSortedWeights) {

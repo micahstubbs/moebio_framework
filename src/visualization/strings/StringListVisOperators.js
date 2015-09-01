@@ -5,6 +5,7 @@ import NumberList from "src/dataStructures/numeric/NumberList";
 import Polygon from "src/dataStructures/geometry/Polygon";
 import Rectangle from "src/dataStructures/geometry/Rectangle";
 import DrawTexts from "src/tools/graphic/DrawTexts";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 
 /**
  * @classdesc Operators that contain visualization method algoritms and return a Table with parameters for StringListPrimitive
@@ -35,7 +36,7 @@ StringListVisOperators.simpleTagCloud = function(stringList, weights, frame, fon
   var K = 20;
   var i0Line;
 
-  var normWeigths = weights.getNormalizedToMax();
+  var normWeigths = NumberListOperators.normalizedToMax(weights);
 
   var sizes;
   var positions;
@@ -114,7 +115,7 @@ StringListVisOperators.tagCloudRectangles = function(stringList, weights, frame,
   mode = mode == null ? 0 : mode;
   margin = margin == null ? 0 : margin;
 
-  var normWeights = weights.sqrt().getNormalizedToMax();
+  var normWeights = NumberListOperators.normalizedToMax(weights.sqrt());
 
   var roundSizes = mode == 0;
 

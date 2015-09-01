@@ -1,5 +1,4 @@
 import Network from "src/dataStructures/structures/networks/Network";
-import NumberList from "src/dataStructures/numeric/NumberList";
 import Node from "src/dataStructures/structures/elements/Node";
 import Relation from "src/dataStructures/structures/elements/Relation";
 import NodeList from "src/dataStructures/structures/lists/NodeList";
@@ -11,8 +10,8 @@ import { typeOf } from "src/tools/utils/code/ClassUtils";
  * @namespace
  * @category networks
  */
-function NetworkConvertions() {}
-export default NetworkConvertions;
+function NetworkConversions() {}
+export default NetworkConversions;
 
 /**
  * Builds a Network based on a two columns Table, creating relations on co-occurrences.
@@ -26,16 +25,17 @@ export default NetworkConvertions;
  * @return {Network}
  * tags:conversion
  */
-NetworkConvertions.TableToNetwork = function(table, numberList, threshold, allowMultipleRelations, minRelationsInNode, stringList) {
+NetworkConversions.TableToNetwork = function(table, numberList, threshold, allowMultipleRelations, minRelationsInNode, stringList) {
   if(table == null || !table.isTable || table[0] == null || table[1] == null) return;
 
   //trace("••••••• createNetworkFromPairsTable", table);
   if(allowMultipleRelations == null) allowMultipleRelations = false;
   if(table.length < 2) return null;
   var network = new Network();
+  var nElements;
 
   if(numberList == null) {
-    var nElements = Math.min(table[0].length, table[1].length);
+    nElements = Math.min(table[0].length, table[1].length);
   } else {
     nElements = Math.min(table[0].length, table[1].length, numberList.length);
   }

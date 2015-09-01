@@ -36,7 +36,6 @@ Tree.prototype.addNodeToTree = function(node, parent) {
   } else {
     var relation = new Relation(parent.id + "_" + node.id, parent.id + "_" + node.id, parent, node);
     this.addRelation(relation);
-    //this._createRelation(parent, node);
     node.level = parent.level + 1;
     node.parent = parent;
   }
@@ -58,8 +57,9 @@ Network.prototype._newCreateRelation = function(parent, node, id, weight) {
  * Adds a new parent node to the Tree.
  *
  * @param {Node} node New Parent Node.
+ * @param {Node} child Node that will become the child.
  */
-Tree.prototype.addFather = function(node, children) {
+Tree.prototype.addFather = function(node, child) {
   //TODO: is children supposed to be child?
   if(child.parent != null || this.nodeList.indexOf(child) == -1) return false;
   this.addNode(node);
@@ -94,12 +94,12 @@ Tree.prototype.getNodesByLevel = function(level) {
 Tree.prototype.getLeaves = function(node) {
   var leaves = new NodeList();
   if(node) {
-    if(node.toNodeList.length == 0) {
+    if(node.toNodeList.length === 0) {
       leaves.addNode(node);
       return leaves;
     }
     var addLeaves = function(candidate) {
-      if(candidate.toNodeList.length == 0) {
+      if(candidate.toNodeList.length === 0) {
         leaves.addNode(candidate);
       } else {
         candidate.toNodeList.forEach(addLeaves);
@@ -108,7 +108,7 @@ Tree.prototype.getLeaves = function(node) {
     node.toNodeList.forEach(addLeaves);
   } else {
     this.nodeList.forEach(function(candidate) {
-      if(candidate.toNodeList.length == 0) leaves.addNode(candidate);
+      if(candidate.toNodeList.length === 0) leaves.addNode(candidate);
     });
   }
   return leaves;
@@ -128,7 +128,7 @@ Tree.prototype.assignDescentWeightsToNodes = function() {
  */
 Tree.prototype._assignDescentWeightsToNode = function(node) {
   var i;
-  if(node.toNodeList.length == 0) {
+  if(node.toNodeList.length === 0) {
     node.descentWeight = 1;
     return 1;
   }
@@ -143,7 +143,7 @@ Tree.prototype._assignDescentWeightsToNode = function(node) {
  *
  * @return {String} Log message indicating Tree's size.
  */
-Tree.prototype.getReport = function(relation) {
+Tree.prototype.getReport = function() {
   //TODO: remove relation input?
   return "Tree contains " + this.nodeList.length + " nodes and " + this.relationList.length + " relations";
 };

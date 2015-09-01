@@ -21,7 +21,7 @@ function Node(id, name) {
   this.name = name != null ? name : '';
   this.type = "Node";
 
-  this.nodeType;
+  this.nodeType = null;
 
   this.x = 0;
   this.y = 0;
