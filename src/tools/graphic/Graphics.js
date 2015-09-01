@@ -63,11 +63,10 @@ function noOperation() {}
  ****************************/
 
 /*
- * @ignore
- *
  * Initialize the graphics proper. Includes
  * things like actually creating the backing canvas and
  * setting up mousehandlers.
+ * @ignore
  */
 Graphics.prototype._initialize = function(autoStart) {
   this.cW = 1; // canvas width
@@ -186,11 +185,11 @@ Graphics.prototype._initialize = function(autoStart) {
   see http://stackoverflow.com/a/19048340
  */
 /**
- * @ignore
  * Helper function for getting the mouse position
  * see http://stackoverflow.com/a/19048340
  *
- * @param  {[type]} evt [description]
+ * @param  {Event} evt
+ * @ignore
  */
 Graphics.prototype._getRelativeMousePos = function(evt) {
   var rect = this.canvas.getBoundingClientRect();
@@ -201,11 +200,11 @@ Graphics.prototype._getRelativeMousePos = function(evt) {
 };
 
 /**
- * @ignore
  * This method is used to handle user interaction events (e.g. mouse events). *
  * Sets some internal state and then displatches to external event handlers.
  *
  * @param  {Event} e event object
+ * @ignore
  */
 Graphics.prototype._onMouseOrKeyBoard = function(e) {
   switch(e.type){
@@ -269,12 +268,12 @@ function resizeThrottler(actualResizeHandler, interval) {
 }
 
 /**
- * @ignore
  * This method is used to handle resizes of the window, and then optionally
  * pass that on to the user defined onResize method if the container dimensions
  * have changed.
  *
- * @param  {[type]} e resize event
+ * @param  {Event} e resize event
+ * @ignore
  */
 Graphics.prototype._onResize = function(e) {
   var currentW = this.cW;
@@ -295,11 +294,11 @@ Graphics.prototype._onResize = function(e) {
 };
 
 /**
- * @ignore
  * Return the dimensions of the container that this graphics object
  * is associated with.
  *
  * @return {Object} object with width and height properties.
+ * @ignore
  */
 Graphics.prototype._containerDimensions = function() {
   // https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model/Determining_the_dimensions_of_elements
@@ -337,8 +336,8 @@ Graphics.prototype._adjustCanvas = function(dimensions) {
 };
 
 /*
- * @ignore
  * Starts or restarts the draw cycle at the current cycleInterval
+ * @ignore
  */
 Graphics.prototype._startCycle = function() {
   this.cycleActive = true;
@@ -352,8 +351,8 @@ Graphics.prototype._startCycle = function() {
 };
 
 /**
- * @ignore
  * Stops the draw cycle
+ * @ignore
  */
 Graphics.prototype._stopCycle = function(callback) {
   clearInterval(this._setIntervalId);
@@ -370,8 +369,7 @@ Graphics.prototype._stopCycle = function(callback) {
  * 
  * Can be called multiple times to delay the stop time to being time milliseconds
  * after the last call to this function.
- * @param  {[type]} time [description]
- * @return {[type]}      [description]
+ * @param  {Number} time time in milliseconds to run the cycle function before stopping ot.
  */
 Graphics.prototype._cycleFor = function(time) {
   if(this._setIntervalId) {
@@ -524,9 +522,8 @@ Graphics.prototype.stop = function() {
  * immediately @see stop.
  *
  *  
- * @param  {[type]} time time in milliseconds after which the cycle function will 
+ * @param  {Number} time time in milliseconds after which the cycle function will 
  *                       continue to run
- * @return {[type]}      [description]
  */
 Graphics.prototype.cycleOnMouseMovement = function(time) {
   var self = this;  
@@ -600,7 +597,7 @@ Graphics.prototype.off = function(eventName, callback) {
  *
  * @see  setBackgroundAlpha
  *
- * @param {[type]} color [description]
+ * @param {String|Array|Number} color A string, array or individual numbers representing the rgb color.
  */
 Graphics.prototype.setBackgroundColor = function(color) {
   if(typeof color === "number") {
@@ -872,8 +869,8 @@ Graphics.prototype.fsEllipse = function(x, y, rW, rH) {
 
 
 /**
- * @ignore
  * TODO add comments to this to explain what it does.
+ * @ignore
  */
 Graphics.prototype._solidArc = function(x,y,a0,a1,r0,r1){
   this.context.beginPath();
@@ -885,13 +882,7 @@ Graphics.prototype._solidArc = function(x,y,a0,a1,r0,r1){
 
 /**
  * [fSolidArc description]
- * @param  {[type]} x  [description]
- * @param  {[type]} y  [description]
- * @param  {[type]} a0 [description]
- * @param  {[type]} a1 [description]
- * @param  {[type]} r0 [description]
- * @param  {[type]} r1 [description]
- * @todo
+ * @todo document fSolidArc
  */
 Graphics.prototype.fSolidArc = function(x,y,a0,a1,r0,r1){
   this._solidArc(x,y,a0,a1,r0,r1);
@@ -900,13 +891,7 @@ Graphics.prototype.fSolidArc = function(x,y,a0,a1,r0,r1){
 
 /**
  * [sSolidArc description]
- * @param  {[type]} x  [description]
- * @param  {[type]} y  [description]
- * @param  {[type]} a0 [description]
- * @param  {[type]} a1 [description]
- * @param  {[type]} r0 [description]
- * @param  {[type]} r1 [description]
- * @todo
+ * @todo document sSolidArc
  */
 Graphics.prototype.sSolidArc = function(x,y,a0,a1,r0,r1){
   this._solidArc(x,y,a0,a1,r0,r1);
@@ -915,13 +900,7 @@ Graphics.prototype.sSolidArc = function(x,y,a0,a1,r0,r1){
 
 /**
  * [fsSolidArc description]
- * @param  {[type]} x  [description]
- * @param  {[type]} y  [description]
- * @param  {[type]} a0 [description]
- * @param  {[type]} a1 [description]
- * @param  {[type]} r0 [description]
- * @param  {[type]} r1 [description]
- * @todo
+ * @todo document fsSolidArc
  */
 Graphics.prototype.fsSolidArc = function(x,y,a0,a1,r0,r1){
   this.fSolidArc(x,y,a0,a1,r0,r1);
@@ -971,8 +950,8 @@ Graphics.prototype.bezier = function(x0, y0, cx0, cy0, cx1, cy1, x1, y1) {
 
 
 /**
+ * @todo add comments to this to explain what it does.
  * @ignore
- * TODO add comments to this to explain what it does.
  */
 Graphics.prototype._lines = function() {
   if(arguments == null) return;
@@ -986,8 +965,8 @@ Graphics.prototype._lines = function() {
 };
 
 /**
- * @ignore
  * TODO add comments to this to explain what it does.
+ * @ignore
  */
 Graphics.prototype._linesM = function() {
   if(arguments == null) {
@@ -1096,10 +1075,9 @@ Graphics.prototype._polygon = function(polygon) {
 };
 
 /**
- * [fPolygon description]
- * @param  {[type]} polygon [description]
- * @return {[type]}         [description]
- * @todo
+ * Renders a filled polygon.
+ * 
+ * @param  {Polygon} polygon the polygon to render
  */
 Graphics.prototype.fPolygon = function(polygon) {
   this._polygon(polygon);
@@ -1107,11 +1085,9 @@ Graphics.prototype.fPolygon = function(polygon) {
 };
 
 /**
- * [sPolygon description]
- * @param  {[type]} polygon   [description]
- * @param  {[type]} closePath [description]
- * @return {[type]}           [description]
- * @todo
+ * Render a stroked polygon
+ * @param  {Polygon} polygon
+ * @param  {Boolean} closePath
  */
 Graphics.prototype.sPolygon = function(polygon, closePath) {
   this._polygon(polygon);
@@ -1122,11 +1098,9 @@ Graphics.prototype.sPolygon = function(polygon, closePath) {
 };
 
 /**
- * [fsPolygon description]
- * @param  {[type]} polygon   [description]
- * @param  {[type]} closePath [description]
- * @return {[type]}           [description]
- * @todo
+ * Render a filled and stroked polygon
+ * @param  {Polygon} polygon
+ * @param  {Boolean} closePath
  */
 Graphics.prototype.fsPolygon = function(polygon, closePath) {
   this._polygon(polygon);
@@ -1139,12 +1113,7 @@ Graphics.prototype.fsPolygon = function(polygon, closePath) {
 
 /**
  * [fEqTriangle description]
- * @param  {[type]} x     [description]
- * @param  {[type]} y     [description]
- * @param  {[type]} angle [description]
- * @param  {[type]} r     [description]
- * @return {[type]}       [description]
- * @todo
+ * @todo document fEqTriangle
  */
 Graphics.prototype.fEqTriangle = function(x, y, angle, r) {
   this._eqTriangle(x, y, angle, r);
@@ -1153,12 +1122,7 @@ Graphics.prototype.fEqTriangle = function(x, y, angle, r) {
 
 /**
  * Draws a stroked equilateral traiangle.
- * @param  {[type]} x     [description]
- * @param  {[type]} y     [description]
- * @param  {[type]} angle [description]
- * @param  {[type]} r     [description]
- * @return {[type]}       [description]
- * @todo
+ * @todo document sEqTriangle
  */
 Graphics.prototype.sEqTriangle = function(x, y, angle, r) {
   this._eqTriangle(x, y, angle, r);
@@ -1167,13 +1131,7 @@ Graphics.prototype.sEqTriangle = function(x, y, angle, r) {
 
 /**
  * Draws a filled and stroked equilateral triangle.
- *
- * @param  {[type]} x     [description]
- * @param  {[type]} y     [description]
- * @param  {[type]} angle [description]
- * @param  {[type]} r     [description]
- * @return {[type]}       [description]
- * @todo
+ * @todo document fsEqTriangle
  */
 Graphics.prototype.fsEqTriangle = function(x, y, angle, r) {
   this._eqTriangle(x, y, angle, r);
@@ -1182,16 +1140,14 @@ Graphics.prototype.fsEqTriangle = function(x, y, angle, r) {
 };
 
 /**
+ * @param  {Number} x     [description]
+ * @param  {Number} y     [description]
+ * @param  {Number} angle [description]
+ * @param  {Number} r     [description]
+ * @return {Number}       [description]
+ *
+ * TODO document this
  * @ignore
- *
- * @param  {[type]} x     [description]
- * @param  {[type]} y     [description]
- * @param  {[type]} angle [description]
- * @param  {[type]} r     [description]
- * @return {[type]}       [description]
- *
- * TODO document this with non-javadoc comments to describe what this
- * does.
  */
 Graphics.prototype._eqTriangle = function(x, y, angle, r) {
   this.context.beginPath();
@@ -1400,10 +1356,9 @@ Graphics.prototype.lineM = function(x0, y0, x1, y1, d) {
 
 
 /**
- * @ignore
  *
- * TODO document this with non-javadoc comments to describe what this
- * does.
+ * TODO document this.
+ * @ignore
  */
 Graphics.prototype._distToSegmentSquared = function(x0, y0, x1, y1) {
   var l2 = Math.pow(x0 - x1, 2) + Math.pow(y0 - y1, 2);
@@ -1504,10 +1459,12 @@ Graphics.prototype.fitImage = function(image, rectangle) {
 // styles
 
 /**
- * [setFill description]
- * @param {[type]} style [description]
+ * Sets the current fill color for the graphics object. 
  *
- * @todo
+ * Callers can pass in either an rgba() color string, or a set of up to four numbers
+ * representing the rgb or rgba color.
+ * 
+ * @param {String|Numbers} style
  */
 Graphics.prototype.setFill = function(style) {
   if(typeof style == "number") {
@@ -1565,9 +1522,9 @@ Graphics.prototype.setLW = function(lineWidth) {
 /**
  * Creates a clipping circle with the given dimensions
  *
- * @param  {[type]} x x coordinate of the circle's center
- * @param  {[type]} y y coordinate of the circle's center
- * @param  {[type]} r radius of circle
+ * @param  {Number} x x coordinate of the circle's center
+ * @param  {Number} y y coordinate of the circle's center
+ * @param  {Number} r radius of circle
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/clip|Clip}
  */
@@ -1865,12 +1822,12 @@ Graphics.prototype.fTextRotatedM = function(text, x, y, angle, size) {
 };
 
 /**
- * @ignore
  * Helper function, returns first param if it is not null or undefined
  * esle returns second param.
  * @param  {Object} value    
  * @param  {Object} fallback 
  * @return {Object} 
+ * @ignore
  */
 function ifDef(value, fallback) {
   if(value !== undefined && value !== null) {
@@ -2041,8 +1998,8 @@ Graphics.prototype.getFrame = function(){
 //
 
 /**
+ * @todo document this
  * @ignore
- * @todo
  */
 Graphics.prototype._linesInFrame = function(axis2D, numberListX, numberListY){
   var l = Math.min(numberListX.length, numberListY.length);
