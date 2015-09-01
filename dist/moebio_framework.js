@@ -1356,7 +1356,7 @@ define('src/index', ['exports'], function (exports) {
     if(addCategoricalColors){
       var colors = new ColorList();
       for(i = 0; table[0][i]!=null; i++) {
-          colors[i] = ColorListGenerators._HARDCODED_CATEGORICAL_COLORS[i%ColorListGenerators._HARDCODED_CATEGORICAL_COLORS.length];
+          colors[i] = ColorListGenerators__default._HARDCODED_CATEGORICAL_COLORS[i%ColorListGenerators__default._HARDCODED_CATEGORICAL_COLORS.length];
         }
       table.push(colors);
     }
@@ -2222,7 +2222,7 @@ define('src/index', ['exports'], function (exports) {
       case "List":
         var freqTable = this.getFrequenciesTable(true);
         this._freqTable = freqTable;
-        var catColors = ColorListGenerators.createCategoricalColors(2, freqTable[0].length);
+        var catColors = ColorListGenerators__default.createCategoricalColors(2, freqTable[0].length);
 
         text += ident + "entropy: <b>" + NumberOperators.numberToString(ListOperators__default.getListEntropy(this, null, freqTable), 4) + "</b>";
 
@@ -4137,6 +4137,13 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @classdesc A {@link List} structure for storing {@link Polygon} instances.
    *
+   * Additional functions that work on NumberTable can be found in:
+   * <ul>
+   *  <li>Operators:   {@link PolygonListOperators}</li>
+   *  <li>Encodings: {@link PolygonListEncodings}</li>
+   * </ul>
+   *
+   *
    * @description Creates a new PolygonList.
    * @constructor
    * @category geometry
@@ -4804,8 +4811,8 @@ define('src/index', ['exports'], function (exports) {
 
   exports.ColorOperators = ColorOperators__default;
 
-  ColorList__ColorList.prototype = new List__default();
-  ColorList__ColorList.prototype.constructor = ColorList__ColorList;
+  ColorList.prototype = new List__default();
+  ColorList.prototype.constructor = ColorList;
 
   /**
    * @classdesc A {@link List} for storing Colors.
@@ -4814,18 +4821,18 @@ define('src/index', ['exports'], function (exports) {
    * @constructor
    * @category colors
    */
-  function ColorList__ColorList() {
+  function ColorList() {
     var args = [];
     var i;
     for(i = 0; i < arguments.length; i++) {
       args[i] = arguments[i];
     }
     var array = List__default.apply(this, args);
-    array = ColorList__ColorList.fromArray(array);
+    array = ColorList.fromArray(array);
 
     return array;
   }
-  var ColorList__default = ColorList__ColorList;
+
 
   /**
    * Creates a new ColorList from a raw array of values
@@ -4833,13 +4840,13 @@ define('src/index', ['exports'], function (exports) {
    * @param {String[]} array Array of hex or other color values
    * @return {ColorList} New ColorList.
    */
-  ColorList__ColorList.fromArray = function(array) {
+  ColorList.fromArray = function(array) {
     var result = List__default.fromArray(array);
     result.type = "ColorList";
-    result.getRgbArrays = ColorList__ColorList.prototype.getRgbArrays;
-    result.getInterpolated = ColorList__ColorList.prototype.getInterpolated;
-    result.getInverted = ColorList__ColorList.prototype.getInverted;
-    result.addAlpha = ColorList__ColorList.prototype.addAlpha;
+    result.getRgbArrays = ColorList.prototype.getRgbArrays;
+    result.getInterpolated = ColorList.prototype.getInterpolated;
+    result.getInverted = ColorList.prototype.getInverted;
+    result.addAlpha = ColorList.prototype.addAlpha;
     return result;
   };
 
@@ -4848,7 +4855,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {array} Array of array of RGB values.
    * tags:
    */
-  ColorList__ColorList.prototype.getRgbArrays = function() {
+  ColorList.prototype.getRgbArrays = function() {
     var rgbArrays = new List__default();
 
     for(var i = 0; this[i] != null; i++) {
@@ -4866,8 +4873,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {ColorList}
    * tags:
    */
-  ColorList__ColorList.prototype.getInterpolated = function(color, value) {
-    var newColorList = new ColorList__ColorList();
+  ColorList.prototype.getInterpolated = function(color, value) {
+    var newColorList = new ColorList();
 
     for(var i = 0; this[i] != null; i++) {
       newColorList[i] = ColorOperators__default.interpolateColors(this[i], color, value);
@@ -4882,8 +4889,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {ColorList}
    * tags:
    */
-  ColorList__ColorList.prototype.getInverted = function() {
-    var newColorList = new ColorList__ColorList();
+  ColorList.prototype.getInverted = function() {
+    var newColorList = new ColorList();
 
     for(var i = 0; this[i] != null; i++) {
       newColorList[i] = ColorOperators__default.invertColor(this[i]);
@@ -4899,8 +4906,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {ColorList}
    * tags:
    */
-  ColorList__ColorList.prototype.addAlpha = function(alpha) {
-    var newColorList = new ColorList__ColorList();
+  ColorList.prototype.addAlpha = function(alpha) {
+    var newColorList = new ColorList();
 
     for(var i = 0; this[i] != null; i++) {
       newColorList[i] = ColorOperators__default.addAlpha(this[i], alpha);
@@ -4910,9 +4917,9 @@ define('src/index', ['exports'], function (exports) {
     return newColorList;
   };
 
-  exports.ColorList = ColorList__default;
+  exports.ColorList = ColorList;
 
-  var version = "0.2.25";
+  var version = "0.3.0";
 
   /*
    * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
@@ -7100,7 +7107,7 @@ define('src/index', ['exports'], function (exports) {
     Polygon: Polygon,
     Polygon3D: Polygon3D,
     DateList: DateList,
-    ColorList: ColorList__default
+    ColorList: ColorList
   };
 
 
@@ -7398,7 +7405,7 @@ define('src/index', ['exports'], function (exports) {
     this.result = null;
     this.errorType = 0;
     this.errorMessage = "";
-    this.url;
+    this.url = '';
   }
 
   exports.LoadEvent = LoadEvent;
@@ -7423,7 +7430,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {callee} the Object containing the onLoadData function to be called
    * @para, {Object} optional parameter that will be stored in the LoadEvent instance
    */
-  Loader.loadData = function(url, onLoadData, callee, param, send_object_json) {
+  Loader.loadData = function(url, onLoadData, callee, param, send_object_json, withCredentials) {
     if(Loader.REPORT_LOADING) console.log('load data:', url);
     Loader.n_loading++;
 
@@ -7498,6 +7505,9 @@ define('src/index', ['exports'], function (exports) {
       }
     }
     if(req) {
+      if(withCredentials === true ){
+          req.withCredentials = true;
+      }
       req.onreadystatechange = onLoadComplete; //processReqChange;
       if(useProxy) {
         req.open("GET", Loader.proxy + url, true);
@@ -9710,7 +9720,13 @@ define('src/index', ['exports'], function (exports) {
   function NumberOperators__NumberOperators() {}
   var NumberOperators__default = NumberOperators__NumberOperators;
 
-  NumberOperators__NumberOperators.numberToString = function(value, nDecimals, powersMode, unit) {
+  /**
+   * converts number into a string
+   *
+   * @param {Number} value The number to convert
+   * @param {Number} nDecimals Number of decimals to include. Defaults to 0.
+   */
+  NumberOperators__NumberOperators.numberToString = function(value, nDecimals ) {
     var string = value.toFixed(nDecimals);
     while(string.charAt(string.length - 1) == '0') {
       string = string.substring(0, string.length - 1);
@@ -9745,8 +9761,9 @@ define('src/index', ['exports'], function (exports) {
    */
   NumberOperators__NumberOperators.numberFromBinaryValues = function(binaryValues) {
     var n = 0;
-    for(var i = 0; binaryValues[i] != null; i++) {
-      n += binaryValues[i] == 1 ? Math.pow(2, i) : 0;
+    var l = binaryValues.length;
+    for(var i = 0; i < l; i++) {
+      n += binaryValues[i] == 1 ? Math.pow(2, (l - (i + 1))) : 0;
     }
     return n;
   };
@@ -9776,7 +9793,7 @@ define('src/index', ['exports'], function (exports) {
       number -= Math.pow(2, biggestPower);
     }
 
-    var length = Math.max(powers.length, length == null ? 0 : length);
+    length = Math.max(powers.length, length == null ? 0 : length);
 
     for(var i = 0; i < length; i++) {
       powers[i] = powers[i] == 1 ? 1 : 0;
@@ -9810,7 +9827,7 @@ define('src/index', ['exports'], function (exports) {
       var s2 = 0;
       var c = 1;
 
-      if(args.length == 0) {
+      if(args.length === 0) {
         args = [+new Date()];
       }
       var mash = NumberOperators__NumberOperators._Mash();
@@ -9838,6 +9855,7 @@ define('src/index', ['exports'], function (exports) {
         var t = 2091639 * s0 + c * 2.3283064365386963e-10; // 2^-32
         s0 = s1;
         s1 = s2;
+        // https://github.com/nquinlan/better-random-numbers-for-javascript-mirror/blob/master/support/js/Alea.js#L38
         return s2 = t - (c = t | 0);
       };
       random.uint32 = function() {
@@ -12792,6 +12810,505 @@ define('src/index', ['exports'], function (exports) {
 
   exports.StringOperators = StringOperators;
 
+  function ColorScales__ColorScales() {}
+  var ColorScales__default = ColorScales__ColorScales;
+
+  /**
+   * @todo write docs
+   */
+  ColorScales__ColorScales.blackScale = function() {
+    return 'black';
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales__ColorScales.grayscale = function(value) {
+    var rgb = ColorOperators__default.interpolateColorsRGB([0, 0, 0], [255, 255, 255], value);
+    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales__ColorScales.antiGrayscale = function(value) {
+    var rgb = ColorOperators__default.interpolateColorsRGB([255, 255, 255], [0, 0, 0], value);
+    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales__ColorScales.antiTemperature = function(value) {
+    return ColorScales__ColorScales.temperature(1 - value);
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales__ColorScales.temperature = function(value) { //todo:make it efficient
+    var color = "#FFFFFF";
+    if(value < 0.2) {
+      color = ColorOperators__default.interpolateColors('#000000', ColorOperators__default.HSVtoHEX(234, 1, 1), value * 5);
+    } else if(value > 0.85) {
+      color = ColorOperators__default.interpolateColors(ColorOperators__default.HSVtoHEX(0, 1, 1), '#FFFFFF', (value - 0.85) / 0.15);
+    } else {
+      color = ColorOperators__default.HSVtoHEX(Math.round((0.65 - (value - 0.2)) * 360), 1, 1);
+    }
+    return color;
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales__ColorScales.sqrtTemperature = function(value) {
+    return ColorScales__ColorScales.temperature(Math.sqrt(value));
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales__ColorScales.sqrt4Temperature = function(value) {
+    return ColorScales__ColorScales.temperature(Math.pow(value, 0.25));
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales__ColorScales.quadraticTemperature = function(value) {
+    return ColorScales__ColorScales.temperature(Math.pow(value, 2));
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales__ColorScales.cubicTemperature = function(value) {
+    return ColorScales__ColorScales.temperature(Math.pow(value, 3));
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales__ColorScales.greenToRed = function(value) { //todo:make it efficient
+    var rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [255, 50, 50], value);
+    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales__ColorScales.greenToBlue = function(value) { //todo:make it efficient
+    var rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [50, 50, 255], value);
+    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales__ColorScales.grayToOrange = function(value) {
+    return 'rgb(' + Math.floor(100 + value*155) + ','+ Math.floor(100 + value*10) +',' + Math.floor(100 - value*100) + ')';
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales__ColorScales.sqrt4GrayToOrange = function(value){
+    return ColorScales__ColorScales.grayToOrange(Math.pow(value, 0.25));
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales__ColorScales.blueToRed = function(value) {
+    return 'rgb(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ')';
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales__ColorScales.blueToRedAlpha = function(value) { //todo:make it efficient
+    return 'rgba(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ', 0.5)';
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales__ColorScales.whiteToRed = function(value) {
+    var gg = Math.floor(255 - value * 255);
+    return 'rgb(255,' + gg + ',' + gg + ')';
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales__ColorScales.redToBlue = function(value) {
+    var rgb = ColorOperators__default.interpolateColorsRGB([255, 0, 0], [0, 0, 255], value);
+    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  //tricolor
+
+  /**
+   * @todo write docs
+   */
+  ColorScales__ColorScales.greenWhiteRed = function(value) { //TODO: make it + efficient
+    var rgb = [0,0,0];
+    if(value < 0.5) {
+      rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [255, 255, 255], value * 2);
+    } else {
+      rgb = ColorOperators__default.interpolateColorsRGB([255, 255, 255], [255, 50, 50], (value - 0.5) * 2);
+    }
+    return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales__ColorScales.blueWhiteRed = function(value) {
+    var rr = value < 0.5 ? Math.floor(510 * value) : 255;
+    var gg = value < 0.5 ? Math.floor(510 * value) : Math.floor(510 * (1 - value));
+    var bb = value < 0.5 ? 255 : Math.floor(510 * (1 - value));
+
+    return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales__ColorScales.grayBlackOrange = function(value){ //TODO: make it + efficient
+    var rgb = [0,0,0];
+    if(value < 0.5) {
+      rgb = ColorOperators__default.interpolateColorsRGB([100, 100, 100], [0, 0, 0], value * 2);
+    } else {
+      rgb = ColorOperators__default.interpolateColorsRGB([0, 0, 0], [255, 110, 0], (value - 0.5) * 2);
+    }
+    return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales__ColorScales.grayWhiteOrange = function(value){ //TODO: make it + efficient
+    var rgb = [0,0,0];
+    if(value < 0.5) {
+      rgb = ColorOperators__default.interpolateColorsRGB([100, 100, 100], [255, 255, 255], value * 2);
+    } else {
+      rgb = ColorOperators__default.interpolateColorsRGB([255, 255, 255], [255, 110, 0], (value - 0.5) * 2);
+    }
+    return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
+  };
+
+
+  /**
+   * @todo write docs
+   */
+  ColorScales__ColorScales.solar = function(value) {
+    var rgb = ColorOperators__default.interpolateColorsRGB([0, 0, 0], ColorOperators__default.interpolateColorsRGB([255, 0, 0], [255, 255, 0], value), Math.pow(value * 0.99 + 0.01, 0.2));
+    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales__ColorScales.antiSolar = function(value) {
+    return ColorOperators__default.invertColor(ColorScales__ColorScales.solar(value));
+  };
+
+  exports.ColorScales = ColorScales__default;
+
+  ColorListGenerators__ColorListGenerators._HARDCODED_CATEGORICAL_COLORS = new ColorList(
+    "#dd4411", "#2200bb", "#1f77b4", "#ff660e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#dd8811",
+    "#dd0011", "#221140", "#1f66a3", "#ff220e", "#2ba01c", "#442728", "#945600", "#8c453a", "#e37700"
+  );
+
+  /**
+   * @classdesc Tools for generating {@link List|Lists} of colors.
+   *
+   * @namespace
+   * @category colors
+   */
+  function ColorListGenerators__ColorListGenerators() {}
+  var ColorListGenerators__default = ColorListGenerators__ColorListGenerators;
+
+  /**
+   * create a simple list of categorical colors
+   * @param  {Number} nColors
+   *
+   * @param  {Number} alpha 1 by default
+   * @param {Boolean} invert invert colors
+   * @return {ColorList}
+   * tags:generator
+   */
+  ColorListGenerators__ColorListGenerators.createDefaultCategoricalColorList = function(nColors, alpha, invert) {
+    alpha = alpha == null ? 1 : alpha;
+    var colors = ColorListGenerators__ColorListGenerators.createCategoricalColors(1, nColors).getInterpolated('black', 0.15);
+    if(alpha < 1) colors = colors.addAlpha(alpha);
+
+    if(invert) colors = colors.getInverted();
+
+    return colors;
+  };
+
+
+  /**
+   * create a colorList based on a colorScale and values from a numberList (that will be normalized)
+   * @param  {NumberList} numberList
+   *
+   * @param  {ColorScale} colorScale
+   * @param  {Number} mode 0:normalize numberList
+   * @return {ColorList}
+   * tags:generator
+   */
+  ColorListGenerators__ColorListGenerators.createColorListFromNumberList = function(numberList, colorScale, mode) {
+    if(numberList==null) return null;
+
+    mode = mode == null ? 0 : mode;
+    colorScale = colorScale==null?ColorScales__default.grayToOrange:colorScale;
+
+    var colorList = new ColorList();
+    var newNumberList;
+    var i;
+
+    switch(mode) {
+      case 0: //0 to max
+        newNumberList = numberList.getNormalizedToMax();
+        break;
+      case 1: //min to max
+        break;
+      case 2: //values between 0 and 1
+        break;
+    }
+
+    for(i = 0; newNumberList[i] != null; i++) {
+      colorList.push(colorScale(newNumberList[i]));
+    }
+
+    return colorList;
+  };
+
+
+  /**
+   * Creates a new ColorList that contains the provided color. Size of the List
+   * is controlled by the nColors input.
+   *
+   * @param {Number} nColors Length of the list.
+   * @param {Color} color Color to fill list with.
+   */
+  ColorListGenerators__ColorListGenerators.createColorListWithSingleColor = function(nColors, color) {
+    var colorList = new ColorList();
+    for(var i = 0; i < nColors; i++) {
+      colorList.push(color);
+    }
+    return colorList;
+  };
+
+
+  /**
+   * Creates a ColorList of categorical colors
+   * @param {Number} mode 0:simple picking from color scale function, 1:random (with seed), 2:hardcoded colors, 3:, 4:, 5:evolutionary algorithm, guarantees non consecutive similar colors
+   * @param {Number} nColors
+   *
+   * @param {ColorScale} colorScaleFunction
+   * @param {Number} alpha transparency
+   * @param {String} interpolateColor color to interpolate
+   * @param {Number} interpolateValue interpolation value [0, 1]
+   * @param {ColorList} colorList colorList to be used in mode 2 (if not colorList is provided it will use default categorical colors)
+   * @return {ColorList} ColorList with categorical colors
+   * tags:generator
+   */
+  ColorListGenerators__ColorListGenerators.createCategoricalColors = function(mode, nColors, colorScaleFunction, alpha, interpolateColor, interpolateValue, colorList) {
+    colorScaleFunction = colorScaleFunction == null ? ColorScales__default.temperature : colorScaleFunction;
+
+    var i;
+    var newColorList = new ColorList();
+    switch(mode) {
+      case 0: //picking from ColorScale
+        for(i = 0; i < nColors; i++) {
+          newColorList[i] = colorScaleFunction(i / (nColors - 1));
+        }
+        break;
+      case 1: //seeded random numbers
+        var values = NumberListGenerators.createRandomNumberList(nColors, null, 0);
+        for(i = 0; i < nColors; i++) {
+          newColorList[i] = colorScaleFunction(values[i]);
+        }
+        break;
+      case 2:
+        colorList = colorList==null?ColorListGenerators__ColorListGenerators._HARDCODED_CATEGORICAL_COLORS:colorList;
+        for(i = 0; i < nColors; i++) {
+          newColorList[i] = colorList[i%colorList.length];
+        }
+        break;
+      case 5:
+        var randomNumbersSource = NumberListGenerators.createRandomNumberList(1001, null, 0);
+        var positions = NumberListGenerators.createSortedNumberList(nColors);
+        var randomNumbers = NumberListGenerators.createRandomNumberList(nColors, null, 0);
+        var randomPositions = ListOperators__default.sortListByNumberList(positions, randomNumbers);
+
+        var nGenerations = Math.floor(nColors * 2) + 100;
+        var nChildren = Math.floor(nColors * 0.6) + 5;
+        var bestEvaluation = ColorListGenerators__ColorListGenerators._evaluationFunction(randomPositions);
+        var child;
+        var bestChildren = randomPositions;
+        var j;
+        var nr = 0;
+        var evaluation;
+
+        for(i = 0; i < nGenerations; i++) {
+          for(j = 0; j < nChildren; j++) {
+            child = ColorListGenerators__ColorListGenerators._sortingVariation(randomPositions, randomNumbersSource[nr], randomNumbersSource[nr + 1]);
+            nr = (nr + 2) % 1001;
+            evaluation = ColorListGenerators__ColorListGenerators._evaluationFunction(child);
+            if(evaluation > bestEvaluation) {
+              bestChildren = child;
+              bestEvaluation = evaluation;
+            }
+          }
+          randomPositions = bestChildren;
+        }
+
+        for(i = 0; i < nColors; i++) {
+          newColorList.push(colorScaleFunction((1 / nColors) + randomPositions[i] / (nColors + 1))); //TODO: make more efficient by pre-nuilding the colorList
+        }
+        break;
+    }
+
+    if(interpolateColor != null && interpolateValue != null) {
+      newColorList = newColorList.getInterpolated(interpolateColor, interpolateValue);
+    }
+
+    if(alpha) {
+      newColorList = newColorList.addAlpha(alpha);
+    }
+
+    return newColorList;
+  };
+
+  /**
+   * @ignore
+   */
+  ColorListGenerators__ColorListGenerators._sortingVariation = function(numberList, rnd0, rnd1) { //private
+    var newNumberList = numberList.clone();
+    var pos0 = Math.floor(rnd0 * newNumberList.length);
+    var pos1 = Math.floor(rnd1 * newNumberList.length);
+    var cache = newNumberList[pos1];
+    newNumberList[pos1] = newNumberList[pos0];
+    newNumberList[pos0] = cache;
+    return newNumberList;
+  };
+
+  /**
+   * @ignore
+   */
+  ColorListGenerators__ColorListGenerators._evaluationFunction = function(numberList) { //private
+    var sum = 0;
+    var i;
+    for(i = 0; numberList[i + 1] != null; i++) {
+      sum += Math.sqrt(Math.abs(numberList[i + 1] - numberList[i]));
+    }
+    return sum;
+  };
+
+  /**
+   * Creates an object dictionary that matches elements from a list (that could contan repeated elements) with categorical colors
+   * @param {List} the list containing categorical data
+   *
+   * @param {ColorList} ColorList with categorical colors
+   * @param {Number} alpha transparency
+   * @param {String} color to mix
+   * @param {Number} interpolation value (0-1) for color mix
+   * @param {Boolean} invert invert colors
+   * @return {Object} object dictionar that delivers a color for each element on original list
+   * tags:generator
+   */
+  ColorListGenerators__ColorListGenerators.createCategoricalColorListDictionaryObject = function(list, colorList, alpha, color, interpolate, invert){
+    if(list==null) return;
+
+    var diffValues = list.getWithoutRepetitions();
+    var diffColors = ColorListGenerators__ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate, colorList);
+    if(invert) diffColors = diffColors.getInverted();
+
+    var dictionaryObject = {};
+
+    diffValues.forEach(function(element, i){
+      dictionaryObject[element] = diffColors[i];
+    });
+
+    return dictionaryObject;
+
+  };
+
+  /**
+   * Creates a ColorList of categorical colors based on an input List. All entries with the same value will get the same color.
+   * @param {List} the list containing categorical data
+   *
+   * @param {ColorList} ColorList with categorical colors
+   * @param {Number} alpha transparency
+   * @param {String} color to mix
+   * @param {Number} interpolation value (0-1) for color mix
+   * @param {Boolean} invert invert colors
+   * @return {ColorList} ColorList with categorical colors that match the given list
+   * @return {List} elements list of elemnts that match colors (equivalent to getWithoutRepetions)
+   * @return {ColorList} ColorList with different categorical colors
+   * @return {Table} dictionary dictionary table with elemnts and matching colors
+   * @return {Object} citionaryObject (relational array, from objects to colors)
+   * tags:generator
+   */
+  ColorListGenerators__ColorListGenerators.createCategoricalColorListForList = function(list, colorList, alpha, color, interpolate, invert)
+  {
+
+    if(!list)
+      return new ColorList();
+    if(!alpha)
+      alpha = 1;
+    if(!color)
+      color = "#fff";
+    if(!interpolate)
+      interpolate = 0;
+
+    list = List__default.fromArray(list);
+    var diffValues = list.getWithoutRepetitions();
+    var diffColors;
+    if(colorList && interpolate!=0) {
+      diffColors = colorList.getInterpolated(color, interpolate);
+    } else {
+      diffColors = ColorListGenerators__ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate, colorList);
+
+      //diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
+    }
+    diffColors = diffColors.addAlpha(alpha);
+
+    if(invert) diffColors = diffColors.getInverted();
+
+    var colorDict = Table.fromArray([diffValues, diffColors]);
+    var dictionaryObject = ListOperators__default.buildDictionaryObjectForDictionary(colorDict);
+
+    var fullColorList = ListOperators__default.translateWithDictionaryObject(list, colorDict, 'black');// ListOperators.translateWithDictionary(list, colorDict, "NULL");
+
+    fullColorList = ColorList.fromArray(fullColorList);
+
+    return [
+      {
+        value: fullColorList,
+        type: 'ColorList'
+      }, {
+        value: diffValues,
+        type: diffValues.type
+      }, {
+        value: diffColors,
+        type: 'ColorList'
+      }, {
+        value: new Table(diffValues, fullColorList),
+        type: 'Table'
+      }, {
+        value: dictionaryObject,
+        type: 'Object'
+      }
+    ];
+  };
+
+  exports.ColorListGenerators = ColorListGenerators__default;
+
   /* global console */
 
   Axis.prototype = new DataModel();
@@ -15082,212 +15599,6 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Polygon3DList = Polygon3DList;
 
-  function ColorScales__ColorScales() {}
-  var ColorScales__default = ColorScales__ColorScales;
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.blackScale = function() {
-    return 'black';
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.grayscale = function(value) {
-    var rgb = ColorOperators__default.interpolateColorsRGB([0, 0, 0], [255, 255, 255], value);
-    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.antiGrayscale = function(value) {
-    var rgb = ColorOperators__default.interpolateColorsRGB([255, 255, 255], [0, 0, 0], value);
-    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.antiTemperature = function(value) {
-    return ColorScales__ColorScales.temperature(1 - value);
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.temperature = function(value) { //todo:make it efficient
-    var color = "#FFFFFF";
-    if(value < 0.2) {
-      color = ColorOperators__default.interpolateColors('#000000', ColorOperators__default.HSVtoHEX(234, 1, 1), value * 5);
-    } else if(value > 0.85) {
-      color = ColorOperators__default.interpolateColors(ColorOperators__default.HSVtoHEX(0, 1, 1), '#FFFFFF', (value - 0.85) / 0.15);
-    } else {
-      color = ColorOperators__default.HSVtoHEX(Math.round((0.65 - (value - 0.2)) * 360), 1, 1);
-    }
-    return color;
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.sqrtTemperature = function(value) {
-    return ColorScales__ColorScales.temperature(Math.sqrt(value));
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.sqrt4Temperature = function(value) {
-    return ColorScales__ColorScales.temperature(Math.pow(value, 0.25));
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.quadraticTemperature = function(value) {
-    return ColorScales__ColorScales.temperature(Math.pow(value, 2));
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.cubicTemperature = function(value) {
-    return ColorScales__ColorScales.temperature(Math.pow(value, 3));
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.greenToRed = function(value) { //todo:make it efficient
-    var rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [255, 50, 50], value);
-    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.greenToBlue = function(value) { //todo:make it efficient
-    var rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [50, 50, 255], value);
-    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.grayToOrange = function(value) {
-    return 'rgb(' + Math.floor(100 + value*155) + ','+ Math.floor(100 + value*10) +',' + Math.floor(100 - value*100) + ')';
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.sqrt4GrayToOrange = function(value){
-    return ColorScales__ColorScales.grayToOrange(Math.pow(value, 0.25));
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.blueToRed = function(value) {
-    return 'rgb(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ')';
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.blueToRedAlpha = function(value) { //todo:make it efficient
-    return 'rgba(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ', 0.5)';
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.whiteToRed = function(value) {
-    var gg = Math.floor(255 - value * 255);
-    return 'rgb(255,' + gg + ',' + gg + ')';
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.redToBlue = function(value) {
-    var rgb = ColorOperators__default.interpolateColorsRGB([255, 0, 0], [0, 0, 255], value);
-    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-  };
-
-  //tricolor
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.greenWhiteRed = function(value) { //TODO: make it + efficient
-    var rgb = [0,0,0];
-    if(value < 0.5) {
-      rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [255, 255, 255], value * 2);
-    } else {
-      rgb = ColorOperators__default.interpolateColorsRGB([255, 255, 255], [255, 50, 50], (value - 0.5) * 2);
-    }
-    return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.blueWhiteRed = function(value) {
-    var rr = value < 0.5 ? Math.floor(510 * value) : 255;
-    var gg = value < 0.5 ? Math.floor(510 * value) : Math.floor(510 * (1 - value));
-    var bb = value < 0.5 ? 255 : Math.floor(510 * (1 - value));
-
-    return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.grayBlackOrange = function(value){ //TODO: make it + efficient
-    var rgb = [0,0,0];
-    if(value < 0.5) {
-      rgb = ColorOperators__default.interpolateColorsRGB([100, 100, 100], [0, 0, 0], value * 2);
-    } else {
-      rgb = ColorOperators__default.interpolateColorsRGB([0, 0, 0], [255, 110, 0], (value - 0.5) * 2);
-    }
-    return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.grayWhiteOrange = function(value){ //TODO: make it + efficient
-    var rgb = [0,0,0];
-    if(value < 0.5) {
-      rgb = ColorOperators__default.interpolateColorsRGB([100, 100, 100], [255, 255, 255], value * 2);
-    } else {
-      rgb = ColorOperators__default.interpolateColorsRGB([255, 255, 255], [255, 110, 0], (value - 0.5) * 2);
-    }
-    return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
-  };
-
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.solar = function(value) {
-    var rgb = ColorOperators__default.interpolateColorsRGB([0, 0, 0], ColorOperators__default.interpolateColorsRGB([255, 0, 0], [255, 255, 0], value), Math.pow(value * 0.99 + 0.01, 0.2));
-    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.antiSolar = function(value) {
-    return ColorOperators__default.invertColor(ColorScales__ColorScales.solar(value));
-  };
-
-  exports.ColorScales = ColorScales__default;
-
   ColorScale.prototype = new DataModel();
   ColorScale.prototype.constructor = ColorScale;
 
@@ -15319,7 +15630,7 @@ define('src/index', ['exports'], function (exports) {
   * @todo write docs
   */
   ColorScale.prototype.getColorList = function(nColors) {
-    var colorList = new ColorList__default();
+    var colorList = new ColorList();
     var i;
     for(i = 0; i < nColors; i++) {
       colorList.push(this.getColor(i / (nColors - 1)));
@@ -16409,299 +16720,6 @@ define('src/index', ['exports'], function (exports) {
 
   exports.ColorGenerators = ColorGenerators;
 
-  ColorListGenerators__ColorListGenerators._HARDCODED_CATEGORICAL_COLORS = new ColorList__default(
-    "#dd4411", "#2200bb", "#1f77b4", "#ff660e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#dd8811",
-    "#dd0011", "#221140", "#1f66a3", "#ff220e", "#2ba01c", "#442728", "#945600", "#8c453a", "#e37700"
-  );
-
-  /**
-   * @classdesc Tools for generating {@link List|Lists} of colors.
-   *
-   * @namespace
-   * @category colors
-   */
-  function ColorListGenerators__ColorListGenerators() {}
-  var ColorListGenerators__default = ColorListGenerators__ColorListGenerators;
-
-  /**
-   * create a simple list of categorical colors
-   * @param  {Number} nColors
-   *
-   * @param  {Number} alpha 1 by default
-   * @param {Boolean} invert invert colors
-   * @return {ColorList}
-   * tags:generator
-   */
-  ColorListGenerators__ColorListGenerators.createDefaultCategoricalColorList = function(nColors, alpha, invert) {
-    alpha = alpha == null ? 1 : alpha;
-    var colors = ColorListGenerators__ColorListGenerators.createCategoricalColors(1, nColors).getInterpolated('black', 0.15);
-    if(alpha < 1) colors = colors.addAlpha(alpha);
-
-    if(invert) colors = colors.getInverted();
-
-    return colors;
-  };
-
-
-  /**
-   * create a colorList based on a colorScale and values from a numberList (that will be normalized)
-   * @param  {NumberList} numberList
-   *
-   * @param  {ColorScale} colorScale
-   * @param  {Number} mode 0:normalize numberList
-   * @return {ColorList}
-   * tags:generator
-   */
-  ColorListGenerators__ColorListGenerators.createColorListFromNumberList = function(numberList, colorScale, mode) {
-    if(numberList==null) return null;
-
-    mode = mode == null ? 0 : mode;
-    colorScale = colorScale==null?ColorScales__default.grayToOrange:colorScale;
-
-    var colorList = new ColorList__default();
-    var newNumberList;
-    var i;
-
-    switch(mode) {
-      case 0: //0 to max
-        newNumberList = numberList.getNormalizedToMax();
-        break;
-      case 1: //min to max
-        break;
-      case 2: //values between 0 and 1
-        break;
-    }
-
-    for(i = 0; newNumberList[i] != null; i++) {
-      colorList.push(colorScale(newNumberList[i]));
-    }
-
-    return colorList;
-  };
-
-
-  /**
-   * Creates a new ColorList that contains the provided color. Size of the List
-   * is controlled by the nColors input.
-   *
-   * @param {Number} nColors Length of the list.
-   * @param {Color} color Color to fill list with.
-   */
-  ColorListGenerators__ColorListGenerators.createColorListWithSingleColor = function(nColors, color) {
-    var colorList = new ColorList__default();
-    for(var i = 0; i < nColors; i++) {
-      colorList.push(color);
-    }
-    return colorList;
-  };
-
-
-  /**
-   * Creates a ColorList of categorical colors
-   * @param {Number} mode 0:simple picking from color scale function, 1:random (with seed), 2:hardcoded colors, 3:, 4:, 5:evolutionary algorithm, guarantees non consecutive similar colors
-   * @param {Number} nColors
-   *
-   * @param {ColorScale} colorScaleFunction
-   * @param {Number} alpha transparency
-   * @param {String} interpolateColor color to interpolate
-   * @param {Number} interpolateValue interpolation value [0, 1]
-   * @param {ColorList} colorList colorList to be used in mode 2 (if not colorList is provided it will use default categorical colors)
-   * @return {ColorList} ColorList with categorical colors
-   * tags:generator
-   */
-  ColorListGenerators__ColorListGenerators.createCategoricalColors = function(mode, nColors, colorScaleFunction, alpha, interpolateColor, interpolateValue, colorList) {
-    colorScaleFunction = colorScaleFunction == null ? ColorScales__default.temperature : colorScaleFunction;
-
-    var i;
-    var newColorList = new ColorList__default();
-    switch(mode) {
-      case 0: //picking from ColorScale
-        for(i = 0; i < nColors; i++) {
-          newColorList[i] = colorScaleFunction(i / (nColors - 1));
-        }
-        break;
-      case 1: //seeded random numbers
-        var values = NumberListGenerators.createRandomNumberList(nColors, null, 0);
-        for(i = 0; i < nColors; i++) {
-          newColorList[i] = colorScaleFunction(values[i]);
-        }
-        break;
-      case 2:
-        colorList = colorList==null?ColorListGenerators__ColorListGenerators._HARDCODED_CATEGORICAL_COLORS:colorList;
-        for(i = 0; i < nColors; i++) {
-          newColorList[i] = colorList[i%colorList.length];
-        }
-        break;
-      case 5:
-        var randomNumbersSource = NumberListGenerators.createRandomNumberList(1001, null, 0);
-        var positions = NumberListGenerators.createSortedNumberList(nColors);
-        var randomNumbers = NumberListGenerators.createRandomNumberList(nColors, null, 0);
-        var randomPositions = ListOperators__default.sortListByNumberList(positions, randomNumbers);
-
-        var nGenerations = Math.floor(nColors * 2) + 100;
-        var nChildren = Math.floor(nColors * 0.6) + 5;
-        var bestEvaluation = ColorListGenerators__ColorListGenerators._evaluationFunction(randomPositions);
-        var child;
-        var bestChildren = randomPositions;
-        var j;
-        var nr = 0;
-        var evaluation;
-
-        for(i = 0; i < nGenerations; i++) {
-          for(j = 0; j < nChildren; j++) {
-            child = ColorListGenerators__ColorListGenerators._sortingVariation(randomPositions, randomNumbersSource[nr], randomNumbersSource[nr + 1]);
-            nr = (nr + 2) % 1001;
-            evaluation = ColorListGenerators__ColorListGenerators._evaluationFunction(child);
-            if(evaluation > bestEvaluation) {
-              bestChildren = child;
-              bestEvaluation = evaluation;
-            }
-          }
-          randomPositions = bestChildren;
-        }
-
-        for(i = 0; i < nColors; i++) {
-          newColorList.push(colorScaleFunction((1 / nColors) + randomPositions[i] / (nColors + 1))); //TODO: make more efficient by pre-nuilding the colorList
-        }
-        break;
-    }
-
-    if(interpolateColor != null && interpolateValue != null) {
-      newColorList = newColorList.getInterpolated(interpolateColor, interpolateValue);
-    }
-
-    if(alpha) {
-      newColorList = newColorList.addAlpha(alpha);
-    }
-
-    return newColorList;
-  };
-
-  /**
-   * @ignore
-   */
-  ColorListGenerators__ColorListGenerators._sortingVariation = function(numberList, rnd0, rnd1) { //private
-    var newNumberList = numberList.clone();
-    var pos0 = Math.floor(rnd0 * newNumberList.length);
-    var pos1 = Math.floor(rnd1 * newNumberList.length);
-    var cache = newNumberList[pos1];
-    newNumberList[pos1] = newNumberList[pos0];
-    newNumberList[pos0] = cache;
-    return newNumberList;
-  };
-
-  /**
-   * @ignore
-   */
-  ColorListGenerators__ColorListGenerators._evaluationFunction = function(numberList) { //private
-    var sum = 0;
-    var i;
-    for(i = 0; numberList[i + 1] != null; i++) {
-      sum += Math.sqrt(Math.abs(numberList[i + 1] - numberList[i]));
-    }
-    return sum;
-  };
-
-  /**
-   * Creates an object dictionary that matches elements from a list (that could contan repeated elements) with categorical colors
-   * @param {List} the list containing categorical data
-   *
-   * @param {ColorList} ColorList with categorical colors
-   * @param {Number} alpha transparency
-   * @param {String} color to mix
-   * @param {Number} interpolation value (0-1) for color mix
-   * @param {Boolean} invert invert colors
-   * @return {Object} object dictionar that delivers a color for each element on original list
-   * tags:generator
-   */
-  ColorListGenerators__ColorListGenerators.createCategoricalColorListDictionaryObject = function(list, colorList, alpha, color, interpolate, invert){
-    if(list==null) return;
-
-    var diffValues = list.getWithoutRepetitions();
-    var diffColors = ColorListGenerators__ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate, colorList);
-    if(invert) diffColors = diffColors.getInverted();
-
-    var dictionaryObject = {};
-
-    diffValues.forEach(function(element, i){
-      dictionaryObject[element] = diffColors[i];
-    });
-
-    return dictionaryObject;
-
-  };
-
-  /**
-   * Creates a ColorList of categorical colors based on an input List. All entries with the same value will get the same color.
-   * @param {List} the list containing categorical data
-   *
-   * @param {ColorList} ColorList with categorical colors
-   * @param {Number} alpha transparency
-   * @param {String} color to mix
-   * @param {Number} interpolation value (0-1) for color mix
-   * @param {Boolean} invert invert colors
-   * @return {ColorList} ColorList with categorical colors that match the given list
-   * @return {List} elements list of elemnts that match colors (equivalent to getWithoutRepetions)
-   * @return {ColorList} ColorList with different categorical colors
-   * @return {Table} dictionary dictionary table with elemnts and matching colors
-   * @return {Object} citionaryObject (relational array, from objects to colors)
-   * tags:generator
-   */
-  ColorListGenerators__ColorListGenerators.createCategoricalColorListForList = function(list, colorList, alpha, color, interpolate, invert)
-  {
-
-    if(!list)
-      return new ColorList__default();
-    if(!alpha)
-      alpha = 1;
-    if(!color)
-      color = "#fff";
-    if(!interpolate)
-      interpolate = 0;
-
-    list = List__default.fromArray(list);
-    var diffValues = list.getWithoutRepetitions();
-    var diffColors;
-    if(colorList && interpolate!=0) {
-      diffColors = colorList.getInterpolated(color, interpolate);
-    } else {
-      diffColors = ColorListGenerators__ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate, colorList);
-
-      //diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
-    }
-    diffColors = diffColors.addAlpha(alpha);
-
-    if(invert) diffColors = diffColors.getInverted();
-
-    var colorDict = Table.fromArray([diffValues, diffColors]);
-    var dictionaryObject = ListOperators__default.buildDictionaryObjectForDictionary(colorDict);
-
-    var fullColorList = ListOperators__default.translateWithDictionaryObject(list, colorDict, 'black');// ListOperators.translateWithDictionary(list, colorDict, "NULL");
-
-    fullColorList = ColorList__default.fromArray(fullColorList);
-
-    return [
-      {
-        value: fullColorList,
-        type: 'ColorList'
-      }, {
-        value: diffValues,
-        type: diffValues.type
-      }, {
-        value: diffColors,
-        type: 'ColorList'
-      }, {
-        value: new Table(diffValues, fullColorList),
-        type: 'Table'
-      }, {
-        value: dictionaryObject,
-        type: 'Object'
-      }
-    ];
-  };
-
-  exports.ColorListGenerators = ColorListGenerators__default;
-
   function ColorListOperators() {}
 
 
@@ -16723,7 +16741,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {ColorList} new ColorList.
    */
   ColorListOperators.colorListFromColorScaleFunction = function(colorScaleFunction, nColors) {
-    var colorList = new ColorList__default();
+    var colorList = new ColorList();
     var i;
     for(i = 0; i < nColors; i++) {
       colorList[i] = colorScaleFunction(i / (nColors - 1));
@@ -16740,7 +16758,7 @@ define('src/index', ['exports'], function (exports) {
 
     if(normalize) numberList = numberList.getNormalized();
 
-    var colorList = new ColorList__default();
+    var colorList = new ColorList();
     var i;
     for(i = 0; numberList[i] != null; i++) {
       colorList[i] = colorScaleFunction(numberList[i]);
@@ -16754,7 +16772,7 @@ define('src/index', ['exports'], function (exports) {
    */
   ColorListOperators.polygon3DToColorList = function(polygon3D) {
     var nPoints = polygon3D.length;
-    var colorList = new ColorList__default();
+    var colorList = new ColorList();
     var i;
     for(i = 0; i < nPoints; i++) {
       colorList.push(ColorOperators__default.point3DToColor(polygon3D[i]));
@@ -16944,7 +16962,7 @@ define('src/index', ['exports'], function (exports) {
   TableConversions.ObjectToList = function(object, fields) {
     var result = TableConversions.ObjectToTable(object, fields);
 
-    if(result.getLengths.getMax() == 1) return result.getRow(0);
+    if(result.getLengths().getMax() == 1) return result.getRow(0);
   };
 
 
@@ -21131,18 +21149,14 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Adds community to Nodes of network based on Louvain community detection.
+   * Builds a Table of clusters based on Louvain community detection.
    * @param {Network} network
-   * @param {Boolean} bAddColors if true add colors to nodes based on community
-   * @param {String} prop Node property to use to store community for each node
-   * @return {Network}
-   * tags:analytics,transformative
+   * @return {Table} List of NodeLists
+   * tags:analysis
    */
-  NetworkOperators.addLouvainCommunityToNodes = function(network,bAddColors,prop) {
+  NetworkOperators.buildNetworkClustersLouvain = function(network) {
     if(network==null) return network;
-    if(bAddColors==null) bAddColors=true;
-    if(prop == null) prop='group';
-
+    
     var node_data = [];
     for(var i=0; i < network.nodeList.length; i++){
       // force nodes to be stringlike since they get used as properties in result
@@ -21159,44 +21173,23 @@ define('src/index', ['exports'], function (exports) {
     // Object with ids of nodes as properties and community number assigned as value.
     var community = NetworkOperators._jLouvain().nodes(node_data).edges(edge_data);
     var result  = community();
+    var clusters = new Table();
+
     var nLGroupIDs = new NumberList();
     if(result)
       for(var i=0; i < network.nodeList.length; i++){
-        var group = result['n'+network.nodeList[i].id];
-        network.nodeList[i][prop] = group;
-        nLGroupIDs.push(group);
+        var j = result['n'+network.nodeList[i].id];
+        if(clusters[j] == undefined)
+          clusters[j]= new NodeList__default();
+        clusters[j].addNode(network.nodeList[i]);
       }
     else{
       // no results mean no communities, make them all unique
       for(var i=0; i < network.nodeList.length; i++){
-        network.nodeList[i][prop] = i;
-        nLGroupIDs.push(i);
+        clusters.push(new NodeList__default(network.nodeList[i]));
       }
     }
-    if(bAddColors){
-      // we will color all singleton items light grey
-      var tFreq = nLGroupIDs.getFrequenciesTable(true);
-      // find how many non-singleton groups (they are sorted by freq from above)
-      var nColors=0;
-      // also at same time build a map from groupId to index so we can efficiently get values
-      var mGroupIndex = {};
-      for(var i=0; i < tFreq[0].length; i++){
-        if(tFreq[1][i] == 1 && nColors == 0)
-          nColors=i;
-        mGroupIndex['g'+tFreq[0][i]] = i;
-      }
-      if(nColors==0 && tFreq[0].length > 0)
-        nColors=tFreq[0].length;
-      var colors = ColorListGenerators__default.createCategoricalColors(2, nColors);
-      for(var i=0;i<network.nodeList.length;i++){
-        var iGroupIndex = mGroupIndex['g'+network.nodeList[i].group];
-        if(tFreq[1][iGroupIndex] == 1)
-          network.nodeList[i].color = 'rgb(128,128,128)';
-        else
-          network.nodeList[i].color = colors[iGroupIndex];
-      }
-    }
-    return network;
+    return clusters;
   };
 
   exports.NetworkOperators = NetworkOperators;
@@ -21725,7 +21718,7 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   DrawTexts.fillTextRectangle = function(text, x, y, width, height, lineHeight, returnHeight, ellipsis, graphics) {
-    var textLines = DrawTexts.textWordWrapReturnLines(text, width, height, lineHeight, ellipsis);
+    var textLines = DrawTexts.textWordWrapReturnLines(text, width, height, lineHeight, ellipsis, graphics);
     return DrawTexts.fillTextRectangleWithTextLines(textLines, x, y, height, lineHeight, returnHeight, graphics);
   };
 
@@ -21831,18 +21824,18 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @todo write docs
    */
-  DrawTexts.cropString = function(ctx, string, fitWidth) {
+  DrawTexts.cropString = function(graphics, string, fitWidth) {
     if(string == null) return;
     fitWidth = fitWidth || 0;
 
-    if(fitWidth <= 0 || ctx.measureText(string).width <= fitWidth) {
+    if(fitWidth <= 0 || graphics.context.measureText(string).width <= fitWidth) {
       return string;
     }
     var chars = string.split('');
     var idx = 1;
     while(chars.length > 0 && idx <= chars.length) {
       var str = chars.slice(0, idx).join('');
-      var w = ctx.measureText(str).width;
+      var w = graphics.context.measureText(str).width;
       if(w > fitWidth) {
         if(idx == 1) {
           idx = 2;
@@ -22474,7 +22467,7 @@ define('src/index', ['exports'], function (exports) {
       this.context.fillRect(0, 0, this.cW, this.cH);
     }
 
-    // setCursor('default'); // YY why is this needed/done?
+    this.setCursor('default');
 
     this.MOUSE_DOWN = this.NF_DOWN == this.nF;
     this.MOUSE_UP = this.NF_UP == this.nF;
@@ -23842,7 +23835,8 @@ define('src/index', ['exports'], function (exports) {
    */
   Graphics.prototype.fTextM = function(text, x, y, size) {
     size = size || this.fontSize;
-    this.context.fillText(text, x, y);
+    //this.context.fillText(text, x, y);
+    this.fText(text, x, y);
     return this.mY > y && this.mY < y + size && this.mX > x && this.mX < x + this.context.measureText(text).width;
   };
 
@@ -23933,8 +23927,13 @@ define('src/index', ['exports'], function (exports) {
       return fallback;
     }
   }
+
   /**
-   * Sets several text canvas rendering properties
+   * Sets default values for several text rendering properties.
+   * Values that are undefined or null are not changed. Will also 
+   * call setText and set the current text properties to that.
+   *
+   * @see  setText
    *
    * @param {Object} color optional font color
    * @param {Object} fontSize optional font size
@@ -23943,7 +23942,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Object} baseline optional vertical alignment ('bottom', 'middle', 'top')
    * @param {Object} style optional font style ('bold', 'italic', 'underline')
    */
-  Graphics.prototype.setText = function(color, fontSize, fontName, align, baseline, style) {
+  Graphics.prototype.setTextDefaults = function(color, fontSize, fontName, align, baseline, style) {
     this.fontColor = ifDef(color, this.fontColor);
     this.fontSize = ifDef(String(fontSize), this.fontSize);
     this.fontName = ifDef(fontName, this.fontName);
@@ -23951,14 +23950,38 @@ define('src/index', ['exports'], function (exports) {
     this.fontBaseline = ifDef(baseline, this.fontBaseline);
     this.fontStyle = ifDef(style, this.fontStyle);
 
-    if(style !== '') {
-      style += ' ';
+    this.setText();
+  };
+
+  /**
+   * Sets several text canvas rendering properties. If a value
+   * is null or undefined, use the currently set default value.
+   *
+   * @see  setTextDefaults
+   *
+   * @param {Object} color optional font color
+   * @param {Object} fSize optional font size
+   * @param {Object} fName optional font name (default: LOADED_FONT)
+   * @param {Object} align optional horizontal align ('left', 'center', 'right')
+   * @param {Object} baseline optional vertical alignment ('bottom', 'middle', 'top')
+   * @param {Object} style optional font style ('bold', 'italic', 'underline')
+   */
+  Graphics.prototype.setText = function(color, fSize, fName, align, baseline, style) {
+    var fontColor = ifDef(color, this.fontColor);
+    var fontSize = ifDef(String(fSize), this.fontSize);
+    var fontName = ifDef(fName, this.fontName);
+    var fontAlign = ifDef(align, this.fontAlign);
+    var fontBaseline = ifDef(baseline, this.fontBaseline);
+    var fontStyle = ifDef(style, this.fontStyle);
+
+    if(fontStyle !== '') {
+      fontStyle += ' ';
     }
 
-    this.context.fillStyle = this.fontColor;
-    this.context.font = this.fontStyle + this.fontSize + 'px ' + this.fontName;
-    this.context.textAlign = this.fontAlign;
-    this.context.textBaseline = this.fontBaseline;
+    this.context.fillStyle = fontColor;
+    this.context.font = fontStyle + fontSize + 'px ' + fontName;
+    this.context.textAlign = fontAlign;
+    this.context.textBaseline = fontBaseline;
   };
 
   /**
@@ -24615,26 +24638,18 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   InputTextFieldHTML.prototype.onKeyDown = function(e) {
-    console.log('InputTextFieldHTML.prototype.onKeyDown, e', e);
-    console.log('e.srcElement', e.srcElement);
-    console.log('e.srcElement.parent', e.srcElement.parent);
-    console.log('e.srcElement.parent.onKeyDownDelayed', e.srcElement.parent.onKeyDownDelayed);
-
     var target = e.srcElement.parent;
 
     target._eKeyDown = e;
     target._keyCode = e.keyCode;
 
     target.timer = setTimeout(target.onKeyDownDelayed, 4, target);
-    console.log('timer>');
   };
 
   /**
    * @todo write docs
    */
   InputTextFieldHTML.prototype.onKeyDownDelayed = function(target) {
-    console.log('InputTextFieldHTML.prototype.onKeyDownDelayed, target, target.DOMtext', target, target.DOMtext);
-
     if(target._keyCode == 13 && target.DOMtext == document.activeElement) {
       if(target.enterFunction != null) {
         target.enterFunction.call(target.enterFunctionTarget, target.id);
@@ -24648,7 +24663,6 @@ define('src/index', ['exports'], function (exports) {
 
       if(target._keyCode != 13) {
         if(target.changeFunction != null) {
-          console.log('call target.changeFunctionTarget');
           target.changeFunction.call(target.changeFunctionTarget, target.id);
         }
       }
@@ -24669,7 +24683,6 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   // InputTextFieldHTML.prototype.forceUnfocus = function() {
-  //   console.log("[!] use InputTextFieldHTML.prototype.forceBlur instead");
   //   a.push(0); // TODO where does this come from
   // };
 
@@ -24677,7 +24690,6 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   InputTextFieldHTML.prototype.forceBlur = function() {
-    console.log('InputTextFieldHTML.prototype.forceBlur');
 
     this.DOMtext.blur();
     this.focus = false;
@@ -24730,7 +24742,6 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   InputTextFieldHTML.prototype.placeCursor = function(nChar) {
-    console.log('InputTextFieldHTML.prototype.placeCursor, nChar', nChar);
     this.setSelection(nChar);
   };
 
@@ -24776,8 +24787,6 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   InputTextFieldHTML.prototype.remove = function() {
-    console.log('InputTextFieldHTML.prototype.remove, his.added', this.added);
-
     if(this.added) {
       this.div.removeChild(this.DOMtext);
       this.main.removeChild(this.div);
@@ -24789,7 +24798,6 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   InputTextFieldHTML.prototype.readd = function() {
-    console.log('InputTextFieldHTML.prototype.readd, his.added', this.added);
 
     if(!this.added) {
       this.main.appendChild(this.div);
@@ -24797,16 +24805,6 @@ define('src/index', ['exports'], function (exports) {
       this.added = true;
     }
   };
-
-  /**
-   * @todo write docs
-   */
-  // InputTextFieldHTML.prototype.disappear = function() {
-  //   console.log('[!] InputTextFieldHTML.prototype.disappear replaced by remove');
-  //   a.push(0); // TODO where does this come from?
-  //   this.x = -10000;
-  //   this.draw();
-  // };
 
   exports.InputTextFieldHTML = InputTextFieldHTML;
 
@@ -26623,88 +26621,6 @@ define('src/index', ['exports'], function (exports) {
 
   exports.ColorsDraw = ColorsDraw;
 
-  function ImageDraw() {}
-
-
-  /**
-   * draws an image
-   * @param  {Rectangle} frame
-   * @param  {Image} image to be drawn
-   *
-   * @param  {Number} mode: 0: adjust to rectangle, 1: center and mask, 2: center and eventual reduction (image smaller than rectangle), 3: adjust to rectangle preserving proportions (image bigger than rectangle), 4: fill repeated from corner, 5: fill repeated from 0,0
-   * tags:draw
-   */
-  ImageDraw.drawImage = function(frame, image, mode) {
-    mode = mode || 0;
-    Draw.fillRectangleWithImage(frame, image, mode);
-  };
-
-
-  /**
-   * draws a visualization and captures an image
-   * @param  {String} visFunction visualization function
-   * @param  {Number} width
-   * @param  {Number} height
-   *
-   * @param {Object} argument0 first argument of the visualization function
-   * @param {Object} argument1 second argument of the visualization function
-   * @param {Object} argument2 third argument of the visualization function
-   * @param {Object} argument3 fourth argument of the visualization function
-   * @return {Image}
-   * tags:
-   */
-  // ImageDraw.captureVisualizationImage = function(visFunctionName, width, height) {
-  //   // TODO refactor this to import context from Global and not reassign it.
-
-  //   console.log('visFunctionName', visFunctionName);
-  //   if(visFunctionName == null ||  width == null || (!width > 0) || height == null || !(height > 0)) return;
-
-  //   var frame = new Rectangle(0, 0, width, height);
-
-  //   var args = Array.prototype.slice.call(arguments);
-  //   args = [frame].concat(args.slice(3));
-
-  //   var visFunction;
-
-  //   if(visFunctionName.indexOf('.') == -1) {
-  //     visFunction = this[visFunctionName];
-  //   } else {
-  //     console.log(visFunctionName.split('.')[0], this[visFunctionName.split('.')[0]], this.mY);
-  //     if(this[visFunctionName.split('.')[0]] == null) return;
-  //     visFunction = this[visFunctionName.split('.')[0]][visFunctionName.split('.')[1]];
-  //   }
-
-  //   if(visFunction == null) return null;
-
-  //   console.log('ImageDraw.captureVisualizationImage | args', args);
-  //   console.log('ImageDraw.captureVisualizationImage | visFunction==null', visFunction == null);
-
-  //   var newCanvas = document.createElement("canvas");
-  //   newCanvas.width = width;
-  //   newCanvas.height = height;
-  //   var newContext = newCanvas.getContext("2d");
-  //   newContext.clearRect(0, 0, width, height);
-
-  //   var mainContext = context;
-  //   context = newContext;
-
-  //   ////draw
-  //   //setStroke('black', 2);
-  //   //line(0,0,width,height);
-  //   //line(width,0,0,height);
-  //   visFunction.apply(this, args);
-  //   ////
-
-  //   context = mainContext;
-
-  //   var im = new Image();
-  //   im.src = newCanvas.toDataURL();
-
-  //   return im;
-  // };
-
-  exports.ImageDraw = ImageDraw;
-
   function ListDraw() {}
 
 
@@ -27517,7 +27433,7 @@ define('src/index', ['exports'], function (exports) {
 
       for(i = 0; i < nCols; i++) {
         if(matrix[i] == null) matrix[i] = new NumberList();
-        matrixColors[i] = new ColorList__default();
+        matrixColors[i] = new ColorList();
         for(j = 0; j < nLists; j++) {
           if(matrix[i][j] == null) matrix[i][j] = 0;
           matrixColors[i][j] = colorScale(matrix[i][j] / max);
@@ -28903,8 +28819,8 @@ define('src/index', ['exports'], function (exports) {
       frame.memory.nFLastChange = graphics.nF;
       frame.memory.image = null;
       frame.memory.actualColorList = colorList == null ? ColorListGenerators__default.createCategoricalColors(0, tree.nLevels, ColorScales__default.grayToOrange, 0.1) : colorList;
-      frame.memory.nodesColorList = new ColorList__default();
-      if(textColor == null) frame.memory.textsColorList = new ColorList__default();
+      frame.memory.nodesColorList = new ColorList();
+      if(textColor == null) frame.memory.textsColorList = new ColorList();
 
       if(frame.memory.actualColorList.length <= tree.nLevels) {
         tree.nodeList.forEach(function(node, i) {
