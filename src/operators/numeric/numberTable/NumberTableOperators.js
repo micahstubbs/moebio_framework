@@ -3,13 +3,17 @@ import NumberTable from "src/dataStructures/numeric/NumberTable";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 import List from "src/dataStructures/lists/List";
 import Table from "src/dataStructures/lists/Table";
-import Relation from "src/dataStructures/structures/elements/Relation";
-import Node from "src/dataStructures/structures/elements/Node";
-import Network from "src/dataStructures/structures/networks/Network";
 import { instantiateWithSameType } from "src/tools/utils/code/ClassUtils";
 
 /**
  * @classdesc NumberTable Operators
+ *
+ * a NumberTable as a matrix: has n lists, each with m values, being a mxn matrix
+ * the following NumberTable:
+ * [ [0, 4, 7], [3, 8, 1] ]
+ * is notated:
+ * | 0   4   7 |
+ * | 3   8   1 |
  *
  * @namespace
  * @category numbers
@@ -18,37 +22,73 @@ function NumberTableOperators() {}
 export default NumberTableOperators;
 
 /**
- * a NumberTable as a matrix: has n lists, each with m values, being a mxn matrix
- * the following NumberTable:
- * [ [0, 4, 7], [3, 8, 1] ]
- * is notated:
- * | 0   4   7 |
- * | 3   8   1 |
- */
-
-
-
-/**
- * normlizes each NumberList to min and max values (redundant with NumberTable.getNumberListsNormalized)
- * @param  {NumberTable} numberTable
+ * normalizes the table to its maximal value
+ *
+ * @param {NumberTable} numbertable NumberTable.
+ * @param  {Number} factor optional factor
  * @return {NumberTable}
- * tags:statistics,deprecated
+ * tags:normalization
  */
-NumberTableOperators.normalizeLists = function(numberTable) {//TODO: redundant with NumberTable.getNumberListsNormalized
-  return numberTable.getNumberListsNormalized();
+NumberTableOperators.normalizeTableToMax = function(numbertable, factor) {
+  factor = factor == null ? 1 : factor;
+
+  var newTable = new NumberTable();
+  var i;
+  var antimax = factor / numbertable.getMax();
+  for(i = 0; numbertable[i] != null; i++) {
+    newTable[i] = numbertable[i].factor(antimax);
+  }
+  newTable.name = numbertable.name;
+  return newTable;
 };
 
 /**
- * @todo finish docs
+ * returns a table with having normalized all the numberLists
+ *
+ * @param {NumberTable} numbertable NumberTable.
+ * @param  {factor} factor optional factor
+ * @return {NumberTable}
+ * tags:normalization
  */
-NumberTableOperators.normalizeListsToMax = function(numberTable) {
-  var newNumberTable = new NumberTable();
-  newNumberTable.name = numberTable.name;
+NumberTableOperators.normalizeLists = function(numbertable, factor) {
+  factor = factor == null ? 1 : factor;
+
+  var newTable = new NumberTable();
   var i;
-  for(i = 0; numberTable[i] != null; i++) {
-    newNumberTable[i] = numberTable[i].getNormalizedToMax();
+  for(i = 0; numbertable[i] != null; i++) {
+    var numberlist = numbertable[i];
+    newTable[i] = NumberListOperators.normalized(numberlist, factor);
   }
-  return newNumberTable;
+  newTable.name = numbertable.name;
+  return newTable;
+};
+
+/**
+ * @todo write docs
+ * @param {NumberTable} numbertable NumberTable.
+ */
+NumberTableOperators.normalizeListsToMax = function(numbertable, factorValue) {
+  var newTable = new NumberTable();
+  for(var i = 0; numbertable[i] != null; i++) {
+    var numberlist = numbertable[i];
+    newTable[i] = NumberListOperators.normalizedToMax(numberlist, factorValue);
+  }
+  newTable.name = numbertable.name;
+  return newTable;
+};
+
+/**
+ * @todo write docs
+ * @param {NumberTable} numbertable NumberTable.
+ */
+NumberTableOperators.normalizeListsToSum = function(numbertable) {
+  var newTable = new NumberTable();
+  for(var i = 0; numbertable[i] != null; i++) {
+    var numberlist = numbertable[i];
+    newTable[i] = NumberListOperators.normalizedToSum(numberlist);
+  }
+  newTable.name = numbertable.name;
+  return newTable;
 };
 
 /**
@@ -225,80 +265,6 @@ NumberTableOperators.kNN = function(numberTable, propertyList, vectorList, k, ca
   return results;
 };
 
-
-
-//TODO: move to NumberTableConversions
-/**
- * @todo finish docs
- */
-NumberTableOperators.numberTableToNetwork = function(numberTable, method, tolerance) {
-  tolerance = tolerance == null ? 0 : tolerance;
-
-  var network = new Network();
-
-  var list0;
-  var list1;
-
-  var i;
-  var j;
-
-  var node0;
-  var node1;
-  var relation;
-
-
-  switch(method) {
-    case 0: // standard deviation
-
-      var sd;
-      var w;
-
-      for(i = 0; numberTable[i + 1] != null; i++) {
-        list0 = numberTable[i];
-
-        if(i == 0) {
-          node0 = new Node(list0.name, list0.name);
-          network.addNode(node0);
-        } else {
-          node0 = network.nodeList[i];
-        }
-
-
-        for(j = i + 1; numberTable[j] != null; j++) {
-          list1 = numberTable[j];
-
-          if(i == 0) {
-            node1 = new Node(list1.name, list1.name);
-            network.addNode(node1);
-          } else {
-            node1 = network.nodeList[j];
-          }
-
-
-
-          list1 = numberTable[j];
-          sd = NumberListOperators.standardDeviationBetweenTwoNumberLists(list0, list1);
-
-          w = 1 / (1 + sd);
-
-          if(w >= tolerance) {
-            relation = new Relation(i + "_" + j, node0.name + "_" + node1.name, node0, node1, w);
-            network.addRelation(relation);
-          }
-        }
-      }
-
-      break;
-    case 1:
-      break;
-    case 2:
-      break;
-  }
-
-  return network;
-};
-
-
 /**
  * calculates the matrix product of two Numbertables
  * @param  {NumberTable} numberTable0 first numberTable
@@ -309,7 +275,7 @@ NumberTableOperators.product = function(numberTable0, numberTable1){
   if(numberTable0==null || numberTable1==null) return;
   var n = numberTable0.length;
   var m = numberTable0[0].length;
-  if(n==0 || m==0 || n!=numberTable1[0].length || m!=numberTable1.length) return;
+  if(n === 0 || m === 0 || n!=numberTable1[0].length || m!=numberTable1.length) return;
 
   var newTable = new NumberTable();
   var i, j, k;

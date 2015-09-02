@@ -54,8 +54,6 @@ NodeList.fromArray = function(array, forceToNode) {
     }
   }
 
-  // TODO: Remove duplicate line?
-  var result = List.fromArray(array);
   result.type = "NodeList";
   result.ids = {};
   // TODO: Fix

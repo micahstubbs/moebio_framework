@@ -1,8 +1,5 @@
 import List from "src/dataStructures/lists/List";
 import NumberList from "src/dataStructures/numeric/NumberList";
-import DateList from "src/dataStructures/dates/DateList";
-import StringOperators from "src/operators/strings/StringOperators";
-import DateOperators from "src/operators/dates/DateOperators";
 import { typeOf } from "src/tools/utils/code/ClassUtils";
 
 StringList.prototype = new List();
@@ -11,19 +8,26 @@ StringList.prototype.constructor = StringList;
 /**
  * @classdesc {@link List} for storing Strings.
  *
+ * Additional functions that work on StringList can be found in:
+ * <ul>
+ *  <li>Operators:   {@link StringListOperators}</li>
+ *  <li>Conversions: {@link StringListConversions}</li>
+ * </ul>
+ *
  * @constructor
  * @description Creates a new StringList
+ *
  * @category strings
  */
 function StringList() {
-  var args = []; //TODO:why this?, ask M
+  var args = [];
 
   for(var i = 0; i < arguments.length; i++) {
     args[i] = String(arguments[i]);
   }
   var array = List.apply(this, args);
   array = StringList.fromArray(array);
-  //
+  
   return array;
 }
 export default StringList;
@@ -50,8 +54,6 @@ StringList.fromArray = function(array, forceToString) {
   result.getSurrounded = StringList.prototype.getSurrounded;
   result.replace = StringList.prototype.replace;
   result.getConcatenated = StringList.prototype.getConcatenated;
-  result.toNumberList = StringList.prototype.toNumberList;
-  result.toDateList = StringList.prototype.toDateList;
   result.trim = StringList.prototype.trim;
 
   //override
@@ -65,7 +67,6 @@ StringList.fromArray = function(array, forceToString) {
  */
 StringList.prototype.getLengths = function() {
   var lengths = new NumberList();
-  var string;
 
   this.forEach(function(string) {
     lengths.push(string.length);
@@ -134,24 +135,6 @@ StringList.prototype.replace = function(regExp, string) {
 };
 
 /**
- * replaces in each string, a sub-string by a string
- * @param  {String} subString sub-string to be replaced in each string
- * @param  {String} replacement string to be placed instead
- * @return {StringList}
- * tags:
- */
-StringList.prototype.replaceSubStringsInStrings = function(subString, replacement) {
-  var newStringList = new StringList();
-  newStringList.name = this.name;
-
-  for(var i = 0; this[i] != null; i++) {
-    newStringList[i] = StringOperators.replaceString(this[i], subString, replacement);
-  }
-
-  return newStringList;
-};
-
-/**
  * @todo write docs
  */
 StringList.prototype.getConcatenated = function(separator) {
@@ -163,7 +146,6 @@ StringList.prototype.getConcatenated = function(separator) {
   }
   return string;
 };
-
 
 /**
  * @todo write docs
@@ -189,37 +171,6 @@ StringList.prototype.toUpperCase = function() {
     newStringList[i] = this[i].toUpperCase();
   }
   return newStringList;
-};
-
-/**
- * @todo write docs
- */
-StringList.prototype.toNumberList = function() {
-  var numbers = new NumberList();
-  numbers.name = this.name;
-  var i;
-  for(i = 0; this[i] != null; i++) {
-    numbers[i] = Number(this[i]);
-  }
-  return numbers;
-};
-
-
-/**
- * converts a stringList into a dateList
- *
- * @param  {String} formatCase format cases:<br>0: MM-DD-YYYY<br>1: YYYY-MM-DD<br>2: MM-DD-YY<br>3: YY-MM-DD<br>4: DD-MM-YY<br>5: DD-MM-YYYY
- * @param  {String} separator "-" by default
- * @return {DateList}
- * tags:
- */
-StringList.prototype.toDateList = function(formatCase, separator) {
-  var dateList = new DateList();
-  var i;
-  for(i = 0; this[i] != null; i++) {
-    dateList.push(DateOperators.stringToDate(this[i], formatCase, separator));
-  }
-  return dateList;
 };
 
 /**

@@ -1,16 +1,20 @@
 import List from "src/dataStructures/lists/List";
-import StringList from "src/dataStructures/strings/StringList";
 import Interval from "src/dataStructures/numeric/Interval";
-import ListGenerators from "src/operators/lists/ListGenerators";
-import Polygon from "src/dataStructures/geometry/Polygon";
-import Point from "src/dataStructures/geometry/Point";
 import { typeOf } from "src/tools/utils/code/ClassUtils";
 
 NumberList.prototype = new List();
 NumberList.prototype.constructor = NumberList;
 
 /**
- * @classdesc List structure for Numbers.
+ * @classdesc List structure for Numbers. Provides basic data type for
+ * storing and working with numbers in a List.
+ *
+ * Additional functions that work on NumberList can be found in:
+ * <ul>
+ *  <li>Operators:   {@link NumberListOperators}</li>
+ *  <li>Conversions: {@link NumberListConversions}</li>
+ *  <li>Generators: {@link NumberListGenerators}</li>
+ * </ul>
  *
  * @constructor
  * @description Creates a new NumberList.
@@ -58,11 +62,6 @@ NumberList.fromArray = function(array, forceToNumber) {
   result.getSum = NumberList.prototype.getSum;
   result.getProduct = NumberList.prototype.getProduct;
   result.getInterval = NumberList.prototype.getInterval;
-  result.getNumbersSimplified = NumberList.prototype.getNumbersSimplified;
-  result.getNormalized = NumberList.prototype.getNormalized;
-  result.getNormalizedToMax = NumberList.prototype.getNormalizedToMax;
-  result.getNormalizedToSum = NumberList.prototype.getNormalizedToSum;
-  result.toPolygon = NumberList.prototype.toPolygon;
 
   //statistics
   result.getAverage = NumberList.prototype.getAverage;
@@ -79,14 +78,11 @@ NumberList.fromArray = function(array, forceToNumber) {
   result.add = NumberList.prototype.add;
   result.subtract = NumberList.prototype.subtract;
   result.divide = NumberList.prototype.divide;
-  result.dotProduct = NumberList.prototype.dotProduct;
-  result.distance = NumberList.prototype.distance;
   result.sqrt = NumberList.prototype.sqrt;
   result.pow = NumberList.prototype.pow;
   result.log = NumberList.prototype.log;
   result.floor = NumberList.prototype.floor;
   result.isEquivalent = NumberList.prototype.isEquivalent;
-  result.toStringList = NumberList.prototype.toStringList;
 
   //transform
   result.approach = NumberList.prototype.approach;
@@ -192,80 +188,6 @@ NumberList.prototype.getProduct = function() {
 };
 
 /**
- * Returns a NumberList normalized to the sum.
- *
- * @param {Number} factor Optional multiplier to modify the normalized values by.
- * Defaults to 1.
- * @param {Number} sum Optional sum to normalize to.
- * If not provided, sum will be calculated automatically.
- * @return {NumberList} New NumberList of values normalized to the sum.
- * tags:
- */
-NumberList.prototype.getNormalizedToSum = function(factor, sum) {
-  factor = factor == null ? 1 : factor;
-  var newNumberList = new NumberList();
-  newNumberList.name = this.name;
-  if(this.length === 0) return newNumberList;
-  var i;
-  sum = sum == null ? this.getSum() : sum;
-  if(sum === 0) return this.clone();
-
-  for(i = 0; i < this.length; i++) {
-    newNumberList.push(factor * this[i] / sum);
-  }
-  return newNumberList;
-};
-
-/**
- * Returns a NumberList normalized to min-max interval.
- *
- * @param {Number} factor Optional multiplier to modify the normalized values by.
- * Defaults to 1.
- * @return {NumberList}
- * tags:
- */
-NumberList.prototype.getNormalized = function(factor) {
-  factor = factor == null ? 1 : factor;
-
-  if(this.length === 0) return null;
-
-  var i;
-  var interval = this.getMinMaxInterval();
-  var a = interval.getAmplitude();
-  var newNumberList = new NumberList();
-  for(i = 0; i < this.length; i++) {
-    newNumberList.push(factor * ((this[i] - interval.x) / a));
-  }
-  newNumberList.name = this.name;
-  return newNumberList;
-};
-
-/**
- * Returns a NumberList normalized to Max.
- *
- * @param {Number} factor Optional multiplier to modify the normalized values by. Defaults to 1.
- * @return {NumberList}
- * tags:
- */
-NumberList.prototype.getNormalizedToMax = function(factor) {
-  factor = factor == null ? 1 : factor;
-
-  if(this.length == 0) return null;
-
-  var max = this.getMax();
-  if(max == 0) {
-    max = this.getMin();
-    if(max == 0) return ListGenerators.createListWithSameElement(this.length, 0);
-  }
-  var newNumberList = new NumberList();
-  for(var i = 0; this[i] != null; i++) {
-    newNumberList.push(factor * (this[i] / max));
-  }
-  newNumberList.name = this.name;
-  return newNumberList;
-};
-
-/**
  * Builds an Interval with min and max value from the NumberList
  *
  * @return {Interval} with starting value as the min of the NumberList
@@ -282,58 +204,6 @@ NumberList.prototype.getInterval = function() {
   }
   var interval = new Interval(min, max);
   return interval;
-};
-
-
-
-/**
- * simplifies a categorical list, by keeping the nCategories-1 most common values, and replacing the others with an "other" element
- * this method reduces the number of different values contained in the list, converting it into a categorical list
- * @param  {Number} method simplification method:<b>0:significant digits<br>1:quantiles (value will be min value in percentile)<br>2:orders of magnitude
- *
- * @param  {Number} param different meaning according to choosen method:<br>0:number of significant digits<br>1:number of quantiles<br>2:no need of param
- * @return {NumberList} simplified list
- * tags:
- */
-NumberList.prototype.getNumbersSimplified = function(method, param) {
-  method = method||0;
-  param = param||0;
-
-  var newList = new NumberList();
-  newList.name = this.name;
-
-
-  switch(method){
-    case 0:
-      var power = Math.pow(10, param);
-      this.forEach(function(val){
-        newList.push(Math.floor(val/power)*power);
-      });
-      break;
-    case 1:
-      //deploy quantiles first (optional return of n percentile, min value, interval, numberTable with indexes, numberTable with values)
-      break;
-  }
-
-  return newList;
-};
-
-
-/**
- * Builds an {@link Polygon} from the NumberList,
- * using each consecutive pair of values in the numberList as
- * x and y positions.
- *
- * @return {Polygon} Polygon representing the values
- * in the NumberList as x/y coordinates.
- */
-NumberList.prototype.toPolygon = function() {
-  if(this.length === 0) return null;
-  var polygon = new Polygon();
-  for(var i = 0; this[i + 1] != null; i += 2) {
-    polygon.push(new Point(this[i], this[i + 1]));
-  }
-  return polygon;
 };
 
 
@@ -420,12 +290,10 @@ NumberList.prototype.getMedian = function() {
  * Builds a partition of n quantiles from the numberList.
  *
  * @param {Number} nQuantiles number of quantiles (the size of the resulting list is nQuantiles-1)
- *
- * @param {Number} returnMode
  * @return {NumberList} A number list of the quantiles.
  * tags:statistics
  */
-NumberList.prototype.getQuantiles = function(nQuantiles, returnMode) {//TODO: defines different options for return
+NumberList.prototype.getQuantiles = function(nQuantiles) {//TODO: defines different options for return
   var sorted = this.getSorted(true);
 
   var prop = this.length / nQuantiles;
@@ -437,8 +305,6 @@ NumberList.prototype.getQuantiles = function(nQuantiles, returnMode) {//TODO: de
   }
   return quantiles;
 };
-
-
 
 /////////sorting
 
@@ -504,24 +370,6 @@ NumberList.prototype.getSortIndexes = function(descending) {
   }
   newList.name = this.name;
   return newList;
-};
-
-/**
- * Returns a new NumberList with the values of
- * the original list multiplied by the input value
- *
- * @param {Number} value The value to multiply each
- * value in the list by.
- * @return {NumberList} New NumberList with values multiplied.
- */
-NumberList.prototype.factor = function(value) {
-  var i;
-  var newNumberList = new NumberList();
-  for(i = 0; i < this.length; i++) {
-    newNumberList.push(this[i] * value);
-  }
-  newNumberList.name = this.name;
-  return newNumberList;
 };
 
 /**
@@ -633,6 +481,25 @@ NumberList.prototype.divide = function(object) {
 };
 
 /**
+ * Returns a new NumberList with the values of
+ * the original list multiplied by the input value
+ *
+ * @param {Number} value The value to multiply each
+ * value in the list by.
+ * @return {NumberList} New NumberList with values multiplied.
+ */
+NumberList.prototype.factor = function(value) {
+  var i;
+  var newNumberList = new NumberList();
+  for(i = 0; i < this.length; i++) {
+    newNumberList.push(this[i] * value);
+  }
+  newNumberList.name = this.name;
+  return newNumberList;
+};
+
+
+/**
  * Returns a new NumberList containing the square root of
  * the values of the current NumberList.
  *
@@ -705,73 +572,9 @@ NumberList.prototype.floor = function() {
   return newNumberList;
 };
 
-
 /**
- * Returns dot product between current list and input NumberList.
- *
- * @param {NumberList} numberList Another NumberList.
- * @return {Number} Dot product between two lists.
+ * @todo write docs
  */
-NumberList.prototype.dotProduct = function(numberList) {
-  var sum = 0;
-  var i;
-  var nElements = Math.min(this.length, numberList.length);
-  for(i = 0; i < nElements; i++) {
-    sum += this[i] * numberList[i];
-  }
-  return sum;
-};
-
-/**
- * Calculates Euclidean distance between two numberLists
- *
- * @param  {NumberList} numberList NumberList of the same length
- * as current list.
- * @return {Number} Summed Euclidean distance between all values.
- * tags:
- */
-NumberList.prototype.distance = function(numberList) {
-  var sum = 0;
-  var i;
-  var nElements = Math.min(this.length, numberList.length);
-  for(i = 0; i < nElements; i++) {
-    sum += Math.pow(this[i] - numberList[i], 2);
-  }
-  return Math.sqrt(sum);
-};
-
-/**
- * Returns true if values in the input NumberList are the same
- * as the values in the current list.
- *
- * @param numberList NumberList to compare.
- * @return {Boolean} True if all values in both lists match.
- */
-NumberList.prototype.isEquivalent = function(numberList) {
-  for(var i = 0; this[i] != null; i++) {
-    if(this[i] != numberList[i]) return false;
-  }
-  return true;
-};
-
-/**
- * Returns a new {@link StringList} with all values converted to strings
- *
- * @return {StringList} New list.
- */
-NumberList.prototype.toStringList = function() {
-  var i;
-  var stringList = new StringList();
-  for(i = 0; this[i] != null; i++) {
-    stringList[i] = String(this[i]);
-  }
-  stringList.name = this.name;
-  return stringList;
-};
-
-
-//transform
-
 NumberList.prototype.approach = function(destinty, speed) {
   speed = speed || 0.5;
 
@@ -783,15 +586,38 @@ NumberList.prototype.approach = function(destinty, speed) {
   }
 };
 
+/**
+ * Returns true if values in the input NumberList are the same
+ * as the values in the current list.
+ *
+ * @param numberList2 Second NumberList to compare.
+ * @return {Boolean} True if all values in both lists match.
+ */
+NumberList.prototype.isEquivalent = function(numberList2) {
+  if(this.length !== numberList2.length) {
+    return false;
+  }
+
+  for(var i = 0; this[i] != null; i++) {
+    if(this[i] != numberList2[i]) return false;
+  }
+  return true;
+};
 
 ///////overriding
 
+/**
+ * @todo write docs
+ */
 NumberList.prototype.clone = function() {
   var newList = NumberList.fromArray(this._slice(), false);
   newList.name = this.name;
   return newList;
 };
 
+/**
+ * @todo write docs
+ */
 NumberList.prototype.slice = function() {
   return NumberList.fromArray(this._slice.apply(this, arguments), false);
 };

@@ -76,6 +76,27 @@ StringListOperators.filterStringListByString = function(stringList, string, asWo
   return newList;
 };
 
+/**
+ * replaces in each string, a sub-string by a string
+ *
+ * @param  {StringList} stringList  StringList to work on.
+ * @param  {String} subString sub-string to be replaced in each string
+ * @param  {String} replacement string to be placed instead
+ * @return {StringList}
+ * tags:
+ */
+StringListOperators.replaceSubStringsInStrings = function(stringlist, subString, replacement) {
+  var newStringList = new StringList();
+  newStringList.name = stringlist.name;
+
+  for(var i = 0; stringlist[i] != null; i++) {
+    newStringList[i] = StringOperators.replaceSubString(stringlist[i], subString, replacement);
+  }
+
+  return newStringList;
+};
+
+
 
 // var regex = new RegExp("\\b"+word+"\\b");
 // var match = string.match(regex);
@@ -172,7 +193,7 @@ StringListOperators.getWordsOccurrencesMatrix = function(strings, stopWords, inc
   if(normalize) {
     matrix.forEach(function(occurrences, i) {
       if(i == 0) return;
-      matrix[i] = matrix[i].getNormalizedToSum();
+      matrix[i] = NumberListOperators.normalizedToSum(matrix[i]);
     });
   }
 

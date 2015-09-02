@@ -1,6 +1,7 @@
 import ColorList from "src/dataStructures/graphic/ColorList";
 import ColorOperators from "src/operators/graphic/ColorOperators";
 import Polygon3D from "src/dataStructures/geometry/Polygon3D";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 
 /**
  * @classdesc Tools for working with Lists of colors.
@@ -44,7 +45,7 @@ ColorListOperators.colorListFromColorScaleFunction = function(colorScaleFunction
 ColorListOperators.colorListFromColorScaleFunctionAndNumberList = function(colorScaleFunction, numberList, normalize) {
   normalize = normalize == null ? true : normalize;
 
-  if(normalize) numberList = numberList.getNormalized();
+  if(normalize) numberList = NumberListOperators.normalized(numberList);
 
   var colorList = new ColorList();
   var i;

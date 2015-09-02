@@ -61,15 +61,6 @@ NumberOperators.numberFromBinaryValues = function(binaryValues) {
  * @todo write docs
  */
 NumberOperators.powersOfTwoDecomposition = function(number, length) {
-  // var i;
-  // var powers = StringList.fromArray(Number(number).toString(2).split('')).toNumberList().getReversed();
-  // var n = powers.length;
-  // for(i=n; i<length; i++){
-  //   powers.push(0);
-  // }
-  // return powers;
-
-
 
   var powers = new NumberList();
 

@@ -3,8 +3,8 @@ window.onload = function() {
   var points = [ {x: 250, y: 250} ];
 
   var graphics = new mo.Graphics({
-    container: ".container",
-    
+    container: "#maindiv",
+
     dimensions: {
       width: 500,
       height: 500,
@@ -36,22 +36,22 @@ window.onload = function() {
           this.setStroke('grey');
           this.sCircle(point.x, point.y, radius + 10);
           this.setCursor('pointer');
-        }  
+        }
         // if mouse pressed, change color to orange
         if((this.MOUSE_DOWN || this.MOUSE_PRESSED) && over) {
           this.setFill('red');
           this.fCircle(point.x, point.y, radius);
         }
-      }      
-    }    
+      }
+    }
   });
 
   // We can also add custom interaction handlers to the graphics object
   // as a whole. These allows us to access standard DOM event information
   // in addition to the what is stored in the graphics object.
-  
+
   // Lets add a circle where-ever the mouse is clicked
-  graphics.on('click', function(e){    
+  graphics.on('click', function(e){
     points.push({
       x: e.offsetX,
       y: e.offsetY

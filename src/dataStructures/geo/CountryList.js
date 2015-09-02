@@ -7,6 +7,11 @@ CountryList.prototype.constructor = CountryList;
 /**
  * @classdesc A {@link List} structure for storing {@link Country|Countries}.
  *
+ * Additional functions that work on CountryList can be found in:
+ * <ul>
+ *  <li>Operators:   {@link CountryListOperators}</li>
+ * </ul>
+ *
  * @description Creates a new CountryList instance.
  * @constructor
  * @category geo
