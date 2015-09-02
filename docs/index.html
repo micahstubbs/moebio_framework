@@ -17,7 +17,7 @@
 
   <div class='clearfix fill-background dark center'>
     <div class='inline pad2y'>
-      <a href="../">Moebio Platform</a> / <a href="index.html">Docs</a>
+      <a href="../">Moebio Framework</a> / <a href="index.html">Docs</a>
     </div>
   </div>
   <div class='pad1 small'>
@@ -88,7 +88,19 @@
 
 
     <section>
-        <article><p>The Moebio Framework is a set of data manipulation and visualization tools for creating interactive web-based visualizations.</p></article>
+        <article><p>The Moebio Framework is a set of data manipulation and visualization tools for creating interactive web-based visualizations.</p>
+<h3>Data Types and Functions</h3><p>A core philosophy of Moebio Framework is that the type of data you are looking at determines the operations and manipulations you can perform on that data. Another way to say this is that if we get our data into the right <em>data type</em>, then we will have access to all the methods and functions in the framework that work on that data type.</p>
+<p>And in Moebio Framework, there are a lot of data types and functions to work with them! From the documentation, you can get a sense for how these data types are arranged. There are the normal basic types you would expect, like Strings and Numbers, but also ones like <a href="http://moebiolabs.github.io/moebio_framework/docs/Rectangle.html">Rectangle</a>, <a href="http://moebiolabs.github.io/moebio_framework/docs/Point.html">Point</a>, and <a href="http://moebiolabs.github.io/moebio_framework/docs/Polygon.html">Polygon</a>.</p>
+<p>Typically in a data set you are dealing with more then just one of these values, and that is where <a href="http://moebiolabs.github.io/moebio_framework/docs/List.html">List</a> and <a href="http://moebiolabs.github.io/moebio_framework/docs/Table.html">Table</a> come in. Most of the basic data types have an associated list type that provides specific methods and functions to that type.  <a href="http://moebiolabs.github.io/moebio_framework/docs/NumberList.html">NumberList</a> for example has <a href="http://moebiolabs.github.io/moebio_framework/docs/NumberList.html#getMax">getMax</a>, <a href="http://moebiolabs.github.io/moebio_framework/docs/NumberList.html#getMin">getMin</a>, <a href="http://moebiolabs.github.io/moebio_framework/docs/NumberList.html#getAverage">getAverage</a>, and many other methods that are specific to working with a list of numbers.</p>
+<p>In addition to these methods callable on an instance of a list or basic data type, Moebio Framework provides a host of customized functions that work on and transform these data types. These functions are organized into namespaces by what types of operations they perform.</p>
+<ul>
+<li><strong>Operators</strong> work on a particular data type to derive insights or details.</li>
+<li><strong>Conversions</strong> convert between different data types.</li>
+<li><strong>Generators</strong> generates artificial data using a number of algorithms.</li>
+<li><strong>Encodings</strong> serialize and deserialize the data types.</li>
+</ul>
+<p>Not all data types have each of these namespaces, but most have some to explore for additional capabilities of the framework. <a href="http://moebiolabs.github.io/moebio_framework/docs/NumberList.html">NumberList</a> for example, has <a href="http://moebiolabs.github.io/moebio_framework/docs/NumberListOperators.html">NumberListOperators</a>, <a href="http://moebiolabs.github.io/moebio_framework/docs/NumberListConversions.html">NumberListConversions</a>, and <a href="http://moebiolabs.github.io/moebio_framework/docs/NumberListGenerators.html">NumberListGenerators</a>. The namespaces attempt to partition up the frameworks functionality in a consistent manner.</p>
+<p>Knowing more about the structure and the capabilities of the data types and their helper functions, let's dive in to using these functions to get an understanding into a particular data set!</p></article>
     </section>
 
 

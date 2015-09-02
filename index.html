@@ -340,9 +340,9 @@ into the global environment.</p>
 
 <p>A core philosophy of Moebio Framework is that the type of data you are looking at determines the operations and manipulations you can perform on that data. Another way to say this is that if we get our data into the right <em>data type</em>, then we will have access to all the methods and functions in the framework that work on that data type.</p>
 
-<p>And in Moebio Framework, there are a lot of data types and functions to work with them! From the documentation, you can get a sense for how these data types are arranged. There are the normal basic types you would expect, like Strings and Numbers, but also ones like <a href="">Rectangle</a>, <a href="">Point</a>, and <a href="">Polygon</a>.</p>
+<p>And in Moebio Framework, there are a lot of data types and functions to work with them! From the documentation, you can get a sense for how these data types are arranged. There are the normal basic types you would expect, like Strings and Numbers, but also ones like <a href="http://moebiolabs.github.io/moebio_framework/docs/Rectangle.html">Rectangle</a>, <a href="http://moebiolabs.github.io/moebio_framework/docs/Point.html">Point</a>, and <a href="http://moebiolabs.github.io/moebio_framework/docs/Polygon.html">Polygon</a>.</p>
 
-<p>Typically in a data set you are dealing with more then just one of these values, and that is where <a href="">List</a> and <a href="">Table</a> come in. Most of the basic data types have an associated list type that provides specific methods and functions to that type.  <a href="">NumberList</a> for example has <a href="">getMax</a>, <a href="">getMin</a>, <a href="">getAvg</a>, and many other methods that are specific to working with a list of numbers.</p>
+<p>Typically in a data set you are dealing with more then just one of these values, and that is where <a href="http://moebiolabs.github.io/moebio_framework/docs/List.html">List</a> and <a href="http://moebiolabs.github.io/moebio_framework/docs/Table.html">Table</a> come in. Most of the basic data types have an associated list type that provides specific methods and functions to that type.  <a href="http://moebiolabs.github.io/moebio_framework/docs/NumberList.html">NumberList</a> for example has <a href="http://moebiolabs.github.io/moebio_framework/docs/NumberList.html#getMax">getMax</a>, <a href="http://moebiolabs.github.io/moebio_framework/docs/NumberList.html#getMin">getMin</a>, <a href="http://moebiolabs.github.io/moebio_framework/docs/NumberList.html#getAverage">getAverage</a>, and many other methods that are specific to working with a list of numbers.</p>
 
 <p>In addition to these methods callable on an instance of a list or basic data type, Moebio Framework provides a host of customized functions that work on and transform these data types. These functions are organized into namespaces by what types of operations they perform.</p>
 
@@ -353,13 +353,13 @@ into the global environment.</p>
 <li><strong>Encodings</strong> serialize and deserialize the data types.</li>
 </ul>
 
-<p>Not all data types have each of these namespaces, but most have some to explore for additional capabilities of the framework. <a href="">NumberList</a> for example, has <a href="">NumberListOperators</a>, <a href="">NumberListConversions</a>, and <a href="">NumberListGenerators</a>. The namespaces attempt to partition up the frameworks functionality in a consistent manner.</p>
+<p>Not all data types have each of these namespaces, but most have some to explore for additional capabilities of the framework. <a href="http://moebiolabs.github.io/moebio_framework/docs/NumberList.html">NumberList</a> for example, has <a href="http://moebiolabs.github.io/moebio_framework/docs/NumberListOperators.html">NumberListOperators</a>, <a href="http://moebiolabs.github.io/moebio_framework/docs/NumberListConversions.html">NumberListConversions</a>, and <a href="http://moebiolabs.github.io/moebio_framework/docs/NumberListGenerators.html">NumberListGenerators</a>. The namespaces attempt to partition up the frameworks functionality in a consistent manner.</p>
 
 <p>Knowing more about the structure and the capabilities of the data types and their helper functions, let&#39;s dive in to using these functions to get an understanding into a particular data set!</p>
 
 <h3>Loading Data</h3>
 
-<p>The full source code for this project is <a href="">in the examples directory</a>.</p>
+<p>The full source code for this project is <a href="https://github.com/moebiolabs/moebio_framework/tree/master/examples/data/data_types.js">in the examples directory</a>.</p>
 
 <p>We will start by loading a basic CSV file. In this example, we have included the framework script in our web page, and along side it we have a directory, <code>data</code> with <code>iris.csv</code>. This is the <a href="https://en.wikipedia.org/wiki/Iris_flower_data_set">iris dataset</a> that has measurements of sepals and petals for three species of iris flowers. We are going to try to explore this data set using <code>console.log</code> and functions from the framework.</p>
 
@@ -373,12 +373,12 @@ into the global environment.</p>
 <span class="c1">// work with data.result here...</span>
 <span class="p">}</span>
 </code></pre></div>
-<p>The result of loading a file starts out as just a long string, but we know it is a CSV and thus we can convert it into a <a href="">Table</a>. The Moebio Framework has a <a href="">TableEncodings.CSVtoTable</a> function that does just that. You pass in a string, and get out a Table. Let&#39;s use that inside our <code>loaded</code> function:</p>
+<p>The result of loading a file starts out as just a long string, but we know it is a CSV and thus we can convert it into a <a href="http://moebiolabs.github.io/moebio_framework/docs/Table.html">Table</a>. The Moebio Framework has a <a href="http://moebiolabs.github.io/moebio_framework/docs/TableEncodings.html#.CSVtoTable">TableEncodings.CSVtoTable</a> function that does just that. You pass in a string, and get out a Table. Let&#39;s use that inside our <code>loaded</code> function:</p>
 <div class="highlight"><pre><code class="language-js" data-lang="js">  <span class="kd">var</span> <span class="nx">table</span> <span class="o">=</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">TableEncodings</span><span class="p">.</span><span class="nx">CSVtoTable</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">result</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
 </code></pre></div>
 <h3>Looking At Tables and Lists</h3>
 
-<p>The second parameter indicates that the first row should be considered the names of the columns. In Moebio Framework, Tables are built up as a list of <a href="">Lists</a>. Each List represents a column, and can hold a different data type. Lists are just like arrays, but with additional capabilities. We can see the names of these lists using <a href="">getNames</a>.</p>
+<p>The second parameter indicates that the first row should be considered the names of the columns. In Moebio Framework, Tables are built up as a list of <a href="http://moebiolabs.github.io/moebio_framework/docs/List.html">Lists</a>. Each List represents a column, and can hold a different data type. Lists are just like arrays, but with additional capabilities. We can see the names of these lists using <a href="http://moebiolabs.github.io/moebio_framework/docs/List.html#getNames">getNames</a>.</p>
 <div class="highlight"><pre><code class="language-js" data-lang="js">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">table</span><span class="p">.</span><span class="nx">getNames</span><span class="p">());</span>
 </code></pre></div>
 <p>These as we expect are the same names in the CSV:</p>
@@ -388,7 +388,7 @@ into the global environment.</p>
 3: &quot;Petal.Width&quot;
 4: &quot;Species&quot;
 </code></pre></div>
-<p>When Moebio Framework converted the CSV into a Table, it was nice enough to convert each List inside that table into one tailored for storing the type of data in that column. As Table is derived from List, we can use List&#39;s <a href="">getTypes</a> method to see these types:</p>
+<p>When Moebio Framework converted the CSV into a Table, it was nice enough to convert each List inside that table into one tailored for storing the type of data in that column. As Table is derived from List, we can use List&#39;s <a href="http://moebiolabs.github.io/moebio_framework/docs/List.html#getTypes">getTypes</a> method to see these types:</p>
 <div class="highlight"><pre><code class="language-js" data-lang="js">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">table</span><span class="p">.</span><span class="nx">getTypes</span><span class="p">());</span>
 </code></pre></div><div class="highlight"><pre><code class="language-text" data-lang="text">0: &quot;NumberList&quot;
 1: &quot;NumberList&quot;
@@ -396,11 +396,11 @@ into the global environment.</p>
 3: &quot;NumberList&quot;
 4: &quot;StringList&quot;
 </code></pre></div>
-<p>So each of our columns contains Numbers in a <a href="">NumberList</a>, except for the last column, <code>Species</code>, which is a <a href="">StringList</a>. Not too surprising, but good to know.</p>
+<p>So each of our columns contains Numbers in a <a href="http://moebiolabs.github.io/moebio_framework/docs/NumberList.html">NumberList</a>, except for the last column, <code>Species</code>, which is a <a href="http://moebiolabs.github.io/moebio_framework/docs/StringList.html">StringList</a>. Not too surprising, but good to know.</p>
 
 <h3>Summary Statistics and Counts</h3>
 
-<p>To get a better feel for the contents of these lists, we can look at some summary statistics. NumberList includes many such methods, like <a href="">getMin</a>, <a href="">getMax</a>, and <a href="">getAverage</a>.</p>
+<p>To get a better feel for the contents of these lists, we can look at some summary statistics. NumberList includes many such methods, like <a href="http://moebiolabs.github.io/moebio_framework/docs/NumberList.html#getMin">getMin</a>, <a href="http://moebiolabs.github.io/moebio_framework/docs/NumberList.html#getMax">getMax</a>, and <a href="http://moebiolabs.github.io/moebio_framework/docs/NumberList.html#getAverage">getAverage</a>.</p>
 
 <p>To access an individual List in the Table, we simply index into the Table like an Array. Here we get the average of the values in the first List:</p>
 <div class="highlight"><pre><code class="language-js" data-lang="js">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;average: &quot;</span> <span class="o">+</span> <span class="nx">table</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">getAverage</span><span class="p">());</span>
@@ -411,7 +411,7 @@ into the global environment.</p>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;max of &quot;</span> <span class="o">+</span> <span class="nx">table</span><span class="p">.</span><span class="nx">getNames</span><span class="p">()[</span><span class="nx">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="nx">table</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">getMax</span><span class="p">());</span>
   <span class="p">}</span>
 </code></pre></div>
-<p>Alternatively, we can use the <a href="">toReport</a> function in <a href="">TableConversions</a> or <a href="">ListConversions</a> to get a handy summary of a Table or List automatically.</p>
+<p>Alternatively, we can use the <a href="http://moebiolabs.github.io/moebio_framework/docs/TableConversions.html#.toReport">toReport</a> function in <a href="http://moebiolabs.github.io/moebio_framework/docs/TableConversions.html">TableConversions</a> or <a href="http://moebiolabs.github.io/moebio_framework/docs/ListConversions.html">ListConversions</a> to get a handy summary of a Table or List automatically.</p>
 <div class="highlight"><pre><code class="language-js" data-lang="js">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">mo</span><span class="p">.</span><span class="nx">TableConversions</span><span class="p">.</span><span class="nx">toReport</span><span class="p">(</span><span class="nx">table</span><span class="p">));</span>
 </code></pre></div>
 <p>Here is what part of the report looks like currently for our Table.</p>
@@ -444,12 +444,12 @@ names: Sepal.Length, Sepal.Width, Petal.Length, Petal.Width, Species
   average: 5.843333333333335
 ...
 </code></pre></div>
-<p>Another great tool in Lists is the <a href="">getFrequenciesTable</a> method. You can use this to tabulate counts of unique items in a List. Here, we use it to check out how many entries for each species there are:</p>
+<p>Another great tool in Lists is the <a href="http://moebiolabs.github.io/moebio_framework/docs/List.html#getFrequenciesTable">getFrequenciesTable</a> method. You can use this to tabulate counts of unique items in a List. Here, we use it to check out how many entries for each species there are:</p>
 <div class="highlight"><pre><code class="language-js" data-lang="js">  <span class="kd">var</span> <span class="nx">freqTable</span> <span class="o">=</span> <span class="nx">table</span><span class="p">[</span><span class="mi">4</span><span class="p">].</span><span class="nx">getFrequenciesTable</span><span class="p">();</span>
   <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Species Counts&#39;</span><span class="p">);</span>
   <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">mo</span><span class="p">.</span><span class="nx">TableEncodings</span><span class="p">.</span><span class="nx">TableToCSV</span><span class="p">(</span><span class="nx">freqTable</span><span class="p">));</span>
 </code></pre></div>
-<p>We use <a href="">TableToCSV</a> to convert the resulting table back into a string just for printing purposes. It shows up like this:</p>
+<p>We use <code>TableToCSV</code> to convert the resulting table back into a string just for printing purposes. It shows up like this:</p>
 <div class="highlight"><pre><code class="language-text" data-lang="text">&quot;setosa&quot;,50
 &quot;versicolor&quot;,50
 &quot;virginica&quot;,50
@@ -462,7 +462,7 @@ names: Sepal.Length, Sepal.Width, Petal.Length, Petal.Width, Species
 
 <p><a href="https://en.wikipedia.org/wiki/Information_gain_in_decision_trees">Information Gain</a> is a popular tool used in data mining, especially in the construction of <a href="https://en.wikipedia.org/wiki/Decision_tree_learning">decision trees</a>. It represents the ability of a particular variable to divide the data set into known categories. While it isn&#39;t typically used outside of building a decision tree, we can try it out here to get a feeling for how well these variables might perform independent of one another in assigning a particular row of data to a particular species.</p>
 
-<p>Moebio Framework&#39;s <a href="">TableOperators</a> includes the <a href="">getVariablesInformationGain</a> function which calculates information gain for each column in a Table, given a list of categories. As all our variables are numerical except for <code>Species</code>, we can use <a href="">getNumberTableFromTable</a> to extract our NumberList columns into a new table for operation:</p>
+<p>Moebio Framework&#39;s <a href="http://moebiolabs.github.io/moebio_framework/docs/TableOperators.html">TableOperators</a> includes the <a href="http://moebiolabs.github.io/moebio_framework/docs/TableOperators.html#.getVariablesInformationGain">getVariablesInformationGain</a> function which calculates information gain for each column in a Table, given a list of categories. As all our variables are numerical except for <code>Species</code>, we can use <a href="http://moebiolabs.github.io/moebio_framework/docs/TableOperators.html#.getNumberTableFromTable">getNumberTableFromTable</a> to extract our NumberList columns into a new table for operation:</p>
 <div class="highlight"><pre><code class="language-js" data-lang="js">  <span class="kd">var</span> <span class="nx">infoGain</span> <span class="o">=</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">TableOperators</span><span class="p">.</span><span class="nx">getVariablesInformationGain</span><span class="p">(</span>
     <span class="nx">mo</span><span class="p">.</span><span class="nx">TableOperators</span><span class="p">.</span><span class="nx">getNumberTableFromTable</span><span class="p">(</span><span class="nx">table</span><span class="p">),</span> <span class="nx">table</span><span class="p">[</span><span class="mi">4</span><span class="p">]);</span>
 
@@ -482,10 +482,10 @@ names: Sepal.Length, Sepal.Width, Petal.Length, Petal.Width, Species
 
 <p>The Moebio Framework includes the ability to generate a K-means clustering from a NumberList. Let&#39;s try it out!</p>
 
-<p>From the experimentation above, we can guess that the 3rd attribute, <code>Petal.Length</code> might be our best bet for clustering this particular dataset (as we are limiting ourselves to just one variable). <a href="">linearKMeans</a>, part of <a href="">NumberListOperators</a> gives us the ability to generate clusters.</p>
+<p>From the experimentation above, we can guess that the 3rd attribute, <code>Petal.Length</code> might be our best bet for clustering this particular dataset (as we are limiting ourselves to just one variable). <a href="http://moebiolabs.github.io/moebio_framework/docs/NumberListOperators.html#.linearKMeans">linearKMeans</a>, part of <a href="http://moebiolabs.github.io/moebio_framework/docs/NumberListOperators.html">NumberListOperators</a> gives us the ability to generate clusters.</p>
 <div class="highlight"><pre><code class="language-js" data-lang="js">  <span class="kd">var</span> <span class="nx">kMeans</span> <span class="o">=</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">NumberListOperators</span><span class="p">.</span><span class="nx">linearKMeans</span><span class="p">(</span><span class="nx">table</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">3</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
 </code></pre></div>
-<p>The <code>3</code> indicates the number of clusters to use (here we are cheating as we know there are only 3 species). The 3rd parameter indicates the algorithm should return the indexes associated with each cluster. So our returned value is a <a href="">NumberTable</a> that stores the indexes of the rows in our original table associated with each of the 3 clusters.</p>
+<p>The <code>3</code> indicates the number of clusters to use (here we are cheating as we know there are only 3 species). The 3rd parameter indicates the algorithm should return the indexes associated with each cluster. So our returned value is a <a href="http://moebiolabs.github.io/moebio_framework/docs/NumberTable.html">NumberTable</a> that stores the indexes of the rows in our original table associated with each of the 3 clusters.</p>
 
 <p>Now, to see how effective the cluster is, a simplistic approach would be to see how many of the <code>Species</code> value in the rows associated with a cluster match the most prevalent <code>Species</code>. As there are 3 species, we can see how well the data were binned into 3 distinct clusters.</p>
 
@@ -497,7 +497,7 @@ names: Sepal.Length, Sepal.Width, Petal.Length, Petal.Width, Species
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;cluster: &#39;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s1">&#39;, mismatch: &#39;</span> <span class="o">+</span> <span class="nx">mismatch</span><span class="p">);</span>
   <span class="p">}</span>
 </code></pre></div>
-<p>First we pull out all the rows associated with a cluster using <a href="">getSubListsByIndexes</a>, and store them in a new Table, <code>cluster</code>. Then, we build a frequency table of the cluster&#39;s <code>Species</code> column (column 4), using <a href="">getFrequenciesTable</a> again. This frequency table has the value in it&#39;s first List and the count of that value as its second List. Finally, our <code>mismatch</code> for the cluster is calculated as the total values in the cluster minus the count of the <code>Species</code> with the most values for that cluster.</p>
+<p>First we pull out all the rows associated with a cluster using <a href="http://moebiolabs.github.io/moebio_framework/docs/Table.html#getSubListsByIndexes">getSubListsByIndexes</a>, and store them in a new Table, <code>cluster</code>. Then, we build a frequency table of the cluster&#39;s <code>Species</code> column (column 4), using <code>getFrequenciesTable</code> again. This frequency table has the value in it&#39;s first List and the count of that value as its second List. Finally, our <code>mismatch</code> for the cluster is calculated as the total values in the cluster minus the count of the <code>Species</code> with the most values for that cluster.</p>
 <div class="highlight"><pre><code class="language-text" data-lang="text">cluster: 0, mismatch: 0
 cluster: 1, mismatch: 6
 cluster: 2, mismatch: 2
@@ -509,7 +509,7 @@ cluster: 2, mismatch: 3
 </code></pre></div>
 <p>So there you have it. We have seen how the Moebio Framework deals with data. How different data types expose different functionality, and how we can use that functionality to explore our data and even get basic answers out of it. Hopefully this gives you a good head start on where to dive into the docs to find out more of what Moebio Framework can do for your data.</p>
 
-<p>The full source code for this project is <a href="">in the examples directory</a>. Check it out and get started!</p>
+<p>The full source code for this project is <a href="https://github.com/moebiolabs/moebio_framework/blob/master/examples/data/data_types.js">in the examples directory</a>. Check it out and get started!</p>
 
   </div>
   
