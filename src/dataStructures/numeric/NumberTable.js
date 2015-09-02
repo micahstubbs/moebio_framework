@@ -216,16 +216,16 @@ NumberTable.prototype.getAverages = function() {
  * @todo write docs
  */
 NumberTable.prototype.getRowsAverages = function() {
-  var nLists = this.length;
-  var averages = this[0].clone().factor(1 / nLists);
+  var l = this.length;
+  var averages = this[0].clone().factor(1 / l);
   var numberList;
   var i, j;
   var length;
-  for(i = 1; i<nLists; i++) {
+  for(i = 1; i<l; i++) {
     numberList = this[i];
     length = numberList.length;
     for(j = 0; j<length; j++) {
-      averages[j] += numberList[j] / nLists;
+      averages[j] += numberList[j] / l;
     }
   }
   return averages;
@@ -235,11 +235,11 @@ NumberTable.prototype.getRowsAverages = function() {
  * @todo write docs
  */
 NumberTable.prototype.getIntervals = function() {
-  var nLists = this.length;
+  var l = this.length;
   var numberList;
   var i;
   var intervalList = new List();//TODO: convert into IntervalList once available
-  for(i = 1; i<nLists; i++) {
+  for(i = 0; i<l; i++) {
     numberList = this[i];
     intervalList.push(numberList.getInterval());
   }
@@ -254,16 +254,17 @@ NumberTable.prototype.factor = function(value) {
   var newTable = new NumberTable();
   var i;
   var numberList;
+  var l = this.length;
 
   switch(typeOf(value)) {
     case 'number':
-      for(i = 0; this[i] != null; i++) {
+      for(i = 0; i<l; i++) {
         numberList = this[i];
         newTable[i] = numberList.factor(value);
       }
       break;
     case 'NumberList':
-      for(i = 0; this[i] != null; i++) {
+      for(i = 0; i<l; i++) {
         numberList = this[i];
         newTable[i] = numberList.factor(value[i]);
       }
@@ -282,8 +283,9 @@ NumberTable.prototype.add = function(value) {
   var newTable = new NumberTable();
   var numberList;
   var i;
+  var l = this.length;
 
-  for(i = 0; this[i] != null; i++) {
+  for(i = 0; i<l; i++) {
     numberList = this[i];
     newTable[i] = numberList.add(value);
   }

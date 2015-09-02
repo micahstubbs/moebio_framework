@@ -33,7 +33,8 @@ function List() {
   DataModel.apply(this);
   var array = [];
   var i;
-  for(i = 0; i < arguments.length; i++) {
+  var nArguments = arguments.length;
+  for(i = 0; i < nArguments; i++) {
     array.push(arguments[i]);
   }
   array = List.fromArray(array);
@@ -294,7 +295,8 @@ List.prototype.getLengths = function() {
  */
 List.prototype.getTypeOfElements = function() {
   var typeOfElements = typeOf(this[0]);
-  for(var i = 1; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 1; i<l; i++) {
     if(typeOf(this[i]) != typeOfElements) return "";
   }
   return typeOfElements;
@@ -308,7 +310,8 @@ List.prototype.getTypeOfElements = function() {
  */
 List.prototype.getTypes = function() {
   var types = new StringList();
-  for(var i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 0; i<l; i++) {
     types[i] = typeOf(this[i]);
   }
   return types;
@@ -336,7 +339,8 @@ List.prototype.toString = function() {
  */
 List.prototype.getNames = function() {
   var stringList = new StringList();
-  for(var i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 0; i<l; i++) {
     stringList[i] = this[i].name;
   }
   return stringList;
@@ -349,7 +353,8 @@ List.prototype.getNames = function() {
  */
 List.prototype.getReversed = function() {
   var newList = instantiateWithSameType(this);
-  for(var i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 0; i<l; i++) {
     newList.unshift(this[i]);
   }
   return newList;
@@ -514,8 +519,9 @@ List.prototype.clone = function() {
   //TODO:check this! fromArray should suffice
   var clonedList = instantiateWithSameType(this);
   var i;
+  var l = this.length;
 
-  for(i = 0; this[i] != null; i++) {
+  for(i = 0; i<l; i++) {
     clonedList.push(this[i]);
   }
   clonedList.name = this.name;
@@ -532,11 +538,13 @@ List.prototype.getWithoutRepetitions = function() {
   var dictionary;
 
   var newList = instantiateWithSameType(this);
+  var l = this.length;
+
   newList.name = this.name;
 
   //if(this.type == 'NumberList' || this.type == 'StringList') {//TODO:check other cases
   dictionary = {};
-  for(i = 0; this[i] != null; i++) {
+  for(i = 0; i<l; i++) {
     if(!dictionary[this[i]]) {
       newList.push(this[i]);
       dictionary[this[i]] = true;
@@ -570,7 +578,7 @@ List.prototype.getSimplified = function(nCategories, othersElement) {
   var newList = new List();
   newList.name = this.name;
 
-  this.forEach(function(element, i){
+  this.forEach(function(element){
     newList.push(freqTable._indexesDictionary[element]<nCategories-1?element:othersElement);
   });
 
@@ -588,11 +596,13 @@ List.prototype.getSimplified = function(nCategories, othersElement) {
  */
 List.prototype.countElement = function(element) {
   var n = 0;
-  this.forEach(function(elementInList) {
-    if(element == elementInList) {
-      n++;
-    }
-  });
+  //this.forEach(function(elementInList) {
+  var l = this.length;
+
+  for(var i = 0; i<l; i++) {
+    if(element == this[i]) n++;
+  }
+
   return n;
 };
 
@@ -603,7 +613,8 @@ List.prototype.countElement = function(element) {
  */
 List.prototype.countOccurrences = function() { //TODO: more efficient
   var occurrences = new NumberList();
-  for(var i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 0; i<l; i++) {
     occurrences[i] = this.indexesOf(this[i]).length;
   }
   return occurrences;
@@ -637,7 +648,9 @@ List.prototype.getFrequenciesTable = function(sortListsByOccurrences, addWeights
   var dictionary = {};
   var prevVal;
 
-  for(i=0; this[i]!=null; i++){
+  var l = this.length;
+
+  for(i=0; i<l; i++){
     index = dictionary[this[i]];
     if(index==null){
       index = elementList.length;

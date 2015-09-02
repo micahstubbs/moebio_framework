@@ -48,14 +48,17 @@ NodeList.fromArray = function(array, forceToNode) {
 
   var result = List.fromArray(array);
 
+
   if(forceToNode) {
-    for(var i = 0; i < result.length; i++) {
+    var lengthResult = result.length;
+
+    for(var i = 0; i < lengthResult; i++) {
       result[i] = typeOf(result[i]) == "Node" ? result[i] : (new Node(String(result[i]), String(result[i])));
     }
   }
 
   // TODO: Remove duplicate line?
-  var result = List.fromArray(array);
+  result = List.fromArray(array);
   result.type = "NodeList";
   result.ids = {};
   // TODO: Fix
@@ -169,7 +172,8 @@ NodeList.prototype.normalizeWeights = function() {
  */
 NodeList.prototype.getNodeByName = function(name) {
   var i;
-  for(i = 0; i < this.length; i++) {
+  var l = this.length;
+  for(i = 0; i < l; i++) {
     if(this[i].name == name) {
       return this[i];
     }
@@ -201,7 +205,7 @@ NodeList.prototype.getNodesByIds = function(ids) {
   var node;
   for(var i = 0; ids[i] != null; i++) {
     node = this.ids[ids[i]];
-    if(node != null) newNodelist[i] = node;
+    if(node != null) newNodelist.push(node);
   }
   return newNodelist;
 };
@@ -230,7 +234,8 @@ NodeList.prototype.getWeights = function() {
  */
 NodeList.prototype.getIds = function() {
   var list = new StringList();
-  for(var i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 0; i<l; i++) {
     list[i] = this[i].id;
   }
   return list;
@@ -283,9 +288,12 @@ NodeList.prototype.getNewId = function() {
  */
 NodeList.prototype.clone = function() {
   var newNodeList = new NodeList();
-  this.forEach(function(node) {
-    newNodeList.addNode(node);
-  });
+  var l = this.length;
+  var i;
+  //this.forEach(function(node) {
+  for(i=0; i<l; i++){
+    newNodeList.addNode(this[i]);
+  }
   newNodeList.name = this.name;
   return newNodeList;
 };
