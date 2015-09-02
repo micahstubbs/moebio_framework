@@ -1,8 +1,8 @@
 import Polygon from "src/dataStructures/geometry/Polygon";
 import Point from "src/dataStructures/geometry/Point";
-import Network from "src/dataStructures/dataStructures/Network";
-import Node from "src/dataStructures/dataStructures/Node";
-import Relation from "src/dataStructures/dataStructures/Relation";
+import Network from "src/dataStructures/structures/networks/Network";
+import Node from "src/dataStructures/structures/elements/Node";
+import Relation from "src/dataStructures/structures/elements/Relation";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 
 /**
