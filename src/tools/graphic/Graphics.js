@@ -6,11 +6,11 @@ import Rectangle from 'src/dataStructures/geometry/Rectangle';
 import { TwoPi, HalfPi } from "src/Global";
 
 /**
- * A graphics object provides a surface for drawing and interaction
+ * @classdesc A graphics object provides a surface for drawing and interaction
  * with drawn primitives.
  *
- * The constructor initializes basic configuration and
- * optionally starts the draw cycle.
+ * @description Creates a new graphcis object and initializes basic configuration
+ * and optionally starts the draw cycle.
  *
  * @param {Object} options valid properties described below
  * @param {String|DOMNode|undefined|false} options.container a string selector or reference
@@ -33,6 +33,9 @@ import { TwoPi, HalfPi } from "src/Global";
  *                                       if set to zero the cycle function will only run once.
  * @param {Boolean} noLoop if this is true only run the cycle function once,
  * @param {Boolean} noStart if this is true the cycle function will not be automatically started.
+ * 
+ * @constructor
+ * @category drawing
  */
 function Graphics(options) {
   this.container = options.container;
