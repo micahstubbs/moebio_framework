@@ -115,6 +115,7 @@ module.exports = function (grunt) {
   // the documentation.
   //
   grunt.registerTask('deploy', ['build', 'gh-pages']);
+  grunt.registerTask('publish', ['deploy']);
 
   grunt.registerTask('serve', ['jekyll:serve']);
 

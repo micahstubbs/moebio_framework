@@ -72,9 +72,9 @@
 
 
       <a class="sidebar-nav-item" href="docs">Docs</a>
-      <a class="sidebar-nav-item" href="https://github.com/moebiolabs/moebio_framework/archive/v0.2.12.zip">Download</a>
+      <a class="sidebar-nav-item" href="https://github.com/moebiolabs/moebio_framework/archive/v0.4.0.zip">Download</a>
       <a class="sidebar-nav-item" href="https://github.com/moebiolabs/moebio_framework">GitHub project</a>
-      <span class="sidebar-nav-item">Currently v0.2.12</span>
+      <span class="sidebar-nav-item">Currently v0.4.0</span>
     </nav>
 
   </div>
@@ -188,7 +188,6 @@
 
 <p>First add the framework source file and shim to an html page.</p>
 <div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;js/moebio_framework.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
-<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;js/global_shim.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
 </code></pre></div>
 <p>The <code>global_shim</code> adds all the functions and data types in <code>moebio_framework</code>
 into the global environment.</p>
@@ -197,47 +196,73 @@ into the global environment.</p>
 
 <h3>Setting up the Canvas</h3>
 
-<p>Moebio Framework harnesses <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API">canvas</a> for much of its visualization capabilities. So, we need to provide it with a canvas element to draw in.</p>
-
-<p>This canvas element is expected to have an id of <code>main</code>. So, the HTML could look something like this:</p>
+<p>Moebio Framework harnesses <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API">canvas</a> for much of its visualization capabilities. But the <a href="">Graphics</a> library will take care of creating the canvas element. We just need to make a <code>div</code> to store it in:</p>
 <div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;maindiv&quot;</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;canvas</span> <span class="na">id=</span><span class="s">&quot;main&quot;</span><span class="nt">&gt;&lt;/canvas&gt;</span>
 <span class="nt">&lt;/div&gt;</span>
 </code></pre></div>
-<p>With this, we are ready to use Moebio Framework.</p>
+<p>Optionally, we might want to add some styling to <code>#maindiv</code> to ensure it is visible:</p>
+<div class="highlight"><pre><code class="language-css" data-lang="css"><span class="nt">html</span><span class="o">,</span> <span class="nt">body</span><span class="p">{</span>
+  <span class="k">height</span><span class="o">:</span><span class="m">100%</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nt">body</span> <span class="p">{</span>
+  <span class="k">margin</span><span class="o">:</span><span class="m">0</span><span class="p">;</span>
+  <span class="k">padding</span><span class="o">:</span><span class="m">0</span><span class="p">;</span>
+  <span class="k">overflow</span><span class="o">:</span><span class="k">hidden</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nf">#maindiv</span> <span class="p">{</span>
+  <span class="k">width</span><span class="o">:</span> <span class="m">100%</span><span class="p">;</span>
+  <span class="k">height</span><span class="o">:</span> <span class="m">100%</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3>Graphics object</h3>
 
+<p>Drawing, initialization, and the render loop of a visualization in Moebio Framework is all controlled by the <code>Graphics</code> object. When creating a Graphics instance, we provide the <code>div</code> or other container for it to render to. We also pass in an <code>init</code> and <code>cycle</code> function (described next). Here is the most basic example of creating a new Graphics instance:</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">graphics</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">Graphics</span><span class="p">({</span>
+  <span class="nx">container</span><span class="o">:</span> <span class="s2">&quot;#maindiv&quot;</span><span class="p">,</span>
+  <span class="nx">init</span><span class="o">:</span> <span class="nx">init</span><span class="p">,</span>
+  <span class="nx">cycle</span><span class="o">:</span> <span class="nx">drawSomething</span>
+<span class="p">});</span>
+</code></pre></div>
+<p><code>Graphics</code> can take other options like <code>dimensions</code> as well. Here is an example setting the width and height of the canvas to draw into.</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">graphics</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">Graphics</span><span class="p">({</span>
+  <span class="nx">container</span><span class="o">:</span> <span class="s2">&quot;#maindiv&quot;</span><span class="p">,</span>
+
+  <span class="nx">dimensions</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">width</span><span class="o">:</span> <span class="mi">500</span><span class="p">,</span>
+    <span class="nx">height</span><span class="o">:</span> <span class="mi">500</span><span class="p">,</span>
+  <span class="p">},</span>
+
+  <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">//...</span>
+  <span class="p">},</span>
+
+  <span class="nx">cycle</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">//...</span>
+  <span class="p">});</span>
+</code></pre></div>
 <h3>init and cycle</h3>
 
 <p>Moebio Framework is built around the concept of a drawing loop. The drawing loop is called over and over again, and it is responsible for drawing the visualization for each <em>frame</em>. If you have worked with something like <a href="https://processing.org/">Processing</a>, then this will look familiar.</p>
 
 <p>In Moebio there are two main functions to implement: <code>init</code> which gets called before the looping starts, and <code>cycle</code> which draws the visualization for each iteration of the loop.</p>
 
-<p>For this simple example, we can start to implement them inside a <code>script</code> tag in our html page:</p>
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-  <span class="c1">// setup code goes here</span>
-<span class="p">}</span>
+<p>In a basic visualization, there may be nothing to setup. In which case, <code>init</code> is optional.</p>
 
-<span class="nx">cycle</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-  <span class="c1">// drawing code goes here</span>
-<span class="p">}</span>
-</code></pre></div>
-<h3>Visualization Attributes</h3>
+<p>In both, <code>this</code> is set to the current <code>Graphics</code> instance. So we can pull out information about the current state of the <code>Graphics</code> instance easily.</p>
 
-<p>The Moebio Framework provides access to a number of useful attributes that let you reason about the current state of the visualization and handle various types of interations.</p>
+<p>The Moebio Framework provides access to a number of useful attributes that let you reason about the current state of the visualization and handle various types of interactions.</p>
 
 <p>These attributes are accessible at any point in your code. Lets use <a href="https://developer.mozilla.org/en-US/docs/Web/API/Console/log">console.log</a> to monitor some of them.</p>
 
 <p>In <code>cycle</code>, add the following logging:</p>
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">cycle</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;canvas width: &quot;</span> <span class="o">+</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">cW</span> <span class="o">+</span> <span class="s2">&quot; canvas height: &quot;</span> <span class="o">+</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">cH</span><span class="p">);</span>
-  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;mouse x: &quot;</span> <span class="o">+</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">mX</span> <span class="o">+</span> <span class="s2">&quot; mouse y: &quot;</span> <span class="o">+</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">mY</span><span class="p">);</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">cycle</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;graphics width: &quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">cW</span> <span class="o">+</span> <span class="s2">&quot; graphics height: &quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">cH</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;mouse x: &quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">mX</span> <span class="o">+</span> <span class="s2">&quot; mouse y: &quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">mY</span><span class="p">);</span>
 <span class="p">}</span>
 </code></pre></div>
 <p>Now open up this page in a web browser and also open the browser&#39;s console.</p>
 
 <p>You should see a bunch of logs scrolling past in the console. Mousing over the window will show the change in the <code>mX</code> and <code>mY</code>, the mouse X and Y position. Resizing the window will change <code>cW</code> and <code>cH</code>, the canvas&#39;s width and height.</p>
-
-<p>Here, <code>mo</code> is the Moebio Framework namespace. So all of its functions, classes, and capabilities will be inside this object.</p>
 
 <p>We will look at some of the other attributes later, but these should be enough to get us started.</p>
 
@@ -248,9 +273,9 @@ into the global environment.</p>
 <p>Let&#39;s use just one of these functions, <code>fRect</code>, to draw a rectangle. We will also use <code>setFill</code> to provide the rectangle&#39;s color.</p>
 
 <p>Modify the cycle function to look like this:</p>
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">cycle</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">mo</span><span class="p">.</span><span class="nx">setFill</span><span class="p">(</span><span class="s1">&#39;steelblue&#39;</span><span class="p">);</span>
-  <span class="nx">mo</span><span class="p">.</span><span class="nx">fRect</span><span class="p">(</span><span class="nx">mo</span><span class="p">.</span><span class="nx">cW</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">cH</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="nx">mo</span><span class="p">.</span><span class="nx">mX</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="nx">mo</span><span class="p">.</span><span class="nx">mY</span> <span class="o">/</span> <span class="mi">2</span><span class="p">));</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">cycle</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">setFill</span><span class="p">(</span><span class="s1">&#39;steelblue&#39;</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">fRect</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">cW</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">cH</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">mX</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">mY</span> <span class="o">/</span> <span class="mi">2</span><span class="p">));</span>
 <span class="p">}</span>
 </code></pre></div>
 <p>Reloading the page gives us a blue rectangle in the middle of the visualization, with dimensions based on the current location of the mouse.</p>
@@ -259,69 +284,125 @@ into the global environment.</p>
 
 <h3>Basic Interaction</h3>
 
-<p>So we have a rectangle updating with every <code>cycle</code>. Let&#39;s add another shape that is interactive and responds to mouse events.</p>
+<p>Let&#39;s start again with an empty <code>cycle</code> function, and this time add some interactive circles.</p>
 
-<p>Still in cycle, add this to create a circle:</p>
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript">  <span class="nx">mo</span><span class="p">.</span><span class="nx">setFill</span><span class="p">(</span><span class="s1">&#39;grey&#39;</span><span class="p">);</span>
-  <span class="kd">var</span> <span class="nx">over</span> <span class="o">=</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">fCircleM</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">60</span><span class="p">);</span>
+<p>We can take advantage of Moebio Framework&#39;s <a href="">Point</a> class to create and store x / y positions to be where we render our circles.</p>
+
+<p>Outside of the <code>cycle</code> function, create an array to store these Points.</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">points</span> <span class="o">=</span> <span class="p">[</span> <span class="k">new</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">Point</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span><span class="mi">250</span><span class="p">)</span> <span class="p">];</span>
+</code></pre></div>
+<p>We add a single point, just to get started. Don&#39;t worry, we will add more in a bit.</p>
+
+<p>Now in our <code>cycle</code> function, we can display each Point in points. We will use <code>fCircleM</code> to draw the circle, while also calculating if the mouse is hovering over that point during this iteration of the <code>cycle</code> function.</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">cycle</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">radius</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+
+  <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">points</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">point</span> <span class="o">=</span> <span class="nx">points</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setFill</span><span class="p">(</span><span class="s1">&#39;grey&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">over</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">fCircleM</span><span class="p">(</span><span class="nx">point</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="nx">point</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span> <span class="nx">radius</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
 </code></pre></div>
 <p><img src="/moebio_framework//public/img/getting_started/circle.png" alt="grey circle"></p>
 
 <p>Right now, this is just a grey circle, but drawing functions that end in <code>M</code> return <code>true</code> if the mouse is hovering over the drawn shape during the current iteration of <code>cycle</code>.</p>
 
-<p>We can use this returned value to visually update the shape when it is moused over:</p>
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript">  <span class="k">if</span><span class="p">(</span><span class="nx">over</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">mo</span><span class="p">.</span><span class="nx">setFill</span><span class="p">(</span><span class="s1">&#39;orange&#39;</span><span class="p">);</span>
-    <span class="nx">mo</span><span class="p">.</span><span class="nx">fCircle</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">60</span><span class="p">);</span>
-    <span class="nx">mo</span><span class="p">.</span><span class="nx">setStroke</span><span class="p">(</span><span class="s1">&#39;grey&#39;</span><span class="p">);</span>
-    <span class="nx">mo</span><span class="p">.</span><span class="nx">sCircle</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">70</span><span class="p">);</span>
+<p>We can use this returned value to visually update the shape when it is moused over (again remember that <code>this</code> is the graphics instance):</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// if mouse over, change color to orange</span>
+  <span class="k">if</span><span class="p">(</span><span class="nx">over</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setFill</span><span class="p">(</span><span class="s1">&#39;orange&#39;</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">fCircle</span><span class="p">(</span><span class="nx">point</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="nx">point</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span> <span class="nx">radius</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setStroke</span><span class="p">(</span><span class="s1">&#39;grey&#39;</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">sCircle</span><span class="p">(</span><span class="nx">point</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="nx">point</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span> <span class="nx">radius</span> <span class="o">+</span> <span class="mi">10</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setCursor</span><span class="p">(</span><span class="s1">&#39;pointer&#39;</span><span class="p">);</span>
   <span class="p">}</span>
 </code></pre></div>
 <p>Now, if <code>over</code> is true, meaning this circle is currently being moused over, we change the fill and re-draw an orange circle on top of our original grey circle. We also add a ring around this circle using <code>sCircle</code>.</p>
 
 <p><img src="/moebio_framework//public/img/getting_started/circle_hover.png" alt="orange circle"></p>
 
-<p>As an aside, the use of <code>sCircle</code> hints that there are a number of different draw functions availible to us for each type of basic shape. Functions that start with <code>f</code>, like <code>fRect</code> and <code>fCircle</code> draw a filled in shape. Those starting with <code>s</code> draw just a stroke. And those that start with <code>fs</code>, like <code>fsRect</code> draw the shape both filled in and with an outline. Check out the documentation to find out more!</p>
+<p>As an aside, the use of <code>sCircle</code> hints that there are a number of different draw functions available to us for each type of basic shape. Functions that start with <code>f</code>, like <code>fRect</code> and <code>fCircle</code> draw a filled in shape. Those starting with <code>s</code> draw just a stroke. And those that start with <code>fs</code>, like <code>fsRect</code> draw the shape both filled in and with an outline. Check out the documentation to find out more!</p>
 
 <p>Finally, let&#39;s add a basic mouse click interaction. Moebio Framework indicates mouse interactions by setting a few globally accessible variables:</p>
 
 <ul>
-<li><code>mo.MOUSE_DOWN</code> - true if the current <code>cycle</code> has a mouse down event.</li>
-<li><code>mo.MOUSE_UP</code> - true if the current <code>cycle</code> has a mouse up event.</li>
-<li><code>mo.MOUSE_PRESSED</code> - true if the mouse is currently being pressed.</li>
+<li><code>MOUSE_DOWN</code> - true if the current <code>cycle</code> has a mouse down event.</li>
+<li><code>MOUSE_UP</code> - true if the current <code>cycle</code> has a mouse up event.</li>
+<li><code>MOUSE_PRESSED</code> - true if the mouse is currently being pressed.</li>
 </ul>
 
 <p>Let&#39;s change the color of the circle to be red if the mouse clicks on it. For this, we will want to handle both <code>MOUSE_DOWN</code> and <code>MOUSE_PRESSED</code> to ensure it stays red if the mouse is held down.</p>
 
 <p>Add this to the end of the <code>cycle</code> function:</p>
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"> <span class="k">if</span><span class="p">((</span><span class="nx">mo</span><span class="p">.</span><span class="nx">MOUSE_DOWN</span> <span class="o">||</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">MOUSE_PRESSED</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">over</span><span class="p">)</span> <span class="p">{</span>
-   <span class="nx">mo</span><span class="p">.</span><span class="nx">setFill</span><span class="p">(</span><span class="s1">&#39;red&#39;</span><span class="p">);</span>
-   <span class="nx">mo</span><span class="p">.</span><span class="nx">fCircle</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">60</span><span class="p">);</span>
- <span class="p">}</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript">   <span class="c1">// if mouse pressed, change color to orange</span>
+   <span class="k">if</span><span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">MOUSE_DOWN</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">MOUSE_PRESSED</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">over</span><span class="p">)</span> <span class="p">{</span>
+     <span class="k">this</span><span class="p">.</span><span class="nx">setFill</span><span class="p">(</span><span class="s1">&#39;red&#39;</span><span class="p">);</span>
+     <span class="k">this</span><span class="p">.</span><span class="nx">fCircle</span><span class="p">(</span><span class="nx">point</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="nx">point</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span> <span class="nx">radius</span><span class="p">);</span>
+   <span class="p">}</span>
 </code></pre></div>
 <p>Now, if the mouse is over the circle, and it is being pressed down, the circle will turn red.</p>
 
-<p>Just to see it all together, here is our complete <code>cycle</code> function:</p>
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">cycle</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">cycle</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">mo</span><span class="p">.</span><span class="nx">setFill</span><span class="p">(</span><span class="s1">&#39;steelblue&#39;</span><span class="p">);</span>
-  <span class="nx">mo</span><span class="p">.</span><span class="nx">fRect</span><span class="p">(</span><span class="nx">mo</span><span class="p">.</span><span class="nx">cW</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">cH</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="nx">mo</span><span class="p">.</span><span class="nx">mX</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="nx">mo</span><span class="p">.</span><span class="nx">mY</span> <span class="o">/</span> <span class="mi">2</span><span class="p">));</span>
+<p>One little addition, as the circles are drawn every time cycle is called, we can easily animate their shape, position, or size based on data or other parameters.</p>
 
-  <span class="nx">mo</span><span class="p">.</span><span class="nx">setFill</span><span class="p">(</span><span class="s1">&#39;grey&#39;</span><span class="p">);</span>
-  <span class="kd">var</span> <span class="nx">over</span> <span class="o">=</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">fCircleM</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">60</span><span class="p">);</span>
-
-  <span class="k">if</span><span class="p">(</span><span class="nx">over</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">mo</span><span class="p">.</span><span class="nx">setFill</span><span class="p">(</span><span class="s1">&#39;orange&#39;</span><span class="p">);</span>
-    <span class="nx">mo</span><span class="p">.</span><span class="nx">fCircle</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">60</span><span class="p">);</span>
-    <span class="nx">mo</span><span class="p">.</span><span class="nx">setStroke</span><span class="p">(</span><span class="s1">&#39;grey&#39;</span><span class="p">);</span>
-    <span class="nx">mo</span><span class="p">.</span><span class="nx">sCircle</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">70</span><span class="p">);</span>
+<p>We can see this by tweaking our <code>radius</code> value. Let&#39;s make it proportional to the x/y location of the mouse. Change our <code>radius</code> code to match the following:</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript">  <span class="kd">var</span> <span class="nx">radius</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">mX</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">mY</span><span class="p">)</span> <span class="o">/</span> <span class="mi">30</span><span class="p">;</span>
+  <span class="k">if</span><span class="p">(</span><span class="nx">radius</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">radius</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
   <span class="p">}</span>
-
-  <span class="k">if</span><span class="p">((</span><span class="nx">mo</span><span class="p">.</span><span class="nx">MOUSE_DOWN</span> <span class="o">||</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">MOUSE_PRESSED</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">over</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">mo</span><span class="p">.</span><span class="nx">setFill</span><span class="p">(</span><span class="s1">&#39;red&#39;</span><span class="p">);</span>
-    <span class="nx">mo</span><span class="p">.</span><span class="nx">fCircle</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">60</span><span class="p">);</span>
+  <span class="k">if</span><span class="p">(</span><span class="nx">radius</span> <span class="o">&gt;</span> <span class="mi">50</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">radius</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">};</span>
 </code></pre></div>
+<p>And now our circles pulse with our mouse movements.</p>
+
+<p>Just to see it all together, here is our complete <code>cycle</code> function:</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">cycle</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// The size of the circles will be controlled by the mouse position</span>
+  <span class="c1">// mX &amp; mY is mouse X &amp; Y</span>
+  <span class="kd">var</span> <span class="nx">radius</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">mX</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">mY</span><span class="p">)</span> <span class="o">/</span> <span class="mi">30</span><span class="p">;</span>
+  <span class="k">if</span><span class="p">(</span><span class="nx">radius</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">radius</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">if</span><span class="p">(</span><span class="nx">radius</span> <span class="o">&gt;</span> <span class="mi">50</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">radius</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="c1">// When drawing shapes we can get information as to whether the mouse</span>
+  <span class="c1">// is over them, or whether the mouse is pressed.</span>
+  <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">points</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">point</span> <span class="o">=</span> <span class="nx">points</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+    <span class="c1">// add a circle that can detect mouse over</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setFill</span><span class="p">(</span><span class="s1">&#39;grey&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">over</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">fCircleM</span><span class="p">(</span><span class="nx">point</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="nx">point</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span> <span class="nx">radius</span><span class="p">);</span>
+
+    <span class="c1">// if mouse over, change color to orange</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">over</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">setFill</span><span class="p">(</span><span class="s1">&#39;orange&#39;</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">fCircle</span><span class="p">(</span><span class="nx">point</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="nx">point</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span> <span class="nx">radius</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">setStroke</span><span class="p">(</span><span class="s1">&#39;grey&#39;</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">sCircle</span><span class="p">(</span><span class="nx">point</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="nx">point</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span> <span class="nx">radius</span> <span class="o">+</span> <span class="mi">10</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">setCursor</span><span class="p">(</span><span class="s1">&#39;pointer&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">// if mouse pressed, change color to orange</span>
+    <span class="k">if</span><span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">MOUSE_DOWN</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">MOUSE_PRESSED</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">over</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">setFill</span><span class="p">(</span><span class="s1">&#39;red&#39;</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">fCircle</span><span class="p">(</span><span class="nx">point</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="nx">point</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span> <span class="nx">radius</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2>Mouse Events</h2>
+
+<p>In our <code>cycle</code> function, the current mouse position and interaction is available through the <code>Graphics</code> instance. We can also bind callback functions to particular mouse actions, as you might be familiar with from something like jQuery.</p>
+
+<p>For this example, we can add new Points to wherever we&#39;ve clicked:</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">graphics</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+  <span class="nx">points</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span> <span class="k">new</span> <span class="nx">mo</span><span class="p">.</span><span class="nx">Point</span><span class="p">(</span><span class="nx">graphics</span><span class="p">.</span><span class="nx">mX</span><span class="p">,</span> <span class="nx">graphics</span><span class="p">.</span><span class="nx">mY</span><span class="p">));</span>
+<span class="p">});</span>
+</code></pre></div>
+<p>Now clicking around will give us a cohort of circles that shrink and grow.</p>
+
 <p>Check out the <a href="/moebio_framework//examples/playground#mouse_movements">full example</a> and the <a href="/moebio_framework//docs">framework&#39;s documentation</a> to see what else you can try!</p>
 
   </div>
