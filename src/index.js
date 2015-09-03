@@ -202,8 +202,8 @@ import CountryListDraw from "src/visualization/geo/CountryListDraw";
 export { CountryListDraw };
 
 // visualization/geometry
-import CirclesVisOperators from "src/visualization/geometry/CirclesVisOperators";
-export { CirclesVisOperators };
+import CircleDraw from "src/visualization/geometry/CircleDraw";
+export { CircleDraw };
 
 // visualization/graphic
 import ColorsDraw from "src/visualization/graphic/ColorsDraw";
@@ -226,8 +226,7 @@ export { ObjectDraw, StringDraw};
 
 // visualization/strings
 import StringListDraw from "src/visualization/strings/StringListDraw";
-import StringListVisOperators from "src/visualization/strings/StringListVisOperators";
-export { StringListDraw, StringListVisOperators};
+export { StringListDraw};
 
 // visualization/structures
 import NetworkDraw from "src/visualization/structures/NetworkDraw";
@@ -237,7 +236,7 @@ export { NetworkDraw, TreeDraw };
 
 // Global.js
 // Functions
-import { 
+import {
   setStructureLocalStorage,
   getStructureLocalStorageFromSeed,
   getStructureLocalStorage
