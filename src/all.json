@@ -119,7 +119,6 @@
   "visualization/objects/ObjectDraw.js",
   "visualization/strings/StringDraw.js",
   "visualization/strings/StringListDraw.js",
-  "visualization/strings/StringListVisOperators.js",
   "visualization/structures/NetworkDraw.js",
   "visualization/structures/TreeDraw.js",
 
