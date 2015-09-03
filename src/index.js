@@ -202,8 +202,8 @@ import CountryListDraw from "src/visualization/geo/CountryListDraw";
 export { CountryListDraw };
 
 // visualization/geometry
-import CirclesVisOperators from "src/visualization/geometry/CirclesVisOperators";
-export { CirclesVisOperators };
+import CircleDraw from "src/visualization/geometry/CircleDraw";
+export { CircleDraw };
 
 // visualization/graphic
 import ColorsDraw from "src/visualization/graphic/ColorsDraw";

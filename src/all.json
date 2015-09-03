@@ -110,7 +110,7 @@
   "tools/utils/system/Navigator.js",
 
   "visualization/geo/CountryListDraw.js",
-  "visualization/geometry/CirclesVisOperators.js",
+  "visualization/geometry/CircleDraw.js",
   "visualization/graphic/ColorsDraw.js",
   "visualization/lists/ListDraw.js",
   "visualization/numeric/IntervalTableDraw.js",
