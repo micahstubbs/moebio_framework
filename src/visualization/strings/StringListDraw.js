@@ -159,7 +159,7 @@ StringListDraw.tagCloudRectangles = function(stringList, weights, frame, mode, m
   for(var i = 0; stringList[i] != null; i++) {
     textSizes[i] = roundSizes ? Math.round(normWeights[i] * 12) * dL : normWeights[i] * 12 * dL;
 
-    DrawTexts.setContextTextProperties('black', textSizes[i], LOADED_FONT, null, null, 'bold');
+    DrawTexts.setContextTextProperties('black', textSizes[i], graphics.fontName, null, null, 'bold');
     w = Math.ceil((2 + graphics.context.measureText(stringList[i]).width) / dL) * dL;
     h = textSizes[i];
 
