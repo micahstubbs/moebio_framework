@@ -237,19 +237,17 @@ export { NetworkDraw, TreeDraw };
 
 // Global.js
 // Functions
-import { Global,
+import { 
   setStructureLocalStorage,
   getStructureLocalStorageFromSeed,
   getStructureLocalStorage
 } from "src/Global";
-export { Global,
+export {
   setStructureLocalStorage,
   getStructureLocalStorageFromSeed,
   getStructureLocalStorage
 };
 // Variables
 
-import { userAgent, userAgentVersion, dataModelsInfo,
-  TwoPi, HalfPi, radToGrad, gradToRad } from "src/Global";
-export { userAgent, userAgentVersion, dataModelsInfo,
-  TwoPi, HalfPi, radToGrad, gradToRad };
+import { dataModelsInfo, TwoPi, HalfPi, radToGrad, gradToRad } from "src/Global";
+export { dataModelsInfo, TwoPi, HalfPi, radToGrad, gradToRad };
