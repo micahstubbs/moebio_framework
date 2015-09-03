@@ -143,14 +143,20 @@ ObjectConversions.ObjectToList = function(object, fields) {
 
 
 
-// *
-//  * convert an object into a json string (JSON.stringify(object))
-//  * @param  {Object} object to convert
-//  * @return {String} string in format json
-//  * tags:conversion
-// ObjectConversions.objectToString = function(object){
-// 	return JSON.stringify(object);
-// }
+/**
+ * converts an object into a json string (JSON.stringify(object))
+ * @param  {Object} object to convert
+ * @return {String} string in format json. If there is an error, it returns an
+ * error string.
+ * tags:conversion
+ */
+ObjectConversions.objectToString = function(object){
+  try {
+    return JSON.stringify(object);
+  } catch (e) {
+    return JSON.stringify({"error":"cannot convert."});
+  }
+};
 
 /**
  * converts any Object into the desirde type, using the most obvious conversion (if exists)
