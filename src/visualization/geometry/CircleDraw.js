@@ -2,11 +2,11 @@ import Polygon3D from "src/dataStructures/geometry/Polygon3D";
 import Point3D from "src/dataStructures/geometry/Point3D";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 
-function CirclesVisOperators() {}
-export default CirclesVisOperators;
+function CircleDraw() {}
+export default CircleDraw;
 
-CirclesVisOperators.circlesCloud = function(weights, frame, margin) {
-  if(weights == null ||  weights.length === 0) return null;
+CircleDraw.circlesCloud = function(weights, frame, margin) {
+  if(weights == null ||  weights.length === 0) return null;
 
   margin = margin == null ? 0 : margin;
 
@@ -34,7 +34,7 @@ CirclesVisOperators.circlesCloud = function(weights, frame, margin) {
     } else {
       a = 0; //i*0.5;
       r = firstR + rCircle + margin + 0.1;
-      while(CirclesVisOperators._pointInCircles(circlesPlaced, px, py, rCircle, margin)) { //StringListVisOperators._pointInRectangles(rectanglesPlaced, px, py, w, h, margin)){
+      while(CircleDraw._pointInCircles(circlesPlaced, px, py, rCircle, margin)) {
         r += 0.1;
         a += r * 0.005;
 
@@ -59,7 +59,7 @@ CirclesVisOperators.circlesCloud = function(weights, frame, margin) {
   return circlesPlaced;
 };
 
-CirclesVisOperators._pointInCircles = function(circles, px, py, r, margin) {
+CircleDraw._pointInCircles = function(circles, px, py, r, margin) {
   var circle;
   for(var i = 0; circles[i] != null; i++) {
     circle = circles[i];
