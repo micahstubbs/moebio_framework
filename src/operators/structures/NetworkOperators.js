@@ -6,6 +6,7 @@ import Node from "src/dataStructures/structures/elements/Node";
 import NumberList from "src/dataStructures/numeric/NumberList";
 import Tree from "src/dataStructures/structures/networks/Tree";
 import Relation from "src/dataStructures/structures/elements/Relation";
+import RelationList from "src/dataStructures/structures/lists/RelationList";
 import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
 import NetworkEncodings from "src/operators/structures/NetworkEncodings";
 import Network from "src/dataStructures/structures/networks/Network";
@@ -99,21 +100,21 @@ NetworkOperators.getNodesBetweenTwoNodes = function(network, node0, node1){
 NetworkOperators.shortestPath = function(network, node0, node1, includeExtremes) {
   if(network == null || node0 == null || node1 == null) return null;
 
-  c.l('\n\n\n------------> shortestPath, network, node0, node1, includeExtremes', network, node0, node1, includeExtremes);
-  c.l('shortestPath | node0.id', node0.id);
-  c.l('shortestPath | node1.id', node1.id);
+  console.log('\n\n\n------------> shortestPath, network, node0, node1, includeExtremes', network, node0, node1, includeExtremes);
+  console.log('shortestPath | node0.id', node0.id);
+  console.log('shortestPath | node1.id', node1.id);
   var tree = NetworkOperators.spanningTree(network, node0, node1);
   //c.l('shortestPath | tree.nodeList.getIds()['+tree.nodeList.getIds().join('-')+"]");
-  c.l('shortestPath | tree.nodeList.length:'+tree.nodeList.length);
-  c.l('shortestPath, tree', tree);
+  console.log('shortestPath | tree.nodeList.length:'+tree.nodeList.length);
+  console.log('shortestPath, tree', tree);
   var path = new NodeList();
   if(includeExtremes) path.addNode(node1);
   //c.l('shortestPath, path', path);
-  c.l('shortestPath, path ids: ['+path.getIds().join('-')+"]");
+  console.log('shortestPath, path ids: ['+path.getIds().join('-')+"]");
   var node = tree.nodeList.getNodeById(node1.id);
-  c.l('shortestPath | node:', node);
+  console.log('shortestPath | node:', node);
 
-  if(node == null) c.l('node==null !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n\n\n');
+  if(node == null) console.log('node==null !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n\n\n');
 
   if(node == null) return null;
 
@@ -121,15 +122,15 @@ NetworkOperators.shortestPath = function(network, node0, node1, includeExtremes)
   //
 
 
-  c.l('  (pre while)>', node0.id, node1.id, node.id,  node.parent==null?'no parent!':node.parent.id);
+  console.log('  (pre while)>', node0.id, node1.id, node.id,  node.parent==null?'no parent!':node.parent.id);
   while(node.parent.id != node0.id) {
     path.addNode(node.parent.node);
     node = node.parent;
     if(node == null) return null;
-    c.l('    >', node0.id, node1.id, node.id,  node.parent==null?'no parent!':node.parent.id);
+    console.log('    >', node0.id, node1.id, node.id,  node.parent==null?'no parent!':node.parent.id);
   }
 
-  c.l('shortestPath, path ids: ['+path.getIds().join('-')+"]");
+  console.log('shortestPath, path ids: ['+path.getIds().join('-')+"]");
 
 
   // c.l('shortestPath, path', path);
@@ -221,7 +222,7 @@ NetworkOperators.shortestPaths = function(network, node0, node1, shortPath, span
   // c.l('\n\n[•--•] /////////--- build paths ----///////')
 
 
-  for(i=0; relationsTable[0][i]!=null; i++){
+  for(var i=0; relationsTable[0][i]!=null; i++){
     allPaths.push( new NodeList(node0, relationsTable[0][i].getOther(node0)) );
   }
 
@@ -273,45 +274,6 @@ NetworkOperators.shortestPaths = function(network, node0, node1, shortPath, span
   // });
 
   return allPaths;
-
-
-
-
-
-
-
-
-
-  ////////////////
-
-
-
-
-
-
-
-  if(shortPath == null) shortPath = NetworkOperators.shortestPath(network, node0, node1, true);
-
-  var lengthShortestPaths = shortPath.length;
-
-
-  var firstPath = new NodeList();
-  var i;
-
-  firstPath.addNode(node0);
-  allPaths.push(firstPath);
-
-
-  var all = NetworkOperators._extendPaths(allPaths, node1, lengthShortestPaths);
-
-  for(i = 0; all[i] != null; i++) {
-    if(all[i][all[i].length - 1] != node1) {
-      all.splice(i, 1);
-      i--;
-    }
-  }
-
-  return all;
 };
 
 /**
@@ -332,8 +294,7 @@ NetworkOperators.getRelationsBetweenNodeLists = function(network, nodeList0, nod
 
   network.relationList.forEach(function(relation){
     if(
-      (nodeList0.getNodeById(relation.node0.id)!=null && nodeList1.getNodeById(relation.node1.id)!=null)
-      ||
+      (nodeList0.getNodeById(relation.node0.id)!=null && nodeList1.getNodeById(relation.node1.id)!=null) ||
       (!directed && nodeList0.getNodeById(relation.node1.id)!=null && nodeList1.getNodeById(relation.node0.id)!=null)
     ){
       relations.addRelation(relation);
@@ -418,7 +379,7 @@ NetworkOperators.loops = function(network, minSize) {
     console.log(loop.getIds().join('-'));
   });
 
-  var same = NetworkOperators._sameLoop(allLoops[0], allLoops[1]);
+  // var same = NetworkOperators._sameLoop(allLoops[0], allLoops[1]);
 
   return allLoops;
 };
@@ -439,7 +400,7 @@ NetworkOperators._sameLoop = function(loop0, loop1) {
  * @ignore
  */
 NetworkOperators._getLoopsOnNode = function(central) {
-  if(central.toNodeList.length == 0 || central.fromNodeList.length == 0) return [];
+  if(central.toNodeList.length === 0 || central.fromNodeList.length === 0) return [];
 
   var columns = new Table();
   var nl = new NodeList();
@@ -457,7 +418,7 @@ NetworkOperators._getLoopsOnNode = function(central) {
       for(j = 0; columns[i][j] != null; j++) {
         node = columns[i][j];
         delete node.onColumn;
-        if(node.toNodeList.length == 0) {
+        if(node.toNodeList.length === 0) {
           columns[i].removeNodeAtIndex(j);
           j--;
         }
@@ -494,7 +455,7 @@ NetworkOperators._getLoopsOnNode = function(central) {
 NetworkOperators._pathsToCentral = function(columns, iColumn, path, paths) {
   if(path.finished) return;
 
-  if(iColumn == 0) {
+  if(iColumn === 0) {
     path.finished = true;
     return;
   }
@@ -546,7 +507,7 @@ NetworkOperators._pathsToCentral = function(columns, iColumn, path, paths) {
  */
 NetworkOperators._loopsColumns = function(nodeList, iColumn, columns) {
   if(columns[iColumn] == null) columns[iColumn] = new NodeList();
-  var node, otherNode;
+  var node;
   var newNodeList = new NodeList();
   for(var i = 0; nodeList[i] != null; i++) {
     node = nodeList[i];
@@ -634,7 +595,7 @@ NetworkOperators.spanningTree = function(network, node0, nodeLimit) { //TODO: th
     newNodes.removeElements(accumulated);
     // c.l('      newNodes.removeElements(accumulated) | newNodes.getIds()', newNodes.getIds().join(','));
     //c.l('newNodes.length (if 0 return tree)', newNodes.length)
-    if(newNodes.length == 0) return tree;
+    if(newNodes.length === 0) return tree;
 
     for(i = 0; newNodes[i] != null; i++) {
       newNode = new Node(newNodes[i].id, newNodes[i].name);
@@ -716,7 +677,8 @@ NetworkOperators.adjacentNodeList = function(network, nodeList, returnConcat, di
 NetworkOperators.degreesPartition = function(network, node) {
   //TODO:optionally add a NodeList of not connected Nodes
   var list0 = new NodeList(node);
-  var nextLevel = nodes = node.nodeList;
+  var nodes = node.nodeList;
+  var nextLevel = nodes; 
   var nextNodes;
   var externalLayer;
   var i;
@@ -783,19 +745,13 @@ NetworkOperators.degreesFromNodeToNodes = function(network, node, nodeList) {
 NetworkOperators.buildDendrogram = function(network) {
   if(network == null) return null;
 
-  //TODO: remove?
-  var t = new Date().getTime();
-
-
   var tree = new Tree();
-
   var nodeList = new NodeList();
 
   var closest;
   var node0;
   var node1;
   var newNode;
-  var relations;
   var id;
   var i;
   var nNodes = network.nodeList.length;
@@ -835,8 +791,6 @@ NetworkOperators.buildDendrogram = function(network) {
     for(i = 0; node1.nodeList[i] != null; i++) {
       newNode.node.nodeList.addNode(node1.nodeList[i]);
       newNode.node.relationList.addRelation(node1.relationList[i]);
-      //TODO: remove?
-      Network;
     }
 
     nodeList.removeElement(node0);
@@ -860,16 +814,18 @@ NetworkOperators.buildDendrogram = function(network) {
  * @ignore
  */
 NetworkOperators._getClosestPair = function(nodeList, returnIndexes, pRelationPair) {
+  var indexes;
+  var nodes;
+
   if(nodeList.length == 2) {
     var index = nodeList[0].nodeList.indexOf(nodeList[1]);
     //var index = nodeList[0].nodeList.indexOfElement(nodeList[1]);
-
     if(returnIndexes) {
-      var indexes = [0, 1];
+      indexes = [0, 1];
       indexes.strength = index == -1 ? 0 : nodeList[0].relationList[index].weight;
       return indexes;
     }
-    var nodes = new NodeList(nodeList[0], nodeList[1]);
+    nodes = new NodeList(nodeList[0], nodeList[1]);
     nodes.strength = index == -1 ? 0 : nodeList[0].relationList[index].weight;
     return nodes;
   }
@@ -881,9 +837,6 @@ NetworkOperators._getClosestPair = function(nodeList, returnIndexes, pRelationPa
 
   var strength;
   var maxStrength = -1;
-
-  var indexesOtherNode;
-  var indexes;
 
   for(i = 0; nodeList[i + 1] != null; i++) {
     nodeList0 = nodeList[i].nodes;
@@ -899,7 +852,7 @@ NetworkOperators._getClosestPair = function(nodeList, returnIndexes, pRelationPa
   }
   indexes.strength = maxStrength;
   if(returnIndexes) return indexes;
-  var nodes = new NodeList(nodeList[indexes[0]], nodeList[indexes[1]]);
+  nodes = new NodeList(nodeList[indexes[0]], nodeList[indexes[1]]);
   nodes.strength = maxStrength;
   return nodes;
 
@@ -1105,7 +1058,7 @@ NetworkOperators.fusionNetworks = function(networks, hubsDistanceFactor, hubsFor
 
 
 
-  networks.forEach(function(net, i) {
+  networks.forEach(function(net) {
     net.relationList.forEach(function(relation) {
       newRelation = new Relation(relation.id, relation.name, fusionNet.nodeList.getNodeById(relation.node0.id), fusionNet.nodeList.getNodeById(relation.node1.id));
       newRelation.color = relation.color;
@@ -1168,7 +1121,7 @@ NetworkOperators._jLouvain = function() {
   //Helpers
   function make_set(array){
     var set = {};
-    array.forEach(function(d,i){
+    array.forEach(function(d){
       set[d] = true;
     });
     return Object.keys(set);
@@ -1187,7 +1140,7 @@ NetworkOperators._jLouvain = function() {
   function get_degree_for_node(graph, node){
     var neighbours = graph._assoc_mat[node] ? Object.keys(graph._assoc_mat[node]) : [];
     var weight = 0;
-    neighbours.forEach(function(neighbour,i){
+    neighbours.forEach(function(neighbour){
       var value = graph._assoc_mat[node][neighbour] || 1;
       if(node == neighbour)
         value *= 2;
@@ -1232,7 +1185,7 @@ NetworkOperators._jLouvain = function() {
 
   function make_assoc_mat(edge_list){
     var mat = {};
-    edge_list.forEach(function(edge, i){
+    edge_list.forEach(function(edge){
       mat[edge.source] = mat[edge.source] || {};
       mat[edge.source][edge.target] = edge.weight;
       mat[edge.target] = mat[edge.target] || {};
@@ -1262,13 +1215,13 @@ NetworkOperators._jLouvain = function() {
 
   //Core-Algorithm Related
   function init_status(graph, status, part){
-    status['nodes_to_com'] = {};
-    status['total_weight'] = 0;
-    status['internals'] = {};
-    status['degrees'] = {};
-    status['gdegrees'] = {};
-    status['loops'] = {};
-    status['total_weight'] = get_graph_size(graph);
+    status.nodes_to_com = {};
+    status.total_weight = 0;
+    status.internals = {};
+    status.degrees = {};
+    status.gdegrees = {};
+    status.loops = {};
+    status.total_weight = get_graph_size(graph);
 
     if(typeof part == 'undefined'){
       graph.nodes.forEach(function(node,i){
@@ -1282,7 +1235,7 @@ NetworkOperators._jLouvain = function() {
         status.internals[i] = status.loops[node];
       });
     }else{
-      graph.nodes.forEach(function(node,i){
+      graph.nodes.forEach(function(node){
         var com = part[node];
         status.nodes_to_com[node] = com;
         var deg = get_degree_for_node(graph, node);
@@ -1291,7 +1244,7 @@ NetworkOperators._jLouvain = function() {
         var inc = 0.0;
 
         var neighbours  = get_neighbours_of_node(graph, node);
-        neighbours.forEach(function(neighbour, i){
+        neighbours.forEach(function(neighbour){
           var weight = graph._assoc_mat[node][neighbour];
           if (weight <= 0){
             throw "Bad graph type, use positive weights";
@@ -1315,7 +1268,7 @@ NetworkOperators._jLouvain = function() {
     var result = 0.0;
     var communities = make_set(obj_values(status.nodes_to_com));
 
-    communities.forEach(function(com,i){
+    communities.forEach(function(com){
       var in_degree = status.internals[com] || 0 ;
       var degree = status.degrees[com] || 0 ;
       if(links > 0){
@@ -1332,7 +1285,7 @@ NetworkOperators._jLouvain = function() {
     var weights = {};
     var neighboorhood = get_neighbours_of_node(graph, node);//make iterable;
 
-    neighboorhood.forEach(function(neighbour, i){
+    neighboorhood.forEach(function(neighbour){
       if(neighbour != node){
         var weight = graph._assoc_mat[node][neighbour] || 1;
         var neighbourcom = status.nodes_to_com[neighbour];
@@ -1387,7 +1340,7 @@ NetworkOperators._jLouvain = function() {
       modif = false;
       nb_pass_done += 1;
 
-      graph.nodes.forEach(function(node,i){
+      graph.nodes.forEach(function(node){
         var com_node = status.nodes_to_com[node];
         var degc_totw = (status.gdegrees[node] || 0) / (status.total_weight * 2.0);
         var neigh_communities = __neighcom(node, graph, status);
@@ -1396,7 +1349,7 @@ NetworkOperators._jLouvain = function() {
         var best_increase = 0;
         var neigh_communities_entries = Object.keys(neigh_communities);//make iterable;
 
-        neigh_communities_entries.forEach(function(com,i){
+        neigh_communities_entries.forEach(function(com){
           var incr = neigh_communities[com] - (status.degrees[com] || 0.0) * degc_totw;
           if (incr > best_increase){
             best_increase = incr;
@@ -1421,7 +1374,7 @@ NetworkOperators._jLouvain = function() {
     //add nodes from partition values
     var partition_values = obj_values(partition);
     ret.nodes = ret.nodes.concat(make_set(partition_values)); //make set
-    graph.edges.forEach(function(edge,i){
+    graph.edges.forEach(function(edge){
       weight = edge.weight || 1;
       var com1 = partition[edge.source];
       var com2 = partition[edge.target];
@@ -1435,7 +1388,7 @@ NetworkOperators._jLouvain = function() {
   function partition_at_level(dendogram, level){
     var partition = clone(dendogram[0]);
     for(var i = 1; i < level + 1; i++ )
-      Object.keys(partition).forEach(function(key,j){
+      Object.keys(partition).forEach(function(key){
         var node = key;
         var com  = partition[key];
         partition[node] = dendogram[i][com];
@@ -1446,9 +1399,9 @@ NetworkOperators._jLouvain = function() {
 
   function generate_dendogram(graph, part_init){
 
-    if(graph.edges.length == 0){
+    if(graph.edges.length === 0){
       var part = {};
-      graph.nodes.forEach(function(node,i){
+      graph.nodes.forEach(function(node){
         part[node] = node;
       });
       return part;
@@ -1484,7 +1437,6 @@ NetworkOperators._jLouvain = function() {
   }
 
   var core = function(){
-    var status = {};
     var dendogram = generate_dendogram(original_graph, partition_init);
     return partition_at_level(dendogram, dendogram.length - 1);
   };
@@ -1531,12 +1483,13 @@ NetworkOperators.buildNetworkClustersLouvain = function(network) {
   if(network==null) return network;
   
   var node_data = [];
-  for(var i=0; i < network.nodeList.length; i++){
+  var i;
+  for(i=0; i < network.nodeList.length; i++){
     // force nodes to be stringlike since they get used as properties in result
     node_data.push('n'+network.nodeList[i].id);
   }
   var edge_data = [];
-  for(var i=0; i < network.relationList.length; i++){
+  for(i=0; i < network.relationList.length; i++){
     var obj = {source: 'n'+network.relationList[i].node0.id,
                target: 'n'+network.relationList[i].node1.id,
                weight:network.relationList[i].weight};
@@ -1548,9 +1501,8 @@ NetworkOperators.buildNetworkClustersLouvain = function(network) {
   var result  = community();
   var clusters = new Table();
 
-  var nLGroupIDs = new NumberList();
   if(result)
-    for(var i=0; i < network.nodeList.length; i++){
+    for(i=0; i < network.nodeList.length; i++){
       var j = result['n'+network.nodeList[i].id];
       if(clusters[j] == undefined)
         clusters[j]= new NodeList();
@@ -1558,7 +1510,7 @@ NetworkOperators.buildNetworkClustersLouvain = function(network) {
     }
   else{
     // no results mean no communities, make them all unique
-    for(var i=0; i < network.nodeList.length; i++){
+    for(i=0; i < network.nodeList.length; i++){
       clusters.push(new NodeList(network.nodeList[i]));
     }
   }

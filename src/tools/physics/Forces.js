@@ -56,7 +56,7 @@ Forces.prototype.forcesForNetwork = function(network, initRadius, initCenter, eq
   var angle;
 
   for(i = 0; i < nNodes; i++) {
-    if(initRadius == 0) {
+    if(initRadius === 0) {
       this.addNode(network.nodeList[i], new Point(network.nodeList[i].x, network.nodeList[i].y));
     } else {
       angle = Math.random() * TwoPi;

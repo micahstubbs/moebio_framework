@@ -1,8 +1,6 @@
 import { TwoPi, HalfPi } from "src/Global";
 import Rectangle from "src/dataStructures/geometry/Rectangle";
-import ColorOperators from "src/operators/graphic/ColorOperators";
 import Point from "src/dataStructures/geometry/Point";
-import Polygon from "src/dataStructures/geometry/Polygon";
 import IntervalTableOperators from "src/operators/numeric/interval/IntervalTableOperators";
 import NumberList from "src/dataStructures/numeric/NumberList";
 import NumberTableFlowOperators from "src/operators/numeric/numberTable/NumberTableFlowOperators";
@@ -11,7 +9,6 @@ import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
 import IntervalTableDraw from "src/visualization/numeric/IntervalTableDraw";
 import GeometryOperators from "src/operators/geometry/GeometryOperators";
 import NumberTable from "src/dataStructures/numeric/NumberTable";
-import StringList from "src/dataStructures/strings/StringList";
 import Table from "src/dataStructures/lists/Table";
 import ColorList from "src/dataStructures/graphic/ColorList";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
@@ -90,7 +87,7 @@ NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listC
  * tags:draw
  */
 NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colors, maxRadius, loglog, margin, graphics) {
-  if(frame == null ||  numberTable == null || numberTable.type != "NumberTable" ||  numberTable.length < 2 ||  numberTable[0].length == 0 || numberTable[1].length == 0) return; //todo:provisional, this is System's work
+  if(frame == null ||  numberTable == null || numberTable.type != "NumberTable" ||  numberTable.length < 2 ||  numberTable[0].length === 0 || numberTable[1].length === 0) return; //todo:provisional, this is System's work
 
   if(numberTable.length < 2) return;
 
@@ -126,7 +123,7 @@ NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colo
     }
   }
 
-  if(margin > 7 && list0.name != "" && list1.name != "") {
+  if(margin > 7 && list0.name !== "" && list1.name !== "") {
     graphics.setText('black', 10, null, 'right', 'middle');
     graphics.fText(list0.name, subframe.getRight() - 2, subframe.bottom + margin * 0.5);
     graphics.fTextRotated(list1.name, subframe.x - margin * 0.5, subframe.y + 1, -HalfPi);
@@ -217,18 +214,18 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
   var x, y;
   var minx, miny;
   var matrixColors;
-
+  var numberTable;
+  var polygon;
 
   //setup
   if(frame.memory == null || coordinates != frame.memory.coordinates || colorScale != frame.memory.colorScale) {
 
     var isNumberTable = coordinates[0].x == null;
-
     if(isNumberTable) {
-      var numberTable = coordinates;
+      numberTable = coordinates;
       if(numberTable == null ||  numberTable.length < 2 || numberTable.type != "NumberTable") return;
     } else {
-      var polygon = coordinates;
+      polygon = coordinates;
     }
 
     var max = 0;
@@ -411,18 +408,18 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
     /////
   }
 
+  var x0, x1;
   if(frame.memory.image) {
-
-    frame.memory.fOpen = 0.8 * frame.memory.fOpen + 0.2 * (frame.containsPoint(mP) ? 0.8 : 1);
-    frame.memory.mXF = 0.7 * frame.memory.mXF + 0.3 * mX;
+    frame.memory.fOpen = 0.8 * frame.memory.fOpen + 0.2 * (frame.containsPoint(graphics.mP) ? 0.8 : 1);
+    frame.memory.mXF = 0.7 * frame.memory.mXF + 0.3 * graphics.mX;
     frame.memory.mXF = Math.min(Math.max(frame.memory.mXF, frame.x), frame.getRight());
 
     if(frame.memory.fOpen < 0.999) {
       graphics.context.save();
       graphics.context.translate(frame.x, frame.y);
       var cut = frame.memory.mXF - frame.x;
-      var x0 = Math.floor(cut * frame.memory.fOpen);
-      var x1 = Math.ceil(frame.width - (frame.width - cut) * frame.memory.fOpen);
+      x0 = Math.floor(cut * frame.memory.fOpen);
+      x1 = Math.ceil(frame.width - (frame.width - cut) * frame.memory.fOpen);
 
       graphics.drawImage(frame.memory.image, 0, 0, cut, flowFrame.height, 0, 0, x0, flowFrame.height);
       graphics.drawImage(frame.memory.image, cut, 0, (frame.width - cut), flowFrame.height, x1, 0, (frame.width - cut) * frame.memory.fOpen, flowFrame.height);
@@ -441,7 +438,7 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
 NumberTableDraw._drawHorizontalLabels = function(frame, y, numberTable, horizontalLabels, x0, x1, graphics) {
   var dx = frame.width / (numberTable[0].length - 1);
   var x;
-  var mX2 = Math.min(Math.max(mX, frame.x + 1), frame.getRight() - 1);
+  var mX2 = Math.min(Math.max(graphics.mX, frame.x + 1), frame.getRight() - 1);
   var iPosDec = (mX2 - frame.x) / dx;
   var iPos = Math.round(iPosDec);
 
@@ -481,12 +478,6 @@ NumberTableDraw._drawPartialFlow = function(frame, flowIntervals, labels, colors
   var i;
   var i0 = Math.floor(iDay);
   var i1 = Math.ceil(iDay);
-
-  var t = iDay - i0;
-  var s = 1 - t;
-
-  var xi;
-  var yi;
 
   var interval0;
   var interval1;

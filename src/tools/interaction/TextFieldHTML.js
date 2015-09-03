@@ -25,14 +25,14 @@ function TextFieldHTML(configuration) {
 
   this.fastHTMLactive = configuration.fastHTMLactive == null ? true : configuration.fastHTMLactive;
 
-  this.text;
+  this.text = undefined;
 
   //////////
 
-  this._prevX;
-  this._prevY;
-  this._prevWidth;
-  this._prevHeight;
+  this._prevX = undefined;
+  this._prevY = undefined;
+  this._prevWidth = undefined;
+  this._prevHeight = undefined;
 
   this.zIndex = 33;
 
@@ -44,10 +44,6 @@ function TextFieldHTML(configuration) {
   this.setText(configuration.text == null ? '' : configuration.text);
 
   this.draw();
-
-  var thisTextField = this;
-  var linkFunction = this.linkFunction;
-  var target = this.target;
 
   if(this.target != null && this.linkFunction != null) {
     FastHtml.target = this.target;

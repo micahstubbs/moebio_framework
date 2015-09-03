@@ -11,13 +11,14 @@ export default StringUtils;
  * @todo write docs
  */
 StringUtils.stringtoXML = function(text) {
+  var doc;
   if(window.ActiveXObject) {
-    var doc = new ActiveXObject('Microsoft.XMLDOM');
+    doc = new window.ActiveXObject('Microsoft.XMLDOM');
     doc.async = 'false';
     doc.loadXML(text);
   } else {
     var parser = new DOMParser();
-    var doc = parser.parseFromString(text, 'text/xml');
+    doc = parser.parseFromString(text, 'text/xml');
   }
   return doc;
 };

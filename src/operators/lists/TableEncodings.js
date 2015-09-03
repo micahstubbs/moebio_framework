@@ -44,7 +44,7 @@ TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, val
   var _firstRowIsHeader = firstRowIsHeader == null ? false : firstRowIsHeader;
 
   if(csvString == null) return null;
-  if(csvString == "") return new Table();
+  if(csvString === "") return new Table();
 
   csvString = csvString.replace(/\$/g, "");
 
@@ -68,12 +68,13 @@ TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, val
   var table = new Table();
   var comaCharacter = separator != undefined ? separator : ",";
 
-  if(csvString == null || csvString == "" || csvString == " " || lines.length == 0) return null;
+  if(csvString == null || csvString === "" || csvString == " " || lines.length === 0) return null;
 
   var startIndex = 0;
+  var headerContent;
   if(_firstRowIsHeader) {
     startIndex = 1;
-    var headerContent = lines[0].split(comaCharacter);
+    headerContent = lines[0].split(comaCharacter);
   }
 
   var element;
@@ -93,13 +94,13 @@ TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, val
 
       cellContent = cellContents[j].replace(/\*CHOMA\*/g, separator).replace(/\*ENTER\*/g, "\n");
 
-      cellContent = cellContent == '' ? valueForNulls : cellContent;
+      cellContent = cellContent === '' ? valueForNulls : cellContent;
 
       cellContent = String(cellContent);
 
       numberCandidate = Number(cellContent.replace(',', '.'));
 
-      element = (numberCandidate || (numberCandidate == 0 && cellContent != '')) ? numberCandidate : cellContent;
+      element = (numberCandidate || (numberCandidate == 0 && cellContent !== '')) ? numberCandidate : cellContent;
 
       if(typeof element == 'string') element = TableEncodings._removeQuotes(element);
 
@@ -121,7 +122,7 @@ TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, val
  * @ignore
  */
 TableEncodings._removeQuotes = function(string) {
-  if(string.length == 0) return string;
+  if(string.length === 0) return string;
   if((string.charAt(0) == "\"" || string.charAt(0) == "'") && (string.charAt(string.length - 1) == "\"" || string.charAt(string.length - 1) == "'")) string = string.substr(1, string.length - 2);
   return string;
 };

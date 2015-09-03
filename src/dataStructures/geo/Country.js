@@ -21,28 +21,28 @@ function Country(id, name) {
   this.id = id;
   this.name = name;
 
-  this.shortName;
+  this.shortName = undefined;
 
-  this.continentName;
-  this.isoCode;
-  this.alternativeNames;
-  this.wikipediaUrl;
-  this.flagImageUrl;
-  this.smallFlagImageUrl;
+  this.continentName = undefined;
+  this.isoCode = undefined;
+  this.alternativeNames = undefined;
+  this.wikipediaUrl = undefined;
+  this.flagImageUrl = undefined;
+  this.smallFlagImageUrl = undefined;
   this.recognized = false;
-  this.geoCenter;
+  this.geoCenter = undefined;
 
-  this.polygonList;
-  this.simplePolygonList;
+  this.polygonList = undefined;
+  this.simplePolygonList = undefined;
 
-  this.longestPolygon;
-  this.longestSimplePolygon;
+  this.longestPolygon = undefined;
+  this.longestSimplePolygon = undefined;
 
-  this._simplifiedNames;
-  this._simplifiedId;
-  this._simplifiedName;
+  this._simplifiedNames = undefined;
+  this._simplifiedId = undefined;
+  this._simplifiedName = undefined;
 
-  this._frame;
+  this._frame = undefined;
 }
 export default Country;
 

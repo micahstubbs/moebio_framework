@@ -19,7 +19,7 @@ function MultiLoader() {
   this.target = null;
   this.loading = false;
 
-  this.indexLoading;
+  this.indexLoading = undefined;
 
   ////datas
   this.datasLoaded = null;
@@ -27,14 +27,14 @@ function MultiLoader() {
   ////images
   this.imagesLoaded = null;
 
-  this.priorityWeights;
+  this.priorityWeights = undefined;
   this.associativeArray = [];
 
   this.url_to_image = {};
 
   this.simulateDelay = false;
   this.DELAY_MILLISECONDS = 1000;
-  this.timer;
+  this.timer = undefined;
 }
 export default MultiLoader;
 

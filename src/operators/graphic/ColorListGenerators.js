@@ -259,7 +259,7 @@ ColorListGenerators.createCategoricalColorListForList = function(list, colorList
   list = List.fromArray(list);
   var diffValues = list.getWithoutRepetitions();
   var diffColors;
-  if(colorList && interpolate!=0) {
+  if(colorList && interpolate !== 0) {
     diffColors = colorList.getInterpolated(color, interpolate);
   } else {
     diffColors = ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate, colorList);

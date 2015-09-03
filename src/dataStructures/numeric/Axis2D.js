@@ -20,8 +20,8 @@ function Axis2D(departureFrame, arrivalFrame) {
   this.departureFrame = departureFrame;
   this.arrivalFrame = arrivalFrame;
 
-  this.pW;
-  this.pH;
+  this.pW = undefined;
+  this.pH = undefined;
 
   this.setFrames(departureFrame, arrivalFrame);
 

@@ -10,6 +10,7 @@ import DateInterval from "src/dataStructures/dates/DateInterval";
 import DateOperators from "src/operators/dates/DateOperators";
 import NumberList from "src/dataStructures/numeric/NumberList";
 import ObjectConversions from "src/operators/objects/ObjectConversions";
+import NumberTableOperators from "src/operators/numeric/NumberTable/NumberTableOperators";
 
 /**
  * @classdesc  Object Operators
@@ -54,9 +55,6 @@ ObjectOperators.getReport = function(object) {
   }
 
   var propertyNames = new StringList();
-  var propertyValues = new StringList();
-  var popertyTypes = new StringList();
-
   for(var propName in object) {
     propertyNames.push(propName);
   }
@@ -155,8 +153,6 @@ ObjectOperators.getPropertiesNamesAndValues = function(object) {
   if(object == null) return;
 
   var table = new Table();
-  var i;
-  var value;
 
   table[0] = ObjectOperators.getPropertiesNames(object);
   table[1] = new List();
@@ -258,12 +254,11 @@ ObjectOperators.toList = function(array) {
  */
 ObjectOperators.addition = function() {
   //console.log("addition__________________________________arguments:", arguments);
-  var objectType;
   var result;
   var i;
   if(arguments.length < 2) {
     if(arguments.length == 1 && arguments[0] != null && arguments[0].isList) {
-      var result = arguments[0][0];
+      result = arguments[0][0];
       for(i = 1; arguments[0][i] != null; i++) {
         result = ObjectOperators.addition(result, arguments[0][i]);
       }
@@ -380,12 +375,11 @@ ObjectOperators.addition = function() {
  */
 ObjectOperators.multiplication = function() {
   //console.log("multiplication__________________________________arguments:", arguments);
-  var objectType;
   var result;
   var i;
   if(arguments.length < 2) {
     if(arguments.length == 1 && arguments[0].isList) {
-      var result = arguments[0][0];
+      result = arguments[0][0];
       for(i = 1; arguments[0][i] != null; i++) {
         result = ObjectOperators.multiplication(result, arguments[0][i]);
       }
@@ -423,7 +417,7 @@ ObjectOperators.multiplication = function() {
       a1Type = typeOf(a1);
     }
 
-    var pairType = a0Type + "_" + a1Type;
+    pairType = a0Type + "_" + a1Type;
     //console.log('pairType:['+pairType+']');
 
     //

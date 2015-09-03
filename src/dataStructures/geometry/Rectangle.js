@@ -173,19 +173,7 @@ Rectangle.prototype.getNormalRectangle = function() {
  * tags:geometry
  */
 Rectangle.prototype.intersectsRectangle = function(rectangle) {
-  return !(this.x + this.width < rectangle.x) && !(this.y + this.height < rectangle.y) && !(rectangle.x + rectangle.width < this.x) && !(rectangle.y + rectangle.height < this.y);
-
-
-  if(this.x + this.width < rectangle.x) return false;
-  if(this.y + this.height < rectangle.y) return false;
-  if(rectangle.x + rectangle.width < this.x) return false;
-  if(rectangle.y + rectangle.height < this.y) return false;
-  return true;
-
-
-
-	return this.containsPoint(rectangle.getTopLeft()) || this.containsPoint(rectangle.getTopRight()) || this.containsPoint(rectangle.getBottomLeft()) || this.containsPoint(rectangle.getBottomRight())
-	|| rectangle.containsPoint(this.getTopLeft()) || rectangle.containsPoint(this.getTopRight()) || rectangle.containsPoint(this.getBottomLeft()) || rectangle.containsPoint(this.getBottomRight());
+  return (this.x + this.width >= rectangle.x) && (this.y + this.height >= rectangle.y) && (rectangle.x + rectangle.width >= this.x) && (rectangle.y + rectangle.height >= this.y);
 };
 
 /**

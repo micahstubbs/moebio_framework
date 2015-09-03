@@ -62,9 +62,9 @@ PolygonListEncodings.PolygonListToString = function(polygonList, separatorCoordi
   var j;
   var t = '';
   for(i = 0; polygonList[i] != null; i++) {
-    t += (i == 0 ? '' : separatorPolygons);
+    t += (i === 0 ? '' : separatorPolygons);
     for(j = 0; polygonList[i][j] != null; j++) {
-      t += (j == 0 ? '' : separatorCoordinates) + polygonList[i][j].x + separatorCoordinates + polygonList[i][j].y;
+      t += (j === 0 ? '' : separatorCoordinates) + polygonList[i][j].x + separatorCoordinates + polygonList[i][j].y;
     }
   }
   return t;

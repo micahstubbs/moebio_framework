@@ -138,7 +138,7 @@ NetworkGenerators.createNetworkFromOccurrencesTable = function(occurrencesTable,
     node0.weight = norm0;
     for(j = i + 1; occurrencesTable[j] != null; j++) {
       string1 = occurrencesTable[j].name;
-      if(i == 0) {
+      if(i === 0) {
         node1 = new Node(string1, string1);
         network.addNode(node1);
       } else {
@@ -180,11 +180,15 @@ NetworkGenerators.createNetworkFromListAndFunction = function(list, weightFuncti
   var node;
   var network = new Network();
 
-  for(var i = 0; list[i + 1] != null; i++) {
-    if(i == 0) network.addNode(new Node("n_0", names == null ? "n_0" : names[i]));
+  for(i = 0; list[i + 1] != null; i++) {
+    if(i === 0) {
+      network.addNode(new Node("n_0", names == null ? "n_0" : names[i]));
+    }
     node = network.nodeList[i];
-    for(var j = i + 1; list[j] != null; j++) {
-      if(i == 0) network.addNode(new Node("n_" + j, names == null ? "n_" + j : names[j]));
+    for(j = i + 1; list[j] != null; j++) {
+      if(i === 0) {
+        network.addNode(new Node("n_" + j, names == null ? "n_" + j : names[j]));
+      }
       w = weightFunction(list[i], list[j]);
       if(w > 0) {
         network.addRelation(new Relation(i + "_" + j, i + "_" + j, node, network.nodeList[j], w));
@@ -209,9 +213,6 @@ NetworkGenerators.createNetworkFromListAndFunction = function(list, weightFuncti
 NetworkGenerators.createNetworkFromTextAndWords = function(text, nounPhrases, splitCharacters) {
   if(text == null || nounPhrases == null) return null;
 
-  var np;
-  var i;
-
   splitCharacters = splitCharacters == null ? "\\.|\\n" : splitCharacters;
 
   var network = new Network();
@@ -227,11 +228,9 @@ NetworkGenerators.createNetworkFromTextAndWords = function(text, nounPhrases, sp
 
   var sentences = text.split(new RegExp(splitCharacters, "g"));
 
-  var np1;
-  var sentence;
   var node, relation;
-  var index, index2;
-  var node0, node1;
+  var index;
+  var node0;
   var regex;
   var id;
 

@@ -17,10 +17,10 @@ function DateAxis(departureDateInterval, arrivalInterval) {
   this.departureDateInterval = departureDateInterval;
   this.arrivalInterval = arrivalInterval;
 
-  this.time0;
-  this.time1;
-  this.dTime;
-  this.arrivalAmplitude;
+  this.time0 = undefined;
+  this.time1 = undefined;
+  this.dTime = undefined;
+  this.arrivalAmplitude = undefined;
 
   this.setDepartureDateInterval(departureDateInterval);
   this.setArrivalInterval(arrivalInterval);

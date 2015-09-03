@@ -20,9 +20,6 @@ StringListDraw.tagCloudRectangles = function(stringList, weights, frame) {
   var rectanglesPlaced = new List();
 
   var dL = 6;
-
-  var a = 0;
-  var r = 0;
   var p = new Point(0, 0);
 
   var w;

@@ -56,9 +56,9 @@ GeometryOperators.bezierCurvePoints = function(x0, y0, c0x, c0y, c1x, c1y, x1, y
  */
 GeometryOperators.trueBezierCurveHeightHorizontalControlPoints = function(x0, x1, y0, y1, c0x, c1x, x) {
   var dx = x1 - x0;
-  var x = (x - x0) / dx;
-  var c0x = (c0x - x0) / dx;
-  var c1x = (c1x - x0) / dx;
+  x = (x - x0) / dx;
+  c0x = (c0x - x0) / dx;
+  c1x = (c1x - x0) / dx;
 
   if(GeometryOperators._bezierSimpleCurveTable == null) {
     var i, p;
@@ -101,11 +101,9 @@ GeometryOperators.distanceToBezierCurve = function(x0, y0, c0x, c0y, c1x, c1y, x
   var p0 = new Point(x0, y0);
   var p0I = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, minDT);
   var p1 = new Point(x1, y1);
-  var p1I = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, 1 - minDT);
   var d0 = Math.pow(p0.x - p.x, 2) + Math.pow(p0.y - p.y, 2);
   var d0I = Math.pow(p0I.x - p.x, 2) + Math.pow(p0I.y - p.y, 2);
   var d1 = Math.pow(p1.x - p.x, 2) + Math.pow(p1.y - p.y, 2);
-  var d1I = Math.pow(p1I.x - p.x, 2) + Math.pow(p1I.y - p.y, 2);
 
   var i;
 
@@ -169,7 +167,7 @@ GeometryOperators.lineFromTwoPoints = function(point0, point1) {
 GeometryOperators.distancePointToLine = function(point, line) {
   var m2;
   var b2;
-  if(line.x == 0) {
+  if(line.x === 0) {
     m2 = Infinity;
     b2 = point.x;
   } else {
@@ -188,7 +186,7 @@ GeometryOperators.distancePointToSegment = function(point, point0Segment, point1
   var line = m == Infinity ? new Point(Infinity, point0Segment.x) : new Point(m, point0Segment.y - m * point0Segment.x);
   var m2;
   var b2;
-  if(line.x == 0) {
+  if(line.x === 0) {
     m2 = Infinity;
     b2 = point.x;
   } else {
@@ -247,7 +245,7 @@ GeometryOperators.VennCircles = function(area0, area1, areaIntersection, centerI
     circle1 = new Point3D(d * 0.5, 0, rB);
   }
 
-  if(areaIntersection == 0) {
+  if(areaIntersection === 0) {
     circle0.x -= d * 0.1;
     circle1.x += d * 0.1;
   }

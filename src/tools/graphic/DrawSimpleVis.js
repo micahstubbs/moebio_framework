@@ -326,15 +326,6 @@ DrawSimpleVis.drawStackBarsFlowTable = function(context, intervalsFlowTable, fra
   var x = frame.x;
   var y = frame.y;
 
-  var prevPoint;
-  var prevYsup;
-  var prevsY;
-  var newYsup;
-
-  var offX;
-
-  var toolTipText;
-
   context.strokeStyle = "white";
 
   for(i = 0; intervalsFlowTable[i] != null; i++) {

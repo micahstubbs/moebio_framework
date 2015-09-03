@@ -8,7 +8,6 @@ import StringList from "src/dataStructures/strings/StringList";
 import NumberTable from "src/dataStructures/numeric/NumberTable";
 import RelationList from "src/dataStructures/structures/lists/RelationList";
 import NodeList from "src/dataStructures/structures/lists/NodeList";
-import PolygonList from "src/dataStructures/geometry/PolygonList";
 import DateList from "src/dataStructures/dates/DateList";
 import ColorList from "src/dataStructures/graphic/ColorList";
 import ColorOperators from "src/operators/graphic/ColorOperators";
@@ -61,9 +60,6 @@ export function typeOf(object) {
   return 'Object';
 }
 
-// TODO remove?
-function VOID() {}
-
 export function instantiate(className, args) {
   switch(className) {
     case 'number':
@@ -71,7 +67,7 @@ export function instantiate(className, args) {
       // TODO: I don't think this works.
       return window[className](args);
     case 'date':
-      if(!args || args.length == 0) return new Date();
+      if(!args || args.length === 0) return new Date();
       if(args.length == 1) {
         if(args[0].match(/\d*.-\d*.-\d*\D\d*.:\d*.:\d*/)) {
           var dateArray = args[0].split(" ");
@@ -164,7 +160,7 @@ export function getTextFromObject(value, type){
       for(i = 0; (value[i] != null && i < 6); i++) {
         subtext = getTextFromObject(value[i], typeOf(value[i]));
         if(subtext.length > 40) subtext = subtext.substr(0, 40) + (value[i].isList ? "…]" : "…");
-        text += (i != 0 ? ", " : "") + subtext;
+        text += (i !== 0 ? ", " : "") + subtext;
       }
       if(value.length > 6) text += ",…";
       text += "]";

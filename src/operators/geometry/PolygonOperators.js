@@ -2,7 +2,6 @@ import Polygon from "src/dataStructures/geometry/Polygon";
 import NumberList from "src/dataStructures/numeric/NumberList";
 import Tree from "src/dataStructures/structures/networks/Tree";
 import NodeList from "src/dataStructures/structures/lists/NodeList";
-import Draw from "src/tools/graphic/Draw";
 import Node from "src/dataStructures/structures/elements/Node";
 import Point from "src/dataStructures/geometry/Point";
 import GeometryOperators from "src/operators/geometry/GeometryOperators";
@@ -34,7 +33,10 @@ PolygonOperators.hull = function(polygon, returnIndexes) {
   var n = p.length;
   var k = 0;
   var h = new Polygon();
-  if(returnIndexes) var indexes = new NumberList();
+  var indexes;
+  if(returnIndexes){
+    indexes = new NumberList();
+  }
 
   p = PolygonOperators.sortOnXY(p);
 
@@ -79,7 +81,6 @@ PolygonOperators.hull = function(polygon, returnIndexes) {
  */
 PolygonOperators.buildDendrogramFromPolygon = function(polygon) {
   var tree = new Tree();
-  var point, i;
   var node;
   var tW;
   var parent;
@@ -132,7 +133,6 @@ PolygonOperators.buildDendrogramFromPolygon = function(polygon) {
   tree.nodeList = tree.nodeList.getReversed();
 
   var assignLevel = function(node, parentLevel) {
-    var son;
     node.level = parentLevel + 1;
     node.toNodeList.forEach(function(son) {
       assignLevel(son, node.level);
@@ -241,7 +241,7 @@ PolygonOperators.expandInAngles = function(polygon, amount) { //TODO: test if it
  * @todo write docs
  */
 PolygonOperators.simplifyPolygon = function(polygon, margin) {
-  margin = margin == null || margin == 0 ? 1 : margin;
+  margin = margin == null || margin === 0 || margin === undefined ? 1 : margin;
   var newPolygon = polygon.clone();
   var p0;
   var p1;
@@ -311,7 +311,6 @@ PolygonOperators.getBezierPolygonBestCenter = function(polygon, nAttempts, graph
   graphics.context.fill();
 
   var center;
-  var testPoint;
   var angle;
   var r;
   var rMax = 0;
@@ -323,7 +322,7 @@ PolygonOperators.getBezierPolygonBestCenter = function(polygon, nAttempts, graph
     for(angle = 0; angle <= TwoPi; angle += 0.1) {
       r = angle;
       var data = graphics.context.getImageData(center.x + r * Math.cos(angle) - frame.x, center.y + r * Math.sin(angle) - frame.y, 1, 1).data;
-      if(data[0] == 0) {
+      if(data[0] === 0) {
         if(r > rMax) {
           rMax = r;
           bestCenter = center;
@@ -344,7 +343,6 @@ PolygonOperators.convexHull = function(polygon, deepness) {
   var indexesHull = this.hull(polygon, true);
   var pointsLeftIndexes = NumberListGenerators.createSortedNumberList(polygon.length);
   pointsLeftIndexes = pointsLeftIndexes.getWithoutElementsAtIndexes(indexesHull);
-  var i;
   var j;
   var k;
   var p0;

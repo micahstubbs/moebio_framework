@@ -466,7 +466,7 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor, graphics) {
 
     graphics.setText(textColor, 12);
     tree.nodeList.forEach(function(node) {
-      node.label = node.toNodeList.length == 0 ? Math.round(node.valueFollowingProbability * 100) / 100 : node.bestFeatureName;
+      node.label = node.toNodeList.length === 0 ? Math.round(node.valueFollowingProbability * 100) / 100 : node.bestFeatureName;
       node._textWidth = graphics.getTextW(node.label);
     });
 
@@ -502,10 +502,11 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor, graphics) {
   var overNode = null;
   var overI;
   var mouseOnFrame = frame.containsPoint(graphics.mP);
-  var moving = graphics.nF - frame.memory.nFLastChange < 80 || Math.pow(frame.memory.kx - kxF, 2) + Math.pow(frame.memory.mx - mxF, 2) > 0.001;
+  //var moving = graphics.nF - frame.memory.nFLastChange < 80 || Math.pow(frame.memory.kx - kxF, 2) + Math.pow(frame.memory.mx - mxF, 2) > 0.001;
   var captureImage = false;//provisional // !moving && frame.memory.image == null && !mouseOnFrame;
   var drawingImage = false;//provisional // !moving && !mouseOnFrame && frame.memory.image != null &&  !captureImage && frame.memory.image.width > 0;
-
+  var yLeaves;
+  
   if(drawingImage) {
     graphics.drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
   } else {
@@ -531,7 +532,7 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor, graphics) {
       graphics.clipRectangle(frame.x, frame.y, frame.width, frame.height);
     }
 
-    var yLeaves = frame.y + hTree + gap;
+    yLeaves = frame.y + hTree + gap;
 
     graphics.setStroke('black', 0.2);
 
@@ -737,13 +738,13 @@ TreeDraw.drawDecisionTree = function(frame, tree, textColor, graphics) {
       frame.memory.focusFrame.x -= (graphics.mX - frame.memory.prevMX) * scale;
       frame.memory.prevMX = graphics.mX;
     }
-    if(graphics.WHEEL_CHANGE != 0) {
+    if(graphics.WHEEL_CHANGE !== 0) {
       var center = frame.memory.focusFrame.getCenter();
       var zoom = 1 + 0.1 * graphics.WHEEL_CHANGE;
       frame.memory.focusFrame.x = center.x - frame.memory.focusFrame.width * 0.5 * zoom;
       frame.memory.focusFrame.width *= zoom;
     }
-    if(graphics.MOUSE_PRESSED || graphics.WHEEL_CHANGE != 0) {
+    if(graphics.MOUSE_PRESSED || graphics.WHEEL_CHANGE !== 0) {
 
       frame.memory.image = null;
 

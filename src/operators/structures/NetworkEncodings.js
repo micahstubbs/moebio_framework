@@ -5,6 +5,7 @@ import Relation from "src/dataStructures/structures/elements/Relation";
 import ColorOperators from "src/operators/graphic/ColorOperators";
 import DateOperators from "src/operators/dates/DateOperators";
 import Table from "src/dataStructures/lists/Table";
+import ColorListGenerators from "src/operators/graphics/ColorListGenerators";
 
 /**
  * @classdesc Serializes and deserializes {@link Network|Networks} using into
@@ -30,27 +31,23 @@ NetworkEncodings.nodeNameSeparators = ['|', ':', ' is ', ' are ', '.', ','];
  */
 NetworkEncodings.decodeNoteWork = function(code) {
   if(code == null) return;
-  if(code == "") return new Network();
+  if(code === "") return new Network();
 
   console.log('\n\n*************////////// decodeNoteWork //////////*************');
   //code = "\n"+code;
 
   var i, j;
-  var paragraph, line, simpleLine;
+  var line, simpleLine;
   var id, id2;
   var name;
-  var index, index2, minIndex;
+  var index, minIndex;
   var lines;
   var node, otherNode;
-  var supNode = null;
   var relation;
-  var prevLine;
   var sep;
   var colorLinesRelations = []; //for relations
   var colorLinesGroups = [];
   var colorSegments = [];
-  var linesInfo = [];
-  var simpleLine;
   var regex;
   var iEnd;
   var propertyName;
@@ -92,7 +89,7 @@ NetworkEncodings.decodeNoteWork = function(code) {
   var firstLine;
 
 
-  paragraphs.forEach(function(paragraph, i) {
+  paragraphs.forEach(function(paragraph) {
 
     if(paragraph.indexOf('\n') == -1) {
       line = paragraph;
@@ -106,9 +103,9 @@ NetworkEncodings.decodeNoteWork = function(code) {
 
     //console.log('firstLine: ['+firstLine+']');
 
-    if(line == '\n' || line == '' || line == ' ' || line == '  ') { //use regex here
+    if(line == '\n' || line === '' || line == ' ' || line == '  ') { //use regex here
 
-    } else if(line.indexOf('//') == 0) {
+    } else if(line.indexOf('//') === 0) {
 
       if(colorSegments[nLineParagraph] == null) colorSegments[nLineParagraph] = [];
 
@@ -194,7 +191,7 @@ NetworkEncodings.decodeNoteWork = function(code) {
       name = index == -1 ? line : line.substr(0, index);
       name = name.trim();
 
-      if(name != "") {
+      if(name !== "") {
         id = NetworkEncodings._simplifyForNoteWork(name);
 
         node = network.nodeList.getNodeById(id);
@@ -255,7 +252,7 @@ NetworkEncodings.decodeNoteWork = function(code) {
       loop2: for(j = 0; node._lines[j] != null; j++) {
         line = node._lines[j];
 
-        if(line.indexOf('=') == 0) {
+        if(line.indexOf('=') === 0) {
 
           id2 = NetworkEncodings._simplifyForNoteWork(line.substr(1));
           otherNode = network.nodeList.getNodeById(id2);
@@ -270,7 +267,6 @@ NetworkEncodings.decodeNoteWork = function(code) {
             network.nodeList.ids[otherNode.id] = node;
 
             break loop;
-            break loop2;
           } else {
             network.nodeList.ids[id2] = otherNode;
           }
@@ -351,7 +347,7 @@ NetworkEncodings.decodeNoteWork = function(code) {
 
                 var relationName = line;
 
-                var regex = NetworkEncodings._regexWordForNoteWork(node.id);
+                regex = NetworkEncodings._regexWordForNoteWork(node.id);
                 index = relationName.search(regex);
 
                 if(index != -1) {
@@ -466,10 +462,7 @@ NetworkEncodings._regexWordForNoteWork = function(word, global) {
 NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesPropertyNames, relationsPropertyNames) {
   if(network == null) return;
 
-  var node, relation, other;
-  var propName;
   var code = "";
-  var simpNodeName;
   var regex, lineRelation;
 
   var codedRelationsContents;
@@ -480,7 +473,7 @@ NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesP
 
   network.nodeList.forEach(function(node) {
     code += node.name;
-    if(node.content && node.content != "") code += nodeContentSeparator + node.content;
+    if(node.content && node.content !== "") code += nodeContentSeparator + node.content;
     code += "\n";
 
     nodesPropertyNames.forEach(function(propName) {
@@ -491,9 +484,9 @@ NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesP
 
     node.toRelationList.forEach(function(relation) {
 
-      var content = ((relation.content == null ||  relation.content == "") && relation.description) ? relation.description : relation.content;
+      var content = ((relation.content == null ||  relation.content === "") && relation.description) ? relation.description : relation.content;
 
-      if(content && content != "") {
+      if(content && content !== "") {
         regex = NetworkEncodings._regexWordForNoteWork(relation.node1.name);
         lineRelation = content + ((regex != null && content.search(regex) == -1) ? (" " + relation.node1.name) : "");
       } else {
@@ -529,11 +522,11 @@ NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesP
  * tags:decoder
  */
 NetworkEncodings.decodeGDF = function(gdfCode) {
-  if(gdfCode == null || gdfCode == "") return;
+  if(gdfCode == null || gdfCode === "") return;
 
   var network = new Network();
   var lines = gdfCode.split("\n"); //TODO: split by ENTERS OUTSIDE QUOTEMARKS
-  if(lines.length == 0) return null;
+  if(lines.length === 0) return null;
   var line;
   var i;
   var j;
@@ -684,8 +677,9 @@ NetworkEncodings.decodeGML = function(gmlCode) {
   var indexG1;
 
   var node;
+  var i, j;
 
-  for(var i = 0; blocks[i] != null; i++) {
+  for(i = 0; blocks[i] != null; i++) {
     blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\n");
     blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\r");
 
@@ -709,10 +703,10 @@ NetworkEncodings.decodeGML = function(gmlCode) {
 
     network.addNode(node);
 
-    for(var j = 1; lines[j] != null; j++) {
+    for(j = 1; lines[j] != null; j++) {
       lines[j] = NetworkEncodings._cleanLineBeginning(lines[j]);
       lines[j] = NetworkEncodings._replaceSpacesInLine(lines[j]);
-      if(lines[j] != "") {
+      if(lines[j] !== "") {
         lineParts = lines[j].split(" ");
         if(lineParts[0] == 'label') lineParts[0] = 'name';
         node[lineParts[0]] = (lineParts[1].charAt(0) == "\"") ? StringOperators.removeQuotes(lineParts[1]).replace(/\*SPACE\*/g, " ") : Number(lineParts[1]);
@@ -743,7 +737,7 @@ NetworkEncodings.decodeGML = function(gmlCode) {
 
     for(j = 0; lines[j] != null; j++) {
       lines[j] = NetworkEncodings._cleanLineBeginning(lines[j]);
-      if(lines[j] != "") {
+      if(lines[j] !== "") {
         lineParts = lines[j].split(" ");
         if(lineParts[0] == 'source') id0 = StringOperators.removeQuotes(lineParts[1]);
         if(lineParts[0] == 'target') id1 = StringOperators.removeQuotes(lineParts[1]);
@@ -820,7 +814,7 @@ NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPr
     } else {
       code += "\n" + ident + "id \"" + node.id + "\"";
     }
-    if(node.name != '') code += "\n" + ident + "label \"" + node.name + "\"";
+    if(node.name !== '') code += "\n" + ident + "label \"" + node.name + "\"";
     for(j = 0; nodesPropertiesNames[j] != null; j++) {
       value = node[nodesPropertiesNames[j]];
       if(value == null) continue;
@@ -994,7 +988,7 @@ NetworkEncodings.decodeSYM = function(symCode) {
 
   for(i = 0; groups[i] != null; i++) {
     group = groups[i];
-    if(group.color == null) group.color = CATEGORICAL_COLORS[i % CATEGORICAL_COLORS.length];
+    if(group.color == null) group.color = ColorListGenerators._HARDCODED_CATEGORICAL_COLORS[i % ColorListGenerators._HARDCODED_CATEGORICAL_COLORS.length];
     for(j = 0; group[j] != null; j++) {
       node = group[j];
       if(node.color == null) node.color = group.color;
@@ -1033,8 +1027,8 @@ NetworkEncodings.encodeSYM = function(network, groups, nodesPropertiesNames, rel
   var propertyName;
   for(i = 0; network.nodeList[i] != null; i++) {
     node = network.nodeList[i];
-    code += (i == 0 ? "" : "\n\n") + "NODE " + node.id;
-    if(node.name != "") code += "\nname:" + (node.name).replace(/\n/g, "\\n");
+    code += (i === 0 ? "" : "\n\n") + "NODE " + node.id;
+    if(node.name !== "") code += "\nname:" + (node.name).replace(/\n/g, "\\n");
     for(j = 0; nodesPropertiesNames[j] != null; j++) {
       propertyName = nodesPropertiesNames[j];
       if(node[propertyName] != null) code += "\n" + propertyName + ":" + _processProperty(propertyName, node[propertyName]);
@@ -1076,11 +1070,10 @@ function _processProperty(propName, propValue) { //TODO: use this in other encod
         return rgb.join(',');
       }
       return propValue;
-      break;
   }
   propValue = String(propValue).replace(/\n/g, "\\n");
   return propValue;
-};
+}
 
 
 

@@ -117,10 +117,9 @@ StringListVisOperators.tagCloudRectangles = function(stringList, weights, frame,
 
   var normWeights = NumberListOperators.normalizedToMax(weights.sqrt());
 
-  var roundSizes = mode == 0;
+  var roundSizes = mode === 0;
 
   var rectangles = new List();
-  var textPositions = new Polygon();
   var textSizes = new NumberList();
 
   var rectanglesPlaced = new List();
@@ -160,7 +159,7 @@ StringListVisOperators.tagCloudRectangles = function(stringList, weights, frame,
   for(var i = 0; stringList[i] != null; i++) {
     textSizes[i] = roundSizes ? Math.round(normWeights[i] * 12) * dL : normWeights[i] * 12 * dL;
 
-    DrawTexts.setContextTextProperties('black', textSizes[i], LOADED_FONT, null, null, 'bold');
+    DrawTexts.setContextTextProperties('black', textSizes[i], graphics.getFontFamily(), null, null, 'bold');
     w = Math.ceil((2 + graphics.context.measureText(stringList[i]).width) / dL) * dL;
     h = textSizes[i];
 

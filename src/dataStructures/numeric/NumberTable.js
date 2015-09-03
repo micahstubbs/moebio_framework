@@ -71,7 +71,6 @@ NumberTable.fromArray = function(array) {
  */
 NumberTable.prototype.getMax = function() {
   if(this.length === 0) return null;
-  console.log(this[0])
 
   var max = this[0].getMax();
   var i;
@@ -86,7 +85,7 @@ NumberTable.prototype.getMax = function() {
  * @todo write docs
  */
 NumberTable.prototype.getMin = function() {
-  if(this.length == 0) return null;
+  if(this.length === 0) return null;
 
   var min = this[0].getMin();
   var i;
@@ -101,7 +100,7 @@ NumberTable.prototype.getMin = function() {
  * @todo write docs
  */
 NumberTable.prototype.getMinMaxInterval = function() {
-  if(this.length == 0) return null;
+  if(this.length === 0) return null;
   var rangeInterval = (this[0]).getMinMaxInterval();
   for(var i = 1; this[i] != null; i++) {
     var newRange = (this[i]).getMinMaxInterval();

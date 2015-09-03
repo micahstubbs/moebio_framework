@@ -153,8 +153,9 @@ RectangleOperators.packingRectangles = function(weights, packingMode, rectangle,
       return europeQuadrigram(weights);
     case 5:
       param = param || 0;
-      if(param == 0) {
-        var nLists = Math.round(Math.sqrt(weights.length));
+      var nLists;
+      if(param === 0) {
+        nLists = Math.round(Math.sqrt(weights.length));
       } else {
         nLists = Math.round(weights.length / param);
       }
@@ -192,8 +193,8 @@ RectangleOperators.packingRectangles = function(weights, packingMode, rectangle,
  */
 RectangleOperators.squarify = function(frame, weights, isNormalizedWeights, isSortedWeights) { //, funcionEvaluacionnWeights:Function=null):Array{
   if(weights == null) return;
-  if(weights.length == 0) return new RectangleList();
-  if(weights.length == 1) return new RectangleList(frame);
+  if(weights.length === 0) return new RectangleList();
+  if(weights.length === 1) return new RectangleList(frame);
 
   isNormalizedWeights = isNormalizedWeights ? isNormalizedWeights : false;
   isSortedWeights = isSortedWeights ? isSortedWeights : false;
@@ -205,8 +206,9 @@ RectangleOperators.squarify = function(frame, weights, isNormalizedWeights, isSo
     newWeightList = NumberListOperators.normalizedToSum(weights);
   }
 
+  var newPositions;
   if(!isSortedWeights) {
-    var newPositions = newWeightList.getSortIndexes(); // ListOperators.sortListByNumberList();// newWeightList.sortNumericIndexedDescending();
+    newPositions = newWeightList.getSortIndexes(); // ListOperators.sortListByNumberList();// newWeightList.sortNumericIndexedDescending();
     newWeightList = ListOperators.sortListByNumberList(newWeightList, newWeightList);
   }
 
@@ -223,13 +225,14 @@ RectangleOperators.squarify = function(frame, weights, isNormalizedWeights, isSo
   var freeSubRectangle = new Rectangle();
   var nWeights = weights.length;
   var lastRectangle;
+  var newRectangleList;
+  var i, j;
 
   if(nWeights > 2) {
-    var i, j, k;
     var sum;
     for(i = index; i < nWeights; i++) {
       proportion = Number.MAX_VALUE;
-      if(newWeightList[i] == 0) {
+      if(newWeightList[i] === 0) {
         rectangleList.push(new Rectangle(freeSubRectangle.x, freeSubRectangle.y, 0, 0));
       } else {
         for(j = 1; j < nWeights; j++) {
@@ -256,11 +259,11 @@ RectangleOperators.squarify = function(frame, weights, isNormalizedWeights, isSo
           }
         }
 
-        if(prevSubRectangleList.length == 0) {
+        if(prevSubRectangleList.length === 0) {
           rectangleList.push(new Rectangle(freeRectangle.x, freeRectangle.y, freeRectangle.width, freeRectangle.height)); //freeRectangle.clone());
           if(rectangleList.length == nWeights) {
             if(!isSortedWeights) {
-              var newRectangleList = new List(); //RectangleList();
+              newRectangleList = new List(); //RectangleList();
               for(i = 0; rectangleList[i] != null; i++) {
                 newRectangleList[newPositions[i]] = rectangleList[i];
               }

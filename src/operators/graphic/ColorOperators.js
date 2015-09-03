@@ -169,8 +169,8 @@ ColorOperators.RGBtoHSV = function(r, g, b) {
     var max = Math.max(Math.max(r, g), b);
     v = max / 255;
     var delta = max - min;
-    if(delta == 0) return new Array(0, 0, r / 255);
-    if(max != 0) {
+    if(delta === 0) return new Array(0, 0, r / 255);
+    if(max !== 0) {
       s = delta / max;
     } else {
       s = 0;
@@ -207,7 +207,7 @@ ColorOperators.HSVtoRGB = function(hue, saturation, value) {
   var p;
   var q;
   var t;
-  if(saturation == 0) {
+  if(saturation === 0) {
     r = g = b = value;
     return [Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255)];
   }
@@ -260,18 +260,18 @@ ColorOperators.HSVtoRGB = function(hue, saturation, value) {
 ColorOperators.HSLtoRGB = function(hue, saturation, light) {
   var r, g, b;
 
-  if(saturation == 0) {
+  function hue2rgb(p, q, t) {
+    if(t < 0) t += 1;
+    if(t > 1) t -= 1;
+    if(t < 1 / 6) return p + (q - p) * 6 * t;
+    if(t < 1 / 2) return q;
+    if(t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+    return p;
+  }
+
+  if(saturation === 0) {
     r = g = b = light; // achromatic
   } else {
-    function hue2rgb(p, q, t) {
-      if(t < 0) t += 1;
-      if(t > 1) t -= 1;
-      if(t < 1 / 6) return p + (q - p) * 6 * t;
-      if(t < 1 / 2) return q;
-      if(t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-      return p;
-    }
-
     var q = light < 0.5 ? light * (1 + saturation) : light + saturation - light * saturation;
     var p = 2 * light - q;
     r = hue2rgb(p, q, (hue / 360) + 1 / 3);
@@ -337,7 +337,6 @@ ColorOperators.getRandomColor = function() {
  */
 ColorOperators.colorStringToRGB = function(color_string) {
   //c.log('color_string:['+color_string+']');
-  var ok = false;
 
   // strip any leading #
   if(color_string.charAt(0) == '#') { // remove # if any

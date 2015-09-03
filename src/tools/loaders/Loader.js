@@ -1,3 +1,5 @@
+/* jshint -W022 */
+
 import LoadEvent from "src/tools/loaders/LoadEvent";
 
 function Loader() {}
@@ -77,16 +79,16 @@ Loader.loadData = function(url, onLoadData, callee, param, send_object_json, wit
     // branch for IE/Windows ActiveX version
   } else if(window.ActiveXObject) {
     try {
-      req = new ActiveXObject("Msxml2.XMLHTTP.6.0");
+      req = new window.ActiveXObject("Msxml2.XMLHTTP.6.0");
     } catch(e) {
       try {
-        req = new ActiveXObject("Msxml2.XMLHTTP.3.0");
+        req = new window.ActiveXObject("Msxml2.XMLHTTP.3.0");
       } catch(e) {
         try {
-          req = new ActiveXObject("Msxml2.XMLHTTP");
+          req = new window.ActiveXObject("Msxml2.XMLHTTP");
         } catch(e) {
           try {
-            req = new ActiveXObject("Microsoft.XMLHTTP");
+            req = new window.ActiveXObject("Microsoft.XMLHTTP");
           } catch(e) {
             req = false;
           }
@@ -110,13 +112,6 @@ Loader.loadData = function(url, onLoadData, callee, param, send_object_json, wit
   }
 };
 
-
-//TODO this method isn't reference by anything else.
-function LoaderRequest(url, method, data) {
-  this.url = url;
-  this.method = method ? method : "GET";
-  this.data = data;
-}
 
 Loader.loadImage = function(url, onComplete, callee, param) {
   Loader.n_loading++;
@@ -247,10 +242,10 @@ Loader.loadXML = function(url, onLoadData) {
     // branch for IE/Windows ActiveX version
   } else if(window.ActiveXObject) {
     try {
-      req = new ActiveXObject("Msxml2.XMLHTTP");
+      req = new window.ActiveXObject("Msxml2.XMLHTTP");
     } catch(e) {
       try {
-        req = new ActiveXObject("Microsoft.XMLHTTP");
+        req = new window.ActiveXObject("Microsoft.XMLHTTP");
       } catch(e) {
         req = false;
       }
@@ -267,7 +262,7 @@ Loader.loadXML = function(url, onLoadData) {
     // only if req shows "loaded"
     if(req.readyState == 4) {
       // only if "OK"
-      if(req.status == 200 || req.status == 0) {
+      if(req.status == 200 || req.status === 0) {
         onLoadComplete(req.responseXML);
 
       } else {
@@ -312,7 +307,7 @@ Loader.sendDataToPhp = function(url, data, onLoadData, callee, param) {
       e.url = url;
       e.param = param;
 
-      if(req.status == 200 || (req.status == 0 && req.responseText != null)) {
+      if(req.status == 200 || (req.status === 0 && req.responseText != null)) {
         e.result = req.responseText;
         onLoadData.call(target, e);
       } else {

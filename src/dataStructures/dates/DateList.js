@@ -1,7 +1,5 @@
 import List from "src/dataStructures/lists/List";
 import NumberList from "src/dataStructures/numeric/NumberList";
-import StringList from "src/dataStructures/strings/StringList";
-import DateOperators from "src/operators/dates/DateOperators";
 
 DateList.prototype = new List();
 DateList.prototype.constructor = DateList;

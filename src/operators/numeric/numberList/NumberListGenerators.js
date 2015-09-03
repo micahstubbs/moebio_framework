@@ -23,7 +23,7 @@ export default NumberListGenerators;
 NumberListGenerators.createSortedNumberList = function(nValues, start, step) {
   start = start || 0;
   step = step || 1;
-  if(step == 0) step = 1;
+  if(step === 0) step = 1;
   var i;
   var numberList = new NumberList();
   for(i = 0; i < nValues; i++) {

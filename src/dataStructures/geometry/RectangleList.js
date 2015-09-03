@@ -37,7 +37,7 @@ RectangleList.fromArray = function(array) {
  * @todo write docs
  */
 RectangleList.prototype.getFrame = function() {//TODO: use RectangleOperators.minRect
-  if(this.length == 0) return null;
+  if(this.length === 0) return null;
 
   var frame = this[0].clone();
   frame.width = frame.getRight();
