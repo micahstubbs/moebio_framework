@@ -11,7 +11,7 @@ import NumberListOperators from "src/operators/numeric/numberList/NumberListOper
  * @classdesc Operators that contain visualization method algoritms and return a Table with parameters for StringListPrimitive
  *
  * @namespace
- * @category strings
+ * @category drawing
  */
 function StringListDraw() {}
 export default StringListDraw;

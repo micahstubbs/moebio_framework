@@ -1,3 +1,10 @@
+
+/**
+ * @classdesc Functions for drawing objects.
+ *
+ * @namespace
+ * @category drawing
+ */
 function ObjectDraw() {}
 export default ObjectDraw;
 
