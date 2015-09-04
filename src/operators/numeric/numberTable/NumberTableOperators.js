@@ -90,8 +90,7 @@ NumberTableOperators.kMeans = function(numberTable, k, returnIndexesMode, N){
 
   returnIndexesMode = returnIndexesMode==null?0:returnIndexesMode;
   N = (N==null || !(N>0))?1000:N;
-
-  //var intervals = numberTable.getIntervals();
+  
   var clusters = new NumberTable();// = returnIndexesMode?new NumberList():new NumberTable();
 
   var i, j, l;
@@ -131,7 +130,7 @@ NumberTableOperators.kMeans = function(numberTable, k, returnIndexesMode, N){
 
     means[j] = row.clone();
 
-    console.log('initial mean', means[j].join(', '));
+    //console.log('initial mean', means[j].join(', '));
   }
 
   
@@ -193,8 +192,8 @@ NumberTableOperators.kMeans = function(numberTable, k, returnIndexesMode, N){
 
   }
 
-  console.log('clusters.getLengths()', clusters.getLengths());
-  console.log('clusters', clusters);
+  // console.log('clusters.getLengths()', clusters.getLengths());
+  // console.log('clusters', clusters);
 
   //prepare results
 

@@ -4,10 +4,14 @@ import List from "src/dataStructures/lists/List";
 import NumberList from "src/dataStructures/numeric/NumberList";
 import TableEncodings from "src/operators/lists/TableEncodings";
 import StringOperators from "src/operators/strings/StringOperators";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
+import ListOperators from "src/operators/lists/ListOperators";
+import NumberOperators from "src/operators/numeric/NumberOperators";
 import {
   instantiate,
   instantiateWithSameType,
   TYPES_SHORT_NAMES_DICTIONARY,
+  getColorFromDataModelType,
   typeOf
   } from "src/tools/utils/code/ClassUtils";
 //
@@ -272,7 +276,7 @@ Table.prototype.getSubTableByElementOnList = function(nList, element){
 Table.prototype.getSubTableByElementsOnList = function(nList, list){
   if(nList==null || list==null) return;
 
-  var i, j, value, list;
+  var i, j;
 
   if(nList<0) nList = this.length+nList;
   nList = nList%this.length;
@@ -485,6 +489,7 @@ Table.prototype.getReportHtml = function(level) {
   var maxLength = lengths.getMax();
   var averageLength = (minLength + maxLength) * 0.5;
   var sameLengths = minLength == maxLength;
+  var nLists = this.length;
 
   var text = "<b>" +( level > 0 ? (ident + "<font style=\"font-size:16px\">table report</f>") : "<font style=\"font-size:18px\">table report</f>" ) + "</b>";
 
@@ -535,19 +540,18 @@ Table.prototype.getReportHtml = function(level) {
 
 
   //list by list
-
-  if(this.length < 501) {
+  if(nLists < 501) {
     text += "<hr>";
     text +=  ident + "<font style=\"font-size:16px\"><b>lists reports</b></f>";
 
     var i;
-    for(i = 0; this[i] != null; i++) {
+    for(i = 0; i<nLists; i++) {
       text += "<br>" + ident + i + ": " + (this[i].name?"<b>"+this[i].name+"</b>":"<i>no name</i>");
       try{
          text += this[i].getReportHtml(1);
       } catch(err){
         text += ident + "[!] something wrong with list <font style=\"font-size:10px\">:" + err + "</f>";
-        c.l('getReportHtml err', err);
+        console.log('getReportHtml err', err);
       }
     }
   }
@@ -590,7 +594,7 @@ Table.prototype.getReportHtml = function(level) {
         text += ident + "[!] second list is subcategorical to first list";
         break;
     }
-
+    
     if(subCategoryCase!=1){
       text += ident + "information gain when segmenting first list by the second: "+NumberOperators.numberToString( ListOperators.getInformationGain(this[0], this[1]), 4);
       text += ident + "information gain when segmenting second list by the first: "+NumberOperators.numberToString( ListOperators.getInformationGain(this[1], this[0]), 4);

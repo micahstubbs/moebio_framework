@@ -2,6 +2,8 @@ import StringOperators from "src/operators/strings/StringOperators";
 import DataModel from "src/dataStructures/DataModel";
 import NumberList from "src/dataStructures/numeric/NumberList";
 import ColorList from "src/dataStructures/graphic/ColorList";
+import ColorOperators from "src/operators/graphic/ColorOperators";
+import ColorScales from "src/operators/graphic/ColorScales";
 import StringList from "src/dataStructures/strings/StringList";
 import DateList from "src/dataStructures/dates/DateList";
 import NodeList from "src/dataStructures/structures/lists/NodeList";
@@ -13,6 +15,7 @@ import NumberTable from "src/dataStructures/numeric/NumberTable";
 import Interval from "src/dataStructures/numeric/Interval";
 import ListOperators from "src/operators/lists/ListOperators";
 import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
+import NumberOperators from "src/operators/numeric/NumberOperators";
 import { instantiateWithSameType, typeOf, instantiate } from "src/tools/utils/code/ClassUtils";
 
 List.prototype = new DataModel();
@@ -227,12 +230,13 @@ List.prototype.getImproved = function() {
     break;
   }
 
+  var l = this.length;
   if(newList === null ||  newList === "") {
     //c.l('getImproved | all elelemnts no same type')
 
     var allLists = true;
     var i;
-    for(i = 0; this[i] != null; i++) {
+    for(i = 0; i<l; i++) {
       //c.l('isList?', i, this[i].isList);
       if(!(this[i].isList)) {
         allLists = false;
@@ -256,11 +260,12 @@ List.prototype.getImproved = function() {
  * @return {Boolean} true if all elements are identical.
  * tags:
  */
-List.prototype.sameElements = function(list) {
+List.prototype.sameElements = function(list) {//TODO: replace name by: isEquivalent
   if(this.length != list.length) return false;
 
   var i;
-  for(i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(i = 0; i<l; i++) {
     if(this[i] != list[i]) return false;
   }
 
@@ -686,7 +691,8 @@ List.prototype.getFrequenciesTable = function(sortListsByOccurrences, addWeights
   if(addWeightsNormalizedToSum) table[2] = table[1].getNormalizedToSum();
   if(addCategoricalColors){
     var colors = new ColorList();
-    for(i = 0; table[0][i]!=null; i++) {
+    l = table[0].length;
+    for(i = 0; i<l; i++) {
         colors[i] = ColorListGenerators._HARDCODED_CATEGORICAL_COLORS[i%ColorListGenerators._HARDCODED_CATEGORICAL_COLORS.length];
       }
     table.push(colors);
@@ -975,8 +981,9 @@ List.prototype.getSortedByList = function(list, ascending) {
 
   var pairsArray = [];
   var i;
+  var l = this.length;
 
-  for(i = 0; this[i] != null; i++) {
+  for(i = 0; i<l; i++) {
     pairsArray[i] = [this[i], list[i]];
   }
 
@@ -996,7 +1003,7 @@ List.prototype.getSortedByList = function(list, ascending) {
   var newList = instantiateWithSameType(this);
   newList.name = this.name;
 
-  for(i = 0; this[i] != null; i++) {
+  for(i = 0; i<l; i++) {
     newList[i] = pairsArray[i][0];
   }
 
@@ -1045,7 +1052,8 @@ List.prototype.indexesOf = function(element) {
  */
 List.prototype.indexOfElements = function(elements) {
   var numberList = new NumberList();
-  for(var i = 0; elements[i] != null; i++) {
+  var l = elements.length;
+  for(var i = 0; i<l; i++) {
     numberList[i] = this.indexOf(elements[i]);
   }
   return numberList;
@@ -1060,7 +1068,8 @@ List.prototype.indexOfElements = function(elements) {
  * tags: filter
  */
 List.prototype.getFirstElementByName = function(name, returnIndex) {
-  for(var i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 0; i<l; i++) {
     if(this[i].name == name) return returnIndex ? i : this[i];
   }
   return returnIndex ? -1 : null;
@@ -1077,9 +1086,10 @@ List.prototype.getFirstElementByName = function(name, returnIndex) {
 List.prototype.getElementsByNames = function(names, returnIndex) {
   var list = returnIndex ? new NumberList() : new List();
   var i;
+  var l = this.length;
 
   names.forEach(function(name) {
-    for(i = 0; this[i] != null; i++) {
+    for(i = 0; i<l; i++) {
       if(this[i].name == name) {
         list.push(returnIndex ? i : this[i]);
         break;
@@ -1398,7 +1408,8 @@ List.prototype.concat = function() {
       var newList = this.clone();
       var args = arguments[0];
       var i;
-      for(i=0; args[i]!=null; i++){
+      var l = args.length;
+      for(i=0; i<l; i++){
         // c.l('   +_+_+_+args[i]',args[i]);
         newList.addNode(args[i]);
       }
@@ -1490,7 +1501,7 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
   }
   text += ident + "type: <b>" + this.type + "</b>";
 
-  if(length == 0) {
+  if(length === 0) {
     text += ident + "single element: [<b>" + this[0] + "</b>]";
     return text;
   } else {
@@ -1508,8 +1519,11 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
       var accumsum = 0;
       var maxAccumsum = -99999;
       var sizeAccum = Math.max(Math.floor(this.length/50), 1);
+      var val;
 
-      this.forEach(function(val){
+      //this.forEach(function(val){
+      for(i=0; i<length; i++){
+        val = this[i];
         min = Math.min(min, val);
         max = Math.max(max, val);
         average += val;
@@ -1522,8 +1536,8 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
           accumsum=0;
           index=0;
         }
-      });
-      if(index!=0){
+      }
+      if(index!==0){
           accumsum /=index;
           maxAccumsum = Math.max(maxAccumsum, accumsum);
           shorten.push(accumsum);
@@ -1544,8 +1558,9 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
       }
       //var shorten = NumberListOperators.shorten(this, 70);
       //shorten = shorten.getNormalizedToMax();
+      var nShorten = shorten.length;
       text += ident;
-      for(i=0; shorten[i]!=null; i++){
+      for(i=0; i<nShorten; i++){
         text += "<font style=\"font-size:7px\"><font color=\""+ColorOperators.colorStringToHEX(ColorScales.grayToOrange(shorten[i]))+"\">█</f></f>";
       }
       break;
@@ -1602,12 +1617,14 @@ List.prototype.pushIfUnique = function(element) {
 List.prototype.removeElements = function(elements) { //TODO: make it more efficient (avoiding the splice method)
   var i;
   var dictionary = {};
+  var l = this.length;
+  var nElements = elements.length;
 
-  for(i=0; elements[i]!=null; i++){
+  for(i=0; i<nElements; i++){
     dictionary[elements[i]] = true;
   }
 
-  for(i = 0; this[i]!=null; i++) {
+  for(i = 0; i<l; i++) {
     //if(elements.indexOf(this[i]) > -1) {
     if(dictionary[this[i]]) {
       this.splice(i, 1);
@@ -1636,7 +1653,8 @@ List.prototype.removeElementsAtIndexes = function(indexes) {
 };
 
 List.prototype.removeRepetitions = function() {
-  for(var i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 0; i<l; i++) {
     if(this.indexOf(this[i], i + 1) != -1) {
       this.splice(i, 1);
     }
@@ -1659,11 +1677,14 @@ List.prototype.replace = function(elementToFind, elementToInsert) {
 List.prototype.assignNames = function(names) {
   if(names == null) return this;
   var n = names.length;
+  var l = this.length;
+  var i;
 
-  this.forEach(function(element, i) {
-    element.name = names[i % n];
-  });
-
+  //this.forEach(function(element, i) {
+  for(i=0; i<l; i++){
+    this[i].name = names[i % n];
+  }
+  
   return this;
 };
 
@@ -1672,22 +1693,19 @@ List.prototype.splice = function() { //TODO: replace
   switch(this.type) {
     case 'NumberList':
       return NumberList.fromArray(this._splice.apply(this, arguments));
-    break;
     case 'StringList':
       return StringList.fromArray(this._splice.apply(this, arguments));
-    break;
     case 'NodeList':
       return NodeList.fromArray(this._splice.apply(this, arguments));
-    break;
     case 'DateList':
       return DateList.fromArray(this._splice.apply(this, arguments));
-    break;
   }
   return List.fromArray(this._splice.apply(this, arguments)).getImproved();
 };
 
 List.prototype.destroy = function() {
-  for(var i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 0; i<l; i++) {
     delete this[i];
   }
 };

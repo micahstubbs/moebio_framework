@@ -2,6 +2,7 @@ import StringList from "src/dataStructures/strings/StringList";
 import ListOperators from "src/operators/lists/ListOperators";
 import NumberList from "src/dataStructures/numeric/NumberList";
 import Table from "src/dataStructures/lists/Table";
+import ColorOperators from "src/operators/graphic/ColorOperators";
 
 /**
  * @classdesc  String Operators

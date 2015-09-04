@@ -128,7 +128,8 @@ NumberList.prototype.getMax = function() {
   if(this.length === 0) return null;
   var i;
   var max = this[0];
-  for(i = 1; i < this.length; i++) {
+  var l = this.length;
+  for(i = 1; i < l; i++) {
     max = Math.max(max, this[i]);
   }
   return max;
@@ -143,7 +144,8 @@ NumberList.prototype.getAmplitude = function() {
   if(this.length === 0) return 0;
   var min = this[0];
   var max = this[0];
-  for(var i = 1; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 1; i<l; i++) {
     min = Math.min(min, this[i]);
     max = Math.max(max, this[i]);
   }
@@ -169,7 +171,8 @@ NumberList.prototype.getSum = function() {
   if(this.length === 0) return 0;
   var i;
   var sum = this[0];
-  for(i = 1; i < this.length; i++) {
+  var l = this.length;
+  for(i = 1; i < l; i++) {
     sum += this[i];
   }
   return sum;
@@ -185,7 +188,8 @@ NumberList.prototype.getProduct = function() {
   if(this.length === 0) return null;
   var i;
   var product = this[0];
-  for(i = 1; i < this.length; i++) {
+  var l = this.length;
+  for(i = 1; i < l; i++) {
     product *= this[i];
   }
   return product;
@@ -233,7 +237,8 @@ NumberList.prototype.getNormalized = function(factor) {
   var interval = this.getMinMaxInterval();
   var a = interval.getAmplitude();
   var newNumberList = new NumberList();
-  for(i = 0; i < this.length; i++) {
+  var l = this.length;
+  for(i = 0; i < l; i++) {
     newNumberList.push(factor * ((this[i] - interval.x) / a));
   }
   newNumberList.name = this.name;
@@ -249,16 +254,18 @@ NumberList.prototype.getNormalized = function(factor) {
  */
 NumberList.prototype.getNormalizedToMax = function(factor) {
   factor = factor == null ? 1 : factor;
+  var l = this.length;
 
-  if(this.length == 0) return null;
-
+  if(l === 0) return null;
+  
   var max = this.getMax();
-  if(max == 0) {
+  if(max === 0) {
     max = this.getMin();
-    if(max == 0) return ListGenerators.createListWithSameElement(this.length, 0);
+    if(max === 0) return ListGenerators.createListWithSameElement(this.length, 0);
   }
   var newNumberList = new NumberList();
-  for(var i = 0; this[i] != null; i++) {
+  
+  for(var i = 0; i<l; i++) {
     newNumberList.push(factor * (this[i] / max));
   }
   newNumberList.name = this.name;
@@ -276,7 +283,8 @@ NumberList.prototype.getInterval = function() {
   if(this.length === 0) return null;
   var max = this[0];
   var min = this[0];
-  for(var i = 1; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 1; i<l; i++) {
     max = Math.max(max, this[i]);
     min = Math.min(min, this[i]);
   }
@@ -330,7 +338,8 @@ NumberList.prototype.getNumbersSimplified = function(method, param) {
 NumberList.prototype.toPolygon = function() {
   if(this.length === 0) return null;
   var polygon = new Polygon();
-  for(var i = 0; this[i + 1] != null; i += 2) {
+  var l = this.length-1;
+  for(var i = 0; i<l; i += 2) {
     polygon.push(new Point(this[i], this[i + 1]));
   }
   return polygon;
@@ -357,9 +366,11 @@ NumberList.prototype.getAverage = function() {
  */
 NumberList.prototype.getGeometricMean = function() {
   var s = 0;
-  this.forEach(function(val) {
-    s += Math.log(val);
-  });
+  //this.forEach(function(val) {
+  var l = this.length;
+  for(var i = 0; i<l; i++) {
+    s += Math.log(this[i]);
+  }
   return Math.pow(Math.E, s / this.length);
 };
 
@@ -371,7 +382,8 @@ NumberList.prototype.getGeometricMean = function() {
  */
 NumberList.prototype.getNorm = function() {
   var sq = 0;
-  for(var i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 0; i<l; i++) {
     sq += Math.pow(this[i], 2);
   }
   return Math.sqrt(sq);
@@ -386,7 +398,8 @@ NumberList.prototype.getNorm = function() {
 NumberList.prototype.getVariance = function() {
   var sd = 0;
   var average = this.getAverage();
-  for(var i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 0; i<l; i++) {
     sd += Math.pow(this[i] - average, 2);
   }
   return sd / this.length;
@@ -480,10 +493,11 @@ NumberList.prototype.getSortIndexes = function(descending) {
 
   var pairs = [];
   var newList = new NumberList();
+  var l = this.length;
 
   if(this.length === 0) return newList;
 
-  for(var i = 0; this[i] != null; i++) {
+  for(var i = 0; i<l; i++) {
     pairs.push([i, this[i]]);
   }
 
@@ -517,7 +531,8 @@ NumberList.prototype.getSortIndexes = function(descending) {
 NumberList.prototype.factor = function(value) {
   var i;
   var newNumberList = new NumberList();
-  for(i = 0; i < this.length; i++) {
+  var l = this.length;
+  for(i = 0; i < l; i++) {
     newNumberList.push(this[i] * value);
   }
   newNumberList.name = this.name;
@@ -542,15 +557,16 @@ NumberList.prototype.add = function(object) {
   var i;
   var newNumberList = new NumberList();
   var type = typeOf(object);
+  var l = this.length;
 
   switch(type) {
     case 'number':
-      for(i = 0; this[i] != null; i++) {
+      for(i = 0; i<l; i++) {
         newNumberList[i] = this[i] + object;
       }
       break;
     case 'NumberList':
-      for(i = 0; this[i] != null; i++) {
+      for(i = 0; i<l; i++) {
         newNumberList[i] = this[i] + object[i % object.length];
       }
       break;
@@ -578,15 +594,16 @@ NumberList.prototype.subtract = function(object) {
   var i;
   var newNumberList = new NumberList();
   var type = typeOf(object);
+  var l = this.length;
 
   switch(type) {
     case 'number':
-      for(i = 0; this[i] != null; i++) {
+      for(i = 0; i<l; i++) {
         newNumberList[i] = this[i] - object;
       }
       break;
     case 'NumberList':
-      for(i = 0; this[i] != null; i++) {
+      for(i = 0; i<l; i++) {
         newNumberList[i] = this[i] - object[i % object.length];
       }
       break;
@@ -614,15 +631,16 @@ NumberList.prototype.divide = function(object) {
   var i;
   var newNumberList = new NumberList();
   var type = typeOf(object);
+  var l = this.length;
 
   switch(type) {
     case 'number':
-      for(i = 0; this[i] != null; i++) {
+      for(i = 0; i<l; i++) {
         newNumberList[i] = this[i] / object;
       }
       break;
     case 'NumberList':
-      for(i = 0; this[i] != null; i++) {
+      for(i = 0; i<l; i++) {
         newNumberList[i] = this[i] / object[i % object.length];
       }
       break;
@@ -641,7 +659,9 @@ NumberList.prototype.divide = function(object) {
 NumberList.prototype.sqrt = function() {
   var i;
   var newNumberList = new NumberList();
-  for(i = 0; i < this.length; i++) {
+  var l = this.length;
+
+  for(i = 0; i < l; i++) {
     newNumberList.push(Math.sqrt(this[i]));
   }
   newNumberList.name = this.name;
@@ -658,7 +678,8 @@ NumberList.prototype.sqrt = function() {
 NumberList.prototype.pow = function(power) {
   var i;
   var newNumberList = new NumberList();
-  for(i = 0; i < this.length; i++) {
+  var l = this.length;
+  for(i = 0; i < l; i++) {
     newNumberList.push(Math.pow(this[i], power));
   }
   newNumberList.name = this.name;
@@ -680,7 +701,8 @@ NumberList.prototype.log = function(add) {
 
   var i;
   var newNumberList = new NumberList();
-  for(i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(i = 0; i<l; i++) {
     newNumberList[i] = Math.log(this[i] + add);
   }
   newNumberList.name = this.name;
@@ -697,7 +719,8 @@ NumberList.prototype.log = function(add) {
 NumberList.prototype.floor = function() {
   var i;
   var newNumberList = new NumberList();
-  for(i = 0; i < this.length; i++) {
+  var l = this.length;
+  for(i = 0; i < l; i++) {
     newNumberList.push(Math.floor(this[i]));
   }
   newNumberList.name = this.name;
@@ -748,7 +771,8 @@ NumberList.prototype.distance = function(numberList) {
  * @return {Boolean} True if all values in both lists match.
  */
 NumberList.prototype.isEquivalent = function(numberList) {
-  for(var i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 0; i<l; i++) {
     if(this[i] != numberList[i]) return false;
   }
   return true;
@@ -762,7 +786,8 @@ NumberList.prototype.isEquivalent = function(numberList) {
 NumberList.prototype.toStringList = function() {
   var i;
   var stringList = new StringList();
-  for(i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(i = 0; i<l; i++) {
     stringList[i] = String(this[i]);
   }
   stringList.name = this.name;
@@ -777,8 +802,9 @@ NumberList.prototype.approach = function(destinty, speed) {
 
   var i;
   var antispeed = 1 - speed;
+  var l = this.length;
 
-  for(i = 0; this[i] != null; i++) {
+  for(i = 0; i<l; i++) {
     this[i] = antispeed * this[i] + speed * destinty[i];
   }
 };
