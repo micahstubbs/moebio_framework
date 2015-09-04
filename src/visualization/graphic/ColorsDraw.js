@@ -1,3 +1,10 @@
+
+/**
+ * @classdesc Functions for drawing {@link Color|Colors}.
+ *
+ * @namespace
+ * @category drawing
+ */
 function ColorsDraw() {}
 export default ColorsDraw;
 

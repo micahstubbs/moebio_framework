@@ -3,7 +3,7 @@ import StringList from "src/dataStructures/strings/StringList";
 /**
  * @classdesc static Class with methods to render text in canvas
  * @namespace
- * @category strings
+ * @category drawing
  */
 function DrawTexts() {}
 export default DrawTexts;

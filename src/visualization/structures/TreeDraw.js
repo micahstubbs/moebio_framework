@@ -13,7 +13,7 @@ import NumberListOperators from "src/operators/numeric/numberList/NumberListOper
  * @classdesc Functions for drawing {@link Tree|Trees}.
  *
  * @namespace
- * @category networks
+ * @category drawing
  */
 function TreeDraw() {}
 export default TreeDraw;

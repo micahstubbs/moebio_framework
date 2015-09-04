@@ -10,7 +10,7 @@ import { TwoPi } from "src/Global";
  * @classdesc Draw basic shapes
  *
  * @namespace
- * @category geometry
+ * @category drawing
  */
 function Draw() {}
 export default Draw;

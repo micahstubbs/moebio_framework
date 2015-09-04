@@ -1,5 +1,11 @@
 import List from "src/dataStructures/lists/List";
 
+/**
+ * @classdesc Functions for drawing {@link List|Lists}.
+ *
+ * @namespace
+ * @category drawing
+ */
 function ListDraw() {}
 export default ListDraw;
 

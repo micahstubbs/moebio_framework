@@ -1,6 +1,12 @@
 import Rectangle from "src/dataStructures/geometry/Rectangle";
 import DrawTexts from "src/tools/graphic/DrawTexts";
 
+/**
+ * @classdesc Functions for drawing Strings
+ *
+ * @namespace
+ * @category drawing
+ */
 function StringDraw() {}
 export default StringDraw;
 
