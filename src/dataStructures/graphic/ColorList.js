@@ -20,7 +20,8 @@ ColorList.prototype.constructor = ColorList;
 function ColorList() {
   var args = [];
   var i;
-  for(i = 0; i < arguments.length; i++) {
+  var lArgs = arguments.length;
+  for(i = 0; i < lArgs; i++) {
     args[i] = arguments[i];
   }
   var array = List.apply(this, args);
@@ -53,8 +54,9 @@ ColorList.fromArray = function(array) {
  */
 ColorList.prototype.getRgbArrays = function() {
   var rgbArrays = new List();
+  var l = this.length;
 
-  for(var i = 0; this[i] != null; i++) {
+  for(var i = 0; i<l; i++) {
     rgbArrays[i] = ColorOperators.colorStringToRGB(this[i]);
   }
 
@@ -71,8 +73,9 @@ ColorList.prototype.getRgbArrays = function() {
  */
 ColorList.prototype.getInterpolated = function(color, value) {
   var newColorList = new ColorList();
+  var l = this.length;
 
-  for(var i = 0; this[i] != null; i++) {
+  for(var i = 0; i<l; i++) {
     newColorList[i] = ColorOperators.interpolateColors(this[i], color, value);
   }
 
@@ -87,8 +90,9 @@ ColorList.prototype.getInterpolated = function(color, value) {
  */
 ColorList.prototype.getInverted = function() {
   var newColorList = new ColorList();
+  var l = this.length;
 
-  for(var i = 0; this[i] != null; i++) {
+  for(var i = 0; i<l; i++) {
     newColorList[i] = ColorOperators.invertColor(this[i]);
   }
 
@@ -104,8 +108,9 @@ ColorList.prototype.getInverted = function() {
  */
 ColorList.prototype.addAlpha = function(alpha) {
   var newColorList = new ColorList();
+  var l = this.length;
 
-  for(var i = 0; this[i] != null; i++) {
+  for(var i = 0; i<l; i++) {
     newColorList[i] = ColorOperators.addAlpha(this[i], alpha);
   }
 

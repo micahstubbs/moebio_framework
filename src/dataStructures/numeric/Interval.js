@@ -45,7 +45,7 @@ Interval.prototype.getMax = function() {
  * @return {Number} the absolute difference between the starting and ending values.
  */
 Interval.prototype.getAmplitude = function() {
-  return Math.abs(this.x - this.y);
+  return Math.abs(this.y - this.x);
 };
 
 /**
@@ -56,14 +56,21 @@ Interval.prototype.getAmplitude = function() {
  * @return {Number} the difference between the starting and ending values.
  */
 Interval.prototype.getSignedAmplitude = function() {
-  return this.x - this.y;
+  return this.y - this.x;
 };
 
 /**
 * @todo write docs
 */
 Interval.prototype.getMiddle = function() {
-  return(this.x + this.y) * 0.5;
+  return (this.x + this.y)*0.5;
+};
+
+/**
+* @todo write docs
+*/
+Interval.prototype.getRandom = function() {
+  return this.x + (this.y - this.x)*Math.random();
 };
 
 /**
@@ -71,7 +78,7 @@ Interval.prototype.getMiddle = function() {
 */
 Interval.prototype.getSign = function() {
   if(this.x == this.y) return 0;
-  return this.getAmplitude() / this.getSignedAmplitude();
+  return Math.abs(this.y - this.x)/(this.y - this.x);
 };
 
 /**

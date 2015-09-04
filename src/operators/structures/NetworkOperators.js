@@ -1,5 +1,6 @@
 import ListOperators from "src/operators/lists/ListOperators";
 import NodeList from "src/dataStructures/structures/lists/NodeList";
+import RelationList from "src/dataStructures/structures/lists/RelationList";
 import List from "src/dataStructures/lists/List";
 import Table from "src/dataStructures/lists/Table";
 import Node from "src/dataStructures/structures/elements/Node";
@@ -54,11 +55,13 @@ NetworkOperators.degreeBetweenNodes = function(network, node0, node1) {
   var d = 1;
   var newNodes;
   var i;
+  var nNodes;
 
   //while(nodes.indexOf(node1)==-1){//TODO: check if getNodeById is faster
   while(nodes.getNodeById(node1.id) == null) {
     newNodes = nodes.clone();
-    for(i = 0; nodes[i] != null; i++) {
+    nNodes = nodes.length;
+    for(i = 0; i<nNodes; i++) {
       newNodes = ListOperators.concat(newNodes, nodes[i].nodeList); //TODO: check if obsolete concat + check if a concatIfNew could be useful, specially if overriden in NodeList, with getNodeById
     }
     newNodes = newNodes.getWithoutRepetitions();
@@ -80,9 +83,14 @@ NetworkOperators.degreeBetweenNodes = function(network, node0, node1) {
  */
 NetworkOperators.getNodesBetweenTwoNodes = function(network, node0, node1){
   var nodeList = new NodeList();
-  network.nodeList.forEach(function(node){
+  var nNodes = network.nodeList.length;
+  var i;
+  var node;
+  //network.nodeList.forEach(function(node){
+  for(i=0; i<nNodes; i++){
+    node = network.nodeList[i];
     if(node.id!=node0.id && node.id!=node1.id && node0.nodeList.getNodeById(node.id)!=null && node1.nodeList.getNodeById(node.id)!=null) nodeList.addNode(node);
-  });
+  }
   return nodeList;
 };
 
@@ -99,40 +107,40 @@ NetworkOperators.getNodesBetweenTwoNodes = function(network, node0, node1){
 NetworkOperators.shortestPath = function(network, node0, node1, includeExtremes) {
   if(network == null || node0 == null || node1 == null) return null;
 
-  c.l('\n\n\n------------> shortestPath, network, node0, node1, includeExtremes', network, node0, node1, includeExtremes);
-  c.l('shortestPath | node0.id', node0.id);
-  c.l('shortestPath | node1.id', node1.id);
+  // console.log('\n\n\n------------> shortestPath, network, node0, node1, includeExtremes', network, node0, node1, includeExtremes);
+  // console.log('shortestPath | node0.id', node0.id);
+  // console.log('shortestPath | node1.id', node1.id);
   var tree = NetworkOperators.spanningTree(network, node0, node1);
-  //c.l('shortestPath | tree.nodeList.getIds()['+tree.nodeList.getIds().join('-')+"]");
-  c.l('shortestPath | tree.nodeList.length:'+tree.nodeList.length);
-  c.l('shortestPath, tree', tree);
+  //console.log('shortestPath | tree.nodeList.getIds()['+tree.nodeList.getIds().join('-')+"]");
+  // console.log('shortestPath | tree.nodeList.length:'+tree.nodeList.length);
+  // console.log('shortestPath, tree', tree);
   var path = new NodeList();
   if(includeExtremes) path.addNode(node1);
-  //c.l('shortestPath, path', path);
-  c.l('shortestPath, path ids: ['+path.getIds().join('-')+"]");
+  //console.log('shortestPath, path', path);
+  //console.log('shortestPath, path ids: ['+path.getIds().join('-')+"]");
   var node = tree.nodeList.getNodeById(node1.id);
-  c.l('shortestPath | node:', node);
+  //console.log('shortestPath | node:', node);
 
-  if(node == null) c.l('node==null !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n\n\n');
+  //if(node == null) console.log('node==null !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n\n\n');
 
   if(node == null) return null;
 
-  // c.l('---'); return;
+  // console.log('---'); return;
   //
 
 
-  c.l('  (pre while)>', node0.id, node1.id, node.id,  node.parent==null?'no parent!':node.parent.id);
+  //console.log('  (pre while)>', node0.id, node1.id, node.id,  node.parent==null?'no parent!':node.parent.id);
   while(node.parent.id != node0.id) {
     path.addNode(node.parent.node);
     node = node.parent;
     if(node == null) return null;
-    c.l('    >', node0.id, node1.id, node.id,  node.parent==null?'no parent!':node.parent.id);
+    //console.log('    >', node0.id, node1.id, node.id,  node.parent==null?'no parent!':node.parent.id);
   }
 
-  c.l('shortestPath, path ids: ['+path.getIds().join('-')+"]");
+  //console.log('shortestPath, path ids: ['+path.getIds().join('-')+"]");
 
 
-  // c.l('shortestPath, path', path);
+  // console.log('shortestPath, path', path);
   if(includeExtremes) path.addNode(node0);
   return path.getReversed();
 };
@@ -152,11 +160,11 @@ NetworkOperators.shortestPath = function(network, node0, node1, includeExtremes)
 NetworkOperators.shortestPaths = function(network, node0, node1, shortPath, spanningTree) {
   if(network == null || node0 == null || node1 == null) return null;
 
-
+  var i;
   var allPaths = new Table();
 
 
-  if(node0.nodeList.getNodeById(node1)!=null){
+  if(node0.nodeList.getNodeById(node1.id)!=null){
     allPaths.push(new NodeList(node0, node1));
     return allPaths;
   }
@@ -165,35 +173,36 @@ NetworkOperators.shortestPaths = function(network, node0, node1, shortPath, span
 
   if(spanningTree==null) spanningTree = NetworkOperators.spanningTree(network, node0, node1);
 
-  // c.l('[•--•] node0.id, node1.id', node0.id, node1.id);
-  // c.l('[•--•] shortestPaths | spanningTree.nodeList.length, spanningTree.nLevels', spanningTree.nodeList.length, spanningTree.nLevels);
+  //console.log('[•--•] node0.id, node1.id', node0.id, node1.id);
+  // console.log('[•--•] shortestPaths | spanningTree.nodeList.length, spanningTree.nLevels', spanningTree.nodeList.length, spanningTree.nLevels);
 
   // for(var i=0; i<spanningTree.nLevels; i++){
-  //   // c.l('  [•--•] level:'+i, spanningTree.getNodesByLevel(i).getIds().join(','));
+  //   // console.log('  [•--•] level:'+i, spanningTree.getNodesByLevel(i).getIds().join(','));
   // }
 
   //first we seek for the nodes in paths
 
   var n = spanningTree.nLevels;
-  // c.l('[•--•] n:', n);
+  //console.log('[•--•] spanningTree.nLevels:', n);
 
-  // c.l('[•--•] spanningTree.getNodesByLevel(spanningTree.nLevels-1).getNodeById(node1.id)', spanningTree.getNodesByLevel(spanningTree.nLevels-1).getNodeById(node1.id) );
+  // console.log('[•--•] spanningTree.getNodesByLevel(spanningTree.nLevels-1).getNodeById(node1.id)', spanningTree.getNodesByLevel(spanningTree.nLevels-1).getNodeById(node1.id) );
 
   var level1 = new NodeList(node1);
   var extended_from_1 = NetworkOperators.adjacentNodeList(network, level1, false);
   var level0 = ListOperators.intersection(extended_from_1, spanningTree.getNodesByLevel(n-2));//spanningTree.getNodesByLevel(n-2);
 
-  // c.l('[•--•] node1.nodeList', node1.nodeList.getIds().join(','));
-  // c.l('[•--•] level1', level1.getIds().join(','));
-  // c.l('[•--•] level on tree:', spanningTree.getNodesByLevel(n-2).getIds().join(','));
-  // c.l('[•--•] extended_from_1', extended_from_1.getIds().join(','));
-  // c.l('[•--•] ----> level0', level0.getIds().join(','));
+  // console.log('[•--•] node1.nodeList', node1.nodeList.getIds().join(','));
+  // console.log('[•--•] level1', level1.getIds().join(','));
+  // console.log('[•--•] level on tree:', spanningTree.getNodesByLevel(n-2).getIds().join(','));
+  // console.log('[•--•] extended_from_1', extended_from_1.getIds().join(','));
+  // console.log('[•--•] ----> level0', level0.getIds().join(','));
 
   var relationsTable = new Table();
+  var relationsBetween;
 
   relationsTable.push(NetworkOperators.getRelationsBetweenNodeLists(network, level0, level1, false));
 
-  // c.l('  [•--•] relationsTable[last]', relationsTable[relationsTable.length-1].getIds().join(','));
+  // console.log('  [•--•] relationsTable[last]', relationsTable[relationsTable.length-1].getIds().join(','));
 
   while(n>2){
     n--;
@@ -202,24 +211,26 @@ NetworkOperators.shortestPaths = function(network, node0, node1, shortPath, span
     //interection of level1 xpanded and level n-2 in tree
 
     level0 = ListOperators.intersection(NetworkOperators.adjacentNodeList(network, level1, false), spanningTree.getNodesByLevel(n-2));
-    // c.l('\n  [•--•] n:', n);
-    // c.l('  [•--•] level1', level1.getIds().join(','));
-    // c.l('  [•--•] level0', level0.getIds().join(','));
+    // console.log('\n  [•--•] n:', n);
+    // console.log('  [•--•] level1', level1.getIds().join(','));
+    // console.log('  [•--•] level0', level0.getIds().join(','));
 
-    relationsTable.push(NetworkOperators.getRelationsBetweenNodeLists(network, level0, level1, false));
-    // c.l('  [•--•] relationsTable[last]', relationsTable[relationsTable.length-1].getIds().join(','));
+    relationsBetween = NetworkOperators.getRelationsBetweenNodeLists(network, level0, level1, false);
+    //console.log('  [•--•] relationsBetween.length', relationsBetween.length);
+
+    relationsTable.push(relationsBetween);
+    // console.log('  [•--•] relationsTable[last]', relationsTable[relationsTable.length-1].getIds().join(','));
   }
 
   relationsTable = relationsTable.getReversed();
 
-  // c.l('\n  [•--•] relationsTable', relationsTable );
+  //console.log('\n  [•--•] relationsTable', relationsTable );
 
-  // c.l('[•--•] relationsTable.getLengths()', relationsTable.getLengths() );
+  // console.log('[•--•] relationsTable.getLengths()', relationsTable.getLengths() );
 
-  //c.l('[•--•] STOP for now'); return;
+  //console.log('[•--•] STOP for now'); return;
 
-  // c.l('\n\n[•--•] /////////--- build paths ----///////')
-
+  //console.log('\n\n[•--•] /////////--- build paths ----///////');
 
   for(i=0; relationsTable[0][i]!=null; i++){
     allPaths.push( new NodeList(node0, relationsTable[0][i].getOther(node0)) );
@@ -232,14 +243,14 @@ NetworkOperators.shortestPaths = function(network, node0, node1, shortPath, span
     var finalNode = path[path.length-1];
     var newPath;
 
-    // c.l('   finalNode.id:',finalNode.id);
+    // console.log('   finalNode.id:',finalNode.id);
 
     relations.forEach(function(relation){
-      // c.l('         test relation:', relation.id);
+      // console.log('         test relation:', relation.id);
       if(finalNode.relationList.getNodeById(relation.id)){
         newPath = path.clone();
         newPath.addNode(relation.getOther(finalNode));
-        // c.l('                newPath:',newPath.getIds().join(','));
+        // console.log('                newPath:',newPath.getIds().join(','));
         newPaths.push(newPath);
       }
     });
@@ -248,28 +259,35 @@ NetworkOperators.shortestPaths = function(network, node0, node1, shortPath, span
   };
 
   var toAdd;
+  var nPaths;
+  var path;
+
+  // console.log('[•--•] allPaths', allPaths);
+  // console.log('[•--•] allPaths[0]', allPaths[0]);
 
   while(allPaths[0].length<spanningTree.nLevels){
-    // c.l('\nallPaths[0].length', allPaths[0].length);
+    //console.log('\nallPaths[0].length', allPaths[0].length);
+    
     newPaths = new Table();
-    allPaths.forEach(function(path){
-      // c.l('        path:',path.getIds().join(','));
+    nPaths = allPaths.length;
+    //allPaths.forEach(function(path){
+    for(i=0; i<nPaths; i++){
+      path = allPaths[i];
+      // console.log('        path:',path.getIds().join(','));
       toAdd = _findNewPaths(path, relationsTable[path.length-1]);
-      // c.l('          added '+toAdd.length+' paths');
+      // console.log('          added '+toAdd.length+' paths');
       newPaths = newPaths.concat(toAdd);
-    });
+    }
     allPaths = newPaths;
-    // c.l('  [•--•] allPaths[0].length', allPaths[0].length);
+    // console.log('  [•--•] allPaths[0].length', allPaths[0].length);
   }
 
 
-
-
-  // c.l('allPaths.length:',allPaths.length);
-  // c.l('allPaths!!!!:',allPaths);
+  //console.log('allPaths.length:',allPaths.length);
+  // console.log('allPaths!!!!:',allPaths);
 
   // allPaths.forEach(function(path, i){
-  //   // c.l('[•--•] path '+i+': '+path.getIds().join(','));
+  //   console.log('[•--•] path '+i+': '+path.getIds().join(','));
   // });
 
   return allPaths;
@@ -277,41 +295,28 @@ NetworkOperators.shortestPaths = function(network, node0, node1, shortPath, span
 
 
 
+  // if(shortPath == null) shortPath = NetworkOperators.shortestPath(network, node0, node1, true);
+
+  // var lengthShortestPaths = shortPath.length;
 
 
+  // var firstPath = new NodeList();
+  // var i;
+
+  // firstPath.addNode(node0);
+  // allPaths.push(firstPath);
 
 
+  // var all = NetworkOperators._extendPaths(allPaths, node1, lengthShortestPaths);
 
-  ////////////////
+  // for(i = 0; all[i] != null; i++) {
+  //   if(all[i][all[i].length - 1] != node1) {
+  //     all.splice(i, 1);
+  //     i--;
+  //   }
+  // }
 
-
-
-
-
-
-
-  if(shortPath == null) shortPath = NetworkOperators.shortestPath(network, node0, node1, true);
-
-  var lengthShortestPaths = shortPath.length;
-
-
-  var firstPath = new NodeList();
-  var i;
-
-  firstPath.addNode(node0);
-  allPaths.push(firstPath);
-
-
-  var all = NetworkOperators._extendPaths(allPaths, node1, lengthShortestPaths);
-
-  for(i = 0; all[i] != null; i++) {
-    if(all[i][all[i].length - 1] != node1) {
-      all.splice(i, 1);
-      i--;
-    }
-  }
-
-  return all;
+  // return all;
 };
 
 /**
@@ -329,16 +334,20 @@ NetworkOperators.getRelationsBetweenNodeLists = function(network, nodeList0, nod
   if(directed==null) directed=true;
 
   var relations = new RelationList();
+  var nRelations = network.relationList.length;
+  var relation;
+  var i;
 
-  network.relationList.forEach(function(relation){
+  //network.relationList.forEach(function(relation){
+  for(i=0; i<nRelations; i++){
+    relation = network.relationList[i];
     if(
-      (nodeList0.getNodeById(relation.node0.id)!=null && nodeList1.getNodeById(relation.node1.id)!=null)
-      ||
+      (nodeList0.getNodeById(relation.node0.id)!=null && nodeList1.getNodeById(relation.node1.id)!=null) ||
       (!directed && nodeList0.getNodeById(relation.node1.id)!=null && nodeList1.getNodeById(relation.node0.id)!=null)
     ){
       relations.addRelation(relation);
     }
-  });
+  }
 
   return relations;
 };
@@ -357,13 +366,16 @@ NetworkOperators._extendPaths = function(allPaths, nodeDestiny, maxLength) {
 
   var newPaths = new Table();
   var path, newPath;
+  var nPaths = allPaths.length;
+  var nNext;
 
-  for(i = 0; allPaths[i] != null; i++) {
+  for(i = 0; i<nPaths; i++) {
     path = allPaths[i];
     node = path[path.length - 1];
     next = node.nodeList.getWithoutRepetitions();
+    nNext = next.length;
 
-    for(j = 0; next[j] != null; j++) {
+    for(j = 0; j<nNext; j++) {
       if(path.getNodeById(next[j].id) == null) {
         newPath = path.clone();
         newPath.addNode(next[j]);
@@ -418,7 +430,7 @@ NetworkOperators.loops = function(network, minSize) {
     console.log(loop.getIds().join('-'));
   });
 
-  var same = NetworkOperators._sameLoop(allLoops[0], allLoops[1]);
+  //var same = NetworkOperators._sameLoop(allLoops[0], allLoops[1]);
 
   return allLoops;
 };
@@ -439,7 +451,7 @@ NetworkOperators._sameLoop = function(loop0, loop1) {
  * @ignore
  */
 NetworkOperators._getLoopsOnNode = function(central) {
-  if(central.toNodeList.length == 0 || central.fromNodeList.length == 0) return [];
+  if(central.toNodeList.length === 0 || central.fromNodeList.length === 0) return [];
 
   var columns = new Table();
   var nl = new NodeList();
@@ -457,7 +469,7 @@ NetworkOperators._getLoopsOnNode = function(central) {
       for(j = 0; columns[i][j] != null; j++) {
         node = columns[i][j];
         delete node.onColumn;
-        if(node.toNodeList.length == 0) {
+        if(node.toNodeList.length === 0) {
           columns[i].removeNodeAtIndex(j);
           j--;
         }
@@ -494,7 +506,7 @@ NetworkOperators._getLoopsOnNode = function(central) {
 NetworkOperators._pathsToCentral = function(columns, iColumn, path, paths) {
   if(path.finished) return;
 
-  if(iColumn == 0) {
+  if(iColumn === 0) {
     path.finished = true;
     return;
   }
@@ -590,7 +602,7 @@ NetworkOperators.spanningTree = function(network, node0, nodeLimit) { //TODO: th
   parent.node = node0;
   tree.addNodeToTree(parent);
 
-  //c.l('spanningTree | network, node0.id, nodeLimit.id', network, node0.id, nodeLimit==null?'nodeLimit=null':nodeLimit.id);
+  //console.log('spanningTree | network, node0.id, nodeLimit.id', network, node0.id, nodeLimit==null?'nodeLimit=null':nodeLimit.id);
 
   var nodes = node0.nodeList;
   var newNodes;
@@ -606,14 +618,14 @@ NetworkOperators.spanningTree = function(network, node0, nodeLimit) { //TODO: th
     if(newNode.id == parent.id) continue;
     newNode.node = nodes[i];
     tree.addNodeToTree(newNode, parent);
-    //c.l('  spanningTree | add:', newNode.id)
-    //c.l('                               spanningTree add node: newNode.id, nodeLimit.id', newNode.id, nodeLimit.id);
+    //console.log('  spanningTree | add:', newNode.id)
+    //console.log('                               spanningTree add node: newNode.id, nodeLimit.id', newNode.id, nodeLimit.id);
     if(nodeLimit != null && newNode.id == nodeLimit.id){
       limitReached = true;
-      //c.l('       spanningTree | limitReached!');
+      //console.log('       spanningTree | limitReached!');
     }
   }
-  //c.l('spanningTree |  limitReached A',  limitReached);
+  //console.log('spanningTree |  limitReached A',  limitReached);
 
   if(limitReached) return tree;
 
@@ -627,18 +639,18 @@ NetworkOperators.spanningTree = function(network, node0, nodeLimit) { //TODO: th
     for(i = 0; nodes[i] != null; i++) {
       newNodes.addNodes(nodes[i].nodeList); //TODO: check if obsolete concat + check if a concatIfNew could be useful, specially if overriden in NodeList, with getNodeById
     }
-    //c.l('N '+N);
+    //console.log('N '+N);
     newNodes = newNodes.getWithoutRepetitions();
-    // c.l('      newNodes.getIds()', newNodes.getIds().join(','));
-    // c.l('      accumulated.getIds()', accumulated.getIds().join(','));
+    // console.log('      newNodes.getIds()', newNodes.getIds().join(','));
+    // console.log('      accumulated.getIds()', accumulated.getIds().join(','));
     newNodes.removeElements(accumulated);
-    // c.l('      newNodes.removeElements(accumulated) | newNodes.getIds()', newNodes.getIds().join(','));
-    //c.l('newNodes.length (if 0 return tree)', newNodes.length)
+    // console.log('      newNodes.removeElements(accumulated) | newNodes.getIds()', newNodes.getIds().join(','));
+    //console.log('newNodes.length (if 0 return tree)', newNodes.length)
     if(newNodes.length == 0) return tree;
 
     for(i = 0; newNodes[i] != null; i++) {
       newNode = new Node(newNodes[i].id, newNodes[i].name);
-      // c.l('                   ++'+newNodes[i].id);
+      // console.log('                   ++'+newNodes[i].id);
       newNode.node = newNodes[i];
       for(var j = 0; newNodes[i].nodeList[j] != null; j++) {
         id = newNodes[i].nodeList[j].id;
@@ -653,23 +665,23 @@ NetworkOperators.spanningTree = function(network, node0, nodeLimit) { //TODO: th
       }
     }
 
-    //c.l('spanningTree |  limitReached B (if true return tree)',  limitReached);
+    //console.log('spanningTree |  limitReached B (if true return tree)',  limitReached);
     if(limitReached) limitReached = true;
 
     if(limitReached) return tree;
 
     nodes = newNodes;
-    // c.l('     --concat');
+    // console.log('     --concat');
     accumulated = accumulated.concat(newNodes);
 
     N++;
     if(N>network.nodeList){
-      //c.l('/////////////////STOP');
+      //console.log('/////////////////STOP');
       return null;
     }
   }
 
-  //c.l('return spanningTree:', tree);
+  //console.log('return spanningTree:', tree);
   return tree;
 };
 
@@ -889,11 +901,11 @@ NetworkOperators._getClosestPair = function(nodeList, returnIndexes, pRelationPa
     nodeList0 = nodeList[i].nodes;
     for(j = i + 1; nodeList[j] != null; j++) {
       strength = NetworkOperators._strengthBetweenSets(nodeList0, nodeList[j].nodes, pRelationPair);
-      //c.log('        i,j,strength, nodeList0.length, nodeList[j].nodes.length', i, j, strength, nodeList0.length, nodeList[j].nodes.length);
+      //console.logog('        i,j,strength, nodeList0.length, nodeList[j].nodes.length', i, j, strength, nodeList0.length, nodeList[j].nodes.length);
       if(strength > maxStrength) {
         indexes = [i, j];
         maxStrength = strength;
-        //c.log('    ---> i, j, new maxStrength', i, j, maxStrength);
+        //console.logog('    ---> i, j, new maxStrength', i, j, maxStrength);
       }
     }
   }

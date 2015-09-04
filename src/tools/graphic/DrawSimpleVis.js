@@ -18,7 +18,7 @@ import NumberListOperators from "src/operators/numeric/numberList/NumberListOper
  * and with classes named NumberTableGraph… os similar
  *
  *
- * ////////>>>>>>>> [!] METHODS ARE BEING REMOVED FROM HERE TO BE PLACE ON THEIR CORRECT CLASSES
+ * //////// [!] METHODS ARE BEING REMOVED FROM HERE TO BE PLACE ON THEIR CORRECT CLASSES
  * @constructor
  */
 

@@ -39,7 +39,8 @@ function List() {
   DataModel.apply(this);
   var array = [];
   var i;
-  for(i = 0; i < arguments.length; i++) {
+  var nArguments = arguments.length;
+  for(i = 0; i < nArguments; i++) {
     array.push(arguments[i]);
   }
   array = List.fromArray(array);
@@ -194,12 +195,13 @@ List.prototype.getImproved = function() {
       break;
   }
 
+  var l = this.length;
   if(newList === null ||  newList === "") {
     //c.l('getImproved | all elelemnts no same type')
 
     var allLists = true;
     var i;
-    for(i = 0; this[i] != null; i++) {
+    for(i = 0; i<l; i++) {
       //c.l('isList?', i, this[i].isList);
       if(!(this[i].isList)) {
         allLists = false;
@@ -227,7 +229,8 @@ List.prototype.isEquivalent = function(list) {
   if(this.length != list.length) return false;
 
   var i;
-  for(i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(i = 0; i<l; i++) {
     if(this[i] != list[i]) return false;
   }
 
@@ -262,7 +265,8 @@ List.prototype.getLengths = function() {
  */
 List.prototype.getTypeOfElements = function() {
   var typeOfElements = typeOf(this[0]);
-  for(var i = 1; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 1; i<l; i++) {
     if(typeOf(this[i]) != typeOfElements) return "";
   }
   return typeOfElements;
@@ -276,7 +280,8 @@ List.prototype.getTypeOfElements = function() {
  */
 List.prototype.getTypes = function() {
   var types = new StringList();
-  for(var i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 0; i<l; i++) {
     types[i] = typeOf(this[i]);
   }
   return types;
@@ -303,7 +308,8 @@ List.prototype.toString = function() {
  */
 List.prototype.getNames = function() {
   var stringList = new StringList();
-  for(var i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 0; i<l; i++) {
     stringList[i] = this[i].name;
   }
   return stringList;
@@ -316,7 +322,8 @@ List.prototype.getNames = function() {
  */
 List.prototype.getReversed = function() {
   var newList = instantiateWithSameType(this);
-  for(var i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 0; i<l; i++) {
     newList.unshift(this[i]);
   }
   return newList;
@@ -481,8 +488,9 @@ List.prototype.clone = function() {
   //TODO:check this! fromArray should suffice
   var clonedList = instantiateWithSameType(this);
   var i;
+  var l = this.length;
 
-  for(i = 0; this[i] != null; i++) {
+  for(i = 0; i<l; i++) {
     clonedList.push(this[i]);
   }
   clonedList.name = this.name;
@@ -499,11 +507,13 @@ List.prototype.getWithoutRepetitions = function() {
   var dictionary;
 
   var newList = instantiateWithSameType(this);
+  var l = this.length;
+
   newList.name = this.name;
 
   //if(this.type == 'NumberList' || this.type == 'StringList') {//TODO:check other cases
   dictionary = {};
-  for(i = 0; this[i] != null; i++) {
+  for(i = 0; i<l; i++) {
     if(!dictionary[this[i]]) {
       newList.push(this[i]);
       dictionary[this[i]] = true;
@@ -553,11 +563,13 @@ List.prototype.getSimplified = function(nCategories, othersElement) {
  */
 List.prototype.countElement = function(element) {
   var n = 0;
-  this.forEach(function(elementInList) {
-    if(element == elementInList) {
-      n++;
-    }
-  });
+  //this.forEach(function(elementInList) {
+  var l = this.length;
+
+  for(var i = 0; i<l; i++) {
+    if(element == this[i]) n++;
+  }
+
   return n;
 };
 
@@ -568,7 +580,8 @@ List.prototype.countElement = function(element) {
  */
 List.prototype.countOccurrences = function() { //TODO: more efficient
   var occurrences = new NumberList();
-  for(var i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 0; i<l; i++) {
     occurrences[i] = this.indexesOf(this[i]).length;
   }
   return occurrences;
@@ -600,7 +613,9 @@ List.prototype.getFrequenciesTable = function(sortListsByOccurrences, addWeights
   //if(this.type == 'NumberList' || this.type == 'StringList') {//TODO:check other cases
   var dictionary = {};
 
-  for(i=0; this[i]!=null; i++){
+  var l = this.length;
+
+  for(i=0; i<l; i++){
     index = dictionary[this[i]];
     if(index==null){
       index = elementList.length;
@@ -636,7 +651,8 @@ List.prototype.getFrequenciesTable = function(sortListsByOccurrences, addWeights
   if(addWeightsNormalizedToSum) table[2] = NumberListOperators.normalizedToSum(table[1]);
   if(addCategoricalColors){
     var colors = new ColorList();
-    for(i = 0; table[0][i]!=null; i++) {
+    l = table[0].length;
+    for(i = 0; i<l; i++) {
         colors[i] = ColorListGenerators._HARDCODED_CATEGORICAL_COLORS[i%ColorListGenerators._HARDCODED_CATEGORICAL_COLORS.length];
       }
     table.push(colors);
@@ -876,8 +892,9 @@ List.prototype.getSortedByList = function(list, ascending) {
 
   var pairsArray = [];
   var i;
+  var l = this.length;
 
-  for(i = 0; this[i] != null; i++) {
+  for(i = 0; i<l; i++) {
     pairsArray[i] = [this[i], list[i]];
   }
 
@@ -897,7 +914,7 @@ List.prototype.getSortedByList = function(list, ascending) {
   var newList = instantiateWithSameType(this);
   newList.name = this.name;
 
-  for(i = 0; this[i] != null; i++) {
+  for(i = 0; i<l; i++) {
     newList[i] = pairsArray[i][0];
   }
 
@@ -946,7 +963,8 @@ List.prototype.indexesOf = function(element) {
  */
 List.prototype.indexOfElements = function(elements) {
   var numberList = new NumberList();
-  for(var i = 0; elements[i] != null; i++) {
+  var l = elements.length;
+  for(var i = 0; i<l; i++) {
     numberList[i] = this.indexOf(elements[i]);
   }
   return numberList;
@@ -961,7 +979,8 @@ List.prototype.indexOfElements = function(elements) {
  * tags: filter
  */
 List.prototype.getFirstElementByName = function(name, returnIndex) {
-  for(var i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 0; i<l; i++) {
     if(this[i].name == name) return returnIndex ? i : this[i];
   }
   return returnIndex ? -1 : null;
@@ -978,9 +997,10 @@ List.prototype.getFirstElementByName = function(name, returnIndex) {
 List.prototype.getElementsByNames = function(names, returnIndex) {
   var list = returnIndex ? new NumberList() : new List();
   var i;
+  var l = this.length;
 
   names.forEach(function(name) {
-    for(i = 0; this[i] != null; i++) {
+    for(i = 0; i<l; i++) {
       if(this[i].name == name) {
         list.push(returnIndex ? i : this[i]);
         break;
@@ -1264,7 +1284,8 @@ List.prototype.concat = function() {
       var newList = this.clone();
       var args = arguments[0];
       var i;
-      for(i=0; args[i]!=null; i++){
+      var l = args.length;
+      for(i=0; i<l; i++){
         // c.l('   +_+_+_+args[i]',args[i]);
         newList.addNode(args[i]);
       }
@@ -1273,6 +1294,7 @@ List.prototype.concat = function() {
   }
   return List.fromArray(this._concat.apply(this, arguments)).getImproved();
 };
+
 
 
 ////transformations
@@ -1285,12 +1307,14 @@ List.prototype.pushIfUnique = function(element) {
 List.prototype.removeElements = function(elements) { //TODO: make it more efficient (avoiding the splice method)
   var i;
   var dictionary = {};
+  var l = this.length;
+  var nElements = elements.length;
 
-  for(i=0; elements[i]!=null; i++){
+  for(i=0; i<nElements; i++){
     dictionary[elements[i]] = true;
   }
 
-  for(i = 0; this[i]!=null; i++) {
+  for(i = 0; i<l; i++) {
     //if(elements.indexOf(this[i]) > -1) {
     if(dictionary[this[i]]) {
       this.splice(i, 1);
@@ -1319,7 +1343,8 @@ List.prototype.removeElementsAtIndexes = function(indexes) {
 };
 
 List.prototype.removeRepetitions = function() {
-  for(var i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 0; i<l; i++) {
     if(this.indexOf(this[i], i + 1) != -1) {
       this.splice(i, 1);
     }
@@ -1342,10 +1367,13 @@ List.prototype.replace = function(elementToFind, elementToInsert) {
 List.prototype.assignNames = function(names) {
   if(names == null) return this;
   var n = names.length;
+  var l = this.length;
+  var i;
 
-  this.forEach(function(element, i) {
-    element.name = names[i % n];
-  });
+  //this.forEach(function(element, i) {
+  for(i=0; i<l; i++){
+    this[i].name = names[i % n];
+  }
 
   return this;
 };
@@ -1366,7 +1394,8 @@ List.prototype.splice = function() { //TODO: replace
 };
 
 List.prototype.destroy = function() {
-  for(var i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 0; i<l; i++) {
     delete this[i];
   }
 };

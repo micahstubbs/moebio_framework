@@ -1,8 +1,8 @@
 import Polygon from "src/dataStructures/geometry/Polygon";
 import Point from "src/dataStructures/geometry/Point";
-import Relation from "src/dataStructures/structures/elements/Relation";
-import Node from "src/dataStructures/structures/elements/Node";
 import Network from "src/dataStructures/structures/networks/Network";
+import Node from "src/dataStructures/structures/elements/Node";
+import Relation from "src/dataStructures/structures/elements/Relation";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 
 /**
@@ -35,12 +35,16 @@ NumberTableConversions.numberTableToPolygon = function(numberTable) {
   return polygon;
 };
 
+
+
+
 /**
  * Converts NumberTable to a {@link Network}.
  *
  * @param {NumberTable} numberTable to convert.
  * @param {Number} method Method to use. Currently only method 0 implemented
  * @param {Number} tolerance Defaults to 0.
+ * @return {Network}
  */
 NumberTableConversions.numberTableToNetwork = function(numberTable, method, tolerance) {
   tolerance = tolerance == null ? 0 : tolerance;

@@ -14,7 +14,7 @@ export default FastHtml;
  * @todo write docs
  */
 FastHtml.expand = function(abreviatedHTML, scope, onEvent) {
-  if(abreviatedHTML == null || abreviatedHTML == "") return "";
+  if(abreviatedHTML == null || abreviatedHTML === "") return "";
 
   var T = new Date().getTime();
 

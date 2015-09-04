@@ -258,6 +258,7 @@ NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
   var means = new NumberList();
   var nextMeans = new NumberList();
   var nValuesInCluster = new NumberList();
+  var length = numberList.length;
 
   var initdMin = 1 + max - min;
 
@@ -274,7 +275,7 @@ NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
       nextMeans[i] = 0;
     }
 
-    for(i = 0; numberList[i] != null; i++) {
+    for(i = 0; i<length; i++) {
       x = numberList[i];
       dMin = initdMin;
       jK = 0;

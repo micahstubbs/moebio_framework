@@ -223,6 +223,7 @@ Table.prototype.getWithoutRows = function(rowsIndexes) {
   return newTable.getImproved();
 };
 
+
 /**
  * Sort Table's lists by a list
  * @param  {List|Number} listOrIndex List used to sort, or index of list in the table
