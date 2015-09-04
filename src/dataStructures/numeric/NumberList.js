@@ -614,6 +614,9 @@ NumberList.prototype.approach = function(destinty, speed) {
  */
 NumberList.prototype.isEquivalent = function(numberList) {
   var l = this.length;
+  if(numberList.length != l) {
+    return false;
+  }
   for(var i = 0; i<l; i++) {
     if(this[i] != numberList[i]) return false;
   }
