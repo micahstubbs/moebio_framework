@@ -407,15 +407,24 @@ Graphics.prototype._onCycle = function() {
   // YY i don't think this interacts well with my expectations
   // of setting the background color. it basically needs to be greater than 0
   // if the bg color is not white and that isn't super obvious.
+  // SS I think I fixed it
   if(this._alphaRefresh === 0){
-    this.context.clearRect(0, 0, this.cW, this.cH);
+    if(this.backGroundColorRGB!=null){
+      this.context.fillStyle =
+      'rgb(' + this.backGroundColorRGB[0] +
+      ',' + this.backGroundColorRGB[1] +
+      ',' + this.backGroundColorRGB[2] + 
+      ')';
+      this.context.fillRect(0, 0, this.cW, this.cH);
+    } else {
+      this.context.clearRect(0, 0, this.cW, this.cH);
+    }
   } else {
     this.context.fillStyle =
       'rgba(' + this.backGroundColorRGB[0] +
       ',' + this.backGroundColorRGB[1] +
       ',' + this.backGroundColorRGB[2] +
       ',' + this._alphaRefresh+')';
-
     this.context.fillRect(0, 0, this.cW, this.cH);
   }
 
@@ -621,7 +630,7 @@ Graphics.prototype.setBackgroundColor = function(color) {
  *
  * @param {Number} backgroundAlpha a number from 0-1
  */
-Graphics.prototype.setBackgroundAlpha = function(backgroundAlpha){
+Graphics.prototype.setBackgroundAlpha = function(backgroundAlpha){//TODO: this is not alpha background, is alpha refresh…
   this._alphaRefresh = backgroundAlpha;
 };
 
