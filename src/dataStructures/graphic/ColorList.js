@@ -7,6 +7,12 @@ ColorList.prototype.constructor = ColorList;
 /**
  * @classdesc A {@link List} for storing Colors.
  *
+ * Additional functions that work on ColorList can be found in:
+ * <ul>
+ *  <li>Operators:   {@link ColorListOperators}</li>
+ *  <li>Generators: {@link ColorListGenerators}</li>
+ * </ul>
+ *
  * @description Creates a new ColorList.
  * @constructor
  * @category colors
@@ -59,7 +65,7 @@ ColorList.prototype.getRgbArrays = function() {
 
 /**
  * interpolates colors with a given color and measure
- * 
+ *
  * @param  {String} color to be interpolated with
  * @param  {Number} value intenisty of interpolation [0,1]
  * @return {ColorList}

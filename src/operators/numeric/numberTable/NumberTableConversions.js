@@ -16,6 +16,7 @@ export default NumberTableConversions;
 
 /**
  * converts a numberTable with at least two lists into a Polygon
+ *
  * @param  {NumberTable} numberTable with at least two numberLists
  * @return {Polygon}
  * tags:conversion
@@ -34,9 +35,16 @@ NumberTableConversions.numberTableToPolygon = function(numberTable) {
   return polygon;
 };
 
-//TODO: needs to be improved
+
+
+
 /**
- * @todo finish docs
+ * Converts NumberTable to a {@link Network}.
+ *
+ * @param {NumberTable} numberTable to convert.
+ * @param {Number} method Method to use. Currently only method 0 implemented
+ * @param {Number} tolerance Defaults to 0.
+ * @return {Network}
  */
 NumberTableConversions.numberTableToNetwork = function(numberTable, method, tolerance) {
   tolerance = tolerance == null ? 0 : tolerance;

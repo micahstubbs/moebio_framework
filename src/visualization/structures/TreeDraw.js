@@ -6,12 +6,14 @@ import NumberList from "src/dataStructures/numeric/NumberList";
 import ColorList from "src/dataStructures/graphic/ColorList";
 import ColorScales from "src/operators/graphic/ColorScales";
 import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
+
 
 /**
  * @classdesc Functions for drawing {@link Tree|Trees}.
  *
  * @namespace
- * @category networks
+ * @category drawing
  */
 function TreeDraw() {}
 export default TreeDraw;
@@ -67,7 +69,7 @@ TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin, gra
  * @return {Node} selected node
  * tags:draw
  */
-TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, externalSelectedNode, graphics) { 
+TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, externalSelectedNode, graphics) {
   if(frame==null || tree==null) return;
 
   if(graphics==null) graphics = frame.graphics; //momentary fix
@@ -123,7 +125,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
     TreeDraw._generateRectangles(tree.nodeList[0]);
 
     frame.memory.focusFrame = TreeDraw._expandRect(tree.nodeList[0]._outRectangle);
-    //c.l('>>>>>>>>>>>>>>>>>>>>>>>> frame.memory.focusFrame', frame.memory.focusFrame);
+    //c.l('frame.memory.focusFrame', frame.memory.focusFrame);
 
     frame.memory.kx = frame.width / frame.memory.focusFrame.width;
     frame.memory.mx = -frame.memory.kx * frame.memory.focusFrame.x;
@@ -808,7 +810,7 @@ TreeDraw._horizontalRectanglesDecision = function(rect, weights) {
   var rects = new List();
   var x0 = rect.x;
   var w;
-  var newWeights = weights.getNormalizedToSum();
+  var newWeights = NumberListOperators.normalizedToSum(weights);
 
   newWeights.forEach(function(weight) {
     w = weight * rect.width;

@@ -7,7 +7,7 @@ TextFieldHTML.prototype.constructor = TextFieldHTML;
  *
  * @param configuration configuration Object with parameters (x, y, width, text, fontColor, fontSize, fontName, fontStyle, linkFunction, target…)
  * @constructor
- * @category strings
+ * @category drawing
  */
 function TextFieldHTML(configuration) {
   configuration = configuration == null ? {} : configuration;

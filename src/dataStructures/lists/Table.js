@@ -12,6 +12,8 @@ import {
   instantiateWithSameType,
   TYPES_SHORT_NAMES_DICTIONARY,
   getColorFromDataModelType,
+  instantiate,
+  instantiateWithSameType,
   typeOf
   } from "src/tools/utils/code/ClassUtils";
 //
@@ -24,6 +26,14 @@ Table.prototype.constructor = Table;
  *
  * Each column is stored as its own {@link List}, making it a List of Lists.
  * Cells in the table can be accessed using table[column][row].
+ *
+ * Additional functions that work on Table can be found in:
+ * <ul>
+ *  <li>Operators:   {@link TableOperators}</li>
+ *  <li>Conversions: {@link TableConversions}</li>
+ *  <li>Generators: {@link TableGenerators}</li>
+ *  <li>Encodings: {@link TableEncodings}</li>
+ * </ul>
  *
  * @description Creates a new Table.
  * Input arguments are treated as the inital column values
@@ -63,13 +73,9 @@ Table.fromArray = function(array) {
   result.getSubListsByIndexes = Table.prototype.getSubListsByIndexes;
   result.getWithoutRow = Table.prototype.getWithoutRow;
   result.getWithoutRows = Table.prototype.getWithoutRows;
-  result.getSubTableByElementOnList = Table.prototype.getSubTableByElementOnList;
-  result.getSubTableByElementsOnList = Table.prototype.getSubTableByElementsOnList;
   result.getTransposed = Table.prototype.getTransposed;
   result.getListsSortedByList = Table.prototype.getListsSortedByList;
   result.sortListsByList = Table.prototype.sortListsByList;
-  result.getReport = Table.prototype.getReport;
-  result.getReportHtml = Table.prototype.getReportHtml;
   result.clone = Table.prototype.clone;
   result.print = Table.prototype.print;
 
@@ -226,6 +232,7 @@ Table.prototype.getWithoutRows = function(rowsIndexes) {
 };
 
 /**
+<<<<<<< HEAD
  * filters lists on a table, keeping elements that are in the same of row of a certain element of a given list from the table
  * @param  {Number} nList index of list containing the element
  * @param  {Object} element used to filter the lists on the table
@@ -364,6 +371,7 @@ Table.prototype.getTransposed = function(firstListAsHeaders) {
   return table;
 };
 
+<<<<<<< HEAD
 /**
  * Generates a string containing details about the current state
  * of the Table. Useful for outputing to the console for debugging.
@@ -645,8 +653,6 @@ Table.prototype.destroy = function() {
 /**
  * Prints contents of Table to console.log.
  */
-
-
 
 Table.prototype.print = function() {
   console.log("///////////// <" + this.name + "////////////////////////////////////////////////////");

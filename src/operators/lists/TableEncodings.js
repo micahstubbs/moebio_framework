@@ -2,6 +2,7 @@ import List from "src/dataStructures/lists/List";
 import Table from "src/dataStructures/lists/Table";
 import NetworkEncodings from "src/operators/structures/NetworkEncodings";
 import ListGenerators from "src/operators/lists/ListGenerators";
+import ListConversions from "src/operators/lists/ListConversions";
 
 /**
  * @classdesc Table Encodings
@@ -108,7 +109,7 @@ TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, val
 
   for(i = 0; table[i] != null; i++) {
     table[i] = table[i].getImproved();
-    if(listsToStringList && table[i].type=="List") table[i] = table[i].toStringList();
+    if(listsToStringList && table[i].type=="List") table[i] = ListConversions.toStringList(table[i]);
   }
 
   table = table.getImproved();

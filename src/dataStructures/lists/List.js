@@ -1,4 +1,3 @@
-import StringOperators from "src/operators/strings/StringOperators";
 import DataModel from "src/dataStructures/DataModel";
 import NumberList from "src/dataStructures/numeric/NumberList";
 import ColorList from "src/dataStructures/graphic/ColorList";
@@ -13,9 +12,9 @@ import PolygonList from "src/dataStructures/geometry/PolygonList";
 import Table from "src/dataStructures/lists/Table";
 import NumberTable from "src/dataStructures/numeric/NumberTable";
 import Interval from "src/dataStructures/numeric/Interval";
-import ListOperators from "src/operators/lists/ListOperators";
 import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
 import NumberOperators from "src/operators/numeric/NumberOperators";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 import { instantiateWithSameType, typeOf, instantiate } from "src/tools/utils/code/ClassUtils";
 
 List.prototype = new DataModel();
@@ -25,7 +24,14 @@ List.prototype.constructor = List;
  /**
   * @classdesc List is an Array with a type property.
   * Lists have a number of methods to assist with working with
-  * them. There are also a number of
+  * them. There are also a number of helper functions in associated namespaces.
+  *
+  * Additional functions that work on List can be found in:
+  * <ul>
+  *  <li>Operators:   {@link ListOperators}</li>
+  *  <li>Conversions: {@link ListConversions}</li>
+  *  <li>Generators: {@link ListGenerators}</li>
+  * </ul>
   *
   * @description Creates a new List.
   * @param {Number|String|Object} arguments Comma separated values to add to List
@@ -63,7 +69,7 @@ List.fromArray = function(array) {
   array._constructor = List;
 
   array.getImproved = List.prototype.getImproved;
-  array.sameElements = List.prototype.sameElements;
+  array.isEquivalent = List.prototype.isEquivalent;
   array.getLength = List.prototype.getLength;
   array.getTypeOfElements = List.prototype.getTypeOfElements; //TODO: redundant?
   array.getTypes = List.prototype.getTypes;
@@ -110,10 +116,7 @@ List.fromArray = function(array) {
   //filter:
   array.getFilteredByPropertyValue = List.prototype.getFilteredByPropertyValue;
   array.getFilteredByBooleanList = List.prototype.getFilteredByBooleanList;
-  //conversion
-  array.toNumberList = List.prototype.toNumberList;
-  array.toStringList = List.prototype.toStringList;
-  //
+
   array.clone = List.prototype.clone;
   array.toString = List.prototype.toString;
   array.getNames = List.prototype.getNames;
@@ -125,8 +128,6 @@ List.fromArray = function(array) {
   array.getFilteredByFunction = List.prototype.getFilteredByFunction;
   array._concat = Array.prototype.concat;
   array.concat = List.prototype.concat;
-  array.getReport = List.prototype.getReport;
-  array.getReportHtml = List.prototype.getReportHtml;
 
   //transformations
   array.pushIfUnique = List.prototype.pushIfUnique;
@@ -143,7 +144,6 @@ List.fromArray = function(array) {
   array.isList = true;
 
   array.destroy = List.prototype.destroy;
-
 
   return array;
 };
@@ -196,38 +196,6 @@ List.prototype.getImproved = function() {
     case "Relation":
       newList = RelationList.fromArray(this, false);
       break;
-      var newList = NumberList.fromArray(this, false);
-    break;
-    case "string":
-      var newList = StringList.fromArray(this, false);
-    break;
-    case "Rectangle":
-      return this;
-    case "date":
-      var newList = DateList.fromArray(this, false);
-    break;
-    case "List":
-      case "DateList":
-      case "IntervalList":
-      case "StringList":
-      case "Table":
-      var newList = Table.fromArray(this, false);
-    break;
-    case "NumberList":
-      var newList = NumberTable.fromArray(this, false);
-    break;
-    case "Point":
-      var newList = Polygon.fromArray(this, false);
-    break;
-    case "Polygon":
-      var newList = PolygonList.fromArray(this, false);
-    break;
-    case "Node":
-      var newList = NodeList.fromArray(this, false);
-    break;
-    case "Relation":
-      var newList = RelationList.fromArray(this, false);
-    break;
   }
 
   var l = this.length;
@@ -260,7 +228,10 @@ List.prototype.getImproved = function() {
  * @return {Boolean} true if all elements are identical.
  * tags:
  */
+<<<<<<< HEAD
 List.prototype.sameElements = function(list) {//TODO: replace name by: isEquivalent
+=======
+List.prototype.isEquivalent = function(list) {
   if(this.length != list.length) return false;
 
   var i;
@@ -328,7 +299,6 @@ List.prototype.getTypes = function() {
  * @return {String} String representation of the List.
  */
 List.prototype.toString = function() {
-  var i;
   var str = "[";
   for(var i = 0; i < this.length - 1; i++) {
     str += this[i] + ", ";
@@ -591,8 +561,6 @@ List.prototype.getSimplified = function(nCategories, othersElement) {
 };
 
 
-
-
 /**
  * returns the number of occurrences of an element in a list.
  * @param  {Object} element The element to count
@@ -644,14 +612,12 @@ List.prototype.getFrequenciesTable = function(sortListsByOccurrences, addWeights
   var numberList = new NumberList();
   var i;
   var index;
-  var element;
 
   table[0] = elementList;
   table[1] = numberList;
 
   //if(this.type == 'NumberList' || this.type == 'StringList') {//TODO:check other cases
   var dictionary = {};
-  var prevVal;
 
   var l = this.length;
 
@@ -688,7 +654,7 @@ List.prototype.getFrequenciesTable = function(sortListsByOccurrences, addWeights
 
   }
 
-  if(addWeightsNormalizedToSum) table[2] = table[1].getNormalizedToSum();
+  if(addWeightsNormalizedToSum) table[2] = NumberListOperators.normalizedToSum(table[1]);
   if(addCategoricalColors){
     var colors = new ColorList();
     l = table[0].length;
@@ -838,7 +804,6 @@ List.prototype.indexOfElement = function(element) { //TODO: test if this is fast
   return -1;
 };
 
-
 /**
  * Returns a List of values of a property of all elements.
  *
@@ -882,40 +847,6 @@ List.prototype.sortIndexed = function() {
   return result;
 };
 
-// List.prototype.sortNumericIndexed=function() {
-//  var index = new Array();
-//  var i;
-//  for(i=0; i<this.length; i++){
-//      index.push({index:i, value:this[i]});
-//  }
-//  var comparator = function(a, b) {
-//      var array_a = a.value;
-//      var array_b = b.value;;
-
-//      return array_a - array_b;
-//  }
-//  index=index.sort(comparator);
-//  var result = new NumberList();
-//  for(i=0; i<index.length; i++){
-//      result.push(index[i].index);
-//  }
-//  return result;
-// }
-
-// List.prototype.sortNumeric=function(descendant){
-//  var comparator;
-//  if(descendant){
-//    var comparator=function(a, b){
-//      return b - a;
-//    }
-//  } else {
-//    var comparator=function(a, b){
-//      return a - b;
-//    }
-//  }
-//  return this.sort(comparator);
-// }
-
 List.prototype.sortOnIndexes = function(indexes) {
   var result = instantiateWithSameType(this);
   result.name = this.name;
@@ -950,21 +881,7 @@ List.prototype.getSortedByProperty = function(propertyName, ascending) {
  * tags:sort
  */
 List.prototype.getSorted = function(ascending) {
-  return this.getSortedByList(this, ascending); //<--- because tests, antiintuitively, have proven this to be faster
-
-  // ascending = ascending == null ? true : ascending;
-
-  // var comparator;
-  // if(ascending) {
-  //   comparator = function(a, b) {
-  //     return a > b ? 1 : -1;
-  //   };
-  // } else {
-  //   comparator = function(a, b) {
-  //     return a > b ? -1 : 1;
-  //   };
-  // }
-  // return this.clone().sort(comparator);
+  return this.getSortedByList(this, ascending);
 };
 
 /**
@@ -1146,13 +1063,14 @@ List.prototype.getFilteredByBooleanList = function(booleanList) {
 /**
  * Filters a list by its elements, and a type of comparison (equal by default).
  *
- * @param  {Object} value object (for equal or different comparison) or number or date
+ * @param  {String} propertyName property to check.
+ * @param  {Object} propertyValue object (for equal or different comparison) or number or date
  * (for equal, different, greater, lesser).
  * @param  {String} comparison equal (default), different, greater, lesser.
  * @return {List} Filtered list
  * tags:filter
  */
-List.prototype.getFilteredByValue = function(value, comparison) {
+List.prototype.getFilteredByValue = function(propertyName, propertyValue, comparison) {
   comparison = comparison == null ? "equal" : comparison;
 
   var newList = new List();
@@ -1223,42 +1141,6 @@ List.prototype.getFilteredByPropertyValue = function(propertyName, propertyValue
   }
 
   return newList.getImproved();
-};
-
-/**
- * Converts the List into a NumberList.
- *
- * @return {NumberList}
- * tags:conversion
- */
-List.prototype.toNumberList = function() {
-  var numberList = new NumberList();
-  numberList.name = this.name;
-  var i;
-  for(i = 0; this[i] != null; i++) {
-    numberList[i] = Number(this[i]);
-  }
-  return numberList;
-};
-
-/**
- * Converts the List into a StringList.
- *
- * @return {StringList}
- * tags:conversion
- */
-List.prototype.toStringList = function() {
-  var i;
-  var stringList = new StringList();
-  stringList.name = this.name;
-  for(i = 0; this[i] != null; i++) {
-    if(typeof this[i] == 'number') {
-      stringList[i] = String(this[i]);
-    } else {
-      stringList[i] = this[i].toString();
-    }
-  }
-  return stringList;
 };
 
 List.prototype.applyFunction = function(func) {
@@ -1420,6 +1302,7 @@ List.prototype.concat = function() {
 };
 
 
+<<<<<<< HEAD
 List.prototype.getReport = function(level) { //TODO:complete
   var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
   var text = level > 0 ? (ident + "////report of instance of List////") : "///////////report of instance of List//////////";
@@ -1605,6 +1488,7 @@ List.prototype.getReportHtml = function(level) { //TODO:complete
   ///add ideas to: analyze, visualize
   return text;
 };
+
 
 
 ////transformations

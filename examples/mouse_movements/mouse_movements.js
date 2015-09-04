@@ -1,14 +1,15 @@
 window.onload = function() {
 
-  var points = [ {x: 250, y: 250} ];
+  var points = [ new mo.Point(250,250) ];
 
   var graphics = new mo.Graphics({
-    container: ".container",
-    
-    dimensions: {
-      width: 500,
-      height: 500,
-    },
+    container: "#maindiv",
+
+    // Optionally add dimensions here to constrain the canvas size
+    // dimensions: {
+    //   width: 500,
+    //   height: 500,
+    // },
 
     cycle: function() {
       // The size of the circles will be controlled by the mouse position
@@ -36,33 +37,27 @@ window.onload = function() {
           this.setStroke('grey');
           this.sCircle(point.x, point.y, radius + 10);
           this.setCursor('pointer');
-        }  
+        }
         // if mouse pressed, change color to orange
         if((this.MOUSE_DOWN || this.MOUSE_PRESSED) && over) {
           this.setFill('red');
           this.fCircle(point.x, point.y, radius);
         }
-      }      
-    }    
+      }
+    }
   });
 
   // We can also add custom interaction handlers to the graphics object
   // as a whole. These allows us to access standard DOM event information
   // in addition to the what is stored in the graphics object.
-  
+
   // Lets add a circle where-ever the mouse is clicked
-  graphics.on('click', function(e){    
-    points.push({
-      x: e.offsetX,
-      y: e.offsetY
-    });
+  graphics.on('click', function(){
+    points.push( new mo.Point(graphics.mX, graphics.mY));
   });
 
   // Its not limited to mouse interaction, we can also listen for keypresses
   graphics.on('keydown', function(){
-    points.push({
-      x: graphics.mX,
-      y: graphics.mY
-    });
+    points.push( new mo.Point(graphics.mX, graphics.mY));
   });
 };

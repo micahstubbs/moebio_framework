@@ -5,7 +5,7 @@ import ColorOperators from "src/operators/graphic/ColorOperators";
  * @classdesc Fast Html
  *
  * @namespace
- * @category basics
+ * @category misc
  */
 function FastHtml() {}
 export default FastHtml;
@@ -14,7 +14,7 @@ export default FastHtml;
  * @todo write docs
  */
 FastHtml.expand = function(abreviatedHTML, scope, onEvent) {
-  if(abreviatedHTML == null || abreviatedHTML == "") return "";
+  if(abreviatedHTML == null || abreviatedHTML === "") return "";
 
   var T = new Date().getTime();
 

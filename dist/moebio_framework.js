@@ -469,260 +469,39 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Interval = Interval__default;
 
-  Rectangle__Rectangle.prototype = new DataModel();
-  Rectangle__Rectangle.prototype.constructor = Rectangle__Rectangle;
-
-  /**
-   * @classdesc Rectangle shape
-   *
-   * @description Creates a new Rectangle.
-   * @param {Number} x
-   * @param {Number} y
-   * @param {Number} width
-   * @param {Number} height
-   * @constructor
-   * @category geometry
-   */
-  function Rectangle__Rectangle(x, y, width, height) {
-    DataModel.apply(this);
-    this.name = "";
-    this.type = "Rectangle";
-    this.x = Number(x) || 0;
-    this.y = Number(y) || 0;
-    this.width = Number(width) || 0;
-    this.height = Number(height) || 0;
-  }
-  var Rectangle__default = Rectangle__Rectangle;
-
-  /**
-   * @todo write docs
-   */
-  Rectangle__Rectangle.prototype.getRight = function() {
-    return this.x + this.width;
-  };
-
-  /**
-   * @todo write docs
-   */
-  Rectangle__Rectangle.prototype.getBottom = function() {
-    return this.y + this.height;
-  };
-
-  /**
-   * @todo write docs
-   */
-  Rectangle__Rectangle.prototype.setRight = function(value) {
-    this.width = value - this.x;
-  };
-
-  /**
-   * @todo write docs
-   */
-  Rectangle__Rectangle.prototype.setBottom = function(value) {
-    this.height = value - this.y;
-  };
-
-
-
-  /**
-   * @todo write docs
-   */
-  Rectangle__Rectangle.prototype.getTopLeft = function() {
-    return new Point(this.x, this.y);
-  };
-
-  /**
-   * @todo write docs
-   */
-  Rectangle__Rectangle.prototype.getTopRight = function() {
-    return new Point(this.x + this.width, this.y);
-  };
-
-  /**
-   * @todo write docs
-   */
-  Rectangle__Rectangle.prototype.getBottomRight = function() {
-    return new Point(this.x + this.width, this.y + this.height);
-  };
-
-  /**
-   * @todo write docs
-   */
-  Rectangle__Rectangle.prototype.getBottomLeft = function() {
-    return new Point(this.x, this.y + this.height);
-  };
-
-  /**
-   * @todo write docs
-   */
-  Rectangle__Rectangle.prototype.getCenter = function() {
-    return new Point(this.x + 0.5 * this.width, this.y + 0.5 * this.height);
-  };
-
-  /**
-   * @todo write docs
-   */
-  Rectangle__Rectangle.prototype.getRandomPoint = function() {
-    return new Point(this.x + Math.random() * this.width, this.y + Math.random() * this.height);
-  };
-
-  /**
-   * @todo write docs
-   */
-  Rectangle__Rectangle.prototype.getIntersection = function(rectangle) {
-    if(rectangle.x + rectangle.width < this.x || rectangle.x > this.x + this.width || rectangle.y + rectangle.height < this.y || rectangle.y > this.y + this.height) return null;
-    var xR = Math.max(rectangle.x, this.x);
-    var yR = Math.max(rectangle.y, this.y);
-    return new Rectangle__Rectangle(xR, yR, Math.min(rectangle.x + rectangle.width, this.x + this.width) - xR, Math.min(rectangle.y + rectangle.height, this.y + this.height) - yR);
-  };
-
-  /**
-   * @todo write docs
-   */
-  Rectangle__Rectangle.prototype.interpolate = function(rectangle, t) {
-    var mint = 1 - t;
-    return new Rectangle__Rectangle(mint * this.x + t * rectangle.x, mint * this.y + t * rectangle.y, mint * this.width + t * rectangle.width, mint * this.height + t * rectangle.height);
-  };
-
-  /**
-   * @todo write docs
-   */
-  Rectangle__Rectangle.prototype.getRatio = function() {
-    return Math.max(this.width, this.height) / Math.min(this.width, this.height);
-  };
-
-  /**
-   * @todo write docs
-   */
-  Rectangle__Rectangle.prototype.getArea = function() {
-    return this.width * this.height;
-  };
-
-  /**
-   * check if a point belong to the rectangle
-   * @param  {Point} point
-   * @return {Boolean}
-   * tags:geometry
-   */
-  Rectangle__Rectangle.prototype.containsPoint = function(point) {
-    return(this.x <= point.x && this.x + this.width >= point.x && this.y <= point.y && this.y + this.height >= point.y);
-  };
-
-
-  /**
-   * @todo write docs
-   */
-  Rectangle__Rectangle.prototype.pointIsOnBorder = function(point, margin) {
-    margin = margin == null ? 1 : margin;
-    if(point.x >= this.x - margin && point.x <= this.x + this.width + margin) {
-      if(point.y >= this.y - margin && point.y <= this.y + margin) return true;
-      if(point.y >= this.y + this.height - margin && point.y <= this.y + this.height + margin) return true;
-      if(point.y >= this.y - margin && point.y <= this.y + this.height + margin) {
-        if(point.x < this.x + margin || point.x > this.x + this.width - margin) return true;
-      }
-    }
-    return false;
-  };
-
-
-
-
-  /**
-   * @todo write docs
-   */
-  Rectangle__Rectangle.prototype.getNormalRectangle = function() {
-    return new Rectangle__Rectangle(Math.min(this.x, this.x + this.width), Math.min(this.y, this.y + this.height), Math.abs(this.width), Math.abs(this.height));
-  };
-
-  /**
-   * return true if it interstects a rectangle
-   * @param  {Rectangle} rectangle
-   * @return {Boolean}
-   * tags:geometry
-   */
-  Rectangle__Rectangle.prototype.intersectsRectangle = function(rectangle) {
-    return !(this.x + this.width < rectangle.x) && !(this.y + this.height < rectangle.y) && !(rectangle.x + rectangle.width < this.x) && !(rectangle.y + rectangle.height < this.y);
-
-
-    if(this.x + this.width < rectangle.x) return false;
-    if(this.y + this.height < rectangle.y) return false;
-    if(rectangle.x + rectangle.width < this.x) return false;
-    if(rectangle.y + rectangle.height < this.y) return false;
-    return true;
-
-
-
-  	return this.containsPoint(rectangle.getTopLeft()) || this.containsPoint(rectangle.getTopRight()) || this.containsPoint(rectangle.getBottomLeft()) || this.containsPoint(rectangle.getBottomRight())
-  	|| rectangle.containsPoint(this.getTopLeft()) || rectangle.containsPoint(this.getTopRight()) || rectangle.containsPoint(this.getBottomLeft()) || rectangle.containsPoint(this.getBottomRight());
-  };
-
-  /**
-   * @todo write docs
-   */
-  Rectangle__Rectangle.prototype.expand = function(expantion, centerPoint) {
-    centerPoint = centerPoint || new Point(this.x + 0.5 * this.width, this.y + 0.5 * this.height);
-    return new Rectangle__Rectangle((this.x - centerPoint.x) * expantion + centerPoint.x, (this.y - centerPoint.y) * expantion + centerPoint.y, this.width * expantion, this.height * expantion);
-  };
-
-  /**
-   * @todo write docs
-   */
-  Rectangle__Rectangle.prototype.isEqual = function(rectangle) {
-    return this.x == rectangle.x && this.y == rectangle.y && this.width == rectangle.width && this.height == rectangle.height;
-  };
-
-  /**
-   * @todo write docs
-   */
-  Rectangle__Rectangle.prototype.clone = function() {
-    return new Rectangle__Rectangle(this.x, this.y, this.width, this.height);
-  };
-
-  /**
-   * @todo write docs
-   */
-  Rectangle__Rectangle.prototype.toString = function() {
-    return "(x=" + this.x + ", y=" + this.y + ", w=" + this.width + ", h=" + this.height + ")";
-  };
-
-  /**
-   * @todo write docs
-   */
-  Rectangle__Rectangle.prototype.destroy = function() {
-    delete this.x;
-    delete this.y;
-    delete this.width;
-    delete this.height;
-  };
-
-  exports.Rectangle = Rectangle__default;
-
-  List__List.prototype = new DataModel();
-  List__List.prototype.constructor = List__List;
+  List.prototype = new DataModel();
+  List.prototype.constructor = List;
 
 
    /**
     * @classdesc List is an Array with a type property.
     * Lists have a number of methods to assist with working with
-    * them. There are also a number of
+    * them. There are also a number of helper functions in associated namespaces.
+    *
+    * Additional functions that work on List can be found in:
+    * <ul>
+    *  <li>Operators:   {@link ListOperators}</li>
+    *  <li>Conversions: {@link ListConversions}</li>
+    *  <li>Generators: {@link ListGenerators}</li>
+    * </ul>
     *
     * @description Creates a new List.
     * @param {Number|String|Object} arguments Comma separated values to add to List
     * @constructor
     * @category basics
     */
-  function List__List() {
+  function List() {
     DataModel.apply(this);
     var array = [];
     var i;
     for(i = 0; i < arguments.length; i++) {
       array.push(arguments[i]);
     }
-    array = List__List.fromArray(array);
+    array = List.fromArray(array);
     //
     return array;
   }
-  var List__default = List__List;
+
 
 
   /**
@@ -731,97 +510,91 @@ define('src/index', ['exports'], function (exports) {
    * @param {Number[]|String[]|Object[]} array Array of values.
    * @return {List} New List.
    */
-  List__List.fromArray = function(array) {
+  List.fromArray = function(array) {
     //TODO: clear some of these method declarations
     array.type = "List";
     array.name = array.name || "";
 
-    array.setType = List__List.prototype.setType;
-    array.setArray = List__List.prototype.setArray;
-    array._constructor = List__List;
+    array.setType = List.prototype.setType;
+    array.setArray = List.prototype.setArray;
+    array._constructor = List;
 
-    array.getImproved = List__List.prototype.getImproved;
-    array.sameElements = List__List.prototype.sameElements;
-    array.getLength = List__List.prototype.getLength;
-    array.getTypeOfElements = List__List.prototype.getTypeOfElements; //TODO: redundant?
-    array.getTypes = List__List.prototype.getTypes;
-    array.getType = List__List.prototype.getType;
-    array.getLengths = List__List.prototype.getLengths;
-    array.getWithoutRepetitions = List__List.prototype.getWithoutRepetitions;
-    array.getSimplified = List__List.prototype.getSimplified;
-    array.getFrequenciesTable = List__List.prototype.getFrequenciesTable;
-    array.allElementsEqual = List__List.prototype.allElementsEqual;
-    array.countElement = List__List.prototype.countElement;
-    array.countOccurrences = List__List.prototype.countOccurrences;
-    array.getMostRepeatedElement = List__List.prototype.getMostRepeatedElement;
-    array.getMin = List__List.prototype.getMin;
-    array.getMax = List__List.prototype.getMax;
-    array.indexesOf = List__List.prototype.indexesOf;
-    array.indexOfElements = List__List.prototype.indexOfElements;
-    array.indexOfByPropertyValue = List__List.prototype.indexOfByPropertyValue;
-    array.getFirstElementByName = List__List.prototype.getFirstElementByName;
-    array.getElementsByNames = List__List.prototype.getElementsByNames;
-    array.getFirstElementByPropertyValue = List__List.prototype.getFirstElementByPropertyValue;
-    array.add = List__List.prototype.add;
-    array.multiply = List__List.prototype.multiply;
-    array.getSubList = List__List.prototype.getSubList;
-    array.getSubListByIndexes = List__List.prototype.getSubListByIndexes;
-    array.getSubListByType = List__List.prototype.getSubListByType;
-    array.getElementNumberOfOccurrences = List__List.prototype.getElementNumberOfOccurrences;
-    array.getPropertyValues = List__List.prototype.getPropertyValues;
-    array.getRandomElement = List__List.prototype.getRandomElement;
-    array.getRandomElements = List__List.prototype.getRandomElements;
-    array.containsElement = List__List.prototype.containsElement;
-    array.indexOfElement = List__List.prototype.indexOfElement;
+    array.getImproved = List.prototype.getImproved;
+    array.isEquivalent = List.prototype.isEquivalent;
+    array.getLength = List.prototype.getLength;
+    array.getTypeOfElements = List.prototype.getTypeOfElements; //TODO: redundant?
+    array.getTypes = List.prototype.getTypes;
+    array.getType = List.prototype.getType;
+    array.getLengths = List.prototype.getLengths;
+    array.getWithoutRepetitions = List.prototype.getWithoutRepetitions;
+    array.getSimplified = List.prototype.getSimplified;
+    array.getFrequenciesTable = List.prototype.getFrequenciesTable;
+    array.allElementsEqual = List.prototype.allElementsEqual;
+    array.countElement = List.prototype.countElement;
+    array.countOccurrences = List.prototype.countOccurrences;
+    array.getMostRepeatedElement = List.prototype.getMostRepeatedElement;
+    array.getMin = List.prototype.getMin;
+    array.getMax = List.prototype.getMax;
+    array.indexesOf = List.prototype.indexesOf;
+    array.indexOfElements = List.prototype.indexOfElements;
+    array.indexOfByPropertyValue = List.prototype.indexOfByPropertyValue;
+    array.getFirstElementByName = List.prototype.getFirstElementByName;
+    array.getElementsByNames = List.prototype.getElementsByNames;
+    array.getFirstElementByPropertyValue = List.prototype.getFirstElementByPropertyValue;
+    array.add = List.prototype.add;
+    array.multiply = List.prototype.multiply;
+    array.getSubList = List.prototype.getSubList;
+    array.getSubListByIndexes = List.prototype.getSubListByIndexes;
+    array.getSubListByType = List.prototype.getSubListByType;
+    array.getElementNumberOfOccurrences = List.prototype.getElementNumberOfOccurrences;
+    array.getPropertyValues = List.prototype.getPropertyValues;
+    array.getRandomElement = List.prototype.getRandomElement;
+    array.getRandomElements = List.prototype.getRandomElements;
+    array.containsElement = List.prototype.containsElement;
+    array.indexOfElement = List.prototype.indexOfElement;
     //sorting:
-    array.sortIndexed = List__List.prototype.sortIndexed;
-    array.sortNumericIndexed = List__List.prototype.sortNumericIndexed;
-    array.sortNumeric = List__List.prototype.sortNumeric;
-    array.sortNumericIndexedDescending = List__List.prototype.sortNumericIndexedDescending;
-    array.sortNumericDescending = List__List.prototype.sortNumericDescending;
-    array.sortOnIndexes = List__List.prototype.sortOnIndexes;
-    array.getReversed = List__List.prototype.getReversed;
-    array.getSortedByProperty = List__List.prototype.getSortedByProperty;
-    array.getSorted = List__List.prototype.getSorted;
-    array.getSortedByList = List__List.prototype.getSortedByList;
-    array.getSortedRandom = List__List.prototype.getSortedRandom;
+    array.sortIndexed = List.prototype.sortIndexed;
+    array.sortNumericIndexed = List.prototype.sortNumericIndexed;
+    array.sortNumeric = List.prototype.sortNumeric;
+    array.sortNumericIndexedDescending = List.prototype.sortNumericIndexedDescending;
+    array.sortNumericDescending = List.prototype.sortNumericDescending;
+    array.sortOnIndexes = List.prototype.sortOnIndexes;
+    array.getReversed = List.prototype.getReversed;
+    array.getSortedByProperty = List.prototype.getSortedByProperty;
+    array.getSorted = List.prototype.getSorted;
+    array.getSortedByList = List.prototype.getSortedByList;
+    array.getSortedRandom = List.prototype.getSortedRandom;
     //filter:
-    array.getFilteredByPropertyValue = List__List.prototype.getFilteredByPropertyValue;
-    array.getFilteredByBooleanList = List__List.prototype.getFilteredByBooleanList;
-    //conversion
-    array.toNumberList = List__List.prototype.toNumberList;
-    array.toStringList = List__List.prototype.toStringList;
-    //
-    array.clone = List__List.prototype.clone;
-    array.toString = List__List.prototype.toString;
-    array.getNames = List__List.prototype.getNames;
-    array.applyFunction = List__List.prototype.applyFunction;
-    array.getWithoutElementAtIndex = List__List.prototype.getWithoutElementAtIndex;
-    array.getWithoutElement = List__List.prototype.getWithoutElement;
-    array.getWithoutElements = List__List.prototype.getWithoutElements;
-    array.getWithoutElementsAtIndexes = List__List.prototype.getWithoutElementsAtIndexes;
-    array.getFilteredByFunction = List__List.prototype.getFilteredByFunction;
+    array.getFilteredByPropertyValue = List.prototype.getFilteredByPropertyValue;
+    array.getFilteredByBooleanList = List.prototype.getFilteredByBooleanList;
+
+    array.clone = List.prototype.clone;
+    array.toString = List.prototype.toString;
+    array.getNames = List.prototype.getNames;
+    array.applyFunction = List.prototype.applyFunction;
+    array.getWithoutElementAtIndex = List.prototype.getWithoutElementAtIndex;
+    array.getWithoutElement = List.prototype.getWithoutElement;
+    array.getWithoutElements = List.prototype.getWithoutElements;
+    array.getWithoutElementsAtIndexes = List.prototype.getWithoutElementsAtIndexes;
+    array.getFilteredByFunction = List.prototype.getFilteredByFunction;
     array._concat = Array.prototype.concat;
-    array.concat = List__List.prototype.concat;
-    array.getReport = List__List.prototype.getReport;
-    array.getReportHtml = List__List.prototype.getReportHtml;
+    array.concat = List.prototype.concat;
 
     //transformations
-    array.pushIfUnique = List__List.prototype.pushIfUnique;
-    array.removeElement = List__List.prototype.removeElement;
-    array.removeElementAtIndex = List__List.prototype.removeElementAtIndex;
-    array.removeElementsAtIndexes = List__List.prototype.removeElementsAtIndexes;
-    array.removeElements = List__List.prototype.removeElements;
-    array.removeRepetitions = List__List.prototype.removeRepetitions;
-    array.replace = List__List.prototype.replace;
-    array.assignNames = List__List.prototype.assignNames;
+    array.pushIfUnique = List.prototype.pushIfUnique;
+    array.removeElement = List.prototype.removeElement;
+    array.removeElementAtIndex = List.prototype.removeElementAtIndex;
+    array.removeElementsAtIndexes = List.prototype.removeElementsAtIndexes;
+    array.removeElements = List.prototype.removeElements;
+    array.removeRepetitions = List.prototype.removeRepetitions;
+    array.replace = List.prototype.replace;
+    array.assignNames = List.prototype.assignNames;
     array._splice = Array.prototype.splice;
-    array.splice = List__List.prototype.splice;
+    array.splice = List.prototype.splice;
 
     array.isList = true;
 
-    array.destroy = List__List.prototype.destroy;
-
+    array.destroy = List.prototype.destroy;
 
     return array;
   };
@@ -831,7 +604,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List} Specific sub-class of List, based on the contents of the List.
    * tags:
    */
-  List__List.prototype.getImproved = function() {
+  List.prototype.getImproved = function() {
     //TODO: still doesn't solve tha case of a list with several list of different types
     if(this.length === 0) {
       return this;
@@ -874,38 +647,6 @@ define('src/index', ['exports'], function (exports) {
       case "Relation":
         newList = RelationList__default.fromArray(this, false);
         break;
-        var newList = NumberList.fromArray(this, false);
-      break;
-      case "string":
-        var newList = StringList.fromArray(this, false);
-      break;
-      case "Rectangle":
-        return this;
-      case "date":
-        var newList = DateList.fromArray(this, false);
-      break;
-      case "List":
-        case "DateList":
-        case "IntervalList":
-        case "StringList":
-        case "Table":
-        var newList = Table.fromArray(this, false);
-      break;
-      case "NumberList":
-        var newList = NumberTable.fromArray(this, false);
-      break;
-      case "Point":
-        var newList = Polygon.fromArray(this, false);
-      break;
-      case "Polygon":
-        var newList = PolygonList.fromArray(this, false);
-      break;
-      case "Node":
-        var newList = NodeList__default.fromArray(this, false);
-      break;
-      case "Relation":
-        var newList = RelationList__default.fromArray(this, false);
-      break;
     }
 
     if(newList === null ||  newList === "") {
@@ -937,7 +678,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Boolean} true if all elements are identical.
    * tags:
    */
-  List__List.prototype.sameElements = function(list) {
+  List.prototype.isEquivalent = function(list) {
     if(this.length != list.length) return false;
 
     var i;
@@ -953,7 +694,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number} Length of the list.
    * tags:
    */
-  List__List.prototype.getLength = function() {
+  List.prototype.getLength = function() {
     return this.length;
   };
 
@@ -963,7 +704,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {null}
    * tags:
    */
-  List__List.prototype.getLengths = function() {
+  List.prototype.getLengths = function() {
     //overriden by different extentions of List
     return null;
   };
@@ -974,7 +715,7 @@ define('src/index', ['exports'], function (exports) {
    * returns an empty string.
    * @return {String} Type of element stored in the List.
    */
-  List__List.prototype.getTypeOfElements = function() {
+  List.prototype.getTypeOfElements = function() {
     var typeOfElements = typeOf(this[0]);
     for(var i = 1; this[i] != null; i++) {
       if(typeOf(this[i]) != typeOfElements) return "";
@@ -988,7 +729,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {StringList} List of types for each element.
    * tags:
    */
-  List__List.prototype.getTypes = function() {
+  List.prototype.getTypes = function() {
     var types = new StringList();
     for(var i = 0; this[i] != null; i++) {
       types[i] = typeOf(this[i]);
@@ -1001,8 +742,7 @@ define('src/index', ['exports'], function (exports) {
    * converts the List into a string.
    * @return {String} String representation of the List.
    */
-  List__List.prototype.toString = function() {
-    var i;
+  List.prototype.toString = function() {
     var str = "[";
     for(var i = 0; i < this.length - 1; i++) {
       str += this[i] + ", ";
@@ -1016,7 +756,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {StringList}
    * tags:
    */
-  List__List.prototype.getNames = function() {
+  List.prototype.getNames = function() {
     var stringList = new StringList();
     for(var i = 0; this[i] != null; i++) {
       stringList[i] = this[i].name;
@@ -1029,7 +769,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List} New List reveresed from original.
    * tags:sort
    */
-  List__List.prototype.getReversed = function() {
+  List.prototype.getReversed = function() {
     var newList = instantiateWithSameType(this);
     for(var i = 0; this[i] != null; i++) {
       newList.unshift(this[i]);
@@ -1045,7 +785,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List__List.prototype.getSubList = function() {
+  List.prototype.getSubList = function() {
     var interval;
     var i;
 
@@ -1079,7 +819,7 @@ define('src/index', ['exports'], function (exports) {
     var type = this.type;
 
     if(type == 'List' || type == 'Table') {
-      newList = new List__List();
+      newList = new List();
     } else {
       newList = instantiate(type);
     }
@@ -1106,8 +846,8 @@ define('src/index', ['exports'], function (exports) {
    * List of the input type.
    * tags:filter
    */
-  List__List.prototype.getSubListByType = function(type) {
-    var newList = new List__List();
+  List.prototype.getSubListByType = function(type) {
+    var newList = new List();
     newList.name = this.name;
     this.forEach(function(element) {
       if(typeOf(element) == type) newList.push(element);
@@ -1121,7 +861,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List__List.prototype.getSubListByIndexes = function() { //TODO: merge with getSubList
+  List.prototype.getSubListByIndexes = function() { //TODO: merge with getSubList
     if(this.length < 1) return this;
     var indexes;
     if(typeOf(arguments[0]) == 'number') {
@@ -1137,7 +877,7 @@ define('src/index', ['exports'], function (exports) {
     var newList;
     var type = this.type;
     if(type == 'List') {
-      newList = new List__List();
+      newList = new List();
     } else {
       newList = instantiate(typeOf(this));
     }
@@ -1175,7 +915,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Object} element
    * @return {Number}
    */
-  List__List.prototype.getElementNumberOfOccurrences = function(element) {
+  List.prototype.getElementNumberOfOccurrences = function(element) {
     var nOccurrences = 0;
     var from = 0;
     var index = this.indexOf(element, from);
@@ -1192,7 +932,7 @@ define('src/index', ['exports'], function (exports) {
    * creates a copy of the List
    * @return {List}
    */
-  List__List.prototype.clone = function() {
+  List.prototype.clone = function() {
     //TODO:check this! fromArray should suffice
     var clonedList = instantiateWithSameType(this);
     var i;
@@ -1209,7 +949,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List__List.prototype.getWithoutRepetitions = function() {
+  List.prototype.getWithoutRepetitions = function() {
     var i;
     var dictionary;
 
@@ -1242,24 +982,22 @@ define('src/index', ['exports'], function (exports) {
    * @return {List} simplified list
    * tags:
    */
-  List__List.prototype.getSimplified = function(nCategories, othersElement) {
+  List.prototype.getSimplified = function(nCategories, othersElement) {
     if(!nCategories) return;
 
     var freqTable = this.getFrequenciesTable();
 
     if(othersElement==null) othersElement = "other";
 
-    var newList = new List__List();
+    var newList = new List();
     newList.name = this.name;
 
-    this.forEach(function(element, i){
+    this.forEach(function(element){
       newList.push(freqTable._indexesDictionary[element]<nCategories-1?element:othersElement);
     });
 
     return newList;
   };
-
-
 
 
   /**
@@ -1268,7 +1006,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number}
    * tags:countt
    */
-  List__List.prototype.countElement = function(element) {
+  List.prototype.countElement = function(element) {
     var n = 0;
     this.forEach(function(elementInList) {
       if(element == elementInList) {
@@ -1283,7 +1021,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {numberList}
    * tags:count
    */
-  List__List.prototype.countOccurrences = function() { //TODO: more efficient
+  List.prototype.countOccurrences = function() { //TODO: more efficient
     var occurrences = new NumberList();
     for(var i = 0; this[i] != null; i++) {
       occurrences[i] = this.indexesOf(this[i]).length;
@@ -1302,22 +1040,20 @@ define('src/index', ['exports'], function (exports) {
    * tags:count
    * previous_name:getElementsRepetitionCount
    */
-  List__List.prototype.getFrequenciesTable = function(sortListsByOccurrences, addWeightsNormalizedToSum, addCategoricalColors) {
+  List.prototype.getFrequenciesTable = function(sortListsByOccurrences, addWeightsNormalizedToSum, addCategoricalColors) {
     sortListsByOccurrences = sortListsByOccurrences == null?true:sortListsByOccurrences;
 
     var table = new Table();
-    var elementList = new List__List();
+    var elementList = new List();
     var numberList = new NumberList();
     var i;
     var index;
-    var element;
 
     table[0] = elementList;
     table[1] = numberList;
 
     //if(this.type == 'NumberList' || this.type == 'StringList') {//TODO:check other cases
     var dictionary = {};
-    var prevVal;
 
     for(i=0; this[i]!=null; i++){
       index = dictionary[this[i]];
@@ -1352,7 +1088,7 @@ define('src/index', ['exports'], function (exports) {
 
     }
 
-    if(addWeightsNormalizedToSum) table[2] = table[1].getNormalizedToSum();
+    if(addWeightsNormalizedToSum) table[2] = NumberListOperators.normalizedToSum(table[1]);
     if(addCategoricalColors){
       var colors = new ColorList();
       for(i = 0; table[0][i]!=null; i++) {
@@ -1368,7 +1104,7 @@ define('src/index', ['exports'], function (exports) {
    * checks if all values in the list are equal to one another
    * @return {Boolean} Returns true if all values in the list are equal.
    */
-  List__List.prototype.allElementsEqual = function() {
+  List.prototype.allElementsEqual = function() {
     var i;
     if(this.length < 2) return true;
 
@@ -1387,7 +1123,7 @@ define('src/index', ['exports'], function (exports) {
    *
    * @return {Object} Most repeated value.
    */
-  List__List.prototype.getMostRepeatedElement = function() {
+  List.prototype.getMostRepeatedElement = function() {
     //TODO: this method should be more efficient
     return this.getFrequenciesTable(true)[0][0];// ListOperators.countElementsRepetitionOnList(this, true)[0][0];
   };
@@ -1397,7 +1133,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number} minimum value in the list
    * tags:
    */
-  List__List.prototype.getMin = function() {
+  List.prototype.getMin = function() {
     if(this.length === 0) return null;
     var min = this[0];
     var i;
@@ -1412,7 +1148,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number} maximum value in the list
    * tags:
    */
-  List__List.prototype.getMax = function() {
+  List.prototype.getMax = function() {
     if(this.length === 0) return null;
     var max = this[0];
     var i;
@@ -1432,7 +1168,7 @@ define('src/index', ['exports'], function (exports) {
    * of adding the given value to the original elements
    * in the List.
    */
-  List__List.prototype.add = function(value) {
+  List.prototype.add = function(value) {
     if(value.constructor == Number) {
       var i;
       var array = instantiateWithSameType(this);
@@ -1449,7 +1185,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Object}
    * tags:
    */
-  List__List.prototype.getRandomElement = function() {
+  List.prototype.getRandomElement = function() {
     return this[Math.floor(this.length * Math.random())];
   };
 
@@ -1460,7 +1196,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List__List.prototype.getRandomElements = function(n, avoidRepetitions) {
+  List.prototype.getRandomElements = function(n, avoidRepetitions) {
     avoidRepetitions = avoidRepetitions == null ? true : avoidRepetitions;
     n = Math.min(n, this.length);
     var newList = instantiateWithSameType(this);
@@ -1479,7 +1215,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Object} element Element to look for in the List.
    * @return {Boolean} True if given element is in the List.
    */
-  List__List.prototype.containsElement = function(element) { //TODO: test if this is faster than indexOf
+  List.prototype.containsElement = function(element) { //TODO: test if this is faster than indexOf
     var i;
     for(i = 0; this[i] != null; i++) {
       if(this[i] == element) return true;
@@ -1493,14 +1229,13 @@ define('src/index', ['exports'], function (exports) {
    * @return {Number} Index of the given element in the List.
    * If element is not found, -1 is returned.
    */
-  List__List.prototype.indexOfElement = function(element) { //TODO: test if this is faster than indexOf
+  List.prototype.indexOfElement = function(element) { //TODO: test if this is faster than indexOf
     var i;
     for(i = 0; this[i] != null; i++) {
       if(this[i] == element) return i;
     }
     return -1;
   };
-
 
   /**
    * Returns a List of values of a property of all elements.
@@ -1511,8 +1246,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:
    */
-  List__List.prototype.getPropertyValues = function(propertyName, valueIfNull) {
-    var newList = new List__List();
+  List.prototype.getPropertyValues = function(propertyName, valueIfNull) {
+    var newList = new List();
     newList.name = propertyName;
     var val;
     for(var i = 0; this[i] != null; i++) {
@@ -1522,7 +1257,7 @@ define('src/index', ['exports'], function (exports) {
     return newList.getImproved();
   };
 
-  List__List.prototype.sortIndexed = function() {
+  List.prototype.sortIndexed = function() {
     var index = [];
     var i;
     for(i = 0; i < this.length; i++) {
@@ -1545,41 +1280,7 @@ define('src/index', ['exports'], function (exports) {
     return result;
   };
 
-  // List.prototype.sortNumericIndexed=function() {
-  //  var index = new Array();
-  //  var i;
-  //  for(i=0; i<this.length; i++){
-  //      index.push({index:i, value:this[i]});
-  //  }
-  //  var comparator = function(a, b) {
-  //      var array_a = a.value;
-  //      var array_b = b.value;;
-
-  //      return array_a - array_b;
-  //  }
-  //  index=index.sort(comparator);
-  //  var result = new NumberList();
-  //  for(i=0; i<index.length; i++){
-  //      result.push(index[i].index);
-  //  }
-  //  return result;
-  // }
-
-  // List.prototype.sortNumeric=function(descendant){
-  //  var comparator;
-  //  if(descendant){
-  //    var comparator=function(a, b){
-  //      return b - a;
-  //    }
-  //  } else {
-  //    var comparator=function(a, b){
-  //      return a - b;
-  //    }
-  //  }
-  //  return this.sort(comparator);
-  // }
-
-  List__List.prototype.sortOnIndexes = function(indexes) {
+  List.prototype.sortOnIndexes = function(indexes) {
     var result = instantiateWithSameType(this);
     result.name = this.name;
     var i;
@@ -1589,7 +1290,7 @@ define('src/index', ['exports'], function (exports) {
     return result;
   };
 
-  List__List.prototype.getSortedByProperty = function(propertyName, ascending) {
+  List.prototype.getSortedByProperty = function(propertyName, ascending) {
     ascending = ascending == null ? true : ascending;
 
     var comparator;
@@ -1612,22 +1313,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:sort
    */
-  List__List.prototype.getSorted = function(ascending) {
-    return this.getSortedByList(this, ascending); //<--- because tests, antiintuitively, have proven this to be faster
-
-    // ascending = ascending == null ? true : ascending;
-
-    // var comparator;
-    // if(ascending) {
-    //   comparator = function(a, b) {
-    //     return a > b ? 1 : -1;
-    //   };
-    // } else {
-    //   comparator = function(a, b) {
-    //     return a > b ? -1 : 1;
-    //   };
-    // }
-    // return this.clone().sort(comparator);
+  List.prototype.getSorted = function(ascending) {
+    return this.getSortedByList(this, ascending);
   };
 
   /**
@@ -1639,7 +1326,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List} sorted list (of the same type)
    * tags:sort
    */
-  List__List.prototype.getSortedByList = function(list, ascending) {
+  List.prototype.getSortedByList = function(list, ascending) {
     ascending = ascending == null ? true : ascending;
 
     var pairsArray = [];
@@ -1679,7 +1366,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:sort
    */
-  List__List.prototype.getSortedRandom = function() {
+  List.prototype.getSortedRandom = function() {
     var newList = this.clone();
     newList.name = this.name;
     newList.sort(function() {
@@ -1695,7 +1382,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {NumberList}
    * tags:
    */
-  List__List.prototype.indexesOf = function(element) {
+  List.prototype.indexesOf = function(element) {
     var index = this.indexOf(element);
     var numberList = new NumberList();
     while(index != -1) {
@@ -1712,7 +1399,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {NumberList}
    * tags:
    */
-  List__List.prototype.indexOfElements = function(elements) {
+  List.prototype.indexOfElements = function(elements) {
     var numberList = new NumberList();
     for(var i = 0; elements[i] != null; i++) {
       numberList[i] = this.indexOf(elements[i]);
@@ -1728,7 +1415,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags: filter
    */
-  List__List.prototype.getFirstElementByName = function(name, returnIndex) {
+  List.prototype.getFirstElementByName = function(name, returnIndex) {
     for(var i = 0; this[i] != null; i++) {
       if(this[i].name == name) return returnIndex ? i : this[i];
     }
@@ -1743,8 +1430,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List__List.prototype.getElementsByNames = function(names, returnIndex) {
-    var list = returnIndex ? new NumberList() : new List__List();
+  List.prototype.getElementsByNames = function(names, returnIndex) {
+    var list = returnIndex ? new NumberList() : new List();
     var i;
 
     names.forEach(function(name) {
@@ -1769,14 +1456,14 @@ define('src/index', ['exports'], function (exports) {
    * @return {Object}
    * tags:
    */
-  List__List.prototype.getFirstElementByPropertyValue = function(propertyName, value) {
+  List.prototype.getFirstElementByPropertyValue = function(propertyName, value) {
     for(var i = 0; this[i] != null; i++) {
       if(this[i][propertyName] == value) return this[i];
     }
     return null;
   };
 
-  List__List.prototype.indexOfByPropertyValue = function(propertyName, value) {
+  List.prototype.indexOfByPropertyValue = function(propertyName, value) {
     for(var i = 0; this[i] != null; i++) {
       if(this[i][propertyName] == value) return i;
     }
@@ -1792,8 +1479,8 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List__List.prototype.getFilteredByBooleanList = function(booleanList) {
-    var newList = new List__List();
+  List.prototype.getFilteredByBooleanList = function(booleanList) {
+    var newList = new List();
     newList.name = this.name;
     var i;
     for(i = 0; this[i] != null; i++) {
@@ -1805,16 +1492,17 @@ define('src/index', ['exports'], function (exports) {
   /**
    * Filters a list by its elements, and a type of comparison (equal by default).
    *
-   * @param  {Object} value object (for equal or different comparison) or number or date
+   * @param  {String} propertyName property to check.
+   * @param  {Object} propertyValue object (for equal or different comparison) or number or date
    * (for equal, different, greater, lesser).
    * @param  {String} comparison equal (default), different, greater, lesser.
    * @return {List} Filtered list
    * tags:filter
    */
-  List__List.prototype.getFilteredByValue = function(value, comparison) {
+  List.prototype.getFilteredByValue = function(propertyName, propertyValue, comparison) {
     comparison = comparison == null ? "equal" : comparison;
 
-    var newList = new List__List();
+    var newList = new List();
     newList.name = "filtered_" + this.name;
     var i;
     switch(comparison) {
@@ -1852,10 +1540,10 @@ define('src/index', ['exports'], function (exports) {
    * @return {List} filtered list
    * tags:filter
    */
-  List__List.prototype.getFilteredByPropertyValue = function(propertyName, propertyValue, comparison) {
+  List.prototype.getFilteredByPropertyValue = function(propertyName, propertyValue, comparison) {
     comparison = comparison == null ? "equal" : comparison;
 
-    var newList = new List__List();
+    var newList = new List();
     newList.name = "filtered_" + this.name;
     var i;
     switch(comparison) {
@@ -1884,45 +1572,9 @@ define('src/index', ['exports'], function (exports) {
     return newList.getImproved();
   };
 
-  /**
-   * Converts the List into a NumberList.
-   *
-   * @return {NumberList}
-   * tags:conversion
-   */
-  List__List.prototype.toNumberList = function() {
-    var numberList = new NumberList();
-    numberList.name = this.name;
-    var i;
-    for(i = 0; this[i] != null; i++) {
-      numberList[i] = Number(this[i]);
-    }
-    return numberList;
-  };
-
-  /**
-   * Converts the List into a StringList.
-   *
-   * @return {StringList}
-   * tags:conversion
-   */
-  List__List.prototype.toStringList = function() {
-    var i;
-    var stringList = new StringList();
-    stringList.name = this.name;
-    for(i = 0; this[i] != null; i++) {
-      if(typeof this[i] == 'number') {
-        stringList[i] = String(this[i]);
-      } else {
-        stringList[i] = this[i].toString();
-      }
-    }
-    return stringList;
-  };
-
-  List__List.prototype.applyFunction = function(func) {
+  List.prototype.applyFunction = function(func) {
     //TODO: to be tested!
-    var newList = new List__List();
+    var newList = new List();
     newList.name = this.name;
     var i;
     for(i = 0; this[i] != null; i++) {
@@ -1934,11 +1586,11 @@ define('src/index', ['exports'], function (exports) {
 
   //filtering
 
-  List__List.prototype.getWithoutElementsAtIndexes = function(indexes) { //[!] This DOESN'T transforms the List
+  List.prototype.getWithoutElementsAtIndexes = function(indexes) { //[!] This DOESN'T transforms the List
     var i;
     var newList;
     if(this.type == 'List') {
-      newList = new List__List();
+      newList = new List();
     } else {
       newList = instantiate(typeOf(this));
     }
@@ -1958,10 +1610,10 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:filter
    */
-  List__List.prototype.getWithoutElementAtIndex = function(index) {
+  List.prototype.getWithoutElementAtIndex = function(index) {
     var newList;
     if(this.type == 'List') {
-      newList = new List__List();
+      newList = new List();
     } else {
       newList = instantiateWithSameType(this);
     }
@@ -1982,14 +1634,14 @@ define('src/index', ['exports'], function (exports) {
    * @param {Number|String|Object} element Element to exclude in the new List.
    * @return {List} New List missing the given element.
    */
-  List__List.prototype.getWithoutElement = function(element) {
+  List.prototype.getWithoutElement = function(element) {
     var index = this.indexOf(element);
     if(index == -1) return this;
 
     var newList;
 
     if(this.type == 'List') {
-      newList = new List__List();
+      newList = new List();
     } else {
       newList = instantiateWithSameType(this);
     }
@@ -2005,10 +1657,10 @@ define('src/index', ['exports'], function (exports) {
     return newList;
   };
 
-  List__List.prototype.getWithoutElements = function(list) {
+  List.prototype.getWithoutElements = function(list) {
     var newList;
     if(this.type == 'List') {
-      newList = new List__List();
+      newList = new List();
     } else {
       newList = instantiateWithSameType(this);
     }
@@ -2033,7 +1685,7 @@ define('src/index', ['exports'], function (exports) {
    * returned List.
    * @return {List} Filtered List.
    */
-  List__List.prototype.getFilteredByFunction = function(func) {
+  List.prototype.getFilteredByFunction = function(func) {
     var newList = instantiateWithSameType(this);
     for(var i = 0; this[i] != null; i++) {
       if(func(this[i])) {
@@ -2047,7 +1699,7 @@ define('src/index', ['exports'], function (exports) {
 
 
 
-  List__List.prototype.concat = function() {
+  List.prototype.concat = function() {
     if(arguments[0] == null) return this;
 
     // c.l('concat | arguments[0].type, this.type', arguments[0].type, this.type);
@@ -2074,201 +1726,18 @@ define('src/index', ['exports'], function (exports) {
         return newList;
       }
     }
-    return List__List.fromArray(this._concat.apply(this, arguments)).getImproved();
-  };
-
-
-  List__List.prototype.getReport = function(level) { //TODO:complete
-    var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
-    var text = level > 0 ? (ident + "////report of instance of List////") : "///////////report of instance of List//////////";
-
-    var length = this.length;
-    var i;
-
-    text += ident + "name: " + this.name;
-    text += ident + "type: " + this.type;
-
-    if(length == 0) {
-      text += ident + "single element: [" + this[0] + "]";
-      return text;
-    } else {
-      text += ident + "length: " + length;
-      text += ident + "first element: [" + this[0] + "]";
-    }
-
-    switch(this.type) {
-      case "NumberList":
-        var min = this.getMin();
-        var max = this.getMax();
-        this.min = min;
-        this.max = max;
-        var average = this.getAverage();//(min + max) * 0.5;
-        this.average = average;
-        text += ident + "min: " + min;
-        text += ident + "max: " + max;
-        text += ident + "average: " + average;
-        if(length < 101) {
-          text += ident + "numbers: " + this.join(", ");
-        }
-        break;
-        case "StringList":
-      case "List":
-        var freqTable = this.getFrequenciesTable(true);
-        this._freqTable = freqTable;
-        text += ident + "number of different elements: " + freqTable[0].length;
-        if(freqTable[0].length < 10) {
-          text += ident + "elements frequency:";
-        } else {
-          text += ident + "some elements frequency:";
-        }
-
-        for(i = 0; freqTable[0][i] != null && i < 10; i++) {
-          text += ident + "  [" + String(freqTable[0][i]) + "]: " + freqTable[1][i];
-        }
-
-        var joined;
-        if(this.type == "List") {
-          joined = this.join("], [");
-        } else {
-          joined = this.toStringList().join("], [");
-        }
-
-        if(joined.length < 2000) text += ident + "strings: [" + joined + "]";
-        break;
-
-    }
-
-    ///add ideas to: analyze, visualize
-
-
-    return text;
-  };
-
-
-  List__List.prototype.getReportHtml = function(level) { //TODO:complete
-    var ident = "<br>" + (level > 0 ? StringOperators.repeatString("&nbsp", level) : "");
-    var text =  level > 0 ? "" : "<b><font style=\"font-size:18px\">list report</f></b>";
-
-    var length = this.length;
-    var i;
-
-    if(this.name){
-      text += ident + "name: <b>" + this.name + "</b>";
-    } else {
-      text += ident + "<i>no name</i>";
-    }
-    text += ident + "type: <b>" + this.type + "</b>";
-
-    if(length == 0) {
-      text += ident + "single element: [<b>" + this[0] + "</b>]";
-      return text;
-    } else {
-      text += ident + "length: <b>" + length + "</b>";
-      text += ident + "first element: [<b>" + this[0] + "</b>]";
-    }
-
-    switch(this.type) {
-      case "NumberList":
-        var min = 9999999;
-        var max = -9999999;
-        var average = 0;
-        var shorten = new NumberList();
-        var index = 0;
-        var accumsum = 0;
-        var maxAccumsum = -99999;
-        var sizeAccum = Math.max(Math.floor(this.length/50), 1);
-
-        this.forEach(function(val){
-          min = Math.min(min, val);
-          max = Math.max(max, val);
-          average += val;
-          accumsum += val;
-          index++;
-          if(index==sizeAccum){
-            accumsum /= index;
-            maxAccumsum = Math.max(maxAccumsum, accumsum);
-            shorten.push(accumsum);
-            accumsum=0;
-            index=0;
-          }
-        });
-        if(index!=0){
-            accumsum /=index;
-            maxAccumsum = Math.max(maxAccumsum, accumsum);
-            shorten.push(accumsum);
-        }
-
-        shorten = shorten.factor(1/maxAccumsum);
-
-        average /= this.length;
-
-        this.min = min;
-        this.max = max;
-        this.average = average;
-        text += ident + "min: <b>" + min + "</b>";
-        text += ident + "max: <b>" + max + "</b>";
-        text += ident + "average: <b>" + average + "</b>";
-        if(length < 101) {
-          text += ident + "numbers: <b>" + this.join("</b>, <b>") + "</b>";
-        }
-        //var shorten = NumberListOperators.shorten(this, 70);
-        //shorten = shorten.getNormalizedToMax();
-        text += ident;
-        for(i=0; shorten[i]!=null; i++){
-          text += "<font style=\"font-size:7px\"><font color=\""+ColorOperators.colorStringToHEX(ColorScales.grayToOrange(shorten[i]))+"\">█</f></f>";
-        }
-        break;
-      case "StringList":
-      case "List":
-        var freqTable = this.getFrequenciesTable(true);
-        this._freqTable = freqTable;
-        var catColors = ColorListGenerators.createCategoricalColors(2, freqTable[0].length);
-
-        text += ident + "entropy: <b>" + NumberOperators.numberToString(ListOperators__default.getListEntropy(this, null, freqTable), 4) + "</b>";
-
-        text += ident + "number of different elements: <b>" + freqTable[0].length + "</b>";
-        if(freqTable[0].length < 10) {
-          text += ident + "elements frequency:";
-        } else {
-          text += ident + "some elements frequency:";
-        }
-
-        for(i = 0; freqTable[0][i] != null && i < 10; i++) {
-          text += ident + "  [<b>" + String(freqTable[0][i]) + "</b>]: <font style=\"font-size:10px\"><b><font color=\""+ColorOperators.colorStringToHEX(catColors[i])+"\">" + freqTable[1][i] + "</f></b></f>";
-        }
-
-        var joined;
-        if(this.type == "List") {
-          joined = this.join("], [");
-        } else {
-          joined = this.toStringList().join("], [");
-        }
-
-        if(joined.length < 2000) text += ident + "contents: [" + joined + "]";
-
-        var weights = freqTable[1].getNormalizedToSum();
-
-        var bars = StringOperators.createsCategoricalColorsBlocksHtml(weights, 55, catColors);
-        text += ident;
-        text += "<font style=\"font-size:7px\">"+bars+"</f>";
-
-        break;
-    }
-
-
-    ///add ideas to: analyze, visualize
-    return text;
+    return List.fromArray(this._concat.apply(this, arguments)).getImproved();
   };
 
 
   ////transformations
 
-  List__List.prototype.pushIfUnique = function(element) {
+  List.prototype.pushIfUnique = function(element) {
     if(this.indexOf(element) != -1) return; //TODO: implement equivalence
     this.push(element);
   };
 
-  List__List.prototype.removeElements = function(elements) { //TODO: make it more efficient (avoiding the splice method)
+  List.prototype.removeElements = function(elements) { //TODO: make it more efficient (avoiding the splice method)
     var i;
     var dictionary = {};
 
@@ -2285,16 +1754,16 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
-  List__List.prototype.removeElement = function(element) {
+  List.prototype.removeElement = function(element) {
     var index = this.indexOf(element);
     if(index != -1) this.splice(index, 1);
   };
 
-  List__List.prototype.removeElementAtIndex = function(index) { //deprecated
+  List.prototype.removeElementAtIndex = function(index) { //deprecated
     this.splice(index, 1);
   };
 
-  List__List.prototype.removeElementsAtIndexes = function(indexes) {
+  List.prototype.removeElementsAtIndexes = function(indexes) {
     indexes = indexes.sort(function(a, b) {
       return a - b;
     });
@@ -2304,7 +1773,7 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
-  List__List.prototype.removeRepetitions = function() {
+  List.prototype.removeRepetitions = function() {
     for(var i = 0; this[i] != null; i++) {
       if(this.indexOf(this[i], i + 1) != -1) {
         this.splice(i, 1);
@@ -2312,7 +1781,7 @@ define('src/index', ['exports'], function (exports) {
     }
   };
 
-  List__List.prototype.replace = function(elementToFind, elementToInsert) {
+  List.prototype.replace = function(elementToFind, elementToInsert) {
     var l = this.length;
     for(var i = 0; i < l; i++) {
       if(this[i] == elementToFind) this[i] = elementToInsert;
@@ -2325,7 +1794,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {List}
    * tags:transform
    */
-  List__List.prototype.assignNames = function(names) {
+  List.prototype.assignNames = function(names) {
     if(names == null) return this;
     var n = names.length;
 
@@ -2337,37 +1806,238 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  List__List.prototype.splice = function() { //TODO: replace
+  List.prototype.splice = function() { //TODO: replace
     switch(this.type) {
       case 'NumberList':
         return NumberList.fromArray(this._splice.apply(this, arguments));
-      break;
       case 'StringList':
         return StringList.fromArray(this._splice.apply(this, arguments));
-      break;
       case 'NodeList':
         return NodeList__default.fromArray(this._splice.apply(this, arguments));
-      break;
       case 'DateList':
         return DateList.fromArray(this._splice.apply(this, arguments));
-      break;
     }
-    return List__List.fromArray(this._splice.apply(this, arguments)).getImproved();
+    return List.fromArray(this._splice.apply(this, arguments)).getImproved();
   };
 
-  List__List.prototype.destroy = function() {
+  List.prototype.destroy = function() {
     for(var i = 0; this[i] != null; i++) {
       delete this[i];
     }
   };
 
-  exports.List = List__default;
+  exports.List = List;
 
-  DateList.prototype = new List__default();
+  StringList.prototype = new List();
+  StringList.prototype.constructor = StringList;
+
+  /**
+   * @classdesc {@link List} for storing Strings.
+   *
+   * Additional functions that work on StringList can be found in:
+   * <ul>
+   *  <li>Operators:   {@link StringListOperators}</li>
+   *  <li>Conversions: {@link StringListConversions}</li>
+   * </ul>
+   *
+   * @constructor
+   * @description Creates a new StringList
+   *
+   * @category strings
+   */
+  function StringList() {
+    var args = [];
+
+    for(var i = 0; i < arguments.length; i++) {
+      args[i] = String(arguments[i]);
+    }
+    var array = List.apply(this, args);
+    array = StringList.fromArray(array);
+    
+    return array;
+  }
+
+
+  /**
+   * @todo write docs
+   */
+  StringList.fromArray = function(array, forceToString) {
+    forceToString = forceToString == null ? true : forceToString;
+
+    var result = List.fromArray(array);
+    if(forceToString) {
+      for(var i = 0; i < result.length; i++) {
+        result[i] = String(result[i]);
+      }
+    }
+    result.type = "StringList";
+
+    //assign methods to array:
+    result.getLengths = StringList.prototype.getLengths;
+    result.toLowerCase = StringList.prototype.toLowerCase;
+    result.toUpperCase = StringList.prototype.toUpperCase;
+    result.append = StringList.prototype.append;
+    result.getSurrounded = StringList.prototype.getSurrounded;
+    result.replace = StringList.prototype.replace;
+    result.getConcatenated = StringList.prototype.getConcatenated;
+    result.trim = StringList.prototype.trim;
+
+    //override
+    result.clone = StringList.prototype.clone;
+
+    return result;
+  };
+
+  /**
+   * overrides List.prototype.getLengths (see comments there)
+   */
+  StringList.prototype.getLengths = function() {
+    var lengths = new NumberList();
+
+    this.forEach(function(string) {
+      lengths.push(string.length);
+    });
+
+    return lengths;
+  };
+
+  /**
+   * @todo write docs
+   */
+  StringList.prototype.append = function(sufix, after) {
+    after = after == null ? true : after;
+    var newStringList = new StringList();
+    newStringList.name = this.name;
+    var sufixIsStringList = typeOf(sufix) == "StringList";
+    var i;
+    if(after) {
+      for(i = 0; this[i] != null; i++) {
+        newStringList[i] = this[i] + (sufixIsStringList ? sufix[i] : sufix);
+      }
+    } else {
+      for(i = 0; this[i] != null; i++) {
+        newStringList[i] = (sufixIsStringList ? sufix[i] : sufix) + this[i];
+      }
+    }
+    return newStringList;
+  };
+
+  /**
+   * prefix and sufix can be string or a StringList
+   */
+  StringList.prototype.getSurrounded = function(prefix, sufix) {
+    var newStringList = new StringList();
+    newStringList.name = this.name;
+    var i;
+
+    var prefixIsStringList = Array.isArray(prefix);
+    var sufixIsStringList = Array.isArray(sufix);
+
+    for(i = 0; this[i] != null; i++) {
+      newStringList[i] = (prefixIsStringList ? prefix[i] : prefix) + this[i] + (sufixIsStringList ? sufix[i] : sufix);
+    }
+
+    return newStringList;
+  };
+
+
+  //deprectaed, replaced by replaceInStrings
+  /**
+   * @ignore
+   */
+  StringList.prototype.replace = function(regExp, string) {
+    if(regExp==null) return this;
+
+    var newStringList = new StringList();
+    var i;
+
+    newStringList.name = this.name;
+
+    for(i = 0; this[i] != null; i++){
+      newStringList[i] = this[i].replace(regExp, string);
+    }
+
+    return newStringList;
+  };
+
+  /**
+   * @todo write docs
+   */
+  StringList.prototype.getConcatenated = function(separator) {
+    var i;
+    var string = "";
+    for(i = 0; this[i] != null; i++) {
+      string += this[i];
+      if(i < this.length - 1) string += separator;
+    }
+    return string;
+  };
+
+  /**
+   * @todo write docs
+   */
+  StringList.prototype.toLowerCase = function() {
+    var newStringList = new StringList();
+    newStringList.name = this.name;
+    var i;
+    for(i = 0; this[i] != null; i++) {
+      newStringList[i] = this[i].toLowerCase();
+    }
+    return newStringList;
+  };
+
+  /**
+   * @todo write docs
+   */
+  StringList.prototype.toUpperCase = function() {
+    var newStringList = new StringList();
+    newStringList.name = this.name;
+    var i;
+    for(i = 0; this[i] != null; i++) {
+      newStringList[i] = this[i].toUpperCase();
+    }
+    return newStringList;
+  };
+
+  /**
+   * trims all the strings on the stringList
+   * @return {StringList}
+   * tags:
+   */
+  StringList.prototype.trim = function() {
+    var i;
+    var newStringList = new StringList();
+    for(i = 0; this[i] != null; i++) {
+      newStringList[i] = this[i].trim();
+    }
+    newStringList.name = this.name;
+    return newStringList;
+  };
+
+  ///////overriding
+
+  /**
+   * @todo write docs
+   */
+  StringList.prototype.clone = function() {
+    var newList = StringList.fromArray(this.slice(), false);
+    newList.name = this.name;
+    return newList;
+  };
+
+  exports.StringList = StringList;
+
+  DateList.prototype = new List();
   DateList.prototype.constructor = DateList;
 
   /**
    * @classdesc A {@link List} for storing Dates.
+   *
+   * Additional functions that work on DateList can be found in:
+   * <ul>
+   *  <li>Operators:   {@link DateListOperators}</li>
+   *  <li>Conversions: {@link DateListConversions}</li>
+   * </ul>
    *
    * @description Creates a new DateList.
    * @constructor
@@ -2378,7 +2048,7 @@ define('src/index', ['exports'], function (exports) {
     for(var i = 0; i < arguments.length; i++) {
       args[i] = Number(arguments[i]);
     }
-    var array = List__default.apply(this, args);
+    var array = List.apply(this, args);
     array = DateList.fromArray(array);
     //
     return array;
@@ -2391,7 +2061,7 @@ define('src/index', ['exports'], function (exports) {
   */
   DateList.fromArray = function(array, forceToDate) {
     forceToDate = forceToDate == null ? true : forceToDate;
-    var result = List__default.fromArray(array);
+    var result = List.fromArray(array);
 
     if(forceToDate) {
       for(var i = 0; i < result.length; i++) {
@@ -2402,7 +2072,6 @@ define('src/index', ['exports'], function (exports) {
     result.type = "DateList";
     //assign methods to array:
     result.getTimes = DateList.prototype.getTimes;
-    result.toStringList = DateList.prototype.toStringList;
     result.getMin = DateList.prototype.getMin;
     result.getMax = DateList.prototype.getMax;
     return result;
@@ -2423,16 +2092,6 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-  /**
-  * @todo write docs
-  */
-  DateList.prototype.toStringList = function() {
-    var stringList = new StringList();
-    for(var i = 0; this[i] != null; i++) {
-      stringList[i] = DateOperators.dateToString(this[i]);
-    }
-    return stringList;
-  };
 
   /**
   * @todo write docs
@@ -2644,7 +2303,452 @@ define('src/index', ['exports'], function (exports) {
 
   exports.DateOperators = DateOperators;
 
-  Polygon3D.prototype = new List__default();
+  Rectangle.prototype = new DataModel();
+  Rectangle.prototype.constructor = Rectangle;
+
+  /**
+   * @classdesc Rectangle shape
+   *
+   * @description Creates a new Rectangle.
+   * @param {Number} x
+   * @param {Number} y
+   * @param {Number} width
+   * @param {Number} height
+   * @constructor
+   * @category geometry
+   */
+  function Rectangle(x, y, width, height) {
+    DataModel.apply(this);
+    this.name = "";
+    this.type = "Rectangle";
+    this.x = Number(x) || 0;
+    this.y = Number(y) || 0;
+    this.width = Number(width) || 0;
+    this.height = Number(height) || 0;
+  }
+
+
+  /**
+   * @todo write docs
+   */
+  Rectangle.prototype.getRight = function() {
+    return this.x + this.width;
+  };
+
+  /**
+   * @todo write docs
+   */
+  Rectangle.prototype.getBottom = function() {
+    return this.y + this.height;
+  };
+
+  /**
+   * @todo write docs
+   */
+  Rectangle.prototype.setRight = function(value) {
+    this.width = value - this.x;
+  };
+
+  /**
+   * @todo write docs
+   */
+  Rectangle.prototype.setBottom = function(value) {
+    this.height = value - this.y;
+  };
+
+
+
+  /**
+   * @todo write docs
+   */
+  Rectangle.prototype.getTopLeft = function() {
+    return new Point(this.x, this.y);
+  };
+
+  /**
+   * @todo write docs
+   */
+  Rectangle.prototype.getTopRight = function() {
+    return new Point(this.x + this.width, this.y);
+  };
+
+  /**
+   * @todo write docs
+   */
+  Rectangle.prototype.getBottomRight = function() {
+    return new Point(this.x + this.width, this.y + this.height);
+  };
+
+  /**
+   * @todo write docs
+   */
+  Rectangle.prototype.getBottomLeft = function() {
+    return new Point(this.x, this.y + this.height);
+  };
+
+  /**
+   * @todo write docs
+   */
+  Rectangle.prototype.getCenter = function() {
+    return new Point(this.x + 0.5 * this.width, this.y + 0.5 * this.height);
+  };
+
+  /**
+   * @todo write docs
+   */
+  Rectangle.prototype.getRandomPoint = function() {
+    return new Point(this.x + Math.random() * this.width, this.y + Math.random() * this.height);
+  };
+
+  /**
+   * @todo write docs
+   */
+  Rectangle.prototype.getIntersection = function(rectangle) {
+    if(rectangle.x + rectangle.width < this.x || rectangle.x > this.x + this.width || rectangle.y + rectangle.height < this.y || rectangle.y > this.y + this.height) return null;
+    var xR = Math.max(rectangle.x, this.x);
+    var yR = Math.max(rectangle.y, this.y);
+    return new Rectangle(xR, yR, Math.min(rectangle.x + rectangle.width, this.x + this.width) - xR, Math.min(rectangle.y + rectangle.height, this.y + this.height) - yR);
+  };
+
+  /**
+   * @todo write docs
+   */
+  Rectangle.prototype.interpolate = function(rectangle, t) {
+    var mint = 1 - t;
+    return new Rectangle(mint * this.x + t * rectangle.x, mint * this.y + t * rectangle.y, mint * this.width + t * rectangle.width, mint * this.height + t * rectangle.height);
+  };
+
+  /**
+   * @todo write docs
+   */
+  Rectangle.prototype.getRatio = function() {
+    return Math.max(this.width, this.height) / Math.min(this.width, this.height);
+  };
+
+  /**
+   * @todo write docs
+   */
+  Rectangle.prototype.getArea = function() {
+    return this.width * this.height;
+  };
+
+  /**
+   * check if a point belong to the rectangle
+   * @param  {Point} point
+   * @return {Boolean}
+   * tags:geometry
+   */
+  Rectangle.prototype.containsPoint = function(point) {
+    return(this.x <= point.x && this.x + this.width >= point.x && this.y <= point.y && this.y + this.height >= point.y);
+  };
+
+
+  /**
+   * @todo write docs
+   */
+  Rectangle.prototype.pointIsOnBorder = function(point, margin) {
+    margin = margin == null ? 1 : margin;
+    if(point.x >= this.x - margin && point.x <= this.x + this.width + margin) {
+      if(point.y >= this.y - margin && point.y <= this.y + margin) return true;
+      if(point.y >= this.y + this.height - margin && point.y <= this.y + this.height + margin) return true;
+      if(point.y >= this.y - margin && point.y <= this.y + this.height + margin) {
+        if(point.x < this.x + margin || point.x > this.x + this.width - margin) return true;
+      }
+    }
+    return false;
+  };
+
+
+
+
+  /**
+   * @todo write docs
+   */
+  Rectangle.prototype.getNormalRectangle = function() {
+    return new Rectangle(Math.min(this.x, this.x + this.width), Math.min(this.y, this.y + this.height), Math.abs(this.width), Math.abs(this.height));
+  };
+
+  /**
+   * return true if it interstects a rectangle
+   * @param  {Rectangle} rectangle
+   * @return {Boolean}
+   * tags:geometry
+   */
+  Rectangle.prototype.intersectsRectangle = function(rectangle) {
+    return !(this.x + this.width < rectangle.x) && !(this.y + this.height < rectangle.y) && !(rectangle.x + rectangle.width < this.x) && !(rectangle.y + rectangle.height < this.y);
+
+
+    if(this.x + this.width < rectangle.x) return false;
+    if(this.y + this.height < rectangle.y) return false;
+    if(rectangle.x + rectangle.width < this.x) return false;
+    if(rectangle.y + rectangle.height < this.y) return false;
+    return true;
+
+
+
+  	return this.containsPoint(rectangle.getTopLeft()) || this.containsPoint(rectangle.getTopRight()) || this.containsPoint(rectangle.getBottomLeft()) || this.containsPoint(rectangle.getBottomRight())
+  	|| rectangle.containsPoint(this.getTopLeft()) || rectangle.containsPoint(this.getTopRight()) || rectangle.containsPoint(this.getBottomLeft()) || rectangle.containsPoint(this.getBottomRight());
+  };
+
+  /**
+   * @todo write docs
+   */
+  Rectangle.prototype.expand = function(expantion, centerPoint) {
+    centerPoint = centerPoint || new Point(this.x + 0.5 * this.width, this.y + 0.5 * this.height);
+    return new Rectangle((this.x - centerPoint.x) * expantion + centerPoint.x, (this.y - centerPoint.y) * expantion + centerPoint.y, this.width * expantion, this.height * expantion);
+  };
+
+  /**
+   * @todo write docs
+   */
+  Rectangle.prototype.isEqual = function(rectangle) {
+    return this.x == rectangle.x && this.y == rectangle.y && this.width == rectangle.width && this.height == rectangle.height;
+  };
+
+  /**
+   * @todo write docs
+   */
+  Rectangle.prototype.clone = function() {
+    return new Rectangle(this.x, this.y, this.width, this.height);
+  };
+
+  /**
+   * @todo write docs
+   */
+  Rectangle.prototype.toString = function() {
+    return "(x=" + this.x + ", y=" + this.y + ", w=" + this.width + ", h=" + this.height + ")";
+  };
+
+  /**
+   * @todo write docs
+   */
+  Rectangle.prototype.destroy = function() {
+    delete this.x;
+    delete this.y;
+    delete this.width;
+    delete this.height;
+  };
+
+  exports.Rectangle = Rectangle;
+
+  Polygon.prototype = new List();
+  Polygon.prototype.constructor = Polygon;
+
+  /**
+   * @classdesc A Polygon is a shape created from a list of {@link Point|Points}.
+   *
+   * @description Creates a new Polygon.
+   * @constructor
+   * @category geometry
+   */
+  function Polygon() {
+    var array = List.apply(this, arguments);
+    array = Polygon.fromArray(array);
+    return array;
+  }
+
+
+  /**
+  * @todo write docs
+  */
+  Polygon.fromArray = function(array) {
+    var result = List.fromArray(array);
+    result.type = "Polygon";
+
+    result.getFrame = Polygon.prototype.getFrame;
+    result.getBarycenter = Polygon.prototype.getBarycenter;
+    result.add = Polygon.prototype.add;
+    result.factor = Polygon.prototype.factor;
+    result.getRotated = Polygon.prototype.getRotated;
+    result.getClosestPoint = Polygon.prototype.getClosestPoint;
+    result.toNumberList = Polygon.prototype.toNumberList;
+    result.containsPoint = Polygon.prototype.containsPoint;
+    //transform
+    result.approach = Polygon.prototype.approach;
+    //override
+    result.clone = Polygon.prototype.clone;
+
+    return result;
+  };
+
+
+  /**
+  * @todo write docs
+  */
+  Polygon.prototype.getFrame = function() {
+    if(this.length == 0) return null;
+    var rectangle = new Rectangle(this[0].x, this[0].y, this[0].x, this[0].y);
+    var p;
+    for(var i = 1; this[i] != null; i++) {
+      p = this[i];
+      rectangle.x = Math.min(rectangle.x, p.x);
+      rectangle.y = Math.min(rectangle.y, p.y);
+      rectangle.width = Math.max(rectangle.width, p.x);
+      rectangle.height = Math.max(rectangle.height, p.y);
+    }
+
+    rectangle.width -= rectangle.x;
+    rectangle.height -= rectangle.y;
+
+    return rectangle;
+  };
+
+  /**
+  * @todo write docs
+  */
+  Polygon.prototype.getBarycenter = function(countLastPoint) {
+    var i;
+    countLastPoint = countLastPoint == null ? true : countLastPoint;
+    var cLPN = 1 - Number(countLastPoint);
+    if(this.length == 0) return null;
+    var barycenter = new Point(this[0].x, this[0].y);
+    for(i = 1; this[i + cLPN] != null; i++) {
+      barycenter.x += this[i].x;
+      barycenter.y += this[i].y;
+    }
+    barycenter.x /= this.length;
+    barycenter.y /= this.length;
+    return barycenter;
+  };
+
+  /**
+  * @todo write docs
+  */
+  Polygon.prototype.add = function(object) {
+    var type = typeOf(object);
+    var i;
+    switch(type) {
+      case 'Point':
+        var newPolygon = new Polygon();
+        for(i = 0; this[i] != null; i++) {
+          newPolygon[i] = this[i].add(object);
+        }
+        newPolygon.name = this.name;
+        return newPolygon;
+        break;
+    }
+  };
+
+  /**
+   * scales the polygon by a number or a Point
+   * @param  {Object} value number or point
+   * @return {Polygon}
+   * tags:
+   */
+  Polygon.prototype.factor = function(value) {
+    var i;
+    var newPolygon = new Polygon();
+    newPolygon.name = this.name;
+
+    if(value >= 0 || value < 0) {
+      for(i = 0; this[i] != null; i++) {
+        newPolygon[i] = new Point(this[i].x * value, this[i].y * value);
+      }
+
+      return newPolygon;
+    } else if(value.type != null && value.type == 'Point') {
+      for(i = 0; this[i] != null; i++) {
+        newPolygon[i] = new Point(this[i].x * value.x, this[i].y * value.y);
+      }
+
+      return newPolygon;
+    }
+
+    return null;
+  };
+
+
+  /**
+  * @todo write docs
+  */
+  Polygon.prototype.getRotated = function(angle, center) {
+    center = center == null ? new Point() : center;
+
+    var newPolygon = new Polygon();
+    for(var i = 0; this[i] != null; i++) {
+      newPolygon[i] = new Point(Math.cos(angle) * (this[i].x - center.x) - Math.sin(angle) * (this[i].y - center.y) + center.x, Math.sin(angle) * (this[i].x - center.x) + Math.cos(angle) * (this[i].y - center.y) + center.y);
+    }
+    newPolygon.name = this.name;
+    return newPolygon;
+  };
+
+  /**
+   * @todo write docs
+   */
+  Polygon.prototype.getClosestPoint = function(point) {
+    var closest = this[0];
+    var d2Min = Math.pow(point.x - closest.x, 2) + Math.pow(point.y - closest.y, 2);
+    var d2;
+
+    for(var i = 1; this[i] != null; i++) {
+      d2 = Math.pow(point.x - this[i].x, 2) + Math.pow(point.y - this[i].y, 2);
+      if(d2 < d2Min) {
+        d2Min = d2;
+        closest = this[i];
+      }
+    }
+    return closest;
+  };
+
+  /**
+   * @todo write docs
+   */
+  Polygon.prototype.toNumberList = function() {
+    var numberList = new NumberList();
+    var i;
+    for(i = 0; this[i] != null; i++) {
+      numberList[i * 2] = this[i].x;
+      numberList[i * 2 + 1] = this[i].y;
+    }
+    return numberList;
+  };
+
+  /**
+  * @todo write docs
+  * Thanks http://jsfromhell.com/math/is-point-in-poly AND http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+  */
+  Polygon.prototype.containsPoint = function(point) {
+    var i;
+    var j;
+    var l;
+    for(var c = false, i = -1, l = this.length, j = l - 1; ++i < l; j = i)
+          ((this[i].y <= point.y && point.y < this[j].y) || (this[j].y <= point.y && point.y < this[i].y))
+          && (point.x < (this[j].x - this[i].x) * (point.y - this[i].y) / (this[j].y - this[i].y) + this[i].x)
+          && (c = !c);
+    return c;
+  };
+
+  //transform
+
+  /**
+   * @todo write docs
+   */
+  Polygon.prototype.approach = function(destiny, speed) {
+    speed = speed || 0.5;
+    var antispeed = 1 - speed;
+
+    this.forEach(function(point, i) {
+      point.x = antispeed * point.x + speed * destiny[i].x;
+      point.y = antispeed * point.y + speed * destiny[i].y;
+    });
+  };
+
+
+  /**
+   * @todo write docs
+   */
+  Polygon.prototype.clone = function() {
+    var newPolygon = new Polygon();
+    for(var i = 0; this[i] != null; i++) {
+      newPolygon[i] = this[i].clone();
+    }
+    newPolygon.name = this.name;
+    return newPolygon;
+  };
+
+  exports.Polygon = Polygon;
+
+  Polygon3D.prototype = new List();
   Polygon3D.prototype.constructor = Polygon3D;
 
   /**
@@ -2656,7 +2760,7 @@ define('src/index', ['exports'], function (exports) {
    * @category geometry
    */
   function Polygon3D() {
-    var array = List__default.apply(this, arguments);
+    var array = List.apply(this, arguments);
     array = Polygon3D.fromArray(array);
     return array;
   }
@@ -2666,7 +2770,7 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   Polygon3D.fromArray = function(array) {
-    var result = List__default.fromArray(array);
+    var result = List.fromArray(array);
     result.type = "Polygon3D";
     //assign methods to array:
     return result;
@@ -2674,934 +2778,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Polygon3D = Polygon3D;
 
-  /* global console */
-
-  Table.prototype = new List__default();
-  Table.prototype.constructor = Table;
-
-  /**
-   * @classdesc A sub-class of {@link List}, Table provides a 2D array-like structure.
-   *
-   * Each column is stored as its own {@link List}, making it a List of Lists.
-   * Cells in the table can be accessed using table[column][row].
-   *
-   * @description Creates a new Table.
-   * Input arguments are treated as the inital column values
-   * of the Table.
-   * @constructor
-   * @category basics
-   */
-  function Table() {
-    var args = [];
-    var i;
-    for(i = 0; i < arguments.length; i++) {
-      args[i] = new List__default(arguments[i]);
-    }
-
-    var array = List__default.apply(this, args);
-    array = Table.fromArray(array);
-
-    return array;
-  }
-
-
-  /**
-   * Creates a new Table from an array
-   * @param {Number[]} array
-   * @return {Table}
-   */
-  Table.fromArray = function(array) {
-    var result = List__default.fromArray(array);
-    result.type = "Table";
-    //assign methods to array:
-    result.applyFunction = Table.prototype.applyFunction;
-    result.getRow = Table.prototype.getRow;
-    result.getRows = Table.prototype.getRows;
-    result.getLengths = Table.prototype.getLengths;
-    result.getListLength = Table.prototype.getListLength;
-    result.sliceRows = Table.prototype.sliceRows;
-    result.getSubListsByIndexes = Table.prototype.getSubListsByIndexes;
-    result.getWithoutRow = Table.prototype.getWithoutRow;
-    result.getWithoutRows = Table.prototype.getWithoutRows;
-    result.getSubTableByElementOnList = Table.prototype.getSubTableByElementOnList;
-    result.getSubTableByElementsOnList = Table.prototype.getSubTableByElementsOnList;
-    result.getTransposed = Table.prototype.getTransposed;
-    result.getListsSortedByList = Table.prototype.getListsSortedByList;
-    result.sortListsByList = Table.prototype.sortListsByList;
-    result.getReport = Table.prototype.getReport;
-    result.getReportHtml = Table.prototype.getReportHtml;
-    result.clone = Table.prototype.clone;
-    result.print = Table.prototype.print;
-
-    //transformative
-    result.removeRow = Table.prototype.removeRow;
-
-    //overiden
-    result.destroy = Table.prototype.destroy;
-
-    result.isTable = true;
-
-    return result;
-  };
-
-
-  /**
-   * Executes a given function on all the columns
-   * in the Table, returning a new Table with the
-   * resulting values.
-   * @param {Function} func Function to apply to each
-   * column in the table. Columns are {@link List|Lists}.
-   * @return {Table} Table of values from applying function.
-   */
-  Table.prototype.applyFunction = function(func) {
-    //TODO: to be tested!
-    var i;
-    var newTable = new Table();
-
-    newTable.name = this.name;
-
-    for(i = 0; this[i] != null; i++) {
-      newTable[i] = this[i].applyFunction(func);
-    }
-    return newTable.getImproved();
-  };
-
-  /**
-   * Returns a {@link List} with all the elements of a row.
-   * @param  {Number} index Index of the row to get.
-   * @return {List}
-   * tags:filter
-   */
-  Table.prototype.getRow = function(index) {
-    var list = new List__default();
-    var i;
-    for(i = 0; i < this.length; i++) {
-      list[i] = this[i][index];
-    }
-    return list.getImproved();
-  };
-
-  /**
-   * Returns the length a column of the Table.
-   * @param  {Number} index The Column to return its length.
-   * Defaults to 0.
-   * @return {Number} Length of column at given index.
-   * tags:
-   */
-  Table.prototype.getListLength = function(index) {
-    return this[index || 0].length;
-  };
-
-  /**
-   * Returns the lengths of all the columns of the Table.
-   * @return {NumberList} Lengths of all columns in Table.
-   */
-  Table.prototype.getLengths = function() {
-    var lengths = new NumberList();
-    for(var i = 0; this[i] != null; i++) {
-      lengths[i] = this[i].length;
-    }
-    return lengths;
-  };
-
-  /**
-   * Filters a Table by selecting a section of rows, elements with last index included.
-   * @param  {Number} startIndex Index of first element in all lists of the table.
-   * @param  {Number} endIndex Index of last elements in all lists of the table.
-   * @return {Table}
-   * tags:filter
-   */
-  Table.prototype.sliceRows = function(startIndex, endIndex) {
-    endIndex = endIndex == null ? (this[0].length - 1) : endIndex;
-
-    var i;
-    var newTable = new Table();
-    var newList;
-
-    newTable.name = this.name;
-    for(i = 0; this[i] != null; i++) {
-      newList = this[i].getSubList(startIndex, endIndex);
-      newList.name = this[i].name;
-      newTable.push(newList);
-    }
-    return newTable.getImproved();
-  };
-
-  /**
-   * Filters the lists of the table by indexes.
-   * @param  {NumberList} indexes
-   * @return {Table}
-   * tags:filter
-   */
-  Table.prototype.getSubListsByIndexes = function(indexes) {
-    var newTable = new Table();
-    this.forEach(function(list) {
-      newTable.push(list.getSubListByIndexes(indexes));
-    });
-    return newTable.getImproved();
-  };
-
-
-  //deprecated
-  /**
-   * @ignore
-   */
-  Table.prototype.getRows = function(indexes) {
-    return Table.prototype.getSubListsByIndexes(indexes);
-  };
-
-  /**
-   * Returns a new Table with the row at the given index removed.
-   * @param {Number} rowIndex Row to remove
-   * @return {Table} New Table.
-   * tags:filter
-   */
-  Table.prototype.getWithoutRow = function(rowIndex) {
-    var newTable = new Table();
-    newTable.name = this.name;
-    for(var i = 0; this[i] != null; i++) {
-      newTable[i] = List__default.fromArray(this[i].slice(0, rowIndex).concat(this[i].slice(rowIndex + 1))).getImproved();
-      newTable[i].name = this[i].name;
-    }
-    return newTable.getImproved();
-  };
-
-  /**
-   * Returns a new Table with the rows listed in the given numberList removed.
-   * @param {NumberList} rowsIndexes numberList of row indexes to remove.
-   * @return {Table}
-   * tags:filter
-   */
-  Table.prototype.getWithoutRows = function(rowsIndexes) {
-    var newTable = new Table();
-    newTable.name = this.name;
-    for(var i = 0; this[i] != null; i++) {
-      newTable[i] = new List__default();
-      for(var j = 0; this[i][j] != null; j++) {
-        if(rowsIndexes.indexOf(j) == -1) newTable[i].push(this[i][j]);
-      }
-      newTable[i].name = this[i].name;
-    }
-    return newTable.getImproved();
-  };
-
-  /**
-   * filters lists on a table, keeping elements that are in the same of row of a certain element of a given list from the table
-   * @param  {Number} nList index of list containing the element
-   * @param  {Object} element used to filter the lists on the table
-   * @return {Table}
-   * tags:filter
-   */
-  Table.prototype.getSubTableByElementOnList = function(nList, element){
-    if(nList==null || element==null) return;
-
-    var i, j, value, list;
-
-    if(nList<0) nList = this.length+nList;
-    nList = nList%this.length;
-
-    var newTable = instantiateWithSameType(this);
-    newTable.name = this.name;
-
-    this.forEach(function(list){
-      var newList = new List__default();
-      newList.name = list.name;
-      newTable.push(newList);
-    });
-
-    var supervised = this[nList];
-
-    for(i=0; supervised[i]!=null; i++){
-      if(element==supervised[i]){
-         for(j=0; newTable[j]!=null; j++){
-            newTable[j].push(this[j][i]);
-         }
-      }
-    }
-
-    newTable.forEach(function(list, i){
-      newTable[i] = list.getImproved();
-    });
-
-    return newTable.getImproved();
-  };
-
-  /**
-   * filters lists on a table, keeping elements that are in the same of row of certain elements of a given list from the table
-   * @param  {Number} nList index of list containing the element
-   * @param  {List} elements used to filter the lists on the table
-   * @return {Table}
-   * tags:filter
-   */
-  Table.prototype.getSubTableByElementsOnList = function(nList, list){
-    if(nList==null || list==null) return;
-
-    var i, j, value, list;
-
-    if(nList<0) nList = this.length+nList;
-    nList = nList%this.length;
-
-    var newTable = instantiateWithSameType(this);
-    newTable.name = this.name;
-
-    this.forEach(function(list){
-      var newList = new List__default();
-      newList.name = list.name;
-      newTable.push(newList);
-    });
-
-    var supervised = this[nList];
-
-    var listDictionary = ListOperators.getBooleanDictionaryForList(list);
-
-    for(i=0; supervised[i]!=null; i++){
-      if(listDictionary[supervised[i]]){
-         for(j=0; newTable[j]!=null; j++){
-            newTable[j].push(this[j][i]);
-         }
-      }
-    }
-
-    newTable.forEach(function(list, i){
-      newTable[i] = list.getImproved();
-    });
-
-    return newTable.getImproved();
-  };
-
-  /**
-   * Sort Table's lists by a list
-   * @param  {List|Number} listOrIndex List used to sort, or index of list in the table
-   *
-   * @param  {Boolean} ascending (true by default)
-   * @return {Table} table (of the same type)
-   * tags:sort
-   */
-  Table.prototype.getListsSortedByList = function(listOrIndex, ascending) { //depracated: use sortListsByList
-    if(listOrIndex == null) return;
-    var newTable = instantiateWithSameType(this);
-    var sortinglist = listOrIndex.isList ? listOrIndex.clone() : this[listOrIndex];
-
-    this.forEach(function(list) {
-      newTable.push(list.getSortedByList(sortinglist, ascending));
-    });
-
-    return newTable;
-  };
-
-  /**
-   * Transposes Table.
-   * @param firstListAsHeaders
-   * @return {Table}
-   */
-  Table.prototype.getTransposed = function(firstListAsHeaders) {
-
-    var tableToTranspose = firstListAsHeaders ? this.getSubList(1) : this;
-
-    var table = instantiate(typeOf(tableToTranspose));
-    if(tableToTranspose.length === 0) return table;
-    var i;
-    var j;
-    var list;
-
-    for(i = 0; tableToTranspose[i] != null; i++) {
-      list = tableToTranspose[i];
-      for(j = 0; list[j] != null; j++) {
-        if(i === 0) table[j] = new List__default();
-        table[j][i] = tableToTranspose[i][j];
-      }
-    }
-    for(j = 0; tableToTranspose[0][j] != null; j++) {
-      table[j] = table[j].getImproved();
-    }
-
-    if(firstListAsHeaders) {
-      this[0].forEach(function(name, i) {
-        table[i].name = String(name);
-      });
-    }
-
-    return table;
-  };
-
-  /**
-   * Generates a string containing details about the current state
-   * of the Table. Useful for outputing to the console for debugging.
-   * @param {Number} level If greater then zero, will indent to that number of spaces.
-   * @return {String} Description String.
-   */
-  Table.prototype.getReport = function(level) {
-    var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
-    var lengths = this.getLengths();
-    var minLength = lengths.getMin();
-    var maxLength = lengths.getMax();
-    var averageLength = (minLength + maxLength) * 0.5;
-    var sameLengths = minLength == maxLength;
-
-    var text = level > 0 ? (ident + "////report of instance of Table////") : "///////////report of instance of Table//////////";
-
-    if(this.length === 0) {
-      text += ident + "this table has no lists";
-      return text;
-    }
-
-    text += ident + "name: " + this.name;
-    text += ident + "type: " + this.type;
-    text += ident + "number of lists: " + this.length;
-
-    text += ident + "all lists have same length: " + (sameLengths ? "true" : "false");
-
-    if(sameLengths) {
-      text += ident + "lists length: " + this[0].length;
-    } else {
-      text += ident + "min length: " + minLength;
-      text += ident + "max length: " + maxLength;
-      text += ident + "average length: " + averageLength;
-      text += ident + "all lengths: " + lengths.join(", ");
-    }
-
-    var names = this.getNames();
-    var types = this.getTypes();
-
-    text += ident + "--";
-    names.forEach(function(name, i){
-      text += ident + i + ": " + name + " ["+TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"]";
-    });
-    text += ident + "--";
-
-    var sameTypes = types.allElementsEqual();
-    if(sameTypes) {
-      text += ident + "types of all lists: " + types[0];
-    } else {
-      text += ident + "types: " + types.join(", ");
-    }
-    text += ident + "names: " + names.join(", ");
-
-    if(this.length < 101) {
-      text += ident + ident + "--------lists reports---------";
-
-      var i;
-      for(i = 0; this[i] != null; i++) {
-        text += "\n" + ident + ("(" + (i) + "/0-" + (this.length - 1) + ")");
-        try{
-           text += this[i].getReport(1);
-        } catch(err){
-          text += ident + "[!] something wrong with list " + err;
-        }
-      }
-    }
-
-    if(this.length == 2) {
-      text += ident + ident + "--------lists comparisons---------";
-      if(this[0].type=="NumberList" && this[1].type=="NumberList"){
-        text += ident + "covariance:" + NumberListOperators.covariance(this[0], this[1]);
-        text += ident + "Pearson product moment correlation: " + NumberListOperators.pearsonProductMomentCorrelation(this[0], this[1]);
-      } else if(this[0].type!="NumberList" && this[1].type!="NumberList"){
-        var nUnion = ListOperators.union(this[0], this[1]).length;
-        text += ident + "union size: " + nUnion;
-        var intersected = ListOperators.intersection(this[0], this[1]);
-        var nIntersection = intersected.length;
-        text += ident + "intersection size: " + nIntersection;
-
-        if(this[0]._freqTable[0].length == nUnion && this[1]._freqTable[0].length == nUnion){
-          text += ident + "[!] both lists contain the same non repeated elements";
-        } else {
-          if(this[0]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in first list also occur on second list";
-          if(this[1]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in second list also occur on first list";
-        }
-        text += ident + "Jaccard distance: " + (1 - (nIntersection/nUnion));
-      }
-      //check for 1-1 matches, number of pairs, categorical, sub-categorical
-      var subCategoryCase = ListOperators.subCategoricalAnalysis(this[0], this[1]);
-
-      switch(subCategoryCase){
-        case 0:
-          text += ident + "no categorical relation found between lists";
-          break;
-        case 1:
-          text += ident + "[!] both lists are categorical identical";
-          break;
-        case 2:
-          text += ident + "[!] first list is subcategorical to second list";
-          break;
-        case 3:
-          text += ident + "[!] second list is subcategorical to first list";
-          break;
-      }
-
-      if(subCategoryCase!=1){
-        text += ident + "information gain when segmenting first list by the second: "+ListOperators.getInformationGain(this[0], this[1]);
-        text += ident + "information gain when segmenting second list by the first: "+ListOperators.getInformationGain(this[1], this[0]);
-      }
-    }
-
-    ///add ideas to: analyze, visualize
-
-    return text;
-  };
-
-
-  Table.prototype.getReportHtml = function(level) {
-    var ident = "<br>" + (level > 0 ? StringOperators.repeatString("&nbsp", level) : "");
-    var lengths = this.getLengths();
-    var minLength = lengths.getMin();
-    var maxLength = lengths.getMax();
-    var averageLength = (minLength + maxLength) * 0.5;
-    var sameLengths = minLength == maxLength;
-
-    var text = "<b>" +( level > 0 ? (ident + "<font style=\"font-size:16px\">table report</f>") : "<font style=\"font-size:18px\">table report</f>" ) + "</b>";
-
-    if(this.length === 0) {
-      text += ident + "this table has no lists";
-      return text;
-    }
-
-    if(this.name){
-      text += ident + "name: <b>" + this.name + "</b>";
-    } else {
-      text += ident + "<i>no name</i>";
-    }
-    text += ident + "type: <b>" + this.type + "</b>";
-    text += ident + "number of lists: <b>" + this.length + "</b>";
-
-    text += ident + "all lists have same length: <b>" + (sameLengths ? "true" : "false") + "</b>";
-
-    if(sameLengths) {
-      text += ident + "lists length: <b>" + this[0].length + "</b>";
-    } else {
-      text += ident + "min length: <b>" + minLength + "</b>";
-      text += ident + "max length: <b>" + maxLength + "</b>";
-      text += ident + "average length: <b>" + averageLength + "</b>";
-      text += ident + "all lengths: <b>" + lengths.join(", ") + "</b>";
-    }
-
-    var names = this.getNames();
-    var types = this.getTypes();
-
-    text += "<hr>";
-    names.forEach(function(name, i){
-      text += ident + "<font style=\"font-size:10px\">" +i + ":</f><b>" + name + "</b> <font color=\""+getColorFromDataModelType(types[i])+ "\">" + TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"</f>";
-    });
-    text += "<hr>";
-
-    var sameTypes = types.allElementsEqual();
-    if(sameTypes) {
-      text += ident + "types of all lists: " + "<b>" + types[0] + "</b>";
-    } else {
-      text += ident + "types: ";
-      types.forEach(function(type, i){
-        text += "<b><font color=\""+getColorFromDataModelType(type)+ "\">" + type+"</f></b>";
-        if(i<types.length-1) text += ", ";
-      });
-    }
-    text += "<br>" + ident + "names: <b>" + names.join("</b>, <b>") + "</b>";
-
-
-    //list by list
-
-    if(this.length < 501) {
-      text += "<hr>";
-      text +=  ident + "<font style=\"font-size:16px\"><b>lists reports</b></f>";
-
-      var i;
-      for(i = 0; this[i] != null; i++) {
-        text += "<br>" + ident + i + ": " + (this[i].name?"<b>"+this[i].name+"</b>":"<i>no name</i>");
-        try{
-           text += this[i].getReportHtml(1);
-        } catch(err){
-          text += ident + "[!] something wrong with list <font style=\"font-size:10px\">:" + err + "</f>";
-          c.l('getReportHtml err', err);
-        }
-      }
-    }
-
-    if(this.length == 2) {//TODO:finish
-      text += "<hr>";
-      text += ident + "<b>lists comparisons</b>";
-      if(this[0].type=="NumberList" && this[1].type=="NumberList"){
-        text += ident + "covariance:" + NumberOperators.numberToString(NumberListOperators.covariance(this[0], this[1]), 4);
-        text += ident + "Pearson product moment correlation: " + NumberOperators.numberToString(NumberListOperators.pearsonProductMomentCorrelation(this[0], this[1]), 4);
-      } else if(this[0].type!="NumberList" && this[1].type!="NumberList"){
-        var nUnion = ListOperators.union(this[0], this[1]).length;
-        text += ident + "union size: " + nUnion;
-        var intersected = ListOperators.intersection(this[0], this[1]);
-        var nIntersection = intersected.length;
-        text += ident + "intersection size: " + nIntersection;
-
-        if(this[0]._freqTable[0].length == nUnion && this[1]._freqTable[0].length == nUnion){
-          text += ident + "[!] both lists contain the same non repeated elements";
-        } else {
-          if(this[0]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in first list also occur on second list";
-          if(this[1]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in second list also occur on first list";
-        }
-        text += ident + "Jaccard distance: " + (1 - (nIntersection/nUnion));
-      }
-      //check for 1-1 matches, number of pairs, categorical, sub-categorical
-      var subCategoryCase = ListOperators.subCategoricalAnalysis(this[0], this[1]);
-
-      switch(subCategoryCase){
-        case 0:
-          text += ident + "no categorical relation found between lists";
-          break;
-        case 1:
-          text += ident + "[!] both lists are categorical identical";
-          break;
-        case 2:
-          text += ident + "[!] first list is subcategorical to second list";
-          break;
-        case 3:
-          text += ident + "[!] second list is subcategorical to first list";
-          break;
-      }
-
-      if(subCategoryCase!=1){
-        text += ident + "information gain when segmenting first list by the second: "+NumberOperators.numberToString( ListOperators.getInformationGain(this[0], this[1]), 4);
-        text += ident + "information gain when segmenting second list by the first: "+NumberOperators.numberToString( ListOperators.getInformationGain(this[1], this[0]), 4);
-      }
-    }
-
-    ///add ideas to: analyze, visualize
-
-    return text;
-  };
-
-  Table.prototype.getReportObject = function() {}; //TODO
-
-  /**
-   * removes a row from the table.
-   * @param {Number} index The row to remove.
-   * @return {undefined}
-   */
-  Table.prototype.removeRow = function(index) {
-    for(var i = 0; this[i] != null; i++) {
-      this[i].splice(index, 1);
-    }
-  };
-
-  /**
-   * makes a copy of the Table.
-   * @return {Table} Copy of table.
-   */
-  Table.prototype.clone = function() {
-    var clonedTable = instantiateWithSameType(this);
-    clonedTable.name = this.name;
-    for(var i = 0; this[i] != null; i++) {
-      clonedTable.push(this[i].clone());
-    }
-    return clonedTable;
-  };
-
-  /**
-   * Removes all contents of the Table.
-   */
-  Table.prototype.destroy = function() {
-    for(var i = 0; this[i] != null; i++) {
-      this[i].destroy();
-      delete this[i];
-    }
-  };
-
-  /**
-   * Prints contents of Table to console.log.
-   */
-
-
-
-  Table.prototype.print = function() {
-    console.log("///////////// <" + this.name + "////////////////////////////////////////////////////");
-    console.log(TableEncodings.TableToCSV(this, null, true));
-    console.log("/////////////" + this.name + "> ////////////////////////////////////////////////////");
-  };
-
-  exports.Table = Table;
-
-  NumberTable.prototype = new Table();
-  NumberTable.prototype.constructor = NumberTable;
-
-  /**
-   * @classdesc {@link Table} to store numbers.
-   *
-   * @constructor
-   * @description Creates a new NumberTable.
-   * @category numbers
-   */
-  function NumberTable() {
-    var args = [];
-    var newNumberList;
-    var array;
-
-    if(arguments.length > 0 && Number(arguments[0]) == arguments[0]) {
-      array = [];
-      var i;
-      for(i = 0; i < arguments[0]; i++) {
-        array.push(new NumberList());
-      }
-    } else {
-      for(i = 0; arguments[i] != null; i++) {
-        newNumberList = NumberList.fromArray(arguments[i]);
-        newNumberList.name = arguments[i].name;
-        arguments[i] = newNumberList;
-      }
-      array = Table.apply(this, arguments);
-    }
-    array = NumberTable.fromArray(array);
-    return array;
-  }
-
-
-  NumberTable.fromArray = function(array) {
-    var result = Table.fromArray(array);
-    result.type = "NumberTable";
-
-    result.getNumberListsNormalized = NumberTable.prototype.getNumberListsNormalized;
-    result.getTableNormalizedToMax = NumberTable.prototype.getTableNormalizedToMax;
-    result.getNumberListsNormalizedToMax = NumberTable.prototype.getNumberListsNormalizedToMax;
-    result.getNumberListsNormalizedToSum = NumberTable.prototype.getNumberListsNormalizedToSum;
-    result.getSums = NumberTable.prototype.getSums;
-    result.getRowsSums = NumberTable.prototype.getRowsSums;
-    result.getAverages = NumberTable.prototype.getAverages;
-    result.getRowsAverages = NumberTable.prototype.getRowsAverages;
-    result.factor = NumberTable.prototype.factor;
-    result.add = NumberTable.prototype.add;
-    result.getMax = NumberTable.prototype.getMax;
-    result.getMin = NumberTable.prototype.getMin;
-    result.getMinMaxInterval = NumberTable.prototype.getMinMaxInterval;
-    result.getCovarianceMatrix = NumberTable.prototype.getCovarianceMatrix;
-
-    return result;
-  };
-
-  /**
-   * returns a table with having normalized all the numberLists
-   *
-   * @param  {factor} factor optional factor
-   * @return {NumberTable}
-   * tags:normalization
-   */
-  NumberTable.prototype.getNumberListsNormalized = function(factor) {
-    factor = factor == null ? 1 : factor;
-
-    var newTable = new NumberTable();
-    var i;
-    for(i = 0; this[i] != null; i++) {
-      var numberList = this[i];
-      newTable[i] = numberList.getNormalized(factor);
-    }
-    newTable.name = this.name;
-    return newTable;
-  };
-
-  /**
-   * normalizes the table to its maximal value
-   *
-   * @param  {Number} factor optional factor
-   * @return {NumberTable}
-   * tags:normalization
-   */
-  NumberTable.prototype.getTableNormalizedToMax = function(factor) {
-    factor = factor == null ? 1 : factor;
-
-    var newTable = new NumberTable();
-    var i;
-    var antimax = factor / this.getMax();
-    for(i = 0; this[i] != null; i++) {
-      newTable[i] = this[i].factor(antimax);
-    }
-    newTable.name = this.name;
-    return newTable;
-  };
-
-  /**
-   * @todo write docs
-   */
-  NumberTable.prototype.getNumberListsNormalizedToMax = function(factorValue) {
-    var newTable = new NumberTable();
-    for(var i = 0; this[i] != null; i++) {
-      var numberList = this[i];
-      newTable[i] = numberList.getNormalizedToMax(factorValue);
-    }
-    newTable.name = this.name;
-    return newTable;
-  };
-
-  /**
-   * @todo write docs
-   */
-  NumberTable.prototype.getNumberListsNormalizedToSum = function() {
-    var newTable = new NumberTable();
-    for(var i = 0; this[i] != null; i++) {
-      var numberList = this[i];
-      newTable[i] = numberList.getNormalizedToSum();
-    }
-    newTable.name = this.name;
-    return newTable;
-  };
-
-
-  /**
-   * @todo write docs
-   */
-  NumberTable.prototype.getMax = function() {
-    if(this.length == 0) return null;
-
-    var max = this[0].getMax();
-    var i;
-
-    for(i = 1; this[i] != null; i++) {
-      max = Math.max(this[i].getMax(), max);
-    }
-    return max;
-  };
-
-  /**
-   * @todo write docs
-   */
-  NumberTable.prototype.getMin = function() {
-    if(this.length == 0) return null;
-
-    var min = this[0].getMin();
-    var i;
-
-    for(i = 1; this[i] != null; i++) {
-      min = Math.min(this[i].getMin(), min);
-    }
-    return min;
-  };
-
-  /**
-   * @todo write docs
-   */
-  NumberTable.prototype.getMinMaxInterval = function() {
-    if(this.length == 0) return null;
-    var rangeInterval = (this[0]).getMinMaxInterval();
-    for(var i = 1; this[i] != null; i++) {
-      var newRange = (this[i]).getMinMaxInterval();
-      rangeInterval.x = Math.min(rangeInterval.x, newRange.x);
-      rangeInterval.y = Math.max(rangeInterval.y, newRange.y);
-    }
-    return rangeInterval;
-  };
-
-  /**
-   * returns a numberList with values from numberlists added
-   * @return {Numberlist}
-   * tags:
-   */
-  NumberTable.prototype.getSums = function() {
-    var numberList = new NumberList();
-    for(var i = 0; this[i] != null; i++) {
-      numberList[i] = this[i].getSum();
-    }
-    return numberList;
-  };
-
-  /**
-   * returns a numberList with all values fro rows added
-   * @return {NumberList}
-   * tags:
-   */
-  NumberTable.prototype.getRowsSums = function() {
-    var sums = this[0].clone();
-    var numberList;
-    for(var i = 1; this[i] != null; i++) {
-      numberList = this[i];
-      for(var j = 0; numberList[j] != null; j++) {
-        sums[j] += numberList[j];
-      }
-    }
-    return sums;
-  };
-
-  /**
-   * @todo write docs
-   */
-  NumberTable.prototype.getAverages = function() {
-    var numberList = new NumberList();
-    for(var i = 0; this[i] != null; i++) {
-      numberList[i] = this[i].getAverage();
-    }
-    return numberList;
-  };
-
-  /**
-   * @todo write docs
-   */
-  NumberTable.prototype.getRowsAverages = function() {
-    var nLists = this.length;
-    var averages = this[0].clone().factor(1 / nLists);
-    var numberList;
-    var i;
-    var j;
-    for(i = 1; this[i] != null; i++) {
-      numberList = this[i];
-      for(j = 0; numberList[j] != null; j++) {
-        averages[j] += numberList[j] / nLists;
-      }
-    }
-    return averages;
-  };
-
-  /**
-   * @todo write docs
-   */
-  NumberTable.prototype.factor = function(value) {
-    var newTable = new NumberTable();
-    var i;
-    var numberList;
-
-    switch(typeOf(value)) {
-      case 'number':
-        for(i = 0; this[i] != null; i++) {
-          numberList = this[i];
-          newTable[i] = numberList.factor(value);
-        }
-        break;
-      case 'NumberList':
-        for(i = 0; this[i] != null; i++) {
-          numberList = this[i];
-          newTable[i] = numberList.factor(value[i]);
-        }
-        break;
-
-    }
-
-    newTable.name = this.name;
-    return newTable;
-  };
-
-  /**
-   * @todo write docs
-   */
-  NumberTable.prototype.add = function(value) {
-    var newTable = new NumberTable();
-    var numberList;
-    var i;
-
-    for(i = 0; this[i] != null; i++) {
-      numberList = this[i];
-      newTable[i] = numberList.add(value);
-    }
-
-    newTable.name = this.name;
-    return newTable;
-  };
-
-
-  /**
-   * @todo write docs
-   */
-  NumberTable.prototype.getCovarianceMatrix = function(){
-    var newTable = new NumberTable();
-    var i;
-    for(i = 0; this[i] != null; i++) {
-
-    }
-
-  };
-
-  exports.NumberTable = NumberTable;
-
-  NodeList__NodeList.prototype = new List__default();
+  NodeList__NodeList.prototype = new List();
   NodeList__NodeList.prototype.constructor = NodeList__NodeList;
 
   /**
@@ -3641,7 +2818,7 @@ define('src/index', ['exports'], function (exports) {
   NodeList__NodeList.fromArray = function(array, forceToNode) {
     forceToNode = forceToNode == null ? false : forceToNode;
 
-    var result = List__default.fromArray(array);
+    var result = List.fromArray(array);
 
     if(forceToNode) {
       for(var i = 0; i < result.length; i++) {
@@ -3649,8 +2826,6 @@ define('src/index', ['exports'], function (exports) {
       }
     }
 
-    // TODO: Remove duplicate line?
-    var result = List__default.fromArray(array);
     result.type = "NodeList";
     result.ids = {};
     // TODO: Fix
@@ -4131,19 +3306,2283 @@ define('src/index', ['exports'], function (exports) {
 
   exports.RelationList = RelationList__default;
 
-  PolygonList.prototype = new Table();
-  PolygonList.prototype.constructor = PolygonList;
+  LoadEvent.prototype = {};
+  LoadEvent.prototype.constructor = LoadEvent;
 
   /**
-   * @classdesc A {@link List} structure for storing {@link Polygon} instances.
+   * LoadEvent
+   * @constructor
+   * @category misc
+   */
+  function LoadEvent() {
+    Object.apply(this);
+    this.result = null;
+    this.errorType = 0;
+    this.errorMessage = "";
+    this.url = '';
+  }
+
+  exports.LoadEvent = LoadEvent;
+
+  function Loader() {}
+
+
+  Loader.proxy = ""; //TODO:install proxy created by Mig at moebio.com
+  Loader.cacheActive = false; //TODO: fix!
+  Loader.associativeByUrls = {};
+  Loader.REPORT_LOADING = false;
+  Loader.n_loading = 0;
+  Loader.LOCAL_STORAGE_ENABLED = false;
+
+  Loader.PHPurl = "http://intuitionanalytics.com/tests/proxy.php?url=";
+
+
+  /**
+   * loads string data from server. The defined Loader.proxy will be used.
+   * @param {String} url the URL of the file to be loaded
+   * @param {Function} onLoadData a function that will be called when complete. The function must receive a LoadEvent
+   * @param {callee} the Object containing the onLoadData function to be called
+   * @para, {Object} optional parameter that will be stored in the LoadEvent instance
+   */
+  Loader.loadData = function(url, onLoadData, callee, param, send_object_json, withCredentials) {
+    if(Loader.REPORT_LOADING) console.log('load data:', url);
+    Loader.n_loading++;
+
+    if(Loader.LOCAL_STORAGE_ENABLED) {
+      // TODO track down LocalStorage. localStorage is a thing though (lowercase l);
+      var result = localStorage.getItem(url);
+      if(result) {
+        var e = new LoadEvent();
+        e.url = url;
+        e.param = param;
+        e.result = result;
+
+        onLoadData.call(target, e);
+      }
+    }
+
+
+
+    if(Loader.REPORT_LOADING) console.log("Loader.loadData | url:", url);
+
+    var useProxy = String(url).substr(0, 4) == "http";
+
+    var req = new XMLHttpRequest();
+
+    var target = callee ? callee : arguments.callee;
+    var onLoadComplete = function() {
+      if(Loader.REPORT_LOADING) console.log('Loader.loadData | onLoadComplete'); //, req.responseText:', req.responseText);
+      if(req.readyState == 4) {
+        Loader.n_loading--;
+
+        var e = new LoadEvent();
+        e.url = url;
+        e.param = param;
+        //if (req.status == 200) { //MIG
+        if(req.status == 200 || (req.status === 0 && req.responseText !== null)) {
+          e.result = req.responseText;
+          onLoadData.call(target, e);
+        } else {
+          if(Loader.REPORT_LOADING) console.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
+          e.errorType = req.status;
+          e.errorMessage = "[!] There was a problem retrieving the data [" + req.status + "]:" + req.statusText;
+          onLoadData.call(target, e);
+        }
+      }
+    };
+
+    // branch for native XMLHttpRequest object
+    if(window.XMLHttpRequest && !(window.ActiveXObject)) {
+      try {
+        req = new XMLHttpRequest();
+      } catch(e) {
+        req = false;
+      }
+      // branch for IE/Windows ActiveX version
+    } else if(window.ActiveXObject) {
+      try {
+        req = new ActiveXObject("Msxml2.XMLHTTP.6.0");
+      } catch(e) {
+        try {
+          req = new ActiveXObject("Msxml2.XMLHTTP.3.0");
+        } catch(e) {
+          try {
+            req = new ActiveXObject("Msxml2.XMLHTTP");
+          } catch(e) {
+            try {
+              req = new ActiveXObject("Microsoft.XMLHTTP");
+            } catch(e) {
+              req = false;
+            }
+          }
+        }
+      }
+    }
+    if(req) {
+      if(withCredentials === true ){
+          req.withCredentials = true;
+      }
+      req.onreadystatechange = onLoadComplete; //processReqChange;
+      if(useProxy) {
+        req.open("GET", Loader.proxy + url, true);
+      } else {
+        req.open("GET", url, true);
+      }
+
+      send_object_json = send_object_json || "";
+      req.send(send_object_json);
+    }
+  };
+
+
+  //TODO this method isn't reference by anything else.
+  function LoaderRequest(url, method, data) {
+    this.url = url;
+    this.method = method ? method : "GET";
+    this.data = data;
+  }
+
+  Loader.loadImage = function(url, onComplete, callee, param) {
+    Loader.n_loading++;
+
+    if(Loader.REPORT_LOADING) console.log("Loader.loadImage | url:", url);
+
+    var target = callee ? callee : arguments.callee;
+    var img = document.createElement('img');
+
+    if(this.cacheActive) {
+      if(this.associativeByUrls[url] != null) {
+        Loader.n_loading--;
+        //console.log('=====>>>>+==>>>+====>>=====>>>+==>> in cache:', url);
+        var e = new LoadEvent();
+        e.result = this.associativeByUrls[url];
+        e.url = url;
+        e.param = param;
+        onComplete.call(target, e);
+      } else {
+        var cache = true;
+        var associative = this.associativeByUrls;
+      }
+    }
+
+    img.onload = function() {
+      Loader.n_loading--;
+      var e = new LoadEvent();
+      e.result = img;
+      e.url = url;
+      e.param = param;
+      if(cache) associative[url] = img;
+      onComplete.call(target, e);
+    };
+
+    img.onerror = function() {
+      Loader.n_loading--;
+      var e = new LoadEvent();
+      e.result = null;
+      e.errorType = 1; //TODO: set an error type!
+      e.errorMessage = "There was a problem retrieving the image [" + img.src + "]:";
+      e.url = url;
+      e.param = param;
+      onComplete.call(target, e);
+    };
+
+    img.src = Loader.proxy + url;
+  };
+
+
+
+  // Loader.loadJSON = function(url, onLoadComplete) {
+  //   Loader.n_loading++;
+
+  //   Loader.loadData(url, function(data) {
+  //     Loader.n_loading--;
+  //     onLoadComplete.call(arguments.callee, jQuery.parseJSON(data));
+  //   });
+  // };
+
+
+  /**
+  Loader.callIndex = 0;
+  Loader.loadJSONP = function(url, onLoadComplete, callee) {
+    Loader.n_loading++;
+
+    Loader.callIndex = Loader.callIndex + 1;
+    var index = Loader.callIndex;
+
+    var newUrl = url + "&callback=JSONcallback" + index;
+    //var newUrl=url+"?callback=JSONcallback"+index; //   <----  WFP suggestion
+
+    var target = callee ? callee : arguments.callee;
+
+    //console.log('Loader.loadJSONP, newUrl:', newUrl);
+
+    $.ajax({
+      url: newUrl,
+      type: 'GET',
+      data: {},
+      dataType: 'jsonp',
+      contentType: "application/json",
+      jsonp: 'jsonp',
+      jsonpCallback: 'JSONcallback' + index,
+      success: function(data) {
+        Loader.n_loading--;
+        var e = new LoadEvent();
+        e.result = data;
+        onLoadComplete.call(target, e);
+      },
+      error: function(data) {
+        Loader.n_loading--;
+        console.log("Loader.loadJSONP | error, data:", data);
+
+        var e = new LoadEvent();
+        e.errorType = 1;
+        onLoadComplete.call(target, e);
+      }
+    }); //.error(function(e){
+    // console.log('---> (((error))) B');
+    //
+    // var e=new LoadEvent();
+    // e.errorType=1;
+    // onLoadComplete.call(target, e);
+    // });
+  };
+  **/
+
+
+
+
+  //FIX THESE METHODS:
+
+  Loader.loadXML = function(url, onLoadData) {
+    Loader.n_loading++;
+
+    var req = new XMLHttpRequest();
+    var onLoadComplete = onLoadData;
+
+    if(Loader.REPORT_LOADING) console.log('loadXML, url:', url);
+
+    // branch for native XMLHttpRequest object
+    if(window.XMLHttpRequest && !(window.ActiveXObject)) {
+      try {
+        req = new XMLHttpRequest();
+      } catch(e) {
+        req = false;
+      }
+      // branch for IE/Windows ActiveX version
+    } else if(window.ActiveXObject) {
+      try {
+        req = new ActiveXObject("Msxml2.XMLHTTP");
+      } catch(e) {
+        try {
+          req = new ActiveXObject("Microsoft.XMLHTTP");
+        } catch(e) {
+          req = false;
+        }
+      }
+    }
+    if(req) {
+      req.onreadystatechange = processReqChange;
+      req.open("GET", url, true);
+      req.send("");
+    }
+
+    function processReqChange() {
+      Loader.n_loading--;
+      // only if req shows "loaded"
+      if(req.readyState == 4) {
+        // only if "OK"
+        if(req.status == 200 || req.status == 0) {
+          onLoadComplete(req.responseXML);
+
+        } else {
+          console.log("There was a problem retrieving the XML data:\n" +
+            req.statusText);
+        }
+      }
+    }
+  };
+
+
+  ///////////////PHP
+
+  Loader.sendContentToVariableToPhp = function(url, varName, value, onLoadData, callee, param) {
+    var data = varName + "=" + encodeURIComponent(value);
+    Loader.sendDataToPhp(url, data, onLoadData, callee, param);
+  };
+
+  Loader.sendContentsToVariablesToPhp = function(url, varNames, values, onLoadData, callee, param) {
+    var data = varNames[0] + "=" + encodeURIComponent(values[0]);
+    for(var i = 1; varNames[i] != null; i++) {
+      data += "&" + varNames[i] + "=" + encodeURIComponent(values[i]);
+    }
+    Loader.sendDataToPhp(url, data, onLoadData, callee, param);
+  };
+
+  Loader.sendDataToPhp = function(url, data, onLoadData, callee, param) {
+    var req = new XMLHttpRequest();
+
+    req.open("POST", url, true);
+    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    req.send(data);
+
+    var target = callee ? callee : arguments.callee;
+
+    var onLoadComplete = function() {
+      if(Loader.REPORT_LOADING) console.log('Loader.loadData | onLoadComplete, req.responseText:', req.responseText);
+      if(req.readyState == 4) {
+        Loader.n_loading--;
+
+        var e = new LoadEvent();
+        e.url = url;
+        e.param = param;
+
+        if(req.status == 200 || (req.status == 0 && req.responseText != null)) {
+          e.result = req.responseText;
+          onLoadData.call(target, e);
+        } else {
+          if(Loader.REPORT_LOADING) console.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
+          e.errorType = req.status;
+          e.errorMessage = "[!] There was a problem retrieving the data [" + req.status + "]:" + req.statusText;
+          onLoadData.call(target, e);
+        }
+      }
+    };
+
+    req.onreadystatechange = onLoadComplete;
+  };
+
+  exports.Loader = Loader;
+
+  Node__Node.prototype = new DataModel();
+  Node__Node.prototype.constructor = Node__Node;
+
+  /**
+   * @classdesc Represents a single node element in a Network. Can have both an id as well
+   * as a name.
    *
-   * @description Creates a new PolygonList.
+   * @description Create a new Node.
+   * @param {String} id ID of the Node
+   * @param {String} name string (label) name to be assigned to node
+   * @constructor
+   * @category networks
+   */
+  function Node__Node(id, name) {
+    this.id = id == null ? '' : id;
+    this.name = name != null ? name : '';
+    this.type = "Node";
+
+    this.nodeType = null;
+
+    this.x = 0;
+    this.y = 0;
+    this.z = 0;
+
+    this.nodeList = new NodeList__default();
+    this.relationList = new RelationList__default();
+
+    this.toNodeList = new NodeList__default();
+    this.toRelationList = new RelationList__default();
+
+    this.fromNodeList = new NodeList__default();
+    this.fromRelationList = new RelationList__default();
+
+    this.weight = 1;
+    this.descentWeight = 1;
+
+    //tree
+    this.level = 0;
+    this.parent = null;
+
+    //physics:
+    this.vx = 0;
+    this.vy = 0;
+    this.vz = 0;
+    this.ax = 0;
+    this.ay = 0;
+    this.az = 0;
+  }
+  var Node__default = Node__Node;
+
+  /**
+   * Removes all Relations and connected Nodes from
+   * the current Node.
+   */
+  Node__Node.prototype.cleanRelations = function() {
+    this.nodeList = new NodeList__default();
+    this.relationList = new RelationList__default();
+
+    this.toNodeList = new NodeList__default();
+    this.toRelationList = new RelationList__default();
+
+    this.fromNodeList = new NodeList__default();
+    this.fromRelationList = new RelationList__default();
+  };
+
+  //TODO: complete with all properties
+  Node__Node.prototype.destroy = function() {
+    DataModel.prototype.destroy.call(this);
+    delete this.id;
+    delete this.name;
+    delete this.nodeType;
+    delete this.x;
+    delete this.y;
+    delete this.z;
+    delete this.nodeList;
+    delete this.relationList;
+    delete this.toNodeList;
+    delete this.toNodeList;
+    delete this.fromNodeList;
+    delete this.fromRelationList;
+    delete this.parent;
+    delete this.weight;
+    delete this.descentWeight;
+    delete this.level;
+    delete this.vx;
+    delete this.vy;
+    delete this.vz;
+    delete this.ax;
+    delete this.ay;
+    delete this.az;
+  };
+
+  /**
+   * Returns the number of Relations connected to this Node.
+   *
+   * @return {Number} Number of Relations (edges) connecting to this Node instance.
+   */
+  Node__Node.prototype.getDegree = function() {
+    return this.relationList.length;
+  };
+
+  //treeProperties:
+
+
+  /**
+   * Returns the parent Node of this Node if it is part of a {@link Tree}.
+   *
+   * @return {Node} Parent Node of this Node.
+   */
+  Node__Node.prototype.getParent = function() {
+    return this.parent;
+  };
+
+  /**
+   * Returns the leaves under a node in a Tree,
+   *
+   * <strong>Warning:</strong> If this Node is part of a Network that is not a tree, this method could run an infinite loop.
+   * @return {NodeList} Leaf Nodes of this Node.
+   * tags:
+   */
+  Node__Node.prototype.getLeaves = function() {
+      var leaves = new NodeList__default();
+      var addLeaves = function(node) {
+        if(node.toNodeList.length === 0) {
+          leaves.addNode(node);
+          return;
+        }
+        node.toNodeList.forEach(addLeaves);
+      };
+      addLeaves(this);
+      return leaves;
+    };
+
+
+  /**
+   * Uses an image as a visual representation to this Node.
+   *
+   * @param {String} urlImage The URL of the image to load.
+   */
+  Node__Node.prototype.loadImage = function(urlImage) {
+    Loader.loadImage(urlImage, function(e) {
+      this.image = e.result;
+    }, this);
+  };
+
+
+  /**
+   * Makes a copy of this Node.
+   *
+   * @return {Node} New Node that is a copy of this Node.
+   */
+  Node__Node.prototype.clone = function() {
+    var newNode = new Node__Node(this.id, this.name);
+
+    newNode.x = this.x;
+    newNode.y = this.y;
+    newNode.z = this.z;
+
+    newNode.nodeType = this.nodeType;
+
+    newNode.weight = this.weight;
+    newNode.descentWeight = this.descentWeight;
+
+    return newNode;
+  };
+
+  exports.Node = Node__default;
+
+  Relation.prototype = new Node__default();
+  Relation.prototype.constructor = Relation;
+
+  /**
+   * Relation
+   * @classdesc Relations represent the edges that connect Nodes
+   * in a Network DataType.
+   *
+   * @description create a new Relation.
+   * @constructor
+   * @param {String} id ID of the Relation.
+   * @param {String} name Name of the Relation.
+   * @param {Node} node0 Source of the Relation.
+   * @param {Node} node1 Destination of the Relation.
+   * @param {Number} weight Edge weight associated with Relation.
+   * Defaults to 1.
+   * @param {String} content Other data to associate with this Relation.
+   * @category networks
+   */
+  function Relation(id, name, node0, node1, weight, content) {
+    Node__default.apply(this, [id, name]);
+    this.type = "Relation";
+
+    this.node0 = node0;
+    this.node1 = node1;
+    this.weight = weight == null ? 1 : weight;
+    this.content = content == null ? "" : content;
+  }
+
+
+  /**
+   * @todo write docs
+   */
+  Relation.prototype.destroy = function() {
+    Node__default.prototype.destroy.call(this);
+    delete this.node0;
+    delete this.node1;
+    delete this.content;
+  };
+
+  /**
+   * given a node returns the other node of a relation
+   * @param  {Node} node
+   * @return {Node}
+   * tags:
+   */
+  Relation.prototype.getOther = function(node) {
+    return node == this.node0 ? this.node1 : this.node0;
+  };
+
+  /**
+   * @todo write docs
+   */
+  Relation.prototype.clone = function() {
+    var relation = new Relation(this.id, this.name, this.node0, this.node1);
+
+    relation.x = this.x;
+    relation.y = this.y;
+    relation.z = this.z;
+
+    relation.nodeType = this.nodeType;
+
+    relation.weight = this.weight;
+    relation.descentWeight = this.descentWeight;
+
+    return relation;
+  };
+
+  exports.Relation = Relation;
+
+  Network.prototype = new DataModel();
+  Network.prototype.constructor = Network;
+
+  /**
+   * @classdesc Networks are a DataType to store network data.
+   *
+   * Networks have nodes stored in a NodeList,
+   * and relations (edges) stored in a RelationList.
+   * @description Create a new Network instance.
+   * @constructor
+   * @category networks
+   */
+  function Network() {
+    this.type = "Network";
+
+    this.nodeList = new NodeList__default();
+    this.relationList = new RelationList__default();
+  }
+
+
+  /**
+   * Get Nodes of the Network as a NodeList
+   * @return {NodeList}
+   * tags:
+   */
+  Network.prototype.getNodes = function() {
+    return this.nodeList;
+  };
+
+  /**
+   * Get Relations (edges) of the Network as
+   * a RelationList.
+   * @return {RelationList}
+   * tags:
+   */
+  Network.prototype.getRelations = function() {
+    return this.relationList;
+  };
+
+  /**
+   * get nodes ids property
+   * @return {StringList}
+   * tags:
+   */
+  Network.prototype.getNodesIds = function() {
+    return this.nodeList.getIds();
+  };
+
+
+
+  /*
+   * building methods
+   */
+
+  /**
+   * Add a node to the network
+   * @param {Node} node A new node that will be added to the network.
+   */
+  Network.prototype.addNode = function(node) {
+    this.nodeList.addNode(node);
+  };
+
+  /**
+   * Retrieve a node from the nodeList of the Network with the given name (label).
+   * @param {String} name The name of the node to retrieve from the Network.
+   * @return {Node} The node with the given name. Null if no node with that name
+   * can be found in the Network.
+   */
+  Network.prototype.getNodeWithName = function(name) {
+    return this.nodeList.getNodeWithName(name);
+  };
+
+  /**
+   * Retrieve node from Network with the given id.
+   * @param {String} id ID of the node to retrieve
+   * @return {Node} The node with the given id. Null if a node with this id is not
+   * in the Network.
+   */
+  Network.prototype.getNodeWithId = function(id) {
+    return this.nodeList.getNodeWithId(id);
+  };
+
+  /**
+   * Add a new Relation (edge) to the Network between two nodes.
+   * @param {Node} node0 The source of the relation.
+   * @param {Node} node1 The destination of the relation.
+   * @param {String} id The id of the relation.
+   * @param {Number} weight A numerical weight associated with the relation (edge).
+   *
+   * @param {String} content Information associated with the relation.
+   */
+  Network.prototype.createRelation = function(node0, node1, id, weight, content) {
+    this.addRelation(new Relation(id, id, node0, node1, weight, content));
+  };
+
+  /**
+   * Add an existing Relation (edge) to the Network.
+   * @param {Relation} relation The relation to add to the network.
+   */
+  Network.prototype.addRelation = function(relation) {
+    this.relationList.addNode(relation);
+    relation.node0.nodeList.addNode(relation.node1);
+    relation.node0.relationList.addNode(relation);
+    relation.node0.toNodeList.addNode(relation.node1);
+    relation.node0.toRelationList.addNode(relation);
+    relation.node1.nodeList.addNode(relation.node0);
+    relation.node1.relationList.addNode(relation);
+    relation.node1.fromNodeList.addNode(relation.node0);
+    relation.node1.fromRelationList.addNode(relation);
+  };
+
+  /**
+   * Create a new Relation between two nodes in the network
+   * @param {Node} node0 The source of the relation.
+   * @param {Node} node1 The destination of the relation.
+   * @param {String} id The id of the relation. If missing, an id will be generated
+   * based on the id's of node0 and node1.
+   * @param {Number} weight=1 A numerical weight associated with the relation (edge).
+   * @param {String} content Information associated with the relation.
+   * @return {Relation} The new relation added to the Network.
+   */
+  Network.prototype.connect = function(node0, node1, id, weight, content) {
+    id = id || (node0.id + "_" + node1.id);
+    weight = weight || 1;
+    var relation = new Relation(id, id, node0, node1, weight);
+    this.addRelation(relation);
+    relation.content = content;
+    return relation;
+  };
+
+
+
+  /*
+   * removing methods
+   */
+
+  /**
+   * Remove a node from the Network
+   * @param {Node} node The node to remove.
+   */
+  Network.prototype.removeNode = function(node) {
+    this.removeNodeRelations(node);
+    this.nodeList.removeNode(node);
+  };
+
+  /**
+   * Remove all Relations connected to the node from the Network.
+   * @param {Node} node Node who's relations will be removed.
+   */
+  Network.prototype.removeNodeRelations = function(node) {
+    for(var i = 0; node.relationList[i] != null; i++) {
+      this.removeRelation(node.relationList[i]);
+      i--;
+    }
+  };
+
+  /**
+   * Remove all Nodes from the Network.
+   */
+  Network.prototype.removeNodes = function() {
+    this.nodeList.deleteNodes();
+    this.relationList.deleteNodes();
+  };
+
+  Network.prototype.removeRelation = function(relation) {
+    this.relationList.removeElement(relation);
+    relation.node0.nodeList.removeNode(relation.node1);
+    relation.node0.relationList.removeRelation(relation);
+    relation.node0.toNodeList.removeNode(relation.node1);
+    relation.node0.toRelationList.removeRelation(relation);
+    relation.node1.nodeList.removeNode(relation.node0);
+    relation.node1.relationList.removeRelation(relation);
+    relation.node1.fromNodeList.removeNode(relation.node0);
+    relation.node1.fromRelationList.removeRelation(relation);
+  };
+
+  /**
+   * Transformative method, removes nodes without a minimal number of connections
+   * @param  {Number} minDegree minimal degree
+   * @return {Number} number of nodes removed
+   * tags:transform
+   */
+  Network.prototype.removeIsolatedNodes = function(minDegree) {
+    var i;
+    var nRemoved = 0;
+    minDegree = minDegree == null ? 1 : minDegree;
+
+    for(i = 0; this.nodeList[i] != null; i++) {
+      if(this.nodeList[i].getDegree() < minDegree) {
+        this.nodeList[i]._toRemove = true;
+      }
+    }
+
+    for(i = 0; this.nodeList[i] != null; i++) {
+      if(this.nodeList[i]._toRemove) {
+        this.removeNode(this.nodeList[i]);
+        nRemoved++;
+        i--;
+      }
+    }
+
+    return nRemoved;
+  };
+
+
+  /**
+   * generates a light clone of the network, with the same nodeList and relationList as the original
+   * @return {Network}
+   */
+  Network.prototype.lightClone = function(){
+    var newNetwork = new Network();
+    newNetwork.nodeList = this.nodeList;
+    newNetwork.relationList = this.relationList;
+    return newNetwork;
+  };
+
+
+  /**
+   * Clones the network
+   *
+   * @param  {StringList} nodePropertiesNames list of preoperties names to be copied from old nodes into new nodes
+   * @param  {StringList} relationPropertiesNames
+   *
+   * @param  {String} idsSubfix optional sufix to be added to ids
+   * @param  {String} namesSubfix optional sufix to be added to names
+   * @return {Networked} network with exact structure than original
+   * tags:
+   */
+  Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames, idsSubfix, namesSubfix) {
+    var newNetwork = new Network();
+    var newNode, newRelation;
+
+    idsSubfix = idsSubfix == null ? '' : String(idsSubfix);
+    namesSubfix = namesSubfix == null ? '' : String(namesSubfix);
+
+    this.nodeList.forEach(function(node) {
+      newNode = new Node__default(idsSubfix + node.id, namesSubfix + node.name);
+      if(idsSubfix !== '') newNode.basicId = node.id;
+      if(namesSubfix !== '') newNode.basicName = node.name;
+      if(nodePropertiesNames) {
+        nodePropertiesNames.forEach(function(propName) {
+          if(node[propName] != null) newNode[propName] = node[propName];
+        });
+      }
+      newNetwork.addNode(newNode);
+    });
+
+    this.relationList.forEach(function(relation) {
+      newRelation = new Relation(idsSubfix + relation.id, namesSubfix + relation.name, newNetwork.nodeList.getNodeById(idsSubfix + relation.node0.id), newNetwork.nodeList.getNodeById(idsSubfix + relation.node1.id));
+      if(idsSubfix !== '') newRelation.basicId = relation.id;
+      if(namesSubfix !== '') newRelation.basicName = relation.name;
+      if(relationPropertiesNames) {
+        relationPropertiesNames.forEach(function(propName) {
+          if(relation[propName] != null) newRelation[propName] = relation[propName];
+        });
+      }
+      newNetwork.addRelation(newRelation);
+    });
+
+    return newNetwork;
+  };
+
+
+  /**
+   * @todo write docs
+   */
+  Network.prototype.getReport = function() {
+    return "network contains " + this.nodeList.length + " nodes and " + this.relationList.length + " relations";
+  };
+
+  /**
+   * @todo write docs
+   */
+  Network.prototype.destroy = function() {
+    delete this.type;
+    this.nodeList.destroy();
+    this.relationList.destroy();
+    delete this.nodeList;
+    delete this.relationList;
+  };
+
+  exports.Network = Network;
+
+  /* global console */
+
+  Table.prototype = new List();
+  Table.prototype.constructor = Table;
+
+  /**
+   * @classdesc A sub-class of {@link List}, Table provides a 2D array-like structure.
+   *
+   * Each column is stored as its own {@link List}, making it a List of Lists.
+   * Cells in the table can be accessed using table[column][row].
+   *
+   * Additional functions that work on Table can be found in:
+   * <ul>
+   *  <li>Operators:   {@link TableOperators}</li>
+   *  <li>Conversions: {@link TableConversions}</li>
+   *  <li>Generators: {@link TableGenerators}</li>
+   *  <li>Encodings: {@link TableEncodings}</li>
+   * </ul>
+   *
+   * @description Creates a new Table.
+   * Input arguments are treated as the inital column values
+   * of the Table.
+   * @constructor
+   * @category basics
+   */
+  function Table() {
+    var args = [];
+    var i;
+    for(i = 0; i < arguments.length; i++) {
+      args[i] = new List(arguments[i]);
+    }
+
+    var array = List.apply(this, args);
+    array = Table.fromArray(array);
+
+    return array;
+  }
+
+
+  /**
+   * Creates a new Table from an array
+   * @param {Number[]} array
+   * @return {Table}
+   */
+  Table.fromArray = function(array) {
+    var result = List.fromArray(array);
+    result.type = "Table";
+    //assign methods to array:
+    result.applyFunction = Table.prototype.applyFunction;
+    result.getRow = Table.prototype.getRow;
+    result.getRows = Table.prototype.getRows;
+    result.getLengths = Table.prototype.getLengths;
+    result.getListLength = Table.prototype.getListLength;
+    result.sliceRows = Table.prototype.sliceRows;
+    result.getSubListsByIndexes = Table.prototype.getSubListsByIndexes;
+    result.getWithoutRow = Table.prototype.getWithoutRow;
+    result.getWithoutRows = Table.prototype.getWithoutRows;
+    result.getTransposed = Table.prototype.getTransposed;
+    result.getListsSortedByList = Table.prototype.getListsSortedByList;
+    result.sortListsByList = Table.prototype.sortListsByList;
+    result.clone = Table.prototype.clone;
+    result.print = Table.prototype.print;
+
+    //transformative
+    result.removeRow = Table.prototype.removeRow;
+
+    //overiden
+    result.destroy = Table.prototype.destroy;
+
+    result.isTable = true;
+
+    return result;
+  };
+
+
+  /**
+   * Executes a given function on all the columns
+   * in the Table, returning a new Table with the
+   * resulting values.
+   * @param {Function} func Function to apply to each
+   * column in the table. Columns are {@link List|Lists}.
+   * @return {Table} Table of values from applying function.
+   */
+  Table.prototype.applyFunction = function(func) {
+    //TODO: to be tested!
+    var i;
+    var newTable = new Table();
+
+    newTable.name = this.name;
+
+    for(i = 0; this[i] != null; i++) {
+      newTable[i] = this[i].applyFunction(func);
+    }
+    return newTable.getImproved();
+  };
+
+  /**
+   * Returns a {@link List} with all the elements of a row.
+   * @param  {Number} index Index of the row to get.
+   * @return {List}
+   * tags:filter
+   */
+  Table.prototype.getRow = function(index) {
+    var list = new List();
+    var i;
+    for(i = 0; i < this.length; i++) {
+      list[i] = this[i][index];
+    }
+    return list.getImproved();
+  };
+
+  /**
+   * Returns the length a column of the Table.
+   * @param  {Number} index The Column to return its length.
+   * Defaults to 0.
+   * @return {Number} Length of column at given index.
+   * tags:
+   */
+  Table.prototype.getListLength = function(index) {
+    return this[index || 0].length;
+  };
+
+  /**
+   * Returns the lengths of all the columns of the Table.
+   * @return {NumberList} Lengths of all columns in Table.
+   */
+  Table.prototype.getLengths = function() {
+    var lengths = new NumberList();
+    for(var i = 0; this[i] != null; i++) {
+      lengths[i] = this[i].length;
+    }
+    return lengths;
+  };
+
+  /**
+   * Filters a Table by selecting a section of rows, elements with last index included.
+   * @param  {Number} startIndex Index of first element in all lists of the table.
+   * @param  {Number} endIndex Index of last elements in all lists of the table.
+   * @return {Table}
+   * tags:filter
+   */
+  Table.prototype.sliceRows = function(startIndex, endIndex) {
+    endIndex = endIndex == null ? (this[0].length - 1) : endIndex;
+
+    var i;
+    var newTable = new Table();
+    var newList;
+
+    newTable.name = this.name;
+    for(i = 0; this[i] != null; i++) {
+      newList = this[i].getSubList(startIndex, endIndex);
+      newList.name = this[i].name;
+      newTable.push(newList);
+    }
+    return newTable.getImproved();
+  };
+
+  /**
+   * Filters the lists of the table by indexes.
+   * @param  {NumberList} indexes
+   * @return {Table}
+   * tags:filter
+   */
+  Table.prototype.getSubListsByIndexes = function(indexes) {
+    var newTable = new Table();
+    this.forEach(function(list) {
+      newTable.push(list.getSubListByIndexes(indexes));
+    });
+    return newTable.getImproved();
+  };
+
+
+  //deprecated
+  /**
+   * @ignore
+   */
+  Table.prototype.getRows = function(indexes) {
+    return Table.prototype.getSubListsByIndexes(indexes);
+  };
+
+  /**
+   * Returns a new Table with the row at the given index removed.
+   * @param {Number} rowIndex Row to remove
+   * @return {Table} New Table.
+   * tags:filter
+   */
+  Table.prototype.getWithoutRow = function(rowIndex) {
+    var newTable = new Table();
+    newTable.name = this.name;
+    for(var i = 0; this[i] != null; i++) {
+      newTable[i] = List.fromArray(this[i].slice(0, rowIndex).concat(this[i].slice(rowIndex + 1))).getImproved();
+      newTable[i].name = this[i].name;
+    }
+    return newTable.getImproved();
+  };
+
+  /**
+   * Returns a new Table with the rows listed in the given numberList removed.
+   * @param {NumberList} rowsIndexes numberList of row indexes to remove.
+   * @return {Table}
+   * tags:filter
+   */
+  Table.prototype.getWithoutRows = function(rowsIndexes) {
+    var newTable = new Table();
+    newTable.name = this.name;
+    for(var i = 0; this[i] != null; i++) {
+      newTable[i] = new List();
+      for(var j = 0; this[i][j] != null; j++) {
+        if(rowsIndexes.indexOf(j) == -1) newTable[i].push(this[i][j]);
+      }
+      newTable[i].name = this[i].name;
+    }
+    return newTable.getImproved();
+  };
+
+  /**
+   * Sort Table's lists by a list
+   * @param  {List|Number} listOrIndex List used to sort, or index of list in the table
+   *
+   * @param  {Boolean} ascending (true by default)
+   * @return {Table} table (of the same type)
+   * tags:sort
+   */
+  Table.prototype.getListsSortedByList = function(listOrIndex, ascending) { //depracated: use sortListsByList
+    if(listOrIndex == null) return;
+    var newTable = instantiateWithSameType(this);
+    var sortinglist = listOrIndex.isList ? listOrIndex.clone() : this[listOrIndex];
+
+    this.forEach(function(list) {
+      newTable.push(list.getSortedByList(sortinglist, ascending));
+    });
+
+    return newTable;
+  };
+
+  /**
+   * Transposes Table.
+   * @param firstListAsHeaders
+   * @return {Table}
+   */
+  Table.prototype.getTransposed = function(firstListAsHeaders) {
+
+    var tableToTranspose = firstListAsHeaders ? this.getSubList(1) : this;
+
+    var table = instantiate(typeOf(tableToTranspose));
+    if(tableToTranspose.length === 0) return table;
+    var i;
+    var j;
+    var list;
+
+    for(i = 0; tableToTranspose[i] != null; i++) {
+      list = tableToTranspose[i];
+      for(j = 0; list[j] != null; j++) {
+        if(i === 0) table[j] = new List();
+        table[j][i] = tableToTranspose[i][j];
+      }
+    }
+    for(j = 0; tableToTranspose[0][j] != null; j++) {
+      table[j] = table[j].getImproved();
+    }
+
+    if(firstListAsHeaders) {
+      this[0].forEach(function(name, i) {
+        table[i].name = String(name);
+      });
+    }
+
+    return table;
+  };
+
+
+  /**
+   * removes a row from the table.
+   * @param {Number} index The row to remove.
+   * @return {undefined}
+   */
+  Table.prototype.removeRow = function(index) {
+    for(var i = 0; this[i] != null; i++) {
+      this[i].splice(index, 1);
+    }
+  };
+
+  /**
+   * makes a copy of the Table.
+   * @return {Table} Copy of table.
+   */
+  Table.prototype.clone = function() {
+    var clonedTable = instantiateWithSameType(this);
+    clonedTable.name = this.name;
+    for(var i = 0; this[i] != null; i++) {
+      clonedTable.push(this[i].clone());
+    }
+    return clonedTable;
+  };
+
+  /**
+   * Removes all contents of the Table.
+   */
+  Table.prototype.destroy = function() {
+    for(var i = 0; this[i] != null; i++) {
+      this[i].destroy();
+      delete this[i];
+    }
+  };
+
+  /**
+   * Prints contents of Table to console.log.
+   */
+
+  Table.prototype.print = function() {
+    console.log("///////////// <" + this.name + "////////////////////////////////////////////////////");
+    console.log(TableEncodings.TableToCSV(this, null, true));
+    console.log("/////////////" + this.name + "> ////////////////////////////////////////////////////");
+  };
+
+  exports.Table = Table;
+
+  NumberTable.prototype = new Table();
+  NumberTable.prototype.constructor = NumberTable;
+
+  /**
+   * @classdesc {@link Table} to store numbers.
+   *
+   * @param [Number|[Number]] args If a single Number, indicates number of
+   * columns to make for the NumberTable. Each column is created as an empty
+   * NumberList. If an Array, or a set of Arrays, it will make a new NumberList
+   * for each array present, populating it with the contents of the array.
+   *
+   * Additional functions that work on NumberTable can be found in:
+   * <ul>
+   *  <li>Operators:   {@link NumberTableOperators}</li>
+   *  <li>Conversions: {@link NumberTableConversions}</li>
+   * </ul>
+   *
+   * @constructor
+   * @description Creates a new NumberTable.
+   * @category numbers
+   */
+  function NumberTable() {
+    var args = [];
+    var newNumberList;
+    var array;
+    var i;
+
+    if(arguments.length > 0 && Number(arguments[0]) == arguments[0]) {
+      array = [];
+      for(i = 0; i < arguments[0]; i++) {
+        array.push(new NumberList());
+      }
+    } else {
+      for(i = 0; arguments[i] != null; i++) {
+        newNumberList = NumberList.fromArray(arguments[i]);
+        newNumberList.name = arguments[i].name;
+        args[i] = newNumberList;
+      }
+      // TODO: this converts all our NumberLists into Lists
+      array = Table.apply(this, args);
+    }
+    array = NumberTable.fromArray(array);
+    return array;
+  }
+
+
+  NumberTable.fromArray = function(array) {
+    var result = Table.fromArray(array);
+    result.type = "NumberTable";
+
+    result.getSums = NumberTable.prototype.getSums;
+    result.getRowsSums = NumberTable.prototype.getRowsSums;
+    result.getAverages = NumberTable.prototype.getAverages;
+    result.getRowsAverages = NumberTable.prototype.getRowsAverages;
+    result.factor = NumberTable.prototype.factor;
+    result.add = NumberTable.prototype.add;
+    result.getMax = NumberTable.prototype.getMax;
+    result.getMin = NumberTable.prototype.getMin;
+    result.getMinMaxInterval = NumberTable.prototype.getMinMaxInterval;
+    result.getCovarianceMatrix = NumberTable.prototype.getCovarianceMatrix;
+
+    return result;
+  };
+
+  /**
+   * @todo write docs
+   */
+  NumberTable.prototype.getMax = function() {
+    if(this.length === 0) return null;
+    console.log(this[0])
+
+    var max = this[0].getMax();
+    var i;
+
+    for(i = 1; this[i] != null; i++) {
+      max = Math.max(this[i].getMax(), max);
+    }
+    return max;
+  };
+
+  /**
+   * @todo write docs
+   */
+  NumberTable.prototype.getMin = function() {
+    if(this.length == 0) return null;
+
+    var min = this[0].getMin();
+    var i;
+
+    for(i = 1; this[i] != null; i++) {
+      min = Math.min(this[i].getMin(), min);
+    }
+    return min;
+  };
+
+  /**
+   * @todo write docs
+   */
+  NumberTable.prototype.getMinMaxInterval = function() {
+    if(this.length == 0) return null;
+    var rangeInterval = (this[0]).getMinMaxInterval();
+    for(var i = 1; this[i] != null; i++) {
+      var newRange = (this[i]).getMinMaxInterval();
+      rangeInterval.x = Math.min(rangeInterval.x, newRange.x);
+      rangeInterval.y = Math.max(rangeInterval.y, newRange.y);
+    }
+    return rangeInterval;
+  };
+
+  /**
+   * returns a numberList with values from numberlists added
+   * @return {Numberlist}
+   * tags:
+   */
+  NumberTable.prototype.getSums = function() {
+    var numberList = new NumberList();
+    for(var i = 0; this[i] != null; i++) {
+      numberList[i] = this[i].getSum();
+    }
+    return numberList;
+  };
+
+  /**
+   * returns a numberList with all values fro rows added
+   * @return {NumberList}
+   * tags:
+   */
+  NumberTable.prototype.getRowsSums = function() {
+    var sums = this[0].clone();
+    var numberList;
+    for(var i = 1; this[i] != null; i++) {
+      numberList = this[i];
+      for(var j = 0; numberList[j] != null; j++) {
+        sums[j] += numberList[j];
+      }
+    }
+    return sums;
+  };
+
+  /**
+   * @todo write docs
+   */
+  NumberTable.prototype.getAverages = function() {
+    var numberList = new NumberList();
+    for(var i = 0; this[i] != null; i++) {
+      numberList[i] = this[i].getAverage();
+    }
+    return numberList;
+  };
+
+  /**
+   * @todo write docs
+   */
+  NumberTable.prototype.getRowsAverages = function() {
+    var nLists = this.length;
+    var averages = this[0].clone().factor(1 / nLists);
+    var numberList;
+    var i;
+    var j;
+    for(i = 1; this[i] != null; i++) {
+      numberList = this[i];
+      for(j = 0; numberList[j] != null; j++) {
+        averages[j] += numberList[j] / nLists;
+      }
+    }
+    return averages;
+  };
+
+  /**
+   * @todo write docs
+   */
+  NumberTable.prototype.factor = function(value) {
+    var newTable = new NumberTable();
+    var i;
+    var numberList;
+
+    switch(typeOf(value)) {
+      case 'number':
+        for(i = 0; this[i] != null; i++) {
+          numberList = this[i];
+          newTable[i] = numberList.factor(value);
+        }
+        break;
+      case 'NumberList':
+        for(i = 0; this[i] != null; i++) {
+          numberList = this[i];
+          newTable[i] = numberList.factor(value[i]);
+        }
+        break;
+
+    }
+
+    newTable.name = this.name;
+    return newTable;
+  };
+
+  /**
+   * @todo write docs
+   */
+  NumberTable.prototype.add = function(value) {
+    var newTable = new NumberTable();
+    var numberList;
+    var i;
+
+    for(i = 0; this[i] != null; i++) {
+      numberList = this[i];
+      newTable[i] = numberList.add(value);
+    }
+
+    newTable.name = this.name;
+    return newTable;
+  };
+
+  exports.NumberTable = NumberTable;
+
+  function NumberOperators() {}
+
+
+  /**
+   * converts number into a string
+   *
+   * @param {Number} value The number to convert
+   * @param {Number} nDecimals Number of decimals to include. Defaults to 0.
+   */
+  NumberOperators.numberToString = function(value, nDecimals ) {
+    var string = value.toFixed(nDecimals);
+    while(string.charAt(string.length - 1) == '0') {
+      string = string.substring(0, string.length - 1);
+    }
+    if(string.charAt(string.length - 1) == '.') string = string.substring(0, string.length - 1);
+    return string;
+  };
+
+  /**
+   * decent method to create pseudo random numbers
+   * @param {Object} seed
+   */
+  NumberOperators.getRandomWithSeed = function(seed) {
+    seed = (seed * 9301 + 49297) % 233280;
+    return seed / (233280.0);
+  };
+
+  /**
+   * @todo write docs
+   */
+  NumberOperators.numberFromBinaryPositions = function(binaryPositions) {
+    var i;
+    var n = 0;
+    for(i = 0; binaryPositions[i] != null; i++) {
+      n += Math.pow(2, binaryPositions[i]);
+    }
+    return n;
+  };
+
+  /**
+   * @todo write docs
+   */
+  NumberOperators.numberFromBinaryValues = function(binaryValues) {
+    var n = 0;
+    var l = binaryValues.length;
+    for(var i = 0; i < l; i++) {
+      n += binaryValues[i] == 1 ? Math.pow(2, (l - (i + 1))) : 0;
+    }
+    return n;
+  };
+
+  /**
+   * @todo write docs
+   */
+  NumberOperators.powersOfTwoDecomposition = function(number, length) {
+
+    var powers = new NumberList();
+
+    var constructingNumber = 0;
+    var biggestPower;
+
+    while(constructingNumber < number) {
+      biggestPower = Math.floor(Math.log(number) / Math.LN2);
+      powers[biggestPower] = 1;
+      number -= Math.pow(2, biggestPower);
+    }
+
+    length = Math.max(powers.length, length == null ? 0 : length);
+
+    for(var i = 0; i < length; i++) {
+      powers[i] = powers[i] == 1 ? 1 : 0;
+    }
+
+    return powers;
+  };
+
+  /**
+   * @todo write docs
+   */
+  NumberOperators.positionsFromBinaryValues = function(binaryValues) {
+    var i;
+    var positions = new NumberList();
+    for(i = 0; binaryValues[i] != null; i++) {
+      if(binaryValues[i] == 1) positions.push(i);
+    }
+    return positions;
+  };
+
+  //////////Random Generator with Seed, From http://baagoe.org/en/w/index.php/Better_random_numbers_for_javascript
+
+  /**
+   * @ignore
+   */
+  NumberOperators._Alea = function() {
+    return(function(args) {
+      // Johannes Baagøe <baagoe@baagoe.com>, 2010
+      var s0 = 0;
+      var s1 = 0;
+      var s2 = 0;
+      var c = 1;
+
+      if(args.length === 0) {
+        args = [+new Date()];
+      }
+      var mash = NumberOperators._Mash();
+      s0 = mash(' ');
+      s1 = mash(' ');
+      s2 = mash(' ');
+
+      for(var i = 0; i < args.length; i++) {
+        s0 -= mash(args[i]);
+        if(s0 < 0) {
+          s0 += 1;
+        }
+        s1 -= mash(args[i]);
+        if(s1 < 0) {
+          s1 += 1;
+        }
+        s2 -= mash(args[i]);
+        if(s2 < 0) {
+          s2 += 1;
+        }
+      }
+      mash = null;
+
+      var random = function() {
+        var t = 2091639 * s0 + c * 2.3283064365386963e-10; // 2^-32
+        s0 = s1;
+        s1 = s2;
+        // https://github.com/nquinlan/better-random-numbers-for-javascript-mirror/blob/master/support/js/Alea.js#L38
+        return s2 = t - (c = t | 0);
+      };
+      random.uint32 = function() {
+        return random() * 0x100000000; // 2^32
+      };
+      random.fract53 = function() {
+        return random() +
+          (random() * 0x200000 | 0) * 1.1102230246251565e-16; // 2^-53
+      };
+      random.version = 'Alea 0.9';
+      random.args = args;
+      return random;
+
+    }(Array.prototype.slice.call(arguments)));
+  };
+
+  /**
+   * @ignore
+   */
+  NumberOperators._Mash = function() {
+    var n = 0xefc8249d;
+
+    var mash = function(data) {
+      data = data.toString();
+      for(var i = 0; i < data.length; i++) {
+        n += data.charCodeAt(i);
+        var h = 0.02519603282416938 * n;
+        n = h >>> 0;
+        h -= n;
+        h *= n;
+        n = h >>> 0;
+        h -= n;
+        n += h * 0x100000000; // 2^32
+      }
+      return(n >>> 0) * 2.3283064365386963e-10; // 2^-32
+    };
+
+    mash.version = 'Mash 0.9';
+    return mash;
+  };
+
+  exports.NumberOperators = NumberOperators;
+
+  NumberList.prototype = new List();
+  NumberList.prototype.constructor = NumberList;
+
+  /**
+   * @classdesc List structure for Numbers. Provides basic data type for
+   * storing and working with numbers in a List.
+   *
+   * Additional functions that work on NumberList can be found in:
+   * <ul>
+   *  <li>Operators:   {@link NumberListOperators}</li>
+   *  <li>Conversions: {@link NumberListConversions}</li>
+   *  <li>Generators: {@link NumberListGenerators}</li>
+   * </ul>
+   *
+   * @constructor
+   * @description Creates a new NumberList.
+   * @category numbers
+   */
+  function NumberList() {
+    var args = [];
+
+    for(var i = 0; i < arguments.length; i++) {
+      args[i] = Number(arguments[i]);
+    }
+    var array = List.apply(this, args);
+    array = NumberList.fromArray(array);
+    return array;
+  }
+
+
+  /**
+   * Creates a new NumberList from a raw array of numbers.
+   *
+   * @param {Number[]} array The array of numbers to create the list from.
+   * @param {Boolean} forceToNumber If true, explicitly converts values in array to Numbers.
+   * @return {NumberList} New NumberList containing values in array
+   */
+  NumberList.fromArray = function(array, forceToNumber) {
+    forceToNumber = forceToNumber == null ? true : forceToNumber;
+
+    var result = List.fromArray(array);
+
+    if(forceToNumber) {
+      for(var i = 0; i < result.length; i++) {
+        result[i] = Number(result[i]);
+      }
+    }
+
+    result.type = "NumberList";
+
+    //assign methods to array:
+    result.unit = NumberList.prototype.unit;
+    result.tenPower = NumberList.prototype.tenPower;
+    result.getMin = NumberList.prototype.getMin;
+    result.getMax = NumberList.prototype.getMax;
+    result.getAmplitude = NumberList.prototype.getAmplitude;
+    result.getMinMaxInterval = NumberList.prototype.getMinMaxInterval;
+    result.getSum = NumberList.prototype.getSum;
+    result.getProduct = NumberList.prototype.getProduct;
+    result.getInterval = NumberList.prototype.getInterval;
+
+    //statistics
+    result.getAverage = NumberList.prototype.getAverage;
+    result.getNorm = NumberList.prototype.getNorm;
+    result.getStandardDeviation = NumberList.prototype.getStandardDeviation;
+    result.getVariance = NumberList.prototype.getVariance;
+    result.getMedian = NumberList.prototype.getMedian;
+    result.getQuantiles = NumberList.prototype.getQuantiles;
+
+    //sorting
+    result.getSorted = NumberList.prototype.getSorted;
+    result.getSortIndexes = NumberList.prototype.getSortIndexes;
+    result.factor = NumberList.prototype.factor;
+    result.add = NumberList.prototype.add;
+    result.subtract = NumberList.prototype.subtract;
+    result.divide = NumberList.prototype.divide;
+    result.sqrt = NumberList.prototype.sqrt;
+    result.pow = NumberList.prototype.pow;
+    result.log = NumberList.prototype.log;
+    result.floor = NumberList.prototype.floor;
+    result.isEquivalent = NumberList.prototype.isEquivalent;
+
+    //transform
+    result.approach = NumberList.prototype.approach;
+
+    //override
+    result.clone = NumberList.prototype.clone;
+    result._slice = Array.prototype.slice;
+    result.slice = NumberList.prototype.slice;
+
+    return result;
+  };
+
+  NumberList.prototype.unit = "";
+  NumberList.prototype.tenPower = 0;
+
+  /**
+   * Returns minimum value in the List. Null if the NumberList is empty.
+   *
+   * @return {Number} The min value.
+   */
+  NumberList.prototype.getMin = function() {
+    //TODO:store result and retrieve while the NumberList doesn't change;
+    if(this.length === 0) return null;
+    var i;
+    var min = this[0];
+    for(i = 1; i < this.length; i++) {
+      min = Math.min(min, this[i]);
+    }
+    return min;
+  };
+
+  /**
+   * Returns maximum value in the List. Null if the NumberList is empty.
+   *
+   * @return {Number} The max value.
+   */
+  NumberList.prototype.getMax = function() {
+    //TODO:store result and retrieve while the NumberList doesn't change;
+    if(this.length === 0) return null;
+    var i;
+    var max = this[0];
+    for(i = 1; i < this.length; i++) {
+      max = Math.max(max, this[i]);
+    }
+    return max;
+  };
+
+  /**
+   * Finds the range of the values in the NumberList.
+   *
+   * @return {Number} The difference between the minimum and maximum value in the List.
+   */
+  NumberList.prototype.getAmplitude = function() {
+    if(this.length === 0) return 0;
+    var min = this[0];
+    var max = this[0];
+    for(var i = 1; this[i] != null; i++) {
+      min = Math.min(min, this[i]);
+      max = Math.max(max, this[i]);
+    }
+    return max - min;
+  };
+
+  /**
+   * Provides the min and max values as an {@link Interval}.
+   *
+   * @return {Interval} Interval containing the min and max values of the List.
+   */
+  NumberList.prototype.getMinMaxInterval = function() { //deprecated?
+    return new Interval__default(this.getMin(), this.getMax());
+  };
+
+  /**
+   * Returns the total sum of values in the NumberList.
+   *
+   * @return {Number} Sum of all values in the List.
+   * tags:
+   */
+  NumberList.prototype.getSum = function() {
+    if(this.length === 0) return 0;
+    var i;
+    var sum = this[0];
+    for(i = 1; i < this.length; i++) {
+      sum += this[i];
+    }
+    return sum;
+  };
+
+  /**
+   * Returns the product of values in the NumberList.
+   *
+   * @return {Number} The product of all values in the NumberList.
+   * tags:
+   */
+  NumberList.prototype.getProduct = function() {
+    if(this.length === 0) return null;
+    var i;
+    var product = this[0];
+    for(i = 1; i < this.length; i++) {
+      product *= this[i];
+    }
+    return product;
+  };
+
+  /**
+   * Builds an Interval with min and max value from the NumberList
+   *
+   * @return {Interval} with starting value as the min of the NumberList
+   * and ending value as the max.
+   * tags:
+   */
+  NumberList.prototype.getInterval = function() {
+    if(this.length === 0) return null;
+    var max = this[0];
+    var min = this[0];
+    for(var i = 1; this[i] != null; i++) {
+      max = Math.max(max, this[i]);
+      min = Math.min(min, this[i]);
+    }
+    var interval = new Interval__default(min, max);
+    return interval;
+  };
+
+
+  /////////statistics
+
+  /**
+   * Calculates mean of the NumberList.
+   *
+   * @return {Number} Mean of all values in the List.
+   * tags:statistics
+   */
+  NumberList.prototype.getAverage = function() {
+    return this.getSum() / this.length;
+  };
+
+  /**
+   * Calculates the geometric mean of the NumberList.
+   *
+   * @return {Number}
+   * tags:statistics
+   */
+  NumberList.prototype.getGeometricMean = function() {
+    var s = 0;
+    this.forEach(function(val) {
+      s += Math.log(val);
+    });
+    return Math.pow(Math.E, s / this.length);
+  };
+
+  /**
+   * Calculates the norm of the NumberList (treated as a vector).
+   *
+   * @return {Number}
+   * tags:statistics
+   */
+  NumberList.prototype.getNorm = function() {
+    var sq = 0;
+    for(var i = 0; this[i] != null; i++) {
+      sq += Math.pow(this[i], 2);
+    }
+    return Math.sqrt(sq);
+  };
+
+  /**
+   * Calculates the variance of the NumberList.
+   *
+   * @return {Number}
+   * tags:statistics
+   */
+  NumberList.prototype.getVariance = function() {
+    var sd = 0;
+    var average = this.getAverage();
+    for(var i = 0; this[i] != null; i++) {
+      sd += Math.pow(this[i] - average, 2);
+    }
+    return sd / this.length;
+  };
+
+  /**
+   * Calculates the standard deviation.
+   *
+   * @return {Number}
+   * tags:statistics
+   */
+  NumberList.prototype.getStandardDeviation = function() {
+    return Math.sqrt(this.getVariance());
+  };
+
+  /**
+   * Calculates the median of the numberList
+   *
+   * @return {Number}
+   * tags:statistics
+   */
+  NumberList.prototype.getMedian = function() {
+    var sorted = this.getSorted(true);
+    var prop = (this.length - 1) / 2;
+    var entProp = Math.floor(prop);
+    var onIndex = prop == entProp;
+    return onIndex ? sorted[prop] : (0.5 * sorted[entProp] + 0.5 * sorted[entProp + 1]);
+  };
+
+  /**
+   * Builds a partition of n quantiles from the numberList.
+   *
+   * @param {Number} nQuantiles number of quantiles (the size of the resulting list is nQuantiles-1)
+   * @return {NumberList} A number list of the quantiles.
+   * tags:statistics
+   */
+  NumberList.prototype.getQuantiles = function(nQuantiles) {//TODO: defines different options for return
+    var sorted = this.getSorted(true);
+
+    var prop = this.length / nQuantiles;
+    var entProp = Math.floor(prop);
+    var onIndex = prop == entProp;
+    var quantiles = new NumberList();
+    for(var i = 0; i < nQuantiles - 1; i++) {
+      quantiles[i] = onIndex ? sorted[(i + 1) * prop] : (0.5 * sorted[(i + 1) * entProp] + 0.5 * sorted[(i + 1) * entProp + 1]);
+    }
+    return quantiles;
+  };
+
+  /////////sorting
+
+  /**
+   * Returns a new NumberList sorted in either ascending or descending order.
+   *
+   * @param {Boolean} ascending True if values should be sorted in ascending order.
+   * If false, values will be sorted in descending order.
+   * @return {NumberList} new sorted NumberList.
+   */
+  NumberList.prototype.getSorted = function(ascending) {
+    ascending = ascending == null ? true : ascending;
+
+    if(ascending) {
+      return NumberList.fromArray(this.slice().sort(function(a, b) {
+        return a - b;
+      }), false);
+    }
+    return NumberList.fromArray(this.slice().sort(function(a, b) {
+      return b - a;
+    }), false);
+  };
+
+  /**
+   * Returns a new NumberList containing the indicies of the values of
+   * the original NumberList in sorted order.
+   *
+   * @param {Boolean} descending If true, values are sorted in descending order.
+   * @return {NumberList} NumberList containing the indices of the original NumberList
+   * such that accessing the values of the original list at those indices would produce
+   * a sorted list.
+   * @example
+   * var nl = NumberList.fromArray([1,3,2]);
+   * var indices = nl.getSortIndexes();
+   * indices[0]; // produces 1 as nl[1] == 3.
+   */
+  NumberList.prototype.getSortIndexes = function(descending) {
+    if(descending == null) descending = true;
+
+    var pairs = [];
+    var newList = new NumberList();
+
+    if(this.length === 0) return newList;
+
+    for(var i = 0; this[i] != null; i++) {
+      pairs.push([i, this[i]]);
+    }
+
+    if(descending) {
+      pairs.sort(function(a, b) {
+        if(a[1] < b[1]) return 1;
+        return -1;
+      });
+    } else {
+      pairs.sort(function(a, b) {
+        if(a[1] < b[1]) return -1;
+        return 1;
+      });
+    }
+
+    for(i = 0; pairs[i] != null; i++) {
+      newList.push(pairs[i][0]);
+    }
+    newList.name = this.name;
+    return newList;
+  };
+
+  /**
+   * Adds a value or values in a NumberList to the current list.
+   *
+   * If input is a Number, each value of the returned
+   * NumberList will be the sum of the original value and this
+   * input value.
+   *
+   * If the input is a NumberList, each value of the returned
+   * NumberList will be the sum of the original value and the
+   * value at the same index in the input list.
+   *
+   * @param {Number|NumberList} object Input value to add to the list.
+   * @return {NumberList}
+   */
+  NumberList.prototype.add = function(object) {
+    var i;
+    var newNumberList = new NumberList();
+    var type = typeOf(object);
+
+    switch(type) {
+      case 'number':
+        for(i = 0; this[i] != null; i++) {
+          newNumberList[i] = this[i] + object;
+        }
+        break;
+      case 'NumberList':
+        for(i = 0; this[i] != null; i++) {
+          newNumberList[i] = this[i] + object[i % object.length];
+        }
+        break;
+    }
+
+    newNumberList.name = this.name;
+    return newNumberList;
+  };
+
+  /**
+   * Subtracts a value or values in a NumberList from the current list.
+   *
+   * If input is a Number, each value of the returned
+   * NumberList will be the original value minus this
+   * input value.
+   *
+   * If the input is a NumberList, each value of the returned
+   * NumberList will be the original value minus the
+   * value at the same index in the input list.
+   *
+   * @param {Number|NumberList} object Input value to subract from the list.
+   * @return {NumberList}
+   */
+  NumberList.prototype.subtract = function(object) {
+    var i;
+    var newNumberList = new NumberList();
+    var type = typeOf(object);
+
+    switch(type) {
+      case 'number':
+        for(i = 0; this[i] != null; i++) {
+          newNumberList[i] = this[i] - object;
+        }
+        break;
+      case 'NumberList':
+        for(i = 0; this[i] != null; i++) {
+          newNumberList[i] = this[i] - object[i % object.length];
+        }
+        break;
+    }
+
+    newNumberList.name = this.name;
+    return newNumberList;
+  };
+
+  /**
+   * Returns a new NumberList with each value divided by a input value or values in a NumberList.
+   *
+   * If input is a Number, each value of the returned
+   * NumberList will be the original value divided by this
+   * input value.
+   *
+   * If the input is a NumberList, each value of the returned
+   * NumberList will be the original value divided by the
+   * value at the same index in the input list.
+   *
+   * @param {Number|NumberList} object Input value to divide by the list.
+   * @return {NumberList}
+   */
+  NumberList.prototype.divide = function(object) {
+    var i;
+    var newNumberList = new NumberList();
+    var type = typeOf(object);
+
+    switch(type) {
+      case 'number':
+        for(i = 0; this[i] != null; i++) {
+          newNumberList[i] = this[i] / object;
+        }
+        break;
+      case 'NumberList':
+        for(i = 0; this[i] != null; i++) {
+          newNumberList[i] = this[i] / object[i % object.length];
+        }
+        break;
+    }
+
+    newNumberList.name = this.name;
+    return newNumberList;
+  };
+
+  /**
+   * Returns a new NumberList with the values of
+   * the original list multiplied by the input value
+   *
+   * @param {Number} value The value to multiply each
+   * value in the list by.
+   * @return {NumberList} New NumberList with values multiplied.
+   */
+  NumberList.prototype.factor = function(value) {
+    var i;
+    var newNumberList = new NumberList();
+    for(i = 0; i < this.length; i++) {
+      newNumberList.push(this[i] * value);
+    }
+    newNumberList.name = this.name;
+    return newNumberList;
+  };
+
+
+  /**
+   * Returns a new NumberList containing the square root of
+   * the values of the current NumberList.
+   *
+   * @return {NumberList} NumberList with square rooted values.
+   */
+  NumberList.prototype.sqrt = function() {
+    var i;
+    var newNumberList = new NumberList();
+    for(i = 0; i < this.length; i++) {
+      newNumberList.push(Math.sqrt(this[i]));
+    }
+    newNumberList.name = this.name;
+    return newNumberList;
+  };
+
+  /**
+   * Returns a new NumberList containing values raised to the power
+   * of the input value.
+   *
+   * @param {Number} power Power to raise each value by.
+   * @return {NumberList} New NumberList.
+   */
+  NumberList.prototype.pow = function(power) {
+    var i;
+    var newNumberList = new NumberList();
+    for(i = 0; i < this.length; i++) {
+      newNumberList.push(Math.pow(this[i], power));
+    }
+    newNumberList.name = this.name;
+    return newNumberList;
+  };
+
+  /**
+   * Returns a transformed version of the list with
+   * each value in the new list the log of the value
+   * in the current list, with an optional constant
+   * added to it.
+   *
+   * @param {Number} add Optional value to add to the log transformed values.
+   * Defaults to 0.
+   * @return {NumberList}
+   */
+  NumberList.prototype.log = function(add) {
+    add = add || 0;
+
+    var i;
+    var newNumberList = new NumberList();
+    for(i = 0; this[i] != null; i++) {
+      newNumberList[i] = Math.log(this[i] + add);
+    }
+    newNumberList.name = this.name;
+
+    return newNumberList;
+  };
+
+  /**
+   * Returns a new NumberList containing the floor values (removing decimals) of
+   * the values of the current NumberList.
+   *
+   * @return {NumberList} NumberList with integer values.
+   */
+  NumberList.prototype.floor = function() {
+    var i;
+    var newNumberList = new NumberList();
+    for(i = 0; i < this.length; i++) {
+      newNumberList.push(Math.floor(this[i]));
+    }
+    newNumberList.name = this.name;
+
+    return newNumberList;
+  };
+
+  /**
+   * @todo write docs
+   */
+  NumberList.prototype.approach = function(destinty, speed) {
+    speed = speed || 0.5;
+
+    var i;
+    var antispeed = 1 - speed;
+
+    for(i = 0; this[i] != null; i++) {
+      this[i] = antispeed * this[i] + speed * destinty[i];
+    }
+  };
+
+  /**
+   * Returns true if values in the input NumberList are the same
+   * as the values in the current list.
+   *
+   * @param numberList2 Second NumberList to compare.
+   * @return {Boolean} True if all values in both lists match.
+   */
+  NumberList.prototype.isEquivalent = function(numberList2) {
+    if(this.length !== numberList2.length) {
+      return false;
+    }
+
+    for(var i = 0; this[i] != null; i++) {
+      if(this[i] != numberList2[i]) return false;
+    }
+    return true;
+  };
+
+  ///////overriding
+
+  /**
+   * @todo write docs
+   */
+  NumberList.prototype.clone = function() {
+    var newList = NumberList.fromArray(this._slice(), false);
+    newList.name = this.name;
+    return newList;
+  };
+
+  /**
+   * @todo write docs
+   */
+  NumberList.prototype.slice = function() {
+    return NumberList.fromArray(this._slice.apply(this, arguments), false);
+  };
+
+  exports.NumberList = NumberList;
+
+  function NumberListGenerators() {}
+
+
+  /**
+   * Generate a NumberList with sorted Numbers
+   * @param {Number} nValues length of the NumberList
+   *
+   * @param {Number} start first value
+   * @param {Number} step increment value
+   * @return {NumberList} generated NumberList
+   * tags:generator
+   */
+  NumberListGenerators.createSortedNumberList = function(nValues, start, step) {
+    start = start || 0;
+    step = step || 1;
+    if(step == 0) step = 1;
+    var i;
+    var numberList = new NumberList();
+    for(i = 0; i < nValues; i++) {
+      numberList.push(start + i * step);
+    }
+    return numberList;
+  };
+
+  // TODO: Should this function be here?
+  /**
+   * @todo finish docs
+   */
+  NumberList.createNumberListFromInterval = function(nElements, interval) {
+    if(interval == null) interval = new Interval__default(0, 1);
+    var numberList = new NumberList();
+    var range = interval.getAmplitude();
+    var i;
+    for(i = 0; i < nElements; i++) {
+      numberList.push(Number(interval.getMin()) + Number(Math.random() * range));
+    }
+    return numberList;
+  };
+
+  /**
+   * creates a list with random numbers
+   *
+   * @param  {Number} nValues
+   *
+   * @param  {Interval} interval range of the numberList
+   * @param  {Number} seed optional seed for seeded random numbers
+   * @return {NumberList}
+   * tags:random
+   */
+  NumberListGenerators.createRandomNumberList = function(nValues, interval, seed, func) {
+    seed = seed == null ? -1 : seed;
+    interval = interval == null ? new Interval__default(0, 1) : interval;
+
+    var numberList = new NumberList();
+    var amplitude = interval.getAmplitude();
+
+    var random = seed == -1 ? Math.random : new NumberOperators._Alea("my", seed, "seeds");
+
+    for(var i = 0; i < nValues; i++) {
+      //seed = (seed*9301+49297) % 233280; //old method, close enough: http://moebio.com/research/randomseedalgorithms/
+      //numberList[i] = interval.x + (seed/233280.0)*amplitude; //old method
+
+      numberList[i] = func == null ? (random() * amplitude + interval.x) : func(random() * amplitude + interval.x);
+    }
+
+    return numberList;
+  };
+
+  exports.NumberListGenerators = NumberListGenerators;
+
+  RectangleList.prototype = new List();
+  RectangleList.prototype.constructor = RectangleList;
+  /**
+   * @classdesc A {@link List} structure for storing {@link Rectangle} instances.
+   *
+   * @description Creates a new RectangleList.
    * @constructor
    * @category geometry
    */
-  function PolygonList() {
-    var array = Table.apply(this, arguments);
-    array = PolygonList.fromArray(array);
+  function RectangleList() {
+    var array = List.apply(this, arguments);
+    array = RectangleList.fromArray(array);
     return array;
   }
 
@@ -4151,94 +5590,145 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @todo write docs
    */
-  PolygonList.fromArray = function(array) {
-    var result = Table.fromArray(array);
-    result.type = "PolygonList";
-    result.getFrame = PolygonList.prototype.getFrame;
-    result.add = PolygonList.prototype.add;
-    result.factor = PolygonList.prototype.factor;
-    result.clone = PolygonList.prototype.clone;
-    result.getString = PolygonList.prototype.getString;
+  RectangleList.fromArray = function(array) {
+    var result = List.fromArray(array);
+    result.type = "RectangleList";
+
+    result.getFrame = RectangleList.prototype.getFrame;
+    result.add = RectangleList.prototype.add;
+    result.factor = RectangleList.prototype.factor;
+    result.getAddedArea = RectangleList.prototype.getAddedArea;
+    result.getIntersectionArea = RectangleList.prototype.getIntersectionArea;
+
     return result;
   };
 
+
   /**
    * @todo write docs
    */
-  PolygonList.prototype.getFrame = function() {
+  RectangleList.prototype.getFrame = function() {//TODO: use RectangleOperators.minRect
     if(this.length == 0) return null;
-    var frameP = this[0].getFrame();
-    var rectangle = new Rectangle__default(frameP.x, frameP.y, frameP.getRight(), frameP.getBottom());
+
+    var frame = this[0].clone();
+    frame.width = frame.getRight();
+    frame.height = frame.getBottom();
     for(var i = 1; this[i] != null; i++) {
-      frameP = this[i].getFrame();
-      rectangle.x = Math.min(rectangle.x, frameP.x);
-      rectangle.y = Math.min(rectangle.y, frameP.y);
-      rectangle.width = Math.max(rectangle.width, frameP.getRight());
-      rectangle.height = Math.max(rectangle.height, frameP.getBottom());
-    }
-    rectangle.width -= rectangle.x;
-    rectangle.height -= rectangle.y;
+      frame.x = Math.min(frame.x, this[i].x);
+      frame.y = Math.min(frame.y, this[i].y);
 
-    return rectangle;
+      frame.width = Math.max(this[i].getRight(), frame.width);
+      frame.height = Math.max(this[i].getBottom(), frame.height);
+    }
+
+    frame.width -= frame.x;
+    frame.height -= frame.y;
+
+    return frame;
   };
+
+  // TODO:finish RectangleList methods
+
+  /**
+   * @ignore
+   */
+  RectangleList.prototype.add = function() {
+
+  };
+
+  /**
+   * @ignore
+   */
+  RectangleList.prototype.factor = function() {
+
+  };
+
+
+  /**
+   * @ignore
+   */
+  RectangleList.prototype.getAddedArea = function() {};
 
   /**
    * @todo write docs
    */
-  PolygonList.prototype.add = function(object) {
-    var type = typeOf(object);
-    var i;
-    switch(type) {
-      case 'Point':
-        var newPolygonList = new PolygonList();
-        for(i = 0; this[i] != null; i++) {
-          newPolygonList[i] = this[i].add(object);
-        }
-        newPolygonList.name = this.name;
-        return newPolygonList;
+  RectangleList.prototype.getIntersectionArea = function() {
+    var rect0;
+    var rect1;
+    var intersectionArea = 0;
+    var intersection;
+    for(var i = 0; this[i + 1] != null; i++) {
+      rect0 = this[i];
+      for(var j = i + 1; this[j] != null; j++) {
+        rect1 = this[j];
+        intersection = rect0.getIntersection(rect1);
+        intersectionArea += intersection == null ? 0 : intersection.getArea();
+      }
+    }
+
+    return intersectionArea;
+  };
+
+  exports.RectangleList = RectangleList;
+
+  function ListGenerators() {}
+
+
+
+  /**
+   * Generates a List made of several copies of same element (returned List is improved)
+   * @param {Object} nValues length of the List
+   * @param {Object} element object to be placed in all positions
+   * @return {List} generated List
+   * tags:generator
+   */
+  ListGenerators.createListWithSameElement = function(nValues, element) {
+    var list;
+    switch(typeOf(element)) {
+      case 'number':
+        list = new NumberList();
         break;
+      case 'List':
+        list = new Table();
+        break;
+      case 'NumberList':
+        list = new NumberTable();
+        break;
+      case 'Rectangle':
+        list = new RectangleList();
+        break;
+      case 'string':
+        list = new StringList();
+        break;
+      case 'boolean':
+        list = new List(); //TODO:update once BooleanList exists
+        break;
+      default:
+        list = new List();
     }
+
+    for(var i = 0; i < nValues; i++) {
+      list[i] = element;
+    }
+    return list;
   };
 
   /**
-   * @todo write docs
+   * Generates a List built froma seed element and a function that will be applied iteratively
+   * @param {Object} nValues length of the List
+   * @param {Object} firstElement first element
+   * @param {Object} dynamicFunction sequence generator function, elementN+1 =  dynamicFunction(elementN)
+   * @return {List} generated List
    */
-  PolygonList.prototype.factor = function(value) {
-    var newPolygonList = new PolygonList();
-    for(var i = 0; this[i] != null; i++) {
-      newPolygonList[i] = this[i].factor(value);
+  ListGenerators.createIterationSequence = function(nValues, firstElement, dynamicFunction) {
+    var list = ListGenerators.createListWithSameElement(1, firstElement);
+    for(var i = 1; i < nValues; i++) {
+      list[i] = dynamicFunction(list[i - 1]);
     }
-    newPolygonList.name = this.name;
-    return newPolygonList;
+    return list;
   };
 
-  /**
-   * @todo write docs
-   */
-  PolygonList.prototype.clone = function() {
-    var newPolygonList = new PolygonList();
-    for(var i = 0; this[i] != null; i++) {
-      newPolygonList[i] = this[i].clone();
-    }
-    newPolygonList.name = this.name;
-    return newPolygonList;
-  };
-
-  // PolygonList.prototype.getString=function(pointSeparator,polygonSeparator){
-  // pointSeparator = pointSeparator==null?',':pointSeparator;
-  // polygonSeparator = polygonSeparator==null?'/':polygonSeparator;
-  // var j;
-  // var t='';
-  // for(var i=0;this[i]!=null;i++){
-  // t+=(i==0?'':polygonSeparator);
-  // for(j=0; this[i][j]!=null; j++){
-  // t+=(j==0?'':pointSeparator)+this[i][j].x+pointSeparator+this[i][j].y;
-  // }
-  // }
-  // return t;
-  // }
-
-  exports.PolygonList = PolygonList;
+  exports.ListGenerators = ListGenerators;
 
   /**
    * @classdesc Provides a set of tools that work with Colors.
@@ -4246,8 +5736,8 @@ define('src/index', ['exports'], function (exports) {
    * @namespace
    * @category colors
    */
-  function ColorOperators__ColorOperators() {}
-  var ColorOperators__default = ColorOperators__ColorOperators;
+  function ColorOperators() {}
+
   // TODO: create Color struture to be used instead of arrays [255, 100,0] ?
 
   /**
@@ -4260,9 +5750,9 @@ define('src/index', ['exports'], function (exports) {
    * @return {String} interpolated color
    *
    */
-  ColorOperators__ColorOperators.interpolateColors = function(color0, color1, value) {
-    var resultArray = ColorOperators__ColorOperators.interpolateColorsRGB(ColorOperators__ColorOperators.colorStringToRGB(color0), ColorOperators__ColorOperators.colorStringToRGB(color1), value);
-    return ColorOperators__ColorOperators.RGBtoHEX(resultArray[0], resultArray[1], resultArray[2]);
+  ColorOperators.interpolateColors = function(color0, color1, value) {
+    var resultArray = ColorOperators.interpolateColorsRGB(ColorOperators.colorStringToRGB(color0), ColorOperators.colorStringToRGB(color1), value);
+    return ColorOperators.RGBtoHEX(resultArray[0], resultArray[1], resultArray[2]);
   };
 
 
@@ -4276,7 +5766,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Array} interpolated RGB color
    *
    */
-  ColorOperators__ColorOperators.interpolateColorsRGB = function(color0, color1, value) {
+  ColorOperators.interpolateColorsRGB = function(color0, color1, value) {
     var s = 1 - value;
     return [Math.floor(s * color0[0] + value * color1[0]), Math.floor(s * color0[1] + value * color1[1]), Math.floor(s * color0[2] + value * color1[2])];
   };
@@ -4287,7 +5777,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Array} returns an RGB color Array
    *
    */
-  ColorOperators__ColorOperators.HEXtoRGB = function(hexColor) {
+  ColorOperators.HEXtoRGB = function(hexColor) {
     return [parseInt(hexColor.substr(1, 2), 16), parseInt(hexColor.substr(3, 2), 16), parseInt(hexColor.substr(5, 2), 16)];
   };
 
@@ -4299,30 +5789,30 @@ define('src/index', ['exports'], function (exports) {
    * @param {Number} blue B value.
    * @return {String} hexadecimal representation of the colors.
    */
-  ColorOperators__ColorOperators.RGBtoHEX = function(red, green, blue) {
-    return "#" + ColorOperators__ColorOperators.toHex(red) + ColorOperators__ColorOperators.toHex(green) + ColorOperators__ColorOperators.toHex(blue);
+  ColorOperators.RGBtoHEX = function(red, green, blue) {
+    return "#" + ColorOperators.toHex(red) + ColorOperators.toHex(green) + ColorOperators.toHex(blue);
   };
 
   /**
    * @todo write docs
    */
-  ColorOperators__ColorOperators.RGBArrayToString = function(array) {
+  ColorOperators.RGBArrayToString = function(array) {
     return 'rgb(' + array[0] + ',' + array[1] + ',' + array[2] + ')';
   };
 
   /**
    * @todo write docs
    */
-  ColorOperators__ColorOperators.colorStringToHEX = function(color_string) {
-    var rgb = ColorOperators__ColorOperators.colorStringToRGB(color_string);
-    return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  ColorOperators.colorStringToHEX = function(color_string) {
+    var rgb = ColorOperators.colorStringToRGB(color_string);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
 
   /**
    * @todo write docs
    */
-  ColorOperators__ColorOperators.numberToHex = function(number) {
+  ColorOperators.numberToHex = function(number) {
     var hex = number.toString(16);
     while(hex.length < 2) hex = "0" + hex;
     return hex;
@@ -4331,7 +5821,7 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @todo write docs
    */
-  ColorOperators__ColorOperators.uinttoRGB = function(color) {
+  ColorOperators.uinttoRGB = function(color) {
     var rgbColor = new Array(color >> 16, (color >> 8) - ((color >> 16) << 8), color - ((color >> 8) << 8));
     return rgbColor;
   };
@@ -4339,32 +5829,32 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @todo write docs
    */
-  ColorOperators__ColorOperators.uinttoHEX = function(color) {
-    var rgbColor = ColorOperators__ColorOperators.uinttoRGB(color);
-    var hexColor = ColorOperators__ColorOperators.RGBToHEX(rgbColor[0], rgbColor[1], rgbColor[2]);
+  ColorOperators.uinttoHEX = function(color) {
+    var rgbColor = ColorOperators.uinttoRGB(color);
+    var hexColor = ColorOperators.RGBToHEX(rgbColor[0], rgbColor[1], rgbColor[2]);
     return hexColor;
   };
 
   /**
    * @todo write docs
    */
-  ColorOperators__ColorOperators.RGBtouint = function(red, green, blue) {
+  ColorOperators.RGBtouint = function(red, green, blue) {
     return Number(red) << 16 | Number(green) << 8 | Number(blue);
   };
 
   /**
    * @todo write docs
    */
-  ColorOperators__ColorOperators.HEXtouint = function(hexColor) {
-    var colorArray = ColorOperators__ColorOperators.HEXtoRGB(hexColor);
-    var color = ColorOperators__ColorOperators.RGBtouint(colorArray[0], colorArray[1], colorArray[2]);
+  ColorOperators.HEXtouint = function(hexColor) {
+    var colorArray = ColorOperators.HEXtoRGB(hexColor);
+    var color = ColorOperators.RGBtouint(colorArray[0], colorArray[1], colorArray[2]);
     return color;
   };
 
   /**
    * @todo write docs
    */
-  ColorOperators__ColorOperators.grayByLevel = function(level) {
+  ColorOperators.grayByLevel = function(level) {
     level = Math.floor(level * 255);
     return 'rgb(' + level + ',' + level + ',' + level + ')';
   };
@@ -4375,26 +5865,26 @@ define('src/index', ['exports'], function (exports) {
    * @return {Array} returns an HSV color Array
    *
    */
-  ColorOperators__ColorOperators.HEXtoHSV = function(hexColor) {
-    var rgb = ColorOperators__ColorOperators.HEXtoRGB(hexColor);
-    return ColorOperators__ColorOperators.RGBtoHSV(rgb[0], rgb[1], rgb[2]);
+  ColorOperators.HEXtoHSV = function(hexColor) {
+    var rgb = ColorOperators.HEXtoRGB(hexColor);
+    return ColorOperators.RGBtoHSV(rgb[0], rgb[1], rgb[2]);
   };
 
 
   /**
    * @todo write docs
    */
-  ColorOperators__ColorOperators.HSVtoHEX = function(hue, saturation, value) {
-    var rgb = ColorOperators__ColorOperators.HSVtoRGB(hue, saturation, value);
-    return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  ColorOperators.HSVtoHEX = function(hue, saturation, value) {
+    var rgb = ColorOperators.HSVtoRGB(hue, saturation, value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
   /**
    * @todo write docs
    */
-  ColorOperators__ColorOperators.HSLtoHEX = function(hue, saturation, light) {
-    var rgb = ColorOperators__ColorOperators.HSLtoRGB(hue, saturation, light);
-    return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  ColorOperators.HSLtoHEX = function(hue, saturation, light) {
+    var rgb = ColorOperators.HSLtoRGB(hue, saturation, light);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
   /**
@@ -4403,7 +5893,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Array} returns a HSV color array
    * H in [0,360], S in [0,1], V in [0,1]
    */
-  ColorOperators__ColorOperators.RGBtoHSV = function(r, g, b) {
+  ColorOperators.RGBtoHSV = function(r, g, b) {
       var h;
       var s;
       var v;
@@ -4436,7 +5926,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Array} a HSV color array
    * @return {Array} returns a RGB color array
    */
-  ColorOperators__ColorOperators.HSVtoRGB = function(hue, saturation, value) {
+  ColorOperators.HSVtoRGB = function(hue, saturation, value) {
     hue = hue ? hue : 0;
     saturation = saturation ? saturation : 0;
     value = value ? value : 0;
@@ -4499,7 +5989,7 @@ define('src/index', ['exports'], function (exports) {
    * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
    * Assumes hue is contained in the interval [0,360) and saturation and l are contained in the set [0, 1]
    */
-  ColorOperators__ColorOperators.HSLtoRGB = function(hue, saturation, light) {
+  ColorOperators.HSLtoRGB = function(hue, saturation, light) {
     var r, g, b;
 
     if(saturation == 0) {
@@ -4527,16 +6017,16 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @todo write docs
    */
-  ColorOperators__ColorOperators.invertColorRGB = function(r, g, b) {
+  ColorOperators.invertColorRGB = function(r, g, b) {
     return [255 - r, 255 - g, 255 - b];
   };
 
   /**
    * @todo write docs
    */
-  ColorOperators__ColorOperators.addAlpha = function(color, alpha) {
+  ColorOperators.addAlpha = function(color, alpha) {
     //var rgb = color.substr(0,3)=='rgb'?ColorOperators.colorStringToRGB(color):ColorOperators.HEXtoRGB(color);
-    var rgb = ColorOperators__ColorOperators.colorStringToRGB(color);
+    var rgb = ColorOperators.colorStringToRGB(color);
     if(rgb == null) return 'black';
     return 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + alpha + ')';
   };
@@ -4544,16 +6034,16 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @todo write docs
    */
-  ColorOperators__ColorOperators.invertColor = function(color) {
-    var rgb = ColorOperators__ColorOperators.colorStringToRGB(color);
-    rgb = ColorOperators__ColorOperators.invertColorRGB(rgb[0], rgb[1], rgb[2]);
-    return ColorOperators__ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  ColorOperators.invertColor = function(color) {
+    var rgb = ColorOperators.colorStringToRGB(color);
+    rgb = ColorOperators.invertColorRGB(rgb[0], rgb[1], rgb[2]);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
   };
 
   /**
    * @todo write docs
    */
-  ColorOperators__ColorOperators.toHex = function(number) {
+  ColorOperators.toHex = function(number) {
     var hex = number.toString(16);
     while(hex.length < 2) hex = "0" + hex;
     return hex;
@@ -4562,7 +6052,7 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @todo write docs
    */
-  ColorOperators__ColorOperators.getRandomColor = function() {
+  ColorOperators.getRandomColor = function() {
     return 'rgb(' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ')';
   };
 
@@ -4577,7 +6067,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Array} rgb array
    * tags:
    */
-  ColorOperators__ColorOperators.colorStringToRGB = function(color_string) {
+  ColorOperators.colorStringToRGB = function(color_string) {
     //c.log('color_string:['+color_string+']');
     var ok = false;
 
@@ -4802,30 +6292,2558 @@ define('src/index', ['exports'], function (exports) {
     return null;
   };
 
-  exports.ColorOperators = ColorOperators__default;
+  exports.ColorOperators = ColorOperators;
 
-  ColorList__ColorList.prototype = new List__default();
-  ColorList__ColorList.prototype.constructor = ColorList__ColorList;
+  function ColorScales() {}
+
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.blackScale = function() {
+    return 'black';
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.grayscale = function(value) {
+    var rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], [255, 255, 255], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.antiGrayscale = function(value) {
+    var rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [0, 0, 0], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.antiTemperature = function(value) {
+    return ColorScales.temperature(1 - value);
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.temperature = function(value) { //todo:make it efficient
+    var color = "#FFFFFF";
+    if(value < 0.2) {
+      color = ColorOperators.interpolateColors('#000000', ColorOperators.HSVtoHEX(234, 1, 1), value * 5);
+    } else if(value > 0.85) {
+      color = ColorOperators.interpolateColors(ColorOperators.HSVtoHEX(0, 1, 1), '#FFFFFF', (value - 0.85) / 0.15);
+    } else {
+      color = ColorOperators.HSVtoHEX(Math.round((0.65 - (value - 0.2)) * 360), 1, 1);
+    }
+    return color;
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.sqrtTemperature = function(value) {
+    return ColorScales.temperature(Math.sqrt(value));
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.sqrt4Temperature = function(value) {
+    return ColorScales.temperature(Math.pow(value, 0.25));
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.quadraticTemperature = function(value) {
+    return ColorScales.temperature(Math.pow(value, 2));
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.cubicTemperature = function(value) {
+    return ColorScales.temperature(Math.pow(value, 3));
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.greenToRed = function(value) { //todo:make it efficient
+    var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [255, 50, 50], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.greenToBlue = function(value) { //todo:make it efficient
+    var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [50, 50, 255], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.grayToOrange = function(value) {
+    return 'rgb(' + Math.floor(100 + value*155) + ','+ Math.floor(100 + value*10) +',' + Math.floor(100 - value*100) + ')';
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.sqrt4GrayToOrange = function(value){
+    return ColorScales.grayToOrange(Math.pow(value, 0.25));
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.blueToRed = function(value) {
+    return 'rgb(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ')';
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.blueToRedAlpha = function(value) { //todo:make it efficient
+    return 'rgba(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ', 0.5)';
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.whiteToRed = function(value) {
+    var gg = Math.floor(255 - value * 255);
+    return 'rgb(255,' + gg + ',' + gg + ')';
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.redToBlue = function(value) {
+    var rgb = ColorOperators.interpolateColorsRGB([255, 0, 0], [0, 0, 255], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  //tricolor
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.greenWhiteRed = function(value) { //TODO: make it + efficient
+    var rgb = [0,0,0];
+    if(value < 0.5) {
+      rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [255, 255, 255], value * 2);
+    } else {
+      rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [255, 50, 50], (value - 0.5) * 2);
+    }
+    return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.blueWhiteRed = function(value) {
+    var rr = value < 0.5 ? Math.floor(510 * value) : 255;
+    var gg = value < 0.5 ? Math.floor(510 * value) : Math.floor(510 * (1 - value));
+    var bb = value < 0.5 ? 255 : Math.floor(510 * (1 - value));
+
+    return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.grayBlackOrange = function(value){ //TODO: make it + efficient
+    var rgb = [0,0,0];
+    if(value < 0.5) {
+      rgb = ColorOperators.interpolateColorsRGB([100, 100, 100], [0, 0, 0], value * 2);
+    } else {
+      rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], [255, 110, 0], (value - 0.5) * 2);
+    }
+    return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.grayWhiteOrange = function(value){ //TODO: make it + efficient
+    var rgb = [0,0,0];
+    if(value < 0.5) {
+      rgb = ColorOperators.interpolateColorsRGB([100, 100, 100], [255, 255, 255], value * 2);
+    } else {
+      rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [255, 110, 0], (value - 0.5) * 2);
+    }
+    return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
+  };
+
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.solar = function(value) {
+    var rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], ColorOperators.interpolateColorsRGB([255, 0, 0], [255, 255, 0], value), Math.pow(value * 0.99 + 0.01, 0.2));
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.antiSolar = function(value) {
+    return ColorOperators.invertColor(ColorScales.solar(value));
+  };
+
+  exports.ColorScales = ColorScales;
+
+  Tree.prototype = new Network();
+  Tree.prototype.constructor = Tree;
+
+  /**
+   * @classdesc Trees are Networks that have a hierarchical structure.
+   *
+   * @description Create a new Tree.
+   * @constructor
+   * @category networks
+   */
+  function Tree() {
+    Network.apply(this);
+    this.type = "Tree";
+
+    this.nLevels = 0;
+    this._createRelation = this.createRelation;
+    this.createRelation = this._newCreateRelation;
+  }
+
+
+  /**
+   * Adds a given Node to the tree, under the given parent Node.
+   *
+   * @param {Node} node
+   * @param {Node} parent
+   */
+  Tree.prototype.addNodeToTree = function(node, parent) {
+    this.addNode(node);
+    if(parent == null) {
+      node.level = 0;
+      node.parent = null;
+    } else {
+      var relation = new Relation(parent.id + "_" + node.id, parent.id + "_" + node.id, parent, node);
+      this.addRelation(relation);
+      node.level = parent.level + 1;
+      node.parent = parent;
+    }
+    this.nLevels = Math.max(this.nLevels, node.level + 1);
+  };
+
+  /**
+   * @ignore
+   */
+  Network.prototype._newCreateRelation = function(parent, node, id, weight) {
+    if(id == null) id = this.relationList.getNewId();
+    this._createRelation(parent, node, id, weight);
+    node.level = parent.level + 1;
+    node.parent = parent;
+    this.nLevels = Math.max(this.nLevels, node.level + 1);
+  };
+
+  /**
+   * Adds a new parent node to the Tree.
+   *
+   * @param {Node} node New Parent Node.
+   * @param {Node} child Node that will become the child.
+   */
+  Tree.prototype.addFather = function(node, child) {
+    //TODO: is children supposed to be child?
+    if(child.parent != null || this.nodeList.indexOf(child) == -1) return false;
+    this.addNode(node);
+    child.parent = node;
+    child.level = 1;
+    this.nLevels = Math.max(this.nLevels, 1);
+    this.createRelation(node, child);
+  };
+
+  /**
+   * Provides a {@link NodeList} of all the Nodes of the Tree at a given level.
+   *
+   * @param {Number} level Level (depth) of the Tree to extract Nodes at.
+   * @return {NodeList} All Nodes at the given level of the tree.
+   */
+  Tree.prototype.getNodesByLevel = function(level) {
+    var newNodeList = new NodeList__default();
+    for(var i = 0; this.nodeList[i] != null; i++) {
+      if(this.nodeList[i].level == level) newNodeList.addNode(this.nodeList[i]);
+    }
+    return newNodeList;
+  };
+
+  /**
+   * Returns the leaves (nodes without children) of a tree.
+   *
+   * @param {Node} node Optional parent Node to start the leaf search from.
+   * If no Node is provided, all leaf Nodes are returned.
+   * @return {NodeList} Leaves of the Tree or sub-tree.
+   * tags:
+   */
+  Tree.prototype.getLeaves = function(node) {
+    var leaves = new NodeList__default();
+    if(node) {
+      if(node.toNodeList.length === 0) {
+        leaves.addNode(node);
+        return leaves;
+      }
+      var addLeaves = function(candidate) {
+        if(candidate.toNodeList.length === 0) {
+          leaves.addNode(candidate);
+        } else {
+          candidate.toNodeList.forEach(addLeaves);
+        }
+      };
+      node.toNodeList.forEach(addLeaves);
+    } else {
+      this.nodeList.forEach(function(candidate) {
+        if(candidate.toNodeList.length === 0) leaves.addNode(candidate);
+      });
+    }
+    return leaves;
+  };
+
+  /**
+   * assignDescentWeightsToNodes
+   *
+   * @return {undefined}
+   */
+  Tree.prototype.assignDescentWeightsToNodes = function() {
+    this._assignDescentWeightsToNode(this.nodeList[0]);
+  };
+
+  /**
+   * @ignore
+   */
+  Tree.prototype._assignDescentWeightsToNode = function(node) {
+    var i;
+    if(node.toNodeList.length === 0) {
+      node.descentWeight = 1;
+      return 1;
+    }
+    for(i = 0; node.toNodeList[i] != null; i++) {
+      node.descentWeight += this._assignDescentWeightsToNode(node.toNodeList[i]);
+    }
+    return node.descentWeight;
+  };
+
+  /**
+   * Returns a string indicating the size of the Tree.
+   *
+   * @return {String} Log message indicating Tree's size.
+   */
+  Tree.prototype.getReport = function() {
+    //TODO: remove relation input?
+    return "Tree contains " + this.nodeList.length + " nodes and " + this.relationList.length + " relations";
+  };
+
+  exports.Tree = Tree;
+
+  function TableOperators() {}
+
+
+
+  /**
+   * @todo finish docs
+   */
+  TableOperators.getElementFromTable = function(table, i, j) {
+    if(table[i] == null) return null;
+    return table[i][j];
+  };
+
+  /**
+   * @todo finish docs
+   */
+  TableOperators.getSubTable = function(table, x, y, width, height) {
+    if(table == null) return table;
+
+    var nLists = table.length;
+    if(nLists === 0) return null;
+    var result = new Table();
+
+    if(width <= 0) width = (nLists - x) + width;
+    x = Math.min(x, nLists - 1);
+    width = Math.min(width, nLists - x);
+
+    var nRows = table[0].length;
+
+    if(nRows === 0) return null;
+
+    if(height <= 0) height = (nRows - y) + height;
+
+    y = Math.min(y, nRows - 1);
+    height = Math.min(height, nRows - y);
+
+    var column;
+    var newColumn;
+    var i;
+    var j;
+    var element;
+    for(i = x; i < x + width; i++) {
+      column = table[i];
+      newColumn = new List();
+      newColumn.name = table[i].name;
+      for(j = y; j < y + height; j++) {
+        element = column[j];
+        newColumn.push(element);
+      }
+      result.push(newColumn.getImproved());
+    }
+    return result.getImproved();
+  };
+
+  /**
+   * filters lists on a table, keeping elements that are in the same of row of a certain element of a given list from the table
+   * @param  {Table} table Table.
+   * @param  {Number} nList index of list containing the element
+   * @param  {Object} element used to filter the lists on the table
+   * @return {Table}
+   * tags:filter
+   */
+  TableOperators.getSubTableByElementOnList = function(table, nList, element){
+    if(nList==null || element==null) return;
+
+    var i, j;
+
+    if(nList<0) nList = table.length+nList;
+    nList = nList%table.length;
+
+    var newTable = instantiateWithSameType(table);
+    newTable.name = table.name;
+
+    table.forEach(function(list){
+      var newList = new List();
+      newList.name = list.name;
+      newTable.push(newList);
+    });
+
+    var supervised = table[nList];
+
+    for(i=0; supervised[i]!=null; i++){
+      if(element==supervised[i]){
+         for(j=0; newTable[j]!=null; j++){
+            newTable[j].push(table[j][i]);
+         }
+      }
+    }
+
+    newTable.forEach(function(list, i){
+      newTable[i] = list.getImproved();
+    });
+
+    return newTable.getImproved();
+  };
+
+  /**
+   * filters lists on a table, keeping elements that are in the same of row of certain elements of a given list from the table
+   * @param  {Table} table Table.
+   * @param  {Number} nList index of list containing the element
+   * @param  {List} elements used to filter the lists on the table
+   * @return {Table}
+   * tags:filter
+   */
+  TableOperators.getSubTableByElementsOnList = function(table, nList, list){
+    if(nList==null || list==null) return;
+
+    var i, j;
+
+    if(nList<0) nList = table.length+nList;
+    nList = nList%table.length;
+
+    var newTable = instantiateWithSameType(table);
+    newTable.name = table.name;
+
+    table.forEach(function(list){
+      var newList = new List();
+      newList.name = list.name;
+      newTable.push(newList);
+    });
+
+    var supervised = table[nList];
+
+    var listDictionary = ListOperators.getBooleanDictionaryForList(list);
+
+    for(i=0; supervised[i]!=null; i++){
+      if(listDictionary[supervised[i]]){
+         for(j=0; newTable[j]!=null; j++){
+            newTable[j].push(table[j][i]);
+         }
+      }
+    }
+
+    newTable.forEach(function(list, i){
+      newTable[i] = list.getImproved();
+    });
+
+    return newTable.getImproved();
+  };
+
+  /**
+   * transposes a table
+   * @param  {Table} table to be transposed
+   *
+   * @param {Boolean} firstListAsHeaders removes first list of the table and uses it as names for the lists on the transposed table
+   * @return {Table}
+   * tags:matrixes
+   */
+  TableOperators.transpose = function(table, firstListAsHeaders) {
+    if(table == null) return null;
+    return table.getTransposed(firstListAsHeaders);
+  };
+
+  /**
+   * divides the instances of a table in two tables: the training table and the test table
+   * @param  {Table} table
+   * @param  {Number} proportion proportion of training instances/test instances, between 0 and 1
+   *
+   * @param  {Number} mode  0:random<br>1:random with seed<br>2:shuffle
+   * @param {Number} seed seed for random numbers (mode 1)
+   * @return {List} list containing the two tables
+   * tags:ds
+   */
+  TableOperators.trainingTestPartition = function(table, proportion, mode, seed) {
+    if(table == null || proportion == null) return;
+
+    mode = mode || 0;
+    seed = seed || 0;
+
+    var n_mod = 0;
+
+    var indexesTr = new NumberList();
+    var indexesTe = new NumberList();
+
+    var random = mode == 1 ? new NumberOperators._Alea("my", seed, "seeds") : Math.random;
+
+    if(mode == 2) {
+      n_mod = Math.floor(proportion / (1 - proportion) * 10);
+    }
+
+    table[0].forEach(function(id, i) {
+      if(mode === 0 ||  mode === 1) {
+        if(random() < proportion) {
+          indexesTr.push(i);
+        } else {
+          indexesTe.push(i);
+        }
+      } else {
+        if(i % n_mod !== 0) {
+          indexesTr.push(i);
+        } else {
+          indexesTe.push(i);
+        }
+      }
+    });
+
+    return new List(table.getSubListsByIndexes(indexesTr), table.getSubListsByIndexes(indexesTe));
+  };
+
+  /**
+   * tests a model
+   * @param  {NumberTable} numberTable coordinates of points
+   * @param  {List} classes list of values of classes
+   * @param  {Function} model function that receives two numbers and returns a guessed class
+   *
+   * @param  {Number} metric 0:error
+   * @return {Number} metric value
+   * tags:ds
+   */
+  TableOperators.testClassificationModel = function(numberTable, classes, model, metric) {
+    if(numberTable == null || classes == null || model == null) return null;
+
+    metric = metric || 0;
+
+    var nErrors = 0;
+
+    classes.forEach(function(clss, i) {
+      if(model(numberTable[0][i], numberTable[1][i]) != clss) {
+        nErrors++;
+      }
+    });
+
+    return nErrors / classes.length;
+  };
+
+
+
+  /**
+   * @todo finish docs
+   */
+  TableOperators.getSubListsByIndexes = function(table, indexes) {
+    var newTable = new Table();
+    newTable.name = table.name;
+    var list;
+    var newList;
+    for(var i = 0; table[i] != null; i++) {
+      list = table[i];
+      newList = instantiateWithSameType(list);
+      for(var j = 0; indexes[j] != null; j++) {
+        newList[j] = list[indexes[j]];
+      }
+      newTable[i] = newList.getImproved();
+    }
+    return newTable;
+  };
+
+  // old version replaced by above version Dec 1st, 2014
+  // - fixed bug where descending with 'false' value gets changed to 'true'
+  // - performance improvements for tables with lots of lists
+  // TableOperators.sortListsByNumberList=function(table, numberList, descending){
+  //  descending = descending || true;
+  /**
+   * @todo finish docs
+   */
+  TableOperators.sortListsByNumberList = function(table, numberList, descending) {
+    if(descending == null) descending = true;
+
+    var newTable = instantiate(typeOf(table));
+    newTable.name = table.name;
+    var nElements = table.length;
+    var i;
+    // only need to do the sort once, not for each column
+    var indexList = numberList.clone();
+    // save original index
+    for(i = 0; i < indexList.length; i++) {
+      indexList[i] = i;
+    }
+    indexList = ListOperators.sortListByNumberList(indexList, numberList, descending);
+    // now clone and then move from original based on index
+    for(i = 0; i < nElements; i++) {
+      newTable[i] = table[i].clone();
+      for(var j = 0; j < indexList.length; j++) {
+        newTable[i][j] = table[i][indexList[j]];
+      }
+    }
+    return newTable;
+  };
+
+
+  /**
+   * aggregates lists from a table, using one of the list of the table as the aggregation list, and based on different modes for each list
+   * @param  {Table} table containing the aggregation list and lists to be aggregated
+   * @param  {Number} indexAggregationList index of the aggregation list on the table
+   * @param  {NumberList} indexesListsToAggregate indexs of the lists to be aggregated; typically it also contains the index of the aggregation list at the beginning, to be aggregated using mode 0 (first element) thus resulting as the list of non repeated elements
+   * @param  {NumberList} modes list of modes of aggregation, these are the options:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes<br>12:count non repeated elements<br>13:enlist non repeated elements<br>14:concat elements (string)<br>15:concat non-repeated elements
+   *
+   * @param {StringList} newListsNames optional names for generated lists
+   * @return {Table} aggregated table
+   * tags:
+   */
+  TableOperators.aggregateTable = function(table, indexAggregationList, indexesListsToAggregate, modes, newListsNames){
+    indexAggregationList = indexAggregationList||0;
+
+    if(table==null || !table.length ||  table.length<indexAggregationList || indexesListsToAggregate==null || !indexesListsToAggregate.length || modes==null) return;
+
+    var aggregatorList = table[indexAggregationList];
+    var indexesTable = ListOperators.getIndexesTable(aggregatorList);
+    var newTable = new Table();
+    var newList;
+    var toAggregateList;
+
+    indexesListsToAggregate.forEach(function(index, i){
+      toAggregateList = table[index];
+      newList = ListOperators.aggregateList(aggregatorList, toAggregateList, i<modes.length?modes[i]:1, indexesTable)[1];
+      if(newListsNames && i<newListsNames.length) newList.name = newListsNames[i];
+      newTable.push(newList);
+    });
+
+    return newTable.getImproved();
+  };
+
+
+
+  /**
+   * builds a pivot table
+   * @param  {table} table
+   * @param  {Number} indexFirstAggregationList index of first list
+   * @param  {Number} indexSecondAggregationList index of second list
+   * @param  {Number} indexListToAggregate index of list to be aggregated
+   * @param  {Number} aggregationMode aggregation mode:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>------not yet deployed:<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes
+   * @param {Object} nullValue value for null cases in non-numerical aggregation
+   *
+   * @param  {Number} resultMode result mode:<br>0:classic pivot, a table of aggregations with first aggregation list elements without repetitions in the first list, and second aggregation elements as headers of the aggregation lists<br>1:two lists for combinations of first aggregated list and second aggregated list, and a third list for aggregated values(default)
+   * @return {Table}
+   * tags:
+   */
+  TableOperators.pivotTable = function(table, indexFirstAggregationList, indexSecondAggregationList, indexListToAggregate, aggregationMode, nullValue, resultMode){
+    if(table==null || !table.length || indexFirstAggregationList==null || indexSecondAggregationList==null || indexListToAggregate==null || aggregationMode==null) return;
+
+    resultMode = resultMode||0;
+    nullValue = nullValue==null?"":nullValue;
+
+    var element1;
+    var coordinate, indexes;
+    var listToAggregate = table[indexListToAggregate];
+
+    var newTable = new Table();
+    var sum;
+    var i;
+
+    if(resultMode==1){//two lists of elements and a list of aggregation value
+      var indexesDictionary = {};
+      var elementsDictionary = {};
+
+      table[indexFirstAggregationList].forEach(function(element0, i){
+        element1 = table[indexSecondAggregationList][i];
+        coordinate = String(element0)+"∞"+String(element1);
+        if(indexesDictionary[coordinate]==null){
+          indexesDictionary[coordinate]=new NumberList();
+          elementsDictionary[coordinate]=new List();
+        }
+        indexesDictionary[coordinate].push(i);
+        elementsDictionary[coordinate].push(listToAggregate[i]);
+      });
+
+      newTable[0] = new List();
+      newTable[1] = new List();
+      switch(aggregationMode){
+        case 0://first element
+          newTable[2] = new List();
+          break;
+        case 1://count
+        case 2://sum
+        case 3://average
+          newTable[2] = new NumberList();
+          break;
+      }
+
+
+      for(coordinate in indexesDictionary) {
+        indexes = indexesDictionary[coordinate];
+        newTable[0].push(table[indexFirstAggregationList][indexes[0]]);
+        newTable[1].push(table[indexSecondAggregationList][indexes[0]]);
+
+        switch(aggregationMode){
+          case 0://first element
+            newTable[2].push(listToAggregate[indexes[0]]);
+            break;
+          case 1://count
+            newTable[2].push(indexes.length);
+            break;
+          case 2://sum
+          case 3://average
+            sum = 0;
+            indexes.forEach(function(index){
+              sum+=listToAggregate[index];
+            });
+            if(aggregationMode==3) sum/=indexes.length;
+            newTable[2].push(sum);
+            break;
+        }
+      }
+
+      newTable[0] = newTable[0].getImproved();
+      newTable[1] = newTable[1].getImproved();
+
+      switch(aggregationMode){
+        case 0://first element
+          newTable[2] = newTable[2].getImproved();
+          break;
+      }
+
+      return newTable;
+    }
+
+
+    ////////////////////////resultMode==0, a table whose first list is the first aggregation list, and each i+i list is the aggregations with elements for the second aggregation list
+
+    newTable[0] = new List();
+
+    var elementsPositions0 = {};
+    var elementsPositions1 = {};
+
+    var x, y;
+    var element;
+    var newList;
+
+    table[indexFirstAggregationList].forEach(function(element0, i){
+      element1 = table[indexSecondAggregationList][i];
+      element = listToAggregate[i];
+
+      y = elementsPositions0[String(element0)];
+      if(y==null){
+        newTable[0].push(element0);
+        y = newTable[0].length-1;
+        elementsPositions0[String(element0)] = y;
+      }
+
+      x = elementsPositions1[String(element1)];
+      if(x==null){
+        switch(aggregationMode){
+          case 0:
+            newList = new List();
+            break;
+          case 1:
+          case 2:
+          case 3:
+            newList = new NumberList();
+            break;
+        }
+        newTable.push(newList);
+        newList.name = String(element1);
+        x = newTable.length-1;
+        elementsPositions1[String(element1)] = x;
+      }
+
+      switch(aggregationMode){
+        case 0://first element
+          if(newTable[x][y]==null) newTable[x][y]=element;
+          break;
+        case 1://count
+          if(newTable[x][y]==null) newTable[x][y]=0;
+          newTable[x][y]++;
+          break;
+        case 2://sum
+          if(newTable[x][y]==null) newTable[x][y]=0;
+          newTable[x][y]+=element;
+          break;
+        case 3://average
+          if(newTable[x][y]==null) newTable[x][y]=[0,0];
+          newTable[x][y][0]+=element;
+          newTable[x][y][1]++;
+          break;
+      }
+
+    });
+
+    switch(aggregationMode){
+      case 0://first element
+        for(i=1; i<newTable.length; i++){
+          if(newTable[i]==null) newTable[i]=new List();
+
+          newTable[0].forEach(function(val, j){
+            if(newTable[i][j]==null) newTable[i][j]=nullValue;
+          });
+
+          newTable[i] = newTable[i].getImproved();
+        }
+        break;
+      case 1://count
+      case 2://sum
+        for(i=1; i<newTable.length; i++){
+          if(newTable[i]==null) newTable[i]=new NumberList();
+          newTable[0].forEach(function(val, j){
+            if(newTable[i][j]==null) newTable[i][j]=0;
+          });
+        }
+        break;
+      case 3://average
+        for(i=1; i<newTable.length; i++){
+          if(newTable[i]==null) newTable[i]=new NumberList();
+          newTable[0].forEach(function(val, j){
+            if(newTable[i][j]==null){
+              newTable[i][j]=0;
+            } else {
+              newTable[i][j]=newTable[i][j][0]/newTable[i][j][1];
+            }
+          });
+        }
+        break;
+    }
+
+    return newTable;
+  };
+
+
+
+  /**
+   * aggregates a table
+   * @param  {Table} table to be aggregated, deprecated: a new more powerful method has been built
+   * @param  {Number} nList list in the table used as basis to aggregation
+   * @param  {Number} mode mode of aggregation, 0:picks first element 1:adds numbers, 2:averages
+   * @return {Table} aggregated table
+   * tags:deprecated
+   */
+  TableOperators.aggregateTableOld = function(table, nList, mode) {
+    nList = nList == null ? 0 : nList;
+    if(table == null || table[0] == null || table[0][0] == null || table[nList] == null) return null;
+    mode = mode == null ? 0 : mode;
+
+    var newTable = new Table();
+    var i, j;
+    var index;
+    var notRepeated;
+
+    newTable.name = table.name;
+
+    for(j = 0; table[j] != null; j++) {
+      newTable[j] = new List();
+      newTable[j].name = table[j].name;
+    }
+
+    switch(mode) {
+      case 0: //leaves the first element of the aggregated subLists
+        for(i = 0; table[0][i] != null; i++) {
+          notRepeated = newTable[nList].indexOf(table[nList][i]) == -1;
+          if(notRepeated) {
+            for(j = 0; table[j] != null; j++) {
+              newTable[j].push(table[j][i]);
+            }
+          }
+        }
+        break;
+      case 1: //adds values in numberLists
+        for(i = 0; table[0][i] != null; i++) {
+          index = newTable[nList].indexOf(table[nList][i]);
+          notRepeated = index == -1;
+          if(notRepeated) {
+            for(j = 0; table[j] != null; j++) {
+              newTable[j].push(table[j][i]);
+            }
+          } else {
+            for(j = 0; table[j] != null; j++) {
+              if(j != nList && table[j].type == 'NumberList') {
+                newTable[j][index] += table[j][i];
+              }
+            }
+          }
+        }
+        break;
+      case 2: //averages values in numberLists
+        var nRepetitionsList = table[nList].getFrequenciesTable(false);
+        newTable = TableOperators.aggregateTableOld(table, nList, 1);
+
+        for(j = 0; newTable[j] != null; j++) {
+          if(j != nList && newTable[j].type == 'NumberList') {
+            newTable[j] = newTable[j].divide(nRepetitionsList[1]);
+          }
+        }
+
+        newTable.push(nRepetitionsList[1]);
+        break;
+    }
+    for(j = 0; newTable[j] != null; j++) {
+      newTable[j] = newTable[j].getImproved();
+    }
+    return newTable.getImproved();
+  };
+
+  /**
+   * counts pairs of elements in same positions in two lists (the result is the adjacent matrix of the network defined by pairs)
+   * @param  {Table} table with at least two lists
+   * @return {NumberTable}
+   * tags:
+   */
+  TableOperators.getCountPairsMatrix = function(table) {
+    if(table == null || table.length < 2 || table[0] == null || table[0][0] == null) return null;
+
+    var list0 = table[0].getWithoutRepetitions();
+    var list1 = table[1].getWithoutRepetitions();
+
+    var matrix = new NumberTable(list1.length);
+
+    list1.forEach(function(element1, i) {
+      matrix[i].name = String(element1);
+      list0.forEach(function(element0, j) {
+        matrix[i][j] = 0;
+      });
+    });
+
+    table[0].forEach(function(element0, i) {
+      var element1 = table[1][i];
+      matrix[list1.indexOf(element1)][list0.indexOf(element0)]++;
+    });
+
+    return matrix;
+  };
+
+
+  /**
+   * filter a table selecting rows that have an element on one of its lists
+   * @param  {Table} table
+   * @param  {Number} nList list that could contain the element in several positions
+   * @param  {Object} element
+   *
+   * @param {Boolean} keepRowIfElementIsPresent if true (default value) the row is selected if the list contains the given element, if false the row is discarded
+   * @return {Table}
+   * tags:filter
+   */
+  TableOperators.filterTableByElementInList = function(table, nList, element, keepRowIfElementIsPresent) {
+    if(table == null ||  table.length <= 0 || nList == null) return;
+    if(element == null) return table;
+
+
+    var newTable = new Table();
+    var i, j;
+
+    newTable.name = table.name;
+
+    for(j = 0; table[j] != null; j++) {
+      newTable[j] = new List();
+      newTable[j].name = table[j].name;
+    }
+
+    if(keepRowIfElementIsPresent){
+      for(i = 0; table[0][i] != null; i++) {
+        if(table[nList][i] == element) {
+          for(j = 0; table[j] != null; j++) {
+            newTable[j].push(table[j][i]);
+          }
+        }
+      }
+    } else {
+      for(i = 0; table[0][i] != null; i++) {
+        if(table[nList][i] != element) {
+          for(j = 0; table[j] != null; j++) {
+            newTable[j].push(table[j][i]);
+          }
+        }
+      }
+    }
+
+    for(j = 0; newTable[j] != null; j++) {
+      newTable[j] = newTable[j].getImproved();
+    }
+
+    return newTable;
+  };
+
+  /**
+   * @todo finish docs
+   */
+  TableOperators.mergeDataTablesInList = function(tableList) {
+    if(tableList.length < 2) return tableList;
+
+    var merged = tableList[0];
+
+    for(var i = 1; tableList[i] != null; i++) {
+      merged = TableOperators.mergeDataTables(merged, tableList[i]);
+    }
+
+    return merged;
+  };
+
+  /**
+   * creates a new table with an updated first List of elements and an added new numberList with the new values
+   */
+  TableOperators.mergeDataTables = function(table0, table1) {
+    if(table1[0].length === 0) {
+      var merged = table0.clone();
+      merged.push(ListGenerators.createListWithSameElement(table0[0].length, 0));
+      return merged;
+    }
+
+    var table = new Table();
+    var list = ListOperators.concatWithoutRepetitions(table0[0], table1[0]);
+
+    var nElements = list.length;
+
+    var nNumbers0 = table0.length - 1;
+    var nNumbers1 = table1.length - 1;
+
+    var numberTable0 = new NumberTable();
+    var numberTable1 = new NumberTable();
+
+    var index;
+
+    var i, j;
+
+    for(i = 0; i < nElements; i++) {
+      index = table0[0].indexOf(list[i]);
+      if(index > -1) {
+        for(j = 0; j < nNumbers0; j++) {
+          if(i === 0) {
+            numberTable0[j] = new NumberList();
+            numberTable0[j].name = table0[j + 1].name;
+          }
+          numberTable0[j][i] = table0[j + 1][index];
+        }
+      } else {
+        for(j = 0; j < nNumbers0; j++) {
+          if(i === 0) {
+            numberTable0[j] = new NumberList();
+            numberTable0[j].name = table0[j + 1].name;
+          }
+          numberTable0[j][i] = 0;
+        }
+      }
+
+      index = table1[0].indexOf(list[i]);
+      if(index > -1) {
+        for(j = 0; j < nNumbers1; j++) {
+          if(i === 0) {
+            numberTable1[j] = new NumberList();
+            numberTable1[j].name = table1[j + 1].name;
+          }
+          numberTable1[j][i] = table1[j + 1][index];
+        }
+      } else {
+        for(j = 0; j < nNumbers1; j++) {
+          if(i === 0) {
+            numberTable1[j] = new NumberList();
+            numberTable1[j].name = table1[j + 1].name;
+          }
+          numberTable1[j][i] = 0;
+        }
+      }
+    }
+
+    table[0] = list;
+
+    for(i = 0; numberTable0[i] != null; i++) {
+      table.push(numberTable0[i]);
+    }
+    for(i = 0; numberTable1[i] != null; i++) {
+      table.push(numberTable1[i]);
+    }
+    return table;
+  };
+
+  /**
+   * From two DataTables creates a new DataTable with combined elements in the first List, and added values in the second
+   * @param {Object} table0
+   * @param {Object} table1
+   * @return {Table}
+   */
+  TableOperators.fusionDataTables = function(table0, table1) {
+    var table = table0.clone();
+    var index;
+    var element;
+    for(var i = 0; table1[0][i] != null; i++) {
+      element = table1[0][i];
+      index = table[0].indexOf(element);
+      if(index == -1) {
+        table[0].push(element);
+        table[1].push(table1[1][i]);
+      } else {
+        table[1][index] += table1[1][i];
+      }
+    }
+    return table;
+  };
+
+  /**
+   * @todo finish docs
+   */
+  TableOperators.completeTable = function(table, nRows, value) {
+    value = value == null ? 0 : value;
+
+    var newTable = new Table();
+    newTable.name = table.name;
+
+    var list;
+    var newList;
+    var j;
+
+    for(var i = 0; i < table.length; i++) {
+      list = table[i];
+      newList = list == null ? ListOperators.getNewListForObjectType(value) : instantiateWithSameType(list);
+      newList.name = list == null ? '' : list.name;
+      for(j = 0; j < nRows; j++) {
+        newList[j] = (list == null || list[j] == null) ? value : list[j];
+      }
+      newTable[i] = newList;
+    }
+    return newTable;
+  };
+
+  /**
+   * filters a Table keeping the NumberLists
+   * @param  {Table} table to filter<
+   * @return {NumberTable}
+   * tags:filter
+   */
+  TableOperators.getNumberTableFromTable = function(table) {
+    if(table == null ||  table.length <= 0) {
+      return null;
+    }
+
+    var i;
+    var newTable = new NumberTable();
+    newTable.name = table.name;
+    for(i = 0; table[i] != null; i++) {
+      if(table[i].type == "NumberList") newTable.push(table[i]);
+    }
+    return newTable;
+  };
+
+  /**
+   * calculates de information gain of all variables in a table and a supervised variable
+   * @param  {Table} variablesTable
+   * @param  {List} supervised
+   * @return {NumberList}
+   * tags:ds
+   */
+  TableOperators.getVariablesInformationGain = function(variablesTable, supervised) {
+    if(variablesTable == null) return null;
+
+    var igs = new NumberList();
+    variablesTable.forEach(function(feature) {
+      igs.push(ListOperators.getInformationGain(feature, supervised));
+    });
+    return igs;
+  };
+
+  /**
+   * @todo finish docs
+   */
+  TableOperators.splitTableByCategoricList = function(table, list) {
+    if(table == null || list == null) return null;
+
+    var childrenTable;
+    var tablesList = new List();
+    var childrenObject = {};
+
+    list.forEach(function(element, i) {
+      childrenTable = childrenObject[element];
+      if(childrenTable == null) {
+        childrenTable = new Table();
+        childrenObject[element] = childrenTable;
+        tablesList.push(childrenTable);
+        table.forEach(function(list, j) {
+          childrenTable[j] = new List();
+          childrenTable[j].name = list.name;
+        });
+        childrenTable._element = element;
+      }
+      table.forEach(function(list, j) {
+        childrenTable[j].push(table[j][i]);
+      });
+    });
+
+    return tablesList;
+  };
+
+  /**
+   * builds a decision tree based on a table made of categorical lists, a list (the values of a supervised variable), and a value from the supervised variable. The result is a tree that contains on its leaves different populations obtained by iterative filterings by category values, and that contain extremes probabilities for having or not the valu ein the supervised variable.
+   * [!] this method only works with categorical lists (in case you have lists with numbers, find a way to simplify by ranges or powers)
+   * @param  {Table} variablesTable predictors table
+   * @param  {Object} supervised variable: list, or index (number) in the table (in which case the list will be removed from the predictors table)
+   * @param {Object} supervisedValue main value in supervised list (associated with blue)
+   *
+   * @param {Number} min_entropy minimum value of entropy on nodes (0.2 default)
+   * @param {Number} min_size_node minimum population size associated with node (10 default)
+   * @param {Number} min_info_gain minimum information gain by splitting by best feature (0.002 default)
+   * @param {Boolean} generatePattern generates a pattern of points picturing proprtion of followed class in node
+   * @param {ColorScale} colorScale to assign color associated to probability (default: blueToRed)
+   * @return {Tree} tree with aditional information on its nodes, including: probablity, color, entropy, weight, lift
+   * tags:ds
+   */
+  TableOperators.buildDecisionTree = function(variablesTable, supervised, supervisedValue, min_entropy, min_size_node, min_info_gain, generatePattern, colorScale){
+    if(variablesTable == null ||  supervised == null || supervisedValue == null) return;
+
+    if(colorScale==null) colorScale = ColorScales.blueWhiteRed;
+
+    if(typeOf(supervised)=='number'){
+      var newTable = variablesTable.getWithoutElementAtIndex(supervised);
+      supervised = variablesTable[supervised];
+      variablesTable = newTable;
+    }
+
+    min_entropy = min_entropy == null ? 0.2 : min_entropy;
+    min_size_node = min_size_node || 10;
+    min_info_gain = min_info_gain || 0.002;
+
+    var indexes = NumberListGenerators.createSortedNumberList(supervised.length);
+    var tree = new Tree();
+
+    TableOperators._buildDecisionTreeNode(tree, variablesTable, supervised, 0, min_entropy, min_size_node, min_info_gain, null, null, supervisedValue, indexes, generatePattern, colorScale);
+
+    return tree;
+  };
+
+
+  /**
+   * @ignore
+   */
+  TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervised, level, min_entropy, min_size_node, min_info_gain, parent, value, supervisedValue, indexes, generatePattern, colorScale) {
+    //if(level < 4) c.l('\nlevel', level);
+    var entropy = ListOperators.getListEntropy(supervised, supervisedValue);
+
+    //if(level < 4) c.l('entropy, min_entropy', entropy, min_entropy);
+    var maxIg = 0;
+    var iBestFeature = 0;
+    var informationGains = 0;
+
+    if(entropy >= min_entropy) {
+      informationGains = TableOperators.getVariablesInformationGain(variablesTable, supervised);
+      informationGains.forEach(function(ig, i){
+        if(ig > maxIg) {
+          maxIg = ig;
+          iBestFeature = i;
+        }
+      });
+    }
+
+    var subDivide = entropy >= min_entropy && maxIg > min_info_gain && supervised.length >= min_size_node;
+
+    var id = tree.nodeList.getNewId();
+    var name = (value == null ? '' : value + ':') + (subDivide ? variablesTable[iBestFeature].name : 'P=' + supervised._biggestProbability + '(' + supervised._mostRepresentedValue + ')');
+    var node = new Node(id, name);
+
+    tree.addNodeToTree(node, parent);
+
+    if(parent == null) {
+      tree.informationGainTable = new Table();
+      tree.informationGainTable[0] = variablesTable.getNames();
+      if(informationGains) {
+        tree.informationGainTable[1] = informationGains.clone();
+        tree.informationGainTable = tree.informationGainTable.getListsSortedByList(informationGains, false);
+      }
+    }
+
+    node.entropy = entropy;
+    node.weight = supervised.length;
+    node.supervised = supervised;
+    node.indexes = indexes;
+    node.value = value;
+    node.mostRepresentedValue = supervised._mostRepresentedValue;
+    node.biggestProbability = supervised._biggestProbability;
+    node.valueFollowingProbability = supervised._P_valueFollowing;
+    node.lift = node.valueFollowingProbability / tree.nodeList[0].valueFollowingProbability; //Math.log(node.valueFollowingProbability/tree.nodeList[0].valueFollowingProbability)/Math.log(2);
+
+
+    // if(level < 4) {
+    //   c.l('supervised.countElement(supervisedValue)', supervised.countElement(supervisedValue));
+    //   c.l('value', value);
+    //   c.l('name', name);
+    //   c.l('supervised.name', supervised.name);
+    //   c.l('supervised.length', supervised.length);
+    //   c.l('supervisedValue', supervisedValue);
+    //   c.l('supervised._biggestProbability, supervised._P_valueFollowing', supervised._biggestProbability, supervised._P_valueFollowing);
+    //   c.l('node.valueFollowingProbability (=supervised._P_valueFollowing):', node.valueFollowingProbability);
+    //   c.l('tree.nodeList[0].valueFollowingProbability', tree.nodeList[0].valueFollowingProbability);
+    //   c.l('node.biggestProbability (=_biggestProbability):', node.biggestProbability);
+    //   c.l('node.mostRepresentedValue:', node.mostRepresentedValue);
+    //   c.l('node.mostRepresentedValue==supervisedValue', node.mostRepresentedValue == supervisedValue);
+    // }
+
+    node._color = colorScale(node.valueFollowingProbability); //TableOperators._decisionTreeColorScale(1 - node.valueFollowingProbability, colorScale);
+
+    if(generatePattern) {
+      var newCanvas = document.createElement("canvas");
+      newCanvas.width = 150;
+      newCanvas.height = 100;
+      var newContext = newCanvas.getContext("2d");
+      newContext.clearRect(0, 0, 150, 100);
+
+      TableOperators._decisionTreeGenerateColorsMixture(newContext, 150, 100, ['blue', 'red'],
+  			node.mostRepresentedValue==supervisedValue?
+  				[Math.floor(node.biggestProbability*node.weight), Math.floor((1-node.biggestProbability)*node.weight)]
+  				:
+  				[Math.floor((1-node.biggestProbability)*node.weight), Math.floor(node.biggestProbability*node.weight)]
+      );
+
+      var img = new Image();
+      img.src = newCanvas.toDataURL();
+      node.pattern = newContext.createPattern(img, "repeat");
+    }
+
+
+    if(!subDivide){
+      return node;
+    }
+
+    node.bestFeatureName = variablesTable[iBestFeature].name;
+    node.bestFeatureName = node.bestFeatureName === "" ? "list "+ iBestFeature:node.bestFeatureName;
+    node.iBestFeature = iBestFeature;
+    node.informationGain = maxIg;
+
+    var expanded = variablesTable.concat([supervised, indexes]);
+
+    var tables = TableOperators.splitTableByCategoricList(expanded, variablesTable[iBestFeature]);
+    var childTable;
+    var childSupervised;
+    var childIndexes;
+
+    tables.forEach(function(expandedChild) {
+      childTable = expandedChild.getSubList(0, expandedChild.length - 3);
+      childSupervised = expandedChild[expandedChild.length - 2];
+      childIndexes = expandedChild[expandedChild.length - 1];
+      TableOperators._buildDecisionTreeNode(tree, childTable, childSupervised, level + 1, min_entropy, min_size_node, min_info_gain, node, expandedChild._element, supervisedValue, childIndexes, generatePattern, colorScale);
+    });
+
+    node.toNodeList = node.toNodeList.getSortedByProperty('valueFollowingProbability', false);
+
+    return node;
+  };
+
+  // TableOperators._decisionTreeColorScale = function(value, colorScale) {
+  //   if(colorScale) return colorScale(value);
+  //   return ColorScales.blueWhiteRed
+
+  //   // var rr = value < 0.5 ? Math.floor(510 * value) : 255;
+  //   // var gg = value < 0.5 ? Math.floor(510 * value) : Math.floor(510 * (1 - value));
+  //   // var bb = value < 0.5 ? 255 : Math.floor(510 * (1 - value));
+
+  //   // return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
+  // };
+
+  /**
+   * @ignore
+   */
+  TableOperators._decisionTreeGenerateColorsMixture = function(ctxt, width, height, colors, weights){
+    var x, y, i; //, rgb;
+    var allColors = ListGenerators.createListWithSameElement(weights[0], colors[0]);
+
+    for(i = 1; colors[i] != null; i++) {
+      allColors = allColors.concat(ListGenerators.createListWithSameElement(weights[i], colors[i]));
+    }
+
+    for(x = 0; x < width; x++) {
+      for(y = 0; y < height; y++) {
+        i = (x + y * width) * 4;
+        ctxt.fillStyle = allColors.getRandomElement();
+        ctxt.fillRect(x, y, 1, 1);
+      }
+    }
+  };
+
+  exports.TableOperators = TableOperators;
+
+  function ListOperators() {}
+
+
+
+  /**
+   * gets an element in a specified position from a List
+   * @param  {List} list
+   *
+   * @param  {Number} index
+   * @return {Object}
+   * tags:
+   */
+  ListOperators.getElement = function(list, index) {
+    if(list == null) return null;
+    index = index == null ? 0 : index % list.length;
+    return list[index];
+  };
+
+  /**
+   * multi-ouput operator that gives acces to individual elements
+   * @param  {List} list
+   *
+   * @param  {Number} fromIndex (default 0)
+   * @return {Object} first Object
+   * @return {Object} second Object
+   * @return {Object} third Object
+   * @return {Object} fourth Object
+   * @return {Object} fifth Object
+   * @return {Object} sisxth Object
+   * @return {Object} seventh Object
+   * @return {Object} eight Object
+   * @return {Object} ninth Object
+   * @return {Object} tenth Object
+   * tags:
+   */
+  ListOperators.getFirstElements = function(list, fromIndex) {
+    if(list == null) return null;
+
+    fromIndex = fromIndex == null ? 0 : Number(fromIndex);
+
+    return [
+    {
+      type: "Object",
+      name: "first value",
+      description: "first value",
+      value: list[fromIndex + 0]
+    },
+    {
+      type: "Object",
+      name: "second value",
+      description: "second value",
+      value: list[fromIndex + 1]
+    },
+    {
+      type: "Object",
+      name: "third value",
+      description: "third value",
+      value: list[fromIndex + 2]
+    },
+    {
+      type: "Object",
+      name: "fourth value",
+      description: "fourth value",
+      value: list[fromIndex + 3]
+    },
+    {
+      type: "Object",
+      name: "fifth value",
+      description: "fifth value",
+      value: list[fromIndex + 4]
+    },
+    {
+      type: "Object",
+      name: "sixth value",
+      description: "sixth value",
+      value: list[fromIndex + 5]
+    },
+    {
+      type: "Object",
+      name: "seventh value",
+      description: "seventh value",
+      value: list[fromIndex + 6]
+    },
+    {
+      type: "Object",
+      name: "eight value",
+      description: "eight value",
+      value: list[fromIndex + 7]
+    },
+    {
+      type: "Object",
+      name: "ninth value",
+      description: "ninth value",
+      value: list[fromIndex + 8]
+    },
+    {
+      type: "Object",
+      name: "tenth value",
+      description: "tenth value",
+      value: list[fromIndex + 9]
+    }];
+  };
+
+
+  /**
+   * first position of element in list (-1 if element doesn't belong to the list)
+   * @param  {List} list
+   * @param  {Object} element
+   * @return {Number}
+   * tags:
+   */
+  ListOperators.indexOf = function(list, element) {
+    return list.indexOf(element);
+  };
+
+  /**
+   * concats lists
+   * @param  {List} list0
+   * @param  {List} list1
+   *
+   * @param  {List} list2
+   * @param  {List} list3
+   * @param  {List} list4
+   * @return {List} list5
+   * tags:
+   */
+  ListOperators.concat = function() {
+    if(arguments == null || arguments.length == 0 ||  arguments[0] == null) return null;
+    if(arguments.length == 1) return arguments[0];
+
+    var i;
+    var list = arguments[0].concat(arguments[1]);
+    for(i = 2; arguments[i]; i++) {
+      list = list.concat(arguments[i]);
+    }
+    return list.getImproved();
+  };
+
+  /**
+   * assembles a List
+   * @param  {Object} argument0
+   *
+   * @param  {Object} argument1
+   * @param  {Object} argument2
+   * @param  {Object} argument3
+   * @param  {Object} argument4
+   * @return {List}
+   * tags:
+   */
+  ListOperators.assemble = function() {
+    return List.fromArray(Array.prototype.slice.call(arguments, 0)).getImproved();
+  };
+
+
+
+  /**
+   * returns a table with two Lists: words and occurrences
+   * @param {List} list
+   *
+   * @param {Boolean} sortListsByOccurrences optional, true by default, common words first
+   * @param {Boolean} consecutiveRepetitions optional false by default, if true only counts consecutive repetitions
+   * @param {Number} optional limit, limits the size of the lists
+   * @return {Table}
+   * tags:count,toimprove,deprecated
+   */
+  // ListOperators.countElementsRepetitionOnList = function(list, sortListsByOccurrences, consecutiveRepetitions, limit) { //transform this, use dictionary instead of indexOf !!!!!!!
+  //   if(list == null) return;
+
+  //   sortListsByOccurrences = sortListsByOccurrences == null ? true : sortListsByOccurrences;
+  //   consecutiveRepetitions = consecutiveRepetitions || false;
+  //   limit = limit == null ? 0 : limit;
+
+  //   var obj;
+  //   var elementList = instantiate(typeOf(list));
+  //   var numberList = new NumberList();
+  //   var index;
+  //   var i;
+
+  //   if(consecutiveRepetitions) {
+  //     if(list.length == 0) return null;
+  //     var previousElement = list[0];
+  //     elementList.push(previousElement);
+  //     numberList.push(1);
+  //     for(i = 1; i < nElements; i++) {
+  //       obj = list[i];
+  //       if(obj == previousElement) {
+  //         numberList[numberList.length - 1] = numberList[numberList.length - 1] + 1;
+  //       } else {
+  //         elementList.push(obj);
+  //         numberList.push(1);
+  //         previousElement = obj;
+  //       }
+  //     }
+  //   } else {
+  //     for(i = 0; list[i] != null; i++){
+  //       obj = list[i];
+  //       index = elementList.indexOf(obj);
+  //       if(index != -1) {
+  //         numberList[index]++;
+  //       } else {
+  //         elementList.push(obj);
+  //         numberList.push(1);
+  //       }
+  //     }
+  //   }
+
+  //   if(elementList.type == "NumberList") {
+  //     var table = new NumberTable();
+  //   } else {
+  //     var table = new Table();
+  //   }
+  //   table[0] = elementList;
+  //   table[1] = numberList;
+
+  //   if(sortListsByOccurrences) {
+  //     table = TableOperators.sortListsByNumberList(table, numberList);
+  //   }
+
+  //   if(limit != 0 && limit < elementList.length) {
+  //     table[0] = table[0].splice(0, limit);
+  //     table[1] = table[1].splice(0, limit);
+  //   }
+
+  //   return table;
+  // };
+
+
+  /**
+   * reverses a list
+   * @param {List} list
+   * @return {List}
+   * tags:sorting
+   */
+  ListOperators.reverse = function(list) {
+    return list.getReversed();
+  };
+
+  /**
+   * @todo write docs
+   */
+  ListOperators.getBooleanDictionaryForList = function(list){
+    if(list==null) return;
+
+    var dictionary = {};
+    list.forEach(function(element){
+      dictionary[element] = true;
+    });
+
+    return dictionary;
+  };
+
+  /**
+   * builds a dictionar object (relational array) for a dictionar (table with two lists)
+   * @param  {Table} dictionary table with two lists, typically without repetitions, elements of the second list being the 'translation' of the correspdonent on the first
+   * @return {Object} relational array
+   * tags:
+   */
+  ListOperators.buildDictionaryObjectForDictionary = function(dictionary){
+    if(dictionary==null || dictionary.length<2) return;
+
+    var dictionaryObject = {};
+
+    dictionary[0].forEach(function(element, i){
+      dictionaryObject[element] = dictionary[1][i];
+    });
+
+    return dictionaryObject;
+  };
+
+
+  /**
+   * using a table with two columns as a dictionary (first list elements to be read, second list result elements), translates a list
+   * @param  {List} list to transalte
+   * @param  {Table} dictionary table with two lists
+   *
+   * @param {Object} nullElement element to place in case no translation is found
+   * @return {List}
+   * tags:
+   */
+  ListOperators.translateWithDictionary = function(list, dictionary, nullElement) {
+    if(list==null || dictionary==null || dictionary.length<2) return;
+
+    var dictionaryObject = ListOperators.buildDictionaryObjectForDictionary(dictionary);
+
+    var list = ListOperators.translateWithDictionaryObject(list, dictionaryObject, nullElement);
+
+    list.dictionaryObject = dictionaryObject;
+
+    return list;
+
+    // var newList = new List();
+    // list.forEach(function(element, i) {
+
+    //   var index = dictionary[0].indexOf(element);
+    //   if(nullElement != null) {
+    //     newList[i] = index == -1 ? nullElement : dictionary[1][index];
+    //   } else {
+    //     newList[i] = index == -1 ? list[i] : dictionary[1][index];
+    //   }
+    // });
+
+    // newList.name = dictionary[1].name;
+
+    // newList = newList.getImproved();
+    // newList.dictionaryObject = dictionaryObject;
+
+    // return newList;
+  };
+
+  /**
+   * creates a new list that is a translation of a list using a dictionar object (a relation array)
+   * @param  {List} list
+   * @param  {Object} dictionaryObject
+   *
+   * @param  {Object} nullElement
+   * @return {List}
+   * tags:
+   */
+  ListOperators.translateWithDictionaryObject = function(list, dictionaryObject, nullElement) {
+    if(list==null || dictionaryObject==null) return;
+
+    var newList = new List();
+    var i;
+
+    list.forEach(function(element, i) {
+      newList[i] = dictionaryObject[element];
+    });
+    if(nullElement!=null){
+      var l = list.length;
+      for(i=0; i<l; i++){
+        if(newList[i]==null) newList[i]=nullElement;
+      }
+    }
+    newList.name = list.name;
+    return newList.getImproved();
+  };
+
+
+  // ListOperators.getIndexesOfElements=function(list, elements){
+  // 	var numberList = new NumberList();
+  // 	var i;
+  // 	for(i=0; elements[i]!=null; i++){
+  // 		numberList[i] = list.indexOf(elements[i]);
+  // 	}
+  // 	return numberList;
+  // }
+
+
+  // ListOperators.countOccurrencesOnList=function(list){
+  // 	var occurrences=new NumberList();
+  // 	var nElements=list.length;
+  // 	for(var i=0; list[i]!=null; i++){
+  // 		occurrences.push(this.getIndexesOfElement(list,list[i]).length);
+  // 	}
+  // 	return occurrences;
+  // }
+
+
+  /**
+   * @todo write docs
+   */
+  ListOperators.sortListByNumberList = function(list, numberList, descending) {
+    if(descending == null) descending = true;
+    if(numberList.length == 0) return list;
+    var newNumberList;
+
+    var pairs = [];
+    var newList = instantiate(typeOf(list));
+    var i;
+
+    for(i = 0; list[i] != null; i++) {
+      pairs.push([list[i], numberList[i]]);
+    }
+
+
+    if(descending) {
+      pairs.sort(function(a, b) {
+        if(a[1] < b[1]) return 1;
+        return -1;
+      });
+    } else {
+      pairs.sort(function(a, b) {
+        if(a[1] < b[1]) return -1;
+        return 1;
+      });
+    }
+
+    for(i = 0; pairs[i] != null; i++) {
+      newList.push(pairs[i][0]);
+    }
+    newList.name = list.name;
+    return newList;
+  };
+
+
+  /**
+   * @todo write docs
+   */
+  ListOperators.sortListByIndexes = function(list, indexedArray) {
+    var newList = instantiate(typeOf(list));
+    newList.name = list.name;
+    var nElements = list.length;
+    var i;
+    for(i = 0; i < nElements; i++) {
+      newList.push(list[indexedArray[i]]);
+    }
+    return newList;
+  };
+
+
+  /**
+   * @todo write docs
+   */
+  ListOperators.concatWithoutRepetitions = function() { //?
+    var i;
+    var newList = arguments[0].clone();
+    for(i = 1; i < arguments.length; i++) {
+      var addList = arguments[i];
+      var nElements = addList.length;
+      for(var i = 0; i < nElements; i++) {
+        if(newList.indexOf(addList[i]) == -1) newList.push(addList[i]);
+      }
+    }
+    return newList.getImproved();
+  };
+
+  /**
+   * builds a table: a list of sub-lists from the original list, each sub-list determined size subListsLength, and starting at certain indexes separated by step
+   * @param  {List} list
+   * @param  {Number} subListsLength length of each sub-list
+   * @param  {Number} step slifing step
+   * @param  {Number} finalizationMode<br>0:all sub-Lists same length, doesn't cover the List<br>1:last sub-List catches the last elements, with lesser length<br>2:all lists same length, last sub-list migth contain elements from the beginning of the List
+   * @return {Table}
+   * tags:
+   */
+  ListOperators.slidingWindowOnList = function(list, subListsLength, step, finalizationMode) {
+    finalizationMode = finalizationMode || 0;
+    var table = new Table();
+    var newList;
+    var nElements = list.length;
+    var nList;
+    var nRow;
+    var i;
+    var j;
+
+    step = Math.max(1, step);
+
+    switch(finalizationMode) {
+      case 0: //all sub-Lists same length, doesn't cover the List
+        for(i = 0; i < nElements; i += step) {
+          if(i + subListsLength <= nElements) {
+            newList = new List();
+            for(j = 0; j < subListsLength; j++) {
+              newList.push(list[i + j]);
+            }
+            table.push(newList.getImproved());
+          }
+        }
+        break;
+      case 1: //last sub-List catches the last elements, with lesser length
+        for(i = 0; i < nElements; i += step) {
+          newList = new List();
+          for(j = 0; j < Math.min(subListsLength, nElements - i); j++) {
+            newList.push(list[i + j]);
+          }
+          table.push(newList.getImproved());
+        }
+        break;
+      case 2: //all lists same length, last sub-list migth contain elements from the beginning of the List
+        for(i = 0; i < nElements; i += step) {
+          newList = new List();
+          for(j = 0; j < subListsLength; j++) {
+            newList.push(list[(i + j) % nElements]);
+          }
+          table.push(newList.getImproved());
+        }
+        break;
+    }
+
+    return table.getImproved();
+  };
+
+  /**
+   * @todo write docs
+   */
+  ListOperators.getNewListForObjectType = function(object) {
+    var newList = new List();
+    newList[0] = object;
+    return instantiateWithSameType(newList.getImproved());
+  };
+
+
+  /*
+  deprectaed, use intersection instead
+   */
+  // ListOperators.listsIntersect = function(list0, list1) {
+  //   var list = list0.length < list1.length ? list0 : list1;
+  //   var otherList = list0 == list ? list1 : list0;
+  //   for(var i = 0; list[i] != null; i++) {
+  //     if(otherList.indexOf(list[i]) != -1) return true;
+  //   }
+  //   return false;
+  // };
+
+
+  /**
+   * creates a List that contains the union of two List (removing repetitions)
+   * @param  {List} list0 first list
+   * @param  {List} list1 second list
+   *
+   * @return {List} the union of both Lists
+   * tags:
+   */
+  ListOperators.union = function(list0, list1) {//TODO: this should be refactored, and placed in ListOperators
+    if(list0==null || list1==null) return;
+
+    var obj = {};
+    var i, k;
+
+    for(i = 0; list0[i]!=null; i++) obj[list0[i]] = list0[i];
+    for(i = 0; list1[i]!=null; i++) obj[list1[i]] = list1[i];
+    var union = new List();
+    for(k in obj) {
+      //if(obj.hasOwnProperty(k)) // <-- optional
+      union.push(obj[k]);
+    }
+    return union;
+  };
+
+
+  /**
+   * returns the list of common elements between two lists (deprecated, use union instead)
+   * @param  {List} list0
+   * @param  {List} list1
+   * @return {List}
+   * tags:deprecated
+   */
+  ListOperators.getCommonElements = function(list0, list1) {
+    var nums = list0.type == 'NumberList' && list1.type == 'NumberList';
+    var strs = list0.type == 'StringList' && list1.type == 'StringList';
+    var newList = nums ? new NumberList() : (strs ? new StringList() : new List());
+
+    var list = list0.length < list1.length ? list0 : list1;
+    var otherList = list0 == list ? list1 : list0;
+
+    for(var i = 0; list[i] != null; i++) {
+      if(otherList.indexOf(list[i]) != -1) newList.push(list[i]);
+    }
+    if(nums || strs) return newList;
+    return newList.getImproved();
+  };
+
+
+
+
+  /**
+   * creates a List that contains the union of two List (removing repetitions) (deprecated, use union instead)
+   * @param  {List} list0
+   * @param  {List} list A
+   * @param  {List} list B
+   *
+   * @return {List} the union of both NumberLists
+   * tags:deprecated
+   */
+  ListOperators.unionLists = function(x, y) {
+    // Borrowed from here: http://stackoverflow.com/questions/3629817/getting-a-union-of-two-arrays-in-javascript
+    var result;
+    if(x.type != x.type || (x.type != "StringList" && x.type != "NumberList"))
+    {
+      // To-do: call generic method here (not yet implemented)
+      //console.log( "ListOperators.unionLists for type '" + x.type + "' or '" + y.type + "' not yet implemented" );
+      return x.concat(y).getWithoutRepetitions();
+      return null;
+    }
+    else
+    {
+      var obj = {};
+      for(var i = x.length - 1; i >= 0; --i)
+        obj[x[i]] = x[i];
+      for(var i = y.length - 1; i >= 0; --i)
+        obj[y[i]] = y[i];
+      result = x.type == "StringList" ? new StringList() : new NumberList();
+      for(var k in obj) {
+        if(obj.hasOwnProperty(k)) // <-- optional
+          result.push(obj[k]);
+      }
+    }
+    return result;
+  };
+
+  /**
+   * creates a List that contains the intersection of two List (elements present in BOTH lists)
+   *
+   * @param  {List} list0 list A
+   * @param  {List} list1 list B
+   *
+   * @return {List} intersection of both NumberLists
+   *
+   * tags:
+   */
+  ListOperators.intersection = function(list0, list1) {
+    if(list0==null || list1==null) return;
+
+    var intersection;
+
+    if(list0.type=="NodeList" && list1.type=="NodeList"){
+      intersection = new NodeList();
+
+      list0.forEach(function(node){
+        if(list1.getNodeById(node.id)){
+          intersection.addNode(node);
+        }
+      });
+
+      return intersection;
+    }
+
+    var element;
+    var dictionary = {};
+    var dictionaryIntersected = {};
+    intersection = new List();
+
+    list0.forEach(function(element){
+      dictionary[element] = true;
+    });
+    list1.forEach(function(element){
+      if(dictionary[element] && dictionaryIntersected[element]==null){
+        dictionaryIntersected[element]=true;
+        intersection.push(element);
+      }
+    });
+    return intersection.getImproved();
+  };
+
+  /**
+   * calculates Jaccard index |list0 ∩ list1|/|list0 ∪ list1| see: https://en.wikipedia.org/wiki/Jaccard_index
+   * @param  {List} list0
+   * @param  {List} list1
+   * @return {Number}
+   * tags:
+   */
+  ListOperators.jaccardIndex = function(list0, list1) {//TODO: see if this can be more efficient, maybe one idctionar for doing union and interstection at the same time
+    return ListOperators.intersection(list0, list1).length/ListOperators.unionLists(list0, list1).length;
+  };
+
+  /**
+   * calculates Jaccard distance 1 - |list0 ∩ list1|/|list0 ∪ list1| see: https://en.wikipedia.org/wiki/Jaccard_index
+   * @param  {List} list0
+   * @param  {List} list1
+   * @return {Number}
+   * tags:
+   */
+  ListOperators.jaccardDistance = function(list0, list1) {
+    return 1 - ListOperators.jaccardIndex(list0, list1);
+  };
+
+  /**
+   * builds a dictionary that matches an element of a List with all its indexes on the List (indexesDictionary[element] --> numberList of indexes of element on list)
+   * @param  {List} list
+   * @return {Object}
+   * tags:
+   */
+  ListOperators.getIndexesDictionary = function(list){
+    var indexesDictionary = {};
+    var i;
+
+    list.forEach(function(element, i){
+      if(indexesDictionary[element]==null) indexesDictionary[element]=new NumberList();
+      indexesDictionary[element].push(i);
+    });
+
+    return indexesDictionary;
+  };
+
+  /**
+   * @todo write docs
+   */
+  ListOperators.getIndexesTable = function(list){
+    var indexesTable = new Table();
+    indexesTable[0] = new List();
+    indexesTable[1] = new NumberTable();
+    var indexesDictionary = {};
+    var indexOnTable;
+    var i;
+
+    list.forEach(function(element, i){
+      indexOnTable = indexesDictionary[element];
+      if(indexOnTable==null){
+        indexesTable[0].push(element);
+        indexesTable[1].push(new NumberList(i));
+        indexesDictionary[element]=indexesTable[0].length-1;
+      } else {
+        indexesTable[1][indexOnTable].push(i);
+      }
+    });
+
+    indexesTable[0] = indexesTable[0].getImproved();
+
+    return indexesTable;
+  };
+
+  /**
+   * aggregates values of a list using an aggregator list as reference
+   *
+   * @param  {List} aggregatorList aggregator list that typically contains several repeated elements
+   * @param  {List} toAggregateList list of elements that will be aggregated
+   * @param  {Number} mode aggregation modes:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes<br>12:count non repeated elements<br>13:enlist non repeated elements<br>14:concat elements (string)<br>15:concat non-repeated elements
+   * @param  {Table} indexesTable optional already calculated table of indexes of elements on the aggregator list (if didn't provided, the method calculates it)
+   * @return {Table} contains a list with non repeated elements on the first list, and the aggregated elements on a second list
+   * tags:
+   */
+  ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, indexesTable){
+    if(aggregatorList==null || toAggregateList==null) return null;
+    var table = new Table();
+
+    if(indexesTable==null) indexesTable = ListOperators.getIndexesTable(aggregatorList);
+
+    if(mode==11) return indexesTable;
+
+    table[0] = indexesTable[0];
+
+    if(mode==0 && aggregatorList==toAggregateList){
+      table[1] = indexesTable[0];
+      return table;
+    }
+
+    mode = mode==null?0:mode;
+
+    switch(mode){
+      case 0://first element
+        table[1] = new List();
+        var list;
+        indexesTable[1].forEach(function(indexes){
+          table[1].push(toAggregateList[indexes[0]]);
+        });
+        table[1] = table[1].getImproved();
+        return table;
+      case 1://count
+        table[1] = new NumberList();
+        indexesTable[1].forEach(function(indexes){
+          table[1].push(indexes.length);
+        });
+        return table;
+      case 2://sum
+      case 3://average
+        var sum;
+        table[1] = new NumberList();
+        indexesTable[1].forEach(function(indexes){
+          sum = 0;
+          indexes.forEach(function(index){
+            sum+=toAggregateList[index];
+          });
+          if(mode==3) sum/=indexes.length;
+          table[1].push(sum);
+        });
+        return table;
+      case 4://min
+        var min;
+        table[1] = new NumberList();
+        indexesTable[1].forEach(function(indexes){
+          min = 99999999999;
+          indexes.forEach(function(index){
+            min=Math.min(min, toAggregateList[index]);
+          });
+          table[1].push(min);
+        });
+        return table;
+      case 5://max
+        var max;
+        table[1] = new NumberList();
+        indexesTable[1].forEach(function(indexes){
+          max = -99999999999;
+          indexes.forEach(function(index){
+            max=Math.max(max, toAggregateList[index]);
+          });
+          table[1].push(max);
+        });
+        return table;
+      case 6://standard deviation
+        var average;
+        table = ListOperators.aggregateList(aggregatorList, toAggregateList, 3, indexesTable);
+        indexesTable[1].forEach(function(indexes, i){
+          sum = 0;
+          average = table[1][i];
+          indexes.forEach(function(index){
+            sum += Math.pow(toAggregateList[index] - average, 2);
+          });
+          table[1][i] = Math.sqrt(sum/indexes.length);
+        });
+        return table;
+      case 7://enlist
+        table[1] = new Table();
+        var list;
+        indexesTable[1].forEach(function(indexes){
+          list = new List();
+          table[1].push(list);
+          indexes.forEach(function(index){
+            list.push(toAggregateList[index]);
+          });
+          list = list.getImproved();
+        });
+        return table.getImproved();
+      case 8://last element
+        table[1] = new List();
+        var list;
+        indexesTable[1].forEach(function(indexes){
+          table[1].push(toAggregateList[indexes[indexes.length-1]]);
+        });
+        table[1] = table[1].getImproved();
+        return table;
+      case 9://most common
+        table[1] = new List();
+        var elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
+        elementsTable[1].forEach(function(elements){
+          table[1].push(elements.getMostRepeatedElement());
+        });
+        table[1] = table[1].getImproved();
+        return table;
+      case 10://random
+        table[1] = new List();
+        var list;
+        indexesTable[1].forEach(function(indexes){
+          table[1].push( toAggregateList[indexes[ Math.floor(Math.random()*indexes.length) ]] );
+        });
+        table[1] = table[1].getImproved();
+        return table;
+      case 11://indexes (returned previosuly)
+        break;
+      case 12://count non repeated
+        table[1] = new NumberList();
+        var elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
+        elementsTable[1].forEach(function(elements){
+          table[1].push(elements.getWithoutRepetitions().length);
+        });
+        return table;
+      case 13://enlist non repeated
+        table[1] = new List();
+        var elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
+        elementsTable[1].forEach(function(elements){
+          table[1].push(elements.getWithoutRepetitions());
+        });
+        table[1] = table[1].getImproved();
+        return table;
+      case 14://concat string
+        table[1] = new StringList();
+        var elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
+        elementsTable[1].forEach(function(elements){
+          table[1].push( elements.join(', ') );
+        });
+        return table;
+      case 15://concat string non repeated
+        table[1] = new StringList();
+        var elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
+        elementsTable[1].forEach(function(elements){
+          table[1].push( elements.getWithoutRepetitions().join(', ') );
+        });
+        return table;
+    }
+
+    return null;
+  };
+
+  /**
+   * Analyses wether two lists are categorical identical, one is subcategorical to the other, or there's no relation
+   * @param  {List} list0
+   * @param  {List} list1
+   * @return {Number} 0:no relation, 1:categorical identical, 2:list0 subcategorical to list1, 3:list1 subcategorical to list0
+   * tags:
+   */
+  ListOperators.subCategoricalAnalysis = function(list0, list1){
+    if(list0==null || list1==null) return;
+
+    var dictionary = {};
+    var element, projection;
+    var i;
+    var list0SubCategorical = true;
+    for(i=0; list0[i]!=null; i++){
+      element = list0[i];
+      projection = dictionary[element];
+      if(projection==null){
+        dictionary[element] = list1[i];
+      } else if(projection!=list1[i]){
+        list0SubCategorical = false;
+        break;
+      }
+    }
+
+    dictionary = {};
+    var list1SubCategorical = true;
+    for(i=0; list1[i]!=null; i++){
+      element = list1[i];
+      projection = dictionary[element];
+      if(projection==null){
+        dictionary[element] = list0[i];
+      } else if(projection!=list0[i]){
+        list1SubCategorical = false;
+        break;
+      }
+    }
+
+    if(list1SubCategorical && list0SubCategorical) return 1;
+    if(list0SubCategorical) return 2;
+    if(list1SubCategorical) return 3;
+    return 0;
+  };
+
+  /**
+   * calculates de entropy of a list, properties _mostRepresentedValue and _biggestProbability are added to the list
+   * @param  {List} list with repeated elements (actegorical list)
+   *
+   * @param {Object} valueFollowing if a value is provided, the property _P_valueFollowing will be added to the list, with proportion of that value in the list
+   * @param {Table} freqTable for saving time, in case the frequency table with sorted elements has been already calculated (with list.getFrequenciesTable(true))
+   * @return {Number}
+   * tags:statistics
+   */
+  ListOperators.getListEntropy = function(list, valueFollowing, freqTable) {
+    if(list == null) return;
+
+    if(list.length < 2) {
+      if(list.length == 1) {
+        list._mostRepresentedValue = list[0];
+        list._biggestProbability = 1;
+        if(valueFollowing != null) list._P_valueFollowing = list[0] == valueFollowing ? 1 : 0;
+      } else {
+        if(valueFollowing != null) list._P_valueFollowing = 0;
+      }
+      return 0;
+    }
+
+    if(freqTable==null) freqTable = list.getFrequenciesTable(true);// ListOperators.countElementsRepetitionOnList(list, true);
+
+    list._mostRepresentedValue = freqTable[0][0];
+    var N = list.length;
+    list._biggestProbability = freqTable[1][0] / N;
+    if(freqTable[0].length == 1) {
+      list._P_valueFollowing = list[0] == valueFollowing ? 1 : 0;
+      return 0;
+    }
+    var entropy = 0;
+
+    var norm = Math.log(freqTable[0].length);
+    freqTable[1].forEach(function(val) {
+      entropy -= (val / N) * Math.log(val / N) / norm;
+    });
+
+    if(valueFollowing != null) {
+      var index = freqTable[0].indexOf(valueFollowing);
+      list._P_valueFollowing = index == -1 ? 0 : freqTable[1][index] / N;
+    }
+    return entropy;
+  };
+
+
+  /**
+   * measures how much a feature decreases entropy when segmenting by its values by a supervised variable
+   * @param  {List} feature
+   * @param  {List} supervised
+   * @return {Number}
+   * tags:ds
+   */
+  ListOperators.getInformationGain = function(feature, supervised) {
+    if(feature == null || supervised == null || feature.length != supervised.length) return null;
+
+    var ig = ListOperators.getListEntropy(supervised);
+    var childrenObject = {};
+    var childrenLists = [];
+    var N = feature.length;
+
+    feature.forEach(function(element, i) {
+      if(childrenObject[element] == null) {
+        childrenObject[element] = new List();
+        childrenLists.push(childrenObject[element]);
+      }
+      childrenObject[element].push(supervised[i]);
+    });
+
+    childrenLists.forEach(function(cl) {
+      ig -= (cl.length / N) * ListOperators.getListEntropy(cl);
+    });
+
+    return ig;
+  };
+
+  /**
+   * @todo write docs
+   */
+  ListOperators.getInformationGainAnalysis = function(feature, supervised) {
+    if(feature == null || supervised == null || feature.length != supervised.length) return null;
+
+    var ig = ListOperators.getListEntropy(supervised);
+    var childrenObject = {};
+    var childrenLists = [];
+    var N = feature.length;
+    var entropy;
+    var sets = new List();
+
+    feature.forEach(function(element, i) {
+      if(childrenObject[element] == null) {
+        childrenObject[element] = new List();
+        childrenLists.push(childrenObject[element]);
+      }
+      childrenObject[element].push(supervised[i]);
+    });
+
+    childrenLists.forEach(function(cl) {
+      entropy = ListOperators.getListEntropy(cl);
+      ig -= (cl.length / N) * entropy;
+
+      sets.push({
+        children: cl,
+        entropy: entropy,
+        infoGain: ig
+      });
+    });
+
+    return sets;
+  };
+
+
+  /**
+   * Takes a List and returns its elements grouped by identic value. Each list in the table is assigned a "valProperty" value which is used for sorting
+   * @param  {List} list of elements to group
+   * @param  {Boolean} whether the results are to be sorted or not
+   * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
+   *
+   * @param  {Boolean} fillBlanks: whether to fill missing slots or not (if data is sequential)
+   * @return {Table}
+   * tags:dani
+   */
+  ListOperators.groupElements = function(list, sortedByValue, mode, fillBlanks) {
+    if(!list)
+      return;
+    var result = ListOperators._groupElements_Base(list, null, sortedByValue, mode, fillBlanks);
+    return result;
+  };
+
+
+  /**
+   * Takes a List and returns its elements grouped by identic value. Each list in the table is assigned a "valProperty" value which is used for sorting
+   * @param  {List} list of elements to group
+   * @param  {String} name of the property to be used for grouping
+   * @param  {Boolean} wether the results are to be sorted or not
+   * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
+   *
+   * @param  {Boolean} fillBlanks: whether to fill missing slots or not (if data is sequential)
+   * @return {Table}
+   * tags:dani
+   */
+  ListOperators.groupElementsByPropertyValue = function(list, propertyName, sortedByValue, mode, fillBlanks) {
+    if(!list)
+      return;
+    var result = ListOperators._groupElements_Base(list, propertyName, sortedByValue, mode, fillBlanks);
+    return result;
+  };
+
+
+
+  /**
+   * @ignore
+   */
+  ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, mode, fillBlanks) {
+    var result;
+
+    if(!list)
+      return;
+    if(mode == undefined)
+      mode = 0;
+    var resultOb = {};
+    var resultTable = new Table();
+    var pValue, item, minValue, maxValue;
+    for(var i = 0; i < list.length; i++) {
+      item = list[i];
+      pValue = propertyName == undefined ? item : item[propertyName];
+      if(resultOb[pValue] == undefined) {
+        resultOb[pValue] = new List();
+        resultOb[pValue].name = pValue;
+        resultOb[pValue].valProperty = pValue;
+        resultTable.push(resultOb[pValue]);
+      }
+      if(mode == 0)
+        resultOb[pValue].push(item);
+      else if(mode == 1)
+        resultOb[pValue].push(i);
+      // Update boundaries
+      if(minValue == undefined || pValue < minValue) {
+        minValue = pValue;
+      }
+      if(maxValue == undefined || pValue > maxValue) {
+        maxValue = pValue;
+      }
+    }
+
+    // Fill the blanks
+    if(fillBlanks) {
+      var numBlanks = 0;
+      for(var i = minValue; i < maxValue; i++) {
+        if(resultOb[i] == undefined) {
+          resultOb[i] = new List();
+          resultOb[i].name = i;
+          resultOb[i].valProperty = i;
+          resultTable.push(resultOb[i]);
+          numBlanks++;
+        }
+      }
+      //console.log("numBlanks: ", numBlanks)
+    }
+
+    // To-do: looks like getSortedByProperty is removing the valProperty from the objects
+    if(sortedByValue)
+      resultTable = resultTable.getSortedByProperty("name"); // "valProperty"
+
+    return resultTable;
+
+  };
+
+  exports.ListOperators = ListOperators;
+
+  ColorList.prototype = new List();
+  ColorList.prototype.constructor = ColorList;
 
   /**
    * @classdesc A {@link List} for storing Colors.
+   *
+   * Additional functions that work on ColorList can be found in:
+   * <ul>
+   *  <li>Operators:   {@link ColorListOperators}</li>
+   *  <li>Generators: {@link ColorListGenerators}</li>
+   * </ul>
    *
    * @description Creates a new ColorList.
    * @constructor
    * @category colors
    */
-  function ColorList__ColorList() {
+  function ColorList() {
     var args = [];
     var i;
     for(i = 0; i < arguments.length; i++) {
       args[i] = arguments[i];
     }
-    var array = List__default.apply(this, args);
-    array = ColorList__ColorList.fromArray(array);
+    var array = List.apply(this, args);
+    array = ColorList.fromArray(array);
 
     return array;
   }
-  var ColorList__default = ColorList__ColorList;
+
 
   /**
    * Creates a new ColorList from a raw array of values
@@ -4833,13 +8851,13 @@ define('src/index', ['exports'], function (exports) {
    * @param {String[]} array Array of hex or other color values
    * @return {ColorList} New ColorList.
    */
-  ColorList__ColorList.fromArray = function(array) {
-    var result = List__default.fromArray(array);
+  ColorList.fromArray = function(array) {
+    var result = List.fromArray(array);
     result.type = "ColorList";
-    result.getRgbArrays = ColorList__ColorList.prototype.getRgbArrays;
-    result.getInterpolated = ColorList__ColorList.prototype.getInterpolated;
-    result.getInverted = ColorList__ColorList.prototype.getInverted;
-    result.addAlpha = ColorList__ColorList.prototype.addAlpha;
+    result.getRgbArrays = ColorList.prototype.getRgbArrays;
+    result.getInterpolated = ColorList.prototype.getInterpolated;
+    result.getInverted = ColorList.prototype.getInverted;
+    result.addAlpha = ColorList.prototype.addAlpha;
     return result;
   };
 
@@ -4848,11 +8866,11 @@ define('src/index', ['exports'], function (exports) {
    * @return {array} Array of array of RGB values.
    * tags:
    */
-  ColorList__ColorList.prototype.getRgbArrays = function() {
-    var rgbArrays = new List__default();
+  ColorList.prototype.getRgbArrays = function() {
+    var rgbArrays = new List();
 
     for(var i = 0; this[i] != null; i++) {
-      rgbArrays[i] = ColorOperators__default.colorStringToRGB(this[i]);
+      rgbArrays[i] = ColorOperators.colorStringToRGB(this[i]);
     }
 
     return rgbArrays;
@@ -4860,17 +8878,17 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * interpolates colors with a given color and measure
-   * 
+   *
    * @param  {String} color to be interpolated with
    * @param  {Number} value intenisty of interpolation [0,1]
    * @return {ColorList}
    * tags:
    */
-  ColorList__ColorList.prototype.getInterpolated = function(color, value) {
-    var newColorList = new ColorList__ColorList();
+  ColorList.prototype.getInterpolated = function(color, value) {
+    var newColorList = new ColorList();
 
     for(var i = 0; this[i] != null; i++) {
-      newColorList[i] = ColorOperators__default.interpolateColors(this[i], color, value);
+      newColorList[i] = ColorOperators.interpolateColors(this[i], color, value);
     }
 
     newColorList.name = this.name;
@@ -4882,11 +8900,11 @@ define('src/index', ['exports'], function (exports) {
    * @return {ColorList}
    * tags:
    */
-  ColorList__ColorList.prototype.getInverted = function() {
-    var newColorList = new ColorList__ColorList();
+  ColorList.prototype.getInverted = function() {
+    var newColorList = new ColorList();
 
     for(var i = 0; this[i] != null; i++) {
-      newColorList[i] = ColorOperators__default.invertColor(this[i]);
+      newColorList[i] = ColorOperators.invertColor(this[i]);
     }
 
     newColorList.name = this.name;
@@ -4899,20 +8917,3279 @@ define('src/index', ['exports'], function (exports) {
    * @return {ColorList}
    * tags:
    */
-  ColorList__ColorList.prototype.addAlpha = function(alpha) {
-    var newColorList = new ColorList__ColorList();
+  ColorList.prototype.addAlpha = function(alpha) {
+    var newColorList = new ColorList();
 
     for(var i = 0; this[i] != null; i++) {
-      newColorList[i] = ColorOperators__default.addAlpha(this[i], alpha);
+      newColorList[i] = ColorOperators.addAlpha(this[i], alpha);
     }
 
     newColorList.name = this.name;
     return newColorList;
   };
 
-  exports.ColorList = ColorList__default;
+  exports.ColorList = ColorList;
 
-  var version = "0.2.25";
+  function NumberListOperators() {}
+
+
+  /**
+   * Returns dot product between two numberLists
+   *
+   * @param  {NumberList1} numberList NumberList of the same length
+   * as numberList2.
+   * @param  {NumberList2} numberList NumberList of the same length
+   * as numberList1.
+   * @return {Number} Dot product between two lists.
+   */
+  NumberListOperators.dotProduct = function(numberList1, numberList2) {
+    var sum = 0;
+    var i;
+    var nElements = Math.min(numberList1.length, numberList2.length);
+    for(i = 0; i < nElements; i++) {
+      sum += numberList1[i] * numberList2[i];
+    }
+    return sum;
+  };
+
+  /**
+   * Calculates Euclidean distance between two numberLists
+   *
+   * @param  {NumberList1} numberList NumberList of the same length
+   * as numberList2.
+   * @param  {NumberList2} numberList NumberList of the same length
+   * as numberList1.
+   * @return {Number} Summed Euclidean distance between all values.
+   * tags:
+   */
+  NumberListOperators.distance = function(numberList1, numberList2) {
+    var sum = 0;
+    var i;
+    var nElements = Math.min(numberList1.length, numberList2.length);
+    for(i = 0; i < nElements; i++) {
+      sum += Math.pow(numberList1[i] - numberList2[i], 2);
+    }
+    return Math.sqrt(sum);
+  };
+
+  /**
+   * cosine similarity, used to compare two NumberLists regardless of norm (see: http://en.wikipedia.org/wiki/Cosine_similarity)
+   * @param  {NumberList} numberList0
+   * @param  {NumberList} numberList1
+   * @return {Number}
+   * tags:statistics
+   */
+  NumberListOperators.cosineSimilarity = function(numberList0, numberList1) {
+    var norms = numberList0.getNorm() * numberList1.getNorm();
+    if(norms === 0) return 0;
+    return numberList0.dotProduct(numberList1) / norms;
+  };
+
+  /**
+   * calculates the covariance between two numberLists
+   * @param  {NumberList} numberList0
+   * @param  {NumberList} numberList1
+   * @return {Number}
+   * tags:statistics
+   */
+  NumberListOperators.covariance = function(numberList0, numberList1) {
+    if(numberList0==null || numberList1==null) return;
+
+    var l = Math.min(numberList0.length, numberList1.length);
+    var i;
+    var av0 = numberList0.getAverage();
+    var av1 = numberList1.getAverage();
+    var s = 0;
+
+    for(i = 0; i<l; i++) {
+      s += (numberList0[i] - av0)*(numberList1[i] - av1);
+    }
+
+    return s/l;
+  };
+
+  /**
+   * Returns a NumberList normalized to the sum.
+   *
+   * @param  {NumberList} numberlist NumberList to Normalize.
+   * @param {Number} factor Optional multiplier to modify the normalized values by.
+   * Defaults to 1.
+   * @param {Number} sum Optional sum to normalize to.
+   * If not provided, sum will be calculated automatically.
+   * @return {NumberList} New NumberList of values normalized to the sum.
+   * tags:
+   */
+  NumberListOperators.normalizedToSum = function(numberlist, factor, sum) {
+    factor = factor == null ? 1 : factor;
+    var newNumberList = new NumberList();
+    newNumberList.name = numberlist.name;
+    if(numberlist.length === 0) return newNumberList;
+    var i;
+    sum = sum == null ? numberlist.getSum() : sum;
+    if(sum === 0) return numberlist.clone();
+
+    for(i = 0; i < numberlist.length; i++) {
+      newNumberList.push(factor * numberlist[i] / sum);
+    }
+    return newNumberList;
+  };
+
+  /**
+   * Returns a NumberList normalized to min-max interval.
+   *
+   * @param  {NumberList} numberlist NumberList to Normalize.
+   * @param {Number} factor Optional multiplier to modify the normalized values by.
+   * Defaults to 1.
+   * @return {NumberList}
+   * tags:
+   */
+  NumberListOperators.normalized = function(numberlist, factor) {
+    factor = factor == null ? 1 : factor;
+
+    if(numberlist.length === 0) return null;
+
+    var i;
+    var interval = numberlist.getMinMaxInterval();
+    var a = interval.getAmplitude();
+    var newNumberList = new NumberList();
+    for(i = 0; i < numberlist.length; i++) {
+      newNumberList.push(factor * ((numberlist[i] - interval.x) / a));
+    }
+    newNumberList.name = numberlist.name;
+    return newNumberList;
+  };
+
+  /**
+   * Returns a NumberList normalized to Max.
+   *
+   * @param  {NumberList} numberlist NumberList to Normalize.
+   * @param {Number} factor Optional multiplier to modify the normalized values by. Defaults to 1.
+   * @return {NumberList}
+   * tags:
+   */
+  NumberListOperators.normalizedToMax = function(numberlist, factor) {
+    factor = factor == null ? 1 : factor;
+
+    if(numberlist.length === 0) return null;
+
+    var max = numberlist.getMax();
+    if(max === 0) {
+      max = numberlist.getMin();
+      if(max === 0) return ListGenerators.createListWithSameElement(numberlist.length, 0);
+    }
+    var newNumberList = new NumberList();
+    for(var i = 0; numberlist[i] != null; i++) {
+      newNumberList.push(factor * (numberlist[i] / max));
+    }
+    newNumberList.name = numberlist.name;
+    return newNumberList;
+  };
+
+
+  /**
+   * generates a new numberList of desired size smaller than original, with elements claculated as averages of neighbors
+   * @param  {NumberList} numberList
+   * @param  {Number} newLength length of returned numberList
+   * @return {NumberList}
+   * tags:statistics
+   */
+  NumberListOperators.shorten = function(numberList, newLength) {
+    if(numberList==null) return null;
+    if(newLength==null || newLength>=numberList.length) return numberList;
+
+    var windowSize = numberList.length/newLength;
+    var newNumberList = new NumberList();
+    var windowSizeInt = Math.floor(windowSize);
+    var val;
+    var i, j, j0;
+
+    newNumberList.name = numberList.name;
+
+    for(i=0; i<newLength; i++){
+      j0 = Math.floor(i*windowSize);
+      val = 0;
+      for(j=0; j<windowSizeInt; j++){
+        val += numberList[j0+j];
+      }
+      newNumberList[i] = val/windowSizeInt;
+    }
+    return newNumberList;
+  };
+
+  /**
+   * simplifies a numer list, by keeping the nCategories-1 most common values, and replacing the others with an "other" element
+   * this method reduces the number of different values contained in the list, converting it into a categorical list
+   * @param  {NumberList} numberList NumberList to shorten
+   * @param  {Number} method simplification method:<b>0:significant digits<br>1:quantiles (value will be min value in percentile)<br>2:orders of magnitude
+   *
+   * @param  {Number} param different meaning according to choosen method:<br>0:number of significant digits<br>1:number of quantiles<br>2:no need of param
+   * @return {NumberList} simplified list
+   * tags:
+   */
+  NumberListOperators.simplify = function(numberlist, method, param) {
+    method = method||0;
+    param = param||0;
+
+    var newList = new NumberList();
+    newList.name = numberlist.name;
+
+
+    switch(method){
+      case 0:
+        var power = Math.pow(10, param);
+        numberlist.forEach(function(val){
+          newList.push(Math.floor(val/power)*power);
+        });
+        break;
+      case 1:
+        //deploy quantiles first (optional return of n percentile, min value, interval, numberTable with indexes, numberTable with values)
+        break;
+    }
+
+    return newList;
+  };
+
+  /**
+   * calculates k-means clusters of values in a numberList
+   * @param  {NumberList} numberList
+   * @param  {Number} k number of clusters
+   *
+   * @param {Boolean} returnIndexes return clusters of indexes rather than values (false by default)
+   * @return {NumberTable} numberLists each being a cluster
+   * tags:ds
+   */
+  NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
+    if(numberList == null || k == null || (k <= 0)) {
+      return null;
+    }
+
+    var interval = numberList.getInterval();
+
+    var min = interval.x;
+    var max = interval.y;
+    var clusters = new NumberTable();
+    var i, j;
+    var jK;
+    var x;
+    var dX = (max - min) / k;
+    var d;
+    var dMin;
+    var n;
+    var N = 1000;
+    var means = new NumberList();
+    var nextMeans = new NumberList();
+    var nValuesInCluster = new NumberList();
+
+    var initdMin = 1 + max - min;
+
+    for(i = 0; i < k; i++) {
+      clusters[i] = new NumberList();
+      nextMeans[i] = min + (i + 0.5) * dX;
+    }
+
+    for(n = 0; n < N; n++) {
+
+      for(i = 0; i < k; i++) {
+        nValuesInCluster[i] = 0;
+        means[i] = nextMeans[i];
+        nextMeans[i] = 0;
+      }
+
+      for(i = 0; numberList[i] != null; i++) {
+        x = numberList[i];
+        dMin = initdMin;
+        jK = 0;
+
+        for(j = 0; j < k; j++) {
+          d = Math.abs(x - means[j]);
+          if(d < dMin) {
+            dMin = d;
+            jK = j;
+          }
+        }
+        if(n == N - 1) {
+          if(returnIndexes) {
+            clusters[jK].push(i);
+          } else {
+            clusters[jK].push(x);
+          }
+        }
+
+        nValuesInCluster[jK]++;
+
+        nextMeans[jK] = ((nValuesInCluster[jK] - 1) * nextMeans[jK] + x) / nValuesInCluster[jK];
+      }
+    }
+
+    return clusters;
+  };
+
+  /**
+   * @todo finish docs
+   */
+  NumberListOperators.standardDeviationBetweenTwoNumberLists = function(numberList0, numberList1) {
+    var s = 0;
+    var l = Math.min(numberList0.length, numberList1.length);
+
+    for(var i = 0; i < l; i++) {
+      s += Math.pow(numberList0[i] - numberList1[i], 2);
+    }
+
+    return s/l;
+  };
+
+  /**
+   * returns Pearson Product Moment Correlation, the most common correlation coefficient ( covariance/(standard_deviation0*standard_deviation1) )
+   * @param  {NumberList} numberList0
+   * @param  {NumberList} numberList1
+   * @return {Number}
+   * tags:statistics
+   */
+  NumberListOperators.pearsonProductMomentCorrelation = function(numberList0, numberList1) { //TODO:make more efficient
+    return NumberListOperators.covariance(numberList0, numberList1) / (numberList0.getStandardDeviation() * numberList1.getStandardDeviation());
+  };
+
+
+  /**
+   * smooth a numberList by calculating averages with neighbors
+   * @param  {NumberList} numberList
+   * @param  {Number} intensity weight for neighbors in average (0<=intensity<=0.5)
+   * @param  {Number} nIterations number of ieterations
+   * @return {NumberList}
+   * tags:statistics
+   */
+  NumberListOperators.averageSmoother = function(numberList, intensity, nIterations) {
+    nIterations = nIterations == null ? 1 : nIterations;
+    intensity = intensity == null ? 0.1 : intensity;
+
+    intensity = Math.max(Math.min(intensity, 0.5), 0);
+    var anti = 1 - 2 * intensity;
+    var n = numberList.length - 1;
+
+    var newNumberList = new NumberList();
+    var i;
+
+    newNumberList.name = numberList.name;
+
+    for(i = 0; i < nIterations; i++) {
+      if(i === 0) {
+        numberList.forEach(function(val, i) {
+          newNumberList[i] = anti * val + (i > 0 ? (numberList[i - 1] * intensity) : 0) + (i < n ? (numberList[i + 1] * intensity) : 0);
+        });
+      } else {
+        newNumberList.forEach(function(val, i) {
+          newNumberList[i] = anti * val + (i > 0 ? (newNumberList[i - 1] * intensity) : 0) + (i < n ? (newNumberList[i + 1] * intensity) : 0);
+        });
+      }
+    }
+
+    newNumberList.name = numberList.name;
+
+    return newNumberList;
+  };
+
+
+  /**
+   * accepted comparison operators: "<", "<=", ">", ">=", "==", "!="
+   */
+  NumberListOperators.filterNumberListByNumber = function(numberList, value, comparisonOperator, returnIndexes) {
+    returnIndexes = returnIndexes || false;
+    var newNumberList = new NumberList();
+    var i;
+
+    if(returnIndexes) {
+      switch(comparisonOperator) {
+        case "<":
+          for(i = 0; numberList[i] != null; i++) {
+            if(numberList[i] < value) {
+              newNumberList.push(i);
+            }
+          }
+          break;
+        case "<=":
+          for(i = 0; numberList[i] != null; i++) {
+            if(numberList[i] <= value) {
+              newNumberList.push(i);
+            }
+          }
+          break;
+        case ">":
+          for(i = 0; numberList[i] != null; i++) {
+            if(numberList[i] > value) {
+              newNumberList.push(i);
+            }
+          }
+          break;
+        case ">=":
+          for(i = 0; numberList[i] != null; i++) {
+            if(numberList[i] >= value) {
+              newNumberList.push(i);
+            }
+          }
+          break;
+        case "==":
+          for(i = 0; numberList[i] != null; i++) {
+            if(numberList[i] == value) {
+              newNumberList.push(i);
+            }
+          }
+          break;
+        case "!=":
+          for(i = 0; numberList[i] != null; i++) {
+            if(numberList[i] != value) {
+              newNumberList.push(i);
+            }
+          }
+          break;
+      }
+
+    } else {
+      switch(comparisonOperator) {
+        case "<":
+          for(i = 0; numberList[i] != null; i++) {
+            if(numberList[i] < value) {
+              newNumberList.push(numberList[i]);
+            }
+          }
+          break;
+        case "<=":
+          for(i = 0; numberList[i] != null; i++) {
+            if(numberList[i] <= value) {
+              newNumberList.push(numberList[i]);
+            }
+          }
+          break;
+        case ">":
+          for(i = 0; numberList[i] != null; i++) {
+            if(numberList[i] > value) {
+              newNumberList.push(numberList[i]);
+            }
+          }
+          break;
+        case ">=":
+          for(i = 0; numberList[i] != null; i++) {
+            if(numberList[i] >= value) {
+              newNumberList.push(numberList[i]);
+            }
+          }
+          break;
+        case "==":
+          for(i = 0; numberList[i] != null; i++) {
+            if(numberList[i] == value) {
+              newNumberList.push(numberList[i]);
+            }
+          }
+          break;
+        case "!=":
+          for(i = 0; numberList[i] != null; i++) {
+            if(numberList[i] != value) {
+              newNumberList.push(numberList[i]);
+            }
+          }
+          break;
+      }
+    }
+
+    return newNumberList;
+  };
+
+  /**
+   * creates a NumberList that contains the union of two NumberList (removing repetitions)
+   *
+   * @param  {NumberList} x list A
+   * @param  {NumberList} y list B
+   *
+   * @return {NumberList} the union of both NumberLists
+   * tags:
+   */
+  NumberListOperators.union = function(x, y) {//TODO: should be refactored, and placed in ListOperators
+    // Borrowed from here: http://stackoverflow.com/questions/3629817/getting-a-union-of-two-arrays-in-javascript
+    var i;
+    var obj = {};
+    for(i = x.length - 1; i >= 0; --i)
+      obj[x[i]] = x[i];
+    for(i = y.length - 1; i >= 0; --i)
+      obj[y[i]] = y[i];
+    var res = new NumberList();
+    for(var k in obj) {
+      if(obj.hasOwnProperty(k)) // <-- optional
+        res.push(obj[k]);
+    }
+    return res;
+  };
+
+  /**
+   * creates a NumberList that contains the intersection of two NumberList (elements present in BOTH lists)
+   * @param  {NumberList} list A
+   * @param  {NumberList} list B
+   *
+   * @return {NumberList} the intersection of both NumberLists
+   * tags:deprecated
+   */
+  NumberListOperators.intersection = function(a, b) {//TODO: refactor method that should be at ListOperators
+    // Borrowed from here: http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
+    //console.log( "arguments: ", arguments );
+    var i;
+    if(arguments.length > 2) {
+      var sets = [];
+      for(i = 0; i < arguments.length; i++) {
+        sets.push(arguments[i]);
+      }
+      sets.sort(function(a, b) {
+        return a.length - b.length;
+      });
+      console.log("sets: ", sets);
+      var resultsTrail = sets[0];
+      for(i = 1; i < sets.length; i++) {
+        var newSet = sets[i];
+        resultsTrail = NumberListOperators.intersection(resultsTrail, newSet);
+      }
+      return resultsTrail;
+    }
+
+    var result = new NumberList();
+    a = a.slice();
+    b = b.slice();
+    while(a.length > 0 && b.length > 0)
+    {
+      if(a[0] < b[0]) {
+        a.shift();
+      }
+      else if(a[0] > b[0]) {
+        b.shift();
+      }
+      else /* they're equal */
+      {
+        result.push(a.shift());
+        b.shift();
+      }
+    }
+
+    return result;
+  };
+
+
+  /**
+   * builds a rectangle that defines the boundaries of two numberLists interpreted as x and y coordinates
+   * @param  {NumberList} numberListX
+   * @param  {NumberList} numberListY
+   * @return {Rectangle}
+   */
+  NumberListOperators.frameFromTwoNumberLists = function(numberListX, numberListY){
+    var intX = numberListX.getInterval();
+    var intY = numberListY.getInterval();
+    return new Rectangle(intX.x, intY.x, intX.getAmplitude(), intY.getAmplitude());
+  };
+
+  exports.NumberListOperators = NumberListOperators;
+
+  ColorListGenerators._HARDCODED_CATEGORICAL_COLORS = new ColorList(
+    "#dd4411", "#2200bb", "#1f77b4", "#ff660e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#dd8811",
+    "#dd0011", "#221140", "#1f66a3", "#ff220e", "#2ba01c", "#442728", "#945600", "#8c453a", "#e37700"
+  );
+
+  /**
+   * @classdesc Tools for generating {@link List|Lists} of colors.
+   *
+   * @namespace
+   * @category colors
+   */
+  function ColorListGenerators() {}
+
+
+  /**
+   * create a simple list of categorical colors
+   * @param  {Number} nColors
+   *
+   * @param  {Number} alpha 1 by default
+   * @param {Boolean} invert invert colors
+   * @return {ColorList}
+   * tags:generator
+   */
+  ColorListGenerators.createDefaultCategoricalColorList = function(nColors, alpha, invert) {
+    alpha = alpha == null ? 1 : alpha;
+    var colors = ColorListGenerators.createCategoricalColors(1, nColors).getInterpolated('black', 0.15);
+    if(alpha < 1) colors = colors.addAlpha(alpha);
+
+    if(invert) colors = colors.getInverted();
+
+    return colors;
+  };
+
+
+  /**
+   * create a colorList based on a colorScale and values from a numberList (that will be normalized)
+   * @param  {NumberList} numberList
+   *
+   * @param  {ColorScale} colorScale
+   * @param  {Number} mode 0:normalize numberList
+   * @return {ColorList}
+   * tags:generator
+   */
+  ColorListGenerators.createColorListFromNumberList = function(numberList, colorScale, mode) {
+    if(numberList==null) return null;
+
+    mode = mode == null ? 0 : mode;
+    colorScale = colorScale==null?ColorScales.grayToOrange:colorScale;
+
+    var colorList = new ColorList();
+    var newNumberList;
+    var i;
+
+    switch(mode) {
+      case 0: //0 to max
+        newNumberList = NumberListOperators.normalizedToMax(numberList);
+        break;
+      case 1: //min to max
+        break;
+      case 2: //values between 0 and 1
+        break;
+    }
+
+    for(i = 0; newNumberList[i] != null; i++) {
+      colorList.push(colorScale(newNumberList[i]));
+    }
+
+    return colorList;
+  };
+
+
+  /**
+   * Creates a new ColorList that contains the provided color. Size of the List
+   * is controlled by the nColors input.
+   *
+   * @param {Number} nColors Length of the list.
+   * @param {Color} color Color to fill list with.
+   */
+  ColorListGenerators.createColorListWithSingleColor = function(nColors, color) {
+    var colorList = new ColorList();
+    for(var i = 0; i < nColors; i++) {
+      colorList.push(color);
+    }
+    return colorList;
+  };
+
+
+  /**
+   * Creates a ColorList of categorical colors
+   * @param {Number} mode 0:simple picking from color scale function, 1:random (with seed), 2:hardcoded colors, 3:, 4:, 5:evolutionary algorithm, guarantees non consecutive similar colors
+   * @param {Number} nColors
+   *
+   * @param {ColorScale} colorScaleFunction
+   * @param {Number} alpha transparency
+   * @param {String} interpolateColor color to interpolate
+   * @param {Number} interpolateValue interpolation value [0, 1]
+   * @param {ColorList} colorList colorList to be used in mode 2 (if not colorList is provided it will use default categorical colors)
+   * @return {ColorList} ColorList with categorical colors
+   * tags:generator
+   */
+  ColorListGenerators.createCategoricalColors = function(mode, nColors, colorScaleFunction, alpha, interpolateColor, interpolateValue, colorList) {
+    colorScaleFunction = colorScaleFunction == null ? ColorScales.temperature : colorScaleFunction;
+
+    var i;
+    var newColorList = new ColorList();
+    switch(mode) {
+      case 0: //picking from ColorScale
+        for(i = 0; i < nColors; i++) {
+          newColorList[i] = colorScaleFunction(i / (nColors - 1));
+        }
+        break;
+      case 1: //seeded random numbers
+        var values = NumberListGenerators.createRandomNumberList(nColors, null, 0);
+        for(i = 0; i < nColors; i++) {
+          newColorList[i] = colorScaleFunction(values[i]);
+        }
+        break;
+      case 2:
+        colorList = colorList==null?ColorListGenerators._HARDCODED_CATEGORICAL_COLORS:colorList;
+        for(i = 0; i < nColors; i++) {
+          newColorList[i] = colorList[i%colorList.length];
+        }
+        break;
+      case 5:
+        var randomNumbersSource = NumberListGenerators.createRandomNumberList(1001, null, 0);
+        var positions = NumberListGenerators.createSortedNumberList(nColors);
+        var randomNumbers = NumberListGenerators.createRandomNumberList(nColors, null, 0);
+        var randomPositions = ListOperators.sortListByNumberList(positions, randomNumbers);
+
+        var nGenerations = Math.floor(nColors * 2) + 100;
+        var nChildren = Math.floor(nColors * 0.6) + 5;
+        var bestEvaluation = ColorListGenerators._evaluationFunction(randomPositions);
+        var child;
+        var bestChildren = randomPositions;
+        var j;
+        var nr = 0;
+        var evaluation;
+
+        for(i = 0; i < nGenerations; i++) {
+          for(j = 0; j < nChildren; j++) {
+            child = ColorListGenerators._sortingVariation(randomPositions, randomNumbersSource[nr], randomNumbersSource[nr + 1]);
+            nr = (nr + 2) % 1001;
+            evaluation = ColorListGenerators._evaluationFunction(child);
+            if(evaluation > bestEvaluation) {
+              bestChildren = child;
+              bestEvaluation = evaluation;
+            }
+          }
+          randomPositions = bestChildren;
+        }
+
+        for(i = 0; i < nColors; i++) {
+          newColorList.push(colorScaleFunction((1 / nColors) + randomPositions[i] / (nColors + 1))); //TODO: make more efficient by pre-nuilding the colorList
+        }
+        break;
+    }
+
+    if(interpolateColor != null && interpolateValue != null) {
+      newColorList = newColorList.getInterpolated(interpolateColor, interpolateValue);
+    }
+
+    if(alpha) {
+      newColorList = newColorList.addAlpha(alpha);
+    }
+
+    return newColorList;
+  };
+
+  /**
+   * @ignore
+   */
+  ColorListGenerators._sortingVariation = function(numberList, rnd0, rnd1) { //private
+    var newNumberList = numberList.clone();
+    var pos0 = Math.floor(rnd0 * newNumberList.length);
+    var pos1 = Math.floor(rnd1 * newNumberList.length);
+    var cache = newNumberList[pos1];
+    newNumberList[pos1] = newNumberList[pos0];
+    newNumberList[pos0] = cache;
+    return newNumberList;
+  };
+
+  /**
+   * @ignore
+   */
+  ColorListGenerators._evaluationFunction = function(numberList) { //private
+    var sum = 0;
+    var i;
+    for(i = 0; numberList[i + 1] != null; i++) {
+      sum += Math.sqrt(Math.abs(numberList[i + 1] - numberList[i]));
+    }
+    return sum;
+  };
+
+  /**
+   * Creates an object dictionary that matches elements from a list (that could contan repeated elements) with categorical colors
+   * @param {List} the list containing categorical data
+   *
+   * @param {ColorList} ColorList with categorical colors
+   * @param {Number} alpha transparency
+   * @param {String} color to mix
+   * @param {Number} interpolation value (0-1) for color mix
+   * @param {Boolean} invert invert colors
+   * @return {Object} object dictionar that delivers a color for each element on original list
+   * tags:generator
+   */
+  ColorListGenerators.createCategoricalColorListDictionaryObject = function(list, colorList, alpha, color, interpolate, invert){
+    if(list==null) return;
+
+    var diffValues = list.getWithoutRepetitions();
+    var diffColors = ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate, colorList);
+    if(invert) diffColors = diffColors.getInverted();
+
+    var dictionaryObject = {};
+
+    diffValues.forEach(function(element, i){
+      dictionaryObject[element] = diffColors[i];
+    });
+
+    return dictionaryObject;
+
+  };
+
+  /**
+   * Creates a ColorList of categorical colors based on an input List. All entries with the same value will get the same color.
+   * @param {List} the list containing categorical data
+   *
+   * @param {ColorList} ColorList with categorical colors
+   * @param {Number} alpha transparency
+   * @param {String} color to mix
+   * @param {Number} interpolation value (0-1) for color mix
+   * @param {Boolean} invert invert colors
+   * @return {ColorList} ColorList with categorical colors that match the given list
+   * @return {List} elements list of elemnts that match colors (equivalent to getWithoutRepetions)
+   * @return {ColorList} ColorList with different categorical colors
+   * @return {Table} dictionary dictionary table with elemnts and matching colors
+   * @return {Object} citionaryObject (relational array, from objects to colors)
+   * tags:generator
+   */
+  ColorListGenerators.createCategoricalColorListForList = function(list, colorList, alpha, color, interpolate, invert)
+  {
+
+    if(!list)
+      return new ColorList();
+    if(!alpha)
+      alpha = 1;
+    if(!color)
+      color = "#fff";
+    if(!interpolate)
+      interpolate = 0;
+
+    list = List.fromArray(list);
+    var diffValues = list.getWithoutRepetitions();
+    var diffColors;
+    if(colorList && interpolate!=0) {
+      diffColors = colorList.getInterpolated(color, interpolate);
+    } else {
+      diffColors = ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate, colorList);
+
+      //diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
+    }
+    diffColors = diffColors.addAlpha(alpha);
+
+    if(invert) diffColors = diffColors.getInverted();
+
+    var colorDict = Table.fromArray([diffValues, diffColors]);
+    var dictionaryObject = ListOperators.buildDictionaryObjectForDictionary(colorDict);
+
+    var fullColorList = ListOperators.translateWithDictionaryObject(list, colorDict, 'black');// ListOperators.translateWithDictionary(list, colorDict, "NULL");
+
+    fullColorList = ColorList.fromArray(fullColorList);
+
+    return [
+      {
+        value: fullColorList,
+        type: 'ColorList'
+      }, {
+        value: diffValues,
+        type: diffValues.type
+      }, {
+        value: diffColors,
+        type: 'ColorList'
+      }, {
+        value: new Table(diffValues, fullColorList),
+        type: 'Table'
+      }, {
+        value: dictionaryObject,
+        type: 'Object'
+      }
+    ];
+  };
+
+  exports.ColorListGenerators = ColorListGenerators;
+
+  function StringOperators() {}
+
+
+  StringOperators.ENTER = String.fromCharCode(13);
+  StringOperators.ENTER2 = String.fromCharCode(10);
+  StringOperators.ENTER3 = String.fromCharCode(8232);
+
+  StringOperators.SPACE = String.fromCharCode(32);
+  StringOperators.SPACE2 = String.fromCharCode(160);
+
+  StringOperators.TAB = "	";
+  StringOperators.TAB2 = String.fromCharCode(9);
+
+  StringOperators.LINK_REGEX = /(^|\s+)(https*\:\/\/\S+[^\.\s+])/;
+  StringOperators.MAIL_REGEX = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  StringOperators.STOP_WORDS = StringList.fromArray("t,s,mt,rt,re,m,http,amp,a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,or,other,our,own,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your".split(","));
+
+
+
+  /**
+   * creates an html string that depicts a proprtions bar with colors for categories
+   * @param  {NumberList} normalizedWeights normalized weights
+   *
+   * @param  {Number} nChars width in characters
+   * @param  {ColorList} colors list of categorical colors
+   * @param  {String} character character or characters to be used as primitive
+   * @return {String} html depciting colored segments forming a bar in a single line
+   */
+  StringOperators.createsCategoricalColorsBlocksHtml = function(normalizedWeights, nChars, colors, character){
+    if(normalizedWeights==null) return "";
+
+    var bars="";
+
+    nChars = nChars==null?20:nChars;
+    colors = colors==null?ColorListGenerators.createDefaultCategoricalColorList(normalizedWeights.length):colors;
+    character = character==null?"█":character;
+
+    normalizedWeights.forEach(function(w, j){
+      w = Math.floor(w*nChars) +  ( (w*nChars - Math.floor(w*nChars))>Math.random()?1:0 );
+      bars += "<font color=\""+ColorOperators.colorStringToHEX(colors[j])+"\">";
+      for(var i=0; i<w; i++){
+        bars += character;
+      }
+      bars += "</f>";
+    });
+
+    return bars;
+  };
+
+  /**
+   * splits a String by a character (entre by default)
+   * @param  {String} string
+   *
+   * @param  {String} character
+   * @return {StringList}
+   * tags:
+   */
+  StringOperators.split = function(string, character) {
+    if(character == null) return StringOperators.splitByEnter(string);
+    return StringList.fromArray(string.split(character));
+  };
+
+
+  /**
+   * split a String by enter (using several codifications)
+   * @param  {String} string
+   * @return {StringList}
+   * tags:
+   */
+  StringOperators.splitByEnter = function(string) {
+    if(string == null) {
+      return null;
+    }
+    var stringList = StringOperators.splitString(string, "\n");
+    if(stringList.length > 1)
+    {
+     return stringList;
+    }
+    stringList = StringOperators.splitString(string, StringOperators.ENTER2);
+    if(stringList.length > 1) {
+      return stringList;
+    }
+    stringList = StringOperators.splitString(string, StringOperators.ENTER3);
+    if(stringList.length > 1) {
+      return stringList;
+    }
+    return new StringList(string);
+  };
+
+
+  /**
+   * replaces in a string ocurrences of a sub-string by another string (base in replace JavaScript method)
+   * @param  {String} string to be modified
+   * @param  {String} subString sub-string to be replaced
+   * @param  {String} replacement string to be placed instead
+   * @return {String}
+   * tags:
+   */
+  StringOperators.replaceSubString = function(string, subString, replacement) {
+    if(string == null || subString == null || replacement == null) return null;
+    return string.replace(new RegExp(subString, "g"), replacement);
+  };
+
+  /**
+   * replaces in a string ocurrences of sub-strings by a string
+   * @param  {String} string to be modified
+   * @param  {StringList} subStrings sub-strings to be replaced
+   * @param  {String} replacement string to be placed instead
+   * @return {String}
+   * tags:
+   */
+  StringOperators.replaceSubStringsByString = function(string, subStrings, replacement) {
+    if(subStrings == null) return;
+
+    subStrings.forEach(function(subString) {
+      string = StringOperators.replaceSubString(string, subString, replacement);
+    });
+
+    return string;
+  };
+
+  /**
+   * replaces in a string ocurrences of sub-strings by strings (1-1)
+   * @param  {String} string to be modified
+   * @param  {StringList} subStrings sub-strings to be replaced
+   * @param  {StringList} replacements strings to be placed instead
+   * @return {String}
+   * tags:
+   */
+  StringOperators.replaceSubStringsByStrings = function(string, subStrings, replacements) {
+    if(subStrings == null || replacements == null) return;
+
+    var nElements = Math.min(subStrings.length, replacements.length);
+    var i;
+
+    for(i = 0; i < nElements; i++) {
+      string = StringOperators.replaceSubString(string, subStrings[i], replacements[i]);
+    }
+
+    return string;
+  };
+
+  /**
+   * builds a stringList of words contained in the text
+   * @param  {String} string text to be analyzed
+   *
+   * @param  {Boolean} withoutRepetitions remove words repetitions
+   * @param  {Boolean} stopWords remove stop words
+   * @param  {Boolean} sortedByFrequency  sorted by frequency in text
+   * @param  {Boolean} includeLinks include html links
+   * @param  {Number} limit of words
+   * @param  {Number} minSizeWords minimal number of characters of words
+   * @return {StringList}
+   * tags:
+   */
+  StringOperators.getWords = function(string, withoutRepetitions, stopWords, sortedByFrequency, includeLinks, limit, minSizeWords) {
+    if(string == null) return null;
+
+    var links;
+
+    minSizeWords = minSizeWords || 0;
+    withoutRepetitions = withoutRepetitions == null ? true : withoutRepetitions;
+    sortedByFrequency = sortedByFrequency == null ? true : sortedByFrequency;
+    includeLinks = includeLinks == null ? true : includeLinks;
+    limit = limit == null ? 0 : limit;
+
+    var i, j;
+
+    if(includeLinks) {
+      links = string.match(StringOperators.LINK_REGEX);
+    }
+    string = string.toLowerCase().replace(StringOperators.LINK_REGEX, "");
+
+    var list = string.match(/\w+/g);
+    if(list == null) return new StringList();
+
+    if(includeLinks && links != null) list = list.concat(links);
+    list = StringList.fromArray(list).replace(/ /g, "");
+
+    if(stopWords != null) { //TODO:check before if all stopwrds are strings
+      //list.removeElements(stopWords);
+
+      for(i = 0; list[i] != null; i++) {
+        for(j = 0; stopWords[j] != null; j++) {
+          if((typeof stopWords[j]) == 'string') {
+            if(stopWords[j] == list[i]) {
+              list.splice(i, 1);
+              i--;
+              break;
+            }
+          } else if(stopWords[j].test(list[i])) {
+            list.splice(i, 1);
+            i--;
+            break;
+          }
+        }
+      }
+
+    }
+
+    if(minSizeWords > 0) {
+      for(i = 0; list[i] != null; i++) {
+        if(list[i].length < minSizeWords) {
+          list.splice(i, 1);
+          i--;
+        }
+      }
+    }
+
+    if(sortedByFrequency) {
+      if(withoutRepetitions) {
+        list = list.getFrequenciesTable(true)[0];// //ListOperators.countElementsRepetitionOnList(list, true)[0];
+        if(limit !== 0) list = list.substr(0, limit);
+
+        return list;
+      }
+
+      var occurrences = ListOperators.countOccurrencesOnList(list);
+      list = list.getSortedByList(occurrences);
+      if(limit !== 0) list = list.substr(0, limit);
+
+      return list;
+    }
+
+    if(withoutRepetitions) {
+      list = list.getWithoutRepetitions();
+    }
+
+    if(limit !== 0) list = list.splice(0, limit);
+    return list;
+  };
+
+
+
+  /**
+   * return a substring
+   * @param  {String} string
+   *
+   * @param  {Number} i0 init index
+   * @param  {Number} length of ths substring (if null returns substring from i0 to the end)
+   * @return {String}
+   * tags:filter
+   */
+  StringOperators.substr = function(string, i0, length) {
+    i0 = i0 || 0;
+    return string.substr(i0, length);
+  };
+
+  /**
+   * split a String by a separator (a String) and returns a StringList
+   * @param  {String} string
+   *
+   * @param  {String} separator
+   * @return {StringList}
+   * tags:
+   */
+  StringOperators.splitString = function(string, separator) {
+    if(string == null) return null;
+    if(separator == null) separator = ",";
+    if(typeof separator == "string") separator = separator.replace("\\n", "\n");
+    if(string.indexOf(separator) == -1) return new StringList(string);
+    return StringList.fromArray(string.split(separator));
+  };
+
+  /**
+   * searches for two Strings within a String and returns the String in between
+   * @param  {String} text
+   * @param  {String} subString0
+   *
+   * @param  {String} subString1 if null returns the text after subString0
+   * @return {String}
+   * tags:filter
+   */
+  StringOperators.getFirstTextBetweenStrings = function(text, subString0, subString1) {
+    var i0 = text.indexOf(subString0);
+    if(i0 == -1) return null;
+    if(subString1 === "" || subString1 == null) return text.substr(i0 + subString0.length);
+    var i1 = text.indexOf(subString1, i0 + subString0.length + 1);
+    if(i1 == -1) return text.substring(i0 + subString0.length);
+    return text.substr(i0 + subString0.length, i1 - (i0 + subString0.length));
+  };
+
+  /**
+   * searches all the Strings contained between two Strings in a String
+   * @param  {String} text
+   * @param  {String} subString0
+   * @param  {String} subString1
+   * @return {StringList}
+   * tags:filter
+   */
+  StringOperators.getAllTextsBetweenStrings = function(text, subString0, subString1) { //TODO: improve using indexOf(string, START_INDEX)
+    if(text.indexOf(subString0) == -1) return new StringList();
+    var blocks = text.split(subString0);
+    var nBlocks = blocks.length;
+    var stringList = new StringList();
+    var block;
+    var index;
+    var i;
+    for(i = 1; i < nBlocks; i++) {
+      block = blocks[i];
+      if(subString1 == subString0) {
+        stringList.push(block);
+      } else {
+        index = block.indexOf(subString1);
+        if(index >= 0) {
+          stringList.push(block.substr(0, index));
+        }
+      }
+    }
+    return stringList;
+  };
+
+  /**
+   * associates a value to each text in a StringList, according to number of words containg in each StringList; one lists pushes to negative values, the other to positive. A classic use would be a primitive sentimental analisis using a list of positive adjectives and a list of negative ones
+   * @param  {String} string to be analized
+   * @param  {StringList} negativeStrings list of 'negative' words
+   * @param  {StringList} positiveStrings list of 'positive' words
+   *
+   * @param  {Boolean} normalizeBySize divide score by the string size
+   * @return {Number}
+   * tags:analysis
+   */
+  StringOperators.countWordsDichotomyAnalysis = function(string, negativeStrings, positiveStrings, normalizeBySize) {
+    var val = 0;
+    negativeStrings.forEach(function(word) {
+      val -= StringOperators.countWordOccurrences(string, word);
+    });
+    positiveStrings.forEach(function(word) {
+      val += StringOperators.countWordOccurrences(string, word);
+    });
+    if(normalizeBySize) val /= string.length;
+    return val;
+  };
+
+
+  /**
+   * creates a list of urls contained in the html in <a> tags
+   * @param  {String} html to be analyzied
+   *
+   * @param {String} urlSource optional, if provided will be used to build complete urls
+   * @param {Boolean} removeHash if true removes the hastag (anchor) content of the url
+   * @return {StringList} list of urls
+   * tags:html
+   */
+  StringOperators.getLinksFromHtml = function(html, urlSource, removeHash) {
+    var doc = document.createElement("html");
+    doc.innerHTML = html;
+
+    var i;
+    var links = doc.getElementsByTagName("a");
+    var originalUrl, url;
+    var urls = new StringList();
+    var index;
+    var urlSourceParts;
+    var parts, blocks;
+    var root;
+
+    urlSource = urlSource === "" ? null : urlSource;
+    removeHash = removeHash == null ? false : removeHash;
+
+    if(urlSource) {
+      urlSource = urlSource.trim();
+
+      if(urlSource.substr(-5) == ".html") {
+        urlSourceParts = urlSource.split("/");
+        urlSource = urlSourceParts.slice(0, urlSourceParts.length - 1).join("/");
+      }
+      if(urlSource.indexOf(-1) == "/") urlSource = urlSource.substr(0, urlSource.length - 1);
+      urlSourceParts = urlSource.split("/");
+
+      root = urlSource.replace("//", "**").split("/")[0].replace("**", "//");
+    }
+
+
+    for(i = 0; i < links.length; i++) {
+      originalUrl = url = links[i].getAttribute("href");
+      if(url == null) continue;
+
+      if(url.indexOf('=') != -1) url = url.split('=')[0];
+
+      //console.log(url);
+      if(urlSource && url.indexOf('http://') == -1 && url.indexOf('https://') == -1 && url.indexOf('wwww.') == -1 && url.indexOf('file:') == -1 && url.indexOf('gopher:') == -1 && url.indexOf('//') !== 0) {
+        if(url.substr(0, 9) == "../../../") {
+          url = urlSourceParts.slice(0, urlSourceParts.length - 3).join("/") + "/" + url.substr(9);
+        } else if(url.substr(0, 6) == "../../") {
+          url = urlSourceParts.slice(0, urlSourceParts.length - 2).join("/") + "/" + url.substr(6);
+        } else if(url.substr(0, 3) == "../") {
+          url = urlSourceParts.slice(0, urlSourceParts.length - 1).join("/") + "/" + url.substr(3);
+        } else if(url.charAt(0) == "/") {
+          url = root + url;
+        } else {
+          url = urlSource + "/" + url;
+        }
+      }
+      if(removeHash && url.indexOf("#") != -1) url = url.split('#')[0];
+      if(url.substr(-1) == "/") url = url.substr(0, url.length - 1);
+
+      index = url.indexOf('/../');
+      while(index != -1) {
+        blocks = url.split('/../');
+        parts = blocks[0].replace("//", "**").split("/");
+        url = parts.slice(0, parts.length - 1).join("/").replace("**", "//") + ("/" + blocks.slice(1).join("/../"));
+        index = url.indexOf('/../');
+      }
+
+      if(url.indexOf('./') != -1) {
+        parts = url.replace("//", "**").split("/");
+        if(parts[0].substr(-1) == ".") {
+          parts[0] = parts[0].substr(0, parts[0].length - 1);
+          url = parts.join('/').replace("**", "//");
+        }
+      }
+
+      url = url.trim();
+
+      if(url.substr(-1) == "/") url = url.substr(0, url.length - 1);
+
+      if(url == urlSource) continue;
+      //console.log(urlSource+' | '+originalUrl+' -> '+url);
+      urls.push(url);
+    }
+
+    urls = urls.getWithoutRepetitions();
+
+    return urls;
+  };
+
+
+  /**
+   * validates is string contains another string, as string or word (space or punctuation boundaries)
+   * @param {String} text string to be validated
+   * @param {String} string string or word to be searched
+   *
+   * @param {Boolean} asWord if true a word will be searched (false by default)
+   * @param {Boolean} caseSensitive (false by default)
+   * @return {Boolean} returns true if string or word is contained
+   */
+  StringOperators.textContainsString = function(text, string, asWord, caseSensitive) {
+    text = caseSensitive ? string : text.toLowerCase();
+    string = caseSensitive ? string : string.toLowerCase();
+    return asWord ?
+      text.match(new RegExp("\\b" + string + "\\b")).length > 0 :
+      text.indexOf(string) != -1;
+  };
+
+  /**
+   * print a string in console
+   * @param  {String} string to be printed in console
+   * @param  {Boolean} frame  if true (default) prints ///////////////// on top and bottom
+   * tags:
+   */
+  StringOperators.logInConsole = function(string, frame) {
+    frame = frame == null ? true : frame;
+    if(frame) console.log('///////////////////////////////////////////////////');
+    console.log(string);
+    if(frame) console.log('///////////////////////////////////////////////////');
+  };
+
+
+
+
+  //////
+
+
+  /**
+   * @todo finish docs
+   */
+  StringOperators.getParenthesisContents = function(text, brackets) {
+    var contents = new StringList();
+
+    var subText = text;
+
+    var contentObject = StringOperators.getFirstParenthesisContentWithIndexes(text, brackets);
+
+    var nAttempts = 0;
+    while(contentObject.content !== "" && contentObject.index1 < subText.length - 1 && nAttempts < text.length) {
+      contents.push(contentObject.content);
+      subText = subText.substr(contentObject.index1 + 2);
+      contentObject = StringOperators.getFirstParenthesisContentWithIndexes(subText, brackets);
+      nAttempts++;
+    }
+
+    return contents;
+  };
+
+  /**
+   * @todo finish docs
+   */
+  StringOperators.getFirstParenthesisContent = function(text, brackets) {
+    return StringOperators.getFirstParenthesisContentWithIndexes(text, brackets).content;
+  };
+
+  /**
+   * @todo finish docs
+   */
+  StringOperators.getFirstParenthesisContentWithIndexes = function(text, brackets) {
+    var open = brackets ? "[" : "(";
+    var close = brackets ? "]" : ")";
+
+    var openRegEx = brackets ? /\[/g : /\(/g;
+    var closeRegEx = brackets ? /\]/g : /\)/g;
+
+    var indexOpen = text.indexOf(open);
+
+    if(indexOpen == -1) return {
+      "content": "",
+      "index0": 0,
+      "index1": 0
+    };
+
+    var indexClose = text.indexOf(close);
+
+    var part = text.substring(indexOpen + 1, indexClose);
+
+    var openMatch = part.match(openRegEx);
+    var closeMatch = part.match(closeRegEx);
+
+    var nOpen = (openMatch == null ? 0 : openMatch.length) - (closeMatch == null ? 0 : closeMatch.length);
+    var nAttempts = 0;
+
+
+    while((nOpen > 0 || indexClose == -1) && nAttempts < text.length) {
+      indexClose = text.indexOf(close, indexClose);
+      part = text.substring(indexOpen + 1, indexClose + 1);
+      indexClose++;
+      openMatch = part.match(openRegEx);
+      closeMatch = part.match(closeRegEx);
+      nOpen = (openMatch == null ? 0 : openMatch.length) - (closeMatch == null ? 0 : closeMatch.length);
+
+      nAttempts++;
+    }
+    indexClose = text.indexOf(close, indexClose);
+
+    return {
+      "content": indexClose == -1 ? text.substring(indexOpen + 1) : text.substring(indexOpen + 1, indexClose),
+      "index0": indexOpen + 1,
+      "index1": indexClose == -1 ? (text.length - 1) : (indexClose - 1)
+    };
+  };
+
+  /**
+   * @todo finish docs
+   */
+  StringOperators.placeString = function(string, stringToPlace, index) {
+    return string.substr(0, index) + stringToPlace + string.substr(index + stringToPlace.length);
+  };
+
+  /**
+   * @todo finish docs
+   */
+  StringOperators.insertString = function(string, stringToInsert, index) {
+    return string.substr(0, index) + stringToInsert + string.substr(index);
+  };
+
+  /**
+   * @todo finish docs
+   */
+  StringOperators.removeEnters = function(string) {
+    return string.replace(/(\StringOperators.ENTER|\StringOperators.ENTER2|\StringOperators.ENTER3)/gi, " ");
+  };
+
+  /**
+   * @todo finish docs
+   */
+  StringOperators.removeTabs = function(string) {
+    return string.replace(/(\StringOperators.TAB|\StringOperators.TAB2|\t)/gi, "");
+  };
+
+  /**
+   * @todo finish docs
+   */
+  StringOperators.removePunctuation = function(string, replaceBy) {
+    replaceBy = replaceBy || "";
+    return string.replace(/[:,.;?!\(\)\"\']/gi, replaceBy);
+  };
+
+  /**
+   * @todo finish docs
+   */
+  StringOperators.removeDoubleSpaces = function(string) {
+    var retString = string;
+    var regExpr = RegExp(/  /);
+    while(regExpr.test(retString)) {
+      retString = retString.replace(regExpr, " ");
+    }
+    return retString;
+  };
+
+  /**
+   * @todo finish docs
+   */
+  StringOperators.removeInitialRepeatedCharacter = function(string, character) {
+    while(string.charAt(0) == character) string = string.substr(1);
+    return string;
+  };
+
+
+  /**
+   * takes plain text from html
+   * @param  {String} html
+   * @return {String}
+   * tags:
+   */
+  StringOperators.removeHtmlTags = function(html) {
+    var tmp = document.createElement("DIV");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText;
+  };
+
+  /**
+   * @todo finish docs
+   */
+  StringOperators.removeLinks = function(text) {
+    text += ' ';
+    var regexp = /https*:\/\/[a-zA-Z0-9\/\.]+( |:|;|\r|\t|\n|\v)/g;
+    return(text.replace(regexp, ' ')).substr(0, text.length - 2);
+  };
+
+  /**
+   * @todo finish docs
+   */
+  StringOperators.removeQuotes = function(string) { //TODO:improve
+    if(string.charAt(0) == "\"") string = string.substr(1);
+    if(string.charAt(string.length - 1) == "\"") string = string.substr(0, string.length - 1);
+    return string;
+  };
+
+  // StringOperators.trim = function(string){
+  // 	return string.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+  // }
+
+
+
+  StringOperators.removeAccentsAndDiacritics = function(string) {
+    var r = string.replace(new RegExp(/[àáâãäå]/g), "a");
+    r = r.replace(new RegExp(/æ/g), "ae");
+    r = r.replace(new RegExp(/ç/g), "c");
+    r = r.replace(new RegExp(/[èéêë]/g), "e");
+    r = r.replace(new RegExp(/[ìíîï]/g), "i");
+    r = r.replace(new RegExp(/ñ/g), "n");
+    r = r.replace(new RegExp(/[òóôõö]/g), "o");
+    r = r.replace(new RegExp(/œ/g), "oe");
+    r = r.replace(new RegExp(/[ùúûü]/g), "u");
+    r = r.replace(new RegExp(/[ýÿ]/g), "y");
+
+    r = r.replace(new RegExp(/[ÀÁÂÄÃ]/g), "A");
+    r = r.replace(new RegExp(/Æ/g), "AE");
+    r = r.replace(new RegExp(/Ç/g), "c");
+    r = r.replace(new RegExp(/[ÈÉÊË]/g), "E");
+    r = r.replace(new RegExp(/[ÌÍÎÏ]/g), "I");
+    r = r.replace(new RegExp(/Ñ/g), "N");
+    r = r.replace(new RegExp(/[ÒÓÔÖÕ]/g), "O");
+    r = r.replace(new RegExp(/Œ/g), "OE");
+    r = r.replace(new RegExp(/[ÙÚÛÜ]/g), "U");
+    r = r.replace(new RegExp(/[Ÿ]/g), "Y");
+
+    return r;
+  };
+
+  /**
+   * creates a table with frequent words and occurrences numbers
+   * @param  {String} string text to be analyzed
+   *
+   * @param  {StringList} stopWords
+   * @param  {Boolean} includeLinks
+   * @param  {Number} limit max size of rows
+   * @param  {Number} minSizeWords
+   * @return {Table} contains a list of words, and a numberList of occurrences
+   * tags:words
+   */
+  StringOperators.getWordsOccurrencesTable = function(string, stopWords, includeLinks, limit, minSizeWords) {
+    if(string == null) return;
+    if(string.length === 0) return new Table(new StringList(), new NumberList());
+    var words = StringOperators.getWords(string, false, stopWords, false, includeLinks, limit, minSizeWords);
+    var table;
+    if(limit != null)
+      table = words.getFrequenciesTable(true).sliceRows(0, limit-1);
+    else
+      table = words.getFrequenciesTable(true);
+    return table;// ListOperators.countElementsRepetitionOnList(words, true, false, limit);
+  };
+
+  /**
+   * @todo finish docs
+   */
+  StringOperators.indexesOf = function(text, string) { //TODO:test
+    var index = text.indexOf(string);
+    if(index == -1) return new NumberList();
+    var indexes = new NumberList(index);
+    index = text.indexOf(string, index + 1);
+    while(index != -1) {
+      indexes.push(index);
+      index = text.indexOf(string, index + 1);
+    }
+    return indexes;
+  };
+
+  /**
+   * returns a string repeated a number of times
+   * @param  {String} text to be repeated
+   * @param  {Number} n number of repetitions
+   * @return {String}
+   * tags:
+   */
+  StringOperators.repeatString = function(text, n) {
+    var i;
+    var newText = "";
+    for(i = 0; i < n; i++) {
+      newText += text;
+    }
+    return newText;
+  };
+
+
+
+
+  //counting / statistics
+
+  /**
+   * @todo finish docs
+   */
+  StringOperators.countOccurrences = function(text, string) { //seems to be th emost efficient: http://stackoverflow.com/questions/4009756/how-to-count-string-occurrence-in-string
+    var n = 0;
+    var index = text.indexOf(string);
+    while(index != -1) {
+      n++;
+      index = text.indexOf(string, index + string.length);
+    }
+    return n;
+  };
+
+  /**
+   * @todo finish docs
+   */
+  StringOperators.countWordOccurrences = function(string, word) {
+    var regex = new RegExp("\\b" + word + "\\b");
+    var match = string.match(regex);
+    return match == null ? 0 : match.length;
+  };
+
+  /**
+   * @todo finish docs
+   */
+  StringOperators.countStringsOccurrences = function(text, strings) {
+    var i;
+    var numberList = new NumberList();
+    for(i = 0; strings[i] != null; i++) {
+      numberList[i] = text.split(strings[i]).length - 1;
+    }
+    return numberList;
+  };
+
+  //validation
+
+  /**
+   * @todo finish docs
+   */
+  StringOperators.validateEmail = function(text) {
+    return StringOperators.MAIL_REGEX.test(text);
+  };
+
+  /**
+   * @todo finish docs
+   */
+  StringOperators.validateUrl = function(text) {
+    return StringOperators.LINK_REGEX.test(text);
+  };
+
+  exports.StringOperators = StringOperators;
+
+  function NetworkEncodings() {}
+
+
+
+  //////////////NoteWork
+
+  NetworkEncodings.nodeNameSeparators = ['|', ':', ' is ', ' are ', '.', ','];
+
+  /**
+   * Converts a String in NoteWork format into a network
+   *
+   * @param  {String} code
+   * @return {Network}
+   * tags:decoding
+   */
+  NetworkEncodings.decodeNoteWork = function(code) {
+    if(code == null) return;
+    if(code == "") return new Network();
+
+    console.log('\n\n*************////////// decodeNoteWork //////////*************');
+    //code = "\n"+code;
+
+    var i, j;
+    var paragraph, line, simpleLine;
+    var id, id2;
+    var name;
+    var index, index2, minIndex;
+    var lines;
+    var node, otherNode;
+    var supNode = null;
+    var relation;
+    var prevLine;
+    var sep;
+    var colorLinesRelations = []; //for relations
+    var colorLinesGroups = [];
+    var colorSegments = [];
+    var linesInfo = [];
+    var simpleLine;
+    var regex;
+    var iEnd;
+    var propertyName;
+    var propertyValue;
+    var network = new Network();
+    var paragraphs = new StringList();
+    var content;
+
+    network.nodesPropertiesNames = new StringList();
+    network.relationsPropertiesNames = new StringList();
+
+    lines = code.split(/\n/g);
+    lines.forEach(function(line, i) {
+      lines[i] = line.trim();
+    });
+
+    code = lines.join('\n');
+
+
+    var nLineParagraph = 0;
+    while(code.charAt(0) == '\n') {
+      code = code.substr(1);
+      nLineParagraph++;
+    }
+
+
+    var left = code;
+
+    index = left.search(/\n\n./g);
+
+    while(index != -1) {
+      paragraphs.push(left.substr(0, index));
+      left = left.substr(index + 2);
+      index = left.search(/\n\n./g);
+    }
+
+    paragraphs.push(left);
+
+    var firstLine;
+
+
+    paragraphs.forEach(function(paragraph, i) {
+
+      if(paragraph.indexOf('\n') == -1) {
+        line = paragraph;
+        lines = null;
+      } else {
+        lines = paragraph.split(/\n/g);
+        line = lines[0];
+      }
+
+      firstLine = line;
+
+      //console.log('firstLine: ['+firstLine+']');
+
+      if(line == '\n' || line == '' || line == ' ' || line == '  ') { //use regex here
+
+      } else if(line.indexOf('//') == 0) {
+
+        if(colorSegments[nLineParagraph] == null) colorSegments[nLineParagraph] = [];
+
+        colorSegments[nLineParagraph].push({
+          type: 'comment',
+          iStart: 0,
+          iEnd: line.length
+        });
+
+      } else if(line == "relations colors:" || line == "groups colors:" || line == "categories colors:") { //line.indexOf(':')!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){ // color in relations or groups
+        // colorLinesRelations.push(line);
+
+        // if(colorSegments[nLineParagraph]==null) colorSegments[nLineParagraph]=[];
+
+        // colorSegments[nLineParagraph].push({
+        // 	type:'relation_color',
+        // 	iStart:0,
+        // 	iEnd:line.length
+        // });
+
+        if(lines) {
+          lines.slice(1).forEach(function(line, i) {
+
+            index = line.indexOf(':');
+            if(firstLine == "relations colors:" && index != -1 && ColorOperators.colorStringToRGB(line.split(':')[1]) != null) {
+              //console.log('  more colors!');
+
+              colorLinesRelations.push(line);
+
+              if(colorSegments[nLineParagraph + i] == null) colorSegments[nLineParagraph + i] = [];
+
+              colorSegments[nLineParagraph + i].push({
+                type: 'relation_color',
+                iStart: 0,
+                iEnd: line.length
+              });
+
+            }
+
+            if((firstLine == "groups colors:" || firstLine == "categories colors:") && index != -1 && ColorOperators.colorStringToRGB(line.split(':')[1]) != null) {
+              //console.log(line)
+              //console.log('  color to group!');
+
+              colorLinesGroups.push(line);
+
+              if(colorSegments[nLineParagraph + i] == null) colorSegments[nLineParagraph + i] = [];
+
+              colorSegments[nLineParagraph + i].push({
+                type: 'relation_color',
+                iStart: 0,
+                iEnd: line.length
+              });
+
+            }
+          });
+        }
+
+      } else { //node
+
+        minIndex = 99999999;
+
+        index = line.indexOf(NetworkEncodings.nodeNameSeparators[0]);
+
+        if(index != -1) {
+          minIndex = index;
+          sep = NetworkEncodings.nodeNameSeparators[0];
+        }
+
+        j = 1;
+
+        while(j < NetworkEncodings.nodeNameSeparators.length) {
+          index = line.indexOf(NetworkEncodings.nodeNameSeparators[j]);
+          if(index != -1) {
+            minIndex = Math.min(index, minIndex);
+            sep = NetworkEncodings.nodeNameSeparators[j];
+          }
+          j++;
+        }
+
+
+        index = minIndex == 99999999 ? -1 : minIndex;
+
+        name = index == -1 ? line : line.substr(0, index);
+        name = name.trim();
+
+        if(name != "") {
+          id = NetworkEncodings._simplifyForNoteWork(name);
+
+          node = network.nodeList.getNodeById(id);
+
+          iEnd = index == -1 ? line.length : index;
+
+          if(node == null) {
+
+            node = new Node(id, name);
+            node._nLine = nLineParagraph;
+            network.addNode(node);
+            node.content = index != -1 ? line.substr(index + sep.length).trim() : "";
+
+            node._lines = lines ? lines.slice(1) : new StringList();
+
+            node.position = network.nodeList.length - 1;
+
+            if(colorSegments[nLineParagraph] == null) colorSegments[nLineParagraph] = [];
+
+            colorSegments[nLineParagraph].push({
+              type: 'node_name',
+              iStart: 0,
+              iEnd: iEnd
+            });
+
+          } else {
+            if(lines != null) node._lines = node._lines.concat(lines.slice(1));
+
+            node.content += index != -1 ? (" | " + line.substr(index + sep.length).trim()) : "";
+
+            if(colorSegments[nLineParagraph] == null) colorSegments[nLineParagraph] = [];
+
+            colorSegments[nLineParagraph].push({
+              type: 'node_name_repeated',
+              iStart: 0,
+              iEnd: iEnd
+            });
+          }
+        } else {
+
+        }
+      }
+
+      nLineParagraph += (lines ? lines.length : 1) + 1;
+    });
+
+
+    //find equalities (synonyms)
+
+    var foundEquivalences = true;
+
+    while(foundEquivalences) {
+      foundEquivalences = false;
+
+      loop: for(i = 0; network.nodeList[i] != null; i++) {
+        node = network.nodeList[i];
+
+        loop2: for(j = 0; node._lines[j] != null; j++) {
+          line = node._lines[j];
+
+          if(line.indexOf('=') == 0) {
+
+            id2 = NetworkEncodings._simplifyForNoteWork(line.substr(1));
+            otherNode = network.nodeList.getNodeById(id2);
+
+            if(otherNode && node != otherNode) {
+
+              foundEquivalences = true;
+
+              node._lines = otherNode._lines.concat(otherNode._lines);
+
+              network.nodeList.removeNode(otherNode);
+              network.nodeList.ids[otherNode.id] = node;
+
+              break loop;
+              break loop2;
+            } else {
+              network.nodeList.ids[id2] = otherNode;
+            }
+
+            if(!node._otherIds) node._otherIds = [];
+            node._otherIds.push(id2);
+          }
+        }
+      }
+    }
+
+
+    //build relations and nodes properties
+
+    network.nodeList.forEach(function(node) {
+
+      nLineParagraph = node._nLine;
+
+      //console.log('node.nLineWeight', node.nLineWeight);
+
+      node._lines.forEach(function(line, i) {
+
+        if(line.indexOf('=') != -1) {
+
+        } else if(line.indexOf(':') > 0) {
+
+          simpleLine = line.trim();
+
+          propertyName = StringOperators.removeAccentsAndDiacritics(simpleLine.split(':')[0]).replace(/\s/g, "_");
+
+          propertyValue = line.split(':')[1].trim();
+          if(propertyValue == String(Number(propertyValue))) propertyValue = Number(propertyValue);
+
+          if(propertyValue != null) {
+            node[propertyName] = propertyValue;
+            if(network.nodesPropertiesNames.indexOf(propertyName) == -1) network.nodesPropertiesNames.push(propertyName);
+          }
+
+        } else {
+          simpleLine = line;
+
+          network.nodeList.forEach(function(otherNode) {
+            regex = NetworkEncodings._regexWordForNoteWork(otherNode.id);
+            index = simpleLine.search(regex);
+
+            if(index == -1 && otherNode._otherIds) {
+              for(j = 0; otherNode._otherIds[j] != null; j++) {
+                regex = NetworkEncodings._regexWordForNoteWork(otherNode._otherIds[j]);
+                index = simpleLine.search(regex);
+                if(index != -1) break;
+              }
+            }
+
+            if(index != -1) {
+              iEnd = index + simpleLine.substr(index).match(regex)[0].length;
+
+              relation = network.relationList.getFirstRelationBetweenNodes(node, otherNode, true);
+
+
+              if(relation != null) {
+
+                content = relation.node0.name + " " + line;
+
+                relation.content += " | " + content;
+
+                if(colorSegments[nLineParagraph + i + 1] == null) colorSegments[nLineParagraph + i + 1] = [];
+
+                colorSegments[nLineParagraph + i + 1].push({
+                  type: 'node_name_in_repeated_relation',
+                  iStart: index,
+                  iEnd: iEnd
+                });
+
+              } else {
+                relation = network.relationList.getFirstRelationBetweenNodes(otherNode, node, true);
+
+                if(relation == null || relation.content != content) {
+
+                  var relationName = line;
+
+                  var regex = NetworkEncodings._regexWordForNoteWork(node.id);
+                  index = relationName.search(regex);
+
+                  if(index != -1) {
+                    relationName = relationName.substr(index);
+                    relationName = relationName.replace(regex, "").trim();
+                  }
+
+                  //console.log(node.id, "*", line, "*", index, "*", line.substr(index));
+
+                  //line = line.replace(regex, "").trim();
+
+                  regex = NetworkEncodings._regexWordForNoteWork(otherNode.id);
+                  index = relationName.search(regex);
+                  relationName = "… " + relationName.substr(0, index).trim() + " …";
+
+                  id = line;
+                  relation = new Relation(line, relationName, node, otherNode);
+
+                  content = relation.node0.name + " " + line;
+
+                  relation.content = content; //.substr(0,index);
+                  network.addRelation(relation);
+
+                  if(colorSegments[nLineParagraph + i + 1] == null) colorSegments[nLineParagraph + i + 1] = [];
+
+                  colorSegments[nLineParagraph + i + 1].push({
+                    type: 'node_name_in_relation',
+                    iStart: index,
+                    iEnd: iEnd
+                  });
+
+                }
+              }
+            }
+          });
+        }
+      });
+
+      node.positionWeight = Math.pow(network.nodeList.length - node.position - 1 / network.nodeList.length, 2);
+      node.combinedWeight = node.positionWeight + node.nodeList.length * 0.1;
+
+    });
+
+
+    //colors in relations and groups
+
+    colorLinesRelations.forEach(function(line) {
+      index = line.indexOf(':');
+      var texts = line.substr(0, index).split(',');
+      texts.forEach(function(text) {
+        var color = line.substr(index + 1);
+        network.relationList.forEach(function(relation) {
+          if(relation.name.indexOf(text) != -1) relation.color = color;
+        });
+      });
+    });
+
+    colorLinesGroups.forEach(function(line) {
+      index = line.indexOf(':');
+      var texts = line.substr(0, index).split(',');
+      texts.forEach(function(text) {
+        var color = line.substr(index + 1);
+        network.nodeList.forEach(function(node) {
+          if(node.group == text) node.color = color;
+          if(node.category == text) node.color = color;
+        });
+      });
+    });
+
+    network.colorSegments = colorSegments;
+
+    return network;
+  };
+
+  /**
+   * @ignore
+   */
+  NetworkEncodings._simplifyForNoteWork = function(name) {
+    name = name.toLowerCase();
+    if(name.substr(name.length - 2) == 'es') {
+      name = name.substr(0, name.length - 1);
+    } else if(name.charAt(name.length - 1) == 's') name = name.substr(0, name.length - 1);
+    return name.trim();
+  };
+
+  /**
+   * _regexWordForNoteWork
+   *
+   * @ignore
+   */
+  NetworkEncodings._regexWordForNoteWork = function(word, global) {
+    global = global == null ? true : global;
+    try {
+      return new RegExp("(\\b)(" + word + "|" + word + "s|" + word + "es)(\\b)", global ? "gi" : "i");
+    } catch(err) {
+      return null;
+    }
+  };
+
+  /**
+   * Encodes a network into NoteWork notes.
+   *
+   * @param  {Network} network Network to encode.
+   * @param  {String} nodeContentSeparator Separator between node name and content. Uses comma if not defined.
+   * @param  {StringList} nodesPropertyNames Node properties to be encoded.
+   * If not defined, no Node properties are encoded.
+   * @param  {StringList} relationsPropertyNames Relations properties to be encoded.
+   * If not defined, no Relation properties are encoded.
+   * @return {String} NoteWork based representation of Network.
+   * tags:encoding
+   */
+  NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesPropertyNames, relationsPropertyNames) {
+    if(network == null) return;
+
+    var node, relation, other;
+    var propName;
+    var code = "";
+    var simpNodeName;
+    var regex, lineRelation;
+
+    var codedRelationsContents;
+
+    nodeContentSeparator = nodeContentSeparator || ', ';
+    nodesPropertyNames = nodesPropertyNames || [];
+    relationsPropertyNames = relationsPropertyNames || [];
+
+    network.nodeList.forEach(function(node) {
+      code += node.name;
+      if(node.content && node.content != "") code += nodeContentSeparator + node.content;
+      code += "\n";
+
+      nodesPropertyNames.forEach(function(propName) {
+        if(node[propName] != null) code += propName + ":" + String(node[propName]) + "\n";
+      });
+
+      codedRelationsContents = new StringList();
+
+      node.toRelationList.forEach(function(relation) {
+
+        var content = ((relation.content == null ||  relation.content == "") && relation.description) ? relation.description : relation.content;
+
+        if(content && content != "") {
+          regex = NetworkEncodings._regexWordForNoteWork(relation.node1.name);
+          lineRelation = content + ((regex != null && content.search(regex) == -1) ? (" " + relation.node1.name) : "");
+        } else {
+          lineRelation = "connected with " + relation.node1.name;
+        }
+
+        if(codedRelationsContents.indexOf(lineRelation) == -1) {
+          code += lineRelation;
+          code += "\n";
+          codedRelationsContents.push(lineRelation);
+        }
+
+      });
+
+      code += "\n";
+
+    });
+
+    return code;
+  };
+
+
+
+
+
+  //////////////GDF
+
+  /**
+   * Creates Network from a GDF string representation.
+   *
+   * @param  {String} gdfCode GDF serialized Network representation.
+   * @return {Network}
+   * tags:decoder
+   */
+  NetworkEncodings.decodeGDF = function(gdfCode) {
+    if(gdfCode == null || gdfCode == "") return;
+
+    var network = new Network();
+    var lines = gdfCode.split("\n"); //TODO: split by ENTERS OUTSIDE QUOTEMARKS
+    if(lines.length == 0) return null;
+    var line;
+    var i;
+    var j;
+    var parts;
+
+    var nodesPropertiesNames = lines[0].substr(8).split(",");
+
+    var iEdges;
+
+    for(i = 1; lines[i] != null; i++) {
+      line = lines[i];
+      if(line.substr(0, 8) == "edgedef>") {
+        iEdges = i + 1;
+        break;
+      }
+      line = NetworkEncodings.replaceChomasInLine(line);
+      parts = line.split(",");
+      var node = new Node(String(parts[0]), String(parts[1]));
+      for(j = 0; (nodesPropertiesNames[j] != null && parts[j] != null); j++) {
+        if(nodesPropertiesNames[j] == "weight") {
+          node.weight = Number(parts[j]);
+        } else if(nodesPropertiesNames[j] == "x") {
+          node.x = Number(parts[j]);
+        } else if(nodesPropertiesNames[j] == "y") {
+          node.y = Number(parts[j]);
+        } else {
+          node[nodesPropertiesNames[j]] = parts[j].replace(/\*CHOMA\*/g, ",");
+        }
+      }
+      network.addNode(node);
+    }
+
+    var relationsPropertiesNames = lines[iEdges - 1].substr(8).split(",");
+
+    for(i = iEdges; lines[i] != null; i++) {
+      line = lines[i];
+      line = NetworkEncodings.replaceChomasInLine(line);
+      parts = line.split(",");
+      if(parts.length >= 2) {
+        var node0 = network.nodeList.getNodeById(String(parts[0]));
+        var node1 = network.nodeList.getNodeById(String(parts[1]));
+        if(node0 == null || node1 == null) {
+          console.log("NetworkEncodings.decodeGDF | [!] problems with nodes ids:", parts[0], parts[1], "at line", i);
+        } else {
+          var id = node0.id + "_" + node1.id + "_" + Math.floor(Math.random() * 999999);
+          var relation = new Relation(id, id, node0, node1);
+          for(j = 2; (relationsPropertiesNames[j] != null && parts[j] != null); j++) {
+            if(relationsPropertiesNames[j] == "weight") {
+              relation.weight = Number(parts[j]);
+            } else {
+              relation[relationsPropertiesNames[j]] = parts[j].replace(/\*CHOMA\*/g, ",");
+            }
+          }
+          network.addRelation(relation);
+        }
+      }
+
+    }
+
+    return network;
+  };
+
+  /**
+   * Encodes a network in GDF Format, more info on GDF
+   * format can be found from
+   * {@link https://gephi.org/users/supported-graph-formats/gml-format/|Gephi}.
+   *
+   * @param  {Network} network Network to encode.
+   * @param  {StringList} nodesPropertiesNames Names of nodes properties to be encoded.
+   * @param  {StringList} relationsPropertiesNames Names of relations properties to be encoded
+   * @return {String} GDF encoding of Network.
+   * tags:encoder
+   */
+  NetworkEncodings.encodeGDF = function(network, nodesPropertiesNames, relationsPropertiesNames) {
+    if(network == null) return;
+
+    nodesPropertiesNames = nodesPropertiesNames == null ? new StringList() : nodesPropertiesNames;
+    relationsPropertiesNames = relationsPropertiesNames == null ? new StringList() : relationsPropertiesNames;
+
+    var code = "nodedef>id" + (nodesPropertiesNames.length > 0 ? "," : "") + nodesPropertiesNames.join(",");
+    var i;
+    var j;
+    var node;
+    for(i = 0; network.nodeList[i] != null; i++) {
+      node = network.nodeList[i];
+      code += "\n" + node.id;
+      for(j = 0; nodesPropertiesNames[j] != null; j++) {
+
+        if(typeof node[nodesPropertiesNames[j]] == 'string') {
+          code += ",\"" + node[nodesPropertiesNames[j]] + "\"";
+        } else {
+          code += "," + node[nodesPropertiesNames[j]];
+        }
+      }
+    }
+
+    code += "\nedgedef>id0,id1" + (relationsPropertiesNames.length > 0 ? "," : "") + relationsPropertiesNames.join(",");
+    var relation;
+    for(i = 0; network.relationList[i] != null; i++) {
+      relation = network.relationList[i];
+      code += "\n" + relation.node0.id + "," + relation.node1.id;
+      for(j = 0; relationsPropertiesNames[j] != null; j++) {
+
+        if(typeof relation[relationsPropertiesNames[j]] == 'string') {
+          code += ",\"" + relation[relationsPropertiesNames[j]] + "\"";
+        } else {
+          code += "," + relation[relationsPropertiesNames[j]];
+        }
+      }
+    }
+
+    return code;
+  };
+
+
+  //////////////GML
+
+  /**
+   * Decodes a GML file into a new Network.
+   *
+   * @param  {String} gmlCode GML based representation of Network.
+   * @return {Network}
+   * tags:decoder
+   */
+  NetworkEncodings.decodeGML = function(gmlCode) {
+    if(gmlCode == null) return null;
+
+    gmlCode = gmlCode.substr(gmlCode.indexOf("[") + 1);
+
+    var network = new Network();
+
+    var firstEdgeIndex = gmlCode.search(/\bedge\b/);
+
+    var nodesPart = gmlCode.substr(0, firstEdgeIndex);
+    var edgesPart = gmlCode.substr(firstEdgeIndex);
+
+    var part = nodesPart;
+
+    var blocks = StringOperators.getParenthesisContents(part, true);
+
+    //console.log('blocks.length', blocks.length);
+
+    var graphicsBlock;
+    var lines;
+    var lineParts;
+
+    var indexG0;
+    var indexG1;
+
+    var node;
+
+    for(var i = 0; blocks[i] != null; i++) {
+      blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\n");
+      blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\r");
+
+      indexG0 = blocks[i].indexOf('graphics');
+      if(indexG0 != -1) {
+        indexG1 = blocks[i].indexOf(']');
+        graphicsBlock = blocks[i].substring(indexG0, indexG1 + 1);
+        blocks[i] = blocks[i].substr(0, indexG0) + blocks[i].substr(indexG1 + 1);
+
+        graphicsBlock = StringOperators.getFirstParenthesisContent(graphicsBlock, true);
+        blocks[i] = blocks[i] + graphicsBlock;
+      }
+
+      lines = blocks[i].split('\n');
+
+      lines[0] = NetworkEncodings._cleanLineBeginning(lines[0]);
+
+      lineParts = lines[0].split(" ");
+
+      node = new Node(StringOperators.removeQuotes(lineParts[1]), StringOperators.removeQuotes(lineParts[1]));
+
+      network.addNode(node);
+
+      for(var j = 1; lines[j] != null; j++) {
+        lines[j] = NetworkEncodings._cleanLineBeginning(lines[j]);
+        lines[j] = NetworkEncodings._replaceSpacesInLine(lines[j]);
+        if(lines[j] != "") {
+          lineParts = lines[j].split(" ");
+          if(lineParts[0] == 'label') lineParts[0] = 'name';
+          node[lineParts[0]] = (lineParts[1].charAt(0) == "\"") ? StringOperators.removeQuotes(lineParts[1]).replace(/\*SPACE\*/g, " ") : Number(lineParts[1]);
+        }
+      }
+    }
+
+    part = edgesPart;
+    blocks = StringOperators.getParenthesisContents(part, true);
+
+    var id0;
+    var id1;
+    var node0;
+    var node1;
+    var relation;
+    var nodes = network.nodeList;
+
+
+    for(i = 0; blocks[i] != null; i++) {
+      blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\n");
+      blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\r");
+
+      lines = blocks[i].split('\n');
+
+      id0 = null;
+      id1 = null;
+      relation = null;
+
+      for(j = 0; lines[j] != null; j++) {
+        lines[j] = NetworkEncodings._cleanLineBeginning(lines[j]);
+        if(lines[j] != "") {
+          lineParts = lines[j].split(" ");
+          if(lineParts[0] == 'source') id0 = StringOperators.removeQuotes(lineParts[1]);
+          if(lineParts[0] == 'target') id1 = StringOperators.removeQuotes(lineParts[1]);
+
+          if(relation == null) {
+            if(id0 != null && id1 != null) {
+              node0 = nodes.getNodeById(id0);
+              node1 = nodes.getNodeById(id1);
+              if(node0 != null && node1 != null) {
+                relation = new Relation(id0 + " " + id1, '', node0, node1);
+                network.addRelation(relation);
+              }
+            }
+          } else {
+            if(lineParts[0] == 'value') lineParts[0] = 'weight';
+            relation[lineParts[0]] = (lineParts[1].charAt(0) == "\"") ? StringOperators.removeQuotes(lineParts[1]) : Number(lineParts[1]);
+          }
+        }
+
+      }
+
+    }
+
+    return network;
+  };
+
+  /**
+   * _cleanLineBeginning
+   *
+   * @ignore
+   */
+  NetworkEncodings._cleanLineBeginning = function(string) {
+    string = StringOperators.removeInitialRepeatedCharacter(string, "\n");
+    string = StringOperators.removeInitialRepeatedCharacter(string, "\r");
+    string = StringOperators.removeInitialRepeatedCharacter(string, " ");
+    string = StringOperators.removeInitialRepeatedCharacter(string, "	");
+    return string;
+  };
+
+
+  /**
+   * Encodes a network into GDF format.
+   *
+   * @param  {Network} network The Network to encode.
+   *
+   * @param  {StringList} nodesPropertiesNames Names of Node properties to encode.
+   * @param  {StringList} relationsPropertiesNames Names of Relation properties to encode.
+   * @param {Boolean} idsAsInts If true, then the index of the Node is used as an ID.
+   * GDF strong specification requires ids for nodes being int numbers.
+   * @return {String} GDF string.
+   * tags:encoder
+   */
+  NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPropertiesNames, idsAsInts) {
+    if(network == null) return;
+
+    idsAsInts = idsAsInts == null ? true : idsAsInts;
+
+    nodesPropertiesNames = nodesPropertiesNames == null ? new StringList() : nodesPropertiesNames;
+    relationsPropertiesNames = relationsPropertiesNames == null ? new StringList() : relationsPropertiesNames;
+
+    var code = "graph\n[";
+    var ident = "	";
+    var i;
+    var j;
+    var node;
+    var isString;
+    var value;
+    for(i = 0; network.nodeList[i] != null; i++) {
+      node = network.nodeList[i];
+      code += "\n" + ident + "node\n" + ident + "[";
+      ident = "		";
+      if(idsAsInts) {
+        code += "\n" + ident + "id " + i;
+      } else {
+        code += "\n" + ident + "id \"" + node.id + "\"";
+      }
+      if(node.name != '') code += "\n" + ident + "label \"" + node.name + "\"";
+      for(j = 0; nodesPropertiesNames[j] != null; j++) {
+        value = node[nodesPropertiesNames[j]];
+        if(value == null) continue;
+        if(value.getMonth) value = DateOperators.dateToString(value);
+        isString = (typeof value == 'string');
+        if(isString) value = value.replace(/\n/g, "\\n").replace(/\"/g, "'");
+        code += "\n" + ident + nodesPropertiesNames[j] + " " + (isString ? "\"" + value + "\"" : value);
+      }
+      ident = "	";
+      code += "\n" + ident + "]";
+    }
+
+    var relation;
+    for(i = 0; network.relationList[i] != null; i++) {
+      relation = network.relationList[i];
+      code += "\n" + ident + "edge\n" + ident + "[";
+      ident = "		";
+      if(idsAsInts) {
+        code += "\n" + ident + "source " + network.nodeList.indexOf(relation.node0);
+        code += "\n" + ident + "target " + network.nodeList.indexOf(relation.node1);
+      } else {
+        code += "\n" + ident + "source \"" + relation.node0.id + "\"";
+        code += "\n" + ident + "target \"" + relation.node1.id + "\"";
+      }
+      for(j = 0; relationsPropertiesNames[j] != null; j++) {
+        value = relation[relationsPropertiesNames[j]];
+        if(value == null) continue;
+        if(value.getMonth) value = DateOperators.dateToString(value);
+        isString = (typeof value == 'string');
+        if(isString) value = value.replace(/\n/g, "\\n").replace(/\"|“|”/g, "'");
+        code += "\n" + ident + relationsPropertiesNames[j] + " " + (isString ? "\"" + value + "\"" : value);
+      }
+      ident = "	";
+      code += "\n" + ident + "]";
+    }
+
+    code += "\n]";
+    return code;
+  };
+
+
+
+
+
+  //////////////SYM
+
+  /**
+   * decodeSYM
+   *
+   * @param symCode
+   * @return {Network}
+   */
+  NetworkEncodings.decodeSYM = function(symCode) {
+    //console.log("/////// decodeSYM\n"+symCode+"\n/////////");
+    var i;
+    var j;
+
+    var lines = StringOperators.splitByEnter(symCode);
+    lines = lines == null ? [] : lines;
+
+    var objectPattern = /((?:NODE|RELATION)|GROUP)\s*([A-Za-z0-9_,\s]*)/;
+
+    var network = new Network();
+    var groups = new Table();
+    var name;
+    var id;
+    var node;
+    var node1;
+    var relation;
+    var group;
+    var groupName;
+    var parts;
+    var propName;
+    var propCont;
+
+    var nodePropertiesNames = [];
+    var relationPropertiesNames = [];
+    var groupsPropertiesNames = [];
+
+    for(i = 0; lines[i] != null; i++) {
+      var bits = objectPattern.exec(lines[i]);
+      if(bits != null) {
+        switch(bits[1]) {
+          case "NODE":
+            id = bits[2];
+            name = lines[i + 1].substr(0, 5) == "name:" ? lines[i + 1].substr(5).trim() : "";
+            name = name.replace(/\\n/g, '\n').replace(/\\'/g, "'");
+            node = new Node(id, name);
+            network.addNode(node);
+            j = i + 1;
+            while(j < lines.length && lines[j].indexOf(":") != -1) {
+              parts = lines[j].split(":");
+              propName = parts[0];
+              propCont = parts.slice(1).join(":");
+              if(propName != "name") {
+                propCont = propCont.trim();
+                node[propName] = String(Number(propCont)) == propCont ? Number(propCont) : propCont;
+                if(typeof node[propName] == "string") node[propName] = node[propName].replace(/\\n/g, '\n').replace(/\\'/g, "'");
+                if(nodePropertiesNames.indexOf(propName) == -1) nodePropertiesNames.push(propName);
+              }
+              j++;
+            }
+            if(node.color != null) {
+              if(/.+,.+,.+/.test(node.color)) node.color = 'rgb(' + node.color + ')';
+            }
+            if(node.group != null) {
+              group = groups.getFirstElementByPropertyValue("name", node.group);
+              if(group == null) {
+                console.log("NODES new group:[" + node.group + "]");
+                group = new NodeList();
+                group.name = node.group;
+                group.name = group.name.replace(/\\n/g, '\n').replace(/\\'/g, "'");
+                groups.push(group);
+              }
+              group.addNode(node);
+              //node.group = group;
+            }
+            break;
+          case "RELATION":
+            var ids = bits[2].replace(/\s/g, "").split(",");
+            //var ids = bits[2].split(",");
+            node = network.nodeList.getNodeById(ids[0]);
+            node1 = network.nodeList.getNodeById(ids[1]);
+            if(node != null && node1 != null) {
+              relation = new Relation(node.id + "_" + node1.id, node.id + "_" + node1.id, node, node1);
+              network.addRelation(relation);
+              j = i + 1;
+              while(j < lines.length && lines[j].indexOf(":") != -1) {
+                parts = lines[j].split(":");
+                propName = parts[0];
+                propCont = parts.slice(1).join(":").trim();
+                if(propName != "name") {
+                  propCont = propCont.trim();
+                  relation[propName] = String(Number(propCont)) == propCont ? Number(propCont) : propCont;
+                  if(typeof relation[propName] == "string") relation[propName] = relation[propName].replace(/\\n/g, '\n').replace(/\\'/g, "'");
+                  if(relationPropertiesNames.indexOf(propName) == -1) relationPropertiesNames.push(propName);
+                }
+                j++;
+              }
+            }
+            if(relation != null && relation.color != null) {
+              relation.color = 'rgb(' + relation.color + ')';
+            }
+            break;
+          case "GROUP":
+            groupName = lines[i].substr(5).trim();
+
+            group = groups.getFirstElementByPropertyValue("name", groupName);
+            if(group == null) {
+              group = new NodeList();
+              group.name = groupName;
+              groups.push(group);
+            }
+            j = i + 1;
+            while(j < lines.length && lines[j].indexOf(":") != -1) {
+              parts = lines[j].split(":");
+              if(parts[0] != "name") {
+                parts[1] = parts[1].trim();
+                group[parts[0]] = String(Number(parts[1])) == parts[1] ? Number(parts[1]) : parts[1];
+                if(groupsPropertiesNames.indexOf(parts[0]) == -1) groupsPropertiesNames.push(parts[0]);
+              }
+              j++;
+            }
+
+            if(/.+,.+,.+/.test(group.color)) group.color = 'rgb(' + group.color + ')';
+
+            break;
+        }
+      }
+    }
+
+    for(i = 0; groups[i] != null; i++) {
+      group = groups[i];
+      if(group.color == null) group.color = CATEGORICAL_COLORS[i % CATEGORICAL_COLORS.length];
+      for(j = 0; group[j] != null; j++) {
+        node = group[j];
+        if(node.color == null) node.color = group.color;
+      }
+    }
+
+    network.groups = groups;
+
+
+
+    network.nodePropertiesNames = nodePropertiesNames;
+    network.relationPropertiesNames = relationPropertiesNames;
+    network.groupsPropertiesNames = groupsPropertiesNames;
+
+    return network;
+  };
+
+  /**
+   * encodeSYM
+   *
+   * @param network
+   * @param groups
+   * @param nodesPropertiesNames
+   * @param relationsPropertiesNames
+   * @param groupsPropertiesNames
+   * @return {String}
+   */
+  NetworkEncodings.encodeSYM = function(network, groups, nodesPropertiesNames, relationsPropertiesNames, groupsPropertiesNames) {
+    nodesPropertiesNames = nodesPropertiesNames == null ? new StringList() : nodesPropertiesNames;
+    relationsPropertiesNames = relationsPropertiesNames == null ? new StringList() : relationsPropertiesNames;
+
+    var code = "";
+    var i;
+    var j;
+    var node;
+    var propertyName;
+    for(i = 0; network.nodeList[i] != null; i++) {
+      node = network.nodeList[i];
+      code += (i == 0 ? "" : "\n\n") + "NODE " + node.id;
+      if(node.name != "") code += "\nname:" + (node.name).replace(/\n/g, "\\n");
+      for(j = 0; nodesPropertiesNames[j] != null; j++) {
+        propertyName = nodesPropertiesNames[j];
+        if(node[propertyName] != null) code += "\n" + propertyName + ":" + _processProperty(propertyName, node[propertyName]);
+      }
+    }
+
+    var relation;
+    for(i = 0; network.relationList[i] != null; i++) {
+      relation = network.relationList[i];
+      code += "\n\nRELATION " + relation.node0.id + ", " + relation.node1.id;
+      for(j = 0; relationsPropertiesNames[j] != null; j++) {
+        propertyName = relationsPropertiesNames[j];
+        if(relation[propertyName] != null) code += "\n" + propertyName + ":" + _processProperty(propertyName, relation[propertyName]);
+      }
+    }
+
+    if(groups == null) return code;
+
+    var group;
+    for(i = 0; groups[i] != null; i++) {
+      group = groups[i];
+      code += "\n\nGROUP " + group.name;
+      for(j = 0; groupsPropertiesNames[j] != null; j++) {
+        propertyName = groupsPropertiesNames[j];
+        if(group[propertyName] != null) code += "\n" + propertyName + ":" + _processProperty(propertyName, group[propertyName]);
+      }
+    }
+
+    //console.log("/////// encodeSYM\n"+code+"\n/////////");
+
+    return code;
+  };
+
+  function _processProperty(propName, propValue) { //TODO: use this in other encoders
+    switch(propName) {
+      case "color":
+        if(propValue.substr(0, 3) == "rgb") {
+          var rgb = ColorOperators.colorStringToRGB(propValue);
+          return rgb.join(',');
+        }
+        return propValue;
+        break;
+    }
+    propValue = String(propValue).replace(/\n/g, "\\n");
+    return propValue;
+  };
+
+
+
+
+
+  /////////////////
+
+  //Also used by CSVToTable
+
+  /**
+   * replaceChomasInLine
+   *
+   * @ignore
+   */
+  NetworkEncodings.replaceChomasInLine = function(line, separator) {
+    var quoteBlocks = line.split("\"");
+    if(quoteBlocks.length < 2) return line;
+    var insideQuote;
+    var i;
+    var re;
+    separator = separator==null?",":separator;
+
+    switch(separator){
+      case ",":
+        re = /,/g;
+        break;
+      case ";":
+        re = /;/g;
+        break;
+    }
+
+    for(i = 0; quoteBlocks[i] != null; i++) {
+      insideQuote = i * 0.5 != Math.floor(i * 0.5);
+      if(insideQuote) {
+        quoteBlocks[i] = quoteBlocks[i].replace(re, "*CHOMA*");
+      }
+    }
+    line = StringList.fromArray(quoteBlocks).getConcatenated("");
+    return line;
+  };
+
+  /**
+   * _replaceSpacesInLine
+   *
+   * @ignore
+   */
+  NetworkEncodings._replaceSpacesInLine = function(line) {
+    var quoteBlocks = line.split("\"");
+    if(quoteBlocks.length < 2) return line;
+    var insideQuote;
+    var i;
+    for(i = 0; quoteBlocks[i] != null; i++) {
+      insideQuote = i * 0.5 != Math.floor(i * 0.5);
+      if(insideQuote) {
+        quoteBlocks[i] = quoteBlocks[i].replace(/ /g, "*SPACE*");
+      }
+    }
+    line = StringList.fromArray(quoteBlocks).getConcatenated("\"");
+    return line;
+  };
+
+  exports.NetworkEncodings = NetworkEncodings;
+
+  function ListConversions() {}
+
+
+  /**
+   * Converts the List into a NumberList.
+   *
+   * @param  {List} list
+   * @return {NumberList}
+   * tags:conversion
+   */
+  ListConversions.toNumberList = function(list) {
+    var numberList = new NumberList();
+    numberList.name = list.name;
+    var i;
+    for(i = 0; list[i] != null; i++) {
+      numberList[i] = Number(list[i]);
+    }
+    return numberList;
+  };
+
+  /**
+   * Converts the List into a StringList.
+   *
+   * @param  {List} list
+   * @return {StringList}
+   * tags:conversion
+   */
+  ListConversions.toStringList = function(list) {
+    var i;
+    var stringList = new StringList();
+    stringList.name = list.name;
+    for(i = 0; list[i] != null; i++) {
+      if(typeof list[i] == 'number') {
+        stringList[i] = String(list[i]);
+      } else {
+        stringList[i] = list[i].toString();
+      }
+    }
+    return stringList;
+  };
+
+  /**
+   * returns a string representing list
+   *
+   * @param  {List} list
+   * @param  {Number} level
+   *
+   */
+  ListConversions.toReport = function(list, level) { //TODO:complete
+    var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
+    var text = level > 0 ? (ident + "////report of instance of List////") : "///////////report of instance of List//////////";
+
+    var length = list.length;
+    var i;
+
+    text += ident + "name: " + list.name;
+    text += ident + "type: " + list.type;
+
+    if(length === 0) {
+      text += ident + "single element: [" + list[0] + "]";
+      return text;
+    } else {
+      text += ident + "length: " + length;
+      text += ident + "first element: [" + list[0] + "]";
+    }
+
+    switch(list.type) {
+      case "NumberList":
+        var min = list.getMin();
+        var max = list.getMax();
+        list.min = min;
+        list.max = max;
+        var average = list.getAverage();//(min + max) * 0.5;
+        list.average = average;
+        text += ident + "min: " + min;
+        text += ident + "max: " + max;
+        text += ident + "average: " + average;
+        if(length < 101) {
+          text += ident + "numbers: " + list.join(", ");
+        }
+        break;
+        case "StringList":
+      case "List":
+        var freqTable = list.getFrequenciesTable(true);
+        list._freqTable = freqTable;
+        text += ident + "number of different elements: " + freqTable[0].length;
+        if(freqTable[0].length < 10) {
+          text += ident + "elements frequency:";
+        } else {
+          text += ident + "some elements frequency:";
+        }
+
+        for(i = 0; freqTable[0][i] != null && i < 10; i++) {
+          text += ident + "  [" + String(freqTable[0][i]) + "]: " + freqTable[1][i];
+        }
+
+        var joined;
+        if(list.type == "List") {
+          joined = list.join("], [");
+        } else {
+          joined = ListConversions.toStringList(list).join("], [");
+        }
+
+        if(joined.length < 2000) text += ident + "strings: [" + joined + "]";
+        break;
+
+    }
+
+    ///add ideas to: analyze, visualize
+
+
+    return text;
+  };
+
+
+  ListConversions.toReportHtml = function(list, level) { //TODO:complete
+    var ident = "<br>" + (level > 0 ? StringOperators.repeatString("&nbsp", level) : "");
+    var text =  level > 0 ? "" : "<b><font style=\"font-size:18px\">list report</f></b>";
+
+    var length = list.length;
+    var i;
+
+    if(list.name){
+      text += ident + "name: <b>" + list.name + "</b>";
+    } else {
+      text += ident + "<i>no name</i>";
+    }
+    text += ident + "type: <b>" + list.type + "</b>";
+
+    if(length === 0) {
+      text += ident + "single element: [<b>" + list[0] + "</b>]";
+      return text;
+    } else {
+      text += ident + "length: <b>" + length + "</b>";
+      text += ident + "first element: [<b>" + list[0] + "</b>]";
+    }
+
+    switch(list.type) {
+      case "NumberList":
+        var min = 9999999;
+        var max = -9999999;
+        var average = 0;
+        var shorten = new NumberList();
+        var index = 0;
+        var accumsum = 0;
+        var maxAccumsum = -99999;
+        var sizeAccum = Math.max(Math.floor(list.length/50), 1);
+
+        list.forEach(function(val){
+          min = Math.min(min, val);
+          max = Math.max(max, val);
+          average += val;
+          accumsum += val;
+          index++;
+          if(index==sizeAccum){
+            accumsum /= index;
+            maxAccumsum = Math.max(maxAccumsum, accumsum);
+            shorten.push(accumsum);
+            accumsum=0;
+            index=0;
+          }
+        });
+        if(index !== 0){
+            accumsum /=index;
+            maxAccumsum = Math.max(maxAccumsum, accumsum);
+            shorten.push(accumsum);
+        }
+
+        shorten = shorten.factor(1/maxAccumsum);
+
+        average /= list.length;
+
+        list.min = min;
+        list.max = max;
+        list.average = average;
+        text += ident + "min: <b>" + min + "</b>";
+        text += ident + "max: <b>" + max + "</b>";
+        text += ident + "average: <b>" + average + "</b>";
+        if(length < 101) {
+          text += ident + "numbers: <b>" + list.join("</b>, <b>") + "</b>";
+        }
+        text += ident;
+        for(i=0; shorten[i]!=null; i++){
+          text += "<font style=\"font-size:7px\"><font color=\""+ColorOperators.colorStringToHEX(ColorScales.grayToOrange(shorten[i]))+"\">█</f></f>";
+        }
+        break;
+      case "StringList":
+      case "List":
+        var freqTable = list.getFrequenciesTable(true);
+        list._freqTable = freqTable;
+        var catColors = ColorListGenerators.createCategoricalColors(2, freqTable[0].length);
+
+        text += ident + "entropy: <b>" + NumberOperators.numberToString(ListOperators.getListEntropy(list, null, freqTable), 4) + "</b>";
+
+        text += ident + "number of different elements: <b>" + freqTable[0].length + "</b>";
+        if(freqTable[0].length < 10) {
+          text += ident + "elements frequency:";
+        } else {
+          text += ident + "some elements frequency:";
+        }
+
+        for(i = 0; freqTable[0][i] != null && i < 10; i++) {
+          text += ident + "  [<b>" + String(freqTable[0][i]) + "</b>]: <font style=\"font-size:10px\"><b><font color=\""+ColorOperators.colorStringToHEX(catColors[i])+"\">" + freqTable[1][i] + "</f></b></f>";
+        }
+
+        var joined;
+        if(list.type == "List") {
+          joined = list.join("], [");
+        } else {
+          joined = ListConversions.toStringList(list).join("], [");
+        }
+
+        if(joined.length < 2000) text += ident + "contents: [" + joined + "]";
+
+        var weights = NumberListOperators.normalizedToSum(freqTable[1]);
+
+        var bars = StringOperators.createsCategoricalColorsBlocksHtml(weights, 55, catColors);
+        text += ident;
+        text += "<font style=\"font-size:7px\">"+bars+"</f>";
+
+        break;
+    }
+
+
+    ///add ideas to: analyze, visualize
+    return text;
+  };
+
+  exports.ListConversions = ListConversions;
+
+  function TableEncodings() {}
+
+
+  TableEncodings.ENTER = String.fromCharCode(13);
+  TableEncodings.ENTER2 = String.fromCharCode(10);
+  TableEncodings.ENTER3 = String.fromCharCode(8232);
+
+  TableEncodings.SPACE = String.fromCharCode(32);
+  TableEncodings.SPACE2 = String.fromCharCode(160);
+
+  TableEncodings.TAB = "	";
+  TableEncodings.TAB2 = String.fromCharCode(9);
+
+
+  /**
+   * Decode a String in format CSV into a Table
+   * @param {String} csv CSV formatted text
+   *
+   * @param {Boolean} first_row_header first row is header (default: false)
+   * @param {String} separator separator character (default: ",")
+   * @param {Object} value_for_nulls Object to be placed instead of null values
+   * @param {Boolean} listsToStringList if true (default value), converts lists that are not StringLists, NumberLists… (probably because they contain strings and numbers) into StringLists
+   * @return {Table} resulting Table
+   * tags:decoder
+   */
+  TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, valueForNulls, listsToStringList) {
+    if(csvString==null) return null;
+    valueForNulls = valueForNulls == null ? "" : valueForNulls;
+    listsToStringList = listsToStringList==null?true:listsToStringList;
+
+    var i, j;
+    var _firstRowIsHeader = firstRowIsHeader == null ? false : firstRowIsHeader;
+
+    if(csvString == null) return null;
+    if(csvString == "") return new Table();
+
+    csvString = csvString.replace(/\$/g, "");
+
+    var blocks = csvString.split("\"");
+    for(i = 1; blocks[i] != null; i += 2) {
+      blocks[i] = blocks[i].replace(/\n/g, "*ENTER*");
+    }
+    csvString = blocks.join("\""); //TODO: create a general method for replacements inside "", apply it to chomas
+
+    var enterChar = TableEncodings.ENTER2;
+    var lines = csvString.split(enterChar);
+    if(lines.length == 1) {
+      enterChar = TableEncodings.ENTER;
+      lines = csvString.split(enterChar);
+      if(lines.length == 1) {
+        enterChar = TableEncodings.ENTER3;
+        lines = csvString.split(enterChar);
+      }
+    }
+
+    var table = new Table();
+    var comaCharacter = separator != undefined ? separator : ",";
+
+    if(csvString == null || csvString == "" || csvString == " " || lines.length == 0) return null;
+
+    var startIndex = 0;
+    if(_firstRowIsHeader) {
+      startIndex = 1;
+      var headerContent = lines[0].split(comaCharacter);
+    }
+
+    var element;
+    var cellContent;
+    var numberCandidate;
+    for(i = startIndex; i < lines.length; i++) {
+      if(lines[i].length < 2) continue;
+
+      var cellContents = NetworkEncodings.replaceChomasInLine(lines[i], separator).split(comaCharacter); //TODO: will be obsolete (see previous TODO)
+
+      for(j = 0; j < cellContents.length; j++) {
+        table[j] = table[j] == null ? new List() : table[j];
+        if(_firstRowIsHeader && i == 1) {
+          table[j].name = ( headerContent[j] == null ? "" : TableEncodings._removeQuotes(headerContent[j]) ).trim();
+        }
+        var actualIndex = _firstRowIsHeader ? (i - 1) : i;
+
+        cellContent = cellContents[j].replace(/\*CHOMA\*/g, separator).replace(/\*ENTER\*/g, "\n");
+
+        cellContent = cellContent == '' ? valueForNulls : cellContent;
+
+        cellContent = String(cellContent);
+
+        numberCandidate = Number(cellContent.replace(',', '.'));
+
+        element = (numberCandidate || (numberCandidate == 0 && cellContent != '')) ? numberCandidate : cellContent;
+
+        if(typeof element == 'string') element = TableEncodings._removeQuotes(element);
+
+        table[j][actualIndex] = element;
+      }
+    }
+
+    for(i = 0; table[i] != null; i++) {
+      table[i] = table[i].getImproved();
+      if(listsToStringList && table[i].type=="List") table[i] = ListConversions.toStringList(table[i]);
+    }
+
+    table = table.getImproved();
+
+    return table;
+  };
+
+  /**
+   * @ignore
+   */
+  TableEncodings._removeQuotes = function(string) {
+    if(string.length == 0) return string;
+    if((string.charAt(0) == "\"" || string.charAt(0) == "'") && (string.charAt(string.length - 1) == "\"" || string.charAt(string.length - 1) == "'")) string = string.substr(1, string.length - 2);
+    return string;
+  };
+
+
+  /**
+   * Encode a Table into a String in format CSV
+   * @param {Table} Table to be enconded
+   *
+   * @param {String} separator character (default: ",")
+   * @param {Boolean} first row as List names (default: false)
+   * @return {String} resulting String in CSV format
+   * tags:encoder
+   */
+  TableEncodings.TableToCSV = function(table, separator, namesAsHeaders) {
+    separator = separator || ",";
+    var i;
+    var j;
+    var list;
+    var type;
+    var lines = ListGenerators.createListWithSameElement(table[0].length, "");
+    var addSeparator;
+    for(i = 0; table[i] != null; i++) {
+      list = table[i];
+      type = list.type;
+      addSeparator = i != table.length - 1;
+      for(j = 0; list[j] != null; j++) {
+        switch(type) {
+          case 'NumberList':
+            lines[j] += list[j];
+            break;
+          default:
+            lines[j] += "\"" + list[j] + "\"";
+            break;
+        }
+        if(addSeparator) lines[j] += separator;
+      }
+    }
+
+    var headers = '';
+    if(namesAsHeaders) {
+      for(i = 0; table[i] != null; i++) {
+        list = table[i];
+        headers += "\"" + list.name + "\"";
+        if(i != table.length - 1) headers += separator;
+      }
+      headers += '\n';
+    }
+
+    return headers + lines.getConcatenated("\n");
+  };
+
+  exports.TableEncodings = TableEncodings;
+
+  PolygonList.prototype = new Table();
+  PolygonList.prototype.constructor = PolygonList;
+
+  /**
+   * @classdesc A {@link List} structure for storing {@link Polygon} instances.
+   *
+   * Additional functions that work on NumberTable can be found in:
+   * <ul>
+   *  <li>Operators:   {@link PolygonListOperators}</li>
+   *  <li>Encodings: {@link PolygonListEncodings}</li>
+   * </ul>
+   *
+   *
+   * @description Creates a new PolygonList.
+   * @constructor
+   * @category geometry
+   */
+  function PolygonList() {
+    var array = Table.apply(this, arguments);
+    array = PolygonList.fromArray(array);
+    return array;
+  }
+
+
+  /**
+   * @todo write docs
+   */
+  PolygonList.fromArray = function(array) {
+    var result = Table.fromArray(array);
+    result.type = "PolygonList";
+    result.getFrame = PolygonList.prototype.getFrame;
+    result.add = PolygonList.prototype.add;
+    result.factor = PolygonList.prototype.factor;
+    result.clone = PolygonList.prototype.clone;
+    result.getString = PolygonList.prototype.getString;
+    return result;
+  };
+
+  /**
+   * @todo write docs
+   */
+  PolygonList.prototype.getFrame = function() {
+    if(this.length == 0) return null;
+    var frameP = this[0].getFrame();
+    var rectangle = new Rectangle(frameP.x, frameP.y, frameP.getRight(), frameP.getBottom());
+    for(var i = 1; this[i] != null; i++) {
+      frameP = this[i].getFrame();
+      rectangle.x = Math.min(rectangle.x, frameP.x);
+      rectangle.y = Math.min(rectangle.y, frameP.y);
+      rectangle.width = Math.max(rectangle.width, frameP.getRight());
+      rectangle.height = Math.max(rectangle.height, frameP.getBottom());
+    }
+    rectangle.width -= rectangle.x;
+    rectangle.height -= rectangle.y;
+
+    return rectangle;
+  };
+
+  /**
+   * @todo write docs
+   */
+  PolygonList.prototype.add = function(object) {
+    var type = typeOf(object);
+    var i;
+    switch(type) {
+      case 'Point':
+        var newPolygonList = new PolygonList();
+        for(i = 0; this[i] != null; i++) {
+          newPolygonList[i] = this[i].add(object);
+        }
+        newPolygonList.name = this.name;
+        return newPolygonList;
+        break;
+    }
+  };
+
+  /**
+   * @todo write docs
+   */
+  PolygonList.prototype.factor = function(value) {
+    var newPolygonList = new PolygonList();
+    for(var i = 0; this[i] != null; i++) {
+      newPolygonList[i] = this[i].factor(value);
+    }
+    newPolygonList.name = this.name;
+    return newPolygonList;
+  };
+
+  /**
+   * @todo write docs
+   */
+  PolygonList.prototype.clone = function() {
+    var newPolygonList = new PolygonList();
+    for(var i = 0; this[i] != null; i++) {
+      newPolygonList[i] = this[i].clone();
+    }
+    newPolygonList.name = this.name;
+    return newPolygonList;
+  };
+
+  // PolygonList.prototype.getString=function(pointSeparator,polygonSeparator){
+  // pointSeparator = pointSeparator==null?',':pointSeparator;
+  // polygonSeparator = polygonSeparator==null?'/':polygonSeparator;
+  // var j;
+  // var t='';
+  // for(var i=0;this[i]!=null;i++){
+  // t+=(i==0?'':polygonSeparator);
+  // for(j=0; this[i][j]!=null; j++){
+  // t+=(j==0?'':pointSeparator)+this[i][j].x+pointSeparator+this[i][j].y;
+  // }
+  // }
+  // return t;
+  // }
+
+  exports.PolygonList = PolygonList;
+
+  var version = "0.4.0";
 
   /*
    * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
@@ -5835,1262 +13112,8 @@ define('src/index', ['exports'], function (exports) {
   exports.radToGrad = radToGrad;
   exports.gradToRad = gradToRad;
 
-  Polygon.prototype = new List__default();
-  Polygon.prototype.constructor = Polygon;
-
-  /**
-   * @classdesc A Polygon is a shape created from a list of {@link Point|Points}.
-   *
-   * @description Creates a new Polygon.
-   * @constructor
-   * @category geometry
-   */
-  function Polygon() {
-    var array = List__default.apply(this, arguments);
-    array = Polygon.fromArray(array);
-    return array;
-  }
-
-
-  /**
-  * @todo write docs
-  */
-  Polygon.fromArray = function(array) {
-    var result = List__default.fromArray(array);
-    result.type = "Polygon";
-
-    result.getFrame = Polygon.prototype.getFrame;
-    result.getBarycenter = Polygon.prototype.getBarycenter;
-    result.add = Polygon.prototype.add;
-    result.factor = Polygon.prototype.factor;
-    result.getRotated = Polygon.prototype.getRotated;
-    result.getClosestPoint = Polygon.prototype.getClosestPoint;
-    result.toNumberList = Polygon.prototype.toNumberList;
-    result.containsPoint = Polygon.prototype.containsPoint;
-    //transform
-    result.approach = Polygon.prototype.approach;
-    //override
-    result.clone = Polygon.prototype.clone;
-
-    return result;
-  };
-
-
-  /**
-  * @todo write docs
-  */
-  Polygon.prototype.getFrame = function() {
-    if(this.length == 0) return null;
-    var rectangle = new Rectangle__default(this[0].x, this[0].y, this[0].x, this[0].y);
-    var p;
-    for(var i = 1; this[i] != null; i++) {
-      p = this[i];
-      rectangle.x = Math.min(rectangle.x, p.x);
-      rectangle.y = Math.min(rectangle.y, p.y);
-      rectangle.width = Math.max(rectangle.width, p.x);
-      rectangle.height = Math.max(rectangle.height, p.y);
-    }
-
-    rectangle.width -= rectangle.x;
-    rectangle.height -= rectangle.y;
-
-    return rectangle;
-  };
-
-  /**
-  * @todo write docs
-  */
-  Polygon.prototype.getBarycenter = function(countLastPoint) {
-    var i;
-    countLastPoint = countLastPoint == null ? true : countLastPoint;
-    var cLPN = 1 - Number(countLastPoint);
-    if(this.length == 0) return null;
-    var barycenter = new Point(this[0].x, this[0].y);
-    for(i = 1; this[i + cLPN] != null; i++) {
-      barycenter.x += this[i].x;
-      barycenter.y += this[i].y;
-    }
-    barycenter.x /= this.length;
-    barycenter.y /= this.length;
-    return barycenter;
-  };
-
-  /**
-  * @todo write docs
-  */
-  Polygon.prototype.add = function(object) {
-    var type = typeOf(object);
-    var i;
-    switch(type) {
-      case 'Point':
-        var newPolygon = new Polygon();
-        for(i = 0; this[i] != null; i++) {
-          newPolygon[i] = this[i].add(object);
-        }
-        newPolygon.name = this.name;
-        return newPolygon;
-        break;
-    }
-  };
-
-  /**
-   * scales the polygon by a number or a Point
-   * @param  {Object} value number or point
-   * @return {Polygon}
-   * tags:
-   */
-  Polygon.prototype.factor = function(value) {
-    var i;
-    var newPolygon = new Polygon();
-    newPolygon.name = this.name;
-
-    if(value >= 0 || value < 0) {
-      for(i = 0; this[i] != null; i++) {
-        newPolygon[i] = new Point(this[i].x * value, this[i].y * value);
-      }
-
-      return newPolygon;
-    } else if(value.type != null && value.type == 'Point') {
-      for(i = 0; this[i] != null; i++) {
-        newPolygon[i] = new Point(this[i].x * value.x, this[i].y * value.y);
-      }
-
-      return newPolygon;
-    }
-
-    return null;
-  };
-
-
-  /**
-  * @todo write docs
-  */
-  Polygon.prototype.getRotated = function(angle, center) {
-    center = center == null ? new Point() : center;
-
-    var newPolygon = new Polygon();
-    for(var i = 0; this[i] != null; i++) {
-      newPolygon[i] = new Point(Math.cos(angle) * (this[i].x - center.x) - Math.sin(angle) * (this[i].y - center.y) + center.x, Math.sin(angle) * (this[i].x - center.x) + Math.cos(angle) * (this[i].y - center.y) + center.y);
-    }
-    newPolygon.name = this.name;
-    return newPolygon;
-  };
-
-  /**
-   * @todo write docs
-   */
-  Polygon.prototype.getClosestPoint = function(point) {
-    var closest = this[0];
-    var d2Min = Math.pow(point.x - closest.x, 2) + Math.pow(point.y - closest.y, 2);
-    var d2;
-
-    for(var i = 1; this[i] != null; i++) {
-      d2 = Math.pow(point.x - this[i].x, 2) + Math.pow(point.y - this[i].y, 2);
-      if(d2 < d2Min) {
-        d2Min = d2;
-        closest = this[i];
-      }
-    }
-    return closest;
-  };
-
-  /**
-   * @todo write docs
-   */
-  Polygon.prototype.toNumberList = function() {
-    var numberList = new NumberList();
-    var i;
-    for(i = 0; this[i] != null; i++) {
-      numberList[i * 2] = this[i].x;
-      numberList[i * 2 + 1] = this[i].y;
-    }
-    return numberList;
-  };
-
-  /**
-  * @todo write docs
-  * Thanks http://jsfromhell.com/math/is-point-in-poly AND http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
-  */
-  Polygon.prototype.containsPoint = function(point) {
-    var i;
-    var j;
-    var l;
-    for(var c = false, i = -1, l = this.length, j = l - 1; ++i < l; j = i)
-          ((this[i].y <= point.y && point.y < this[j].y) || (this[j].y <= point.y && point.y < this[i].y))
-          && (point.x < (this[j].x - this[i].x) * (point.y - this[i].y) / (this[j].y - this[i].y) + this[i].x)
-          && (c = !c);
-    return c;
-  };
-
-  //transform
-
-  /**
-   * @todo write docs
-   */
-  Polygon.prototype.approach = function(destiny, speed) {
-    speed = speed || 0.5;
-    var antispeed = 1 - speed;
-
-    this.forEach(function(point, i) {
-      point.x = antispeed * point.x + speed * destiny[i].x;
-      point.y = antispeed * point.y + speed * destiny[i].y;
-    });
-  };
-
-
-  /**
-   * @todo write docs
-   */
-  Polygon.prototype.clone = function() {
-    var newPolygon = new Polygon();
-    for(var i = 0; this[i] != null; i++) {
-      newPolygon[i] = this[i].clone();
-    }
-    newPolygon.name = this.name;
-    return newPolygon;
-  };
-
-  exports.Polygon = Polygon;
-
-  NumberList.prototype = new List__default();
-  NumberList.prototype.constructor = NumberList;
-
-  /**
-   * @classdesc List structure for Numbers.
-   *
-   * @constructor
-   * @description Creates a new NumberList.
-   * @category numbers
-   */
-  function NumberList() {
-    var args = [];
-
-    for(var i = 0; i < arguments.length; i++) {
-      args[i] = Number(arguments[i]);
-    }
-    var array = List__default.apply(this, args);
-    array = NumberList.fromArray(array);
-    return array;
-  }
-
-
-  /**
-   * Creates a new NumberList from a raw array of numbers.
-   *
-   * @param {Number[]} array The array of numbers to create the list from.
-   * @param {Boolean} forceToNumber If true, explicitly converts values in array to Numbers.
-   * @return {NumberList} New NumberList containing values in array
-   */
-  NumberList.fromArray = function(array, forceToNumber) {
-    forceToNumber = forceToNumber == null ? true : forceToNumber;
-
-    var result = List__default.fromArray(array);
-
-    if(forceToNumber) {
-      for(var i = 0; i < result.length; i++) {
-        result[i] = Number(result[i]);
-      }
-    }
-
-    result.type = "NumberList";
-
-    //assign methods to array:
-    result.unit = NumberList.prototype.unit;
-    result.tenPower = NumberList.prototype.tenPower;
-    result.getMin = NumberList.prototype.getMin;
-    result.getMax = NumberList.prototype.getMax;
-    result.getAmplitude = NumberList.prototype.getAmplitude;
-    result.getMinMaxInterval = NumberList.prototype.getMinMaxInterval;
-    result.getSum = NumberList.prototype.getSum;
-    result.getProduct = NumberList.prototype.getProduct;
-    result.getInterval = NumberList.prototype.getInterval;
-    result.getNumbersSimplified = NumberList.prototype.getNumbersSimplified;
-    result.getNormalized = NumberList.prototype.getNormalized;
-    result.getNormalizedToMax = NumberList.prototype.getNormalizedToMax;
-    result.getNormalizedToSum = NumberList.prototype.getNormalizedToSum;
-    result.toPolygon = NumberList.prototype.toPolygon;
-
-    //statistics
-    result.getAverage = NumberList.prototype.getAverage;
-    result.getNorm = NumberList.prototype.getNorm;
-    result.getStandardDeviation = NumberList.prototype.getStandardDeviation;
-    result.getVariance = NumberList.prototype.getVariance;
-    result.getMedian = NumberList.prototype.getMedian;
-    result.getQuantiles = NumberList.prototype.getQuantiles;
-
-    //sorting
-    result.getSorted = NumberList.prototype.getSorted;
-    result.getSortIndexes = NumberList.prototype.getSortIndexes;
-    result.factor = NumberList.prototype.factor;
-    result.add = NumberList.prototype.add;
-    result.subtract = NumberList.prototype.subtract;
-    result.divide = NumberList.prototype.divide;
-    result.dotProduct = NumberList.prototype.dotProduct;
-    result.distance = NumberList.prototype.distance;
-    result.sqrt = NumberList.prototype.sqrt;
-    result.pow = NumberList.prototype.pow;
-    result.log = NumberList.prototype.log;
-    result.floor = NumberList.prototype.floor;
-    result.isEquivalent = NumberList.prototype.isEquivalent;
-    result.toStringList = NumberList.prototype.toStringList;
-
-    //transform
-    result.approach = NumberList.prototype.approach;
-
-    //override
-    result.clone = NumberList.prototype.clone;
-    result._slice = Array.prototype.slice;
-    result.slice = NumberList.prototype.slice;
-
-    return result;
-  };
-
-  NumberList.prototype.unit = "";
-  NumberList.prototype.tenPower = 0;
-
-  /**
-   * Returns minimum value in the List. Null if the NumberList is empty.
-   *
-   * @return {Number} The min value.
-   */
-  NumberList.prototype.getMin = function() {
-    //TODO:store result and retrieve while the NumberList doesn't change;
-    if(this.length === 0) return null;
-    var i;
-    var min = this[0];
-    for(i = 1; i < this.length; i++) {
-      min = Math.min(min, this[i]);
-    }
-    return min;
-  };
-
-  /**
-   * Returns maximum value in the List. Null if the NumberList is empty.
-   *
-   * @return {Number} The max value.
-   */
-  NumberList.prototype.getMax = function() {
-    //TODO:store result and retrieve while the NumberList doesn't change;
-    if(this.length === 0) return null;
-    var i;
-    var max = this[0];
-    for(i = 1; i < this.length; i++) {
-      max = Math.max(max, this[i]);
-    }
-    return max;
-  };
-
-  /**
-   * Finds the range of the values in the NumberList.
-   *
-   * @return {Number} The difference between the minimum and maximum value in the List.
-   */
-  NumberList.prototype.getAmplitude = function() {
-    if(this.length === 0) return 0;
-    var min = this[0];
-    var max = this[0];
-    for(var i = 1; this[i] != null; i++) {
-      min = Math.min(min, this[i]);
-      max = Math.max(max, this[i]);
-    }
-    return max - min;
-  };
-
-  /**
-   * Provides the min and max values as an {@link Interval}.
-   *
-   * @return {Interval} Interval containing the min and max values of the List.
-   */
-  NumberList.prototype.getMinMaxInterval = function() { //deprecated?
-    return new Interval__default(this.getMin(), this.getMax());
-  };
-
-  /**
-   * Returns the total sum of values in the NumberList.
-   *
-   * @return {Number} Sum of all values in the List.
-   * tags:
-   */
-  NumberList.prototype.getSum = function() {
-    if(this.length === 0) return 0;
-    var i;
-    var sum = this[0];
-    for(i = 1; i < this.length; i++) {
-      sum += this[i];
-    }
-    return sum;
-  };
-
-  /**
-   * Returns the product of values in the NumberList.
-   *
-   * @return {Number} The product of all values in the NumberList.
-   * tags:
-   */
-  NumberList.prototype.getProduct = function() {
-    if(this.length === 0) return null;
-    var i;
-    var product = this[0];
-    for(i = 1; i < this.length; i++) {
-      product *= this[i];
-    }
-    return product;
-  };
-
-  /**
-   * Returns a NumberList normalized to the sum.
-   *
-   * @param {Number} factor Optional multiplier to modify the normalized values by.
-   * Defaults to 1.
-   * @param {Number} sum Optional sum to normalize to.
-   * If not provided, sum will be calculated automatically.
-   * @return {NumberList} New NumberList of values normalized to the sum.
-   * tags:
-   */
-  NumberList.prototype.getNormalizedToSum = function(factor, sum) {
-    factor = factor == null ? 1 : factor;
-    var newNumberList = new NumberList();
-    newNumberList.name = this.name;
-    if(this.length === 0) return newNumberList;
-    var i;
-    sum = sum == null ? this.getSum() : sum;
-    if(sum === 0) return this.clone();
-
-    for(i = 0; i < this.length; i++) {
-      newNumberList.push(factor * this[i] / sum);
-    }
-    return newNumberList;
-  };
-
-  /**
-   * Returns a NumberList normalized to min-max interval.
-   *
-   * @param {Number} factor Optional multiplier to modify the normalized values by.
-   * Defaults to 1.
-   * @return {NumberList}
-   * tags:
-   */
-  NumberList.prototype.getNormalized = function(factor) {
-    factor = factor == null ? 1 : factor;
-
-    if(this.length === 0) return null;
-
-    var i;
-    var interval = this.getMinMaxInterval();
-    var a = interval.getAmplitude();
-    var newNumberList = new NumberList();
-    for(i = 0; i < this.length; i++) {
-      newNumberList.push(factor * ((this[i] - interval.x) / a));
-    }
-    newNumberList.name = this.name;
-    return newNumberList;
-  };
-
-  /**
-   * Returns a NumberList normalized to Max.
-   *
-   * @param {Number} factor Optional multiplier to modify the normalized values by. Defaults to 1.
-   * @return {NumberList}
-   * tags:
-   */
-  NumberList.prototype.getNormalizedToMax = function(factor) {
-    factor = factor == null ? 1 : factor;
-
-    if(this.length == 0) return null;
-
-    var max = this.getMax();
-    if(max == 0) {
-      max = this.getMin();
-      if(max == 0) return ListGenerators.createListWithSameElement(this.length, 0);
-    }
-    var newNumberList = new NumberList();
-    for(var i = 0; this[i] != null; i++) {
-      newNumberList.push(factor * (this[i] / max));
-    }
-    newNumberList.name = this.name;
-    return newNumberList;
-  };
-
-  /**
-   * Builds an Interval with min and max value from the NumberList
-   *
-   * @return {Interval} with starting value as the min of the NumberList
-   * and ending value as the max.
-   * tags:
-   */
-  NumberList.prototype.getInterval = function() {
-    if(this.length === 0) return null;
-    var max = this[0];
-    var min = this[0];
-    for(var i = 1; this[i] != null; i++) {
-      max = Math.max(max, this[i]);
-      min = Math.min(min, this[i]);
-    }
-    var interval = new Interval__default(min, max);
-    return interval;
-  };
-
-
-
-  /**
-   * simplifies a categorical list, by keeping the nCategories-1 most common values, and replacing the others with an "other" element
-   * this method reduces the number of different values contained in the list, converting it into a categorical list
-   * @param  {Number} method simplification method:<b>0:significant digits<br>1:quantiles (value will be min value in percentile)<br>2:orders of magnitude
-   *
-   * @param  {Number} param different meaning according to choosen method:<br>0:number of significant digits<br>1:number of quantiles<br>2:no need of param
-   * @return {NumberList} simplified list
-   * tags:
-   */
-  NumberList.prototype.getNumbersSimplified = function(method, param) {
-    method = method||0;
-    param = param||0;
-
-    var newList = new NumberList();
-    newList.name = this.name;
-
-
-    switch(method){
-      case 0:
-        var power = Math.pow(10, param);
-        this.forEach(function(val){
-          newList.push(Math.floor(val/power)*power);
-        });
-        break;
-      case 1:
-        //deploy quantiles first (optional return of n percentile, min value, interval, numberTable with indexes, numberTable with values)
-        break;
-    }
-
-    return newList;
-  };
-
-
-  /**
-   * Builds an {@link Polygon} from the NumberList,
-   * using each consecutive pair of values in the numberList as
-   * x and y positions.
-   *
-   * @return {Polygon} Polygon representing the values
-   * in the NumberList as x/y coordinates.
-   */
-  NumberList.prototype.toPolygon = function() {
-    if(this.length === 0) return null;
-    var polygon = new Polygon();
-    for(var i = 0; this[i + 1] != null; i += 2) {
-      polygon.push(new Point(this[i], this[i + 1]));
-    }
-    return polygon;
-  };
-
-
-  /////////statistics
-
-  /**
-   * Calculates mean of the NumberList.
-   *
-   * @return {Number} Mean of all values in the List.
-   * tags:statistics
-   */
-  NumberList.prototype.getAverage = function() {
-    return this.getSum() / this.length;
-  };
-
-  /**
-   * Calculates the geometric mean of the NumberList.
-   *
-   * @return {Number}
-   * tags:statistics
-   */
-  NumberList.prototype.getGeometricMean = function() {
-    var s = 0;
-    this.forEach(function(val) {
-      s += Math.log(val);
-    });
-    return Math.pow(Math.E, s / this.length);
-  };
-
-  /**
-   * Calculates the norm of the NumberList (treated as a vector).
-   *
-   * @return {Number}
-   * tags:statistics
-   */
-  NumberList.prototype.getNorm = function() {
-    var sq = 0;
-    for(var i = 0; this[i] != null; i++) {
-      sq += Math.pow(this[i], 2);
-    }
-    return Math.sqrt(sq);
-  };
-
-  /**
-   * Calculates the variance of the NumberList.
-   *
-   * @return {Number}
-   * tags:statistics
-   */
-  NumberList.prototype.getVariance = function() {
-    var sd = 0;
-    var average = this.getAverage();
-    for(var i = 0; this[i] != null; i++) {
-      sd += Math.pow(this[i] - average, 2);
-    }
-    return sd / this.length;
-  };
-
-  /**
-   * Calculates the standard deviation.
-   *
-   * @return {Number}
-   * tags:statistics
-   */
-  NumberList.prototype.getStandardDeviation = function() {
-    return Math.sqrt(this.getVariance());
-  };
-
-  /**
-   * Calculates the median of the numberList
-   *
-   * @return {Number}
-   * tags:statistics
-   */
-  NumberList.prototype.getMedian = function() {
-    var sorted = this.getSorted(true);
-    var prop = (this.length - 1) / 2;
-    var entProp = Math.floor(prop);
-    var onIndex = prop == entProp;
-    return onIndex ? sorted[prop] : (0.5 * sorted[entProp] + 0.5 * sorted[entProp + 1]);
-  };
-
-  /**
-   * Builds a partition of n quantiles from the numberList.
-   *
-   * @param {Number} nQuantiles number of quantiles (the size of the resulting list is nQuantiles-1)
-   *
-   * @param {Number} returnMode
-   * @return {NumberList} A number list of the quantiles.
-   * tags:statistics
-   */
-  NumberList.prototype.getQuantiles = function(nQuantiles, returnMode) {//TODO: defines different options for return
-    var sorted = this.getSorted(true);
-
-    var prop = this.length / nQuantiles;
-    var entProp = Math.floor(prop);
-    var onIndex = prop == entProp;
-    var quantiles = new NumberList();
-    for(var i = 0; i < nQuantiles - 1; i++) {
-      quantiles[i] = onIndex ? sorted[(i + 1) * prop] : (0.5 * sorted[(i + 1) * entProp] + 0.5 * sorted[(i + 1) * entProp + 1]);
-    }
-    return quantiles;
-  };
-
-
-
-  /////////sorting
-
-  /**
-   * Returns a new NumberList sorted in either ascending or descending order.
-   *
-   * @param {Boolean} ascending True if values should be sorted in ascending order.
-   * If false, values will be sorted in descending order.
-   * @return {NumberList} new sorted NumberList.
-   */
-  NumberList.prototype.getSorted = function(ascending) {
-    ascending = ascending == null ? true : ascending;
-
-    if(ascending) {
-      return NumberList.fromArray(this.slice().sort(function(a, b) {
-        return a - b;
-      }), false);
-    }
-    return NumberList.fromArray(this.slice().sort(function(a, b) {
-      return b - a;
-    }), false);
-  };
-
-  /**
-   * Returns a new NumberList containing the indicies of the values of
-   * the original NumberList in sorted order.
-   *
-   * @param {Boolean} descending If true, values are sorted in descending order.
-   * @return {NumberList} NumberList containing the indices of the original NumberList
-   * such that accessing the values of the original list at those indices would produce
-   * a sorted list.
-   * @example
-   * var nl = NumberList.fromArray([1,3,2]);
-   * var indices = nl.getSortIndexes();
-   * indices[0]; // produces 1 as nl[1] == 3.
-   */
-  NumberList.prototype.getSortIndexes = function(descending) {
-    if(descending == null) descending = true;
-
-    var pairs = [];
-    var newList = new NumberList();
-
-    if(this.length === 0) return newList;
-
-    for(var i = 0; this[i] != null; i++) {
-      pairs.push([i, this[i]]);
-    }
-
-    if(descending) {
-      pairs.sort(function(a, b) {
-        if(a[1] < b[1]) return 1;
-        return -1;
-      });
-    } else {
-      pairs.sort(function(a, b) {
-        if(a[1] < b[1]) return -1;
-        return 1;
-      });
-    }
-
-    for(i = 0; pairs[i] != null; i++) {
-      newList.push(pairs[i][0]);
-    }
-    newList.name = this.name;
-    return newList;
-  };
-
-  /**
-   * Returns a new NumberList with the values of
-   * the original list multiplied by the input value
-   *
-   * @param {Number} value The value to multiply each
-   * value in the list by.
-   * @return {NumberList} New NumberList with values multiplied.
-   */
-  NumberList.prototype.factor = function(value) {
-    var i;
-    var newNumberList = new NumberList();
-    for(i = 0; i < this.length; i++) {
-      newNumberList.push(this[i] * value);
-    }
-    newNumberList.name = this.name;
-    return newNumberList;
-  };
-
-  /**
-   * Adds a value or values in a NumberList to the current list.
-   *
-   * If input is a Number, each value of the returned
-   * NumberList will be the sum of the original value and this
-   * input value.
-   *
-   * If the input is a NumberList, each value of the returned
-   * NumberList will be the sum of the original value and the
-   * value at the same index in the input list.
-   *
-   * @param {Number|NumberList} object Input value to add to the list.
-   * @return {NumberList}
-   */
-  NumberList.prototype.add = function(object) {
-    var i;
-    var newNumberList = new NumberList();
-    var type = typeOf(object);
-
-    switch(type) {
-      case 'number':
-        for(i = 0; this[i] != null; i++) {
-          newNumberList[i] = this[i] + object;
-        }
-        break;
-      case 'NumberList':
-        for(i = 0; this[i] != null; i++) {
-          newNumberList[i] = this[i] + object[i % object.length];
-        }
-        break;
-    }
-
-    newNumberList.name = this.name;
-    return newNumberList;
-  };
-
-  /**
-   * Subtracts a value or values in a NumberList from the current list.
-   *
-   * If input is a Number, each value of the returned
-   * NumberList will be the original value minus this
-   * input value.
-   *
-   * If the input is a NumberList, each value of the returned
-   * NumberList will be the original value minus the
-   * value at the same index in the input list.
-   *
-   * @param {Number|NumberList} object Input value to subract from the list.
-   * @return {NumberList}
-   */
-  NumberList.prototype.subtract = function(object) {
-    var i;
-    var newNumberList = new NumberList();
-    var type = typeOf(object);
-
-    switch(type) {
-      case 'number':
-        for(i = 0; this[i] != null; i++) {
-          newNumberList[i] = this[i] - object;
-        }
-        break;
-      case 'NumberList':
-        for(i = 0; this[i] != null; i++) {
-          newNumberList[i] = this[i] - object[i % object.length];
-        }
-        break;
-    }
-
-    newNumberList.name = this.name;
-    return newNumberList;
-  };
-
-  /**
-   * Returns a new NumberList with each value divided by a input value or values in a NumberList.
-   *
-   * If input is a Number, each value of the returned
-   * NumberList will be the original value divided by this
-   * input value.
-   *
-   * If the input is a NumberList, each value of the returned
-   * NumberList will be the original value divided by the
-   * value at the same index in the input list.
-   *
-   * @param {Number|NumberList} object Input value to divide by the list.
-   * @return {NumberList}
-   */
-  NumberList.prototype.divide = function(object) {
-    var i;
-    var newNumberList = new NumberList();
-    var type = typeOf(object);
-
-    switch(type) {
-      case 'number':
-        for(i = 0; this[i] != null; i++) {
-          newNumberList[i] = this[i] / object;
-        }
-        break;
-      case 'NumberList':
-        for(i = 0; this[i] != null; i++) {
-          newNumberList[i] = this[i] / object[i % object.length];
-        }
-        break;
-    }
-
-    newNumberList.name = this.name;
-    return newNumberList;
-  };
-
-  /**
-   * Returns a new NumberList containing the square root of
-   * the values of the current NumberList.
-   *
-   * @return {NumberList} NumberList with square rooted values.
-   */
-  NumberList.prototype.sqrt = function() {
-    var i;
-    var newNumberList = new NumberList();
-    for(i = 0; i < this.length; i++) {
-      newNumberList.push(Math.sqrt(this[i]));
-    }
-    newNumberList.name = this.name;
-    return newNumberList;
-  };
-
-  /**
-   * Returns a new NumberList containing values raised to the power
-   * of the input value.
-   *
-   * @param {Number} power Power to raise each value by.
-   * @return {NumberList} New NumberList.
-   */
-  NumberList.prototype.pow = function(power) {
-    var i;
-    var newNumberList = new NumberList();
-    for(i = 0; i < this.length; i++) {
-      newNumberList.push(Math.pow(this[i], power));
-    }
-    newNumberList.name = this.name;
-    return newNumberList;
-  };
-
-  /**
-   * Returns a transformed version of the list with
-   * each value in the new list the log of the value
-   * in the current list, with an optional constant
-   * added to it.
-   *
-   * @param {Number} add Optional value to add to the log transformed values.
-   * Defaults to 0.
-   * @return {NumberList}
-   */
-  NumberList.prototype.log = function(add) {
-    add = add || 0;
-
-    var i;
-    var newNumberList = new NumberList();
-    for(i = 0; this[i] != null; i++) {
-      newNumberList[i] = Math.log(this[i] + add);
-    }
-    newNumberList.name = this.name;
-
-    return newNumberList;
-  };
-
-  /**
-   * Returns a new NumberList containing the floor values (removing decimals) of
-   * the values of the current NumberList.
-   *
-   * @return {NumberList} NumberList with integer values.
-   */
-  NumberList.prototype.floor = function() {
-    var i;
-    var newNumberList = new NumberList();
-    for(i = 0; i < this.length; i++) {
-      newNumberList.push(Math.floor(this[i]));
-    }
-    newNumberList.name = this.name;
-
-    return newNumberList;
-  };
-
-
-  /**
-   * Returns dot product between current list and input NumberList.
-   *
-   * @param {NumberList} numberList Another NumberList.
-   * @return {Number} Dot product between two lists.
-   */
-  NumberList.prototype.dotProduct = function(numberList) {
-    var sum = 0;
-    var i;
-    var nElements = Math.min(this.length, numberList.length);
-    for(i = 0; i < nElements; i++) {
-      sum += this[i] * numberList[i];
-    }
-    return sum;
-  };
-
-  /**
-   * Calculates Euclidean distance between two numberLists
-   *
-   * @param  {NumberList} numberList NumberList of the same length
-   * as current list.
-   * @return {Number} Summed Euclidean distance between all values.
-   * tags:
-   */
-  NumberList.prototype.distance = function(numberList) {
-    var sum = 0;
-    var i;
-    var nElements = Math.min(this.length, numberList.length);
-    for(i = 0; i < nElements; i++) {
-      sum += Math.pow(this[i] - numberList[i], 2);
-    }
-    return Math.sqrt(sum);
-  };
-
-  /**
-   * Returns true if values in the input NumberList are the same
-   * as the values in the current list.
-   *
-   * @param numberList NumberList to compare.
-   * @return {Boolean} True if all values in both lists match.
-   */
-  NumberList.prototype.isEquivalent = function(numberList) {
-    for(var i = 0; this[i] != null; i++) {
-      if(this[i] != numberList[i]) return false;
-    }
-    return true;
-  };
-
-  /**
-   * Returns a new {@link StringList} with all values converted to strings
-   *
-   * @return {StringList} New list.
-   */
-  NumberList.prototype.toStringList = function() {
-    var i;
-    var stringList = new StringList();
-    for(i = 0; this[i] != null; i++) {
-      stringList[i] = String(this[i]);
-    }
-    stringList.name = this.name;
-    return stringList;
-  };
-
-
-  //transform
-
-  NumberList.prototype.approach = function(destinty, speed) {
-    speed = speed || 0.5;
-
-    var i;
-    var antispeed = 1 - speed;
-
-    for(i = 0; this[i] != null; i++) {
-      this[i] = antispeed * this[i] + speed * destinty[i];
-    }
-  };
-
-
-  ///////overriding
-
-  NumberList.prototype.clone = function() {
-    var newList = NumberList.fromArray(this._slice(), false);
-    newList.name = this.name;
-    return newList;
-  };
-
-  NumberList.prototype.slice = function() {
-    return NumberList.fromArray(this._slice.apply(this, arguments), false);
-  };
-
-  exports.NumberList = NumberList;
-
-  StringList.prototype = new List__default();
-  StringList.prototype.constructor = StringList;
-
-  /**
-   * @classdesc {@link List} for storing Strings.
-   *
-   * @constructor
-   * @description Creates a new StringList
-   * @category strings
-   */
-  function StringList() {
-    var args = []; //TODO:why this?, ask M
-
-    for(var i = 0; i < arguments.length; i++) {
-      args[i] = String(arguments[i]);
-    }
-    var array = List__default.apply(this, args);
-    array = StringList.fromArray(array);
-    //
-    return array;
-  }
-
-
-  /**
-   * @todo write docs
-   */
-  StringList.fromArray = function(array, forceToString) {
-    forceToString = forceToString == null ? true : forceToString;
-
-    var result = List__default.fromArray(array);
-    if(forceToString) {
-      for(var i = 0; i < result.length; i++) {
-        result[i] = String(result[i]);
-      }
-    }
-    result.type = "StringList";
-
-    //assign methods to array:
-    result.getLengths = StringList.prototype.getLengths;
-    result.toLowerCase = StringList.prototype.toLowerCase;
-    result.toUpperCase = StringList.prototype.toUpperCase;
-    result.append = StringList.prototype.append;
-    result.getSurrounded = StringList.prototype.getSurrounded;
-    result.replace = StringList.prototype.replace;
-    result.getConcatenated = StringList.prototype.getConcatenated;
-    result.toNumberList = StringList.prototype.toNumberList;
-    result.toDateList = StringList.prototype.toDateList;
-    result.trim = StringList.prototype.trim;
-
-    //override
-    result.clone = StringList.prototype.clone;
-
-    return result;
-  };
-
-  /**
-   * overrides List.prototype.getLengths (see comments there)
-   */
-  StringList.prototype.getLengths = function() {
-    var lengths = new NumberList();
-    var string;
-
-    this.forEach(function(string) {
-      lengths.push(string.length);
-    });
-
-    return lengths;
-  };
-
-  /**
-   * @todo write docs
-   */
-  StringList.prototype.append = function(sufix, after) {
-    after = after == null ? true : after;
-    var newStringList = new StringList();
-    newStringList.name = this.name;
-    var sufixIsStringList = typeOf(sufix) == "StringList";
-    var i;
-    if(after) {
-      for(i = 0; this[i] != null; i++) {
-        newStringList[i] = this[i] + (sufixIsStringList ? sufix[i] : sufix);
-      }
-    } else {
-      for(i = 0; this[i] != null; i++) {
-        newStringList[i] = (sufixIsStringList ? sufix[i] : sufix) + this[i];
-      }
-    }
-    return newStringList;
-  };
-
-  /**
-   * prefix and sufix can be string or a StringList
-   */
-  StringList.prototype.getSurrounded = function(prefix, sufix) {
-    var newStringList = new StringList();
-    newStringList.name = this.name;
-    var i;
-
-    var prefixIsStringList = Array.isArray(prefix);
-    var sufixIsStringList = Array.isArray(sufix);
-
-    for(i = 0; this[i] != null; i++) {
-      newStringList[i] = (prefixIsStringList ? prefix[i] : prefix) + this[i] + (sufixIsStringList ? sufix[i] : sufix);
-    }
-
-    return newStringList;
-  };
-
-
-  //deprectaed, replaced by replaceInStrings
-  /**
-   * @ignore
-   */
-  StringList.prototype.replace = function(regExp, string) {
-    if(regExp==null) return this;
-
-    var newStringList = new StringList();
-    var i;
-
-    newStringList.name = this.name;
-
-    for(i = 0; this[i] != null; i++){
-      newStringList[i] = this[i].replace(regExp, string);
-    }
-
-    return newStringList;
-  };
-
-  /**
-   * replaces in each string, a sub-string by a string
-   * @param  {String} subString sub-string to be replaced in each string
-   * @param  {String} replacement string to be placed instead
-   * @return {StringList}
-   * tags:
-   */
-  StringList.prototype.replaceSubStringsInStrings = function(subString, replacement) {
-    var newStringList = new StringList();
-    newStringList.name = this.name;
-
-    for(var i = 0; this[i] != null; i++) {
-      newStringList[i] = StringOperators.replaceString(this[i], subString, replacement);
-    }
-
-    return newStringList;
-  };
-
-  /**
-   * @todo write docs
-   */
-  StringList.prototype.getConcatenated = function(separator) {
-    var i;
-    var string = "";
-    for(i = 0; this[i] != null; i++) {
-      string += this[i];
-      if(i < this.length - 1) string += separator;
-    }
-    return string;
-  };
-
-
-  /**
-   * @todo write docs
-   */
-  StringList.prototype.toLowerCase = function() {
-    var newStringList = new StringList();
-    newStringList.name = this.name;
-    var i;
-    for(i = 0; this[i] != null; i++) {
-      newStringList[i] = this[i].toLowerCase();
-    }
-    return newStringList;
-  };
-
-  /**
-   * @todo write docs
-   */
-  StringList.prototype.toUpperCase = function() {
-    var newStringList = new StringList();
-    newStringList.name = this.name;
-    var i;
-    for(i = 0; this[i] != null; i++) {
-      newStringList[i] = this[i].toUpperCase();
-    }
-    return newStringList;
-  };
-
-  /**
-   * @todo write docs
-   */
-  StringList.prototype.toNumberList = function() {
-    var numbers = new NumberList();
-    numbers.name = this.name;
-    var i;
-    for(i = 0; this[i] != null; i++) {
-      numbers[i] = Number(this[i]);
-    }
-    return numbers;
-  };
-
-
-  /**
-   * converts a stringList into a dateList
-   *
-   * @param  {String} formatCase format cases:<br>0: MM-DD-YYYY<br>1: YYYY-MM-DD<br>2: MM-DD-YY<br>3: YY-MM-DD<br>4: DD-MM-YY<br>5: DD-MM-YYYY
-   * @param  {String} separator "-" by default
-   * @return {DateList}
-   * tags:
-   */
-  StringList.prototype.toDateList = function(formatCase, separator) {
-    var dateList = new DateList();
-    var i;
-    for(i = 0; this[i] != null; i++) {
-      dateList.push(DateOperators.stringToDate(this[i], formatCase, separator));
-    }
-    return dateList;
-  };
-
-  /**
-   * trims all the strings on the stringList
-   * @return {StringList}
-   * tags:
-   */
-  StringList.prototype.trim = function() {
-    var i;
-    var newStringList = new StringList();
-    for(i = 0; this[i] != null; i++) {
-      newStringList[i] = this[i].trim();
-    }
-    newStringList.name = this.name;
-    return newStringList;
-  };
-
-  ///////overriding
-
-  /**
-   * @todo write docs
-   */
-  StringList.prototype.clone = function() {
-    var newList = StringList.fromArray(this.slice(), false);
-    newList.name = this.name;
-    return newList;
-  };
-
-  exports.StringList = StringList;
-
   var typeDict = {
-    List: List__default,
+    List: List,
     Table: Table,
     StringList: StringList,
     NumberList: NumberList,
@@ -7100,7 +13123,7 @@ define('src/index', ['exports'], function (exports) {
     Polygon: Polygon,
     Polygon3D: Polygon3D,
     DateList: DateList,
-    ColorList: ColorList__default
+    ColorList: ColorList
   };
 
 
@@ -7200,12 +13223,12 @@ define('src/index', ['exports'], function (exports) {
     for(i=0; dataModelsInfo[i]!=null; i++){
       type = dataModelsInfo[i].type;
       _shortFromTypeDictionary[type] = dataModelsInfo[i].short;
-      _colorFromTypeDictionary[type] = ColorOperators__default.interpolateColors(dataModelsInfo[i].color, 'black', 0.2);
-      _lightColorFromTypeDictionary[type] = ColorOperators__default.interpolateColors(dataModelsInfo[i].color, 'white', 0.35);
+      _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.2);
+      _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.35);
       type = type.toLowerCase();
       _shortFromTypeDictionary[type] = dataModelsInfo[i].short;
-      _colorFromTypeDictionary[type] = ColorOperators__default.interpolateColors(dataModelsInfo[i].color, 'black', 0.2);
-      _lightColorFromTypeDictionary[type] = ColorOperators__default.interpolateColors(dataModelsInfo[i].color, 'white', 0.35);
+      _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.2);
+      _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.35);
     }
   }
 
@@ -7214,7 +13237,7 @@ define('src/index', ['exports'], function (exports) {
     return _shortFromTypeDictionary[type];
   }
 
-  function ClassUtils__getColorFromDataModelType(type){
+  function getColorFromDataModelType(type){
     if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
     return _colorFromTypeDictionary[type];
   }
@@ -7228,7 +13251,7 @@ define('src/index', ['exports'], function (exports) {
     if(value == null) return "Null";
     if(value.isList) {
       if(value.length === 0) return "[]";
-      var text = value.toString(); // value.length>6?value.slice(0, 5).forEach(function(v){return getTextFromObject(v, typeOf(v))}).join(','):value.toStringList().join(',').forEach(function(v, typeOf(v)){return getTextFromObject(v, type)});
+      var text = value.toString(); 
       if(text.length > 160) {
         var i;
         var subtext;
@@ -7377,5420 +13400,13 @@ define('src/index', ['exports'], function (exports) {
   exports.typeOf = typeOf;
   exports.instantiate = instantiate;
   exports.getShortNameFromDataModelType = getShortNameFromDataModelType;
-  exports.getColorFromDataModelType = ClassUtils__getColorFromDataModelType;
+  exports.getColorFromDataModelType = getColorFromDataModelType;
   exports.getLightColorFromDataModelType = getLightColorFromDataModelType;
   exports.getTextFromObject = getTextFromObject;
   exports.instantiateWithSameType = instantiateWithSameType;
   exports.isArray = isArray;
   exports.evalJavaScriptFunction = evalJavaScriptFunction;
   exports.argumentsToArray = argumentsToArray;
-
-  LoadEvent.prototype = {};
-  LoadEvent.prototype.constructor = LoadEvent;
-
-  /**
-   * LoadEvent
-   * @constructor
-   * @category misc
-   */
-  function LoadEvent() {
-    Object.apply(this);
-    this.result = null;
-    this.errorType = 0;
-    this.errorMessage = "";
-    this.url;
-  }
-
-  exports.LoadEvent = LoadEvent;
-
-  function Loader() {}
-
-
-  Loader.proxy = ""; //TODO:install proxy created by Mig at moebio.com
-  Loader.cacheActive = false; //TODO: fix!
-  Loader.associativeByUrls = {};
-  Loader.REPORT_LOADING = false;
-  Loader.n_loading = 0;
-  Loader.LOCAL_STORAGE_ENABLED = false;
-
-  Loader.PHPurl = "http://intuitionanalytics.com/tests/proxy.php?url=";
-
-
-  /**
-   * loads string data from server. The defined Loader.proxy will be used.
-   * @param {String} url the URL of the file to be loaded
-   * @param {Function} onLoadData a function that will be called when complete. The function must receive a LoadEvent
-   * @param {callee} the Object containing the onLoadData function to be called
-   * @para, {Object} optional parameter that will be stored in the LoadEvent instance
-   */
-  Loader.loadData = function(url, onLoadData, callee, param, send_object_json) {
-    if(Loader.REPORT_LOADING) console.log('load data:', url);
-    Loader.n_loading++;
-
-    if(Loader.LOCAL_STORAGE_ENABLED) {
-      // TODO track down LocalStorage. localStorage is a thing though (lowercase l);
-      var result = localStorage.getItem(url);
-      if(result) {
-        var e = new LoadEvent();
-        e.url = url;
-        e.param = param;
-        e.result = result;
-
-        onLoadData.call(target, e);
-      }
-    }
-
-
-
-    if(Loader.REPORT_LOADING) console.log("Loader.loadData | url:", url);
-
-    var useProxy = String(url).substr(0, 4) == "http";
-
-    var req = new XMLHttpRequest();
-
-    var target = callee ? callee : arguments.callee;
-    var onLoadComplete = function() {
-      if(Loader.REPORT_LOADING) console.log('Loader.loadData | onLoadComplete'); //, req.responseText:', req.responseText);
-      if(req.readyState == 4) {
-        Loader.n_loading--;
-
-        var e = new LoadEvent();
-        e.url = url;
-        e.param = param;
-        //if (req.status == 200) { //MIG
-        if(req.status == 200 || (req.status === 0 && req.responseText !== null)) {
-          e.result = req.responseText;
-          onLoadData.call(target, e);
-        } else {
-          if(Loader.REPORT_LOADING) console.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
-          e.errorType = req.status;
-          e.errorMessage = "[!] There was a problem retrieving the data [" + req.status + "]:" + req.statusText;
-          onLoadData.call(target, e);
-        }
-      }
-    };
-
-    // branch for native XMLHttpRequest object
-    if(window.XMLHttpRequest && !(window.ActiveXObject)) {
-      try {
-        req = new XMLHttpRequest();
-      } catch(e) {
-        req = false;
-      }
-      // branch for IE/Windows ActiveX version
-    } else if(window.ActiveXObject) {
-      try {
-        req = new ActiveXObject("Msxml2.XMLHTTP.6.0");
-      } catch(e) {
-        try {
-          req = new ActiveXObject("Msxml2.XMLHTTP.3.0");
-        } catch(e) {
-          try {
-            req = new ActiveXObject("Msxml2.XMLHTTP");
-          } catch(e) {
-            try {
-              req = new ActiveXObject("Microsoft.XMLHTTP");
-            } catch(e) {
-              req = false;
-            }
-          }
-        }
-      }
-    }
-    if(req) {
-      req.onreadystatechange = onLoadComplete; //processReqChange;
-      if(useProxy) {
-        req.open("GET", Loader.proxy + url, true);
-      } else {
-        req.open("GET", url, true);
-      }
-
-      send_object_json = send_object_json || "";
-      req.send(send_object_json);
-    }
-  };
-
-
-  //TODO this method isn't reference by anything else.
-  function LoaderRequest(url, method, data) {
-    this.url = url;
-    this.method = method ? method : "GET";
-    this.data = data;
-  }
-
-  Loader.loadImage = function(url, onComplete, callee, param) {
-    Loader.n_loading++;
-
-    if(Loader.REPORT_LOADING) console.log("Loader.loadImage | url:", url);
-
-    var target = callee ? callee : arguments.callee;
-    var img = document.createElement('img');
-
-    if(this.cacheActive) {
-      if(this.associativeByUrls[url] != null) {
-        Loader.n_loading--;
-        //console.log('=====>>>>+==>>>+====>>=====>>>+==>> in cache:', url);
-        var e = new LoadEvent();
-        e.result = this.associativeByUrls[url];
-        e.url = url;
-        e.param = param;
-        onComplete.call(target, e);
-      } else {
-        var cache = true;
-        var associative = this.associativeByUrls;
-      }
-    }
-
-    img.onload = function() {
-      Loader.n_loading--;
-      var e = new LoadEvent();
-      e.result = img;
-      e.url = url;
-      e.param = param;
-      if(cache) associative[url] = img;
-      onComplete.call(target, e);
-    };
-
-    img.onerror = function() {
-      Loader.n_loading--;
-      var e = new LoadEvent();
-      e.result = null;
-      e.errorType = 1; //TODO: set an error type!
-      e.errorMessage = "There was a problem retrieving the image [" + img.src + "]:";
-      e.url = url;
-      e.param = param;
-      onComplete.call(target, e);
-    };
-
-    img.src = Loader.proxy + url;
-  };
-
-
-
-  // Loader.loadJSON = function(url, onLoadComplete) {
-  //   Loader.n_loading++;
-
-  //   Loader.loadData(url, function(data) {
-  //     Loader.n_loading--;
-  //     onLoadComplete.call(arguments.callee, jQuery.parseJSON(data));
-  //   });
-  // };
-
-
-  /**
-  Loader.callIndex = 0;
-  Loader.loadJSONP = function(url, onLoadComplete, callee) {
-    Loader.n_loading++;
-
-    Loader.callIndex = Loader.callIndex + 1;
-    var index = Loader.callIndex;
-
-    var newUrl = url + "&callback=JSONcallback" + index;
-    //var newUrl=url+"?callback=JSONcallback"+index; //   <----  WFP suggestion
-
-    var target = callee ? callee : arguments.callee;
-
-    //console.log('Loader.loadJSONP, newUrl:', newUrl);
-
-    $.ajax({
-      url: newUrl,
-      type: 'GET',
-      data: {},
-      dataType: 'jsonp',
-      contentType: "application/json",
-      jsonp: 'jsonp',
-      jsonpCallback: 'JSONcallback' + index,
-      success: function(data) {
-        Loader.n_loading--;
-        var e = new LoadEvent();
-        e.result = data;
-        onLoadComplete.call(target, e);
-      },
-      error: function(data) {
-        Loader.n_loading--;
-        console.log("Loader.loadJSONP | error, data:", data);
-
-        var e = new LoadEvent();
-        e.errorType = 1;
-        onLoadComplete.call(target, e);
-      }
-    }); //.error(function(e){
-    // console.log('---> (((error))) B');
-    //
-    // var e=new LoadEvent();
-    // e.errorType=1;
-    // onLoadComplete.call(target, e);
-    // });
-  };
-  **/
-
-
-
-
-  //FIX THESE METHODS:
-
-  Loader.loadXML = function(url, onLoadData) {
-    Loader.n_loading++;
-
-    var req = new XMLHttpRequest();
-    var onLoadComplete = onLoadData;
-
-    if(Loader.REPORT_LOADING) console.log('loadXML, url:', url);
-
-    // branch for native XMLHttpRequest object
-    if(window.XMLHttpRequest && !(window.ActiveXObject)) {
-      try {
-        req = new XMLHttpRequest();
-      } catch(e) {
-        req = false;
-      }
-      // branch for IE/Windows ActiveX version
-    } else if(window.ActiveXObject) {
-      try {
-        req = new ActiveXObject("Msxml2.XMLHTTP");
-      } catch(e) {
-        try {
-          req = new ActiveXObject("Microsoft.XMLHTTP");
-        } catch(e) {
-          req = false;
-        }
-      }
-    }
-    if(req) {
-      req.onreadystatechange = processReqChange;
-      req.open("GET", url, true);
-      req.send("");
-    }
-
-    function processReqChange() {
-      Loader.n_loading--;
-      // only if req shows "loaded"
-      if(req.readyState == 4) {
-        // only if "OK"
-        if(req.status == 200 || req.status == 0) {
-          onLoadComplete(req.responseXML);
-
-        } else {
-          console.log("There was a problem retrieving the XML data:\n" +
-            req.statusText);
-        }
-      }
-    }
-  };
-
-
-  ///////////////PHP
-
-  Loader.sendContentToVariableToPhp = function(url, varName, value, onLoadData, callee, param) {
-    var data = varName + "=" + encodeURIComponent(value);
-    Loader.sendDataToPhp(url, data, onLoadData, callee, param);
-  };
-
-  Loader.sendContentsToVariablesToPhp = function(url, varNames, values, onLoadData, callee, param) {
-    var data = varNames[0] + "=" + encodeURIComponent(values[0]);
-    for(var i = 1; varNames[i] != null; i++) {
-      data += "&" + varNames[i] + "=" + encodeURIComponent(values[i]);
-    }
-    Loader.sendDataToPhp(url, data, onLoadData, callee, param);
-  };
-
-  Loader.sendDataToPhp = function(url, data, onLoadData, callee, param) {
-    var req = new XMLHttpRequest();
-
-    req.open("POST", url, true);
-    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    req.send(data);
-
-    var target = callee ? callee : arguments.callee;
-
-    var onLoadComplete = function() {
-      if(Loader.REPORT_LOADING) console.log('Loader.loadData | onLoadComplete, req.responseText:', req.responseText);
-      if(req.readyState == 4) {
-        Loader.n_loading--;
-
-        var e = new LoadEvent();
-        e.url = url;
-        e.param = param;
-
-        if(req.status == 200 || (req.status == 0 && req.responseText != null)) {
-          e.result = req.responseText;
-          onLoadData.call(target, e);
-        } else {
-          if(Loader.REPORT_LOADING) console.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
-          e.errorType = req.status;
-          e.errorMessage = "[!] There was a problem retrieving the data [" + req.status + "]:" + req.statusText;
-          onLoadData.call(target, e);
-        }
-      }
-    };
-
-    req.onreadystatechange = onLoadComplete;
-  };
-
-  exports.Loader = Loader;
-
-  Node__Node.prototype = new DataModel();
-  Node__Node.prototype.constructor = Node__Node;
-
-  /**
-   * @classdesc Represents a single node element in a Network. Can have both an id as well
-   * as a name.
-   *
-   * @description Create a new Node.
-   * @param {String} id ID of the Node
-   * @param {String} name string (label) name to be assigned to node
-   * @constructor
-   * @category networks
-   */
-  function Node__Node(id, name) {
-    this.id = id == null ? '' : id;
-    this.name = name != null ? name : '';
-    this.type = "Node";
-
-    this.nodeType;
-
-    this.x = 0;
-    this.y = 0;
-    this.z = 0;
-
-    this.nodeList = new NodeList__default();
-    this.relationList = new RelationList__default();
-
-    this.toNodeList = new NodeList__default();
-    this.toRelationList = new RelationList__default();
-
-    this.fromNodeList = new NodeList__default();
-    this.fromRelationList = new RelationList__default();
-
-    this.weight = 1;
-    this.descentWeight = 1;
-
-    //tree
-    this.level = 0;
-    this.parent = null;
-
-    //physics:
-    this.vx = 0;
-    this.vy = 0;
-    this.vz = 0;
-    this.ax = 0;
-    this.ay = 0;
-    this.az = 0;
-  }
-  var Node__default = Node__Node;
-
-  /**
-   * Removes all Relations and connected Nodes from
-   * the current Node.
-   */
-  Node__Node.prototype.cleanRelations = function() {
-    this.nodeList = new NodeList__default();
-    this.relationList = new RelationList__default();
-
-    this.toNodeList = new NodeList__default();
-    this.toRelationList = new RelationList__default();
-
-    this.fromNodeList = new NodeList__default();
-    this.fromRelationList = new RelationList__default();
-  };
-
-  //TODO: complete with all properties
-  Node__Node.prototype.destroy = function() {
-    DataModel.prototype.destroy.call(this);
-    delete this.id;
-    delete this.name;
-    delete this.nodeType;
-    delete this.x;
-    delete this.y;
-    delete this.z;
-    delete this.nodeList;
-    delete this.relationList;
-    delete this.toNodeList;
-    delete this.toNodeList;
-    delete this.fromNodeList;
-    delete this.fromRelationList;
-    delete this.parent;
-    delete this.weight;
-    delete this.descentWeight;
-    delete this.level;
-    delete this.vx;
-    delete this.vy;
-    delete this.vz;
-    delete this.ax;
-    delete this.ay;
-    delete this.az;
-  };
-
-  /**
-   * Returns the number of Relations connected to this Node.
-   *
-   * @return {Number} Number of Relations (edges) connecting to this Node instance.
-   */
-  Node__Node.prototype.getDegree = function() {
-    return this.relationList.length;
-  };
-
-  //treeProperties:
-
-
-  /**
-   * Returns the parent Node of this Node if it is part of a {@link Tree}.
-   *
-   * @return {Node} Parent Node of this Node.
-   */
-  Node__Node.prototype.getParent = function() {
-    return this.parent;
-  };
-
-  /**
-   * Returns the leaves under a node in a Tree,
-   *
-   * <strong>Warning:</strong> If this Node is part of a Network that is not a tree, this method could run an infinite loop.
-   * @return {NodeList} Leaf Nodes of this Node.
-   * tags:
-   */
-  Node__Node.prototype.getLeaves = function() {
-      var leaves = new NodeList__default();
-      var addLeaves = function(node) {
-        if(node.toNodeList.length === 0) {
-          leaves.addNode(node);
-          return;
-        }
-        node.toNodeList.forEach(addLeaves);
-      };
-      addLeaves(this);
-      return leaves;
-    };
-
-
-  /**
-   * Uses an image as a visual representation to this Node.
-   *
-   * @param {String} urlImage The URL of the image to load.
-   */
-  Node__Node.prototype.loadImage = function(urlImage) {
-    Loader.loadImage(urlImage, function(e) {
-      this.image = e.result;
-    }, this);
-  };
-
-
-  /**
-   * Makes a copy of this Node.
-   *
-   * @return {Node} New Node that is a copy of this Node.
-   */
-  Node__Node.prototype.clone = function() {
-    var newNode = new Node__Node(this.id, this.name);
-
-    newNode.x = this.x;
-    newNode.y = this.y;
-    newNode.z = this.z;
-
-    newNode.nodeType = this.nodeType;
-
-    newNode.weight = this.weight;
-    newNode.descentWeight = this.descentWeight;
-
-    return newNode;
-  };
-
-  exports.Node = Node__default;
-
-  Relation.prototype = new Node__default();
-  Relation.prototype.constructor = Relation;
-
-  /**
-   * Relation
-   * @classdesc Relations represent the edges that connect Nodes
-   * in a Network DataType.
-   *
-   * @description create a new Relation.
-   * @constructor
-   * @param {String} id ID of the Relation.
-   * @param {String} name Name of the Relation.
-   * @param {Node} node0 Source of the Relation.
-   * @param {Node} node1 Destination of the Relation.
-   * @param {Number} weight Edge weight associated with Relation.
-   * Defaults to 1.
-   * @param {String} content Other data to associate with this Relation.
-   * @category networks
-   */
-  function Relation(id, name, node0, node1, weight, content) {
-    Node__default.apply(this, [id, name]);
-    this.type = "Relation";
-
-    this.node0 = node0;
-    this.node1 = node1;
-    this.weight = weight == null ? 1 : weight;
-    this.content = content == null ? "" : content;
-  }
-
-
-  /**
-   * @todo write docs
-   */
-  Relation.prototype.destroy = function() {
-    Node__default.prototype.destroy.call(this);
-    delete this.node0;
-    delete this.node1;
-    delete this.content;
-  };
-
-  /**
-   * given a node returns the other node of a relation
-   * @param  {Node} node
-   * @return {Node}
-   * tags:
-   */
-  Relation.prototype.getOther = function(node) {
-    return node == this.node0 ? this.node1 : this.node0;
-  };
-
-  /**
-   * @todo write docs
-   */
-  Relation.prototype.clone = function() {
-    var relation = new Relation(this.id, this.name, this.node0, this.node1);
-
-    relation.x = this.x;
-    relation.y = this.y;
-    relation.z = this.z;
-
-    relation.nodeType = this.nodeType;
-
-    relation.weight = this.weight;
-    relation.descentWeight = this.descentWeight;
-
-    return relation;
-  };
-
-  exports.Relation = Relation;
-
-  Network.prototype = new DataModel();
-  Network.prototype.constructor = Network;
-
-  /**
-   * @classdesc Networks are a DataType to store network data.
-   *
-   * Networks have nodes stored in a NodeList,
-   * and relations (edges) stored in a RelationList.
-   * @description Create a new Network instance.
-   * @constructor
-   * @category networks
-   */
-  function Network() {
-    this.type = "Network";
-
-    this.nodeList = new NodeList__default();
-    this.relationList = new RelationList__default();
-  }
-
-
-  /**
-   * Get Nodes of the Network as a NodeList
-   * @return {NodeList}
-   * tags:
-   */
-  Network.prototype.getNodes = function() {
-    return this.nodeList;
-  };
-
-  /**
-   * Get Relations (edges) of the Network as
-   * a RelationList.
-   * @return {RelationList}
-   * tags:
-   */
-  Network.prototype.getRelations = function() {
-    return this.relationList;
-  };
-
-  /**
-   * get nodes ids property
-   * @return {StringList}
-   * tags:
-   */
-  Network.prototype.getNodesIds = function() {
-    return this.nodeList.getIds();
-  };
-
-
-
-  /*
-   * building methods
-   */
-
-  /**
-   * Add a node to the network
-   * @param {Node} node A new node that will be added to the network.
-   */
-  Network.prototype.addNode = function(node) {
-    this.nodeList.addNode(node);
-  };
-
-  /**
-   * Retrieve a node from the nodeList of the Network with the given name (label).
-   * @param {String} name The name of the node to retrieve from the Network.
-   * @return {Node} The node with the given name. Null if no node with that name
-   * can be found in the Network.
-   */
-  Network.prototype.getNodeWithName = function(name) {
-    return this.nodeList.getNodeWithName(name);
-  };
-
-  /**
-   * Retrieve node from Network with the given id.
-   * @param {String} id ID of the node to retrieve
-   * @return {Node} The node with the given id. Null if a node with this id is not
-   * in the Network.
-   */
-  Network.prototype.getNodeWithId = function(id) {
-    return this.nodeList.getNodeWithId(id);
-  };
-
-  /**
-   * Add a new Relation (edge) to the Network between two nodes.
-   * @param {Node} node0 The source of the relation.
-   * @param {Node} node1 The destination of the relation.
-   * @param {String} id The id of the relation.
-   * @param {Number} weight A numerical weight associated with the relation (edge).
-   *
-   * @param {String} content Information associated with the relation.
-   */
-  Network.prototype.createRelation = function(node0, node1, id, weight, content) {
-    this.addRelation(new Relation(id, id, node0, node1, weight, content));
-  };
-
-  /**
-   * Add an existing Relation (edge) to the Network.
-   * @param {Relation} relation The relation to add to the network.
-   */
-  Network.prototype.addRelation = function(relation) {
-    this.relationList.addNode(relation);
-    relation.node0.nodeList.addNode(relation.node1);
-    relation.node0.relationList.addNode(relation);
-    relation.node0.toNodeList.addNode(relation.node1);
-    relation.node0.toRelationList.addNode(relation);
-    relation.node1.nodeList.addNode(relation.node0);
-    relation.node1.relationList.addNode(relation);
-    relation.node1.fromNodeList.addNode(relation.node0);
-    relation.node1.fromRelationList.addNode(relation);
-  };
-
-  /**
-   * Create a new Relation between two nodes in the network
-   * @param {Node} node0 The source of the relation.
-   * @param {Node} node1 The destination of the relation.
-   * @param {String} id The id of the relation. If missing, an id will be generated
-   * based on the id's of node0 and node1.
-   * @param {Number} weight=1 A numerical weight associated with the relation (edge).
-   * @param {String} content Information associated with the relation.
-   * @return {Relation} The new relation added to the Network.
-   */
-  Network.prototype.connect = function(node0, node1, id, weight, content) {
-    id = id || (node0.id + "_" + node1.id);
-    weight = weight || 1;
-    var relation = new Relation(id, id, node0, node1, weight);
-    this.addRelation(relation);
-    relation.content = content;
-    return relation;
-  };
-
-
-
-  /*
-   * removing methods
-   */
-
-  /**
-   * Remove a node from the Network
-   * @param {Node} node The node to remove.
-   */
-  Network.prototype.removeNode = function(node) {
-    this.removeNodeRelations(node);
-    this.nodeList.removeNode(node);
-  };
-
-  /**
-   * Remove all Relations connected to the node from the Network.
-   * @param {Node} node Node who's relations will be removed.
-   */
-  Network.prototype.removeNodeRelations = function(node) {
-    for(var i = 0; node.relationList[i] != null; i++) {
-      this.removeRelation(node.relationList[i]);
-      i--;
-    }
-  };
-
-  /**
-   * Remove all Nodes from the Network.
-   */
-  Network.prototype.removeNodes = function() {
-    this.nodeList.deleteNodes();
-    this.relationList.deleteNodes();
-  };
-
-  Network.prototype.removeRelation = function(relation) {
-    this.relationList.removeElement(relation);
-    relation.node0.nodeList.removeNode(relation.node1);
-    relation.node0.relationList.removeRelation(relation);
-    relation.node0.toNodeList.removeNode(relation.node1);
-    relation.node0.toRelationList.removeRelation(relation);
-    relation.node1.nodeList.removeNode(relation.node0);
-    relation.node1.relationList.removeRelation(relation);
-    relation.node1.fromNodeList.removeNode(relation.node0);
-    relation.node1.fromRelationList.removeRelation(relation);
-  };
-
-  /**
-   * Transformative method, removes nodes without a minimal number of connections
-   * @param  {Number} minDegree minimal degree
-   * @return {Number} number of nodes removed
-   * tags:transform
-   */
-  Network.prototype.removeIsolatedNodes = function(minDegree) {
-    var i;
-    var nRemoved = 0;
-    minDegree = minDegree == null ? 1 : minDegree;
-
-    for(i = 0; this.nodeList[i] != null; i++) {
-      if(this.nodeList[i].getDegree() < minDegree) {
-        this.nodeList[i]._toRemove = true;
-      }
-    }
-
-    for(i = 0; this.nodeList[i] != null; i++) {
-      if(this.nodeList[i]._toRemove) {
-        this.removeNode(this.nodeList[i]);
-        nRemoved++;
-        i--;
-      }
-    }
-
-    return nRemoved;
-  };
-
-
-  /**
-   * generates a light clone of the network, with the same nodeList and relationList as the original
-   * @return {Network}
-   */
-  Network.prototype.lightClone = function(){
-    var newNetwork = new Network();
-    newNetwork.nodeList = this.nodeList;
-    newNetwork.relationList = this.relationList;
-    return newNetwork;
-  };
-
-
-  /**
-   * Clones the network
-   *
-   * @param  {StringList} nodePropertiesNames list of preoperties names to be copied from old nodes into new nodes
-   * @param  {StringList} relationPropertiesNames
-   *
-   * @param  {String} idsSubfix optional sufix to be added to ids
-   * @param  {String} namesSubfix optional sufix to be added to names
-   * @return {Networked} network with exact structure than original
-   * tags:
-   */
-  Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames, idsSubfix, namesSubfix) {
-    var newNetwork = new Network();
-    var newNode, newRelation;
-    var i;
-
-    idsSubfix = idsSubfix == null ? '' : String(idsSubfix);
-    namesSubfix = namesSubfix == null ? '' : String(namesSubfix);
-
-    this.nodeList.forEach(function(node) {
-      newNode = new Node__default(idsSubfix + node.id, namesSubfix + node.name);
-      if(idsSubfix != '') newNode.basicId = node.id;
-      if(namesSubfix != '') newNode.basicName = node.name;
-      if(nodePropertiesNames) {
-        nodePropertiesNames.forEach(function(propName) {
-          if(node[propName] != null) newNode[propName] = node[propName];
-        });
-      }
-      newNetwork.addNode(newNode);
-    });
-
-    this.relationList.forEach(function(relation) {
-      newRelation = new Relation(idsSubfix + relation.id, namesSubfix + relation.name, newNetwork.nodeList.getNodeById(idsSubfix + relation.node0.id), newNetwork.nodeList.getNodeById(idsSubfix + relation.node1.id));
-      if(idsSubfix != '') newRelation.basicId = relation.id;
-      if(namesSubfix != '') newRelation.basicName = relation.name;
-      if(relationPropertiesNames) {
-        relationPropertiesNames.forEach(function(propName) {
-          if(relation[propName] != null) newRelation[propName] = relation[propName];
-        });
-      }
-      newNetwork.addRelation(newRelation);
-    });
-
-    return newNetwork;
-  };
-
-
-  /**
-   * @todo write docs
-   */
-  Network.prototype.getReport = function() {
-    return "network contains " + this.nodeList.length + " nodes and " + this.relationList.length + " relations";
-  };
-
-  /**
-   * @todo write docs
-   */
-  Network.prototype.destroy = function() {
-    delete this.type;
-    this.nodeList.destroy();
-    this.relationList.destroy();
-    delete this.nodeList;
-    delete this.relationList;
-  };
-
-  exports.Network = Network;
-
-  function NetworkEncodings() {}
-
-
-
-  //////////////NoteWork
-
-  NetworkEncodings.nodeNameSeparators = ['|', ':', ' is ', ' are ', '.', ','];
-
-  /**
-   * Converts a String in NoteWork format into a network
-   *
-   * @param  {String} code
-   * @return {Network}
-   * tags:decoding
-   */
-  NetworkEncodings.decodeNoteWork = function(code) {
-    if(code == null) return;
-    if(code == "") return new Network();
-
-    console.log('\n\n*************////////// decodeNoteWork //////////*************');
-    //code = "\n"+code;
-
-    var i, j;
-    var paragraph, line, simpleLine;
-    var id, id2;
-    var name;
-    var index, index2, minIndex;
-    var lines;
-    var node, otherNode;
-    var supNode = null;
-    var relation;
-    var prevLine;
-    var sep;
-    var colorLinesRelations = []; //for relations
-    var colorLinesGroups = [];
-    var colorSegments = [];
-    var linesInfo = [];
-    var simpleLine;
-    var regex;
-    var iEnd;
-    var propertyName;
-    var propertyValue;
-    var network = new Network();
-    var paragraphs = new StringList();
-    var content;
-
-    network.nodesPropertiesNames = new StringList();
-    network.relationsPropertiesNames = new StringList();
-
-    lines = code.split(/\n/g);
-    lines.forEach(function(line, i) {
-      lines[i] = line.trim();
-    });
-
-    code = lines.join('\n');
-
-
-    var nLineParagraph = 0;
-    while(code.charAt(0) == '\n') {
-      code = code.substr(1);
-      nLineParagraph++;
-    }
-
-
-    var left = code;
-
-    index = left.search(/\n\n./g);
-
-    while(index != -1) {
-      paragraphs.push(left.substr(0, index));
-      left = left.substr(index + 2);
-      index = left.search(/\n\n./g);
-    }
-
-    paragraphs.push(left);
-
-    var firstLine;
-
-
-    paragraphs.forEach(function(paragraph, i) {
-
-      if(paragraph.indexOf('\n') == -1) {
-        line = paragraph;
-        lines = null;
-      } else {
-        lines = paragraph.split(/\n/g);
-        line = lines[0];
-      }
-
-      firstLine = line;
-
-      //console.log('firstLine: ['+firstLine+']');
-
-      if(line == '\n' || line == '' || line == ' ' || line == '  ') { //use regex here
-
-      } else if(line.indexOf('//') == 0) {
-
-        if(colorSegments[nLineParagraph] == null) colorSegments[nLineParagraph] = [];
-
-        colorSegments[nLineParagraph].push({
-          type: 'comment',
-          iStart: 0,
-          iEnd: line.length
-        });
-
-      } else if(line == "relations colors:" || line == "groups colors:" || line == "categories colors:") { //line.indexOf(':')!=-1 && ColorOperators.colorStringToRGB(line.split(':')[1])!=null){ // color in relations or groups
-        // colorLinesRelations.push(line);
-
-        // if(colorSegments[nLineParagraph]==null) colorSegments[nLineParagraph]=[];
-
-        // colorSegments[nLineParagraph].push({
-        // 	type:'relation_color',
-        // 	iStart:0,
-        // 	iEnd:line.length
-        // });
-
-        if(lines) {
-          lines.slice(1).forEach(function(line, i) {
-
-            index = line.indexOf(':');
-            if(firstLine == "relations colors:" && index != -1 && ColorOperators__default.colorStringToRGB(line.split(':')[1]) != null) {
-              //console.log('  more colors!');
-
-              colorLinesRelations.push(line);
-
-              if(colorSegments[nLineParagraph + i] == null) colorSegments[nLineParagraph + i] = [];
-
-              colorSegments[nLineParagraph + i].push({
-                type: 'relation_color',
-                iStart: 0,
-                iEnd: line.length
-              });
-
-            }
-
-            if((firstLine == "groups colors:" || firstLine == "categories colors:") && index != -1 && ColorOperators__default.colorStringToRGB(line.split(':')[1]) != null) {
-              //console.log(line)
-              //console.log('  color to group!');
-
-              colorLinesGroups.push(line);
-
-              if(colorSegments[nLineParagraph + i] == null) colorSegments[nLineParagraph + i] = [];
-
-              colorSegments[nLineParagraph + i].push({
-                type: 'relation_color',
-                iStart: 0,
-                iEnd: line.length
-              });
-
-            }
-          });
-        }
-
-      } else { //node
-
-        minIndex = 99999999;
-
-        index = line.indexOf(NetworkEncodings.nodeNameSeparators[0]);
-
-        if(index != -1) {
-          minIndex = index;
-          sep = NetworkEncodings.nodeNameSeparators[0];
-        }
-
-        j = 1;
-
-        while(j < NetworkEncodings.nodeNameSeparators.length) {
-          index = line.indexOf(NetworkEncodings.nodeNameSeparators[j]);
-          if(index != -1) {
-            minIndex = Math.min(index, minIndex);
-            sep = NetworkEncodings.nodeNameSeparators[j];
-          }
-          j++;
-        }
-
-
-        index = minIndex == 99999999 ? -1 : minIndex;
-
-        name = index == -1 ? line : line.substr(0, index);
-        name = name.trim();
-
-        if(name != "") {
-          id = NetworkEncodings._simplifyForNoteWork(name);
-
-          node = network.nodeList.getNodeById(id);
-
-          iEnd = index == -1 ? line.length : index;
-
-          if(node == null) {
-
-            node = new Node(id, name);
-            node._nLine = nLineParagraph;
-            network.addNode(node);
-            node.content = index != -1 ? line.substr(index + sep.length).trim() : "";
-
-            node._lines = lines ? lines.slice(1) : new StringList();
-
-            node.position = network.nodeList.length - 1;
-
-            if(colorSegments[nLineParagraph] == null) colorSegments[nLineParagraph] = [];
-
-            colorSegments[nLineParagraph].push({
-              type: 'node_name',
-              iStart: 0,
-              iEnd: iEnd
-            });
-
-          } else {
-            if(lines != null) node._lines = node._lines.concat(lines.slice(1));
-
-            node.content += index != -1 ? (" | " + line.substr(index + sep.length).trim()) : "";
-
-            if(colorSegments[nLineParagraph] == null) colorSegments[nLineParagraph] = [];
-
-            colorSegments[nLineParagraph].push({
-              type: 'node_name_repeated',
-              iStart: 0,
-              iEnd: iEnd
-            });
-          }
-        } else {
-
-        }
-      }
-
-      nLineParagraph += (lines ? lines.length : 1) + 1;
-    });
-
-
-    //find equalities (synonyms)
-
-    var foundEquivalences = true;
-
-    while(foundEquivalences) {
-      foundEquivalences = false;
-
-      loop: for(i = 0; network.nodeList[i] != null; i++) {
-        node = network.nodeList[i];
-
-        loop2: for(j = 0; node._lines[j] != null; j++) {
-          line = node._lines[j];
-
-          if(line.indexOf('=') == 0) {
-
-            id2 = NetworkEncodings._simplifyForNoteWork(line.substr(1));
-            otherNode = network.nodeList.getNodeById(id2);
-
-            if(otherNode && node != otherNode) {
-
-              foundEquivalences = true;
-
-              node._lines = otherNode._lines.concat(otherNode._lines);
-
-              network.nodeList.removeNode(otherNode);
-              network.nodeList.ids[otherNode.id] = node;
-
-              break loop;
-              break loop2;
-            } else {
-              network.nodeList.ids[id2] = otherNode;
-            }
-
-            if(!node._otherIds) node._otherIds = [];
-            node._otherIds.push(id2);
-          }
-        }
-      }
-    }
-
-
-    //build relations and nodes properties
-
-    network.nodeList.forEach(function(node) {
-
-      nLineParagraph = node._nLine;
-
-      //console.log('node.nLineWeight', node.nLineWeight);
-
-      node._lines.forEach(function(line, i) {
-
-        if(line.indexOf('=') != -1) {
-
-        } else if(line.indexOf(':') > 0) {
-
-          simpleLine = line.trim();
-
-          propertyName = removeAccentsAndDiacritics(simpleLine.split(':')[0]).replace(/\s/g, "_");
-
-          propertyValue = line.split(':')[1].trim();
-          if(propertyValue == String(Number(propertyValue))) propertyValue = Number(propertyValue);
-
-          if(propertyValue != null) {
-            node[propertyName] = propertyValue;
-            if(network.nodesPropertiesNames.indexOf(propertyName) == -1) network.nodesPropertiesNames.push(propertyName);
-          }
-
-        } else {
-          simpleLine = line;
-
-          network.nodeList.forEach(function(otherNode) {
-            regex = NetworkEncodings._regexWordForNoteWork(otherNode.id);
-            index = simpleLine.search(regex);
-
-            if(index == -1 && otherNode._otherIds) {
-              for(j = 0; otherNode._otherIds[j] != null; j++) {
-                regex = NetworkEncodings._regexWordForNoteWork(otherNode._otherIds[j]);
-                index = simpleLine.search(regex);
-                if(index != -1) break;
-              }
-            }
-
-            if(index != -1) {
-              iEnd = index + simpleLine.substr(index).match(regex)[0].length;
-
-              relation = network.relationList.getFirstRelationBetweenNodes(node, otherNode, true);
-
-
-              if(relation != null) {
-
-                content = relation.node0.name + " " + line;
-
-                relation.content += " | " + content;
-
-                if(colorSegments[nLineParagraph + i + 1] == null) colorSegments[nLineParagraph + i + 1] = [];
-
-                colorSegments[nLineParagraph + i + 1].push({
-                  type: 'node_name_in_repeated_relation',
-                  iStart: index,
-                  iEnd: iEnd
-                });
-
-              } else {
-                relation = network.relationList.getFirstRelationBetweenNodes(otherNode, node, true);
-
-                if(relation == null || relation.content != content) {
-
-                  var relationName = line;
-
-                  var regex = NetworkEncodings._regexWordForNoteWork(node.id);
-                  index = relationName.search(regex);
-
-                  if(index != -1) {
-                    relationName = relationName.substr(index);
-                    relationName = relationName.replace(regex, "").trim();
-                  }
-
-                  //console.log(node.id, "*", line, "*", index, "*", line.substr(index));
-
-                  //line = line.replace(regex, "").trim();
-
-                  regex = NetworkEncodings._regexWordForNoteWork(otherNode.id);
-                  index = relationName.search(regex);
-                  relationName = "… " + relationName.substr(0, index).trim() + " …";
-
-                  id = line;
-                  relation = new Relation(line, relationName, node, otherNode);
-
-                  content = relation.node0.name + " " + line;
-
-                  relation.content = content; //.substr(0,index);
-                  network.addRelation(relation);
-
-                  if(colorSegments[nLineParagraph + i + 1] == null) colorSegments[nLineParagraph + i + 1] = [];
-
-                  colorSegments[nLineParagraph + i + 1].push({
-                    type: 'node_name_in_relation',
-                    iStart: index,
-                    iEnd: iEnd
-                  });
-
-                }
-              }
-            }
-          });
-        }
-      });
-
-      node.positionWeight = Math.pow(network.nodeList.length - node.position - 1 / network.nodeList.length, 2);
-      node.combinedWeight = node.positionWeight + node.nodeList.length * 0.1;
-
-    });
-
-
-    //colors in relations and groups
-
-    colorLinesRelations.forEach(function(line) {
-      index = line.indexOf(':');
-      var texts = line.substr(0, index).split(',');
-      texts.forEach(function(text) {
-        var color = line.substr(index + 1);
-        network.relationList.forEach(function(relation) {
-          if(relation.name.indexOf(text) != -1) relation.color = color;
-        });
-      });
-    });
-
-    colorLinesGroups.forEach(function(line) {
-      index = line.indexOf(':');
-      var texts = line.substr(0, index).split(',');
-      texts.forEach(function(text) {
-        var color = line.substr(index + 1);
-        network.nodeList.forEach(function(node) {
-          if(node.group == text) node.color = color;
-          if(node.category == text) node.color = color;
-        });
-      });
-    });
-
-    network.colorSegments = colorSegments;
-
-    return network;
-  };
-
-  /**
-   * @ignore
-   */
-  NetworkEncodings._simplifyForNoteWork = function(name) {
-    name = name.toLowerCase();
-    if(name.substr(name.length - 2) == 'es') {
-      name = name.substr(0, name.length - 1);
-    } else if(name.charAt(name.length - 1) == 's') name = name.substr(0, name.length - 1);
-    return name.trim();
-  };
-
-  /**
-   * _regexWordForNoteWork
-   *
-   * @ignore
-   */
-  NetworkEncodings._regexWordForNoteWork = function(word, global) {
-    global = global == null ? true : global;
-    try {
-      return new RegExp("(\\b)(" + word + "|" + word + "s|" + word + "es)(\\b)", global ? "gi" : "i");
-    } catch(err) {
-      return null;
-    }
-  };
-
-  /**
-   * Encodes a network into NoteWork notes.
-   *
-   * @param  {Network} network Network to encode.
-   * @param  {String} nodeContentSeparator Separator between node name and content. Uses comma if not defined.
-   * @param  {StringList} nodesPropertyNames Node properties to be encoded.
-   * If not defined, no Node properties are encoded.
-   * @param  {StringList} relationsPropertyNames Relations properties to be encoded.
-   * If not defined, no Relation properties are encoded.
-   * @return {String} NoteWork based representation of Network.
-   * tags:encoding
-   */
-  NetworkEncodings.encodeNoteWork = function(network, nodeContentSeparator, nodesPropertyNames, relationsPropertyNames) {
-    if(network == null) return;
-
-    var node, relation, other;
-    var propName;
-    var code = "";
-    var simpNodeName;
-    var regex, lineRelation;
-
-    var codedRelationsContents;
-
-    nodeContentSeparator = nodeContentSeparator || ', ';
-    nodesPropertyNames = nodesPropertyNames || [];
-    relationsPropertyNames = relationsPropertyNames || [];
-
-    network.nodeList.forEach(function(node) {
-      code += node.name;
-      if(node.content && node.content != "") code += nodeContentSeparator + node.content;
-      code += "\n";
-
-      nodesPropertyNames.forEach(function(propName) {
-        if(node[propName] != null) code += propName + ":" + String(node[propName]) + "\n";
-      });
-
-      codedRelationsContents = new StringList();
-
-      node.toRelationList.forEach(function(relation) {
-
-        var content = ((relation.content == null ||  relation.content == "") && relation.description) ? relation.description : relation.content;
-
-        if(content && content != "") {
-          regex = NetworkEncodings._regexWordForNoteWork(relation.node1.name);
-          lineRelation = content + ((regex != null && content.search(regex) == -1) ? (" " + relation.node1.name) : "");
-        } else {
-          lineRelation = "connected with " + relation.node1.name;
-        }
-
-        if(codedRelationsContents.indexOf(lineRelation) == -1) {
-          code += lineRelation;
-          code += "\n";
-          codedRelationsContents.push(lineRelation);
-        }
-
-      });
-
-      code += "\n";
-
-    });
-
-    return code;
-  };
-
-
-
-
-
-  //////////////GDF
-
-  /**
-   * Creates Network from a GDF string representation.
-   *
-   * @param  {String} gdfCode GDF serialized Network representation.
-   * @return {Network}
-   * tags:decoder
-   */
-  NetworkEncodings.decodeGDF = function(gdfCode) {
-    if(gdfCode == null || gdfCode == "") return;
-
-    var network = new Network();
-    var lines = gdfCode.split("\n"); //TODO: split by ENTERS OUTSIDE QUOTEMARKS
-    if(lines.length == 0) return null;
-    var line;
-    var i;
-    var j;
-    var parts;
-
-    var nodesPropertiesNames = lines[0].substr(8).split(",");
-
-    var iEdges;
-
-    for(i = 1; lines[i] != null; i++) {
-      line = lines[i];
-      if(line.substr(0, 8) == "edgedef>") {
-        iEdges = i + 1;
-        break;
-      }
-      line = NetworkEncodings.replaceChomasInLine(line);
-      parts = line.split(",");
-      var node = new Node(String(parts[0]), String(parts[1]));
-      for(j = 0; (nodesPropertiesNames[j] != null && parts[j] != null); j++) {
-        if(nodesPropertiesNames[j] == "weight") {
-          node.weight = Number(parts[j]);
-        } else if(nodesPropertiesNames[j] == "x") {
-          node.x = Number(parts[j]);
-        } else if(nodesPropertiesNames[j] == "y") {
-          node.y = Number(parts[j]);
-        } else {
-          node[nodesPropertiesNames[j]] = parts[j].replace(/\*CHOMA\*/g, ",");
-        }
-      }
-      network.addNode(node);
-    }
-
-    var relationsPropertiesNames = lines[iEdges - 1].substr(8).split(",");
-
-    for(i = iEdges; lines[i] != null; i++) {
-      line = lines[i];
-      line = NetworkEncodings.replaceChomasInLine(line);
-      parts = line.split(",");
-      if(parts.length >= 2) {
-        var node0 = network.nodeList.getNodeById(String(parts[0]));
-        var node1 = network.nodeList.getNodeById(String(parts[1]));
-        if(node0 == null || node1 == null) {
-          console.log("NetworkEncodings.decodeGDF | [!] problems with nodes ids:", parts[0], parts[1], "at line", i);
-        } else {
-          var id = node0.id + "_" + node1.id + "_" + Math.floor(Math.random() * 999999);
-          var relation = new Relation(id, id, node0, node1);
-          for(j = 2; (relationsPropertiesNames[j] != null && parts[j] != null); j++) {
-            if(relationsPropertiesNames[j] == "weight") {
-              relation.weight = Number(parts[j]);
-            } else {
-              relation[relationsPropertiesNames[j]] = parts[j].replace(/\*CHOMA\*/g, ",");
-            }
-          }
-          network.addRelation(relation);
-        }
-      }
-
-    }
-
-    return network;
-  };
-
-  /**
-   * Encodes a network in GDF Format, more info on GDF
-   * format can be found from
-   * {@link https://gephi.org/users/supported-graph-formats/gml-format/|Gephi}.
-   *
-   * @param  {Network} network Network to encode.
-   * @param  {StringList} nodesPropertiesNames Names of nodes properties to be encoded.
-   * @param  {StringList} relationsPropertiesNames Names of relations properties to be encoded
-   * @return {String} GDF encoding of Network.
-   * tags:encoder
-   */
-  NetworkEncodings.encodeGDF = function(network, nodesPropertiesNames, relationsPropertiesNames) {
-    if(network == null) return;
-
-    nodesPropertiesNames = nodesPropertiesNames == null ? new StringList() : nodesPropertiesNames;
-    relationsPropertiesNames = relationsPropertiesNames == null ? new StringList() : relationsPropertiesNames;
-
-    var code = "nodedef>id" + (nodesPropertiesNames.length > 0 ? "," : "") + nodesPropertiesNames.join(",");
-    var i;
-    var j;
-    var node;
-    for(i = 0; network.nodeList[i] != null; i++) {
-      node = network.nodeList[i];
-      code += "\n" + node.id;
-      for(j = 0; nodesPropertiesNames[j] != null; j++) {
-
-        if(typeof node[nodesPropertiesNames[j]] == 'string') {
-          code += ",\"" + node[nodesPropertiesNames[j]] + "\"";
-        } else {
-          code += "," + node[nodesPropertiesNames[j]];
-        }
-      }
-    }
-
-    code += "\nedgedef>id0,id1" + (relationsPropertiesNames.length > 0 ? "," : "") + relationsPropertiesNames.join(",");
-    var relation;
-    for(i = 0; network.relationList[i] != null; i++) {
-      relation = network.relationList[i];
-      code += "\n" + relation.node0.id + "," + relation.node1.id;
-      for(j = 0; relationsPropertiesNames[j] != null; j++) {
-
-        if(typeof relation[relationsPropertiesNames[j]] == 'string') {
-          code += ",\"" + relation[relationsPropertiesNames[j]] + "\"";
-        } else {
-          code += "," + relation[relationsPropertiesNames[j]];
-        }
-      }
-    }
-
-    return code;
-  };
-
-
-  //////////////GML
-
-  /**
-   * Decodes a GML file into a new Network.
-   *
-   * @param  {String} gmlCode GML based representation of Network.
-   * @return {Network}
-   * tags:decoder
-   */
-  NetworkEncodings.decodeGML = function(gmlCode) {
-    if(gmlCode == null) return null;
-
-    gmlCode = gmlCode.substr(gmlCode.indexOf("[") + 1);
-
-    var network = new Network();
-
-    var firstEdgeIndex = gmlCode.search(/\bedge\b/);
-
-    var nodesPart = gmlCode.substr(0, firstEdgeIndex);
-    var edgesPart = gmlCode.substr(firstEdgeIndex);
-
-    var part = nodesPart;
-
-    var blocks = StringOperators.getParenthesisContents(part, true);
-
-    //console.log('blocks.length', blocks.length);
-
-    var graphicsBlock;
-    var lines;
-    var lineParts;
-
-    var indexG0;
-    var indexG1;
-
-    var node;
-
-    for(var i = 0; blocks[i] != null; i++) {
-      blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\n");
-      blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\r");
-
-      indexG0 = blocks[i].indexOf('graphics');
-      if(indexG0 != -1) {
-        indexG1 = blocks[i].indexOf(']');
-        graphicsBlock = blocks[i].substring(indexG0, indexG1 + 1);
-        blocks[i] = blocks[i].substr(0, indexG0) + blocks[i].substr(indexG1 + 1);
-
-        graphicsBlock = StringOperators.getFirstParenthesisContent(graphicsBlock, true);
-        blocks[i] = blocks[i] + graphicsBlock;
-      }
-
-      lines = blocks[i].split('\n');
-
-      lines[0] = NetworkEncodings._cleanLineBeginning(lines[0]);
-
-      lineParts = lines[0].split(" ");
-
-      node = new Node(StringOperators.removeQuotes(lineParts[1]), StringOperators.removeQuotes(lineParts[1]));
-
-      network.addNode(node);
-
-      for(var j = 1; lines[j] != null; j++) {
-        lines[j] = NetworkEncodings._cleanLineBeginning(lines[j]);
-        lines[j] = NetworkEncodings._replaceSpacesInLine(lines[j]);
-        if(lines[j] != "") {
-          lineParts = lines[j].split(" ");
-          if(lineParts[0] == 'label') lineParts[0] = 'name';
-          node[lineParts[0]] = (lineParts[1].charAt(0) == "\"") ? StringOperators.removeQuotes(lineParts[1]).replace(/\*SPACE\*/g, " ") : Number(lineParts[1]);
-        }
-      }
-    }
-
-    part = edgesPart;
-    blocks = StringOperators.getParenthesisContents(part, true);
-
-    var id0;
-    var id1;
-    var node0;
-    var node1;
-    var relation;
-    var nodes = network.nodeList;
-
-
-    for(i = 0; blocks[i] != null; i++) {
-      blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\n");
-      blocks[i] = StringOperators.removeInitialRepeatedCharacter(blocks[i], "\r");
-
-      lines = blocks[i].split('\n');
-
-      id0 = null;
-      id1 = null;
-      relation = null;
-
-      for(j = 0; lines[j] != null; j++) {
-        lines[j] = NetworkEncodings._cleanLineBeginning(lines[j]);
-        if(lines[j] != "") {
-          lineParts = lines[j].split(" ");
-          if(lineParts[0] == 'source') id0 = StringOperators.removeQuotes(lineParts[1]);
-          if(lineParts[0] == 'target') id1 = StringOperators.removeQuotes(lineParts[1]);
-
-          if(relation == null) {
-            if(id0 != null && id1 != null) {
-              node0 = nodes.getNodeById(id0);
-              node1 = nodes.getNodeById(id1);
-              if(node0 != null && node1 != null) {
-                relation = new Relation(id0 + " " + id1, '', node0, node1);
-                network.addRelation(relation);
-              }
-            }
-          } else {
-            if(lineParts[0] == 'value') lineParts[0] = 'weight';
-            relation[lineParts[0]] = (lineParts[1].charAt(0) == "\"") ? StringOperators.removeQuotes(lineParts[1]) : Number(lineParts[1]);
-          }
-        }
-
-      }
-
-    }
-
-    return network;
-  };
-
-  /**
-   * _cleanLineBeginning
-   *
-   * @ignore
-   */
-  NetworkEncodings._cleanLineBeginning = function(string) {
-    string = StringOperators.removeInitialRepeatedCharacter(string, "\n");
-    string = StringOperators.removeInitialRepeatedCharacter(string, "\r");
-    string = StringOperators.removeInitialRepeatedCharacter(string, " ");
-    string = StringOperators.removeInitialRepeatedCharacter(string, "	");
-    return string;
-  };
-
-
-  /**
-   * Encodes a network into GDF format.
-   *
-   * @param  {Network} network The Network to encode.
-   *
-   * @param  {StringList} nodesPropertiesNames Names of Node properties to encode.
-   * @param  {StringList} relationsPropertiesNames Names of Relation properties to encode.
-   * @param {Boolean} idsAsInts If true, then the index of the Node is used as an ID.
-   * GDF strong specification requires ids for nodes being int numbers.
-   * @return {String} GDF string.
-   * tags:encoder
-   */
-  NetworkEncodings.encodeGML = function(network, nodesPropertiesNames, relationsPropertiesNames, idsAsInts) {
-    if(network == null) return;
-
-    idsAsInts = idsAsInts == null ? true : idsAsInts;
-
-    nodesPropertiesNames = nodesPropertiesNames == null ? new StringList() : nodesPropertiesNames;
-    relationsPropertiesNames = relationsPropertiesNames == null ? new StringList() : relationsPropertiesNames;
-
-    var code = "graph\n[";
-    var ident = "	";
-    var i;
-    var j;
-    var node;
-    var isString;
-    var value;
-    for(i = 0; network.nodeList[i] != null; i++) {
-      node = network.nodeList[i];
-      code += "\n" + ident + "node\n" + ident + "[";
-      ident = "		";
-      if(idsAsInts) {
-        code += "\n" + ident + "id " + i;
-      } else {
-        code += "\n" + ident + "id \"" + node.id + "\"";
-      }
-      if(node.name != '') code += "\n" + ident + "label \"" + node.name + "\"";
-      for(j = 0; nodesPropertiesNames[j] != null; j++) {
-        value = node[nodesPropertiesNames[j]];
-        if(value == null) continue;
-        if(value.getMonth) value = DateOperators.dateToString(value);
-        isString = (typeof value == 'string');
-        if(isString) value = value.replace(/\n/g, "\\n").replace(/\"/g, "'");
-        code += "\n" + ident + nodesPropertiesNames[j] + " " + (isString ? "\"" + value + "\"" : value);
-      }
-      ident = "	";
-      code += "\n" + ident + "]";
-    }
-
-    var relation;
-    for(i = 0; network.relationList[i] != null; i++) {
-      relation = network.relationList[i];
-      code += "\n" + ident + "edge\n" + ident + "[";
-      ident = "		";
-      if(idsAsInts) {
-        code += "\n" + ident + "source " + network.nodeList.indexOf(relation.node0);
-        code += "\n" + ident + "target " + network.nodeList.indexOf(relation.node1);
-      } else {
-        code += "\n" + ident + "source \"" + relation.node0.id + "\"";
-        code += "\n" + ident + "target \"" + relation.node1.id + "\"";
-      }
-      for(j = 0; relationsPropertiesNames[j] != null; j++) {
-        value = relation[relationsPropertiesNames[j]];
-        if(value == null) continue;
-        if(value.getMonth) value = DateOperators.dateToString(value);
-        isString = (typeof value == 'string');
-        if(isString) value = value.replace(/\n/g, "\\n").replace(/\"|“|”/g, "'");
-        code += "\n" + ident + relationsPropertiesNames[j] + " " + (isString ? "\"" + value + "\"" : value);
-      }
-      ident = "	";
-      code += "\n" + ident + "]";
-    }
-
-    code += "\n]";
-    return code;
-  };
-
-
-
-
-
-  //////////////SYM
-
-  /**
-   * decodeSYM
-   *
-   * @param symCode
-   * @return {Network}
-   */
-  NetworkEncodings.decodeSYM = function(symCode) {
-    //console.log("/////// decodeSYM\n"+symCode+"\n/////////");
-    var i;
-    var j;
-
-    var lines = StringOperators.splitByEnter(symCode);
-    lines = lines == null ? [] : lines;
-
-    var objectPattern = /((?:NODE|RELATION)|GROUP)\s*([A-Za-z0-9_,\s]*)/;
-
-    var network = new Network();
-    var groups = new Table();
-    var name;
-    var id;
-    var node;
-    var node1;
-    var relation;
-    var group;
-    var groupName;
-    var parts;
-    var propName;
-    var propCont;
-
-    var nodePropertiesNames = [];
-    var relationPropertiesNames = [];
-    var groupsPropertiesNames = [];
-
-    for(i = 0; lines[i] != null; i++) {
-      var bits = objectPattern.exec(lines[i]);
-      if(bits != null) {
-        switch(bits[1]) {
-          case "NODE":
-            id = bits[2];
-            name = lines[i + 1].substr(0, 5) == "name:" ? lines[i + 1].substr(5).trim() : "";
-            name = name.replace(/\\n/g, '\n').replace(/\\'/g, "'");
-            node = new Node(id, name);
-            network.addNode(node);
-            j = i + 1;
-            while(j < lines.length && lines[j].indexOf(":") != -1) {
-              parts = lines[j].split(":");
-              propName = parts[0];
-              propCont = parts.slice(1).join(":");
-              if(propName != "name") {
-                propCont = propCont.trim();
-                node[propName] = String(Number(propCont)) == propCont ? Number(propCont) : propCont;
-                if(typeof node[propName] == "string") node[propName] = node[propName].replace(/\\n/g, '\n').replace(/\\'/g, "'");
-                if(nodePropertiesNames.indexOf(propName) == -1) nodePropertiesNames.push(propName);
-              }
-              j++;
-            }
-            if(node.color != null) {
-              if(/.+,.+,.+/.test(node.color)) node.color = 'rgb(' + node.color + ')';
-            }
-            if(node.group != null) {
-              group = groups.getFirstElementByPropertyValue("name", node.group);
-              if(group == null) {
-                console.log("NODES new group:[" + node.group + "]");
-                group = new NodeList();
-                group.name = node.group;
-                group.name = group.name.replace(/\\n/g, '\n').replace(/\\'/g, "'");
-                groups.push(group);
-              }
-              group.addNode(node);
-              //node.group = group;
-            }
-            break;
-          case "RELATION":
-            var ids = bits[2].replace(/\s/g, "").split(",");
-            //var ids = bits[2].split(",");
-            node = network.nodeList.getNodeById(ids[0]);
-            node1 = network.nodeList.getNodeById(ids[1]);
-            if(node != null && node1 != null) {
-              relation = new Relation(node.id + "_" + node1.id, node.id + "_" + node1.id, node, node1);
-              network.addRelation(relation);
-              j = i + 1;
-              while(j < lines.length && lines[j].indexOf(":") != -1) {
-                parts = lines[j].split(":");
-                propName = parts[0];
-                propCont = parts.slice(1).join(":").trim();
-                if(propName != "name") {
-                  propCont = propCont.trim();
-                  relation[propName] = String(Number(propCont)) == propCont ? Number(propCont) : propCont;
-                  if(typeof relation[propName] == "string") relation[propName] = relation[propName].replace(/\\n/g, '\n').replace(/\\'/g, "'");
-                  if(relationPropertiesNames.indexOf(propName) == -1) relationPropertiesNames.push(propName);
-                }
-                j++;
-              }
-            }
-            if(relation != null && relation.color != null) {
-              relation.color = 'rgb(' + relation.color + ')';
-            }
-            break;
-          case "GROUP":
-            groupName = lines[i].substr(5).trim();
-
-            group = groups.getFirstElementByPropertyValue("name", groupName);
-            if(group == null) {
-              group = new NodeList();
-              group.name = groupName;
-              groups.push(group);
-            }
-            j = i + 1;
-            while(j < lines.length && lines[j].indexOf(":") != -1) {
-              parts = lines[j].split(":");
-              if(parts[0] != "name") {
-                parts[1] = parts[1].trim();
-                group[parts[0]] = String(Number(parts[1])) == parts[1] ? Number(parts[1]) : parts[1];
-                if(groupsPropertiesNames.indexOf(parts[0]) == -1) groupsPropertiesNames.push(parts[0]);
-              }
-              j++;
-            }
-
-            if(/.+,.+,.+/.test(group.color)) group.color = 'rgb(' + group.color + ')';
-
-            break;
-        }
-      }
-    }
-
-    for(i = 0; groups[i] != null; i++) {
-      group = groups[i];
-      if(group.color == null) group.color = CATEGORICAL_COLORS[i % CATEGORICAL_COLORS.length];
-      for(j = 0; group[j] != null; j++) {
-        node = group[j];
-        if(node.color == null) node.color = group.color;
-      }
-    }
-
-    network.groups = groups;
-
-
-
-    network.nodePropertiesNames = nodePropertiesNames;
-    network.relationPropertiesNames = relationPropertiesNames;
-    network.groupsPropertiesNames = groupsPropertiesNames;
-
-    return network;
-  };
-
-  /**
-   * encodeSYM
-   *
-   * @param network
-   * @param groups
-   * @param nodesPropertiesNames
-   * @param relationsPropertiesNames
-   * @param groupsPropertiesNames
-   * @return {String}
-   */
-  NetworkEncodings.encodeSYM = function(network, groups, nodesPropertiesNames, relationsPropertiesNames, groupsPropertiesNames) {
-    nodesPropertiesNames = nodesPropertiesNames == null ? new StringList() : nodesPropertiesNames;
-    relationsPropertiesNames = relationsPropertiesNames == null ? new StringList() : relationsPropertiesNames;
-
-    var code = "";
-    var i;
-    var j;
-    var node;
-    var propertyName;
-    for(i = 0; network.nodeList[i] != null; i++) {
-      node = network.nodeList[i];
-      code += (i == 0 ? "" : "\n\n") + "NODE " + node.id;
-      if(node.name != "") code += "\nname:" + (node.name).replace(/\n/g, "\\n");
-      for(j = 0; nodesPropertiesNames[j] != null; j++) {
-        propertyName = nodesPropertiesNames[j];
-        if(node[propertyName] != null) code += "\n" + propertyName + ":" + _processProperty(propertyName, node[propertyName]);
-      }
-    }
-
-    var relation;
-    for(i = 0; network.relationList[i] != null; i++) {
-      relation = network.relationList[i];
-      code += "\n\nRELATION " + relation.node0.id + ", " + relation.node1.id;
-      for(j = 0; relationsPropertiesNames[j] != null; j++) {
-        propertyName = relationsPropertiesNames[j];
-        if(relation[propertyName] != null) code += "\n" + propertyName + ":" + _processProperty(propertyName, relation[propertyName]);
-      }
-    }
-
-    if(groups == null) return code;
-
-    var group;
-    for(i = 0; groups[i] != null; i++) {
-      group = groups[i];
-      code += "\n\nGROUP " + group.name;
-      for(j = 0; groupsPropertiesNames[j] != null; j++) {
-        propertyName = groupsPropertiesNames[j];
-        if(group[propertyName] != null) code += "\n" + propertyName + ":" + _processProperty(propertyName, group[propertyName]);
-      }
-    }
-
-    //console.log("/////// encodeSYM\n"+code+"\n/////////");
-
-    return code;
-  };
-
-  function _processProperty(propName, propValue) { //TODO: use this in other encoders
-    switch(propName) {
-      case "color":
-        if(propValue.substr(0, 3) == "rgb") {
-          var rgb = ColorOperators__default.colorStringToRGB(propValue);
-          return rgb.join(',');
-        }
-        return propValue;
-        break;
-    }
-    propValue = String(propValue).replace(/\n/g, "\\n");
-    return propValue;
-  };
-
-
-
-
-
-  /////////////////
-
-  //Also used by CSVToTable
-
-  /**
-   * replaceChomasInLine
-   *
-   * @ignore
-   */
-  NetworkEncodings.replaceChomasInLine = function(line, separator) {
-    var quoteBlocks = line.split("\"");
-    if(quoteBlocks.length < 2) return line;
-    var insideQuote;
-    var i;
-    var re;
-    separator = separator==null?",":separator;
-
-    switch(separator){
-      case ",":
-        re = /,/g;
-        break;
-      case ";":
-        re = /;/g;
-        break;
-    }
-
-    for(i = 0; quoteBlocks[i] != null; i++) {
-      insideQuote = i * 0.5 != Math.floor(i * 0.5);
-      if(insideQuote) {
-        quoteBlocks[i] = quoteBlocks[i].replace(re, "*CHOMA*");
-      }
-    }
-    line = StringList.fromArray(quoteBlocks).getConcatenated("");
-    return line;
-  };
-
-  /**
-   * _replaceSpacesInLine
-   *
-   * @ignore
-   */
-  NetworkEncodings._replaceSpacesInLine = function(line) {
-    var quoteBlocks = line.split("\"");
-    if(quoteBlocks.length < 2) return line;
-    var insideQuote;
-    var i;
-    for(i = 0; quoteBlocks[i] != null; i++) {
-      insideQuote = i * 0.5 != Math.floor(i * 0.5);
-      if(insideQuote) {
-        quoteBlocks[i] = quoteBlocks[i].replace(/ /g, "*SPACE*");
-      }
-    }
-    line = StringList.fromArray(quoteBlocks).getConcatenated("\"");
-    return line;
-  };
-
-  exports.NetworkEncodings = NetworkEncodings;
-
-  function TableEncodings() {}
-
-
-  TableEncodings.ENTER = String.fromCharCode(13);
-  TableEncodings.ENTER2 = String.fromCharCode(10);
-  TableEncodings.ENTER3 = String.fromCharCode(8232);
-
-  TableEncodings.SPACE = String.fromCharCode(32);
-  TableEncodings.SPACE2 = String.fromCharCode(160);
-
-  TableEncodings.TAB = "	";
-  TableEncodings.TAB2 = String.fromCharCode(9);
-
-
-  /**
-   * Decode a String in format CSV into a Table
-   * @param {String} csv CSV formatted text
-   *
-   * @param {Boolean} first_row_header first row is header (default: false)
-   * @param {String} separator separator character (default: ",")
-   * @param {Object} value_for_nulls Object to be placed instead of null values
-   * @param {Boolean} listsToStringList if true (default value), converts lists that are not StringLists, NumberLists… (probably because they contain strings and numbers) into StringLists
-   * @return {Table} resulting Table
-   * tags:decoder
-   */
-  TableEncodings.CSVtoTable = function(csvString, firstRowIsHeader, separator, valueForNulls, listsToStringList) {
-    if(csvString==null) return null;
-    valueForNulls = valueForNulls == null ? "" : valueForNulls;
-    listsToStringList = listsToStringList==null?true:listsToStringList;
-
-    var i, j;
-    var _firstRowIsHeader = firstRowIsHeader == null ? false : firstRowIsHeader;
-
-    if(csvString == null) return null;
-    if(csvString == "") return new Table();
-
-    csvString = csvString.replace(/\$/g, "");
-
-    var blocks = csvString.split("\"");
-    for(i = 1; blocks[i] != null; i += 2) {
-      blocks[i] = blocks[i].replace(/\n/g, "*ENTER*");
-    }
-    csvString = blocks.join("\""); //TODO: create a general method for replacements inside "", apply it to chomas
-
-    var enterChar = TableEncodings.ENTER2;
-    var lines = csvString.split(enterChar);
-    if(lines.length == 1) {
-      enterChar = TableEncodings.ENTER;
-      lines = csvString.split(enterChar);
-      if(lines.length == 1) {
-        enterChar = TableEncodings.ENTER3;
-        lines = csvString.split(enterChar);
-      }
-    }
-
-    var table = new Table();
-    var comaCharacter = separator != undefined ? separator : ",";
-
-    if(csvString == null || csvString == "" || csvString == " " || lines.length == 0) return null;
-
-    var startIndex = 0;
-    if(_firstRowIsHeader) {
-      startIndex = 1;
-      var headerContent = lines[0].split(comaCharacter);
-    }
-
-    var element;
-    var cellContent;
-    var numberCandidate;
-    for(i = startIndex; i < lines.length; i++) {
-      if(lines[i].length < 2) continue;
-
-      var cellContents = NetworkEncodings.replaceChomasInLine(lines[i], separator).split(comaCharacter); //TODO: will be obsolete (see previous TODO)
-
-      for(j = 0; j < cellContents.length; j++) {
-        table[j] = table[j] == null ? new List__default() : table[j];
-        if(_firstRowIsHeader && i == 1) {
-          table[j].name = ( headerContent[j] == null ? "" : TableEncodings._removeQuotes(headerContent[j]) ).trim();
-        }
-        var actualIndex = _firstRowIsHeader ? (i - 1) : i;
-
-        cellContent = cellContents[j].replace(/\*CHOMA\*/g, separator).replace(/\*ENTER\*/g, "\n");
-
-        cellContent = cellContent == '' ? valueForNulls : cellContent;
-
-        cellContent = String(cellContent);
-
-        numberCandidate = Number(cellContent.replace(',', '.'));
-
-        element = (numberCandidate || (numberCandidate == 0 && cellContent != '')) ? numberCandidate : cellContent;
-
-        if(typeof element == 'string') element = TableEncodings._removeQuotes(element);
-
-        table[j][actualIndex] = element;
-      }
-    }
-
-    for(i = 0; table[i] != null; i++) {
-      table[i] = table[i].getImproved();
-      if(listsToStringList && table[i].type=="List") table[i] = table[i].toStringList();
-    }
-
-    table = table.getImproved();
-
-    return table;
-  };
-
-  /**
-   * @ignore
-   */
-  TableEncodings._removeQuotes = function(string) {
-    if(string.length == 0) return string;
-    if((string.charAt(0) == "\"" || string.charAt(0) == "'") && (string.charAt(string.length - 1) == "\"" || string.charAt(string.length - 1) == "'")) string = string.substr(1, string.length - 2);
-    return string;
-  };
-
-
-  /**
-   * Encode a Table into a String in format CSV
-   * @param {Table} Table to be enconded
-   *
-   * @param {String} separator character (default: ",")
-   * @param {Boolean} first row as List names (default: false)
-   * @return {String} resulting String in CSV format
-   * tags:encoder
-   */
-  TableEncodings.TableToCSV = function(table, separator, namesAsHeaders) {
-    separator = separator || ",";
-    var i;
-    var j;
-    var list;
-    var type;
-    var lines = ListGenerators.createListWithSameElement(table[0].length, "");
-    var addSeparator;
-    for(i = 0; table[i] != null; i++) {
-      list = table[i];
-      type = list.type;
-      addSeparator = i != table.length - 1;
-      for(j = 0; list[j] != null; j++) {
-        switch(type) {
-          case 'NumberList':
-            lines[j] += list[j];
-            break;
-          default:
-            lines[j] += "\"" + list[j] + "\"";
-            break;
-        }
-        if(addSeparator) lines[j] += separator;
-      }
-    }
-
-    var headers = '';
-    if(namesAsHeaders) {
-      for(i = 0; table[i] != null; i++) {
-        list = table[i];
-        headers += "\"" + list.name + "\"";
-        if(i != table.length - 1) headers += separator;
-      }
-      headers += '\n';
-    }
-
-    return headers + lines.getConcatenated("\n");
-  };
-
-  exports.TableEncodings = TableEncodings;
-
-  RectangleList.prototype = new List__default();
-  RectangleList.prototype.constructor = RectangleList;
-  /**
-   * @classdesc A {@link List} structure for storing {@link Rectangle} instances.
-   *
-   * @description Creates a new RectangleList.
-   * @constructor
-   * @category geometry
-   */
-  function RectangleList() {
-    var array = List__default.apply(this, arguments);
-    array = RectangleList.fromArray(array);
-    return array;
-  }
-
-
-  /**
-   * @todo write docs
-   */
-  RectangleList.fromArray = function(array) {
-    var result = List__default.fromArray(array);
-    result.type = "RectangleList";
-
-    result.getFrame = RectangleList.prototype.getFrame;
-    result.add = RectangleList.prototype.add;
-    result.factor = RectangleList.prototype.factor;
-    result.getAddedArea = RectangleList.prototype.getAddedArea;
-    result.getIntersectionArea = RectangleList.prototype.getIntersectionArea;
-
-    return result;
-  };
-
-
-  /**
-   * @todo write docs
-   */
-  RectangleList.prototype.getFrame = function() {//TODO: use RectangleOperators.minRect
-    if(this.length == 0) return null;
-
-    var frame = this[0].clone();
-    frame.width = frame.getRight();
-    frame.height = frame.getBottom();
-    for(var i = 1; this[i] != null; i++) {
-      frame.x = Math.min(frame.x, this[i].x);
-      frame.y = Math.min(frame.y, this[i].y);
-
-      frame.width = Math.max(this[i].getRight(), frame.width);
-      frame.height = Math.max(this[i].getBottom(), frame.height);
-    }
-
-    frame.width -= frame.x;
-    frame.height -= frame.y;
-
-    return frame;
-  };
-
-  // TODO:finish RectangleList methods
-
-  /**
-   * @ignore
-   */
-  RectangleList.prototype.add = function() {
-
-  };
-
-  /**
-   * @ignore
-   */
-  RectangleList.prototype.factor = function() {
-
-  };
-
-
-  /**
-   * @ignore
-   */
-  RectangleList.prototype.getAddedArea = function() {};
-
-  /**
-   * @todo write docs
-   */
-  RectangleList.prototype.getIntersectionArea = function() {
-    var rect0;
-    var rect1;
-    var intersectionArea = 0;
-    var intersection;
-    for(var i = 0; this[i + 1] != null; i++) {
-      rect0 = this[i];
-      for(var j = i + 1; this[j] != null; j++) {
-        rect1 = this[j];
-        intersection = rect0.getIntersection(rect1);
-        intersectionArea += intersection == null ? 0 : intersection.getArea();
-      }
-    }
-
-    return intersectionArea;
-  };
-
-  exports.RectangleList = RectangleList;
-
-  function ListGenerators() {}
-
-
-
-  /**
-   * Generates a List made of several copies of same element (returned List is improved)
-   * @param {Object} nValues length of the List
-   * @param {Object} element object to be placed in all positions
-   * @return {List} generated List
-   * tags:generator
-   */
-  ListGenerators.createListWithSameElement = function(nValues, element) {
-    var list;
-    switch(typeOf(element)) {
-      case 'number':
-        list = new NumberList();
-        break;
-      case 'List':
-        list = new Table();
-        break;
-      case 'NumberList':
-        list = new NumberTable();
-        break;
-      case 'Rectangle':
-        list = new RectangleList();
-        break;
-      case 'string':
-        list = new StringList();
-        break;
-      case 'boolean':
-        list = new List__default(); //TODO:update once BooleanList exists
-        break;
-      default:
-        list = new List__default();
-    }
-
-    for(var i = 0; i < nValues; i++) {
-      list[i] = element;
-    }
-    return list;
-  };
-
-  /**
-   * Generates a List built froma seed element and a function that will be applied iteratively
-   * @param {Object} nValues length of the List
-   * @param {Object} firstElement first element
-   * @param {Object} dynamicFunction sequence generator function, elementN+1 =  dynamicFunction(elementN)
-   * @return {List} generated List
-   */
-  ListGenerators.createIterationSequence = function(nValues, firstElement, dynamicFunction) {
-    var list = ListGenerators.createListWithSameElement(1, firstElement);
-    for(var i = 1; i < nValues; i++) {
-      list[i] = dynamicFunction(list[i - 1]);
-    }
-    return list;
-  };
-
-  exports.ListGenerators = ListGenerators;
-
-  function NumberOperators__NumberOperators() {}
-  var NumberOperators__default = NumberOperators__NumberOperators;
-
-  NumberOperators__NumberOperators.numberToString = function(value, nDecimals, powersMode, unit) {
-    var string = value.toFixed(nDecimals);
-    while(string.charAt(string.length - 1) == '0') {
-      string = string.substring(0, string.length - 1);
-    }
-    if(string.charAt(string.length - 1) == '.') string = string.substring(0, string.length - 1);
-    return string;
-  };
-
-  /**
-   * decent method to create pseudo random numbers
-   * @param {Object} seed
-   */
-  NumberOperators__NumberOperators.getRandomWithSeed = function(seed) {
-    seed = (seed * 9301 + 49297) % 233280;
-    return seed / (233280.0);
-  };
-
-  /**
-   * @todo write docs
-   */
-  NumberOperators__NumberOperators.numberFromBinaryPositions = function(binaryPositions) {
-    var i;
-    var n = 0;
-    for(i = 0; binaryPositions[i] != null; i++) {
-      n += Math.pow(2, binaryPositions[i]);
-    }
-    return n;
-  };
-
-  /**
-   * @todo write docs
-   */
-  NumberOperators__NumberOperators.numberFromBinaryValues = function(binaryValues) {
-    var n = 0;
-    for(var i = 0; binaryValues[i] != null; i++) {
-      n += binaryValues[i] == 1 ? Math.pow(2, i) : 0;
-    }
-    return n;
-  };
-
-  /**
-   * @todo write docs
-   */
-  NumberOperators__NumberOperators.powersOfTwoDecomposition = function(number, length) {
-    // var i;
-    // var powers = StringList.fromArray(Number(number).toString(2).split('')).toNumberList().getReversed();
-    // var n = powers.length;
-    // for(i=n; i<length; i++){
-    //   powers.push(0);
-    // }
-    // return powers;
-
-
-
-    var powers = new NumberList();
-
-    var constructingNumber = 0;
-    var biggestPower;
-
-    while(constructingNumber < number) {
-      biggestPower = Math.floor(Math.log(number) / Math.LN2);
-      powers[biggestPower] = 1;
-      number -= Math.pow(2, biggestPower);
-    }
-
-    var length = Math.max(powers.length, length == null ? 0 : length);
-
-    for(var i = 0; i < length; i++) {
-      powers[i] = powers[i] == 1 ? 1 : 0;
-    }
-
-    return powers;
-  };
-
-  /**
-   * @todo write docs
-   */
-  NumberOperators__NumberOperators.positionsFromBinaryValues = function(binaryValues) {
-    var i;
-    var positions = new NumberList();
-    for(i = 0; binaryValues[i] != null; i++) {
-      if(binaryValues[i] == 1) positions.push(i);
-    }
-    return positions;
-  };
-
-  //////////Random Generator with Seed, From http://baagoe.org/en/w/index.php/Better_random_numbers_for_javascript
-
-  /**
-   * @ignore
-   */
-  NumberOperators__NumberOperators._Alea = function() {
-    return(function(args) {
-      // Johannes Baagøe <baagoe@baagoe.com>, 2010
-      var s0 = 0;
-      var s1 = 0;
-      var s2 = 0;
-      var c = 1;
-
-      if(args.length == 0) {
-        args = [+new Date()];
-      }
-      var mash = NumberOperators__NumberOperators._Mash();
-      s0 = mash(' ');
-      s1 = mash(' ');
-      s2 = mash(' ');
-
-      for(var i = 0; i < args.length; i++) {
-        s0 -= mash(args[i]);
-        if(s0 < 0) {
-          s0 += 1;
-        }
-        s1 -= mash(args[i]);
-        if(s1 < 0) {
-          s1 += 1;
-        }
-        s2 -= mash(args[i]);
-        if(s2 < 0) {
-          s2 += 1;
-        }
-      }
-      mash = null;
-
-      var random = function() {
-        var t = 2091639 * s0 + c * 2.3283064365386963e-10; // 2^-32
-        s0 = s1;
-        s1 = s2;
-        return s2 = t - (c = t | 0);
-      };
-      random.uint32 = function() {
-        return random() * 0x100000000; // 2^32
-      };
-      random.fract53 = function() {
-        return random() +
-          (random() * 0x200000 | 0) * 1.1102230246251565e-16; // 2^-53
-      };
-      random.version = 'Alea 0.9';
-      random.args = args;
-      return random;
-
-    }(Array.prototype.slice.call(arguments)));
-  };
-
-  /**
-   * @ignore
-   */
-  NumberOperators__NumberOperators._Mash = function() {
-    var n = 0xefc8249d;
-
-    var mash = function(data) {
-      data = data.toString();
-      for(var i = 0; i < data.length; i++) {
-        n += data.charCodeAt(i);
-        var h = 0.02519603282416938 * n;
-        n = h >>> 0;
-        h -= n;
-        h *= n;
-        n = h >>> 0;
-        h -= n;
-        n += h * 0x100000000; // 2^32
-      }
-      return(n >>> 0) * 2.3283064365386963e-10; // 2^-32
-    };
-
-    mash.version = 'Mash 0.9';
-    return mash;
-  };
-
-  exports.NumberOperators = NumberOperators__default;
-
-  function NumberListGenerators() {}
-
-
-  /**
-   * Generate a NumberList with sorted Numbers
-   * @param {Number} nValues length of the NumberList
-   *
-   * @param {Number} start first value
-   * @param {Number} step increment value
-   * @return {NumberList} generated NumberList
-   * tags:generator
-   */
-  NumberListGenerators.createSortedNumberList = function(nValues, start, step) {
-    start = start || 0;
-    step = step || 1;
-    if(step == 0) step = 1;
-    var i;
-    var numberList = new NumberList();
-    for(i = 0; i < nValues; i++) {
-      numberList.push(start + i * step);
-    }
-    return numberList;
-  };
-
-  // TODO: Should this function be here?
-  /**
-   * @todo finish docs
-   */
-  NumberList.createNumberListFromInterval = function(nElements, interval) {
-    if(interval == null) interval = new Interval__default(0, 1);
-    var numberList = new NumberList();
-    var range = interval.getAmplitude();
-    var i;
-    for(i = 0; i < nElements; i++) {
-      numberList.push(Number(interval.getMin()) + Number(Math.random() * range));
-    }
-    return numberList;
-  };
-
-  /**
-   * creates a list with random numbers
-   *
-   * @param  {Number} nValues
-   *
-   * @param  {Interval} interval range of the numberList
-   * @param  {Number} seed optional seed for seeded random numbers
-   * @return {NumberList}
-   * tags:random
-   */
-  NumberListGenerators.createRandomNumberList = function(nValues, interval, seed, func) {
-    seed = seed == null ? -1 : seed;
-    interval = interval == null ? new Interval__default(0, 1) : interval;
-
-    var numberList = new NumberList();
-    var amplitude = interval.getAmplitude();
-
-    var random = seed == -1 ? Math.random : new NumberOperators__default._Alea("my", seed, "seeds");
-
-    for(var i = 0; i < nValues; i++) {
-      //seed = (seed*9301+49297) % 233280; //old method, close enough: http://moebio.com/research/randomseedalgorithms/
-      //numberList[i] = interval.x + (seed/233280.0)*amplitude; //old method
-
-      numberList[i] = func == null ? (random() * amplitude + interval.x) : func(random() * amplitude + interval.x);
-    }
-
-    return numberList;
-  };
-
-  exports.NumberListGenerators = NumberListGenerators;
-
-  function TableOperators() {}
-
-
-
-  /**
-   * @todo finish docs
-   */
-  TableOperators.getElementFromTable = function(table, i, j) {
-    if(table[i] == null) return null;
-    return table[i][j];
-  };
-
-  /**
-   * @todo finish docs
-   */
-  TableOperators.getSubTable = function(table, x, y, width, height) {
-    if(table == null) return table;
-
-    var nLists = table.length;
-    if(nLists == 0) return null;
-    var result = new Table();
-
-    if(width <= 0) width = (nLists - x) + width;
-    x = Math.min(x, nLists - 1);
-    width = Math.min(width, nLists - x);
-
-    var nRows = table[0].length;
-
-    if(nRows == 0) return null;
-
-    if(height <= 0) height = (nRows - y) + height;
-
-    y = Math.min(y, nRows - 1);
-    height = Math.min(height, nRows - y);
-
-    var column;
-    var newColumn;
-    var i;
-    var j;
-    var element;
-    for(i = x; i < x + width; i++) {
-      column = table[i];
-      newColumn = new List__default();
-      newColumn.name = table[i].name;
-      for(j = y; j < y + height; j++) {
-        element = column[j];
-        newColumn.push(element);
-      }
-      result.push(newColumn.getImproved());
-    }
-    return result.getImproved();
-  };
-
-  /**
-   * transposes a table
-   * @param  {Table} table to be transposed
-   *
-   * @param {Boolean} firstListAsHeaders removes first list of the table and uses it as names for the lists on the transposed table
-   * @return {Table}
-   * tags:matrixes
-   */
-  TableOperators.transpose = function(table, firstListAsHeaders) {
-    if(table == null) return null;
-    return table.getTransposed(firstListAsHeaders);
-  };
-
-  /**
-   * divides the instances of a table in two tables: the training table and the test table
-   * @param  {Table} table
-   * @param  {Number} proportion proportion of training instances/test instances, between 0 and 1
-   *
-   * @param  {Number} mode  0:random<br>1:random with seed<br>2:shuffle
-   * @param {Number} seed seed for random numbers (mode 1)
-   * @return {List} list containing the two tables
-   * tags:ds
-   */
-  TableOperators.trainingTestPartition = function(table, proportion, mode, seed) {
-    if(table == null || proportion == null) return;
-
-    mode = mode || 0;
-    seed = seed || 0;
-
-    var indexesTr = new NumberList();
-    var indexesTe = new NumberList();
-
-    var random = mode == 1 ? new NumberOperators__default._Alea("my", seed, "seeds") : Math.random;
-
-    if(mode == 2) N_MOD = Math.floor(proportion / (1 - proportion) * 10);
-
-    table[0].forEach(function(id, i) {
-      if(mode == 0 ||  mode == 1) {
-        if(random() < proportion) {
-          indexesTr.push(i);
-        } else {
-          indexesTe.push(i);
-        }
-      } else {
-        if(i % N_MOD != 0) {
-          indexesTr.push(i);
-        } else {
-          indexesTe.push(i);
-        }
-      }
-    });
-
-    return new List__default(table.getSubListsByIndexes(indexesTr), table.getSubListsByIndexes(indexesTe));
-  };
-
-  /**
-   * tests a model
-   * @param  {NumberTable} numberTable coordinates of points
-   * @param  {List} classes list of values of classes
-   * @param  {Function} model function that receives two numbers and returns a guessed class
-   *
-   * @param  {Number} metric 0:error
-   * @return {Number} metric value
-   * tags:ds
-   */
-  TableOperators.testClassificationModel = function(numberTable, classes, model, metric) {
-    if(numberTable == null || classes == null || model == null) return null;
-
-    metric = metric || 0;
-
-    var i;
-    var nErrors = 0;
-
-    classes.forEach(function(clss, i) {
-      if(model(numberTable[0][i], numberTable[1][i]) != clss) {
-        nErrors++;
-      }
-    });
-
-    return nErrors / classes.length;
-  };
-
-
-
-  /**
-   * @todo finish docs
-   */
-  TableOperators.getSubListsByIndexes = function(table, indexes) {
-    var newTable = new Table();
-    newTable.name = table.name;
-    var list;
-    var newList;
-    for(var i = 0; table[i] != null; i++) {
-      list = table[i];
-      newList = instantiateWithSameType(list);
-      for(var j = 0; indexes[j] != null; j++) {
-        newList[j] = list[indexes[j]];
-      }
-      newTable[i] = newList.getImproved();
-    }
-    return newTable;
-  };
-
-  // old version replaced by above version Dec 1st, 2014
-  // - fixed bug where descending with 'false' value gets changed to 'true'
-  // - performance improvements for tables with lots of lists
-  // TableOperators.sortListsByNumberList=function(table, numberList, descending){
-  //  descending = descending || true;
-  /**
-   * @todo finish docs
-   */
-  TableOperators.sortListsByNumberList = function(table, numberList, descending) {
-    if(descending == null) descending = true;
-
-    var newTable = instantiate(typeOf(table));
-    newTable.name = table.name;
-    var nElements = table.length;
-    var i;
-    // only need to do the sort once, not for each column
-    var indexList = numberList.clone();
-    // save original index
-    for(i = 0; i < indexList.length; i++) {
-      indexList[i] = i;
-    }
-    indexList = ListOperators__default.sortListByNumberList(indexList, numberList, descending);
-    // now clone and then move from original based on index
-    for(i = 0; i < nElements; i++) {
-      newTable[i] = table[i].clone();
-      for(var j = 0; j < indexList.length; j++) {
-        newTable[i][j] = table[i][indexList[j]];
-      }
-    }
-    return newTable;
-  };
-
-
-  /**
-   * aggregates lists from a table, using one of the list of the table as the aggregation list, and based on different modes for each list
-   * @param  {Table} table containing the aggregation list and lists to be aggregated
-   * @param  {Number} indexAggregationList index of the aggregation list on the table
-   * @param  {NumberList} indexesListsToAggregate indexs of the lists to be aggregated; typically it also contains the index of the aggregation list at the beginning, to be aggregated using mode 0 (first element) thus resulting as the list of non repeated elements
-   * @param  {NumberList} modes list of modes of aggregation, these are the options:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes<br>12:count non repeated elements<br>13:enlist non repeated elements<br>14:concat elements (string)<br>15:concat non-repeated elements
-   *
-   * @param {StringList} newListsNames optional names for generated lists
-   * @return {Table} aggregated table
-   * tags:
-   */
-  TableOperators.aggregateTable = function(table, indexAggregationList, indexesListsToAggregate, modes, newListsNames){
-    indexAggregationList = indexAggregationList||0;
-
-    if(table==null || !table.length ||  table.length<indexAggregationList || indexesListsToAggregate==null || !indexesListsToAggregate.length || modes==null) return;
-
-    var aggregatorList = table[indexAggregationList];
-    var indexesTable = ListOperators__default.getIndexesTable(aggregatorList);
-    var newTable = new Table();
-    var newList;
-    var toAggregateList;
-    var i;
-
-    indexesListsToAggregate.forEach(function(index, i){
-      toAggregateList = table[index];
-      newList = ListOperators__default.aggregateList(aggregatorList, toAggregateList, i<modes.length?modes[i]:1, indexesTable)[1];
-      if(newListsNames && i<newListsNames.length) newList.name = newListsNames[i];
-      newTable.push(newList);
-    });
-
-    return newTable.getImproved();
-  };
-
-
-
-  /**
-   * builds a pivot table
-   * @param  {table} table
-   * @param  {Number} indexFirstAggregationList index of first list
-   * @param  {Number} indexSecondAggregationList index of second list
-   * @param  {Number} indexListToAggregate index of list to be aggregated
-   * @param  {Number} aggregationMode aggregation mode:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>------not yet deployed:<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes
-   * @param {Object} nullValue value for null cases in non-numerical aggregation
-   *
-   * @param  {Number} resultMode result mode:<br>0:classic pivot, a table of aggregations with first aggregation list elements without repetitions in the first list, and second aggregation elements as headers of the aggregation lists<br>1:two lists for combinations of first aggregated list and second aggregated list, and a third list for aggregated values(default)
-   * @return {Table}
-   * tags:
-   */
-  TableOperators.pivotTable = function(table, indexFirstAggregationList, indexSecondAggregationList, indexListToAggregate, aggregationMode, nullValue, resultMode){
-    if(table==null || !table.length || indexFirstAggregationList==null || indexSecondAggregationList==null || indexListToAggregate==null || aggregationMode==null) return;
-
-    resultMode = resultMode||0;
-    nullValue = nullValue==null?"":nullValue;
-
-    var element0, element1;
-    var coordinate, indexes;
-    var listToAggregate = table[indexListToAggregate];
-
-    var newTable = new Table();
-    var sum;
-    var i, j, index;
-
-    if(resultMode==1){//two lists of elements and a list of aggregation value
-      var indexesDictionary = {};
-      var elementsDictionary = {};
-
-      table[indexFirstAggregationList].forEach(function(element0, i){
-        element1 = table[indexSecondAggregationList][i];
-        coordinate = String(element0)+"∞"+String(element1);
-        if(indexesDictionary[coordinate]==null){
-          indexesDictionary[coordinate]=new NumberList();
-          elementsDictionary[coordinate]=new List__default();
-        }
-        indexesDictionary[coordinate].push(i);
-        elementsDictionary[coordinate].push(listToAggregate[i]);
-      });
-
-      newTable[0] = new List__default();
-      newTable[1] = new List__default();
-      switch(aggregationMode){
-        case 0://first element
-          newTable[2] = new List__default();
-          break;
-        case 1://count
-        case 2://sum
-        case 3://average
-          newTable[2] = new NumberList();
-          break;
-      }
-
-
-      for(coordinate in indexesDictionary) {
-        indexes = indexesDictionary[coordinate];
-        newTable[0].push(table[indexFirstAggregationList][indexes[0]]);
-        newTable[1].push(table[indexSecondAggregationList][indexes[0]]);
-
-        switch(aggregationMode){
-          case 0://first element
-            newTable[2].push(listToAggregate[indexes[0]]);
-            break;
-          case 1://count
-            newTable[2].push(indexes.length);
-            break;
-          case 2://sum
-          case 3://average
-            sum = 0;
-            indexes.forEach(function(index){
-              sum+=listToAggregate[index];
-            });
-            if(aggregationMode==3) sum/=indexes.length;
-            newTable[2].push(sum);
-            break;
-        }
-      }
-
-      newTable[0] = newTable[0].getImproved();
-      newTable[1] = newTable[1].getImproved();
-
-      switch(aggregationMode){
-        case 0://first element
-          newTable[2] = newTable[2].getImproved();
-          break;
-      }
-
-      return newTable;
-    }
-
-
-    ////////////////////////resultMode==0, a table whose first list is the first aggregation list, and each i+i list is the aggregations with elements for the second aggregation list
-
-    newTable[0] = new List__default();
-
-    var elementsPositions0 = {};
-    var elementsPositions1 = {};
-
-    var x, y;
-    var element;
-    var newList;
-
-    table[indexFirstAggregationList].forEach(function(element0, i){
-      element1 = table[indexSecondAggregationList][i];
-      element = listToAggregate[i];
-
-      y = elementsPositions0[String(element0)];
-      if(y==null){
-        newTable[0].push(element0);
-        y = newTable[0].length-1;
-        elementsPositions0[String(element0)] = y;
-      }
-
-      x = elementsPositions1[String(element1)];
-      if(x==null){
-        switch(aggregationMode){
-          case 0:
-            newList = new List__default();
-            break;
-          case 1:
-          case 2:
-          case 3:
-            newList = new NumberList();
-            break;
-        }
-        newTable.push(newList);
-        newList.name = String(element1);
-        x = newTable.length-1;
-        elementsPositions1[String(element1)] = x;
-      }
-
-      switch(aggregationMode){
-        case 0://first element
-          if(newTable[x][y]==null) newTable[x][y]=element;
-          break;
-        case 1://count
-          if(newTable[x][y]==null) newTable[x][y]=0;
-          newTable[x][y]++;
-          break;
-        case 2://sum
-          if(newTable[x][y]==null) newTable[x][y]=0;
-          newTable[x][y]+=element;
-          break;
-        case 3://average
-          if(newTable[x][y]==null) newTable[x][y]=[0,0];
-          newTable[x][y][0]+=element;
-          newTable[x][y][1]++;
-          break;
-      }
-
-    });
-
-    switch(aggregationMode){
-      case 0://first element
-        for(i=1; i<newTable.length; i++){
-          if(newTable[i]==null) newTable[i]=new List__default();
-
-          newTable[0].forEach(function(val, j){
-            if(newTable[i][j]==null) newTable[i][j]=nullValue;
-          });
-
-          newTable[i] = newTable[i].getImproved();
-        }
-        break;
-      case 1://count
-      case 2://sum
-        for(i=1; i<newTable.length; i++){
-          if(newTable[i]==null) newTable[i]=new NumberList();
-          newTable[0].forEach(function(val, j){
-            if(newTable[i][j]==null) newTable[i][j]=0;
-          });
-        }
-        break;
-      case 3://average
-        for(i=1; i<newTable.length; i++){
-          if(newTable[i]==null) newTable[i]=new NumberList();
-          newTable[0].forEach(function(val, j){
-            if(newTable[i][j]==null){
-              newTable[i][j]=0;
-            } else {
-              newTable[i][j]=newTable[i][j][0]/newTable[i][j][1];
-            }
-          });
-        }
-        break;
-    }
-
-    return newTable;
-  };
-
-
-
-  /**
-   * aggregates a table
-   * @param  {Table} table to be aggregated, deprecated: a new more powerful method has been built
-   * @param  {Number} nList list in the table used as basis to aggregation
-   * @param  {Number} mode mode of aggregation, 0:picks first element 1:adds numbers, 2:averages
-   * @return {Table} aggregated table
-   * tags:deprecated
-   */
-  TableOperators.aggregateTableOld = function(table, nList, mode) {
-    nList = nList == null ? 0 : nList;
-    if(table == null || table[0] == null || table[0][0] == null || table[nList] == null) return null;
-    mode = mode == null ? 0 : mode;
-
-    var newTable = new Table();
-    var i, j;
-    var index;
-    var notRepeated;
-
-    newTable.name = table.name;
-
-    for(j = 0; table[j] != null; j++) {
-      newTable[j] = new List__default();
-      newTable[j].name = table[j].name;
-    }
-
-    switch(mode) {
-      case 0: //leaves the first element of the aggregated subLists
-        for(i = 0; table[0][i] != null; i++) {
-          notRepeated = newTable[nList].indexOf(table[nList][i]) == -1;
-          if(notRepeated) {
-            for(j = 0; table[j] != null; j++) {
-              newTable[j].push(table[j][i]);
-            }
-          }
-        }
-        break;
-      case 1: //adds values in numberLists
-        for(i = 0; table[0][i] != null; i++) {
-          index = newTable[nList].indexOf(table[nList][i]);
-          notRepeated = index == -1;
-          if(notRepeated) {
-            for(j = 0; table[j] != null; j++) {
-              newTable[j].push(table[j][i]);
-            }
-          } else {
-            for(j = 0; table[j] != null; j++) {
-              if(j != nList && table[j].type == 'NumberList') {
-                newTable[j][index] += table[j][i];
-              }
-            }
-          }
-        }
-        break;
-      case 2: //averages values in numberLists
-        var nRepetitionsList = table[nList].getFrequenciesTable(false);
-        newTable = TableOperators.aggregateTableOld(table, nList, 1);
-
-        for(j = 0; newTable[j] != null; j++) {
-          if(j != nList && newTable[j].type == 'NumberList') {
-            newTable[j] = newTable[j].divide(nRepetitionsList[1]);
-          }
-        }
-
-        newTable.push(nRepetitionsList[1]);
-        break;
-    }
-    for(j = 0; newTable[j] != null; j++) {
-      newTable[j] = newTable[j].getImproved();
-    }
-    return newTable.getImproved();
-  };
-
-  /**
-   * counts pairs of elements in same positions in two lists (the result is the adjacent matrix of the network defined by pairs)
-   * @param  {Table} table with at least two lists
-   * @return {NumberTable}
-   * tags:
-   */
-  TableOperators.getCountPairsMatrix = function(table) {
-    if(table == null || table.length < 2 || table[0] == null || table[0][0] == null) return null;
-
-    var list0 = table[0].getWithoutRepetitions();
-    var list1 = table[1].getWithoutRepetitions();
-
-    var matrix = new NumberTable(list1.length);
-
-    list1.forEach(function(element1, i) {
-      matrix[i].name = String(element1);
-      list0.forEach(function(element0, j) {
-        matrix[i][j] = 0;
-      });
-    });
-
-    table[0].forEach(function(element0, i) {
-      element1 = table[1][i];
-      matrix[list1.indexOf(element1)][list0.indexOf(element0)]++;
-    });
-
-    return matrix;
-  };
-
-
-  /**
-   * filter a table selecting rows that have an element on one of its lists
-   * @param  {Table} table
-   * @param  {Number} nList list that could contain the element in several positions
-   * @param  {Object} element
-   *
-   * @param {Boolean} keepRowIfElementIsPresent if true (default value) the row is selected if the list contains the given element, if false the row is discarded
-   * @return {Table}
-   * tags:filter
-   */
-  TableOperators.filterTableByElementInList = function(table, nList, element, keepRowIfElementIsPresent) {
-    if(table == null ||  !table.length > 1 || nList == null) return;
-    if(element == null) return table;
-
-
-    var newTable = new Table();
-    var i, j;
-
-    newTable.name = table.name;
-
-    for(j = 0; table[j] != null; j++) {
-      newTable[j] = new List__default();
-      newTable[j].name = table[j].name;
-    }
-
-    if(keepRowIfElementIsPresent){
-      for(i = 0; table[0][i] != null; i++) {
-        if(table[nList][i] == element) {
-          for(j = 0; table[j] != null; j++) {
-            newTable[j].push(table[j][i]);
-          }
-        }
-      }
-    } else {
-      for(i = 0; table[0][i] != null; i++) {
-        if(table[nList][i] != element) {
-          for(j = 0; table[j] != null; j++) {
-            newTable[j].push(table[j][i]);
-          }
-        }
-      }
-    }
-
-    for(j = 0; newTable[j] != null; j++) {
-      newTable[j] = newTable[j].getImproved();
-    }
-
-    return newTable;
-  };
-
-  /**
-   * @todo finish docs
-   */
-  TableOperators.mergeDataTablesInList = function(tableList) {
-    if(tableList.length < 2) return tableList;
-
-    var merged = tableList[0];
-
-    for(var i = 1; tableList[i] != null; i++) {
-      merged = TableOperators.mergeDataTables(merged, tableList[i]);
-    }
-
-    return merged;
-  };
-
-  /**
-   * creates a new table with an updated first List of elements and an added new numberList with the new values
-   */
-  TableOperators.mergeDataTables = function(table0, table1) {
-    if(table1[0].length == 0) {
-      var merged = table0.clone();
-      merged.push(ListGenerators.createListWithSameElement(table0[0].length, 0));
-      return merged;
-    }
-
-    var table = new Table();
-    var list = ListOperators__default.concatWithoutRepetitions(table0[0], table1[0]);
-
-    var nElements = list.length;
-
-    var nNumbers0 = table0.length - 1;
-    var nNumbers1 = table1.length - 1;
-
-    var numberTable0 = new NumberTable();
-    var numberTable1 = new NumberTable();
-
-    var element;
-    var index;
-
-    var i, j;
-
-    for(i = 0; i < nElements; i++) {
-      index = table0[0].indexOf(list[i]);
-      if(index > -1) {
-        for(var j = 0; j < nNumbers0; j++) {
-          if(i == 0) {
-            numberTable0[j] = new NumberList();
-            numberTable0[j].name = table0[j + 1].name;
-          }
-          numberTable0[j][i] = table0[j + 1][index];
-        }
-      } else {
-        for(j = 0; j < nNumbers0; j++) {
-          if(i == 0) {
-            numberTable0[j] = new NumberList();
-            numberTable0[j].name = table0[j + 1].name;
-          }
-          numberTable0[j][i] = 0;
-        }
-      }
-
-      index = table1[0].indexOf(list[i]);
-      if(index > -1) {
-        for(j = 0; j < nNumbers1; j++) {
-          if(i == 0) {
-            numberTable1[j] = new NumberList();
-            numberTable1[j].name = table1[j + 1].name;
-          }
-          numberTable1[j][i] = table1[j + 1][index];
-        }
-      } else {
-        for(j = 0; j < nNumbers1; j++) {
-          if(i == 0) {
-            numberTable1[j] = new NumberList();
-            numberTable1[j].name = table1[j + 1].name;
-          }
-          numberTable1[j][i] = 0;
-        }
-      }
-    }
-
-    table[0] = list;
-
-    for(i = 0; numberTable0[i] != null; i++) {
-      table.push(numberTable0[i]);
-    }
-    for(i = 0; numberTable1[i] != null; i++) {
-      table.push(numberTable1[i]);
-    }
-    return table;
-  };
-
-  /**
-   * From two DataTables creates a new DataTable with combined elements in the first List, and added values in the second
-   * @param {Object} table0
-   * @param {Object} table1
-   * @return {Table}
-   */
-  TableOperators.fusionDataTables = function(table0, table1) {
-    var table = table0.clone();
-    var index;
-    var element;
-    for(var i = 0; table1[0][i] != null; i++) {
-      element = table1[0][i];
-      index = table[0].indexOf(element);
-      if(index == -1) {
-        table[0].push(element);
-        table[1].push(table1[1][i]);
-      } else {
-        table[1][index] += table1[1][i];
-      }
-    }
-    return table;
-  };
-
-  /**
-   * @todo finish docs
-   */
-  TableOperators.completeTable = function(table, nRows, value) {
-    value = value == null ? 0 : value;
-
-    var newTable = new Table();
-    newTable.name = table.name;
-
-    var list;
-    var newList;
-    var j;
-
-    for(var i = 0; i < table.length; i++) {
-      list = table[i];
-      newList = list == null ? ListOperators__default.getNewListForObjectType(value) : instantiateWithSameType(list);
-      newList.name = list == null ? '' : list.name;
-      for(j = 0; j < nRows; j++) {
-        newList[j] = (list == null || list[j] == null) ? value : list[j];
-      }
-      newTable[i] = newList;
-    }
-    return newTable;
-  };
-
-  /**
-   * filters a Table keeping the NumberLists
-   * @param  {Table} table to filter<
-   * @return {NumberTable}
-   * tags:filter
-   */
-  TableOperators.getNumberTableFromTable = function(table) {
-    if(table == null ||  !table.length > 0) return null;
-
-    var i;
-    var newTable = new NumberTable();
-    newTable.name = table.name;
-    for(i = 0; table[i] != null; i++) {
-      if(table[i].type == "NumberList") newTable.push(table[i]);
-    }
-    return newTable;
-  };
-
-  /**
-   * calculates de information gain of all variables in a table and a supervised variable
-   * @param  {Table} variablesTable
-   * @param  {List} supervised
-   * @return {NumberList}
-   * tags:ds
-   */
-  TableOperators.getVariablesInformationGain = function(variablesTable, supervised) {
-    if(variablesTable == null) return null;
-
-    var igs = new NumberList();
-    variablesTable.forEach(function(feature) {
-      igs.push(ListOperators__default.getInformationGain(feature, supervised));
-    });
-    return igs;
-  };
-
-  /**
-   * @todo finish docs
-   */
-  TableOperators.splitTableByCategoricList = function(table, list) {
-    if(table == null || list == null) return null;
-
-    var childrenTable;
-    var tablesList = new List__default();
-    var childrenObject = {};
-    var N = list.length;
-
-    list.forEach(function(element, i) {
-      childrenTable = childrenObject[element];
-      if(childrenTable == null) {
-        childrenTable = new Table();
-        childrenObject[element] = childrenTable;
-        tablesList.push(childrenTable);
-        table.forEach(function(list, j) {
-          childrenTable[j] = new List__default();
-          childrenTable[j].name = list.name;
-        });
-        childrenTable._element = element;
-      }
-      table.forEach(function(list, j) {
-        childrenTable[j].push(table[j][i]);
-      });
-    });
-
-    return tablesList;
-  };
-
-  /**
-   * builds a decision tree based on a table made of categorical lists, a list (the values of a supervised variable), and a value from the supervised variable. The result is a tree that contains on its leaves different populations obtained by iterative filterings by category values, and that contain extremes probabilities for having or not the valu ein the supervised variable.
-   * [!] this method only works with categorical lists (in case you have lists with numbers, find a way to simplify by ranges or powers)
-   * @param  {Table} variablesTable predictors table
-   * @param  {Object} supervised variable: list, or index (number) in the table (in which case the list will be removed from the predictors table)
-   * @param {Object} supervisedValue main value in supervised list (associated with blue)
-   *
-   * @param {Number} min_entropy minimum value of entropy on nodes (0.2 default)
-   * @param {Number} min_size_node minimum population size associated with node (10 default)
-   * @param {Number} min_info_gain minimum information gain by splitting by best feature (0.002 default)
-   * @param {Boolean} generatePattern generates a pattern of points picturing proprtion of followed class in node
-   * @param {ColorScale} colorScale to assign color associated to probability (default: blueToRed)
-   * @return {Tree} tree with aditional information on its nodes, including: probablity, color, entropy, weight, lift
-   * tags:ds
-   */
-  TableOperators.buildDecisionTree = function(variablesTable, supervised, supervisedValue, min_entropy, min_size_node, min_info_gain, generatePattern, colorScale){
-    if(variablesTable == null ||  supervised == null || supervisedValue == null) return;
-
-    if(colorScale==null) colorScale = ColorScales.blueWhiteRed;
-
-    if(typeOf(supervised)=='number'){
-      var newTable = variablesTable.getWithoutElementAtIndex(supervised);
-      supervised = variablesTable[supervised];
-      variablesTable = newTable;
-    }
-
-    min_entropy = min_entropy == null ? 0.2 : min_entropy;
-    min_size_node = min_size_node || 10;
-    min_info_gain = min_info_gain || 0.002;
-
-    var indexes = NumberListGenerators.createSortedNumberList(supervised.length);
-    var tree = new Tree();
-
-    TableOperators._buildDecisionTreeNode(tree, variablesTable, supervised, 0, min_entropy, min_size_node, min_info_gain, null, null, supervisedValue, indexes, generatePattern, colorScale);
-
-    return tree;
-  };
-
-
-  /**
-   * @ignore
-   */
-  TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervised, level, min_entropy, min_size_node, min_info_gain, parent, value, supervisedValue, indexes, generatePattern, colorScale) {
-    //if(level < 4) c.l('\nlevel', level);
-    var entropy = ListOperators__default.getListEntropy(supervised, supervisedValue);
-
-    //if(level < 4) c.l('entropy, min_entropy', entropy, min_entropy);
-
-    if(entropy >= min_entropy) {
-      var informationGains = TableOperators.getVariablesInformationGain(variablesTable, supervised);
-      var maxIg = 0;
-      var iBestFeature = 0;
-      informationGains.forEach(function(ig, i){
-        if(ig > maxIg) {
-          maxIg = ig;
-          iBestFeature = i;
-        }
-      });
-    }
-
-    var subDivide = entropy >= min_entropy && maxIg > min_info_gain && supervised.length >= min_size_node;
-
-    var id = tree.nodeList.getNewId();
-    var name = (value == null ? '' : value + ':') + (subDivide ? variablesTable[iBestFeature].name : 'P=' + supervised._biggestProbability + '(' + supervised._mostRepresentedValue + ')');
-    var node = new Node(id, name);
-
-    tree.addNodeToTree(node, parent);
-
-    if(parent == null) {
-      tree.informationGainTable = new Table();
-      tree.informationGainTable[0] = variablesTable.getNames();
-      if(informationGains) {
-        tree.informationGainTable[1] = informationGains.clone();
-        tree.informationGainTable = tree.informationGainTable.getListsSortedByList(informationGains, false);
-      }
-    }
-
-    node.entropy = entropy;
-    node.weight = supervised.length;
-    node.supervised = supervised;
-    node.indexes = indexes;
-    node.value = value;
-    node.mostRepresentedValue = supervised._mostRepresentedValue;
-    node.biggestProbability = supervised._biggestProbability;
-    node.valueFollowingProbability = supervised._P_valueFollowing;
-    node.lift = node.valueFollowingProbability / tree.nodeList[0].valueFollowingProbability; //Math.log(node.valueFollowingProbability/tree.nodeList[0].valueFollowingProbability)/Math.log(2);
-
-
-    // if(level < 4) {
-    //   c.l('supervised.countElement(supervisedValue)', supervised.countElement(supervisedValue));
-    //   c.l('value', value);
-    //   c.l('name', name);
-    //   c.l('supervised.name', supervised.name);
-    //   c.l('supervised.length', supervised.length);
-    //   c.l('supervisedValue', supervisedValue);
-    //   c.l('supervised._biggestProbability, supervised._P_valueFollowing', supervised._biggestProbability, supervised._P_valueFollowing);
-    //   c.l('node.valueFollowingProbability (=supervised._P_valueFollowing):', node.valueFollowingProbability);
-    //   c.l('tree.nodeList[0].valueFollowingProbability', tree.nodeList[0].valueFollowingProbability);
-    //   c.l('node.biggestProbability (=_biggestProbability):', node.biggestProbability);
-    //   c.l('node.mostRepresentedValue:', node.mostRepresentedValue);
-    //   c.l('node.mostRepresentedValue==supervisedValue', node.mostRepresentedValue == supervisedValue);
-    // }
-
-    node._color = colorScale(node.valueFollowingProbability); //TableOperators._decisionTreeColorScale(1 - node.valueFollowingProbability, colorScale);
-
-    if(generatePattern) {
-      var newCanvas = document.createElement("canvas");
-      newCanvas.width = 150;
-      newCanvas.height = 100;
-      var newContext = newCanvas.getContext("2d");
-      newContext.clearRect(0, 0, 150, 100);
-
-      TableOperators._decisionTreeGenerateColorsMixture(newContext, 150, 100, ['blue', 'red'],
-  			node.mostRepresentedValue==supervisedValue?
-  				[Math.floor(node.biggestProbability*node.weight), Math.floor((1-node.biggestProbability)*node.weight)]
-  				:
-  				[Math.floor((1-node.biggestProbability)*node.weight), Math.floor(node.biggestProbability*node.weight)]
-      );
-
-      var img = new Image();
-      img.src = newCanvas.toDataURL();
-      node.pattern = newContext.createPattern(img, "repeat");
-    }
-
-
-    if(!subDivide){
-      return node;
-    }
-
-    node.bestFeatureName = variablesTable[iBestFeature].name;
-    node.bestFeatureName = node.bestFeatureName == ""?"list "+iBestFeature:node.bestFeatureName;
-    node.iBestFeature = iBestFeature;
-    node.informationGain = maxIg;
-
-    var expanded = variablesTable.concat([supervised, indexes]);
-
-    var tables = TableOperators.splitTableByCategoricList(expanded, variablesTable[iBestFeature]);
-    var childTable;
-    var childSupervised;
-    var childIndexes;
-    var newNode;
-
-    tables.forEach(function(expandedChild) {
-      childTable = expandedChild.getSubList(0, expandedChild.length - 3);
-      childSupervised = expandedChild[expandedChild.length - 2];
-      childIndexes = expandedChild[expandedChild.length - 1];
-      TableOperators._buildDecisionTreeNode(tree, childTable, childSupervised, level + 1, min_entropy, min_size_node, min_info_gain, node, expandedChild._element, supervisedValue, childIndexes, generatePattern, colorScale);
-    });
-
-    node.toNodeList = node.toNodeList.getSortedByProperty('valueFollowingProbability', false);
-
-    return node;
-  };
-
-  // TableOperators._decisionTreeColorScale = function(value, colorScale) {
-  //   if(colorScale) return colorScale(value);
-  //   return ColorScales.blueWhiteRed
-
-  //   // var rr = value < 0.5 ? Math.floor(510 * value) : 255;
-  //   // var gg = value < 0.5 ? Math.floor(510 * value) : Math.floor(510 * (1 - value));
-  //   // var bb = value < 0.5 ? 255 : Math.floor(510 * (1 - value));
-
-  //   // return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
-  // };
-
-  /**
-   * @ignore
-   */
-  TableOperators._decisionTreeGenerateColorsMixture = function(ctxt, width, height, colors, weights){
-    var x, y, i; //, rgb;
-    var allColors = ListGenerators.createListWithSameElement(weights[0], colors[0]);
-
-    for(i = 1; colors[i] != null; i++) {
-      allColors = allColors.concat(ListGenerators.createListWithSameElement(weights[i], colors[i]));
-    }
-
-    for(x = 0; x < width; x++) {
-      for(y = 0; y < height; y++) {
-        i = (x + y * width) * 4;
-        ctxt.fillStyle = allColors.getRandomElement();
-        ctxt.fillRect(x, y, 1, 1);
-      }
-    }
-  };
-
-  exports.TableOperators = TableOperators;
-
-  function ListOperators__ListOperators() {}
-  var ListOperators__default = ListOperators__ListOperators;
-
-
-  /**
-   * gets an element in a specified position from a List
-   * @param  {List} list
-   *
-   * @param  {Number} index
-   * @return {Object}
-   * tags:
-   */
-  ListOperators__ListOperators.getElement = function(list, index) {
-    if(list == null) return null;
-    index = index == null ? 0 : index % list.length;
-    return list[index];
-  };
-
-  /**
-   * multi-ouput operator that gives acces to individual elements
-   * @param  {List} list
-   *
-   * @param  {Number} fromIndex (default 0)
-   * @return {Object} first Object
-   * @return {Object} second Object
-   * @return {Object} third Object
-   * @return {Object} fourth Object
-   * @return {Object} fifth Object
-   * @return {Object} sisxth Object
-   * @return {Object} seventh Object
-   * @return {Object} eight Object
-   * @return {Object} ninth Object
-   * @return {Object} tenth Object
-   * tags:
-   */
-  ListOperators__ListOperators.getFirstElements = function(list, fromIndex) {
-    if(list == null) return null;
-
-    fromIndex = fromIndex == null ? 0 : Number(fromIndex);
-
-    return [
-    {
-      type: "Object",
-      name: "first value",
-      description: "first value",
-      value: list[fromIndex + 0]
-    },
-    {
-      type: "Object",
-      name: "second value",
-      description: "second value",
-      value: list[fromIndex + 1]
-    },
-    {
-      type: "Object",
-      name: "third value",
-      description: "third value",
-      value: list[fromIndex + 2]
-    },
-    {
-      type: "Object",
-      name: "fourth value",
-      description: "fourth value",
-      value: list[fromIndex + 3]
-    },
-    {
-      type: "Object",
-      name: "fifth value",
-      description: "fifth value",
-      value: list[fromIndex + 4]
-    },
-    {
-      type: "Object",
-      name: "sixth value",
-      description: "sixth value",
-      value: list[fromIndex + 5]
-    },
-    {
-      type: "Object",
-      name: "seventh value",
-      description: "seventh value",
-      value: list[fromIndex + 6]
-    },
-    {
-      type: "Object",
-      name: "eight value",
-      description: "eight value",
-      value: list[fromIndex + 7]
-    },
-    {
-      type: "Object",
-      name: "ninth value",
-      description: "ninth value",
-      value: list[fromIndex + 8]
-    },
-    {
-      type: "Object",
-      name: "tenth value",
-      description: "tenth value",
-      value: list[fromIndex + 9]
-    }];
-  };
-
-
-  /**
-   * first position of element in list (-1 if element doesn't belong to the list)
-   * @param  {List} list
-   * @param  {Object} element
-   * @return {Number}
-   * tags:
-   */
-  ListOperators__ListOperators.indexOf = function(list, element) {
-    return list.indexOf(element);
-  };
-
-  /**
-   * concats lists
-   * @param  {List} list0
-   * @param  {List} list1
-   *
-   * @param  {List} list2
-   * @param  {List} list3
-   * @param  {List} list4
-   * @return {List} list5
-   * tags:
-   */
-  ListOperators__ListOperators.concat = function() {
-    if(arguments == null || arguments.length == 0 ||  arguments[0] == null) return null;
-    if(arguments.length == 1) return arguments[0];
-
-    var i;
-    var list = arguments[0].concat(arguments[1]);
-    for(i = 2; arguments[i]; i++) {
-      list = list.concat(arguments[i]);
-    }
-    return list.getImproved();
-  };
-
-  /**
-   * assembles a List
-   * @param  {Object} argument0
-   *
-   * @param  {Object} argument1
-   * @param  {Object} argument2
-   * @param  {Object} argument3
-   * @param  {Object} argument4
-   * @return {List}
-   * tags:
-   */
-  ListOperators__ListOperators.assemble = function() {
-    return List__default.fromArray(Array.prototype.slice.call(arguments, 0)).getImproved();
-  };
-
-
-
-  /**
-   * returns a table with two Lists: words and occurrences
-   * @param {List} list
-   *
-   * @param {Boolean} sortListsByOccurrences optional, true by default, common words first
-   * @param {Boolean} consecutiveRepetitions optional false by default, if true only counts consecutive repetitions
-   * @param {Number} optional limit, limits the size of the lists
-   * @return {Table}
-   * tags:count,toimprove,deprecated
-   */
-  // ListOperators.countElementsRepetitionOnList = function(list, sortListsByOccurrences, consecutiveRepetitions, limit) { //transform this, use dictionary instead of indexOf !!!!!!!
-  //   if(list == null) return;
-
-  //   sortListsByOccurrences = sortListsByOccurrences == null ? true : sortListsByOccurrences;
-  //   consecutiveRepetitions = consecutiveRepetitions || false;
-  //   limit = limit == null ? 0 : limit;
-
-  //   var obj;
-  //   var elementList = instantiate(typeOf(list));
-  //   var numberList = new NumberList();
-  //   var index;
-  //   var i;
-
-  //   if(consecutiveRepetitions) {
-  //     if(list.length == 0) return null;
-  //     var previousElement = list[0];
-  //     elementList.push(previousElement);
-  //     numberList.push(1);
-  //     for(i = 1; i < nElements; i++) {
-  //       obj = list[i];
-  //       if(obj == previousElement) {
-  //         numberList[numberList.length - 1] = numberList[numberList.length - 1] + 1;
-  //       } else {
-  //         elementList.push(obj);
-  //         numberList.push(1);
-  //         previousElement = obj;
-  //       }
-  //     }
-  //   } else {
-  //     for(i = 0; list[i] != null; i++){
-  //       obj = list[i];
-  //       index = elementList.indexOf(obj);
-  //       if(index != -1) {
-  //         numberList[index]++;
-  //       } else {
-  //         elementList.push(obj);
-  //         numberList.push(1);
-  //       }
-  //     }
-  //   }
-
-  //   if(elementList.type == "NumberList") {
-  //     var table = new NumberTable();
-  //   } else {
-  //     var table = new Table();
-  //   }
-  //   table[0] = elementList;
-  //   table[1] = numberList;
-
-  //   if(sortListsByOccurrences) {
-  //     table = TableOperators.sortListsByNumberList(table, numberList);
-  //   }
-
-  //   if(limit != 0 && limit < elementList.length) {
-  //     table[0] = table[0].splice(0, limit);
-  //     table[1] = table[1].splice(0, limit);
-  //   }
-
-  //   return table;
-  // };
-
-
-  /**
-   * reverses a list
-   * @param {List} list
-   * @return {List}
-   * tags:sorting
-   */
-  ListOperators__ListOperators.reverse = function(list) {
-    return list.getReversed();
-  };
-
-  /**
-   * @todo write docs
-   */
-  ListOperators__ListOperators.getBooleanDictionaryForList = function(list){
-    if(list==null) return;
-
-    var dictionary = {};
-    list.forEach(function(element){
-      dictionary[element] = true;
-    });
-
-    return dictionary;
-  };
-
-  /**
-   * builds a dictionar object (relational array) for a dictionar (table with two lists)
-   * @param  {Table} dictionary table with two lists, typically without repetitions, elements of the second list being the 'translation' of the correspdonent on the first
-   * @return {Object} relational array
-   * tags:
-   */
-  ListOperators__ListOperators.buildDictionaryObjectForDictionary = function(dictionary){
-    if(dictionary==null || dictionary.length<2) return;
-
-    var dictionaryObject = {};
-
-    dictionary[0].forEach(function(element, i){
-      dictionaryObject[element] = dictionary[1][i];
-    });
-
-    return dictionaryObject;
-  };
-
-
-  /**
-   * using a table with two columns as a dictionary (first list elements to be read, second list result elements), translates a list
-   * @param  {List} list to transalte
-   * @param  {Table} dictionary table with two lists
-   *
-   * @param {Object} nullElement element to place in case no translation is found
-   * @return {List}
-   * tags:
-   */
-  ListOperators__ListOperators.translateWithDictionary = function(list, dictionary, nullElement) {
-    if(list==null || dictionary==null || dictionary.length<2) return;
-
-    var dictionaryObject = ListOperators__ListOperators.buildDictionaryObjectForDictionary(dictionary);
-
-    var list = ListOperators__ListOperators.translateWithDictionaryObject(list, dictionaryObject, nullElement);
-
-    list.dictionaryObject = dictionaryObject;
-
-    return list;
-
-    // var newList = new List();
-    // list.forEach(function(element, i) {
-
-    //   var index = dictionary[0].indexOf(element);
-    //   if(nullElement != null) {
-    //     newList[i] = index == -1 ? nullElement : dictionary[1][index];
-    //   } else {
-    //     newList[i] = index == -1 ? list[i] : dictionary[1][index];
-    //   }
-    // });
-
-    // newList.name = dictionary[1].name;
-
-    // newList = newList.getImproved();
-    // newList.dictionaryObject = dictionaryObject;
-
-    // return newList;
-  };
-
-  /**
-   * creates a new list that is a translation of a list using a dictionar object (a relation array)
-   * @param  {List} list
-   * @param  {Object} dictionaryObject
-   *
-   * @param  {Object} nullElement
-   * @return {List}
-   * tags:
-   */
-  ListOperators__ListOperators.translateWithDictionaryObject = function(list, dictionaryObject, nullElement) {
-    if(list==null || dictionaryObject==null) return;
-
-    var newList = new List__default();
-    var i;
-
-    list.forEach(function(element, i) {
-      newList[i] = dictionaryObject[element];
-    });
-    if(nullElement!=null){
-      var l = list.length;
-      for(i=0; i<l; i++){
-        if(newList[i]==null) newList[i]=nullElement;
-      }
-    }
-    newList.name = list.name;
-    return newList.getImproved();
-  };
-
-
-  // ListOperators.getIndexesOfElements=function(list, elements){
-  // 	var numberList = new NumberList();
-  // 	var i;
-  // 	for(i=0; elements[i]!=null; i++){
-  // 		numberList[i] = list.indexOf(elements[i]);
-  // 	}
-  // 	return numberList;
-  // }
-
-
-  // ListOperators.countOccurrencesOnList=function(list){
-  // 	var occurrences=new NumberList();
-  // 	var nElements=list.length;
-  // 	for(var i=0; list[i]!=null; i++){
-  // 		occurrences.push(this.getIndexesOfElement(list,list[i]).length);
-  // 	}
-  // 	return occurrences;
-  // }
-
-
-  /**
-   * @todo write docs
-   */
-  ListOperators__ListOperators.sortListByNumberList = function(list, numberList, descending) {
-    if(descending == null) descending = true;
-    if(numberList.length == 0) return list;
-    var newNumberList;
-
-    var pairs = [];
-    var newList = instantiate(typeOf(list));
-    var i;
-
-    for(i = 0; list[i] != null; i++) {
-      pairs.push([list[i], numberList[i]]);
-    }
-
-
-    if(descending) {
-      pairs.sort(function(a, b) {
-        if(a[1] < b[1]) return 1;
-        return -1;
-      });
-    } else {
-      pairs.sort(function(a, b) {
-        if(a[1] < b[1]) return -1;
-        return 1;
-      });
-    }
-
-    for(i = 0; pairs[i] != null; i++) {
-      newList.push(pairs[i][0]);
-    }
-    newList.name = list.name;
-    return newList;
-  };
-
-
-  /**
-   * @todo write docs
-   */
-  ListOperators__ListOperators.sortListByIndexes = function(list, indexedArray) {
-    var newList = instantiate(typeOf(list));
-    newList.name = list.name;
-    var nElements = list.length;
-    var i;
-    for(i = 0; i < nElements; i++) {
-      newList.push(list[indexedArray[i]]);
-    }
-    return newList;
-  };
-
-
-  /**
-   * @todo write docs
-   */
-  ListOperators__ListOperators.concatWithoutRepetitions = function() { //?
-    var i;
-    var newList = arguments[0].clone();
-    for(i = 1; i < arguments.length; i++) {
-      var addList = arguments[i];
-      var nElements = addList.length;
-      for(var i = 0; i < nElements; i++) {
-        if(newList.indexOf(addList[i]) == -1) newList.push(addList[i]);
-      }
-    }
-    return newList.getImproved();
-  };
-
-  /**
-   * builds a table: a list of sub-lists from the original list, each sub-list determined size subListsLength, and starting at certain indexes separated by step
-   * @param  {List} list
-   * @param  {Number} subListsLength length of each sub-list
-   * @param  {Number} step slifing step
-   * @param  {Number} finalizationMode<br>0:all sub-Lists same length, doesn't cover the List<br>1:last sub-List catches the last elements, with lesser length<br>2:all lists same length, last sub-list migth contain elements from the beginning of the List
-   * @return {Table}
-   * tags:
-   */
-  ListOperators__ListOperators.slidingWindowOnList = function(list, subListsLength, step, finalizationMode) {
-    finalizationMode = finalizationMode || 0;
-    var table = new Table();
-    var newList;
-    var nElements = list.length;
-    var nList;
-    var nRow;
-    var i;
-    var j;
-
-    step = Math.max(1, step);
-
-    switch(finalizationMode) {
-      case 0: //all sub-Lists same length, doesn't cover the List
-        for(i = 0; i < nElements; i += step) {
-          if(i + subListsLength <= nElements) {
-            newList = new List__default();
-            for(j = 0; j < subListsLength; j++) {
-              newList.push(list[i + j]);
-            }
-            table.push(newList.getImproved());
-          }
-        }
-        break;
-      case 1: //last sub-List catches the last elements, with lesser length
-        for(i = 0; i < nElements; i += step) {
-          newList = new List__default();
-          for(j = 0; j < Math.min(subListsLength, nElements - i); j++) {
-            newList.push(list[i + j]);
-          }
-          table.push(newList.getImproved());
-        }
-        break;
-      case 2: //all lists same length, last sub-list migth contain elements from the beginning of the List
-        for(i = 0; i < nElements; i += step) {
-          newList = new List__default();
-          for(j = 0; j < subListsLength; j++) {
-            newList.push(list[(i + j) % nElements]);
-          }
-          table.push(newList.getImproved());
-        }
-        break;
-    }
-
-    return table.getImproved();
-  };
-
-  /**
-   * @todo write docs
-   */
-  ListOperators__ListOperators.getNewListForObjectType = function(object) {
-    var newList = new List__default();
-    newList[0] = object;
-    return instantiateWithSameType(newList.getImproved());
-  };
-
-
-  /*
-  deprectaed, use intersection instead
-   */
-  // ListOperators.listsIntersect = function(list0, list1) {
-  //   var list = list0.length < list1.length ? list0 : list1;
-  //   var otherList = list0 == list ? list1 : list0;
-  //   for(var i = 0; list[i] != null; i++) {
-  //     if(otherList.indexOf(list[i]) != -1) return true;
-  //   }
-  //   return false;
-  // };
-
-
-  /**
-   * creates a List that contains the union of two List (removing repetitions)
-   * @param  {List} list0 first list
-   * @param  {List} list1 second list
-   *
-   * @return {List} the union of both Lists
-   * tags:
-   */
-  ListOperators__ListOperators.union = function(list0, list1) {//TODO: this should be refactored, and placed in ListOperators
-    if(list0==null || list1==null) return;
-
-    var obj = {};
-    var i, k;
-
-    for(i = 0; list0[i]!=null; i++) obj[list0[i]] = list0[i];
-    for(i = 0; list1[i]!=null; i++) obj[list1[i]] = list1[i];
-    var union = new List__default();
-    for(k in obj) {
-      //if(obj.hasOwnProperty(k)) // <-- optional
-      union.push(obj[k]);
-    }
-    return union;
-  };
-
-
-  /**
-   * returns the list of common elements between two lists (deprecated, use union instead)
-   * @param  {List} list0
-   * @param  {List} list1
-   * @return {List}
-   * tags:deprecated
-   */
-  ListOperators__ListOperators.getCommonElements = function(list0, list1) {
-    var nums = list0.type == 'NumberList' && list1.type == 'NumberList';
-    var strs = list0.type == 'StringList' && list1.type == 'StringList';
-    var newList = nums ? new NumberList() : (strs ? new StringList() : new List__default());
-
-    var list = list0.length < list1.length ? list0 : list1;
-    var otherList = list0 == list ? list1 : list0;
-
-    for(var i = 0; list[i] != null; i++) {
-      if(otherList.indexOf(list[i]) != -1) newList.push(list[i]);
-    }
-    if(nums || strs) return newList;
-    return newList.getImproved();
-  };
-
-
-
-
-  /**
-   * creates a List that contains the union of two List (removing repetitions) (deprecated, use union instead)
-   * @param  {List} list0
-   * @param  {List} list A
-   * @param  {List} list B
-   *
-   * @return {List} the union of both NumberLists
-   * tags:deprecated
-   */
-  ListOperators__ListOperators.unionLists = function(x, y) {
-    // Borrowed from here: http://stackoverflow.com/questions/3629817/getting-a-union-of-two-arrays-in-javascript
-    var result;
-    if(x.type != x.type || (x.type != "StringList" && x.type != "NumberList"))
-    {
-      // To-do: call generic method here (not yet implemented)
-      //console.log( "ListOperators.unionLists for type '" + x.type + "' or '" + y.type + "' not yet implemented" );
-      return x.concat(y).getWithoutRepetitions();
-      return null;
-    }
-    else
-    {
-      var obj = {};
-      for(var i = x.length - 1; i >= 0; --i)
-        obj[x[i]] = x[i];
-      for(var i = y.length - 1; i >= 0; --i)
-        obj[y[i]] = y[i];
-      result = x.type == "StringList" ? new StringList() : new NumberList();
-      for(var k in obj) {
-        if(obj.hasOwnProperty(k)) // <-- optional
-          result.push(obj[k]);
-      }
-    }
-    return result;
-  };
-
-  /**
-   * creates a List that contains the intersection of two List (elements present in BOTH lists)
-   *
-   * @param  {List} list0 list A
-   * @param  {List} list1 list B
-   *
-   * @return {List} intersection of both NumberLists
-   *
-   * tags:
-   */
-  ListOperators__ListOperators.intersection = function(list0, list1) {
-    if(list0==null || list1==null) return;
-
-    var intersection;
-
-    if(list0.type=="NodeList" && list1.type=="NodeList"){
-      intersection = new NodeList();
-
-      list0.forEach(function(node){
-        if(list1.getNodeById(node.id)){
-          intersection.addNode(node);
-        }
-      });
-
-      return intersection;
-    }
-
-    var element;
-    var dictionary = {};
-    var dictionaryIntersected = {};
-    intersection = new List__default();
-
-    list0.forEach(function(element){
-      dictionary[element] = true;
-    });
-    list1.forEach(function(element){
-      if(dictionary[element] && dictionaryIntersected[element]==null){
-        dictionaryIntersected[element]=true;
-        intersection.push(element);
-      }
-    });
-    return intersection.getImproved();
-  };
-
-  /**
-   * calculates Jaccard index |list0 ∩ list1|/|list0 ∪ list1| see: https://en.wikipedia.org/wiki/Jaccard_index
-   * @param  {List} list0
-   * @param  {List} list1
-   * @return {Number}
-   * tags:
-   */
-  ListOperators__ListOperators.jaccardIndex = function(list0, list1) {//TODO: see if this can be more efficient, maybe one idctionar for doing union and interstection at the same time
-    return ListOperators__ListOperators.intersection(list0, list1).length/ListOperators__ListOperators.unionLists(list0, list1).length;
-  };
-
-  /**
-   * calculates Jaccard distance 1 - |list0 ∩ list1|/|list0 ∪ list1| see: https://en.wikipedia.org/wiki/Jaccard_index
-   * @param  {List} list0
-   * @param  {List} list1
-   * @return {Number}
-   * tags:
-   */
-  ListOperators__ListOperators.jaccardDistance = function(list0, list1) {
-    return 1 - ListOperators__ListOperators.jaccardIndex(list0, list1);
-  };
-
-  /**
-   * builds a dictionary that matches an element of a List with all its indexes on the List (indexesDictionary[element] --> numberList of indexes of element on list)
-   * @param  {List} list
-   * @return {Object}
-   * tags:
-   */
-  ListOperators__ListOperators.getIndexesDictionary = function(list){
-    var indexesDictionary = {};
-    var i;
-
-    list.forEach(function(element, i){
-      if(indexesDictionary[element]==null) indexesDictionary[element]=new NumberList();
-      indexesDictionary[element].push(i);
-    });
-
-    return indexesDictionary;
-  };
-
-  /**
-   * @todo write docs
-   */
-  ListOperators__ListOperators.getIndexesTable = function(list){
-    var indexesTable = new Table();
-    indexesTable[0] = new List__default();
-    indexesTable[1] = new NumberTable();
-    var indexesDictionary = {};
-    var indexOnTable;
-    var i;
-
-    list.forEach(function(element, i){
-      indexOnTable = indexesDictionary[element];
-      if(indexOnTable==null){
-        indexesTable[0].push(element);
-        indexesTable[1].push(new NumberList(i));
-        indexesDictionary[element]=indexesTable[0].length-1;
-      } else {
-        indexesTable[1][indexOnTable].push(i);
-      }
-    });
-
-    indexesTable[0] = indexesTable[0].getImproved();
-
-    return indexesTable;
-  };
-
-  /**
-   * aggregates values of a list using an aggregator list as reference
-   *
-   * @param  {List} aggregatorList aggregator list that typically contains several repeated elements
-   * @param  {List} toAggregateList list of elements that will be aggregated
-   * @param  {Number} mode aggregation modes:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes<br>12:count non repeated elements<br>13:enlist non repeated elements<br>14:concat elements (string)<br>15:concat non-repeated elements
-   * @param  {Table} indexesTable optional already calculated table of indexes of elements on the aggregator list (if didn't provided, the method calculates it)
-   * @return {Table} contains a list with non repeated elements on the first list, and the aggregated elements on a second list
-   * tags:
-   */
-  ListOperators__ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, indexesTable){
-    if(aggregatorList==null || toAggregateList==null) return null;
-    var table = new Table();
-
-    if(indexesTable==null) indexesTable = ListOperators__ListOperators.getIndexesTable(aggregatorList);
-
-    if(mode==11) return indexesTable;
-
-    table[0] = indexesTable[0];
-
-    if(mode==0 && aggregatorList==toAggregateList){
-      table[1] = indexesTable[0];
-      return table;
-    }
-
-    mode = mode==null?0:mode;
-
-    switch(mode){
-      case 0://first element
-        table[1] = new List__default();
-        var list;
-        indexesTable[1].forEach(function(indexes){
-          table[1].push(toAggregateList[indexes[0]]);
-        });
-        table[1] = table[1].getImproved();
-        return table;
-      case 1://count
-        table[1] = new NumberList();
-        indexesTable[1].forEach(function(indexes){
-          table[1].push(indexes.length);
-        });
-        return table;
-      case 2://sum
-      case 3://average
-        var sum;
-        table[1] = new NumberList();
-        indexesTable[1].forEach(function(indexes){
-          sum = 0;
-          indexes.forEach(function(index){
-            sum+=toAggregateList[index];
-          });
-          if(mode==3) sum/=indexes.length;
-          table[1].push(sum);
-        });
-        return table;
-      case 4://min
-        var min;
-        table[1] = new NumberList();
-        indexesTable[1].forEach(function(indexes){
-          min = 99999999999;
-          indexes.forEach(function(index){
-            min=Math.min(min, toAggregateList[index]);
-          });
-          table[1].push(min);
-        });
-        return table;
-      case 5://max
-        var max;
-        table[1] = new NumberList();
-        indexesTable[1].forEach(function(indexes){
-          max = -99999999999;
-          indexes.forEach(function(index){
-            max=Math.max(max, toAggregateList[index]);
-          });
-          table[1].push(max);
-        });
-        return table;
-      case 6://standard deviation
-        var average;
-        table = ListOperators__ListOperators.aggregateList(aggregatorList, toAggregateList, 3, indexesTable);
-        indexesTable[1].forEach(function(indexes, i){
-          sum = 0;
-          average = table[1][i];
-          indexes.forEach(function(index){
-            sum += Math.pow(toAggregateList[index] - average, 2);
-          });
-          table[1][i] = Math.sqrt(sum/indexes.length);
-        });
-        return table;
-      case 7://enlist
-        table[1] = new Table();
-        var list;
-        indexesTable[1].forEach(function(indexes){
-          list = new List__default();
-          table[1].push(list);
-          indexes.forEach(function(index){
-            list.push(toAggregateList[index]);
-          });
-          list = list.getImproved();
-        });
-        return table.getImproved();
-      case 8://last element
-        table[1] = new List__default();
-        var list;
-        indexesTable[1].forEach(function(indexes){
-          table[1].push(toAggregateList[indexes[indexes.length-1]]);
-        });
-        table[1] = table[1].getImproved();
-        return table;
-      case 9://most common
-        table[1] = new List__default();
-        var elementsTable = ListOperators__ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
-        elementsTable[1].forEach(function(elements){
-          table[1].push(elements.getMostRepeatedElement());
-        });
-        table[1] = table[1].getImproved();
-        return table;
-      case 10://random
-        table[1] = new List__default();
-        var list;
-        indexesTable[1].forEach(function(indexes){
-          table[1].push( toAggregateList[indexes[ Math.floor(Math.random()*indexes.length) ]] );
-        });
-        table[1] = table[1].getImproved();
-        return table;
-      case 11://indexes (returned previosuly)
-        break;
-      case 12://count non repeated
-        table[1] = new NumberList();
-        var elementsTable = ListOperators__ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
-        elementsTable[1].forEach(function(elements){
-          table[1].push(elements.getWithoutRepetitions().length);
-        });
-        return table;
-      case 13://enlist non repeated
-        table[1] = new List__default();
-        var elementsTable = ListOperators__ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
-        elementsTable[1].forEach(function(elements){
-          table[1].push(elements.getWithoutRepetitions());
-        });
-        table[1] = table[1].getImproved();
-        return table;
-      case 14://concat string
-        table[1] = new StringList();
-        var elementsTable = ListOperators__ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
-        elementsTable[1].forEach(function(elements){
-          table[1].push( elements.join(', ') );
-        });
-        return table;
-      case 15://concat string non repeated
-        table[1] = new StringList();
-        var elementsTable = ListOperators__ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
-        elementsTable[1].forEach(function(elements){
-          table[1].push( elements.getWithoutRepetitions().join(', ') );
-        });
-        return table;
-    }
-
-    return null;
-  };
-
-  /**
-   * Analyses wether two lists are categorical identical, one is subcategorical to the other, or there's no relation
-   * @param  {List} list0
-   * @param  {List} list1
-   * @return {Number} 0:no relation, 1:categorical identical, 2:list0 subcategorical to list1, 3:list1 subcategorical to list0
-   * tags:
-   */
-  ListOperators__ListOperators.subCategoricalAnalysis = function(list0, list1){
-    if(list0==null || list1==null) return;
-
-    var dictionary = {};
-    var element, projection;
-    var i;
-    var list0SubCategorical = true;
-    for(i=0; list0[i]!=null; i++){
-      element = list0[i];
-      projection = dictionary[element];
-      if(projection==null){
-        dictionary[element] = list1[i];
-      } else if(projection!=list1[i]){
-        list0SubCategorical = false;
-        break;
-      }
-    }
-
-    dictionary = {};
-    var list1SubCategorical = true;
-    for(i=0; list1[i]!=null; i++){
-      element = list1[i];
-      projection = dictionary[element];
-      if(projection==null){
-        dictionary[element] = list0[i];
-      } else if(projection!=list0[i]){
-        list1SubCategorical = false;
-        break;
-      }
-    }
-
-    if(list1SubCategorical && list0SubCategorical) return 1;
-    if(list0SubCategorical) return 2;
-    if(list1SubCategorical) return 3;
-    return 0;
-  };
-
-  /**
-   * calculates de entropy of a list, properties _mostRepresentedValue and _biggestProbability are added to the list
-   * @param  {List} list with repeated elements (actegorical list)
-   *
-   * @param {Object} valueFollowing if a value is provided, the property _P_valueFollowing will be added to the list, with proportion of that value in the list
-   * @param {Table} freqTable for saving time, in case the frequency table with sorted elements has been already calculated (with list.getFrequenciesTable(true))
-   * @return {Number}
-   * tags:statistics
-   */
-  ListOperators__ListOperators.getListEntropy = function(list, valueFollowing, freqTable) {
-    if(list == null) return;
-
-    if(list.length < 2) {
-      if(list.length == 1) {
-        list._mostRepresentedValue = list[0];
-        list._biggestProbability = 1;
-        if(valueFollowing != null) list._P_valueFollowing = list[0] == valueFollowing ? 1 : 0;
-      } else {
-        if(valueFollowing != null) list._P_valueFollowing = 0;
-      }
-      return 0;
-    }
-
-    if(freqTable==null) freqTable = list.getFrequenciesTable(true);// ListOperators.countElementsRepetitionOnList(list, true);
-
-    list._mostRepresentedValue = freqTable[0][0];
-    var N = list.length;
-    list._biggestProbability = freqTable[1][0] / N;
-    if(freqTable[0].length == 1) {
-      list._P_valueFollowing = list[0] == valueFollowing ? 1 : 0;
-      return 0;
-    }
-    var entropy = 0;
-
-    var norm = Math.log(freqTable[0].length);
-    freqTable[1].forEach(function(val) {
-      entropy -= (val / N) * Math.log(val / N) / norm;
-    });
-
-    if(valueFollowing != null) {
-      var index = freqTable[0].indexOf(valueFollowing);
-      list._P_valueFollowing = index == -1 ? 0 : freqTable[1][index] / N;
-    }
-    return entropy;
-  };
-
-
-  /**
-   * measures how much a feature decreases entropy when segmenting by its values by a supervised variable
-   * @param  {List} feature
-   * @param  {List} supervised
-   * @return {Number}
-   * tags:ds
-   */
-  ListOperators__ListOperators.getInformationGain = function(feature, supervised) {
-    if(feature == null || supervised == null || feature.length != supervised.length) return null;
-
-    var ig = ListOperators__ListOperators.getListEntropy(supervised);
-    var childrenObject = {};
-    var childrenLists = [];
-    var N = feature.length;
-
-    feature.forEach(function(element, i) {
-      if(childrenObject[element] == null) {
-        childrenObject[element] = new List__default();
-        childrenLists.push(childrenObject[element]);
-      }
-      childrenObject[element].push(supervised[i]);
-    });
-
-    childrenLists.forEach(function(cl) {
-      ig -= (cl.length / N) * ListOperators__ListOperators.getListEntropy(cl);
-    });
-
-    return ig;
-  };
-
-  /**
-   * @todo write docs
-   */
-  ListOperators__ListOperators.getInformationGainAnalysis = function(feature, supervised) {
-    if(feature == null || supervised == null || feature.length != supervised.length) return null;
-
-    var ig = ListOperators__ListOperators.getListEntropy(supervised);
-    var childrenObject = {};
-    var childrenLists = [];
-    var N = feature.length;
-    var entropy;
-    var sets = new List__default();
-
-    feature.forEach(function(element, i) {
-      if(childrenObject[element] == null) {
-        childrenObject[element] = new List__default();
-        childrenLists.push(childrenObject[element]);
-      }
-      childrenObject[element].push(supervised[i]);
-    });
-
-    childrenLists.forEach(function(cl) {
-      entropy = ListOperators__ListOperators.getListEntropy(cl);
-      ig -= (cl.length / N) * entropy;
-
-      sets.push({
-        children: cl,
-        entropy: entropy,
-        infoGain: ig
-      });
-    });
-
-    return sets;
-  };
-
-
-  /**
-   * Takes a List and returns its elements grouped by identic value. Each list in the table is assigned a "valProperty" value which is used for sorting
-   * @param  {List} list of elements to group
-   * @param  {Boolean} whether the results are to be sorted or not
-   * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
-   *
-   * @param  {Boolean} fillBlanks: whether to fill missing slots or not (if data is sequential)
-   * @return {Table}
-   * tags:dani
-   */
-  ListOperators__ListOperators.groupElements = function(list, sortedByValue, mode, fillBlanks) {
-    if(!list)
-      return;
-    var result = ListOperators__ListOperators._groupElements_Base(list, null, sortedByValue, mode, fillBlanks);
-    return result;
-  };
-
-
-  /**
-   * Takes a List and returns its elements grouped by identic value. Each list in the table is assigned a "valProperty" value which is used for sorting
-   * @param  {List} list of elements to group
-   * @param  {String} name of the property to be used for grouping
-   * @param  {Boolean} wether the results are to be sorted or not
-   * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
-   *
-   * @param  {Boolean} fillBlanks: whether to fill missing slots or not (if data is sequential)
-   * @return {Table}
-   * tags:dani
-   */
-  ListOperators__ListOperators.groupElementsByPropertyValue = function(list, propertyName, sortedByValue, mode, fillBlanks) {
-    if(!list)
-      return;
-    var result = ListOperators__ListOperators._groupElements_Base(list, propertyName, sortedByValue, mode, fillBlanks);
-    return result;
-  };
-
-
-
-  /**
-   * @ignore
-   */
-  ListOperators__ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, mode, fillBlanks) {
-    var result;
-
-    if(!list)
-      return;
-    if(mode == undefined)
-      mode = 0;
-    var resultOb = {};
-    var resultTable = new Table();
-    var pValue, item, minValue, maxValue;
-    for(var i = 0; i < list.length; i++) {
-      item = list[i];
-      pValue = propertyName == undefined ? item : item[propertyName];
-      if(resultOb[pValue] == undefined) {
-        resultOb[pValue] = new List__default();
-        resultOb[pValue].name = pValue;
-        resultOb[pValue].valProperty = pValue;
-        resultTable.push(resultOb[pValue]);
-      }
-      if(mode == 0)
-        resultOb[pValue].push(item);
-      else if(mode == 1)
-        resultOb[pValue].push(i);
-      // Update boundaries
-      if(minValue == undefined || pValue < minValue) {
-        minValue = pValue;
-      }
-      if(maxValue == undefined || pValue > maxValue) {
-        maxValue = pValue;
-      }
-    }
-
-    // Fill the blanks
-    if(fillBlanks) {
-      var numBlanks = 0;
-      for(var i = minValue; i < maxValue; i++) {
-        if(resultOb[i] == undefined) {
-          resultOb[i] = new List__default();
-          resultOb[i].name = i;
-          resultOb[i].valProperty = i;
-          resultTable.push(resultOb[i]);
-          numBlanks++;
-        }
-      }
-      //console.log("numBlanks: ", numBlanks)
-    }
-
-    // To-do: looks like getSortedByProperty is removing the valProperty from the objects
-    if(sortedByValue)
-      resultTable = resultTable.getSortedByProperty("name"); // "valProperty"
-
-    return resultTable;
-
-  };
-
-  exports.ListOperators = ListOperators__default;
-
-  function StringOperators() {}
-
-
-  StringOperators.ENTER = String.fromCharCode(13);
-  StringOperators.ENTER2 = String.fromCharCode(10);
-  StringOperators.ENTER3 = String.fromCharCode(8232);
-
-  StringOperators.SPACE = String.fromCharCode(32);
-  StringOperators.SPACE2 = String.fromCharCode(160);
-
-  StringOperators.TAB = "	";
-  StringOperators.TAB2 = String.fromCharCode(9);
-
-  StringOperators.LINK_REGEX = /(^|\s+)(https*\:\/\/\S+[^\.\s+])/;
-  StringOperators.MAIL_REGEX = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  StringOperators.STOP_WORDS = StringList.fromArray("t,s,mt,rt,re,m,http,amp,a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,or,other,our,own,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your".split(","));
-
-
-
-  /**
-   * creates an html string that depicts a proprtions bar with colors for categories
-   * @param  {NumberList} normalizedWeights normalized weights
-   *
-   * @param  {Number} nChars width in characters
-   * @param  {ColorList} colors list of categorical colors
-   * @param  {String} character character or characters to be used as primitive
-   * @return {String} html depciting colored segments forming a bar in a single line
-   */
-  StringOperators.createsCategoricalColorsBlocksHtml = function(normalizedWeights, nChars, colors, character){
-    if(normalizedWeights==null) return "";
-
-    var bars="";
-
-    nChars = nChars==null?20:nChars;
-    colors = colors==null?ColorListGenerators.createDefaultCategoricalColorList(normalizedWeights.length):colors;
-    character = character==null?"█":character;
-
-    normalizedWeights.forEach(function(w, j){
-      w = Math.floor(w*nChars) +  ( (w*nChars - Math.floor(w*nChars))>Math.random()?1:0 );
-      bars += "<font color=\""+ColorOperators.colorStringToHEX(colors[j])+"\">";
-      for(i=0; i<w; i++){
-        bars += character;
-      }
-      bars += "</f>";
-    });
-
-    return bars;
-  };
-
-
-
-  /**
-   * splits a String by a character (entre by default)
-   * @param  {String} string
-   *
-   * @param  {String} character
-   * @return {StringList}
-   * tags:
-   */
-  StringOperators.split = function(string, character) {
-    if(character == null) return StringOperators.splitByEnter(string);
-    return StringList.fromArray(string.split(character));
-  };
-
-
-  /**
-   * split a String by enter (using several codifications)
-   * @param  {String} string
-   * @return {StringList}
-   * tags:
-   */
-  StringOperators.splitByEnter = function(string) {
-    if(string == null) return null;
-    var stringList = StringOperators.splitString(string, "\n");
-    if(stringList.length > 1) return stringList;
-    var stringList = StringOperators.splitString(string, StringOperators.ENTER2);
-    if(stringList.length > 1) return stringList;
-    var stringList = StringOperators.splitString(string, StringOperators.ENTER3);
-    if(stringList.length > 1) return stringList;
-    return new StringList(string);
-  };
-
-
-  /**
-   * replaces in a string ocurrences of a sub-string by another string (base in replace JavaScript method)
-   * @param  {String} string to be modified
-   * @param  {String} subString sub-string to be replaced
-   * @param  {String} replacement string to be placed instead
-   * @return {String}
-   * tags:
-   */
-  StringOperators.replaceSubString = function(string, subString, replacement) {
-    if(string == null || subString == null || replacement == null) return null;
-    return string.replace(new RegExp(subString, "g"), replacement);
-  };
-
-  /**
-   * replaces in a string ocurrences of sub-strings by a string
-   * @param  {String} string to be modified
-   * @param  {StringList} subStrings sub-strings to be replaced
-   * @param  {String} replacement string to be placed instead
-   * @return {String}
-   * tags:
-   */
-  StringOperators.replaceSubStringsByString = function(string, subStrings, replacement) {
-    if(subStrings == null) return;
-
-    var subString;
-
-    subStrings.forEach(function(subString) {
-      string = StringOperators.replaceSubString(string, subString, replacement);
-    });
-
-    return string;
-  };
-
-  /**
-   * replaces in a string ocurrences of sub-strings by strings (1-1)
-   * @param  {String} string to be modified
-   * @param  {StringList} subStrings sub-strings to be replaced
-   * @param  {StringList} replacements strings to be placed instead
-   * @return {String}
-   * tags:
-   */
-  StringOperators.replaceSubStringsByStrings = function(string, subStrings, replacements) {
-    if(subStrings == null || replacements == null) return;
-
-    var nElements = Math.min(subStrings.length, replacements.length);
-    var i;
-    var subString;
-
-    for(i = 0; i < nElements; i++) {
-      string = StringOperators.replaceSubString(string, subStrings[i], replacements[i]);
-    }
-
-    return string;
-  };
-
-  /**
-   * builds a stringList of words contained in the text
-   * @param  {String} string text to be analyzed
-   *
-   * @param  {Boolean} withoutRepetitions remove words repetitions
-   * @param  {Boolean} stopWords remove stop words
-   * @param  {Boolean} sortedByFrequency  sorted by frequency in text
-   * @param  {Boolean} includeLinks include html links
-   * @param  {Number} limit of words
-   * @param  {Number} minSizeWords minimal number of characters of words
-   * @return {StringList}
-   * tags:
-   */
-  StringOperators.getWords = function(string, withoutRepetitions, stopWords, sortedByFrequency, includeLinks, limit, minSizeWords) {
-    if(string == null) return null;
-
-    minSizeWords = minSizeWords || 0;
-    withoutRepetitions = withoutRepetitions == null ? true : withoutRepetitions;
-    sortedByFrequency = sortedByFrequency == null ? true : sortedByFrequency;
-    includeLinks = includeLinks == null ? true : includeLinks;
-    limit = limit == null ? 0 : limit;
-
-    var i, j;
-
-    if(includeLinks) var links = string.match(StringOperators.LINK_REGEX);
-    string = string.toLowerCase().replace(StringOperators.LINK_REGEX, "");
-
-    var list = string.match(/\w+/g);
-    if(list == null) return new StringList();
-
-    if(includeLinks && links != null) list = list.concat(links);
-    list = StringList.fromArray(list).replace(/ /g, "");
-
-    if(stopWords != null) { //TODO:check before if all stopwrds are strings
-      //list.removeElements(stopWords);
-
-      for(i = 0; list[i] != null; i++) {
-        for(j = 0; stopWords[j] != null; j++) {
-          if((typeof stopWords[j]) == 'string') {
-            if(stopWords[j] == list[i]) {
-              list.splice(i, 1);
-              i--;
-              break;
-            }
-          } else if(stopWords[j].test(list[i])) {
-            list.splice(i, 1);
-            i--;
-            break;
-          }
-        }
-      }
-
-    }
-
-    if(minSizeWords > 0) {
-      for(i = 0; list[i] != null; i++) {
-        if(list[i].length < minSizeWords) {
-          list.splice(i, 1);
-          i--;
-        }
-      }
-    }
-
-    if(sortedByFrequency) {
-      if(withoutRepetitions) {
-        list = list.getFrequenciesTable(true)[0];// //ListOperators.countElementsRepetitionOnList(list, true)[0];
-        if(limit != 0) list = list.substr(0, limit);
-
-        return list;
-      }
-
-      var occurrences = ListOperators__default.countOccurrencesOnList(list);
-      list = list.getSortedByList(occurrences);
-      if(limit != 0) list = list.substr(0, limit);
-
-      return list;
-    }
-
-    if(withoutRepetitions) {
-      list = list.getWithoutRepetitions();
-    }
-
-    if(limit != 0) list = list.splice(0, limit);
-    return list;
-  };
-
-
-
-  /**
-   * return a substring
-   * @param  {String} string
-   *
-   * @param  {Number} i0 init index
-   * @param  {Number} length of ths substring (if null returns substring from i0 to the end)
-   * @return {String}
-   * tags:filter
-   */
-  StringOperators.substr = function(string, i0, length) {
-    i0 = i0 || 0;
-    return string.substr(i0, length);
-  };
-
-  /**
-   * split a String by a separator (a String) and returns a StringList
-   * @param  {String} string
-   *
-   * @param  {String} separator
-   * @return {StringList}
-   * tags:
-   */
-  StringOperators.splitString = function(string, separator) {
-    if(string == null) return null;
-    if(separator == null) separator = ",";
-    if(typeof separator == "string") separator = separator.replace("\\n", "\n");
-    if(string.indexOf(separator) == -1) return new StringList(string);
-    return StringList.fromArray(string.split(separator));
-  };
-
-  /**
-   * searches for two Strings within a String and returns the String in between
-   * @param  {String} text
-   * @param  {String} subString0
-   *
-   * @param  {String} subString1 if null returns the text after subString0
-   * @return {String}
-   * tags:filter
-   */
-  StringOperators.getFirstTextBetweenStrings = function(text, subString0, subString1) {
-    var i0 = text.indexOf(subString0);
-    if(i0 == -1) return null;
-    if(subString1 == "" || subString1 == null) return text.substr(i0 + subString0.length);
-    var i1 = text.indexOf(subString1, i0 + subString0.length + 1);
-    if(i1 == -1) return text.substring(i0 + subString0.length);
-    return text.substr(i0 + subString0.length, i1 - (i0 + subString0.length));
-  };
-
-  /**
-   * searches all the Strings contained between two Strings in a String
-   * @param  {String} text
-   * @param  {String} subString0
-   * @param  {String} subString1
-   * @return {StringList}
-   * tags:filter
-   */
-  StringOperators.getAllTextsBetweenStrings = function(text, subString0, subString1) { //TODO: improve using indexOf(string, START_INDEX)
-    if(text.indexOf(subString0) == -1) return new StringList();
-    var blocks = text.split(subString0);
-    var nBlocks = blocks.length;
-    var stringList = new StringList();
-    var block;
-    var index;
-    var i;
-    for(i = 1; i < nBlocks; i++) {
-      block = blocks[i];
-      if(subString1 == subString0) {
-        stringList.push(block);
-      } else {
-        index = block.indexOf(subString1);
-        if(index >= 0) {
-          stringList.push(block.substr(0, index));
-        }
-      }
-    }
-    return stringList;
-  };
-
-  /**
-   * associates a value to each text in a StringList, according to number of words containg in each StringList; one lists pushes to negative values, the other to positive. A classic use would be a primitive sentimental analisis using a list of positive adjectives and a list of negative ones
-   * @param  {String} string to be analized
-   * @param  {StringList} negativeStrings list of 'negative' words
-   * @param  {StringList} positiveStrings list of 'positive' words
-   *
-   * @param  {Boolean} normalizeBySize divide score by the string size
-   * @return {Number}
-   * tags:analysis
-   */
-  StringOperators.countWordsDichotomyAnalysis = function(string, negativeStrings, positiveStrings, normalizeBySize) {
-    var val = 0;
-    negativeStrings.forEach(function(word) {
-      val -= StringOperators.countWordOccurrences(string, word);
-    });
-    positiveStrings.forEach(function(word) {
-      val += StringOperators.countWordOccurrences(string, word);
-    });
-    if(normalizeBySize) val /= string.length;
-    return val;
-  };
-
-
-  /**
-   * creates a list of urls contained in the html in <a> tags
-   * @param  {String} html to be analyzied
-   *
-   * @param {String} urlSource optional, if provided will be used to build complete urls
-   * @param {Boolean} removeHash if true removes the hastag (anchor) content of the url
-   * @return {StringList} list of urls
-   * tags:html
-   */
-  StringOperators.getLinksFromHtml = function(html, urlSource, removeHash) {
-    var doc = document.createElement("html");
-    doc.innerHTML = html;
-
-    var i;
-    var links = doc.getElementsByTagName("a");
-    var originalUrl, url;
-    var urls = new StringList();
-    var index;
-    var urlSourceParts;
-    var parts, blocks;
-
-    urlSource = urlSource == "" ? null : urlSource;
-    removeHash = removeHash == null ? false : removeHash;
-
-    if(urlSource) {
-      urlSource = urlSource.trim();
-
-      if(urlSource.substr(-5) == ".html") {
-        urlSourceParts = urlSource.split("/");
-        urlSource = urlSourceParts.slice(0, urlSourceParts.length - 1).join("/");
-      }
-      if(urlSource.indexOf(-1) == "/") urlSource = urlSource.substr(0, urlSource.length - 1);
-      urlSourceParts = urlSource.split("/");
-
-      var root = urlSource.replace("//", "**").split("/")[0].replace("**", "//");
-    }
-
-
-    for(i = 0; i < links.length; i++) {
-      originalUrl = url = links[i].getAttribute("href");
-      if(url == null) continue;
-
-      if(url.indexOf('=') != -1) url = url.split('=')[0];
-
-      //console.log(url);
-      if(urlSource && url.indexOf('http://') == -1 && url.indexOf('https://') == -1 && url.indexOf('wwww.') == -1 && url.indexOf('file:') == -1 && url.indexOf('gopher:') == -1 && url.indexOf('//') != 0) {
-        if(url.substr(0, 9) == "../../../") {
-          url = urlSourceParts.slice(0, urlSourceParts.length - 3).join("/") + "/" + url.substr(9);
-        } else if(url.substr(0, 6) == "../../") {
-          url = urlSourceParts.slice(0, urlSourceParts.length - 2).join("/") + "/" + url.substr(6);
-        } else if(url.substr(0, 3) == "../") {
-          url = urlSourceParts.slice(0, urlSourceParts.length - 1).join("/") + "/" + url.substr(3);
-        } else if(url.charAt(0) == "/") {
-          url = root + url;
-        } else {
-          url = urlSource + "/" + url;
-        }
-      }
-      if(removeHash && url.indexOf("#") != -1) url = url.split('#')[0];
-      if(url.substr(-1) == "/") url = url.substr(0, url.length - 1);
-
-      index = url.indexOf('/../');
-      while(index != -1) {
-        blocks = url.split('/../');
-        parts = blocks[0].replace("//", "**").split("/");
-        url = parts.slice(0, parts.length - 1).join("/").replace("**", "//") + ("/" + blocks.slice(1).join("/../"));
-        index = url.indexOf('/../');
-      }
-
-      if(url.indexOf('./') != -1) {
-        parts = url.replace("//", "**").split("/");
-        if(parts[0].substr(-1) == ".") {
-          parts[0] = parts[0].substr(0, parts[0].length - 1);
-          url = parts.join('/').replace("**", "//");
-        }
-      }
-
-      url = url.trim();
-
-      if(url.substr(-1) == "/") url = url.substr(0, url.length - 1);
-
-      if(url == urlSource) continue;
-      //console.log(urlSource+' | '+originalUrl+' -> '+url);
-      urls.push(url);
-    }
-
-    urls = urls.getWithoutRepetitions();
-
-    return urls;
-  };
-
-
-  /**
-   * validates is string contains another string, as string or word (space or punctuation boundaries)
-   * @param {String} text string to be validated
-   * @param {String} string string or word to be searched
-   *
-   * @param {Boolean} asWord if true a word will be searched (false by default)
-   * @param {Boolean} caseSensitive (false by default)
-   * @return {Boolean} returns true if string or word is contained
-   */
-  StringOperators.textContainsString = function(text, string, asWord, caseSensitive) {
-    text = caseSensitive ? string : text.toLowerCase();
-    string = caseSensitive ? string : string.toLowerCase();
-    return asWord ?
-      text.match(new RegExp("\\b" + string + "\\b")).length > 0 :
-      text.indexOf(string) != -1;
-  };
-
-  /**
-   * print a string in console
-   * @param  {String} string to be printed in console
-   * @param  {Boolean} frame  if true (default) prints ///////////////// on top and bottom
-   * tags:
-   */
-  StringOperators.logInConsole = function(string, frame) {
-    frame = frame == null ? true : frame;
-    if(frame) console.log('///////////////////////////////////////////////////');
-    console.log(string);
-    if(frame) console.log('///////////////////////////////////////////////////');
-  };
-
-
-
-
-  //////
-
-
-  /**
-   * @todo finish docs
-   */
-  StringOperators.getParenthesisContents = function(text, brackets) {
-    var contents = new StringList();
-
-    var subText = text;
-
-    var contentObject = StringOperators.getFirstParenthesisContentWithIndexes(text, brackets);
-
-    var nAttempts = 0;
-    while(contentObject.content != "" && contentObject.index1 < subText.length - 1 && nAttempts < text.length) {
-      contents.push(contentObject.content);
-      subText = subText.substr(contentObject.index1 + 2);
-      contentObject = StringOperators.getFirstParenthesisContentWithIndexes(subText, brackets);
-      nAttempts++;
-    }
-
-    return contents;
-  };
-
-  /**
-   * @todo finish docs
-   */
-  StringOperators.getFirstParenthesisContent = function(text, brackets) {
-    return StringOperators.getFirstParenthesisContentWithIndexes(text, brackets).content;
-  };
-
-  /**
-   * @todo finish docs
-   */
-  StringOperators.getFirstParenthesisContentWithIndexes = function(text, brackets) {
-    var open = brackets ? "[" : "(";
-    var close = brackets ? "]" : ")";
-
-    var openRegEx = brackets ? /\[/g : /\(/g;
-    var closeRegEx = brackets ? /\]/g : /\)/g;
-
-    var indexOpen = text.indexOf(open);
-
-    if(indexOpen == -1) return {
-      "content": "",
-      "index0": 0,
-      "index1": 0
-    };
-
-    var indexClose = text.indexOf(close);
-
-    var part = text.substring(indexOpen + 1, indexClose);
-
-    var openMatch = part.match(openRegEx);
-    var closeMatch = part.match(closeRegEx);
-
-    var nOpen = (openMatch == null ? 0 : openMatch.length) - (closeMatch == null ? 0 : closeMatch.length);
-    var nAttempts = 0;
-
-
-    while((nOpen > 0 || indexClose == -1) && nAttempts < text.length) {
-      indexClose = text.indexOf(close, indexClose);
-      part = text.substring(indexOpen + 1, indexClose + 1);
-      indexClose++;
-      openMatch = part.match(openRegEx);
-      closeMatch = part.match(closeRegEx);
-      nOpen = (openMatch == null ? 0 : openMatch.length) - (closeMatch == null ? 0 : closeMatch.length);
-
-      nAttempts++;
-    }
-    indexClose = text.indexOf(close, indexClose);
-
-    return {
-      "content": indexClose == -1 ? text.substring(indexOpen + 1) : text.substring(indexOpen + 1, indexClose),
-      "index0": indexOpen + 1,
-      "index1": indexClose == -1 ? (text.length - 1) : (indexClose - 1)
-    };
-  };
-
-  /**
-   * @todo finish docs
-   */
-  StringOperators.placeString = function(string, stringToPlace, index) {
-    return string.substr(0, index) + stringToPlace + string.substr(index + stringToPlace.length);
-  };
-
-  /**
-   * @todo finish docs
-   */
-  StringOperators.insertString = function(string, stringToInsert, index) {
-    return string.substr(0, index) + stringToInsert + string.substr(index);
-  };
-
-  /**
-   * @todo finish docs
-   */
-  StringOperators.removeEnters = function(string) {
-    return string.replace(/(\StringOperators.ENTER|\StringOperators.ENTER2|\StringOperators.ENTER3)/gi, " ");
-  };
-
-  /**
-   * @todo finish docs
-   */
-  StringOperators.removeTabs = function(string) {
-    return string.replace(/(\StringOperators.TAB|\StringOperators.TAB2|\t)/gi, "");
-  };
-
-  /**
-   * @todo finish docs
-   */
-  StringOperators.removePunctuation = function(string, replaceBy) {
-    replaceBy = replaceBy || "";
-    return string.replace(/[:,.;?!\(\)\"\']/gi, replaceBy);
-  };
-
-  /**
-   * @todo finish docs
-   */
-  StringOperators.removeDoubleSpaces = function(string) {
-    var retString = string;
-    var regExpr = RegExp(/  /);
-    while(regExpr.test(retString)) {
-      retString = retString.replace(regExpr, " ");
-    }
-    return retString;
-  };
-
-  /**
-   * @todo finish docs
-   */
-  StringOperators.removeInitialRepeatedCharacter = function(string, character) {
-    while(string.charAt(0) == character) string = string.substr(1);
-    return string;
-  };
-
-
-  /**
-   * takes plain text from html
-   * @param  {String} html
-   * @return {String}
-   * tags:
-   */
-  StringOperators.removeHtmlTags = function(html) {
-    var tmp = document.createElement("DIV");
-    tmp.innerHTML = html;
-    return tmp.textContent || tmp.innerText;
-  };
-
-  /**
-   * @todo finish docs
-   */
-  StringOperators.removeLinks = function(text) {
-    text += ' ';
-    var regexp = /https*:\/\/[a-zA-Z0-9\/\.]+( |:|;|\r|\t|\n|\v)/g;
-    return(text.replace(regexp, ' ')).substr(0, text.length - 2);
-  };
-
-  /**
-   * @todo finish docs
-   */
-  StringOperators.removeQuotes = function(string) { //TODO:improve
-    if(string.charAt(0) == "\"") string = string.substr(1);
-    if(string.charAt(string.length - 1) == "\"") string = string.substr(0, string.length - 1);
-    return string;
-  };
-
-  // StringOperators.trim = function(string){
-  // 	return string.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-  // }
-
-
-
-  function StringOperators__removeAccentsAndDiacritics(string) {
-    var r = string.replace(new RegExp(/[àáâãäå]/g), "a");
-    r = r.replace(new RegExp(/æ/g), "ae");
-    r = r.replace(new RegExp(/ç/g), "c");
-    r = r.replace(new RegExp(/[èéêë]/g), "e");
-    r = r.replace(new RegExp(/[ìíîï]/g), "i");
-    r = r.replace(new RegExp(/ñ/g), "n");
-    r = r.replace(new RegExp(/[òóôõö]/g), "o");
-    r = r.replace(new RegExp(/œ/g), "oe");
-    r = r.replace(new RegExp(/[ùúûü]/g), "u");
-    r = r.replace(new RegExp(/[ýÿ]/g), "y");
-
-    r = r.replace(new RegExp(/[ÀÁÂÄÃ]/g), "A");
-    r = r.replace(new RegExp(/Æ/g), "AE");
-    r = r.replace(new RegExp(/Ç/g), "c");
-    r = r.replace(new RegExp(/[ÈÉÊË]/g), "E");
-    r = r.replace(new RegExp(/[ÌÍÎÏ]/g), "I");
-    r = r.replace(new RegExp(/Ñ/g), "N");
-    r = r.replace(new RegExp(/[ÒÓÔÖÕ]/g), "O");
-    r = r.replace(new RegExp(/Œ/g), "OE");
-    r = r.replace(new RegExp(/[ÙÚÛÜ]/g), "U");
-    r = r.replace(new RegExp(/[Ÿ]/g), "Y");
-
-    return r;
-  }
-
-  /**
-   * creates a table with frequent words and occurrences numbers
-   * @param  {String} string text to be analyzed
-   *
-   * @param  {StringList} stopWords
-   * @param  {Boolean} includeLinks
-   * @param  {Number} limit max size of rows
-   * @param  {Number} minSizeWords
-   * @return {Table} contains a list of words, and a numberList of occurrences
-   * tags:words
-   */
-  StringOperators.getWordsOccurrencesTable = function(string, stopWords, includeLinks, limit, minSizeWords) {
-    if(string == null) return;
-    if(string.length == 0) return new Table(new StringList(), new NumberList());
-    var words = StringOperators.getWords(string, false, stopWords, false, includeLinks, limit, minSizeWords);
-    var table;
-    if(limit != null)
-      table = words.getFrequenciesTable(true).sliceRows(0, limit-1);
-    else
-      table = words.getFrequenciesTable(true);
-    return table;// ListOperators.countElementsRepetitionOnList(words, true, false, limit);
-  };
-
-  /**
-   * @todo finish docs
-   */
-  StringOperators.indexesOf = function(text, string) { //TODO:test
-    var index = text.indexOf(string);
-    if(index == -1) return new NumberList();
-    var indexes = new NumberList(index);
-    index = text.indexOf(string, index + 1);
-    while(index != -1) {
-      indexes.push(index);
-      index = text.indexOf(string, index + 1);
-    }
-    return indexes;
-  };
-
-  /**
-   * returns a string repeated a number of times
-   * @param  {String} text to be repeated
-   * @param  {Number} n number of repetitions
-   * @return {String}
-   * tags:
-   */
-  StringOperators.repeatString = function(text, n) {
-    var i;
-    var newText = "";
-    for(i = 0; i < n; i++) {
-      newText += text;
-    }
-    return newText;
-  };
-
-
-
-
-  //counting / statistics
-
-  /**
-   * @todo finish docs
-   */
-  StringOperators.countOccurrences = function(text, string) { //seems to be th emost efficient: http://stackoverflow.com/questions/4009756/how-to-count-string-occurrence-in-string
-    var n = 0;
-    var index = text.indexOf(string);
-    while(index != -1) {
-      n++;
-      index = text.indexOf(string, index + string.length);
-    }
-    return n;
-  };
-
-  /**
-   * @todo finish docs
-   */
-  StringOperators.countWordOccurrences = function(string, word) {
-    var regex = new RegExp("\\b" + word + "\\b");
-    var match = string.match(regex);
-    return match == null ? 0 : match.length;
-  };
-
-  /**
-   * @todo finish docs
-   */
-  StringOperators.countStringsOccurrences = function(text, strings) {
-    var i;
-    var numberList = new NumberList();
-    for(i = 0; strings[i] != null; i++) {
-      numberList[i] = text.split(strings[i]).length - 1;
-    }
-    return numberList;
-  };
-
-  //validation
-
-  /**
-   * @todo finish docs
-   */
-  StringOperators.validateEmail = function(text) {
-    return StringOperators.MAIL_REGEX.test(text);
-  };
-
-  /**
-   * @todo finish docs
-   */
-  StringOperators.validateUrl = function(text) {
-    return StringOperators.LINK_REGEX.test(text);
-  };
-
-  exports.StringOperators = StringOperators;
 
   /* global console */
 
@@ -12885,7 +13501,7 @@ define('src/index', ['exports'], function (exports) {
    * @category numbers
    */
   function Axis2D(departureFrame, arrivalFrame) {
-    arrivalFrame = arrivalFrame == null ? new Rectangle__default(0, 0, 1, 1) : arrivalFrame;
+    arrivalFrame = arrivalFrame == null ? new Rectangle(0, 0, 1, 1) : arrivalFrame;
     DataModel.apply(this, arguments);
     this.departureFrame = departureFrame;
     this.arrivalFrame = arrivalFrame;
@@ -13401,154 +14017,6 @@ define('src/index', ['exports'], function (exports) {
   };
 
   exports.Country = Country;
-
-  Tree__Tree.prototype = new Network();
-  Tree__Tree.prototype.constructor = Tree__Tree;
-
-  /**
-   * @classdesc Trees are Networks that have a hierarchical structure.
-   *
-   * @description Create a new Tree.
-   * @constructor
-   * @category networks
-   */
-  function Tree__Tree() {
-    Network.apply(this);
-    this.type = "Tree";
-
-    this.nLevels = 0;
-    this._createRelation = this.createRelation;
-    this.createRelation = this._newCreateRelation;
-  }
-  var Tree__default = Tree__Tree;
-
-  /**
-   * Adds a given Node to the tree, under the given parent Node.
-   *
-   * @param {Node} node
-   * @param {Node} parent
-   */
-  Tree__Tree.prototype.addNodeToTree = function(node, parent) {
-    this.addNode(node);
-    if(parent == null) {
-      node.level = 0;
-      node.parent = null;
-    } else {
-      var relation = new Relation(parent.id + "_" + node.id, parent.id + "_" + node.id, parent, node);
-      this.addRelation(relation);
-      //this._createRelation(parent, node);
-      node.level = parent.level + 1;
-      node.parent = parent;
-    }
-    this.nLevels = Math.max(this.nLevels, node.level + 1);
-  };
-
-  /**
-   * @ignore
-   */
-  Network.prototype._newCreateRelation = function(parent, node, id, weight) {
-    if(id == null) id = this.relationList.getNewId();
-    this._createRelation(parent, node, id, weight);
-    node.level = parent.level + 1;
-    node.parent = parent;
-    this.nLevels = Math.max(this.nLevels, node.level + 1);
-  };
-
-  /**
-   * Adds a new parent node to the Tree.
-   *
-   * @param {Node} node New Parent Node.
-   */
-  Tree__Tree.prototype.addFather = function(node, children) {
-    //TODO: is children supposed to be child?
-    if(child.parent != null || this.nodeList.indexOf(child) == -1) return false;
-    this.addNode(node);
-    child.parent = node;
-    child.level = 1;
-    this.nLevels = Math.max(this.nLevels, 1);
-    this.createRelation(node, child);
-  };
-
-  /**
-   * Provides a {@link NodeList} of all the Nodes of the Tree at a given level.
-   *
-   * @param {Number} level Level (depth) of the Tree to extract Nodes at.
-   * @return {NodeList} All Nodes at the given level of the tree.
-   */
-  Tree__Tree.prototype.getNodesByLevel = function(level) {
-    var newNodeList = new NodeList__default();
-    for(var i = 0; this.nodeList[i] != null; i++) {
-      if(this.nodeList[i].level == level) newNodeList.addNode(this.nodeList[i]);
-    }
-    return newNodeList;
-  };
-
-  /**
-   * Returns the leaves (nodes without children) of a tree.
-   *
-   * @param {Node} node Optional parent Node to start the leaf search from.
-   * If no Node is provided, all leaf Nodes are returned.
-   * @return {NodeList} Leaves of the Tree or sub-tree.
-   * tags:
-   */
-  Tree__Tree.prototype.getLeaves = function(node) {
-    var leaves = new NodeList__default();
-    if(node) {
-      if(node.toNodeList.length == 0) {
-        leaves.addNode(node);
-        return leaves;
-      }
-      var addLeaves = function(candidate) {
-        if(candidate.toNodeList.length == 0) {
-          leaves.addNode(candidate);
-        } else {
-          candidate.toNodeList.forEach(addLeaves);
-        }
-      };
-      node.toNodeList.forEach(addLeaves);
-    } else {
-      this.nodeList.forEach(function(candidate) {
-        if(candidate.toNodeList.length == 0) leaves.addNode(candidate);
-      });
-    }
-    return leaves;
-  };
-
-  /**
-   * assignDescentWeightsToNodes
-   *
-   * @return {undefined}
-   */
-  Tree__Tree.prototype.assignDescentWeightsToNodes = function() {
-    this._assignDescentWeightsToNode(this.nodeList[0]);
-  };
-
-  /**
-   * @ignore
-   */
-  Tree__Tree.prototype._assignDescentWeightsToNode = function(node) {
-    var i;
-    if(node.toNodeList.length == 0) {
-      node.descentWeight = 1;
-      return 1;
-    }
-    for(i = 0; node.toNodeList[i] != null; i++) {
-      node.descentWeight += this._assignDescentWeightsToNode(node.toNodeList[i]);
-    }
-    return node.descentWeight;
-  };
-
-  /**
-   * Returns a string indicating the size of the Tree.
-   *
-   * @return {String} Log message indicating Tree's size.
-   */
-  Tree__Tree.prototype.getReport = function(relation) {
-    //TODO: remove relation input?
-    return "Tree contains " + this.nodeList.length + " nodes and " + this.relationList.length + " relations";
-  };
-
-  exports.Tree = Tree__default;
 
   Point3D.prototype = new Point();
   Point3D.prototype.constructor = Point3D;
@@ -14390,7 +14858,7 @@ define('src/index', ['exports'], function (exports) {
     var i;
     var rect;
     if(colors != null) var nColors = colors.length;
-    var adjustedRect = new Rectangle__default();
+    var adjustedRect = new Rectangle();
     for(i = 0; rectangleList[i] != null; i++) {
       rect = rectangleList[i];
       if(rect.height <= margin || rect.width <= margin) continue;
@@ -14515,7 +14983,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:geometry
    */
   PolygonOperators.buildDendrogramFromPolygon = function(polygon) {
-    var tree = new Tree__default();
+    var tree = new Tree();
     var point, i;
     var node;
     var tW;
@@ -14895,6 +15363,11 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @classdesc A {@link List} structure for storing {@link Country|Countries}.
    *
+   * Additional functions that work on CountryList can be found in:
+   * <ul>
+   *  <li>Operators:   {@link CountryListOperators}</li>
+   * </ul>
+   *
    * @description Creates a new CountryList instance.
    * @constructor
    * @category geo
@@ -15057,7 +15530,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.CountryList = CountryList;
 
-  Polygon3DList.prototype = new List__default();
+  Polygon3DList.prototype = new List();
   Polygon3DList.prototype.constructor = Polygon3DList;
 
   /**
@@ -15068,225 +15541,19 @@ define('src/index', ['exports'], function (exports) {
    * @category geometry
    */
   function Polygon3DList() {
-    var array = List__default.apply(this, arguments);
+    var array = List.apply(this, arguments);
     array = Polygon3DList.fromArray(array);
     return array;
   }
 
 
   Polygon3DList.fromArray = function(array) {
-    var result = List__default.fromArray(array);
+    var result = List.fromArray(array);
     result.type = "Polygon3DList";
     return result;
   };
 
   exports.Polygon3DList = Polygon3DList;
-
-  function ColorScales__ColorScales() {}
-  var ColorScales__default = ColorScales__ColorScales;
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.blackScale = function() {
-    return 'black';
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.grayscale = function(value) {
-    var rgb = ColorOperators__default.interpolateColorsRGB([0, 0, 0], [255, 255, 255], value);
-    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.antiGrayscale = function(value) {
-    var rgb = ColorOperators__default.interpolateColorsRGB([255, 255, 255], [0, 0, 0], value);
-    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.antiTemperature = function(value) {
-    return ColorScales__ColorScales.temperature(1 - value);
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.temperature = function(value) { //todo:make it efficient
-    var color = "#FFFFFF";
-    if(value < 0.2) {
-      color = ColorOperators__default.interpolateColors('#000000', ColorOperators__default.HSVtoHEX(234, 1, 1), value * 5);
-    } else if(value > 0.85) {
-      color = ColorOperators__default.interpolateColors(ColorOperators__default.HSVtoHEX(0, 1, 1), '#FFFFFF', (value - 0.85) / 0.15);
-    } else {
-      color = ColorOperators__default.HSVtoHEX(Math.round((0.65 - (value - 0.2)) * 360), 1, 1);
-    }
-    return color;
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.sqrtTemperature = function(value) {
-    return ColorScales__ColorScales.temperature(Math.sqrt(value));
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.sqrt4Temperature = function(value) {
-    return ColorScales__ColorScales.temperature(Math.pow(value, 0.25));
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.quadraticTemperature = function(value) {
-    return ColorScales__ColorScales.temperature(Math.pow(value, 2));
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.cubicTemperature = function(value) {
-    return ColorScales__ColorScales.temperature(Math.pow(value, 3));
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.greenToRed = function(value) { //todo:make it efficient
-    var rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [255, 50, 50], value);
-    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.greenToBlue = function(value) { //todo:make it efficient
-    var rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [50, 50, 255], value);
-    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.grayToOrange = function(value) {
-    return 'rgb(' + Math.floor(100 + value*155) + ','+ Math.floor(100 + value*10) +',' + Math.floor(100 - value*100) + ')';
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.sqrt4GrayToOrange = function(value){
-    return ColorScales__ColorScales.grayToOrange(Math.pow(value, 0.25));
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.blueToRed = function(value) {
-    return 'rgb(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ')';
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.blueToRedAlpha = function(value) { //todo:make it efficient
-    return 'rgba(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ', 0.5)';
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.whiteToRed = function(value) {
-    var gg = Math.floor(255 - value * 255);
-    return 'rgb(255,' + gg + ',' + gg + ')';
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.redToBlue = function(value) {
-    var rgb = ColorOperators__default.interpolateColorsRGB([255, 0, 0], [0, 0, 255], value);
-    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-  };
-
-  //tricolor
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.greenWhiteRed = function(value) { //TODO: make it + efficient
-    var rgb = [0,0,0];
-    if(value < 0.5) {
-      rgb = ColorOperators__default.interpolateColorsRGB([50, 255, 50], [255, 255, 255], value * 2);
-    } else {
-      rgb = ColorOperators__default.interpolateColorsRGB([255, 255, 255], [255, 50, 50], (value - 0.5) * 2);
-    }
-    return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.blueWhiteRed = function(value) {
-    var rr = value < 0.5 ? Math.floor(510 * value) : 255;
-    var gg = value < 0.5 ? Math.floor(510 * value) : Math.floor(510 * (1 - value));
-    var bb = value < 0.5 ? 255 : Math.floor(510 * (1 - value));
-
-    return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.grayBlackOrange = function(value){ //TODO: make it + efficient
-    var rgb = [0,0,0];
-    if(value < 0.5) {
-      rgb = ColorOperators__default.interpolateColorsRGB([100, 100, 100], [0, 0, 0], value * 2);
-    } else {
-      rgb = ColorOperators__default.interpolateColorsRGB([0, 0, 0], [255, 110, 0], (value - 0.5) * 2);
-    }
-    return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.grayWhiteOrange = function(value){ //TODO: make it + efficient
-    var rgb = [0,0,0];
-    if(value < 0.5) {
-      rgb = ColorOperators__default.interpolateColorsRGB([100, 100, 100], [255, 255, 255], value * 2);
-    } else {
-      rgb = ColorOperators__default.interpolateColorsRGB([255, 255, 255], [255, 110, 0], (value - 0.5) * 2);
-    }
-    return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
-  };
-
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.solar = function(value) {
-    var rgb = ColorOperators__default.interpolateColorsRGB([0, 0, 0], ColorOperators__default.interpolateColorsRGB([255, 0, 0], [255, 255, 0], value), Math.pow(value * 0.99 + 0.01, 0.2));
-    return ColorOperators__default.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales__ColorScales.antiSolar = function(value) {
-    return ColorOperators__default.invertColor(ColorScales__ColorScales.solar(value));
-  };
-
-  exports.ColorScales = ColorScales__default;
 
   ColorScale.prototype = new DataModel();
   ColorScale.prototype.constructor = ColorScale;
@@ -15304,7 +15571,7 @@ define('src/index', ['exports'], function (exports) {
     this.name = "";
     this.type = "ColorScale";
 
-    this.colorScaleFunction = colorScaleFunction ? colorScaleFunction : ColorScales__default.blackScale;
+    this.colorScaleFunction = colorScaleFunction ? colorScaleFunction : ColorScales.blackScale;
   }
 
 
@@ -15319,7 +15586,7 @@ define('src/index', ['exports'], function (exports) {
   * @todo write docs
   */
   ColorScale.prototype.getColorList = function(nColors) {
-    var colorList = new ColorList__default();
+    var colorList = new ColorList();
     var i;
     for(i = 0; i < nColors; i++) {
       colorList.push(this.getColor(i / (nColors - 1)));
@@ -15514,7 +15781,7 @@ define('src/index', ['exports'], function (exports) {
   DateListOperators.buildTimeTreeFromDates = function(dates) {
     if(dates == null) return;
 
-    var tree = new Tree__default();
+    var tree = new Tree();
     var minYear;
     var maxYear;
 
@@ -15707,6 +15974,26 @@ define('src/index', ['exports'], function (exports) {
     return date.getMilliseconds();
   };
 
+  exports.DateListOperators = DateListOperators;
+
+  function DateListConversions() {}
+
+
+  /**
+  * Converts DateList to StringList
+  *
+  * @param {DateList} datelist The DateList to convert.
+  */
+  DateListConversions.toStringList = function(datelist) {
+    var stringList = new StringList();
+    for(var i = 0; datelist[i] != null; i++) {
+      stringList[i] = DateOperators.dateToString(datelist[i]);
+    }
+    return stringList;
+  };
+
+  exports.DateListConversions = DateListConversions;
+
   function CountryListOperators() {}
 
 
@@ -15763,41 +16050,13 @@ define('src/index', ['exports'], function (exports) {
 
   exports.GeoOperators = GeoOperators;
 
-  function GeometryConvertions() {}
+  function GeometryConversions() {}
 
-
-  //include(frameworksRoot+"operators/strings/StringOperators.js")
-
-  // GeometryConvertions.StringToPolygonList=function(string, sep0, sep1, sep2){
-  // sep0 = sep0 || ",";
-  // sep1 = sep1 || " ";
-  // sep2 = sep2 || "\n";
-  //
-  // var polygonList = new PolygonList();
-  // var polygon;
-  // var point;
-  //
-  // lines = StringOperators.splitString(string, sep2);
-  //
-  // var i;
-  // var j;
-  // for(i=0; lines[i]!=null; i++){
-  // polygon = new Polygon();
-  // var points = StringOperators.splitString(lines[i], sep1);
-  // for(j=0; points[j]!=null; j++){
-  // var sPoint = StringOperators.splitString(points[j], sep0);
-  // point = new Point(Number(sPoint[0]), Number(sPoint[1]));
-  // polygon.push(point);
-  // }
-  // polygonList.push(polygon);
-  // }
-  // return polygonList;
-  // }
 
   /**
    * @todo write docs
    */
-  GeometryConvertions.twoNumberListsToPolygon = function(numberList0, numberList1) { //TODO:change name to NumberTableToPolygon
+  GeometryConversions.twoNumberListsToPolygon = function(numberList0, numberList1) { //TODO:change name to NumberTableToPolygon
     var n = Math.min(numberList0.length, numberList1.length);
     var polygon = new Polygon();
     for(var i = 0; i < n; i++) {
@@ -15812,7 +16071,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {NumberTable}
    * tags:conversion
    */
-  GeometryConvertions.PolygonToNumberTable = function(polygon) {
+  GeometryConversions.PolygonToNumberTable = function(polygon) {
     if(polygon == null) return null;
 
     var numberTable = new NumberTable();
@@ -15827,7 +16086,7 @@ define('src/index', ['exports'], function (exports) {
     return numberTable;
   };
 
-  exports.GeometryConvertions = GeometryConvertions;
+  exports.GeometryConversions = GeometryConversions;
 
   function PolygonGenerators() {}
 
@@ -16075,7 +16334,7 @@ define('src/index', ['exports'], function (exports) {
    */
   RectangleOperators.packingRectangles = function(weights, packingMode, rectangle, param) {
     //TODO: return RectangleList instead of List
-    if(rectangle == null) rectangle = new Rectangle__default(0, 0, 1, 1);
+    if(rectangle == null) rectangle = new Rectangle(0, 0, 1, 1);
     packingMode = packingMode ? packingMode : 0;
     switch(packingMode) {
       //0: quadrification
@@ -16095,14 +16354,14 @@ define('src/index', ['exports'], function (exports) {
 
         var sum = weights.getSum();
 
-        var rectangleList = new List__default(); //RectangleList();
+        var rectangleList = new List(); //RectangleList();
         var dY = rectangle.y;
         var h;
         var vFactor = rectangle.height / sum;
         var i;
         for(i = 0; weights[i] != null; i++) {
           h = vFactor * weights[i];
-          rectangleList.push(new Rectangle__default(rectangle.x, dY, rectangle.width, h));
+          rectangleList.push(new Rectangle(rectangle.x, dY, rectangle.width, h));
           dY += h;
         }
         return rectangleList;
@@ -16114,13 +16373,13 @@ define('src/index', ['exports'], function (exports) {
         }
         sum = weights.getSum();
 
-        rectangleList = new List__default(); //RectangleList();
+        rectangleList = new List(); //RectangleList();
         var dX = rectangle.x;
         var w;
         var hFactor = rectangle.width / sum;
         for(i = 0; weights[i] != null; i++) {
           w = hFactor * weights[i];
-          rectangleList.push(new Rectangle__default(dX, rectangle.y, w, rectangle.height));
+          rectangleList.push(new Rectangle(dX, rectangle.y, w, rectangle.height));
           dX += w;
         }
         return rectangleList;
@@ -16129,10 +16388,10 @@ define('src/index', ['exports'], function (exports) {
         if(weights.length < 6) {
 
         } else if(weights.length == 6) {
-          var rAfrica = new Rectangle__default(0.44, 0.36, 0.16, 0.45);
-          var rAsia = new Rectangle__default(0.6, 0.15, 0.3, 0.3);
-          var rAustralasia = new Rectangle__default(0.72, 0.45, 0.28, 0.32);
-          var rEurope = new Rectangle__default(0.38, 0.04, 0.22, 0.32);
+          var rAfrica = new Rectangle(0.44, 0.36, 0.16, 0.45);
+          var rAsia = new Rectangle(0.6, 0.15, 0.3, 0.3);
+          var rAustralasia = new Rectangle(0.72, 0.45, 0.28, 0.32);
+          var rEurope = new Rectangle(0.38, 0.04, 0.22, 0.32);
 
           var pivotEuroafrasia = new Point(0.6, 0.36);
           rAfrica = expandRectangle(rAfrica, Math.sqrt(weights[0]), pivotEuroafrasia);
@@ -16147,8 +16406,8 @@ define('src/index', ['exports'], function (exports) {
 
           var pivotAmericas = new Point(0.26, 0.36 + Math.max(rAfrica.height * 0.3, rEurope.height * 0.2));
 
-          var rNorthAmerica = new Rectangle__default(0.1, pivotAmericas.y - 0.4, 0.2, 0.4);
-          var rSouthAmerica = new Rectangle__default(0.22, pivotAmericas.y, 0.16, 0.5);
+          var rNorthAmerica = new Rectangle(0.1, pivotAmericas.y - 0.4, 0.2, 0.4);
+          var rSouthAmerica = new Rectangle(0.22, pivotAmericas.y, 0.16, 0.5);
 
           rNorthAmerica = expandRectangle(rNorthAmerica, Math.sqrt(weights[4]), pivotAmericas);
           rSouthAmerica = expandRectangle(rSouthAmerica, Math.sqrt(weights[5]), pivotAmericas);
@@ -16159,7 +16418,7 @@ define('src/index', ['exports'], function (exports) {
           rSouthAmerica.x += delta;
           rNorthAmerica.x += delta;
 
-          return new List__default(rAfrica, rAsia, rAustralasia, rEurope, rNorthAmerica, rSouthAmerica); //RectangleList
+          return new List(rAfrica, rAsia, rAustralasia, rEurope, rNorthAmerica, rSouthAmerica); //RectangleList
 
         } else {
 
@@ -16178,15 +16437,15 @@ define('src/index', ['exports'], function (exports) {
         var nMissing = nLists * nRows - weights.length;
 
         var average = weights.getAverage();
-        var weigthsCompleted = ListOperators__default.concat(weights, ListGenerators.createListWithSameElement(nMissing, average));
-        var table = ListOperators__default.slidingWindowOnList(weigthsCompleted, nRows, nRows, 0);
+        var weigthsCompleted = ListOperators.concat(weights, ListGenerators.createListWithSameElement(nMissing, average));
+        var table = ListOperators.slidingWindowOnList(weigthsCompleted, nRows, nRows, 0);
         var sumList = table.getSums();
         var rectangleColumns = this.packingRectangles(sumList, 2, rectangle);
 
-        rectangleList = List__default(); //new RectangleList();
+        rectangleList = List(); //new RectangleList();
 
         for(i = 0; i < nLists; i++) {
-          rectangleList = ListOperators__default.concat(rectangleList, this.packingRectangles(table[i], 1, rectangleColumns[i]));
+          rectangleList = ListOperators.concat(rectangleList, this.packingRectangles(table[i], 1, rectangleColumns[i]));
         }
 
         return rectangleList;
@@ -16217,25 +16476,25 @@ define('src/index', ['exports'], function (exports) {
     if(isNormalizedWeights) {
       newWeightList = weights; // new NumberList(arregloPesos);
     } else {
-      newWeightList = weights.getNormalizedToSum();
+      newWeightList = NumberListOperators.normalizedToSum(weights);
     }
 
     if(!isSortedWeights) {
       var newPositions = newWeightList.getSortIndexes(); // ListOperators.sortListByNumberList();// newWeightList.sortNumericIndexedDescending();
-      newWeightList = ListOperators__default.sortListByNumberList(newWeightList, newWeightList);
+      newWeightList = ListOperators.sortListByNumberList(newWeightList, newWeightList);
     }
 
     var area = frame.width * frame.height;
     var rectangleList = new RectangleList();
     var freeRectangle = frame.clone();
     var subWeightList;
-    var subRectangleList = new List__default(); //RectangleList();//
+    var subRectangleList = new List(); //RectangleList();//
     var prevSubRectangleList;
     var proportion;
     var worstProportion;
     var index = 0;
     var subArea;
-    var freeSubRectangle = new Rectangle__default();
+    var freeSubRectangle = new Rectangle();
     var nWeights = weights.length;
     var lastRectangle;
 
@@ -16245,7 +16504,7 @@ define('src/index', ['exports'], function (exports) {
       for(i = index; i < nWeights; i++) {
         proportion = Number.MAX_VALUE;
         if(newWeightList[i] == 0) {
-          rectangleList.push(new Rectangle__default(freeSubRectangle.x, freeSubRectangle.y, 0, 0));
+          rectangleList.push(new Rectangle(freeSubRectangle.x, freeSubRectangle.y, 0, 0));
         } else {
           for(j = 1; j < nWeights; j++) {
             subWeightList = newWeightList.slice(i, i + j); //NumberList.fromArray(newWeightList.slice(i, i+j));//
@@ -16272,10 +16531,10 @@ define('src/index', ['exports'], function (exports) {
           }
 
           if(prevSubRectangleList.length == 0) {
-            rectangleList.push(new Rectangle__default(freeRectangle.x, freeRectangle.y, freeRectangle.width, freeRectangle.height)); //freeRectangle.clone());
+            rectangleList.push(new Rectangle(freeRectangle.x, freeRectangle.y, freeRectangle.width, freeRectangle.height)); //freeRectangle.clone());
             if(rectangleList.length == nWeights) {
               if(!isSortedWeights) {
-                var newRectangleList = new List__default(); //RectangleList();
+                var newRectangleList = new List(); //RectangleList();
                 for(i = 0; rectangleList[i] != null; i++) {
                   newRectangleList[newPositions[i]] = rectangleList[i];
                 }
@@ -16288,7 +16547,7 @@ define('src/index', ['exports'], function (exports) {
             rectangleList = rectangleList.concat(prevSubRectangleList);
             if(rectangleList.length == nWeights) {
               if(!isSortedWeights) {
-                newRectangleList = new List__default();
+                newRectangleList = new List();
                 for(i = 0; rectangleList[i] != null; i++) {
                   newRectangleList[newPositions[i]] = rectangleList[i];
                 }
@@ -16314,12 +16573,12 @@ define('src/index', ['exports'], function (exports) {
       freeSubRectangle = frame.clone();
       rectangleList = RectangleOperators.partitionRectangle(freeSubRectangle, subWeightList, subWeightList.getSum());
     } else {
-      rectangleList[0] = new Rectangle__default(frame.x, frame.y, frame.width, frame.height); //frame.clone();
+      rectangleList[0] = new Rectangle(frame.x, frame.y, frame.width, frame.height); //frame.clone();
     }
 
 
     if(!isSortedWeights) {
-      newRectangleList = new List__default(); //RectangleList();//
+      newRectangleList = new List(); //RectangleList();//
       for(i = 0; rectangleList[i] != null; i++) {
         newRectangleList[newPositions[i]] = rectangleList[i];
       }
@@ -16338,8 +16597,8 @@ define('src/index', ['exports'], function (exports) {
    */
   RectangleOperators.partitionRectangle = function(rectangle, normalizedWeightList, sum) {
     var area = rectangle.width * rectangle.height;
-    var rectangleList = new List__default(); //RectangleList();
-    var freeRectangle = new Rectangle__default(rectangle.x, rectangle.y, rectangle.width, rectangle.height); //rectangle.clone();
+    var rectangleList = new List(); //RectangleList();
+    var freeRectangle = new Rectangle(rectangle.x, rectangle.y, rectangle.width, rectangle.height); //rectangle.clone();
     var areai;
     var i;
     var rect;
@@ -16347,12 +16606,12 @@ define('src/index', ['exports'], function (exports) {
     for(i = 0; i < normalizedWeightList.length; i++) {
       areai = normalizedWeightList[i] * area / sum;
       if(rectangle.width > rectangle.height) {
-        rect = new Rectangle__default(freeRectangle.x, freeRectangle.y, areai / freeRectangle.height, freeRectangle.height);
+        rect = new Rectangle(freeRectangle.x, freeRectangle.y, areai / freeRectangle.height, freeRectangle.height);
         rectangleList.push(rect);
         freeRectangle.x += areai / freeRectangle.height;
         //rect.ratio = rect.width/rect.height;
       } else {
-        rect = new Rectangle__default(freeRectangle.x, freeRectangle.y, freeRectangle.width, areai / freeRectangle.width);
+        rect = new Rectangle(freeRectangle.x, freeRectangle.y, freeRectangle.width, areai / freeRectangle.width);
         rectangleList.push(rect);
         freeRectangle.y += areai / freeRectangle.width;
         //rect.ratio = rect.height/rect.width;
@@ -16409,299 +16668,6 @@ define('src/index', ['exports'], function (exports) {
 
   exports.ColorGenerators = ColorGenerators;
 
-  ColorListGenerators__ColorListGenerators._HARDCODED_CATEGORICAL_COLORS = new ColorList__default(
-    "#dd4411", "#2200bb", "#1f77b4", "#ff660e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#dd8811",
-    "#dd0011", "#221140", "#1f66a3", "#ff220e", "#2ba01c", "#442728", "#945600", "#8c453a", "#e37700"
-  );
-
-  /**
-   * @classdesc Tools for generating {@link List|Lists} of colors.
-   *
-   * @namespace
-   * @category colors
-   */
-  function ColorListGenerators__ColorListGenerators() {}
-  var ColorListGenerators__default = ColorListGenerators__ColorListGenerators;
-
-  /**
-   * create a simple list of categorical colors
-   * @param  {Number} nColors
-   *
-   * @param  {Number} alpha 1 by default
-   * @param {Boolean} invert invert colors
-   * @return {ColorList}
-   * tags:generator
-   */
-  ColorListGenerators__ColorListGenerators.createDefaultCategoricalColorList = function(nColors, alpha, invert) {
-    alpha = alpha == null ? 1 : alpha;
-    var colors = ColorListGenerators__ColorListGenerators.createCategoricalColors(1, nColors).getInterpolated('black', 0.15);
-    if(alpha < 1) colors = colors.addAlpha(alpha);
-
-    if(invert) colors = colors.getInverted();
-
-    return colors;
-  };
-
-
-  /**
-   * create a colorList based on a colorScale and values from a numberList (that will be normalized)
-   * @param  {NumberList} numberList
-   *
-   * @param  {ColorScale} colorScale
-   * @param  {Number} mode 0:normalize numberList
-   * @return {ColorList}
-   * tags:generator
-   */
-  ColorListGenerators__ColorListGenerators.createColorListFromNumberList = function(numberList, colorScale, mode) {
-    if(numberList==null) return null;
-
-    mode = mode == null ? 0 : mode;
-    colorScale = colorScale==null?ColorScales__default.grayToOrange:colorScale;
-
-    var colorList = new ColorList__default();
-    var newNumberList;
-    var i;
-
-    switch(mode) {
-      case 0: //0 to max
-        newNumberList = numberList.getNormalizedToMax();
-        break;
-      case 1: //min to max
-        break;
-      case 2: //values between 0 and 1
-        break;
-    }
-
-    for(i = 0; newNumberList[i] != null; i++) {
-      colorList.push(colorScale(newNumberList[i]));
-    }
-
-    return colorList;
-  };
-
-
-  /**
-   * Creates a new ColorList that contains the provided color. Size of the List
-   * is controlled by the nColors input.
-   *
-   * @param {Number} nColors Length of the list.
-   * @param {Color} color Color to fill list with.
-   */
-  ColorListGenerators__ColorListGenerators.createColorListWithSingleColor = function(nColors, color) {
-    var colorList = new ColorList__default();
-    for(var i = 0; i < nColors; i++) {
-      colorList.push(color);
-    }
-    return colorList;
-  };
-
-
-  /**
-   * Creates a ColorList of categorical colors
-   * @param {Number} mode 0:simple picking from color scale function, 1:random (with seed), 2:hardcoded colors, 3:, 4:, 5:evolutionary algorithm, guarantees non consecutive similar colors
-   * @param {Number} nColors
-   *
-   * @param {ColorScale} colorScaleFunction
-   * @param {Number} alpha transparency
-   * @param {String} interpolateColor color to interpolate
-   * @param {Number} interpolateValue interpolation value [0, 1]
-   * @param {ColorList} colorList colorList to be used in mode 2 (if not colorList is provided it will use default categorical colors)
-   * @return {ColorList} ColorList with categorical colors
-   * tags:generator
-   */
-  ColorListGenerators__ColorListGenerators.createCategoricalColors = function(mode, nColors, colorScaleFunction, alpha, interpolateColor, interpolateValue, colorList) {
-    colorScaleFunction = colorScaleFunction == null ? ColorScales__default.temperature : colorScaleFunction;
-
-    var i;
-    var newColorList = new ColorList__default();
-    switch(mode) {
-      case 0: //picking from ColorScale
-        for(i = 0; i < nColors; i++) {
-          newColorList[i] = colorScaleFunction(i / (nColors - 1));
-        }
-        break;
-      case 1: //seeded random numbers
-        var values = NumberListGenerators.createRandomNumberList(nColors, null, 0);
-        for(i = 0; i < nColors; i++) {
-          newColorList[i] = colorScaleFunction(values[i]);
-        }
-        break;
-      case 2:
-        colorList = colorList==null?ColorListGenerators__ColorListGenerators._HARDCODED_CATEGORICAL_COLORS:colorList;
-        for(i = 0; i < nColors; i++) {
-          newColorList[i] = colorList[i%colorList.length];
-        }
-        break;
-      case 5:
-        var randomNumbersSource = NumberListGenerators.createRandomNumberList(1001, null, 0);
-        var positions = NumberListGenerators.createSortedNumberList(nColors);
-        var randomNumbers = NumberListGenerators.createRandomNumberList(nColors, null, 0);
-        var randomPositions = ListOperators__default.sortListByNumberList(positions, randomNumbers);
-
-        var nGenerations = Math.floor(nColors * 2) + 100;
-        var nChildren = Math.floor(nColors * 0.6) + 5;
-        var bestEvaluation = ColorListGenerators__ColorListGenerators._evaluationFunction(randomPositions);
-        var child;
-        var bestChildren = randomPositions;
-        var j;
-        var nr = 0;
-        var evaluation;
-
-        for(i = 0; i < nGenerations; i++) {
-          for(j = 0; j < nChildren; j++) {
-            child = ColorListGenerators__ColorListGenerators._sortingVariation(randomPositions, randomNumbersSource[nr], randomNumbersSource[nr + 1]);
-            nr = (nr + 2) % 1001;
-            evaluation = ColorListGenerators__ColorListGenerators._evaluationFunction(child);
-            if(evaluation > bestEvaluation) {
-              bestChildren = child;
-              bestEvaluation = evaluation;
-            }
-          }
-          randomPositions = bestChildren;
-        }
-
-        for(i = 0; i < nColors; i++) {
-          newColorList.push(colorScaleFunction((1 / nColors) + randomPositions[i] / (nColors + 1))); //TODO: make more efficient by pre-nuilding the colorList
-        }
-        break;
-    }
-
-    if(interpolateColor != null && interpolateValue != null) {
-      newColorList = newColorList.getInterpolated(interpolateColor, interpolateValue);
-    }
-
-    if(alpha) {
-      newColorList = newColorList.addAlpha(alpha);
-    }
-
-    return newColorList;
-  };
-
-  /**
-   * @ignore
-   */
-  ColorListGenerators__ColorListGenerators._sortingVariation = function(numberList, rnd0, rnd1) { //private
-    var newNumberList = numberList.clone();
-    var pos0 = Math.floor(rnd0 * newNumberList.length);
-    var pos1 = Math.floor(rnd1 * newNumberList.length);
-    var cache = newNumberList[pos1];
-    newNumberList[pos1] = newNumberList[pos0];
-    newNumberList[pos0] = cache;
-    return newNumberList;
-  };
-
-  /**
-   * @ignore
-   */
-  ColorListGenerators__ColorListGenerators._evaluationFunction = function(numberList) { //private
-    var sum = 0;
-    var i;
-    for(i = 0; numberList[i + 1] != null; i++) {
-      sum += Math.sqrt(Math.abs(numberList[i + 1] - numberList[i]));
-    }
-    return sum;
-  };
-
-  /**
-   * Creates an object dictionary that matches elements from a list (that could contan repeated elements) with categorical colors
-   * @param {List} the list containing categorical data
-   *
-   * @param {ColorList} ColorList with categorical colors
-   * @param {Number} alpha transparency
-   * @param {String} color to mix
-   * @param {Number} interpolation value (0-1) for color mix
-   * @param {Boolean} invert invert colors
-   * @return {Object} object dictionar that delivers a color for each element on original list
-   * tags:generator
-   */
-  ColorListGenerators__ColorListGenerators.createCategoricalColorListDictionaryObject = function(list, colorList, alpha, color, interpolate, invert){
-    if(list==null) return;
-
-    var diffValues = list.getWithoutRepetitions();
-    var diffColors = ColorListGenerators__ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate, colorList);
-    if(invert) diffColors = diffColors.getInverted();
-
-    var dictionaryObject = {};
-
-    diffValues.forEach(function(element, i){
-      dictionaryObject[element] = diffColors[i];
-    });
-
-    return dictionaryObject;
-
-  };
-
-  /**
-   * Creates a ColorList of categorical colors based on an input List. All entries with the same value will get the same color.
-   * @param {List} the list containing categorical data
-   *
-   * @param {ColorList} ColorList with categorical colors
-   * @param {Number} alpha transparency
-   * @param {String} color to mix
-   * @param {Number} interpolation value (0-1) for color mix
-   * @param {Boolean} invert invert colors
-   * @return {ColorList} ColorList with categorical colors that match the given list
-   * @return {List} elements list of elemnts that match colors (equivalent to getWithoutRepetions)
-   * @return {ColorList} ColorList with different categorical colors
-   * @return {Table} dictionary dictionary table with elemnts and matching colors
-   * @return {Object} citionaryObject (relational array, from objects to colors)
-   * tags:generator
-   */
-  ColorListGenerators__ColorListGenerators.createCategoricalColorListForList = function(list, colorList, alpha, color, interpolate, invert)
-  {
-
-    if(!list)
-      return new ColorList__default();
-    if(!alpha)
-      alpha = 1;
-    if(!color)
-      color = "#fff";
-    if(!interpolate)
-      interpolate = 0;
-
-    list = List__default.fromArray(list);
-    var diffValues = list.getWithoutRepetitions();
-    var diffColors;
-    if(colorList && interpolate!=0) {
-      diffColors = colorList.getInterpolated(color, interpolate);
-    } else {
-      diffColors = ColorListGenerators__ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate, colorList);
-
-      //diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
-    }
-    diffColors = diffColors.addAlpha(alpha);
-
-    if(invert) diffColors = diffColors.getInverted();
-
-    var colorDict = Table.fromArray([diffValues, diffColors]);
-    var dictionaryObject = ListOperators__default.buildDictionaryObjectForDictionary(colorDict);
-
-    var fullColorList = ListOperators__default.translateWithDictionaryObject(list, colorDict, 'black');// ListOperators.translateWithDictionary(list, colorDict, "NULL");
-
-    fullColorList = ColorList__default.fromArray(fullColorList);
-
-    return [
-      {
-        value: fullColorList,
-        type: 'ColorList'
-      }, {
-        value: diffValues,
-        type: diffValues.type
-      }, {
-        value: diffColors,
-        type: 'ColorList'
-      }, {
-        value: new Table(diffValues, fullColorList),
-        type: 'Table'
-      }, {
-        value: dictionaryObject,
-        type: 'Object'
-      }
-    ];
-  };
-
-  exports.ColorListGenerators = ColorListGenerators__default;
-
   function ColorListOperators() {}
 
 
@@ -16723,7 +16689,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {ColorList} new ColorList.
    */
   ColorListOperators.colorListFromColorScaleFunction = function(colorScaleFunction, nColors) {
-    var colorList = new ColorList__default();
+    var colorList = new ColorList();
     var i;
     for(i = 0; i < nColors; i++) {
       colorList[i] = colorScaleFunction(i / (nColors - 1));
@@ -16738,9 +16704,9 @@ define('src/index', ['exports'], function (exports) {
   ColorListOperators.colorListFromColorScaleFunctionAndNumberList = function(colorScaleFunction, numberList, normalize) {
     normalize = normalize == null ? true : normalize;
 
-    if(normalize) numberList = numberList.getNormalized();
+    if(normalize) numberList = NumberListOperators.normalized(numberList);
 
-    var colorList = new ColorList__default();
+    var colorList = new ColorList();
     var i;
     for(i = 0; numberList[i] != null; i++) {
       colorList[i] = colorScaleFunction(numberList[i]);
@@ -16754,10 +16720,10 @@ define('src/index', ['exports'], function (exports) {
    */
   ColorListOperators.polygon3DToColorList = function(polygon3D) {
     var nPoints = polygon3D.length;
-    var colorList = new ColorList__default();
+    var colorList = new ColorList();
     var i;
     for(i = 0; i < nPoints; i++) {
-      colorList.push(ColorOperators__default.point3DToColor(polygon3D[i]));
+      colorList.push(ColorOperators.point3DToColor(polygon3D[i]));
     }
     return colorList;
   };
@@ -16771,7 +16737,7 @@ define('src/index', ['exports'], function (exports) {
     var polygon3D = new Polygon3D();
     var i;
     for(i = 0; i < nColors; i++) {
-      polygon3D.push(ColorOperators__default.colorToPoint3D(colorList[i]));
+      polygon3D.push(ColorOperators.colorToPoint3D(colorList[i]));
     }
     return polygon3D;
   };
@@ -16831,125 +16797,6 @@ define('src/index', ['exports'], function (exports) {
 
 
   /**
-   * Convert an object (or more typically an Array of objects) into a Table
-   * @param {Object} object or array of objects
-   *
-   * @param {List} list of field names to include (by default will take all from first element in array of objects)
-   * @return {Table} resulting Table
-   * tags:decoder,dani
-   */
-  TableConversions.ObjectToTable = function(object, fields) {
-    // Formats:
-    // 1: normal list of objects
-    // 2: Object with single property, containing normal list of obejcts
-    // 3: Object as CSV (each property represents a column)
-    var format;
-
-    // If it's an array, then it's format 1
-    if(Array.isArray(object)) {
-      format = 1;
-      // If not field names supplied, get them from first element
-      if(!fields)
-      {
-        fields = [];
-        for(var p in object[0]) {
-          fields.push(p);
-        }
-      }
-      // Else (not array), it's an object
-    } else {
-      // Check how many properties the object has
-      var properties = [];
-      for(var p in object) {
-        properties.push(p);
-      }
-
-      // If it has only one, and it's an array, it's foramt 2, so assume it's just a capsule
-      // and extract the array as format 1
-      if(properties.length == 1 && Array.isArray(object[properties[0]]))
-      {
-        format = 1;
-        object = object[properties[0]];
-
-        // If not field names supplied, get them from first element
-        if(!fields)
-        {
-          fields = [];
-          for(var p in object[0]) {
-            fields.push(p);
-          }
-        }
-      } else {
-        // Finally, if the object has many properties, we assume it's a csv encoded as JSON
-        // ( each property of the object represents a column of the CSV )
-        format = 3;
-
-        // If not fields supplied, use all properties
-        if(!fields)
-          fields = properties;
-      }
-    }
-
-
-    // Create table and columns
-    var result = new Table();
-    for(var i = 0; i < fields.length; i++) {
-      var fieldName = fields[i];
-      var column = new List__default();
-      result[i] = column;
-      column.name = fieldName;
-    }
-
-    // Fill the table
-    if(format == 1)
-    {
-      for(var i = 0; i < object.length; i++) {
-        var row = object[i];
-        for(var f = 0; f < fields.length; f++) {
-          result[f].push(row[fields[f]]);
-        }
-      }
-    } else {
-      for(var f = 0; f < fields.length; f++) {
-        var column = object[fields[f]];
-        for(var i = 0; i < column.length; i++) {
-          result[f].push(column[i]);
-        }
-      }
-    }
-
-    // Improve columns
-    for(var i = 0; i < result.length; i++) {
-      result[i] = result[i].getImproved();
-    }
-
-    //if(result.getLengths.getMax()==1) return result.getRow(0);
-
-    // Improve table
-    result = result.getImproved();
-
-    // Return best possible
-    return result;
-  };
-
-
-  /**
-   * Convert an object (or more typically an Array of objects) into a Table
-   * @param {Object} object or array of objects
-   *
-   * @param {List} list of field names to include (by default will take all from first element in array of objects)
-   * @return {List} resulting list (probably a table)
-   * tags:decoder
-   */
-  TableConversions.ObjectToList = function(object, fields) {
-    var result = TableConversions.ObjectToTable(object, fields);
-
-    if(result.getLengths.getMax() == 1) return result.getRow(0);
-  };
-
-
-
-  /**
    * Convert a Table into an Object or Array of objects
    * @param {Object} table to be converted
    *
@@ -16979,14 +16826,257 @@ define('src/index', ['exports'], function (exports) {
         array: result
       };
     };
-    // Tests ObjectToTable / TableToObject
-    /*
-    var input = [ {name:"dani", age:36, other:"eee"}, {name:"alejandro", age:34}, {name:"anna", age:37} ];
-    var table = TableEncodings.ObjectToTable( input );
-    console.log( "ObjectToTable: ", table );
-    var obj = TableEncodings.TableToObject(table);
-    console.log( "ObjectToTable INVERSE: ", obj );
-    */
+
+
+  /**
+   * Generates a string containing details about the current state
+   * of the Table. Useful for outputing to the console for debugging.
+   * @param {Table} table Table to generate report on.
+   * @param {Number} level If greater then zero, will indent to that number of spaces.
+   * @return {String} Description String.
+   */
+  TableConversions.toReport = function(table, level) {
+    var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
+    var lengths = table.getLengths();
+    var minLength = lengths.getMin();
+    var maxLength = lengths.getMax();
+    var averageLength = (minLength + maxLength) * 0.5;
+    var sameLengths = minLength == maxLength;
+
+    var text = level > 0 ? (ident + "////report of instance of Table////") : "///////////report of instance of Table//////////";
+
+    if(table.length === 0) {
+      text += ident + "this table has no lists";
+      return text;
+    }
+
+    text += ident + "name: " + table.name;
+    text += ident + "type: " + table.type;
+    text += ident + "number of lists: " + table.length;
+
+    text += ident + "all lists have same length: " + (sameLengths ? "true" : "false");
+
+    if(sameLengths) {
+      text += ident + "lists length: " + table[0].length;
+    } else {
+      text += ident + "min length: " + minLength;
+      text += ident + "max length: " + maxLength;
+      text += ident + "average length: " + averageLength;
+      text += ident + "all lengths: " + lengths.join(", ");
+    }
+
+    var names = table.getNames();
+    var types = table.getTypes();
+
+    text += ident + "--";
+    names.forEach(function(name, i){
+      text += ident + i + ": " + name + " ["+TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"]";
+    });
+    text += ident + "--";
+
+    var sameTypes = types.allElementsEqual();
+    if(sameTypes) {
+      text += ident + "types of all lists: " + types[0];
+    } else {
+      text += ident + "types: " + types.join(", ");
+    }
+    text += ident + "names: " + names.join(", ");
+
+    if(table.length < 101) {
+      text += ident + ident + "--------lists reports---------";
+
+      var i;
+      for(i = 0; table[i] != null; i++) {
+        text += "\n" + ident + ("(" + (i) + "/0-" + (table.length - 1) + ")");
+        try{
+           text += ListConversions.toReport(table[i], 1);
+        } catch(err){
+          text += ident + "[!] something wrong with list " + err;
+        }
+      }
+    }
+
+    if(table.length == 2) {
+      text += ident + ident + "--------lists comparisons---------";
+      if(table[0].type=="NumberList" && table[1].type=="NumberList"){
+        text += ident + "covariance:" + NumberListOperators.covariance(table[0], table[1]);
+        text += ident + "Pearson product moment correlation: " + NumberListOperators.pearsonProductMomentCorrelation(table[0], table[1]);
+      } else if(table[0].type!="NumberList" && table[1].type!="NumberList"){
+        var nUnion = ListOperators.union(table[0], table[1]).length;
+        text += ident + "union size: " + nUnion;
+        var intersected = ListOperators.intersection(table[0], table[1]);
+        var nIntersection = intersected.length;
+        text += ident + "intersection size: " + nIntersection;
+
+        if(table[0]._freqTable[0].length == nUnion && table[1]._freqTable[0].length == nUnion){
+          text += ident + "[!] both lists contain the same non repeated elements";
+        } else {
+          if(table[0]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in first list also occur on second list";
+          if(table[1]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in second list also occur on first list";
+        }
+        text += ident + "Jaccard distance: " + (1 - (nIntersection/nUnion));
+      }
+      //check for 1-1 matches, number of pairs, categorical, sub-categorical
+      var subCategoryCase = ListOperators.subCategoricalAnalysis(table[0], table[1]);
+
+      switch(subCategoryCase){
+        case 0:
+          text += ident + "no categorical relation found between lists";
+          break;
+        case 1:
+          text += ident + "[!] both lists are categorical identical";
+          break;
+        case 2:
+          text += ident + "[!] first list is subcategorical to second list";
+          break;
+        case 3:
+          text += ident + "[!] second list is subcategorical to first list";
+          break;
+      }
+
+      if(subCategoryCase!=1){
+        text += ident + "information gain when segmenting first list by the second: "+ListOperators.getInformationGain(table[0], table[1]);
+        text += ident + "information gain when segmenting second list by the first: "+ListOperators.getInformationGain(table[1], table[0]);
+      }
+    }
+
+    ///add ideas to: analyze, visualize
+
+    return text;
+  };
+
+  /**
+   * Generates a string containing details about the current state
+   * of the Table. Useful for outputing to the console for debugging.
+   * @param {Table} table Table to generate report on.
+   * @param {Number} level If greater then zero, will indent to that number of spaces.
+   * @return {String} Description String.
+   */
+  TableConversions.toReportHtml = function(table,level) {
+    var ident = "<br>" + (level > 0 ? StringOperators.repeatString("&nbsp", level) : "");
+    var lengths = table.getLengths();
+    var minLength = lengths.getMin();
+    var maxLength = lengths.getMax();
+    var averageLength = (minLength + maxLength) * 0.5;
+    var sameLengths = minLength == maxLength;
+
+    var text = "<b>" +( level > 0 ? (ident + "<font style=\"font-size:16px\">table report</f>") : "<font style=\"font-size:18px\">table report</f>" ) + "</b>";
+
+    if(table.length === 0) {
+      text += ident + "this table has no lists";
+      return text;
+    }
+
+    if(table.name){
+      text += ident + "name: <b>" + table.name + "</b>";
+    } else {
+      text += ident + "<i>no name</i>";
+    }
+    text += ident + "type: <b>" + table.type + "</b>";
+    text += ident + "number of lists: <b>" + table.length + "</b>";
+
+    text += ident + "all lists have same length: <b>" + (sameLengths ? "true" : "false") + "</b>";
+
+    if(sameLengths) {
+      text += ident + "lists length: <b>" + table[0].length + "</b>";
+    } else {
+      text += ident + "min length: <b>" + minLength + "</b>";
+      text += ident + "max length: <b>" + maxLength + "</b>";
+      text += ident + "average length: <b>" + averageLength + "</b>";
+      text += ident + "all lengths: <b>" + lengths.join(", ") + "</b>";
+    }
+
+    var names = table.getNames();
+    var types = table.getTypes();
+
+    text += "<hr>";
+    names.forEach(function(name, i){
+      text += ident + "<font style=\"font-size:10px\">" +i + ":</f><b>" + name + "</b> <font color=\""+getColorFromDataModelType(types[i])+ "\">" + TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"</f>";
+    });
+    text += "<hr>";
+
+    var sameTypes = types.allElementsEqual();
+    if(sameTypes) {
+      text += ident + "types of all lists: " + "<b>" + types[0] + "</b>";
+    } else {
+      text += ident + "types: ";
+      types.forEach(function(type, i){
+        text += "<b><font color=\""+getColorFromDataModelType(type)+ "\">" + type+"</f></b>";
+        if(i<types.length-1) text += ", ";
+      });
+    }
+    text += "<br>" + ident + "names: <b>" + names.join("</b>, <b>") + "</b>";
+
+
+    //list by list
+
+    if(table.length < 501) {
+      text += "<hr>";
+      text +=  ident + "<font style=\"font-size:16px\"><b>lists reports</b></f>";
+
+      var i;
+      for(i = 0; table[i] != null; i++) {
+        text += "<br>" + ident + i + ": " + (table[i].name?"<b>"+table[i].name+"</b>":"<i>no name</i>");
+        try{
+           text += ListConversions.toReportHtml(table[i], 1);
+        } catch(err){
+          text += ident + "[!] something wrong with list <font style=\"font-size:10px\">:" + err + "</f>";
+          console.log('getReportHtml err', err);
+        }
+      }
+    }
+
+    if(table.length == 2) {//TODO:finish
+      text += "<hr>";
+      text += ident + "<b>lists comparisons</b>";
+      if(table[0].type=="NumberList" && table[1].type=="NumberList"){
+        text += ident + "covariance:" + NumberOperators.numberToString(NumberListOperators.covariance(table[0], table[1]), 4);
+        text += ident + "Pearson product moment correlation: " + NumberOperators.numberToString(NumberListOperators.pearsonProductMomentCorrelation(table[0], table[1]), 4);
+      } else if(table[0].type!="NumberList" && table[1].type!="NumberList"){
+        var nUnion = ListOperators.union(table[0], table[1]).length;
+        text += ident + "union size: " + nUnion;
+        var intersected = ListOperators.intersection(table[0], table[1]);
+        var nIntersection = intersected.length;
+        text += ident + "intersection size: " + nIntersection;
+
+        if(table[0]._freqTable[0].length == nUnion && table[1]._freqTable[0].length == nUnion){
+          text += ident + "[!] both lists contain the same non repeated elements";
+        } else {
+          if(table[0]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in first list also occur on second list";
+          if(table[1]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in second list also occur on first list";
+        }
+        text += ident + "Jaccard distance: " + (1 - (nIntersection/nUnion));
+      }
+      //check for 1-1 matches, number of pairs, categorical, sub-categorical
+      var subCategoryCase = ListOperators.subCategoricalAnalysis(table[0], table[1]);
+
+      switch(subCategoryCase){
+        case 0:
+          text += ident + "no categorical relation found between lists";
+          break;
+        case 1:
+          text += ident + "[!] both lists are categorical identical";
+          break;
+        case 2:
+          text += ident + "[!] first list is subcategorical to second list";
+          break;
+        case 3:
+          text += ident + "[!] second list is subcategorical to first list";
+          break;
+      }
+
+      if(subCategoryCase!=1){
+        text += ident + "information gain when segmenting first list by the second: "+NumberOperators.numberToString( ListOperators.getInformationGain(table[0], table[1]), 4);
+        text += ident + "information gain when segmenting second list by the first: "+NumberOperators.numberToString( ListOperators.getInformationGain(table[1], table[0]), 4);
+      }
+    }
+
+    ///add ideas to: analyze, visualize
+
+    return text;
+  };
+
+  TableConversions.toReportObject = function() {}; //TODO
 
   exports.TableConversions = TableConversions;
 
@@ -17014,7 +17104,7 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   IntervalListOperators.scaleIntervals = function(intervalList, value) {
-    var newIntervalList = new List__default();
+    var newIntervalList = new List();
     newIntervalList.name = intervalList.name;
     for(var i = 0; intervalList[i] !== null; i++) {
       newIntervalList[i] = intervalList[i].getScaled(value);
@@ -17057,14 +17147,16 @@ define('src/index', ['exports'], function (exports) {
    **/
   // TODO: resolve particular cases (right angles)
   MatrixGenerators.createMatrixFromTrianglesMapping = function(v0, v1, v2, w0, w1, w2) {
+    var a, b, c, d;
+
     if(v1.y != v0.y) {
       var k = (v2.y - v0.y) / (v1.y - v0.y);
 
-      var a = (w2.x - w0.x - (w1.x - w0.x) * k) / (v2.x - v0.x - (v1.x - v0.x) * k);
-      var b = k * (w1.x - w0.x) / (v2.y - v0.y) - a * (v1.x - v0.x) / (v1.y - v0.y);
+      a = (w2.x - w0.x - (w1.x - w0.x) * k) / (v2.x - v0.x - (v1.x - v0.x) * k);
+      b = k * (w1.x - w0.x) / (v2.y - v0.y) - a * (v1.x - v0.x) / (v1.y - v0.y);
 
-      var c = (w2.y - w0.y - (w1.y - w0.y) * k) / (v2.x - v0.x - (v1.x - v0.x) * k);
-      var d = k * (w1.y - w0.y) / (v2.y - v0.y) - c * (v1.x - v0.x) / (v1.y - v0.y);
+      c = (w2.y - w0.y - (w1.y - w0.y) * k) / (v2.x - v0.x - (v1.x - v0.x) * k);
+      d = k * (w1.y - w0.y) / (v2.y - v0.y) - c * (v1.x - v0.x) / (v1.y - v0.y);
     } else {
       a = (w1.x - w0.x) / (v1.x - v0.x);
       b = (w2.x - w0.x) / (v2.y - v0.y) - a * (v2.x - v0.x) / (v2.y - v0.y);
@@ -17082,14 +17174,16 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   MatrixGenerators.applyTransformationOnCanvasFromPoints = function(context, v0, v1, v2, w0, w1, w2) {
+    var a, b, c, d;
+
     if(v1.y != v0.y) {
       var k = (v2.y - v0.y) / (v1.y - v0.y);
 
-      var a = (w2.x - w0.x - (w1.x - w0.x) * k) / (v2.x - v0.x - (v1.x - v0.x) * k);
-      var b = k * (w1.x - w0.x) / (v2.y - v0.y) - a * (v1.x - v0.x) / (v1.y - v0.y);
+      a = (w2.x - w0.x - (w1.x - w0.x) * k) / (v2.x - v0.x - (v1.x - v0.x) * k);
+      b = k * (w1.x - w0.x) / (v2.y - v0.y) - a * (v1.x - v0.x) / (v1.y - v0.y);
 
-      var c = (w2.y - w0.y - (w1.y - w0.y) * k) / (v2.x - v0.x - (v1.x - v0.x) * k);
-      var d = k * (w1.y - w0.y) / (v2.y - v0.y) - c * (v1.x - v0.x) / (v1.y - v0.y);
+      c = (w2.y - w0.y - (w1.y - w0.y) * k) / (v2.x - v0.x - (v1.x - v0.x) * k);
+      d = k * (w1.y - w0.y) / (v2.y - v0.y) - c * (v1.x - v0.x) / (v1.y - v0.y);
     } else {
       a = (w1.x - w0.x) / (v1.x - v0.x);
       b = (w2.x - w0.x) / (v2.y - v0.y) - a * (v2.x - v0.x) / (v2.y - v0.y);
@@ -17196,407 +17290,51 @@ define('src/index', ['exports'], function (exports) {
 
   exports.MatrixGenerators = MatrixGenerators;
 
-  function NumberListOperators__NumberListOperators() {}
-  var NumberListOperators__default = NumberListOperators__NumberListOperators;
+  function NumberListConversions() {}
+
 
   /**
-   * cosine similarity, used to compare two NumberLists regardless of norm (see: http://en.wikipedia.org/wiki/Cosine_similarity)
-   * @param  {NumberList} numberList0
-   * @param  {NumberList} numberList1
-   * @return {Number}
-   * tags:statistics
+   * Builds an {@link Polygon} from the NumberList,
+   * using each consecutive pair of values in the numberList as
+   * x and y positions.
+   *
+   * @param {NumberList} numberlist The NumberList to convert to a Polygon.
+   * @return {Polygon} Polygon representing the values
+   * in the NumberList as x/y coordinates.
    */
-  NumberListOperators__NumberListOperators.cosineSimilarity = function(numberList0, numberList1) {
-    var norms = numberList0.getNorm() * numberList1.getNorm();
-    if(norms === 0) return 0;
-    return numberList0.dotProduct(numberList1) / norms;
+  NumberListConversions.toPolygon = function(numberlist) {
+    if(numberlist.length === 0) return null;
+    var polygon = new Polygon();
+    for(var i = 0; numberlist[i + 1] != null; i += 2) {
+      polygon.push(new Point(numberlist[i], numberlist[i + 1]));
+    }
+    return polygon;
   };
 
   /**
-   * calculates the covariance between two numberLists
-   * @param  {NumberList} numberList0
-   * @param  {NumberList} numberList1
-   * @return {Number}
-   * tags:statistics
+   * Returns a new {@link StringList} with all values converted to strings
+   *
+   * @param {NumberList} numberlist The NumberList to convert.
+   * @return {StringList} New list.
    */
-  NumberListOperators__NumberListOperators.covariance = function(numberList0, numberList1) {
-    if(numberList0==null || numberList1==null) return;
-
-    var l = Math.min(numberList0.length, numberList1.length);
+  NumberListConversions.toStringList = function(numberlist) {
     var i;
-    var av0 = numberList0.getAverage();
-    var av1 = numberList1.getAverage();
-    var s = 0;
-
-    for(i = 0; i<l; i++) {
-      s += (numberList0[i] - av0)*(numberList1[i] - av1);
+    var stringList = new StringList();
+    for(i = 0; numberlist[i] != null; i++) {
+      stringList[i] = String(numberlist[i]);
     }
-
-    return s/l;
+    stringList.name = numberlist.name;
+    return stringList;
   };
 
-  /**
-   * generates a new numberList of desired size smaller than original, with elements claculated as averages of neighbors
-   * @param  {NumberList} numberList
-   * @param  {Number} newLength length of returned numberList
-   * @return {NumberList}
-   * tags:statistics
-   */
-  NumberListOperators__NumberListOperators.shorten = function(numberList, newLength) {
-    if(numberList==null) return null;
-    if(newLength==null || newLength>=numberList.length) return numberList;
-
-    var windowSize = numberList.length/newLength;
-    var newNumberList = new NumberList();
-    var windowSizeInt = Math.floor(windowSize);
-    var val;
-    var i, j, j0;
-
-    newNumberList.name = numberList.name;
-
-    for(i=0; i<newLength; i++){
-      j0 = Math.floor(i*windowSize);
-      val = 0;
-      for(j=0; j<windowSizeInt; j++){
-        val += numberList[j0+j];
-      }
-      newNumberList[i] = val/windowSizeInt;
-    }
-    return newNumberList;
-  };
-
-  /**
-   * calculates k-means clusters of values in a numberList
-   * @param  {NumberList} numberList
-   * @param  {Number} k number of clusters
-   *
-   * @param {Boolean} returnIndexes return clusters of indexes rather than values (false by default)
-   * @return {NumberTable} numberLists each being a cluster
-   * tags:ds
-   */
-  NumberListOperators__NumberListOperators.linearKMeans = function(numberList, k, returnIndexes) {
-    if(numberList == null || k == null || !k > 0) return null;
-
-    var interval = numberList.getInterval();
-
-    var min = interval.x;
-    var max = interval.y;
-    var clusters = new NumberTable();
-    var i, j;
-    var jK;
-    var x;
-    var dX = (max - min) / k;
-    var d;
-    var dMin;
-    var n;
-    var actualMean;
-    var N = 1000;
-    var means = new NumberList();
-    var nextMeans = new NumberList();
-    var nValuesInCluster = new NumberList();
-
-    var initdMin = 1 + max - min;
-
-    for(i = 0; i < k; i++) {
-      clusters[i] = new NumberList();
-      nextMeans[i] = min + (i + 0.5) * dX;
-    }
-
-    for(n = 0; n < N; n++) {
-
-      for(i = 0; i < k; i++) {
-        nValuesInCluster[i] = 0;
-        means[i] = nextMeans[i];
-        nextMeans[i] = 0;
-      }
-
-      for(i = 0; numberList[i] != null; i++) {
-        x = numberList[i];
-        dMin = initdMin;
-        jK = 0;
-
-        for(j = 0; j < k; j++) {
-          d = Math.abs(x - means[j]);
-          if(d < dMin) {
-            dMin = d;
-            jK = j;
-          }
-        }
-        if(n == N - 1) {
-          returnIndexes ? clusters[jK].push(i) : clusters[jK].push(x);
-        }
-
-        nValuesInCluster[jK]++;
-
-        nextMeans[jK] = ((nValuesInCluster[jK] - 1) * nextMeans[jK] + x) / nValuesInCluster[jK];
-      }
-    }
-
-    return clusters;
-  };
-
-  /**
-   * @todo finish docs
-   */
-  NumberListOperators__NumberListOperators.standardDeviationBetweenTwoNumberLists = function(numberList0, numberList1) {
-    var s = 0;
-    var l = Math.min(numberList0.length, numberList1.length);
-
-    for(var i = 0; i < l; i++) {
-      s += Math.pow(numberList0[i] - numberList1[i], 2);
-    }
-
-    return s/l;
-  };
-
-  /**
-   * returns Pearson Product Moment Correlation, the most common correlation coefficient ( covariance/(standard_deviation0*standard_deviation1) )
-   * @param  {NumberList} numberList0
-   * @param  {NumberList} numberList1
-   * @return {Number}
-   * tags:statistics
-   */
-  NumberListOperators__NumberListOperators.pearsonProductMomentCorrelation = function(numberList0, numberList1) { //TODO:make more efficient
-    return NumberListOperators__NumberListOperators.covariance(numberList0, numberList1) / (numberList0.getStandardDeviation() * numberList1.getStandardDeviation());
-  };
-
-
-  /**
-   * smooth a numberList by calculating averages with neighbors
-   * @param  {NumberList} numberList
-   * @param  {Number} intensity weight for neighbors in average (0<=intensity<=0.5)
-   * @param  {Number} nIterations number of ieterations
-   * @return {NumberList}
-   * tags:statistics
-   */
-  NumberListOperators__NumberListOperators.averageSmoother = function(numberList, intensity, nIterations) {
-    nIterations = nIterations == null ? 1 : nIterations;
-    intensity = intensity == null ? 0.1 : intensity;
-
-    intensity = Math.max(Math.min(intensity, 0.5), 0);
-    var anti = 1 - 2 * intensity;
-    var n = numberList.length - 1;
-
-    var newNumberList = new NumberList();
-    var i;
-
-    newNumberList.name = numberList.name;
-
-    for(i = 0; i < nIterations; i++) {
-      if(i == 0) {
-        numberList.forEach(function(val, i) {
-          newNumberList[i] = anti * val + (i > 0 ? (numberList[i - 1] * intensity) : 0) + (i < n ? (numberList[i + 1] * intensity) : 0);
-        });
-      } else {
-        newNumberList.forEach(function(val, i) {
-          newNumberList[i] = anti * val + (i > 0 ? (newNumberList[i - 1] * intensity) : 0) + (i < n ? (newNumberList[i + 1] * intensity) : 0);
-        });
-      }
-    }
-
-    newNumberList.name = numberList.name;
-
-    return newNumberList;
-  };
-
-
-  /**
-   * accepted comparison operators: "<", "<=", ">", ">=", "==", "!="
-   */
-  NumberListOperators__NumberListOperators.filterNumberListByNumber = function(numberList, value, comparisonOperator, returnIndexes) {
-    returnIndexes = returnIndexes || false;
-    var newNumberList = new NumberList();
-    var i;
-
-    if(returnIndexes) {
-      switch(comparisonOperator) {
-        case "<":
-          for(i = 0; numberList[i] != null; i++) {
-            if(numberList[i] < value) {
-              newNumberList.push(i);
-            }
-          }
-          break;
-        case "<=":
-          for(i = 0; numberList[i] != null; i++) {
-            if(numberList[i] <= value) {
-              newNumberList.push(i);
-            }
-          }
-          break;
-        case ">":
-          for(i = 0; numberList[i] != null; i++) {
-            if(numberList[i] > value) {
-              newNumberList.push(i);
-            }
-          }
-          break;
-        case ">=":
-          for(i = 0; numberList[i] != null; i++) {
-            if(numberList[i] >= value) {
-              newNumberList.push(i);
-            }
-          }
-          break;
-        case "==":
-          for(i = 0; numberList[i] != null; i++) {
-            if(numberList[i] == value) {
-              newNumberList.push(i);
-            }
-          }
-          break;
-        case "!=":
-          for(i = 0; numberList[i] != null; i++) {
-            if(numberList[i] != value) {
-              newNumberList.push(i);
-            }
-          }
-          break;
-      }
-
-    } else {
-      switch(comparisonOperator) {
-        case "<":
-          for(i = 0; numberList[i] != null; i++) {
-            if(numberList[i] < value) {
-              newNumberList.push(numberList[i]);
-            }
-          }
-          break;
-        case "<=":
-          for(i = 0; numberList[i] != null; i++) {
-            if(numberList[i] <= value) {
-              newNumberList.push(numberList[i]);
-            }
-          }
-          break;
-        case ">":
-          for(i = 0; numberList[i] != null; i++) {
-            if(numberList[i] > value) {
-              newNumberList.push(numberList[i]);
-            }
-          }
-          break;
-        case ">=":
-          for(i = 0; numberList[i] != null; i++) {
-            if(numberList[i] >= value) {
-              newNumberList.push(numberList[i]);
-            }
-          }
-          break;
-        case "==":
-          for(i = 0; numberList[i] != null; i++) {
-            if(numberList[i] == value) {
-              newNumberList.push(numberList[i]);
-            }
-          }
-          break;
-        case "!=":
-          for(i = 0; numberList[i] != null; i++) {
-            if(numberList[i] != value) {
-              newNumberList.push(numberList[i]);
-            }
-          }
-          break;
-      }
-    }
-
-    return newNumberList;
-  };
-
-  /**
-   * creates a NumberList that contains the union of two NumberList (removing repetitions)
-   *
-   * @param  {NumberList} x list A
-   * @param  {NumberList} y list B
-   *
-   * @return {NumberList} the union of both NumberLists
-   * tags:
-   */
-  NumberListOperators__NumberListOperators.union = function(x, y) {//TODO: this should be refactored, and placed in ListOperators
-    // Borrowed from here: http://stackoverflow.com/questions/3629817/getting-a-union-of-two-arrays-in-javascript
-    var obj = {};
-    for(var i = x.length - 1; i >= 0; --i)
-      obj[x[i]] = x[i];
-    for(var i = y.length - 1; i >= 0; --i)
-      obj[y[i]] = y[i];
-    var res = new NumberList();
-    for(var k in obj) {
-      if(obj.hasOwnProperty(k)) // <-- optional
-        res.push(obj[k]);
-    }
-    return res;
-  };
-
-  /**
-   * creates a NumberList that contains the intersection of two NumberList (elements present in BOTH lists)
-   * @param  {NumberList} list A
-   * @param  {NumberList} list B
-   *
-   * @return {NumberList} the intersection of both NumberLists
-   * tags:deprecated
-   */
-  NumberListOperators__NumberListOperators.intersection = function(a, b) {//TODO: refactor this method that should be at ListOperators
-    // Borrowed from here: http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
-    //console.log( "arguments: ", arguments );
-    if(arguments.length > 2) {
-      var sets = [];
-      for(var i = 0; i < arguments.length; i++) {
-        sets.push(arguments[i]);
-      }
-      sets.sort(function(a, b) {
-        return a.length - b.length;
-      });
-      console.log("sets: ", sets);
-      var resultsTrail = sets[0];
-      for(var i = 1; i < sets.length; i++) {
-        var newSet = sets[i];
-        resultsTrail = NumberListOperators__NumberListOperators.intersection(resultsTrail, newSet);
-      }
-      return resultsTrail;
-    }
-
-    var result = new NumberList();
-    a = a.slice();
-    b = b.slice();
-    while(a.length > 0 && b.length > 0)
-    {
-      if(a[0] < b[0]) {
-        a.shift();
-      }
-      else if(a[0] > b[0]) {
-        b.shift();
-      }
-      else /* they're equal */
-      {
-        result.push(a.shift());
-        b.shift();
-      }
-    }
-
-    return result;
-  };
-
-
-  /**
-   * builds a rectangle that defines the boundaries of two numberLists interpreted as x and y coordinates
-   * @param  {NumberList} numberListX
-   * @param  {NumberList} numberListY
-   * @return {Rectangle}
-   */
-  NumberListOperators__NumberListOperators.frameFromTwoNumberLists = function(numberListX, numberListY){
-    var intX = numberListX.getInterval();
-    var intY = numberListY.getInterval();
-    return new Rectangle(intX.x, intY.x, intX.getAmplitude(), intY.getAmplitude());
-  };
-
-  exports.NumberListOperators = NumberListOperators__default;
+  exports.NumberListConversions = NumberListConversions;
 
   function NumberTableConversions() {}
 
 
   /**
    * converts a numberTable with at least two lists into a Polygon
+   *
    * @param  {NumberTable} numberTable with at least two numberLists
    * @return {Polygon}
    * tags:conversion
@@ -17613,6 +17351,80 @@ define('src/index', ['exports'], function (exports) {
     }
 
     return polygon;
+  };
+
+  /**
+   * Converts NumberTable to a {@link Network}.
+   *
+   * @param {NumberTable} numberTable to convert.
+   * @param {Number} method Method to use. Currently only method 0 implemented
+   * @param {Number} tolerance Defaults to 0.
+   */
+  NumberTableConversions.numberTableToNetwork = function(numberTable, method, tolerance) {
+    tolerance = tolerance == null ? 0 : tolerance;
+
+    var network = new Network();
+
+    var list0;
+    var list1;
+
+    var i;
+    var j;
+
+    var node0;
+    var node1;
+    var relation;
+
+
+    switch(method) {
+      case 0: // standard deviation
+
+        var sd;
+        var w;
+
+        for(i = 0; numberTable[i + 1] != null; i++) {
+          list0 = numberTable[i];
+
+          if(i === 0) {
+            node0 = new Node__default(list0.name, list0.name);
+            network.addNode(node0);
+          } else {
+            node0 = network.nodeList[i];
+          }
+
+
+          for(j = i + 1; numberTable[j] != null; j++) {
+            list1 = numberTable[j];
+
+            if(i === 0) {
+              node1 = new Node__default(list1.name, list1.name);
+              network.addNode(node1);
+            } else {
+              node1 = network.nodeList[j];
+            }
+
+
+
+            list1 = numberTable[j];
+            sd = NumberListOperators.standardDeviationBetweenTwoNumberLists(list0, list1);
+
+            w = 1 / (1 + sd);
+
+            if(w >= tolerance) {
+              relation = new Relation(i + "_" + j, node0.name + "_" + node1.name, node0, node1, w);
+              network.addRelation(relation);
+            }
+          }
+        }
+
+        break;
+      case 1:
+        break;
+      case 2:
+        break;
+    }
+
+    return network;
   };
 
   exports.NumberTableConversions = NumberTableConversions;
@@ -17737,7 +17549,7 @@ define('src/index', ['exports'], function (exports) {
 
     for(i = 1; i < nElements; i++) {
       numberList = table[i];
-      intervalList = new List__default();
+      intervalList = new List();
       intervalTable[i - 1] = intervalList;
       for(j = 0; j < nRows; j++) {
         intervalList.push(new Interval(table[i - 1][j], table[i][j]));
@@ -17791,37 +17603,73 @@ define('src/index', ['exports'], function (exports) {
   var NumberTableOperators__default = NumberTableOperators__NumberTableOperators;
 
   /**
-   * a NumberTable as a matrix: has n lists, each with m values, being a mxn matrix
-   * the following NumberTable:
-   * [ [0, 4, 7], [3, 8, 1] ]
-   * is notated:
-   * | 0   4   7 |
-   * | 3   8   1 |
-   */
-
-
-
-  /**
-   * normlizes each NumberList to min and max values (redundant with NumberTable.getNumberListsNormalized)
-   * @param  {NumberTable} numberTable
+   * normalizes the table to its maximal value
+   *
+   * @param {NumberTable} numbertable NumberTable.
+   * @param  {Number} factor optional factor
    * @return {NumberTable}
-   * tags:statistics,deprecated
+   * tags:normalization
    */
-  NumberTableOperators__NumberTableOperators.normalizeLists = function(numberTable) {//TODO: redundant with NumberTable.getNumberListsNormalized
-    return numberTable.getNumberListsNormalized();
+  NumberTableOperators__NumberTableOperators.normalizeTableToMax = function(numbertable, factor) {
+    factor = factor == null ? 1 : factor;
+
+    var newTable = new NumberTable();
+    var i;
+    var antimax = factor / numbertable.getMax();
+    for(i = 0; numbertable[i] != null; i++) {
+      newTable[i] = numbertable[i].factor(antimax);
+    }
+    newTable.name = numbertable.name;
+    return newTable;
   };
 
   /**
-   * @todo finish docs
+   * returns a table with having normalized all the numberLists
+   *
+   * @param {NumberTable} numbertable NumberTable.
+   * @param  {factor} factor optional factor
+   * @return {NumberTable}
+   * tags:normalization
    */
-  NumberTableOperators__NumberTableOperators.normalizeListsToMax = function(numberTable) {
-    var newNumberTable = new NumberTable();
-    newNumberTable.name = numberTable.name;
+  NumberTableOperators__NumberTableOperators.normalizeLists = function(numbertable, factor) {
+    factor = factor == null ? 1 : factor;
+
+    var newTable = new NumberTable();
     var i;
-    for(i = 0; numberTable[i] != null; i++) {
-      newNumberTable[i] = numberTable[i].getNormalizedToMax();
+    for(i = 0; numbertable[i] != null; i++) {
+      var numberlist = numbertable[i];
+      newTable[i] = NumberListOperators.normalized(numberlist, factor);
     }
-    return newNumberTable;
+    newTable.name = numbertable.name;
+    return newTable;
+  };
+
+  /**
+   * @todo write docs
+   * @param {NumberTable} numbertable NumberTable.
+   */
+  NumberTableOperators__NumberTableOperators.normalizeListsToMax = function(numbertable, factorValue) {
+    var newTable = new NumberTable();
+    for(var i = 0; numbertable[i] != null; i++) {
+      var numberlist = numbertable[i];
+      newTable[i] = NumberListOperators.normalizedToMax(numberlist, factorValue);
+    }
+    newTable.name = numbertable.name;
+    return newTable;
+  };
+
+  /**
+   * @todo write docs
+   * @param {NumberTable} numbertable NumberTable.
+   */
+  NumberTableOperators__NumberTableOperators.normalizeListsToSum = function(numbertable) {
+    var newTable = new NumberTable();
+    for(var i = 0; numbertable[i] != null; i++) {
+      var numberlist = numbertable[i];
+      newTable[i] = NumberListOperators.normalizedToSum(numberlist);
+    }
+    newTable.name = numbertable.name;
+    return newTable;
   };
 
   /**
@@ -17842,7 +17690,7 @@ define('src/index', ['exports'], function (exports) {
     var newNumberTable = new NumberTable();
     newNumberTable.name = numberTable.name;
     numberTable.forEach(function(nL, i) {
-      newNumberTable[i] = NumberListOperators__default.averageSmoother(numberTable[i], intensity, nIterations);
+      newNumberTable[i] = NumberListOperators.averageSmoother(numberTable[i], intensity, nIterations);
     });
     return newNumberTable;
   };
@@ -17904,7 +17752,7 @@ define('src/index', ['exports'], function (exports) {
 
       if(calculateClass) {
         var classTable = new Table();
-        classTable[0] = new List__default();
+        classTable[0] = new List();
         classTable[1] = new NumberList();
         for(i = 0; i < k; i++) {
           var clas = propertyList[table[0][i]];
@@ -17998,80 +17846,6 @@ define('src/index', ['exports'], function (exports) {
     return results;
   };
 
-
-
-  //TODO: move to NumberTableConversions
-  /**
-   * @todo finish docs
-   */
-  NumberTableOperators__NumberTableOperators.numberTableToNetwork = function(numberTable, method, tolerance) {
-    tolerance = tolerance == null ? 0 : tolerance;
-
-    var network = new Network();
-
-    var list0;
-    var list1;
-
-    var i;
-    var j;
-
-    var node0;
-    var node1;
-    var relation;
-
-
-    switch(method) {
-      case 0: // standard deviation
-
-        var sd;
-        var w;
-
-        for(i = 0; numberTable[i + 1] != null; i++) {
-          list0 = numberTable[i];
-
-          if(i == 0) {
-            node0 = new Node__default(list0.name, list0.name);
-            network.addNode(node0);
-          } else {
-            node0 = network.nodeList[i];
-          }
-
-
-          for(j = i + 1; numberTable[j] != null; j++) {
-            list1 = numberTable[j];
-
-            if(i == 0) {
-              node1 = new Node__default(list1.name, list1.name);
-              network.addNode(node1);
-            } else {
-              node1 = network.nodeList[j];
-            }
-
-
-
-            list1 = numberTable[j];
-            sd = NumberListOperators__default.standardDeviationBetweenTwoNumberLists(list0, list1);
-
-            w = 1 / (1 + sd);
-
-            if(w >= tolerance) {
-              relation = new Relation(i + "_" + j, node0.name + "_" + node1.name, node0, node1, w);
-              network.addRelation(relation);
-            }
-          }
-        }
-
-        break;
-      case 1:
-        break;
-      case 2:
-        break;
-    }
-
-    return network;
-  };
-
-
   /**
    * calculates the matrix product of two Numbertables
    * @param  {NumberTable} numberTable0 first numberTable
@@ -18082,7 +17856,7 @@ define('src/index', ['exports'], function (exports) {
     if(numberTable0==null || numberTable1==null) return;
     var n = numberTable0.length;
     var m = numberTable0[0].length;
-    if(n==0 || m==0 || n!=numberTable1[0].length || m!=numberTable1.length) return;
+    if(n === 0 || m === 0 || n!=numberTable1[0].length || m!=numberTable1.length) return;
 
     var newTable = new NumberTable();
     var i, j, k;
@@ -18117,7 +17891,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.NumberTableOperators = NumberTableOperators__default;
 
-  function NetworkConvertions() {}
+  function NetworkConversions() {}
 
 
   /**
@@ -18132,16 +17906,17 @@ define('src/index', ['exports'], function (exports) {
    * @return {Network}
    * tags:conversion
    */
-  NetworkConvertions.TableToNetwork = function(table, numberList, threshold, allowMultipleRelations, minRelationsInNode, stringList) {
+  NetworkConversions.TableToNetwork = function(table, numberList, threshold, allowMultipleRelations, minRelationsInNode, stringList) {
     if(table == null || !table.isTable || table[0] == null || table[1] == null) return;
 
     //trace("••••••• createNetworkFromPairsTable", table);
     if(allowMultipleRelations == null) allowMultipleRelations = false;
     if(table.length < 2) return null;
     var network = new Network();
+    var nElements;
 
     if(numberList == null) {
-      var nElements = Math.min(table[0].length, table[1].length);
+      nElements = Math.min(table[0].length, table[1].length);
     } else {
       nElements = Math.min(table[0].length, table[1].length, numberList.length);
     }
@@ -18207,9 +17982,172 @@ define('src/index', ['exports'], function (exports) {
     return network;
   };
 
-  exports.NetworkConvertions = NetworkConvertions;
+  exports.NetworkConversions = NetworkConversions;
+
+  function StringListConversions() {}
+
+
+
+  /**
+   * Converts StringLIst to numberList
+   *
+   * @param {StringList} stringlist StringList to convert
+   */
+  StringListConversions.toNumberList = function(stringlist) {
+    var numbers = new NumberList();
+    numbers.name = stringlist.name;
+    var i;
+    for(i = 0; stringlist[i] != null; i++) {
+      numbers[i] = Number(stringlist[i]);
+    }
+    return numbers;
+  };
+
+
+  /**
+   * converts a stringList into a dateList
+   *
+   * @param {StringList} stringlist StringList to convert
+   * @param  {String} formatCase format cases:<br>0: MM-DD-YYYY<br>1: YYYY-MM-DD<br>2: MM-DD-YY<br>3: YY-MM-DD<br>4: DD-MM-YY<br>5: DD-MM-YYYY
+   * @param  {String} separator "-" by default
+   * @return {DateList}
+   * tags:
+   */
+  StringListConversions.toDateList = function(formatCase, separator) {
+    var dateList = new DateList();
+    var i;
+    for(i = 0; this[i] != null; i++) {
+      dateList.push(DateOperators.stringToDate(this[i], formatCase, separator));
+    }
+    return dateList;
+  };
+
+  exports.StringListConversions = StringListConversions;
 
   function ObjectConversions() {}
+
+
+  /**
+   * Convert an object (or more typically an Array of objects) into a Table
+   * @param {Object} object or array of objects
+   *
+   * @param {List} list of field names to include (by default will take all from first element in array of objects)
+   * @return {Table} resulting Table
+   * tags:decoder,dani
+   */
+  ObjectConversions.ObjectToTable = function(object, fields) {
+    // Formats:
+    // 1: normal list of objects
+    // 2: Object with single property, containing normal list of obejcts
+    // 3: Object as CSV (each property represents a column)
+    var format;
+    var p;
+
+    // If it's an array, then it's format 1
+    if(Array.isArray(object)) {
+      format = 1;
+      // If not field names supplied, get them from first element
+      if(!fields)
+      {
+        fields = [];
+        for(p in object[0]) {
+          if (object[0].hasOwnProperty(p)) {
+            fields.push(p);
+          }
+        }
+      }
+      // Else (not array), it's an object
+    } else {
+      // Check how many properties the object has
+      var properties = [];
+      for(p in object) {
+        properties.push(p);
+      }
+
+      // If it has only one, and it's an array, it's foramt 2, so assume it's just a capsule
+      // and extract the array as format 1
+      if(properties.length == 1 && Array.isArray(object[properties[0]]))
+      {
+        format = 1;
+        object = object[properties[0]];
+
+        // If not field names supplied, get them from first element
+        if(!fields)
+        {
+          fields = [];
+          for(p in object[0]) {
+            fields.push(p);
+          }
+        }
+      } else {
+        // Finally, if the object has many properties, we assume it's a csv encoded as JSON
+        // ( each property of the object represents a column of the CSV )
+        format = 3;
+
+        // If not fields supplied, use all properties
+        if(!fields)
+          fields = properties;
+      }
+    }
+
+
+    // Create table and columns
+    var column, i, f;
+    var result = new Table();
+    for(i = 0; i < fields.length; i++) {
+      var fieldName = fields[i];
+      column = new List();
+      result[i] = column;
+      column.name = fieldName;
+    }
+
+    // Fill the table
+    if(format == 1)
+    {
+      for(i = 0; i < object.length; i++) {
+        var row = object[i];
+        for(f = 0; f < fields.length; f++) {
+          result[f].push(row[fields[f]]);
+        }
+      }
+    } else {
+      for(f = 0; f < fields.length; f++) {
+        column = object[fields[f]];
+        for(i = 0; i < column.length; i++) {
+          result[f].push(column[i]);
+        }
+      }
+    }
+
+    // Improve columns
+    for(i = 0; i < result.length; i++) {
+      result[i] = result[i].getImproved();
+    }
+
+    //if(result.getLengths.getMax()==1) return result.getRow(0);
+
+    // Improve table
+    result = result.getImproved();
+
+    // Return best possible
+    return result;
+  };
+
+
+  /**
+   * Convert an object (or more typically an Array of objects) into a Table
+   * @param {Object} object or array of objects
+   *
+   * @param {List} list of field names to include (by default will take all from first element in array of objects)
+   * @return {List} resulting list (probably a table)
+   * tags:decoder
+   */
+  ObjectConversions.ObjectToList = function(object, fields) {
+    var result = ObjectConversions.ObjectToTable(object, fields);
+
+    if(result.getLengths.getMax() == 1) return result.getRow(0);
+  };
+
 
 
   // *
@@ -18258,15 +18196,15 @@ define('src/index', ['exports'], function (exports) {
         return new Date(object);
       case 'List_StringList':
       case 'NumberList_StringList':
-        return object.toStringList();
+        return NumberListConversions.toStringList(object);
       case 'StringList_NumberList':
-        return object.toNumberList();
+        return StringListConversions.toNumberList(object);
       case 'Object_string':
         return JSON.stringify(object, null, "\t");
       case 'string_Object':
         return JSON.parse(object);
       case 'string_ColorScale':
-        return ColorScales__default[object]; //todo: not working, fix
+        return ColorScales[object]; //todo: not working, fix
       case 'string_Table':
         return TableEncodings.CSVtoTable(object);
       case 'StringList_DateList': //TODO: solve cases of lists
@@ -18279,7 +18217,7 @@ define('src/index', ['exports'], function (exports) {
       case 'DateList_NumberList': //TODO: solve cases of lists
         return object.getTimes();
       case 'Table_Network':
-        return NetworkConvertions.TableToNetwork(object, null, 0, false);
+        return NetworkConversions.TableToNetwork(object, null, 0, false);
 
     }
 
@@ -18304,7 +18242,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:conversion
    */
   ObjectConversions.ArrayToList = function(array){
-    return List.fromArray(object).getImproved();
+    return List.fromArray(array).getImproved();
   };
 
   exports.ObjectConversions = ObjectConversions;
@@ -18451,7 +18389,7 @@ define('src/index', ['exports'], function (exports) {
     var value;
 
     table[0] = ObjectOperators.getPropertiesNames(object);
-    table[1] = new List__default();
+    table[1] = new List();
 
     table[0].forEach(function(value, i) {
       table[1][i] = object[value];
@@ -18525,7 +18463,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:conversion
    */
   ObjectOperators.toList = function(array) {
-    return List__default.fromArray(array).getImproved();
+    return List.fromArray(array).getImproved();
   };
 
 
@@ -18619,11 +18557,11 @@ define('src/index', ['exports'], function (exports) {
         case 'Interval_Interval':
           return new Point(a0.getMin() + a1.getMin(), a0.getMax() + a1.getMax());
         case 'Point_Rectangle':
-          return new Rectangle__default(a0.x + a1.x, a0.y + a1.y, a1.width, a1.height);
+          return new Rectangle(a0.x + a1.x, a0.y + a1.y, a1.width, a1.height);
         case 'Interval_Rectangle':
-          return new Rectangle__default(a0.getMin() + a1.x, a0.getMax() + a1.y, a1.width, a1.height);
+          return new Rectangle(a0.getMin() + a1.x, a0.getMax() + a1.y, a1.width, a1.height);
         case 'Rectangle_Rectangle':
-          return new Rectangle__default(a0.x + a1.x, a0.y + a1.y, a0.width + a1.width, a0.height + a1.height);
+          return new Rectangle(a0.x + a1.x, a0.y + a1.y, a0.width + a1.width, a0.height + a1.height);
         case 'date_number':
           return new Date(a0.getTime() + (a1 / DateOperators.millisecondsToDays));
         case 'date_date':
@@ -18742,11 +18680,11 @@ define('src/index', ['exports'], function (exports) {
         case 'Interval_Interval':
           return new Point(a0.getMin() + a1.getMin(), a0.getMax() + a1.getMax());
         case 'Point_Rectangle':
-          return new Rectangle__default(a0.x * a1.x, a0.y * a1.y, a1.width, a1.height); //todo: no
+          return new Rectangle(a0.x * a1.x, a0.y * a1.y, a1.width, a1.height); //todo: no
         case 'Interval_Rectangle':
-          return new Rectangle__default(a0.getMin() * a1.x, a0.getMax() * a1.y, a1.width, a1.height); //todo: no
+          return new Rectangle(a0.getMin() * a1.x, a0.getMax() * a1.y, a1.width, a1.height); //todo: no
         case 'Rectangle_Rectangle':
-          return new Rectangle__default(a0.x * a1.x, a0.y * a1.y, a0.width * a1.width, a0.height * a1.height);
+          return new Rectangle(a0.x * a1.x, a0.y * a1.y, a0.width * a1.width, a0.height * a1.height);
         case 'date_number':
           return new Date(a0.getTime() * (a1 / DateOperators.millisecondsToDays));
         case 'date_date':
@@ -18850,11 +18788,11 @@ define('src/index', ['exports'], function (exports) {
         case 'Interval_Interval':
           return new Point(a0.getMin() + a1.getMin(), a0.getMax() + a1.getMax());
         case 'Point_Rectangle':
-          return new Rectangle__default(a0.x / a1.x, a0.y / a1.y, a1.width, a1.height); //todo: no
+          return new Rectangle(a0.x / a1.x, a0.y / a1.y, a1.width, a1.height); //todo: no
         case 'Interval_Rectangle':
-          return new Rectangle__default(a0.getMin() / a1.x, a0.getMax() / a1.y, a1.width, a1.height); //todo: no
+          return new Rectangle(a0.getMin() / a1.x, a0.getMax() / a1.y, a1.width, a1.height); //todo: no
         case 'Rectangle_Rectangle':
-          return new Rectangle__default(a0.x / a1.x, a0.y / a1.y, a0.width / a1.width, a0.height / a1.height);
+          return new Rectangle(a0.x / a1.x, a0.y / a1.y, a0.width / a1.width, a0.height / a1.height);
         case 'date_number':
           return new Date(a0.getTime() / (a1 / DateOperators.millisecondsToDays));
         case 'date_date':
@@ -18915,7 +18853,7 @@ define('src/index', ['exports'], function (exports) {
   ObjectOperators._applyBinaryOperatorOnLists = function(list0, list1, operator) {
     var n = Math.min(list0.length, list1.length);
     var i;
-    var resultList = new List__default();
+    var resultList = new List();
     for(i = 0; i < n; i++) {
       resultList.push(ObjectOperators._applyBinaryOperator(list0[i], list1[i], operator));
     }
@@ -18923,7 +18861,7 @@ define('src/index', ['exports'], function (exports) {
   };
   ObjectOperators._applyBinaryOperatorOnListWithObject = function(list, object, operator) {
     var i;
-    var resultList = new List__default();
+    var resultList = new List();
     for(i = 0; i < list.length; i++) {
       resultList.push(ObjectOperators._applyBinaryOperator(list[i], object, operator));
     }
@@ -18931,7 +18869,7 @@ define('src/index', ['exports'], function (exports) {
   };
   ObjectOperators._applyBinaryOperatorOnObjectWithList = function(object, list, operator) {
     var i;
-    var resultList = new List__default();
+    var resultList = new List();
     for(i = 0; i < list.length; i++) {
       resultList.push(ObjectOperators._applyBinaryOperator(object, list[i], operator));
     }
@@ -19030,6 +18968,27 @@ define('src/index', ['exports'], function (exports) {
     return newList;
   };
 
+  /**
+   * replaces in each string, a sub-string by a string
+   *
+   * @param  {StringList} stringList  StringList to work on.
+   * @param  {String} subString sub-string to be replaced in each string
+   * @param  {String} replacement string to be placed instead
+   * @return {StringList}
+   * tags:
+   */
+  StringListOperators.replaceSubStringsInStrings = function(stringlist, subString, replacement) {
+    var newStringList = new StringList();
+    newStringList.name = stringlist.name;
+
+    for(var i = 0; stringlist[i] != null; i++) {
+      newStringList[i] = StringOperators.replaceSubString(stringlist[i], subString, replacement);
+    }
+
+    return newStringList;
+  };
+
+
 
   // var regex = new RegExp("\\b"+word+"\\b");
   // var match = string.match(regex);
@@ -19126,7 +19085,7 @@ define('src/index', ['exports'], function (exports) {
     if(normalize) {
       matrix.forEach(function(occurrences, i) {
         if(i == 0) return;
-        matrix[i] = matrix[i].getNormalizedToSum();
+        matrix[i] = NumberListOperators.normalizedToSum(matrix[i]);
       });
     }
 
@@ -19158,7 +19117,7 @@ define('src/index', ['exports'], function (exports) {
       for(j = i + 1; network.nodeList[j] != null; j++) {
         var node1 = network.nodeList[j];
 
-        var weight = NumberListOperators__default.cosineSimilarity(node.wordsWeights, node1.wordsWeights);
+        var weight = NumberListOperators.cosineSimilarity(node.wordsWeights, node1.wordsWeights);
 
         if(i == 0 && j == 1) {
           console.log(node.wordsWeights.length, node1.wordsWeights.length, weight);
@@ -19349,7 +19308,7 @@ define('src/index', ['exports'], function (exports) {
     if(seed!=null){
       funcRandom = function(){
         seed++;
-       return NumberOperators__default.getRandomWithSeed(seed);
+       return NumberOperators.getRandomWithSeed(seed);
      };
     } else {
       funcRandom = Math.random;
@@ -19461,7 +19420,7 @@ define('src/index', ['exports'], function (exports) {
             weight = occurrencesTable[i].dotProduct(occurrencesTable[j]);
             break;
           case 1:
-            weight = NumberListOperators__default.cosinus(occurrencesTable[i], occurrencesTable[j]);
+            weight = NumberListOperators.cosinus(occurrencesTable[i], occurrencesTable[j]);
             break;
         }
 
@@ -19668,7 +19627,7 @@ define('src/index', ['exports'], function (exports) {
     while(nodes.getNodeById(node1.id) == null) {
       newNodes = nodes.clone();
       for(i = 0; nodes[i] != null; i++) {
-        newNodes = ListOperators__default.concat(newNodes, nodes[i].nodeList); //TODO: check if obsolete concat + check if a concatIfNew could be useful, specially if overriden in NodeList, with getNodeById
+        newNodes = ListOperators.concat(newNodes, nodes[i].nodeList); //TODO: check if obsolete concat + check if a concatIfNew could be useful, specially if overriden in NodeList, with getNodeById
       }
       newNodes = newNodes.getWithoutRepetitions();
       if(nodes.length == newNodes.length) return -1;
@@ -19790,7 +19749,7 @@ define('src/index', ['exports'], function (exports) {
 
     var level1 = new NodeList__default(node1);
     var extended_from_1 = NetworkOperators.adjacentNodeList(network, level1, false);
-    var level0 = ListOperators__default.intersection(extended_from_1, spanningTree.getNodesByLevel(n-2));//spanningTree.getNodesByLevel(n-2);
+    var level0 = ListOperators.intersection(extended_from_1, spanningTree.getNodesByLevel(n-2));//spanningTree.getNodesByLevel(n-2);
 
     // c.l('[•--•] node1.nodeList', node1.nodeList.getIds().join(','));
     // c.l('[•--•] level1', level1.getIds().join(','));
@@ -19810,7 +19769,7 @@ define('src/index', ['exports'], function (exports) {
 
       //interection of level1 xpanded and level n-2 in tree
 
-      level0 = ListOperators__default.intersection(NetworkOperators.adjacentNodeList(network, level1, false), spanningTree.getNodesByLevel(n-2));
+      level0 = ListOperators.intersection(NetworkOperators.adjacentNodeList(network, level1, false), spanningTree.getNodesByLevel(n-2));
       // c.l('\n  [•--•] n:', n);
       // c.l('  [•--•] level1', level1.getIds().join(','));
       // c.l('  [•--•] level0', level0.getIds().join(','));
@@ -20194,7 +20153,7 @@ define('src/index', ['exports'], function (exports) {
 
     node0 = node0==null?network.nodeList[0]:node0;
 
-    var tree = new Tree__default();
+    var tree = new Tree();
     var parent = new Node__default(node0.id, node0.name);
     parent.node = node0;
     tree.addNodeToTree(parent);
@@ -20396,7 +20355,7 @@ define('src/index', ['exports'], function (exports) {
     var t = new Date().getTime();
 
 
-    var tree = new Tree__default();
+    var tree = new Tree();
 
     var nodeList = new NodeList__default();
 
@@ -20652,7 +20611,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Network}
    */
   NetworkOperators.fusionNoteworks = function(noteworksList, hubsDistanceFactor, hubsForceWeight) {
-    var networks = new List__default();
+    var networks = new List();
 
     noteworksList.forEach(function(map, i) {
       var subfix = "map_" + i + "_";
@@ -20684,7 +20643,7 @@ define('src/index', ['exports'], function (exports) {
     var i, j;
     var mapsCluster = new Table();
 
-    var colors = ColorListGenerators__default.createDefaultCategoricalColorList(networks.length).getInterpolated('black', 0.17).getInterpolated('white', 0.55);
+    var colors = ColorListGenerators.createDefaultCategoricalColorList(networks.length).getInterpolated('black', 0.17).getInterpolated('white', 0.55);
 
     networks.forEach(function(net, i) {
       mapsCluster[i] = new NodeList__default();
@@ -21131,18 +21090,14 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Adds community to Nodes of network based on Louvain community detection.
+   * Builds a Table of clusters based on Louvain community detection.
    * @param {Network} network
-   * @param {Boolean} bAddColors if true add colors to nodes based on community
-   * @param {String} prop Node property to use to store community for each node
-   * @return {Network}
-   * tags:analytics,transformative
+   * @return {Table} List of NodeLists
+   * tags:analysis
    */
-  NetworkOperators.addLouvainCommunityToNodes = function(network,bAddColors,prop) {
+  NetworkOperators.buildNetworkClustersLouvain = function(network) {
     if(network==null) return network;
-    if(bAddColors==null) bAddColors=true;
-    if(prop == null) prop='group';
-
+    
     var node_data = [];
     for(var i=0; i < network.nodeList.length; i++){
       // force nodes to be stringlike since they get used as properties in result
@@ -21159,49 +21114,28 @@ define('src/index', ['exports'], function (exports) {
     // Object with ids of nodes as properties and community number assigned as value.
     var community = NetworkOperators._jLouvain().nodes(node_data).edges(edge_data);
     var result  = community();
+    var clusters = new Table();
+
     var nLGroupIDs = new NumberList();
     if(result)
       for(var i=0; i < network.nodeList.length; i++){
-        var group = result['n'+network.nodeList[i].id];
-        network.nodeList[i][prop] = group;
-        nLGroupIDs.push(group);
+        var j = result['n'+network.nodeList[i].id];
+        if(clusters[j] == undefined)
+          clusters[j]= new NodeList__default();
+        clusters[j].addNode(network.nodeList[i]);
       }
     else{
       // no results mean no communities, make them all unique
       for(var i=0; i < network.nodeList.length; i++){
-        network.nodeList[i][prop] = i;
-        nLGroupIDs.push(i);
+        clusters.push(new NodeList__default(network.nodeList[i]));
       }
     }
-    if(bAddColors){
-      // we will color all singleton items light grey
-      var tFreq = nLGroupIDs.getFrequenciesTable(true);
-      // find how many non-singleton groups (they are sorted by freq from above)
-      var nColors=0;
-      // also at same time build a map from groupId to index so we can efficiently get values
-      var mGroupIndex = {};
-      for(var i=0; i < tFreq[0].length; i++){
-        if(tFreq[1][i] == 1 && nColors == 0)
-          nColors=i;
-        mGroupIndex['g'+tFreq[0][i]] = i;
-      }
-      if(nColors==0 && tFreq[0].length > 0)
-        nColors=tFreq[0].length;
-      var colors = ColorListGenerators__default.createCategoricalColors(2, nColors);
-      for(var i=0;i<network.nodeList.length;i++){
-        var iGroupIndex = mGroupIndex['g'+network.nodeList[i].group];
-        if(tFreq[1][iGroupIndex] == 1)
-          network.nodeList[i].color = 'rgb(128,128,128)';
-        else
-          network.nodeList[i].color = colors[iGroupIndex];
-      }
-    }
-    return network;
+    return clusters;
   };
 
   exports.NetworkOperators = NetworkOperators;
 
-  function TreeConvertions() {}
+  function TreeConversions() {}
 
 
   /**
@@ -21209,33 +21143,31 @@ define('src/index', ['exports'], function (exports) {
    * @param {Table} table
    *
    * @param {String} fatherName name of father node
-   * @param {Boolean} lastListIsWeights true if last list is a NumberList with weights for leaves
    * @return {Tree}
    * tags:convertion
    */
-  TreeConvertions.TableToTree = function(table, fatherName, lastListIsWeights) {
+  TreeConversions.TableToTree = function(table, fatherName)  {
     if(table == null) return;
 
     fatherName = fatherName == null ? "father" : fatherName;
 
-    var tree = new Tree__default();
+    var tree = new Tree();
     var node, parent;
     var id;
-    var iCol;
 
     var father = new Node__default(fatherName, fatherName);
     tree.addNodeToTree(father, null);
 
     table.forEach(function(list, i) {
       table[i].forEach(function(element, j) {
-        id = TreeConvertions.getId(table, i, j);
+        id = TreeConversions.getId(table, i, j);
         node = tree.nodeList.getNodeById(id);
         if(node == null) {
           node = new Node__default(id, String(element));
-          if(i == 0) {
+          if(i === 0) {
             tree.addNodeToTree(node, father);
           } else {
-            parent = tree.nodeList.getNodeById(TreeConvertions.getId(table, i - 1, j));
+            parent = tree.nodeList.getNodeById(TreeConversions.getId(table, i - 1, j));
             tree.addNodeToTree(node, parent);
           }
         }
@@ -21250,7 +21182,7 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @todo write docs
    */
-  TreeConvertions.getId = function(table, i, j) {
+  TreeConversions.getId = function(table, i, j) {
     var iCol = 1;
     var id = String(table[0][j]);
     while(iCol <= i) {
@@ -21260,7 +21192,7 @@ define('src/index', ['exports'], function (exports) {
     return id;
   };
 
-  exports.TreeConvertions = TreeConvertions;
+  exports.TreeConversions = TreeConversions;
 
   function TreeEncodings() {}
 
@@ -21274,7 +21206,7 @@ define('src/index', ['exports'], function (exports) {
     superiorNodeName = superiorNodeName == null ? "" : superiorNodeName;
     identationCharacter = identationCharacter == null ? "\t" : identationCharacter;
 
-    var tree = new Tree__default();
+    var tree = new Tree();
 
     var lines = StringOperators.splitByEnter(indexedTree);
     var nLines = lines.length;
@@ -21340,12 +21272,12 @@ define('src/index', ['exports'], function (exports) {
 
   DrawSimpleVis.drawSimpleBarChart = function(context, numberList, frame, colors) { //TODO: complete cases (numberLists with negative (and positive) values)
     colors = colors == null ? ColorListOperators.colorListFromColorScale(new ColorScale()) : colors;
-    frame = frame == null ? new Rectangle__default(10, 10, 400, 300) : frame;
+    frame = frame == null ? new Rectangle(10, 10, 400, 300) : frame;
 
     var dX = frame.width / numberList.length;
 
     var bottom = frame.getBottom();
-    var normalizedNumberList = numberList.getNormalizedToMax(frame.height);
+    var normalizedNumberList = NumberListOperators.normalizedToMax(numberList, frame.height);
 
     var i;
     for(i = 0; numberList[i] != null; i++) {
@@ -21620,8 +21552,8 @@ define('src/index', ['exports'], function (exports) {
     var i;
     var j;
 
-    colors = colors == null ? ColorListOperators.colorListFromColorScale(new ColorScale(ColorOperators__default.temperatureScale), nElements) : colors;
-    frame = frame == null ? new Rectangle__default(10, 10, 400, 300) : frame;
+    colors = colors == null ? ColorListOperators.colorListFromColorScale(new ColorScale(ColorOperators.temperatureScale), nElements) : colors;
+    frame = frame == null ? new Rectangle(10, 10, 400, 300) : frame;
 
     var nCols = intervalsFlowTable[0].length;
     var dX = frame.width / (nCols - 1);
@@ -21725,7 +21657,7 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   DrawTexts.fillTextRectangle = function(text, x, y, width, height, lineHeight, returnHeight, ellipsis, graphics) {
-    var textLines = DrawTexts.textWordWrapReturnLines(text, width, height, lineHeight, ellipsis);
+    var textLines = DrawTexts.textWordWrapReturnLines(text, width, height, lineHeight, ellipsis, graphics);
     return DrawTexts.fillTextRectangleWithTextLines(textLines, x, y, height, lineHeight, returnHeight, graphics);
   };
 
@@ -21831,18 +21763,18 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @todo write docs
    */
-  DrawTexts.cropString = function(ctx, string, fitWidth) {
+  DrawTexts.cropString = function(graphics, string, fitWidth) {
     if(string == null) return;
     fitWidth = fitWidth || 0;
 
-    if(fitWidth <= 0 || ctx.measureText(string).width <= fitWidth) {
+    if(fitWidth <= 0 || graphics.context.measureText(string).width <= fitWidth) {
       return string;
     }
     var chars = string.split('');
     var idx = 1;
     while(chars.length > 0 && idx <= chars.length) {
       var str = chars.slice(0, idx).join('');
-      var w = ctx.measureText(str).width;
+      var w = graphics.context.measureText(str).width;
       if(w > fitWidth) {
         if(idx == 1) {
           idx = 2;
@@ -22118,11 +22050,10 @@ define('src/index', ['exports'], function (exports) {
    ****************************/
 
   /*
-   * @ignore
-   *
    * Initialize the graphics proper. Includes
    * things like actually creating the backing canvas and
    * setting up mousehandlers.
+   * @ignore
    */
   Graphics.prototype._initialize = function(autoStart) {
     this.cW = 1; // canvas width
@@ -22241,11 +22172,11 @@ define('src/index', ['exports'], function (exports) {
     see http://stackoverflow.com/a/19048340
    */
   /**
-   * @ignore
    * Helper function for getting the mouse position
    * see http://stackoverflow.com/a/19048340
    *
-   * @param  {[type]} evt [description]
+   * @param  {Event} evt
+   * @ignore
    */
   Graphics.prototype._getRelativeMousePos = function(evt) {
     var rect = this.canvas.getBoundingClientRect();
@@ -22256,11 +22187,11 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * @ignore
    * This method is used to handle user interaction events (e.g. mouse events). *
    * Sets some internal state and then displatches to external event handlers.
    *
    * @param  {Event} e event object
+   * @ignore
    */
   Graphics.prototype._onMouseOrKeyBoard = function(e) {
     switch(e.type){
@@ -22324,12 +22255,12 @@ define('src/index', ['exports'], function (exports) {
   }
 
   /**
-   * @ignore
    * This method is used to handle resizes of the window, and then optionally
    * pass that on to the user defined onResize method if the container dimensions
    * have changed.
    *
-   * @param  {[type]} e resize event
+   * @param  {Event} e resize event
+   * @ignore
    */
   Graphics.prototype._onResize = function(e) {
     var currentW = this.cW;
@@ -22350,11 +22281,11 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * @ignore
    * Return the dimensions of the container that this graphics object
    * is associated with.
    *
    * @return {Object} object with width and height properties.
+   * @ignore
    */
   Graphics.prototype._containerDimensions = function() {
     // https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model/Determining_the_dimensions_of_elements
@@ -22392,8 +22323,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /*
-   * @ignore
    * Starts or restarts the draw cycle at the current cycleInterval
+   * @ignore
    */
   Graphics.prototype._startCycle = function() {
     this.cycleActive = true;
@@ -22407,8 +22338,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * @ignore
    * Stops the draw cycle
+   * @ignore
    */
   Graphics.prototype._stopCycle = function(callback) {
     clearInterval(this._setIntervalId);
@@ -22425,8 +22356,7 @@ define('src/index', ['exports'], function (exports) {
    * 
    * Can be called multiple times to delay the stop time to being time milliseconds
    * after the last call to this function.
-   * @param  {[type]} time [description]
-   * @return {[type]}      [description]
+   * @param  {Number} time time in milliseconds to run the cycle function before stopping ot.
    */
   Graphics.prototype._cycleFor = function(time) {
     if(this._setIntervalId) {
@@ -22474,7 +22404,7 @@ define('src/index', ['exports'], function (exports) {
       this.context.fillRect(0, 0, this.cW, this.cH);
     }
 
-    // setCursor('default'); // YY why is this needed/done?
+    this.setCursor('default');
 
     this.MOUSE_DOWN = this.NF_DOWN == this.nF;
     this.MOUSE_UP = this.NF_UP == this.nF;
@@ -22579,9 +22509,8 @@ define('src/index', ['exports'], function (exports) {
    * immediately @see stop.
    *
    *  
-   * @param  {[type]} time time in milliseconds after which the cycle function will 
+   * @param  {Number} time time in milliseconds after which the cycle function will 
    *                       continue to run
-   * @return {[type]}      [description]
    */
   Graphics.prototype.cycleOnMouseMovement = function(time) {
     var self = this;  
@@ -22655,7 +22584,7 @@ define('src/index', ['exports'], function (exports) {
    *
    * @see  setBackgroundAlpha
    *
-   * @param {[type]} color [description]
+   * @param {String|Array|Number} color A string, array or individual numbers representing the rgb color.
    */
   Graphics.prototype.setBackgroundColor = function(color) {
     if(typeof color === "number") {
@@ -22665,10 +22594,10 @@ define('src/index', ['exports'], function (exports) {
         color = 'rgb('+ arguments[0] + ',' + arguments[1] + ',' + arguments[2]+')';
       }
     } else if(Array.isArray(color)) {
-      color = ColorOperators__default.RGBtoHEX(color[0], color[1], color[2]);
+      color = ColorOperators.RGBtoHEX(color[0], color[1], color[2]);
     }
     this.backGroundColor = color;
-    this.backGroundColorRGB = ColorOperators__default.colorStringToRGB(this.backGroundColor);
+    this.backGroundColorRGB = ColorOperators.colorStringToRGB(this.backGroundColor);
   };
 
   /**
@@ -22927,8 +22856,8 @@ define('src/index', ['exports'], function (exports) {
 
 
   /**
-   * @ignore
    * TODO add comments to this to explain what it does.
+   * @ignore
    */
   Graphics.prototype._solidArc = function(x,y,a0,a1,r0,r1){
     this.context.beginPath();
@@ -22940,13 +22869,7 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * [fSolidArc description]
-   * @param  {[type]} x  [description]
-   * @param  {[type]} y  [description]
-   * @param  {[type]} a0 [description]
-   * @param  {[type]} a1 [description]
-   * @param  {[type]} r0 [description]
-   * @param  {[type]} r1 [description]
-   * @todo
+   * @todo document fSolidArc
    */
   Graphics.prototype.fSolidArc = function(x,y,a0,a1,r0,r1){
     this._solidArc(x,y,a0,a1,r0,r1);
@@ -22955,13 +22878,7 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * [sSolidArc description]
-   * @param  {[type]} x  [description]
-   * @param  {[type]} y  [description]
-   * @param  {[type]} a0 [description]
-   * @param  {[type]} a1 [description]
-   * @param  {[type]} r0 [description]
-   * @param  {[type]} r1 [description]
-   * @todo
+   * @todo document sSolidArc
    */
   Graphics.prototype.sSolidArc = function(x,y,a0,a1,r0,r1){
     this._solidArc(x,y,a0,a1,r0,r1);
@@ -22970,13 +22887,7 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * [fsSolidArc description]
-   * @param  {[type]} x  [description]
-   * @param  {[type]} y  [description]
-   * @param  {[type]} a0 [description]
-   * @param  {[type]} a1 [description]
-   * @param  {[type]} r0 [description]
-   * @param  {[type]} r1 [description]
-   * @todo
+   * @todo document fsSolidArc
    */
   Graphics.prototype.fsSolidArc = function(x,y,a0,a1,r0,r1){
     this.fSolidArc(x,y,a0,a1,r0,r1);
@@ -23026,8 +22937,8 @@ define('src/index', ['exports'], function (exports) {
 
 
   /**
+   * @todo add comments to this to explain what it does.
    * @ignore
-   * TODO add comments to this to explain what it does.
    */
   Graphics.prototype._lines = function() {
     if(arguments == null) return;
@@ -23041,8 +22952,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * @ignore
    * TODO add comments to this to explain what it does.
+   * @ignore
    */
   Graphics.prototype._linesM = function() {
     if(arguments == null) {
@@ -23151,10 +23062,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * [fPolygon description]
-   * @param  {[type]} polygon [description]
-   * @return {[type]}         [description]
-   * @todo
+   * Renders a filled polygon.
+   * 
+   * @param  {Polygon} polygon the polygon to render
    */
   Graphics.prototype.fPolygon = function(polygon) {
     this._polygon(polygon);
@@ -23162,11 +23072,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * [sPolygon description]
-   * @param  {[type]} polygon   [description]
-   * @param  {[type]} closePath [description]
-   * @return {[type]}           [description]
-   * @todo
+   * Render a stroked polygon
+   * @param  {Polygon} polygon
+   * @param  {Boolean} closePath
    */
   Graphics.prototype.sPolygon = function(polygon, closePath) {
     this._polygon(polygon);
@@ -23177,11 +23085,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * [fsPolygon description]
-   * @param  {[type]} polygon   [description]
-   * @param  {[type]} closePath [description]
-   * @return {[type]}           [description]
-   * @todo
+   * Render a filled and stroked polygon
+   * @param  {Polygon} polygon
+   * @param  {Boolean} closePath
    */
   Graphics.prototype.fsPolygon = function(polygon, closePath) {
     this._polygon(polygon);
@@ -23194,12 +23100,7 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * [fEqTriangle description]
-   * @param  {[type]} x     [description]
-   * @param  {[type]} y     [description]
-   * @param  {[type]} angle [description]
-   * @param  {[type]} r     [description]
-   * @return {[type]}       [description]
-   * @todo
+   * @todo document fEqTriangle
    */
   Graphics.prototype.fEqTriangle = function(x, y, angle, r) {
     this._eqTriangle(x, y, angle, r);
@@ -23208,12 +23109,7 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * Draws a stroked equilateral traiangle.
-   * @param  {[type]} x     [description]
-   * @param  {[type]} y     [description]
-   * @param  {[type]} angle [description]
-   * @param  {[type]} r     [description]
-   * @return {[type]}       [description]
-   * @todo
+   * @todo document sEqTriangle
    */
   Graphics.prototype.sEqTriangle = function(x, y, angle, r) {
     this._eqTriangle(x, y, angle, r);
@@ -23222,13 +23118,7 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * Draws a filled and stroked equilateral triangle.
-   *
-   * @param  {[type]} x     [description]
-   * @param  {[type]} y     [description]
-   * @param  {[type]} angle [description]
-   * @param  {[type]} r     [description]
-   * @return {[type]}       [description]
-   * @todo
+   * @todo document fsEqTriangle
    */
   Graphics.prototype.fsEqTriangle = function(x, y, angle, r) {
     this._eqTriangle(x, y, angle, r);
@@ -23237,16 +23127,14 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
+   * @param  {Number} x     [description]
+   * @param  {Number} y     [description]
+   * @param  {Number} angle [description]
+   * @param  {Number} r     [description]
+   * @return {Number}       [description]
+   *
+   * TODO document this
    * @ignore
-   *
-   * @param  {[type]} x     [description]
-   * @param  {[type]} y     [description]
-   * @param  {[type]} angle [description]
-   * @param  {[type]} r     [description]
-   * @return {[type]}       [description]
-   *
-   * TODO document this with non-javadoc comments to describe what this
-   * does.
    */
   Graphics.prototype._eqTriangle = function(x, y, angle, r) {
     this.context.beginPath();
@@ -23455,10 +23343,9 @@ define('src/index', ['exports'], function (exports) {
 
 
   /**
-   * @ignore
    *
-   * TODO document this with non-javadoc comments to describe what this
-   * does.
+   * TODO document this.
+   * @ignore
    */
   Graphics.prototype._distToSegmentSquared = function(x0, y0, x1, y1) {
     var l2 = Math.pow(x0 - x1, 2) + Math.pow(y0 - y1, 2);
@@ -23559,10 +23446,12 @@ define('src/index', ['exports'], function (exports) {
   // styles
 
   /**
-   * [setFill description]
-   * @param {[type]} style [description]
+   * Sets the current fill color for the graphics object. 
    *
-   * @todo
+   * Callers can pass in either an rgba() color string, or a set of up to four numbers
+   * representing the rgb or rgba color.
+   * 
+   * @param {String|Numbers} style
    */
   Graphics.prototype.setFill = function(style) {
     if(typeof style == "number") {
@@ -23620,9 +23509,9 @@ define('src/index', ['exports'], function (exports) {
   /**
    * Creates a clipping circle with the given dimensions
    *
-   * @param  {[type]} x x coordinate of the circle's center
-   * @param  {[type]} y y coordinate of the circle's center
-   * @param  {[type]} r radius of circle
+   * @param  {Number} x x coordinate of the circle's center
+   * @param  {Number} y y coordinate of the circle's center
+   * @param  {Number} r radius of circle
    *
    * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/clip|Clip}
    */
@@ -23842,7 +23731,8 @@ define('src/index', ['exports'], function (exports) {
    */
   Graphics.prototype.fTextM = function(text, x, y, size) {
     size = size || this.fontSize;
-    this.context.fillText(text, x, y);
+    //this.context.fillText(text, x, y);
+    this.fText(text, x, y);
     return this.mY > y && this.mY < y + size && this.mX > x && this.mX < x + this.context.measureText(text).width;
   };
 
@@ -23919,12 +23809,12 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * @ignore
    * Helper function, returns first param if it is not null or undefined
    * esle returns second param.
    * @param  {Object} value    
    * @param  {Object} fallback 
    * @return {Object} 
+   * @ignore
    */
   function ifDef(value, fallback) {
     if(value !== undefined && value !== null) {
@@ -23933,8 +23823,13 @@ define('src/index', ['exports'], function (exports) {
       return fallback;
     }
   }
+
   /**
-   * Sets several text canvas rendering properties
+   * Sets default values for several text rendering properties.
+   * Values that are undefined or null are not changed. Will also 
+   * call setText and set the current text properties to that.
+   *
+   * @see  setText
    *
    * @param {Object} color optional font color
    * @param {Object} fontSize optional font size
@@ -23943,7 +23838,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Object} baseline optional vertical alignment ('bottom', 'middle', 'top')
    * @param {Object} style optional font style ('bold', 'italic', 'underline')
    */
-  Graphics.prototype.setText = function(color, fontSize, fontName, align, baseline, style) {
+  Graphics.prototype.setTextDefaults = function(color, fontSize, fontName, align, baseline, style) {
     this.fontColor = ifDef(color, this.fontColor);
     this.fontSize = ifDef(String(fontSize), this.fontSize);
     this.fontName = ifDef(fontName, this.fontName);
@@ -23951,14 +23846,38 @@ define('src/index', ['exports'], function (exports) {
     this.fontBaseline = ifDef(baseline, this.fontBaseline);
     this.fontStyle = ifDef(style, this.fontStyle);
 
-    if(style !== '') {
-      style += ' ';
+    this.setText();
+  };
+
+  /**
+   * Sets several text canvas rendering properties. If a value
+   * is null or undefined, use the currently set default value.
+   *
+   * @see  setTextDefaults
+   *
+   * @param {Object} color optional font color
+   * @param {Object} fSize optional font size
+   * @param {Object} fName optional font name (default: LOADED_FONT)
+   * @param {Object} align optional horizontal align ('left', 'center', 'right')
+   * @param {Object} baseline optional vertical alignment ('bottom', 'middle', 'top')
+   * @param {Object} style optional font style ('bold', 'italic', 'underline')
+   */
+  Graphics.prototype.setText = function(color, fSize, fName, align, baseline, style) {
+    var fontColor = ifDef(color, this.fontColor);
+    var fontSize = ifDef(String(fSize), this.fontSize);
+    var fontName = ifDef(fName, this.fontName);
+    var fontAlign = ifDef(align, this.fontAlign);
+    var fontBaseline = ifDef(baseline, this.fontBaseline);
+    var fontStyle = ifDef(style, this.fontStyle);
+
+    if(fontStyle !== '') {
+      fontStyle += ' ';
     }
 
-    this.context.fillStyle = this.fontColor;
-    this.context.font = this.fontStyle + this.fontSize + 'px ' + this.fontName;
-    this.context.textAlign = this.fontAlign;
-    this.context.textBaseline = this.fontBaseline;
+    this.context.fillStyle = fontColor;
+    this.context.font = fontStyle + fontSize + 'px ' + fontName;
+    this.context.textAlign = fontAlign;
+    this.context.textBaseline = fontBaseline;
   };
 
   /**
@@ -24058,7 +23977,7 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   Graphics.prototype.getFrame = function(){
-    return new Rectangle__default(0, 0, this.cW, this.cH);
+    return new Rectangle(0, 0, this.cW, this.cH);
   };
 
   //
@@ -24066,8 +23985,8 @@ define('src/index', ['exports'], function (exports) {
   //
 
   /**
+   * @todo document this
    * @ignore
-   * @todo
    */
   Graphics.prototype._linesInFrame = function(axis2D, numberListX, numberListY){
     var l = Math.min(numberListX.length, numberListY.length);
@@ -24615,26 +24534,18 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   InputTextFieldHTML.prototype.onKeyDown = function(e) {
-    console.log('InputTextFieldHTML.prototype.onKeyDown, e', e);
-    console.log('e.srcElement', e.srcElement);
-    console.log('e.srcElement.parent', e.srcElement.parent);
-    console.log('e.srcElement.parent.onKeyDownDelayed', e.srcElement.parent.onKeyDownDelayed);
-
     var target = e.srcElement.parent;
 
     target._eKeyDown = e;
     target._keyCode = e.keyCode;
 
     target.timer = setTimeout(target.onKeyDownDelayed, 4, target);
-    console.log('timer>');
   };
 
   /**
    * @todo write docs
    */
   InputTextFieldHTML.prototype.onKeyDownDelayed = function(target) {
-    console.log('InputTextFieldHTML.prototype.onKeyDownDelayed, target, target.DOMtext', target, target.DOMtext);
-
     if(target._keyCode == 13 && target.DOMtext == document.activeElement) {
       if(target.enterFunction != null) {
         target.enterFunction.call(target.enterFunctionTarget, target.id);
@@ -24648,7 +24559,6 @@ define('src/index', ['exports'], function (exports) {
 
       if(target._keyCode != 13) {
         if(target.changeFunction != null) {
-          console.log('call target.changeFunctionTarget');
           target.changeFunction.call(target.changeFunctionTarget, target.id);
         }
       }
@@ -24669,7 +24579,6 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   // InputTextFieldHTML.prototype.forceUnfocus = function() {
-  //   console.log("[!] use InputTextFieldHTML.prototype.forceBlur instead");
   //   a.push(0); // TODO where does this come from
   // };
 
@@ -24677,7 +24586,6 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   InputTextFieldHTML.prototype.forceBlur = function() {
-    console.log('InputTextFieldHTML.prototype.forceBlur');
 
     this.DOMtext.blur();
     this.focus = false;
@@ -24730,7 +24638,6 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   InputTextFieldHTML.prototype.placeCursor = function(nChar) {
-    console.log('InputTextFieldHTML.prototype.placeCursor, nChar', nChar);
     this.setSelection(nChar);
   };
 
@@ -24776,8 +24683,6 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   InputTextFieldHTML.prototype.remove = function() {
-    console.log('InputTextFieldHTML.prototype.remove, his.added', this.added);
-
     if(this.added) {
       this.div.removeChild(this.DOMtext);
       this.main.removeChild(this.div);
@@ -24789,7 +24694,6 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   InputTextFieldHTML.prototype.readd = function() {
-    console.log('InputTextFieldHTML.prototype.readd, his.added', this.added);
 
     if(!this.added) {
       this.main.appendChild(this.div);
@@ -24797,16 +24701,6 @@ define('src/index', ['exports'], function (exports) {
       this.added = true;
     }
   };
-
-  /**
-   * @todo write docs
-   */
-  // InputTextFieldHTML.prototype.disappear = function() {
-  //   console.log('[!] InputTextFieldHTML.prototype.disappear replaced by remove');
-  //   a.push(0); // TODO where does this come from?
-  //   this.x = -10000;
-  //   this.draw();
-  // };
 
   exports.InputTextFieldHTML = InputTextFieldHTML;
 
@@ -24889,7 +24783,7 @@ define('src/index', ['exports'], function (exports) {
       
       this.links = new StringList();
       this.linksType = new StringList();
-      var indexesPairs = new List__default();
+      var indexesPairs = new List();
       var lengthBefore;
 
       var link;    
@@ -25159,7 +25053,7 @@ define('src/index', ['exports'], function (exports) {
     bit = "";
     while(bit != null) {
       bit = StringOperators.getFirstTextBetweenStrings(newText, "<fcuint", ">");
-      if(bit != null) newText = newText.replace("<fcuint" + bit + ">", "<font color=\"" + ColorOperators__default.uinttoHEX(bit) + "\">");
+      if(bit != null) newText = newText.replace("<fcuint" + bit + ">", "<font color=\"" + ColorOperators.uinttoHEX(bit) + "\">");
     }
 
     bit = "";
@@ -25167,7 +25061,7 @@ define('src/index', ['exports'], function (exports) {
       bit = StringOperators.getFirstTextBetweenStrings(newText, "<frgb", ">");
       if(bit != null) {
         var rgb = bit.split(".");
-        newText = newText.replace("<frgb" + bit + ">", "<font color=\"" + ColorOperators__default.RGBtoHEX(Number(rgb[0]), Number(rgb[1]), Number(rgb[2])) + "\">");
+        newText = newText.replace("<frgb" + bit + ">", "<font color=\"" + ColorOperators.RGBtoHEX(Number(rgb[0]), Number(rgb[1]), Number(rgb[2])) + "\">");
       }
     }
 
@@ -25312,7 +25206,7 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   FastHtml.getColorTag = function(color) {
-    color = ColorOperators__default.colorStringToHEX(color);
+    color = ColorOperators.colorStringToHEX(color);
     return "<font color=\"" + color + "\">";
   };
 
@@ -25456,7 +25350,7 @@ define('src/index', ['exports'], function (exports) {
     this.target = callee ? callee : arguments.callee;
     this.onComplete = onComplete;
 
-    this.datasLoaded = new List__default();
+    this.datasLoaded = new List();
     this.nextDataLoading();
   };
 
@@ -25506,7 +25400,7 @@ define('src/index', ['exports'], function (exports) {
     this.onComplete = onComplete;
     this.priorityWeights = priorityWeights;
 
-    this.imagesLoaded = new List__default();
+    this.imagesLoaded = new List();
 
     this.nextImageLoading();
   };
@@ -25788,9 +25682,9 @@ define('src/index', ['exports'], function (exports) {
 
     this.nodeList = new NodeList__default();
 
-    this.forcesList = new List__default();
+    this.forcesList = new List();
     this.equilibriumDistances = new NumberList();
-    this.forcesTypeList = new List__default();
+    this.forcesTypeList = new List();
     this.fromNodeList = new NodeList__default();
     this.toNodeList = new NodeList__default();
 
@@ -25811,9 +25705,9 @@ define('src/index', ['exports'], function (exports) {
     addShortRepulsorsOnRelated = addShortRepulsorsOnRelated == null ? false : addShortRepulsorsOnRelated;
 
 
-    this.forcesList = new List__default();
+    this.forcesList = new List();
     this.equilibriumDistances = new NumberList();
-    this.forcesTypeList = new List__default();
+    this.forcesTypeList = new List();
     this.fromNodeList = new NodeList__default();
     this.toNodeList = new NodeList__default();
 
@@ -26414,8 +26308,8 @@ define('src/index', ['exports'], function (exports) {
 
 
   CountryListDraw.drawCountriesAsCircles = function(context, countryList, radiusList, frame, geoFrame, colors) {
-    geoFrame = geoFrame == null ? new Rectangle__default(-180, -90, 360, 180) : geoFrame;
-    colors = colors == null ? ColorListGenerators__default.createColorListWithSingleColor(countryList.length, 'rgba(100,100,100,0.6)') : colors;
+    geoFrame = geoFrame == null ? new Rectangle(-180, -90, 360, 180) : geoFrame;
+    colors = colors == null ? ColorListGenerators.createColorListWithSingleColor(countryList.length, 'rgba(100,100,100,0.6)') : colors;
 
     var dX = frame.width / geoFrame.width;
     var dY = frame.height / geoFrame.height;
@@ -26435,8 +26329,8 @@ define('src/index', ['exports'], function (exports) {
   };
 
   CountryListDraw.drawCountriesPolygons = function(context, countryList, frame, geoFrame, colors, lineWidth, lineColor) {
-    geoFrame = geoFrame == null ? new Rectangle__default(-180, -90, 360, 180) : geoFrame;
-    colors = colors == null ? ColorListGenerators__default.createColorListWithSingleColor(countryList.length, 'rgba(100,100,100,0.6)') : colors;
+    geoFrame = geoFrame == null ? new Rectangle(-180, -90, 360, 180) : geoFrame;
+    colors = colors == null ? ColorListGenerators.createColorListWithSingleColor(countryList.length, 'rgba(100,100,100,0.6)') : colors;
 
     var dX = frame.width / geoFrame.width;
     var dY = frame.height / geoFrame.height;
@@ -26478,7 +26372,7 @@ define('src/index', ['exports'], function (exports) {
 
     margin = margin == null ? 0 : margin;
 
-    var normWeights = weights.getNormalizedToMax().sqrt();
+    var normWeights = NumberListOperators.normalizedToMax(weights).sqrt();
     var circlesPlaced = new Polygon3D();
 
     var dL = 6;
@@ -26623,88 +26517,6 @@ define('src/index', ['exports'], function (exports) {
 
   exports.ColorsDraw = ColorsDraw;
 
-  function ImageDraw() {}
-
-
-  /**
-   * draws an image
-   * @param  {Rectangle} frame
-   * @param  {Image} image to be drawn
-   *
-   * @param  {Number} mode: 0: adjust to rectangle, 1: center and mask, 2: center and eventual reduction (image smaller than rectangle), 3: adjust to rectangle preserving proportions (image bigger than rectangle), 4: fill repeated from corner, 5: fill repeated from 0,0
-   * tags:draw
-   */
-  ImageDraw.drawImage = function(frame, image, mode) {
-    mode = mode || 0;
-    Draw.fillRectangleWithImage(frame, image, mode);
-  };
-
-
-  /**
-   * draws a visualization and captures an image
-   * @param  {String} visFunction visualization function
-   * @param  {Number} width
-   * @param  {Number} height
-   *
-   * @param {Object} argument0 first argument of the visualization function
-   * @param {Object} argument1 second argument of the visualization function
-   * @param {Object} argument2 third argument of the visualization function
-   * @param {Object} argument3 fourth argument of the visualization function
-   * @return {Image}
-   * tags:
-   */
-  // ImageDraw.captureVisualizationImage = function(visFunctionName, width, height) {
-  //   // TODO refactor this to import context from Global and not reassign it.
-
-  //   console.log('visFunctionName', visFunctionName);
-  //   if(visFunctionName == null ||  width == null || (!width > 0) || height == null || !(height > 0)) return;
-
-  //   var frame = new Rectangle(0, 0, width, height);
-
-  //   var args = Array.prototype.slice.call(arguments);
-  //   args = [frame].concat(args.slice(3));
-
-  //   var visFunction;
-
-  //   if(visFunctionName.indexOf('.') == -1) {
-  //     visFunction = this[visFunctionName];
-  //   } else {
-  //     console.log(visFunctionName.split('.')[0], this[visFunctionName.split('.')[0]], this.mY);
-  //     if(this[visFunctionName.split('.')[0]] == null) return;
-  //     visFunction = this[visFunctionName.split('.')[0]][visFunctionName.split('.')[1]];
-  //   }
-
-  //   if(visFunction == null) return null;
-
-  //   console.log('ImageDraw.captureVisualizationImage | args', args);
-  //   console.log('ImageDraw.captureVisualizationImage | visFunction==null', visFunction == null);
-
-  //   var newCanvas = document.createElement("canvas");
-  //   newCanvas.width = width;
-  //   newCanvas.height = height;
-  //   var newContext = newCanvas.getContext("2d");
-  //   newContext.clearRect(0, 0, width, height);
-
-  //   var mainContext = context;
-  //   context = newContext;
-
-  //   ////draw
-  //   //setStroke('black', 2);
-  //   //line(0,0,width,height);
-  //   //line(width,0,0,height);
-  //   visFunction.apply(this, args);
-  //   ////
-
-  //   context = mainContext;
-
-  //   var im = new Image();
-  //   im.src = newCanvas.toDataURL();
-
-  //   return im;
-  // };
-
-  exports.ImageDraw = ImageDraw;
-
   function ListDraw() {}
 
 
@@ -26727,19 +26539,19 @@ define('src/index', ['exports'], function (exports) {
     textSize = textSize || 14;
     returnMode = returnMode == null ? 0 : returnMode;
 
-    if(frame.memory == null) frame.memory = { selected: 0, y: 0, multiSelected: new List__default() };
+    if(frame.memory == null) frame.memory = { selected: 0, y: 0, multiSelected: new List() };
 
     var changeList = frame.memory.list != list;
     var changeExternallySelected = (changeList && selectedInit != null) || frame.memory.selectedInit != selectedInit;
 
     if(changeExternallySelected) {
       if(returnMode == 3) {
-        frame.memory.multiSelected = new List__default();
+        frame.memory.multiSelected = new List();
         selectedInit.forEach(function(index) {
           frame.memory.multiSelected.push(list[index]);
         });
       } else if(returnMode == 2) {
-        frame.memory.multiSelected = List__default.fromArray(selectedInit).getImproved();
+        frame.memory.multiSelected = List.fromArray(selectedInit).getImproved();
       } else {
         frame.memory.selected = selectedInit;
       }
@@ -26851,8 +26663,8 @@ define('src/index', ['exports'], function (exports) {
   IntervalTableDraw.MIN_CHARACTERS_SIZE = 1;
 
   IntervalTableDraw.drawIntervalsFlowTable = function(intervalsFlowTable, frame, colors, bezier, offValue, graphics) { //, returnHovered){ //TODO: implement rollover detection, using _isOnShape (below)
-    frame = frame == null ? new Rectangle__default(10, 10, 400, 300) : frame;
-    colors = colors == null ? ColorListGenerators__default.createCategoricalColors(0, intervalsFlowTable.length, ColorScales__default.temperature) : colors;
+    frame = frame == null ? new Rectangle(10, 10, 400, 300) : frame;
+    colors = colors == null ? ColorListGenerators.createCategoricalColors(0, intervalsFlowTable.length, ColorScales.temperature) : colors;
     bezier = bezier || false;
     offValue = offValue == null ? 0.45 : offValue;
 
@@ -26976,7 +26788,7 @@ define('src/index', ['exports'], function (exports) {
     var i;
     var j;
 
-    colors = colors == null ? ColorListOperators.colorListFromColorScale(new ColorScale(ColorOperators__default.temperatureScale), nElements) : colors;
+    colors = colors == null ? ColorListOperators.colorListFromColorScale(new ColorScale(ColorOperators.temperatureScale), nElements) : colors;
     center = center == null ? new Point(100, 100) : center;
     radius = radius == null ? 200 : radius;
     r0 = r0 == null ? 10 : r0;
@@ -27122,8 +26934,8 @@ define('src/index', ['exports'], function (exports) {
     var i;
     var j;
 
-    colors = colors == null ? ColorListGenerators__default.createCategoricalColors(0, intervalsFlowTable.length, ColorScales__default.temperature) : colors;
-    frame = frame == null ? new Rectangle__default(10, 10, 400, 300) : frame;
+    colors = colors == null ? ColorListGenerators.createCategoricalColors(0, intervalsFlowTable.length, ColorScales.temperature) : colors;
+    frame = frame == null ? new Rectangle(10, 10, 400, 300) : frame;
 
     var nCols = intervalsFlowTable[0].length;
     var dX = frame.width / (nCols - 1);
@@ -27281,13 +27093,13 @@ define('src/index', ['exports'], function (exports) {
 
     if(graphics==null) graphics = frame.graphics; //momentary fix
 
-    colorScale = colorScale == null ? ColorScales__default.blueToRed : colorScale;
+    colorScale = colorScale == null ? ColorScales.blueToRed : colorScale;
     listColorsIndependent = listColorsIndependent || false;
     margin = margin == null ? 2 : margin;
 
     var dX = frame.width / numberTable.length;
     var dY = frame.height / numberTable[0].length;
-    
+
     var i;
     var j;
     var numberList;
@@ -27344,14 +27156,14 @@ define('src/index', ['exports'], function (exports) {
     loglog = loglog || false;
     margin = margin || 0;
 
-    var subframe = new Rectangle__default(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
+    var subframe = new Rectangle(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
     subframe.bottom = subframe.getBottom();
 
     var i;
     var x, y;
-    var list0 = (loglog ? numberTable[0].log(1) : numberTable[0]).getNormalized();
-    var list1 = (loglog ? numberTable[1].log(1) : numberTable[1]).getNormalized();
-    var radii = numberTable.length <= 2 ? null : numberTable[2].getNormalized().sqrt().factor(maxRadius);
+    var list0 = NumberListOperators.normalized(loglog ? numberTable[0].log(1) : numberTable[0]);
+    var list1 = (loglog ? numberTable[1].log(1) :  NumberListOperators.normalized(numberTable[1]));
+    var radii = numberTable.length <= 2 ? null :  NumberListOperators.normalized(numberTable[2]).sqrt().factor(maxRadius);
     var nColors = (colors == null) ? null : colors.length;
     var n = Math.min(list0.length, list1.length, (radii == null) ? 300000 : radii.length, (texts == null) ? 300000 : texts.length);
     var iOver;
@@ -27405,13 +27217,13 @@ define('src/index', ['exports'], function (exports) {
     if(numberTable.length < 2) return;
 
     var margin = 16;
-    var subframe = new Rectangle__default(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
+    var subframe = new Rectangle(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
     subframe.bottom = subframe.getBottom();
 
     var i;
     var y0, y1;
-    var list0 = numberTable[0].getNormalized();
-    var list1 = numberTable[1].getNormalized();
+    var list0 =  NumberListOperators.normalized(numberTable[0]);
+    var list1 =  NumberListOperators.normalized(numberTable[1]);
     var n = Math.min(list0.length, list1.length, texts == null ? 2000 : texts.length);
 
     var x0 = subframe.x + (texts == null ? 10 : 0.25 * subframe.width);
@@ -27451,10 +27263,10 @@ define('src/index', ['exports'], function (exports) {
     if(coordinates == null || coordinates[0] == null) return;
 
     colorScale = colorScale == null ?
-  								ColorScales__default.whiteToRed
+  								ColorScales.whiteToRed
   								:
       typeof colorScale == 'string' ?
-  									ColorScales__default[colorScale]
+  									ColorScales[colorScale]
   									:
       colorScale;
     margin = margin || 0;
@@ -27517,7 +27329,7 @@ define('src/index', ['exports'], function (exports) {
 
       for(i = 0; i < nCols; i++) {
         if(matrix[i] == null) matrix[i] = new NumberList();
-        matrixColors[i] = new ColorList__default();
+        matrixColors[i] = new ColorList();
         for(j = 0; j < nLists; j++) {
           if(matrix[i][j] == null) matrix[i][j] = 0;
           matrixColors[i][j] = colorScale(matrix[i][j] / max);
@@ -27537,7 +27349,7 @@ define('src/index', ['exports'], function (exports) {
     //c.log(matrixColors.length, matrixColors[0].length, matrixColors[0][0]);
 
     //draw
-    var subframe = new Rectangle__default(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
+    var subframe = new Rectangle(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
     subframe.bottom = subframe.getBottom();
     var dx = subframe.width / matrixColors.length;
     var dy = subframe.height / matrixColors[0].length;
@@ -27634,11 +27446,11 @@ define('src/index', ['exports'], function (exports) {
     if(colorList && frame.memory.colorList != colorList) frame.memory.image = null;
 
     if(frame.memory.colorList != colorList || frame.memory.colorList == null) {
-      frame.memory.actualColorList = colorList == null ? ColorListGenerators__default.createDefaultCategoricalColorList(numberTable.length, 0.7) : colorList;
+      frame.memory.actualColorList = colorList == null ? ColorListGenerators.createDefaultCategoricalColorList(numberTable.length, 0.7) : colorList;
       frame.memory.colorList = colorList;
     }
 
-    var flowFrame = new Rectangle__default(0, 0, frame.width, horizontalLabels == null ? frame.height : (frame.height - 14));
+    var flowFrame = new Rectangle(0, 0, frame.width, horizontalLabels == null ? frame.height : (frame.height - 14));
 
     if(frame.memory.image == null) {
       // TODO refactor to not reassign context
@@ -27852,7 +27664,7 @@ define('src/index', ['exports'], function (exports) {
       });
     }
     if(frame.memory.colorList != colorList || frame.memory.colorList == null) {
-      frame.memory.actualColorList = colorList == null ? ColorListGenerators__default.createDefaultCategoricalColorList(numberTable.length, 0.4) : colorList;
+      frame.memory.actualColorList = colorList == null ? ColorListGenerators.createDefaultCategoricalColorList(numberTable.length, 0.4) : colorList;
       frame.memory.colorList = colorList;
     }
 
@@ -27959,7 +27771,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:draw
    */
   NumberListDraw.drawSimpleGraph = function(frame, numberList, margin, xValues, graphics) {
-    if(numberList == null || numberList.getNormalized == null) return;
+    if(numberList == null || NumberListOperators.normalized(numberList) == null) return;
 
     if(graphics==null) graphics = frame.graphics; //momentary fix
 
@@ -27973,9 +27785,9 @@ define('src/index', ['exports'], function (exports) {
         zero: null
       };
       if(frame.memory.minmax.x > 0 && frame.memory.minmax.y > 0) {
-        frame.memory.normalizedList = numberList.getNormalizedToMax();
+        frame.memory.normalizedList = NumberListOperators.normalizedToMax(numberList);
       } else {
-        frame.memory.normalizedList = numberList.getNormalized();
+        frame.memory.normalizedList =  NumberListOperators.normalized(numberList);
         frame.memory.zero = -frame.memory.minmax.x / frame.memory.minmax.getAmplitude();
       }
 
@@ -27991,7 +27803,7 @@ define('src/index', ['exports'], function (exports) {
     }
 
     var i;
-    var subframe = new Rectangle__default(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
+    var subframe = new Rectangle(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
     subframe.bottom = subframe.getBottom();
     var x;
     var dx = subframe.width / numberList.length;
@@ -28105,7 +27917,7 @@ define('src/index', ['exports'], function (exports) {
     margin = margin || 10;
     fontSize = fontSize || 12;
 
-    var subframe = new Rectangle__default(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
+    var subframe = new Rectangle(frame.x + margin, frame.y + margin, frame.width - margin * 2, frame.height - margin * 2);
     subframe.bottom = subframe.getBottom();
 
     var lineHeight = Math.floor(fontSize * 1.2);
@@ -28144,13 +27956,13 @@ define('src/index', ['exports'], function (exports) {
 
   StringListDraw.tagCloudRectangles = function(stringList, weights, frame) {
 
-    var normWeights = table[1].sqrt().getNormalizedToMax();
+    var normWeights = NumberListOperators.normalizedToMax(table[1].sqrt());
 
-    var rectangles = new List__default();
+    var rectangles = new List();
     var textPositions = new Polygon();
     var textSizes = new NumberList();
 
-    var rectanglesPlaced = new List__default();
+    var rectanglesPlaced = new List();
 
     var dL = 6;
 
@@ -28178,7 +27990,7 @@ define('src/index', ['exports'], function (exports) {
         }
       }
 
-      rectangles[i] = new Rectangle__default(p.x, p.y, w, h);
+      rectangles[i] = new Rectangle(p.x, p.y, w, h);
       rectanglesPlaced.push(rectangles[i]);
     }
   };
@@ -28217,7 +28029,7 @@ define('src/index', ['exports'], function (exports) {
     var K = 20;
     var i0Line;
 
-    var normWeigths = weights.getNormalizedToMax();
+    var normWeigths = NumberListOperators.normalizedToMax(weights);
 
     var sizes;
     var positions;
@@ -28296,15 +28108,15 @@ define('src/index', ['exports'], function (exports) {
     mode = mode == null ? 0 : mode;
     margin = margin == null ? 0 : margin;
 
-    var normWeights = weights.sqrt().getNormalizedToMax();
+    var normWeights = NumberListOperators.normalizedToMax(weights.sqrt());
 
     var roundSizes = mode == 0;
 
-    var rectangles = new List__default();
+    var rectangles = new List();
     var textPositions = new Polygon();
     var textSizes = new NumberList();
 
-    var rectanglesPlaced = new List__default();
+    var rectanglesPlaced = new List();
 
     var dL = 6;
 
@@ -28404,7 +28216,7 @@ define('src/index', ['exports'], function (exports) {
 
       }
 
-      rectangles[i] = new Rectangle__default(px, py, w, h);
+      rectangles[i] = new Rectangle(px, py, w, h);
       rectanglesPlaced.push(rectangles[i]);
     }
 
@@ -28568,7 +28380,7 @@ define('src/index', ['exports'], function (exports) {
 
       frame.bottom = frame.getBottom();
       frame.right = frame.getRight();
-      memory.frameMargin = new Rectangle__default(frame.x + margin, frame.y + margin, frame.width - 2 * margin, frame.height - 2 * margin);
+      memory.frameMargin = new Rectangle(frame.x + margin, frame.y + margin, frame.width - 2 * margin, frame.height - 2 * margin);
       frameMargin = memory.frameMargin;
       memory.frameMargin.right = memory.frameMargin.getRight();
       memory.frameMargin.bottom = memory.frameMargin.getBottom();
@@ -28690,7 +28502,7 @@ define('src/index', ['exports'], function (exports) {
    * @ignore
    */
   NetworkDraw.drawNetworkMatrix = function(frame, network, colors, relationsColorScaleFunction, margin, directed, normalizedNodeWeights, returnHovered, graphics) {
-    relationsColorScaleFunction = relationsColorScaleFunction == null ? ColorOperators__default.grayScale : relationsColorScaleFunction;
+    relationsColorScaleFunction = relationsColorScaleFunction == null ? ColorOperators.grayScale : relationsColorScaleFunction;
     margin = margin == null ? 2 : margin;
     directed = directed == null ? false : directed;
 
@@ -28791,11 +28603,11 @@ define('src/index', ['exports'], function (exports) {
    * tags:draw
    */
   TreeDraw.drawRectanglesTree = function(frame, tree, levelColors, margin) {
-    levelColors = levelColors == null ? ColorListGenerators__default.createCategoricalColors(1, tree.nLevels) : levelColors;
+    levelColors = levelColors == null ? ColorListGenerators.createCategoricalColors(1, tree.nLevels) : levelColors;
     margin = margin || 1;
 
     var dX = frame.width / tree.nLevels;
-    TreeDraw._drawRectanglesTreeChildren(tree.nodeList[0], new Rectangle__default(frame.x, frame.y, dX, frame.height), levelColors, margin);
+    TreeDraw._drawRectanglesTreeChildren(tree.nodeList[0], new Rectangle(frame.x, frame.y, dX, frame.height), levelColors, margin);
   };
 
   TreeDraw._drawRectanglesTreeChildren = function(node, frame, colors, margin, graphics) {
@@ -28810,7 +28622,7 @@ define('src/index', ['exports'], function (exports) {
       var h;
       for(i = 0; children[i] != null; i++) {
         h = dY * (children[i].descentWeight);
-        TreeDraw._drawRectanglesTreeChildren(children[i], new Rectangle__default(frame.x + frame.width, yy, frame.width, h), colors, margin);
+        TreeDraw._drawRectanglesTreeChildren(children[i], new Rectangle(frame.x + frame.width, yy, frame.width, h), colors, margin);
         yy += h;
       }
     }
@@ -28830,7 +28642,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Node} selected node
    * tags:draw
    */
-  TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, externalSelectedNode, graphics) { 
+  TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, externalSelectedNode, graphics) {
     if(frame==null || tree==null) return;
 
     if(graphics==null) graphics = frame.graphics; //momentary fix
@@ -28881,7 +28693,7 @@ define('src/index', ['exports'], function (exports) {
         assignTreemapWeight(tree.nodeList[0]);
       }
 
-      tree.nodeList[0]._outRectangle = new Rectangle__default(0, 0, frame.width, frame.height);
+      tree.nodeList[0]._outRectangle = new Rectangle(0, 0, frame.width, frame.height);
       tree.nodeList[0]._inRectangle = TreeDraw._inRectFromOutRect(tree.nodeList[0]._outRectangle);
       TreeDraw._generateRectangles(tree.nodeList[0]);
 
@@ -28902,9 +28714,9 @@ define('src/index', ['exports'], function (exports) {
     if(frame.memory.colorList != colorList || frame.memory.colorList == null) {
       frame.memory.nFLastChange = graphics.nF;
       frame.memory.image = null;
-      frame.memory.actualColorList = colorList == null ? ColorListGenerators__default.createCategoricalColors(0, tree.nLevels, ColorScales__default.grayToOrange, 0.1) : colorList;
-      frame.memory.nodesColorList = new ColorList__default();
-      if(textColor == null) frame.memory.textsColorList = new ColorList__default();
+      frame.memory.actualColorList = colorList == null ? ColorListGenerators.createCategoricalColors(0, tree.nLevels, ColorScales.grayToOrange, 0.1) : colorList;
+      frame.memory.nodesColorList = new ColorList();
+      if(textColor == null) frame.memory.textsColorList = new ColorList();
 
       if(frame.memory.actualColorList.length <= tree.nLevels) {
         tree.nodeList.forEach(function(node, i) {
@@ -28913,7 +28725,7 @@ define('src/index', ['exports'], function (exports) {
       } else if(frame.memory.actualColorList.length == frame.memory.leaves.length) {
         frame.memory.leaves.forEach(function(node, i) {
           node._color = frame.memory.actualColorList[i];
-          node._rgb = ColorOperators__default.colorStringToRGB(node._color);
+          node._rgb = ColorOperators.colorStringToRGB(node._color);
         });
         var assignColor = function(node) {
           var i;
@@ -28944,7 +28756,7 @@ define('src/index', ['exports'], function (exports) {
       if(textColor == null) {
         var rgb;
         tree.nodeList.forEach(function(node, i) {
-          rgb = node._color ? ColorOperators__default.colorStringToRGB(node._color) : [0, 0, 0];
+          rgb = node._color ? ColorOperators.colorStringToRGB(node._color) : [0, 0, 0];
           frame.memory.textsColorList[i] = (rgb[0] + rgb[1] + rgb[2] > 360) ? 'black' : 'white';
         });
       }
@@ -29019,7 +28831,7 @@ define('src/index', ['exports'], function (exports) {
 
       tree.nodeList.forEach(function(node, i) {
 
-        rect = new Rectangle__default(tx(node._outRectangle.x), ty(node._outRectangle.y), node._outRectangle.width * kx, node._outRectangle.height * ky);
+        rect = new Rectangle(tx(node._outRectangle.x), ty(node._outRectangle.y), node._outRectangle.width * kx, node._outRectangle.height * ky);
 
         if(rect.width > 5 && rect.height > 4 && rect.x < frame.width && rect.getRight() > 0 && rect.y < frame.height && rect.getBottom() > 0) {
 
@@ -29078,7 +28890,7 @@ define('src/index', ['exports'], function (exports) {
       if(overNode) {
         graphics.setCursor('pointer');
 
-        rect = new Rectangle__default(tx(overNode._outRectangle.x), ty(overNode._outRectangle.y), overNode._outRectangle.width * kx, overNode._outRectangle.height * ky);
+        rect = new Rectangle(tx(overNode._outRectangle.x), ty(overNode._outRectangle.y), overNode._outRectangle.width * kx, overNode._outRectangle.height * ky);
         x = Math.round(frame.x + rect.x) + 0.5;
         y = Math.round(frame.y + rect.y) + 0.5;
         graphics.setStroke(textColor ? textColor : frame.memory.textsColorList[overI], 2);
@@ -29152,13 +28964,13 @@ define('src/index', ['exports'], function (exports) {
    * @ignore
    */
   TreeDraw._reduceRect = function(rect) {
-    return new Rectangle__default(rect.x + rect.width * TreeDraw.PROP_RECT_REDUCTION_MARGIN, rect.y + rect.height * TreeDraw.PROP_RECT_REDUCTION_MARGIN, rect.width * (1 - 2 * TreeDraw.PROP_RECT_REDUCTION_MARGIN), rect.height * (1 - 2 * TreeDraw.PROP_RECT_REDUCTION_MARGIN));
+    return new Rectangle(rect.x + rect.width * TreeDraw.PROP_RECT_REDUCTION_MARGIN, rect.y + rect.height * TreeDraw.PROP_RECT_REDUCTION_MARGIN, rect.width * (1 - 2 * TreeDraw.PROP_RECT_REDUCTION_MARGIN), rect.height * (1 - 2 * TreeDraw.PROP_RECT_REDUCTION_MARGIN));
   };
   TreeDraw._expandRect = function(rect) {
-    return new Rectangle__default(rect.x - rect.width * TreeDraw.PROP_RECT_EXPANTION_MARGIN, rect.y - rect.height * TreeDraw.PROP_RECT_EXPANTION_MARGIN, rect.width * (1 + 2 * TreeDraw.PROP_RECT_EXPANTION_MARGIN), rect.height * (1 + 2 * TreeDraw.PROP_RECT_EXPANTION_MARGIN));
+    return new Rectangle(rect.x - rect.width * TreeDraw.PROP_RECT_EXPANTION_MARGIN, rect.y - rect.height * TreeDraw.PROP_RECT_EXPANTION_MARGIN, rect.width * (1 + 2 * TreeDraw.PROP_RECT_EXPANTION_MARGIN), rect.height * (1 + 2 * TreeDraw.PROP_RECT_EXPANTION_MARGIN));
   };
   TreeDraw._inRectFromOutRect = function(rect) {
-    return new Rectangle__default(rect.x + rect.width * TreeDraw.PROP_RECT_MARGIN, rect.y + rect.height * TreeDraw.PROP_RECT_LABEL, rect.width * (1 - 2 * TreeDraw.PROP_RECT_MARGIN), rect.height * (1 - TreeDraw.PROP_RECT_MARGIN - TreeDraw.PROP_RECT_LABEL));
+    return new Rectangle(rect.x + rect.width * TreeDraw.PROP_RECT_MARGIN, rect.y + rect.height * TreeDraw.PROP_RECT_LABEL, rect.width * (1 - 2 * TreeDraw.PROP_RECT_MARGIN), rect.height * (1 - TreeDraw.PROP_RECT_MARGIN - TreeDraw.PROP_RECT_LABEL));
   };
   TreeDraw.PROP_RECT_MARGIN = 0.03;
   TreeDraw.PROP_RECT_LABEL = 0.2;
@@ -29215,11 +29027,11 @@ define('src/index', ['exports'], function (exports) {
 
 
 
-      tree.nodeList[0]._outRectangle = new Rectangle__default(0, 0, frame.width, hTree);
+      tree.nodeList[0]._outRectangle = new Rectangle(0, 0, frame.width, hTree);
       tree.nodeList[0]._inRectangle = TreeDraw._inRectFromOutRectDecision(tree.nodeList[0]._outRectangle, hLevel);
       TreeDraw._generateRectanglesDecision(tree.nodeList[0], hLevel);
 
-      frame.memory.focusFrame = new Rectangle__default(0, 0, frame.width, frame.height);
+      frame.memory.focusFrame = new Rectangle(0, 0, frame.width, frame.height);
       frame.memory.kx = frame.width / frame.memory.focusFrame.width;
       frame.memory.mx = -frame.memory.kx * frame.memory.focusFrame.x;
       frame.memory.ky = frame.height / frame.memory.focusFrame.height;
@@ -29298,7 +29110,7 @@ define('src/index', ['exports'], function (exports) {
 
       tree.nodeList.forEach(function(node, i) {
 
-        rect = new Rectangle__default(tx(node._outRectangle.x), node._outRectangle.y, node._outRectangle.width * kx, node._outRectangle.height);
+        rect = new Rectangle(tx(node._outRectangle.x), node._outRectangle.y, node._outRectangle.width * kx, node._outRectangle.height);
 
         if(rect.x < frame.width && rect.getRight() > 0 && rect.y < frame.height && rect.getBottom() > 0) {
 
@@ -29449,7 +29261,7 @@ define('src/index', ['exports'], function (exports) {
         graphics.setCursor('pointer');
 
         //rect = new Rectangle(tx(overNode._outRectangle.x), ty(overNode._outRectangle.y), overNode._outRectangle.width*kx, overNode._outRectangle.height*ky);
-        rect = new Rectangle__default(tx(overNode._outRectangle.x), overNode._outRectangle.y, overNode._outRectangle.width * kx, overNode._outRectangle.height);
+        rect = new Rectangle(tx(overNode._outRectangle.x), overNode._outRectangle.y, overNode._outRectangle.width * kx, overNode._outRectangle.height);
         x = Math.round(frame.x + rect.x) + 0.5;
         y = Math.round(frame.y + rect.y) + 0.5;
 
@@ -29471,7 +29283,7 @@ define('src/index', ['exports'], function (exports) {
         graphics.sRect(x, y, Math.floor(rect.width), Math.floor(rect.height));
 
         if(graphics.MOUSE_UP_FAST) {
-          frame.memory.focusFrame = new Rectangle__default(overNode._outRectangle.x - overNode._outRectangle.width * 0.025, 0, overNode._outRectangle.width * 1.05, frame.height); // TreeDraw._expandRect(overNode._outRectangle);
+          frame.memory.focusFrame = new Rectangle(overNode._outRectangle.x - overNode._outRectangle.width * 0.025, 0, overNode._outRectangle.width * 1.05, frame.height); // TreeDraw._expandRect(overNode._outRectangle);
 
           if(frame.memory.focusFrame.x < 0) {
             frame.memory.focusFrame.width += frame.memory.focusFrame.x;
@@ -29561,21 +29373,21 @@ define('src/index', ['exports'], function (exports) {
    * @ignore
    */
   TreeDraw._inRectFromOutRectDecision = function(rect, hLevel) {
-    return new Rectangle__default(rect.x, rect.y + hLevel, rect.width, rect.height - hLevel);
+    return new Rectangle(rect.x, rect.y + hLevel, rect.width, rect.height - hLevel);
   };
 
   /**
    * @ignore
    */
   TreeDraw._horizontalRectanglesDecision = function(rect, weights) {
-    var rects = new List__default();
+    var rects = new List();
     var x0 = rect.x;
     var w;
-    var newWeights = weights.getNormalizedToSum();
+    var newWeights = NumberListOperators.normalizedToSum(weights);
 
     newWeights.forEach(function(weight) {
       w = weight * rect.width;
-      rects.push(new Rectangle__default(x0, rect.y, w, rect.height));
+      rects.push(new Rectangle(x0, rect.y, w, rect.height));
       x0 += w;
     });
 

@@ -1,6 +1,8 @@
 import StringList from "src/dataStructures/strings/StringList";
 import ListOperators from "src/operators/lists/ListOperators";
 import NumberList from "src/dataStructures/numeric/NumberList";
+import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
+import ColorOperators from "src/operators/graphic/ColorOperators";
 import Table from "src/dataStructures/lists/Table";
 import ColorOperators from "src/operators/graphic/ColorOperators";
 
@@ -50,7 +52,7 @@ StringOperators.createsCategoricalColorsBlocksHtml = function(normalizedWeights,
   normalizedWeights.forEach(function(w, j){
     w = Math.floor(w*nChars) +  ( (w*nChars - Math.floor(w*nChars))>Math.random()?1:0 );
     bars += "<font color=\""+ColorOperators.colorStringToHEX(colors[j])+"\">";
-    for(i=0; i<w; i++){
+    for(var i=0; i<w; i++){
       bars += character;
     }
     bars += "</f>";
@@ -58,8 +60,6 @@ StringOperators.createsCategoricalColorsBlocksHtml = function(normalizedWeights,
 
   return bars;
 };
-
-
 
 /**
  * splits a String by a character (entre by default)
@@ -82,13 +82,22 @@ StringOperators.split = function(string, character) {
  * tags:
  */
 StringOperators.splitByEnter = function(string) {
-  if(string == null) return null;
+  if(string == null) {
+    return null;
+  }
   var stringList = StringOperators.splitString(string, "\n");
-  if(stringList.length > 1) return stringList;
-  var stringList = StringOperators.splitString(string, StringOperators.ENTER2);
-  if(stringList.length > 1) return stringList;
-  var stringList = StringOperators.splitString(string, StringOperators.ENTER3);
-  if(stringList.length > 1) return stringList;
+  if(stringList.length > 1)
+  {
+   return stringList;
+  }
+  stringList = StringOperators.splitString(string, StringOperators.ENTER2);
+  if(stringList.length > 1) {
+    return stringList;
+  }
+  stringList = StringOperators.splitString(string, StringOperators.ENTER3);
+  if(stringList.length > 1) {
+    return stringList;
+  }
   return new StringList(string);
 };
 
@@ -117,8 +126,6 @@ StringOperators.replaceSubString = function(string, subString, replacement) {
 StringOperators.replaceSubStringsByString = function(string, subStrings, replacement) {
   if(subStrings == null) return;
 
-  var subString;
-
   subStrings.forEach(function(subString) {
     string = StringOperators.replaceSubString(string, subString, replacement);
   });
@@ -139,7 +146,6 @@ StringOperators.replaceSubStringsByStrings = function(string, subStrings, replac
 
   var nElements = Math.min(subStrings.length, replacements.length);
   var i;
-  var subString;
 
   for(i = 0; i < nElements; i++) {
     string = StringOperators.replaceSubString(string, subStrings[i], replacements[i]);
@@ -164,6 +170,8 @@ StringOperators.replaceSubStringsByStrings = function(string, subStrings, replac
 StringOperators.getWords = function(string, withoutRepetitions, stopWords, sortedByFrequency, includeLinks, limit, minSizeWords) {
   if(string == null) return null;
 
+  var links;
+
   minSizeWords = minSizeWords || 0;
   withoutRepetitions = withoutRepetitions == null ? true : withoutRepetitions;
   sortedByFrequency = sortedByFrequency == null ? true : sortedByFrequency;
@@ -172,7 +180,9 @@ StringOperators.getWords = function(string, withoutRepetitions, stopWords, sorte
 
   var i, j;
 
-  if(includeLinks) var links = string.match(StringOperators.LINK_REGEX);
+  if(includeLinks) {
+    links = string.match(StringOperators.LINK_REGEX);
+  }
   string = string.toLowerCase().replace(StringOperators.LINK_REGEX, "");
 
   var list = string.match(/\w+/g);
@@ -214,14 +224,14 @@ StringOperators.getWords = function(string, withoutRepetitions, stopWords, sorte
   if(sortedByFrequency) {
     if(withoutRepetitions) {
       list = list.getFrequenciesTable(true)[0];// //ListOperators.countElementsRepetitionOnList(list, true)[0];
-      if(limit != 0) list = list.substr(0, limit);
+      if(limit !== 0) list = list.substr(0, limit);
 
       return list;
     }
 
     var occurrences = ListOperators.countOccurrencesOnList(list);
     list = list.getSortedByList(occurrences);
-    if(limit != 0) list = list.substr(0, limit);
+    if(limit !== 0) list = list.substr(0, limit);
 
     return list;
   }
@@ -230,7 +240,7 @@ StringOperators.getWords = function(string, withoutRepetitions, stopWords, sorte
     list = list.getWithoutRepetitions();
   }
 
-  if(limit != 0) list = list.splice(0, limit);
+  if(limit !== 0) list = list.splice(0, limit);
   return list;
 };
 
@@ -278,7 +288,7 @@ StringOperators.splitString = function(string, separator) {
 StringOperators.getFirstTextBetweenStrings = function(text, subString0, subString1) {
   var i0 = text.indexOf(subString0);
   if(i0 == -1) return null;
-  if(subString1 == "" || subString1 == null) return text.substr(i0 + subString0.length);
+  if(subString1 === "" || subString1 == null) return text.substr(i0 + subString0.length);
   var i1 = text.indexOf(subString1, i0 + subString0.length + 1);
   if(i1 == -1) return text.substring(i0 + subString0.length);
   return text.substr(i0 + subString0.length, i1 - (i0 + subString0.length));
@@ -357,8 +367,9 @@ StringOperators.getLinksFromHtml = function(html, urlSource, removeHash) {
   var index;
   var urlSourceParts;
   var parts, blocks;
+  var root;
 
-  urlSource = urlSource == "" ? null : urlSource;
+  urlSource = urlSource === "" ? null : urlSource;
   removeHash = removeHash == null ? false : removeHash;
 
   if(urlSource) {
@@ -371,7 +382,7 @@ StringOperators.getLinksFromHtml = function(html, urlSource, removeHash) {
     if(urlSource.indexOf(-1) == "/") urlSource = urlSource.substr(0, urlSource.length - 1);
     urlSourceParts = urlSource.split("/");
 
-    var root = urlSource.replace("//", "**").split("/")[0].replace("**", "//");
+    root = urlSource.replace("//", "**").split("/")[0].replace("**", "//");
   }
 
 
@@ -382,7 +393,7 @@ StringOperators.getLinksFromHtml = function(html, urlSource, removeHash) {
     if(url.indexOf('=') != -1) url = url.split('=')[0];
 
     //console.log(url);
-    if(urlSource && url.indexOf('http://') == -1 && url.indexOf('https://') == -1 && url.indexOf('wwww.') == -1 && url.indexOf('file:') == -1 && url.indexOf('gopher:') == -1 && url.indexOf('//') != 0) {
+    if(urlSource && url.indexOf('http://') == -1 && url.indexOf('https://') == -1 && url.indexOf('wwww.') == -1 && url.indexOf('file:') == -1 && url.indexOf('gopher:') == -1 && url.indexOf('//') !== 0) {
       if(url.substr(0, 9) == "../../../") {
         url = urlSourceParts.slice(0, urlSourceParts.length - 3).join("/") + "/" + url.substr(9);
       } else if(url.substr(0, 6) == "../../") {
@@ -476,7 +487,7 @@ StringOperators.getParenthesisContents = function(text, brackets) {
   var contentObject = StringOperators.getFirstParenthesisContentWithIndexes(text, brackets);
 
   var nAttempts = 0;
-  while(contentObject.content != "" && contentObject.index1 < subText.length - 1 && nAttempts < text.length) {
+  while(contentObject.content !== "" && contentObject.index1 < subText.length - 1 && nAttempts < text.length) {
     contents.push(contentObject.content);
     subText = subText.substr(contentObject.index1 + 2);
     contentObject = StringOperators.getFirstParenthesisContentWithIndexes(subText, brackets);
@@ -634,7 +645,7 @@ StringOperators.removeQuotes = function(string) { //TODO:improve
 
 
 
-function removeAccentsAndDiacritics(string) {
+StringOperators.removeAccentsAndDiacritics = function(string) {
   var r = string.replace(new RegExp(/[àáâãäå]/g), "a");
   r = r.replace(new RegExp(/æ/g), "ae");
   r = r.replace(new RegExp(/ç/g), "c");
@@ -658,7 +669,7 @@ function removeAccentsAndDiacritics(string) {
   r = r.replace(new RegExp(/[Ÿ]/g), "Y");
 
   return r;
-}
+};
 
 /**
  * creates a table with frequent words and occurrences numbers
@@ -673,7 +684,7 @@ function removeAccentsAndDiacritics(string) {
  */
 StringOperators.getWordsOccurrencesTable = function(string, stopWords, includeLinks, limit, minSizeWords) {
   if(string == null) return;
-  if(string.length == 0) return new Table(new StringList(), new NumberList());
+  if(string.length === 0) return new Table(new StringList(), new NumberList());
   var words = StringOperators.getWords(string, false, stopWords, false, includeLinks, limit, minSizeWords);
   var table;
   if(limit != null)

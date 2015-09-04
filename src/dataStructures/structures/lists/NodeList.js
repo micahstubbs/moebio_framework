@@ -56,9 +56,7 @@ NodeList.fromArray = function(array, forceToNode) {
       result[i] = typeOf(result[i]) == "Node" ? result[i] : (new Node(String(result[i]), String(result[i])));
     }
   }
-
-  // TODO: Remove duplicate line?
-  result = List.fromArray(array);
+  
   result.type = "NodeList";
   result.ids = {};
   // TODO: Fix

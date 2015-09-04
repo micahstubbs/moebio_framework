@@ -235,15 +235,14 @@ Network.prototype.lightClone = function(){
 Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames, idsSubfix, namesSubfix) {
   var newNetwork = new Network();
   var newNode, newRelation;
-  var i;
 
   idsSubfix = idsSubfix == null ? '' : String(idsSubfix);
   namesSubfix = namesSubfix == null ? '' : String(namesSubfix);
 
   this.nodeList.forEach(function(node) {
     newNode = new Node(idsSubfix + node.id, namesSubfix + node.name);
-    if(idsSubfix != '') newNode.basicId = node.id;
-    if(namesSubfix != '') newNode.basicName = node.name;
+    if(idsSubfix !== '') newNode.basicId = node.id;
+    if(namesSubfix !== '') newNode.basicName = node.name;
     if(nodePropertiesNames) {
       nodePropertiesNames.forEach(function(propName) {
         if(node[propName] != null) newNode[propName] = node[propName];
@@ -254,8 +253,8 @@ Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames,
 
   this.relationList.forEach(function(relation) {
     newRelation = new Relation(idsSubfix + relation.id, namesSubfix + relation.name, newNetwork.nodeList.getNodeById(idsSubfix + relation.node0.id), newNetwork.nodeList.getNodeById(idsSubfix + relation.node1.id));
-    if(idsSubfix != '') newRelation.basicId = relation.id;
-    if(namesSubfix != '') newRelation.basicName = relation.name;
+    if(idsSubfix !== '') newRelation.basicId = relation.id;
+    if(namesSubfix !== '') newRelation.basicName = relation.name;
     if(relationPropertiesNames) {
       relationPropertiesNames.forEach(function(propName) {
         if(relation[propName] != null) newRelation[propName] = relation[propName];

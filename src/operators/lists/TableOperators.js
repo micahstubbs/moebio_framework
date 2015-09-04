@@ -7,6 +7,8 @@ import NumberTable from "src/dataStructures/numeric/NumberTable";
 import ListOperators from "src/operators/lists/ListOperators";
 import NumberListGenerators from "src/operators/numeric/numberList/NumberListGenerators";
 import ListGenerators from "src/operators/lists/ListGenerators";
+import ColorScales from "src/operators/graphic/ColorScales";
+import Tree from "src/dataStructures/structures/networks/Tree";
 
 /**
  * @classdesc Table Operators
@@ -33,7 +35,7 @@ TableOperators.getSubTable = function(table, x, y, width, height) {
   if(table == null) return table;
 
   var nLists = table.length;
-  if(nLists == 0) return null;
+  if(nLists === 0) return null;
   var result = new Table();
 
   if(width <= 0) width = (nLists - x) + width;
@@ -42,7 +44,7 @@ TableOperators.getSubTable = function(table, x, y, width, height) {
 
   var nRows = table[0].length;
 
-  if(nRows == 0) return null;
+  if(nRows === 0) return null;
 
   if(height <= 0) height = (nRows - y) + height;
 
@@ -65,6 +67,92 @@ TableOperators.getSubTable = function(table, x, y, width, height) {
     result.push(newColumn.getImproved());
   }
   return result.getImproved();
+};
+
+/**
+ * filters lists on a table, keeping elements that are in the same of row of a certain element of a given list from the table
+ * @param  {Table} table Table.
+ * @param  {Number} nList index of list containing the element
+ * @param  {Object} element used to filter the lists on the table
+ * @return {Table}
+ * tags:filter
+ */
+TableOperators.getSubTableByElementOnList = function(table, nList, element){
+  if(nList==null || element==null) return;
+
+  var i, j;
+
+  if(nList<0) nList = table.length+nList;
+  nList = nList%table.length;
+
+  var newTable = instantiateWithSameType(table);
+  newTable.name = table.name;
+
+  table.forEach(function(list){
+    var newList = new List();
+    newList.name = list.name;
+    newTable.push(newList);
+  });
+
+  var supervised = table[nList];
+
+  for(i=0; supervised[i]!=null; i++){
+    if(element==supervised[i]){
+       for(j=0; newTable[j]!=null; j++){
+          newTable[j].push(table[j][i]);
+       }
+    }
+  }
+
+  newTable.forEach(function(list, i){
+    newTable[i] = list.getImproved();
+  });
+
+  return newTable.getImproved();
+};
+
+/**
+ * filters lists on a table, keeping elements that are in the same of row of certain elements of a given list from the table
+ * @param  {Table} table Table.
+ * @param  {Number} nList index of list containing the element
+ * @param  {List} elements used to filter the lists on the table
+ * @return {Table}
+ * tags:filter
+ */
+TableOperators.getSubTableByElementsOnList = function(table, nList, list){
+  if(nList==null || list==null) return;
+
+  var i, j;
+
+  if(nList<0) nList = table.length+nList;
+  nList = nList%table.length;
+
+  var newTable = instantiateWithSameType(table);
+  newTable.name = table.name;
+
+  table.forEach(function(list){
+    var newList = new List();
+    newList.name = list.name;
+    newTable.push(newList);
+  });
+
+  var supervised = table[nList];
+
+  var listDictionary = ListOperators.getBooleanDictionaryForList(list);
+
+  for(i=0; supervised[i]!=null; i++){
+    if(listDictionary[supervised[i]]){
+       for(j=0; newTable[j]!=null; j++){
+          newTable[j].push(table[j][i]);
+       }
+    }
+  }
+
+  newTable.forEach(function(list, i){
+    newTable[i] = list.getImproved();
+  });
+
+  return newTable.getImproved();
 };
 
 /**
@@ -96,22 +184,26 @@ TableOperators.trainingTestPartition = function(table, proportion, mode, seed) {
   mode = mode || 0;
   seed = seed || 0;
 
+  var n_mod = 0;
+
   var indexesTr = new NumberList();
   var indexesTe = new NumberList();
 
   var random = mode == 1 ? new NumberOperators._Alea("my", seed, "seeds") : Math.random;
 
-  if(mode == 2) N_MOD = Math.floor(proportion / (1 - proportion) * 10);
+  if(mode == 2) {
+    n_mod = Math.floor(proportion / (1 - proportion) * 10);
+  }
 
   table[0].forEach(function(id, i) {
-    if(mode == 0 ||  mode == 1) {
+    if(mode === 0 ||  mode === 1) {
       if(random() < proportion) {
         indexesTr.push(i);
       } else {
         indexesTe.push(i);
       }
     } else {
-      if(i % N_MOD != 0) {
+      if(i % n_mod !== 0) {
         indexesTr.push(i);
       } else {
         indexesTe.push(i);
@@ -137,7 +229,6 @@ TableOperators.testClassificationModel = function(numberTable, classes, model, m
 
   metric = metric || 0;
 
-  var i;
   var nErrors = 0;
 
   classes.forEach(function(clss, i) {
@@ -224,7 +315,6 @@ TableOperators.aggregateTable = function(table, indexAggregationList, indexesLis
   var newTable = new Table();
   var newList;
   var toAggregateList;
-  var i;
 
   indexesListsToAggregate.forEach(function(index, i){
     toAggregateList = table[index];
@@ -257,13 +347,13 @@ TableOperators.pivotTable = function(table, indexFirstAggregationList, indexSeco
   resultMode = resultMode||0;
   nullValue = nullValue==null?"":nullValue;
 
-  var element0, element1;
+  var element1;
   var coordinate, indexes;
   var listToAggregate = table[indexListToAggregate];
 
   var newTable = new Table();
   var sum;
-  var i, j, index;
+  var i;
 
   if(resultMode==1){//two lists of elements and a list of aggregation value
     var indexesDictionary = {};
@@ -526,7 +616,7 @@ TableOperators.getCountPairsMatrix = function(table) {
   });
 
   table[0].forEach(function(element0, i) {
-    element1 = table[1][i];
+    var element1 = table[1][i];
     matrix[list1.indexOf(element1)][list0.indexOf(element0)]++;
   });
 
@@ -545,7 +635,7 @@ TableOperators.getCountPairsMatrix = function(table) {
  * tags:filter
  */
 TableOperators.filterTableByElementInList = function(table, nList, element, keepRowIfElementIsPresent) {
-  if(table == null ||  !table.length > 1 || nList == null) return;
+  if(table == null ||  table.length <= 0 || nList == null) return;
   if(element == null) return table;
 
 
@@ -603,7 +693,7 @@ TableOperators.mergeDataTablesInList = function(tableList) {
  * creates a new table with an updated first List of elements and an added new numberList with the new values
  */
 TableOperators.mergeDataTables = function(table0, table1) {
-  if(table1[0].length == 0) {
+  if(table1[0].length === 0) {
     var merged = table0.clone();
     merged.push(ListGenerators.createListWithSameElement(table0[0].length, 0));
     return merged;
@@ -620,7 +710,6 @@ TableOperators.mergeDataTables = function(table0, table1) {
   var numberTable0 = new NumberTable();
   var numberTable1 = new NumberTable();
 
-  var element;
   var index;
 
   var i, j;
@@ -628,8 +717,8 @@ TableOperators.mergeDataTables = function(table0, table1) {
   for(i = 0; i < nElements; i++) {
     index = table0[0].indexOf(list[i]);
     if(index > -1) {
-      for(var j = 0; j < nNumbers0; j++) {
-        if(i == 0) {
+      for(j = 0; j < nNumbers0; j++) {
+        if(i === 0) {
           numberTable0[j] = new NumberList();
           numberTable0[j].name = table0[j + 1].name;
         }
@@ -637,7 +726,7 @@ TableOperators.mergeDataTables = function(table0, table1) {
       }
     } else {
       for(j = 0; j < nNumbers0; j++) {
-        if(i == 0) {
+        if(i === 0) {
           numberTable0[j] = new NumberList();
           numberTable0[j].name = table0[j + 1].name;
         }
@@ -648,7 +737,7 @@ TableOperators.mergeDataTables = function(table0, table1) {
     index = table1[0].indexOf(list[i]);
     if(index > -1) {
       for(j = 0; j < nNumbers1; j++) {
-        if(i == 0) {
+        if(i === 0) {
           numberTable1[j] = new NumberList();
           numberTable1[j].name = table1[j + 1].name;
         }
@@ -656,7 +745,7 @@ TableOperators.mergeDataTables = function(table0, table1) {
       }
     } else {
       for(j = 0; j < nNumbers1; j++) {
-        if(i == 0) {
+        if(i === 0) {
           numberTable1[j] = new NumberList();
           numberTable1[j].name = table1[j + 1].name;
         }
@@ -731,7 +820,9 @@ TableOperators.completeTable = function(table, nRows, value) {
  * tags:filter
  */
 TableOperators.getNumberTableFromTable = function(table) {
-  if(table == null ||  !table.length > 0) return null;
+  if(table == null ||  table.length <= 0) {
+    return null;
+  }
 
   var i;
   var newTable = new NumberTable();
@@ -768,7 +859,6 @@ TableOperators.splitTableByCategoricList = function(table, list) {
   var childrenTable;
   var tablesList = new List();
   var childrenObject = {};
-  var N = list.length;
 
   list.forEach(function(element, i) {
     childrenTable = childrenObject[element];
@@ -837,11 +927,12 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
   var entropy = ListOperators.getListEntropy(supervised, supervisedValue);
 
   //if(level < 4) c.l('entropy, min_entropy', entropy, min_entropy);
+  var maxIg = 0;
+  var iBestFeature = 0;
+  var informationGains = 0;
 
   if(entropy >= min_entropy) {
-    var informationGains = TableOperators.getVariablesInformationGain(variablesTable, supervised);
-    var maxIg = 0;
-    var iBestFeature = 0;
+    informationGains = TableOperators.getVariablesInformationGain(variablesTable, supervised);
     informationGains.forEach(function(ig, i){
       if(ig > maxIg) {
         maxIg = ig;
@@ -920,7 +1011,7 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
   }
 
   node.bestFeatureName = variablesTable[iBestFeature].name;
-  node.bestFeatureName = node.bestFeatureName == ""?"list "+iBestFeature:node.bestFeatureName;
+  node.bestFeatureName = node.bestFeatureName === "" ? "list "+ iBestFeature:node.bestFeatureName;
   node.iBestFeature = iBestFeature;
   node.informationGain = maxIg;
 
@@ -930,7 +1021,6 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
   var childTable;
   var childSupervised;
   var childIndexes;
-  var newNode;
 
   tables.forEach(function(expandedChild) {
     childTable = expandedChild.getSubList(0, expandedChild.length - 3);

@@ -3,28 +3,6 @@ import MD5 from "src/tools/utils/strings/MD5";
 import NetworkEncodings from "src/operators/structures/NetworkEncodings";
 import { typeOf } from "src/tools/utils/code/ClassUtils";
 
-
-/**
- *
- * @module Global
- *
- * @classdesc Static class that:
- * -includes all the data models (by including the class IncludeDataModels.js)
- * -includes information about all those data models (on dataModelsInfo variable)
- * -includes class utils (that contains methods such as instantiate)
- * -contains the global variables (such as userAgent, canvas, nF, mX…), global
- * -contains the listener methods
- * -triggers de init, update and draw in Global class
- *
- */
-export function Global(){}
-
-Global.userAgent="unknown";
-
-
-export var userAgent="none";
-export var userAgentVersion;
-
 //data models info
 export var dataModelsInfo = [
   {
@@ -391,13 +369,10 @@ export var dataModelsInfo = [
 ];
 
 //global constants
-export var context;
 export var TwoPi = 2*Math.PI;
 export var HalfPi = 0.5*Math.PI;
 export var radToGrad = 180/Math.PI;
 export var gradToRad = Math.PI/180;
-export var c = console;
-c.l = c.log; //use c.l instead of console.log
 
 /**
  * @todo write docs
@@ -407,35 +382,7 @@ Array.prototype.last = function(){
 };
 
 window.addEventListener('load', function(){
-
-  if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
-    userAgent='IE';
-    userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
-    if(userAgentVersion<9) return null;
-  } else if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent)){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
-    userAgent='FIREFOX';
-    userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
-  } else if (navigator.userAgent.match(/Chrome/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
-    userAgent='CHROME';
-    userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
-  } else if (/Mozilla[\/\s](\d+\.\d+)/.test(navigator.userAgent) || navigator.userAgent.match(/Mozilla/) != null){ //test for Firefox/x.x or Firefox x.x (ignoring remaining digits);
-    userAgent='MOZILLA';
-    userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
-  } else if (navigator.userAgent.match(/Safari/) != null){ //test for MSIE x.x;
-    userAgent='Safari';
-    userAgentVersion=Number(RegExp.$1); // capture x.x portion and store as a number
-  } else if(navigator.userAgent.match(/iPad/i) != null){
-    userAgent='IOS';
-  } else if(navigator.userAgent.match(/iPhone/i) != null){
-    userAgent='IOS';
-  }
-
-
-  Global.userAgent=userAgent;
-  Global._frameRate=30;
-
-  console.log('Moebio Framework v' + version + ' | user agent: '+userAgent+' | user agent version: '+userAgentVersion);
-
+  console.log('Moebio Framework v' + version);
 }, false);
 
 
@@ -449,7 +396,21 @@ export function setStructureLocalStorageWithSeed(object, seed, comments){
 }
 
 /**
- * @todo write docs
+ * Puts an object into HTML5 local storage. Note that when you 
+ * store your object it will be wrapped in an object with the following 
+ * structure. This structure can be retrieved later in addition to the base
+ * object.
+ *  {
+ *    id: storage id
+ *    type: type of object
+ *    comments: user specified comments
+ *    date: current time
+ *    code: the serialized object
+ *  }
+ * 
+ * @param {Object} object   the object to store
+ * @param {String} id       the id to store it with
+ * @param {String} comments extra comments to store along with the object.
  */
 export function setStructureLocalStorage(object, id, comments){
   var type = typeOf(object);
@@ -460,7 +421,7 @@ export function setStructureLocalStorage(object, id, comments){
       code = object;
       break;
     case 'Network':
-      code = NetworkEncodings.encodeGDF(network);
+      code = NetworkEncodings.encodeGDF(object);
       break;
     default:
       type = 'object';
@@ -477,11 +438,6 @@ export function setStructureLocalStorage(object, id, comments){
   };
 
   var storageString = JSON.stringify(storageObject);
-
-  // c.l('storageObject', storageObject);
-  // c.l('id:['+id+']');
-  // c.l('code.length:', code.length);
-
   localStorage.setItem(id, storageString);
 }
 
@@ -493,7 +449,13 @@ export function getStructureLocalStorageFromSeed(seed, returnStorageObject){
 }
 
 /**
- * @todo write docs
+ * Gets a item previously stored in localstorage. @see setStructureLocalStorage
+ * You can choose either to retrieve the object that was stored of the wrapper
+ * object created when it was stored.
+ * 
+ * @param  {String} id id of object to lookup
+ * @param  {boolean} returnStorageObject return the wrapper object instead of the original value
+ * @return {Object|null} returns the object (or wrapper) that was stored, or null if nothing is found with this id.
  */
 export function getStructureLocalStorage(id, returnStorageObject){
   returnStorageObject = returnStorageObject||false;

@@ -9,6 +9,12 @@ DateList.prototype.constructor = DateList;
 /**
  * @classdesc A {@link List} for storing Dates.
  *
+ * Additional functions that work on DateList can be found in:
+ * <ul>
+ *  <li>Operators:   {@link DateListOperators}</li>
+ *  <li>Conversions: {@link DateListConversions}</li>
+ * </ul>
+ *
  * @description Creates a new DateList.
  * @constructor
  * @category dates
@@ -42,7 +48,6 @@ DateList.fromArray = function(array, forceToDate) {
   result.type = "DateList";
   //assign methods to array:
   result.getTimes = DateList.prototype.getTimes;
-  result.toStringList = DateList.prototype.toStringList;
   result.getMin = DateList.prototype.getMin;
   result.getMax = DateList.prototype.getMax;
   return result;
@@ -63,16 +68,6 @@ DateList.prototype.getTimes = function() {
 };
 
 
-/**
-* @todo write docs
-*/
-DateList.prototype.toStringList = function() {
-  var stringList = new StringList();
-  for(var i = 0; this[i] != null; i++) {
-    stringList[i] = DateOperators.dateToString(this[i]);
-  }
-  return stringList;
-};
 
 /**
 * @todo write docs

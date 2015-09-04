@@ -1,5 +1,6 @@
 import Rectangle from "src/dataStructures/geometry/Rectangle";
 import StringList from "src/dataStructures/strings/StringList";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 
 function NumberListDraw() {}
 export default NumberListDraw;
@@ -15,7 +16,7 @@ export default NumberListDraw;
  * tags:draw
  */
 NumberListDraw.drawSimpleGraph = function(frame, numberList, margin, xValues, graphics) {
-  if(numberList == null || numberList.getNormalized == null) return;
+  if(numberList == null || NumberListOperators.normalized(numberList) == null) return;
 
   if(graphics==null) graphics = frame.graphics; //momentary fix
 
@@ -29,9 +30,9 @@ NumberListDraw.drawSimpleGraph = function(frame, numberList, margin, xValues, gr
       zero: null
     };
     if(frame.memory.minmax.x > 0 && frame.memory.minmax.y > 0) {
-      frame.memory.normalizedList = numberList.getNormalizedToMax();
+      frame.memory.normalizedList = NumberListOperators.normalizedToMax(numberList);
     } else {
-      frame.memory.normalizedList = numberList.getNormalized();
+      frame.memory.normalizedList =  NumberListOperators.normalized(numberList);
       frame.memory.zero = -frame.memory.minmax.x / frame.memory.minmax.getAmplitude();
     }
 

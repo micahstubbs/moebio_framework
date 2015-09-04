@@ -120,7 +120,7 @@ function drawCube() {
 window.onload = function() {
   buildCube();
   new mo.Graphics({
-    container: "body",
+    container: "#maindiv",
     init: init,
     cycle: drawCube
   });
