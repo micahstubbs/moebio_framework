@@ -192,84 +192,6 @@ NumberList.prototype.getProduct = function() {
 };
 
 /**
-<<<<<<< HEAD
- * Returns a NumberList normalized to the sum.
- *
- * @param {Number} factor Optional multiplier to modify the normalized values by.
- * Defaults to 1.
- * @param {Number} sum Optional sum to normalize to.
- * If not provided, sum will be calculated automatically.
- * @return {NumberList} New NumberList of values normalized to the sum.
- * tags:
- */
-NumberList.prototype.getNormalizedToSum = function(factor, sum) {
-  factor = factor == null ? 1 : factor;
-  var newNumberList = new NumberList();
-  newNumberList.name = this.name;
-  if(this.length === 0) return newNumberList;
-  var i;
-  sum = sum == null ? this.getSum() : sum;
-  if(sum === 0) return this.clone();
-
-  for(i = 0; i < this.length; i++) {
-    newNumberList.push(factor * this[i] / sum);
-  }
-  return newNumberList;
-};
-
-/**
- * Returns a NumberList normalized to min-max interval.
- *
- * @param {Number} factor Optional multiplier to modify the normalized values by.
- * Defaults to 1.
- * @return {NumberList}
- * tags:
- */
-NumberList.prototype.getNormalized = function(factor) {
-  factor = factor == null ? 1 : factor;
-
-  if(this.length === 0) return null;
-
-  var i;
-  var interval = this.getMinMaxInterval();
-  var a = interval.getAmplitude();
-  var newNumberList = new NumberList();
-  var l = this.length;
-  for(i = 0; i < l; i++) {
-    newNumberList.push(factor * ((this[i] - interval.x) / a));
-  }
-  newNumberList.name = this.name;
-  return newNumberList;
-};
-
-/**
- * Returns a NumberList normalized to Max.
- *
- * @param {Number} factor Optional multiplier to modify the normalized values by. Defaults to 1.
- * @return {NumberList}
- * tags:
- */
-NumberList.prototype.getNormalizedToMax = function(factor) {
-  factor = factor == null ? 1 : factor;
-  var l = this.length;
-
-  if(l === 0) return null;
-  
-  var max = this.getMax();
-  if(max === 0) {
-    max = this.getMin();
-    if(max === 0) return ListGenerators.createListWithSameElement(this.length, 0);
-  }
-  var newNumberList = new NumberList();
-  
-  for(var i = 0; i<l; i++) {
-    newNumberList.push(factor * (this[i] / max));
-  }
-  newNumberList.name = this.name;
-  return newNumberList;
-};
-
-/**
  * Builds an Interval with min and max value from the NumberList
  *
  * @return {Interval} with starting value as the min of the NumberList
@@ -320,25 +242,6 @@ NumberList.prototype.getNumbersSimplified = function(method, param) {
   }
 
   return newList;
-};
-
-
-/**
- * Builds an {@link Polygon} from the NumberList,
- * using each consecutive pair of values in the numberList as
- * x and y positions.
- *
- * @return {Polygon} Polygon representing the values
- * in the NumberList as x/y coordinates.
- */
-NumberList.prototype.toPolygon = function() {
-  if(this.length === 0) return null;
-  var polygon = new Polygon();
-  var l = this.length-1;
-  for(var i = 0; i<l; i += 2) {
-    polygon.push(new Point(this[i], this[i + 1]));
-  }
-  return polygon;
 };
 
 
@@ -768,23 +671,6 @@ NumberList.prototype.isEquivalent = function(numberList) {
   }
   return true;
 };
-
-/**
- * Returns a new {@link StringList} with all values converted to strings
- *
- * @return {StringList} New list.
- */
-NumberList.prototype.toStringList = function() {
-  var i;
-  var stringList = new StringList();
-  var l = this.length;
-  for(i = 0; i<l; i++) {
-    stringList[i] = String(this[i]);
-  }
-  stringList.name = this.name;
-  return stringList;
-};
-
 
 //transform
 

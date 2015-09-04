@@ -1,8 +1,6 @@
 import DataModel from "src/dataStructures/DataModel";
 import NumberList from "src/dataStructures/numeric/NumberList";
 import ColorList from "src/dataStructures/graphic/ColorList";
-import ColorOperators from "src/operators/graphic/ColorOperators";
-import ColorScales from "src/operators/graphic/ColorScales";
 import StringList from "src/dataStructures/strings/StringList";
 import DateList from "src/dataStructures/dates/DateList";
 import NodeList from "src/dataStructures/structures/lists/NodeList";
@@ -13,7 +11,6 @@ import Table from "src/dataStructures/lists/Table";
 import NumberTable from "src/dataStructures/numeric/NumberTable";
 import Interval from "src/dataStructures/numeric/Interval";
 import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
-import NumberOperators from "src/operators/numeric/NumberOperators";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 import { instantiateWithSameType, typeOf, instantiate } from "src/tools/utils/code/ClassUtils";
 
@@ -228,9 +225,6 @@ List.prototype.getImproved = function() {
  * @return {Boolean} true if all elements are identical.
  * tags:
  */
-<<<<<<< HEAD
-List.prototype.sameElements = function(list) {//TODO: replace name by: isEquivalent
-=======
 List.prototype.isEquivalent = function(list) {
   if(this.length != list.length) return false;
 
@@ -1302,194 +1296,6 @@ List.prototype.concat = function() {
 };
 
 
-<<<<<<< HEAD
-List.prototype.getReport = function(level) { //TODO:complete
-  var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
-  var text = level > 0 ? (ident + "////report of instance of List////") : "///////////report of instance of List//////////";
-
-  var length = this.length;
-  var i;
-
-  text += ident + "name: " + this.name;
-  text += ident + "type: " + this.type;
-
-  if(length == 0) {
-    text += ident + "single element: [" + this[0] + "]";
-    return text;
-  } else {
-    text += ident + "length: " + length;
-    text += ident + "first element: [" + this[0] + "]";
-  }
-
-  switch(this.type) {
-    case "NumberList":
-      var min = this.getMin();
-      var max = this.getMax();
-      this.min = min;
-      this.max = max;
-      var average = this.getAverage();//(min + max) * 0.5;
-      this.average = average;
-      text += ident + "min: " + min;
-      text += ident + "max: " + max;
-      text += ident + "average: " + average;
-      if(length < 101) {
-        text += ident + "numbers: " + this.join(", ");
-      }
-      break;
-      case "StringList":
-    case "List":
-      var freqTable = this.getFrequenciesTable(true);
-      this._freqTable = freqTable;
-      text += ident + "number of different elements: " + freqTable[0].length;
-      if(freqTable[0].length < 10) {
-        text += ident + "elements frequency:";
-      } else {
-        text += ident + "some elements frequency:";
-      }
-
-      for(i = 0; freqTable[0][i] != null && i < 10; i++) {
-        text += ident + "  [" + String(freqTable[0][i]) + "]: " + freqTable[1][i];
-      }
-
-      var joined;
-      if(this.type == "List") {
-        joined = this.join("], [");
-      } else {
-        joined = this.toStringList().join("], [");
-      }
-
-      if(joined.length < 2000) text += ident + "strings: [" + joined + "]";
-      break;
-
-  }
-
-  ///add ideas to: analyze, visualize
-
-
-  return text;
-};
-
-
-List.prototype.getReportHtml = function(level) { //TODO:complete
-  var ident = "<br>" + (level > 0 ? StringOperators.repeatString("&nbsp", level) : "");
-  var text =  level > 0 ? "" : "<b><font style=\"font-size:18px\">list report</f></b>";
-
-  var length = this.length;
-  var i;
-
-  if(this.name){
-    text += ident + "name: <b>" + this.name + "</b>";
-  } else {
-    text += ident + "<i>no name</i>";
-  }
-  text += ident + "type: <b>" + this.type + "</b>";
-
-  if(length === 0) {
-    text += ident + "single element: [<b>" + this[0] + "</b>]";
-    return text;
-  } else {
-    text += ident + "length: <b>" + length + "</b>";
-    text += ident + "first element: [<b>" + this[0] + "</b>]";
-  }
-
-  switch(this.type) {
-    case "NumberList":
-      var min = 9999999;
-      var max = -9999999;
-      var average = 0;
-      var shorten = new NumberList();
-      var index = 0;
-      var accumsum = 0;
-      var maxAccumsum = -99999;
-      var sizeAccum = Math.max(Math.floor(this.length/50), 1);
-      var val;
-
-      //this.forEach(function(val){
-      for(i=0; i<length; i++){
-        val = this[i];
-        min = Math.min(min, val);
-        max = Math.max(max, val);
-        average += val;
-        accumsum += val;
-        index++;
-        if(index==sizeAccum){
-          accumsum /= index;
-          maxAccumsum = Math.max(maxAccumsum, accumsum);
-          shorten.push(accumsum);
-          accumsum=0;
-          index=0;
-        }
-      }
-      if(index!==0){
-          accumsum /=index;
-          maxAccumsum = Math.max(maxAccumsum, accumsum);
-          shorten.push(accumsum);
-      }
-
-      shorten = shorten.factor(1/maxAccumsum);
-
-      average /= this.length;
-
-      this.min = min;
-      this.max = max;
-      this.average = average;
-      text += ident + "min: <b>" + min + "</b>";
-      text += ident + "max: <b>" + max + "</b>";
-      text += ident + "average: <b>" + average + "</b>";
-      if(length < 101) {
-        text += ident + "numbers: <b>" + this.join("</b>, <b>") + "</b>";
-      }
-      //var shorten = NumberListOperators.shorten(this, 70);
-      //shorten = shorten.getNormalizedToMax();
-      var nShorten = shorten.length;
-      text += ident;
-      for(i=0; i<nShorten; i++){
-        text += "<font style=\"font-size:7px\"><font color=\""+ColorOperators.colorStringToHEX(ColorScales.grayToOrange(shorten[i]))+"\">█</f></f>";
-      }
-      break;
-    case "StringList":
-    case "List":
-      var freqTable = this.getFrequenciesTable(true);
-      this._freqTable = freqTable;
-      var catColors = ColorListGenerators.createCategoricalColors(2, freqTable[0].length);
-
-      text += ident + "entropy: <b>" + NumberOperators.numberToString(ListOperators.getListEntropy(this, null, freqTable), 4) + "</b>";
-
-      text += ident + "number of different elements: <b>" + freqTable[0].length + "</b>";
-      if(freqTable[0].length < 10) {
-        text += ident + "elements frequency:";
-      } else {
-        text += ident + "some elements frequency:";
-      }
-
-      for(i = 0; freqTable[0][i] != null && i < 10; i++) {
-        text += ident + "  [<b>" + String(freqTable[0][i]) + "</b>]: <font style=\"font-size:10px\"><b><font color=\""+ColorOperators.colorStringToHEX(catColors[i])+"\">" + freqTable[1][i] + "</f></b></f>";
-      }
-
-      var joined;
-      if(this.type == "List") {
-        joined = this.join("], [");
-      } else {
-        joined = this.toStringList().join("], [");
-      }
-
-      if(joined.length < 2000) text += ident + "contents: [" + joined + "]";
-
-      var weights = freqTable[1].getNormalizedToSum();
-
-      var bars = StringOperators.createsCategoricalColorsBlocksHtml(weights, 55, catColors);
-      text += ident;
-      text += "<font style=\"font-size:7px\">"+bars+"</f>";
-
-      break;
-  }
-
-
-  ///add ideas to: analyze, visualize
-  return text;
-};
-
-
 
 ////transformations
 
@@ -1568,7 +1374,7 @@ List.prototype.assignNames = function(names) {
   for(i=0; i<l; i++){
     this[i].name = names[i % n];
   }
-  
+
   return this;
 };
 

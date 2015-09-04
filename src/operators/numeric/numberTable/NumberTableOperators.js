@@ -6,8 +6,6 @@ import NumberTable from "src/dataStructures/numeric/NumberTable";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 import ListOperators from "src/operators/lists/ListOperators";
 import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
-import List from "src/dataStructures/lists/List";
-import Table from "src/dataStructures/lists/Table";
 import { instantiateWithSameType } from "src/tools/utils/code/ClassUtils";
 
 /**
@@ -102,7 +100,7 @@ NumberTableOperators.normalizeListsToSum = function(numbertable) {
  *
  * @param  {Number} intensity weight for neighbors in average (0<=intensity<=0.5)
  * @param  {Number} nIterations number of ieterations
- * @return {List} numberList of indexes, or list of numberTables 
+ * @return {List} numberList of indexes, or list of numberTables
  * tags:statistics
  */
 NumberTableOperators.averageSmootherOnLists = function(numberTable, intensity, nIterations) {
@@ -135,7 +133,7 @@ NumberTableOperators.kMeans = function(numberTable, k, returnIndexesMode, N){
 
   returnIndexesMode = returnIndexesMode==null?0:returnIndexesMode;
   N = (N==null || !(N>0))?1000:N;
-  
+
   var clusters = new NumberTable();// = returnIndexesMode?new NumberList():new NumberTable();
 
   var i, j, l;
@@ -178,7 +176,7 @@ NumberTableOperators.kMeans = function(numberTable, k, returnIndexesMode, N){
     //console.log('initial mean', means[j].join(', '));
   }
 
-  
+
 
   for(n = 0; n < N; n++) {
     //iterations
@@ -216,7 +214,7 @@ NumberTableOperators.kMeans = function(numberTable, k, returnIndexesMode, N){
       meanRowsIndexes = clusters[j];
       nRowsMean = meanRowsIndexes.length;
       means[j] = new NumberList();
-      
+
       newMean = means[j];
 
       row = rows[meanRowsIndexes[0]];
@@ -245,7 +243,7 @@ NumberTableOperators.kMeans = function(numberTable, k, returnIndexesMode, N){
   var meanNumber;
   var cluster;
   var sizeCluster;
- 
+
 
   if(returnIndexesMode==1 || returnIndexesMode==5){
     meanNumber = new NumberList();
@@ -466,7 +464,7 @@ NumberTableOperators.product = function(numberTable0, numberTable1){
   var m = numberTable0[0].length;
 
   if(n === 0 || m === 0 || n!=numberTable1[0].length || m!=numberTable1.length) return;
-  
+
 
   var newTable = new NumberTable();
   var i, j, k;

@@ -1,7 +1,6 @@
 import Rectangle from "src/dataStructures/geometry/Rectangle";
 import NumberList from "src/dataStructures/numeric/NumberList";
 import NumberTable from "src/dataStructures/numeric/NumberTable";
-import Rectangle from "src/dataStructures/geometry/Rectangle";
 import ListGenerators from "src/operators/lists/ListGenerators";
 
 /**
