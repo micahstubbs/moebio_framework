@@ -212,39 +212,6 @@ NumberList.prototype.getInterval = function() {
 };
 
 
-/**
- * simplifies a categorical list, by keeping the nCategories-1 most common values, and replacing the others with an "other" element
- * this method reduces the number of different values contained in the list, converting it into a categorical list
- * @param  {Number} method simplification method:<b>0:significant digits<br>1:quantiles (value will be min value in percentile)<br>2:orders of magnitude
- *
- * @param  {Number} param different meaning according to choosen method:<br>0:number of significant digits<br>1:number of quantiles<br>2:no need of param
- * @return {NumberList} simplified list
- * tags:
- */
-NumberList.prototype.getNumbersSimplified = function(method, param) {
-  method = method||0;
-  param = param||0;
-
-  var newList = new NumberList();
-  newList.name = this.name;
-
-
-  switch(method){
-    case 0:
-      var power = Math.pow(10, param);
-      this.forEach(function(val){
-        newList.push(Math.floor(val/power)*power);
-      });
-      break;
-    case 1:
-      //deploy quantiles first (optional return of n percentile, min value, interval, numberTable with indexes, numberTable with values)
-      break;
-  }
-
-  return newList;
-};
-
-
 /////////statistics
 
 /**
@@ -416,7 +383,6 @@ NumberList.prototype.getSortIndexes = function(descending) {
 };
 
 /**
-<<<<<<< HEAD
  * Returns a new NumberList with the values of
  * the original list multiplied by the input value
  *
@@ -542,24 +508,6 @@ NumberList.prototype.divide = function(object) {
       break;
   }
 
-  newNumberList.name = this.name;
-  return newNumberList;
-};
-
-/**
- * Returns a new NumberList with the values of
- * the original list multiplied by the input value
- *
- * @param {Number} value The value to multiply each
- * value in the list by.
- * @return {NumberList} New NumberList with values multiplied.
- */
-NumberList.prototype.factor = function(value) {
-  var i;
-  var newNumberList = new NumberList();
-  for(i = 0; i < this.length; i++) {
-    newNumberList.push(this[i] * value);
-  }
   newNumberList.name = this.name;
   return newNumberList;
 };
