@@ -343,7 +343,7 @@ GeometryOperators.delauney = function(polygon) { /// ---> move to Polygon operat
 
 
 /**
- * @todo write docs
+ * @ignore
  */
 function Triangle(a, b, c) {
   this.a = a;

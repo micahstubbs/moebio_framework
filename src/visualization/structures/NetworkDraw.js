@@ -8,7 +8,7 @@ import Polygon from "src/dataStructures/geometry/Polygon";
  * @classdesc Functions for drawing {@link Network|Networks}.
  *
  * @namespace
- * @category networks
+ * @category drawing
  */
 function NetworkDraw() {}
 export default NetworkDraw;

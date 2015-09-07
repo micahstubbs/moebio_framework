@@ -3,6 +3,7 @@ import NumberTable from "src/dataStructures/numeric/NumberTable";
 import Table from "src/dataStructures/lists/Table";
 import NumberList from "src/dataStructures/numeric/NumberList";
 import StringList from "src/dataStructures/strings/StringList";
+import NodeList from "src/dataStructures/structures/lists/NodeList";
 import { typeOf, instantiate, instantiateWithSameType } from "src/tools/utils/code/ClassUtils";
 
 /**
@@ -112,6 +113,29 @@ ListOperators.getFirstElements = function(list, fromIndex) {
     description: "tenth value",
     value: list[fromIndex + 9]
   }];
+};
+
+
+/**
+* check if two lists contain same elements
+* @param {List} list0 first list
+* @param {List} list1 second list
+* @return {Boolean}
+* tags:
+*/
+ListOperators.containSameElements = function(list0, list1) {
+  if(list0==null || list1==null) return null;
+
+  var l = list0.length;
+  var i;
+
+  if(l!=list1.length) return;
+
+  for(i=0; i<l; i++){
+    if(list0[i]!=list1[i]) return false;
+  }
+
+  return true;
 };
 
 
@@ -316,10 +340,15 @@ ListOperators.translateWithDictionaryObject = function(list, dictionaryObject, n
 
   var newList = new List();
   var i;
+  var nElements = list.length;
 
-  list.forEach(function(element, i) {
-    newList[i] = dictionaryObject[element];
-  });
+  for(i=0; i<nElements; i++){
+    newList[i] = dictionaryObject[list[i]];
+  }
+  // list.forEach(function(element, i) {
+  //   newList[i] = dictionaryObject[element];
+  // });
+  
   if(nullElement!=null){
     var l = list.length;
     for(i=0; i<l; i++){

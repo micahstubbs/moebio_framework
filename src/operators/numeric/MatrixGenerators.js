@@ -4,7 +4,7 @@ import Matrix from "src/dataStructures/numeric/Matrix";
  * @classdesc Create default Matrix instances.
  *
  * @namespace
- * @category basics
+ * @category numbers
  */
 function MatrixGenerators() {}
 export default MatrixGenerators;

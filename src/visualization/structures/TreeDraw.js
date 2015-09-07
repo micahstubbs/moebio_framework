@@ -13,7 +13,7 @@ import NumberListOperators from "src/operators/numeric/numberList/NumberListOper
  * @classdesc Functions for drawing {@link Tree|Trees}.
  *
  * @namespace
- * @category networks
+ * @category drawing
  */
 function TreeDraw() {}
 export default TreeDraw;
@@ -125,7 +125,7 @@ TreeDraw.drawTreemap = function(frame, tree, colorList, weights, textColor, exte
     TreeDraw._generateRectangles(tree.nodeList[0]);
 
     frame.memory.focusFrame = TreeDraw._expandRect(tree.nodeList[0]._outRectangle);
-    //c.l('>>>>>>>>>>>>>>>>>>>>>>>> frame.memory.focusFrame', frame.memory.focusFrame);
+    //c.l('frame.memory.focusFrame', frame.memory.focusFrame);
 
     frame.memory.kx = frame.width / frame.memory.focusFrame.width;
     frame.memory.mx = -frame.memory.kx * frame.memory.focusFrame.x;

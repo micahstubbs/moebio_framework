@@ -6,7 +6,7 @@ InputTextFieldHTML.prototype.constructor = InputTextFieldHTML;
  *
  * @param configuration configuration Object with parameters (x, y, width, height, text, fontColor, fontSize, fontName, fontStyle, linkFunction, target…)
  * @constructor
- * @category strings
+ * @category drawing
  */
 function InputTextFieldHTML(configuration, graphics) {
   this.id = configuration.id == null ? 0 : configuration.id;

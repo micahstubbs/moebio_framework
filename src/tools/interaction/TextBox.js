@@ -12,7 +12,7 @@ TextBox.prototype.constructor = TextBox;
  * @description create new TextBox.
  * @param configuration configuration Object with parameters (x, y, width, text, fontColor, fontSize, fontName, fontStyle, warnFunction, target…)
  * @constructor
- * @category strings
+ * @category drawing
  */
 function TextBox(configuration, graphics) {
 
@@ -26,8 +26,8 @@ function TextBox(configuration, graphics) {
   this.text = configuration.text == null ? '' : configuration.text;
 
   this.fontColor = configuration.fontColor == null ? 'black' : configuration.fontColor;
-  this.fontSize = configuration.fontSize == null ? '14' : configuration.fontSize;  
-  this.fontName = configuration.fontName == null ? 'arial' : configuration.fontName;  
+  this.fontSize = configuration.fontSize == null ? '14' : configuration.fontSize;
+  this.fontName = configuration.fontName == null ? 'arial' : configuration.fontName;
 
   this.warnFunction = configuration.warnFunction;
   this.target = configuration.target;
@@ -81,13 +81,13 @@ TextBox.prototype.setText = function(text) {
     var index0;
     var index0b;
     var index1;
-    
+
     this.links = new StringList();
     this.linksType = new StringList();
     indexesPairs = new List();
     var lengthBefore;
 
-    var link;    
+    var link;
     var extra;
     var rest;
 
@@ -201,7 +201,7 @@ TextBox.prototype.draw = function(scale) {
     this.graphics.context.fillStyle = this.backgroundColor;
     this.graphics.context.fillRect(this.x - this.boxMargin, this.y - this.boxMargin, this.width + 2 * this.boxMargin, this.height + 2 * this.boxMargin);
   }
-  
+
   this.graphics.setText(this.fontColor, this.fontSize * scale, this.fontName, null, null, this.fontStyle);
   DrawTexts.fillTextRectangleWithTextLines(this.lines, this.x, this.y, 0, this.lineHeight * scale);
 
@@ -251,7 +251,7 @@ TextBox.prototype.mouseUp = function(e) {
         window.open(link);
       } else {
         window.open(link, "_self");
-      }      
+      }
     } else {
       this.warnFunction.call(this.target, link);
     }

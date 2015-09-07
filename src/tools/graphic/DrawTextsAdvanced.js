@@ -5,7 +5,7 @@ import Point from "src/dataStructures/geometry/Point";
  * @classdesc Draw Texts Advanced
  *
  * @namespace
- * @category strings
+ * @category drawing
  */
 function DrawTextsAdvanced() {}
 export default DrawTextsAdvanced;

@@ -2,6 +2,12 @@ import Polygon3D from "src/dataStructures/geometry/Polygon3D";
 import Point3D from "src/dataStructures/geometry/Point3D";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 
+/**
+ * @classdesc Functions for drawing circles.
+ *
+ * @namespace
+ * @category drawing
+ */
 function CircleDraw() {}
 export default CircleDraw;
 
