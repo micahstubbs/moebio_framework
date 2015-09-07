@@ -1550,3 +1550,11 @@ NetworkOperators.buildNetworkClustersLouvain = function(network) {
   }
   return clusters;
 };
+
+
+/**
+ * @todo write docs
+ */
+NetworkOperators.getReport = function() {
+  return "network contains " + this.nodeList.length + " nodes and " + this.relationList.length + " relations";
+};

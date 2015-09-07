@@ -266,14 +266,6 @@ Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames,
   return newNetwork;
 };
 
-
-/**
- * @todo write docs
- */
-Network.prototype.getReport = function() {
-  return "network contains " + this.nodeList.length + " nodes and " + this.relationList.length + " relations";
-};
-
 /**
  * @todo write docs
  */
