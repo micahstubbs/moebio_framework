@@ -2,6 +2,7 @@ import NumberList from "src/dataStructures/numeric/NumberList";
 import NumberTable from "src/dataStructures/numeric/NumberTable";
 import Table from "src/dataStructures/lists/Table";
 import List from "src/dataStructures/lists/List";
+import Interval from "src/dataStructures/numeric/Interval";
 
 /**
  * @classdesc NumberTable Flow Operators
@@ -59,8 +60,6 @@ NumberTableFlowOperators.getFlowTable = function(numberTable, normalized, includ
 
 
   if(normalized && include0s) {
-    var max;
-
     flowTable = new NumberTable(numberTable.length + 1);
 
     numberTable[0].forEach(function() {
@@ -70,7 +69,7 @@ NumberTableFlowOperators.getFlowTable = function(numberTable, normalized, includ
     numberTable.forEach(function(list, iList) {
       list.forEach(function(val, j) {
         var sum = sums[j];
-        flowTable[iList + 1][j] = val / (sum == 0 ? 0.00001 : sum) + flowTable[iList][j];
+        flowTable[iList + 1][j] = val / (sum === 0 ? 0.00001 : sum) + flowTable[iList][j];
       });
     });
 
@@ -99,7 +98,7 @@ NumberTableFlowOperators.getFlowTable = function(numberTable, normalized, includ
     if(include0s) {
       flowTable[0][i] = 0;
     }
-    if(maxToNormalize == 0) maxToNormalize = 0.00001;
+    if(maxToNormalize === 0) maxToNormalize = 0.00001;
     flowTable[include0Add][i] = (numberList[i] - minToNormalize) / maxToNormalize;
     for(j = 1; j < nElements; j++) {
       numberList = numberTable[j];
@@ -127,6 +126,7 @@ NumberTableFlowOperators.getFlowTableIntervals = function(numberTable, normalize
 
   var maxCols = new NumberList();
 
+  var numberList;
   for(i = 1; i < nElements; i++) {
     numberList = table[i];
     intervalList = new List();
@@ -138,9 +138,9 @@ NumberTableFlowOperators.getFlowTableIntervals = function(numberTable, normalize
 
   }
 
+  var interval;
   if(sorted) {
     var amplitudes;
-    var interval;
     var yy;
     for(j = 0; j < nRows; j++) {
       amplitudes = new NumberList();

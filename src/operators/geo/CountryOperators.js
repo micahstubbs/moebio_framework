@@ -23,7 +23,7 @@ CountryOperators.getSimplifiedNames = function(names) {
   var name;
   for(var i = 0; names[i] != null; i++) {
     name = this.getSimplifiedName(names[i]);
-    if(name != "") simplifiedNames.pushIfUnique(name);
+    if(name !== "") simplifiedNames.pushIfUnique(name);
   }
   return simplifiedNames;
 };

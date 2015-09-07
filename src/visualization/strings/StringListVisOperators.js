@@ -11,15 +11,15 @@ import NumberListOperators from "src/operators/numeric/numberList/NumberListOper
  * @classdesc Operators that contain visualization method algoritms and return a Table with parameters for StringListPrimitive
  *
  * @namespace
- * @category drawing
+ * @category strings
  */
-function StringListDraw() {}
-export default StringListDraw;
+function StringListVisOperators() {}
+export default StringListVisOperators;
 
 /**
  * @todo write docs
  */
-StringListDraw.simpleTagCloud = function(stringList, weights, frame, font, interLineFactor, graphics) {
+StringListVisOperators.simpleTagCloud = function(stringList, weights, frame, font, interLineFactor, graphics) {
   font = font == null ? 'Arial' : font;
   interLineFactor = interLineFactor == null ? 1.2 : interLineFactor;
 
@@ -111,13 +111,13 @@ StringListDraw.simpleTagCloud = function(stringList, weights, frame, font, inter
 /**
  * @todo write docs
  */
-StringListDraw.tagCloudRectangles = function(stringList, weights, frame, mode, margin, graphics) {
+StringListVisOperators.tagCloudRectangles = function(stringList, weights, frame, mode, margin, graphics) {
   mode = mode == null ? 0 : mode;
   margin = margin == null ? 0 : margin;
 
   var normWeights = NumberListOperators.normalizedToMax(weights.sqrt());
 
-  var roundSizes = (mode === 0);
+  var roundSizes = mode === 0;
 
   var rectangles = new List();
   var textSizes = new NumberList();
@@ -159,17 +159,17 @@ StringListDraw.tagCloudRectangles = function(stringList, weights, frame, mode, m
   for(var i = 0; stringList[i] != null; i++) {
     textSizes[i] = roundSizes ? Math.round(normWeights[i] * 12) * dL : normWeights[i] * 12 * dL;
 
-    DrawTexts.setContextTextProperties('black', textSizes[i], graphics.fontName, null, null, 'bold');
+    DrawTexts.setContextTextProperties('black', textSizes[i], graphics.getFontFamily(), null, null, 'bold');
     w = Math.ceil((2 + graphics.context.measureText(stringList[i]).width) / dL) * dL;
     h = textSizes[i];
 
     switch(mode) {
       case 0: //open triangle
-        while(StringListDraw._pointInRectangles(rectanglesPlaced, px, py, w, h, margin)) {
+        while(StringListVisOperators._pointInRectangles(rectanglesPlaced, px, py, w, h, margin)) {
           px += dL;
           py -= dL;
           if(py < frame.y) {
-            py = frame.y; //TODO this used to be p.x - but p is not defined.
+            py = p.x;
             px = frame.x;
           }
         }
@@ -181,7 +181,7 @@ StringListDraw.tagCloudRectangles = function(stringList, weights, frame, mode, m
         } else {
           a = i * 0.1;
           r = 0;
-          while(StringListDraw._pointInRectangles(rectanglesPlaced, px, py, w, h, margin)) {
+          while(StringListVisOperators._pointInRectangles(rectanglesPlaced, px, py, w, h, margin)) {
             r += 1;
             a += r * 0.005;
 
@@ -201,7 +201,7 @@ StringListDraw.tagCloudRectangles = function(stringList, weights, frame, mode, m
           nSteps = 1;
           a = 0;
           pc = center.clone();
-          while(StringListDraw._pointInRectangles(rectanglesPlaced, px, py, w, h, margin)) {
+          while(StringListVisOperators._pointInRectangles(rectanglesPlaced, px, py, w, h, margin)) {
             nStep++;
 
             pc.x += prop * jump * Math.cos(a);
@@ -250,7 +250,7 @@ StringListDraw.tagCloudRectangles = function(stringList, weights, frame, mode, m
 /**
  * @ignore
  */
-StringListDraw._pointInRectangles = function(rectangles, px, py, width, height, margin) {
+StringListVisOperators._pointInRectangles = function(rectangles, px, py, width, height, margin) {
   var rect;
   for(var i = 0; rectangles[i] != null; i++) {
     rect = rectangles[i];

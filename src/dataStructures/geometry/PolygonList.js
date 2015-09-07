@@ -44,7 +44,7 @@ PolygonList.fromArray = function(array) {
  * @todo write docs
  */
 PolygonList.prototype.getFrame = function() {
-  if(this.length == 0) return null;
+  if(this.length === 0) return null;
   var frameP = this[0].getFrame();
   var rectangle = new Rectangle(frameP.x, frameP.y, frameP.getRight(), frameP.getBottom());
   for(var i = 1; this[i] != null; i++) {
@@ -74,7 +74,6 @@ PolygonList.prototype.add = function(object) {
       }
       newPolygonList.name = this.name;
       return newPolygonList;
-      break;
   }
 };
 

@@ -60,7 +60,11 @@ StringListOperators.join = function(stringList, character, prefix, sufix) {
 StringListOperators.filterStringListByString = function(stringList, string, asWord, returnIndexes) {
   var i;
   var newList = returnIndexes ? new NumberList() : new StringList();
-  if(asWord) var regex = new RegExp("\\b" + string + "\\b");
+  var regex;
+
+  if(asWord) {
+    regex = new RegExp("\\b" + string + "\\b");
+  }
 
   for(i = 0; stringList[i] != null; i++) {
     if(asWord) {
@@ -178,7 +182,7 @@ StringListOperators.getWordsOccurrencesMatrix = function(strings, stopWords, inc
 
     if(stressUniqueness) {
       matrix.forEach(function(occurrences, i) {
-        if(i == 0) return;
+        if(i === 0) return;
         occurrences.forEach(function(value, j) {
           occurrences[j] = value / totalList[j];
         });
@@ -192,7 +196,7 @@ StringListOperators.getWordsOccurrencesMatrix = function(strings, stopWords, inc
 
   if(normalize) {
     matrix.forEach(function(occurrences, i) {
-      if(i == 0) return;
+      if(i === 0) return;
       matrix[i] = NumberListOperators.normalizedToSum(matrix[i]);
     });
   }
@@ -227,7 +231,7 @@ StringListOperators.createTextsNetwork = function(texts, stopWords, stressUnique
 
       var weight = NumberListOperators.cosineSimilarity(node.wordsWeights, node1.wordsWeights);
 
-      if(i == 0 && j == 1) {
+      if(i === 0 && j == 1) {
         console.log(node.wordsWeights.length, node1.wordsWeights.length, weight);
         console.log(node.wordsWeights.type, node.wordsWeights);
         console.log(node1.wordsWeights.type, node1.wordsWeights);
@@ -258,7 +262,7 @@ StringListOperators.createTextsNetwork = function(texts, stopWords, stressUnique
  * tags:generator
  */
 StringListOperators.createShortTextsNetwork = function(texts, stopWords, relationThreshold, mode, applyIntensity, wordsFrequencyTable) {
-  if(texts == null ||  texts.length == null || texts.length == 0) return;
+  if(texts == null ||  texts.length == null || texts.length === 0) return;
 
   var _time = new Date().getTime();
 
@@ -268,7 +272,6 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
   var n_texts = texts.length;
   var i, j;
   var word;
-  var w;
   var nWords;
   var n_words;
   var weights;
@@ -300,11 +303,13 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
       weightFunction = function(nOtherTexts) {
         return 1 - Math.pow(2 * Math.pow(nOtherTexts / (n_texts - 1), 0.2) - 1, 2);
       };
+      break;
     default: //originality except isolation
       weightFunction = function(nOtherTexts) {
-        if(nOtherTexts == 0) return 0;
+        if(nOtherTexts === 0) return 0;
         return 1 / nOtherTexts;
       };
+      break;
   }
 
   console.log('A ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);

@@ -76,6 +76,7 @@ TextBox.prototype.setText = function(text) {
   var i;
   var j;
   var blocks = this.text.split('<e');
+  var indexesPairs;
   if(blocks.length > 1) {
     var index0;
     var index0b;
@@ -83,7 +84,7 @@ TextBox.prototype.setText = function(text) {
 
     this.links = new StringList();
     this.linksType = new StringList();
-    var indexesPairs = new List();
+    indexesPairs = new List();
     var lengthBefore;
 
     var link;
@@ -142,15 +143,15 @@ TextBox.prototype.setText = function(text) {
   this.lines = DrawTexts.textWordWrapReturnLines(this.text, this.width, 0, this.lineHeight);
   this.height = this.lines.length * this.lineHeight;
 
-
+  var lengthAccumulated;
+  var line;
   if(this.links != null) {
     var interval;
-    var lengthAccumulated = 0;
+    lengthAccumulated = 0;
     this.pointPairs = [];
     var w0;
     var w1;
     var y;
-    var line;
     for(i = 0; this.links[i] != null; i++) {
       interval = indexesPairs[i];
       lengthAccumulated = 0;

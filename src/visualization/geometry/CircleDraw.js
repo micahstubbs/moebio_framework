@@ -12,14 +12,12 @@ function CircleDraw() {}
 export default CircleDraw;
 
 CircleDraw.circlesCloud = function(weights, frame, margin) {
-  if(weights == null ||  weights.length == 0) return null;
+  if(weights == null ||  weights.length === 0) return null;
 
   margin = margin == null ? 0 : margin;
 
   var normWeights = NumberListOperators.normalizedToMax(weights).sqrt();
   var circlesPlaced = new Polygon3D();
-
-  var dL = 6;
 
   var a = 0;
   var r = 0;
@@ -35,7 +33,7 @@ CircleDraw.circlesCloud = function(weights, frame, margin) {
 
   for(var i = 0; normWeights[i] != null; i++) {
     rCircle = normWeights[i] * 100;
-    if(i == 0) {
+    if(i === 0) {
       px = center.x;
       py = center.y;
       firstR = rCircle;

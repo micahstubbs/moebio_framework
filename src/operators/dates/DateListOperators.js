@@ -40,9 +40,9 @@ DateListOperators.buildTimeTreeFromDates = function(dates) {
   tree.addNodeToTree(superior);
   superior.dates = dates.clone();
 
-  var y, m, d, h, mn, s, ms;
-  var yNode, mNode, dNode, hNode, mnNode, sNode, msNode;
-  var parent;
+  var y, m, d, h, mn;
+  var yNode, mNode, dNode, hNode, mnNode;
+  var nDaysOnMonth;
 
   //var N=0;
 

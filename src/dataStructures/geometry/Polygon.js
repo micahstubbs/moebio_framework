@@ -50,7 +50,7 @@ Polygon.fromArray = function(array) {
 * @todo write docs
 */
 Polygon.prototype.getFrame = function() {
-  if(this.length == 0) return null;
+  if(this.length === 0) return null;
   var rectangle = new Rectangle(this[0].x, this[0].y, this[0].x, this[0].y);
   var p;
   for(var i = 1; this[i] != null; i++) {
@@ -74,7 +74,7 @@ Polygon.prototype.getBarycenter = function(countLastPoint) {
   var i;
   countLastPoint = countLastPoint == null ? true : countLastPoint;
   var cLPN = 1 - Number(countLastPoint);
-  if(this.length == 0) return null;
+  if(this.length === 0) return null;
   var barycenter = new Point(this[0].x, this[0].y);
   for(i = 1; this[i + cLPN] != null; i++) {
     barycenter.x += this[i].x;
@@ -99,7 +99,6 @@ Polygon.prototype.add = function(object) {
       }
       newPolygon.name = this.name;
       return newPolygon;
-      break;
   }
 };
 
@@ -185,10 +184,11 @@ Polygon.prototype.containsPoint = function(point) {
   var i;
   var j;
   var l;
-  for(var c = false, i = -1, l = this.length, j = l - 1; ++i < l; j = i)
-        ((this[i].y <= point.y && point.y < this[j].y) || (this[j].y <= point.y && point.y < this[i].y))
-        && (point.x < (this[j].x - this[i].x) * (point.y - this[i].y) / (this[j].y - this[i].y) + this[i].x)
-        && (c = !c);
+  var c;
+  for(c = false, i = -1, l = this.length, j = l - 1; ++i < l; j = i)
+        ((this[i].y <= point.y && point.y < this[j].y) || (this[j].y <= point.y && point.y < this[i].y)) &&
+        (point.x < (this[j].x - this[i].x) * (point.y - this[i].y) / (this[j].y - this[i].y) + this[i].x) &&
+        (c = !c);
   return c;
 };
 

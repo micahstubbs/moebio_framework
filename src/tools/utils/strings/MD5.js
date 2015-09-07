@@ -73,7 +73,6 @@ MD5.rstr_hmac_md5 = function(key, data)
 MD5.rstr2hex = function(input)
 {
 	var hexcase = 0;
-  try { hexcase; } catch(e) { hexcase=0; }
   var hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
   var output = "";
   var x;
@@ -92,7 +91,6 @@ MD5.rstr2hex = function(input)
 MD5.rstr2b64 = function(input)
 {
 	var b64pad  = "";
-  try { b64pad; } catch(e) { b64pad=''; }
   var tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
   var output = "";
   var len = input.length;
@@ -225,10 +223,11 @@ MD5.str2rstr_utf16be = function(input)
  */
 MD5.rstr2binl = function(input)
 {
+  var i;
   var output = Array(input.length >> 2);
-  for(var i = 0; i < output.length; i++)
+  for(i = 0; i < output.length; i++)
     output[i] = 0;
-  for(var i = 0; i < input.length * 8; i += 8)
+  for(i = 0; i < input.length * 8; i += 8)
     output[i>>5] |= (input.charCodeAt(i / 8) & 0xFF) << (i%32);
   return output;
 };

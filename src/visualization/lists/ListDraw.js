@@ -23,7 +23,7 @@ export default ListDraw;
  * tags:draw
  */
 ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode, selectedInit, graphics) {
-  if(list == null || !list.length > 0) return;
+  if(list == null || list.length < 0) return;
 
   textSize = textSize || 14;
   returnMode = returnMode == null ? 0 : returnMode;

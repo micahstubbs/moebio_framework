@@ -13,9 +13,9 @@ export default DrawTextsAdvanced;
 /**
  * @ignore
  */
-DrawTextsAdvanced.characterOnQuadrilater = function(context, character, p0, p1, p2, p3, fontType) {
+// DrawTextsAdvanced.characterOnQuadrilater = function(context, character, p0, p1, p2, p3, fontType) {
 
-};
+// };
 
 
 /**
@@ -41,31 +41,32 @@ DrawTextsAdvanced.textOnQuadrilater = function(text, p0, p1, p2, p3, fontSize, n
   var w = measure.width;
   var h = fontSize; // 64;//*96/72; //TODO: fix this
 
+  var v0, v1, v2;
   switch(n) {
     case 0:
-      var v0 = new Point(0, 0);
-      var v1 = new Point(w, 0);
-      var v2 = new Point(0.000001, h + 0.000001);
+      v0 = new Point(0, 0);
+      v1 = new Point(w, 0);
+      v2 = new Point(0.000001, h + 0.000001);
       break;
     case 2:
-      var v0 = new Point(0, 0);
-      var v1 = new Point(w * 0.5, 0);
-      var v2 = new Point(0.000001, h * 0.5 + 0.000001);
+      v0 = new Point(0, 0);
+      v1 = new Point(w * 0.5, 0);
+      v2 = new Point(0.000001, h * 0.5 + 0.000001);
       break;
     case 3:
-      var v0 = new Point(w * 0.5, 0);
-      var v1 = new Point(w, 0);
-      var v2 = new Point(w * 0.5 + 0.000001, h * 0.5 + 0.000001);
+      v0 = new Point(w * 0.5, 0);
+      v1 = new Point(w, 0);
+      v2 = new Point(w * 0.5 + 0.000001, h * 0.5 + 0.000001);
       break;
     case 4:
-      var v0 = new Point(w * 0.5, h * 0.5);
-      var v1 = new Point(w, h * 0.5);
-      var v2 = new Point(w * 0.5 + 0.000001, h + 0.000001);
+      v0 = new Point(w * 0.5, h * 0.5);
+      v1 = new Point(w, h * 0.5);
+      v2 = new Point(w * 0.5 + 0.000001, h + 0.000001);
       break;
     case 5:
-      var v0 = new Point(0, h * 0.5);
-      var v1 = new Point(w * 0.5, h * 0.5);
-      var v2 = new Point(0.000001, h + 0.000001);
+      v0 = new Point(0, h * 0.5);
+      v1 = new Point(w * 0.5, h * 0.5);
+      v2 = new Point(0.000001, h + 0.000001);
       break;
   }
 
@@ -207,7 +208,6 @@ DrawTextsAdvanced.getClippedTrianglesData = function(image, xI, yI, wI, hI, grap
  */
 DrawTextsAdvanced.typodeOnQuadrilater = function(text, p0, p1, p2, p3, graphics) { //TODO:fix, finish
   var dX = p1.x - p0.x;
-  var dY = p1.y - p0.y;
   var h0 = p3.y - p0.y;
   var h1 = p2.y - p1.y;
 

@@ -53,8 +53,6 @@ NetworkDraw.drawRadialNetwork = function(frame, network, graphics) {
   var nodeOver;
   var dA = TwoPi / network.nodeList.length;
 
-  var polygon = new Polygon();
-
   graphics.setFill('black');
 
   network.nodeList.forEach(function(node, i) {
@@ -278,21 +276,23 @@ NetworkDraw.drawNetworkMatrix = function(frame, network, colors, relationsColorS
 
   var xx = dX;
   var yy = dY;
+  var ww;
+  var hh;
+  var xNodes = [];
+  var yNodes = [];
+  var wNodes = [];
+  var hNodes = [];
 
   returnHovered = returnHovered && frame.pointIsInside(graphics.mousePoint);
 
-  if(returnHovered) var hoverValues = new Point(-1, -1);
-
+  var hoverValues;
+  if(returnHovered) {
+    hoverValues = new Point(-1, -1);
+  }
 
   if(useWeights) {
     dX = frame.width - dX;
     dY = frame.height - dY;
-    var ww;
-    var hh;
-    var xNodes = [];
-    var yNodes = [];
-    var wNodes = [];
-    var hNodes = [];
   }
 
   for(i = 0; nodeList[i] != null; i++) {
@@ -304,8 +304,8 @@ NetworkDraw.drawNetworkMatrix = function(frame, network, colors, relationsColorS
       graphics.context.fillRect(frame.x, frame.y + yy, w, hh - margin);
 
       if(returnHovered) {
-        if(mouseX > frame.x + xx && mouseX < frame.x + xx + ww) hoverValues.x = i;
-        if(mouseY > frame.y + yy && mouseY < frame.y + yy + hh) hoverValues.y = i;
+        if(graphics.mX > frame.x + xx && graphics.mX < frame.x + xx + ww) hoverValues.x = i;
+        if(graphics.mY > frame.y + yy && graphics.mY < frame.y + yy + hh) hoverValues.y = i;
       }
       xNodes[nodeList[i].id] = xx;
       yNodes[nodeList[i].id] = yy;

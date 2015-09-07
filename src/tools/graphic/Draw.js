@@ -152,7 +152,10 @@ Draw.drawRectangles = function(rectangleList, x, y, colors, margin, bitmapDataLi
   var twoMargin = 2 * margin;
   var i;
   var rect;
-  if(colors != null) var nColors = colors.length;
+  var nColors;
+  if(colors != null) {
+    nColors = colors.length;
+  }
   var adjustedRect = new Rectangle();
   for(i = 0; rectangleList[i] != null; i++) {
     rect = rectangleList[i];

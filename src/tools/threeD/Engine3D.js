@@ -115,9 +115,9 @@ Engine3D.prototype.scale = function(point3D) {
 * @todo write docs
 */
 Engine3D.prototype.sortedIndexesByPointsScale = function(polygon3D) {
-  var pairsArray = new Array();
-
-  for(var i = 0; polygon3D[i] != null; i++) {
+  var pairsArray = [];
+  var i;
+  for(i = 0; polygon3D[i] != null; i++) {
     pairsArray[i] = [polygon3D[i], i];
   }
 
@@ -127,7 +127,7 @@ Engine3D.prototype.sortedIndexesByPointsScale = function(polygon3D) {
 
   var indexes = new NumberList();
 
-  for(var i = 0; polygon3D[i] != null; i++) {
+  for(i = 0; polygon3D[i] != null; i++) {
     indexes[i] = pairsArray[i][1];
   }
 
@@ -138,9 +138,9 @@ Engine3D.prototype.sortedIndexesByPointsScale = function(polygon3D) {
 * @todo write docs
 */
 Engine3D.prototype.sortListByPointsScale = function(list, polygon3D) {
-  var pairsArray = new Array();
-
-  for(var i = 0; list[i] != null; i++) {
+  var pairsArray = [];
+  var i;
+  for(i = 0; list[i] != null; i++) {
     pairsArray[i] = [polygon3D[i], list[i]];
   }
 
@@ -151,7 +151,7 @@ Engine3D.prototype.sortListByPointsScale = function(list, polygon3D) {
   var newList = instantiateWithSameType(list);
   newList.name = list;
 
-  for(var i = 0; list[i] != null; i++) {
+  for(i = 0; list[i] != null; i++) {
     newList[i] = pairsArray[i][1];
   }
 
