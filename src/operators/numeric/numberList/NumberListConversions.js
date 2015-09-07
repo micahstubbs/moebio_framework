@@ -1,7 +1,7 @@
 
-import Polygon from "src/dataStructures/geometry/Polygon";
-import StringList from "src/dataStructures/strings/StringList";
-import Point from "src/dataStructures/geometry/Point";
+import Polygon from "src/dataTypes/geometry/Polygon";
+import StringList from "src/dataTypes/strings/StringList";
+import Point from "src/dataTypes/geometry/Point";
 
 /**
  * @classdesc NumberList Conversions

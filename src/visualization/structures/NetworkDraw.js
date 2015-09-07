@@ -1,8 +1,8 @@
 import { TwoPi } from "src/Global";
-import Rectangle from "src/dataStructures/geometry/Rectangle";
+import Rectangle from "src/dataTypes/geometry/Rectangle";
 import ColorOperators from "src/operators/graphic/ColorOperators";
-import Point from "src/dataStructures/geometry/Point";
-import Polygon from "src/dataStructures/geometry/Polygon";
+import Point from "src/dataTypes/geometry/Point";
+import Polygon from "src/dataTypes/geometry/Polygon";
 
 /**
  * @classdesc Functions for drawing {@link Network|Networks}.

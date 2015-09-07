@@ -1,5 +1,5 @@
 import GeometryOperators from "src/operators/geometry/GeometryOperators";
-import Rectangle from "src/dataStructures/geometry/Rectangle";
+import Rectangle from "src/dataTypes/geometry/Rectangle";
 import { TwoPi } from "src/Global";
 
 

@@ -1,5 +1,5 @@
-import Tree from "src/dataStructures/structures/networks/Tree";
-import Node from "src/dataStructures/structures/elements/Node";
+import Tree from "src/dataTypes/structures/networks/Tree";
+import Node from "src/dataTypes/structures/elements/Node";
 
 /**
  * @classdesc Tools to convert Trees to other data types

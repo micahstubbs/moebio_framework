@@ -1,11 +1,11 @@
-import Rectangle from "src/dataStructures/geometry/Rectangle";
-import Point from "src/dataStructures/geometry/Point";
+import Rectangle from "src/dataTypes/geometry/Rectangle";
+import Point from "src/dataTypes/geometry/Point";
 import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
 import GeometryOperators from "src/operators/geometry/GeometryOperators";
 import ColorScales from "src/operators/graphic/ColorScales";
 import { TwoPi } from "src/Global";
 import DrawTextsAdvanced from "src/tools/graphic/DrawTextsAdvanced";
-import ColorScale from "src/dataStructures/graphic/ColorScale";
+import ColorScale from "src/dataTypes/graphic/ColorScale";
 import ColorListOperators from "src/operators/graphic/ColorListOperators";
 import ColorOperators from "src/operators/graphic/ColorOperators";
 

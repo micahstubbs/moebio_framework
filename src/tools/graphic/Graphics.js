@@ -1,8 +1,8 @@
-import Point from 'src/dataStructures/geometry/Point';
-import Polygon from 'src/dataStructures/geometry/Polygon';
+import Point from 'src/dataTypes/geometry/Point';
+import Polygon from 'src/dataTypes/geometry/Polygon';
 import ColorOperators from "src/operators/graphic/ColorOperators";
 import GeometryOperators from 'src/operators/geometry/GeometryOperators';
-import Rectangle from 'src/dataStructures/geometry/Rectangle';
+import Rectangle from 'src/dataTypes/geometry/Rectangle';
 import { TwoPi, HalfPi } from "src/Global";
 
 /**

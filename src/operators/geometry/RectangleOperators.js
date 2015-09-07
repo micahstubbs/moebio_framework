@@ -1,10 +1,10 @@
-import Interval from "src/dataStructures/numeric/Interval";
-import Rectangle from "src/dataStructures/geometry/Rectangle";
-import List from "src/dataStructures/lists/List";
+import Interval from "src/dataTypes/numeric/Interval";
+import Rectangle from "src/dataTypes/geometry/Rectangle";
+import List from "src/dataTypes/lists/List";
 import ListOperators from "src/operators/lists/ListOperators";
-import RectangleList from "src/dataStructures/geometry/RectangleList";
+import RectangleList from "src/dataTypes/geometry/RectangleList";
 import ListGenerators from "src/operators/lists/ListGenerators";
-import Point from "src/dataStructures/geometry/Point";
+import Point from "src/dataTypes/geometry/Point";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 
 

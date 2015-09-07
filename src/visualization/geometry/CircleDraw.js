@@ -1,5 +1,5 @@
-import Polygon3D from "src/dataStructures/geometry/Polygon3D";
-import Point3D from "src/dataStructures/geometry/Point3D";
+import Polygon3D from "src/dataTypes/geometry/Polygon3D";
+import Point3D from "src/dataTypes/geometry/Point3D";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 
 /**

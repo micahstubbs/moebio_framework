@@ -1,4 +1,4 @@
-import Point from "src/dataStructures/geometry/Point";
+import Point from "src/dataTypes/geometry/Point";
 
 /**
  * @classdesc Provides a set of tools that work with {@link Point|Points}.

@@ -1,5 +1,5 @@
-import NumberList from "src/dataStructures/numeric/NumberList";
-import Interval from "src/dataStructures/numeric/Interval";
+import NumberList from "src/dataTypes/numeric/NumberList";
+import Interval from "src/dataTypes/numeric/Interval";
 import NumberOperators from "src/operators/numeric/NumberOperators";
 
 /**

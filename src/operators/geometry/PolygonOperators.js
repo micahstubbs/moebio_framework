@@ -1,11 +1,11 @@
-import Polygon from "src/dataStructures/geometry/Polygon";
-import NumberList from "src/dataStructures/numeric/NumberList";
-import Tree from "src/dataStructures/structures/networks/Tree";
-import NodeList from "src/dataStructures/structures/lists/NodeList";
-import Node from "src/dataStructures/structures/elements/Node";
-import Point from "src/dataStructures/geometry/Point";
+import Polygon from "src/dataTypes/geometry/Polygon";
+import NumberList from "src/dataTypes/numeric/NumberList";
+import Tree from "src/dataTypes/structures/networks/Tree";
+import NodeList from "src/dataTypes/structures/lists/NodeList";
+import Node from "src/dataTypes/structures/elements/Node";
+import Point from "src/dataTypes/geometry/Point";
 import GeometryOperators from "src/operators/geometry/GeometryOperators";
-import Interval from "src/dataStructures/numeric/Interval";
+import Interval from "src/dataTypes/numeric/Interval";
 import NumberListGenerators from "src/operators/numeric/numberList/NumberListGenerators";
 import { TwoPi } from "src/Global";
 

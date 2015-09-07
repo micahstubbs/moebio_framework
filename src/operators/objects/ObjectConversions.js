@@ -1,13 +1,13 @@
 import { typeOf } from "src/tools/utils/code/ClassUtils";
-import Point from "src/dataStructures/geometry/Point";
+import Point from "src/dataTypes/geometry/Point";
 import DateOperators from "src/operators/dates/DateOperators";
-import Polygon from "src/dataStructures/geometry/Polygon";
+import Polygon from "src/dataTypes/geometry/Polygon";
 import ColorScales from "src/operators/graphic/ColorScales";
 import TableEncodings from "src/operators/lists/TableEncodings";
-import DateList from "src/dataStructures/dates/DateList";
+import DateList from "src/dataTypes/dates/DateList";
 import NetworkConversions from "src/operators/structures/NetworkConversions";
-import List from "src/dataStructures/lists/List";
-import Table from "src/dataStructures/lists/Table";
+import List from "src/dataTypes/lists/List";
+import Table from "src/dataTypes/lists/Table";
 import StringListConversions from "src/operators/strings/StringListConversions";
 import NumberListConversions from "src/operators/numeric/numberList/NumberListConversions";
 

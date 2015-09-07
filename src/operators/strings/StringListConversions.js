@@ -1,6 +1,6 @@
-import DateList from "src/dataStructures/dates/DateList";
+import DateList from "src/dataTypes/dates/DateList";
 import DateOperators from "src/operators/dates/DateOperators";
-import NumberList from "src/dataStructures/numeric/NumberList";
+import NumberList from "src/dataTypes/numeric/NumberList";
 
 /**
  * @classdesc  StringList Conversions

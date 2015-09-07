@@ -1,6 +1,6 @@
-import ColorList from "src/dataStructures/graphic/ColorList";
+import ColorList from "src/dataTypes/graphic/ColorList";
 import ColorOperators from "src/operators/graphic/ColorOperators";
-import Polygon3D from "src/dataStructures/geometry/Polygon3D";
+import Polygon3D from "src/dataTypes/geometry/Polygon3D";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 
 /**

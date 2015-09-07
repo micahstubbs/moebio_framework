@@ -1,14 +1,14 @@
-import StringList from "src/dataStructures/strings/StringList";
-import List from "src/dataStructures/lists/List";
-import Table from "src/dataStructures/lists/Table";
+import StringList from "src/dataTypes/strings/StringList";
+import List from "src/dataTypes/lists/List";
+import Table from "src/dataTypes/lists/Table";
 import { typeOf } from "src/tools/utils/code/ClassUtils";
-import Point from "src/dataStructures/geometry/Point";
-import Point3D from "src/dataStructures/geometry/Point3D";
-import Rectangle from "src/dataStructures/geometry/Rectangle";
-import Interval from "src/dataStructures/numeric/Interval";
-import DateInterval from "src/dataStructures/dates/DateInterval";
+import Point from "src/dataTypes/geometry/Point";
+import Point3D from "src/dataTypes/geometry/Point3D";
+import Rectangle from "src/dataTypes/geometry/Rectangle";
+import Interval from "src/dataTypes/numeric/Interval";
+import DateInterval from "src/dataTypes/dates/DateInterval";
 import DateOperators from "src/operators/dates/DateOperators";
-import NumberList from "src/dataStructures/numeric/NumberList";
+import NumberList from "src/dataTypes/numeric/NumberList";
 import ObjectConversions from "src/operators/objects/ObjectConversions";
 import NumberTableOperators from "src/operators/numeric/NumberTable/NumberTableOperators";
 

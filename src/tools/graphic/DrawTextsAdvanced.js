@@ -1,5 +1,5 @@
 import MatrixGenerators from "src/operators/numeric/MatrixGenerators";
-import Point from "src/dataStructures/geometry/Point";
+import Point from "src/dataTypes/geometry/Point";
 
 /**
  * @classdesc Draw Texts Advanced

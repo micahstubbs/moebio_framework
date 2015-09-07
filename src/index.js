@@ -3,66 +3,66 @@
 // This file re-exports everything that is in the public
 // interface of the framework.
 
-// dataStructures/
-import DataModel from "src/dataStructures/DataModel";
+// dataTypes/
+import DataModel from "src/dataTypes/DataModel";
 export { DataModel };
 
-// dataStructures/lists
-import List from "src/dataStructures/lists/List";
-import Table from "src/dataStructures/lists/Table";
+// dataTypes/lists
+import List from "src/dataTypes/lists/List";
+import Table from "src/dataTypes/lists/Table";
 export { List, Table };
 
-// dataStructures/numeric
-import Axis from "src/dataStructures/numeric/Axis";
-import Axis2D from "src/dataStructures/numeric/Axis2D";
-import Interval from "src/dataStructures/numeric/Interval";
-import Matrix from "src/dataStructures/numeric/Matrix";
-import NumberList from "src/dataStructures/numeric/NumberList";
-import NumberTable from "src/dataStructures/numeric/NumberTable";
+// dataTypes/numeric
+import Axis from "src/dataTypes/numeric/Axis";
+import Axis2D from "src/dataTypes/numeric/Axis2D";
+import Interval from "src/dataTypes/numeric/Interval";
+import Matrix from "src/dataTypes/numeric/Matrix";
+import NumberList from "src/dataTypes/numeric/NumberList";
+import NumberTable from "src/dataTypes/numeric/NumberTable";
 export { Axis, Axis2D, Interval, Matrix, NumberList, NumberTable };
 
-// dataStructures/dates
-import DateAxis from "src/dataStructures/dates/DateAxis";
-import DateInterval from "src/dataStructures/dates/DateInterval";
-import DateList from "src/dataStructures/dates/DateList";
+// dataTypes/dates
+import DateAxis from "src/dataTypes/dates/DateAxis";
+import DateInterval from "src/dataTypes/dates/DateInterval";
+import DateList from "src/dataTypes/dates/DateList";
 export { DateAxis, DateInterval, DateList };
 
-// dataStructures/geo
-import Country from "src/dataStructures/geo/Country";
-import CountryList from "src/dataStructures/geo/CountryList";
+// dataTypes/geo
+import Country from "src/dataTypes/geo/Country";
+import CountryList from "src/dataTypes/geo/CountryList";
 export { Country, CountryList };
 
-// dataStructures/geometry
-import Point from "src/dataStructures/geometry/Point";
-import Point3D from "src/dataStructures/geometry/Point3D";
-import Polygon from "src/dataStructures/geometry/Polygon";
-import Polygon3D from "src/dataStructures/geometry/Polygon3D";
-import Polygon3DList from "src/dataStructures/geometry/Polygon3DList";
-import PolygonList from "src/dataStructures/geometry/PolygonList";
-import Rectangle from "src/dataStructures/geometry/Rectangle";
-import RectangleList from "src/dataStructures/geometry/RectangleList";
+// dataTypes/geometry
+import Point from "src/dataTypes/geometry/Point";
+import Point3D from "src/dataTypes/geometry/Point3D";
+import Polygon from "src/dataTypes/geometry/Polygon";
+import Polygon3D from "src/dataTypes/geometry/Polygon3D";
+import Polygon3DList from "src/dataTypes/geometry/Polygon3DList";
+import PolygonList from "src/dataTypes/geometry/PolygonList";
+import Rectangle from "src/dataTypes/geometry/Rectangle";
+import RectangleList from "src/dataTypes/geometry/RectangleList";
 export { Point, Point3D, Polygon, Polygon3D, Polygon3DList, PolygonList, Rectangle, RectangleList };
 
-// dataStructures/graphic
-import ColorList from "src/dataStructures/graphic/ColorList";
-import ColorScale from "src/dataStructures/graphic/ColorScale";
+// dataTypes/graphic
+import ColorList from "src/dataTypes/graphic/ColorList";
+import ColorScale from "src/dataTypes/graphic/ColorScale";
 export { ColorList, ColorScale };
 
-// dataStructures/spaces
-import Space2D from "src/dataStructures/spaces/Space2D";
+// dataTypes/spaces
+import Space2D from "src/dataTypes/spaces/Space2D";
 export { Space2D };
 
-// dataStructures/Strings
-import StringList from "src/dataStructures/strings/StringList";
+// dataTypes/Strings
+import StringList from "src/dataTypes/strings/StringList";
 export { StringList };
 
-// dataStructures/structures
-import Node from "src/dataStructures/structures/elements/Node";
-import Relation from "src/dataStructures/structures/elements/Relation";
-import NodeList from "src/dataStructures/structures/lists/NodeList";
-import RelationList from "src/dataStructures/structures/lists/RelationList";
-import Network from "src/dataStructures/structures/networks/Network";
-import Tree from "src/dataStructures/structures/networks/Tree";
+// dataTypes/structures
+import Node from "src/dataTypes/structures/elements/Node";
+import Relation from "src/dataTypes/structures/elements/Relation";
+import NodeList from "src/dataTypes/structures/lists/NodeList";
+import RelationList from "src/dataTypes/structures/lists/RelationList";
+import Network from "src/dataTypes/structures/networks/Network";
+import Tree from "src/dataTypes/structures/networks/Tree";
 export { Node, Relation, NodeList, RelationList, Network, Tree };
 
 // operators/dates

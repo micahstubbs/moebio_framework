@@ -1,4 +1,4 @@
-import List from "src/dataStructures/lists/List";
+import List from "src/dataTypes/lists/List";
 
 /**
  * @classdesc Provides a set of tools that work with Interval Lists.

@@ -1,5 +1,5 @@
 import ListGenerators from "src/operators/lists/ListGenerators";
-import Table from "src/dataStructures/lists/Table";
+import Table from "src/dataTypes/lists/Table";
 
 /**
  * @classdesc Table Generators

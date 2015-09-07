@@ -1,4 +1,4 @@
-import List from "src/dataStructures/lists/List";
+import List from "src/dataTypes/lists/List";
 
 /**
  * @classdesc Functions for drawing {@link List|Lists}.

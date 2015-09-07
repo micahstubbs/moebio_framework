@@ -1,6 +1,6 @@
-import Tree from "src/dataStructures/structures/networks/Tree";
-import Node from "src/dataStructures/structures/elements/Node";
-import DateList from "src/dataStructures/dates/DateList";
+import Tree from "src/dataTypes/structures/networks/Tree";
+import Node from "src/dataTypes/structures/elements/Node";
+import DateList from "src/dataTypes/dates/DateList";
 import DateOperators from "src/operators/dates/DateOperators";
 
 /**

@@ -1,4 +1,4 @@
-import Rectangle from "src/dataStructures/geometry/Rectangle";
+import Rectangle from "src/dataTypes/geometry/Rectangle";
 import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
 import { TwoPi } from "src/Global";
 

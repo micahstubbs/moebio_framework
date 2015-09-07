@@ -1,8 +1,8 @@
-import Point from "src/dataStructures/geometry/Point";
-import Point3D from "src/dataStructures/geometry/Point3D";
+import Point from "src/dataTypes/geometry/Point";
+import Point3D from "src/dataTypes/geometry/Point3D";
 import PointOperators from "src/operators/geometry/PointOperators";
-import Polygon3D from "src/dataStructures/geometry/Polygon3D";
-import NumberList from "src/dataStructures/numeric/NumberList";
+import Polygon3D from "src/dataTypes/geometry/Polygon3D";
+import NumberList from "src/dataTypes/numeric/NumberList";
 
 /**
  * @classdesc Provides a set of tools that work with Geometric data.

@@ -1,9 +1,9 @@
-import NumberList from "src/dataStructures/numeric/NumberList";
-import StringList from "src/dataStructures/strings/StringList";
-import Table from "src/dataStructures/lists/Table";
-import NumberTable from "src/dataStructures/numeric/NumberTable";
-import List from "src/dataStructures/lists/List";
-import RectangleList from "src/dataStructures/geometry/RectangleList";
+import NumberList from "src/dataTypes/numeric/NumberList";
+import StringList from "src/dataTypes/strings/StringList";
+import Table from "src/dataTypes/lists/Table";
+import NumberTable from "src/dataTypes/numeric/NumberTable";
+import List from "src/dataTypes/lists/List";
+import RectangleList from "src/dataTypes/geometry/RectangleList";
 import { typeOf } from "src/tools/utils/code/ClassUtils";
 
 /**

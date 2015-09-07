@@ -1,4 +1,4 @@
-import PolygonList from "src/dataStructures/geometry/PolygonList";
+import PolygonList from "src/dataTypes/geometry/PolygonList";
 import PolygonOperators from "src/operators/geometry/PolygonOperators";
 
 /**

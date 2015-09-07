@@ -1,4 +1,4 @@
-import Rectangle from "src/dataStructures/geometry/Rectangle";
+import Rectangle from "src/dataTypes/geometry/Rectangle";
 import DrawTexts from "src/tools/graphic/DrawTexts";
 
 /**

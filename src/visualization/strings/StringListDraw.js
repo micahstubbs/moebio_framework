@@ -1,9 +1,9 @@
-import List from "src/dataStructures/lists/List";
-import Table from "src/dataStructures/lists/Table";
-import Point from "src/dataStructures/geometry/Point";
-import NumberList from "src/dataStructures/numeric/NumberList";
-import Polygon from "src/dataStructures/geometry/Polygon";
-import Rectangle from "src/dataStructures/geometry/Rectangle";
+import List from "src/dataTypes/lists/List";
+import Table from "src/dataTypes/lists/Table";
+import Point from "src/dataTypes/geometry/Point";
+import NumberList from "src/dataTypes/numeric/NumberList";
+import Polygon from "src/dataTypes/geometry/Polygon";
+import Rectangle from "src/dataTypes/geometry/Rectangle";
 import DrawTexts from "src/tools/graphic/DrawTexts";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 

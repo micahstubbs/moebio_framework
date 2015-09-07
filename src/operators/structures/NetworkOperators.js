@@ -1,15 +1,15 @@
 import ListOperators from "src/operators/lists/ListOperators";
-import NodeList from "src/dataStructures/structures/lists/NodeList";
-import RelationList from "src/dataStructures/structures/lists/RelationList";
-import List from "src/dataStructures/lists/List";
-import Table from "src/dataStructures/lists/Table";
-import Node from "src/dataStructures/structures/elements/Node";
-import NumberList from "src/dataStructures/numeric/NumberList";
-import Tree from "src/dataStructures/structures/networks/Tree";
-import Relation from "src/dataStructures/structures/elements/Relation";
+import NodeList from "src/dataTypes/structures/lists/NodeList";
+import RelationList from "src/dataTypes/structures/lists/RelationList";
+import List from "src/dataTypes/lists/List";
+import Table from "src/dataTypes/lists/Table";
+import Node from "src/dataTypes/structures/elements/Node";
+import NumberList from "src/dataTypes/numeric/NumberList";
+import Tree from "src/dataTypes/structures/networks/Tree";
+import Relation from "src/dataTypes/structures/elements/Relation";
 import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
 import NetworkEncodings from "src/operators/structures/NetworkEncodings";
-import Network from "src/dataStructures/structures/networks/Network";
+import Network from "src/dataTypes/structures/networks/Network";
 
 /**
  * @classdesc Provides a set of tools that work with Networks.

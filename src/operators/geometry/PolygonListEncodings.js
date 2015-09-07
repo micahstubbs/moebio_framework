@@ -1,7 +1,7 @@
-import PolygonList from "src/dataStructures/geometry/PolygonList";
+import PolygonList from "src/dataTypes/geometry/PolygonList";
 import StringOperators from "src/operators/strings/StringOperators";
-import Polygon from "src/dataStructures/geometry/Polygon";
-import Point from "src/dataStructures/geometry/Point";
+import Polygon from "src/dataTypes/geometry/Polygon";
+import Point from "src/dataTypes/geometry/Point";
 
 /**
  * @classdesc Encode and Decode {@link Polygon} as a String.

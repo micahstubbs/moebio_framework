@@ -1,5 +1,5 @@
-import Rectangle from "src/dataStructures/geometry/Rectangle";
-import StringList from "src/dataStructures/strings/StringList";
+import Rectangle from "src/dataTypes/geometry/Rectangle";
+import StringList from "src/dataTypes/strings/StringList";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 
 function NumberListDraw() {}
