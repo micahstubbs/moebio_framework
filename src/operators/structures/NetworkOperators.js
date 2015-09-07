@@ -7,7 +7,6 @@ import Node from "src/dataStructures/structures/elements/Node";
 import NumberList from "src/dataStructures/numeric/NumberList";
 import Tree from "src/dataStructures/structures/networks/Tree";
 import Relation from "src/dataStructures/structures/elements/Relation";
-import RelationList from "src/dataStructures/structures/lists/RelationList";
 import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
 import NetworkEncodings from "src/operators/structures/NetworkEncodings";
 import Network from "src/dataStructures/structures/networks/Network";
