@@ -3,9 +3,9 @@ function loaded(data) {
   // Understanding Data
   var table = mo.TableEncodings.CSVtoTable(data.result, true);
   console.log(table.getNames());
-  console.log(mo.ListConversions.toReport(table[0]));
+  console.log(mo.ListOperators.getReport(table[0]));
 
-  console.log(mo.TableConversions.toReport(table));
+  console.log(mo.TableOperators.getReport(table));
 
   console.log(table.getTypes());
 

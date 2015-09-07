@@ -267,7 +267,7 @@ NetworkOperators.shortestPaths = function(network, node0, node1, shortPath, span
 
   while(allPaths[0].length<spanningTree.nLevels){
     //console.log('\nallPaths[0].length', allPaths[0].length);
-    
+
     newPaths = new Table();
     nPaths = allPaths.length;
     //allPaths.forEach(function(path){
@@ -1541,7 +1541,7 @@ NetworkOperators._jLouvain = function() {
  */
 NetworkOperators.buildNetworkClustersLouvain = function(network) {
   if(network==null) return network;
-  
+
   var node_data = [];
   for(var i=0; i < network.nodeList.length; i++){
     // force nodes to be stringlike since they get used as properties in result
@@ -1575,4 +1575,12 @@ NetworkOperators.buildNetworkClustersLouvain = function(network) {
     }
   }
   return clusters;
+};
+
+
+/**
+ * @todo write docs
+ */
+NetworkOperators.getReport = function() {
+  return "network contains " + this.nodeList.length + " nodes and " + this.relationList.length + " relations";
 };
