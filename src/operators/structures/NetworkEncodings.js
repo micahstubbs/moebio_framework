@@ -7,7 +7,7 @@ import NodeList from "src/dataStructures/structures/lists/NodeList";
 import ColorOperators from "src/operators/graphic/ColorOperators";
 import DateOperators from "src/operators/dates/DateOperators";
 import Table from "src/dataStructures/lists/Table";
-import ColorListGenerators from "src/operators/graphics/ColorListGenerators";
+import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
 
 /**
  * @classdesc Serializes and deserializes {@link Network|Networks} using into
