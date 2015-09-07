@@ -1,7 +1,7 @@
 import ColorListOperators from "src/operators/graphic/ColorListOperators";
-import Point from "src/dataStructures/geometry/Point";
-import Rectangle from "src/dataStructures/geometry/Rectangle";
-import ColorScale from "src/dataStructures/graphic/ColorScale";
+import Point from "src/dataTypes/geometry/Point";
+import Rectangle from "src/dataTypes/geometry/Rectangle";
+import ColorScale from "src/dataTypes/graphic/ColorScale";
 import ColorOperators from "src/operators/graphic/ColorOperators";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 

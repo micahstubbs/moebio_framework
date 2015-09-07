@@ -1,5 +1,5 @@
 import Loader from "src/tools/loaders/Loader";
-import List from "src/dataStructures/lists/List";
+import List from "src/dataTypes/lists/List";
 import LoadEvent from "src/tools/loaders/LoadEvent";
 
 MultiLoader.prototype = {};

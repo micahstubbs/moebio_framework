@@ -1,5 +1,5 @@
-import Point from "src/dataStructures/geometry/Point";
-import Polygon from "src/dataStructures/geometry/Polygon";
+import Point from "src/dataTypes/geometry/Point";
+import Polygon from "src/dataTypes/geometry/Polygon";
 
 /**
  * @classdesc Functions to create Polygons from a set of points

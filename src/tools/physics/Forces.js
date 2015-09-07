@@ -1,7 +1,7 @@
-import NodeList from "src/dataStructures/structures/lists/NodeList";
-import List from "src/dataStructures/lists/List";
-import NumberList from "src/dataStructures/numeric/NumberList";
-import Point from "src/dataStructures/geometry/Point";
+import NodeList from "src/dataTypes/structures/lists/NodeList";
+import List from "src/dataTypes/lists/List";
+import NumberList from "src/dataTypes/numeric/NumberList";
+import Point from "src/dataTypes/geometry/Point";
 import { TwoPi } from "src/Global";
 
 /**

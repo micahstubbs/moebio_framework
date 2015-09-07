@@ -1,14 +1,14 @@
 import NumberOperators from "src/operators/numeric/NumberOperators";
 import { instantiateWithSameType, typeOf, instantiate } from "src/tools/utils/code/ClassUtils";
-import List from "src/dataStructures/lists/List";
-import Table from "src/dataStructures/lists/Table";
-import NumberList from "src/dataStructures/numeric/NumberList";
-import NumberTable from "src/dataStructures/numeric/NumberTable";
+import List from "src/dataTypes/lists/List";
+import Table from "src/dataTypes/lists/Table";
+import NumberList from "src/dataTypes/numeric/NumberList";
+import NumberTable from "src/dataTypes/numeric/NumberTable";
 import ListOperators from "src/operators/lists/ListOperators";
 import NumberListGenerators from "src/operators/numeric/numberList/NumberListGenerators";
 import ListGenerators from "src/operators/lists/ListGenerators";
 import ColorScales from "src/operators/graphic/ColorScales";
-import Tree from "src/dataStructures/structures/networks/Tree";
+import Tree from "src/dataTypes/structures/networks/Tree";
 
 import StringOperators from "src/operators/strings/StringOperators";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";

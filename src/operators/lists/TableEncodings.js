@@ -1,5 +1,5 @@
-import List from "src/dataStructures/lists/List";
-import Table from "src/dataStructures/lists/Table";
+import List from "src/dataTypes/lists/List";
+import Table from "src/dataTypes/lists/Table";
 import NetworkEncodings from "src/operators/structures/NetworkEncodings";
 import ListGenerators from "src/operators/lists/ListGenerators";
 import ListConversions from "src/operators/lists/ListConversions";

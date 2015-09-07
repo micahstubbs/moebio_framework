@@ -1,4 +1,4 @@
-import Matrix from "src/dataStructures/numeric/Matrix";
+import Matrix from "src/dataTypes/numeric/Matrix";
 
 /**
  * @classdesc Create default Matrix instances.

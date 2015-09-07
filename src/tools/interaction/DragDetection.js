@@ -1,6 +1,6 @@
 /* global clearInterval, setInterval */
 
-import Point from "src/dataStructures/geometry/Point";
+import Point from "src/dataTypes/geometry/Point";
 
 DragDetection.prototype.constructor = DragDetection;
 

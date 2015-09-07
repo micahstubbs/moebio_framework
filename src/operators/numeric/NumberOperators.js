@@ -1,4 +1,4 @@
-import NumberList from "src/dataStructures/numeric/NumberList";
+import NumberList from "src/dataTypes/numeric/NumberList";
 
 /**
  * @classdesc Provides a set of tools that work with Numbers.

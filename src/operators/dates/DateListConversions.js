@@ -1,4 +1,4 @@
-import StringList from "src/dataStructures/strings/StringList";
+import StringList from "src/dataTypes/strings/StringList";
 import DateOperators from "src/operators/dates/DateOperators";
 
 /**

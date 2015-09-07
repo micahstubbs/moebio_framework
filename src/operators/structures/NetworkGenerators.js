@@ -1,11 +1,11 @@
-import Node from "src/dataStructures/structures/elements/Node";
-import Relation from "src/dataStructures/structures/elements/Relation";
-import NodeList from "src/dataStructures/structures/lists/NodeList";
-import Network from "src/dataStructures/structures/networks/Network";
+import Node from "src/dataTypes/structures/elements/Node";
+import Relation from "src/dataTypes/structures/elements/Relation";
+import NodeList from "src/dataTypes/structures/lists/NodeList";
+import Network from "src/dataTypes/structures/networks/Network";
 import StringListOperators from "src/operators/strings/StringListOperators";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 import NumberOperators from "src/operators/numeric/NumberOperators";
-import StringList from "src/dataStructures/strings/StringList";
+import StringList from "src/dataTypes/strings/StringList";
 import NetworkEncodings from "src/operators/structures/NetworkEncodings";
 
 /**

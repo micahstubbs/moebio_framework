@@ -1,13 +1,13 @@
-import StringList from "src/dataStructures/strings/StringList";
-import NumberList from "src/dataStructures/numeric/NumberList";
-import NumberTable from "src/dataStructures/numeric/NumberTable";
+import StringList from "src/dataTypes/strings/StringList";
+import NumberList from "src/dataTypes/numeric/NumberList";
+import NumberTable from "src/dataTypes/numeric/NumberTable";
 import StringOperators from "src/operators/strings/StringOperators";
 import TableOperators from "src/operators/lists/TableOperators";
-import Network from "src/dataStructures/structures/networks/Network";
-import Relation from "src/dataStructures/structures/elements/Relation";
-import Node from "src/dataStructures/structures/elements/Node";
+import Network from "src/dataTypes/structures/networks/Network";
+import Relation from "src/dataTypes/structures/elements/Relation";
+import Node from "src/dataTypes/structures/elements/Node";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
-import Table from "src/dataStructures/lists/Table";
+import Table from "src/dataTypes/lists/Table";
 
 
 /**

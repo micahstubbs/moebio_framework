@@ -1,7 +1,7 @@
-import Polygon from "src/dataStructures/geometry/Polygon";
-import Point from "src/dataStructures/geometry/Point";
-import NumberTable from "src/dataStructures/numeric/NumberTable";
-import NumberList from "src/dataStructures/numeric/NumberList";
+import Polygon from "src/dataTypes/geometry/Polygon";
+import Point from "src/dataTypes/geometry/Point";
+import NumberTable from "src/dataTypes/numeric/NumberTable";
+import NumberList from "src/dataTypes/numeric/NumberList";
 
 /**
  * @classdesc Tools to convert geometric data types.

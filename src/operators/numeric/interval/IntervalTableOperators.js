@@ -1,4 +1,4 @@
-import Table from "src/dataStructures/lists/Table";
+import Table from "src/dataTypes/lists/Table";
 import IntervalListOperators from "src/operators/numeric/interval/IntervalListOperators";
 
 /**

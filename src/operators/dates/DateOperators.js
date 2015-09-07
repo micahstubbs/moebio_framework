@@ -1,4 +1,4 @@
-import DateList from "src/dataStructures/dates/DateList";
+import DateList from "src/dataTypes/dates/DateList";
 
 /**
  * @classdesc Provides a set of tools that work with Dates.

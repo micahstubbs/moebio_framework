@@ -1,16 +1,16 @@
 import { TwoPi, HalfPi } from "src/Global";
-import Rectangle from "src/dataStructures/geometry/Rectangle";
-import Point from "src/dataStructures/geometry/Point";
+import Rectangle from "src/dataTypes/geometry/Rectangle";
+import Point from "src/dataTypes/geometry/Point";
 import IntervalTableOperators from "src/operators/numeric/interval/IntervalTableOperators";
-import NumberList from "src/dataStructures/numeric/NumberList";
+import NumberList from "src/dataTypes/numeric/NumberList";
 import NumberTableFlowOperators from "src/operators/numeric/numberTable/NumberTableFlowOperators";
 import ColorScales from "src/operators/graphic/ColorScales";
 import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
 import IntervalTableDraw from "src/visualization/numeric/IntervalTableDraw";
 import GeometryOperators from "src/operators/geometry/GeometryOperators";
-import NumberTable from "src/dataStructures/numeric/NumberTable";
-import Table from "src/dataStructures/lists/Table";
-import ColorList from "src/dataStructures/graphic/ColorList";
+import NumberTable from "src/dataTypes/numeric/NumberTable";
+import Table from "src/dataTypes/lists/Table";
+import ColorList from "src/dataTypes/graphic/ColorList";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 
 function NumberTableDraw() {}

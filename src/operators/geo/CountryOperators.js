@@ -1,4 +1,4 @@
-import StringList from "src/dataStructures/strings/StringList";
+import StringList from "src/dataTypes/strings/StringList";
 /**
  * @classdesc Provides a set of tools that work with {@link Country|Countries}.
  *

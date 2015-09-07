@@ -1,12 +1,12 @@
-import StringList from "src/dataStructures/strings/StringList";
-import Network from "src/dataStructures/structures/networks/Network";
+import StringList from "src/dataTypes/strings/StringList";
+import Network from "src/dataTypes/structures/networks/Network";
 import StringOperators from "src/operators/strings/StringOperators";
-import Node from "src/dataStructures/structures/elements/Node";
-import Relation from "src/dataStructures/structures/elements/Relation";
-import NodeList from "src/dataStructures/structures/lists/NodeList";
+import Node from "src/dataTypes/structures/elements/Node";
+import Relation from "src/dataTypes/structures/elements/Relation";
+import NodeList from "src/dataTypes/structures/lists/NodeList";
 import ColorOperators from "src/operators/graphic/ColorOperators";
 import DateOperators from "src/operators/dates/DateOperators";
-import Table from "src/dataStructures/lists/Table";
+import Table from "src/dataTypes/lists/Table";
 import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
 
 /**

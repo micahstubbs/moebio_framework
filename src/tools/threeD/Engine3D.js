@@ -1,8 +1,8 @@
-import Point from "src/dataStructures/geometry/Point";
-import Point3D from "src/dataStructures/geometry/Point3D";
-import Polygon from "src/dataStructures/geometry/Polygon";
-import Polygon3D from "src/dataStructures/geometry/Polygon3D";
-import NumberList from "src/dataStructures/numeric/NumberList";
+import Point from "src/dataTypes/geometry/Point";
+import Point3D from "src/dataTypes/geometry/Point3D";
+import Polygon from "src/dataTypes/geometry/Polygon";
+import Polygon3D from "src/dataTypes/geometry/Polygon3D";
+import NumberList from "src/dataTypes/numeric/NumberList";
 import { instantiateWithSameType } from "src/tools/utils/code/ClassUtils";
 
 Engine3D.prototype.constructor = Engine3D;

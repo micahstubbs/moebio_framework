@@ -1,9 +1,9 @@
-import StringList from "src/dataStructures/strings/StringList";
+import StringList from "src/dataTypes/strings/StringList";
 import ListOperators from "src/operators/lists/ListOperators";
-import NumberList from "src/dataStructures/numeric/NumberList";
+import NumberList from "src/dataTypes/numeric/NumberList";
 import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
 import ColorOperators from "src/operators/graphic/ColorOperators";
-import Table from "src/dataStructures/lists/Table";
+import Table from "src/dataTypes/lists/Table";
 
 /**
  * @classdesc  String Operators

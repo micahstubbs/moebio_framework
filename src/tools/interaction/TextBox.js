@@ -1,8 +1,8 @@
 import StringOperators from "src/operators/strings/StringOperators";
 import DrawTexts from "src/tools/graphic/DrawTexts";
-import StringList from "src/dataStructures/strings/StringList";
-import Interval from "src/dataStructures/numeric/Interval";
-import List from "src/dataStructures/lists/List";
+import StringList from "src/dataTypes/strings/StringList";
+import Interval from "src/dataTypes/numeric/Interval";
+import List from "src/dataTypes/lists/List";
 
 TextBox.prototype.constructor = TextBox;
 

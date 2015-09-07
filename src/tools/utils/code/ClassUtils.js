@@ -1,15 +1,15 @@
 import DateOperators from "src/operators/dates/DateOperators";
-import Polygon from "src/dataStructures/geometry/Polygon";
-import Polygon3D from "src/dataStructures/geometry/Polygon3D";
-import List from "src/dataStructures/lists/List";
-import Table from "src/dataStructures/lists/Table";
-import NumberList from "src/dataStructures/numeric/NumberList";
-import StringList from "src/dataStructures/strings/StringList";
-import NumberTable from "src/dataStructures/numeric/NumberTable";
-import RelationList from "src/dataStructures/structures/lists/RelationList";
-import NodeList from "src/dataStructures/structures/lists/NodeList";
-import DateList from "src/dataStructures/dates/DateList";
-import ColorList from "src/dataStructures/graphic/ColorList";
+import Polygon from "src/dataTypes/geometry/Polygon";
+import Polygon3D from "src/dataTypes/geometry/Polygon3D";
+import List from "src/dataTypes/lists/List";
+import Table from "src/dataTypes/lists/Table";
+import NumberList from "src/dataTypes/numeric/NumberList";
+import StringList from "src/dataTypes/strings/StringList";
+import NumberTable from "src/dataTypes/numeric/NumberTable";
+import RelationList from "src/dataTypes/structures/lists/RelationList";
+import NodeList from "src/dataTypes/structures/lists/NodeList";
+import DateList from "src/dataTypes/dates/DateList";
+import ColorList from "src/dataTypes/graphic/ColorList";
 import ColorOperators from "src/operators/graphic/ColorOperators";
 import { dataModelsInfo } from "src/Global";
 

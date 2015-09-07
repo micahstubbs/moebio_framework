@@ -1,5 +1,5 @@
-import NumberList from "src/dataStructures/numeric/NumberList";
-import StringList from "src/dataStructures/strings/StringList";
+import NumberList from "src/dataTypes/numeric/NumberList";
+import StringList from "src/dataTypes/strings/StringList";
 
 /**
  * @classdesc List Operators

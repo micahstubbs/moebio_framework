@@ -1,8 +1,8 @@
-import NumberList from "src/dataStructures/numeric/NumberList";
-import NumberTable from "src/dataStructures/numeric/NumberTable";
-import Table from "src/dataStructures/lists/Table";
-import List from "src/dataStructures/lists/List";
-import Interval from "src/dataStructures/numeric/Interval";
+import NumberList from "src/dataTypes/numeric/NumberList";
+import NumberTable from "src/dataTypes/numeric/NumberTable";
+import Table from "src/dataTypes/lists/Table";
+import List from "src/dataTypes/lists/List";
+import Interval from "src/dataTypes/numeric/Interval";
 
 /**
  * @classdesc NumberTable Flow Operators

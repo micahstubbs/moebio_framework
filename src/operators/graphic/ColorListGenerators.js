@@ -1,9 +1,9 @@
-import ColorList from "src/dataStructures/graphic/ColorList";
+import ColorList from "src/dataTypes/graphic/ColorList";
 import ColorScales from "src/operators/graphic/ColorScales";
 import NumberListGenerators from "src/operators/numeric/numberList/NumberListGenerators";
 import ListOperators from "src/operators/lists/ListOperators";
-import Table from "src/dataStructures/lists/Table";
-import List from "src/dataStructures/lists/List";
+import Table from "src/dataTypes/lists/Table";
+import List from "src/dataTypes/lists/List";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 
 ColorListGenerators._HARDCODED_CATEGORICAL_COLORS = new ColorList(
