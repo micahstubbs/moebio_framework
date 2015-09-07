@@ -72,8 +72,11 @@ NumberTableOperators.normalizeLists = function(numbertable, factor) {
  */
 NumberTableOperators.normalizeListsToMax = function(numbertable, factorValue) {
   var newTable = new NumberTable();
-  for(var i = 0; numbertable[i] != null; i++) {
-    var numberlist = numbertable[i];
+  var numberlist
+  var l = numbertable.length;
+  var i;
+  for(i = 0; i<l; i++) {
+    numberlist = numbertable[i];
     newTable[i] = NumberListOperators.normalizedToMax(numberlist, factorValue);
   }
   newTable.name = numbertable.name;
@@ -86,8 +89,11 @@ NumberTableOperators.normalizeListsToMax = function(numbertable, factorValue) {
  */
 NumberTableOperators.normalizeListsToSum = function(numbertable) {
   var newTable = new NumberTable();
-  for(var i = 0; numbertable[i] != null; i++) {
-    var numberlist = numbertable[i];
+  var numberlist;
+  var l = numbertable.length;
+  var i;
+  for(i = 0; i<l; i++) {
+    numberlist = numbertable[i];
     newTable[i] = NumberListOperators.normalizedToSum(numberlist);
   }
   newTable.name = numbertable.name;
