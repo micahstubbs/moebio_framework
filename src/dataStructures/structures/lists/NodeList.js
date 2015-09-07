@@ -98,7 +98,9 @@ NodeList.fromArray = function(array, forceToNode) {
  *
  */
 NodeList.prototype.removeNodes = function() {
-  for(var i = 0; i < this.length; i++) {
+  var l = this.length;
+  var i;
+  for(i = 0; i < l; i++) {
     this.ids[this[i].id] = null;
     this.removeElement(this[i]);
   }
@@ -201,9 +203,10 @@ NodeList.prototype.getNodeById = function(id) {
 NodeList.prototype.getNodesByIds = function(ids) {
   var newNodelist = new NodeList();
   var node;
-  for(var i = 0; ids[i] != null; i++) {
+  var nIds = ids.length;
+  for(var i = 0; i<nIds; i++) {
     node = this.ids[ids[i]];
-    if(node != null) newNodelist.push(node);
+    if(node != null) newNodelist.addNode(node);
   }
   return newNodelist;
 };
@@ -217,7 +220,8 @@ NodeList.prototype.getNodesByIds = function(ids) {
  */
 NodeList.prototype.getWeights = function() {
   var numberList = new NumberList();
-  for(var i = 0; this[i] != null; i++) {
+  var i;
+  for(i = 0; this[i] != null; i++) {
     numberList[i] = this[i].weight;
   }
   return numberList;
