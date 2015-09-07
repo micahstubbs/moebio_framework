@@ -192,84 +192,6 @@ NumberList.prototype.getProduct = function() {
 };
 
 /**
-<<<<<<< HEAD
- * Returns a NumberList normalized to the sum.
- *
- * @param {Number} factor Optional multiplier to modify the normalized values by.
- * Defaults to 1.
- * @param {Number} sum Optional sum to normalize to.
- * If not provided, sum will be calculated automatically.
- * @return {NumberList} New NumberList of values normalized to the sum.
- * tags:
- */
-NumberList.prototype.getNormalizedToSum = function(factor, sum) {
-  factor = factor == null ? 1 : factor;
-  var newNumberList = new NumberList();
-  newNumberList.name = this.name;
-  if(this.length === 0) return newNumberList;
-  var i;
-  sum = sum == null ? this.getSum() : sum;
-  if(sum === 0) return this.clone();
-
-  for(i = 0; i < this.length; i++) {
-    newNumberList.push(factor * this[i] / sum);
-  }
-  return newNumberList;
-};
-
-/**
- * Returns a NumberList normalized to min-max interval.
- *
- * @param {Number} factor Optional multiplier to modify the normalized values by.
- * Defaults to 1.
- * @return {NumberList}
- * tags:
- */
-NumberList.prototype.getNormalized = function(factor) {
-  factor = factor == null ? 1 : factor;
-
-  if(this.length === 0) return null;
-
-  var i;
-  var interval = this.getMinMaxInterval();
-  var a = interval.getAmplitude();
-  var newNumberList = new NumberList();
-  var l = this.length;
-  for(i = 0; i < l; i++) {
-    newNumberList.push(factor * ((this[i] - interval.x) / a));
-  }
-  newNumberList.name = this.name;
-  return newNumberList;
-};
-
-/**
- * Returns a NumberList normalized to Max.
- *
- * @param {Number} factor Optional multiplier to modify the normalized values by. Defaults to 1.
- * @return {NumberList}
- * tags:
- */
-NumberList.prototype.getNormalizedToMax = function(factor) {
-  factor = factor == null ? 1 : factor;
-  var l = this.length;
-
-  if(l === 0) return null;
-  
-  var max = this.getMax();
-  if(max === 0) {
-    max = this.getMin();
-    if(max === 0) return ListGenerators.createListWithSameElement(this.length, 0);
-  }
-  var newNumberList = new NumberList();
-  
-  for(var i = 0; i<l; i++) {
-    newNumberList.push(factor * (this[i] / max));
-  }
-  newNumberList.name = this.name;
-  return newNumberList;
-};
-
-/**
  * Builds an Interval with min and max value from the NumberList
  *
  * @return {Interval} with starting value as the min of the NumberList
@@ -287,58 +209,6 @@ NumberList.prototype.getInterval = function() {
   }
   var interval = new Interval(min, max);
   return interval;
-};
-
-
-/**
- * simplifies a categorical list, by keeping the nCategories-1 most common values, and replacing the others with an "other" element
- * this method reduces the number of different values contained in the list, converting it into a categorical list
- * @param  {Number} method simplification method:<b>0:significant digits<br>1:quantiles (value will be min value in percentile)<br>2:orders of magnitude
- *
- * @param  {Number} param different meaning according to choosen method:<br>0:number of significant digits<br>1:number of quantiles<br>2:no need of param
- * @return {NumberList} simplified list
- * tags:
- */
-NumberList.prototype.getNumbersSimplified = function(method, param) {
-  method = method||0;
-  param = param||0;
-
-  var newList = new NumberList();
-  newList.name = this.name;
-
-
-  switch(method){
-    case 0:
-      var power = Math.pow(10, param);
-      this.forEach(function(val){
-        newList.push(Math.floor(val/power)*power);
-      });
-      break;
-    case 1:
-      //deploy quantiles first (optional return of n percentile, min value, interval, numberTable with indexes, numberTable with values)
-      break;
-  }
-
-  return newList;
-};
-
-
-/**
- * Builds an {@link Polygon} from the NumberList,
- * using each consecutive pair of values in the numberList as
- * x and y positions.
- *
- * @return {Polygon} Polygon representing the values
- * in the NumberList as x/y coordinates.
- */
-NumberList.prototype.toPolygon = function() {
-  if(this.length === 0) return null;
-  var polygon = new Polygon();
-  var l = this.length-1;
-  for(var i = 0; i<l; i += 2) {
-    polygon.push(new Point(this[i], this[i + 1]));
-  }
-  return polygon;
 };
 
 
@@ -513,7 +383,6 @@ NumberList.prototype.getSortIndexes = function(descending) {
 };
 
 /**
-<<<<<<< HEAD
  * Returns a new NumberList with the values of
  * the original list multiplied by the input value
  *
@@ -643,24 +512,6 @@ NumberList.prototype.divide = function(object) {
   return newNumberList;
 };
 
-/**
- * Returns a new NumberList with the values of
- * the original list multiplied by the input value
- *
- * @param {Number} value The value to multiply each
- * value in the list by.
- * @return {NumberList} New NumberList with values multiplied.
- */
-NumberList.prototype.factor = function(value) {
-  var i;
-  var newNumberList = new NumberList();
-  for(i = 0; i < this.length; i++) {
-    newNumberList.push(this[i] * value);
-  }
-  newNumberList.name = this.name;
-  return newNumberList;
-};
-
 
 /**
  * Returns a new NumberList containing the square root of
@@ -763,28 +614,14 @@ NumberList.prototype.approach = function(destinty, speed) {
  */
 NumberList.prototype.isEquivalent = function(numberList) {
   var l = this.length;
+  if(numberList.length != l) {
+    return false;
+  }
   for(var i = 0; i<l; i++) {
     if(this[i] != numberList[i]) return false;
   }
   return true;
 };
-
-/**
- * Returns a new {@link StringList} with all values converted to strings
- *
- * @return {StringList} New list.
- */
-NumberList.prototype.toStringList = function() {
-  var i;
-  var stringList = new StringList();
-  var l = this.length;
-  for(i = 0; i<l; i++) {
-    stringList[i] = String(this[i]);
-  }
-  stringList.name = this.name;
-  return stringList;
-};
-
 
 //transform
 

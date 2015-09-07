@@ -4,7 +4,6 @@ import NumberList from "src/dataStructures/numeric/NumberList";
 import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
 import ColorOperators from "src/operators/graphic/ColorOperators";
 import Table from "src/dataStructures/lists/Table";
-import ColorOperators from "src/operators/graphic/ColorOperators";
 
 /**
  * @classdesc  String Operators

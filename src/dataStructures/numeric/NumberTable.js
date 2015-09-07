@@ -73,7 +73,6 @@ NumberTable.fromArray = function(array) {
  */
 NumberTable.prototype.getMax = function() {
   if(this.length === 0) return null;
-  console.log(this[0])
 
   var max = this[0].getMax();
   var i;
@@ -234,17 +233,4 @@ NumberTable.prototype.add = function(value) {
 
   newTable.name = this.name;
   return newTable;
-};
-
-
-/**
- * @todo write docs
- */
-NumberTable.prototype.getCovarianceMatrix = function(){//TODO:move to NumberTableOperators and finish it!
-  var newTable = new NumberTable();
-  var i;
-  for(i = 0; this[i] != null; i++) {
-
-  }
-
 };
