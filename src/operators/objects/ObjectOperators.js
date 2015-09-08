@@ -10,7 +10,7 @@ import DateInterval from "src/dataTypes/dates/DateInterval";
 import DateOperators from "src/operators/dates/DateOperators";
 import NumberList from "src/dataTypes/numeric/NumberList";
 import ObjectConversions from "src/operators/objects/ObjectConversions";
-//import NumberTableOperators from "src/operators/numeric/NumberTable/NumberTableOperators";
+import NumberTableOperators from "src/operators/numeric/numberTable/NumberTableOperators";
 
 /**
  * @classdesc  Object Operators
