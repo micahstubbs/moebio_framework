@@ -51,4 +51,17 @@ describe("NumberListOperators", function() {
     expect(kTable[0][2]).toBe(1);
   });
 
+
+  it("should smooth a numberlist", function(){
+    var nl1 = new mo.NumberList(1,1,3,5,5,5,10);
+    var expected = new mo.NumberList(0.9, 1.2000000000000002, 3.0000000000000004, 4.8, 5, 5.5, 8.5);    
+    var smoothed = mo.NumberListOperators.averageSmoother(nl1);    
+    expect(expected.isEquivalent(smoothed)).toBe(true);
+
+    var nl2 = new mo.NumberList(1,1,3,5,5,5,10);
+    var expected2 = new mo.NumberList(0.7908480000000003, 1.5470480000000004, 3.023488960000001, 4.419526096, 5.056700208000001, 5.828072627040001, 5.770294455024001);
+    var smoothed2= mo.NumberListOperators.averageSmoother(nl2, 0.1, 4);    
+    expect(expected2.isEquivalent(smoothed2)).toBe(true);
+  });
+
 });

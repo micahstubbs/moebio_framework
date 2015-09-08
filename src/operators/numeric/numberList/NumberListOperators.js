@@ -346,28 +346,29 @@ NumberListOperators.averageSmoother = function(numberList, intensity, nIteration
   var anti = 1 - 2 * intensity;
   var n = numberList.length - 1;
 
-  var newNumberList = new NumberList();
+  var newNumberList = numberList.clone();
   var i;
 
-  newNumberList.name = numberList.name;
+  var smoothFirst = function(val, i, list){
+    list[i] = anti * val + (i > 0 ? (numberList[i - 1] * intensity) : 0) + (i < n ? (numberList[i + 1] * intensity) : 0);
+  };
+
+  var smooth = function(val, i, list){
+    list[i] = anti * val + (i > 0 ? (list[i - 1] * intensity) : 0) + (i < n ? (list[i + 1] * intensity) : 0);
+  };
 
   for(i = 0; i < nIterations; i++) {
     if(i === 0) {
-      numberList.forEach(function(val, i) {
-        newNumberList[i] = anti * val + (i > 0 ? (numberList[i - 1] * intensity) : 0) + (i < n ? (numberList[i + 1] * intensity) : 0);
-      });
+      newNumberList.forEach(smoothFirst);
     } else {
-      newNumberList.forEach(function(val, i) {
-        newNumberList[i] = anti * val + (i > 0 ? (newNumberList[i - 1] * intensity) : 0) + (i < n ? (newNumberList[i + 1] * intensity) : 0);
-      });
-    }
+      newNumberList.forEach(smooth);
+    }    
   }
 
   newNumberList.name = numberList.name;
 
   return newNumberList;
 };
-
 
 /**
  * accepted comparison operators: "<", "<=", ">", ">=", "==", "!="
