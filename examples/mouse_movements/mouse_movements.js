@@ -38,7 +38,7 @@ window.onload = function() {
           this.sCircle(point.x, point.y, radius + 10);
           this.setCursor('pointer');
         }
-        // if mouse pressed, change color to orange
+        // if mouse pressed, change color to red
         if((this.MOUSE_DOWN || this.MOUSE_PRESSED) && over) {
           this.setFill('red');
           this.fCircle(point.x, point.y, radius);
