@@ -488,14 +488,12 @@ ObjectOperators.multiplication = function() {
  * @return {Object}
  * tags:math
  */
-ObjectOperators.division = function() {
-  //console.log("addition__________________________________arguments:", arguments);
-  var objectType;
+ObjectOperators.division = function() {    
   var result;
   var i;
   if(arguments.length < 2) {
     if(arguments.length == 1 && arguments[0] && arguments[0].isList) {
-      var result = arguments[0][0];
+      result = arguments[0][0];
       for(i = 1; arguments[0][i] != null; i++) {
         result = ObjectOperators.division(result, arguments[0][i]);
       }
