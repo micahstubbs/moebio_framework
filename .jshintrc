@@ -10,7 +10,8 @@
     "it": true,
     "expect": true,
     "console": false,
-    "mo": false
+    "mo": false,
+    "require": true
   },
   "eqeqeq": false,
   "esnext": true,
