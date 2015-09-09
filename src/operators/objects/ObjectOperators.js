@@ -12,7 +12,7 @@ import NumberList from "src/dataTypes/numeric/NumberList";
 import ObjectConversions from "src/operators/objects/ObjectConversions";
 import ListOperators from "src/operators/lists/ListOperators";
 import TableOperators from "src/operators/lists/TableOperators";
-import NumberTableOperators from "src/operators/numeric/NumberTable/NumberTableOperators";
+import NumberTableOperators from "src/operators/numeric/numberTable/NumberTableOperators";
 
 /**
  * @classdesc  Object Operators
@@ -22,7 +22,6 @@ import NumberTableOperators from "src/operators/numeric/NumberTable/NumberTableO
  */
 function ObjectOperators() {}
 export default ObjectOperators;
-
 
 /**
  * identity function
@@ -102,7 +101,7 @@ ObjectOperators.getReportHtml = function(object) {
     case 'List':
       return ListOperators.getReportHtml(object);
   }
-  
+
   var text = "<fs18>report of instance of Object</f>";
 
   text += ObjectOperators.getReportHtml(object);

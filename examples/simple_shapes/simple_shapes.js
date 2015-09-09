@@ -230,23 +230,6 @@ function drawSimpleShapes() {
   });
   g.setBackgroundColor('Azure');
   g.setBackgroundAlpha(1);
-
-  var g2 = new mo.Graphics({
-    container: "#container2",
-    dimensions: {
-      width: 600,
-      height: 300
-    },
-    cycle: function() {
-      drawRects(this, 20, 20);
-      drawCircles(this, 40, 100);
-      drawLines(this, 20, 200);
-      drawText(this, 20, 300);
-    }
-  });
-  g2.setBackgroundColor('AntiqueWhite');
-  g2.setBackgroundAlpha(1);
-
 }
 
 window.onload = function() {
