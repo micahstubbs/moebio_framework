@@ -681,11 +681,35 @@ ListOperators.jaccardDistance = function(list0, list1) {
   return 1 - ListOperators.jaccardIndex(list0, list1);
 };
 
+
+
 /**
- * builds a dictionary that matches an element of a List with all its indexes on the List (indexesDictionary[element] --> numberList of indexes of element on list)
+ * builds a dictionary that matches an element of a List with its index on the List (indexesDictionary[element] --> index)
+ * it assumes there's no repetitions on the list (if that's not tha case the last index of the element will be delivered)
  * @param  {List} list
  * @return {Object}
- * tags:
+ * tags:dictionary
+ */
+ListOperators.getSingleIndexDictionaryForList = function(list){
+  if(list==null) return;
+
+  var i;
+  var l = list.length;
+
+  var dictionary = {};
+  for(i=0; i<l; i++){
+    dictionary[list[i]] = i;
+  }
+
+  return dictionary;
+};
+
+/**
+ * builds a dictionary that matches an element of a List with all its indexes on the List (indexesDictionary[element] --> numberList of indexes of element on list)
+ * if the list has no repeated elements, and a single is required per element, use ListOperators.getSingleIndexDictionaryForList
+ * @param  {List} list
+ * @return {Object}
+ * tags:dictionary
  */
 ListOperators.getIndexesDictionary = function(list){
   var indexesDictionary = {};
