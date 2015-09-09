@@ -72,7 +72,7 @@ NumberTableOperators.normalizeLists = function(numbertable, factor) {
  */
 NumberTableOperators.normalizeListsToMax = function(numbertable, factorValue) {
   var newTable = new NumberTable();
-  var numberlist
+  var numberlist;
   var l = numbertable.length;
   var i;
   for(i = 0; i<l; i++) {
@@ -138,7 +138,7 @@ NumberTableOperators.kMeans = function(numberTable, k, returnIndexesMode, N){
   if(numberTable == null || numberTable[0]==null || k == null || k <= 0 || numberTable.getLengths().getInterval().getAmplitude()!==0) return null;
 
   returnIndexesMode = returnIndexesMode==null?0:returnIndexesMode;
-  N = (N==null || !(N>0))?1000:N;
+  N = (N==null || (N<=0))?1000:N;
 
   var clusters = new NumberTable();// = returnIndexesMode?new NumberList():new NumberTable();
 

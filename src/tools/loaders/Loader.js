@@ -73,23 +73,23 @@ Loader.loadData = function(url, onLoadData, callee, param, send_object_json, wit
   if(window.XMLHttpRequest && !(window.ActiveXObject)) {
     try {
       req = new XMLHttpRequest();
-    } catch(e) {
+    } catch(e1) {
       req = false;
     }
     // branch for IE/Windows ActiveX version
   } else if(window.ActiveXObject) {
     try {
       req = new window.ActiveXObject("Msxml2.XMLHTTP.6.0");
-    } catch(e) {
+    } catch(e2) {
       try {
         req = new window.ActiveXObject("Msxml2.XMLHTTP.3.0");
-      } catch(e) {
+      } catch(e3) {
         try {
           req = new window.ActiveXObject("Msxml2.XMLHTTP");
-        } catch(e) {
+        } catch(e4) {
           try {
             req = new window.ActiveXObject("Microsoft.XMLHTTP");
-          } catch(e) {
+          } catch(e5) {
             req = false;
           }
         }
