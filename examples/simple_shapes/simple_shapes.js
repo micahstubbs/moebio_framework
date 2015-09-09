@@ -172,7 +172,7 @@ function drawSimpleShapes() {
   function drawText(g, x, y) {
     g.setStroke('orange');
     g.setFill('steelblue');
-    g.setText('black', 30, 'Ariel');
+    g.setText('black', 30, 'Arial');
     var text = 'hello';
 
     g.fText(text, x, y);
@@ -186,30 +186,30 @@ function drawSimpleShapes() {
     // interactive text
 
     x += margin + width;
-    g.setText('black', 30, 'Ariel');
+    g.setText('black', 30, 'Arial');
     on = g.fTextM(text, x, y, 30);
     if(on) {
-      g.setText('red', 30, 'Ariel');
+      g.setText('red', 30, 'Arial');
       g.setFill('red');
       g.fText(text, x, y);
     }
 
     x += margin + width;
-    g.setText('black', 30, 'Ariel');
+    g.setText('black', 30, 'Arial');
     g.setStroke('orange');
     on = g.fsTextM(text, x, y, 30);
     if(on) {
-      g.setText('red', 30, 'Ariel');
+      g.setText('red', 30, 'Arial');
       g.setStroke('black');
       g.fsText(text, x, y);
     }
 
     x += margin + width;
-    g.setText('black', 30, 'Ariel');
+    g.setText('black', 30, 'Arial');
     g.setStroke('orange');
     on = g.fTextRotatedM(text, x, y, (20 * Math.PI / 180), 30);
     if(on) {
-      g.setText('red', 30, 'Ariel');
+      g.setText('red', 30, 'Arial');
       g.fTextRotated(text, x, y, (20 * Math.PI / 180));
     }
   }
