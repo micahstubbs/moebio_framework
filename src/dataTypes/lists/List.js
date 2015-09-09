@@ -545,7 +545,7 @@ List.prototype.getSimplified = function(nCategories, othersElement) {
   var i;
   var l = this.length;
 
-  if(othersElement===null) othersElement = "other";
+  if(othersElement==null) othersElement = "other";
 
   var newList = this.type=="StringList"?new StringList():new List();
   newList.name = this.name;
