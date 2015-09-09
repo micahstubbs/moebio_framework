@@ -285,7 +285,7 @@ NumberList.prototype.getNumbersSimplified = function(method, param) {
       param = param||1;
       newList.name = this.name + " (significant digits)";
       for(i=0; i<l; i++){
-        newList.push( this[i].toPrecision(param) );
+        newList.push( Number(this[i].toPrecision(param)) );
       }
       break;
   }
