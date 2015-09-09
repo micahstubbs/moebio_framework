@@ -33,7 +33,7 @@ import { TwoPi, HalfPi } from "src/Global";
  *                                       if set to zero the cycle function will only run once.
  * @param {Boolean} noLoop if this is true only run the cycle function once,
  * @param {Boolean} noStart if this is true the cycle function will not be automatically started.
- * 
+ *
  * @constructor
  * @category drawing
  */
@@ -133,8 +133,8 @@ Graphics.prototype._initialize = function(autoStart) {
   if(this.container) {
     // If this container is falsy, then the canvas is not attached to the DOM
     // and can be used as an offscreen buffer.
-    this.container.appendChild(this.canvas);  
-  }  
+    this.container.appendChild(this.canvas);
+  }
   this.context = this.canvas.getContext("2d");
 
   this._adjustCanvas(this.dimensions);
@@ -177,9 +177,9 @@ Graphics.prototype._initialize = function(autoStart) {
 
   // Start the draw loop
   if(autoStart) {
-    this._startCycle();  
+    this._startCycle();
   }
-  
+
 };
 
 
@@ -346,11 +346,11 @@ Graphics.prototype._startCycle = function() {
   this.cycleActive = true;
   if(this._cycleInterval === 0) {
     // Call the cycle only once function
-    setTimeout(this._onCycle.bind(this), 10);  
+    setTimeout(this._onCycle.bind(this), 10);
   } else {
     clearInterval(this._setIntervalId);
-    this._setIntervalId = setInterval(this._onCycle.bind(this), this._cycleInterval);  
-  }  
+    this._setIntervalId = setInterval(this._onCycle.bind(this), this._cycleInterval);
+  }
 };
 
 /**
@@ -364,36 +364,36 @@ Graphics.prototype._stopCycle = function(callback) {
 
   if(callback) {
     callback();
-  }  
+  }
 };
 
 /**
  * Run the cycle function for a certain amount of time and then stop it.
- * 
+ *
  * Can be called multiple times to delay the stop time to being time milliseconds
  * after the last call to this function.
  * @param  {Number} time time in milliseconds to run the cycle function before stopping ot.
  */
 Graphics.prototype._cycleFor = function(time) {
   if(this._setIntervalId) {
-    // If there was already a running cycle then just delay the 
+    // If there was already a running cycle then just delay the
     // stop function to stop after time. This effectively debounces
-    // the _startCycle call.    
+    // the _startCycle call.
     clearTimeout(this._setTimeOutId);
     this._stopAfter(time);
   } else {
-    this._startCycle();  
+    this._startCycle();
     this._stopAfter(time);
   }
 };
 
-Graphics.prototype._stopAfter = function(time, callback) {    
+Graphics.prototype._stopAfter = function(time, callback) {
   var self = this;
-  this._setTimeOutId = setTimeout(function(){    
+  this._setTimeOutId = setTimeout(function(){
     self._stopCycle();
     if(callback){
-      callback();  
-    }    
+      callback();
+    }
   }, time);
 };
 
@@ -414,7 +414,7 @@ Graphics.prototype._onCycle = function() {
       this.context.fillStyle =
       'rgb(' + this.backGroundColorRGB[0] +
       ',' + this.backGroundColorRGB[1] +
-      ',' + this.backGroundColorRGB[2] + 
+      ',' + this.backGroundColorRGB[2] +
       ')';
       this.context.fillRect(0, 0, this.cW, this.cH);
     } else {
@@ -527,32 +527,32 @@ Graphics.prototype.stop = function() {
 };
 
 /**
- * Set the cycle function to only run mouse movement and have 
- * it run for a given amount of time after the mouse movement 
- * has ended. If a cycle function is currently running it will 
+ * Set the cycle function to only run mouse movement and have
+ * it run for a given amount of time after the mouse movement
+ * has ended. If a cycle function is currently running it will
  * continue to run until time has elapsed. If you want it to stop
  * immediately @see stop.
  *
- *  
- * @param  {Number} time time in milliseconds after which the cycle function will 
+ *
+ * @param  {Number} time time in milliseconds after which the cycle function will
  *                       continue to run
  */
 Graphics.prototype.cycleOnMouseMovement = function(time) {
-  var self = this;  
+  var self = this;
 
   if(this.cycleOnMouseMovementListener){
     this.canvas.removeEventListener('mousemove', this.cycleOnMouseMovementListener, false);
     this.canvas.removeEventListener('mousewheel', this.cycleOnMouseMovementListener, false);
-    this.canvas.removeEventListener('mousemove', this.cycleOnMouseMovementListener, false); 
+    this.canvas.removeEventListener('mousemove', this.cycleOnMouseMovementListener, false);
   }
 
   this.cycleOnMouseMovementListener = function(){
     self._cycleFor(time);
   };
-    
+
   this.canvas.addEventListener('mousemove', this.cycleOnMouseMovementListener, false);
   this.canvas.addEventListener('mousewheel', this.cycleOnMouseMovementListener, false);
-  this.canvas.addEventListener('mousemove', this.cycleOnMouseMovementListener, false); 
+  this.canvas.addEventListener('mousemove', this.cycleOnMouseMovementListener, false);
 
   self._cycleFor(time);
 };
@@ -1088,7 +1088,7 @@ Graphics.prototype._polygon = function(polygon) {
 
 /**
  * Renders a filled polygon.
- * 
+ *
  * @param  {Polygon} polygon the polygon to render
  */
 Graphics.prototype.fPolygon = function(polygon) {
@@ -1471,11 +1471,11 @@ Graphics.prototype.fitImage = function(image, rectangle) {
 // styles
 
 /**
- * Sets the current fill color for the graphics object. 
+ * Sets the current fill color for the graphics object.
  *
  * Callers can pass in either an rgba() color string, or a set of up to four numbers
  * representing the rgb or rgba color.
- * 
+ *
  * @param {String|Numbers} style
  */
 Graphics.prototype.setFill = function(style) {
@@ -1611,7 +1611,7 @@ Graphics.prototype.restore = function() {
  * @param {Number} x X position to start the text.
  * @param {Number} y Y position to start the text.
  * @example
- * setText('black', 30, 'Ariel');
+ * setText('black', 30, 'Arial');
  * fText("hello", 10, 10);
  *
  */
@@ -1629,7 +1629,7 @@ Graphics.prototype.fText = function(text, x, y) {
  * @param {Number} x X position to start the text.
  * @param {Number} y Y position to start the text.
  * @example
- * setText('black', 30, 'Ariel');
+ * setText('black', 30, 'Arial');
  * setStroke('orange');
  * sText("hello", 10, 10);
  *
@@ -1649,7 +1649,7 @@ Graphics.prototype.sText = function(text, x, y) {
  * @param {Number} x X position to start the text.
  * @param {Number} y Y position to start the text.
  * @example
- * setText('black', 30, 'Ariel');
+ * setText('black', 30, 'Arial');
  * setStroke('orange');
  * fsText("hello", 10, 10);
  *
@@ -1683,7 +1683,7 @@ Graphics.prototype.fTextW = function(text, x, y) {
  * @param {Number} y Y position to start the text.
  * @param {Number} angle The angle in radians to rotate the text
  * @example
- * setText('black', 30, 'Ariel');
+ * setText('black', 30, 'Arial');
  * fTextRotated("hello", 40, 40, (20 * Math.PI / 180));
  *
  */
@@ -1708,7 +1708,7 @@ Graphics.prototype.fTextRotated = function(text, x, y, angle) {
  * @param {Number} yCenter Y position of center of arc.
  * @param {Boolean} centered if false (default) text starts on control point, if true the control point is the center of the text
  * @example
- * setText('black', 30, 'Ariel');
+ * setText('black', 30, 'Arial');
  * fTextArc("Wheels on the Bus Go Round and Round", 500, 300, 200, 200, true);
  *
  */
@@ -1746,10 +1746,10 @@ Graphics.prototype.fTextArc = function(text, x, y, xCenter, yCenter, centered){
  * @return {Boolean} Returns true if the mouse is over the text on the current
  * iteration of the cycle function.
  * @example
- * setText('black', 30, 'Ariel');
+ * setText('black', 30, 'Arial');
  * var on = fTextM("hello", 10, 10, 30);
  * if(on) {
- *   setText('red', 30, 'Ariel');
+ *   setText('red', 30, 'Arial');
  *   fText("hello", 10, 10);
  * }
  *
@@ -1774,11 +1774,11 @@ Graphics.prototype.fTextM = function(text, x, y, size) {
  * @return {Boolean} Returns true if the mouse is over the text on the current
  * iteration of the cycle function.
  * @example
- * setText('black', 30, 'Ariel');
+ * setText('black', 30, 'Arial');
  * setStroke('orange')
  * var on = fsTextM("hello", 10, 10, 30);
  * if(on) {
- *   setText('red', 30, 'Ariel');
+ *   setText('red', 30, 'Arial');
  *   setStroke('black')
  *   fsText("hello", 10, 10);
  * }
@@ -1805,10 +1805,10 @@ Graphics.prototype.fsTextM = function(text, x, y, size) {
  * @return {Boolean} Returns true if the mouse is over the text on the current
  * iteration of the cycle function.
  * @example
- * setText('black', 30, 'Ariel');
+ * setText('black', 30, 'Arial');
  * var on = fTextRotatedM("hello", 10, 10, (20 * Math.PI / 180), 30);
  * if(on) {
- *   setText('red', 30, 'Ariel');
+ *   setText('red', 30, 'Arial');
  *   setStroke('black')
  *   fsText("hello", 10, 10);
  * }
@@ -1835,9 +1835,9 @@ Graphics.prototype.fTextRotatedM = function(text, x, y, angle, size) {
 /**
  * Helper function, returns first param if it is not null or undefined
  * esle returns second param.
- * @param  {Object} value    
- * @param  {Object} fallback 
- * @return {Object} 
+ * @param  {Object} value
+ * @param  {Object} fallback
+ * @return {Object}
  * @ignore
  */
 function ifDef(value, fallback) {
@@ -1850,7 +1850,7 @@ function ifDef(value, fallback) {
 
 /**
  * Sets default values for several text rendering properties.
- * Values that are undefined or null are not changed. Will also 
+ * Values that are undefined or null are not changed. Will also
  * call setText and set the current text properties to that.
  *
  * @see  setText
@@ -2279,5 +2279,3 @@ Graphics.prototype.drawQuadrilater = function(p0, p1, p2, p3, close) {
   this.context.lineTo(p3.x, p3.y);
   if(close) this.context.lineTo(p0.x, p0.y);
 };
-
-
