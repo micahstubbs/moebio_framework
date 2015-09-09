@@ -212,11 +212,11 @@ NumberList.prototype.getInterval = function() {
 };
 
 
-<<<<<<< HEAD:src/dataStructures/numeric/NumberList.js
+
 
 /**
  * simplifies the numberList either by replacing numbers by its order of magnitude, or by quantiles
- * 
+ *
  * @param  {Number} method simplification method:<br>0:significant digits<br>1:number of quantile<br>2:rounded by quantile<br>3:order of magnitude<br>4:rounded by order of magnitude
  * @param  {Number} param different meaning according to choosen method:<br>0:number of significant digits<br>1:number of quantiles<br>2:number of quantiles<br>3:no need of param<br>4:no need of param
  * @return {NumberList} simplified list
@@ -390,7 +390,7 @@ NumberList.prototype.getQuantiles = function(nQuantiles) {//TODO: defines differ
   var entProp = Math.floor(prop);
   var onIndex = prop == entProp;
   var quantiles = new NumberList();
-  
+
   for(var i = 0; i < nQuantiles - 1; i++) {
     quantiles[i] = onIndex ? sorted[(i + 1) * prop] : (0.5 * sorted[(i + 1) * entProp] + 0.5 * sorted[(i + 1) * entProp + 1]);
   }
