@@ -685,7 +685,7 @@ ListOperators.jaccardDistance = function(list0, list1) {
  * builds a dictionary that matches an element of a List with all its indexes on the List (indexesDictionary[element] --> numberList of indexes of element on list)
  * @param  {List} list
  * @return {Object}
- * tags:
+ * tags:dictionary
  */
 ListOperators.getIndexesDictionary = function(list){
   var indexesDictionary = {};
