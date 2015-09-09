@@ -185,6 +185,20 @@ Rectangle.prototype.expand = function(expantion, centerPoint) {
 };
 
 /**
+ * @todo finish factor for Rectangle
+ * @todo write docs
+ */
+// Rectangle.prototype.factor = function(param) {
+//   if(param==null) return null;
+//   var type = typeOf(param);
+//   switch(type){
+//     case 'Point':
+//   }
+//   centerPoint = centerPoint || new Point(this.x + 0.5 * this.width, this.y + 0.5 * this.height);
+//   return new Rectangle((this.x - centerPoint.x) * expantion + centerPoint.x, (this.y - centerPoint.y) * expantion + centerPoint.y, this.width * expantion, this.height * expantion);
+// };
+
+/**
  * @todo write docs
  */
 Rectangle.prototype.isEqual = function(rectangle) {
