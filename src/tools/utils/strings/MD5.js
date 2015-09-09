@@ -79,8 +79,8 @@ MD5.rstr2hex = function(input)
   for(var i = 0; i < input.length; i++)
   {
     x = input.charCodeAt(i);
-    output += hex_tab.charAt((x >>> 4) & 0x0F)
-           +  hex_tab.charAt( x        & 0x0F);
+    output += hex_tab.charAt((x >>> 4) & 0x0F) +
+              hex_tab.charAt( x        & 0x0F);
   }
   return output;
 };

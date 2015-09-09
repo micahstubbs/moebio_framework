@@ -128,7 +128,7 @@ NetworkGenerators.createNetworkFromOccurrencesTable = function(occurrencesTable,
   var norm1;
   for(i = 0; occurrencesTable[i] != null; i++) {
     string0 = occurrencesTable[i].name;
-    if(i == 0) {
+    if(i === 0) {
       node0 = new Node(string0, string0);
       network.addNode(node0);
     } else {

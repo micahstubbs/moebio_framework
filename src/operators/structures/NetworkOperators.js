@@ -217,7 +217,7 @@ NetworkOperators.shortestPaths = function(network, node0, node1, shortPath, span
 
   //console.log('\n\n[•--•] /////////--- build paths ----///////');
 
-  for(var i=0; relationsTable[0][i]!=null; i++){
+  for(i=0; relationsTable[0][i]!=null; i++){
     allPaths.push( new NodeList(node0, relationsTable[0][i].getOther(node0)) );
   }
 
@@ -629,7 +629,7 @@ NetworkOperators.spanningTree = function(network, node0, nodeLimit) { //TODO: th
     newNodes.removeElements(accumulated);
     // console.log('      newNodes.removeElements(accumulated) | newNodes.getIds()', newNodes.getIds().join(','));
     //console.log('newNodes.length (if 0 return tree)', newNodes.length)
-    if(newNodes.length == 0) return tree;
+    if(newNodes.length === 0) return tree;
 
     for(i = 0; newNodes[i] != null; i++) {
       newNode = new Node(newNodes[i].id, newNodes[i].name);
