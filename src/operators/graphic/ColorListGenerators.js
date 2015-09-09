@@ -1,9 +1,10 @@
-import ColorList from "src/dataStructures/graphic/ColorList";
+import ColorList from "src/dataTypes/graphic/ColorList";
 import ColorScales from "src/operators/graphic/ColorScales";
 import NumberListGenerators from "src/operators/numeric/numberList/NumberListGenerators";
 import ListOperators from "src/operators/lists/ListOperators";
-import Table from "src/dataStructures/lists/Table";
-import List from "src/dataStructures/lists/List";
+import Table from "src/dataTypes/lists/Table";
+import List from "src/dataTypes/lists/List";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 
 ColorListGenerators._HARDCODED_CATEGORICAL_COLORS = new ColorList(
   "#dd4411", "#2200bb", "#1f77b4", "#ff660e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#dd8811",
@@ -42,7 +43,7 @@ ColorListGenerators.createDefaultCategoricalColorList = function(nColors, alpha,
 /**
  * create a colorList based on a colorScale and values from a numberList (that will be normalized)
  * @param  {NumberList} numberList
- * 
+ *
  * @param  {ColorScale} colorScale
  * @param  {Number} mode 0:normalize numberList
  * @return {ColorList}
@@ -50,7 +51,7 @@ ColorListGenerators.createDefaultCategoricalColorList = function(nColors, alpha,
  */
 ColorListGenerators.createColorListFromNumberList = function(numberList, colorScale, mode) {
   if(numberList==null) return null;
-  
+
   mode = mode == null ? 0 : mode;
   colorScale = colorScale==null?ColorScales.grayToOrange:colorScale;
 
@@ -60,7 +61,7 @@ ColorListGenerators.createColorListFromNumberList = function(numberList, colorSc
 
   switch(mode) {
     case 0: //0 to max
-      newNumberList = numberList.getNormalizedToMax();
+      newNumberList = NumberListOperators.normalizedToMax(numberList);
       break;
     case 1: //min to max
       break;
@@ -76,6 +77,13 @@ ColorListGenerators.createColorListFromNumberList = function(numberList, colorSc
 };
 
 
+/**
+ * Creates a new ColorList that contains the provided color. Size of the List
+ * is controlled by the nColors input.
+ *
+ * @param {Number} nColors Length of the list.
+ * @param {Color} color Color to fill list with.
+ */
 ColorListGenerators.createColorListWithSingleColor = function(nColors, color) {
   var colorList = new ColorList();
   for(var i = 0; i < nColors; i++) {
@@ -166,6 +174,9 @@ ColorListGenerators.createCategoricalColors = function(mode, nColors, colorScale
   return newColorList;
 };
 
+/**
+ * @ignore
+ */
 ColorListGenerators._sortingVariation = function(numberList, rnd0, rnd1) { //private
   var newNumberList = numberList.clone();
   var pos0 = Math.floor(rnd0 * newNumberList.length);
@@ -175,6 +186,10 @@ ColorListGenerators._sortingVariation = function(numberList, rnd0, rnd1) { //pri
   newNumberList[pos0] = cache;
   return newNumberList;
 };
+
+/**
+ * @ignore
+ */
 ColorListGenerators._evaluationFunction = function(numberList) { //private
   var sum = 0;
   var i;
@@ -198,7 +213,7 @@ ColorListGenerators._evaluationFunction = function(numberList) { //private
  */
 ColorListGenerators.createCategoricalColorListDictionaryObject = function(list, colorList, alpha, color, interpolate, invert){
   if(list==null) return;
-  
+
   var diffValues = list.getWithoutRepetitions();
   var diffColors = ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate, colorList);
   if(invert) diffColors = diffColors.getInverted();
@@ -211,8 +226,7 @@ ColorListGenerators.createCategoricalColorListDictionaryObject = function(list, 
 
   return dictionaryObject;
 
-}
-
+};
 
 /**
  * Creates a ColorList of categorical colors based on an input List. All entries with the same value will get the same color.
@@ -241,15 +255,15 @@ ColorListGenerators.createCategoricalColorListForList = function(list, colorList
     color = "#fff";
   if(!interpolate)
     interpolate = 0;
-  
+
   list = List.fromArray(list);
   var diffValues = list.getWithoutRepetitions();
   var diffColors;
-  if(colorList && interpolate!=0) {
+  if(colorList && interpolate !== 0) {
     diffColors = colorList.getInterpolated(color, interpolate);
   } else {
     diffColors = ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate, colorList);
-    
+
     //diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
   }
   diffColors = diffColors.addAlpha(alpha);

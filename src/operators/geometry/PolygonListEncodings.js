@@ -1,7 +1,7 @@
-import PolygonList from "src/dataStructures/geometry/PolygonList";
+import PolygonList from "src/dataTypes/geometry/PolygonList";
 import StringOperators from "src/operators/strings/StringOperators";
-import Polygon from "src/dataStructures/geometry/Polygon";
-import Point from "src/dataStructures/geometry/Point";
+import Polygon from "src/dataTypes/geometry/Polygon";
+import Point from "src/dataTypes/geometry/Point";
 
 /**
  * @classdesc Encode and Decode {@link Polygon} as a String.
@@ -62,9 +62,9 @@ PolygonListEncodings.PolygonListToString = function(polygonList, separatorCoordi
   var j;
   var t = '';
   for(i = 0; polygonList[i] != null; i++) {
-    t += (i == 0 ? '' : separatorPolygons);
+    t += (i === 0 ? '' : separatorPolygons);
     for(j = 0; polygonList[i][j] != null; j++) {
-      t += (j == 0 ? '' : separatorCoordinates) + polygonList[i][j].x + separatorCoordinates + polygonList[i][j].y;
+      t += (j === 0 ? '' : separatorCoordinates) + polygonList[i][j].x + separatorCoordinates + polygonList[i][j].y;
     }
   }
   return t;

@@ -1,17 +1,17 @@
 import DateOperators from "src/operators/dates/DateOperators";
-import Polygon from "src/dataStructures/geometry/Polygon";
-import Polygon3D from "src/dataStructures/geometry/Polygon3D";
-import List from "src/dataStructures/lists/List";
-import Table from "src/dataStructures/lists/Table";
-import NumberList from "src/dataStructures/numeric/NumberList";
-import StringList from "src/dataStructures/strings/StringList";
-import NumberTable from "src/dataStructures/numeric/NumberTable";
-import RelationList from "src/dataStructures/structures/lists/RelationList";
-import NodeList from "src/dataStructures/structures/lists/NodeList";
-import PolygonList from "src/dataStructures/geometry/PolygonList";
-import DateList from "src/dataStructures/dates/DateList";
-import ColorList from "src/dataStructures/graphic/ColorList";
-
+import Polygon from "src/dataTypes/geometry/Polygon";
+import Polygon3D from "src/dataTypes/geometry/Polygon3D";
+import List from "src/dataTypes/lists/List";
+import Table from "src/dataTypes/lists/Table";
+import NumberList from "src/dataTypes/numeric/NumberList";
+import StringList from "src/dataTypes/strings/StringList";
+import NumberTable from "src/dataTypes/numeric/NumberTable";
+import RelationList from "src/dataTypes/structures/lists/RelationList";
+import NodeList from "src/dataTypes/structures/lists/NodeList";
+import DateList from "src/dataTypes/dates/DateList";
+import ColorList from "src/dataTypes/graphic/ColorList";
+import ColorOperators from "src/operators/graphic/ColorOperators";
+import { dataModelsInfo } from "src/Global";
 
 // Provides a lookup table for instantiate classes.
 // This is used in the instantiate function to simplify the logic
@@ -34,7 +34,7 @@ var typeDict = {
 /*
  * All these function are globally available since they are included in the Global class
  */
-export var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"}
+export var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"};
 export var _shortFromTypeDictionary;
 export var _colorFromTypeDictionary;
 export var _lightColorFromTypeDictionary;
@@ -60,9 +60,6 @@ export function typeOf(object) {
   return 'Object';
 }
 
-// TODO remove?
-function VOID() {}
-
 export function instantiate(className, args) {
   switch(className) {
     case 'number':
@@ -70,7 +67,7 @@ export function instantiate(className, args) {
       // TODO: I don't think this works.
       return window[className](args);
     case 'date':
-      if(!args || args.length == 0) return new Date();
+      if(!args || args.length === 0) return new Date();
       if(args.length == 1) {
         if(args[0].match(/\d*.-\d*.-\d*\D\d*.:\d*.:\d*/)) {
           var dateArray = args[0].split(" ");
@@ -119,7 +116,7 @@ export function instantiate(className, args) {
 export function _createDataModelsInfoDictionaries(){
   var i;
   var type;
-  
+
   _shortFromTypeDictionary = {};
   _colorFromTypeDictionary = {};
   _lightColorFromTypeDictionary = {};
@@ -154,8 +151,8 @@ export function getLightColorFromDataModelType(type){
 export function getTextFromObject(value, type){
   if(value == null) return "Null";
   if(value.isList) {
-    if(value.length == 0) return "[]";
-    var text = value.toString(); // value.length>6?value.slice(0, 5).forEach(function(v){return getTextFromObject(v, typeOf(v))}).join(','):value.toStringList().join(',').forEach(function(v, typeOf(v)){return getTextFromObject(v, type)});
+    if(value.length === 0) return "[]";
+    var text = value.toString(); 
     if(text.length > 160) {
       var i;
       var subtext;
@@ -163,7 +160,7 @@ export function getTextFromObject(value, type){
       for(i = 0; (value[i] != null && i < 6); i++) {
         subtext = getTextFromObject(value[i], typeOf(value[i]));
         if(subtext.length > 40) subtext = subtext.substr(0, 40) + (value[i].isList ? "…]" : "…");
-        text += (i != 0 ? ", " : "") + subtext;
+        text += (i !== 0 ? ", " : "") + subtext;
       }
       if(value.length > 6) text += ",…";
       text += "]";

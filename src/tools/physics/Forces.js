@@ -1,7 +1,7 @@
-import NodeList from "src/dataStructures/structures/lists/NodeList";
-import List from "src/dataStructures/lists/List";
-import NumberList from "src/dataStructures/numeric/NumberList";
-import Point from "src/dataStructures/geometry/Point";
+import NodeList from "src/dataTypes/structures/lists/NodeList";
+import List from "src/dataTypes/lists/List";
+import NumberList from "src/dataTypes/numeric/NumberList";
+import Point from "src/dataTypes/geometry/Point";
 import { TwoPi } from "src/Global";
 
 /**
@@ -56,7 +56,7 @@ Forces.prototype.forcesForNetwork = function(network, initRadius, initCenter, eq
   var angle;
 
   for(i = 0; i < nNodes; i++) {
-    if(initRadius == 0) {
+    if(initRadius === 0) {
       this.addNode(network.nodeList[i], new Point(network.nodeList[i].x, network.nodeList[i].y));
     } else {
       angle = Math.random() * TwoPi;
@@ -96,6 +96,9 @@ Forces.prototype.forcesForNetwork = function(network, initRadius, initCenter, eq
   }
 };
 
+/**
+ * @todo write docs
+ */
 Forces.prototype.addNode = function(node, initPosition, initSpeed) {
   initPosition = initPosition == null ? new Point(Math.random() * 200 - 100, Math.random() * 200 - 100) : initPosition;
   initSpeed = initSpeed == null ? new Point(0, 0) : initSpeed;
@@ -108,6 +111,9 @@ Forces.prototype.addNode = function(node, initPosition, initSpeed) {
   node.ay = 0;
 };
 
+/**
+ * @todo write docs
+ */
 Forces.prototype.addForce = function(node0, node1, type, equilibriumDistance) {
   this.fromNodeList.addNode(node0);
   this.toNodeList.addNode(node1);
@@ -116,6 +122,9 @@ Forces.prototype.addForce = function(node0, node1, type, equilibriumDistance) {
   if(equilibriumDistance != null) this.equilibriumDistances.push(equilibriumDistance);
 };
 
+/**
+ * @todo write docs
+ */
 Forces.prototype.calculate = function() {
   var i;
   var node0, node1;
@@ -165,6 +174,9 @@ Forces.prototype.calculate = function() {
   }
 };
 
+/**
+ * @todo write docs
+ */
 Forces.prototype.attractionToPoint = function(point, strength, limit) {
   strength = strength == null ? 1 : strength;
   var node;
@@ -188,6 +200,9 @@ Forces.prototype.attractionToPoint = function(point, strength, limit) {
 };
 
 
+/**
+ * @todo write docs
+ */
 Forces.prototype.avoidOverlapping = function(delta) {
   delta = delta || 0;
 
@@ -244,6 +259,9 @@ Forces.prototype.avoidOverlapping = function(delta) {
   this._i0++;
 };
 
+/**
+ * @todo write docs
+ */
 Forces.prototype.avoidOverlappingRadial = function(delta, K) {
   delta = delta || 0;
   K = K || 1;
@@ -280,8 +298,9 @@ Forces.prototype.avoidOverlappingRadial = function(delta, K) {
   this._i0++;
 };
 
-
-
+/**
+ * @todo write docs
+ */
 Forces.prototype.applyForces = function() {
   var node;
 
@@ -296,10 +315,16 @@ Forces.prototype.applyForces = function() {
   }
 };
 
+/**
+ * @todo write docs
+ */
 Forces.prototype.deactivateForcesFromNode = function(node) {
   node.vx = node.vy = node.ax = node.ay = 0;
 };
 
+/**
+ * @todo write docs
+ */
 Forces.prototype.destroy = function() {
   delete this.k;
   delete this.dEqSprings;
@@ -323,6 +348,9 @@ Forces.prototype.destroy = function() {
 ///////////////////////////////////////////PRIVATE
 
 
+/**
+ * @ignore
+ */
 Forces.prototype._resetAccelerations = function() {
   var node;
   for(var i = 0; this.nodeList[i] != null; i++) {

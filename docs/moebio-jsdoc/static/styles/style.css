@@ -117,6 +117,11 @@ h3 {
   line-height: 24px;
 }
 
+h3.name {
+  border-top: black 1px solid;
+  margin-top: 10px;
+}
+
 h4 {
   font-size: 15px;
   line-height: 20px;

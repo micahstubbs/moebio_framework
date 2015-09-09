@@ -1,7 +1,12 @@
-import { setText } from "src/tools/graphic/SimpleGraphics";
-import Rectangle from "src/dataStructures/geometry/Rectangle";
+import Rectangle from "src/dataTypes/geometry/Rectangle";
 import DrawTexts from "src/tools/graphic/DrawTexts";
 
+/**
+ * @classdesc Functions for drawing Strings
+ *
+ * @namespace
+ * @category drawing
+ */
 function StringDraw() {}
 export default StringDraw;
 
@@ -16,8 +21,10 @@ export default StringDraw;
  * @return {Object}
  * tags:draw
  */
-StringDraw.drawText = function(frame, object, fontSize, fontStyle, margin) {
-  //var frame = frame;//StringDraw.drawText;
+StringDraw.drawText = function(frame, object, fontSize, fontStyle, margin, graphics) {
+  if(frame==null || object==null) return;
+
+  if(graphics==null) graphics = frame.graphics; //momentary fix
 
   margin = margin || 10;
   fontSize = fontSize || 12;
@@ -27,7 +34,7 @@ StringDraw.drawText = function(frame, object, fontSize, fontStyle, margin) {
 
   var lineHeight = Math.floor(fontSize * 1.2);
 
-  setText('black', fontSize, null, null, null, fontStyle);
+  graphics.setText('black', fontSize, null, null, null, fontStyle);
 
   var significantChange = frame.memory == null || object != frame.memory.object || fontSize != frame.memory.fontSize || fontStyle != frame.memory.fontStyle || margin != frame.memory.margin || frame.width != frame.memory.width || frame.height != frame.memory.height;
 
@@ -41,7 +48,7 @@ StringDraw.drawText = function(frame, object, fontSize, fontStyle, margin) {
 							:
       JSON.stringify(object, null, "\t");
     frame.memory = {
-      textLines: DrawTexts.textWordWrapReturnLines(realString, subframe.width, subframe.height, lineHeight, true),
+      textLines: DrawTexts.textWordWrapReturnLines(realString, subframe.width, subframe.height, lineHeight, true, graphics),
       object: object,
       fontSize: fontSize,
       fontStyle: fontStyle,
@@ -51,5 +58,5 @@ StringDraw.drawText = function(frame, object, fontSize, fontStyle, margin) {
     };
   }
 
-  DrawTexts.fillTextRectangleWithTextLines(frame.memory.textLines, subframe.x, subframe.y, subframe.height, lineHeight);
+  DrawTexts.fillTextRectangleWithTextLines(frame.memory.textLines, subframe.x, subframe.y, subframe.height, lineHeight, null, graphics);
 };

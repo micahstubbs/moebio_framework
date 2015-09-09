@@ -1,15 +1,21 @@
-import StringList from "src/dataStructures/strings/StringList";
-import NumberList from "src/dataStructures/numeric/NumberList";
-import NumberTable from "src/dataStructures/numeric/NumberTable";
+import StringList from "src/dataTypes/strings/StringList";
+import NumberList from "src/dataTypes/numeric/NumberList";
+import NumberTable from "src/dataTypes/numeric/NumberTable";
 import StringOperators from "src/operators/strings/StringOperators";
 import TableOperators from "src/operators/lists/TableOperators";
-import Network from "src/dataStructures/structures/networks/Network";
-import Relation from "src/dataStructures/structures/elements/Relation";
-import Node from "src/dataStructures/structures/elements/Node";
+import Network from "src/dataTypes/structures/networks/Network";
+import Relation from "src/dataTypes/structures/elements/Relation";
+import Node from "src/dataTypes/structures/elements/Node";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
-import Table from "src/dataStructures/lists/Table";
+import Table from "src/dataTypes/lists/Table";
 
 
+/**
+ * @classdesc  StringList Operators
+ *
+ * @namespace
+ * @category strings
+ */
 function StringListOperators() {}
 export default StringListOperators;
 
@@ -54,7 +60,11 @@ StringListOperators.join = function(stringList, character, prefix, sufix) {
 StringListOperators.filterStringListByString = function(stringList, string, asWord, returnIndexes) {
   var i;
   var newList = returnIndexes ? new NumberList() : new StringList();
-  if(asWord) var regex = new RegExp("\\b" + string + "\\b");
+  var regex;
+
+  if(asWord) {
+    regex = new RegExp("\\b" + string + "\\b");
+  }
 
   for(i = 0; stringList[i] != null; i++) {
     if(asWord) {
@@ -70,13 +80,37 @@ StringListOperators.filterStringListByString = function(stringList, string, asWo
   return newList;
 };
 
+/**
+ * replaces in each string, a sub-string by a string
+ *
+ * @param  {StringList} stringList  StringList to work on.
+ * @param  {String} subString sub-string to be replaced in each string
+ * @param  {String} replacement string to be placed instead
+ * @return {StringList}
+ * tags:
+ */
+StringListOperators.replaceSubStringsInStrings = function(stringlist, subString, replacement) {
+  var newStringList = new StringList();
+  newStringList.name = stringlist.name;
+
+  for(var i = 0; stringlist[i] != null; i++) {
+    newStringList[i] = StringOperators.replaceSubString(stringlist[i], subString, replacement);
+  }
+
+  return newStringList;
+};
+
+
 
 // var regex = new RegExp("\\b"+word+"\\b");
 // var match = string.match(regex);
 // return match==null?0:match.length;
 
-/**
+/*
  * a classic function, but now it works with patterns!
+ */
+/**
+ * @todo finish docs
  */
 StringListOperators.countStringsOccurrencesOnTexts = function(strings, texts) {
   var occurrencesTable = new NumberTable();
@@ -148,7 +182,7 @@ StringListOperators.getWordsOccurrencesMatrix = function(strings, stopWords, inc
 
     if(stressUniqueness) {
       matrix.forEach(function(occurrences, i) {
-        if(i == 0) return;
+        if(i === 0) return;
         occurrences.forEach(function(value, j) {
           occurrences[j] = value / totalList[j];
         });
@@ -162,8 +196,8 @@ StringListOperators.getWordsOccurrencesMatrix = function(strings, stopWords, inc
 
   if(normalize) {
     matrix.forEach(function(occurrences, i) {
-      if(i == 0) return;
-      matrix[i] = matrix[i].getNormalizedToSum();
+      if(i === 0) return;
+      matrix[i] = NumberListOperators.normalizedToSum(matrix[i]);
     });
   }
 
@@ -174,6 +208,9 @@ StringListOperators.getWordsOccurrencesMatrix = function(strings, stopWords, inc
 };
 
 //good approach for few large texts, to be tested
+/**
+ * @todo finish docs
+ */
 StringListOperators.createTextsNetwork = function(texts, stopWords, stressUniqueness, relationThreshold) {
   var i, j;
   var network = new Network();
@@ -194,7 +231,7 @@ StringListOperators.createTextsNetwork = function(texts, stopWords, stressUnique
 
       var weight = NumberListOperators.cosineSimilarity(node.wordsWeights, node1.wordsWeights);
 
-      if(i == 0 && j == 1) {
+      if(i === 0 && j == 1) {
         console.log(node.wordsWeights.length, node1.wordsWeights.length, weight);
         console.log(node.wordsWeights.type, node.wordsWeights);
         console.log(node1.wordsWeights.type, node1.wordsWeights);
@@ -225,7 +262,7 @@ StringListOperators.createTextsNetwork = function(texts, stopWords, stressUnique
  * tags:generator
  */
 StringListOperators.createShortTextsNetwork = function(texts, stopWords, relationThreshold, mode, applyIntensity, wordsFrequencyTable) {
-  if(texts == null ||  texts.length == null || texts.length == 0) return;
+  if(texts == null ||  texts.length == null || texts.length === 0) return;
 
   var _time = new Date().getTime();
 
@@ -235,7 +272,6 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
   var n_texts = texts.length;
   var i, j;
   var word;
-  var w;
   var nWords;
   var n_words;
   var weights;
@@ -267,11 +303,13 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
       weightFunction = function(nOtherTexts) {
         return 1 - Math.pow(2 * Math.pow(nOtherTexts / (n_texts - 1), 0.2) - 1, 2);
       };
+      break;
     default: //originality except isolation
       weightFunction = function(nOtherTexts) {
-        if(nOtherTexts == 0) return 0;
+        if(nOtherTexts === 0) return 0;
         return 1 / nOtherTexts;
       };
+      break;
   }
 
   console.log('A ===> StringListOperators.createShortTextsNetwork took:', new Date().getTime() - _time);

@@ -1,11 +1,24 @@
-import List from "src/dataStructures/lists/List";
-import NumberTable from "src/dataStructures/numeric/NumberTable";
-import Table from "src/dataStructures/lists/Table";
-import NumberList from "src/dataStructures/numeric/NumberList";
-import TableOperators from "src/operators/lists/TableOperators";
-import StringList from "src/dataStructures/strings/StringList";
+import List from "src/dataTypes/lists/List";
+import ListConversions from "src/operators/lists/ListConversions";
+import NumberTable from "src/dataTypes/numeric/NumberTable";
+import Table from "src/dataTypes/lists/Table";
+import NumberList from "src/dataTypes/numeric/NumberList";
+import StringList from "src/dataTypes/strings/StringList";
+import NodeList from "src/dataTypes/structures/lists/NodeList";
+import StringOperators from "src/operators/strings/StringOperators";
+import ColorOperators from "src/operators/graphic/ColorOperators";
+import ColorScales from "src/operators/graphic/ColorScales";
+import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
+import NumberOperators from "src/operators/numeric/NumberOperators";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 import { typeOf, instantiate, instantiateWithSameType } from "src/tools/utils/code/ClassUtils";
 
+/**
+ * @classdesc List Operators
+ *
+ * @namespace
+ * @category basics
+ */
 function ListOperators() {}
 export default ListOperators;
 
@@ -111,6 +124,29 @@ ListOperators.getFirstElements = function(list, fromIndex) {
 
 
 /**
+* check if two lists contain same elements
+* @param {List} list0 first list
+* @param {List} list1 second list
+* @return {Boolean}
+* tags:
+*/
+ListOperators.containSameElements = function(list0, list1) {
+  if(list0==null || list1==null) return null;
+
+  var l = list0.length;
+  var i;
+
+  if(l!=list1.length) return;
+
+  for(i=0; i<l; i++){
+    if(list0[i]!=list1[i]) return false;
+  }
+
+  return true;
+};
+
+
+/**
  * first position of element in list (-1 if element doesn't belong to the list)
  * @param  {List} list
  * @param  {Object} element
@@ -133,7 +169,7 @@ ListOperators.indexOf = function(list, element) {
  * tags:
  */
 ListOperators.concat = function() {
-  if(arguments == null || arguments.length == 0 ||  arguments[0] == null) return null;
+  if(arguments == null || arguments.length === 0 ||  arguments[0] == null) return null;
   if(arguments.length == 1) return arguments[0];
 
   var i;
@@ -243,6 +279,9 @@ ListOperators.reverse = function(list) {
   return list.getReversed();
 };
 
+/**
+ * @todo write docs
+ */
 ListOperators.getBooleanDictionaryForList = function(list){
   if(list==null) return;
 
@@ -252,7 +291,7 @@ ListOperators.getBooleanDictionaryForList = function(list){
   });
 
   return dictionary;
-}
+};
 
 /**
  * builds a dictionar object (relational array) for a dictionar (table with two lists)
@@ -270,7 +309,7 @@ ListOperators.buildDictionaryObjectForDictionary = function(dictionary){
   });
 
   return dictionaryObject;
-}
+};
 
 
 /**
@@ -287,36 +326,18 @@ ListOperators.translateWithDictionary = function(list, dictionary, nullElement) 
 
   var dictionaryObject = ListOperators.buildDictionaryObjectForDictionary(dictionary);
 
-  var list = ListOperators.translateWithDictionaryObject(list, dictionaryObject, nullElement);
+  var newList = ListOperators.translateWithDictionaryObject(list, dictionaryObject, nullElement);
 
-  list.dictionaryObject = dictionaryObject;
-  
-  return list;
+  newList.dictionaryObject = dictionaryObject;
 
-  // var newList = new List();
-  // list.forEach(function(element, i) {
-
-  //   var index = dictionary[0].indexOf(element);
-  //   if(nullElement != null) {
-  //     newList[i] = index == -1 ? nullElement : dictionary[1][index];
-  //   } else {
-  //     newList[i] = index == -1 ? list[i] : dictionary[1][index];
-  //   }
-  // });
-
-  // newList.name = dictionary[1].name;
-
-  // newList = newList.getImproved();
-  // newList.dictionaryObject = dictionaryObject;
-  
-  // return newList;
+  return newList;
 };
 
 /**
  * creates a new list that is a translation of a list using a dictionar object (a relation array)
  * @param  {List} list
  * @param  {Object} dictionaryObject
- * 
+ *
  * @param  {Object} nullElement
  * @return {List}
  * tags:
@@ -326,10 +347,15 @@ ListOperators.translateWithDictionaryObject = function(list, dictionaryObject, n
 
   var newList = new List();
   var i;
+  var nElements = list.length;
 
-  list.forEach(function(element, i) {
-    newList[i] = dictionaryObject[element];
-  });
+  for(i=0; i<nElements; i++){
+    newList[i] = dictionaryObject[list[i]];
+  }
+  // list.forEach(function(element, i) {
+  //   newList[i] = dictionaryObject[element];
+  // });
+
   if(nullElement!=null){
     var l = list.length;
     for(i=0; i<l; i++){
@@ -338,7 +364,7 @@ ListOperators.translateWithDictionaryObject = function(list, dictionaryObject, n
   }
   newList.name = list.name;
   return newList.getImproved();
-}
+};
 
 
 // ListOperators.getIndexesOfElements=function(list, elements){
@@ -361,10 +387,12 @@ ListOperators.translateWithDictionaryObject = function(list, dictionaryObject, n
 // }
 
 
+/**
+ * @todo write docs
+ */
 ListOperators.sortListByNumberList = function(list, numberList, descending) {
   if(descending == null) descending = true;
-  if(numberList.length == 0) return list;
-  var newNumberList;
+  if(numberList.length === 0) return list;
 
   var pairs = [];
   var newList = instantiate(typeOf(list));
@@ -395,6 +423,9 @@ ListOperators.sortListByNumberList = function(list, numberList, descending) {
 };
 
 
+/**
+ * @todo write docs
+ */
 ListOperators.sortListByIndexes = function(list, indexedArray) {
   var newList = instantiate(typeOf(list));
   newList.name = list.name;
@@ -407,13 +438,16 @@ ListOperators.sortListByIndexes = function(list, indexedArray) {
 };
 
 
-ListOperators.concatWithoutRepetitions = function() { //?
+/**
+ * @todo write docs
+ */
+ListOperators.concatWithoutRepetitions = function() {
   var i;
   var newList = arguments[0].clone();
   for(i = 1; i < arguments.length; i++) {
     var addList = arguments[i];
     var nElements = addList.length;
-    for(var i = 0; i < nElements; i++) {
+    for(i = 0; i < nElements; i++) { // TODO Is the redefing of i intentional?
       if(newList.indexOf(addList[i]) == -1) newList.push(addList[i]);
     }
   }
@@ -434,8 +468,6 @@ ListOperators.slidingWindowOnList = function(list, subListsLength, step, finaliz
   var table = new Table();
   var newList;
   var nElements = list.length;
-  var nList;
-  var nRow;
   var i;
   var j;
 
@@ -476,6 +508,9 @@ ListOperators.slidingWindowOnList = function(list, subListsLength, step, finaliz
   return table.getImproved();
 };
 
+/**
+ * @todo write docs
+ */
 ListOperators.getNewListForObjectType = function(object) {
   var newList = new List();
   newList[0] = object;
@@ -558,20 +593,20 @@ ListOperators.getCommonElements = function(list0, list1) {
 ListOperators.unionLists = function(x, y) {
   // Borrowed from here: http://stackoverflow.com/questions/3629817/getting-a-union-of-two-arrays-in-javascript
   var result;
-  if(x.type != x.type || (x.type != "StringList" && x.type != "NumberList"))
-  {
+  if(x.type != x.type || (x.type != "StringList" && x.type != "NumberList")) {
     // To-do: call generic method here (not yet implemented)
     //console.log( "ListOperators.unionLists for type '" + x.type + "' or '" + y.type + "' not yet implemented" );
     return x.concat(y).getWithoutRepetitions();
-    return null;
   }
-  else
-  {
+  else {
     var obj = {};
-    for(var i = x.length - 1; i >= 0; --i)
+    var i;
+    for(i = x.length - 1; i >= 0; --i){
       obj[x[i]] = x[i];
-    for(var i = y.length - 1; i >= 0; --i)
+    }
+    for(i = y.length - 1; i >= 0; --i){
       obj[y[i]] = y[i];
+    }
     result = x.type == "StringList" ? new StringList() : new NumberList();
     for(var k in obj) {
       if(obj.hasOwnProperty(k)) // <-- optional
@@ -608,7 +643,6 @@ ListOperators.intersection = function(list0, list1) {
     return intersection;
   }
 
-  var element;
   var dictionary = {};
   var dictionaryIntersected = {};
   intersection = new List();
@@ -634,7 +668,7 @@ ListOperators.intersection = function(list0, list1) {
  */
 ListOperators.jaccardIndex = function(list0, list1) {//TODO: see if this can be more efficient, maybe one idctionar for doing union and interstection at the same time
   return ListOperators.intersection(list0, list1).length/ListOperators.unionLists(list0, list1).length;
-}
+};
 
 /**
  * calculates Jaccard distance 1 - |list0 ∩ list1|/|list0 ∪ list1| see: https://en.wikipedia.org/wiki/Jaccard_index
@@ -645,7 +679,7 @@ ListOperators.jaccardIndex = function(list0, list1) {//TODO: see if this can be 
  */
 ListOperators.jaccardDistance = function(list0, list1) {
   return 1 - ListOperators.jaccardIndex(list0, list1);
-}
+};
 
 /**
  * builds a dictionary that matches an element of a List with all its indexes on the List (indexesDictionary[element] --> numberList of indexes of element on list)
@@ -655,7 +689,6 @@ ListOperators.jaccardDistance = function(list0, list1) {
  */
 ListOperators.getIndexesDictionary = function(list){
   var indexesDictionary = {};
-  var i;
 
   list.forEach(function(element, i){
     if(indexesDictionary[element]==null) indexesDictionary[element]=new NumberList();
@@ -663,31 +696,33 @@ ListOperators.getIndexesDictionary = function(list){
   });
 
   return indexesDictionary;
-}
+};
 
+/**
+ * @todo write docs
+ */
 ListOperators.getIndexesTable = function(list){
   var indexesTable = new Table();
   indexesTable[0] = new List();
   indexesTable[1] = new NumberTable();
   var indexesDictionary = {};
   var indexOnTable;
-  var i;
 
   list.forEach(function(element, i){
-    indexOnTable = indexesDictionary[element]
+    indexOnTable = indexesDictionary[element];
     if(indexOnTable==null){
       indexesTable[0].push(element);
       indexesTable[1].push(new NumberList(i));
       indexesDictionary[element]=indexesTable[0].length-1;
     } else {
-      indexesTable[1][indexOnTable].push(i)
+      indexesTable[1][indexOnTable].push(i);
     }
   });
 
   indexesTable[0] = indexesTable[0].getImproved();
 
   return indexesTable;
-}
+};
 
 /**
  * aggregates values of a list using an aggregator list as reference
@@ -709,17 +744,19 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
 
   table[0] = indexesTable[0];
 
-  if(mode==0 && aggregatorList==toAggregateList){
+  if(mode===0 && aggregatorList==toAggregateList){
     table[1] = indexesTable[0];
     return table;
   }
 
   mode = mode==null?0:mode;
 
+  var list;
+  var elementsTable;
+
   switch(mode){
     case 0://first element
       table[1] = new List();
-      var list;
       indexesTable[1].forEach(function(indexes){
         table[1].push(toAggregateList[indexes[0]]);
       });
@@ -780,10 +817,9 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
       return table;
     case 7://enlist
       table[1] = new Table();
-      var list;
       indexesTable[1].forEach(function(indexes){
         list = new List();
-        table[1].push(list)
+        table[1].push(list);
         indexes.forEach(function(index){
           list.push(toAggregateList[index]);
         });
@@ -792,7 +828,6 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
       return table.getImproved();
     case 8://last element
       table[1] = new List();
-      var list;
       indexesTable[1].forEach(function(indexes){
         table[1].push(toAggregateList[indexes[indexes.length-1]]);
       });
@@ -800,7 +835,7 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
       return table;
     case 9://most common
       table[1] = new List();
-      var elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
+      elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
       elementsTable[1].forEach(function(elements){
         table[1].push(elements.getMostRepeatedElement());
       });
@@ -808,7 +843,6 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
       return table;
     case 10://random
       table[1] = new List();
-      var list;
       indexesTable[1].forEach(function(indexes){
         table[1].push( toAggregateList[indexes[ Math.floor(Math.random()*indexes.length) ]] );
       });
@@ -818,14 +852,14 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
       break;
     case 12://count non repeated
       table[1] = new NumberList();
-      var elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
+      elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
       elementsTable[1].forEach(function(elements){
         table[1].push(elements.getWithoutRepetitions().length);
       });
       return table;
     case 13://enlist non repeated
       table[1] = new List();
-      var elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
+      elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
       elementsTable[1].forEach(function(elements){
         table[1].push(elements.getWithoutRepetitions());
       });
@@ -833,14 +867,14 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
       return table;
     case 14://concat string
       table[1] = new StringList();
-      var elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
+      elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
       elementsTable[1].forEach(function(elements){
         table[1].push( elements.join(', ') );
       });
       return table;
     case 15://concat string non repeated
       table[1] = new StringList();
-      var elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
+      elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
       elementsTable[1].forEach(function(elements){
         table[1].push( elements.getWithoutRepetitions().join(', ') );
       });
@@ -848,7 +882,7 @@ ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, in
   }
 
   return null;
-}
+};
 
 /**
  * Analyses wether two lists are categorical identical, one is subcategorical to the other, or there's no relation
@@ -868,12 +902,12 @@ ListOperators.subCategoricalAnalysis = function(list0, list1){
     element = list0[i];
     projection = dictionary[element];
     if(projection==null){
-      dictionary[element] = list1[i]
+      dictionary[element] = list1[i];
     } else if(projection!=list1[i]){
       list0SubCategorical = false;
       break;
     }
-  };
+  }
 
   dictionary = {};
   var list1SubCategorical = true;
@@ -881,18 +915,18 @@ ListOperators.subCategoricalAnalysis = function(list0, list1){
     element = list1[i];
     projection = dictionary[element];
     if(projection==null){
-      dictionary[element] = list0[i]
+      dictionary[element] = list0[i];
     } else if(projection!=list0[i]){
       list1SubCategorical = false;
       break;
     }
-  };
+  }
 
   if(list1SubCategorical && list0SubCategorical) return 1;
   if(list0SubCategorical) return 2;
   if(list1SubCategorical) return 3;
   return 0;
-}
+};
 
 /**
  * calculates de entropy of a list, properties _mostRepresentedValue and _biggestProbability are added to the list
@@ -916,7 +950,7 @@ ListOperators.getListEntropy = function(list, valueFollowing, freqTable) {
     }
     return 0;
   }
-  
+
   if(freqTable==null) freqTable = list.getFrequenciesTable(true);// ListOperators.countElementsRepetitionOnList(list, true);
 
   list._mostRepresentedValue = freqTable[0][0];
@@ -971,6 +1005,9 @@ ListOperators.getInformationGain = function(feature, supervised) {
   return ig;
 };
 
+/**
+ * @todo write docs
+ */
 ListOperators.getInformationGainAnalysis = function(feature, supervised) {
   if(feature == null || supervised == null || feature.length != supervised.length) return null;
 
@@ -1042,34 +1079,36 @@ ListOperators.groupElementsByPropertyValue = function(list, propertyName, sorted
 
 
 
+/**
+ * @ignore
+ */
 ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, mode, fillBlanks) {
-  var result;
-
   if(!list)
     return;
-  if(mode == undefined)
+  if(mode == undefined){
     mode = 0;
+  }
   var resultOb = {};
   var resultTable = new Table();
-  var pValue, item, minValue, maxValue;
-  for(var i = 0; i < list.length; i++) {
+  var pValue, item, minValue, maxValue, i;
+  for(i = 0; i < list.length; i++) {
     item = list[i];
     pValue = propertyName == undefined ? item : item[propertyName];
-    if(resultOb[pValue] == undefined) {
+    if(resultOb[pValue] === undefined) {
       resultOb[pValue] = new List();
       resultOb[pValue].name = pValue;
       resultOb[pValue].valProperty = pValue;
       resultTable.push(resultOb[pValue]);
     }
-    if(mode == 0)
+    if(mode === 0)
       resultOb[pValue].push(item);
     else if(mode == 1)
       resultOb[pValue].push(i);
     // Update boundaries
-    if(minValue == undefined || pValue < minValue) {
+    if(minValue === undefined || pValue < minValue) {
       minValue = pValue;
     }
-    if(maxValue == undefined || pValue > maxValue) {
+    if(maxValue === undefined || pValue > maxValue) {
       maxValue = pValue;
     }
   }
@@ -1077,8 +1116,8 @@ ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, 
   // Fill the blanks
   if(fillBlanks) {
     var numBlanks = 0;
-    for(var i = minValue; i < maxValue; i++) {
-      if(resultOb[i] == undefined) {
+    for(i = minValue; i < maxValue; i++) {
+      if(resultOb[i] === undefined) {
         resultOb[i] = new List();
         resultOb[i].name = i;
         resultOb[i].valProperty = i;
@@ -1095,4 +1134,191 @@ ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, 
 
   return resultTable;
 
+};
+
+/**
+ * returns a string representing list
+ *
+ * @param  {List} list
+ * @param  {Number} level
+ *
+ */
+ListOperators.getReport = function(list, level) { //TODO:complete
+  var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
+  var text = level > 0 ? (ident + "////report of instance of List////") : "///////////report of instance of List//////////";
+
+  var length = list.length;
+  var i;
+
+  text += ident + "name: " + list.name;
+  text += ident + "type: " + list.type;
+
+  if(length === 0) {
+    text += ident + "single element: [" + list[0] + "]";
+    return text;
+  } else {
+    text += ident + "length: " + length;
+    text += ident + "first element: [" + list[0] + "]";
+  }
+
+  switch(list.type) {
+    case "NumberList":
+      var min = list.getMin();
+      var max = list.getMax();
+      list.min = min;
+      list.max = max;
+      var average = list.getAverage();//(min + max) * 0.5;
+      list.average = average;
+      text += ident + "min: " + min;
+      text += ident + "max: " + max;
+      text += ident + "average: " + average;
+      if(length < 101) {
+        text += ident + "numbers: " + list.join(", ");
+      }
+      break;
+      case "StringList":
+    case "List":
+      var freqTable = list.getFrequenciesTable(true);
+      list._freqTable = freqTable;
+      text += ident + "number of different elements: " + freqTable[0].length;
+      if(freqTable[0].length < 10) {
+        text += ident + "elements frequency:";
+      } else {
+        text += ident + "some elements frequency:";
+      }
+
+      for(i = 0; freqTable[0][i] != null && i < 10; i++) {
+        text += ident + "  [" + String(freqTable[0][i]) + "]: " + freqTable[1][i];
+      }
+
+      var joined;
+      if(list.type == "List") {
+        joined = list.join("], [");
+      } else {
+        joined = ListConversions.toStringList(list).join("], [");
+      }
+
+      if(joined.length < 2000) text += ident + "strings: [" + joined + "]";
+      break;
+
+  }
+
+  ///add ideas to: analyze, visualize
+
+
+  return text;
+};
+
+
+ListOperators.getReportHtml = function(list, level) { //TODO:complete
+  var ident = "<br>" + (level > 0 ? StringOperators.repeatString("&nbsp", level) : "");
+  var text =  level > 0 ? "" : "<b><font style=\"font-size:18px\">list report</f></b>";
+
+  var length = list.length;
+  var i;
+
+  if(list.name){
+    text += ident + "name: <b>" + list.name + "</b>";
+  } else {
+    text += ident + "<i>no name</i>";
+  }
+  text += ident + "type: <b>" + list.type + "</b>";
+
+  if(length === 0) {
+    text += ident + "single element: [<b>" + list[0] + "</b>]";
+    return text;
+  } else {
+    text += ident + "length: <b>" + length + "</b>";
+    text += ident + "first element: [<b>" + list[0] + "</b>]";
+  }
+
+  switch(list.type) {
+    case "NumberList":
+      var min = 9999999;
+      var max = -9999999;
+      var average = 0;
+      var shorten = new NumberList();
+      var index = 0;
+      var accumsum = 0;
+      var maxAccumsum = -99999;
+      var sizeAccum = Math.max(Math.floor(list.length/50), 1);
+
+      list.forEach(function(val){
+        min = Math.min(min, val);
+        max = Math.max(max, val);
+        average += val;
+        accumsum += val;
+        index++;
+        if(index==sizeAccum){
+          accumsum /= index;
+          maxAccumsum = Math.max(maxAccumsum, accumsum);
+          shorten.push(accumsum);
+          accumsum=0;
+          index=0;
+        }
+      });
+      if(index !== 0){
+          accumsum /=index;
+          maxAccumsum = Math.max(maxAccumsum, accumsum);
+          shorten.push(accumsum);
+      }
+
+      shorten = shorten.factor(1/maxAccumsum);
+
+      average /= list.length;
+
+      list.min = min;
+      list.max = max;
+      list.average = average;
+      text += ident + "min: <b>" + min + "</b>";
+      text += ident + "max: <b>" + max + "</b>";
+      text += ident + "average: <b>" + average + "</b>";
+      if(length < 101) {
+        text += ident + "numbers: <b>" + list.join("</b>, <b>") + "</b>";
+      }
+      text += ident;
+      for(i=0; shorten[i]!=null; i++){
+        text += "<font style=\"font-size:7px\"><font color=\""+ColorOperators.colorStringToHEX(ColorScales.grayToOrange(shorten[i]))+"\">█</f></f>";
+      }
+      break;
+    case "StringList":
+    case "List":
+      var freqTable = list.getFrequenciesTable(true);
+      list._freqTable = freqTable;
+      var catColors = ColorListGenerators.createCategoricalColors(2, freqTable[0].length);
+
+      text += ident + "entropy: <b>" + NumberOperators.numberToString(ListOperators.getListEntropy(list, null, freqTable), 4) + "</b>";
+
+      text += ident + "number of different elements: <b>" + freqTable[0].length + "</b>";
+      if(freqTable[0].length < 10) {
+        text += ident + "elements frequency:";
+      } else {
+        text += ident + "some elements frequency:";
+      }
+
+      for(i = 0; freqTable[0][i] != null && i < 10; i++) {
+        text += ident + "  [<b>" + String(freqTable[0][i]) + "</b>]: <font style=\"font-size:10px\"><b><font color=\""+ColorOperators.colorStringToHEX(catColors[i])+"\">" + freqTable[1][i] + "</f></b></f>";
+      }
+
+      var joined;
+      if(list.type == "List") {
+        joined = list.join("], [");
+      } else {
+        joined = ListConversions.toStringList(list).join("], [");
+      }
+
+      if(joined.length < 2000) text += ident + "contents: [" + joined + "]";
+
+      var weights = NumberListOperators.normalizedToSum(freqTable[1]);
+
+      var bars = StringOperators.createsCategoricalColorsBlocksHtml(weights, 55, catColors);
+      text += ident;
+      text += "<font style=\"font-size:7px\">"+bars+"</f>";
+
+      break;
+  }
+
+
+  ///add ideas to: analyze, visualize
+  return text;
 };

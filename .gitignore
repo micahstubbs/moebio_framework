@@ -7,3 +7,5 @@ tmp
 dist/moebio_framework.js
 dist/moebio_framework.js.map
 dist/moebio_framework.min.js
+*.sublime-project
+*.sublime-workspace

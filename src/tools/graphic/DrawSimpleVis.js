@@ -1,8 +1,9 @@
 import ColorListOperators from "src/operators/graphic/ColorListOperators";
-import Point from "src/dataStructures/geometry/Point";
-import Rectangle from "src/dataStructures/geometry/Rectangle";
-import ColorScale from "src/dataStructures/graphic/ColorScale";
+import Point from "src/dataTypes/geometry/Point";
+import Rectangle from "src/dataTypes/geometry/Rectangle";
+import ColorScale from "src/dataTypes/graphic/ColorScale";
 import ColorOperators from "src/operators/graphic/ColorOperators";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 
 /*
  * DrawSimpleVis
@@ -17,7 +18,7 @@ import ColorOperators from "src/operators/graphic/ColorOperators";
  * and with classes named NumberTableGraph… os similar
  *
  *
- * ////////>>>>>>>> [!] METHODS ARE BEING REMOVED FROM HERE TO BE PLACE ON THEIR CORRECT CLASSES
+ * //////// [!] METHODS ARE BEING REMOVED FROM HERE TO BE PLACE ON THEIR CORRECT CLASSES
  * @constructor
  */
 
@@ -31,7 +32,7 @@ DrawSimpleVis.drawSimpleBarChart = function(context, numberList, frame, colors) 
   var dX = frame.width / numberList.length;
 
   var bottom = frame.getBottom();
-  var normalizedNumberList = numberList.getNormalizedToMax(frame.height);
+  var normalizedNumberList = NumberListOperators.normalizedToMax(numberList, frame.height);
 
   var i;
   for(i = 0; numberList[i] != null; i++) {
@@ -324,15 +325,6 @@ DrawSimpleVis.drawStackBarsFlowTable = function(context, intervalsFlowTable, fra
   var mY = 0;
   var x = frame.x;
   var y = frame.y;
-
-  var prevPoint;
-  var prevYsup;
-  var prevsY;
-  var newYsup;
-
-  var offX;
-
-  var toolTipText;
 
   context.strokeStyle = "white";
 

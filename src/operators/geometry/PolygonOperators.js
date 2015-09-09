@@ -1,18 +1,13 @@
-import Polygon from "src/dataStructures/geometry/Polygon";
-import NumberList from "src/dataStructures/numeric/NumberList";
-import Tree from "src/dataStructures/structures/networks/Tree";
-import NodeList from "src/dataStructures/structures/lists/NodeList";
-import Draw from "src/tools/graphic/Draw";
-import Node from "src/dataStructures/structures/elements/Node";
-import Point from "src/dataStructures/geometry/Point";
+import Polygon from "src/dataTypes/geometry/Polygon";
+import NumberList from "src/dataTypes/numeric/NumberList";
+import Tree from "src/dataTypes/structures/networks/Tree";
+import NodeList from "src/dataTypes/structures/lists/NodeList";
+import Node from "src/dataTypes/structures/elements/Node";
+import Point from "src/dataTypes/geometry/Point";
 import GeometryOperators from "src/operators/geometry/GeometryOperators";
-import Interval from "src/dataStructures/numeric/Interval";
+import Interval from "src/dataTypes/numeric/Interval";
 import NumberListGenerators from "src/operators/numeric/numberList/NumberListGenerators";
-import {
-  context,
-  clearContext,
-  TwoPi
-} from "src/Global";
+import { TwoPi } from "src/Global";
 
 /**
  * @classdesc Provides a set of tools that work with Polygons
@@ -38,7 +33,10 @@ PolygonOperators.hull = function(polygon, returnIndexes) {
   var n = p.length;
   var k = 0;
   var h = new Polygon();
-  if(returnIndexes) var indexes = new NumberList();
+  var indexes;
+  if(returnIndexes){
+    indexes = new NumberList();
+  }
 
   p = PolygonOperators.sortOnXY(p);
 
@@ -83,7 +81,6 @@ PolygonOperators.hull = function(polygon, returnIndexes) {
  */
 PolygonOperators.buildDendrogramFromPolygon = function(polygon) {
   var tree = new Tree();
-  var point, i;
   var node;
   var tW;
   var parent;
@@ -136,7 +133,6 @@ PolygonOperators.buildDendrogramFromPolygon = function(polygon) {
   tree.nodeList = tree.nodeList.getReversed();
 
   var assignLevel = function(node, parentLevel) {
-    var son;
     node.level = parentLevel + 1;
     node.toNodeList.forEach(function(son) {
       assignLevel(son, node.level);
@@ -151,6 +147,9 @@ PolygonOperators.buildDendrogramFromPolygon = function(polygon) {
 
 };
 
+/**
+ * @todo write docs
+ */
 PolygonOperators._findClosestNodes = function(nodeList) {
   var i, j;
   var d2;
@@ -173,6 +172,9 @@ PolygonOperators._findClosestNodes = function(nodeList) {
 };
 
 
+/**
+ * @todo write docs
+ */
 PolygonOperators.sortOnXY = function(polygon) {
   return polygon.sort(function(p0, p1) {
     if(p0.x < p1.x) return -1;
@@ -182,10 +184,16 @@ PolygonOperators.sortOnXY = function(polygon) {
 };
 
 //TODO: move this to PointOperators
+/**
+ * @todo write docs
+ */
 PolygonOperators.crossProduct3Points = function(o, a, b) {
   return(a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
 };
 
+/**
+ * @todo write docs
+ */
 PolygonOperators.expandFromBarycenter = function(polygon, factor) {
   var newPolygon = new Polygon();
   var barycenter = polygon.getBarycenter();
@@ -197,6 +205,9 @@ PolygonOperators.expandFromBarycenter = function(polygon, factor) {
   return newPolygon;
 };
 
+/**
+ * @todo write docs
+ */
 PolygonOperators.expandInAngles = function(polygon, amount) { //TODO: test if it works with convex polygons
   var newPolygon = new Polygon();
   var p0 = polygon[polygon.length - 1];
@@ -226,8 +237,11 @@ PolygonOperators.expandInAngles = function(polygon, amount) { //TODO: test if it
   return newPolygon;
 };
 
+/**
+ * @todo write docs
+ */
 PolygonOperators.simplifyPolygon = function(polygon, margin) {
-  margin = margin == null || margin == 0 ? 1 : margin;
+  margin = margin == null || margin === 0 || margin === undefined ? 1 : margin;
   var newPolygon = polygon.clone();
   var p0;
   var p1;
@@ -251,47 +265,52 @@ PolygonOperators.simplifyPolygon = function(polygon, margin) {
 };
 
 
-/**
+/*
  * used techinique: draws the bézier polygon and checks color
  */
-PolygonOperators.bezierPolygonContainsPoint = function(polygon, point, border) {
+/**
+ * @todo write docs
+ */
+PolygonOperators.bezierPolygonContainsPoint = function(polygon, point, border, graphics) {
   var frame = polygon.getFrame();
-  clearContext();
-  context.fillStyle = 'black';
-  context.fillRect(0, 0, frame.width, frame.height);
+  graphics.clearContext();
+  graphics.context.fillStyle = 'black';
+  graphics.context.fillRect(0, 0, frame.width, frame.height);
   if(border != null) {
-    context.strokeStyle = 'black';
-    context.lineWidth = border;
+    graphics.context.strokeStyle = 'black';
+    graphics.context.lineWidth = border;
   }
-  context.fillStyle = 'white';
-  context.beginPath();
-  Draw.drawBezierPolygon(context, polygon, -frame.x, -frame.y);
-  context.fill();
-  if(border != null) context.stroke();
-  var data = context.getImageData(point.x - frame.x, point.y - frame.y, 1, 1).data;
-  clearContext();
+  graphics.context.fillStyle = 'white';
+  graphics.context.beginPath();
+  graphics.drawBezierPolygon(polygon, -frame.x, -frame.y);
+  graphics.context.fill();
+  if(border != null) graphics.context.stroke();
+  var data = graphics.context.getImageData(point.x - frame.x, point.y - frame.y, 1, 1).data;
+  graphics.clearContext();
   return data[0] > 0;
 };
 
 
-/**
+/*
  * used techinique: draws the bézier polygon and checks color
  * best center: the center of biggest circle within the polygon
  * [!] very unefficient
  */
-PolygonOperators.getBezierPolygonBestCenter = function(polygon, nAttempts) {
+/**
+ * @todo write docs
+ */
+PolygonOperators.getBezierPolygonBestCenter = function(polygon, nAttempts, graphics) {
   nAttempts = nAttempts == null ? 500 : nAttempts;
 
   var frame = polygon.getFrame();
-  context.fillStyle = 'black';
-  context.fillRect(0, 0, frame.width, frame.height);
-  context.fillStyle = 'white';
-  context.beginPath();
-  Draw.drawBezierPolygon(context, polygon, -frame.x, -frame.y);
-  context.fill();
+  graphics.context.fillStyle = 'black';
+  graphics.context.fillRect(0, 0, frame.width, frame.height);
+  graphics.context.fillStyle = 'white';
+  graphics.context.beginPath();
+  graphics.drawBezierPolygon(polygon, -frame.x, -frame.y);
+  graphics.context.fill();
 
   var center;
-  var testPoint;
   var angle;
   var r;
   var rMax = 0;
@@ -300,10 +319,10 @@ PolygonOperators.getBezierPolygonBestCenter = function(polygon, nAttempts) {
 
   for(var i = 0; i < nAttempts; i++) {
     center = frame.getRandomPoint();
-    for(angle = 0; angle += 0.1; angle <= TwoPi) {
+    for(angle = 0; angle <= TwoPi; angle += 0.1) {
       r = angle;
-      var data = context.getImageData(center.x + r * Math.cos(angle) - frame.x, center.y + r * Math.sin(angle) - frame.y, 1, 1).data;
-      if(data[0] == 0) {
+      var data = graphics.context.getImageData(center.x + r * Math.cos(angle) - frame.x, center.y + r * Math.sin(angle) - frame.y, 1, 1).data;
+      if(data[0] === 0) {
         if(r > rMax) {
           rMax = r;
           bestCenter = center;
@@ -317,11 +336,13 @@ PolygonOperators.getBezierPolygonBestCenter = function(polygon, nAttempts) {
 };
 
 
+/**
+ * @todo write docs
+ */
 PolygonOperators.convexHull = function(polygon, deepness) {
   var indexesHull = this.hull(polygon, true);
   var pointsLeftIndexes = NumberListGenerators.createSortedNumberList(polygon.length);
   pointsLeftIndexes = pointsLeftIndexes.getWithoutElementsAtIndexes(indexesHull);
-  var i;
   var j;
   var k;
   var p0;
@@ -366,13 +387,16 @@ PolygonOperators.convexHull = function(polygon, deepness) {
     //pointsLeftIndexes.removeElement(pointsLeftIndexes[kMin]); //!!!! TODO: FIX THIS!
     pointsLeftIndexes.splice(kMin, 1);
 
-    if(pointsLeftIndexes.length == 0) return indexesHull;
+    if(pointsLeftIndexes.length === 0) return indexesHull;
 
     nHull++;
   }
   return indexesHull;
 };
 
+/**
+ * @todo write docs
+ */
 PolygonOperators.controlPointsFromPointsAnglesIntensities = function(polygon, angles, intensities) {
   var controlPoints = new Polygon();
   for(var i = 0; polygon[i] != null; i++) {
@@ -383,6 +407,9 @@ PolygonOperators.controlPointsFromPointsAnglesIntensities = function(polygon, an
 };
 
 
+/**
+ * @todo write docs
+ */
 PolygonOperators.placePointsInsidePolygon = function(polygon, nPoints, mode) {
   var points = new Polygon();
   var frame = polygon.getFrame();
@@ -394,11 +421,13 @@ PolygonOperators.placePointsInsidePolygon = function(polygon, nPoints, mode) {
         p = new Point(frame.x + Math.random() * frame.width, frame.y + Math.random() * frame.height);
         if(PolygonOperators.polygonContainsPoint(polygon, p)) points.push(p);
       }
-      return points;
-      break;
+      return points;      
   }
 };
 
+/**
+ * @todo write docs
+ */
 PolygonOperators.placePointsInsideBezierPolygon = function(polygon, nPoints, mode, border) {
   var points = new Polygon();
   var frame = polygon.getFrame();
@@ -415,7 +444,6 @@ PolygonOperators.placePointsInsideBezierPolygon = function(polygon, nPoints, mod
           nAttempts = 0;
         }
       }
-      return points;
-      break;
+      return points;      
   }
 };

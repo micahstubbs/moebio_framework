@@ -1,13 +1,12 @@
-import Rectangle from "src/dataStructures/geometry/Rectangle";
-import Point from "src/dataStructures/geometry/Point";
+import Rectangle from "src/dataTypes/geometry/Rectangle";
+import Point from "src/dataTypes/geometry/Point";
 import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
 import GeometryOperators from "src/operators/geometry/GeometryOperators";
 import ColorScales from "src/operators/graphic/ColorScales";
-import { context, TwoPi, mP } from "src/Global";
+import { TwoPi } from "src/Global";
 import DrawTextsAdvanced from "src/tools/graphic/DrawTextsAdvanced";
-import ColorScale from "src/dataStructures/graphic/ColorScale";
+import ColorScale from "src/dataTypes/graphic/ColorScale";
 import ColorListOperators from "src/operators/graphic/ColorListOperators";
-import { fTextRotated, setText } from "src/tools/graphic/SimpleGraphics";
 import ColorOperators from "src/operators/graphic/ColorOperators";
 
 function IntervalTableDraw() {}
@@ -15,13 +14,12 @@ export default IntervalTableDraw;
 
 IntervalTableDraw.MIN_CHARACTERS_SIZE = 1;
 
-IntervalTableDraw.drawIntervalsFlowTable = function(intervalsFlowTable, frame, colors, bezier, offValue) { //, returnHovered){ //TODO: implement rollover detection, using _isOnShape (below)
+IntervalTableDraw.drawIntervalsFlowTable = function(intervalsFlowTable, frame, colors, bezier, offValue, graphics) { //, returnHovered){ //TODO: implement rollover detection, using _isOnShape (below)
   frame = frame == null ? new Rectangle(10, 10, 400, 300) : frame;
   colors = colors == null ? ColorListGenerators.createCategoricalColors(0, intervalsFlowTable.length, ColorScales.temperature) : colors;
   bezier = bezier || false;
   offValue = offValue == null ? 0.45 : offValue;
 
-  var nElements = intervalsFlowTable.length;
   var i;
   var j;
 
@@ -31,18 +29,12 @@ IntervalTableDraw.drawIntervalsFlowTable = function(intervalsFlowTable, frame, c
 
   var point;
 
-  var intervalList;
-  var lastIntervalList = intervalsFlowTable[nElements - 1];
-  var sY = 0;
-  var mY = 0;
+  var intervalList;  
+  var sY = 0;  
   var x = frame.x;
   var y = frame.y;
 
   var prevPoint;
-  var prevYsup;
-  var prevsY;
-  var newYsup;
-
   var offX;
 
   //var nHovered = -1;
@@ -50,13 +42,13 @@ IntervalTableDraw.drawIntervalsFlowTable = function(intervalsFlowTable, frame, c
   for(i = 0; intervalsFlowTable[i] != null; i++) {
     intervalList = intervalsFlowTable[i];
 
-    context.fillStyle = colors[i];
-    context.beginPath();
+    graphics.context.fillStyle = colors[i];
+    graphics.context.beginPath();
 
     sY = y;
 
     point = new Point(x, intervalList[0].y * dY + sY);
-    context.moveTo(point.x, point.y);
+    graphics.context.moveTo(point.x, point.y);
 
     prevPoint = point;
 
@@ -67,16 +59,16 @@ IntervalTableDraw.drawIntervalsFlowTable = function(intervalsFlowTable, frame, c
 
       if(bezier) {
         offX = (point.x - prevPoint.x) * offValue;
-        context.bezierCurveTo(prevPoint.x + offX, prevPoint.y, point.x - offX, point.y, point.x, point.y);
+        graphics.context.bezierCurveTo(prevPoint.x + offX, prevPoint.y, point.x - offX, point.y, point.x, point.y);
       } else {
-        context.lineTo(point.x, point.y);
+        graphics.context.lineTo(point.x, point.y);
       }
 
       prevPoint = point;
     }
 
     point = new Point((nCols - 1) * dX + x, intervalList[nCols - 1].x * dY + sY);
-    context.lineTo(point.x, point.y);
+    graphics.context.lineTo(point.x, point.y);
     prevPoint = point;
 
     for(j = nCols - 2; j >= 0; j--) {
@@ -86,23 +78,23 @@ IntervalTableDraw.drawIntervalsFlowTable = function(intervalsFlowTable, frame, c
 
       if(bezier) {
         offX = (point.x - prevPoint.x) * offValue;
-        context.bezierCurveTo(prevPoint.x + offX, prevPoint.y, point.x - offX, point.y, point.x, point.y);
+        graphics.context.bezierCurveTo(prevPoint.x + offX, prevPoint.y, point.x - offX, point.y, point.x, point.y);
 
         // if(returnHovered && nHovered==-1 && IntervalTableDraw._isOnShape(prevPoint, point, intervalList[j-1].y*dY+sY, intervalList[j].y*dY+sY, offX, mX, mY)){
         // nHovered = i;
         // }
 
       } else {
-        context.lineTo(point.x, point.y);
+        graphics.context.lineTo(point.x, point.y);
       }
 
       prevPoint = point;
     }
 
     point = new Point(x, intervalList[0].x * dY + sY);
-    context.lineTo(point.x, point.y);
+    graphics.context.lineTo(point.x, point.y);
 
-    context.fill();
+    graphics.context.fill();
 
   }
 
@@ -143,7 +135,7 @@ IntervalTableDraw._isOnShape = function(prevPoint, point, prevYsup, newYsup, off
 
 
 
-IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, center, radius, r0, colors, texts, returnHovered, angles, angle0) {
+IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, center, radius, r0, colors, texts, returnHovered, angles, angle0, graphics) {
   var nElements = intervalsFlowTable.length;
   var i;
   var j;
@@ -160,32 +152,20 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 
   var point;
 
-  var intervalList;
-  var lastIntervalList = intervalsFlowTable[nElements - 1];
+  var intervalList;  
   var interval;
 
-  var r = r0;
   var s, textS;
 
   var prevPoint;
-  var prevRsup;
-  var prevsR;
-  var newRsup;
-
-  var breaks = false;
-
+  
   var nR;
   var nR2;
 
   var offA = dA * 0.3;
   var cosOffA = Math.cos(offA);
 
-  var s;
-  var amp;
   var rT;
-
-  var xT;
-  var yT;
 
   var nHovered = -1;
 
@@ -199,12 +179,12 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
 
     intervalList = intervalsFlowTable[i];
 
-    context.fillStyle = colors[i % nElements];
+    graphics.context.fillStyle = colors[i % nElements];
 
-    context.beginPath();
+    graphics.context.beginPath();
 
     point = new Point(angles == null ? 0 : angles[0] + angle0, (1 - intervalList[0].y) * dR + r0);
-    context.moveTo(point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
+    graphics.context.moveTo(point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
 
     prevPoint = point;
 
@@ -216,11 +196,11 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
       nR = prevPoint.y / cosOffA;
       nR2 = point.y / cosOffA;
 
-      context.bezierCurveTo(nR * Math.cos(prevPoint.x + offA) + center.x, nR * Math.sin(prevPoint.x + offA) + center.y,
+      graphics.context.bezierCurveTo(nR * Math.cos(prevPoint.x + offA) + center.x, nR * Math.sin(prevPoint.x + offA) + center.y,
         nR2 * Math.cos(point.x - offA) + center.x, nR2 * Math.sin(point.x - offA) + center.y,
         point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
 
-      if(returnHovered && nHovered == -1 && this._isOnRadialShape(center, mP, prevPoint.x, point.x, dR * (1 - intervalList[(j - 1) % nCols].y) + r0, dR * (1 - intervalList[(j - 1) % nCols].x) + r0, dR * (1 - intervalList[j % nCols].y) + r0, dR * (1 - intervalList[j % nCols].x) + r0)) {
+      if(returnHovered && nHovered == -1 && this._isOnRadialShape(center, graphics.mP, prevPoint.x, point.x, dR * (1 - intervalList[(j - 1) % nCols].y) + r0, dR * (1 - intervalList[(j - 1) % nCols].x) + r0, dR * (1 - intervalList[j % nCols].y) + r0, dR * (1 - intervalList[j % nCols].x) + r0)) {
         nHovered = i;
       }
 
@@ -244,7 +224,7 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
     }
 
     point = new Point(angles == null ? 0 : angles[0] + angle0, (1 - intervalList[0].x) * dR + r0);
-    context.lineTo(point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
+    graphics.context.lineTo(point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
     prevPoint = point;
 
     for(j = nCols - 1; j >= 0; j--) {
@@ -253,7 +233,7 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
       nR = prevPoint.y / cosOffA;
       nR2 = point.y / cosOffA;
 
-      context.bezierCurveTo(nR * Math.cos(prevPoint.x - offA) + center.x, nR * Math.sin(prevPoint.x - offA) + center.y,
+      graphics.context.bezierCurveTo(nR * Math.cos(prevPoint.x - offA) + center.x, nR * Math.sin(prevPoint.x - offA) + center.y,
         nR2 * Math.cos(point.x + offA) + center.x, nR2 * Math.sin(point.x + offA) + center.y,
         point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
 
@@ -261,15 +241,15 @@ IntervalTableDraw.drawCircularIntervalsFlowTable = function(intervalsFlowTable, 
     }
 
     point = new Point(angles == null ? 0 : angles[0] + angle0, (1 - intervalList[0].x) * dR + r0);
-    context.lineTo(point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
+    graphics.context.lineTo(point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
 
-    context.fill();
+    graphics.context.fill();
 
   }
 
   for(i = 0; filteredTexts[i] != null; i++) {
-    setText('black', textsSizes[i], null, 'center', 'middle');
-    fTextRotated(filteredTexts[i], textsX[i], textsY[i], textsAngles[i]);
+    graphics.setText('black', textsSizes[i], null, 'center', 'middle');
+    graphics.fTextRotated(filteredTexts[i], textsX[i], textsY[i], textsAngles[i]);
   }
 
   return nHovered;
@@ -300,7 +280,7 @@ IntervalTableDraw._isOnRadialShape = function(center, testPoint, a0, a1, r0a, r0
 
 
 
-IntervalTableDraw.drawIntervalsWordsFlowTable = function(frame, intervalsFlowTable, texts, colors, typode) {
+IntervalTableDraw.drawIntervalsWordsFlowTable = function(frame, intervalsFlowTable, texts, colors, typode, graphics) {
   var nElements = intervalsFlowTable.length;
 
   var i;
@@ -315,9 +295,6 @@ IntervalTableDraw.drawIntervalsWordsFlowTable = function(frame, intervalsFlowTab
 
   var point0;
   var point1;
-
-  var nextPoint0;
-  var nextPoint1;
 
   var point0Prev = new Point();
   var point1Prev = new Point();
@@ -335,10 +312,12 @@ IntervalTableDraw.drawIntervalsWordsFlowTable = function(frame, intervalsFlowTab
 
   var text;
 
-  if(!typode) context.strokeStyle = "rgba(255,255,255,0.4)";
+  if(!typode) {
+    graphics.context.strokeStyle = "rgba(255,255,255,0.4)";
+  }
 
-  context.textBaseline = "top";
-  context.textAlign = "left";
+  graphics.context.textBaseline = "top";
+  graphics.context.textAlign = "left";
 
   var position;
   var xx;
@@ -351,8 +330,6 @@ IntervalTableDraw.drawIntervalsWordsFlowTable = function(frame, intervalsFlowTab
   var selectedChar;
   var charWidth;
   var fontSize;
-
-  var offX;
 
   var factX = (nCols - 1) / frame.width;
 
@@ -380,9 +357,9 @@ IntervalTableDraw.drawIntervalsWordsFlowTable = function(frame, intervalsFlowTab
       nChar++;
       size = (point1.y - point0.y);
       fontSize = Math.floor(0.3 * size + 1);
-      if(!typode) context.font = fontSize + 'px ' + LOADED_FONT;
+      if(!typode) graphics.context.font = fontSize + 'px ';
       selectedChar = text.charAt(nChar % text.length);
-      charWidth = typode ? fontSize * widthsTypode[selectedChar] : context.measureText(selectedChar).width + 2;
+      charWidth = typode ? fontSize * widthsTypode[selectedChar] : graphics.context.measureText(selectedChar).width + 2;
       jumpX = charWidth * 0.9 || 1;
 
       xx += jumpX;
@@ -400,37 +377,35 @@ IntervalTableDraw.drawIntervalsWordsFlowTable = function(frame, intervalsFlowTab
 
       valueLastInterval = IntervalTableDraw._bezierValue(xj0, xj1, lastIntervalList[j].y, lastIntervalList[j + 1].y, t, offX);
 
-
-      prevsY = sY;
       sY = (1 - valueLastInterval) * 0.5 * dY + y;
-
 
       point0Prev.x = point0.x;
       point0Prev.y = point0.y;
       point1Prev.x = point1.x;
       point1Prev.y = point1.y;
 
-
       valueX = IntervalTableDraw._bezierValue(xj0, xj1, intervalList[j].x, intervalList[j + 1].x, t, offX);
       valueY = IntervalTableDraw._bezierValue(xj0, xj1, intervalList[j].y, intervalList[j + 1].y, t, offX);
-
 
       point0 = new Point(xx + x, valueX * dY + sY);
       point1 = new Point(xx + x, valueY * dY + sY);
 
       center = new Point(point0Prev.x + jumpX * 0.5, (point0.y + point1.y + point0Prev.y + point1Prev.y) * 0.25);
 
-      typode ? context.strokeStyle = colors[i] : context.fillStyle = colors[i];
-
+      if(typode) {
+        graphics.context.strokeStyle = colors[i];
+      } else {
+        graphics.context.fillStyle = colors[i];
+      }
 
       if(size > IntervalTableDraw.MIN_CHARACTERS_SIZE) {
         if(typode) {
           DrawTextsAdvanced.typodeOnQuadrilater(selectedChar, point0Prev, point0, point1, point1Prev);
         } else {
-          context.save();
-          context.globalAlpha = size / 15;
-          DrawTextsAdvanced.textOnQuadrilater(context, selectedChar, point0Prev, point0, point1, point1Prev, fontSize, 1);
-          context.restore();
+          graphics.context.save();
+          graphics.context.globalAlpha = size / 15;
+          DrawTextsAdvanced.textOnQuadrilater(graphics.context, selectedChar, point0Prev, point0, point1, point1Prev, fontSize, 1);
+          graphics.context.restore();
         }
 
       }

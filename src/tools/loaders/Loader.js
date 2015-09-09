@@ -1,3 +1,5 @@
+/* jshint -W022 */
+
 import LoadEvent from "src/tools/loaders/LoadEvent";
 
 function Loader() {}
@@ -20,7 +22,7 @@ Loader.PHPurl = "http://intuitionanalytics.com/tests/proxy.php?url=";
  * @param {callee} the Object containing the onLoadData function to be called
  * @para, {Object} optional parameter that will be stored in the LoadEvent instance
  */
-Loader.loadData = function(url, onLoadData, callee, param, send_object_json) {
+Loader.loadData = function(url, onLoadData, callee, param, send_object_json, withCredentials) {
   if(Loader.REPORT_LOADING) console.log('load data:', url);
   Loader.n_loading++;
 
@@ -71,23 +73,23 @@ Loader.loadData = function(url, onLoadData, callee, param, send_object_json) {
   if(window.XMLHttpRequest && !(window.ActiveXObject)) {
     try {
       req = new XMLHttpRequest();
-    } catch(e) {
+    } catch(e1) {
       req = false;
     }
     // branch for IE/Windows ActiveX version
   } else if(window.ActiveXObject) {
     try {
-      req = new ActiveXObject("Msxml2.XMLHTTP.6.0");
-    } catch(e) {
+      req = new window.ActiveXObject("Msxml2.XMLHTTP.6.0");
+    } catch(e2) {
       try {
-        req = new ActiveXObject("Msxml2.XMLHTTP.3.0");
-      } catch(e) {
+        req = new window.ActiveXObject("Msxml2.XMLHTTP.3.0");
+      } catch(e3) {
         try {
-          req = new ActiveXObject("Msxml2.XMLHTTP");
-        } catch(e) {
+          req = new window.ActiveXObject("Msxml2.XMLHTTP");
+        } catch(e4) {
           try {
-            req = new ActiveXObject("Microsoft.XMLHTTP");
-          } catch(e) {
+            req = new window.ActiveXObject("Microsoft.XMLHTTP");
+          } catch(e5) {
             req = false;
           }
         }
@@ -95,6 +97,9 @@ Loader.loadData = function(url, onLoadData, callee, param, send_object_json) {
     }
   }
   if(req) {
+    if(withCredentials === true ){
+        req.withCredentials = true;
+    }
     req.onreadystatechange = onLoadComplete; //processReqChange;
     if(useProxy) {
       req.open("GET", Loader.proxy + url, true);
@@ -107,13 +112,6 @@ Loader.loadData = function(url, onLoadData, callee, param, send_object_json) {
   }
 };
 
-
-//TODO this method isn't reference by anything else.
-function LoaderRequest(url, method, data) {
-  this.url = url;
-  this.method = method ? method : "GET";
-  this.data = data;
-}
 
 Loader.loadImage = function(url, onComplete, callee, param) {
   Loader.n_loading++;
@@ -244,10 +242,10 @@ Loader.loadXML = function(url, onLoadData) {
     // branch for IE/Windows ActiveX version
   } else if(window.ActiveXObject) {
     try {
-      req = new ActiveXObject("Msxml2.XMLHTTP");
+      req = new window.ActiveXObject("Msxml2.XMLHTTP");
     } catch(e) {
       try {
-        req = new ActiveXObject("Microsoft.XMLHTTP");
+        req = new window.ActiveXObject("Microsoft.XMLHTTP");
       } catch(e) {
         req = false;
       }
@@ -264,7 +262,7 @@ Loader.loadXML = function(url, onLoadData) {
     // only if req shows "loaded"
     if(req.readyState == 4) {
       // only if "OK"
-      if(req.status == 200 || req.status == 0) {
+      if(req.status == 200 || req.status === 0) {
         onLoadComplete(req.responseXML);
 
       } else {
@@ -309,7 +307,7 @@ Loader.sendDataToPhp = function(url, data, onLoadData, callee, param) {
       e.url = url;
       e.param = param;
 
-      if(req.status == 200 || (req.status == 0 && req.responseText != null)) {
+      if(req.status == 200 || (req.status === 0 && req.responseText != null)) {
         e.result = req.responseText;
         onLoadData.call(target, e);
       } else {

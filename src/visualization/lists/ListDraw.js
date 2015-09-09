@@ -1,13 +1,11 @@
-import List from "src/dataStructures/lists/List";
-import { setFill,
-  setCursor,
-  fText,
-  fRectM,
-  fRect,
-  setText
-} from "src/tools/graphic/SimpleGraphics";
-import { MOUSE_DOWN, mY, mP } from "src/Global";
+import List from "src/dataTypes/lists/List";
 
+/**
+ * @classdesc Functions for drawing {@link List|Lists}.
+ *
+ * @namespace
+ * @category drawing
+ */
 function ListDraw() {}
 export default ListDraw;
 
@@ -24,8 +22,8 @@ export default ListDraw;
  * @return {Object} returns the index of the selected element, the element, a list of indexes or a list of elements
  * tags:draw
  */
-ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode, selectedInit) {
-  if(list == null || !list.length > 0) return;
+ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode, selectedInit, graphics) {
+  if(list == null || list.length < 0) return;
 
   textSize = textSize || 14;
   returnMode = returnMode == null ? 0 : returnMode;
@@ -61,7 +59,7 @@ ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode,
   var dy = textSize + 4;
   var n = list.length;
   var bottom = frame.getBottom();
-  var mouseIn = frame.containsPoint(mP);
+  var mouseIn = frame.containsPoint(graphics.mP);
   var y0Follow = 0;
   var y0;
   var isSelected;
@@ -74,7 +72,7 @@ ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode,
     y0 = frame.y + 10;
   } else {
     if(mouseIn) {
-      y0Follow = Math.min(10 - (hList - frame.height + 20) * ((mY - (frame.y + 10)) / (frame.height - 20)), 10);
+      y0Follow = Math.min(10 - (hList - frame.height + 20) * ((graphics.mY - (frame.y + 10)) / (frame.height - 20)), 10);
     } else {
       y0Follow = 10 - (hList - frame.height + 20) * frame.memory.selected / list.length;
     }
@@ -85,7 +83,7 @@ ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode,
   }
 
 
-  setText('black', textSize);
+  graphics.setText('black', textSize);
 
   for(i = 0; list[i] != null; i++) {
     y = y0 + dy * i;
@@ -103,20 +101,20 @@ ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode,
       isSelected = multi ? onMulti : frame.memory.selected == i;
 
       if(isSelected) {
-        setFill('black');
-        fRect(frame.x + 2, y, frame.width - 4, dy);
-        setFill('white');
+        graphics.setFill('black');
+        graphics.fRect(frame.x + 2, y, frame.width - 4, dy);
+        graphics.setFill('white');
       } else {
-        setFill('black');
+        graphics.setFill('black');
       }
-      fText(list[i].toString(), xTexts, y + 2);
+      graphics.fText(list[i].toString(), xTexts, y + 2);
 
-      if(mouseIn && mY >= y && mY < y + dy) {
-        setFill('rgba(150,150,150,0.3)');
-        if(fRectM(frame.x + 2, y, frame.width - 4, dy)) {
-          setCursor('pointer');
+      if(mouseIn && graphics.mY >= y && graphics.mY < y + dy) {
+        graphics.setFill('rgba(150,150,150,0.3)');
+        if(graphics.fRectM(frame.x + 2, y, frame.width - 4, dy)) {
+          graphics.setCursor('pointer');
         }
-        if(MOUSE_DOWN) {
+        if(graphics.MOUSE_DOWN) {
           if(multi) {
 
             if(onMulti) {
@@ -133,12 +131,12 @@ ListDraw.drawList = function(frame, list, returnMode, colorList, textSize, mode,
         }
       }
     } else {
-      setFill('black');
+      graphics.setFill('black');
     }
 
     if(colorList) {
-      setFill(colorList == null ? 'rgb(200, 200, 200)' : colorList[i % n]);
-      fRect(x, y + 4, 10, 10);
+      graphics.setFill(colorList == null ? 'rgb(200, 200, 200)' : colorList[i % n]);
+      graphics.fRect(x, y + 4, 10, 10);
     }
 
   }

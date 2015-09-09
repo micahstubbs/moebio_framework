@@ -1,3 +1,11 @@
+
+
+/**
+ * @classdesc  String Conversions
+ *
+ * @namespace
+ * @category strings
+ */
 function StringConversions() {}
 export default StringConversions;
 

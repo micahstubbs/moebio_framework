@@ -1,12 +1,21 @@
-import Tree from "src/dataStructures/structures/networks/Tree";
-import Node from "src/dataStructures/structures/elements/Node";
+import Tree from "src/dataTypes/structures/networks/Tree";
+import Node from "src/dataTypes/structures/elements/Node";
 import StringOperators from "src/operators/strings/StringOperators";
 
+/**
+ * @classdesc Tools to Encode Trees
+ *
+ * @namespace
+ * @category networks
+ */
 function TreeEncodings() {}
 export default TreeEncodings;
 
 //include(frameworksRoot+"operators/strings/StringOperators.js");
 
+/**
+ * @todo write docs
+ */
 TreeEncodings.decodeIdentedTree = function(indexedTree, superiorNodeName, identationCharacter) {
   superiorNodeName = superiorNodeName == null ? "" : superiorNodeName;
   identationCharacter = identationCharacter == null ? "\t" : identationCharacter;
@@ -16,7 +25,7 @@ TreeEncodings.decodeIdentedTree = function(indexedTree, superiorNodeName, identa
   var lines = StringOperators.splitByEnter(indexedTree);
   var nLines = lines.length;
 
-  if(nLines == 0 ||  (nLines == 1 && (lines[0] == null || lines[0] == ""))) return null;
+  if(nLines === 0 ||  (nLines == 1 && (lines[0] == null || lines[0] === ""))) return null;
 
   var i;
   var j;
@@ -28,9 +37,10 @@ TreeEncodings.decodeIdentedTree = function(indexedTree, superiorNodeName, identa
 
   var node;
   var parent;
+  var superiorNode;
 
-  if(superiorNodeName != "" && superiorNodeName != null) {
-    var superiorNode = new Node(superiorNodeName, superiorNodeName);
+  if(superiorNodeName !== "" && superiorNodeName != null) {
+    superiorNode = new Node(superiorNodeName, superiorNodeName);
     tree.addNodeToTree(superiorNode, null);
   }
 
@@ -47,7 +57,7 @@ TreeEncodings.decodeIdentedTree = function(indexedTree, superiorNodeName, identa
 
     node = new Node(line, name);
     //c.log("+ ", name);
-    if(j == 0) {
+    if(j === 0) {
       if(superiorNode != null) {
         tree.addNodeToTree(node, superiorNode);
       } else {

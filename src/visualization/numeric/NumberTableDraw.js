@@ -1,47 +1,17 @@
-import {
-  context,
-  mX,
-  mY,
-  mP,
-  TwoPi,
-  HalfPi,
-  MOUSE_UP_FAST,
-  MOUSE_DOWN,
-  MOUSE_UP,
-  WHEEL_CHANGE
-} from "src/Global";
-
-import {
-  setCursor,
-  line,
-  setStroke,
-  setFill,
-  fText,
-  setText,
-  drawImage,
-  fCircleM,
-  getTextW,
-  fRectM,
-  sRect,
-  fTextRotated,
-  clipRectangle
-} from "src/tools/graphic/SimpleGraphics";
-
-import Rectangle from "src/dataStructures/geometry/Rectangle";
-import ColorOperators from "src/operators/graphic/ColorOperators";
-import Point from "src/dataStructures/geometry/Point";
-import Polygon from "src/dataStructures/geometry/Polygon";
+import { TwoPi, HalfPi } from "src/Global";
+import Rectangle from "src/dataTypes/geometry/Rectangle";
+import Point from "src/dataTypes/geometry/Point";
 import IntervalTableOperators from "src/operators/numeric/interval/IntervalTableOperators";
-import NumberList from "src/dataStructures/numeric/NumberList";
+import NumberList from "src/dataTypes/numeric/NumberList";
 import NumberTableFlowOperators from "src/operators/numeric/numberTable/NumberTableFlowOperators";
 import ColorScales from "src/operators/graphic/ColorScales";
 import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
 import IntervalTableDraw from "src/visualization/numeric/IntervalTableDraw";
 import GeometryOperators from "src/operators/geometry/GeometryOperators";
-import NumberTable from "src/dataStructures/numeric/NumberTable";
-import StringList from "src/dataStructures/strings/StringList";
-import Table from "src/dataStructures/lists/Table";
-import ColorList from "src/dataStructures/graphic/ColorList";
+import NumberTable from "src/dataTypes/numeric/NumberTable";
+import Table from "src/dataTypes/lists/Table";
+import ColorList from "src/dataTypes/graphic/ColorList";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 
 function NumberTableDraw() {}
 export default NumberTableDraw;
@@ -57,8 +27,10 @@ export default NumberTableDraw;
  * @return {Point}
  * tags:draw
  */
-NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listColorsIndependent, margin) {
+NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listColorsIndependent, margin, graphics) {
   if(frame == null ||  numberTable == null || numberTable.type == null || numberTable.type != "NumberTable" ||  numberTable.length < 2) return null;
+
+  if(graphics==null) graphics = frame.graphics; //momentary fix
 
   colorScale = colorScale == null ? ColorScales.blueToRed : colorScale;
   listColorsIndependent = listColorsIndependent || false;
@@ -86,15 +58,15 @@ NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listC
   for(i = 0; numberTable[i] != null; i++) {
     numberList = numberTable[i];
     x = Math.round(frame.x + i * dX);
-    mouseXOnColumn = mX > x && mX <= x + dX;
+    mouseXOnColumn = graphics.mX > x && graphics.mX <= x + dX;
     if(listColorsIndependent) {
       minMaxInterval = numberList.getMinMaxInterval();
       amp = minMaxInterval.getAmplitude();
     }
     for(j = 0; numberList[j] != null; j++) {
-      context.fillStyle = colorScale((numberList[j] - minMaxInterval.x) / amp);
-      context.fillRect(x, Math.round(frame.y + j * dY), Math.ceil(dX) - margin, Math.ceil(dY) - margin);
-      if(mouseXOnColumn && mY > frame.y + j * dY && mY <= frame.y + (j + 1) * dY) overCoordinates = new Point(i, j);
+      graphics.context.fillStyle = colorScale((numberList[j] - minMaxInterval.x) / amp);
+      graphics.context.fillRect(x, Math.round(frame.y + j * dY), Math.ceil(dX) - margin, Math.ceil(dY) - margin);
+      if(mouseXOnColumn && graphics.mY > frame.y + j * dY && graphics.mY <= frame.y + (j + 1) * dY) overCoordinates = new Point(i, j);
     }
   }
 
@@ -114,8 +86,8 @@ NumberTableDraw.drawNumberTable = function(frame, numberTable, colorScale, listC
  * @return {Number} index of rollovered element
  * tags:draw
  */
-NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colors, maxRadius, loglog, margin) {
-  if(frame == null ||  numberTable == null || numberTable.type != "NumberTable" ||  numberTable.length < 2 ||  numberTable[0].length == 0 || numberTable[1].length == 0) return; //todo:provisional, this is System's work
+NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colors, maxRadius, loglog, margin, graphics) {
+  if(frame == null ||  numberTable == null || numberTable.type != "NumberTable" ||  numberTable.length < 2 ||  numberTable[0].length === 0 || numberTable[1].length === 0) return; //todo:provisional, this is System's work
 
   if(numberTable.length < 2) return;
 
@@ -128,9 +100,9 @@ NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colo
 
   var i;
   var x, y;
-  var list0 = (loglog ? numberTable[0].log(1) : numberTable[0]).getNormalized();
-  var list1 = (loglog ? numberTable[1].log(1) : numberTable[1]).getNormalized();
-  var radii = numberTable.length <= 2 ? null : numberTable[2].getNormalized().sqrt().factor(maxRadius);
+  var list0 = NumberListOperators.normalized(loglog ? numberTable[0].log(1) : numberTable[0]);
+  var list1 = (loglog ? numberTable[1].log(1) :  NumberListOperators.normalized(numberTable[1]));
+  var radii = numberTable.length <= 2 ? null :  NumberListOperators.normalized(numberTable[2]).sqrt().factor(maxRadius);
   var nColors = (colors == null) ? null : colors.length;
   var n = Math.min(list0.length, list1.length, (radii == null) ? 300000 : radii.length, (texts == null) ? 300000 : texts.length);
   var iOver;
@@ -142,31 +114,32 @@ NumberTableDraw.drawSimpleScatterPlot = function(frame, numberTable, texts, colo
     if(radii == null) {
       if(NumberTableDraw._drawCrossScatterPlot(x, y, colors == null ? 'rgb(150,150,150)' : colors[i % nColors])) iOver = i;
     } else {
-      setFill(colors == null ? 'rgb(150,150,150)' : colors[i % nColors]);
-      if(fCircleM(x, y, radii[i], radii[i] + 1)) iOver = i;
+      graphics.setFill(colors == null ? 'rgb(150,150,150)' : colors[i % nColors]);
+      if(graphics.fCircleM(x, y, radii[i], radii[i] + 1)) iOver = i;
     }
     if(texts != null) {
-      setText('black', 10);
-      fText(texts[i], x, y);
+      graphics.setText('black', 10);
+      graphics.fText(texts[i], x, y);
     }
   }
 
-  if(margin > 7 && list0.name != "" && list1.name != "") {
-    setText('black', 10, null, 'right', 'middle');
-    fText(list0.name, subframe.getRight() - 2, subframe.bottom + margin * 0.5);
-    fTextRotated(list1.name, subframe.x - margin * 0.5, subframe.y + 1, -HalfPi);
+  if(margin > 7 && list0.name !== "" && list1.name !== "") {
+    graphics.setText('black', 10, null, 'right', 'middle');
+    graphics.fText(list0.name, subframe.getRight() - 2, subframe.bottom + margin * 0.5);
+    graphics.fTextRotated(list1.name, subframe.x - margin * 0.5, subframe.y + 1, -HalfPi);
   }
 
   if(iOver != null) {
-    setCursor('pointer');
+    graphics.setCursor('pointer');
     return iOver;
   }
 };
-NumberTableDraw._drawCrossScatterPlot = function(x, y, color) {
-  setStroke(color, 1);
-  line(x, y - 2, x, y + 2);
-  line(x - 2, y, x + 2, y);
-  return Math.pow(mX - x, 2) + Math.pow(mY - y, 2) < 25;
+
+NumberTableDraw._drawCrossScatterPlot = function(x, y, color, graphics) {
+  graphics.setStroke(color, 1);
+  graphics.line(x, y - 2, x, y + 2);
+  graphics.line(x - 2, y, x + 2, y);
+  return Math.pow(graphics.mX - x, 2) + Math.pow(graphics.mY - y, 2) < 25;
 };
 
 /**
@@ -177,7 +150,7 @@ NumberTableDraw._drawCrossScatterPlot = function(x, y, color) {
  * @return {Object}
  * tags:draw
  */
-NumberTableDraw.drawSlopeGraph = function(frame, numberTable, texts) {
+NumberTableDraw.drawSlopeGraph = function(frame, numberTable, texts, graphics) {
   if(frame == null ||  numberTable == null || numberTable.type != "NumberTable") return; //todo:provisional, this is System's work
 
   if(numberTable.length < 2) return;
@@ -188,28 +161,28 @@ NumberTableDraw.drawSlopeGraph = function(frame, numberTable, texts) {
 
   var i;
   var y0, y1;
-  var list0 = numberTable[0].getNormalized();
-  var list1 = numberTable[1].getNormalized();
+  var list0 =  NumberListOperators.normalized(numberTable[0]);
+  var list1 =  NumberListOperators.normalized(numberTable[1]);
   var n = Math.min(list0.length, list1.length, texts == null ? 2000 : texts.length);
 
   var x0 = subframe.x + (texts == null ? 10 : 0.25 * subframe.width);
   var x1 = subframe.getRight() - (texts == null ? 10 : 0.25 * subframe.width);
 
-  setStroke('black', 1);
+  graphics.setStroke('black', 1);
 
   for(i = 0; i < n; i++) {
     y0 = subframe.bottom - list0[i] * subframe.height;
     y1 = subframe.bottom - list1[i] * subframe.height;
 
-    line(x0, y0, x1, y1);
+    graphics.line(x0, y0, x1, y1);
 
     if(texts != null && (subframe.bottom - y0) >= 9) {
-      setText('black', 9, null, 'right', 'middle');
-      fText(texts[i], x0 - 2, y0);
+      graphics.setText('black', 9, null, 'right', 'middle');
+      graphics.fText(texts[i], x0 - 2, y0);
     }
     if(texts != null && (subframe.bottom - y1) >= 9) {
-      setText('black', 9, null, 'left', 'middle');
-      fText(texts[i], x1 + 2, y1);
+      graphics.setText('black', 9, null, 'left', 'middle');
+      graphics.fText(texts[i], x1 + 2, y1);
     }
   }
 };
@@ -225,7 +198,7 @@ NumberTableDraw.drawSlopeGraph = function(frame, numberTable, texts) {
  * @return {NumberList} list of positions of elements on clicked coordinates
  * tags:draw
  */
-NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, margin) {
+NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, margin, graphics) {
   if(coordinates == null || coordinates[0] == null) return;
 
   colorScale = colorScale == null ?
@@ -241,18 +214,18 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
   var x, y;
   var minx, miny;
   var matrixColors;
-
+  var numberTable;
+  var polygon;
 
   //setup
   if(frame.memory == null || coordinates != frame.memory.coordinates || colorScale != frame.memory.colorScale) {
 
     var isNumberTable = coordinates[0].x == null;
-
     if(isNumberTable) {
-      var numberTable = coordinates;
+      numberTable = coordinates;
       if(numberTable == null ||  numberTable.length < 2 || numberTable.type != "NumberTable") return;
     } else {
-      var polygon = coordinates;
+      polygon = coordinates;
     }
 
     var max = 0;
@@ -321,12 +294,12 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
   var dy = subframe.height / matrixColors[0].length;
   var prevSelected = frame.memory.selected;
 
-  if(MOUSE_UP_FAST) frame.memory.selected = null;
+  if(graphics.MOUSE_UP_FAST) frame.memory.selected = null;
 
   for(i = 0; matrixColors[i] != null; i++) {
     for(j = 0; matrixColors[0][j] != null; j++) {
-      setFill(matrixColors[i][j]);
-      if(fRectM(subframe.x + i * dx, subframe.bottom - (j + 1) * dy, dx + 0.5, dy + 0.5) && MOUSE_UP_FAST) {
+      graphics.setFill(matrixColors[i][j]);
+      if(graphics.fRectM(subframe.x + i * dx, subframe.bottom - (j + 1) * dy, dx + 0.5, dy + 0.5) && graphics.MOUSE_UP_FAST) {
         frame.memory.selected = [i, j];
       }
     }
@@ -335,10 +308,10 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
 
   //selection
   if(frame.memory.selected) {
-    setStroke('white', 5);
-    sRect(subframe.x + frame.memory.selected[0] * dx - 1, subframe.bottom - (frame.memory.selected[1] + 1) * dy - 1, dx + 1, dy + 1);
-    setStroke('black', 1);
-    sRect(subframe.x + frame.memory.selected[0] * dx - 1, subframe.bottom - (frame.memory.selected[1] + 1) * dy - 1, dx + 1, dy + 1);
+    graphics.setStroke('white', 5);
+    graphics.sRect(subframe.x + frame.memory.selected[0] * dx - 1, subframe.bottom - (frame.memory.selected[1] + 1) * dy - 1, dx + 1, dy + 1);
+    graphics.setStroke('black', 1);
+    graphics.sRect(subframe.x + frame.memory.selected[0] * dx - 1, subframe.bottom - (frame.memory.selected[1] + 1) * dy - 1, dx + 1, dy + 1);
   }
 
   if(prevSelected != frame.memory.selected) {
@@ -379,7 +352,7 @@ NumberTableDraw.drawDensityMatrix = function(frame, coordinates, colorScale, mar
  * @return {NumberList} list of positions of elements on clicked coordinates
  * tags:draw
  */
-NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, bezier, colorList, horizontalLabels, showValues, logFactor) {
+NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, bezier, colorList, horizontalLabels, showValues, logFactor, graphics) {
   if(numberTable == null ||  numberTable.length < 2 || numberTable.type != "NumberTable") return;
 
   bezier = bezier == null ? true : bezier;
@@ -401,7 +374,7 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
       flowIntervals: IntervalTableOperators.scaleIntervals(NumberTableFlowOperators.getFlowTableIntervals(nT2, normalized, sorted), intervalsFactor),
       fOpen: 1,
       names: numberTable.getNames(),
-      mXF: mX,
+      mXF: graphics.mX,
       width: frame.width,
       height: frame.height,
       logFactor: logFactor,
@@ -435,36 +408,37 @@ NumberTableDraw.drawStreamgraph = function(frame, numberTable, normalized, sorte
     /////
   }
 
+  var x0, x1;
   if(frame.memory.image) {
-
-    frame.memory.fOpen = 0.8 * frame.memory.fOpen + 0.2 * (frame.containsPoint(mP) ? 0.8 : 1);
-    frame.memory.mXF = 0.7 * frame.memory.mXF + 0.3 * mX;
+    frame.memory.fOpen = 0.8 * frame.memory.fOpen + 0.2 * (frame.containsPoint(graphics.mP) ? 0.8 : 1);
+    frame.memory.mXF = 0.7 * frame.memory.mXF + 0.3 * graphics.mX;
     frame.memory.mXF = Math.min(Math.max(frame.memory.mXF, frame.x), frame.getRight());
 
     if(frame.memory.fOpen < 0.999) {
-      context.save();
-      context.translate(frame.x, frame.y);
+      graphics.context.save();
+      graphics.context.translate(frame.x, frame.y);
       var cut = frame.memory.mXF - frame.x;
-      var x0 = Math.floor(cut * frame.memory.fOpen);
-      var x1 = Math.ceil(frame.width - (frame.width - cut) * frame.memory.fOpen);
+      x0 = Math.floor(cut * frame.memory.fOpen);
+      x1 = Math.ceil(frame.width - (frame.width - cut) * frame.memory.fOpen);
 
-      drawImage(frame.memory.image, 0, 0, cut, flowFrame.height, 0, 0, x0, flowFrame.height);
-      drawImage(frame.memory.image, cut, 0, (frame.width - cut), flowFrame.height, x1, 0, (frame.width - cut) * frame.memory.fOpen, flowFrame.height);
+      graphics.drawImage(frame.memory.image, 0, 0, cut, flowFrame.height, 0, 0, x0, flowFrame.height);
+      graphics.drawImage(frame.memory.image, cut, 0, (frame.width - cut), flowFrame.height, x1, 0, (frame.width - cut) * frame.memory.fOpen, flowFrame.height);
 
       NumberTableDraw._drawPartialFlow(flowFrame, frame.memory.flowIntervals, frame.memory.names, frame.memory.actualColorList, cut, x0, x1, 0.3, sorted, showValues ? numberTable : null);
 
-      context.restore();
+      graphics.context.restore();
     } else {
-      drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+      graphics.drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
     }
   }
 
   if(horizontalLabels) NumberTableDraw._drawHorizontalLabels(frame, frame.getBottom() - 5, numberTable, horizontalLabels, x0, x1);
 };
-NumberTableDraw._drawHorizontalLabels = function(frame, y, numberTable, horizontalLabels, x0, x1) {
+
+NumberTableDraw._drawHorizontalLabels = function(frame, y, numberTable, horizontalLabels, x0, x1, graphics) {
   var dx = frame.width / (numberTable[0].length - 1);
   var x;
-  var mX2 = Math.min(Math.max(mX, frame.x + 1), frame.getRight() - 1);
+  var mX2 = Math.min(Math.max(graphics.mX, frame.x + 1), frame.getRight() - 1);
   var iPosDec = (mX2 - frame.x) / dx;
   var iPos = Math.round(iPosDec);
 
@@ -472,7 +446,7 @@ NumberTableDraw._drawHorizontalLabels = function(frame, y, numberTable, horizont
   x1 = x1 == null ? frame.x : x1 + frame.x;
 
   horizontalLabels.forEach(function(label, i) {
-    setText('black', (i == iPos && x1 > (x0 + 4)) ? 14 : 10, null, 'center', 'middle');
+    graphics.setText('black', (i == iPos && x1 > (x0 + 4)) ? 14 : 10, null, 'center', 'middle');
 
     if(x0 > x1 - 5) {
       x = frame.x + i * dx;
@@ -486,10 +460,11 @@ NumberTableDraw._drawHorizontalLabels = function(frame, y, numberTable, horizont
         x = frame.x + i * dx * frame.memory.fOpen + (x1 - x0);
       }
     }
-    fText(horizontalLabels[i], x, y);
+    graphics.fText(horizontalLabels[i], x, y);
   });
 };
-NumberTableDraw._drawPartialFlow = function(frame, flowIntervals, labels, colors, x, x0, x1, OFF_X, sorted, numberTable) {
+
+NumberTableDraw._drawPartialFlow = function(frame, flowIntervals, labels, colors, x, x0, x1, OFF_X, sorted, numberTable, graphics) {
   var w = x1 - x0;
   var wForText = numberTable == null ? (x1 - x0) : (x1 - x0) * 0.85;
 
@@ -498,18 +473,11 @@ NumberTableDraw._drawPartialFlow = function(frame, flowIntervals, labels, colors
   var wDay = frame.width / (nDays - 1);
 
   var iDay = (x - frame.x) / wDay; // Math.min(Math.max((nDays-1)*(x-frame.x)/frame.width, 0), nDays-1);
-
-  var iDay = Math.max(Math.min(iDay, nDays - 1), 0);
+  iDay = Math.max(Math.min(iDay, nDays - 1), 0);
 
   var i;
   var i0 = Math.floor(iDay);
   var i1 = Math.ceil(iDay);
-
-  var t = iDay - i0;
-  var s = 1 - t;
-
-  var xi;
-  var yi;
 
   var interval0;
   var interval1;
@@ -532,7 +500,7 @@ NumberTableDraw._drawPartialFlow = function(frame, flowIntervals, labels, colors
 
   for(i = 0; flowIntervals[i] != null; i++) {
 
-    setFill(colors[i]);
+    graphics.setFill(colors[i]);
     interval0 = flowIntervals[i][i0];
     interval1 = flowIntervals[i][i1];
 
@@ -549,30 +517,30 @@ NumberTableDraw._drawPartialFlow = function(frame, flowIntervals, labels, colors
 
     //if(h<1) continue;
 
-    if(fRectM(x0, y, w, h)) iOver = i;
+    if(graphics.fRectM(x0, y, w, h)) iOver = i;
 
     if(h >= 5 && w > 40) {
-      setText('white', h, null, null, 'middle');
+      graphics.setText('white', h, null, null, 'middle');
 
       text = labels[i];
 
-      wt = getTextW(text);
+      wt = graphics.getTextW(text);
       pt = wt / wForText;
 
       if(pt > 1) {
-        setText('white', h / pt, null, null, 'middle');
+        graphics.setText('white', h / pt, null, null, 'middle');
       }
 
-      context.fillText(text, x0, y + h * 0.5);
+      graphics.context.fillText(text, x0, y + h * 0.5);
 
       if(numberTable) {
-        wt = getTextW(text);
+        wt = graphics.getTextW(text);
 
         ts0 = Math.min(h, h / pt);
         ts1 = Math.max(ts0 * 0.6, 8);
 
-        setText('white', ts1, null, null, 'middle');
-        fText(Math.round(numberTable[i][i0]), x0 + wt + w * 0.03, y + (h + (ts0 - ts1) * 0.5) * 0.5);
+        graphics.setText('white', ts1, null, null, 'middle');
+        graphics.fText(Math.round(numberTable[i][i0]), x0 + wt + w * 0.03, y + (h + (ts0 - ts1) * 0.5) * 0.5);
       }
 
 
@@ -597,7 +565,7 @@ NumberTableDraw._drawPartialFlow = function(frame, flowIntervals, labels, colors
  * @return {NumberList} list of positions of elements on clicked coordinates
  * tags:draw
  */
-NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, colorList, names) {
+NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalized, sorted, intervalsFactor, colorList, names, graphics) {
   if(numberTable == null ||  numberTable.length < 2 || numberTable[0].length < 2 || numberTable.type != "NumberTable") return;
 
   intervalsFactor = intervalsFactor == null ? 1 : intervalsFactor;
@@ -612,7 +580,7 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
       flowIntervals: IntervalTableOperators.scaleIntervals(NumberTableFlowOperators.getFlowTableIntervals(numberTable, normalized, sorted), intervalsFactor),
       fOpen: 1,
       names: numberTable.getNames(),
-      mXF: mX,
+      mXF: graphics.mX,
       width: frame.width,
       height: frame.height,
       radius: Math.min(frame.width, frame.height) * 0.46 - (names == null ? 0 : 8),
@@ -633,28 +601,28 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
     frame.memory.colorList = colorList;
   }
 
-  var mouseOnFrame = frame.containsPoint(mP);
+  var mouseOnFrame = frame.containsPoint(graphics.mP);
 
   if(mouseOnFrame) {
-    if(MOUSE_DOWN) {
-      frame.memory.downX = mX;
-      frame.memory.downY = mY;
+    if(graphics.MOUSE_DOWN) {
+      frame.memory.downX = graphics.mX;
+      frame.memory.downY = graphics.mY;
       frame.memory.pressed = true;
       frame.memory.zoomPressed = frame.memory.zoom;
       frame.memory.anglePressed = frame.memory.angle0;
     }
 
-    frame.memory.zoom *= (1 - 0.4 * WHEEL_CHANGE);
+    frame.memory.zoom *= (1 - 0.4 * graphics.WHEEL_CHANGE);
   }
 
-  if(MOUSE_UP) frame.memory.pressed = false;
+  if(graphics.MOUSE_UP) frame.memory.pressed = false;
   if(frame.memory.pressed) {
     var center = frame.getCenter();
     var dx0 = frame.memory.downX - center.x;
     var dy0 = frame.memory.downY - center.y;
     var d0 = Math.sqrt(Math.pow(dx0, 2) + Math.pow(dy0, 2));
-    var dx1 = mX - center.x;
-    var dy1 = mY - center.y;
+    var dx1 = graphics.mX - center.x;
+    var dy1 = graphics.mY - center.y;
     var d1 = Math.sqrt(Math.pow(dx1, 2) + Math.pow(dy1, 2));
     frame.memory.zoom = frame.memory.zoomPressed * ((d1 + 5) / (d0 + 5));
     var a0 = Math.atan2(dy0, dx0);
@@ -668,7 +636,7 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
   var drawingImage = !mouseOnFrame && frame.memory.image != null &&  !captureImage;
 
   if(drawingImage) {
-    drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
+    graphics.drawImage(frame.memory.image, frame.x, frame.y, frame.width, frame.height);
   } else {
     if(captureImage) {
       // TODO refactor to not reassign context
@@ -687,23 +655,23 @@ NumberTableDraw.drawCircularStreamgraph = function(frame, numberTable, normalize
       // fRect(0, 0, frame.width, frame.height);
     }
 
-    context.save();
-    clipRectangle(frame.x, frame.y, frame.width, frame.height);
+    graphics.context.save();
+    graphics.clipRectangle(frame.x, frame.y, frame.width, frame.height);
 
     IntervalTableDraw.drawCircularIntervalsFlowTable(frame.memory.flowIntervals, frame.getCenter(), frame.memory.radius * frame.memory.zoom, frame.memory.r0, frame.memory.actualColorList, frame.memory.names, true, frame.memory.angles, frame.memory.angle0);
 
-    context.restore();
+    graphics.context.restore();
 
     if(names) {
       var a;
       var r = frame.memory.radius * frame.memory.zoom + 8;
 
-      setText('black', 14, null, 'center', 'middle');
+      graphics.setText('black', 14, null, 'center', 'middle');
 
       names.forEach(function(name, i) {
         a = frame.memory.angle0 + frame.memory.angles[i];
 
-        fTextRotated(String(name), frame.getCenter().x + r * Math.cos(a), frame.getCenter().y + r * Math.sin(a), a + HalfPi);
+        graphics.fTextRotated(String(name), frame.getCenter().x + r * Math.cos(a), frame.getCenter().y + r * Math.sin(a), a + HalfPi);
       });
     }
 

@@ -1,27 +1,48 @@
 import NumberOperators from "src/operators/numeric/NumberOperators";
 import { instantiateWithSameType, typeOf, instantiate } from "src/tools/utils/code/ClassUtils";
-import List from "src/dataStructures/lists/List";
-import Table from "src/dataStructures/lists/Table";
-import NumberList from "src/dataStructures/numeric/NumberList";
-import NumberTable from "src/dataStructures/numeric/NumberTable";
+import List from "src/dataTypes/lists/List";
+import Table from "src/dataTypes/lists/Table";
+import NumberList from "src/dataTypes/numeric/NumberList";
+import NumberTable from "src/dataTypes/numeric/NumberTable";
 import ListOperators from "src/operators/lists/ListOperators";
 import NumberListGenerators from "src/operators/numeric/numberList/NumberListGenerators";
 import ListGenerators from "src/operators/lists/ListGenerators";
+import ColorScales from "src/operators/graphic/ColorScales";
+import Tree from "src/dataTypes/structures/networks/Tree";
 
+import StringOperators from "src/operators/strings/StringOperators";
+import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
+import {
+  TYPES_SHORT_NAMES_DICTIONARY,
+  getColorFromDataModelType
+} from "src/tools/utils/code/ClassUtils";
+
+/**
+ * @classdesc Table Operators
+ *
+ * @namespace
+ * @category basics
+ */
 function TableOperators() {}
 export default TableOperators;
 
 
+/**
+ * @todo finish docs
+ */
 TableOperators.getElementFromTable = function(table, i, j) {
   if(table[i] == null) return null;
   return table[i][j];
 };
 
+/**
+ * @todo finish docs
+ */
 TableOperators.getSubTable = function(table, x, y, width, height) {
   if(table == null) return table;
 
   var nLists = table.length;
-  if(nLists == 0) return null;
+  if(nLists === 0) return null;
   var result = new Table();
 
   if(width <= 0) width = (nLists - x) + width;
@@ -30,7 +51,7 @@ TableOperators.getSubTable = function(table, x, y, width, height) {
 
   var nRows = table[0].length;
 
-  if(nRows == 0) return null;
+  if(nRows === 0) return null;
 
   if(height <= 0) height = (nRows - y) + height;
 
@@ -53,6 +74,106 @@ TableOperators.getSubTable = function(table, x, y, width, height) {
     result.push(newColumn.getImproved());
   }
   return result.getImproved();
+};
+
+/**
+ * filters lists on a table, keeping elements that are in the same of row of a certain element of a given list from the table
+ * @param  {Table} table Table.
+ * @param  {Number} nList index of list containing the element
+ * @param  {Object} element used to filter the lists on the table
+ * @return {Table}
+ * tags:filter
+ */
+TableOperators.getSubTableByElementOnList = function(table, nList, element){
+  if(nList==null || element==null) return;
+
+  var i, j;
+  var nLists = table.length;
+
+  if(nList<0) nList = nLists+nList;
+  nList = nList%nLists;
+
+  var newTable = instantiateWithSameType(table);
+  newTable.name = table.name;
+
+  for(i=0; i<nLists; i++){
+    var newList = new List();
+    newList.name = table[i].name;
+    newTable.push(newList);
+  }
+  // table.forEach(function(list){
+  //   var newList = new List();
+  //   newList.name = list.name;
+  //   newTable.push(newList);
+  // });
+
+  var supervised = table[nList];
+  var nSupervised = supervised.length;
+  var nElements;
+
+  for(i=0; i<nSupervised; i++){
+    if(element==supervised[i]){
+      nElements = newTable.length;
+       for(j=0; j<nElements; j++){
+          newTable[j].push(table[j][i]);
+       }
+    }
+  }
+
+  nLists = newTable.length;
+
+  for(i=0; i<nLists; i++){
+    newTable[i] = newTable[i].getImproved();
+  }
+  // newTable.forEach(function(list, i){
+  //   newTable[i] = list.getImproved();
+  // });
+
+  return newTable.getImproved();
+};
+
+/**
+ * filters lists on a table, keeping elements that are in the same of row of certain elements of a given list from the table
+ * @param  {Table} table Table.
+ * @param  {Number} nList index of list containing the element
+ * @param  {List} elements used to filter the lists on the table
+ * @return {Table}
+ * tags:filter
+ */
+TableOperators.getSubTableByElementsOnList = function(table, nList, list){
+  if(nList==null || list==null) return;
+
+  var i, j;
+
+  if(nList<0) nList = table.length+nList;
+  nList = nList%table.length;
+
+  var newTable = instantiateWithSameType(table);
+  newTable.name = table.name;
+
+  table.forEach(function(list){
+    var newList = new List();
+    newList.name = list.name;
+    newTable.push(newList);
+  });
+
+  var supervised = table[nList];
+
+  var listDictionary = ListOperators.getBooleanDictionaryForList(list);
+
+  for(i=0; supervised[i]!=null; i++){
+    if(listDictionary[supervised[i]]){
+       for(j=0; newTable[j]!=null; j++){
+          newTable[j].push(table[j][i]);
+       }
+    }
+  }
+
+  newTable.forEach(function(list, i){
+    newTable[i] = list.getImproved();
+  });
+
+  return newTable.getImproved();
 };
 
 /**
@@ -84,22 +205,26 @@ TableOperators.trainingTestPartition = function(table, proportion, mode, seed) {
   mode = mode || 0;
   seed = seed || 0;
 
+  var n_mod = 0;
+
   var indexesTr = new NumberList();
   var indexesTe = new NumberList();
 
   var random = mode == 1 ? new NumberOperators._Alea("my", seed, "seeds") : Math.random;
 
-  if(mode == 2) N_MOD = Math.floor(proportion / (1 - proportion) * 10);
+  if(mode == 2) {
+    n_mod = Math.floor(proportion / (1 - proportion) * 10);
+  }
 
   table[0].forEach(function(id, i) {
-    if(mode == 0 ||  mode == 1) {
+    if(mode === 0 ||  mode === 1) {
       if(random() < proportion) {
         indexesTr.push(i);
       } else {
         indexesTe.push(i);
       }
     } else {
-      if(i % N_MOD != 0) {
+      if(i % n_mod !== 0) {
         indexesTr.push(i);
       } else {
         indexesTe.push(i);
@@ -125,7 +250,6 @@ TableOperators.testClassificationModel = function(numberTable, classes, model, m
 
   metric = metric || 0;
 
-  var i;
   var nErrors = 0;
 
   classes.forEach(function(clss, i) {
@@ -139,6 +263,9 @@ TableOperators.testClassificationModel = function(numberTable, classes, model, m
 
 
 
+/**
+ * @todo finish docs
+ */
 TableOperators.getSubListsByIndexes = function(table, indexes) {
   var newTable = new Table();
   newTable.name = table.name;
@@ -160,6 +287,9 @@ TableOperators.getSubListsByIndexes = function(table, indexes) {
 // - performance improvements for tables with lots of lists
 // TableOperators.sortListsByNumberList=function(table, numberList, descending){
 //  descending = descending || true;
+/**
+ * @todo finish docs
+ */
 TableOperators.sortListsByNumberList = function(table, numberList, descending) {
   if(descending == null) descending = true;
 
@@ -182,7 +312,7 @@ TableOperators.sortListsByNumberList = function(table, numberList, descending) {
     }
   }
   return newTable;
-}
+};
 
 
 /**
@@ -206,7 +336,6 @@ TableOperators.aggregateTable = function(table, indexAggregationList, indexesLis
   var newTable = new Table();
   var newList;
   var toAggregateList;
-  var i;
 
   indexesListsToAggregate.forEach(function(index, i){
     toAggregateList = table[index];
@@ -216,7 +345,7 @@ TableOperators.aggregateTable = function(table, indexAggregationList, indexesLis
   });
 
   return newTable.getImproved();
-}
+};
 
 
 
@@ -239,13 +368,13 @@ TableOperators.pivotTable = function(table, indexFirstAggregationList, indexSeco
   resultMode = resultMode||0;
   nullValue = nullValue==null?"":nullValue;
 
-  var element0, element1;
+  var element1;
   var coordinate, indexes;
   var listToAggregate = table[indexListToAggregate];
 
   var newTable = new Table();
   var sum;
-  var i, j, index;
+  var i;
 
   if(resultMode==1){//two lists of elements and a list of aggregation value
     var indexesDictionary = {};
@@ -410,7 +539,7 @@ TableOperators.pivotTable = function(table, indexFirstAggregationList, indexSeco
   }
 
   return newTable;
-}
+};
 
 
 
@@ -508,7 +637,7 @@ TableOperators.getCountPairsMatrix = function(table) {
   });
 
   table[0].forEach(function(element0, i) {
-    element1 = table[1][i];
+    var element1 = table[1][i];
     matrix[list1.indexOf(element1)][list0.indexOf(element0)]++;
   });
 
@@ -521,13 +650,13 @@ TableOperators.getCountPairsMatrix = function(table) {
  * @param  {Table} table
  * @param  {Number} nList list that could contain the element in several positions
  * @param  {Object} element
- * 
+ *
  * @param {Boolean} keepRowIfElementIsPresent if true (default value) the row is selected if the list contains the given element, if false the row is discarded
  * @return {Table}
  * tags:filter
  */
 TableOperators.filterTableByElementInList = function(table, nList, element, keepRowIfElementIsPresent) {
-  if(table == null ||  !table.length > 1 || nList == null) return;
+  if(table == null ||  table.length <= 0 || nList == null) return;
   if(element == null) return table;
 
 
@@ -566,6 +695,9 @@ TableOperators.filterTableByElementInList = function(table, nList, element, keep
   return newTable;
 };
 
+/**
+ * @todo finish docs
+ */
 TableOperators.mergeDataTablesInList = function(tableList) {
   if(tableList.length < 2) return tableList;
 
@@ -582,7 +714,7 @@ TableOperators.mergeDataTablesInList = function(tableList) {
  * creates a new table with an updated first List of elements and an added new numberList with the new values
  */
 TableOperators.mergeDataTables = function(table0, table1) {
-  if(table1[0].length == 0) {
+  if(table1[0].length === 0) {
     var merged = table0.clone();
     merged.push(ListGenerators.createListWithSameElement(table0[0].length, 0));
     return merged;
@@ -599,7 +731,6 @@ TableOperators.mergeDataTables = function(table0, table1) {
   var numberTable0 = new NumberTable();
   var numberTable1 = new NumberTable();
 
-  var element;
   var index;
 
   var i, j;
@@ -607,8 +738,8 @@ TableOperators.mergeDataTables = function(table0, table1) {
   for(i = 0; i < nElements; i++) {
     index = table0[0].indexOf(list[i]);
     if(index > -1) {
-      for(var j = 0; j < nNumbers0; j++) {
-        if(i == 0) {
+      for(j = 0; j < nNumbers0; j++) {
+        if(i === 0) {
           numberTable0[j] = new NumberList();
           numberTable0[j].name = table0[j + 1].name;
         }
@@ -616,7 +747,7 @@ TableOperators.mergeDataTables = function(table0, table1) {
       }
     } else {
       for(j = 0; j < nNumbers0; j++) {
-        if(i == 0) {
+        if(i === 0) {
           numberTable0[j] = new NumberList();
           numberTable0[j].name = table0[j + 1].name;
         }
@@ -627,7 +758,7 @@ TableOperators.mergeDataTables = function(table0, table1) {
     index = table1[0].indexOf(list[i]);
     if(index > -1) {
       for(j = 0; j < nNumbers1; j++) {
-        if(i == 0) {
+        if(i === 0) {
           numberTable1[j] = new NumberList();
           numberTable1[j].name = table1[j + 1].name;
         }
@@ -635,7 +766,7 @@ TableOperators.mergeDataTables = function(table0, table1) {
       }
     } else {
       for(j = 0; j < nNumbers1; j++) {
-        if(i == 0) {
+        if(i === 0) {
           numberTable1[j] = new NumberList();
           numberTable1[j].name = table1[j + 1].name;
         }
@@ -678,6 +809,9 @@ TableOperators.fusionDataTables = function(table0, table1) {
   return table;
 };
 
+/**
+ * @todo finish docs
+ */
 TableOperators.completeTable = function(table, nRows, value) {
   value = value == null ? 0 : value;
 
@@ -707,7 +841,9 @@ TableOperators.completeTable = function(table, nRows, value) {
  * tags:filter
  */
 TableOperators.getNumberTableFromTable = function(table) {
-  if(table == null ||  !table.length > 0) return null;
+  if(table == null ||  table.length <= 0) {
+    return null;
+  }
 
   var i;
   var newTable = new NumberTable();
@@ -735,13 +871,15 @@ TableOperators.getVariablesInformationGain = function(variablesTable, supervised
   return igs;
 };
 
+/**
+ * @todo finish docs
+ */
 TableOperators.splitTableByCategoricList = function(table, list) {
   if(table == null || list == null) return null;
 
   var childrenTable;
   var tablesList = new List();
   var childrenObject = {};
-  var N = list.length;
 
   list.forEach(function(element, i) {
     childrenTable = childrenObject[element];
@@ -802,16 +940,20 @@ TableOperators.buildDecisionTree = function(variablesTable, supervised, supervis
 };
 
 
+/**
+ * @ignore
+ */
 TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervised, level, min_entropy, min_size_node, min_info_gain, parent, value, supervisedValue, indexes, generatePattern, colorScale) {
   //if(level < 4) c.l('\nlevel', level);
   var entropy = ListOperators.getListEntropy(supervised, supervisedValue);
 
   //if(level < 4) c.l('entropy, min_entropy', entropy, min_entropy);
+  var maxIg = 0;
+  var iBestFeature = 0;
+  var informationGains = 0;
 
   if(entropy >= min_entropy) {
-    var informationGains = TableOperators.getVariablesInformationGain(variablesTable, supervised);
-    var maxIg = 0;
-    var iBestFeature = 0;
+    informationGains = TableOperators.getVariablesInformationGain(variablesTable, supervised);
     informationGains.forEach(function(ig, i){
       if(ig > maxIg) {
         maxIg = ig;
@@ -864,7 +1006,7 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
   // }
 
   node._color = colorScale(node.valueFollowingProbability); //TableOperators._decisionTreeColorScale(1 - node.valueFollowingProbability, colorScale);
-  
+
   if(generatePattern) {
     var newCanvas = document.createElement("canvas");
     newCanvas.width = 150;
@@ -890,7 +1032,7 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
   }
 
   node.bestFeatureName = variablesTable[iBestFeature].name;
-  node.bestFeatureName = node.bestFeatureName == ""?"list "+iBestFeature:node.bestFeatureName;
+  node.bestFeatureName = node.bestFeatureName === "" ? "list "+ iBestFeature:node.bestFeatureName;
   node.iBestFeature = iBestFeature;
   node.informationGain = maxIg;
 
@@ -900,7 +1042,6 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
   var childTable;
   var childSupervised;
   var childIndexes;
-  var newNode;
 
   tables.forEach(function(expandedChild) {
     childTable = expandedChild.getSubList(0, expandedChild.length - 3);
@@ -925,6 +1066,9 @@ TableOperators._buildDecisionTreeNode = function(tree, variablesTable, supervise
 //   // return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
 // };
 
+/**
+ * @ignore
+ */
 TableOperators._decisionTreeGenerateColorsMixture = function(ctxt, width, height, colors, weights){
   var x, y, i; //, rgb;
   var allColors = ListGenerators.createListWithSameElement(weights[0], colors[0]);
@@ -941,3 +1085,254 @@ TableOperators._decisionTreeGenerateColorsMixture = function(ctxt, width, height
     }
   }
 };
+
+
+/**
+ * Generates a string containing details about the current state
+ * of the Table. Useful for outputing to the console for debugging.
+ * @param {Table} table Table to generate report on.
+ * @param {Number} level If greater then zero, will indent to that number of spaces.
+ * @return {String} Description String.
+ */
+TableOperators.getReport = function(table, level) {
+  var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
+  var lengths = table.getLengths();
+  var minLength = lengths.getMin();
+  var maxLength = lengths.getMax();
+  var averageLength = (minLength + maxLength) * 0.5;
+  var sameLengths = minLength == maxLength;
+
+  var text = level > 0 ? (ident + "////report of instance of Table////") : "///////////report of instance of Table//////////";
+
+  if(table.length === 0) {
+    text += ident + "this table has no lists";
+    return text;
+  }
+
+  text += ident + "name: " + table.name;
+  text += ident + "type: " + table.type;
+  text += ident + "number of lists: " + table.length;
+
+  text += ident + "all lists have same length: " + (sameLengths ? "true" : "false");
+
+  if(sameLengths) {
+    text += ident + "lists length: " + table[0].length;
+  } else {
+    text += ident + "min length: " + minLength;
+    text += ident + "max length: " + maxLength;
+    text += ident + "average length: " + averageLength;
+    text += ident + "all lengths: " + lengths.join(", ");
+  }
+
+  var names = table.getNames();
+  var types = table.getTypes();
+
+  text += ident + "--";
+  names.forEach(function(name, i){
+    text += ident + i + ": " + name + " ["+TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"]";
+  });
+  text += ident + "--";
+
+  var sameTypes = types.allElementsEqual();
+  if(sameTypes) {
+    text += ident + "types of all lists: " + types[0];
+  } else {
+    text += ident + "types: " + types.join(", ");
+  }
+  text += ident + "names: " + names.join(", ");
+
+  if(table.length < 101) {
+    text += ident + ident + "--------lists reports---------";
+
+    var i;
+    for(i = 0; table[i] != null; i++) {
+      text += "\n" + ident + ("(" + (i) + "/0-" + (table.length - 1) + ")");
+      try{
+         text += ListOperators.getReport(table[i], 1);
+      } catch(err){
+        text += ident + "[!] something wrong with list " + err;
+      }
+    }
+  }
+
+  if(table.length == 2) {
+    text += ident + ident + "--------lists comparisons---------";
+    if(table[0].type=="NumberList" && table[1].type=="NumberList"){
+      text += ident + "covariance:" + NumberListOperators.covariance(table[0], table[1]);
+      text += ident + "Pearson product moment correlation: " + NumberListOperators.pearsonProductMomentCorrelation(table[0], table[1]);
+    } else if(table[0].type!="NumberList" && table[1].type!="NumberList"){
+      var nUnion = ListOperators.union(table[0], table[1]).length;
+      text += ident + "union size: " + nUnion;
+      var intersected = ListOperators.intersection(table[0], table[1]);
+      var nIntersection = intersected.length;
+      text += ident + "intersection size: " + nIntersection;
+
+      if(table[0]._freqTable[0].length == nUnion && table[1]._freqTable[0].length == nUnion){
+        text += ident + "[!] both lists contain the same non repeated elements";
+      } else {
+        if(table[0]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in first list also occur on second list";
+        if(table[1]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in second list also occur on first list";
+      }
+      text += ident + "Jaccard distance: " + (1 - (nIntersection/nUnion));
+    }
+    //check for 1-1 matches, number of pairs, categorical, sub-categorical
+    var subCategoryCase = ListOperators.subCategoricalAnalysis(table[0], table[1]);
+
+    switch(subCategoryCase){
+      case 0:
+        text += ident + "no categorical relation found between lists";
+        break;
+      case 1:
+        text += ident + "[!] both lists are categorical identical";
+        break;
+      case 2:
+        text += ident + "[!] first list is subcategorical to second list";
+        break;
+      case 3:
+        text += ident + "[!] second list is subcategorical to first list";
+        break;
+    }
+
+    if(subCategoryCase!=1){
+      text += ident + "information gain when segmenting first list by the second: "+ListOperators.getInformationGain(table[0], table[1]);
+      text += ident + "information gain when segmenting second list by the first: "+ListOperators.getInformationGain(table[1], table[0]);
+    }
+  }
+
+  ///add ideas to: analyze, visualize
+
+  return text;
+};
+
+/**
+ * Generates a string containing details about the current state
+ * of the Table. Useful for outputing to the console for debugging.
+ * @param {Table} table Table to generate report on.
+ * @param {Number} level If greater then zero, will indent to that number of spaces.
+ * @return {String} Description String.
+ */
+TableOperators.getReportHtml = function(table,level) {
+  var ident = "<br>" + (level > 0 ? StringOperators.repeatString("&nbsp", level) : "");
+  var lengths = table.getLengths();
+  var minLength = lengths.getMin();
+  var maxLength = lengths.getMax();
+  var averageLength = (minLength + maxLength) * 0.5;
+  var sameLengths = minLength == maxLength;
+
+  var text = "<b>" +( level > 0 ? (ident + "<font style=\"font-size:16px\">table report</f>") : "<font style=\"font-size:18px\">table report</f>" ) + "</b>";
+
+  if(table.length === 0) {
+    text += ident + "this table has no lists";
+    return text;
+  }
+
+  if(table.name){
+    text += ident + "name: <b>" + table.name + "</b>";
+  } else {
+    text += ident + "<i>no name</i>";
+  }
+  text += ident + "type: <b>" + table.type + "</b>";
+  text += ident + "number of lists: <b>" + table.length + "</b>";
+
+  text += ident + "all lists have same length: <b>" + (sameLengths ? "true" : "false") + "</b>";
+
+  if(sameLengths) {
+    text += ident + "lists length: <b>" + table[0].length + "</b>";
+  } else {
+    text += ident + "min length: <b>" + minLength + "</b>";
+    text += ident + "max length: <b>" + maxLength + "</b>";
+    text += ident + "average length: <b>" + averageLength + "</b>";
+    text += ident + "all lengths: <b>" + lengths.join(", ") + "</b>";
+  }
+
+  var names = table.getNames();
+  var types = table.getTypes();
+
+  text += "<hr>";
+  names.forEach(function(name, i){
+    text += ident + "<font style=\"font-size:10px\">" +i + ":</f><b>" + name + "</b> <font color=\""+getColorFromDataModelType(types[i])+ "\">" + TYPES_SHORT_NAMES_DICTIONARY[types[i]]+"</f>";
+  });
+  text += "<hr>";
+
+  var sameTypes = types.allElementsEqual();
+  if(sameTypes) {
+    text += ident + "types of all lists: " + "<b>" + types[0] + "</b>";
+  } else {
+    text += ident + "types: ";
+    types.forEach(function(type, i){
+      text += "<b><font color=\""+getColorFromDataModelType(type)+ "\">" + type+"</f></b>";
+      if(i<types.length-1) text += ", ";
+    });
+  }
+  text += "<br>" + ident + "names: <b>" + names.join("</b>, <b>") + "</b>";
+
+
+  //list by list
+
+  if(table.length < 501) {
+    text += "<hr>";
+    text +=  ident + "<font style=\"font-size:16px\"><b>lists reports</b></f>";
+
+    var i;
+    for(i = 0; table[i] != null; i++) {
+      text += "<br>" + ident + i + ": " + (table[i].name?"<b>"+table[i].name+"</b>":"<i>no name</i>");
+      try{
+         text += ListOperators.getReportHtml(table[i], 1);
+      } catch(err){
+        text += ident + "[!] something wrong with list <font style=\"font-size:10px\">:" + err + "</f>";
+        console.log('getReportHtml err', err);
+      }
+    }
+  }
+
+  if(table.length == 2) {//TODO:finish
+    text += "<hr>";
+    text += ident + "<b>lists comparisons</b>";
+    if(table[0].type=="NumberList" && table[1].type=="NumberList"){
+      text += ident + "covariance:" + NumberOperators.numberToString(NumberListOperators.covariance(table[0], table[1]), 4);
+      text += ident + "Pearson product moment correlation: " + NumberOperators.numberToString(NumberListOperators.pearsonProductMomentCorrelation(table[0], table[1]), 4);
+    } else if(table[0].type!="NumberList" && table[1].type!="NumberList"){
+      var nUnion = ListOperators.union(table[0], table[1]).length;
+      text += ident + "union size: " + nUnion;
+      var intersected = ListOperators.intersection(table[0], table[1]);
+      var nIntersection = intersected.length;
+      text += ident + "intersection size: " + nIntersection;
+
+      if(table[0]._freqTable[0].length == nUnion && table[1]._freqTable[0].length == nUnion){
+        text += ident + "[!] both lists contain the same non repeated elements";
+      } else {
+        if(table[0]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in first list also occur on second list";
+        if(table[1]._freqTable[0].length == nIntersection) text += ident + "[!] all elements in second list also occur on first list";
+      }
+      text += ident + "Jaccard distance: " + (1 - (nIntersection/nUnion));
+    }
+    //check for 1-1 matches, number of pairs, categorical, sub-categorical
+    var subCategoryCase = ListOperators.subCategoricalAnalysis(table[0], table[1]);
+
+    switch(subCategoryCase){
+      case 0:
+        text += ident + "no categorical relation found between lists";
+        break;
+      case 1:
+        text += ident + "[!] both lists are categorical identical";
+        break;
+      case 2:
+        text += ident + "[!] first list is subcategorical to second list";
+        break;
+      case 3:
+        text += ident + "[!] second list is subcategorical to first list";
+        break;
+    }
+
+    if(subCategoryCase!=1){
+      text += ident + "information gain when segmenting first list by the second: "+NumberOperators.numberToString( ListOperators.getInformationGain(table[0], table[1]), 4);
+      text += ident + "information gain when segmenting second list by the first: "+NumberOperators.numberToString( ListOperators.getInformationGain(table[1], table[0]), 4);
+    }
+  }
+
+  ///add ideas to: analyze, visualize
+
+  return text;
+};
+
+TableOperators.getReportObject = function() {}; //TODO

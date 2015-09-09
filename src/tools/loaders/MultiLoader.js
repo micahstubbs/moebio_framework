@@ -1,5 +1,5 @@
 import Loader from "src/tools/loaders/Loader";
-import List from "src/dataStructures/lists/List";
+import List from "src/dataTypes/lists/List";
 import LoadEvent from "src/tools/loaders/LoadEvent";
 
 MultiLoader.prototype = {};
@@ -19,7 +19,7 @@ function MultiLoader() {
   this.target = null;
   this.loading = false;
 
-  this.indexLoading;
+  this.indexLoading = undefined;
 
   ////datas
   this.datasLoaded = null;
@@ -27,14 +27,14 @@ function MultiLoader() {
   ////images
   this.imagesLoaded = null;
 
-  this.priorityWeights;
+  this.priorityWeights = undefined;
   this.associativeArray = [];
 
   this.url_to_image = {};
 
   this.simulateDelay = false;
   this.DELAY_MILLISECONDS = 1000;
-  this.timer;
+  this.timer = undefined;
 }
 export default MultiLoader;
 

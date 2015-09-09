@@ -1,4 +1,4 @@
-import NumberList from "src/dataStructures/numeric/NumberList";
+import NumberList from "src/dataTypes/numeric/NumberList";
 
 /**
  * @classdesc Provides a set of tools that work with Numbers.
@@ -9,7 +9,13 @@ import NumberList from "src/dataStructures/numeric/NumberList";
 function NumberOperators() {}
 export default NumberOperators;
 
-NumberOperators.numberToString = function(value, nDecimals, powersMode, unit) {
+/**
+ * converts number into a string
+ *
+ * @param {Number} value The number to convert
+ * @param {Number} nDecimals Number of decimals to include. Defaults to 0.
+ */
+NumberOperators.numberToString = function(value, nDecimals ) {
   var string = value.toFixed(nDecimals);
   while(string.charAt(string.length - 1) == '0') {
     string = string.substring(0, string.length - 1);
@@ -27,6 +33,9 @@ NumberOperators.getRandomWithSeed = function(seed) {
   return seed / (233280.0);
 };
 
+/**
+ * @todo write docs
+ */
 NumberOperators.numberFromBinaryPositions = function(binaryPositions) {
   var i;
   var n = 0;
@@ -36,24 +45,22 @@ NumberOperators.numberFromBinaryPositions = function(binaryPositions) {
   return n;
 };
 
+/**
+ * @todo write docs
+ */
 NumberOperators.numberFromBinaryValues = function(binaryValues) {
   var n = 0;
-  for(var i = 0; binaryValues[i] != null; i++) {
-    n += binaryValues[i] == 1 ? Math.pow(2, i) : 0;
+  var l = binaryValues.length;
+  for(var i = 0; i < l; i++) {
+    n += binaryValues[i] == 1 ? Math.pow(2, (l - (i + 1))) : 0;
   }
   return n;
 };
 
+/**
+ * @todo write docs
+ */
 NumberOperators.powersOfTwoDecomposition = function(number, length) {
-  // var i;
-  // var powers = StringList.fromArray(Number(number).toString(2).split('')).toNumberList().getReversed();
-  // var n = powers.length;
-  // for(i=n; i<length; i++){
-  //   powers.push(0);
-  // }
-  // return powers;
-
-
 
   var powers = new NumberList();
 
@@ -66,7 +73,7 @@ NumberOperators.powersOfTwoDecomposition = function(number, length) {
     number -= Math.pow(2, biggestPower);
   }
 
-  var length = Math.max(powers.length, length == null ? 0 : length);
+  length = Math.max(powers.length, length == null ? 0 : length);
 
   for(var i = 0; i < length; i++) {
     powers[i] = powers[i] == 1 ? 1 : 0;
@@ -75,6 +82,9 @@ NumberOperators.powersOfTwoDecomposition = function(number, length) {
   return powers;
 };
 
+/**
+ * @todo write docs
+ */
 NumberOperators.positionsFromBinaryValues = function(binaryValues) {
   var i;
   var positions = new NumberList();
@@ -86,6 +96,9 @@ NumberOperators.positionsFromBinaryValues = function(binaryValues) {
 
 //////////Random Generator with Seed, From http://baagoe.org/en/w/index.php/Better_random_numbers_for_javascript
 
+/**
+ * @ignore
+ */
 NumberOperators._Alea = function() {
   return(function(args) {
     // Johannes Baagøe <baagoe@baagoe.com>, 2010
@@ -94,7 +107,7 @@ NumberOperators._Alea = function() {
     var s2 = 0;
     var c = 1;
 
-    if(args.length == 0) {
+    if(args.length === 0) {
       args = [+new Date()];
     }
     var mash = NumberOperators._Mash();
@@ -122,6 +135,7 @@ NumberOperators._Alea = function() {
       var t = 2091639 * s0 + c * 2.3283064365386963e-10; // 2^-32
       s0 = s1;
       s1 = s2;
+      // https://github.com/nquinlan/better-random-numbers-for-javascript-mirror/blob/master/support/js/Alea.js#L38
       return s2 = t - (c = t | 0);
     };
     random.uint32 = function() {
@@ -138,6 +152,9 @@ NumberOperators._Alea = function() {
   }(Array.prototype.slice.call(arguments)));
 };
 
+/**
+ * @ignore
+ */
 NumberOperators._Mash = function() {
   var n = 0xefc8249d;
 

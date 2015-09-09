@@ -92,7 +92,7 @@ InputTextField.prototype.onKeyDown = function(e) {
     }
   } else {
     var character = String.fromCharCode(x);
-    c.log("onKeyDown x:" + x + ", character: [" + character + "]");
+    console.log("onKeyDown x:" + x + ", character: [" + character + "]");
     if(this._assocativeKeys[x] != null) {
       if(this.allSelected) {
         this.text = "";

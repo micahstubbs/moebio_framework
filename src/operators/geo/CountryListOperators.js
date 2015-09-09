@@ -10,6 +10,9 @@ function CountryListOperators() {}
 export default CountryListOperators;
 
 
+/**
+ * @todo write docs
+ */
 CountryListOperators.getCountryByName = function(countryList, name) {
   var simplifiedName = CountryOperators.getSimplifiedName(name);
 

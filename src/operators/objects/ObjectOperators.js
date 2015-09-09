@@ -1,19 +1,27 @@
-import StringList from "src/dataStructures/strings/StringList";
-import List from "src/dataStructures/lists/List";
-import Table from "src/dataStructures/lists/Table";
+import StringList from "src/dataTypes/strings/StringList";
+import List from "src/dataTypes/lists/List";
+import Table from "src/dataTypes/lists/Table";
 import { typeOf } from "src/tools/utils/code/ClassUtils";
-import Point from "src/dataStructures/geometry/Point";
-import Point3D from "src/dataStructures/geometry/Point3D";
-import Rectangle from "src/dataStructures/geometry/Rectangle";
-import Interval from "src/dataStructures/numeric/Interval";
-import DateInterval from "src/dataStructures/dates/DateInterval";
+import Point from "src/dataTypes/geometry/Point";
+import Point3D from "src/dataTypes/geometry/Point3D";
+import Rectangle from "src/dataTypes/geometry/Rectangle";
+import Interval from "src/dataTypes/numeric/Interval";
+import DateInterval from "src/dataTypes/dates/DateInterval";
 import DateOperators from "src/operators/dates/DateOperators";
-import NumberList from "src/dataStructures/numeric/NumberList";
+import NumberList from "src/dataTypes/numeric/NumberList";
 import ObjectConversions from "src/operators/objects/ObjectConversions";
+import ListOperators from "src/operators/lists/ListOperators";
+import TableOperators from "src/operators/lists/TableOperators";
+import NumberTableOperators from "src/operators/numeric/numberTable/NumberTableOperators";
 
+/**
+ * @classdesc  Object Operators
+ *
+ * @namespace
+ * @category basics
+ */
 function ObjectOperators() {}
 export default ObjectOperators;
-
 
 /**
  * identity function
@@ -37,6 +45,16 @@ ObjectOperators.getReport = function(object) {
 
   if(object.getReport) return object.getReport();
 
+  var type = typeOf(object);
+
+  switch(type){
+    case 'Table':
+      return TableOperators.getReport(object);
+    case 'List':
+      return ListOperators.getReport(object);
+  }
+
+
   var text = "///////////report of instance of Object//////////";
   if(object.name) text += "name: "+object.name;
 
@@ -48,9 +66,6 @@ ObjectOperators.getReport = function(object) {
   }
 
   var propertyNames = new StringList();
-  var propertyValues = new StringList();
-  var popertyTypes = new StringList();
-
   for(var propName in object) {
     propertyNames.push(propName);
   }
@@ -78,8 +93,19 @@ ObjectOperators.getReportHtml = function(object) {
 
   if(object.getReportHtml) return object.getReportHtml();
 
+  var type = typeOf(object);
+
+  switch(type){
+    case 'Table':
+      return TableOperators.getReportHtml(object);
+    case 'List':
+      return ListOperators.getReportHtml(object);
+  }
+
   var text = "<fs18>report of instance of Object</f>";
-  if(object.name) text += "name: "+object.name;
+
+  text += ObjectOperators.getReportHtml(object);
+  //if(object.name) text += "name: "+object.name;
 
   return text;
 };
@@ -149,8 +175,6 @@ ObjectOperators.getPropertiesNamesAndValues = function(object) {
   if(object == null) return;
 
   var table = new Table();
-  var i;
-  var value;
 
   table[0] = ObjectOperators.getPropertiesNames(object);
   table[1] = new List();
@@ -252,12 +276,11 @@ ObjectOperators.toList = function(array) {
  */
 ObjectOperators.addition = function() {
   //console.log("addition__________________________________arguments:", arguments);
-  var objectType;
   var result;
   var i;
   if(arguments.length < 2) {
     if(arguments.length == 1 && arguments[0] != null && arguments[0].isList) {
-      var result = arguments[0][0];
+      result = arguments[0][0];
       for(i = 1; arguments[0][i] != null; i++) {
         result = ObjectOperators.addition(result, arguments[0][i]);
       }
@@ -374,12 +397,11 @@ ObjectOperators.addition = function() {
  */
 ObjectOperators.multiplication = function() {
   //console.log("multiplication__________________________________arguments:", arguments);
-  var objectType;
   var result;
   var i;
   if(arguments.length < 2) {
     if(arguments.length == 1 && arguments[0].isList) {
-      var result = arguments[0][0];
+      result = arguments[0][0];
       for(i = 1; arguments[0][i] != null; i++) {
         result = ObjectOperators.multiplication(result, arguments[0][i]);
       }
@@ -417,7 +439,7 @@ ObjectOperators.multiplication = function() {
       a1Type = typeOf(a1);
     }
 
-    var pairType = a0Type + "_" + a1Type;
+    pairType = a0Type + "_" + a1Type;
     //console.log('pairType:['+pairType+']');
 
     //
@@ -489,14 +511,12 @@ ObjectOperators.multiplication = function() {
  * @return {Object}
  * tags:math
  */
-ObjectOperators.division = function() {
-  //console.log("addition__________________________________arguments:", arguments);
-  var objectType;
+ObjectOperators.division = function() {    
   var result;
   var i;
   if(arguments.length < 2) {
     if(arguments.length == 1 && arguments[0] && arguments[0].isList) {
-      var result = arguments[0][0];
+      result = arguments[0][0];
       for(i = 1; arguments[0][i] != null; i++) {
         result = ObjectOperators.division(result, arguments[0][i]);
       }

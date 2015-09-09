@@ -7,7 +7,7 @@ TextFieldHTML.prototype.constructor = TextFieldHTML;
  *
  * @param configuration configuration Object with parameters (x, y, width, text, fontColor, fontSize, fontName, fontStyle, linkFunction, target…)
  * @constructor
- * @category strings
+ * @category drawing
  */
 function TextFieldHTML(configuration) {
   configuration = configuration == null ? {} : configuration;
@@ -25,14 +25,14 @@ function TextFieldHTML(configuration) {
 
   this.fastHTMLactive = configuration.fastHTMLactive == null ? true : configuration.fastHTMLactive;
 
-  this.text;
+  this.text = undefined;
 
   //////////
 
-  this._prevX;
-  this._prevY;
-  this._prevWidth;
-  this._prevHeight;
+  this._prevX = undefined;
+  this._prevY = undefined;
+  this._prevWidth = undefined;
+  this._prevHeight = undefined;
 
   this.zIndex = 33;
 
@@ -45,10 +45,6 @@ function TextFieldHTML(configuration) {
 
   this.draw();
 
-  var thisTextField = this;
-  var linkFunction = this.linkFunction;
-  var target = this.target;
-
   if(this.target != null && this.linkFunction != null) {
     FastHtml.target = this.target;
     FastHtml.linkFunction = this.linkFunction;
@@ -58,6 +54,9 @@ export default TextFieldHTML;
 
 
 
+/**
+ * @todo write docs
+ */
 TextFieldHTML.prototype.draw = function() {
   //c.log('this.width, this._prevWidth', this.width, this._prevWidth);
   if(this.x != this._prevX || this.y != this._prevY || this.width != this._prevWidth || this.height != this._prevHeight) {
@@ -70,6 +69,9 @@ TextFieldHTML.prototype.draw = function() {
   }
 };
 
+/**
+ * @todo write docs
+ */
 TextFieldHTML.prototype.setText = function(text) {
   if(this.text != text) {
     this.text = text;
@@ -77,6 +79,9 @@ TextFieldHTML.prototype.setText = function(text) {
   }
 };
 
+/**
+ * @todo write docs
+ */
 TextFieldHTML.prototype.getText = function() {
   return this.DOMtext.value;
 };

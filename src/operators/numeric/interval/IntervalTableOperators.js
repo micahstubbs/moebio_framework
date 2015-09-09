@@ -1,4 +1,4 @@
-import Table from "src/dataStructures/lists/Table";
+import Table from "src/dataTypes/lists/Table";
 import IntervalListOperators from "src/operators/numeric/interval/IntervalListOperators";
 
 /**
@@ -11,7 +11,9 @@ import IntervalListOperators from "src/operators/numeric/interval/IntervalListOp
 function IntervalTableOperators() {}
 export default IntervalTableOperators;
 
-
+/**
+ * @todo write docs
+ */
 IntervalTableOperators.scaleIntervals = function(intervalTable, value) {
   var newIntervalTable = new Table();
   newIntervalTable.name = intervalTable.name;
