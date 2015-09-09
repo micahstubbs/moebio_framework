@@ -414,7 +414,6 @@ List.prototype.getSubListByType = function(type) {
  * tags:filter
  */
 List.prototype.getSubListByIndexes = function() { //TODO: merge with getSubList
-  console.log("\n\n\n\n List.prototype.getSubListByIndexes | this: ", this);
   if(this.length < 1) return this;
   var indexes;
   if(typeOf(arguments[0]) == 'number') {

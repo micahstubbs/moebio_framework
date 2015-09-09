@@ -1176,8 +1176,9 @@ ListOperators.getReport = function(list, level) { //TODO:complete
         text += ident + "numbers: " + list.join(", ");
       }
       break;
-      case "StringList":
+    case "StringList":
     case "List":
+    case "ColorList":
       var freqTable = list.getFrequenciesTable(true);
       list._freqTable = freqTable;
       text += ident + "number of different elements: " + freqTable[0].length;
@@ -1283,6 +1284,7 @@ ListOperators.getReportHtml = function(list, level) { //TODO:complete
       break;
     case "StringList":
     case "List":
+    case "ColorList":
       var freqTable = list.getFrequenciesTable(true);
       list._freqTable = freqTable;
       var catColors = ColorListGenerators.createCategoricalColors(2, freqTable[0].length);

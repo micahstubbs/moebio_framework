@@ -54,6 +54,9 @@ ObjectOperators.getReport = function(object) {
       return ListOperators.getReport(object);
   }
 
+  if(object.isTable) return TableOperators.getReport(object);
+  if(object.isList) return ListOperators.getReport(object);
+
 
   var text = "///////////report of instance of Object//////////";
   if(object.name) text += "name: "+object.name;
@@ -101,6 +104,9 @@ ObjectOperators.getReportHtml = function(object) {
     case 'List':
       return ListOperators.getReportHtml(object);
   }
+
+  if(object.isTable) return TableOperators.getReportHtml(object);
+  if(object.isList) return ListOperators.getReportHtml(object);
 
   var text = "<fs18>report of instance of Object</f>";
 
