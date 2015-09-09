@@ -121,9 +121,7 @@ Engine3D.prototype.sortedIndexesByPointsScale = function(polygon3D) {
     pairsArray[i] = [polygon3D[i], i];
   }
 
-  UTLITARY_GLOBAL_VAR = this._basis;
-  pairsArray = pairsArray.sort(this._sortingCriteria, this._basis);
-  UTLITARY_GLOBAL_VAR = null;
+  pairsArray = pairsArray.sort(this._sortingCriteria.bind(this));
 
   var indexes = new NumberList();
 
@@ -143,10 +141,8 @@ Engine3D.prototype.sortListByPointsScale = function(list, polygon3D) {
   for(i = 0; list[i] != null; i++) {
     pairsArray[i] = [polygon3D[i], list[i]];
   }
-
-  UTLITARY_GLOBAL_VAR = this._basis;
-  pairsArray = pairsArray.sort(this._sortingCriteria, this._basis);
-  UTLITARY_GLOBAL_VAR = null;
+  
+  pairsArray = pairsArray.sort(this._sortingCriteria.bind(this));
 
   var newList = instantiateWithSameType(list);
   newList.name = list;
@@ -161,10 +157,10 @@ Engine3D.prototype.sortListByPointsScale = function(list, polygon3D) {
 /**
 * @todo write docs
 */
-Engine3D.prototype._sortingCriteria = function(array0, array1, basis) {
+Engine3D.prototype._sortingCriteria = function(array0, array1) {
   var point3D0 = array0[0];
   var point3D1 = array1[0];
-  return(UTLITARY_GLOBAL_VAR[0].z * point3D0.x + UTLITARY_GLOBAL_VAR[1].z * point3D0.y + UTLITARY_GLOBAL_VAR[2].z * point3D0.z < UTLITARY_GLOBAL_VAR[0].z * point3D1.x + UTLITARY_GLOBAL_VAR[1].z * point3D1.y + UTLITARY_GLOBAL_VAR[2].z * point3D1.z) ? 1 : -1;
+  return(this._basis[0].z * point3D0.x + this._basis[1].z * point3D0.y + this._basis[2].z * point3D0.z < this._basis[0].z * point3D1.x + this._basis[1].z * point3D1.y + this._basis[2].z * point3D1.z) ? 1 : -1;
 };
 
 
