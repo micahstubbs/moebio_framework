@@ -263,20 +263,18 @@ ColorListGenerators.createCategoricalColorListForList = function(list, colorList
     diffColors = colorList.getInterpolated(color, interpolate);
   } else {
     diffColors = ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate, colorList);
-
-    //diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
   }
-  diffColors = diffColors.addAlpha(alpha);
+  if(alpha<1) diffColors = diffColors.addAlpha(alpha);
 
   if(invert) diffColors = diffColors.getInverted();
 
-  var colorDict = Table.fromArray([diffValues, diffColors]);
-  var dictionaryObject = ListOperators.buildDictionaryObjectForDictionary(colorDict);
+  var colorDictTable = Table.fromArray([diffValues, diffColors]);
+  var dictionaryObject = ListOperators.buildDictionaryObjectForDictionary(colorDictTable);
 
-  var fullColorList = ListOperators.translateWithDictionaryObject(list, colorDict, 'black');// ListOperators.translateWithDictionary(list, colorDict, "NULL");
+  var fullColorList = ListOperators.translateWithDictionary(list, colorDictTable, 'black');
 
   fullColorList = ColorList.fromArray(fullColorList);
-
+  
   return [
     {
       value: fullColorList,
