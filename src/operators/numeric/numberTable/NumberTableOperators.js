@@ -199,7 +199,7 @@ NumberTableOperators.kMeans = function(numberTable, k, returnIndexesMode, N){
       jK = 0;
 
       for(j = 0; j < k; j++) {
-        d = row.distance(means[j]);
+        d = NumberListOperators.distance(row, means[j]);
         if(d < dMin) {
           dMin = d;
           jK = j;
