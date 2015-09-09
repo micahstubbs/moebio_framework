@@ -414,6 +414,7 @@ List.prototype.getSubListByType = function(type) {
  * tags:filter
  */
 List.prototype.getSubListByIndexes = function() { //TODO: merge with getSubList
+  console.log("\n\n\n\n List.prototype.getSubListByIndexes | this: ", this);
   if(this.length < 1) return this;
   var indexes;
   if(typeOf(arguments[0]) == 'number') {
@@ -541,15 +542,20 @@ List.prototype.getSimplified = function(nCategories, othersElement) {
   if(!nCategories) return;
 
   var freqTable = this.getFrequenciesTable();
+  var i;
+  var l = this.length;
 
   if(othersElement==null) othersElement = "other";
 
   var newList = new List();
   newList.name = this.name;
 
-  this.forEach(function(element){
-    newList.push(freqTable._indexesDictionary[element]<nCategories-1?element:othersElement);
-  });
+  for(i=0; i<l; i++){
+    newList.push(freqTable._indexesDictionary[this[i]]<nCategories-1?this[i]:othersElement);
+  }
+  // this.forEach(function(element){
+  //   newList.push(freqTable._indexesDictionary[element]<nCategories-1?element:othersElement);
+  // });
 
   return newList;
 };
@@ -670,8 +676,9 @@ List.prototype.allElementsEqual = function() {
   if(this.length < 2) return true;
 
   var first = this[0];
+  var l = this.length;
 
-  for(i = 1; this[i] != null; i++) {
+  for(i = 1; i<l; i++) {
     if(this[i] != first) return false;
   }
 
@@ -698,7 +705,8 @@ List.prototype.getMin = function() {
   if(this.length === 0) return null;
   var min = this[0];
   var i;
-  for(i = 1; i < this.length; i++) {
+  var l = this.length;
+  for(i = 1; i < l; i++) {
     min = Math.min(min, this[i]);
   }
   return min;
@@ -713,7 +721,8 @@ List.prototype.getMax = function() {
   if(this.length === 0) return null;
   var max = this[0];
   var i;
-  for(i = 1; i < this.length; i++) {
+  var l = this.length;
+  for(i = 1; i < l; i++) {
     max = Math.max(max, this[i]);
   }
   return max;
@@ -732,8 +741,9 @@ List.prototype.getMax = function() {
 List.prototype.add = function(value) {
   if(value.constructor == Number) {
     var i;
+    var l = this.length;
     var array = instantiateWithSameType(this);
-    for(i = 0; i < this.length; i++) {
+    for(i = 0; i < l; i++) {
       array.push(this[i] + value);
     }
     return array;
@@ -778,7 +788,8 @@ List.prototype.getRandomElements = function(n, avoidRepetitions) {
  */
 List.prototype.containsElement = function(element) { //TODO: test if this is faster than indexOf
   var i;
-  for(i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(i = 0; i<l; i++) {
     if(this[i] == element) return true;
   }
   return false;
@@ -792,7 +803,8 @@ List.prototype.containsElement = function(element) { //TODO: test if this is fas
  */
 List.prototype.indexOfElement = function(element) { //TODO: test if this is faster than indexOf
   var i;
-  for(i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(i = 0; i<l; i++) {
     if(this[i] == element) return i;
   }
   return -1;
@@ -811,7 +823,8 @@ List.prototype.getPropertyValues = function(propertyName, valueIfNull) {
   var newList = new List();
   newList.name = propertyName;
   var val;
-  for(var i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 0; i<l; i++) {
     val = this[i][propertyName];
     newList[i] = (val == null ? valueIfNull : val);
   }
@@ -821,7 +834,8 @@ List.prototype.getPropertyValues = function(propertyName, valueIfNull) {
 List.prototype.sortIndexed = function() {
   var index = [];
   var i;
-  for(i = 0; i < this.length; i++) {
+  var l = this.length;
+  for(i = 0; i < l; i++) {
     index.push({
       index: i,
       value: this[i]
@@ -1022,14 +1036,16 @@ List.prototype.getElementsByNames = function(names, returnIndex) {
  * tags:
  */
 List.prototype.getFirstElementByPropertyValue = function(propertyName, value) {
-  for(var i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 0; i<l; i++) {
     if(this[i][propertyName] == value) return this[i];
   }
   return null;
 };
 
 List.prototype.indexOfByPropertyValue = function(propertyName, value) {
-  for(var i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 0; i<l; i++) {
     if(this[i][propertyName] == value) return i;
   }
   return -1;
@@ -1048,7 +1064,8 @@ List.prototype.getFilteredByBooleanList = function(booleanList) {
   var newList = new List();
   newList.name = this.name;
   var i;
-  for(i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(i = 0; i<l; i++) {
     if(booleanList[i]) newList.push(this[i]);
   }
   return newList.getImproved();
@@ -1111,24 +1128,25 @@ List.prototype.getFilteredByPropertyValue = function(propertyName, propertyValue
   var newList = new List();
   newList.name = "filtered_" + this.name;
   var i;
+  var l = this.length;
   switch(comparison) {
     case "equal":
-      for(i = 0; this[i] != null; i++) {
+      for(i = 0; i<l; i++) {
       if(this[i][propertyName] == propertyValue) newList.push(this[i]);
     }
     break;
     case "different":
-      for(i = 0; this[i] != null; i++) {
+      for(i = 0; i<l; i++) {
       if(this[i][propertyName] != propertyValue) newList.push(this[i]);
     }
     break;
     case "greater":
-      for(i = 0; this[i] != null; i++) {
+      for(i = 0; i<l; i++) {
       if(this[i][propertyName] > propertyValue) newList.push(this[i]);
     }
     break;
     case "lower":
-      for(i = 0; this[i] != null; i++) {
+      for(i = 0; i<l; i++) {
       if(this[i][propertyName] > propertyValue) newList.push(this[i]);
     }
     break;
@@ -1142,7 +1160,8 @@ List.prototype.applyFunction = function(func) {
   var newList = new List();
   newList.name = this.name;
   var i;
-  for(i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(i = 0; i<l; i++) {
     newList[i] = func(this[i]);
   }
   return newList.getImproved();
@@ -1151,15 +1170,16 @@ List.prototype.applyFunction = function(func) {
 
 //filtering
 
-List.prototype.getWithoutElementsAtIndexes = function(indexes) { //[!] This DOESN'T transforms the List
+List.prototype.getWithoutElementsAtIndexes = function(indexes) {
   var i;
   var newList;
+  var l = this.length;
   if(this.type == 'List') {
     newList = new List();
   } else {
     newList = instantiate(typeOf(this));
   }
-  for(i = 0; i < this.length; i++) {
+  for(i = 0; i < l; i++) {
     if(indexes.indexOf(i) == -1) {
       newList.push(this[i]);
     }
@@ -1177,12 +1197,13 @@ List.prototype.getWithoutElementsAtIndexes = function(indexes) { //[!] This DOES
  */
 List.prototype.getWithoutElementAtIndex = function(index) {
   var newList;
+  var l = this.length;
   if(this.type == 'List') {
     newList = new List();
   } else {
     newList = instantiateWithSameType(this);
   }
-  for(var i = 0; this[i] != null; i++) {
+  for(var i = 0; i<l; i++) {
     if(i != index) {
       newList.push(this[i]);
     }
@@ -1214,7 +1235,8 @@ List.prototype.getWithoutElement = function(element) {
   newList.name = this.name;
 
   var i;
-  for(i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(i = 0; i<l; i++) {
     if(i != index) newList.push(this[i]);
   }
 
@@ -1222,15 +1244,16 @@ List.prototype.getWithoutElement = function(element) {
   return newList;
 };
 
-List.prototype.getWithoutElements = function(list) {
+List.prototype.getWithoutElements = function(list) {//TODO: more efficiency with dictionary
   var newList;
+  var l = this.length;
   if(this.type == 'List') {
     newList = new List();
   } else {
     newList = instantiateWithSameType(this);
   }
 
-  for(var i = 0; this[i] != null; i++) {
+  for(var i = 0; i<l; i++) {
     if(list.indexOf(this[i]) == -1) {
       newList.push(this[i]);
     }
@@ -1252,7 +1275,8 @@ List.prototype.getWithoutElements = function(list) {
  */
 List.prototype.getFilteredByFunction = function(func) {
   var newList = instantiateWithSameType(this);
-  for(var i = 0; this[i] != null; i++) {
+  var l = this.length;
+  for(var i = 0; i<l; i++) {
     if(func(this[i])) {
       newList.push(this[i]);
     }

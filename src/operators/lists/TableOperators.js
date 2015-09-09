@@ -88,32 +88,46 @@ TableOperators.getSubTableByElementOnList = function(table, nList, element){
   if(nList==null || element==null) return;
 
   var i, j;
+  var nLists = table.length;
 
-  if(nList<0) nList = table.length+nList;
-  nList = nList%table.length;
+  if(nList<0) nList = nLists+nList;
+  nList = nList%nLists;
 
   var newTable = instantiateWithSameType(table);
   newTable.name = table.name;
 
-  table.forEach(function(list){
+  for(i=0; i<nLists; i++){
     var newList = new List();
-    newList.name = list.name;
+    newList.name = table[i].name;
     newTable.push(newList);
-  });
+  }
+  // table.forEach(function(list){
+  //   var newList = new List();
+  //   newList.name = list.name;
+  //   newTable.push(newList);
+  // });
 
   var supervised = table[nList];
+  var nSupervised = supervised.length;
+  var nElements;
 
-  for(i=0; supervised[i]!=null; i++){
+  for(i=0; i<nSupervised; i++){
     if(element==supervised[i]){
-       for(j=0; newTable[j]!=null; j++){
+      nElements = newTable.length;
+       for(j=0; j<nElements; j++){
           newTable[j].push(table[j][i]);
        }
     }
   }
 
-  newTable.forEach(function(list, i){
-    newTable[i] = list.getImproved();
-  });
+  nLists = newTable.length;
+
+  for(i=0; i<nLists; i++){
+    newTable[i] = newTable[i].getImproved();
+  }
+  // newTable.forEach(function(list, i){
+  //   newTable[i] = list.getImproved();
+  // });
 
   return newTable.getImproved();
 };

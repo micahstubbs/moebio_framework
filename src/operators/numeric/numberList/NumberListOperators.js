@@ -556,6 +556,7 @@ NumberListOperators.intersection = function(a, b) {//TODO: refactor method that 
  * @return {Rectangle}
  */
 NumberListOperators.frameFromTwoNumberLists = function(numberListX, numberListY){
+  if(numberListX==null || numberListY==null) return;
   var intX = numberListX.getInterval();
   var intY = numberListY.getInterval();
   return new Rectangle(intX.x, intY.x, intX.getAmplitude(), intY.getAmplitude());
