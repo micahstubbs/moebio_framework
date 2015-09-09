@@ -10,6 +10,8 @@ import DateInterval from "src/dataTypes/dates/DateInterval";
 import DateOperators from "src/operators/dates/DateOperators";
 import NumberList from "src/dataTypes/numeric/NumberList";
 import ObjectConversions from "src/operators/objects/ObjectConversions";
+import ListOperators from "src/operators/lists/ListOperators";
+import TableOperators from "src/operators/lists/TableOperators";
 import NumberTableOperators from "src/operators/numeric/NumberTable/NumberTableOperators";
 
 /**
@@ -43,6 +45,16 @@ ObjectOperators.getReport = function(object) {
   if(object == null) return null;
 
   if(object.getReport) return object.getReport();
+
+  var type = typeOf(object);
+
+  switch(type){
+    case 'Table':
+      return TableOperators.getReport(object);
+    case 'List':
+      return ListOperators.getReport(object);
+  }
+
 
   var text = "///////////report of instance of Object//////////";
   if(object.name) text += "name: "+object.name;
@@ -82,8 +94,19 @@ ObjectOperators.getReportHtml = function(object) {
 
   if(object.getReportHtml) return object.getReportHtml();
 
+  var type = typeOf(object);
+
+  switch(type){
+    case 'Table':
+      return TableOperators.getReportHtml(object);
+    case 'List':
+      return ListOperators.getReportHtml(object);
+  }
+  
   var text = "<fs18>report of instance of Object</f>";
-  if(object.name) text += "name: "+object.name;
+
+  text += ObjectOperators.getReportHtml(object);
+  //if(object.name) text += "name: "+object.name;
 
   return text;
 };
