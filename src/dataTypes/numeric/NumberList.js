@@ -43,9 +43,10 @@ NumberList.fromArray = function(array, forceToNumber) {
   forceToNumber = forceToNumber == null ? true : forceToNumber;
 
   var result = List.fromArray(array);
+  var l = result.length;
 
   if(forceToNumber) {
-    for(var i = 0; i < result.length; i++) {
+    for(var i = 0; i < l; i++) {
       result[i] = Number(result[i]);
     }
   }
@@ -62,6 +63,7 @@ NumberList.fromArray = function(array, forceToNumber) {
   result.getSum = NumberList.prototype.getSum;
   result.getProduct = NumberList.prototype.getProduct;
   result.getInterval = NumberList.prototype.getInterval;
+  result.getNumbersSimplified = NumberList.prototype.getNumbersSimplified;
 
   //statistics
   result.getAverage = NumberList.prototype.getAverage;
@@ -217,14 +219,15 @@ NumberList.prototype.getInterval = function() {
 /**
  * simplifies the numberList either by replacing numbers by its order of magnitude, or by quantiles
  *
- * @param  {Number} method simplification method:<br>0:significant digits<br>1:number of quantile<br>2:rounded by quantile<br>3:order of magnitude<br>4:rounded by order of magnitude
- * @param  {Number} param different meaning according to choosen method:<br>0:number of significant digits<br>1:number of quantiles<br>2:number of quantiles<br>3:no need of param<br>4:no need of param
+ * @param  {Number} method simplification method:<br>0:factors of numbers of magnitude<br>1:number of quantile<br>2:rounded by quantile<br>3:order of magnitude<br>4:rounded by order of magnitude<br>5:sigificant digits (num.toPrecision)
+ * @param  {Number} param different meaning according to choosen method:<br>0:number of significant digits<br>1:number of quantiles<br>2:number of quantiles<br>3:no need of param<br>4:no need of param<br>5:number of significant digits
  * @return {NumberList} simplified list
  * tags:
  */
 NumberList.prototype.getNumbersSimplified = function(method, param) {
   var newList;
   var i, j;
+  var l = this.length;
 
   method = method||0;
   param = param||0;
@@ -244,12 +247,13 @@ NumberList.prototype.getNumbersSimplified = function(method, param) {
       param = Math.min( param||10, Math.floor(this.length/2) );
       var quantiles = this.getQuantiles(param);
       var val;
-      for(i=0; this[i]!==undefined; i++){
+      var nQuantiles = quantiles.length;
+      for(i=0; i<l; i++){
         val = this[i];
         if(val<quantiles[0]){
           method==1?newList.push(0):newList.push(quantiles._min);
         } else {
-          for(j=0; quantiles[j]!==undefined; j++){
+          for(j=0; j<nQuantiles; j++){
             if( val>=quantiles[j] && (j+1==quantiles.length || val<quantiles[j+1]) ){
               method==1?newList.push(j+1):newList.push(quantiles[j]);
               break;
@@ -261,19 +265,33 @@ NumberList.prototype.getNumbersSimplified = function(method, param) {
       break;
     case 3:
       newList.name = this.name + " (order of magnitude)";
-      this.forEach(function(val){
-        newList.push(Math.floor( Math.log(val)/Math.log(10) ));
-      });
+      for(i=0; i<l; i++){
+        newList.push(Math.floor( Math.log(this[i])/Math.log(10) ));
+      }
+      // this.forEach(function(val){
+      //   newList.push(Math.floor( Math.log(val)/Math.log(10) ));
+      // });
       break;
     case 4:
-      this.forEach(function(val){
-        newList.push( Math.pow ( 10, Math.floor( Math.log(val)/Math.log(10) ) ) );
-      });
+      newList.name = this.name + " (rounded by order of magnitude)";
+      for(i=0; i<l; i++){
+        newList.push( Math.pow ( 10, Math.floor( Math.log(this[i])/Math.log(10) ) ) );
+      }
+      // this.forEach(function(val){
+      //   newList.push( Math.pow ( 10, Math.floor( Math.log(val)/Math.log(10) ) ) );
+      // });
+      break;
+    case 5:
+      param = param||1;
+      newList.name = this.name + " (significant digits)";
+      for(i=0; i<l; i++){
+        newList.push( this[i].toPrecision(param) );
+      }
       break;
   }
 
   return newList;
-}
+};
 
 
 /**
