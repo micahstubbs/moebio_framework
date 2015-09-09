@@ -7,6 +7,9 @@
 import DataModel from "src/dataTypes/DataModel";
 export { DataModel };
 
+import ListReport from "src/operators/lists/ListReport";
+export { ListReport };
+
 // dataTypes/lists
 import List from "src/dataTypes/lists/List";
 import Table from "src/dataTypes/lists/Table";

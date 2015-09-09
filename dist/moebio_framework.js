@@ -92,390 +92,6 @@ define('src/index', ['exports'], function (exports) {
 
   exports.DataModel = DataModel;
 
-  Point.prototype = new DataModel();
-  Point.prototype.constructor = Point;
-
-  /**
-   * @classdesc Represents an individual 2D point in space.
-   *
-   * @description Creates a new Point
-   * @param {Number} x
-   * @param {Number} y
-   * @constructor
-   * @category geometry
-   */
-  function Point(x, y) {
-    DataModel.apply(this, arguments);
-    this.type = "Point";
-    this.x = Number(x) || 0;
-    this.y = Number(y) || 0;
-  }
-
-
-
-  /**
-  * @todo write docs
-  */
-  Point.prototype.getNorm = function() {
-    return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
-  };
-
-  /**
-  * @todo write docs
-  */
-  Point.prototype.getAngle = function() {
-    return Math.atan2(this.y, this.x);
-  };
-
-
-
-  /**
-  * @todo write docs
-  */
-  Point.prototype.factor = function(k) {
-    if(k >= 0 || k < 0) return new Point(this.x * k, this.y * k);
-    if(k.type != null && k.type == 'Point') return new Point(this.x * k.x, this.y * k.y);
-  };
-
-  /**
-  * @todo write docs
-  */
-  Point.prototype.normalize = function() {
-    var norm = Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
-    return new Point(this.x / norm, this.y / norm);
-  };
-
-  /**
-  * @todo write docs
-  */
-  Point.prototype.normalizeToValue = function(k) {
-    var factor = k / Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
-    return new Point(this.x * factor, this.y * factor);
-  };
-
-
-
-  /**
-  * @todo write docs
-  */
-  Point.prototype.subtract = function(point) {
-    return new Point(this.x - point.x, this.y - point.y);
-  };
-
-  /**
-  * @todo write docs
-  */
-  Point.prototype.add = function(point) {
-    return new Point(point.x + this.x, point.y + this.y);
-  };
-
-  /**
-  * @todo write docs
-  */
-  Point.prototype.addCoordinates = function(x, y) {
-    return new Point(x + this.x, y + this.y);
-  };
-
-  /**
-  * @todo write docs
-  */
-  Point.prototype.distanceToPoint = function(point) {
-    return Math.sqrt(Math.pow(this.x - point.x, 2) + Math.pow(this.y - point.y, 2));
-  };
-
-  /**
-  * @todo write docs
-  */
-  Point.prototype.distanceToPointSquared = function(point) {
-    return Math.pow(this.x - point.x, 2) + Math.pow(this.y - point.y, 2);
-  };
-
-  /**
-  * @todo write docs
-  */
-  Point.prototype.angleToPoint = function(point) {
-    return Math.atan2(point.y - this.y, point.x - this.x);
-  };
-
-  /**
-  * @todo write docs
-  */
-  Point.prototype.expandFromPoint = function(point, factor) {
-    return new Point(point.x + factor * (this.x - point.x), point.y + factor * (this.y - point.y));
-  };
-
-
-  /**
-  * @todo write docs
-  */
-  Point.prototype.interpolate = function(point, t) {
-    return new Point((1 - t) * this.x + t * point.x, (1 - t) * this.y + t * point.y);
-  };
-
-  /**
-  * @todo write docs
-  */
-  Point.prototype.cross = function(point) {
-    return this.x * point.y - this.y * point.x;
-  };
-
-  /**
-  * @todo write docs
-  */
-  Point.prototype.dot = function(point) {
-    return this.x * point.x + this.y * point.y;
-  };
-
-  /**
-  * @todo write docs
-  */
-  Point.prototype.getRotated = function(angle, center) {
-    center = center == null ? new Point() : center;
-
-    return new Point(Math.cos(angle) * (this.x - center.x) - Math.sin(angle) * (this.y - center.y) + center.x, Math.sin(angle) * (this.x - center.x) + Math.cos(angle) * (this.y - center.y) + center.y);
-  };
-
-  /**
-  * @todo write docs
-  */
-  Point.prototype.clone = function() {
-    return new Point(this.x, this.y);
-  };
-
-  /**
-  * @todo write docs
-  */
-  Point.prototype.toString = function() {
-    return "(x=" + this.x + ", y=" + this.y + ")";
-  };
-
-  /**
-  * @todo write docs
-  */
-  Point.prototype.destroy = function() {
-    delete this.type;
-    delete this.name;
-    delete this.x;
-    delete this.y;
-  };
-
-  exports.Point = Point;
-
-  Interval.prototype = new Point();
-  Interval.prototype.constructor = Interval;
-
-  /**
-   * @classdesc Provide reasoning around numeric intervals.
-   *
-   * @constructor
-   * @param {Number} x Interval's start value.
-   * @param {Number} y Interval's end value.
-   * @description Creates a new Interval.
-   * @category numbers
-   */
-  function Interval(x, y) {
-    DataModel.apply(this, arguments);
-    this.x = Number(x);
-    this.y = Number(y);
-    this.type = "Interval";
-  }
-
-
-  /**
-   * Finds the minimum value of the Interval.
-   *
-   * @return {Number} the minimum value in the interval
-   */
-  Interval.prototype.getMin = function() {
-    return Math.min(this.x, this.y);
-  };
-
-  /**
-   * Finds the maximum value of the Interval.
-   *
-   * @return {Number} the max value in the interval
-   */
-  Interval.prototype.getMax = function() {
-    return Math.max(this.x, this.y);
-  };
-
-  /**
-   * Finds the range between the min and max of the Interval.
-   *
-   * @return {Number} the absolute difference between the starting and ending values.
-   */
-  Interval.prototype.getAmplitude = function() {
-    return Math.abs(this.y - this.x);
-  };
-
-  /**
-   * Finds the range between the min and max of the Interval.
-   * If the starting value of the Interval is less then the ending value,
-   * this will return a negative value.
-   *
-   * @return {Number} the difference between the starting and ending values.
-   */
-  Interval.prototype.getSignedAmplitude = function() {
-    return this.y - this.x;
-  };
-
-  /**
-  * @todo write docs
-  */
-  Interval.prototype.getMiddle = function() {
-    return (this.x + this.y)*0.5;
-  };
-
-  /**
-  * @todo write docs
-  */
-  Interval.prototype.getRandom = function() {
-    return this.x + (this.y - this.x)*Math.random();
-  };
-
-  /**
-  * @todo write docs
-  */
-  Interval.prototype.getSign = function() {
-    if(this.x == this.y) return 0;
-    return Math.abs(this.y - this.x)/(this.y - this.x);
-  };
-
-  /**
-   * Scales a value
-   * @todo finish docs
-   *
-   * @return {Interval}
-   */
-  Interval.prototype.getScaled = function(value) {
-    var midAmp = 0.5 * (this.y - this.x);
-    var middle = (this.x + this.y) * 0.5;
-    return new Interval(middle - midAmp * value, middle + midAmp * value);
-  };
-
-  /**
-  * @todo write docs
-  */
-  Interval.prototype.getScaledFromProportion = function(value, proportion) {
-    var antiP = 1 - proportion;
-    var amp0 = proportion * (this.y - this.x);
-    var amp1 = antiP * (this.y - this.x);
-    var middle = antiP * this.x + proportion * this.y;
-    return new Interval(middle - amp0 * value, middle + amp1 * value);
-  };
-
-  /**
-  * @todo write docs
-  */
-  Interval.prototype.add = function(value) {
-    return new Interval(this.x + value, this.y + value);
-  };
-
-  /**
-  * @todo write docs
-  */
-  Interval.prototype.invert = function() {
-    var swap = this.x;
-    this.x = this.y;
-    this.y = swap;
-  };
-
-  /**
-   * Returns a value in interval range
-   * 0 -> min
-   * 1 -> max
-   * @param value between 0 and 1 (to obtain values between min and max)
-   *
-   */
-  Interval.prototype.getInterpolatedValue = function(value) {
-    //TODO: should this be unsigned amplitude?
-    return value * Number(this.getSignedAmplitude()) + this.x;
-  };
-
-  /**
-  * @todo write docs
-  */
-  Interval.prototype.getInverseInterpolatedValue = function(value) {
-    return(value - this.x) / this.getSignedAmplitude();
-  };
-
-  /**
-  * @todo write docs
-  */
-  Interval.prototype.getInterpolatedValues = function(numberList) {
-    var newNumberList = [];
-    var nElements = numberList.length;
-    for(var i = 0; i < nElements; i++) {
-      newNumberList.push(this.getInterpolatedValue(numberList[i]));
-    }
-    return newNumberList;
-  };
-
-  /**
-  * @todo write docs
-  */
-  Interval.prototype.getInverseInterpolatedValues = function(numberList) {
-    var newNumberList = [];
-    var nElements = numberList.length;
-    for(var i = 0; i < nElements; i++) {
-      newNumberList.push(this.getInverseInterpolatedValue(numberList[i]));
-    }
-    return newNumberList;
-  };
-
-  /**
-  * @todo write docs
-  */
-  Interval.prototype.intersect = function(interval) {
-    return new Interval(Math.max(this.x, interval.x), Math.min(this.y, interval.y));
-  };
-
-  /**
-   * create a new interval with the same proporties values
-   * @return {Interval}
-   *
-   */
-  Interval.prototype.clone = function() {
-    var newInterval = new Interval(this.x, this.y);
-    newInterval.name = name;
-    return newInterval;
-  };
-
-  /**
-   * Indicates if a number is included in the Interval.
-   *
-   * @param value Number to test.
-   * @return {Boolean} True if the value is inside the Interval.
-   *
-   */
-  Interval.prototype.contains = function(value) {
-    if(this.y > this.x) return value >= this.x && value <= this.y;
-    return value >= this.y && value <= this.y;
-  };
-
-  /**
-   * Indicates if provided interval contains the same values
-   *
-   * @param interval
-   * @return {Boolean}
-   *
-   */
-  Interval.prototype.isEquivalent = function(interval) {
-    return this.x == interval.x && this.y == interval.y;
-  };
-
-  /**
-   * creates a new interval with the same proporties values
-   * @return {String}
-   *
-   */
-
-  Interval.prototype.toString = function() {
-    return "Interval[x:" + this.x + "| y:" + this.y + "| amplitude:" + this.getAmplitude() + "]";
-  };
-
-  exports.Interval = Interval;
-
   List.prototype = new DataModel();
   List.prototype.constructor = List;
 
@@ -599,6 +215,11 @@ define('src/index', ['exports'], function (exports) {
     array.assignNames = List.prototype.assignNames;
     array._splice = Array.prototype.splice;
     array.splice = List.prototype.splice;
+
+
+    // var getReport = ListReport.getReport;
+    var getReport = ListOperators.getReport;
+    array.getReport = getReport.bind(array, array);
 
     array.isList = true;
 
@@ -2140,6 +1761,175 @@ define('src/index', ['exports'], function (exports) {
 
   exports.DateOperators = DateOperators;
 
+  Point.prototype = new DataModel();
+  Point.prototype.constructor = Point;
+
+  /**
+   * @classdesc Represents an individual 2D point in space.
+   *
+   * @description Creates a new Point
+   * @param {Number} x
+   * @param {Number} y
+   * @constructor
+   * @category geometry
+   */
+  function Point(x, y) {
+    DataModel.apply(this, arguments);
+    this.type = "Point";
+    this.x = Number(x) || 0;
+    this.y = Number(y) || 0;
+  }
+
+
+
+  /**
+  * @todo write docs
+  */
+  Point.prototype.getNorm = function() {
+    return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
+  };
+
+  /**
+  * @todo write docs
+  */
+  Point.prototype.getAngle = function() {
+    return Math.atan2(this.y, this.x);
+  };
+
+
+
+  /**
+  * @todo write docs
+  */
+  Point.prototype.factor = function(k) {
+    if(k >= 0 || k < 0) return new Point(this.x * k, this.y * k);
+    if(k.type != null && k.type == 'Point') return new Point(this.x * k.x, this.y * k.y);
+  };
+
+  /**
+  * @todo write docs
+  */
+  Point.prototype.normalize = function() {
+    var norm = Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
+    return new Point(this.x / norm, this.y / norm);
+  };
+
+  /**
+  * @todo write docs
+  */
+  Point.prototype.normalizeToValue = function(k) {
+    var factor = k / Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
+    return new Point(this.x * factor, this.y * factor);
+  };
+
+
+
+  /**
+  * @todo write docs
+  */
+  Point.prototype.subtract = function(point) {
+    return new Point(this.x - point.x, this.y - point.y);
+  };
+
+  /**
+  * @todo write docs
+  */
+  Point.prototype.add = function(point) {
+    return new Point(point.x + this.x, point.y + this.y);
+  };
+
+  /**
+  * @todo write docs
+  */
+  Point.prototype.addCoordinates = function(x, y) {
+    return new Point(x + this.x, y + this.y);
+  };
+
+  /**
+  * @todo write docs
+  */
+  Point.prototype.distanceToPoint = function(point) {
+    return Math.sqrt(Math.pow(this.x - point.x, 2) + Math.pow(this.y - point.y, 2));
+  };
+
+  /**
+  * @todo write docs
+  */
+  Point.prototype.distanceToPointSquared = function(point) {
+    return Math.pow(this.x - point.x, 2) + Math.pow(this.y - point.y, 2);
+  };
+
+  /**
+  * @todo write docs
+  */
+  Point.prototype.angleToPoint = function(point) {
+    return Math.atan2(point.y - this.y, point.x - this.x);
+  };
+
+  /**
+  * @todo write docs
+  */
+  Point.prototype.expandFromPoint = function(point, factor) {
+    return new Point(point.x + factor * (this.x - point.x), point.y + factor * (this.y - point.y));
+  };
+
+
+  /**
+  * @todo write docs
+  */
+  Point.prototype.interpolate = function(point, t) {
+    return new Point((1 - t) * this.x + t * point.x, (1 - t) * this.y + t * point.y);
+  };
+
+  /**
+  * @todo write docs
+  */
+  Point.prototype.cross = function(point) {
+    return this.x * point.y - this.y * point.x;
+  };
+
+  /**
+  * @todo write docs
+  */
+  Point.prototype.dot = function(point) {
+    return this.x * point.x + this.y * point.y;
+  };
+
+  /**
+  * @todo write docs
+  */
+  Point.prototype.getRotated = function(angle, center) {
+    center = center == null ? new Point() : center;
+
+    return new Point(Math.cos(angle) * (this.x - center.x) - Math.sin(angle) * (this.y - center.y) + center.x, Math.sin(angle) * (this.x - center.x) + Math.cos(angle) * (this.y - center.y) + center.y);
+  };
+
+  /**
+  * @todo write docs
+  */
+  Point.prototype.clone = function() {
+    return new Point(this.x, this.y);
+  };
+
+  /**
+  * @todo write docs
+  */
+  Point.prototype.toString = function() {
+    return "(x=" + this.x + ", y=" + this.y + ")";
+  };
+
+  /**
+  * @todo write docs
+  */
+  Point.prototype.destroy = function() {
+    delete this.type;
+    delete this.name;
+    delete this.x;
+    delete this.y;
+  };
+
+  exports.Point = Point;
+
   Rectangle.prototype = new DataModel();
   Rectangle.prototype.constructor = Rectangle;
 
@@ -2603,204 +2393,515 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Polygon3D = Polygon3D;
 
-  StringList.prototype = new List();
-  StringList.prototype.constructor = StringList;
+  LoadEvent.prototype = {};
+  LoadEvent.prototype.constructor = LoadEvent;
 
   /**
-   * @classdesc {@link List} for storing Strings.
-   *
-   * Additional functions that work on StringList can be found in:
-   * <ul>
-   *  <li>Operators:   {@link StringListOperators}</li>
-   *  <li>Conversions: {@link StringListConversions}</li>
-   * </ul>
-   *
+   * LoadEvent
    * @constructor
-   * @description Creates a new StringList
-   *
-   * @category strings
+   * @category misc
    */
-  function StringList() {
-    var args = [];
-
-    for(var i = 0; i < arguments.length; i++) {
-      args[i] = String(arguments[i]);
-    }
-    var array = List.apply(this, args);
-    array = StringList.fromArray(array);
-    
-    return array;
+  function LoadEvent() {
+    Object.apply(this);
+    this.result = null;
+    this.errorType = 0;
+    this.errorMessage = "";
+    this.url = '';
   }
 
+  exports.LoadEvent = LoadEvent;
+
+  /* jshint -W022 */
+
+  function Loader() {}
+
+
+  Loader.proxy = ""; //TODO:install proxy created by Mig at moebio.com
+  Loader.cacheActive = false; //TODO: fix!
+  Loader.associativeByUrls = {};
+  Loader.REPORT_LOADING = false;
+  Loader.n_loading = 0;
+  Loader.LOCAL_STORAGE_ENABLED = false;
+
+  Loader.PHPurl = "http://intuitionanalytics.com/tests/proxy.php?url=";
+
 
   /**
-   * @todo write docs
+   * loads string data from server. The defined Loader.proxy will be used.
+   * @param {String} url the URL of the file to be loaded
+   * @param {Function} onLoadData a function that will be called when complete. The function must receive a LoadEvent
+   * @param {callee} the Object containing the onLoadData function to be called
+   * @para, {Object} optional parameter that will be stored in the LoadEvent instance
    */
-  StringList.fromArray = function(array, forceToString) {
-    forceToString = forceToString == null ? true : forceToString;
+  Loader.loadData = function(url, onLoadData, callee, param, send_object_json, withCredentials) {
+    if(Loader.REPORT_LOADING) console.log('load data:', url);
+    Loader.n_loading++;
 
-    var result = List.fromArray(array);
-    if(forceToString) {
-      for(var i = 0; i < result.length; i++) {
-        result[i] = String(result[i]);
+    if(Loader.LOCAL_STORAGE_ENABLED) {
+      // TODO track down LocalStorage. localStorage is a thing though (lowercase l);
+      var result = localStorage.getItem(url);
+      if(result) {
+        var e = new LoadEvent();
+        e.url = url;
+        e.param = param;
+        e.result = result;
+
+        onLoadData.call(target, e);
       }
     }
-    result.type = "StringList";
 
-    //assign methods to array:
-    result.getLengths = StringList.prototype.getLengths;
-    result.toLowerCase = StringList.prototype.toLowerCase;
-    result.toUpperCase = StringList.prototype.toUpperCase;
-    result.append = StringList.prototype.append;
-    result.getSurrounded = StringList.prototype.getSurrounded;
-    result.replace = StringList.prototype.replace;
-    result.getConcatenated = StringList.prototype.getConcatenated;
-    result.trim = StringList.prototype.trim;
 
-    //override
-    result.clone = StringList.prototype.clone;
 
-    return result;
-  };
+    if(Loader.REPORT_LOADING) console.log("Loader.loadData | url:", url);
 
-  /**
-   * overrides List.prototype.getLengths (see comments there)
-   */
-  StringList.prototype.getLengths = function() {
-    var lengths = new NumberList();
+    var useProxy = String(url).substr(0, 4) == "http";
 
-    this.forEach(function(string) {
-      lengths.push(string.length);
-    });
+    var req = new XMLHttpRequest();
 
-    return lengths;
-  };
+    var target = callee ? callee : arguments.callee;
+    var onLoadComplete = function() {
+      if(Loader.REPORT_LOADING) console.log('Loader.loadData | onLoadComplete'); //, req.responseText:', req.responseText);
+      if(req.readyState == 4) {
+        Loader.n_loading--;
 
-  /**
-   * @todo write docs
-   */
-  StringList.prototype.append = function(sufix, after) {
-    after = after == null ? true : after;
-    var newStringList = new StringList();
-    newStringList.name = this.name;
-    var sufixIsStringList = typeOf(sufix) == "StringList";
-    var i;
-    if(after) {
-      for(i = 0; this[i] != null; i++) {
-        newStringList[i] = this[i] + (sufixIsStringList ? sufix[i] : sufix);
+        var e = new LoadEvent();
+        e.url = url;
+        e.param = param;
+        //if (req.status == 200) { //MIG
+        if(req.status == 200 || (req.status === 0 && req.responseText !== null)) {
+          e.result = req.responseText;
+          onLoadData.call(target, e);
+        } else {
+          if(Loader.REPORT_LOADING) console.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
+          e.errorType = req.status;
+          e.errorMessage = "[!] There was a problem retrieving the data [" + req.status + "]:" + req.statusText;
+          onLoadData.call(target, e);
+        }
       }
-    } else {
-      for(i = 0; this[i] != null; i++) {
-        newStringList[i] = (sufixIsStringList ? sufix[i] : sufix) + this[i];
+    };
+
+    // branch for native XMLHttpRequest object
+    if(window.XMLHttpRequest && !(window.ActiveXObject)) {
+      try {
+        req = new XMLHttpRequest();
+      } catch(e) {
+        req = false;
+      }
+      // branch for IE/Windows ActiveX version
+    } else if(window.ActiveXObject) {
+      try {
+        req = new window.ActiveXObject("Msxml2.XMLHTTP.6.0");
+      } catch(e) {
+        try {
+          req = new window.ActiveXObject("Msxml2.XMLHTTP.3.0");
+        } catch(e) {
+          try {
+            req = new window.ActiveXObject("Msxml2.XMLHTTP");
+          } catch(e) {
+            try {
+              req = new window.ActiveXObject("Microsoft.XMLHTTP");
+            } catch(e) {
+              req = false;
+            }
+          }
+        }
       }
     }
-    return newStringList;
+    if(req) {
+      if(withCredentials === true ){
+          req.withCredentials = true;
+      }
+      req.onreadystatechange = onLoadComplete; //processReqChange;
+      if(useProxy) {
+        req.open("GET", Loader.proxy + url, true);
+      } else {
+        req.open("GET", url, true);
+      }
+
+      send_object_json = send_object_json || "";
+      req.send(send_object_json);
+    }
   };
 
-  /**
-   * prefix and sufix can be string or a StringList
-   */
-  StringList.prototype.getSurrounded = function(prefix, sufix) {
-    var newStringList = new StringList();
-    newStringList.name = this.name;
-    var i;
 
-    var prefixIsStringList = Array.isArray(prefix);
-    var sufixIsStringList = Array.isArray(sufix);
+  Loader.loadImage = function(url, onComplete, callee, param) {
+    Loader.n_loading++;
 
-    for(i = 0; this[i] != null; i++) {
-      newStringList[i] = (prefixIsStringList ? prefix[i] : prefix) + this[i] + (sufixIsStringList ? sufix[i] : sufix);
+    if(Loader.REPORT_LOADING) console.log("Loader.loadImage | url:", url);
+
+    var target = callee ? callee : arguments.callee;
+    var img = document.createElement('img');
+
+    if(this.cacheActive) {
+      if(this.associativeByUrls[url] != null) {
+        Loader.n_loading--;
+        //console.log('=====>>>>+==>>>+====>>=====>>>+==>> in cache:', url);
+        var e = new LoadEvent();
+        e.result = this.associativeByUrls[url];
+        e.url = url;
+        e.param = param;
+        onComplete.call(target, e);
+      } else {
+        var cache = true;
+        var associative = this.associativeByUrls;
+      }
     }
 
-    return newStringList;
+    img.onload = function() {
+      Loader.n_loading--;
+      var e = new LoadEvent();
+      e.result = img;
+      e.url = url;
+      e.param = param;
+      if(cache) associative[url] = img;
+      onComplete.call(target, e);
+    };
+
+    img.onerror = function() {
+      Loader.n_loading--;
+      var e = new LoadEvent();
+      e.result = null;
+      e.errorType = 1; //TODO: set an error type!
+      e.errorMessage = "There was a problem retrieving the image [" + img.src + "]:";
+      e.url = url;
+      e.param = param;
+      onComplete.call(target, e);
+    };
+
+    img.src = Loader.proxy + url;
   };
 
 
-  //deprectaed, replaced by replaceInStrings
+
+  // Loader.loadJSON = function(url, onLoadComplete) {
+  //   Loader.n_loading++;
+
+  //   Loader.loadData(url, function(data) {
+  //     Loader.n_loading--;
+  //     onLoadComplete.call(arguments.callee, jQuery.parseJSON(data));
+  //   });
+  // };
+
+
   /**
-   * @ignore
-   */
-  StringList.prototype.replace = function(regExp, string) {
-    if(regExp==null) return this;
+  Loader.callIndex = 0;
+  Loader.loadJSONP = function(url, onLoadComplete, callee) {
+    Loader.n_loading++;
 
-    var newStringList = new StringList();
-    var i;
+    Loader.callIndex = Loader.callIndex + 1;
+    var index = Loader.callIndex;
 
-    newStringList.name = this.name;
+    var newUrl = url + "&callback=JSONcallback" + index;
+    //var newUrl=url+"?callback=JSONcallback"+index; //   <----  WFP suggestion
 
-    for(i = 0; this[i] != null; i++){
-      newStringList[i] = this[i].replace(regExp, string);
+    var target = callee ? callee : arguments.callee;
+
+    //console.log('Loader.loadJSONP, newUrl:', newUrl);
+
+    $.ajax({
+      url: newUrl,
+      type: 'GET',
+      data: {},
+      dataType: 'jsonp',
+      contentType: "application/json",
+      jsonp: 'jsonp',
+      jsonpCallback: 'JSONcallback' + index,
+      success: function(data) {
+        Loader.n_loading--;
+        var e = new LoadEvent();
+        e.result = data;
+        onLoadComplete.call(target, e);
+      },
+      error: function(data) {
+        Loader.n_loading--;
+        console.log("Loader.loadJSONP | error, data:", data);
+
+        var e = new LoadEvent();
+        e.errorType = 1;
+        onLoadComplete.call(target, e);
+      }
+    }); //.error(function(e){
+    // console.log('---> (((error))) B');
+    //
+    // var e=new LoadEvent();
+    // e.errorType=1;
+    // onLoadComplete.call(target, e);
+    // });
+  };
+  **/
+
+
+
+
+  //FIX THESE METHODS:
+
+  Loader.loadXML = function(url, onLoadData) {
+    Loader.n_loading++;
+
+    var req = new XMLHttpRequest();
+    var onLoadComplete = onLoadData;
+
+    if(Loader.REPORT_LOADING) console.log('loadXML, url:', url);
+
+    // branch for native XMLHttpRequest object
+    if(window.XMLHttpRequest && !(window.ActiveXObject)) {
+      try {
+        req = new XMLHttpRequest();
+      } catch(e) {
+        req = false;
+      }
+      // branch for IE/Windows ActiveX version
+    } else if(window.ActiveXObject) {
+      try {
+        req = new window.ActiveXObject("Msxml2.XMLHTTP");
+      } catch(e) {
+        try {
+          req = new window.ActiveXObject("Microsoft.XMLHTTP");
+        } catch(e) {
+          req = false;
+        }
+      }
+    }
+    if(req) {
+      req.onreadystatechange = processReqChange;
+      req.open("GET", url, true);
+      req.send("");
     }
 
-    return newStringList;
-  };
+    function processReqChange() {
+      Loader.n_loading--;
+      // only if req shows "loaded"
+      if(req.readyState == 4) {
+        // only if "OK"
+        if(req.status == 200 || req.status === 0) {
+          onLoadComplete(req.responseXML);
 
-  /**
-   * @todo write docs
-   */
-  StringList.prototype.getConcatenated = function(separator) {
-    var i;
-    var string = "";
-    for(i = 0; this[i] != null; i++) {
-      string += this[i];
-      if(i < this.length - 1) string += separator;
+        } else {
+          console.log("There was a problem retrieving the XML data:\n" +
+            req.statusText);
+        }
+      }
     }
-    return string;
   };
 
-  /**
-   * @todo write docs
-   */
-  StringList.prototype.toLowerCase = function() {
-    var newStringList = new StringList();
-    newStringList.name = this.name;
-    var i;
-    for(i = 0; this[i] != null; i++) {
-      newStringList[i] = this[i].toLowerCase();
+
+  ///////////////PHP
+
+  Loader.sendContentToVariableToPhp = function(url, varName, value, onLoadData, callee, param) {
+    var data = varName + "=" + encodeURIComponent(value);
+    Loader.sendDataToPhp(url, data, onLoadData, callee, param);
+  };
+
+  Loader.sendContentsToVariablesToPhp = function(url, varNames, values, onLoadData, callee, param) {
+    var data = varNames[0] + "=" + encodeURIComponent(values[0]);
+    for(var i = 1; varNames[i] != null; i++) {
+      data += "&" + varNames[i] + "=" + encodeURIComponent(values[i]);
     }
-    return newStringList;
+    Loader.sendDataToPhp(url, data, onLoadData, callee, param);
   };
 
+  Loader.sendDataToPhp = function(url, data, onLoadData, callee, param) {
+    var req = new XMLHttpRequest();
+
+    req.open("POST", url, true);
+    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    req.send(data);
+
+    var target = callee ? callee : arguments.callee;
+
+    var onLoadComplete = function() {
+      if(Loader.REPORT_LOADING) console.log('Loader.loadData | onLoadComplete, req.responseText:', req.responseText);
+      if(req.readyState == 4) {
+        Loader.n_loading--;
+
+        var e = new LoadEvent();
+        e.url = url;
+        e.param = param;
+
+        if(req.status == 200 || (req.status === 0 && req.responseText != null)) {
+          e.result = req.responseText;
+          onLoadData.call(target, e);
+        } else {
+          if(Loader.REPORT_LOADING) console.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
+          e.errorType = req.status;
+          e.errorMessage = "[!] There was a problem retrieving the data [" + req.status + "]:" + req.statusText;
+          onLoadData.call(target, e);
+        }
+      }
+    };
+
+    req.onreadystatechange = onLoadComplete;
+  };
+
+  exports.Loader = Loader;
+
+  Node__Node.prototype = new DataModel();
+  Node__Node.prototype.constructor = Node__Node;
+
   /**
-   * @todo write docs
+   * @classdesc Represents a single node element in a Network. Can have both an id as well
+   * as a name.
+   *
+   * @description Create a new Node.
+   * @param {String} id ID of the Node
+   * @param {String} name string (label) name to be assigned to node
+   * @constructor
+   * @category networks
    */
-  StringList.prototype.toUpperCase = function() {
-    var newStringList = new StringList();
-    newStringList.name = this.name;
-    var i;
-    for(i = 0; this[i] != null; i++) {
-      newStringList[i] = this[i].toUpperCase();
-    }
-    return newStringList;
+  function Node__Node(id, name) {
+    this.id = id == null ? '' : id;
+    this.name = name != null ? name : '';
+    this.type = "Node";
+
+    this.nodeType = null;
+
+    this.x = 0;
+    this.y = 0;
+    this.z = 0;
+
+    this.nodeList = new NodeList();
+    this.relationList = new RelationList();
+
+    this.toNodeList = new NodeList();
+    this.toRelationList = new RelationList();
+
+    this.fromNodeList = new NodeList();
+    this.fromRelationList = new RelationList();
+
+    this.weight = 1;
+    this.descentWeight = 1;
+
+    //tree
+    this.level = 0;
+    this.parent = null;
+
+    //physics:
+    this.vx = 0;
+    this.vy = 0;
+    this.vz = 0;
+    this.ax = 0;
+    this.ay = 0;
+    this.az = 0;
+  }
+  var Node__default = Node__Node;
+
+  /**
+   * Removes all Relations and connected Nodes from
+   * the current Node.
+   */
+  Node__Node.prototype.cleanRelations = function() {
+    this.nodeList = new NodeList();
+    this.relationList = new RelationList();
+
+    this.toNodeList = new NodeList();
+    this.toRelationList = new RelationList();
+
+    this.fromNodeList = new NodeList();
+    this.fromRelationList = new RelationList();
+  };
+
+  //TODO: complete with all properties
+  Node__Node.prototype.destroy = function() {
+    DataModel.prototype.destroy.call(this);
+    delete this.id;
+    delete this.name;
+    delete this.nodeType;
+    delete this.x;
+    delete this.y;
+    delete this.z;
+    delete this.nodeList;
+    delete this.relationList;
+    delete this.toNodeList;
+    delete this.toNodeList;
+    delete this.fromNodeList;
+    delete this.fromRelationList;
+    delete this.parent;
+    delete this.weight;
+    delete this.descentWeight;
+    delete this.level;
+    delete this.vx;
+    delete this.vy;
+    delete this.vz;
+    delete this.ax;
+    delete this.ay;
+    delete this.az;
   };
 
   /**
-   * trims all the strings on the stringList
-   * @return {StringList}
+   * Returns the number of Relations connected to this Node.
+   *
+   * @return {Number} Number of Relations (edges) connecting to this Node instance.
+   */
+  Node__Node.prototype.getDegree = function() {
+    return this.relationList.length;
+  };
+
+  //treeProperties:
+
+
+  /**
+   * Returns the parent Node of this Node if it is part of a {@link Tree}.
+   *
+   * @return {Node} Parent Node of this Node.
+   */
+  Node__Node.prototype.getParent = function() {
+    return this.parent;
+  };
+
+  /**
+   * Returns the leaves under a node in a Tree,
+   *
+   * <strong>Warning:</strong> If this Node is part of a Network that is not a tree, this method could run an infinite loop.
+   * @return {NodeList} Leaf Nodes of this Node.
    * tags:
    */
-  StringList.prototype.trim = function() {
-    var i;
-    var newStringList = new StringList();
-    for(i = 0; this[i] != null; i++) {
-      newStringList[i] = this[i].trim();
-    }
-    newStringList.name = this.name;
-    return newStringList;
-  };
+  Node__Node.prototype.getLeaves = function() {
+      var leaves = new NodeList();
+      var addLeaves = function(node) {
+        if(node.toNodeList.length === 0) {
+          leaves.addNode(node);
+          return;
+        }
+        node.toNodeList.forEach(addLeaves);
+      };
+      addLeaves(this);
+      return leaves;
+    };
 
-  ///////overriding
 
   /**
-   * @todo write docs
+   * Uses an image as a visual representation to this Node.
+   *
+   * @param {String} urlImage The URL of the image to load.
    */
-  StringList.prototype.clone = function() {
-    var newList = StringList.fromArray(this.slice(), false);
-    newList.name = this.name;
-    return newList;
+  Node__Node.prototype.loadImage = function(urlImage) {
+    Loader.loadImage(urlImage, function(e) {
+      this.image = e.result;
+    }, this);
   };
 
-  exports.StringList = StringList;
+
+  /**
+   * Makes a copy of this Node.
+   *
+   * @return {Node} New Node that is a copy of this Node.
+   */
+  Node__Node.prototype.clone = function() {
+    var newNode = new Node__Node(this.id, this.name);
+
+    newNode.x = this.x;
+    newNode.y = this.y;
+    newNode.z = this.z;
+
+    newNode.nodeType = this.nodeType;
+
+    newNode.weight = this.weight;
+    newNode.descentWeight = this.descentWeight;
+
+    return newNode;
+  };
+
+  exports.Node = Node__default;
 
   NodeList.prototype = new List();
   NodeList.prototype.constructor = NodeList;
@@ -3341,1456 +3442,6 @@ define('src/index', ['exports'], function (exports) {
   };
 
   exports.RelationList = RelationList;
-
-  LoadEvent.prototype = {};
-  LoadEvent.prototype.constructor = LoadEvent;
-
-  /**
-   * LoadEvent
-   * @constructor
-   * @category misc
-   */
-  function LoadEvent() {
-    Object.apply(this);
-    this.result = null;
-    this.errorType = 0;
-    this.errorMessage = "";
-    this.url = '';
-  }
-
-  exports.LoadEvent = LoadEvent;
-
-  /* jshint -W022 */
-
-  function Loader() {}
-
-
-  Loader.proxy = ""; //TODO:install proxy created by Mig at moebio.com
-  Loader.cacheActive = false; //TODO: fix!
-  Loader.associativeByUrls = {};
-  Loader.REPORT_LOADING = false;
-  Loader.n_loading = 0;
-  Loader.LOCAL_STORAGE_ENABLED = false;
-
-  Loader.PHPurl = "http://intuitionanalytics.com/tests/proxy.php?url=";
-
-
-  /**
-   * loads string data from server. The defined Loader.proxy will be used.
-   * @param {String} url the URL of the file to be loaded
-   * @param {Function} onLoadData a function that will be called when complete. The function must receive a LoadEvent
-   * @param {callee} the Object containing the onLoadData function to be called
-   * @para, {Object} optional parameter that will be stored in the LoadEvent instance
-   */
-  Loader.loadData = function(url, onLoadData, callee, param, send_object_json, withCredentials) {
-    if(Loader.REPORT_LOADING) console.log('load data:', url);
-    Loader.n_loading++;
-
-    if(Loader.LOCAL_STORAGE_ENABLED) {
-      // TODO track down LocalStorage. localStorage is a thing though (lowercase l);
-      var result = localStorage.getItem(url);
-      if(result) {
-        var e = new LoadEvent();
-        e.url = url;
-        e.param = param;
-        e.result = result;
-
-        onLoadData.call(target, e);
-      }
-    }
-
-
-
-    if(Loader.REPORT_LOADING) console.log("Loader.loadData | url:", url);
-
-    var useProxy = String(url).substr(0, 4) == "http";
-
-    var req = new XMLHttpRequest();
-
-    var target = callee ? callee : arguments.callee;
-    var onLoadComplete = function() {
-      if(Loader.REPORT_LOADING) console.log('Loader.loadData | onLoadComplete'); //, req.responseText:', req.responseText);
-      if(req.readyState == 4) {
-        Loader.n_loading--;
-
-        var e = new LoadEvent();
-        e.url = url;
-        e.param = param;
-        //if (req.status == 200) { //MIG
-        if(req.status == 200 || (req.status === 0 && req.responseText !== null)) {
-          e.result = req.responseText;
-          onLoadData.call(target, e);
-        } else {
-          if(Loader.REPORT_LOADING) console.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
-          e.errorType = req.status;
-          e.errorMessage = "[!] There was a problem retrieving the data [" + req.status + "]:" + req.statusText;
-          onLoadData.call(target, e);
-        }
-      }
-    };
-
-    // branch for native XMLHttpRequest object
-    if(window.XMLHttpRequest && !(window.ActiveXObject)) {
-      try {
-        req = new XMLHttpRequest();
-      } catch(e) {
-        req = false;
-      }
-      // branch for IE/Windows ActiveX version
-    } else if(window.ActiveXObject) {
-      try {
-        req = new window.ActiveXObject("Msxml2.XMLHTTP.6.0");
-      } catch(e) {
-        try {
-          req = new window.ActiveXObject("Msxml2.XMLHTTP.3.0");
-        } catch(e) {
-          try {
-            req = new window.ActiveXObject("Msxml2.XMLHTTP");
-          } catch(e) {
-            try {
-              req = new window.ActiveXObject("Microsoft.XMLHTTP");
-            } catch(e) {
-              req = false;
-            }
-          }
-        }
-      }
-    }
-    if(req) {
-      if(withCredentials === true ){
-          req.withCredentials = true;
-      }
-      req.onreadystatechange = onLoadComplete; //processReqChange;
-      if(useProxy) {
-        req.open("GET", Loader.proxy + url, true);
-      } else {
-        req.open("GET", url, true);
-      }
-
-      send_object_json = send_object_json || "";
-      req.send(send_object_json);
-    }
-  };
-
-
-  Loader.loadImage = function(url, onComplete, callee, param) {
-    Loader.n_loading++;
-
-    if(Loader.REPORT_LOADING) console.log("Loader.loadImage | url:", url);
-
-    var target = callee ? callee : arguments.callee;
-    var img = document.createElement('img');
-
-    if(this.cacheActive) {
-      if(this.associativeByUrls[url] != null) {
-        Loader.n_loading--;
-        //console.log('=====>>>>+==>>>+====>>=====>>>+==>> in cache:', url);
-        var e = new LoadEvent();
-        e.result = this.associativeByUrls[url];
-        e.url = url;
-        e.param = param;
-        onComplete.call(target, e);
-      } else {
-        var cache = true;
-        var associative = this.associativeByUrls;
-      }
-    }
-
-    img.onload = function() {
-      Loader.n_loading--;
-      var e = new LoadEvent();
-      e.result = img;
-      e.url = url;
-      e.param = param;
-      if(cache) associative[url] = img;
-      onComplete.call(target, e);
-    };
-
-    img.onerror = function() {
-      Loader.n_loading--;
-      var e = new LoadEvent();
-      e.result = null;
-      e.errorType = 1; //TODO: set an error type!
-      e.errorMessage = "There was a problem retrieving the image [" + img.src + "]:";
-      e.url = url;
-      e.param = param;
-      onComplete.call(target, e);
-    };
-
-    img.src = Loader.proxy + url;
-  };
-
-
-
-  // Loader.loadJSON = function(url, onLoadComplete) {
-  //   Loader.n_loading++;
-
-  //   Loader.loadData(url, function(data) {
-  //     Loader.n_loading--;
-  //     onLoadComplete.call(arguments.callee, jQuery.parseJSON(data));
-  //   });
-  // };
-
-
-  /**
-  Loader.callIndex = 0;
-  Loader.loadJSONP = function(url, onLoadComplete, callee) {
-    Loader.n_loading++;
-
-    Loader.callIndex = Loader.callIndex + 1;
-    var index = Loader.callIndex;
-
-    var newUrl = url + "&callback=JSONcallback" + index;
-    //var newUrl=url+"?callback=JSONcallback"+index; //   <----  WFP suggestion
-
-    var target = callee ? callee : arguments.callee;
-
-    //console.log('Loader.loadJSONP, newUrl:', newUrl);
-
-    $.ajax({
-      url: newUrl,
-      type: 'GET',
-      data: {},
-      dataType: 'jsonp',
-      contentType: "application/json",
-      jsonp: 'jsonp',
-      jsonpCallback: 'JSONcallback' + index,
-      success: function(data) {
-        Loader.n_loading--;
-        var e = new LoadEvent();
-        e.result = data;
-        onLoadComplete.call(target, e);
-      },
-      error: function(data) {
-        Loader.n_loading--;
-        console.log("Loader.loadJSONP | error, data:", data);
-
-        var e = new LoadEvent();
-        e.errorType = 1;
-        onLoadComplete.call(target, e);
-      }
-    }); //.error(function(e){
-    // console.log('---> (((error))) B');
-    //
-    // var e=new LoadEvent();
-    // e.errorType=1;
-    // onLoadComplete.call(target, e);
-    // });
-  };
-  **/
-
-
-
-
-  //FIX THESE METHODS:
-
-  Loader.loadXML = function(url, onLoadData) {
-    Loader.n_loading++;
-
-    var req = new XMLHttpRequest();
-    var onLoadComplete = onLoadData;
-
-    if(Loader.REPORT_LOADING) console.log('loadXML, url:', url);
-
-    // branch for native XMLHttpRequest object
-    if(window.XMLHttpRequest && !(window.ActiveXObject)) {
-      try {
-        req = new XMLHttpRequest();
-      } catch(e) {
-        req = false;
-      }
-      // branch for IE/Windows ActiveX version
-    } else if(window.ActiveXObject) {
-      try {
-        req = new window.ActiveXObject("Msxml2.XMLHTTP");
-      } catch(e) {
-        try {
-          req = new window.ActiveXObject("Microsoft.XMLHTTP");
-        } catch(e) {
-          req = false;
-        }
-      }
-    }
-    if(req) {
-      req.onreadystatechange = processReqChange;
-      req.open("GET", url, true);
-      req.send("");
-    }
-
-    function processReqChange() {
-      Loader.n_loading--;
-      // only if req shows "loaded"
-      if(req.readyState == 4) {
-        // only if "OK"
-        if(req.status == 200 || req.status === 0) {
-          onLoadComplete(req.responseXML);
-
-        } else {
-          console.log("There was a problem retrieving the XML data:\n" +
-            req.statusText);
-        }
-      }
-    }
-  };
-
-
-  ///////////////PHP
-
-  Loader.sendContentToVariableToPhp = function(url, varName, value, onLoadData, callee, param) {
-    var data = varName + "=" + encodeURIComponent(value);
-    Loader.sendDataToPhp(url, data, onLoadData, callee, param);
-  };
-
-  Loader.sendContentsToVariablesToPhp = function(url, varNames, values, onLoadData, callee, param) {
-    var data = varNames[0] + "=" + encodeURIComponent(values[0]);
-    for(var i = 1; varNames[i] != null; i++) {
-      data += "&" + varNames[i] + "=" + encodeURIComponent(values[i]);
-    }
-    Loader.sendDataToPhp(url, data, onLoadData, callee, param);
-  };
-
-  Loader.sendDataToPhp = function(url, data, onLoadData, callee, param) {
-    var req = new XMLHttpRequest();
-
-    req.open("POST", url, true);
-    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    req.send(data);
-
-    var target = callee ? callee : arguments.callee;
-
-    var onLoadComplete = function() {
-      if(Loader.REPORT_LOADING) console.log('Loader.loadData | onLoadComplete, req.responseText:', req.responseText);
-      if(req.readyState == 4) {
-        Loader.n_loading--;
-
-        var e = new LoadEvent();
-        e.url = url;
-        e.param = param;
-
-        if(req.status == 200 || (req.status === 0 && req.responseText != null)) {
-          e.result = req.responseText;
-          onLoadData.call(target, e);
-        } else {
-          if(Loader.REPORT_LOADING) console.log("[!] There was a problem retrieving the data [" + req.status + "]:\n" + req.statusText);
-          e.errorType = req.status;
-          e.errorMessage = "[!] There was a problem retrieving the data [" + req.status + "]:" + req.statusText;
-          onLoadData.call(target, e);
-        }
-      }
-    };
-
-    req.onreadystatechange = onLoadComplete;
-  };
-
-  exports.Loader = Loader;
-
-  Node__Node.prototype = new DataModel();
-  Node__Node.prototype.constructor = Node__Node;
-
-  /**
-   * @classdesc Represents a single node element in a Network. Can have both an id as well
-   * as a name.
-   *
-   * @description Create a new Node.
-   * @param {String} id ID of the Node
-   * @param {String} name string (label) name to be assigned to node
-   * @constructor
-   * @category networks
-   */
-  function Node__Node(id, name) {
-    this.id = id == null ? '' : id;
-    this.name = name != null ? name : '';
-    this.type = "Node";
-
-    this.nodeType = null;
-
-    this.x = 0;
-    this.y = 0;
-    this.z = 0;
-
-    this.nodeList = new NodeList();
-    this.relationList = new RelationList();
-
-    this.toNodeList = new NodeList();
-    this.toRelationList = new RelationList();
-
-    this.fromNodeList = new NodeList();
-    this.fromRelationList = new RelationList();
-
-    this.weight = 1;
-    this.descentWeight = 1;
-
-    //tree
-    this.level = 0;
-    this.parent = null;
-
-    //physics:
-    this.vx = 0;
-    this.vy = 0;
-    this.vz = 0;
-    this.ax = 0;
-    this.ay = 0;
-    this.az = 0;
-  }
-  var Node__default = Node__Node;
-
-  /**
-   * Removes all Relations and connected Nodes from
-   * the current Node.
-   */
-  Node__Node.prototype.cleanRelations = function() {
-    this.nodeList = new NodeList();
-    this.relationList = new RelationList();
-
-    this.toNodeList = new NodeList();
-    this.toRelationList = new RelationList();
-
-    this.fromNodeList = new NodeList();
-    this.fromRelationList = new RelationList();
-  };
-
-  //TODO: complete with all properties
-  Node__Node.prototype.destroy = function() {
-    DataModel.prototype.destroy.call(this);
-    delete this.id;
-    delete this.name;
-    delete this.nodeType;
-    delete this.x;
-    delete this.y;
-    delete this.z;
-    delete this.nodeList;
-    delete this.relationList;
-    delete this.toNodeList;
-    delete this.toNodeList;
-    delete this.fromNodeList;
-    delete this.fromRelationList;
-    delete this.parent;
-    delete this.weight;
-    delete this.descentWeight;
-    delete this.level;
-    delete this.vx;
-    delete this.vy;
-    delete this.vz;
-    delete this.ax;
-    delete this.ay;
-    delete this.az;
-  };
-
-  /**
-   * Returns the number of Relations connected to this Node.
-   *
-   * @return {Number} Number of Relations (edges) connecting to this Node instance.
-   */
-  Node__Node.prototype.getDegree = function() {
-    return this.relationList.length;
-  };
-
-  //treeProperties:
-
-
-  /**
-   * Returns the parent Node of this Node if it is part of a {@link Tree}.
-   *
-   * @return {Node} Parent Node of this Node.
-   */
-  Node__Node.prototype.getParent = function() {
-    return this.parent;
-  };
-
-  /**
-   * Returns the leaves under a node in a Tree,
-   *
-   * <strong>Warning:</strong> If this Node is part of a Network that is not a tree, this method could run an infinite loop.
-   * @return {NodeList} Leaf Nodes of this Node.
-   * tags:
-   */
-  Node__Node.prototype.getLeaves = function() {
-      var leaves = new NodeList();
-      var addLeaves = function(node) {
-        if(node.toNodeList.length === 0) {
-          leaves.addNode(node);
-          return;
-        }
-        node.toNodeList.forEach(addLeaves);
-      };
-      addLeaves(this);
-      return leaves;
-    };
-
-
-  /**
-   * Uses an image as a visual representation to this Node.
-   *
-   * @param {String} urlImage The URL of the image to load.
-   */
-  Node__Node.prototype.loadImage = function(urlImage) {
-    Loader.loadImage(urlImage, function(e) {
-      this.image = e.result;
-    }, this);
-  };
-
-
-  /**
-   * Makes a copy of this Node.
-   *
-   * @return {Node} New Node that is a copy of this Node.
-   */
-  Node__Node.prototype.clone = function() {
-    var newNode = new Node__Node(this.id, this.name);
-
-    newNode.x = this.x;
-    newNode.y = this.y;
-    newNode.z = this.z;
-
-    newNode.nodeType = this.nodeType;
-
-    newNode.weight = this.weight;
-    newNode.descentWeight = this.descentWeight;
-
-    return newNode;
-  };
-
-  exports.Node = Node__default;
-
-  Relation.prototype = new Node__default();
-  Relation.prototype.constructor = Relation;
-
-  /**
-   * Relation
-   * @classdesc Relations represent the edges that connect Nodes
-   * in a Network DataType.
-   *
-   * @description create a new Relation.
-   * @constructor
-   * @param {String} id ID of the Relation.
-   * @param {String} name Name of the Relation.
-   * @param {Node} node0 Source of the Relation.
-   * @param {Node} node1 Destination of the Relation.
-   * @param {Number} weight Edge weight associated with Relation.
-   * Defaults to 1.
-   * @param {String} content Other data to associate with this Relation.
-   * @category networks
-   */
-  function Relation(id, name, node0, node1, weight, content) {
-    Node__default.apply(this, [id, name]);
-    this.type = "Relation";
-
-    this.node0 = node0;
-    this.node1 = node1;
-    this.weight = weight == null ? 1 : weight;
-    this.content = content == null ? "" : content;
-  }
-
-
-  /**
-   * @todo write docs
-   */
-  Relation.prototype.destroy = function() {
-    Node__default.prototype.destroy.call(this);
-    delete this.node0;
-    delete this.node1;
-    delete this.content;
-  };
-
-  /**
-   * given a node returns the other node of a relation
-   * @param  {Node} node
-   * @return {Node}
-   * tags:
-   */
-  Relation.prototype.getOther = function(node) {
-    return node == this.node0 ? this.node1 : this.node0;
-  };
-
-  /**
-   * @todo write docs
-   */
-  Relation.prototype.clone = function() {
-    var relation = new Relation(this.id, this.name, this.node0, this.node1);
-
-    relation.x = this.x;
-    relation.y = this.y;
-    relation.z = this.z;
-
-    relation.nodeType = this.nodeType;
-
-    relation.weight = this.weight;
-    relation.descentWeight = this.descentWeight;
-
-    return relation;
-  };
-
-  exports.Relation = Relation;
-
-  Network.prototype = new DataModel();
-  Network.prototype.constructor = Network;
-
-  /**
-   * @classdesc Networks are a DataType to store network data.
-   *
-   * Networks have nodes stored in a NodeList,
-   * and relations (edges) stored in a RelationList.
-   * @description Create a new Network instance.
-   * @constructor
-   * @category networks
-   */
-  function Network() {
-    this.type = "Network";
-
-    this.nodeList = new NodeList();
-    this.relationList = new RelationList();
-  }
-
-
-  /**
-   * Get Nodes of the Network as a NodeList
-   * @return {NodeList}
-   * tags:
-   */
-  Network.prototype.getNodes = function() {
-    return this.nodeList;
-  };
-
-  /**
-   * Get Relations (edges) of the Network as
-   * a RelationList.
-   * @return {RelationList}
-   * tags:
-   */
-  Network.prototype.getRelations = function() {
-    return this.relationList;
-  };
-
-  /**
-   * get nodes ids property
-   * @return {StringList}
-   * tags:
-   */
-  Network.prototype.getNodesIds = function() {
-    return this.nodeList.getIds();
-  };
-
-
-
-  /*
-   * building methods
-   */
-
-  /**
-   * Add a node to the network
-   * @param {Node} node A new node that will be added to the network.
-   */
-  Network.prototype.addNode = function(node) {
-    this.nodeList.addNode(node);
-  };
-
-  /**
-   * Retrieve a node from the nodeList of the Network with the given name (label).
-   * @param {String} name The name of the node to retrieve from the Network.
-   * @return {Node} The node with the given name. Null if no node with that name
-   * can be found in the Network.
-   */
-  Network.prototype.getNodeWithName = function(name) {
-    return this.nodeList.getNodeWithName(name);
-  };
-
-  /**
-   * Retrieve node from Network with the given id.
-   * @param {String} id ID of the node to retrieve
-   * @return {Node} The node with the given id. Null if a node with this id is not
-   * in the Network.
-   */
-  Network.prototype.getNodeWithId = function(id) {
-    return this.nodeList.getNodeWithId(id);
-  };
-
-  /**
-   * Add a new Relation (edge) to the Network between two nodes.
-   * @param {Node} node0 The source of the relation.
-   * @param {Node} node1 The destination of the relation.
-   * @param {String} id The id of the relation.
-   * @param {Number} weight A numerical weight associated with the relation (edge).
-   *
-   * @param {String} content Information associated with the relation.
-   */
-  Network.prototype.createRelation = function(node0, node1, id, weight, content) {
-    this.addRelation(new Relation(id, id, node0, node1, weight, content));
-  };
-
-  /**
-   * Add an existing Relation (edge) to the Network.
-   * @param {Relation} relation The relation to add to the network.
-   */
-  Network.prototype.addRelation = function(relation) {
-    this.relationList.addNode(relation);
-    relation.node0.nodeList.addNode(relation.node1);
-    relation.node0.relationList.addNode(relation);
-    relation.node0.toNodeList.addNode(relation.node1);
-    relation.node0.toRelationList.addNode(relation);
-    relation.node1.nodeList.addNode(relation.node0);
-    relation.node1.relationList.addNode(relation);
-    relation.node1.fromNodeList.addNode(relation.node0);
-    relation.node1.fromRelationList.addNode(relation);
-  };
-
-  /**
-   * Create a new Relation between two nodes in the network
-   * @param {Node} node0 The source of the relation.
-   * @param {Node} node1 The destination of the relation.
-   * @param {String} id The id of the relation. If missing, an id will be generated
-   * based on the id's of node0 and node1.
-   * @param {Number} weight=1 A numerical weight associated with the relation (edge).
-   * @param {String} content Information associated with the relation.
-   * @return {Relation} The new relation added to the Network.
-   */
-  Network.prototype.connect = function(node0, node1, id, weight, content) {
-    id = id || (node0.id + "_" + node1.id);
-    weight = weight || 1;
-    var relation = new Relation(id, id, node0, node1, weight);
-    this.addRelation(relation);
-    relation.content = content;
-    return relation;
-  };
-
-
-
-  /*
-   * removing methods
-   */
-
-  /**
-   * Remove a node from the Network
-   * @param {Node} node The node to remove.
-   */
-  Network.prototype.removeNode = function(node) {
-    this.removeNodeRelations(node);
-    this.nodeList.removeNode(node);
-  };
-
-  /**
-   * Remove all Relations connected to the node from the Network.
-   * @param {Node} node Node who's relations will be removed.
-   */
-  Network.prototype.removeNodeRelations = function(node) {
-    for(var i = 0; node.relationList[i] != null; i++) {
-      this.removeRelation(node.relationList[i]);
-      i--;
-    }
-  };
-
-  /**
-   * Remove all Nodes from the Network.
-   */
-  Network.prototype.removeNodes = function() {
-    this.nodeList.deleteNodes();
-    this.relationList.deleteNodes();
-  };
-
-  Network.prototype.removeRelation = function(relation) {
-    this.relationList.removeElement(relation);
-    relation.node0.nodeList.removeNode(relation.node1);
-    relation.node0.relationList.removeRelation(relation);
-    relation.node0.toNodeList.removeNode(relation.node1);
-    relation.node0.toRelationList.removeRelation(relation);
-    relation.node1.nodeList.removeNode(relation.node0);
-    relation.node1.relationList.removeRelation(relation);
-    relation.node1.fromNodeList.removeNode(relation.node0);
-    relation.node1.fromRelationList.removeRelation(relation);
-  };
-
-  /**
-   * Transformative method, removes nodes without a minimal number of connections
-   * @param  {Number} minDegree minimal degree
-   * @return {Number} number of nodes removed
-   * tags:transform
-   */
-  Network.prototype.removeIsolatedNodes = function(minDegree) {
-    var i;
-    var nRemoved = 0;
-    minDegree = minDegree == null ? 1 : minDegree;
-
-    for(i = 0; this.nodeList[i] != null; i++) {
-      if(this.nodeList[i].getDegree() < minDegree) {
-        this.nodeList[i]._toRemove = true;
-      }
-    }
-
-    for(i = 0; this.nodeList[i] != null; i++) {
-      if(this.nodeList[i]._toRemove) {
-        this.removeNode(this.nodeList[i]);
-        nRemoved++;
-        i--;
-      }
-    }
-
-    return nRemoved;
-  };
-
-
-  /**
-   * generates a light clone of the network, with the same nodeList and relationList as the original
-   * @return {Network}
-   */
-  Network.prototype.lightClone = function(){
-    var newNetwork = new Network();
-    newNetwork.nodeList = this.nodeList;
-    newNetwork.relationList = this.relationList;
-    return newNetwork;
-  };
-
-
-  /**
-   * Clones the network
-   *
-   * @param  {StringList} nodePropertiesNames list of preoperties names to be copied from old nodes into new nodes
-   * @param  {StringList} relationPropertiesNames
-   *
-   * @param  {String} idsSubfix optional sufix to be added to ids
-   * @param  {String} namesSubfix optional sufix to be added to names
-   * @return {Networked} network with exact structure than original
-   * tags:
-   */
-  Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames, idsSubfix, namesSubfix) {
-    var newNetwork = new Network();
-    var newNode, newRelation;
-
-    idsSubfix = idsSubfix == null ? '' : String(idsSubfix);
-    namesSubfix = namesSubfix == null ? '' : String(namesSubfix);
-
-    this.nodeList.forEach(function(node) {
-      newNode = new Node__default(idsSubfix + node.id, namesSubfix + node.name);
-      if(idsSubfix !== '') newNode.basicId = node.id;
-      if(namesSubfix !== '') newNode.basicName = node.name;
-      if(nodePropertiesNames) {
-        nodePropertiesNames.forEach(function(propName) {
-          if(node[propName] != null) newNode[propName] = node[propName];
-        });
-      }
-      newNetwork.addNode(newNode);
-    });
-
-    this.relationList.forEach(function(relation) {
-      newRelation = new Relation(idsSubfix + relation.id, namesSubfix + relation.name, newNetwork.nodeList.getNodeById(idsSubfix + relation.node0.id), newNetwork.nodeList.getNodeById(idsSubfix + relation.node1.id));
-      if(idsSubfix !== '') newRelation.basicId = relation.id;
-      if(namesSubfix !== '') newRelation.basicName = relation.name;
-      if(relationPropertiesNames) {
-        relationPropertiesNames.forEach(function(propName) {
-          if(relation[propName] != null) newRelation[propName] = relation[propName];
-        });
-      }
-      newNetwork.addRelation(newRelation);
-    });
-
-    return newNetwork;
-  };
-
-  /**
-   * @todo write docs
-   */
-  Network.prototype.destroy = function() {
-    delete this.type;
-    this.nodeList.destroy();
-    this.relationList.destroy();
-    delete this.nodeList;
-    delete this.relationList;
-  };
-
-  exports.Network = Network;
-
-  function ListConversions() {}
-
-
-  /**
-   * Converts the List into a NumberList.
-   *
-   * @param  {List} list
-   * @return {NumberList}
-   * tags:conversion
-   */
-  ListConversions.toNumberList = function(list) {
-    var numberList = new NumberList();
-    numberList.name = list.name;
-    var i;
-    for(i = 0; list[i] != null; i++) {
-      numberList[i] = Number(list[i]);
-    }
-    return numberList;
-  };
-
-  /**
-   * Converts the List into a StringList.
-   *
-   * @param  {List} list
-   * @return {StringList}
-   * tags:conversion
-   */
-  ListConversions.toStringList = function(list) {
-    var i;
-    var stringList = new StringList();
-    stringList.name = list.name;
-    for(i = 0; list[i] != null; i++) {
-      if(typeof list[i] == 'number') {
-        stringList[i] = String(list[i]);
-      } else {
-        stringList[i] = list[i].toString();
-      }
-    }
-    return stringList;
-  };
-
-  exports.ListConversions = ListConversions;
-
-  /* global console */
-
-  Table.prototype = new List();
-  Table.prototype.constructor = Table;
-
-  /**
-   * @classdesc A sub-class of {@link List}, Table provides a 2D array-like structure.
-   *
-   * Each column is stored as its own {@link List}, making it a List of Lists.
-   * Cells in the table can be accessed using table[column][row].
-   *
-   * Additional functions that work on Table can be found in:
-   * <ul>
-   *  <li>Operators:   {@link TableOperators}</li>
-   *  <li>Conversions: {@link TableConversions}</li>
-   *  <li>Generators: {@link TableGenerators}</li>
-   *  <li>Encodings: {@link TableEncodings}</li>
-   * </ul>
-   *
-   * @description Creates a new Table.
-   * Input arguments are treated as the inital column values
-   * of the Table.
-   * @constructor
-   * @category basics
-   */
-  function Table() {
-    var args = [];
-    var i;
-    for(i = 0; i < arguments.length; i++) {
-      args[i] = new List(arguments[i]);
-    }
-
-    var array = List.apply(this, args);
-    array = Table.fromArray(array);
-
-    return array;
-  }
-
-
-  /**
-   * Creates a new Table from an array
-   * @param {Number[]} array
-   * @return {Table}
-   */
-  Table.fromArray = function(array) {
-    var result = List.fromArray(array);
-    result.type = "Table";
-    //assign methods to array:
-    result.applyFunction = Table.prototype.applyFunction;
-    result.getRow = Table.prototype.getRow;
-    result.getRows = Table.prototype.getRows;
-    result.getLengths = Table.prototype.getLengths;
-    result.getListLength = Table.prototype.getListLength;
-    result.sliceRows = Table.prototype.sliceRows;
-    result.getSubListsByIndexes = Table.prototype.getSubListsByIndexes;
-    result.getWithoutRow = Table.prototype.getWithoutRow;
-    result.getWithoutRows = Table.prototype.getWithoutRows;
-    result.getTransposed = Table.prototype.getTransposed;
-    result.getListsSortedByList = Table.prototype.getListsSortedByList;
-    result.sortListsByList = Table.prototype.sortListsByList;
-    result.clone = Table.prototype.clone;
-    result.print = Table.prototype.print;
-
-    //transformative
-    result.removeRow = Table.prototype.removeRow;
-
-    //overiden
-    result.destroy = Table.prototype.destroy;
-
-    result.isTable = true;
-
-    return result;
-  };
-
-
-  /**
-   * Executes a given function on all the columns
-   * in the Table, returning a new Table with the
-   * resulting values.
-   * @param {Function} func Function to apply to each
-   * column in the table. Columns are {@link List|Lists}.
-   * @return {Table} Table of values from applying function.
-   */
-  Table.prototype.applyFunction = function(func) {
-    //TODO: to be tested!
-    var i;
-    var newTable = new Table();
-
-    newTable.name = this.name;
-
-    for(i = 0; this[i] != null; i++) {
-      newTable[i] = this[i].applyFunction(func);
-    }
-    return newTable.getImproved();
-  };
-
-  /**
-   * Returns a {@link List} with all the elements of a row.
-   * @param  {Number} index Index of the row to get.
-   * @return {List}
-   * tags:filter
-   */
-  Table.prototype.getRow = function(index) {
-    var list = new List();
-    var i;
-    for(i = 0; i < this.length; i++) {
-      list[i] = this[i][index];
-    }
-    return list.getImproved();
-  };
-
-  /**
-   * Returns the length a column of the Table.
-   * @param  {Number} index The Column to return its length.
-   * Defaults to 0.
-   * @return {Number} Length of column at given index.
-   * tags:
-   */
-  Table.prototype.getListLength = function(index) {
-    return this[index || 0].length;
-  };
-
-  /**
-   * Returns the lengths of all the columns of the Table.
-   * @return {NumberList} Lengths of all columns in Table.
-   */
-  Table.prototype.getLengths = function() {
-    var lengths = new NumberList();
-    for(var i = 0; this[i] != null; i++) {
-      lengths[i] = this[i].length;
-    }
-    return lengths;
-  };
-
-  /**
-   * Filters a Table by selecting a section of rows, elements with last index included.
-   * @param  {Number} startIndex Index of first element in all lists of the table.
-   * @param  {Number} endIndex Index of last elements in all lists of the table.
-   * @return {Table}
-   * tags:filter
-   */
-  Table.prototype.sliceRows = function(startIndex, endIndex) {
-    endIndex = endIndex == null ? (this[0].length - 1) : endIndex;
-
-    var i;
-    var newTable = new Table();
-    var newList;
-
-    newTable.name = this.name;
-    for(i = 0; this[i] != null; i++) {
-      newList = this[i].getSubList(startIndex, endIndex);
-      newList.name = this[i].name;
-      newTable.push(newList);
-    }
-    return newTable.getImproved();
-  };
-
-  /**
-   * Filters the lists of the table by indexes.
-   * @param  {NumberList} indexes
-   * @return {Table}
-   * tags:filter
-   */
-  Table.prototype.getSubListsByIndexes = function(indexes) {
-    var newTable = new Table();
-    this.forEach(function(list) {
-      newTable.push(list.getSubListByIndexes(indexes));
-    });
-    return newTable.getImproved();
-  };
-
-
-  //deprecated
-  /**
-   * @ignore
-   */
-  Table.prototype.getRows = function(indexes) {
-    return Table.prototype.getSubListsByIndexes(indexes);
-  };
-
-  /**
-   * Returns a new Table with the row at the given index removed.
-   * @param {Number} rowIndex Row to remove
-   * @return {Table} New Table.
-   * tags:filter
-   */
-  Table.prototype.getWithoutRow = function(rowIndex) {
-    var newTable = new Table();
-    newTable.name = this.name;
-    for(var i = 0; this[i] != null; i++) {
-      newTable[i] = List.fromArray(this[i].slice(0, rowIndex).concat(this[i].slice(rowIndex + 1))).getImproved();
-      newTable[i].name = this[i].name;
-    }
-    return newTable.getImproved();
-  };
-
-  /**
-   * Returns a new Table with the rows listed in the given numberList removed.
-   * @param {NumberList} rowsIndexes numberList of row indexes to remove.
-   * @return {Table}
-   * tags:filter
-   */
-  Table.prototype.getWithoutRows = function(rowsIndexes) {
-    var newTable = new Table();
-    newTable.name = this.name;
-    for(var i = 0; this[i] != null; i++) {
-      newTable[i] = new List();
-      for(var j = 0; this[i][j] != null; j++) {
-        if(rowsIndexes.indexOf(j) == -1) newTable[i].push(this[i][j]);
-      }
-      newTable[i].name = this[i].name;
-    }
-    return newTable.getImproved();
-  };
-
-
-  /**
-   * Sort Table's lists by a list
-   * @param  {List|Number} listOrIndex List used to sort, or index of list in the table
-   *
-   * @param  {Boolean} ascending (true by default)
-   * @return {Table} table (of the same type)
-   * tags:sort
-   */
-  Table.prototype.getListsSortedByList = function(listOrIndex, ascending) { //depracated: use sortListsByList
-    if(listOrIndex == null) return;
-    var newTable = instantiateWithSameType(this);
-    var sortinglist = listOrIndex.isList ? listOrIndex.clone() : this[listOrIndex];
-
-    this.forEach(function(list) {
-      newTable.push(list.getSortedByList(sortinglist, ascending));
-    });
-
-    return newTable;
-  };
-
-  /**
-   * Transposes Table.
-   * @param firstListAsHeaders
-   * @return {Table}
-   */
-  Table.prototype.getTransposed = function(firstListAsHeaders) {
-
-    var tableToTranspose = firstListAsHeaders ? this.getSubList(1) : this;
-
-    var table = instantiate(typeOf(tableToTranspose));
-    if(tableToTranspose.length === 0) return table;
-    var i;
-    var j;
-    var list;
-
-    for(i = 0; tableToTranspose[i] != null; i++) {
-      list = tableToTranspose[i];
-      for(j = 0; list[j] != null; j++) {
-        if(i === 0) table[j] = new List();
-        table[j][i] = tableToTranspose[i][j];
-      }
-    }
-    for(j = 0; tableToTranspose[0][j] != null; j++) {
-      table[j] = table[j].getImproved();
-    }
-
-    if(firstListAsHeaders) {
-      this[0].forEach(function(name, i) {
-        table[i].name = String(name);
-      });
-    }
-
-    return table;
-  };
-
-
-  /**
-   * removes a row from the table.
-   * @param {Number} index The row to remove.
-   * @return {undefined}
-   */
-  Table.prototype.removeRow = function(index) {
-    for(var i = 0; this[i] != null; i++) {
-      this[i].splice(index, 1);
-    }
-  };
-
-  /**
-   * makes a copy of the Table.
-   * @return {Table} Copy of table.
-   */
-  Table.prototype.clone = function() {
-    var clonedTable = instantiateWithSameType(this);
-    clonedTable.name = this.name;
-    for(var i = 0; this[i] != null; i++) {
-      clonedTable.push(this[i].clone());
-    }
-    return clonedTable;
-  };
-
-  /**
-   * Removes all contents of the Table.
-   */
-  Table.prototype.destroy = function() {
-    for(var i = 0; this[i] != null; i++) {
-      this[i].destroy();
-      delete this[i];
-    }
-  };
-
-  /**
-   * Prints contents of Table to console.log.
-   */
-
-  Table.prototype.print = function() {
-    console.log("///////////// <" + this.name + "////////////////////////////////////////////////////");
-    console.log(TableEncodings.TableToCSV(this, null, true));
-    console.log("/////////////" + this.name + "> ////////////////////////////////////////////////////");
-  };
-
-  exports.Table = Table;
-
-  NumberTable.prototype = new Table();
-  NumberTable.prototype.constructor = NumberTable;
-
-  /**
-   * @classdesc {@link Table} to store numbers.
-   *
-   * @param [Number|[Number]] args If a single Number, indicates number of
-   * columns to make for the NumberTable. Each column is created as an empty
-   * NumberList. If an Array, or a set of Arrays, it will make a new NumberList
-   * for each array present, populating it with the contents of the array.
-   *
-   * Additional functions that work on NumberTable can be found in:
-   * <ul>
-   *  <li>Operators:   {@link NumberTableOperators}</li>
-   *  <li>Conversions: {@link NumberTableConversions}</li>
-   * </ul>
-   *
-   * @constructor
-   * @description Creates a new NumberTable.
-   * @category numbers
-   */
-  function NumberTable() {
-    var args = [];
-    var newNumberList;
-    var array;
-    var i;
-
-    if(arguments.length > 0 && Number(arguments[0]) == arguments[0]) {
-      array = [];
-      for(i = 0; i < arguments[0]; i++) {
-        array.push(new NumberList());
-      }
-    } else {
-      for(i = 0; arguments[i] != null; i++) {
-        newNumberList = NumberList.fromArray(arguments[i]);
-        newNumberList.name = arguments[i].name;
-        args[i] = newNumberList;
-      }
-      // TODO: this converts all our NumberLists into Lists
-      array = Table.apply(this, args);
-    }
-    array = NumberTable.fromArray(array);
-    return array;
-  }
-
-
-  NumberTable.fromArray = function(array) {
-    var result = Table.fromArray(array);
-    result.type = "NumberTable";
-
-    result.getSums = NumberTable.prototype.getSums;
-    result.getRowsSums = NumberTable.prototype.getRowsSums;
-    result.getAverages = NumberTable.prototype.getAverages;
-    result.getRowsAverages = NumberTable.prototype.getRowsAverages;
-    result.getIntervals = NumberTable.prototype.getIntervals;
-    result.factor = NumberTable.prototype.factor;
-    result.add = NumberTable.prototype.add;
-    result.getMax = NumberTable.prototype.getMax;
-    result.getMin = NumberTable.prototype.getMin;
-    result.getMinMaxInterval = NumberTable.prototype.getMinMaxInterval;
-    result.getCovarianceMatrix = NumberTable.prototype.getCovarianceMatrix;
-
-    return result;
-  };
-
-  /**
-   * @todo write docs
-   */
-  NumberTable.prototype.getMax = function() {
-    if(this.length === 0) return null;
-
-    var max = this[0].getMax();
-    var i;
-
-    for(i = 1; this[i] != null; i++) {
-      max = Math.max(this[i].getMax(), max);
-    }
-    return max;
-  };
-
-  /**
-   * @todo write docs
-   */
-  NumberTable.prototype.getMin = function() {
-    if(this.length === 0) return null;
-
-    var min = this[0].getMin();
-    var i;
-
-    for(i = 1; this[i] != null; i++) {
-      min = Math.min(this[i].getMin(), min);
-    }
-    return min;
-  };
-
-  /**
-   * @todo write docs
-   */
-  NumberTable.prototype.getMinMaxInterval = function() {
-    if(this.length === 0) return null;
-    var rangeInterval = (this[0]).getMinMaxInterval();
-    for(var i = 1; this[i] != null; i++) {
-      var newRange = (this[i]).getMinMaxInterval();
-      rangeInterval.x = Math.min(rangeInterval.x, newRange.x);
-      rangeInterval.y = Math.max(rangeInterval.y, newRange.y);
-    }
-    return rangeInterval;
-  };
-
-  /**
-   * returns a numberList with values from numberlists added
-   * @return {Numberlist}
-   * tags:
-   */
-  NumberTable.prototype.getSums = function() {
-    var numberList = new NumberList();
-    for(var i = 0; this[i] != null; i++) {
-      numberList[i] = this[i].getSum();
-    }
-    return numberList;
-  };
-
-  /**
-   * returns a numberList with all values fro rows added
-   * @return {NumberList}
-   * tags:
-   */
-  NumberTable.prototype.getRowsSums = function() {
-    var sums = this[0].clone();
-    var numberList;
-    for(var i = 1; this[i] != null; i++) {
-      numberList = this[i];
-      for(var j = 0; numberList[j] != null; j++) {
-        sums[j] += numberList[j];
-      }
-    }
-    return sums;
-  };
-
-  /**
-   * @todo write docs
-   */
-  NumberTable.prototype.getAverages = function() {
-    var numberList = new NumberList();
-    for(var i = 0; this[i] != null; i++) {
-      numberList[i] = this[i].getAverage();
-    }
-    return numberList;
-  };
-
-  /**
-   * @todo write docs
-   */
-  NumberTable.prototype.getRowsAverages = function() {
-    var l = this.length;
-    var averages = this[0].clone().factor(1 / l);
-    var numberList;
-    var i, j;
-    var length;
-    for(i = 1; i<l; i++) {
-      numberList = this[i];
-      length = numberList.length;
-      for(j = 0; j<length; j++) {
-        averages[j] += numberList[j] / l;
-      }
-    }
-    return averages;
-  };
-
-  /**
-   * @todo write docs
-   */
-  NumberTable.prototype.getIntervals = function() {
-    var l = this.length;
-    var numberList;
-    var i;
-    var intervalList = new List();//TODO: convert into IntervalList once available
-    for(i = 0; i<l; i++) {
-      numberList = this[i];
-      intervalList.push(numberList.getInterval());
-    }
-    return intervalList;
-  };
-
-
-  /**
-   * @todo write docs
-   */
-  NumberTable.prototype.factor = function(value) {
-    var newTable = new NumberTable();
-    var i;
-    var numberList;
-    var l = this.length;
-
-    switch(typeOf(value)) {
-      case 'number':
-        for(i = 0; i<l; i++) {
-          numberList = this[i];
-          newTable[i] = numberList.factor(value);
-        }
-        break;
-      case 'NumberList':
-        for(i = 0; i<l; i++) {
-          numberList = this[i];
-          newTable[i] = numberList.factor(value[i]);
-        }
-        break;
-
-    }
-
-    newTable.name = this.name;
-    return newTable;
-  };
-
-  /**
-   * @todo write docs
-   */
-  NumberTable.prototype.add = function(value) {
-    var newTable = new NumberTable();
-    var numberList;
-    var i;
-    var l = this.length;
-
-    for(i = 0; i<l; i++) {
-      numberList = this[i];
-      newTable[i] = numberList.add(value);
-    }
-
-    newTable.name = this.name;
-    return newTable;
-  };
-
-  exports.NumberTable = NumberTable;
 
   /**
    * @classdesc Provides a set of tools that work with Colors.
@@ -5355,212 +4006,6 @@ define('src/index', ['exports'], function (exports) {
 
   exports.ColorOperators = ColorOperators;
 
-  function ColorScales() {}
-
-
-  /**
-   * @todo write docs
-   */
-  ColorScales.blackScale = function() {
-    return 'black';
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales.grayscale = function(value) {
-    var rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], [255, 255, 255], value);
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales.antiGrayscale = function(value) {
-    var rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [0, 0, 0], value);
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales.antiTemperature = function(value) {
-    return ColorScales.temperature(1 - value);
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales.temperature = function(value) { //todo:make it efficient
-    var color = "#FFFFFF";
-    if(value < 0.2) {
-      color = ColorOperators.interpolateColors('#000000', ColorOperators.HSVtoHEX(234, 1, 1), value * 5);
-    } else if(value > 0.85) {
-      color = ColorOperators.interpolateColors(ColorOperators.HSVtoHEX(0, 1, 1), '#FFFFFF', (value - 0.85) / 0.15);
-    } else {
-      color = ColorOperators.HSVtoHEX(Math.round((0.65 - (value - 0.2)) * 360), 1, 1);
-    }
-    return color;
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales.sqrtTemperature = function(value) {
-    return ColorScales.temperature(Math.sqrt(value));
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales.sqrt4Temperature = function(value) {
-    return ColorScales.temperature(Math.pow(value, 0.25));
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales.quadraticTemperature = function(value) {
-    return ColorScales.temperature(Math.pow(value, 2));
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales.cubicTemperature = function(value) {
-    return ColorScales.temperature(Math.pow(value, 3));
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales.greenToRed = function(value) { //todo:make it efficient
-    var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [255, 50, 50], value);
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales.greenToBlue = function(value) { //todo:make it efficient
-    var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [50, 50, 255], value);
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales.grayToOrange = function(value) {
-    return 'rgb(' + Math.floor(100 + value*155) + ','+ Math.floor(100 + value*10) +',' + Math.floor(100 - value*100) + ')';
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales.sqrt4GrayToOrange = function(value){
-    return ColorScales.grayToOrange(Math.pow(value, 0.25));
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales.blueToRed = function(value) {
-    return 'rgb(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ')';
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales.blueToRedAlpha = function(value) { //todo:make it efficient
-    return 'rgba(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ', 0.5)';
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales.whiteToRed = function(value) {
-    var gg = Math.floor(255 - value * 255);
-    return 'rgb(255,' + gg + ',' + gg + ')';
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales.redToBlue = function(value) {
-    var rgb = ColorOperators.interpolateColorsRGB([255, 0, 0], [0, 0, 255], value);
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-  };
-
-  //tricolor
-
-  /**
-   * @todo write docs
-   */
-  ColorScales.greenWhiteRed = function(value) { //TODO: make it + efficient
-    var rgb = [0,0,0];
-    if(value < 0.5) {
-      rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [255, 255, 255], value * 2);
-    } else {
-      rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [255, 50, 50], (value - 0.5) * 2);
-    }
-    return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales.blueWhiteRed = function(value) {
-    var rr = value < 0.5 ? Math.floor(510 * value) : 255;
-    var gg = value < 0.5 ? Math.floor(510 * value) : Math.floor(510 * (1 - value));
-    var bb = value < 0.5 ? 255 : Math.floor(510 * (1 - value));
-
-    return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales.grayBlackOrange = function(value){ //TODO: make it + efficient
-    var rgb = [0,0,0];
-    if(value < 0.5) {
-      rgb = ColorOperators.interpolateColorsRGB([100, 100, 100], [0, 0, 0], value * 2);
-    } else {
-      rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], [255, 110, 0], (value - 0.5) * 2);
-    }
-    return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales.grayWhiteOrange = function(value){ //TODO: make it + efficient
-    var rgb = [0,0,0];
-    if(value < 0.5) {
-      rgb = ColorOperators.interpolateColorsRGB([100, 100, 100], [255, 255, 255], value * 2);
-    } else {
-      rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [255, 110, 0], (value - 0.5) * 2);
-    }
-    return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
-  };
-
-
-  /**
-   * @todo write docs
-   */
-  ColorScales.solar = function(value) {
-    var rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], ColorOperators.interpolateColorsRGB([255, 0, 0], [255, 255, 0], value), Math.pow(value * 0.99 + 0.01, 0.2));
-    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
-  };
-
-  /**
-   * @todo write docs
-   */
-  ColorScales.antiSolar = function(value) {
-    return ColorOperators.invertColor(ColorScales.solar(value));
-  };
-
-  exports.ColorScales = ColorScales;
-
   ColorList.prototype = new List();
   ColorList.prototype.constructor = ColorList;
 
@@ -5680,178 +4125,1217 @@ define('src/index', ['exports'], function (exports) {
 
   exports.ColorList = ColorList;
 
-  function NumberOperators() {}
+  var version = "0.4.2";
 
-
-  /**
-   * converts number into a string
-   *
-   * @param {Number} value The number to convert
-   * @param {Number} nDecimals Number of decimals to include. Defaults to 0.
+  /*
+   * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
+   * Digest Algorithm, as defined in RFC 1321.
+   * Version 2.2 Copyright (C) Paul Johnston 1999 - 2009
+   * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
+   * Distributed under the BSD License
+   * See http://pajhome.org.uk/crypt/md5 for more info.
    */
-  NumberOperators.numberToString = function(value, nDecimals ) {
-    var string = value.toFixed(nDecimals);
-    while(string.charAt(string.length - 1) == '0') {
-      string = string.substring(0, string.length - 1);
+
+  /*
+   * Configurable variables. You may need to tweak these to be compatible with
+   * the server-side, but the defaults work in most cases.
+   */
+  //var hexcase = 0;   /* hex output format. 0 - lowercase; 1 - uppercase        */
+  //var b64pad  = "";  /* base-64 pad character. "=" for strict RFC compliance   */
+
+
+  function MD5(){}
+
+
+  /*
+   * These are the functions you'll usually want to call
+   * They take string arguments and return either hex or base-64 encoded strings
+   */
+  MD5.hex_md5 = function(s)    { return this.rstr2hex(this.rstr_md5(this.str2rstr_utf8(s))); };
+  MD5.b64_md5 = function(s)    { return this.rstr2b64(this.rstr_md5(this.str2rstr_utf8(s))); };
+  MD5.any_md5 = function(s, e) { return this.rstr2any(this.rstr_md5(this.str2rstr_utf8(s)), e); };
+  MD5.hex_hmac_md5 = function(k, d)
+    { return this.rstr2hex(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); };
+  MD5.b64_hmac_md5 = function(k, d)
+    { return this.rstr2b64(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); };
+  MD5.any_hmac_md5 = function(k, d, e)
+    { return this.rstr2any(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d)), e); };
+
+  /*
+   * Perform a simple self-test to see if the VM is working
+   */
+  MD5.md5_vm_test = function()
+  {
+    return this.hex_md5("abc").toLowerCase() == "900150983cd24fb0d6963f7d28e17f72";
+  };
+
+  /*
+   * Calculate the MD5 of a raw string
+   */
+  MD5.rstr_md5 = function(s)
+  {
+    return this.binl2rstr(this.binl_md5(this.rstr2binl(s), s.length * 8));
+  };
+
+  /*
+   * Calculate the HMAC-MD5, of a key and some data (raw strings)
+   */
+  MD5.rstr_hmac_md5 = function(key, data)
+  {
+    var bkey = this.rstr2binl(key);
+    if(bkey.length > 16) bkey = this.binl_md5(bkey, key.length * 8);
+
+    var ipad = Array(16), opad = Array(16);
+    for(var i = 0; i < 16; i++)
+    {
+      ipad[i] = bkey[i] ^ 0x36363636;
+      opad[i] = bkey[i] ^ 0x5C5C5C5C;
     }
-    if(string.charAt(string.length - 1) == '.') string = string.substring(0, string.length - 1);
-    return string;
+
+    var hash = this.binl_md5(ipad.concat(this.rstr2binl(data)), 512 + data.length * 8);
+    return this.binl2rstr(this.binl_md5(opad.concat(hash), 512 + 128));
   };
 
-  /**
-   * decent method to create pseudo random numbers
-   * @param {Object} seed
+  /*
+   * Convert a raw string to a hex string
    */
-  NumberOperators.getRandomWithSeed = function(seed) {
-    seed = (seed * 9301 + 49297) % 233280;
-    return seed / (233280.0);
+  MD5.rstr2hex = function(input)
+  {
+  	var hexcase = 0;
+    var hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
+    var output = "";
+    var x;
+    for(var i = 0; i < input.length; i++)
+    {
+      x = input.charCodeAt(i);
+      output += hex_tab.charAt((x >>> 4) & 0x0F)
+             +  hex_tab.charAt( x        & 0x0F);
+    }
+    return output;
   };
 
-  /**
-   * @todo write docs
+  /*
+   * Convert a raw string to a base-64 string
    */
-  NumberOperators.numberFromBinaryPositions = function(binaryPositions) {
+  MD5.rstr2b64 = function(input)
+  {
+  	var b64pad  = "";
+    var tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    var output = "";
+    var len = input.length;
+    for(var i = 0; i < len; i += 3)
+    {
+      var triplet = (input.charCodeAt(i) << 16)
+                  | (i + 1 < len ? input.charCodeAt(i+1) << 8 : 0)
+                  | (i + 2 < len ? input.charCodeAt(i+2)      : 0);
+      for(var j = 0; j < 4; j++)
+      {
+        if(i * 8 + j * 6 > input.length * 8) output += b64pad;
+        else output += tab.charAt((triplet >>> 6*(3-j)) & 0x3F);
+      }
+    }
+    return output;
+  };
+
+  /*
+   * Convert a raw string to an arbitrary string encoding
+   */
+  MD5.rstr2any = function(input, encoding)
+  {
+    var divisor = encoding.length;
+    var i, j, q, x, quotient;
+
+    /* Convert to an array of 16-bit big-endian values, forming the dividend */
+    var dividend = Array(Math.ceil(input.length / 2));
+    for(i = 0; i < dividend.length; i++)
+    {
+      dividend[i] = (input.charCodeAt(i * 2) << 8) | input.charCodeAt(i * 2 + 1);
+    }
+
+    /*
+     * Repeatedly perform a long division. The binary array forms the dividend,
+     * the length of the encoding is the divisor. Once computed, the quotient
+     * forms the dividend for the next step. All remainders are stored for later
+     * use.
+     */
+    var full_length = Math.ceil(input.length * 8 /
+                                      (Math.log(encoding.length) / Math.log(2)));
+    var remainders = Array(full_length);
+    for(j = 0; j < full_length; j++)
+    {
+      quotient = Array();
+      x = 0;
+      for(i = 0; i < dividend.length; i++)
+      {
+        x = (x << 16) + dividend[i];
+        q = Math.floor(x / divisor);
+        x -= q * divisor;
+        if(quotient.length > 0 || q > 0)
+          quotient[quotient.length] = q;
+      }
+      remainders[j] = x;
+      dividend = quotient;
+    }
+
+    /* Convert the remainders to the output string */
+    var output = "";
+    for(i = remainders.length - 1; i >= 0; i--)
+      output += encoding.charAt(remainders[i]);
+
+    return output;
+  };
+
+  /*
+   * Encode a string as utf-8.
+   * For efficiency, this assumes the input is valid utf-16.
+   */
+  MD5.str2rstr_utf8 = function(input)
+  {
+    var output = "";
+    var i = -1;
+    var x, y;
+
+    while(++i < input.length)
+    {
+      /* Decode utf-16 surrogate pairs */
+      x = input.charCodeAt(i);
+      y = i + 1 < input.length ? input.charCodeAt(i + 1) : 0;
+      if(0xD800 <= x && x <= 0xDBFF && 0xDC00 <= y && y <= 0xDFFF)
+      {
+        x = 0x10000 + ((x & 0x03FF) << 10) + (y & 0x03FF);
+        i++;
+      }
+
+      /* Encode output as utf-8 */
+      if(x <= 0x7F)
+        output += String.fromCharCode(x);
+      else if(x <= 0x7FF)
+        output += String.fromCharCode(0xC0 | ((x >>> 6 ) & 0x1F),
+                                      0x80 | ( x         & 0x3F));
+      else if(x <= 0xFFFF)
+        output += String.fromCharCode(0xE0 | ((x >>> 12) & 0x0F),
+                                      0x80 | ((x >>> 6 ) & 0x3F),
+                                      0x80 | ( x         & 0x3F));
+      else if(x <= 0x1FFFFF)
+        output += String.fromCharCode(0xF0 | ((x >>> 18) & 0x07),
+                                      0x80 | ((x >>> 12) & 0x3F),
+                                      0x80 | ((x >>> 6 ) & 0x3F),
+                                      0x80 | ( x         & 0x3F));
+    }
+    return output;
+  };
+
+  /*
+   * Encode a string as utf-16
+   */
+  MD5.str2rstr_utf16le = function(input)
+  {
+    var output = "";
+    for(var i = 0; i < input.length; i++)
+      output += String.fromCharCode( input.charCodeAt(i)        & 0xFF,
+                                    (input.charCodeAt(i) >>> 8) & 0xFF);
+    return output;
+  };
+
+  MD5.str2rstr_utf16be = function(input)
+  {
+    var output = "";
+    for(var i = 0; i < input.length; i++)
+      output += String.fromCharCode((input.charCodeAt(i) >>> 8) & 0xFF,
+                                     input.charCodeAt(i)        & 0xFF);
+    return output;
+  };
+
+  /*
+   * Convert a raw string to an array of little-endian words
+   * Characters >255 have their high-byte silently ignored.
+   */
+  MD5.rstr2binl = function(input)
+  {
     var i;
-    var n = 0;
-    for(i = 0; binaryPositions[i] != null; i++) {
-      n += Math.pow(2, binaryPositions[i]);
-    }
-    return n;
+    var output = Array(input.length >> 2);
+    for(i = 0; i < output.length; i++)
+      output[i] = 0;
+    for(i = 0; i < input.length * 8; i += 8)
+      output[i>>5] |= (input.charCodeAt(i / 8) & 0xFF) << (i%32);
+    return output;
   };
+
+  /*
+   * Convert an array of little-endian words to a string
+   */
+  MD5.binl2rstr = function(input)
+  {
+    var output = "";
+    for(var i = 0; i < input.length * 32; i += 8)
+      output += String.fromCharCode((input[i>>5] >>> (i % 32)) & 0xFF);
+    return output;
+  };
+
+  /*
+   * Calculate the MD5 of an array of little-endian words, and a bit length.
+   */
+  MD5.binl_md5 = function(x, len)
+  {
+    /* append padding */
+    x[len >> 5] |= 0x80 << ((len) % 32);
+    x[(((len + 64) >>> 9) << 4) + 14] = len;
+
+    var a =  1732584193;
+    var b = -271733879;
+    var c = -1732584194;
+    var d =  271733878;
+
+    for(var i = 0; i < x.length; i += 16)
+    {
+      var olda = a;
+      var oldb = b;
+      var oldc = c;
+      var oldd = d;
+
+      a = this.md5_ff(a, b, c, d, x[i+ 0], 7 , -680876936);
+      d = this.md5_ff(d, a, b, c, x[i+ 1], 12, -389564586);
+      c = this.md5_ff(c, d, a, b, x[i+ 2], 17,  606105819);
+      b = this.md5_ff(b, c, d, a, x[i+ 3], 22, -1044525330);
+      a = this.md5_ff(a, b, c, d, x[i+ 4], 7 , -176418897);
+      d = this.md5_ff(d, a, b, c, x[i+ 5], 12,  1200080426);
+      c = this.md5_ff(c, d, a, b, x[i+ 6], 17, -1473231341);
+      b = this.md5_ff(b, c, d, a, x[i+ 7], 22, -45705983);
+      a = this.md5_ff(a, b, c, d, x[i+ 8], 7 ,  1770035416);
+      d = this.md5_ff(d, a, b, c, x[i+ 9], 12, -1958414417);
+      c = this.md5_ff(c, d, a, b, x[i+10], 17, -42063);
+      b = this.md5_ff(b, c, d, a, x[i+11], 22, -1990404162);
+      a = this.md5_ff(a, b, c, d, x[i+12], 7 ,  1804603682);
+      d = this.md5_ff(d, a, b, c, x[i+13], 12, -40341101);
+      c = this.md5_ff(c, d, a, b, x[i+14], 17, -1502002290);
+      b = this.md5_ff(b, c, d, a, x[i+15], 22,  1236535329);
+
+      a = this.md5_gg(a, b, c, d, x[i+ 1], 5 , -165796510);
+      d = this.md5_gg(d, a, b, c, x[i+ 6], 9 , -1069501632);
+      c = this.md5_gg(c, d, a, b, x[i+11], 14,  643717713);
+      b = this.md5_gg(b, c, d, a, x[i+ 0], 20, -373897302);
+      a = this.md5_gg(a, b, c, d, x[i+ 5], 5 , -701558691);
+      d = this.md5_gg(d, a, b, c, x[i+10], 9 ,  38016083);
+      c = this.md5_gg(c, d, a, b, x[i+15], 14, -660478335);
+      b = this.md5_gg(b, c, d, a, x[i+ 4], 20, -405537848);
+      a = this.md5_gg(a, b, c, d, x[i+ 9], 5 ,  568446438);
+      d = this.md5_gg(d, a, b, c, x[i+14], 9 , -1019803690);
+      c = this.md5_gg(c, d, a, b, x[i+ 3], 14, -187363961);
+      b = this.md5_gg(b, c, d, a, x[i+ 8], 20,  1163531501);
+      a = this.md5_gg(a, b, c, d, x[i+13], 5 , -1444681467);
+      d = this.md5_gg(d, a, b, c, x[i+ 2], 9 , -51403784);
+      c = this.md5_gg(c, d, a, b, x[i+ 7], 14,  1735328473);
+      b = this.md5_gg(b, c, d, a, x[i+12], 20, -1926607734);
+
+      a = this.md5_hh(a, b, c, d, x[i+ 5], 4 , -378558);
+      d = this.md5_hh(d, a, b, c, x[i+ 8], 11, -2022574463);
+      c = this.md5_hh(c, d, a, b, x[i+11], 16,  1839030562);
+      b = this.md5_hh(b, c, d, a, x[i+14], 23, -35309556);
+      a = this.md5_hh(a, b, c, d, x[i+ 1], 4 , -1530992060);
+      d = this.md5_hh(d, a, b, c, x[i+ 4], 11,  1272893353);
+      c = this.md5_hh(c, d, a, b, x[i+ 7], 16, -155497632);
+      b = this.md5_hh(b, c, d, a, x[i+10], 23, -1094730640);
+      a = this.md5_hh(a, b, c, d, x[i+13], 4 ,  681279174);
+      d = this.md5_hh(d, a, b, c, x[i+ 0], 11, -358537222);
+      c = this.md5_hh(c, d, a, b, x[i+ 3], 16, -722521979);
+      b = this.md5_hh(b, c, d, a, x[i+ 6], 23,  76029189);
+      a = this.md5_hh(a, b, c, d, x[i+ 9], 4 , -640364487);
+      d = this.md5_hh(d, a, b, c, x[i+12], 11, -421815835);
+      c = this.md5_hh(c, d, a, b, x[i+15], 16,  530742520);
+      b = this.md5_hh(b, c, d, a, x[i+ 2], 23, -995338651);
+
+      a = this.md5_ii(a, b, c, d, x[i+ 0], 6 , -198630844);
+      d = this.md5_ii(d, a, b, c, x[i+ 7], 10,  1126891415);
+      c = this.md5_ii(c, d, a, b, x[i+14], 15, -1416354905);
+      b = this.md5_ii(b, c, d, a, x[i+ 5], 21, -57434055);
+      a = this.md5_ii(a, b, c, d, x[i+12], 6 ,  1700485571);
+      d = this.md5_ii(d, a, b, c, x[i+ 3], 10, -1894986606);
+      c = this.md5_ii(c, d, a, b, x[i+10], 15, -1051523);
+      b = this.md5_ii(b, c, d, a, x[i+ 1], 21, -2054922799);
+      a = this.md5_ii(a, b, c, d, x[i+ 8], 6 ,  1873313359);
+      d = this.md5_ii(d, a, b, c, x[i+15], 10, -30611744);
+      c = this.md5_ii(c, d, a, b, x[i+ 6], 15, -1560198380);
+      b = this.md5_ii(b, c, d, a, x[i+13], 21,  1309151649);
+      a = this.md5_ii(a, b, c, d, x[i+ 4], 6 , -145523070);
+      d = this.md5_ii(d, a, b, c, x[i+11], 10, -1120210379);
+      c = this.md5_ii(c, d, a, b, x[i+ 2], 15,  718787259);
+      b = this.md5_ii(b, c, d, a, x[i+ 9], 21, -343485551);
+
+      a = this.safe_add(a, olda);
+      b = this.safe_add(b, oldb);
+      c = this.safe_add(c, oldc);
+      d = this.safe_add(d, oldd);
+    }
+    return Array(a, b, c, d);
+  };
+
+  /*
+   * These functions implement the four basic operations the algorithm uses.
+   */
+  MD5.md5_cmn = function(q, a, b, x, s, t)
+  {
+    return this.safe_add(this.bit_rol(this.safe_add(this.safe_add(a, q), this.safe_add(x, t)), s),b);
+  };
+  MD5.md5_ff = function(a, b, c, d, x, s, t)
+  {
+    return this.md5_cmn((b & c) | ((~b) & d), a, b, x, s, t);
+  };
+  MD5.md5_gg = function(a, b, c, d, x, s, t)
+  {
+    return this.md5_cmn((b & d) | (c & (~d)), a, b, x, s, t);
+  };
+  MD5.md5_hh = function(a, b, c, d, x, s, t)
+  {
+    return this.md5_cmn(b ^ c ^ d, a, b, x, s, t);
+  };
+  MD5.md5_ii = function(a, b, c, d, x, s, t)
+  {
+    return this.md5_cmn(c ^ (b | (~d)), a, b, x, s, t);
+  };
+
+  /*
+   * Add integers, wrapping at 2^32. This uses 16-bit operations internally
+   * to work around bugs in some JS interpreters.
+   */
+  MD5.safe_add = function(x, y)
+  {
+    var lsw = (x & 0xFFFF) + (y & 0xFFFF);
+    var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+    return (msw << 16) | (lsw & 0xFFFF);
+  };
+
+  /*
+   * Bitwise rotate a 32-bit number to the left.
+   */
+  MD5.bit_rol = function(num, cnt)
+  {
+    return (num << cnt) | (num >>> (32 - cnt));
+  };
+
+  exports.MD5 = MD5;
+
+  var dataModelsInfo = [
+    {
+      type:"Null",
+      short:"Ø",
+      category:"object",
+      level:"0",
+      write:"true",
+      inherits:null,
+      color:"#ffffff"
+    },
+    {
+      type:"Object",
+      short:"{}",
+      category:"object",
+      level:"0",
+      write:"true",
+      inherits:null,
+      to:"String",
+      color:"#C0BFBF"
+    },
+    {
+      type:"Function",
+      short:"F",
+      category:"object",
+      level:"0",
+      inherits:null,
+      color:"#C0BFBF"
+    },  {
+      type:"Boolean",
+      short:"b",
+      category:"boolean",
+      level:"0",
+      write:"true",
+      inherits:null,
+      to:"Number",
+      color:"#4F60AB"
+    },
+    {
+      type:"Number",
+      short:"#",
+      category:"number",
+      level:"0",
+      write:"true",
+      inherits:null,
+      to:"String",
+      color:"#5DA1D8"
+    },
+    {
+      type:"Interval",
+      short:"##",
+      category:"number",
+      level:"0.5",
+      write:"true",
+      inherits:null,
+      to:"Point",
+      contains:"Number",
+      color:"#386080"
+    },
+    {
+      type:"Array",
+      short:"[]",
+      category:"object",
+      level:"1",
+      inherits:null,
+      to:"List",
+      contains:"Object,Null",
+      color:"#80807F"
+    },
+    {
+      type:"List",
+      short:"L",
+      category:"object",
+      level:"1",
+      inherits:"Array",
+      contains:"Object",
+      comments:"A List is an Array that doesn't contain nulls, and with enhanced functionalities",
+      color:"#80807F"
+    },
+    {
+      type:"Table",
+      short:"T",
+      category:"object",
+      level:"2",
+      inherits:"List",
+      contains:"List",
+      comments:"A Table is a List of Lists",
+      color:"#80807F"
+    },
+    {
+      type:"BooleanList",
+      short:"bL",
+      category:"boolean",
+      level:"1",
+      inherits:"List",
+      to:"NumberList",
+      contains:"Boolean",
+      color:"#3A4780"
+    },
+    {
+      type:"NumberList",
+      short:"#L",
+      category:"number",
+      level:"1",
+      write:"true",
+      inherits:"List",
+      to:"StringList",
+      contains:"Number",
+      color:"#386080"
+    },
+    {
+      type:"NumberTable",
+      short:"#T",
+      category:"number",
+      level:"2",
+      write:"true",
+      inherits:"Table",
+      to:"Network",
+      contains:"NumberList",
+      color:"#386080"
+    },
+    {
+      type:"String",
+      short:"s",
+      category:"string",
+      level:"0",
+      write:"true",
+      inherits:null,
+      color:"#8BC63F"
+    },
+    {
+      type:"StringList",
+      short:"sL",
+      category:"string",
+      level:"1",
+      write:"true",
+      inherits:"List",
+      contains:"String",
+      color:"#5A8039"
+    },
+    {
+      type:"StringTable",
+      short:"sT",
+      category:"string",
+      level:"2",
+      inherits:"Table",
+      contains:"StringList",
+      color:"#5A8039"
+    },
+    {
+      type:"Date",
+      short:"d",
+      category:"date",
+      level:"0.5",
+      write:"true",
+      inherits:null,
+      to:"Number,String",
+      color:"#7AC8A3"
+    },
+    {
+      type:"DateInterval",
+      short:"dd",
+      category:"date",
+      level:"0.75",
+      inherits:null,
+      to:"Interval",
+      contains:"Date",
+      color:"#218052"
+    },
+    {
+      type:"DateList",
+      short:"dL",
+      category:"date",
+      level:"1.5",
+      inherits:"List",
+      to:"NumberList,StringList",
+      contains:"Date",
+      color:"#218052"
+    },
+    {
+      type:"Point",
+      short:".",
+      category:"geometry",
+      level:"0.5",
+      write:"true",
+      inherits:null,
+      to:"Interval",
+      contains:"Number",
+      color:"#9D59A4"
+    },
+    {
+      type:"Rectangle",
+      short:"t",
+      category:"geometry",
+      level:"0.5",
+      inherits:null,
+      to:"Polygon",
+      contains:"Number",
+      color:"#9D59A4"
+    },
+    {
+      type:"Polygon",
+      short:".L",
+      category:"geometry",
+      level:"1.5",
+      inherits:"List",
+      to:"NumberTable",
+      contains:"Point",
+      comments:"A Polygon is a List of Points",
+      color:"#76297F"
+    },
+    {
+      type:"RectangleList",
+      short:"tL",
+      category:"geometry",
+      level:"1.5",
+      inherits:null,
+      to:"MultiPolygon",
+      contains:"Rectangle",
+      color:"#76297F"
+    },
+    {
+      type:"MultiPolygon",
+      short:".T",
+      category:"geometry",
+      level:"2.5",
+      inherits:"Table",
+      contains:"Polygon",
+      comments:"A MultiPolygon is a List of Polygons",
+      color:"#76297F"
+    },
+    {
+      type:"Point3D",
+      short:"3",
+      category:"geometry",
+      level:"0.5",
+      write:"true",
+      inherits:"Point",
+      to:"NumberList",
+      contains:"Number",
+      color:"#9D59A4"
+    },
+    {
+      type:"Polygon3D",
+      short:"3L",
+      category:"geometry",
+      level:"1.5",
+      inherits:"List",
+      to:"NumberTable",
+      contains:"Point3D",
+      color:"#76297F"
+    },
+    {
+      type:"MultiPolygon3D",
+      short:"3T",
+      category:"geometry",
+      level:"2.5",
+      inherits:"Table",
+      contains:"Polygon3D",
+      color:"#76297F"
+    },
+    {
+      type:"Color",
+      short:"c",
+      category:"color",
+      level:"0",
+      inherits:null,
+      to:"String",
+      comments:"a Color is just a string that can be interpreted as color",
+      color:"#EE4488"
+    },
+    {
+      type:"ColorScale",
+      short:"cS",
+      category:"color",
+      level:"0",
+      write:"true",
+      inherits:"Function",
+      color:"#802046"
+    },
+    {
+      type:"ColorList",
+      short:"cL",
+      category:"color",
+      level:"1",
+      write:"true",
+      inherits:"List",
+      to:"StringList",
+      contains:"Color",
+      color:"#802046"
+    },
+    {
+      type:"Image",
+      short:"i",
+      category:"graphic",
+      level:"0",
+      inherits:null,
+      color:"#802046"
+    },
+    {
+      type:"ImageList",
+      short:"iL",
+      category:"graphic",
+      level:"1",
+      inherits:"List",
+      contains:"Image",
+      color:"#802046"
+    },
+    {
+      type:"Node",
+      short:"n",
+      category:"structure",
+      level:"0",
+      inherits:null,
+      color:"#FAA542"
+    },
+    {
+      type:"Relation",
+      short:"r",
+      category:"structure",
+      level:"0.5",
+      inherits:"Node",
+      contains:"Node",
+      color:"#FAA542"
+    },
+    {
+      type:"NodeList",
+      short:"nL",
+      category:"structure",
+      level:"1",
+      inherits:"List",
+      contains:"Node",
+      color:"#805522"
+    },
+    {
+      type:"RelationList",
+      short:"rL",
+      category:"structure",
+      level:"1.5",
+      inherits:"NodeList",
+      contains:"Relation",
+      color:"#805522"
+    },
+    {
+      type:"Network",
+      short:"Nt",
+      category:"structure",
+      level:"2",
+      inherits:null,
+      to:"Table",
+      contains:"NodeList,RelationList",
+      color:"#805522"
+    },
+    {
+      type:"Tree",
+      short:"Tr",
+      category:"structure",
+      level:"2",
+      inherits:"Network",
+      to:"Table",
+      contains:"NodeList,RelationList",
+      color:"#805522"
+    }
+  ];
+
+  //global constants
+  var TwoPi = 2*Math.PI;
+  var HalfPi = 0.5*Math.PI;
+  var radToGrad = 180/Math.PI;
+  var gradToRad = Math.PI/180;
 
   /**
    * @todo write docs
    */
-  NumberOperators.numberFromBinaryValues = function(binaryValues) {
-    var n = 0;
-    var l = binaryValues.length;
-    for(var i = 0; i < l; i++) {
-      n += binaryValues[i] == 1 ? Math.pow(2, (l - (i + 1))) : 0;
-    }
-    return n;
+  Array.prototype.last = function(){
+    return this[this.length-1];
   };
+
+  window.addEventListener('load', function(){
+    console.log('Moebio Framework v' + version);
+  }, false);
+
+
+  ////structures local storage
 
   /**
    * @todo write docs
    */
-  NumberOperators.powersOfTwoDecomposition = function(number, length) {
-
-    var powers = new NumberList();
-
-    var constructingNumber = 0;
-    var biggestPower;
-
-    while(constructingNumber < number) {
-      biggestPower = Math.floor(Math.log(number) / Math.LN2);
-      powers[biggestPower] = 1;
-      number -= Math.pow(2, biggestPower);
-    }
-
-    length = Math.max(powers.length, length == null ? 0 : length);
-
-    for(var i = 0; i < length; i++) {
-      powers[i] = powers[i] == 1 ? 1 : 0;
-    }
-
-    return powers;
-  };
+  function setStructureLocalStorageWithSeed(object, seed, comments){
+    setStructureLocalStorage(object, MD5.hex_md5(seed), comments);
+  }
 
   /**
-   * @todo write docs
+   * Puts an object into HTML5 local storage. Note that when you 
+   * store your object it will be wrapped in an object with the following 
+   * structure. This structure can be retrieved later in addition to the base
+   * object.
+   *  {
+   *    id: storage id
+   *    type: type of object
+   *    comments: user specified comments
+   *    date: current time
+   *    code: the serialized object
+   *  }
+   * 
+   * @param {Object} object   the object to store
+   * @param {String} id       the id to store it with
+   * @param {String} comments extra comments to store along with the object.
    */
-  NumberOperators.positionsFromBinaryValues = function(binaryValues) {
-    var i;
-    var positions = new NumberList();
-    for(i = 0; binaryValues[i] != null; i++) {
-      if(binaryValues[i] == 1) positions.push(i);
+  function setStructureLocalStorage(object, id, comments){
+    var type = typeOf(object);
+    var code;
+
+    switch(type){
+      case 'string':
+        code = object;
+        break;
+      case 'Network':
+        code = NetworkEncodings.encodeGDF(object);
+        break;
+      default:
+        type = 'object';
+        code = JSON.stringify(object);
+        break;
     }
-    return positions;
-  };
 
-  //////////Random Generator with Seed, From http://baagoe.org/en/w/index.php/Better_random_numbers_for_javascript
-
-  /**
-   * @ignore
-   */
-  NumberOperators._Alea = function() {
-    return(function(args) {
-      // Johannes Baagøe <baagoe@baagoe.com>, 2010
-      var s0 = 0;
-      var s1 = 0;
-      var s2 = 0;
-      var c = 1;
-
-      if(args.length === 0) {
-        args = [+new Date()];
-      }
-      var mash = NumberOperators._Mash();
-      s0 = mash(' ');
-      s1 = mash(' ');
-      s2 = mash(' ');
-
-      for(var i = 0; i < args.length; i++) {
-        s0 -= mash(args[i]);
-        if(s0 < 0) {
-          s0 += 1;
-        }
-        s1 -= mash(args[i]);
-        if(s1 < 0) {
-          s1 += 1;
-        }
-        s2 -= mash(args[i]);
-        if(s2 < 0) {
-          s2 += 1;
-        }
-      }
-      mash = null;
-
-      var random = function() {
-        var t = 2091639 * s0 + c * 2.3283064365386963e-10; // 2^-32
-        s0 = s1;
-        s1 = s2;
-        // https://github.com/nquinlan/better-random-numbers-for-javascript-mirror/blob/master/support/js/Alea.js#L38
-        return s2 = t - (c = t | 0);
-      };
-      random.uint32 = function() {
-        return random() * 0x100000000; // 2^32
-      };
-      random.fract53 = function() {
-        return random() +
-          (random() * 0x200000 | 0) * 1.1102230246251565e-16; // 2^-53
-      };
-      random.version = 'Alea 0.9';
-      random.args = args;
-      return random;
-
-    }(Array.prototype.slice.call(arguments)));
-  };
-
-  /**
-   * @ignore
-   */
-  NumberOperators._Mash = function() {
-    var n = 0xefc8249d;
-
-    var mash = function(data) {
-      data = data.toString();
-      for(var i = 0; i < data.length; i++) {
-        n += data.charCodeAt(i);
-        var h = 0.02519603282416938 * n;
-        n = h >>> 0;
-        h -= n;
-        h *= n;
-        n = h >>> 0;
-        h -= n;
-        n += h * 0x100000000; // 2^32
-      }
-      return(n >>> 0) * 2.3283064365386963e-10; // 2^-32
+    var storageObject = {
+      id:id,
+      type:type,
+      comments:comments,
+      date:new Date(),
+      code:code
     };
 
-    mash.version = 'Mash 0.9';
-    return mash;
+    var storageString = JSON.stringify(storageObject);
+    localStorage.setItem(id, storageString);
+  }
+
+  /**
+   * @todo write docs
+   */
+  function getStructureLocalStorageFromSeed(seed, returnStorageObject){
+    return getStructureLocalStorage(MD5.hex_md5(seed), returnStorageObject);
+  }
+
+  /**
+   * Gets a item previously stored in localstorage. @see setStructureLocalStorage
+   * You can choose either to retrieve the object that was stored of the wrapper
+   * object created when it was stored.
+   * 
+   * @param  {String} id id of object to lookup
+   * @param  {boolean} returnStorageObject return the wrapper object instead of the original value
+   * @return {Object|null} returns the object (or wrapper) that was stored, or null if nothing is found with this id.
+   */
+  function getStructureLocalStorage(id, returnStorageObject){
+    returnStorageObject = returnStorageObject||false;
+
+    var item = localStorage.getItem(id);
+
+    if(item==null) return null;
+
+    var storageObject;
+    try{
+      storageObject = JSON.parse(item);
+    } catch(err){
+      return null;
+    }
+
+    if(storageObject.type==null && storageObject.code==null) return null;
+
+    var type = storageObject.type;
+    var code = storageObject.code;
+    var object;
+
+    switch(type){
+      case 'string':
+        object = code;
+        break;
+      case 'Network':
+        object = NetworkEncodings.decodeGDF(code);
+        break;
+      case 'object':
+        object = JSON.parse(code);
+        break;
+    }
+
+    if(returnStorageObject){
+      storageObject.object = object;
+      storageObject.size = storageObject.code.length;
+      storageObject.date = new Date(storageObject.date);
+
+      return storageObject;
+    }
+
+    return object;
+  }
+
+  exports.setStructureLocalStorage = setStructureLocalStorage;
+  exports.getStructureLocalStorageFromSeed = getStructureLocalStorageFromSeed;
+  exports.getStructureLocalStorage = getStructureLocalStorage;
+  exports.dataModelsInfo = dataModelsInfo;
+  exports.TwoPi = TwoPi;
+  exports.HalfPi = HalfPi;
+  exports.radToGrad = radToGrad;
+  exports.gradToRad = gradToRad;
+
+  /* global console */
+
+  Table.prototype = new List();
+  Table.prototype.constructor = Table;
+
+  /**
+   * @classdesc A sub-class of {@link List}, Table provides a 2D array-like structure.
+   *
+   * Each column is stored as its own {@link List}, making it a List of Lists.
+   * Cells in the table can be accessed using table[column][row].
+   *
+   * Additional functions that work on Table can be found in:
+   * <ul>
+   *  <li>Operators:   {@link TableOperators}</li>
+   *  <li>Conversions: {@link TableConversions}</li>
+   *  <li>Generators: {@link TableGenerators}</li>
+   *  <li>Encodings: {@link TableEncodings}</li>
+   * </ul>
+   *
+   * @description Creates a new Table.
+   * Input arguments are treated as the inital column values
+   * of the Table.
+   * @constructor
+   * @category basics
+   */
+  function Table() {
+    var args = [];
+    var i;
+    for(i = 0; i < arguments.length; i++) {
+      args[i] = new List(arguments[i]);
+    }
+
+    var array = List.apply(this, args);
+    array = Table.fromArray(array);
+
+    return array;
+  }
+
+
+  /**
+   * Creates a new Table from an array
+   * @param {Number[]} array
+   * @return {Table}
+   */
+  Table.fromArray = function(array) {
+    var result = List.fromArray(array);
+    result.type = "Table";
+    //assign methods to array:
+    result.applyFunction = Table.prototype.applyFunction;
+    result.getRow = Table.prototype.getRow;
+    result.getRows = Table.prototype.getRows;
+    result.getLengths = Table.prototype.getLengths;
+    result.getListLength = Table.prototype.getListLength;
+    result.sliceRows = Table.prototype.sliceRows;
+    result.getSubListsByIndexes = Table.prototype.getSubListsByIndexes;
+    result.getWithoutRow = Table.prototype.getWithoutRow;
+    result.getWithoutRows = Table.prototype.getWithoutRows;
+    result.getTransposed = Table.prototype.getTransposed;
+    result.getListsSortedByList = Table.prototype.getListsSortedByList;
+    result.sortListsByList = Table.prototype.sortListsByList;
+    result.clone = Table.prototype.clone;
+    result.print = Table.prototype.print;
+
+    //transformative
+    result.removeRow = Table.prototype.removeRow;
+
+    //overiden
+    result.destroy = Table.prototype.destroy;
+
+    result.isTable = true;
+
+    return result;
   };
 
-  exports.NumberOperators = NumberOperators;
+
+  /**
+   * Executes a given function on all the columns
+   * in the Table, returning a new Table with the
+   * resulting values.
+   * @param {Function} func Function to apply to each
+   * column in the table. Columns are {@link List|Lists}.
+   * @return {Table} Table of values from applying function.
+   */
+  Table.prototype.applyFunction = function(func) {
+    //TODO: to be tested!
+    var i;
+    var newTable = new Table();
+
+    newTable.name = this.name;
+
+    for(i = 0; this[i] != null; i++) {
+      newTable[i] = this[i].applyFunction(func);
+    }
+    return newTable.getImproved();
+  };
+
+  /**
+   * Returns a {@link List} with all the elements of a row.
+   * @param  {Number} index Index of the row to get.
+   * @return {List}
+   * tags:filter
+   */
+  Table.prototype.getRow = function(index) {
+    var list = new List();
+    var i;
+    for(i = 0; i < this.length; i++) {
+      list[i] = this[i][index];
+    }
+    return list.getImproved();
+  };
+
+  /**
+   * Returns the length a column of the Table.
+   * @param  {Number} index The Column to return its length.
+   * Defaults to 0.
+   * @return {Number} Length of column at given index.
+   * tags:
+   */
+  Table.prototype.getListLength = function(index) {
+    return this[index || 0].length;
+  };
+
+  /**
+   * Returns the lengths of all the columns of the Table.
+   * @return {NumberList} Lengths of all columns in Table.
+   */
+  Table.prototype.getLengths = function() {
+    var lengths = new NumberList();
+    for(var i = 0; this[i] != null; i++) {
+      lengths[i] = this[i].length;
+    }
+    return lengths;
+  };
+
+  /**
+   * Filters a Table by selecting a section of rows, elements with last index included.
+   * @param  {Number} startIndex Index of first element in all lists of the table.
+   * @param  {Number} endIndex Index of last elements in all lists of the table.
+   * @return {Table}
+   * tags:filter
+   */
+  Table.prototype.sliceRows = function(startIndex, endIndex) {
+    endIndex = endIndex == null ? (this[0].length - 1) : endIndex;
+
+    var i;
+    var newTable = new Table();
+    var newList;
+
+    newTable.name = this.name;
+    for(i = 0; this[i] != null; i++) {
+      newList = this[i].getSubList(startIndex, endIndex);
+      newList.name = this[i].name;
+      newTable.push(newList);
+    }
+    return newTable.getImproved();
+  };
+
+  /**
+   * Filters the lists of the table by indexes.
+   * @param  {NumberList} indexes
+   * @return {Table}
+   * tags:filter
+   */
+  Table.prototype.getSubListsByIndexes = function(indexes) {
+    var newTable = new Table();
+    this.forEach(function(list) {
+      newTable.push(list.getSubListByIndexes(indexes));
+    });
+    return newTable.getImproved();
+  };
+
+
+  //deprecated
+  /**
+   * @ignore
+   */
+  Table.prototype.getRows = function(indexes) {
+    return Table.prototype.getSubListsByIndexes(indexes);
+  };
+
+  /**
+   * Returns a new Table with the row at the given index removed.
+   * @param {Number} rowIndex Row to remove
+   * @return {Table} New Table.
+   * tags:filter
+   */
+  Table.prototype.getWithoutRow = function(rowIndex) {
+    var newTable = new Table();
+    newTable.name = this.name;
+    for(var i = 0; this[i] != null; i++) {
+      newTable[i] = List.fromArray(this[i].slice(0, rowIndex).concat(this[i].slice(rowIndex + 1))).getImproved();
+      newTable[i].name = this[i].name;
+    }
+    return newTable.getImproved();
+  };
+
+  /**
+   * Returns a new Table with the rows listed in the given numberList removed.
+   * @param {NumberList} rowsIndexes numberList of row indexes to remove.
+   * @return {Table}
+   * tags:filter
+   */
+  Table.prototype.getWithoutRows = function(rowsIndexes) {
+    var newTable = new Table();
+    newTable.name = this.name;
+    for(var i = 0; this[i] != null; i++) {
+      newTable[i] = new List();
+      for(var j = 0; this[i][j] != null; j++) {
+        if(rowsIndexes.indexOf(j) == -1) newTable[i].push(this[i][j]);
+      }
+      newTable[i].name = this[i].name;
+    }
+    return newTable.getImproved();
+  };
+
+
+  /**
+   * Sort Table's lists by a list
+   * @param  {List|Number} listOrIndex List used to sort, or index of list in the table
+   *
+   * @param  {Boolean} ascending (true by default)
+   * @return {Table} table (of the same type)
+   * tags:sort
+   */
+  Table.prototype.getListsSortedByList = function(listOrIndex, ascending) { //depracated: use sortListsByList
+    if(listOrIndex == null) return;
+    var newTable = instantiateWithSameType(this);
+    var sortinglist = listOrIndex.isList ? listOrIndex.clone() : this[listOrIndex];
+
+    this.forEach(function(list) {
+      newTable.push(list.getSortedByList(sortinglist, ascending));
+    });
+
+    return newTable;
+  };
+
+  /**
+   * Transposes Table.
+   * @param firstListAsHeaders
+   * @return {Table}
+   */
+  Table.prototype.getTransposed = function(firstListAsHeaders) {
+
+    var tableToTranspose = firstListAsHeaders ? this.getSubList(1) : this;
+
+    var table = instantiate(typeOf(tableToTranspose));
+    if(tableToTranspose.length === 0) return table;
+    var i;
+    var j;
+    var list;
+
+    for(i = 0; tableToTranspose[i] != null; i++) {
+      list = tableToTranspose[i];
+      for(j = 0; list[j] != null; j++) {
+        if(i === 0) table[j] = new List();
+        table[j][i] = tableToTranspose[i][j];
+      }
+    }
+    for(j = 0; tableToTranspose[0][j] != null; j++) {
+      table[j] = table[j].getImproved();
+    }
+
+    if(firstListAsHeaders) {
+      this[0].forEach(function(name, i) {
+        table[i].name = String(name);
+      });
+    }
+
+    return table;
+  };
+
+
+  /**
+   * removes a row from the table.
+   * @param {Number} index The row to remove.
+   * @return {undefined}
+   */
+  Table.prototype.removeRow = function(index) {
+    for(var i = 0; this[i] != null; i++) {
+      this[i].splice(index, 1);
+    }
+  };
+
+  /**
+   * makes a copy of the Table.
+   * @return {Table} Copy of table.
+   */
+  Table.prototype.clone = function() {
+    var clonedTable = instantiateWithSameType(this);
+    clonedTable.name = this.name;
+    for(var i = 0; this[i] != null; i++) {
+      clonedTable.push(this[i].clone());
+    }
+    return clonedTable;
+  };
+
+  /**
+   * Removes all contents of the Table.
+   */
+  Table.prototype.destroy = function() {
+    for(var i = 0; this[i] != null; i++) {
+      this[i].destroy();
+      delete this[i];
+    }
+  };
+
+  /**
+   * Prints contents of Table to console.log.
+   */
+
+  Table.prototype.print = function() {
+    console.log("///////////// <" + this.name + "////////////////////////////////////////////////////");
+    console.log(TableEncodings.TableToCSV(this, null, true));
+    console.log("/////////////" + this.name + "> ////////////////////////////////////////////////////");
+  };
+
+  exports.Table = Table;
 
   NumberList.prototype = new List();
   NumberList.prototype.constructor = NumberList;
@@ -6508,6 +5992,1671 @@ define('src/index', ['exports'], function (exports) {
   };
 
   exports.NumberList = NumberList;
+
+  StringList.prototype = new List();
+  StringList.prototype.constructor = StringList;
+
+  /**
+   * @classdesc {@link List} for storing Strings.
+   *
+   * Additional functions that work on StringList can be found in:
+   * <ul>
+   *  <li>Operators:   {@link StringListOperators}</li>
+   *  <li>Conversions: {@link StringListConversions}</li>
+   * </ul>
+   *
+   * @constructor
+   * @description Creates a new StringList
+   *
+   * @category strings
+   */
+  function StringList() {
+    var args = [];
+
+    for(var i = 0; i < arguments.length; i++) {
+      args[i] = String(arguments[i]);
+    }
+    var array = List.apply(this, args);
+    array = StringList.fromArray(array);
+    
+    return array;
+  }
+
+
+  /**
+   * @todo write docs
+   */
+  StringList.fromArray = function(array, forceToString) {
+    forceToString = forceToString == null ? true : forceToString;
+
+    var result = List.fromArray(array);
+    if(forceToString) {
+      for(var i = 0; i < result.length; i++) {
+        result[i] = String(result[i]);
+      }
+    }
+    result.type = "StringList";
+
+    //assign methods to array:
+    result.getLengths = StringList.prototype.getLengths;
+    result.toLowerCase = StringList.prototype.toLowerCase;
+    result.toUpperCase = StringList.prototype.toUpperCase;
+    result.append = StringList.prototype.append;
+    result.getSurrounded = StringList.prototype.getSurrounded;
+    result.replace = StringList.prototype.replace;
+    result.getConcatenated = StringList.prototype.getConcatenated;
+    result.trim = StringList.prototype.trim;
+
+    //override
+    result.clone = StringList.prototype.clone;
+
+    return result;
+  };
+
+  /**
+   * overrides List.prototype.getLengths (see comments there)
+   */
+  StringList.prototype.getLengths = function() {
+    var lengths = new NumberList();
+
+    this.forEach(function(string) {
+      lengths.push(string.length);
+    });
+
+    return lengths;
+  };
+
+  /**
+   * @todo write docs
+   */
+  StringList.prototype.append = function(sufix, after) {
+    after = after == null ? true : after;
+    var newStringList = new StringList();
+    newStringList.name = this.name;
+    var sufixIsStringList = typeOf(sufix) == "StringList";
+    var i;
+    if(after) {
+      for(i = 0; this[i] != null; i++) {
+        newStringList[i] = this[i] + (sufixIsStringList ? sufix[i] : sufix);
+      }
+    } else {
+      for(i = 0; this[i] != null; i++) {
+        newStringList[i] = (sufixIsStringList ? sufix[i] : sufix) + this[i];
+      }
+    }
+    return newStringList;
+  };
+
+  /**
+   * prefix and sufix can be string or a StringList
+   */
+  StringList.prototype.getSurrounded = function(prefix, sufix) {
+    var newStringList = new StringList();
+    newStringList.name = this.name;
+    var i;
+
+    var prefixIsStringList = Array.isArray(prefix);
+    var sufixIsStringList = Array.isArray(sufix);
+
+    for(i = 0; this[i] != null; i++) {
+      newStringList[i] = (prefixIsStringList ? prefix[i] : prefix) + this[i] + (sufixIsStringList ? sufix[i] : sufix);
+    }
+
+    return newStringList;
+  };
+
+
+  //deprectaed, replaced by replaceInStrings
+  /**
+   * @ignore
+   */
+  StringList.prototype.replace = function(regExp, string) {
+    if(regExp==null) return this;
+
+    var newStringList = new StringList();
+    var i;
+
+    newStringList.name = this.name;
+
+    for(i = 0; this[i] != null; i++){
+      newStringList[i] = this[i].replace(regExp, string);
+    }
+
+    return newStringList;
+  };
+
+  /**
+   * @todo write docs
+   */
+  StringList.prototype.getConcatenated = function(separator) {
+    var i;
+    var string = "";
+    for(i = 0; this[i] != null; i++) {
+      string += this[i];
+      if(i < this.length - 1) string += separator;
+    }
+    return string;
+  };
+
+  /**
+   * @todo write docs
+   */
+  StringList.prototype.toLowerCase = function() {
+    var newStringList = new StringList();
+    newStringList.name = this.name;
+    var i;
+    for(i = 0; this[i] != null; i++) {
+      newStringList[i] = this[i].toLowerCase();
+    }
+    return newStringList;
+  };
+
+  /**
+   * @todo write docs
+   */
+  StringList.prototype.toUpperCase = function() {
+    var newStringList = new StringList();
+    newStringList.name = this.name;
+    var i;
+    for(i = 0; this[i] != null; i++) {
+      newStringList[i] = this[i].toUpperCase();
+    }
+    return newStringList;
+  };
+
+  /**
+   * trims all the strings on the stringList
+   * @return {StringList}
+   * tags:
+   */
+  StringList.prototype.trim = function() {
+    var i;
+    var newStringList = new StringList();
+    for(i = 0; this[i] != null; i++) {
+      newStringList[i] = this[i].trim();
+    }
+    newStringList.name = this.name;
+    return newStringList;
+  };
+
+  ///////overriding
+
+  /**
+   * @todo write docs
+   */
+  StringList.prototype.clone = function() {
+    var newList = StringList.fromArray(this.slice(), false);
+    newList.name = this.name;
+    return newList;
+  };
+
+  exports.StringList = StringList;
+
+  NumberTable.prototype = new Table();
+  NumberTable.prototype.constructor = NumberTable;
+
+  /**
+   * @classdesc {@link Table} to store numbers.
+   *
+   * @param [Number|[Number]] args If a single Number, indicates number of
+   * columns to make for the NumberTable. Each column is created as an empty
+   * NumberList. If an Array, or a set of Arrays, it will make a new NumberList
+   * for each array present, populating it with the contents of the array.
+   *
+   * Additional functions that work on NumberTable can be found in:
+   * <ul>
+   *  <li>Operators:   {@link NumberTableOperators}</li>
+   *  <li>Conversions: {@link NumberTableConversions}</li>
+   * </ul>
+   *
+   * @constructor
+   * @description Creates a new NumberTable.
+   * @category numbers
+   */
+  function NumberTable() {
+    var args = [];
+    var newNumberList;
+    var array;
+    var i;
+
+    if(arguments.length > 0 && Number(arguments[0]) == arguments[0]) {
+      array = [];
+      for(i = 0; i < arguments[0]; i++) {
+        array.push(new NumberList());
+      }
+    } else {
+      for(i = 0; arguments[i] != null; i++) {
+        newNumberList = NumberList.fromArray(arguments[i]);
+        newNumberList.name = arguments[i].name;
+        args[i] = newNumberList;
+      }
+      // TODO: this converts all our NumberLists into Lists
+      array = Table.apply(this, args);
+    }
+    array = NumberTable.fromArray(array);
+    return array;
+  }
+
+
+  NumberTable.fromArray = function(array) {
+    var result = Table.fromArray(array);
+    result.type = "NumberTable";
+
+    result.getSums = NumberTable.prototype.getSums;
+    result.getRowsSums = NumberTable.prototype.getRowsSums;
+    result.getAverages = NumberTable.prototype.getAverages;
+    result.getRowsAverages = NumberTable.prototype.getRowsAverages;
+    result.getIntervals = NumberTable.prototype.getIntervals;
+    result.factor = NumberTable.prototype.factor;
+    result.add = NumberTable.prototype.add;
+    result.getMax = NumberTable.prototype.getMax;
+    result.getMin = NumberTable.prototype.getMin;
+    result.getMinMaxInterval = NumberTable.prototype.getMinMaxInterval;
+    result.getCovarianceMatrix = NumberTable.prototype.getCovarianceMatrix;
+
+    return result;
+  };
+
+  /**
+   * @todo write docs
+   */
+  NumberTable.prototype.getMax = function() {
+    if(this.length === 0) return null;
+
+    var max = this[0].getMax();
+    var i;
+
+    for(i = 1; this[i] != null; i++) {
+      max = Math.max(this[i].getMax(), max);
+    }
+    return max;
+  };
+
+  /**
+   * @todo write docs
+   */
+  NumberTable.prototype.getMin = function() {
+    if(this.length === 0) return null;
+
+    var min = this[0].getMin();
+    var i;
+
+    for(i = 1; this[i] != null; i++) {
+      min = Math.min(this[i].getMin(), min);
+    }
+    return min;
+  };
+
+  /**
+   * @todo write docs
+   */
+  NumberTable.prototype.getMinMaxInterval = function() {
+    if(this.length === 0) return null;
+    var rangeInterval = (this[0]).getMinMaxInterval();
+    for(var i = 1; this[i] != null; i++) {
+      var newRange = (this[i]).getMinMaxInterval();
+      rangeInterval.x = Math.min(rangeInterval.x, newRange.x);
+      rangeInterval.y = Math.max(rangeInterval.y, newRange.y);
+    }
+    return rangeInterval;
+  };
+
+  /**
+   * returns a numberList with values from numberlists added
+   * @return {Numberlist}
+   * tags:
+   */
+  NumberTable.prototype.getSums = function() {
+    var numberList = new NumberList();
+    for(var i = 0; this[i] != null; i++) {
+      numberList[i] = this[i].getSum();
+    }
+    return numberList;
+  };
+
+  /**
+   * returns a numberList with all values fro rows added
+   * @return {NumberList}
+   * tags:
+   */
+  NumberTable.prototype.getRowsSums = function() {
+    var sums = this[0].clone();
+    var numberList;
+    for(var i = 1; this[i] != null; i++) {
+      numberList = this[i];
+      for(var j = 0; numberList[j] != null; j++) {
+        sums[j] += numberList[j];
+      }
+    }
+    return sums;
+  };
+
+  /**
+   * @todo write docs
+   */
+  NumberTable.prototype.getAverages = function() {
+    var numberList = new NumberList();
+    for(var i = 0; this[i] != null; i++) {
+      numberList[i] = this[i].getAverage();
+    }
+    return numberList;
+  };
+
+  /**
+   * @todo write docs
+   */
+  NumberTable.prototype.getRowsAverages = function() {
+    var l = this.length;
+    var averages = this[0].clone().factor(1 / l);
+    var numberList;
+    var i, j;
+    var length;
+    for(i = 1; i<l; i++) {
+      numberList = this[i];
+      length = numberList.length;
+      for(j = 0; j<length; j++) {
+        averages[j] += numberList[j] / l;
+      }
+    }
+    return averages;
+  };
+
+  /**
+   * @todo write docs
+   */
+  NumberTable.prototype.getIntervals = function() {
+    var l = this.length;
+    var numberList;
+    var i;
+    var intervalList = new List();//TODO: convert into IntervalList once available
+    for(i = 0; i<l; i++) {
+      numberList = this[i];
+      intervalList.push(numberList.getInterval());
+    }
+    return intervalList;
+  };
+
+
+  /**
+   * @todo write docs
+   */
+  NumberTable.prototype.factor = function(value) {
+    var newTable = new NumberTable();
+    var i;
+    var numberList;
+    var l = this.length;
+
+    switch(typeOf(value)) {
+      case 'number':
+        for(i = 0; i<l; i++) {
+          numberList = this[i];
+          newTable[i] = numberList.factor(value);
+        }
+        break;
+      case 'NumberList':
+        for(i = 0; i<l; i++) {
+          numberList = this[i];
+          newTable[i] = numberList.factor(value[i]);
+        }
+        break;
+
+    }
+
+    newTable.name = this.name;
+    return newTable;
+  };
+
+  /**
+   * @todo write docs
+   */
+  NumberTable.prototype.add = function(value) {
+    var newTable = new NumberTable();
+    var numberList;
+    var i;
+    var l = this.length;
+
+    for(i = 0; i<l; i++) {
+      numberList = this[i];
+      newTable[i] = numberList.add(value);
+    }
+
+    newTable.name = this.name;
+    return newTable;
+  };
+
+  exports.NumberTable = NumberTable;
+
+  var typeDict = {
+    List: List,
+    Table: Table,
+    StringList: StringList,
+    NumberList: NumberList,
+    NumberTable: NumberTable,
+    NodeList: NodeList,
+    RelationList: RelationList,
+    Polygon: Polygon,
+    Polygon3D: Polygon3D,
+    DateList: DateList,
+    ColorList: ColorList
+  };
+
+
+  /*
+   * All these function are globally available since they are included in the Global class
+   */
+  var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"};
+  var _shortFromTypeDictionary;
+  var _colorFromTypeDictionary;
+  var _lightColorFromTypeDictionary;
+
+  /*
+   * types are:
+   * number, string, boolean, date, Array, Object
+   * and all data models classes names
+   */
+
+  function typeOf(object) {
+    if(object==null) return null;
+
+    var type = typeof object;
+    if(type !== 'object') return type;
+
+    if(object.type!=null) return object.type;
+
+    if(Object.prototype.toString.call(object) == "[object Array]") return "Array";
+
+    if(object.getDate != null) return 'date';
+
+    return 'Object';
+  }
+
+  function instantiate(className, args) {
+    switch(className) {
+      case 'number':
+      case 'string':
+        // TODO: I don't think this works.
+        return window[className](args);
+      case 'date':
+        if(!args || args.length === 0) return new Date();
+        if(args.length == 1) {
+          if(args[0].match(/\d*.-\d*.-\d*\D\d*.:\d*.:\d*/)) {
+            var dateArray = args[0].split(" ");
+            dateArray[0] = dateArray[0].split("-");
+            if(dateArray[1]) dateArray[1] = dateArray[1].split(":");
+            else dateArray[1] = new Array(0, 0, 0);
+            return new Date(Date.UTC(dateArray[0][0], Number(dateArray[0][1]) - 1, dateArray[0][2], dateArray[1][0], dateArray[1][1], dateArray[1][2]));
+          }
+          //
+          if(Number(args[0]) != "NaN") return new Date(Number(args[0]));
+          else return new Date(args[0]);
+        }
+        return new Date(Date.UTC.apply(null, args));
+      case 'boolean':
+        // TODO: I don't think this works.
+        return window[className]((args == "false" || args == "0") ? false : true);
+      case 'List':
+      case 'Table':
+      case 'StringList':
+      case 'NumberList':
+      case 'NumberTable':
+      case 'NodeList':
+      case 'RelationList':
+      case 'Polygon':
+      case 'Polygon3D':
+      case 'PolygonList':
+      case 'DateList':
+      case 'ColorList':
+        return typeDict[className].apply(new typeDict[className](), args);
+      case null:
+      case undefined:
+      case 'undefined':
+        return null;
+    }
+    //generic instantiation of object:
+    var o, dummyFunction, cl;
+    cl = window[className]; // get reference to class constructor function
+    dummyFunction = function() {}; // dummy function
+    dummyFunction.prototype = cl.prototype; // reference same prototype
+    o = new dummyFunction(); // instantiate dummy function to copy prototype properties
+    cl.apply(o, args); // call class constructor, supplying new object as context
+
+    return o;
+  }
+
+  function _createDataModelsInfoDictionaries(){
+    var i;
+    var type;
+
+    _shortFromTypeDictionary = {};
+    _colorFromTypeDictionary = {};
+    _lightColorFromTypeDictionary = {};
+
+    for(i=0; dataModelsInfo[i]!=null; i++){
+      type = dataModelsInfo[i].type;
+      _shortFromTypeDictionary[type] = dataModelsInfo[i].short;
+      _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.2);
+      _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.35);
+      type = type.toLowerCase();
+      _shortFromTypeDictionary[type] = dataModelsInfo[i].short;
+      _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.2);
+      _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.35);
+    }
+  }
+
+  function getShortNameFromDataModelType(type){
+    if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
+    return _shortFromTypeDictionary[type];
+  }
+
+  function getColorFromDataModelType(type){
+    if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
+    return _colorFromTypeDictionary[type];
+  }
+
+  function getLightColorFromDataModelType(type){
+    if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
+    return _lightColorFromTypeDictionary[type];
+  }
+
+  function getTextFromObject(value, type){
+    if(value == null) return "Null";
+    if(value.isList) {
+      if(value.length === 0) return "[]";
+      var text = value.toString(); 
+      if(text.length > 160) {
+        var i;
+        var subtext;
+        text = "[";
+        for(i = 0; (value[i] != null && i < 6); i++) {
+          subtext = getTextFromObject(value[i], typeOf(value[i]));
+          if(subtext.length > 40) subtext = subtext.substr(0, 40) + (value[i].isList ? "…]" : "…");
+          text += (i !== 0 ? ", " : "") + subtext;
+        }
+        if(value.length > 6) text += ",…";
+        text += "]";
+      }
+      return text;
+    }
+
+    switch(type) {
+      case "date":
+        return DateOperators.dateToString(value);
+      case "DateInterval":
+        return DateOperators.dateToString(value.date0) + " - " + DateOperators.dateToString(value.date1);
+      case "string":
+        return((value.length > 160) ? value.substr(0, 159) + "…" : value).replace(/\n/g, "↩");
+      case "number":
+        return String(value);
+      default:
+        return "{}"; //value.toString();
+    }
+  }
+
+  function instantiateWithSameType(object, args) {
+    return instantiate(typeOf(object), args);
+  }
+
+  function isArray(obj) {
+    if(obj.constructor.toString().indexOf("Array") == -1)
+      return false;
+    else
+      return true;
+  }
+
+  Date.prototype.getType = function() {
+    return 'date';
+  };
+
+
+
+  function evalJavaScriptFunction(functionText, args, scope){
+  	if(functionText==null) return;
+
+  	var res;
+
+  	var myFunction;
+
+  	var good = true;
+  	var message = '';
+    var error;
+
+  	var realCode;
+
+  	var lines = functionText.split('\n');
+
+  	for(var i=0; lines[i]!=null; i++){
+  		lines[i] = lines[i].trim();
+  		if(lines[i] === "" || lines[i].substr(1)=="/"){
+  			lines.splice(i,1);
+  			i--;
+  		}
+  	}
+
+  	var isFunction = lines[0].indexOf('function')!=-1;
+
+  	functionText = lines.join('\n');
+
+  	if(isFunction){
+  		if(scope){
+  			realCode = "scope.myFunction = " + functionText;
+  		} else {
+  			realCode = "myFunction = " + functionText;
+  		}
+  	} else {
+  		if(scope){
+  			realCode = "scope.myVar = " + functionText;
+  		} else {
+  			realCode = "myVar = " + functionText;
+  		}
+  	}
+
+  	try{
+  		if(isFunction){
+  			eval(realCode);
+  			if(scope){
+  				res = scope.myFunction.apply(scope, args);
+  			} else {
+  				res = myFunction.apply(this, args);
+  			}
+  		} else {
+  			eval(realCode);
+  			if(scope){
+  				res = scope.myVar;
+  			} else 	{
+  				res = myVar;
+  			}
+  		}
+  	} catch(err){
+  		good = false;
+  		message = err.message;
+  		res = null;
+      error = err;
+  	}
+
+    var resultObject = {
+      result: res,
+      success: good,
+      errorMessage: message,
+      error: error
+    };
+
+    return resultObject;
+  }
+
+  function argumentsToArray(args) {
+    return Array.prototype.slice.call(args, 0);
+  }
+
+  // export function TimeLogger(name) {
+  //   var scope = this;
+  //   this.name = name;
+  //   this.clocks = {};
+
+  //   this.tic = function(clockName) {
+  //     scope.clocks[clockName] = new Date().getTime();
+  //     //c.l( "TimeLogger '"+clockName+"' has been started");
+  //   };
+  //   this.tac = function(clockName) {
+  //     if(scope.clocks[clockName] == null) {
+  //       scope.tic(clockName);
+  //     } else {
+  //       var now = new Date().getTime();
+  //       var diff = now - scope.clocks[clockName];
+  //       console.log("TimeLogger '" + clockName + "' took " + diff + " ms");
+  //     }
+  //   };
+  // }
+  // export var tl = new TimeLogger("Global Time Logger");
+
+  exports.typeOf = typeOf;
+  exports.instantiate = instantiate;
+  exports.getShortNameFromDataModelType = getShortNameFromDataModelType;
+  exports.getColorFromDataModelType = getColorFromDataModelType;
+  exports.getLightColorFromDataModelType = getLightColorFromDataModelType;
+  exports.getTextFromObject = getTextFromObject;
+  exports.instantiateWithSameType = instantiateWithSameType;
+  exports.isArray = isArray;
+  exports.evalJavaScriptFunction = evalJavaScriptFunction;
+  exports.argumentsToArray = argumentsToArray;
+
+  Relation.prototype = new Node__default();
+  Relation.prototype.constructor = Relation;
+
+  /**
+   * Relation
+   * @classdesc Relations represent the edges that connect Nodes
+   * in a Network DataType.
+   *
+   * @description create a new Relation.
+   * @constructor
+   * @param {String} id ID of the Relation.
+   * @param {String} name Name of the Relation.
+   * @param {Node} node0 Source of the Relation.
+   * @param {Node} node1 Destination of the Relation.
+   * @param {Number} weight Edge weight associated with Relation.
+   * Defaults to 1.
+   * @param {String} content Other data to associate with this Relation.
+   * @category networks
+   */
+  function Relation(id, name, node0, node1, weight, content) {
+    Node__default.apply(this, [id, name]);
+    this.type = "Relation";
+
+    this.node0 = node0;
+    this.node1 = node1;
+    this.weight = weight == null ? 1 : weight;
+    this.content = content == null ? "" : content;
+  }
+
+
+  /**
+   * @todo write docs
+   */
+  Relation.prototype.destroy = function() {
+    Node__default.prototype.destroy.call(this);
+    delete this.node0;
+    delete this.node1;
+    delete this.content;
+  };
+
+  /**
+   * given a node returns the other node of a relation
+   * @param  {Node} node
+   * @return {Node}
+   * tags:
+   */
+  Relation.prototype.getOther = function(node) {
+    return node == this.node0 ? this.node1 : this.node0;
+  };
+
+  /**
+   * @todo write docs
+   */
+  Relation.prototype.clone = function() {
+    var relation = new Relation(this.id, this.name, this.node0, this.node1);
+
+    relation.x = this.x;
+    relation.y = this.y;
+    relation.z = this.z;
+
+    relation.nodeType = this.nodeType;
+
+    relation.weight = this.weight;
+    relation.descentWeight = this.descentWeight;
+
+    return relation;
+  };
+
+  exports.Relation = Relation;
+
+  Network.prototype = new DataModel();
+  Network.prototype.constructor = Network;
+
+  /**
+   * @classdesc Networks are a DataType to store network data.
+   *
+   * Networks have nodes stored in a NodeList,
+   * and relations (edges) stored in a RelationList.
+   * @description Create a new Network instance.
+   * @constructor
+   * @category networks
+   */
+  function Network() {
+    this.type = "Network";
+
+    this.nodeList = new NodeList();
+    this.relationList = new RelationList();
+  }
+
+
+  /**
+   * Get Nodes of the Network as a NodeList
+   * @return {NodeList}
+   * tags:
+   */
+  Network.prototype.getNodes = function() {
+    return this.nodeList;
+  };
+
+  /**
+   * Get Relations (edges) of the Network as
+   * a RelationList.
+   * @return {RelationList}
+   * tags:
+   */
+  Network.prototype.getRelations = function() {
+    return this.relationList;
+  };
+
+  /**
+   * get nodes ids property
+   * @return {StringList}
+   * tags:
+   */
+  Network.prototype.getNodesIds = function() {
+    return this.nodeList.getIds();
+  };
+
+
+
+  /*
+   * building methods
+   */
+
+  /**
+   * Add a node to the network
+   * @param {Node} node A new node that will be added to the network.
+   */
+  Network.prototype.addNode = function(node) {
+    this.nodeList.addNode(node);
+  };
+
+  /**
+   * Retrieve a node from the nodeList of the Network with the given name (label).
+   * @param {String} name The name of the node to retrieve from the Network.
+   * @return {Node} The node with the given name. Null if no node with that name
+   * can be found in the Network.
+   */
+  Network.prototype.getNodeWithName = function(name) {
+    return this.nodeList.getNodeWithName(name);
+  };
+
+  /**
+   * Retrieve node from Network with the given id.
+   * @param {String} id ID of the node to retrieve
+   * @return {Node} The node with the given id. Null if a node with this id is not
+   * in the Network.
+   */
+  Network.prototype.getNodeWithId = function(id) {
+    return this.nodeList.getNodeWithId(id);
+  };
+
+  /**
+   * Add a new Relation (edge) to the Network between two nodes.
+   * @param {Node} node0 The source of the relation.
+   * @param {Node} node1 The destination of the relation.
+   * @param {String} id The id of the relation.
+   * @param {Number} weight A numerical weight associated with the relation (edge).
+   *
+   * @param {String} content Information associated with the relation.
+   */
+  Network.prototype.createRelation = function(node0, node1, id, weight, content) {
+    this.addRelation(new Relation(id, id, node0, node1, weight, content));
+  };
+
+  /**
+   * Add an existing Relation (edge) to the Network.
+   * @param {Relation} relation The relation to add to the network.
+   */
+  Network.prototype.addRelation = function(relation) {
+    this.relationList.addNode(relation);
+    relation.node0.nodeList.addNode(relation.node1);
+    relation.node0.relationList.addNode(relation);
+    relation.node0.toNodeList.addNode(relation.node1);
+    relation.node0.toRelationList.addNode(relation);
+    relation.node1.nodeList.addNode(relation.node0);
+    relation.node1.relationList.addNode(relation);
+    relation.node1.fromNodeList.addNode(relation.node0);
+    relation.node1.fromRelationList.addNode(relation);
+  };
+
+  /**
+   * Create a new Relation between two nodes in the network
+   * @param {Node} node0 The source of the relation.
+   * @param {Node} node1 The destination of the relation.
+   * @param {String} id The id of the relation. If missing, an id will be generated
+   * based on the id's of node0 and node1.
+   * @param {Number} weight=1 A numerical weight associated with the relation (edge).
+   * @param {String} content Information associated with the relation.
+   * @return {Relation} The new relation added to the Network.
+   */
+  Network.prototype.connect = function(node0, node1, id, weight, content) {
+    id = id || (node0.id + "_" + node1.id);
+    weight = weight || 1;
+    var relation = new Relation(id, id, node0, node1, weight);
+    this.addRelation(relation);
+    relation.content = content;
+    return relation;
+  };
+
+
+
+  /*
+   * removing methods
+   */
+
+  /**
+   * Remove a node from the Network
+   * @param {Node} node The node to remove.
+   */
+  Network.prototype.removeNode = function(node) {
+    this.removeNodeRelations(node);
+    this.nodeList.removeNode(node);
+  };
+
+  /**
+   * Remove all Relations connected to the node from the Network.
+   * @param {Node} node Node who's relations will be removed.
+   */
+  Network.prototype.removeNodeRelations = function(node) {
+    for(var i = 0; node.relationList[i] != null; i++) {
+      this.removeRelation(node.relationList[i]);
+      i--;
+    }
+  };
+
+  /**
+   * Remove all Nodes from the Network.
+   */
+  Network.prototype.removeNodes = function() {
+    this.nodeList.deleteNodes();
+    this.relationList.deleteNodes();
+  };
+
+  Network.prototype.removeRelation = function(relation) {
+    this.relationList.removeElement(relation);
+    relation.node0.nodeList.removeNode(relation.node1);
+    relation.node0.relationList.removeRelation(relation);
+    relation.node0.toNodeList.removeNode(relation.node1);
+    relation.node0.toRelationList.removeRelation(relation);
+    relation.node1.nodeList.removeNode(relation.node0);
+    relation.node1.relationList.removeRelation(relation);
+    relation.node1.fromNodeList.removeNode(relation.node0);
+    relation.node1.fromRelationList.removeRelation(relation);
+  };
+
+  /**
+   * Transformative method, removes nodes without a minimal number of connections
+   * @param  {Number} minDegree minimal degree
+   * @return {Number} number of nodes removed
+   * tags:transform
+   */
+  Network.prototype.removeIsolatedNodes = function(minDegree) {
+    var i;
+    var nRemoved = 0;
+    minDegree = minDegree == null ? 1 : minDegree;
+
+    for(i = 0; this.nodeList[i] != null; i++) {
+      if(this.nodeList[i].getDegree() < minDegree) {
+        this.nodeList[i]._toRemove = true;
+      }
+    }
+
+    for(i = 0; this.nodeList[i] != null; i++) {
+      if(this.nodeList[i]._toRemove) {
+        this.removeNode(this.nodeList[i]);
+        nRemoved++;
+        i--;
+      }
+    }
+
+    return nRemoved;
+  };
+
+
+  /**
+   * generates a light clone of the network, with the same nodeList and relationList as the original
+   * @return {Network}
+   */
+  Network.prototype.lightClone = function(){
+    var newNetwork = new Network();
+    newNetwork.nodeList = this.nodeList;
+    newNetwork.relationList = this.relationList;
+    return newNetwork;
+  };
+
+
+  /**
+   * Clones the network
+   *
+   * @param  {StringList} nodePropertiesNames list of preoperties names to be copied from old nodes into new nodes
+   * @param  {StringList} relationPropertiesNames
+   *
+   * @param  {String} idsSubfix optional sufix to be added to ids
+   * @param  {String} namesSubfix optional sufix to be added to names
+   * @return {Networked} network with exact structure than original
+   * tags:
+   */
+  Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames, idsSubfix, namesSubfix) {
+    var newNetwork = new Network();
+    var newNode, newRelation;
+
+    idsSubfix = idsSubfix == null ? '' : String(idsSubfix);
+    namesSubfix = namesSubfix == null ? '' : String(namesSubfix);
+
+    this.nodeList.forEach(function(node) {
+      newNode = new Node__default(idsSubfix + node.id, namesSubfix + node.name);
+      if(idsSubfix !== '') newNode.basicId = node.id;
+      if(namesSubfix !== '') newNode.basicName = node.name;
+      if(nodePropertiesNames) {
+        nodePropertiesNames.forEach(function(propName) {
+          if(node[propName] != null) newNode[propName] = node[propName];
+        });
+      }
+      newNetwork.addNode(newNode);
+    });
+
+    this.relationList.forEach(function(relation) {
+      newRelation = new Relation(idsSubfix + relation.id, namesSubfix + relation.name, newNetwork.nodeList.getNodeById(idsSubfix + relation.node0.id), newNetwork.nodeList.getNodeById(idsSubfix + relation.node1.id));
+      if(idsSubfix !== '') newRelation.basicId = relation.id;
+      if(namesSubfix !== '') newRelation.basicName = relation.name;
+      if(relationPropertiesNames) {
+        relationPropertiesNames.forEach(function(propName) {
+          if(relation[propName] != null) newRelation[propName] = relation[propName];
+        });
+      }
+      newNetwork.addRelation(newRelation);
+    });
+
+    return newNetwork;
+  };
+
+  /**
+   * @todo write docs
+   */
+  Network.prototype.destroy = function() {
+    delete this.type;
+    this.nodeList.destroy();
+    this.relationList.destroy();
+    delete this.nodeList;
+    delete this.relationList;
+  };
+
+  exports.Network = Network;
+
+  function ColorScales() {}
+
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.blackScale = function() {
+    return 'black';
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.grayscale = function(value) {
+    var rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], [255, 255, 255], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.antiGrayscale = function(value) {
+    var rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [0, 0, 0], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.antiTemperature = function(value) {
+    return ColorScales.temperature(1 - value);
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.temperature = function(value) { //todo:make it efficient
+    var color = "#FFFFFF";
+    if(value < 0.2) {
+      color = ColorOperators.interpolateColors('#000000', ColorOperators.HSVtoHEX(234, 1, 1), value * 5);
+    } else if(value > 0.85) {
+      color = ColorOperators.interpolateColors(ColorOperators.HSVtoHEX(0, 1, 1), '#FFFFFF', (value - 0.85) / 0.15);
+    } else {
+      color = ColorOperators.HSVtoHEX(Math.round((0.65 - (value - 0.2)) * 360), 1, 1);
+    }
+    return color;
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.sqrtTemperature = function(value) {
+    return ColorScales.temperature(Math.sqrt(value));
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.sqrt4Temperature = function(value) {
+    return ColorScales.temperature(Math.pow(value, 0.25));
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.quadraticTemperature = function(value) {
+    return ColorScales.temperature(Math.pow(value, 2));
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.cubicTemperature = function(value) {
+    return ColorScales.temperature(Math.pow(value, 3));
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.greenToRed = function(value) { //todo:make it efficient
+    var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [255, 50, 50], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.greenToBlue = function(value) { //todo:make it efficient
+    var rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [50, 50, 255], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.grayToOrange = function(value) {
+    return 'rgb(' + Math.floor(100 + value*155) + ','+ Math.floor(100 + value*10) +',' + Math.floor(100 - value*100) + ')';
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.sqrt4GrayToOrange = function(value){
+    return ColorScales.grayToOrange(Math.pow(value, 0.25));
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.blueToRed = function(value) {
+    return 'rgb(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ')';
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.blueToRedAlpha = function(value) { //todo:make it efficient
+    return 'rgba(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ', 0.5)';
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.whiteToRed = function(value) {
+    var gg = Math.floor(255 - value * 255);
+    return 'rgb(255,' + gg + ',' + gg + ')';
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.redToBlue = function(value) {
+    var rgb = ColorOperators.interpolateColorsRGB([255, 0, 0], [0, 0, 255], value);
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  //tricolor
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.greenWhiteRed = function(value) { //TODO: make it + efficient
+    var rgb = [0,0,0];
+    if(value < 0.5) {
+      rgb = ColorOperators.interpolateColorsRGB([50, 255, 50], [255, 255, 255], value * 2);
+    } else {
+      rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [255, 50, 50], (value - 0.5) * 2);
+    }
+    return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.blueWhiteRed = function(value) {
+    var rr = value < 0.5 ? Math.floor(510 * value) : 255;
+    var gg = value < 0.5 ? Math.floor(510 * value) : Math.floor(510 * (1 - value));
+    var bb = value < 0.5 ? 255 : Math.floor(510 * (1 - value));
+
+    return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.grayBlackOrange = function(value){ //TODO: make it + efficient
+    var rgb = [0,0,0];
+    if(value < 0.5) {
+      rgb = ColorOperators.interpolateColorsRGB([100, 100, 100], [0, 0, 0], value * 2);
+    } else {
+      rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], [255, 110, 0], (value - 0.5) * 2);
+    }
+    return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.grayWhiteOrange = function(value){ //TODO: make it + efficient
+    var rgb = [0,0,0];
+    if(value < 0.5) {
+      rgb = ColorOperators.interpolateColorsRGB([100, 100, 100], [255, 255, 255], value * 2);
+    } else {
+      rgb = ColorOperators.interpolateColorsRGB([255, 255, 255], [255, 110, 0], (value - 0.5) * 2);
+    }
+    return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
+  };
+
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.solar = function(value) {
+    var rgb = ColorOperators.interpolateColorsRGB([0, 0, 0], ColorOperators.interpolateColorsRGB([255, 0, 0], [255, 255, 0], value), Math.pow(value * 0.99 + 0.01, 0.2));
+    return ColorOperators.RGBtoHEX(rgb[0], rgb[1], rgb[2]);
+  };
+
+  /**
+   * @todo write docs
+   */
+  ColorScales.antiSolar = function(value) {
+    return ColorOperators.invertColor(ColorScales.solar(value));
+  };
+
+  exports.ColorScales = ColorScales;
+
+  Interval.prototype = new Point();
+  Interval.prototype.constructor = Interval;
+
+  /**
+   * @classdesc Provide reasoning around numeric intervals.
+   *
+   * @constructor
+   * @param {Number} x Interval's start value.
+   * @param {Number} y Interval's end value.
+   * @description Creates a new Interval.
+   * @category numbers
+   */
+  function Interval(x, y) {
+    DataModel.apply(this, arguments);
+    this.x = Number(x);
+    this.y = Number(y);
+    this.type = "Interval";
+  }
+
+
+  /**
+   * Finds the minimum value of the Interval.
+   *
+   * @return {Number} the minimum value in the interval
+   */
+  Interval.prototype.getMin = function() {
+    return Math.min(this.x, this.y);
+  };
+
+  /**
+   * Finds the maximum value of the Interval.
+   *
+   * @return {Number} the max value in the interval
+   */
+  Interval.prototype.getMax = function() {
+    return Math.max(this.x, this.y);
+  };
+
+  /**
+   * Finds the range between the min and max of the Interval.
+   *
+   * @return {Number} the absolute difference between the starting and ending values.
+   */
+  Interval.prototype.getAmplitude = function() {
+    return Math.abs(this.y - this.x);
+  };
+
+  /**
+   * Finds the range between the min and max of the Interval.
+   * If the starting value of the Interval is less then the ending value,
+   * this will return a negative value.
+   *
+   * @return {Number} the difference between the starting and ending values.
+   */
+  Interval.prototype.getSignedAmplitude = function() {
+    return this.y - this.x;
+  };
+
+  /**
+  * @todo write docs
+  */
+  Interval.prototype.getMiddle = function() {
+    return (this.x + this.y)*0.5;
+  };
+
+  /**
+  * @todo write docs
+  */
+  Interval.prototype.getRandom = function() {
+    return this.x + (this.y - this.x)*Math.random();
+  };
+
+  /**
+  * @todo write docs
+  */
+  Interval.prototype.getSign = function() {
+    if(this.x == this.y) return 0;
+    return Math.abs(this.y - this.x)/(this.y - this.x);
+  };
+
+  /**
+   * Scales a value
+   * @todo finish docs
+   *
+   * @return {Interval}
+   */
+  Interval.prototype.getScaled = function(value) {
+    var midAmp = 0.5 * (this.y - this.x);
+    var middle = (this.x + this.y) * 0.5;
+    return new Interval(middle - midAmp * value, middle + midAmp * value);
+  };
+
+  /**
+  * @todo write docs
+  */
+  Interval.prototype.getScaledFromProportion = function(value, proportion) {
+    var antiP = 1 - proportion;
+    var amp0 = proportion * (this.y - this.x);
+    var amp1 = antiP * (this.y - this.x);
+    var middle = antiP * this.x + proportion * this.y;
+    return new Interval(middle - amp0 * value, middle + amp1 * value);
+  };
+
+  /**
+  * @todo write docs
+  */
+  Interval.prototype.add = function(value) {
+    return new Interval(this.x + value, this.y + value);
+  };
+
+  /**
+  * @todo write docs
+  */
+  Interval.prototype.invert = function() {
+    var swap = this.x;
+    this.x = this.y;
+    this.y = swap;
+  };
+
+  /**
+   * Returns a value in interval range
+   * 0 -> min
+   * 1 -> max
+   * @param value between 0 and 1 (to obtain values between min and max)
+   *
+   */
+  Interval.prototype.getInterpolatedValue = function(value) {
+    //TODO: should this be unsigned amplitude?
+    return value * Number(this.getSignedAmplitude()) + this.x;
+  };
+
+  /**
+  * @todo write docs
+  */
+  Interval.prototype.getInverseInterpolatedValue = function(value) {
+    return(value - this.x) / this.getSignedAmplitude();
+  };
+
+  /**
+  * @todo write docs
+  */
+  Interval.prototype.getInterpolatedValues = function(numberList) {
+    var newNumberList = [];
+    var nElements = numberList.length;
+    for(var i = 0; i < nElements; i++) {
+      newNumberList.push(this.getInterpolatedValue(numberList[i]));
+    }
+    return newNumberList;
+  };
+
+  /**
+  * @todo write docs
+  */
+  Interval.prototype.getInverseInterpolatedValues = function(numberList) {
+    var newNumberList = [];
+    var nElements = numberList.length;
+    for(var i = 0; i < nElements; i++) {
+      newNumberList.push(this.getInverseInterpolatedValue(numberList[i]));
+    }
+    return newNumberList;
+  };
+
+  /**
+  * @todo write docs
+  */
+  Interval.prototype.intersect = function(interval) {
+    return new Interval(Math.max(this.x, interval.x), Math.min(this.y, interval.y));
+  };
+
+  /**
+   * create a new interval with the same proporties values
+   * @return {Interval}
+   *
+   */
+  Interval.prototype.clone = function() {
+    var newInterval = new Interval(this.x, this.y);
+    newInterval.name = name;
+    return newInterval;
+  };
+
+  /**
+   * Indicates if a number is included in the Interval.
+   *
+   * @param value Number to test.
+   * @return {Boolean} True if the value is inside the Interval.
+   *
+   */
+  Interval.prototype.contains = function(value) {
+    if(this.y > this.x) return value >= this.x && value <= this.y;
+    return value >= this.y && value <= this.y;
+  };
+
+  /**
+   * Indicates if provided interval contains the same values
+   *
+   * @param interval
+   * @return {Boolean}
+   *
+   */
+  Interval.prototype.isEquivalent = function(interval) {
+    return this.x == interval.x && this.y == interval.y;
+  };
+
+  /**
+   * creates a new interval with the same proporties values
+   * @return {String}
+   *
+   */
+
+  Interval.prototype.toString = function() {
+    return "Interval[x:" + this.x + "| y:" + this.y + "| amplitude:" + this.getAmplitude() + "]";
+  };
+
+  exports.Interval = Interval;
+
+  function NumberOperators() {}
+
+
+  /**
+   * converts number into a string
+   *
+   * @param {Number} value The number to convert
+   * @param {Number} nDecimals Number of decimals to include. Defaults to 0.
+   */
+  NumberOperators.numberToString = function(value, nDecimals ) {
+    var string = value.toFixed(nDecimals);
+    while(string.charAt(string.length - 1) == '0') {
+      string = string.substring(0, string.length - 1);
+    }
+    if(string.charAt(string.length - 1) == '.') string = string.substring(0, string.length - 1);
+    return string;
+  };
+
+  /**
+   * decent method to create pseudo random numbers
+   * @param {Object} seed
+   */
+  NumberOperators.getRandomWithSeed = function(seed) {
+    seed = (seed * 9301 + 49297) % 233280;
+    return seed / (233280.0);
+  };
+
+  /**
+   * @todo write docs
+   */
+  NumberOperators.numberFromBinaryPositions = function(binaryPositions) {
+    var i;
+    var n = 0;
+    for(i = 0; binaryPositions[i] != null; i++) {
+      n += Math.pow(2, binaryPositions[i]);
+    }
+    return n;
+  };
+
+  /**
+   * @todo write docs
+   */
+  NumberOperators.numberFromBinaryValues = function(binaryValues) {
+    var n = 0;
+    var l = binaryValues.length;
+    for(var i = 0; i < l; i++) {
+      n += binaryValues[i] == 1 ? Math.pow(2, (l - (i + 1))) : 0;
+    }
+    return n;
+  };
+
+  /**
+   * @todo write docs
+   */
+  NumberOperators.powersOfTwoDecomposition = function(number, length) {
+
+    var powers = new NumberList();
+
+    var constructingNumber = 0;
+    var biggestPower;
+
+    while(constructingNumber < number) {
+      biggestPower = Math.floor(Math.log(number) / Math.LN2);
+      powers[biggestPower] = 1;
+      number -= Math.pow(2, biggestPower);
+    }
+
+    length = Math.max(powers.length, length == null ? 0 : length);
+
+    for(var i = 0; i < length; i++) {
+      powers[i] = powers[i] == 1 ? 1 : 0;
+    }
+
+    return powers;
+  };
+
+  /**
+   * @todo write docs
+   */
+  NumberOperators.positionsFromBinaryValues = function(binaryValues) {
+    var i;
+    var positions = new NumberList();
+    for(i = 0; binaryValues[i] != null; i++) {
+      if(binaryValues[i] == 1) positions.push(i);
+    }
+    return positions;
+  };
+
+  //////////Random Generator with Seed, From http://baagoe.org/en/w/index.php/Better_random_numbers_for_javascript
+
+  /**
+   * @ignore
+   */
+  NumberOperators._Alea = function() {
+    return(function(args) {
+      // Johannes Baagøe <baagoe@baagoe.com>, 2010
+      var s0 = 0;
+      var s1 = 0;
+      var s2 = 0;
+      var c = 1;
+
+      if(args.length === 0) {
+        args = [+new Date()];
+      }
+      var mash = NumberOperators._Mash();
+      s0 = mash(' ');
+      s1 = mash(' ');
+      s2 = mash(' ');
+
+      for(var i = 0; i < args.length; i++) {
+        s0 -= mash(args[i]);
+        if(s0 < 0) {
+          s0 += 1;
+        }
+        s1 -= mash(args[i]);
+        if(s1 < 0) {
+          s1 += 1;
+        }
+        s2 -= mash(args[i]);
+        if(s2 < 0) {
+          s2 += 1;
+        }
+      }
+      mash = null;
+
+      var random = function() {
+        var t = 2091639 * s0 + c * 2.3283064365386963e-10; // 2^-32
+        s0 = s1;
+        s1 = s2;
+        // https://github.com/nquinlan/better-random-numbers-for-javascript-mirror/blob/master/support/js/Alea.js#L38
+        return s2 = t - (c = t | 0);
+      };
+      random.uint32 = function() {
+        return random() * 0x100000000; // 2^32
+      };
+      random.fract53 = function() {
+        return random() +
+          (random() * 0x200000 | 0) * 1.1102230246251565e-16; // 2^-53
+      };
+      random.version = 'Alea 0.9';
+      random.args = args;
+      return random;
+
+    }(Array.prototype.slice.call(arguments)));
+  };
+
+  /**
+   * @ignore
+   */
+  NumberOperators._Mash = function() {
+    var n = 0xefc8249d;
+
+    var mash = function(data) {
+      data = data.toString();
+      for(var i = 0; i < data.length; i++) {
+        n += data.charCodeAt(i);
+        var h = 0.02519603282416938 * n;
+        n = h >>> 0;
+        h -= n;
+        h *= n;
+        n = h >>> 0;
+        h -= n;
+        n += h * 0x100000000; // 2^32
+      }
+      return(n >>> 0) * 2.3283064365386963e-10; // 2^-32
+    };
+
+    mash.version = 'Mash 0.9';
+    return mash;
+  };
+
+  exports.NumberOperators = NumberOperators;
 
   function NumberListGenerators() {}
 
@@ -7584,1312 +8733,6 @@ define('src/index', ['exports'], function (exports) {
   };
 
   exports.ColorListGenerators = ColorListGenerators;
-
-  function ListOperators() {}
-
-
-
-  /**
-   * gets an element in a specified position from a List
-   * @param  {List} list
-   *
-   * @param  {Number} index
-   * @return {Object}
-   * tags:
-   */
-  ListOperators.getElement = function(list, index) {
-    if(list == null) return null;
-    index = index == null ? 0 : index % list.length;
-    return list[index];
-  };
-
-  /**
-   * multi-ouput operator that gives acces to individual elements
-   * @param  {List} list
-   *
-   * @param  {Number} fromIndex (default 0)
-   * @return {Object} first Object
-   * @return {Object} second Object
-   * @return {Object} third Object
-   * @return {Object} fourth Object
-   * @return {Object} fifth Object
-   * @return {Object} sisxth Object
-   * @return {Object} seventh Object
-   * @return {Object} eight Object
-   * @return {Object} ninth Object
-   * @return {Object} tenth Object
-   * tags:
-   */
-  ListOperators.getFirstElements = function(list, fromIndex) {
-    if(list == null) return null;
-
-    fromIndex = fromIndex == null ? 0 : Number(fromIndex);
-
-    return [
-    {
-      type: "Object",
-      name: "first value",
-      description: "first value",
-      value: list[fromIndex + 0]
-    },
-    {
-      type: "Object",
-      name: "second value",
-      description: "second value",
-      value: list[fromIndex + 1]
-    },
-    {
-      type: "Object",
-      name: "third value",
-      description: "third value",
-      value: list[fromIndex + 2]
-    },
-    {
-      type: "Object",
-      name: "fourth value",
-      description: "fourth value",
-      value: list[fromIndex + 3]
-    },
-    {
-      type: "Object",
-      name: "fifth value",
-      description: "fifth value",
-      value: list[fromIndex + 4]
-    },
-    {
-      type: "Object",
-      name: "sixth value",
-      description: "sixth value",
-      value: list[fromIndex + 5]
-    },
-    {
-      type: "Object",
-      name: "seventh value",
-      description: "seventh value",
-      value: list[fromIndex + 6]
-    },
-    {
-      type: "Object",
-      name: "eight value",
-      description: "eight value",
-      value: list[fromIndex + 7]
-    },
-    {
-      type: "Object",
-      name: "ninth value",
-      description: "ninth value",
-      value: list[fromIndex + 8]
-    },
-    {
-      type: "Object",
-      name: "tenth value",
-      description: "tenth value",
-      value: list[fromIndex + 9]
-    }];
-  };
-
-
-  /**
-  * check if two lists contain same elements
-  * @param {List} list0 first list
-  * @param {List} list1 second list
-  * @return {Boolean}
-  * tags:
-  */
-  ListOperators.containSameElements = function(list0, list1) {
-    if(list0==null || list1==null) return null;
-
-    var l = list0.length;
-    var i;
-
-    if(l!=list1.length) return;
-
-    for(i=0; i<l; i++){
-      if(list0[i]!=list1[i]) return false;
-    }
-
-    return true;
-  };
-
-
-  /**
-   * first position of element in list (-1 if element doesn't belong to the list)
-   * @param  {List} list
-   * @param  {Object} element
-   * @return {Number}
-   * tags:
-   */
-  ListOperators.indexOf = function(list, element) {
-    return list.indexOf(element);
-  };
-
-  /**
-   * concats lists
-   * @param  {List} list0
-   * @param  {List} list1
-   *
-   * @param  {List} list2
-   * @param  {List} list3
-   * @param  {List} list4
-   * @return {List} list5
-   * tags:
-   */
-  ListOperators.concat = function() {
-    if(arguments == null || arguments.length === 0 ||  arguments[0] == null) return null;
-    if(arguments.length == 1) return arguments[0];
-
-    var i;
-    var list = arguments[0].concat(arguments[1]);
-    for(i = 2; arguments[i]; i++) {
-      list = list.concat(arguments[i]);
-    }
-    return list.getImproved();
-  };
-
-  /**
-   * assembles a List
-   * @param  {Object} argument0
-   *
-   * @param  {Object} argument1
-   * @param  {Object} argument2
-   * @param  {Object} argument3
-   * @param  {Object} argument4
-   * @return {List}
-   * tags:
-   */
-  ListOperators.assemble = function() {
-    return List.fromArray(Array.prototype.slice.call(arguments, 0)).getImproved();
-  };
-
-
-
-  /**
-   * returns a table with two Lists: words and occurrences
-   * @param {List} list
-   *
-   * @param {Boolean} sortListsByOccurrences optional, true by default, common words first
-   * @param {Boolean} consecutiveRepetitions optional false by default, if true only counts consecutive repetitions
-   * @param {Number} optional limit, limits the size of the lists
-   * @return {Table}
-   * tags:count,toimprove,deprecated
-   */
-  // ListOperators.countElementsRepetitionOnList = function(list, sortListsByOccurrences, consecutiveRepetitions, limit) { //transform this, use dictionary instead of indexOf !!!!!!!
-  //   if(list == null) return;
-
-  //   sortListsByOccurrences = sortListsByOccurrences == null ? true : sortListsByOccurrences;
-  //   consecutiveRepetitions = consecutiveRepetitions || false;
-  //   limit = limit == null ? 0 : limit;
-
-  //   var obj;
-  //   var elementList = instantiate(typeOf(list));
-  //   var numberList = new NumberList();
-  //   var index;
-  //   var i;
-
-  //   if(consecutiveRepetitions) {
-  //     if(list.length == 0) return null;
-  //     var previousElement = list[0];
-  //     elementList.push(previousElement);
-  //     numberList.push(1);
-  //     for(i = 1; i < nElements; i++) {
-  //       obj = list[i];
-  //       if(obj == previousElement) {
-  //         numberList[numberList.length - 1] = numberList[numberList.length - 1] + 1;
-  //       } else {
-  //         elementList.push(obj);
-  //         numberList.push(1);
-  //         previousElement = obj;
-  //       }
-  //     }
-  //   } else {
-  //     for(i = 0; list[i] != null; i++){
-  //       obj = list[i];
-  //       index = elementList.indexOf(obj);
-  //       if(index != -1) {
-  //         numberList[index]++;
-  //       } else {
-  //         elementList.push(obj);
-  //         numberList.push(1);
-  //       }
-  //     }
-  //   }
-
-  //   if(elementList.type == "NumberList") {
-  //     var table = new NumberTable();
-  //   } else {
-  //     var table = new Table();
-  //   }
-  //   table[0] = elementList;
-  //   table[1] = numberList;
-
-  //   if(sortListsByOccurrences) {
-  //     table = TableOperators.sortListsByNumberList(table, numberList);
-  //   }
-
-  //   if(limit != 0 && limit < elementList.length) {
-  //     table[0] = table[0].splice(0, limit);
-  //     table[1] = table[1].splice(0, limit);
-  //   }
-
-  //   return table;
-  // };
-
-
-  /**
-   * reverses a list
-   * @param {List} list
-   * @return {List}
-   * tags:sorting
-   */
-  ListOperators.reverse = function(list) {
-    return list.getReversed();
-  };
-
-  /**
-   * @todo write docs
-   */
-  ListOperators.getBooleanDictionaryForList = function(list){
-    if(list==null) return;
-
-    var dictionary = {};
-    list.forEach(function(element){
-      dictionary[element] = true;
-    });
-
-    return dictionary;
-  };
-
-  /**
-   * builds a dictionar object (relational array) for a dictionar (table with two lists)
-   * @param  {Table} dictionary table with two lists, typically without repetitions, elements of the second list being the 'translation' of the correspdonent on the first
-   * @return {Object} relational array
-   * tags:
-   */
-  ListOperators.buildDictionaryObjectForDictionary = function(dictionary){
-    if(dictionary==null || dictionary.length<2) return;
-
-    var dictionaryObject = {};
-
-    dictionary[0].forEach(function(element, i){
-      dictionaryObject[element] = dictionary[1][i];
-    });
-
-    return dictionaryObject;
-  };
-
-
-  /**
-   * using a table with two columns as a dictionary (first list elements to be read, second list result elements), translates a list
-   * @param  {List} list to transalte
-   * @param  {Table} dictionary table with two lists
-   *
-   * @param {Object} nullElement element to place in case no translation is found
-   * @return {List}
-   * tags:
-   */
-  ListOperators.translateWithDictionary = function(list, dictionary, nullElement) {
-    if(list==null || dictionary==null || dictionary.length<2) return;
-
-    var dictionaryObject = ListOperators.buildDictionaryObjectForDictionary(dictionary);
-
-    var newList = ListOperators.translateWithDictionaryObject(list, dictionaryObject, nullElement);
-
-    newList.dictionaryObject = dictionaryObject;
-
-    return newList;
-  };
-
-  /**
-   * creates a new list that is a translation of a list using a dictionar object (a relation array)
-   * @param  {List} list
-   * @param  {Object} dictionaryObject
-   *
-   * @param  {Object} nullElement
-   * @return {List}
-   * tags:
-   */
-  ListOperators.translateWithDictionaryObject = function(list, dictionaryObject, nullElement) {
-    if(list==null || dictionaryObject==null) return;
-
-    var newList = new List();
-    var i;
-    var nElements = list.length;
-
-    for(i=0; i<nElements; i++){
-      newList[i] = dictionaryObject[list[i]];
-    }
-    // list.forEach(function(element, i) {
-    //   newList[i] = dictionaryObject[element];
-    // });
-
-    if(nullElement!=null){
-      var l = list.length;
-      for(i=0; i<l; i++){
-        if(newList[i]==null) newList[i]=nullElement;
-      }
-    }
-    newList.name = list.name;
-    return newList.getImproved();
-  };
-
-
-  // ListOperators.getIndexesOfElements=function(list, elements){
-  // 	var numberList = new NumberList();
-  // 	var i;
-  // 	for(i=0; elements[i]!=null; i++){
-  // 		numberList[i] = list.indexOf(elements[i]);
-  // 	}
-  // 	return numberList;
-  // }
-
-
-  // ListOperators.countOccurrencesOnList=function(list){
-  // 	var occurrences=new NumberList();
-  // 	var nElements=list.length;
-  // 	for(var i=0; list[i]!=null; i++){
-  // 		occurrences.push(this.getIndexesOfElement(list,list[i]).length);
-  // 	}
-  // 	return occurrences;
-  // }
-
-
-  /**
-   * @todo write docs
-   */
-  ListOperators.sortListByNumberList = function(list, numberList, descending) {
-    if(descending == null) descending = true;
-    if(numberList.length === 0) return list;
-
-    var pairs = [];
-    var newList = instantiate(typeOf(list));
-    var i;
-
-    for(i = 0; list[i] != null; i++) {
-      pairs.push([list[i], numberList[i]]);
-    }
-
-
-    if(descending) {
-      pairs.sort(function(a, b) {
-        if(a[1] < b[1]) return 1;
-        return -1;
-      });
-    } else {
-      pairs.sort(function(a, b) {
-        if(a[1] < b[1]) return -1;
-        return 1;
-      });
-    }
-
-    for(i = 0; pairs[i] != null; i++) {
-      newList.push(pairs[i][0]);
-    }
-    newList.name = list.name;
-    return newList;
-  };
-
-
-  /**
-   * @todo write docs
-   */
-  ListOperators.sortListByIndexes = function(list, indexedArray) {
-    var newList = instantiate(typeOf(list));
-    newList.name = list.name;
-    var nElements = list.length;
-    var i;
-    for(i = 0; i < nElements; i++) {
-      newList.push(list[indexedArray[i]]);
-    }
-    return newList;
-  };
-
-
-  /**
-   * @todo write docs
-   */
-  ListOperators.concatWithoutRepetitions = function() {
-    var i;
-    var newList = arguments[0].clone();
-    for(i = 1; i < arguments.length; i++) {
-      var addList = arguments[i];
-      var nElements = addList.length;
-      for(i = 0; i < nElements; i++) { // TODO Is the redefing of i intentional?
-        if(newList.indexOf(addList[i]) == -1) newList.push(addList[i]);
-      }
-    }
-    return newList.getImproved();
-  };
-
-  /**
-   * builds a table: a list of sub-lists from the original list, each sub-list determined size subListsLength, and starting at certain indexes separated by step
-   * @param  {List} list
-   * @param  {Number} subListsLength length of each sub-list
-   * @param  {Number} step slifing step
-   * @param  {Number} finalizationMode<br>0:all sub-Lists same length, doesn't cover the List<br>1:last sub-List catches the last elements, with lesser length<br>2:all lists same length, last sub-list migth contain elements from the beginning of the List
-   * @return {Table}
-   * tags:
-   */
-  ListOperators.slidingWindowOnList = function(list, subListsLength, step, finalizationMode) {
-    finalizationMode = finalizationMode || 0;
-    var table = new Table();
-    var newList;
-    var nElements = list.length;
-    var i;
-    var j;
-
-    step = Math.max(1, step);
-
-    switch(finalizationMode) {
-      case 0: //all sub-Lists same length, doesn't cover the List
-        for(i = 0; i < nElements; i += step) {
-          if(i + subListsLength <= nElements) {
-            newList = new List();
-            for(j = 0; j < subListsLength; j++) {
-              newList.push(list[i + j]);
-            }
-            table.push(newList.getImproved());
-          }
-        }
-        break;
-      case 1: //last sub-List catches the last elements, with lesser length
-        for(i = 0; i < nElements; i += step) {
-          newList = new List();
-          for(j = 0; j < Math.min(subListsLength, nElements - i); j++) {
-            newList.push(list[i + j]);
-          }
-          table.push(newList.getImproved());
-        }
-        break;
-      case 2: //all lists same length, last sub-list migth contain elements from the beginning of the List
-        for(i = 0; i < nElements; i += step) {
-          newList = new List();
-          for(j = 0; j < subListsLength; j++) {
-            newList.push(list[(i + j) % nElements]);
-          }
-          table.push(newList.getImproved());
-        }
-        break;
-    }
-
-    return table.getImproved();
-  };
-
-  /**
-   * @todo write docs
-   */
-  ListOperators.getNewListForObjectType = function(object) {
-    var newList = new List();
-    newList[0] = object;
-    return instantiateWithSameType(newList.getImproved());
-  };
-
-
-  /*
-  deprectaed, use intersection instead
-   */
-  // ListOperators.listsIntersect = function(list0, list1) {
-  //   var list = list0.length < list1.length ? list0 : list1;
-  //   var otherList = list0 == list ? list1 : list0;
-  //   for(var i = 0; list[i] != null; i++) {
-  //     if(otherList.indexOf(list[i]) != -1) return true;
-  //   }
-  //   return false;
-  // };
-
-
-  /**
-   * creates a List that contains the union of two List (removing repetitions)
-   * @param  {List} list0 first list
-   * @param  {List} list1 second list
-   *
-   * @return {List} the union of both Lists
-   * tags:
-   */
-  ListOperators.union = function(list0, list1) {//TODO: this should be refactored, and placed in ListOperators
-    if(list0==null || list1==null) return;
-
-    var obj = {};
-    var i, k;
-
-    for(i = 0; list0[i]!=null; i++) obj[list0[i]] = list0[i];
-    for(i = 0; list1[i]!=null; i++) obj[list1[i]] = list1[i];
-    var union = new List();
-    for(k in obj) {
-      //if(obj.hasOwnProperty(k)) // <-- optional
-      union.push(obj[k]);
-    }
-    return union;
-  };
-
-
-  /**
-   * returns the list of common elements between two lists (deprecated, use union instead)
-   * @param  {List} list0
-   * @param  {List} list1
-   * @return {List}
-   * tags:deprecated
-   */
-  ListOperators.getCommonElements = function(list0, list1) {
-    var nums = list0.type == 'NumberList' && list1.type == 'NumberList';
-    var strs = list0.type == 'StringList' && list1.type == 'StringList';
-    var newList = nums ? new NumberList() : (strs ? new StringList() : new List());
-
-    var list = list0.length < list1.length ? list0 : list1;
-    var otherList = list0 == list ? list1 : list0;
-
-    for(var i = 0; list[i] != null; i++) {
-      if(otherList.indexOf(list[i]) != -1) newList.push(list[i]);
-    }
-    if(nums || strs) return newList;
-    return newList.getImproved();
-  };
-
-
-
-
-  /**
-   * creates a List that contains the union of two List (removing repetitions) (deprecated, use union instead)
-   * @param  {List} list0
-   * @param  {List} list A
-   * @param  {List} list B
-   *
-   * @return {List} the union of both NumberLists
-   * tags:deprecated
-   */
-  ListOperators.unionLists = function(x, y) {
-    // Borrowed from here: http://stackoverflow.com/questions/3629817/getting-a-union-of-two-arrays-in-javascript
-    var result;
-    if(x.type != x.type || (x.type != "StringList" && x.type != "NumberList")) {
-      // To-do: call generic method here (not yet implemented)
-      //console.log( "ListOperators.unionLists for type '" + x.type + "' or '" + y.type + "' not yet implemented" );
-      return x.concat(y).getWithoutRepetitions();
-    }
-    else {
-      var obj = {};
-      var i;
-      for(i = x.length - 1; i >= 0; --i){
-        obj[x[i]] = x[i];
-      }
-      for(i = y.length - 1; i >= 0; --i){
-        obj[y[i]] = y[i];
-      }
-      result = x.type == "StringList" ? new StringList() : new NumberList();
-      for(var k in obj) {
-        if(obj.hasOwnProperty(k)) // <-- optional
-          result.push(obj[k]);
-      }
-    }
-    return result;
-  };
-
-  /**
-   * creates a List that contains the intersection of two List (elements present in BOTH lists)
-   *
-   * @param  {List} list0 list A
-   * @param  {List} list1 list B
-   *
-   * @return {List} intersection of both NumberLists
-   *
-   * tags:
-   */
-  ListOperators.intersection = function(list0, list1) {
-    if(list0==null || list1==null) return;
-
-    var intersection;
-
-    if(list0.type=="NodeList" && list1.type=="NodeList"){
-      intersection = new NodeList();
-
-      list0.forEach(function(node){
-        if(list1.getNodeById(node.id)){
-          intersection.addNode(node);
-        }
-      });
-
-      return intersection;
-    }
-
-    var dictionary = {};
-    var dictionaryIntersected = {};
-    intersection = new List();
-
-    list0.forEach(function(element){
-      dictionary[element] = true;
-    });
-    list1.forEach(function(element){
-      if(dictionary[element] && dictionaryIntersected[element]==null){
-        dictionaryIntersected[element]=true;
-        intersection.push(element);
-      }
-    });
-    return intersection.getImproved();
-  };
-
-  /**
-   * calculates Jaccard index |list0 ∩ list1|/|list0 ∪ list1| see: https://en.wikipedia.org/wiki/Jaccard_index
-   * @param  {List} list0
-   * @param  {List} list1
-   * @return {Number}
-   * tags:
-   */
-  ListOperators.jaccardIndex = function(list0, list1) {//TODO: see if this can be more efficient, maybe one idctionar for doing union and interstection at the same time
-    return ListOperators.intersection(list0, list1).length/ListOperators.unionLists(list0, list1).length;
-  };
-
-  /**
-   * calculates Jaccard distance 1 - |list0 ∩ list1|/|list0 ∪ list1| see: https://en.wikipedia.org/wiki/Jaccard_index
-   * @param  {List} list0
-   * @param  {List} list1
-   * @return {Number}
-   * tags:
-   */
-  ListOperators.jaccardDistance = function(list0, list1) {
-    return 1 - ListOperators.jaccardIndex(list0, list1);
-  };
-
-  /**
-   * builds a dictionary that matches an element of a List with all its indexes on the List (indexesDictionary[element] --> numberList of indexes of element on list)
-   * @param  {List} list
-   * @return {Object}
-   * tags:
-   */
-  ListOperators.getIndexesDictionary = function(list){
-    var indexesDictionary = {};
-
-    list.forEach(function(element, i){
-      if(indexesDictionary[element]==null) indexesDictionary[element]=new NumberList();
-      indexesDictionary[element].push(i);
-    });
-
-    return indexesDictionary;
-  };
-
-  /**
-   * @todo write docs
-   */
-  ListOperators.getIndexesTable = function(list){
-    var indexesTable = new Table();
-    indexesTable[0] = new List();
-    indexesTable[1] = new NumberTable();
-    var indexesDictionary = {};
-    var indexOnTable;
-
-    list.forEach(function(element, i){
-      indexOnTable = indexesDictionary[element];
-      if(indexOnTable==null){
-        indexesTable[0].push(element);
-        indexesTable[1].push(new NumberList(i));
-        indexesDictionary[element]=indexesTable[0].length-1;
-      } else {
-        indexesTable[1][indexOnTable].push(i);
-      }
-    });
-
-    indexesTable[0] = indexesTable[0].getImproved();
-
-    return indexesTable;
-  };
-
-  /**
-   * aggregates values of a list using an aggregator list as reference
-   *
-   * @param  {List} aggregatorList aggregator list that typically contains several repeated elements
-   * @param  {List} toAggregateList list of elements that will be aggregated
-   * @param  {Number} mode aggregation modes:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes<br>12:count non repeated elements<br>13:enlist non repeated elements<br>14:concat elements (string)<br>15:concat non-repeated elements
-   * @param  {Table} indexesTable optional already calculated table of indexes of elements on the aggregator list (if didn't provided, the method calculates it)
-   * @return {Table} contains a list with non repeated elements on the first list, and the aggregated elements on a second list
-   * tags:
-   */
-  ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, indexesTable){
-    if(aggregatorList==null || toAggregateList==null) return null;
-    var table = new Table();
-
-    if(indexesTable==null) indexesTable = ListOperators.getIndexesTable(aggregatorList);
-
-    if(mode==11) return indexesTable;
-
-    table[0] = indexesTable[0];
-
-    if(mode===0 && aggregatorList==toAggregateList){
-      table[1] = indexesTable[0];
-      return table;
-    }
-
-    mode = mode==null?0:mode;
-
-    var list;
-    var elementsTable;
-
-    switch(mode){
-      case 0://first element
-        table[1] = new List();
-        indexesTable[1].forEach(function(indexes){
-          table[1].push(toAggregateList[indexes[0]]);
-        });
-        table[1] = table[1].getImproved();
-        return table;
-      case 1://count
-        table[1] = new NumberList();
-        indexesTable[1].forEach(function(indexes){
-          table[1].push(indexes.length);
-        });
-        return table;
-      case 2://sum
-      case 3://average
-        var sum;
-        table[1] = new NumberList();
-        indexesTable[1].forEach(function(indexes){
-          sum = 0;
-          indexes.forEach(function(index){
-            sum+=toAggregateList[index];
-          });
-          if(mode==3) sum/=indexes.length;
-          table[1].push(sum);
-        });
-        return table;
-      case 4://min
-        var min;
-        table[1] = new NumberList();
-        indexesTable[1].forEach(function(indexes){
-          min = 99999999999;
-          indexes.forEach(function(index){
-            min=Math.min(min, toAggregateList[index]);
-          });
-          table[1].push(min);
-        });
-        return table;
-      case 5://max
-        var max;
-        table[1] = new NumberList();
-        indexesTable[1].forEach(function(indexes){
-          max = -99999999999;
-          indexes.forEach(function(index){
-            max=Math.max(max, toAggregateList[index]);
-          });
-          table[1].push(max);
-        });
-        return table;
-      case 6://standard deviation
-        var average;
-        table = ListOperators.aggregateList(aggregatorList, toAggregateList, 3, indexesTable);
-        indexesTable[1].forEach(function(indexes, i){
-          sum = 0;
-          average = table[1][i];
-          indexes.forEach(function(index){
-            sum += Math.pow(toAggregateList[index] - average, 2);
-          });
-          table[1][i] = Math.sqrt(sum/indexes.length);
-        });
-        return table;
-      case 7://enlist
-        table[1] = new Table();
-        indexesTable[1].forEach(function(indexes){
-          list = new List();
-          table[1].push(list);
-          indexes.forEach(function(index){
-            list.push(toAggregateList[index]);
-          });
-          list = list.getImproved();
-        });
-        return table.getImproved();
-      case 8://last element
-        table[1] = new List();
-        indexesTable[1].forEach(function(indexes){
-          table[1].push(toAggregateList[indexes[indexes.length-1]]);
-        });
-        table[1] = table[1].getImproved();
-        return table;
-      case 9://most common
-        table[1] = new List();
-        elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
-        elementsTable[1].forEach(function(elements){
-          table[1].push(elements.getMostRepeatedElement());
-        });
-        table[1] = table[1].getImproved();
-        return table;
-      case 10://random
-        table[1] = new List();
-        indexesTable[1].forEach(function(indexes){
-          table[1].push( toAggregateList[indexes[ Math.floor(Math.random()*indexes.length) ]] );
-        });
-        table[1] = table[1].getImproved();
-        return table;
-      case 11://indexes (returned previosuly)
-        break;
-      case 12://count non repeated
-        table[1] = new NumberList();
-        elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
-        elementsTable[1].forEach(function(elements){
-          table[1].push(elements.getWithoutRepetitions().length);
-        });
-        return table;
-      case 13://enlist non repeated
-        table[1] = new List();
-        elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
-        elementsTable[1].forEach(function(elements){
-          table[1].push(elements.getWithoutRepetitions());
-        });
-        table[1] = table[1].getImproved();
-        return table;
-      case 14://concat string
-        table[1] = new StringList();
-        elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
-        elementsTable[1].forEach(function(elements){
-          table[1].push( elements.join(', ') );
-        });
-        return table;
-      case 15://concat string non repeated
-        table[1] = new StringList();
-        elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
-        elementsTable[1].forEach(function(elements){
-          table[1].push( elements.getWithoutRepetitions().join(', ') );
-        });
-        return table;
-    }
-
-    return null;
-  };
-
-  /**
-   * Analyses wether two lists are categorical identical, one is subcategorical to the other, or there's no relation
-   * @param  {List} list0
-   * @param  {List} list1
-   * @return {Number} 0:no relation, 1:categorical identical, 2:list0 subcategorical to list1, 3:list1 subcategorical to list0
-   * tags:
-   */
-  ListOperators.subCategoricalAnalysis = function(list0, list1){
-    if(list0==null || list1==null) return;
-
-    var dictionary = {};
-    var element, projection;
-    var i;
-    var list0SubCategorical = true;
-    for(i=0; list0[i]!=null; i++){
-      element = list0[i];
-      projection = dictionary[element];
-      if(projection==null){
-        dictionary[element] = list1[i];
-      } else if(projection!=list1[i]){
-        list0SubCategorical = false;
-        break;
-      }
-    }
-
-    dictionary = {};
-    var list1SubCategorical = true;
-    for(i=0; list1[i]!=null; i++){
-      element = list1[i];
-      projection = dictionary[element];
-      if(projection==null){
-        dictionary[element] = list0[i];
-      } else if(projection!=list0[i]){
-        list1SubCategorical = false;
-        break;
-      }
-    }
-
-    if(list1SubCategorical && list0SubCategorical) return 1;
-    if(list0SubCategorical) return 2;
-    if(list1SubCategorical) return 3;
-    return 0;
-  };
-
-  /**
-   * calculates de entropy of a list, properties _mostRepresentedValue and _biggestProbability are added to the list
-   * @param  {List} list with repeated elements (actegorical list)
-   *
-   * @param {Object} valueFollowing if a value is provided, the property _P_valueFollowing will be added to the list, with proportion of that value in the list
-   * @param {Table} freqTable for saving time, in case the frequency table with sorted elements has been already calculated (with list.getFrequenciesTable(true))
-   * @return {Number}
-   * tags:statistics
-   */
-  ListOperators.getListEntropy = function(list, valueFollowing, freqTable) {
-    if(list == null) return;
-
-    if(list.length < 2) {
-      if(list.length == 1) {
-        list._mostRepresentedValue = list[0];
-        list._biggestProbability = 1;
-        if(valueFollowing != null) list._P_valueFollowing = list[0] == valueFollowing ? 1 : 0;
-      } else {
-        if(valueFollowing != null) list._P_valueFollowing = 0;
-      }
-      return 0;
-    }
-
-    if(freqTable==null) freqTable = list.getFrequenciesTable(true);// ListOperators.countElementsRepetitionOnList(list, true);
-
-    list._mostRepresentedValue = freqTable[0][0];
-    var N = list.length;
-    list._biggestProbability = freqTable[1][0] / N;
-    if(freqTable[0].length == 1) {
-      list._P_valueFollowing = list[0] == valueFollowing ? 1 : 0;
-      return 0;
-    }
-    var entropy = 0;
-
-    var norm = Math.log(freqTable[0].length);
-    freqTable[1].forEach(function(val) {
-      entropy -= (val / N) * Math.log(val / N) / norm;
-    });
-
-    if(valueFollowing != null) {
-      var index = freqTable[0].indexOf(valueFollowing);
-      list._P_valueFollowing = index == -1 ? 0 : freqTable[1][index] / N;
-    }
-    return entropy;
-  };
-
-
-  /**
-   * measures how much a feature decreases entropy when segmenting by its values by a supervised variable
-   * @param  {List} feature
-   * @param  {List} supervised
-   * @return {Number}
-   * tags:ds
-   */
-  ListOperators.getInformationGain = function(feature, supervised) {
-    if(feature == null || supervised == null || feature.length != supervised.length) return null;
-
-    var ig = ListOperators.getListEntropy(supervised);
-    var childrenObject = {};
-    var childrenLists = [];
-    var N = feature.length;
-
-    feature.forEach(function(element, i) {
-      if(childrenObject[element] == null) {
-        childrenObject[element] = new List();
-        childrenLists.push(childrenObject[element]);
-      }
-      childrenObject[element].push(supervised[i]);
-    });
-
-    childrenLists.forEach(function(cl) {
-      ig -= (cl.length / N) * ListOperators.getListEntropy(cl);
-    });
-
-    return ig;
-  };
-
-  /**
-   * @todo write docs
-   */
-  ListOperators.getInformationGainAnalysis = function(feature, supervised) {
-    if(feature == null || supervised == null || feature.length != supervised.length) return null;
-
-    var ig = ListOperators.getListEntropy(supervised);
-    var childrenObject = {};
-    var childrenLists = [];
-    var N = feature.length;
-    var entropy;
-    var sets = new List();
-
-    feature.forEach(function(element, i) {
-      if(childrenObject[element] == null) {
-        childrenObject[element] = new List();
-        childrenLists.push(childrenObject[element]);
-      }
-      childrenObject[element].push(supervised[i]);
-    });
-
-    childrenLists.forEach(function(cl) {
-      entropy = ListOperators.getListEntropy(cl);
-      ig -= (cl.length / N) * entropy;
-
-      sets.push({
-        children: cl,
-        entropy: entropy,
-        infoGain: ig
-      });
-    });
-
-    return sets;
-  };
-
-
-  /**
-   * Takes a List and returns its elements grouped by identic value. Each list in the table is assigned a "valProperty" value which is used for sorting
-   * @param  {List} list of elements to group
-   * @param  {Boolean} whether the results are to be sorted or not
-   * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
-   *
-   * @param  {Boolean} fillBlanks: whether to fill missing slots or not (if data is sequential)
-   * @return {Table}
-   * tags:dani
-   */
-  ListOperators.groupElements = function(list, sortedByValue, mode, fillBlanks) {
-    if(!list)
-      return;
-    var result = ListOperators._groupElements_Base(list, null, sortedByValue, mode, fillBlanks);
-    return result;
-  };
-
-
-  /**
-   * Takes a List and returns its elements grouped by identic value. Each list in the table is assigned a "valProperty" value which is used for sorting
-   * @param  {List} list of elements to group
-   * @param  {String} name of the property to be used for grouping
-   * @param  {Boolean} wether the results are to be sorted or not
-   * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
-   *
-   * @param  {Boolean} fillBlanks: whether to fill missing slots or not (if data is sequential)
-   * @return {Table}
-   * tags:dani
-   */
-  ListOperators.groupElementsByPropertyValue = function(list, propertyName, sortedByValue, mode, fillBlanks) {
-    if(!list)
-      return;
-    var result = ListOperators._groupElements_Base(list, propertyName, sortedByValue, mode, fillBlanks);
-    return result;
-  };
-
-
-
-  /**
-   * @ignore
-   */
-  ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, mode, fillBlanks) {
-    if(!list)
-      return;
-    if(mode == undefined){
-      mode = 0;
-    }
-    var resultOb = {};
-    var resultTable = new Table();
-    var pValue, item, minValue, maxValue, i;
-    for(i = 0; i < list.length; i++) {
-      item = list[i];
-      pValue = propertyName == undefined ? item : item[propertyName];
-      if(resultOb[pValue] === undefined) {
-        resultOb[pValue] = new List();
-        resultOb[pValue].name = pValue;
-        resultOb[pValue].valProperty = pValue;
-        resultTable.push(resultOb[pValue]);
-      }
-      if(mode === 0)
-        resultOb[pValue].push(item);
-      else if(mode == 1)
-        resultOb[pValue].push(i);
-      // Update boundaries
-      if(minValue === undefined || pValue < minValue) {
-        minValue = pValue;
-      }
-      if(maxValue === undefined || pValue > maxValue) {
-        maxValue = pValue;
-      }
-    }
-
-    // Fill the blanks
-    if(fillBlanks) {
-      var numBlanks = 0;
-      for(i = minValue; i < maxValue; i++) {
-        if(resultOb[i] === undefined) {
-          resultOb[i] = new List();
-          resultOb[i].name = i;
-          resultOb[i].valProperty = i;
-          resultTable.push(resultOb[i]);
-          numBlanks++;
-        }
-      }
-      //console.log("numBlanks: ", numBlanks)
-    }
-
-    // To-do: looks like getSortedByProperty is removing the valProperty from the objects
-    if(sortedByValue)
-      resultTable = resultTable.getSortedByProperty("name"); // "valProperty"
-
-    return resultTable;
-
-  };
-
-  /**
-   * returns a string representing list
-   *
-   * @param  {List} list
-   * @param  {Number} level
-   *
-   */
-  ListOperators.getReport = function(list, level) { //TODO:complete
-    var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
-    var text = level > 0 ? (ident + "////report of instance of List////") : "///////////report of instance of List//////////";
-
-    var length = list.length;
-    var i;
-
-    text += ident + "name: " + list.name;
-    text += ident + "type: " + list.type;
-
-    if(length === 0) {
-      text += ident + "single element: [" + list[0] + "]";
-      return text;
-    } else {
-      text += ident + "length: " + length;
-      text += ident + "first element: [" + list[0] + "]";
-    }
-
-    switch(list.type) {
-      case "NumberList":
-        var min = list.getMin();
-        var max = list.getMax();
-        list.min = min;
-        list.max = max;
-        var average = list.getAverage();//(min + max) * 0.5;
-        list.average = average;
-        text += ident + "min: " + min;
-        text += ident + "max: " + max;
-        text += ident + "average: " + average;
-        if(length < 101) {
-          text += ident + "numbers: " + list.join(", ");
-        }
-        break;
-        case "StringList":
-      case "List":
-        var freqTable = list.getFrequenciesTable(true);
-        list._freqTable = freqTable;
-        text += ident + "number of different elements: " + freqTable[0].length;
-        if(freqTable[0].length < 10) {
-          text += ident + "elements frequency:";
-        } else {
-          text += ident + "some elements frequency:";
-        }
-
-        for(i = 0; freqTable[0][i] != null && i < 10; i++) {
-          text += ident + "  [" + String(freqTable[0][i]) + "]: " + freqTable[1][i];
-        }
-
-        var joined;
-        if(list.type == "List") {
-          joined = list.join("], [");
-        } else {
-          joined = ListConversions.toStringList(list).join("], [");
-        }
-
-        if(joined.length < 2000) text += ident + "strings: [" + joined + "]";
-        break;
-
-    }
-
-    ///add ideas to: analyze, visualize
-
-
-    return text;
-  };
-
-
-  ListOperators.getReportHtml = function(list, level) { //TODO:complete
-    var ident = "<br>" + (level > 0 ? StringOperators.repeatString("&nbsp", level) : "");
-    var text =  level > 0 ? "" : "<b><font style=\"font-size:18px\">list report</f></b>";
-
-    var length = list.length;
-    var i;
-
-    if(list.name){
-      text += ident + "name: <b>" + list.name + "</b>";
-    } else {
-      text += ident + "<i>no name</i>";
-    }
-    text += ident + "type: <b>" + list.type + "</b>";
-
-    if(length === 0) {
-      text += ident + "single element: [<b>" + list[0] + "</b>]";
-      return text;
-    } else {
-      text += ident + "length: <b>" + length + "</b>";
-      text += ident + "first element: [<b>" + list[0] + "</b>]";
-    }
-
-    switch(list.type) {
-      case "NumberList":
-        var min = 9999999;
-        var max = -9999999;
-        var average = 0;
-        var shorten = new NumberList();
-        var index = 0;
-        var accumsum = 0;
-        var maxAccumsum = -99999;
-        var sizeAccum = Math.max(Math.floor(list.length/50), 1);
-
-        list.forEach(function(val){
-          min = Math.min(min, val);
-          max = Math.max(max, val);
-          average += val;
-          accumsum += val;
-          index++;
-          if(index==sizeAccum){
-            accumsum /= index;
-            maxAccumsum = Math.max(maxAccumsum, accumsum);
-            shorten.push(accumsum);
-            accumsum=0;
-            index=0;
-          }
-        });
-        if(index !== 0){
-            accumsum /=index;
-            maxAccumsum = Math.max(maxAccumsum, accumsum);
-            shorten.push(accumsum);
-        }
-
-        shorten = shorten.factor(1/maxAccumsum);
-
-        average /= list.length;
-
-        list.min = min;
-        list.max = max;
-        list.average = average;
-        text += ident + "min: <b>" + min + "</b>";
-        text += ident + "max: <b>" + max + "</b>";
-        text += ident + "average: <b>" + average + "</b>";
-        if(length < 101) {
-          text += ident + "numbers: <b>" + list.join("</b>, <b>") + "</b>";
-        }
-        text += ident;
-        for(i=0; shorten[i]!=null; i++){
-          text += "<font style=\"font-size:7px\"><font color=\""+ColorOperators.colorStringToHEX(ColorScales.grayToOrange(shorten[i]))+"\">█</f></f>";
-        }
-        break;
-      case "StringList":
-      case "List":
-        var freqTable = list.getFrequenciesTable(true);
-        list._freqTable = freqTable;
-        var catColors = ColorListGenerators.createCategoricalColors(2, freqTable[0].length);
-
-        text += ident + "entropy: <b>" + NumberOperators.numberToString(ListOperators.getListEntropy(list, null, freqTable), 4) + "</b>";
-
-        text += ident + "number of different elements: <b>" + freqTable[0].length + "</b>";
-        if(freqTable[0].length < 10) {
-          text += ident + "elements frequency:";
-        } else {
-          text += ident + "some elements frequency:";
-        }
-
-        for(i = 0; freqTable[0][i] != null && i < 10; i++) {
-          text += ident + "  [<b>" + String(freqTable[0][i]) + "</b>]: <font style=\"font-size:10px\"><b><font color=\""+ColorOperators.colorStringToHEX(catColors[i])+"\">" + freqTable[1][i] + "</f></b></f>";
-        }
-
-        var joined;
-        if(list.type == "List") {
-          joined = list.join("], [");
-        } else {
-          joined = ListConversions.toStringList(list).join("], [");
-        }
-
-        if(joined.length < 2000) text += ident + "contents: [" + joined + "]";
-
-        var weights = NumberListOperators.normalizedToSum(freqTable[1]);
-
-        var bars = StringOperators.createsCategoricalColorsBlocksHtml(weights, 55, catColors);
-        text += ident;
-        text += "<font style=\"font-size:7px\">"+bars+"</f>";
-
-        break;
-    }
-
-
-    ///add ideas to: analyze, visualize
-    return text;
-  };
-
-  exports.ListOperators = ListOperators;
 
   function StringOperators() {}
 
@@ -10951,1192 +10794,1311 @@ define('src/index', ['exports'], function (exports) {
 
   exports.TableEncodings = TableEncodings;
 
-  var version = "0.4.2";
+  function ListOperators() {}
 
-  /*
-   * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
-   * Digest Algorithm, as defined in RFC 1321.
-   * Version 2.2 Copyright (C) Paul Johnston 1999 - 2009
-   * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
-   * Distributed under the BSD License
-   * See http://pajhome.org.uk/crypt/md5 for more info.
+
+
+  /**
+   * gets an element in a specified position from a List
+   * @param  {List} list
+   *
+   * @param  {Number} index
+   * @return {Object}
+   * tags:
    */
-
-  /*
-   * Configurable variables. You may need to tweak these to be compatible with
-   * the server-side, but the defaults work in most cases.
-   */
-  //var hexcase = 0;   /* hex output format. 0 - lowercase; 1 - uppercase        */
-  //var b64pad  = "";  /* base-64 pad character. "=" for strict RFC compliance   */
-
-
-  function MD5(){}
-
-
-  /*
-   * These are the functions you'll usually want to call
-   * They take string arguments and return either hex or base-64 encoded strings
-   */
-  MD5.hex_md5 = function(s)    { return this.rstr2hex(this.rstr_md5(this.str2rstr_utf8(s))); };
-  MD5.b64_md5 = function(s)    { return this.rstr2b64(this.rstr_md5(this.str2rstr_utf8(s))); };
-  MD5.any_md5 = function(s, e) { return this.rstr2any(this.rstr_md5(this.str2rstr_utf8(s)), e); };
-  MD5.hex_hmac_md5 = function(k, d)
-    { return this.rstr2hex(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); };
-  MD5.b64_hmac_md5 = function(k, d)
-    { return this.rstr2b64(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d))); };
-  MD5.any_hmac_md5 = function(k, d, e)
-    { return this.rstr2any(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d)), e); };
-
-  /*
-   * Perform a simple self-test to see if the VM is working
-   */
-  MD5.md5_vm_test = function()
-  {
-    return this.hex_md5("abc").toLowerCase() == "900150983cd24fb0d6963f7d28e17f72";
+  ListOperators.getElement = function(list, index) {
+    if(list == null) return null;
+    index = index == null ? 0 : index % list.length;
+    return list[index];
   };
 
-  /*
-   * Calculate the MD5 of a raw string
+  /**
+   * multi-ouput operator that gives acces to individual elements
+   * @param  {List} list
+   *
+   * @param  {Number} fromIndex (default 0)
+   * @return {Object} first Object
+   * @return {Object} second Object
+   * @return {Object} third Object
+   * @return {Object} fourth Object
+   * @return {Object} fifth Object
+   * @return {Object} sisxth Object
+   * @return {Object} seventh Object
+   * @return {Object} eight Object
+   * @return {Object} ninth Object
+   * @return {Object} tenth Object
+   * tags:
    */
-  MD5.rstr_md5 = function(s)
-  {
-    return this.binl2rstr(this.binl_md5(this.rstr2binl(s), s.length * 8));
-  };
+  ListOperators.getFirstElements = function(list, fromIndex) {
+    if(list == null) return null;
 
-  /*
-   * Calculate the HMAC-MD5, of a key and some data (raw strings)
-   */
-  MD5.rstr_hmac_md5 = function(key, data)
-  {
-    var bkey = this.rstr2binl(key);
-    if(bkey.length > 16) bkey = this.binl_md5(bkey, key.length * 8);
+    fromIndex = fromIndex == null ? 0 : Number(fromIndex);
 
-    var ipad = Array(16), opad = Array(16);
-    for(var i = 0; i < 16; i++)
+    return [
     {
-      ipad[i] = bkey[i] ^ 0x36363636;
-      opad[i] = bkey[i] ^ 0x5C5C5C5C;
-    }
-
-    var hash = this.binl_md5(ipad.concat(this.rstr2binl(data)), 512 + data.length * 8);
-    return this.binl2rstr(this.binl_md5(opad.concat(hash), 512 + 128));
-  };
-
-  /*
-   * Convert a raw string to a hex string
-   */
-  MD5.rstr2hex = function(input)
-  {
-  	var hexcase = 0;
-    var hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
-    var output = "";
-    var x;
-    for(var i = 0; i < input.length; i++)
+      type: "Object",
+      name: "first value",
+      description: "first value",
+      value: list[fromIndex + 0]
+    },
     {
-      x = input.charCodeAt(i);
-      output += hex_tab.charAt((x >>> 4) & 0x0F)
-             +  hex_tab.charAt( x        & 0x0F);
-    }
-    return output;
-  };
-
-  /*
-   * Convert a raw string to a base-64 string
-   */
-  MD5.rstr2b64 = function(input)
-  {
-  	var b64pad  = "";
-    var tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    var output = "";
-    var len = input.length;
-    for(var i = 0; i < len; i += 3)
+      type: "Object",
+      name: "second value",
+      description: "second value",
+      value: list[fromIndex + 1]
+    },
     {
-      var triplet = (input.charCodeAt(i) << 16)
-                  | (i + 1 < len ? input.charCodeAt(i+1) << 8 : 0)
-                  | (i + 2 < len ? input.charCodeAt(i+2)      : 0);
-      for(var j = 0; j < 4; j++)
-      {
-        if(i * 8 + j * 6 > input.length * 8) output += b64pad;
-        else output += tab.charAt((triplet >>> 6*(3-j)) & 0x3F);
-      }
-    }
-    return output;
-  };
-
-  /*
-   * Convert a raw string to an arbitrary string encoding
-   */
-  MD5.rstr2any = function(input, encoding)
-  {
-    var divisor = encoding.length;
-    var i, j, q, x, quotient;
-
-    /* Convert to an array of 16-bit big-endian values, forming the dividend */
-    var dividend = Array(Math.ceil(input.length / 2));
-    for(i = 0; i < dividend.length; i++)
+      type: "Object",
+      name: "third value",
+      description: "third value",
+      value: list[fromIndex + 2]
+    },
     {
-      dividend[i] = (input.charCodeAt(i * 2) << 8) | input.charCodeAt(i * 2 + 1);
-    }
-
-    /*
-     * Repeatedly perform a long division. The binary array forms the dividend,
-     * the length of the encoding is the divisor. Once computed, the quotient
-     * forms the dividend for the next step. All remainders are stored for later
-     * use.
-     */
-    var full_length = Math.ceil(input.length * 8 /
-                                      (Math.log(encoding.length) / Math.log(2)));
-    var remainders = Array(full_length);
-    for(j = 0; j < full_length; j++)
+      type: "Object",
+      name: "fourth value",
+      description: "fourth value",
+      value: list[fromIndex + 3]
+    },
     {
-      quotient = Array();
-      x = 0;
-      for(i = 0; i < dividend.length; i++)
-      {
-        x = (x << 16) + dividend[i];
-        q = Math.floor(x / divisor);
-        x -= q * divisor;
-        if(quotient.length > 0 || q > 0)
-          quotient[quotient.length] = q;
-      }
-      remainders[j] = x;
-      dividend = quotient;
-    }
-
-    /* Convert the remainders to the output string */
-    var output = "";
-    for(i = remainders.length - 1; i >= 0; i--)
-      output += encoding.charAt(remainders[i]);
-
-    return output;
-  };
-
-  /*
-   * Encode a string as utf-8.
-   * For efficiency, this assumes the input is valid utf-16.
-   */
-  MD5.str2rstr_utf8 = function(input)
-  {
-    var output = "";
-    var i = -1;
-    var x, y;
-
-    while(++i < input.length)
+      type: "Object",
+      name: "fifth value",
+      description: "fifth value",
+      value: list[fromIndex + 4]
+    },
     {
-      /* Decode utf-16 surrogate pairs */
-      x = input.charCodeAt(i);
-      y = i + 1 < input.length ? input.charCodeAt(i + 1) : 0;
-      if(0xD800 <= x && x <= 0xDBFF && 0xDC00 <= y && y <= 0xDFFF)
-      {
-        x = 0x10000 + ((x & 0x03FF) << 10) + (y & 0x03FF);
-        i++;
-      }
-
-      /* Encode output as utf-8 */
-      if(x <= 0x7F)
-        output += String.fromCharCode(x);
-      else if(x <= 0x7FF)
-        output += String.fromCharCode(0xC0 | ((x >>> 6 ) & 0x1F),
-                                      0x80 | ( x         & 0x3F));
-      else if(x <= 0xFFFF)
-        output += String.fromCharCode(0xE0 | ((x >>> 12) & 0x0F),
-                                      0x80 | ((x >>> 6 ) & 0x3F),
-                                      0x80 | ( x         & 0x3F));
-      else if(x <= 0x1FFFFF)
-        output += String.fromCharCode(0xF0 | ((x >>> 18) & 0x07),
-                                      0x80 | ((x >>> 12) & 0x3F),
-                                      0x80 | ((x >>> 6 ) & 0x3F),
-                                      0x80 | ( x         & 0x3F));
-    }
-    return output;
+      type: "Object",
+      name: "sixth value",
+      description: "sixth value",
+      value: list[fromIndex + 5]
+    },
+    {
+      type: "Object",
+      name: "seventh value",
+      description: "seventh value",
+      value: list[fromIndex + 6]
+    },
+    {
+      type: "Object",
+      name: "eight value",
+      description: "eight value",
+      value: list[fromIndex + 7]
+    },
+    {
+      type: "Object",
+      name: "ninth value",
+      description: "ninth value",
+      value: list[fromIndex + 8]
+    },
+    {
+      type: "Object",
+      name: "tenth value",
+      description: "tenth value",
+      value: list[fromIndex + 9]
+    }];
   };
 
-  /*
-   * Encode a string as utf-16
-   */
-  MD5.str2rstr_utf16le = function(input)
-  {
-    var output = "";
-    for(var i = 0; i < input.length; i++)
-      output += String.fromCharCode( input.charCodeAt(i)        & 0xFF,
-                                    (input.charCodeAt(i) >>> 8) & 0xFF);
-    return output;
-  };
 
-  MD5.str2rstr_utf16be = function(input)
-  {
-    var output = "";
-    for(var i = 0; i < input.length; i++)
-      output += String.fromCharCode((input.charCodeAt(i) >>> 8) & 0xFF,
-                                     input.charCodeAt(i)        & 0xFF);
-    return output;
-  };
+  /**
+  * check if two lists contain same elements
+  * @param {List} list0 first list
+  * @param {List} list1 second list
+  * @return {Boolean}
+  * tags:
+  */
+  ListOperators.containSameElements = function(list0, list1) {
+    if(list0==null || list1==null) return null;
 
-  /*
-   * Convert a raw string to an array of little-endian words
-   * Characters >255 have their high-byte silently ignored.
-   */
-  MD5.rstr2binl = function(input)
-  {
+    var l = list0.length;
     var i;
-    var output = Array(input.length >> 2);
-    for(i = 0; i < output.length; i++)
-      output[i] = 0;
-    for(i = 0; i < input.length * 8; i += 8)
-      output[i>>5] |= (input.charCodeAt(i / 8) & 0xFF) << (i%32);
-    return output;
-  };
 
-  /*
-   * Convert an array of little-endian words to a string
-   */
-  MD5.binl2rstr = function(input)
-  {
-    var output = "";
-    for(var i = 0; i < input.length * 32; i += 8)
-      output += String.fromCharCode((input[i>>5] >>> (i % 32)) & 0xFF);
-    return output;
-  };
+    if(l!=list1.length) return;
 
-  /*
-   * Calculate the MD5 of an array of little-endian words, and a bit length.
-   */
-  MD5.binl_md5 = function(x, len)
-  {
-    /* append padding */
-    x[len >> 5] |= 0x80 << ((len) % 32);
-    x[(((len + 64) >>> 9) << 4) + 14] = len;
-
-    var a =  1732584193;
-    var b = -271733879;
-    var c = -1732584194;
-    var d =  271733878;
-
-    for(var i = 0; i < x.length; i += 16)
-    {
-      var olda = a;
-      var oldb = b;
-      var oldc = c;
-      var oldd = d;
-
-      a = this.md5_ff(a, b, c, d, x[i+ 0], 7 , -680876936);
-      d = this.md5_ff(d, a, b, c, x[i+ 1], 12, -389564586);
-      c = this.md5_ff(c, d, a, b, x[i+ 2], 17,  606105819);
-      b = this.md5_ff(b, c, d, a, x[i+ 3], 22, -1044525330);
-      a = this.md5_ff(a, b, c, d, x[i+ 4], 7 , -176418897);
-      d = this.md5_ff(d, a, b, c, x[i+ 5], 12,  1200080426);
-      c = this.md5_ff(c, d, a, b, x[i+ 6], 17, -1473231341);
-      b = this.md5_ff(b, c, d, a, x[i+ 7], 22, -45705983);
-      a = this.md5_ff(a, b, c, d, x[i+ 8], 7 ,  1770035416);
-      d = this.md5_ff(d, a, b, c, x[i+ 9], 12, -1958414417);
-      c = this.md5_ff(c, d, a, b, x[i+10], 17, -42063);
-      b = this.md5_ff(b, c, d, a, x[i+11], 22, -1990404162);
-      a = this.md5_ff(a, b, c, d, x[i+12], 7 ,  1804603682);
-      d = this.md5_ff(d, a, b, c, x[i+13], 12, -40341101);
-      c = this.md5_ff(c, d, a, b, x[i+14], 17, -1502002290);
-      b = this.md5_ff(b, c, d, a, x[i+15], 22,  1236535329);
-
-      a = this.md5_gg(a, b, c, d, x[i+ 1], 5 , -165796510);
-      d = this.md5_gg(d, a, b, c, x[i+ 6], 9 , -1069501632);
-      c = this.md5_gg(c, d, a, b, x[i+11], 14,  643717713);
-      b = this.md5_gg(b, c, d, a, x[i+ 0], 20, -373897302);
-      a = this.md5_gg(a, b, c, d, x[i+ 5], 5 , -701558691);
-      d = this.md5_gg(d, a, b, c, x[i+10], 9 ,  38016083);
-      c = this.md5_gg(c, d, a, b, x[i+15], 14, -660478335);
-      b = this.md5_gg(b, c, d, a, x[i+ 4], 20, -405537848);
-      a = this.md5_gg(a, b, c, d, x[i+ 9], 5 ,  568446438);
-      d = this.md5_gg(d, a, b, c, x[i+14], 9 , -1019803690);
-      c = this.md5_gg(c, d, a, b, x[i+ 3], 14, -187363961);
-      b = this.md5_gg(b, c, d, a, x[i+ 8], 20,  1163531501);
-      a = this.md5_gg(a, b, c, d, x[i+13], 5 , -1444681467);
-      d = this.md5_gg(d, a, b, c, x[i+ 2], 9 , -51403784);
-      c = this.md5_gg(c, d, a, b, x[i+ 7], 14,  1735328473);
-      b = this.md5_gg(b, c, d, a, x[i+12], 20, -1926607734);
-
-      a = this.md5_hh(a, b, c, d, x[i+ 5], 4 , -378558);
-      d = this.md5_hh(d, a, b, c, x[i+ 8], 11, -2022574463);
-      c = this.md5_hh(c, d, a, b, x[i+11], 16,  1839030562);
-      b = this.md5_hh(b, c, d, a, x[i+14], 23, -35309556);
-      a = this.md5_hh(a, b, c, d, x[i+ 1], 4 , -1530992060);
-      d = this.md5_hh(d, a, b, c, x[i+ 4], 11,  1272893353);
-      c = this.md5_hh(c, d, a, b, x[i+ 7], 16, -155497632);
-      b = this.md5_hh(b, c, d, a, x[i+10], 23, -1094730640);
-      a = this.md5_hh(a, b, c, d, x[i+13], 4 ,  681279174);
-      d = this.md5_hh(d, a, b, c, x[i+ 0], 11, -358537222);
-      c = this.md5_hh(c, d, a, b, x[i+ 3], 16, -722521979);
-      b = this.md5_hh(b, c, d, a, x[i+ 6], 23,  76029189);
-      a = this.md5_hh(a, b, c, d, x[i+ 9], 4 , -640364487);
-      d = this.md5_hh(d, a, b, c, x[i+12], 11, -421815835);
-      c = this.md5_hh(c, d, a, b, x[i+15], 16,  530742520);
-      b = this.md5_hh(b, c, d, a, x[i+ 2], 23, -995338651);
-
-      a = this.md5_ii(a, b, c, d, x[i+ 0], 6 , -198630844);
-      d = this.md5_ii(d, a, b, c, x[i+ 7], 10,  1126891415);
-      c = this.md5_ii(c, d, a, b, x[i+14], 15, -1416354905);
-      b = this.md5_ii(b, c, d, a, x[i+ 5], 21, -57434055);
-      a = this.md5_ii(a, b, c, d, x[i+12], 6 ,  1700485571);
-      d = this.md5_ii(d, a, b, c, x[i+ 3], 10, -1894986606);
-      c = this.md5_ii(c, d, a, b, x[i+10], 15, -1051523);
-      b = this.md5_ii(b, c, d, a, x[i+ 1], 21, -2054922799);
-      a = this.md5_ii(a, b, c, d, x[i+ 8], 6 ,  1873313359);
-      d = this.md5_ii(d, a, b, c, x[i+15], 10, -30611744);
-      c = this.md5_ii(c, d, a, b, x[i+ 6], 15, -1560198380);
-      b = this.md5_ii(b, c, d, a, x[i+13], 21,  1309151649);
-      a = this.md5_ii(a, b, c, d, x[i+ 4], 6 , -145523070);
-      d = this.md5_ii(d, a, b, c, x[i+11], 10, -1120210379);
-      c = this.md5_ii(c, d, a, b, x[i+ 2], 15,  718787259);
-      b = this.md5_ii(b, c, d, a, x[i+ 9], 21, -343485551);
-
-      a = this.safe_add(a, olda);
-      b = this.safe_add(b, oldb);
-      c = this.safe_add(c, oldc);
-      d = this.safe_add(d, oldd);
+    for(i=0; i<l; i++){
+      if(list0[i]!=list1[i]) return false;
     }
-    return Array(a, b, c, d);
+
+    return true;
   };
 
-  /*
-   * These functions implement the four basic operations the algorithm uses.
-   */
-  MD5.md5_cmn = function(q, a, b, x, s, t)
-  {
-    return this.safe_add(this.bit_rol(this.safe_add(this.safe_add(a, q), this.safe_add(x, t)), s),b);
-  };
-  MD5.md5_ff = function(a, b, c, d, x, s, t)
-  {
-    return this.md5_cmn((b & c) | ((~b) & d), a, b, x, s, t);
-  };
-  MD5.md5_gg = function(a, b, c, d, x, s, t)
-  {
-    return this.md5_cmn((b & d) | (c & (~d)), a, b, x, s, t);
-  };
-  MD5.md5_hh = function(a, b, c, d, x, s, t)
-  {
-    return this.md5_cmn(b ^ c ^ d, a, b, x, s, t);
-  };
-  MD5.md5_ii = function(a, b, c, d, x, s, t)
-  {
-    return this.md5_cmn(c ^ (b | (~d)), a, b, x, s, t);
-  };
-
-  /*
-   * Add integers, wrapping at 2^32. This uses 16-bit operations internally
-   * to work around bugs in some JS interpreters.
-   */
-  MD5.safe_add = function(x, y)
-  {
-    var lsw = (x & 0xFFFF) + (y & 0xFFFF);
-    var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
-    return (msw << 16) | (lsw & 0xFFFF);
-  };
-
-  /*
-   * Bitwise rotate a 32-bit number to the left.
-   */
-  MD5.bit_rol = function(num, cnt)
-  {
-    return (num << cnt) | (num >>> (32 - cnt));
-  };
-
-  exports.MD5 = MD5;
-
-  var dataModelsInfo = [
-    {
-      type:"Null",
-      short:"Ø",
-      category:"object",
-      level:"0",
-      write:"true",
-      inherits:null,
-      color:"#ffffff"
-    },
-    {
-      type:"Object",
-      short:"{}",
-      category:"object",
-      level:"0",
-      write:"true",
-      inherits:null,
-      to:"String",
-      color:"#C0BFBF"
-    },
-    {
-      type:"Function",
-      short:"F",
-      category:"object",
-      level:"0",
-      inherits:null,
-      color:"#C0BFBF"
-    },  {
-      type:"Boolean",
-      short:"b",
-      category:"boolean",
-      level:"0",
-      write:"true",
-      inherits:null,
-      to:"Number",
-      color:"#4F60AB"
-    },
-    {
-      type:"Number",
-      short:"#",
-      category:"number",
-      level:"0",
-      write:"true",
-      inherits:null,
-      to:"String",
-      color:"#5DA1D8"
-    },
-    {
-      type:"Interval",
-      short:"##",
-      category:"number",
-      level:"0.5",
-      write:"true",
-      inherits:null,
-      to:"Point",
-      contains:"Number",
-      color:"#386080"
-    },
-    {
-      type:"Array",
-      short:"[]",
-      category:"object",
-      level:"1",
-      inherits:null,
-      to:"List",
-      contains:"Object,Null",
-      color:"#80807F"
-    },
-    {
-      type:"List",
-      short:"L",
-      category:"object",
-      level:"1",
-      inherits:"Array",
-      contains:"Object",
-      comments:"A List is an Array that doesn't contain nulls, and with enhanced functionalities",
-      color:"#80807F"
-    },
-    {
-      type:"Table",
-      short:"T",
-      category:"object",
-      level:"2",
-      inherits:"List",
-      contains:"List",
-      comments:"A Table is a List of Lists",
-      color:"#80807F"
-    },
-    {
-      type:"BooleanList",
-      short:"bL",
-      category:"boolean",
-      level:"1",
-      inherits:"List",
-      to:"NumberList",
-      contains:"Boolean",
-      color:"#3A4780"
-    },
-    {
-      type:"NumberList",
-      short:"#L",
-      category:"number",
-      level:"1",
-      write:"true",
-      inherits:"List",
-      to:"StringList",
-      contains:"Number",
-      color:"#386080"
-    },
-    {
-      type:"NumberTable",
-      short:"#T",
-      category:"number",
-      level:"2",
-      write:"true",
-      inherits:"Table",
-      to:"Network",
-      contains:"NumberList",
-      color:"#386080"
-    },
-    {
-      type:"String",
-      short:"s",
-      category:"string",
-      level:"0",
-      write:"true",
-      inherits:null,
-      color:"#8BC63F"
-    },
-    {
-      type:"StringList",
-      short:"sL",
-      category:"string",
-      level:"1",
-      write:"true",
-      inherits:"List",
-      contains:"String",
-      color:"#5A8039"
-    },
-    {
-      type:"StringTable",
-      short:"sT",
-      category:"string",
-      level:"2",
-      inherits:"Table",
-      contains:"StringList",
-      color:"#5A8039"
-    },
-    {
-      type:"Date",
-      short:"d",
-      category:"date",
-      level:"0.5",
-      write:"true",
-      inherits:null,
-      to:"Number,String",
-      color:"#7AC8A3"
-    },
-    {
-      type:"DateInterval",
-      short:"dd",
-      category:"date",
-      level:"0.75",
-      inherits:null,
-      to:"Interval",
-      contains:"Date",
-      color:"#218052"
-    },
-    {
-      type:"DateList",
-      short:"dL",
-      category:"date",
-      level:"1.5",
-      inherits:"List",
-      to:"NumberList,StringList",
-      contains:"Date",
-      color:"#218052"
-    },
-    {
-      type:"Point",
-      short:".",
-      category:"geometry",
-      level:"0.5",
-      write:"true",
-      inherits:null,
-      to:"Interval",
-      contains:"Number",
-      color:"#9D59A4"
-    },
-    {
-      type:"Rectangle",
-      short:"t",
-      category:"geometry",
-      level:"0.5",
-      inherits:null,
-      to:"Polygon",
-      contains:"Number",
-      color:"#9D59A4"
-    },
-    {
-      type:"Polygon",
-      short:".L",
-      category:"geometry",
-      level:"1.5",
-      inherits:"List",
-      to:"NumberTable",
-      contains:"Point",
-      comments:"A Polygon is a List of Points",
-      color:"#76297F"
-    },
-    {
-      type:"RectangleList",
-      short:"tL",
-      category:"geometry",
-      level:"1.5",
-      inherits:null,
-      to:"MultiPolygon",
-      contains:"Rectangle",
-      color:"#76297F"
-    },
-    {
-      type:"MultiPolygon",
-      short:".T",
-      category:"geometry",
-      level:"2.5",
-      inherits:"Table",
-      contains:"Polygon",
-      comments:"A MultiPolygon is a List of Polygons",
-      color:"#76297F"
-    },
-    {
-      type:"Point3D",
-      short:"3",
-      category:"geometry",
-      level:"0.5",
-      write:"true",
-      inherits:"Point",
-      to:"NumberList",
-      contains:"Number",
-      color:"#9D59A4"
-    },
-    {
-      type:"Polygon3D",
-      short:"3L",
-      category:"geometry",
-      level:"1.5",
-      inherits:"List",
-      to:"NumberTable",
-      contains:"Point3D",
-      color:"#76297F"
-    },
-    {
-      type:"MultiPolygon3D",
-      short:"3T",
-      category:"geometry",
-      level:"2.5",
-      inherits:"Table",
-      contains:"Polygon3D",
-      color:"#76297F"
-    },
-    {
-      type:"Color",
-      short:"c",
-      category:"color",
-      level:"0",
-      inherits:null,
-      to:"String",
-      comments:"a Color is just a string that can be interpreted as color",
-      color:"#EE4488"
-    },
-    {
-      type:"ColorScale",
-      short:"cS",
-      category:"color",
-      level:"0",
-      write:"true",
-      inherits:"Function",
-      color:"#802046"
-    },
-    {
-      type:"ColorList",
-      short:"cL",
-      category:"color",
-      level:"1",
-      write:"true",
-      inherits:"List",
-      to:"StringList",
-      contains:"Color",
-      color:"#802046"
-    },
-    {
-      type:"Image",
-      short:"i",
-      category:"graphic",
-      level:"0",
-      inherits:null,
-      color:"#802046"
-    },
-    {
-      type:"ImageList",
-      short:"iL",
-      category:"graphic",
-      level:"1",
-      inherits:"List",
-      contains:"Image",
-      color:"#802046"
-    },
-    {
-      type:"Node",
-      short:"n",
-      category:"structure",
-      level:"0",
-      inherits:null,
-      color:"#FAA542"
-    },
-    {
-      type:"Relation",
-      short:"r",
-      category:"structure",
-      level:"0.5",
-      inherits:"Node",
-      contains:"Node",
-      color:"#FAA542"
-    },
-    {
-      type:"NodeList",
-      short:"nL",
-      category:"structure",
-      level:"1",
-      inherits:"List",
-      contains:"Node",
-      color:"#805522"
-    },
-    {
-      type:"RelationList",
-      short:"rL",
-      category:"structure",
-      level:"1.5",
-      inherits:"NodeList",
-      contains:"Relation",
-      color:"#805522"
-    },
-    {
-      type:"Network",
-      short:"Nt",
-      category:"structure",
-      level:"2",
-      inherits:null,
-      to:"Table",
-      contains:"NodeList,RelationList",
-      color:"#805522"
-    },
-    {
-      type:"Tree",
-      short:"Tr",
-      category:"structure",
-      level:"2",
-      inherits:"Network",
-      to:"Table",
-      contains:"NodeList,RelationList",
-      color:"#805522"
-    }
-  ];
-
-  //global constants
-  var TwoPi = 2*Math.PI;
-  var HalfPi = 0.5*Math.PI;
-  var radToGrad = 180/Math.PI;
-  var gradToRad = Math.PI/180;
 
   /**
-   * @todo write docs
+   * first position of element in list (-1 if element doesn't belong to the list)
+   * @param  {List} list
+   * @param  {Object} element
+   * @return {Number}
+   * tags:
    */
-  Array.prototype.last = function(){
-    return this[this.length-1];
+  ListOperators.indexOf = function(list, element) {
+    return list.indexOf(element);
   };
 
-  window.addEventListener('load', function(){
-    console.log('Moebio Framework v' + version);
-  }, false);
-
-
-  ////structures local storage
-
   /**
-   * @todo write docs
+   * concats lists
+   * @param  {List} list0
+   * @param  {List} list1
+   *
+   * @param  {List} list2
+   * @param  {List} list3
+   * @param  {List} list4
+   * @return {List} list5
+   * tags:
    */
-  function setStructureLocalStorageWithSeed(object, seed, comments){
-    setStructureLocalStorage(object, MD5.hex_md5(seed), comments);
-  }
+  ListOperators.concat = function() {
+    if(arguments == null || arguments.length === 0 ||  arguments[0] == null) return null;
+    if(arguments.length == 1) return arguments[0];
 
-  /**
-   * Puts an object into HTML5 local storage. Note that when you 
-   * store your object it will be wrapped in an object with the following 
-   * structure. This structure can be retrieved later in addition to the base
-   * object.
-   *  {
-   *    id: storage id
-   *    type: type of object
-   *    comments: user specified comments
-   *    date: current time
-   *    code: the serialized object
-   *  }
-   * 
-   * @param {Object} object   the object to store
-   * @param {String} id       the id to store it with
-   * @param {String} comments extra comments to store along with the object.
-   */
-  function setStructureLocalStorage(object, id, comments){
-    var type = typeOf(object);
-    var code;
-
-    switch(type){
-      case 'string':
-        code = object;
-        break;
-      case 'Network':
-        code = NetworkEncodings.encodeGDF(object);
-        break;
-      default:
-        type = 'object';
-        code = JSON.stringify(object);
-        break;
-    }
-
-    var storageObject = {
-      id:id,
-      type:type,
-      comments:comments,
-      date:new Date(),
-      code:code
-    };
-
-    var storageString = JSON.stringify(storageObject);
-    localStorage.setItem(id, storageString);
-  }
-
-  /**
-   * @todo write docs
-   */
-  function getStructureLocalStorageFromSeed(seed, returnStorageObject){
-    return getStructureLocalStorage(MD5.hex_md5(seed), returnStorageObject);
-  }
-
-  /**
-   * Gets a item previously stored in localstorage. @see setStructureLocalStorage
-   * You can choose either to retrieve the object that was stored of the wrapper
-   * object created when it was stored.
-   * 
-   * @param  {String} id id of object to lookup
-   * @param  {boolean} returnStorageObject return the wrapper object instead of the original value
-   * @return {Object|null} returns the object (or wrapper) that was stored, or null if nothing is found with this id.
-   */
-  function getStructureLocalStorage(id, returnStorageObject){
-    returnStorageObject = returnStorageObject||false;
-
-    var item = localStorage.getItem(id);
-
-    if(item==null) return null;
-
-    var storageObject;
-    try{
-      storageObject = JSON.parse(item);
-    } catch(err){
-      return null;
-    }
-
-    if(storageObject.type==null && storageObject.code==null) return null;
-
-    var type = storageObject.type;
-    var code = storageObject.code;
-    var object;
-
-    switch(type){
-      case 'string':
-        object = code;
-        break;
-      case 'Network':
-        object = NetworkEncodings.decodeGDF(code);
-        break;
-      case 'object':
-        object = JSON.parse(code);
-        break;
-    }
-
-    if(returnStorageObject){
-      storageObject.object = object;
-      storageObject.size = storageObject.code.length;
-      storageObject.date = new Date(storageObject.date);
-
-      return storageObject;
-    }
-
-    return object;
-  }
-
-  exports.setStructureLocalStorage = setStructureLocalStorage;
-  exports.getStructureLocalStorageFromSeed = getStructureLocalStorageFromSeed;
-  exports.getStructureLocalStorage = getStructureLocalStorage;
-  exports.dataModelsInfo = dataModelsInfo;
-  exports.TwoPi = TwoPi;
-  exports.HalfPi = HalfPi;
-  exports.radToGrad = radToGrad;
-  exports.gradToRad = gradToRad;
-
-  var typeDict = {
-    List: List,
-    Table: Table,
-    StringList: StringList,
-    NumberList: NumberList,
-    NumberTable: NumberTable,
-    NodeList: NodeList,
-    RelationList: RelationList,
-    Polygon: Polygon,
-    Polygon3D: Polygon3D,
-    DateList: DateList,
-    ColorList: ColorList
-  };
-
-
-  /*
-   * All these function are globally available since they are included in the Global class
-   */
-  var TYPES_SHORT_NAMES_DICTIONARY = {"Null":"Ø","Object":"{}","Function":"F","Boolean":"b","Number":"#","Interval":"##","Array":"[]","List":"L","Table":"T","BooleanList":"bL","NumberList":"#L","NumberTable":"#T","String":"s","StringList":"sL","StringTable":"sT","Date":"d","DateInterval":"dd","DateList":"dL","Point":".","Rectangle":"t","Polygon":".L","RectangleList":"tL","MultiPolygon":".T","Point3D":"3","Polygon3D":"3L","MultiPolygon3D":"3T","Color":"c","ColorScale":"cS","ColorList":"cL","Image":"i","ImageList":"iL","Node":"n","Relation":"r","NodeList":"nL","RelationList":"rL","Network":"Nt","Tree":"Tr"};
-  var _shortFromTypeDictionary;
-  var _colorFromTypeDictionary;
-  var _lightColorFromTypeDictionary;
-
-  /*
-   * types are:
-   * number, string, boolean, date, Array, Object
-   * and all data models classes names
-   */
-
-  function typeOf(object) {
-    if(object==null) return null;
-
-    var type = typeof object;
-    if(type !== 'object') return type;
-
-    if(object.type!=null) return object.type;
-
-    if(Object.prototype.toString.call(object) == "[object Array]") return "Array";
-
-    if(object.getDate != null) return 'date';
-
-    return 'Object';
-  }
-
-  function instantiate(className, args) {
-    switch(className) {
-      case 'number':
-      case 'string':
-        // TODO: I don't think this works.
-        return window[className](args);
-      case 'date':
-        if(!args || args.length === 0) return new Date();
-        if(args.length == 1) {
-          if(args[0].match(/\d*.-\d*.-\d*\D\d*.:\d*.:\d*/)) {
-            var dateArray = args[0].split(" ");
-            dateArray[0] = dateArray[0].split("-");
-            if(dateArray[1]) dateArray[1] = dateArray[1].split(":");
-            else dateArray[1] = new Array(0, 0, 0);
-            return new Date(Date.UTC(dateArray[0][0], Number(dateArray[0][1]) - 1, dateArray[0][2], dateArray[1][0], dateArray[1][1], dateArray[1][2]));
-          }
-          //
-          if(Number(args[0]) != "NaN") return new Date(Number(args[0]));
-          else return new Date(args[0]);
-        }
-        return new Date(Date.UTC.apply(null, args));
-      case 'boolean':
-        // TODO: I don't think this works.
-        return window[className]((args == "false" || args == "0") ? false : true);
-      case 'List':
-      case 'Table':
-      case 'StringList':
-      case 'NumberList':
-      case 'NumberTable':
-      case 'NodeList':
-      case 'RelationList':
-      case 'Polygon':
-      case 'Polygon3D':
-      case 'PolygonList':
-      case 'DateList':
-      case 'ColorList':
-        return typeDict[className].apply(new typeDict[className](), args);
-      case null:
-      case undefined:
-      case 'undefined':
-        return null;
-    }
-    //generic instantiation of object:
-    var o, dummyFunction, cl;
-    cl = window[className]; // get reference to class constructor function
-    dummyFunction = function() {}; // dummy function
-    dummyFunction.prototype = cl.prototype; // reference same prototype
-    o = new dummyFunction(); // instantiate dummy function to copy prototype properties
-    cl.apply(o, args); // call class constructor, supplying new object as context
-
-    return o;
-  }
-
-  function _createDataModelsInfoDictionaries(){
     var i;
-    var type;
-
-    _shortFromTypeDictionary = {};
-    _colorFromTypeDictionary = {};
-    _lightColorFromTypeDictionary = {};
-
-    for(i=0; dataModelsInfo[i]!=null; i++){
-      type = dataModelsInfo[i].type;
-      _shortFromTypeDictionary[type] = dataModelsInfo[i].short;
-      _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.2);
-      _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.35);
-      type = type.toLowerCase();
-      _shortFromTypeDictionary[type] = dataModelsInfo[i].short;
-      _colorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'black', 0.2);
-      _lightColorFromTypeDictionary[type] = ColorOperators.interpolateColors(dataModelsInfo[i].color, 'white', 0.35);
+    var list = arguments[0].concat(arguments[1]);
+    for(i = 2; arguments[i]; i++) {
+      list = list.concat(arguments[i]);
     }
-  }
+    return list.getImproved();
+  };
 
-  function getShortNameFromDataModelType(type){
-    if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
-    return _shortFromTypeDictionary[type];
-  }
-
-  function getColorFromDataModelType(type){
-    if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
-    return _colorFromTypeDictionary[type];
-  }
-
-  function getLightColorFromDataModelType(type){
-    if(_shortFromTypeDictionary==null) _createDataModelsInfoDictionaries();
-    return _lightColorFromTypeDictionary[type];
-  }
-
-  function getTextFromObject(value, type){
-    if(value == null) return "Null";
-    if(value.isList) {
-      if(value.length === 0) return "[]";
-      var text = value.toString(); 
-      if(text.length > 160) {
-        var i;
-        var subtext;
-        text = "[";
-        for(i = 0; (value[i] != null && i < 6); i++) {
-          subtext = getTextFromObject(value[i], typeOf(value[i]));
-          if(subtext.length > 40) subtext = subtext.substr(0, 40) + (value[i].isList ? "…]" : "…");
-          text += (i !== 0 ? ", " : "") + subtext;
-        }
-        if(value.length > 6) text += ",…";
-        text += "]";
-      }
-      return text;
-    }
-
-    switch(type) {
-      case "date":
-        return DateOperators.dateToString(value);
-      case "DateInterval":
-        return DateOperators.dateToString(value.date0) + " - " + DateOperators.dateToString(value.date1);
-      case "string":
-        return((value.length > 160) ? value.substr(0, 159) + "…" : value).replace(/\n/g, "↩");
-      case "number":
-        return String(value);
-      default:
-        return "{}"; //value.toString();
-    }
-  }
-
-  function instantiateWithSameType(object, args) {
-    return instantiate(typeOf(object), args);
-  }
-
-  function isArray(obj) {
-    if(obj.constructor.toString().indexOf("Array") == -1)
-      return false;
-    else
-      return true;
-  }
-
-  Date.prototype.getType = function() {
-    return 'date';
+  /**
+   * assembles a List
+   * @param  {Object} argument0
+   *
+   * @param  {Object} argument1
+   * @param  {Object} argument2
+   * @param  {Object} argument3
+   * @param  {Object} argument4
+   * @return {List}
+   * tags:
+   */
+  ListOperators.assemble = function() {
+    return List.fromArray(Array.prototype.slice.call(arguments, 0)).getImproved();
   };
 
 
 
-  function evalJavaScriptFunction(functionText, args, scope){
-  	if(functionText==null) return;
+  /**
+   * returns a table with two Lists: words and occurrences
+   * @param {List} list
+   *
+   * @param {Boolean} sortListsByOccurrences optional, true by default, common words first
+   * @param {Boolean} consecutiveRepetitions optional false by default, if true only counts consecutive repetitions
+   * @param {Number} optional limit, limits the size of the lists
+   * @return {Table}
+   * tags:count,toimprove,deprecated
+   */
+  // ListOperators.countElementsRepetitionOnList = function(list, sortListsByOccurrences, consecutiveRepetitions, limit) { //transform this, use dictionary instead of indexOf !!!!!!!
+  //   if(list == null) return;
 
-  	var res;
+  //   sortListsByOccurrences = sortListsByOccurrences == null ? true : sortListsByOccurrences;
+  //   consecutiveRepetitions = consecutiveRepetitions || false;
+  //   limit = limit == null ? 0 : limit;
 
-  	var myFunction;
+  //   var obj;
+  //   var elementList = instantiate(typeOf(list));
+  //   var numberList = new NumberList();
+  //   var index;
+  //   var i;
 
-  	var good = true;
-  	var message = '';
-    var error;
-
-  	var realCode;
-
-  	var lines = functionText.split('\n');
-
-  	for(var i=0; lines[i]!=null; i++){
-  		lines[i] = lines[i].trim();
-  		if(lines[i] === "" || lines[i].substr(1)=="/"){
-  			lines.splice(i,1);
-  			i--;
-  		}
-  	}
-
-  	var isFunction = lines[0].indexOf('function')!=-1;
-
-  	functionText = lines.join('\n');
-
-  	if(isFunction){
-  		if(scope){
-  			realCode = "scope.myFunction = " + functionText;
-  		} else {
-  			realCode = "myFunction = " + functionText;
-  		}
-  	} else {
-  		if(scope){
-  			realCode = "scope.myVar = " + functionText;
-  		} else {
-  			realCode = "myVar = " + functionText;
-  		}
-  	}
-
-  	try{
-  		if(isFunction){
-  			eval(realCode);
-  			if(scope){
-  				res = scope.myFunction.apply(scope, args);
-  			} else {
-  				res = myFunction.apply(this, args);
-  			}
-  		} else {
-  			eval(realCode);
-  			if(scope){
-  				res = scope.myVar;
-  			} else 	{
-  				res = myVar;
-  			}
-  		}
-  	} catch(err){
-  		good = false;
-  		message = err.message;
-  		res = null;
-      error = err;
-  	}
-
-    var resultObject = {
-      result: res,
-      success: good,
-      errorMessage: message,
-      error: error
-    };
-
-    return resultObject;
-  }
-
-  function argumentsToArray(args) {
-    return Array.prototype.slice.call(args, 0);
-  }
-
-  // export function TimeLogger(name) {
-  //   var scope = this;
-  //   this.name = name;
-  //   this.clocks = {};
-
-  //   this.tic = function(clockName) {
-  //     scope.clocks[clockName] = new Date().getTime();
-  //     //c.l( "TimeLogger '"+clockName+"' has been started");
-  //   };
-  //   this.tac = function(clockName) {
-  //     if(scope.clocks[clockName] == null) {
-  //       scope.tic(clockName);
-  //     } else {
-  //       var now = new Date().getTime();
-  //       var diff = now - scope.clocks[clockName];
-  //       console.log("TimeLogger '" + clockName + "' took " + diff + " ms");
+  //   if(consecutiveRepetitions) {
+  //     if(list.length == 0) return null;
+  //     var previousElement = list[0];
+  //     elementList.push(previousElement);
+  //     numberList.push(1);
+  //     for(i = 1; i < nElements; i++) {
+  //       obj = list[i];
+  //       if(obj == previousElement) {
+  //         numberList[numberList.length - 1] = numberList[numberList.length - 1] + 1;
+  //       } else {
+  //         elementList.push(obj);
+  //         numberList.push(1);
+  //         previousElement = obj;
+  //       }
   //     }
-  //   };
-  // }
-  // export var tl = new TimeLogger("Global Time Logger");
+  //   } else {
+  //     for(i = 0; list[i] != null; i++){
+  //       obj = list[i];
+  //       index = elementList.indexOf(obj);
+  //       if(index != -1) {
+  //         numberList[index]++;
+  //       } else {
+  //         elementList.push(obj);
+  //         numberList.push(1);
+  //       }
+  //     }
+  //   }
 
-  exports.typeOf = typeOf;
-  exports.instantiate = instantiate;
-  exports.getShortNameFromDataModelType = getShortNameFromDataModelType;
-  exports.getColorFromDataModelType = getColorFromDataModelType;
-  exports.getLightColorFromDataModelType = getLightColorFromDataModelType;
-  exports.getTextFromObject = getTextFromObject;
-  exports.instantiateWithSameType = instantiateWithSameType;
-  exports.isArray = isArray;
-  exports.evalJavaScriptFunction = evalJavaScriptFunction;
-  exports.argumentsToArray = argumentsToArray;
+  //   if(elementList.type == "NumberList") {
+  //     var table = new NumberTable();
+  //   } else {
+  //     var table = new Table();
+  //   }
+  //   table[0] = elementList;
+  //   table[1] = numberList;
+
+  //   if(sortListsByOccurrences) {
+  //     table = TableOperators.sortListsByNumberList(table, numberList);
+  //   }
+
+  //   if(limit != 0 && limit < elementList.length) {
+  //     table[0] = table[0].splice(0, limit);
+  //     table[1] = table[1].splice(0, limit);
+  //   }
+
+  //   return table;
+  // };
+
+
+  /**
+   * reverses a list
+   * @param {List} list
+   * @return {List}
+   * tags:sorting
+   */
+  ListOperators.reverse = function(list) {
+    return list.getReversed();
+  };
+
+  /**
+   * @todo write docs
+   */
+  ListOperators.getBooleanDictionaryForList = function(list){
+    if(list==null) return;
+
+    var dictionary = {};
+    list.forEach(function(element){
+      dictionary[element] = true;
+    });
+
+    return dictionary;
+  };
+
+  /**
+   * builds a dictionar object (relational array) for a dictionar (table with two lists)
+   * @param  {Table} dictionary table with two lists, typically without repetitions, elements of the second list being the 'translation' of the correspdonent on the first
+   * @return {Object} relational array
+   * tags:
+   */
+  ListOperators.buildDictionaryObjectForDictionary = function(dictionary){
+    if(dictionary==null || dictionary.length<2) return;
+
+    var dictionaryObject = {};
+
+    dictionary[0].forEach(function(element, i){
+      dictionaryObject[element] = dictionary[1][i];
+    });
+
+    return dictionaryObject;
+  };
+
+
+  /**
+   * using a table with two columns as a dictionary (first list elements to be read, second list result elements), translates a list
+   * @param  {List} list to transalte
+   * @param  {Table} dictionary table with two lists
+   *
+   * @param {Object} nullElement element to place in case no translation is found
+   * @return {List}
+   * tags:
+   */
+  ListOperators.translateWithDictionary = function(list, dictionary, nullElement) {
+    if(list==null || dictionary==null || dictionary.length<2) return;
+
+    var dictionaryObject = ListOperators.buildDictionaryObjectForDictionary(dictionary);
+
+    var newList = ListOperators.translateWithDictionaryObject(list, dictionaryObject, nullElement);
+
+    newList.dictionaryObject = dictionaryObject;
+
+    return newList;
+  };
+
+  /**
+   * creates a new list that is a translation of a list using a dictionar object (a relation array)
+   * @param  {List} list
+   * @param  {Object} dictionaryObject
+   *
+   * @param  {Object} nullElement
+   * @return {List}
+   * tags:
+   */
+  ListOperators.translateWithDictionaryObject = function(list, dictionaryObject, nullElement) {
+    if(list==null || dictionaryObject==null) return;
+
+    var newList = new List();
+    var i;
+    var nElements = list.length;
+
+    for(i=0; i<nElements; i++){
+      newList[i] = dictionaryObject[list[i]];
+    }
+    // list.forEach(function(element, i) {
+    //   newList[i] = dictionaryObject[element];
+    // });
+
+    if(nullElement!=null){
+      var l = list.length;
+      for(i=0; i<l; i++){
+        if(newList[i]==null) newList[i]=nullElement;
+      }
+    }
+    newList.name = list.name;
+    return newList.getImproved();
+  };
+
+
+  // ListOperators.getIndexesOfElements=function(list, elements){
+  // 	var numberList = new NumberList();
+  // 	var i;
+  // 	for(i=0; elements[i]!=null; i++){
+  // 		numberList[i] = list.indexOf(elements[i]);
+  // 	}
+  // 	return numberList;
+  // }
+
+
+  // ListOperators.countOccurrencesOnList=function(list){
+  // 	var occurrences=new NumberList();
+  // 	var nElements=list.length;
+  // 	for(var i=0; list[i]!=null; i++){
+  // 		occurrences.push(this.getIndexesOfElement(list,list[i]).length);
+  // 	}
+  // 	return occurrences;
+  // }
+
+
+  /**
+   * @todo write docs
+   */
+  ListOperators.sortListByNumberList = function(list, numberList, descending) {
+    if(descending == null) descending = true;
+    if(numberList.length === 0) return list;
+
+    var pairs = [];
+    var newList = instantiate(typeOf(list));
+    var i;
+
+    for(i = 0; list[i] != null; i++) {
+      pairs.push([list[i], numberList[i]]);
+    }
+
+
+    if(descending) {
+      pairs.sort(function(a, b) {
+        if(a[1] < b[1]) return 1;
+        return -1;
+      });
+    } else {
+      pairs.sort(function(a, b) {
+        if(a[1] < b[1]) return -1;
+        return 1;
+      });
+    }
+
+    for(i = 0; pairs[i] != null; i++) {
+      newList.push(pairs[i][0]);
+    }
+    newList.name = list.name;
+    return newList;
+  };
+
+
+  /**
+   * @todo write docs
+   */
+  ListOperators.sortListByIndexes = function(list, indexedArray) {
+    var newList = instantiate(typeOf(list));
+    newList.name = list.name;
+    var nElements = list.length;
+    var i;
+    for(i = 0; i < nElements; i++) {
+      newList.push(list[indexedArray[i]]);
+    }
+    return newList;
+  };
+
+
+  /**
+   * @todo write docs
+   */
+  ListOperators.concatWithoutRepetitions = function() {
+    var i;
+    var newList = arguments[0].clone();
+    for(i = 1; i < arguments.length; i++) {
+      var addList = arguments[i];
+      var nElements = addList.length;
+      for(i = 0; i < nElements; i++) { // TODO Is the redefing of i intentional?
+        if(newList.indexOf(addList[i]) == -1) newList.push(addList[i]);
+      }
+    }
+    return newList.getImproved();
+  };
+
+  /**
+   * builds a table: a list of sub-lists from the original list, each sub-list determined size subListsLength, and starting at certain indexes separated by step
+   * @param  {List} list
+   * @param  {Number} subListsLength length of each sub-list
+   * @param  {Number} step slifing step
+   * @param  {Number} finalizationMode<br>0:all sub-Lists same length, doesn't cover the List<br>1:last sub-List catches the last elements, with lesser length<br>2:all lists same length, last sub-list migth contain elements from the beginning of the List
+   * @return {Table}
+   * tags:
+   */
+  ListOperators.slidingWindowOnList = function(list, subListsLength, step, finalizationMode) {
+    finalizationMode = finalizationMode || 0;
+    var table = new Table();
+    var newList;
+    var nElements = list.length;
+    var i;
+    var j;
+
+    step = Math.max(1, step);
+
+    switch(finalizationMode) {
+      case 0: //all sub-Lists same length, doesn't cover the List
+        for(i = 0; i < nElements; i += step) {
+          if(i + subListsLength <= nElements) {
+            newList = new List();
+            for(j = 0; j < subListsLength; j++) {
+              newList.push(list[i + j]);
+            }
+            table.push(newList.getImproved());
+          }
+        }
+        break;
+      case 1: //last sub-List catches the last elements, with lesser length
+        for(i = 0; i < nElements; i += step) {
+          newList = new List();
+          for(j = 0; j < Math.min(subListsLength, nElements - i); j++) {
+            newList.push(list[i + j]);
+          }
+          table.push(newList.getImproved());
+        }
+        break;
+      case 2: //all lists same length, last sub-list migth contain elements from the beginning of the List
+        for(i = 0; i < nElements; i += step) {
+          newList = new List();
+          for(j = 0; j < subListsLength; j++) {
+            newList.push(list[(i + j) % nElements]);
+          }
+          table.push(newList.getImproved());
+        }
+        break;
+    }
+
+    return table.getImproved();
+  };
+
+  /**
+   * @todo write docs
+   */
+  ListOperators.getNewListForObjectType = function(object) {
+    var newList = new List();
+    newList[0] = object;
+    return instantiateWithSameType(newList.getImproved());
+  };
+
+
+  /*
+  deprectaed, use intersection instead
+   */
+  // ListOperators.listsIntersect = function(list0, list1) {
+  //   var list = list0.length < list1.length ? list0 : list1;
+  //   var otherList = list0 == list ? list1 : list0;
+  //   for(var i = 0; list[i] != null; i++) {
+  //     if(otherList.indexOf(list[i]) != -1) return true;
+  //   }
+  //   return false;
+  // };
+
+
+  /**
+   * creates a List that contains the union of two List (removing repetitions)
+   * @param  {List} list0 first list
+   * @param  {List} list1 second list
+   *
+   * @return {List} the union of both Lists
+   * tags:
+   */
+  ListOperators.union = function(list0, list1) {//TODO: this should be refactored, and placed in ListOperators
+    if(list0==null || list1==null) return;
+
+    var obj = {};
+    var i, k;
+
+    for(i = 0; list0[i]!=null; i++) obj[list0[i]] = list0[i];
+    for(i = 0; list1[i]!=null; i++) obj[list1[i]] = list1[i];
+    var union = new List();
+    for(k in obj) {
+      //if(obj.hasOwnProperty(k)) // <-- optional
+      union.push(obj[k]);
+    }
+    return union;
+  };
+
+
+  /**
+   * returns the list of common elements between two lists (deprecated, use union instead)
+   * @param  {List} list0
+   * @param  {List} list1
+   * @return {List}
+   * tags:deprecated
+   */
+  ListOperators.getCommonElements = function(list0, list1) {
+    var nums = list0.type == 'NumberList' && list1.type == 'NumberList';
+    var strs = list0.type == 'StringList' && list1.type == 'StringList';
+    var newList = nums ? new NumberList() : (strs ? new StringList() : new List());
+
+    var list = list0.length < list1.length ? list0 : list1;
+    var otherList = list0 == list ? list1 : list0;
+
+    for(var i = 0; list[i] != null; i++) {
+      if(otherList.indexOf(list[i]) != -1) newList.push(list[i]);
+    }
+    if(nums || strs) return newList;
+    return newList.getImproved();
+  };
+
+
+
+
+  /**
+   * creates a List that contains the union of two List (removing repetitions) (deprecated, use union instead)
+   * @param  {List} list0
+   * @param  {List} list A
+   * @param  {List} list B
+   *
+   * @return {List} the union of both NumberLists
+   * tags:deprecated
+   */
+  ListOperators.unionLists = function(x, y) {
+    // Borrowed from here: http://stackoverflow.com/questions/3629817/getting-a-union-of-two-arrays-in-javascript
+    var result;
+    if(x.type != x.type || (x.type != "StringList" && x.type != "NumberList")) {
+      // To-do: call generic method here (not yet implemented)
+      //console.log( "ListOperators.unionLists for type '" + x.type + "' or '" + y.type + "' not yet implemented" );
+      return x.concat(y).getWithoutRepetitions();
+    }
+    else {
+      var obj = {};
+      var i;
+      for(i = x.length - 1; i >= 0; --i){
+        obj[x[i]] = x[i];
+      }
+      for(i = y.length - 1; i >= 0; --i){
+        obj[y[i]] = y[i];
+      }
+      result = x.type == "StringList" ? new StringList() : new NumberList();
+      for(var k in obj) {
+        if(obj.hasOwnProperty(k)) // <-- optional
+          result.push(obj[k]);
+      }
+    }
+    return result;
+  };
+
+  /**
+   * creates a List that contains the intersection of two List (elements present in BOTH lists)
+   *
+   * @param  {List} list0 list A
+   * @param  {List} list1 list B
+   *
+   * @return {List} intersection of both NumberLists
+   *
+   * tags:
+   */
+  ListOperators.intersection = function(list0, list1) {
+    if(list0==null || list1==null) return;
+
+    var intersection;
+
+    if(list0.type=="NodeList" && list1.type=="NodeList"){
+      intersection = new NodeList();
+
+      list0.forEach(function(node){
+        if(list1.getNodeById(node.id)){
+          intersection.addNode(node);
+        }
+      });
+
+      return intersection;
+    }
+
+    var dictionary = {};
+    var dictionaryIntersected = {};
+    intersection = new List();
+
+    list0.forEach(function(element){
+      dictionary[element] = true;
+    });
+    list1.forEach(function(element){
+      if(dictionary[element] && dictionaryIntersected[element]==null){
+        dictionaryIntersected[element]=true;
+        intersection.push(element);
+      }
+    });
+    return intersection.getImproved();
+  };
+
+  /**
+   * calculates Jaccard index |list0 ∩ list1|/|list0 ∪ list1| see: https://en.wikipedia.org/wiki/Jaccard_index
+   * @param  {List} list0
+   * @param  {List} list1
+   * @return {Number}
+   * tags:
+   */
+  ListOperators.jaccardIndex = function(list0, list1) {//TODO: see if this can be more efficient, maybe one idctionar for doing union and interstection at the same time
+    return ListOperators.intersection(list0, list1).length/ListOperators.unionLists(list0, list1).length;
+  };
+
+  /**
+   * calculates Jaccard distance 1 - |list0 ∩ list1|/|list0 ∪ list1| see: https://en.wikipedia.org/wiki/Jaccard_index
+   * @param  {List} list0
+   * @param  {List} list1
+   * @return {Number}
+   * tags:
+   */
+  ListOperators.jaccardDistance = function(list0, list1) {
+    return 1 - ListOperators.jaccardIndex(list0, list1);
+  };
+
+  /**
+   * builds a dictionary that matches an element of a List with all its indexes on the List (indexesDictionary[element] --> numberList of indexes of element on list)
+   * @param  {List} list
+   * @return {Object}
+   * tags:
+   */
+  ListOperators.getIndexesDictionary = function(list){
+    var indexesDictionary = {};
+
+    list.forEach(function(element, i){
+      if(indexesDictionary[element]==null) indexesDictionary[element]=new NumberList();
+      indexesDictionary[element].push(i);
+    });
+
+    return indexesDictionary;
+  };
+
+  /**
+   * @todo write docs
+   */
+  ListOperators.getIndexesTable = function(list){
+    var indexesTable = new Table();
+    indexesTable[0] = new List();
+    indexesTable[1] = new NumberTable();
+    var indexesDictionary = {};
+    var indexOnTable;
+
+    list.forEach(function(element, i){
+      indexOnTable = indexesDictionary[element];
+      if(indexOnTable==null){
+        indexesTable[0].push(element);
+        indexesTable[1].push(new NumberList(i));
+        indexesDictionary[element]=indexesTable[0].length-1;
+      } else {
+        indexesTable[1][indexOnTable].push(i);
+      }
+    });
+
+    indexesTable[0] = indexesTable[0].getImproved();
+
+    return indexesTable;
+  };
+
+  /**
+   * aggregates values of a list using an aggregator list as reference
+   *
+   * @param  {List} aggregatorList aggregator list that typically contains several repeated elements
+   * @param  {List} toAggregateList list of elements that will be aggregated
+   * @param  {Number} mode aggregation modes:<br>0:first element<br>1:count (default)<br>2:sum<br>3:average<br>4:min<br>5:max<br>6:standard deviation<br>7:enlist (creates a list of elements)<br>8:last element<br>9:most common element<br>10:random element<br>11:indexes<br>12:count non repeated elements<br>13:enlist non repeated elements<br>14:concat elements (string)<br>15:concat non-repeated elements
+   * @param  {Table} indexesTable optional already calculated table of indexes of elements on the aggregator list (if didn't provided, the method calculates it)
+   * @return {Table} contains a list with non repeated elements on the first list, and the aggregated elements on a second list
+   * tags:
+   */
+  ListOperators.aggregateList = function(aggregatorList, toAggregateList, mode, indexesTable){
+    if(aggregatorList==null || toAggregateList==null) return null;
+    var table = new Table();
+
+    if(indexesTable==null) indexesTable = ListOperators.getIndexesTable(aggregatorList);
+
+    if(mode==11) return indexesTable;
+
+    table[0] = indexesTable[0];
+
+    if(mode===0 && aggregatorList==toAggregateList){
+      table[1] = indexesTable[0];
+      return table;
+    }
+
+    mode = mode==null?0:mode;
+
+    var list;
+    var elementsTable;
+
+    switch(mode){
+      case 0://first element
+        table[1] = new List();
+        indexesTable[1].forEach(function(indexes){
+          table[1].push(toAggregateList[indexes[0]]);
+        });
+        table[1] = table[1].getImproved();
+        return table;
+      case 1://count
+        table[1] = new NumberList();
+        indexesTable[1].forEach(function(indexes){
+          table[1].push(indexes.length);
+        });
+        return table;
+      case 2://sum
+      case 3://average
+        var sum;
+        table[1] = new NumberList();
+        indexesTable[1].forEach(function(indexes){
+          sum = 0;
+          indexes.forEach(function(index){
+            sum+=toAggregateList[index];
+          });
+          if(mode==3) sum/=indexes.length;
+          table[1].push(sum);
+        });
+        return table;
+      case 4://min
+        var min;
+        table[1] = new NumberList();
+        indexesTable[1].forEach(function(indexes){
+          min = 99999999999;
+          indexes.forEach(function(index){
+            min=Math.min(min, toAggregateList[index]);
+          });
+          table[1].push(min);
+        });
+        return table;
+      case 5://max
+        var max;
+        table[1] = new NumberList();
+        indexesTable[1].forEach(function(indexes){
+          max = -99999999999;
+          indexes.forEach(function(index){
+            max=Math.max(max, toAggregateList[index]);
+          });
+          table[1].push(max);
+        });
+        return table;
+      case 6://standard deviation
+        var average;
+        table = ListOperators.aggregateList(aggregatorList, toAggregateList, 3, indexesTable);
+        indexesTable[1].forEach(function(indexes, i){
+          sum = 0;
+          average = table[1][i];
+          indexes.forEach(function(index){
+            sum += Math.pow(toAggregateList[index] - average, 2);
+          });
+          table[1][i] = Math.sqrt(sum/indexes.length);
+        });
+        return table;
+      case 7://enlist
+        table[1] = new Table();
+        indexesTable[1].forEach(function(indexes){
+          list = new List();
+          table[1].push(list);
+          indexes.forEach(function(index){
+            list.push(toAggregateList[index]);
+          });
+          list = list.getImproved();
+        });
+        return table.getImproved();
+      case 8://last element
+        table[1] = new List();
+        indexesTable[1].forEach(function(indexes){
+          table[1].push(toAggregateList[indexes[indexes.length-1]]);
+        });
+        table[1] = table[1].getImproved();
+        return table;
+      case 9://most common
+        table[1] = new List();
+        elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
+        elementsTable[1].forEach(function(elements){
+          table[1].push(elements.getMostRepeatedElement());
+        });
+        table[1] = table[1].getImproved();
+        return table;
+      case 10://random
+        table[1] = new List();
+        indexesTable[1].forEach(function(indexes){
+          table[1].push( toAggregateList[indexes[ Math.floor(Math.random()*indexes.length) ]] );
+        });
+        table[1] = table[1].getImproved();
+        return table;
+      case 11://indexes (returned previosuly)
+        break;
+      case 12://count non repeated
+        table[1] = new NumberList();
+        elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
+        elementsTable[1].forEach(function(elements){
+          table[1].push(elements.getWithoutRepetitions().length);
+        });
+        return table;
+      case 13://enlist non repeated
+        table[1] = new List();
+        elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
+        elementsTable[1].forEach(function(elements){
+          table[1].push(elements.getWithoutRepetitions());
+        });
+        table[1] = table[1].getImproved();
+        return table;
+      case 14://concat string
+        table[1] = new StringList();
+        elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
+        elementsTable[1].forEach(function(elements){
+          table[1].push( elements.join(', ') );
+        });
+        return table;
+      case 15://concat string non repeated
+        table[1] = new StringList();
+        elementsTable = ListOperators.aggregateList(aggregatorList, toAggregateList, 7, indexesTable);
+        elementsTable[1].forEach(function(elements){
+          table[1].push( elements.getWithoutRepetitions().join(', ') );
+        });
+        return table;
+    }
+
+    return null;
+  };
+
+  /**
+   * Analyses wether two lists are categorical identical, one is subcategorical to the other, or there's no relation
+   * @param  {List} list0
+   * @param  {List} list1
+   * @return {Number} 0:no relation, 1:categorical identical, 2:list0 subcategorical to list1, 3:list1 subcategorical to list0
+   * tags:
+   */
+  ListOperators.subCategoricalAnalysis = function(list0, list1){
+    if(list0==null || list1==null) return;
+
+    var dictionary = {};
+    var element, projection;
+    var i;
+    var list0SubCategorical = true;
+    for(i=0; list0[i]!=null; i++){
+      element = list0[i];
+      projection = dictionary[element];
+      if(projection==null){
+        dictionary[element] = list1[i];
+      } else if(projection!=list1[i]){
+        list0SubCategorical = false;
+        break;
+      }
+    }
+
+    dictionary = {};
+    var list1SubCategorical = true;
+    for(i=0; list1[i]!=null; i++){
+      element = list1[i];
+      projection = dictionary[element];
+      if(projection==null){
+        dictionary[element] = list0[i];
+      } else if(projection!=list0[i]){
+        list1SubCategorical = false;
+        break;
+      }
+    }
+
+    if(list1SubCategorical && list0SubCategorical) return 1;
+    if(list0SubCategorical) return 2;
+    if(list1SubCategorical) return 3;
+    return 0;
+  };
+
+  /**
+   * calculates de entropy of a list, properties _mostRepresentedValue and _biggestProbability are added to the list
+   * @param  {List} list with repeated elements (actegorical list)
+   *
+   * @param {Object} valueFollowing if a value is provided, the property _P_valueFollowing will be added to the list, with proportion of that value in the list
+   * @param {Table} freqTable for saving time, in case the frequency table with sorted elements has been already calculated (with list.getFrequenciesTable(true))
+   * @return {Number}
+   * tags:statistics
+   */
+  ListOperators.getListEntropy = function(list, valueFollowing, freqTable) {
+    if(list == null) return;
+
+    if(list.length < 2) {
+      if(list.length == 1) {
+        list._mostRepresentedValue = list[0];
+        list._biggestProbability = 1;
+        if(valueFollowing != null) list._P_valueFollowing = list[0] == valueFollowing ? 1 : 0;
+      } else {
+        if(valueFollowing != null) list._P_valueFollowing = 0;
+      }
+      return 0;
+    }
+
+    if(freqTable==null) freqTable = list.getFrequenciesTable(true);// ListOperators.countElementsRepetitionOnList(list, true);
+
+    list._mostRepresentedValue = freqTable[0][0];
+    var N = list.length;
+    list._biggestProbability = freqTable[1][0] / N;
+    if(freqTable[0].length == 1) {
+      list._P_valueFollowing = list[0] == valueFollowing ? 1 : 0;
+      return 0;
+    }
+    var entropy = 0;
+
+    var norm = Math.log(freqTable[0].length);
+    freqTable[1].forEach(function(val) {
+      entropy -= (val / N) * Math.log(val / N) / norm;
+    });
+
+    if(valueFollowing != null) {
+      var index = freqTable[0].indexOf(valueFollowing);
+      list._P_valueFollowing = index == -1 ? 0 : freqTable[1][index] / N;
+    }
+    return entropy;
+  };
+
+
+  /**
+   * measures how much a feature decreases entropy when segmenting by its values by a supervised variable
+   * @param  {List} feature
+   * @param  {List} supervised
+   * @return {Number}
+   * tags:ds
+   */
+  ListOperators.getInformationGain = function(feature, supervised) {
+    if(feature == null || supervised == null || feature.length != supervised.length) return null;
+
+    var ig = ListOperators.getListEntropy(supervised);
+    var childrenObject = {};
+    var childrenLists = [];
+    var N = feature.length;
+
+    feature.forEach(function(element, i) {
+      if(childrenObject[element] == null) {
+        childrenObject[element] = new List();
+        childrenLists.push(childrenObject[element]);
+      }
+      childrenObject[element].push(supervised[i]);
+    });
+
+    childrenLists.forEach(function(cl) {
+      ig -= (cl.length / N) * ListOperators.getListEntropy(cl);
+    });
+
+    return ig;
+  };
+
+  /**
+   * @todo write docs
+   */
+  ListOperators.getInformationGainAnalysis = function(feature, supervised) {
+    if(feature == null || supervised == null || feature.length != supervised.length) return null;
+
+    var ig = ListOperators.getListEntropy(supervised);
+    var childrenObject = {};
+    var childrenLists = [];
+    var N = feature.length;
+    var entropy;
+    var sets = new List();
+
+    feature.forEach(function(element, i) {
+      if(childrenObject[element] == null) {
+        childrenObject[element] = new List();
+        childrenLists.push(childrenObject[element]);
+      }
+      childrenObject[element].push(supervised[i]);
+    });
+
+    childrenLists.forEach(function(cl) {
+      entropy = ListOperators.getListEntropy(cl);
+      ig -= (cl.length / N) * entropy;
+
+      sets.push({
+        children: cl,
+        entropy: entropy,
+        infoGain: ig
+      });
+    });
+
+    return sets;
+  };
+
+
+  /**
+   * Takes a List and returns its elements grouped by identic value. Each list in the table is assigned a "valProperty" value which is used for sorting
+   * @param  {List} list of elements to group
+   * @param  {Boolean} whether the results are to be sorted or not
+   * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
+   *
+   * @param  {Boolean} fillBlanks: whether to fill missing slots or not (if data is sequential)
+   * @return {Table}
+   * tags:dani
+   */
+  ListOperators.groupElements = function(list, sortedByValue, mode, fillBlanks) {
+    if(!list)
+      return;
+    var result = ListOperators._groupElements_Base(list, null, sortedByValue, mode, fillBlanks);
+    return result;
+  };
+
+
+  /**
+   * Takes a List and returns its elements grouped by identic value. Each list in the table is assigned a "valProperty" value which is used for sorting
+   * @param  {List} list of elements to group
+   * @param  {String} name of the property to be used for grouping
+   * @param  {Boolean} wether the results are to be sorted or not
+   * @param  {Number} mode: 0 for returning original values, 1 for indices in original list
+   *
+   * @param  {Boolean} fillBlanks: whether to fill missing slots or not (if data is sequential)
+   * @return {Table}
+   * tags:dani
+   */
+  ListOperators.groupElementsByPropertyValue = function(list, propertyName, sortedByValue, mode, fillBlanks) {
+    if(!list)
+      return;
+    var result = ListOperators._groupElements_Base(list, propertyName, sortedByValue, mode, fillBlanks);
+    return result;
+  };
+
+
+
+  /**
+   * @ignore
+   */
+  ListOperators._groupElements_Base = function(list, propertyName, sortedByValue, mode, fillBlanks) {
+    if(!list)
+      return;
+    if(mode == undefined){
+      mode = 0;
+    }
+    var resultOb = {};
+    var resultTable = new Table();
+    var pValue, item, minValue, maxValue, i;
+    for(i = 0; i < list.length; i++) {
+      item = list[i];
+      pValue = propertyName == undefined ? item : item[propertyName];
+      if(resultOb[pValue] === undefined) {
+        resultOb[pValue] = new List();
+        resultOb[pValue].name = pValue;
+        resultOb[pValue].valProperty = pValue;
+        resultTable.push(resultOb[pValue]);
+      }
+      if(mode === 0)
+        resultOb[pValue].push(item);
+      else if(mode == 1)
+        resultOb[pValue].push(i);
+      // Update boundaries
+      if(minValue === undefined || pValue < minValue) {
+        minValue = pValue;
+      }
+      if(maxValue === undefined || pValue > maxValue) {
+        maxValue = pValue;
+      }
+    }
+
+    // Fill the blanks
+    if(fillBlanks) {
+      var numBlanks = 0;
+      for(i = minValue; i < maxValue; i++) {
+        if(resultOb[i] === undefined) {
+          resultOb[i] = new List();
+          resultOb[i].name = i;
+          resultOb[i].valProperty = i;
+          resultTable.push(resultOb[i]);
+          numBlanks++;
+        }
+      }
+      //console.log("numBlanks: ", numBlanks)
+    }
+
+    // To-do: looks like getSortedByProperty is removing the valProperty from the objects
+    if(sortedByValue)
+      resultTable = resultTable.getSortedByProperty("name"); // "valProperty"
+
+    return resultTable;
+
+  };
+
+  /**
+   * returns a string representing list
+   *
+   * @param  {List} list
+   * @param  {Number} level
+   *
+   */
+  ListOperators.getReport = function(list, level) { //TODO:complete
+    var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
+    var text = level > 0 ? (ident + "////report of instance of List////") : "///////////report of instance of List//////////";
+
+    var length = list.length;
+    var i;
+
+    text += ident + "name: " + list.name;
+    text += ident + "type: " + list.type;
+
+    if(length === 0) {
+      text += ident + "single element: [" + list[0] + "]";
+      return text;
+    } else {
+      text += ident + "length: " + length;
+      text += ident + "first element: [" + list[0] + "]";
+    }
+
+    switch(list.type) {
+      case "NumberList":
+        var min = list.getMin();
+        var max = list.getMax();
+        list.min = min;
+        list.max = max;
+        var average = list.getAverage();//(min + max) * 0.5;
+        list.average = average;
+        text += ident + "min: " + min;
+        text += ident + "max: " + max;
+        text += ident + "average: " + average;
+        if(length < 101) {
+          text += ident + "numbers: " + list.join(", ");
+        }
+        break;
+        case "StringList":
+      case "List":
+        var freqTable = list.getFrequenciesTable(true);
+        list._freqTable = freqTable;
+        text += ident + "number of different elements: " + freqTable[0].length;
+        if(freqTable[0].length < 10) {
+          text += ident + "elements frequency:";
+        } else {
+          text += ident + "some elements frequency:";
+        }
+
+        for(i = 0; freqTable[0][i] != null && i < 10; i++) {
+          text += ident + "  [" + String(freqTable[0][i]) + "]: " + freqTable[1][i];
+        }
+
+        var joined;
+        if(list.type == "List") {
+          joined = list.join("], [");
+        } else {
+          joined = ListConversions.toStringList(list).join("], [");
+        }
+
+        if(joined.length < 2000) text += ident + "strings: [" + joined + "]";
+        break;
+
+    }
+
+    ///add ideas to: analyze, visualize
+
+
+    return text;
+  };
+
+
+  ListOperators.getReportHtml = function(list, level) { //TODO:complete
+    var ident = "<br>" + (level > 0 ? StringOperators.repeatString("&nbsp", level) : "");
+    var text =  level > 0 ? "" : "<b><font style=\"font-size:18px\">list report</f></b>";
+
+    var length = list.length;
+    var i;
+
+    if(list.name){
+      text += ident + "name: <b>" + list.name + "</b>";
+    } else {
+      text += ident + "<i>no name</i>";
+    }
+    text += ident + "type: <b>" + list.type + "</b>";
+
+    if(length === 0) {
+      text += ident + "single element: [<b>" + list[0] + "</b>]";
+      return text;
+    } else {
+      text += ident + "length: <b>" + length + "</b>";
+      text += ident + "first element: [<b>" + list[0] + "</b>]";
+    }
+
+    switch(list.type) {
+      case "NumberList":
+        var min = 9999999;
+        var max = -9999999;
+        var average = 0;
+        var shorten = new NumberList();
+        var index = 0;
+        var accumsum = 0;
+        var maxAccumsum = -99999;
+        var sizeAccum = Math.max(Math.floor(list.length/50), 1);
+
+        list.forEach(function(val){
+          min = Math.min(min, val);
+          max = Math.max(max, val);
+          average += val;
+          accumsum += val;
+          index++;
+          if(index==sizeAccum){
+            accumsum /= index;
+            maxAccumsum = Math.max(maxAccumsum, accumsum);
+            shorten.push(accumsum);
+            accumsum=0;
+            index=0;
+          }
+        });
+        if(index !== 0){
+            accumsum /=index;
+            maxAccumsum = Math.max(maxAccumsum, accumsum);
+            shorten.push(accumsum);
+        }
+
+        shorten = shorten.factor(1/maxAccumsum);
+
+        average /= list.length;
+
+        list.min = min;
+        list.max = max;
+        list.average = average;
+        text += ident + "min: <b>" + min + "</b>";
+        text += ident + "max: <b>" + max + "</b>";
+        text += ident + "average: <b>" + average + "</b>";
+        if(length < 101) {
+          text += ident + "numbers: <b>" + list.join("</b>, <b>") + "</b>";
+        }
+        text += ident;
+        for(i=0; shorten[i]!=null; i++){
+          text += "<font style=\"font-size:7px\"><font color=\""+ColorOperators.colorStringToHEX(ColorScales.grayToOrange(shorten[i]))+"\">█</f></f>";
+        }
+        break;
+      case "StringList":
+      case "List":
+        var freqTable = list.getFrequenciesTable(true);
+        list._freqTable = freqTable;
+        var catColors = ColorListGenerators.createCategoricalColors(2, freqTable[0].length);
+
+        text += ident + "entropy: <b>" + NumberOperators.numberToString(ListOperators.getListEntropy(list, null, freqTable), 4) + "</b>";
+
+        text += ident + "number of different elements: <b>" + freqTable[0].length + "</b>";
+        if(freqTable[0].length < 10) {
+          text += ident + "elements frequency:";
+        } else {
+          text += ident + "some elements frequency:";
+        }
+
+        for(i = 0; freqTable[0][i] != null && i < 10; i++) {
+          text += ident + "  [<b>" + String(freqTable[0][i]) + "</b>]: <font style=\"font-size:10px\"><b><font color=\""+ColorOperators.colorStringToHEX(catColors[i])+"\">" + freqTable[1][i] + "</f></b></f>";
+        }
+
+        var joined;
+        if(list.type == "List") {
+          joined = list.join("], [");
+        } else {
+          joined = ListConversions.toStringList(list).join("], [");
+        }
+
+        if(joined.length < 2000) text += ident + "contents: [" + joined + "]";
+
+        var weights = NumberListOperators.normalizedToSum(freqTable[1]);
+
+        var bars = StringOperators.createsCategoricalColorsBlocksHtml(weights, 55, catColors);
+        text += ident;
+        text += "<font style=\"font-size:7px\">"+bars+"</f>";
+
+        break;
+    }
+
+
+    ///add ideas to: analyze, visualize
+    return text;
+  };
+
+  exports.ListOperators = ListOperators;
 
   PolygonList.prototype = new Table();
   PolygonList.prototype.constructor = PolygonList;
@@ -12252,6 +12214,242 @@ define('src/index', ['exports'], function (exports) {
   // }
 
   exports.PolygonList = PolygonList;
+
+  function ListConversions() {}
+
+
+  /**
+   * Converts the List into a NumberList.
+   *
+   * @param  {List} list
+   * @return {NumberList}
+   * tags:conversion
+   */
+  ListConversions.toNumberList = function(list) {
+    var numberList = new NumberList();
+    numberList.name = list.name;
+    var i;
+    for(i = 0; list[i] != null; i++) {
+      numberList[i] = Number(list[i]);
+    }
+    return numberList;
+  };
+
+  /**
+   * Converts the List into a StringList.
+   *
+   * @param  {List} list
+   * @return {StringList}
+   * tags:conversion
+   */
+  ListConversions.toStringList = function(list) {
+    var i;
+    var stringList = new StringList();
+    stringList.name = list.name;
+    for(i = 0; list[i] != null; i++) {
+      if(typeof list[i] == 'number') {
+        stringList[i] = String(list[i]);
+      } else {
+        stringList[i] = list[i].toString();
+      }
+    }
+    return stringList;
+  };
+
+  exports.ListConversions = ListConversions;
+
+  var ListReport = {};
+
+
+
+  /**
+   * returns a string representing list
+   *
+   * @param  {List} list
+   * @param  {Number} level
+   *
+   */
+  ListReport.getReport = function(list, level) { //TODO:complete
+    var ident = "\n" + (level > 0 ? StringOperators.repeatString("  ", level) : "");
+    var text = level > 0 ? (ident + "////report of instance of List////") : "///////////report of instance of List//////////";
+
+    var length = list.length;
+    var i;
+
+    text += ident + "name: " + list.name;
+    text += ident + "type: " + list.type;
+
+    if(length === 0) {
+      text += ident + "single element: [" + list[0] + "]";
+      return text;
+    } else {
+      text += ident + "length: " + length;
+      text += ident + "first element: [" + list[0] + "]";
+    }
+
+    switch(list.type) {
+      case "NumberList":
+        var min = list.getMin();
+        var max = list.getMax();
+        list.min = min;
+        list.max = max;
+        var average = list.getAverage();//(min + max) * 0.5;
+        list.average = average;
+        text += ident + "min: " + min;
+        text += ident + "max: " + max;
+        text += ident + "average: " + average;
+        if(length < 101) {
+          text += ident + "numbers: " + list.join(", ");
+        }
+        break;
+        case "StringList":
+      case "List":
+        var freqTable = list.getFrequenciesTable(true);
+        list._freqTable = freqTable;
+        text += ident + "number of different elements: " + freqTable[0].length;
+        if(freqTable[0].length < 10) {
+          text += ident + "elements frequency:";
+        } else {
+          text += ident + "some elements frequency:";
+        }
+
+        for(i = 0; freqTable[0][i] != null && i < 10; i++) {
+          text += ident + "  [" + String(freqTable[0][i]) + "]: " + freqTable[1][i];
+        }
+
+        var joined;
+        if(list.type == "List") {
+          joined = list.join("], [");
+        } else {
+          joined = ListConversions.toStringList(list).join("], [");
+        }
+
+        if(joined.length < 2000) text += ident + "strings: [" + joined + "]";
+        break;
+
+    }
+
+    ///add ideas to: analyze, visualize
+
+
+    return text;
+  };
+
+
+  ListReport.getReportHtml = function(list, level) { //TODO:complete
+    var ident = "<br>" + (level > 0 ? StringOperators.repeatString("&nbsp", level) : "");
+    var text =  level > 0 ? "" : "<b><font style=\"font-size:18px\">list report</f></b>";
+
+    var length = list.length;
+    var i;
+
+    if(list.name){
+      text += ident + "name: <b>" + list.name + "</b>";
+    } else {
+      text += ident + "<i>no name</i>";
+    }
+    text += ident + "type: <b>" + list.type + "</b>";
+
+    if(length === 0) {
+      text += ident + "single element: [<b>" + list[0] + "</b>]";
+      return text;
+    } else {
+      text += ident + "length: <b>" + length + "</b>";
+      text += ident + "first element: [<b>" + list[0] + "</b>]";
+    }
+
+    switch(list.type) {
+      case "NumberList":
+        var min = 9999999;
+        var max = -9999999;
+        var average = 0;
+        var shorten = new NumberList();
+        var index = 0;
+        var accumsum = 0;
+        var maxAccumsum = -99999;
+        var sizeAccum = Math.max(Math.floor(list.length/50), 1);
+
+        list.forEach(function(val){
+          min = Math.min(min, val);
+          max = Math.max(max, val);
+          average += val;
+          accumsum += val;
+          index++;
+          if(index==sizeAccum){
+            accumsum /= index;
+            maxAccumsum = Math.max(maxAccumsum, accumsum);
+            shorten.push(accumsum);
+            accumsum=0;
+            index=0;
+          }
+        });
+        if(index !== 0){
+            accumsum /=index;
+            maxAccumsum = Math.max(maxAccumsum, accumsum);
+            shorten.push(accumsum);
+        }
+
+        shorten = shorten.factor(1/maxAccumsum);
+
+        average /= list.length;
+
+        list.min = min;
+        list.max = max;
+        list.average = average;
+        text += ident + "min: <b>" + min + "</b>";
+        text += ident + "max: <b>" + max + "</b>";
+        text += ident + "average: <b>" + average + "</b>";
+        if(length < 101) {
+          text += ident + "numbers: <b>" + list.join("</b>, <b>") + "</b>";
+        }
+        text += ident;
+        for(i=0; shorten[i]!=null; i++){
+          text += "<font style=\"font-size:7px\"><font color=\""+ColorOperators.colorStringToHEX(ColorScales.grayToOrange(shorten[i]))+"\">█</f></f>";
+        }
+        break;
+      case "StringList":
+      case "List":
+        var freqTable = list.getFrequenciesTable(true);
+        list._freqTable = freqTable;
+        var catColors = ColorListGenerators.createCategoricalColors(2, freqTable[0].length);
+
+        text += ident + "entropy: <b>" + NumberOperators.numberToString(ListOperators.getListEntropy(list, null, freqTable), 4) + "</b>";
+
+        text += ident + "number of different elements: <b>" + freqTable[0].length + "</b>";
+        if(freqTable[0].length < 10) {
+          text += ident + "elements frequency:";
+        } else {
+          text += ident + "some elements frequency:";
+        }
+
+        for(i = 0; freqTable[0][i] != null && i < 10; i++) {
+          text += ident + "  [<b>" + String(freqTable[0][i]) + "</b>]: <font style=\"font-size:10px\"><b><font color=\""+ColorOperators.colorStringToHEX(catColors[i])+"\">" + freqTable[1][i] + "</f></b></f>";
+        }
+
+        var joined;
+        if(list.type == "List") {
+          joined = list.join("], [");
+        } else {
+          joined = ListConversions.toStringList(list).join("], [");
+        }
+
+        if(joined.length < 2000) text += ident + "contents: [" + joined + "]";
+
+        var weights = NumberListOperators.normalizedToSum(freqTable[1]);
+
+        var bars = StringOperators.createsCategoricalColorsBlocksHtml(weights, 55, catColors);
+        text += ident;
+        text += "<font style=\"font-size:7px\">"+bars+"</f>";
+
+        break;
+    }
+
+
+    ///add ideas to: analyze, visualize
+    return text;
+  };
+
+  exports.ListReport = ListReport;
 
   /* global console */
 

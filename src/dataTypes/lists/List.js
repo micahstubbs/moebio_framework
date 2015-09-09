@@ -1,5 +1,7 @@
 import DataModel from "src/dataTypes/DataModel";
 import NumberList from "src/dataTypes/numeric/NumberList";
+import ListOperators from "src/operators/lists/ListOperators";
+// import ListReport from "src/operators/lists/ListReport";
 import ColorList from "src/dataTypes/graphic/ColorList";
 import StringList from "src/dataTypes/strings/StringList";
 import DateList from "src/dataTypes/dates/DateList";
@@ -137,6 +139,11 @@ List.fromArray = function(array) {
   array.assignNames = List.prototype.assignNames;
   array._splice = Array.prototype.splice;
   array.splice = List.prototype.splice;
+
+
+  // var getReport = ListReport.getReport;
+  var getReport = ListOperators.getReport;
+  array.getReport = getReport.bind(array, array);
 
   array.isList = true;
 
