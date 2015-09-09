@@ -143,7 +143,7 @@ Tree.prototype._assignDescentWeightsToNode = function(node) {
  *
  * @return {String} Log message indicating Tree's size.
  */
-Tree.prototype.getReport = function() {
+Tree.prototype.getReport = function() {// @todo to be placed in TreeOperators
   //TODO: remove relation input?
   return "Tree contains " + this.nodeList.length + " nodes and " + this.relationList.length + " relations";
 };
