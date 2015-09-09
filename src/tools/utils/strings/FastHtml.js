@@ -13,7 +13,7 @@ export default FastHtml;
 /**
  * @todo write docs
  */
-FastHtml.expand = function(abreviatedHTML, scope, onEvent) {
+FastHtml.expand = function(abreviatedHTML) {
   if(abreviatedHTML == null || abreviatedHTML === "") return "";
 
   var bit;

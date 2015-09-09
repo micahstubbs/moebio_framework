@@ -39,8 +39,16 @@ function InputTextFieldHTML(configuration, graphics) {
 
   this.main = graphics.container;// document.getElementById('maindiv');
   this.div = document.createElement('div2');
-  this.textarea ? this.DOMtext = document.createElement("textarea") : this.DOMtext = document.createElement("input");
-  this.password ? this.DOMtext.setAttribute('type', 'password') : this.DOMtext.setAttribute('type', 'text');
+  if(this.textarea) {
+    this.DOMtext = document.createElement("textarea");
+  } else {
+    this.DOMtext = document.createElement("input");
+  }
+  if(this.password) {
+    this.DOMtext.setAttribute('type', 'password');
+  } else {
+    this.DOMtext.setAttribute('type', 'text');
+  }
   this.div.setAttribute('style', 'position:absolute;top:' + this.y + 'px;left:' + this.x + 'px;z-index:' + this.zIndex + ';');
 
   if(!this.border) this.DOMtext.setAttribute('style', 'border:none');

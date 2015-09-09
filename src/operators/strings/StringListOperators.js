@@ -332,7 +332,7 @@ StringListOperators.createShortTextsNetwork = function(texts, stopWords, relatio
         nOtherTexts += Number(text.indexOf(word) != -1); //is this the fastest way?
       });
 
-      if(nOtherTexts == 0) {
+      if(nOtherTexts === 0) {
         words.splice(j, 1);
         j--;
         continue;

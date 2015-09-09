@@ -242,7 +242,7 @@ TextBox.prototype.line = function(x0, x1, y) {
 /**
  * @todo write docs
  */
-TextBox.prototype.mouseUp = function(e) {
+TextBox.prototype.mouseUp = function() {
   if(this.overLink != null) {
     var link = this.links[this.overLink];
     var linkType = this.linksType[this.overLink];

@@ -246,7 +246,7 @@ Loader.loadXML = function(url, onLoadData) {
     } catch(e) {
       try {
         req = new window.ActiveXObject("Microsoft.XMLHTTP");
-      } catch(e) {
+      } catch(e2) {
         req = false;
       }
     }
