@@ -111,7 +111,9 @@ Table.prototype.constructor = Table;
 function Table() {
   var args = [];
   var i;
-  for(i = 0; i &lt; arguments.length; i++) {
+  var nArgs = arguments.length;
+
+  for(i = 0; i &lt; nArgs; i++) {
     args[i] = new List(arguments[i]);
   }
 
@@ -188,7 +190,9 @@ Table.prototype.applyFunction = function(func) {
 Table.prototype.getRow = function(index) {
   var list = new List();
   var i;
-  for(i = 0; i &lt; this.length; i++) {
+  var l = this.length;
+
+  for(i = 0; i &lt; l; i++) {
     list[i] = this[i][index];
   }
   return list.getImproved();
@@ -211,7 +215,9 @@ Table.prototype.getListLength = function(index) {
  */
 Table.prototype.getLengths = function() {
   var lengths = new NumberList();
-  for(var i = 0; this[i] != null; i++) {
+  var l = this.length;
+
+  for(var i = 0; i&lt;l; i++) {
     lengths[i] = this[i].length;
   }
   return lengths;
@@ -230,9 +236,10 @@ Table.prototype.sliceRows = function(startIndex, endIndex) {
   var i;
   var newTable = new Table();
   var newList;
+  var l = this.length;
 
   newTable.name = this.name;
-  for(i = 0; this[i] != null; i++) {
+  for(i = 0; i&lt;l; i++) {
     newList = this[i].getSubList(startIndex, endIndex);
     newList.name = this[i].name;
     newTable.push(newList);
@@ -248,9 +255,15 @@ Table.prototype.sliceRows = function(startIndex, endIndex) {
  */
 Table.prototype.getSubListsByIndexes = function(indexes) {
   var newTable = new Table();
-  this.forEach(function(list) {
-    newTable.push(list.getSubListByIndexes(indexes));
-  });
+  var i;
+  var l = this.length;
+
+  for(i=0; i&lt;l; i++){
+    newTable.push(this[i].getSubListByIndexes(indexes));
+  }
+  // this.forEach(function(list) {
+  //   newTable.push(list.getSubListByIndexes(indexes));
+  // });
   return newTable.getImproved();
 };
 
@@ -271,8 +284,9 @@ Table.prototype.getRows = function(indexes) {
  */
 Table.prototype.getWithoutRow = function(rowIndex) {
   var newTable = new Table();
+  var l = this.length;
   newTable.name = this.name;
-  for(var i = 0; this[i] != null; i++) {
+  for(var i = 0; i&lt;l; i++) {
     newTable[i] = List.fromArray(this[i].slice(0, rowIndex).concat(this[i].slice(rowIndex + 1))).getImproved();
     newTable[i].name = this[i].name;
   }
@@ -285,12 +299,15 @@ Table.prototype.getWithoutRow = function(rowIndex) {
  * @return {Table}
  * tags:filter
  */
-Table.prototype.getWithoutRows = function(rowsIndexes) {
+Table.prototype.getWithoutRows = function(rowsIndexes) {// @todo improve efficiency by building dictionary and not using indexOf
   var newTable = new Table();
+  var l = this.length;
+  var nElements;
   newTable.name = this.name;
-  for(var i = 0; this[i] != null; i++) {
+  for(var i = 0; i&lt;l; i++) {
     newTable[i] = new List();
-    for(var j = 0; this[i][j] != null; j++) {
+    nElements = this[i].length;
+    for(var j = 0; j&lt;nElements; j++) {
       if(rowsIndexes.indexOf(j) == -1) newTable[i].push(this[i][j]);
     }
     newTable[i].name = this[i].name;
@@ -327,6 +344,8 @@ Table.prototype.getListsSortedByList = function(listOrIndex, ascending) { //depr
 Table.prototype.getTransposed = function(firstListAsHeaders) {
 
   var tableToTranspose = firstListAsHeaders ? this.getSubList(1) : this;
+  var l = tableToTranspose.length;
+  var nElements;
 
   var table = instantiate(typeOf(tableToTranspose));
   if(tableToTranspose.length === 0) return table;
@@ -334,21 +353,28 @@ Table.prototype.getTransposed = function(firstListAsHeaders) {
   var j;
   var list;
 
-  for(i = 0; tableToTranspose[i] != null; i++) {
+  for(i = 0; i&lt;l; i++) {
     list = tableToTranspose[i];
-    for(j = 0; list[j] != null; j++) {
+    nElements = list.length;
+    for(j = 0; j&lt;nElements; j++) {
       if(i === 0) table[j] = new List();
       table[j][i] = tableToTranspose[i][j];
     }
   }
-  for(j = 0; tableToTranspose[0][j] != null; j++) {
+
+  nElements = tableToTranspose[0].length;
+  for(j = 0; j&lt;nElements; j++) {
     table[j] = table[j].getImproved();
   }
 
   if(firstListAsHeaders) {
-    this[0].forEach(function(name, i) {
-      table[i].name = String(name);
-    });
+    nElements = this[0].length;
+    for(j = 0; j&lt;nElements; j++) {
+      table[j].name = String(this[0][j]);
+    }
+    // this[0].forEach(function(name, i) {
+    //   table[i].name = String(name);
+    // });
   }
 
   return table;
@@ -371,9 +397,10 @@ Table.prototype.removeRow = function(index) {
  * @return {Table} Copy of table.
  */
 Table.prototype.clone = function() {
+  var l = this.length;
   var clonedTable = instantiateWithSameType(this);
   clonedTable.name = this.name;
-  for(var i = 0; this[i] != null; i++) {
+  for(var i = 0; i&lt;l; i++) {
     clonedTable.push(this[i].clone());
   }
   return clonedTable;

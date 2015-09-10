@@ -107,6 +107,37 @@ NumberListOperators.dotProduct = function(numberList1, numberList2) {
 };
 
 /**
+ * Returns linear regression between two numberLists in another numberList with items
+ * slope, intercept
+ *
+ * @param  {NumberList} numberListX of the same length as numberListY.
+ * @param  {NumberList} numberListY of the same length as numberListX.
+ * @return {NumberList} NumberList with items slope, intercept
+ * tags:statistics
+ */
+NumberListOperators.linearRegression = function(numberListX, numberListY) {
+  var numberListR = new NumberList();
+  if(numberListX == null || numberListY == null ||
+     numberListX.length != numberListY.length || numberListX.length === 0)
+    return numberListR;
+  var sumx=0,sumy=0,sumx2=0,sumxy=0,sumy2=0;
+
+  var n = numberListX.length;
+  for(var i = 0; i &lt; n; i++) {
+    sumx += numberListX[i];
+    sumy += numberListY[i];
+    sumx2 += numberListX[i]*numberListX[i];
+    sumxy += numberListX[i]*numberListY[i];
+    sumy2 += numberListY[i]*numberListY[i];
+  }
+  var slope = (n * sumxy - sumx * sumy) / (n * sumx2 - sumx * sumx);
+  var intercept = (sumy / n) - (slope * sumx) / n;
+  numberListR.push(slope);
+  numberListR.push(intercept);
+  return numberListR;
+};
+
+/**
  * Calculates Euclidean distance between two numberLists
  *
  * @param  {NumberList1} numberList NumberList of the same length
@@ -421,20 +452,22 @@ NumberListOperators.averageSmoother = function(numberList, intensity, nIteration
   var anti = 1 - 2 * intensity;
   var n = numberList.length - 1;
 
-  var newNumberList = new NumberList();
+  var newNumberList = numberList.clone();
   var i;
 
-  newNumberList.name = numberList.name;
+  var smoothFirst = function(val, i, list){
+    list[i] = anti * val + (i > 0 ? (numberList[i - 1] * intensity) : 0) + (i &lt; n ? (numberList[i + 1] * intensity) : 0);
+  };
+
+  var smooth = function(val, i, list){
+    list[i] = anti * val + (i > 0 ? (list[i - 1] * intensity) : 0) + (i &lt; n ? (list[i + 1] * intensity) : 0);
+  };
 
   for(i = 0; i &lt; nIterations; i++) {
     if(i === 0) {
-      numberList.forEach(function(val, i) {
-        newNumberList[i] = anti * val + (i > 0 ? (numberList[i - 1] * intensity) : 0) + (i &lt; n ? (numberList[i + 1] * intensity) : 0);
-      });
+      newNumberList.forEach(smoothFirst);
     } else {
-      newNumberList.forEach(function(val, i) {
-        newNumberList[i] = anti * val + (i > 0 ? (newNumberList[i - 1] * intensity) : 0) + (i &lt; n ? (newNumberList[i + 1] * intensity) : 0);
-      });
+      newNumberList.forEach(smooth);
     }
   }
 
@@ -442,7 +475,6 @@ NumberListOperators.averageSmoother = function(numberList, intensity, nIteration
 
   return newNumberList;
 };
-
 
 /**
  * accepted comparison operators: "&lt;", "&lt;=", ">", ">=", "==", "!="
@@ -631,6 +663,7 @@ NumberListOperators.intersection = function(a, b) {//TODO: refactor method that 
  * @return {Rectangle}
  */
 NumberListOperators.frameFromTwoNumberLists = function(numberListX, numberListY){
+  if(numberListX==null || numberListY==null) return;
   var intX = numberListX.getInterval();
   var intY = numberListY.getInterval();
   return new Rectangle(intX.x, intY.x, intX.getAmplitude(), intY.getAmplitude());

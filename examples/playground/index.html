@@ -81,7 +81,7 @@ function setupEditor() {
   });
 
   function generate() {
-    var session = "document.getElementById('maindiv').innerHTML = '';"
+    var session = "var __main = document.getElementById('maindiv'); if(__main) { __main.innerHTML = '';}"
     session = session + editor.getSession().getValue();
     // hack to re-run init
     session += "window.onload();";

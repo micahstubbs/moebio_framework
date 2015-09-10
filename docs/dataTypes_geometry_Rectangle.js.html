@@ -80,7 +80,7 @@ Rectangle.prototype = new DataModel();
 Rectangle.prototype.constructor = Rectangle;
 
 /**
- * @classdesc Rectangle shape
+ * @classdesc Rectangle shape with x, y, width, and height.
  *
  * @description Creates a new Rectangle.
  * @param {Number} x
@@ -102,79 +102,91 @@ function Rectangle(x, y, width, height) {
 export default Rectangle;
 
 /**
- * @todo write docs
+ * Gets the position of the top right corner of the Rectangle.
+ * @return {Number} Top-right corner.
  */
 Rectangle.prototype.getRight = function() {
   return this.x + this.width;
 };
 
 /**
- * @todo write docs
+ * Gets the position of the bottom left corner of the Rectangle.
+ * @return {Number} Bottom-left corner.
  */
 Rectangle.prototype.getBottom = function() {
   return this.y + this.height;
 };
 
 /**
- * @todo write docs
+ * Sets the position of the top right corner of the Rectangle by reducing the
+ * width of the Rectangle to set it to the input value.
+ * @param {Number} New value of Top-right corner.
  */
 Rectangle.prototype.setRight = function(value) {
   this.width = value - this.x;
 };
 
 /**
- * @todo write docs
+ * Sets the position of the bottom left corner of the Rectangle by reducing the
+ * height of the Rectangle to set it to the input value.
+ * @param {Number} New value of bottom-left corner.
  */
 Rectangle.prototype.setBottom = function(value) {
   this.height = value - this.y;
 };
 
-
-
 /**
- * @todo write docs
+ * Gets the position of the top left corner of the Rectangle as a {@link Point}.
+ * @return {Point} Top-Left corner.
  */
 Rectangle.prototype.getTopLeft = function() {
   return new Point(this.x, this.y);
 };
 
 /**
- * @todo write docs
+ * Gets the position of the top right corner of the Rectangle as a {@link Point}.
+ * @return {Point} Top-Right corner.
  */
 Rectangle.prototype.getTopRight = function() {
   return new Point(this.x + this.width, this.y);
 };
 
 /**
- * @todo write docs
+ * Gets the position of the bottom right corner of the Rectangle as a {@link Point}.
+ * @return {Point} Bottom-Right corner.
  */
 Rectangle.prototype.getBottomRight = function() {
   return new Point(this.x + this.width, this.y + this.height);
 };
 
 /**
- * @todo write docs
+ * Gets the position of the bottom left corner of the Rectangle as a {@link Point}.
+ * @return {Point} Bottom-Left corner.
  */
 Rectangle.prototype.getBottomLeft = function() {
   return new Point(this.x, this.y + this.height);
 };
 
 /**
- * @todo write docs
+ * Gets the position of the middle of the Rectangle as a {@link Point}.
+ * @return {Point} Center of Rectangle
  */
 Rectangle.prototype.getCenter = function() {
   return new Point(this.x + 0.5 * this.width, this.y + 0.5 * this.height);
 };
 
 /**
- * @todo write docs
+ * Returns a random {@link Point} constrained to be within the bounds of the Rectangle.
+ * @return {Point} Random Point in Rectangle.
  */
 Rectangle.prototype.getRandomPoint = function() {
   return new Point(this.x + Math.random() * this.width, this.y + Math.random() * this.height);
 };
 
 /**
- * @todo write docs
+ * Returns a Rectangle that is the overlap of this Rectangle and the input Rectangle.
+ * @param {Rectangle} rectangle Rectangle to overlap on this Rectangle.
+ * @return {Rectangle} Overlaping area of the two as a Rectangle.
  */
 Rectangle.prototype.getIntersection = function(rectangle) {
   if(rectangle.x + rectangle.width &lt; this.x || rectangle.x > this.x + this.width || rectangle.y + rectangle.height &lt; this.y || rectangle.y > this.y + this.height) return null;
@@ -184,7 +196,10 @@ Rectangle.prototype.getIntersection = function(rectangle) {
 };
 
 /**
- * @todo write docs
+ * Returns a new Rectangle that is the interpolation between the current Rectangle
+ * and the given Rectangle at some time t. The input t is a value between 0 and 1.
+ * @param {Rectangle} rectangle Rectangle to interpolate to.
+ * @return {Rectangle} Overlaping area of the two as a Rectangle.
  */
 Rectangle.prototype.interpolate = function(rectangle, t) {
   var mint = 1 - t;
@@ -192,23 +207,25 @@ Rectangle.prototype.interpolate = function(rectangle, t) {
 };
 
 /**
- * @todo write docs
+ * Returns the width / height ratio.
+ * @return {Number} ratio of the Rectangle.
  */
 Rectangle.prototype.getRatio = function() {
   return Math.max(this.width, this.height) / Math.min(this.width, this.height);
 };
 
 /**
- * @todo write docs
+ * Returns the width * height area of the Rectangle
+ * @return {Number} area of the Rectangle.
  */
 Rectangle.prototype.getArea = function() {
   return this.width * this.height;
 };
 
 /**
- * check if a point belong to the rectangle
- * @param  {Point} point
- * @return {Boolean}
+ * Checks if a Point is within the bounds of this Rectangle.
+ * @param  {Point} point Point to check.
+ * @return {Boolean} true if Point is in Rectangle.
  * tags:geometry
  */
 Rectangle.prototype.containsPoint = function(point) {
@@ -217,7 +234,11 @@ Rectangle.prototype.containsPoint = function(point) {
 
 
 /**
- * @todo write docs
+ * Checks if a Point is on the border of the Rectangle within some margin.
+ * @param  {Point} point Point to check.
+ * @param  {Number} margin Area around border to include in the 'border' of the Rectangle.
+ * @return {Boolean} true if Point is on the border.
+ * tags:geometry
  */
 Rectangle.prototype.pointIsOnBorder = function(point, margin) {
   margin = margin == null ? 1 : margin;
@@ -231,20 +252,19 @@ Rectangle.prototype.pointIsOnBorder = function(point, margin) {
   return false;
 };
 
-
-
-
 /**
- * @todo write docs
+ * Creates a new Rectangle from this Rectangle which has no negative values for
+ * width and height.
+ * @return {Rectangle} new Normalized Rectangle.
  */
 Rectangle.prototype.getNormalRectangle = function() {
   return new Rectangle(Math.min(this.x, this.x + this.width), Math.min(this.y, this.y + this.height), Math.abs(this.width), Math.abs(this.height));
 };
 
 /**
- * return true if it interstects a rectangle
- * @param  {Rectangle} rectangle
- * @return {Boolean}
+ * Returns true if provided Rectangle overlaps this Rectangle.
+ * @param  {Rectangle} rectangle Rectangle to check.
+ * @return {Boolean} true if the two Rectangles overlap.
  * tags:geometry
  */
 Rectangle.prototype.intersectsRectangle = function(rectangle) {
@@ -252,36 +272,45 @@ Rectangle.prototype.intersectsRectangle = function(rectangle) {
 };
 
 /**
- * @todo write docs
+ * Expands Rectangle by multiplying dimensions by the given expansion around a
+ * given center point. If no center point is provided, the new Rectangle is
+ * expanded around the center of the current Rectangle.
+ * @param {Number} expansion Factor to expand by.
+ * @param {Point} centerPoint Center point of the expansion. Center of Rectangle by default.
+ * @return {Rectangle} Expanded Rectangle.
  */
-Rectangle.prototype.expand = function(expantion, centerPoint) {
+Rectangle.prototype.expand = function(expansion, centerPoint) {
   centerPoint = centerPoint || new Point(this.x + 0.5 * this.width, this.y + 0.5 * this.height);
-  return new Rectangle((this.x - centerPoint.x) * expantion + centerPoint.x, (this.y - centerPoint.y) * expantion + centerPoint.y, this.width * expantion, this.height * expantion);
+  return new Rectangle((this.x - centerPoint.x) * expansion + centerPoint.x, (this.y - centerPoint.y) * expansion + centerPoint.y, this.width * expansion, this.height * expansion);
 };
 
 /**
- * @todo write docs
+ * Returns true if this Rectangle is equal to the provided Rectangle.
+ * @param  {Rectangle} rectangle Rectangle to compare.
+ * @return {Boolean} true if two Rectangles are equal.
  */
 Rectangle.prototype.isEqual = function(rectangle) {
   return this.x == rectangle.x &amp;&amp; this.y == rectangle.y &amp;&amp; this.width == rectangle.width &amp;&amp; this.height == rectangle.height;
 };
 
 /**
- * @todo write docs
+ * Returns copy of this Rectangle.
+ * @return {Rectangle} Copy of this Rectangle.
  */
 Rectangle.prototype.clone = function() {
   return new Rectangle(this.x, this.y, this.width, this.height);
 };
 
 /**
- * @todo write docs
- */
+* Provides a string representation of the Rectangle.
+* @return {String} string output.
+*/
 Rectangle.prototype.toString = function() {
   return "(x=" + this.x + ", y=" + this.y + ", w=" + this.width + ", h=" + this.height + ")";
 };
 
 /**
- * @todo write docs
+ * Deletes Rectangle.
  */
 Rectangle.prototype.destroy = function() {
   delete this.x;

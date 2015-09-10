@@ -1004,15 +1004,19 @@ define('src/index', ['exports'], function (exports) {
 
     var freqTable = this.getFrequenciesTable();
 
-    if(othersElement==null) othersElement = "other";
+    if(othersElement===null) othersElement = "other";
 
+<<<<<<< HEAD
+    var newList = this.type=="StringList"?new StringList():new List__List();
+=======
     var newList = new List();
+>>>>>>> master
     newList.name = this.name;
 
     this.forEach(function(element){
       newList.push(freqTable._indexesDictionary[element]<nCategories-1?element:othersElement);
     });
-
+    
     return newList;
   };
 
@@ -2198,9 +2202,41 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @todo write docs
    */
+<<<<<<< HEAD
+  Table.fromArray = function(array) {
+    var result = List__default.fromArray(array);
+    result.type = "Table";
+    //assign methods to array:
+    result.applyFunction = Table.prototype.applyFunction;
+    result.getRow = Table.prototype.getRow;
+    result.getRows = Table.prototype.getRows;
+    result.getLengths = Table.prototype.getLengths;
+    result.getListLength = Table.prototype.getListLength;
+    result.sliceRows = Table.prototype.sliceRows;
+    result.getSubListsByIndexes = Table.prototype.getSubListsByIndexes;
+    result.getWithoutRow = Table.prototype.getWithoutRow;
+    result.getWithoutRows = Table.prototype.getWithoutRows;
+    result.getTableSimplified = Table.prototype.getTableSimplified;
+    result.getSubTableByElementOnList = Table.prototype.getSubTableByElementOnList;
+    result.getSubTableByElementsOnList = Table.prototype.getSubTableByElementsOnList;
+    result.getTransposed = Table.prototype.getTransposed;
+    result.getListsSortedByList = Table.prototype.getListsSortedByList;
+    result.sortListsByList = Table.prototype.sortListsByList;
+    result.getReport = Table.prototype.getReport;
+    result.getReportHtml = Table.prototype.getReportHtml;
+    result.clone = Table.prototype.clone;
+    result.print = Table.prototype.print;
+
+    //transformative
+    result.removeRow = Table.prototype.removeRow;
+
+    //overiden
+    result.destroy = Table.prototype.destroy;
+=======
   Rectangle.prototype.getTopLeft = function() {
     return new Point(this.x, this.y);
   };
+>>>>>>> master
 
   /**
    * @todo write docs
@@ -2326,12 +2362,64 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @todo write docs
    */
+<<<<<<< HEAD
+  Table.prototype.getWithoutRows = function(rowsIndexes) {
+    var newTable = new Table();
+    var i, j;
+
+    newTable.name = this.name;
+    for(i = 0; this[i] != null; i++) {
+      newTable[i] = new List__default();
+      for(j = 0; this[i][j] != null; j++){
+        if(rowsIndexes.indexOf(j) == -1) newTable[i].push(this[i][j]);
+      }
+      newTable[i].name = this[i].name;
+    }
+    return newTable.getImproved();
+  };
+
+  /**
+   * takes a table and simplifies its lists, numberLists will be simplified using quantiles values (using getNumbersSimplified) and other lists reducing the number of different elements (using getSimplified)
+   * specially useful to build simpe decision trees using TableOperators.buildDecisionTree
+   * @param  {Number} nCategories number of different elements on each list
+   * 
+   * @param {Object} othersElement to be placed instead of the less common elements ("other" by default)
+   * @return {Table}
+   * tags:
+   */
+  Table.prototype.getTableSimplified = function(nCategories, othersElement) {
+    if(nCategories===undefined) return null;
+
+    var i;
+    var newTable = new Table();
+    newTable.name = this.name;
+
+    for(i=0; this[i]!==undefined; i++){
+      newTable.push(
+        this[i].type==='NumberList'?
+        this[i].getNumbersSimplified(2, nCategories)
+        :
+        this[i].getSimplified(nCategories, othersElement)
+      );
+    }
+
+    return newTable;
+  };
+
+  /**
+   * filters lists on a table, keeping elements that are in the same of row of a certain element of a given list from the table
+   * @param  {Number} nList index of list containing the element
+   * @param  {Object} element used to filter the lists on the table
+   * @return {Table}
+   * tags:filter
+=======
   Rectangle.prototype.isEqual = function(rectangle) {
     return this.x == rectangle.x && this.y == rectangle.y && this.width == rectangle.width && this.height == rectangle.height;
   };
 
   /**
    * @todo write docs
+>>>>>>> master
    */
   Rectangle.prototype.clone = function() {
     return new Rectangle(this.x, this.y, this.width, this.height);
@@ -4457,6 +4545,64 @@ define('src/index', ['exports'], function (exports) {
 
 
   /**
+<<<<<<< HEAD
+   * simplifies the numberList either by replacing numbers by its order of magnitude, or by quantiles
+   * 
+   * @param  {Number} method simplification method:<br>0:significant digits<br>1:number of quantile<br>2:rounded by quantile<br>3:order of magnitude<br>4:rounded by order of magnitude
+   * @param  {Number} param different meaning according to choosen method:<br>0:number of significant digits<br>1:number of quantiles<br>2:number of quantiles<br>3:no need of param<br>4:no need of param
+   * @return {NumberList} simplified list
+   * tags:
+   */
+  NumberList.prototype.getNumbersSimplified = function(method, param) {
+    var newList;
+    var i, j;
+
+    method = method||0;
+    param = param||0;
+
+    newList = new NumberList();
+    newList.name = this.name;
+
+    switch(method){
+      case 0:
+        var power = Math.pow(10, param);
+        this.forEach(function(val){
+          newList.push(Math.floor(val/power)*power);
+        });
+        break;
+      case 1:
+      case 2:
+        param = Math.min( param||10, Math.floor(this.length/2) );
+        var quantiles = this.getQuantiles(param);
+        var val;
+        for(i=0; this[i]!==undefined; i++){
+          val = this[i];
+          if(val<quantiles[0]){
+            method==1?newList.push(0):newList.push(quantiles._min);
+          } else {
+            for(j=0; quantiles[j]!==undefined; j++){
+              if( val>=quantiles[j] && (j+1==quantiles.length || val<quantiles[j+1]) ){
+                method==1?newList.push(j+1):newList.push(quantiles[j]);
+                break;
+              }
+            }
+          }
+        }
+        if(method==1) newList.name = this.name + " (n quantile)";
+        break;
+      case 3:
+        newList.name = this.name + " (order of magnitude)";
+        this.forEach(function(val){
+          newList.push(Math.floor( Math.log(val)/Math.log(10) ));
+        });
+        break;
+      case 4:
+        this.forEach(function(val){
+          newList.push( Math.pow ( 10, Math.floor( Math.log(val)/Math.log(10) ) ) );
+        });
+        break;
+    }
+=======
    * Sort Table's lists by a list
    * @param  {List|Number} listOrIndex List used to sort, or index of list in the table
    *
@@ -4482,6 +4628,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Table}
    */
   Table.prototype.getTransposed = function(firstListAsHeaders) {
+>>>>>>> master
 
     var tableToTranspose = firstListAsHeaders ? this.getSubList(1) : this;
 
@@ -4508,7 +4655,18 @@ define('src/index', ['exports'], function (exports) {
       });
     }
 
+<<<<<<< HEAD
+  /**
+   * Calculates mean of the NumberList.
+   *
+   * @return {Number} Mean of all values in the List.
+   * tags:statistics
+   */
+  NumberList.prototype.getAverage = function() {
+    return this.getSum()/this.length;
+=======
     return table;
+>>>>>>> master
   };
 
 
@@ -4564,6 +4722,31 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @classdesc {@link Table} to store numbers.
    *
+<<<<<<< HEAD
+   * @param {Number} nQuantiles number of quantiles (the size of the resulting list is nQuantiles-1)
+   * @return {NumberList} A number list of the quantiles.
+   * tags:statistics
+   */
+  NumberList.prototype.getQuantiles = function(nQuantiles) {
+    //TODO: defines different options for return
+    
+    var sorted = this.getSorted(true);
+    var prop = this.length / nQuantiles;
+    var entProp = Math.floor(prop);
+    var onIndex = prop == entProp;
+    var quantiles = new NumberList();
+    
+    for(var i = 0; i < nQuantiles - 1; i++) {
+      quantiles[i] = onIndex ? sorted[(i + 1) * prop] : (0.5 * sorted[(i + 1) * entProp] + 0.5 * sorted[(i + 1) * entProp + 1]);
+    }
+
+    quantiles._sorted = sorted;
+    quantiles._min = sorted[0];
+    quantiles._max = sorted[sorted.length-1];
+
+    return quantiles;
+  };
+=======
    * @param [Number|[Number]] args If a single Number, indicates number of
    * columns to make for the NumberTable. Each column is created as an empty
    * NumberList. If an Array, or a set of Arrays, it will make a new NumberList
@@ -4602,6 +4785,7 @@ define('src/index', ['exports'], function (exports) {
     array = NumberTable.fromArray(array);
     return array;
   }
+>>>>>>> master
 
 
   NumberTable.fromArray = function(array) {

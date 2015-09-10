@@ -1549,7 +1549,8 @@ tags:</p>
 
 
 <p>
-    <p>builds a dictionary that matches an element of a List with all its indexes on the List (indexesDictionary[element] --&gt; numberList of indexes of element on list)</p>
+    <p>builds a dictionary that matches an element of a List with all its indexes on the List (indexesDictionary[element] --&gt; numberList of indexes of element on list)
+if the list has no repeated elements, and a single is required per element, use ListOperators.getSingleIndexDictionaryForList</p>
 </p>
 
 
@@ -1633,7 +1634,7 @@ tags:</p>
 
 </strong>
   
-  <p>tags:</p>
+  <p>tags:dictionary</p>
   
 </p>
 
@@ -2140,6 +2141,114 @@ tags:</p>
 
 
 
+
+
+
+
+            
+                
+
+    
+
+
+    <h3 class="name" id=".getSingleIndexDictionaryForList"><span class="type-signature">(static) </span>getSingleIndexDictionaryForList<span class="signature">(list)</span><span class="type-signature"> &rarr; {Object}</span></h3>
+
+    
+
+
+
+<p>
+    <p>builds a dictionary that matches an element of a List with its index on the List (indexesDictionary[element] --&gt; index)
+it assumes there's no repetitions on the list (if that's not tha case the last index of the element will be delivered)</p>
+</p>
+
+
+
+
+
+
+
+
+
+  <h4>Parameters</h4>
+  <p>
+  
+
+<table>
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>list</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="List.html">List</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+  </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<span class='force-inline'>
+
+        
+<p>
+  
+      <strong>Returns 
+<span class="param-type">Object</span>
+
+</strong>
+  
+  <p>tags:dictionary</p>
+  
+</p>
+
+    
+</span>
 
 
 

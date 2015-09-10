@@ -85,6 +85,8 @@ import DateInterval from "src/dataTypes/dates/DateInterval";
 import DateOperators from "src/operators/dates/DateOperators";
 import NumberList from "src/dataTypes/numeric/NumberList";
 import ObjectConversions from "src/operators/objects/ObjectConversions";
+import ListOperators from "src/operators/lists/ListOperators";
+import TableOperators from "src/operators/lists/TableOperators";
 import NumberTableOperators from "src/operators/numeric/numberTable/NumberTableOperators";
 
 /**
@@ -117,6 +119,19 @@ ObjectOperators.getReport = function(object) {
   if(object == null) return null;
 
   if(object.getReport) return object.getReport();
+
+  var type = typeOf(object);
+
+  switch(type){
+    case 'Table':
+      return TableOperators.getReport(object);
+    case 'List':
+      return ListOperators.getReport(object);
+  }
+
+  if(object.isTable) return TableOperators.getReport(object);
+  if(object.isList) return ListOperators.getReport(object);
+
 
   var text = "///////////report of instance of Object//////////";
   if(object.name) text += "name: "+object.name;
@@ -156,8 +171,22 @@ ObjectOperators.getReportHtml = function(object) {
 
   if(object.getReportHtml) return object.getReportHtml();
 
+  var type = typeOf(object);
+
+  switch(type){
+    case 'Table':
+      return TableOperators.getReportHtml(object);
+    case 'List':
+      return ListOperators.getReportHtml(object);
+  }
+
+  if(object.isTable) return TableOperators.getReportHtml(object);
+  if(object.isList) return ListOperators.getReportHtml(object);
+
   var text = "&lt;fs18>report of instance of Object&lt;/f>";
-  if(object.name) text += "name: "+object.name;
+
+  text += ObjectOperators.getReportHtml(object);
+  //if(object.name) text += "name: "+object.name;
 
   return text;
 };
@@ -563,14 +592,12 @@ ObjectOperators.multiplication = function() {
  * @return {Object}
  * tags:math
  */
-ObjectOperators.division = function() {
-  //console.log("addition__________________________________arguments:", arguments);
-  var objectType;
+ObjectOperators.division = function() {    
   var result;
   var i;
   if(arguments.length &lt; 2) {
     if(arguments.length == 1 &amp;&amp; arguments[0] &amp;&amp; arguments[0].isList) {
-      var result = arguments[0][0];
+      result = arguments[0][0];
       for(i = 1; arguments[0][i] != null; i++) {
         result = ObjectOperators.division(result, arguments[0][i]);
       }
