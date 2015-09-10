@@ -32,6 +32,37 @@ NumberListOperators.dotProduct = function(numberList1, numberList2) {
 };
 
 /**
+ * Returns regression between two numberLists in another numberList with items
+ * slope, intercept
+ *
+ * @param  {NumberList} numberListX of the same length as numberListY.
+ * @param  {NumberList} numberListY of the same length as numberListX.
+ * @return {NumberList} NumberList with items slope, intercept
+ * tags:statistics
+ */
+NumberListOperators.regression = function(numberListX, numberListY) {
+  var numberListR = new NumberList();
+  if(numberListX == null || numberListY == null ||
+     numberListX.length != numberListY.length || numberListX.length === 0)
+    return numberListR;
+  var sumx=0,sumy=0,sumx2=0,sumxy=0,sumy2=0;
+
+  var n = numberListX.length;
+  for(var i = 0; i < n; i++) {
+    sumx += numberListX[i];
+    sumy += numberListY[i];
+    sumx2 += numberListX[i]*numberListX[i];
+    sumxy += numberListX[i]*numberListY[i];
+    sumy2 += numberListY[i]*numberListY[i];
+  }
+  var slope = (n * sumxy - sumx * sumy) / (n * sumx2 - sumx * sumx);
+  var intercept = (sumy / n) - (slope * sumx) / n;
+  numberListR.push(slope);
+  numberListR.push(intercept);
+  return numberListR;
+};
+
+/**
  * Calculates Euclidean distance between two numberLists
  *
  * @param  {NumberList1} numberList NumberList of the same length
@@ -362,7 +393,7 @@ NumberListOperators.averageSmoother = function(numberList, intensity, nIteration
       newNumberList.forEach(smoothFirst);
     } else {
       newNumberList.forEach(smooth);
-    }    
+    }
   }
 
   newNumberList.name = numberList.name;
