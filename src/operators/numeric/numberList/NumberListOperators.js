@@ -32,7 +32,7 @@ NumberListOperators.dotProduct = function(numberList1, numberList2) {
 };
 
 /**
- * Returns regression between two numberLists in another numberList with items
+ * Returns linear regression between two numberLists in another numberList with items
  * slope, intercept
  *
  * @param  {NumberList} numberListX of the same length as numberListY.
@@ -40,7 +40,7 @@ NumberListOperators.dotProduct = function(numberList1, numberList2) {
  * @return {NumberList} NumberList with items slope, intercept
  * tags:statistics
  */
-NumberListOperators.regression = function(numberListX, numberListY) {
+NumberListOperators.linearRegression = function(numberListX, numberListY) {
   var numberListR = new NumberList();
   if(numberListX == null || numberListY == null ||
      numberListX.length != numberListY.length || numberListX.length === 0)
