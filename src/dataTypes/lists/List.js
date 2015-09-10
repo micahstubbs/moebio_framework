@@ -10,6 +10,7 @@ import PolygonList from "src/dataTypes/geometry/PolygonList";
 import Table from "src/dataTypes/lists/Table";
 import NumberTable from "src/dataTypes/numeric/NumberTable";
 import Interval from "src/dataTypes/numeric/Interval";
+import ListOperators from "src/operators/lists/ListOperators";
 import ColorListGenerators from "src/operators/graphic/ColorListGenerators";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
 import { instantiateWithSameType, typeOf, instantiate } from "src/tools/utils/code/ClassUtils";
@@ -414,7 +415,6 @@ List.prototype.getSubListByType = function(type) {
  * tags:filter
  */
 List.prototype.getSubListByIndexes = function() { //TODO: merge with getSubList
-  console.log("\n\n\n\n List.prototype.getSubListByIndexes | this: ", this);
   if(this.length < 1) return this;
   var indexes;
   if(typeOf(arguments[0]) == 'number') {
@@ -542,21 +542,22 @@ List.prototype.getSimplified = function(nCategories, othersElement) {
   if(!nCategories) return;
 
   var freqTable = this.getFrequenciesTable();
+  var frequencyIndexesDictionary = ListOperators.getSingleIndexDictionaryForList(freqTable[0]);
   var i;
   var l = this.length;
 
   if(othersElement==null) othersElement = "other";
 
-  var newList = new List();
+  var newList = this.type=="StringList"?new StringList():new List();
   newList.name = this.name;
 
   for(i=0; i<l; i++){
-    newList.push(freqTable._indexesDictionary[this[i]]<nCategories-1?this[i]:othersElement);
+    newList.push(frequencyIndexesDictionary[this[i]]<nCategories-1?this[i]:othersElement);
   }
   // this.forEach(function(element){
   //   newList.push(freqTable._indexesDictionary[element]<nCategories-1?element:othersElement);
   // });
-
+  
   return newList;
 };
 
@@ -617,22 +618,21 @@ List.prototype.getFrequenciesTable = function(sortListsByOccurrences, addWeights
   table[1] = numberList;
 
   //if(this.type == 'NumberList' || this.type == 'StringList') {//TODO:check other cases
-  var dictionary = {};
+  table._indexesDictionary = {};
 
   var l = this.length;
 
   for(i=0; i<l; i++){
-    index = dictionary[this[i]];
+    index = table._indexesDictionary[this[i]];
     if(index==null){
       index = elementList.length;
       elementList[index] = this[i];
       numberList[index] = 0;
-      dictionary[this[i]]= index;
+      table._indexesDictionary[this[i]]= index;
     }
     numberList[index]++;
   }
 
-  table._indexesDictionary = dictionary;
 
 
   // } else {
@@ -659,8 +659,8 @@ List.prototype.getFrequenciesTable = function(sortListsByOccurrences, addWeights
     var colors = new ColorList();
     l = table[0].length;
     for(i = 0; i<l; i++) {
-        colors[i] = ColorListGenerators._HARDCODED_CATEGORICAL_COLORS[i%ColorListGenerators._HARDCODED_CATEGORICAL_COLORS.length];
-      }
+      colors[i] = ColorListGenerators._HARDCODED_CATEGORICAL_COLORS[i%ColorListGenerators._HARDCODED_CATEGORICAL_COLORS.length];
+    }
     table.push(colors);
   }
 

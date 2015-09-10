@@ -43,9 +43,10 @@ NumberList.fromArray = function(array, forceToNumber) {
   forceToNumber = forceToNumber == null ? true : forceToNumber;
 
   var result = List.fromArray(array);
+  var l = result.length;
 
   if(forceToNumber) {
-    for(var i = 0; i < result.length; i++) {
+    for(var i = 0; i < l; i++) {
       result[i] = Number(result[i]);
     }
   }
@@ -62,6 +63,7 @@ NumberList.fromArray = function(array, forceToNumber) {
   result.getSum = NumberList.prototype.getSum;
   result.getProduct = NumberList.prototype.getProduct;
   result.getInterval = NumberList.prototype.getInterval;
+  result.getNumbersSimplified = NumberList.prototype.getNumbersSimplified;
 
   //statistics
   result.getAverage = NumberList.prototype.getAverage;
@@ -212,6 +214,104 @@ NumberList.prototype.getInterval = function() {
 };
 
 
+
+
+/**
+ * simplifies the numberList either by replacing numbers by its order of magnitude, or by quantiles
+ *
+ * @param  {Number} method simplification method:<br>0:factors of numbers of magnitude<br>1:number of quantile<br>2:rounded by quantile<br>3:order of magnitude<br>4:rounded by order of magnitude<br>5:sigificant digits (num.toPrecision)
+ * @param  {Number} param different meaning according to choosen method:<br>0:number of significant digits<br>1:number of quantiles<br>2:number of quantiles<br>3:no need of param<br>4:no need of param<br>5:number of significant digits
+ * @return {NumberList} simplified list
+ * tags:
+ */
+NumberList.prototype.getNumbersSimplified = function(method, param) {
+  var newList;
+  var i, j;
+  var l = this.length;
+
+  method = method||0;
+  param = param||0;
+
+  newList = new NumberList();
+  newList.name = this.name;
+
+  switch(method){
+    case 0:
+      var power = Math.pow(10, param);
+      this.forEach(function(val){
+        newList.push(Math.floor(val/power)*power);
+      });
+      break;
+    case 1:
+    case 2:
+      param = Math.min( param||10, Math.floor(this.length/2) );
+      var quantiles = this.getQuantiles(param);
+      var val;
+      var nQuantiles = quantiles.length;
+      for(i=0; i<l; i++){
+        val = this[i];
+        if(val<quantiles[0]){
+          method==1?newList.push(0):newList.push(quantiles._min);
+        } else {
+          for(j=0; j<nQuantiles; j++){
+            if( val>=quantiles[j] && (j+1==quantiles.length || val<quantiles[j+1]) ){
+              method==1?newList.push(j+1):newList.push(quantiles[j]);
+              break;
+            }
+          }
+        }
+      }
+      if(method==1) newList.name = this.name + " (n quantile)";
+      break;
+    case 3:
+      newList.name = this.name + " (order of magnitude)";
+      for(i=0; i<l; i++){
+        newList.push(Math.floor( Math.log(this[i])/Math.log(10) ));
+      }
+      // this.forEach(function(val){
+      //   newList.push(Math.floor( Math.log(val)/Math.log(10) ));
+      // });
+      break;
+    case 4:
+      newList.name = this.name + " (rounded by order of magnitude)";
+      for(i=0; i<l; i++){
+        newList.push( Math.pow ( 10, Math.floor( Math.log(this[i])/Math.log(10) ) ) );
+      }
+      // this.forEach(function(val){
+      //   newList.push( Math.pow ( 10, Math.floor( Math.log(val)/Math.log(10) ) ) );
+      // });
+      break;
+    case 5:
+      param = param||1;
+      newList.name = this.name + " (significant digits)";
+      for(i=0; i<l; i++){
+        newList.push( Number(this[i].toPrecision(param)) );
+      }
+      break;
+  }
+
+  return newList;
+};
+
+
+/**
+ * Builds an {@link Polygon} from the NumberList,
+ * using each consecutive pair of values in the numberList as
+ * x and y positions.
+ *
+ * @return {Polygon} Polygon representing the values
+ * in the NumberList as x/y coordinates.
+ */
+NumberList.prototype.toPolygon = function() {
+  if(this.length === 0) return null;
+  var polygon = new Polygon();
+  for(var i = 0; this[i + 1] != null; i += 2) {
+    polygon.push(new Point(this[i], this[i + 1]));
+  }
+  return polygon;
+};
+
+
 /////////statistics
 
 /**
@@ -221,7 +321,7 @@ NumberList.prototype.getInterval = function() {
  * tags:statistics
  */
 NumberList.prototype.getAverage = function() {
-  return this.getSum() / this.length;
+  return this.getSum()/this.length;
 };
 
 /**
@@ -304,14 +404,19 @@ NumberList.prototype.getMedian = function() {
  */
 NumberList.prototype.getQuantiles = function(nQuantiles) {//TODO: defines different options for return
   var sorted = this.getSorted(true);
-
   var prop = this.length / nQuantiles;
   var entProp = Math.floor(prop);
   var onIndex = prop == entProp;
   var quantiles = new NumberList();
+
   for(var i = 0; i < nQuantiles - 1; i++) {
     quantiles[i] = onIndex ? sorted[(i + 1) * prop] : (0.5 * sorted[(i + 1) * entProp] + 0.5 * sorted[(i + 1) * entProp + 1]);
   }
+
+  quantiles._sorted = sorted;
+  quantiles._min = sorted[0];
+  quantiles._max = sorted[sorted.length-1];
+
   return quantiles;
 };
 
