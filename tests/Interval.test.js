@@ -52,9 +52,19 @@ describe("Interval", function() {
     expect(inter.contains(101)).toBe(false);
   });
 
+
+  it("should get sign", function() {
+    var inter = new mo.Interval(0, 100);
+    expect(inter.getSign()).toBe(1);
+    inter = new mo.Interval(10,0);
+    expect(inter.getSign()).toBe(-1);
+    inter = new mo.Interval(10,10);
+    expect(inter.getSign()).toBe(0);
+  });
+
   xit("should find containing values in negative intervals", function() {
     //TODO: interval broken for negative intervals?
-    inter = new mo.Interval(-1, -99);
+    var inter = new mo.Interval(-1, -99);
     expect(inter.contains(-1)).toBe(true);
     expect(inter.contains(-2)).toBe(true);
     expect(inter.contains(0)).toBe(false);

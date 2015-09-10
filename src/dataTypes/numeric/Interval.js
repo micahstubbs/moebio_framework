@@ -6,6 +6,7 @@ Interval.prototype.constructor = Interval;
 
 /**
  * @classdesc Provide reasoning around numeric intervals.
+ * Intervals have a start and end value.
  *
  * @constructor
  * @param {Number} x Interval's start value.
@@ -60,21 +61,28 @@ Interval.prototype.getSignedAmplitude = function() {
 };
 
 /**
-* @todo write docs
+ * Returns the middle value between the min and max of the Interval.
+ *
+ * @return {Number} the difference between the starting and ending values.
 */
 Interval.prototype.getMiddle = function() {
   return (this.x + this.y)*0.5;
 };
 
 /**
-* @todo write docs
+ * Returns a random value within the min and max of the Interval.
+ *
+ * @return {Number} A random value.
 */
 Interval.prototype.getRandom = function() {
   return this.x + (this.y - this.x)*Math.random();
 };
 
 /**
-* @todo write docs
+ * Returns 1 if end value is greater then start value, and -1 if that is reversed.
+ * If min and max values are equal, returns 0.
+ *
+ * @return {Number} The sign of the Interval.
 */
 Interval.prototype.getSign = function() {
   if(this.x == this.y) return 0;
@@ -82,10 +90,10 @@ Interval.prototype.getSign = function() {
 };
 
 /**
- * Scales a value
- * @todo finish docs
+ * Returns a new Interval with its start and stop values scaled by the input value.
  *
- * @return {Interval}
+ * @param {Number} value Value to scale Interval by.
+ * @return {Interval} The scaled Interval.
  */
 Interval.prototype.getScaled = function(value) {
   var midAmp = 0.5 * (this.y - this.x);
@@ -94,7 +102,12 @@ Interval.prototype.getScaled = function(value) {
 };
 
 /**
-* @todo write docs
+ * Returns a new Interval with its start and stop values scaled by the input value,
+ * but first pulling out a given proportion of the Interval to Scale.
+ *
+ * @param {Number} value Value to scale Interval by.
+ * @param {Number} proportion of Interval to keep in scaling.
+ * @return {Interval} The scaled Interval.
 */
 Interval.prototype.getScaledFromProportion = function(value, proportion) {
   var antiP = 1 - proportion;
@@ -105,14 +118,17 @@ Interval.prototype.getScaledFromProportion = function(value, proportion) {
 };
 
 /**
-* @todo write docs
+* Adds provided value to the start and stop values of the Interval.
+* Returns the new Interval
+* @param {Number} Number to add to each side of the Interval.
+* @return {Interval} New added Interval.
 */
 Interval.prototype.add = function(value) {
   return new Interval(this.x + value, this.y + value);
 };
 
 /**
-* @todo write docs
+* Swap start and stop values of this Interval.
 */
 Interval.prototype.invert = function() {
   var swap = this.x;
@@ -133,14 +149,20 @@ Interval.prototype.getInterpolatedValue = function(value) {
 };
 
 /**
-* @todo write docs
+* Returns a value between 0 and 1 representing the provided value in the Interval.
+* @param {Number} value Number to inverse interpolate.
+* @return {Number} Inverse interpolation of input for this Interval.
 */
 Interval.prototype.getInverseInterpolatedValue = function(value) {
   return(value - this.x) / this.getSignedAmplitude();
 };
 
 /**
-* @todo write docs
+* Interpolates each value in a given NumberList and provides a new NumberList
+* containing the interpolated values.
+*
+* @param {NumberList}  numberList NumberList to interpolate.
+* @return {NumberList} NumberList of interpolated values.
 */
 Interval.prototype.getInterpolatedValues = function(numberList) {
   var newNumberList = [];
@@ -152,7 +174,11 @@ Interval.prototype.getInterpolatedValues = function(numberList) {
 };
 
 /**
-* @todo write docs
+* Inverse Interpolate each value in a given NumberList and provides a new NumberList
+* containing these values.
+*
+* @param {NumberList}  numberList NumberList to inverse interpolate.
+* @return {NumberList} NumberList of inverse interpolated values.
 */
 Interval.prototype.getInverseInterpolatedValues = function(numberList) {
   var newNumberList = [];
@@ -171,9 +197,9 @@ Interval.prototype.intersect = function(interval) {
 };
 
 /**
- * create a new interval with the same proporties values
- * @return {Interval}
+ * Create a new interval with the same proporties values
  *
+ * @return {Interval} Copied Interval.
  */
 Interval.prototype.clone = function() {
   var newInterval = new Interval(this.x, this.y);
@@ -186,7 +212,6 @@ Interval.prototype.clone = function() {
  *
  * @param value Number to test.
  * @return {Boolean} True if the value is inside the Interval.
- *
  */
 Interval.prototype.contains = function(value) {
   if(this.y > this.x) return value >= this.x && value <= this.y;
@@ -194,22 +219,21 @@ Interval.prototype.contains = function(value) {
 };
 
 /**
- * Indicates if provided interval contains the same values
+ * Indicates if provided interval contains the same values.
  *
- * @param interval
- * @return {Boolean}
- *
+ * @param interval Interval to compare with.
+ * @return {Boolean} true if the are the same.
  */
 Interval.prototype.isEquivalent = function(interval) {
   return this.x == interval.x && this.y == interval.y;
 };
 
 /**
- * creates a new interval with the same proporties values
- * @return {String}
+ * Provides a String representation of the Interval.
+ *
+ * @return {String} String representation.
  *
  */
-
 Interval.prototype.toString = function() {
   return "Interval[x:" + this.x + "| y:" + this.y + "| amplitude:" + this.getAmplitude() + "]";
 };
