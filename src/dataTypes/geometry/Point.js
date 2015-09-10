@@ -188,7 +188,7 @@ Point.prototype.clone = function() {
 };
 
 /**
-* Provides a string representation of the Point
+* Provides a string representation of the Point.
 * @return {String} string output
 */
 Point.prototype.toString = function() {
@@ -196,7 +196,7 @@ Point.prototype.toString = function() {
 };
 
 /**
-* Deletes Point
+* Deletes Point.
 */
 Point.prototype.destroy = function() {
   delete this.type;
