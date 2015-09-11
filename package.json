@@ -1,6 +1,16 @@
 {
   "name": "moebioFramework",
   "version": "0.4.3",
+  "license": "MIT",
+  "author": {
+    "name": "Santiago Ortiz",
+    "url": "http://moebio.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/moebiolabs/moebio_framework.git"
+  },
+  "homepage": "http://moebiolabs.github.io/moebio_framework/",
   "devDependencies": {
     "esperanto": "^0.7.2",
     "grunt": "~0.4.1",
