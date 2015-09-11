@@ -29,8 +29,8 @@ module.exports = function (grunt) {
   //
   // Default task - build distribution source
   //
-  grunt.registerTask('build-fast', ['shell:esperanto_bundle', 'wrap:dist', 'remove:concat']);
-  grunt.registerTask('build', ['shell:esperanto_bundle', 'wrap:dist', 'remove:concat', 'uglify']);
+  grunt.registerTask('build-fast', ['rollup']);
+  grunt.registerTask('build', ['rollup', 'uglify']);
   grunt.registerTask('default', ['build']);
 
   //

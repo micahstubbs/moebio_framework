@@ -374,7 +374,7 @@ Graphics.prototype._stopCycle = function(callback) {
  * after the last call to this function.
  * @param  {Number} time time in milliseconds to run the cycle function before stopping ot.
  */
-Graphics.prototype._cycleFor = function(time) {
+Graphics.prototype.cycleFor = function(time) {
   if(this._setIntervalId) {
     // If there was already a running cycle then just delay the
     // stop function to stop after time. This effectively debounces
@@ -547,14 +547,14 @@ Graphics.prototype.cycleOnMouseMovement = function(time) {
   }
 
   this.cycleOnMouseMovementListener = function(){
-    self._cycleFor(time);
+    self.cycleFor(time);
   };
 
   this.canvas.addEventListener('mousemove', this.cycleOnMouseMovementListener, false);
   this.canvas.addEventListener('mousewheel', this.cycleOnMouseMovementListener, false);
   this.canvas.addEventListener('mousemove', this.cycleOnMouseMovementListener, false);
 
-  self._cycleFor(time);
+  self.cycleFor(time);
 };
 
 /**
