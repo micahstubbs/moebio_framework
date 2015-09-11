@@ -13,13 +13,7 @@ Moebio Framework is a JavaScript toolkit for performing data analysis and creati
 
 ## Supported Browsers
 
-Most modern browsers are supported:
-
-* Chrome (44+)
-* Firefox (39+)
-* Safari (10.10)
-
-Other browsers have not been tested.
+Should work on most major browsers. Currently tested on Chrome (44+).
 
 ## Getting Started
 
