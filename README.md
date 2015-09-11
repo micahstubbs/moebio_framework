@@ -53,7 +53,7 @@ Primary code in the Moebio Framework is organized in its `src` directory the fol
   * `operators`: more advanced functionality that work on instances of different data types.
   * `index.js`: This file defines the public interface of the framework.
 
-Moebio Framework uses ES6 module syntax (transpiled using esperanto) to define modules and dependencies. Note: it _does not_ support the use of other ES6 features in the code.
+Moebio Framework uses ES6 module syntax (transpiled using rollup) to define modules and dependencies. Note: it _does not_ support the use of other ES6 features in the code.
 
 To learn more about ES6 Modules, check out [jsmodules.io](http://jsmodules.io) and ["ECMAScript 6 modules: the final syntax"](http://www.2ality.com/2014/09/es6-modules-final.html)
 
