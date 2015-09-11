@@ -2,7 +2,6 @@
   "name": "moebioFramework",
   "version": "0.4.3",
   "devDependencies": {
-    "esperanto": "^0.7.2",
     "grunt": "~0.4.1",
     "grunt-contrib-concat": "~0.3.0",
     "grunt-contrib-jshint": "^0.11.2",
@@ -24,7 +23,7 @@
     "karma-chrome-launcher": "^0.1.12",
     "karma-jasmine": "^0.1.6",
     "lodash": "^3.3.1",
-    "source-map": "^0.4.2",
+    "rollup": "^0.15.0",
     "striptags": "^2.0.2"
   }
 }

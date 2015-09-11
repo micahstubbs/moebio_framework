@@ -1,6 +1,6 @@
 import Node from "src/dataTypes/structures/elements/Node";
 
-Relation.prototype = new Node();
+Relation.prototype = Object.create(Node.prototype);
 Relation.prototype.constructor = Relation;
 
 /**
@@ -20,7 +20,7 @@ Relation.prototype.constructor = Relation;
  * @category networks
  */
 function Relation(id, name, node0, node1, weight, content) {
-  Node.apply(this, [id, name]);
+  Node.call(this, id, name);
   this.type = "Relation";
 
   this.node0 = node0;
