@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Moebio Framework: Source: dataTypes/structures/networks/Network.js</title>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:700italic,400,700' rel='stylesheet' type='text/css'>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/style.css">
+</head>
+
+<body onload="prettyPrint()">
+
+<div class='hide-mobile pin-left pint-top pin-bottom col2 quiet-scroll scroll-styled fixed'>
+
+  <div class='clearfix fill-background dark center'>
+    <div class='inline pad2y'>
+      <a href="../">Moebio Framework</a> / <a href="index.html">Docs</a>
+    </div>
+  </div>
+  <div class='pad1 small'>
+    <div class="filter-block clearfix">
+      <input type="text" id="filter-input" placeholder="Type to filter">
+      <a href="#" id="clear-filter-button">x</a>
+    </div>
+    <div class='side'>
+      <h3>Numbers</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Axis2D.html">Axis2D</a></li><li class="code"><a href="Interval.html">Interval</a></li><li class="code"><a href="Matrix.html">Matrix</a></li><li class="code"><a href="NumberList.html">NumberList</a></li><li class="code"><a href="NumberTable.html">NumberTable</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="IntervalListOperators.html">IntervalListOperators</a></li><li class="code"><a href="IntervalTableOperators.html">IntervalTableOperators</a></li><li class="code"><a href="MatrixGenerators.html">MatrixGenerators</a></li><li class="code"><a href="NumberListConversions.html">NumberListConversions</a></li><li class="code"><a href="NumberListGenerators.html">NumberListGenerators</a></li><li class="code"><a href="NumberListOperators.html">NumberListOperators</a></li><li class="code"><a href="NumberOperators.html">NumberOperators</a></li><li class="code"><a href="NumberTableConversions.html">NumberTableConversions</a></li><li class="code"><a href="NumberTableFlowOperators.html">NumberTableFlowOperators</a></li><li class="code"><a href="NumberTableOperators.html">NumberTableOperators</a></li></ul></div><h3>Colors</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="ColorList.html">ColorList</a></li><li class="code"><a href="ColorScale.html">ColorScale</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="ColorGenerators.html">ColorGenerators</a></li><li class="code"><a href="ColorListGenerators.html">ColorListGenerators</a></li><li class="code"><a href="ColorListOperators.html">ColorListOperators</a></li><li class="code"><a href="ColorOperators.html">ColorOperators</a></li><li class="code"><a href="ColorScaleGenerators.html">ColorScaleGenerators</a></li><li class="code"><a href="ColorScales.html">ColorScales</a></li></ul></div><h3>Geo</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Country.html">Country</a></li><li class="code"><a href="CountryList.html">CountryList</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="CountryListOperators.html">CountryListOperators</a></li><li class="code"><a href="CountryOperators.html">CountryOperators</a></li><li class="code"><a href="GeoOperators.html">GeoOperators</a></li></ul></div><h3>Basics</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DataModel.html">DataModel</a></li><li class="code"><a href="List.html">List</a></li><li class="code"><a href="Table.html">Table</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="ListConversions.html">ListConversions</a></li><li class="code"><a href="ListGenerators.html">ListGenerators</a></li><li class="code"><a href="ListOperators.html">ListOperators</a></li><li class="code"><a href="ObjectConversions.html">ObjectConversions</a></li><li class="code"><a href="ObjectOperators.html">ObjectOperators</a></li><li class="code"><a href="TableConversions.html">TableConversions</a></li><li class="code"><a href="TableEncodings.html">TableEncodings</a></li><li class="code"><a href="TableGenerators.html">TableGenerators</a></li><li class="code"><a href="TableOperators.html">TableOperators</a></li></ul></div><h3>Dates</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DateAxis.html">DateAxis</a></li><li class="code"><a href="DateInterval.html">DateInterval</a></li><li class="code"><a href="DateList.html">DateList</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="DateListConversions.html">DateListConversions</a></li><li class="code"><a href="DateListOperators.html">DateListOperators</a></li><li class="code"><a href="DateOperators.html">DateOperators</a></li></ul></div><h3>Drawing</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="DragDetection.html">DragDetection</a></li><li class="code"><a href="Graphics.html">Graphics</a></li><li class="code"><a href="InputTextFieldHTML.html">InputTextFieldHTML</a></li><li class="code"><a href="TextBox.html">TextBox</a></li><li class="code"><a href="TextFieldHTML.html">TextFieldHTML</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="CircleDraw.html">CircleDraw</a></li><li class="code"><a href="ColorsDraw.html">ColorsDraw</a></li><li class="code"><a href="Draw.html">Draw</a></li><li class="code"><a href="DrawTexts.html">DrawTexts</a></li><li class="code"><a href="DrawTextsAdvanced.html">DrawTextsAdvanced</a></li><li class="code"><a href="ListDraw.html">ListDraw</a></li><li class="code"><a href="NetworkDraw.html">NetworkDraw</a></li><li class="code"><a href="ObjectDraw.html">ObjectDraw</a></li><li class="code"><a href="StringDraw.html">StringDraw</a></li><li class="code"><a href="StringListDraw.html">StringListDraw</a></li><li class="code"><a href="TreeDraw.html">TreeDraw</a></li></ul></div><h3>Geometry</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Engine3D.html">Engine3D</a></li><li class="code"><a href="Point.html">Point</a></li><li class="code"><a href="Point3D.html">Point3D</a></li><li class="code"><a href="Polygon.html">Polygon</a></li><li class="code"><a href="Polygon3D.html">Polygon3D</a></li><li class="code"><a href="Polygon3DList.html">Polygon3DList</a></li><li class="code"><a href="PolygonList.html">PolygonList</a></li><li class="code"><a href="Rectangle.html">Rectangle</a></li><li class="code"><a href="RectangleList.html">RectangleList</a></li><li class="code"><a href="Space2D.html">Space2D</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="GeometryConversions.html">GeometryConversions</a></li><li class="code"><a href="GeometryOperators.html">GeometryOperators</a></li><li class="code"><a href="PointOperators.html">PointOperators</a></li><li class="code"><a href="PolygonGenerators.html">PolygonGenerators</a></li><li class="code"><a href="PolygonListEncodings.html">PolygonListEncodings</a></li><li class="code"><a href="PolygonListOperators.html">PolygonListOperators</a></li><li class="code"><a href="PolygonOperators.html">PolygonOperators</a></li><li class="code"><a href="RectangleOperators.html">RectangleOperators</a></li></ul></div><h3>Networks</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="Forces.html">Forces</a></li><li class="code"><a href="Network.html">Network</a></li><li class="code"><a href="Node.html">Node</a></li><li class="code"><a href="NodeList.html">NodeList</a></li><li class="code"><a href="Relation.html">Relation</a></li><li class="code"><a href="RelationList.html">RelationList</a></li><li class="code"><a href="Tree.html">Tree</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="NetworkConversions.html">NetworkConversions</a></li><li class="code"><a href="NetworkEncodings.html">NetworkEncodings</a></li><li class="code"><a href="NetworkGenerators.html">NetworkGenerators</a></li><li class="code"><a href="NetworkOperators.html">NetworkOperators</a></li><li class="code"><a href="TreeConversions.html">TreeConversions</a></li><li class="code"><a href="TreeEncodings.html">TreeEncodings</a></li></ul></div><h3>Misc</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="LoadEvent.html">LoadEvent</a></li><li class="code"><a href="MultiLoader.html">MultiLoader</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="FastHtml.html">FastHtml</a></li></ul></div><h3>Strings</h3>
+<div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Classes</strong></div><ul>
+<li class="code"><a href="StringList.html">StringList</a></li></ul></div><div class="space-bottom1"><div class="pad0y"><strong class="capitalize" keyline-all>Namespaces</strong></div><ul>
+<li class="code"><a href="StringConversions.html">StringConversions</a></li><li class="code"><a href="StringListConversions.html">StringListConversions</a></li><li class="code"><a href="StringListOperators.html">StringListOperators</a></li><li class="code"><a href="StringOperators.html">StringOperators</a></li><li class="code"><a href="StringUtils.html">StringUtils</a></li></ul></div><h3>Functions</h3><ul><li class="small"><a href="global.html#getStructureLocalStorage">getStructureLocalStorage</a></li><li class="small"><a href="global.html#getStructureLocalStorageFromSeed">getStructureLocalStorageFromSeed</a></li><li class="small"><a href="global.html#setStructureLocalStorage">setStructureLocalStorage</a></li><li class="small"><a href="global.html#setStructureLocalStorageWithSeed">setStructureLocalStorageWithSeed</a></li></ul></div>
+    </div>
+  </div>
+</div>
+<div class='limiter margin2'>
+    <div class='pad1y pad2x fill-white'>
+      <div class='prose'>
+        <div class='pad2y'>
+          <h1 class='code'>Source: dataTypes/structures/networks/Network.js</h1>
+        </div>
+        
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import DataModel from "src/dataTypes/DataModel";
+import NodeList from "src/dataTypes/structures/lists/NodeList";
+import RelationList from "src/dataTypes/structures/lists/RelationList";
+import Node from "src/dataTypes/structures/elements/Node";
+import Relation from "src/dataTypes/structures/elements/Relation";
+
+Network.prototype = new DataModel();
+Network.prototype.constructor = Network;
+
+/**
+ * @classdesc Networks are a DataType to store network data.
+ *
+ * Networks have nodes stored in a NodeList,
+ * and relations (edges) stored in a RelationList.
+ * @description Create a new Network instance.
+ * @constructor
+ * @category networks
+ */
+function Network() {
+  this.type = "Network";
+
+  this.nodeList = new NodeList();
+  this.relationList = new RelationList();
+}
+export default Network;
+
+/**
+ * Get Nodes of the Network as a NodeList
+ * @return {NodeList}
+ * tags:
+ */
+Network.prototype.getNodes = function() {
+  return this.nodeList;
+};
+
+/**
+ * Get Relations (edges) of the Network as
+ * a RelationList.
+ * @return {RelationList}
+ * tags:
+ */
+Network.prototype.getRelations = function() {
+  return this.relationList;
+};
+
+/**
+ * get nodes ids property
+ * @return {StringList}
+ * tags:
+ */
+Network.prototype.getNodesIds = function() {
+  return this.nodeList.getIds();
+};
+
+
+
+/*
+ * building methods
+ */
+
+/**
+ * Add a node to the network
+ * @param {Node} node A new node that will be added to the network.
+ */
+Network.prototype.addNode = function(node) {
+  this.nodeList.addNode(node);
+};
+
+/**
+ * Retrieve a node from the nodeList of the Network with the given name (label).
+ * @param {String} name The name of the node to retrieve from the Network.
+ * @return {Node} The node with the given name. Null if no node with that name
+ * can be found in the Network.
+ */
+Network.prototype.getNodeWithName = function(name) {
+  return this.nodeList.getNodeWithName(name);
+};
+
+/**
+ * Retrieve node from Network with the given id.
+ * @param {String} id ID of the node to retrieve
+ * @return {Node} The node with the given id. Null if a node with this id is not
+ * in the Network.
+ */
+Network.prototype.getNodeWithId = function(id) {
+  return this.nodeList.getNodeWithId(id);
+};
+
+/**
+ * Add a new Relation (edge) to the Network between two nodes.
+ * @param {Node} node0 The source of the relation.
+ * @param {Node} node1 The destination of the relation.
+ * @param {String} id The id of the relation.
+ * @param {Number} weight A numerical weight associated with the relation (edge).
+ *
+ * @param {String} content Information associated with the relation.
+ */
+Network.prototype.createRelation = function(node0, node1, id, weight, content) {
+  this.addRelation(new Relation(id, id, node0, node1, weight, content));
+};
+
+/**
+ * Add an existing Relation (edge) to the Network.
+ * @param {Relation} relation The relation to add to the network.
+ */
+Network.prototype.addRelation = function(relation) {
+  this.relationList.addNode(relation);
+  relation.node0.nodeList.addNode(relation.node1);
+  relation.node0.relationList.addNode(relation);
+  relation.node0.toNodeList.addNode(relation.node1);
+  relation.node0.toRelationList.addNode(relation);
+  relation.node1.nodeList.addNode(relation.node0);
+  relation.node1.relationList.addNode(relation);
+  relation.node1.fromNodeList.addNode(relation.node0);
+  relation.node1.fromRelationList.addNode(relation);
+};
+
+/**
+ * Create a new Relation between two nodes in the network
+ * @param {Node} node0 The source of the relation.
+ * @param {Node} node1 The destination of the relation.
+ * @param {String} id The id of the relation. If missing, an id will be generated
+ * based on the id's of node0 and node1.
+ * @param {Number} weight=1 A numerical weight associated with the relation (edge).
+ * @param {String} content Information associated with the relation.
+ * @return {Relation} The new relation added to the Network.
+ */
+Network.prototype.connect = function(node0, node1, id, weight, content) {
+  id = id || (node0.id + "_" + node1.id);
+  weight = weight || 1;
+  var relation = new Relation(id, id, node0, node1, weight);
+  this.addRelation(relation);
+  relation.content = content;
+  return relation;
+};
+
+
+
+/*
+ * removing methods
+ */
+
+/**
+ * Remove a node from the Network
+ * @param {Node} node The node to remove.
+ */
+Network.prototype.removeNode = function(node) {
+  this.removeNodeRelations(node);
+  this.nodeList.removeNode(node);
+};
+
+/**
+ * Remove all Relations connected to the node from the Network.
+ * @param {Node} node Node who's relations will be removed.
+ */
+Network.prototype.removeNodeRelations = function(node) {
+  for(var i = 0; node.relationList[i] != null; i++) {
+    this.removeRelation(node.relationList[i]);
+    i--;
+  }
+};
+
+/**
+ * Remove all Nodes from the Network.
+ */
+Network.prototype.removeNodes = function() {
+  this.nodeList.deleteNodes();
+  this.relationList.deleteNodes();
+};
+
+Network.prototype.removeRelation = function(relation) {
+  this.relationList.removeElement(relation);
+  relation.node0.nodeList.removeNode(relation.node1);
+  relation.node0.relationList.removeRelation(relation);
+  relation.node0.toNodeList.removeNode(relation.node1);
+  relation.node0.toRelationList.removeRelation(relation);
+  relation.node1.nodeList.removeNode(relation.node0);
+  relation.node1.relationList.removeRelation(relation);
+  relation.node1.fromNodeList.removeNode(relation.node0);
+  relation.node1.fromRelationList.removeRelation(relation);
+};
+
+/**
+ * Transformative method, removes nodes without a minimal number of connections
+ * @param  {Number} minDegree minimal degree
+ * @return {Number} number of nodes removed
+ * tags:transform
+ */
+Network.prototype.removeIsolatedNodes = function(minDegree) {
+  var i;
+  var nRemoved = 0;
+  minDegree = minDegree == null ? 1 : minDegree;
+
+  for(i = 0; this.nodeList[i] != null; i++) {
+    if(this.nodeList[i].getDegree() &lt; minDegree) {
+      this.nodeList[i]._toRemove = true;
+    }
+  }
+
+  for(i = 0; this.nodeList[i] != null; i++) {
+    if(this.nodeList[i]._toRemove) {
+      this.removeNode(this.nodeList[i]);
+      nRemoved++;
+      i--;
+    }
+  }
+
+  return nRemoved;
+};
+
+
+/**
+ * generates a light clone of the network, with the same nodeList and relationList as the original
+ * @return {Network}
+ */
+Network.prototype.lightClone = function(){
+  var newNetwork = new Network();
+  newNetwork.nodeList = this.nodeList;
+  newNetwork.relationList = this.relationList;
+  return newNetwork;
+};
+
+
+/**
+ * Clones the network
+ *
+ * @param  {StringList} nodePropertiesNames list of preoperties names to be copied from old nodes into new nodes
+ * @param  {StringList} relationPropertiesNames
+ *
+ * @param  {String} idsSubfix optional sufix to be added to ids
+ * @param  {String} namesSubfix optional sufix to be added to names
+ * @return {Networked} network with exact structure than original
+ * tags:
+ */
+Network.prototype.clone = function(nodePropertiesNames, relationPropertiesNames, idsSubfix, namesSubfix) {
+  var newNetwork = new Network();
+  var newNode, newRelation;
+
+  idsSubfix = idsSubfix == null ? '' : String(idsSubfix);
+  namesSubfix = namesSubfix == null ? '' : String(namesSubfix);
+
+  this.nodeList.forEach(function(node) {
+    newNode = new Node(idsSubfix + node.id, namesSubfix + node.name);
+    if(idsSubfix !== '') newNode.basicId = node.id;
+    if(namesSubfix !== '') newNode.basicName = node.name;
+    if(nodePropertiesNames) {
+      nodePropertiesNames.forEach(function(propName) {
+        if(node[propName] != null) newNode[propName] = node[propName];
+      });
+    }
+    newNetwork.addNode(newNode);
+  });
+
+  this.relationList.forEach(function(relation) {
+    newRelation = new Relation(idsSubfix + relation.id, namesSubfix + relation.name, newNetwork.nodeList.getNodeById(idsSubfix + relation.node0.id), newNetwork.nodeList.getNodeById(idsSubfix + relation.node1.id));
+    if(idsSubfix !== '') newRelation.basicId = relation.id;
+    if(namesSubfix !== '') newRelation.basicName = relation.name;
+    if(relationPropertiesNames) {
+      relationPropertiesNames.forEach(function(propName) {
+        if(relation[propName] != null) newRelation[propName] = relation[propName];
+      });
+    }
+    newNetwork.addRelation(newRelation);
+  });
+
+  return newNetwork;
+};
+
+/**
+ * @todo write docs
+ */
+Network.prototype.destroy = function() {
+  delete this.type;
+  this.nodeList.destroy();
+  this.relationList.destroy();
+  delete this.nodeList;
+  delete this.relationList;
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+      </div>
+    </div>
+    <div class='quiet small center pad1y'>
+    </div>
+  </div>
+  <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <script src="scripts/filter.js"></script>
+  <script src="scripts/prettify/prettify.js"></script>
+</body>
+</html>
