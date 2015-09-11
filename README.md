@@ -25,6 +25,24 @@ Download the pre-built files (minified and unminified) from the `dist/` director
 
 For more info and examples, check out the website:  [http://moebiolabs.github.io/moebio_framework/](http://moebiolabs.github.io/moebio_framework/).
 
+Moebio Framework is on _npm_ and _bower_ as well.
+
+```
+npm install moebio-framework
+```
+
+or
+
+```
+bower install moebio-framework
+```
+
+will install from those sources.
+
+## Getting Help
+
+Have questions? Comments? Suggestions? [Ask away in the issues](https://github.com/moebiolabs/moebio_framework/issues). Tag a question with the _#question_ tag and we will do our best to answer.
+
 ## Project Layout
 
 Primary code in the Moebio Framework is organized in its `src` directory the following way:
@@ -46,7 +64,7 @@ If you would like to contribute to Moebio Framework, try out customizations loca
 Grunt is used as the build tool. So you need node.js and npm installed on your machine.
 
 The project is built using grunt. Most of the grunt tasks are kept in separate
-files in the the ```/tasks``` folder.
+files in the the `/tasks` folder.
 
 ## Common Grunt tasks
 
