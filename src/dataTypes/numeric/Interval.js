@@ -149,7 +149,7 @@ Interval.prototype.getInterpolatedValue = function(value) {
 };
 
 /**
-* Returns a value between 0 and 1 representing the provided value in the Interval.
+* Returns a value between 0 and 1 representing the normalized input value in the Interval.
 * @param {Number} value Number to inverse interpolate.
 * @return {Number} Inverse interpolation of input for this Interval.
 */
