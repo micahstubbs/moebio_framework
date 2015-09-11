@@ -462,12 +462,11 @@ Graphics.prototype._emit = function(eventName, e) {
   switch(eventName) {
     case 'mousewheel':
     case 'DOMMouseScroll':
+      eventName = 'mousewheel';
       if (!e) {
-        e = window.event; //IE // YY is this still a thing
+        e = window.event;
       }
       if (e.wheelDelta) {
-        // YY do we actually want to keep this here or is the
-        // main goal to send this information to the listener.
         this.WHEEL_CHANGE = e.wheelDelta/120;
       } else if (e.detail) { /** Mozilla case. */
         this.WHEEL_CHANGE = -e.detail/3;
