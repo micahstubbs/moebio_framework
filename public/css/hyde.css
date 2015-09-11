@@ -32,7 +32,7 @@
  */
 
 html {
-  font-family: "PT Sans", Helvetica, Arial, sans-serif;
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
 }
 @media (min-width: 48em) {
   html {
@@ -54,7 +54,7 @@ html {
  */
 
 .sidebar {
-  text-align: center;
+  /*text-align: center;*/
   padding: 2rem 1rem;
   color: rgba(255,255,255,.5);
   background-color: #202020;
@@ -73,6 +73,7 @@ html {
 /* Sidebar links */
 .sidebar a {
   color: #fff;
+  font-size: 0.8rem;
 }
 
 /* About section */
@@ -80,7 +81,7 @@ html {
   color: #fff;
   margin-top: 0;
   /*font-family: "Abril Fatface", serif;*/
-  font-size: 2.75rem;
+  font-size: 1.8rem;
 }
 
 /* Sidebar nav */
@@ -139,14 +140,14 @@ a.sidebar-nav-item:focus {
 @media (min-width: 48em) {
   .content {
     max-width: 38rem;
-    margin-left: 20rem;
+    margin-left: 18rem;
     margin-right: 2rem;
   }
 }
 
 @media (min-width: 64em) {
   .content {
-    margin-left: 22rem;
+    margin-left: 18rem;
     margin-right: 4rem;
   }
 }

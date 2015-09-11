@@ -13,7 +13,55 @@
 
 }
 
+body {
+  font-family: 'Open Sans';
+}
 
 h1.post-title {
   border-bottom: 1px solid #2D3E50;
+}
+
+h1 {
+  font-family: Menlo, Bitstream Vera Sans Mono, Monaco, Consolas, monospace !important;
+  font-size: 1.2rem;
+}
+
+h2 {
+  font-family: Menlo, Bitstream Vera Sans Mono, Monaco, Consolas, monospace !important;
+  font-size: 1.0rem;
+}
+
+h3 {
+  font-size: 1.0rem;
+}
+
+.sidebar-about h1 a {
+  border-bottom: 1px solid #268bd2;
+}
+
+.sidebar-about h1 a:hover {
+  text-decoration: none;
+}
+
+.sidebar {
+  color: #bbb;
+  background-color: white;
+  border-left: 10px solid #2D3E51;
+}
+
+@media (max-width: 48em) {
+  .sidebar {
+    border-left: none;
+    border-top: 8px solid #2D3E51;
+  }
+}
+
+
+.sidebar a {
+  color: black;
+}
+
+.sidebar a:hover{
+  color: #268bd2;
+  text-decoration: underline;
 }
