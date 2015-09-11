@@ -2,19 +2,34 @@
 
 ## What is this?
 
-A set of tools for Moebio's projects
+Moebio Framework is a JavaScript toolkit for performing data analysis and creating visualizations. It provides a canvas based graphics framework and data structures and operators for manipulating data.
+
+## Features
+
+* Fast canvas based 2D and 3D drawing api with mouse interaction
+* Text Rendering Support
+* Canvas based UI Elements like Color Pickers, Text Boxes and Tooltips
+* A Growing collection of tools for Statistics, Prediction, Math, Network Analysis and more!
+
+## Supported Browsers
+
+Should work on most major browsers. Currently tested on Chrome (44+).
 
 ## Getting Started
 
 Download the pre-built files (minified and unminified) from the `dist/` directory and start using in your project.
 
-For more info check out the website and docs at [http://moebiolabs.github.io/moebio_framework/](http://moebiolabs.github.io/moebio_framework/).
+```
+<script src="moebio_framework.js"></script>
+```
+
+For more info and examples, check out the website:  [http://moebiolabs.github.io/moebio_framework/](http://moebiolabs.github.io/moebio_framework/).
 
 ## Project Layout
 
 Primary code in the Moebio Framework is organized in its `src` directory the following way:
 
-  * `dataStructures`: basic data types for storing and manipulating different kinds of data.
+  * `dataTypes`: basic data types for storing and manipulating different kinds of data.
   * `tools`: drawing tools for basic shapes, as well as helpers for interaction, data loading, and 3D.
   * `visualization`: functions for visualization the data types used in the framework
   * `operators`: more advanced functionality that work on instances of different data types.
@@ -24,15 +39,11 @@ Moebio Framework uses ES6 module syntax (transpiled using esperanto) to define m
 
 To learn more about ES6 Modules, check out [jsmodules.io](http://jsmodules.io) and ["ECMAScript 6 modules: the final syntax"](http://www.2ality.com/2014/09/es6-modules-final.html)
 
-## Requirements
-
-For Deployment: Supported Browsers
-
-For Development: Grunt is used as the build tool. So you need node.js and npm installed on your machine.
-
 ## Dev Setup
 
 If you would like to contribute to Moebio Framework, try out customizations locally, or just build from source, you can clone the repository and use the instructions below to get started.
+
+Grunt is used as the build tool. So you need node.js and npm installed on your machine.
 
 The project is built using grunt. Most of the grunt tasks are kept in separate
 files in the the ```/tasks``` folder.
@@ -84,29 +95,22 @@ docs/build
 
 JSDoc templates can be found in `docs/moebio-jsdoc` and are directly inspired by the documentation of [TurfJS](http://turfjs.org/).
 
-### Building the Site
+## Testing
 
-The website and the build process for managing it are housed in the [Moebio Framework Site Repository](https://github.com/moebiolabs/moebio_framework_site). Check out the details there.
-
-### Releasing the Framework
-
-The [grunt-release](https://github.com/geddski/grunt-release) tool is used for building releases of the framework. Additionally, [grunt-git]() is used to commit build files as part of the release process. Briefly, releasing entails the following procedure:
-
- - bump the version number in `package.json`.
- - bump version number in `src/Version.js`
- - rebuild distribution files in `dist/`
- - add and commit changed `src/Version.js` and `dist/` files.
- - stage the package.json file's change.
- - commit that change with a message like "release 0.6.22".
- - create a new git tag for the release.
- - push the changes out to GitHub.
- - also push the new tag out to GitHub.
- - create a .zip release on GitHub.
-
-All this can be done with
+Use:
 
 ```bash
-grunt release
+grunt test
 ```
 
-for patch builds. Major and minor releases can also be automated using `grunt release:major` and `grunt release:minor`, respectively. For more on semantic versioning, check out [semver.org](http://semver.org/).
+to run tests.
+
+Tests are in `tests/` directory and use the [Karma](http://karma-runner.github.io/0.13/index.html) testing framework.
+
+## Contributors
+
+* [Santiago Ortiz](https://twitter.com/moebio)
+* [Daniel Aguilar](https://twitter.com/protozoo)
+* [Jeff Clark](https://twitter.com/JeffClark)
+* [Yannick Assogba](https://twitter.com/tafsiri)
+* [Jim Vallandingham](https://twitter.com/vlandham)
