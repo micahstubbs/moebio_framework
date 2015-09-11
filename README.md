@@ -130,5 +130,5 @@ Tests are in `tests/` directory and use the [Karma](http://karma-runner.github.i
 * [Santiago Ortiz](https://twitter.com/moebio)
 * [Daniel Aguilar](https://twitter.com/protozoo)
 * [Jeff Clark](https://twitter.com/JeffClark)
-* [Yannick Assogba](https://twitter.com/tafsiri)
-* [Jim Vallandingham](https://twitter.com/vlandham)
+* [Yannick Assogba](https://twitter.com/tafsiri) ([Bocoup Data Visualization Team](https://bocoup.com/datavis/))
+* [Jim Vallandingham](https://twitter.com/vlandham) ([Bocoup Data Visualization Team](https://bocoup.com/datavis/))
