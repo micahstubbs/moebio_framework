@@ -17,7 +17,7 @@ module.exports = function(grunt) {
   grunt.config.set('release', {
     options: {
       bump: true,
-      npm: false,
+      npm: true,
       afterBump: ['string-replace:version'],
       beforeRelease: ['default', 'gitadd:build', 'gitcommit:build']
     }
