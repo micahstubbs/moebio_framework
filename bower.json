@@ -1,0 +1,24 @@
+{
+  "name": "moebio-framework",
+  "main": "dist/moebio_framework.js",
+  "homepage": "http://moebiolabs.github.io/moebio_framework",
+  "authors": [
+    "Santiago Ortiz"
+  ],
+  "description": "A toolkit for performing data analysis and creating visualizations.",
+  "license": "MIT",
+  "moduleType": [
+    "globals",
+    "es6"
+  ],
+  "ignore": [
+    ".DS_Store",
+    ".git",
+    ".gitignore",
+    ".npmignore",
+    "node_modules",
+    "package.json",
+    "test",
+    "tasks"
+  ]
+}
