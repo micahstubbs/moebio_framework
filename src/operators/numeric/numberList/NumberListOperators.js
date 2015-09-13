@@ -37,7 +37,7 @@ NumberListOperators.dotProduct = function(numberList1, numberList2) {
  *
  * @param  {NumberList} numberListX of the same length as numberListY.
  * @param  {NumberList} numberListY of the same length as numberListX.
- * @return {NumberList} NumberList with items slope, intercept
+ * @return {NumberList} NumberList with items slope, intercept, r squared, n
  * tags:statistics
  */
 NumberListOperators.linearRegression = function(numberListX, numberListY) {
@@ -57,8 +57,11 @@ NumberListOperators.linearRegression = function(numberListX, numberListY) {
   }
   var slope = (n * sumxy - sumx * sumy) / (n * sumx2 - sumx * sumx);
   var intercept = (sumy / n) - (slope * sumx) / n;
+  var r2 = Math.pow((n*sumxy - sumx*sumy)/Math.sqrt((n*sumx2-sumx*sumx)*(n*sumy2-sumy*sumy)),2);
   numberListR.push(slope);
   numberListR.push(intercept);
+  numberListR.push(r2);
+  numberListR.push(n);
   return numberListR;
 };
 
