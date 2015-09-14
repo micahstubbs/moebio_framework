@@ -1,4 +1,5 @@
 import Rectangle from "src/dataTypes/geometry/Rectangle";
+import Point from "src/dataTypes/geometry/Point";
 import NumberList from "src/dataTypes/numeric/NumberList";
 import NumberTable from "src/dataTypes/numeric/NumberTable";
 import ListGenerators from "src/operators/lists/ListGenerators";
@@ -33,18 +34,20 @@ NumberListOperators.dotProduct = function(numberList1, numberList2) {
 
 /**
  * Returns linear regression between two numberLists in another numberList with items
- * slope, intercept
+ * slope, intercept, r squared, n OR in a Point representing the line
  *
  * @param  {NumberList} numberListX of the same length as numberListY.
  * @param  {NumberList} numberListY of the same length as numberListX.
- * @return {NumberList} NumberList with items slope, intercept
+ * @param  {Number} returnType <br>0:NumberList with items slope, intercept, r squared, n.<br>1: Point with slope,intercept
+ * @return {Object} result depending on returnType
  * tags:statistics
  */
-NumberListOperators.linearRegression = function(numberListX, numberListY) {
+NumberListOperators.linearRegression = function(numberListX, numberListY, returnType) {
+  returnType = returnType == null || returnType > 1 ? 0:returnType;
   var numberListR = new NumberList();
   if(numberListX == null || numberListY == null ||
      numberListX.length != numberListY.length || numberListX.length === 0)
-    return numberListR;
+    return returnType===0?numberListR:new Point();
   var sumx=0,sumy=0,sumx2=0,sumxy=0,sumy2=0;
 
   var n = numberListX.length;
@@ -57,8 +60,13 @@ NumberListOperators.linearRegression = function(numberListX, numberListY) {
   }
   var slope = (n * sumxy - sumx * sumy) / (n * sumx2 - sumx * sumx);
   var intercept = (sumy / n) - (slope * sumx) / n;
+  if(returnType==1)
+    return new Point(slope,intercept);
+  var r2 = Math.pow((n*sumxy - sumx*sumy)/Math.sqrt((n*sumx2-sumx*sumx)*(n*sumy2-sumy*sumy)),2);
   numberListR.push(slope);
   numberListR.push(intercept);
+  numberListR.push(r2);
+  numberListR.push(n);
   return numberListR;
 };
 
