@@ -2,6 +2,7 @@ import ColorList from "src/dataTypes/graphic/ColorList";
 import ColorScales from "src/operators/graphic/ColorScales";
 import NumberListGenerators from "src/operators/numeric/numberList/NumberListGenerators";
 import ListOperators from "src/operators/lists/ListOperators";
+import ColorOperators from "src/operators/graphic/ColorOperators";
 import Table from "src/dataTypes/lists/Table";
 import List from "src/dataTypes/lists/List";
 import NumberListOperators from "src/operators/numeric/numberList/NumberListOperators";
@@ -88,6 +89,32 @@ ColorListGenerators.createColorListWithSingleColor = function(nColors, color) {
   var colorList = new ColorList();
   for(var i = 0; i < nColors; i++) {
     colorList.push(color);
+  }
+  return colorList;
+};
+
+
+/**
+ * Creates a new ColorList from the full spectrum. Size of the List
+ * is controlled by the nColors input.
+ *
+ * @param {Number} nColors Length of the list (default 8).
+ * @param {Number} saturation in range [0,1]
+ * @param {Number} value in range [0,1]
+ * @return {ColorList} ColorList with spectrum colors
+ * tags:generator
+*/
+ColorListGenerators.createColorListSpectrum = function(nColors, saturation,value) {
+  // use HSV and rotate through hues
+  nColors = nColors == null? 8:nColors;
+  saturation = saturation == null? 1:saturation;
+  value = value == null? 1:value;
+  var colorList = new ColorList();
+  var hue;
+  for(var i = 0; i < nColors; i++) {
+    // hue of 0 == hue of 360 so we go to nColors-1
+    hue = 360*i/nColors;
+    colorList.push(ColorOperators.HSVtoHEX(hue,saturation,value));
   }
   return colorList;
 };
@@ -274,7 +301,7 @@ ColorListGenerators.createCategoricalColorListForList = function(list, colorList
   var fullColorList = ListOperators.translateWithDictionary(list, colorDictTable, 'black');
 
   fullColorList = ColorList.fromArray(fullColorList);
-  
+
   return [
     {
       value: fullColorList,
