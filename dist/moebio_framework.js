@@ -3140,6 +3140,8 @@
     //sorting
     result.getSorted = NumberList.prototype.getSorted;
     result.getSortIndexes = NumberList.prototype.getSortIndexes;
+
+    //math
     result.factor = NumberList.prototype.factor;
     result.add = NumberList.prototype.add;
     result.subtract = NumberList.prototype.subtract;
@@ -5793,18 +5795,20 @@
 
   /**
    * Returns linear regression between two numberLists in another numberList with items
-   * slope, intercept
+   * slope, intercept, r squared, n OR in a Point representing the line
    *
    * @param  {NumberList} numberListX of the same length as numberListY.
    * @param  {NumberList} numberListY of the same length as numberListX.
-   * @return {NumberList} NumberList with items slope, intercept
+   * @param  {Number} returnType <br>0:NumberList with items slope, intercept, r squared, n.<br>1: Point with slope,intercept
+   * @return {Object} result depending on returnType
    * tags:statistics
    */
-  NumberListOperators.linearRegression = function(numberListX, numberListY) {
+  NumberListOperators.linearRegression = function(numberListX, numberListY, returnType) {
+    returnType = returnType == null || returnType > 1 ? 0:returnType;
     var numberListR = new NumberList();
     if(numberListX == null || numberListY == null ||
        numberListX.length != numberListY.length || numberListX.length === 0)
-      return numberListR;
+      return returnType===0?numberListR:new _Point();
     var sumx=0,sumy=0,sumx2=0,sumxy=0,sumy2=0;
 
     var n = numberListX.length;
@@ -5817,8 +5821,13 @@
     }
     var slope = (n * sumxy - sumx * sumy) / (n * sumx2 - sumx * sumx);
     var intercept = (sumy / n) - (slope * sumx) / n;
+    if(returnType==1)
+      return new _Point(slope,intercept);
+    var r2 = Math.pow((n*sumxy - sumx*sumy)/Math.sqrt((n*sumx2-sumx*sumx)*(n*sumy2-sumy*sumy)),2);
     numberListR.push(slope);
     numberListR.push(intercept);
+    numberListR.push(r2);
+    numberListR.push(n);
     return numberListR;
   };
 
@@ -18201,11 +18210,14 @@
    * @return {DateList}
    * tags:
    */
-  StringListConversions.toDateList = function(formatCase, separator) {
+  StringListConversions.toDateList = function(stringList, formatCase, separator) {
+    if(stringList==null) return;
+    
     var dateList = new DateList();
     var i;
-    for(i = 0; this[i] != null; i++) {
-      dateList.push(DateOperators.stringToDate(this[i], formatCase, separator));
+    var l = stringList.length;
+    for(i = 0; i<l; i++) {
+      dateList.push(DateOperators.stringToDate(stringList[i], formatCase, separator));
     }
     return dateList;
   };
@@ -22821,7 +22833,7 @@
    * after the last call to this function.
    * @param  {Number} time time in milliseconds to run the cycle function before stopping ot.
    */
-  Graphics.prototype._cycleFor = function(time) {
+  Graphics.prototype.cycleFor = function(time) {
     if(this._setIntervalId) {
       // If there was already a running cycle then just delay the
       // stop function to stop after time. This effectively debounces
@@ -22909,12 +22921,11 @@
     switch(eventName) {
       case 'mousewheel':
       case 'DOMMouseScroll':
+        eventName = 'mousewheel';
         if (!e) {
-          e = window.event; //IE // YY is this still a thing
+          e = window.event;
         }
         if (e.wheelDelta) {
-          // YY do we actually want to keep this here or is the
-          // main goal to send this information to the listener.
           this.WHEEL_CHANGE = e.wheelDelta/120;
         } else if (e.detail) { /** Mozilla case. */
           this.WHEEL_CHANGE = -e.detail/3;
@@ -22994,14 +23005,14 @@
     }
 
     this.cycleOnMouseMovementListener = function(){
-      self._cycleFor(time);
+      self.cycleFor(time);
     };
 
     this.canvas.addEventListener('mousemove', this.cycleOnMouseMovementListener, false);
     this.canvas.addEventListener('mousewheel', this.cycleOnMouseMovementListener, false);
     this.canvas.addEventListener('mousemove', this.cycleOnMouseMovementListener, false);
 
-    self._cycleFor(time);
+    self.cycleFor(time);
   };
 
   /**
@@ -28358,6 +28369,8 @@
    * tags:draw
    */
   ObjectDraw.count = function(frame, object, graphics) {
+    if(graphics==null) graphics = frame.graphics;
+    
     if(frame.memory == null) {
       frame.memory = {
         n: 1,
