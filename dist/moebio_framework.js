@@ -92,11 +92,11 @@ define('src/index', ['exports'], function (exports) {
 
   exports.DataModel = DataModel;
 
-  Point__Point.prototype = new DataModel();
-  Point__Point.prototype.constructor = Point__Point;
+  Point.prototype = new DataModel();
+  Point.prototype.constructor = Point;
 
   /**
-   * @classdesc Represents a 2D point in space.
+   * @classdesc Represents an individual 2D point in space.
    *
    * @description Creates a new Point
    * @param {Number} x
@@ -104,207 +104,168 @@ define('src/index', ['exports'], function (exports) {
    * @constructor
    * @category geometry
    */
-  function Point__Point(x, y) {
+  function Point(x, y) {
     DataModel.apply(this, arguments);
     this.type = "Point";
     this.x = Number(x) || 0;
     this.y = Number(y) || 0;
   }
-  var Point__default = Point__Point;
+
+
 
   /**
-  * Returns the {@link https://en.wikipedia.org/wiki/Norm_(mathematics)#Euclidean_norm|Euclidean norm} of the Point.
+  * @todo write docs
   */
-  Point__Point.prototype.getNorm = function() {
+  Point.prototype.getNorm = function() {
     return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
   };
 
   /**
-  * Returns a Number between -π and π representing the angle theta of the Point.
-  * Uses {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atan2|atan2}.
-  * @return {Number} Angle of Point.
+  * @todo write docs
   */
-  Point__Point.prototype.getAngle = function() {
+  Point.prototype.getAngle = function() {
     return Math.atan2(this.y, this.x);
   };
 
+
+
   /**
-  * Returns a new Point scaled by the input factor k. If k is a Number, the x and y
-  * are scaled by that number. If k is a Point, then the x and y of the two points
-  * are multiplied.
-  * @param {Number|Point} k Factor to scale by.
-  * @return {Point} New scaled Point.
+  * @todo write docs
   */
-  Point__Point.prototype.factor = function(k) {
-    if(k >= 0 || k < 0) return new Point__Point(this.x * k, this.y * k);
-    if(k.type != null && k.type == 'Point') return new Point__Point(this.x * k.x, this.y * k.y);
+  Point.prototype.factor = function(k) {
+    if(k >= 0 || k < 0) return new Point(this.x * k, this.y * k);
+    if(k.type != null && k.type == 'Point') return new Point(this.x * k.x, this.y * k.y);
   };
 
   /**
-  * Normalize x and y values of the point by the Point's Euclidean Norm.
-  * @return {Point} Normalized Point.
+  * @todo write docs
   */
-  Point__Point.prototype.normalize = function() {
+  Point.prototype.normalize = function() {
     var norm = Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
-    return new Point__Point(this.x / norm, this.y / norm);
+    return new Point(this.x / norm, this.y / norm);
   };
 
   /**
-  * Normalize x and y values of the point by the Point's Euclidean Norm and then
-  * scale them by the input factor k.
-  * @param {Number} k Factor to scale by.
-  * @return {Point} Normalized Point.
+  * @todo write docs
   */
-  Point__Point.prototype.normalizeToValue = function(k) {
+  Point.prototype.normalizeToValue = function(k) {
     var factor = k / Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
-    return new Point__Point(this.x * factor, this.y * factor);
+    return new Point(this.x * factor, this.y * factor);
+  };
+
+
+
+  /**
+  * @todo write docs
+  */
+  Point.prototype.subtract = function(point) {
+    return new Point(this.x - point.x, this.y - point.y);
   };
 
   /**
-  * Subtracts given Point from this Point.
-  * @param {Point} point The point to subtract
-  * @return {Point} New subtracted Point.
+  * @todo write docs
   */
-  Point__Point.prototype.subtract = function(point) {
-    return new Point__Point(this.x - point.x, this.y - point.y);
+  Point.prototype.add = function(point) {
+    return new Point(point.x + this.x, point.y + this.y);
   };
 
   /**
-  * Adds given Point to this Point.
-  * @param {Point} point The point to add
-  * @return {Point} New added Point.
+  * @todo write docs
   */
-  Point__Point.prototype.add = function(point) {
-    return new Point__Point(point.x + this.x, point.y + this.y);
+  Point.prototype.addCoordinates = function(x, y) {
+    return new Point(x + this.x, y + this.y);
   };
 
   /**
-  * Adds x and y values to this Point
-  * @param {Number} x X value to add
-  * @param {Number} y Y value to add
-  * @return {Point} New Point with added values.
+  * @todo write docs
   */
-  Point__Point.prototype.addCoordinates = function(x, y) {
-    return new Point__Point(x + this.x, y + this.y);
-  };
-
-  /**
-  * Provides the Euclidean distance between this Point and another Point.
-  * @param {Point} point The point to provide distance to.
-  * @return {Number} Distance between two points.
-  */
-  Point__Point.prototype.distanceToPoint = function(point) {
+  Point.prototype.distanceToPoint = function(point) {
     return Math.sqrt(Math.pow(this.x - point.x, 2) + Math.pow(this.y - point.y, 2));
   };
 
   /**
-  * Provides a Euclidean-like distance without square-rooting the result
-  * between this Point and another Point.
-  * @param {Point} point The point to provide distance to.
-  * @return {Number} Distance squared between two points.
+  * @todo write docs
   */
-  Point__Point.prototype.distanceToPointSquared = function(point) {
+  Point.prototype.distanceToPointSquared = function(point) {
     return Math.pow(this.x - point.x, 2) + Math.pow(this.y - point.y, 2);
   };
 
   /**
-  * Returns a Number between -π and π representing the angle theta between this Point
-  * and another Point
-  * Uses {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atan2|atan2}.
-  * @param {Point} point The point to provide angle from.
-  * @return {Number} Angle of Point.
+  * @todo write docs
   */
-  Point__Point.prototype.angleToPoint = function(point) {
+  Point.prototype.angleToPoint = function(point) {
     return Math.atan2(point.y - this.y, point.x - this.x);
   };
 
   /**
-  * Creates a new Point who's x and y values are added to by the factor multiplied
-  *  by the difference between the current Point and the provided Point.
-  * @param {Point} point Point to find difference between current point of
-  * @return {Point} Expanded Point.
+  * @todo write docs
   */
-  Point__Point.prototype.expandFromPoint = function(point, factor) {
-    return new Point__Point(point.x + factor * (this.x - point.x), point.y + factor * (this.y - point.y));
+  Point.prototype.expandFromPoint = function(point, factor) {
+    return new Point(point.x + factor * (this.x - point.x), point.y + factor * (this.y - point.y));
+  };
+
+
+  /**
+  * @todo write docs
+  */
+  Point.prototype.interpolate = function(point, t) {
+    return new Point((1 - t) * this.x + t * point.x, (1 - t) * this.y + t * point.y);
   };
 
   /**
-  * Creates a new Point who's x and y values are multiplied by the difference
-  * between the current Point and the provided Point. The factor value is added
-  * to both x and y of this new Point.
-  * @param {Point} point Point to find difference between current point of
-  * @return {Point} Expanded Point.
+  * @todo write docs
   */
-  Point__Point.prototype.interpolate = function(point, t) {
-    return new Point__Point((1 - t) * this.x + t * point.x, (1 - t) * this.y + t * point.y);
-  };
-
-  /**
-  * Crosses the x and y values.
-  * Returns the value of this Point's x multiplied by the provided Point's y value,
-  * subtracted by the provided Point's y value multiplied by this Point's x value.
-  * @param {Point} point Point to cross
-  * @return {Number} Crossed value.
-  */
-  Point__Point.prototype.cross = function(point) {
+  Point.prototype.cross = function(point) {
     return this.x * point.y - this.y * point.x;
   };
 
   /**
-  * Calculates the dot product between two points.
-  * @param {Point} point Point to compute dot product with
-  * @return {Number} Dot Product
+  * @todo write docs
   */
-  Point__Point.prototype.dot = function(point) {
+  Point.prototype.dot = function(point) {
     return this.x * point.x + this.y * point.y;
   };
 
   /**
-  * Rotates a Point around a given center
-  * @param {Number} angle Amount to rotate by
-  * @param {Number} center to rotate around. If not provided, rotate around 0,0
-  * @return {Point} New Point the result of this Point rotated by angle around center.
+  * @todo write docs
   */
-  Point__Point.prototype.getRotated = function(angle, center) {
-    center = center == null ? new Point__Point() : center;
+  Point.prototype.getRotated = function(angle, center) {
+    center = center == null ? new Point() : center;
 
-    return new Point__Point(Math.cos(angle) * (this.x - center.x) - Math.sin(angle) * (this.y - center.y) + center.x, Math.sin(angle) * (this.x - center.x) + Math.cos(angle) * (this.y - center.y) + center.y);
+    return new Point(Math.cos(angle) * (this.x - center.x) - Math.sin(angle) * (this.y - center.y) + center.x, Math.sin(angle) * (this.x - center.x) + Math.cos(angle) * (this.y - center.y) + center.y);
   };
 
   /**
-  * Copies this Point.
-  * @return {Point} Copy of this point
+  * @todo write docs
   */
-  Point__Point.prototype.clone = function() {
-    return new Point__Point(this.x, this.y);
+  Point.prototype.clone = function() {
+    return new Point(this.x, this.y);
   };
 
   /**
-  * Provides a string representation of the Point.
-  * @return {String} string output
+  * @todo write docs
   */
-  Point__Point.prototype.toString = function() {
+  Point.prototype.toString = function() {
     return "(x=" + this.x + ", y=" + this.y + ")";
   };
 
   /**
-  * Deletes Point.
+  * @todo write docs
   */
-  Point__Point.prototype.destroy = function() {
+  Point.prototype.destroy = function() {
     delete this.type;
     delete this.name;
     delete this.x;
     delete this.y;
   };
 
-  exports.Point = Point__default;
+  exports.Point = Point;
 
-  Interval.prototype = new Point__default();
+  Interval.prototype = new Point();
   Interval.prototype.constructor = Interval;
 
   /**
    * @classdesc Provide reasoning around numeric intervals.
-   * Intervals have a start and end value.
    *
    * @constructor
    * @param {Number} x Interval's start value.
@@ -359,28 +320,21 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Returns the middle value between the min and max of the Interval.
-   *
-   * @return {Number} the difference between the starting and ending values.
+  * @todo write docs
   */
   Interval.prototype.getMiddle = function() {
     return (this.x + this.y)*0.5;
   };
 
   /**
-   * Returns a random value within the min and max of the Interval.
-   *
-   * @return {Number} A random value.
+  * @todo write docs
   */
   Interval.prototype.getRandom = function() {
     return this.x + (this.y - this.x)*Math.random();
   };
 
   /**
-   * Returns 1 if end value is greater then start value, and -1 if that is reversed.
-   * If min and max values are equal, returns 0.
-   *
-   * @return {Number} The sign of the Interval.
+  * @todo write docs
   */
   Interval.prototype.getSign = function() {
     if(this.x == this.y) return 0;
@@ -388,10 +342,10 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Returns a new Interval with its start and stop values scaled by the input value.
+   * Scales a value
+   * @todo finish docs
    *
-   * @param {Number} value Value to scale Interval by.
-   * @return {Interval} The scaled Interval.
+   * @return {Interval}
    */
   Interval.prototype.getScaled = function(value) {
     var midAmp = 0.5 * (this.y - this.x);
@@ -400,12 +354,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Returns a new Interval with its start and stop values scaled by the input value,
-   * but first pulling out a given proportion of the Interval to Scale.
-   *
-   * @param {Number} value Value to scale Interval by.
-   * @param {Number} proportion of Interval to keep in scaling.
-   * @return {Interval} The scaled Interval.
+  * @todo write docs
   */
   Interval.prototype.getScaledFromProportion = function(value, proportion) {
     var antiP = 1 - proportion;
@@ -416,17 +365,14 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-  * Adds provided value to the start and stop values of the Interval.
-  * Returns the new Interval
-  * @param {Number} Number to add to each side of the Interval.
-  * @return {Interval} New added Interval.
+  * @todo write docs
   */
   Interval.prototype.add = function(value) {
     return new Interval(this.x + value, this.y + value);
   };
 
   /**
-  * Swap start and stop values of this Interval.
+  * @todo write docs
   */
   Interval.prototype.invert = function() {
     var swap = this.x;
@@ -447,20 +393,14 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-  * Returns a value between 0 and 1 representing the normalized input value in the Interval.
-  * @param {Number} value Number to inverse interpolate.
-  * @return {Number} Inverse interpolation of input for this Interval.
+  * @todo write docs
   */
   Interval.prototype.getInverseInterpolatedValue = function(value) {
     return(value - this.x) / this.getSignedAmplitude();
   };
 
   /**
-  * Interpolates each value in a given NumberList and provides a new NumberList
-  * containing the interpolated values.
-  *
-  * @param {NumberList}  numberList NumberList to interpolate.
-  * @return {NumberList} NumberList of interpolated values.
+  * @todo write docs
   */
   Interval.prototype.getInterpolatedValues = function(numberList) {
     var newNumberList = [];
@@ -472,11 +412,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-  * Inverse Interpolate each value in a given NumberList and provides a new NumberList
-  * containing these values.
-  *
-  * @param {NumberList}  numberList NumberList to inverse interpolate.
-  * @return {NumberList} NumberList of inverse interpolated values.
+  * @todo write docs
   */
   Interval.prototype.getInverseInterpolatedValues = function(numberList) {
     var newNumberList = [];
@@ -495,9 +431,9 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Create a new interval with the same proporties values
+   * create a new interval with the same proporties values
+   * @return {Interval}
    *
-   * @return {Interval} Copied Interval.
    */
   Interval.prototype.clone = function() {
     var newInterval = new Interval(this.x, this.y);
@@ -510,6 +446,7 @@ define('src/index', ['exports'], function (exports) {
    *
    * @param value Number to test.
    * @return {Boolean} True if the value is inside the Interval.
+   *
    */
   Interval.prototype.contains = function(value) {
     if(this.y > this.x) return value >= this.x && value <= this.y;
@@ -517,21 +454,22 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Indicates if provided interval contains the same values.
+   * Indicates if provided interval contains the same values
    *
-   * @param interval Interval to compare with.
-   * @return {Boolean} true if the are the same.
+   * @param interval
+   * @return {Boolean}
+   *
    */
   Interval.prototype.isEquivalent = function(interval) {
     return this.x == interval.x && this.y == interval.y;
   };
 
   /**
-   * Provides a String representation of the Interval.
-   *
-   * @return {String} String representation.
+   * creates a new interval with the same proporties values
+   * @return {String}
    *
    */
+
   Interval.prototype.toString = function() {
     return "Interval[x:" + this.x + "| y:" + this.y + "| amplitude:" + this.getAmplitude() + "]";
   };
@@ -706,7 +644,7 @@ define('src/index', ['exports'], function (exports) {
         newList = NumberTable.fromArray(this, false);
         break;
       case "Point":
-        newList = Polygon__default.fromArray(this, false);
+        newList = Polygon.fromArray(this, false);
         break;
       case "Polygon":
         newList = PolygonList.fromArray(this, false);
@@ -1065,21 +1003,19 @@ define('src/index', ['exports'], function (exports) {
     if(!nCategories) return;
 
     var freqTable = this.getFrequenciesTable();
-    var frequencyIndexesDictionary = ListOperators.getSingleIndexDictionaryForList(freqTable[0]);
-    var i;
-    var l = this.length;
 
-    if(othersElement==null) othersElement = "other";
+    if(othersElement===null) othersElement = "other";
 
-    var newList = this.type=="StringList"?new StringList():new List();
+<<<<<<< HEAD
+    var newList = this.type=="StringList"?new StringList():new List__List();
+=======
+    var newList = new List();
+>>>>>>> master
     newList.name = this.name;
 
-    for(i=0; i<l; i++){
-      newList.push(frequencyIndexesDictionary[this[i]]<nCategories-1?this[i]:othersElement);
-    }
-    // this.forEach(function(element){
-    //   newList.push(freqTable._indexesDictionary[element]<nCategories-1?element:othersElement);
-    // });
+    this.forEach(function(element){
+      newList.push(freqTable._indexesDictionary[element]<nCategories-1?element:othersElement);
+    });
     
     return newList;
   };
@@ -1141,21 +1077,22 @@ define('src/index', ['exports'], function (exports) {
     table[1] = numberList;
 
     //if(this.type == 'NumberList' || this.type == 'StringList') {//TODO:check other cases
-    table._indexesDictionary = {};
+    var dictionary = {};
 
     var l = this.length;
 
     for(i=0; i<l; i++){
-      index = table._indexesDictionary[this[i]];
+      index = dictionary[this[i]];
       if(index==null){
         index = elementList.length;
         elementList[index] = this[i];
         numberList[index] = 0;
-        table._indexesDictionary[this[i]]= index;
+        dictionary[this[i]]= index;
       }
       numberList[index]++;
     }
 
+    table._indexesDictionary = dictionary;
 
 
     // } else {
@@ -1182,8 +1119,8 @@ define('src/index', ['exports'], function (exports) {
       var colors = new ColorList();
       l = table[0].length;
       for(i = 0; i<l; i++) {
-        colors[i] = ColorListGenerators._HARDCODED_CATEGORICAL_COLORS[i%ColorListGenerators._HARDCODED_CATEGORICAL_COLORS.length];
-      }
+          colors[i] = ColorListGenerators._HARDCODED_CATEGORICAL_COLORS[i%ColorListGenerators._HARDCODED_CATEGORICAL_COLORS.length];
+        }
       table.push(colors);
     }
 
@@ -1199,9 +1136,8 @@ define('src/index', ['exports'], function (exports) {
     if(this.length < 2) return true;
 
     var first = this[0];
-    var l = this.length;
 
-    for(i = 1; i<l; i++) {
+    for(i = 1; this[i] != null; i++) {
       if(this[i] != first) return false;
     }
 
@@ -1228,8 +1164,7 @@ define('src/index', ['exports'], function (exports) {
     if(this.length === 0) return null;
     var min = this[0];
     var i;
-    var l = this.length;
-    for(i = 1; i < l; i++) {
+    for(i = 1; i < this.length; i++) {
       min = Math.min(min, this[i]);
     }
     return min;
@@ -1244,8 +1179,7 @@ define('src/index', ['exports'], function (exports) {
     if(this.length === 0) return null;
     var max = this[0];
     var i;
-    var l = this.length;
-    for(i = 1; i < l; i++) {
+    for(i = 1; i < this.length; i++) {
       max = Math.max(max, this[i]);
     }
     return max;
@@ -1264,9 +1198,8 @@ define('src/index', ['exports'], function (exports) {
   List.prototype.add = function(value) {
     if(value.constructor == Number) {
       var i;
-      var l = this.length;
       var array = instantiateWithSameType(this);
-      for(i = 0; i < l; i++) {
+      for(i = 0; i < this.length; i++) {
         array.push(this[i] + value);
       }
       return array;
@@ -1311,8 +1244,7 @@ define('src/index', ['exports'], function (exports) {
    */
   List.prototype.containsElement = function(element) { //TODO: test if this is faster than indexOf
     var i;
-    var l = this.length;
-    for(i = 0; i<l; i++) {
+    for(i = 0; this[i] != null; i++) {
       if(this[i] == element) return true;
     }
     return false;
@@ -1326,8 +1258,7 @@ define('src/index', ['exports'], function (exports) {
    */
   List.prototype.indexOfElement = function(element) { //TODO: test if this is faster than indexOf
     var i;
-    var l = this.length;
-    for(i = 0; i<l; i++) {
+    for(i = 0; this[i] != null; i++) {
       if(this[i] == element) return i;
     }
     return -1;
@@ -1346,8 +1277,7 @@ define('src/index', ['exports'], function (exports) {
     var newList = new List();
     newList.name = propertyName;
     var val;
-    var l = this.length;
-    for(var i = 0; i<l; i++) {
+    for(var i = 0; this[i] != null; i++) {
       val = this[i][propertyName];
       newList[i] = (val == null ? valueIfNull : val);
     }
@@ -1357,8 +1287,7 @@ define('src/index', ['exports'], function (exports) {
   List.prototype.sortIndexed = function() {
     var index = [];
     var i;
-    var l = this.length;
-    for(i = 0; i < l; i++) {
+    for(i = 0; i < this.length; i++) {
       index.push({
         index: i,
         value: this[i]
@@ -1559,16 +1488,14 @@ define('src/index', ['exports'], function (exports) {
    * tags:
    */
   List.prototype.getFirstElementByPropertyValue = function(propertyName, value) {
-    var l = this.length;
-    for(var i = 0; i<l; i++) {
+    for(var i = 0; this[i] != null; i++) {
       if(this[i][propertyName] == value) return this[i];
     }
     return null;
   };
 
   List.prototype.indexOfByPropertyValue = function(propertyName, value) {
-    var l = this.length;
-    for(var i = 0; i<l; i++) {
+    for(var i = 0; this[i] != null; i++) {
       if(this[i][propertyName] == value) return i;
     }
     return -1;
@@ -1587,8 +1514,7 @@ define('src/index', ['exports'], function (exports) {
     var newList = new List();
     newList.name = this.name;
     var i;
-    var l = this.length;
-    for(i = 0; i<l; i++) {
+    for(i = 0; this[i] != null; i++) {
       if(booleanList[i]) newList.push(this[i]);
     }
     return newList.getImproved();
@@ -1651,25 +1577,24 @@ define('src/index', ['exports'], function (exports) {
     var newList = new List();
     newList.name = "filtered_" + this.name;
     var i;
-    var l = this.length;
     switch(comparison) {
       case "equal":
-        for(i = 0; i<l; i++) {
+        for(i = 0; this[i] != null; i++) {
         if(this[i][propertyName] == propertyValue) newList.push(this[i]);
       }
       break;
       case "different":
-        for(i = 0; i<l; i++) {
+        for(i = 0; this[i] != null; i++) {
         if(this[i][propertyName] != propertyValue) newList.push(this[i]);
       }
       break;
       case "greater":
-        for(i = 0; i<l; i++) {
+        for(i = 0; this[i] != null; i++) {
         if(this[i][propertyName] > propertyValue) newList.push(this[i]);
       }
       break;
       case "lower":
-        for(i = 0; i<l; i++) {
+        for(i = 0; this[i] != null; i++) {
         if(this[i][propertyName] > propertyValue) newList.push(this[i]);
       }
       break;
@@ -1683,8 +1608,7 @@ define('src/index', ['exports'], function (exports) {
     var newList = new List();
     newList.name = this.name;
     var i;
-    var l = this.length;
-    for(i = 0; i<l; i++) {
+    for(i = 0; this[i] != null; i++) {
       newList[i] = func(this[i]);
     }
     return newList.getImproved();
@@ -1693,16 +1617,15 @@ define('src/index', ['exports'], function (exports) {
 
   //filtering
 
-  List.prototype.getWithoutElementsAtIndexes = function(indexes) {
+  List.prototype.getWithoutElementsAtIndexes = function(indexes) { //[!] This DOESN'T transforms the List
     var i;
     var newList;
-    var l = this.length;
     if(this.type == 'List') {
       newList = new List();
     } else {
       newList = instantiate(typeOf(this));
     }
-    for(i = 0; i < l; i++) {
+    for(i = 0; i < this.length; i++) {
       if(indexes.indexOf(i) == -1) {
         newList.push(this[i]);
       }
@@ -1720,13 +1643,12 @@ define('src/index', ['exports'], function (exports) {
    */
   List.prototype.getWithoutElementAtIndex = function(index) {
     var newList;
-    var l = this.length;
     if(this.type == 'List') {
       newList = new List();
     } else {
       newList = instantiateWithSameType(this);
     }
-    for(var i = 0; i<l; i++) {
+    for(var i = 0; this[i] != null; i++) {
       if(i != index) {
         newList.push(this[i]);
       }
@@ -1758,8 +1680,7 @@ define('src/index', ['exports'], function (exports) {
     newList.name = this.name;
 
     var i;
-    var l = this.length;
-    for(i = 0; i<l; i++) {
+    for(i = 0; this[i] != null; i++) {
       if(i != index) newList.push(this[i]);
     }
 
@@ -1767,16 +1688,15 @@ define('src/index', ['exports'], function (exports) {
     return newList;
   };
 
-  List.prototype.getWithoutElements = function(list) {//TODO: more efficiency with dictionary
+  List.prototype.getWithoutElements = function(list) {
     var newList;
-    var l = this.length;
     if(this.type == 'List') {
       newList = new List();
     } else {
       newList = instantiateWithSameType(this);
     }
 
-    for(var i = 0; i<l; i++) {
+    for(var i = 0; this[i] != null; i++) {
       if(list.indexOf(this[i]) == -1) {
         newList.push(this[i]);
       }
@@ -1798,8 +1718,7 @@ define('src/index', ['exports'], function (exports) {
    */
   List.prototype.getFilteredByFunction = function(func) {
     var newList = instantiateWithSameType(this);
-    var l = this.length;
-    for(var i = 0; i<l; i++) {
+    for(var i = 0; this[i] != null; i++) {
       if(func(this[i])) {
         newList.push(this[i]);
       }
@@ -2229,7 +2148,7 @@ define('src/index', ['exports'], function (exports) {
   Rectangle.prototype.constructor = Rectangle;
 
   /**
-   * @classdesc Rectangle shape with x, y, width, and height.
+   * @classdesc Rectangle shape
    *
    * @description Creates a new Rectangle.
    * @param {Number} x
@@ -2251,91 +2170,111 @@ define('src/index', ['exports'], function (exports) {
 
 
   /**
-   * Gets the position of the top right corner of the Rectangle.
-   * @return {Number} Top-right corner.
+   * @todo write docs
    */
   Rectangle.prototype.getRight = function() {
     return this.x + this.width;
   };
 
   /**
-   * Gets the position of the bottom left corner of the Rectangle.
-   * @return {Number} Bottom-left corner.
+   * @todo write docs
    */
   Rectangle.prototype.getBottom = function() {
     return this.y + this.height;
   };
 
   /**
-   * Sets the position of the top right corner of the Rectangle by reducing the
-   * width of the Rectangle to set it to the input value.
-   * @param {Number} New value of Top-right corner.
+   * @todo write docs
    */
   Rectangle.prototype.setRight = function(value) {
     this.width = value - this.x;
   };
 
   /**
-   * Sets the position of the bottom left corner of the Rectangle by reducing the
-   * height of the Rectangle to set it to the input value.
-   * @param {Number} New value of bottom-left corner.
+   * @todo write docs
    */
   Rectangle.prototype.setBottom = function(value) {
     this.height = value - this.y;
   };
 
-  /**
-   * Gets the position of the top left corner of the Rectangle as a {@link Point}.
-   * @return {Point} Top-Left corner.
-   */
-  Rectangle.prototype.getTopLeft = function() {
-    return new Point__default(this.x, this.y);
-  };
+
 
   /**
-   * Gets the position of the top right corner of the Rectangle as a {@link Point}.
-   * @return {Point} Top-Right corner.
+   * @todo write docs
+   */
+<<<<<<< HEAD
+  Table.fromArray = function(array) {
+    var result = List__default.fromArray(array);
+    result.type = "Table";
+    //assign methods to array:
+    result.applyFunction = Table.prototype.applyFunction;
+    result.getRow = Table.prototype.getRow;
+    result.getRows = Table.prototype.getRows;
+    result.getLengths = Table.prototype.getLengths;
+    result.getListLength = Table.prototype.getListLength;
+    result.sliceRows = Table.prototype.sliceRows;
+    result.getSubListsByIndexes = Table.prototype.getSubListsByIndexes;
+    result.getWithoutRow = Table.prototype.getWithoutRow;
+    result.getWithoutRows = Table.prototype.getWithoutRows;
+    result.getTableSimplified = Table.prototype.getTableSimplified;
+    result.getSubTableByElementOnList = Table.prototype.getSubTableByElementOnList;
+    result.getSubTableByElementsOnList = Table.prototype.getSubTableByElementsOnList;
+    result.getTransposed = Table.prototype.getTransposed;
+    result.getListsSortedByList = Table.prototype.getListsSortedByList;
+    result.sortListsByList = Table.prototype.sortListsByList;
+    result.getReport = Table.prototype.getReport;
+    result.getReportHtml = Table.prototype.getReportHtml;
+    result.clone = Table.prototype.clone;
+    result.print = Table.prototype.print;
+
+    //transformative
+    result.removeRow = Table.prototype.removeRow;
+
+    //overiden
+    result.destroy = Table.prototype.destroy;
+=======
+  Rectangle.prototype.getTopLeft = function() {
+    return new Point(this.x, this.y);
+  };
+>>>>>>> master
+
+  /**
+   * @todo write docs
    */
   Rectangle.prototype.getTopRight = function() {
-    return new Point__default(this.x + this.width, this.y);
+    return new Point(this.x + this.width, this.y);
   };
 
   /**
-   * Gets the position of the bottom right corner of the Rectangle as a {@link Point}.
-   * @return {Point} Bottom-Right corner.
+   * @todo write docs
    */
   Rectangle.prototype.getBottomRight = function() {
-    return new Point__default(this.x + this.width, this.y + this.height);
+    return new Point(this.x + this.width, this.y + this.height);
   };
 
   /**
-   * Gets the position of the bottom left corner of the Rectangle as a {@link Point}.
-   * @return {Point} Bottom-Left corner.
+   * @todo write docs
    */
   Rectangle.prototype.getBottomLeft = function() {
-    return new Point__default(this.x, this.y + this.height);
+    return new Point(this.x, this.y + this.height);
   };
 
   /**
-   * Gets the position of the middle of the Rectangle as a {@link Point}.
-   * @return {Point} Center of Rectangle
+   * @todo write docs
    */
   Rectangle.prototype.getCenter = function() {
-    return new Point__default(this.x + 0.5 * this.width, this.y + 0.5 * this.height);
+    return new Point(this.x + 0.5 * this.width, this.y + 0.5 * this.height);
   };
 
   /**
-   * Returns a random {@link Point} constrained to be within the bounds of the Rectangle.
-   * @return {Point} Random Point in Rectangle.
+   * @todo write docs
    */
   Rectangle.prototype.getRandomPoint = function() {
-    return new Point__default(this.x + Math.random() * this.width, this.y + Math.random() * this.height);
+    return new Point(this.x + Math.random() * this.width, this.y + Math.random() * this.height);
   };
 
   /**
-   * Returns a Rectangle that is the overlap of this Rectangle and the input Rectangle.
-   * @param {Rectangle} rectangle Rectangle to overlap on this Rectangle.
-   * @return {Rectangle} Overlaping area of the two as a Rectangle.
+   * @todo write docs
    */
   Rectangle.prototype.getIntersection = function(rectangle) {
     if(rectangle.x + rectangle.width < this.x || rectangle.x > this.x + this.width || rectangle.y + rectangle.height < this.y || rectangle.y > this.y + this.height) return null;
@@ -2345,10 +2284,7 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Returns a new Rectangle that is the interpolation between the current Rectangle
-   * and the given Rectangle at some time t. The input t is a value between 0 and 1.
-   * @param {Rectangle} rectangle Rectangle to interpolate to.
-   * @return {Rectangle} Overlaping area of the two as a Rectangle.
+   * @todo write docs
    */
   Rectangle.prototype.interpolate = function(rectangle, t) {
     var mint = 1 - t;
@@ -2356,25 +2292,23 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Returns the width / height ratio.
-   * @return {Number} ratio of the Rectangle.
+   * @todo write docs
    */
   Rectangle.prototype.getRatio = function() {
     return Math.max(this.width, this.height) / Math.min(this.width, this.height);
   };
 
   /**
-   * Returns the width * height area of the Rectangle
-   * @return {Number} area of the Rectangle.
+   * @todo write docs
    */
   Rectangle.prototype.getArea = function() {
     return this.width * this.height;
   };
 
   /**
-   * Checks if a Point is within the bounds of this Rectangle.
-   * @param  {Point} point Point to check.
-   * @return {Boolean} true if Point is in Rectangle.
+   * check if a point belong to the rectangle
+   * @param  {Point} point
+   * @return {Boolean}
    * tags:geometry
    */
   Rectangle.prototype.containsPoint = function(point) {
@@ -2383,11 +2317,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   /**
-   * Checks if a Point is on the border of the Rectangle within some margin.
-   * @param  {Point} point Point to check.
-   * @param  {Number} margin Area around border to include in the 'border' of the Rectangle.
-   * @return {Boolean} true if Point is on the border.
-   * tags:geometry
+   * @todo write docs
    */
   Rectangle.prototype.pointIsOnBorder = function(point, margin) {
     margin = margin == null ? 1 : margin;
@@ -2401,19 +2331,20 @@ define('src/index', ['exports'], function (exports) {
     return false;
   };
 
+
+
+
   /**
-   * Creates a new Rectangle from this Rectangle which has no negative values for
-   * width and height.
-   * @return {Rectangle} new Normalized Rectangle.
+   * @todo write docs
    */
   Rectangle.prototype.getNormalRectangle = function() {
     return new Rectangle(Math.min(this.x, this.x + this.width), Math.min(this.y, this.y + this.height), Math.abs(this.width), Math.abs(this.height));
   };
 
   /**
-   * Returns true if provided Rectangle overlaps this Rectangle.
-   * @param  {Rectangle} rectangle Rectangle to check.
-   * @return {Boolean} true if the two Rectangles overlap.
+   * return true if it interstects a rectangle
+   * @param  {Rectangle} rectangle
+   * @return {Boolean}
    * tags:geometry
    */
   Rectangle.prototype.intersectsRectangle = function(rectangle) {
@@ -2421,45 +2352,88 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Expands Rectangle by multiplying dimensions by the given expansion around a
-   * given center point. If no center point is provided, the new Rectangle is
-   * expanded around the center of the current Rectangle.
-   * @param {Number} expansion Factor to expand by.
-   * @param {Point} centerPoint Center point of the expansion. Center of Rectangle by default.
-   * @return {Rectangle} Expanded Rectangle.
+   * @todo write docs
    */
-  Rectangle.prototype.expand = function(expansion, centerPoint) {
-    centerPoint = centerPoint || new Point__default(this.x + 0.5 * this.width, this.y + 0.5 * this.height);
-    return new Rectangle((this.x - centerPoint.x) * expansion + centerPoint.x, (this.y - centerPoint.y) * expansion + centerPoint.y, this.width * expansion, this.height * expansion);
+  Rectangle.prototype.expand = function(expantion, centerPoint) {
+    centerPoint = centerPoint || new Point(this.x + 0.5 * this.width, this.y + 0.5 * this.height);
+    return new Rectangle((this.x - centerPoint.x) * expantion + centerPoint.x, (this.y - centerPoint.y) * expantion + centerPoint.y, this.width * expantion, this.height * expantion);
   };
 
   /**
-   * Returns true if this Rectangle is equal to the provided Rectangle.
-   * @param  {Rectangle} rectangle Rectangle to compare.
-   * @return {Boolean} true if two Rectangles are equal.
+   * @todo write docs
    */
+<<<<<<< HEAD
+  Table.prototype.getWithoutRows = function(rowsIndexes) {
+    var newTable = new Table();
+    var i, j;
+
+    newTable.name = this.name;
+    for(i = 0; this[i] != null; i++) {
+      newTable[i] = new List__default();
+      for(j = 0; this[i][j] != null; j++){
+        if(rowsIndexes.indexOf(j) == -1) newTable[i].push(this[i][j]);
+      }
+      newTable[i].name = this[i].name;
+    }
+    return newTable.getImproved();
+  };
+
+  /**
+   * takes a table and simplifies its lists, numberLists will be simplified using quantiles values (using getNumbersSimplified) and other lists reducing the number of different elements (using getSimplified)
+   * specially useful to build simpe decision trees using TableOperators.buildDecisionTree
+   * @param  {Number} nCategories number of different elements on each list
+   * 
+   * @param {Object} othersElement to be placed instead of the less common elements ("other" by default)
+   * @return {Table}
+   * tags:
+   */
+  Table.prototype.getTableSimplified = function(nCategories, othersElement) {
+    if(nCategories===undefined) return null;
+
+    var i;
+    var newTable = new Table();
+    newTable.name = this.name;
+
+    for(i=0; this[i]!==undefined; i++){
+      newTable.push(
+        this[i].type==='NumberList'?
+        this[i].getNumbersSimplified(2, nCategories)
+        :
+        this[i].getSimplified(nCategories, othersElement)
+      );
+    }
+
+    return newTable;
+  };
+
+  /**
+   * filters lists on a table, keeping elements that are in the same of row of a certain element of a given list from the table
+   * @param  {Number} nList index of list containing the element
+   * @param  {Object} element used to filter the lists on the table
+   * @return {Table}
+   * tags:filter
+=======
   Rectangle.prototype.isEqual = function(rectangle) {
     return this.x == rectangle.x && this.y == rectangle.y && this.width == rectangle.width && this.height == rectangle.height;
   };
 
   /**
-   * Returns copy of this Rectangle.
-   * @return {Rectangle} Copy of this Rectangle.
+   * @todo write docs
+>>>>>>> master
    */
   Rectangle.prototype.clone = function() {
     return new Rectangle(this.x, this.y, this.width, this.height);
   };
 
   /**
-  * Provides a string representation of the Rectangle.
-  * @return {String} string output.
-  */
+   * @todo write docs
+   */
   Rectangle.prototype.toString = function() {
     return "(x=" + this.x + ", y=" + this.y + ", w=" + this.width + ", h=" + this.height + ")";
   };
 
   /**
-   * Deletes Rectangle.
+   * @todo write docs
    */
   Rectangle.prototype.destroy = function() {
     delete this.x;
@@ -2470,8 +2444,8 @@ define('src/index', ['exports'], function (exports) {
 
   exports.Rectangle = Rectangle;
 
-  Polygon__Polygon.prototype = new List();
-  Polygon__Polygon.prototype.constructor = Polygon__Polygon;
+  Polygon.prototype = new List();
+  Polygon.prototype.constructor = Polygon;
 
   /**
    * @classdesc A Polygon is a shape created from a list of {@link Point|Points}.
@@ -2480,32 +2454,32 @@ define('src/index', ['exports'], function (exports) {
    * @constructor
    * @category geometry
    */
-  function Polygon__Polygon() {
+  function Polygon() {
     var array = List.apply(this, arguments);
-    array = Polygon__Polygon.fromArray(array);
+    array = Polygon.fromArray(array);
     return array;
   }
-  var Polygon__default = Polygon__Polygon;
+
 
   /**
   * @todo write docs
   */
-  Polygon__Polygon.fromArray = function(array) {
+  Polygon.fromArray = function(array) {
     var result = List.fromArray(array);
     result.type = "Polygon";
 
-    result.getFrame = Polygon__Polygon.prototype.getFrame;
-    result.getBarycenter = Polygon__Polygon.prototype.getBarycenter;
-    result.add = Polygon__Polygon.prototype.add;
-    result.factor = Polygon__Polygon.prototype.factor;
-    result.getRotated = Polygon__Polygon.prototype.getRotated;
-    result.getClosestPoint = Polygon__Polygon.prototype.getClosestPoint;
-    result.toNumberList = Polygon__Polygon.prototype.toNumberList;
-    result.containsPoint = Polygon__Polygon.prototype.containsPoint;
+    result.getFrame = Polygon.prototype.getFrame;
+    result.getBarycenter = Polygon.prototype.getBarycenter;
+    result.add = Polygon.prototype.add;
+    result.factor = Polygon.prototype.factor;
+    result.getRotated = Polygon.prototype.getRotated;
+    result.getClosestPoint = Polygon.prototype.getClosestPoint;
+    result.toNumberList = Polygon.prototype.toNumberList;
+    result.containsPoint = Polygon.prototype.containsPoint;
     //transform
-    result.approach = Polygon__Polygon.prototype.approach;
+    result.approach = Polygon.prototype.approach;
     //override
-    result.clone = Polygon__Polygon.prototype.clone;
+    result.clone = Polygon.prototype.clone;
 
     return result;
   };
@@ -2514,7 +2488,7 @@ define('src/index', ['exports'], function (exports) {
   /**
   * @todo write docs
   */
-  Polygon__Polygon.prototype.getFrame = function() {
+  Polygon.prototype.getFrame = function() {
     if(this.length === 0) return null;
     var rectangle = new Rectangle(this[0].x, this[0].y, this[0].x, this[0].y);
     var p;
@@ -2535,12 +2509,12 @@ define('src/index', ['exports'], function (exports) {
   /**
   * @todo write docs
   */
-  Polygon__Polygon.prototype.getBarycenter = function(countLastPoint) {
+  Polygon.prototype.getBarycenter = function(countLastPoint) {
     var i;
     countLastPoint = countLastPoint == null ? true : countLastPoint;
     var cLPN = 1 - Number(countLastPoint);
     if(this.length === 0) return null;
-    var barycenter = new Point__default(this[0].x, this[0].y);
+    var barycenter = new Point(this[0].x, this[0].y);
     for(i = 1; this[i + cLPN] != null; i++) {
       barycenter.x += this[i].x;
       barycenter.y += this[i].y;
@@ -2553,12 +2527,12 @@ define('src/index', ['exports'], function (exports) {
   /**
   * @todo write docs
   */
-  Polygon__Polygon.prototype.add = function(object) {
+  Polygon.prototype.add = function(object) {
     var type = typeOf(object);
     var i;
     switch(type) {
       case 'Point':
-        var newPolygon = new Polygon__Polygon();
+        var newPolygon = new Polygon();
         for(i = 0; this[i] != null; i++) {
           newPolygon[i] = this[i].add(object);
         }
@@ -2573,20 +2547,20 @@ define('src/index', ['exports'], function (exports) {
    * @return {Polygon}
    * tags:
    */
-  Polygon__Polygon.prototype.factor = function(value) {
+  Polygon.prototype.factor = function(value) {
     var i;
-    var newPolygon = new Polygon__Polygon();
+    var newPolygon = new Polygon();
     newPolygon.name = this.name;
 
     if(value >= 0 || value < 0) {
       for(i = 0; this[i] != null; i++) {
-        newPolygon[i] = new Point__default(this[i].x * value, this[i].y * value);
+        newPolygon[i] = new Point(this[i].x * value, this[i].y * value);
       }
 
       return newPolygon;
     } else if(value.type != null && value.type == 'Point') {
       for(i = 0; this[i] != null; i++) {
-        newPolygon[i] = new Point__default(this[i].x * value.x, this[i].y * value.y);
+        newPolygon[i] = new Point(this[i].x * value.x, this[i].y * value.y);
       }
 
       return newPolygon;
@@ -2599,12 +2573,12 @@ define('src/index', ['exports'], function (exports) {
   /**
   * @todo write docs
   */
-  Polygon__Polygon.prototype.getRotated = function(angle, center) {
-    center = center == null ? new Point__default() : center;
+  Polygon.prototype.getRotated = function(angle, center) {
+    center = center == null ? new Point() : center;
 
-    var newPolygon = new Polygon__Polygon();
+    var newPolygon = new Polygon();
     for(var i = 0; this[i] != null; i++) {
-      newPolygon[i] = new Point__default(Math.cos(angle) * (this[i].x - center.x) - Math.sin(angle) * (this[i].y - center.y) + center.x, Math.sin(angle) * (this[i].x - center.x) + Math.cos(angle) * (this[i].y - center.y) + center.y);
+      newPolygon[i] = new Point(Math.cos(angle) * (this[i].x - center.x) - Math.sin(angle) * (this[i].y - center.y) + center.x, Math.sin(angle) * (this[i].x - center.x) + Math.cos(angle) * (this[i].y - center.y) + center.y);
     }
     newPolygon.name = this.name;
     return newPolygon;
@@ -2613,7 +2587,7 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @todo write docs
    */
-  Polygon__Polygon.prototype.getClosestPoint = function(point) {
+  Polygon.prototype.getClosestPoint = function(point) {
     var closest = this[0];
     var d2Min = Math.pow(point.x - closest.x, 2) + Math.pow(point.y - closest.y, 2);
     var d2;
@@ -2631,7 +2605,7 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @todo write docs
    */
-  Polygon__Polygon.prototype.toNumberList = function() {
+  Polygon.prototype.toNumberList = function() {
     var numberList = new NumberList();
     var i;
     for(i = 0; this[i] != null; i++) {
@@ -2645,7 +2619,7 @@ define('src/index', ['exports'], function (exports) {
   * @todo write docs
   * Thanks http://jsfromhell.com/math/is-point-in-poly AND http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
   */
-  Polygon__Polygon.prototype.containsPoint = function(point) {
+  Polygon.prototype.containsPoint = function(point) {
     var i;
     var j;
     var l;
@@ -2662,7 +2636,7 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @todo write docs
    */
-  Polygon__Polygon.prototype.approach = function(destiny, speed) {
+  Polygon.prototype.approach = function(destiny, speed) {
     speed = speed || 0.5;
     var antispeed = 1 - speed;
 
@@ -2676,8 +2650,8 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @todo write docs
    */
-  Polygon__Polygon.prototype.clone = function() {
-    var newPolygon = new Polygon__Polygon();
+  Polygon.prototype.clone = function() {
+    var newPolygon = new Polygon();
     for(var i = 0; this[i] != null; i++) {
       newPolygon[i] = this[i].clone();
     }
@@ -2685,7 +2659,7 @@ define('src/index', ['exports'], function (exports) {
     return newPolygon;
   };
 
-  exports.Polygon = Polygon__default;
+  exports.Polygon = Polygon;
 
   Polygon3D.prototype = new List();
   Polygon3D.prototype.constructor = Polygon3D;
@@ -3179,9 +3153,9 @@ define('src/index', ['exports'], function (exports) {
    * @return {Polygon}
    */
   NodeList.prototype.getPolygon = function(graphics) {
-    var polygon = new Polygon__default();
+    var polygon = new Polygon();
     for(var i = 0; this[i] != null; i++) {
-      polygon[i] = new Point__default(this[i].x + graphics.cX, this[i].y + graphics.cY);
+      polygon[i] = new Point(this[i].x + graphics.cX, this[i].y + graphics.cY);
     }
     return polygon;
   };
@@ -3547,23 +3521,23 @@ define('src/index', ['exports'], function (exports) {
     if(window.XMLHttpRequest && !(window.ActiveXObject)) {
       try {
         req = new XMLHttpRequest();
-      } catch(e1) {
+      } catch(e) {
         req = false;
       }
       // branch for IE/Windows ActiveX version
     } else if(window.ActiveXObject) {
       try {
         req = new window.ActiveXObject("Msxml2.XMLHTTP.6.0");
-      } catch(e2) {
+      } catch(e) {
         try {
           req = new window.ActiveXObject("Msxml2.XMLHTTP.3.0");
-        } catch(e3) {
+        } catch(e) {
           try {
             req = new window.ActiveXObject("Msxml2.XMLHTTP");
-          } catch(e4) {
+          } catch(e) {
             try {
               req = new window.ActiveXObject("Microsoft.XMLHTTP");
-            } catch(e5) {
+            } catch(e) {
               req = false;
             }
           }
@@ -3720,7 +3694,7 @@ define('src/index', ['exports'], function (exports) {
       } catch(e) {
         try {
           req = new window.ActiveXObject("Microsoft.XMLHTTP");
-        } catch(e2) {
+        } catch(e) {
           req = false;
         }
       }
@@ -4382,9 +4356,7 @@ define('src/index', ['exports'], function (exports) {
   function Table() {
     var args = [];
     var i;
-    var nArgs = arguments.length;
-
-    for(i = 0; i < nArgs; i++) {
+    for(i = 0; i < arguments.length; i++) {
       args[i] = new List(arguments[i]);
     }
 
@@ -4461,9 +4433,7 @@ define('src/index', ['exports'], function (exports) {
   Table.prototype.getRow = function(index) {
     var list = new List();
     var i;
-    var l = this.length;
-
-    for(i = 0; i < l; i++) {
+    for(i = 0; i < this.length; i++) {
       list[i] = this[i][index];
     }
     return list.getImproved();
@@ -4486,9 +4456,7 @@ define('src/index', ['exports'], function (exports) {
    */
   Table.prototype.getLengths = function() {
     var lengths = new NumberList();
-    var l = this.length;
-
-    for(var i = 0; i<l; i++) {
+    for(var i = 0; this[i] != null; i++) {
       lengths[i] = this[i].length;
     }
     return lengths;
@@ -4507,10 +4475,9 @@ define('src/index', ['exports'], function (exports) {
     var i;
     var newTable = new Table();
     var newList;
-    var l = this.length;
 
     newTable.name = this.name;
-    for(i = 0; i<l; i++) {
+    for(i = 0; this[i] != null; i++) {
       newList = this[i].getSubList(startIndex, endIndex);
       newList.name = this[i].name;
       newTable.push(newList);
@@ -4526,15 +4493,9 @@ define('src/index', ['exports'], function (exports) {
    */
   Table.prototype.getSubListsByIndexes = function(indexes) {
     var newTable = new Table();
-    var i;
-    var l = this.length;
-
-    for(i=0; i<l; i++){
-      newTable.push(this[i].getSubListByIndexes(indexes));
-    }
-    // this.forEach(function(list) {
-    //   newTable.push(list.getSubListByIndexes(indexes));
-    // });
+    this.forEach(function(list) {
+      newTable.push(list.getSubListByIndexes(indexes));
+    });
     return newTable.getImproved();
   };
 
@@ -4555,9 +4516,8 @@ define('src/index', ['exports'], function (exports) {
    */
   Table.prototype.getWithoutRow = function(rowIndex) {
     var newTable = new Table();
-    var l = this.length;
     newTable.name = this.name;
-    for(var i = 0; i<l; i++) {
+    for(var i = 0; this[i] != null; i++) {
       newTable[i] = List.fromArray(this[i].slice(0, rowIndex).concat(this[i].slice(rowIndex + 1))).getImproved();
       newTable[i].name = this[i].name;
     }
@@ -4570,15 +4530,12 @@ define('src/index', ['exports'], function (exports) {
    * @return {Table}
    * tags:filter
    */
-  Table.prototype.getWithoutRows = function(rowsIndexes) {// @todo improve efficiency by building dictionary and not using indexOf
+  Table.prototype.getWithoutRows = function(rowsIndexes) {
     var newTable = new Table();
-    var l = this.length;
-    var nElements;
     newTable.name = this.name;
-    for(var i = 0; i<l; i++) {
+    for(var i = 0; this[i] != null; i++) {
       newTable[i] = new List();
-      nElements = this[i].length;
-      for(var j = 0; j<nElements; j++) {
+      for(var j = 0; this[i][j] != null; j++) {
         if(rowsIndexes.indexOf(j) == -1) newTable[i].push(this[i][j]);
       }
       newTable[i].name = this[i].name;
@@ -4588,6 +4545,64 @@ define('src/index', ['exports'], function (exports) {
 
 
   /**
+<<<<<<< HEAD
+   * simplifies the numberList either by replacing numbers by its order of magnitude, or by quantiles
+   * 
+   * @param  {Number} method simplification method:<br>0:significant digits<br>1:number of quantile<br>2:rounded by quantile<br>3:order of magnitude<br>4:rounded by order of magnitude
+   * @param  {Number} param different meaning according to choosen method:<br>0:number of significant digits<br>1:number of quantiles<br>2:number of quantiles<br>3:no need of param<br>4:no need of param
+   * @return {NumberList} simplified list
+   * tags:
+   */
+  NumberList.prototype.getNumbersSimplified = function(method, param) {
+    var newList;
+    var i, j;
+
+    method = method||0;
+    param = param||0;
+
+    newList = new NumberList();
+    newList.name = this.name;
+
+    switch(method){
+      case 0:
+        var power = Math.pow(10, param);
+        this.forEach(function(val){
+          newList.push(Math.floor(val/power)*power);
+        });
+        break;
+      case 1:
+      case 2:
+        param = Math.min( param||10, Math.floor(this.length/2) );
+        var quantiles = this.getQuantiles(param);
+        var val;
+        for(i=0; this[i]!==undefined; i++){
+          val = this[i];
+          if(val<quantiles[0]){
+            method==1?newList.push(0):newList.push(quantiles._min);
+          } else {
+            for(j=0; quantiles[j]!==undefined; j++){
+              if( val>=quantiles[j] && (j+1==quantiles.length || val<quantiles[j+1]) ){
+                method==1?newList.push(j+1):newList.push(quantiles[j]);
+                break;
+              }
+            }
+          }
+        }
+        if(method==1) newList.name = this.name + " (n quantile)";
+        break;
+      case 3:
+        newList.name = this.name + " (order of magnitude)";
+        this.forEach(function(val){
+          newList.push(Math.floor( Math.log(val)/Math.log(10) ));
+        });
+        break;
+      case 4:
+        this.forEach(function(val){
+          newList.push( Math.pow ( 10, Math.floor( Math.log(val)/Math.log(10) ) ) );
+        });
+        break;
+    }
+=======
    * Sort Table's lists by a list
    * @param  {List|Number} listOrIndex List used to sort, or index of list in the table
    *
@@ -4613,10 +4628,9 @@ define('src/index', ['exports'], function (exports) {
    * @return {Table}
    */
   Table.prototype.getTransposed = function(firstListAsHeaders) {
+>>>>>>> master
 
     var tableToTranspose = firstListAsHeaders ? this.getSubList(1) : this;
-    var l = tableToTranspose.length;
-    var nElements;
 
     var table = instantiate(typeOf(tableToTranspose));
     if(tableToTranspose.length === 0) return table;
@@ -4624,31 +4638,35 @@ define('src/index', ['exports'], function (exports) {
     var j;
     var list;
 
-    for(i = 0; i<l; i++) {
+    for(i = 0; tableToTranspose[i] != null; i++) {
       list = tableToTranspose[i];
-      nElements = list.length;
-      for(j = 0; j<nElements; j++) {
+      for(j = 0; list[j] != null; j++) {
         if(i === 0) table[j] = new List();
         table[j][i] = tableToTranspose[i][j];
       }
     }
-
-    nElements = tableToTranspose[0].length;
-    for(j = 0; j<nElements; j++) {
+    for(j = 0; tableToTranspose[0][j] != null; j++) {
       table[j] = table[j].getImproved();
     }
 
     if(firstListAsHeaders) {
-      nElements = this[0].length;
-      for(j = 0; j<nElements; j++) {
-        table[j].name = String(this[0][j]);
-      }
-      // this[0].forEach(function(name, i) {
-      //   table[i].name = String(name);
-      // });
+      this[0].forEach(function(name, i) {
+        table[i].name = String(name);
+      });
     }
 
+<<<<<<< HEAD
+  /**
+   * Calculates mean of the NumberList.
+   *
+   * @return {Number} Mean of all values in the List.
+   * tags:statistics
+   */
+  NumberList.prototype.getAverage = function() {
+    return this.getSum()/this.length;
+=======
     return table;
+>>>>>>> master
   };
 
 
@@ -4668,10 +4686,9 @@ define('src/index', ['exports'], function (exports) {
    * @return {Table} Copy of table.
    */
   Table.prototype.clone = function() {
-    var l = this.length;
     var clonedTable = instantiateWithSameType(this);
     clonedTable.name = this.name;
-    for(var i = 0; i<l; i++) {
+    for(var i = 0; this[i] != null; i++) {
       clonedTable.push(this[i].clone());
     }
     return clonedTable;
@@ -4705,6 +4722,31 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @classdesc {@link Table} to store numbers.
    *
+<<<<<<< HEAD
+   * @param {Number} nQuantiles number of quantiles (the size of the resulting list is nQuantiles-1)
+   * @return {NumberList} A number list of the quantiles.
+   * tags:statistics
+   */
+  NumberList.prototype.getQuantiles = function(nQuantiles) {
+    //TODO: defines different options for return
+    
+    var sorted = this.getSorted(true);
+    var prop = this.length / nQuantiles;
+    var entProp = Math.floor(prop);
+    var onIndex = prop == entProp;
+    var quantiles = new NumberList();
+    
+    for(var i = 0; i < nQuantiles - 1; i++) {
+      quantiles[i] = onIndex ? sorted[(i + 1) * prop] : (0.5 * sorted[(i + 1) * entProp] + 0.5 * sorted[(i + 1) * entProp + 1]);
+    }
+
+    quantiles._sorted = sorted;
+    quantiles._min = sorted[0];
+    quantiles._max = sorted[sorted.length-1];
+
+    return quantiles;
+  };
+=======
    * @param [Number|[Number]] args If a single Number, indicates number of
    * columns to make for the NumberTable. Each column is created as an empty
    * NumberList. If an Array, or a set of Arrays, it will make a new NumberList
@@ -4743,6 +4785,7 @@ define('src/index', ['exports'], function (exports) {
     array = NumberTable.fromArray(array);
     return array;
   }
+>>>>>>> master
 
 
   NumberTable.fromArray = function(array) {
@@ -6035,10 +6078,9 @@ define('src/index', ['exports'], function (exports) {
     forceToNumber = forceToNumber == null ? true : forceToNumber;
 
     var result = List.fromArray(array);
-    var l = result.length;
 
     if(forceToNumber) {
-      for(var i = 0; i < l; i++) {
+      for(var i = 0; i < result.length; i++) {
         result[i] = Number(result[i]);
       }
     }
@@ -6055,7 +6097,6 @@ define('src/index', ['exports'], function (exports) {
     result.getSum = NumberList.prototype.getSum;
     result.getProduct = NumberList.prototype.getProduct;
     result.getInterval = NumberList.prototype.getInterval;
-    result.getNumbersSimplified = NumberList.prototype.getNumbersSimplified;
 
     //statistics
     result.getAverage = NumberList.prototype.getAverage;
@@ -6206,104 +6247,6 @@ define('src/index', ['exports'], function (exports) {
   };
 
 
-
-
-  /**
-   * simplifies the numberList either by replacing numbers by its order of magnitude, or by quantiles
-   *
-   * @param  {Number} method simplification method:<br>0:factors of numbers of magnitude<br>1:number of quantile<br>2:rounded by quantile<br>3:order of magnitude<br>4:rounded by order of magnitude<br>5:sigificant digits (num.toPrecision)
-   * @param  {Number} param different meaning according to choosen method:<br>0:number of significant digits<br>1:number of quantiles<br>2:number of quantiles<br>3:no need of param<br>4:no need of param<br>5:number of significant digits
-   * @return {NumberList} simplified list
-   * tags:
-   */
-  NumberList.prototype.getNumbersSimplified = function(method, param) {
-    var newList;
-    var i, j;
-    var l = this.length;
-
-    method = method||0;
-    param = param||0;
-
-    newList = new NumberList();
-    newList.name = this.name;
-
-    switch(method){
-      case 0:
-        var power = Math.pow(10, param);
-        this.forEach(function(val){
-          newList.push(Math.floor(val/power)*power);
-        });
-        break;
-      case 1:
-      case 2:
-        param = Math.min( param||10, Math.floor(this.length/2) );
-        var quantiles = this.getQuantiles(param);
-        var val;
-        var nQuantiles = quantiles.length;
-        for(i=0; i<l; i++){
-          val = this[i];
-          if(val<quantiles[0]){
-            method==1?newList.push(0):newList.push(quantiles._min);
-          } else {
-            for(j=0; j<nQuantiles; j++){
-              if( val>=quantiles[j] && (j+1==quantiles.length || val<quantiles[j+1]) ){
-                method==1?newList.push(j+1):newList.push(quantiles[j]);
-                break;
-              }
-            }
-          }
-        }
-        if(method==1) newList.name = this.name + " (n quantile)";
-        break;
-      case 3:
-        newList.name = this.name + " (order of magnitude)";
-        for(i=0; i<l; i++){
-          newList.push(Math.floor( Math.log(this[i])/Math.log(10) ));
-        }
-        // this.forEach(function(val){
-        //   newList.push(Math.floor( Math.log(val)/Math.log(10) ));
-        // });
-        break;
-      case 4:
-        newList.name = this.name + " (rounded by order of magnitude)";
-        for(i=0; i<l; i++){
-          newList.push( Math.pow ( 10, Math.floor( Math.log(this[i])/Math.log(10) ) ) );
-        }
-        // this.forEach(function(val){
-        //   newList.push( Math.pow ( 10, Math.floor( Math.log(val)/Math.log(10) ) ) );
-        // });
-        break;
-      case 5:
-        param = param||1;
-        newList.name = this.name + " (significant digits)";
-        for(i=0; i<l; i++){
-          newList.push( Number(this[i].toPrecision(param)) );
-        }
-        break;
-    }
-
-    return newList;
-  };
-
-
-  /**
-   * Builds an {@link Polygon} from the NumberList,
-   * using each consecutive pair of values in the numberList as
-   * x and y positions.
-   *
-   * @return {Polygon} Polygon representing the values
-   * in the NumberList as x/y coordinates.
-   */
-  NumberList.prototype.toPolygon = function() {
-    if(this.length === 0) return null;
-    var polygon = new Polygon();
-    for(var i = 0; this[i + 1] != null; i += 2) {
-      polygon.push(new Point(this[i], this[i + 1]));
-    }
-    return polygon;
-  };
-
-
   /////////statistics
 
   /**
@@ -6313,7 +6256,7 @@ define('src/index', ['exports'], function (exports) {
    * tags:statistics
    */
   NumberList.prototype.getAverage = function() {
-    return this.getSum()/this.length;
+    return this.getSum() / this.length;
   };
 
   /**
@@ -6396,19 +6339,14 @@ define('src/index', ['exports'], function (exports) {
    */
   NumberList.prototype.getQuantiles = function(nQuantiles) {//TODO: defines different options for return
     var sorted = this.getSorted(true);
+
     var prop = this.length / nQuantiles;
     var entProp = Math.floor(prop);
     var onIndex = prop == entProp;
     var quantiles = new NumberList();
-
     for(var i = 0; i < nQuantiles - 1; i++) {
       quantiles[i] = onIndex ? sorted[(i + 1) * prop] : (0.5 * sorted[(i + 1) * entProp] + 0.5 * sorted[(i + 1) * entProp + 1]);
     }
-
-    quantiles._sorted = sorted;
-    quantiles._min = sorted[0];
-    quantiles._max = sorted[sorted.length-1];
-
     return quantiles;
   };
 
@@ -7007,37 +6945,6 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Returns linear regression between two numberLists in another numberList with items
-   * slope, intercept
-   *
-   * @param  {NumberList} numberListX of the same length as numberListY.
-   * @param  {NumberList} numberListY of the same length as numberListX.
-   * @return {NumberList} NumberList with items slope, intercept
-   * tags:statistics
-   */
-  NumberListOperators.linearRegression = function(numberListX, numberListY) {
-    var numberListR = new NumberList();
-    if(numberListX == null || numberListY == null ||
-       numberListX.length != numberListY.length || numberListX.length === 0)
-      return numberListR;
-    var sumx=0,sumy=0,sumx2=0,sumxy=0,sumy2=0;
-
-    var n = numberListX.length;
-    for(var i = 0; i < n; i++) {
-      sumx += numberListX[i];
-      sumy += numberListY[i];
-      sumx2 += numberListX[i]*numberListX[i];
-      sumxy += numberListX[i]*numberListY[i];
-      sumy2 += numberListY[i]*numberListY[i];
-    }
-    var slope = (n * sumxy - sumx * sumy) / (n * sumx2 - sumx * sumx);
-    var intercept = (sumy / n) - (slope * sumx) / n;
-    numberListR.push(slope);
-    numberListR.push(intercept);
-    return numberListR;
-  };
-
-  /**
    * Calculates Euclidean distance between two numberLists
    *
    * @param  {NumberList1} numberList NumberList of the same length
@@ -7352,22 +7259,20 @@ define('src/index', ['exports'], function (exports) {
     var anti = 1 - 2 * intensity;
     var n = numberList.length - 1;
 
-    var newNumberList = numberList.clone();
+    var newNumberList = new NumberList();
     var i;
 
-    var smoothFirst = function(val, i, list){
-      list[i] = anti * val + (i > 0 ? (numberList[i - 1] * intensity) : 0) + (i < n ? (numberList[i + 1] * intensity) : 0);
-    };
-
-    var smooth = function(val, i, list){
-      list[i] = anti * val + (i > 0 ? (list[i - 1] * intensity) : 0) + (i < n ? (list[i + 1] * intensity) : 0);
-    };
+    newNumberList.name = numberList.name;
 
     for(i = 0; i < nIterations; i++) {
       if(i === 0) {
-        newNumberList.forEach(smoothFirst);
+        numberList.forEach(function(val, i) {
+          newNumberList[i] = anti * val + (i > 0 ? (numberList[i - 1] * intensity) : 0) + (i < n ? (numberList[i + 1] * intensity) : 0);
+        });
       } else {
-        newNumberList.forEach(smooth);
+        newNumberList.forEach(function(val, i) {
+          newNumberList[i] = anti * val + (i > 0 ? (newNumberList[i - 1] * intensity) : 0) + (i < n ? (newNumberList[i + 1] * intensity) : 0);
+        });
       }
     }
 
@@ -7375,6 +7280,7 @@ define('src/index', ['exports'], function (exports) {
 
     return newNumberList;
   };
+
 
   /**
    * accepted comparison operators: "<", "<=", ">", ">=", "==", "!="
@@ -7563,7 +7469,6 @@ define('src/index', ['exports'], function (exports) {
    * @return {Rectangle}
    */
   NumberListOperators.frameFromTwoNumberLists = function(numberListX, numberListY){
-    if(numberListX==null || numberListY==null) return;
     var intX = numberListX.getInterval();
     var intY = numberListY.getInterval();
     return new Rectangle(intX.x, intY.x, intX.getAmplitude(), intY.getAmplitude());
@@ -7828,18 +7733,20 @@ define('src/index', ['exports'], function (exports) {
       diffColors = colorList.getInterpolated(color, interpolate);
     } else {
       diffColors = ColorListGenerators.createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate, colorList);
+
+      //diffColors = ColorListGenerators.createDefaultCategoricalColorList( diffValues.length, 1 ).getInterpolated( color, interpolate );
     }
-    if(alpha<1) diffColors = diffColors.addAlpha(alpha);
+    diffColors = diffColors.addAlpha(alpha);
 
     if(invert) diffColors = diffColors.getInverted();
 
-    var colorDictTable = Table.fromArray([diffValues, diffColors]);
-    var dictionaryObject = ListOperators.buildDictionaryObjectForDictionary(colorDictTable);
+    var colorDict = Table.fromArray([diffValues, diffColors]);
+    var dictionaryObject = ListOperators.buildDictionaryObjectForDictionary(colorDict);
 
-    var fullColorList = ListOperators.translateWithDictionary(list, colorDictTable, 'black');
+    var fullColorList = ListOperators.translateWithDictionaryObject(list, colorDict, 'black');// ListOperators.translateWithDictionary(list, colorDict, "NULL");
 
     fullColorList = ColorList.fromArray(fullColorList);
-    
+
     return [
       {
         value: fullColorList,
@@ -8524,35 +8431,11 @@ define('src/index', ['exports'], function (exports) {
     return 1 - ListOperators.jaccardIndex(list0, list1);
   };
 
-
-
-  /**
-   * builds a dictionary that matches an element of a List with its index on the List (indexesDictionary[element] --> index)
-   * it assumes there's no repetitions on the list (if that's not tha case the last index of the element will be delivered)
-   * @param  {List} list
-   * @return {Object}
-   * tags:dictionary
-   */
-  ListOperators.getSingleIndexDictionaryForList = function(list){
-    if(list==null) return;
-
-    var i;
-    var l = list.length;
-
-    var dictionary = {};
-    for(i=0; i<l; i++){
-      dictionary[list[i]] = i;
-    }
-
-    return dictionary;
-  };
-
   /**
    * builds a dictionary that matches an element of a List with all its indexes on the List (indexesDictionary[element] --> numberList of indexes of element on list)
-   * if the list has no repeated elements, and a single is required per element, use ListOperators.getSingleIndexDictionaryForList
    * @param  {List} list
    * @return {Object}
-   * tags:dictionary
+   * tags:
    */
   ListOperators.getIndexesDictionary = function(list){
     var indexesDictionary = {};
@@ -9043,9 +8926,8 @@ define('src/index', ['exports'], function (exports) {
           text += ident + "numbers: " + list.join(", ");
         }
         break;
-      case "StringList":
+        case "StringList":
       case "List":
-      case "ColorList":
         var freqTable = list.getFrequenciesTable(true);
         list._freqTable = freqTable;
         text += ident + "number of different elements: " + freqTable[0].length;
@@ -9151,7 +9033,6 @@ define('src/index', ['exports'], function (exports) {
         break;
       case "StringList":
       case "List":
-      case "ColorList":
         var freqTable = list.getFrequenciesTable(true);
         list._freqTable = freqTable;
         var catColors = ColorListGenerators.createCategoricalColors(2, freqTable[0].length);
@@ -11254,7 +11135,7 @@ define('src/index', ['exports'], function (exports) {
 
   exports.TableEncodings = TableEncodings;
 
-  var version = "0.4.3";
+  var version = "0.4.2";
 
   /*
    * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
@@ -11337,8 +11218,8 @@ define('src/index', ['exports'], function (exports) {
     for(var i = 0; i < input.length; i++)
     {
       x = input.charCodeAt(i);
-      output += hex_tab.charAt((x >>> 4) & 0x0F) +
-                hex_tab.charAt( x        & 0x0F);
+      output += hex_tab.charAt((x >>> 4) & 0x0F)
+             +  hex_tab.charAt( x        & 0x0F);
     }
     return output;
   };
@@ -12156,7 +12037,7 @@ define('src/index', ['exports'], function (exports) {
     NumberTable: NumberTable,
     NodeList: NodeList,
     RelationList: RelationList,
-    Polygon: Polygon__default,
+    Polygon: Polygon,
     Polygon3D: Polygon3D,
     DateList: DateList,
     ColorList: ColorList
@@ -12699,7 +12580,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Point} projected Point.
    */
   Axis2D.prototype.project = function(point) {
-    return new Point__default((point.x - this.departureFrame.x) * this.pW + this.arrivalFrame.x, (point.y - this.departureFrame.y) * this.pH + this.arrivalFrame.y);
+    return new Point((point.x - this.departureFrame.x) * this.pW + this.arrivalFrame.x, (point.y - this.departureFrame.y) * this.pH + this.arrivalFrame.y);
   };
 
 
@@ -12727,7 +12608,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Point} reverse projected Point in the arrival frame.
    */
   Axis2D.prototype.inverseProject = function(point) {
-    return new Point__default((point.x - this.arrivalFrame.x) / this.pW + this.departureFrame.x, (point.y - this.arrivalFrame.y) / this.pH + this.departureFrame.y);
+    return new Point((point.x - this.arrivalFrame.x) / this.pW + this.departureFrame.x, (point.y - this.arrivalFrame.y) / this.pH + this.departureFrame.y);
   };
 
 
@@ -12805,7 +12686,7 @@ define('src/index', ['exports'], function (exports) {
    * @returns {Point} A new point with the transformation applied.
    */
   Matrix.prototype.transformPoint = function(point) {
-    return new Point__default(
+    return new Point(
       this.a * point.x + this.c * point.y + this.tx,
       this.b * point.x + this.d * point.y + this.ty
     );
@@ -12844,7 +12725,7 @@ define('src/index', ['exports'], function (exports) {
    * @return {Point} A new point transformed by this matrix ignoring tx and ty.
    */
   Matrix.prototype.deltaTransformPoint = function(point) {
-    return Point__default(
+    return Point(
       this.a * point.x + this.c * point.y,
       this.b * point.x + this.d * point.y
     );
@@ -13307,14 +13188,14 @@ define('src/index', ['exports'], function (exports) {
    *
    * @return {String} Log message indicating Tree's size.
    */
-  Tree.prototype.getReport = function() {// @todo to be placed in TreeOperators
+  Tree.prototype.getReport = function() {
     //TODO: remove relation input?
     return "Tree contains " + this.nodeList.length + " nodes and " + this.relationList.length + " relations";
   };
 
   exports.Tree = Tree;
 
-  Point3D.prototype = new Point__default();
+  Point3D.prototype = new Point();
   Point3D.prototype.constructor = Point3D;
   /**
    * @classdesc Point3D represents a point in 3D space.
@@ -13327,7 +13208,7 @@ define('src/index', ['exports'], function (exports) {
    * @category geometry
    */
   function Point3D(x, y, z) {
-    Point__default.apply(this, arguments);
+    Point.apply(this, arguments);
     //this.name='';
     this.type = "Point3D";
     this.z = z;
@@ -13493,7 +13374,7 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   PointOperators.twoPointsInterpolation = function(point0, point1, t) {
-    return new Point__default((1 - t) * point0.x + t * point1.x, (1 - t) * point0.y + t * point1.y);
+    return new Point((1 - t) * point0.x + t * point1.x, (1 - t) * point0.y + t * point1.y);
   };
 
   exports.PointOperators = PointOperators;
@@ -13509,8 +13390,8 @@ define('src/index', ['exports'], function (exports) {
   GeometryOperators.getSoftenControlPoints = function(point0, point1, point2, controlVectorSize) {
     controlVectorSize = controlVectorSize || 10;
     var angle = PointOperators.angleFromTwoPoints(point0, point2);
-    var controlPoint0 = new Point__default(point1.x - controlVectorSize * Math.cos(angle), point1.y - controlVectorSize * Math.sin(angle));
-    var controlPoint1 = new Point__default(point1.x + controlVectorSize * Math.cos(angle), point1.y + controlVectorSize * Math.sin(angle));
+    var controlPoint0 = new Point(point1.x - controlVectorSize * Math.cos(angle), point1.y - controlVectorSize * Math.sin(angle));
+    var controlPoint1 = new Point(point1.x + controlVectorSize * Math.cos(angle), point1.y + controlVectorSize * Math.sin(angle));
     return [controlPoint0, controlPoint1];
   };
 
@@ -13534,7 +13415,7 @@ define('src/index', ['exports'], function (exports) {
     var fx = s * bx + t * cx;
     var fy = s * by + t * cy;
 
-    return new Point__default(t * fx + s * ex, t * fy + s * ey);
+    return new Point(t * fx + s * ex, t * fy + s * ey);
   };
 
 
@@ -13586,9 +13467,9 @@ define('src/index', ['exports'], function (exports) {
     var minDT = 0.01;
     var t0 = 0;
     var t1 = 1;
-    var p0 = new Point__default(x0, y0);
+    var p0 = new Point(x0, y0);
     var p0I = GeometryOperators.bezierCurvePoints(x0, y0, c0x, c0y, c1x, c1y, x1, y1, minDT);
-    var p1 = new Point__default(x1, y1);
+    var p1 = new Point(x1, y1);
     var d0 = Math.pow(p0.x - p.x, 2) + Math.pow(p0.y - p.y, 2);
     var d0I = Math.pow(p0I.x - p.x, 2) + Math.pow(p0I.y - p.y, 2);
     var d1 = Math.pow(p1.x - p.x, 2) + Math.pow(p1.y - p.y, 2);
@@ -13644,9 +13525,9 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   GeometryOperators.lineFromTwoPoints = function(point0, point1) {
-    if(point0.x == point1.x) return new Point__default(Infinity, point0.x);
+    if(point0.x == point1.x) return new Point(Infinity, point0.x);
     var m = (point1.y - point0.y) / (point1.x - point0.x);
-    return new Point__default(m, point0.y - m * point0.x);
+    return new Point(m, point0.y - m * point0.x);
   };
 
   /**
@@ -13662,7 +13543,7 @@ define('src/index', ['exports'], function (exports) {
       m2 = -1 / line.x;
       b2 = point.y - m2 * point.x;
     }
-    var interPoint = GeometryOperators.intersectionLines(line, new Point__default(m2, b2));
+    var interPoint = GeometryOperators.intersectionLines(line, new Point(m2, b2));
     return Math.sqrt(Math.pow(point.x - interPoint.x, 2) + Math.pow(point.y - interPoint.y, 2));
   };
 
@@ -13671,7 +13552,7 @@ define('src/index', ['exports'], function (exports) {
    */
   GeometryOperators.distancePointToSegment = function(point, point0Segment, point1Segment) {
     var m = point0Segment.x == point1Segment.x ? Infinity : (point1Segment.y - point0Segment.y) / (point1Segment.x - point0Segment.x);
-    var line = m == Infinity ? new Point__default(Infinity, point0Segment.x) : new Point__default(m, point0Segment.y - m * point0Segment.x);
+    var line = m == Infinity ? new Point(Infinity, point0Segment.x) : new Point(m, point0Segment.y - m * point0Segment.x);
     var m2;
     var b2;
     if(line.x === 0) {
@@ -13681,7 +13562,7 @@ define('src/index', ['exports'], function (exports) {
       m2 = -1 / line.x;
       b2 = point.y - m2 * point.x;
     }
-    var interPoint = GeometryOperators.intersectionLines(line, new Point__default(m2, b2));
+    var interPoint = GeometryOperators.intersectionLines(line, new Point(m2, b2));
     if(interPoint.x >= Math.min(point0Segment.x, point1Segment.x) && interPoint.x <= Math.max(point0Segment.x, point1Segment.x)) return point.distanceToPoint(interPoint);
     return Math.min(point.distanceToPoint(point0Segment), point.distanceToPoint(point1Segment));
   };
@@ -13693,21 +13574,21 @@ define('src/index', ['exports'], function (exports) {
     if(line0.x == line1.x) {
       if(line0.y == line1.y) {
         if(line0.x == Infinity) {
-          return new Point__default(line0.y, 0);
+          return new Point(line0.y, 0);
         } else {
-          return new Point__default(0, line0.y);
+          return new Point(0, line0.y);
         }
       }
       return null;
     }
     if(line0.x == Infinity) {
-      return new Point__default(line0.y, line1.x * line0.y + line1.y);
+      return new Point(line0.y, line1.x * line0.y + line1.y);
     } else if(line1.x == Infinity) {
-      return new Point__default(line1.y, line0.x * line1.y + line0.y);
+      return new Point(line1.y, line0.x * line1.y + line0.y);
     }
 
     var xx = (line1.y - line0.y) / (line0.x - line1.x);
-    return new Point__default(xx, line0.x * xx + line0.y);
+    return new Point(xx, line0.x * xx + line0.y);
   };
 
 
@@ -14028,7 +13909,7 @@ define('src/index', ['exports'], function (exports) {
     var p = polygon;
     var n = p.length;
     var k = 0;
-    var h = new Polygon__default();
+    var h = new Polygon();
     var indexes;
     if(returnIndexes){
       indexes = new NumberList();
@@ -14066,7 +13947,7 @@ define('src/index', ['exports'], function (exports) {
       h[k++] = p[i];
     }
 
-    return Polygon__default.fromArray(h.getSubList(new Interval(0, k - 2)));
+    return Polygon.fromArray(h.getSubList(new Interval(0, k - 2)));
   };
 
   /**
@@ -14082,14 +13963,14 @@ define('src/index', ['exports'], function (exports) {
     var parent;
     var leaves = new NodeList();
 
-    var node0, node1, nodeList = new Polygon__default();
+    var node0, node1, nodeList = new Polygon();
 
     polygon.forEach(function(point, i) {
       node = new Node__default('point_' + i, 'point_' + i);
       node.weight = 1;
       node.barycenter = point;
       node.point = point;
-      node.polygon = new Polygon__default(point);
+      node.polygon = new Polygon(point);
       tree.addNode(node);
       nodeList.push(node);
       leaves.push(node);
@@ -14105,7 +13986,7 @@ define('src/index', ['exports'], function (exports) {
       //c.l("node0.polygon.length, node1.polygon.length, parent.polygon.length", node0.polygon.length, node1.polygon.length, parent.polygon.length);
       parent.weight = parent.polygon.length;
       tW = node0.weight + node1.weight;
-      parent.barycenter = new Point__default((node0.weight * node0.barycenter.x + node1.weight * node1.barycenter.x) / tW, (node0.weight * node0.barycenter.y + node1.weight * node1.barycenter.y) / tW);
+      parent.barycenter = new Point((node0.weight * node0.barycenter.x + node1.weight * node1.barycenter.x) / tW, (node0.weight * node0.barycenter.y + node1.weight * node1.barycenter.y) / tW);
       //c.l('parent.barycenter.x', parent.barycenter.x, parent.barycenter.y);
       tree.addNode(parent);
       tree._newCreateRelation(parent, node0);
@@ -14191,7 +14072,7 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   PolygonOperators.expandFromBarycenter = function(polygon, factor) {
-    var newPolygon = new Polygon__default();
+    var newPolygon = new Polygon();
     var barycenter = polygon.getBarycenter();
 
     for(var i = 0; polygon[i] != null; i++) {
@@ -14205,7 +14086,7 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   PolygonOperators.expandInAngles = function(polygon, amount) { //TODO: test if it works with convex polygons
-    var newPolygon = new Polygon__default();
+    var newPolygon = new Polygon();
     var p0 = polygon[polygon.length - 1];
     var p1 = polygon[0];
     var p2 = polygon[1];
@@ -14215,7 +14096,7 @@ define('src/index', ['exports'], function (exports) {
     var sign;
 
     var a = 0.5 * Math.atan2(p1.y - p2.y, p1.x - p2.x) + 0.5 * Math.atan2(p1.y - p0.y, p1.x - p0.x);
-    var globalSign = polygon.containsPoint(new Point__default(p1.x + Math.floor(amount) * Math.cos(a), p1.y + Math.floor(amount) * Math.sin(a))) ? -1 : 1;
+    var globalSign = polygon.containsPoint(new Point(p1.x + Math.floor(amount) * Math.cos(a), p1.y + Math.floor(amount) * Math.sin(a))) ? -1 : 1;
 
 
     for(var i = 0; polygon[i] != null; i++) {
@@ -14227,7 +14108,7 @@ define('src/index', ['exports'], function (exports) {
       sign = Math.abs(a1 - a0) < Math.PI ? -1 : 1;
       a = 0.5 * a0 + 0.5 * a1;
       //sign = polygon.containsPoint(new Point(p1.x + Math.floor(amount)*Math.cos(a), p1.y + Math.floor(amount)*Math.sin(a)))?-1:1;
-      newPolygon[i] = new Point__default(p1.x + globalSign * sign * amount * Math.cos(a), p1.y + globalSign * sign * amount * Math.sin(a));
+      newPolygon[i] = new Point(p1.x + globalSign * sign * amount * Math.cos(a), p1.y + globalSign * sign * amount * Math.sin(a));
     }
 
     return newPolygon;
@@ -14343,7 +14224,7 @@ define('src/index', ['exports'], function (exports) {
     var k;
     var p0;
     var p1;
-    var pC = new Point__default();
+    var pC = new Point();
     var p;
     var d;
     var dMin = deepness - 1;
@@ -14394,10 +14275,10 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   PolygonOperators.controlPointsFromPointsAnglesIntensities = function(polygon, angles, intensities) {
-    var controlPoints = new Polygon__default();
+    var controlPoints = new Polygon();
     for(var i = 0; polygon[i] != null; i++) {
-      if(i > 0) controlPoints.push(new Point__default(polygon[i].x - intensities[i] * Math.cos(angles[i]), polygon[i].y - intensities[i] * Math.sin(angles[i])));
-      if(i < polygon.length - 1) controlPoints.push(new Point__default(polygon[i].x + intensities[i] * Math.cos(angles[i]), polygon[i].y + intensities[i] * Math.sin(angles[i])));
+      if(i > 0) controlPoints.push(new Point(polygon[i].x - intensities[i] * Math.cos(angles[i]), polygon[i].y - intensities[i] * Math.sin(angles[i])));
+      if(i < polygon.length - 1) controlPoints.push(new Point(polygon[i].x + intensities[i] * Math.cos(angles[i]), polygon[i].y + intensities[i] * Math.sin(angles[i])));
     }
     return controlPoints;
   };
@@ -14407,14 +14288,14 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   PolygonOperators.placePointsInsidePolygon = function(polygon, nPoints, mode) {
-    var points = new Polygon__default();
+    var points = new Polygon();
     var frame = polygon.getFrame();
     mode = mode || 0;
     switch(mode) {
       case 0: //random simple
         var p;
         while(points.length < nPoints) {
-          p = new Point__default(frame.x + Math.random() * frame.width, frame.y + Math.random() * frame.height);
+          p = new Point(frame.x + Math.random() * frame.width, frame.y + Math.random() * frame.height);
           if(PolygonOperators.polygonContainsPoint(polygon, p)) points.push(p);
         }
         return points;      
@@ -14425,7 +14306,7 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   PolygonOperators.placePointsInsideBezierPolygon = function(polygon, nPoints, mode, border) {
-    var points = new Polygon__default();
+    var points = new Polygon();
     var frame = polygon.getFrame();
     mode = mode || 0;
     switch(mode) {
@@ -14433,7 +14314,7 @@ define('src/index', ['exports'], function (exports) {
         var p;
         var nAttempts = 0;
         while(points.length < nPoints && nAttempts < 1000) {
-          p = new Point__default(frame.x + Math.random() * frame.width, frame.y + Math.random() * frame.height);
+          p = new Point(frame.x + Math.random() * frame.width, frame.y + Math.random() * frame.height);
           nAttempts++;
           if(PolygonOperators.bezierPolygonContainsPoint(polygon, p, border)) {
             points.push(p);
@@ -14689,7 +14570,7 @@ define('src/index', ['exports'], function (exports) {
     configuration = configuration == null ? {} : configuration;
     this.graphics = graphics;
 
-    this.center = configuration.center == null ? new Point__default(0, 0) : configuration.center;
+    this.center = configuration.center == null ? new Point(0, 0) : configuration.center;
     this.scale = 1;
 
     if(configuration.interactionActive) this.activeInteraction();
@@ -14735,7 +14616,7 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   Space2D.prototype.project = function(point) {
-    return new Point__default((point.x - this.center.x) * this.scale, (point.y + this.center.y) * this.scale);
+    return new Point((point.x - this.center.x) * this.scale, (point.y + this.center.y) * this.scale);
   };
 
   /**
@@ -14756,7 +14637,7 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   Space2D.prototype.inverseProject = function(point) {
-    return new Point__default(point.x / this.scale + this.center.x, point.y / this.scale + this.center.y);
+    return new Point(point.x / this.scale + this.center.x, point.y / this.scale + this.center.y);
   };
 
   /**
@@ -14855,7 +14736,7 @@ define('src/index', ['exports'], function (exports) {
       this.scale = this.MAX_SCALE;
       return;
     }
-    this.factorScaleFromPoint(new Point__default(this.graphics.mX - 0, this.graphics.mY - 0), (1 - 0.02 * e.value));
+    this.factorScaleFromPoint(new Point(this.graphics.mX - 0, this.graphics.mY - 0), (1 - 0.02 * e.value));
   };
 
   exports.Space2D = Space2D;
@@ -15147,9 +15028,9 @@ define('src/index', ['exports'], function (exports) {
    */
   GeometryConversions.twoNumberListsToPolygon = function(numberList0, numberList1) { //TODO:change name to NumberTableToPolygon
     var n = Math.min(numberList0.length, numberList1.length);
-    var polygon = new Polygon__default();
+    var polygon = new Polygon();
     for(var i = 0; i < n; i++) {
-      polygon[i] = new Point__default(numberList0[i], numberList1[i]);
+      polygon[i] = new Point(numberList0[i], numberList1[i]);
     }
     return polygon;
   };
@@ -15184,12 +15065,12 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   PolygonGenerators.createPolygon = function(nPoints, mode, frame) {
-    var polygon = new Polygon__default();
+    var polygon = new Polygon();
 
     switch(mode) {
       case 0: //random
         for(var i = 0; i < nPoints; i++) {
-          polygon.push(new Point__default(frame.x + frame.width * Math.random(), frame.y + frame.height * Math.random()));
+          polygon.push(new Point(frame.x + frame.width * Math.random(), frame.y + frame.height * Math.random()));
         }
         break;
       case 1: //circle
@@ -15319,10 +15200,10 @@ define('src/index', ['exports'], function (exports) {
     var j;
     var numbers;
     for(var i = 0; pols[i] != null; i++) {
-      polygon = new Polygon__default();
+      polygon = new Polygon();
       numbers = StringOperators.splitString(pols[i], separatorCoordinates);
       for(j = 0; numbers[j] != null; j += 2) {
-        point = new Point__default(Number(numbers[j]), Number(numbers[j + 1]));
+        point = new Point(Number(numbers[j]), Number(numbers[j + 1]));
         polygon.push(point);
       }
       polygonList.push(polygon);
@@ -15482,18 +15363,18 @@ define('src/index', ['exports'], function (exports) {
           var rAustralasia = new Rectangle(0.72, 0.45, 0.28, 0.32);
           var rEurope = new Rectangle(0.38, 0.04, 0.22, 0.32);
 
-          var pivotEuroafrasia = new Point__default(0.6, 0.36);
+          var pivotEuroafrasia = new Point(0.6, 0.36);
           rAfrica = expandRectangle(rAfrica, Math.sqrt(weights[0]), pivotEuroafrasia);
           rAsia = expandRectangle(rAsia, Math.sqrt(weights[1]), pivotEuroafrasia);
           rEurope = expandRectangle(rEurope, Math.sqrt(weights[3]), pivotEuroafrasia);
 
           rAustralasia.x = rAsia.x + rAsia.width * 0.5;
           rAustralasia.y = rAsia.bottom;
-          var pivotAustralasia = new Point__default(rAustralasia.x + rAustralasia.width * 0.3, rAsia.bottom);
+          var pivotAustralasia = new Point(rAustralasia.x + rAustralasia.width * 0.3, rAsia.bottom);
           rAustralasia = expandRectangle(rAustralasia, Math.sqrt(weights[2]), pivotAustralasia);
           rAustralasia.y += rAustralasia.height * 0.2;
 
-          var pivotAmericas = new Point__default(0.26, 0.36 + Math.max(rAfrica.height * 0.3, rEurope.height * 0.2));
+          var pivotAmericas = new Point(0.26, 0.36 + Math.max(rAfrica.height * 0.3, rEurope.height * 0.2));
 
           var rNorthAmerica = new Rectangle(0.1, pivotAmericas.y - 0.4, 0.2, 0.4);
           var rSouthAmerica = new Rectangle(0.22, pivotAmericas.y, 0.16, 0.5);
@@ -16008,46 +15889,32 @@ define('src/index', ['exports'], function (exports) {
     if(nList==null || element==null) return;
 
     var i, j;
-    var nLists = table.length;
 
-    if(nList<0) nList = nLists+nList;
-    nList = nList%nLists;
+    if(nList<0) nList = table.length+nList;
+    nList = nList%table.length;
 
     var newTable = instantiateWithSameType(table);
     newTable.name = table.name;
 
-    for(i=0; i<nLists; i++){
+    table.forEach(function(list){
       var newList = new List();
-      newList.name = table[i].name;
+      newList.name = list.name;
       newTable.push(newList);
-    }
-    // table.forEach(function(list){
-    //   var newList = new List();
-    //   newList.name = list.name;
-    //   newTable.push(newList);
-    // });
+    });
 
     var supervised = table[nList];
-    var nSupervised = supervised.length;
-    var nElements;
 
-    for(i=0; i<nSupervised; i++){
+    for(i=0; supervised[i]!=null; i++){
       if(element==supervised[i]){
-        nElements = newTable.length;
-         for(j=0; j<nElements; j++){
+         for(j=0; newTable[j]!=null; j++){
             newTable[j].push(table[j][i]);
          }
       }
     }
 
-    nLists = newTable.length;
-
-    for(i=0; i<nLists; i++){
-      newTable[i] = newTable[i].getImproved();
-    }
-    // newTable.forEach(function(list, i){
-    //   newTable[i] = list.getImproved();
-    // });
+    newTable.forEach(function(list, i){
+      newTable[i] = list.getImproved();
+    });
 
     return newTable.getImproved();
   };
@@ -17467,9 +17334,9 @@ define('src/index', ['exports'], function (exports) {
    */
   NumberListConversions.toPolygon = function(numberlist) {
     if(numberlist.length === 0) return null;
-    var polygon = new Polygon__default();
+    var polygon = new Polygon();
     for(var i = 0; numberlist[i + 1] != null; i += 2) {
-      polygon.push(new Point__default(numberlist[i], numberlist[i + 1]));
+      polygon.push(new Point(numberlist[i], numberlist[i + 1]));
     }
     return polygon;
   };
@@ -17507,10 +17374,10 @@ define('src/index', ['exports'], function (exports) {
 
     var i;
     var n = Math.min(numberTable[0].length, numberTable[1].length);
-    var polygon = new Polygon__default();
+    var polygon = new Polygon();
 
     for(i = 0; i < n; i++) {
-      polygon[i] = new Point__default(numberTable[0][i], numberTable[1][i]);
+      polygon[i] = new Point(numberTable[0][i], numberTable[1][i]);
     }
 
     return polygon;
@@ -17816,7 +17683,7 @@ define('src/index', ['exports'], function (exports) {
    */
   NumberTableOperators.normalizeListsToMax = function(numbertable, factorValue) {
     var newTable = new NumberTable();
-    var numberlist;
+    var numberlist
     var l = numbertable.length;
     var i;
     for(i = 0; i<l; i++) {
@@ -17882,7 +17749,7 @@ define('src/index', ['exports'], function (exports) {
     if(numberTable == null || numberTable[0]==null || k == null || k <= 0 || numberTable.getLengths().getInterval().getAmplitude()!==0) return null;
 
     returnIndexesMode = returnIndexesMode==null?0:returnIndexesMode;
-    N = (N==null || (N<=0))?1000:N;
+    N = (N==null || !(N>0))?1000:N;
 
     var clusters = new NumberTable();// = returnIndexesMode?new NumberList():new NumberTable();
 
@@ -17943,7 +17810,7 @@ define('src/index', ['exports'], function (exports) {
         jK = 0;
 
         for(j = 0; j < k; j++) {
-          d = NumberListOperators.distance(row, means[j]);
+          d = row.distance(means[j]);
           if(d < dMin) {
             dMin = d;
             jK = j;
@@ -18544,10 +18411,10 @@ define('src/index', ['exports'], function (exports) {
       case 'Array_List':
         return ObjectConversions.ArrayToList(object);
       case 'NumberTable_Polygon':
-        var polygon = new Polygon__default();
+        var polygon = new Polygon();
         var length2 = object.length > 1;
         for(i = 0; object[0][i] != null; i++) {
-          polygon[i] = new Point__default(object[0][i], length2 ? object[1][i] : 0);
+          polygon[i] = new Point(object[0][i], length2 ? object[1][i] : 0);
         }
         return polygon;
       case 'date_string':
@@ -18636,19 +18503,6 @@ define('src/index', ['exports'], function (exports) {
 
     if(object.getReport) return object.getReport();
 
-    var type = typeOf(object);
-
-    switch(type){
-      case 'Table':
-        return TableOperators.getReport(object);
-      case 'List':
-        return ListOperators.getReport(object);
-    }
-
-    if(object.isTable) return TableOperators.getReport(object);
-    if(object.isList) return ListOperators.getReport(object);
-
-
     var text = "///////////report of instance of Object//////////";
     if(object.name) text += "name: "+object.name;
 
@@ -18687,22 +18541,8 @@ define('src/index', ['exports'], function (exports) {
 
     if(object.getReportHtml) return object.getReportHtml();
 
-    var type = typeOf(object);
-
-    switch(type){
-      case 'Table':
-        return TableOperators.getReportHtml(object);
-      case 'List':
-        return ListOperators.getReportHtml(object);
-    }
-
-    if(object.isTable) return TableOperators.getReportHtml(object);
-    if(object.isList) return ListOperators.getReportHtml(object);
-
     var text = "<fs18>report of instance of Object</f>";
-
-    text += ObjectOperators.getReportHtml(object);
-    //if(object.name) text += "name: "+object.name;
+    if(object.name) text += "name: "+object.name;
 
     return text;
   };
@@ -18927,19 +18767,19 @@ define('src/index', ['exports'], function (exports) {
         case 'number_number':
           return a0 + a1;
         case 'Point_Point':
-          return new Point__default(a0.x + a1.x, a0.y + a1.y);
+          return new Point(a0.x + a1.x, a0.y + a1.y);
         case 'Point3D_Point3D':
           return new Point3D(a0.x + a1.x, a0.y + a1.y, a0.z + a1.z);
         case 'number_Point':
-          return new Point__default(a0.x + a1, a0.y + a1);
+          return new Point(a0.x + a1, a0.y + a1);
         case 'number_Point3D':
           return new Point3D(a0.x + a1, a0.y + a1, a0.z + a1);
         case 'Interval_number':
           return new Interval(a0.x + a1, a0.y + a1);
         case 'Interval_Point':
-          return new Point__default(a0.getMin() + a1.x, a0.getMax() + a1.y);
+          return new Point(a0.getMin() + a1.x, a0.getMax() + a1.y);
         case 'Interval_Interval':
-          return new Point__default(a0.getMin() + a1.getMin(), a0.getMax() + a1.getMax());
+          return new Point(a0.getMin() + a1.getMin(), a0.getMax() + a1.getMax());
         case 'Point_Rectangle':
           return new Rectangle(a0.x + a1.x, a0.y + a1.y, a1.width, a1.height);
         case 'Interval_Rectangle':
@@ -19049,19 +18889,19 @@ define('src/index', ['exports'], function (exports) {
         case 'string_string':
           return a0 * a1; //todo: what to do with strings?
         case 'Point_Point':
-          return new Point__default(a0.x * a1.x, a0.y * a1.y);
+          return new Point(a0.x * a1.x, a0.y * a1.y);
         case 'Point3D_Point3D':
           return new Point3D(a0.x * a1.x, a0.y * a1.y, a0.z * a1.z);
         case 'number_Point':
-          return new Point__default(a0.x * a1, a0.y * a1);
+          return new Point(a0.x * a1, a0.y * a1);
         case 'number_Point3D':
           return new Point3D(a0.x * a1, a0.y * a1, a0.z * a1);
         case 'Interval_number':
           return new Interval(a0.getMin() * a1, a0.getMax() * a1);
         case 'Interval_Point':
-          return new Point__default(a0.getMin() * a1.x, a0.getMax() * a1.y);
+          return new Point(a0.getMin() * a1.x, a0.getMax() * a1.y);
         case 'Interval_Interval':
-          return new Point__default(a0.getMin() + a1.getMin(), a0.getMax() + a1.getMax());
+          return new Point(a0.getMin() + a1.getMin(), a0.getMax() + a1.getMax());
         case 'Point_Rectangle':
           return new Rectangle(a0.x * a1.x, a0.y * a1.y, a1.width, a1.height); //todo: no
         case 'Interval_Rectangle':
@@ -19108,12 +18948,14 @@ define('src/index', ['exports'], function (exports) {
    * @return {Object}
    * tags:math
    */
-  ObjectOperators.division = function() {    
+  ObjectOperators.division = function() {
+    //console.log("addition__________________________________arguments:", arguments);
+    var objectType;
     var result;
     var i;
     if(arguments.length < 2) {
       if(arguments.length == 1 && arguments[0] && arguments[0].isList) {
-        result = arguments[0][0];
+        var result = arguments[0][0];
         for(i = 1; arguments[0][i] != null; i++) {
           result = ObjectOperators.division(result, arguments[0][i]);
         }
@@ -19155,19 +18997,19 @@ define('src/index', ['exports'], function (exports) {
         case 'string_string':
           return a0 / a1; //todo: what to do with strings?
         case 'Point_Point':
-          return new Point__default(a0.x / a1.x, a0.y / a1.y);
+          return new Point(a0.x / a1.x, a0.y / a1.y);
         case 'Point3D_Point3D':
           return new Point3D(a0.x / a1.x, a0.y / a1.y, a0.z / a1.z);
         case 'number_Point':
-          return new Point__default(a0.x / a1, a0.y / a1);
+          return new Point(a0.x / a1, a0.y / a1);
         case 'number_Point3D':
           return new Point3D(a0.x / a1, a0.y / a1, a0.z / a1);
         case 'Interval_number':
           return new Interval(a0.getMin() / a1, a0.getMax() / a1);
         case 'Interval_Point':
-          return new Point__default(a0.getMin() / a1.x, a0.getMax() / a1.y);
+          return new Point(a0.getMin() / a1.x, a0.getMax() / a1.y);
         case 'Interval_Interval':
-          return new Point__default(a0.getMin() + a1.getMin(), a0.getMax() + a1.getMax());
+          return new Point(a0.getMin() + a1.getMin(), a0.getMax() + a1.getMax());
         case 'Point_Rectangle':
           return new Rectangle(a0.x / a1.x, a0.y / a1.y, a1.width, a1.height); //todo: no
         case 'Interval_Rectangle':
@@ -19605,7 +19447,7 @@ define('src/index', ['exports'], function (exports) {
           nOtherTexts += Number(text.indexOf(word) != -1); //is this the fastest way?
         });
 
-        if(nOtherTexts === 0) {
+        if(nOtherTexts == 0) {
           words.splice(j, 1);
           j--;
           continue;
@@ -19782,7 +19624,7 @@ define('src/index', ['exports'], function (exports) {
     var norm1;
     for(i = 0; occurrencesTable[i] != null; i++) {
       string0 = occurrencesTable[i].name;
-      if(i === 0) {
+      if(i == 0) {
         node0 = new Node__default(string0, string0);
         network.addNode(node0);
       } else {
@@ -20169,7 +20011,7 @@ define('src/index', ['exports'], function (exports) {
 
     //console.log('\n\n[•--•] /////////--- build paths ----///////');
 
-    for(i=0; relationsTable[0][i]!=null; i++){
+    for(var i=0; relationsTable[0][i]!=null; i++){
       allPaths.push( new NodeList(node0, relationsTable[0][i].getOther(node0)) );
     }
 
@@ -20581,7 +20423,7 @@ define('src/index', ['exports'], function (exports) {
       newNodes.removeElements(accumulated);
       // console.log('      newNodes.removeElements(accumulated) | newNodes.getIds()', newNodes.getIds().join(','));
       //console.log('newNodes.length (if 0 return tree)', newNodes.length)
-      if(newNodes.length === 0) return tree;
+      if(newNodes.length == 0) return tree;
 
       for(i = 0; newNodes[i] != null; i++) {
         newNode = new Node__default(newNodes[i].id, newNodes[i].name);
@@ -22168,10 +22010,10 @@ define('src/index', ['exports'], function (exports) {
       for(j = 1; j < nCols; j++) {
         sY = (1 - lastIntervalList[j].y) * 0.5 * dY + i * mY + y;
 
-        point0 = new Point__default(j * dX + x, intervalList[j].x * dY + sY);
-        point1 = new Point__default((j + 1) * dX + x, intervalList[j].x * dY + sY);
-        point2 = new Point__default((j + 1) * dX + x, intervalList[j].y * dY + sY);
-        point3 = new Point__default(j * dX + x, intervalList[j].y * dY + sY);
+        point0 = new Point(j * dX + x, intervalList[j].x * dY + sY);
+        point1 = new Point((j + 1) * dX + x, intervalList[j].x * dY + sY);
+        point2 = new Point((j + 1) * dX + x, intervalList[j].y * dY + sY);
+        point3 = new Point(j * dX + x, intervalList[j].y * dY + sY);
 
         context.fillStyle = colors[i];
         context.beginPath();
@@ -22385,11 +22227,11 @@ define('src/index', ['exports'], function (exports) {
     n = n == null ? 0 : n;
 
     if(n == 1) {
-      var p01 = new Point__default((p0.x + p1.x) * 0.5, (p0.y + p1.y) * 0.5);
-      var p03 = new Point__default((p0.x + p3.x) * 0.5, (p0.y + p3.y) * 0.5);
-      var p23 = new Point__default((p2.x + p3.x) * 0.5, (p2.y + p3.y) * 0.5);
-      var p12 = new Point__default((p1.x + p2.x) * 0.5, (p1.y + p2.y) * 0.5);
-      var pc = new Point__default((p01.x + p23.x) * 0.5, (p01.y + p23.y) * 0.5);
+      var p01 = new Point((p0.x + p1.x) * 0.5, (p0.y + p1.y) * 0.5);
+      var p03 = new Point((p0.x + p3.x) * 0.5, (p0.y + p3.y) * 0.5);
+      var p23 = new Point((p2.x + p3.x) * 0.5, (p2.y + p3.y) * 0.5);
+      var p12 = new Point((p1.x + p2.x) * 0.5, (p1.y + p2.y) * 0.5);
+      var pc = new Point((p01.x + p23.x) * 0.5, (p01.y + p23.y) * 0.5);
       DrawTextsAdvanced.textOnQuadrilater(text, p0, p01, pc, p03, fontSize, 2);
       DrawTextsAdvanced.textOnQuadrilater(text, p01, p1, p12, pc, fontSize, 3);
       DrawTextsAdvanced.textOnQuadrilater(text, pc, p12, p2, p23, fontSize, 4);
@@ -22403,29 +22245,29 @@ define('src/index', ['exports'], function (exports) {
     var v0, v1, v2;
     switch(n) {
       case 0:
-        v0 = new Point__default(0, 0);
-        v1 = new Point__default(w, 0);
-        v2 = new Point__default(0.000001, h + 0.000001);
+        v0 = new Point(0, 0);
+        v1 = new Point(w, 0);
+        v2 = new Point(0.000001, h + 0.000001);
         break;
       case 2:
-        v0 = new Point__default(0, 0);
-        v1 = new Point__default(w * 0.5, 0);
-        v2 = new Point__default(0.000001, h * 0.5 + 0.000001);
+        v0 = new Point(0, 0);
+        v1 = new Point(w * 0.5, 0);
+        v2 = new Point(0.000001, h * 0.5 + 0.000001);
         break;
       case 3:
-        v0 = new Point__default(w * 0.5, 0);
-        v1 = new Point__default(w, 0);
-        v2 = new Point__default(w * 0.5 + 0.000001, h * 0.5 + 0.000001);
+        v0 = new Point(w * 0.5, 0);
+        v1 = new Point(w, 0);
+        v2 = new Point(w * 0.5 + 0.000001, h * 0.5 + 0.000001);
         break;
       case 4:
-        v0 = new Point__default(w * 0.5, h * 0.5);
-        v1 = new Point__default(w, h * 0.5);
-        v2 = new Point__default(w * 0.5 + 0.000001, h + 0.000001);
+        v0 = new Point(w * 0.5, h * 0.5);
+        v1 = new Point(w, h * 0.5);
+        v2 = new Point(w * 0.5 + 0.000001, h + 0.000001);
         break;
       case 5:
-        v0 = new Point__default(0, h * 0.5);
-        v1 = new Point__default(w * 0.5, h * 0.5);
-        v2 = new Point__default(0.000001, h + 0.000001);
+        v0 = new Point(0, h * 0.5);
+        v1 = new Point(w * 0.5, h * 0.5);
+        v2 = new Point(0.000001, h + 0.000001);
         break;
     }
 
@@ -22476,7 +22318,7 @@ define('src/index', ['exports'], function (exports) {
   DrawTextsAdvanced.mapRectangleIntoQuadrilater = function(image, xI, yI, wI, hI, v0, v1, v2, v3, graphics) { //TODO:find the correct place for this
     graphics.context.save();
 
-    var M = MatrixGenerators.createMatrixFromTrianglesMapping(new Point__default(0, 0), new Point__default(100, 0), new Point__default(100, 100), v0, v1, v2);
+    var M = MatrixGenerators.createMatrixFromTrianglesMapping(new Point(0, 0), new Point(100, 0), new Point(100, 100), v0, v1, v2);
     graphics.context.transform(M.a, M.b, M.c, M.d, M.tx, M.ty);
 
     graphics.context.beginPath();
@@ -22497,7 +22339,7 @@ define('src/index', ['exports'], function (exports) {
 
     graphics.context.save();
 
-    M = MatrixGenerators.createMatrixFromTrianglesMapping(new Point__default(0, 0), new Point__default(0, 2), new Point__default(2, 2), v0, v3, v2);
+    M = MatrixGenerators.createMatrixFromTrianglesMapping(new Point(0, 0), new Point(0, 2), new Point(2, 2), v0, v3, v2);
     graphics.context.transform(M.a, M.b, M.c, M.d, M.tx, M.ty);
 
     graphics.context.beginPath();
@@ -22639,7 +22481,7 @@ define('src/index', ['exports'], function (exports) {
     this.cY = 1; // canvas center y
     this.mX = 0; // cursor x
     this.mY = 0; // cursor y
-    this.mP = new Point__default(0, 0); // cursor point // YY why have this and mX and mY
+    this.mP = new Point(0, 0); // cursor point // YY why have this and mX and mY
     this.nF = 0; // number of current frame since first cycle
     this.MOUSE_DOWN=false; //true on the frame of mousedown event
     this.MOUSE_UP=false; //true on the frame of mouseup event
@@ -22694,8 +22536,8 @@ define('src/index', ['exports'], function (exports) {
     if(this.container) {
       // If this container is falsy, then the canvas is not attached to the DOM
       // and can be used as an offscreen buffer.
-      this.container.appendChild(this.canvas);
-    }
+      this.container.appendChild(this.canvas);  
+    }  
     this.context = this.canvas.getContext("2d");
 
     this._adjustCanvas(this.dimensions);
@@ -22738,9 +22580,9 @@ define('src/index', ['exports'], function (exports) {
 
     // Start the draw loop
     if(autoStart) {
-      this._startCycle();
+      this._startCycle();  
     }
-
+    
   };
 
 
@@ -22907,11 +22749,11 @@ define('src/index', ['exports'], function (exports) {
     this.cycleActive = true;
     if(this._cycleInterval === 0) {
       // Call the cycle only once function
-      setTimeout(this._onCycle.bind(this), 10);
+      setTimeout(this._onCycle.bind(this), 10);  
     } else {
       clearInterval(this._setIntervalId);
-      this._setIntervalId = setInterval(this._onCycle.bind(this), this._cycleInterval);
-    }
+      this._setIntervalId = setInterval(this._onCycle.bind(this), this._cycleInterval);  
+    }  
   };
 
   /**
@@ -22925,36 +22767,36 @@ define('src/index', ['exports'], function (exports) {
 
     if(callback) {
       callback();
-    }
+    }  
   };
 
   /**
    * Run the cycle function for a certain amount of time and then stop it.
-   *
+   * 
    * Can be called multiple times to delay the stop time to being time milliseconds
    * after the last call to this function.
    * @param  {Number} time time in milliseconds to run the cycle function before stopping ot.
    */
   Graphics.prototype._cycleFor = function(time) {
     if(this._setIntervalId) {
-      // If there was already a running cycle then just delay the
+      // If there was already a running cycle then just delay the 
       // stop function to stop after time. This effectively debounces
-      // the _startCycle call.
+      // the _startCycle call.    
       clearTimeout(this._setTimeOutId);
       this._stopAfter(time);
     } else {
-      this._startCycle();
+      this._startCycle();  
       this._stopAfter(time);
     }
   };
 
-  Graphics.prototype._stopAfter = function(time, callback) {
+  Graphics.prototype._stopAfter = function(time, callback) {    
     var self = this;
-    this._setTimeOutId = setTimeout(function(){
+    this._setTimeOutId = setTimeout(function(){    
       self._stopCycle();
       if(callback){
-        callback();
-      }
+        callback();  
+      }    
     }, time);
   };
 
@@ -22975,7 +22817,7 @@ define('src/index', ['exports'], function (exports) {
         this.context.fillStyle =
         'rgb(' + this.backGroundColorRGB[0] +
         ',' + this.backGroundColorRGB[1] +
-        ',' + this.backGroundColorRGB[2] +
+        ',' + this.backGroundColorRGB[2] + 
         ')';
         this.context.fillRect(0, 0, this.cW, this.cH);
       } else {
@@ -23088,32 +22930,32 @@ define('src/index', ['exports'], function (exports) {
   };
 
   /**
-   * Set the cycle function to only run mouse movement and have
-   * it run for a given amount of time after the mouse movement
-   * has ended. If a cycle function is currently running it will
+   * Set the cycle function to only run mouse movement and have 
+   * it run for a given amount of time after the mouse movement 
+   * has ended. If a cycle function is currently running it will 
    * continue to run until time has elapsed. If you want it to stop
    * immediately @see stop.
    *
-   *
-   * @param  {Number} time time in milliseconds after which the cycle function will
+   *  
+   * @param  {Number} time time in milliseconds after which the cycle function will 
    *                       continue to run
    */
   Graphics.prototype.cycleOnMouseMovement = function(time) {
-    var self = this;
+    var self = this;  
 
     if(this.cycleOnMouseMovementListener){
       this.canvas.removeEventListener('mousemove', this.cycleOnMouseMovementListener, false);
       this.canvas.removeEventListener('mousewheel', this.cycleOnMouseMovementListener, false);
-      this.canvas.removeEventListener('mousemove', this.cycleOnMouseMovementListener, false);
+      this.canvas.removeEventListener('mousemove', this.cycleOnMouseMovementListener, false); 
     }
 
     this.cycleOnMouseMovementListener = function(){
       self._cycleFor(time);
     };
-
+      
     this.canvas.addEventListener('mousemove', this.cycleOnMouseMovementListener, false);
     this.canvas.addEventListener('mousewheel', this.cycleOnMouseMovementListener, false);
-    this.canvas.addEventListener('mousemove', this.cycleOnMouseMovementListener, false);
+    this.canvas.addEventListener('mousemove', this.cycleOnMouseMovementListener, false); 
 
     self._cycleFor(time);
   };
@@ -23547,13 +23389,13 @@ define('src/index', ['exports'], function (exports) {
     }
 
     var args = arguments[0];
-    var p = new Polygon__default();
+    var p = new Polygon();
     this.context.beginPath();
     this.context.moveTo(args[0], args[1]);
-    p[0] = new Point__default(args[0], args[1]);
+    p[0] = new Point(args[0], args[1]);
     for(var i = 2; args[i + 1] != null; i += 2) {
       this.context.lineTo(args[i], args[i + 1]);
-      p.push(new Point__default(args[i], args[i + 1]));
+      p.push(new Point(args[i], args[i + 1]));
     }
     return p.containsPoint(this.mP);
   };
@@ -23649,7 +23491,7 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * Renders a filled polygon.
-   *
+   * 
    * @param  {Polygon} polygon the polygon to render
    */
   Graphics.prototype.fPolygon = function(polygon) {
@@ -24032,11 +23874,11 @@ define('src/index', ['exports'], function (exports) {
   // styles
 
   /**
-   * Sets the current fill color for the graphics object.
+   * Sets the current fill color for the graphics object. 
    *
    * Callers can pass in either an rgba() color string, or a set of up to four numbers
    * representing the rgb or rgba color.
-   *
+   * 
    * @param {String|Numbers} style
    */
   Graphics.prototype.setFill = function(style) {
@@ -24172,7 +24014,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Number} x X position to start the text.
    * @param {Number} y Y position to start the text.
    * @example
-   * setText('black', 30, 'Arial');
+   * setText('black', 30, 'Ariel');
    * fText("hello", 10, 10);
    *
    */
@@ -24190,7 +24032,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Number} x X position to start the text.
    * @param {Number} y Y position to start the text.
    * @example
-   * setText('black', 30, 'Arial');
+   * setText('black', 30, 'Ariel');
    * setStroke('orange');
    * sText("hello", 10, 10);
    *
@@ -24210,7 +24052,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Number} x X position to start the text.
    * @param {Number} y Y position to start the text.
    * @example
-   * setText('black', 30, 'Arial');
+   * setText('black', 30, 'Ariel');
    * setStroke('orange');
    * fsText("hello", 10, 10);
    *
@@ -24244,7 +24086,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Number} y Y position to start the text.
    * @param {Number} angle The angle in radians to rotate the text
    * @example
-   * setText('black', 30, 'Arial');
+   * setText('black', 30, 'Ariel');
    * fTextRotated("hello", 40, 40, (20 * Math.PI / 180));
    *
    */
@@ -24269,7 +24111,7 @@ define('src/index', ['exports'], function (exports) {
    * @param {Number} yCenter Y position of center of arc.
    * @param {Boolean} centered if false (default) text starts on control point, if true the control point is the center of the text
    * @example
-   * setText('black', 30, 'Arial');
+   * setText('black', 30, 'Ariel');
    * fTextArc("Wheels on the Bus Go Round and Round", 500, 300, 200, 200, true);
    *
    */
@@ -24307,10 +24149,10 @@ define('src/index', ['exports'], function (exports) {
    * @return {Boolean} Returns true if the mouse is over the text on the current
    * iteration of the cycle function.
    * @example
-   * setText('black', 30, 'Arial');
+   * setText('black', 30, 'Ariel');
    * var on = fTextM("hello", 10, 10, 30);
    * if(on) {
-   *   setText('red', 30, 'Arial');
+   *   setText('red', 30, 'Ariel');
    *   fText("hello", 10, 10);
    * }
    *
@@ -24335,11 +24177,11 @@ define('src/index', ['exports'], function (exports) {
    * @return {Boolean} Returns true if the mouse is over the text on the current
    * iteration of the cycle function.
    * @example
-   * setText('black', 30, 'Arial');
+   * setText('black', 30, 'Ariel');
    * setStroke('orange')
    * var on = fsTextM("hello", 10, 10, 30);
    * if(on) {
-   *   setText('red', 30, 'Arial');
+   *   setText('red', 30, 'Ariel');
    *   setStroke('black')
    *   fsText("hello", 10, 10);
    * }
@@ -24366,10 +24208,10 @@ define('src/index', ['exports'], function (exports) {
    * @return {Boolean} Returns true if the mouse is over the text on the current
    * iteration of the cycle function.
    * @example
-   * setText('black', 30, 'Arial');
+   * setText('black', 30, 'Ariel');
    * var on = fTextRotatedM("hello", 10, 10, (20 * Math.PI / 180), 30);
    * if(on) {
-   *   setText('red', 30, 'Arial');
+   *   setText('red', 30, 'Ariel');
    *   setStroke('black')
    *   fsText("hello", 10, 10);
    * }
@@ -24396,9 +24238,9 @@ define('src/index', ['exports'], function (exports) {
   /**
    * Helper function, returns first param if it is not null or undefined
    * esle returns second param.
-   * @param  {Object} value
-   * @param  {Object} fallback
-   * @return {Object}
+   * @param  {Object} value    
+   * @param  {Object} fallback 
+   * @return {Object} 
    * @ignore
    */
   function ifDef(value, fallback) {
@@ -24411,7 +24253,7 @@ define('src/index', ['exports'], function (exports) {
 
   /**
    * Sets default values for several text rendering properties.
-   * Values that are undefined or null are not changed. Will also
+   * Values that are undefined or null are not changed. Will also 
    * call setText and set the current text properties to that.
    *
    * @see  setText
@@ -24872,20 +24714,20 @@ define('src/index', ['exports'], function (exports) {
     this.graphics = graphics;
 
     this.factor = configuration.factor == null ? 1 : configuration.factor;
-    this.center = new Point__default(0, 0);
+    this.center = new Point(0, 0);
 
     this.graphics.on("mousedown", this.onMouse, this);
     this.graphics.on("mouseup", this.onMouse, this);
 
     this.dragging = false;
-    this.mouseClickPosition = new Point__default();
-    this.mousePosition = new Point__default();
+    this.mouseClickPosition = new Point();
+    this.mousePosition = new Point();
     this.r = 0;
     this.a = 0;
 
     this.idInterval = null;
 
-    this.dragVector = new Point__default();
+    this.dragVector = new Point();
   }
 
 
@@ -25010,16 +24852,8 @@ define('src/index', ['exports'], function (exports) {
 
     this.main = graphics.container;// document.getElementById('maindiv');
     this.div = document.createElement('div2');
-    if(this.textarea) {
-      this.DOMtext = document.createElement("textarea");
-    } else {
-      this.DOMtext = document.createElement("input");
-    }
-    if(this.password) {
-      this.DOMtext.setAttribute('type', 'password');
-    } else {
-      this.DOMtext.setAttribute('type', 'text');
-    }
+    this.textarea ? this.DOMtext = document.createElement("textarea") : this.DOMtext = document.createElement("input");
+    this.password ? this.DOMtext.setAttribute('type', 'password') : this.DOMtext.setAttribute('type', 'text');
     this.div.setAttribute('style', 'position:absolute;top:' + this.y + 'px;left:' + this.x + 'px;z-index:' + this.zIndex + ';');
 
     if(!this.border) this.DOMtext.setAttribute('style', 'border:none');
@@ -25535,7 +25369,7 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @todo write docs
    */
-  TextBox.prototype.mouseUp = function() {
+  TextBox.prototype.mouseUp = function(e) {
     if(this.overLink != null) {
       var link = this.links[this.overLink];
       var linkType = this.linksType[this.overLink];
@@ -25609,7 +25443,7 @@ define('src/index', ['exports'], function (exports) {
   /**
    * @todo write docs
    */
-  FastHtml.expand = function(abreviatedHTML) {
+  FastHtml.expand = function(abreviatedHTML, scope, onEvent) {
     if(abreviatedHTML == null || abreviatedHTML === "") return "";
 
     var bit;
@@ -26304,7 +26138,7 @@ define('src/index', ['exports'], function (exports) {
    */
   Forces.prototype.forcesForNetwork = function(network, initRadius, initCenter, eqDistancesMode, addShortRepulsorsOnRelated) {
     initRadius = initRadius || 0;
-    initCenter = initCenter || new Point__default(0, 0);
+    initCenter = initCenter || new Point(0, 0);
     eqDistancesMode = eqDistancesMode == null ? 0 : eqDistancesMode;
     addShortRepulsorsOnRelated = addShortRepulsorsOnRelated == null ? false : addShortRepulsorsOnRelated;
 
@@ -26325,10 +26159,10 @@ define('src/index', ['exports'], function (exports) {
 
     for(i = 0; i < nNodes; i++) {
       if(initRadius === 0) {
-        this.addNode(network.nodeList[i], new Point__default(network.nodeList[i].x, network.nodeList[i].y));
+        this.addNode(network.nodeList[i], new Point(network.nodeList[i].x, network.nodeList[i].y));
       } else {
         angle = Math.random() * TwoPi;
-        this.addNode(network.nodeList[i], new Point__default(initCenter.x + initRadius * Math.cos(angle), initCenter.y + initRadius * Math.sin(angle)));
+        this.addNode(network.nodeList[i], new Point(initCenter.x + initRadius * Math.cos(angle), initCenter.y + initRadius * Math.sin(angle)));
       }
     }
 
@@ -26368,8 +26202,8 @@ define('src/index', ['exports'], function (exports) {
    * @todo write docs
    */
   Forces.prototype.addNode = function(node, initPosition, initSpeed) {
-    initPosition = initPosition == null ? new Point__default(Math.random() * 200 - 100, Math.random() * 200 - 100) : initPosition;
-    initSpeed = initSpeed == null ? new Point__default(0, 0) : initSpeed;
+    initPosition = initPosition == null ? new Point(Math.random() * 200 - 100, Math.random() * 200 - 100) : initPosition;
+    initSpeed = initSpeed == null ? new Point(0, 0) : initSpeed;
     this.nodeList.addNode(node);
     node.x = initPosition.x;
     node.y = initPosition.y;
@@ -26746,7 +26580,9 @@ define('src/index', ['exports'], function (exports) {
       pairsArray[i] = [polygon3D[i], i];
     }
 
-    pairsArray = pairsArray.sort(this._sortingCriteria.bind(this));
+    UTLITARY_GLOBAL_VAR = this._basis;
+    pairsArray = pairsArray.sort(this._sortingCriteria, this._basis);
+    UTLITARY_GLOBAL_VAR = null;
 
     var indexes = new NumberList();
 
@@ -26766,8 +26602,10 @@ define('src/index', ['exports'], function (exports) {
     for(i = 0; list[i] != null; i++) {
       pairsArray[i] = [polygon3D[i], list[i]];
     }
-    
-    pairsArray = pairsArray.sort(this._sortingCriteria.bind(this));
+
+    UTLITARY_GLOBAL_VAR = this._basis;
+    pairsArray = pairsArray.sort(this._sortingCriteria, this._basis);
+    UTLITARY_GLOBAL_VAR = null;
 
     var newList = instantiateWithSameType(list);
     newList.name = list;
@@ -26782,10 +26620,10 @@ define('src/index', ['exports'], function (exports) {
   /**
   * @todo write docs
   */
-  Engine3D.prototype._sortingCriteria = function(array0, array1) {
+  Engine3D.prototype._sortingCriteria = function(array0, array1, basis) {
     var point3D0 = array0[0];
     var point3D1 = array1[0];
-    return(this._basis[0].z * point3D0.x + this._basis[1].z * point3D0.y + this._basis[2].z * point3D0.z < this._basis[0].z * point3D1.x + this._basis[1].z * point3D1.y + this._basis[2].z * point3D1.z) ? 1 : -1;
+    return(UTLITARY_GLOBAL_VAR[0].z * point3D0.x + UTLITARY_GLOBAL_VAR[1].z * point3D0.y + UTLITARY_GLOBAL_VAR[2].z * point3D0.z < UTLITARY_GLOBAL_VAR[0].z * point3D1.x + UTLITARY_GLOBAL_VAR[1].z * point3D1.y + UTLITARY_GLOBAL_VAR[2].z * point3D1.z) ? 1 : -1;
   };
 
 
@@ -26840,7 +26678,7 @@ define('src/index', ['exports'], function (exports) {
 
 
   Engine3D.prototype.line3D = function(point0, point1) {
-    var polygon = new Polygon__default();
+    var polygon = new Polygon();
 
     var p0 = point0; //while there's no Transformation3D'
     var prescale0 = this.lens / (this.lens + (this._basis[0].z * p0.x + this._basis[1].z * p0.y + this._basis[2].z * p0.z));
@@ -26851,8 +26689,8 @@ define('src/index', ['exports'], function (exports) {
 
     if(prescale0 > 0 || prescale1 > 0) {
       if(prescale0 > 0 && prescale1 > 0) {
-        polygon.push(new Point__default((this._basis[0].x * p0.x + this._basis[1].x * p0.y + this._basis[2].x * p0.z) * prescale0, (this._basis[0].y * p0.x + this._basis[1].y * p0.y + this._basis[2].y * p0.z) * prescale0));
-        polygon.push(new Point__default((this._basis[0].x * p1.x + this._basis[1].x * p1.y + this._basis[2].x * p1.z) * prescale1, (this._basis[0].y * p1.x + this._basis[1].y * p1.y + this._basis[2].y * p1.z) * prescale1));
+        polygon.push(new Point((this._basis[0].x * p0.x + this._basis[1].x * p0.y + this._basis[2].x * p0.z) * prescale0, (this._basis[0].y * p0.x + this._basis[1].y * p0.y + this._basis[2].y * p0.z) * prescale0));
+        polygon.push(new Point((this._basis[0].x * p1.x + this._basis[1].x * p1.y + this._basis[2].x * p1.z) * prescale1, (this._basis[0].y * p1.x + this._basis[1].y * p1.y + this._basis[2].y * p1.z) * prescale1));
         return polygon;
       } else {
         var p0B = new Point3D(this._basis[0].x * p0.x + this._basis[1].x * p0.y + this._basis[2].x * p0.z, this._basis[0].y * p0.x + this._basis[1].y * p0.y + this._basis[2].y * p0.z, this._basis[0].z * p0.x + this._basis[1].z * p0.y + this._basis[2].z * p0.z);
@@ -26861,11 +26699,11 @@ define('src/index', ['exports'], function (exports) {
         var pM = new Point3D(p0B.x + t * (p1B.x - p0B.x), p0B.y + t * (p1B.y - p0B.y), -this.lens + this._cuttingPlane);
         var prescaleM = this.lens / (this.lens + pM.z);
         if(prescale0 > 0) {
-          polygon.push(new Point__default(p0B.x * prescale0, p0B.y * prescale0));
-          polygon.push(new Point__default(pM.x * prescaleM, pM.y * prescaleM));
+          polygon.push(new Point(p0B.x * prescale0, p0B.y * prescale0));
+          polygon.push(new Point(pM.x * prescaleM, pM.y * prescaleM));
         } else {
-          polygon.push(new Point__default(pM.x * prescaleM, pM.y * prescaleM));
-          polygon.push(new Point__default(p1B.x * prescale1, p1B.y * prescale1));
+          polygon.push(new Point(pM.x * prescaleM, pM.y * prescaleM));
+          polygon.push(new Point(p1B.x * prescale1, p1B.y * prescale1));
         }
         return polygon;
       }
@@ -27299,7 +27137,7 @@ define('src/index', ['exports'], function (exports) {
 
       sY = y;
 
-      point = new Point__default(x, intervalList[0].y * dY + sY);
+      point = new Point(x, intervalList[0].y * dY + sY);
       graphics.context.moveTo(point.x, point.y);
 
       prevPoint = point;
@@ -27307,7 +27145,7 @@ define('src/index', ['exports'], function (exports) {
       for(j = 1; j < nCols; j++) {
         sY = y;
 
-        point = new Point__default(j * dX + x, intervalList[j].y * dY + sY);
+        point = new Point(j * dX + x, intervalList[j].y * dY + sY);
 
         if(bezier) {
           offX = (point.x - prevPoint.x) * offValue;
@@ -27319,14 +27157,14 @@ define('src/index', ['exports'], function (exports) {
         prevPoint = point;
       }
 
-      point = new Point__default((nCols - 1) * dX + x, intervalList[nCols - 1].x * dY + sY);
+      point = new Point((nCols - 1) * dX + x, intervalList[nCols - 1].x * dY + sY);
       graphics.context.lineTo(point.x, point.y);
       prevPoint = point;
 
       for(j = nCols - 2; j >= 0; j--) {
         sY = y;
 
-        point = new Point__default(j * dX + x, intervalList[j].x * dY + sY);
+        point = new Point(j * dX + x, intervalList[j].x * dY + sY);
 
         if(bezier) {
           offX = (point.x - prevPoint.x) * offValue;
@@ -27343,7 +27181,7 @@ define('src/index', ['exports'], function (exports) {
         prevPoint = point;
       }
 
-      point = new Point__default(x, intervalList[0].x * dY + sY);
+      point = new Point(x, intervalList[0].x * dY + sY);
       graphics.context.lineTo(point.x, point.y);
 
       graphics.context.fill();
@@ -27393,7 +27231,7 @@ define('src/index', ['exports'], function (exports) {
     var j;
 
     colors = colors == null ? ColorListOperators.colorListFromColorScale(new ColorScale(ColorOperators.temperatureScale), nElements) : colors;
-    center = center == null ? new Point__default(100, 100) : center;
+    center = center == null ? new Point(100, 100) : center;
     radius = radius == null ? 200 : radius;
     r0 = r0 == null ? 10 : r0;
     angle0 = angle0 == null ? 0 : angle0;
@@ -27435,7 +27273,7 @@ define('src/index', ['exports'], function (exports) {
 
       graphics.context.beginPath();
 
-      point = new Point__default(angles == null ? 0 : angles[0] + angle0, (1 - intervalList[0].y) * dR + r0);
+      point = new Point(angles == null ? 0 : angles[0] + angle0, (1 - intervalList[0].y) * dR + r0);
       graphics.context.moveTo(point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
 
       prevPoint = point;
@@ -27443,7 +27281,7 @@ define('src/index', ['exports'], function (exports) {
       for(j = 1; j <= nCols; j++) {
 
         interval = intervalList[j % nCols];
-        point = new Point__default(angles == null ? j * dA : angles[j % nCols] + angle0, (1 - interval.y) * dR + r0);
+        point = new Point(angles == null ? j * dA : angles[j % nCols] + angle0, (1 - interval.y) * dR + r0);
 
         nR = prevPoint.y / cosOffA;
         nR2 = point.y / cosOffA;
@@ -27475,12 +27313,12 @@ define('src/index', ['exports'], function (exports) {
         }
       }
 
-      point = new Point__default(angles == null ? 0 : angles[0] + angle0, (1 - intervalList[0].x) * dR + r0);
+      point = new Point(angles == null ? 0 : angles[0] + angle0, (1 - intervalList[0].x) * dR + r0);
       graphics.context.lineTo(point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
       prevPoint = point;
 
       for(j = nCols - 1; j >= 0; j--) {
-        point = new Point__default(angles == null ? j * dA : angles[j] + angle0, (1 - intervalList[j].x) * dR + r0);
+        point = new Point(angles == null ? j * dA : angles[j] + angle0, (1 - intervalList[j].x) * dR + r0);
 
         nR = prevPoint.y / cosOffA;
         nR2 = point.y / cosOffA;
@@ -27492,7 +27330,7 @@ define('src/index', ['exports'], function (exports) {
         prevPoint = point;
       }
 
-      point = new Point__default(angles == null ? 0 : angles[0] + angle0, (1 - intervalList[0].x) * dR + r0);
+      point = new Point(angles == null ? 0 : angles[0] + angle0, (1 - intervalList[0].x) * dR + r0);
       graphics.context.lineTo(point.y * Math.cos(point.x) + center.x, point.y * Math.sin(point.x) + center.y);
 
       graphics.context.fill();
@@ -27548,8 +27386,8 @@ define('src/index', ['exports'], function (exports) {
     var point0;
     var point1;
 
-    var point0Prev = new Point__default();
-    var point1Prev = new Point__default();
+    var point0Prev = new Point();
+    var point1Prev = new Point();
 
     var center;
     var size;
@@ -27602,8 +27440,8 @@ define('src/index', ['exports'], function (exports) {
       t = 0;
 
       sY = (1 - lastIntervalList[0].y) * 0.5 * dY + y;
-      point0 = new Point__default(x, intervalList[0].x * dY + sY);
-      point1 = new Point__default(x, intervalList[0].y * dY + sY);
+      point0 = new Point(x, intervalList[0].x * dY + sY);
+      point1 = new Point(x, intervalList[0].y * dY + sY);
 
       do {
         nChar++;
@@ -27639,10 +27477,10 @@ define('src/index', ['exports'], function (exports) {
         valueX = IntervalTableDraw._bezierValue(xj0, xj1, intervalList[j].x, intervalList[j + 1].x, t, offX);
         valueY = IntervalTableDraw._bezierValue(xj0, xj1, intervalList[j].y, intervalList[j + 1].y, t, offX);
 
-        point0 = new Point__default(xx + x, valueX * dY + sY);
-        point1 = new Point__default(xx + x, valueY * dY + sY);
+        point0 = new Point(xx + x, valueX * dY + sY);
+        point1 = new Point(xx + x, valueY * dY + sY);
 
-        center = new Point__default(point0Prev.x + jumpX * 0.5, (point0.y + point1.y + point0Prev.y + point1Prev.y) * 0.25);
+        center = new Point(point0Prev.x + jumpX * 0.5, (point0.y + point1.y + point0Prev.y + point1Prev.y) * 0.25);
 
         if(typode) {
           graphics.context.strokeStyle = colors[i];
@@ -27666,12 +27504,12 @@ define('src/index', ['exports'], function (exports) {
   };
   IntervalTableDraw._bezierValue = function(x0, x1, y0, y1, t, offX) {
     var u = 1 - t;
-    var p0 = new Point__default(x0 + t * offX, y0);
-    var p1 = new Point__default(u * (x0 + offX) + t * (x1 - offX), u * y0 + t * y1);
-    var p2 = new Point__default(x1 - u * offX, y1);
+    var p0 = new Point(x0 + t * offX, y0);
+    var p1 = new Point(u * (x0 + offX) + t * (x1 - offX), u * y0 + t * y1);
+    var p2 = new Point(x1 - u * offX, y1);
 
-    var P0 = new Point__default(u * p0.x + t * p1.x, u * p0.y + t * p1.y);
-    var P1 = new Point__default(u * p1.x + t * p2.x, u * p1.y + t * p2.y);
+    var P0 = new Point(u * p0.x + t * p1.x, u * p0.y + t * p1.y);
+    var P1 = new Point(u * p1.x + t * p2.x, u * p1.y + t * p2.y);
 
     return u * P0.y + t * P1.y;
   };
@@ -27731,7 +27569,7 @@ define('src/index', ['exports'], function (exports) {
       for(j = 0; numberList[j] != null; j++) {
         graphics.context.fillStyle = colorScale((numberList[j] - minMaxInterval.x) / amp);
         graphics.context.fillRect(x, Math.round(frame.y + j * dY), Math.ceil(dX) - margin, Math.ceil(dY) - margin);
-        if(mouseXOnColumn && graphics.mY > frame.y + j * dY && graphics.mY <= frame.y + (j + 1) * dY) overCoordinates = new Point__default(i, j);
+        if(mouseXOnColumn && graphics.mY > frame.y + j * dY && graphics.mY <= frame.y + (j + 1) * dY) overCoordinates = new Point(i, j);
       }
     }
 
@@ -28595,7 +28433,7 @@ define('src/index', ['exports'], function (exports) {
       i0Line = 0;
 
       sizes = new NumberList();
-      positions = new Polygon__default();
+      positions = new Polygon();
 
       for(i = 0; stringList[i] != null; i++) {
         tag = stringList[i];
@@ -28617,7 +28455,7 @@ define('src/index', ['exports'], function (exports) {
         }
 
         maxST = Math.max(maxST, sT);
-        positions.push(new Point__default(xx, yy));
+        positions.push(new Point(xx, yy));
         xx += wT + sT * 0.2;
       }
 
@@ -28685,7 +28523,7 @@ define('src/index', ['exports'], function (exports) {
         var jump = 5;
         var nStep = 0;
         var nSteps = 1;
-        var pc = new Point__default();
+        var pc = new Point();
         break;
       case 1: //circle
         px = 0;
@@ -28943,16 +28781,16 @@ define('src/index', ['exports'], function (exports) {
         kx = frameMargin.width / Math.log((frameP.right + 1) / (frameP.x + 1));
         ky = frameMargin.height / Math.log((frameP.bottom + 1) / (frameP.y + 1));
         project = function(p) {
-          return new Point__default((Math.log(p.x + 1) - Math.log(frameP.x + 1)) * kx + frameMargin.x, frameMargin.bottom - (Math.log(p.y + 1) - Math.log(frameP.y + 1)) * ky);
+          return new Point((Math.log(p.x + 1) - Math.log(frameP.x + 1)) * kx + frameMargin.x, frameMargin.bottom - (Math.log(p.y + 1) - Math.log(frameP.y + 1)) * ky);
         };
       } else {
         kx = frameMargin.width / frameP.width;
         ky = frameMargin.height / frameP.height;
         project = function(p) {
-          return new Point__default((p.x - frameP.x) * kx + frameMargin.x, frameMargin.bottom - (p.y - frameP.y) * ky);
+          return new Point((p.x - frameP.x) * kx + frameMargin.x, frameMargin.bottom - (p.y - frameP.y) * ky);
         };
       }
-      memory.projectedPolygon = new Polygon__default();
+      memory.projectedPolygon = new Polygon();
       polygon.forEach(function(p, i) {
         memory.projectedPolygon[i] = project(p);
       });
@@ -29080,7 +28918,7 @@ define('src/index', ['exports'], function (exports) {
 
     var hoverValues;
     if(returnHovered) {
-      hoverValues = new Point__default(-1, -1);
+      hoverValues = new Point(-1, -1);
     }
 
     if(useWeights) {
