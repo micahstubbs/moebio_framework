@@ -449,7 +449,7 @@ Graphics.prototype._stopCycle = function(callback) {
  * after the last call to this function.
  * @param  {Number} time time in milliseconds to run the cycle function before stopping ot.
  */
-Graphics.prototype._cycleFor = function(time) {
+Graphics.prototype.cycleFor = function(time) {
   if(this._setIntervalId) {
     // If there was already a running cycle then just delay the
     // stop function to stop after time. This effectively debounces
@@ -537,12 +537,11 @@ Graphics.prototype._emit = function(eventName, e) {
   switch(eventName) {
     case 'mousewheel':
     case 'DOMMouseScroll':
+      eventName = 'mousewheel';
       if (!e) {
-        e = window.event; //IE // YY is this still a thing
+        e = window.event;
       }
       if (e.wheelDelta) {
-        // YY do we actually want to keep this here or is the
-        // main goal to send this information to the listener.
         this.WHEEL_CHANGE = e.wheelDelta/120;
       } else if (e.detail) { /** Mozilla case. */
         this.WHEEL_CHANGE = -e.detail/3;
@@ -622,14 +621,14 @@ Graphics.prototype.cycleOnMouseMovement = function(time) {
   }
 
   this.cycleOnMouseMovementListener = function(){
-    self._cycleFor(time);
+    self.cycleFor(time);
   };
 
   this.canvas.addEventListener('mousemove', this.cycleOnMouseMovementListener, false);
   this.canvas.addEventListener('mousewheel', this.cycleOnMouseMovementListener, false);
   this.canvas.addEventListener('mousemove', this.cycleOnMouseMovementListener, false);
 
-  self._cycleFor(time);
+  self.cycleFor(time);
 };
 
 /**

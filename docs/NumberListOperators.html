@@ -1273,7 +1273,7 @@ tags:ds</p>
     
 
 
-    <h3 class="name" id=".linearRegression"><span class="type-signature">(static) </span>linearRegression<span class="signature">(numberListX, numberListY)</span><span class="type-signature"> &rarr; {<a href="NumberList.html">NumberList</a>}</span></h3>
+    <h3 class="name" id=".linearRegression"><span class="type-signature">(static) </span>linearRegression<span class="signature">(numberListX, numberListY, returnType)</span><span class="type-signature"> &rarr; {Object}</span></h3>
 
     
 
@@ -1281,7 +1281,7 @@ tags:ds</p>
 
 <p>
     <p>Returns linear regression between two numberLists in another numberList with items
-slope, intercept</p>
+slope, intercept, r squared, n OR in a Point representing the line</p>
 </p>
 
 
@@ -1361,6 +1361,29 @@ slope, intercept</p>
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>returnType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p><br>0:NumberList with items slope, intercept, r squared, n.<br>1: Point with slope,intercept</p></td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -1384,11 +1407,11 @@ slope, intercept</p>
 <p>
   
       <strong>Returns 
-<span class="param-type"><a href="NumberList.html">NumberList</a></span>
+<span class="param-type">Object</span>
 
 </strong>
   
-  <p>NumberList with items slope, intercept
+  <p>result depending on returnType
 tags:statistics</p>
   
 </p>

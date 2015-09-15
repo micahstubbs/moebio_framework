@@ -91,6 +91,8 @@ export default ObjectDraw;
  * tags:draw
  */
 ObjectDraw.count = function(frame, object, graphics) {
+  if(graphics==null) graphics = frame.graphics;
+  
   if(frame.memory == null) {
     frame.memory = {
       n: 1,

@@ -2,7 +2,7 @@
 
 'use strict';
 
-var moebioPath = "node_modules/moebioFramework";
+var moebioPath = "node_modules/moebio-framework";
 
 var examples = ['mouse_movements', 'simple_shapes', 'cube', 'network', 'spanning_tree'];
 

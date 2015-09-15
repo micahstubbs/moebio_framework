@@ -112,11 +112,14 @@ StringListConversions.toNumberList = function(stringlist) {
  * @return {DateList}
  * tags:
  */
-StringListConversions.toDateList = function(formatCase, separator) {
+StringListConversions.toDateList = function(stringList, formatCase, separator) {
+  if(stringList==null) return;
+  
   var dateList = new DateList();
   var i;
-  for(i = 0; this[i] != null; i++) {
-    dateList.push(DateOperators.stringToDate(this[i], formatCase, separator));
+  var l = stringList.length;
+  for(i = 0; i&lt;l; i++) {
+    dateList.push(DateOperators.stringToDate(stringList[i], formatCase, separator));
   }
   return dateList;
 };
