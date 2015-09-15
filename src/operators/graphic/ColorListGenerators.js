@@ -156,6 +156,7 @@ ColorListGenerators.createCategoricalColors = function(mode, nColors, colorScale
         newColorList[i] = colorList[i%colorList.length];
       }
       break;
+    case 4:
     case 5:
       var randomNumbersSource = NumberListGenerators.createRandomNumberList(1001, null, 0);
       var positions = NumberListGenerators.createSortedNumberList(nColors);
@@ -164,7 +165,8 @@ ColorListGenerators.createCategoricalColors = function(mode, nColors, colorScale
 
       var nGenerations = Math.floor(nColors * 2) + 100;
       var nChildren = Math.floor(nColors * 0.6) + 5;
-      var bestEvaluation = ColorListGenerators._evaluationFunction(randomPositions);
+      var bCircular = mode == 4;
+      var bestEvaluation = ColorListGenerators._evaluationFunction(randomPositions,bCircular);
       var child;
       var bestChildren = randomPositions;
       var j;
@@ -175,7 +177,7 @@ ColorListGenerators.createCategoricalColors = function(mode, nColors, colorScale
         for(j = 0; j < nChildren; j++) {
           child = ColorListGenerators._sortingVariation(randomPositions, randomNumbersSource[nr], randomNumbersSource[nr + 1]);
           nr = (nr + 2) % 1001;
-          evaluation = ColorListGenerators._evaluationFunction(child);
+          evaluation = ColorListGenerators._evaluationFunction(child,bCircular,bCircular);
           if(evaluation > bestEvaluation) {
             bestChildren = child;
             bestEvaluation = evaluation;
@@ -183,9 +185,16 @@ ColorListGenerators.createCategoricalColors = function(mode, nColors, colorScale
         }
         randomPositions = bestChildren;
       }
-
-      for(i = 0; i < nColors; i++) {
-        newColorList.push(colorScaleFunction((1 / nColors) + randomPositions[i] / (nColors + 1))); //TODO: make more efficient by pre-nuilding the colorList
+      if(mode == 4){
+        var colorListSpectrum = ColorListGenerators.createColorListSpectrum(nColors);
+        for(i = 0; i < nColors; i++) {
+          newColorList.push(colorListSpectrum[randomPositions[i]]);
+        }
+      }
+      else{ // 5
+        for(i = 0; i < nColors; i++) {
+          newColorList.push(colorScaleFunction((1 / nColors) + randomPositions[i] / (nColors + 1))); //TODO: make more efficient by pre-nuilding the colorList
+        }
       }
       break;
   }
@@ -217,11 +226,18 @@ ColorListGenerators._sortingVariation = function(numberList, rnd0, rnd1) { //pri
 /**
  * @ignore
  */
-ColorListGenerators._evaluationFunction = function(numberList) { //private
+ColorListGenerators._evaluationFunction = function(numberList, bCircular) { //private
+  // bCircular == true means distance between 0 and n-1 is 1
   var sum = 0;
-  var i;
+  var i,d,
+    len=numberList.length,
+    h=Math.floor(len/2);
   for(i = 0; numberList[i + 1] != null; i++) {
-    sum += Math.sqrt(Math.abs(numberList[i + 1] - numberList[i]));
+    d = Math.abs(numberList[i + 1] - numberList[i]);
+    if(bCircular && d > h){
+      d = len-d;
+    }
+    sum += Math.sqrt(d);
   }
   return sum;
 };
